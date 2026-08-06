@@ -65,6 +65,7 @@ type PageKey =
   | 'bookmakers'
   | 'factory'
   | 'identity'
+  | 'issues'
   | 'limits-lab'
   | 'brands'
   | 'surfaces'
@@ -161,6 +162,12 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
     active: 'identity',
     pageLabel: 'Identity',
     brandBadge: 'ops',
+  },
+  {
+    file: 'issues/index.html',
+    active: 'issues',
+    pageLabel: 'Issues',
+    brandBadge: 'governance',
   },
   {
     file: 'limits-lab/index.html',

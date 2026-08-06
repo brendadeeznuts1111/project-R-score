@@ -23,10 +23,9 @@ This tenant does not make GitHub Issues the concept or domain graph.
 | Typed taxonomy + parse-once spine          | [#238](https://github.com/brendadeeznuts1111/project-R-score/issues/238) | implemented             |
 | Form, doctor, audit, label synchronization | [#239](https://github.com/brendadeeznuts1111/project-R-score/issues/239) | implemented             |
 | Deterministic public registry bake         | [#240](https://github.com/brendadeeznuts1111/project-R-score/issues/240) | implemented             |
-| Static portal consumer                     | [#241](https://github.com/brendadeeznuts1111/project-R-score/issues/241) | not implemented         |
+| Static portal consumer                     | [#241](https://github.com/brendadeeznuts1111/project-R-score/issues/241) | implemented             |
 
-Do not add `/portal/issues/` until the preceding public artifact phase owns its
-verifier and drift contract.
+The portal consumes the preceding public artifact and does not query GitHub.
 
 ## Domain contract
 
@@ -90,6 +89,22 @@ serialized-byte parity. The artifact is wired through `registry-index.md`,
 `wiki-index.md`, portal weave, and the bake manifest priority inventory.
 `bake:all` runs it before the final manifest.
 
+## Static portal consumer
+
+`/portal/issues/` reads only the taxonomy artifact and the public bake manifest.
+It renders all eight semantic groups, marks required versus optional dimensions
+in text, exposes provider and repository color values with accessible label
+copy, and keeps the registry and portal concept identities distinct.
+
+The browser verifier repeats the public shape/count/hash checks and compares the
+canonical payload byte length with the manifest entry. Missing schema, source
+hash, audit health, manifest registration, or byte parity produces an explicit
+degraded state while leaving valid rows visible for diagnosis. The artifact is
+intentionally timestamp-free, so freshness is its validated source hash plus
+manifest byte parity rather than a mutable wall-clock field. GitHub links are
+navigation-only issue searches; no credential or authenticated request ships to
+the browser.
+
 ## Proof
 
 ```bash
@@ -97,6 +112,7 @@ bun tools/brand-manifest.ts
 bun test tests/branded-catalog.test.ts tests/github-issue-taxonomy.test.ts
 bun test tests/github-issue-tooling.test.ts
 bun test tests/github-issue-taxonomy-public.test.ts
+bun test tests/github-issue-taxonomy-portal.test.ts
 bun run github-issue-taxonomy:check
 bun run check:brands:all
 bun run type-check

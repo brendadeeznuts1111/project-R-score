@@ -24,6 +24,7 @@ export const PORTAL_BOARD_SLUGS = [
   'failures',
   'glossary',
   'identity',
+  'issues',
   'install-hygiene',
   'limits',
   'limits-lab',

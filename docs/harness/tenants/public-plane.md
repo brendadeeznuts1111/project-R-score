@@ -44,6 +44,7 @@ edge behavior in `functions/`.
 | Limit raises bake + board                     | **Closed**            | `/portal/limits/` · `limit-raises.json` · health `artifacts.limitRaises` · tenant `partner-limits.md`                                                                    |
 | `skills-catalog.json` scope                   | **Closed**            | Kimi Daimon (`PORTAL_SKILLS_DIR`) · harness plane baked separately as `harness-skills-catalog.json`                                                                      |
 | GitHub issue taxonomy registry projection     | **Closed**            | `/registry/github-issue-taxonomy.json` · `bun run github-issue-taxonomy:check` · portal weave + bake manifest                                                            |
+| GitHub issue taxonomy static board            | **Closed**            | `/portal/issues/` · baked registry + manifest only · accessible non-color cues · explicit degraded state                                                               |
 
 ## Skill catalog domains
 

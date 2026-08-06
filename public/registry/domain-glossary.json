@@ -197,6 +197,11 @@
       "sections": []
     },
     {
+      "path": "/portal/issues/",
+      "concept": "page.issueTaxonomy",
+      "sections": []
+    },
+    {
       "path": "/portal/install-hygiene/",
       "concept": "page.installHygiene",
       "sections": []
@@ -425,13 +430,13 @@
     }
   ],
   "summary": {
-    "concepts": 459,
-    "active": 449,
+    "concepts": 460,
+    "active": 450,
     "deprecated": 10,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 322,
+    "portalSemantics": 323,
     "categories": {
       "market": 33,
       "model": 18,
@@ -439,7 +444,7 @@
       "pipeline": 41,
       "tournament": 99,
       "trading": 59,
-      "ui": 180,
+      "ui": 181,
       "warehouse": 27
     },
     "kinds": {
@@ -463,13 +468,13 @@
       "registry": 39,
       "sport": 11,
       "tournament": 6,
-      "ui": 254
+      "ui": 255
     },
     "semanticTypes": {
       "classification": 162,
       "location": 4,
       "presentation": 14,
-      "resource": 108,
+      "resource": 109,
       "state": 33,
       "version": 1
     },
@@ -477,7 +482,7 @@
       "badge": 61,
       "chip": 125,
       "code": 35,
-      "heading": 73,
+      "heading": 74,
       "link": 24,
       "token": 4
     }
@@ -4504,6 +4509,41 @@
       "synonyms": [
         "identity board",
         "authentication controls"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "correlationId": "legacy",
+      "addedAt": "2026-01-01",
+      "domain": "portal",
+      "namespace": "page",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "page.issueTaxonomy",
+      "label": "GitHub issue taxonomy",
+      "description": "Portal page for repository-governed issue dimensions, provider labels, ownership, and public registry drift health.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "issue spine",
+        "issue labels",
+        "issue governance",
+        "GitHub taxonomy"
       ],
       "values": null,
       "valueLabels": null,

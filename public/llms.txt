@@ -15,6 +15,7 @@ Fetch with `Accept: text/markdown` for raw markdown; HTML renders otherwise.
 - [Env](portal/env.md): environment + secret status (redacted)
 - [Skills](portal/skills.md): installed skills registry + package downloads
 - [Monitoring](portal/monitoring.md): registry + integrity metrics
+- [Issues](portal/issues.md): repository issue taxonomy, ownership, and drift health
 
 ## JSON APIs
 
@@ -32,6 +33,7 @@ Fetch with `Accept: text/markdown` for raw markdown; HTML renders otherwise.
 - [toc-ops-bake-proof.json](registry/toc-ops-bake-proof.json): TOC bake evidence (gates · T/I/OE · R_P)
 - [dod-registry.json](registry/dod-registry.json): DOD snapshot registry
 - [dod-queue.json](registry/dod-queue.json): DOD review queue snapshot (Pages read-only)
+- [github-issue-taxonomy.json](registry/github-issue-taxonomy.json): issue dimensions, labels, ownership, and audit evidence
 - [registry.json](registry/registry.json): package index
 - [registry-client latest.json](registry/@factorywager/registry-client/latest.json): `@factorywager/registry-client` packument
 - [registry-client-proof.json](registry/registry-client-proof.json): resolve/download/publish probes (3/3)

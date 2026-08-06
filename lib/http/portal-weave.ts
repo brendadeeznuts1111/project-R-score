@@ -174,6 +174,17 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     cli: 'bun run glossary:portal',
   },
   {
+    id: 'issues', // brand-ok — weave surface slug, not a domain entity id
+    label: 'Issues',
+    href: '/portal/issues/',
+    conceptId: 'portal.github_issue_taxonomy',
+    colorKey: 'middleware',
+    note: 'repository issue spine · semantic labels · ownership · registry drift health',
+    group: 'registry',
+    cli: 'bun run github-issue-taxonomy:check',
+    relatedArtifactIds: ['github-issue-taxonomy'],
+  },
+  {
     id: 'surfaces',
     label: 'Surfaces',
     href: '/portal/surfaces/',

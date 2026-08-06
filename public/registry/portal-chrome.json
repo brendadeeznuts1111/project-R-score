@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-08-06T00:13:52.100Z",
+  "generated": "2026-08-06T04:14:03.369Z",
   "path": "/registry/portal-chrome.json",
   "runtime": {
     "bunVersion": "1.4.0",
@@ -9,18 +9,18 @@
   },
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 25,
-    "footerLinks": 20,
+    "overflowNav": 26,
+    "footerLinks": 21,
     "components": 21,
     "scripts": 6,
     "badgeSources": 6,
     "unlistedSurfaces": 8,
-    "boardCoverage": 39,
+    "boardCoverage": 40,
     "domainLanes": 6,
     "groups": {
       "ops": 16,
       "harness": 1,
-      "registry": 9,
+      "registry": 10,
       "secrets": 2,
       "plane": 1,
       "other": 2
@@ -146,6 +146,17 @@
       "note": "market · model · trading · warehouse · pipeline concepts",
       "cli": "bun run glossary:portal",
       "registryArtifact": "/registry/domain-glossary.json"
+    },
+    {
+      "id": "issues",
+      "label": "Issues",
+      "href": "/portal/issues/",
+      "tier": "overflow",
+      "group": "registry",
+      "domain": "knowledge",
+      "note": "repository issue spine · labels · ownership · public drift health",
+      "cli": "bun run github-issue-taxonomy:check",
+      "registryArtifact": "/registry/github-issue-taxonomy.json"
     },
     {
       "id": "surfaces",
@@ -410,6 +421,10 @@
     {
       "label": "Glossary",
       "href": "/portal/glossary/"
+    },
+    {
+      "label": "Issues",
+      "href": "/portal/issues/"
     },
     {
       "label": "Surfaces",
@@ -769,6 +784,14 @@
       "label": "Glossary"
     },
     {
+      "id": "issues",
+      "href": "/portal/issues/",
+      "tier": "overflow",
+      "group": "registry",
+      "domain": "knowledge",
+      "label": "Issues"
+    },
+    {
       "id": "surfaces",
       "href": "/portal/surfaces/",
       "tier": "overflow",
@@ -1037,6 +1060,7 @@
         "catalog",
         "brands",
         "glossary",
+        "issues",
         "surfaces",
         "skills",
         "concepts",

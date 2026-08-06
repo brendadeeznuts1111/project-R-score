@@ -324,6 +324,17 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     registryArtifact: '/registry/domain-glossary.json',
   },
   {
+    id: 'issues', // brand-ok — chrome navigation slot key, not a domain entity id
+    label: 'Issues',
+    href: '/portal/issues/',
+    tier: 'overflow',
+    group: 'registry',
+    domain: 'knowledge',
+    note: 'repository issue spine · labels · ownership · public drift health',
+    cli: 'bun run github-issue-taxonomy:check',
+    registryArtifact: '/registry/github-issue-taxonomy.json',
+  },
+  {
     id: 'surfaces',
     label: 'Surfaces',
     href: '/portal/surfaces/',
@@ -650,6 +661,7 @@ export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'Packages', href: '/portal/packages/' },
   { label: 'Brands', href: '/portal/brands/' },
   { label: 'Glossary', href: '/portal/glossary/' },
+  { label: 'Issues', href: '/portal/issues/' },
   { label: 'Surfaces', href: '/portal/surfaces/' },
   { label: 'Health', href: '/portal/health/' },
   { label: 'Portal proof', href: '/registry/portal-weave.json' },

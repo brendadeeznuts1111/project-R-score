@@ -69,6 +69,7 @@ Primary consumers of baked registry JSON. Full board index:
 | Partner history | [/portal/partner-history/](https://score.factory-wager.com/portal/partner-history/) | limit / partner slices                  |
 | TOC Ops         | [/portal/toc/](https://score.factory-wager.com/portal/toc/)                         | `toc-ops.json`                          |
 | Bookmakers      | [/portal/bookmakers/](https://score.factory-wager.com/portal/bookmakers/)           | `bookmakers.json`                       |
+| Issues          | [/portal/issues/](https://score.factory-wager.com/portal/issues/)                   | `github-issue-taxonomy.json`            |
 | Tennis          | [/portal/tennis/](https://score.factory-wager.com/portal/tennis/)                   | `tennis/*` · agent-auth                 |
 | Doctor          | [/portal/doctor/](https://score.factory-wager.com/portal/doctor/)                   | `doctor-state.json`                     |
 | Vault           | [/portal/vault/](https://score.factory-wager.com/portal/vault/)                     | `vault-health.json`                     |
