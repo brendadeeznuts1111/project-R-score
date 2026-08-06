@@ -20,7 +20,9 @@ describe('partner dashboard consumer contract', () => {
       fetchTransport: {
         moduleRef: '/portal/fetch-json.js',
         exportName: 'fetchJsonResult',
-        requiredFailurePolicy: 'throw-structured-error',
+        defaultTimeoutMs: 5000,
+        contentTypeDiagnosticPolicy: 'advisory-debug-gated',
+        requiredFailurePolicy: 'throw-path-qualified-error',
         optionalFailurePolicy: 'explicit-catch-to-null',
       },
       requiredInputRefs: PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,

@@ -8,6 +8,7 @@ import type {
   OutId,
   PartnerCallSign,
   PartnerCode,
+  ProfileDocumentVersion,
   RailId,
   SportsbookId,
   SourceSystemId,
@@ -45,6 +46,10 @@ export function parsePartnerCallSign(value: unknown, expectedCode?: PartnerCode)
     throw new TypeError(`Invalid PartnerCallSign: ${callSign}`);
   }
   return callSign as PartnerCallSign;
+}
+
+export function parseProfileDocumentVersion(value: unknown): ProfileDocumentVersion {
+  return parseExactString(value, 'ProfileDocumentVersion') as ProfileDocumentVersion;
 }
 
 export type CanonicalOutIdentity = {

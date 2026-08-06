@@ -1,9 +1,15 @@
-import { parseAdapterId, parsePartnerCallSign, parsePartnerCode } from '../core/identifiers.ts';
+import {
+  parseAdapterId,
+  parsePartnerCallSign,
+  parsePartnerCode,
+  parseProfileDocumentVersion,
+} from '../core/identifiers.ts';
 import {
   CANONICAL_PROFILE_SOURCE_SYSTEM_ID,
   type AdapterId,
   type PartnerCallSign,
   type PartnerCode,
+  type ProfileDocumentVersion,
   type SourceSystemId,
 } from '../core/types.ts';
 
@@ -15,7 +21,7 @@ type WireRecord = Record<string, unknown>;
 
 export type PartnerProfileCoverageEntry = {
   callSign: PartnerCallSign;
-  profileDocumentVersion: string;
+  profileDocumentVersion: ProfileDocumentVersion;
 };
 
 export type PartnerProfileCoverageArtifact = {
@@ -24,7 +30,7 @@ export type PartnerProfileCoverageArtifact = {
   evidenceByPartnerCode: Record<string, PartnerProfileCoverageEntry>;
 };
 
-export interface PartnerProfileCoverageReadPort {
+export interface PartnerProfileCoverageArtifactReader {
   read(): Promise<PartnerProfileCoverageArtifact>;
 }
 
@@ -92,10 +98,7 @@ function parseCoverageProfiles(
     assertExactKeys(rawEntry, ['callSign', 'profileDocumentVersion'], entryPath);
     profiles[partnerCode] = {
       callSign: parsePartnerCallSign(rawEntry.callSign, partnerCode),
-      profileDocumentVersion: parseExactString(
-        rawEntry.profileDocumentVersion,
-        `${entryPath}.profileDocumentVersion`
-      ),
+      profileDocumentVersion: parseProfileDocumentVersion(rawEntry.profileDocumentVersion),
     };
   }
   return profiles;
@@ -141,10 +144,7 @@ export function buildPartnerProfileCoverageArtifact(
     }
     evidenceByPartnerCode[partnerCode] = {
       callSign: parsePartnerCallSign(rawProfile.identity.callSign, partnerCode),
-      profileDocumentVersion: parseExactString(
-        rawProfile.meta.version,
-        `privateProfiles.${partnerCode}.meta.version`
-      ),
+      profileDocumentVersion: parseProfileDocumentVersion(rawProfile.meta.version),
     };
   }
   return parsePartnerProfileCoverageArtifact({

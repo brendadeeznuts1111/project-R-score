@@ -6,6 +6,7 @@ type PartnerBrand<Name extends string> = string & {
 
 export type PartnerCode = PartnerBrand<'PartnerCode'>;
 export type PartnerCallSign = PartnerBrand<'PartnerCallSign'>;
+export type ProfileDocumentVersion = PartnerBrand<'ProfileDocumentVersion'>;
 export type OutId = PartnerBrand<'OutId'>;
 export type TreeNodeId = PartnerBrand<'TreeNodeId'>;
 export type RailId = PartnerBrand<'RailId'>;

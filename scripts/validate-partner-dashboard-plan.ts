@@ -11,6 +11,7 @@ import { PARTNER_HASH_PATTERN_INITS } from '../lib/portal/url-planes.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import {
   CANONICAL_OUT_ID_PATTERN,
+  CANONICAL_PROFILE_SOURCE_SYSTEM_ID,
   INGRESS_TRANSLATION_COUNTER,
   LEGACY_OUT_ID_WARNING_CODE,
   LEGACY_SEAT_OUT_TOKEN_PATTERN,
@@ -19,7 +20,6 @@ import {
   PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
   PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
   PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT,
-  PARTNER_PROFILE_COVERAGE_ADAPTER_ID,
   PARTNER_PROFILE_COVERAGE_INPUT_REF,
   PARTNER_PROFILE_COVERAGE_SCHEMA_V1,
   PARTNER_DASHBOARD_SEMANTIC_GAPS,
@@ -42,10 +42,13 @@ const PARTNERS_BOARD_HTML = resolvePath(REPO_ROOT, 'public/portal/partners/index
 const GENERATED_THEME_CSS = resolvePath(REPO_ROOT, 'public/portal/theme-tokens.css');
 const PARTNER_PROFILE_COVERAGE_REGISTRY = resolvePath(
   REPO_ROOT,
-  'public/registry/partner-profile-coverage.json'
+  'public',
+  PARTNER_PROFILE_COVERAGE_INPUT_REF.replace(/^\//, '')
 );
 const PARTNERS_OPS_REGISTRY = resolvePath(REPO_ROOT, 'public/registry/partners-ops.json');
 const PARTNERS_PACKAGE_JSON = resolvePath(REPO_ROOT, 'packages/partners/package.json');
+const SPORTS_TERMINAL_BLOCKING_REASON =
+  'one exact parsed input, explicit external-ID resolution, authenticated route integration, and integer-minor-unit money wire are required';
 
 type AnyRecord = Record<string, any>;
 
@@ -85,14 +88,14 @@ type ConnectorContract = {
 };
 
 const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
-  'profile-coverage-registry': {
+  'canonical-profile-config': {
     snapshotKey: 'profiles',
     required: true,
-    sourceSystemId: 'factorywager-partner-profile',
-    port: 'PartnerProfileCoverageReadPort',
-    inputKind: 'registry-artifact',
-    inputRef: PARTNER_PROFILE_COVERAGE_INPUT_REF,
-    implementationStatus: 'implemented',
+    sourceSystemId: CANONICAL_PROFILE_SOURCE_SYSTEM_ID,
+    port: 'PartnerProfileReadPort',
+    inputKind: 'private-toml-glob',
+    inputRef: 'config/partner-profiles/*.toml',
+    implementationStatus: 'planned',
   },
   'accounting-ledger': {
     snapshotKey: 'accounting',
@@ -429,7 +432,9 @@ export async function validatePartnerDashboardPlan(
     plan.package?.components?.legacy_ops_adapter !== 'implemented' ||
     plan.package?.components?.portal_consumer_contract !== 'implemented' ||
     plan.package?.components?.profile_coverage_adapter !== 'implemented' ||
-    plan.package?.components?.browser_loader !== 'planned' ||
+    plan.package?.components?.current_compatibility_fetch_transport !== 'implemented' ||
+    plan.package?.components?.canonical_dashboard_browser_loader !== 'planned' ||
+    'browser_loader' in (plan.package?.components ?? {}) ||
     plan.package?.components?.connector_ports !== 'partial' ||
     plan.package?.components?.source_adapters !== 'partial' ||
     plan.package?.components?.reconciliation !== 'planned'
@@ -443,6 +448,8 @@ export async function validatePartnerDashboardPlan(
     plan.shapes?.profile_coverage_artifact?.schema !== PARTNER_PROFILE_COVERAGE_SCHEMA_V1 ||
     plan.shapes?.profile_coverage_artifact?.path !== PARTNER_PROFILE_COVERAGE_INPUT_REF ||
     plan.shapes?.profile_coverage_artifact?.implementation_status !== 'implemented' ||
+    plan.shapes?.profile_coverage_artifact?.role !== 'implementation-readiness-input' ||
+    plan.shapes?.profile_coverage_artifact?.dashboard_connector !== false ||
     plan.shapes?.profile_coverage_artifact?.lifecycle_authority !== false ||
     !sameMembers(plan.shapes?.profile_coverage_artifact?.public_fact_paths ?? [], [
       'generatedAt',
@@ -495,6 +502,15 @@ export async function validatePartnerDashboardPlan(
   ) {
     errors.push('ingress must declare the implemented pre-core rejecting translator');
   }
+  if (
+    plan.ingress?.http?.route_status !== 'no-canonical-route' ||
+    plan.ingress?.http?.auth_integration_status !== 'unwired' ||
+    !Array.isArray(plan.ingress?.http?.accepted_media_types) ||
+    plan.ingress.http.accepted_media_types.length !== 0 ||
+    plan.ingress?.http?.multipart_status !== 'unsupported-not-required'
+  ) {
+    errors.push('ingress HTTP status must not claim an unwired canonical API contract');
+  }
   const legacyOutMapping = plan.ingress?.mappings?.legacy_seat_out_token;
   if (
     legacyOutMapping?.from_pattern !== LEGACY_SEAT_OUT_TOKEN_PATTERN ||
@@ -503,6 +519,7 @@ export async function validatePartnerDashboardPlan(
     legacyOutMapping?.canonical_parser !== 'parseCanonicalOutId' ||
     legacyOutMapping?.canonical_parser_implementation_status !== 'implemented' ||
     legacyOutMapping?.emit_deprecation_warning !== true ||
+    legacyOutMapping?.warning_emission_owner !== 'future-ingress-caller' ||
     legacyOutMapping?.deprecation_warning_code !== LEGACY_OUT_ID_WARNING_CODE ||
     legacyOutMapping?.preserve_original_as_provenance !== true
   ) {
@@ -630,6 +647,10 @@ export async function validatePartnerDashboardPlan(
           currentCompatibilityContract.fetchTransport.moduleRef ||
         currentFetchTransport?.export_name !==
           currentCompatibilityContract.fetchTransport.exportName ||
+        currentFetchTransport?.default_timeout_ms !==
+          currentCompatibilityContract.fetchTransport.defaultTimeoutMs ||
+        currentFetchTransport?.content_type_diagnostic_policy !==
+          currentCompatibilityContract.fetchTransport.contentTypeDiagnosticPolicy ||
         currentFetchTransport?.required_failure_policy !==
           currentCompatibilityContract.fetchTransport.requiredFailurePolicy ||
         currentFetchTransport?.optional_failure_policy !==
@@ -947,6 +968,13 @@ export async function validatePartnerDashboardPlan(
   ) {
     errors.push(`connector snapshot keys do not match the ${legacyStatus} legacy contract`);
   }
+  if (
+    !sameMembers(plan.reconciliation?.profile_precedence ?? [], ['canonical-profile-config']) ||
+    plan.reconciliation?.profile_coverage !==
+      'all-four-current-codes-required-for-implementation-ready'
+  ) {
+    errors.push('reconciliation must separate canonical profile authority from coverage readiness');
+  }
   for (const [key, precedence] of Object.entries(plan.reconciliation ?? {})) {
     if (!key.endsWith('_precedence') || !Array.isArray(precedence)) continue;
     if (!unique(precedence)) errors.push(`reconciliation ${key} contains duplicate connectors`);
@@ -998,23 +1026,17 @@ export async function validatePartnerDashboardPlan(
       errors.push(`connector ${connector.id} must provide at least one fact kind`);
     }
     for (const path of connector.authoritative_fact_paths ?? []) {
-      if (
-        connector.id === 'profile-coverage-registry'
-          ? path !== 'evidenceByPartnerCode.*'
-          : !/^partners\[\]\./.test(path)
-      ) {
+      if (!/^partners\[\]\./.test(path)) {
         errors.push(`connector ${connector.id} has invalid authoritative fact path ${path}`);
       }
     }
     if (
-      connector.id === 'profile-coverage-registry' &&
-      (connector.adapter_id !== PARTNER_PROFILE_COVERAGE_ADAPTER_ID ||
-        connector.target_adapter_export !== './adapters/profile-coverage' ||
-        !sameMembers(connector.provides ?? [], ['identity-coverage']))
+      connector.id === 'canonical-profile-config' &&
+      (connector.adapter_id !== 'canonical-profile-config' ||
+        connector.target_adapter_export !== './adapters/profile' ||
+        !sameMembers(connector.provides ?? [], ['identity', 'lifecycle', 'policy']))
     ) {
-      errors.push(
-        'profile-coverage-registry connector must expose only implemented identity coverage'
-      );
+      errors.push('canonical-profile-config must remain the planned profile authority');
     }
     for (const regionId of connector.region_ids ?? []) {
       if (!regionIds.includes(regionId)) {
@@ -1024,6 +1046,12 @@ export async function validatePartnerDashboardPlan(
     if (connector.implementation_status === 'blocked') {
       if (connector.enabled !== false || !connector.blocking_reason) {
         errors.push(`blocked connector ${connector.id} must be disabled with a blocking reason`);
+      }
+      if (
+        connector.id === 'sports-terminal' &&
+        connector.blocking_reason !== SPORTS_TERMINAL_BLOCKING_REASON
+      ) {
+        errors.push('sports-terminal blocking reason must name every unresolved boundary');
       }
     } else if (connector.input_kind === 'registry-artifact') {
       const sourcePath = resolvePath(REPO_ROOT, 'public', connector.input_ref.replace(/^\//, ''));

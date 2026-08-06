@@ -7,6 +7,7 @@ import {
   derivePartnerProfileCoverage,
   parsePartnerCode,
   parsePartnerProfileCoverageArtifact,
+  parseProfileDocumentVersion,
   adaptPartnerProfileCoverageArtifact,
 } from '../packages/partners/src/index.ts';
 
@@ -105,6 +106,8 @@ describe('partner profile coverage boundary', () => {
   });
 
   test('rejects loose schemas, mismatched identities, and noncanonical time', async () => {
+    expect(parseProfileDocumentVersion('1.2.3')).toBe('1.2.3');
+    expect(() => parseProfileDocumentVersion(' 1.2.3 ')).toThrow('ProfileDocumentVersion');
     expect(() =>
       parsePartnerProfileCoverageArtifact({
         schema: PARTNER_PROFILE_COVERAGE_SCHEMA_V1,

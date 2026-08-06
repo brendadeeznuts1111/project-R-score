@@ -119,10 +119,15 @@ describe('partner dashboard semantic plan', () => {
     const plan = copyPlan();
     plan.shapes.profile_coverage_artifact.lifecycle_authority = true;
     plan.shapes.profile_coverage_artifact.public_fact_paths.push('telegram.chatId');
+    plan.reconciliation.profile_precedence = ['legacy-ops-registry'];
+    plan.reconciliation.profile_coverage = 'four-current-codes-or-explicit-migration-reason';
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors).toContain(
       'profile coverage artifact must remain redacted identity evidence only'
+    );
+    expect(result.errors).toContain(
+      'reconciliation must separate canonical profile authority from coverage readiness'
     );
   });
 
@@ -133,7 +138,9 @@ describe('partner dashboard semantic plan', () => {
     plan.identity.partner_code.pattern = '^wrong$';
     plan.identity.out_id.implementation_status = 'planned';
     plan.ingress.stage = 'inside-core';
+    plan.ingress.http.route_status = 'implemented';
     plan.ingress.mappings.legacy_seat_out_token.from_pattern = '^unsafe$';
+    plan.ingress.mappings.legacy_seat_out_token.warning_emission_owner = 'translator';
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors).toContain(
@@ -152,6 +159,9 @@ describe('partner dashboard semantic plan', () => {
       'ingress must declare the implemented pre-core rejecting translator'
     );
     expect(result.errors).toContain(
+      'ingress HTTP status must not claim an unwired canonical API contract'
+    );
+    expect(result.errors).toContain(
       'legacy seat OutId mapping must match the package ingress translator'
     );
   });
@@ -163,13 +173,18 @@ describe('partner dashboard semantic plan', () => {
     plan.connectors[0].region_ids.push('unknown-region');
     plan.surfaces.portal.regions[0].connectors.push('unknown-connector');
     plan.surfaces.portal.regions[1].connectors = plan.surfaces.portal.regions[1].connectors.filter(
-      (connectorKey: string) => connectorKey !== 'profile-coverage-registry'
+      (connectorKey: string) => connectorKey !== 'canonical-profile-config'
     );
     const legacyConnector = plan.connectors.find(
       (connector: Record<string, unknown>) => connector.id === 'legacy-ops-registry'
     );
     if (!legacyConnector) throw new Error('legacy connector fixture missing');
     legacyConnector.target_adapter_implementation_status = 'planned';
+    const sportsConnector = plan.connectors.find(
+      (connector: Record<string, unknown>) => connector.id === 'sports-terminal'
+    );
+    if (!sportsConnector) throw new Error('sports connector fixture missing');
+    sportsConnector.blocking_reason = 'input undecided';
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors.some(error => error.includes('snapshot_key must be profiles'))).toBe(true);
@@ -182,27 +197,29 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors).toContain(
       'connector legacy-ops-registry target compatibility adapter must be implemented'
     );
+    expect(result.errors).toContain(
+      'sports-terminal blocking reason must name every unresolved boundary'
+    );
   });
 
-  it('pins the profile connector to redacted coverage evidence', async () => {
+  it('keeps profile coverage separate from the planned canonical profile connector', async () => {
     const plan = copyPlan();
     const connector = plan.connectors.find(
-      (candidate: Record<string, unknown>) =>
-        candidate.id === 'profile-coverage-registry'
+      (candidate: Record<string, unknown>) => candidate.id === 'canonical-profile-config'
     );
-    if (!connector) throw new Error('profile coverage connector fixture missing');
+    if (!connector) throw new Error('canonical profile connector fixture missing');
     connector.adapter_id = 'profile-artifact';
-    connector.target_adapter_export = './adapters/profile';
-    connector.provides = ['identity', 'lifecycle'];
-    connector.authoritative_fact_paths = ['partners[].lifecycle'];
+    connector.target_adapter_export = './adapters/profile-coverage';
+    connector.provides = ['identity-coverage'];
+    connector.authoritative_fact_paths = ['evidenceByPartnerCode.*'];
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors).toContain(
-      'profile-coverage-registry connector must expose only implemented identity coverage'
+      'canonical-profile-config must remain the planned profile authority'
     );
     expect(
       result.errors.some(error =>
-        error.includes('profile-coverage-registry has invalid authoritative fact path')
+        error.includes('canonical-profile-config has invalid authoritative fact path')
       )
     ).toBe(true);
   });
