@@ -23,28 +23,28 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 
 ## Canonical docs
 
-| Role                                      | Path                                                                                                        |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Path SSOT                                 | [`docs/repo-docs.ts`](./docs/repo-docs.ts)                                                                  |
-| Docs index                                | [`../docs/README.md`](../docs/README.md)                                                                    |
-| Standards                                 | [`.custom-instructions.md`](../.custom-instructions.md)                                                     |
-| Agents                                    | [`../AGENTS.md`](../AGENTS.md)                                                                              |
-| Install                                   | [`../docs/UNIFIED.md`](../docs/UNIFIED.md)                                                                  |
-| Wire                                      | [`../docs/WIRE_BOUNDARY.md`](../docs/WIRE_BOUNDARY.md)                                                      |
-| Brands                                    | [`types/branded/README.md`](./types/branded/README.md)                                                      |
-| Bun native capabilities                   | [`../docs/BUN_NATIVE_CAPABILITIES.md`](../docs/BUN_NATIVE_CAPABILITIES.md)                                  |
-| Console depth                             | [`console-depth.ts`](./console-depth.ts) · note [`console-depth.md`](./console-depth.md)                    |
-| Bun runtime hub (CLI · depth · utilities) | [`bun-runtime.md`](./bun-runtime.md) · flags [`../config/runtime-flags.json`](../config/runtime-flags.json) |
-| Terminal / PTY                            | [`terminal.ts`](./terminal.ts)                                                                              |
-| Deep equals                               | [`deep-equals.ts`](./deep-equals.ts)                                                                        |
-| Peek settle                               | [`peek-settle.ts`](./peek-settle.ts)                                                                        |
-| Time / UUID v7                            | [`time.ts`](./time.ts)                                                                                      |
-| Image metadata                            | [`image-metadata.ts`](./image-metadata.ts)                                                                  |
-| Screenshot TEST-003                       | [`screenshot-remediation.ts`](./screenshot-remediation.ts)                                                  |
-| Path (Bun)                                | [`path-bun.ts`](./path-bun.ts)                                                                              |
-| Sync FS spine                             | [`bun-fs-utils.ts`](./bun-fs-utils.ts) (`ensureDirSync` · `readJsonSync`)                                   |
-| FS helpers (scripts plane)                | [`../scripts/lib/fs-bun.ts`](../scripts/lib/fs-bun.ts) re-exports path-bun                                  |
-| ESLint bun-native ban                     | [`../config/eslint/harness/bun-native.ts`](../config/eslint/harness/bun-native.ts)                          |
+| Role                                      | Path                                                                                                                          |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Path SSOT                                 | [`docs/repo-docs.ts`](./docs/repo-docs.ts)                                                                                    |
+| Docs index                                | [`../docs/README.md`](../docs/README.md)                                                                                      |
+| Standards                                 | [`.custom-instructions.md`](../.custom-instructions.md)                                                                       |
+| Agents                                    | [`../AGENTS.md`](../AGENTS.md)                                                                                                |
+| Install                                   | [`../docs/UNIFIED.md`](../docs/UNIFIED.md)                                                                                    |
+| Wire                                      | [`../docs/WIRE_BOUNDARY.md`](../docs/WIRE_BOUNDARY.md)                                                                        |
+| Brands                                    | [`types/branded/README.md`](./types/branded/README.md)                                                                        |
+| Bun native capabilities                   | [`../docs/BUN_NATIVE_CAPABILITIES.md`](../docs/BUN_NATIVE_CAPABILITIES.md)                                                    |
+| Console depth                             | [`console-depth.ts`](./console-depth.ts) · note [`console-depth.md`](./console-depth.md)                                      |
+| Bun runtime hub (CLI · depth · utilities) | [`bun-runtime.md`](./bun-runtime.md) · flags [`../config/runtime-flags.json`](../config/runtime-flags.json)                   |
+| Terminal / PTY                            | [`terminal.ts`](./terminal.ts)                                                                                                |
+| Deep equals                               | [`deep-equals.ts`](./deep-equals.ts)                                                                                          |
+| Peek settle                               | [`peek-settle.ts`](./peek-settle.ts)                                                                                          |
+| Time / UUID v7                            | [`time.ts`](./time.ts)                                                                                                        |
+| Image metadata                            | [`image-metadata.ts`](./image-metadata.ts)                                                                                    |
+| Screenshot TEST-003                       | [`screenshot-remediation.ts`](./screenshot-remediation.ts)                                                                    |
+| Path (Bun)                                | [`path-bun.ts`](./path-bun.ts)                                                                                                |
+| Sync FS spine                             | [`bun-fs-utils.ts`](./bun-fs-utils.ts) (`ensureDirSync` · `readJsonSync`)                                                     |
+| FS helpers (scripts plane)                | [`../scripts/lib/fs-bun.ts`](../scripts/lib/fs-bun.ts) re-exports path-bun                                                    |
+| ESLint bun-native ban                     | [`../config/eslint/harness/bun-native.ts`](../config/eslint/harness/bun-native.ts) (`node:fs` · `node:url` · `node:zlib` · …) |
 
 ## Bun-native exceptions (`node:*` still present)
 
