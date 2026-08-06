@@ -437,7 +437,10 @@ not the utils docs page.
 **Tip-diff (local CI, GHA disabled):** `bun run bun:types-inventory:tip-diff`
 fetches oven-sh/bun `packages/bun-types` into `.cache/` (or `--prefer-local`
 `~/bun`) and reports tip-only/pin-only vs catalog pin; `:tip-diff:strict` fails
-on policy breach; reports under `.cache/bun-types-tip-diff/`
+on policy breach; reports under `.cache/bun-types-tip-diff/`.
+**Usage (Phase 4):** `bun run bun:types-usage` / `:unused` cross-references
+inventory type-likes (class/interface/type) with codebase chains, type
+positions, and `from "bun"` imports → `.cache/bun-types-usage/`
 
 Operate loop (feeds → scrape → catalog with embedded `releaseHits` → integrity):
 [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · **daily**
