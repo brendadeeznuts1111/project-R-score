@@ -57,35 +57,40 @@
       "url": "https://mcp.cloudflare.com/mcp",
       "headers": {
         "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
-      }
+      },
+      "envFile": "${workspaceFolder}/.env"
     },
     "cloudflare-docs": {
       "type": "http",
       "url": "https://docs.mcp.cloudflare.com/mcp",
       "headers": {
         "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
-      }
+      },
+      "envFile": "${workspaceFolder}/.env"
     },
     "cloudflare-bindings": {
       "type": "http",
       "url": "https://bindings.mcp.cloudflare.com/mcp",
       "headers": {
         "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
-      }
+      },
+      "envFile": "${workspaceFolder}/.env"
     },
     "cloudflare-builds": {
       "type": "http",
       "url": "https://builds.mcp.cloudflare.com/mcp",
       "headers": {
         "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
-      }
+      },
+      "envFile": "${workspaceFolder}/.env"
     },
     "cloudflare-observability": {
       "type": "http",
       "url": "https://observability.mcp.cloudflare.com/mcp",
       "headers": {
         "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
-      }
+      },
+      "envFile": "${workspaceFolder}/.env"
     }
   }
 }

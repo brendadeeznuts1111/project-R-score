@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 /**
  * mcp-sync — generate .vscode/mcp.json from the SSOT .mcp.json.
  *
@@ -41,6 +42,7 @@ function convert(server: McpServer): Record<string, unknown> {
         Object.entries(server.headers).map(([k, v]) => [k, toVsCodeEnvRef(v)])
       );
     }
+    if (server.envFile) out.envFile = toWorkspaceRelative(server.envFile);
     return out;
   }
   const out: Record<string, unknown> = {
