@@ -9,9 +9,7 @@
  * @see artifact-registry/bookmakers/v0.4.0/ops/books.json
  */
 
-// Sync catalog load at process boot — Bun.file is async-only for text
-// eslint-disable-next-line no-restricted-imports -- sync registry merge path
-import { readFileSync } from 'node:fs';
+import { readJsonSync } from '../bun-fs-utils.ts';
 import { joinPath } from '../path-bun.ts';
 import type {
   LiquidityTier,
@@ -236,7 +234,7 @@ export type LoadMergedRegistryOpts = {
 };
 
 function readJsonFile<T>(path: string): T {
-  return JSON.parse(readFileSync(path, 'utf8')) as T;
+  return readJsonSync<T>(path);
 }
 
 /** Load + merge public/ops catalogs (sync — safe for CLI + route handlers). */
@@ -316,8 +314,7 @@ export function toPartnerHealthRow(book: MergedBook): PartnerHealthRow {
   const amount = typeof book.balance?.amount === 'number' ? book.balance.amount : null;
   const telegram = book.contact?.telegramHandle ?? book.contact?.telegram ?? null;
   const healthExtra = book.health as
-    | { latencyMs?: number | null; errorRate?: number | null; uptime24h?: number | null }
-    | undefined;
+    { latencyMs?: number | null; errorRate?: number | null; uptime24h?: number | null } | undefined;
   const latencyMs =
     typeof healthExtra?.latencyMs === 'number' && Number.isFinite(healthExtra.latencyMs)
       ? healthExtra.latencyMs

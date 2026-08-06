@@ -55,7 +55,7 @@ Every `lib/*.ts` module is listed. Grouped for scan; paths stay flat under
 | -------------------------------------------- | ------------------------------------------------------------------------------- |
 | [`index.ts`](./index.ts)                     | Public barrel (`LIB_INFO`, `FW`)                                                |
 | [`path-bun.ts`](./path-bun.ts)               | Bun-native path helpers (ratchet: no `node:path` in `lib/`)                     |
-| [`bun-fs-utils.ts`](./bun-fs-utils.ts)       | Sync `ensureDirSync` / `ensureParentDirSync` (peek + `Bun.write`; no `node:fs`) |
+| [`bun-fs-utils.ts`](./bun-fs-utils.ts)       | Sync `ensureDirSync` / `readJsonSync` (peek+write · `Bun.mmap`; no `node:fs`)   |
 | [`bun-path-url.ts`](./bun-path-url.ts)       | `Bun.fileURLToPath` / `pathToFileURL` (prefer over `node:url`)                  |
 | [`bun-executable.ts`](./bun-executable.ts)   | Absolute `bun` argv0 via `Bun.which` · entrypoint · version fingerprint         |
 | [`bun-runtime-env.ts`](./bun-runtime-env.ts) | Typed assessment of Bun/runtime control-plane env keys                          |
