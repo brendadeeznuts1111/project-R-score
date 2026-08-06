@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-08-06T08:26:12.754Z",
+  "generatedAt": "2026-08-06T18:35:20.108Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 92,
+  "brandCount": 93,
   "domainCount": 10,
   "domains": [
     "audit",
@@ -17,7 +17,7 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 70,
+    "id": 71,
     "key": 3,
     "code": 19
   },
@@ -55,7 +55,7 @@
     {
       "name": "portal",
       "module": "lib/types/branded/portal.ts",
-      "brandCount": 5
+      "brandCount": 6
     },
     {
       "name": "security",
@@ -2296,6 +2296,33 @@
       "guard": "BRAND_GUARDS.isTelegramUserId",
       "shortName": "telegramUserId",
       "envName": "TELEGRAM_USER_ID"
+    },
+    {
+      "name": "TelegramChatId",
+      "domain": "portal",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "Telegram chat_id from Bot API (msg.chat.id / callback query)",
+      "kind": "id",
+      "module": "lib/types/branded/portal.ts",
+      "constructors": {
+        "as": "asTelegramChatId",
+        "try": "tryTelegramChatId",
+        "parse": "parseTelegramChatId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isTelegramChatId",
+      "shortName": "telegramChatId",
+      "envName": "TELEGRAM_CHAT_ID"
     },
     {
       "name": "PortalAccountId",

@@ -143,6 +143,7 @@ import type {
 import type {
   PortalTenantId,
   TelegramUserId,
+  TelegramChatId,
   PortalAccountId,
   LinkNonceId,
   DomId,
@@ -254,6 +255,7 @@ export type AnyId =
   | SportsbookId
   | PortalTenantId
   | TelegramUserId
+  | TelegramChatId
   | PortalAccountId
   | LinkNonceId
   | DomId

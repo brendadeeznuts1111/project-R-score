@@ -6,6 +6,11 @@
  */
 import type { Database } from 'bun:sqlite';
 import { randomUUIDv7 } from 'bun';
+import {
+  scanStaleAnchorsFromDb,
+  type AnchorStabilityOpts,
+  type StaleAnchorSignal,
+} from './anchor-stability.ts';
 
 /** Same soft tolerance as rails/deposits reconciliation. */
 const DEPOSIT_TOLERANCE = 1_000;
@@ -179,7 +184,15 @@ export function applyBookScrapes(
 /** Load active accounts → scrape each → apply; return counts for CLI/ops. */
 export async function runBookReconciliation(
   db: Database,
-  opts?: { live?: boolean; webview?: boolean }
+  opts?: {
+    live?: boolean;
+    webview?: boolean;
+    /** Also run the stale-anchor scan over limit-tracker history and append signals. */
+    anchorScan?: boolean;
+    anchorScanPath?: string;
+    /** Thresholds for the stale-anchor scan (passed through to scanStaleAnchorsFromDb). */
+    anchorScanOpts?: AnchorStabilityOpts;
+  }
 ): Promise<{
   scrapes: number;
   updated: number;
@@ -195,9 +208,23 @@ export async function runBookReconciliation(
   const { mismatches } = applyBookScrapes(db, scrapes);
   const updated = scrapes.filter(s => s.ok).length;
 
+  const anchorSignals: StaleAnchorSignal[] = opts?.anchorScan
+    ? scanStaleAnchorsFromDb({
+        path: opts.anchorScanPath,
+        ...(opts.anchorScanOpts ?? {}),
+      }).signals
+    : [];
+
   return {
     scrapes: scrapes.length,
     updated,
-    mismatches,
+    mismatches: [
+      ...mismatches,
+      ...anchorSignals.map(s => ({
+        kind: s.kind,
+        detail: s.detail,
+        diff: Math.round(s.driftUsd),
+      })),
+    ],
   };
 }
