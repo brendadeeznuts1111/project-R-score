@@ -2020,6 +2020,8 @@
     "docs:refid": "bun tools/docs-refid.ts",
     "docs:refid:check": "bun tools/docs-refid.ts check",
     "docs:refid:check:strict": "bun tools/docs-refid.ts check --strict-format",
+    "docs:refid:check:dry-run": "bun tools/docs-refid.ts check --dry-run",
+    "docs:refid:audit": "bun tools/docs-refid.ts audit",
     "docs:refid:suggest": "bun tools/docs-refid.ts suggest",
     "docs:refid:list": "bun tools/docs-refid.ts list",
     "docs:refid:scaffold": "bun tools/docs-refid.ts scaffold",

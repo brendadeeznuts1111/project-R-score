@@ -18,17 +18,36 @@ bun run images:generate --template=<avatar|hero|match|convert|placeholder> [opti
 
 ### Options
 
-| Flag | Description |
-|------|-------------|
-| `--source` | File or directory |
-| `--out` | File or directory |
-| `--size WxH` | e.g. `64x64` |
-| `--format` | `webp` · `jpeg` · `png` · `avif` |
-| `--quality` | 1–100 (hero defaults 85) |
-| `--fit` | `fill` (default) or `inside` — Bun has no `cover`; `cover` is mapped to `fill` |
-| `--max-pixels` | Decompression guard (default ~16M) |
-| `--json` | Machine summary |
-| `--dry-run` | Plan only |
+<!-- REF:ID 1.1.source -->
+<a id="1.1.source"></a>
+<!-- REF:ID 1.1.out -->
+<a id="1.1.out"></a>
+<!-- REF:ID 1.1.size -->
+<a id="1.1.size"></a>
+<!-- REF:ID 1.1.format -->
+<a id="1.1.format"></a>
+<!-- REF:ID 1.1.quality -->
+<a id="1.1.quality"></a>
+<!-- REF:ID 1.1.fit -->
+<a id="1.1.fit"></a>
+<!-- REF:ID 1.1.max-pixels -->
+<a id="1.1.max-pixels"></a>
+<!-- REF:ID 1.1.json -->
+<a id="1.1.json"></a>
+<!-- REF:ID 1.1.dry-run -->
+<a id="1.1.dry-run"></a>
+
+| Script | REF:ID | href | --flag | Description |
+| --- | --- | --- | --- | --- |
+| `images:generate` | `1.1.source` | [`#1.1.source`](#1.1.source) | `--source` | File or directory |
+| `images:generate` | `1.1.out` | [`#1.1.out`](#1.1.out) | `--out` | File or directory |
+| `images:generate` | `1.1.size` | [`#1.1.size`](#1.1.size) | `--size WxH` | e.g. `64x64` |
+| `images:generate` | `1.1.format` | [`#1.1.format`](#1.1.format) | `--format` | `webp` · `jpeg` · `png` · `avif` |
+| `images:generate` | `1.1.quality` | [`#1.1.quality`](#1.1.quality) | `--quality` | 1–100 (hero defaults 85) |
+| `images:generate` | `1.1.fit` | [`#1.1.fit`](#1.1.fit) | `--fit` | `fill` (default) or `inside` — Bun has no `cover`; `cover` is mapped to `fill` |
+| `images:generate` | `1.1.max-pixels` | [`#1.1.max-pixels`](#1.1.max-pixels) | `--max-pixels` | Decompression guard (default ~16M) |
+| `images:generate` | `1.1.json` | [`#1.1.json`](#1.1.json) | `--json` | Machine summary |
+| `images:generate` | `1.1.dry-run` | [`#1.1.dry-run`](#1.1.dry-run) | `--dry-run` | Plan only |
 
 ### Examples
 

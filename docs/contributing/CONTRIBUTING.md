@@ -49,6 +49,11 @@ Library: [`lib/docs/ref-id.ts`](../../lib/docs/ref-id.ts).
 bun run docs:refid:check
 # Same; format issues fail
 bun run docs:refid:check:strict
+# Report-only (never fails) + inventory of Flags tables across docs/
+bun run docs:refid:check:dry-run
+# Inventory only: registered · Flags-only candidates · leave-as-is
+bun run docs:refid:audit
+bun run docs:refid:audit --json
 # Multi-command CLI
 bun tools/docs-refid.ts help
 bun tools/docs-refid.ts check --json
@@ -68,6 +73,7 @@ bun run docs:map:check
 | `--doc`                | `docs/design/bun-types-inventory.md`              |
 | `--script` (scaffold)  | `bun:types-status`                                |
 | `--default` (scaffold) | `off`                                             |
+| `--roots` (audit)      | `docs` (recursive `**/*.md`)                      |
 | validation mode        | soft (format → warn; missing anchor/href → error) |
 
 ### Validation presets
@@ -76,14 +82,20 @@ bun run docs:map:check
 | ------------- | ------------------------------------ | -------------------------------------------------------------------------------------- |
 | soft          | default `check`                      | Format length/kebab → **warn**; missing anchors, href mismatch, duplicates → **error** |
 | strict format | `--strict-format` / `--refid-strict` | Format issues → **error**                                                              |
+| dry-run       | `--dry-run` / `docs:refid:check:dry-run` | Full validation + **audit inventory**; **always exit 0**                           |
 | skip          | `--skip-refid-check`                 | No validation (exit 0) — drafts / fast local loops only                                |
 | write hrefs   | `--write-hrefs`                      | Fill empty / `—` / `auto` href cells with `[`#REF`](#REF)`, then validate              |
 
 Registered document for `check` (no `--doc`):
 
-| Doc                                  | Tool rows                                           |
-| ------------------------------------ | --------------------------------------------------- |
-| `docs/design/bun-types-inventory.md` | `tools/bun-types-status.ts` → `buildStatusFlagRows` |
+| Doc | Tool rows | Coverage |
+| --- | --------- | -------- |
+| `docs/design/bun-types-inventory.md` | `tools/bun-types-status.ts` → `buildStatusFlagRows` | **requireToolCoverage** |
+| design/harness/IMAGES Flag docs | (doc-only) | registered · no tool rows yet |
+
+`bun run docs:refid:audit` must report **flags-table-only=0** (all operator Flag tables
+are either REF:ID-registered or not Flag-option tables). Board maps with a trailing
+`Flags` column are not REF:ID surfaces.
 
 Ad-hoc draft:
 
@@ -109,12 +121,14 @@ Taken keywords get a numeric suffix from suggest (`refresh` → `4.1.refresh-2`)
 | Gate                        | Command                                          |
 | --------------------------- | ------------------------------------------------ |
 | In-process library          | `bun test tests/docs-ref-id.test.ts`             |
+| Audit classifiers           | `bun test tests/docs-ref-id-audit.test.ts`       |
 | **CLI subprocess contract** | `bun test tests/docs-refid-cli.contract.test.ts` |
-| Package script              | `bun run docs:refid:check`                       |
+| Package script              | `bun run docs:refid:check` · `:audit` · `:check:dry-run` |
 
 Subprocess tests spawn `bun tools/docs-refid.ts` / `docs-refid-check.ts` and
 assert exit codes + stdout (help, presets, JSON schema `factorywager/ref-id/v2`,
-fixture failure modes under `tests/fixtures/ref-id/`, `--write-hrefs` fill).
+fixture failure modes under `tests/fixtures/ref-id/`, `--write-hrefs` fill,
+`--dry-run`, `audit` / `factorywager/ref-id-audit/v1`).
 
 ## Testing & concept changes
 

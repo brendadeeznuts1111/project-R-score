@@ -1,18 +1,22 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
 /**
- * docs-refid.ts — REF:ID v2 multi-command CLI (check · suggest · list · scaffold).
+ * docs-refid.ts — REF:ID v2 multi-command CLI (check · audit · suggest · list · scaffold).
  *
  *   bun tools/docs-refid.ts check
  *   bun tools/docs-refid.ts check --strict-format
+ *   bun tools/docs-refid.ts check --dry-run
+ *   bun tools/docs-refid.ts audit
  *   bun tools/docs-refid.ts suggest --section=4.1 --keyword=refresh
  *   bun tools/docs-refid.ts suggest --section=4.1 --flag=--max-age-days
  *   bun tools/docs-refid.ts list [--doc=docs/design/bun-types-inventory.md]
  *   bun tools/docs-refid.ts scaffold --section=4.1 --flag=--foo-bar [--script=bun:types-status]
  *
  * Package aliases:
- *   bun run docs:refid:check · docs:refid:suggest · docs:refid:list · docs:refid:scaffold
+ *   bun run docs:refid:check · docs:refid:audit · docs:refid:suggest · docs:refid:list · docs:refid:scaffold
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import {
@@ -25,6 +29,13 @@ import {
   suggestRefId,
   validateRefIdFormat,
 } from '../lib/docs/ref-id.ts';
+import {
+  classifyMarkdownFile,
+  printAuditReport,
+  summarizeAudit,
+  type MdRefIdAuditRow,
+  type RefIdAuditReport,
+} from '../lib/docs/ref-id-audit.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import {
   printRefIdIssues,
@@ -45,14 +56,15 @@ function flagValue(argv: string[], name: string): string | null {
 }
 
 function printHelp(): void {
-  console.log(`docs-refid — REF:ID v2 validation & DX (check · suggest · list · scaffold)
+  console.log(`docs-refid — REF:ID v2 validation & DX (check · audit · suggest · list · scaffold)
 
 USAGE
   bun tools/docs-refid.ts <command> [options]
-  bun run docs:refid[:check|:suggest|:list|:scaffold] …
+  bun run docs:refid[:check|:audit|:suggest|:list|:scaffold] …
 
 COMMANDS
   check      Validate registered design docs + tool flag rows (default command)
+  audit      Inventory markdown for REF:ID / Flags tables (design + docs/)
   suggest    Free REF:ID under a section (normalizes --flag / camelCase → kebab)
   list       Numbered REF:IDs / section anchors in a doc
   scaffold   Paste-ready <!-- REF:ID --> + <a id> + flags table row
@@ -60,9 +72,10 @@ COMMANDS
 
 OPTIONS
   --strict-format · --refid-strict   Format warns (length/kebab) become errors
+  --dry-run                          check: report errors but always exit 0; also run audit inventory
   --skip-refid-check                 check: exit 0 without validating (fast-pass)
   --write-hrefs                      check: fill empty/—/auto href cells from REF:ID
-  --json                             Machine output (check / suggest / list / scaffold)
+  --json                             Machine output (check / audit / suggest / list / scaffold)
   --section=<path>                   Section number path (default: 4.1)
   --keyword=<leaf>                   Keyword leaf (kebab preferred)
   --flag=<--cli-flag>                CLI flag; normalized to keyword (e.g. --maxAgeDays)
@@ -73,7 +86,8 @@ OPTIONS
   --script=<name>                    scaffold package.json script (default: bun:types-status)
   --shortcode=<s>                    scaffold shortcode cell (default: —)
   --default=<s>                      scaffold default cell (default: off)
-  --all                              list: include slug TOC ids (not only numbered)
+  --all                              list: include slug TOC ids; audit: include clean rows
+  --roots=<a,b>                      audit scan roots (default: docs)
   -h · --help                        Show this help
 
 DEFAULTS
@@ -91,6 +105,7 @@ REGISTERED DOCS (check)
 VALIDATION PRESETS
   soft (default)     format length/kebab → warn; errors fail process
   --strict-format    format issues → error
+  --dry-run          validate + inventory; never fail (report only)
   --skip-refid-check skip validation entirely (exit 0)
   --write-hrefs      rewrite auto href cells, then validate
 
@@ -104,6 +119,8 @@ REF:ID RULES (summary)
 EXAMPLES
   bun tools/docs-refid.ts check
   bun tools/docs-refid.ts check --strict-format --json
+  bun tools/docs-refid.ts check --dry-run
+  bun tools/docs-refid.ts audit
   bun tools/docs-refid.ts check --doc=path/to/draft.md --write-hrefs
   bun tools/docs-refid.ts check --doc=draft.md --section-ref=4.1 \\
       --section-heading='### Flags / settings'
@@ -113,7 +130,7 @@ EXAMPLES
   bun tools/docs-refid.ts scaffold --section=4.1 --flag=--new-flag
 
 SEE ALSO
-  lib/docs/ref-id.ts
+  lib/docs/ref-id.ts · lib/docs/ref-id-audit.ts
   docs/DEVELOPMENT-STANDARDS.md § REF:ID
   docs/contributing/CONTRIBUTING.md § REF:ID Validation
   bun run docs:map:check          # includes REF:ID unless --skip-refid-check
@@ -129,8 +146,91 @@ async function loadDocScan(docRel: string) {
   return { text, scan: scanMarkdownRefIds(text, docRel), docRel };
 }
 
+async function buildAuditReport(
+  argv: string[],
+  opts: { dryRun?: boolean } = {}
+): Promise<RefIdAuditReport> {
+  const rootsArg = flagValue(argv, '--roots');
+  const roots = (rootsArg ? rootsArg.split(',') : ['docs']).map(r => r.trim()).filter(Boolean);
+  const registered = new Set(refIdRegistry().map(e => e.doc));
+  const showClean = argv.includes('--all');
+  const rows: MdRefIdAuditRow[] = [];
+  const seen = new Set<string>();
+  for (const root of roots) {
+    const absRoot = joinPath(REPO, root);
+    const glob = new Bun.Glob('**/*.md');
+    for await (const rel of glob.scan({ cwd: absRoot, onlyFiles: true })) {
+      const file = joinPath(root, rel).replace(/\\/g, '/');
+      if (seen.has(file)) continue;
+      seen.add(file);
+      const text = await Bun.file(joinPath(REPO, file)).text();
+      const row = classifyMarkdownFile(file, text, registered);
+      if (row.class === 'clean' && !showClean) continue;
+      rows.push(row);
+    }
+  }
+  // When not --all, still include registered even if somehow missed
+  for (const doc of registered) {
+    if (seen.has(doc)) continue;
+    const abs = joinPath(REPO, doc);
+    if (!(await Bun.file(abs).exists())) continue;
+    const text = await Bun.file(abs).text();
+    rows.push(classifyMarkdownFile(doc, text, registered));
+  }
+  rows.sort((a, b) => a.file.localeCompare(b.file));
+  return {
+    schema: 'factorywager/ref-id-audit/v1',
+    scanned: seen.size || rows.length,
+    rows: showClean ? rows : rows.filter(r => r.class !== 'clean'),
+    summary: summarizeAudit(
+      // summary over full scan including clean
+      await (async () => {
+        const full: MdRefIdAuditRow[] = [];
+        const fullSeen = new Set<string>();
+        for (const root of roots) {
+          const absRoot = joinPath(REPO, root);
+          const glob = new Bun.Glob('**/*.md');
+          for await (const rel of glob.scan({ cwd: absRoot, onlyFiles: true })) {
+            const file = joinPath(root, rel).replace(/\\/g, '/');
+            if (fullSeen.has(file)) continue;
+            fullSeen.add(file);
+            const text = await Bun.file(joinPath(REPO, file)).text();
+            full.push(classifyMarkdownFile(file, text, registered));
+          }
+        }
+        return full;
+      })()
+    ),
+    dryRun: opts.dryRun === true,
+  };
+}
+
+async function cmdAudit(argv: string[]): Promise<void> {
+  const report = await buildAuditReport(argv);
+  if (argv.includes('--json')) {
+    process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+    return;
+  }
+  printAuditReport(report);
+  const candidates = report.rows.filter(r => r.action === 'candidate-promote');
+  if (candidates.length) {
+    console.info('CANDIDATES (not registered — promote when tool flagDocRef exists):');
+    for (const c of candidates) console.info(`  · ${c.file} — ${c.note}`);
+    console.info('');
+  }
+  const leave = report.rows.filter(
+    r => r.class === 'flags-table-only' && r.action === 'leave-as-is'
+  );
+  if (leave.length) {
+    console.info('FLAGS TABLES (leave as-is — not design-doc REF:ID surface):');
+    for (const c of leave) console.info(`  · ${c.file}`);
+    console.info('');
+  }
+}
+
 async function cmdCheck(argv: string[]): Promise<void> {
   const skip = argv.includes('--skip-refid-check');
+  const dryRun = argv.includes('--dry-run');
   const strictFormat = argv.includes('--strict-format') || argv.includes('--refid-strict');
   const asJson = argv.includes('--json');
   const writeHrefs = argv.includes('--write-hrefs');
@@ -151,12 +251,39 @@ async function cmdCheck(argv: string[]): Promise<void> {
     sectionRefId,
     sectionHeading,
   });
+  if (dryRun && !skip) {
+    const audit = await buildAuditReport(argv, { dryRun: true });
+    audit.validationIssues = issues;
+    if (asJson) {
+      process.stdout.write(
+        `${JSON.stringify(
+          {
+            schema: 'factorywager/ref-id/v2+audit',
+            dryRun: true,
+            count: issues.length,
+            issues,
+            audit,
+          },
+          null,
+          2
+        )}\n`
+      );
+    } else {
+      printRefIdIssues(issues, { dryRun: true });
+      printAuditReport(audit);
+    }
+    return;
+  }
   if (asJson) {
     process.stdout.write(
-      `${JSON.stringify({ schema: 'factorywager/ref-id/v2', count: issues.length, issues }, null, 2)}\n`
+      `${JSON.stringify(
+        { schema: 'factorywager/ref-id/v2', count: issues.length, issues, dryRun: false },
+        null,
+        2
+      )}\n`
     );
   } else {
-    printRefIdIssues(issues);
+    printRefIdIssues(issues, { dryRun: false });
   }
   if (issues.some(i => i.severity === 'error')) process.exitCode = 1;
 }
@@ -173,7 +300,6 @@ async function cmdSuggest(argv: string[]): Promise<void> {
   const docRel = flagValue(argv, '--doc') ?? BUN_TYPES_INVENTORY_DOC;
   const { scan } = await loadDocScan(docRel);
   const taken = collectTakenRefIds(scan);
-  // also claim tool flags from registry
   for (const entry of refIdRegistry()) {
     if (entry.doc === docRel) {
       for (const t of entry.toolFlags()) taken.add(t.refId);
@@ -223,7 +349,6 @@ async function cmdList(argv: string[]): Promise<void> {
   const docRel = flagValue(argv, '--doc') ?? BUN_TYPES_INVENTORY_DOC;
   const { scan } = await loadDocScan(docRel);
   const all = collectTakenRefIds(scan);
-  // Prefer numbered REF:IDs / section anchors; slug TOC entries only with --all
   const showAll = argv.includes('--all');
   const taken = [...all]
     .filter(id => showAll || parseRefId(id) != null || /^\d+(?:\.\d+)*$/.test(id))
@@ -302,6 +427,7 @@ async function main(): Promise<void> {
     return;
   }
   if (cmd === 'check') await cmdCheck(rest);
+  else if (cmd === 'audit') await cmdAudit(rest);
   else if (cmd === 'suggest') await cmdSuggest(rest);
   else if (cmd === 'list') await cmdList(rest);
   else if (cmd === 'scaffold') await cmdScaffold(rest);

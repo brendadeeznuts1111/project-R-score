@@ -110,13 +110,24 @@ bun run --filter sports-terminal-os typecheck
 bun run --parallel --filter '*' --if-present build test
 ```
 
-| Flag | Role |
-|------|------|
-| `--parallel` | Concurrent package scripts (≠ `bun test --parallel`) |
-| `--sequential` | One package at a time |
-| `--workspaces` | All workspace packages |
-| `--if-present` | Skip packages missing the script (almost always required here — most packages have few scripts) |
-| `--no-exit-on-error` | Keep fan-out running after a package fails |
+<!-- REF:ID 1.1.parallel -->
+<a id="1.1.parallel"></a>
+<!-- REF:ID 1.1.sequential -->
+<a id="1.1.sequential"></a>
+<!-- REF:ID 1.1.workspaces -->
+<a id="1.1.workspaces"></a>
+<!-- REF:ID 1.1.if-present -->
+<a id="1.1.if-present"></a>
+<!-- REF:ID 1.1.no-exit-on-error -->
+<a id="1.1.no-exit-on-error"></a>
+
+| Script | REF:ID | href | --flag | Role |
+| --- | --- | --- | --- | --- |
+| `bun --filter` | `1.1.parallel` | [`#1.1.parallel`](#1.1.parallel) | `--parallel` | Concurrent package scripts (≠ `bun test --parallel`) |
+| `bun --filter` | `1.1.sequential` | [`#1.1.sequential`](#1.1.sequential) | `--sequential` | One package at a time |
+| `bun --filter` | `1.1.workspaces` | [`#1.1.workspaces`](#1.1.workspaces) | `--workspaces` | All workspace packages |
+| `bun --filter` | `1.1.if-present` | [`#1.1.if-present`](#1.1.if-present) | `--if-present` | Skip packages missing the script (almost always required here — most packages have few scripts) |
+| `bun --filter` | `1.1.no-exit-on-error` | [`#1.1.no-exit-on-error`](#1.1.no-exit-on-error) | `--no-exit-on-error` | Keep fan-out running after a package fails |
 
 **Dependency order:** if workspace package `foo` depends on `bar` and both have `build`, `bun --filter '*' build` starts `foo` only after `bar` finishes ([dependency order](https://bun.com/docs/pm/filter#dependency-order)).
 

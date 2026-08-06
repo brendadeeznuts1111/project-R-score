@@ -42,8 +42,10 @@ describe('docs-refid CLI contract (subprocess)', () => {
     expect(r.stdout).toContain('VALIDATION PRESETS');
     expect(r.stdout).toContain('--strict-format');
     expect(r.stdout).toContain('--skip-refid-check');
+    expect(r.stdout).toContain('--dry-run');
     expect(r.stdout).toContain('REGISTERED DOCS');
     expect(r.stdout).toContain('check');
+    expect(r.stdout).toContain('audit');
     expect(r.stdout).toContain('suggest');
     expect(r.stdout).toContain('list');
     expect(r.stdout).toContain('scaffold');
@@ -81,6 +83,40 @@ describe('docs-refid CLI contract (subprocess)', () => {
     expect(r.exitCode).toBe(0);
     // skip path still prints ok with empty issues via printRefIdIssues
     expect(r.stdout).toMatch(/ok|REF:ID/i);
+  });
+
+  test('check --dry-run exits 0 and labels dry-run + audit inventory', () => {
+    const r = run(['check', '--dry-run']);
+    expect(r.exitCode).toBe(0);
+    expect(r.stdout).toContain('[dry-run]');
+    expect(r.stdout).toMatch(/audit|scanned/i);
+    expect(r.stdout).toContain('docs/design/bun-types-inventory.md');
+  });
+
+  test('audit lists registered docs with zero flags-table-only gaps', () => {
+    const r = run(['audit']);
+    expect(r.exitCode).toBe(0);
+    expect(r.stdout).toMatch(/scanned \d+/);
+    expect(r.stdout).toMatch(/registered=\d+/);
+    expect(r.stdout).toContain('flags-table-only=0');
+    expect(r.stdout).toContain('docs/design/bun-types-inventory.md');
+    expect(r.stdout).toContain('keep-registered');
+  });
+
+  test('audit --json schema factorywager/ref-id-audit/v1', () => {
+    const r = run(['audit', '--json']);
+    expect(r.exitCode).toBe(0);
+    const body = JSON.parse(r.stdout) as {
+      schema: string;
+      scanned: number;
+      summary: Record<string, number>;
+      rows: Array<{ file: string; class: string }>;
+    };
+    expect(body.schema).toBe('factorywager/ref-id-audit/v1');
+    expect(body.scanned).toBeGreaterThan(10);
+    expect(body.summary.registered).toBeGreaterThanOrEqual(1);
+    expect(body.summary['flags-table-only'] ?? 0).toBe(0);
+    expect(body.rows.some(row => row.file.includes('bun-types-inventory'))).toBe(true);
   });
 
   test('check --strict-format still green on registered doc', () => {
