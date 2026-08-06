@@ -6,14 +6,16 @@
  *
  *   bun run partner-surface-inventory:validate
  *
- * Uses brand-manifest (not TypeScript AST) + Bun.file.exists for registry artifacts.
- * Does not replace lib:domains:check.
+ * Uses brand-manifest (not TypeScript AST) + Bun.file.exists for registry artifacts,
+ * then Layer B: omit / schemaId / moneyPolicy / requiredTopKeys against baked JSON.
+ * Does not replace lib:domains:check. Ast-grep wire traps are Layer C (separate).
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import {
   buildPartnerSurfaceInventory,
   type PartnerSurfaceRow,
 } from '../lib/docs/partner-surface-inventory.ts';
+import { checkRegistryArtifact } from '../lib/docs/partner-surface-registry-check.ts';
 import { resolvePath } from './lib/fs-bun.ts';
 
 const ROOT = resolvePath(import.meta.dir, '..');
@@ -121,11 +123,22 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
         });
       } else {
         const abs = resolvePath(ROOT, row.registry.artifactPath);
-        if (!(await Bun.file(abs).exists())) {
+        const file = Bun.file(abs);
+        if (!(await file.exists())) {
           issues.push({
             level: 'error',
             message: `${row.id}: registry artifact missing ${row.registry.artifactPath}`,
           });
+        } else {
+          try {
+            const artifact = await file.json();
+            issues.push(...checkRegistryArtifact(row.id, row.registry, artifact));
+          } catch (err) {
+            issues.push({
+              level: 'error',
+              message: `${row.id}: failed to parse registry JSON (${String(err)})`,
+            });
+          }
         }
         if (
           row.registry.moneyPolicy === 'forbidden' &&

@@ -2,7 +2,7 @@
   "kind": "partner-surface-inventory",
   "schemaVersion": 2,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-06T18:52:14.385Z",
+  "bakedAt": "2026-08-06T18:55:56.077Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",
@@ -441,6 +441,7 @@
       "href": "/registry/partners-ops.json",
       "registry": {
         "schemaId": "factorywager.partners-ops.v2",
+        "schemaIdField": "schema",
         "artifactPath": "public/registry/partners-ops.json",
         "conceptIds": [
           "partner.phase.*",
@@ -449,11 +450,17 @@
         ],
         "omits": [
           "vaultKey",
-          "credentials",
+          "password",
           "softBalance",
-          "apiKey"
+          "apiKey",
+          "api_key"
         ],
-        "moneyPolicy": "integerMinorUnits"
+        "moneyPolicy": "integerMinorUnits",
+        "requiredTopKeys": [
+          "schema",
+          "partners",
+          "summary"
+        ]
       }
     },
     {
@@ -470,7 +477,8 @@
       "machine": "artifact",
       "href": "/registry/partner-health.json",
       "registry": {
-        "schemaId": "partner-health.v1",
+        "schemaId": "1",
+        "schemaIdField": "schemaVersion",
         "artifactPath": "public/registry/partner-health.json",
         "omits": [
           "vaultKey",
@@ -478,7 +486,11 @@
           "softBalance",
           "password"
         ],
-        "moneyPolicy": "forbidden"
+        "moneyPolicy": "forbidden",
+        "requiredTopKeys": [
+          "schemaVersion",
+          "health"
+        ]
       }
     },
     {
@@ -495,13 +507,19 @@
       "href": "/registry/partner-profiles.json",
       "notes": "Compatibility input — not new canonical authority",
       "registry": {
-        "schemaId": "partner-profiles.legacy",
+        "schemaId": "1",
+        "schemaIdField": "schemaVersion",
         "artifactPath": "public/registry/partner-profiles.json",
         "omits": [
           "vaultKey",
-          "credentials"
+          "credentials",
+          "password"
         ],
-        "moneyPolicy": "unset"
+        "moneyPolicy": "unset",
+        "requiredTopKeys": [
+          "schemaVersion",
+          "profiles"
+        ]
       }
     },
     {
@@ -519,14 +537,20 @@
       "machine": "artifact",
       "href": "/registry/partner-profile-coverage.json",
       "registry": {
-        "schemaId": "partner-profile-coverage.v1",
+        "schemaId": "factorywager.partner-profile-coverage.v1",
+        "schemaIdField": "schema",
         "artifactPath": "public/registry/partner-profile-coverage.json",
         "omits": [
           "vaultKey",
           "credentials",
-          "softBalance"
+          "softBalance",
+          "password"
         ],
-        "moneyPolicy": "forbidden"
+        "moneyPolicy": "forbidden",
+        "requiredTopKeys": [
+          "schema",
+          "evidenceByPartnerCode"
+        ]
       }
     },
     {
@@ -543,13 +567,21 @@
       "href": "/registry/tennis/partner-contracts.json",
       "notes": "Trading chrome Domain; partner-adjacent contracts",
       "registry": {
-        "schemaId": "tennis.partner-contracts",
+        "schemaId": "tennis-partner-contracts",
+        "schemaIdField": "kind",
         "artifactPath": "public/registry/tennis/partner-contracts.json",
         "omits": [
           "vaultKey",
-          "credentials"
+          "credentials",
+          "password",
+          "softBalance"
         ],
-        "moneyPolicy": "integerMinorUnits"
+        "moneyPolicy": "integerMinorUnits",
+        "requiredTopKeys": [
+          "kind",
+          "partners",
+          "summary"
+        ]
       }
     },
     {
@@ -566,13 +598,22 @@
       "machine": "artifact",
       "href": "/registry/workspace-lane-map.json",
       "registry": {
-        "schemaId": "workspace-lane-map.v1",
+        "schemaId": "workspace-lane-map",
+        "schemaIdField": "kind",
         "artifactPath": "public/registry/workspace-lane-map.json",
         "omits": [
           "softBalance",
-          "credentials"
+          "credentials",
+          "password",
+          "vaultKey"
         ],
-        "moneyPolicy": "forbidden"
+        "moneyPolicy": "forbidden",
+        "requiredTopKeys": [
+          "kind",
+          "sessionLanes",
+          "chromeDomains",
+          "correlations"
+        ]
       }
     },
     {
@@ -589,14 +630,21 @@
       "machine": "artifact",
       "href": "/registry/partner-surface-inventory.json",
       "registry": {
-        "schemaId": "partner-surface-inventory.v1",
+        "schemaId": "partner-surface-inventory",
+        "schemaIdField": "kind",
         "artifactPath": "public/registry/partner-surface-inventory.json",
         "omits": [
           "softBalance",
-          "credentials",
-          "vaultKey"
+          "password",
+          "vaultKey",
+          "apiKey"
         ],
-        "moneyPolicy": "forbidden"
+        "moneyPolicy": "forbidden",
+        "requiredTopKeys": [
+          "kind",
+          "rows",
+          "principle"
+        ]
       }
     },
     {
