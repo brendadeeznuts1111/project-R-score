@@ -116,11 +116,14 @@ Partner hash routes are a separate compatibility plane: `#partners`,
 The private `packages/partners` workspace now exports the TOML-facing plan
 types, semantic-gap map, canonical identifier parsers, ingress-only out
 translation, v1 artifact boundary, and pure artifact assembler. Its connector
-ports and adapters are still planned. The first six connectors have real inputs
-but planned extracted adapters; Sports Terminal is disabled and blocked on one
-exact parsed input; only the legacy ops projection is a current compatibility
-implementation. The required profile artifact currently has zero profiles, so
-the plan must remain `proposal` until canonical coverage is materialized.
+ports and canonical source adapters are still planned. The selective legacy ops
+compatibility adapter is implemented; it preserves partner/out visibility while
+dropping non-authoritative and sensitive source fields, and it returns narrow
+observations rather than canonical dashboard records. The first six connectors
+have real inputs but planned extracted adapters; Sports Terminal is disabled and
+blocked on one exact parsed input. The required profile artifact currently has
+zero profiles, so the plan must remain `proposal` until canonical coverage is
+materialized.
 
 Resilience belongs to connectors, not pure adapters. Defaults are a three-second
 timeout, three-failure circuit threshold, five-minute stale window, and a

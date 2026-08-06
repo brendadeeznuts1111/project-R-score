@@ -8,6 +8,7 @@
     ".": "./src/index.ts",
     "./boundary": "./src/boundary/index.ts",
     "./compatibility": "./src/compatibility/index.ts",
+    "./compatibility/legacy-partners-ops": "./src/compatibility/legacy-partners-ops.ts",
     "./core": "./src/core/index.ts",
     "./dashboard-plan": "./src/dashboard-plan.ts",
     "./package.json": "./package.json"
@@ -15,6 +16,6 @@
   "module": "./src/index.ts",
   "scripts": {
     "build": "bun run tsc --project ./tsconfig.json",
-    "test": "bun test ../../tests/partners-package.test.ts ../../tests/partner-dashboard-artifact.test.ts"
+    "test": "bun test ../../tests/partners-package.test.ts ../../tests/partner-dashboard-artifact.test.ts ../../tests/partner-legacy-ops-adapter.test.ts"
   }
 }

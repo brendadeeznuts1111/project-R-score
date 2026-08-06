@@ -18,6 +18,7 @@ import {
   INGRESS_TRANSLATION_COUNTER,
   LEGACY_OUT_ID_WARNING_CODE,
   LEGACY_SEAT_OUT_TOKEN_PATTERN,
+  PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
   PARTNER_DASHBOARD_SEMANTIC_GAPS,
   PARTNER_CODE_PATTERN,
   PARTNERS_PACKAGE_TARGET,
@@ -386,7 +387,9 @@ export async function validatePartnerDashboardPlan(
     partnersPackage.exports?.['./dashboard-plan'] !== './src/dashboard-plan.ts' ||
     partnersPackage.exports?.['./core'] !== './src/core/index.ts' ||
     partnersPackage.exports?.['./boundary'] !== './src/boundary/index.ts' ||
-    partnersPackage.exports?.['./compatibility'] !== './src/compatibility/index.ts'
+    partnersPackage.exports?.['./compatibility'] !== './src/compatibility/index.ts' ||
+    partnersPackage.exports?.['./compatibility/legacy-partners-ops'] !==
+      './src/compatibility/legacy-partners-ops.ts'
   ) {
     errors.push(
       'packages/partners must remain private and export dashboard-plan, core, boundary, and compatibility'
@@ -397,6 +400,7 @@ export async function validatePartnerDashboardPlan(
     plan.package?.components?.artifact_boundary !== 'implemented' ||
     plan.package?.components?.artifact_assembler !== 'implemented' ||
     plan.package?.components?.ingress_translator !== 'implemented' ||
+    plan.package?.components?.legacy_ops_adapter !== 'implemented' ||
     plan.package?.components?.connector_ports !== 'planned' ||
     plan.package?.components?.source_adapters !== 'planned' ||
     plan.package?.components?.reconciliation !== 'planned'
@@ -407,7 +411,9 @@ export async function validatePartnerDashboardPlan(
   }
   if (
     plan.shapes?.dashboard_artifact?.active_out_identity_field !== 'activeOutIds' ||
-    plan.shapes?.dashboard_artifact?.conflict_value_policy !== 'redacted-json-scalars-only'
+    plan.shapes?.dashboard_artifact?.conflict_value_policy !== 'redacted-json-scalars-only' ||
+    (legacyStatus !== 'retired' &&
+      plan.shapes?.dashboard_artifact?.schema !== PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1)
   ) {
     errors.push('dashboard artifact must expose active OutIds and scalar-only conflict evidence');
   }
@@ -890,6 +896,9 @@ export async function validatePartnerDashboardPlan(
       const modulePath = resolvePath(REPO_ROOT, connector.current_owner_module ?? '');
       if (!connector.current_owner_module || !(await Bun.file(modulePath).exists())) {
         errors.push(`connector ${connector.id} current_owner_module does not exist`);
+      }
+      if (connector.target_adapter_implementation_status !== 'implemented') {
+        errors.push(`connector ${connector.id} target compatibility adapter must be implemented`);
       }
     }
   }

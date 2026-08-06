@@ -11,7 +11,11 @@ boundary parser, and a pure caller-timestamped assembler over already reconciled
 records. It does not yet join adapters or apply source precedence. It also does
 not read files or SQLite, own theme tokens, mount APIs, or bake production data.
 Connector ports/adapters and the Sports Terminal transport remain separate
-planned slices.
+planned slices. The one implemented compatibility adapter is the selective
+`partners-ops.v2` compatibility projection; it drops credentials, payment
+targets, money, Telegram IDs, limits, and presentation fields rather than
+promoting them into partner-domain truth. Its output is a narrow observation
+shape, not `PartnerDashboardRecord[]`.
 
 ```bash
 bun --cwd=packages/partners run build

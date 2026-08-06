@@ -2,6 +2,7 @@ import { parseCanonicalOutId, parsePartnerCode } from '../core/identifiers.ts';
 import {
   CANONICAL_PROFILE_SOURCE_SYSTEM_ID,
   PARTNER_CONNECTOR_SNAPSHOT_KEYS,
+  PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
   PROFILE_MIGRATION_REQUIRED_REASON,
   type PartnerDashboardArtifact,
   type PartnerDashboardBuildInput,
@@ -99,7 +100,7 @@ export function assemblePartnerDashboardArtifact(
     );
   const balancePositions = partners.flatMap(partner => partner.accounting.balancePositions);
   const artifact: PartnerDashboardArtifact = {
-    schema: 'factorywager.partners-dashboard.v1',
+    schema: PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
     generatedAt: input.generatedAt,
     connectorSnapshots,
     activeOutIds: sortedActiveOutIds,

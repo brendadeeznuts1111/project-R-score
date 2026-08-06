@@ -153,6 +153,11 @@ describe('partner dashboard semantic plan', () => {
     plan.surfaces.portal.regions[1].connectors = plan.surfaces.portal.regions[1].connectors.filter(
       (connectorKey: string) => connectorKey !== 'profiles-registry'
     );
+    const legacyConnector = plan.connectors.find(
+      (connector: Record<string, unknown>) => connector.id === 'legacy-ops-registry'
+    );
+    if (!legacyConnector) throw new Error('legacy connector fixture missing');
+    legacyConnector.target_adapter_implementation_status = 'planned';
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors.some(error => error.includes('snapshot_key must be profiles'))).toBe(true);
@@ -162,6 +167,9 @@ describe('partner dashboard semantic plan', () => {
       true
     );
     expect(result.errors.some(error => error.includes('are not reciprocal'))).toBe(true);
+    expect(result.errors).toContain(
+      'connector legacy-ops-registry target compatibility adapter must be implemented'
+    );
   });
 
   it('separately rejects section-mount and partner-hash-route drift', async () => {

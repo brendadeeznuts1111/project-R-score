@@ -20,6 +20,7 @@ import {
   OUT_FUNDING_STATUSES,
   OUT_OPERATIONAL_STATUSES,
   PARTNER_CONNECTOR_SNAPSHOT_KEYS,
+  PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
   PARTNER_LIFECYCLE_STATES,
   PARTNER_OPERATIONAL_PHASES,
   PROVENANCE_CONFIDENCE_VALUES,
@@ -467,8 +468,8 @@ export function parsePartnerDashboardArtifact(value: unknown): PartnerDashboardA
     ],
     'artifact'
   );
-  if (value.schema !== 'factorywager.partners-dashboard.v1') {
-    throw new TypeError('artifact.schema must be factorywager.partners-dashboard.v1');
+  if (value.schema !== PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1) {
+    throw new TypeError(`artifact.schema must be ${PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1}`);
   }
   assertIsoTime(value.generatedAt, 'artifact.generatedAt');
   assertRecord(value.connectorSnapshots, 'artifact.connectorSnapshots');

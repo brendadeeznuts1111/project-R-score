@@ -22,6 +22,7 @@ export type JsonPrimitive = string | number | boolean | null;
 export type JsonValue = JsonPrimitive | JsonValue[] | { [key: string]: JsonValue };
 
 export const CANONICAL_PROFILE_SOURCE_SYSTEM_ID = 'factorywager-partner-profile' as SourceSystemId;
+export const PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1 = 'factorywager.partners-dashboard.v1';
 
 export const PARTNER_LIFECYCLE_STATES = [
   'signup',
@@ -202,7 +203,7 @@ export type PartnerSourceConflict = {
 };
 
 export type PartnerDashboardArtifact = {
-  schema: 'factorywager.partners-dashboard.v1';
+  schema: typeof PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1;
   generatedAt: string;
   connectorSnapshots: Record<PartnerConnectorSnapshotKey, ConnectorSnapshot>;
   activeOutIds: OutId[];

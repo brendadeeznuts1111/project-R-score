@@ -337,14 +337,18 @@ TOML-facing plan types, unresolved semantic-gap map, canonical identifier
 parsers, ingress-only out translation, the v1 artifact boundary, and the pure
 artifact assembler over already reconciled records. It performs no I/O, does not
 yet join adapters or apply source precedence, and emits no production artifact
-by itself. The remaining slices are:
+by itself. A selective `partners-ops.v2` compatibility adapter now keeps the
+four current partner/out identities available as narrow observations while
+deliberately dropping credentials, payment targets, Telegram IDs, money, limits,
+colors, and other non-authoritative facts. It does not manufacture canonical
+dashboard records, lifecycle facts, active outs, or resolved Sportsbook IDs. The
+remaining slices are:
 
-1. Implement a compatibility adapter over `partners-ops.v2` so the four current
-   partners render immediately.
-2. Join a redacted `partner-profiles.json`; emit attention for legacy records
+1. Join a redacted `partner-profiles.json`; emit attention for legacy records
    without a real profile.
-3. Add a minimum profile-coverage gate for the four known CODEs.
-4. Add accounting and Telegram adapter summaries.
+2. Add a minimum profile-coverage gate for the four known CODEs.
+3. Add accounting and Telegram adapter summaries.
+4. Implement reconciliation/source precedence over typed adapter results.
 5. Point the board at the new artifact; retain old fetches behind a temporary
    debug flag for comparison tests.
 6. Split the current inline board controller into small browser modules and use
