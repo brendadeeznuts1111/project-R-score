@@ -2,7 +2,7 @@
   "kind": "partner-surface-inventory",
   "schemaVersion": 2,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-06T20:37:47.470Z",
+  "bakedAt": "2026-08-06T21:04:16.492Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",
@@ -844,6 +844,38 @@
         "boundaryPathGlobs": [
           "lib/telegram/seat-*.ts",
           "lib/telegram/seat-desk-*.ts"
+        ]
+      }
+    },
+    {
+      "id": "wire.kalshi.outId",
+      "aspect": "wire-field",
+      "token": "outId",
+      "repo": "Kalshi-bot",
+      "path": "Kalshi-bot/src/partner",
+      "properties": [
+        "execution/provider wire",
+        "legacy raw string before extraction boundary"
+      ],
+      "owner": "execution adapter",
+      "machine": "identity",
+      "typeOrExport": "OutId",
+      "notes": "Explicit compatibility boundary for the pinned Kalshi partner submodule; new package-core code must parse to OutId",
+      "wireField": {
+        "wireName": "outId",
+        "sourceSystemId": "kalshi",
+        "resolvesTo": "OutId",
+        "brandedType": "OutId",
+        "pattern": "outId",
+        "patterns": [
+          "outId",
+          "out_id"
+        ],
+        "quarantineOnFail": true,
+        "boundaryPathGlobs": [
+          "Kalshi-bot/src/partner/**",
+          "Kalshi-bot/tools/partner-*.ts",
+          "Kalshi-bot/tools/provision-fantasy402-vault.ts"
         ]
       }
     },
