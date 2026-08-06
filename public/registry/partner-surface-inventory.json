@@ -2,7 +2,7 @@
   "kind": "partner-surface-inventory",
   "schemaVersion": 2,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-06T19:08:14.673Z",
+  "bakedAt": "2026-08-06T19:35:18.576Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",
@@ -191,7 +191,11 @@
         "replaces": [
           "partnerId",
           "partner_id"
-        ]
+        ],
+        "domain": "operations",
+        "registryRef": "partners-ops",
+        "isActive": true,
+        "category": "identity"
       }
     },
     {
@@ -211,7 +215,10 @@
         "pattern": "^[A-Z]{3,6}-[0-9]{3}$",
         "mintAuthority": "parsePartnerCallSignCode",
         "module": "lib/types/branded/operations.ts",
-        "interiorOnly": false
+        "interiorOnly": false,
+        "domain": "operations",
+        "isActive": true,
+        "category": "identity"
       }
     },
     {
@@ -231,7 +238,11 @@
       "brand": {
         "mintAuthority": "asPartnerProfileKey",
         "module": "lib/types/branded/operations.ts",
-        "interiorOnly": true
+        "interiorOnly": true,
+        "domain": "operations",
+        "registryRef": "partner-profiles",
+        "isActive": true,
+        "category": "profile"
       }
     },
     {
@@ -249,7 +260,11 @@
       "brand": {
         "mintAuthority": "asPartnerTemplateId",
         "module": "lib/types/branded/operations.ts",
-        "interiorOnly": true
+        "interiorOnly": true,
+        "domain": "operations",
+        "registryRef": "partner-contracts",
+        "isActive": true,
+        "category": "template"
       }
     },
     {
@@ -273,7 +288,11 @@
         "replaces": [
           "accountId",
           "SPEN-1 legacy"
-        ]
+        ],
+        "domain": "operations",
+        "registryRef": "partners-ops",
+        "isActive": true,
+        "category": "identity"
       }
     },
     {
@@ -295,7 +314,10 @@
         "interiorOnly": false,
         "replaces": [
           "partnerId"
-        ]
+        ],
+        "domain": "cross-domain",
+        "isActive": true,
+        "category": "external"
       }
     },
     {
@@ -314,7 +336,11 @@
       "brand": {
         "mintAuthority": "asTreeNodeId",
         "module": "lib/types/branded/operations.ts",
-        "interiorOnly": true
+        "interiorOnly": true,
+        "domain": "operations",
+        "registryRef": "workspace-lane-map",
+        "isActive": true,
+        "category": "node"
       }
     },
     {
@@ -339,7 +365,11 @@
         "interiorOnly": false,
         "replaces": [
           "partnerId"
-        ]
+        ],
+        "domain": "operations",
+        "registryRef": "partners-ops",
+        "isActive": true,
+        "category": "identity"
       }
     },
     {
