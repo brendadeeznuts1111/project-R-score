@@ -1,6 +1,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
-// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.mmap (sync read)
+// @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 /**
  * Machine-local mintable secrets — bridge when Proton Pass create is unavailable.
  *
@@ -13,17 +15,18 @@
  *   bun run vault:gap:export-minted
  *
  * Prefer vault inject for multi-host SSOT. Local mint is single-machine continuity.
+ *
+ * Sync I/O via lib/bun-fs-utils (mmap read · peek write · Glob list) — no node:fs.
+ * Mode bits via best-effort `chmod` spawn after write.
  */
-// Sync fs required: requireSecret / constructors are synchronous; Bun.file is async-only.
-// eslint-disable-next-line no-restricted-imports -- machine-local mint needs sync read/write
 import {
-  chmodSync,
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-} from 'node:fs';
+  chmodBestEffort,
+  ensureDirSync,
+  fileExistsSync,
+  listFileNamesSync,
+  readTextSync,
+  writeTextSync,
+} from '../bun-fs-utils.ts';
 import { randomHex } from '../bytes-base64.ts';
 import { joinPath } from '../path-bun.ts';
 
@@ -83,8 +86,8 @@ export function requireMintableSecret(envKey: string, opts: ResolveMintableOpts 
   if (fromEnv) return fromEnv;
 
   const path = mintedSecretPath(envKey);
-  if (existsSync(path)) {
-    const raw = readFileSync(path, 'utf8').trim();
+  if (fileExistsSync(path)) {
+    const raw = readTextSync(path).trim();
     if (raw.length > 0) return raw;
   }
 
@@ -103,18 +106,9 @@ export function requireMintableSecret(envKey: string, opts: ResolveMintableOpts 
 
   const value = mintHex(opts.bytes ?? 32);
   const dir = mintedSecretsDir();
-  mkdirSync(dir, { recursive: true, mode: 0o700 });
-  try {
-    chmodSync(dir, 0o700);
-  } catch {
-    // best-effort on platforms that ignore mode
-  }
-  writeFileSync(path, `${value}\n`, { encoding: 'utf8', mode: 0o600 });
-  try {
-    chmodSync(path, 0o600);
-  } catch {
-    // best-effort
-  }
+  ensureDirSync(dir);
+  chmodBestEffort(dir, 0o700);
+  writeTextSync(path, `${value}\n`, { mode: 0o600 });
   console.warn(
     `🔐 Minted ${envKey} → ${path} (machine-local). Export to Proton Pass: bun run vault:gap:export-minted`
   );
@@ -124,8 +118,7 @@ export function requireMintableSecret(envKey: string, opts: ResolveMintableOpts 
 /** List minted keys present on disk (no values). */
 export function listMintedSecretKeys(): string[] {
   const dir = mintedSecretsDir();
-  if (!existsSync(dir)) return [];
-  return readdirSync(dir)
+  return listFileNamesSync(dir)
     .filter(n => /^[A-Z][A-Z0-9_]*$/.test(n))
     .sort();
 }
@@ -133,8 +126,8 @@ export function listMintedSecretKeys(): string[] {
 /** Read one minted value (for export tooling only — never log). */
 export function readMintedSecret(envKey: string): string | undefined {
   const path = mintedSecretPath(envKey);
-  if (!existsSync(path)) return undefined;
-  const raw = readFileSync(path, 'utf8').trim();
+  if (!fileExistsSync(path)) return undefined;
+  const raw = readTextSync(path).trim();
   return raw.length > 0 ? raw : undefined;
 }
 
@@ -148,7 +141,7 @@ export function mintLocalAll(keys: readonly string[] = MINTABLE_SECRET_KEYS): {
   const out: { key: string; path: string; created: boolean; len: number }[] = [];
   for (const key of keys) {
     const path = mintedSecretPath(key);
-    const existed = existsSync(path) && readFileSync(path, 'utf8').trim().length > 0;
+    const existed = fileExistsSync(path) && readTextSync(path).trim().length > 0;
     const value = requireMintableSecret(key, { bytes: 32 });
     out.push({ key, path, created: !existed, len: value.length });
   }
