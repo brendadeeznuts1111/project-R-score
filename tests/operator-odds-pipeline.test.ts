@@ -156,19 +156,31 @@ describe('operator odds pipeline', () => {
         },
       ]),
     ];
-    // Current detector sums all quotes per selection key across books — for Heads quotes 2.1+1.7
-    // invSum = 1/2.1 + 1/1.7 ≈ 1.065 (no arb). Adjust algorithm expectation:
-    // Detector is naive multi-quote on same selection; craft one selection with two high prices.
+    // Best-price-per-selection arb: book A fat on Yes, book B fat on No.
     const simple = [
       syntheticSnapshot('x.example', [
-        { id: 'm', name: 'M', selections: [{ name: 'Yes', price: 2.2 }] },
+        {
+          id: 'm',
+          name: 'M',
+          selections: [
+            { name: 'Yes', price: 2.2 },
+            { name: 'No', price: 1.7 },
+          ],
+        },
       ]),
       syntheticSnapshot('y.example', [
-        { id: 'm', name: 'M', selections: [{ name: 'Yes', price: 2.2 }] },
+        {
+          id: 'm',
+          name: 'M',
+          selections: [
+            { name: 'Yes', price: 1.7 },
+            { name: 'No', price: 2.25 },
+          ],
+        },
       ]),
     ];
     const signals = detectArbitrage(simple, { minEdge: 0.0 });
-    // 1/2.2 + 1/2.2 ≈ 0.909 < 1 → arb
+    // best Yes 2.2 + best No 2.25 → invSum ≈ 0.899 < 1 → arb
     expect(signals.some(s => s.type === 'arbitrage')).toBe(true);
     expect(detectArbitrage(snaps).length).toBeGreaterThanOrEqual(0);
     expect(detectArbitrage(arbSnaps).length).toBeGreaterThanOrEqual(0);

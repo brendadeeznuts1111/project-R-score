@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/test — bun:test
 import { describe, expect, test } from 'bun:test';
 import {
   detectArbitrage,

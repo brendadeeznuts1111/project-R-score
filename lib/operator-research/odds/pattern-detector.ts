@@ -9,12 +9,7 @@ import {
   overround,
   steamVelocity,
 } from './edge-math.ts';
-import type {
-  DiffResult,
-  EdgeSignal,
-  OddsMarket,
-  OddsSnapshot,
-} from './types.ts';
+import type { DiffResult, EdgeSignal, OddsMarket, OddsSnapshot } from './types.ts';
 
 const DEFAULT_LINE_MOVE_REL = 0.1; // 10%
 const DEFAULT_VALUE_EV_PCT = 2; // 2% EV
@@ -88,19 +83,11 @@ export function detectPatterns(
         const firstSel = firstMarket.selections.find(s => s.name === sel.name);
         if (!firstSel || firstSel.price === 0) continue;
         const change = (sel.price - firstSel.price) / Math.abs(firstSel.price);
-        const vel = steamVelocity(
-          firstSel.price,
-          sel.price,
-          first.timestamp,
-          last.timestamp
-        );
+        const vel = steamVelocity(firstSel.price, sel.price, first.timestamp, last.timestamp);
 
         if (Math.abs(change) >= lineMoveRel) {
           const already = signals.some(
-            s =>
-              s.type === 'line_move' &&
-              s.marketId === market.id &&
-              s.selection === sel.name
+            s => s.type === 'line_move' && s.marketId === market.id && s.selection === sel.name
           );
           if (!already) {
             signals.push({
@@ -245,7 +232,9 @@ export function detectArbitrage(
       confidence: Math.min(1, edge * 5),
       host: hostSnap?.host ?? quotes[0]!.host,
       details: `Arb on "${mk}": edge=${(edge * 100).toFixed(2)}% invSum=${invSum.toFixed(4)} · ${legs
-        .map(l => `${l.selection}@${l.host} ${l.price.toFixed(3)} (${(l.weight * 100).toFixed(1)}%)`)
+        .map(
+          l => `${l.selection}@${l.host} ${l.price.toFixed(3)} (${(l.weight * 100).toFixed(1)}%)`
+        )
         .join(' · ')}`,
       marketId: top.marketId,
       observedAt: now,
@@ -348,10 +337,7 @@ export function detectValueEdges(
 
     for (const pair of pairs) {
       if (String(pair.host) === String(sharp.host)) continue;
-      for (const [side, trueP] of [
-        [pair.a, fair.pA] as const,
-        [pair.b, fair.pB] as const,
-      ]) {
+      for (const [side, trueP] of [[pair.a, fair.pA] as const, [pair.b, fair.pB] as const]) {
         const ev = expectedValuePct(trueP, side.price);
         if (ev < minEvPct) continue;
         const kelly = kellyFraction(trueP, side.price);

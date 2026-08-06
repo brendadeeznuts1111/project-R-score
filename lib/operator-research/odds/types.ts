@@ -55,12 +55,7 @@ export type DiffResult = {
 };
 
 export type EdgeSignalType =
-  | 'line_move'
-  | 'steam'
-  | 'arbitrage'
-  | 'value'
-  | 'suspicious'
-  | 'new_market';
+  'line_move' | 'steam' | 'arbitrage' | 'value' | 'suspicious' | 'new_market';
 
 export type ArbLeg = {
   host: string;

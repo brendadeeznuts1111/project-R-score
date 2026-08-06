@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 import { endpointFromHost, runMonitorTick } from './pipeline.ts';
 import { getLastSnapshots, ensureOddsStore } from './odds-store.ts';
@@ -21,7 +22,7 @@ export type EdgeScanOptions = {
 
 async function loadFixtureSnapshot(
   host: string,
-  fixtureId: string
+  fixtureId: string // brand-ok — opaque research fixture filename stem
 ): Promise<OddsSnapshot | null> {
   const path = joinPath(FIXTURES_DIR, 'odds', `${fixtureId}.json`);
   const f = Bun.file(path);
@@ -101,9 +102,13 @@ export function rankSignals(signals: EdgeSignal[]): EdgeSignal[] {
     suspicious: 50,
     new_market: 20,
   };
+  // Type tier first so a high-EV value never outranks arbitrage; metrics break ties.
   return signals.slice().sort((a, b) => {
-    const wa = (weight[a.type] ?? 0) + a.confidence * 10 + (a.meta?.edgePct ?? a.meta?.evPct ?? 0);
-    const wb = (weight[b.type] ?? 0) + b.confidence * 10 + (b.meta?.edgePct ?? b.meta?.evPct ?? 0);
-    return wb - wa;
+    const wa = weight[a.type] ?? 0;
+    const wb = weight[b.type] ?? 0;
+    if (wb !== wa) return wb - wa;
+    const sa = a.confidence * 10 + (a.meta?.edgePct ?? a.meta?.evPct ?? 0);
+    const sb = b.confidence * 10 + (b.meta?.edgePct ?? b.meta?.evPct ?? 0);
+    return sb - sa;
   });
 }

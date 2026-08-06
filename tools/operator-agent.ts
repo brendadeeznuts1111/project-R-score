@@ -714,8 +714,7 @@ async function cmdArb(args: string[]) {
  */
 async function cmdEdgeScan(args: string[]) {
   const hostsRaw =
-    opt(args, '--hosts') ??
-    'hardrock.bet,sportsbook.draftkings.com,www.pinnacle.com';
+    opt(args, '--hosts') ?? 'hardrock.bet,sportsbook.draftkings.com,www.pinnacle.com';
   const hosts = hostsRaw
     .split(',')
     .map(s => s.trim())
