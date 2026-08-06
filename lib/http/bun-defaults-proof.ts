@@ -20,8 +20,8 @@
  * @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname — default port
  */
 
-import { tmpdir } from 'node:os';
 import { inspectCustom, shouldColor } from '../console-depth.ts';
+import { systemTempDir } from '../tmp-probe.ts';
 import { inspectTable, type TableRow } from './networking-report.ts';
 
 export type BunDefaultCaseId =
@@ -93,7 +93,7 @@ async function runCase(
 /** Run all default-behavior cases against the current Bun. */
 export async function runBunDefaultsCases(): Promise<BunDefaultCaseResult[]> {
   const nested = { a: { b: { c: { d: 1 } } } };
-  const tmpRoot = `${tmpdir()}/bun-defaults-${Date.now()}`;
+  const tmpRoot = `${systemTempDir()}/bun-defaults-${Date.now()}`;
 
   return [
     await runCase(

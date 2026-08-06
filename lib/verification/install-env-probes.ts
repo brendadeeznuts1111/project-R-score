@@ -10,10 +10,8 @@
  * @see https://bun.com/docs/runtime/bunfig#install-registry
  * @see tools/bun-install-env.ts — descriptions SSOT
  */
-// eslint-disable-next-line no-restricted-imports
-import { mkdtemp, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
 import { joinPath } from '../path-bun.ts';
+import { makeTempDir, removeTempDir } from '../tmp-probe.ts';
 import { factoryWagerRegistryUrlFromEnv } from '../../config/r2-env.ts';
 import { RegistryClient } from '@factorywager/registry-client';
 import { resolveCanonicalForProbe } from '../../tools/canonical-helpers.ts';
@@ -99,7 +97,7 @@ function spawnInstall(
 }
 
 async function freshProbeDir(): Promise<string> {
-  const dir = await mkdtemp(joinPath(tmpdir(), 'fw-install-env-'));
+  const dir = await makeTempDir('fw-install-env');
   await Bun.write(
     joinPath(dir, 'package.json'),
     JSON.stringify(
@@ -180,7 +178,7 @@ async function packumentIsNpmJson(registryUrl: string, pkg: string): Promise<boo
 }
 
 async function freshScopedProbeDir(registryUrl: string): Promise<string> {
-  const dir = await mkdtemp(joinPath(tmpdir(), 'fw-scoped-registry-'));
+  const dir = await makeTempDir('fw-scoped-registry');
   await Bun.write(
     joinPath(dir, 'package.json'),
     JSON.stringify(
@@ -236,7 +234,7 @@ export async function probeBunConfigRegistry(): Promise<InstallEnvProbeRow> {
       ok
     );
   } finally {
-    await rm(dir, { recursive: true, force: true }).catch(() => {});
+    await removeTempDir(dir).catch(() => {});
   }
 }
 
@@ -255,7 +253,7 @@ export async function probeBunConfigToken(): Promise<InstallEnvProbeRow> {
       run.exitCode === 0
     );
   } finally {
-    await rm(dir, { recursive: true, force: true }).catch(() => {});
+    await removeTempDir(dir).catch(() => {});
   }
 }
 
@@ -275,7 +273,7 @@ export async function probeBunConfigYarnLockfile(): Promise<InstallEnvProbeRow> 
       ok
     );
   } finally {
-    await rm(dir, { recursive: true, force: true }).catch(() => {});
+    await removeTempDir(dir).catch(() => {});
   }
 }
 
@@ -293,7 +291,7 @@ export async function probeBunConfigSkipSaveLockfile(): Promise<InstallEnvProbeR
       ok
     );
   } finally {
-    await rm(dir, { recursive: true, force: true }).catch(() => {});
+    await removeTempDir(dir).catch(() => {});
   }
 }
 
@@ -315,7 +313,7 @@ export async function probeBunConfigSkipLoadLockfile(): Promise<InstallEnvProbeR
       ok
     );
   } finally {
-    await rm(dir, { recursive: true, force: true }).catch(() => {});
+    await removeTempDir(dir).catch(() => {});
   }
 }
 
@@ -363,7 +361,7 @@ export async function probeFactoryWagerScopedRegistry(): Promise<InstallEnvProbe
 
       attempts.push(`${lane.id}: dry-run=${dryRun.exitCode} info=${info.exitCode}`);
     } finally {
-      await rm(dir, { recursive: true, force: true }).catch(() => {});
+      await removeTempDir(dir).catch(() => {});
     }
   }
 
@@ -462,7 +460,7 @@ export async function probeBunConfigSkipInstallPackages(): Promise<InstallEnvPro
       ok
     );
   } finally {
-    await rm(dir, { recursive: true, force: true }).catch(() => {});
+    await removeTempDir(dir).catch(() => {});
   }
 }
 

@@ -42,7 +42,8 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | Image metadata                            | [`image-metadata.ts`](./image-metadata.ts)                                                                                    |
 | Screenshot TEST-003                       | [`screenshot-remediation.ts`](./screenshot-remediation.ts)                                                                    |
 | Path (Bun)                                | [`path-bun.ts`](./path-bun.ts)                                                                                                |
-| Sync FS spine                             | [`bun-fs-utils.ts`](./bun-fs-utils.ts) (`ensureDirSync` · `readJsonSync`)                                                     |
+| Sync FS spine                             | [`bun-fs-utils.ts`](./bun-fs-utils.ts) (`ensureDirSync` · `readJsonSync` · mint helpers)                                      |
+| Probe temp dirs                           | [`tmp-probe.ts`](./tmp-probe.ts) (`makeTempDir` · `removeTempDir` · `systemTempDir`)                                          |
 | FS helpers (scripts plane)                | [`../scripts/lib/fs-bun.ts`](../scripts/lib/fs-bun.ts) re-exports path-bun                                                    |
 | ESLint bun-native ban                     | [`../config/eslint/harness/bun-native.ts`](../config/eslint/harness/bun-native.ts) (`node:fs` · `node:url` · `node:zlib` · …) |
 
@@ -54,10 +55,9 @@ call sites need an explicit reason (and usually a line-level `eslint-disable`
 with that reason). Prefer shrinking this table over growing it. **Target** is
 the planned resolution lane (not a commitment date).
 
-| File / cluster                                                                                                                                            | Reason                                                                                                                                          | Target                              |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| Probe `mkdtemp` / `tmpdir` in [`verification/`](./verification/), [`docs/`](./docs/) probes, [`http/bun-defaults-proof.ts`](./http/bun-defaults-proof.ts) | Scratch dirs for runtime contract probes — not product I/O. No first-class Bun `mkdtemp`; keep `node:fs`/`node:os` until a shared probe helper. | **Deferred** (low priority)         |
-| Per-file `eslint-disable` with rationale                                                                                                                  | Documented intentional dual port                                                                                                                | Remove when that call site migrates |
+| File / cluster                           | Reason                           | Target                              |
+| ---------------------------------------- | -------------------------------- | ----------------------------------- |
+| Per-file `eslint-disable` with rationale | Documented intentional dual port | Remove when that call site migrates |
 
 **Resolved:**
 
@@ -66,7 +66,11 @@ the planned resolution lane (not a commitment date).
   ([#424](https://github.com/brendadeeznuts1111/project-R-score/pull/424)).
 - Machine-local mint in
   [`security/mintable-secret.ts`](./security/mintable-secret.ts) →
-  `bun-fs-utils` mmap/peek write + chmod spawn (Lane 3a).
+  `bun-fs-utils` (Lane 3a /
+  [#427](https://github.com/brendadeeznuts1111/project-R-score/pull/427)).
+- Probe temp dirs → [`tmp-probe.ts`](./tmp-probe.ts) (`makeTempDir` /
+  `removeTempDir`); verification/docs/http probes no longer use `mkdtemp` /
+  `node:os` tmpdir.
 
 Product FS migration (mkdir / sync JSON / path URL): PR
 [#422](https://github.com/brendadeeznuts1111/project-R-score/pull/422) — spine
