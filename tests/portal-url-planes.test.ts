@@ -6,12 +6,14 @@ import { describe, expect, test } from 'bun:test';
 import { parsePartnerHash, partnerHash, type PartnerRoute } from '../lib/portal/partner-routes.ts';
 import {
   PARTNER_HASH_PATTERN_INITS,
+  PORTAL_GLOSSARY_BOARD_PATHNAME_INIT,
   PORTAL_GLOSSARY_CONCEPT_HASH_INIT,
   PORTAL_SECTION_HASH_INIT,
   classifyPortalHash,
   classifyPortalLocation,
   classifyPortalPathname,
   isPortalSectionHash,
+  parsePortalGlossaryUrl,
   portalGlossaryConceptFromHash,
   portalSectionFromHash,
 } from '../lib/portal/url-planes.ts';
@@ -92,6 +94,19 @@ describe('portal url planes', () => {
     const out = partner.exec({ hash: 'partner/ASH/out/out-ASH-1' });
     expect(out?.hash.groups.code).toBe('ASH');
     expect(out?.hash.groups.outId).toBe('out-ASH-1');
+  });
+
+  test('parsePortalGlossaryUrl owns board+hash dialect for deep links', () => {
+    expect(
+      parsePortalGlossaryUrl(
+        'https://score.factory-wager.com/portal/glossary/#glossary:ops.view.account_net',
+      ),
+    ).toEqual({
+      board: 'glossary',
+      concept: 'ops.view.account_net',
+      type: 'glossary',
+    });
+    expect(PORTAL_GLOSSARY_BOARD_PATHNAME_INIT.pathname).toContain('glossary|account|partners');
   });
 
   test('shared precompiled patterns separate test-only checks from group extraction', () => {

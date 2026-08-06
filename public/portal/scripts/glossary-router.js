@@ -1,19 +1,31 @@
 /**
- * URLPattern-based glossary hash router.
- * Extracts board + concept from #glossary:ops.view.account_net
+ * Browser deep-link parser for glossary/section hashes.
+ *
+ * Semantic SSOT: `lib/portal/url-planes.ts` → `parsePortalGlossaryUrl`
+ * + `PORTAL_GLOSSARY_BOARD_PATHNAME_INIT` / section / glossary hash inits.
+ *
+ * This file is the static-Pages mirror (cannot import `lib/` on Pages).
+ * Drift-guard: `tests/glossary-router.test.ts` asserts parity with the SSOT.
  *
  * The literal colon must be escaped (`\\:`) — a bare `:` starts a named
- * parameter and Bun's URLPattern parser throws "Name position … is less
- * than name start …". Same dialect as components/glossary-ux.js.
- * Trailing `/*` tolerates the canonical trailing-slash board URLs.
+ * parameter and Bun's URLPattern parser throws. Trailing `/*` tolerates
+ * canonical trailing-slash board URLs.
+ *
+ * @see lib/portal/url-planes.ts
+ * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api
+ * @see https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster
  */
+
+/** Keep in lockstep with PORTAL_GLOSSARY_BOARD_PATHNAME_INIT.pathname */
+const BOARD_PATHNAME = '/portal/:board(glossary|account|partners|partner-history|limits)/*';
+
 const GLOSSARY_PATTERN = new URLPattern({
-  pathname: '/portal/:board(glossary|account|partners|partner-history|limits)/*',
+  pathname: BOARD_PATHNAME,
   hash: 'glossary\\::concept',
 });
 
 const SECTION_PATTERN = new URLPattern({
-  pathname: '/portal/:board(glossary|account|partners|partner-history|limits)/*',
+  pathname: BOARD_PATHNAME,
   hash: 'section\\::section',
 });
 

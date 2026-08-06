@@ -37,6 +37,14 @@ export const PORTAL_GLOSSARY_CONCEPT_HASH_INIT = {
 } as const;
 
 /**
+ * Boards that accept glossary/section deep-link hashes.
+ * Browser mirror: `public/portal/scripts/glossary-router.js` (parity-tested).
+ */
+export const PORTAL_GLOSSARY_BOARD_PATHNAME_INIT = {
+  pathname: '/portal/:board(glossary|account|partners|partner-history|limits)/*',
+} as const;
+
+/**
  * Partner entity hashes (most-specific first when iterating for match).
  * Consumed by lib/portal/partner-routes.ts; board JS must mirror the `hash` strings.
  */
@@ -79,9 +87,47 @@ export function classifyPortalPathname(
 const sectionPattern = new URLPattern(PORTAL_SECTION_HASH_INIT);
 const glossaryConceptPattern = new URLPattern(PORTAL_GLOSSARY_CONCEPT_HASH_INIT);
 const partnerPatterns = Object.values(PARTNER_HASH_PATTERN_INITS).map(init => new URLPattern(init));
+const glossaryBoardGlossaryPattern = new URLPattern({
+  ...PORTAL_GLOSSARY_BOARD_PATHNAME_INIT,
+  ...PORTAL_GLOSSARY_CONCEPT_HASH_INIT,
+});
+const glossaryBoardSectionPattern = new URLPattern({
+  ...PORTAL_GLOSSARY_BOARD_PATHNAME_INIT,
+  ...PORTAL_SECTION_HASH_INIT,
+});
 
 function cleanPortalHash(hash: string): string {
   return hash.replace(/^#/, '');
+}
+
+/** Full-URL glossary/section deep link (pathname board + hash). Browser mirror: glossary-router.js. */
+export type PortalGlossaryDeepLink =
+  | { board: string; concept: string; type: 'glossary' }
+  | { board: string; concept: string; type: 'section' };
+
+/**
+ * Parse a full portal URL for glossary/section deep links.
+ * Hash-only helpers (`portalGlossaryConceptFromHash`) stay for in-page mounts;
+ * this owns the board+hash dialect shared with `public/portal/scripts/glossary-router.js`.
+ */
+export function parsePortalGlossaryUrl(url: string): PortalGlossaryDeepLink | null {
+  const glossary = glossaryBoardGlossaryPattern.exec(url);
+  if (glossary?.pathname.groups.board && glossary.hash.groups.concept) {
+    return {
+      board: glossary.pathname.groups.board,
+      concept: glossary.hash.groups.concept,
+      type: 'glossary',
+    };
+  }
+  const section = glossaryBoardSectionPattern.exec(url);
+  if (section?.pathname.groups.board && section.hash.groups.section) {
+    return {
+      board: section.pathname.groups.board,
+      concept: section.hash.groups.section,
+      type: 'section',
+    };
+  }
+  return null;
 }
 
 /** Fast boolean check for `#section:{hash}` without allocating match groups. */
