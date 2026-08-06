@@ -5,17 +5,30 @@
 **Principle** `map-before-rename` — inventory joins overloaded “partner”
 surfaces before any token rename.
 
-**Schema** v2 — structured bags: `brand` · `registry` · `wireField` ·
-`chromeNav` · `taxonomy` (aspect-conditional).
+**Schema** v2 — aspect-conditional bags: `brand` · `partnerCode` · `outId` ·
+`registry` · `wireField` · `chromeNav` · `taxonomy`
 
-**SSOT (rows)**
-[`lib/docs/partner-surface-inventory.ts`](../../lib/docs/partner-surface-inventory.ts)
+|                   | Path                                                                                               |
+| ----------------- | -------------------------------------------------------------------------------------------------- |
+| **SSOT (rows)**   | [`lib/docs/partner-surface-inventory.ts`](../../lib/docs/partner-surface-inventory.ts)             |
+| **Registry bake** | [`/registry/partner-surface-inventory.json`](../../public/registry/partner-surface-inventory.json) |
 
-**Registry**
-[`/registry/partner-surface-inventory.json`](../../public/registry/partner-surface-inventory.json)
+Answers: **what kind of partner is this, where does it live, what shape does it
+have?** It joins sibling maps; it does **not** replace them.
 
-This inventory answers: **what kind of partner is this, where does it live, what
-shape does it have?** It does **not** replace:
+## Contents
+
+1. [What this owns](#what-this-owns)
+2. [Homonym machines](#homonym-machines-do-not-nest)
+3. [Validation layers A–D](#validation-layers-ad)
+4. [Row + bag schema](#row--bag-schema)
+5. [Live-derived rows](#live-derived-rows)
+6. [Operator commands](#operator-commands)
+7. [Minimum surface set](#minimum-surface-set-summary)
+8. [Generated full table](#generated-full-table)
+9. [Out of scope](#out-of-scope)
+
+## What this owns
 
 | Existing SSOT                                                                 | Owns                                                |
 | ----------------------------------------------------------------------------- | --------------------------------------------------- |
@@ -25,115 +38,250 @@ shape does it have?** It does **not** replace:
 
 ## Homonym machines (do not nest)
 
-| Machine              | Token                          | Label / notes                                   |
-| -------------------- | ------------------------------ | ----------------------------------------------- |
-| Session archive lane | `partner`                      | filename `<lane>` in naming-grammar             |
-| Chrome Domain lane   | `partner`                      | ISSUE-ROUTING **Domain** · label “Partner desk” |
-| ConceptDomain        | `partners`                     | plural · prefixes `partner.` / `out.`           |
-| Commit scope         | `partner` · `partners` · `ops` | open-set `type(scope):` hints                   |
+Same English token can mean different machines. Rows always set `machine` when
+the token is shared.
+
+| Label                | `machine`       | Token                          | Notes                                           |
+| -------------------- | --------------- | ------------------------------ | ----------------------------------------------- |
+| Session archive lane | `sessionLane`   | `partner`                      | filename `<lane>` in naming-grammar             |
+| Chrome Domain lane   | `chromeDomain`  | `partner`                      | ISSUE-ROUTING **Domain** · label “Partner desk” |
+| ConceptDomain        | `conceptDomain` | `partners`                     | plural · prefixes `partner.` / `out.`           |
+| Commit scope         | `commitScope`   | `partner` · `partners` · `ops` | open-set `type(scope):` hints                   |
 
 ```bash
 bun tools/workspace-taxonomy.ts explain partner
-bun run partner-surface-inventory:bake
-bun run partner-surface-inventory:check
-bun run partner-surface-inventory:validate
-bun run partner-surface-inventory:lint-wires
-bun scripts/validate-wire-traps.ts
-bun scripts/validate-wire-traps.ts --hlp
-bun scripts/validate-wire-traps.ts --why
-bun scripts/validate-wire-traps.ts --document
-bun test tests/partner-surface-inventory.test.ts tests/partner-surface-wire-lint.test.ts
 ```
 
-### `lint-wires` CLI flags
+## Validation layers A–D
+
+Do **not** alias validate → wire/domain lints. Each layer has its own command.
+
+| Layer | Command                                  | Checks                                                                                                                                                    | Default severity                         |
+| ----- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| A     | `partner-surface-inventory:validate`     | brand-manifest · bag linking · lifecycle · fitness · partner-code/out-id ↔ partners-ops · mintAuthority in `brand.module` · test-corpus `hasTestCoverage` | **error** (some drifts **warn**)         |
+| B     | `partner-surface-inventory:validate`     | baked JSON vs registry bag: schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy`                                            | **error**                                |
+| C     | `partner-surface-inventory:lint-wires`   | naked brand annotations outside `boundaryPathGlobs` — [wire-lint.md](./wire-lint.md)                                                                      | **error** (glob empty checkout **warn**) |
+| D     | `partner-surface-inventory:lint-domains` | brand types used outside home path globs                                                                                                                  | **warn** (`--strict` → **error**)        |
+
+Pre-commit (`scripts/pre-commit.ts`):
+
+| Gate                                                           | When                                      | Escape                                  |
+| -------------------------------------------------------------- | ----------------------------------------- | --------------------------------------- |
+| Layer C `--scan` (+ `--strict-globs` if inventory SSOT staged) | staged `.ts`/`.tsx` or inventory bake/doc | `SKIP_WIRE_LINT=1` (reason in commit)   |
+| Layer D `--scan` (+ `--strict` if domain-lint SSOT staged)     | staged `.ts`/`.tsx` or inventory bake/doc | `SKIP_DOMAIN_LINT=1` (reason in commit) |
+
+Inactive / deprecated brands still referenced by wire-field, portal-board /
+chrome-nav, or registry consumers emit **warn**. Generated docs include **Brand
+status**, **Brand health**, **Partner codes**, and **OutIds**.
+
+### `lint-wires` flags
 
 | Flag                                    | Meaning                                                                  |
 | --------------------------------------- | ------------------------------------------------------------------------ |
 | _(no args)_ · `-h` · `--help` · `--hlp` | Usage (teaching default; no scan)                                        |
 | `--scan`                                | Run the wire-trap scan (`package.json` passes this)                      |
-| `--why`                                 | Claim / allowlist rationale (ANSI markdown when available)               |
+| `--why`                                 | Claim / allowlist rationale                                              |
 | `--document`                            | Path + wire-bag excerpt from this design doc                             |
 | `--strict-globs`                        | Fail when an allowlist glob matches 0 files (`WIRE_TRAP_STRICT_GLOBS=1`) |
 
-Pre-commit (`scripts/pre-commit.ts`): runs `--scan` when staged `.ts`/`.tsx` or
-inventory bake/doc changes; adds `--strict-globs` when inventory/lint SSOT is
-staged. Escape: `SKIP_WIRE_LINT=1` (reason in commit message).
+## Row + bag schema
 
-Compact table (bags):
+Each row in the lib SSOT / registry bake has core fields plus at most one aspect
+bag.
+
+### Core row fields
+
+| Field          | Required | Meaning                                                          |
+| -------------- | -------- | ---------------------------------------------------------------- |
+| `id`           | yes      | Opaque inventory row key                                         |
+| `aspect`       | yes      | Kind of surface (see Aspects)                                    |
+| `machine`      | no       | Homonym / identity machine (see Machines)                        |
+| `token`        | yes      | English / id as agents see it                                    |
+| `typeOrExport` | no       | TypeScript export or wire label when known                       |
+| `repo`         | yes      | `project-R-score` · `Kalshi-bot` · `toc-ops` · `sports-terminal` |
+| `path`         | yes      | Source path or package                                           |
+| `href`         | no       | Portal/registry URL when applicable                              |
+| `properties`   | yes      | Key attrs (domain, registry, brand shape, cli)                   |
+| `owner`        | yes      | Owning lane / doc                                                |
+| `notes`        | no       | Free-form caveat                                                 |
+
+### Aspects
+
+| `aspect`       | Role                            | Bag           |
+| -------------- | ------------------------------- | ------------- |
+| `taxonomy`     | Homonym / machine map           | `taxonomy`    |
+| `chrome-nav`   | Partner desk chrome item        | `chromeNav`   |
+| `portal-board` | Board under `/portal/`          | `chromeNav`   |
+| `registry`     | Baked JSON artifact contract    | `registry`    |
+| `brand`        | Branded identity / profile type | `brand`       |
+| `partner-code` | Live desk PartnerCode instance  | `partnerCode` |
+| `out-id`       | Live OutId seat                 | `outId`       |
+| `package`      | npm / workspace package         | —             |
+| `lib-module`   | High-signal lib path            | —             |
+| `wire-field`   | Naked wire trap / allowlist     | `wireField`   |
+| `doc-tenant`   | Design / tenant doc pointer     | —             |
+| `cross-repo`   | External repo surface           | —             |
+
+### Machines
+
+| `machine`       | Role                                 |
+| --------------- | ------------------------------------ |
+| `sessionLane`   | Session archive `<lane>`             |
+| `chromeDomain`  | ISSUE-ROUTING Domain / chrome lane   |
+| `conceptDomain` | Glossary ConceptDomain               |
+| `commitScope`   | Conventional-commit scope hint       |
+| `identity`      | Brand / PartnerCode / OutId identity |
+| `artifact`      | Registry or package artifact         |
+| `nav`           | Chrome / board navigation            |
+
+### Bag: `brand`
+
+Layer A cross-checks these against brand-manifest and inventory registries.
+
+| Field               | Required | Meaning                                                       |
+| ------------------- | -------- | ------------------------------------------------------------- |
+| `mintAuthority`     | yes      | Constructor label (`parseX` / `asX`; may list several)        |
+| `module`            | yes      | Source module path (mint terms must appear here)              |
+| `interiorOnly`      | yes      | True when brand must not cross the wire boundary              |
+| `domain`            | yes      | Brand-catalog domain, taxonomy token, or `cross-domain`       |
+| `isActive`          | yes      | Live brand vs deprecated/legacy                               |
+| `category`          | yes      | `identity` · `profile` · `template` · `external` · `node`     |
+| `pattern`           | no       | Regex string when shape is fixed                              |
+| `replaces`          | no       | Legacy wire names this brand supersedes                       |
+| `registryRef`       | no       | Inventory `registry` row `token` that holds instances         |
+| `deprecatedAt`      | no       | ISO date when sunsetting started                              |
+| `deprecationReason` | no       | Why (required when `deprecatedAt`; recommended when inactive) |
+| `replacedBy`        | no       | Successor brand token                                         |
+| `fitnessScore`      | no       | 1–5 reuse fitness (type-reference-map scale)                  |
+| `hasTestCoverage`   | no       | Whether mint/parse constructors have focused tests            |
+
+Evidence (Layer A **warn** on drift):
+
+- `hasTestCoverage` ↔ mintAuthority hits in `tests/**` and `packages/**`
+  `*.{test,spec,test-d}.*`
+- mintAuthority terms ↔ text of `brand.module`
+
+### Bag: `partnerCode`
+
+| Field         | Required | Meaning                                           |
+| ------------- | -------- | ------------------------------------------------- |
+| `brandRef`    | yes      | Active inventory brand (`PartnerCode`)            |
+| `registryRef` | yes      | Inventory registry token (usually `partners-ops`) |
+| `phase`       | no       | Operator phase (e.g. `operator_ready`)            |
+| `callSign`    | no       | Desk call sign (`CODE-NNN`)                       |
+
+### Bag: `outId`
+
+| Field         | Required | Meaning                                           |
+| ------------- | -------- | ------------------------------------------------- |
+| `brandRef`    | yes      | Active inventory brand (`OutId`)                  |
+| `registryRef` | yes      | Inventory registry token (usually `partners-ops`) |
+| `partnerCode` | yes      | Owning PartnerCode                                |
+| `status`      | no       | `outs[].status` when present                      |
+
+### Bag: `registry`
+
+| Field             | Meaning                                                               |
+| ----------------- | --------------------------------------------------------------------- |
+| `schemaId`        | Expected schema / kind label                                          |
+| `schemaIdField`   | `schema` · `kind` · `schemaVersion` · `none`                          |
+| `artifactPath`    | Path under repo to baked JSON                                         |
+| `omits`           | Object **key names** that must be absent anywhere in the artifact     |
+| `moneyPolicy`     | `integerMinorUnits` · `forbidden` · `unset`                           |
+| `requiredTopKeys` | Top-level keys that must exist                                        |
+| `conceptIds`      | Glossary / relatedConcept refs (may include `*`) — **not** JSON paths |
+
+Notes:
+
+- `omits` walks key names only (string values inside an `omits` array do not
+  count as present keys).
+- partners-ops may expose `credentials.username` as a public board label; vault
+  secrets (`password`, `vaultKey`, `apiKey`) stay in `omits`.
+
+### Bag: `wireField`
+
+Full guide: [wire-lint.md](./wire-lint.md).
+
+| Field                  | Meaning                                             |
+| ---------------------- | --------------------------------------------------- |
+| `wireName`             | Wire field label                                    |
+| `sourceSystemId`       | Adapter source (`kalshi` · `sports` · …)            |
+| `resolvesTo`           | Target brand / ref family                           |
+| `brandedType`          | Error display type (defaults to `resolvesTo`)       |
+| `pattern` / `patterns` | TypeScript identifier(s) to match                   |
+| `nakedType`            | Annotation RHS — `string` (default) or `number`     |
+| `boundaryPathGlobs`    | Allowlist where naked annotations are OK            |
+| `strict`               | Default true: allowlisted hits silent; false → warn |
+| `requireReason`        | `// wire-ok` must include a reason                  |
+| `quarantineOnFail`     | Whether failed parse should quarantine              |
+
+Notes:
+
+- Rules are **inventory-driven** (same engine for `partnerId`, `outId`, …).
+- `ExternalPartnerRef` rows are allowlists for raw wire strings — **not**
+  skipped.
+- Glob coverage: 0 matches + empty/missing tree → **warn**; 0 matches + tree has
+  files → **error**.
+- Interior code uses brands / refs, or `// wire-ok` / `// brand-ok` (same / prev
+  / next line).
+- Money (`money: number`) deferred — no `MoneyAmount` brand yet.
+
+### Bag: `chromeNav`
+
+| Field              | Meaning                                                |
+| ------------------ | ------------------------------------------------------ |
+| `domain`           | Chrome Domain lane (`partner`, …)                      |
+| `group`            | Nav group                                              |
+| `tier`             | Priority / overflow tier                               |
+| `registryArtifact` | Inventory registry token when board is artifact-backed |
+| `cli`              | Optional bake / ops CLI hint                           |
+
+### Bag: `taxonomy`
+
+| Field             | Meaning                                              |
+| ----------------- | ---------------------------------------------------- |
+| `homonymDistinct` | Must be true when the token collides across machines |
+| `conceptDomain`   | Related ConceptDomain token when applicable          |
+
+## Live-derived rows
+
+These aspects are **not** hand-listed static seeds; bake/validate pass live
+inputs (same pattern as chrome-nav).
+
+| Aspect                                           | Source                                                    | Rules                                                                                                                                      |
+| ------------------------------------------------ | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `chrome-nav` / `portal-board` (Domain `partner`) | [`chrome-catalog.ts`](../../lib/portal/chrome-catalog.ts) | Board adds cannot drift silently                                                                                                           |
+| `partner-code`                                   | `partners-ops.json` → `partners[].code`                   | Active `brandRef` + `registryRef`; code must exist; `callSign` must match `CODE-NNN` (**warn** if missing/malformed); phase drift **warn** |
+| `out-id`                                         | `partners-ops.json` → `partners[].outs[].id`              | Active `brandRef=OutId`; out must exist; owning `partnerCode` required; status drift **warn**                                              |
+
+Empty partners-ops → zero `partner-code` / `out-id` rows.
+
+## Operator commands
+
+### Bake / check
 
 ```bash
-bun -e 'const inv=await Bun.file("public/registry/partner-surface-inventory.json").json(); console.log(Bun.inspect.table(inv.rows.filter(r=>r.brand||r.registry||r.wireField).map(r=>({aspect:r.aspect,token:r.token,bag:r.brand?"brand":r.registry?"registry":"wire",detail:JSON.stringify(r.brand??r.registry??r.wireField)})),["aspect","token","bag","detail"],{colors:true}))'
+bun run partner-surface-inventory:bake
+bun run partner-surface-inventory:check
 ```
 
-## Row schema
+### Validate (Layers A + B)
 
-Each row in the lib SSOT / registry bake:
+```bash
+bun run partner-surface-inventory:validate
+```
 
-| Field          | Meaning                                                                                                                                                                                                     |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `aspect`       | taxonomy · chrome-nav · portal-board · registry · brand · partner-code · out-id · package · lib-module · wire-field · doc-tenant · cross-repo                                                               |
-| `machine`      | optional: sessionLane · chromeDomain · conceptDomain · commitScope · identity · artifact · nav                                                                                                              |
-| `token`        | English / id as agents see it                                                                                                                                                                               |
-| `typeOrExport` | TypeScript export or wire label when known                                                                                                                                                                  |
-| `repo`         | project-R-score · Kalshi-bot · toc-ops · sports-terminal                                                                                                                                                    |
-| `path`         | source path or package                                                                                                                                                                                      |
-| `href`         | public portal/registry URL when applicable (domains → lanes/concepts/partners; brands → `/portal/brands/#domain=operations&q=…`; live PartnerCode → `partnerDeskHrefs`)                                     |
-| `properties`   | key attrs (domain, registry, brand shape, cli)                                                                                                                                                              |
-| `owner`        | owning lane / doc                                                                                                                                                                                           |
-| `brand`        | (brand only) pattern · mintAuthority · module · interiorOnly · replaces · domain · registryRef? · isActive · category · deprecatedAt? · deprecationReason? · replacedBy? · fitnessScore? · hasTestCoverage? |
-| `partnerCode`  | (partner-code only) brandRef · registryRef · phase? · callSign?                                                                                                                                             |
-| `outId`        | (out-id only) brandRef · registryRef · partnerCode · status?                                                                                                                                                |
-| `registry`     | (registry only) schemaId · schemaIdField · artifactPath · omits · moneyPolicy · requiredTopKeys · conceptIds                                                                                                |
-| `wireField`    | (wire-field only) wireName · pattern(s) · brandedType · resolvesTo · nakedType · boundaryPathGlobs · strict · requireReason                                                                                 |
-| `chromeNav`    | (chrome-nav / portal-board) domain · group · tier · registryArtifact                                                                                                                                        |
-| `taxonomy`     | (taxonomy) homonymDistinct · conceptDomain                                                                                                                                                                  |
+### Lint wires (Layer C)
 
-Brand linking metadata (Layer A cross-checks):
+```bash
+bun run partner-surface-inventory:lint-wires
+bun scripts/validate-wire-traps.ts --hlp
+bun scripts/validate-wire-traps.ts --why
+bun scripts/validate-wire-traps.ts --document
+bun scripts/validate-wire-traps.ts --scan
+```
 
-| Field               | Meaning                                                                                                           |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `domain`            | Brand-catalog domain (`operations`, …), taxonomy `conceptDomain`/`chromeDomain` token, or sentinel `cross-domain` |
-| `registryRef`       | Inventory `registry` row `token` that holds instances (omit when none / external)                                 |
-| `isActive`          | Live brand vs deprecated/legacy                                                                                   |
-| `category`          | `identity` · `profile` · `template` · `external` · `node`                                                         |
-| `deprecatedAt`      | Optional ISO date when sunsetting started                                                                         |
-| `deprecationReason` | Optional why (required when `deprecatedAt` or recommended when `isActive=false`)                                  |
-| `replacedBy`        | Optional successor brand token                                                                                    |
-| `fitnessScore`      | Optional 1–5 reuse fitness (type-reference-map scale)                                                             |
-| `hasTestCoverage`   | Optional whether mint/parse constructors have focused tests                                                       |
-
-`partner-code` and `out-id` rows are **derived live** from `partners-ops.json`
-at bake / validate time (same pattern as chrome-nav). Partner codes must
-`brandRef` → an **active** brand with `registryRef`, exist in `partners[].code`,
-and carry a well-formed `callSign` (`CODE-NNN`) — missing/malformed callSign
-warns. OutIds must `brandRef` → OutId, exist in `partners[].outs[].id`, and name
-an owning PartnerCode; status drift warns. `hasTestCoverage` is evidenced by
-scanning `tests/**` and `packages/**` `*.{test,spec,test-d}.*` for mintAuthority
-symbols; mintAuthority terms must also appear in `brand.module` — bag / module
-drift warns.
-
-`bun run partner-surface-inventory:validate` enforces domain ∈ allowlist and
-`registryRef` → existing registry row when set. Inactive / deprecated brands
-still referenced by wire-field, portal-board/chrome-nav, or registry consumers
-emit **warn**. Generated docs include **Brand status**, **Brand health**,
-**Partner codes**, and **OutIds** sections.
-
-Chrome-nav and portal-board rows for Domain `partner` are **derived live** from
-[`chrome-catalog.ts`](../../lib/portal/chrome-catalog.ts) so board adds cannot
-drift silently. Validate bags with `bun run partner-surface-inventory:validate`
-and wire traps with `bun run partner-surface-inventory:lint-wires`:
-
-| Layer | Check                                                                                                                   |
-| ----- | ----------------------------------------------------------------------------------------------------------------------- |
-| A     | brand-manifest + brand linking + lifecycle + fitness + partner-code/out-id ↔ partners-ops + mint module evidence        |
-| B     | baked JSON vs bag: schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy`                   |
-| C     | `lint-wires`: inventory-driven naked brand annotations outside `boundaryPathGlobs` — see [wire-lint.md](./wire-lint.md) |
-| D     | `lint-domains`: inventory brand types used outside home path globs (default **warn**; `--strict` → error)               |
-
-Layer A/B stay on `partner-surface-inventory:validate`. Layer C is
-`partner-surface-inventory:lint-wires`. Layer D is
-`partner-surface-inventory:lint-domains` (do not alias validate → wire/domain
-lints).
+### Lint domains (Layer D)
 
 ```bash
 bun run partner-surface-inventory:lint-domains
@@ -141,54 +289,37 @@ bun scripts/validate-partner-domain-isolation.ts --rules
 bun scripts/validate-partner-domain-isolation.ts --scan --strict
 ```
 
-Pre-commit (`scripts/pre-commit.ts`): runs Layer D `--scan` when staged
-`.ts`/`.tsx` or inventory bake/doc changes; adds `--strict` when domain-lint
-SSOT is staged (`partner-surface-inventory.ts` ·
-`partner-surface-domain-lint.ts` · `validate-partner-domain-isolation.ts` ·
-inventory JSON). Escape: `SKIP_DOMAIN_LINT=1` (reason in commit message).
+### Generated docs
 
-Registry bag notes:
+```bash
+bun run partner-surface-inventory:docs
+bun run partner-surface-inventory:docs:check
+```
 
-- `conceptIds` are glossary / relatedConcept refs (may include `*`) — **not**
-  JSON path walks.
-- `omits` are enforced by walking object **key names** (string values in an
-  `omits` array do not count as present keys).
-- partners-ops may expose `credentials.username` as a public board label; vault
-  secrets (`password`, `vaultKey`, `apiKey`) stay in `omits`.
+### Tests / TTY
 
-Wire bag notes — full guide: [wire-lint.md](./wire-lint.md).
-
-- Rules are **inventory-driven**: `pattern` / `patterns` + `brandedType` +
-  `boundaryPathGlobs` (same engine for `partnerId`, `outId`, …).
-- `ExternalPartnerRef` rows are allowlists for raw wire strings — **not**
-  skipped.
-- Glob coverage: 0 matches + empty/missing tree → **warn** (optional nested
-  checkout); 0 matches + tree has files → **error**. Pass `--strict-globs` (or
-  `WIRE_TRAP_STRICT_GLOBS=1`) to fail empty checkouts too.
-- `strict` (default true): allowlisted hits silent; `strict: false` warns on
-  allowlisted naked annotations (migration).
-- `requireReason`: `// wire-ok` on matching files must include
-  `// wire-ok: <reason>`.
-- Interior code must use branded types / refs, or suppress with `// wire-ok` /
-  `// brand-ok` (same / prev / next line).
-- Money (`money: number`) deferred — no `MoneyAmount` brand yet.
-- Pre-commit path-gates `--scan` (+ `--strict-globs` when inventory SSOT
-  staged). Escape: `SKIP_WIRE_LINT=1`.
+```bash
+bun test tests/partner-surface-inventory.test.ts tests/partner-surface-wire-lint.test.ts
+bun -e 'import { formatPartnerSurfaceMarkdown } from "./lib/docs/partner-surface-inventory.ts"; console.log(formatPartnerSurfaceMarkdown())'
+bun -e 'const inv=await Bun.file("public/registry/partner-surface-inventory.json").json(); console.log(Bun.inspect.table(inv.rows.filter(r=>r.brand||r.registry||r.wireField).map(r=>({aspect:r.aspect,token:r.token,bag:r.brand?"brand":r.registry?"registry":"wire",detail:JSON.stringify(r.brand??r.registry??r.wireField)})),["aspect","token","bag","detail"],{colors:true}))'
+```
 
 ## Minimum surface set (summary)
 
 ### Partner desk boards (`data-domain=partner`)
 
-| Nav id            | Href                       | Registry                        |
-| ----------------- | -------------------------- | ------------------------------- |
-| `partners`        | `/portal/partners/`        | `/registry/partners-ops.json`   |
-| `partner-health`  | `/portal/partner/`         | `/registry/partner-health.json` |
-| `account`         | `/portal/account/`         | partners-ops                    |
-| `partner-history` | `/portal/partner-history/` | limit-raises                    |
-| `limits`          | `/portal/limits/`          | limit-raises                    |
-| `limits-lab`      | `/portal/limits-lab/`      | limit-forecast-lab              |
-| `bookmakers`      | `/portal/bookmakers/`      | bookmakers                      |
-| `factory`         | `/portal/factory/`         | telegram-handshake              |
+Registry column uses inventory **tokens** (not mixed file paths).
+
+| Nav id            | Href                       | Registry token       |
+| ----------------- | -------------------------- | -------------------- |
+| `partners`        | `/portal/partners/`        | `partners-ops`       |
+| `partner-health`  | `/portal/partner/`         | `partner-health`     |
+| `account`         | `/portal/account/`         | `partners-ops`       |
+| `partner-history` | `/portal/partner-history/` | `limit-raises`       |
+| `limits`          | `/portal/limits/`          | `limit-raises`       |
+| `limits-lab`      | `/portal/limits-lab/`      | `limit-forecast-lab` |
+| `bookmakers`      | `/portal/bookmakers/`      | `bookmakers`         |
+| `factory`         | `/portal/factory/`         | `telegram-handshake` |
 
 Knowledge board `/portal/lanes/` explains the homonym (chrome Domain
 `knowledge`, not partner desk).
@@ -207,27 +338,16 @@ Unqualified `partnerId` / Sports `partner_id` / Kalshi registry `id` / Pandora
 
 ### Cross-repo
 
-- **Kalshi-bot** — glossary cores `partner.phase.*` (Factory must not
-  re-declare)
-- **toc-ops** — Soft Balance / MessageLog (not Factory partner boards)
-- **sports-terminal** — React `/partners` IA only; connector blocked
+| Repo                | Notes                                                          |
+| ------------------- | -------------------------------------------------------------- |
+| **Kalshi-bot**      | Glossary cores `partner.phase.*` (Factory must not re-declare) |
+| **toc-ops**         | Soft Balance / MessageLog (not Factory partner boards)         |
+| **sports-terminal** | React `/partners` IA only; connector blocked                   |
 
-## Full table
+## Generated full table
 
-Generated tables (domains · brands with linking metadata · boards · live
-PartnerCodes) are committed at
-[`partner-surface-inventory.generated.md`](./partner-surface-inventory.generated.md):
-
-```bash
-bun run partner-surface-inventory:docs
-bun run partner-surface-inventory:docs:check
-```
-
-TTY dump of every inventory row:
-
-```bash
-bun -e 'import { formatPartnerSurfaceMarkdown } from "./lib/docs/partner-surface-inventory.ts"; console.log(formatPartnerSurfaceMarkdown())'
-```
+Committed tables (domains · brands · boards · live PartnerCodes · OutIds):
+[`partner-surface-inventory.generated.md`](./partner-surface-inventory.generated.md).
 
 Or read the bake:
 [`/registry/partner-surface-inventory.json`](../../public/registry/partner-surface-inventory.json).
