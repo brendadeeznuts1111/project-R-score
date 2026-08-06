@@ -330,6 +330,16 @@ async function main(): Promise<void> {
       await writeTimings(timings, full);
       process.exit(1);
     }
+    console.info(`🗺️  Lib Area map paths (${libFiles.length} path(s) staged)...`);
+    const mapCode = await runGate('lib-area-maps', ['bun', 'run', 'lib:area-maps:check'], timings);
+    if (mapCode !== 0) {
+      console.error(
+        '❌ Lib Area map path contract failed — fix ## Area map entry paths/globs\n' +
+          '   bun run lib:area-maps:check'
+      );
+      await writeTimings(timings, full);
+      process.exit(1);
+    }
   }
 
   const auditFiles = staged.filter(isAuditSsotPath);

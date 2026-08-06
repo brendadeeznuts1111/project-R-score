@@ -78,6 +78,12 @@ const CHEAP: Step[] = [
     repair: 'bun run lib:domains:check',
   },
   {
+    name: 'lib-area-maps',
+    cmd: ['bun', 'run', 'lib:area-maps:check'],
+    owner: 'tools/lib-area-map-check.ts · lib/*/README.md ## Area map',
+    repair: 'bun run lib:area-maps:check · fix Area map paths/globs',
+  },
+  {
     name: 'audit-verify',
     cmd: ['bun', 'run', 'audit:verify'],
     owner: 'tools/audit-catalog.ts · lib/audit/',
@@ -123,17 +129,13 @@ function eslintStep(fullLint: boolean): Step {
 function testStep(mainHead: boolean): Step {
   return {
     name: 'test-changed',
-    // Full CI includes bake/doctor tests that inspect shared repository files.
-    // Keep the dirty-tree fast lane parallel, but serialize the main-head lane
-    // so those filesystem contracts cannot observe another test's fixture.
+    // bun-test-changed defaults to --parallel (implies --isolate)
     cmd: mainHead
-      ? ['bun', 'run', 'test:changed', '--', '--main-head', '--serial']
+      ? ['bun', 'run', 'test:changed', '--', '--main-head']
       : ['bun', 'run', 'test:changed'],
-    owner: mainHead
-      ? 'scripts/bun-test-changed.ts · --changed --main-head --serial'
-      : 'scripts/bun-test-changed.ts · --changed --parallel',
+    owner: 'scripts/bun-test-changed.ts · --changed --parallel · --main-head',
     repair: mainHead
-      ? 'bun run test:changed -- --main-head --serial'
+      ? 'bun run test:changed:main'
       : 'bun run test:changed  # or --serial / BUN_TEST_SERIAL=1',
   };
 }

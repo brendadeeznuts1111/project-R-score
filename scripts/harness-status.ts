@@ -83,6 +83,7 @@ const ratchets: Array<{ cmd: string; purpose: string }> = [
   { cmd: 'bun run check:bun-env', purpose: 'no process.env in lib|scripts' },
   { cmd: 'bun run projects:roots:check', purpose: 'product-leaf README + package.json' },
   { cmd: 'bun run lib:domains:check', purpose: 'lib/*/ README domain indexes' },
+  { cmd: 'bun run lib:area-maps:check', purpose: 'lib/*/ Area map path/glob validation' },
   { cmd: 'bun run build:defines', purpose: 'AST define BUILD_* + DEBUG DCE (prod)' },
   { cmd: 'bun run build:defines:dev', purpose: 'DEBUG=true / --feature=DEBUG' },
   { cmd: 'bun run build:defines:compile', purpose: 'standalone → dist/fw-build-info' },
