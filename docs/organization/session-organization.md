@@ -27,10 +27,10 @@ Counts match the **29 active** rows below (two zero-turn empties trashed
 | Lane               | Sessions | Theme                                                                                               |
 | ------------------ | -------- | --------------------------------------------------------------------------------------------------- |
 | **harness/infra**  | 7        | remote SSH/staging, config, proof pipeline, verification ratchets, hooks setup, architecture review |
-| **partner**        | 7        | limits detection, accounting/ledger integration, onboarding, Fantasy402, partner domain map         |
+| **partner**        | 8        | limits detection, accounting/ledger integration, onboarding, Fantasy402, partner domain map, anchor-stability signal |
 | **portal/UI**      | 4        | HTML designs, ops portal tables/cards, registry/package cards dashboard                             |
 | **concepts**       | 3        | concept audit / graph / health dashboard proposals                                                  |
-| **git-ops / meta** | 3        | main rebase + `bun:ci` sync, commit summaries, session archive map                                  |
+| **git-ops / meta** | 2        | main rebase + `bun:ci` sync, commit summaries, session archive map                                  |
 | **tennis-hq**      | 2        | producer repo (`plum-spruce-dawn-dune1`) PR review + site checks                                    |
 | **docs**           | 1        | bunx doc translation                                                                                |
 | **bugfix**         | 1        | generic bug hunt                                                                                    |
@@ -137,8 +137,8 @@ HTML design: tabs + `Bun.color` palette | portal/UI | 2 | 08-06 |
 Philosophy Q&A (casual) | empty/misc | 1 | 08-06 |
 `20260806-1527-empty-misc-philosophy-qa.jsonl` | | 31 |
 `20260806-152835.941080000-deepseek-deepseek-v4-flash` | `26-0806-1528` |
-Session history organization (this session) | git-ops/meta | 1 | 08-06 |
-`20260806-1528-git-ops-meta-session-organization.jsonl` |
+Session org doc + dead-anchor fix + grounded "Echo Snipe" re-scope (anchor-stability, TelegramChatId, cron bake) | partner | ~90 | 08-06 |
+`20260806-1528-partner-anchor-stability-cron-bake.jsonl` |
 
 ## Naming pattern (`<t>-<lane>-<slug>`)
 
@@ -185,12 +185,26 @@ grammar doc.
   hardening (32 turns, including a `partners-board.js` baseline conflict),
   tennis-hq producer PR review, and HTML design edits.
 - **08-06 (recent):** two HTML/`Bun.color` design sessions, a casual philosophy
-  Q&A, and this session.
+  Q&A, then this session: session-org doc, dead `@see` anchor fix (#430), and
+  the grounded re-scope of the pasted "Echo Snipe" proposal into the partner
+  stale-anchor signal (#459 → #465 → #477, incl. the `TelegramChatId` brand).
 - **08-06 (afternoon delivery)** — grounded merge evidence:
   - [project-R-score#459](https://github.com/brendadeeznuts1111/project-R-score/pull/459)
     →
     [`lib/operations/anchor-stability.ts`](../../lib/operations/anchor-stability.ts)
     · tenant [`partner-limits.md`](../harness/tenants/partner-limits.md)
+  - [project-R-score#465](https://github.com/brendadeeznuts1111/project-R-score/pull/465)
+    → `scanStaleAnchorsFromDb` + `runBookReconciliation` `anchorScan` wiring +
+    [`tools/ops-anchor-scan.ts`](../../tools/ops-anchor-scan.ts) CLI +
+    **`TelegramChatId`** brand (portal domain, wire-input) fixing the
+    pre-existing `chatId` pre-push/bun:ci brand blocker
+  - [project-R-score#477](https://github.com/brendadeeznuts1111/project-R-score/pull/477)
+    → scheduled bake
+    [`tools/bake-stale-anchors.ts`](../../tools/bake-stale-anchors.ts) →
+    [`public/registry/stale-anchors.json`](../../public/registry/stale-anchors.json)
+    (`stale-anchors.v1`) + OS-level `Bun.cron`
+    [`tools/ops-anchor-scan-cron.ts`](../../tools/ops-anchor-scan-cron.ts)
+    (`*/15 * * * *`, reboot-surviving)
   - [king-zippy-umbra-acre#14](https://github.com/brendadeeznuts1111/king-zippy-umbra-acre/pull/14)
     → `/portal/tennis` 302 to
     [`score.factory-wager.com/portal/tennis/`](https://score.factory-wager.com/portal/tennis/)
