@@ -46,7 +46,9 @@ export type RefIdIssueKind =
   | 'missing-anchor'
   | 'href-mismatch'
   | 'toc-href-mismatch'
-  | 'orphan-anchor';
+  | 'orphan-anchor'
+  | 'section-placement'
+  | 'comment-missing-anchor';
 
 export type RefIdIssue = {
   severity: RefIdSeverity;
@@ -270,7 +272,11 @@ export function extractCommentRefIds(text: string): Array<{ refId: string; line:
   const re = /<!--\s*REF:ID\s+([^\s]+)\s*-->/i;
   for (let i = 0; i < lines.length; i++) {
     const m = lines[i]!.match(re);
-    if (m) out.push({ refId: m[1]!.trim(), line: i + 1 });
+    if (!m) continue;
+    const refId = m[1]!.trim();
+    // Ignore prose placeholders (e.g. `…`) — only real section / flag ids.
+    if (!REF_ID_RE.test(refId) && !REF_SECTION_RE.test(refId)) continue;
+    out.push({ refId, line: i + 1 });
   }
   return out;
 }
@@ -361,6 +367,10 @@ export type CheckRefIdDocOpts = {
   toolFlags?: readonly ToolFlagRef[];
   /** When true, missing tool↔doc rows are errors */
   requireToolCoverage?: boolean;
+  /** Section id that must sit on the previous non-empty line above `sectionHeading`. */
+  sectionRefId?: string;
+  /** Exact markdown heading line, e.g. `### Flags / settings`. */
+  sectionHeading?: string;
 };
 
 /**
@@ -442,6 +452,49 @@ export function checkRefIdDocument(
         refId: row.refId,
         detail: `REF:ID '${row.refId}' has no matching <a id="${row.refId}">`,
       });
+    }
+  }
+
+  // <!-- REF:ID X --> must have matching <a id="X">
+  for (const c of scan.commentRefs) {
+    if (!anchorIds.has(c.refId)) {
+      issues.push({
+        severity: 'error',
+        kind: 'comment-missing-anchor',
+        file,
+        line: c.line,
+        refId: c.refId,
+        detail: `comment REF:ID '${c.refId}' has no matching <a id="${c.refId}">`,
+      });
+    }
+  }
+
+  // Section placement: sectionRefId on previous non-empty line above heading
+  if (opts.sectionRefId && opts.sectionHeading) {
+    const lines = text.split(/\r?\n/);
+    const headingIdx = lines.findIndex(l => l.trim() === opts.sectionHeading!.trim());
+    if (headingIdx < 0) {
+      issues.push({
+        severity: 'error',
+        kind: 'section-placement',
+        file,
+        refId: opts.sectionRefId,
+        detail: `heading not found: ${opts.sectionHeading}`,
+      });
+    } else {
+      let prev = headingIdx - 1;
+      while (prev >= 0 && lines[prev]!.trim() === '') prev--;
+      const prevLine = prev >= 0 ? lines[prev]! : '';
+      if (!prevLine.includes(`id="${opts.sectionRefId}"`)) {
+        issues.push({
+          severity: 'error',
+          kind: 'section-placement',
+          file,
+          line: headingIdx + 1,
+          refId: opts.sectionRefId,
+          detail: `expected <a id="${opts.sectionRefId}"> on the line immediately above heading`,
+        });
+      }
     }
   }
 

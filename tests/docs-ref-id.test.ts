@@ -163,4 +163,38 @@ describe('REF:ID markdown extract + check', () => {
     expect(taken.has('4.1')).toBe(true);
     expect(taken.has('4.1.refresh')).toBe(true);
   });
+
+  test('section placement fails when 4.1 is not above heading', () => {
+    const md = `
+<a id="4.1"></a>
+<a id="4.1.refresh"></a>
+### Flags / settings
+| Script | REF:ID | href |
+| --- | --- | --- |
+| x | \`4.1.refresh\` | \`#4.1.refresh\` |
+`;
+    const issues = checkRefIdDocument(md, 't.md', {
+      sectionRefId: '4.1',
+      sectionHeading: '### Flags / settings',
+    });
+    expect(issues.some(i => i.kind === 'section-placement')).toBe(true);
+  });
+
+  test('comment without matching anchor is error', () => {
+    const md = `
+<!-- REF:ID 4.1.refresh -->
+<a id="4.1"></a>
+### Flags / settings
+| Script | REF:ID | href |
+| --- | --- | --- |
+| x | \`4.1.strict\` | \`#4.1.strict\` |
+`;
+    const issues = checkRefIdDocument(md, 't.md', {
+      sectionRefId: '4.1',
+      sectionHeading: '### Flags / settings',
+    });
+    expect(issues.some(i => i.kind === 'comment-missing-anchor' && i.refId === '4.1.refresh')).toBe(
+      true
+    );
+  });
 });

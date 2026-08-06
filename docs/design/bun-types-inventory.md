@@ -86,22 +86,23 @@ usage, and status do.
 | `bun:types-status`                    | `bun tools/bun-types-status.ts`                             | Compose inventory + tip + usage → verdict / next steps | `0` soft; `--strict` → `1` on warn/fail |
 | `bun:types-status:refresh`            | `bun tools/bun-types-status.ts --refresh`                   | Same after `bun:types-report:local`                    | same                                    |
 
-<a id="4.1"></a> <a id="4.1.refresh"></a> <a id="4.1.strict"></a>
-<a id="4.1.max-age-days"></a> <a id="4.1.json"></a> <a id="4.1.help"></a>
-<a id="4.1.shared.strict"></a> <a id="4.1.shared.prefer-local"></a>
+<a id="4.1.refresh"></a> <a id="4.1.strict"></a> <a id="4.1.max-age-days"></a>
+<a id="4.1.json"></a> <a id="4.1.help"></a> <a id="4.1.shared.strict"></a>
+<a id="4.1.shared.prefer-local"></a> <a id="4.1"></a>
 
 ### Flags / settings
 
 **REF:ID** (v2) = Contents section number path under §4 (`4.1.<leaf>`). **href**
-MUST be `#` + REF:ID (HTML anchors above). Rules: kebab-case keywords (2–32
-chars, no leading/trailing hyphens); reserved leaves `index` · `top` · `toc` ·
-`anchor`; globally unique per doc; table `href` equals `#` + REF:ID; every
-table/tool REF:ID has a matching `<a id>`. Validate: `bun run docs:refid:check` (also part of `docs:map:check`; skip with
-`--skip-refid-check`). Add a flag: `bun run docs:refid:suggest --section=4.1
---flag=--foo` · paste `docs:refid:scaffold` output (anchor + table row). Table
-`href` may be `auto` / empty (derived as `#` + REF:ID). Doc **current** cannot
-show process argv — live default vs current is printed by
-`bun run bun:types-status` (Flags section · `report.json` `flags[]`).
+MUST be `#` + REF:ID (or empty/`—`/`auto`). Section id `4.1` sits on the line
+immediately above this heading. Rules: kebab-case keywords (2–32 chars);
+reserved leaves `index` · `top` · `toc` · `anchor`; unique per doc; every
+table/tool REF:ID has a matching HTML anchor; HTML `REF:ID` comments require a
+matching `<a id>`. Validate: `bun run docs:refid:check` (also part of
+`docs:map:check`; skip with `--skip-refid-check`). Add a flag:
+`bun run docs:refid:suggest --section=4.1 --flag=--foo` · paste
+`docs:refid:scaffold` output. Doc **current** cannot show process argv — live
+default vs current is printed by `bun run bun:types-status` (Flags section ·
+`report.json` `flags[]`).
 
 | Script             | REF:ID                    | href                                                   | --flag           | shortcode | default       | current                     |
 | ------------------ | ------------------------- | ------------------------------------------------------ | ---------------- | --------- | ------------- | --------------------------- |
