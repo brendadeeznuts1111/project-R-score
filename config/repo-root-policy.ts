@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/workers#creating-a-worker — Workers
 /**
  * Root placement policy for the FactoryWager monorepo.
  *
@@ -16,20 +17,22 @@ export interface RootOutputRoute {
   action: string;
 }
 
+/**
+ * Present-or-expected root directories that are part of the monorepo spine.
+ * Do not list retired parking names here — put them in ROOT_DIRECTORY_ROUTES
+ * so hygiene fails closed if they reappear (`unexpected-root-dir` + route).
+ */
 const CORE_ROOT_DIRECTORIES = [
   'archive',
   'artifacts',
   'assets',
   'config',
   'dashboard',
-  'database',
   'docs',
   'examples',
   'functions',
-  'herdr-worktrees',
   'Kalshi-bot',
   'lib',
-  'logs',
   'node_modules',
   'packages',
   'plannator',
@@ -39,13 +42,9 @@ const CORE_ROOT_DIRECTORIES = [
   'scratch',
   'scripts',
   'server',
-  'services',
   'spine',
-  'src',
   'tests',
   'tools',
-  'utils',
-  'workers',
 ] as const;
 
 /**
@@ -101,6 +100,42 @@ export const ROOT_DIRECTORY_ROUTES = {
     owner: 'portal-snapshot',
     target: 'artifacts/snapshots/',
     action: 'use PORTAL_SNAPSHOT_DIR or the artifact-store default',
+  },
+  /** Retired root parking — fail closed if resurrected (org history Phase 1–4). */
+  database: {
+    owner: 'migrations',
+    target: 'migrations/',
+    action: 'do not recreate root database/; SQL lives under migrations/',
+  },
+  'herdr-worktrees': {
+    owner: 'worktree-parking',
+    target: '.worktrees/ or .codex-worktrees/',
+    action: 'delete if reappear; use .worktrees/ or .codex-worktrees/',
+  },
+  logs: {
+    owner: 'runtime-logs',
+    target: 'artifacts/ or OS temp',
+    action: 'do not recreate root logs/; keep runtime logs out of the repo root',
+  },
+  services: {
+    owner: 'platform-routing',
+    target: 'functions/ · functions-bun-only/ · projects/active/',
+    action: 'do not recreate root services/; place APIs under functions or a product leaf',
+  },
+  src: {
+    owner: 'lib',
+    target: 'lib/ or packages/*',
+    action: 'do not recreate root src/; shared code lives under lib/ or packages/',
+  },
+  utils: {
+    owner: 'lib-utils',
+    target: 'lib/utils/',
+    action: 'do not recreate root utils/; use lib/utils/',
+  },
+  workers: {
+    owner: 'platform-routing',
+    target: 'functions/ or a Workers package leaf',
+    action: 'do not recreate root workers/; edge code is functions/ or a nested product',
   },
 } as const satisfies Record<string, RootOutputRoute>;
 
