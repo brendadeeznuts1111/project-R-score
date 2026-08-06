@@ -4,6 +4,24 @@ Research-domain helpers for bookmaker discovery, live odds monitoring, and
 portal agent-odds surfaces. HTTP ingress and static delivery remain under
 `tools/` and `public/portal/`.
 
+## Area map
+
+Cluster index. **Limit scrape agents live under [`lib/operations/scrapers/`](../operations/scrapers/)** — not here. Shared bridge: `config/operators/*.toml` `[scrape]` via [`operators.ts`](./operators.ts).
+
+| Area | Paths (entry) | Role |
+|------|---------------|------|
+| Discovery / enrich | [`research.ts`](./research.ts) · [`batch.ts`](./batch.ts) · [`enrich.ts`](./enrich.ts) · [`fetch-url.ts`](./fetch-url.ts) · [`detect-stack.ts`](./detect-stack.ts) · [`evidence.ts`](./evidence.ts) · [`coverage.ts`](./coverage.ts) | Seed → fetch/fixture → stack fingerprint → evidence DB → coverage |
+| Operator config | [`operators.ts`](./operators.ts) · [`types.ts`](./types.ts) · [`paths.ts`](./paths.ts) + `config/operators/*.toml` | Declarative operator identity + optional scrape block |
+| Odds pipeline | [`odds/`](./odds/) | Live/fixture odds: fetch, parse, diff, store, cron, WS |
+| Normalization | [`normalization/`](./normalization/) | Leagues/teams/markets seed store + line conversion (`config/operator-research/*` when present) |
+| Matching / signals | [`matching/`](./matching/) | Cross-book match, arb, line movement, smart-money, alerts |
+| Desk HTTP / chrome | [`dashboard.ts`](./dashboard.ts) · [`desk-jobs.ts`](./desk-jobs.ts) · [`registry-desk.ts`](./registry-desk.ts) · [`system-panel.ts`](./system-panel.ts) · [`auth/`](./auth/) · [`doctor.ts`](./doctor.ts) | `agent serve` megasurface + registry publish |
+| Portal sim / edges | [`edge-engine.ts`](./edge-engine.ts) · [`bet-mock.ts`](./bet-mock.ts) · [`backtest.ts`](./backtest.ts) | Simulated edges/Kelly for `/portal/agent-odds/` (not full live feed) |
+
+**Three “edges” surfaces (do not merge casually):** live matching arb (`matching/`) · pipeline pattern signals (`odds/pattern-detector`) · portal `edge-engine` sim.
+
+**Config:** `config/operators/*.toml` is SSOT for identity. `config/operator-research/{seeds,leagues,teams,markets,alerts,tier-weights}.*` is the norm/alerts SSOT when checked out — seed scripts fall back partially without it.
+
 | Module                                                      | Role                                                                           |
 | ----------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | [`edge-engine.ts`](./edge-engine.ts)                        | Portal agent-odds uncovered edges: arb/value/steam, Kelly, latency (brands)    |

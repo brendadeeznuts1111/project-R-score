@@ -133,14 +133,14 @@ Every first-level `lib/*/` directory (alphabetical). Each row requires a local
 | [`constants/`](./constants/) | Shared constants barrel | `index.ts` |
 | [`core/`](./core/) | Core types and infrastructure | `index.ts` |
 | [`db/`](./db/) | Database connection helpers (SQLite / ops DB) | `connection.ts` |
-| [`docs/`](./docs/) | Path SSOT, tokens, doc builders, Bun brand usages | `index.ts` · `repo-docs.ts` |
+| [`docs/`](./docs/) | Path SSOT, tokens, doc builders, Bun brand usages · **Area map** | [README Area map](./docs/README.md#area-map) · `repo-docs.ts` |
 | [`doctor/`](./doctor/) | Doctor-state bake helpers for `portal-cli doctor` | domain README · `install/` policy |
 | [`dod/`](./dod/) | Agent image proof pipeline (verify, watermark, evidence) | `evidence.ts` · `verifier.ts` |
 | [`experiments/`](./experiments/) | Multi-factor partner-policy experiment engine | `engine.ts` · `design.ts` |
 | [`factory/`](./factory/) | Internal registry client, CLI, artifact scaffolding | `artifact.ts` · `registry.ts` |
 | [`glossary/`](./glossary/) | Glossary utilities beside portal / Kalshi SSOT bakes | `tournament-snap.ts` |
 | [`harness/`](./harness/) | Harness proof paths, monorepo health, CI discovery | `proof.ts` · `monorepo-health.ts` |
-| [`http/`](./http/) | `Bun.serve` / fetch / portal / static HTTP surfaces | `bun-server.ts` · `fetch-headers.ts` |
+| [`http/`](./http/) | `Bun.serve` / fetch / portal / static HTTP surfaces · **Area map** | [README Area map](./http/README.md#area-map) · `bun-server.ts` |
 | [`identity/`](./identity/) | Auth layer (lockout, MFA, geo, WebAuthn, JIT) | `identity.ts` · `lockout.ts` |
 | [`images/`](./images/) | `Bun.Image` helpers for Tennis HQ / portal | `avatar-response.ts` |
 | [`install/`](./install/) | Machine bunfig / install policy (code SSOT) | `machine-bunfig-policy.ts` |
@@ -148,8 +148,8 @@ Every first-level `lib/*/` directory (alphabetical). Each row requires a local
 | [`mcp/`](./mcp/) | MCP / domain helpers | `stdio-jsonrpc.ts` |
 | [`monitoring/`](./monitoring/) | Registry + ops health dashboard slices | `collect.ts` · `page.ts` |
 | [`net/`](./net/) | Network helpers (HTTPS proxy CONNECT reuse) | `proxy.ts` |
-| [`operations/`](./operations/) | Ops tree, limits, scrapers, compliance HTTP | domain README · `limits/` |
-| [`operator-research/`](./operator-research/) | Bookmaker research, odds, edge engine | `edge-engine.ts` · `index.ts` |
+| [`operations/`](./operations/) | Ops tree, limits, scrapers, compliance · **mega** | [README Area map](./operations/README.md#area-map) · `limits/` · `scrapers/` |
+| [`operator-research/`](./operator-research/) | Bookmaker research, odds, edge engine · **mega** | [README Area map](./operator-research/README.md#area-map) · `edge-engine.ts` |
 | [`package/`](./package/) | Package manager graph helpers | `package-manager.ts` |
 | [`pages/`](./pages/) | Cloudflare Pages / Bun-only function helpers (edge-safe) | `pages-function.ts` · `r2-types.ts` |
 | [`partner-profile/`](./partner-profile/) | Canonical partner record, ledger, settlement | `schema.ts` · `ledger.ts` |
@@ -165,7 +165,7 @@ Every first-level `lib/*/` directory (alphabetical). Each row requires a local
 | [`security/`](./security/) | Secrets, R2 creds, vault health, hash wrappers | `index.ts` · `r2-credentials.ts` |
 | [`shared/`](./shared/) | Cross-cutting shared helpers | `tools/` |
 | [`surfaces/`](./surfaces/) | Public edge surface inventory (hosts · shortcodes) | `inventory.ts` · `doctor-check.ts` |
-| [`telegram/`](./telegram/) | Factory Telegram bots, handshakes, partner ops colors | domain README · `ops-bot` surface |
+| [`telegram/`](./telegram/) | Factory Telegram bots, handshakes, seat desk · **mega** | [README Area map](./telegram/README.md#area-map) · `ops-bot` surface |
 | [`tennis/`](./tennis/) | Portal tennis desk (metrics, avatars, live) | domain README |
 | [`theme/`](./theme/) | Colors / styled logging | `colors.ts` |
 | [`toc-ops/`](./toc-ops/) | TOC Ops Drum / Buffer / Rope fixture surface | domain README · `types.ts` |

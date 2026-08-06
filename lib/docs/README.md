@@ -1,19 +1,35 @@
 # docs
 
-Path SSOT, tokens, doc builders.
+Path SSOT, tokens, doc builders, Bun brand map, coverage / symbol index.
 
 Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
+Token layers: [`README-token-ref.md`](./README-token-ref.md).
 
-| Entry |
-|-------|
-| [`index.ts`](./index.ts) |
-| [`repo-docs.ts`](./repo-docs.ts) |
+## Area map
+
+Cluster index (not every file). Prefer tools → `lib/docs` imports; `doc-index.ts` reverse-depends on `tools/bun-doc-refs` / catalog intentionally for bake composition.
+
+| Area | Paths (entry) | Role |
+|------|---------------|------|
+| Path / remotes SSOT | [`repo-docs.ts`](./repo-docs.ts) · [`index.ts`](./index.ts) · [`docs-artifact-paths.ts`](./docs-artifact-paths.ts) | Canonical paths, remotes, artifact locations |
+| Token / catalog | [`token-ref.ts`](./token-ref.ts) · [`bun-token.ts`](./bun-token.ts) · [`token-ref-adapter.ts`](./token-ref-adapter.ts) · [`locus-resolve.ts`](./locus-resolve.ts) | Interior TokenRef → export BunToken |
+| URL / fetch / constants | [`bun-site-url.ts`](./bun-site-url.ts) · [`urls.ts`](./urls.ts) · [`fetch-page.ts`](./fetch-page.ts) · [`constants/`](./constants/) | bun.com URL construction + provider catalogs |
+| Blog / bundler operate | `blog-*.ts` · [`bundler-nav.ts`](./bundler-nav.ts) · [`bundler-gaps.ts`](./bundler-gaps.ts) · [`bun-source-links.ts`](./bun-source-links.ts) | Harvest, nav, gap reports for `bun-doc-refs` |
+| Release / brand / install | [`bun-release-tracker.ts`](./bun-release-tracker.ts) · [`bun-brand-usages.ts`](./bun-brand-usages.ts) · [`bun-brand-contract.ts`](./bun-brand-contract.ts) · `bun-install-*-docs.ts` | Verification rows + brand × API map + install policy prose |
+| Index / coverage / search | [`doc-index.ts`](./doc-index.ts) · [`docs-coverage-report.ts`](./docs-coverage-report.ts) · [`smart-symbol-index.ts`](./smart-symbol-index.ts) · [`ripgrep-spawn.ts`](./ripgrep-spawn.ts) · [`cache-manager.ts`](./cache-manager.ts) | Bakes, probes, local symbol DB |
+
+Large data SSOTs (`bun-brand-usages`, `smart-symbol-index`) are inventory/runtime helpers, not general docs API.
+
+| Entry | Role |
+|-------|------|
+| [`index.ts`](./index.ts) | Barrel subset (repo-docs + bundler) |
+| [`repo-docs.ts`](./repo-docs.ts) | `CANONICAL_REPO_DOCS` · `CANONICAL_REMOTES` |
 | [`bun-site-url.ts`](./bun-site-url.ts) | URLPatternInit parts · `CANONICAL_SOURCES` · `bunDocs` / `bunBlog` |
 | [`fetch-page.ts`](./fetch-page.ts) | Shared page fetch SSOT (`fetchPage`) |
 | [`extract-metadata.ts`](./extract-metadata.ts) | Social metadata via HTMLRewriter |
 | [`blog-extract.ts`](./blog-extract.ts) | Article body + re-exports for blog ingestion |
 | [`bundler-nav.ts`](./bundler-nav.ts) | Bun docs Bundler sidebar (leaves · groups · CANONICAL_REFS merge) |
 | [`bundler-gaps.ts`](./bundler-gaps.ts) | High-signal anchor/catalog gap reports (`bundler --gaps`) |
-| [`token-ref.ts`](./token-ref.ts) |
-| [`bun-token.ts`](./bun-token.ts) |
+| [`token-ref.ts`](./token-ref.ts) | Interior TokenRef |
+| [`bun-token.ts`](./bun-token.ts) | Export BunToken |
 

@@ -2,7 +2,30 @@
 
 Tree-aware Telegram integration for the sports betting operations platform and multi-tenant portal webhook.
 
+## Area map
+
+Cluster index (not every file). Dual bots are **intentional multi-plane**, not product duplication — production is Pages webhook + R2 + `telegram:ops:consume`; long-poll `ops-bot` is host-local when `OPS_DB_PATH` is openable.
+
+| Area | Paths | Role |
+|------|-------|------|
+| Transport / API | `telegram-api*.ts` · [`telegram-config.ts`](telegram-config.ts) · `*-health.ts` · [`out-health.ts`](out-health.ts) | Bot API send/edit/rich · env SSOT · verify probes |
+| Factory path | [`webhook-pages.ts`](webhook-pages.ts) · [`telegram-update.ts`](telegram-update.ts) · [`consumer-updates.ts`](consumer-updates.ts) · [`bot.ts`](bot.ts) · [`link-nonce.ts`](link-nonce.ts) · [`ops-acl.ts`](ops-acl.ts) | Pages → R2 `telegram-updates` → drain → multi-tenant commands |
+| Ops path | [`ops-bot.ts`](ops-bot.ts) · [`ops-bridge.ts`](ops-bridge.ts) · [`ops-commands.ts`](ops-commands.ts) · [`play-callback.ts`](play-callback.ts) | Long-poll + shared command dispatch (+ R2 `telegram-commands` when no local DB) |
+| Handshake / package group | `package-group-*.ts` · `handshake-*.ts` · [`verify-package-group-handshake.ts`](verify-package-group-handshake.ts) · [`dm-seat-designation.ts`](dm-seat-designation.ts) | Forum registry, readiness, lanes, JSONL lifecycle |
+| Seat capital desk | [`seat-intake.ts`](seat-intake.ts) · [`seat-capital-desk.ts`](seat-capital-desk.ts) · `seat-desk-*.ts` | Intake model + pinned desk + Fill keyboard + partner paste templates |
+| Surfaces / brand | [`surfaces.ts`](surfaces.ts) · `surface-*.ts` · [`branding.ts`](branding.ts) · [`house-forum-metadata.ts`](house-forum-metadata.ts) | Concern matrix, titles/photos/topics, outbox chat routing |
+| Directory / broadcast | [`known-chats.ts`](known-chats.ts) · [`broadcast.ts`](broadcast.ts) · [`telegram-discovery.ts`](telegram-discovery.ts) · [`refresh-known-chats.ts`](refresh-known-chats.ts) | Self-learning directory + send-to-known |
+| Flows / templates | [`flows/`](flows/) · [`templates/`](templates/) | Interactive cards + HTML message pack |
+| Partner-ops / reports | `partner-ops-*.ts` · `daily-*-report.ts` · [`event-alerts.ts`](event-alerts.ts) · [`soft-accounting-export.ts`](soft-accounting-export.ts) | Registry bake, finance/capacity, alerts |
+| Catalog research | [`catalog-research/`](catalog-research/) | Offline catalog-vs-live enhancement agent (not message path) |
+
+**Edge allowlist (no `bun:sqlite`):** only [`webhook-pages.ts`](webhook-pages.ts) + [`telegram-update.ts`](telegram-update.ts). Everything else is Bun-only.
+
+**Coupling:** bidirectional with [`lib/operations`](../operations/) (DB + onboard; reverse: dispatcher/summary snapshots) and [`lib/channels/outbox`](../channels/outbox.ts) (send/templates/surfaces). Prefer snapshot JSON for reverse deps when adding new ops→telegram edges.
+
 ## Modules
+
+Entry points (not a full file list). Prefer the Area map for orientation.
 
 | Module | Role |
 |--------|------|
@@ -10,6 +33,7 @@ Tree-aware Telegram integration for the sports betting operations platform and m
 | `bot.ts` | Bun command router (`TelegramBot`, factory/science/tennis) · factory path also runs Accounting photo ingest |
 | `webhook-pages.ts` | Pages edge enqueue → R2 `telegram-updates` (no bun:sqlite) |
 | `telegram-update.ts` | Edge-safe TelegramUpdate wire types |
+| `consumer-updates.ts` | Bun drain of R2 `telegram-updates` → `bot.handleUpdate` |
 | `ops-bridge.ts` | Bun webhook → SQLite or R2 `telegram-commands` queue |
 | `ops-commands.ts` | Pure ops command handlers shared by bridge + consumer |
 | `play-callback.ts` | Inline keyboard ack (`play:{id}:{node}:placed\|skip`) |
@@ -21,13 +45,14 @@ Tree-aware Telegram integration for the sports betting operations platform and m
 | `telegram-discovery.ts` | Granular Bot API + known-chats inventory (`telegram:discover`) |
 | `known-chats.ts` | Self-learning `ops_telegram_known_chats` from updates |
 | `broadcast.ts` | Send-to-known-chats + `ops_broadcast_log` |
-| `surfaces.ts` | Concern separation SSOT · naming · outbox chat routing |
+| `surfaces.ts` | Concern separation SSOT · house surface registry + topic slugs · outbox chat routing |
 | `surface-graph.ts` | Live topology ASCII / mermaid / env suggest |
 | `surface-audit.ts` | Title · binding · ACL · routing audit |
 | `package-group-registry.ts` | Partner package forum registry + pending JSONL |
 | `package-group-forum.ts` | Partner forum metadata SSOT · `PARTNER_PACKAGE_FORUM_TOPIC_PLAN` (5 topics, every partner) |
-| `surfaces.ts` | House surface registry + topic slugs (`hq`, `sandbox`, `all-accounting`, …) |
 | `partner-forum-accounting.ts` | Accounting topic ensure + one-shot prompt per partner forum |
+| `partner-ops-registry.ts` | Partners-ops v2 bake → `partners-ops.json` (seat desk + handshake projection) |
+| `seat-intake.ts` | Intake model / parse / view helpers (desk leaf — import-cycle burn-down) |
 | `seat-desk-partner-message.ts` | Partner paste + Liquidity/Outs/Accounting template SSOT |
 | `handshake-catalog.ts` | **Machine reference** — constants, lanes, verify checks, CLI, templates (`telegram:handshake:catalog`) |
 | `catalog-research/` | Research agent — catalog vs live gaps → `catalog-enhancements.json` (`telegram:catalog:research`) |
@@ -43,7 +68,7 @@ Tree-aware Telegram integration for the sports betting operations platform and m
 | `refresh-known-chats.ts` | `getChat` / member-count refresh for directory |
 | `telegram-api.ts` | `sendTelegramBotMessage` · `sendRichTelegramMessage` · `editMessageReplyMarkup` · `setMyCommands` · `answerCallbackQuery` (rate-limited + 429 retry) |
 | `seat-capital-desk.ts` | Pinned capital desk per call-sign (rich table + Fill keyboard) |
-| `seat-desk-*.ts` | Desk callbacks (`sd:*`), pending ForceReply, pipe-line intake, partner templates |
+| `seat-desk-*.ts` | Desk callbacks (`sd:*`), pending ForceReply, pipe-line intake, book-max, markup, snapshot |
 | `rich-message.ts` | Bot API 10.1 `InputRichMessage` HTML helpers + MTProto RichText map |
 
 ## Factory webhook commands

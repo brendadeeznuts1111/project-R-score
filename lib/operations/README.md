@@ -14,7 +14,30 @@ Tree-structured agent management with HMAC-signed play distribution.
 | Rail | Funding channel (PayPal, Venmo, CashApp, wire) |
 | Play | HMAC-signed wager recommendation from expert |
 
+## Area map
+
+Cluster index (not every file). Module table below is **entry points only** — ~90+ modules live under these areas.
+
+| Area | Paths (entry) | Role |
+|------|---------------|------|
+| Core / schema | [`db.ts`](db.ts) · [`schema.ts`](schema.ts) · [`index.ts`](index.ts) · [`backup.ts`](backup.ts) | SQLite open, migrate, barrel |
+| Play / liquidity | `play-*.ts` · [`liquidity.ts`](liquidity.ts) · [`cut-engine.ts`](cut-engine.ts) · [`fraud-guard.ts`](fraud-guard.ts) · [`rail-limits.ts`](rail-limits.ts) | Sign, dispatch, reserve, settle, cuts |
+| Limits / raises | `limit-*.ts` · [`partner-analytics-repo.ts`](partner-analytics-repo.ts) · [`account-limit-profiles.ts`](account-limit-profiles.ts) · `baseline-*.ts` · [`limits/`](limits/) | Multi-factor raises, patterns, baselines |
+| Scrapers | [`scrapers/`](scrapers/) · `books/` · wire taxonomy | Book limit scrape pipeline (Tier‑4 HTML / agents) |
+| Compliance / state | [`state-regulation.ts`](state-regulation.ts) · [`state-compliance-http.ts`](state-compliance-http.ts) · [`regulation-policy-catalog.ts`](regulation-policy-catalog.ts) | MA/NJ geo, licenses, mock API |
+| TOC bridge | `toc-*.ts` | Soft-balance + identity join → [`lib/toc-ops`](../toc-ops/) (fixture export; not ct Soft plane) |
+| Onboard / partner | `partner-*.ts` · [`account-service.ts`](account-service.ts) · [`onboarding-config.ts`](onboarding-config.ts) | Tree nodes, package groups, gate bind |
+| Loop / summary | [`ops-summary.ts`](ops-summary.ts) · `ops-loop-*.ts` · [`ops-settle-batch.ts`](ops-settle-batch.ts) · [`snapshot-cron.ts`](snapshot-cron.ts) · [`ops-sync.ts`](ops-sync.ts) | Portal payload, throughput loop, cron |
+
+**Portal sink:** `buildOpsSummary` → live `/api/operations/summary` + `ops:snapshot` → `public/registry/ops-summary.json`. Domain slices (liquidity, tree, plays, limits, TOC, loop) are core; harness proof strips (monorepo health, CF pages/token, docs coverage, bun brand map) attach for the bake board — treat as façade gravity when changing types.
+
+**Coverage floors cycle:** capacity lives in operations (`platform-coverage`); floor keys resolve in [`lib/experiments`](../experiments/) (`COVERAGE_FLOOR_KEYS`). Avoid new cross edges without naming both sides.
+
+**TOC ownership:** types/export = [`lib/toc-ops`](../toc-ops/); SQLite seed / soft-balance = `toc-*.ts` here. Tenant: [`docs/harness/tenants/toc-ops.md`](../../docs/harness/tenants/toc-ops.md).
+
 ## Modules (this package)
+
+Entry points (not a full file list). Prefer the Area map for orientation.
 
 | Path | Purpose |
 |------|---------|
