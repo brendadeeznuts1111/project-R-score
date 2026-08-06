@@ -7,7 +7,7 @@ portal agent-odds surfaces. HTTP ingress and static delivery remain under
 | Module                                                      | Role                                                                           |
 | ----------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | [`edge-engine.ts`](./edge-engine.ts)                        | Portal agent-odds uncovered edges: arb/value/steam, Kelly, latency (brands)    |
-| [`odds/`](./odds/)                                          | Bun-native live odds pipeline: prewarm, fetch, diff, store, patterns, cron, WS |
+| [`odds/`](./odds/)                                          | Live odds pipeline + **depth**: multi-leg arb, value vs sharp, steam velocity, `edge-scan` |
 | [`odds/scheduler.ts`](./odds/scheduler.ts)                  | In-process `Bun.cron` odds monitor (1.3.12+)                                   |
 | [`desk-jobs.ts`](./desk-jobs.ts)                            | `GET /api/system/jobs` snapshot for `agent serve`                              |
 | [`registry-desk.ts`](./registry-desk.ts)                    | Registry browse/publish (snapshot · optional live packument · CSRF publish)    |

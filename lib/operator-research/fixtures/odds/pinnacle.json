@@ -1,0 +1,19 @@
+{
+  "host": "www.pinnacle.com",
+  "sportsbookId": "pinnacle",
+  "timestamp": 1754401000000,
+  "markets": [
+    {
+      "id": "mlb-nyy-bos-ml",
+      "name": "NYY vs BOS Moneyline",
+      "sport": "baseball",
+      "league": "MLB",
+      "marketType": "moneyline",
+      "selections": [
+        { "name": "NYY", "price": 1.95 },
+        { "name": "BOS", "price": 1.95 }
+      ]
+    }
+  ],
+  "limits": { "maxBet": 5000, "minBet": 1, "currency": "USD" }
+}
