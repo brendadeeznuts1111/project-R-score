@@ -6,8 +6,6 @@
  */
 
 import { joinPath } from '../../path-bun.ts';
-// eslint-disable-next-line no-restricted-imports -- ensure parent dirs before sqlite/file write
-import { mkdirSync } from 'node:fs';
 import type { FetchEventsOptions, PartnerEvent } from '../types/event.ts';
 import { partnerEventsFromMarkets } from './events-from-markets.ts';
 import type { AccountLimit, PartnerFetcher, ResearchFetchResult, ResearchMarket } from './types.ts';
@@ -88,7 +86,7 @@ async function ensureFixture(): Promise<FixtureShape> {
   if (await file.exists()) {
     return (await file.json()) as FixtureShape;
   }
-  mkdirSync(FIXTURE_DIR, { recursive: true });
+  // Bun.write creates intermediate path segments (no node:fs mkdir).
   await Bun.write(FIXTURE, JSON.stringify(DEFAULT_FIXTURE, null, 2));
   return DEFAULT_FIXTURE;
 }

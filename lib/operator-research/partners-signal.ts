@@ -11,8 +11,7 @@
  * @see public/registry/partners-ops.json
  */
 
-// eslint-disable-next-line no-restricted-imports -- sync partner signal join
-import { readFileSync } from 'node:fs';
+import { readJsonSync } from '../bun-fs-utils.ts';
 import { joinPath } from '../path-bun.ts';
 import { loadMergedRegistry, type MergedBook, type MergedRegistry } from '../bookmakers/merge.ts';
 import { loadTelegramEnv } from '../telegram/telegram-config.ts';
@@ -47,9 +46,7 @@ type OpsPartnerTelegram = {
 
 function readPartnersOps(path = DEFAULT_PARTNERS_OPS): OpsPartnerTelegram[] {
   try {
-    const raw = JSON.parse(readFileSync(path, 'utf8')) as {
-      partners?: OpsPartnerTelegram[];
-    };
+    const raw = readJsonSync<{ partners?: OpsPartnerTelegram[] }>(path);
     return raw.partners ?? [];
   } catch {
     return [];
