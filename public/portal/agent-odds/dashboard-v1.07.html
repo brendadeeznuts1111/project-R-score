@@ -92,18 +92,25 @@
 <div class="container">
   <h1>🧠 Bun Agent <small>Live Odds Intelligence v1.07 · Trading Desk</small></h1>
   <div class="subhead">
-    <span>📍 Partner registry · <span class="highlight" id="bookCount">—</span> books · mock desk only</span>
+    <span>📍 Partner registry · <span class="highlight" id="bookCount">—</span> books ·
+      <span id="planeBadge" class="badge">detecting plane…</span>
+    </span>
     <span class="flex">
+      <a class="badge" href="/portal/partners/" style="text-decoration:none;color:#b6c8e0;">← Partners</a>
+      <a class="badge" href="/portal/partner/" style="text-decoration:none;color:#b6c8e0;">Partner health</a>
+      <a class="badge" href="/portal/bookmakers/" style="text-decoration:none;color:#b6c8e0;">Bookmakers</a>
       <span class="badge">📡 WebSocket</span>
       <span class="badge">⚡ Edges</span>
       <span class="badge">🤖 Mock Bet</span>
       <span class="badge">📊 Backtest</span>
-      <span class="badge">🧮 ML annotate</span>
       <span class="badge">💧 Liquidity</span>
       <span id="userDisplay" class="text-muted">👤 Guest</span>
       <button class="btn btn-sm" id="loginBtn">Login</button>
       <button class="btn btn-sm" id="logoutBtn" style="display:none;">Logout</button>
     </span>
+  </div>
+  <div class="filter-bar" id="planeBanner" style="margin-bottom:16px;">
+    <span class="text-muted" id="planeBannerText">Checking agent API vs Pages static registry…</span>
   </div>
 
   <div class="tabs" id="mainTabs">
@@ -362,15 +369,21 @@
 
   <div class="toast" id="toast"></div>
   <div style="margin-top:24px;border-top:1px solid #1e2630;padding-top:14px;color:#4a5a6a;font-size:12px;text-align:center;">
-    Bun Agent v1.07 Trading Desk · mock bet/backtest only ·
-    <a href="/dashboard-v1.06.html" style="color:#5fc3f4;">v1.06</a> ·
-    <a href="/dashboard-v1.03.html" style="color:#5fc3f4;">v1.03</a>
+    Bun Agent v1.07 · partner-adjacent portal board · mock bet/backtest only ·
+    <a href="/portal/partners/" style="color:#5fc3f4;">Partners</a> ·
+    <a href="/portal/bookmakers/" style="color:#5fc3f4;">Bookmakers</a> ·
+    <a href="/registry/bookmakers.json" style="color:#5fc3f4;">bookmakers.json</a> ·
+    <a href="/registry/partners-ops.json" style="color:#5fc3f4;">partners-ops.json</a> ·
+    <a href="dashboard-v1.06.html" style="color:#5fc3f4;">v1.06</a>
   </div>
 </div>
 
 <script>
-const API = window.location.origin;
+/** Live agent APIs when agent:odds-dashboard is running; Pages static uses registry fallback. */
+const API = (window.AGENT_API_BASE || window.location.origin).replace(/\/$/, '');
 window.AGENT_API_BASE = API;
+let agentLive = false;
+let planeMode = 'detecting'; // 'live' | 'static' | 'detecting'
 let currentTab = 'edges';
 let eventsData = [];
 let edgesData = [];
@@ -878,64 +891,203 @@ async function deleteRule(id) {
   loadAlerts();
 }
 
-// ── Health ───────────────────────────────────────────────────
-async function loadHealth(refresh = false) {
-  try {
-    const res = await fetch(API + '/api/partners/health' + (refresh ? '?refresh=1' : ''));
-    const data = await res.json();
-    partnerHealth = data.health || [];
-    const summary = data.summary || {};
-    const online = summary.online ?? 0;
-    const total = summary.total ?? partnerHealth.length;
-    const hs = document.getElementById('healthStatus');
+// ── Plane detection + Pages registry fallback ────────────────
+function setPlaneMode(mode, detail) {
+  planeMode = mode;
+  agentLive = mode === 'live';
+  const badge = document.getElementById('planeBadge');
+  const banner = document.getElementById('planeBannerText');
+  if (badge) {
+    badge.textContent = mode === 'live' ? 'Live agent' : mode === 'static' ? 'Pages static' : 'detecting…';
+  }
+  if (banner) {
+    if (mode === 'live') {
+      banner.textContent = detail || 'Live Bun agent APIs connected · edges/WS/mock bet available.';
+    } else if (mode === 'static') {
+      banner.innerHTML = (detail || 'Pages static plane — partner chips from registry bakes.') +
+        ' Live edges/WS: run <code>bun run agent:odds-dashboard</code> locally (or set <code>window.AGENT_API_BASE</code>).';
+    } else {
+      banner.textContent = detail || 'Checking agent API vs Pages static registry…';
+    }
+  }
+}
+
+function renderPartnerStrip(health, summary) {
+  partnerHealth = health || [];
+  const online = summary?.online ?? partnerHealth.filter(p => p.status === 'active' || p.status === 'low_balance').length;
+  const total = summary?.total ?? partnerHealth.length;
+  const hs = document.getElementById('healthStatus');
+  if (hs) {
     if (total && online === total) {
       hs.textContent = 'All online';
       hs.className = 'status-badge status-online';
+    } else if (total) {
+      hs.textContent = `${online}/${total} ready`;
+      hs.className = 'status-badge status-pending';
     } else {
-      hs.textContent = `${online}/${total} online`;
+      hs.textContent = 'no data';
       hs.className = 'status-badge status-pending';
     }
-    document.getElementById('liquidityMix').textContent = summary.byLiquidity
+  }
+  const mix = document.getElementById('liquidityMix');
+  if (mix) {
+    mix.textContent = summary?.byLiquidity
       ? Object.entries(summary.byLiquidity).map(([k, v]) => `${k}:${v}`).join(' · ')
       : '—';
-    document.getElementById('lastProbe').textContent = data.lastProbe
-      ? new Date(data.lastProbe).toLocaleString()
-      : '—';
-    document.getElementById('bookCount').textContent = total;
-    document.getElementById('partnerStrip').innerHTML = partnerHealth.slice(0, 12).map(p => `
-      <div class="partner-chip">
-        <div class="chip-label">${p.label}</div>
-        <div class="chip-meta">
-          <span class="${liqClass(p.liquidityTier)}">${p.liquidityTier}</span>
-          <span class="status-badge ${p.status === 'active' ? 'status-online' : 'status-pending'}">${p.status}</span>
-        </div>
-      </div>`).join('');
-  } catch {
-    document.getElementById('healthStatus').textContent = 'unavailable';
   }
+  if (document.getElementById('bookCount')) document.getElementById('bookCount').textContent = total || '—';
+  if (document.getElementById('operatorCount')) document.getElementById('operatorCount').textContent = total || '—';
+  const strip = document.getElementById('partnerStrip');
+  if (strip) {
+    strip.innerHTML = partnerHealth.slice(0, 12).map(p => `
+      <div class="partner-chip">
+        <div class="chip-label">${p.label || p.id}</div>
+        <div class="chip-meta">
+          <span class="${liqClass(p.liquidityTier)}">${p.liquidityTier || 'unknown'}</span>
+          <span class="status-badge ${p.status === 'active' ? 'status-online' : 'status-pending'}">${p.status || '—'}</span>
+        </div>
+      </div>`).join('') || '<div class="empty-state">No partner rows.</div>';
+  }
+}
+
+/** Pages-safe: derive chips from public registry bakes (no agent). */
+async function loadRegistryFallback() {
   try {
-    const p = await fetch(API + '/api/platform').then(r => r.json());
-    if (p.bun) document.getElementById('bunVersion').textContent = p.bun;
-    if (p.operators != null) {
-      document.getElementById('operatorCount').textContent = p.operators;
-      document.getElementById('bookCount').textContent = p.operators;
+    const [bmRes, opsRes] = await Promise.all([
+      fetch('/registry/bookmakers.json'),
+      fetch('/registry/partners-ops.json'),
+    ]);
+    if (!bmRes.ok) throw new Error('bookmakers bake missing');
+    const bm = await bmRes.json();
+    const ops = opsRes.ok ? await opsRes.json() : null;
+    const outsBySlug = new Map();
+    for (const partner of ops?.partners || []) {
+      for (const out of partner.outs || []) {
+        const slug = (out.book?.slug || out.book?.id || '').replace(/^book-/, '').toLowerCase();
+        if (!slug) continue;
+        const cur = outsBySlug.get(slug) || { ready: 0, total: 0 };
+        cur.total += 1;
+        const st = String(out.status || '').toLowerCase();
+        if (st === 'ready' || st === 'active' || st === 'warmed') cur.ready += 1;
+        outsBySlug.set(slug, cur);
+      }
     }
-    if (p.rateLimit) document.getElementById('rateLimit').textContent = p.rateLimit;
-    if (p.rateCurrent != null) document.getElementById('rateCurrent').textContent = p.rateCurrent;
-    if (p.lastBackup) document.getElementById('lastBackup').textContent = new Date(p.lastBackup).toLocaleString();
-    if (p.dashboard) document.getElementById('dashVersion').textContent = p.dashboard;
-  } catch { /* ignore */ }
+    const health = [];
+    const byLiquidity = {};
+    const byStatus = {};
+    for (const [key, entry] of Object.entries(bm.bookmakers || {})) {
+      const id = entry.id || key;
+      const tier = String(entry.limits?.liquidityTier || 'unknown').toLowerCase();
+      const slug = String(entry.slug || id).toLowerCase();
+      const outs = outsBySlug.get(slug) || outsBySlug.get(String(id).toLowerCase()) || { ready: 0, total: 0 };
+      let status = 'deferred';
+      if (outs.total === 0) status = 'deferred';
+      else if (outs.ready === 0) status = 'offline';
+      else if (outs.ready < outs.total) status = 'degraded';
+      else status = 'active';
+      byLiquidity[tier] = (byLiquidity[tier] || 0) + 1;
+      byStatus[status] = (byStatus[status] || 0) + 1;
+      health.push({
+        id,
+        label: entry.label || id,
+        status,
+        liquidityTier: tier,
+        outsReady: outs.ready,
+        outsTotal: outs.total,
+      });
+    }
+    health.sort((a, b) => String(a.label).localeCompare(String(b.label)));
+    const online = health.filter(p => p.status === 'active' || p.status === 'low_balance').length;
+    renderPartnerStrip(health, {
+      online,
+      total: health.length,
+      byLiquidity,
+      byStatus,
+    });
+    const probe = document.getElementById('lastProbe');
+    if (probe) probe.textContent = ops?.generatedAt
+      ? new Date(ops.generatedAt).toLocaleString() + ' (ops bake)'
+      : (bm.generatedAt ? new Date(bm.generatedAt).toLocaleString() + ' (catalog)' : 'registry bake');
+    const dash = document.getElementById('dashVersion');
+    if (dash) dash.textContent = 'agent-odds v1.07 · static registry';
+    setPlaneMode('static', `Loaded ${health.length} books from /registry/bookmakers.json` +
+      (ops ? ' + partners-ops outs.' : ' (no partners-ops bake).'));
+    return true;
+  } catch (err) {
+    const hs = document.getElementById('healthStatus');
+    if (hs) {
+      hs.textContent = 'registry unavailable';
+      hs.className = 'status-badge status-offline';
+    }
+    setPlaneMode('static', 'Registry bakes unavailable on this host.');
+    return false;
+  }
+}
+
+// ── Health ───────────────────────────────────────────────────
+async function loadHealth(refresh = false) {
+  try {
+    const res = await fetch(API + '/api/partners/health' + (refresh ? '?refresh=1' : ''), {
+      signal: AbortSignal.timeout(2500),
+    });
+    if (!res.ok) throw new Error('health ' + res.status);
+    const data = await res.json();
+    if (!data.health) throw new Error('no health payload');
+    renderPartnerStrip(data.health, data.summary || {});
+    const probe = document.getElementById('lastProbe');
+    if (probe) {
+      probe.textContent = data.lastProbe
+        ? new Date(data.lastProbe).toLocaleString()
+        : (data.generatedAt ? new Date(data.generatedAt).toLocaleString() : '—');
+    }
+    setPlaneMode('live', 'Live agent · GET /api/partners/health ok.');
+  } catch {
+    await loadRegistryFallback();
+  }
+  if (agentLive) {
+    try {
+      const p = await fetch(API + '/api/platform', { signal: AbortSignal.timeout(2000) }).then(r => r.ok ? r.json() : null);
+      if (p) {
+        if (p.bun) document.getElementById('bunVersion').textContent = p.bun;
+        if (p.operators != null) {
+          document.getElementById('operatorCount').textContent = p.operators;
+          document.getElementById('bookCount').textContent = p.operators;
+        }
+        if (p.rateLimit) document.getElementById('rateLimit').textContent = p.rateLimit;
+        if (p.rateCurrent != null) document.getElementById('rateCurrent').textContent = p.rateCurrent;
+        if (p.lastBackup) document.getElementById('lastBackup').textContent = new Date(p.lastBackup).toLocaleString();
+        if (p.dashboard) document.getElementById('dashVersion').textContent = p.dashboard;
+      }
+    } catch { /* ignore */ }
+  } else {
+    const bunEl = document.getElementById('bunVersion');
+    if (bunEl && bunEl.textContent === '—') bunEl.textContent = 'n/a (static)';
+  }
 }
 
 // ── Options / login / backup ─────────────────────────────────
 async function loadOptions() {
   try {
-    const o = await fetch(API + '/api/odds/options').then(r => r.json());
+    const res = await fetch(API + '/api/odds/options', { signal: AbortSignal.timeout(2000) });
+    if (!res.ok) throw new Error('options');
+    const o = await res.json();
     populateSelect('filterHost', o.hosts || [], 'All hosts');
     populateSelect('filterSport', o.sports || [], 'All sports');
     populateSelect('filterLiquidity', o.liquidityTiers || ['high','medium','low'], 'All liquidity');
     populateSelect('filterStatus', o.partnerStatuses || [], 'All status');
-  } catch { /* ignore */ }
+  } catch {
+    // Pages static: hosts from registry if chips already loaded
+    const hosts = partnerHealth
+      .map(p => {
+        try {
+          return p.urls?.web ? new URL(p.urls.web).hostname.replace(/^www\./, '') : '';
+        } catch { return ''; }
+      })
+      .filter(Boolean);
+    if (hosts.length) populateSelect('filterHost', [...new Set(hosts)].sort(), 'All hosts');
+    populateSelect('filterLiquidity', ['high','medium','low','illiquid','unknown'], 'All liquidity');
+    populateSelect('filterStatus', ['active','low_balance','degraded','offline','deferred'], 'All status');
+  }
 }
 
 document.getElementById('applyEdgeFilter').addEventListener('click', loadEdges);
@@ -1042,6 +1194,11 @@ function addLiveMessage(text, kind) {
 }
 
 function ensureWebSocket() {
+  if (!agentLive) {
+    const status = document.getElementById('wsStatus');
+    if (status) status.textContent = '⚪ Static plane (no agent WS)';
+    return;
+  }
   if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
   const status = document.getElementById('wsStatus');
   try {
@@ -1268,20 +1425,31 @@ document.getElementById('betModal').addEventListener('click', e => {
 });
 document.getElementById('runBacktestBtn').addEventListener('click', runBacktestHandler);
 
-// Init
-loadOptions();
-loadHealth();
-loadEdges();
-ensureWebSocket();
+// Init — health first (detects live agent vs Pages registry)
+(async () => {
+  await loadHealth();
+  await loadOptions();
+  if (agentLive) {
+    loadEdges();
+    ensureWebSocket();
+  } else {
+    const edgesBox = document.getElementById('edgesTableContainer');
+    if (edgesBox) {
+      edgesBox.innerHTML = '<div class="empty-state">Live edges need the Bun agent. On Pages: partner chips load from registry. Locally: <code>bun run agent:odds-dashboard</code>.</div>';
+    }
+  }
+})();
+
 setInterval(() => {
+  if (currentTab === 'health') loadHealth(true);
+  if (!agentLive) return;
   if (currentTab === 'edges') loadEdges(true);
   else if (currentTab === 'events') loadEvents(true);
   else if (currentTab === 'odds') loadOdds(true);
-  else if (currentTab === 'health') loadHealth(true);
   else if (currentTab === 'live') loadBets();
 }, 30000);
 
-console.log('🧠 Bun Agent Dashboard v1.07 – Trading Desk (WS · mock bet · backtest · ML).');
+console.log('🧠 Bun Agent Dashboard v1.07 – partner portal plane (static registry + optional live agent).');
 </script>
 <script type="module" src="/portal/data.js"></script>
 <script type="module" src="/portal/topbar.js"></script>

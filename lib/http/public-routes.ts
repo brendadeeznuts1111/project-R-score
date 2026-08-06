@@ -291,7 +291,7 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     category: 'portal',
     kind: 'file-static',
     okStatuses: [200],
-    note: 'standalone agent odds dashboard · versioned local HTML snapshots',
+    note: 'partner-adjacent trading desk · static registry chips on Pages · live APIs via bun run agent:odds-dashboard',
   },
   {
     path: '/portal/partner/',
