@@ -162,6 +162,48 @@ Balance / per-play ledgers stay in `toc-ops-repo`.
 Authority: [`lib/telegram/ops-view-glossary.ts`](../../../lib/telegram/ops-view-glossary.ts) · bake `bun run glossary:portal`.
 Soft handshake + board Soft plays chrome: [`docs/design/soft-handshake.md`](../../design/soft-handshake.md) · `soft:accounting:check` in `partners:governance`. Book-type builders wait on Soft `byBookType`; **no new glossary IDs** — collapse via `OPS_VIEW_COLLAPSE_BACKLOG`.
 
+## Accounting delivery & DOD proof ingest (deep)
+
+Two directional surfaces, deliberately split — **figures go out**, **proof comes back in**. Glossary refs: `section.partnersAccounting` · `ops.dod.ingest` · `ops.dod.reconcile` · `page.dodReview` ([semantic vocabulary](../../../lib/portal/semantic-vocabulary.ts)).
+
+### Outbound — commission / finance figures → `liquidity/outs`
+
+Per-partner daily finance report posts figures + `Commission: {pct}%` to the partner forum's `liquidity/outs` thread (default resolution) — [`lib/telegram/daily-finance-report.ts`](../../../lib/telegram/daily-finance-report.ts) · `bun run telegram:ops -- daily-finance` (cron entry `runDailyFinanceReport`).
+
+```text
+aggregatePartnerFinance(db, days=7)          # ledger window per partner
+  → loadPartnerNotificationSettings          # config/partner-profiles/*.toml
+  → filter: telegram.preferences.dailyFinance (all-on default; false opts out)
+  → commissionPct = profile.settlement.commissionPct
+  → target: packageGroupForumMetadata(CODE).chatId + topicsThreadMap['liquidity/outs']
+  → sendTelegramBotMessage (HTML + "Acknowledge" inline keyboard)
+```
+
+- `targetFor` override: `publishFinanceReports({ targetFor })` swaps the per-partner chat/topic resolution (`null` skips).
+- Same thread also receives daily capacity reports (`daily-capacity-report.ts`) and event alerts (`event-alerts.ts:238`).
+- **Weekly settlement** (`partner-settlement-cron.ts` → `settlement-runner.ts`) computes commission **amount** into the ledger + profile TOML only — it never posts to chat; the daily report posts the **rate**.
+
+### Inbound — proof photos → `dod_submissions` → `/portal/dod/`
+
+Partner posts a deposit/withdraw/reconcile photo in the package `accounting` topic or the house `all-accounting` thread → [`lib/dod/telegram-accounting-ingest.ts`](../../../lib/dod/telegram-accounting-ingest.ts) (`ingestAccountingDodPhoto`).
+
+```text
+resolveAccountingForumTarget(message)        # package (forum Accounting topic) vs house (all-accounting)
+  → extractTelegramImageFileId + parseDodCaption
+  → resolveIngestAgentId (Telegram user → tree_nodes seat, /register bound)
+  → findDodByTelegramMessage (dedupe by chat+message)
+  → downloadTelegramFile → DODVerifier.process (lib/dod/verifier.ts)
+      validate magic → aHash visualHash → watermark → R2/local webp → HMAC sign
+      → OCR extractAmount → platform cross-check → auto-approve / flagged / pending
+      → reconcileDodAmounts(expectedStake, accountingAmount)   # >$0.01 delta → mismatch → flag
+      → INSERT dod_submissions (accounting_amount, expected_amount, reconciled, telegram_* ids)
+  → in-thread reply: "✅ DOD queued · <id> · Review: /portal/dod/"
+```
+
+- Routing: chat ∈ `package_group_registry` + `Accounting` topic → `{kind:'package', partnerCode}`; else house `all-accounting` chat + `Deposits|Withdrawals|Reconcile` thread → `{kind:'house'}` (house requires partner CODE in caption).
+- Review queue: `bun run ops:snapshot` bakes [`public/registry/dod-queue.json`](../../../public/registry/dod-queue.json) → [`/portal/dod/`](../../../public/portal/dod/) board (reconcile-mismatch banners, links back to the Telegram message + Partners desk).
+- Ledger link: `positions.last_reconciled` (`lib/operations/ops-summary.ts`) — book-position reconciliation timestamp, same reconcile concept as DOD amounts.
+
 ## Bot API surface (this repo)
 
 | Method | Module | Used for |
