@@ -12,7 +12,9 @@
  *  - Orphan globs match full relative paths (not bare * basename)
  *  - Mega allowlist: require map; warn top-level orphans by default
  *  - Verified stamp: warn if missing/stale on megas
- *  - --open / --open=N: Bun.openInEditor on first N issues (bunfig [debug].editor)
+ *  - --open / --open=N: Bun.openInEditor on first N issues
+ *    (optional --editor=code|vscode|cursor|subl; else bunfig [debug].editor)
+ *    Opens with line/column when known (Area map heading, token line, or 1:1)
  *
  * Usage:
  *   bun tools/lib-area-map-check.ts
@@ -23,7 +25,7 @@
  *   bun tools/lib-area-map-check.ts --strict-verified
  *   bun tools/lib-area-map-check.ts --domain=operations
  *   bun tools/lib-area-map-check.ts --open
- *   bun tools/lib-area-map-check.ts --open=3
+ *   bun tools/lib-area-map-check.ts --open=3 --editor=cursor
  *   bun run lib:area-maps:check
  */
 import { joinPath, resolvePath } from '../lib/path-bun';
@@ -93,6 +95,8 @@ function parseArgs(argv: string[]) {
   let domainFilter: string | null = null;
   /** 0 = do not open; N = open first N issues via Bun.openInEditor */
   let openCount = 0;
+  /** Override editor (vscode, code, cursor, subl, …) — else bunfig / $VISUAL / $EDITOR */
+  let editor: string | undefined;
   for (const a of argv) {
     if (a.startsWith('--max-glob=')) {
       const n = Number(a.slice('--max-glob='.length));
@@ -106,6 +110,10 @@ function parseArgs(argv: string[]) {
       const n = Number(a.slice('--open='.length));
       openCount = Number.isFinite(n) && n > 0 ? Math.floor(n) : 1;
     }
+    if (a.startsWith('--editor=')) {
+      const e = a.slice('--editor='.length).trim();
+      if (e) editor = e;
+    }
   }
   return {
     asJson,
@@ -118,6 +126,7 @@ function parseArgs(argv: string[]) {
     maxGlob,
     domainFilter,
     openCount,
+    editor,
   };
 }
 
@@ -460,8 +469,25 @@ function isWarnOnly(
   return false;
 }
 
-/** Resolve an issue to an absolute path for Bun.openInEditor (README and/or module). */
-export function issueToOpenPath(issue: Issue): string | null {
+export type OpenTarget = {
+  path: string;
+  line: number;
+  column: number;
+};
+
+/** 1-based line of first match for needle in file text, or null. */
+export function lineOfNeedle(text: string, needle: string): number | null {
+  if (!needle) return null;
+  const idx = text.indexOf(needle);
+  if (idx < 0) return null;
+  return text.slice(0, idx).split('\n').length;
+}
+
+/**
+ * Sync target without reading file (line defaults to 1). Prefer issueToOpenTargetAsync.
+ * @see https://bun.com/docs/runtime/utils#bun-openineditor
+ */
+export function issueToOpenTarget(issue: Issue): OpenTarget | null {
   const domainAbs = joinPath(LIB, issue.domain);
   const readme = joinPath(domainAbs, 'README.md');
   if (
@@ -471,21 +497,86 @@ export function issueToOpenPath(issue: Issue): string | null {
     issue.kind === 'empty-glob' ||
     issue.kind === 'broad-glob'
   ) {
-    return readme;
+    return { path: readme, line: 1, column: 1 };
   }
   if (issue.path) {
-    // Prefer the concrete file when present
-    const candidate = joinPath(domainAbs, issue.path);
-    return candidate;
+    return { path: joinPath(domainAbs, issue.path), line: 1, column: 1 };
   }
-  return readme;
+  return { path: readme, line: 1, column: 1 };
+}
+
+/** Resolve path + line/column from README text when available. */
+export async function issueToOpenTargetAsync(issue: Issue): Promise<OpenTarget | null> {
+  const domainAbs = joinPath(LIB, issue.domain);
+  const readme = joinPath(domainAbs, 'README.md');
+
+  if (
+    issue.kind === 'no-area-map' ||
+    issue.kind === 'missing-verified' ||
+    issue.kind === 'stale-verified' ||
+    issue.kind === 'empty-glob' ||
+    issue.kind === 'broad-glob'
+  ) {
+    let line = 1;
+    let column = 1;
+    if (await Bun.file(readme).exists()) {
+      const text = await Bun.file(readme).text();
+      if (issue.kind === 'missing-verified' || issue.kind === 'stale-verified') {
+        line = lineOfNeedle(text, 'area-map-verified') ?? lineOfNeedle(text, '# ') ?? 1;
+      } else if (issue.kind === 'empty-glob' || issue.kind === 'broad-glob') {
+        line =
+          (issue.path ? lineOfNeedle(text, issue.path) : null) ??
+          lineOfNeedle(text, '## Area map') ??
+          lineOfNeedle(text, '## Ownership map') ??
+          1;
+      } else {
+        line = lineOfNeedle(text, '## Area map') ?? lineOfNeedle(text, '## Ownership map') ?? 1;
+      }
+      // column: first non-space on that line is 1 for map headings
+      column = 1;
+    }
+    return { path: readme, line, column };
+  }
+
+  if (issue.path) {
+    const modulePath = joinPath(domainAbs, issue.path);
+    // Orphan: open the module; also jump README to the Area map table for context when path is only a token
+    if (issue.kind === 'orphan-top-level' || issue.kind === 'missing-path') {
+      if (await Bun.file(modulePath).exists()) {
+        return { path: modulePath, line: 1, column: 1 };
+      }
+      // missing module — open README at token / Area map
+      if (await Bun.file(readme).exists()) {
+        const text = await Bun.file(readme).text();
+        const line =
+          lineOfNeedle(text, issue.path) ??
+          lineOfNeedle(text, '## Area map') ??
+          lineOfNeedle(text, '## Ownership map') ??
+          1;
+        return { path: readme, line, column: 1 };
+      }
+    }
+    return { path: modulePath, line: 1, column: 1 };
+  }
+
+  return { path: readme, line: 1, column: 1 };
+}
+
+/** @deprecated use issueToOpenTarget / issueToOpenTargetAsync */
+export function issueToOpenPath(issue: Issue): string | null {
+  return issueToOpenTarget(issue)?.path ?? null;
 }
 
 /**
- * Open first N issues in the editor (repo bunfig [debug].editor, else $VISUAL/$EDITOR).
+ * Open first N issues in the editor.
+ * Editor: opts.editor → bunfig [debug].editor → $VISUAL → $EDITOR
  * @see https://bun.com/docs/runtime/utils#bun-openineditor
  */
-function openIssuesInEditor(issues: Issue[], count: number): void {
+async function openIssuesInEditor(
+  issues: Issue[],
+  count: number,
+  editor?: string
+): Promise<void> {
   if (count <= 0 || issues.length === 0) return;
   if (typeof Bun.openInEditor !== 'function') {
     console.error('❌ Bun.openInEditor unavailable on this runtime');
@@ -496,12 +587,19 @@ function openIssuesInEditor(issues: Issue[], count: number): void {
   let opened = 0;
   for (let i = 0; i < issues.length && opened < n; i++) {
     const issue = issues[i]!;
-    const abs = issueToOpenPath(issue);
-    if (!abs || seen.has(abs)) continue;
-    seen.add(abs);
-    const rel = abs.startsWith(REPO) ? abs.slice(REPO.length + 1) : abs;
-    console.info(`✏️  open ${rel}  [${issue.kind}] ${issue.domain}`);
-    Bun.openInEditor(abs);
+    const target = await issueToOpenTargetAsync(issue);
+    if (!target || seen.has(target.path)) continue;
+    seen.add(target.path);
+    const rel = target.path.startsWith(REPO) ? target.path.slice(REPO.length + 1) : target.path;
+    console.info(
+      `✏️  open ${rel}:${target.line}:${target.column}  [${issue.kind}] ${issue.domain}`
+    );
+    const opts: { line: number; column: number; editor?: string } = {
+      line: target.line,
+      column: target.column,
+    };
+    if (editor) opts.editor = editor;
+    Bun.openInEditor(target.path, opts);
     opened++;
   }
 }
@@ -585,7 +683,7 @@ async function main(): Promise<void> {
   if (opts.openCount > 0 && allIssues.length > 0) {
     // Prefer fails first, then warnings
     const ordered = [...failing, ...warnings];
-    openIssuesInEditor(ordered, opts.openCount);
+    await openIssuesInEditor(ordered, opts.openCount, opts.editor);
   }
 
   if (failing.length > 0) process.exitCode = 1;
