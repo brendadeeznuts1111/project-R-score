@@ -1,12 +1,13 @@
 import { describe, expect, test } from 'bun:test';
 import { runBacktest } from '../lib/operator-research/backtest.ts';
 import { defaultAlertRules } from '../lib/operator-research/edge-engine.ts';
+import { asRuleId } from '../lib/types/branded.ts';
 
 describe('backtest', () => {
   test('returns metrics for known rule with seed', () => {
     const rules = defaultAlertRules();
     const out = runBacktest(rules, {
-      ruleId: 'arbitrage',
+      ruleId: asRuleId('arbitrage'),
       startDate: '2026-07-01',
       endDate: '2026-07-14',
       seed: 42,
@@ -24,14 +25,14 @@ describe('backtest', () => {
     const rules = defaultAlertRules();
     expect(
       runBacktest(rules, {
-        ruleId: 'arbitrage',
+        ruleId: asRuleId('arbitrage'),
         startDate: 'nope',
         endDate: '2026-07-01',
       }).ok,
     ).toBe(false);
     expect(
       runBacktest(rules, {
-        ruleId: 'missing-rule',
+        ruleId: asRuleId('missing-rule'),
         startDate: '2026-07-01',
         endDate: '2026-07-10',
       }).ok,
@@ -41,13 +42,13 @@ describe('backtest', () => {
   test('is deterministic with seed', () => {
     const rules = defaultAlertRules();
     const a = runBacktest(rules, {
-      ruleId: 'value-bet',
+      ruleId: asRuleId('value-bet'),
       startDate: '2026-06-01',
       endDate: '2026-06-20',
       seed: 7,
     });
     const b = runBacktest(rules, {
-      ruleId: 'value-bet',
+      ruleId: asRuleId('value-bet'),
       startDate: '2026-06-01',
       endDate: '2026-06-20',
       seed: 7,

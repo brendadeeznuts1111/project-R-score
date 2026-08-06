@@ -615,15 +615,15 @@ const server = Bun.serve({
         };
         const edgeIdRaw = body.edgeId?.trim() ?? '';
         const edgeId = tryEdgeId(edgeIdRaw);
-        if (!edgeIdRaw) {
-          return json({ ok: false, error: 'edgeId required', mock: true }, 400);
+        if (!edgeId) {
+          return json({ ok: false, error: 'edgeId required or invalid', mock: true }, 400);
         }
         const edges = await getEdges();
         const edge =
-          edges.find(e => String(e.id) === edgeIdRaw) ||
-          (edgeId ? edges.find(e => e.id === edgeId) : undefined);
+          edges.find(e => e.id === edgeId) ||
+          edges.find(e => String(e.id) === edgeIdRaw);
         const result = placeMockBet(edge, {
-          edgeId: edgeId ?? edgeIdRaw,
+          edgeId,
           stake: Number(body.stake),
           bookmaker: String(body.bookmaker ?? ''),
         });
@@ -677,8 +677,12 @@ const server = Bun.serve({
             400,
           );
         }
+        const ruleId = tryRuleId(String(body.ruleId));
+        if (!ruleId) {
+          return json({ ok: false, error: 'invalid ruleId', mock: true }, 400);
+        }
         const out = runBacktest(ALERT_RULES, {
-          ruleId: String(body.ruleId),
+          ruleId,
           startDate: String(body.startDate),
           endDate: String(body.endDate),
           seed: body.seed,

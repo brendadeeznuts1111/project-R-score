@@ -8,14 +8,14 @@ import type { AlertRule } from './edge-engine.ts';
 import type { RuleId } from '../types/branded.ts';
 
 export type BacktestRequest = {
-  ruleId: string;
+  ruleId: RuleId;
   startDate: string; // YYYY-MM-DD
   endDate: string;
   seed?: number;
 };
 
 export type BacktestResult = {
-  ruleId: string;
+  ruleId: RuleId;
   ruleName: string;
   totalBets: number;
   wins: number;
@@ -64,7 +64,7 @@ export function runBacktest(
     return { ok: false, error: 'endDate must be on or after startDate', status: 400 };
   }
 
-  const rule = rules.find(r => String(r.id) === req.ruleId || r.id === (req.ruleId as RuleId));
+  const rule = rules.find(r => r.id === req.ruleId || String(r.id) === String(req.ruleId));
   if (!rule) {
     return { ok: false, error: 'rule not found', status: 404 };
   }
@@ -120,7 +120,7 @@ export function runBacktest(
   return {
     ok: true,
     result: {
-      ruleId: String(rule.id),
+      ruleId: rule.id,
       ruleName: rule.name,
       totalBets: simulated,
       wins,

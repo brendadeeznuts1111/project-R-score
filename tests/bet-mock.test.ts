@@ -38,11 +38,15 @@ describe('bet-mock', () => {
   beforeEach(() => resetMockBetLedger());
 
   test('rejects missing edge and bad stake', () => {
-    expect(placeMockBet(undefined, { edgeId: 'x', stake: 10, bookmaker: 'a' }).status).toBe(
-      404,
-    );
     expect(
-      placeMockBet(sampleEdge(), { edgeId: '1-arb', stake: 0, bookmaker: 'softbook' }).status,
+      placeMockBet(undefined, { edgeId: asEdgeId('x'), stake: 10, bookmaker: 'a' }).status,
+    ).toBe(404);
+    expect(
+      placeMockBet(sampleEdge(), {
+        edgeId: asEdgeId('1-arb'),
+        stake: 0,
+        bookmaker: 'softbook',
+      }).status,
     ).toBe(400);
   });
 

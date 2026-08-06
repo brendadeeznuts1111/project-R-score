@@ -6,18 +6,18 @@
  */
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 
-import type { EdgeId } from '../types/branded.ts';
+import type { EdgeId, EventId } from '../types/branded.ts';
 import type { EdgeOpportunity } from './edge-engine.ts';
 
 export type MockBetRequest = {
-  edgeId: EdgeId | string;
+  edgeId: EdgeId;
   stake: number;
   bookmaker: string;
 };
 
 export type MockBetOrder = {
   orderId: string; // brand-ok — mock order id (not a domain brand yet)
-  edgeId: string; // brand-ok — wire echo of EdgeId
+  edgeId: EdgeId;
   bookmaker: string;
   stake: number;
   success: boolean;
@@ -25,7 +25,7 @@ export type MockBetOrder = {
   mock: true;
   createdAt: string;
   edge_type?: string;
-  event_id?: string;
+  event_id?: EventId;
 };
 
 const LEDGER: MockBetOrder[] = [];
@@ -89,7 +89,7 @@ export function placeMockBet(
   const orderId = `ord-${Bun.randomUUIDv7().slice(0, 12)}`;
   const order: MockBetOrder = {
     orderId: success ? orderId : '',
-    edgeId: String(edge.id),
+    edgeId: edge.id,
     bookmaker: req.bookmaker,
     stake,
     success,
@@ -99,7 +99,7 @@ export function placeMockBet(
     mock: true,
     createdAt: new Date(opts?.now?.() ?? Date.now()).toISOString(),
     edge_type: edge.type,
-    event_id: String(edge.event_id),
+    event_id: edge.event_id,
   };
   LEDGER.unshift(order);
   if (LEDGER.length > MAX_LEDGER) LEDGER.length = MAX_LEDGER;
