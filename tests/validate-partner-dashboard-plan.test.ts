@@ -239,7 +239,7 @@ describe('partner dashboard semantic plan', () => {
       'implemented portal consumer must load only the canonical dashboard artifact'
     );
     expect(result.errors).toContain(
-      'portal transition contract must require canonical primary and explicit query-only legacy compare'
+      'implemented portal consumer must retire transition policy and remove legacy comparison'
     );
   });
 
@@ -255,13 +255,17 @@ describe('partner dashboard semantic plan', () => {
         plan.surfaces.portal.consumer_contract.transition_input_mode = 'automatic-fallback';
       }],
       ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.canonical_primary_input_ref = '/registry/wrong.json';
+        plan.surfaces.portal.consumer_contract.canonical_input_ref = '/registry/wrong.json';
       }],
       ['portal transition contract', plan => {
         plan.surfaces.portal.consumer_contract.canonical_failure_policy = 'fallback';
       }],
       ['portal transition contract', plan => {
         plan.surfaces.portal.consumer_contract.automatic_legacy_fallback = true;
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.implementation_status =
+          'implemented';
       }],
       ['portal transition contract', plan => {
         plan.surfaces.portal.consumer_contract.legacy_comparison.activation = 'hash';
@@ -312,6 +316,8 @@ describe('partner dashboard semantic plan', () => {
       '/registry/partners-dashboard.json',
     ];
     plan.surfaces.portal.consumer_contract.optional_input_refs = [];
+    plan.surfaces.portal.consumer_contract.transition_implementation_status = 'retired';
+    delete plan.surfaces.portal.consumer_contract.legacy_comparison;
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors).not.toContain(
@@ -321,6 +327,11 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors).toContain(
       'implemented portal consumer requires the canonical dashboard artifact to exist'
     );
+    expect(result.summary).toMatchObject({
+      portalInputs: 1,
+      portalRequiredInputs: 1,
+      portalOptionalInputs: 0,
+    });
   });
 
   it('turns the active legacy-ops cutoff into a hard removal gate', async () => {

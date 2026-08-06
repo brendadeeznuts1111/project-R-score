@@ -37,9 +37,9 @@ export const PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN = Object.freeze({
 });
 
 export const PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT = Object.freeze({
-  schema: PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
+  artifactSchema: PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
   entrypointPath: PARTNER_DASHBOARD_ENTRYPOINT,
-  current: Object.freeze({
+  currentCompatibility: Object.freeze({
     implementationStatus: 'current-compatibility',
     inputMode: 'legacy-multi-artifact',
     requiredInputRefs: PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
@@ -48,15 +48,17 @@ export const PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT = Object.freeze({
   transition: Object.freeze({
     implementationStatus: 'planned',
     inputMode: 'canonical-single-artifact-with-explicit-legacy-comparison',
-    canonicalPrimaryInputRef: PARTNER_DASHBOARD_ARTIFACT_REF,
+    canonicalInputRef: PARTNER_DASHBOARD_ARTIFACT_REF,
     canonicalFailurePolicy: 'error-never-fallback',
     automaticLegacyFallback: false,
     legacyComparison: PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN,
   }),
   target: Object.freeze({
     inputMode: 'canonical-single-artifact',
-    primaryInputRef: PARTNER_DASHBOARD_ARTIFACT_REF,
+    canonicalInputRef: PARTNER_DASHBOARD_ARTIFACT_REF,
     retirementCondition: 'portal-loads-only-target-artifact',
+    transitionPolicyStatus: 'retired',
+    legacyComparisonPolicy: 'removed',
   }),
 });
 

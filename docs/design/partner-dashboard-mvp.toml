@@ -73,7 +73,7 @@ target_input_mode = "canonical-single-artifact"
 retirement_condition = "portal-loads-only-target-artifact"
 transition_implementation_status = "planned"
 transition_input_mode = "canonical-single-artifact-with-explicit-legacy-comparison"
-canonical_primary_input_ref = "/registry/partners-dashboard.json"
+canonical_input_ref = "/registry/partners-dashboard.json"
 canonical_failure_policy = "error-never-fallback"
 automatic_legacy_fallback = false
 

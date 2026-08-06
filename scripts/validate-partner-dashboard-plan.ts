@@ -535,44 +535,47 @@ export async function validatePartnerDashboardPlan(
       );
     }
     const transitionContract = PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.transition;
+    const targetContract = PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.target;
+    const currentCompatibilityContract =
+      PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.currentCompatibility;
     const legacyComparison = portalConsumerContract.legacy_comparison as AnyRecord | undefined;
     const legacyComparisonRequired = (legacyComparison?.required_input_refs ?? []).map(String);
     const legacyComparisonOptional = (legacyComparison?.optional_input_refs ?? []).map(String);
     const legacyComparisonInputs = [...legacyComparisonRequired, ...legacyComparisonOptional];
     if (
-      portalConsumerContract.transition_implementation_status !==
+      consumerStatus === currentCompatibilityContract.implementationStatus &&
+      (portalConsumerContract.transition_implementation_status !==
         transitionContract.implementationStatus ||
-      portalConsumerContract.transition_input_mode !== transitionContract.inputMode ||
-      portalConsumerContract.canonical_primary_input_ref !==
-        transitionContract.canonicalPrimaryInputRef ||
-      portalConsumerContract.canonical_failure_policy !==
-        transitionContract.canonicalFailurePolicy ||
-      portalConsumerContract.automatic_legacy_fallback !==
-        transitionContract.automaticLegacyFallback ||
-      legacyComparison?.implementation_status !==
-        transitionContract.legacyComparison.implementationStatus ||
-      legacyComparison?.activation !== transitionContract.legacyComparison.activation ||
-      legacyComparison?.search_param !== transitionContract.legacyComparison.searchParam ||
-      legacyComparison?.search_value !== transitionContract.legacyComparison.searchValue ||
-      legacyComparison?.load_order !== transitionContract.legacyComparison.loadOrder ||
-      legacyComparison?.result_role !== transitionContract.legacyComparison.resultRole ||
-      legacyComparison?.failure_policy !== transitionContract.legacyComparison.failurePolicy ||
-      !sameMembers(
-        legacyComparisonRequired,
-        transitionContract.legacyComparison.requiredInputRefs
-      ) ||
-      !sameMembers(
-        legacyComparisonOptional,
-        transitionContract.legacyComparison.optionalInputRefs
-      ) ||
-      !unique(legacyComparisonInputs) ||
-      legacyComparisonInputs.some(inputRef => !/^\/registry\/[^/].*\.json$/.test(inputRef))
+        portalConsumerContract.transition_input_mode !== transitionContract.inputMode ||
+        portalConsumerContract.canonical_input_ref !== transitionContract.canonicalInputRef ||
+        portalConsumerContract.canonical_failure_policy !==
+          transitionContract.canonicalFailurePolicy ||
+        portalConsumerContract.automatic_legacy_fallback !==
+          transitionContract.automaticLegacyFallback ||
+        legacyComparison?.implementation_status !==
+          transitionContract.legacyComparison.implementationStatus ||
+        legacyComparison?.activation !== transitionContract.legacyComparison.activation ||
+        legacyComparison?.search_param !== transitionContract.legacyComparison.searchParam ||
+        legacyComparison?.search_value !== transitionContract.legacyComparison.searchValue ||
+        legacyComparison?.load_order !== transitionContract.legacyComparison.loadOrder ||
+        legacyComparison?.result_role !== transitionContract.legacyComparison.resultRole ||
+        legacyComparison?.failure_policy !== transitionContract.legacyComparison.failurePolicy ||
+        !sameMembers(
+          legacyComparisonRequired,
+          transitionContract.legacyComparison.requiredInputRefs
+        ) ||
+        !sameMembers(
+          legacyComparisonOptional,
+          transitionContract.legacyComparison.optionalInputRefs
+        ) ||
+        !unique(legacyComparisonInputs) ||
+        legacyComparisonInputs.some(inputRef => !/^\/registry\/[^/].*\.json$/.test(inputRef)))
     ) {
       errors.push(
-        'portal transition contract must require canonical primary and explicit query-only legacy compare'
+        'portal transition contract must require canonical input and explicit query-only legacy comparison'
       );
     }
-    if (consumerStatus === 'current-compatibility') {
+    if (consumerStatus === currentCompatibilityContract.implementationStatus) {
       if (
         !sameMembers(observedInputs.required, requiredInputs) ||
         !sameMembers(observedInputs.optional, optionalInputs)
@@ -587,7 +590,7 @@ export async function validatePartnerDashboardPlan(
       ) {
         errors.push('portal current input refs must match the package consumer contract');
       }
-      if (inputMode !== 'legacy-multi-artifact') {
+      if (inputMode !== currentCompatibilityContract.inputMode) {
         errors.push('current-compatibility portal consumer must use legacy-multi-artifact mode');
       }
       if (observedCombined.includes(dashboardArtifactRef)) {
@@ -604,6 +607,15 @@ export async function validatePartnerDashboardPlan(
       if (!(await Bun.file(dashboardArtifactPath).exists())) {
         errors.push(
           'implemented portal consumer requires the canonical dashboard artifact to exist'
+        );
+      }
+      if (
+        portalConsumerContract.transition_implementation_status !==
+          targetContract.transitionPolicyStatus ||
+        legacyComparison !== undefined
+      ) {
+        errors.push(
+          'implemented portal consumer must retire transition policy and remove legacy comparison'
         );
       }
     } else {
@@ -1143,12 +1155,11 @@ export async function validatePartnerDashboardPlan(
       regions: regions.length,
       sectionMounts: sectionMounts.length,
       hashRoutes: hashRoutes.length,
-      portalInputs: (() => {
-        const inputs = portalRegistryInputs(boardHtml);
-        return inputs.required.length + inputs.optional.length;
-      })(),
-      portalRequiredInputs: portalRegistryInputs(boardHtml).required.length,
-      portalOptionalInputs: portalRegistryInputs(boardHtml).optional.length,
+      portalInputs:
+        (portalConsumerContract?.required_input_refs ?? []).length +
+        (portalConsumerContract?.optional_input_refs ?? []).length,
+      portalRequiredInputs: (portalConsumerContract?.required_input_refs ?? []).length,
+      portalOptionalInputs: (portalConsumerContract?.optional_input_refs ?? []).length,
       presentationStates: states.length,
       canonicalProfiles: canonicalProfileCount,
     },

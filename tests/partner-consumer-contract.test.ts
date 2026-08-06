@@ -14,17 +14,25 @@ describe('partner dashboard consumer contract', () => {
     expect(PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS).toEqual([
       '/registry/soft-accounting-export.json',
     ]);
+    expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.currentCompatibility).toEqual({
+      implementationStatus: 'current-compatibility',
+      inputMode: 'legacy-multi-artifact',
+      requiredInputRefs: PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
+      optionalInputRefs: PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
+    });
     expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.transition).toMatchObject({
       implementationStatus: 'planned',
       inputMode: 'canonical-single-artifact-with-explicit-legacy-comparison',
-      canonicalPrimaryInputRef: PARTNER_DASHBOARD_ARTIFACT_REF,
+      canonicalInputRef: PARTNER_DASHBOARD_ARTIFACT_REF,
       canonicalFailurePolicy: 'error-never-fallback',
       automaticLegacyFallback: false,
     });
     expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.target).toEqual({
       inputMode: 'canonical-single-artifact',
-      primaryInputRef: '/registry/partners-dashboard.json',
+      canonicalInputRef: '/registry/partners-dashboard.json',
       retirementCondition: 'portal-loads-only-target-artifact',
+      transitionPolicyStatus: 'retired',
+      legacyComparisonPolicy: 'removed',
     });
     const legacyRefs = [
       ...PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
@@ -56,6 +64,9 @@ describe('partner dashboard consumer contract', () => {
     expect(isLegacyPartnerComparisonRequested('/portal/partners/?compare=')).toBe(false);
     expect(
       isLegacyPartnerComparisonRequested('/portal/partners/?compare=legacy&compare=other')
+    ).toBe(false);
+    expect(
+      isLegacyPartnerComparisonRequested('/portal/partners/?compare=legacy&compare=legacy')
     ).toBe(false);
     expect(isLegacyPartnerComparisonRequested('/portal/partners/')).toBe(false);
   });
