@@ -13,22 +13,28 @@
  *      (or use `BUN_TYPES_TIP` / existing `~/bun/packages/bun-types` with `--prefer-local`)
  *   2. Inventory pin (catalog bun-types) vs tip with the same deep parser as v3
  *   3. Write report JSON + MD; optional `--strict` fails on pin-only or excess tip-only
+ *   4. **Wire changelog** (Phase 5): full Added/Removed/Changed under `.cache/bun-types-changelog/`
  *
  * Usage:
- *   bun tools/bun-types-tip-diff.ts                 # fetch + report (exit 0)
- *   bun tools/bun-types-tip-diff.ts --prefer-local  # skip network if local tip exists
- *   bun tools/bun-types-tip-diff.ts --no-fetch      # only BUN_TYPES_TIP / local tip
- *   bun tools/bun-types-tip-diff.ts --strict        # fail if pin-only or tip-only > max
- *   bun tools/bun-types-tip-diff.ts --max-tip-only=50
+ *   bun tools/bun-types-tip-diff.ts                 # fetch + report + changelog
+ *   bun tools/bun-types-tip-diff.ts --prefer-local
+ *   bun tools/bun-types-tip-diff.ts --no-fetch
+ *   bun tools/bun-types-tip-diff.ts --strict
+ *   bun tools/bun-types-tip-diff.ts --no-changelog  # skip Phase 5 narrative
  *   bun tools/bun-types-tip-diff.ts --json
- *   bun tools/bun-types-tip-diff.ts --write          # always writes under tools/
  *
  * Scripts:
  *   bun run bun:types-inventory:tip-diff
  *   bun run bun:types-inventory:tip-diff:strict
+ *   bun run bun:types-report                        # tip-diff + usage + changelog
  */
 import { logTable } from '../lib/console-depth.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
+import {
+  diffInventories,
+  renderChangelogMd,
+  type ChangelogResult,
+} from './bun-types-changelog.ts';
 import {
   INVENTORY_DTS_FILES,
   computeTipDiff,
@@ -36,28 +42,34 @@ import {
   resolveBunTypesRoot,
   type TipDiff,
 } from './bun-types-inventory.ts';
+import { BUN_TYPES_TIP_CACHE, fetchUpstreamBunTypes } from './bun-types-tip-fetch.ts';
 
 const TOOLS_DIR = resolvePath(import.meta.dir);
 const REPO_ROOT = resolvePath(TOOLS_DIR, '..');
-const CACHE_ROOT = joinPath(REPO_ROOT, '.cache', 'bun-types-tip');
+const CACHE_ROOT = BUN_TYPES_TIP_CACHE;
 /** Volatile reports live under .cache (gitignored) — not committed like inventory SSOT */
 const OUT_DIR = joinPath(REPO_ROOT, '.cache', 'bun-types-tip-diff');
 const OUT_JSON = joinPath(OUT_DIR, 'report.json');
 const OUT_MD = joinPath(OUT_DIR, 'report.md');
-const UPSTREAM = 'https://github.com/oven-sh/bun.git';
+const CHANGELOG_DIR = joinPath(REPO_ROOT, '.cache', 'bun-types-changelog');
+const CHANGELOG_JSON = joinPath(CHANGELOG_DIR, 'changelog.json');
+const CHANGELOG_MD = joinPath(CHANGELOG_DIR, 'CHANGELOG.md');
 
 type Report = {
-  schema: 'factorywager/bun-types-tip-diff/v1';
+  schema: 'factorywager/bun-types-tip-diff/v2';
   generated: string;
   runtime: { bunVersion: string; bunRevision: string };
   pin: { package: string; version: string; root: string };
   tip: { root: string; revision: string | null; source: 'fetch' | 'env' | 'local-clone' };
   fetch: { performed: boolean; cacheRoot: string };
   diff: TipDiff;
+  /** Phase 5 full member changelog (null when --no-changelog) */
+  changelog: ChangelogResult | null;
   policy: {
     strict: boolean;
     maxTipOnly: number;
     failOnPinOnly: boolean;
+    changelog: boolean;
   };
   verdict: 'ok' | 'warn' | 'fail';
   reasons: string[];
@@ -96,72 +108,8 @@ async function gitText(cwd: string, args: string[]): Promise<{ ok: boolean; text
   return { ok: code === 0, text: (text || err).trim() };
 }
 
-/**
- * Sparse-fetch oven-sh/bun packages/bun-types into .cache/bun-types-tip.
- */
-export async function fetchUpstreamBunTypes(
-  cacheRoot: string = CACHE_ROOT,
-): Promise<{ root: string; revision: string }> {
-  const typesPath = joinPath(cacheRoot, 'packages', 'bun-types');
-
-  if (!(await dirHasGit(cacheRoot))) {
-    // fresh sparse clone
-    await Bun.spawn(['mkdir', '-p', resolvePath(cacheRoot, '..')]).exited;
-    // remove partial dir if any
-    await Bun.spawn(['rm', '-rf', cacheRoot]).exited;
-    console.info(`tip-diff: cloning ${UPSTREAM} (sparse packages/bun-types) → ${cacheRoot}`);
-    const clone = Bun.spawn(
-      [
-        'git',
-        'clone',
-        '--depth',
-        '1',
-        '--filter=blob:none',
-        '--sparse',
-        UPSTREAM,
-        cacheRoot,
-      ],
-      { stdout: 'inherit', stderr: 'inherit' },
-    );
-    if ((await clone.exited) !== 0) {
-      throw new Error('git clone oven-sh/bun failed (network or git required)');
-    }
-    const sparse = Bun.spawn(['git', '-C', cacheRoot, 'sparse-checkout', 'set', 'packages/bun-types'], {
-      stdout: 'inherit',
-      stderr: 'inherit',
-    });
-    if ((await sparse.exited) !== 0) {
-      throw new Error('git sparse-checkout set packages/bun-types failed');
-    }
-  } else {
-    console.info(`tip-diff: updating ${cacheRoot}`);
-    const fetch = Bun.spawn(
-      ['git', '-C', cacheRoot, 'fetch', '--depth', '1', 'origin', 'main'],
-      { stdout: 'inherit', stderr: 'inherit' },
-    );
-    if ((await fetch.exited) !== 0) {
-      throw new Error('git fetch origin main failed');
-    }
-    const reset = Bun.spawn(['git', '-C', cacheRoot, 'reset', '--hard', 'origin/main'], {
-      stdout: 'inherit',
-      stderr: 'inherit',
-    });
-    if ((await reset.exited) !== 0) {
-      throw new Error('git reset --hard origin/main failed');
-    }
-    // ensure sparse includes types (idempotent)
-    await Bun.spawn(['git', '-C', cacheRoot, 'sparse-checkout', 'set', 'packages/bun-types'], {
-      stdout: 'pipe',
-      stderr: 'pipe',
-    }).exited;
-  }
-
-  if (!(await pathExists(joinPath(typesPath, 'bun.d.ts')))) {
-    throw new Error(`tip-diff: missing ${typesPath}/bun.d.ts after fetch`);
-  }
-  const rev = await gitText(cacheRoot, ['rev-parse', '--short', 'HEAD']);
-  return { root: typesPath, revision: rev.ok ? rev.text : 'unknown' };
-}
+/** Re-export for callers that imported fetch from tip-diff. */
+export { fetchUpstreamBunTypes } from './bun-types-tip-fetch.ts';
 
 async function resolveTipSource(opts: {
   noFetch: boolean;
@@ -256,9 +204,21 @@ function renderReportMd(report: Report): string {
   }
   lines.push('## Commands');
   lines.push('');
+  if (report.changelog) {
+    const c = report.changelog.summary;
+    lines.push('## Changelog (wired Phase 5)');
+    lines.push('');
+    lines.push(
+      `+${c.added} −${c.removed} ~${c.changed} · full narrative: \`.cache/bun-types-changelog/CHANGELOG.md\``,
+    );
+    lines.push('');
+  }
+  lines.push('## Commands');
+  lines.push('');
   lines.push('```bash');
   lines.push('bun run bun:types-inventory:tip-diff');
   lines.push('bun run bun:types-inventory:tip-diff:strict');
+  lines.push('bun run bun:types-report');
   lines.push('BUN_TYPES_TIP=/path/to/bun-types bun tools/bun-types-tip-diff.ts --no-fetch');
   lines.push('```');
   lines.push('');
@@ -279,10 +239,37 @@ function parseCli(argv: string[]) {
     strict: argv.includes('--strict'),
     noFetch: argv.includes('--no-fetch'),
     preferLocal: argv.includes('--prefer-local'),
+    noChangelog: argv.includes('--no-changelog'),
     maxTipOnly,
     failOnPinOnly: !argv.includes('--allow-pin-only'),
     help: argv.includes('--help') || argv.includes('-h'),
   };
+}
+
+async function loadMembersFromTypesRoot(
+  typesRoot: string,
+  opts: { deprecatedFile?: (f: string) => boolean } = {},
+) {
+  const raw = [];
+  for (const f of INVENTORY_DTS_FILES) {
+    const p = joinPath(typesRoot, f);
+    if (!(await Bun.file(p).exists())) continue;
+    raw.push(
+      ...parseDtsFile(await Bun.file(p).text(), f, {
+        shallow: false,
+        interfaces: true,
+        properties: true,
+        typeAliases: true,
+        deprecatedFile: opts.deprecatedFile?.(f) ?? f === 'deprecated.d.ts',
+      }),
+    );
+  }
+  const byKey = new Map<string, (typeof raw)[0]>();
+  for (const m of raw) {
+    const k = `${m.module}|${m.setting}|${m.kind}`;
+    if (!byKey.has(k)) byKey.set(k, m);
+  }
+  return [...byKey.values()];
 }
 
 async function main(): Promise<void> {
@@ -295,8 +282,9 @@ async function main(): Promise<void> {
   --strict           Exit 1 on pin-only (default) or tip-only > --max-tip-only
   --max-tip-only=N   Strict threshold for tip-only count (default 200)
   --allow-pin-only   Do not fail on pin-only in --strict
+  --no-changelog     Skip Phase 5 full Added/Removed/Changed write
   --json             Print report JSON
-  --no-write         Do not write tools/bun-types-tip-diff.{json,md}
+  --no-write         Do not write .cache reports
   -h, --help
 `);
     return;
@@ -308,28 +296,10 @@ async function main(): Promise<void> {
     preferLocal: args.preferLocal,
   });
 
-  // Build pin member list via same deep parser as inventory
-  const pinRaw = [];
-  for (const f of INVENTORY_DTS_FILES) {
-    const p = joinPath(pin.root, f);
-    if (!(await Bun.file(p).exists())) continue;
-    pinRaw.push(
-      ...parseDtsFile(await Bun.file(p).text(), f, {
-        shallow: false,
-        interfaces: true,
-        properties: true,
-        typeAliases: true,
-        deprecatedFile: f === 'deprecated.d.ts',
-      }),
-    );
-  }
-  // dedupe like inventory
-  const byKey = new Map<string, (typeof pinRaw)[0]>();
-  for (const m of pinRaw) {
-    const k = `${m.module}|${m.setting}|${m.kind}`;
-    if (!byKey.has(k)) byKey.set(k, m);
-  }
-  const pinMembers = [...byKey.values()];
+  const pinMembers = await loadMembersFromTypesRoot(pin.root);
+  const tipMembers = await loadMembersFromTypesRoot(tip.root, {
+    deprecatedFile: f => f === 'deprecated.d.ts',
+  });
 
   const diff = await computeTipDiff(pinMembers, tip.root, tip.revision, {
     shallow: false,
@@ -337,6 +307,14 @@ async function main(): Promise<void> {
     properties: true,
     typeAliases: true,
   });
+
+  let changelog: ChangelogResult | null = null;
+  if (!args.noChangelog) {
+    changelog = diffInventories(pinMembers, tipMembers, {
+      from: `pin@${pin.version}`,
+      to: `tip@${tip.revision ?? 'unknown'}`,
+    });
+  }
 
   const reasons: string[] = [];
   let verdict: Report['verdict'] = 'ok';
@@ -353,9 +331,14 @@ async function main(): Promise<void> {
     reasons.push(`tip-only ${diff.tipOnly.length} (new upstream surface; under max ${args.maxTipOnly})`);
     if (verdict === 'ok') verdict = 'warn';
   }
+  if (changelog && (changelog.summary.added || changelog.summary.removed || changelog.summary.changed)) {
+    reasons.push(
+      `changelog +${changelog.summary.added} −${changelog.summary.removed} ~${changelog.summary.changed}`,
+    );
+  }
 
   const report: Report = {
-    schema: 'factorywager/bun-types-tip-diff/v1',
+    schema: 'factorywager/bun-types-tip-diff/v2',
     generated: new Date().toISOString(),
     runtime: { bunVersion: Bun.version, bunRevision: Bun.revision },
     pin: { package: pin.packageName, version: pin.version, root: pin.root },
@@ -366,10 +349,12 @@ async function main(): Promise<void> {
     },
     fetch: { performed: tip.fetched, cacheRoot: CACHE_ROOT },
     diff,
+    changelog,
     policy: {
       strict: args.strict,
       maxTipOnly: args.maxTipOnly,
       failOnPinOnly: args.failOnPinOnly,
+      changelog: !args.noChangelog,
     },
     verdict,
     reasons,
@@ -379,6 +364,11 @@ async function main(): Promise<void> {
     await Bun.spawn(['mkdir', '-p', OUT_DIR]).exited;
     await Bun.write(OUT_JSON, `${JSON.stringify(report, null, 2)}\n`);
     await Bun.write(OUT_MD, renderReportMd(report));
+    if (changelog) {
+      await Bun.spawn(['mkdir', '-p', CHANGELOG_DIR]).exited;
+      await Bun.write(CHANGELOG_JSON, `${JSON.stringify(changelog, null, 2)}\n`);
+      await Bun.write(CHANGELOG_MD, renderChangelogMd(changelog));
+    }
   }
 
   if (args.json) {
@@ -390,6 +380,11 @@ async function main(): Promise<void> {
     console.log(
       `shared ${diff.shared} · tip-only ${diff.tipOnly.length} · pin-only ${diff.pinOnly.length} · verdict ${report.verdict}`,
     );
+    if (changelog) {
+      console.log(
+        `changelog +${changelog.summary.added} −${changelog.summary.removed} ~${changelog.summary.changed}`,
+      );
+    }
     if (diff.tipOnly.length) {
       logTable(
         diff.tipOnly.slice(0, 30).map(setting => ({ setting })),
@@ -405,6 +400,10 @@ async function main(): Promise<void> {
     if (!args.noWrite) {
       console.log(`wrote ${OUT_JSON}`);
       console.log(`wrote ${OUT_MD}`);
+      if (changelog) {
+        console.log(`wrote ${CHANGELOG_MD}`);
+        console.log(`wrote ${CHANGELOG_JSON}`);
+      }
     }
   }
 

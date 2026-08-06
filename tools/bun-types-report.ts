@@ -1,0 +1,84 @@
+#!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/reference/bun/argv — Bun.argv
+/**
+ * bun-types-report.ts — one-shot local report stack:
+ *
+ *   1. tip-diff (+ wired changelog)  → .cache/bun-types-tip-diff · changelog
+ *   2. usage scan                    → .cache/bun-types-usage
+ *
+ * GitHub Actions disabled; this is the operator merge-machine bundle.
+ *
+ * Usage:
+ *   bun tools/bun-types-report.ts
+ *   bun tools/bun-types-report.ts --prefer-local
+ *   bun tools/bun-types-report.ts --strict
+ *   bun tools/bun-types-report.ts --skip-usage
+ *
+ * Script: bun run bun:types-report
+ */
+import { resolvePath } from '../lib/path-bun.ts';
+
+const REPO_ROOT = resolvePath(import.meta.dir, '..');
+const bunBin = process.execPath.includes('bun') ? process.execPath : 'bun';
+
+function parseCli(argv: string[]) {
+  return {
+    preferLocal: argv.includes('--prefer-local'),
+    noFetch: argv.includes('--no-fetch'),
+    strict: argv.includes('--strict'),
+    skipUsage: argv.includes('--skip-usage'),
+    skipChangelog: argv.includes('--no-changelog'),
+    help: argv.includes('--help') || argv.includes('-h'),
+  };
+}
+
+async function run(label: string, args: string[]): Promise<number> {
+  console.info(`\n== bun:types-report · ${label} ==`);
+  const proc = Bun.spawn([bunBin, ...args], {
+    cwd: REPO_ROOT,
+    stdout: 'inherit',
+    stderr: 'inherit',
+    env: { ...Bun.env },
+  });
+  return (await proc.exited) ?? 1;
+}
+
+async function main(): Promise<void> {
+  const args = parseCli(Bun.argv.slice(2));
+  if (args.help) {
+    console.log(`bun-types-report — tip-diff (+changelog) + usage
+
+  --prefer-local   tip from ~/bun (no network)
+  --no-fetch       tip env/local only
+  --strict         fail tip-diff on policy breach
+  --skip-usage     only tip-diff/changelog
+  --no-changelog   pass through to tip-diff
+  -h, --help
+`);
+    return;
+  }
+
+  const tipArgs = ['tools/bun-types-tip-diff.ts'];
+  if (args.preferLocal) tipArgs.push('--prefer-local');
+  if (args.noFetch) tipArgs.push('--no-fetch');
+  if (args.strict) tipArgs.push('--strict');
+  if (args.skipChangelog) tipArgs.push('--no-changelog');
+
+  const tipCode = await run('tip-diff + changelog', tipArgs);
+  if (tipCode !== 0) process.exit(tipCode);
+
+  if (!args.skipUsage) {
+    const usageCode = await run('usage', ['tools/bun-types-usage.ts']);
+    if (usageCode !== 0) process.exit(usageCode);
+  }
+
+  console.info('\n✓ bun:types-report complete');
+  console.info('  .cache/bun-types-tip-diff/report.md');
+  console.info('  .cache/bun-types-changelog/CHANGELOG.md');
+  if (!args.skipUsage) console.info('  .cache/bun-types-usage/report.md');
+}
+
+if (import.meta.main) {
+  await main();
+}

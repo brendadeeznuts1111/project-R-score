@@ -35,7 +35,7 @@ import {
   type MemberKind,
   type ParseDtsOpts,
 } from './bun-types-inventory.ts';
-import { fetchUpstreamBunTypes } from './bun-types-tip-diff.ts';
+import { fetchUpstreamBunTypes } from './bun-types-tip-fetch.ts';
 
 const TOOLS_DIR = resolvePath(import.meta.dir);
 const REPO_ROOT = resolvePath(TOOLS_DIR, '..');
