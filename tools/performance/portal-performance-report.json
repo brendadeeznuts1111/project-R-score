@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "metric": "aggregate-initial-js-css-by-route",
-  "pageCount": 35,
-  "baselineRevision": "faff7919463f82dc3ab5227482a704a1f7672377",
-  "baselineBytes": 6573486,
-  "sourceBytes": 5521340,
-  "optimizedBytes": 4132518,
+  "pageCount": 37,
+  "baselineRevision": "b0f6f6299be1f56867a90d64cd69f380689758ea",
+  "baselineBytes": 6755228,
+  "sourceBytes": 5730449,
+  "optimizedBytes": 4274606,
   "targetReductionPct": 35,
-  "reductionPct": 37.13,
-  "targetBytes": 4272765,
+  "reductionPct": 36.72,
+  "targetBytes": 4390898,
   "pass": true,
   "source": [
     {
@@ -55,17 +55,24 @@
     },
     {
       "page": "/portal/packages/",
-      "javascriptBytes": 107668,
+      "javascriptBytes": 109186,
       "stylesheetBytes": 82539,
       "inlineBytes": 11973,
-      "totalBytes": 202180
+      "totalBytes": 203698
+    },
+    {
+      "page": "/portal/tools/",
+      "javascriptBytes": 87540,
+      "stylesheetBytes": 82539,
+      "inlineBytes": 11400,
+      "totalBytes": 181479
     },
     {
       "page": "/portal/partners/",
       "javascriptBytes": 23709,
       "stylesheetBytes": 82539,
-      "inlineBytes": 71991,
-      "totalBytes": 178239
+      "inlineBytes": 72240,
+      "totalBytes": 178488
     },
     {
       "page": "/portal/glossary/",
@@ -75,11 +82,11 @@
       "totalBytes": 177927
     },
     {
-      "page": "/portal/tools/",
-      "javascriptBytes": 78892,
+      "page": "/portal/bookmakers/",
+      "javascriptBytes": 82876,
       "stylesheetBytes": 82539,
-      "inlineBytes": 11400,
-      "totalBytes": 172831
+      "inlineBytes": 753,
+      "totalBytes": 166168
     },
     {
       "page": "/portal/dod/",
@@ -87,13 +94,6 @@
       "stylesheetBytes": 82539,
       "inlineBytes": 21756,
       "totalBytes": 164899
-    },
-    {
-      "page": "/portal/bookmakers/",
-      "javascriptBytes": 80389,
-      "stylesheetBytes": 82539,
-      "inlineBytes": 753,
-      "totalBytes": 163681
     },
     {
       "page": "/portal/dashboard/",
@@ -138,6 +138,13 @@
       "totalBytes": 138663
     },
     {
+      "page": "/portal/issues/",
+      "javascriptBytes": 50507,
+      "stylesheetBytes": 87612,
+      "inlineBytes": 0,
+      "totalBytes": 138119
+    },
+    {
       "page": "/portal/catalog/",
       "javascriptBytes": 50336,
       "stylesheetBytes": 82539,
@@ -159,18 +166,18 @@
       "totalBytes": 135446
     },
     {
-      "page": "/portal/agent-odds/",
-      "javascriptBytes": 12137,
+      "page": "/portal/surfaces/",
+      "javascriptBytes": 48347,
       "stylesheetBytes": 82539,
-      "inlineBytes": 35612,
-      "totalBytes": 130288
+      "inlineBytes": 1041,
+      "totalBytes": 131927
     },
     {
       "page": "/portal/concepts/graph/",
-      "javascriptBytes": 41144,
+      "javascriptBytes": 42996,
       "stylesheetBytes": 82539,
       "inlineBytes": 3545,
-      "totalBytes": 127228
+      "totalBytes": 129080
     },
     {
       "page": "/portal/bunfig/",
@@ -178,13 +185,6 @@
       "stylesheetBytes": 82539,
       "inlineBytes": 788,
       "totalBytes": 124155
-    },
-    {
-      "page": "/portal/surfaces/",
-      "javascriptBytes": 40473,
-      "stylesheetBytes": 82539,
-      "inlineBytes": 1041,
-      "totalBytes": 124053
     },
     {
       "page": "/portal/compliance/",
@@ -215,6 +215,13 @@
       "totalBytes": 117302
     },
     {
+      "page": "/portal/lanes/",
+      "javascriptBytes": 32344,
+      "stylesheetBytes": 82539,
+      "inlineBytes": 261,
+      "totalBytes": 115144
+    },
+    {
       "page": "/portal/limits-lab/",
       "javascriptBytes": 24747,
       "stylesheetBytes": 82539,
@@ -222,18 +229,18 @@
       "totalBytes": 113610
     },
     {
-      "page": "/portal/vault/",
-      "javascriptBytes": 23709,
-      "stylesheetBytes": 82539,
-      "inlineBytes": 4151,
-      "totalBytes": 110399
-    },
-    {
       "page": "/portal/partner/",
       "javascriptBytes": 25073,
       "stylesheetBytes": 82539,
       "inlineBytes": 2729,
       "totalBytes": 110341
+    },
+    {
+      "page": "/portal/vault/",
+      "javascriptBytes": 23709,
+      "stylesheetBytes": 82539,
+      "inlineBytes": 2507,
+      "totalBytes": 108755
     },
     {
       "page": "/portal/failures/",
@@ -255,253 +262,274 @@
       "stylesheetBytes": 82539,
       "inlineBytes": 588,
       "totalBytes": 106836
+    },
+    {
+      "page": "/portal/agent-odds/",
+      "javascriptBytes": 12137,
+      "stylesheetBytes": 0,
+      "inlineBytes": 53013,
+      "totalBytes": 65150
     }
   ],
   "optimized": [
     {
       "page": "/portal/toc/",
       "javascriptBytes": 62861,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 223280,
-      "totalBytes": 356255
+      "totalBytes": 356280
     },
     {
       "page": "/portal/ops/",
       "javascriptBytes": 117166,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 126,
-      "totalBytes": 187406
+      "totalBytes": 187431
     },
     {
       "page": "/portal/health/",
       "javascriptBytes": 90591,
-      "stylesheetBytes": 72856,
+      "stylesheetBytes": 72881,
       "inlineBytes": 14055,
-      "totalBytes": 177502
+      "totalBytes": 177527
     },
     {
       "page": "/portal/account/",
       "javascriptBytes": 68310,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 24935,
-      "totalBytes": 163359
+      "totalBytes": 163384
     },
     {
       "page": "/portal/limits/",
       "javascriptBytes": 47007,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 43155,
-      "totalBytes": 160276
+      "totalBytes": 160301
     },
     {
       "page": "/portal/partner-history/",
       "javascriptBytes": 45237,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 42293,
-      "totalBytes": 157644
+      "totalBytes": 157669
     },
     {
       "page": "/portal/packages/",
-      "javascriptBytes": 68755,
-      "stylesheetBytes": 70114,
+      "javascriptBytes": 69716,
+      "stylesheetBytes": 70139,
       "inlineBytes": 10027,
-      "totalBytes": 148896
+      "totalBytes": 149882
     },
     {
       "page": "/portal/glossary/",
       "javascriptBytes": 46824,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 11463,
-      "totalBytes": 128401
+      "totalBytes": 128426
+    },
+    {
+      "page": "/portal/tools/",
+      "javascriptBytes": 48847,
+      "stylesheetBytes": 70139,
+      "inlineBytes": 8964,
+      "totalBytes": 127950
     },
     {
       "page": "/portal/partners/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 70114,
-      "inlineBytes": 48746,
-      "totalBytes": 124265
+      "stylesheetBytes": 70139,
+      "inlineBytes": 48898,
+      "totalBytes": 124442
     },
     {
       "page": "/portal/dod/",
       "javascriptBytes": 33931,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 19730,
-      "totalBytes": 123775
-    },
-    {
-      "page": "/portal/tools/",
-      "javascriptBytes": 44451,
-      "stylesheetBytes": 70114,
-      "inlineBytes": 8964,
-      "totalBytes": 123529
+      "totalBytes": 123800
     },
     {
       "page": "/portal/dashboard/",
       "javascriptBytes": 44315,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 6098,
-      "totalBytes": 120527
+      "totalBytes": 120552
     },
     {
       "page": "/portal/bookmakers/",
-      "javascriptBytes": 45860,
-      "stylesheetBytes": 70114,
+      "javascriptBytes": 47236,
+      "stylesheetBytes": 70139,
       "inlineBytes": 535,
-      "totalBytes": 116509
+      "totalBytes": 117910
     },
     {
       "page": "/portal/tennis/",
       "javascriptBytes": 36321,
-      "stylesheetBytes": 72370,
+      "stylesheetBytes": 72395,
       "inlineBytes": 594,
-      "totalBytes": 109285
+      "totalBytes": 109310
     },
     {
       "page": "/portal/brands/",
       "javascriptBytes": 29569,
-      "stylesheetBytes": 78549,
+      "stylesheetBytes": 78574,
       "inlineBytes": 0,
-      "totalBytes": 108118
+      "totalBytes": 108143
     },
     {
       "page": "/portal/install-hygiene/",
       "javascriptBytes": 27625,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 9173,
-      "totalBytes": 106912
-    },
-    {
-      "page": "/portal/agent-odds/",
-      "javascriptBytes": 5405,
-      "stylesheetBytes": 70114,
-      "inlineBytes": 31146,
-      "totalBytes": 106665
+      "totalBytes": 106937
     },
     {
       "page": "/portal/",
       "javascriptBytes": 34448,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 0,
-      "totalBytes": 104562
+      "totalBytes": 104587
     },
     {
       "page": "/portal/concepts/",
       "javascriptBytes": 20502,
-      "stylesheetBytes": 81108,
+      "stylesheetBytes": 81133,
       "inlineBytes": 0,
-      "totalBytes": 101610
+      "totalBytes": 101635
+    },
+    {
+      "page": "/portal/issues/",
+      "javascriptBytes": 26163,
+      "stylesheetBytes": 75203,
+      "inlineBytes": 0,
+      "totalBytes": 101366
     },
     {
       "page": "/portal/catalog/",
       "javascriptBytes": 24960,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 3754,
-      "totalBytes": 98828
+      "totalBytes": 98853
     },
     {
       "page": "/portal/env/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 23144,
-      "totalBytes": 98663
+      "totalBytes": 98688
     },
     {
       "page": "/portal/factory/",
       "javascriptBytes": 27086,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 241,
-      "totalBytes": 97441
+      "totalBytes": 97466
+    },
+    {
+      "page": "/portal/surfaces/",
+      "javascriptBytes": 25280,
+      "stylesheetBytes": 70139,
+      "inlineBytes": 599,
+      "totalBytes": 96018
     },
     {
       "page": "/portal/concepts/graph/",
-      "javascriptBytes": 21944,
-      "stylesheetBytes": 70114,
+      "javascriptBytes": 23409,
+      "stylesheetBytes": 70139,
       "inlineBytes": 2193,
-      "totalBytes": 94251
+      "totalBytes": 95741
     },
     {
       "page": "/portal/bunfig/",
       "javascriptBytes": 21563,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 445,
-      "totalBytes": 92122
-    },
-    {
-      "page": "/portal/surfaces/",
-      "javascriptBytes": 21095,
-      "stylesheetBytes": 70114,
-      "inlineBytes": 599,
-      "totalBytes": 91808
+      "totalBytes": 92147
     },
     {
       "page": "/portal/doctor/",
       "javascriptBytes": 20265,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 319,
-      "totalBytes": 90698
+      "totalBytes": 90723
     },
     {
       "page": "/portal/compliance/",
       "javascriptBytes": 12356,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 7564,
-      "totalBytes": 90034
+      "totalBytes": 90059
     },
     {
       "page": "/portal/console-format/",
       "javascriptBytes": 18566,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 89,
-      "totalBytes": 88769
+      "totalBytes": 88794
     },
     {
       "page": "/portal/limits-lab/",
       "javascriptBytes": 13585,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 4257,
-      "totalBytes": 87956
+      "totalBytes": 87981
+    },
+    {
+      "page": "/portal/lanes/",
+      "javascriptBytes": 14699,
+      "stylesheetBytes": 70139,
+      "inlineBytes": 178,
+      "totalBytes": 85016
     },
     {
       "page": "/portal/skills/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 8461,
-      "totalBytes": 83980
+      "totalBytes": 84005
     },
     {
       "page": "/portal/partner/",
       "javascriptBytes": 11476,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 1702,
-      "totalBytes": 83292
+      "totalBytes": 83317
     },
     {
       "page": "/portal/vault/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 70114,
-      "inlineBytes": 3881,
-      "totalBytes": 79400
+      "stylesheetBytes": 70139,
+      "inlineBytes": 2375,
+      "totalBytes": 77919
     },
     {
       "page": "/portal/failures/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 1627,
-      "totalBytes": 77146
+      "totalBytes": 77171
     },
     {
       "page": "/portal/identity/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 1140,
-      "totalBytes": 76659
+      "totalBytes": 76684
     },
     {
       "page": "/portal/science/",
       "javascriptBytes": 5405,
-      "stylesheetBytes": 70114,
+      "stylesheetBytes": 70139,
       "inlineBytes": 456,
-      "totalBytes": 75975
+      "totalBytes": 76000
+    },
+    {
+      "page": "/portal/agent-odds/",
+      "javascriptBytes": 5405,
+      "stylesheetBytes": 0,
+      "inlineBytes": 45087,
+      "totalBytes": 50492
     }
   ]
 }
