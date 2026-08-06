@@ -70,6 +70,8 @@ import {
   getLastSnapshots,
   HIGH_PRIORITY_BOOKS,
   parseOddsJson,
+  rankSignals,
+  runEdgeScan,
   runMonitorTick,
   startOddsDashboard,
   startOddsMonitor,
@@ -89,7 +91,8 @@ Commands:
   partner-coverage --detailed [--output <md>]
   research --run full [--seed <file>] [--parallel N] [--limit N] [--spawn]
   detect-edges --host <host> [--window N] [--fixture <id>] [--seed-fixtures]
-  monitor-odds [--once|--cron] [--hosts a,b] [--no-fixture] [--dashboard] [--port N]
+  edge-scan [--hosts a,b,c] [--seed-arb] [--seed-value] [--minEdgePct N] [--minEvPct N] [--json]
+  monitor-odds [--once|--cron] [--hosts a,b] [--arb] [--no-fixture] [--dashboard] [--port N]
   odds-dashboard [--port N]
   check-version [--json]
   test-webview [--json]
@@ -353,7 +356,9 @@ async function cmdMonitorOdds(args: string[]) {
       fixtureFallback: !flag(args, '--no-fixture'),
       store: !flag(args, '--no-store'),
       window: Number(opt(args, '--window', '5')),
-      crossBookArb: flag(args, '--arb'),
+      // Multi-host ticks default to cross-book arb+value; single host is line/steam only.
+      crossBookArb: flag(args, '--arb') || hosts.length > 1,
+      crossBookValue: flag(args, '--arb') || flag(args, '--value') || hosts.length > 1,
       hooks,
     });
     dashboard?.publishTick(results);
@@ -704,6 +709,72 @@ async function cmdArb(args: string[]) {
   }
 }
 
+/**
+ * Live multi-book edge scan (snapshot arb/value/steam) — deeper than provenance arb alone.
+ */
+async function cmdEdgeScan(args: string[]) {
+  const hostsRaw =
+    opt(args, '--hosts') ?? 'hardrock.bet,sportsbook.draftkings.com,www.pinnacle.com';
+  const hosts = hostsRaw
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  let seedFixtures: Record<string, string> | undefined;
+  if (flag(args, '--seed-arb')) {
+    seedFixtures = {
+      'hardrock.bet': 'hardrock-arb',
+      'sportsbook.draftkings.com': 'draftkings-arb',
+    };
+  } else if (flag(args, '--seed-value')) {
+    seedFixtures = {
+      'www.pinnacle.com': 'pinnacle',
+      'hardrock.bet': 'hardrock',
+      'sportsbook.draftkings.com': 'draftkings',
+    };
+  } else if (flag(args, '--seed-fixtures')) {
+    seedFixtures = Object.fromEntries(
+      hosts.map(h => {
+        const id = h.replace(/^www\./, '').split('.')[0] ?? h;
+        return [h, id];
+      })
+    );
+  }
+
+  const report = await runEdgeScan({
+    hosts,
+    seedFixtures,
+    fixtureFallback: !flag(args, '--no-fixture'),
+    store: !flag(args, '--no-store'),
+    minArbEdge: Number(opt(args, '--minEdgePct', '1.5')) / 100,
+    minEvPct: Number(opt(args, '--minEvPct', '2')),
+    includeHistoryPatterns: flag(args, '--history'),
+  });
+  report.signals = rankSignals(report.signals);
+
+  if (flag(args, '--json')) {
+    console.log(JSON.stringify(report, null, 2)); // console-ok
+    return;
+  }
+  console.log(
+    inspect(
+      {
+        hosts: report.hosts,
+        snapshots: report.snapshots,
+        summary: report.summary,
+        top: report.signals.slice(0, 12).map(s => ({
+          type: s.type,
+          host: String(s.host),
+          confidence: +s.confidence.toFixed(3),
+          details: s.details,
+          meta: s.meta,
+        })),
+      },
+      { depth: 5, colors: Boolean(Bun.enableANSIColors) }
+    )
+  );
+}
+
 async function cmdAlerts(args: string[]) {
   await seedAll();
   if (flag(args, '--evaluate')) {
@@ -833,6 +904,9 @@ switch (cmd) {
     break;
   case 'detect-edges':
     await cmdDetectEdges(rest);
+    break;
+  case 'edge-scan':
+    await cmdEdgeScan(rest);
     break;
   case 'monitor-odds':
     await cmdMonitorOdds(rest);

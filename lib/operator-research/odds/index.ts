@@ -1,4 +1,5 @@
 export * from './types.ts';
+export * from './edge-math.ts';
 export * from './connection-pool.ts';
 export * from './odds-fetcher.ts';
 export * from './odds-parser.ts';
@@ -8,3 +9,4 @@ export * from './pattern-detector.ts';
 export * from './pipeline.ts';
 export * from './scheduler.ts';
 export * from './dashboard.ts';
+export * from './edge-scan.ts';

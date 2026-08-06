@@ -1,0 +1,19 @@
+{
+  "host": "hardrock.bet",
+  "sportsbookId": "hardrock",
+  "timestamp": 1754401000000,
+  "markets": [
+    {
+      "id": "mlb-nyy-bos-ml",
+      "name": "NYY vs BOS Moneyline",
+      "sport": "baseball",
+      "league": "MLB",
+      "marketType": "moneyline",
+      "selections": [
+        { "name": "NYY", "price": 2.2 },
+        { "name": "BOS", "price": 1.72 }
+      ]
+    }
+  ],
+  "limits": { "maxBet": 800, "minBet": 1, "currency": "USD" }
+}

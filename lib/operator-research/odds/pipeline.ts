@@ -17,7 +17,7 @@ import {
 } from './odds-store.ts';
 import { detectCrossBookArbitrage } from '../matching/arbitrage.ts';
 import { evaluateAlerts, type AlertEvent } from '../matching/alerts.ts';
-import { detectArbitrage, detectPatterns } from './pattern-detector.ts';
+import { detectPatterns, scanCrossBookEdges } from './pattern-detector.ts';
 import type { EdgeSignal, MonitorTickResult, OddsEndpoint, OddsSnapshot } from './types.ts';
 
 export type PipelineHooks = {
@@ -33,6 +33,10 @@ export type RunMonitorOptions = {
   window?: number;
   lineMoveRel?: number;
   crossBookArb?: boolean;
+  /** Soft-book value vs sharp de-vig (requires ≥2 hosts). Default: same as crossBookArb. */
+  crossBookValue?: boolean;
+  minArbEdge?: number;
+  minEvPct?: number;
   /** Run provenance cross-book arb + alert rules after tick (default: when store). */
   evaluateAlerts?: boolean;
   hooks?: PipelineHooks;
@@ -180,13 +184,22 @@ export async function runMonitorTick(opts: RunMonitorOptions): Promise<MonitorTi
     }
   }
 
-  if (opts.crossBookArb && liveSnapshots.length >= 2) {
-    const arbs = detectArbitrage(liveSnapshots);
-    if (arbs.length > 0 && opts.store !== false) storeEdgeSignals(arbs);
-    // attach to first matching host result
-    for (const arb of arbs) {
-      const r = results.find(x => String(x.host) === String(arb.host));
-      if (r) r.patterns.push(arb);
+  const wantArb = opts.crossBookArb === true;
+  const wantValue = opts.crossBookValue ?? wantArb;
+  if ((wantArb || wantValue) && liveSnapshots.length >= 2) {
+    const cross = scanCrossBookEdges(liveSnapshots, {
+      minArbEdge: wantArb ? (opts.minArbEdge ?? 0.02) : 1, // disable arb when not wanted
+      minEvPct: wantValue ? (opts.minEvPct ?? 2) : 1e9, // disable value when not wanted
+    }).filter(s => {
+      if (s.type === 'arbitrage') return wantArb;
+      if (s.type === 'value') return wantValue;
+      return false;
+    });
+    if (cross.length > 0 && opts.store !== false) storeEdgeSignals(cross);
+    for (const sig of cross) {
+      const r = results.find(x => String(x.host) === String(sig.host));
+      if (r) r.patterns.push(sig);
+      else if (results[0]) results[0].patterns.push(sig);
     }
   }
 

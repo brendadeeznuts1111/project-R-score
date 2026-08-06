@@ -54,7 +54,28 @@ export type DiffResult = {
   limitChanges: { from: OddsLimits; to: OddsLimits } | null;
 };
 
-export type EdgeSignalType = 'line_move' | 'steam' | 'arbitrage' | 'suspicious' | 'new_market';
+export type EdgeSignalType =
+  'line_move' | 'steam' | 'arbitrage' | 'value' | 'suspicious' | 'new_market';
+
+export type ArbLeg = {
+  host: string;
+  selection: string;
+  price: number;
+  weight: number;
+  marketId: string; // brand-ok
+};
+
+export type EdgeMeta = {
+  edgePct?: number;
+  invSum?: number;
+  kelly?: number;
+  evPct?: number;
+  velocityPerMin?: number;
+  trueProb?: number;
+  legs?: ArbLeg[];
+  sharpHost?: string;
+  softHost?: string;
+};
 
 export type EdgeSignal = {
   type: EdgeSignalType;
@@ -64,6 +85,7 @@ export type EdgeSignal = {
   marketId?: string; // brand-ok
   selection?: string;
   observedAt: number;
+  meta?: EdgeMeta;
 };
 
 export type OddsEndpoint = {
@@ -86,4 +108,19 @@ export type MonitorTickResult = {
   patterns: EdgeSignal[];
   snapshot: OddsSnapshot | null;
   error?: string;
+};
+
+export type EdgeScanReport = {
+  generatedAt: string;
+  hosts: string[];
+  snapshots: number;
+  signals: EdgeSignal[];
+  summary: {
+    arbitrage: number;
+    value: number;
+    steam: number;
+    line_move: number;
+    new_market: number;
+    suspicious: number;
+  };
 };
