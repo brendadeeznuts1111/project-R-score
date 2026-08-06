@@ -446,6 +446,10 @@ inventory snapshots (or pin vs tip types) into Added/Removed/Changed under
 `.cache/bun-types-changelog/`. **Wired:** `bun:types-inventory:tip-diff` always
 emits that changelog (unless `--no-changelog`). **Full stack:**
 `bun run bun:types-report` · `:local` runs tip-diff+changelog then usage.
+**Local CI (soft):** `bun run bun:types-ci` (prefer-local report; tip **warn** exits 0).
+Wired as a **soft** step at the end of `bun run bun:ci` (does not fail merge on warn).
+Skip: `BUN_TYPES_CI=0` or `SKIP_BUN_TYPES_CI=1`. Hard gate: `BUN_TYPES_CI_STRICT=1`
+or `bun run bun:types-ci:strict`. Reports under `.cache/bun-types-*/` (not committed).
 
 Operate loop (feeds → scrape → catalog with embedded `releaseHits` → integrity):
 [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · **daily**

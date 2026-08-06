@@ -9,6 +9,12 @@
  * Env: package.json loads `~/.reasonix/.env` via `--env-file`. Non-secret
  * `R2_BUCKET_NAME` defaults here when unset (same as config/r2-env.ts).
  * Git identity uses lib/macros helpers at runtime (not `type: "macro"`).
+ *
+ * Soft bun-types report (tip-diff + changelog + usage):
+ *   - Always runs after hard steps unless `BUN_TYPES_CI=0` / `SKIP_BUN_TYPES_CI=1`
+ *   - Default soft: tip-diff **warn** still exits 0 (does not fail bun:ci)
+ *   - Hard gate: `BUN_TYPES_CI_STRICT=1` → `bun run bun:types-ci:strict`
+ *   - Manual: `bun run bun:types-ci` · reports under `.cache/bun-types-*/`
  */
 import { getGitBranch, getGitCommitHash } from '../lib/macros/git-commit.ts';
 import { checkBunPin } from '../lib/verification/bun-runtime-pin.ts';
@@ -45,7 +51,15 @@ console.info(
   `bun:ci · ${shortSha} · ${branch || 'unknown'}${ciNote} · Bun ${Bun.version} (${Bun.revision}) · ${bunExecutable} · R2_BUCKET_NAME=${Bun.env.R2_BUCKET_NAME}`
 );
 
-const steps = [
+type CiStep = {
+  name: string;
+  command: string[];
+  cwd: string;
+  /** When true, non-zero exit logs a warning and does not fail bun:ci */
+  soft?: boolean;
+};
+
+const steps: CiStep[] = [
   {
     name: 'nested-registry-install',
     command: ['bun', 'install', '--frozen-lockfile'],
@@ -59,7 +73,27 @@ const steps = [
     command: ['bun', 'run', 'ci:portal-registry'],
     cwd: repoRoot,
   },
-] as const;
+];
+
+const skipTypesCi =
+  Bun.env.BUN_TYPES_CI === '0' ||
+  Bun.env.BUN_TYPES_CI === 'false' ||
+  Bun.env.SKIP_BUN_TYPES_CI === '1' ||
+  Bun.env.SKIP_BUN_TYPES_CI === 'true';
+const typesCiStrict =
+  Bun.env.BUN_TYPES_CI_STRICT === '1' || Bun.env.BUN_TYPES_CI_STRICT === 'true';
+
+if (!skipTypesCi) {
+  steps.push({
+    name: typesCiStrict ? 'bun-types-report (strict)' : 'bun-types-report (soft)',
+    command: ['bun', 'run', typesCiStrict ? 'bun:types-ci:strict' : 'bun:types-ci'],
+    cwd: repoRoot,
+    // Soft by default: tip-diff warn exits 0; still soft-wrap if tool fails (missing tip, etc.)
+    soft: !typesCiStrict,
+  });
+} else {
+  console.info('\nbun:ci · bun-types-report skipped (BUN_TYPES_CI=0 or SKIP_BUN_TYPES_CI=1)');
+}
 
 for (const step of steps) {
   console.info(`\n== bun:ci · ${step.name} ==`);
@@ -73,6 +107,12 @@ for (const step of steps) {
   });
   const exitCode = (await proc.exited) ?? 1;
   if (exitCode !== 0) {
+    if (step.soft) {
+      console.warn(
+        `bun:ci · ${step.name} exited ${exitCode} (soft — not failing merge proof; set BUN_TYPES_CI_STRICT=1 to enforce)`,
+      );
+      continue;
+    }
     console.error(`bun:ci failed at ${step.name}`);
     process.exit(exitCode);
   }
