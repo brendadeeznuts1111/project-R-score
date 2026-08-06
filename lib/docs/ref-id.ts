@@ -368,7 +368,7 @@ export type CheckRefIdDocOpts = {
   /** When true, missing tool↔doc rows are errors */
   requireToolCoverage?: boolean;
   /** Section id that must sit on the previous non-empty line above `sectionHeading`. */
-  sectionRefId?: string;
+  sectionRefId?: string; // brand-ok — design-doc section fragment (REF:ID), not domain brand
   /** Exact markdown heading line, e.g. `### Flags / settings`. */
   sectionHeading?: string;
 };
