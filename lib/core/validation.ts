@@ -5,7 +5,7 @@ import { ValidationError } from './error-handling';
 /**
  * Validation result interface
  */
-export interface ValidationResult<T = any> {
+export interface ValidationResult<T = unknown> {
   isValid: boolean;
   data?: T;
   errors: string[];
@@ -15,7 +15,7 @@ export interface ValidationResult<T = any> {
 /**
  * Validator function type
  */
-export type ValidatorFn<T = any> = (input: unknown) => ValidationResult<T>;
+export type ValidatorFn<T = unknown> = (input: unknown) => ValidationResult<T>;
 
 /**
  * Schema definition for object validation
@@ -29,7 +29,7 @@ export interface ValidationSchema {
     min?: number;
     max?: number;
     pattern?: RegExp;
-    enum?: any[];
+    enum?: unknown[];
     custom?: ValidatorFn;
     sanitize?: boolean;
   };
@@ -77,7 +77,7 @@ export class InputSanitizer {
   /**
    * Sanitize array input
    */
-  static normalizeArray(input: unknown): any[] {
+  static normalizeArray(input: unknown): unknown[] {
     if (!Array.isArray(input)) {
       return [];
     }
@@ -88,12 +88,12 @@ export class InputSanitizer {
   /**
    * Sanitize object input
    */
-  static normalizeObject(input: unknown): Record<string, any> {
+  static normalizeObject(input: unknown): Record<string, unknown> {
     if (!input || typeof input !== 'object' || Array.isArray(input)) {
       return {};
     }
 
-    const sanitized: Record<string, any> = {};
+    const sanitized: Record<string, unknown> = {};
     const record = input as Record<string, unknown>;
     const keys = Object.keys(record).slice(0, 50); // Limit object size
 
@@ -366,8 +366,8 @@ export class Validator {
   /**
    * Validate object input against schema
    */
-  static parseObject(schema: ValidationSchema): ValidatorFn<Record<string, any>> {
-    return (input: unknown): ValidationResult<Record<string, any>> => {
+  static parseObject(schema: ValidationSchema): ValidatorFn<Record<string, unknown>> {
+    return (input: unknown): ValidationResult<Record<string, unknown>> => {
       const errors: string[] = [];
       const warnings: string[] = [];
 
@@ -376,13 +376,13 @@ export class Validator {
         return { isValid: false, errors, warnings };
       }
 
-      const obj = input as Record<string, any>;
-      const validated: Record<string, any> = {};
+      const obj = input as Record<string, unknown>;
+      const validated: Record<string, unknown> = {};
 
       // Validate each field in schema
       for (const [key, rules] of Object.entries(schema)) {
         const value = obj[key];
-        let validator: ValidatorFn;
+        let validator: ValidatorFn<unknown>;
 
         // Create validator based on type
         switch (rules.type) {
@@ -392,7 +392,7 @@ export class Validator {
               minLength: rules.minLength,
               maxLength: rules.maxLength,
               pattern: rules.pattern,
-              enum: rules.enum,
+              enum: rules.enum?.every(item => typeof item === 'string') ? rules.enum : undefined,
               sanitize: rules.sanitize,
             });
             break;
@@ -492,20 +492,29 @@ export class Validator {
  * Validate request object structure
  */
 export function isValidRequest(request: unknown): request is {
-  headers?: { authorization?: string; [key: string]: any };
+  headers?: Record<string, unknown> & { authorization?: string };
   method?: string;
   url?: string;
-  body?: any;
+  body?: unknown;
 } {
   if (!request || typeof request !== 'object') {
     return false;
   }
 
-  const req = request as any;
+  const req = request as Record<string, unknown>;
+  const headers = req.headers;
+  const validHeaders =
+    headers === undefined ||
+    (typeof headers === 'object' &&
+      headers !== null &&
+      !Array.isArray(headers) &&
+      (!('authorization' in headers) ||
+        (headers as Record<string, unknown>).authorization === undefined ||
+        typeof (headers as Record<string, unknown>).authorization === 'string'));
 
   // Check that it has reasonable request properties
   return (
-    (typeof req.headers === 'object' || req.headers === undefined) &&
+    validHeaders &&
     (typeof req.method === 'string' || req.method === undefined) &&
     (typeof req.url === 'string' || req.url === undefined)
   );

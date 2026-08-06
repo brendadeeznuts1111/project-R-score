@@ -49,6 +49,7 @@ import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 import { joinPath } from '../lib/path-bun.ts';
+import { readServePublicBindManifest } from '../lib/http/serve-public-bind.ts';
 import {
   BUN_DNS_CACHE_STATS_DOCS,
   BUN_DNS_PREFETCHING_DOCS,
@@ -126,8 +127,8 @@ const flag = (n: string): string | undefined => {
   return hit?.slice(n.length + 3);
 };
 
-const LOCAL_BASE =
-  flag('base') || Bun.env.HEALTH_URL || Bun.env.BASE_URL || 'http://127.0.0.1:3000';
+const EXPLICIT_LOCAL_BASE = flag('base') || Bun.env.HEALTH_URL || Bun.env.BASE_URL;
+let LOCAL_BASE = EXPLICIT_LOCAL_BASE || 'http://127.0.0.1:3000';
 const LOCAL_ONLY = has('local-only');
 const ROUTES = has('routes') || has('routes-only') || has('local-only');
 const ROUTES_ONLY = has('routes-only');
@@ -136,6 +137,18 @@ const SHOULD_SAVE = has('save');
 const AS_JSON = has('json');
 const TIMEOUT_MS = Number(flag('timeout-ms') ?? 10_000);
 const BOX_INNER = 62;
+
+export async function resolveRouteProbeBase(
+  explicitBase: string | undefined = EXPLICIT_LOCAL_BASE,
+  bindFilePath?: string
+): Promise<string> {
+  if (explicitBase) return explicitBase;
+  const bind = await readServePublicBindManifest(bindFilePath);
+  if (bind?.loopbackOrigin) return bind.loopbackOrigin;
+  throw new Error(
+    "routes-only requires --base=<origin>, HEALTH_URL/BASE_URL, or this worktree's .serve-public/bind.toml; start serve-public in this worktree or pass an explicit base"
+  );
+}
 
 function boxLine(text: string): string {
   return `║  ${padEndWidth(text, BOX_INNER)}║`;
@@ -547,6 +560,10 @@ export async function probePublicRoutes(
 // ── Render (Bun.inspect.custom + inspect.table) ────────────────────────────
 
 async function main(): Promise<void> {
+  if (ROUTES_ONLY) {
+    LOCAL_BASE = await resolveRouteProbeBase();
+  }
+
   const t0 = Bun.nanoseconds();
 
   let rows: NetCheckRow[] = [];

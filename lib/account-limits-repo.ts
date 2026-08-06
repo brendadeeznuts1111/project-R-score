@@ -187,6 +187,12 @@ export interface EnrichedLimitRaise extends LimitRaise {
   top_clv: ClvMover[];
 }
 
+export interface DeepLimitAlert extends LimitRaise {
+  direction: 'up' | 'down';
+  score?: number;
+  top_factors?: string[];
+}
+
 /** Latest known max_wager snapshot for a node+sportsbook (any sport/market/bet_type). */
 export interface LatestBookLimit {
   /** partner_account_limits.id */
@@ -832,8 +838,8 @@ export function collectDeepLimitAlerts(
   nodeId: string, // brand-ok — TreeNodeId wire
   sinceTimestamp: number = Math.floor(Date.now() / 1000) - 48 * 3600
 ): {
-  raises: Array<LimitRaise & { direction: 'up'; score?: number }>;
-  decreases: Array<LimitRaise & { direction: 'down'; score?: number }>;
+  raises: Array<DeepLimitAlert & { direction: 'up' }>;
+  decreases: Array<DeepLimitAlert & { direction: 'down' }>;
 } {
   const repo = new AccountLimitsRepository(db);
   const raises = repo
@@ -855,8 +861,8 @@ export function collectDeepLimitAlerts(
           e => e.sportsbook === r.sportsbook && e.sport_id === r.sport_id
         );
         if (match && match.multi_factor_score != null) {
-          (r as any).score = match.multi_factor_score;
-          (r as any).top_factors = match.top_contributing_factors;
+          r.score = match.multi_factor_score;
+          r.top_factors = match.top_contributing_factors;
         }
       } catch {}
     }
@@ -871,7 +877,7 @@ export function publishLimitAlertToChannel(
   alert: LimitRaise & { node_id: string; direction?: string; score?: number } // brand-ok — TreeNodeId wire
 ): void {
   try {
-    const { ChannelMessage, publishEvent } =
+    const { publishEvent } =
       require('./channels/channels.ts') as typeof import('./channels/channels.ts');
     const { localOpsChannelStore } =
       require('./channels/outbox.ts') as typeof import('./channels/outbox.ts');
@@ -956,7 +962,13 @@ export function formatLimitChangeTable(
 
 /** Summary footer: totals, net change, direction breakout. */
 export function formatChangeSummary(
-  changes: Array<LimitRaise & { direction?: 'up' | 'down' }>
+  changes: Array<
+    LimitRaise & {
+      direction?: 'up' | 'down';
+      score?: number;
+      multi_factor_score?: number;
+    }
+  >
 ): string {
   if (!changes || changes.length === 0) return '';
   const total = changes.length;
@@ -968,13 +980,11 @@ export function formatChangeSummary(
     }
     return s;
   }, 0);
-  const hasScore = changes.some(
-    r => (r as any).multi_factor_score != null || (r as any).score != null
-  );
-  const avgScore = hasScore
-    ? changes.reduce((s, r) => s + ((r as any).multi_factor_score ?? (r as any).score ?? 0), 0) /
-      total
-    : null;
+  const scores = changes
+    .map(change => change.multi_factor_score ?? change.score)
+    .filter((score): score is number => score != null);
+  const avgScore =
+    scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : null;
   const parts = [
     `Total: ${total}`,
     `🚀 ${raises}`,

@@ -61,7 +61,7 @@ Options: --schedule <cron> · --title <name> · --baseline`);
     case 'run': {
       let result: Awaited<ReturnType<typeof runEventAlerts>>;
       try {
-        result = await runEventAlerts({ baseline: opts.baseline });
+        result = await runEventAlerts(opts.baseline ? { baseline: true } : {});
       } catch (err) {
         console.error(
           colorize(`telegram:event-alerts · ${err instanceof Error ? err.message : err}`, '#f85149')
@@ -83,6 +83,7 @@ Options: --schedule <cron> · --title <name> · --baseline`);
         ['feeds', 'seen', 'alerted', 'skippedPartners', 'failed', 'firstRun']
       );
       for (const f of result.failed) console.error(`  ✗ ${f.eventKey}: ${f.error}`);
+      if (result.failed.length > 0) process.exitCode = 1;
       return;
     }
   }

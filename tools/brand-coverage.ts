@@ -402,6 +402,9 @@ export async function loadBrandConsumerFiles(root: string): Promise<BrandCoverag
   if (!paths.some(path => path.startsWith('projects/'))) {
     paths.push(...(await listProjectsPaths(root)));
   }
+  // The scratch runner appends exported projects after its local index paths;
+  // normalize order so bounded evidence lists match a normal checkout bake.
+  paths.sort((left, right) => left.localeCompare(right));
   for (const path of paths) {
     if (!CONSUMER_ROOTS.some(consumerRoot => path.startsWith(`${consumerRoot}/`))) continue;
     if (!SOURCE_FILE.test(path) || EXCLUDED.some(pattern => pattern.test(path))) continue;

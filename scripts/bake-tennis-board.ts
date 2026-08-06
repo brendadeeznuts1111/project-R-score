@@ -18,7 +18,7 @@
  * @see public/portal/tennis/
  */
 import { Database } from 'bun:sqlite';
-import { join } from 'node:path';
+import { joinPath } from '../lib/path-bun.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import {
   bucketMidCents,
@@ -42,11 +42,11 @@ import {
   sampleLiveMatches,
 } from '../lib/tennis/live-matches.ts';
 
-const ROOT = join(import.meta.dir, '..');
-const OUT_DIR = join(ROOT, 'public/registry/tennis');
-const DEFAULT_DB = join(ROOT, 'Kalshi-bot/research/cache/event-store.db');
-const WAREHOUSE_AVATARS = join(ROOT, 'warehouse/avatars');
-const PUBLIC_AVATARS = join(ROOT, 'public/avatars');
+const ROOT = joinPath(import.meta.dir, '..');
+const OUT_DIR = joinPath(ROOT, 'public/registry/tennis');
+const DEFAULT_DB = joinPath(ROOT, 'Kalshi-bot/research/cache/event-store.db');
+const WAREHOUSE_AVATARS = joinPath(ROOT, 'warehouse/avatars');
+const PUBLIC_AVATARS = joinPath(ROOT, 'public/avatars');
 
 function argValue(flag: string): string | undefined {
   const i = Bun.argv.indexOf(flag);
@@ -220,6 +220,28 @@ async function main(): Promise<void> {
     ? sampleLiveMatches(new Date(), matchLimit)
     : loadLiveMatchesDoc(dbPath, { limit: matchLimit });
 
+  // Attach desk quality onto metrics for portal health strip.
+  if (liveMatches.quality) {
+    metrics = {
+      ...metrics,
+      desk: {
+        scannedEvents: liveMatches.quality.scannedEvents,
+        withBothMids: liveMatches.quality.withBothMids,
+        withOneMid: liveMatches.quality.withOneMid,
+        withNoMids: liveMatches.quality.withNoMids,
+        listedWithBothMids: liveMatches.quality.listedWithBothMids,
+        listedMissingMids: liveMatches.quality.listedMissingMids,
+        coveragePct: liveMatches.quality.coveragePct,
+        ...(liveMatches.quality.latestBookTs != null
+          ? { latestBookTs: liveMatches.quality.latestBookTs }
+          : {}),
+        ...(liveMatches.quality.latestBookAt
+          ? { latestBookAt: liveMatches.quality.latestBookAt }
+          : {}),
+      },
+    };
+  }
+
   const profileNames = forceSample
     ? liveMatches.matches.flatMap(m => [m.sideA.label, m.sideB.label])
     : [
@@ -233,22 +255,30 @@ async function main(): Promise<void> {
       ? await buildAvatarIndexFromNames(profileNames)
       : await scanWarehouseAvatars();
 
-  await Bun.write(join(OUT_DIR, 'board-metrics.json'), `${JSON.stringify(metrics, null, 2)}\n`);
+  await Bun.write(joinPath(OUT_DIR, 'board-metrics.json'), `${JSON.stringify(metrics, null, 2)}\n`);
   await Bun.write(
-    join(OUT_DIR, 'mid-distribution.json'),
+    joinPath(OUT_DIR, 'mid-distribution.json'),
     `${JSON.stringify(toMidDistributionDoc(metrics), null, 2)}\n`
   );
-  await Bun.write(join(OUT_DIR, 'live-matches.json'), `${JSON.stringify(liveMatches, null, 2)}\n`);
   await Bun.write(
-    join(OUT_DIR, 'avatar-index.json'),
+    joinPath(OUT_DIR, 'live-matches.json'),
+    `${JSON.stringify(liveMatches, null, 2)}\n`
+  );
+  await Bun.write(
+    joinPath(OUT_DIR, 'avatar-index.json'),
     `${JSON.stringify(toAvatarIndexDoc(avatarIndex), null, 2)}\n`
   );
 
   console.log(
     `tennis board bake → metrics=${metrics.source} mids=${metrics.midsUsable} series=${metrics.seriesVolume.length} markets=${metrics.markets}`
   );
+  const q = liveMatches.quality;
   console.log(
-    `  matches=${liveMatches.source} n=${liveMatches.matches.length} · avatars=${avatarIndex.players.length} · images=${imagesOk ? 'ok' : 'skip'}`
+    `  matches=${liveMatches.source} n=${liveMatches.matches.length}` +
+      (q
+        ? ` mid-ok=${q.listedWithBothMids}/${liveMatches.matches.length} store-full=${q.withBothMids}`
+        : '') +
+      ` · avatars=${avatarIndex.players.length} · images=${imagesOk ? 'ok' : 'skip'}`
   );
   console.log(`  ${OUT_DIR}/board-metrics.json`);
   console.log(`  ${OUT_DIR}/mid-distribution.json`);

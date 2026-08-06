@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "kind": "tennis-partner-contracts",
+  "path": "/registry/tennis/partner-contracts.json",
+  "generatedAt": "2026-08-05T17:37:45.981Z",
+  "source": "live",
+  "runtimeUrl": "https://tennis.factory-wager.com",
+  "contractPaths": {
+    "partnersCapacity": "https://tennis.factory-wager.com/api/v1/partners/capacity",
+    "accountingFinance": "https://tennis.factory-wager.com/api/v1/accounting/finance"
+  },
+  "summary": {
+    "partnerCount": 4,
+    "activeOuts": 5,
+    "totalOuts": 5,
+    "operatorReady": 3,
+    "handshakeOk": 4
+  },
+  "partners": [
+    {
+      "partnerCode": "ASH",
+      "callSign": "ASH-001",
+      "phase": "partner.phase.operator_ready",
+      "activeOuts": 1,
+      "totalOuts": 1,
+      "totalPerBetMaxCents": 50000,
+      "ledgerRowCount": 0,
+      "balanceDeltaCents": 0,
+      "colorHex": "#c530ac",
+      "handshakeOk": true,
+      "factoryPhase": "operator_ready",
+      "fundStatus": "ready",
+      "incompleteOuts": 0,
+      "partnersHref": "/portal/partners/#partner/ASH",
+      "accountingHref": "/portal/partners/#partner/ASH/accounting",
+      "telegramAccountingHref": "/portal/partners/#partner/ASH/telegram/accounting",
+      "outs": [
+        {
+          "outId": "out-ASH-1",
+          "partnerCode": "ASH",
+          "callSign": "ASH-001",
+          "status": "active",
+          "bookId": "book-hard-rock-florida",
+          "verticalKey": "hardrock",
+          "secretsConfigured": false,
+          "perBetMaxCents": 50000
+        }
+      ]
+    },
+    {
+      "partnerCode": "BIL",
+      "callSign": "BIL-001",
+      "phase": "partner.phase.operator_ready",
+      "activeOuts": 1,
+      "totalOuts": 1,
+      "totalPerBetMaxCents": 50000,
+      "ledgerRowCount": 0,
+      "balanceDeltaCents": 0,
+      "colorHex": "#2e1fd1",
+      "handshakeOk": true,
+      "factoryPhase": "operator_ready",
+      "fundStatus": "ready",
+      "incompleteOuts": 0,
+      "partnersHref": "/portal/partners/#partner/BIL",
+      "accountingHref": "/portal/partners/#partner/BIL/accounting",
+      "telegramAccountingHref": "/portal/partners/#partner/BIL/telegram/accounting",
+      "outs": [
+        {
+          "outId": "out-BIL-1",
+          "partnerCode": "BIL",
+          "callSign": "BIL-001",
+          "status": "active",
+          "bookId": "book-partner-book-tbd",
+          "verticalKey": "fantasy402",
+          "secretsConfigured": false,
+          "perBetMaxCents": 50000
+        }
+      ]
+    },
+    {
+      "partnerCode": "NOV",
+      "callSign": "NOV-001",
+      "phase": "partner.phase.operator_ready",
+      "activeOuts": 1,
+      "totalOuts": 1,
+      "totalPerBetMaxCents": 50000,
+      "ledgerRowCount": 0,
+      "balanceDeltaCents": 0,
+      "colorHex": "#4a7e20",
+      "handshakeOk": true,
+      "factoryPhase": "operator_ready",
+      "fundStatus": "ready",
+      "incompleteOuts": 0,
+      "partnersHref": "/portal/partners/#partner/NOV",
+      "accountingHref": "/portal/partners/#partner/NOV/accounting",
+      "telegramAccountingHref": "/portal/partners/#partner/NOV/telegram/accounting",
+      "outs": [
+        {
+          "outId": "out-NOV-1",
+          "partnerCode": "NOV",
+          "callSign": "NOV-001",
+          "status": "active",
+          "bookId": "book-hard-rock-florida",
+          "verticalKey": "hardrock",
+          "secretsConfigured": false,
+          "perBetMaxCents": 50000
+        }
+      ]
+    },
+    {
+      "partnerCode": "SPEN",
+      "callSign": "SPEN-001",
+      "phase": "partner.phase.onboarding",
+      "activeOuts": 2,
+      "totalOuts": 2,
+      "totalPerBetMaxCents": 100000,
+      "ledgerRowCount": 0,
+      "balanceDeltaCents": 0,
+      "colorHex": "#6a7c13",
+      "handshakeOk": true,
+      "factoryPhase": "operator_ready",
+      "fundStatus": "ready",
+      "incompleteOuts": 0,
+      "partnersHref": "/portal/partners/#partner/SPEN",
+      "accountingHref": "/portal/partners/#partner/SPEN/accounting",
+      "telegramAccountingHref": "/portal/partners/#partner/SPEN/telegram/accounting",
+      "outs": [
+        {
+          "outId": "out-SPEN-1",
+          "partnerCode": "SPEN",
+          "callSign": "SPEN-001",
+          "status": "active",
+          "bookId": "book-parlay21-com",
+          "verticalKey": "oddsblaze",
+          "secretsConfigured": false,
+          "perBetMaxCents": 50000
+        },
+        {
+          "outId": "out-SPEN-2",
+          "partnerCode": "SPEN",
+          "callSign": "SPEN-001",
+          "status": "active",
+          "bookId": "book-lonestarwagering-com",
+          "verticalKey": "oddsblaze",
+          "secretsConfigured": false,
+          "perBetMaxCents": 50000
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Live Tennis HQ v1 partners/capacity + accounting/finance",
+    "Enriched with Factory handshake + fundStatus from partners-ops join"
+  ]
+}

@@ -38,8 +38,8 @@ function sampleFor(name: string): { input: string; expected: string } {
 }
 
 describe('branded domain-value catalog', () => {
-  test('catalog is a unique 62-value, 9-domain contract', () => {
-    expect(branded.BRAND_CATALOG).toHaveLength(62);
+  test('catalog is a unique 69-value, 9-domain contract', () => {
+    expect(branded.BRAND_CATALOG).toHaveLength(69);
 
     const names = branded.BRAND_CATALOG.map(spec => spec.name);
     const domains = new Set(branded.BRAND_CATALOG.map(spec => spec.domain));
@@ -48,7 +48,7 @@ describe('branded domain-value catalog', () => {
     expect(new Set(names).size).toBe(names.length);
     expect(domains.size).toBe(9);
     expect(domains.has('surfaces')).toBeTrue();
-    expect(kinds.filter(kind => kind === 'id')).toHaveLength(56);
+    expect(kinds.filter(kind => kind === 'id')).toHaveLength(63);
     expect(kinds.filter(kind => kind === 'key')).toHaveLength(1);
     expect(kinds.filter(kind => kind === 'code')).toHaveLength(5);
   });
@@ -89,7 +89,7 @@ describe('branded domain-value catalog', () => {
   });
 
   test('generated guards cover every canonical runtime shape', () => {
-    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(62);
+    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(69);
 
     for (const spec of branded.BRAND_CATALOG) {
       const guardName = `is${spec.name}` as keyof typeof branded.BRAND_GUARDS;
@@ -173,6 +173,9 @@ describe('branded domain-value catalog', () => {
     expect(branded.BRAND_GUARDS.isSurfaceAccessCode('Bearer (intended)')).toBeFalse();
     expect(branded.surfaceBackendCodeFromBackend('cloudflare-pages:project-r-score')).toBe(
       'cloudflare-pages'
+    );
+    expect(branded.surfaceBackendCodeFromBackend('cloudflare-worker:tennis-hq')).toBe(
+      'cloudflare-worker'
     );
     expect(branded.surfaceBackendCodeFromBackend('none — no tunnel')).toBe('none');
     expect(branded.pagesDevHostForProject(branded.PROJECT_R_SCORE_PAGES)).toBe(

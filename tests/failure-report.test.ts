@@ -2,9 +2,12 @@
 import { describe, expect, test } from 'bun:test';
 import {
   buildFailuresReport,
+  FAILURES_STALE_MS,
   failuresFromJunitXml,
+  isFailuresReportStale,
   namePattern,
 } from '../lib/failure-report.ts';
+import { renderHtml } from '../tools/failures-bake.ts';
 
 const JUNIT = `<?xml version="1.0" encoding="UTF-8"?>
 <testsuites name="bun test" tests="3" assertions="10" failures="1" skipped="1" time="2.5">
@@ -63,10 +66,65 @@ describe('test-failures parser', () => {
     expect(report.totals.failures).toBe(1);
     expect(report.healthy).toBe(false);
     expect(report.generatedAt).toBe('2026-07-28T00:00:00Z');
+    // Without mtimes, sourceAt falls back to bake time
+    expect(report.sourceAt).toBe('2026-07-28T00:00:00Z');
+  });
+
+  test('sourceAt prefers max JUnit mtime over bake wall-clock', () => {
+    const report = buildFailuresReport(
+      [
+        {
+          source: 'old.xml',
+          xml: JUNIT,
+          mtimeMs: Date.parse('2026-07-01T00:00:00Z'),
+        },
+        {
+          source: 'new.xml',
+          xml: '<testsuites tests="0" failures="0" skipped="0" time="0"></testsuites>',
+          mtimeMs: Date.parse('2026-07-20T12:00:00Z'),
+        },
+      ],
+      '2026-08-04T00:00:00Z'
+    );
+    expect(report.generatedAt).toBe('2026-08-04T00:00:00Z');
+    expect(report.sourceAt).toBe('2026-07-20T12:00:00.000Z');
+    // Fresh bake of old suite is still stale vs source
+    expect(
+      isFailuresReportStale(report, Date.parse('2026-08-04T00:00:00Z'), FAILURES_STALE_MS)
+    ).toBe(true);
+  });
+
+  test('isFailuresReportStale is false for recent sourceAt', () => {
+    const now = Date.parse('2026-08-04T12:00:00Z');
+    expect(
+      isFailuresReportStale(
+        { sourceAt: '2026-08-04T11:00:00Z', generatedAt: '2026-08-04T12:00:00Z' },
+        now,
+        FAILURES_STALE_MS
+      )
+    ).toBe(false);
   });
 
   test('report shape is a stable contract (snapshot)', () => {
     const report = buildFailuresReport([{ source: 'junit.xml', xml: JUNIT }], '2026-07-28T00:00:00Z');
     expect(report).toMatchSnapshot();
+  });
+
+  test('renderHtml embeds sourceAt and stale-board guard using STALE_MS', () => {
+    const report = buildFailuresReport(
+      [{ source: 'junit.xml', xml: JUNIT, mtimeMs: Date.parse('2026-07-01T00:00:00Z') }],
+      '2026-08-04T00:00:00Z'
+    );
+    const html = renderHtml(report);
+    expect(html).toContain('id="tf-stale-banner"');
+    expect(html).toContain('id="test-failures-embed"');
+    expect(html).toContain(`const STALE_MS = ${FAILURES_STALE_MS}`);
+    expect(html).toContain('report.sourceAt || report.generatedAt');
+    expect(html).toContain('"sourceAt":"2026-07-01T00:00:00.000Z"');
+    expect(html).toContain('Stale green board');
+    // Always alarm styling — no soft green class for stale+healthy
+    expect(html).not.toContain('tf-stale.ok');
+    // Escaping: failure message with < is escaped in table
+    expect(html).toContain('breaks &lt;badly&gt;');
   });
 });

@@ -62,4 +62,13 @@ describe('portal design kernel', () => {
     expect(topbar).toContain('bootstrapGlossarySurface');
     expect(glossaryUx).toContain("const conceptId = surface?.concept ?? 'ui.semantic.surface'");
   });
+
+  test('shared asynchronous chrome reserves layout before hydration', async () => {
+    const style = await Bun.file('public/portal/style.css').text();
+
+    expect(style).toMatch(/\.tenant-sidebar\s*\{[^}]*min-block-size:\s*34px/s);
+    expect(style).toMatch(/\[data-domain-lanes\]\[hidden\]\s*\{[^}]*min-block-size:\s*104px/s);
+    expect(style).toMatch(/\.ops-jump\[hidden\]\s*\{[^}]*display:\s*flex\s*!important/s);
+    expect(style).toMatch(/operations-dashboard\s*\{[^}]*min-block-size:\s*100vh/s);
+  });
 });

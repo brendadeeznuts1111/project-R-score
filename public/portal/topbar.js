@@ -2,18 +2,6 @@
  * Shared topbar — health dot (portal:data) + lazy tenant sidebar bootstrap.
  */
 
-import { startDataService } from './data.js';
-import {
-  loadTenantManifest,
-  resolveTenantId,
-  renderSidebar,
-  tenantRegistryPaths,
-} from './components/sidebar.js';
-import { markCurrentNavigation } from './navigation.js';
-import { bootstrapNavBadges } from './nav-badges.js';
-import { bootGlossaryUx } from './components/glossary-ux.js';
-import './components/notification.js';
-
 let pendingHealthRaf = 0;
 let sidebarBootstrapped = false;
 
@@ -89,6 +77,10 @@ async function bootstrapSidebar() {
   if (sidebarBootstrapped) return;
   const nav = document.getElementById('tenant-sidebar');
   if (!nav) return;
+
+  const { loadTenantManifest, resolveTenantId, renderSidebar } = await import(
+    './components/sidebar.js'
+  );
 
   const run = async () => {
     if (sidebarBootstrapped) return;
@@ -168,26 +160,64 @@ function normalizeBrandChrome() {
 
 async function bootstrapGlossarySurface() {
   try {
+    const { bootGlossaryUx } = await import('./components/glossary-ux.js');
     await bootGlossaryUx();
   } catch (error) {
     console.warn('[portal:topbar] glossary surface unavailable:', error);
   }
 }
 
-if (!window.__portalDataStarted) {
-  startDataService();
+async function bootstrapDomainLaneSurface() {
+  try {
+    const { bootstrapDomainLanes } = await import('./components/domain-lanes.js');
+    bootstrapDomainLanes();
+  } catch (error) {
+    console.warn('[portal:topbar] domain lanes unavailable:', error);
+  }
+}
+
+async function bootstrapCoreChromeSurfaces() {
+  try {
+    const [{ startDataService }, { markCurrentNavigation }, { bootstrapNavBadges }] =
+      await Promise.all([
+        import('./data.js'),
+        import('./navigation.js'),
+        import('./nav-badges.js'),
+        import('./components/notification.js'),
+        import('./components/footer.js'),
+      ]);
+    if (!window.__portalDataStarted) startDataService();
+    const navigation = markCurrentNavigation();
+    if (navigation) {
+      document.dispatchEvent(new CustomEvent('portal:navigation', { detail: navigation }));
+    }
+    await bootstrapSidebar();
+    bootstrapNavBadges();
+  } catch (error) {
+    console.warn('[portal:topbar] deferred chrome unavailable:', error);
+  }
+}
+
+/** Keep data-backed and optional chrome off the critical execution path. */
+function scheduleDeferredChromeSurfaces() {
+  const boot = () => {
+    void Promise.all([
+      bootstrapCoreChromeSurfaces(),
+      bootstrapGlossarySurface(),
+      bootstrapDomainLaneSurface(),
+    ]);
+  };
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(boot, { timeout: 1_500 });
+    return;
+  }
+  window.setTimeout(boot, 1_500);
 }
 
 function onReady() {
   normalizeBrandChrome();
-  const navigation = markCurrentNavigation();
-  if (navigation) {
-    document.dispatchEvent(new CustomEvent('portal:navigation', { detail: navigation }));
-  }
-  bootstrapSidebar();
   bootstrapNavOverflow();
-  bootstrapNavBadges();
-  void bootstrapGlossarySurface();
+  scheduleDeferredChromeSurfaces();
 }
 
 if (document.readyState === 'loading') {
@@ -195,5 +225,3 @@ if (document.readyState === 'loading') {
 } else {
   onReady();
 }
-
-export { tenantRegistryPaths, resolveTenantId };

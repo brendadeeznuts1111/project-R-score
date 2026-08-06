@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 /**
  * Operations DB connection factory — WAL + busy_timeout + unified schema.
  *
@@ -7,10 +8,6 @@
  * the same database as interactive runs. Explicit opts.path always wins.
  */
 import { Database } from 'bun:sqlite';
-// Sync mkdir required: SQLite opens a file handle before any async file helper
-// could create the parent dir; Bun.file is async-only.
-// eslint-disable-next-line no-restricted-imports -- parent-dir creation for fresh-worktree data/
-import { mkdirSync } from 'node:fs';
 import { joinPath } from '../path-bun.ts';
 import { initSchema } from './schema.ts';
 
@@ -24,11 +21,18 @@ export type OpenOperationsDbOpts = {
   skipInit?: boolean;
 };
 
+/** Ensure parent dir exists for file DBs (fresh worktrees often lack data/). */
+function ensureParentDir(filePath: string): void {
+  if (filePath === ':memory:') return;
+  const slash = filePath.lastIndexOf('/');
+  if (slash <= 0) return;
+  const dir = filePath.slice(0, slash);
+  Bun.spawnSync(['mkdir', '-p', dir], { stdout: 'ignore', stderr: 'ignore' });
+}
+
 export function openOperationsDb(opts?: OpenOperationsDbOpts): Database {
   const path = opts?.path ?? DEFAULT_OPS_DB_PATH;
-  if (path !== ':memory:') {
-    mkdirSync(joinPath(path, '..'), { recursive: true });
-  }
+  ensureParentDir(path);
   const db = new Database(path, path === ':memory:' ? undefined : { create: true });
   db.run('PRAGMA journal_mode = WAL');
   db.run('PRAGMA busy_timeout = 5000');

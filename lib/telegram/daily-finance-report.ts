@@ -15,35 +15,40 @@ import {
   type PartnerFinanceSummary,
 } from '../partner-profile/finance-report.ts';
 import { loadPackageGroupForumMetadata } from './package-group-forum.ts';
-import { loadPartnerNotificationPrefs } from './partner-notification-prefs.ts';
+import { loadPartnerNotificationSettings } from './partner-notification-prefs.ts';
 import { resolveNotificationPreferences } from './partner-notifications.ts';
 import { sendTelegramBotMessage } from './telegram-api.ts';
+import { escapeHtml } from './templates/escape.ts';
 
 // ─── report text ─────────────────────────────────────────────────────────────
 
-/** Per-partner finance report (Markdown). `commissionPct` optional (0–100). */
+/** Per-partner finance report (Telegram HTML). `commissionPct` optional (0–100). */
 export function buildFinanceReportText(
   summary: PartnerFinanceSummary,
   commissionPct?: number
 ): string {
+  const money = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: summary.currency,
+  });
   const lines: string[] = [
-    `💼 **Finance report — ${summary.partnerCode}**`,
+    `💼 <b>Finance report — ${escapeHtml(summary.partnerCode)}</b>`,
     `Window: ${summary.from.slice(0, 10)} → ${summary.to.slice(0, 10)}`,
     '',
-    `Entries: **${summary.entries}** · Net flow: **$${summary.netFlow.toFixed(2)}**`,
-    `Latest balance: **$${(summary.latestBalance ?? 0).toFixed(2)}**`,
+    `Entries: <b>${summary.entries}</b> · Net flow: <b>${escapeHtml(money.format(summary.netFlow))}</b>`,
+    `Latest balance: <b>${escapeHtml(money.format(summary.latestBalance ?? 0))}</b>`,
     '',
   ];
   const activeTypes = (Object.entries(summary.byType) as Array<[string, number]>).filter(
     ([, n]) => n > 0
   );
   if (activeTypes.length === 0) {
-    lines.push('_No ledger activity in this window._');
+    lines.push('<i>No ledger activity in this window.</i>');
   } else {
-    for (const [type, n] of activeTypes) lines.push(`• ${type}: ${n}`);
+    for (const [type, n] of activeTypes) lines.push(`• ${escapeHtml(type)}: ${n}`);
   }
   if (commissionPct != null) {
-    lines.push('', `Commission: **${commissionPct}%**`);
+    lines.push('', `Commission: <b>${commissionPct}%</b>`);
   }
   return lines.join('\n');
 }
@@ -131,58 +136,73 @@ export async function publishFinanceReports(
   let sent = 0;
 
   const db = opts.logDelivery ? (opts.db ?? openFinanceReportDb()) : null;
+  const ownsDb = db !== null && opts.db === undefined;
   if (db) ensureFinanceReportLog(db);
 
-  for (const summary of summaries) {
-    if (opts.filter && !opts.filter(summary)) {
-      skipped.push(summary.partnerCode);
-      continue;
-    }
-    let target: { chatId: string; topicId?: number } | null = null; // brand-ok — Telegram chat_id wire
-    try {
-      if (opts.targetFor) {
-        target = await opts.targetFor(summary);
-      } else {
-        const meta = await loadPackageGroupForumMetadata(summary.partnerCode, {
-          rootDir: opts.forumsMetaDir,
-        });
-        if (meta?.chatId) {
-          target = { chatId: meta.chatId, topicId: meta.topicsThreadMap?.['liquidity/outs'] };
-        }
+  try {
+    for (const summary of summaries) {
+      if (opts.filter && !opts.filter(summary)) {
+        skipped.push(summary.partnerCode);
+        continue;
       }
-    } catch {
-      target = null;
-    }
-    if (!target?.chatId) {
-      skipped.push(summary.partnerCode);
-      continue;
-    }
+      let target: { chatId: string; topicId?: number } | null = null; // brand-ok — Telegram chat_id wire
+      try {
+        if (opts.targetFor) {
+          target = await opts.targetFor(summary);
+        } else {
+          const meta = await loadPackageGroupForumMetadata(summary.partnerCode, {
+            rootDir: opts.forumsMetaDir,
+          });
+          if (meta?.chatId) {
+            target = { chatId: meta.chatId, topicId: meta.topicsThreadMap?.['liquidity/outs'] };
+          }
+        }
+      } catch {
+        target = null;
+      }
+      if (!target?.chatId) {
+        skipped.push(summary.partnerCode);
+        continue;
+      }
 
-    try {
-      const result = await sendTelegramBotMessage(token, {
-        chatId: target.chatId,
-        text: buildFinanceReportText(summary, opts.commissionPctByCode?.[summary.partnerCode]),
-        parseMode: 'Markdown',
-        messageThreadId: target.topicId,
-      });
-      if (result.ok) {
-        sent++;
-        db && logFinanceReportDelivery(db, summary.partnerCode);
-      } else {
+      try {
+        const result = await sendTelegramBotMessage(token, {
+          chatId: target.chatId,
+          text: buildFinanceReportText(summary, opts.commissionPctByCode?.[summary.partnerCode]),
+          parseMode: 'HTML',
+          messageThreadId: target.topicId,
+          replyMarkup: {
+            inline_keyboard: [
+              [
+                {
+                  text: '✅ Acknowledge',
+                  callback_data: `nf:finance:ack:${summary.partnerCode}`,
+                },
+              ],
+            ],
+          },
+        });
+        if (result.ok) {
+          sent++;
+          db && logFinanceReportDelivery(db, summary.partnerCode);
+        } else {
+          failed.push({
+            partnerCode: summary.partnerCode,
+            error: result.description ?? `telegram error ${result.errorCode ?? 'unknown'}`,
+          });
+        }
+      } catch (err) {
         failed.push({
           partnerCode: summary.partnerCode,
-          error: result.description ?? `telegram error ${result.errorCode ?? 'unknown'}`,
+          error: err instanceof Error ? err.message : String(err),
         });
       }
-    } catch (err) {
-      failed.push({
-        partnerCode: summary.partnerCode,
-        error: err instanceof Error ? err.message : String(err),
-      });
     }
-  }
 
-  return { sent, skipped, failed };
+    return { sent, skipped, failed };
+  } finally {
+    if (ownsDb) db?.close();
+  }
 }
 
 /**
@@ -209,14 +229,20 @@ export async function runDailyFinanceReport(
       days: opts.days ?? 7,
       ...(opts.partnerCode ? { partnerCode: opts.partnerCode } : {}),
     });
-    const prefsByCode = await loadPartnerNotificationPrefs(opts.profilesDir);
+    const settingsByCode = await loadPartnerNotificationSettings(opts.profilesDir);
     const result = await publishFinanceReports({
       token,
       summaries,
       db,
       logDelivery: true,
       filter: summary =>
-        resolveNotificationPreferences(prefsByCode[summary.partnerCode]).dailyFinance,
+        resolveNotificationPreferences(settingsByCode[summary.partnerCode]?.preferences)
+          .dailyFinance,
+      commissionPctByCode: Object.fromEntries(
+        Object.entries(settingsByCode).flatMap(([code, settings]) =>
+          settings.commissionPct === undefined ? [] : [[code, settings.commissionPct]]
+        )
+      ),
     });
     return { ...result, partners: summaries.length };
   } finally {

@@ -313,30 +313,22 @@ export const OPS_ONELINERS: readonly OpsOneliner[] = [
   },
   {
     id: 'auto-fund-cron',
-    summary: 'Register auto-fund cron (register + stop)',
+    summary: 'Preview auto-fund cron and execute one cycle',
     apis: ['Bun.cron', 'bun:sqlite'],
     docs: 'https://bun.com/docs/runtime/cron',
     run: () => {
       const db = memoryOpsDb();
-      const job = Bun.cron(
-        '0 */6 * * *',
-        () => {
-          const low = db
-            .query(`SELECT id FROM sb_accounts WHERE balance < 10000 LIMIT 1`)
-            .get() as { id: string } | null; // brand-ok — opaque SQL primary key
-          if (low)
-            db.run(`UPDATE sb_accounts SET balance = balance + 5000 WHERE id = $id`, {
-              $id: low.id,
-            });
-        },
-        'ops-auto-fund-demo'
-      );
-      const name = job?.constructor?.name ?? typeof job;
-      if (typeof (job as { stop?: () => void })?.stop === 'function') {
-        (job as { stop: () => void }).stop();
-      }
+      const next = Bun.cron.parse('0 */6 * * *');
+      const low = db.query(`SELECT id FROM sb_accounts WHERE balance < 10000 LIMIT 1`).get() as {
+        id: string; // brand-ok — opaque SQL primary key
+      } | null;
+      if (low)
+        db.run(`UPDATE sb_accounts SET balance = balance + 5000 WHERE id = $id`, {
+          $id: low.id,
+        });
       db.close();
-      return `cron=${name}`;
+      if (!next) throw new Error('auto-fund cron has no future occurrence');
+      return `next=${next.toISOString()} funded=${low ? 'yes' : 'no'}`;
     },
   },
 ];

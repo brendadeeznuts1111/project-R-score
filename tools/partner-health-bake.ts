@@ -9,6 +9,7 @@
 import { colorize, logTable } from '../lib/console-depth.ts';
 import {
   bakePartnerHealth,
+  buildPartnerHealthBake,
   partnerHealthBakeMatches,
   PARTNER_HEALTH_BAKE_PATH,
 } from '../lib/partner-profile/partner-health-bake.ts';
@@ -25,7 +26,7 @@ const check = Bun.argv.includes('--check');
 const outPath = argValue(Bun.argv, '--out') ?? PARTNER_HEALTH_BAKE_PATH;
 
 if (check) {
-  const live = await bakePartnerHealth(outPath).then(r => r.bake);
+  const live = await buildPartnerHealthBake();
   const committedText = await Bun.file(PARTNER_HEALTH_BAKE_PATH).text();
   const committed = JSON.parse(committedText) as unknown;
   const matches = partnerHealthBakeMatches(live, committed);

@@ -52,17 +52,13 @@ consumer (portal reads file, Pages Functions read R2, monitoring reads file).
 
 Verified via SigV4 `ListObjectsV2` against `factory-wager-registry`:
 
-1. **The R2 artifact plane is catalog-only (deferred, not abandoned).** The bucket
-   holds 11 objects: the catalog index (`registry.json`, 17 packages,
-   metadata + inline README), an `ops-summary.json` stub, and the `channels/*`
-   telegram event streams + consumer cursor. **No `storage/` artifact objects
-   exist** — no publish has landed artifact bytes in R2 to date. What
-   `bun install` resolves (packuments + tarballs) is served from the committed
-   static mirror (`public/registry/@factorywager/*`). Decision 1 ("R2 is the
-   single source of truth … and artifacts") stands for the *index*; the
-   `storage/` artifact write plane is **deferred until deliberately activated**
-   (one real `factory publish` + verification), at which point this addendum is
-   removed.
+1. **The R2 artifact plane was activated on 2026-08-04.** The first canonical
+   object is `@tennis-hq/ssot/1.5.0.tgz`: 11,204 bytes with SHA-256
+   `a6c0e9502cdb1c30d37e7579ed3d90e475cc28e6e0f46e0837394524f8cc8f55`.
+   A direct `RegistryClient.install()` download verified the stored byte length
+   and checksum after `factory publish`; the R2 index now resolves `latest` to
+   `1.5.0`. The committed static snapshot remains the Pages fallback, refreshed
+   from R2 with `factory snapshot`.
 2. **Bucket multi-tenancy is accepted.** The registry index and the telegram
    event channels share the bucket. The enforced read boundary is the edge
    allowlist (`lib/factory/http-keys.ts`) — `channels/*` keys can never be

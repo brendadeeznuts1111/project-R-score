@@ -25,6 +25,19 @@ export type VenueCountRow = {
   count: number;
 };
 
+/** Desk / book data-quality slice (from live-matches bake). */
+export type TennisBoardDeskQuality = {
+  scannedEvents: number;
+  withBothMids: number;
+  withOneMid: number;
+  withNoMids: number;
+  listedWithBothMids: number;
+  listedMissingMids: number;
+  coveragePct: number;
+  latestBookTs?: number;
+  latestBookAt?: string;
+};
+
 export type TennisBoardMetrics = {
   schemaVersion: 1;
   kind: 'tennis-board-metrics';
@@ -37,6 +50,8 @@ export type TennisBoardMetrics = {
   buckets: MidBucket[];
   seriesVolume: SeriesVolumeRow[];
   venues: VenueCountRow[];
+  /** Live-match mid coverage for health strip. */
+  desk?: TennisBoardDeskQuality;
   note?: string;
 };
 

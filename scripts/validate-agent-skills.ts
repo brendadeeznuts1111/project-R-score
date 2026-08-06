@@ -5,7 +5,7 @@
 // @see https://bun.com/docs/runtime/yaml — Bun.YAML
 /** Validate repository-local Codex skill structure and skill-loop registry alignment. */
 
-import { dirname, resolve } from 'node:path';
+import { dirnamePath, resolvePath } from '../lib/path-bun.ts';
 import {
   AGENT_SKILLS_PATHS,
   agentSkillsDisplayPath,
@@ -14,7 +14,7 @@ import {
 } from '../lib/agent-skills-paths.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
-const DEFAULT_REPO_ROOT = resolve(import.meta.dir, '..');
+const DEFAULT_REPO_ROOT = resolvePath(import.meta.dir, '..');
 const SKILL_NAME_RE = /^[a-z0-9-]{1,64}$/;
 const ALLOWED_FRONTMATTER_KEYS = new Set([
   'name',
@@ -130,8 +130,8 @@ async function validateLocalLinks(
       continue;
     }
     const target = destination.startsWith('/')
-      ? resolve(repoRoot, `.${destination}`)
-      : resolve(dirname(skillPath), destination);
+      ? resolvePath(repoRoot, `.${destination}`)
+      : resolvePath(dirnamePath(skillPath), destination);
     if (!(await pathExists(target))) {
       issue(
         issues,
@@ -186,7 +186,7 @@ async function validateMetadata(
         issue(issues, 'error', 'metadata-icon', displayPath, `${field} must be a non-empty string`);
         continue;
       }
-      const iconPath = resolve(dirname(metadataPath), '..', value);
+      const iconPath = resolvePath(dirnamePath(metadataPath), '..', value);
       if (!(await pathExists(iconPath))) {
         issue(
           issues,

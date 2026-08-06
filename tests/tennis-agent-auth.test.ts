@@ -8,6 +8,7 @@ import {
   TENNIS_AGENT_AUTH_KIND,
   TENNIS_AGENT_AUTH_PATH,
   TENNIS_AGENT_AUTH_SCHEMA_VERSION,
+  TENNIS_HQ_RUNTIME_URL,
 } from '../lib/tennis/agent-auth.ts';
 
 function vaultMap(): VaultMapFile {
@@ -38,6 +39,14 @@ describe('Tennis HQ agent auth artifact', () => {
       'pass://factorywager/FactoryWager Registry Token/password'
     );
     expect(JSON.stringify(artifact)).not.toContain('tokenPresent');
+    expect(artifact.producerRuntime.url).toBe(TENNIS_HQ_RUNTIME_URL);
+    expect(artifact.producerRuntime.platform).toBe('cloudflare-workers');
+    expect(artifact.producerRuntime.contractAuth.registryTokenAccepted).toBe(false);
+    expect(artifact.producerRuntime.contractAuth.unauthenticatedStatuses).toEqual([401, 503]);
+    // Must match a real package.json script (not a dead alias).
+    expect(artifact.producerRuntime.releaseVerification).toBe(
+      'bun run cloudflare:deploy:verify'
+    );
   });
 
   test('fails closed when the vault mapping is absent', () => {
@@ -45,5 +54,27 @@ describe('Tennis HQ agent auth artifact', () => {
     expect(artifact.status).toBe('missing');
     expect(artifact.configured).toBe(false);
     expect(artifact.vaultRef).toBeNull();
+  });
+
+  test('publishes the owned producer runtime from the Tennis portal', async () => {
+    const portal = await Bun.file('public/portal/tennis/index.html').text();
+    expect(portal).toContain(`href="${TENNIS_HQ_RUNTIME_URL}"`);
+    expect(portal).toContain(`${TENNIS_HQ_RUNTIME_URL}/api/version`);
+  });
+
+  test('loads one reusable Tennis desk controller instead of an inline duplicate', async () => {
+    const [portal, controller] = await Promise.all([
+      Bun.file('public/portal/tennis/index.html').text(),
+      Bun.file('public/portal/components/tennis-desk.js').text(),
+    ]);
+
+    expect(portal).toContain(
+      '<script type="module" src="/portal/components/tennis-desk.js"></script>'
+    );
+    expect(portal).not.toContain('function renderKpis');
+    expect(controller).toContain("fetch('/registry/tennis/live-matches.json'");
+    expect(controller).toContain("fetch('/registry/tennis/agent-auth.json'");
+    expect(controller).toContain('/registry/tennis/partner-contracts.json');
+    expect(controller).toContain('function renderKpis');
   });
 });

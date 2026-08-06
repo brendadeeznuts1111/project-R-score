@@ -8,6 +8,7 @@
  * Includes per-token min-interval rate limiting and a single 429 retry.
  */
 import { loadTelegramEnv } from './telegram-config.ts';
+import { telegramBotApiUrl, telegramFileApiUrl } from './telegram-api-url.ts';
 
 export type TelegramApiResult = {
   ok: boolean;
@@ -49,7 +50,7 @@ export async function telegramApiCall(
   body: Record<string, unknown>
 ): Promise<TelegramApiResult> {
   await respectRateLimit(token);
-  const res = await fetch(`https://api.telegram.org/bot${token}/` + method, {
+  const res = await fetch(telegramBotApiUrl(token, method), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -529,4 +530,20 @@ export async function editRichTelegramMessage(
     description: r.description,
     errorCode: r.error_code,
   };
+}
+
+/** Download a Bot API file by `file_id` (getFile → `/file/bot…/{path}`). */
+export async function downloadTelegramFile(
+  token: string,
+  fileId: string // brand-ok — Telegram file_id wire
+): Promise<Uint8Array> {
+  const meta = await telegramApiCall(token, 'getFile', { file_id: fileId });
+  const path =
+    meta.ok && meta.result && typeof meta.result === 'object'
+      ? (meta.result as { file_path?: string }).file_path
+      : undefined;
+  if (!path) throw new Error(meta.description || 'getFile failed — no file_path');
+  const res = await fetch(telegramFileApiUrl(token, path));
+  if (!res.ok) throw new Error(`Telegram file download HTTP ${res.status}`);
+  return new Uint8Array(await res.arrayBuffer());
 }

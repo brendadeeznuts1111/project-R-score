@@ -1,7 +1,7 @@
 {
   "schema": "factorywager.partners-ops.v2",
   "version": "2",
-  "generatedAt": "2026-08-02T00:53:01.014Z",
+  "generatedAt": "2026-08-04T20:40:06.210Z",
   "path": "/registry/partners-ops.json",
   "sources": {
     "seatCapitalDesk": "/registry/seat-capital-desk.json",
@@ -61,6 +61,8 @@
       "telegram.topic.liquidity",
       "telegram.topic.accounting",
       "partner.ops.event",
+      "accounting.transfer",
+      "account.scope.global",
       "ops.limits.account",
       "ops.limits.effective_limit",
       "ops.limits.monitoring_status",
@@ -527,6 +529,34 @@
       "token": "--partner-ops-pinnacle",
       "hex": "#A371F7",
       "css": "#a371f7"
+    },
+    "publish.ssot_flow_soft": {
+      "conceptId": "publish.ssot_flow_soft",
+      "colorKey": "tennis",
+      "token": "--partner-ops-tennis",
+      "hex": "#3FB950",
+      "css": "#3fb950"
+    },
+    "publish.pm_proof": {
+      "conceptId": "publish.pm_proof",
+      "colorKey": "kalshi",
+      "token": "--partner-ops-kalshi",
+      "hex": "#58A6FF",
+      "css": "#58a6ff"
+    },
+    "publish.mode.soft": {
+      "conceptId": "publish.mode.soft",
+      "colorKey": "middleware",
+      "token": "--partner-ops-middleware",
+      "hex": "#D29922",
+      "css": "#d29922"
+    },
+    "publish.mode.strict": {
+      "conceptId": "publish.mode.strict",
+      "colorKey": "trading",
+      "token": "--partner-ops-trading",
+      "hex": "#F85149",
+      "css": "#f85149"
     }
   },
   "eventCodes": [

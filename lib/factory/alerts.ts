@@ -3,6 +3,7 @@
  * Registry ops alerts — Slack webhook + Telegram bot.
  */
 import { loadTelegramEnv } from '../telegram/telegram-config.ts';
+import { telegramBotApiUrl } from '../telegram/telegram-api-url.ts';
 
 export type AlertSeverity = 'info' | 'warning' | 'critical';
 export type RegistryAlertFetch = (
@@ -52,7 +53,7 @@ export async function sendRegistryAlert(
   const postTelegram = async (): Promise<boolean> => {
     if (!token || !chatTarget) return false;
     try {
-      const res = await fetcher(`https://api.telegram.org/bot${token}/sendMessage`, {
+      const res = await fetcher(telegramBotApiUrl(token, 'sendMessage'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chat_id: chatTarget, text: formatted }),

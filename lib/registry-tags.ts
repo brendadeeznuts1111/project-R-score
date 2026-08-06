@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/semver/order — Bun.semver.order
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/semver#bun-semver-order-versiona-string-versionb-string-0-1-1 — Bun.semver.order
@@ -14,8 +15,6 @@
  *
  * Upgrade path: consumers resolve `pre` → smoke → promote → `post`/`latest`.
  */
-// eslint-disable-next-line no-restricted-imports
-import { existsSync, readFileSync } from 'node:fs';
 import { sha256Hex } from './bun-utils-proof.ts';
 
 /** Canonical dist-tag names (npm-style). */
@@ -111,14 +110,19 @@ export function nextUpgradeTag(current: string): RegistryDistTag | null {
   return null;
 }
 
-export function loadProofIndex(path: string = PROOF_INDEX_PATH): ProofPackagesIndex {
+/** Load the proof packages index (empty shell when the file is missing). */
+export async function loadProofIndex(path: string = PROOF_INDEX_PATH): Promise<ProofPackagesIndex> {
+  const empty: ProofPackagesIndex = {
+    schemaVersion: 1,
+    lastUpdated: new Date(0).toISOString(),
+    packages: {},
+  };
   try {
-    if (!existsSync(path)) {
-      return { schemaVersion: 1, lastUpdated: new Date(0).toISOString(), packages: {} };
-    }
-    return JSON.parse(readFileSync(path, 'utf8')) as ProofPackagesIndex;
+    const file = Bun.file(path);
+    if (!(await file.exists())) return empty;
+    return (await file.json()) as ProofPackagesIndex;
   } catch {
-    return { schemaVersion: 1, lastUpdated: new Date(0).toISOString(), packages: {} };
+    return empty;
   }
 }
 
@@ -281,7 +285,7 @@ export async function writeTaggedProofArtifact(
     tagPaths.push(tagPath);
   }
 
-  let index = loadProofIndex();
+  let index = await loadProofIndex();
   index = upsertProofPackageRelease(index, packageName, version, {
     phase: opts.phase,
     proofHash,

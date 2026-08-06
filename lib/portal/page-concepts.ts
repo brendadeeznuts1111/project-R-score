@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
 /**
  * Portal page glossary catalog.
  *
@@ -96,9 +97,25 @@ export const PORTAL_PAGE_CONCEPT_DEFINITIONS = [
   {
     path: '/portal/dod/',
     id: 'page.dodReview',
-    label: 'Definition-of-done review',
-    description: 'Portal page for reviewing completion evidence and proof integrity.',
-    synonyms: ['DOD review', 'proof review'],
+    label: 'DOD visual-proof review',
+    description:
+      'Portal page for the visual-proof submission queue: Accounting-topic photos, OCR amounts, Telegram deep-links, Bun.Image meta, and stake reconciliation against execution expected amounts.',
+    synonyms: [
+      'DOD review',
+      'proof review',
+      'visual proof',
+      'document of deposit',
+      'accounting proof queue',
+    ],
+    seeAlso: [
+      'ui.semantic.surface',
+      'ui.semantic.resources',
+      'ui.semantic.artifact',
+      'section.partnersAccounting',
+      'ops.dod.ingest',
+      'ops.dod.reconcile',
+      'ops.dod.meta_log',
+    ],
   },
   {
     path: '/portal/env/',
@@ -179,6 +196,20 @@ export const PORTAL_PAGE_CONCEPT_DEFINITIONS = [
     label: 'Packages map',
     description: 'Portal page for package ownership, dependency roles, and artifact health.',
     synonyms: ['package graph', 'packages board'],
+  },
+  {
+    path: '/portal/agent-odds/',
+    id: 'page.agentOdds',
+    label: 'Agent odds dashboard',
+    description: 'Standalone portal page for agent odds monitoring and local dashboard snapshots.',
+    synonyms: ['agent odds', 'odds dashboard'],
+  },
+  {
+    path: '/portal/partner/',
+    id: 'page.partnerHealth',
+    label: 'Partner health',
+    description: 'Portal page for partner profile alignment, Telegram output, and finance health.',
+    synonyms: ['partner health', 'partner status'],
   },
   {
     path: '/portal/partners/',

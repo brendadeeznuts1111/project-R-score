@@ -6,6 +6,14 @@
 
 import type { Severity, PerformanceMetrics } from '../core/fw-types';
 
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+export type DeepPartial<T> = {
+  [Key in keyof T]?: T[Key] extends Record<string, unknown> ? DeepPartial<T[Key]> : T[Key];
+};
+
 // Performance utilities
 export class PerformanceUtils {
   /**
@@ -133,28 +141,21 @@ export class ObjectUtils {
   /**
    * Deep merge objects
    */
-  static deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T {
-    const result = { ...target };
+  static deepMerge<T extends Record<string, unknown>>(target: T, source: DeepPartial<T>): T {
+    const result: Record<string, unknown> = { ...target };
 
-    for (const key in source) {
-      if (source[key] !== undefined) {
-        if (
-          typeof source[key] === 'object' &&
-          source[key] !== null &&
-          !Array.isArray(source[key])
-        ) {
-          const base =
-            typeof result[key] === 'object' && result[key] !== null && !Array.isArray(result[key])
-              ? result[key]
-              : ({} as T[Extract<keyof T, string>]);
-          result[key] = this.deepMerge(base, source[key] as any);
-        } else {
-          result[key] = source[key] as any;
-        }
+    for (const [key, value] of Object.entries(source)) {
+      if (value === undefined) continue;
+
+      const current = result[key];
+      if (isPlainRecord(value)) {
+        result[key] = this.deepMerge(isPlainRecord(current) ? current : {}, value);
+      } else {
+        result[key] = value;
       }
     }
 
-    return result;
+    return result as T;
   }
 
   /**

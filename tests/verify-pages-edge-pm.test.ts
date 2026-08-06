@@ -15,6 +15,7 @@ import {
   PM_PROOF_REPORT_PATH,
   PM_PROOF_SCHEMA,
   readmeMetadata,
+  registryHostOrigin,
   scopeTokenPresence,
   scopedPackumentUrl,
 } from '../lib/verification/pm-registry-probes.ts';
@@ -238,6 +239,26 @@ describe('pm-registry-probes network fail-soft', () => {
     expect(thrown.skipped).toBe(true);
   });
 
+  test('artifactRegistryApi uses host origin, not npm packument base', async () => {
+    expect(registryHostOrigin('https://registry.factory-wager.com/api/npm')).toBe(
+      'https://registry.factory-wager.com'
+    );
+    let hit = '';
+    const row = await artifactRegistryApi(
+      (async (input: RequestInfo | URL) => {
+        hit = String(input);
+        return Response.json(
+          { status: 'ok' },
+          { headers: { 'content-type': 'application/json' } }
+        );
+      }) as unknown as typeof fetch,
+      'https://registry.factory-wager.com/api/npm'
+    );
+    expect(hit).toBe('https://registry.factory-wager.com/api/registry/health');
+    expect(hit).not.toContain('/api/npm/api/');
+    expect(row.ok).toBe(true);
+  });
+
   test('scopeTokenPresence never hard-fails', () => {
     expect(scopeTokenPresence({ FACTORY_WAGER_TOKEN: 'abc' }).skipped).toBe(false);
     const absent = scopeTokenPresence({});
@@ -333,5 +354,11 @@ describe('verify-pages-edge --pm wiring', () => {
     expect(pkg.scripts?.['verify:pm']).toBe('bun tools/verify-pages-edge.ts --pm');
     expect(pkg.scripts?.['verify:pm:save']).toBe('bun tools/verify-pages-edge.ts --pm --save');
     expect(pkg.scripts?.['ssot:flow:soft']).toBe('bun tools/bake-ssot-flow-soft.ts');
+    expect(pkg.scripts?.['tennis:ssot:release:check']).toBe(
+      'bun tools/verify-tennis-ssot-release.ts'
+    );
+    expect(pkg.scripts?.['tennis:ssot:release:check:live']).toBe(
+      'bun tools/verify-tennis-ssot-release.ts --live'
+    );
   });
 });

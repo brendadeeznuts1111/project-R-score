@@ -9,6 +9,7 @@
 
 import type { SeatCapitalDeskSnapshot } from './seat-desk-snapshot.ts';
 import { sendTelegramBotMessage } from './telegram-api.ts';
+import { escapeHtml } from './templates/escape.ts';
 
 export type OutHealthStatus = 'ok' | 'offline' | 'low_balance';
 
@@ -74,7 +75,7 @@ export function checkOutConnectivity(out: OutHealthSource): { degraded: boolean;
 export function parseOutBalance(raw: string | undefined): number | null {
   if (raw === undefined) return null;
   const cleaned = raw.replace(/[$,]/g, '').trim();
-  const n = Number.parseFloat(cleaned);
+  const n = Number(cleaned);
   return Number.isFinite(n) ? n : null;
 }
 
@@ -129,13 +130,15 @@ export function runOutHealthChecks(opts: OutHealthCheckOpts): OutHealthReport {
   return { generatedAt, checked: results.length, ok: results.length - degraded.length, degraded };
 }
 
-/** Ops alert text for degraded outs (Markdown). */
+/** Ops alert text for degraded outs (Telegram HTML). */
 export function buildOutHealthAlertText(report: OutHealthReport): string {
   const lines = [
-    `🚨 **Out health alert** — ${report.degraded.length} degraded of ${report.checked}`,
+    `🚨 <b>Out health alert</b> — ${report.degraded.length} degraded of ${report.checked}`,
   ];
   for (const d of report.degraded.slice(0, 20)) {
-    lines.push(`• \`${d.outNum}\` (${d.partnerCode} · ${d.book}) — **${d.status}**: ${d.reason}`);
+    lines.push(
+      `• <code>${escapeHtml(d.outNum)}</code> (${escapeHtml(d.partnerCode)} · ${escapeHtml(d.book)}) — <b>${escapeHtml(d.status)}</b>: ${escapeHtml(d.reason)}`
+    );
   }
   return lines.join('\n');
 }
@@ -153,7 +156,7 @@ export async function alertOpsOnDegraded(opts: AlertOpsOpts): Promise<{ sent: bo
   const result = await sendTelegramBotMessage(opts.token, {
     chatId: opts.chatId,
     text: buildOutHealthAlertText(opts.report),
-    parseMode: 'Markdown',
+    parseMode: 'HTML',
     messageThreadId: opts.topicId,
   });
   return { sent: result.ok };

@@ -1,7 +1,7 @@
 // @see https://bun.com/docs/test — bun:test
 // tests/partner-profiles-diff.test.ts — profile TOML diff + audit baseline.
 
-import { beforeEach, describe, expect, test } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { rmSync } from 'node:fs';
 
 import {
@@ -35,6 +35,10 @@ let db: Database;
 beforeEach(() => {
   rmSync(FIXTURE, { recursive: true, force: true });
   db = openProfileAuditDb(':memory:');
+});
+
+afterEach(() => {
+  db.close();
 });
 
 describe('profile hashing + TOML loading', () => {
@@ -107,6 +111,15 @@ describe('diff semantics', () => {
     expect(rows).toHaveLength(1);
     expect(rows[0]!.action).toBe('add');
     expect(lastProfileAuditHash(db, 'SPEN')).toBe(entries[0]!.hash);
+  });
+
+  test('does not append duplicate removal audit rows', async () => {
+    recordProfileAudit(db, 'ASH', 'baseline', 'present');
+    const diff = diffPartnerProfiles({ entries: [], db });
+    expect(diff.removed).toEqual(['ASH']);
+    expect(recordDiffAudit(db, diff, [])).toBe(1);
+    expect(recordDiffAudit(db, diff, [])).toBe(0);
+    expect(listProfileAudit(db, 'ASH').map(row => row.action)).toEqual(['remove', 'baseline']);
   });
 
   test('audit rows are listed newest-first with code filter', async () => {

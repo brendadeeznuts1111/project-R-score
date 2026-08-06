@@ -18,13 +18,18 @@
  */
 
 import { jsonOut, logTable } from '../lib/console-depth.ts';
+import { parseGitStatusPorcelain, type GitStatusEntry } from '../scripts/lib/git-porcelain.ts';
 
 export {};
 
 const JSON_MODE = Bun.argv.includes('--json');
 const STALE_HOURS = 48;
 
-async function git(args: string[], cwd?: string): Promise<string> {
+async function git(
+  args: string[],
+  cwd?: string,
+  preserveLeadingWhitespace = false
+): Promise<string> {
   const proc = Bun.spawn(['git', ...args], {
     cwd,
     stdout: 'pipe',
@@ -33,7 +38,7 @@ async function git(args: string[], cwd?: string): Promise<string> {
   const out = await new Response(proc.stdout).text();
   const code = await proc.exited;
   if (code !== 0) return '';
-  return out.trim();
+  return preserveLeadingWhitespace ? out.trimEnd() : out.trim();
 }
 
 const ROOT = await git(['rev-parse', '--show-toplevel']);
@@ -54,21 +59,9 @@ function areaOf(path: string): string {
   return 'other';
 }
 
-interface DirtyEntry {
-  code: string;
-  path: string;
-}
-
-async function dirtyEntries(cwd: string): Promise<DirtyEntry[]> {
-  const out = await git(['status', '--porcelain'], cwd);
-  if (!out) return [];
-  return out
-    .split('\n')
-    .filter(Boolean)
-    .map(line => {
-      const m = line.match(/^(.{1,2})\s+(.+)$/);
-      return { code: (m?.[1] ?? '').padEnd(2), path: m?.[2] ?? line };
-    });
+async function dirtyEntries(cwd: string): Promise<GitStatusEntry[]> {
+  const out = await git(['status', '--porcelain=v1'], cwd, true);
+  return parseGitStatusPorcelain(out);
 }
 
 // ── Primary checkout ────────────────────────────────────────────────────────

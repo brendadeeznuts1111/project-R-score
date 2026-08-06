@@ -1,0 +1,96 @@
+{
+  "kind": "registry-bake-manifest",
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-05T17:37:46.044Z",
+  "root": "/Users/nolarose/Projects/.codex-worktrees/wave-c-tennis-int/public/registry",
+  "runtime": {
+    "runtime": "bun",
+    "runtimeVersion": "1.3.6",
+    "bakedAt": "2026-08-05T17:37:46.044Z",
+    "runtimeRevision": "d8bebc386121"
+  },
+  "entries": [
+    {
+      "path": "/registry/concepts-graph.json",
+      "bakedAt": "2026-08-05T15:46:14.104Z",
+      "source": null,
+      "bytes": 217533,
+      "etag": null
+    },
+    {
+      "path": "/registry/domain-glossary.json",
+      "bakedAt": "2026-07-31T13:43:54.333Z",
+      "source": null,
+      "bytes": 445822,
+      "etag": null
+    },
+    {
+      "path": "/registry/limit-raises.json",
+      "bakedAt": "2026-07-31T23:41:59.270Z",
+      "source": null,
+      "bytes": 134123,
+      "etag": null
+    },
+    {
+      "path": "/registry/ops-summary.json",
+      "bakedAt": "2026-08-01T21:28:48.791Z",
+      "source": "snapshot",
+      "bytes": 63912,
+      "etag": null
+    },
+    {
+      "path": "/registry/partners-ops.json",
+      "bakedAt": "2026-08-04T20:40:06.210Z",
+      "source": null,
+      "bytes": 38750,
+      "etag": null
+    },
+    {
+      "path": "/registry/portal-chrome.json",
+      "bakedAt": "2026-08-05T09:19:23.324Z",
+      "source": null,
+      "bytes": 26846,
+      "etag": null
+    },
+    {
+      "path": "/registry/projects-registry.json",
+      "bakedAt": "2026-07-22T13:15:44.871Z",
+      "source": null,
+      "bytes": 17207,
+      "etag": null
+    },
+    {
+      "path": "/registry/telegram-handshake.json",
+      "bakedAt": "2026-07-28T16:41:44.049Z",
+      "source": "snapshot",
+      "bytes": 3073,
+      "etag": null
+    },
+    {
+      "path": "/registry/tennis/agent-auth.json",
+      "bakedAt": "2026-08-05T02:48:46.377Z",
+      "source": null,
+      "bytes": 2219,
+      "etag": null
+    },
+    {
+      "path": "/registry/tennis/board-metrics.json",
+      "bakedAt": "2026-08-05T07:57:06.849Z",
+      "source": "event-store",
+      "bytes": 1691,
+      "etag": null
+    },
+    {
+      "path": "/registry/tennis/partner-contracts.json",
+      "bakedAt": "2026-08-05T17:37:45.981Z",
+      "source": "live",
+      "bytes": 4811,
+      "etag": null
+    }
+  ],
+  "summary": {
+    "files": 11,
+    "withTimestamp": 11,
+    "totalBytes": 955987
+  }
+}

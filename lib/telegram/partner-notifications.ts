@@ -53,7 +53,7 @@ export function shouldNotify(
 /** True when the partner wants new-event alerts for this sport (empty sports = all). */
 export function shouldNotifyEvent(sport: string, prefs?: TelegramNotificationPreferences): boolean {
   if (!shouldNotify('newEvents', prefs)) return false;
-  const sports = (prefs?.newEventsSports ?? []).map(s => s.toLowerCase());
+  const sports = (prefs?.newEventsSports ?? []).map(s => s.trim().toLowerCase()).filter(Boolean);
   return sports.length === 0 || sports.includes(sport.toLowerCase());
 }
 

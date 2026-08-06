@@ -25,8 +25,11 @@ function argValue(argv: readonly string[], flag: string): string | undefined {
 }
 
 const minBalanceRaw = argValue(Bun.argv, '--min-balance');
-const minBalance =
-  minBalanceRaw === undefined ? undefined : Number.parseFloat(minBalanceRaw) || undefined;
+const minBalance = minBalanceRaw === undefined ? undefined : Number(minBalanceRaw);
+if (minBalance !== undefined && (!Number.isFinite(minBalance) || minBalance < 0)) {
+  console.error('--min-balance must be a non-negative number');
+  process.exit(2);
+}
 const outFilter = argValue(Bun.argv, '--out');
 const partnerFilter = argValue(Bun.argv, '--partner');
 const doAlert = Bun.argv.includes('--alert');

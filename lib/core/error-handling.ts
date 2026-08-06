@@ -1,7 +1,9 @@
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/core/error-handling.ts — Error handling with typed errors and recovery strategies
 
-import { styled } from '../theme/colors';
+import { styled, type FactoryWagerColor } from '../theme/colors';
+
+export type ErrorContext = Readonly<Record<string, string | number | boolean | null>>;
 
 /**
  * Base error class for all R2 integration errors
@@ -10,7 +12,7 @@ export class R2IntegrationError extends Error {
   constructor(
     message: string,
     public readonly code: string,
-    public readonly context?: any,
+    public readonly context?: ErrorContext,
     public readonly recoverable: boolean = false
   ) {
     super(message);
@@ -27,28 +29,28 @@ export class R2IntegrationError extends Error {
  * Specific error types
  */
 export class R2ConnectionError extends R2IntegrationError {
-  constructor(message: string, context?: any) {
+  constructor(message: string, context?: ErrorContext) {
     super(message, 'R2_CONNECTION_ERROR', context, false);
     this.name = 'R2ConnectionError';
   }
 }
 
 export class R2DataError extends R2IntegrationError {
-  constructor(message: string, context?: any) {
+  constructor(message: string, context?: ErrorContext) {
     super(message, 'R2_DATA_ERROR', context, true);
     this.name = 'R2DataError';
   }
 }
 
 export class ValidationError extends R2IntegrationError {
-  constructor(message: string, context?: any) {
+  constructor(message: string, context?: ErrorContext) {
     super(message, 'VALIDATION_ERROR', context, false);
     this.name = 'ValidationError';
   }
 }
 
 export class CacheError extends R2IntegrationError {
-  constructor(message: string, context?: any) {
+  constructor(message: string, context?: ErrorContext) {
     super(message, 'CACHE_ERROR', context, true);
     this.name = 'CacheError';
   }
@@ -153,7 +155,7 @@ export class ErrorHandler {
    */
   private generateErrorCode(error: R2IntegrationError, context: string): string {
     const timestamp = Date.now().toString(36);
-    const hash = btoa(`${context}-${error.code}`).slice(0, 8);
+    const hash = new TextEncoder().encode(`${context}-${error.code}`).toBase64().slice(0, 8);
     return `${error.code}-${hash}-${timestamp}`;
   }
 
@@ -175,7 +177,7 @@ export class ErrorHandler {
     severity: ErrorSeverity,
     errorCode: string
   ): void {
-    const severityColors = {
+    const severityColors: Record<ErrorSeverity, FactoryWagerColor> = {
       [ErrorSeverity.LOW]: 'muted',
       [ErrorSeverity.MEDIUM]: 'warning',
       [ErrorSeverity.HIGH]: 'error',
@@ -186,11 +188,15 @@ export class ErrorHandler {
     const count = this.errorCounts.get(errorCode) || 1;
     const countText = count > 1 ? ` (${count}x)` : '';
 
-    console.info(styled(`❌ ${error.name}${countText} [${errorCode}]`, color as any));
+    console.info(styled(`❌ ${error.name}${countText} [${errorCode}]`, color));
     console.info(styled(`   Context: ${context}`, 'muted'));
     console.info(styled(`   Message: ${error.message}`, 'muted'));
 
-    if (error.context && Object.keys(error.context).length > 0) {
+    if (
+      error.context &&
+      typeof error.context === 'object' &&
+      Object.keys(error.context).length > 0
+    ) {
       console.info(styled(`   Context: ${JSON.stringify(error.context, null, 2)}`, 'muted'));
     }
   }

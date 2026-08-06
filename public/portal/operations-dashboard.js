@@ -7,6 +7,7 @@
  */
 import { renderVerificationResults, renderVerificationTableRow } from './verification-card.js';
 import { formatBunBrandAlignment } from './bun-brand-alignment.js';
+import { mountFreshnessBadge } from './data-freshness.js';
 import './channel-filter.js';
 
 /** Format summary.bySubsystem for ops panel subtitle. */
@@ -86,53 +87,31 @@ class OperationsDashboard extends HTMLElement {
             <div class="skeleton-line" style="width:70%"></div>
           </div>
         </div>
-        <div id="ops-grid" class="ops-grid hidden">
-          <section class="ops-panel" id="ops-liquidity">
-            <h2>Liquidity</h2>
-            <div class="ops-metric" id="total-liquidity">$0</div>
+        <div class="ops-body">
+          <nav id="ops-sidebar" class="ops-sidebar" aria-label="Board sections" hidden></nav>
+          <div id="ops-grid" class="ops-grid hidden">
+          <section class="ops-panel wide ops-panel--desk" id="ops-partner-desk" data-domain="partner">
+            <h2>Partner Desk <span class="ops-badge" title="Handshake · seat · limits · partners-ops">domain</span></h2>
+            <div class="ops-desk-metrics" id="ops-desk-metrics" aria-label="Partner desk KPIs"></div>
+            <div class="ops-sub" id="ops-desk-detail"></div>
+            <div class="ops-desk-links" id="ops-desk-links">
+              <a class="ops-link" href="/portal/partners/">Partners board</a>
+              <a class="ops-link" href="/portal/partners/#section:outs">Outs inventory</a>
+              <a class="ops-link" href="/portal/limits/">Limits</a>
+              <a class="ops-link" href="/portal/account/">Account dossier</a>
+              <a class="ops-link" href="/registry/partners-ops.json">partners-ops.json</a>
+              <a class="ops-link" href="/registry/ops-summary.json">ops-summary.json</a>
+            </div>
           </section>
-          <section class="ops-panel">
-            <h2>Experts</h2>
-            <ul id="expert-list"></ul>
-          </section>
-          <section class="ops-panel">
-            <h2>Agent Tree</h2>
-            <div id="tree-viz"></div>
-          </section>
-          <section class="ops-panel" id="ops-partners">
-            <h2>Partner profiles</h2>
-            <div class="ops-metric" id="partners-bound">0</div>
-            <div class="ops-sub" id="partners-detail"></div>
-            <ul id="partners-recent"></ul>
-          </section>
-          <section class="ops-panel" id="ops-limits">
-            <h2>Limit changes</h2>
-            <div class="ops-metric" id="limits-count">0</div>
-            <div class="ops-sub" id="limits-detail"></div>
-            <div class="ops-sub" id="limits-patterns-detail" hidden></div>
-            <div class="ops-sub" id="limits-predict-detail" hidden></div>
-            <table id="limits-table" style="width:100%;font-size:0.85em;margin-top:4px">
-              <thead><tr><th>Partner</th><th>Book</th><th>Sport</th><th>Market</th><th>Type</th><th>Old</th><th>New</th><th>Influence</th><th>When</th></tr></thead>
-              <tbody id="limits-tbody"></tbody>
-            </table>
-            <a class="ops-link" href="/portal/limits/">Limits board</a>
-            <a class="ops-link" href="/portal/partner-history/">Partner history</a>
-            <a class="ops-link" href="/registry/limit-raises.json">limit-raises.json</a>
-          </section>
-          <section class="ops-panel">
-            <h2>Ops channels</h2>
-            <div class="ops-metric" id="channels-pending">0</div>
-            <div class="ops-sub" id="channels-detail"></div>
-          </section>
-          <section class="ops-panel wide" id="telegram-handshake" data-subsystem="telegram">
-            <h2>Package handshake <span class="version-badge subsystem-other">telegram</span></h2>
+          <section class="ops-panel wide" id="telegram-handshake" data-subsystem="telegram" data-domain="partner">
+            <h2>Handshake <span class="version-badge subsystem-other">telegram</span></h2>
             <div class="ops-metric" id="telegram-handshake-gaps">—</div>
             <div class="ops-sub" id="telegram-handshake-detail"></div>
             <label class="ops-sub" id="telegram-handshake-filter-wrap" hidden>
               <input type="checkbox" id="telegram-handshake-gaps-only" />
               gaps only (2·house!)
             </label>
-            <table id="telegram-handshake-table" class="ops-table hidden" aria-label="Package group handshake partners">
+            <table id="telegram-handshake-table" class="portal-table hidden" aria-label="Package group handshake partners">
               <thead>
                 <tr>
                   <th>CODE</th>
@@ -150,11 +129,11 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" id="telegram-handshake-json" href="/registry/telegram-handshake.json">Handshake JSON</a>
             <a class="ops-link" id="telegram-handshake-catalog" href="/registry/telegram-handshake-catalog.json">Catalog JSON</a>
           </section>
-          <section class="ops-panel wide" id="seat-capital-desk" data-subsystem="telegram">
-            <h2>Seat capital desk <span class="version-badge subsystem-other">telegram</span></h2>
+          <section class="ops-panel wide" id="seat-capital-desk" data-subsystem="telegram" data-domain="partner">
+            <h2>Seat Capital <span class="version-badge subsystem-other">telegram</span></h2>
             <div class="ops-metric" id="seat-capital-desk-metric">—</div>
             <div class="ops-sub" id="seat-capital-desk-detail"></div>
-            <table id="seat-capital-desk-table" class="ops-table hidden" aria-label="Seat capital desks">
+            <table id="seat-capital-desk-table" class="portal-table hidden" aria-label="Seat capital desks">
               <thead>
                 <tr>
                   <th>Call</th>
@@ -168,7 +147,7 @@ class OperationsDashboard extends HTMLElement {
             </table>
             <div id="seat-capital-desk-expand" class="ops-sub"></div>
             <h3 class="ops-sub" style="margin-top:12px">Partner messages</h3>
-            <table id="seat-partner-message-table" class="ops-table hidden" aria-label="Seat desk partner messages">
+            <table id="seat-partner-message-table" class="portal-table hidden" aria-label="Seat desk partner messages">
               <thead>
                 <tr>
                   <th>Call</th>
@@ -184,20 +163,45 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" id="seat-capital-desk-json" href="/registry/seat-capital-desk.json">Seat desk JSON</a>
             <a class="ops-link" href="/portal/partners/#section:partner-message">Partners · partner messages</a>
           </section>
-          <section class="ops-panel">
-            <h2>Ops loop</h2>
+          <section class="ops-panel" id="ops-partners" data-domain="partner">
+            <h2>Partners</h2>
+            <div class="ops-metric" id="partners-bound">0</div>
+            <div class="ops-sub" id="partners-detail"></div>
+            <ul id="partners-recent"></ul>
+            <a class="ops-link" href="/portal/partners/">Partners board</a>
+            <a class="ops-link" href="/registry/partners-ops.json">partners-ops.json</a>
+          </section>
+          <section class="ops-panel" id="ops-limits" data-domain="partner">
+            <h2>Limits</h2>
+            <div class="ops-metric" id="limits-count">0</div>
+            <div class="ops-sub" id="limits-detail"></div>
+            <div class="ops-sub" id="limits-patterns-detail" hidden></div>
+            <div class="ops-sub" id="limits-predict-detail" hidden></div>
+            <table id="limits-table" class="portal-table" data-density="compact">
+              <thead><tr><th>Partner</th><th>Book</th><th>Sport</th><th>Market</th><th>Type</th><th>Old</th><th>New</th><th>Influence</th><th>When</th></tr></thead>
+              <tbody id="limits-tbody"></tbody>
+            </table>
+            <a class="ops-link" href="/portal/limits/">Limits board</a>
+            <a class="ops-link" href="/portal/partner-history/">Partner history</a>
+            <a class="ops-link" href="/registry/limit-raises.json">limit-raises.json</a>
+          </section>
+          <section class="ops-panel" id="ops-loop" data-domain="control">
+            <h2>Ops Loop</h2>
             <div class="ops-metric" id="loop-completion">0%</div>
             <div class="ops-sub" id="loop-detail"></div>
+            <div class="ops-loop-grid" id="loop-grid" aria-label="Loop counters"></div>
+            <a class="ops-link" href="/portal/partners/">Partner desk</a>
+            <a class="ops-link" href="/registry/ops-summary.json">ops-summary · loop</a>
           </section>
-          <section class="ops-panel">
-            <h2>TOC Ops <span class="ops-badge" title="Operate-lite gates baked; Soft mutations not on Pages">DEMO</span></h2>
+          <section class="ops-panel" id="ops-toc" data-domain="control">
+            <h2>TOC <span class="ops-badge" title="Operate-lite gates baked; Soft mutations not on Pages">DEMO</span></h2>
             <div class="ops-metric" id="toc-warmed">—</div>
             <div class="ops-sub" id="toc-detail"></div>
             <div class="ops-sub" id="toc-enforcement"></div>
             <a class="ops-link" href="/portal/toc/">Open TOC board (read-only)</a>
             <a class="ops-link" href="/portal/compliance/">MA/NJ compliance</a>
           </section>
-          <section class="ops-panel" id="compliance-panel" data-subsystem="compliance">
+          <section class="ops-panel" id="compliance-panel" data-subsystem="compliance" data-domain="control">
             <h2>Compliance <span class="ops-badge" title="Baked MA/NJ board · shadow matrix · discrete geo">MA/NJ</span></h2>
             <div class="ops-metric" id="compliance-metric">—</div>
             <div class="ops-sub" id="compliance-detail"></div>
@@ -206,8 +210,25 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" href="/registry/compliance-board.json">Board JSON</a>
             <a class="ops-link" href="/api/compliance">API snapshot</a>
           </section>
+          <section class="ops-panel" id="ops-liquidity" data-domain="control">
+            <h2>Liquidity</h2>
+            <div class="ops-metric" id="total-liquidity">$0</div>
+          </section>
+          <section class="ops-panel">
+            <h2>Experts</h2>
+            <ul id="expert-list"></ul>
+          </section>
+          <section class="ops-panel">
+            <h2>Agent Tree</h2>
+            <div id="tree-viz"></div>
+          </section>
+          <section class="ops-panel">
+            <h2>Ops channels</h2>
+            <div class="ops-metric" id="channels-pending">0</div>
+            <div class="ops-sub" id="channels-detail"></div>
+          </section>
           <section class="ops-panel" id="monorepo-health-panel" data-subsystem="harness">
-            <h2>Monorepo health <span class="ops-badge" title="claim monorepo-health-score · gate check:monorepo-health">harness</span></h2>
+            <h2>Health <span class="ops-badge" title="claim monorepo-health-score · gate check:monorepo-health">harness</span></h2>
             <div class="ops-metric" id="monorepo-health-metric">—</div>
             <div class="ops-sub" id="monorepo-health-detail"></div>
             <div class="ops-sub" id="monorepo-health-metrics"></div>
@@ -219,9 +240,10 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" href="/registry/portal-chrome.json">Chrome registry</a>
           </section>
           <section class="ops-panel" id="bun-brand-alignment-panel" data-subsystem="harness">
-            <h2>Bun × brand alignment <span class="ops-badge" title="capability relationships · branded values · project proof">harness</span></h2>
+            <h2>Brand Alignment <span class="ops-badge" title="capability relationships · branded values · project proof">harness</span></h2>
             <div class="ops-metric" id="bun-brand-alignment-metric">—</div>
             <div class="ops-sub" id="bun-brand-alignment-detail"></div>
+            <a class="ops-link" href="/portal/brands/#evidence=observed-undeclared">Observed undeclared</a>
             <a class="ops-link" href="/portal/brands/#view=projects">Open project alignment</a>
             <a class="ops-link" href="/portal/brands/#view=relationships">Relationship map</a>
             <a class="ops-link" href="/registry/bun-brand-map.json">Map JSON</a>
@@ -270,7 +292,7 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-metric" id="install-platform-pass">—</div>
             <div class="ops-sub" id="install-platform-detail"></div>
             <a class="ops-link" id="install-platform-link" href="/registry/install-platform.json">Full install platform proof JSON</a>
-            <table id="install-platform-table" class="ops-table hidden">
+            <table id="install-platform-table" class="portal-table hidden">
               <thead><tr><th>Aspect</th><th>Status</th><th>Docs</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -281,7 +303,7 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-sub" id="install-env-detail"></div>
             <a class="ops-link" id="install-env-link" href="/registry/install-env-proof.json">Full install env proof JSON</a>
             <a class="ops-link" href="https://bun.com/docs/pm/cli/install#configuring-with-environment-variables" target="_blank" rel="noopener">Bun install env vars</a>
-            <table id="install-env-table" class="ops-table hidden">
+            <table id="install-env-table" class="portal-table hidden">
               <thead><tr><th>Env var</th><th>Status</th><th>Docs</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -293,7 +315,7 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-mono" id="docs-coverage-hash"></div>
             <a class="ops-link" id="docs-coverage-link" href="/registry/docs-coverage-proof.json">Full docs coverage proof JSON</a>
             <a class="ops-link" href="https://bun.com/reference" target="_blank" rel="noopener" title="Meta · stable — Complete generated API reference">Bun API Reference</a>
-            <table id="docs-coverage-table" class="ops-table hidden">
+            <table id="docs-coverage-table" class="portal-table hidden">
               <thead><tr><th>Lane</th><th>Status</th><th>Detail</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -307,7 +329,7 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" href="/.well-known/mcp.json">/.well-known/mcp.json</a>
             <a class="ops-link" href="/registry/cloudflare-pages-preflight.json">Preflight report JSON</a>
             <div class="ops-sub" id="cloudflare-preflight-detail"></div>
-            <table id="cloudflare-token-table" class="ops-table hidden">
+            <table id="cloudflare-token-table" class="portal-table hidden">
               <thead><tr><th>Server</th><th>Status</th><th>URL</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -319,19 +341,19 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-mono" id="registry-client-hash"></div>
             <a class="ops-link" id="registry-client-link" href="/registry/registry-client-proof.json">Full registry client proof JSON</a>
             <a class="ops-link" href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md" target="_blank" rel="noopener">Registry client docs</a>
-            <table id="registry-client-table" class="ops-table hidden">
+            <table id="registry-client-table" class="portal-table hidden">
               <thead><tr><th>Probe</th><th>Status</th><th>Docs</th></tr></thead>
               <tbody></tbody>
             </table>
           </section>
           <section class="ops-panel wide" id="ops-runtime-nits" data-subsystem="runtime">
-            <h2>Bun runtime nits (Phase 1) <span class="version-badge subsystem-runtime">runtime</span></h2>
+            <h2>Runtime Nits <span class="version-badge subsystem-runtime">runtime</span></h2>
             <div class="ops-metric" id="runtime-nits-pass">—</div>
             <div class="ops-sub" id="runtime-nits-detail"></div>
             <div class="ops-mono" id="runtime-nits-hash"></div>
             <a class="ops-link" id="runtime-nits-link" href="/registry/bun-runtime-nits-proof.json">Full runtime nits proof JSON</a>
             <a class="ops-link" href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/bun-runtime-nits.md" target="_blank" rel="noopener">Runtime nits docs</a>
-            <table id="runtime-nits-table" class="ops-table hidden">
+            <table id="runtime-nits-table" class="portal-table hidden">
               <thead><tr><th>Probe</th><th>Category</th><th>Status</th><th>Docs</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -360,19 +382,19 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" id="bundler-loaders-link" href="/registry/bundler-loaders-proof.json">Full bundler loaders proof JSON</a>
             <a class="ops-link" href="https://bun.com/docs/bundler/loaders#css" target="_blank" rel="noopener">CSS loader</a>
             <a class="ops-link" href="https://bun.com/docs/bundler#content-types" target="_blank" rel="noopener">Asset Processing</a>
-            <table id="bundler-loaders-table" class="ops-table hidden">
+            <table id="bundler-loaders-table" class="portal-table hidden">
               <thead><tr><th>Probe</th><th>Status</th><th>Docs</th></tr></thead>
               <tbody></tbody>
             </table>
           </section>
           <section class="ops-panel wide" id="ops-taxonomy" data-subsystem="mixed">
-            <h2>Proof taxonomy audit <span class="version-badge">mixed</span></h2>
+            <h2>Taxonomy <span class="version-badge">mixed</span></h2>
             <div class="ops-metric" id="taxonomy-pass">—</div>
             <div class="ops-sub" id="taxonomy-detail"></div>
             <div class="ops-mono" id="taxonomy-hash"></div>
             <a class="ops-link" id="taxonomy-link" href="/registry/proof-taxonomy-audit.json">Full taxonomy audit JSON</a>
             <a class="ops-link" href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/verification/proof-taxonomy.ts" target="_blank" rel="noopener">Contract SSOT</a>
-            <table id="taxonomy-table" class="ops-table hidden">
+            <table id="taxonomy-table" class="portal-table hidden">
               <thead><tr><th>Artifact</th><th>Subsystem</th><th>Rows</th><th>Status</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -390,7 +412,7 @@ class OperationsDashboard extends HTMLElement {
             <channel-filter></channel-filter>
             <div id="release-features-cards" class="verification-cards hidden"></div>
             <script type="application/ld+json" id="release-jsonld"></script>
-            <table id="release-features-table" class="ops-table hidden">
+            <table id="release-features-table" class="portal-table hidden">
               <thead><tr><th>Test</th><th>Status</th><th>Docs</th></tr></thead>
               <tbody></tbody>
             </table>
@@ -425,20 +447,20 @@ class OperationsDashboard extends HTMLElement {
             <img id="pred-chart" class="ops-chart hidden" alt="Coverage prediction chart" width="100%" />
           </section>
           <section class="ops-panel wide" id="ops-plays">
-            <h2>Today's Plays</h2>
+            <h2>Plays</h2>
             <div class="ops-source" id="ops-source"></div>
-            <table id="plays-table"><thead><tr><th>Time</th><th>Expert</th><th>Event</th><th>Pick</th><th>Odds</th><th>Sent</th><th>Placed</th></tr></thead><tbody></tbody></table>
+            <table id="plays-table" class="portal-table" data-zebra><thead><tr><th>Time</th><th>Expert</th><th>Event</th><th>Pick</th><th>Odds</th><th>Sent</th><th>Placed</th></tr></thead><tbody></tbody></table>
           </section>
-          <section class="ops-panel">
+          <section class="ops-panel" id="ops-rails">
             <h2>Rails</h2>
             <div id="rail-status"></div>
           </section>
-          <section class="ops-panel">
+          <section class="ops-panel" id="ops-hardware">
             <h2>Hardware</h2>
             <div id="phone-inventory"></div>
           </section>
           <section class="ops-panel wide" id="portal-weave-panel" data-subsystem="harness">
-            <h2>Portal weave <span class="ops-badge" title="schema v2 · surfaces · artifacts · chrome">v2</span></h2>
+            <h2>Weave <span class="ops-badge" title="schema v2 · surfaces · artifacts · chrome">v2</span></h2>
             <div class="ops-sub" id="portal-weave-summary">Cross-surface links · registry SSOT</div>
             <div class="ops-sub" id="portal-weave-related"></div>
             <h3 class="ops-weave-h3">Surfaces</h3>
@@ -454,6 +476,7 @@ class OperationsDashboard extends HTMLElement {
             <div id="portal-weave-scripts" class="ops-weave-scripts"></div>
           </section>
         </div>
+        </div>
       </div>
     `;
 
@@ -466,12 +489,33 @@ class OperationsDashboard extends HTMLElement {
     });
 
     await this.load();
-    this.render();
-    this.mountOpsJump();
     this.startPolling();
   }
 
-  /** Sticky section jump strip in #ops-jump (shell host outside this element). */
+  /** Section nav entries: [label, id] — label matches the panel h2 (ids stay stable). */
+  sectionLinks() {
+    return [
+      ['Partner Desk', 'ops-partner-desk'],
+      ['Handshake', 'telegram-handshake'],
+      ['Seat Capital', 'seat-capital-desk'],
+      ['Partners', 'ops-partners'],
+      ['Limits', 'ops-limits'],
+      ['Ops Loop', 'ops-loop'],
+      ['TOC', 'ops-toc'],
+      ['Compliance', 'compliance-panel'],
+      ['Liquidity', 'ops-liquidity'],
+      ['Health', 'monorepo-health-panel'],
+      ['Brand Alignment', 'bun-brand-alignment-panel'],
+      ['Runtime Nits', 'ops-runtime-nits'],
+      ['Taxonomy', 'ops-taxonomy'],
+      ['Plays', 'ops-plays'],
+      ['Weave', 'portal-weave-panel'],
+      ['Rails', 'ops-rails'],
+      ['Hardware', 'ops-hardware'],
+    ].filter(([, id]) => this.querySelector(`#${id}`));
+  }
+
+  /** Sticky section jump strip in #ops-jump (shell host) — mobile fallback when the rail folds. */
   mountOpsJump() {
     const host = document.getElementById('ops-jump');
     if (!host) return;
@@ -481,18 +525,7 @@ class OperationsDashboard extends HTMLElement {
       host.innerHTML = '';
       return;
     }
-    const links = [
-      ['Liquidity', 'ops-liquidity'],
-      ['Partners', 'ops-partners'],
-      ['Limits', 'ops-limits'],
-      ['Handshake', 'telegram-handshake'],
-      ['Compliance', 'compliance-panel'],
-      ['Health', 'monorepo-health-panel'],
-      ['Nits', 'ops-runtime-nits'],
-      ['Taxonomy', 'ops-taxonomy'],
-      ['Weave', 'portal-weave-panel'],
-      ['Plays', 'ops-plays'],
-    ].filter(([, id]) => this.querySelector(`#${id}`));
+    const links = this.sectionLinks();
     if (links.length === 0) {
       host.hidden = true;
       host.innerHTML = '';
@@ -502,6 +535,86 @@ class OperationsDashboard extends HTMLElement {
       `<span class="ops-jump-label">Jump</span>` +
       links.map(([label, id]) => `<a href="#${esc(id)}">${esc(label)}</a>`).join('');
     host.hidden = false;
+  }
+
+  /** Persistent section rail inside the dashboard; scroll-spy + URL hash sync. */
+  mountOpsSidebar() {
+    const rail = this.querySelector('#ops-sidebar');
+    if (!rail) return;
+    const grid = this.querySelector('#ops-grid');
+    if (!grid || grid.classList.contains('hidden')) {
+      rail.hidden = true;
+      rail.innerHTML = '';
+      return;
+    }
+    const links = this.sectionLinks();
+    if (links.length === 0) {
+      rail.hidden = true;
+      rail.innerHTML = '';
+      return;
+    }
+    rail.innerHTML =
+      `<span class="ops-sidebar-label">Sections</span>` +
+      `<div class="ops-sidebar-links">` +
+      links
+        .map(([label, id]) => `<a href="#${esc(id)}" data-section="${esc(id)}">${esc(label)}</a>`)
+        .join('') +
+      `</div>`;
+    rail.hidden = false;
+    this.wireSectionNav();
+  }
+
+  /** Scroll-spy: highlight the section in view and mirror it into the URL hash. */
+  wireSectionNav() {
+    const ids = this.sectionLinks().map(([, id]) => id);
+    const anchors = [...this.querySelectorAll('#ops-sidebar a[data-section]')];
+    const jumpHost = document.getElementById('ops-jump');
+    let ticking = false;
+    let activeId = null;
+
+    const setActive = id => {
+      if (!ids.includes(id)) return;
+      if (activeId === id) return;
+      activeId = id;
+      anchors.forEach(a => {
+        const on = a.dataset.section === id;
+        a.classList.toggle('is-active', on);
+        if (on) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+      if (jumpHost) {
+        jumpHost.querySelectorAll('a').forEach(a => {
+          a.classList.toggle('is-active', a.getAttribute('href') === `#${id}`);
+        });
+      }
+      if (window.location.hash !== `#${id}`) {
+        history.replaceState(null, '', `#${id}`);
+      }
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        let current = ids[0];
+        for (const id of ids) {
+          const el = document.getElementById(id);
+          if (el && el.getBoundingClientRect().top <= 120) current = id;
+        }
+        setActive(current);
+      });
+    };
+
+    anchors.forEach(a =>
+      a.addEventListener('click', () => {
+        setActive(a.dataset.section);
+        requestAnimationFrame(() => setActive(a.dataset.section)); // settle after anchor jump
+      })
+    );
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    requestAnimationFrame(onScroll);
   }
 
   async loadDocIndex() {
@@ -668,21 +781,23 @@ class OperationsDashboard extends HTMLElement {
   }
 
   async loadVerificationArtifacts() {
-    await this.loadDocIndex();
-    await this.loadReleaseFeatures();
-    await this.loadVerificationIndex();
-    await this.loadInstallPlatform();
-    await this.loadInstallEnv();
-    await this.loadNetworkingProof();
-    await this.loadRegistryClient();
-    await this.loadDocsCoverage();
-    await this.loadCloudflareTokenScope();
-    await this.loadBunRuntimeNits();
-    await this.loadRatchet();
-    await this.loadGuides();
-    await this.loadBundlerLoaders();
-    await this.loadProofTaxonomyAudit();
-    await this.loadPortalWeave();
+    await Promise.allSettled([
+      this.loadDocIndex(),
+      this.loadReleaseFeatures(),
+      this.loadVerificationIndex(),
+      this.loadInstallPlatform(),
+      this.loadInstallEnv(),
+      this.loadNetworkingProof(),
+      this.loadRegistryClient(),
+      this.loadDocsCoverage(),
+      this.loadCloudflareTokenScope(),
+      this.loadBunRuntimeNits(),
+      this.loadRatchet(),
+      this.loadGuides(),
+      this.loadBundlerLoaders(),
+      this.loadProofTaxonomyAudit(),
+      this.loadPortalWeave(),
+    ]);
   }
 
   async load() {
@@ -697,11 +812,13 @@ class OperationsDashboard extends HTMLElement {
       const res = await fetch('/api/operations/summary');
       if (res.ok) {
         this.data = await res.json();
-        await this.loadVerificationArtifacts();
         this.retries = 0;
         loading.classList.add('hidden');
         grid.classList.remove('hidden');
+        this.render();
         this.mountOpsJump();
+        this.mountOpsSidebar();
+        void this.loadVerificationArtifacts().then(() => this.render());
         return;
       }
     } catch {
@@ -712,11 +829,13 @@ class OperationsDashboard extends HTMLElement {
       const res = await fetch('/registry/ops-summary.json');
       if (res.ok) {
         this.data = await res.json();
-        await this.loadVerificationArtifacts();
         this.retries = 0;
         loading.classList.add('hidden');
         grid.classList.remove('hidden');
+        this.render();
         this.mountOpsJump();
+        this.mountOpsSidebar();
+        void this.loadVerificationArtifacts().then(() => this.render());
         return;
       }
     } catch {
@@ -812,6 +931,105 @@ class OperationsDashboard extends HTMLElement {
         </div>
         <div>Downstream: $${(t.downstreamLiquidity ?? 0).toLocaleString()}</div>
       `;
+    }
+
+    // ── Partner desk pulse (domain-first) ──
+    const deskMetrics = this.querySelector('#ops-desk-metrics');
+    const deskDetail = this.querySelector('#ops-desk-detail');
+    if (deskMetrics) {
+      const hs = d.telegramHandshake || {};
+      const scd = d.seatCapitalDesk || {};
+      const lims = Array.isArray(d.limitChanges) ? d.limitChanges : [];
+      const partners = d.partners || {};
+      const loop = d.loop || {};
+      const cells = [
+        {
+          k: 'Handshake gaps',
+          v: hs.available ? String(hs.inviteGaps ?? 0) : '—',
+          tone: hs.available && (hs.inviteGaps ?? 0) > 0 ? 'warn' : 'ok',
+          href: '#telegram-handshake',
+        },
+        {
+          k: 'Operator ready',
+          v: hs.available ? `${hs.operatorReady ?? 0}/${hs.partners ?? 0}` : '—',
+          tone:
+            hs.available && hs.partners > 0 && hs.operatorReady === hs.partners ? 'ok' : 'warn',
+          href: '#telegram-handshake',
+        },
+        {
+          k: 'Seat incomplete',
+          v: scd.available ? String(scd.incompleteOuts ?? 0) : '—',
+          tone: scd.available && (scd.incompleteOuts ?? 0) > 0 ? 'warn' : 'ok',
+          href: '#seat-capital-desk',
+        },
+        {
+          k: 'Limit raises',
+          v: String(lims.length),
+          tone: lims.length > 0 ? 'ok' : '',
+          href: '#ops-limits',
+        },
+        {
+          k: 'Partners bound',
+          v: String(partners.bound ?? 0),
+          tone: (partners.bound ?? 0) > 0 ? 'ok' : 'warn',
+          href: '#ops-partners',
+        },
+        {
+          k: 'Outbox pending',
+          v: loop.outboxPending != null ? String(loop.outboxPending) : '—',
+          tone: (loop.outboxPending ?? 0) > 50 ? 'bad' : (loop.outboxPending ?? 0) > 0 ? 'warn' : 'ok',
+          href: '#ops-loop',
+        },
+      ];
+      deskMetrics.innerHTML = cells
+        .map(
+          c =>
+            `<a class="ops-desk-stat ${esc(c.tone)}" href="${esc(c.href)}">` +
+            `<span class="kicker">${esc(c.k)}</span>` +
+            `<span class="v">${esc(c.v)}</span>` +
+            `</a>`
+        )
+        .join('');
+      if (deskDetail) {
+        const gen = d.generated ? String(d.generated).replace('T', ' ').replace(/\.\d+Z$/, 'Z') : '—';
+        deskDetail.textContent =
+          `ops-summary ${gen}` +
+          (hs.available ? ` · handshake ${hs.partners ?? 0} codes` : ' · handshake unavailable') +
+          (scd.available ? ` · seat ${scd.desks ?? 0} desks` : ' · seat unavailable') +
+          (loop.outboxPending != null
+            ? ` · outbox pending ${loop.outboxPending}` +
+              (loop.oldestPendingAgeSec != null
+                ? ` (oldest ${Math.round(Number(loop.oldestPendingAgeSec) / 3600)}h)`
+                : '')
+            : '');
+      }
+      const gate = document.getElementById('ops-gate');
+      if (gate) {
+        const gaps =
+          (hs.inviteGaps ?? 0) + (scd.incompleteOuts ?? 0) + ((loop.outboxPending ?? 0) > 100 ? 1 : 0);
+        const ok = (hs.available || scd.available) && gaps === 0;
+        gate.className = `portal-gate ${ok ? 'pass' : gaps > 0 ? 'warn' : 'pass'}`;
+        gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${ok ? 'desk ready' : 'desk gaps'}`;
+      }
+      const baked = document.getElementById('ops-baked');
+      if (baked && d.generated) {
+        baked.textContent = String(d.generated).replace('T', ' ').replace(/\.\d+Z$/, ' UTC');
+      }
+      // Bake-manifest "Data as of" — fail-silent if missing; worst of desk bakes.
+      void mountFreshnessBadge(
+        document.getElementById('ops-freshness'),
+        [
+          '/registry/ops-summary.json',
+          '/registry/partners-ops.json',
+          '/registry/telegram-handshake.json',
+          '/registry/limit-raises.json',
+        ],
+        {
+          fallbacks: {
+            '/registry/ops-summary.json': d.generated || d.generatedAt || null,
+          },
+        }
+      );
     }
 
     const partnersBound = this.querySelector('#partners-bound');
@@ -1384,6 +1602,7 @@ class OperationsDashboard extends HTMLElement {
 
     const loopCompletion = this.querySelector('#loop-completion');
     const loopDetail = this.querySelector('#loop-detail');
+    const loopGrid = this.querySelector('#loop-grid');
     if (loopCompletion && d.loop) {
       const rate = Number(d.loop.loopCompletionRate ?? 0);
       loopCompletion.textContent = `${(rate * 100).toFixed(0)}%`;
@@ -1400,11 +1619,17 @@ class OperationsDashboard extends HTMLElement {
         if (d.loop.processReturnProxy != null) {
           capParts.push(`RP ${Number(d.loop.processReturnProxy).toFixed(2)}`);
         }
-        loopDetail.textContent =
+        const pending = d.loop.outboxPending ?? 0;
+        const pendingAgeH =
+          d.loop.oldestPendingAgeSec != null
+            ? Math.round(Number(d.loop.oldestPendingAgeSec) / 3600)
+            : null;
+        loopDetail.innerHTML =
           `disp ${d.loop.dispatched ?? 0} · full ${d.loop.settledViaFullLoop ?? 0}` +
           ` · manual ${d.loop.manualStepsPerCycle ?? 0}` +
-          ` · outbox fail ${d.loop.outboxFailed ?? 0}` +
-          (d.loop.oldestPendingAgeSec != null ? ` · oldest ${d.loop.oldestPendingAgeSec}s` : '') +
+          ` · outbox fail <strong class="${(d.loop.outboxFailed ?? 0) > 0 ? 'tone-bad' : ''}">${d.loop.outboxFailed ?? 0}</strong>` +
+          ` · pending <strong class="${pending > 50 ? 'tone-bad' : pending > 0 ? 'tone-warn' : ''}">${pending}</strong>` +
+          (pendingAgeH != null ? ` · oldest <strong>${pendingAgeH}h</strong>` : '') +
           ` · gate +${d.loop.gatedAllow ?? 0}/~${d.loop.gatedAdjust ?? 0}/-${d.loop.gatedDeny ?? 0}` +
           (d.loop.gatedDefer != null && d.loop.gatedDefer > 0
             ? ` · defer ${d.loop.gatedDefer}`
@@ -1413,11 +1638,31 @@ class OperationsDashboard extends HTMLElement {
             ? ` · play ${Math.round(Number(d.loop.loopCompletionRateByPlay) * 100)}%`
             : '') +
           (d.loop.projectorBackend
-            ? ` · projector ${d.loop.projectorBackend}` +
-              (d.loop.projectorBucket ? `:${d.loop.projectorBucket}` : '') +
+            ? ` · projector ${esc(d.loop.projectorBackend)}` +
+              (d.loop.projectorBucket ? `:${esc(d.loop.projectorBucket)}` : '') +
               (d.loop.projectorDurable ? '' : ' (attr)')
             : '') +
-          (capParts.length ? ` · ${capParts.join(' · ')}` : '');
+          (capParts.length ? ` · ${capParts.map(esc).join(' · ')}` : '');
+      }
+      if (loopGrid) {
+        const cells = [
+          ['Dispatched', d.loop.dispatched ?? 0, ''],
+          ['Settled full', d.loop.settledViaFullLoop ?? 0, 'ok'],
+          ['Outbox sent', d.loop.outboxSent ?? 0, ''],
+          [
+            'Outbox pending',
+            d.loop.outboxPending ?? 0,
+            (d.loop.outboxPending ?? 0) > 50 ? 'bad' : (d.loop.outboxPending ?? 0) > 0 ? 'warn' : 'ok',
+          ],
+          ['Outbox failed', d.loop.outboxFailed ?? 0, (d.loop.outboxFailed ?? 0) > 0 ? 'bad' : 'ok'],
+          ['Reserved', d.loop.reserved ?? 0, ''],
+        ];
+        loopGrid.innerHTML = cells
+          .map(
+            ([k, v, tone]) =>
+              `<div class="ops-loop-cell ${esc(tone)}"><span class="kicker">${esc(k)}</span><span class="v">${esc(v)}</span></div>`
+          )
+          .join('');
       }
     }
 

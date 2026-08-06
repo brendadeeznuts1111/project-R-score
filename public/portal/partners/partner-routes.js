@@ -10,7 +10,7 @@
  * the TS module uses partnerHash(route) for typed round-trips.
  */
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
-const OUT_ID_RE = /^out-[A-Z0-9-]+$/;
+const OUT_ID_RE = /^out-([A-Z]{3,6})-([1-9][0-9]*)$/;
 const BOOK_ID_RE = /^book-[a-z0-9-]+$/;
 const TELEGRAM_TOPICS = new Set(['general', 'ops', 'alerts', 'liquidity', 'accounting']);
 
@@ -47,7 +47,8 @@ export function parsePartnerHash(hash) {
   if (out) {
     const code = partnerCode(out.hash.groups.code);
     const outId = decode(out.hash.groups.outId);
-    if (code && OUT_ID_RE.test(outId) && outId.startsWith(`out-${code}-`)) {
+    const outIdMatch = OUT_ID_RE.exec(outId);
+    if (code && outIdMatch?.[1] === code) {
       return { type: 'out', code, outId };
     }
   }
@@ -89,11 +90,7 @@ export function partnerHash(code) {
 export function partnerOutHash(code, outId) {
   const normalized = partnerCode(code);
   const normalizedOut = decode(outId);
-  if (
-    !normalized ||
-    !OUT_ID_RE.test(normalizedOut) ||
-    !normalizedOut.startsWith(`out-${normalized}-`)
-  ) {
+  if (!normalized || OUT_ID_RE.exec(normalizedOut)?.[1] !== normalized) {
     return '#partners';
   }
   return `#partner/${normalized}/out/${encodeURIComponent(normalizedOut)}`;
@@ -151,7 +148,10 @@ export function decodeTelegramStartPayload(raw) {
     const colon = decoded.indexOf(':');
     if (colon < 0) return null;
     const code = decoded.slice(0, colon).trim().toUpperCase();
-    const topic = decoded.slice(colon + 1).trim().toLowerCase();
+    const topic = decoded
+      .slice(colon + 1)
+      .trim()
+      .toLowerCase();
     if (!PARTNER_CODE_RE.test(code) || !TELEGRAM_TOPICS.has(topic)) return null;
     return { code, topic };
   } catch {

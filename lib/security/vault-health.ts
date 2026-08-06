@@ -22,6 +22,19 @@ export type ReferencedHealth = {
   status: 'ok' | 'trashed' | 'missing';
 };
 
+/**
+ * Live probe of a token-bearing env value against its issuer. The bake CLI
+ * performs the probe (pure module only folds the result in) — catches the
+ * expired-token case that presence checks miss (item Active, token 401).
+ */
+export type TokenProbe = {
+  envKey: string;
+  kind: 'cloudflare' | 'generic';
+  status: 'ok' | 'invalid' | 'unreachable';
+  statusCode: number | null;
+  checkedAt: string;
+};
+
 export type VaultHealthVault = {
   name: string;
   active: number;
@@ -34,6 +47,7 @@ export type VaultHealthReport = {
   generatedAt: string;
   vaults: VaultHealthVault[];
   referenced: ReferencedHealth[];
+  tokenProbes: TokenProbe[];
   summary: {
     vaultCount: number;
     activeItems: number;
@@ -41,6 +55,9 @@ export type VaultHealthReport = {
     referencedOk: number;
     referencedTrashed: number;
     referencedMissing: number;
+    tokensOk: number;
+    tokensInvalid: number;
+    tokensUnreachable: number;
     healthy: boolean;
   };
 };
@@ -84,11 +101,12 @@ export function liveItemsFromListJson(raw: string): VaultLiveItem[] {
   return out;
 }
 
-/** Cross-reference env→vault refs against live vault contents. */
+/** Cross-reference env→vault refs against live vault contents (+ token probes). */
 export function computeVaultHealth(
   refs: VaultRefInput[],
   liveByVault: Map<string, VaultLiveItem[]>,
-  generatedAt = new Date().toISOString()
+  generatedAt = new Date().toISOString(),
+  opts: { tokenProbes?: TokenProbe[] } = {}
 ): VaultHealthReport {
   const vaults: VaultHealthVault[] = [];
   for (const [name, items] of [...liveByVault.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
@@ -115,6 +133,12 @@ export function computeVaultHealth(
   }
   referenced.sort((a, b) => a.envKey.localeCompare(b.envKey));
 
+  const tokenProbes = (opts.tokenProbes ?? []).map(p => ({ ...p }));
+  tokenProbes.sort((a, b) => a.envKey.localeCompare(b.envKey));
+  const tokensOk = tokenProbes.filter(p => p.status === 'ok').length;
+  const tokensInvalid = tokenProbes.filter(p => p.status === 'invalid').length;
+  const tokensUnreachable = tokenProbes.filter(p => p.status === 'unreachable').length;
+
   const referencedTrashed = referenced.filter(r => r.status === 'trashed').length;
   const referencedMissing = referenced.filter(r => r.status === 'missing').length;
   return {
@@ -122,6 +146,7 @@ export function computeVaultHealth(
     generatedAt,
     vaults,
     referenced,
+    tokenProbes,
     summary: {
       vaultCount: vaults.length,
       activeItems: vaults.reduce((n, v) => n + v.active, 0),
@@ -129,7 +154,10 @@ export function computeVaultHealth(
       referencedOk: referenced.filter(r => r.status === 'ok').length,
       referencedTrashed,
       referencedMissing,
-      healthy: referencedTrashed === 0 && referencedMissing === 0,
+      tokensOk,
+      tokensInvalid,
+      tokensUnreachable,
+      healthy: referencedTrashed === 0 && referencedMissing === 0 && tokensInvalid === 0,
     },
   };
 }

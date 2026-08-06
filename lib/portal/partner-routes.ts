@@ -29,7 +29,7 @@ import { PARTNER_HASH_PATTERN_INITS } from './url-planes.ts';
 import { asDomId, type DomId } from '../types/branded/portal.ts';
 
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
-const OUT_ID_RE = /^out-[A-Z0-9-]+$/;
+const OUT_ID_RE = /^out-([A-Z]{3,6})-([1-9][0-9]*)$/;
 const BOOK_ID_RE = /^book-[a-z0-9-]+$/;
 
 export type PartnerRouteType = 'partners' | 'partner' | 'out' | 'accounting' | 'telegram' | 'book';
@@ -76,7 +76,8 @@ export function parsePartnerHash(hash: string): PartnerRoute | null {
   if (out) {
     const code = normalizePartnerCode(out.hash.groups.code);
     const outId = decode(out.hash.groups.outId);
-    if (code && OUT_ID_RE.test(outId) && outId.startsWith(`out-${code}-`)) {
+    const outIdMatch = OUT_ID_RE.exec(outId);
+    if (code && outIdMatch?.[1] === code) {
       return { type: 'out', code, outId };
     }
   }

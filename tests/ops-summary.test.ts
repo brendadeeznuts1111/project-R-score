@@ -80,6 +80,7 @@ describe('buildOpsSummary', () => {
       bound: 0,
       unboundAgents: 0,
       byLifecycle: {},
+      invalidLifecycle: 0,
       recent: [],
     });
     expect(s.channels).toMatchObject({ pending: 0, failed: 0, sent: 0 });

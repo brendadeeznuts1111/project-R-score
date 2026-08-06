@@ -203,6 +203,22 @@ describe('RegistryClient — publish name validation', () => {
     });
     expect(release.name).toBe('my-valid_lib');
   });
+
+  test('accepts the Tennis HQ producer scope and preserves its R2 key', async () => {
+    const client = mockClient();
+    const release = await client.publish('@tennis-hq/ssot', '9.9.9', new Blob(['data']), {
+      type: 'library',
+    });
+    expect(release.name).toBe('@tennis-hq/ssot');
+    expect(release.storage.r2Key).toBe('@tennis-hq/ssot/9.9.9.tgz');
+  });
+
+  test('rejects arbitrary package scopes', async () => {
+    const client = mockClient();
+    await expect(
+      client.publish('@unknown/pkg', '1.0.0', new Blob(['data']), { type: 'library' })
+    ).rejects.toThrow('Invalid artifact name');
+  });
 });
 
 describe('RegistryClient — publish duplicate version', () => {

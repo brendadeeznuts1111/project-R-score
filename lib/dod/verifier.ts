@@ -22,14 +22,18 @@
 
 import { Database } from 'bun:sqlite';
 import { averageHash, hammingDistance } from './evidence.ts';
+import { reconcileDodAmounts } from './reconcile.ts';
+import { appendDodMetaNdjson } from './meta-log.ts';
 import { requireSecret } from '../security/require-secret.ts';
 import { requireMintableSecret } from '../security/mintable-secret.ts';
+import { telegramBotApiUrl } from '../telegram/telegram-api-url.ts';
 import { DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
 import {
   agentHasPlatformAccount,
   detectPlatformFromText,
   platformSlug,
 } from '../operations/platform-coverage.ts';
+import { parseDodId, parseTreeNodeId, type DodId, type TreeNodeId } from '../types/branded.ts';
 
 /** Magic-byte sniffing: PNG, JPEG, WebP (RIFF), GIF. */
 export function validateImage(bytes: Uint8Array): boolean {
@@ -151,18 +155,50 @@ export function extractAmount(text: string | undefined): number | undefined {
 }
 
 export interface DODSubmission {
-  id: string; // brand-ok — UUIDv7
-  agentId: string; // brand-ok
+  id: string; // brand-ok — wire UUID parsed by process()
+  agentId: string; // brand-ok — wire tree-node ID parsed by process()
   type: 'balance' | 'slip' | 'receipt' | 'id' | 'location' | 'device';
   rawImage: Uint8Array;
   submittedAt: string;
-  telegramMessageId?: number;
+  /** Bot API chat id where the evidence photo landed (supergroup/channel/DM). */
+  telegramChatId?: string | number; // brand-ok — Telegram Bot API chat id (opaque wire)
+  telegramMessageId?: number; // brand-ok — Telegram message id (opaque wire)
+  /** Forum topic id (Accounting / Liquidity) when sent in a package forum. */
+  telegramThreadId?: number; // brand-ok — Telegram forum topic / thread id
+  /** Public @username when the chat is public (optional). */
+  telegramUsername?: string;
+  /** Forum topic label, e.g. accounting. */
+  telegramTopic?: string;
   /** Optional book slug or display name from caption (`/dod balance draftkings`). */
   platformHint?: string;
+  /** Expected stake from play dispatch (optional override). */
+  expectedAmount?: number;
+  /** Partner CODE when ingested from Accounting forum. */
+  partnerCode?: string;
+}
+
+/** Latest stake_actual for an agent from play_distribution fan-out. */
+export function lookupExpectedStake(
+  db: Database,
+  agentId: string // brand-ok — play_distribution node_id / partner CODE
+): number | null {
+  try {
+    const row = db
+      .query(
+        `SELECT stake_actual FROM play_distribution
+         WHERE node_id = $aid AND stake_actual IS NOT NULL
+         ORDER BY received_at DESC
+         LIMIT 1`
+      )
+      .get({ $aid: agentId }) as { stake_actual: number } | null;
+    return row?.stake_actual ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export interface DODVerification {
-  dodId: string;
+  dodId: DodId;
   status: 'pending' | 'verified' | 'rejected' | 'flagged';
   visualHash: string;
   metadataHash: string;
@@ -186,7 +222,7 @@ export class DODVerifier {
   private registryPath: string;
   private store: DODEvidenceStore;
   private idEncryptionKey?: string;
-  private onVerifiedBalance?: (agentId: string, amount?: number) => Promise<void>;
+  private onVerifiedBalance?: (agentId: TreeNodeId, amount?: number) => Promise<void>;
 
   constructor(
     dbPath = DEFAULT_OPS_DB_PATH,
@@ -195,7 +231,7 @@ export class DODVerifier {
       registryPath?: string;
       store?: DODEvidenceStore;
       idEncryptionKey?: string;
-      onVerifiedBalance?: (agentId: string, amount?: number) => Promise<void>;
+      onVerifiedBalance?: (agentId: TreeNodeId, amount?: number) => Promise<void>;
     } = {}
   ) {
     this.proofSecret = requireSecret('DOD_PROOF_SECRET', 'dod-dev-secret');
@@ -233,15 +269,33 @@ export class DODVerifier {
         rejection_reason TEXT
       )
     `);
-    // Migration: encrypted-at-rest flag (Batch 2).
+    // Migrations (additive only).
     const cols = this.db.query('PRAGMA table_info(dod_submissions)').all() as { name: string }[];
-    if (!cols.some(c => c.name === 'encrypted')) {
-      this.db.run('ALTER TABLE dod_submissions ADD COLUMN encrypted INTEGER DEFAULT 0');
-    }
+    const have = new Set(cols.map(c => c.name));
+    const add = (name: string, ddl: string) => {
+      if (!have.has(name)) this.db.run(`ALTER TABLE dod_submissions ADD COLUMN ${ddl}`);
+    };
+    add('encrypted', 'encrypted INTEGER DEFAULT 0');
+    add('telegram_chat_id', 'telegram_chat_id TEXT');
+    add('telegram_message_id', 'telegram_message_id INTEGER');
+    add('telegram_thread_id', 'telegram_thread_id INTEGER');
+    add('telegram_username', 'telegram_username TEXT');
+    add('telegram_topic', 'telegram_topic TEXT');
+    add('image_meta_json', 'image_meta_json TEXT');
+    add('accounting_amount', 'accounting_amount REAL');
+    add('expected_amount', 'expected_amount REAL');
+    add('reconciled', 'reconciled INTEGER DEFAULT 0');
+    this.db.run(`
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_dod_telegram_msg
+      ON dod_submissions (telegram_chat_id, telegram_message_id)
+      WHERE telegram_chat_id IS NOT NULL AND telegram_message_id IS NOT NULL
+    `);
   }
 
   async process(submission: DODSubmission): Promise<DODVerification> {
     const t0 = Bun.nanoseconds();
+    const dodId = parseDodId(submission.id);
+    const agentId = parseTreeNodeId(submission.agentId);
 
     // 0a. Validate image magic bytes before decoding.
     if (!validateImage(submission.rawImage)) {
@@ -249,7 +303,7 @@ export class DODVerifier {
     }
 
     // 0b. Per-agent rate limit (default 10/hour, DOD_RATE_LIMIT_PER_HOUR override).
-    this.checkRateLimit(submission.agentId);
+    this.checkRateLimit(agentId);
 
     // 1. Load image
     const img = new Bun.Image(submission.rawImage);
@@ -271,7 +325,7 @@ export class DODVerifier {
 
     // 5. Randomized storage path (no agentId in URL; deterministic per id+secret)
     const prefix = Bun.hash
-      .crc32(submission.id + this.proofSecret)
+      .crc32(dodId + this.proofSecret)
       .toString(36)
       .slice(0, 8);
 
@@ -282,14 +336,14 @@ export class DODVerifier {
       storeBytes = await encryptAesGcm(stored, this.idEncryptionKey);
       encrypted = true;
     }
-    const s3Path = `dod/${prefix}/${submission.id}.webp${encrypted ? '.enc' : ''}`;
+    const s3Path = `dod/${prefix}/${dodId}.webp${encrypted ? '.enc' : ''}`;
     await this.store.put(s3Path, storeBytes);
 
     // 6. Metadata hash
     const metaHash = this.hashMetadata(metadata, submission);
 
     // 7. Sign
-    const signature = this.sign(submission.id, visualHash, metaHash);
+    const signature = this.sign(dodId, visualHash, metaHash);
 
     // 8. Tamper detection
     let tamperScore = this.detectTampering(metadata, submission);
@@ -326,7 +380,7 @@ export class DODVerifier {
         : 'pending';
 
     const verification: DODVerification = {
-      dodId: submission.id,
+      dodId,
       status,
       visualHash,
       metadataHash: metaHash,
@@ -341,16 +395,39 @@ export class DODVerifier {
       flagReason: platformCheck.flagReason,
     };
 
+    const { parseBunImageMetaStrip } = await import('./enrich-entry.ts');
+    const imageMeta = parseBunImageMetaStrip({
+      ...metadata,
+      size: submission.rawImage.byteLength,
+      deviceModel: verification.deviceModel,
+    });
+    const accountingAmount = extractAmount(extractedText) ?? null;
+
+    const expectedStake =
+      submission.expectedAmount ?? lookupExpectedStake(this.db, agentId) ?? null;
+    const reconcile = reconcileDodAmounts(expectedStake, accountingAmount);
+    if (reconcile.status === 'mismatch') {
+      tamperScore = Math.min(100, tamperScore + 15);
+      verification.tamperScore = tamperScore;
+      if (status === 'verified' || status === 'pending') {
+        status = 'flagged';
+        verification.status = status;
+      }
+    }
+
     // 9. Persist
     this.db.run(
       `
       INSERT INTO dod_submissions (id, agent_id, type, status, visual_hash, metadata_hash, signature, tamper_score,
-        extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted)
-      VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc)
+        extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted,
+        telegram_chat_id, telegram_message_id, telegram_thread_id, telegram_username, telegram_topic,
+        image_meta_json, accounting_amount, expected_amount, reconciled)
+      VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc,
+        $tgChat, $tgMsg, $tgThread, $tgUser, $tgTopic, $imgMeta, $amt, $expAmt, $reconciled)
     `,
       {
-        $id: submission.id,
-        $aid: submission.agentId,
+        $id: dodId,
+        $aid: agentId,
         $type: submission.type,
         $status: verification.status,
         $vh: visualHash,
@@ -365,13 +442,35 @@ export class DODVerifier {
         $sub: submission.submittedAt,
         $proc: verification.processedAt,
         $enc: encrypted ? 1 : 0,
+        $tgChat: submission.telegramChatId != null ? String(submission.telegramChatId) : null,
+        $tgMsg: submission.telegramMessageId ?? null,
+        $tgThread: submission.telegramThreadId ?? null,
+        $tgUser: submission.telegramUsername ?? null,
+        $tgTopic: submission.telegramTopic ?? null,
+        $imgMeta: imageMeta ? JSON.stringify(imageMeta) : null,
+        $amt: accountingAmount,
+        $expAmt: reconcile.expected,
+        $reconciled: reconcile.reconciled ? 1 : 0,
       }
     );
+
+    if (imageMeta) {
+      await appendDodMetaNdjson({
+        at: verification.processedAt,
+        dodId,
+        agentId,
+        type: submission.type,
+        partnerCode: submission.partnerCode ?? null,
+        telegramTopic: submission.telegramTopic ?? null,
+        s3Path,
+        meta: imageMeta,
+      });
+    }
 
     // 9b. Sidecar record — the store is the source of truth; SQLite is a
     // rebuildable index (see rebuildIndex()).
     await this.store.put(
-      `dod-records/${submission.id}.json`,
+      `dod-records/${dodId}.json`,
       new TextEncoder().encode(
         JSON.stringify({
           submission: { ...submission, rawImage: undefined },
@@ -387,7 +486,7 @@ export class DODVerifier {
       submission.type === 'balance' &&
       this.onVerifiedBalance
     ) {
-      await this.onVerifiedBalance(submission.agentId, extractAmount(extractedText));
+      await this.onVerifiedBalance(agentId, extractAmount(extractedText));
     }
 
     // 11. Notify ops if flagged
@@ -402,8 +501,7 @@ export class DODVerifier {
   }
 
   // ── Rate Limit ─────────────────────────────────────────────────
-  private checkRateLimit(agentId: string): void {
-    // brand-ok — external agent key, not domain AgentId
+  private checkRateLimit(agentId: TreeNodeId): void {
     const parsed = Number(Bun.env.DOD_RATE_LIMIT_PER_HOUR ?? 10);
     const maxPerHour = Number.isFinite(parsed) && parsed > 0 ? parsed : 10;
     const row = this.db
@@ -497,7 +595,7 @@ export class DODVerifier {
       const wv = new Bun.WebView({
         width: meta.width || 400,
         height: (meta.height || 300) + 24,
-        html: `<style>body{margin:0;background:#000}img{width:100%;object-fit:contain}.wm{position:absolute;bottom:4px;right:8px;background:rgba(0,0,0,0.7);color:#fff;font:11px monospace;padding:2px 6px;border-radius:3px}</style><img src="data:image/webp;base64,${Buffer.from(await img.webp({ quality: 90 }).bytes()).toString('base64')}"/><div class="wm">${text}</div>`,
+        html: `<style>body{margin:0;background:#000}img{width:100%;object-fit:contain}.wm{position:absolute;bottom:4px;right:8px;background:rgba(0,0,0,0.7);color:#fff;font:11px monospace;padding:2px 6px;border-radius:3px}</style><img src="data:image/webp;base64,${(await img.webp({ quality: 90 }).bytes()).toBase64()}"/><div class="wm">${text}</div>`,
         headless: true,
       });
       await Bun.sleep(200);
@@ -512,7 +610,7 @@ export class DODVerifier {
   // ── OCR via WebView + Tesseract ──────────────────────────────
   private async extractText(img: Bun.Image): Promise<string> {
     try {
-      const encoded = Buffer.from(await img.webp({ quality: 80 }).bytes()).toString('base64');
+      const encoded = (await img.webp({ quality: 80 }).bytes()).toBase64();
       const wv = new Bun.WebView({
         width: 800,
         height: 600,
@@ -547,7 +645,7 @@ export class DODVerifier {
   }
 
   // ── Signature ────────────────────────────────────────────────────
-  private sign(dodId: string, visualHash: string, metaHash: string): string {
+  private sign(dodId: DodId, visualHash: string, metaHash: string): string {
     const h = new Bun.CryptoHasher('sha256', this.proofSecret);
     h.update(`${dodId}:${visualHash}:${metaHash}`);
     return h.digest('hex');
@@ -601,7 +699,7 @@ export class DODVerifier {
     const token = tg.effectiveToken;
     const chatId = tg.opsChatId;
     if (!token || !chatId) return;
-    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    await fetch(telegramBotApiUrl(token, 'sendMessage'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -612,7 +710,8 @@ export class DODVerifier {
           `Type: ${sub.type}`,
           `Tamper: ${ver.tamperScore}/100`,
           `ID: \`${sub.id.slice(0, 8)}\``,
-          `Review: /portal/dod/${sub.id}`,
+          `Review: /portal/dod/`,
+          'Confirm bet/deposit amounts in partner Telegram Accounting (Partners desk).',
         ].join('\n'),
         parse_mode: 'Markdown',
       }),
@@ -620,14 +719,14 @@ export class DODVerifier {
   }
 
   // ── Review Actions ───────────────────────────────────────────────
-  approve(dodId: string, reviewedBy = 'operations') {
+  approve(dodId: DodId, reviewedBy = 'operations') {
     this.db.run(
       "UPDATE dod_submissions SET status='verified', reviewed_at=datetime('now'), reviewed_by=$by WHERE id=$id",
       { $id: dodId, $by: reviewedBy }
     );
   }
 
-  reject(dodId: string, reason: string, reviewedBy = 'operations') {
+  reject(dodId: DodId, reason: string, reviewedBy = 'operations') {
     this.db.run(
       "UPDATE dod_submissions SET status='rejected', reviewed_at=datetime('now'), reviewed_by=$by, rejection_reason=$r WHERE id=$id",
       { $id: dodId, $by: reviewedBy, $r: reason }
@@ -643,15 +742,18 @@ export class DODVerifier {
   }
 
   /** Find submissions with similar perceptual hashes (Hamming distance). */
-  findSimilar(hash: string, maxDistance = 5): { id: string; agent_id: string; distance: number }[] {
+  findSimilar(
+    hash: string,
+    maxDistance = 5
+  ): { id: DodId; agent_id: TreeNodeId; distance: number }[] {
     const all = this.db
       .query('SELECT id, agent_id, visual_hash FROM dod_submissions WHERE visual_hash IS NOT NULL')
       .all() as { id: string; agent_id: string; visual_hash: string }[]; // brand-ok x2 — opaque DB row, not domain types
 
     return all
       .map(row => ({
-        id: row.id,
-        agent_id: row.agent_id,
+        id: parseDodId(row.id),
+        agent_id: parseTreeNodeId(row.agent_id),
         distance: hammingDistance(hash, row.visual_hash),
       }))
       .filter(r => r.distance > 0 && r.distance <= maxDistance)
@@ -691,8 +793,11 @@ export class DODVerifier {
         const { submission: s, verification: v } = record;
         this.db.run(
           `INSERT OR REPLACE INTO dod_submissions (id, agent_id, type, status, visual_hash, metadata_hash, signature, tamper_score,
-            extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted)
-          VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc)`,
+            extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted,
+            telegram_chat_id, telegram_message_id, telegram_thread_id, telegram_username, telegram_topic,
+            accounting_amount, expected_amount, reconciled)
+          VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc,
+            $tgChat, $tgMsg, $tgThread, $tgUser, $tgTopic, $amt, $expAmt, $reconciled)`,
           {
             $id: s.id,
             $aid: s.agentId,
@@ -710,6 +815,14 @@ export class DODVerifier {
             $sub: s.submittedAt,
             $proc: v.processedAt,
             $enc: record.encrypted ? 1 : 0,
+            $tgChat: s.telegramChatId != null ? String(s.telegramChatId) : null,
+            $tgMsg: s.telegramMessageId ?? null,
+            $tgThread: s.telegramThreadId ?? null,
+            $tgUser: s.telegramUsername ?? null,
+            $tgTopic: s.telegramTopic ?? null,
+            $amt: extractAmount(v.extractedText) ?? null,
+            $expAmt: s.expectedAmount ?? null,
+            $reconciled: 0,
           }
         );
         restored++;
@@ -721,8 +834,7 @@ export class DODVerifier {
   }
 
   /** Agent-side receipt: status + hashes for a submitted DOD. */
-  receipt(dodId: string) {
-    // brand-ok — opaque external DOD id
+  receipt(dodId: DodId) {
     return (
       this.db
         .query(
@@ -733,8 +845,7 @@ export class DODVerifier {
   }
 
   /** Agent-side verification: recompute HMAC and compare (constant length). */
-  verifySignature(dodId: string, visualHash: string, metaHash: string, signature: string): boolean {
-    // brand-ok — opaque external DOD id
+  verifySignature(dodId: DodId, visualHash: string, metaHash: string, signature: string): boolean {
     return this.sign(dodId, visualHash, metaHash) === signature;
   }
 

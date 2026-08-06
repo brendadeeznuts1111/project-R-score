@@ -19,7 +19,7 @@
  * Codes (closed vocabularies from config/surfaces.toml):
  * - **SurfaceStatusCode** — live | vanity | broken | dangling | staged | placeholder | external
  * - **SurfaceAccessCode** — public | allowlist | applied | staged | bearer (intended) | external | none
- * - **SurfaceBackendCode** — cloudflare-pages | cloudflared | github-pages | helpscout | none | unknown
+ * - **SurfaceBackendCode** — cloudflare-pages | cloudflare-worker | cloudflared | github-pages | helpscout | none | unknown
  *
  * Do not pass a path-bearing Access domain where a HostId is required.
  * Split with `hostIdFromAccessDomain` / `pathFromAccessDomain`.
@@ -112,6 +112,7 @@ export const SURFACE_ACCESS_CODES = [
 
 export const SURFACE_BACKEND_CODES = [
   'cloudflare-pages',
+  'cloudflare-worker',
   'cloudflared',
   'github-pages',
   'helpscout',
@@ -431,6 +432,7 @@ export function surfaceBackendCodeFromBackend(backend: string): SurfaceBackendCo
     return asSurfaceBackendCode('none');
   }
   if (raw.startsWith('cloudflare-pages')) return asSurfaceBackendCode('cloudflare-pages');
+  if (raw.startsWith('cloudflare-worker')) return asSurfaceBackendCode('cloudflare-worker');
   if (raw.startsWith('cloudflared') || raw.includes('cloudflared tunnel')) {
     return asSurfaceBackendCode('cloudflared');
   }
@@ -726,7 +728,7 @@ export const SURFACES_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['wire-input', 'system-internal'],
     description:
-      'Backend family shortcode (cloudflare-pages|cloudflared|github-pages|helpscout|none|unknown)',
+      'Backend family shortcode (cloudflare-pages|cloudflare-worker|cloudflared|github-pages|helpscout|none|unknown)',
     validation: SURFACE_BACKEND_BRAND_VALIDATION,
   },
   {

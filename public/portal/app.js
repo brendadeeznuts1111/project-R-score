@@ -70,24 +70,30 @@ function updateRegistryBanner(mode) {
   const ageMs = updatedAt === null ? null : Math.max(0, Date.now() - updatedAt);
   const stale = ageMs !== null && ageMs > REGISTRY_FRESHNESS_THRESHOLD_MS;
   const ageHours = ageMs === null ? null : Math.floor(ageMs / (60 * 60 * 1000));
-  const ageLabel = ageHours === null
-    ? 'age unknown'
-    : ageHours < 1
-      ? '<1h old'
-      : ageHours < 48
-        ? `${ageHours}h old`
-        : `${Math.floor(ageHours / 24)}d old`;
+  const ageLabel =
+    ageHours === null
+      ? 'age unknown'
+      : ageHours < 1
+        ? '<1h old'
+        : ageHours < 48
+          ? `${ageHours}h old`
+          : `${Math.floor(ageHours / 24)}d old`;
 
   banner.dataset.source = mode;
   banner.dataset.freshness = ageMs === null ? 'unknown' : stale ? 'stale' : 'fresh';
-  text.textContent = updatedAt !== null
-    ? `${mode === 'edge' ? 'Edge' : 'Snapshot'} · updated ${updated.toLocaleDateString()} · ${updated.toLocaleTimeString()}`
-    : mode === 'edge' ? 'Edge registry' : 'Registry snapshot';
+  text.textContent =
+    updatedAt !== null
+      ? `${mode === 'edge' ? 'Edge' : 'Snapshot'} · updated ${updated.toLocaleDateString()} · ${updated.toLocaleTimeString()}`
+      : mode === 'edge'
+        ? 'Edge registry'
+        : 'Registry snapshot';
   freshness.className = `registry-freshness registry-freshness--${banner.dataset.freshness}`;
-  freshness.textContent = ageMs === null ? 'Unknown freshness' : `${stale ? 'Stale' : 'Fresh'} · ${ageLabel}`;
-  freshness.title = updatedAt !== null
-    ? `Registry data timestamp: ${updated.toLocaleString()}. Freshness threshold: 24 hours.`
-    : 'Registry data does not include a valid last-updated timestamp.';
+  freshness.textContent =
+    ageMs === null ? 'Unknown freshness' : `${stale ? 'Stale' : 'Fresh'} · ${ageLabel}`;
+  freshness.title =
+    updatedAt !== null
+      ? `Registry data timestamp: ${updated.toLocaleString()}. Freshness threshold: 24 hours.`
+      : 'Registry data does not include a valid last-updated timestamp.';
 }
 
 // ── Render pipeline ──────────────────────────────────────────────────────
@@ -139,12 +145,14 @@ function renderGrid(packages) {
       if (info) showDetail(name, info);
     });
   });
-
 }
 
 function updateStats(packages) {
-  const allVersions = packages.reduce((sum, [, info]) =>
-    sum + (info.releases ? Object.keys(info.releases).length : info.versions.length), 0);
+  const allVersions = packages.reduce(
+    (sum, [, info]) =>
+      sum + (info.releases ? Object.keys(info.releases).length : info.versions.length),
+    0
+  );
   const types = new Set();
   let totalHealth = 0;
   for (const [, info] of packages) {
@@ -157,7 +165,8 @@ function updateStats(packages) {
   $('stat-packages').innerHTML = `${packages.length} <span>packages</span>`;
   $('stat-versions').innerHTML = `${allVersions} <span>versions</span>`;
   $('stat-types').innerHTML = `${types.size} <span>types</span>`;
-  $('stat-health').innerHTML = `${avgHealth}/100 <span>avg health</span>`;
+  $('stat-health').innerHTML =
+    `<span class="stat-health-value ${healthClass(avgHealth)}">${avgHealth}/100</span> <span>avg health</span>`;
 
   updateRegistryBanner(registrySource);
 }
@@ -178,6 +187,10 @@ function buildFilterUI(packages) {
   const scopeChips = $('filter-scopes');
   renderFilterChips(scopeChips, scopes, 'scope', state.scopes);
 
+  // Tag chips
+  const tagChips = $('filter-tags');
+  renderFilterChips(tagChips, tags, 'tag', state.tags);
+
   // Sort
   $('sort-select').value = state.sort;
 
@@ -190,11 +203,8 @@ function buildFilterUI(packages) {
 
   // Restore search box from hash
   $('search').value = state.query;
-  updateFilterSummary(
-    applyFilters(packages, state).length,
-    packages.length,
-    state,
-  );
+  updateSearchClear();
+  updateFilterSummary(applyFilters(packages, state).length, packages.length, state);
 }
 
 function renderFilterChips(container, values, kind, selectedValues) {
@@ -242,8 +252,26 @@ function clearFilters() {
   const hadHash = Boolean(window.location.hash);
   window.location.hash = '';
   $('search').value = '';
+  updateSearchClear();
   focusedCardIndex = -1;
   if (!hadHash) syncFiltersFromHash();
+  $('search').focus();
+}
+
+/** Show/hide the inline clear-search button based on the query value. */
+function updateSearchClear() {
+  const btn = $('search-clear');
+  if (!btn) return;
+  btn.classList.toggle('hidden', !$('search').value);
+}
+
+/** Clear only the query term (keeps type/scope/tag filters). */
+function clearSearch() {
+  const state = readHashState();
+  state.query = '';
+  writeHashState(state);
+  $('search').value = '';
+  updateSearchClear();
   $('search').focus();
 }
 
@@ -258,7 +286,8 @@ function syncFiltersFromHash() {
 // ── Glossary hash routing ────────────────────────────────────────────────
 
 function scrollToConcept(concept) {
-  const el = document.getElementById(concept) || document.querySelector(`[data-concept="${concept}"]`);
+  const el =
+    document.getElementById(concept) || document.querySelector(`[data-concept="${concept}"]`);
   if (el) {
     el.scrollIntoView({ block: 'center', behavior: 'smooth' });
     el.classList.add('concept-highlight');
@@ -281,6 +310,7 @@ function debouncedSearch() {
     const state = readHashState();
     state.query = $('search').value;
     writeHashState(state);
+    updateSearchClear();
   }, 200);
 }
 
@@ -313,12 +343,14 @@ function toggleHelpOverlay() {
     existing.remove();
     return;
   }
-  document.body.insertAdjacentHTML('beforeend', `
+  document.body.insertAdjacentHTML(
+    'beforeend',
+    `
     <div id="help-overlay" class="help-overlay" role="dialog" aria-label="Keyboard shortcuts">
       <div class="help-panel">
         <button type="button" class="help-close" aria-label="Close">&times;</button>
         <h2>Keyboard Shortcuts</h2>
-        <table class="help-table">
+        <table class="portal-table help-table">
           <tr><td><kbd>↓</kbd> <kbd>j</kbd></td><td>Next card</td></tr>
           <tr><td><kbd>↑</kbd> <kbd>k</kbd></td><td>Previous card</td></tr>
           <tr><td><kbd>Enter</kbd></td><td>Open detail modal</td></tr>
@@ -332,7 +364,8 @@ function toggleHelpOverlay() {
         </table>
       </div>
     </div>
-  `);
+  `
+  );
   const overlay = document.getElementById('help-overlay');
   overlay?.querySelector('.help-close')?.addEventListener('click', () => overlay.remove());
   overlay?.addEventListener('click', e => {
@@ -369,6 +402,7 @@ async function init() {
     });
 
     $('search').addEventListener('input', debouncedSearch);
+    $('search-clear')?.addEventListener('click', clearSearch);
     window.addEventListener('hashchange', syncFiltersFromHash);
     window.addEventListener('hashchange', handleGlossaryHash);
 

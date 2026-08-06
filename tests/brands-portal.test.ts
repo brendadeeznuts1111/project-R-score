@@ -12,7 +12,7 @@ describe('brand keymap portal', () => {
       kind: 'brand-keymap',
       path: '/registry/brand-keymap.json',
       summary: {
-        brands: 61,
+        brands: 69,
         domains: 9,
       },
       sources: {
@@ -23,7 +23,7 @@ describe('brand keymap portal', () => {
         stagedGate: 'bun tools/branded-id-check.ts --staged --strict',
       },
     });
-    expect(payload.brands).toHaveLength(61);
+    expect(payload.brands).toHaveLength(69);
     expect(payload.brands.some((b: { name: string }) => b.name === 'OidcClientId')).toBe(true);
     expect(payload.brands.some((b: { name: string }) => b.name === 'DomId')).toBe(true);
     expect(payload.brands.some((b: { name: string }) => b.name === 'HostId')).toBe(true);
@@ -79,10 +79,51 @@ describe('brand keymap portal', () => {
       expect.objectContaining({ label: 'Brands', href: '/portal/brands/' })
     );
     expect(PORTAL_WEAVE_SURFACES).toContainEqual(
-      expect.objectContaining({ id: 'brands', href: '/portal/brands/' })
+      expect.objectContaining({
+        id: 'brands',
+        cli: expect.stringMatching(/brand-keymap[\s\S]*bun:brand-map/),
+      })
     );
     expect(PORTAL_WEAVE_ARTIFACTS).toContainEqual(
       expect.objectContaining({ href: '/registry/brand-keymap.json' })
     );
+    expect(PORTAL_WEAVE_ARTIFACTS).toContainEqual(
+      expect.objectContaining({ href: '/registry/bun-brand-map.json', purpose: 'shared' })
+    );
+  });
+
+  test('board surfaces mapped and observed summary ratios', async () => {
+    const script = await Bun.file('public/portal/brands/brands-board.js').text();
+    expect(script).toContain('brands mapped');
+    expect(script).toContain('matched / observed');
+    expect(script).toContain('topUndeclaredApis');
+    expect(script).toContain('mappedBrands');
+  });
+
+  test('wave-2 summary, unmapped filter, and evidence deep-links', async () => {
+    const [script, html, css, alignment, ops] = await Promise.all([
+      Bun.file('public/portal/brands/brands-board.js').text(),
+      Bun.file('public/portal/brands/index.html').text(),
+      Bun.file('public/portal/brands/brands.css').text(),
+      Bun.file('public/portal/bun-brand-alignment.js').text(),
+      Bun.file('public/portal/operations-dashboard.js').text(),
+    ]);
+
+    expect(script).toContain('legacy / new undeclared');
+    expect(script).toContain('baselineUndeclared');
+    expect(script).toContain('newUndeclared');
+    expect(script).toContain("focusEvidence('observed-undeclared')");
+    expect(script).toContain("focusEvidence('verified')");
+    expect(script).toContain("status === 'unmapped'");
+    expect(script).toContain('bunGraphBrandNames');
+    expect(html).toContain('value="unmapped"');
+    expect(html).toContain('Unmapped in Bun graph');
+    expect(css).toContain('button.brand-stat');
+    expect(css).toContain('.brand-stat.clickable');
+    expect(css).toContain('attention-strong');
+    expect(alignment).toContain('/portal/brands/#evidence=observed-undeclared');
+    expect(alignment).not.toContain('attention view');
+    expect(ops).toContain('/portal/brands/#evidence=observed-undeclared');
+    expect(ops).not.toContain('attention view');
   });
 });

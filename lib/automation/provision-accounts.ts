@@ -12,6 +12,7 @@
  *   fill form fields → submit → verify → store encrypted credentials → close.
  */
 import { Database } from 'bun:sqlite';
+import { bytesToBase64 } from '../bytes-base64.ts';
 import { encryptAesGcm } from '../dod/verifier.ts';
 import { DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
 import { requireMintableSecret } from '../security/mintable-secret.ts';
@@ -70,7 +71,7 @@ function resolveKey(encryptionKey?: string): string | undefined {
 async function encryptCredentials(bundle: CredentialBundle, keyMaterial: string): Promise<string> {
   const plain = JSON.stringify(bundle);
   const enc = await encryptAesGcm(new TextEncoder().encode(plain), keyMaterial);
-  return Buffer.from(enc).toString('base64');
+  return bytesToBase64(enc instanceof Uint8Array ? enc : new Uint8Array(enc));
 }
 
 // ── Single Account Provision ───────────────────────────────────────

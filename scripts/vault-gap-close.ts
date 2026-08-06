@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -19,7 +20,7 @@
  *
  * Note: pass-cli may be Killed:9 in restricted agent hosts — use mint-local path.
  */
-import { resolve } from 'node:path';
+import { resolvePath } from '../lib/path-bun.ts';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { logDepth } from '../lib/console-depth.ts';
 import {
@@ -38,8 +39,8 @@ import {
   secretRatchetOk,
 } from './lib/vault-gap-status.ts';
 
-const ROOT = resolve(import.meta.dir, '..');
-const TEMPLATE = resolve(ROOT, 'env.template');
+const ROOT = resolvePath(import.meta.dir, '..');
+const TEMPLATE = resolvePath(ROOT, 'env.template');
 const VAULT = 'factorywager';
 
 const argv = Bun.argv.slice(2);

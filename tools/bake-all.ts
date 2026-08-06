@@ -93,7 +93,19 @@ const STEPS: BakeStep[] = [
   { id: 'env', bunArgs: ['run', 'env:inventory:bake'], note: 'env inventory' },
   { id: 'compliance', bunArgs: ['run', 'compliance:bake'], note: 'compliance board' },
   { id: 'ops', bunArgs: ['run', 'ops:snapshot'], note: 'ops-summary + limit-raises' },
+  {
+    id: 'tennis-partner-contracts',
+    // Live when PARTNER_API_TOKEN set; else offline join. Atomic write + keep-last-good.
+    bunArgs: ['tools/bake-tennis-partner-contracts.ts'],
+    note: 'tennis/partner-contracts.json',
+  },
   { id: 'doctor', bunArgs: ['run', 'bake:doctor'], note: 'doctor-state.json' },
+  {
+    id: 'bake-manifest',
+    // Last step: inventory timestamps after other bakes.
+    bunArgs: ['tools/bake-registry-manifest.ts'],
+    note: 'bake-manifest.json',
+  },
 ];
 
 function bakeSpawnArgv(step: BakeStep): string[] {

@@ -17,6 +17,7 @@ factorywager-enterprise (root)
 ├── packages/*      @factorywager/* workspace packages
 ├── lib/shared      @factorywager/shared (lib/* glob)
 ├── sports-terminal-os   workspace app member
+├── .agents/skills/ast-grep   private hook tooling workspace
 └── projects/**     nested monorepos / archive (not root workspaces)
 ```
 
@@ -154,7 +155,8 @@ From root `package.json` (do not invent globs in prose):
   "packages": [
     "packages/*",
     "projects/active/sports-terminal-os",
-    "lib/*"
+    "lib/*",
+    ".agents/skills/ast-grep"
   ]
 }
 ```
@@ -162,10 +164,12 @@ From root `package.json` (do not invent globs in prose):
 | Member class | Examples |
 |--------------|----------|
 | Root `workspace:*` deps (spine imports) | `docs-tools`, `guards`, `registry-client`, `rip` |
-| Workspace-only (filter/discovery) | `business`, `p2p`, `@factorywager/shared`, `sports-terminal-os` |
+| Workspace-only (filter/discovery/install) | `business`, `p2p`, `@factorywager/shared`, `sports-terminal-os`, private `@projects/ast-grep-skill` hook tooling |
 | Archived (out of install graph) | `projects/archive/factorywager-packages/{ab-testing,versioning}` |
 
 Gate: `scripts/validate-workspaces.ts` — **homebase only** (does not require experimental/archive package.json files to be root members).
+
+The ast-grep tooling package is deliberately a workspace member because the root pre-commit hook runs its semver tests. This keeps dependency hydration in the ordinary root `bun install` and shared `bun.lock`, rather than performing an implicit install during `git commit`.
 
 ## Catalog SSOT
 
@@ -174,23 +178,16 @@ Root `catalog` pins shared third-party versions (exact; matches `install.exact`)
 | Key | Role |
 |-----|------|
 | `typescript` | Toolchain (root + packages via `catalog:`) |
-| `@types/bun` / `bun-types` | Types pin (may lag runtime 1.4.0) |
+| `@types/bun` / `bun-types` | Independent wrapper-stable and declaration-canary pins; policy in `config/bun-channels.toml` |
 | `zod`, `react`, `react-dom`, `@types/react*` | Shared app stack |
 
 **Consumers must use** `"pkg": "catalog:"` (or `catalog:<name>`). Do not re-float cataloged names with `^` / `latest`.
 
-**Intentional exception:** `sports-terminal-os` pins `typescript` at **5.9.3** until TS 6 typecheck cleanup; zod/react/`bun-types` still use `catalog:`. See [Open debt: STO TypeScript 6](#open-debt-sto-typescript-6).
-
 Policy table + anti-patterns: [UNIFIED § Catalogs and workspace protocols](../../UNIFIED.md#catalogs-and-workspace-protocols).
 
-### Open debt: STO TypeScript 6
+### STO TypeScript 6 (resolved)
 
-| | |
-|--|--|
-| **Current** | `sports-terminal-os` pins `typescript` **5.9.3** intentionally; root catalog is **6.0.3**. |
-| **Why** | On catalog TS 6, STO `tsc` surfaces path imports into monorepo `lib/`, `baseUrl`/`rootDir` layout, Response body types, and related strictness — not ready to force the pin. |
-| **Exit** | STO `bun run typecheck` green on catalog `typescript` → switch STO `package.json` to `"typescript": "catalog:"` → drop the UNIFIED catalog exception. |
-| **Owner** | platform / STO maintainers |
+Resolved **2026-07-28**: `sports-terminal-os` uses `"typescript": "catalog:"` (root catalog **6.0.3**). No catalog exception remains for STO.
 
 ## TypeScript 6+ types discovery
 

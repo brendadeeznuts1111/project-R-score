@@ -57,6 +57,11 @@ export const ROOT_INTEGRATIONS = {
     owner: 'github-pages',
     purpose: 'Jekyll include root consumed by wiki.factory-wager.com',
   },
+  'artifact-registry': {
+    owner: 'bookmakers-registry',
+    purpose:
+      'Versioned public and operator artifact split; operator data is never published to Pages',
+  },
   'functions-bun-only': {
     owner: 'platform-routing',
     purpose: 'Bun runtime handlers kept separate from Cloudflare Pages edge functions',

@@ -42,6 +42,7 @@ import { buildRegistryHealthReport } from './health';
 import { runIntegrityCycle } from './monitoring';
 import { registry } from './registry';
 import { type ArtifactType } from './artifact';
+import { readPublishPackageJson } from './publish-metadata';
 
 const VERSION = '0.1.0';
 
@@ -251,10 +252,8 @@ async function cmdPublish(args: string[]): Promise<void> {
   const filePath = positionals[0];
   if (!filePath) errorExit('Missing <path> argument. Usage: factory publish <path> [options]');
 
-  // Try to read package.json from the path (if it's a directory) or adjacent
-  const pkgJson = await tryReadJson(
-    filePath.endsWith('.tgz') ? 'package.json' : `${filePath}/package.json`
-  );
+  // Never fall back to the monorepo root package.json for tarball publishes.
+  const pkgJson = await readPublishPackageJson(filePath);
 
   const name = (values.name as string | undefined) ?? (pkgJson?.name as string | undefined);
   const version =
@@ -446,26 +445,30 @@ async function cmdIntegrity(): Promise<void> {
   process.exit(report.failures.length > 0 ? 1 : 0);
 }
 
+function parseRuntimeProperty(target: unknown, property: string): unknown {
+  if (target === null || (typeof target !== 'object' && typeof target !== 'function')) {
+    return undefined;
+  }
+  return Reflect.get(target, property);
+}
+
+function isRuntimePathAvailable(root: unknown, parts: string[]): boolean {
+  let target = root;
+  for (const part of parts) {
+    target = parseRuntimeProperty(target, part);
+    if (target === undefined) return false;
+  }
+  return true;
+}
+
 async function cmdProof(args: string[]): Promise<void> {
   // One-liner: factory proof --api Bun.CryptoHasher
   const apiFlag = args.find(a => a.startsWith('--api='));
   if (apiFlag) {
     const api = apiFlag.split('=')[1]!;
-    const root = Bun as any;
     const ns = api.startsWith('Bun.') ? api.slice(4) : api;
     const parts = ns.split('.');
-    let target: any = root;
-    let found = false;
-    for (const p of parts) {
-      if (target[p] !== undefined) {
-        target = target[p];
-        found = true;
-      } else {
-        found = false;
-        break;
-      }
-    }
-    const available = found;
+    const available = isRuntimePathAvailable(Bun, parts);
     const version = Bun.version;
     const docs = `https://bun.sh/docs/runtime/${api.toLowerCase().replace('bun.', '').replace('.', '#')}`;
     console.log(available ? `✓ ${api} @ ${version} (${docs})` : `✗ ${api} not in registry`);
@@ -500,11 +503,13 @@ async function cmdProof(args: string[]): Promise<void> {
 
   const apis = {
     'Bun.CryptoHasher': typeof Bun.CryptoHasher === 'function',
-    'Bun.TOML.stringify': !!(Bun as any).TOML?.stringify,
+    'Bun.TOML.stringify':
+      typeof parseRuntimeProperty(parseRuntimeProperty(Bun, 'TOML'), 'stringify') === 'function',
     'Bun.inspect.table': typeof Bun.inspect.table === 'function',
     'Bun.concatArrayBuffers': typeof Bun.concatArrayBuffers === 'function',
     'Bun.stringWidth': typeof Bun.stringWidth === 'function',
-    'Bun.markdown.render': typeof (Bun as any).markdown?.render === 'function',
+    'Bun.markdown.render':
+      typeof parseRuntimeProperty(parseRuntimeProperty(Bun, 'markdown'), 'render') === 'function',
     'Bun.color': typeof Bun.color === 'function',
     'Bun.sliceAnsi': typeof Bun.sliceAnsi === 'function',
   };

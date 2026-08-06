@@ -205,7 +205,7 @@ export {
   type OnboardNodeContext,
   type PartnerOnboardApplyResult,
   type PartnerOnboardPackageOpts,
-  type PartnerOnboardPlan,
+  type PartnerSeatOnboardingPlan,
   type UnboundAgentSeat,
 } from './partner-onboard-package.ts';
 export {

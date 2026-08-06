@@ -19,7 +19,7 @@
  *   bun run audit:packages:env   — packages graph + env inventory bake
  */
 import { Glob } from 'bun';
-import { relative, resolve } from 'node:path';
+import { relativePath, resolvePath } from '../lib/path-bun.ts';
 import { parseEnvTemplate, scanTextForUsages, type EnvUsage } from './lib/env-defaults-scan.ts';
 import {
   SECRET_ALIASES,
@@ -40,8 +40,8 @@ const RATCHET = argv.includes('--ratchet');
 const WRITE_BASELINE = argv.includes('--write-baseline');
 const BAKE = argv.includes('--bake');
 
-const BASELINE_PATH = resolve(ROOT, 'scripts/env-secret-gap-baseline.json');
-const BAKE_PATH = resolve(ROOT, 'public/registry/env-inventory.json');
+const BASELINE_PATH = resolvePath(ROOT, 'scripts/env-secret-gap-baseline.json');
+const BAKE_PATH = resolvePath(ROOT, 'public/registry/env-inventory.json');
 
 const ROOTS = ['lib', 'config', 'scripts', 'tools', 'packages'];
 const TEMPLATES = [
@@ -72,7 +72,7 @@ async function collectTs(): Promise<string[]> {
   const found: string[] = [];
   const glob = new Glob('**/*.ts');
   for (const root of ROOTS) {
-    const base = resolve(ROOT, root);
+    const base = resolvePath(ROOT, root);
     try {
       for await (const file of glob.scan({ cwd: base, absolute: true })) {
         if (IGNORE_DIR_PARTS.some(p => file.includes(p))) continue;
@@ -93,7 +93,7 @@ for (const file of await collectTs()) {
     usages.push(
       ...scanTextForUsages(file, text).map(u => ({
         ...u,
-        file: relative(ROOT, u.file),
+        file: relativePath(ROOT, u.file),
       }))
     );
   } catch {
@@ -120,7 +120,7 @@ const vaultKeySet = new Set<string>();
 const templateKeySet = new Set<string>();
 
 for (const rel of TEMPLATES) {
-  const path = resolve(ROOT, rel);
+  const path = resolvePath(ROOT, rel);
   if (!(await Bun.file(path).exists())) {
     templates.push({ path: rel, keys: [], vaultRefs: [] });
     continue;
@@ -247,7 +247,7 @@ if (WRITE_BASELINE) {
   };
   await Bun.write(BASELINE_PATH, JSON.stringify(baseline, null, 2) + '\n');
   console.log(
-    `✅ wrote ${actionableGaps.length} actionable vault gap(s) → ${relative(ROOT, BASELINE_PATH)}`
+    `✅ wrote ${actionableGaps.length} actionable vault gap(s) → ${relativePath(ROOT, BASELINE_PATH)}`
   );
   if (actionableGaps.length)
     logTable(
@@ -262,7 +262,7 @@ let baseline: Baseline | null = null;
 if (RATCHET) {
   baseline = await loadBaseline();
   if (!baseline) {
-    console.error(`❌ no baseline at ${relative(ROOT, BASELINE_PATH)}`);
+    console.error(`❌ no baseline at ${relativePath(ROOT, BASELINE_PATH)}`);
     console.error('   Create with: bun run env:inventory --write-baseline');
     process.exit(1);
   }
@@ -286,12 +286,12 @@ if (RATCHET) {
 if (BAKE) {
   const compact = await buildEnvInventoryCompact(ROOT, { includeGapReport: false });
   await Bun.write(BAKE_PATH, JSON.stringify(compact, null, 2) + '\n');
-  console.log(`→ ${relative(ROOT, BAKE_PATH)}`);
+  console.log(`→ ${relativePath(ROOT, BAKE_PATH)}`);
   const { buildVaultMapBundle } = await import('../lib/security/vault-map.ts');
-  const vaultMapPath = resolve(ROOT, 'public/registry/vault-map.json');
+  const vaultMapPath = resolvePath(ROOT, 'public/registry/vault-map.json');
   const vaultBundle = await buildVaultMapBundle({ root: ROOT });
   await Bun.write(vaultMapPath, JSON.stringify(vaultBundle, null, 2) + '\n');
-  console.log(`→ ${relative(ROOT, vaultMapPath)}`);
+  console.log(`→ ${relativePath(ROOT, vaultMapPath)}`);
 }
 
 if (JSON_OUT) {
@@ -299,7 +299,7 @@ if (JSON_OUT) {
     ...report,
     ratchet: baseline
       ? {
-          baselinePath: relative(ROOT, BASELINE_PATH),
+          baselinePath: relativePath(ROOT, BASELINE_PATH),
           baselineGaps: baseline.actionableVaultGaps,
           currentGaps: actionableGaps,
           failed: ratchetFailed,
@@ -315,7 +315,7 @@ if (RATCHET && !VAULT_ONLY) {
   if (!ratchetFailed) {
     console.log(
       `✅ env vault-gap ratchet OK — ${actionableGaps.length} gap(s) within baseline ` +
-        `(${relative(ROOT, BASELINE_PATH)})`
+        `(${relativePath(ROOT, BASELINE_PATH)})`
     );
     if (actionableGaps.length) {
       console.log(`   gaps: ${actionableGaps.join(', ')}`);

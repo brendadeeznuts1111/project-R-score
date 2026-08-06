@@ -17,14 +17,31 @@ export type TestFailure = {
   replayTest: string;
 };
 
+export type FailureReportDoc = {
+  source: string;
+  xml: string;
+  /** JUnit file mtime in ms (when known). Stale-board guard prefers this over bake wall-clock. */
+  mtimeMs?: number;
+};
+
 export type TestFailuresReport = {
   kind: 'test-failures';
+  /** Bake wall-clock (when the board was rendered). */
   generatedAt: string;
+  /**
+   * Freshness of the underlying suite: max JUnit source mtime (ISO), or
+   * `generatedAt` when mtimes were not supplied. Stale-board banners should
+   * compare against this field — not bake time alone.
+   */
+  sourceAt: string;
   sources: string[];
   totals: { tests: number; failures: number; skipped: number; timeSeconds: number };
   failures: TestFailure[];
   healthy: boolean;
 };
+
+/** Board is stale when the suite source (or bake time) is older than this. */
+export const FAILURES_STALE_MS = 24 * 60 * 60 * 1000;
 
 function unescapeXml(s: string): string {
   return s
@@ -90,9 +107,32 @@ export function failuresFromJunitXml(xml: string): {
   };
 }
 
+/** Max ISO timestamp from supplied JUnit mtimes; undefined when none provided. */
+export function sourceAtFromDocs(docs: FailureReportDoc[]): string | undefined {
+  let max = 0;
+  for (const d of docs) {
+    if (typeof d.mtimeMs === 'number' && Number.isFinite(d.mtimeMs) && d.mtimeMs > max) {
+      max = d.mtimeMs;
+    }
+  }
+  return max > 0 ? new Date(max).toISOString() : undefined;
+}
+
+/** True when the suite source (preferred) or bake time is older than STALE_MS. */
+export function isFailuresReportStale(
+  report: Pick<TestFailuresReport, 'sourceAt' | 'generatedAt'>,
+  nowMs = Date.now(),
+  staleMs = FAILURES_STALE_MS
+): boolean {
+  const anchor = report.sourceAt || report.generatedAt;
+  const t = new Date(anchor).getTime();
+  if (!Number.isFinite(t)) return false;
+  return nowMs - t > staleMs;
+}
+
 /** Merge failures from multiple JUnit documents into one report. */
 export function buildFailuresReport(
-  docs: { source: string; xml: string }[],
+  docs: FailureReportDoc[],
   generatedAt = new Date().toISOString()
 ): TestFailuresReport {
   const all: TestFailure[] = [];
@@ -107,9 +147,11 @@ export function buildFailuresReport(
     timeSeconds += r.timeSeconds;
   }
   all.sort((a, b) => a.file.localeCompare(b.file) || a.name.localeCompare(b.name));
+  const sourceAt = sourceAtFromDocs(docs) ?? generatedAt;
   return {
     kind: 'test-failures',
     generatedAt,
+    sourceAt,
     sources: docs.map(d => d.source),
     totals: {
       tests,

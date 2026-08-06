@@ -198,6 +198,7 @@ describe('limit detection pipeline (E2E)', () => {
       ],
       predictionAccuracy: { mae: 0.123, rmse: 0.456, bias: -0.012, n: 50 },
       generatedAt: '2026-07-28T00:00:00',
+      bunVersion: 'test-runtime',
     };
 
     const svg = generateLimitChartSvg(chartData);

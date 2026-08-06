@@ -15,6 +15,7 @@ Refreshes portal/Pages artifacts:
 - `public/registry/toc-ops.json` (+ bakes `#toc-embed` on `/portal/toc/` · ops-summary `toc` slice)
 - `public/registry/compliance-board.json` (+ enhancements/shadow · portal embed · ops-summary `compliance` slice; disable with `--no-compliance` / `OPS_SNAPSHOT_COMPLIANCE=0`) — **one board → many projections** (`ops-summary.compliance` · `monitoring.compliance` · health `complianceBoard` · `/portal/compliance/`) · tenant [`compliance-portal.md`](compliance-portal.md)
 - `public/registry/limit-raises.json` (multi-factor raise context · 48h · capture missing rows via `exportLimitRaisesSnapshot`) — portal `/portal/limits/` · agent snapshot on Pages · tenant [`partner-limits.md`](partner-limits.md)
+- After ops bakes, inventory timestamps via `bun tools/bake-registry-manifest.ts` → `/registry/bake-manifest.json` (board “Data as of” badges · fail-open notes in [`bake-resilience.md`](bake-resilience.md))
 - tenant slices `public/registry/{factory,science,tennis}/registry.json` (when thin)
 - `@factorywager/bun-utils-test` + `routing-test` proofs
 - prediction report (unless `--no-report`)

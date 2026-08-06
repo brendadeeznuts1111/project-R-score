@@ -1,4 +1,4 @@
-// @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
+// @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortSignal.timeout
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * BetMGM Tier 4 scrape agent (fixture-first; no headless).
@@ -86,10 +86,8 @@ export function scrapeBetMgmHtmlStub(): BetMgmAgentResult {
 }
 
 async function fetchLiveJson(timeoutMs: number): Promise<unknown | null> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetch(BETMGM_LIVE_URL, { signal: controller.signal });
+    const response = await fetch(BETMGM_LIVE_URL, { signal: AbortSignal.timeout(timeoutMs) });
     if (!response.ok) {
       console.warn(`[betmgm-agent] live HTTP ${response.status}`);
       return null;
@@ -99,8 +97,6 @@ async function fetchLiveJson(timeoutMs: number): Promise<unknown | null> {
     const message = error instanceof Error ? error.message : String(error);
     console.warn(`[betmgm-agent] live error: ${message}`);
     return null;
-  } finally {
-    clearTimeout(timer);
   }
 }
 

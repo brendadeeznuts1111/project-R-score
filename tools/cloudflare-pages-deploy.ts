@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --verify
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
@@ -41,11 +42,64 @@ const VERIFY_TAXONOMY = Bun.argv.includes('--taxonomy') || Bun.env.PAGES_VERIFY_
 const POLL_MS = 15_000;
 const MAX_POLLS = 12;
 
-type CfResponse<T> = {
+export type CfResponse<T> = {
   success: boolean;
   result?: T;
   errors?: Array<{ message: string }>;
+  /** Synthetic operator signal: Cloudflare accepted the request but public content is unchanged. */
+  notModified?: boolean;
 };
+
+function responseExcerpt(text: string): string {
+  const compact = text.replace(/\s+/g, ' ').trim();
+  if (!compact) return '(empty body)';
+  return compact.length <= 160 ? compact : `${compact.slice(0, 157)}…`;
+}
+
+/** Decode the Cloudflare envelope without assuming every HTTP response is JSON object-shaped. */
+export function parseCloudflareApiResponse<T>(
+  text: string,
+  status: number,
+  requestLabel: string
+): CfResponse<T> {
+  if (status === 304 && !text.trim()) {
+    return { success: true, notModified: true };
+  }
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch {
+    throw new Error(
+      `Cloudflare API ${requestLabel} returned non-JSON (HTTP ${status}): ${responseExcerpt(text)}`
+    );
+  }
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error(
+      `Cloudflare API ${requestLabel} returned an invalid envelope (HTTP ${status}): ${responseExcerpt(text)}`
+    );
+  }
+  const envelope = value as Partial<CfResponse<T>>;
+  if (typeof envelope.success !== 'boolean') {
+    throw new Error(
+      `Cloudflare API ${requestLabel} omitted success (HTTP ${status}): ${responseExcerpt(text)}`
+    );
+  }
+  return envelope as CfResponse<T>;
+}
+
+/** Apply HTTP status policy after envelope parsing; 304 is a verified no-op, not a failure. */
+export function ensureCloudflareHttpSuccess<T>(
+  body: CfResponse<T>,
+  status: number,
+  requestLabel: string
+): CfResponse<T> {
+  if (body.notModified) return body;
+  if (status < 200 || status >= 300) {
+    const detail = body.errors?.map(error => error.message).join('; ') || 'request failed';
+    throw new Error(`Cloudflare API ${requestLabel} HTTP ${status}: ${detail}`);
+  }
+  return body;
+}
 
 type DeployStage = { name: string; status: string };
 type Deployment = {
@@ -61,6 +115,8 @@ async function cf<T>(path: string, init?: RequestInit): Promise<CfResponse<T>> {
   if (!token) {
     throw new Error('CLOUDFLARE_API_TOKEN not set (~/.reasonix/.env)');
   }
+  const method = init?.method ?? 'GET';
+  const requestLabel = `${method} ${path}`;
   const res = await fetch(`https://api.cloudflare.com/client/v4${path}`, {
     ...init,
     headers: {
@@ -69,15 +125,20 @@ async function cf<T>(path: string, init?: RequestInit): Promise<CfResponse<T>> {
       ...(init?.headers ?? {}),
     },
   });
-  return (await res.json()) as CfResponse<T>;
+  const body = parseCloudflareApiResponse<T>(await res.text(), res.status, requestLabel);
+  return ensureCloudflareHttpSuccess(body, res.status, requestLabel);
 }
 
-async function triggerDeploy(): Promise<string> {
+async function triggerDeploy(): Promise<string | null> {
   console.log(`🚀 Triggering Pages deploy → ${PROJECT} (${BRANCH})`);
   const body = await cf<Deployment>(
     `/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/deployments`,
     { method: 'POST', body: JSON.stringify({ branch: BRANCH }) }
   );
+  if (body.notModified) {
+    console.log('ℹ️  Pages content unchanged (HTTP 304) — verifying current production');
+    return null;
+  }
   if (!body.success || !body.result?.id) {
     throw new Error(body.errors?.map(e => e.message).join('; ') || 'deploy trigger failed');
   }
@@ -147,12 +208,26 @@ async function runEdgeVerify(taxonomy = false): Promise<void> {
   if ((await proc.exited) !== 0) process.exit(1);
 }
 
+async function runTennisSsotReleaseVerify(): Promise<void> {
+  console.log('\n🔍 Tennis SSOT live release parity');
+  const proc = Bun.spawn({
+    cmd: ['bun', 'tools/verify-tennis-ssot-release.ts', '--live'],
+    cwd: `${import.meta.dir}/..`,
+    env: { ...Bun.env },
+    stdout: 'inherit',
+    stderr: 'inherit',
+  });
+  if ((await proc.exited) !== 0) process.exit(1);
+}
+
 async function main() {
   await loadReasonixEnv();
   const deployId = await triggerDeploy();
-  if (WAIT) await waitForDeploy(deployId);
-  if (VERIFY) await runEdgeVerify(VERIFY_TAXONOMY);
-  else if (!WAIT) {
+  if (WAIT && deployId) await waitForDeploy(deployId);
+  if (VERIFY) {
+    await runEdgeVerify(VERIFY_TAXONOMY);
+    await runTennisSsotReleaseVerify();
+  } else if (!WAIT) {
     console.log('   tip: bun run cloudflare:deploy:wait — poll until live');
     console.log('   tip: bun run cloudflare:deploy:verify — wait + edge smoke');
     console.log(

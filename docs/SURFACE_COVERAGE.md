@@ -3,7 +3,7 @@
 Human-readable view of **board surface inventories** and **HTML/JS usage**
 from the same SSOT as `bun run validate:surface-coverage`.
 
-| Generated | `2026-08-04T01:40:16.773Z` |
+| Generated | `2026-08-06T00:43:32.722Z` |
 | --- | --- |
 | Boards | partner-history · partners · limits · account |
 | Validator | [`scripts/validate-surface-coverage.ts`](../scripts/validate-surface-coverage.ts) |
@@ -14,8 +14,8 @@ from the same SSOT as `bun run validate:surface-coverage`.
 | Board | Files scanned | Usages | Surface allowlist | Dead allowlist (unused chrome) |
 | --- | ---: | ---: | ---: | ---: |
 | partner-history | 5 | 244 | 34 | 23 |
-| partners | 2 | 83 | 11 | 0 |
-| limits | 2 | 98 | 21 | 1 |
+| partners | 3 | 83 | 11 | 0 |
+| limits | 2 | 101 | 21 | 1 |
 | account | 3 | 148 | 14 | 2 |
 
 ## Surface inventory (declared dependencies)
@@ -224,14 +224,15 @@ _…2 more concepts_
 
 | Concept | Count | Sample files |
 | --- | ---: | --- |
-| `ops.view.per_play` | 8 | `public/portal/partners/index.html` |
+| `ops.view.per_play` | 6 | `public/portal/partners/index.html` |
+| `out.status.ready` | 5 | `public/portal/partners/index.html` |
 | `page.partners` | 5 | `public/portal/partners/index.html` |
-| `ops.view.per_book_type` | 4 | `public/portal/partners/index.html` |
-| `ops.view.per_week` | 4 | `public/portal/partners/index.html` |
 | `telegram.handshake` | 4 | `public/portal/partners/index.html` |
 | `telegram.seat_desk` | 4 | `public/portal/partners/index.html` |
 | `accounting.free_roll` | 3 | `public/portal/partners/index.html` |
 | `ops.limits.effective_limit` | 3 | `public/portal/partners/index.html` |
+| `ops.view.per_book_type` | 3 | `public/portal/partners/index.html` |
+| `ops.view.per_week` | 3 | `public/portal/partners/index.html` |
 | `section.partnersAccounting` | 3 | `public/portal/partners/index.html` |
 | `section.partnersAccountsLimits` | 3 | `public/portal/partners/index.html` |
 | `section.partnersBookDetail` | 3 | `public/portal/partners/index.html` |
@@ -241,7 +242,6 @@ _…2 more concepts_
 | `section.partnersPartnerMessage` | 3 | `public/portal/partners/index.html` |
 | `section.partnersTags` | 3 | `public/portal/partners/index.html` |
 | `section.partnersTelegram` | 3 | `public/portal/partners/index.html` |
-| `telegram.wire` | 3 | `public/portal/partners/index.html` |
 | `ui.route.partnerHash` | 3 | `public/portal/partners/index.html` |
 | `book.type.legal` | 2 | `public/portal/partners/index.html` |
 | `ops.view.per_account` | 2 | `public/portal/partners/index.html` |
@@ -249,6 +249,7 @@ _…2 more concepts_
 | `telegram.deposit_rail` | 2 | `public/portal/partners/index.html` |
 | `telegram.forum.topic.accounting` | 2 | `public/portal/partners/index.html` |
 | `telegram.surface.all_accounting` | 2 | `public/portal/partners/index.html` |
+| `telegram.wire` | 2 | `public/portal/partners/index.html` |
 | `ops.limits.opening_baseline` | 1 | `public/portal/partners/index.html` |
 | `ops.view.account_summary` | 1 | `public/portal/partners/index.html` |
 | `page.accountDossier` | 1 | `public/portal/partners/index.html` |
@@ -267,9 +268,9 @@ _…2 more concepts_
 | `ops.limits.market_type` | 4 | `public/portal/limits/index.html`, `public/portal/limits/limit-profiles.js` |
 | `ops.limits.sport` | 4 | `public/portal/limits/index.html`, `public/portal/limits/limit-profiles.js` |
 | `ops.limits.effective_limit` | 3 | `public/portal/limits/index.html` |
+| `ops.limits.limit_delta` | 3 | `public/portal/limits/index.html` |
 | `ops.limits.monitoring_status` | 3 | `public/portal/limits/index.html`, `public/portal/limits/limit-profiles.js` |
 | `ui.filter.sportsbook` | 3 | `public/portal/limits/index.html` |
-| `ops.limits.limit_delta` | 2 | `public/portal/limits/index.html` |
 | `ops.limits.market_phase` | 2 | `public/portal/limits/index.html` |
 | `ops.limits.profile` | 2 | `public/portal/limits/index.html` |
 | `section.accountLimitControl` | 2 | `public/portal/limits/index.html` |
@@ -283,6 +284,7 @@ _…2 more concepts_
 | `section.stateZipPatterns` | 2 | `public/portal/limits/index.html` |
 | `ui.action.searchProfiles` | 2 | `public/portal/limits/index.html` |
 | `ui.filter.partnerId` | 2 | `public/portal/limits/index.html` |
+| `ui.filter.window` | 2 | `public/portal/limits/index.html` |
 | `ui.filter.zipPrefix` | 2 | `public/portal/limits/index.html` |
 | `ops.limits.data_coverage` | 1 | `public/portal/limits/index.html` |
 | `ops.limits.downline` | 1 | `public/portal/limits/index.html` |
@@ -296,9 +298,8 @@ _…2 more concepts_
 | `section.jurisdictionCatalog` | 1 | `public/portal/limits/index.html` |
 | `ui.action.filter` | 1 | `public/portal/limits/index.html` |
 | `ui.action.reset` | 1 | `public/portal/limits/index.html` |
-| `ui.filter.jurisdiction` | 1 | `public/portal/limits/index.html` |
 
-_…3 more concepts_
+_…4 more concepts_
 
 **Allowlisted but unused in HTML** (inventory / collapse backlog):
 

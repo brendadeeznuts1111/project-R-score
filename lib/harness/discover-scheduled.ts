@@ -143,11 +143,78 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     reason: 'OS cron register for vault-health board bake — not a spine maintenance tenant',
   },
   {
+    id: 'pkg-bun-channel-cron-preview',
+    source: 'package-script',
+    match: 'bun:channel:cron:preview',
+    reason: 'Read-only preview for the operator-owned Bun channel doctor OS schedule',
+  },
+  {
+    id: 'pkg-bun-channel-cron-register',
+    source: 'package-script',
+    match: 'bun:channel:cron:register',
+    reason:
+      'Explicit OS cron registration for the Bun channel doctor; not a spine maintenance tenant',
+  },
+  {
+    id: 'pkg-bun-channel-cron-remove',
+    source: 'package-script',
+    match: 'bun:channel:cron:remove',
+    reason: 'Explicit OS cron removal for the operator-owned Bun channel doctor',
+  },
+  {
     id: 'pkg-partner-settlement-cron-register',
     source: 'package-script',
     match: 'partner:settlement:cron:register',
     reason:
       'OS cron register for the weekly partner settlement runner — not a spine maintenance tenant; see docs/design/settlement-feed.md',
+  },
+  {
+    id: 'pkg-telegram-daily-report-cron-register',
+    source: 'package-script',
+    match: 'telegram:daily-report:cron:register',
+    reason: 'Operator-owned OS cron registration for partner Telegram capacity reports',
+  },
+  {
+    id: 'pkg-telegram-daily-report-cron-remove',
+    source: 'package-script',
+    match: 'telegram:daily-report:cron:remove',
+    reason: 'Operator-owned OS cron removal for partner Telegram capacity reports',
+  },
+  {
+    id: 'pkg-telegram-daily-report-cron-preview',
+    source: 'package-script',
+    match: 'telegram:daily-report:cron:preview',
+    reason: 'Read-only preview for the partner Telegram capacity report schedule',
+  },
+  {
+    id: 'pkg-telegram-event-alerts-cron-register',
+    source: 'package-script',
+    match: 'telegram:event-alerts:cron:register',
+    reason: 'Operator-owned OS cron registration for partner Telegram event alerts',
+  },
+  {
+    id: 'pkg-telegram-event-alerts-cron-remove',
+    source: 'package-script',
+    match: 'telegram:event-alerts:cron:remove',
+    reason: 'Operator-owned OS cron removal for partner Telegram event alerts',
+  },
+  {
+    id: 'pkg-partner-finance-report-cron-register',
+    source: 'package-script',
+    match: 'partner:finance-report:cron:register',
+    reason: 'Operator-owned OS cron registration for partner finance reports',
+  },
+  {
+    id: 'pkg-partner-finance-report-cron-remove',
+    source: 'package-script',
+    match: 'partner:finance-report:cron:remove',
+    reason: 'Operator-owned OS cron removal for partner finance reports',
+  },
+  {
+    id: 'pkg-partner-finance-report-cron-preview',
+    source: 'package-script',
+    match: 'partner:finance-report:cron:preview',
+    reason: 'Read-only preview for the partner finance report schedule',
   },
   {
     id: 'pkg-partner-settlement-cron-remove',

@@ -64,6 +64,12 @@
       .metric.raised {
         color: var(--accent, #58a6ff);
       }
+      .metric.warn {
+        color: var(--yellow, #d29922);
+      }
+      .metric.down {
+        color: var(--red, #f85149);
+      }
       .limits-page table {
         width: 100%;
         border-collapse: collapse;
@@ -175,6 +181,12 @@
         cursor: pointer;
         font-weight: 600;
         font-family: inherit;
+      }
+      .filter-bar :is(input, select, button):focus-visible,
+      .profile-filter :is(input, select):focus-visible {
+        border-color: var(--accent);
+        outline: 2px solid var(--accent);
+        outline-offset: 1px;
       }
       .empty {
         color: var(--text-dim);
@@ -529,6 +541,14 @@
       }
       .limits-hero .sub {
         max-width: 72ch;
+      }
+      .last-updated {
+        color: var(--text-dim);
+        display: inline-block;
+        font-size: 11px;
+        font-variant-numeric: tabular-nums;
+        margin-left: 8px;
+        white-space: nowrap;
       }
       .section-heading {
         align-items: center;
@@ -892,35 +912,51 @@
         <span class="logo-page">Limits</span>
       </h1>
         <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
-        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
+        <a href="/" class="nav-link" title="public lander · portal entry" data-group="other" data-domain="platform">Home</a>
+        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · C4/C5 loop · partner handshake panel · bun run ops:snapshot" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot" data-registry="/registry/ops-summary.json">Ops</a>
+        <a href="/portal/" class="nav-link" title="portal hub · board index · weave surfaces" data-group="registry" data-domain="platform">Registry</a>
+        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-domain="platform" data-cli="bun run monorepo:health:bake" data-registry="/registry/monorepo-health.json">Health</a>
+        <a href="/portal/dod/" class="nav-link" title="visual proof review · public-plane gate · bun run public:audit:verify" data-group="plane" data-domain="platform" data-cli="bun run public:audit:verify">DOD</a>
+        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · shadow matrix · bun run compliance:bake" data-group="ops" data-domain="control" data-cli="bun run compliance:bake" data-registry="/registry/compliance-board.json">Compliance</a>
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
-            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
-            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link active" aria-current="page" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog" data-group="ops" data-cli="bun run telegram:handshake:catalog" role="menuitem">Partners</a>
-            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog" data-group="ops" role="menuitem">Account</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-cli="bun run bookmakers:bake" role="menuitem">Bookmakers</a>
-            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+          <div class="nav-group" role="group" aria-label="Ops · domain" data-group="ops">
+            <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
+            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · seat capital · bun run telegram:handshake:catalog" data-group="ops" data-domain="partner" data-cli="bun run telegram:handshake:catalog" data-registry="/registry/partners-ops.json" role="menuitem">Partners</a>
+            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed" data-group="ops" data-domain="partner" data-cli="bun run ops:dossier:seed" data-registry="/registry/partners-ops.json" role="menuitem">Account</a>
+            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Partner history</a>
+            <a href="/portal/limits/" class="nav-link active" aria-current="page" title="multi-factor partner limit raises · CLV · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Limits</a>
+            <a href="/portal/limits-lab/" class="nav-link" title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:predict" data-registry="/registry/limit-forecast-lab.json" role="menuitem">Limits lab</a>
+            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-domain="partner" data-cli="bun run bookmakers:bake" data-registry="/registry/bookmakers.json" role="menuitem">Bookmakers</a>
+            <a href="/portal/factory/" class="nav-link" title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify" data-group="ops" data-domain="partner" data-cli="bun run telegram:verify" data-registry="/registry/telegram-handshake.json" role="menuitem">Factory</a>
+            <a href="/portal/tennis/" class="nav-link" title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake" data-group="ops" data-domain="trading" data-cli="bun run tennis:board:bake" data-registry="/registry/tennis/agent-auth.json" role="menuitem">Tennis</a>
+            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-domain="trading" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
+            <a href="/portal/dashboard/" class="nav-link" title="KPIs · TOC · compliance plane · proof-index pins" data-group="ops" data-domain="control" role="menuitem">Dashboard</a>
+            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope fixture board · bun run ops:seed:toc" data-group="ops" data-domain="control" data-cli="bun run ops:seed:toc" data-registry="/registry/toc-ops.json" role="menuitem">TOC</a>
+            <a href="/monitoring/" class="nav-link" title="routing · env · compliance tile · proof status · bun run ops:snapshot --no-seed" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot --no-seed" data-registry="/registry/monitoring.json" role="menuitem">Monitoring</a>
+            <a href="/portal/identity/" class="nav-link" title="auth board · lockout · anomaly · geo · JIT · bun test tests/identity-*.test.ts" data-group="ops" data-domain="identity" data-cli="bun test tests/identity-*.test.ts" data-registry="/registry/identity-board.json" role="menuitem">Identity</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Secrets" data-group="secrets">
+            <div class="nav-group-label" aria-hidden="true">Secrets</div>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-registry="/registry/vault-health.json" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Registry" data-group="registry">
+            <div class="nav-group-label" aria-hidden="true">Registry</div>
+            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-domain="knowledge" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
+            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-domain="platform" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" data-registry="/registry/packages-graph-map.json" role="menuitem">Packages</a>
+            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-domain="knowledge" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-domain="knowledge" data-cli="bun run glossary:portal" data-registry="/registry/domain-glossary.json" role="menuitem">Glossary</a>
+            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" data-registry="/registry/surfaces-state.json" role="menuitem">Surfaces</a>
+            <a href="/portal/skills/" class="nav-link" title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate" data-group="registry" data-domain="knowledge" data-cli="bun run skills:validate" data-registry="/registry/harness-skills-catalog.json" role="menuitem">Skills</a>
+            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
+            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-domain="knowledge" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="More" data-group="other">
+            <div class="nav-group-label" aria-hidden="true">More</div>
+            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub · wiki-index" data-group="other" data-domain="platform" role="menuitem">Wiki</a>
+          </div>
           </div>
         </div>
       </nav>
@@ -934,6 +970,7 @@
     </header>
 
     <main class="portal-page limits-page">
+      <div data-domain-lanes="partner" hidden></div>
       <nav class="portal-actions limit-actions" aria-label="Limits resources">
         <a href="/registry/limit-raises.json" target="_blank" rel="noopener">
           <strong>Policy artifact</strong>
@@ -1001,6 +1038,14 @@
           Trace observed limit movement from partner to downline, sportsbook, jurisdiction, and ZIP
           cluster while keeping policy, license, prediction, and proof evidence directly
           inspectable. The signal window covers 48 hours and refreshes every 30 seconds.
+          <span id="last-updated" class="last-updated" hidden></span>
+          <span
+            id="limits-freshness"
+            class="portal-freshness"
+            hidden
+            aria-live="polite"
+            title="Bake-manifest freshness"
+          ></span>
         </p>
       </header>
 
@@ -1212,6 +1257,19 @@
             <a href="/portal/glossary/#glossary:ui.filter.zipPrefix">ZIP prefix</a>
             <select id="filter-zip" aria-label="Filter by ZIP prefix">
               <option value="">All ZIP prefixes</option>
+            </select>
+          </label>
+          <label class="pattern-filter" for="filter-time">
+            <a
+              href="/portal/glossary/#glossary:ui.filter.window"
+              data-glossary-concept="ui.filter.window"
+              >Time</a
+            >
+            <select id="filter-time" aria-label="Filter by time window">
+              <option value="">All time</option>
+              <option value="24h">Last 24 hours</option>
+              <option value="7d">Last 7 days</option>
+              <option value="30d">Last 30 days</option>
             </select>
           </label>
           <button
@@ -1446,6 +1504,13 @@
                   <th>
                     <a
                       class="semantic-label"
+                      href="/portal/glossary/#glossary:ops.limits.limit_delta"
+                      >Delta %</a
+                    >
+                  </th>
+                  <th>
+                    <a
+                      class="semantic-label"
                       href="/portal/glossary/#glossary:ops.limits.influence_score"
                       >Influence</a
                     >
@@ -1486,11 +1551,13 @@
         let filterBook = '';
         let filterState = '';
         let filterZip = '';
+        let filterTime = '';
         const PATTERN_QUERY_PARAMS = {
           account: 'pattern',
           sportsbook: 'book',
           state: 'state',
           zip: 'zip',
+          time: 'time',
         };
         const GLOSSARY_CONCEPT_PATTERN = /^[a-z0-9][a-z0-9._-]*$/i;
         const MARKET_GLOSSARY_CONCEPTS = Object.freeze({
@@ -1588,7 +1655,8 @@
             const caesars = caesarsRes.ok ? await caesarsRes.json() : null;
             const t3 = baseline?.sources?.tiers?.['3'] ?? baseline?.sources?.tiers?.[3];
             const t3Status = t3?.status ?? (t3?.wired === false ? 'stub' : 'unknown');
-            const t3Notes = t3?.notes ?? 'Tier 3 partner API provenance missing — run baseline:sync-all';
+            const t3Notes =
+              t3?.notes ?? 'Tier 3 partner API provenance missing — run baseline:sync-all';
             const wafCount = caesars?.summary?.byRole?.waf ?? 0;
             const cookieHint =
               'Live Caesars bets/configuration is CloudFront/WAF-gated; set CAESARS_SCRAPE_COOKIE + CAESARS_WAF_TOKEN for live, else fixture default.';
@@ -1613,6 +1681,7 @@
           void loadBaselineProvenance();
           let summary = null;
           let loadError = null;
+          let limitRaisesGeneratedAt = null;
           try {
             const res = await fetch('/api/operations/summary');
             if (res.ok) {
@@ -1651,6 +1720,7 @@
             const res = await fetch('/registry/limit-raises.json');
             if (res.ok) {
               const snapshot = await res.json();
+              limitRaisesGeneratedAt = snapshot.generatedAt || snapshot.generated || null;
               const snapshotChanges = Object.values(snapshot.byNode ?? {}).flatMap(bucket =>
                 (bucket.raises ?? []).map(raise => ({
                   ...raise,
@@ -1673,6 +1743,27 @@
             data = summary;
             render();
             loadPredictStrip(summary);
+            const lastUpdated = document.getElementById('last-updated');
+            if (lastUpdated) {
+              lastUpdated.hidden = false;
+              lastUpdated.textContent = `Updated ${new Date().toLocaleTimeString()}`;
+            }
+            // Bake-manifest "Data as of" — worst of limits desk bakes (fail-silent).
+            import('/portal/data-freshness.js')
+              .then(({ mountFreshnessBadge }) =>
+                mountFreshnessBadge(
+                  document.getElementById('limits-freshness'),
+                  ['/registry/limit-raises.json', '/registry/ops-summary.json'],
+                  {
+                    fallbacks: {
+                      '/registry/limit-raises.json': limitRaisesGeneratedAt,
+                      '/registry/ops-summary.json':
+                        summary.generated || summary.generatedAt || null,
+                    },
+                  }
+                )
+              )
+              .catch(() => {});
             return;
           }
           const empty = document.getElementById('empty-state');
@@ -1724,12 +1815,14 @@
           filterBook = document.getElementById('filter-book').value;
           filterState = document.getElementById('filter-state').value;
           filterZip = document.getElementById('filter-zip').value;
+          filterTime = document.getElementById('filter-time').value;
           const url = new URL(window.location.href);
           const values = {
             [PATTERN_QUERY_PARAMS.account]: filterPartner,
             [PATTERN_QUERY_PARAMS.sportsbook]: filterBook,
             [PATTERN_QUERY_PARAMS.state]: filterState,
             [PATTERN_QUERY_PARAMS.zip]: filterZip,
+            [PATTERN_QUERY_PARAMS.time]: filterTime,
           };
           for (const [parameter, value] of Object.entries(values)) {
             if (value) url.searchParams.set(parameter, value);
@@ -1750,14 +1843,63 @@
           filterBook = url.searchParams.get(PATTERN_QUERY_PARAMS.sportsbook) ?? '';
           filterState = url.searchParams.get(PATTERN_QUERY_PARAMS.state) ?? '';
           filterZip = url.searchParams.get(PATTERN_QUERY_PARAMS.zip) ?? '';
+          filterTime = url.searchParams.get(PATTERN_QUERY_PARAMS.time) ?? '';
           document.getElementById('filter-partner').value = filterPartner;
           document.getElementById('filter-book').value = filterBook;
+          document.getElementById('filter-state').value = filterState;
+          document.getElementById('filter-zip').value = filterZip;
+          document.getElementById('filter-time').value = filterTime;
         }
 
         function esc(s) {
           const d = document.createElement('div');
           d.textContent = s;
           return d.innerHTML;
+        }
+
+        /** Apply a tone class to a summary metric span ('' = neutral). */
+        function toneMetric(id, tone) {
+          const el = document.getElementById(id);
+          if (el) el.className = `metric${tone ? ' ' + tone : ''}`;
+        }
+
+        /** Absolute cutoff (ms) for a time-window filter value. */
+        function timeCutoffMs(value) {
+          const now = Date.now();
+          if (value === '24h') return now - 24 * 3600000;
+          if (value === '7d') return now - 7 * 86400000;
+          if (value === '30d') return now - 30 * 86400000;
+          return 0;
+        }
+
+        /** Compact relative timestamp from unix seconds: "3h ago" / "5d ago". */
+        function relativeTime(unixSeconds) {
+          const then = Number(unixSeconds) * 1000;
+          if (!Number.isFinite(then) || then <= 0) return '—';
+          const ms = Date.now() - then;
+          if (ms < 0) return new Date(then).toLocaleString();
+          const HOUR = 3600000;
+          const DAY = 86400000;
+          if (ms < DAY) return `${Math.max(1, Math.round(ms / HOUR))}h ago`;
+          if (ms < 30 * DAY) return `${Math.round(ms / DAY)}d ago`;
+          if (ms < 365 * DAY) return `${Math.round(ms / (30 * DAY))}mo ago`;
+          return new Date(then).toLocaleDateString();
+        }
+
+        /** "1 node" / "3 nodes" — regular +s pluralization. */
+        function plural(count, singular) {
+          return `${count} ${pluralWord(count, singular)}`;
+        }
+
+        /** Just the pluralized word: "node" / "nodes". */
+        function pluralWord(count, singular) {
+          return Number(count ?? 0) === 1 ? singular : singular + 's';
+        }
+
+        /** Shorten long ids (UUIDs) for table display: "019f92bf-…b8a95824". */
+        function shortId(value) {
+          const v = String(value ?? '');
+          return v.length <= 20 ? v : `${v.slice(0, 8)}…${v.slice(-8)}`;
         }
 
         function render() {
@@ -1803,6 +1945,10 @@
             if (filterBook && r.sportsbook !== filterBook) return false;
             if (filterState && pattern?.state_code !== filterState) return false;
             if (filterZip && pattern?.zip_prefix !== filterZip) return false;
+            if (filterTime) {
+              const t = Number(r.increased_at) * 1000;
+              if (!Number.isFinite(t) || t <= 0 || t < timeCutoffMs(filterTime)) return false;
+            }
             return true;
           });
 
@@ -1831,6 +1977,19 @@
                     100
                 )}%`
               : '—';
+          toneMetric('net-limit-delta', netDelta >= 0 ? 'ok' : 'down');
+          toneMetric(
+            'raised-share',
+            filtered.length === 0 ? '' : upward / filtered.length >= 0.5 ? 'ok' : 'warn'
+          );
+          toneMetric(
+            'evidence-coverage',
+            Number(patterns.audit?.coveragePct ?? 0) >= 90
+              ? 'ok'
+              : Number(patterns.audit?.coveragePct ?? 0) >= 60
+                ? 'warn'
+                : 'down'
+          );
           document.getElementById('unique-partners').textContent = partners.size;
           document.getElementById('unique-books').textContent = books.size;
           document.getElementById('downline-nodes').textContent = patterns.downlineNodes ?? 0;
@@ -1871,11 +2030,11 @@
                   ? `Drivers: ${drivers} · ${proof}`
                   : `Drivers pending · ${proof}`;
                 const scoreBadge = r.context_available
-                  ? `<span class="badge score" data-glossary-concept="ops.limits.influence_score" title="${esc(scoreTitle)}">${Math.round((r.multi_factor_score ?? 0) * 100)}</span>`
+                  ? `<span class="badge score" data-glossary-concept="ops.limits.influence_score" title="${esc(scoreTitle)}">${Math.round((r.multi_factor_score ?? 0) * 100)}%</span>`
                   : `<span class="badge pending" data-glossary-concept="ui.semantic.status" title="${esc(scoreTitle)}">pending</span>`;
                 const when =
                   Number.isFinite(Number(r.increased_at)) && Number(r.increased_at) > 0
-                    ? new Date(Number(r.increased_at) * 1000).toLocaleString()
+                    ? `<time datetime="${new Date(Number(r.increased_at) * 1000).toISOString()}" title="${new Date(Number(r.increased_at) * 1000).toLocaleString()}">${relativeTime(Number(r.increased_at))}</time>`
                     : '—';
                 return `<tr>
         <td><strong data-glossary-concept="ops.limits.account">${esc(pattern?.node_name ?? r.node_id ?? '—')}</strong><br><small><a class="semantic-label" href="${glossaryHref(roleGlossaryConcept(pattern?.node_type))}">${esc(pattern?.node_type ?? 'node')}</a> · depth ${pattern?.downline_depth ?? 0}</small></td>
@@ -1886,7 +2045,8 @@
         <td><span class="badge ${typeCls}" data-glossary-concept="ops.limits.market_phase">${esc(r.bet_type ?? '—')}</span></td>
         <td>$${prev.toLocaleString()}</td>
         <td><strong>$${next.toLocaleString()}</strong></td>
-        <td><span class="badge ${directionCls}" data-glossary-concept="ops.limits.change_direction">${directionLabel}</span><br><strong>${raise >= 0 ? '+' : '−'}$${Math.abs(raise).toLocaleString()} (${pct}%)</strong></td>
+        <td><span class="badge ${directionCls}" data-glossary-concept="ops.limits.change_direction">${directionLabel}</span> <strong>${raise >= 0 ? '+' : '−'}$${Math.abs(raise).toLocaleString()}</strong></td>
+        <td>${pct === '∞' ? '∞' : `${pct}%`}</td>
         <td>${scoreBadge}</td>
         <td>${when}</td>
       </tr>`;
@@ -1935,11 +2095,11 @@
                     <span class="badge ${total < 0 ? 'down' : 'up'}" data-glossary-concept="ops.limits.change_direction">${total < 0 ? 'reduced' : 'raised'}</span>
                   </div>
                   <div class="node-breakdown__metrics">
-                    <span><strong>${raises.length}</strong>changes</span>
+                    <span><strong>${raises.length}</strong>${pluralWord(raises.length, 'change')}</span>
                     <span><strong>${total >= 0 ? '+' : '−'}$${Math.abs(total).toLocaleString()}</strong>net delta</span>
                     <span><strong>${avgScore == null ? '—' : `${avgScore}%`}</strong>influence</span>
-                    <span><strong>${pattern?.sportsbooks?.length ?? 0}</strong>books</span>
-                    <span><strong>${pattern?.violation_count_30d ?? 0}</strong>violations</span>
+                    <span><strong>${pattern?.sportsbooks?.length ?? 0}</strong>${pluralWord(pattern?.sportsbooks?.length ?? 0, 'book')}</span>
+                    <span><strong>${pattern?.violation_count_30d ?? 0}</strong>${pluralWord(pattern?.violation_count_30d ?? 0, 'violation')}</span>
                     <span><strong>${pattern?.proof_verified_changes ?? 0}/${pattern?.changes ?? raises.length}</strong>proof</span>
                   </div>
                   <small>${esc((pattern?.sportsbooks ?? []).join(' · ') || 'No sportsbook source')} · top market ${esc(pattern?.top_market ?? 'not observed')}</small>
@@ -1954,10 +2114,10 @@
                 row => `<div class="pattern-row" data-tone="${row.decreases > 0 ? 'warn' : 'ok'}">
                 <div class="pattern-row__label">
                   <strong>${esc(row.key)}</strong>
-                  <small>${row.nodes} nodes · ${row.partners} partner trees</small>
+                  <small>${plural(row.nodes, 'node')} · ${plural(row.partners, 'partner tree')}</small>
                 </div>
                 <div class="pattern-row__metrics">
-                  <small>${row.changes} changes · ${row.raises} raised / ${row.decreases} reduced · ${esc((row.states ?? []).join(' / '))}</small>
+                  <small>${plural(row.changes, 'change')} · ${row.raises} raised / ${row.decreases} reduced · ${esc((row.states ?? []).join(' / '))}</small>
                   <small>net ${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()} · avg ${row.avg_delta_pct >= 0 ? '+' : ''}${row.avg_delta_pct}% · top ${esc(row.top_market ?? '—')}</small>
                   <span class="pattern-meter"><span style="width:${Math.min(100, Math.abs(row.avg_delta_pct))}%"></span></span>
                 </div>
@@ -1976,10 +2136,10 @@
                 row => `<div class="pattern-row" data-tone="${row.net_delta < 0 ? 'warn' : 'ok'}">
                 <div class="pattern-row__label">
                   <strong>${esc(row.key)}</strong>
-                  <small>${row.kind} · ${row.nodes} nodes · ${row.partners} partner trees</small>
+                  <small>${row.kind} · ${plural(row.nodes, 'node')} · ${plural(row.partners, 'partner tree')}</small>
                 </div>
                 <div class="pattern-row__metrics">
-                  <small>${row.changes} changes · ${row.raises} raised / ${row.decreases} reduced · net ${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()}</small>
+                  <small>${plural(row.changes, 'change')} · ${row.raises} raised / ${row.decreases} reduced · net ${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()}</small>
                   <small>top ${esc(row.top_market ?? '—')} · ZIP ${esc((row.zip_prefixes ?? []).join(', ') || row.key)}</small>
                   <span class="pattern-meter"><span style="width:${Math.min(100, Math.abs(row.avg_delta_pct))}%"></span></span>
                 </div>
@@ -2004,13 +2164,13 @@
             (patterns.nodePatterns ?? [])
               .map(
                 row => `<tr>
-                <td><code title="${esc(row.partner_node_id)}">${esc(row.partner_node_id.replace('limit-demo-', ''))}</code></td>
+                <td><code title="${esc(row.partner_node_id)}">${esc(shortId(row.partner_node_id.replace('limit-demo-', '')))}</code></td>
                 <td><strong data-glossary-concept="ops.limits.account">${esc(row.node_name)}</strong><br><small><a class="semantic-label" href="${glossaryHref(roleGlossaryConcept(row.node_type))}">${esc(row.node_type)}</a> · depth ${row.downline_depth}</small></td>
                 <td><strong>${esc(row.state_code ?? '—')}</strong> · <code>${esc(row.zip_code ?? '—')}</code><br><small>${esc(row.location ?? 'not observed')}</small></td>
                 <td><span class="badge ${row.license_status === 'active' ? 'pregame' : 'pending'}" data-glossary-concept="ui.semantic.status">${esc(row.license_status ?? 'none')}</span></td>
-                <td><span class="badge ${row.violation_count_30d > 1 ? 'live' : row.violation_count_30d > 0 ? 'pending' : 'pregame'}">${row.violation_count_30d} violations</span></td>
+                <td><span class="badge ${row.violation_count_30d > 1 ? 'live' : row.violation_count_30d > 0 ? 'pending' : 'pregame'}">${row.violation_count_30d} ${pluralWord(row.violation_count_30d, 'violation')}</span></td>
                 <td>${esc((row.sportsbooks ?? []).join(', '))}</td>
-                <td>${row.changes} changes<br><strong>${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()}</strong></td>
+                <td>${plural(row.changes, 'change')}<br><strong>${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()}</strong></td>
                 <td>${row.avg_influence_score == null ? '<span class="badge pending" data-glossary-concept="ui.semantic.status">pending</span>' : `<span class="badge score" data-glossary-concept="ops.limits.influence_score">${Math.round(row.avg_influence_score * 100)}%</span>`}</td>
                 <td>${row.proof_verified_changes}/${row.changes}<br><small>${row.scored_changes} scored</small></td>
               </tr>`
@@ -2036,19 +2196,19 @@
           const findings = [
             topBook && {
               title: `${topBook.key} carries the largest net movement`,
-              detail: `${topBook.changes} changes across ${topBook.nodes} nodes produced ${topBook.net_delta >= 0 ? '+' : '−'}$${Math.abs(topBook.net_delta).toLocaleString()} net movement.`,
+              detail: `${plural(topBook.changes, 'change')} across ${plural(topBook.nodes, 'node')} produced ${topBook.net_delta >= 0 ? '+' : '−'}$${Math.abs(topBook.net_delta).toLocaleString()} net movement.`,
               evidence: `sportsbook aggregate · ${topBook.states.join('/')} · ${topBook.top_market ?? 'mixed markets'}`,
               tone: topBook.decreases > 0 ? 'warn' : 'ok',
             },
             topGeo && {
               title: `ZIP ${topGeo.key} has the strongest average move`,
-              detail: `${topGeo.avg_delta_pct >= 0 ? '+' : ''}${topGeo.avg_delta_pct}% average movement across ${topGeo.changes} changes and ${topGeo.nodes} nodes.`,
+              detail: `${topGeo.avg_delta_pct >= 0 ? '+' : ''}${topGeo.avg_delta_pct}% average movement across ${plural(topGeo.changes, 'change')} and ${plural(topGeo.nodes, 'node')}.`,
               evidence: `ZIP aggregate · ${topGeo.states.join('/')} · net ${topGeo.net_delta >= 0 ? '+' : '−'}$${Math.abs(topGeo.net_delta).toLocaleString()}`,
               tone: Math.abs(topGeo.avg_delta_pct) >= 100 ? 'warn' : 'ok',
             },
             riskNode && {
               title: `${riskNode.node_name} is the priority review node`,
-              detail: `${riskNode.violation_count_30d} violations in 30 days with ${riskNode.proof_verified_changes}/${riskNode.changes} changes proof-verified.`,
+              detail: `${plural(riskNode.violation_count_30d, 'violation')} in 30 days with ${riskNode.proof_verified_changes}/${riskNode.changes} changes proof-verified.`,
               evidence: `${riskNode.state_code ?? 'unmapped'} ${riskNode.zip_code ?? ''} · ${riskNode.sportsbooks.join(', ')}`,
               tone: riskNode.violation_count_30d > 1 ? 'warn' : 'ok',
             },
@@ -2096,6 +2256,7 @@
         document.getElementById('filter-book').addEventListener('change', applyFilter);
         document.getElementById('filter-state').addEventListener('change', applyFilter);
         document.getElementById('filter-zip').addEventListener('change', applyFilter);
+        document.getElementById('filter-time').addEventListener('change', applyFilter);
         window.addEventListener('popstate', () => {
           syncPatternFiltersFromUrl();
           render();
@@ -2105,7 +2266,7 @@
         load();
         setInterval(load, POLL_INTERVAL);
       </script>
-      <script type="module" src="/portal/limits/limit-profiles.js?v=5"></script>
+      <script type="module" src="/portal/limits/limit-profiles.js?v=7"></script>
     </main>
     <footer class="footer" data-portal-chrome="footer">
     <p>
@@ -2114,6 +2275,8 @@
       <a href="/portal/ops/">Ops</a> ·
       <a href="/portal/toc/">TOC</a> ·
       <a href="/portal/partners/">Partners</a> ·
+      <a href="/portal/tennis/">Tennis</a> ·
+      <a href="/portal/bookmakers/">Bookmakers</a> ·
       <a href="/portal/packages/">Packages</a> ·
       <a href="/portal/brands/">Brands</a> ·
       <a href="/portal/glossary/">Glossary</a> ·
@@ -2125,6 +2288,7 @@
       <a href="/portal/dod/">DOD</a> ·
       <a href="/portal/env/">Env</a> ·
       <a href="/portal/vault/">Vault</a> ·
+      <a href="https://wiki.factory-wager.com/wiki-index.html" target="_blank" rel="noopener noreferrer">Wiki</a> ·
       <a href="/registry/monorepo-health.json">Monorepo health</a> ·
       <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
     </p>

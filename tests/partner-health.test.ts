@@ -31,12 +31,17 @@ describe('partner health', () => {
     ensurePartnerLedgerSchema(db);
     ensureAccountLimitsSchema(db);
     db.query(
-      `INSERT INTO partner_profile_bindings (tree_node_id, template_id, profile_key, lifecycle_status, created_at, updated_at)
-       VALUES ('node-spen', 'partner-active', 'SPEN', 'active', datetime('now'), datetime('now'))`
+      `INSERT INTO tree_nodes (id, type, name, call_sign, created_at)
+       VALUES ('node-spen', 'partner', 'SPEN partner', 'SPEN-001', datetime('now'))`
     ).run();
     db.query(
-      `INSERT INTO partner_ledger (id, partner_code, type, amount, currency, balance_after, created_at)
-       VALUES ('l1', 'SPEN', 'deposit', 100, 'usd', 100, datetime('now'))`
+      `INSERT INTO partner_profile_bindings (tree_node_id, template_id, profile_key, lifecycle_status, created_at, updated_at)
+       VALUES ('node-spen', 'partner-active', 'pp-node-spen', 'active', datetime('now'), datetime('now'))`
+    ).run();
+    db.query(
+      `INSERT INTO partner_ledger
+         (id, partner_code, type, amount_minor, currency, balance_after_minor, created_at)
+       VALUES ('l1', 'SPEN', 'deposit', 10000, 'USD', 10000, datetime('now'))`
     ).run();
 
     const report = await runPartnerHealth({ db, profilesDir: FIXTURE });

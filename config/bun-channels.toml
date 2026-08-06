@@ -1,0 +1,29 @@
+schema_version = 1
+
+[policy]
+runtime_channel = "stable"
+mutation = "never"
+promotion = "reviewed"
+
+[types]
+wrapper_package = "@types/bun"
+wrapper_channel = "latest"
+definitions_package = "bun-types"
+definitions_channel = "canary"
+
+[monitor]
+os_schedule = "17 6 * * *"
+os_timezone = "system"
+in_process_timezone = "UTC"
+title = "bun-channel-doctor"
+artifact = "public/registry/bun-channel-status.json"
+fetch_timeout_ms = 10000
+
+[sources]
+stable_api = "https://api.github.com/repos/Jarred-Sumner/bun-releases-for-updater/releases/latest"
+stable_api_fallback = "https://api.github.com/repos/oven-sh/bun/releases/latest"
+canary_api = "https://api.github.com/repos/oven-sh/bun/releases/tags/canary"
+tip_api = "https://api.github.com/repos/oven-sh/bun/commits/main"
+rss = "https://bun.com/rss.xml"
+atom = "https://github.com/oven-sh/bun/releases.atom"
+npm_registry = "https://registry.npmjs.org"

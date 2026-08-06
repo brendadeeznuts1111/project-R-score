@@ -15,6 +15,7 @@ import { sendTelegramBotMessage } from './telegram-api.ts';
 import type { Database } from 'bun:sqlite';
 
 import { ackDailyReport } from './daily-capacity-report.ts';
+import { ackFinanceReport } from './daily-finance-report.ts';
 
 /** Inline keyboard with a confirm row + optional cancel row. */
 export function buildInlineConfirmMarkup(
@@ -23,10 +24,17 @@ export function buildInlineConfirmMarkup(
   cancelLabel = '← Cancel',
   cancelData?: string
 ): Record<string, unknown> {
+  const cancel = cancelData ?? `${data}|cancel`;
+  for (const callbackData of [data, cancel]) {
+    const bytes = new TextEncoder().encode(callbackData).byteLength;
+    if (bytes < 1 || bytes > 64) {
+      throw new Error(`Telegram callback_data must be 1–64 bytes (got ${bytes})`);
+    }
+  }
   return {
     inline_keyboard: [
       [{ text: confirmLabel, callback_data: data }],
-      [{ text: cancelLabel, callback_data: cancelData ?? `${data}|cancel` }],
+      [{ text: cancelLabel, callback_data: cancel }],
     ],
   };
 }
@@ -53,15 +61,35 @@ export type NotificationCallbackResult = {
 export function handleNotificationCallback(
   input: NotificationCallbackInput
 ): NotificationCallbackResult {
+  if (input.data.endsWith('|cancel')) return { toast: 'Cancelled.' };
   const parts = input.data.split(':');
   const [, type, action, payload] = parts;
 
-  if (type === 'daily' && action === 'ack' && payload) {
+  if (
+    parts.length === 4 &&
+    type === 'daily' &&
+    action === 'ack' &&
+    payload &&
+    /^[A-Z]{3,6}$/i.test(payload)
+  ) {
     const acked = ackDailyReport(input.db, payload.toUpperCase());
     if (acked > 0) {
       return { toast: `✅ Daily report acknowledged for ${payload.toUpperCase()}`, acked: true };
     }
     return { toast: `Nothing pending to acknowledge for ${payload.toUpperCase()}` };
+  }
+
+  if (
+    parts.length === 4 &&
+    type === 'finance' &&
+    action === 'ack' &&
+    payload &&
+    /^[A-Z]{3,6}$/i.test(payload)
+  ) {
+    const code = payload.toUpperCase();
+    const acked = ackFinanceReport(input.db, code);
+    if (acked > 0) return { toast: `✅ Finance report acknowledged for ${code}`, acked: true };
+    return { toast: `Nothing pending to acknowledge for ${code}` };
   }
 
   return { toast: 'Unknown notification action.' };

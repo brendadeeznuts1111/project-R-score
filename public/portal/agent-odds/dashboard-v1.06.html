@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bun Agent – Uncovered Edges v1.06</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#0b0e14; color:#e8edf5; font-family:system-ui,sans-serif; padding:24px; }
+    .container { max-width:1800px; margin:0 auto; }
+    h1 { font-size:28px; font-weight:600; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+    h1 small { font-size:14px; font-weight:400; color:#7a8ba3; }
+    .subhead { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; margin-bottom:20px; color:#7a8ba3; border-bottom:1px solid #1e2630; padding-bottom:12px; font-size:14px; gap:8px; }
+    .badge { background:#1e2630; padding:4px 12px; border-radius:20px; font-size:12px; color:#b6c8e0; display:inline-block; }
+    .highlight { color:#5fc3f4; font-weight:500; }
+    .tabs { display:flex; gap:0; border-bottom:1px solid #1e2834; margin-bottom:20px; flex-wrap:wrap; }
+    .tabs .tab { padding:10px 18px; cursor:pointer; background:#131b24; border:1px solid transparent; border-radius:8px 8px 0 0; margin-right:4px; font-weight:500; transition:0.15s; user-select:none; }
+    .tabs .tab.active { background:#1e2834; border-color:#1e2834; border-bottom-color:#131b24; color:#5fc3f4; }
+    .tabs .tab:hover { background:#1a212a; }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+    .card { background:#131b24; border-radius:16px; border:1px solid #1e2834; overflow:hidden; margin-bottom:20px; }
+    .card-header { padding:14px 20px; border-bottom:1px solid #1e2834; display:flex; justify-content:space-between; align-items:center; font-weight:500; font-size:15px; flex-wrap:wrap; gap:8px; }
+    .card-body { padding:16px 20px 20px; overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th { text-align:left; padding:10px 8px; color:#7a8ba3; font-weight:500; font-size:11px; text-transform:uppercase; letter-spacing:0.4px; border-bottom:1px solid #1e2834; white-space:nowrap; }
+    td { padding:10px 8px; border-bottom:1px solid #1a212a; vertical-align:middle; }
+    .status-badge { display:inline-block; padding:2px 10px; border-radius:12px; font-size:11px; font-weight:500; }
+    .status-online { background:#1a3a2a; color:#6fcf97; }
+    .status-offline { background:#3a1a1a; color:#f28b82; }
+    .status-pending { background:#2a2a1a; color:#f9ca7f; }
+    .btn { background:#1e2834; border:none; color:#e8edf5; padding:6px 14px; border-radius:8px; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+    .btn:hover { background:#2a3644; }
+    .btn-primary { background:#2a6f9c; color:#fff; }
+    .btn-primary:hover { background:#3a8fc4; }
+    .btn-success { background:#1f6e43; color:#fff; }
+    .btn-danger { background:#6f2a2a; color:#fff; }
+    .btn-sm { padding:4px 10px; font-size:12px; }
+    .flex { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .mt-2 { margin-top:8px; }
+    .text-muted { color:#7a8ba3; font-size:12px; }
+    .pill { display:inline-block; background:#1a212a; padding:2px 10px; border-radius:12px; font-size:11px; color:#b6c8e0; margin-right:4px; }
+    .liq-high { background:#1a3a2a; color:#6fcf97; }
+    .liq-medium { background:#2a2a1a; color:#f9ca7f; }
+    .liq-low { background:#3a2a14; color:#f0a060; }
+    .liq-illiquid { background:#3a1a1a; color:#f28b82; }
+    .liq-unknown { background:#1a212a; color:#7a8ba3; }
+    .live-panel { max-height:240px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
+    .live-item { background:#0e1620; border-radius:10px; padding:10px 14px; border-left:3px solid #2a6f9c; font-size:13px; }
+    .live-item .meta { display:flex; justify-content:space-between; color:#7a8ba3; font-size:11px; margin-top:4px; }
+    .empty-state { color:#7a8ba3; text-align:center; padding:28px 0; font-size:14px; }
+    .filter-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; background:#131b24; padding:12px 16px; border-radius:12px; border:1px solid #1e2834; align-items:center; }
+    .filter-bar select, .filter-bar input { background:#1e2834; color:#e8edf5; border:none; padding:6px 12px; border-radius:8px; font-size:13px; }
+    .filter-bar button { background:#2a6f9c; border:none; color:#fff; padding:6px 16px; border-radius:8px; font-size:13px; cursor:pointer; }
+    .filter-bar button:hover { background:#3a8fc4; }
+    .stats-row { display:flex; gap:12px; flex-wrap:wrap; font-size:13px; margin-bottom:16px; }
+    .stats-row .stat-box { background:#0e1620; padding:6px 12px; border-radius:8px; border:1px solid #1e2834; }
+    .stats-row .stat-box strong { color:#5fc3f4; }
+    .partner-strip { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+    .partner-chip { background:#131b24; border:1px solid #1e2834; border-radius:10px; padding:8px 12px; font-size:12px; min-width:130px; }
+    .partner-chip .chip-label { font-weight:600; }
+    .partner-chip .chip-meta { color:#7a8ba3; margin-top:2px; font-size:11px; }
+    .comparison-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-top:12px; }
+    .comparison-card { background:#0e1620; border-radius:10px; padding:12px; border:1px solid #1e2834; }
+    .comparison-card .book-name { font-weight:600; color:#5fc3f4; }
+    .latency-badge { background:#2a2a1a; padding:2px 8px; border-radius:10px; font-size:11px; color:#f9ca7f; }
+    .limit-indicator { color:#6fcf97; font-weight:500; }
+    .edge-highlight { color:#f28b82; font-weight:600; }
+    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center; }
+    .modal.active { display:flex; }
+    .modal-content { background:#131b24; padding:28px; border-radius:16px; max-width:520px; width:92%; border:1px solid #1e2834; max-height:90vh; overflow-y:auto; }
+    .modal-content h2 { margin-bottom:12px; }
+    .modal-content label { display:block; margin:8px 0 4px; font-size:13px; color:#b6c8e0; }
+    .modal-content input, .modal-content select { width:100%; padding:8px; margin-bottom:8px; background:#1e2834; color:#e8edf5; border:1px solid #1e2834; border-radius:8px; }
+    .toast { position:fixed; bottom:20px; right:20px; background:#1f6e43; color:#fff; padding:12px 20px; border-radius:8px; font-size:14px; z-index:2000; display:none; box-shadow:0 4px 12px rgba(0,0,0,0.5); }
+    .chart-container { height:140px; margin-top:8px; }
+    code { font-size:11px; color:#b6c8e0; }
+    @media (max-width:640px) {
+      body { padding:12px; } h1 { font-size:20px; }
+      .tabs .tab { font-size:12px; padding:8px 12px; }
+      .filter-bar { flex-direction:column; align-items:stretch; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>🧠 Bun Agent <small>Live Odds Intelligence v1.06 · Uncovered Edges</small></h1>
+  <div class="subhead">
+    <span>📍 Partner registry · <span class="highlight" id="bookCount">—</span> books · edge engine on Bun</span>
+    <span class="flex">
+      <span class="badge">⚡ Edge Engine</span>
+      <span class="badge">🔍 Arbitrage</span>
+      <span class="badge">📈 Steam</span>
+      <span class="badge">🧮 Kelly</span>
+      <span class="badge">💧 Liquidity</span>
+      <span id="userDisplay" class="text-muted">👤 Guest</span>
+      <button class="btn btn-sm" id="loginBtn">Login</button>
+      <button class="btn btn-sm" id="logoutBtn" style="display:none;">Logout</button>
+    </span>
+  </div>
+
+  <div class="tabs" id="mainTabs">
+    <div class="tab" data-tab="odds">📊 Odds</div>
+    <div class="tab" data-tab="events">📅 Events</div>
+    <div class="tab" data-tab="detail">📈 Event Detail</div>
+    <div class="tab active" data-tab="edges">⚡ Uncovered Edges</div>
+    <div class="tab" data-tab="alerts">🚨 Alerts</div>
+    <div class="tab" data-tab="health">💚 Health</div>
+  </div>
+
+  <!-- ODDS -->
+  <div class="tab-content" id="tab-odds">
+    <div class="filter-bar">
+      <select id="filterHost"><option value="">All hosts</option></select>
+      <select id="filterSport"><option value="">All sports</option></select>
+      <select id="filterLiquidity"><option value="">All liquidity</option></select>
+      <select id="filterStatus"><option value="">All status</option></select>
+      <button id="applyOddsFilter">Apply</button>
+      <button class="btn btn-sm" id="refreshOdds">↻</button>
+      <span style="margin-left:auto;" class="text-muted" id="oddsCount">0 rows</span>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>Filtered Odds (partner-enriched)</span>
+        <button class="btn btn-sm" id="exportOdds">⬇️ CSV</button>
+      </div>
+      <div class="card-body" id="oddsTableContainer"><div class="empty-state">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- EVENTS -->
+  <div class="tab-content" id="tab-events">
+    <div class="filter-bar">
+      <select id="filterSportEvents"><option value="">All Sports</option></select>
+      <select id="filterLeagueEvents"><option value="">All Leagues</option></select>
+      <select id="filterStatusEvents"><option value="">All Status</option></select>
+      <select id="filterGeoEvents"><option value="">All Geo</option></select>
+      <button id="applyEventsFilter">Apply</button>
+      <button class="btn btn-sm" id="refreshEvents">↻</button>
+      <span style="margin-left:auto;" class="text-muted" id="eventsCount">0 events</span>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>📋 Events</span></div>
+      <div class="card-body" id="eventsTableContainer"><div class="empty-state">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- DETAIL -->
+  <div class="tab-content" id="tab-detail">
+    <div class="card">
+      <div class="card-header">
+        <span>📈 Event Detail</span>
+        <div class="flex">
+          <input type="text" id="eventIdInput" placeholder="Event ID" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;width:100px;" />
+          <button id="loadEventBtn" class="btn btn-primary btn-sm">Load</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="eventDetailContainer"><div class="empty-state">Enter an event ID or open from Events.</div></div>
+        <div id="liveComparisonContainer" style="margin-top:16px;"></div>
+        <div id="crossMarketContainer" style="margin-top:16px;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>📊 Odds History</span>
+        <div class="flex">
+          <select id="detailMarketType"><option value="moneyline">Moneyline</option><option value="spread">Spread</option><option value="total">Total</option></select>
+          <button id="refreshChart" class="btn btn-sm">↻</button>
+        </div>
+      </div>
+      <div class="card-body"><div class="chart-container"><canvas id="detailChart" width="700" height="140"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- EDGES -->
+  <div class="tab-content active" id="tab-edges">
+    <div class="filter-bar">
+      <select id="filterEdgeSport"><option value="">All Sports</option></select>
+      <select id="filterEdgeLeague"><option value="">All Leagues</option></select>
+      <input type="number" id="filterEdgeMin" placeholder="Min edge %" step="0.1" style="width:110px;" />
+      <select id="filterEdgeType">
+        <option value="">All Types</option>
+        <option value="arbitrage">Arbitrage</option>
+        <option value="value">Value Bet</option>
+        <option value="steam">Steam Move</option>
+      </select>
+      <button id="applyEdgeFilter">Apply</button>
+      <button class="btn btn-sm" id="refreshEdges">↻</button>
+      <span style="margin-left:auto;" class="text-muted" id="edgesCount">0 opportunities</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box">Avg edge <strong id="avgEdgeDisplay">0%</strong></div>
+      <div class="stat-box">Max edge <strong id="maxEdgeDisplay">0%</strong></div>
+      <div class="stat-box">Opportunities <strong id="oppCountDisplay">0</strong></div>
+      <div class="stat-box">Arb <strong id="countArb">0</strong></div>
+      <div class="stat-box">Value <strong id="countValue">0</strong></div>
+      <div class="stat-box">Steam <strong id="countSteam">0</strong></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>⚡ Live Edge Opportunities</span>
+        <span class="text-muted">Illiquid / offline books excluded</span>
+      </div>
+      <div class="card-body" id="edgesTableContainer"><div class="empty-state">Loading edges…</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>📊 Edge Distribution</span></div>
+      <div class="card-body"><canvas id="edgeChart" width="640" height="120"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>📈 Rule Performance Snapshot</span></div>
+      <div class="card-body" id="rulePerformanceContainer"><div class="empty-state">—</div></div>
+    </div>
+  </div>
+
+  <!-- ALERTS -->
+  <div class="tab-content" id="tab-alerts">
+    <div class="card">
+      <div class="card-header">
+        <span>🚨 Alert Rules</span>
+        <button id="addRuleBtn" class="btn btn-success btn-sm">+ Add Rule</button>
+      </div>
+      <div class="card-body" id="rulesTableContainer"><div class="empty-state">Loading…</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>📜 Alert History</span></div>
+      <div class="card-body live-panel" id="alertHistoryContainer"><div class="empty-state">—</div></div>
+    </div>
+  </div>
+
+  <!-- HEALTH -->
+  <div class="tab-content" id="tab-health">
+    <div class="partner-strip" id="partnerStrip"></div>
+    <div class="card">
+      <div class="card-header"><span>📊 Rate Limit &amp; Health</span></div>
+      <div class="card-body">
+        <div class="flex" style="gap:16px;flex-wrap:wrap;">
+          <div><span class="text-muted">Requests</span> <strong id="rateCurrent">0</strong> / <span id="rateLimit">100</span></div>
+          <div><span class="text-muted">Health</span> <span class="status-badge status-pending" id="healthStatus">…</span></div>
+          <div><span class="text-muted">Liquidity</span> <span id="liquidityMix" class="text-muted">—</span></div>
+          <div><span class="text-muted">Probe</span> <span id="lastProbe">—</span></div>
+          <div><span class="text-muted">Backup</span> <span id="lastBackup">—</span></div>
+        </div>
+        <div class="mt-2 flex">
+          <button class="btn btn-sm" id="backupBtn">💾 Backup</button>
+          <span class="text-muted" id="backupResult"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>⚙️ Platform</span></div>
+      <div class="card-body">
+        <div class="flex" style="gap:16px;flex-wrap:wrap;">
+          <div><span class="text-muted">Bun</span> <strong id="bunVersion">—</strong></div>
+          <div><span class="text-muted">Operators</span> <strong id="operatorCount">—</strong></div>
+          <div><span class="text-muted">Dashboard</span> <strong id="dashVersion">v1.06</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rule modal -->
+  <div class="modal" id="ruleModal">
+    <div class="modal-content">
+      <h2 id="ruleModalTitle">Edit Rule</h2>
+      <input type="hidden" id="ruleEditId" />
+      <label>ID</label><input type="text" id="ruleId" />
+      <label>Name</label><input type="text" id="ruleName" />
+      <label>Description</label><input type="text" id="ruleDescription" />
+      <label>Condition</label><input type="text" id="ruleCondition" placeholder="price_change_percent > 5" />
+      <label>Channels (comma)</label><input type="text" id="ruleChannels" placeholder="ws, email" />
+      <label>Active</label><select id="ruleActive"><option value="true">Yes</option><option value="false">No</option></select>
+      <label>Period</label><select id="rulePeriod"><option value="all">All</option><option value="prematch">Prematch</option><option value="live">Live</option></select>
+      <label>Pattern</label><select id="rulePattern"><option value="">None</option><option value="spike">Spike</option><option value="arbitrage">Arbitrage</option><option value="value">Value</option></select>
+      <label>Edge min (fraction)</label><input type="number" id="ruleEdgeMin" step="0.01" />
+      <label>Latency threshold (ms)</label><input type="number" id="ruleLatencyThreshold" />
+      <div class="flex mt-2">
+        <button id="saveRuleBtn" class="btn btn-primary">Save</button>
+        <button id="deleteRuleBtn" class="btn btn-danger" style="display:none;">Delete</button>
+        <button id="cancelRuleBtn" class="btn btn-sm">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login modal -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <h2>🔑 Login</h2>
+      <input type="text" id="loginUser" value="analyst" />
+      <input type="password" id="loginPass" value="password123" autocomplete="current-password" />
+      <button class="btn btn-primary" id="loginSubmit">Login</button>
+      <button class="btn btn-sm" id="loginCancel" style="margin-top:8px;">Cancel</button>
+      <div id="loginError" style="color:#f28b82;margin-top:8px;"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div style="margin-top:24px;border-top:1px solid #1e2630;padding-top:14px;color:#4a5a6a;font-size:12px;text-align:center;">
+    Bun Agent v1.06 · Uncovered Edges · <a href="/dashboard-v1.03.html" style="color:#5fc3f4;">v1.03</a>
+  </div>
+</div>
+
+<script>
+const API = window.location.origin;
+window.AGENT_API_BASE = API;
+let currentTab = 'edges';
+let eventsData = [];
+let edgesData = [];
+let rulesData = [];
+let oddsData = [];
+let partnerHealth = [];
+let loggedIn = false;
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 2800);
+}
+
+function liqClass(tier) {
+  const t = String(tier || 'unknown').toLowerCase();
+  return 'pill liq-' + (['high','medium','low','illiquid'].includes(t) ? t : 'unknown');
+}
+
+function switchTab(tabId) {
+  currentTab = tabId;
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tabId));
+  if (tabId === 'edges') loadEdges();
+  if (tabId === 'events') loadEvents();
+  if (tabId === 'odds') loadOdds();
+  if (tabId === 'alerts') loadAlerts();
+  if (tabId === 'health') loadHealth();
+}
+
+document.getElementById('mainTabs').addEventListener('click', (e) => {
+  const tab = e.target.closest('.tab');
+  if (tab) switchTab(tab.dataset.tab);
+});
+
+function populateSelect(id, values, allLabel) {
+  const sel = document.getElementById(id);
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = `<option value="">${allLabel || 'All'}</option>`;
+  for (const v of values) {
+    const o = document.createElement('option');
+    o.value = v; o.textContent = v; sel.appendChild(o);
+  }
+  if (cur) sel.value = cur;
+}
+
+// ── Edges ────────────────────────────────────────────────────
+async function loadEdges(refresh = false) {
+  const params = new URLSearchParams();
+  const sport = document.getElementById('filterEdgeSport').value;
+  const league = document.getElementById('filterEdgeLeague').value;
+  const type = document.getElementById('filterEdgeType').value;
+  const min = document.getElementById('filterEdgeMin').value;
+  if (sport) params.set('sport', sport);
+  if (league) params.set('league', league);
+  if (type) params.set('type', type);
+  if (min) params.set('min', min);
+  params.set('refresh', refresh ? '1' : '0');
+  try {
+    const res = await fetch(API + '/api/edges?' + params);
+    const body = await res.json();
+    edgesData = body.data || [];
+    renderEdges(edgesData, body.summary);
+  } catch {
+    document.getElementById('edgesTableContainer').innerHTML = '<div class="empty-state">Edges API unavailable</div>';
+  }
+  loadRulePerformance();
+}
+
+function renderEdges(edges, summary) {
+  document.getElementById('edgesCount').textContent = `${edges.length} opportunities`;
+  const s = summary || {};
+  document.getElementById('avgEdgeDisplay').textContent = (s.avgEdge ?? 0) + '%';
+  document.getElementById('maxEdgeDisplay').textContent = (s.maxEdge ?? 0) + '%';
+  document.getElementById('oppCountDisplay').textContent = s.count ?? edges.length;
+  document.getElementById('countArb').textContent = s.byType?.arbitrage || 0;
+  document.getElementById('countValue').textContent = s.byType?.value || 0;
+  document.getElementById('countSteam').textContent = s.byType?.steam || 0;
+
+  const container = document.getElementById('edgesTableContainer');
+  if (!edges.length) {
+    container.innerHTML = '<div class="empty-state">No edge opportunities (try lower min % or refresh).</div>';
+    drawEdgeChart([]);
+    return;
+  }
+  let html = `<table class="edge-table"><thead><tr>
+    <th>Event</th><th>Market</th><th>Type</th><th>Edge %</th><th>EV</th><th>Conf</th><th>Kelly</th>
+    <th>Books</th><th>Odds</th><th>Latency</th><th>Liq</th><th>Stake</th><th>Time</th>
+  </tr></thead><tbody>`;
+  for (const e of edges) {
+    const color = e.edge_percent > 5 ? '#f28b82' : (e.edge_percent > 3 ? '#f9ca7f' : '#6fcf97');
+    const lat = e.latency_ms ? `${e.latency_ms.book1}/${e.latency_ms.book2 || '—'}ms` : '—';
+    const lag = e.latency_adjusted ? ' <span class="latency-badge">adj</span>' : '';
+    html += `<tr>
+      <td><strong>${e.home}</strong> vs <strong>${e.away}</strong><div class="text-muted">${e.league} · #${e.event_id}</div></td>
+      <td>${e.market}</td>
+      <td><span class="pill">${e.type}</span></td>
+      <td style="color:${color};font-weight:600;">${e.edge_percent}%</td>
+      <td>${e.expected_value}%</td>
+      <td>${((e.confidence || 0) * 100).toFixed(0)}%</td>
+      <td>${e.kelly_fraction != null ? (e.kelly_fraction * 100).toFixed(1) + '%' : '—'}</td>
+      <td>${(e.bookmakers || []).join(' / ')}</td>
+      <td>${e.odds?.book1 || '—'} / ${e.odds?.book2 || '—'}</td>
+      <td>${lat}${lag}</td>
+      <td>${(e.liquidity_tiers || []).map(t => `<span class="${liqClass(t)}">${t}</span>`).join(' ')}</td>
+      <td>$${e.stake_suggestion}</td>
+      <td class="text-muted">${new Date(e.timestamp).toLocaleTimeString()}</td>
+    </tr>`;
+  }
+  html += '</tbody></table>';
+  container.innerHTML = html;
+  drawEdgeChart(edges);
+
+  // populate edge filters from data
+  const sports = [...new Set(edges.map(e => e.sport))].sort();
+  const leagues = [...new Set(edges.map(e => e.league))].sort();
+  if (sports.length) populateSelect('filterEdgeSport', sports, 'All Sports');
+  if (leagues.length) populateSelect('filterEdgeLeague', leagues, 'All Leagues');
+}
+
+function drawEdgeChart(edges) {
+  const canvas = document.getElementById('edgeChart');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#0e1620';
+  ctx.fillRect(0, 0, w, h);
+  if (!edges.length) return;
+  const sorted = [...edges].sort((a, b) => a.edge_percent - b.edge_percent);
+  const max = sorted[sorted.length - 1].edge_percent || 1;
+  const barW = w / sorted.length;
+  sorted.forEach((e, i) => {
+    const bh = (e.edge_percent / max) * (h - 12);
+    ctx.fillStyle = e.edge_percent > 5 ? '#f28b82' : (e.edge_percent > 3 ? '#f9ca7f' : '#6fcf97');
+    ctx.fillRect(i * barW, h - 6 - bh, Math.max(1, barW - 1), bh);
+  });
+}
+
+async function loadRulePerformance() {
+  try {
+    const res = await fetch(API + '/api/alerts/performance');
+    const body = await res.json();
+    const rows = body.data || [];
+    const c = document.getElementById('rulePerformanceContainer');
+    if (!rows.length) { c.innerHTML = '<div class="empty-state">No performance data.</div>'; return; }
+    let html = `<table><thead><tr><th>Rule</th><th>Triggered</th><th>Hit Rate</th><th>Avg Profit</th><th>Total P&L</th></tr></thead><tbody>`;
+    for (const p of rows) {
+      html += `<tr><td>${p.name}</td><td>${p.triggered}</td><td>${(p.hit_rate * 100).toFixed(0)}%</td><td>$${p.avg_profit}</td><td>$${p.total_pnl}</td></tr>`;
+    }
+    html += '</tbody></table>';
+    c.innerHTML = html;
+  } catch { /* ignore */ }
+}
+
+// ── Events ───────────────────────────────────────────────────
+async function loadEvents(refresh = false) {
+  const params = new URLSearchParams();
+  const sport = document.getElementById('filterSportEvents').value;
+  const league = document.getElementById('filterLeagueEvents').value;
+  const status = document.getElementById('filterStatusEvents').value;
+  const geo = document.getElementById('filterGeoEvents').value;
+  if (sport) params.set('sport', sport);
+  if (league) params.set('league', league);
+  if (status) params.set('status', status);
+  if (geo) params.set('geo', geo);
+  params.set('refresh', refresh ? '1' : '0');
+  try {
+    const res = await fetch(API + '/api/events?' + params);
+    const body = await res.json();
+    eventsData = body.data || [];
+    renderEvents(eventsData);
+  } catch {
+    document.getElementById('eventsTableContainer').innerHTML = '<div class="empty-state">Events API unavailable</div>';
+  }
+}
+
+function renderEvents(events) {
+  document.getElementById('eventsCount').textContent = `${events.length} events`;
+  const sports = [...new Set(events.map(e => e.sport))].sort();
+  const leagues = [...new Set(events.map(e => e.league))].sort();
+  const geos = [...new Set(events.map(e => e.geo))].sort();
+  populateSelect('filterSportEvents', sports, 'All Sports');
+  populateSelect('filterLeagueEvents', leagues, 'All Leagues');
+  populateSelect('filterStatusEvents', ['scheduled','live','finished'], 'All Status');
+  populateSelect('filterGeoEvents', geos, 'All Geo');
+
+  const container = document.getElementById('eventsTableContainer');
+  if (!events.length) {
+    container.innerHTML = '<div class="empty-state">No events.</div>';
+    return;
+  }
+  let html = `<table><thead><tr>
+    <th>ID</th><th>Sport</th><th>League</th><th>Home</th><th>Away</th><th>Status</th>
+    <th>Geo</th><th>State</th><th>Latency</th><th>Limit</th><th>Books</th><th></th>
+  </tr></thead><tbody>`;
+  for (const ev of events) {
+    const st = ev.status === 'live' ? 'status-online' : (ev.status === 'finished' ? 'status-offline' : 'status-pending');
+    const books = Object.values(ev.bookmakers || {});
+    const avgLat = books.length ? books.reduce((a, b) => a + b.latency, 0) / books.length : 0;
+    html += `<tr>
+      <td>${ev.id}</td>
+      <td><span class="pill">${ev.sport}</span></td>
+      <td>${ev.league}</td>
+      <td>${ev.home_team}</td>
+      <td>${ev.away_team}</td>
+      <td><span class="status-badge ${st}">${ev.status}</span></td>
+      <td>${ev.geo}</td>
+      <td>${ev.state}</td>
+      <td>${avgLat.toFixed(0)}ms</td>
+      <td class="limit-indicator">$${ev.limits.min}–$${ev.limits.max}</td>
+      <td>${Object.keys(ev.bookmakers || {}).length}</td>
+      <td><button class="btn btn-sm btn-primary load-ev" data-id="${ev.id}">View</button></td>
+    </tr>`;
+  }
+  html += '</tbody></table>';
+  container.innerHTML = html;
+  container.querySelectorAll('.load-ev').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('eventIdInput').value = btn.dataset.id;
+      loadEventDetail(btn.dataset.id);
+      switchTab('detail');
+    });
+  });
+}
+
+async function loadEventDetail(eventId) {
+  try {
+    const res = await fetch(API + '/api/events/' + encodeURIComponent(eventId));
+    if (!res.ok) throw new Error('not found');
+    const body = await res.json();
+    renderEventDetail(body.data);
+    loadChart(eventId);
+  } catch {
+    document.getElementById('eventDetailContainer').innerHTML = '<div class="empty-state">Event not found.</div>';
+  }
+}
+
+function renderEventDetail(event) {
+  const container = document.getElementById('eventDetailContainer');
+  if (!event) {
+    container.innerHTML = '<div class="empty-state">Event not found.</div>';
+    return;
+  }
+  container.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;">
+      <div><strong>ID</strong> ${event.id}</div>
+      <div><strong>Sport</strong> ${event.sport}</div>
+      <div><strong>League</strong> ${event.league}</div>
+      <div><strong>Home</strong> ${event.home_team}</div>
+      <div><strong>Away</strong> ${event.away_team}</div>
+      <div><strong>Status</strong> ${event.status}</div>
+      <div><strong>Geo</strong> ${event.geo}</div>
+      <div><strong>State</strong> ${event.state}</div>
+      <div><strong>Limit</strong> $${event.limits.min}–$${event.limits.max}</div>
+    </div>`;
+
+  const marketContainer = document.getElementById('crossMarketContainer');
+  let marketHtml = `<div class="card-header" style="padding:8px 0;border-bottom:1px solid #1e2834;">📊 Markets</div>
+    <table style="margin-top:8px;"><thead><tr><th>Market</th><th>Home/Over</th><th>Away/Under</th></tr></thead><tbody>`;
+  for (const [mkt, odds] of Object.entries(event.markets || {})) {
+    marketHtml += `<tr><td><strong>${mkt}</strong></td>
+      <td>${odds.home || odds.over || '—'}</td>
+      <td>${odds.away || odds.under || '—'}</td></tr>`;
+  }
+  marketHtml += '</tbody></table>';
+  marketContainer.innerHTML = marketHtml;
+
+  const comp = document.getElementById('liveComparisonContainer');
+  let compHtml = `<div class="card-header" style="padding:8px 0;border-bottom:1px solid #1e2834;">🔁 Live book comparison</div><div class="comparison-grid">`;
+  for (const [book, data] of Object.entries(event.bookmakers || {})) {
+    const odds = data.odds?.moneyline || {};
+    compHtml += `<div class="comparison-card">
+      <div class="book-name">${book}</div>
+      <div>ML ${odds.home} / ${odds.away}</div>
+      <div class="text-muted">Latency <span class="latency-badge">${data.latency}ms</span>
+        ${data.liquidityTier ? `<span class="${liqClass(data.liquidityTier)}">${data.liquidityTier}</span>` : ''}
+      </div>
+    </div>`;
+  }
+  compHtml += '</div>';
+  comp.innerHTML = compHtml;
+}
+
+async function loadChart(eventId) {
+  const market = document.getElementById('detailMarketType').value;
+  try {
+    const res = await fetch(API + `/api/events/${encodeURIComponent(eventId)}/history?market=${market}`);
+    const body = await res.json();
+    drawHistoryChart(body.data || []);
+  } catch {
+    drawHistoryChart([]);
+  }
+}
+
+function drawHistoryChart(data) {
+  const canvas = document.getElementById('detailChart');
+  const ctx = canvas.getContext('2d');
+  const width = canvas.width, height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+  if (!data.length) {
+    ctx.fillStyle = '#7a8ba3';
+    ctx.fillText('No history', 20, height / 2);
+    return;
+  }
+  const groups = {};
+  for (const p of data) {
+    (groups[p.bookmaker] ||= []).push(p);
+  }
+  ctx.strokeStyle = '#1e2834';
+  ctx.beginPath();
+  ctx.moveTo(40, 10); ctx.lineTo(40, height - 20); ctx.lineTo(width - 10, height - 20);
+  ctx.stroke();
+  const colors = ['#5fc3f4', '#6fcf97', '#f9ca7f', '#f28b82'];
+  let ci = 0;
+  for (const [, points] of Object.entries(groups)) {
+    if (points.length < 2) continue;
+    const sorted = points.sort((a, b) => a.timestamp - b.timestamp);
+    const minV = Math.min(...sorted.map(p => p.odds_decimal));
+    const maxV = Math.max(...sorted.map(p => p.odds_decimal));
+    const range = maxV - minV || 0.1;
+    ctx.strokeStyle = colors[ci++ % colors.length];
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const step = (width - 50) / (sorted.length - 1);
+    sorted.forEach((p, i) => {
+      const x = 40 + i * step;
+      const y = height - 20 - ((p.odds_decimal - minV) / range) * (height - 30);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+}
+
+// ── Odds ─────────────────────────────────────────────────────
+async function loadOdds(refresh = false) {
+  const params = new URLSearchParams();
+  const host = document.getElementById('filterHost').value;
+  const sport = document.getElementById('filterSport').value;
+  const liq = document.getElementById('filterLiquidity').value;
+  const st = document.getElementById('filterStatus').value;
+  if (host) params.set('host', host);
+  if (sport) params.set('sport', sport);
+  if (liq) params.set('liquidity', liq);
+  if (st) params.set('status', st);
+  params.set('refresh', refresh ? '1' : '0');
+  params.set('limit', '80');
+  try {
+    const res = await fetch(API + '/api/odds?' + params);
+    const body = await res.json();
+    oddsData = body.data || [];
+    renderOdds(oddsData);
+  } catch {
+    document.getElementById('oddsTableContainer').innerHTML = '<div class="empty-state">Odds API unavailable</div>';
+  }
+}
+
+function renderOdds(rows) {
+  document.getElementById('oddsCount').textContent = `${rows.length} rows`;
+  const c = document.getElementById('oddsTableContainer');
+  if (!rows.length) { c.innerHTML = '<div class="empty-state">No odds.</div>'; return; }
+  let html = `<table><thead><tr>
+    <th>Liquidity</th><th>Book</th><th>Status</th><th>Sport</th><th>League</th><th>Market</th><th>Session</th><th>Price</th>
+  </tr></thead><tbody>`;
+  for (const r of rows) {
+    const st = r.partnerStatus || '—';
+    const stc = st === 'active' ? 'status-online' : (st === 'offline' || st === 'critical' ? 'status-offline' : 'status-pending');
+    html += `<tr>
+      <td><span class="${liqClass(r.liquidityTier)}">${r.liquidityTier || 'unknown'}</span></td>
+      <td><strong>${r.label || r.bookmakerId || r.host}</strong><div class="text-muted">${r.host}</div></td>
+      <td><span class="status-badge ${stc}">${st}</span></td>
+      <td><span class="pill">${r.sport}</span></td>
+      <td>${r.league}</td>
+      <td>${r.market_type}</td>
+      <td>${r.session}</td>
+      <td>${r.price}</td>
+    </tr>`;
+  }
+  html += '</tbody></table>';
+  c.innerHTML = html;
+}
+
+// ── Alerts ───────────────────────────────────────────────────
+async function loadAlerts() {
+  try {
+    const [rulesRes, histRes] = await Promise.all([
+      fetch(API + '/api/alerts/rules'),
+      fetch(API + '/api/alerts/history'),
+    ]);
+    rulesData = (await rulesRes.json()).data || [];
+    renderRules(rulesData);
+    const hist = (await histRes.json()).data || [];
+    renderAlertHistory(hist);
+  } catch {
+    document.getElementById('rulesTableContainer').innerHTML = '<div class="empty-state">Alerts API unavailable</div>';
+  }
+}
+
+function renderRules(rules) {
+  const c = document.getElementById('rulesTableContainer');
+  if (!rules.length) { c.innerHTML = '<div class="empty-state">No rules.</div>'; return; }
+  let html = `<table><thead><tr>
+    <th>ID</th><th>Name</th><th>Condition</th><th>Period</th><th>Pattern</th><th>Edge min</th><th>Latency</th><th>Active</th><th></th>
+  </tr></thead><tbody>`;
+  for (const r of rules) {
+    html += `<tr>
+      <td><code>${r.id}</code></td>
+      <td>${r.name}</td>
+      <td><code>${r.condition}</code></td>
+      <td>${r.period || 'all'}</td>
+      <td>${r.pattern || '—'}</td>
+      <td>${r.edge?.min != null ? (r.edge.min * 100).toFixed(1) + '%' : '—'}</td>
+      <td>${r.latency_threshold ? r.latency_threshold + 'ms' : '—'}</td>
+      <td><span class="status-badge ${r.active ? 'status-online' : 'status-offline'}">${r.active ? 'Yes' : 'No'}</span></td>
+      <td>
+        <button class="btn btn-sm edit-rule" data-id="${r.id}">Edit</button>
+        <button class="btn btn-sm btn-danger del-rule" data-id="${r.id}">✕</button>
+      </td>
+    </tr>`;
+  }
+  html += '</tbody></table>';
+  c.innerHTML = html;
+  c.querySelectorAll('.edit-rule').forEach(b => b.addEventListener('click', () => openRuleEditor(b.dataset.id)));
+  c.querySelectorAll('.del-rule').forEach(b => b.addEventListener('click', () => deleteRule(b.dataset.id)));
+}
+
+function renderAlertHistory(history) {
+  const c = document.getElementById('alertHistoryContainer');
+  if (!history.length) { c.innerHTML = '<div class="empty-state">No alerts.</div>'; return; }
+  c.innerHTML = history.slice(0, 15).map(a => `
+    <div class="live-item">
+      <div>🔔 <strong>${a.rule_id}</strong> ${a.message}</div>
+      <div class="meta"><span>${new Date(a.timestamp).toLocaleTimeString()}</span></div>
+    </div>`).join('');
+}
+
+function openRuleEditor(ruleId) {
+  const modal = document.getElementById('ruleModal');
+  const rule = ruleId ? rulesData.find(r => r.id === ruleId) : null;
+  document.getElementById('ruleModalTitle').textContent = rule ? 'Edit Rule' : 'Add Rule';
+  document.getElementById('ruleEditId').value = rule?.id || '';
+  document.getElementById('ruleId').value = rule?.id || '';
+  document.getElementById('ruleId').disabled = !!rule;
+  document.getElementById('ruleName').value = rule?.name || '';
+  document.getElementById('ruleDescription').value = rule?.description || '';
+  document.getElementById('ruleCondition').value = rule?.condition || '';
+  document.getElementById('ruleChannels').value = (rule?.channels || ['ws']).join(', ');
+  document.getElementById('ruleActive').value = rule?.active === false ? 'false' : 'true';
+  document.getElementById('rulePeriod').value = rule?.period || 'all';
+  document.getElementById('rulePattern').value = rule?.pattern || '';
+  document.getElementById('ruleEdgeMin').value = rule?.edge?.min ?? '';
+  document.getElementById('ruleLatencyThreshold').value = rule?.latency_threshold ?? '';
+  document.getElementById('deleteRuleBtn').style.display = rule ? 'inline-flex' : 'none';
+  modal.classList.add('active');
+}
+
+function closeRuleEditor() {
+  document.getElementById('ruleModal').classList.remove('active');
+}
+
+async function saveRule() {
+  const body = {
+    id: document.getElementById('ruleId').value.trim(),
+    name: document.getElementById('ruleName').value.trim(),
+    description: document.getElementById('ruleDescription').value.trim(),
+    condition: document.getElementById('ruleCondition').value.trim(),
+    channels: document.getElementById('ruleChannels').value.split(',').map(s => s.trim()).filter(Boolean),
+    active: document.getElementById('ruleActive').value === 'true',
+    period: document.getElementById('rulePeriod').value,
+    pattern: document.getElementById('rulePattern').value,
+    edge: document.getElementById('ruleEdgeMin').value
+      ? { min: Number(document.getElementById('ruleEdgeMin').value) }
+      : undefined,
+    latency_threshold: document.getElementById('ruleLatencyThreshold').value
+      ? Number(document.getElementById('ruleLatencyThreshold').value)
+      : undefined,
+  };
+  if (!body.id || !body.name) { showToast('ID and name required'); return; }
+  const res = await fetch(API + '/api/alerts/rules', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (res.ok) {
+    showToast('Rule saved');
+    closeRuleEditor();
+    loadAlerts();
+  } else showToast('Save failed');
+}
+
+async function deleteRule(id) {
+  if (!confirm('Delete rule ' + id + '?')) return;
+  await fetch(API + '/api/alerts/rules/' + encodeURIComponent(id), { method: 'DELETE' });
+  showToast('Deleted');
+  closeRuleEditor();
+  loadAlerts();
+}
+
+// ── Health ───────────────────────────────────────────────────
+async function loadHealth(refresh = false) {
+  try {
+    const res = await fetch(API + '/api/partners/health' + (refresh ? '?refresh=1' : ''));
+    const data = await res.json();
+    partnerHealth = data.health || [];
+    const summary = data.summary || {};
+    const online = summary.online ?? 0;
+    const total = summary.total ?? partnerHealth.length;
+    const hs = document.getElementById('healthStatus');
+    if (total && online === total) {
+      hs.textContent = 'All online';
+      hs.className = 'status-badge status-online';
+    } else {
+      hs.textContent = `${online}/${total} online`;
+      hs.className = 'status-badge status-pending';
+    }
+    document.getElementById('liquidityMix').textContent = summary.byLiquidity
+      ? Object.entries(summary.byLiquidity).map(([k, v]) => `${k}:${v}`).join(' · ')
+      : '—';
+    document.getElementById('lastProbe').textContent = data.lastProbe
+      ? new Date(data.lastProbe).toLocaleString()
+      : '—';
+    document.getElementById('bookCount').textContent = total;
+    document.getElementById('partnerStrip').innerHTML = partnerHealth.slice(0, 12).map(p => `
+      <div class="partner-chip">
+        <div class="chip-label">${p.label}</div>
+        <div class="chip-meta">
+          <span class="${liqClass(p.liquidityTier)}">${p.liquidityTier}</span>
+          <span class="status-badge ${p.status === 'active' ? 'status-online' : 'status-pending'}">${p.status}</span>
+        </div>
+      </div>`).join('');
+  } catch {
+    document.getElementById('healthStatus').textContent = 'unavailable';
+  }
+  try {
+    const p = await fetch(API + '/api/platform').then(r => r.json());
+    if (p.bun) document.getElementById('bunVersion').textContent = p.bun;
+    if (p.operators != null) {
+      document.getElementById('operatorCount').textContent = p.operators;
+      document.getElementById('bookCount').textContent = p.operators;
+    }
+    if (p.rateLimit) document.getElementById('rateLimit').textContent = p.rateLimit;
+    if (p.rateCurrent != null) document.getElementById('rateCurrent').textContent = p.rateCurrent;
+    if (p.lastBackup) document.getElementById('lastBackup').textContent = new Date(p.lastBackup).toLocaleString();
+    if (p.dashboard) document.getElementById('dashVersion').textContent = p.dashboard;
+  } catch { /* ignore */ }
+}
+
+// ── Options / login / backup ─────────────────────────────────
+async function loadOptions() {
+  try {
+    const o = await fetch(API + '/api/odds/options').then(r => r.json());
+    populateSelect('filterHost', o.hosts || [], 'All hosts');
+    populateSelect('filterSport', o.sports || [], 'All sports');
+    populateSelect('filterLiquidity', o.liquidityTiers || ['high','medium','low'], 'All liquidity');
+    populateSelect('filterStatus', o.partnerStatuses || [], 'All status');
+  } catch { /* ignore */ }
+}
+
+document.getElementById('applyEdgeFilter').addEventListener('click', loadEdges);
+document.getElementById('refreshEdges').addEventListener('click', () => loadEdges(true));
+document.getElementById('applyEventsFilter').addEventListener('click', loadEvents);
+document.getElementById('refreshEvents').addEventListener('click', () => loadEvents(true));
+document.getElementById('applyOddsFilter').addEventListener('click', loadOdds);
+document.getElementById('refreshOdds').addEventListener('click', () => loadOdds(true));
+document.getElementById('loadEventBtn').addEventListener('click', () => {
+  const id = document.getElementById('eventIdInput').value.trim();
+  if (id) loadEventDetail(id);
+});
+document.getElementById('refreshChart').addEventListener('click', () => {
+  const id = document.getElementById('eventIdInput').value.trim();
+  if (id) loadChart(id);
+});
+document.getElementById('addRuleBtn').addEventListener('click', () => openRuleEditor(null));
+document.getElementById('saveRuleBtn').addEventListener('click', saveRule);
+document.getElementById('cancelRuleBtn').addEventListener('click', closeRuleEditor);
+document.getElementById('deleteRuleBtn').addEventListener('click', () => {
+  const id = document.getElementById('ruleEditId').value;
+  if (id) deleteRule(id);
+});
+document.getElementById('ruleModal').addEventListener('click', e => {
+  if (e.target.id === 'ruleModal') closeRuleEditor();
+});
+document.getElementById('exportOdds').addEventListener('click', () => {
+  let csv = 'liquidity,book,host,status,sport,league,market,price\n';
+  for (const r of oddsData) {
+    csv += `${r.liquidityTier||''},${r.label||''},${r.host},${r.partnerStatus||''},${r.sport},${r.league},${r.market_type},${r.price}\n`;
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'odds.csv';
+  a.click();
+  showToast('CSV exported');
+});
+document.getElementById('backupBtn').addEventListener('click', async () => {
+  const res = await fetch(API + '/api/backup', { method: 'POST' });
+  const d = await res.json();
+  document.getElementById('backupResult').textContent = d.message || 'ok';
+  if (d.at) document.getElementById('lastBackup').textContent = new Date(d.at).toLocaleString();
+  showToast('Backup complete');
+});
+
+document.getElementById('loginBtn').addEventListener('click', () => document.getElementById('loginModal').classList.add('active'));
+document.getElementById('loginCancel').addEventListener('click', () => document.getElementById('loginModal').classList.remove('active'));
+document.getElementById('loginSubmit').addEventListener('click', async () => {
+  const username = document.getElementById('loginUser').value;
+  const password = document.getElementById('loginPass').value;
+  try {
+    const res = await fetch(API + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+    const d = await res.json();
+    if (d.ok) {
+      loggedIn = true;
+      document.getElementById('userDisplay').textContent = '👤 ' + (d.user || username);
+      document.getElementById('loginBtn').style.display = 'none';
+      document.getElementById('logoutBtn').style.display = 'inline-flex';
+      document.getElementById('loginModal').classList.remove('active');
+      showToast('Logged in');
+      return;
+    }
+  } catch { /* demo */ }
+  if (username === 'analyst' && password === 'password123') {
+    loggedIn = true;
+    document.getElementById('userDisplay').textContent = '👤 ' + username;
+    document.getElementById('loginBtn').style.display = 'none';
+    document.getElementById('logoutBtn').style.display = 'inline-flex';
+    document.getElementById('loginModal').classList.remove('active');
+    showToast('Logged in (demo)');
+  } else {
+    document.getElementById('loginError').textContent = 'Invalid credentials';
+  }
+});
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  loggedIn = false;
+  document.getElementById('userDisplay').textContent = '👤 Guest';
+  document.getElementById('loginBtn').style.display = 'inline-flex';
+  document.getElementById('logoutBtn').style.display = 'none';
+  showToast('Logged out');
+});
+
+// Init
+loadOptions();
+loadHealth();
+loadEdges();
+setInterval(() => {
+  if (currentTab === 'edges') loadEdges(true);
+  else if (currentTab === 'events') loadEvents(true);
+  else if (currentTab === 'odds') loadOdds(true);
+  else if (currentTab === 'health') loadHealth(true);
+}, 30000);
+
+console.log('🧠 Bun Agent Dashboard v1.06 – Uncovered Edges loaded.');
+</script>
+<script type="module" src="/portal/data.js"></script>
+<script type="module" src="/portal/topbar.js"></script>
+</body>
+</html>

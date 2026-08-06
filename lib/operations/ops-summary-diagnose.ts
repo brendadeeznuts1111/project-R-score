@@ -16,7 +16,22 @@ export type OpsSummaryDiagnoseShape = {
     baseUrl?: string;
     routes?: Array<{ path?: string; pass?: boolean; status?: number | string }>;
   };
-  liquidity?: { total?: number };
+  liquidity?: {
+    total?: number;
+    empty?: boolean;
+    accounts?: { count?: number; balance?: number };
+    positions?: {
+      count?: number;
+      deposited?: number;
+      available?: number;
+      inPlay?: number;
+    };
+    pool?: {
+      totalLiquidity?: number;
+      totalExposure?: number;
+      available?: number;
+    };
+  };
   bunUtils?: { passed?: number; total?: number; failed?: number };
   /** MA/NJ board slice from ops-summary.compliance (baked companion). */
   compliance?: {
@@ -112,8 +127,20 @@ export function classifySummaryPayload(
     reasons.push('snapshot source (Pages or static file)');
   }
 
-  if (shape.source === 'live' && shape.liquidity?.total === 0) {
-    reasons.push('empty liquidity (ops DB has no active balance; informational)');
+  if (shape.source === 'live') {
+    const liq = shape.liquidity;
+    const empty =
+      liq?.empty === true ||
+      (liq?.total === 0 &&
+        (liq?.positions?.count ?? 0) === 0 &&
+        (liq?.pool?.totalLiquidity ?? 0) === 0);
+    if (empty || liq?.total === 0) {
+      reasons.push(
+        empty
+          ? 'empty liquidity (no accounts, positions, or ops pool; informational)'
+          : 'accounts balance $0 (positions/pool may still have desk capital; informational)'
+      );
+    }
   }
 
   if (shape.bunUtils?.total != null && (shape.bunUtils.failed ?? 0) > 0) {

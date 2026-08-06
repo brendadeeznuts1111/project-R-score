@@ -1,3 +1,5 @@
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
+// @see https://bun.com/docs/bundler/index#features — bun:bundle
 // @see https://bun.com/docs/runtime/s3 — Bun.s3
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/webview — Bun.WebView
@@ -62,20 +64,19 @@ export const CHANGELOG_EVENTS: ChangelogEvent[] = [
   {
     name: 'Bun.WebView',
     kind: 'feature',
-    version: '1.4.0',
+    version: '1.3.12',
     note: 'Headless browser automation via native WebView',
-    blogAnchor: 'webview',
   },
   {
     name: 'Bun.markdown.ansi',
     kind: 'feature',
-    version: '1.4.0',
+    version: '1.3.12',
     note: 'Markdown → ANSI terminal rendering',
   },
   {
     name: 'Bun.cron',
     kind: 'feature',
-    version: '1.3.14',
+    version: '1.3.12',
     note: 'In-process cron scheduling (UTC, no-overlap)',
   },
   {
@@ -193,6 +194,34 @@ export const CHANGELOG_EVENTS: ChangelogEvent[] = [
     kind: 'feature',
     version: '1.3.14',
     note: 'HTTP/2 and HTTP/3 options on fetch() client',
+  },
+  {
+    name: 'FormData',
+    kind: 'fix',
+    version: '1.3.14',
+    note: 'Multipart boundaries now use the WebKit-compatible shape',
+    blogAnchor: 'web-apis',
+  },
+  {
+    name: 'Blob',
+    kind: 'fix',
+    version: '1.3.14',
+    note: 'Empty Blob inspection and duplicated content-type lifetime were repaired',
+    blogAnchor: 'web-apis',
+  },
+  {
+    name: 'ReadableStream',
+    kind: 'fix',
+    version: '1.3.14',
+    note: 'Small Bun.file streams no longer close their controller twice',
+    blogAnchor: 'web-apis',
+  },
+  {
+    name: 'WebSocket',
+    kind: 'fix',
+    version: '1.3.14',
+    note: 'CONNECTING close cleanup and perMessageDeflate opt-out behavior were repaired',
+    blogAnchor: 'websocket-permessagedeflate-false-now-respected-in-upgrade-requests',
   },
 ];
 

@@ -205,35 +205,51 @@
         <span class="logo-page">Account</span>
       </h1>
         <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
-        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
+        <a href="/" class="nav-link" title="public lander · portal entry" data-group="other" data-domain="platform">Home</a>
+        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · C4/C5 loop · partner handshake panel · bun run ops:snapshot" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot" data-registry="/registry/ops-summary.json">Ops</a>
+        <a href="/portal/" class="nav-link" title="portal hub · board index · weave surfaces" data-group="registry" data-domain="platform">Registry</a>
+        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-domain="platform" data-cli="bun run monorepo:health:bake" data-registry="/registry/monorepo-health.json">Health</a>
+        <a href="/portal/dod/" class="nav-link" title="visual proof review · public-plane gate · bun run public:audit:verify" data-group="plane" data-domain="platform" data-cli="bun run public:audit:verify">DOD</a>
+        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · shadow matrix · bun run compliance:bake" data-group="ops" data-domain="control" data-cli="bun run compliance:bake" data-registry="/registry/compliance-board.json">Compliance</a>
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
-            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
-            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog" data-group="ops" data-cli="bun run telegram:handshake:catalog" role="menuitem">Partners</a>
-            <a href="/portal/account/" class="nav-link active" aria-current="page" title="single-account dossier · tree · telemetry · betlog" data-group="ops" role="menuitem">Account</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-cli="bun run bookmakers:bake" role="menuitem">Bookmakers</a>
-            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+          <div class="nav-group" role="group" aria-label="Ops · domain" data-group="ops">
+            <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
+            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · seat capital · bun run telegram:handshake:catalog" data-group="ops" data-domain="partner" data-cli="bun run telegram:handshake:catalog" data-registry="/registry/partners-ops.json" role="menuitem">Partners</a>
+            <a href="/portal/account/" class="nav-link active" aria-current="page" title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed" data-group="ops" data-domain="partner" data-cli="bun run ops:dossier:seed" data-registry="/registry/partners-ops.json" role="menuitem">Account</a>
+            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Partner history</a>
+            <a href="/portal/limits/" class="nav-link" title="multi-factor partner limit raises · CLV · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Limits</a>
+            <a href="/portal/limits-lab/" class="nav-link" title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:predict" data-registry="/registry/limit-forecast-lab.json" role="menuitem">Limits lab</a>
+            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-domain="partner" data-cli="bun run bookmakers:bake" data-registry="/registry/bookmakers.json" role="menuitem">Bookmakers</a>
+            <a href="/portal/factory/" class="nav-link" title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify" data-group="ops" data-domain="partner" data-cli="bun run telegram:verify" data-registry="/registry/telegram-handshake.json" role="menuitem">Factory</a>
+            <a href="/portal/tennis/" class="nav-link" title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake" data-group="ops" data-domain="trading" data-cli="bun run tennis:board:bake" data-registry="/registry/tennis/agent-auth.json" role="menuitem">Tennis</a>
+            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-domain="trading" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
+            <a href="/portal/dashboard/" class="nav-link" title="KPIs · TOC · compliance plane · proof-index pins" data-group="ops" data-domain="control" role="menuitem">Dashboard</a>
+            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope fixture board · bun run ops:seed:toc" data-group="ops" data-domain="control" data-cli="bun run ops:seed:toc" data-registry="/registry/toc-ops.json" role="menuitem">TOC</a>
+            <a href="/monitoring/" class="nav-link" title="routing · env · compliance tile · proof status · bun run ops:snapshot --no-seed" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot --no-seed" data-registry="/registry/monitoring.json" role="menuitem">Monitoring</a>
+            <a href="/portal/identity/" class="nav-link" title="auth board · lockout · anomaly · geo · JIT · bun test tests/identity-*.test.ts" data-group="ops" data-domain="identity" data-cli="bun test tests/identity-*.test.ts" data-registry="/registry/identity-board.json" role="menuitem">Identity</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Secrets" data-group="secrets">
+            <div class="nav-group-label" aria-hidden="true">Secrets</div>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-registry="/registry/vault-health.json" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Registry" data-group="registry">
+            <div class="nav-group-label" aria-hidden="true">Registry</div>
+            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-domain="knowledge" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
+            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-domain="platform" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" data-registry="/registry/packages-graph-map.json" role="menuitem">Packages</a>
+            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-domain="knowledge" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-domain="knowledge" data-cli="bun run glossary:portal" data-registry="/registry/domain-glossary.json" role="menuitem">Glossary</a>
+            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" data-registry="/registry/surfaces-state.json" role="menuitem">Surfaces</a>
+            <a href="/portal/skills/" class="nav-link" title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate" data-group="registry" data-domain="knowledge" data-cli="bun run skills:validate" data-registry="/registry/harness-skills-catalog.json" role="menuitem">Skills</a>
+            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
+            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-domain="knowledge" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="More" data-group="other">
+            <div class="nav-group-label" aria-hidden="true">More</div>
+            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub · wiki-index" data-group="other" data-domain="platform" role="menuitem">Wiki</a>
+          </div>
           </div>
         </div>
       </nav>
@@ -241,6 +257,7 @@
     </header>
 
     <main class="ad-page portal-page">
+      <div data-domain-lanes="partner" hidden></div>
       <div class="portal-actions">
         <a href="/portal/partners/" data-glossary-concept="page.partners">Partners</a>
         <a href="/portal/partner-history/" data-glossary-concept="page.partnerHistory">History</a>
@@ -549,16 +566,12 @@
         accountDossierGlossaryHref,
       } from './glossary-map.js';
       import { bootGlossaryUx, scrollGlossarySectionFromUrl } from '../components/glossary-ux.js';
+      import { escHtml, renderPortalTable } from '../components/portal-ui.js';
 
       let domainGlossary = null;
 
       const $ = id => document.getElementById(id);
-      const esc = value =>
-        String(value ?? '')
-          .replaceAll('&', '&amp;')
-          .replaceAll('<', '&lt;')
-          .replaceAll('>', '&gt;')
-          .replaceAll('"', '&quot;');
+      const esc = value => escHtml(value);
 
       function money(value) {
         if (value == null || Number.isNaN(Number(value))) return '—';
@@ -676,11 +689,16 @@
           $('ad-tree').innerHTML =
             '<p class="ad-empty">No connected tree rows in the baked pattern snapshot.</p>';
         } else {
-          $('ad-tree').innerHTML = `<table class="ad-table"><thead><tr>
-            <th>Account</th><th>Role</th><th>Depth</th><th>State</th><th>ZIP</th><th>Changes</th>
-          </tr></thead><tbody>${dossier.connected
-            .map(row => {
-              const self = String(row.node_id) === dossier.accountId;
+          $('ad-tree').innerHTML = renderPortalTable(
+            [
+              { key: 'account', label: 'Account' },
+              { key: 'role', label: 'Role' },
+              { key: 'depth', label: 'Depth' },
+              { key: 'state', label: 'State' },
+              { key: 'zip', label: 'ZIP' },
+              { key: 'changes', label: 'Changes' },
+            ],
+            dossier.connected.map(row => {
               const href = buildAccountDossierHref({
                 accountId: row.node_id,
                 hours: dossier.lookbackHours,
@@ -693,20 +711,31 @@
                     : row.node_type === 'agent'
                       ? G.agent
                       : G.roleType;
-              return `<tr class="${self ? 'ad-tree-self' : ''}">
-                <td><a href="${href}" data-glossary-concept="${G.accountFilter}">${esc(row.node_name || row.node_id)}</a><div class="ad-meta ad-id">${esc(row.node_id)}</div></td>
-                <td><a class="semantic-label" href="${accountDossierGlossaryHref(roleConcept)}" data-glossary-concept="${roleConcept}">${esc(row.node_type || '—')}</a></td>
-                <td>${esc(row.downline_depth ?? 0)}</td>
-                <td>${esc(row.state_code || '—')}</td>
-                <td>${esc(row.zip_code || '—')}</td>
-                <td>${esc(row.changes ?? 0)}</td>
-              </tr>`;
-            })
-            .join('')}</tbody></table>`;
+              return [
+                {
+                  html: `<a href="${href}" data-glossary-concept="${G.accountFilter}">${esc(row.node_name || row.node_id)}</a><div class="ad-meta ad-id">${esc(row.node_id)}</div>`,
+                },
+                {
+                  html: `<a class="semantic-label" href="${accountDossierGlossaryHref(roleConcept)}" data-glossary-concept="${roleConcept}">${esc(row.node_type || '—')}</a>`,
+                },
+                row.downline_depth ?? 0,
+                row.state_code || '—',
+                row.zip_code || '—',
+                row.changes ?? 0,
+              ];
+            }),
+            {
+              className: 'ad-table',
+              rowClass: i =>
+                String(dossier.connected[i]?.node_id) === dossier.accountId
+                  ? 'ad-tree-self'
+                  : undefined,
+            }
+          );
         }
 
         const loc = dossier.location;
-        $('ad-location').innerHTML = `<table class="ad-table"><tbody>
+        $('ad-location').innerHTML = `<table class="portal-table ad-table"><tbody>
           <tr><th>State</th><td>${esc(loc.state || '—')}</td></tr>
           <tr><th>City / label</th><td>${esc(loc.city || '—')}</td></tr>
           <tr><th>ZIP</th><td>${esc(loc.zip || '—')}${loc.zipPrefix ? ` <span class="ad-meta">(prefix ${esc(loc.zipPrefix)})</span>` : ''}</td></tr>
@@ -718,64 +747,81 @@
           $('ad-traces').innerHTML =
             '<p class="ad-empty">No evidence traces on this account profile.</p>';
         } else {
-          $('ad-traces').innerHTML = `<table class="ad-table"><thead><tr>
-            <th>When</th><th>Kind</th><th>Source</th><th>Detail</th>
-          </tr></thead><tbody>${dossier.traces
-            .slice(0, 40)
-            .map(
-              t => `<tr>
-              <td class="ad-meta">${esc(t.at || '—')}</td>
-              <td>${esc(t.kind || '—')}</td>
-              <td class="ad-meta">${esc(t.source || '—')}</td>
-              <td>${esc(t.detail || '—')}</td>
-            </tr>`
-            )
-            .join('')}</tbody></table>`;
+          $('ad-traces').innerHTML = renderPortalTable(
+            [
+              { key: 'when', label: 'When' },
+              { key: 'kind', label: 'Kind' },
+              { key: 'source', label: 'Source' },
+              { key: 'detail', label: 'Detail' },
+            ],
+            dossier.traces.slice(0, 40).map(t => [
+              { html: esc(t.at || '—'), className: 'ad-meta' },
+              t.kind || '—',
+              { html: esc(t.source || '—'), className: 'ad-meta' },
+              t.detail || '—',
+            ]),
+            { className: 'ad-table' }
+          );
         }
 
         if (!dossier.policies.length) {
           $('ad-policies').innerHTML =
             '<p class="ad-empty">No jurisdiction / account policies matched this node.</p>';
         } else {
-          $('ad-policies').innerHTML = `<table class="ad-table"><thead><tr>
-            <th>Code</th><th>Label</th><th>State</th><th>Max</th><th>Risk</th>
-          </tr></thead><tbody>${dossier.policies
-            .map(
-              p => `<tr>
-              <td class="ad-id">${esc(p.policyCode || p.policyKey)}</td>
-              <td>${esc(p.label || '—')}</td>
-              <td>${esc(p.stateCode || '—')}</td>
-              <td>${money(p.maxWager)}</td>
-              <td>${esc(p.riskTier || '—')}</td>
-            </tr>`
-            )
-            .join('')}</tbody></table>`;
+          $('ad-policies').innerHTML = renderPortalTable(
+            [
+              { key: 'code', label: 'Code' },
+              { key: 'label', label: 'Label' },
+              { key: 'state', label: 'State' },
+              { key: 'max', label: 'Max' },
+              { key: 'risk', label: 'Risk' },
+            ],
+            dossier.policies.map(p => [
+              { html: esc(p.policyCode || p.policyKey), className: 'ad-id' },
+              p.label || '—',
+              p.stateCode || '—',
+              { html: money(p.maxWager) },
+              p.riskTier || '—',
+            ]),
+            { className: 'ad-table' }
+          );
         }
 
         if (!dossier.raises.length) {
           $('ad-raises').innerHTML =
             '<p class="ad-empty">No raise telemetry in this lookback window.</p>';
         } else {
-          $('ad-raises').innerHTML = `<table class="ad-table"><thead><tr>
-            <th>Book</th><th>Sport</th><th>Market</th><th>Prior→New</th><th>Score</th><th>Factors</th><th>Proof</th>
-          </tr></thead><tbody>${dossier.raises
-            .slice(0, 50)
-            .map(r => {
+          $('ad-raises').innerHTML = renderPortalTable(
+            [
+              { key: 'book', label: 'Book' },
+              { key: 'sport', label: 'Sport' },
+              { key: 'market', label: 'Market' },
+              { key: 'delta', label: 'Prior→New' },
+              { key: 'score', label: 'Score' },
+              { key: 'factors', label: 'Factors' },
+              { key: 'proof', label: 'Proof' },
+            ],
+            dossier.raises.slice(0, 50).map(r => {
               const factors = Array.isArray(r.top_contributing_factors)
                 ? r.top_contributing_factors.join(', ')
                 : '—';
               const proof = r.context_proof?.valid === true ? 'valid' : '—';
-              return `<tr>
-                <td>${esc(r.sportsbook || '—')}</td>
-                <td>${esc(r.sport_id || '—')}</td>
-                <td>${esc(r.market_id || '—')}</td>
-                <td>${money(r.previous_max)} → <strong>${money(r.new_limit)}</strong></td>
-                <td>${r.multi_factor_score != null ? Number(r.multi_factor_score).toFixed(2) : '—'}</td>
-                <td class="ad-meta">${esc(factors)}</td>
-                <td>${esc(proof)}</td>
-              </tr>`;
-            })
-            .join('')}</tbody></table>`;
+              return [
+                r.sportsbook || '—',
+                r.sport_id || '—',
+                r.market_id || '—',
+                {
+                  html: `${money(r.previous_max)} → <strong>${money(r.new_limit)}</strong>`,
+                },
+                r.multi_factor_score != null
+                  ? Number(r.multi_factor_score).toFixed(2)
+                  : '—',
+                { html: esc(factors), className: 'ad-meta' },
+                proof,
+              ];
+            }),
+            { className: 'ad-table' }
+          );
         }
 
         const card = $('ad-limit-card');
@@ -789,21 +835,28 @@
             ? `<p class="ad-empty">No outs listed for CODE <code>${esc(dossier.partnerCode)}</code> in partners-ops.</p>`
             : '<p class="ad-empty">No partner CODE resolved — outs unavailable.</p>';
         } else {
-          $('ad-outs').innerHTML = `<table class="ad-table"><thead><tr>
-            <th>Out</th><th>Book</th><th>Type</th><th>Status</th><th>Rail</th><th>Max</th>
-          </tr></thead><tbody>${dossier.outs
-            .map(o => {
+          $('ad-outs').innerHTML = renderPortalTable(
+            [
+              { key: 'out', label: 'Out' },
+              { key: 'book', label: 'Book' },
+              { key: 'type', label: 'Type' },
+              { key: 'status', label: 'Status' },
+              { key: 'rail', label: 'Rail' },
+              { key: 'max', label: 'Max' },
+            ],
+            dossier.outs.map(o => {
               const book = o.book || {};
-              return `<tr>
-                <td class="ad-id">${esc(o.id || '—')}</td>
-                <td>${esc(book.name || book.slug || '—')}</td>
-                <td>${esc(book.type || '—')}</td>
-                <td>${esc(o.status || '—')}</td>
-                <td>${esc(o.funding?.method || '—')}</td>
-                <td>${esc(o.maxBet || '—')}</td>
-              </tr>`;
-            })
-            .join('')}</tbody></table>`;
+              return [
+                { html: esc(o.id || '—'), className: 'ad-id' },
+                book.name || book.slug || '—',
+                book.type || '—',
+                o.status || '—',
+                o.funding?.method || '—',
+                o.maxBet || '—',
+              ];
+            }),
+            { className: 'ad-table' }
+          );
         }
 
         const tg = dossier.telegram || {};
@@ -827,7 +880,7 @@
             .map(step => `<li>${esc(step)}</li>`)
             .join('');
           $('ad-telegram').innerHTML = `
-            <table class="ad-table"><tbody>
+            <table class="portal-table ad-table"><tbody>
               <tr><th data-glossary-concept="${G.handshake}">Phase</th><td>${esc(tg.phase || '—')}${tg.phaseConceptId ? ` <span class="ad-meta">(${esc(tg.phaseConceptId)})</span>` : ''}</td></tr>
               <tr><th data-glossary-concept="${G.wire}">Package chat</th><td class="ad-id">${esc(tg.chatId || 'unlinked')}</td></tr>
               <tr><th data-glossary-concept="${G.handshake}">Comm ready</th><td>${tg.ready ? 'ready' : 'incomplete'} · topics ${esc(tg.topicsConfigured)}/${esc(tg.topicsRequired)}</td></tr>
@@ -835,7 +888,7 @@
               <tr><th data-glossary-concept="${G.wire}">DM seat</th><td>${esc(tg.dmSeatStatus || '—')}${tg.callSign ? ` · ${esc(tg.callSign)}` : ''}</td></tr>
               <tr><th>Invite</th><td>${tg.inviteLink ? `<a href="${esc(tg.inviteLink)}" rel="noopener" target="_blank">open invite</a>` : '—'}</td></tr>
             </tbody></table>
-            <table class="ad-table" style="margin-top:12px"><thead><tr>
+            <table class="portal-table ad-table" style="margin-top:12px"><thead><tr>
               <th>Topic</th><th>thread_id</th><th>Board</th>
             </tr></thead><tbody>${topicRows}</tbody></table>
             <p class="ad-meta" style="margin-top:10px">
@@ -887,7 +940,7 @@
               <a class="semantic-label" href="${accountDossierGlossaryHref(soft.weekConceptId || G.perWeek)}" data-glossary-concept="${soft.weekConceptId || G.perWeek}">Soft weeks</a>
               <span class="ad-meta"> · derived from plays when export.weeks empty</span>
             </h3>
-            <table class="ad-table" data-glossary-concept="${soft.weekConceptId || G.perWeek}"><thead><tr>
+            <table class="portal-table ad-table" data-glossary-concept="${soft.weekConceptId || G.perWeek}"><thead><tr>
               <th>Week (UTC Mon)</th><th>Stake Σ</th><th>|P&amp;L| settled</th><th>Net</th>
             </tr></thead><tbody>${weekRows}</tbody></table>`
               : '';
@@ -908,7 +961,7 @@
               <a class="semantic-label" href="${accountDossierGlossaryHref(soft.bookConceptId || G.perBookType)}" data-glossary-concept="${soft.bookConceptId || G.perBookType}">Soft book types</a>
               <span class="ad-meta"> · tagged plays / partners-ops primary out</span>
             </h3>
-            <table class="ad-table" data-glossary-concept="${soft.bookConceptId || G.perBookType}"><thead><tr>
+            <table class="portal-table ad-table" data-glossary-concept="${soft.bookConceptId || G.perBookType}"><thead><tr>
               <th>Book type</th><th>Stake Σ</th><th>|P&amp;L| settled</th><th>Net</th>
             </tr></thead><tbody>${bookRows}</tbody></table>`
               : '';
@@ -917,7 +970,7 @@
               <a class="semantic-label" href="${accountDossierGlossaryHref(soft.conceptId || G.perPlay)}" data-glossary-concept="${soft.conceptId || G.perPlay}">Soft plays</a>
               <span class="ad-meta"> · ${esc(soft.playCount)} · source ${esc(soft.source)}</span>
             </h3>
-            <table class="ad-table" data-glossary-concept="${soft.conceptId || G.perPlay}"><thead><tr>
+            <table class="portal-table ad-table" data-glossary-concept="${soft.conceptId || G.perPlay}"><thead><tr>
               <th>When</th><th>Play</th><th>Market</th><th>Result</th><th>Stake</th><th>P&amp;L</th>
             </tr></thead><tbody>${playRows}</tbody></table>
             ${weekBlock}
@@ -951,7 +1004,7 @@
             )
             .join('');
           $('ad-accounting').innerHTML = `
-            <table class="ad-table"><tbody>
+            <table class="portal-table ad-table"><tbody>
               <tr data-glossary-concept="${ids.summary || G.accountSummary}"><th><a class="semantic-label" href="${accountDossierGlossaryHref(ids.summary || G.accountSummary)}" data-glossary-concept="${ids.summary || G.accountSummary}">Fund status</a></th><td>${esc(acctView?.fundStatus || acct?.fundStatus || '—')}</td></tr>
               <tr data-glossary-concept="${ids.summary || G.accountSummary}"><th>Incomplete outs</th><td>${esc(acctView?.incompleteOuts ?? acct?.incompleteOuts ?? 0)}</td></tr>
               <tr data-glossary-concept="${ids.deposits || G.accountDeposits}"><th><a class="semantic-label" href="${accountDossierGlossaryHref(ids.deposits || G.accountDeposits)}" data-glossary-concept="${ids.deposits || G.accountDeposits}">Deposits</a></th><td>${esc(summary.deposits ?? '—')}</td></tr>
@@ -962,7 +1015,7 @@
             </tbody></table>
             ${
               deposits
-                ? `<table class="ad-table" style="margin-top:12px" data-glossary-concept="${ids.deposits || G.accountDeposits}"><thead><tr><th>Deposit</th><th>Amount</th><th>Rail</th></tr></thead><tbody>${deposits}</tbody></table>`
+                ? `<table class="portal-table ad-table" style="margin-top:12px" data-glossary-concept="${ids.deposits || G.accountDeposits}"><thead><tr><th>Deposit</th><th>Amount</th><th>Rail</th></tr></thead><tbody>${deposits}</tbody></table>`
                 : '<p class="ad-empty" style="margin-top:12px">No deposit rows in bake.</p>'
             }
             <div class="ad-actions">
@@ -977,7 +1030,7 @@
           $('ad-activity').innerHTML =
             '<p class="ad-empty">No handshake / ledger activity projected for this CODE yet.</p>';
         } else {
-          $('ad-activity').innerHTML = `<table class="ad-table"><thead><tr>
+          $('ad-activity').innerHTML = `<table class="portal-table ad-table"><thead><tr>
             <th>When</th><th>Kind</th><th>Detail</th>
           </tr></thead><tbody>${activity
             .map(row => {
@@ -1097,6 +1150,8 @@
       <a href="/portal/ops/">Ops</a> ·
       <a href="/portal/toc/">TOC</a> ·
       <a href="/portal/partners/">Partners</a> ·
+      <a href="/portal/tennis/">Tennis</a> ·
+      <a href="/portal/bookmakers/">Bookmakers</a> ·
       <a href="/portal/packages/">Packages</a> ·
       <a href="/portal/brands/">Brands</a> ·
       <a href="/portal/glossary/">Glossary</a> ·
@@ -1108,6 +1163,7 @@
       <a href="/portal/dod/">DOD</a> ·
       <a href="/portal/env/">Env</a> ·
       <a href="/portal/vault/">Vault</a> ·
+      <a href="https://wiki.factory-wager.com/wiki-index.html" target="_blank" rel="noopener noreferrer">Wiki</a> ·
       <a href="/registry/monorepo-health.json">Monorepo health</a> ·
       <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
     </p>

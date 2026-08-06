@@ -13,6 +13,7 @@
 | Wire boundary (full) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
 | Domain → concept → shape → surface | [DOMAIN_CONCEPT_SHAPE.md](./DOMAIN_CONCEPT_SHAPE.md) |
 | Bun capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) · [Utilities guides map](./BUN_NATIVE_CAPABILITIES.md#utilities-guides-map) |
+| Bun channel/type governance | [design/bun-channel-governance.md](./design/bun-channel-governance.md) · `bun run bun:channel:check` |
 | Docs operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) · `bun run docs:refresh` |
 | Audit findings/concepts | [audit/README.md](./audit/README.md) · `bun tools/bun-doc-refs.ts suggest --audit "<q>"` · claim `audit-findings-catalog` |
 | Import graph | [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md) |
@@ -36,6 +37,7 @@
 | Package-group handshake | [harness/tenants/partner-package-group-handshake.md](./harness/tenants/partner-package-group-handshake.md) · `telegram:handshake:readiness --deep` |
 | Seat capital desk | [harness/tenants/seat-capital-desk.md](./harness/tenants/seat-capital-desk.md) · `test:seat-desk` |
 | Partner onboard package | [harness/tenants/partner-onboarding-package.md](./harness/tenants/partner-onboarding-package.md) |
+| Partner dashboard MVP | [design/partner-dashboard-mvp.md](./design/partner-dashboard-mvp.md) · [design/partner-dashboard-mvp.toml](./design/partner-dashboard-mvp.toml) |
 | Identity / auth (Phase 0–2b) | [`../lib/identity/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/identity/README.md) |
 
 ## Cloudflare · deploy

@@ -31,6 +31,7 @@ import { sportsbookOpeningBaselineGlossaryConcepts } from '../lib/operations/spo
 import { telegramGlossaryConcepts } from '../lib/telegram/telegram-glossary.ts';
 import { partnerOpsGlossaryConcepts } from '../lib/telegram/partner-ops-glossary.ts';
 import { opsViewGlossaryConcepts } from '../lib/telegram/ops-view-glossary.ts';
+import { tournamentSeriesGlossaryConcepts } from '../lib/glossary/tournament-series-glossary.ts';
 
 describe('domain glossary portal', () => {
   test('registry projection is integral, bounded, and color-normalized', async () => {
@@ -69,7 +70,8 @@ describe('domain glossary portal', () => {
         sportsbookOpeningBaselineGlossaryConcepts().length +
         telegramGlossaryConcepts().length +
         partnerOpsGlossaryConcepts().length +
-        opsViewGlossaryConcepts().length
+        opsViewGlossaryConcepts().length +
+        tournamentSeriesGlossaryConcepts().length
     );
     expect(payload.concepts.some(c => c.id === 'telegram.wire')).toBe(true);
     expect(payload.concepts.some(c => c.id === 'accounting.free_roll')).toBe(true);

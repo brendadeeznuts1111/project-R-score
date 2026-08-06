@@ -4,6 +4,8 @@
  * @see docs/harness/tenants/monorepo-health.md (claim packages-graph-map-v13)
  */
 
+import { escHtml, renderPortalTable, renderPortalTableRows } from '../components/portal-ui.js';
+
 /** Supported bake schema for this board (pin — warn on mismatch, still try to render). */
 export const PACKAGES_MAP_SCHEMA = 13;
 /** Older bakes still render; surfaces block appears only on v13+. */
@@ -29,6 +31,34 @@ export const PACKAGES_RELATED_REGISTRY = [
 export function formatLoadError(err) {
   if (err instanceof Error) return err.message || err.name;
   return String(err);
+}
+
+/**
+ * Relative age for bake timestamps (UTC ISO or ms).
+ * @param {string|number|null|undefined} when
+ * @param {number} [nowMs]
+ */
+export function formatRelativeAge(when, nowMs = Date.now()) {
+  if (when == null || when === '') return 'unknown age';
+  const t = typeof when === 'number' ? when : Date.parse(String(when));
+  if (!Number.isFinite(t)) return 'unknown age';
+  const sec = Math.max(0, Math.round((nowMs - t) / 1000));
+  if (sec < 45) return 'just now';
+  if (sec < 3600) return `${Math.round(sec / 60)}m ago`;
+  if (sec < 86400) return `${Math.round(sec / 3600)}h ago`;
+  if (sec < 86400 * 14) return `${Math.round(sec / 86400)}d ago`;
+  return `${Math.round(sec / (86400 * 7))}w ago`;
+}
+
+/**
+ * Compact absolute stamp for tooltips (YYYY-MM-DD HH:mm UTC).
+ * @param {string|number|null|undefined} when
+ */
+export function formatBakeStamp(when) {
+  if (when == null || when === '') return '';
+  const d = new Date(typeof when === 'number' ? when : String(when));
+  if (Number.isNaN(d.getTime())) return String(when);
+  return d.toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
 }
 
 /**
@@ -99,6 +129,42 @@ export function normalizePackagesMap(raw, source) {
     raw.surfaces && typeof raw.surfaces === 'object'
       ? /** @type {Record<string, unknown>} */ (raw.surfaces)
       : null;
+  const mapActions = Array.isArray(map.actions) ? map.actions : [];
+  const openActions = Array.isArray(raw.openActions)
+    ? raw.openActions.filter(a => a && typeof a === 'object' && a.action !== 'ok')
+    : mapActions.filter(a => a && a.action !== 'ok');
+  const totals =
+    raw.totals && typeof raw.totals === 'object'
+      ? /** @type {Record<string, unknown>} */ (raw.totals)
+      : {};
+  const summary =
+    map.summary && typeof map.summary === 'object'
+      ? /** @type {Record<string, unknown>} */ (map.summary)
+      : {};
+  /** @type {Record<string, unknown>|null} */
+  let glance =
+    raw.glance && typeof raw.glance === 'object'
+      ? /** @type {Record<string, unknown>} */ (raw.glance)
+      : null;
+  if (!glance) {
+    glance = {
+      score: raw.score ?? map.score,
+      grade: raw.grade ?? map.grade,
+      packageCount: summary.packageCount ?? rows.length,
+      consumed: summary.consumed ?? 0,
+      dormant: summary.dormant ?? 0,
+      openActions: totals.openActions ?? summary.openActions ?? openActions.length,
+      avgPackageScore: totals.avgPackageScore ?? summary.avgPackageScore ?? null,
+      orphanCount: totals.orphanCount ?? 0,
+      cycleCount: totals.cycleCount ?? 0,
+      hubCount: totals.hubCount ?? 0,
+      externalEdges: totals.externalEdges ?? 0,
+      crossPackageEdges: totals.crossPackageEdges ?? 0,
+      topHub: summary.topHub ?? null,
+      surfacesPages: surfaces?.summary?.portalPages ?? null,
+      surfacesRegOrphan: surfaces?.summary?.registryOrphanFromPortal ?? null,
+    };
+  }
   return {
     source,
     schemaVersion,
@@ -110,16 +176,58 @@ export function normalizePackagesMap(raw, source) {
     bunVersion: raw.bunVersion ?? map.bunVersion ?? '',
     score: raw.score ?? map.score,
     grade: raw.grade ?? map.grade,
+    board: typeof raw.board === 'string' ? raw.board : '/portal/packages/',
+    glance,
+    totals,
+    openActions,
     map,
     packages: rows,
-    summary: map.summary && typeof map.summary === 'object' ? map.summary : {},
-    actions: Array.isArray(map.actions) ? map.actions : [],
+    summary,
+    actions: mapActions,
     archiveProbes: Array.isArray(map.archiveProbes) ? map.archiveProbes : [],
     quarantine: Array.isArray(map.quarantine) ? map.quarantine : [],
     vault: map.vault && typeof map.vault === 'object' ? map.vault : null,
     env: map.env && typeof map.env === 'object' ? map.env : null,
     surfaces,
   };
+}
+
+/**
+ * Graph-health strip HTML from glance (cycles · hubs · edges · orphans).
+ * @param {Record<string, unknown>|null|undefined} glance
+ */
+export function renderGlanceStrip(glance) {
+  if (!glance || typeof glance !== 'object') return '';
+  const n = key => {
+    const v = glance[key];
+    return typeof v === 'number' && Number.isFinite(v) ? v : 0;
+  };
+  const tone = (v, warnAt = 1) =>
+    v >= warnAt ? (v >= 5 ? 'grade-critical' : 'grade-needs-improvement') : 'grade-healthy';
+  const cell = (label, key, warnAt) => {
+    const v = n(key);
+    return (
+      `<span class="pkg-glance-cell ${tone(v, warnAt)}">` +
+      `<span class="pkg-glance-num">${v}</span>` +
+      `<span class="pkg-glance-label">${label}</span>` +
+      `</span>`
+    );
+  };
+  const hub = glance.topHub ? String(glance.topHub) : '—';
+  return (
+    `<div class="pkg-glance-strip" role="group" aria-label="Graph health glance">` +
+    cell('cycles', 'cycleCount', 1) +
+    cell('hubs', 'hubCount', 999) +
+    cell('external', 'externalEdges', 999) +
+    cell('cross-pkg', 'crossPackageEdges', 1) +
+    cell('orphans', 'orphanCount', 1) +
+    cell('open', 'openActions', 1) +
+    `<span class="pkg-glance-cell pkg-glance-hub" title="top external hub">` +
+    `<span class="pkg-glance-num">${escapeHtml(hub)}</span>` +
+    `<span class="pkg-glance-label">top hub</span>` +
+    `</span>` +
+    `</div>`
+  );
 }
 
 /**
@@ -820,21 +928,74 @@ export function normalizePublishPlaneRow(proof, fallbacks) {
  * HTML table for publish-plane soft-pass rows.
  * @param {ReturnType<typeof normalizePublishPlaneRow>[]} rows
  */
+/**
+ * Soft-pass KPI cards (above the detail table).
+ * @param {ReturnType<typeof normalizePublishPlaneRow>[]} rows
+ */
+export function renderPublishPlaneCards(rows) {
+  if (!rows.length) return '';
+  return rows
+    .map(r => {
+      const statusClass =
+        r.status === 'pass' ? 'grade-healthy' : r.status === 'fail' ? 'grade-critical' : 'pkg-empty';
+      const mark = r.status === 'pass' ? 'pass' : r.status === 'fail' ? 'fail' : 'missing';
+      const counts = r.missing
+        ? 'missing bake'
+        : `${r.passed}/${r.total}` +
+          (r.skipped ? ` · ${r.skipped} skipped` : '') +
+          (r.failed && r.failed !== 0 && r.failed !== '—' ? ` · ${r.failed} failed` : '');
+      const jsonHref = r.reportPath || `/registry/${r.artifactId}.json`;
+      const swatch = r.colorHex
+        ? `<span class="pkg-color-swatch" style="background:${escapeHtml(r.colorHex)}" title="${escapeHtml(r.colorToken || r.colorKey)}"></span>`
+        : '';
+      const tennisHint =
+        r.packageLabel && String(r.packageLabel).includes('tennis-hq')
+          ? ` · <a href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer">Market Desk</a>`
+          : '';
+      return (
+        `<article class="publish-kpi-card" data-status="${escapeHtml(String(r.status))}" data-artifact-id="${escapeHtml(r.artifactId)}">` +
+        `<div class="kpi-title">` +
+        `<span>${swatch}${escapeHtml(r.artifactName)}</span>` +
+        `<span class="${statusClass}">${escapeHtml(mark)}</span>` +
+        `</div>` +
+        `<div class="kpi-meta"><code>${escapeHtml(r.artifactId)}</code> · ${escapeHtml(String(counts))} · mode <code>${escapeHtml(r.mode)}</code></div>` +
+        `<div class="kpi-meta">${escapeHtml(r.packageLabel || '—')}${tennisHint}</div>` +
+        `<div class="kpi-actions">` +
+        `<a class="pkg-chip" href="${escapeHtml(jsonHref)}">json</a>` +
+        `<button type="button" class="copy-cli" data-cli="${escapeHtml(r.cli)}">copy CLI</button>` +
+        `</div>` +
+        `</article>`
+      );
+    })
+    .join('');
+}
+
 export function renderPublishPlaneTable(rows) {
   if (!rows.length) {
     return '<p class="pkg-empty">No soft-pass proofs — <code>bun run ssot:flow:soft</code> · <code>bun run verify:pm:save</code></p>';
   }
-  const body = rows
-    .map(r => {
+  const cols = [
+    { key: 'name', label: 'artifactName' },
+    { key: 'id', label: 'artifactId' },
+    { key: 'color', label: 'colorKey' },
+    { key: 'mode', label: 'mode' },
+    { key: 'status', label: 'status' },
+    { key: 'summary', label: 'summary' },
+    { key: 'detail', label: 'detail' },
+    { key: 'json', label: 'json' },
+    { key: 'cli', label: 'cli' },
+  ];
+  return renderPortalTable(
+    cols,
+    rows.map(r => {
       const statusClass =
         r.status === 'pass' ? 'grade-healthy' : r.status === 'fail' ? 'grade-critical' : 'pkg-empty';
       const mark = r.status === 'pass' ? '✅' : r.status === 'fail' ? '❌' : '—';
-      const counts =
-        r.missing
-          ? 'missing bake'
-          : `${r.passed}/${r.total}` +
-            (r.skipped ? ` · ${r.skipped} skipped` : '') +
-            (r.failed && r.failed !== 0 && r.failed !== '—' ? ` · ${r.failed} failed` : '');
+      const counts = r.missing
+        ? 'missing bake'
+        : `${r.passed}/${r.total}` +
+          (r.skipped ? ` · ${r.skipped} skipped` : '') +
+          (r.failed && r.failed !== 0 && r.failed !== '—' ? ` · ${r.failed} failed` : '');
       const detail = r.tarballPath
         ? `<code>${escapeHtml(r.tarballPath)}</code>${r.sha256 ? ` · sha256 ${escapeHtml(r.sha256)}…` : ''}`
         : escapeHtml(r.packageLabel);
@@ -850,26 +1011,34 @@ export function renderPublishPlaneTable(rows) {
         ? `<span class="pkg-color-swatch" style="background:${escapeHtml(r.modeColorHex || 'transparent')}"></span>` +
           `<code>${escapeHtml(r.mode)}</code>/<code>${escapeHtml(r.modeColorKey)}</code>`
         : escapeHtml(r.mode);
-      return (
-        `<tr data-artifact-id="${escapeHtml(r.artifactId)}" data-concept-id="${escapeHtml(r.conceptId)}" data-color-key="${escapeHtml(r.colorKey)}">` +
-        `<td>${escapeHtml(r.artifactName)}</td>` +
-        `<td><code>${escapeHtml(r.artifactId)}</code></td>` +
-        `<td>${colorCell}</td>` +
-        `<td>${modeCell}</td>` +
-        `<td class="${statusClass}">${mark} ${escapeHtml(String(r.status))}</td>` +
-        `<td>${escapeHtml(String(counts))}</td>` +
-        `<td>${detail}</td>` +
-        `<td><a href="${escapeHtml(jsonHref)}"><code>${escapeHtml(r.artifactId)}.json</code></a></td>` +
-        `<td><button type="button" class="copy-cli" data-cli="${escapeHtml(r.cli)}">copy CLI</button></td>` +
-        `</tr>`
-      );
-    })
-    .join('');
-  return (
-    `<table class="pkg-table" aria-label="Publish plane soft-pass artifacts">` +
-    `<thead><tr>` +
-    `<th>artifactName</th><th>artifactId</th><th>colorKey</th><th>mode</th><th>status</th><th>summary</th><th>detail</th><th>json</th><th>cli</th>` +
-    `</tr></thead><tbody>${body}</tbody></table>`
+      return [
+        r.artifactName,
+        { html: `<code>${escapeHtml(r.artifactId)}</code>` },
+        { html: colorCell },
+        { html: modeCell },
+        {
+          html: `${mark} ${escapeHtml(String(r.status))}`,
+          className: statusClass,
+        },
+        String(counts),
+        { html: detail },
+        {
+          html: `<a href="${escapeHtml(jsonHref)}"><code>${escapeHtml(r.artifactId)}.json</code></a>`,
+        },
+        {
+          html: `<button type="button" class="copy-cli" data-cli="${escapeHtml(r.cli)}">copy CLI</button>`,
+        },
+      ];
+    }),
+    {
+      className: 'pkg-table',
+      tableAttrs: { 'aria-label': 'Publish plane soft-pass artifacts' },
+      rowAttrs: i => ({
+        'data-artifact-id': String(rows[i]?.artifactId || ''),
+        'data-concept-id': String(rows[i]?.conceptId || ''),
+        'data-color-key': String(rows[i]?.colorKey || ''),
+      }),
+    }
   );
 }
 
@@ -988,9 +1157,29 @@ export async function loadPublishPlaneSoftPass(doc = document) {
       '<p class="meta">Weave: missing <code>portal-weave.json</code> — rebake via ops:snapshot / compliance:bake</p>';
   }
 
+  const kpiHost = doc.getElementById('publish-plane-kpis');
+  if (kpiHost) {
+    kpiHost.innerHTML = renderPublishPlaneCards(rows);
+    bindCopyButtons(kpiHost);
+  }
+
   if (host) {
     host.innerHTML = renderPublishPlaneTable(rows) + weaveNote;
     bindCopyButtons(host);
+  }
+
+  const ageEl = doc.getElementById('publish-plane-age');
+  if (ageEl) {
+    const stamps = [ssot?.timestamp, ssot?.generatedAt, pm?.timestamp, pm?.generatedAt]
+      .map(v => (v == null ? NaN : Date.parse(String(v))))
+      .filter(n => Number.isFinite(n));
+    if (stamps.length) {
+      const newest = Math.max(...stamps);
+      ageEl.textContent = `newest bake ${formatRelativeAge(newest)} · ${formatBakeStamp(newest)}`;
+      ageEl.title = stamps.map(t => formatBakeStamp(t)).join(' · ');
+    } else {
+      ageEl.textContent = 'bake age unknown';
+    }
   }
 
   // Keep hidden meta nodes for older tests / scrapers.
@@ -1294,6 +1483,96 @@ export function summarizePackageRoles(packages) {
   return { roles, grades, orphanFiles, count: (packages || []).length };
 }
 
+/**
+ * Render stacked role mix bar from package roles summary.
+ * @param {ReturnType<typeof summarizePackageRoles>} breakdown
+ * @param {Document} [doc]
+ */
+export function renderRoleMixBar(breakdown, doc = document) {
+  const root = doc.getElementById('pkg-role-mix');
+  const track = doc.getElementById('pkg-role-mix-track');
+  const legend = doc.getElementById('pkg-role-mix-legend');
+  const label = doc.getElementById('pkg-role-mix-label');
+  if (!root || !track || !legend) return;
+  const total = Math.max(1, breakdown.count || 0);
+  const order = [
+    ['consumed', 'mix-consumed', breakdown.roles.consumed],
+    ['dormant', 'mix-dormant', breakdown.roles.dormant],
+    ['root-tooling', 'mix-root-tooling', breakdown.roles['root-tooling']],
+    ['scripted', 'mix-scripted', breakdown.roles.scripted],
+    ['other', 'mix-other', breakdown.roles.other],
+  ];
+  const parts = order.filter(([, , n]) => n > 0);
+  if (!parts.length) {
+    root.hidden = true;
+    return;
+  }
+  root.hidden = false;
+  track.innerHTML = parts
+    .map(([, cls, n]) => {
+      const pct = Math.max(2, Math.round((n / total) * 100));
+      return `<span class="${cls}" style="width:${pct}%" title="${n}"></span>`;
+    })
+    .join('');
+  legend.innerHTML = parts
+    .map(([name, cls, n]) => {
+      const color =
+        cls === 'mix-consumed'
+          ? 'var(--green, #3dd68c)'
+          : cls === 'mix-dormant'
+            ? 'var(--yellow, #e6b84d)'
+            : cls === 'mix-scripted'
+              ? 'var(--accent, #58a6ff)'
+              : 'var(--text-dim)';
+      return `<span><i style="background:${color}"></i>${escapeHtml(name)} ${n}</span>`;
+    })
+    .join('');
+  if (label) {
+    label.textContent = `${breakdown.count} packages · ${breakdown.roles.consumed} consumed · ${breakdown.roles.dormant} dormant`;
+  }
+}
+
+/**
+ * Sort package rows for the coupling table.
+ * @param {Array<Record<string, unknown>>} packages
+ * @param {string} sortKey
+ */
+export function sortPackageRows(packages, sortKey) {
+  const rows = [...(packages || [])].filter(p => p && typeof p === 'object');
+  const nameOf = p => String(p.name || p.package || '');
+  const scoreOf = p => (typeof p.score === 'number' ? p.score : -1);
+  const bytesOf = p => (typeof p.bytes === 'number' ? p.bytes : 0);
+  rows.sort((a, b) => {
+    if (sortKey === 'score-desc') return scoreOf(b) - scoreOf(a) || nameOf(a).localeCompare(nameOf(b));
+    if (sortKey === 'score-asc') return scoreOf(a) - scoreOf(b) || nameOf(a).localeCompare(nameOf(b));
+    if (sortKey === 'role') {
+      return (
+        String(a.role || '').localeCompare(String(b.role || '')) || nameOf(a).localeCompare(nameOf(b))
+      );
+    }
+    if (sortKey === 'size-desc') return bytesOf(b) - bytesOf(a) || nameOf(a).localeCompare(nameOf(b));
+    return nameOf(a).localeCompare(nameOf(b));
+  });
+  return rows;
+}
+
+/**
+ * Filter package rows by free-text (name / role).
+ * @param {Array<Record<string, unknown>>} packages
+ * @param {string} q
+ */
+export function filterPackageRows(packages, q) {
+  const needle = String(q || '')
+    .trim()
+    .toLowerCase();
+  if (!needle) return packages || [];
+  return (packages || []).filter(p => {
+    if (!p || typeof p !== 'object') return false;
+    const hay = `${p.name || p.package || ''} ${p.role || ''} ${p.grade || ''}`.toLowerCase();
+    return hay.includes(needle);
+  });
+}
+
 function renderPackagesBoard(data, doc = document) {
   const summary = data.summary ?? {};
   const boardGrade = gradeFromScore(data.score);
@@ -1301,9 +1580,17 @@ function renderPackagesBoard(data, doc = document) {
   const scoreEl = doc.getElementById('s-score');
   setText(scoreEl, data.score != null ? String(data.score) : '—');
   if (scoreEl) {
-    scoreEl.className = `stat-num grade-${boardGrade}`;
+    scoreEl.className = `v grade-${boardGrade}`;
     scoreEl.title = data.grade ? String(data.grade) : boardGrade;
   }
+  const pill = doc.getElementById('board-grade-pill');
+  const pillScore = doc.getElementById('pill-score');
+  const pillGrade = doc.getElementById('pill-grade');
+  if (pill) {
+    pill.className = `portal-gate pkg-grade-pill grade-${boardGrade}`;
+  }
+  setText(pillScore, data.score != null ? String(data.score) : '—');
+  setText(pillGrade, data.grade ? String(data.grade) : boardGrade);
   setText(
     doc.getElementById('s-avg'),
     summary.avgPackageScore != null ? String(summary.avgPackageScore) : '—'
@@ -1318,6 +1605,26 @@ function renderPackagesBoard(data, doc = document) {
     doc.getElementById('s-pkg-count'),
     summary.packageCount != null ? String(summary.packageCount) : String(breakdown.count)
   );
+  setText(
+    doc.getElementById('s-score-sub'),
+    `${data.schemaVersion != null ? `schema v${data.schemaVersion}` : 'schema ?'} · ${formatRelativeAge(data.generatedAt)}`
+  );
+  setText(
+    doc.getElementById('s-actions-sub'),
+    summary.openActions
+      ? `${summary.openActions} open · review archive candidates`
+      : 'no open actions'
+  );
+  setText(
+    doc.getElementById('s-pkg-sub'),
+    `${breakdown.roles.consumed} consumed · ${breakdown.roles.dormant} dormant`
+  );
+  renderRoleMixBar(breakdown, doc);
+  const glanceHost = doc.getElementById('pkg-glance');
+  if (glanceHost) {
+    glanceHost.innerHTML = renderGlanceStrip(data.glance);
+    glanceHost.hidden = !glanceHost.innerHTML;
+  }
   // Optional legacy cards if present in older HTML
   setText(
     doc.getElementById('s-archive'),
@@ -1369,10 +1676,15 @@ function renderPackagesBoard(data, doc = document) {
             ? `schema invalid (degraded; rebake required for v${PACKAGES_MAP_SCHEMA})`
             : `schema ${data.schemaVersion} unsupported (degraded; board pins v${PACKAGES_MAP_SCHEMA})`;
   const gradeNote = data.grade ? ` · ${data.grade}` : '';
+  const ageNote = data.generatedAt ? ` · ${formatRelativeAge(data.generatedAt)}` : '';
+  const genEl = doc.getElementById('gen-meta');
   setText(
-    doc.getElementById('gen-meta'),
-    `${data.generatedAt || 'unknown time'} · bun ${data.bunVersion || '?'} · ${schemaNote}${gradeNote} · ${data.source}`
+    genEl,
+    `${data.generatedAt || 'unknown time'}${ageNote} · bun ${data.bunVersion || '?'} · ${schemaNote}${gradeNote} · ${data.source}`
   );
+  if (genEl && data.generatedAt) {
+    genEl.title = formatBakeStamp(data.generatedAt);
+  }
 
   // Interactive dependency graph (SVG, zero CDN) from packageEdges + externalEdges
   renderDependencyGraph(data, doc);
@@ -1469,63 +1781,145 @@ function renderPackagesBoard(data, doc = document) {
   void loadPackageInfoRelated(doc);
   void loadPublishPlaneSoftPass(doc);
 
-  const body = doc.getElementById('pkg-body');
-  if (body) {
+  const paintPackageTable = () => {
+    const body = doc.getElementById('pkg-body');
+    const countEl = doc.getElementById('pkg-table-count');
+    if (!body) return;
     body.replaceChildren();
-    if (!data.packages.length) {
-      const tr = doc.createElement('tr');
-      tr.innerHTML = `<td colspan="5" class="pkg-empty">No package rows in bake</td>`;
-      body.appendChild(tr);
-    } else {
-      // Sort: critical / needs-improvement first, then name
-      const rows = [...data.packages].sort((a, b) => {
+    const searchEl = doc.getElementById('pkg-search');
+    const sortEl = doc.getElementById('pkg-sort');
+    const q = searchEl?.value || '';
+    const sortKey = sortEl?.value || 'score-desc';
+    let rows = filterPackageRows(data.packages, q);
+    rows = sortPackageRows(rows, sortKey);
+    // When no explicit sort preference beyond default score-desc, keep grade-first for ops
+    if (sortKey === 'score-desc' && !q) {
+      rows = [...rows].sort((a, b) => {
         const ga = gradeFromScore(a.score);
         const gb = gradeFromScore(b.score);
         const rank = g =>
           g === 'critical' ? 0 : g === 'needs-improvement' ? 1 : g === 'healthy' ? 2 : 3;
         return (
           rank(ga) - rank(gb) ||
+          (typeof b.score === 'number' ? b.score : -1) -
+            (typeof a.score === 'number' ? a.score : -1) ||
           String(a.name ?? a.package).localeCompare(String(b.name ?? b.package))
         );
       });
-      for (const p of rows) {
-        const tr = doc.createElement('tr');
+    }
+    if (countEl) {
+      countEl.textContent = `${rows.length} of ${data.packages.length} packages`;
+    }
+    if (!data.packages.length) {
+      body.innerHTML = renderPortalTableRows(
+        [
+          { key: 'n', label: 'Name' },
+          { key: 'r', label: 'Role' },
+          { key: 's', label: 'Score' },
+          { key: 'o', label: 'Orphans' },
+          { key: 'b', label: 'KB' },
+        ],
+        [],
+        { emptyMessage: 'No package rows in bake' }
+      );
+      return;
+    }
+    if (!rows.length) {
+      body.innerHTML = renderPortalTableRows(
+        [
+          { key: 'n', label: 'Name' },
+          { key: 'r', label: 'Role' },
+          { key: 's', label: 'Score' },
+          { key: 'o', label: 'Orphans' },
+          { key: 'b', label: 'KB' },
+        ],
+        [],
+        { emptyMessage: `No packages match “${q}”` }
+      );
+      return;
+    }
+    const PKG_COLS = [
+      { key: 'n', label: 'Name' },
+      { key: 'r', label: 'Role' },
+      { key: 's', label: 'Score' },
+      { key: 'o', label: 'Orphans' },
+      { key: 'b', label: 'KB' },
+    ];
+    body.innerHTML = renderPortalTableRows(
+      PKG_COLS,
+      rows.map(p => {
         const role = p.role ?? '—';
         const name = p.name ?? p.package ?? '—';
         const bytes = typeof p.bytes === 'number' ? (p.bytes / 1024).toFixed(1) : '—';
         const g = gradeFromScore(p.score);
-        tr.dataset.pkg = String(name);
-        tr.dataset.role = String(role);
-        tr.dataset.grade = g;
-        tr.setAttribute('data-grade', g);
-        tr.tabIndex = 0;
-        tr.setAttribute('aria-label', `Focus package ${String(name)} in dependency graph`);
-        tr.setAttribute('aria-selected', 'false');
-        tr.classList.add('pkg-row-clickable');
-        tr.innerHTML = `<td>${escapeHtml(String(name))}</td><td class="role role-${classToken(role)}">${escapeHtml(String(role))}</td><td class="grade-${g}">${p.score ?? '—'}</td><td>${p.orphans ?? 0}</td><td>${bytes}</td>`;
-        const activateRow = () => {
-          const graphHost = doc.getElementById('pkg-dep-graph');
-          if (!graphHost) return;
-          graphHost._pkgFocusId = String(name);
-          // re-render graph with focus
-          renderDependencyGraph(data, doc);
-          doc.querySelectorAll('#pkg-body tr.pkg-row-selected').forEach(r => {
-            r.classList.remove('pkg-row-selected');
-            r.setAttribute('aria-selected', 'false');
-          });
-          tr.classList.add('pkg-row-selected');
-          tr.setAttribute('aria-selected', 'true');
-        };
-        tr.addEventListener('click', activateRow);
-        tr.addEventListener('keydown', event => {
-          if (!isKeyboardActivationKey(event.key)) return;
-          event.preventDefault();
-          activateRow();
-        });
-        body.appendChild(tr);
+        return [
+          String(name),
+          {
+            html: escapeHtml(String(role)),
+            className: `role role-${classToken(role)}`,
+          },
+          {
+            html: String(p.score ?? '—'),
+            className: `grade-${g}`,
+          },
+          p.orphans ?? 0,
+          bytes,
+        ];
+      }),
+      {
+        rowClass: () => 'pkg-row-clickable',
+        rowAttrs: i => {
+          const p = rows[i];
+          const role = p?.role ?? '—';
+          const name = p?.name ?? p?.package ?? '—';
+          const g = gradeFromScore(p?.score);
+          return {
+            'data-pkg': String(name),
+            'data-role': String(role),
+            'data-grade': g,
+            tabindex: '0',
+            'aria-label': `Focus package ${String(name)} in dependency graph`,
+            'aria-selected': 'false',
+          };
+        },
       }
+    );
+    for (const tr of body.querySelectorAll('tr.pkg-row-clickable')) {
+      const name = tr.getAttribute('data-pkg') || '';
+      const activateRow = () => {
+        const graphHost = doc.getElementById('pkg-dep-graph');
+        if (!graphHost) return;
+        graphHost._pkgFocusId = String(name);
+        renderDependencyGraph(data, doc);
+        doc.querySelectorAll('#pkg-body tr.pkg-row-selected').forEach(r => {
+          r.classList.remove('pkg-row-selected');
+          r.setAttribute('aria-selected', 'false');
+        });
+        tr.classList.add('pkg-row-selected');
+        tr.setAttribute('aria-selected', 'true');
+      };
+      tr.addEventListener('click', activateRow);
+      tr.addEventListener('keydown', event => {
+        if (!isKeyboardActivationKey(event.key)) return;
+        event.preventDefault();
+        activateRow();
+      });
     }
+  };
+
+  paintPackageTable();
+
+  const searchEl = doc.getElementById('pkg-search');
+  const sortEl = doc.getElementById('pkg-sort');
+  if (searchEl && searchEl.dataset.bound !== '1') {
+    searchEl.dataset.bound = '1';
+    searchEl.addEventListener('input', () => paintPackageTable());
   }
+  if (sortEl && sortEl.dataset.bound !== '1') {
+    sortEl.dataset.bound = '1';
+    sortEl.addEventListener('change', () => paintPackageTable());
+  }
+
   // re-apply role/grade filters if user had them selected
   const graphHost = doc.getElementById('pkg-dep-graph');
   if (graphHost) {
@@ -1574,7 +1968,10 @@ function renderPackagesBoard(data, doc = document) {
 
   const actionList = doc.getElementById('action-list');
   if (actionList) {
-    const actions = data.actions.filter(a => a.action !== 'ok');
+    const actions = Array.isArray(data.openActions)
+      ? data.openActions
+      : data.actions.filter(a => a.action !== 'ok');
+    const okOmitted = Math.max(0, (data.actions || []).length - actions.length);
     actionList.innerHTML = actions.length
       ? actions
           .map(a => {
@@ -1584,7 +1981,10 @@ function renderPackagesBoard(data, doc = document) {
               : '';
             return `<li><code>${escapeHtml(a.package)}</code> · <strong>${escapeHtml(a.action)}</strong> — ${escapeHtml(a.reason)}${hintHtml}</li>`;
           })
-          .join('')
+          .join('') +
+        (okOmitted
+          ? `<li class="meta">${okOmitted} ok action${okOmitted === 1 ? '' : 's'} omitted</li>`
+          : '')
       : '<li>None — coupling aligned</li>';
   }
 
@@ -1674,7 +2074,7 @@ function renderPackagesBoardError(err, doc = document) {
   setText(doc.getElementById('s-inject'), '—');
   setText(doc.getElementById('hub'), '—');
   const scoreEl = doc.getElementById('s-score');
-  if (scoreEl) scoreEl.className = 'stat-num';
+  if (scoreEl) scoreEl.className = 'v';
 
   const body = doc.getElementById('pkg-body');
   if (body) {
@@ -1705,23 +2105,16 @@ function renderPackagesBoardError(err, doc = document) {
   }
 }
 
-/**
- * @param {string} s
- */
+/** Prefer shared portal-ui escHtml (kept as escapeHtml for local call sites). */
 function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+  return escHtml(s);
 }
 
 /**
  * @param {string} s
  */
 function escapeAttribute(s) {
-  return escapeHtml(s);
+  return escHtml(s);
 }
 
 /**

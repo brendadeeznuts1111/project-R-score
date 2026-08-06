@@ -20,11 +20,8 @@ const CHART_COLORS = {
   barBg: '#e5e7eb',
 };
 
-function esc(s: any): string {
-  return String(s ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+function esc(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 // ── Chart: Limit changes overview ─────────────────────────────────────────
@@ -49,6 +46,8 @@ export function generateLimitChartSvg(data: {
   };
   /** ISO timestamp for footer (tests pass a fixed value for stable snapshots). */
   generatedAt?: string;
+  /** Runtime label override for deterministic tests; defaults to the active Bun version. */
+  bunVersion?: string;
 }): string {
   const lines: string[] = [];
   let y = 25;
@@ -69,7 +68,7 @@ export function generateLimitChartSvg(data: {
     data.avgScore != null ? `Avg score: ${(data.avgScore * 100).toFixed(0)}%` : null,
     `Books: ${data.books}`,
     `Partners: ${data.partners}`,
-  ].filter(Boolean);
+  ].filter((metric): metric is string => metric !== null);
 
   for (const m of metrics) {
     lines.push(
@@ -143,7 +142,7 @@ export function generateLimitChartSvg(data: {
   y += 18;
   const generatedAt = data.generatedAt ?? new Date().toISOString().slice(0, 19);
   lines.push(
-    `<text x="${leftX}" y="${y}" font-family="system-ui" font-size="10" fill="${CHART_COLORS.dim}">Generated: ${esc(generatedAt)} | Bun ${Bun.version}</text>`
+    `<text x="${leftX}" y="${y}" font-family="system-ui" font-size="10" fill="${CHART_COLORS.dim}">Generated: ${esc(generatedAt)} | Bun ${esc(data.bunVersion ?? Bun.version)}</text>`
   );
 
   const svg = [

@@ -25,8 +25,10 @@ const MUST_INCLUDE_BUN = [
   'tsconfig.lint.json',
   'tools/tsconfig.json',
   'tests/tsconfig.branded.json',
-  'tests/tsconfig.snapshot.json',
+  'tests/tsconfig.bun-native-comprehensive.json',
 ] as const;
+
+const GENERATED_BUN_CONFIGS = ['tests/tsconfig.snapshot.json'] as const;
 
 async function readJson(rel: string): Promise<Record<string, unknown>> {
   const path = joinPath(ROOT, rel);
@@ -53,6 +55,16 @@ describe('TypeScript 6+ bun types (tsconfig)', () => {
 
   test('primary tsconfigs list types: ["bun"]', async () => {
     for (const rel of MUST_INCLUDE_BUN) {
+      const cfg = await readJson(rel);
+      const types = typesArray(cfg);
+      expect(types, `${rel} must set compilerOptions.types`).not.toBeNull();
+      expect(types, `${rel} must include "bun"`).toContain('bun');
+    }
+  });
+
+  test('generated tsconfigs include bun types when present', async () => {
+    for (const rel of GENERATED_BUN_CONFIGS) {
+      if (!(await Bun.file(joinPath(ROOT, rel)).exists())) continue;
       const cfg = await readJson(rel);
       const types = typesArray(cfg);
       expect(types, `${rel} must set compilerOptions.types`).not.toBeNull();
@@ -106,5 +118,5 @@ describe('tsconfig-types-audit helpers', () => {
     expect(monorepoRisk).toEqual([]);
     expect(summary.bunOk).toBeGreaterThan(0);
     expect(summary.emitClean).toBeGreaterThanOrEqual(1);
-  });
+  }, 15_000);
 });

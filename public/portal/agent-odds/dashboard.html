@@ -1,0 +1,777 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bun Agent – Live Odds Intelligence v1.01</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0b0e14;
+      color: #e8edf5;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      padding: 24px;
+    }
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    h1 small {
+      font-size: 14px;
+      font-weight: 400;
+      color: #7a8ba3;
+    }
+    .subhead {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      color: #7a8ba3;
+      border-bottom: 1px solid #1e2630;
+      padding-bottom: 12px;
+      font-size: 14px;
+      gap: 8px;
+    }
+    .badge {
+      background: #1e2630;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #b6c8e0;
+      display: inline-block;
+    }
+    .badge .highlight {
+      color: #5fc3f4;
+      font-weight: 500;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 1024px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .card {
+      background: #131b24;
+      border-radius: 16px;
+      border: 1px solid #1e2834;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .card-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid #1e2834;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 500;
+      font-size: 15px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .card-header .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .card-body {
+      padding: 16px 20px 20px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th {
+      text-align: left;
+      padding: 10px 8px;
+      color: #7a8ba3;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #1e2834;
+      white-space: nowrap;
+    }
+    td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #1a212a;
+      vertical-align: middle;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    .host-cell {
+      font-weight: 500;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .status-online { background: #1a3a2a; color: #6fcf97; }
+    .status-offline { background: #3a1a1a; color: #f28b82; }
+    .status-pending { background: #2a2a1a; color: #f9ca7f; }
+    .tag {
+      display: inline-block;
+      background: #1e2834;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      margin-right: 4px;
+      color: #b6c8e0;
+    }
+    .btn {
+      background: #1e2834;
+      border: none;
+      color: #e8edf5;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover {
+      background: #2a3644;
+    }
+    .btn-primary {
+      background: #2a6f9c;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #3a8fc4;
+    }
+    .btn-success {
+      background: #1f6e43;
+      color: #fff;
+    }
+    .btn-success:hover {
+      background: #2a8f55;
+    }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #1e2834;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 4px 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #5fc3f4;
+      width: 0%;
+      transition: width 0.3s;
+    }
+    .thumb {
+      width: 48px;
+      height: 48px;
+      background: #1a212a;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #7a8ba3;
+      overflow: hidden;
+    }
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .live-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .live-item {
+      background: #0e1620;
+      border-radius: 10px;
+      padding: 10px 14px;
+      border-left: 3px solid #2a6f9c;
+      font-size: 13px;
+    }
+    .live-item .meta {
+      display: flex;
+      justify-content: space-between;
+      color: #7a8ba3;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+    .signal {
+      background: #1a2a2a;
+      color: #6fcf97;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .signal-warning { background: #2a2a1a; color: #f9ca7f; }
+    .signal-danger { background: #2a1a1a; color: #f28b82; }
+    .empty-state {
+      color: #7a8ba3;
+      text-align: center;
+      padding: 30px 0;
+      font-size: 14px;
+    }
+    .flex {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .mt-2 { margin-top: 8px; }
+    .text-muted { color: #7a8ba3; font-size: 12px; }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      background: #131b24;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid #1e2834;
+      align-items: center;
+    }
+    .filter-bar select {
+      background: #1e2834;
+      color: #e8edf5;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .filter-bar select:focus {
+      outline: 1px solid #2a6f9c;
+    }
+    .filter-bar button {
+      background: #2a6f9c;
+      border: none;
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .filter-bar button:hover {
+      background: #3a8fc4;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 13px;
+    }
+    .stats-row .stat-box {
+      background: #0e1620;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid #1e2834;
+    }
+    .stats-row .stat-box strong {
+      color: #5fc3f4;
+    }
+
+    .pill {
+      display: inline-block;
+      background: #1a212a;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      color: #b6c8e0;
+      margin-right: 4px;
+    }
+
+    /* Scroll styling */
+    .live-panel::-webkit-scrollbar {
+      width: 4px;
+    }
+    .live-panel::-webkit-scrollbar-track {
+      background: #0e1620;
+    }
+    .live-panel::-webkit-scrollbar-thumb {
+      background: #2a3644;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <h1>
+    🧠 Bun Agent
+    <small>Live Odds Intelligence v1.01 · Market Type &amp; Sport Drill‑down</small>
+  </h1>
+  <div class="subhead">
+    <span>📍 <span class="highlight">Hardrock.bet</span> · Bet365 · Stake.com · <span id="bookCount">15</span> monitored books</span>
+    <span>
+      <span class="badge">⚡ HTTP/2 multiplexed</span>
+      <span class="badge">📦 Gzip + ETag</span>
+      <span class="badge">🔐 X-API-Key</span>
+      <span class="badge">🖥️ Bun 1.3.14</span>
+    </span>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <select id="filterHost"><option value="">All Bookmakers</option></select>
+    <select id="filterSport"><option value="">All Sports</option></select>
+    <select id="filterLeague"><option value="">All Leagues</option></select>
+    <select id="filterMarketType"><option value="">All Markets</option></select>
+    <select id="filterSession"><option value="">All Sessions</option></select>
+    <button id="applyFilters">Apply Filters</button>
+    <span style="margin-left:auto; font-size:13px; color:#7a8ba3;" id="resultCount">0 rows</span>
+  </div>
+
+  <!-- STATS ROW -->
+  <div class="stats-row" id="statsRow" style="margin-bottom:16px;">
+    <div class="stat-box">🏀 <strong id="statBasketball">0</strong> Basketball</div>
+    <div class="stat-box">⚽ <strong id="statFootball">0</strong> Football</div>
+    <div class="stat-box">🎾 <strong id="statTennis">0</strong> Tennis</div>
+    <div class="stat-box">🏒 <strong id="statHockey">0</strong> Hockey</div>
+    <div class="stat-box">⚾ <strong id="statBaseball">0</strong> Baseball</div>
+    <div class="stat-box">🏈 <strong id="statFootballAmerican">0</strong> American Football</div>
+    <div class="stat-box">📊 <strong id="statMarkets">0</strong> total markets</div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="grid">
+
+    <!-- LEFT COLUMN: FILTERED ODDS TABLE -->
+    <div>
+      <div class="card">
+        <div class="card-header">
+          <span>📊 Filtered Odds</span>
+          <div class="actions">
+            <button class="btn btn-sm" id="refreshOdds">↻ Refresh</button>
+            <button class="btn btn-sm" id="clearFilters">✕ Clear Filters</button>
+          </div>
+        </div>
+        <div class="card-body" id="oddsTableContainer">
+          <div class="empty-state">Apply filters to see odds data.</div>
+        </div>
+      </div>
+
+      <!-- ENRICHMENT LOG (compact) -->
+      <div class="card">
+        <div class="card-header">
+          <span>⚡ Enrichment Pipeline</span>
+          <span class="text-muted" id="enrichStatus">Idle</span>
+        </div>
+        <div class="card-body" id="enrichLog" style="max-height:160px; overflow-y:auto;">
+          <div class="empty-state">No enrichment tasks running.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: LIVE FEED + EDGES + STATUS -->
+    <div>
+
+      <!-- LIVE ODDS MOVEMENTS -->
+      <div class="card">
+        <div class="card-header">
+          <span>🔴 Live Odds Movements</span>
+          <span class="badge" id="liveCounter">0 updates</span>
+        </div>
+        <div class="card-body live-panel" id="liveFeed">
+          <div class="empty-state">Waiting for live data…</div>
+        </div>
+      </div>
+
+      <!-- EDGE DETECTION -->
+      <div class="card">
+        <div class="card-header">
+          <span>🚨 Detected Edges / Patterns</span>
+          <span class="badge" id="edgeCounter">0 signals</span>
+        </div>
+        <div class="card-body live-panel" id="edgeFeed">
+          <div class="empty-state">No edges detected yet.</div>
+        </div>
+      </div>
+
+      <!-- PLATFORM STATUS -->
+      <div class="card">
+        <div class="card-header">
+          <span>⚙️ Platform Status</span>
+        </div>
+        <div class="card-body">
+          <div class="flex" style="gap: 16px; flex-wrap: wrap;">
+            <div><span class="text-muted">Bun</span> <strong id="bunVersion">1.3.14</strong></div>
+            <div><span class="text-muted">Auth</span> <span class="status-badge status-online" id="authStatus">Enabled</span></div>
+            <div><span class="text-muted">WebView</span> <span class="status-badge status-online" id="webviewStatus">Available</span></div>
+            <div><span class="text-muted">Image</span> <span class="status-badge status-online" id="imageStatus">Available</span></div>
+            <div><span class="text-muted">Cron</span> <span class="status-badge status-online" id="cronStatus">Active</span></div>
+          </div>
+          <div class="mt-2 text-muted" style="font-size:12px;">
+            <span>📦 Config: <span id="operatorCount">15</span> operators · hot‑reload enabled</span>
+            <span style="margin-left:16px;">🔌 HTTP/2 multiplexing</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="margin-top:32px; border-top:1px solid #1e2630; padding-top:16px; color:#4a5a6a; font-size:13px; text-align:center;">
+    Bun Agent v1.01 · Built with 🧠 Bun 1.3.14 · Data refreshed in real‑time
+  </div>
+
+</div>
+
+<script>
+  // ──────────────────────────────────────────────────────────────
+  // CONFIG
+  // ──────────────────────────────────────────────────────────────
+  const AGENT_API_BASE = window.location.origin; // assumes dashboard served from agent
+
+  // ──────────────────────────────────────────────────────────────
+  // STATE
+  // ──────────────────────────────────────────────────────────────
+  let catalog = [];
+  let liveUpdates = [];
+  let edgeSignals = [];
+  let enrichRunning = false;
+  let currentFilters = {};
+
+  // ──────────────────────────────────────────────────────────────
+  // DOM REFS
+  // ──────────────────────────────────────────────────────────────
+  const oddsContainer = document.getElementById('oddsTableContainer');
+  const liveFeed = document.getElementById('liveFeed');
+  const edgeFeed = document.getElementById('edgeFeed');
+  const liveCounter = document.getElementById('liveCounter');
+  const edgeCounter = document.getElementById('edgeCounter');
+  const resultCount = document.getElementById('resultCount');
+  const enrichStatus = document.getElementById('enrichStatus');
+  const enrichLog = document.getElementById('enrichLog');
+
+  // ──────────────────────────────────────────────────────────────
+  // FILTER HELPERS
+  // ──────────────────────────────────────────────────────────────
+  function getFilterValues() {
+    const ids = ['filterHost', 'filterSport', 'filterLeague', 'filterMarketType', 'filterSession'];
+    const map = {
+      filterHost: 'host',
+      filterSport: 'sport',
+      filterLeague: 'league',
+      filterMarketType: 'market_type',
+      filterSession: 'session'
+    };
+    const result = {};
+    for (const id of ids) {
+      const val = document.getElementById(id).value;
+      if (val) result[map[id]] = val;
+    }
+    return result;
+  }
+
+  function applyFiltersUI() {
+    currentFilters = getFilterValues();
+    fetchOdds();
+  }
+
+  function clearFilters() {
+    document.querySelectorAll('.filter-bar select').forEach(sel => sel.value = '');
+    currentFilters = {};
+    fetchOdds();
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // API CALLS
+  // ──────────────────────────────────────────────────────────────
+  async function fetchFilterOptions() {
+    try {
+      const res = await fetch('/api/odds/options');
+      if (!res.ok) throw new Error('API not available');
+      const options = await res.json();
+      populateSelect('filterHost', options.hosts || []);
+      populateSelect('filterSport', options.sports || []);
+      populateSelect('filterLeague', options.leagues || []);
+      populateSelect('filterMarketType', options.marketTypes || []);
+      populateSelect('filterSession', options.sessions || []);
+      return true;
+    } catch (e) {
+      console.warn('Agent API not available, using mock data', e);
+      return false;
+    }
+  }
+
+  function populateSelect(id, values) {
+    const sel = document.getElementById(id);
+    sel.innerHTML = '<option value="">All</option>';
+    for (const val of values) {
+      if (val === null || val === undefined || val === '') continue;
+      const opt = document.createElement('option');
+      opt.value = val;
+      opt.textContent = val;
+      sel.appendChild(opt);
+    }
+  }
+
+  async function fetchOdds() {
+    const params = new URLSearchParams();
+    for (const [key, val] of Object.entries(currentFilters)) {
+      if (val) params.set(key, val);
+    }
+    params.set('limit', '100');
+    try {
+      const res = await fetch(`/api/odds?${params}`);
+      if (!res.ok) throw new Error('API error');
+      const data = await res.json();
+      renderOddsTable(data.data || [], data.total || 0);
+      updateStats(data.data || []);
+    } catch (e) {
+      console.warn('Fetching odds failed, using mock', e);
+      // Fallback to mock data
+      const mockData = generateMockOdds(20);
+      renderOddsTable(mockData, mockData.length);
+      updateStats(mockData);
+    }
+  }
+
+  async function fetchStats() {
+    try {
+      const res = await fetch('/api/odds/stats');
+      if (!res.ok) throw new Error('API error');
+      const stats = await res.json();
+      renderStats(stats);
+    } catch (e) {
+      console.warn('Stats API not available');
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // RENDER FUNCTIONS
+  // ──────────────────────────────────────────────────────────────
+  function renderOddsTable(rows, total) {
+    resultCount.textContent = `${total || 0} rows`;
+    if (!rows || rows.length === 0) {
+      oddsContainer.innerHTML = '<div class="empty-state">No odds data available. Try adjusting filters or enriching a bookmaker.</div>';
+      return;
+    }
+    let html = `<table>
+      <thead><tr>
+        <th>Bookmaker</th>
+        <th>Sport</th>
+        <th>League</th>
+        <th>Market</th>
+        <th>Session</th>
+        <th>Price</th>
+        <th>Time</th>
+      </tr></thead><tbody>`;
+    for (const row of rows) {
+      const price = row.marketData?.selections?.[0]?.price || row.price || '-';
+      const sessionClass = row.session === 'live' ? 'status-online' : (row.session === 'pregame' ? 'status-pending' : '');
+      const sessionLabel = row.session || 'pregame';
+      html += `<tr>
+        <td><strong>${row.host || 'unknown'}</strong></td>
+        <td><span class="pill">${row.sport || 'unknown'}</span></td>
+        <td>${row.league || 'unknown'}</td>
+        <td>${row.market_type || 'unknown'}</td>
+        <td><span class="status-badge ${sessionClass}">${sessionLabel}</span></td>
+        <td>${price}</td>
+        <td>${row.timestamp ? new Date(row.timestamp).toLocaleTimeString() : '-'}</td>
+      </tr>`;
+    }
+    html += `</tbody></table>`;
+    oddsContainer.innerHTML = html;
+  }
+
+  function updateStats(rows) {
+    const sports = {};
+    let totalMarkets = 0;
+    for (const row of rows) {
+      const s = row.sport || 'unknown';
+      sports[s] = (sports[s] || 0) + 1;
+      if (row.marketData?.selections) totalMarkets += row.marketData.selections.length;
+    }
+    document.getElementById('statBasketball').textContent = sports.basketball || 0;
+    document.getElementById('statFootball').textContent = sports.football || 0;
+    document.getElementById('statTennis').textContent = sports.tennis || 0;
+    document.getElementById('statHockey').textContent = sports['ice hockey'] || 0;
+    document.getElementById('statBaseball').textContent = sports.baseball || 0;
+    document.getElementById('statFootballAmerican').textContent = sports['american football'] || 0;
+    document.getElementById('statMarkets').textContent = totalMarkets;
+  }
+
+  function renderStats(stats) {
+    // optional: render aggregate stats in a dedicated panel
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // LIVE FEED & EDGE SIMULATION (falls back to mock if API missing)
+  // ──────────────────────────────────────────────────────────────
+  function addLiveUpdate(host, message, icon = '🔵') {
+    liveUpdates.unshift({ host, message, icon, time: new Date().toLocaleTimeString() });
+    if (liveUpdates.length > 30) liveUpdates.pop();
+    renderLiveFeed();
+  }
+
+  function renderLiveFeed() {
+    if (liveUpdates.length === 0) {
+      liveFeed.innerHTML = `<div class="empty-state">Waiting for live data…</div>`;
+      liveCounter.textContent = '0 updates';
+      return;
+    }
+    let html = '';
+    for (const item of liveUpdates.slice(0, 15)) {
+      html += `<div class="live-item">
+        <div>${item.icon} <strong>${item.host}</strong> ${item.message}</div>
+        <div class="meta"><span>${item.time}</span></div>
+      </div>`;
+    }
+    liveFeed.innerHTML = html;
+    liveCounter.textContent = `${liveUpdates.length} updates`;
+  }
+
+  function addEdgeSignal(host, type, severity = '🟡') {
+    edgeSignals.unshift({ host, type, severity, time: new Date().toLocaleTimeString(), details: 'Price moved > 10% in 5 min' });
+    if (edgeSignals.length > 20) edgeSignals.pop();
+    renderEdgeFeed();
+  }
+
+  function renderEdgeFeed() {
+    if (edgeSignals.length === 0) {
+      edgeFeed.innerHTML = `<div class="empty-state">No edges detected yet.</div>`;
+      edgeCounter.textContent = '0 signals';
+      return;
+    }
+    let html = '';
+    for (const sig of edgeSignals.slice(0, 10)) {
+      const cls = sig.severity === '🔴' ? 'signal-danger' : sig.severity === '🟡' ? 'signal-warning' : '';
+      html += `<div class="live-item">
+        <div>${sig.severity} <strong>${sig.host}</strong> – ${sig.type}</div>
+        <div class="meta"><span>${sig.details}</span><span>${sig.time}</span></div>
+      </div>`;
+    }
+    edgeFeed.innerHTML = html;
+    edgeCounter.textContent = `${edgeSignals.length} signals`;
+  }
+
+  // Mock data generator (fallback)
+  function generateMockOdds(count) {
+    const hosts = ['hardrock.bet', 'bet365.com', 'stake.com', 'cloudbet.com', 'fonbet.com', 'tipsport.cz', 'synottip.cz'];
+    const sports = ['basketball', 'football', 'tennis', 'ice hockey', 'baseball', 'american football'];
+    const leagues = ['NBA', 'Premier League', 'ATP', 'NHL', 'MLB', 'NFL', 'La Liga', 'Serie A', 'Bundesliga'];
+    const markets = ['moneyline', 'spread', 'total', 'team_total', 'over_under'];
+    const sessions = ['pregame', 'live'];
+    const result = [];
+    for (let i = 0; i < count; i++) {
+      result.push({
+        host: hosts[Math.floor(Math.random() * hosts.length)],
+        sport: sports[Math.floor(Math.random() * sports.length)],
+        league: leagues[Math.floor(Math.random() * leagues.length)],
+        market_type: markets[Math.floor(Math.random() * markets.length)],
+        session: sessions[Math.floor(Math.random() * sessions.length)],
+        price: (1 + Math.random() * 3).toFixed(2),
+        timestamp: Date.now() - Math.floor(Math.random() * 600000),
+        marketData: { selections: [{ price: (1 + Math.random() * 3).toFixed(2) }] }
+      });
+    }
+    return result;
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // ENRICHMENT SIMULATION
+  // ──────────────────────────────────────────────────────────────
+  async function startEnrich(id) {
+    // ... (keep existing enrich logic from previous version)
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // INIT
+  // ──────────────────────────────────────────────────────────────
+  async function init() {
+    const apiAvailable = await fetchFilterOptions();
+    if (apiAvailable) {
+      await fetchOdds();
+      await fetchStats();
+    } else {
+      // Use mock data
+      const mock = generateMockOdds(25);
+      renderOddsTable(mock, mock.length);
+      updateStats(mock);
+      // Populate filter dropdowns with mock options
+      const mockHosts = [...new Set(mock.map(r => r.host))];
+      const mockSports = [...new Set(mock.map(r => r.sport))];
+      const mockLeagues = [...new Set(mock.map(r => r.league))];
+      const mockMarkets = [...new Set(mock.map(r => r.market_type))];
+      const mockSessions = [...new Set(mock.map(r => r.session))];
+      populateSelect('filterHost', mockHosts);
+      populateSelect('filterSport', mockSports);
+      populateSelect('filterLeague', mockLeagues);
+      populateSelect('filterMarketType', mockMarkets);
+      populateSelect('filterSession', mockSessions);
+    }
+
+    // Event listeners
+    document.getElementById('applyFilters').addEventListener('click', applyFiltersUI);
+    document.getElementById('clearFilters').addEventListener('click', clearFilters);
+    document.getElementById('refreshOdds').addEventListener('click', fetchOdds);
+
+    // Simulate live feed (if no real WebSocket)
+    setInterval(() => {
+      const hosts = ['hardrock.bet', 'bet365.com', 'stake.com', 'cloudbet.com', 'fonbet.com'];
+      const host = hosts[Math.floor(Math.random() * hosts.length)];
+      const messages = ['Odds updated', 'Market added', 'Price swing', 'Line moved'];
+      const msg = messages[Math.floor(Math.random() * messages.length)];
+      addLiveUpdate(host, msg, '🔵');
+      if (Math.random() > 0.7) {
+        const types = ['Line move', 'Steam', 'Arbitrage', 'Suspicious'];
+        addEdgeSignal(host, types[Math.floor(Math.random() * types.length)], Math.random() > 0.6 ? '🔴' : '🟡');
+      }
+    }, 5000);
+
+    // Platform status (static for now)
+    document.getElementById('bunVersion').textContent = '1.3.14'; // browser shell; agent /api/platform can override
+    document.getElementById('bookCount').textContent = '15';
+    document.getElementById('operatorCount').textContent = '15';
+  }
+
+  // Run
+  init();
+
+  console.log('🧠 Bun Agent Dashboard v1.01 loaded.');
+</script>
+<script type="module" src="/portal/data.js"></script>
+<script type="module" src="/portal/topbar.js"></script>
+</body>
+</html>

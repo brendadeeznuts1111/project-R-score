@@ -32,6 +32,17 @@ export const PARTNER_LIFECYCLE_STATUSES = [
 ] as const;
 export type PartnerLifecycleStatus = (typeof PARTNER_LIFECYCLE_STATUSES)[number];
 
+export function isPartnerLifecycleStatus(value: unknown): value is PartnerLifecycleStatus {
+  return typeof value === 'string' && PARTNER_LIFECYCLE_STATUSES.some(status => status === value);
+}
+
+export function parsePartnerLifecycleStatus(value: unknown): PartnerLifecycleStatus {
+  if (!isPartnerLifecycleStatus(value)) {
+    throw new Error(`Invalid PartnerLifecycleStatus: ${String(value)}`);
+  }
+  return value;
+}
+
 export const PARTNER_PHASES = ['operator_ready', 'onboarding', 'incomplete', 'paused'] as const;
 export type PartnerPhase = (typeof PARTNER_PHASES)[number];
 
@@ -253,7 +264,7 @@ export function validatePartnerProfile(value: unknown): ProfileValidation {
   if (!isRecord(value.lifecycle)) {
     issues.push('lifecycle required');
   } else {
-    if (!PARTNER_LIFECYCLE_STATUSES.includes(value.lifecycle.status as PartnerLifecycleStatus)) {
+    if (!isPartnerLifecycleStatus(value.lifecycle.status)) {
       issues.push(`lifecycle.status must be one of ${PARTNER_LIFECYCLE_STATUSES.join('|')}`);
     }
     if (!PARTNER_PHASES.includes(value.lifecycle.phase as PartnerPhase)) {
@@ -325,6 +336,19 @@ export function validatePartnerProfile(value: unknown): ProfileValidation {
       }
     }
   }
+  if (value.settlement !== undefined) {
+    if (!isRecord(value.settlement)) {
+      issues.push('settlement must be an object');
+    } else if (
+      value.settlement.commissionPct !== undefined &&
+      (typeof value.settlement.commissionPct !== 'number' ||
+        !Number.isFinite(value.settlement.commissionPct) ||
+        value.settlement.commissionPct < 0 ||
+        value.settlement.commissionPct > 100)
+    ) {
+      issues.push('settlement.commissionPct must be a finite number from 0 to 100');
+    }
+  }
   if (issues.length > 0) return { valid: false, issues };
-  return { valid: true, profile: value as unknown as PartnerProfile };
+  return { valid: true, profile: value as PartnerProfile };
 }

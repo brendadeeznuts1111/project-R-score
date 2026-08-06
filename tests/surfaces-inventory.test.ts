@@ -123,6 +123,8 @@ describe('lib/surfaces/inventory', () => {
     const pagesBacked = surfacesForBackendCode(inv, asSurfaceBackendCode('cloudflare-pages'));
     expect(pagesBacked.every(s => s.backendCode === 'cloudflare-pages')).toBeTrue();
     expect(pagesBacked.some(s => s.pagesProject === PROJECT_R_SCORE_PAGES)).toBeTrue();
+    const workerBacked = surfacesForBackendCode(inv, asSurfaceBackendCode('cloudflare-worker'));
+    expect(workerBacked.map(s => String(s.id))).toContain('tennis');
 
     expect(inv.publishLanes.map(l => String(l.id)).sort()).toEqual([
       'local-gateway',
@@ -137,5 +139,6 @@ describe('lib/surfaces/inventory', () => {
     expect(summary.pagesProjects).toContain('project-r-score');
     expect(summary.accessDomains).toContain('score.factory-wager.com/portal');
     expect(summary.byBackendCode['cloudflare-pages']).toBeGreaterThan(0);
+    expect(summary.byBackendCode['cloudflare-worker']).toBe(1);
   });
 });

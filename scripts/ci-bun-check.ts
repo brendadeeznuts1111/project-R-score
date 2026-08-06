@@ -6,6 +6,7 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
+import { isCanaryBunBuild } from '../lib/verification/bun-release-channel.ts';
 import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
 
 function parseSemver(version: string): { major: number; minor: number; patch: number } | null {
@@ -72,11 +73,9 @@ try {
   }
 }
 
-// Only inspect semantic version strings; revision hashes may contain arbitrary
-// substrings (e.g. "canary" in a commit message) and must not trigger false positives.
-const isCanary = [version, cliVersion]
-  .filter(Boolean)
-  .some(value => value.toLowerCase().includes('canary'));
+// Bun.version and `bun --version` omit the channel in some canary builds, while
+// `bun --revision` retains it (for example, 1.4.0-canary.1+<sha>).
+const isCanary = isCanaryBunBuild([version, cliVersion, cliRevision]);
 const allowCanary = Bun.env.ALLOW_CANARY_BUN_CI === '1' || Bun.env.ALLOW_CANARY_BUN_CI === 'true';
 
 if (!isAtLeast(version, minimum)) {

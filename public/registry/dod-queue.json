@@ -19,7 +19,7 @@
       "metadata_hash": "6eb489d03709ddf9",
       "signature": "beb3670cf804b9f1",
       "tamper_score": 78,
-      "extracted_text": "Balance $12,450.00 FanDuel",
+      "extracted_text": "ASH · Balance $12,450.00 FanDuel",
       "geo_lat": null,
       "geo_lng": null,
       "device_model": "iPhone 15 Pro",
@@ -29,7 +29,26 @@
       "reviewed_at": null,
       "reviewed_by": null,
       "rejection_reason": null,
-      "encrypted": 0
+      "encrypted": 0,
+      "telegram_chat_id": "-1002147483001",
+      "telegram_message_id": 1842,
+      "telegram_thread_id": 42,
+      "telegram_topic": "accounting",
+      "image_meta": {
+        "width": 1170,
+        "height": 2532,
+        "format": "jpeg",
+        "size": 482110,
+        "exif": {
+          "software": "Screenshot",
+          "deviceModel": "iPhone 15 Pro"
+        },
+        "gps": null,
+        "missingExif": false
+      },
+      "accounting_amount": 12450,
+      "telegram_deep_link": "https://t.me/c/2147483001/42/1842",
+      "telegram_username": null
     },
     {
       "id": "019f92d6-7f30-7773-ab55-e9df671cf6f4",
@@ -40,7 +59,7 @@
       "metadata_hash": "50c0dcc557a37bc6",
       "signature": "adc0d8a2c0e3edc8",
       "tamper_score": 62,
-      "extracted_text": "NBA LAL -4.5 · DraftKings",
+      "extracted_text": "BIL-001 · NBA LAL -4.5 $250 · DraftKings",
       "geo_lat": null,
       "geo_lng": null,
       "device_model": "iPhone 15 Pro",
@@ -50,7 +69,25 @@
       "reviewed_at": null,
       "reviewed_by": null,
       "rejection_reason": null,
-      "encrypted": 0
+      "encrypted": 0,
+      "telegram_chat_id": "-1002147483002",
+      "telegram_message_id": 991,
+      "telegram_thread_id": 42,
+      "telegram_topic": "accounting",
+      "image_meta": {
+        "width": 1080,
+        "height": 1920,
+        "format": "png",
+        "size": 310440,
+        "exif": {
+          "deviceModel": "iPhone 15 Pro"
+        },
+        "gps": null,
+        "missingExif": false
+      },
+      "accounting_amount": 250,
+      "telegram_deep_link": "https://t.me/c/2147483002/42/991",
+      "telegram_username": null
     },
     {
       "id": "019f92d6-7f31-722c-a846-f3b843829e31",
@@ -61,7 +98,7 @@
       "metadata_hash": "6755c9ca3d53874e",
       "signature": "d9c0824a32064bf9",
       "tamper_score": 18,
-      "extracted_text": "Deposit confirmation $500",
+      "extracted_text": "NOV · Deposit confirmation $500",
       "geo_lat": null,
       "geo_lng": null,
       "device_model": "iPhone 15 Pro",
@@ -71,7 +108,26 @@
       "reviewed_at": null,
       "reviewed_by": null,
       "rejection_reason": null,
-      "encrypted": 0
+      "encrypted": 0,
+      "telegram_chat_id": "-1002147483003",
+      "telegram_message_id": 2201,
+      "telegram_thread_id": 42,
+      "telegram_topic": "accounting",
+      "image_meta": {
+        "width": 1179,
+        "height": 2556,
+        "format": "webp",
+        "size": 198220,
+        "exif": {
+          "software": "Telegram",
+          "deviceModel": "iPhone 15 Pro"
+        },
+        "gps": null,
+        "missingExif": false
+      },
+      "accounting_amount": 500,
+      "telegram_deep_link": "https://t.me/c/2147483003/42/2201",
+      "telegram_username": null
     },
     {
       "id": "019f92d6-7f31-722e-9c41-abe86e03a3e5",
@@ -82,7 +138,7 @@
       "metadata_hash": "4a286f090afc64ca",
       "signature": "bed69097d957cb85",
       "tamper_score": 12,
-      "extracted_text": "Balance $8,200.00 BetMGM",
+      "extracted_text": "SPEN · Balance $8,200.00 BetMGM",
       "geo_lat": null,
       "geo_lng": null,
       "device_model": "iPhone 15 Pro",
@@ -92,7 +148,26 @@
       "reviewed_at": "2026-07-24T03:45:58.640Z",
       "reviewed_by": "demo-seed",
       "rejection_reason": null,
-      "encrypted": 0
+      "encrypted": 0,
+      "telegram_chat_id": "-1002147483004",
+      "telegram_message_id": 440,
+      "telegram_thread_id": 42,
+      "telegram_topic": "accounting",
+      "image_meta": {
+        "width": 1170,
+        "height": 2532,
+        "format": "jpeg",
+        "size": 401880,
+        "exif": {
+          "dateTimeOriginal": "2026:07:24 03:30:00",
+          "deviceModel": "iPhone 15 Pro"
+        },
+        "gps": null,
+        "missingExif": false
+      },
+      "accounting_amount": 8200,
+      "telegram_deep_link": "https://t.me/c/2147483004/42/440",
+      "telegram_username": null
     },
     {
       "id": "019f92d6-7f31-7230-99b8-2d7d93d4a0a7",
@@ -113,7 +188,25 @@
       "reviewed_at": "2026-07-24T02:45:58.640Z",
       "reviewed_by": "demo-seed",
       "rejection_reason": "Image unreadable; resubmit clear photo",
-      "encrypted": 0
+      "encrypted": 0,
+      "accounting_amount": null,
+      "image_meta": {
+        "width": null,
+        "height": null,
+        "format": null,
+        "size": null,
+        "exif": {
+          "deviceModel": "iPhone 15 Pro"
+        },
+        "gps": null,
+        "missingExif": false
+      },
+      "telegram_chat_id": null,
+      "telegram_message_id": null,
+      "telegram_thread_id": null,
+      "telegram_username": null,
+      "telegram_topic": null,
+      "telegram_deep_link": null
     },
     {
       "id": "019f92d6-7f31-7232-bfa4-f25b7276c4ff",
@@ -134,7 +227,28 @@
       "reviewed_at": null,
       "reviewed_by": null,
       "rejection_reason": null,
-      "encrypted": 0
+      "encrypted": 0,
+      "accounting_amount": null,
+      "image_meta": {
+        "width": null,
+        "height": null,
+        "format": null,
+        "size": null,
+        "exif": {
+          "deviceModel": "iPhone 15 Pro"
+        },
+        "gps": {
+          "lat": 25.7617,
+          "lng": -80.1918
+        },
+        "missingExif": false
+      },
+      "telegram_chat_id": null,
+      "telegram_message_id": null,
+      "telegram_thread_id": null,
+      "telegram_username": null,
+      "telegram_topic": null,
+      "telegram_deep_link": null
     }
   ]
 }

@@ -14,7 +14,21 @@ import {
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import { applyOpsSyncEvent } from '../lib/operations/ops-sync.ts';
 import { AccountService } from '../lib/operations/account-service.ts';
+import type { PartnerLifecycleStatus } from '../lib/partner-profile/schema.ts';
 import { asTreeNodeId } from '../lib/types/branded/operations.ts';
+
+const LIFECYCLE_GATE_CASES = [
+  ['active', 'allow', true],
+  ['graduated', 'allow', true],
+  ['materialized', 'allow', true],
+  ['kyc_pending', 'allow', true],
+  ['cultivating', 'defer', false],
+  ['signup', 'defer', false],
+  ['suspended', 'block', false],
+  ['terminated', 'block', false],
+] as const satisfies ReadonlyArray<
+  readonly [PartnerLifecycleStatus, 'allow' | 'block' | 'defer', boolean]
+>;
 
 function insertNode(
   db: ReturnType<typeof openOperationsDb>,
@@ -123,6 +137,52 @@ describe('partner-profile-bridge', () => {
     expect(capped.allowed).toBe(true);
     expect(capped.action).toBe('adjust');
     expect(capped.adjustedStake).toBeLessThan(50_000);
+    db.close();
+  });
+
+  test.each(LIFECYCLE_GATE_CASES)(
+    'gate for %s is %s',
+    (lifecycleStatus, expectedAction, expectedAllowed) => {
+      const db = openOperationsDb({ path: ':memory:' });
+      const nodeId = insertNode(db, { status: 'active' });
+      bindPartnerProfile(db, nodeId, { lifecycleStatus });
+
+      const evaluation = evaluateForNode(db, nodeId, {
+        suggestedStake: 100,
+        signalType: 'manual',
+      });
+
+      expect(evaluation.action).toBe(expectedAction);
+      expect(evaluation.allowed).toBe(expectedAllowed);
+      db.close();
+    }
+  );
+
+  test('rejects an invalid lifecycle on single-entity reads; soft-quarantines aggregates', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const nodeId = insertNode(db, { status: 'active' });
+    const goodId = insertNode(db, { name: 'Good', status: 'active' });
+    bindPartnerProfile(db, nodeId, { lifecycleStatus: 'active' });
+    bindPartnerProfile(db, goodId, { lifecycleStatus: 'active' });
+    db.run('PRAGMA ignore_check_constraints = ON');
+    db.run(
+      `UPDATE partner_profile_bindings SET lifecycle_status = 'frozen' WHERE tree_node_id = $id`,
+      { $id: nodeId }
+    );
+
+    // Single-entity paths still fail closed (parse at boundary).
+    expect(() => materializePartnerProfile(db, nodeId)).toThrow(
+      'Invalid PartnerLifecycleStatus: frozen'
+    );
+    expect(() => evaluateForNode(db, nodeId, { suggestedStake: 100 })).toThrow(
+      'Invalid PartnerLifecycleStatus: frozen'
+    );
+    // Aggregates soft-quarantine so ops-summary / limits stay up.
+    const slice = queryPartnersSlice(db);
+    expect(slice.bound).toBe(2);
+    expect(slice.invalidLifecycle).toBe(1);
+    expect(slice.byLifecycle.active).toBe(1);
+    expect(slice.recent.every(r => r.lifecycleStatus === 'active')).toBe(true);
     db.close();
   });
 

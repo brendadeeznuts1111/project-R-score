@@ -18,6 +18,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
   <link rel="stylesheet" href="/portal/venues.css" />
+  <style>
+    .tennis-hero-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; width: 100%; }
+    .tennis-hero-copy { flex: 1; min-width: 12rem; }
+    .tennis-avatar-chip {
+      display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;
+      border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px 4px 4px; background: var(--surface);
+    }
+    .tennis-avatar-chip img { border-radius: 50%; object-fit: cover; display: block; background: var(--border); }
+    .tennis-avatar-name { font-size: 12px; font-weight: 600; }
+    #kpi-host .portal-stat { cursor: default; }
+    #kpi-host .portal-stat:hover { transform: none; box-shadow: none; }
+  </style>
 </head>
 <body>
   <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
@@ -30,35 +42,51 @@
         <span class="logo-page">Tennis</span>
       </h1>
       <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
-        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
+        <a href="/" class="nav-link" title="public lander · portal entry" data-group="other" data-domain="platform">Home</a>
+        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · C4/C5 loop · partner handshake panel · bun run ops:snapshot" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot" data-registry="/registry/ops-summary.json">Ops</a>
+        <a href="/portal/" class="nav-link" title="portal hub · board index · weave surfaces" data-group="registry" data-domain="platform">Registry</a>
+        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-domain="platform" data-cli="bun run monorepo:health:bake" data-registry="/registry/monorepo-health.json">Health</a>
+        <a href="/portal/dod/" class="nav-link" title="visual proof review · public-plane gate · bun run public:audit:verify" data-group="plane" data-domain="platform" data-cli="bun run public:audit:verify">DOD</a>
+        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · shadow matrix · bun run compliance:bake" data-group="ops" data-domain="control" data-cli="bun run compliance:bake" data-registry="/registry/compliance-board.json">Compliance</a>
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
-            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
-            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog" data-group="ops" data-cli="bun run telegram:handshake:catalog" role="menuitem">Partners</a>
-            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog" data-group="ops" role="menuitem">Account</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-cli="bun run bookmakers:bake" role="menuitem">Bookmakers</a>
-            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+          <div class="nav-group" role="group" aria-label="Ops · domain" data-group="ops">
+            <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
+            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · seat capital · bun run telegram:handshake:catalog" data-group="ops" data-domain="partner" data-cli="bun run telegram:handshake:catalog" data-registry="/registry/partners-ops.json" role="menuitem">Partners</a>
+            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed" data-group="ops" data-domain="partner" data-cli="bun run ops:dossier:seed" data-registry="/registry/partners-ops.json" role="menuitem">Account</a>
+            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Partner history</a>
+            <a href="/portal/limits/" class="nav-link" title="multi-factor partner limit raises · CLV · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Limits</a>
+            <a href="/portal/limits-lab/" class="nav-link" title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:predict" data-registry="/registry/limit-forecast-lab.json" role="menuitem">Limits lab</a>
+            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-domain="partner" data-cli="bun run bookmakers:bake" data-registry="/registry/bookmakers.json" role="menuitem">Bookmakers</a>
+            <a href="/portal/factory/" class="nav-link" title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify" data-group="ops" data-domain="partner" data-cli="bun run telegram:verify" data-registry="/registry/telegram-handshake.json" role="menuitem">Factory</a>
+            <a href="/portal/tennis/" class="nav-link active" aria-current="page" title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake" data-group="ops" data-domain="trading" data-cli="bun run tennis:board:bake" data-registry="/registry/tennis/agent-auth.json" role="menuitem">Tennis</a>
+            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-domain="trading" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
+            <a href="/portal/dashboard/" class="nav-link" title="KPIs · TOC · compliance plane · proof-index pins" data-group="ops" data-domain="control" role="menuitem">Dashboard</a>
+            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope fixture board · bun run ops:seed:toc" data-group="ops" data-domain="control" data-cli="bun run ops:seed:toc" data-registry="/registry/toc-ops.json" role="menuitem">TOC</a>
+            <a href="/monitoring/" class="nav-link" title="routing · env · compliance tile · proof status · bun run ops:snapshot --no-seed" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot --no-seed" data-registry="/registry/monitoring.json" role="menuitem">Monitoring</a>
+            <a href="/portal/identity/" class="nav-link" title="auth board · lockout · anomaly · geo · JIT · bun test tests/identity-*.test.ts" data-group="ops" data-domain="identity" data-cli="bun test tests/identity-*.test.ts" data-registry="/registry/identity-board.json" role="menuitem">Identity</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Secrets" data-group="secrets">
+            <div class="nav-group-label" aria-hidden="true">Secrets</div>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-registry="/registry/vault-health.json" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Registry" data-group="registry">
+            <div class="nav-group-label" aria-hidden="true">Registry</div>
+            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-domain="knowledge" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
+            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-domain="platform" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" data-registry="/registry/packages-graph-map.json" role="menuitem">Packages</a>
+            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-domain="knowledge" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-domain="knowledge" data-cli="bun run glossary:portal" data-registry="/registry/domain-glossary.json" role="menuitem">Glossary</a>
+            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" data-registry="/registry/surfaces-state.json" role="menuitem">Surfaces</a>
+            <a href="/portal/skills/" class="nav-link" title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate" data-group="registry" data-domain="knowledge" data-cli="bun run skills:validate" data-registry="/registry/harness-skills-catalog.json" role="menuitem">Skills</a>
+            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
+            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-domain="knowledge" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="More" data-group="other">
+            <div class="nav-group-label" aria-hidden="true">More</div>
+            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub · wiki-index" data-group="other" data-domain="platform" role="menuitem">Wiki</a>
+          </div>
           </div>
         </div>
       </nav>
@@ -73,37 +101,76 @@
   </header>
 
   <main class="main portal-page">
-    <header class="portal-hero">
-      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;width:100%">
-        <a href="/avatars/demo-player.webp" class="tennis-avatar-chip" title="demo-player avatar (Bun.Image)" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:999px;padding:4px 12px 4px 4px;background:var(--surface)">
-          <img id="hero-avatar" src="/avatars/demo-player.webp" width="40" height="40" alt="demo-player" style="border-radius:50%;object-fit:cover;display:block;background:var(--border)" loading="lazy" />
-          <span style="font-size:12px;font-weight:600">demo-player</span>
-          <span class="tone-chip tone-neutral" style="font-size:10px">avatar</span>
+    <section class="portal-hero portal-hero--card tennis-hero" aria-labelledby="tennis-hero-title">
+      <p class="portal-eyebrow">Tennis HQ · venue desk</p>
+      <div class="tennis-hero-row">
+        <a href="/avatars/demo-player.webp" class="tennis-avatar-chip" title="demo-player avatar (Bun.Image)">
+          <img id="hero-avatar" src="/avatars/demo-player.webp" width="40" height="40" alt="demo-player" loading="lazy" />
+          <span class="tennis-avatar-name">demo-player</span>
+          <span class="tone-chip tone-neutral">avatar</span>
         </a>
-        <div style="flex:1;min-width:12rem">
-          <h2 class="portal-hero__title">Tennis</h2>
-          <p class="sub" style="margin-top:4px">
-            Live desk board from event-store bake when present —
+        <div class="tennis-hero-copy">
+          <h2 id="tennis-hero-title" class="portal-hero__title">Tennis desk</h2>
+          <p class="hero-sub">
+            Live metrics from event-store bake —
             <code>bun run tennis:board:bake</code> →
             <code>/registry/tennis/board-metrics.json</code>.
             Venue colors are identity; edge uses semantic green/red.
-            Local on-demand: <code>GET /avatar/demo-player</code> (serve-public · Bun.Image).
+            Runtime:
+            <a href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer"><code>tennis.factory-wager.com</code></a>.
           </p>
         </div>
       </div>
-    </header>
+      <div class="portal-hero-meta">
+        <span id="tennis-gate" class="portal-gate warn" aria-live="polite"><span class="dot" aria-hidden="true"></span>loading</span>
+        <span id="tennis-baked" class="portal-baked">metrics · registry · venues</span>
+        <span
+          id="tennis-freshness-contracts"
+          class="portal-freshness"
+          hidden
+          aria-live="polite"
+          title="Partner-contracts bake age"
+        ></span>
+        <span
+          id="tennis-freshness-metrics"
+          class="portal-freshness"
+          hidden
+          aria-live="polite"
+          title="Board-metrics bake age"
+        ></span>
+        <span
+          id="tennis-freshness-books"
+          class="portal-freshness"
+          hidden
+          aria-live="polite"
+          title="Latest book tick age (desk.latestBookAt)"
+        ></span>
+        <div class="portal-source-links" aria-label="Related artifacts">
+          <a href="/registry/tennis/board-metrics.json" target="_blank" rel="noopener">board-metrics</a>
+          <a href="/registry/tennis/live-matches.json" target="_blank" rel="noopener">live-matches</a>
+          <a href="/registry/tennis/agent-auth.json" target="_blank" rel="noopener">agent-auth</a>
+          <a href="/registry/tennis/partner-contracts.json" target="_blank" rel="noopener">partner-contracts</a>
+          <a href="/registry/bake-manifest.json" target="_blank" rel="noopener">bake-manifest</a>
+          <a href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer">runtime</a>
+          <a href="https://tennis.factory-wager.com/api/version" target="_blank" rel="noopener noreferrer">runtime version</a>
+          <a href="/portal/partners/">Partners</a>
+          <a href="/portal/telegram.md">Telegram</a>
+          <a href="/portal/dod/">DOD</a>
+          <a href="/portal/env/">env</a>
+          <a href="/portal/tennis.md">MD</a>
+        </div>
+      </div>
+    </section>
 
     <div class="portal-actions">
-      <a href="/registry/tennis/board-metrics.json" target="_blank" rel="noopener">board-metrics</a>
       <a href="/registry/tennis/mid-distribution.json" target="_blank" rel="noopener">mid-distribution</a>
       <a href="/registry/tennis/registry.json" target="_blank" rel="noopener">registry</a>
-      <a href="/registry/tennis/agent-auth.json" target="_blank" rel="noopener" title="Cloud agent FACTORY_WAGER_TOKEN status">agent-auth</a>
-      <a href="/portal/env/" title="Vault map · FACTORY_WAGER_TOKEN">Env / vault</a>
-      <a href="/portal/health/">Health</a>
+      <a href="/registry/partners-ops.json" target="_blank" rel="noopener">partners-ops</a>
+      <a href="/registry/telegram-handshake.json" target="_blank" rel="noopener">handshake</a>
       <button type="button" id="btn-refresh">Refresh</button>
     </div>
 
-    <div class="portal-banner warn" id="live-banner" role="status">
+    <div class="portal-banner warn" id="live-banner" role="status" hidden>
       <span class="dot"></span>
       <div>
         <div class="title" id="banner-title">Loading tennis board…</div>
@@ -111,7 +178,60 @@
       </div>
     </div>
 
-    <div class="portal-card-grid" id="kpi-host" aria-live="polite"></div>
+    <div class="portal-stat-grid" id="kpi-host" aria-live="polite"></div>
+
+    <section class="portal-section" aria-labelledby="runtime-heading">
+      <h2 id="runtime-heading">Owned production runtime</h2>
+      <p class="section-sub">
+        <a href="https://tennis.factory-wager.com" target="_blank" rel="noopener noreferrer"><code>tennis.factory-wager.com</code></a>
+        is served by the FactoryWager-operated Cloudflare Worker <code>tennis-hq</code>.
+        Release verification checks the exact merged SHA, shell, glossary, and the fail-closed
+        <code>/api/v1</code> contract boundary. Registry auth and producer service auth remain
+        separate token planes.
+      </p>
+      <div class="portal-stat-grid" id="runtime-kpi-host" aria-live="polite" style="margin-top:12px"></div>
+      <p class="section-sub" id="runtime-probe-detail" style="margin-top:8px">Probing runtime…</p>
+    </section>
+
+    <section class="portal-section" aria-labelledby="partner-join-heading" data-domain="partner">
+      <h2 id="partner-join-heading">Partner desk · Factory join</h2>
+      <p class="section-sub">
+        Public bake of Tennis HQ <code>partners/capacity</code> + <code>accounting/finance</code>
+        (or offline partners-ops join). Browser never holds <code>PARTNER_API_TOKEN</code>.
+      </p>
+      <div class="portal-source-links" id="partner-code-chips" aria-label="Partner CODE deep links" style="margin:10px 0;flex-wrap:wrap;gap:8px"></div>
+      <p class="section-sub" id="partner-contracts-meta">Loading partner-contracts bake…</p>
+      <div class="table-wrap" style="margin-top:8px">
+        <table class="portal-table" id="partner-contracts-table" aria-label="Tennis partner contracts join">
+          <thead>
+            <tr>
+              <th>CODE</th>
+              <th>Call</th>
+              <th>Phase</th>
+              <th>Outs</th>
+              <th>Incompl.</th>
+              <th>Max bet ¢</th>
+              <th>FUND</th>
+              <th>HS</th>
+              <th>Links</th>
+            </tr>
+          </thead>
+          <tbody><tr><td colspan="9">…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="portal-source-links" aria-label="Partner desk boards" style="flex-wrap:wrap;gap:8px;margin-top:10px">
+        <a href="/registry/tennis/partner-contracts.json" target="_blank" rel="noopener">partner-contracts.json</a>
+        <a href="/portal/partners/">Partners board</a>
+        <a href="/portal/partners/#section:outs">Outs inventory</a>
+        <a href="/portal/dod/">DOD proofs</a>
+        <a href="/portal/telegram.md">Telegram map</a>
+        <a href="/portal/ops/#ops-partner-desk">Ops desk pulse</a>
+      </div>
+      <p class="section-sub" style="margin-top:10px">
+        CLI: <code>bun run tennis:partner-contracts:bake</code>
+        (live with <code>PARTNER_API_TOKEN</code> or <code>--offline</code>)
+      </p>
+    </section>
 
     <section class="portal-section" aria-labelledby="venues-heading">
       <h2 id="venues-heading">Venues</h2>
@@ -125,7 +245,7 @@
     <section class="portal-section" aria-labelledby="sample-heading">
       <h2 id="sample-heading">Live matches</h2>
       <p class="section-sub" id="matches-sub">
-        Event-store pairs with avatar slugs — filter by venue.
+        <span id="matches-meta">Event-store pairs with avatar slugs — filter by venue.</span>
         <label for="venue-filter" class="dim">Venue</label>
         <select id="venue-filter" style="margin-left:8px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit">
           <option value="">All</option>
@@ -136,7 +256,7 @@
         </select>
       </p>
       <div class="table-wrap">
-        <table class="data-table" id="sample-rows">
+        <table class="portal-table" id="sample-rows">
           <thead>
             <tr>
               <th></th>
@@ -159,7 +279,7 @@
       <h2 id="reg-heading">Tenant registry packages</h2>
       <p class="section-sub" id="reg-sub">Loading…</p>
       <div class="table-wrap">
-        <table class="data-table" id="reg-table">
+        <table class="portal-table" id="reg-table">
           <thead>
             <tr><th>Package</th><th>Latest</th><th>Versions</th></tr>
           </thead>
@@ -186,6 +306,8 @@
       <a href="/portal/ops/">Ops</a> ·
       <a href="/portal/toc/">TOC</a> ·
       <a href="/portal/partners/">Partners</a> ·
+      <a href="/portal/tennis/">Tennis</a> ·
+      <a href="/portal/bookmakers/">Bookmakers</a> ·
       <a href="/portal/packages/">Packages</a> ·
       <a href="/portal/brands/">Brands</a> ·
       <a href="/portal/glossary/">Glossary</a> ·
@@ -197,6 +319,7 @@
       <a href="/portal/dod/">DOD</a> ·
       <a href="/portal/env/">Env</a> ·
       <a href="/portal/vault/">Vault</a> ·
+      <a href="https://wiki.factory-wager.com/wiki-index.html" target="_blank" rel="noopener noreferrer">Wiki</a> ·
       <a href="/registry/monorepo-health.json">Monorepo health</a> ·
       <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
     </p>
@@ -211,476 +334,6 @@
   <script type="module" src="/portal/topbar.js"></script>
   <script type="module" src="/portal/components/sidebar.js"></script>
   <script type="module" src="/portal/components/footer.js"></script>
-  <script type="module">
-/**
- * Tennis portal board — venues, metrics bake, charts.
- * @see /registry/tennis/board-metrics.json
- * @see /portal/venues.css · style.css bar-chart / venue-badge
- */
-import { getHealthData } from '/portal/data.js';
-import {
-  mountVenueLegend,
-  renderVenueBadge,
-  parseMarketVenue,
-} from '/portal/components/venue-badge.js';
-
-const $ = id => document.getElementById(id);
-const esc = s =>
-  String(s ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-
-function barChartHtml(data, { title, subtitle = '' } = {}) {
-  if (!data?.length) {
-    return `<div class="bar-chart"><div class="bar-chart-header"><div class="bar-chart-title">${esc(title)}</div>
-      <div class="bar-chart-subtitle">No data</div></div></div>`;
-  }
-  const maxVal = Math.max(...data.map(d => d.value), 0);
-  const rows = data
-    .map(d => {
-      const pct = maxVal > 0 ? (d.value / maxVal) * 100 : 0;
-      const display = d.display ?? d.value.toLocaleString();
-      const color = d.color ? `;background:${d.color}` : '';
-      return `<div class="bar-chart-row">
-        <div class="bar-chart-label" title="${esc(d.label)}">${esc(d.label)}</div>
-        <div class="bar-chart-track"><div class="bar-chart-bar" style="width:${pct.toFixed(1)}%${color}"></div></div>
-        <div class="bar-chart-value">${esc(display)}</div>
-      </div>`;
-    })
-    .join('');
-  return `<div class="bar-chart">
-    <div class="bar-chart-header">
-      <div class="bar-chart-title">${esc(title)}</div>
-      ${subtitle ? `<div class="bar-chart-subtitle">${esc(subtitle)}</div>` : ''}
-    </div>
-    <div class="bar-chart-bars">${rows}</div>
-  </div>`;
-}
-
-function kpiHtml(label, value, sub = '') {
-  return `<article class="portal-card portal-card--metric" data-kpi="${esc(label)}">
-    <h3 style="font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);margin:0 0 6px">${esc(label)}</h3>
-    <div class="val">${esc(String(value))}</div>
-    ${sub ? `<div class="sub">${esc(sub)}</div>` : ''}
-  </article>`;
-}
-
-function setBanner(tone, title, meta) {
-  const banner = $('live-banner');
-  if (!banner) return;
-  banner.className = `portal-banner ${tone}`;
-  $('banner-title').textContent = title;
-  $('banner-meta').textContent = meta;
-}
-
-function renderKpis(metrics, regPkgCount, agentAuth) {
-  const host = $('kpi-host');
-  if (!host) return;
-  const source = metrics?.source ?? '—';
-  const tone =
-    source === 'event-store' ? 'ok' : source === 'sample' ? 'warn' : 'warn';
-  const authStatus = agentAuth?.status === 'configured'
-    ? 'configured'
-    : agentAuth
-      ? (agentAuth.status || 'unset')
-      : '—';
-  const authSub = agentAuth?.envKey
-    ? `${agentAuth.envKey} · cloud agent`
-    : 'FACTORY_WAGER_TOKEN';
-  host.innerHTML = [
-    kpiHtml('Source', source, metrics?.note?.slice(0, 48) ?? ''),
-    kpiHtml('Markets', metrics?.markets ?? '—', 'event-store rows'),
-    kpiHtml('Book mids', metrics?.midsUsable ?? '—', `${metrics?.bookTicksLatest ?? 0} latest ticks`),
-    kpiHtml('Packages', regPkgCount, 'tennis registry'),
-    kpiHtml('Registry token', authStatus, authSub),
-  ].join('');
-  // tint first card by source
-  const first = host.querySelector('[data-kpi="Source"] .val');
-  if (first) first.className = `val st-${tone === 'ok' ? 'ok' : 'warn'}`;
-  const authVal = host.querySelector('[data-kpi="Registry token"] .val');
-  if (authVal) {
-    authVal.className = `val st-${authStatus === 'configured' ? 'ok' : 'warn'}`;
-  }
-}
-
-function renderCharts(metrics) {
-  const host = $('charts-host');
-  if (!host || !metrics) return;
-  const volRows = (metrics.seriesVolume || []).map(r => ({
-    label: r.label || r.series,
-    value: r.volume24h || 0,
-    display: r.display || String(r.volume24h ?? 0),
-  }));
-  const midRows = (metrics.buckets || []).map(b => ({
-    label: b.range,
-    value: b.count,
-    display: String(b.count),
-  }));
-  host.innerHTML =
-    barChartHtml(volRows, {
-      title: 'Volume by series (24h)',
-      subtitle:
-        metrics.source === 'event-store'
-          ? `live event-store · ${metrics.seriesVolume?.length ?? 0} series`
-          : metrics.note || 'sample',
-    }) +
-    barChartHtml(midRows, {
-      title: 'Mid distribution',
-      subtitle:
-        metrics.source === 'event-store'
-          ? `latest book mids · n=${metrics.midsUsable}`
-          : 'sample / fallback',
-    });
-}
-
-function renderVenuesFromMetrics(metrics) {
-  const host = $('venue-live-host');
-  if (!host) return;
-  const rows = metrics?.venues?.length
-    ? metrics.venues
-    : [
-        { venue: 'kalshi', count: 0 },
-        { venue: 'polymarket', count: 0 },
-        { venue: 'pinnacle', count: 0 },
-        { venue: 'betfair', count: 0 },
-      ];
-  host.innerHTML = rows
-    .map(r => {
-      const id = parseMarketVenue(r.venue);
-      return `<article class="portal-card">
-        <div style="margin-bottom:8px">${renderVenueBadge(id, { size: 'md' })}</div>
-        <div class="val" style="font-size:18px">${esc(String(r.count))}</div>
-        <div class="sub">markets in store</div>
-      </article>`;
-    })
-    .join('');
-}
-
-
-/** @type {{ players: any[], nameToSlug: Record<string,string> }} */
-let avatarIndex = { players: [], nameToSlug: {} };
-/** @type {any[]} */
-let liveMatchRows = [];
-
-function resolveSlug(name) {
-  const raw = String(name || '').trim();
-  if (!raw) return 'demo-player';
-  if (avatarIndex.nameToSlug[raw]) return avatarIndex.nameToSlug[raw];
-  const n = raw.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'player';
-  return avatarIndex.nameToSlug[n] || n;
-}
-
-function avatarImg(slug, size = 28) {
-  const s = esc(slug || 'demo-player');
-  return `<img src="/avatars/${s}.webp" width="${size}" height="${size}" alt="${s}" loading="lazy"
-    style="border-radius:50%;object-fit:cover;background:var(--border);vertical-align:middle"
-    onerror="this.onerror=null;this.src='/avatar/${s}'" />`;
-}
-
-function renderSampleTable(filterVenue = '') {
-  const tbody = document.querySelector('#sample-rows tbody');
-  if (!tbody) return;
-  const rows = filterVenue
-    ? liveMatchRows.filter((r) => r.venue === filterVenue)
-    : liveMatchRows;
-  if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="9">No matches — run <code>bun run tennis:board:bake</code></td></tr>';
-    return;
-  }
-  tbody.innerHTML = rows.map((r) => {
-    const slugA = r.sideA?.slug || resolveSlug(r.sideA?.label);
-    const slugB = r.sideB?.slug || resolveSlug(r.sideB?.label);
-    const edge = r.edgeCents;
-    const edgeCls = edge == null ? '' : edge >= 0 ? 'st-ok' : 'st-bad';
-    const edgeStr = edge == null ? '—' : (edge >= 0 ? '+' : '') + edge + '¢';
-    const midA = r.sideA?.midCents != null ? r.sideA.midCents + '¢' : '—';
-    const midB = r.sideB?.midCents != null ? r.sideB.midCents + '¢' : '—';
-    return `<tr>
-      <td>${avatarImg(slugA)}</td>
-      <td>${esc(r.sideA?.label || '—')}</td>
-      <td>${avatarImg(slugB)}</td>
-      <td>${esc(r.sideB?.label || '—')}</td>
-      <td>${typeof renderVenueBadge === 'function' ? renderVenueBadge(r.venue || 'kalshi', { showLabel: false }) : esc(r.venue || '—')}</td>
-      <td class="mono">${esc(midA)}</td>
-      <td class="mono">${esc(midB)}</td>
-      <td class="mono ${edgeCls}">${esc(edgeStr)}</td>
-      <td class="mono">${esc(r.seriesLabel || r.series || '—')}</td>
-    </tr>`;
-  }).join('');
-}
-
-function renderAvatarStrip() {
-  const host = document.getElementById('avatar-strip');
-  const img = document.getElementById('hero-avatar');
-  const players = (avatarIndex.players || []).filter((p) => p.hasSource || p.hasWebp || p.slug === 'demo-player');
-  const ids = players.length ? players.slice(0, 12).map((p) => p.slug) : ['demo-player'];
-  if (img) {
-    const id = ids[0] || 'demo-player';
-    img.src = `/avatars/${id}.webp`;
-    img.alt = id;
-    const label = img.closest('a')?.querySelector('span');
-    // keep first text span as name
-  }
-  if (host) {
-    host.innerHTML = ids.map((id) => {
-      const p = (avatarIndex.players || []).find((x) => x.slug === id);
-      const name = p?.displayName || id;
-      return `<a href="/avatars/${esc(id)}.webp" class="portal-card" style="display:flex;align-items:center;gap:10px;padding:10px 12px;text-decoration:none;color:inherit">
-        ${avatarImg(id, 48)}
-        <div>
-          <div style="font-weight:600;font-size:13px">${esc(name)}</div>
-          <div class="sub" style="margin:0"><code>${esc(id)}</code> · ${p?.hasWebp ? 'webp' : 'pending'}</div>
-        </div>
-      </a>`;
-    }).join('');
-  }
-}
-
-async function loadAvatarIndex() {
-  try {
-    const res = await fetch('/registry/tennis/avatar-index.json', {
-      credentials: 'same-origin', headers: { Accept: 'application/json' }, cache: 'no-cache',
-    });
-    if (!res.ok) return;
-    const doc = await res.json();
-    avatarIndex = {
-      players: doc.players || [],
-      nameToSlug: doc.nameToSlug || {},
-    };
-    if (!Object.keys(avatarIndex.nameToSlug).length && avatarIndex.players.length) {
-      const m = {};
-      for (const p of avatarIndex.players) {
-        m[p.slug] = p.slug;
-      }
-      avatarIndex.nameToSlug = m;
-    }
-  } catch { /* keep empty */ }
-}
-
-async function loadLiveMatches() {
-  try {
-    const res = await fetch('/registry/tennis/live-matches.json', {
-      credentials: 'same-origin', headers: { Accept: 'application/json' }, cache: 'no-cache',
-    });
-    if (!res.ok) return;
-    const doc = await res.json();
-    liveMatchRows = doc.matches || [];
-    const sub = document.getElementById('matches-sub');
-    if (sub) {
-      sub.innerHTML = `${doc.source || '—'} · ${liveMatchRows.length} matches · filter by venue · slugs from avatar-index`;
-    }
-  } catch {
-    liveMatchRows = [];
-  }
-}
-
-async function loadMetrics() {
-  try {
-    const res = await fetch('/registry/tennis/board-metrics.json', {
-      credentials: 'same-origin',
-      headers: { Accept: 'application/json' },
-      cache: 'no-cache',
-    });
-    if (!res.ok) throw new Error(`metrics HTTP ${res.status}`);
-    return await res.json();
-  } catch {
-    // legacy mid-only
-    try {
-      const res = await fetch('/registry/tennis/mid-distribution.json', {
-        credentials: 'same-origin',
-        headers: { Accept: 'application/json' },
-        cache: 'no-cache',
-      });
-      if (!res.ok) return null;
-      const mid = await res.json();
-      return {
-        schemaVersion: 1,
-        kind: 'tennis-board-metrics',
-        generatedAt: mid.generatedAt,
-        source: mid.source || 'sample',
-        bookTicksLatest: 0,
-        midsUsable: mid.n ?? 0,
-        markets: 0,
-        buckets: mid.buckets || [],
-        seriesVolume: [],
-        venues: [],
-        note: mid.note,
-      };
-    } catch {
-      return null;
-    }
-  }
-}
-
-async function loadRegistry() {
-  try {
-    const res = await fetch('/registry/tennis/registry.json', {
-      credentials: 'same-origin',
-      headers: { Accept: 'application/json' },
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-async function loadAgentAuth() {
-  try {
-    const res = await fetch('/registry/tennis/agent-auth.json', {
-      credentials: 'same-origin',
-      headers: { Accept: 'application/json' },
-      cache: 'no-store',
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-function renderRegistry(reg) {
-  const packages = reg?.packages && typeof reg.packages === 'object' ? reg.packages : {};
-  const names = Object.keys(packages);
-  const regBody = $('reg-table')?.querySelector('tbody');
-  if (regBody) {
-    regBody.innerHTML = names.length
-      ? names
-          .map(name => {
-            const p = packages[name];
-            const latest = p?.['dist-tags']?.latest ?? p?.versions?.[0] ?? '—';
-            const nVer = Array.isArray(p?.versions) ? p.versions.length : '—';
-            return `<tr><td class="mono">${esc(name)}</td><td class="mono">${esc(latest)}</td><td class="mono">${esc(String(nVer))}</td></tr>`;
-          })
-          .join('')
-      : '<tr><td colspan="3">No packages</td></tr>';
-  }
-  const regSub = $('reg-sub');
-  if (regSub) {
-    regSub.innerHTML = reg
-      ? `${names.length} package(s) · updated ${esc(reg.lastUpdated ?? '—')} · <code>/registry/tennis/registry.json</code>`
-      : 'Registry unavailable';
-  }
-  return names.length;
-}
-
-function renderHealth(detail) {
-  const healthLine = $('tenant-health-line');
-  if (!healthLine) return;
-  const { status, data } = detail || {};
-  if (status === 'ok' || status === 'stale') {
-    healthLine.innerHTML = `Portal health: <span class="st-ok">${esc(data?.status ?? 'ok')}</span> · ${esc(data?.runtime ?? '—')}`;
-  } else {
-    healthLine.innerHTML = '<span class="st-warn">Health unavailable</span>';
-  }
-}
-
-export async function load() {
-  setBanner('warn', 'Loading tennis board…', 'metrics · registry · avatars · matches');
-  const [metrics, reg, agentAuth] = await Promise.all([
-    loadMetrics(),
-    loadRegistry(),
-    loadAgentAuth(),
-    loadAvatarIndex(),
-    loadLiveMatches(),
-  ]);
-  const pkgCount = renderRegistry(reg);
-  renderAvatarStrip();
-  renderSampleTable(document.getElementById('venue-filter')?.value || '');
-
-  if (metrics) {
-    renderKpis(metrics, pkgCount, agentAuth);
-    renderCharts(metrics);
-    renderVenuesFromMetrics(metrics);
-    const tone = metrics.source === 'event-store' ? 'ok' : 'warn';
-    const authBit =
-      agentAuth?.status === 'configured'
-        ? ' · registry token configured'
-        : agentAuth
-          ? ' · registry token missing'
-          : '';
-    setBanner(
-      tone,
-      metrics.source === 'event-store' ? 'Tennis board live' : 'Tennis board (sample metrics)',
-      [
-        metrics.generatedAt ? String(metrics.generatedAt).slice(0, 19) : null,
-        `mids ${metrics.midsUsable}`,
-        `markets ${metrics.markets}`,
-        metrics.eventStorePath ? metrics.eventStorePath : null,
-      ]
-        .filter(Boolean)
-        .join(' · ') + authBit
-    );
-  } else {
-    renderKpis(null, pkgCount, agentAuth);
-    setBanner('bad', 'Metrics unavailable', 'Run bun run tennis:board:bake' + (agentAuth?.status === 'configured' ? ' · registry token configured' : ''));
-  }
-}
-
-function renderAvatarStrip() {
-  const host = document.getElementById('avatar-strip');
-  const img = document.getElementById('hero-avatar');
-  const ids = ['demo-player'];
-  // Prefer static bake on Pages; probe on-demand path when local serve-public
-  const candidates = (id) => [`/avatars/${id}.webp`, `/avatar/${id}`];
-  if (img) {
-    const id = 'demo-player';
-    const tryNext = (i) => {
-      if (i >= 2) return;
-      const url = candidates(id)[i] + (i === 0 ? '' : `?s=128`);
-      const probe = new Image();
-      probe.onload = () => { img.src = url; };
-      probe.onerror = () => tryNext(i + 1);
-      probe.src = url;
-    };
-    tryNext(0);
-  }
-  if (host) {
-    host.innerHTML = ids.map((id) => {
-      const src = `/avatars/${id}.webp`;
-      return `<a href="${src}" class="portal-card" style="display:flex;align-items:center;gap:10px;padding:10px 12px;text-decoration:none;color:inherit">
-        <img src="${src}" width="48" height="48" alt="${id}" style="border-radius:50%;object-fit:cover;background:var(--border)" loading="lazy"
-          onerror="this.onerror=null;this.src='/avatar/${id}'" />
-        <div>
-          <div style="font-weight:600;font-size:13px">${id}</div>
-          <div class="sub" style="margin:0">Bun.Image · /avatars · /avatar/:id</div>
-        </div>
-      </a>`;
-    }).join('');
-  }
-}
-
-function boot() {
-  renderAvatarStrip();
-
-  mountVenueLegend($('venue-legend-host'));
-  renderSampleTable();
-
-  const filter = $('venue-filter');
-  filter?.addEventListener('change', () => renderSampleTable(filter.value));
-
-  $('btn-refresh')?.addEventListener('click', e => {
-    e.preventDefault();
-    void load();
-  });
-
-  document.addEventListener('portal:data', e => renderHealth(e.detail));
-  const cached = getHealthData();
-  if (cached) renderHealth({ status: 'stale', data: cached });
-
-  void load();
-  setInterval(() => void load(), 30_000);
-}
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', boot);
-} else {
-  boot();
-}
-
-  </script>
+  <script type="module" src="/portal/components/tennis-desk.js"></script>
 </body>
 </html>

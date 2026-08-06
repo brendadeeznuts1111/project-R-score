@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Concept inventory (not GitHub SSOT)
+    url: https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/CONCEPT_LIFECYCLE.md
+    about: Concept ids live in vocabulary + concept:audit — do not invent concept labels on issues.
+  - name: Partner domain map
+    url: https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/harness/tenants/partner-domain-map.md
+    about: Domain ownership and concept prefixes (partner desk).
+  - name: Bookmakers open issues (BM-*)
+    url: https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/harness/tenants/bookmakers-open-issues.md
+    about: Residual catalog/desk/publish gaps tracked as BM-1…BM-5.

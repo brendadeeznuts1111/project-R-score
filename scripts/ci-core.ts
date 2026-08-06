@@ -84,6 +84,10 @@ const CORE_STEPS: CoreStep[] = [
     cmd: ['bun', 'run', 'concept:audit', '--', '--strict', '--output', 'json'],
     writeOut: 'concept-audit.json',
   },
+  {
+    name: 'tennis-ssot-release',
+    cmd: ['bun', 'run', 'tennis:ssot:release:check'],
+  },
 ];
 
 async function run(

@@ -30,19 +30,19 @@ export const asArtifactName = nameBrand.as;
 export const parseArtifactName = nameBrand.parse;
 
 /**
- * Valid artifact names: local names or the canonical npm scope.
+ * Valid artifact names: local names or an owned package scope.
  *
- * Registry storage and the public proxy intentionally allow only
- * `@factorywager/*`; accepting arbitrary scopes here would create objects the
- * read boundary refuses to serve.
+ * Registry storage and the public proxy intentionally allow only FactoryWager
+ * and its Tennis HQ producer; accepting arbitrary scopes here would create
+ * objects the read boundary refuses to serve.
  */
-const NAME_RE = /^(?:@factorywager\/)?[a-zA-Z0-9_-]+$/;
+const NAME_RE = /^(?:@(?:factorywager|tennis-hq)\/)?[a-zA-Z0-9_-]+$/;
 
 /** Create an ArtifactName with npm-compatible validation. */
 export function validateArtifactName(raw: string): ArtifactName {
   if (!NAME_RE.test(raw)) {
     throw new TypeError(
-      `Invalid artifact name: "${raw}". Use [a-zA-Z0-9_-] or @factorywager/<name>.`
+      `Invalid artifact name: "${raw}". Use [a-zA-Z0-9_-], @factorywager/<name>, or @tennis-hq/<name>.`
     );
   }
   return asArtifactName(raw);

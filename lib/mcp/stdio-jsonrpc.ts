@@ -152,6 +152,6 @@ export function writeJsonRpc(msg: object): void {
     Bun.stdout.write(json + '\n');
     return;
   }
-  const header = `Content-Length: ${Buffer.byteLength(json)}\r\n\r\n`;
+  const header = `Content-Length: ${new TextEncoder().encode(json).byteLength}\r\n\r\n`;
   Bun.stdout.write(header + json);
 }

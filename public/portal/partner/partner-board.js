@@ -57,7 +57,7 @@ export function renderPartnerHealth(bake) {
     return;
   }
   const h = bake.health;
-  const o = bake.outChecks;
+  const o = bake.outChecks ?? { checked: 0, degraded: [] };
   badge.textContent = h.ok ? 'HEALTHY' : 'DEGRADED';
   badge.className = h.ok ? 'doc-badge green' : 'doc-badge red';
   const tone = bakeTone(bake.generatedAt);
@@ -105,10 +105,7 @@ async function load(useLive) {
   const src = useLive ? '/api/partner/health' : '/registry/partner-health.json';
   const r = await fetchJsonResult(src);
   const data = r?.ok ? r.data : null;
-  renderPartnerHealth(
-    data &&
-      (useLive ? { health: data, outChecks: data.outChecks, generatedAt: data.generatedAt } : data)
-  );
+  renderPartnerHealth(data);
 }
 
 function wire() {

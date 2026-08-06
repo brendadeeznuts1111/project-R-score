@@ -50,6 +50,14 @@ describe('partner health bake', () => {
   test('partnerHealthBakeMatches detects drift', async () => {
     const live = await buildPartnerHealthBake();
     expect(partnerHealthBakeMatches(live, live)).toBe(true);
+    expect(
+      partnerHealthBakeMatches(live, {
+        ...live,
+        generatedAt: '2000-01-01T00:00:00.000Z',
+        health: { ...live.health, generatedAt: '2000-01-01T00:00:00.000Z' },
+        outChecks: { ...live.outChecks, generatedAt: '2000-01-01T00:00:00.000Z' },
+      })
+    ).toBe(true);
     expect(partnerHealthBakeMatches(live, { schemaVersion: 1, health: live.health, outChecks: { ...live.outChecks, checked: -1 } })).toBe(false);
     expect(partnerHealthBakeMatches(live, null)).toBe(false);
   });

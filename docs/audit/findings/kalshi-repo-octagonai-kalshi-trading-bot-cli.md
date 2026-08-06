@@ -6,7 +6,7 @@
 |-------|-------|
 | id | `kalshi-repo-octagonai-kalshi-trading-bot-cli` |
 | kind | `AuditFinding` |
-| status | `open` |
+| status | `confirmed` |
 | publishedAt | 2026-07-22 |
 | since | _unknown_ |
 | discoveredIn | 2026-07-22T05-50-48-875Z |
@@ -15,7 +15,7 @@
 
 ## Description
 
-Quality score 84.75/100. Strategy: market_making, sports, news_event, momentum, llm_ensemble. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox. Missing test coverage on extracted paths.
+Quality score 84.75/100. Strategy: market_making, sports, news_event, momentum, llm_ensemble. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox. Missing test coverage on extracted paths. Triaged 2026-08-05 audit-gap batch: confirmed as high-value shortlist candidate under kalshi-shortlist-diversity (lift signing/execution modules separately; do not wholesale-vend).
 
 ## Evidence
 

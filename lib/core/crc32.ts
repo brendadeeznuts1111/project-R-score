@@ -50,7 +50,7 @@ export interface FileChecksumResult extends CRC32Result {
 /**
  * Compute CRC32 checksum for data
  *
- * @param data - Data to hash (string, Buffer, or Uint8Array)
+ * @param data - Data to hash (string or Uint8Array)
  * @returns CRC32 result with value and hex representation
  *
  * @example
@@ -60,7 +60,7 @@ export interface FileChecksumResult extends CRC32Result {
  * console.info(result.hex);   // "3610A686"
  * ```
  */
-export function crc32(data: string | Buffer | Uint8Array): CRC32Result {
+export function crc32(data: string | Uint8Array): CRC32Result {
   const start = performance.now();
 
   const input = typeof data === 'string' ? new TextEncoder().encode(data) : data;
@@ -160,10 +160,7 @@ export function crc32Chunks(chunks: Uint8Array[]): CRC32Result {
  * const valid = verify('hello', '3610A686');
  * ```
  */
-export function verify(
-  data: string | Buffer | Uint8Array,
-  expectedChecksum: string | number
-): boolean {
+export function verify(data: string | Uint8Array, expectedChecksum: string | number): boolean {
   const result = crc32(data);
 
   if (typeof expectedChecksum === 'string') {

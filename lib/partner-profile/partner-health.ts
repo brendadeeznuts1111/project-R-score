@@ -38,6 +38,12 @@ function safeCount(db: Database, sql: string): { count: number; error?: string }
   }
 }
 
+function bindingPartnerCode(profileKey: string, callSign: string | null): string {
+  const callSignCode = callSign?.match(/^([A-Z]{3,6})-\d{3}$/)?.[1];
+  if (callSignCode) return callSignCode;
+  return profileKey;
+}
+
 /** Build the partner-domain health report. Never throws on degraded subsystems. */
 export async function runPartnerHealth(
   opts: { db?: Database; profilesDir?: string } = {}
@@ -76,10 +82,17 @@ export async function runPartnerHealth(
     try {
       boundKeys = new Set(
         (
-          db.query('SELECT DISTINCT profile_key FROM partner_profile_bindings').all() as Array<{
+          db
+            .query(
+              `SELECT DISTINCT b.profile_key, n.call_sign
+               FROM partner_profile_bindings b
+               LEFT JOIN tree_nodes n ON n.id = b.tree_node_id`
+            )
+            .all() as Array<{
             profile_key: string;
+            call_sign: string | null;
           }>
-        ).map(r => r.profile_key)
+        ).map(r => bindingPartnerCode(r.profile_key, r.call_sign))
       );
     } catch {
       /* bindings table missing — degraded */
@@ -120,6 +133,8 @@ export async function runPartnerHealth(
     report.ledger.ok &&
     report.capacity.ok &&
     report.profiles.ok;
+
+  if (!opts.db) db?.close();
 
   return report;
 }

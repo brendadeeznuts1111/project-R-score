@@ -4,6 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="portal-poll-ms" content="60000" />
     <meta
       name="description"
       content="Partner package groups · Telegram forum chats · Accounting topic deals · betting deposit rails from seat capital desk."
@@ -22,72 +23,67 @@
     />
     <link rel="stylesheet" href="/portal/style.css" />
     <style>
-      .partners-page {
-        max-width: 1120px;
-        margin: 0 auto;
-        padding: 28px 24px 48px;
+      .partners-page.portal-page {
+        max-width: 1180px;
       }
-      .partners-hero {
-        margin-bottom: 20px;
+      .partners-hero.portal-hero--card .partners-title,
+      .partners-hero.portal-hero--card .portal-hero__title {
+        margin: 0;
       }
-      .partners-title {
-        margin: 0 0 8px;
-        font-size: 28px;
-        font-weight: 650;
-        letter-spacing: -0.03em;
+      .partners-hero.portal-hero--card .partners-title a,
+      .partners-hero.portal-hero--card .portal-hero__title a {
+        color: inherit;
+        text-decoration: none;
       }
-      .partners-lede {
-        margin: 0 0 14px;
-        font-size: 14px;
-        color: var(--text-dim);
-        line-height: 1.5;
-        max-width: 62ch;
-      }
-      .partners-lede code {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 12px;
-      }
-      .partners-meta {
-        font-size: 12px;
-        color: var(--text-dim);
-        margin: 0 0 16px;
-      }
-      .partners-meta a {
+      .partners-hero.portal-hero--card .partners-title a:hover,
+      .partners-hero.portal-hero--card .portal-hero__title a:hover {
         color: var(--accent);
       }
-      .partners-stats {
+      .partners-meta-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
-        gap: 10px;
-        margin: 0 0 22px;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 8px;
+        width: 100%;
+        margin-top: 12px;
       }
-      @media (max-width: 900px) {
-        .partners-stats {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      .partners-stat {
-        background: var(--surface);
+      .partners-meta-chip {
         border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 12px 14px;
-      }
-      .partners-stat .k {
+        border-radius: 8px;
+        padding: 8px 10px;
+        background: color-mix(in srgb, var(--bg, #0d1117) 40%, transparent);
         font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-dim);
+        line-height: 1.35;
       }
-      .partners-stat .v {
-        font-size: 22px;
-        font-weight: 650;
+      .partners-meta-chip .k {
+        display: block;
+        color: var(--text-dim);
+        font: 600 10px/1.2 var(--font-mono, ui-monospace, monospace);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+      .partners-meta-chip time,
+      .partners-meta-chip .v {
+        font-family: var(--font-mono, ui-monospace, monospace);
         font-variant-numeric: tabular-nums;
       }
-      .partners-stat.ok .v {
-        color: var(--green, #3fb950);
+      .partners-meta-chip.warn {
+        border-color: color-mix(in srgb, var(--yellow, #d29922) 45%, var(--border));
       }
-      .partners-stat.warn .v {
-        color: var(--yellow, #d29922);
+      .partners-meta-chip.ok {
+        border-color: color-mix(in srgb, var(--green, #3fb950) 40%, var(--border));
+      }
+      .partners-meta-links {
+        margin: 10px 0 0;
+        font-size: 11px;
+        color: var(--text-dim);
+        line-height: 1.5;
+      }
+      .partners-meta-links a {
+        color: var(--accent);
+      }
+      #partners-stats.portal-stat-grid {
+        margin: 0 0 22px;
       }
       .partners-section {
         margin: 0 0 26px;
@@ -113,28 +109,12 @@
         padding: 14px 16px;
         overflow-x: auto;
       }
+      /* Base chrome from .portal-table — board keeps width floor only */
       .partners-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12px;
         min-width: 720px;
       }
       .partners-table th {
-        text-align: left;
-        padding: 7px 8px;
-        color: var(--text-dim);
         font-weight: 600;
-        border-bottom: 1px solid var(--border);
-        white-space: nowrap;
-      }
-      .partners-table td {
-        padding: 7px 8px;
-        border-bottom: 1px solid rgba(48, 54, 61, 0.35);
-        vertical-align: top;
-      }
-      .partners-table code {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 11px;
       }
       .tone-ok {
         color: var(--green, #3fb950);
@@ -212,6 +192,96 @@
       .tracking-summary .book-chip {
         white-space: nowrap;
       }
+      .phase-filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 0 0 12px;
+        align-items: center;
+      }
+      .phase-filter-bar .phase-filter-label {
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        margin-right: 4px;
+      }
+      .phase-filter-chip {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-dim);
+        font: 550 11px/1.2 var(--font-sans, system-ui, sans-serif);
+        padding: 4px 9px;
+        border-radius: 999px;
+        cursor: pointer;
+      }
+      .phase-filter-chip.is-active,
+      .phase-filter-chip:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 12%, transparent);
+      }
+      .coverage-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 110px;
+      }
+      .coverage-bar-track {
+        flex: 1;
+        height: 6px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--border) 80%, transparent);
+        overflow: hidden;
+      }
+      .coverage-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: var(--accent);
+      }
+      .coverage-bar-fill.tone-ok {
+        background: var(--green, #3fb950);
+      }
+      .coverage-bar-fill.tone-warn {
+        background: var(--yellow, #d29922);
+      }
+      .coverage-bar-fill.tone-bad {
+        background: var(--red, #f85149);
+      }
+      .coverage-bar-pct {
+        font: 550 11px/1 var(--font-mono, ui-monospace, monospace);
+        color: var(--text-dim);
+        min-width: 2.5rem;
+        text-align: end;
+      }
+      .partner-outs-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 10px;
+        align-items: center;
+      }
+      .partner-outs-toolbar select {
+        font: 500 12px/1.2 var(--font-sans, system-ui, sans-serif);
+        background: var(--surface, #161b22);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 4px 8px;
+      }
+      .partner-profile-outs {
+        margin-top: 14px;
+      }
+      .partner-profile-outs h3 {
+        margin: 0 0 8px;
+        font-size: 12px;
+        font-weight: 650;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+      }
       .cli-row {
         font-family: 'JetBrains Mono', monospace;
         font-size: 11px;
@@ -273,35 +343,51 @@
         <span class="logo-page">Partners</span>
       </h1>
         <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
-        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
+        <a href="/" class="nav-link" title="public lander · portal entry" data-group="other" data-domain="platform">Home</a>
+        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · C4/C5 loop · partner handshake panel · bun run ops:snapshot" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot" data-registry="/registry/ops-summary.json">Ops</a>
+        <a href="/portal/" class="nav-link" title="portal hub · board index · weave surfaces" data-group="registry" data-domain="platform">Registry</a>
+        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-domain="platform" data-cli="bun run monorepo:health:bake" data-registry="/registry/monorepo-health.json">Health</a>
+        <a href="/portal/dod/" class="nav-link" title="visual proof review · public-plane gate · bun run public:audit:verify" data-group="plane" data-domain="platform" data-cli="bun run public:audit:verify">DOD</a>
+        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · shadow matrix · bun run compliance:bake" data-group="ops" data-domain="control" data-cli="bun run compliance:bake" data-registry="/registry/compliance-board.json">Compliance</a>
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
-            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
-            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/partners/" class="nav-link active" aria-current="page" title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog" data-group="ops" data-cli="bun run telegram:handshake:catalog" role="menuitem">Partners</a>
-            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog" data-group="ops" role="menuitem">Account</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-cli="bun run bookmakers:bake" role="menuitem">Bookmakers</a>
-            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+          <div class="nav-group" role="group" aria-label="Ops · domain" data-group="ops">
+            <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
+            <a href="/portal/partners/" class="nav-link active" aria-current="page" title="package groups · telegram forums · accounting · deposits · seat capital · bun run telegram:handshake:catalog" data-group="ops" data-domain="partner" data-cli="bun run telegram:handshake:catalog" data-registry="/registry/partners-ops.json" role="menuitem">Partners</a>
+            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed" data-group="ops" data-domain="partner" data-cli="bun run ops:dossier:seed" data-registry="/registry/partners-ops.json" role="menuitem">Account</a>
+            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Partner history</a>
+            <a href="/portal/limits/" class="nav-link" title="multi-factor partner limit raises · CLV · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Limits</a>
+            <a href="/portal/limits-lab/" class="nav-link" title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:predict" data-registry="/registry/limit-forecast-lab.json" role="menuitem">Limits lab</a>
+            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-domain="partner" data-cli="bun run bookmakers:bake" data-registry="/registry/bookmakers.json" role="menuitem">Bookmakers</a>
+            <a href="/portal/factory/" class="nav-link" title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify" data-group="ops" data-domain="partner" data-cli="bun run telegram:verify" data-registry="/registry/telegram-handshake.json" role="menuitem">Factory</a>
+            <a href="/portal/tennis/" class="nav-link" title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake" data-group="ops" data-domain="trading" data-cli="bun run tennis:board:bake" data-registry="/registry/tennis/agent-auth.json" role="menuitem">Tennis</a>
+            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-domain="trading" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
+            <a href="/portal/dashboard/" class="nav-link" title="KPIs · TOC · compliance plane · proof-index pins" data-group="ops" data-domain="control" role="menuitem">Dashboard</a>
+            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope fixture board · bun run ops:seed:toc" data-group="ops" data-domain="control" data-cli="bun run ops:seed:toc" data-registry="/registry/toc-ops.json" role="menuitem">TOC</a>
+            <a href="/monitoring/" class="nav-link" title="routing · env · compliance tile · proof status · bun run ops:snapshot --no-seed" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot --no-seed" data-registry="/registry/monitoring.json" role="menuitem">Monitoring</a>
+            <a href="/portal/identity/" class="nav-link" title="auth board · lockout · anomaly · geo · JIT · bun test tests/identity-*.test.ts" data-group="ops" data-domain="identity" data-cli="bun test tests/identity-*.test.ts" data-registry="/registry/identity-board.json" role="menuitem">Identity</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Secrets" data-group="secrets">
+            <div class="nav-group-label" aria-hidden="true">Secrets</div>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-registry="/registry/vault-health.json" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Registry" data-group="registry">
+            <div class="nav-group-label" aria-hidden="true">Registry</div>
+            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-domain="knowledge" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
+            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-domain="platform" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" data-registry="/registry/packages-graph-map.json" role="menuitem">Packages</a>
+            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-domain="knowledge" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-domain="knowledge" data-cli="bun run glossary:portal" data-registry="/registry/domain-glossary.json" role="menuitem">Glossary</a>
+            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" data-registry="/registry/surfaces-state.json" role="menuitem">Surfaces</a>
+            <a href="/portal/skills/" class="nav-link" title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate" data-group="registry" data-domain="knowledge" data-cli="bun run skills:validate" data-registry="/registry/harness-skills-catalog.json" role="menuitem">Skills</a>
+            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
+            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-domain="knowledge" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="More" data-group="other">
+            <div class="nav-group-label" aria-hidden="true">More</div>
+            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub · wiki-index" data-group="other" data-domain="platform" role="menuitem">Wiki</a>
+          </div>
           </div>
         </div>
       </nav>
@@ -314,9 +400,11 @@
       </div>
     </header>
 
-    <main class="partners-page" id="partner-panel">
-      <header class="partners-hero">
-        <h2 class="partners-title">
+    <main class="partners-page portal-page" id="partner-panel">
+      <div data-domain-lanes="partner" hidden></div>
+      <header class="partners-hero portal-hero--card" aria-labelledby="partners-hero-title">
+        <p class="portal-eyebrow">Package groups · Telegram · Soft bake mirror</p>
+        <h2 class="partners-title portal-hero__title" id="partners-hero-title">
           <a
             class="semantic-label"
             href="/portal/glossary/#glossary:page.partners"
@@ -324,40 +412,57 @@
             >Partners</a
           >
         </h2>
-        <p class="partners-lede">
-          Package Telegram forums, Accounting topic deals, and betting deposit rails from the seat
-          capital desk. Soft ledger mutations stay in <code>ct</code>; this board is the factory
-          bake mirror. Glossary:
-          <a href="/portal/glossary/#glossary:telegram.wire" data-glossary-concept="telegram.wire"
-            >telegram.wire</a
+        <p class="partners-lede hero-sub">
+          Forums, Accounting topic deals, and seat-desk deposit rails. Soft ledger mutations stay in
+          <code>ct</code> — this board is the factory bake mirror.
+        </p>
+        <div class="portal-hero-meta">
+          <span id="partners-gate" class="portal-gate" aria-live="polite">…</span>
+          <span id="partners-baked" class="portal-baked">loading…</span>
+          <span
+            id="partners-freshness"
+            class="portal-freshness"
+            hidden
+            aria-live="polite"
+            title="Bake-manifest freshness"
+          ></span>
+          <div class="portal-source-links" aria-label="Related artifacts">
+            <a href="/registry/partners-ops.json">partners-ops.json</a>
+            <a href="/registry/telegram-handshake.json">handshake</a>
+            <a href="/registry/soft-accounting-export.json">soft export</a>
+            <a href="/registry/bake-manifest.json">bake-manifest</a>
+            <a href="/portal/glossary/#glossary:telegram.wire" data-glossary-concept="telegram.wire"
+              >telegram.wire</a
+            >
+          </div>
+        </div>
+        <div class="partners-meta-grid" id="partners-meta" aria-label="Bake provenance">
+          Loading registry…
+        </div>
+        <p class="partners-meta-links">
+          CLI <code>bun run partners:validate</code> ·
+          <a
+            href="/portal/glossary/#glossary:section.partnersTags"
+            data-glossary-concept="section.partnersTags"
+            >Partner tags</a
           >
-          · taxonomy
-          <a href="/registry/partners-ops.json"><code>partners-ops.json</code></a>
-          · <code>bun run partners:validate</code>.
+          ·
+          <a
+            href="/portal/glossary/#glossary:ui.route.partnerHash"
+            data-glossary-concept="ui.route.partnerHash"
+            >hash routes</a
+          >
         </p>
         <nav
           class="tag-filter-bar"
           id="tag-filter-bar"
           aria-label="Partner-ops taxonomy filters"
           data-glossary-concept="section.partnersTags"
+          style="margin-top: 14px"
         >
           <div id="section:tag-filter-bar" class="sr-only" aria-hidden="true"></div>
-          <p class="blurb" style="margin: 0 0 6px">
-            <a
-              href="/portal/glossary/#glossary:section.partnersTags"
-              data-glossary-concept="section.partnersTags"
-              >Partner tags</a
-            >
-            ·
-            <a
-              href="/portal/glossary/#glossary:ui.route.partnerHash"
-              data-glossary-concept="ui.route.partnerHash"
-              >hash routes</a
-            >
-          </p>
           <ul class="topic-chips" id="taxonomy-chips" aria-label="Partner-ops taxonomy"></ul>
         </nav>
-        <p class="partners-meta" id="partners-meta">Loading registry…</p>
         <nav
           class="partner-route-bar"
           id="partner-route-bar"
@@ -371,13 +476,24 @@
         ></nav>
       </header>
 
-      <div id="error-banner" class="ops-banner error hidden"></div>
-      <div id="loading" class="ops-loading">
+      <div
+        id="error-banner"
+        class="ops-banner error hidden"
+        role="alert"
+        aria-live="assertive"
+      ></div>
+      <div id="loading" class="ops-loading" role="status" aria-live="polite">
         <div class="spinner"></div>
         <p>Loading partners…</p>
       </div>
       <div id="dashboard" class="hidden">
-        <div class="partners-stats" id="partners-stats"></div>
+        <div class="portal-stat-grid" id="partners-stats" aria-label="Partners summary"></div>
+        <div
+          class="phase-filter-bar"
+          id="phase-filter-bar"
+          role="toolbar"
+          aria-label="Filter partners by phase"
+        ></div>
 
         <section
           class="partners-section partner-profile hidden"
@@ -421,7 +537,7 @@
           </p>
           <ul class="topic-chips" id="topic-chips"></ul>
           <div class="partners-panel" id="telegram-thread" style="margin-top: 12px">
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -444,6 +560,67 @@
             bun run telegram:handshake:catalog · telegram:handshake:invite-gap · telegram:ops --
             link-package-group CODE chatId
           </p>
+        </section>
+
+        <section
+          class="partners-section"
+          id="section:outs"
+          aria-labelledby="outs-heading"
+          data-glossary-concept="out.status.ready"
+        >
+          <h2 id="outs-heading">
+            <a
+              href="/portal/glossary/#glossary:out.status.ready"
+              data-glossary-concept="out.status.ready"
+              >Outs inventory</a
+            >
+          </h2>
+          <p class="blurb">
+            Flattened seats from
+            <a href="/registry/partners-ops.json"><code>partners-ops.json</code></a>
+            — book, funding rail, max bet, and
+            <a
+              href="/portal/glossary/#glossary:out.status.ready"
+              data-glossary-concept="out.status.ready"
+              >out status</a
+            >. Filter by readiness; open a partner profile via CODE.
+          </p>
+          <div class="partner-outs-toolbar" role="toolbar" aria-label="Outs filters">
+            <label>
+              Status
+              <select id="outs-status-filter" aria-label="Filter outs by status">
+                <option value="">All</option>
+                <option value="ready">ready</option>
+                <option value="deferred">deferred</option>
+                <option value="paused">paused</option>
+                <option value="blocked">blocked</option>
+              </select>
+            </label>
+            <label class="phase-filter-chip" style="border: none; padding: 0">
+              <input type="checkbox" id="outs-incomplete-only" /> incomplete only
+            </label>
+            <span id="outs-filter-count" class="tone-muted" aria-live="polite"></span>
+          </div>
+          <div class="partners-panel">
+            <table class="portal-table partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Phase</th>
+                  <th>Out</th>
+                  <th>Book</th>
+                  <th>Type</th>
+                  <th>User</th>
+                  <th>Rail</th>
+                  <th>Max</th>
+                  <th>Status</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody id="outs-tbody"></tbody>
+            </table>
+          </div>
+          <p class="cli-row">bun run partners:validate · bun run partners:build</p>
         </section>
 
         <section
@@ -480,7 +657,7 @@
             <span id="account-limit-summary"></span>
           </p>
           <div class="partners-panel">
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -610,7 +787,7 @@
             surface. Soft Balance stays in toc-ops <code>ct</code>.
           </p>
           <div class="partners-panel" id="accounting-ledger">
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -630,7 +807,7 @@
               <code>partners:event</code> / <code>partners:ledger:append</code> →
               <code>bun run partners:build</code>. Shipped <code>event.*</code> ids only.
             </p>
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -659,7 +836,7 @@
                 ><code>ops.view.per_play</code></a
               >. Promote live with <code>bun run soft:accounting:from-ct</code>.
             </p>
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -688,7 +865,7 @@
                 ><code>ops.view.per_week</code></a
               >.
             </p>
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -721,7 +898,7 @@
                 ><code>book.type.*</code></a
               >.
             </p>
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -777,7 +954,6 @@
             data-section="outs"
             data-glossary-concept="section.partnersOuts"
           >
-            <div id="section:outs" class="sr-only" aria-hidden="true"></div>
             <p class="blurb" style="margin: 0 0 8px">
               <a
                 href="/portal/glossary/#glossary:section.partnersOuts"
@@ -787,7 +963,7 @@
               — deposit rails and status chips (hash
               <code>#partner/CODE/out/out-CODE-N</code>).
             </p>
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -865,7 +1041,7 @@
             ></ul>
           </div>
           <div class="partners-panel">
-            <table class="partners-table">
+            <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Call</th>
@@ -896,6 +1072,8 @@
       <a href="/portal/ops/">Ops</a> ·
       <a href="/portal/toc/">TOC</a> ·
       <a href="/portal/partners/">Partners</a> ·
+      <a href="/portal/tennis/">Tennis</a> ·
+      <a href="/portal/bookmakers/">Bookmakers</a> ·
       <a href="/portal/packages/">Packages</a> ·
       <a href="/portal/brands/">Brands</a> ·
       <a href="/portal/glossary/">Glossary</a> ·
@@ -907,6 +1085,7 @@
       <a href="/portal/dod/">DOD</a> ·
       <a href="/portal/env/">Env</a> ·
       <a href="/portal/vault/">Vault</a> ·
+      <a href="https://wiki.factory-wager.com/wiki-index.html" target="_blank" rel="noopener noreferrer">Wiki</a> ·
       <a href="/registry/monorepo-health.json">Monorepo health</a> ·
       <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
     </p>
@@ -934,14 +1113,153 @@
         telegramDeepLink,
         telegramTopicsForPhase,
       } from '/portal/partners/partner-routes.js';
+      import {
+        coverageBarStyle,
+        filterPartnerOuts,
+        flattenPartnerOuts,
+        indexOpsByPartner,
+        listPartnerPhases,
+        normalizePartnerCode,
+        canonicalProfileCoverage,
+        partnerReadinessGate,
+        summarizePartnerDesk,
+      } from '/portal/partners/partners-board.js';
+      import { mountFreshnessBadge } from '/portal/data-freshness.js';
+      import {
+        escHtml,
+        renderPortalStatGrid,
+        renderPortalTableRows,
+      } from '/portal/components/portal-ui.js';
 
       const TELEGRAM_BOT = 'FactoryWagerBot';
 
       const $ = id => document.getElementById(id);
+
+      /** Column defs for shared tbody builders (static thead stays in HTML). */
+      const PARTNER_COLS = [
+        { key: 'code', label: 'Partner' },
+        { key: 'phase', label: 'Phase' },
+        { key: 'tax', label: 'Taxonomy' },
+        { key: 'membership', label: 'Membership' },
+        { key: 'callSign', label: 'Call sign' },
+        { key: 'dm', label: 'DM seat' },
+        { key: 'handshake', label: 'Handshake' },
+        { key: 'invite', label: 'Invite' },
+        { key: 'bot', label: 'Bot' },
+        { key: 'next', label: 'Next' },
+        { key: 'balance', label: 'Balance' },
+      ];
+      const OUTS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'phase', label: 'Phase' },
+        { key: 'out', label: 'Out' },
+        { key: 'book', label: 'Book' },
+        { key: 'type', label: 'Type' },
+        { key: 'user', label: 'User' },
+        { key: 'rail', label: 'Rail' },
+        { key: 'max', label: 'Max' },
+        { key: 'status', label: 'Status' },
+        { key: 'note', label: 'Note' },
+      ];
+      const DEPOSIT_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'callSign', label: 'Call sign' },
+        { key: 'out', label: 'Out' },
+        { key: 'book', label: 'Book' },
+        { key: 'user', label: 'User' },
+        { key: 'rail', label: 'Rail' },
+        { key: 'sendTo', label: 'Send to' },
+        { key: 'max', label: 'Max' },
+        { key: 'freeplay', label: 'Freeplay' },
+        { key: 'status', label: 'Status' },
+      ];
+      const ACCOUNTING_DEALS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'callSign', label: 'Call sign' },
+        { key: 'fund', label: 'Fund' },
+        { key: 'tg', label: 'Telegram' },
+        { key: 'incomplete', label: 'Incomplete outs' },
+        { key: 'checklist', label: 'Checklist' },
+        { key: 'cli', label: 'CLI' },
+      ];
+      const ACCOUNTING_EVENTS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'at', label: 'When' },
+        { key: 'code', label: 'Code' },
+        { key: 'concept', label: 'Concept' },
+        { key: 'amount', label: 'Amount' },
+        { key: 'rail', label: 'Rail / out' },
+        { key: 'note', label: 'Note' },
+      ];
+      const SOFT_PLAYS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'at', label: 'Placed' },
+        { key: 'play', label: 'Play' },
+        { key: 'market', label: 'Market' },
+        { key: 'result', label: 'Result' },
+        { key: 'stake', label: 'Stake' },
+        { key: 'pnl', label: 'PnL' },
+      ];
+      const SOFT_WEEKS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'week', label: 'Week' },
+        { key: 'deposits', label: 'Deposits' },
+        { key: 'settlements', label: 'Settlements' },
+        { key: 'net', label: 'Net' },
+      ];
+      const SOFT_BOOKS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'book', label: 'Book type' },
+        { key: 'deposits', label: 'Deposits' },
+        { key: 'settlements', label: 'Settlements' },
+        { key: 'net', label: 'Net' },
+      ];
+      const LEDGER_COLS = [
+        { key: 'at', label: 'When' },
+        { key: 'type', label: 'Type' },
+        { key: 'amount', label: 'Amount' },
+        { key: 'currency', label: 'CCY' },
+        { key: 'ref', label: 'Reference' },
+        { key: 'track', label: 'Tracking' },
+        { key: 'balance', label: 'Balance after' },
+      ];
+      const PROFILE_OUTS_COLS = [
+        { key: 'out', label: 'Out' },
+        { key: 'balance', label: 'Balance' },
+        { key: 'last', label: 'Last' },
+        { key: 'amount', label: 'Amount' },
+        { key: 'type', label: 'Type' },
+      ];
+      const ACCOUNTS_LIMITS_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'phase', label: 'Phase' },
+        { key: 'accounts', label: 'Accounts' },
+        { key: 'limits', label: 'Limits' },
+        { key: 'effective', label: 'Effective' },
+        { key: 'freeplay', label: 'Freeplay' },
+        { key: 'ledger', label: 'Ledger' },
+        { key: 'comms', label: 'Comms' },
+        { key: 'actions', label: 'Actions' },
+      ];
+      const PARTNER_MSG_COLS = [
+        { key: 'callSign', label: 'Call sign' },
+        { key: 'fund', label: 'Fund' },
+        { key: 'active', label: 'Active outs' },
+        { key: 'deferred', label: 'Deferred' },
+        { key: 'common', label: 'Common missing' },
+        { key: 'specific', label: 'Out-specific' },
+        { key: 'cli', label: 'CLI' },
+      ];
       /** @type {Map<string, { hex?: string, conceptId?: string, label?: string }>} */
       let bookIndex = new Map();
       /** @type {Map<string, object>} */
       let opsByPartner = new Map();
+      /** @type {object | null} */
+      let opsCache = null;
+      /** @type {string | null} */
+      let phaseFilter = null;
+      /** @type {object[]} */
+      let flattenedOuts = [];
       /** @type {Map<string, object[]>} */
       let softPlaysByPartner = new Map();
       /** @type {object[]} */
@@ -953,6 +1271,7 @@
       let colorsCache = {};
       let handshakeCache = null;
       let seatCache = null;
+      let partnerProfilesCache = { profiles: {}, summary: { count: 0 } };
 
       function weekStartIsoFromPlacedAt(placedAt) {
         const ms = Date.parse(String(placedAt || ''));
@@ -1002,10 +1321,9 @@
         );
       }
 
+      /** Escape for HTML text/attrs — shared portal-ui builder. */
       function esc(value) {
-        const el = document.createElement('div');
-        el.textContent = value == null ? '' : String(value);
-        return el.innerHTML;
+        return escHtml(value);
       }
 
       /** Format a ledger balance ("—" when the ops DB projection is absent). */
@@ -1151,40 +1469,219 @@
           .join('');
       }
 
-      function renderStats(handshake, seat, ops) {
-        const partners =
-          ops?.summary?.partners ?? handshake?.partners ?? (handshake?.rows?.length || 0);
-        const ready = handshake?.operatorReady ?? 0;
+      function bakeLabel(iso, source = '') {
+        if (!iso) return { text: '—', tone: '' };
+        const t = Date.parse(iso);
+        if (!Number.isFinite(t) || t <= 0) {
+          return {
+            text: source ? `fixture · ${source}` : 'fixture / unset',
+            tone: 'warn',
+          };
+        }
+        // Treat unix epoch sentinel as fixture marker
+        if (t < Date.parse('1980-01-01T00:00:00.000Z')) {
+          return {
+            text: source ? `fixture · ${source}` : 'fixture (epoch bake)',
+            tone: 'warn',
+          };
+        }
+        return {
+          text: new Date(t)
+            .toISOString()
+            .replace('T', ' ')
+            .replace(/\.\d+Z$/, ' UTC'),
+          tone: 'ok',
+        };
+      }
+
+      function renderStats(handshake, seat, ops, partnerProfiles) {
+        const desk = summarizePartnerDesk(ops, handshake);
         const desks = seat?.desks ?? (seat?.rows?.length || 0);
-        const incomplete = ops?.summary?.incompleteOuts ?? seat?.incompleteOuts ?? 0;
-        const inviteGaps = handshake?.inviteGaps ?? 0;
-        const accounts = ops?.summary?.accounts ?? ops?.summary?.outs ?? 0;
-        const trackedLimits = ops?.summary?.trackedLimits ?? 0;
-        const communicationReady = ops?.summary?.communicationReady ?? 0;
+        const profileCoverage = canonicalProfileCoverage(ops, handshake, partnerProfiles);
+        const canonicalProfiles = profileCoverage.coveredCodes.length;
         const cells = [
-          ['Partners', partners, ''],
-          ['Operator ready', ready, ready === partners && partners > 0 ? 'ok' : ''],
-          ['Accounts', accounts, ''],
+          ['Partners', desk.partners, '', 'section:telegram', 'Package groups in handshake'],
           [
-            'Tracked limits',
-            trackedLimits,
-            trackedLimits === accounts && accounts > 0 ? 'ok' : 'warn',
+            'Operator ready',
+            desk.operatorReady,
+            desk.operatorReady === desk.partners && desk.partners > 0 ? 'ok' : 'warn',
+            'section:telegram',
+            'Phase operator_ready',
+          ],
+          ['Accounts', desk.accounts, '', 'section:accounts-limits', 'Outs / accounts tracked'],
+          [
+            'Outs ready',
+            `${desk.readyOuts}/${desk.outs}`,
+            desk.readyOuts === desk.outs && desk.outs > 0 ? 'ok' : 'warn',
+            'section:outs',
+            'partners-ops out.status.ready',
+          ],
+          [
+            'Limit coverage',
+            `${desk.limitCoveragePct}%`,
+            desk.limitCoveragePct >= 80 ? 'ok' : desk.limitCoveragePct >= 40 ? 'warn' : 'bad',
+            'section:accounts-limits',
+            `${desk.trackedLimits} tracked limits`,
           ],
           [
             'Telegram ready',
-            communicationReady,
-            communicationReady === partners && partners > 0 ? 'ok' : 'warn',
+            desk.communicationReady,
+            desk.communicationReady === desk.partners && desk.partners > 0 ? 'ok' : 'warn',
+            'section:telegram',
+            'Invite + membership ready',
           ],
-          ['Seat desks', desks, ''],
-          ['Incomplete outs', incomplete, incomplete > 0 ? 'warn' : 'ok'],
-          ['Invite gaps', inviteGaps, inviteGaps > 0 ? 'warn' : 'ok'],
+          ['Seat desks', desks, '', 'section:deposits', 'Seat capital desks'],
+          [
+            'Canonical profiles',
+            canonicalProfiles,
+            canonicalProfiles >= desk.partners && desk.partners > 0 ? 'ok' : 'warn',
+            'partner-profile',
+            profileCoverage.missingCodes.length
+              ? `Exact CODE coverage; missing ${profileCoverage.missingCodes.join(', ')}`
+              : 'Exact CODE coverage is complete',
+          ],
+          [
+            'Incomplete outs',
+            desk.incompleteOuts,
+            desk.incompleteOuts > 0 ? 'warn' : 'ok',
+            'section:outs',
+            'Needs attention',
+          ],
+          [
+            'Invite gaps',
+            desk.inviteGaps,
+            desk.inviteGaps > 0 ? 'warn' : 'ok',
+            'section:telegram',
+            'Missing Telegram invites',
+          ],
         ];
-        $('partners-stats').innerHTML = cells
-          .map(
-            ([k, v, tone]) =>
-              `<div class="partners-stat ${tone}"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`
-          )
-          .join('');
+        const readiness = partnerReadinessGate({
+          partnerCount: desk.partners,
+          canonicalProfileCount: canonicalProfiles,
+          incompleteOuts: desk.incompleteOuts,
+          inviteGaps: desk.inviteGaps,
+        });
+        const gate = $('partners-gate');
+        if (gate) {
+          gate.className = `portal-gate ${readiness.tone}`;
+          gate.title = readiness.profilesReady
+            ? 'Canonical profile authority is complete'
+            : 'Legacy compatibility view; canonical profile coverage is incomplete';
+          gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${esc(readiness.label)}`;
+        }
+        $('partners-stats').innerHTML = renderPortalStatGrid(
+          cells.map(([k, v, tone, target, hint]) => ({
+            label: k,
+            value: v,
+            tone: tone || 'muted',
+            hint,
+            button: true,
+            attrs: { 'data-scroll-target': target },
+          }))
+        );
+        for (const btn of $('partners-stats').querySelectorAll('[data-scroll-target]')) {
+          btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-scroll-target');
+            const el = id ? document.getElementById(id) : null;
+            if (!el) return;
+            el.classList.remove('hidden');
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        }
+      }
+
+      function coverageBarHtml(pct) {
+        const bar = coverageBarStyle(pct);
+        return `<div class="coverage-bar" title="${bar.pct}% limit coverage">
+          <div class="coverage-bar-track"><div class="coverage-bar-fill tone-${bar.tone}" style="width:${bar.width}"></div></div>
+          <span class="coverage-bar-pct">${bar.pct}%</span>
+        </div>`;
+      }
+
+      function renderPhaseFilter(ops) {
+        const bar = $('phase-filter-bar');
+        if (!bar) return;
+        const phases = listPartnerPhases(ops);
+        if (!phases.length) {
+          bar.innerHTML = '';
+          return;
+        }
+        const chips = [
+          `<span class="phase-filter-label">Phase</span>`,
+          `<button type="button" class="phase-filter-chip${!phaseFilter ? ' is-active' : ''}" data-phase="" aria-pressed="${!phaseFilter}">All (${ops?.partners?.length || 0})</button>`,
+          ...phases.map(
+            p =>
+              `<button type="button" class="phase-filter-chip${phaseFilter === p.phase ? ' is-active' : ''}" data-phase="${esc(p.phase)}" aria-pressed="${phaseFilter === p.phase}" title="${esc(p.conceptId)}">${esc(p.phase)} (${p.count})</button>`
+          ),
+        ];
+        bar.innerHTML = chips.join('');
+        bar.querySelectorAll('[data-phase]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            phaseFilter = btn.getAttribute('data-phase') || null;
+            if (phaseFilter === '') phaseFilter = null;
+            renderPhaseFilter(opsCache);
+            renderPartners(handshakeCache);
+            applyPartnerRoute(false);
+          });
+        });
+      }
+
+      function renderOutsInventory(selectedCode = null) {
+        const tbody = $('outs-tbody');
+        if (!tbody) return;
+        const statusEl = $('outs-status-filter');
+        const incompleteEl = $('outs-incomplete-only');
+        const status = statusEl?.value || '';
+        const incompleteOnly = Boolean(incompleteEl?.checked);
+        const filtered = filterPartnerOuts(flattenedOuts, {
+          partnerCode: selectedCode,
+          status: status || null,
+          incompleteOnly,
+        });
+        const count = $('outs-filter-count');
+        if (count) {
+          count.textContent = `${filtered.length} of ${flattenedOuts.length} outs`;
+        }
+        tbody.innerHTML = renderPortalTableRows(
+          OUTS_COLS,
+          filtered.map(row => {
+            const out = row.out || {};
+            const outId = out.id || '';
+            return [
+              {
+                html: `${partnerLink(row.partnerCode)}<br><code>${esc(row.callSign)}</code>`,
+              },
+              { html: phaseChip(row.partnerCode) },
+              {
+                html: `<a href="${partnerOutHash(row.partnerCode, outId)}"><code>${esc(outId)}</code></a>`,
+              },
+              { html: bookChip(row.bookName, out) },
+              {
+                html: conceptChip(
+                  out.book?.typeConceptId || 'book.type.legal',
+                  row.bookType,
+                  out.book?.color
+                ),
+              },
+              { html: `<code>${esc(row.username)}</code>` },
+              { html: railChip(row.method, out) },
+              String(row.maxBet),
+              {
+                html:
+                  statusChip(row.status, out) +
+                  (row.incomplete ? ' · <span class="tone-warn">incomplete</span>' : ''),
+              },
+              out.note || '—',
+            ];
+          }),
+          {
+            emptyMessage: 'No outs match filters — check partners-ops bake',
+            rowAttrs: i => ({
+              'data-partner-code': String(filtered[i]?.partnerCode || ''),
+              'data-out-status': String(filtered[i]?.status || ''),
+            }),
+          }
+        );
       }
 
       function routeChip(href, label, color, conceptId = '') {
@@ -1242,32 +1739,62 @@
 
       function renderPartners(handshake) {
         const rows = Array.isArray(handshake?.rows) ? handshake.rows : [];
-        $('partners-tbody').innerHTML = rows.length
-          ? rows
-              .map(row => {
-                const invite = row.inviteLink
-                  ? `<a href="${esc(row.inviteLink)}" target="_blank" rel="noopener">invite</a>`
-                  : '<span class="tone-warn">none</span>';
-                const verify = `${row.verifyPassed ?? '—'}/${row.verifyTotal ?? '—'}`;
-                const ops = opsByPartner.get(String(row.partnerCode || '').toUpperCase());
-                const tax = ops ? `${ops.outs?.length || 0} outs · ${ops.phase}` : '—';
-                const bot = botTopicLinks(row.partnerCode, ops?.phase);
-                return `<tr id="partner-detail-${esc(row.partnerCode)}" data-partner-code="${esc(row.partnerCode)}">
-                <td>${partnerLink(row.partnerCode)}</td>
-                <td>${phaseChip(row.partnerCode)}</td>
-                <td>${esc(tax)}</td>
-                <td><code>${esc(row.membershipCell || '—')}</code></td>
-                <td><code>${esc(row.callSign || '—')}</code></td>
-                <td>${esc(row.dmSeatStatus || '—')}</td>
-                <td class="${toneClass(row.handshakeOk)}">${row.handshakeOk ? 'ok' : 'fail'} · ${esc(verify)}</td>
-                <td>${invite}</td>
-                <td>${bot}</td>
-                <td>${esc((row.nextSteps && row.nextSteps[0]) || '—')}</td>
-                <td>${balanceCell(ops)}</td>
-              </tr>`;
-              })
-              .join('')
-          : '<tr><td colspan="11">No partners in telegram-handshake bake</td></tr>';
+        const filtered = phaseFilter
+          ? rows.filter(row => {
+              const ops = opsByPartner.get(normalizePartnerCode(row.partnerCode));
+              return String(ops?.phase || '') === phaseFilter;
+            })
+          : rows;
+        $('partners-tbody').innerHTML = renderPortalTableRows(
+          PARTNER_COLS,
+          filtered.map(row => {
+            const invite = row.inviteLink
+              ? `<a href="${esc(row.inviteLink)}" target="_blank" rel="noopener">invite</a>`
+              : '<span class="tone-warn">none</span>';
+            const verify = `${row.verifyPassed ?? '—'}/${row.verifyTotal ?? '—'}`;
+            const ops = opsByPartner.get(normalizePartnerCode(row.partnerCode));
+            const limits = ops?.tracking?.limits || {};
+            const tax = ops
+              ? `${ops.outs?.length || 0} outs · ${limits.coveragePct ?? 0}% limits`
+              : '—';
+            const bot = botTopicLinks(row.partnerCode, ops?.phase);
+            const taxHtml =
+              esc(tax) +
+              (limits.coveragePct != null
+                ? `<div style="margin-top:4px">${coverageBarHtml(limits.coveragePct)}</div>`
+                : '');
+            return [
+              { html: partnerLink(row.partnerCode) },
+              { html: phaseChip(row.partnerCode) },
+              { html: taxHtml },
+              { html: `<code>${esc(row.membershipCell || '—')}</code>` },
+              { html: `<code>${esc(row.callSign || '—')}</code>` },
+              row.dmSeatStatus || '—',
+              {
+                html: `${row.handshakeOk ? 'ok' : 'fail'} · ${esc(verify)}`,
+                className: toneClass(row.handshakeOk),
+              },
+              { html: invite },
+              { html: bot },
+              (row.nextSteps && row.nextSteps[0]) || '—',
+              { html: balanceCell(ops) },
+            ];
+          }),
+          {
+            emptyMessage: phaseFilter
+              ? `No partners in phase ${phaseFilter}`
+              : 'No partners in telegram-handshake bake',
+            rowAttrs: i => {
+              const row = filtered[i];
+              const ops = opsByPartner.get(normalizePartnerCode(row?.partnerCode));
+              return {
+                id: `partner-detail-${row?.partnerCode || ''}`,
+                'data-partner-code': String(row?.partnerCode || ''),
+                'data-phase': String(ops?.phase || ''),
+              };
+            },
+          }
+        );
       }
 
       function renderPartnerProfile(code) {
@@ -1286,7 +1813,9 @@
         const desk = (seatCache?.rows || []).find(
           r => String(r.partnerCode || '').toUpperCase() === code
         );
-        const callSign = hs?.callSign || desk?.callSign || `${code}-001`;
+        const unified = partnerProfilesCache?.profiles?.[code] || null;
+        const callSign =
+          unified?.identity?.callSign || hs?.callSign || desk?.callSign || `${code}-001`;
         const tracking = ops?.tracking || {};
         const accounts = tracking.accounts || {};
         const limits = tracking.limits || {};
@@ -1303,8 +1832,11 @@
         body.innerHTML = `<div class="partner-profile-grid">
           <div><div class="k">Code</div><div class="v"><code>${esc(code)}</code> · <code>${esc(callSign)}</code></div></div>
           <div><div class="k">Phase</div><div class="v">${phaseChip(code)}</div></div>
+          <div><div class="k">Profile lifecycle</div><div class="v">${esc(unified?.lifecycle?.status || 'not baked')} · ${esc(unified?.lifecycle?.phase || '—')}</div></div>
+          <div><div class="k">Profile template</div><div class="v">${esc(unified?.meta?.templateId || '—')} · ${esc(unified?.meta?.version || '—')}</div></div>
           <div><div class="k">Telegram</div><div class="v">${esc(hs?.membershipCell || '—')} · DM ${esc(hs?.dmSeatStatus || (desk?.hasTelegramDesk ? 'pinned' : '—'))}</div></div>
           <div><div class="k">Accounts</div><div class="v">${esc(String(accounts.ready ?? 0))}/${esc(String(accounts.total ?? 0))} ready · ${esc(String(limits.coveragePct ?? 0))}% limits</div></div>
+          <div><div class="k">Limit coverage</div><div class="v">${coverageBarHtml(limits.coveragePct)}</div></div>
           <div><div class="k">Fund / outs</div><div class="v ${fundTone(desk?.fundStatus)}">${esc(desk?.fundStatus || 'no intake')} · ${esc(String(desk?.incompleteOuts ?? ops?.outs?.length ?? '—'))} outs</div></div>
           <div><div class="k">Balance</div><div class="v">${fmtMoney(ops?.accounting?.balance)}</div></div>
           <div><div class="k">Initial cap</div><div class="v">${fmtMoney(ops?.accounting?.initialCapital)}</div></div>
@@ -1313,10 +1845,25 @@
           <div><div class="k">Onboard CLI</div><div class="v"><code>bun run onboard:partner -- ${esc(callSign)} --dry-run</code></div></div>
         </div>
         <div class="partner-profile-links">${cross}</div>
+        <div class="partner-profile-outs">
+          <h3>Outs · partners-ops</h3>
+          <div class="tracking-summary">${
+            (ops?.outs || [])
+              .map(out =>
+                routeChip(
+                  partnerOutHash(code, out.id),
+                  `${out.book?.name || out.id}: ${out.status || '—'} · ${out.maxBet || '—'}`,
+                  out.statusColor || out.book?.color,
+                  out.statusConceptId || 'out.status.ready'
+                ).replace('topic-chip', 'book-chip')
+              )
+              .join('') || '<span class="tone-warn">No outs on this partner</span>'
+          }</div>
+        </div>
         <div class="partners-panel">
           <h2>Ledger <span class="tone-muted">(partner_ledger)</span></h2>
           <div class="blurb">Most recent transactions — desk entries, imports, and the weekly commission adjustment (newest first).</div>
-          <table class="partners-table">
+          <table class="portal-table partners-table">
             <thead>
               <tr>
                 <th>When</th>
@@ -1334,7 +1881,7 @@
         <div class="partners-panel">
           <h2>Per-out balances <span class="tone-muted">(books)</span></h2>
           <div class="blurb">Ledger sums per book account — which book is profitable vs. losing.</div>
-          <table class="partners-table">
+          <table class="portal-table partners-table">
             <thead>
               <tr>
                 <th>Out</th>
@@ -1350,42 +1897,47 @@
         panel.classList.remove('hidden');
         const ledgerBody = $('partner-ledger-tbody');
         if (ledgerBody) {
-          const rows = ops?.accounting?.ledgerRows || [];
-          ledgerBody.innerHTML = rows.length
-            ? [...rows]
-                .reverse()
-                .map(
-                  r => `<tr>
-                <td><time>${esc(r.createdAt)}</time></td>
-                <td><code>${esc(r.type)}</code></td>
-                <td>${fmtMoney(r.amount)}</td>
-                <td>${esc(r.currency)}</td>
-                <td>${esc(r.reference || '—')}</td>
-                <td>${esc(r.trackingId || '—')}</td>
-                <td>${fmtMoney(r.balanceAfter)}</td>
-              </tr>`
-                )
-                .join('')
-            : '<tr><td colspan="7">No partner_ledger transactions — post via <code>partner:settlement:post</code> / <code>import</code>, then <code>partners:build</code></td></tr>';
+          const rows = [...(ops?.accounting?.ledgerRows || [])].reverse();
+          ledgerBody.innerHTML = renderPortalTableRows(
+            LEDGER_COLS,
+            rows.map(r => {
+              const type = String(r.type || 'unknown');
+              const conceptId = `accounting.${type}`;
+              return [
+                { html: `<time>${esc(r.createdAt)}</time>` },
+                { html: conceptChip(conceptId, type, ops?.colors?.[conceptId]) },
+                { html: fmtMoney(r.amount) },
+                r.currency,
+                r.reference || '—',
+                r.trackingId || '—',
+                { html: fmtMoney(r.balanceAfter) },
+              ];
+            }),
+            {
+              emptyMessage:
+                'No partner_ledger transactions — post via partner:settlement:post / import, then partners:build',
+            }
+          );
         }
         const outsBody = $('partner-outs-tbody');
         if (outsBody) {
           const outs = ops?.accounting?.outs || {};
-          const outIds = Object.keys(outs);
-          outsBody.innerHTML = outIds.length
-            ? outIds
-                .sort()
-                .map(
-                  o => `<tr>
-                <td><code>${esc(o)}</code></td>
-                <td>${fmtMoney(outs[o].balance)}</td>
-                <td><time>${esc(outs[o].lastTransactionAt || '—')}</time></td>
-                <td>${outs[o].lastAmount != null ? fmtMoney(outs[o].lastAmount) : '—'}</td>
-                <td>${esc(outs[o].lastType || '—')}</td>
-              </tr>`
-                )
-                .join('')
-            : '<tr><td colspan="5">No per-out ledger rows — post with <code>--out &lt;bookKey&gt;</code></td></tr>';
+          const outIds = Object.keys(outs).sort();
+          outsBody.innerHTML = renderPortalTableRows(
+            PROFILE_OUTS_COLS,
+            outIds.map(o => [
+              { html: `<code>${esc(o)}</code>` },
+              { html: fmtMoney(outs[o].balance) },
+              { html: `<time>${esc(outs[o].lastTransactionAt || '—')}</time>` },
+              {
+                html: outs[o].lastAmount != null ? fmtMoney(outs[o].lastAmount) : '—',
+              },
+              outs[o].lastType || '—',
+            ]),
+            {
+              emptyMessage: 'No per-out ledger rows — post with --out <bookKey>',
+            }
+          );
         }
         const hint = $('onboard-cli-hint');
         if (hint) {
@@ -1412,30 +1964,46 @@
         const desks = deskByPartner(seat);
         const partners = Array.isArray(handshake?.rows) ? handshake.rows : [];
         const codes = partners.length ? partners.map(p => p.partnerCode) : [...desks.keys()];
-        $('accounting-tbody').innerHTML = codes.length
-          ? codes
-              .map(code => {
-                const desk = desks.get(String(code).toUpperCase());
-                const done = (desk?.checklist || []).filter(c => c.done).length;
-                const total = (desk?.checklist || []).length;
-                const checklist = total ? `${done}/${total}` : '—';
-                const softN = softPlayCount(code);
-                return `<tr data-partner-code="${esc(code)}">
-                <td>${partnerLink(code)}</td>
-                <td><code>${esc(desk?.callSign || '—')}</code></td>
-                <td class="${fundTone(desk?.fundStatus)}">${esc(desk?.fundStatus || 'no intake')}</td>
-                <td class="${desk?.hasTelegramDesk ? 'tone-ok' : 'tone-warn'}">${desk?.hasTelegramDesk ? 'pinned' : 'missing'}</td>
-                <td class="${(desk?.incompleteOuts || 0) > 0 ? 'tone-warn' : ''}">${esc(desk?.incompleteOuts ?? '—')}</td>
-                <td>${esc(checklist)}${
-                  softN
+        $('accounting-tbody').innerHTML = renderPortalTableRows(
+          ACCOUNTING_DEALS_COLS,
+          codes.map(code => {
+            const desk = desks.get(String(code).toUpperCase());
+            const done = (desk?.checklist || []).filter(c => c.done).length;
+            const total = (desk?.checklist || []).length;
+            const checklist = total ? `${done}/${total}` : '—';
+            const softN = softPlayCount(code);
+            return [
+              { html: partnerLink(code) },
+              { html: `<code>${esc(desk?.callSign || '—')}</code>` },
+              {
+                html: esc(desk?.fundStatus || 'no intake'),
+                className: fundTone(desk?.fundStatus),
+              },
+              {
+                html: desk?.hasTelegramDesk ? 'pinned' : 'missing',
+                className: desk?.hasTelegramDesk ? 'tone-ok' : 'tone-warn',
+              },
+              {
+                html: esc(desk?.incompleteOuts ?? '—'),
+                className: (desk?.incompleteOuts || 0) > 0 ? 'tone-warn' : '',
+              },
+              {
+                html:
+                  esc(checklist) +
+                  (softN
                     ? ` · ${conceptChip('ops.view.per_play', `${softN} soft plays`, colorsCache['ops.view.per_play'] || '')}`
-                    : ''
-                }</td>
-                <td><code>telegram:package-group:accounting -- ${esc(code)}</code></td>
-              </tr>`;
-              })
-              .join('')
-          : '<tr><td colspan="7">No accounting rows</td></tr>';
+                    : ''),
+              },
+              {
+                html: `<code>telegram:package-group:accounting -- ${esc(code)}</code>`,
+              },
+            ];
+          }),
+          {
+            emptyMessage: 'No accounting rows',
+            rowAttrs: i => ({ 'data-partner-code': String(codes[i] || '') }),
+          }
+        );
 
         const events = [];
         for (const partner of ops?.partners || []) {
@@ -1446,23 +2014,30 @@
         events.sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')));
         const eventsBody = $('accounting-events-tbody');
         if (eventsBody) {
-          eventsBody.innerHTML = events.length
-            ? events
-                .slice(0, 40)
-                .map(e => {
-                  const conceptId = e.conceptId || conceptIdForPartnerOpsEventCode(e.code);
-                  return `<tr data-partner-code="${esc(e.partnerCode)}">
-                <td>${partnerLink(e.partnerCode)}</td>
-                <td><time>${esc(e.at || '—')}</time></td>
-                <td><code>${esc(e.code || '—')}</code></td>
-                <td><a href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}">${esc(conceptId)}</a></td>
-                <td>${e.amount != null ? esc(String(e.amount)) : '—'}</td>
-                <td>${esc([e.rail, e.outId].filter(Boolean).join(' · ') || '—')}</td>
-                <td>${esc(e.note || '—')}</td>
-              </tr>`;
-                })
-                .join('')
-            : '<tr><td colspan="7">No ledger events — bun run partners:event … then partners:build</td></tr>';
+          const slice = events.slice(0, 40);
+          eventsBody.innerHTML = renderPortalTableRows(
+            ACCOUNTING_EVENTS_COLS,
+            slice.map(e => {
+              const conceptId = e.conceptId || conceptIdForPartnerOpsEventCode(e.code);
+              return [
+                { html: partnerLink(e.partnerCode) },
+                { html: `<time>${esc(e.at || '—')}</time>` },
+                { html: `<code>${esc(e.code || '—')}</code>` },
+                {
+                  html: `<a href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}">${esc(conceptId)}</a>`,
+                },
+                e.amount != null ? String(e.amount) : '—',
+                [e.rail, e.outId].filter(Boolean).join(' · ') || '—',
+                e.note || '—',
+              ];
+            }),
+            {
+              emptyMessage: 'No ledger events — bun run partners:event … then partners:build',
+              rowAttrs: i => ({
+                'data-partner-code': String(slice[i]?.partnerCode || ''),
+              }),
+            }
+          );
         }
 
         const softBody = $('soft-plays-tbody');
@@ -1474,58 +2049,72 @@
           softPlays.sort((a, b) =>
             String(b.placedAt || '').localeCompare(String(a.placedAt || ''))
           );
-          softBody.innerHTML = softPlays.length
-            ? softPlays
-                .slice(0, 40)
-                .map(
-                  p => `<tr data-partner-code="${esc(p.partnerCode)}" data-glossary-concept="ops.view.per_play">
-                <td>${partnerLink(p.partnerCode)}</td>
-                <td><time>${esc(p.placedAt || '—')}</time></td>
-                <td><code>${esc(p.playId || '—')}</code></td>
-                <td>${esc(p.market || '—')}</td>
-                <td>${esc(p.result || '—')}</td>
-                <td>${esc(p.stake)}</td>
-                <td>${esc(p.pnl ?? '—')}</td>
-              </tr>`
-                )
-                .join('')
-            : `<tr><td colspan="7">No Soft plays — <code>bun run soft:accounting:bake</code> or <code>soft:accounting:from-ct</code> · source ${esc(softAccountingSource)}</td></tr>`;
+          const slice = softPlays.slice(0, 40);
+          softBody.innerHTML = renderPortalTableRows(
+            SOFT_PLAYS_COLS,
+            slice.map(p => [
+              { html: partnerLink(p.partnerCode) },
+              { html: `<time>${esc(p.placedAt || '—')}</time>` },
+              { html: `<code>${esc(p.playId || '—')}</code>` },
+              p.market || '—',
+              p.result || '—',
+              p.stake,
+              p.pnl ?? '—',
+            ]),
+            {
+              emptyMessage: `No Soft plays — bun run soft:accounting:bake or soft:accounting:from-ct · source ${softAccountingSource}`,
+              rowAttrs: i => ({
+                'data-partner-code': String(slice[i]?.partnerCode || ''),
+                'data-glossary-concept': 'ops.view.per_play',
+              }),
+            }
+          );
         }
 
         const weeksBody = $('soft-weeks-tbody');
         if (weeksBody) {
-          weeksBody.innerHTML = softWeekRows.length
-            ? softWeekRows
-                .slice(0, 40)
-                .map(
-                  w => `<tr data-partner-code="${esc(w.partnerCode)}" data-glossary-concept="ops.view.per_week">
-                <td>${partnerLink(w.partnerCode)}</td>
-                <td><code>${esc(w.weekStart || '—')}</code></td>
-                <td>${esc(w.deposits)}</td>
-                <td>${esc(w.settlements)}</td>
-                <td><strong>${esc(w.net)}</strong></td>
-              </tr>`
-                )
-                .join('')
-            : `<tr><td colspan="5">No Soft week rollups — bake Soft plays first · source ${esc(softAccountingSource)}</td></tr>`;
+          const slice = softWeekRows.slice(0, 40);
+          weeksBody.innerHTML = renderPortalTableRows(
+            SOFT_WEEKS_COLS,
+            slice.map(w => [
+              { html: partnerLink(w.partnerCode) },
+              { html: `<code>${esc(w.weekStart || '—')}</code>` },
+              w.deposits,
+              w.settlements,
+              { html: `<strong>${esc(w.net)}</strong>` },
+            ]),
+            {
+              emptyMessage: `No Soft week rollups — bake Soft plays first · source ${softAccountingSource}`,
+              rowAttrs: i => ({
+                'data-partner-code': String(slice[i]?.partnerCode || ''),
+                'data-glossary-concept': 'ops.view.per_week',
+              }),
+            }
+          );
         }
 
         const booksBody = $('soft-book-types-tbody');
         if (booksBody) {
-          booksBody.innerHTML = softBookTypeRows.length
-            ? softBookTypeRows
-                .slice(0, 40)
-                .map(
-                  b => `<tr data-partner-code="${esc(b.partnerCode)}" data-glossary-concept="ops.view.per_book_type">
-                <td>${partnerLink(b.partnerCode)}</td>
-                <td><a href="${glossaryHref(b.bookType)}" data-glossary-concept="${esc(b.bookType)}"><code>${esc(b.bookType)}</code></a></td>
-                <td>${esc(b.deposits)}</td>
-                <td>${esc(b.settlements)}</td>
-                <td><strong>${esc(b.net)}</strong></td>
-              </tr>`
-                )
-                .join('')
-            : `<tr><td colspan="5">No Soft book-type rollups — tag plays with bookType or enrich via partners-ops · source ${esc(softAccountingSource)}</td></tr>`;
+          const slice = softBookTypeRows.slice(0, 40);
+          booksBody.innerHTML = renderPortalTableRows(
+            SOFT_BOOKS_COLS,
+            slice.map(b => [
+              { html: partnerLink(b.partnerCode) },
+              {
+                html: `<a href="${glossaryHref(b.bookType)}" data-glossary-concept="${esc(b.bookType)}"><code>${esc(b.bookType)}</code></a>`,
+              },
+              b.deposits,
+              b.settlements,
+              { html: `<strong>${esc(b.net)}</strong>` },
+            ]),
+            {
+              emptyMessage: `No Soft book-type rollups — tag plays with bookType or enrich via partners-ops · source ${softAccountingSource}`,
+              rowAttrs: i => ({
+                'data-partner-code': String(slice[i]?.partnerCode || ''),
+                'data-glossary-concept': 'ops.view.per_book_type',
+              }),
+            }
+          );
         }
       }
 
@@ -1582,27 +2171,43 @@
             });
           }
         }
-        $('deposits-tbody').innerHTML = outs.length
-          ? outs
-              .map(o => {
-                const opsOut = opsOutFor(o.partnerCode, o.outNum);
-                const routeOutId =
-                  opsOut?.id || `out-${String(o.partnerCode || '').toUpperCase()}-${o.outNum}`;
-                return `<tr id="out-card-${esc(routeOutId)}" data-partner-code="${esc(o.partnerCode)}">
-                <td>${partnerLink(o.partnerCode)}</td>
-                <td><code>${esc(o.callSign)}</code></td>
-                <td><a href="${partnerOutHash(o.partnerCode, routeOutId)}">${esc(o.outNum)}</a></td>
-                <td>${bookChip(o.book, opsOut)}</td>
-                <td><code>${esc(o.username)}</code></td>
-                <td>${railChip(o.depositMethod, opsOut)}</td>
-                <td><code>${esc(o.sendTo)}</code></td>
-                <td>${esc(o.maxBet)}</td>
-                <td><a href="${glossaryHref('accounting.free_roll')}" data-glossary-concept="accounting.free_roll">${esc(o.freeplayPct)}</a></td>
-                <td>${statusChip(o.status, opsOut)}</td>
-              </tr>`;
-              })
-              .join('')
-          : '<tr><td colspan="10">No deposit outs in seat-capital-desk bake</td></tr>';
+        $('deposits-tbody').innerHTML = renderPortalTableRows(
+          DEPOSIT_COLS,
+          outs.map(o => {
+            const opsOut = opsOutFor(o.partnerCode, o.outNum);
+            const routeOutId =
+              opsOut?.id || `out-${String(o.partnerCode || '').toUpperCase()}-${o.outNum}`;
+            return [
+              { html: partnerLink(o.partnerCode) },
+              { html: `<code>${esc(o.callSign)}</code>` },
+              {
+                html: `<a href="${partnerOutHash(o.partnerCode, routeOutId)}">${esc(o.outNum)}</a>`,
+              },
+              { html: bookChip(o.book, opsOut) },
+              { html: `<code>${esc(o.username)}</code>` },
+              { html: railChip(o.depositMethod, opsOut) },
+              { html: `<code>${esc(o.sendTo)}</code>` },
+              o.maxBet,
+              {
+                html: `<a href="${glossaryHref('accounting.free_roll')}" data-glossary-concept="accounting.free_roll">${esc(o.freeplayPct)}</a>`,
+              },
+              { html: statusChip(o.status, opsOut) },
+            ];
+          }),
+          {
+            emptyMessage: 'No deposit outs in seat-capital-desk bake',
+            rowAttrs: i => {
+              const o = outs[i];
+              const opsOut = opsOutFor(o?.partnerCode, o?.outNum);
+              const routeOutId =
+                opsOut?.id || `out-${String(o?.partnerCode || '').toUpperCase()}-${o?.outNum}`;
+              return {
+                id: `out-card-${routeOutId}`,
+                'data-partner-code': String(o?.partnerCode || ''),
+              };
+            },
+          }
+        );
       }
 
       function renderAccountsLimits(ops, limitPatterns) {
@@ -1613,67 +2218,95 @@
           : '';
 
         const rows = ops?.partners || [];
-        $('accounts-limits-tbody').innerHTML = rows.length
-          ? rows
-              .map(partner => {
-                const tracking = partner.tracking || {};
-                const accounts = tracking.accounts || {};
-                const limits = tracking.limits || {};
-                const communication = tracking.communication || {};
-                const accounting = tracking.accounting || {};
-                const limitTone =
-                  limits.missing === 0 ? colors['out.status.ready'] : colors['out.status.deferred'];
-                const communicationTone = communication.ready
-                  ? colors['out.status.ready']
-                  : colors['telegram.handshake'];
-                const effectiveLimits = (partner.outs || []).map(out =>
-                  routeChip(
-                    partnerOutHash(partner.code, out.id),
-                    `${out.book?.name || out.id}: ${out.maxBet || '—'}`,
-                    colors['ops.limits.effective_limit'],
-                    'ops.limits.effective_limit'
-                  ).replace('topic-chip', 'book-chip')
-                );
-                const actions = [
-                  routeChip(
-                    partnerHash(partner.code),
-                    'Profile',
-                    colors['ops.limits.account'],
-                    'ops.limits.account'
-                  ),
-                  routeChip(
-                    partnerAccountingHash(partner.code),
-                    'Accounting',
-                    colors['ops.view.per_account'] || colors['telegram.topic.accounting'],
-                    'ops.view.per_account'
-                  ),
-                  routeChip(
-                    partnerTelegramHash(partner.code, 'ops'),
-                    'Telegram',
-                    colors['telegram.topic.ops'],
-                    'telegram.handshake'
-                  ),
-                  `<a class="book-chip" href="/portal/limits/?partner=${encodeURIComponent(partner.code)}" data-glossary-concept="ops.limits.effective_limit">Limits</a>`,
-                  `<a class="book-chip" href="/portal/partner-history/?partner=${encodeURIComponent(partner.code)}" data-glossary-concept="ops.limits.opening_baseline">History</a>`,
-                ].join(' ');
-                return `<tr data-partner-code="${esc(partner.code)}">
-                <td>${partnerLink(partner.code)}<br><code>${esc(partner.callSign)}</code></td>
-                <td>${phaseChip(partner.code)}</td>
-                <td>${conceptChip('ops.limits.account', `${accounts.ready || 0}/${accounts.total || 0} ready`, colors['ops.limits.account'])}</td>
-                <td>${conceptChip('ops.limits.monitoring_status', `${limits.coveragePct || 0}% · ${limits.missing || 0} missing`, limitTone)}</td>
-                <td><span class="tracking-summary">${effectiveLimits.join('') || '—'}</span></td>
-                <td>${conceptChip('ops.view.account_freeplay', `${accounting.freeRollPercent || 0}% · ${accounting.freeRollApplied || 0} applied`, colors['ops.view.account_freeplay'] || colors['accounting.free_roll'])}</td>
-                <td><a href="${partnerAccountingHash(partner.code)}" data-glossary-concept="ops.view.account_summary">${esc(accounting.ledgerEvents || 0)} events</a>${
+        $('accounts-limits-tbody').innerHTML = renderPortalTableRows(
+          ACCOUNTS_LIMITS_COLS,
+          rows.map(partner => {
+            const tracking = partner.tracking || {};
+            const accounts = tracking.accounts || {};
+            const limits = tracking.limits || {};
+            const communication = tracking.communication || {};
+            const accounting = tracking.accounting || {};
+            const communicationTone = communication.ready
+              ? colors['out.status.ready']
+              : colors['telegram.handshake'];
+            const effectiveLimits = (partner.outs || []).map(out =>
+              routeChip(
+                partnerOutHash(partner.code, out.id),
+                `${out.book?.name || out.id}: ${out.maxBet || '—'}`,
+                colors['ops.limits.effective_limit'],
+                'ops.limits.effective_limit'
+              ).replace('topic-chip', 'book-chip')
+            );
+            const actions = [
+              routeChip(
+                partnerHash(partner.code),
+                'Profile',
+                colors['ops.limits.account'],
+                'ops.limits.account'
+              ),
+              routeChip(
+                partnerAccountingHash(partner.code),
+                'Accounting',
+                colors['ops.view.per_account'] || colors['telegram.topic.accounting'],
+                'ops.view.per_account'
+              ),
+              routeChip(
+                partnerTelegramHash(partner.code, 'ops'),
+                'Telegram',
+                colors['telegram.topic.ops'],
+                'telegram.handshake'
+              ),
+              `<a class="book-chip" href="/portal/limits/?partner=${encodeURIComponent(partner.code)}" data-glossary-concept="ops.limits.effective_limit">Limits</a>`,
+              `<a class="book-chip" href="/portal/partner-history/?partner=${encodeURIComponent(partner.code)}" data-glossary-concept="ops.limits.opening_baseline">History</a>`,
+            ].join(' ');
+            return [
+              {
+                html: `${partnerLink(partner.code)}<br><code>${esc(partner.callSign)}</code>`,
+              },
+              { html: phaseChip(partner.code) },
+              {
+                html: conceptChip(
+                  'ops.limits.account',
+                  `${accounts.ready || 0}/${accounts.total || 0} ready`,
+                  colors['ops.limits.account']
+                ),
+              },
+              {
+                html: `${coverageBarHtml(limits.coveragePct)}<div class="tone-muted" style="font-size:11px;margin-top:4px">${esc(String(limits.missing || 0))} missing</div>`,
+              },
+              {
+                html: `<span class="tracking-summary">${effectiveLimits.join('') || '—'}</span>`,
+              },
+              {
+                html: conceptChip(
+                  'ops.view.account_freeplay',
+                  `${accounting.freeRollPercent || 0}% · ${accounting.freeRollApplied || 0} applied`,
+                  colors['ops.view.account_freeplay'] || colors['accounting.free_roll']
+                ),
+              },
+              {
+                html: `<a href="${partnerAccountingHash(partner.code)}" data-glossary-concept="ops.view.account_summary">${esc(accounting.ledgerEvents || 0)} events</a>${
                   softPlayCount(partner.code)
                     ? ` · ${conceptChip('ops.view.per_play', `${softPlayCount(partner.code)} soft`, colors['ops.view.per_play'] || colors['telegram.topic.accounting'])}`
                     : ''
-                }</td>
-                <td>${routeChip(partnerTelegramHash(partner.code, 'accounting'), `${communication.topicsConfigured || 0}/${communication.topicsRequired || 5} topics · ${communication.chatLinked ? 'linked' : 'unlinked'}`, communicationTone, 'telegram.handshake')}</td>
-                <td>${actions}</td>
-              </tr>`;
-              })
-              .join('')
-          : '<tr><td colspan="9">No account tracking in partners-ops bake</td></tr>';
+                }`,
+              },
+              {
+                html: routeChip(
+                  partnerTelegramHash(partner.code, 'accounting'),
+                  `${communication.topicsConfigured || 0}/${communication.topicsRequired || 5} topics · ${communication.chatLinked ? 'linked' : 'unlinked'}`,
+                  communicationTone,
+                  'telegram.handshake'
+                ),
+              },
+              { html: actions },
+            ];
+          }),
+          {
+            emptyMessage: 'No account tracking in partners-ops bake',
+            rowAttrs: i => ({ 'data-partner-code': String(rows[i]?.code || '') }),
+          }
+        );
       }
 
       function renderPartnerMessages(seat) {
@@ -1695,30 +2328,37 @@
             : '<li class="tone-warn">No templates in seat bake — run bun run ops:snapshot</li>';
         }
         const views = seat?.partnerViews || [];
-        $('partner-message-tbody').innerHTML = views.length
-          ? views
-              .map(v => {
-                const fund = v.fund?.status || '—';
-                const common = (v.commonMissing || []).join(', ') || '—';
-                const specific =
-                  (v.outSpecificMissing || [])
-                    .map(o => `${o.num} ${o.book}: ${(o.labels || []).join('/')}`)
-                    .join('; ') || '—';
-                const partnerCode = String(v.callSign || '')
-                  .split('-')[0]
-                  .toUpperCase();
-                return `<tr data-partner-code="${esc(partnerCode)}">
-                <td><code>${esc(v.callSign)}</code></td>
-                <td class="${fundTone(fund)}">${esc(fund)}</td>
-                <td>${esc(String((v.activeOuts || []).length))}</td>
-                <td>${esc(String((v.deferredOuts || []).length))}</td>
-                <td>${esc(common)}</td>
-                <td>${esc(specific)}</td>
-                <td><code>seat:desk:partner-message ${esc(v.callSign)} --json</code></td>
-              </tr>`;
-              })
-              .join('')
-          : '<tr><td colspan="7">No partnerViews in seat-capital-desk bake — run bun run ops:snapshot</td></tr>';
+        $('partner-message-tbody').innerHTML = renderPortalTableRows(
+          PARTNER_MSG_COLS,
+          views.map(v => {
+            const fund = v.fund?.status || '—';
+            const common = (v.commonMissing || []).join(', ') || '—';
+            const specific =
+              (v.outSpecificMissing || [])
+                .map(o => `${o.num} ${o.book}: ${(o.labels || []).join('/')}`)
+                .join('; ') || '—';
+            return [
+              { html: `<code>${esc(v.callSign)}</code>` },
+              { html: esc(fund), className: fundTone(fund) },
+              String((v.activeOuts || []).length),
+              String((v.deferredOuts || []).length),
+              common,
+              specific,
+              {
+                html: `<code>seat:desk:partner-message ${esc(v.callSign)} --json</code>`,
+              },
+            ];
+          }),
+          {
+            emptyMessage: 'No partnerViews in seat-capital-desk bake — run bun run ops:snapshot',
+            rowAttrs: i => {
+              const partnerCode = String(views[i]?.callSign || '')
+                .split('-')[0]
+                .toUpperCase();
+              return { 'data-partner-code': partnerCode };
+            },
+          }
+        );
       }
 
       function renderBooks(ops) {
@@ -1731,11 +2371,8 @@
                 const id = String(book.id || '');
                 const wire = book.color && typeof book.color === 'object' ? book.color : {};
                 const concept = book.typeConceptId || 'scrape.book';
-                const chip = conceptChip(concept, book.name || id, wire).replace(
-                  'topic-chip',
-                  'book-chip'
-                );
-                return `<a class="book-card" id="book-card-${esc(id)}" href="#book/${esc(id)}" data-book-id="${esc(id)}">${chip}</a>`;
+                const colorAttrs = colorWireAttributes(wire);
+                return `<a class="book-card book-chip" id="book-card-${esc(id)}" href="#book/${esc(id)}" data-book-id="${esc(id)}" data-glossary-concept="${esc(concept)}"${colorAttrs}>${esc(book.name || id)}</a>`;
               })
               .join('')
           : '<span class="tone-warn">No books in partners-ops bake</span>';
@@ -1770,9 +2407,17 @@
         }
 
         renderPartnerProfile(selectedCode);
+        renderOutsInventory(selectedCode);
 
         let target = null;
-        if (route.type === 'out') target = document.getElementById(`out-card-${route.outId}`);
+        if (route.type === 'out') {
+          target =
+            document.getElementById(`out-card-${route.outId}`) ||
+            document
+              .querySelector(`[data-partner-code="${route.code}"] a[href*="${route.outId}"]`)
+              ?.closest('tr') ||
+            $('section:outs');
+        }
         if (route.type === 'accounting') target = $('accounting-ledger');
         if (route.type === 'telegram') target = $('telegram-thread');
         if (route.type === 'partner') {
@@ -1796,24 +2441,34 @@
 
       async function load() {
         try {
-          const [handshake, seat, catalog, taxonomy, ops, limitPatterns, softAccounting] =
-            await Promise.all([
-              loadJson('/registry/telegram-handshake.json'),
-              loadJson('/registry/seat-capital-desk.json'),
-              loadJson('/registry/telegram-handshake-catalog.json'),
-              loadJson('/registry/scrape-wire-taxonomy.json'),
-              loadJson('/registry/partners-ops.json'),
-              loadJson('/registry/limit-raises.json'),
-              loadJson('/registry/soft-accounting-export.json').catch(() => null),
-            ]);
+          const [
+            handshake,
+            seat,
+            catalog,
+            taxonomy,
+            ops,
+            partnerProfiles,
+            limitPatterns,
+            softAccounting,
+          ] = await Promise.all([
+            loadJson('/registry/telegram-handshake.json'),
+            loadJson('/registry/seat-capital-desk.json'),
+            loadJson('/registry/telegram-handshake-catalog.json'),
+            loadJson('/registry/scrape-wire-taxonomy.json'),
+            loadJson('/registry/partners-ops.json'),
+            loadJson('/registry/partner-profiles.json'),
+            loadJson('/registry/limit-raises.json'),
+            loadJson('/registry/soft-accounting-export.json').catch(() => null),
+          ]);
           installColorTokens(ops.colors);
           colorsCache = ops.colors || {};
           bookIndex = indexBooks(taxonomy);
           handshakeCache = handshake;
           seatCache = seat;
-          opsByPartner = new Map(
-            (ops.partners || []).map(p => [String(p.code || '').toUpperCase(), p])
-          );
+          partnerProfilesCache = partnerProfiles;
+          opsCache = ops;
+          opsByPartner = indexOpsByPartner(ops);
+          flattenedOuts = flattenPartnerOuts(ops);
           softAccountingSource = softAccounting?.source || 'unavailable';
           softPlaysByPartner = new Map();
           for (const play of softAccounting?.plays || []) {
@@ -1863,27 +2518,72 @@
                       String(a.bookType).localeCompare(String(b.bookType))
                   )
               : [];
-          $('partners-meta').innerHTML =
-            `Handshake <time>${esc(handshake.generatedAt || '—')}</time> · ` +
-            `Seat desk <time>${esc(seat.generatedAt || '—')}</time> · ` +
-            `Ops <time>${esc(ops.generatedAt || '—')}</time> · ` +
-            `Soft <time>${esc(softAccounting?.generatedAt || '—')}</time> (${esc(softAccountingSource)}) · ` +
-            `<a href="/registry/telegram-handshake.json"><code>telegram-handshake.json</code></a> · ` +
-            `<a href="/registry/seat-capital-desk.json"><code>seat-capital-desk.json</code></a> · ` +
-            `<a href="/registry/partners-ops.json"><code>partners-ops.json</code></a> · ` +
-            `<a href="/registry/soft-accounting-export.json" data-glossary-concept="ops.view.per_play"><code>soft-accounting-export.json</code></a> · ` +
-            `<a href="/registry/limit-raises.json"><code>limit-raises.json</code></a> · ` +
-            `<a href="/portal/glossary/#glossary:telegram.wire"><code>telegram glossary</code></a>`;
+          const softBake = bakeLabel(softAccounting?.generatedAt, softAccountingSource);
+          const opsBake = bakeLabel(ops.generatedAt);
+          const hsBake = bakeLabel(handshake.generatedAt);
+          const seatBake = bakeLabel(seat.generatedAt);
+          const profBake = bakeLabel(partnerProfiles.generatedAt);
+          const baked = $('partners-baked');
+          if (baked) {
+            baked.textContent = `ops ${opsBake.text} · ${ops?.summary?.partners ?? 0} partners · schema ${esc(ops.schema || ops.version || 'v2')}`;
+          }
+          void mountFreshnessBadge(
+            $('partners-freshness'),
+            [
+              '/registry/partners-ops.json',
+              '/registry/telegram-handshake.json',
+              '/registry/seat-capital-desk.json',
+              '/registry/soft-accounting-export.json',
+            ],
+            {
+              fallbacks: {
+                '/registry/partners-ops.json': ops?.generatedAt || null,
+                '/registry/telegram-handshake.json': handshake?.generatedAt || null,
+                '/registry/seat-capital-desk.json': seat?.generatedAt || null,
+                '/registry/soft-accounting-export.json': softAccounting?.generatedAt || null,
+              },
+            }
+          );
+          $('partners-meta').innerHTML = [
+            ['Handshake', hsBake],
+            ['Seat desk', seatBake],
+            ['Ops', opsBake],
+            [
+              'Profiles',
+              {
+                text: `${profBake.text} · ${partnerProfiles.summary?.count ?? 0}`,
+                tone: profBake.tone,
+              },
+            ],
+            ['Soft', softBake],
+          ]
+            .map(
+              ([k, b]) =>
+                `<div class="partners-meta-chip ${esc(b.tone)}"><span class="k">${esc(k)}</span><span class="v">${esc(b.text)}</span></div>`
+            )
+            .join('');
           renderTopics(catalog, ops);
           renderTaxonomyChips(ops);
           renderPartnerRoutes(ops);
-          renderStats(handshake, seat, ops);
+          renderStats(handshake, seat, ops, partnerProfiles);
+          renderPhaseFilter(ops);
           renderPartners(handshake);
+          renderOutsInventory(null);
           renderAccountsLimits(ops, limitPatterns);
           renderAccounting(handshake, seat, ops);
           renderDeposits(seat);
           renderBooks(ops);
           renderPartnerMessages(seat);
+          $('outs-status-filter')?.addEventListener('change', () => {
+            const route = parsePartnerHash(window.location.hash);
+            renderOutsInventory(route && 'code' in route ? route.code : null);
+            applyPartnerRoute(false);
+          });
+          $('outs-incomplete-only')?.addEventListener('change', () => {
+            const route = parsePartnerHash(window.location.hash);
+            renderOutsInventory(route && 'code' in route ? route.code : null);
+            applyPartnerRoute(false);
+          });
           $('loading').classList.add('hidden');
           $('dashboard').classList.remove('hidden');
           bootGlossaryUx({
@@ -1896,7 +2596,24 @@
           $('loading').classList.add('hidden');
           const banner = $('error-banner');
           banner.classList.remove('hidden');
-          banner.textContent = err instanceof Error ? err.message : String(err);
+          banner.className = 'portal-error';
+          const msg = err instanceof Error ? err.message : String(err);
+          banner.innerHTML =
+            `<h3>Partners bake unavailable</h3>` +
+            `<p>One or more registry artifacts failed to load.</p>` +
+            `<p><code>${esc(msg)}</code></p>` +
+            `<div class="portal-actions">` +
+            `<button type="button" class="btn" id="partners-retry">Retry</button>` +
+            `<a class="btn" href="/registry/partners-ops.json">Open partners-ops.json</a>` +
+            `<a class="btn" href="/registry/soft-accounting-export.json">Open soft export</a>` +
+            `</div>` +
+            `<p class="dim" style="margin-top:10px">Local: <code>bun run partners:validate</code> · <code>bun run soft:accounting:bake</code></p>`;
+          $('partners-retry')?.addEventListener('click', () => void load());
+          const gate = $('partners-gate');
+          if (gate) {
+            gate.className = 'portal-gate fail';
+            gate.innerHTML = '<span class="dot" aria-hidden="true"></span>error';
+          }
         }
       }
 

@@ -4,6 +4,7 @@ import {
   NAMING_CLUSTERS,
   reportPasses,
   runReferenceDiscovery,
+  similarEnvRepair,
 } from '../lib/reference-discovery.ts';
 
 describe('reference-discovery', () => {
@@ -18,18 +19,33 @@ describe('reference-discovery', () => {
     expect(ids).toContain('pages-plane');
   });
 
-  test('runReferenceDiscovery returns structured report', async () => {
-    const report = await runReferenceDiscovery({ skipUnused: true });
-    expect(report.generatedAt).toMatch(/^\d{4}-/);
-    expect(report.perimeter.length).toBeGreaterThan(0);
-    expect(report.summary.total).toBe(report.findings.length);
-    expect(typeof report.summary.errors).toBe('number');
-    expect(
-      report.findings.filter(
-        finding => finding.kind === 'similar-env' && finding.severity === 'warn'
-      )
-    ).toEqual([]);
+  test('similarEnvRepair is context-aware (not R2-only boilerplate)', () => {
+    expect(similarEnvRepair('R2_BUCKET', 'S3_BUCKET')).toContain('r2-env.ts');
+    expect(similarEnvRepair('CONCEPT_GRAPH_FOCUS', 'CONCEPT_GRAPH_FORMAT')).toContain(
+      'concept CLI'
+    );
+    expect(similarEnvRepair('TELEGRAM_BOT_FACTORY', 'TELEGRAM_OPS_CHAT_ID')).toContain(
+      'Telegram'
+    );
+    expect(similarEnvRepair('FOO_BAR', 'FOO_BAZ')).toContain('isAllowedSimilarEnvPair');
   });
+
+  test(
+    'runReferenceDiscovery returns structured report',
+    async () => {
+      const report = await runReferenceDiscovery({ skipUnused: true });
+      expect(report.generatedAt).toMatch(/^\d{4}-/);
+      expect(report.perimeter.length).toBeGreaterThan(0);
+      expect(report.summary.total).toBe(report.findings.length);
+      expect(typeof report.summary.errors).toBe('number');
+      expect(
+        report.findings.filter(
+          finding => finding.kind === 'similar-env' && finding.severity === 'warn'
+        )
+      ).toEqual([]);
+    },
+    { timeout: 30_000 }
+  );
 
   test('reportPasses fails when errors present', () => {
     expect(

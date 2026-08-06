@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -92,9 +93,15 @@ export async function expectPortalPage(path: string, fetchImpl: typeof fetch = f
   }
   const html = await res.text();
   if (!res.ok) throw new Error(String(res.status));
-  if (!html.includes('/portal/data.js')) throw new Error('missing data.js script tag');
   if (!html.includes('/portal/topbar.js')) throw new Error('missing topbar.js script tag');
-  return 'includes shared portal scripts';
+  if (html.includes('/portal/data.js')) return 'includes shared portal scripts';
+
+  const topbar = await fetchImpl(`${BASE}/portal/topbar.js`, { redirect: 'manual' });
+  const topbarSource = await topbar.text();
+  if (!topbar.ok || !topbarSource.includes('./data.js')) {
+    throw new Error('missing data.js script tag or deferred topbar import');
+  }
+  return 'topbar owns deferred shared scripts';
 }
 
 async function expectJson(path: string, assert: (j: Record<string, unknown>) => void) {
@@ -120,11 +127,26 @@ async function expectSecurityHeaders(path: string, responseKind: 'static' | 'fun
   return `${responseKind} · shared contract`;
 }
 
-interface CfDeployment {
+export interface CfDeployment {
+  id?: string; // brand-ok — Cloudflare Pages deployment UUID from the API boundary
   environment?: string;
   url?: string;
+  aliases?: string[];
   latest_stage?: { name?: string; status?: string };
   deployment_trigger?: { metadata?: { commit_hash?: string } };
+}
+
+/** Prefer the public production apex because Pages Access protects hash-preview origins. */
+export function selectProductionContentBase(deployment: CfDeployment): string | undefined {
+  const productionHost = CLOUDFLARE_DEFAULTS.zones.factoryWager.name;
+  const publicAlias = deployment.aliases?.find(alias => {
+    try {
+      return new URL(alias).hostname === productionHost;
+    } catch {
+      return false;
+    }
+  });
+  return (publicAlias ?? deployment.url)?.replace(/\/$/, '');
 }
 
 /** Immutable origins can 404 for a minute or two right after `deploy:success`. */
@@ -138,12 +160,13 @@ async function fetchWithRetry(url: string, attempts = 3): Promise<Response> {
 }
 
 /**
- * Content proof for the Access-gated portal plane. The alias hostname sits
- * behind Cloudflare Access (302), but the immutable per-deploy origin is
- * Access-free — so the deployed portal code is provable without a service
- * token. Degrades to an ok-skip when no CF API token is in the environment.
+ * Content proof for the Access-gated portal plane. Pages preview protection
+ * intentionally covers branch/hash origins, so the proof resolves the latest
+ * successful production deployment and fetches its public apex alias. The API
+ * commit metadata keeps the content result tied to the selected deployment.
+ * Degrades to an ok-skip when no CF API token is in the environment.
  */
-async function expectImmutableDeployProof() {
+async function expectProductionDeployProof() {
   const token = Bun.env.CLOUDFLARE_API_TOKEN?.trim();
   if (!token) return 'skipped (CLOUDFLARE_API_TOKEN not set)';
   const account = Bun.env.CLOUDFLARE_ACCOUNT_ID?.trim() || CLOUDFLARE_DEFAULTS.accountId;
@@ -160,17 +183,19 @@ async function expectImmutableDeployProof() {
       d.latest_stage?.name === 'deploy' &&
       d.latest_stage?.status === 'success'
   );
-  if (!prod?.url) throw new Error('no successful production deployment');
+  if (!prod) throw new Error('no successful production deployment');
+  const contentBase = selectProductionContentBase(prod);
+  if (!contentBase) throw new Error('production deployment has no content URL');
   const commit = prod.deployment_trigger?.metadata?.commit_hash?.slice(0, 9) ?? '?';
 
-  const js = await fetchWithRetry(`${prod.url}/portal/components/glossary-ux.js`);
+  const js = await fetchWithRetry(`${contentBase}/portal/components/glossary-ux.js`);
   if (!js.ok) throw new Error(`glossary-ux.js → ${js.status}`);
   const body = await js.text();
   const markers = ['getElementByIdInRoot', 'applySectionTitles', 'sectionTitleFromSurface'];
   const missing = markers.filter(m => !body.includes(m));
   if (missing.length) throw new Error(`P1 markers missing: ${missing.join(', ')}`);
 
-  const reg = await fetchWithRetry(`${prod.url}/registry/domain-glossary.json`);
+  const reg = await fetchWithRetry(`${contentBase}/registry/domain-glossary.json`);
   if (!reg.ok) throw new Error(`domain-glossary.json → ${reg.status}`);
   const glossary = (await reg.json()) as {
     surfaces?: Array<{ sections?: Array<{ title?: string }> }>;
@@ -186,7 +211,7 @@ async function expectImmutableDeployProof() {
   if (sections === 0 || titled !== sections) {
     throw new Error(`sections titled ${titled}/${sections}`);
   }
-  const deployId = prod.url.split('//')[1]?.split('.')[0] ?? '?';
+  const deployId = prod.id?.slice(0, 8) ?? prod.url?.split('//')[1]?.split('.')[0] ?? '?';
   return `deploy ${deployId} @ ${commit} · P1 markers ok · sections ${titled}/${sections}`;
 }
 
@@ -381,7 +406,7 @@ async function main() {
       })
     ),
     check('/portal/env/ page', 'core', () => expectPortalPage('/portal/env/')),
-    check('immutable deploy proof', 'core', () => expectImmutableDeployProof()),
+    check('production deploy proof', 'core', () => expectProductionDeployProof()),
     check('well-known/mcp.json', 'core', () =>
       expectJson('/.well-known/mcp.json', j => {
         if (!Array.isArray(j.servers) || j.servers.length < 5) throw new Error('missing servers[]');

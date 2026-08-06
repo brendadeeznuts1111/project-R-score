@@ -13,6 +13,7 @@ import {
   PARTNER_HISTORY_SURFACE_CONCEPTS,
   PARTNERS_SURFACE_CONCEPTS,
   PORTAL_SEMANTIC_CONCEPTS,
+  TENNIS_SURFACE_CONCEPTS,
 } from './semantic-vocabulary.ts';
 
 const ROOT = `${import.meta.dir}/../../public/portal`;
@@ -52,6 +53,7 @@ function surfaceMaps(): Array<Record<string, string>> {
     LIMIT_FIELD_CONCEPTS as Record<string, string>,
     API_INFRA_CONCEPTS as Record<string, string>,
     HEALTH_FIELD_CONCEPTS as Record<string, string>,
+    TENNIS_SURFACE_CONCEPTS as Record<string, string>,
   ];
 }
 

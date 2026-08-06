@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite (seen-set)
 // lib/telegram/event-alerts.ts — real-time new-event alerts (stream-list-v2).
 //
@@ -20,6 +21,7 @@ import {
   type TelegramNotificationPreferences,
 } from './partner-notifications.ts';
 import { sendTelegramBotMessage } from './telegram-api.ts';
+import { escapeHtml } from './templates/escape.ts';
 
 export const STREAM_LIST_URL = 'https://api-gs.player-us.xyz/stream-list-v2/?tv=usa';
 
@@ -39,7 +41,7 @@ export type StreamFeed = {
 };
 
 /**
- * Parse the real stream-list-v2 payload: `d.sports[sport][eventId] = {
+ * Parse the real stream-list-v2 payload: `sports[sport].events[eventId] = {
  * sport, league, competitiors: { home, away }, stream_id, … }`.
  * Malformed entries are skipped.
  */
@@ -49,8 +51,11 @@ export function parseStreamListPayload(payload: unknown): StreamFeed[] {
   const sports = (payload as { sports?: unknown }).sports;
   if (!sports || typeof sports !== 'object') return out;
 
-  for (const [sport, events] of Object.entries(sports as Record<string, unknown>)) {
-    if (!events || typeof events !== 'object') continue;
+  for (const [sport, sportPayload] of Object.entries(sports as Record<string, unknown>)) {
+    if (!sportPayload || typeof sportPayload !== 'object') continue;
+    const wrapper = sportPayload as Record<string, unknown>;
+    const events =
+      wrapper.events && typeof wrapper.events === 'object' ? wrapper.events : sportPayload;
     const parsed: StreamEvent[] = [];
     for (const [eventId, raw] of Object.entries(events as Record<string, unknown>)) {
       if (!raw || typeof raw !== 'object') continue;
@@ -80,10 +85,11 @@ export function parseStreamListPayload(payload: unknown): StreamFeed[] {
 }
 
 export async function fetchStreamFeed(
-  url = STREAM_LIST_URL,
-  fetchImpl: typeof globalThis.fetch = globalThis.fetch
+  url = Bun.env.STREAM_LIST_URL ?? STREAM_LIST_URL,
+  fetchImpl: typeof globalThis.fetch = globalThis.fetch,
+  timeoutMs = 10_000
 ): Promise<StreamFeed[]> {
-  const res = await fetchImpl(url);
+  const res = await fetchImpl(url, { signal: AbortSignal.timeout(timeoutMs) });
   if (!res.ok) throw new Error(`stream-list-v2 ${res.status}`);
   const payload = (await res.json()) as unknown;
   return parseStreamListPayload(payload);
@@ -134,7 +140,7 @@ export function eventKeyOf(
 // ─── alert message ───────────────────────────────────────────────────────────
 
 export function buildEventAlertText(event: StreamEvent): string {
-  return `🎾 New ${event.sport} match: **${event.home} vs ${event.away}**\nLeague: ${event.league}`;
+  return `🎾 New ${escapeHtml(event.sport)} match: <b>${escapeHtml(event.home)} vs ${escapeHtml(event.away)}</b>\nLeague: ${escapeHtml(event.league)}`;
 }
 
 // ─── scan + fan-out ──────────────────────────────────────────────────────────
@@ -205,7 +211,7 @@ export async function runEventAlertScan(opts: EventAlertScanOpts): Promise<Event
             const result = await sendTelegramBotMessage(opts.token, {
               chatId: target.chatId,
               text: buildEventAlertText(event),
-              parseMode: 'Markdown',
+              parseMode: 'HTML',
               messageThreadId: target.topicId,
             });
             if (result.ok) alerted++;
@@ -237,22 +243,26 @@ async function defaultTargetFor(
  * fresh process never spams the full event set.
  */
 export async function runEventAlerts(
-  opts: { token?: string; baseline?: boolean; db?: Database } = {}
+  opts: { token?: string; baseline?: boolean; db?: Database; streamUrl?: string } = {}
 ): Promise<EventAlertScanResult & { feeds: number; firstRun: boolean }> {
   const { loadTelegramEnv } = await import('./telegram-config.ts');
   const env = loadTelegramEnv();
   const token = opts.token ?? env.effectiveToken;
   if (!token) throw new Error('TELEGRAM_BOT_FACTORY not set — run telegram:factory:setup');
 
-  const feed = await fetchStreamFeed();
+  const feed = await fetchStreamFeed(opts.streamUrl);
   const db = opts.db ?? openEventAlertsDb();
   const firstRun = db.query('SELECT COUNT(*) AS n FROM telegram_event_alerts_seen').get() as {
     n: number;
   };
   const baseline = opts.baseline ?? firstRun.n === 0;
 
-  const result = await runEventAlertScan({ token, feed, db, baseline });
-  return { ...result, feeds: feed.length, firstRun: baseline };
+  try {
+    const result = await runEventAlertScan({ token, feed, db, baseline });
+    return { ...result, feeds: feed.length, firstRun: baseline };
+  } finally {
+    if (!opts.db) db.close();
+  }
 }
 
 export { notifyPartners };

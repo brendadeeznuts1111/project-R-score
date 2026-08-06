@@ -36,17 +36,19 @@ afterEach(() => {
 const REAL_PAYLOAD = {
   sports: {
     tennis: {
-      '39779797': {
-        sport: 'Tennis',
-        league: 'ITF - Fano (M)',
-        competitiors: { home: 'Iiro Vasa', away: 'Filip Jeff Planinsek' },
-        stream_id: 39779797,
-      },
-      '39779823': {
-        sport: 'Tennis',
-        league: 'ITF - Fano (M)',
-        competitiors: { home: 'A', away: 'B' },
-        stream_id: 39779823,
+      events: {
+        '39779797': {
+          sport: 'Tennis',
+          league: 'ITF - Fano (M)',
+          competitiors: { home: 'Iiro Vasa', away: 'Filip Jeff Planinsek' },
+          stream_id: 39779797,
+        },
+        '39779823': {
+          sport: 'Tennis',
+          league: 'ITF - Fano (M)',
+          competitiors: { home: 'A', away: 'B' },
+          stream_id: 39779823,
+        },
       },
     },
     soccer: {
@@ -75,6 +77,22 @@ describe('stream feed parsing (grounded on the real payload shape)', () => {
     const feeds = parseStreamListPayload({ sports: { bogus: 'nope', empty: {} } });
     expect(feeds).toEqual([]);
     expect(parseStreamListPayload(null)).toEqual([]);
+  });
+
+  test('also accepts the legacy unwrapped event map', () => {
+    const feeds = parseStreamListPayload({
+      sports: {
+        tennis: {
+          '1': {
+            sport: 'Tennis',
+            league: 'L',
+            competitiors: { home: 'A', away: 'B' },
+            stream_id: 1,
+          },
+        },
+      },
+    });
+    expect(feeds[0]?.events[0]?.eventId).toBe('1');
   });
 
   test('fetchStreamFeed hits the endpoint and parses', async () => {
@@ -151,6 +169,16 @@ describe('seen-set + alert scan', () => {
     });
     expect(text).toContain('Ihor Dubinin vs Pavlo Shulhachyk');
     expect(text).toContain('Setka Cup');
+    expect(
+      buildEventAlertText({
+        sport: 'tennis',
+        league: '<script>',
+        home: 'A & B',
+        away: '<C>',
+        eventId: 'escaped',
+        streamId: 2,
+      })
+    ).toContain('A &amp; B vs &lt;C&gt;');
   });
 
   test('recordEventSeen is idempotent', () => {
@@ -168,5 +196,6 @@ describe('per-sport preference filtering', () => {
     expect(shouldNotifyEvent('tennis', { newEventsSports: ['soccer'] })).toBe(false);
     expect(shouldNotifyEvent('tennis', { newEventsSports: ['soccer', 'tennis'] })).toBe(true);
     expect(shouldNotifyEvent('Tennis', { newEventsSports: ['tennis'] })).toBe(true); // case-insensitive
+    expect(shouldNotifyEvent('tennis', { newEventsSports: [' Tennis '] })).toBe(true);
   });
 });

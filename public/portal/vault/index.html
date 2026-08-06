@@ -1,146 +1,275 @@
-<!DOCTYPE html>
+<!doctype html>
 <!-- @see docs/portal-foundation.md — baked by tools/vault-health-bake.ts; do not edit -->
 <html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="portal-poll-ms" content="60000" />
-  <title>Vault · FactoryWager</title>
-  <meta name="theme-color" content="#0d1117" />
-  <meta name="application-name" content="FactoryWager" />
-  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
-  <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/portal/style.css" />
-  <script type="application/json" id="vault-health-embed">{"kind":"vault-health","generatedAt":"2026-07-28T23:32:23.471Z","vaults":[{"name":"factorywager","active":30,"trashed":0,"trashedTitles":[]}],"referenced":[{"envKey":"CLOUDFLARE_ACCESS_API_TOKEN","vault":"factorywager","item":"Cloudflare Access API Token","status":"ok"},{"envKey":"CLOUDFLARE_API_TOKEN","vault":"factorywager","item":"Cloudflare API Token","status":"ok"},{"envKey":"CLOUDFLARE_DNS_API_TOKEN","vault":"factorywager","item":"Cloudflare API Token (DNS)","status":"ok"},{"envKey":"DOD_ID_ENCRYPTION_KEY","vault":"factorywager","item":"DOD ID Encryption Key","status":"ok"},{"envKey":"DOD_PROOF_SECRET","vault":"factorywager","item":"DOD Proof Secret","status":"ok"},{"envKey":"FACTORY_WAGER_TOKEN","vault":"factorywager","item":"FactoryWager Registry Token","status":"ok"},{"envKey":"GITHUB_TOKEN","vault":"factorywager","item":"GitHub PAT","status":"ok"},{"envKey":"PLAY_SIGNING_SECRET","vault":"factorywager","item":"Play Signing Secret","status":"ok"},{"envKey":"PROVISION_ENCRYPTION_KEY","vault":"factorywager","item":"Provision Encryption Key","status":"ok"},{"envKey":"R2_ACCESS_KEY_ID","vault":"factorywager","item":"R2 bun-secrets bucket","status":"ok"},{"envKey":"R2_SECRET_ACCESS_KEY","vault":"factorywager","item":"R2 bun-secrets bucket","status":"ok"},{"envKey":"REGISTRY_SECRET","vault":"factorywager","item":"Registry Dev Secret","status":"ok"},{"envKey":"REPORT_SIGNING_SECRET","vault":"factorywager","item":"Report Signing Secret","status":"ok"},{"envKey":"SOCKET_API_KEY","vault":"factorywager","item":"Socket API Key","status":"ok"},{"envKey":"SSH_DEPLOY_KEY","vault":"factorywager","item":"SSH Deploy Key","status":"ok"},{"envKey":"TELEGRAM_BOT_FACTORY","vault":"factorywager","item":"Telegram: factorywager_bot","status":"ok"},{"envKey":"TELEGRAM_WEBHOOK_SECRET","vault":"factorywager","item":"Telegram Webhook Secret","status":"ok"}],"summary":{"vaultCount":1,"activeItems":30,"trashedItems":0,"referencedOk":17,"referencedTrashed":0,"referencedMissing":0,"healthy":true}}</script>
-  <style>
-    .vh-wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px 48px; }
-    .vh-stats { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; margin: 16px 0 20px; }
-    .vh-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
-    .vh-stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
-    .vh-stat .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
-    .vh-stat.bad .v { color: var(--red, #f85149); }
-    .vh-stat.ok .v { color: var(--green, #3fb950); }
-    .vh-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
-    .vh-panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 0 0 12px; }
-    .vh-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .vh-table th { text-align: left; padding: 6px 8px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); }
-    .vh-table td { padding: 6px 8px; border-bottom: 1px solid rgba(48,54,61,.4); }
-    .vh-table td.bad, .vh-table tr.bad td { color: var(--red, #f85149); }
-    .vh-table tr.warn td { color: var(--yellow, #d29922); }
-    .vh-table td.ok { color: var(--green, #3fb950); }
-    .dim { color: var(--text-dim); font-size: 11px; }
-  </style>
-</head>
-<body>
-  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <h1 class="logo">
-        <span class="logo-icon" aria-hidden="true"></span>
-        <span class="brand-wordmark">FactoryWager</span>
-        <span class="brand-badge">ops</span>
-        <span class="logo-page">Vault</span>
-      </h1>
-      <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
-        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
-        <div class="nav-overflow">
-          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
-          <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link active" aria-current="page" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
-            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
-            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog" data-group="ops" data-cli="bun run telegram:handshake:catalog" role="menuitem">Partners</a>
-            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog" data-group="ops" role="menuitem">Account</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-cli="bun run bookmakers:bake" role="menuitem">Bookmakers</a>
-            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="portal-poll-ms" content="60000" />
+    <title>Vault · FactoryWager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <script type="application/json" id="vault-health-embed">
+      {
+        "kind": "vault-health",
+        "generatedAt": "2026-08-05T07:14:17.992Z",
+        "vaults": [{ "name": "factorywager", "active": 31, "trashed": 0, "trashedTitles": [] }],
+        "referenced": [
+          {
+            "envKey": "CLOUDFLARE_ACCESS_API_TOKEN",
+            "vault": "factorywager",
+            "item": "Cloudflare Access API Token",
+            "status": "ok"
+          },
+          {
+            "envKey": "CLOUDFLARE_API_TOKEN",
+            "vault": "factorywager",
+            "item": "Cloudflare API Token",
+            "status": "ok"
+          },
+          {
+            "envKey": "CLOUDFLARE_DNS_API_TOKEN",
+            "vault": "factorywager",
+            "item": "Cloudflare API Token (DNS)",
+            "status": "ok"
+          },
+          {
+            "envKey": "DOD_ID_ENCRYPTION_KEY",
+            "vault": "factorywager",
+            "item": "DOD ID Encryption Key",
+            "status": "ok"
+          },
+          {
+            "envKey": "DOD_PROOF_SECRET",
+            "vault": "factorywager",
+            "item": "DOD Proof Secret",
+            "status": "ok"
+          },
+          {
+            "envKey": "FACTORY_WAGER_TOKEN",
+            "vault": "factorywager",
+            "item": "FactoryWager Registry Token",
+            "status": "ok"
+          },
+          {
+            "envKey": "GITHUB_TOKEN",
+            "vault": "factorywager",
+            "item": "GitHub PAT",
+            "status": "ok"
+          },
+          {
+            "envKey": "PLAY_SIGNING_SECRET",
+            "vault": "factorywager",
+            "item": "Play Signing Secret",
+            "status": "ok"
+          },
+          {
+            "envKey": "PROVISION_ENCRYPTION_KEY",
+            "vault": "factorywager",
+            "item": "Provision Encryption Key",
+            "status": "ok"
+          },
+          {
+            "envKey": "R2_ACCESS_KEY_ID",
+            "vault": "factorywager",
+            "item": "R2 bun-secrets bucket",
+            "status": "ok"
+          },
+          {
+            "envKey": "R2_SECRET_ACCESS_KEY",
+            "vault": "factorywager",
+            "item": "R2 bun-secrets bucket",
+            "status": "ok"
+          },
+          {
+            "envKey": "REGISTRY_SECRET",
+            "vault": "factorywager",
+            "item": "Registry Dev Secret",
+            "status": "ok"
+          },
+          {
+            "envKey": "REPORT_SIGNING_SECRET",
+            "vault": "factorywager",
+            "item": "Report Signing Secret",
+            "status": "ok"
+          },
+          {
+            "envKey": "SOCKET_API_KEY",
+            "vault": "factorywager",
+            "item": "Socket API Key",
+            "status": "ok"
+          },
+          {
+            "envKey": "SSH_DEPLOY_KEY",
+            "vault": "factorywager",
+            "item": "SSH Deploy Key",
+            "status": "ok"
+          },
+          {
+            "envKey": "TELEGRAM_BOT_FACTORY",
+            "vault": "factorywager",
+            "item": "Telegram: factorywager_bot",
+            "status": "ok"
+          },
+          {
+            "envKey": "TELEGRAM_WEBHOOK_SECRET",
+            "vault": "factorywager",
+            "item": "Telegram Webhook Secret",
+            "status": "ok"
+          }
+        ],
+        "summary": {
+          "vaultCount": 1,
+          "activeItems": 31,
+          "trashedItems": 0,
+          "referencedOk": 17,
+          "referencedTrashed": 0,
+          "referencedMissing": 0,
+          "healthy": true
+        }
+      }
+    </script>
+    <style>
+      /* Specialty tones only — base table from .portal-table */
+      .portal-table.vh-table td.bad,
+      .portal-table.vh-table tr.bad td {
+        color: var(--red, #f85149);
+      }
+      .portal-table.vh-table tr.warn td {
+        color: var(--yellow, #d29922);
+      }
+      .portal-table.vh-table td.ok {
+        color: var(--green, #3fb950);
+      }
+      .dim {
+        color: var(--text-dim);
+        font-size: 11px;
+      }
+      .bad {
+        color: var(--red, #f85149);
+      }
+      .portal-stat {
+        cursor: default;
+      }
+      .portal-stat:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon">■</span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">Vault</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary"></nav>
+      </div>
+    </header>
+    <main class="portal-page">
+      <section class="portal-hero portal-hero--card" aria-labelledby="vh-hero-title">
+        <p class="portal-eyebrow">Proton Pass · env refs</p>
+        <h2 id="vh-hero-title">Vault health — titles and states only</h2>
+        <p class="hero-sub">
+          Live Pass inventory crossed with vault-map env references. No secret values are read or
+          stored. Offline gate: <code>portal-cli vault health</code>.
+        </p>
+        <div class="portal-hero-meta">
+          <span class="portal-gate pass" aria-live="polite"
+            ><span class="dot" aria-hidden="true"></span>healthy</span
+          >
+          <span class="portal-baked">generated 2026-08-05T07:14:17.992Z</span>
+          <div class="portal-source-links" aria-label="Related artifacts">
+            <a href="/registry/vault-health.json">vault-health.json</a>
+            <a href="/portal/env/">env</a>
+            <a href="/portal/env/#partner-env-panel">partners env</a>
+            <a href="/portal/doctor/">doctor</a>
           </div>
         </div>
-      </nav>
-    </div>
-  </header>
-  <main class="vh-wrap">
-    <p class="dim">Proton Pass live state × env references · generated 2026-07-28T23:32:23.471Z · <code>bun run vault:health:bake</code></p>
-    <p class="dim">Gate (CI, offline): <code>portal-cli vault health</code> · inventory SSOT <code>tests/__snapshots__/vault-health.test.ts.snap</code> · intentional drift <code>--update</code> · machine report <a href="/registry/vault-health.json">vault-health.json</a></p>
-    <div class="vh-stats">
-      <div class="vh-stat "><div class="k">Vaults</div><div class="v">1</div></div>
-      <div class="vh-stat "><div class="k">Active items</div><div class="v">30</div></div>
-      <div class="vh-stat ok"><div class="k">Trashed items</div><div class="v">0</div></div>
-      <div class="vh-stat ok"><div class="k">Refs trashed</div><div class="v">0</div></div>
-      <div class="vh-stat ok"><div class="k">Refs missing</div><div class="v">0</div></div>
-    </div>
-    <div class="vh-panel">
-      <h2>Referenced-item issues (purge risk)</h2>
-      <table class="vh-table">
-        <thead><tr><th>Env key</th><th>Vault</th><th>Item</th><th>Status</th></tr></thead>
-        <tbody><tr><td colspan="4" class="ok">All env-referenced items resolve Active ✓</td></tr></tbody>
-      </table>
-    </div>
-    <div class="vh-panel">
-      <h2>Vaults</h2>
-      <table class="vh-table">
-        <thead><tr><th>Vault</th><th>Active</th><th>Trashed</th><th>Trashed titles</th></tr></thead>
-        <tbody><tr>
-        <td>factorywager</td><td>30</td>
-        <td class="">0</td>
-        <td class="dim">—</td>
-      </tr></tbody>
-      </table>
-    </div>
-    <p class="dim">No secret values are read or stored by this bake — titles and states only.</p>
-  </main>
-  <script type="module" src="/portal/data.js"></script>
-  <script type="module" src="/portal/topbar.js"></script>
-  <script type="module" src="/portal/components/sidebar.js"></script>
-  <script type="module" src="/portal/components/notification.js"></script>
-  <script type="module" src="/portal/components/footer.js"></script>
-  <footer class="footer" data-portal-chrome="footer">
-    <p>
-      <strong>FactoryWager</strong> ·
-      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
-      <a href="/portal/ops/">Ops</a> ·
-      <a href="/portal/toc/">TOC</a> ·
-      <a href="/portal/partners/">Partners</a> ·
-      <a href="/portal/packages/">Packages</a> ·
-      <a href="/portal/brands/">Brands</a> ·
-      <a href="/portal/glossary/">Glossary</a> ·
-      <a href="/portal/surfaces/">Surfaces</a> ·
-      <a href="/portal/health/">Health</a> ·
-      <a href="/registry/portal-weave.json">Portal proof</a> ·
-      <a href="/portal/compliance/">Compliance</a> ·
-      <a href="/portal/limits/">Limits</a> ·
-      <a href="/portal/dod/">DOD</a> ·
-      <a href="/portal/env/">Env</a> ·
-      <a href="/portal/vault/">Vault</a> ·
-      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
-      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </p>
-    <p class="footer-meta">
-      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
-      · <span data-footer-bun></span>
-      · <span data-footer-ts>…</span>
-    </p>
-  </footer>
-</body>
+      </section>
+      <p class="dim">
+        Inventory SSOT <code>tests/__snapshots__/vault-health.test.ts.snap</code> · intentional
+        drift <code>--update</code> · bake <code>bun run vault:health:bake</code>
+      </p>
+      <div class="portal-stat-grid" aria-label="Vault summary">
+        <div class="portal-stat muted"><span class="k">Vaults</span><span class="v">1</span></div>
+        <div class="portal-stat muted">
+          <span class="k">Active items</span><span class="v">31</span>
+        </div>
+        <div class="portal-stat ok">
+          <span class="k">Trashed items</span><span class="v">0</span>
+        </div>
+        <div class="portal-stat ok">
+          <span class="k">Refs trashed</span><span class="v">0</span>
+        </div>
+        <div class="portal-stat ok">
+          <span class="k">Refs missing</span><span class="v">0</span>
+        </div>
+      </div>
+
+      <section class="portal-panel">
+        <div class="portal-panel-head">
+          <h2>Referenced-item issues (purge risk)</h2>
+          <p class="portal-panel-desc">Env keys whose Pass items are missing or trashed.</p>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table vh-table" data-density="compact">
+            <thead>
+              <tr>
+                <th>Env key</th>
+                <th>Vault</th>
+                <th>Item</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="4" class="dim">All env-referenced items resolve Active ✓</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section class="portal-panel">
+        <div class="portal-panel-head">
+          <h2>Vaults</h2>
+          <p class="portal-panel-desc">Active vs trashed item counts per vault.</p>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table vh-table" data-density="compact">
+            <thead>
+              <tr>
+                <th>Vault</th>
+                <th>Active</th>
+                <th>Trashed</th>
+                <th>Trashed titles</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>factorywager</td>
+                <td>31</td>
+                <td>0</td>
+                <td class="dim">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <p class="dim">No secret values are read or stored by this bake — titles and states only.</p>
+    </main>
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/components/sidebar.js"></script>
+    <script type="module" src="/portal/components/notification.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+  </body>
 </html>

@@ -16,6 +16,7 @@ import {
 } from '../channels/outbox.ts';
 import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
 import { loadTelegramEnv } from '../telegram/telegram-config.ts';
+import { telegramBotApiUrl } from '../telegram/telegram-api-url.ts';
 import { asTreeNodeId, asGateDecisionId, tryStateCode } from '../types/branded/operations.ts';
 import { AccountService } from './account-service.ts';
 import { detectFraudSignals } from './fraud-guard.ts';
@@ -342,7 +343,7 @@ export async function flushOutbox(
 
   for (const row of pending) {
     try {
-      const res = await fetch(`https://api.telegram.org/bot${opts.token}/sendMessage`, {
+      const res = await fetch(telegramBotApiUrl(opts.token, 'sendMessage'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

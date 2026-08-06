@@ -1,5 +1,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
 // @see https://bun.com/docs/runtime/cookies — Bun.Cookie
+import { base64UrlToUtf8, utf8ToBase64Url } from '../../lib/bytes-base64.ts';
+
 export const DASHBOARD_COOKIE_NAME = 'bfw_state';
 
 export type SecurityLevel = 'high' | 'medium' | 'low';
@@ -63,17 +65,12 @@ function normalizeDomain(domain: string): string {
 }
 
 function toCookieValue(state: DashboardState): string {
-  return btoa(JSON.stringify(state)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+  return utf8ToBase64Url(JSON.stringify(state));
 }
 
 function fromCookieValue(value: string): DashboardState | null {
-  const normalized = String(value || '')
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
-  const padLen = (4 - (normalized.length % 4)) % 4;
-  const padded = normalized + '='.repeat(padLen);
   try {
-    const parsed = JSON.parse(atob(padded)) as Partial<DashboardState>;
+    const parsed = JSON.parse(base64UrlToUtf8(String(value || ''))) as Partial<DashboardState>;
     const domain = normalizeDomain(parsed.domain || '');
     if (!domain) return null;
     const prefMetric = parsed.prefMetric === 'memory' ? 'memory' : 'latency';

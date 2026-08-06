@@ -1,0 +1,245 @@
+{
+  "surface": "dashboard",
+  "manifest": {
+    "version": 1,
+    "surface": "dashboard",
+    "title": "Partner MVP Delivery",
+    "description": "A source-backed snapshot of the foundation delivered on the partner-consolidation lane, the MVP contract surface, and the ordered implementation queue.",
+    "generatedAt": "2026-08-05T21:55:34Z",
+    "cards": [
+      {
+        "id": "semantic_contract",
+        "description": "Registered concept and surface bindings in the validated partner plan, with explicit gaps retained as proposed concepts.",
+        "dataset": "mvp_overview",
+        "sourceId": "plan_validator",
+        "metrics": [
+          { "label": "Semantic bindings", "field": "semanticBindings", "format": "number" },
+          { "label": "Explicit gaps", "field": "semanticGaps", "format": "number" }
+        ]
+      },
+      {
+        "id": "profile_anchor",
+        "description": "Canonical partner profiles currently present versus the four-profile minimum migration anchor.",
+        "dataset": "mvp_overview",
+        "sourceId": "partner_plan",
+        "metrics": [
+          { "label": "Canonical profiles", "field": "canonicalProfiles", "format": "number" },
+          { "label": "Minimum target", "field": "profileTarget", "format": "number" }
+        ]
+      },
+      {
+        "id": "connector_contract",
+        "description": "Declared source connectors in the MVP plan, including the unresolved Sports Terminal boundary.",
+        "dataset": "mvp_overview",
+        "sourceId": "plan_validator",
+        "metrics": [
+          { "label": "Connectors declared", "field": "connectors", "format": "number" },
+          { "label": "Blocked", "field": "blockedConnectors", "format": "number" }
+        ]
+      },
+      {
+        "id": "dashboard_composition",
+        "description": "Mounted dashboard regions versus URL-addressable hash routes; mounts and routes are intentionally different concerns.",
+        "dataset": "mvp_overview",
+        "sourceId": "plan_validator",
+        "metrics": [
+          { "label": "Section mounts", "field": "sectionMounts", "format": "number" },
+          { "label": "Hash routes", "field": "hashRoutes", "format": "number" }
+        ]
+      },
+      {
+        "id": "foundation_delivery",
+        "description": "Scoped foundation commits delivered before this generated status artifact.",
+        "dataset": "mvp_overview",
+        "sourceId": "branch_history",
+        "metrics": [
+          { "label": "Foundation commits", "field": "foundationCommits", "format": "number" },
+          { "label": "Intentional TODO contracts", "field": "intentionalTodos", "format": "number" }
+        ]
+      }
+    ],
+    "charts": [
+      {
+        "id": "connector_state_chart",
+        "title": "Connector implementation state",
+        "subtitle": "The contract is complete enough to enumerate every source boundary; implementation remains concentrated in planned adapters.",
+        "type": "bar",
+        "dataset": "connector_status_summary",
+        "sourceId": "partner_plan",
+        "valueFormat": "number",
+        "encodings": {
+          "x": { "field": "status", "type": "nominal", "label": "Implementation state" },
+          "y": { "field": "count", "type": "quantitative", "label": "Connectors" }
+        }
+      },
+      {
+        "id": "remaining_work_chart",
+        "title": "Planned remaining-work burn-down",
+        "subtitle": "Remaining items after each ordered phase; this is a delivery sequence, not a time forecast.",
+        "type": "sparkline",
+        "intent": "trend",
+        "dataset": "remaining_work_burndown",
+        "sourceId": "implementation_map",
+        "valueFormat": "number",
+        "encodings": {
+          "x": { "field": "step", "type": "ordinal", "label": "Delivery step" },
+          "y": { "field": "remaining", "type": "quantitative", "label": "Remaining work items" }
+        }
+      }
+    ],
+    "sources": [
+      {
+        "id": "partner_plan",
+        "label": "Partner-plan reviewed snapshot query",
+        "path": "sql/partner-plan.sql"
+      },
+      {
+        "id": "plan_validator",
+        "label": "Plan-validator reviewed snapshot query",
+        "path": "sql/plan-validator.sql"
+      },
+      {
+        "id": "implementation_map",
+        "label": "Implementation-map reviewed snapshot query",
+        "path": "sql/implementation-map.sql"
+      },
+      {
+        "id": "branch_history",
+        "label": "Branch-history reviewed snapshot query",
+        "path": "sql/branch-history.sql"
+      }
+    ],
+    "blocks": [
+      {
+        "id": "status_metrics",
+        "type": "metric-strip",
+        "cardIds": [
+          "profile_anchor"
+        ]
+      },
+      { "id": "remaining_work", "type": "chart", "chartId": "remaining_work_chart" },
+      {
+        "id": "execution_queue",
+        "type": "markdown",
+        "sourceId": "implementation_map",
+        "body": "## Next execution sequence\n\n**Anchor:** register gaps → materialize profiles → resolve Sports Terminal input. **Build:** core → ingress → adapters → read model → portal. **Harden:** legacy cutoff → zero-usage window → money cutover."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-05T21:55:34Z",
+    "status": "ready",
+    "datasets": {
+      "mvp_overview": [
+        {
+          "semanticBindings": 33,
+          "semanticGaps": 15,
+          "connectors": 8,
+          "blockedConnectors": 1,
+          "canonicalProfiles": 0,
+          "profileTarget": 4,
+          "sectionMounts": 9,
+          "hashRoutes": 6,
+          "presentationStates": 31,
+          "foundationCommits": 7,
+          "intentionalTodos": 2
+        }
+      ],
+      "connector_status_summary": [
+        { "status": "Planned", "count": 6, "meaning": "Contracted adapter and port; implementation not started" },
+        { "status": "Blocked", "count": 1, "meaning": "Sports Terminal requires one exact versioned input contract" },
+        { "status": "Compatibility", "count": 1, "meaning": "Legacy operations projection retained only through migration" }
+      ],
+      "remaining_work_summary": [
+        { "phase": "Anchor", "count": 3, "goal": "Register concepts, materialize profiles, and resolve the Sports Terminal input" },
+        { "phase": "Build", "count": 5, "goal": "Implement core types, ingress, adapters, projection, and portal consumption" },
+        { "phase": "Harden", "count": 3, "goal": "Automate retirement, observe legacy usage, and complete money rollout" }
+      ],
+      "remaining_work_stack": [
+        { "scope": "MVP remaining", "phase": "Anchor", "count": 3 },
+        { "scope": "MVP remaining", "phase": "Build", "count": 5 },
+        { "scope": "MVP remaining", "phase": "Harden", "count": 3 }
+      ],
+      "remaining_work_burndown": [
+        { "step": 0, "phase": "Start", "remaining": 11 },
+        { "step": 1, "phase": "After Anchor", "remaining": 8 },
+        { "step": 2, "phase": "After Build", "remaining": 3 },
+        { "step": 3, "phase": "After Harden", "remaining": 0 }
+      ],
+      "foundation_commits": [
+        { "sequence": 1, "commit": "b07bc493f", "area": "Bun runtime", "outcome": "Grounded recent release behavior in exact-version contracts", "proof": "Release, Web API, TOML, fetch, file, and WebSocket tests" },
+        { "sequence": 2, "commit": "b53e4b2ad", "area": "Bun channels", "outcome": "Added read-only stable, canary, tip, feed, and type governance", "proof": "Channel doctor CLI, worker, cron, and tests" },
+        { "sequence": 3, "commit": "96a1aaacf", "area": "Partner domain", "outcome": "Established the package scaffold, semantic map, and dashboard planning SSOT", "proof": "Plan validator and package contract tests" },
+        { "sequence": 4, "commit": "0d8a42f6a", "area": "Accounting", "outcome": "Added integer-money migration and SQL lint enforcement", "proof": "Migration, rollback, lint, and pre-commit tests" },
+        { "sequence": 5, "commit": "fcae7ddfb", "area": "Type contracts", "outcome": "Tracked compile-only snapshot contracts", "proof": "Dedicated snapshot tsconfig and type check" },
+        { "sequence": 6, "commit": "07962dae9", "area": "Agent operations", "outcome": "Added the Project R operations skill and command map", "proof": "Skill validation and registry tests" },
+        { "sequence": 7, "commit": "e84868d33", "area": "Bun cron", "outcome": "Made cron verification release-aware and CLI-deterministic", "proof": "46 of 46 demos and 73 of 73 API checks" }
+      ],
+      "connector_inventory": [
+        { "order": 1, "connector": "profiles-registry", "owner": "partners", "status": "planned", "required": "yes", "nextAction": "Materialize and parse the first canonical profiles" },
+        { "order": 2, "connector": "accounting-ledger", "owner": "accounting", "status": "planned", "required": "no", "nextAction": "Read integer minor-unit balances through AccountingReadPort" },
+        { "order": 3, "connector": "telegram-handshake", "owner": "telegram", "status": "planned", "required": "no", "nextAction": "Project readiness only; preserve transport boundary" },
+        { "order": 4, "connector": "limits-registry", "owner": "compliance", "status": "planned", "required": "no", "nextAction": "Adapt per-out coverage without owning identity" },
+        { "order": 5, "connector": "bookmakers-registry", "owner": "trading", "status": "planned", "required": "no", "nextAction": "Resolve SportsbookId and display metadata" },
+        { "order": 6, "connector": "tennis-contract", "owner": "trading", "status": "planned", "required": "no", "nextAction": "Reuse strict parsing and last-known-good reliability pattern" },
+        { "order": 7, "connector": "sports-terminal", "owner": "trading", "status": "blocked", "required": "no", "nextAction": "Select one exact versioned package export or registry artifact" },
+        { "order": 8, "connector": "legacy-ops-registry", "owner": "partners", "status": "current-compatibility", "required": "no", "nextAction": "Instrument usage and remove under artifact schema v2" }
+      ],
+      "work_queue": [
+        { "order": 1, "phase": "Anchor", "workItem": "Register the 15 explicit semantic gaps", "state": "ready", "dependency": "Concept-owner review", "doneWhen": "The plan validates as implementation-ready with no unregistered proposal gaps" },
+        { "order": 2, "phase": "Anchor", "workItem": "Materialize canonical profiles for the four current partner CODEs", "state": "ready", "dependency": "Partner profile source review", "doneWhen": "Profile bake contains four parsed profiles and passes coverage tests" },
+        { "order": 3, "phase": "Anchor", "workItem": "Choose the Sports Terminal v2 input contract", "state": "blocked", "dependency": "Sports Terminal owner", "doneWhen": "One versioned parsed input replaces the unresolved connector input" },
+        { "order": 4, "phase": "Build", "workItem": "Implement canonical brands, facts, ports, and parsers", "state": "queued", "dependency": "Concept registration", "doneWhen": "Core exports parse PartnerCode, OutId, lifecycle provenance, refs, scope, and money" },
+        { "order": 5, "phase": "Build", "workItem": "Implement IngressTranslator and runtime edge enforcement", "state": "queued", "dependency": "Canonical OutId parser", "doneWhen": "CODE-N is translated only at ingress with telemetry and unknown aliases are rejected" },
+        { "order": 6, "phase": "Build", "workItem": "Implement the seven canonical adapters and one compatibility adapter", "state": "queued", "dependency": "Core ports and source fixtures", "doneWhen": "Each connector emits parsed facts with resilience and provenance" },
+        { "order": 7, "phase": "Build", "workItem": "Build the partner read-model projection and registry bake", "state": "queued", "dependency": "Profiles and adapter contracts", "doneWhen": "partners-dashboard.json v1 is deterministic, validated, and last-known-good safe" },
+        { "order": 8, "phase": "Build", "workItem": "Move /portal/partners onto the single dashboard artifact", "state": "queued", "dependency": "Read-model bake", "doneWhen": "The browser performs no domain joins and specialist boards remain deep links" },
+        { "order": 9, "phase": "Harden", "workItem": "Wire the weekly legacy-ops cutoff check and notification", "state": "queued", "dependency": "Owned notification target", "doneWhen": "The 2026-11-03 cutoff is enforced and alerts are observable" },
+        { "order": 10, "phase": "Harden", "workItem": "Measure legacy ingress and compatibility usage", "state": "queued", "dependency": "Ingress and legacy adapters", "doneWhen": "Both counters remain at zero for the required 30-day retirement window" },
+        { "order": 11, "phase": "Harden", "workItem": "Execute the production integer-money cutover", "state": "queued", "dependency": "Reviewed database inventory and rollout window", "doneWhen": "Backfill, dual-read/write transition, verification, finalize, and rollback evidence are complete" }
+      ],
+      "contract_inventory": [
+        { "order": 1, "surface": "Semantic bindings", "count": 33, "interpretation": "Existing registered concepts and surfaces reused by the plan" },
+        { "order": 2, "surface": "Explicit semantic gaps", "count": 15, "interpretation": "Proposals requiring registration; none are silently aliased" },
+        { "order": 3, "surface": "Connectors", "count": 8, "interpretation": "Seven canonical source boundaries plus legacy compatibility" },
+        { "order": 4, "surface": "Dashboard regions", "count": 8, "interpretation": "Operator-facing content regions" },
+        { "order": 5, "surface": "Section mounts", "count": 9, "interpretation": "Region placements in the dashboard composition" },
+        { "order": 6, "surface": "Hash routes", "count": 6, "interpretation": "URL-addressable routes; intentionally fewer than mounts" },
+        { "order": 7, "surface": "Presentation states", "count": 31, "interpretation": "Theme recipes mapped after semantic surface selection" },
+        { "order": 8, "surface": "Canonical profiles", "count": 0, "interpretation": "The missing runtime anchor that keeps the snapshot partial" }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "partner_plan",
+      "label": "Partner-plan reviewed snapshot query",
+      "path": "sql/partner-plan.sql"
+    },
+    {
+      "id": "plan_validator",
+      "label": "Plan-validator reviewed snapshot query",
+      "path": "sql/plan-validator.sql"
+    },
+    {
+      "id": "implementation_map",
+      "label": "Implementation-map reviewed snapshot query",
+      "path": "sql/implementation-map.sql"
+    },
+    {
+      "id": "branch_history",
+      "label": "Branch-history reviewed snapshot query",
+      "path": "sql/branch-history.sql"
+    }
+  ],
+  "package_info": {
+    "originUrl": "artifact://project-r/partner-consolidation-status",
+    "controls": {
+      "edit": false,
+      "refresh": false,
+      "share": false,
+      "export": false
+    }
+  }
+}

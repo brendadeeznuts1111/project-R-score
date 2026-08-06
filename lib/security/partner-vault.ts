@@ -11,6 +11,7 @@
  * Repository layer: SQL filters on `node_id` belong here (not call sites).
  */
 import type { Database } from 'bun:sqlite';
+import { base64ToBytes, bytesToBase64 } from '../bytes-base64.ts';
 import { asTreeNodeId, type TreeNodeId } from '../types/branded.ts';
 import { requireSecret } from './require-secret.ts';
 
@@ -74,7 +75,7 @@ export async function encryptPartnerSecret(
   const out = new Uint8Array(12 + ct.byteLength);
   out.set(iv, 0);
   out.set(new Uint8Array(ct), 12);
-  return Buffer.from(out).toString('base64');
+  return bytesToBase64(out);
 }
 
 /** Decrypt wire format from {@link encryptPartnerSecret}. */
@@ -83,10 +84,12 @@ export async function decryptPartnerSecret(
   masterKey: string,
   nodeId: TreeNodeId
 ): Promise<string> {
-  const raw = Buffer.from(encryptedValue, 'base64');
+  const raw = base64ToBytes(encryptedValue);
   if (raw.byteLength < 13) throw new Error('partner-vault: ciphertext too short');
-  const iv = raw.subarray(0, 12);
-  const ct = raw.subarray(12);
+  // slice() (not subarray()) so iv/ct are fresh Uint8Array<ArrayBuffer> views,
+  // assignable to BufferSource for crypto.subtle.decrypt (TS lib generics).
+  const iv = raw.slice(0, 12);
+  const ct = raw.slice(12);
   const key = await derivePartnerAesKey(masterKey, nodeId);
   const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
   return new TextDecoder().decode(pt);

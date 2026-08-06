@@ -27,6 +27,12 @@ export type DecisionId = BrandedString<'DecisionId'>;
 export type LoopId = BrandedString<'LoopId'>;
 /** Ops tree node (partner / agent / sub_agent) primary key. */
 export type TreeNodeId = BrandedString<'TreeNodeId'>;
+/** Funding rail identity (operations treasury path). */
+export type RailId = BrandedString<'RailId'>;
+/** Funding transfer row identity. */
+export type FundingId = BrandedString<'FundingId'>;
+/** AI / automation optimization command handle. */
+export type CommandId = BrandedString<'CommandId'>;
 /** Factorial / A/B experiment primary key. */
 export type ExperimentId = BrandedString<'ExperimentId'>;
 /** One design cell (variant) within an experiment. */
@@ -45,6 +51,10 @@ export type GateDecisionId = BrandedString<'GateDecisionId'>;
 export type OpsChannelEventId = BrandedString<'OpsChannelEventId'>;
 /** Immutable issued limit-forecast identity. */
 export type LimitForecastIssueId = BrandedString<'LimitForecastIssueId'>;
+/** Synthetic or live odds event identity. */
+export type EventId = BrandedString<'EventId'>;
+/** Detected betting-edge opportunity identity. */
+export type EdgeId = BrandedString<'EdgeId'>;
 /** Canonical sportsbook slug used by limit-policy and scrape registries. */
 export type SportsbookId = BrandedString<'SportsbookId'>;
 /**
@@ -70,6 +80,9 @@ const run = defineBrandConstructors('RunId');
 const decision = defineBrandConstructors('DecisionId');
 const loop = defineBrandConstructors('LoopId');
 const treeNode = defineBrandConstructors('TreeNodeId');
+const rail = defineBrandConstructors('RailId');
+const funding = defineBrandConstructors('FundingId');
+const command = defineBrandConstructors('CommandId');
 const experiment = defineBrandConstructors('ExperimentId');
 const experimentVariant = defineBrandConstructors('ExperimentVariantId');
 const experimentAssignment = defineBrandConstructors('ExperimentAssignmentId');
@@ -79,6 +92,8 @@ const outId = defineBrandConstructors('OutId');
 const gateDecisionId = defineBrandConstructors('GateDecisionId');
 const opsChannelEventId = defineBrandConstructors('OpsChannelEventId');
 const limitForecastIssueId = defineBrandConstructors('LimitForecastIssueId');
+const eventId = defineBrandConstructors('EventId');
+const edgeId = defineBrandConstructors('EdgeId');
 
 export const asOperationId = operation.as;
 export const tryOperationId = operation.try;
@@ -128,6 +143,18 @@ export const asTreeNodeId = treeNode.as;
 export const tryTreeNodeId = treeNode.try;
 export const parseTreeNodeId = treeNode.parse;
 
+export const asRailId = rail.as;
+export const tryRailId = rail.try;
+export const parseRailId = rail.parse;
+
+export const asFundingId = funding.as;
+export const tryFundingId = funding.try;
+export const parseFundingId = funding.parse;
+
+export const asCommandId = command.as;
+export const tryCommandId = command.try;
+export const parseCommandId = command.parse;
+
 export const asExperimentId = experiment.as;
 export const tryExperimentId = experiment.try;
 export const parseExperimentId = experiment.parse;
@@ -162,6 +189,14 @@ export const parseOpsChannelEventId = opsChannelEventId.parse;
 export const asLimitForecastIssueId = limitForecastIssueId.as;
 export const tryLimitForecastIssueId = limitForecastIssueId.try;
 export const parseLimitForecastIssueId = limitForecastIssueId.parse;
+
+export const asEventId = eventId.as;
+export const tryEventId = eventId.try;
+export const parseEventId = eventId.parse;
+
+export const asEdgeId = edgeId.as;
+export const tryEdgeId = edgeId.try;
+export const parseEdgeId = edgeId.parse;
 
 const SPORTSBOOK_ID_VALIDATION = {
   shape: 'pattern',
@@ -345,6 +380,27 @@ export const OPERATIONS_BRAND_SPECS = [
     description: 'Ops tree node (partner / agent / sub_agent) identity',
   },
   {
+    name: 'RailId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Funding rail identity for treasury transfers',
+  },
+  {
+    name: 'FundingId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal'],
+    description: 'Funding transfer row identity',
+  },
+  {
+    name: 'CommandId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'AI / automation optimization command handle',
+  },
+  {
     name: 'ExperimentId',
     domain: 'operations',
     tiers: ['as', 'try', 'parse'],
@@ -406,6 +462,20 @@ export const OPERATIONS_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal'],
     description: 'Immutable issued limit forecast identity',
+  },
+  {
+    name: 'EventId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Synthetic or live odds event identity',
+  },
+  {
+    name: 'EdgeId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Detected betting-edge opportunity identity',
   },
   {
     name: 'SportsbookId',

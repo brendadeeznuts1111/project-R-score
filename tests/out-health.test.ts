@@ -98,6 +98,7 @@ describe('out health checks', () => {
     expect(parseOutBalance('500')).toBe(500);
     expect(parseOutBalance(undefined)).toBeNull();
     expect(parseOutBalance('n/a')).toBeNull();
+    expect(parseOutBalance('$12oops')).toBeNull();
   });
 
   test('runOutHealthChecks reports ok / offline / low_balance with a pluggable balance', () => {

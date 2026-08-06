@@ -87,8 +87,14 @@ export class EnhancedDocsCacheManager {
       // Compress if enabled
       if (this.config.compression) {
         const jsonString = JSON.stringify(cacheData);
-        const compressed = Bun.gzipSync(Buffer.from(jsonString));
-        dataToSave = { _compressed: true, data: Buffer.from(compressed).toString('base64') };
+        const compressed = Bun.gzipSync(new TextEncoder().encode(jsonString));
+        dataToSave = {
+          _compressed: true,
+          data: (compressed instanceof Uint8Array
+            ? compressed
+            : new Uint8Array(compressed)
+          ).toBase64(),
+        };
       }
 
       await Bun.write(`${this.cacheDir}/cache.json`, JSON.stringify(dataToSave, null, 2));
@@ -218,7 +224,7 @@ export class EnhancedDocsCacheManager {
   }
 
   private calculateSize(data: any): number {
-    return Buffer.byteLength(JSON.stringify(data), 'utf8');
+    return new TextEncoder().encode(JSON.stringify(data)).byteLength;
   }
 
   private calculateChecksum(data: any): string {

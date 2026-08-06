@@ -37,7 +37,7 @@ Exception: [`public/portal/health-page.js`](../public/portal/health-page.js) (sh
 | Brand assets | [`public/site.webmanifest`](../public/site.webmanifest) · [`public/icons/factory/`](../public/icons/factory/) | canonical mark, favicon/install metadata, theme colors |
 | CLI hub | [`/portal/tools/`](../public/portal/tools/) | copy-CLI · bake freshness · capability subset · `#capabilities` |
 | Packages board | [`/portal/packages/`](../public/portal/packages/) | SVG dependency graph · role filter · detail panel · claim `packages-graph-map-v13` |
-| Brand keymap | [`/portal/brands/`](../public/portal/brands/) | 61-value glossary · constructor tiers · glossary concept links · design-kernel domain colors · tracked-project adoption · `/registry/brand-keymap.json` |
+| Brand keymap | [`/portal/brands/`](../public/portal/brands/) | 67-value glossary · constructor tiers · glossary concept links · design-kernel domain colors · tracked-project adoption · `/registry/brand-keymap.json` |
 | Domain glossary | [`/portal/glossary/`](../public/portal/glossary/) | schema v3 · canonical market/model/trading vocabulary + typed portal field semantics · surface `sections[]` as `{ hash, domId, conceptId, title }` · `URLPattern.hash` deep links · portal design-kernel category tokens + partner-ops concept colors · `/registry/domain-glossary.json` |
 | Vault board | [`/portal/vault/`](../public/portal/vault/) | live bake visual; gate = `portal-cli vault health` (offline snaps) |
 | Failures board | [`/portal/failures/`](../public/portal/failures/) | junit bake · nav badge = failure count |
@@ -185,16 +185,40 @@ Shared layout / status classes in [`public/portal/style.css`](../public/portal/s
 |-------|------|
 | `.portal-page` | Page shell (`max-width: var(--layout-max)`, pad). Aliases: `.health-page`, `.doc-wrap`, `.partner-page`. |
 | `.portal-hero` | In-page title + `.hero-sub` / `.sub` (topbar `.logo-page` stays chrome). |
+| `.portal-hero--card` | Glossary-grade operator hero (radial accent + title + meta row). |
+| `.portal-eyebrow` | Mono uppercase label above hero title. |
+| `.portal-gate` + `.pass`/`.ok`/`.warn`/`.fail`/`.bad` | Bake/audit gate pill with pulse on pass. |
+| `.portal-baked` · `.portal-source-links` | Bake timestamp + artifact deep links. |
+| `.portal-stat-grid` · `.portal-stat` | Clickable metric cards (`ok`/`warn`/`bad`/`muted`/`active`). |
+| `.portal-panel` · `.portal-panel-head` · `.portal-panel-desc` | Section panel + uppercase h2. |
+| `.portal-toolbar` · `.portal-count` · `.portal-clear` | Filter row + result chip + clear. |
+| `.portal-skeleton` · `.portal-error` | Shimmer loading + actionable failure card. |
 | `.portal-section` / `.section` + `.section-sub` | Bordered `h2` + dim description. **No emoji in headings.** |
-| `.portal-card` / `.portal-card-grid` | Metric / panel cards (accent hairline). |
-| `.data-table` + `.table-wrap` | Dark data tables; aliases include `.env-table`, `.ops-table`, `.live-table`, `.doc-table`. |
+| `.portal-card` / `.portal-card-grid` | **Canonical card primitive** (accent hairline). Variants: `--metric` (numbers), `--panel` (sections), `--stat` (KPI summaries). Composed aliases: `.pkg-card`, `.ops-panel`, `.stat-card`, `.ops-desk-stat`, `.card`, `.verification-result` (`.health-card` is a group container, not a card surface). |
+| `.portal-table` + `.table-wrap` | **Canonical** dark data tables (`data-density` · `data-zebra` · `data-tone`). CSS aliases still style `.data-table` / `.ops-table` / `.env-table` / `.live-table` / `.doc-table` — new markup should use `.portal-table` only. |
+| `.portal-chip` · `.portal-pill` · `.portal-meta-row` | Shared chips / category pills / mono meta rows (prefer over per-board CSS). Atom names used by boards: `.chip` (pills/tags) · `.kicker` (uppercase micro labels) · `.metric-value` (large tabular numbers). |
+| `lib/portal/ui-html.ts` · `components/portal-ui.js` | Pure HTML builders — `renderPortalTable` (+ `tableAttrs`) · **`renderPortalTableRows`** (`rowAttrs`) · `renderPortalStatGrid` · chips/panel. Bakes: identity · vault · failures. Boards: partners (all main tbodies) · account · packages publish/coupling. Dual-class `portal-table` + board alias when specialty CSS remains. |
 | `.row-ok` / `.row-warn` / `.row-bad` | 3px inset row rails (Live check pattern). |
 | `.tone-chip.tone-ok\|warn\|bad\|neutral` | Status pills. |
 | `.status-text` / `.st-ok` / `.st-warn` / `.st-bad` | Inline status color. |
 | `.portal-actions` + `.btn` / `.btn-primary` | Secondary outline actions. |
 | `.portal-banner` | Status strip + `.dot` (ok/warn/bad). |
 
+Operator boards that already use the raised bar: Concepts · Surfaces · Skills · Env · Glossary · Brands · Catalog · Bunfig · Console-format · Doctor · Partners · Packages · Failures · Vault · Install-hygiene. Prefer these primitives for remaining boards.
+
 **Tone contract (only):** `ok → var(--green)` · `warn → var(--yellow)` · `bad → var(--red)` · `neutral → var(--text-dim)`. Do not use Tailwind greens (`#16a34a`) or light badge fills on portal boards.
+
+### Canonical primitives contract
+
+Canonical names for new `/portal/*` boards. Aliases are **permanent legacy-compat shims — safe to use, never a merge blocker**; new code prefers the canonical names. Do not migrate legacy markup unless already touching the template.
+
+| Primitive | Classes | Modifiers | Notes |
+|-----------|---------|-----------|-------|
+| **Table** | `.portal-table` | `data-density="compact"` · `data-tone="accent|warn|bad"` · `data-zebra` | Aliases: `.data-table`, `.env-table`, `.ops-table`, `.live-table`, `.doc-table` (share base + `row-ok/warn/bad` rails). |
+| **Card** | `.portal-card` | `--metric` (numbers) · `--panel` (sections) · `--stat` (KPI summaries) | Composed aliases: `.pkg-card`, `.ops-panel`, `.stat-card`, `.ops-desk-stat`, `.card`, `.verification-result`. |
+| **Atoms** | `.kicker` (micro labels) · `.chip` (pills/tags — canonical pill base) · `.metric-value` (large tabular numbers) | tone via `--tone-*` tokens | `.chip` theme variants compose the base: `.tone-chip`, `.kind-chip`, `.plane-chip`, `.portal-pill`, `.ops-badge`, `.portal-chip` (`.version-badge`/`.channel-badge` are the accent-badge family, own base). Avoid inventing new per-board names (`ops-*`, `vh-*`, `tf-*`…) for these roles. |
+
+**Governance:** new boards targeting `/portal/*` must use the canonical primitives above. Reviewers suggest swapping an alias → canonical on *new* elements; aliases on legacy elements are never a blocker.
 
 ### Venue identity palette (not status)
 
@@ -228,7 +252,7 @@ bun test tests/venue-brand.test.ts
 | Mid distribution | `/registry/tennis/mid-distribution.json` |
 | Agent registry auth | `/registry/tennis/agent-auth.json` (`FACTORY_WAGER_TOKEN` status · no secret) · [`tennis-hq-registry`](harness/tenants/tennis-hq-registry.md) |
 | Bake | `bun run tennis:board:bake` (event-store) · `--sample` fallback |
-| Board UI | [`/portal/tennis/`](../public/portal/tennis/) · `tennis-board.js` |
+| Board UI | [`/portal/tennis/`](../public/portal/tennis/) · [`tennis-desk.js`](../public/portal/components/tennis-desk.js) |
 | Pure helpers | [`lib/tennis/board-metrics.ts`](../lib/tennis/board-metrics.ts) |
 
 Event-store default: `Kalshi-bot/research/cache/event-store.db` (book_ticks mids + markets series volume).

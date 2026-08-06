@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
@@ -612,13 +613,7 @@ export async function writeMonorepoHealthArtifacts(
   if (opts?.archive) {
     try {
       // Bun.Archive — pack the JSON report for historical trend storage
-      const Archive = (
-        Bun as unknown as {
-          Archive?: new (files: Record<string, Blob | string>) => {
-            bytes: () => Promise<Uint8Array> | Uint8Array;
-          };
-        }
-      ).Archive;
+      const Archive = Bun.Archive;
       if (Archive) {
         const arc = new Archive({
           'monorepo-health.json': body,

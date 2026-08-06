@@ -42,6 +42,8 @@ export const SCRATCH_PATHSPEC = ['.', ':(exclude)projects/', ':(exclude)Kalshi-b
  * content never counts as "changed" anyway.
  */
 export const SCRATCH_LINK_DIRS = ['node_modules', 'projects', 'Kalshi-bot'] as const;
+/** Bound worker-process pressure for Argon2/SQLite-heavy changed suites. */
+export const STAGED_TEST_PARALLELISM = 6;
 const forwarded = Bun.argv.slice(2).filter(a => a !== '--');
 
 /**
@@ -169,6 +171,13 @@ async function buildScratchRepo(tmp: string): Promise<void> {
     Bun.spawnSync({ cmd: ['rm', '-f', `${tmp}/${f}`], stdout: 'pipe', stderr: 'pipe' });
   }
 
+  // 5b. Make the overlaid snapshot visible to git-backed inventory tools.
+  // `checkout-index` updates only the scratch worktree; without this add,
+  // `git ls-files` omits staged additions such as new branded-ID consumers,
+  // so bake checks see a different source set than the commit being tested.
+  const addOverlay = git(['add', '-A'], { cwd: tmp });
+  if (addOverlay.code !== 0) throw new Error(`git add overlay: ${addOverlay.err.trim()}`);
+
   // 6. Environment files tests need but git doesn't track (generated configs
   //    like tests/tsconfig.snapshot.json). Copy untracked NON-test files only:
   //    untracked *.test.ts are other lanes' in-flight work — the exact dirt
@@ -240,7 +249,14 @@ async function main(): Promise<number> {
 
   try {
     const proc = Bun.spawn(
-      ['bun', 'test', '--changed', '--pass-with-no-tests', '--parallel', ...forwarded],
+      [
+        'bun',
+        'test',
+        '--changed',
+        '--pass-with-no-tests',
+        `--parallel=${STAGED_TEST_PARALLELISM}`,
+        ...forwarded,
+      ],
       {
         cwd: tmp,
         stdout: 'inherit',

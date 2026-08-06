@@ -3,6 +3,7 @@
 // capacity report, and inline confirmation layer (additive to lib/telegram).
 
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
+import { mkdirSync, rmSync } from 'node:fs';
 
 import {
   deliverPartnerNotification,
@@ -25,6 +26,10 @@ import {
   sendInlineConfirmation,
 } from '../lib/telegram/inline-confirmation.ts';
 import { resetTelegramRateLimiters } from '../lib/telegram/telegram-api.ts';
+import {
+  loadPartnerNotificationPrefs,
+  loadPartnerNotificationSettings,
+} from '../lib/telegram/partner-notification-prefs.ts';
 import { validatePartnerProfile } from '../lib/partner-profile/schema.ts';
 
 import type { SeatCapitalDeskSnapshot, SeatDeskViewModel } from '../lib/telegram/seat-desk-snapshot.ts';
@@ -85,6 +90,7 @@ beforeEach(() => {
 
 afterEach(() => {
   globalThis.fetch = originalFetch;
+  rmSync('.tmp/notification-prefs', { recursive: true, force: true });
 });
 
 /** Stub api.telegram.org — records bodies, returns ok per the result builder. */
@@ -121,6 +127,28 @@ describe('notification preferences', () => {
     const prefs = resolveNotificationPreferences({ dailyCapacity: false, bogus: true } as never);
     expect(prefs.dailyCapacity).toBe(false);
     expect(prefs.newEvents).toBe(true);
+  });
+
+  test('profile loader includes partners with default preferences', async () => {
+    mkdirSync('.tmp/notification-prefs', { recursive: true });
+    await Bun.write(
+      '.tmp/notification-prefs/SPEN.toml',
+      `meta.templateId = "partner-active"
+meta.name = "Test"
+meta.version = "1.0.0"
+meta.source = "telegram"
+identity.code = "SPEN"
+identity.callSign = "SPEN-001"
+identity.status = "onboarded"
+lifecycle.status = "active"
+lifecycle.phase = "operator_ready"
+settlement.commissionPct = 20
+`
+    );
+    expect(await loadPartnerNotificationPrefs('.tmp/notification-prefs')).toEqual({ SPEN: {} });
+    expect(await loadPartnerNotificationSettings('.tmp/notification-prefs')).toEqual({
+      SPEN: { preferences: {}, commissionPct: 20 },
+    });
   });
 });
 
@@ -196,8 +224,8 @@ describe('notification delivery', () => {
 describe('daily capacity report', () => {
   test('builds passwordless markdown from a seat view', () => {
     const text = buildDailyCapacityReportText(seatView());
-    expect(text).toContain('**Daily capacity — SPEN-001**');
-    expect(text).toContain('Fund: **ready**');
+    expect(text).toContain('<b>Daily capacity — SPEN-001</b>');
+    expect(text).toContain('Fund: <b>ready</b>');
     expect(text).toContain('fantasy402');
     expect(text).toContain('ezlive');
     expect(text).not.toContain('password');
@@ -228,6 +256,8 @@ describe('daily capacity report', () => {
     expect(calls).toHaveLength(1);
     expect(calls[0]!.body.chat_id).toBe('chat-SPEN');
     expect(calls[0]!.body.message_thread_id).toBe(5);
+    expect(calls[0]!.body.parse_mode).toBe('HTML');
+    expect(calls[0]!.body.reply_markup).toBeDefined();
 
     const { n } = db
       .query("SELECT COUNT(*) AS n FROM telegram_daily_report_log WHERE partner_code = 'SPEN'")
@@ -244,6 +274,9 @@ describe('inline confirmation', () => {
     expect(keyboard).toHaveLength(2);
     expect(keyboard[0]![0]).toMatchObject({ text: '✅ Acknowledge', callback_data: 'nf:daily:ack:SPEN' });
     expect(keyboard[1]![0]!.callback_data).toBe('nf:daily:ack:SPEN|cancel');
+    expect(() => buildInlineConfirmMarkup(`nf:${'x'.repeat(64)}`, 'Too long')).toThrow(
+      '1–64 bytes'
+    );
   });
 
   test('callback routing acks the latest delivery in the ops DB', () => {
@@ -260,6 +293,12 @@ describe('inline confirmation', () => {
     const again = handleNotificationCallback({ data: 'nf:daily:ack:SPEN', db });
     expect(again.acked).toBeUndefined();
     expect(again.toast).toContain('Nothing pending');
+    expect(
+      handleNotificationCallback({ data: 'nf:daily:ack:SPEN|cancel', db }).toast
+    ).toBe('Cancelled.');
+    expect(handleNotificationCallback({ data: 'nf:daily:ack:../x', db }).toast).toContain(
+      'Unknown'
+    );
     db.close();
   });
 

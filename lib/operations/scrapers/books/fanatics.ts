@@ -1,4 +1,4 @@
-// @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
+// @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortSignal.timeout
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Fanatics Tier 4 scrape agent (fixture-first; optional live JSON).
@@ -87,11 +87,9 @@ export function scrapeFanaticsHtmlStub(): FanaticsAgentResult {
 }
 
 async function fetchLiveJson(timeoutMs: number): Promise<unknown | null> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const response = await fetch(FANATICS_LIVE_URL, {
-      signal: controller.signal,
+      signal: AbortSignal.timeout(timeoutMs),
       headers: {
         Accept: 'application/json',
         'User-Agent': 'FactoryWager-baseline-scrape/1.0',
@@ -111,8 +109,6 @@ async function fetchLiveJson(timeoutMs: number): Promise<unknown | null> {
     const message = error instanceof Error ? error.message : String(error);
     console.warn(`[fanatics-agent] live error: ${message}`);
     return null;
-  } finally {
-    clearTimeout(timer);
   }
 }
 

@@ -46,9 +46,13 @@ export function partnerHealthBakeMatches(
 ): boolean {
   if (!committed || typeof committed !== 'object') return false;
   const c = committed as Partial<PartnerHealthBake>;
+  const healthState = ({ generatedAt: _generatedAt, ...state }: PartnerHealthReport) => state;
+  const outState = ({ generatedAt: _generatedAt, ...state }: OutHealthReport) => state;
   return (
     c.schemaVersion === 1 &&
-    Bun.deepEquals(c.health, live.health, true) &&
-    Bun.deepEquals(c.outChecks, live.outChecks, true)
+    c.health !== undefined &&
+    c.outChecks !== undefined &&
+    Bun.deepEquals(healthState(c.health), healthState(live.health), true) &&
+    Bun.deepEquals(outState(c.outChecks), outState(live.outChecks), true)
   );
 }

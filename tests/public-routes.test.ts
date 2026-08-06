@@ -77,11 +77,13 @@ describe('lib/http/public-routes', () => {
   });
 });
 
-describe('probePublicRoutes (live when serve-public up)', () => {
+describe('probePublicRoutes (live when PUBLIC_ROUTE_TEST_BASE is set)', () => {
   test('probes dashboards and route objects', async () => {
+    const base = Bun.env.PUBLIC_ROUTE_TEST_BASE?.trim();
+    if (!base) return;
     let up = false;
     try {
-      const r = await fetch('http://127.0.0.1:3000/ready', {
+      const r = await fetch(`${base}/ready`, {
         signal: AbortSignal.timeout(1500),
       });
       up = r.ok;
@@ -90,7 +92,7 @@ describe('probePublicRoutes (live when serve-public up)', () => {
     }
     if (!up) return;
 
-    const probe = await probePublicRoutes('http://127.0.0.1:3000');
+    const probe = await probePublicRoutes(base);
     expect(probe.health?.routeStats?.staticRoutes).toBeGreaterThan(0);
     expect(probe.health?.serve?.hotPreloaded?.length).toBeGreaterThan(0);
     // REGISTRY_SECRET on a stale process can 401 unregistered APIs; ignore auth noise.

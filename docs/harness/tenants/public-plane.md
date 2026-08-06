@@ -109,23 +109,25 @@ bun run ops:snapshot --no-routing # portal-weave rebake
 
 | Gate | Last run | Result |
 |------|----------|--------|
-| `discover:compose:check` | 2026-07-28 | 0 errors · harness + public (info naming-cluster / similar-env remain) |
-| `public:discover:check` | 2026-07-28 | 0 findings · `install-hygiene-report.json` weave-wired (not orphan) |
-| `public:audit:verify` | 2026-07-28 | pass · portal static · audit catalog |
-| `verify:portal:static` | 2026-07-28 | pass |
-| `reference:discover:check` | 2026-07-28 | 0 errors · info similar-env / naming-cluster (warn tier not gated) |
+| `discover:compose:check` | 2026-08-05 | 0 errors · harness + public (info naming-cluster remain; CONCEPT_GRAPH_* similar-env allowlisted) |
+| `public:discover:check` | 2026-08-05 | 0 findings |
+| `public:audit:verify` | 2026-08-05 | pass · portal static · audit catalog (4 findings all non-open) |
+| `verify:portal:static` | 2026-08-05 | pass |
+| `reference:discover:check` | 2026-08-05 | 0 errors · context-aware similar-env repair · intentional CONCEPT_GRAPH family allowlisted |
+| `partners:governance` | 2026-08-05 | pass (submodule Kalshi-bot required for glossary:portal:check) |
 | `test:toc-ops` | 2026-07-26 | 71 pass · 18 files |
 | `cloudflare:preflight` | 2026-07-26 | pass · 13 contracts · 20 consistency |
 | `ci:harness:fast` | 2026-07-26 | pass |
 | `skills:validate` | 2026-08-04 | pass · 34 definitions · 23 loop-registry entries · optional `bet-ticker-worker` warning |
 | `harness-skills-catalog` | 2026-08-04 | 34 definitions baked · portal-weave artifact |
 | Registry rebake | 2026-07-26 | `portal-weave.json` · `harness-skills-catalog.json` + weave artifacts |
+| Full UI performance audit | 2026-08-05 | pass · 42% bundle · 97% route sweep · see `full-ui-performance-audit.md` |
 
 ### Deferred lanes (not this triage)
 
 | Lane | Why deferred |
 |------|----------------|
-| similar-env / naming-cluster warn cleanup | Separate reference-discovery pass (`--min-severity warn`) |
+| similar-env / naming-cluster residual info | Intentional families allowlisted 2026-08-05; remaining info pairs are non-gated |
 | Live `/api/health` schema on Pages (Partial) | Needs Access-aware live `verify:portal` |
 | Board-deep discovery (schemaVersion / badges) | New finding kinds — not in `lib/public-discovery.ts` today |
 | toc-ops dual-write · tunnel DNS | Product / CF ops — outside public-discovery |

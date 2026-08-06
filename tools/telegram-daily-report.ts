@@ -24,14 +24,16 @@ export const TELEGRAM_DAILY_REPORT_SCHEDULE = Bun.env.TELEGRAM_DAILY_REPORT_SCHE
 export const TELEGRAM_DAILY_REPORT_TITLE = 'telegram-daily-capacity-report';
 export const TELEGRAM_DAILY_REPORT_WORKER = `${import.meta.dir}/../scripts/telegram-daily-report-cron.ts`;
 
-type Command = 'run' | 'preview' | 'register' | 'remove';
+type Command = 'run' | 'preview' | 'cron-preview' | 'register' | 'remove';
 
 function parseArgv(
   argv: string[]
 ): { command: Command; schedule: string; title: string; count: number } | null {
   const positional = argv.filter(a => !a.startsWith('-'));
   const command = positional[0] as Command | undefined;
-  if (!command || !['run', 'preview', 'register', 'remove'].includes(command)) return null;
+  if (!command || !['run', 'preview', 'cron-preview', 'register', 'remove'].includes(command)) {
+    return null;
+  }
   let schedule = TELEGRAM_DAILY_REPORT_SCHEDULE;
   let title = TELEGRAM_DAILY_REPORT_TITLE;
   let count = 3;
@@ -55,10 +57,23 @@ async function preview(): Promise<void> {
   }
 }
 
+function previewCron(schedule: string, count: number): void {
+  const rows: Array<{ fire: number; at: string }> = [];
+  let relative: Date | number | undefined;
+  for (let fire = 1; fire <= Math.max(1, Math.min(count, 20)); fire++) {
+    const at = parseCron(schedule, relative);
+    if (!at) break;
+    rows.push({ fire, at: at.toISOString() });
+    relative = at.getTime() + 1;
+  }
+  if (rows.length === 0) throw new Error(`invalid cron schedule: ${schedule}`);
+  logTable(rows, ['fire', 'at']);
+}
+
 async function main(): Promise<void> {
   const opts = parseArgv(Bun.argv.slice(2));
   if (!opts) {
-    console.log(`Usage: bun tools/telegram-daily-report.ts <run|preview|register|remove> [options]
+    console.log(`Usage: bun tools/telegram-daily-report.ts <run|preview|cron-preview|register|remove> [options]
 OS Bun.cron for the daily partner capacity report.
 Options: --schedule <cron> · --title <name> · --count <n>`);
     process.exit(2);
@@ -67,6 +82,9 @@ Options: --schedule <cron> · --title <name> · --count <n>`);
   switch (opts.command) {
     case 'preview':
       await preview();
+      return;
+    case 'cron-preview':
+      previewCron(opts.schedule, opts.count);
       return;
     case 'register':
       await registerOsCron(TELEGRAM_DAILY_REPORT_WORKER, opts.schedule, opts.title);

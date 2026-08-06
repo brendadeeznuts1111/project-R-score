@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "bun-brand-map",
   "path": "/registry/bun-brand-map.json",
-  "generatedAt": "2026-08-02T00:56:06.685Z",
+  "generatedAt": "2026-08-05T09:07:49.488Z",
   "sources": {
     "declarations": "lib/docs/bun-brand-usages.ts",
     "catalog": "tools/bun-docs-catalog.json",
@@ -12,35 +12,35 @@
     "proof": "public/registry/release-features.json"
   },
   "sourceDigests": {
-    "declarations": "983e4abdc6c2186b059149e14d91505db8e34f1ce852cb0bbe5931d442432fec",
+    "declarations": "7f7d2b60af04791eb821e6d4c82170fed0b1e904ed0fd0b686e98f3949037f87",
     "catalog": "660cd11fb3c8950911a5f8a6e91911778384cad382b0fdc3771876bacdf99041",
-    "brandManifest": "a0d03772fafe4d1af7a5099abc28d28e693af01e884f079032f6a85d052b824c",
-    "brandKeymap": "440d3d2c4ba6c608d5be85135e2b3bdac0744cbcd5b3d775b1b25c1f8c45e0ad",
-    "observations": "1d373e2461e5ad35c82f5300d84e56ef4932380f45af6feacfbb1586bfcfab00",
-    "baseline": "57e70c50175bc9a9ce9fafdb90fdb801e1e423fff49ae2fcf7c422bd268fb330",
-    "proofs": "de7129ca17c5951aca8d6e78d6aa52b345ff4cd5d3445d96b770e1c10e428840"
+    "brandManifest": "b3ae6a5f53354ac0bc417a42577db1813935f966b1659c6645cd9a24a8405ae9",
+    "brandKeymap": "3958ab4c6e534d477074677792efeb4fc31b7251e49769d86cb7261d537dc55a",
+    "observations": "8b3211d712f017da67ecc1fa5c79b05f5faa2d240aa478d1fa72dd2b0731596f",
+    "baseline": "f20a24e2b1d9017ebb64996f25926c1561a88927c6141109f89dc02f8e414329",
+    "proofs": "507e0b41f4cbfa61108992f2798afcbda0cdf20d6c4edb55d2165273a107b5f5"
   },
   "summary": {
     "apis": 15,
-    "relationships": 40,
-    "wrappers": 13,
+    "relationships": 86,
+    "wrappers": 34,
     "projects": 32,
-    "verified": 2,
-    "attention": 31,
-    "declared": 19,
-    "observed": 326,
-    "matched": 36,
-    "undeclared": 290,
-    "baselineUndeclared": 290,
-    "legacyUndeclared": 290,
+    "verified": 3,
+    "attention": 51,
+    "declared": 40,
+    "observed": 332,
+    "matched": 112,
+    "undeclared": 220,
+    "baselineUndeclared": 220,
+    "legacyUndeclared": 220,
     "newUndeclared": 0,
     "catalogConflicts": 0,
     "productionProofErrors": 0,
     "stale": 0,
     "experimentalApprovals": 0,
-    "brands": 61,
-    "mappedBrands": 2,
-    "totalCanonicalBrands": 61,
+    "brands": 67,
+    "mappedBrands": 13,
+    "totalCanonicalBrands": 67,
     "trackedProjects": 32,
     "externalProjects": 3
   },
@@ -297,6 +297,1013 @@
       ]
     },
     {
+      "id": "bun-randomuuidv7-funding-mint",
+      "key": "bun-randomuuidv7-funding-mint",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/operations/rail-limits.ts",
+          "symbol": "fundViaRail"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/operations/rail-limits.ts",
+          "symbol": "fundViaRail"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "output",
+          "brand": "FundingId",
+          "rationale": "Rail funding rows mint FundingId from UUIDv7 before insert."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-ops-channel-event",
+      "key": "bun-randomuuidv7-ops-channel-event",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/channels/outbox.ts",
+          "symbol": "enqueueOpsChannelEvent"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/channels/outbox.ts",
+          "symbol": "enqueueOpsChannelEvent"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "output",
+          "brand": "OpsChannelEventId",
+          "rationale": "Ops channel outbox events mint OpsChannelEventId from UUIDv7."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-command-mint",
+      "key": "bun-randomuuidv7-command-mint",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/ai/ai-operations-manager.ts",
+          "symbol": "AIOperationsManager.generateId"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/ai/ai-operations-manager.ts",
+          "symbol": "AIOperationsManager.generateId"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "output",
+          "brand": "CommandId",
+          "rationale": "AI command handles mint CommandId from a UUIDv7-backed string."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-correlation-mint",
+      "key": "bun-randomuuidv7-correlation-mint",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "session",
+      "implementations": [
+        {
+          "path": "lib/ai/ai-operations-manager.ts",
+          "symbol": "AIOperationsManager.generateCorrelationId"
+        },
+        {
+          "path": "tools/concept-inventory.ts",
+          "symbol": "parseConceptInventoryOptions"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/ai/ai-operations-manager.ts",
+          "symbol": "AIOperationsManager.generateCorrelationId"
+        },
+        {
+          "path": "tools/concept-inventory.ts",
+          "symbol": "parseConceptInventoryOptions"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "output",
+          "brand": "CorrelationId",
+          "rationale": "Trace correlation ids and concept-inventory run ids mint CorrelationId from UUIDv7."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 2,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-toc-tree-node",
+      "key": "bun-randomuuidv7-toc-tree-node",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/operations/toc-identity-bridge.ts",
+          "symbol": "ensureAgent"
+        },
+        {
+          "path": "lib/operations/toc-identity-bridge.ts",
+          "symbol": "ensureNovPartner"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/operations/toc-identity-bridge.ts",
+          "symbol": "seedTocIdentityBindings"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "output",
+          "brand": "TreeNodeId",
+          "rationale": "TOC identity seeding mints TreeNodeId for new agent and NOV partner nodes."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 2,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-toc-opaque-rows",
+      "key": "bun-randomuuidv7-toc-opaque-rows",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/operations/toc-identity-bridge.ts",
+          "symbol": "ensureHardrockAccount"
+        },
+        {
+          "path": "lib/operations/toc-identity-bridge.ts",
+          "symbol": "ensureRail"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/operations/toc-identity-bridge.ts",
+          "symbol": "seedTocIdentityBindings"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "sb_accounts and rails row ids are opaque SQLite primary keys (brand-ok strings), not domain *Id values."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 2,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-partner-ledger-opaque",
+      "key": "bun-randomuuidv7-partner-ledger-opaque",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/partner-profile/ledger.ts",
+          "symbol": "insertLedgerEntry"
+        },
+        {
+          "path": "lib/partner-profile/deposit-import.ts",
+          "symbol": "importDeposits"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/partner-profile/ledger.ts",
+          "symbol": "insertLedgerEntry"
+        },
+        {
+          "path": "lib/partner-profile/deposit-import.ts",
+          "symbol": "importDeposits"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Partner ledger row ids and deposit batch ids are opaque strings (brand-ok), not domain *Id values."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 2,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-scratch-temp-dirs",
+      "key": "bun-randomuuidv7-scratch-temp-dirs",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "tooling",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "scripts/bun-test-changed-staged.ts",
+          "symbol": "main"
+        },
+        {
+          "path": "scripts/lib/index-tree.ts",
+          "symbol": "materializeIndexTree"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "scripts/bun-test-changed-staged.ts",
+          "symbol": "main"
+        },
+        {
+          "path": "scripts/lib/index-tree.ts",
+          "symbol": "materializeIndexTree"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "UUIDv7 suffixes only uniquify ephemeral scratch directories for staged test isolation."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 2,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-token-mint",
+      "key": "bun-randomuuidv7-token-mint",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "identity",
+      "implementations": [
+        {
+          "path": "lib/identity/identity.ts",
+          "symbol": "mintBearerToken"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/identity/identity.ts",
+          "symbol": "mintBearerToken"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "output",
+          "brand": "TokenId",
+          "rationale": "Bearer token mint concatenates UUIDv7 with a hex secret into TokenId."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-identity-mint",
+      "key": "bun-randomuuidv7-identity-mint",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "identity",
+      "implementations": [
+        {
+          "path": "lib/identity/identity.ts",
+          "symbol": "IdentitySystem.logAuthEvent"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/identity/identity.ts",
+          "symbol": "IdentitySystem.logAuthEvent"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "output",
+          "brand": "IdentityId",
+          "rationale": "Auth audit rows mint IdentityId from UUIDv7 before insert."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-gate-decision",
+      "key": "bun-randomuuidv7-gate-decision",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/operations/partner-profile-bridge.ts",
+          "symbol": "evaluateForNode"
+        },
+        {
+          "path": "lib/operations/play-dispatcher.ts",
+          "symbol": "publishAndDispatch"
+        },
+        {
+          "path": "lib/operations/ops-loop-gate-backfill.ts",
+          "symbol": "insertLegacyGateAllow"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/operations/partner-profile-bridge.ts",
+          "symbol": "evaluateForNode"
+        },
+        {
+          "path": "lib/operations/play-dispatcher.ts",
+          "symbol": "publishAndDispatch"
+        },
+        {
+          "path": "lib/operations/ops-loop-gate-backfill.ts",
+          "symbol": "insertLegacyGateAllow"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "output",
+          "brand": "GateDecisionId",
+          "rationale": "Partner policy and play-dispatch paths mint GateDecisionId from UUIDv7."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 6,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-mints",
+      "key": "bun-randomuuidv7-experiment-mints",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/experiments/engine.ts",
+          "symbol": "FactorialEngine.createExperiment"
+        },
+        {
+          "path": "lib/experiments/engine.ts",
+          "symbol": "FactorialEngine.assignBalanced"
+        },
+        {
+          "path": "lib/experiments/engine.ts",
+          "symbol": "FactorialEngine.assignToConfig"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/experiments/engine.ts",
+          "symbol": "FactorialEngine.createExperiment"
+        },
+        {
+          "path": "lib/experiments/engine.ts",
+          "symbol": "FactorialEngine.assignBalanced"
+        },
+        {
+          "path": "lib/experiments/engine.ts",
+          "symbol": "FactorialEngine.assignToConfig"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "output",
+          "brand": "ExperimentId",
+          "rationale": "Factorial experiment creation mints ExperimentId from UUIDv7."
+        },
+        {
+          "direction": "output",
+          "brand": "ExperimentVariantId",
+          "rationale": "Factorial experiment creation mints ExperimentVariantId per design variant."
+        },
+        {
+          "direction": "output",
+          "brand": "ExperimentAssignmentId",
+          "rationale": "Balanced and config assignment paths mint ExperimentAssignmentId from UUIDv7."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 4,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-tree-node-account",
+      "key": "bun-randomuuidv7-tree-node-account",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/accounts/accounts.ts",
+          "symbol": "AccountSystem.create"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/accounts/accounts.ts",
+          "symbol": "AccountSystem.create"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "output",
+          "brand": "TreeNodeId",
+          "rationale": "Account tree node creation mints TreeNodeId from UUIDv7."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-ops-seed-demo",
+      "key": "bun-randomuuidv7-ops-seed-demo",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "tooling",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/operations/ops-seed.ts",
+          "symbol": "seedOperationsDemo"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/operations/ops-seed.ts",
+          "symbol": "seedOperationsDemo"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Operations demo seed rows use bare UUIDv7 primary keys for fixtures, not domain *Id mints."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 21,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-ops-oneliners-demo",
+      "key": "bun-randomuuidv7-ops-oneliners-demo",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "tooling",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "tools/bun-ops-oneliners.ts",
+          "symbol": "seedOpsDb"
+        },
+        {
+          "path": "tools/bun-ops-oneliners.ts",
+          "symbol": "run"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "tools/bun-ops-oneliners.ts",
+          "symbol": "seedOpsDb"
+        },
+        {
+          "path": "tools/bun-ops-oneliners.ts",
+          "symbol": "run"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Ops oneliner demos mint ephemeral SQLite fixture ids; they are not domain *Id values."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 8,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-anomaly-opaque",
+      "key": "bun-randomuuidv7-anomaly-opaque",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/ai/anomaly-detector.ts",
+          "symbol": "AnomalyDetector.createAnomaly"
+        },
+        {
+          "path": "lib/ai/anomaly-detector.ts",
+          "symbol": "AnomalyDetector.createRuleBasedAnomaly"
+        },
+        {
+          "path": "lib/ai/anomaly-detector.ts",
+          "symbol": "AnomalyDetector.checkImmediateAnomalies"
+        },
+        {
+          "path": "lib/ai/anomaly-detector.ts",
+          "symbol": "AnomalyDetector.findRelatedEvents"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/ai/anomaly-detector.ts",
+          "symbol": "AnomalyDetector.createAnomaly"
+        },
+        {
+          "path": "lib/ai/anomaly-detector.ts",
+          "symbol": "AnomalyDetector.createRuleBasedAnomaly"
+        },
+        {
+          "path": "lib/ai/anomaly-detector.ts",
+          "symbol": "AnomalyDetector.checkImmediateAnomalies"
+        },
+        {
+          "path": "lib/ai/anomaly-detector.ts",
+          "symbol": "AnomalyDetector.findRelatedEvents"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Anomaly and related-event ids are prefixed opaque strings, not branded domain *Id values."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 5,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-ops-loop-fixture",
+      "key": "bun-randomuuidv7-ops-loop-fixture",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "tooling",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/operations/ops-loop-fixture.ts",
+          "symbol": "runOpsLoopFixture"
+        },
+        {
+          "path": "lib/operations/ops-loop-fixture.ts",
+          "symbol": "runOpsLoopMultiNodeFixture"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/operations/ops-loop-fixture.ts",
+          "symbol": "runOpsLoopFixture"
+        },
+        {
+          "path": "lib/operations/ops-loop-fixture.ts",
+          "symbol": "runOpsLoopMultiNodeFixture"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Ops-loop fixtures mint bare node ids for in-memory demos; branding happens at bind sites."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 4,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-telegram-broadcast-opaque",
+      "key": "bun-randomuuidv7-telegram-broadcast-opaque",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/telegram/broadcast.ts",
+          "symbol": "broadcastToKnownChats"
+        },
+        {
+          "path": "lib/telegram/broadcast.ts",
+          "symbol": "enqueueBroadcastToOutbox"
+        },
+        {
+          "path": "lib/telegram/broadcast-log.ts",
+          "symbol": "recordBroadcastOutboxSend"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/telegram/broadcast.ts",
+          "symbol": "broadcastToKnownChats"
+        },
+        {
+          "path": "lib/telegram/broadcast.ts",
+          "symbol": "enqueueBroadcastToOutbox"
+        },
+        {
+          "path": "lib/telegram/broadcast-log.ts",
+          "symbol": "recordBroadcastOutboxSend"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Broadcast batch and log row ids are opaque strings (brand-ok), not domain *Id values."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 5,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-time-encoding-hex",
+      "key": "bun-randomuuidv7-time-encoding-hex",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-hex",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "audit",
+      "implementations": [
+        {
+          "path": "lib/time.ts",
+          "symbol": "randomUUIDv7"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/time.ts",
+          "symbol": "randomUUIDv7"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The hex encoding overload reshapes UUIDv7 bytes for callers; EvidenceId mint is the uuid-string path."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-time-encoding-buffer",
+      "key": "bun-randomuuidv7-time-encoding-buffer",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-buffer",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "audit",
+      "implementations": [
+        {
+          "path": "lib/time.ts",
+          "symbol": "randomUUIDv7"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/time.ts",
+          "symbol": "randomUUIDv7"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The buffer encoding overload returns raw UUIDv7 bytes; EvidenceId mint is the uuid-string path."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-ab-opaque",
+      "key": "bun-randomuuidv7-experiment-ab-opaque",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "lib/experiments/engine.ts",
+          "symbol": "FactorialEngine.recordMetric"
+        },
+        {
+          "path": "lib/experiments/engine.ts",
+          "symbol": "createExperiment"
+        },
+        {
+          "path": "lib/experiments/engine.ts",
+          "symbol": "assignVariant"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/experiments/engine.ts",
+          "symbol": "FactorialEngine.recordMetric"
+        },
+        {
+          "path": "lib/experiments/engine.ts",
+          "symbol": "createExperiment"
+        },
+        {
+          "path": "lib/experiments/engine.ts",
+          "symbol": "assignVariant"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Legacy A/B helpers and metric rows mint bare UUID strings without asExperiment* branding."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 4,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
       "id": "bun-cron-in-process-monitoring",
       "key": "bun-cron-in-process-monitoring",
       "token": "Bun.cron",
@@ -499,15 +1506,19 @@
           "rationale": "The PTY object is native process infrastructure; terminal identity remains separately branded."
         }
       ],
-      "proofs": [],
-      "evidenceState": "declared-unproven",
+      "proofs": [
+        {
+          "source": "public/registry/release-features.json",
+          "key": "result:Bun.spawn PTY (echo capture)",
+          "state": "passed"
+        }
+      ],
+      "evidenceState": "verified",
       "projects": [
         "project-R-score"
       ],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": []
     },
     {
       "id": "process-execve-capability-probe",
@@ -622,6 +1633,10 @@
         },
         {
           "path": "package.json",
+          "symbol": "test:dev"
+        },
+        {
+          "path": "package.json",
           "symbol": "test:watch"
         },
         {
@@ -667,7 +1682,7 @@
       "projects": [
         "project-R-score"
       ],
-      "observations": 10,
+      "observations": 11,
       "attention": [
         "declared-unproven"
       ]
@@ -1146,6 +2161,861 @@
       "proofs": []
     },
     {
+      "id": "bun-randomuuidv7-funding-mint:0:0",
+      "key": "bun-randomuuidv7-funding-mint:0:0",
+      "capabilityId": "bun-randomuuidv7-funding-mint",
+      "capabilityKey": "bun-randomuuidv7-funding-mint",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "FundingId",
+      "direction": "output",
+      "rationale": "Rail funding rows mint FundingId from UUIDv7 before insert.",
+      "wrapper": "lib/operations/rail-limits.ts",
+      "wrapperSymbol": "fundViaRail",
+      "consumer": "lib/operations/rail-limits.ts",
+      "consumerSymbol": "fundViaRail",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-ops-channel-event:0:0",
+      "key": "bun-randomuuidv7-ops-channel-event:0:0",
+      "capabilityId": "bun-randomuuidv7-ops-channel-event",
+      "capabilityKey": "bun-randomuuidv7-ops-channel-event",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "OpsChannelEventId",
+      "direction": "output",
+      "rationale": "Ops channel outbox events mint OpsChannelEventId from UUIDv7.",
+      "wrapper": "lib/channels/outbox.ts",
+      "wrapperSymbol": "enqueueOpsChannelEvent",
+      "consumer": "lib/channels/outbox.ts",
+      "consumerSymbol": "enqueueOpsChannelEvent",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-command-mint:0:0",
+      "key": "bun-randomuuidv7-command-mint:0:0",
+      "capabilityId": "bun-randomuuidv7-command-mint",
+      "capabilityKey": "bun-randomuuidv7-command-mint",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "CommandId",
+      "direction": "output",
+      "rationale": "AI command handles mint CommandId from a UUIDv7-backed string.",
+      "wrapper": "lib/ai/ai-operations-manager.ts",
+      "wrapperSymbol": "AIOperationsManager.generateId",
+      "consumer": "lib/ai/ai-operations-manager.ts",
+      "consumerSymbol": "AIOperationsManager.generateId",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-correlation-mint:0:0",
+      "key": "bun-randomuuidv7-correlation-mint:0:0",
+      "capabilityId": "bun-randomuuidv7-correlation-mint",
+      "capabilityKey": "bun-randomuuidv7-correlation-mint",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "CorrelationId",
+      "direction": "output",
+      "rationale": "Trace correlation ids and concept-inventory run ids mint CorrelationId from UUIDv7.",
+      "wrapper": "lib/ai/ai-operations-manager.ts",
+      "wrapperSymbol": "AIOperationsManager.generateCorrelationId",
+      "consumer": "lib/ai/ai-operations-manager.ts",
+      "consumerSymbol": "AIOperationsManager.generateCorrelationId",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-correlation-mint:1:0",
+      "key": "bun-randomuuidv7-correlation-mint:1:0",
+      "capabilityId": "bun-randomuuidv7-correlation-mint",
+      "capabilityKey": "bun-randomuuidv7-correlation-mint",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "CorrelationId",
+      "direction": "output",
+      "rationale": "Trace correlation ids and concept-inventory run ids mint CorrelationId from UUIDv7.",
+      "wrapper": "tools/concept-inventory.ts",
+      "wrapperSymbol": "parseConceptInventoryOptions",
+      "consumer": "tools/concept-inventory.ts",
+      "consumerSymbol": "parseConceptInventoryOptions",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-toc-tree-node:0:0",
+      "key": "bun-randomuuidv7-toc-tree-node:0:0",
+      "capabilityId": "bun-randomuuidv7-toc-tree-node",
+      "capabilityKey": "bun-randomuuidv7-toc-tree-node",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "TreeNodeId",
+      "direction": "output",
+      "rationale": "TOC identity seeding mints TreeNodeId for new agent and NOV partner nodes.",
+      "wrapper": "lib/operations/toc-identity-bridge.ts",
+      "wrapperSymbol": "ensureAgent",
+      "consumer": "lib/operations/toc-identity-bridge.ts",
+      "consumerSymbol": "seedTocIdentityBindings",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-toc-tree-node:1:0",
+      "key": "bun-randomuuidv7-toc-tree-node:1:0",
+      "capabilityId": "bun-randomuuidv7-toc-tree-node",
+      "capabilityKey": "bun-randomuuidv7-toc-tree-node",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "TreeNodeId",
+      "direction": "output",
+      "rationale": "TOC identity seeding mints TreeNodeId for new agent and NOV partner nodes.",
+      "wrapper": "lib/operations/toc-identity-bridge.ts",
+      "wrapperSymbol": "ensureNovPartner",
+      "consumer": "lib/operations/toc-identity-bridge.ts",
+      "consumerSymbol": "seedTocIdentityBindings",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-toc-opaque-rows:0:0",
+      "key": "bun-randomuuidv7-toc-opaque-rows:0:0",
+      "capabilityId": "bun-randomuuidv7-toc-opaque-rows",
+      "capabilityKey": "bun-randomuuidv7-toc-opaque-rows",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "sb_accounts and rails row ids are opaque SQLite primary keys (brand-ok strings), not domain *Id values.",
+      "wrapper": "lib/operations/toc-identity-bridge.ts",
+      "wrapperSymbol": "ensureHardrockAccount",
+      "consumer": "lib/operations/toc-identity-bridge.ts",
+      "consumerSymbol": "seedTocIdentityBindings",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-toc-opaque-rows:1:0",
+      "key": "bun-randomuuidv7-toc-opaque-rows:1:0",
+      "capabilityId": "bun-randomuuidv7-toc-opaque-rows",
+      "capabilityKey": "bun-randomuuidv7-toc-opaque-rows",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "sb_accounts and rails row ids are opaque SQLite primary keys (brand-ok strings), not domain *Id values.",
+      "wrapper": "lib/operations/toc-identity-bridge.ts",
+      "wrapperSymbol": "ensureRail",
+      "consumer": "lib/operations/toc-identity-bridge.ts",
+      "consumerSymbol": "seedTocIdentityBindings",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-partner-ledger-opaque:0:0",
+      "key": "bun-randomuuidv7-partner-ledger-opaque:0:0",
+      "capabilityId": "bun-randomuuidv7-partner-ledger-opaque",
+      "capabilityKey": "bun-randomuuidv7-partner-ledger-opaque",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Partner ledger row ids and deposit batch ids are opaque strings (brand-ok), not domain *Id values.",
+      "wrapper": "lib/partner-profile/ledger.ts",
+      "wrapperSymbol": "insertLedgerEntry",
+      "consumer": "lib/partner-profile/ledger.ts",
+      "consumerSymbol": "insertLedgerEntry",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-partner-ledger-opaque:1:0",
+      "key": "bun-randomuuidv7-partner-ledger-opaque:1:0",
+      "capabilityId": "bun-randomuuidv7-partner-ledger-opaque",
+      "capabilityKey": "bun-randomuuidv7-partner-ledger-opaque",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Partner ledger row ids and deposit batch ids are opaque strings (brand-ok), not domain *Id values.",
+      "wrapper": "lib/partner-profile/deposit-import.ts",
+      "wrapperSymbol": "importDeposits",
+      "consumer": "lib/partner-profile/deposit-import.ts",
+      "consumerSymbol": "importDeposits",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-scratch-temp-dirs:0:0",
+      "key": "bun-randomuuidv7-scratch-temp-dirs:0:0",
+      "capabilityId": "bun-randomuuidv7-scratch-temp-dirs",
+      "capabilityKey": "bun-randomuuidv7-scratch-temp-dirs",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "UUIDv7 suffixes only uniquify ephemeral scratch directories for staged test isolation.",
+      "wrapper": "scripts/bun-test-changed-staged.ts",
+      "wrapperSymbol": "main",
+      "consumer": "scripts/bun-test-changed-staged.ts",
+      "consumerSymbol": "main",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-scratch-temp-dirs:1:0",
+      "key": "bun-randomuuidv7-scratch-temp-dirs:1:0",
+      "capabilityId": "bun-randomuuidv7-scratch-temp-dirs",
+      "capabilityKey": "bun-randomuuidv7-scratch-temp-dirs",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "UUIDv7 suffixes only uniquify ephemeral scratch directories for staged test isolation.",
+      "wrapper": "scripts/lib/index-tree.ts",
+      "wrapperSymbol": "materializeIndexTree",
+      "consumer": "scripts/lib/index-tree.ts",
+      "consumerSymbol": "materializeIndexTree",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-token-mint:0:0",
+      "key": "bun-randomuuidv7-token-mint:0:0",
+      "capabilityId": "bun-randomuuidv7-token-mint",
+      "capabilityKey": "bun-randomuuidv7-token-mint",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "TokenId",
+      "direction": "output",
+      "rationale": "Bearer token mint concatenates UUIDv7 with a hex secret into TokenId.",
+      "wrapper": "lib/identity/identity.ts",
+      "wrapperSymbol": "mintBearerToken",
+      "consumer": "lib/identity/identity.ts",
+      "consumerSymbol": "mintBearerToken",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-identity-mint:0:0",
+      "key": "bun-randomuuidv7-identity-mint:0:0",
+      "capabilityId": "bun-randomuuidv7-identity-mint",
+      "capabilityKey": "bun-randomuuidv7-identity-mint",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "IdentityId",
+      "direction": "output",
+      "rationale": "Auth audit rows mint IdentityId from UUIDv7 before insert.",
+      "wrapper": "lib/identity/identity.ts",
+      "wrapperSymbol": "IdentitySystem.logAuthEvent",
+      "consumer": "lib/identity/identity.ts",
+      "consumerSymbol": "IdentitySystem.logAuthEvent",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-gate-decision:0:0",
+      "key": "bun-randomuuidv7-gate-decision:0:0",
+      "capabilityId": "bun-randomuuidv7-gate-decision",
+      "capabilityKey": "bun-randomuuidv7-gate-decision",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "GateDecisionId",
+      "direction": "output",
+      "rationale": "Partner policy and play-dispatch paths mint GateDecisionId from UUIDv7.",
+      "wrapper": "lib/operations/partner-profile-bridge.ts",
+      "wrapperSymbol": "evaluateForNode",
+      "consumer": "lib/operations/partner-profile-bridge.ts",
+      "consumerSymbol": "evaluateForNode",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-gate-decision:1:0",
+      "key": "bun-randomuuidv7-gate-decision:1:0",
+      "capabilityId": "bun-randomuuidv7-gate-decision",
+      "capabilityKey": "bun-randomuuidv7-gate-decision",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "GateDecisionId",
+      "direction": "output",
+      "rationale": "Partner policy and play-dispatch paths mint GateDecisionId from UUIDv7.",
+      "wrapper": "lib/operations/play-dispatcher.ts",
+      "wrapperSymbol": "publishAndDispatch",
+      "consumer": "lib/operations/play-dispatcher.ts",
+      "consumerSymbol": "publishAndDispatch",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-gate-decision:2:0",
+      "key": "bun-randomuuidv7-gate-decision:2:0",
+      "capabilityId": "bun-randomuuidv7-gate-decision",
+      "capabilityKey": "bun-randomuuidv7-gate-decision",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "GateDecisionId",
+      "direction": "output",
+      "rationale": "Partner policy and play-dispatch paths mint GateDecisionId from UUIDv7.",
+      "wrapper": "lib/operations/ops-loop-gate-backfill.ts",
+      "wrapperSymbol": "insertLegacyGateAllow",
+      "consumer": "lib/operations/ops-loop-gate-backfill.ts",
+      "consumerSymbol": "insertLegacyGateAllow",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-mints:0:0",
+      "key": "bun-randomuuidv7-experiment-mints:0:0",
+      "capabilityId": "bun-randomuuidv7-experiment-mints",
+      "capabilityKey": "bun-randomuuidv7-experiment-mints",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "ExperimentId",
+      "direction": "output",
+      "rationale": "Factorial experiment creation mints ExperimentId from UUIDv7.",
+      "wrapper": "lib/experiments/engine.ts",
+      "wrapperSymbol": "FactorialEngine.createExperiment",
+      "consumer": "lib/experiments/engine.ts",
+      "consumerSymbol": "FactorialEngine.createExperiment",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-mints:0:1",
+      "key": "bun-randomuuidv7-experiment-mints:0:1",
+      "capabilityId": "bun-randomuuidv7-experiment-mints",
+      "capabilityKey": "bun-randomuuidv7-experiment-mints",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "ExperimentVariantId",
+      "direction": "output",
+      "rationale": "Factorial experiment creation mints ExperimentVariantId per design variant.",
+      "wrapper": "lib/experiments/engine.ts",
+      "wrapperSymbol": "FactorialEngine.createExperiment",
+      "consumer": "lib/experiments/engine.ts",
+      "consumerSymbol": "FactorialEngine.createExperiment",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-mints:0:2",
+      "key": "bun-randomuuidv7-experiment-mints:0:2",
+      "capabilityId": "bun-randomuuidv7-experiment-mints",
+      "capabilityKey": "bun-randomuuidv7-experiment-mints",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "ExperimentAssignmentId",
+      "direction": "output",
+      "rationale": "Balanced and config assignment paths mint ExperimentAssignmentId from UUIDv7.",
+      "wrapper": "lib/experiments/engine.ts",
+      "wrapperSymbol": "FactorialEngine.createExperiment",
+      "consumer": "lib/experiments/engine.ts",
+      "consumerSymbol": "FactorialEngine.createExperiment",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-mints:1:0",
+      "key": "bun-randomuuidv7-experiment-mints:1:0",
+      "capabilityId": "bun-randomuuidv7-experiment-mints",
+      "capabilityKey": "bun-randomuuidv7-experiment-mints",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "ExperimentId",
+      "direction": "output",
+      "rationale": "Factorial experiment creation mints ExperimentId from UUIDv7.",
+      "wrapper": "lib/experiments/engine.ts",
+      "wrapperSymbol": "FactorialEngine.assignBalanced",
+      "consumer": "lib/experiments/engine.ts",
+      "consumerSymbol": "FactorialEngine.assignBalanced",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-mints:1:1",
+      "key": "bun-randomuuidv7-experiment-mints:1:1",
+      "capabilityId": "bun-randomuuidv7-experiment-mints",
+      "capabilityKey": "bun-randomuuidv7-experiment-mints",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "ExperimentVariantId",
+      "direction": "output",
+      "rationale": "Factorial experiment creation mints ExperimentVariantId per design variant.",
+      "wrapper": "lib/experiments/engine.ts",
+      "wrapperSymbol": "FactorialEngine.assignBalanced",
+      "consumer": "lib/experiments/engine.ts",
+      "consumerSymbol": "FactorialEngine.assignBalanced",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-mints:1:2",
+      "key": "bun-randomuuidv7-experiment-mints:1:2",
+      "capabilityId": "bun-randomuuidv7-experiment-mints",
+      "capabilityKey": "bun-randomuuidv7-experiment-mints",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "ExperimentAssignmentId",
+      "direction": "output",
+      "rationale": "Balanced and config assignment paths mint ExperimentAssignmentId from UUIDv7.",
+      "wrapper": "lib/experiments/engine.ts",
+      "wrapperSymbol": "FactorialEngine.assignBalanced",
+      "consumer": "lib/experiments/engine.ts",
+      "consumerSymbol": "FactorialEngine.assignBalanced",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-mints:2:0",
+      "key": "bun-randomuuidv7-experiment-mints:2:0",
+      "capabilityId": "bun-randomuuidv7-experiment-mints",
+      "capabilityKey": "bun-randomuuidv7-experiment-mints",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "ExperimentId",
+      "direction": "output",
+      "rationale": "Factorial experiment creation mints ExperimentId from UUIDv7.",
+      "wrapper": "lib/experiments/engine.ts",
+      "wrapperSymbol": "FactorialEngine.assignToConfig",
+      "consumer": "lib/experiments/engine.ts",
+      "consumerSymbol": "FactorialEngine.assignToConfig",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-mints:2:1",
+      "key": "bun-randomuuidv7-experiment-mints:2:1",
+      "capabilityId": "bun-randomuuidv7-experiment-mints",
+      "capabilityKey": "bun-randomuuidv7-experiment-mints",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "ExperimentVariantId",
+      "direction": "output",
+      "rationale": "Factorial experiment creation mints ExperimentVariantId per design variant.",
+      "wrapper": "lib/experiments/engine.ts",
+      "wrapperSymbol": "FactorialEngine.assignToConfig",
+      "consumer": "lib/experiments/engine.ts",
+      "consumerSymbol": "FactorialEngine.assignToConfig",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-mints:2:2",
+      "key": "bun-randomuuidv7-experiment-mints:2:2",
+      "capabilityId": "bun-randomuuidv7-experiment-mints",
+      "capabilityKey": "bun-randomuuidv7-experiment-mints",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "ExperimentAssignmentId",
+      "direction": "output",
+      "rationale": "Balanced and config assignment paths mint ExperimentAssignmentId from UUIDv7.",
+      "wrapper": "lib/experiments/engine.ts",
+      "wrapperSymbol": "FactorialEngine.assignToConfig",
+      "consumer": "lib/experiments/engine.ts",
+      "consumerSymbol": "FactorialEngine.assignToConfig",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-tree-node-account:0:0",
+      "key": "bun-randomuuidv7-tree-node-account:0:0",
+      "capabilityId": "bun-randomuuidv7-tree-node-account",
+      "capabilityKey": "bun-randomuuidv7-tree-node-account",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "TreeNodeId",
+      "direction": "output",
+      "rationale": "Account tree node creation mints TreeNodeId from UUIDv7.",
+      "wrapper": "lib/accounts/accounts.ts",
+      "wrapperSymbol": "AccountSystem.create",
+      "consumer": "lib/accounts/accounts.ts",
+      "consumerSymbol": "AccountSystem.create",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-ops-seed-demo:0:0",
+      "key": "bun-randomuuidv7-ops-seed-demo:0:0",
+      "capabilityId": "bun-randomuuidv7-ops-seed-demo",
+      "capabilityKey": "bun-randomuuidv7-ops-seed-demo",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Operations demo seed rows use bare UUIDv7 primary keys for fixtures, not domain *Id mints.",
+      "wrapper": "lib/operations/ops-seed.ts",
+      "wrapperSymbol": "seedOperationsDemo",
+      "consumer": "lib/operations/ops-seed.ts",
+      "consumerSymbol": "seedOperationsDemo",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-ops-oneliners-demo:0:0",
+      "key": "bun-randomuuidv7-ops-oneliners-demo:0:0",
+      "capabilityId": "bun-randomuuidv7-ops-oneliners-demo",
+      "capabilityKey": "bun-randomuuidv7-ops-oneliners-demo",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Ops oneliner demos mint ephemeral SQLite fixture ids; they are not domain *Id values.",
+      "wrapper": "tools/bun-ops-oneliners.ts",
+      "wrapperSymbol": "seedOpsDb",
+      "consumer": "tools/bun-ops-oneliners.ts",
+      "consumerSymbol": "seedOpsDb",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-ops-oneliners-demo:1:0",
+      "key": "bun-randomuuidv7-ops-oneliners-demo:1:0",
+      "capabilityId": "bun-randomuuidv7-ops-oneliners-demo",
+      "capabilityKey": "bun-randomuuidv7-ops-oneliners-demo",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Ops oneliner demos mint ephemeral SQLite fixture ids; they are not domain *Id values.",
+      "wrapper": "tools/bun-ops-oneliners.ts",
+      "wrapperSymbol": "run",
+      "consumer": "tools/bun-ops-oneliners.ts",
+      "consumerSymbol": "run",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-anomaly-opaque:0:0",
+      "key": "bun-randomuuidv7-anomaly-opaque:0:0",
+      "capabilityId": "bun-randomuuidv7-anomaly-opaque",
+      "capabilityKey": "bun-randomuuidv7-anomaly-opaque",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Anomaly and related-event ids are prefixed opaque strings, not branded domain *Id values.",
+      "wrapper": "lib/ai/anomaly-detector.ts",
+      "wrapperSymbol": "AnomalyDetector.createAnomaly",
+      "consumer": "lib/ai/anomaly-detector.ts",
+      "consumerSymbol": "AnomalyDetector.createAnomaly",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-anomaly-opaque:1:0",
+      "key": "bun-randomuuidv7-anomaly-opaque:1:0",
+      "capabilityId": "bun-randomuuidv7-anomaly-opaque",
+      "capabilityKey": "bun-randomuuidv7-anomaly-opaque",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Anomaly and related-event ids are prefixed opaque strings, not branded domain *Id values.",
+      "wrapper": "lib/ai/anomaly-detector.ts",
+      "wrapperSymbol": "AnomalyDetector.createRuleBasedAnomaly",
+      "consumer": "lib/ai/anomaly-detector.ts",
+      "consumerSymbol": "AnomalyDetector.createRuleBasedAnomaly",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-anomaly-opaque:2:0",
+      "key": "bun-randomuuidv7-anomaly-opaque:2:0",
+      "capabilityId": "bun-randomuuidv7-anomaly-opaque",
+      "capabilityKey": "bun-randomuuidv7-anomaly-opaque",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Anomaly and related-event ids are prefixed opaque strings, not branded domain *Id values.",
+      "wrapper": "lib/ai/anomaly-detector.ts",
+      "wrapperSymbol": "AnomalyDetector.checkImmediateAnomalies",
+      "consumer": "lib/ai/anomaly-detector.ts",
+      "consumerSymbol": "AnomalyDetector.checkImmediateAnomalies",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-anomaly-opaque:3:0",
+      "key": "bun-randomuuidv7-anomaly-opaque:3:0",
+      "capabilityId": "bun-randomuuidv7-anomaly-opaque",
+      "capabilityKey": "bun-randomuuidv7-anomaly-opaque",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Anomaly and related-event ids are prefixed opaque strings, not branded domain *Id values.",
+      "wrapper": "lib/ai/anomaly-detector.ts",
+      "wrapperSymbol": "AnomalyDetector.findRelatedEvents",
+      "consumer": "lib/ai/anomaly-detector.ts",
+      "consumerSymbol": "AnomalyDetector.findRelatedEvents",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-ops-loop-fixture:0:0",
+      "key": "bun-randomuuidv7-ops-loop-fixture:0:0",
+      "capabilityId": "bun-randomuuidv7-ops-loop-fixture",
+      "capabilityKey": "bun-randomuuidv7-ops-loop-fixture",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Ops-loop fixtures mint bare node ids for in-memory demos; branding happens at bind sites.",
+      "wrapper": "lib/operations/ops-loop-fixture.ts",
+      "wrapperSymbol": "runOpsLoopFixture",
+      "consumer": "lib/operations/ops-loop-fixture.ts",
+      "consumerSymbol": "runOpsLoopFixture",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-ops-loop-fixture:1:0",
+      "key": "bun-randomuuidv7-ops-loop-fixture:1:0",
+      "capabilityId": "bun-randomuuidv7-ops-loop-fixture",
+      "capabilityKey": "bun-randomuuidv7-ops-loop-fixture",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Ops-loop fixtures mint bare node ids for in-memory demos; branding happens at bind sites.",
+      "wrapper": "lib/operations/ops-loop-fixture.ts",
+      "wrapperSymbol": "runOpsLoopMultiNodeFixture",
+      "consumer": "lib/operations/ops-loop-fixture.ts",
+      "consumerSymbol": "runOpsLoopMultiNodeFixture",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-telegram-broadcast-opaque:0:0",
+      "key": "bun-randomuuidv7-telegram-broadcast-opaque:0:0",
+      "capabilityId": "bun-randomuuidv7-telegram-broadcast-opaque",
+      "capabilityKey": "bun-randomuuidv7-telegram-broadcast-opaque",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Broadcast batch and log row ids are opaque strings (brand-ok), not domain *Id values.",
+      "wrapper": "lib/telegram/broadcast.ts",
+      "wrapperSymbol": "broadcastToKnownChats",
+      "consumer": "lib/telegram/broadcast.ts",
+      "consumerSymbol": "broadcastToKnownChats",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-telegram-broadcast-opaque:1:0",
+      "key": "bun-randomuuidv7-telegram-broadcast-opaque:1:0",
+      "capabilityId": "bun-randomuuidv7-telegram-broadcast-opaque",
+      "capabilityKey": "bun-randomuuidv7-telegram-broadcast-opaque",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Broadcast batch and log row ids are opaque strings (brand-ok), not domain *Id values.",
+      "wrapper": "lib/telegram/broadcast.ts",
+      "wrapperSymbol": "enqueueBroadcastToOutbox",
+      "consumer": "lib/telegram/broadcast.ts",
+      "consumerSymbol": "enqueueBroadcastToOutbox",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-telegram-broadcast-opaque:2:0",
+      "key": "bun-randomuuidv7-telegram-broadcast-opaque:2:0",
+      "capabilityId": "bun-randomuuidv7-telegram-broadcast-opaque",
+      "capabilityKey": "bun-randomuuidv7-telegram-broadcast-opaque",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Broadcast batch and log row ids are opaque strings (brand-ok), not domain *Id values.",
+      "wrapper": "lib/telegram/broadcast-log.ts",
+      "wrapperSymbol": "recordBroadcastOutboxSend",
+      "consumer": "lib/telegram/broadcast-log.ts",
+      "consumerSymbol": "recordBroadcastOutboxSend",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-time-encoding-hex:0:0",
+      "key": "bun-randomuuidv7-time-encoding-hex:0:0",
+      "capabilityId": "bun-randomuuidv7-time-encoding-hex",
+      "capabilityKey": "bun-randomuuidv7-time-encoding-hex",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-hex",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The hex encoding overload reshapes UUIDv7 bytes for callers; EvidenceId mint is the uuid-string path.",
+      "wrapper": "lib/time.ts",
+      "wrapperSymbol": "randomUUIDv7",
+      "consumer": "lib/time.ts",
+      "consumerSymbol": "randomUUIDv7",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-time-encoding-buffer:0:0",
+      "key": "bun-randomuuidv7-time-encoding-buffer:0:0",
+      "capabilityId": "bun-randomuuidv7-time-encoding-buffer",
+      "capabilityKey": "bun-randomuuidv7-time-encoding-buffer",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-buffer",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The buffer encoding overload returns raw UUIDv7 bytes; EvidenceId mint is the uuid-string path.",
+      "wrapper": "lib/time.ts",
+      "wrapperSymbol": "randomUUIDv7",
+      "consumer": "lib/time.ts",
+      "consumerSymbol": "randomUUIDv7",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-ab-opaque:0:0",
+      "key": "bun-randomuuidv7-experiment-ab-opaque:0:0",
+      "capabilityId": "bun-randomuuidv7-experiment-ab-opaque",
+      "capabilityKey": "bun-randomuuidv7-experiment-ab-opaque",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Legacy A/B helpers and metric rows mint bare UUID strings without asExperiment* branding.",
+      "wrapper": "lib/experiments/engine.ts",
+      "wrapperSymbol": "FactorialEngine.recordMetric",
+      "consumer": "lib/experiments/engine.ts",
+      "consumerSymbol": "FactorialEngine.recordMetric",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-ab-opaque:1:0",
+      "key": "bun-randomuuidv7-experiment-ab-opaque:1:0",
+      "capabilityId": "bun-randomuuidv7-experiment-ab-opaque",
+      "capabilityKey": "bun-randomuuidv7-experiment-ab-opaque",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Legacy A/B helpers and metric rows mint bare UUID strings without asExperiment* branding.",
+      "wrapper": "lib/experiments/engine.ts",
+      "wrapperSymbol": "createExperiment",
+      "consumer": "lib/experiments/engine.ts",
+      "consumerSymbol": "createExperiment",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-experiment-ab-opaque:2:0",
+      "key": "bun-randomuuidv7-experiment-ab-opaque:2:0",
+      "capabilityId": "bun-randomuuidv7-experiment-ab-opaque",
+      "capabilityKey": "bun-randomuuidv7-experiment-ab-opaque",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Legacy A/B helpers and metric rows mint bare UUID strings without asExperiment* branding.",
+      "wrapper": "lib/experiments/engine.ts",
+      "wrapperSymbol": "assignVariant",
+      "consumer": "lib/experiments/engine.ts",
+      "consumerSymbol": "assignVariant",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
       "id": "bun-cron-in-process-monitoring:0:0",
       "key": "bun-cron-in-process-monitoring:0:0",
       "capabilityId": "bun-cron-in-process-monitoring",
@@ -1256,8 +3126,10 @@
       "consumerSymbol": "runInteractive",
       "project": "project-R-score",
       "policy": "optional",
-      "evidenceState": "declared-unproven",
-      "proofs": []
+      "evidenceState": "verified",
+      "proofs": [
+        "public/registry/release-features.json#result:Bun.spawn PTY (echo capture)"
+      ]
     },
     {
       "id": "process-execve-capability-probe:0:0",
@@ -1367,7 +3239,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:watch",
+      "wrapperSymbol": "test:dev",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -1386,7 +3258,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:watch:full",
+      "wrapperSymbol": "test:watch",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -1405,7 +3277,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:watch:shard1",
+      "wrapperSymbol": "test:watch:full",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -1424,7 +3296,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:watch:shard2",
+      "wrapperSymbol": "test:watch:shard1",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -1443,7 +3315,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:watch:shard3",
+      "wrapperSymbol": "test:watch:shard2",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -1462,7 +3334,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:state-compliance",
+      "wrapperSymbol": "test:watch:shard3",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -1473,6 +3345,25 @@
     {
       "id": "bun-test-parallel:9:0",
       "key": "bun-test-parallel:9:0",
+      "capabilityId": "bun-test-parallel",
+      "capabilityKey": "bun-test-parallel",
+      "api": "--parallel",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:state-compliance",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-parallel:10:0",
+      "key": "bun-test-parallel:10:0",
       "capabilityId": "bun-test-parallel",
       "capabilityKey": "bun-test-parallel",
       "api": "--parallel",
@@ -1743,9 +3634,13 @@
     {
       "name": "CorrelationId",
       "domain": "session",
-      "capabilities": [],
-      "relationships": 0,
-      "projects": []
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 2,
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "SnapshotId",
@@ -1771,9 +3666,13 @@
     {
       "name": "IdentityId",
       "domain": "identity",
-      "capabilities": [],
-      "relationships": 0,
-      "projects": []
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 1,
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "OidcClientId",
@@ -1792,9 +3691,13 @@
     {
       "name": "TokenId",
       "domain": "identity",
-      "capabilities": [],
-      "relationships": 0,
-      "projects": []
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 1,
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "DocumentId",
@@ -1887,6 +3790,20 @@
       ]
     },
     {
+      "name": "DodId",
+      "domain": "audit",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "RuleId",
+      "domain": "audit",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
       "name": "OperationId",
       "domain": "operations",
       "capabilities": [],
@@ -1966,30 +3883,75 @@
     {
       "name": "TreeNodeId",
       "domain": "operations",
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 3,
+      "projects": [
+        "project-R-score"
+      ]
+    },
+    {
+      "name": "RailId",
+      "domain": "operations",
       "capabilities": [],
       "relationships": 0,
       "projects": []
+    },
+    {
+      "name": "FundingId",
+      "domain": "operations",
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 1,
+      "projects": [
+        "project-R-score"
+      ]
+    },
+    {
+      "name": "CommandId",
+      "domain": "operations",
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 1,
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "ExperimentId",
       "domain": "operations",
-      "capabilities": [],
-      "relationships": 0,
-      "projects": []
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 3,
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "ExperimentVariantId",
       "domain": "operations",
-      "capabilities": [],
-      "relationships": 0,
-      "projects": []
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 3,
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "ExperimentAssignmentId",
       "domain": "operations",
-      "capabilities": [],
-      "relationships": 0,
-      "projects": []
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 3,
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "PartnerProfileKey",
@@ -2006,18 +3968,33 @@
       "projects": []
     },
     {
-      "name": "GateDecisionId",
+      "name": "OutId",
       "domain": "operations",
       "capabilities": [],
       "relationships": 0,
       "projects": []
     },
     {
+      "name": "GateDecisionId",
+      "domain": "operations",
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 3,
+      "projects": [
+        "project-R-score"
+      ]
+    },
+    {
       "name": "OpsChannelEventId",
       "domain": "operations",
-      "capabilities": [],
-      "relationships": 0,
-      "projects": []
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 1,
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "LimitForecastIssueId",
@@ -2758,7 +4735,7 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "lib/accounts/automation.ts",
-      "line": 35,
+      "line": 37,
       "detail": "Bun.cron (unknown) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -2768,7 +4745,7 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "lib/accounts/automation.ts",
-      "line": 47,
+      "line": 46,
       "detail": "Bun.cron (unknown) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -2778,7 +4755,7 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "lib/accounts/automation.ts",
-      "line": 62,
+      "line": 61,
       "detail": "Bun.cron (unknown) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -2788,7 +4765,7 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "lib/accounts/automation.ts",
-      "line": 79,
+      "line": 78,
       "detail": "Bun.cron (unknown) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -3063,16 +5040,6 @@
       "baseline": true
     },
     {
-      "key": "Bun.randomUUIDv7|uuid-buffer|lib/time.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/time.ts",
-      "line": 96,
-      "detail": "Bun.randomUUIDv7 (uuid-buffer) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
       "key": "Bun.randomUUIDv7|uuid-buffer|projects/active/enterprise/full-stack-bun.io/bun-runtime-arsenal.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
@@ -3133,16 +5100,6 @@
       "baseline": true
     },
     {
-      "key": "Bun.randomUUIDv7|uuid-hex|lib/time.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/time.ts",
-      "line": 93,
-      "detail": "Bun.randomUUIDv7 (uuid-hex) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
       "key": "Bun.randomUUIDv7|uuid-hex|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
@@ -3173,102 +5130,12 @@
       "baseline": true
     },
     {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/accounts/accounts.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/accounts/accounts.ts",
-      "line": 136,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/ai-operations-manager.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/ai/ai-operations-manager.ts",
-      "line": 1505,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/ai-operations-manager.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/ai/ai-operations-manager.ts",
-      "line": 1512,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/anomaly-detector.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/ai/anomaly-detector.ts",
-      "line": 431,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/anomaly-detector.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/ai/anomaly-detector.ts",
-      "line": 456,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/anomaly-detector.ts#3",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/ai/anomaly-detector.ts",
-      "line": 548,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/anomaly-detector.ts#4",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/ai/anomaly-detector.ts",
-      "line": 680,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/anomaly-detector.ts#5",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/ai/anomaly-detector.ts",
-      "line": 680,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
       "key": "Bun.randomUUIDv7|uuid-string|lib/automation/provision-accounts.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "lib/automation/provision-accounts.ts",
-      "line": 179,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/channels/outbox.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/channels/outbox.ts",
-      "line": 85,
+      "line": 180,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -3279,86 +5146,6 @@
       "api": "Bun.randomUUIDv7",
       "path": "lib/experiments/champion-challenger.ts",
       "line": 38,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/experiments/engine.ts",
-      "line": 121,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/experiments/engine.ts",
-      "line": 154,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#3",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/experiments/engine.ts",
-      "line": 335,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#4",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/experiments/engine.ts",
-      "line": 386,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#5",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/experiments/engine.ts",
-      "line": 450,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#6",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/experiments/engine.ts",
-      "line": 715,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#7",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/experiments/engine.ts",
-      "line": 751,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#8",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/experiments/engine.ts",
-      "line": 818,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -3379,26 +5166,6 @@
       "api": "Bun.randomUUIDv7",
       "path": "lib/experiments/switchback.ts",
       "line": 203,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/identity/identity.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/identity/identity.ts",
-      "line": 318,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/identity/identity.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/identity/identity.ts",
-      "line": 711,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -3493,292 +5260,12 @@
       "baseline": true
     },
     {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-loop-fixture.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-loop-fixture.ts",
-      "line": 20,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-loop-fixture.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-loop-fixture.ts",
-      "line": 21,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-loop-fixture.ts#3",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-loop-fixture.ts",
-      "line": 76,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-loop-fixture.ts#4",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-loop-fixture.ts",
-      "line": 85,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-loop-gate-backfill.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-loop-gate-backfill.ts",
-      "line": 92,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-loop-gate-backfill.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-loop-gate-backfill.ts",
-      "line": 97,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 61,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#10",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 121,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#11",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 257,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#12",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 258,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#13",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 259,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#14",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 260,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#15",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 279,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#16",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 280,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#17",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 294,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#18",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 295,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#19",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 308,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 70,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#20",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 308,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#21",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 308,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#3",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 71,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#4",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 72,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#5",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 73,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#6",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 74,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#7",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 75,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#8",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 110,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#9",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/ops-seed.ts",
-      "line": 120,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
       "key": "Bun.randomUUIDv7|uuid-string|lib/operations/partner-profile-bridge.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "lib/operations/partner-profile-bridge.ts",
-      "line": 383,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/partner-profile-bridge.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/partner-profile-bridge.ts",
-      "line": 552,
+      "line": 563,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -3788,7 +5275,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "lib/operations/partner-profile-seed.ts",
-      "line": 99,
+      "line": 100,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -3798,7 +5285,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "lib/operations/partner-profile-seed.ts",
-      "line": 141,
+      "line": 142,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -3808,37 +5295,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "lib/operations/partner-profile-seed.ts",
-      "line": 167,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/play-dispatcher.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/play-dispatcher.ts",
-      "line": 118,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/play-dispatcher.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/play-dispatcher.ts",
-      "line": 187,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/play-dispatcher.ts#3",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/play-dispatcher.ts",
-      "line": 236,
+      "line": 168,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -3873,56 +5330,6 @@
       "baseline": true
     },
     {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/rail-limits.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/rail-limits.ts",
-      "line": 63,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/toc-identity-bridge.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/toc-identity-bridge.ts",
-      "line": 92,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/toc-identity-bridge.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/toc-identity-bridge.ts",
-      "line": 124,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/toc-identity-bridge.ts#3",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/toc-identity-bridge.ts",
-      "line": 172,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/toc-identity-bridge.ts#4",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operations/toc-identity-bridge.ts",
-      "line": 193,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
       "key": "Bun.randomUUIDv7|uuid-string|lib/operations/toc-soft-balance.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
@@ -3949,56 +5356,6 @@
       "api": "Bun.randomUUIDv7",
       "path": "lib/provisioning/queue.ts",
       "line": 42,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/telegram/broadcast-log.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/telegram/broadcast-log.ts",
-      "line": 45,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/telegram/broadcast-log.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/telegram/broadcast-log.ts",
-      "line": 53,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/telegram/broadcast.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/telegram/broadcast.ts",
-      "line": 103,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/telegram/broadcast.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/telegram/broadcast.ts",
-      "line": 125,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/telegram/broadcast.ts#3",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/telegram/broadcast.ts",
-      "line": 204,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4883,86 +6240,6 @@
       "baseline": true
     },
     {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bun-ops-oneliners.ts",
-      "line": 35,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bun-ops-oneliners.ts",
-      "line": 36,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#3",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bun-ops-oneliners.ts",
-      "line": 37,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#4",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bun-ops-oneliners.ts",
-      "line": 38,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#5",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bun-ops-oneliners.ts",
-      "line": 63,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#6",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bun-ops-oneliners.ts",
-      "line": 89,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#7",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bun-ops-oneliners.ts",
-      "line": 116,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#8",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bun-ops-oneliners.ts",
-      "line": 267,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
       "key": "Bun.randomUUIDv7|uuid-string|tools/deep-audit-report.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
@@ -5388,7 +6665,7 @@
       "severity": "warning",
       "api": "Bun.WebView",
       "path": "lib/automation/provision-accounts.ts",
-      "line": 108,
+      "line": 109,
       "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -5513,11 +6790,91 @@
       "baseline": false
     },
     {
+      "key": "proof-state|bun-randomuuidv7-anomaly-opaque",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/ai/anomaly-detector.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-command-mint",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/ai/ai-operations-manager.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-correlation-mint",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/ai/ai-operations-manager.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
       "key": "proof-state|bun-randomuuidv7-evidence-mint",
       "kind": "proof-state",
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "lib/time.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-experiment-ab-opaque",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/experiments/engine.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-experiment-mints",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/experiments/engine.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-funding-mint",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/rail-limits.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-gate-decision",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/partner-profile-bridge.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-identity-mint",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/identity/identity.ts",
       "line": 1,
       "detail": "optional capability is declared-unproven",
       "baseline": false
@@ -5533,11 +6890,141 @@
       "baseline": false
     },
     {
+      "key": "proof-state|bun-randomuuidv7-ops-channel-event",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/channels/outbox.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-ops-loop-fixture",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-loop-fixture.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-ops-oneliners-demo",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-ops-oneliners.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-ops-seed-demo",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-partner-ledger-opaque",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/partner-profile/ledger.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
       "key": "proof-state|bun-randomuuidv7-phone-sportsbook-journal",
       "kind": "proof-state",
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "lib/operations/phone-sportsbook-journal.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-scratch-temp-dirs",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "scripts/bun-test-changed-staged.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-telegram-broadcast-opaque",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/telegram/broadcast.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-time-encoding-buffer",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/time.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-time-encoding-hex",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/time.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-toc-opaque-rows",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/toc-identity-bridge.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-toc-tree-node",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/toc-identity-bridge.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-token-mint",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/identity/identity.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-tree-node-account",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/accounts/accounts.ts",
       "line": 1,
       "detail": "optional capability is declared-unproven",
       "baseline": false
@@ -5558,16 +7045,6 @@
       "severity": "warning",
       "api": "Bun.sliceAnsi",
       "path": "lib/console-depth.ts",
-      "line": 1,
-      "detail": "optional capability is declared-unproven",
-      "baseline": false
-    },
-    {
-      "key": "proof-state|bun-terminal-pty",
-      "kind": "proof-state",
-      "severity": "warning",
-      "api": "Bun.Terminal",
-      "path": "lib/terminal.ts",
       "line": 1,
       "detail": "optional capability is declared-unproven",
       "baseline": false

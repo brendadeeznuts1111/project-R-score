@@ -1,6 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://developers.cloudflare.com/api/resources/user/subresources/tokens/methods/verify/ — token lifecycle response
 /**
  * Vault health bake — cross-references config/vault-map.toml env refs against
  * LIVE Proton Pass item states, writes:
@@ -8,7 +11,9 @@
  *   public/portal/vault/index.html      (baked board / visual summary)
  *
  * Exits 1 when any env-referenced item is missing or trashed (purge time-bomb
- * detector) unless --no-fail. Requires an agent session:
+ * detector), or when `pass-cli item list` fails for a referenced vault
+ * (fail-closed — never treat list failure as an empty vault) unless --no-fail.
+ * Requires an agent session:
  *   source scripts/agent-env.sh factorywager && bun run vault:health:bake
  *
  * CI gate (no live vault): portal-cli vault health → tests/vault-health.test.ts
@@ -17,13 +22,21 @@
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { escapeHtml } from '../lib/escape-html.ts';
+import {
+  escHtml,
+  renderPortalPanel,
+  renderPortalStatGrid,
+  renderPortalTable,
+} from '../lib/portal/ui-html.ts';
 import { buildVaultMapBundle } from '../lib/security/vault-map.ts';
 import {
   computeVaultHealth,
   liveItemsFromListJson,
+  type TokenProbe,
   type VaultLiveItem,
   type VaultRefInput,
 } from '../lib/security/vault-health.ts';
+import { checkPatVaultMatrix, probePassSession } from '../lib/security/pass-session.ts';
 import { capturePassCli } from './portal-secret.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
@@ -31,39 +44,152 @@ const OUT_JSON = joinPath(ROOT, 'public', 'registry', 'vault-health.json');
 const OUT_HTML = joinPath(ROOT, 'public', 'portal', 'vault', 'index.html');
 const NO_FAIL = Bun.argv.includes('--no-fail');
 
-async function fetchVaultItems(vault: string): Promise<VaultLiveItem[]> {
-  const { code, stdout } = await capturePassCli(['item', 'list', vault, '--output', 'json']);
-  if (code !== 0) {
-    console.error(`warn: item list failed for vault "${vault}" (exit ${code}) — treating as empty`);
-    return [];
+export type VaultListResult = { ok: true; items: VaultLiveItem[] } | { ok: false; code: number };
+
+/** Cloudflare token-bearing env keys probed via /user/tokens/verify (401 = expired). */
+const CLOUDFLARE_TOKEN_KEYS = [
+  'CLOUDFLARE_API_TOKEN',
+  'CLOUDFLARE_DNS_API_TOKEN',
+  'CLOUDFLARE_ACCESS_API_TOKEN',
+] as const;
+type CloudflareTokenEnvKey = (typeof CLOUDFLARE_TOKEN_KEYS)[number];
+
+export type CloudflareTokenVerifyPayload = {
+  success?: boolean;
+  result?: { status?: string };
+};
+
+/** Interpret both HTTP transport and Cloudflare's token lifecycle response. */
+export function classifyCloudflareTokenVerify(
+  statusCode: number,
+  payload: CloudflareTokenVerifyPayload | null
+): TokenProbe['status'] {
+  if (statusCode === 408 || statusCode === 425 || statusCode === 429 || statusCode >= 500) {
+    return 'unreachable';
   }
-  return liveItemsFromListJson(stdout);
+  if (statusCode >= 400) return 'invalid';
+  if (payload?.result?.status === 'disabled' || payload?.result?.status === 'expired') {
+    return 'invalid';
+  }
+  if (payload?.success === true && payload.result?.status === 'active') return 'ok';
+  return 'unreachable';
 }
 
-function renderHtml(report: ReturnType<typeof computeVaultHealth>): string {
+/** Probe a Cloudflare token value against the tokens/verify endpoint. */
+async function probeCloudflareToken(envKey: CloudflareTokenEnvKey): Promise<TokenProbe> {
+  const token = Bun.env[envKey];
+  const checkedAt = new Date().toISOString();
+  if (!token) {
+    return { envKey, kind: 'cloudflare', status: 'unreachable', statusCode: null, checkedAt };
+  }
+  try {
+    const res = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const payload = (await res.json().catch(() => null)) as CloudflareTokenVerifyPayload | null;
+    return {
+      envKey,
+      kind: 'cloudflare',
+      status: classifyCloudflareTokenVerify(res.status, payload),
+      statusCode: res.status,
+      checkedAt,
+    };
+  } catch {
+    return { envKey, kind: 'cloudflare', status: 'unreachable', statusCode: null, checkedAt };
+  }
+}
+
+/** Probe all configured Cloudflare tokens (catches expired 401 before deploys fail). */
+async function probeCloudflareTokens(): Promise<TokenProbe[]> {
+  const probes: TokenProbe[] = [];
+  for (const key of CLOUDFLARE_TOKEN_KEYS) {
+    if (Bun.env[key]) probes.push(await probeCloudflareToken(key));
+  }
+  return probes;
+}
+
+/** Live `item list` for one vault — fail closed on non-zero exit (do not invent empty). */
+export async function fetchVaultItems(vault: string): Promise<VaultListResult> {
+  const { code, stdout } = await capturePassCli(['item', 'list', vault, '--output', 'json']);
+  if (code !== 0) {
+    return { ok: false, code };
+  }
+  return { ok: true, items: liveItemsFromListJson(stdout) };
+}
+
+/** Export for unit/manual re-render of the vault board template. */
+export function renderHtml(
+  report: ReturnType<typeof computeVaultHealth>,
+  listFailures: string[] = []
+): string {
   const s = report.summary;
   const issues = report.referenced.filter(r => r.status !== 'ok');
-  const stat = (k: string, v: number, cls = '') =>
-    `<div class="vh-stat ${cls}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
-  const vaultRows = report.vaults
-    .map(
-      v => `<tr>
-        <td>${escapeHtml(v.name)}</td><td>${v.active}</td>
-        <td class="${v.trashed ? 'bad' : ''}">${v.trashed}</td>
-        <td class="dim">${escapeHtml(v.trashedTitles.join(', ') || '—')}</td>
-      </tr>`
-    )
-    .join('\n');
-  const issueRows = issues.length
-    ? issues
-        .map(
-          r => `<tr class="${r.status === 'trashed' ? 'bad' : 'warn'}">
-            <td>${escapeHtml(r.envKey)}</td><td>${escapeHtml(r.vault)}</td>
-            <td>${escapeHtml(r.item)}</td><td>${r.status.toUpperCase()}</td>
-          </tr>`
-        )
-        .join('\n')
-    : '<tr><td colspan="4" class="ok">All env-referenced items resolve Active ✓</td></tr>';
+  const tokenRows = report.tokenProbes.map(p => [
+    p.envKey,
+    p.status.toUpperCase(),
+    p.statusCode ?? '—',
+  ]);
+  const tokenBlock =
+    report.tokenProbes.length === 0
+      ? ''
+      : renderPortalPanel(
+          'Token probes (live verify against issuer)',
+          renderPortalTable(['Env key', 'Status', 'HTTP'], tokenRows, { zebra: true }),
+          s.tokensInvalid > 0
+            ? { title: 'expired/disabled tokens fail the health gate' }
+            : s.tokensUnreachable > 0
+              ? { title: 'issuer unreachable; token validity was not scored' }
+              : undefined
+        );
+  const gateCls = s.healthy && listFailures.length === 0 ? 'pass' : 'fail';
+  const gateLabel =
+    listFailures.length > 0
+      ? 'list failed'
+      : s.tokensInvalid > 0
+        ? 'token invalid'
+        : s.healthy
+          ? 'healthy'
+          : 'purge risk';
+
+  const issuesTable = renderPortalTable(
+    [
+      { key: 'env', label: 'Env key' },
+      { key: 'vault', label: 'Vault' },
+      { key: 'item', label: 'Item' },
+      { key: 'status', label: 'Status' },
+    ],
+    issues.map(r => [r.envKey, r.vault, r.item, r.status.toUpperCase()]),
+    {
+      className: 'vh-table',
+      density: 'compact',
+      emptyMessage: 'All env-referenced items resolve Active ✓',
+      rowClass: i => (issues[i]!.status === 'trashed' ? 'bad' : 'warn'),
+    }
+  );
+
+  const vaultsTable = renderPortalTable(
+    [
+      { key: 'name', label: 'Vault' },
+      { key: 'active', label: 'Active' },
+      { key: 'trashed', label: 'Trashed' },
+      { key: 'titles', label: 'Trashed titles' },
+    ],
+    report.vaults.map(v => [
+      v.name,
+      v.active,
+      { html: String(v.trashed), className: v.trashed ? 'bad' : '' },
+      { html: escHtml(v.trashedTitles.join(', ') || '—'), className: 'dim' },
+    ]),
+    { className: 'vh-table', density: 'compact', emptyMessage: 'No vaults' }
+  );
+
+  const listFailBlock = listFailures.length
+    ? renderPortalPanel(
+        'Vault list failures (fail-closed)',
+        `<p class="bad">Could not list: ${escHtml(listFailures.join(', '))}.</p>`,
+        { desc: 'Refs for these vaults are not trusted until list succeeds.' }
+      )
+    : '';
 
   return `<!DOCTYPE html>
 <!-- @see docs/portal-foundation.md — baked by tools/vault-health-bake.ts; do not edit -->
@@ -79,22 +205,14 @@ function renderHtml(report: ReturnType<typeof computeVaultHealth>): string {
   <link rel="stylesheet" href="/portal/style.css" />
   <script type="application/json" id="vault-health-embed">${JSON.stringify(report)}</script>
   <style>
-    .vh-wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px 48px; }
-    .vh-stats { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; margin: 16px 0 20px; }
-    .vh-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
-    .vh-stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
-    .vh-stat .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
-    .vh-stat.bad .v { color: var(--red, #f85149); }
-    .vh-stat.ok .v { color: var(--green, #3fb950); }
-    .vh-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
-    .vh-panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 0 0 12px; }
-    .vh-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .vh-table th { text-align: left; padding: 6px 8px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); }
-    .vh-table td { padding: 6px 8px; border-bottom: 1px solid rgba(48,54,61,.4); }
-    .vh-table td.bad, .vh-table tr.bad td { color: var(--red, #f85149); }
-    .vh-table tr.warn td { color: var(--yellow, #d29922); }
-    .vh-table td.ok { color: var(--green, #3fb950); }
+    /* Specialty tones only — base table from .portal-table */
+    .portal-table.vh-table td.bad, .portal-table.vh-table tr.bad td { color: var(--red, #f85149); }
+    .portal-table.vh-table tr.warn td { color: var(--yellow, #d29922); }
+    .portal-table.vh-table td.ok { color: var(--green, #3fb950); }
     .dim { color: var(--text-dim); font-size: 11px; }
+    .bad { color: var(--red, #f85149); }
+    .portal-stat { cursor: default; }
+    .portal-stat:hover { transform: none; box-shadow: none; }
   </style>
 </head>
 <body>
@@ -110,30 +228,61 @@ function renderHtml(report: ReturnType<typeof computeVaultHealth>): string {
       <nav class="topbar-nav" aria-label="Primary"></nav>
     </div>
   </header>
-  <main class="vh-wrap">
-    <p class="dim">Proton Pass live state × env references · generated ${escapeHtml(report.generatedAt)} · <code>bun run vault:health:bake</code></p>
-    <p class="dim">Gate (CI, offline): <code>portal-cli vault health</code> · inventory SSOT <code>tests/__snapshots__/vault-health.test.ts.snap</code> · intentional drift <code>--update</code> · machine report <a href="/registry/vault-health.json">vault-health.json</a></p>
-    <div class="vh-stats">
-      ${stat('Vaults', s.vaultCount)}
-      ${stat('Active items', s.activeItems)}
-      ${stat('Trashed items', s.trashedItems, s.trashedItems ? 'bad' : 'ok')}
-      ${stat('Refs trashed', s.referencedTrashed, s.referencedTrashed ? 'bad' : 'ok')}
-      ${stat('Refs missing', s.referencedMissing, s.referencedMissing ? 'bad' : 'ok')}
+  <main class="portal-page">
+    <section class="portal-hero portal-hero--card" aria-labelledby="vh-hero-title">
+      <p class="portal-eyebrow">Proton Pass · env refs</p>
+      <h2 id="vh-hero-title">Vault health — titles and states only</h2>
+      <p class="hero-sub">
+        Live Pass inventory crossed with vault-map env references. No secret values
+        are read or stored. Offline gate: <code>portal-cli vault health</code>.
+      </p>
+      <div class="portal-hero-meta">
+        <span class="portal-gate ${gateCls}" aria-live="polite"><span class="dot" aria-hidden="true"></span>${gateLabel}</span>
+        <span class="portal-baked">generated ${escapeHtml(report.generatedAt)}</span>
+        <div class="portal-source-links" aria-label="Related artifacts">
+          <a href="/registry/vault-health.json">vault-health.json</a>
+          <a href="/portal/env/">env</a>
+          <a href="/portal/env/#partner-env-panel">partners env</a>
+          <a href="/portal/doctor/">doctor</a>
+        </div>
+      </div>
+    </section>
+    <p class="dim">Inventory SSOT <code>tests/__snapshots__/vault-health.test.ts.snap</code> · intentional drift <code>--update</code> · bake <code>bun run vault:health:bake</code></p>
+    <div class="portal-stat-grid" aria-label="Vault summary">
+      ${renderPortalStatGrid([
+        { label: 'Vaults', value: s.vaultCount },
+        { label: 'Active items', value: s.activeItems },
+        { label: 'Trashed items', value: s.trashedItems, tone: s.trashedItems ? 'bad' : 'ok' },
+        {
+          label: 'Refs trashed',
+          value: s.referencedTrashed,
+          tone: s.referencedTrashed ? 'bad' : 'ok',
+        },
+        {
+          label: 'Refs missing',
+          value: s.referencedMissing,
+          tone: s.referencedMissing ? 'bad' : 'ok',
+        },
+        {
+          label: 'Tokens invalid',
+          value: s.tokensInvalid,
+          tone: s.tokensInvalid ? 'bad' : 'ok',
+        },
+        {
+          label: 'Token probes unavailable',
+          value: s.tokensUnreachable,
+          tone: s.tokensUnreachable ? 'warn' : 'ok',
+        },
+      ])}
     </div>
-    <div class="vh-panel">
-      <h2>Referenced-item issues (purge risk)</h2>
-      <table class="vh-table">
-        <thead><tr><th>Env key</th><th>Vault</th><th>Item</th><th>Status</th></tr></thead>
-        <tbody>${issueRows}</tbody>
-      </table>
-    </div>
-    <div class="vh-panel">
-      <h2>Vaults</h2>
-      <table class="vh-table">
-        <thead><tr><th>Vault</th><th>Active</th><th>Trashed</th><th>Trashed titles</th></tr></thead>
-        <tbody>${vaultRows}</tbody>
-      </table>
-    </div>
+    ${tokenBlock}
+    ${listFailBlock}
+    ${renderPortalPanel('Referenced-item issues (purge risk)', issuesTable, {
+      desc: 'Env keys whose Pass items are missing or trashed.',
+    })}
+    ${renderPortalPanel('Vaults', vaultsTable, {
+      desc: 'Active vs trashed item counts per vault.',
+    })}
     <p class="dim">No secret values are read or stored by this bake — titles and states only.</p>
   </main>
   <script type="module" src="/portal/data.js"></script>
@@ -147,6 +296,30 @@ function renderHtml(report: ReturnType<typeof computeVaultHealth>): string {
 }
 
 async function main(): Promise<void> {
+  const session = await probePassSession({ listVaults: true });
+  if (!session.ready) {
+    console.error(
+      'UNHEALTHY: Pass session not ready — source scripts/agent-env.sh factorywager' +
+        (session.infoError ? ` (${session.infoError})` : '')
+    );
+    console.error('Proof: pass-cli info --output json (not `test` alone)');
+    if (!NO_FAIL) process.exit(1);
+  } else {
+    const matrix = checkPatVaultMatrix(session.patName, session.vaults);
+    console.log(
+      `session: PAT=${session.patName} vaults=${session.vaults.join(',') || '(none)'}` +
+        (matrix.expected.length
+          ? ` expected=${matrix.expected.join(',')} matrix=${matrix.ok ? 'ok' : 'MISSING'}`
+          : '')
+    );
+    if (!matrix.ok) {
+      console.error(
+        `UNHEALTHY: PAT "${session.patName}" cannot see expected vault(s): ${matrix.missing.join(', ')}`
+      );
+      if (!NO_FAIL) process.exit(1);
+    }
+  }
+
   const bundle = await buildVaultMapBundle();
   const refs: VaultRefInput[] = bundle.entries
     .filter(e => e.vault && e.item)
@@ -154,27 +327,58 @@ async function main(): Promise<void> {
 
   const vaultNames = [...new Set(refs.map(r => r.vault!))].sort();
   const liveByVault = new Map<string, VaultLiveItem[]>();
+  const listFailures: string[] = [];
   for (const vault of vaultNames) {
-    liveByVault.set(vault, await fetchVaultItems(vault));
+    const result = await fetchVaultItems(vault);
+    if (!result.ok) {
+      listFailures.push(vault);
+      console.error(`error: item list failed for vault "${vault}" (exit ${result.code})`);
+      // Fail-closed: do NOT insert an empty list — that would invent referencedMissing.
+      continue;
+    }
+    liveByVault.set(vault, result.items);
   }
 
-  const report = computeVaultHealth(refs, liveByVault);
+  const failedVaults = new Set(listFailures);
+  // Score refs only for vaults we successfully listed; list failures fail the bake below.
+  const scoredRefs = refs.filter(r => r.vault && !failedVaults.has(r.vault));
+  const tokenProbes = await probeCloudflareTokens();
+  const report = computeVaultHealth(scoredRefs, liveByVault, undefined, { tokenProbes });
+  if (listFailures.length > 0) {
+    report.summary.healthy = false;
+  }
+
   await Bun.write(OUT_JSON, `${JSON.stringify(report, null, 2)}\n`);
-  await Bun.write(OUT_HTML, renderHtml(report));
+  await Bun.write(OUT_HTML, renderHtml(report, listFailures));
 
   const s = report.summary;
   console.log(
     `vault-health: ${s.vaultCount} vaults · ${s.activeItems} active · ${s.trashedItems} trashed · ` +
-      `refs ok=${s.referencedOk} trashed=${s.referencedTrashed} missing=${s.referencedMissing}`
+      `refs ok=${s.referencedOk} trashed=${s.referencedTrashed} missing=${s.referencedMissing}` +
+      ` · tokens ok=${s.tokensOk} invalid=${s.tokensInvalid} unreachable=${s.tokensUnreachable}` +
+      (listFailures.length ? ` · listFailed=${listFailures.join(',')}` : '')
   );
   for (const r of report.referenced.filter(r => r.status !== 'ok')) {
     console.error(`  ⚠️  ${r.envKey} → ${r.vault}/${r.item} — ${r.status.toUpperCase()}`);
   }
+  for (const p of report.tokenProbes.filter(p => p.status !== 'ok')) {
+    console.error(
+      `  ⚠️  ${p.envKey} — token ${p.status.toUpperCase()}${p.statusCode ? ` (HTTP ${p.statusCode})` : ''}`
+    );
+  }
   console.log(`baked: ${OUT_JSON}`);
   console.log(`baked: ${OUT_HTML}`);
 
-  if (!s.healthy && !NO_FAIL) {
-    console.error('UNHEALTHY: env-referenced items are missing or trashed (purge risk).');
+  if ((!s.healthy || listFailures.length > 0) && !NO_FAIL) {
+    if (listFailures.length > 0) {
+      console.error(
+        `UNHEALTHY: pass-cli item list failed for vault(s): ${listFailures.join(', ')} (fail-closed).`
+      );
+    } else if (s.tokensInvalid > 0) {
+      console.error(`UNHEALTHY: ${s.tokensInvalid} Cloudflare token probe(s) invalid or expired.`);
+    } else {
+      console.error('UNHEALTHY: env-referenced items are missing or trashed (purge risk).');
+    }
     process.exit(1);
   }
 }

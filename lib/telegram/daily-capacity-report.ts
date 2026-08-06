@@ -17,20 +17,21 @@ import { formatUsdAmount } from './seat-desk-book-max.ts';
 import { loadPackageGroupForumMetadata } from './package-group-forum.ts';
 import { resolveNotificationPreferences } from './partner-notifications.ts';
 import { sendTelegramBotMessage } from './telegram-api.ts';
+import { escapeHtml } from './templates/escape.ts';
 
 import type { SeatCapitalDeskSnapshot, SeatDeskViewModel } from './seat-desk-snapshot.ts';
 
 // ─── report text ─────────────────────────────────────────────────────────────
 
-/** Passwordless per-partner capacity report (Markdown). */
+/** Passwordless per-partner capacity report (Telegram HTML). */
 export function buildDailyCapacityReportText(view: SeatDeskViewModel): string {
   const lines: string[] = [
-    `📊 **Daily capacity — ${view.callSign}**`,
-    `Fund: **${view.fundStatus}**${view.fundDetail ? ` · ${view.fundDetail}` : ''}`,
+    `📊 <b>Daily capacity — ${escapeHtml(view.callSign)}</b>`,
+    `Fund: <b>${escapeHtml(view.fundStatus)}</b>${view.fundDetail ? ` · ${escapeHtml(view.fundDetail)}` : ''}`,
     '',
   ];
   if (view.outs.length === 0) {
-    lines.push('_No outs on file._');
+    lines.push('<i>No outs on file.</i>');
   }
   for (const out of view.outs) {
     const maxBet =
@@ -38,7 +39,7 @@ export function buildDailyCapacityReportText(view: SeatDeskViewModel): string {
         ? formatUsdAmount(Number(out.maxBet))
         : out.maxBet;
     lines.push(
-      `• ${out.book} · \`${out.username}\` · max ${maxBet}${out.bookMaxLine ? ` · ${out.bookMaxLine}` : ''}`
+      `• ${escapeHtml(out.book)} · <code>${escapeHtml(out.username)}</code> · max ${escapeHtml(maxBet)}${out.bookMaxLine ? ` · ${escapeHtml(out.bookMaxLine)}` : ''}`
     );
   }
   return lines.join('\n');
@@ -130,58 +131,73 @@ export async function publishDailyCapacityReports(
   let sent = 0;
 
   const db = opts.logDelivery ? (opts.db ?? openDailyReportDb()) : null;
+  const ownsDb = db !== null && opts.db === undefined;
   if (db) ensureDailyReportLog(db);
 
-  for (const view of snapshot.rows) {
-    if (opts.filter && !opts.filter(view)) {
-      skipped.push(view.partnerCode);
-      continue;
-    }
-    let target: { chatId: string; topicId?: number } | null = null; // brand-ok — Telegram chat_id wire
-    try {
-      if (opts.targetFor) {
-        target = await opts.targetFor(view);
-      } else {
-        const meta = await loadPackageGroupForumMetadata(view.partnerCode, {
-          rootDir: opts.forumsMetaDir,
-        });
-        if (meta?.chatId) {
-          target = { chatId: meta.chatId, topicId: meta.topicsThreadMap?.['liquidity/outs'] };
-        }
+  try {
+    for (const view of snapshot.rows) {
+      if (opts.filter && !opts.filter(view)) {
+        skipped.push(view.partnerCode);
+        continue;
       }
-    } catch {
-      target = null;
-    }
-    if (!target?.chatId) {
-      skipped.push(view.partnerCode);
-      continue;
-    }
+      let target: { chatId: string; topicId?: number } | null = null; // brand-ok — Telegram chat_id wire
+      try {
+        if (opts.targetFor) {
+          target = await opts.targetFor(view);
+        } else {
+          const meta = await loadPackageGroupForumMetadata(view.partnerCode, {
+            rootDir: opts.forumsMetaDir,
+          });
+          if (meta?.chatId) {
+            target = { chatId: meta.chatId, topicId: meta.topicsThreadMap?.['liquidity/outs'] };
+          }
+        }
+      } catch {
+        target = null;
+      }
+      if (!target?.chatId) {
+        skipped.push(view.partnerCode);
+        continue;
+      }
 
-    try {
-      const result = await sendTelegramBotMessage(token, {
-        chatId: target.chatId,
-        text: buildDailyCapacityReportText(view),
-        parseMode: 'Markdown',
-        messageThreadId: target.topicId,
-      });
-      if (result.ok) {
-        sent++;
-        db && logDailyReportDelivery(db, view.partnerCode);
-      } else {
+      try {
+        const result = await sendTelegramBotMessage(token, {
+          chatId: target.chatId,
+          text: buildDailyCapacityReportText(view),
+          parseMode: 'HTML',
+          messageThreadId: target.topicId,
+          replyMarkup: {
+            inline_keyboard: [
+              [
+                {
+                  text: '✅ Acknowledge',
+                  callback_data: `nf:daily:ack:${view.partnerCode}`,
+                },
+              ],
+            ],
+          },
+        });
+        if (result.ok) {
+          sent++;
+          db && logDailyReportDelivery(db, view.partnerCode);
+        } else {
+          failed.push({
+            partnerCode: view.partnerCode,
+            error: result.description ?? `telegram error ${result.errorCode ?? 'unknown'}`,
+          });
+        }
+      } catch (err) {
         failed.push({
           partnerCode: view.partnerCode,
-          error: result.description ?? `telegram error ${result.errorCode ?? 'unknown'}`,
+          error: err instanceof Error ? err.message : String(err),
         });
       }
-    } catch (err) {
-      failed.push({
-        partnerCode: view.partnerCode,
-        error: err instanceof Error ? err.message : String(err),
-      });
     }
-  }
 
-  return { sent, skipped, failed };
+    return { sent, skipped, failed };
+  } finally {
+    if (ownsDb) db?.close();
+  }
 }
 
 /**

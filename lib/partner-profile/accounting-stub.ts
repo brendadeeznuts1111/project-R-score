@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
 // @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML.parse
 // @see https://bun.com/docs/runtime/toml#bun-toml-stringify — Bun.TOML.stringify
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -20,6 +21,7 @@
 
 import type { Database } from 'bun:sqlite';
 import { joinPath } from '../path-bun';
+import { tomlStringify } from '../toml-stringify';
 import { openOperationsDb, type OpenOperationsDbOpts } from '../operations/db';
 import { PROFILES_DIR } from './bake';
 import {
@@ -115,7 +117,7 @@ export async function mirrorLedgerEntryToProfile(
     const ledger = Array.isArray(accounting.ledger) ? (accounting.ledger as unknown[]) : [];
     accounting.ledger = [...ledger, row];
     profile.accounting = accounting;
-    await Bun.write(profilePath, `${Bun.TOML.stringify(profile).trimEnd()}\n`);
+    await Bun.write(profilePath, `${tomlStringify(profile).trimEnd()}\n`);
     return true;
   } catch (e) {
     console.warn(

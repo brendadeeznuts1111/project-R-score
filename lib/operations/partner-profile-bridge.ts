@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
 // @see https://bun.com/docs/runtime/bun-apis — Bun.mmap
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML
@@ -13,6 +14,11 @@
 import type { Database } from 'bun:sqlite';
 import { randomUUIDv7 } from 'bun';
 import {
+  isPartnerLifecycleStatus,
+  parsePartnerLifecycleStatus,
+  type PartnerLifecycleStatus,
+} from '../partner-profile/schema.ts';
+import {
   asGateDecisionId,
   asPartnerProfileKey,
   asPartnerTemplateId,
@@ -23,6 +29,9 @@ import {
   type TreeNodeId,
 } from '../types/branded/operations.ts';
 import { templateIdForOnboardingSource } from './onboarding-config.ts';
+
+/** @deprecated Import the canonical type from partner-profile/schema.ts. */
+export type { PartnerLifecycleStatus } from '../partner-profile/schema.ts';
 
 export const DEFAULT_TEMPLATE_ID = 'default-prospect';
 /** Alias used by backfill / docs for the same default onboarding template. */
@@ -36,14 +45,6 @@ export const PARTNER_TEMPLATES_DIR = 'config/partner-templates';
 export function templateIdForSource(source?: string): PartnerTemplateId {
   return templateIdForOnboardingSource(source);
 }
-
-export type PartnerLifecycleStatus =
-  | 'signup'
-  | 'materialized'
-  | 'kyc_pending'
-  | 'active'
-  | 'suspended'
-  | 'terminated';
 
 export type PartnerTemplateSor = {
   eligible_tiers: string[];
@@ -117,6 +118,17 @@ export type GateEvaluation = {
   decisionId: GateDecisionId;
   templateId?: PartnerTemplateId;
 };
+
+const LIFECYCLE_GATE_ACTION = {
+  signup: 'defer',
+  materialized: 'allow',
+  kyc_pending: 'allow',
+  active: 'allow',
+  cultivating: 'defer',
+  graduated: 'allow',
+  suspended: 'block',
+  terminated: 'block',
+} as const satisfies Record<PartnerLifecycleStatus, 'allow' | 'block' | 'defer'>;
 
 const templateCache = new Map<string, PartnerTemplate>();
 
@@ -361,7 +373,7 @@ export function materializePartnerProfile(
       treeNodeId: asTreeNodeId(row.tree_node_id as string),
       templateId: asPartnerTemplateId(row.template_id as string),
       profileKey: asPartnerProfileKey(row.profile_key as string),
-      lifecycleStatus: row.lifecycle_status as PartnerLifecycleStatus,
+      lifecycleStatus: parsePartnerLifecycleStatus(row.lifecycle_status),
       createdAt: row.created_at as string,
       updatedAt: row.updated_at as string,
     },
@@ -410,8 +422,9 @@ export function evaluateForNode(
     return { allowed: false, action: 'block', reason: 'Node suspended', decisionId };
   }
 
-  const lifecycle = binding.lifecycle_status;
-  if (lifecycle === 'suspended' || lifecycle === 'terminated') {
+  const lifecycle = parsePartnerLifecycleStatus(binding.lifecycle_status);
+  const lifecycleAction = LIFECYCLE_GATE_ACTION[lifecycle];
+  if (lifecycleAction === 'block') {
     return {
       allowed: false,
       action: 'block',
@@ -420,16 +433,14 @@ export function evaluateForNode(
       templateId: asPartnerTemplateId(binding.template_id),
     };
   }
-  if (lifecycle !== 'active' && lifecycle !== 'materialized') {
-    if (lifecycle !== 'kyc_pending') {
-      return {
-        allowed: false,
-        action: 'defer',
-        reason: `Profile lifecycle ${lifecycle}`,
-        decisionId,
-        templateId: asPartnerTemplateId(binding.template_id),
-      };
-    }
+  if (lifecycleAction === 'defer') {
+    return {
+      allowed: false,
+      action: 'defer',
+      reason: `Profile lifecycle ${lifecycle}`,
+      decisionId,
+      templateId: asPartnerTemplateId(binding.template_id),
+    };
   }
 
   const template = loadPartnerTemplateSync(binding.template_id);
@@ -565,12 +576,14 @@ export function recordGateDecision(
 export type PartnersSummarySlice = {
   bound: number;
   unboundAgents: number;
-  byLifecycle: Record<string, number>;
+  byLifecycle: Partial<Record<PartnerLifecycleStatus, number>>;
+  /** Rows with lifecycle_status that failed parse — aggregate soft-quarantine count. */
+  invalidLifecycle: number;
   recent: Array<{
     treeNodeId: TreeNodeId;
     profileKey: string;
     partnerTemplate: PartnerTemplateId;
-    lifecycleStatus: string;
+    lifecycleStatus: PartnerLifecycleStatus;
     name: string;
   }>;
 };
@@ -595,9 +608,14 @@ export function queryPartnersSlice(db: Database): PartnersSummarySlice {
     )
     .all() as { lifecycle_status: string; n: number }[];
 
-  const byLifecycle: Record<string, number> = {};
+  const byLifecycle: Partial<Record<PartnerLifecycleStatus, number>> = {};
+  let invalidLifecycle = 0;
   for (const row of lifecycleRows) {
-    byLifecycle[row.lifecycle_status] = row.n;
+    if (!isPartnerLifecycleStatus(row.lifecycle_status)) {
+      invalidLifecycle += row.n;
+      continue;
+    }
+    byLifecycle[row.lifecycle_status] = (byLifecycle[row.lifecycle_status] ?? 0) + row.n;
   }
 
   const recent = db
@@ -615,17 +633,27 @@ export function queryPartnersSlice(db: Database): PartnersSummarySlice {
     name: string;
   }>;
 
+  // Soft-parse recent rows: skip corrupt lifecycle so one bad binding cannot
+  // take down ops-summary (single-entity materialize/evaluate still throw).
+  const recentParsed = recent.flatMap(r => {
+    if (!isPartnerLifecycleStatus(r.lifecycle_status)) return [];
+    return [
+      {
+        treeNodeId: asTreeNodeId(r.tree_node_id),
+        profileKey: r.profile_key,
+        partnerTemplate: asPartnerTemplateId(r.template_id),
+        lifecycleStatus: r.lifecycle_status,
+        name: r.name,
+      },
+    ];
+  });
+
   return {
     bound: bound.n,
     unboundAgents: unboundAgents.n,
     byLifecycle,
-    recent: recent.map(r => ({
-      treeNodeId: asTreeNodeId(r.tree_node_id),
-      profileKey: r.profile_key,
-      partnerTemplate: asPartnerTemplateId(r.template_id),
-      lifecycleStatus: r.lifecycle_status,
-      name: r.name,
-    })),
+    invalidLifecycle,
+    recent: recentParsed,
   };
 }
 

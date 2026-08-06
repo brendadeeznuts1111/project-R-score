@@ -55,7 +55,7 @@ import {
   loadSeatCapitalDeskSummarySlice,
   type SeatCapitalDeskSummarySlice,
 } from '../telegram/seat-desk-snapshot.ts';
-import { asTreeNodeId } from '../types/branded.ts';
+import { asTreeNodeId, parseTreeNodeId, type TreeNodeId } from '../types/branded.ts';
 import { buildLimitPatternSnapshot, type LimitPatternSnapshot } from './limit-patterns.ts';
 
 export type OpsSummaryExpert = {
@@ -255,10 +255,46 @@ export type OpsSummaryMonorepoHealth = MonorepoHealthSummarySlice;
 /** Bun capability × brand declaration, adoption, and proof rollup. */
 export type OpsSummaryBunBrandMap = BunBrandMapOpsSlice;
 
+/** Per-node position row for the ops liquidity panel. */
+export type OpsSummaryLiquidityPosition = {
+  nodeId: TreeNodeId;
+  name: string;
+  type: string;
+  book: string;
+  deposited: number;
+  available: number;
+  inPlay: number;
+  lastReconciled: string | null;
+};
+
+/**
+ * Desk liquidity rollup — soft-balance accounts, position books, and ops pool.
+ * `total` stays the active `sb_accounts` sum for seed/contract compatibility.
+ */
+export type OpsSummaryLiquidity = {
+  total: number;
+  accounts: { count: number; balance: number };
+  positions: {
+    count: number;
+    deposited: number;
+    available: number;
+    inPlay: number;
+  };
+  pool: {
+    totalLiquidity: number;
+    totalExposure: number;
+    available: number;
+    updatedAt: string | null;
+  };
+  topPositions: OpsSummaryLiquidityPosition[];
+  /** No active accounts, no positions, and zero pool liquidity. */
+  empty: boolean;
+};
+
 export type OpsSummaryPayload = {
   source: 'live' | 'snapshot';
   generated: string;
-  liquidity: { total: number };
+  liquidity: OpsSummaryLiquidity;
   experts: OpsSummaryExpert[];
   tree: {
     partners: number;
@@ -931,14 +967,152 @@ export function loadCloudflarePagesPreflightSlice(
   }
 }
 
+/**
+ * Accounts + positions + ops pool for the desk liquidity panel.
+ * Safe when tables are missing (returns zeros).
+ */
+export function buildLiquiditySummary(
+  db: Database,
+  opts?: { topLimit?: number }
+): OpsSummaryLiquidity {
+  const topLimit = Math.max(1, Math.min(opts?.topLimit ?? 8, 25));
+
+  let accounts = { count: 0, balance: 0 };
+  try {
+    const row = db
+      .query(
+        `SELECT COUNT(*) AS count,
+                COALESCE(SUM(balance), 0) AS balance
+         FROM sb_accounts WHERE status = 'active'`
+      )
+      .get() as { count: number; balance: number };
+    accounts = { count: Number(row.count) || 0, balance: Number(row.balance) || 0 };
+  } catch {
+    /* table missing */
+  }
+
+  let positions = { count: 0, deposited: 0, available: 0, inPlay: 0 };
+  let topPositions: OpsSummaryLiquidityPosition[] = [];
+  try {
+    const sum = db
+      .query(
+        `SELECT COUNT(*) AS count,
+                COALESCE(SUM(deposited), 0) AS deposited,
+                COALESCE(SUM(available), 0) AS available,
+                COALESCE(SUM(in_play), 0) AS inPlay
+         FROM positions`
+      )
+      .get() as {
+      count: number;
+      deposited: number;
+      available: number;
+      inPlay: number;
+    };
+    positions = {
+      count: Number(sum.count) || 0,
+      deposited: Number(sum.deposited) || 0,
+      available: Number(sum.available) || 0,
+      inPlay: Number(sum.inPlay) || 0,
+    };
+
+    const rows = db
+      .query(
+        `SELECT p.node_id AS nodeId,
+                p.book AS book,
+                p.deposited AS deposited,
+                p.available AS available,
+                p.in_play AS inPlay,
+                p.last_reconciled AS lastReconciled,
+                COALESCE(tn.name, p.node_id) AS name,
+                COALESCE(tn.type, 'unknown') AS type
+         FROM positions p
+         LEFT JOIN tree_nodes tn ON tn.id = p.node_id
+         ORDER BY p.deposited DESC, p.available DESC
+         LIMIT $limit`
+      )
+      .all({ $limit: topLimit }) as Array<{
+      nodeId: unknown;
+      book: string;
+      deposited: number;
+      available: number;
+      inPlay: number;
+      lastReconciled: string | null;
+      name: string;
+      type: string;
+    }>;
+
+    topPositions = rows.map(r => {
+      const nodeId = parseTreeNodeId(r.nodeId);
+      return {
+        nodeId,
+        name: r.name || nodeId,
+        type: r.type || 'unknown',
+        book: r.book || '_all',
+        deposited: Number(r.deposited) || 0,
+        available: Number(r.available) || 0,
+        inPlay: Number(r.inPlay) || 0,
+        lastReconciled: r.lastReconciled ?? null,
+      };
+    });
+  } catch {
+    /* positions / tree_nodes missing */
+  }
+
+  let pool = {
+    totalLiquidity: 0,
+    totalExposure: 0,
+    available: 0,
+    updatedAt: null as string | null,
+  };
+  try {
+    const row = db
+      .query(
+        `SELECT total_liquidity AS totalLiquidity,
+                total_exposure AS totalExposure,
+                updated_at AS updatedAt
+         FROM operations WHERE id = 'main'`
+      )
+      .get() as {
+      totalLiquidity: number;
+      totalExposure: number;
+      updatedAt: string | null;
+    } | null;
+    if (row) {
+      const totalLiquidity = Number(row.totalLiquidity) || 0;
+      const totalExposure = Number(row.totalExposure) || 0;
+      pool = {
+        totalLiquidity,
+        totalExposure,
+        available: totalLiquidity - totalExposure,
+        updatedAt: row.updatedAt ?? null,
+      };
+    }
+  } catch {
+    /* operations table missing */
+  }
+
+  const empty =
+    accounts.count === 0 &&
+    positions.count === 0 &&
+    pool.totalLiquidity === 0 &&
+    pool.totalExposure === 0;
+
+  return {
+    total: accounts.balance,
+    accounts,
+    positions,
+    pool,
+    topPositions,
+    empty,
+  };
+}
+
 /** Build full ops summary from an open operations DB. */
 export function buildOpsSummary(
   db: Database,
   source: 'live' | 'snapshot' = 'live'
 ): OpsSummaryPayload {
-  const liquidity = db
-    .query(`SELECT COALESCE(SUM(balance), 0) AS total FROM sb_accounts WHERE status = 'active'`)
-    .get() as { total: number };
+  const liquidity = buildLiquiditySummary(db);
 
   const experts = db
     .query(`SELECT name, sport, market, edge_score, active FROM experts ORDER BY edge_score DESC`)
@@ -1012,7 +1186,7 @@ export function buildOpsSummary(
   return {
     source,
     generated: new Date().toISOString(),
-    liquidity: { total: liquidity.total },
+    liquidity,
     experts,
     tree: {
       partners: tree.partners,

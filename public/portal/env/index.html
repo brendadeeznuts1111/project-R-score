@@ -17,18 +17,11 @@
   <link rel="stylesheet" href="/portal/style.css" />
   <style>
     .hidden { display: none; }
-    .env-dashboard { max-width: 960px; margin: 0 auto; padding: 0 24px 32px; }
-    .env-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-    .env-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); padding: 8px 12px; border-bottom: 1px solid var(--border); }
-    .env-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
-    .env-table tr:hover { background: var(--surface-hover); }
-    .env-key { font-family: monospace; font-weight: 600; color: var(--accent); font-size: 12px; }
     .st-ok { color: var(--green, #3fb950); }
     .st-bad { color: var(--red, #f85149); }
     .st-warn { color: var(--yellow, #d29922); }
-    .section-title { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
-    .section-sub { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
     .generated { font-size: 11px; color: var(--text-dim); text-align: right; margin-top: 24px; }
+    .portal-error .portal-error-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -42,35 +35,51 @@
         <span class="logo-page">Env</span>
       </h1>
       <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
-        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
+        <a href="/" class="nav-link" title="public lander · portal entry" data-group="other" data-domain="platform">Home</a>
+        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · C4/C5 loop · partner handshake panel · bun run ops:snapshot" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot" data-registry="/registry/ops-summary.json">Ops</a>
+        <a href="/portal/" class="nav-link" title="portal hub · board index · weave surfaces" data-group="registry" data-domain="platform">Registry</a>
+        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-domain="platform" data-cli="bun run monorepo:health:bake" data-registry="/registry/monorepo-health.json">Health</a>
+        <a href="/portal/dod/" class="nav-link" title="visual proof review · public-plane gate · bun run public:audit:verify" data-group="plane" data-domain="platform" data-cli="bun run public:audit:verify">DOD</a>
+        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · shadow matrix · bun run compliance:bake" data-group="ops" data-domain="control" data-cli="bun run compliance:bake" data-registry="/registry/compliance-board.json">Compliance</a>
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link active" aria-current="page" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
-            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
-            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog" data-group="ops" data-cli="bun run telegram:handshake:catalog" role="menuitem">Partners</a>
-            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog" data-group="ops" role="menuitem">Account</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-cli="bun run bookmakers:bake" role="menuitem">Bookmakers</a>
-            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+          <div class="nav-group" role="group" aria-label="Ops · domain" data-group="ops">
+            <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
+            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · seat capital · bun run telegram:handshake:catalog" data-group="ops" data-domain="partner" data-cli="bun run telegram:handshake:catalog" data-registry="/registry/partners-ops.json" role="menuitem">Partners</a>
+            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed" data-group="ops" data-domain="partner" data-cli="bun run ops:dossier:seed" data-registry="/registry/partners-ops.json" role="menuitem">Account</a>
+            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Partner history</a>
+            <a href="/portal/limits/" class="nav-link" title="multi-factor partner limit raises · CLV · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Limits</a>
+            <a href="/portal/limits-lab/" class="nav-link" title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:predict" data-registry="/registry/limit-forecast-lab.json" role="menuitem">Limits lab</a>
+            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-domain="partner" data-cli="bun run bookmakers:bake" data-registry="/registry/bookmakers.json" role="menuitem">Bookmakers</a>
+            <a href="/portal/factory/" class="nav-link" title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify" data-group="ops" data-domain="partner" data-cli="bun run telegram:verify" data-registry="/registry/telegram-handshake.json" role="menuitem">Factory</a>
+            <a href="/portal/tennis/" class="nav-link" title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake" data-group="ops" data-domain="trading" data-cli="bun run tennis:board:bake" data-registry="/registry/tennis/agent-auth.json" role="menuitem">Tennis</a>
+            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-domain="trading" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
+            <a href="/portal/dashboard/" class="nav-link" title="KPIs · TOC · compliance plane · proof-index pins" data-group="ops" data-domain="control" role="menuitem">Dashboard</a>
+            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope fixture board · bun run ops:seed:toc" data-group="ops" data-domain="control" data-cli="bun run ops:seed:toc" data-registry="/registry/toc-ops.json" role="menuitem">TOC</a>
+            <a href="/monitoring/" class="nav-link" title="routing · env · compliance tile · proof status · bun run ops:snapshot --no-seed" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot --no-seed" data-registry="/registry/monitoring.json" role="menuitem">Monitoring</a>
+            <a href="/portal/identity/" class="nav-link" title="auth board · lockout · anomaly · geo · JIT · bun test tests/identity-*.test.ts" data-group="ops" data-domain="identity" data-cli="bun test tests/identity-*.test.ts" data-registry="/registry/identity-board.json" role="menuitem">Identity</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Secrets" data-group="secrets">
+            <div class="nav-group-label" aria-hidden="true">Secrets</div>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-registry="/registry/vault-health.json" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link active" aria-current="page" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Registry" data-group="registry">
+            <div class="nav-group-label" aria-hidden="true">Registry</div>
+            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-domain="knowledge" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
+            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-domain="platform" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" data-registry="/registry/packages-graph-map.json" role="menuitem">Packages</a>
+            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-domain="knowledge" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-domain="knowledge" data-cli="bun run glossary:portal" data-registry="/registry/domain-glossary.json" role="menuitem">Glossary</a>
+            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" data-registry="/registry/surfaces-state.json" role="menuitem">Surfaces</a>
+            <a href="/portal/skills/" class="nav-link" title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate" data-group="registry" data-domain="knowledge" data-cli="bun run skills:validate" data-registry="/registry/harness-skills-catalog.json" role="menuitem">Skills</a>
+            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
+            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-domain="knowledge" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="More" data-group="other">
+            <div class="nav-group-label" aria-hidden="true">More</div>
+            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub · wiki-index" data-group="other" data-domain="platform" role="menuitem">Wiki</a>
+          </div>
           </div>
         </div>
       </nav>
@@ -84,48 +93,232 @@
     </div>
   </header>
 
-  <main class="env-dashboard">
+  <main class="portal-page">
+    <section class="portal-hero portal-hero--card" aria-labelledby="env-hero-title">
+      <p class="portal-eyebrow">Vault map · partners · accounts</p>
+      <h2 id="env-hero-title">Environment ownership without printing secrets</h2>
+      <p class="hero-sub">
+        Vault-map inject checklist, package env hits, partner shared bindings, and partner→account outs —
+        keys, groups, and severity only. Values never appear on this board.
+      </p>
+      <div class="portal-hero-meta">
+        <span id="env-gate" class="portal-gate" aria-live="polite">…</span>
+        <span id="env-meta" class="portal-baked">loading…</span>
+        <div class="portal-source-links" aria-label="Related artifacts">
+          <a href="/registry/vault-map.json">vault-map.json</a>
+          <a href="/registry/vault-health.json">vault-health.json</a>
+          <a href="/registry/env-inventory.json">env-inventory.json</a>
+          <a href="/registry/partners-ops.json">partners-ops.json</a>
+          <a href="/portal/vault/">vault board</a>
+          <a href="/portal/partners/">partners</a>
+        </div>
+      </div>
+    </section>
+
+    <div id="env-error" hidden></div>
+
     <div id="loading" class="ops-loading"><div class="spinner"></div><p>Loading environment…</p></div>
+
     <div id="dashboard" class="hidden">
-      <p class="section-sub" id="env-summary">—</p>
+      <div id="env-stats" class="portal-stat-grid" aria-label="Env summary"></div>
 
-      <div class="section-title">Environment checklist</div>
-      <table class="env-table" id="env-table">
-        <thead><tr><th>Key</th><th>Group</th><th>Severity</th><th>Status</th><th>Detail</th></tr></thead>
-        <tbody id="env-body">
-          <tr class="skeleton-row"><td colspan="5">Loading…</td></tr>
-        </tbody>
-      </table>
+      <section class="portal-panel" aria-labelledby="env-checklist-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="env-checklist-title">Environment checklist</h2>
+            <p class="portal-panel-desc" id="env-summary">—</p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="portal-count" id="env-count">…</span>
+            <button type="button" class="portal-clear" id="env-clear" disabled>Clear filters</button>
+          </div>
+        </div>
+        <div class="portal-toolbar">
+          <label>
+            Search
+            <input type="search" id="env-q" placeholder="Filter key or group…" aria-label="Search env keys" />
+          </label>
+          <label>
+            Severity
+            <select id="env-severity" aria-label="Filter by severity">
+              <option value="">all severity</option>
+            </select>
+          </label>
+          <label>
+            Group
+            <select id="env-group" aria-label="Filter by group">
+              <option value="">all groups</option>
+            </select>
+          </label>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table" id="env-table">
+            <thead><tr><th scope="col">Key</th><th scope="col">Group</th><th scope="col">Severity</th><th scope="col">Status</th><th scope="col">Detail</th></tr></thead>
+            <tbody id="env-body">
+              <tr><td colspan="5" class="dim">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-      <div class="section-title" id="ct-title">Content-Type handling</div>
-      <p class="section-sub" id="ct-summary">—</p>
-      <table class="env-table" id="content-type-table">
-        <thead><tr><th>Status</th><th>Scenario</th><th>Default</th><th>Our value</th><th>Expected</th></tr></thead>
-        <tbody id="ct-body">
-          <tr class="skeleton-row"><td colspan="5">Loading…</td></tr>
-        </tbody>
-      </table>
+      <section class="portal-panel hidden" id="ct-panel" aria-labelledby="ct-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="ct-title">Content-Type handling</h2>
+            <p class="portal-panel-desc" id="ct-summary">—</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table" id="content-type-table">
+            <thead><tr><th scope="col">Status</th><th scope="col">Scenario</th><th scope="col">Default</th><th scope="col">Our value</th><th scope="col">Expected</th></tr></thead>
+            <tbody id="ct-body">
+              <tr><td colspan="5" class="dim">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-      <div class="section-title">Packages plane <a href="/portal/packages/" style="font-size:12px;font-weight:400">board</a></div>
-      <p class="section-sub" id="pkg-summary">Loading inventory bake…</p>
-      <table class="env-table">
-        <thead><tr><th>Package</th><th>Env keys</th><th>Missing template</th></tr></thead>
-        <tbody id="pkg-body"><tr><td colspan="3">—</td></tr></tbody>
-      </table>
+      <section class="portal-panel" aria-labelledby="pkg-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="pkg-title">Packages plane <a href="/portal/packages/" style="font-size:12px;font-weight:400">board</a></h2>
+            <p class="portal-panel-desc" id="pkg-summary">Loading inventory bake…</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table">
+            <thead><tr><th scope="col">Package</th><th scope="col">Env keys</th><th scope="col">Missing template</th></tr></thead>
+            <tbody id="pkg-body"><tr><td colspan="3" class="dim">—</td></tr></tbody>
+          </table>
+        </div>
+      </section>
 
-      <div class="section-title">Env key owners (package-touched)</div>
-      <p class="section-sub" id="owners-summary">—</p>
-      <table class="env-table">
-        <thead><tr><th>Key</th><th>×count</th><th>Packages</th><th>Planes</th><th>Root tpl</th></tr></thead>
-        <tbody id="owners-body"><tr><td colspan="5">—</td></tr></tbody>
-      </table>
+      <section class="portal-panel" id="vault-health-panel" aria-labelledby="vault-health-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="vault-health-title">Vault health <a href="/portal/vault/" style="font-size:12px;font-weight:400">board</a></h2>
+            <p class="portal-panel-desc" id="vault-health-summary">Loading vault-health bake…</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th scope="col">Vault</th>
+                <th scope="col">Active</th>
+                <th scope="col">Trashed</th>
+              </tr>
+            </thead>
+            <tbody id="vault-health-vaults"><tr><td colspan="3" class="dim">—</td></tr></tbody>
+          </table>
+        </div>
+        <div class="table-wrap" style="margin-top:16px">
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th scope="col">Env key</th>
+                <th scope="col">Vault / item</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody id="vault-health-refs"><tr><td colspan="3" class="dim">—</td></tr></tbody>
+          </table>
+        </div>
+      </section>
 
-      <div class="section-title">Vault map (display chrome)</div>
-      <p class="section-sub" id="vault-map-summary">—</p>
-      <table class="env-table">
-        <thead><tr><th></th><th>Key</th><th>Label</th><th>Vault / item</th><th>Template</th><th>Runtime</th></tr></thead>
-        <tbody id="vault-map-body"><tr><td colspan="6">—</td></tr></tbody>
-      </table>
+      <section class="portal-panel" id="partner-env-panel" aria-labelledby="partner-env-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="partner-env-title">Partner env bindings <a href="/portal/partners/" style="font-size:12px;font-weight:400">partners</a></h2>
+            <p class="portal-panel-desc" id="partner-env-summary">Loading partnersAccountsPlane…</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th scope="col">Key</th>
+                <th scope="col">Role</th>
+                <th scope="col">Consumers</th>
+                <th scope="col">Vault map</th>
+                <th scope="col">Template</th>
+                <th scope="col">Runtime</th>
+              </tr>
+            </thead>
+            <tbody id="partner-env-body"><tr><td colspan="6" class="dim">—</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="portal-panel" id="partner-accounts-panel" aria-labelledby="partner-accounts-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="partner-accounts-title">Partners → accounts</h2>
+            <p class="portal-panel-desc" id="partner-accounts-summary">—</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th scope="col">Partner</th>
+                <th scope="col">Phase</th>
+                <th scope="col">Handshake</th>
+                <th scope="col">Telegram</th>
+                <th scope="col">Accounts</th>
+                <th scope="col">Outs</th>
+                <th scope="col">Dossier</th>
+              </tr>
+            </thead>
+            <tbody id="partner-accounts-body"><tr><td colspan="7" class="dim">—</td></tr></tbody>
+          </table>
+        </div>
+        <div class="table-wrap" style="margin-top:16px">
+          <table class="portal-table">
+            <thead>
+              <tr>
+                <th scope="col">Partner</th>
+                <th scope="col">Out</th>
+                <th scope="col">Book</th>
+                <th scope="col">Status</th>
+                <th scope="col">Login label</th>
+                <th scope="col">Account</th>
+              </tr>
+            </thead>
+            <tbody id="partner-outs-body"><tr><td colspan="6" class="dim">—</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="portal-panel" aria-labelledby="owners-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="owners-title">Env key owners (package-touched)</h2>
+            <p class="portal-panel-desc" id="owners-summary">—</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table">
+            <thead><tr><th scope="col">Key</th><th scope="col">×count</th><th scope="col">Packages</th><th scope="col">Planes</th><th scope="col">Root tpl</th></tr></thead>
+            <tbody id="owners-body"><tr><td colspan="5" class="dim">—</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="portal-panel" id="vault-map-panel" aria-labelledby="vault-map-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="vault-map-title">Vault map (display chrome)</h2>
+            <p class="portal-panel-desc" id="vault-map-summary">—</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="portal-table">
+            <thead><tr><th scope="col"></th><th scope="col">Key</th><th scope="col">Label</th><th scope="col">Vault / item</th><th scope="col">Template</th><th scope="col">Runtime</th></tr></thead>
+            <tbody id="vault-map-body"><tr><td colspan="6" class="dim">—</td></tr></tbody>
+          </table>
+        </div>
+      </section>
 
       <div class="generated" id="generated"></div>
     </div>
@@ -136,8 +329,71 @@
   <script type="module">
     const $ = id => document.getElementById(id);
 
+    /** @type {any[]} */
+    let envTable = [];
+    /** @type {any} */
+    let envSummary = {};
+    /** @type {string[]} */
+    let requiredMissingKeys = [];
+    let vaultEntryCount = 0;
+    let query = '';
+    let severityFilter = '';
+    let groupFilter = '';
+    let statusFilter = '';
+
     function escapeHtml(s) {
-      return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function parseHash(hash = location.hash) {
+      const params = new URLSearchParams(String(hash).replace(/^#/, ''));
+      return {
+        q: params.get('q') || '',
+        severity: params.get('severity') || '',
+        group: params.get('group') || '',
+        status: params.get('status') || '',
+      };
+    }
+
+    function writeHash() {
+      const params = new URLSearchParams();
+      if (query) params.set('q', query);
+      if (severityFilter) params.set('severity', severityFilter);
+      if (groupFilter) params.set('group', groupFilter);
+      if (statusFilter) params.set('status', statusFilter);
+      const fragment = params.toString();
+      history.replaceState(null, '', `${location.pathname}${location.search}${fragment ? `#${fragment}` : ''}`);
+    }
+
+    function applyHash(hash = location.hash) {
+      const h = parseHash(hash);
+      query = h.q;
+      severityFilter = h.severity;
+      groupFilter = h.group;
+      statusFilter = h.status;
+      syncControls();
+      scrollToPanelFromHash(hash);
+    }
+
+    /** Bare panel ids (#partner-env-panel) — not filter params (#q=&severity=). */
+    function scrollToPanelFromHash(hash = location.hash) {
+      const raw = String(hash).replace(/^#/, '');
+      if (!raw || raw.includes('=')) return;
+      const id = raw.split('&')[0];
+      if (!/^[a-z][a-z0-9-]*$/i.test(id)) return;
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function syncControls() {
+      const qEl = $('env-q');
+      const sev = $('env-severity');
+      const grp = $('env-group');
+      const clear = $('env-clear');
+      if (qEl && qEl.value !== query) qEl.value = query;
+      if (sev) sev.value = severityFilter;
+      if (grp) grp.value = groupFilter;
+      if (clear) clear.disabled = !(query || severityFilter || groupFilter || statusFilter);
     }
 
     function statusClass(st) {
@@ -147,53 +403,173 @@
       return 'st-ok';
     }
 
-    function renderEnvTable(env) {
-      const summary = env.summary || {};
-      const table = env.table || [];
-      const miss = env.requiredMissingKeys || [];
-      $('env-summary').textContent = table.length
-        ? `${summary.ok ?? '—'}/${summary.total ?? table.length} ok · missing ${summary.missing ?? 0} · required gaps ${summary.requiredMissing ?? 0}` +
+    function rowTone(st) {
+      const cls = statusClass(st);
+      if (cls === 'st-bad') return 'row-bad';
+      if (cls === 'st-warn') return 'row-warn';
+      return 'row-ok';
+    }
+
+    function gateTone() {
+      const req = envSummary.requiredMissing ?? 0;
+      const miss = envSummary.missing ?? 0;
+      if (req > 0) return 'bad';
+      if (miss > 0) return 'warn';
+      return 'ok';
+    }
+
+    function renderHero(checkedAt) {
+      const gate = $('env-gate');
+      const meta = $('env-meta');
+      const tone = gateTone();
+      if (gate) {
+        gate.className = `portal-gate ${tone}`;
+        gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${tone}`;
+      }
+      if (meta) {
+        meta.textContent = checkedAt
+          ? `checked ${new Date(checkedAt).toLocaleString()} · ${envSummary.total ?? envTable.length} keys`
+          : `${envSummary.total ?? envTable.length} keys`;
+      }
+    }
+
+    function fillSelect(el, values, allLabel) {
+      if (!el) return;
+      const cur = el.value;
+      const opts = [`<option value="">${escapeHtml(allLabel)}</option>`].concat(
+        [...values].sort().map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`)
+      );
+      el.innerHTML = opts.join('');
+      if ([...values].includes(cur)) el.value = cur;
+    }
+
+    function renderStats() {
+      const stats = $('env-stats');
+      if (!stats) return;
+      const ok = envSummary.ok ?? 0;
+      const miss = envSummary.missing ?? 0;
+      const req = envSummary.requiredMissing ?? 0;
+      const items = [
+        { label: 'Ok', value: String(ok), hint: 'filter ok status', cls: 'ok', filter: 'status:ok' },
+        { label: 'Missing', value: String(miss), hint: 'filter missing', cls: miss ? 'warn' : 'muted', filter: 'status:missing' },
+        { label: 'Required gaps', value: String(req), hint: 'required severity', cls: req ? 'bad' : 'ok', filter: 'severity:required' },
+        { label: 'Vault entries', value: String(vaultEntryCount), hint: 'scroll to vault map', cls: 'muted', filter: 'scroll:vault' },
+      ];
+      stats.innerHTML = items.map(item => {
+        const active =
+          item.filter === 'status:ok' ? statusFilter === 'ok' :
+          item.filter === 'status:missing' ? statusFilter === 'missing' :
+          item.filter === 'severity:required' ? severityFilter === 'required' : false;
+        const dataAttr = item.filter ? ` data-stat-filter="${escapeHtml(item.filter)}"` : '';
+        return (
+          `<button type="button" class="portal-stat ${item.cls}${active ? ' active' : ''}"${dataAttr}>` +
+          `<span class="k">${escapeHtml(item.label)}</span>` +
+          `<span class="v">${escapeHtml(item.value)}</span>` +
+          `<span class="hint">${escapeHtml(item.hint)}</span>` +
+          `</button>`
+        );
+      }).join('');
+
+      for (const btn of stats.querySelectorAll('[data-stat-filter]')) {
+        btn.addEventListener('click', () => {
+          const kind = btn.getAttribute('data-stat-filter');
+          if (kind === 'status:ok') {
+            statusFilter = statusFilter === 'ok' ? '' : 'ok';
+          } else if (kind === 'status:missing') {
+            statusFilter = statusFilter === 'missing' ? '' : 'missing';
+          } else if (kind === 'severity:required') {
+            severityFilter = severityFilter === 'required' ? '' : 'required';
+          } else if (kind === 'scroll:vault') {
+            $('vault-map-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return;
+          }
+          syncControls();
+          writeHash();
+          renderStats();
+          renderEnvTableBody();
+        });
+      }
+    }
+
+    function filteredEnvRows() {
+      const q = query.toLowerCase().trim();
+      return envTable.filter(row => {
+        const st = String(row.Status || '');
+        const sev = String(row.Severity || '');
+        const grp = String(row.Group || '');
+        if (statusFilter === 'ok' && statusClass(st) !== 'st-ok') return false;
+        if (statusFilter === 'missing' && st !== 'missing') return false;
+        if (severityFilter && sev !== severityFilter) return false;
+        if (groupFilter && grp !== groupFilter) return false;
+        if (!q) return true;
+        return `${row.Key} ${grp}`.toLowerCase().includes(q);
+      });
+    }
+
+    function renderEnvTableBody() {
+      const tbody = $('env-body');
+      const count = $('env-count');
+      const miss = requiredMissingKeys;
+      const summaryLine = envTable.length
+        ? `${envSummary.ok ?? '—'}/${envSummary.total ?? envTable.length} ok · missing ${envSummary.missing ?? 0} · required gaps ${envSummary.requiredMissing ?? 0}` +
           (miss.length ? ` · need: ${miss.join(', ')}` : '')
         : 'No env checklist in payload';
-      const tbody = $('env-body');
-      if (!table.length) {
-        tbody.innerHTML = '<tr><td colspan="5">No env data. Run <code>bun run env:check</code> locally.</td></tr>';
+      $('env-summary').textContent = summaryLine;
+
+      if (!envTable.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="dim">No env data. Run <code>bun run env:check</code> locally.</td></tr>';
+        if (count) count.textContent = '0 shown';
         return;
       }
-      tbody.innerHTML = table.map(row => {
-        const st = String(row.Status || '');
-        const cls = statusClass(st);
-        return `<tr>
-          <td class="env-key">${escapeHtml(row.Key)}</td>
-          <td>${escapeHtml(row.Group)}</td>
-          <td>${escapeHtml(row.Severity)}</td>
-          <td class="${cls}">${escapeHtml(st)}</td>
-          <td>${escapeHtml(row.Detail || '')}</td>
-        </tr>`;
-      }).join('');
+
+      const rows = filteredEnvRows();
+      if (count) count.textContent = `${rows.length} shown`;
+
+      tbody.innerHTML = rows.length
+        ? rows.map(row => {
+            const st = String(row.Status || '');
+            const cls = statusClass(st);
+            const rowCls = rowTone(st);
+            return `<tr class="${rowCls}">
+              <td class="mono">${escapeHtml(row.Key)}</td>
+              <td>${escapeHtml(row.Group)}</td>
+              <td>${escapeHtml(row.Severity)}</td>
+              <td class="${cls}">${escapeHtml(st)}</td>
+              <td>${escapeHtml(row.Detail || '')}</td>
+            </tr>`;
+          }).join('')
+        : '<tr><td colspan="5" class="dim">No rows match filters.</td></tr>';
+    }
+
+    function renderEnvTable(env) {
+      envSummary = env.summary || {};
+      envTable = env.table || [];
+      requiredMissingKeys = env.requiredMissingKeys || [];
+      fillSelect($('env-severity'), new Set(envTable.map(r => r.Severity).filter(Boolean)), 'all severity');
+      fillSelect($('env-group'), new Set(envTable.map(r => r.Group).filter(Boolean)), 'all groups');
+      renderStats();
+      renderEnvTableBody();
     }
 
     function renderContentType(data) {
       const rows = data?.rows || data?.contentType?.rows || [];
-      const ctSection = $('ct-title');
-      const ctTable = $('content-type-table');
+      const ctPanel = $('ct-panel');
       if (!rows.length) {
-        ctSection.classList.add('hidden');
-        ctTable.classList.add('hidden');
+        ctPanel?.classList.add('hidden');
         return;
       }
-      ctSection.classList.remove('hidden');
-      ctTable.classList.remove('hidden');
+      ctPanel?.classList.remove('hidden');
       const pass = rows.filter(r => r.status === 'ok' || r.severity === 'pass').length;
       $('ct-summary').textContent = `${pass}/${rows.length} scenarios match expected wire behavior`;
       $('ct-body').innerHTML = rows.map(r => {
         const ok = r.status === 'ok' || r.severity === 'pass';
-        return `<tr>
+        const rowCls = ok ? 'row-ok' : 'row-warn';
+        return `<tr class="${rowCls}">
           <td class="${ok ? 'st-ok' : 'st-warn'}">${ok ? '✓' : '△'}</td>
-          <td class="env-key">${escapeHtml(r.id || r.scenario || r.note)}</td>
-          <td>${escapeHtml(r.defaultValue ?? r.default ?? '—')}</td>
-          <td>${escapeHtml(r.ourValue ?? r.our ?? '—')}</td>
-          <td>${escapeHtml(r.expected ?? '—')}</td>
+          <td class="mono">${escapeHtml(r.id || r.scenario || r.note)}</td>
+          <td class="mono">${escapeHtml(r.defaultValue ?? r.default ?? '—')}</td>
+          <td class="mono">${escapeHtml(r.ourValue ?? r.our ?? '—')}</td>
+          <td class="mono">${escapeHtml(r.expected ?? '—')}</td>
         </tr>`;
       }).join('');
     }
@@ -201,6 +577,7 @@
     function showDashboard(checkedAt) {
       $('loading').classList.add('hidden');
       $('dashboard').classList.remove('hidden');
+      renderHero(checkedAt);
       $('generated').textContent = checkedAt
         ? 'Last checked: ' + new Date(checkedAt).toLocaleString()
         : '';
@@ -236,8 +613,9 @@
         if (!res.ok) throw new Error(String(res.status));
         const map = await res.json();
         const entries = map.entries || [];
+        vaultEntryCount = entries.length;
         const s = map.summary || {};
-        $('vault-map-summary').textContent = entries.length
+        $('vault-map-summary').innerHTML = entries.length
           ? `${s.entryCount ?? entries.length} entries · passRef=${s.withPassRef ?? '—'} · color=${s.withColor ?? '—'} · icon=${s.withIcon ?? '—'} · runtime set=${s.runtimePresent ?? '—'} · <a href="/registry/vault-map.json">JSON</a>`
           : 'Empty vault map';
         $('vault-map-body').innerHTML = entries.length
@@ -249,41 +627,51 @@
                 ? `<img src="/${escapeHtml(String(e.icon).replace(/^public\//, ''))}" alt="" width="16" height="16" style="vertical-align:middle;margin-right:4px;opacity:.9" />`
                 : (e.glyph ? `<span style="margin-right:4px">${escapeHtml(e.glyph)}</span>` : '');
               const path = [e.vault, e.item].filter(Boolean).join(' / ') || '—';
-              return `<tr>
+              const tplCls = e.inTemplate ? 'st-ok' : 'st-warn';
+              const rtCls = e.runtimePresent ? 'st-ok' : 'st-bad';
+              const rowCls = e.runtimePresent ? (e.inTemplate ? 'row-ok' : 'row-warn') : 'row-bad';
+              return `<tr class="${rowCls}">
                 <td>${icon}${swatch}</td>
-                <td class="env-key">${escapeHtml(e.envKey)}</td>
+                <td class="mono">${escapeHtml(e.envKey)}</td>
                 <td>${escapeHtml(e.label || e.envKey)}</td>
-                <td style="font-size:11px;color:var(--text-dim)">${escapeHtml(path)}</td>
-                <td class="${e.inTemplate ? 'st-ok' : 'st-warn'}">${e.inTemplate ? 'yes' : 'no'}</td>
-                <td class="${e.runtimePresent ? 'st-ok' : 'st-bad'}">${e.runtimePresent ? 'set' : 'missing'}</td>
+                <td class="dim" style="font-size:11px">${escapeHtml(path)}</td>
+                <td class="${tplCls}">${e.inTemplate ? 'yes' : 'no'}</td>
+                <td class="${rtCls}">${e.runtimePresent ? 'set' : 'missing'}</td>
               </tr>`;
             }).join('')
-          : '<tr><td colspan="6">Run <code>bun run env:inventory:bake</code></td></tr>';
+          : '<tr><td colspan="6" class="dim">Run <code>bun run env:inventory:bake</code></td></tr>';
       } catch {
-        // Fall back to packagesPlane.displayMap from env-inventory
         try {
           const res = await fetch('/registry/env-inventory.json', { cache: 'no-store' });
           if (!res.ok) throw new Error(String(res.status));
           const inv = await res.json();
           const entries = inv.packagesPlane?.displayMap || [];
+          vaultEntryCount = entries.length;
           $('vault-map-summary').textContent = entries.length
             ? `${entries.length} from packagesPlane.displayMap · bake vault-map.json for dedicated artifact`
             : 'No vault-map bake — run bun run env:inventory:bake';
           $('vault-map-body').innerHTML = entries.length
-            ? entries.map(e => `<tr>
-                <td>${e.color ? `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${escapeHtml(e.color)}"></span>` : ''}</td>
-                <td class="env-key">${escapeHtml(e.envKey)}</td>
-                <td>${escapeHtml(e.label || e.envKey)}</td>
-                <td style="font-size:11px">${escapeHtml([e.vault, e.item].filter(Boolean).join(' / ') || '—')}</td>
-                <td class="${e.inTemplate ? 'st-ok' : 'st-warn'}">${e.inTemplate ? 'yes' : 'no'}</td>
-                <td class="${e.runtimePresent ? 'st-ok' : 'st-bad'}">${e.runtimePresent ? 'set' : 'missing'}</td>
-              </tr>`).join('')
-            : '<tr><td colspan="6">—</td></tr>';
+            ? entries.map(e => {
+                const tplCls = e.inTemplate ? 'st-ok' : 'st-warn';
+                const rtCls = e.runtimePresent ? 'st-ok' : 'st-bad';
+                const rowCls = e.runtimePresent ? (e.inTemplate ? 'row-ok' : 'row-warn') : 'row-bad';
+                return `<tr class="${rowCls}">
+                  <td>${e.color ? `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${escapeHtml(e.color)}"></span>` : ''}</td>
+                  <td class="mono">${escapeHtml(e.envKey)}</td>
+                  <td>${escapeHtml(e.label || e.envKey)}</td>
+                  <td class="dim" style="font-size:11px">${escapeHtml([e.vault, e.item].filter(Boolean).join(' / ') || '—')}</td>
+                  <td class="${tplCls}">${e.inTemplate ? 'yes' : 'no'}</td>
+                  <td class="${rtCls}">${e.runtimePresent ? 'set' : 'missing'}</td>
+                </tr>`;
+              }).join('')
+            : '<tr><td colspan="6" class="dim">—</td></tr>';
         } catch {
+          vaultEntryCount = 0;
           $('vault-map-summary').textContent = 'No /registry/vault-map.json';
-          $('vault-map-body').innerHTML = '<tr><td colspan="6">Bake missing</td></tr>';
+          $('vault-map-body').innerHTML = '<tr><td colspan="6" class="dim">Bake missing</td></tr>';
         }
       }
+      renderStats();
     }
 
     async function loadPackagesPlane() {
@@ -298,31 +686,200 @@
           ? `${plane.summary?.packagesWithEnv ?? rows.length} pkg(s) · ${plane.summary?.envKeyCount ?? '—'} keys · missingTemplate=${plane.summary?.missingTemplate ?? 0} · gaps=${(inv.vault?.actionableVaultGaps || []).length} · display=${inv.vault?.displayMapped ?? plane.summary?.displayMapped ?? '—'} · owners=${sum.ownerCount ?? '—'} · multiPlane=${sum.multiPlaneKeys ?? '—'} · needsInject=${sum.rootRuntimeNeedsInject ?? inv.runtime?.root?.missingNeedsInject?.length ?? '—'} · coveredByDefault=${sum.rootCoveredByDefault ?? inv.runtime?.root?.coveredByTemplateDefault?.length ?? '—'} · defaultsIssues=${inv.defaultsIssues?.total ?? sum.defaultsIssueCount ?? 0}`
           : 'No packages Bun.env hits in bake';
         $('pkg-body').innerHTML = rows.length
-          ? rows.map(r => `<tr>
-              <td class="env-key">${escapeHtml(r.package)}</td>
-              <td>${escapeHtml((r.envKeys || []).join(', '))}</td>
-              <td class="${(r.missingTemplateKeys || []).length ? 'st-warn' : 'st-ok'}">${escapeHtml((r.missingTemplateKeys || []).join(', ') || '—')}</td>
-            </tr>`).join('')
-          : '<tr><td colspan="3">Run <code>bun run env:inventory:bake</code> or <code>bun run audit:packages:env</code></td></tr>';
+          ? rows.map(r => {
+              const miss = (r.missingTemplateKeys || []).length;
+              const rowCls = miss ? 'row-warn' : 'row-ok';
+              return `<tr class="${rowCls}">
+                <td class="mono">${escapeHtml(r.package)}</td>
+                <td class="mono">${escapeHtml((r.envKeys || []).join(', '))}</td>
+                <td class="${miss ? 'st-warn' : 'st-ok'}">${escapeHtml((r.missingTemplateKeys || []).join(', ') || '—')}</td>
+              </tr>`;
+            }).join('')
+          : '<tr><td colspan="3" class="dim">Run <code>bun run env:inventory:bake</code> or <code>bun run audit:packages:env</code></td></tr>';
         const owners = (inv.owners || []).filter(o => (o.packages || []).length).slice(0, 24);
         $('owners-summary').textContent = owners.length
           ? `${owners.length} package-touched key(s) · schema ${inv.schemaVersion ?? '?'}`
           : 'No package-touched owners in bake';
         $('owners-body').innerHTML = owners.length
-          ? owners.map(o => `<tr>
-              <td class="env-key">${escapeHtml(o.envKey)}</td>
-              <td>${escapeHtml(String(o.count))}</td>
-              <td>${escapeHtml((o.packages || []).join(', '))}</td>
-              <td>${escapeHtml((o.planes || []).join(', '))}</td>
-              <td class="${o.inRootTemplate ? 'st-ok' : 'st-warn'}">${o.inRootTemplate ? 'yes' : 'no'}</td>
-            </tr>`).join('')
-          : '<tr><td colspan="5">—</td></tr>';
+          ? owners.map(o => {
+              const rowCls = o.inRootTemplate ? 'row-ok' : 'row-warn';
+              return `<tr class="${rowCls}">
+                <td class="mono">${escapeHtml(o.envKey)}</td>
+                <td>${escapeHtml(String(o.count))}</td>
+                <td class="mono">${escapeHtml((o.packages || []).join(', '))}</td>
+                <td>${escapeHtml((o.planes || []).join(', '))}</td>
+                <td class="${o.inRootTemplate ? 'st-ok' : 'st-warn'}">${o.inRootTemplate ? 'yes' : 'no'}</td>
+              </tr>`;
+            }).join('')
+          : '<tr><td colspan="5" class="dim">—</td></tr>';
+        renderPartnersAccountsPlane(inv.partnersAccountsPlane, inv.schemaVersion);
       } catch {
         $('pkg-summary').textContent = 'No /registry/env-inventory.json — run bun run env:inventory:bake';
         $('pkg-body').innerHTML =
-          '<tr><td colspan="3">Bake missing. <a href="/portal/packages/">Packages board</a></td></tr>';
+          '<tr><td colspan="3" class="dim">Bake missing. <a href="/portal/packages/">Packages board</a></td></tr>';
         $('owners-summary').textContent = 'Bake missing';
-        $('owners-body').innerHTML = '<tr><td colspan="5">—</td></tr>';
+        $('owners-body').innerHTML = '<tr><td colspan="5" class="dim">—</td></tr>';
+        renderPartnersAccountsPlane(null, null);
+      }
+    }
+
+    function renderPartnersAccountsPlane(plane, schemaVersion) {
+      if (!plane || !Array.isArray(plane.sharedEnvBindings)) {
+        $('partner-env-summary').textContent =
+          'No partnersAccountsPlane — re-bake with bun run env:inventory:bake (schema v5+)';
+        $('partner-env-body').innerHTML =
+          '<tr><td colspan="6" class="dim">Bake missing partners join</td></tr>';
+        $('partner-accounts-summary').textContent = '—';
+        $('partner-accounts-body').innerHTML =
+          '<tr><td colspan="7" class="dim">—</td></tr>';
+        $('partner-outs-body').innerHTML =
+          '<tr><td colspan="6" class="dim">—</td></tr>';
+        return;
+      }
+      const s = plane.summary || {};
+      const bindings = plane.sharedEnvBindings || [];
+      $('partner-env-summary').innerHTML =
+        `${bindings.length} shared key(s) · missing runtime=${s.sharedEnvMissing ?? 0} · schema ${schemaVersion ?? '?'} · ` +
+        `<a href="/registry/env-inventory.json">JSON</a> · <a href="/registry/partners-ops.json">partners-ops</a>`;
+      $('partner-env-body').innerHTML = bindings.length
+        ? bindings
+            .map(b => {
+              const rowCls = b.runtimePresent ? 'row-ok' : 'row-warn';
+              return `<tr class="${rowCls}">
+                <td class="mono">${escapeHtml(b.envKey)}</td>
+                <td>${escapeHtml(b.role)}</td>
+                <td class="mono">${escapeHtml((b.consumers || []).join(', '))}</td>
+                <td class="${b.inVaultMap ? 'st-ok' : 'st-warn'}">${b.inVaultMap ? 'yes' : 'no'}</td>
+                <td class="${b.inTemplate ? 'st-ok' : 'st-warn'}">${b.inTemplate ? 'yes' : 'no'}</td>
+                <td class="${b.runtimePresent ? 'st-ok' : 'st-bad'}">${b.runtimePresent ? 'set' : 'missing'}</td>
+              </tr>`;
+            })
+            .join('')
+        : '<tr><td colspan="6" class="dim">—</td></tr>';
+
+      const partners = plane.partners || [];
+      $('partner-accounts-summary').textContent = partners.length
+        ? `${s.partnerCount ?? partners.length} partner(s) · accounts ${s.accountsReady ?? 0}/${s.accountsTotal ?? 0} ready · outs ${s.outsReady ?? 0}/${s.outsTotal ?? 0} · handshake gaps=${s.partnersMissingHandshake ?? 0} · telegram gaps=${s.partnersMissingTelegram ?? 0}`
+        : 'No partners in partners-ops bake';
+      $('partner-accounts-body').innerHTML = partners.length
+        ? partners
+            .map(p => {
+              const hsOk = !!p.handshakeOk;
+              const tgOk = !!p.telegramChatLinked;
+              const acct = `${p.accountsReady ?? 0}/${p.accountsTotal ?? 0}`;
+              const outs = `${p.outsReady ?? 0}/${p.outsTotal ?? 0}`;
+              const rowCls = hsOk && tgOk ? 'row-ok' : 'row-warn';
+              return `<tr class="${rowCls}">
+                <td class="mono"><a href="${escapeHtml(p.partnersHref || '/portal/partners/')}">${escapeHtml(p.partnerCode)}</a> · ${escapeHtml(p.callSign || '')}</td>
+                <td>${escapeHtml(p.phase || '—')}</td>
+                <td class="${hsOk ? 'st-ok' : 'st-bad'}">${hsOk ? 'ok' : 'gap'}</td>
+                <td class="${tgOk ? 'st-ok' : 'st-warn'}">${tgOk ? 'linked' : 'missing'}</td>
+                <td class="mono">${escapeHtml(acct)}</td>
+                <td class="mono">${escapeHtml(outs)}</td>
+                <td><a href="${escapeHtml(p.accountHref || '#')}">dossier</a></td>
+              </tr>`;
+            })
+            .join('')
+        : '<tr><td colspan="7" class="dim">Run <code>bun run partners:build</code> then <code>bun run env:inventory:bake</code></td></tr>';
+
+      const outRows = partners.flatMap(p =>
+        (p.outs || []).map(o => ({ partnerCode: p.partnerCode, ...o }))
+      );
+      $('partner-outs-body').innerHTML = outRows.length
+        ? outRows
+            .map(o => {
+              const ready = o.status === 'ready';
+              return `<tr class="${ready ? 'row-ok' : 'row-warn'}">
+                <td class="mono">${escapeHtml(o.partnerCode)}</td>
+                <td class="mono">${escapeHtml(o.outId)}</td>
+                <td>${escapeHtml(o.bookName || o.bookSlug || '—')}</td>
+                <td class="${ready ? 'st-ok' : 'st-warn'}">${escapeHtml(o.status || '—')}</td>
+                <td class="mono">${escapeHtml(o.usernameLabel || '—')}</td>
+                <td><a href="${escapeHtml(o.href || '#')}">account</a></td>
+              </tr>`;
+            })
+            .join('')
+        : '<tr><td colspan="6" class="dim">No outs in partners-ops</td></tr>';
+    }
+
+    function showLoadError(msg) {
+      $('loading').classList.add('hidden');
+      const gate = $('env-gate');
+      if (gate) {
+        gate.className = 'portal-gate bad';
+        gate.innerHTML = '<span class="dot" aria-hidden="true"></span>fail';
+      }
+      const meta = $('env-meta');
+      if (meta) meta.textContent = 'load failed';
+      const err = $('env-error');
+      if (err) {
+        err.hidden = false;
+        err.innerHTML = `<div class="portal-error" role="alert">
+          <h3>Failed to load environment</h3>
+          <p><code>${escapeHtml(msg)}</code></p>
+          <div class="portal-error-actions">
+            <button type="button" class="portal-clear" id="env-retry">Retry</button>
+            <a class="portal-clear" href="/registry/env-inventory.json" style="display:inline-flex;align-items:center;text-decoration:none">env-inventory.json</a>
+          </div>
+        </div>`;
+        $('env-retry')?.addEventListener('click', () => {
+          err.hidden = true;
+          err.innerHTML = '';
+          $('loading')?.classList.remove('hidden');
+          void load();
+        });
+      }
+    }
+
+    async function loadVaultHealth() {
+      try {
+        const res = await fetch('/registry/vault-health.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(String(res.status));
+        const vh = await res.json();
+        const sum = vh.summary || {};
+        const healthy = sum.healthy === true;
+        const when = vh.generatedAt ? new Date(vh.generatedAt).toLocaleString() : '—';
+        $('vault-health-summary').innerHTML = healthy
+          ? `healthy · refs ok=${sum.referencedOk ?? '—'} · missing=${sum.referencedMissing ?? 0} · trashed=${sum.referencedTrashed ?? 0} · baked ${escapeHtml(when)} · <a href="/portal/vault/">board</a> · <a href="/registry/vault-health.json">JSON</a>`
+          : `UNHEALTHY · refs ok=${sum.referencedOk ?? '—'} · missing=${sum.referencedMissing ?? 0} · trashed=${sum.referencedTrashed ?? 0} · baked ${escapeHtml(when)} · <a href="/portal/vault/">board</a> · <a href="/registry/vault-health.json">JSON</a>`;
+        const vaults = vh.vaults || [];
+        $('vault-health-vaults').innerHTML = vaults.length
+          ? vaults
+              .map(v => {
+                const bad = (v.trashed || 0) > 0;
+                return `<tr class="${bad ? 'row-warn' : 'row-ok'}">
+                  <td class="mono">${escapeHtml(v.name)}</td>
+                  <td class="st-ok">${escapeHtml(String(v.active ?? 0))}</td>
+                  <td class="${bad ? 'st-warn' : 'st-ok'}">${escapeHtml(String(v.trashed ?? 0))}</td>
+                </tr>`;
+              })
+              .join('')
+          : '<tr><td colspan="3" class="dim">No vaults in bake — bun run vault:health:bake</td></tr>';
+        const refs = vh.referenced || [];
+        const interesting = refs.filter(r => r.status !== 'ok').concat(refs.filter(r => r.status === 'ok').slice(0, 12));
+        const show = interesting.length ? interesting : refs.slice(0, 17);
+        $('vault-health-refs').innerHTML = show.length
+          ? show
+              .map(r => {
+                const ok = r.status === 'ok';
+                const bad = r.status === 'missing' || r.status === 'trashed';
+                const cls = ok ? 'st-ok' : bad ? 'st-bad' : 'st-warn';
+                const rowCls = ok ? 'row-ok' : 'row-warn';
+                return `<tr class="${rowCls}">
+                  <td class="mono">${escapeHtml(r.envKey)}</td>
+                  <td class="mono">${escapeHtml([r.vault, r.item].filter(Boolean).join(' / '))}</td>
+                  <td class="${cls}">${escapeHtml(r.status)}</td>
+                </tr>`;
+              })
+              .join('')
+          : '<tr><td colspan="3" class="dim">—</td></tr>';
+      } catch {
+        $('vault-health-summary').innerHTML =
+          'No /registry/vault-health.json — open <a href="/portal/vault/">vault board</a> or run <code>bun run vault:health:bake</code> (not the raw JSON <pre> dump)';
+        $('vault-health-vaults').innerHTML =
+          '<tr><td colspan="3" class="dim">Bake missing</td></tr>';
+        $('vault-health-refs').innerHTML =
+          '<tr><td colspan="3" class="dim">Bake missing</td></tr>';
       }
     }
 
@@ -335,10 +892,50 @@
         if (ct) renderContentType(ct);
         await loadPackagesPlane();
         await loadVaultMap();
+        await loadVaultHealth();
       } catch (e) {
-        $('loading').innerHTML = '<p style="color:var(--red)">⚠️ Failed to load: ' + escapeHtml(e.message) + '</p>';
+        showLoadError(e.message);
       }
     }
+
+    $('env-q')?.addEventListener('input', () => {
+      query = $('env-q').value;
+      syncControls();
+      writeHash();
+      renderEnvTableBody();
+    });
+
+    $('env-severity')?.addEventListener('change', () => {
+      severityFilter = $('env-severity').value;
+      syncControls();
+      writeHash();
+      renderStats();
+      renderEnvTableBody();
+    });
+
+    $('env-group')?.addEventListener('change', () => {
+      groupFilter = $('env-group').value;
+      syncControls();
+      writeHash();
+      renderEnvTableBody();
+    });
+
+    $('env-clear')?.addEventListener('click', () => {
+      query = '';
+      severityFilter = '';
+      groupFilter = '';
+      statusFilter = '';
+      syncControls();
+      writeHash();
+      renderStats();
+      renderEnvTableBody();
+    });
+
+    window.addEventListener('hashchange', () => {
+      applyHash();
+      renderStats();
+      renderEnvTableBody();
+    });
 
     document.addEventListener('portal:data', e => {
       const { status, data } = e.detail || {};
@@ -347,6 +944,7 @@
       }
     });
 
+    applyHash();
     load();
   </script>
   <script type="module" src="/portal/components/sidebar.js"></script>
@@ -358,6 +956,8 @@
       <a href="/portal/ops/">Ops</a> ·
       <a href="/portal/toc/">TOC</a> ·
       <a href="/portal/partners/">Partners</a> ·
+      <a href="/portal/tennis/">Tennis</a> ·
+      <a href="/portal/bookmakers/">Bookmakers</a> ·
       <a href="/portal/packages/">Packages</a> ·
       <a href="/portal/brands/">Brands</a> ·
       <a href="/portal/glossary/">Glossary</a> ·
@@ -369,6 +969,7 @@
       <a href="/portal/dod/">DOD</a> ·
       <a href="/portal/env/">Env</a> ·
       <a href="/portal/vault/">Vault</a> ·
+      <a href="https://wiki.factory-wager.com/wiki-index.html" target="_blank" rel="noopener noreferrer">Wiki</a> ·
       <a href="/registry/monorepo-health.json">Monorepo health</a> ·
       <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
     </p>

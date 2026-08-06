@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
+// @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
 // @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML
 // @see https://bun.com/docs/runtime/toml — Bun.TOML.stringify
 // @see https://bun.com/reference/bun/argv — Bun.argv
@@ -42,6 +44,7 @@ export const PROOF_MANIFEST_PATH = 'tools/bun-api-coverage-proof.json';
 export type ApiSymbolProof = {
   inTypes: boolean;
   knownTypeGap: boolean;
+  knownRuntimeGap: boolean;
   inDocs: boolean;
   docUrl: string | null;
   runtime: string;
@@ -79,6 +82,7 @@ export type VerifyManifest = {
     apisVerified: number;
     typesVerified: number;
     knownTypeGaps: number;
+    knownRuntimeGaps: number;
     opsDemos: number;
     apiDemos: number;
   };
@@ -94,6 +98,13 @@ const KNOWN_BUN_TYPES_GAPS: Readonly<Record<string, { version: string; reason: s
   'Bun.TOML.stringify': {
     version: '1.4.0-canary.20260519T150915',
     reason: 'runtime 1.4 API is not declared by the pinned bun-types canary package',
+  },
+};
+
+const KNOWN_RUNTIME_GAPS: Readonly<Record<string, { minimum: string; reason: string }>> = {
+  'Bun.TOML.stringify': {
+    minimum: '1.4.0',
+    reason: 'Pages-safe Bun 1.3.14 uses the governed lib/toml-stringify fallback',
   },
 };
 
@@ -148,6 +159,7 @@ export async function verifyBunApis(opts?: {
   let apisVerified = 0;
   let typesVerified = 0;
   let knownTypeGaps = 0;
+  let knownRuntimeGaps = 0;
   const bunTypesPinned = bunTypesVersionSourceUrl(bunTypes.version);
   for (const api of allApis) {
     const inTypes = typesContains(dts, api);
@@ -156,7 +168,12 @@ export async function verifyBunApis(opts?: {
     const docUrl = findDocUrl(api);
     const runtime = await probeRuntimeApi(api);
     const runtimeOk = runtime !== 'undefined';
-    const ok = (inTypes || knownTypeGap) && docUrl != null && runtimeOk;
+    const runtimeGap = KNOWN_RUNTIME_GAPS[api];
+    const knownRuntimeGap =
+      !runtimeOk &&
+      runtimeGap !== undefined &&
+      !Bun.semver.satisfies(Bun.version, `>=${runtimeGap.minimum}`);
+    const ok = (inTypes || knownTypeGap) && docUrl != null && (runtimeOk || knownRuntimeGap);
     const sha256 = proofHash({
       signature: `${api}|types:${inTypes}|doc:${docUrl}|runtime:${runtime}`,
       bunTypesSource: bunTypesPinned,
@@ -164,6 +181,7 @@ export async function verifyBunApis(opts?: {
     apis[api] = {
       inTypes,
       knownTypeGap,
+      knownRuntimeGap,
       inDocs: docUrl != null,
       docUrl,
       runtime,
@@ -172,6 +190,7 @@ export async function verifyBunApis(opts?: {
     };
     if (inTypes) typesVerified++;
     if (knownTypeGap) knownTypeGaps++;
+    if (knownRuntimeGap) knownRuntimeGaps++;
     if (ok) apisVerified++;
   }
 
@@ -225,6 +244,7 @@ export async function verifyBunApis(opts?: {
       apisVerified,
       typesVerified,
       knownTypeGaps,
+      knownRuntimeGaps,
       opsDemos: demoProofs.filter(d => d.kind === 'ops').length,
       apiDemos: demoProofs.filter(d => d.kind === 'api').length,
     },
@@ -246,7 +266,7 @@ function printReport(manifest: VerifyManifest, write: boolean): void {
     `Demos: ${summary.demosPassed}/${summary.demos} passed (${summary.apiDemos} api + ${summary.opsDemos} ops)`
   );
   console.log(
-    `APIs: ${summary.apisVerified}/${summary.apis} validated (types+docs+runtime) · declarations: ${
+    `APIs: ${summary.apisVerified}/${summary.apis} validated (types+docs+runtime/fallback) · declarations: ${
       summary.typesVerified
     }/${summary.apis} exact${
       summary.knownTypeGaps ? ` + ${summary.knownTypeGaps} pinned upstream gap` : ''
@@ -277,6 +297,14 @@ function printReport(manifest: VerifyManifest, write: boolean): void {
     }
   }
 
+  const runtimeGaps = Object.entries(manifest.apis).filter(([, proof]) => proof.knownRuntimeGap);
+  if (runtimeGaps.length) {
+    console.log('\nGOVERNED RUNTIME FALLBACKS:');
+    for (const [api] of runtimeGaps) {
+      console.log(`  △ ${api} — ${KNOWN_RUNTIME_GAPS[api]?.reason}`);
+    }
+  }
+
   if (write) {
     console.log(`\nWrote ${PROOF_MANIFEST_PATH}`);
   } else {
@@ -292,5 +320,7 @@ if (import.meta.main) {
   const failed =
     manifest.summary.demosPassed < manifest.summary.demos ||
     manifest.summary.apisVerified < manifest.summary.apis;
-  if (failed) process.exit(1);
+  // The CLI owns its lifecycle after every awaited proof has completed. Exit
+  // explicitly so a runtime-level handle leak cannot make CI wait forever.
+  process.exit(failed ? 1 : 0);
 }

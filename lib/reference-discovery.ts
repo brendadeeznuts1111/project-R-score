@@ -342,15 +342,53 @@ function isAllowedSimilarEnvPair(a: string, b: string): boolean {
   ]);
   if (conceptAuditPairs.has([a, b].sort().join('|'))) return true;
 
-  // Concept graph output and bind controls are independent. BUNPORT selects
-  // Bun's native default port; PORT supplies an explicit numeric override.
-  const conceptGraphPairs = new Set([
-    'CONCEPT_GRAPH_BUNPORT|CONCEPT_GRAPH_PORT',
-    'CONCEPT_GRAPH_FORMAT|CONCEPT_GRAPH_PORT',
-  ]);
-  if (conceptGraphPairs.has([a, b].sort().join('|'))) return true;
+  // Concept graph CLI knobs share a CONCEPT_GRAPH_* namespace but each key
+  // owns a distinct option (focus, format, hubs, surface, output, ports).
+  if (a.startsWith('CONCEPT_GRAPH_') && b.startsWith('CONCEPT_GRAPH_')) return true;
+
+  // Concept metadata fix/strict are complementary toggles, not aliases.
+  if (
+    (a === 'CONCEPT_METADATA_FIX' && b === 'CONCEPT_METADATA_STRICT') ||
+    (a === 'CONCEPT_METADATA_STRICT' && b === 'CONCEPT_METADATA_FIX')
+  ) {
+    return true;
+  }
+
+  // Dashboard listen vs test harness port (orthogonal bind targets).
+  if (
+    (a === 'DASHBOARD_PORT' && b === 'DASHBOARD_TEST_PORT') ||
+    (a === 'DASHBOARD_TEST_PORT' && b === 'DASHBOARD_PORT')
+  ) {
+    return true;
+  }
 
   return false;
+}
+
+/** Context-aware repair text for similar-env pairs (avoid R2-only boilerplate). */
+export function similarEnvRepair(a: string, b: string): string {
+  const pair = `${a}|${b}`;
+  if (
+    pair.includes('R2_') ||
+    pair.includes('S3_') ||
+    pair.includes('REGISTRY') ||
+    pair.includes('BUCKET')
+  ) {
+    return 'Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md';
+  }
+  if (a.startsWith('CONCEPT_') || b.startsWith('CONCEPT_')) {
+    return 'Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate';
+  }
+  if (a.startsWith('CLOUDFLARE_') || b.startsWith('CLOUDFLARE_')) {
+    return 'Cloudflare token/account policy is multi-key by design — see docs/registry-client.md §Env naming';
+  }
+  if (a.startsWith('TELEGRAM_') || b.startsWith('TELEGRAM_')) {
+    return 'Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs';
+  }
+  if (a.includes('PORT') || b.includes('PORT') || a.includes('URL') || b.includes('URL')) {
+    return 'Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional';
+  }
+  return 'Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)';
 }
 
 async function scanSimilarEnvVars(files: string[]): Promise<ReferenceFinding[]> {
@@ -391,8 +429,7 @@ async function scanSimilarEnvVars(files: string[]): Promise<ReferenceFinding[]> 
         id: `similar-env:${pairId}`,
         title: `Similar env var names: ${a} ↔ ${b}`,
         detail: `similarity=${sim.toFixed(2)} · hits ${counts.get(a)} / ${counts.get(b)}`,
-        repair:
-          'Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md',
+        repair: similarEnvRepair(a, b),
       });
     }
   }

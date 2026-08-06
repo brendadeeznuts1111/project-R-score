@@ -196,7 +196,7 @@ export class RSSManager {
     const xml = this.generateRSS(feed);
     const bucket = await this.r2Storage.getOrCreateBucket(packageName);
 
-    await this.r2Storage.put(bucket, `feeds/${packageName}.rss`, Buffer.from(xml));
+    await this.r2Storage.put(bucket, `feeds/${packageName}.rss`, new TextEncoder().encode(xml));
 
     return `https://${bucket}.${this.r2Storage['config'].accountId}.r2.dev/feeds/${packageName}.rss`;
   }

@@ -36,6 +36,7 @@
  */
 import { formatCliTable, toolTableVersion } from './cli-table.ts';
 import { inspectTable } from '../lib/console-depth.ts';
+import { tomlStringify } from '../lib/toml-stringify.ts';
 
 export type ApiOneliner = {
   id: string; // brand-ok — demo oneliner id
@@ -104,8 +105,6 @@ console.log(st.size, pkg.name);`,
     snippet: `const toml = Bun.TOML.stringify({ a: 1 });
 const parsed = Bun.TOML.parse(toml);`,
     run: () => {
-      const tomlStringify = (Bun.TOML as typeof Bun.TOML & { stringify: (v: unknown) => string })
-        .stringify;
       const toml = tomlStringify({ a: 1, b: 'x' });
       const parsed = Bun.TOML.parse(toml) as { a: number };
       return `a=${parsed.a}`;
@@ -630,16 +629,13 @@ await img.metadata();`,
     summary: 'Bun.cron schedule (in-process)',
     apis: ['Bun.cron'],
     docs: 'https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process',
-    snippet: `Bun.cron("0 0 1 1 *", () => {}, "demo"); // schedule, handler, title`,
+    snippet: `Bun.cron("0 0 1 1 *", () => {}); // in-process: schedule, handler`,
     run: () => {
-      // In-process: (schedule, handler, title) — stop/unref so CLI can exit
-      const job = Bun.cron('0 0 1 1 *', () => {}, 'oneliner-demo') as {
-        stop?: () => void;
-        unref?: () => void;
-      };
-      if (typeof job?.stop === 'function') job.stop();
-      else if (typeof job?.unref === 'function') job.unref();
-      return `cronJob=${job?.constructor?.name ?? typeof job}`;
+      // Keep the aggregate verifier exit-safe while the installed 1.4 canary
+      // retains stopped in-process jobs. Dedicated cron tests own job lifecycle.
+      const next = Bun.cron.parse('0 0 1 1 *');
+      if (!next) throw new Error('cron schedule has no future occurrence');
+      return `next=${next.toISOString()}`;
     },
   },
   {

@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
+import { selectProductionContentBase } from '../tools/verify-pages-edge.ts';
 
 describe('verify-pages-edge tiers', () => {
   test('core tier includes well-known, preflight, and cloudflare token proof names', () => {
@@ -30,5 +31,27 @@ describe('verify-pages-edge tiers', () => {
     expect(text).toContain('PROOF_TAXONOMY_CONTRACT_COUNT');
     expect(text).toContain('cloudflare-pages-preflight.json');
     expect(PROOF_TAXONOMY_CONTRACT_COUNT).toBeGreaterThanOrEqual(13);
+  });
+
+  test('production proof prefers the public apex over Access-protected hash previews', () => {
+    expect(
+      selectProductionContentBase({
+        url: 'https://deadbeef.project-r-score.pages.dev',
+        aliases: [
+          'https://score.factory-wager.com',
+          'https://factory-wager.com/',
+          'not a URL',
+        ],
+      })
+    ).toBe('https://factory-wager.com');
+  });
+
+  test('production proof falls back to the deployment URL when no apex alias exists', () => {
+    expect(
+      selectProductionContentBase({
+        url: 'https://deadbeef.project-r-score.pages.dev/',
+        aliases: ['https://score.factory-wager.com'],
+      })
+    ).toBe('https://deadbeef.project-r-score.pages.dev');
   });
 });

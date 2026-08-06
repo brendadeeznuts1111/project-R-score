@@ -13,7 +13,7 @@
 
 import { fileURLToPath } from '../bun-path-url.ts';
 import { sleep } from '../time.ts';
-import { asHostId, asSurfaceId, type HostId, type SurfaceId } from '../types/branded.ts';
+import { parseHostId, parseSurfaceId, type HostId, type SurfaceId } from '../types/branded.ts';
 
 /** Probe row shape (assignable to WeaveProbeRow). */
 export type SubdomainProbeRow = {
@@ -27,7 +27,7 @@ export type SubdomainProbeRow = {
   detail: string;
 };
 
-export type SubdomainExpect = 'json' | 'ok' | 'access';
+export type SubdomainExpect = 'json' | 'ok' | 'access' | 'bearer-auth';
 
 export type SubdomainCheckSpec = {
   path: string;
@@ -71,10 +71,16 @@ function normalizeCheck(raw: unknown): SubdomainCheckSpec {
   if (typeof o.path !== 'string' || !o.path.startsWith('/')) {
     throw new Error('subdomain check.path must be a string starting with /');
   }
-  const expect =
-    o.expect === 'json' || o.expect === 'ok' || o.expect === 'access'
-      ? o.expect
-      : defaultExpectForPath(o.path);
+  if (
+    o.expect !== undefined &&
+    o.expect !== 'json' &&
+    o.expect !== 'ok' &&
+    o.expect !== 'access' &&
+    o.expect !== 'bearer-auth'
+  ) {
+    throw new Error(`unsupported subdomain check.expect: ${String(o.expect)}`);
+  }
+  const expect = o.expect ?? defaultExpectForPath(o.path);
   return { path: o.path, expect };
 }
 
@@ -107,8 +113,8 @@ export function parseSubdomainsConfig(raw: unknown): WeaveSubdomainsConfig {
       throw new Error(`subdomains[${i}].checks must be a non-empty array`);
     }
     return {
-      name: asSurfaceId(r.name),
-      domain: asHostId(r.domain.toLowerCase()),
+      name: parseSurfaceId(r.name),
+      domain: parseHostId(r.domain.toLowerCase()),
       checks: r.checks.map(normalizeCheck),
     };
   });
@@ -163,14 +169,29 @@ export async function probeSubdomainCheck(
   opts: SubdomainProbeOpts
 ): Promise<SubdomainProbeHit> {
   let lastErr: Error | undefined;
+  let lastObservation: Omit<SubdomainProbeHit, 'ok' | 'detail'> = {
+    httpStatus: null,
+    latencyMs: 0,
+    sizeBytes: 0,
+    contentType: '',
+  };
   const t0 = performance.now();
   for (let attempt = 0; attempt < opts.retries; attempt++) {
     try {
-      const res = await fetch(url, { redirect: 'manual' });
+      const res = await fetch(url, {
+        redirect: 'manual',
+        headers: { Accept: 'application/json' },
+      });
       const location = res.headers.get('location') ?? '';
       const access = res.status === 302 && location.includes('cloudflareaccess');
       const contentType = contentTypeOf(res);
       const latencyMs = Math.round(performance.now() - t0);
+      lastObservation = {
+        httpStatus: res.status,
+        latencyMs,
+        sizeBytes: 0,
+        contentType,
+      };
 
       if (expect === 'access') {
         if (!access) {
@@ -183,6 +204,53 @@ export async function probeSubdomainCheck(
           sizeBytes: 0,
           contentType,
           detail: '302 Access',
+        };
+      }
+      if (expect === 'bearer-auth') {
+        const body = await res.arrayBuffer();
+        const sizeBytes = sizeOf(res, body);
+        lastObservation = { ...lastObservation, sizeBytes };
+        if (res.status !== 401) {
+          throw new Error(`expected configured bearer rejection 401, got ${res.status}`);
+        }
+        if (contentType !== 'application/json') {
+          throw new Error(
+            `expected application/json, got ${contentType || 'missing content-type'}`
+          );
+        }
+        const challenge = res.headers.get('www-authenticate') ?? '';
+        if (!/^Bearer(?:\s|$)/i.test(challenge)) {
+          throw new Error('expected WWW-Authenticate: Bearer challenge');
+        }
+        const cacheControl = res.headers.get('cache-control') ?? '';
+        if (
+          !cacheControl
+            .toLowerCase()
+            .split(',')
+            .some(value => value.trim() === 'no-store')
+        ) {
+          throw new Error('expected Cache-Control: no-store');
+        }
+        try {
+          const parsed: unknown = JSON.parse(new TextDecoder().decode(body));
+          if (parsed === null || typeof parsed !== 'object') {
+            throw new Error('JSON not an object');
+          }
+          const auth = parsed as { ok?: unknown; code?: unknown };
+          if (auth.ok !== false || auth.code !== 'unauthorized') {
+            throw new Error('JSON is not the configured bearer rejection');
+          }
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : String(e);
+          throw new Error(`invalid bearer-auth JSON (${msg})`);
+        }
+        return {
+          ok: true,
+          httpStatus: res.status,
+          latencyMs,
+          sizeBytes,
+          contentType,
+          detail: `${res.status} bearer-auth`,
         };
       }
       if (access) throw new Error(`302 Access (expected ${expect})`);
@@ -230,10 +298,8 @@ export async function probeSubdomainCheck(
   }
   return {
     ok: false,
-    httpStatus: null,
+    ...lastObservation,
     latencyMs: Math.round(performance.now() - t0),
-    sizeBytes: 0,
-    contentType: '',
     detail: lastErr?.message ?? 'unreachable',
   };
 }

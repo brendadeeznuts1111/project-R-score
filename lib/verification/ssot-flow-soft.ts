@@ -40,6 +40,15 @@ export const TENNIS_HQ_ROOT_ENV = 'TENNIS_HQ_ROOT';
 const DEFAULT_TENNIS_HQ = 'king-zippy-umbra-acre';
 const SSOT_PKG_REL = 'packages/tennis-hq-ssot';
 const ARTIFACTS_REL = 'artifacts/publish';
+export const SSOT_CONTRACT_MANIFEST_ENTRY = 'package/registry/contracts/v1/manifest.json' as const;
+export const SSOT_CONTRACT_SET = 'tennis-hq/v1' as const;
+export const SSOT_CONTRACT_DOMAINS = [
+  'marketdata',
+  'research',
+  'trading',
+  'partners',
+  'accounting',
+] as const;
 
 export type SsotFlowStep = {
   name: string;
@@ -80,6 +89,12 @@ export type SsotFlowSoftProof = {
     path: string;
     fileCount: number;
     sha256: string;
+  } | null;
+  contracts: {
+    manifestPath: typeof SSOT_CONTRACT_MANIFEST_ENTRY;
+    contractSet: typeof SSOT_CONTRACT_SET;
+    schemaVersion: 1;
+    domains: (typeof SSOT_CONTRACT_DOMAINS)[number][];
   } | null;
   steps: SsotFlowStep[];
   summary: {
@@ -216,6 +231,66 @@ async function resolveTarball(
   return { absPath: abs, relPath, fileCount, sha256 };
 }
 
+export async function inspectSsotContractTarball(
+  tarballPath: string,
+  packageVersion: string
+): Promise<
+  | {
+      ok: true;
+      contracts: NonNullable<SsotFlowSoftProof['contracts']>;
+      detail: string;
+    }
+  | { ok: false; detail: string }
+> {
+  const extract = Bun.spawnSync({
+    cmd: ['tar', '-xOzf', tarballPath, SSOT_CONTRACT_MANIFEST_ENTRY],
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  if (extract.exitCode !== 0) {
+    return { ok: false, detail: `missing ${SSOT_CONTRACT_MANIFEST_ENTRY}` };
+  }
+  try {
+    const manifest = JSON.parse(extract.stdout.toString()) as {
+      schemaVersion?: number;
+      contractSet?: string;
+      package?: { name?: string; version?: string };
+      domains?: Record<string, unknown>;
+    };
+    const domains = Object.keys(manifest.domains ?? {});
+    if (manifest.schemaVersion !== 1 || manifest.contractSet !== SSOT_CONTRACT_SET) {
+      return { ok: false, detail: 'contract manifest schemaVersion/contractSet mismatch' };
+    }
+    if (
+      manifest.package?.name !== '@tennis-hq/ssot' ||
+      manifest.package.version !== packageVersion
+    ) {
+      return { ok: false, detail: 'contract manifest package identity/version mismatch' };
+    }
+    if (
+      domains.length !== SSOT_CONTRACT_DOMAINS.length ||
+      domains.some((domain, index) => domain !== SSOT_CONTRACT_DOMAINS[index])
+    ) {
+      return {
+        ok: false,
+        detail: `contract domains must be ${SSOT_CONTRACT_DOMAINS.join(', ')}`,
+      };
+    }
+    return {
+      ok: true,
+      contracts: {
+        manifestPath: SSOT_CONTRACT_MANIFEST_ENTRY,
+        contractSet: SSOT_CONTRACT_SET,
+        schemaVersion: 1,
+        domains: [...SSOT_CONTRACT_DOMAINS],
+      },
+      detail: `${SSOT_CONTRACT_SET} · ${domains.length} domains · package ${packageVersion}`,
+    };
+  } catch {
+    return { ok: false, detail: 'contract manifest is not valid JSON' };
+  }
+}
+
 async function gitSha(cwd: string): Promise<string | null> {
   try {
     const proc = Bun.spawn(['git', '-C', cwd, 'rev-parse', '--short', 'HEAD'], {
@@ -230,6 +305,17 @@ async function gitSha(cwd: string): Promise<string | null> {
   } catch {
     return null;
   }
+}
+
+export function canonicalTennisHqCheckoutLabel(tennisHqRoot: string): string {
+  const checkoutName =
+    tennisHqRoot
+      .replace(/[/\\]+$/, '')
+      .split(/[/\\]/)
+      .at(-1) || DEFAULT_TENNIS_HQ;
+  return checkoutName === DEFAULT_TENNIS_HQ || checkoutName.startsWith(`${DEFAULT_TENNIS_HQ}-`)
+    ? DEFAULT_TENNIS_HQ
+    : checkoutName;
 }
 
 /** Run offline soft-pass and return proof (does not write). */
@@ -263,6 +349,7 @@ async function finalizeProof(input: {
 }): Promise<SsotFlowSoftProof> {
   const stepsOk = input.steps.every(s => s.ok);
   const tarball = stepsOk ? await resolveTarball(input.tennisHqRoot, input.pkg.version) : null;
+  let contracts: SsotFlowSoftProof['contracts'] = null;
   if (stepsOk && !tarball) {
     input.steps.push({
       name: 'tarball',
@@ -275,14 +362,17 @@ async function finalizeProof(input: {
       ok: true,
       detail: `${tarball.relPath} · ${tarball.fileCount} files · sha256=${tarball.sha256.slice(0, 12)}…`,
     });
+    const contractInspection = await inspectSsotContractTarball(tarball.absPath, input.pkg.version);
+    if (contractInspection.ok) contracts = contractInspection.contracts;
+    input.steps.push({
+      name: 'contracts:v1',
+      ok: contractInspection.ok,
+      detail: contractInspection.detail,
+    });
   }
 
   // Commit-safe: never bake absolute machine paths into registry JSON.
-  const tennisHqLabel =
-    input.tennisHqRoot
-      .replace(/[/\\]+$/, '')
-      .split(/[/\\]/)
-      .at(-1) || DEFAULT_TENNIS_HQ;
+  const tennisHqLabel = canonicalTennisHqCheckoutLabel(input.tennisHqRoot);
 
   const ok = input.steps.every(s => s.ok);
   const passed = input.steps.filter(s => s.ok).length;
@@ -317,6 +407,7 @@ async function finalizeProof(input: {
     tarball: tarball
       ? { path: tarball.relPath, fileCount: tarball.fileCount, sha256: tarball.sha256 }
       : null,
+    contracts,
     steps: input.steps,
     summary: {
       passed,

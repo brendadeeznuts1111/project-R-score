@@ -161,9 +161,9 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     id: 'brands',
     label: 'Brands',
     href: '/portal/brands/',
-    note: 'domain-value glossary · constructors · project adoption',
+    note: 'Bun×brand relationships · domain-value glossary · constructors · project adoption',
     group: 'registry',
-    cli: 'bun tools/brand-keymap.ts',
+    cli: 'bun tools/brand-keymap.ts && bun run bun:brand-map',
   },
   {
     id: 'glossary',
@@ -287,6 +287,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     cli: 'bun run ops:limits:demo',
   },
   {
+    id: 'partner-health',
+    label: 'Partner health',
+    href: '/portal/partner/',
+    note: 'domain readiness · profile alignment · out health',
+    group: 'ops',
+    cli: 'bun run partner:health:bake',
+  },
+  {
     id: 'partners',
     label: 'Partners',
     href: '/portal/partners/',
@@ -331,6 +339,37 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     note: '@factorywager/bookmakers artifact · canonical bookmaker registry · weave runbook',
     group: 'ops',
     cli: 'bun run bookmakers:bake',
+  },
+  {
+    id: 'factory',
+    label: 'Factory',
+    href: '/portal/factory/',
+    note: 'Factory Telegram ops · handshake readiness · package-group wire',
+    group: 'ops',
+    cli: 'bun run telegram:verify',
+  },
+  {
+    id: 'identity',
+    label: 'Identity',
+    href: '/portal/identity/',
+    note: 'auth board · lockout · anomaly · geo · JIT',
+    group: 'ops',
+  },
+  {
+    id: 'limits-lab',
+    label: 'Limits lab',
+    href: '/portal/limits-lab/',
+    note: 'forecast / predict lab · multi-factor backtest',
+    group: 'ops',
+    cli: 'bun run ops:limits:predict',
+  },
+  {
+    id: 'concepts',
+    label: 'Concepts',
+    href: '/portal/concepts/',
+    note: 'semantic vocabulary · domain summary · usage + provenance',
+    group: 'registry',
+    cli: 'bun run concepts:bake',
   },
   // ── Plane ──
   {
@@ -424,9 +463,16 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveArtifact[] = [
   },
   // ── shared / cross-cutting state ──
   {
+    label: 'bun-brand-map',
+    href: '/registry/bun-brand-map.json',
+    note: 'Bun capability × brand cross-map · evidence + undeclared ratchet',
+    purpose: 'shared',
+    cli: 'bun run bun:brand-map',
+  },
+  {
     label: 'brand-keymap',
     href: '/registry/brand-keymap.json',
-    note: '57-value catalog · tracked project adoption',
+    note: '67-value catalog · tracked project adoption',
     purpose: 'shared',
   },
   {

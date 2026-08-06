@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
 
-# Husky executes hook files through `sh`; delegate immediately to the Bun runner.
+# Husky → Bun pre-commit. Pin SSOT: .bun-version + package.json engines.bun / packageManager.
+# The runner enforces Bun.semver.satisfies(runtime, engines.bun).
 exec bun scripts/pre-commit.ts "$@"

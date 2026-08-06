@@ -62,11 +62,12 @@ export function isHarnessFormatPath(file: string): boolean {
   return false;
 }
 
-/** Files already migrated — strict error tier. */
+/**
+ * Files already migrated — strict error tier for bun-first guard.
+ * Paths must exist on main; drop retired scripts rather than leave ENOENT noise.
+ */
 export const STRICT_INVENTORY = [
   'lib/projects-scan.ts',
-  'scripts/projects-table.ts',
-  'scripts/projects-dashboard.ts',
   'scripts/dx-mcp.ts',
   'scripts/dx-catalog-cli.ts',
   'scripts/harness-guard.ts',

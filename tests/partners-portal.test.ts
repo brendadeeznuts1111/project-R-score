@@ -28,11 +28,19 @@ describe('partners portal board', () => {
     expect(html).toContain('id="section:telegram"');
     expect(html).toContain('id="section:accounting"');
     expect(html).toContain('id="section:accounts-limits"');
+    expect(html).toContain('id="section:outs"');
+    expect(html).toContain('id="outs-tbody"');
+    expect(html).toContain('id="phase-filter-bar"');
     expect(html).toContain('id="section:onboard"');
     expect(html).toContain('id="partner-profile"');
     expect(html).toContain('id="section:deposits"');
     expect(html).toContain('id="section:partner-message"');
     expect(html).toContain('renderPartnerProfile');
+    expect(html).toContain('renderOutsInventory');
+    expect(html).toContain('renderPhaseFilter');
+    expect(html).toContain('summarizePartnerDesk');
+    expect(html).toContain('coverageBarHtml');
+    expect(html).toContain('/portal/partners/partners-board.js');
     expect(html).toContain('telegramTopicsForPhase');
     expect(html).toContain('onboard:partner');
     expect(html).toContain('/portal/limits/?partner=');
@@ -42,6 +50,9 @@ describe('partners portal board', () => {
     expect(html).toContain('/registry/telegram-handshake-catalog.json');
     expect(html).toContain('/registry/scrape-wire-taxonomy.json');
     expect(html).toContain('/registry/partners-ops.json');
+    expect(html).toContain('/registry/partner-profiles.json');
+    expect(html).toContain('partnerProfilesCache?.profiles?.[code]');
+    expect(html).toContain('Profile lifecycle');
     expect(html).toContain('/registry/limit-raises.json');
     expect(html).toContain('depositMethod');
     expect(html).toContain('telegram:package-group:accounting');
@@ -75,6 +86,8 @@ describe('partners portal board', () => {
     expect(html).toContain('partners:event');
     expect(html).toContain('/portal/components/partner-ops-event-concepts.js');
     expect(html).toContain('conceptIdForPartnerOpsEventCode');
+    expect(html).toContain('data-domain-lanes="partner"');
+    expect(html).toContain('partner-profile-outs');
     expect(html).toContain('data-glossary-concept="section.partnersTags"');
     expect(html).toContain('data-glossary-concept="section.partnersOuts"');
     expect(html).toContain('data-glossary-concept="section.partnersBookDetail"');
@@ -107,6 +120,37 @@ describe('partners portal board', () => {
     expect(html).toContain('Fallback first');
     expect(html).toContain('partners-ops.json');
     expect(html).toContain('bookRegistry');
+  });
+
+  test('ships valid head, accessible loading/filter states, and non-nested book links', async () => {
+    const html = await Bun.file(BOARD).text();
+    const head = html.slice(0, html.indexOf('</head>'));
+    const renderBooks = html.slice(
+      html.indexOf('function renderBooks'),
+      html.indexOf('function applyPartnerRoute')
+    );
+
+    expect(head).not.toContain('\\n');
+    expect(html).toMatch(
+      /<div\s+id="error-banner"\s+class="ops-banner error hidden"\s+role="alert"\s+aria-live="assertive"/
+    );
+    expect(html).toMatch(
+      /<div\s+id="loading"\s+class="ops-loading"\s+role="status"\s+aria-live="polite"/
+    );
+    expect(html).toContain('aria-pressed="${!phaseFilter}"');
+    expect(html).toContain('aria-pressed="${phaseFilter === p.phase}"');
+    expect(renderBooks).toContain('class="book-card book-chip"');
+    expect(renderBooks).not.toContain('conceptChip(');
+  });
+
+  test('labels zero-profile data as legacy compatibility instead of canonical readiness', async () => {
+    const html = await Bun.file(BOARD).text();
+    expect(html).toContain('partnerReadinessGate');
+    expect(html).toContain('canonicalProfileCoverage');
+    expect(html).toContain('Canonical profiles');
+    expect(html).toContain('Exact CODE coverage; missing');
+    expect(html).toContain('Legacy compatibility view; canonical profile coverage is incomplete');
+    expect(html).toContain('renderStats(handshake, seat, ops, partnerProfiles)');
   });
 
   test('baked registry artifacts exist for the board consumers', async () => {
@@ -160,11 +204,40 @@ describe('partners portal board', () => {
     expect(parsePartnerHash('#partner/ASH/telegram/not-a-topic')).toBeNull();
     expect(partnerHash('ash')).toBe('#partner/ASH');
     expect(partnerOutHash('ASH', 'out-ASH-2')).toBe('#partner/ASH/out/out-ASH-2');
+    expect(partnerOutHash('ASH', 'out-ASH-0')).toBe('#partners');
+    expect(partnerOutHash('ASH', 'out-ASH-01')).toBe('#partners');
     expect(partnerAccountingHash('ASH')).toBe('#partner/ASH/accounting');
     expect(partnerTelegramHash('ASH', 'accounting')).toBe('#partner/ASH/telegram/accounting');
     expect(parsePartnerHash('#book/book-dk-nj')).toEqual({ type: 'book', bookId: 'book-dk-nj' });
     expect(parsePartnerHash('#book/not-a-book')).toBeNull();
     expect(partnerBookHash('book-dk-nj')).toBe('#book/book-dk-nj');
+  });
+
+  test('partner profile panel wires ledger balance, history, and per-out DOM contracts', async () => {
+    const html = await Bun.file(BOARD).text();
+    expect(html).toContain('renderPartnerProfile');
+    expect(html).toContain('partner-ledger-tbody');
+    expect(html).toContain('partner-outs-tbody');
+    expect(html).toContain('ops?.accounting?.balance');
+    expect(html).toContain('ops?.accounting?.initialCapital');
+    expect(html).toContain('ops?.accounting?.ledgerRows');
+    expect(html).toContain('ops?.accounting?.outs');
+    expect(html).toContain("const conceptId = `accounting.${type}`");
+    expect(html).toContain('conceptChip(conceptId, type, ops?.colors?.[conceptId])');
+    expect(html).toContain('trackingId');
+    expect(html).toContain('tone-bad');
+    expect(html).toContain('.reverse()');
+    expect(html).toContain('partner:settlement:post');
+    expect(html).toContain('partners:build');
+  });
+
+  test('partners Soft week rollup table wires ops.view.per_week rows from softWeekRows', async () => {
+    const html = await Bun.file(BOARD).text();
+    expect(html).toContain('soft-weeks-tbody');
+    expect(html).toContain('softWeekRows');
+    expect(html).toContain('data-glossary-concept="ops.view.per_week"');
+    expect(html).toContain('w.weekStart');
+    expect(html).toContain('w.net');
   });
 
   test('partners Soft book-type table wires live soft-ct byBookType into ops.view.per_book_type', async () => {

@@ -27,6 +27,7 @@
  */
 
 import * as ts from 'typescript';
+import { jsonOut } from '../lib/console-depth.ts';
 import { BUN_BRAND_USAGES } from '../lib/docs/bun-brand-usages.ts';
 import {
   assertBunBrandUsages,
@@ -1109,6 +1110,17 @@ async function trackedFiles(root: string): Promise<{ paths: string[]; files: Sou
   ]);
   if (exitCode !== 0) throw new Error(`git ls-files failed: ${stderr.trim()}`);
   const paths = stdout.split('\0').filter(Boolean);
+  // Staged-test scratch repos symlink projects/, so their local index only
+  // contains the symlink. Reuse the runner's NUL-delimited real-index export
+  // to keep owner-path validation and capability observation equivalent to a
+  // normal checkout.
+  if (!paths.some(path => path.startsWith('projects/'))) {
+    const exportedProjects = Bun.env.KIMI_STAGED_PROJECTS_LS_FILES;
+    if (exportedProjects && (await Bun.file(exportedProjects).exists())) {
+      paths.push(...(await Bun.file(exportedProjects).text()).split('\0').filter(Boolean));
+    }
+  }
+  paths.sort((left, right) => left.localeCompare(right));
   const scanPaths = paths.filter(isBunBrandScanPath);
   const files = await mapWithConcurrency(scanPaths, TRACKED_FILE_READ_CONCURRENCY, async path => {
     try {
@@ -1204,7 +1216,7 @@ async function main(): Promise<void> {
   const target = `${root}/${BUN_BRAND_MAP_PATH}`;
 
   if (args.has('--json')) {
-    console.log(JSON.stringify(payload, null, 2));
+    jsonOut(payload);
     return;
   }
   if (args.has('--check')) {

@@ -10,6 +10,7 @@
 import type { Database } from 'bun:sqlite';
 import { randomUUIDv7 } from 'bun';
 import { sendRegistryAlert } from '../factory/alerts.ts';
+import type { PartnerLifecycleStatus } from '../partner-profile/schema.ts';
 import { MemoryChannelStore, R2ChannelStore, type ChannelMessage } from './channels.ts';
 import {
   asOpsChannelEventId,
@@ -552,7 +553,7 @@ export function enqueueIdentityChannelEvent(
     treeNodeId: TreeNodeId;
     profileKey: string;
     partnerTemplate: PartnerTemplateId;
-    lifecycleStatus: string;
+    lifecycleStatus: PartnerLifecycleStatus;
   }
 ): OpsChannelEvent {
   return enqueueOpsChannelEvent(db, {
@@ -576,7 +577,7 @@ export function enqueuePartnerWelcomeEvent(
     treeNodeId: TreeNodeId;
     profileKey: string;
     partnerTemplate: PartnerTemplateId;
-    lifecycleStatus: string;
+    lifecycleStatus: PartnerLifecycleStatus;
     telegramId?: string; // brand-ok
     nodeName?: string;
     templateId?: TemplateId;

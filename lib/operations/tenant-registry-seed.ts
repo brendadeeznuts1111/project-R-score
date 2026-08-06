@@ -72,7 +72,14 @@ export const TENANT_PACKAGE_SLICES: Record<TenantRegistryKey, string[]> = {
     '@factorywager/bun-test',
   ],
   science: ['quantum-domain-ops', 'event-store', 'odds-engine', 'test-plugin', 'sdk-test-pkg'],
-  tennis: ['cascade-mover', 'sports-terminal-os', 'bet-ticker', 'odds-engine', 'event-store'],
+  tennis: [
+    '@tennis-hq/ssot',
+    'cascade-mover',
+    'sports-terminal-os',
+    'bet-ticker',
+    'odds-engine',
+    'event-store',
+  ],
 };
 
 type RegistryIndex = {

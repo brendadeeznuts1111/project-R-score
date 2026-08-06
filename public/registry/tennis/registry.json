@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "tenantId": "tennis",
-  "lastUpdated": "2026-07-31T11:28:01.197Z",
+  "lastUpdated": "2026-08-04T21:50:47.158Z",
   "meta": {
     "source": "tenant-registry-seed",
-    "rootLastUpdated": "2026-07-24T00:00:22.295046+00:00",
-    "packageCount": 5,
+    "rootLastUpdated": "2026-08-04T21:50:32.341Z",
+    "packageCount": 6,
     "agentAuth": {
       "status": "configured",
       "artifact": "/registry/tennis/agent-auth.json",
@@ -16,6 +16,57 @@
     }
   },
   "packages": {
+    "@tennis-hq/ssot": {
+      "versions": [
+        "1.5.0",
+        "1.4.0"
+      ],
+      "dist-tags": {
+        "latest": "1.5.0"
+      },
+      "releases": {
+        "1.4.0": {
+          "id": "@tennis-hq/ssot@1.4.0",
+          "name": "@tennis-hq/ssot",
+          "version": "1.4.0",
+          "type": "library",
+          "description": "Tennis HQ governance SSOT (npm: @tennis-hq/ssot) — color registry + glossary color wire",
+          "author": {
+            "name": "FactoryWager Team",
+            "email": "team@factory-wager.com",
+            "url": "https://factory-wager.com"
+          },
+          "tags": [],
+          "readme": "# `@tennis-hq/ssot`\n\n**Publish-only** package for Tennis HQ governance artifacts (MIT).\n\nThe root app (`tennis-hq`) stays **`private: true`** and is never published.\n\n| Export | Contents |\n|--------|----------|\n| `@tennis-hq/ssot` | `SSOT_VERSION`, `COLOR_KEYS`, loaders |\n| `@tennis-hq/ssot/color-system.json` | Kernel color registry |\n| `@tennis-hq/ssot/glossary-colors.json` | Glossary color wire |\n\n## From monorepo root\n\n```bash\nbun run colors:build\nbun run ssot:build\nbun run ssot:check\nbun run ssot:pack          # artifacts/publish/*.tgz — no auth\nbun run ssot:publish       # needs NPM_TOKEN or npm login\n```\n\n## Version\n\n```bash\nbun pm version patch --no-git-tag-version   # root\nbun run ssot:build                          # sync + artifacts\n```\n\n## Config\n\n- `publishConfig.access`: **public** (free scoped package)\n- `private`: false\n- `files`: dist, registry, README, LICENSE\n",
+          "publishedAt": "2026-07-31T15:01:23.230Z",
+          "publisher": "tennis-hq",
+          "storage": {
+            "r2Key": "@tennis-hq/ssot/1.4.0.tgz",
+            "size": 5228,
+            "checksum": "fb0d0ba575de786182a45827a184d3f195f9cfe21cf8c74b76b7e569a370d19c",
+            "contentType": "application/gzip"
+          }
+        },
+        "1.5.0": {
+          "id": "@tennis-hq/ssot@1.5.0",
+          "name": "@tennis-hq/ssot",
+          "version": "1.5.0",
+          "type": "library",
+          "description": "Tennis HQ governance SSOT — versioned domain contracts, color registry, and glossary color wire",
+          "author": "FactoryWager Team",
+          "tags": [],
+          "readme": "# `@tennis-hq/ssot`\n\n**Publish-only** package for Tennis HQ governance artifacts and transport-safe domain contracts (MIT).\n\nThe root app (`tennis-hq`) stays **`private: true`** and is never published.\n\n| Export                                       | Contents                              |\n| -------------------------------------------- | ------------------------------------- |\n| `@tennis-hq/ssot`                            | `SSOT_VERSION`, `COLOR_KEYS`, loaders |\n| `@tennis-hq/ssot/color-system.json`          | Kernel color registry                 |\n| `@tennis-hq/ssot/glossary-colors.json`       | Glossary color wire                   |\n| `@tennis-hq/ssot/contracts/v1/manifest.json` | Five-domain runtime contract manifest |\n| `@tennis-hq/ssot/contracts/v1/*.schema.json` | Common and domain JSON Schemas        |\n\nThe v1 runtime domains are `marketdata`, `research`, `trading`, `partners`, and\n`accounting`. Runtime routes require `PARTNER_API_TOKEN` (or the provider-side\n`OPERATOR_API_TOKEN` alias). `FACTORY_WAGER_TOKEN` remains registry/package\nauthentication and is not accepted by the runtime API.\n\n## From monorepo root\n\n```bash\nbun run colors:build\nbun run ssot:build\nbun run ssot:check\nbun run ssot:pack          # artifacts/publish/*.tgz — no auth\nbun run ssot:publish       # needs NPM_TOKEN or npm login\n```\n\n## Version\n\n```bash\nbun pm version patch --no-git-tag-version   # root\nbun run ssot:build                          # sync + artifacts\n```\n\n## Config\n\n- `publishConfig.access`: **public** (free scoped package)\n- `private`: false\n- `files`: dist, registry, README, LICENSE\n",
+          "publishedAt": "2026-08-04T21:50:31.826Z",
+          "publisher": "tennis-hq",
+          "storage": {
+            "r2Key": "@tennis-hq/ssot/1.5.0.tgz",
+            "size": 11204,
+            "checksum": "a6c0e9502cdb1c30d37e7579ed3d90e475cc28e6e0f46e0837394524f8cc8f55",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
     "cascade-mover": {
       "versions": [
         "3.0.0",

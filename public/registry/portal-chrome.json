@@ -1,25 +1,43 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-08-03T23:44:37.601Z",
+  "generated": "2026-08-06T00:13:52.100Z",
   "path": "/registry/portal-chrome.json",
   "runtime": {
     "bunVersion": "1.4.0",
-    "bunRevision": "a227ad99"
+    "bunRevision": "3f93daaf"
   },
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 20,
-    "footerLinks": 17,
-    "components": 14,
-    "scripts": 5
+    "overflowNav": 25,
+    "footerLinks": 20,
+    "components": 21,
+    "scripts": 6,
+    "badgeSources": 6,
+    "unlistedSurfaces": 8,
+    "boardCoverage": 39,
+    "domainLanes": 6,
+    "groups": {
+      "ops": 16,
+      "harness": 1,
+      "registry": 9,
+      "secrets": 2,
+      "plane": 1,
+      "other": 2
+    }
   },
   "related": {
     "weave": "/registry/portal-weave.json",
     "monorepoHealth": "/registry/monorepo-health.json",
     "packagesGraph": "/registry/packages-graph-map.json",
     "opsSummary": "/registry/ops-summary.json",
-    "glossary": "/registry/domain-glossary.json"
+    "glossary": "/registry/domain-glossary.json",
+    "doctor": "/registry/doctor-state.json",
+    "bookmakers": "/registry/bookmakers.json",
+    "vaultHealth": "/registry/vault-health.json",
+    "partnersOps": "/registry/partners-ops.json",
+    "limitRaises": "/registry/limit-raises.json",
+    "chrome": "/registry/portal-chrome.json"
   },
   "priorityNav": [
     {
@@ -27,7 +45,9 @@
       "label": "Home",
       "href": "/",
       "tier": "priority",
-      "group": "other"
+      "group": "other",
+      "domain": "platform",
+      "note": "public lander · portal entry"
     },
     {
       "id": "ops",
@@ -35,15 +55,19 @@
       "href": "/portal/ops/",
       "tier": "priority",
       "group": "ops",
-      "note": "ops-summary rollup",
-      "cli": "bun run ops:snapshot"
+      "domain": "control",
+      "note": "ops-summary rollup · C4/C5 loop · partner handshake panel",
+      "cli": "bun run ops:snapshot",
+      "registryArtifact": "/registry/ops-summary.json"
     },
     {
       "id": "registry",
       "label": "Registry",
       "href": "/portal/",
       "tier": "priority",
-      "group": "registry"
+      "group": "registry",
+      "domain": "platform",
+      "note": "portal hub · board index · weave surfaces"
     },
     {
       "id": "health",
@@ -51,8 +75,11 @@
       "href": "/portal/health/",
       "tier": "priority",
       "group": "harness",
+      "domain": "platform",
       "note": "system health · monorepo score",
-      "cli": "bun run monorepo:health:bake"
+      "cli": "bun run monorepo:health:bake",
+      "badgeSource": "/registry/monorepo-health.json",
+      "registryArtifact": "/registry/monorepo-health.json"
     },
     {
       "id": "dod",
@@ -60,7 +87,9 @@
       "href": "/portal/dod/",
       "tier": "priority",
       "group": "plane",
-      "note": "visual proof review"
+      "domain": "platform",
+      "note": "visual proof review · public-plane gate",
+      "cli": "bun run public:audit:verify"
     },
     {
       "id": "compliance",
@@ -68,8 +97,10 @@
       "href": "/portal/compliance/",
       "tier": "priority",
       "group": "ops",
-      "note": "MA/NJ board",
-      "cli": "bun run compliance:bake"
+      "domain": "control",
+      "note": "MA/NJ board · shadow matrix",
+      "cli": "bun run compliance:bake",
+      "registryArtifact": "/registry/compliance-board.json"
     }
   ],
   "overflowNav": [
@@ -79,6 +110,7 @@
       "href": "/portal/catalog/",
       "tier": "overflow",
       "group": "registry",
+      "domain": "knowledge",
       "note": "account catalog · scrape-wire sports/states registry",
       "cli": "bun run bake:scrape-wire-taxonomy"
     },
@@ -88,8 +120,11 @@
       "href": "/portal/packages/",
       "tier": "overflow",
       "group": "registry",
+      "domain": "platform",
       "note": "graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.*",
-      "cli": "bun run ssot:flow:soft && bun run verify:pm:save"
+      "cli": "bun run ssot:flow:soft && bun run verify:pm:save",
+      "badgeSource": "/registry/packages-graph-map.json",
+      "registryArtifact": "/registry/packages-graph-map.json"
     },
     {
       "id": "brands",
@@ -97,6 +132,7 @@
       "href": "/portal/brands/",
       "tier": "overflow",
       "group": "registry",
+      "domain": "knowledge",
       "note": "domain-value glossary · constructor tiers · project adoption",
       "cli": "bun run brand:keymap"
     },
@@ -106,8 +142,10 @@
       "href": "/portal/glossary/",
       "tier": "overflow",
       "group": "registry",
+      "domain": "knowledge",
       "note": "market · model · trading · warehouse · pipeline concepts",
-      "cli": "bun run glossary:portal"
+      "cli": "bun run glossary:portal",
+      "registryArtifact": "/registry/domain-glossary.json"
     },
     {
       "id": "surfaces",
@@ -115,15 +153,21 @@
       "href": "/portal/surfaces/",
       "tier": "overflow",
       "group": "registry",
+      "domain": "knowledge",
       "note": "edge host inventory · Access domains · backend shortcodes · schema v2",
-      "cli": "bun run surfaces:bake  # → /registry/surfaces-state.json"
+      "cli": "bun run surfaces:bake  # → /registry/surfaces-state.json",
+      "registryArtifact": "/registry/surfaces-state.json"
     },
     {
       "id": "skills",
       "label": "Skills",
       "href": "/portal/skills/",
       "tier": "overflow",
-      "group": "registry"
+      "group": "registry",
+      "domain": "knowledge",
+      "note": "harness + Kimi skill catalogs · loop registry alignment",
+      "cli": "bun run skills:validate",
+      "registryArtifact": "/registry/harness-skills-catalog.json"
     },
     {
       "id": "vault",
@@ -131,8 +175,11 @@
       "href": "/portal/vault/",
       "tier": "overflow",
       "group": "secrets",
+      "domain": "identity",
       "note": "Proton Pass health bake · gate: portal-cli vault health",
-      "cli": "bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+      "cli": "bun run portal-cli vault health  # offline SSOT · --update to refresh snaps",
+      "badgeSource": "/registry/vault-health.json",
+      "registryArtifact": "/registry/vault-health.json"
     },
     {
       "id": "env",
@@ -140,6 +187,7 @@
       "href": "/portal/env/",
       "tier": "overflow",
       "group": "secrets",
+      "domain": "identity",
       "note": "vault-map inject · secret autofill mapping",
       "cli": "bun run portal-cli secret map  # no secret values printed"
     },
@@ -149,6 +197,7 @@
       "href": "/portal/concepts/",
       "tier": "overflow",
       "group": "registry",
+      "domain": "knowledge",
       "note": "semantic vocabulary · domain summary · usage + provenance",
       "cli": "bun run concepts:bake  # → /registry/concepts-state.json"
     },
@@ -158,32 +207,9 @@
       "href": "/portal/concepts/graph/",
       "tier": "overflow",
       "group": "registry",
+      "domain": "knowledge",
       "note": "seeAlso · surface · domain hubs · interactive board",
       "cli": "bun run concept:graph:bake  # → /registry/concepts-graph.json"
-    },
-    {
-      "id": "dashboard",
-      "label": "Dashboard",
-      "href": "/portal/dashboard/",
-      "tier": "overflow",
-      "group": "ops"
-    },
-    {
-      "id": "toc",
-      "label": "TOC",
-      "href": "/portal/toc/",
-      "tier": "overflow",
-      "group": "ops",
-      "note": "Drum/Buffer/Rope",
-      "cli": "bun run ops:seed:toc"
-    },
-    {
-      "id": "limits",
-      "label": "Limits",
-      "href": "/portal/limits/",
-      "tier": "overflow",
-      "group": "ops",
-      "cli": "bun run ops:limits:demo"
     },
     {
       "id": "partners",
@@ -191,8 +217,21 @@
       "href": "/portal/partners/",
       "tier": "overflow",
       "group": "ops",
-      "note": "package groups · telegram forums · accounting · deposits",
-      "cli": "bun run telegram:handshake:catalog"
+      "domain": "partner",
+      "note": "package groups · telegram forums · accounting · deposits · seat capital",
+      "cli": "bun run telegram:handshake:catalog",
+      "registryArtifact": "/registry/partners-ops.json"
+    },
+    {
+      "id": "partner-health",
+      "label": "Partner health",
+      "href": "/portal/partner/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "note": "partner domain readiness · profile alignment · per-out checks",
+      "cli": "bun run partner:health:bake",
+      "registryArtifact": "/registry/partner-health.json"
     },
     {
       "id": "account",
@@ -200,7 +239,10 @@
       "href": "/portal/account/",
       "tier": "overflow",
       "group": "ops",
-      "note": "single-account dossier · tree · telemetry · betlog"
+      "domain": "partner",
+      "note": "single-account dossier · tree · telemetry · betlog · ops.view.per_account",
+      "cli": "bun run ops:dossier:seed",
+      "registryArtifact": "/registry/partners-ops.json"
     },
     {
       "id": "partner-history",
@@ -208,8 +250,32 @@
       "href": "/portal/partner-history/",
       "tier": "overflow",
       "group": "ops",
+      "domain": "partner",
       "note": "per-partner limit history board",
-      "cli": "bun run ops:limits:demo"
+      "cli": "bun run ops:limits:demo",
+      "registryArtifact": "/registry/limit-raises.json"
+    },
+    {
+      "id": "limits",
+      "label": "Limits",
+      "href": "/portal/limits/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "note": "multi-factor partner limit raises · CLV",
+      "cli": "bun run ops:limits:demo",
+      "registryArtifact": "/registry/limit-raises.json"
+    },
+    {
+      "id": "limits-lab",
+      "label": "Limits lab",
+      "href": "/portal/limits-lab/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "note": "forecast / predict lab · multi-factor backtest",
+      "cli": "bun run ops:limits:predict",
+      "registryArtifact": "/registry/limit-forecast-lab.json"
     },
     {
       "id": "bookmakers",
@@ -217,15 +283,32 @@
       "href": "/portal/bookmakers/",
       "tier": "overflow",
       "group": "ops",
+      "domain": "partner",
       "note": "@factorywager/bookmakers artifact · canonical bookmaker registry",
-      "cli": "bun run bookmakers:bake"
+      "cli": "bun run bookmakers:bake",
+      "registryArtifact": "/registry/bookmakers.json"
     },
     {
-      "id": "monitoring",
-      "label": "Monitoring",
-      "href": "/monitoring/",
+      "id": "factory",
+      "label": "Factory",
+      "href": "/portal/factory/",
       "tier": "overflow",
-      "group": "ops"
+      "group": "ops",
+      "domain": "partner",
+      "note": "Factory Telegram ops · package-group wire · handshake",
+      "cli": "bun run telegram:verify",
+      "registryArtifact": "/registry/telegram-handshake.json"
+    },
+    {
+      "id": "tennis",
+      "label": "Tennis",
+      "href": "/portal/tennis/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "trading",
+      "note": "Tennis HQ desk · agent-auth · live matches",
+      "cli": "bun run tennis:board:bake",
+      "registryArtifact": "/registry/tennis/agent-auth.json"
     },
     {
       "id": "prediction-report",
@@ -233,8 +316,51 @@
       "href": "/registry/prediction/report/",
       "tier": "overflow",
       "group": "ops",
+      "domain": "trading",
       "note": "latest prediction report · snapshot scope",
       "cli": "bun run portal-cli snapshot last --scope prediction"
+    },
+    {
+      "id": "dashboard",
+      "label": "Dashboard",
+      "href": "/portal/dashboard/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "control",
+      "note": "KPIs · TOC · compliance plane · proof-index pins"
+    },
+    {
+      "id": "toc",
+      "label": "TOC",
+      "href": "/portal/toc/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "control",
+      "note": "Drum/Buffer/Rope fixture board",
+      "cli": "bun run ops:seed:toc",
+      "registryArtifact": "/registry/toc-ops.json"
+    },
+    {
+      "id": "monitoring",
+      "label": "Monitoring",
+      "href": "/monitoring/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "control",
+      "note": "routing · env · compliance tile · proof status",
+      "cli": "bun run ops:snapshot --no-seed",
+      "registryArtifact": "/registry/monitoring.json"
+    },
+    {
+      "id": "identity",
+      "label": "Identity",
+      "href": "/portal/identity/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "identity",
+      "note": "auth board · lockout · anomaly · geo · JIT",
+      "cli": "bun test tests/identity-*.test.ts",
+      "registryArtifact": "/registry/identity-board.json"
     },
     {
       "id": "wiki",
@@ -242,8 +368,9 @@
       "href": "https://wiki.factory-wager.com/wiki-index.html",
       "tier": "overflow",
       "group": "other",
+      "domain": "platform",
       "external": true,
-      "note": "GitHub Pages hub"
+      "note": "GitHub Pages hub · wiki-index"
     }
   ],
   "footerLinks": [
@@ -263,6 +390,14 @@
     {
       "label": "Partners",
       "href": "/portal/partners/"
+    },
+    {
+      "label": "Tennis",
+      "href": "/portal/tennis/"
+    },
+    {
+      "label": "Bookmakers",
+      "href": "/portal/bookmakers/"
     },
     {
       "label": "Packages",
@@ -309,6 +444,11 @@
       "href": "/portal/vault/"
     },
     {
+      "label": "Wiki",
+      "href": "https://wiki.factory-wager.com/wiki-index.html",
+      "external": true
+    },
+    {
       "label": "Monorepo health",
       "href": "/registry/monorepo-health.json"
     },
@@ -326,21 +466,45 @@
       "kind": "module"
     },
     {
+      "id": "fetch-json",
+      "path": "/portal/fetch-json.js",
+      "role": "shared JSON fetch helper · cache: no-store defaults",
+      "kind": "module"
+    },
+    {
+      "id": "registry-cache",
+      "path": "/portal/registry-cache.js",
+      "role": "in-memory registry bake cache for multi-card boards",
+      "kind": "module"
+    },
+    {
       "id": "nav-badges",
       "path": "/portal/nav-badges.js",
       "role": "live counts from baked registry JSON on nav links",
       "kind": "module"
     },
     {
+      "id": "domain-lanes",
+      "path": "/portal/components/domain-lanes.js",
+      "role": "domain lane chips · partner desk filter from portal-chrome domainLanes",
+      "kind": "module"
+    },
+    {
       "id": "topbar",
       "path": "/portal/topbar.js",
-      "role": "health dot · nav current · sidebar bootstrap · nav badges",
+      "role": "health dot · nav current · sidebar bootstrap · nav badges · domain lanes",
       "kind": "module"
     },
     {
       "id": "navigation",
       "path": "/portal/navigation.js",
       "role": "markCurrentNavigation path SSOT",
+      "kind": "module"
+    },
+    {
+      "id": "card",
+      "path": "/portal/card.js",
+      "role": "shared card chrome · scope badges · tag filters",
       "kind": "module"
     },
     {
@@ -380,6 +544,18 @@
       "kind": "style"
     },
     {
+      "id": "theme-tokens",
+      "path": "/portal/theme-tokens.css",
+      "role": "CSS custom properties · color kernel theme aliases",
+      "kind": "style"
+    },
+    {
+      "id": "theme-jsonc",
+      "path": "/portal/theme.jsonc",
+      "role": "theme SSOT · validate:colors / test:colors",
+      "kind": "shell"
+    },
+    {
       "id": "brand-assets",
       "path": "/site.webmanifest",
       "role": "FactoryWager mark · install metadata · theme colors",
@@ -401,6 +577,12 @@
       "id": "toc-dashboard",
       "path": "/portal/toc/toc-dashboard.js",
       "role": "TOC Drum/Buffer/Rope · harness glance",
+      "kind": "module"
+    },
+    {
+      "id": "verification-card",
+      "path": "/portal/verification-card.js",
+      "role": "proof-index verification pins · health/dashboard",
       "kind": "module"
     }
   ],
@@ -425,6 +607,455 @@
     {
       "label": "ops snapshot",
       "cmd": "bun run ops:snapshot --no-routing"
+    },
+    {
+      "label": "portal doctor",
+      "cmd": "bun run portal:doctor"
+    }
+  ],
+  "badgeSources": [
+    {
+      "href": "/portal/failures/",
+      "source": "/registry/failures.json",
+      "pick": "totals.failures | failures.length"
+    },
+    {
+      "href": "/portal/vault/",
+      "source": "/registry/vault-health.json",
+      "pick": "summary.activeItems | vaults[].active sum"
+    },
+    {
+      "href": "/portal/packages/",
+      "source": "/registry/packages-graph-map.json",
+      "pick": "packages.length | map.summary.packageCount"
+    },
+    {
+      "href": "/portal/health/",
+      "source": "/registry/monorepo-health.json",
+      "pick": "score | summary.score"
+    },
+    {
+      "href": "/portal/doctor/",
+      "source": "/registry/doctor-state.json",
+      "pick": "tone | ok → green/red"
+    },
+    {
+      "href": "/portal/install-hygiene/",
+      "source": "/registry/install-hygiene-report.json",
+      "pick": "ok | prune | fail label"
+    }
+  ],
+  "unlistedSurfaces": [
+    {
+      "id": "agent-odds",
+      "href": "/portal/agent-odds/",
+      "reason": "specialized agent odds workspace · direct product route"
+    },
+    {
+      "id": "doctor",
+      "href": "/portal/doctor/",
+      "reason": "harness control-plane · portal:doctor · badge source on doctor-state"
+    },
+    {
+      "id": "tools",
+      "href": "/portal/tools/",
+      "reason": "operator tools hub · weave scripts · not a product board"
+    },
+    {
+      "id": "failures",
+      "href": "/portal/failures/",
+      "reason": "JUnit failure board · badge source; keep overflow lean"
+    },
+    {
+      "id": "bunfig",
+      "href": "/portal/bunfig/",
+      "reason": "install policy board · UNIFIED machine/project merge"
+    },
+    {
+      "id": "console-format",
+      "href": "/portal/console-format/",
+      "reason": "console-format ratchet board · developer control-plane"
+    },
+    {
+      "id": "install-hygiene",
+      "href": "/portal/install-hygiene/",
+      "reason": "cache/links hygiene · badge source; not day-loop product nav"
+    },
+    {
+      "id": "science",
+      "href": "/portal/science/",
+      "reason": "experimental science board · niche"
+    }
+  ],
+  "boardCoverage": [
+    {
+      "id": "home",
+      "href": "/",
+      "tier": "priority",
+      "group": "other",
+      "domain": "platform",
+      "label": "Home"
+    },
+    {
+      "id": "ops",
+      "href": "/portal/ops/",
+      "tier": "priority",
+      "group": "ops",
+      "domain": "control",
+      "label": "Ops"
+    },
+    {
+      "id": "registry",
+      "href": "/portal/",
+      "tier": "priority",
+      "group": "registry",
+      "domain": "platform",
+      "label": "Registry"
+    },
+    {
+      "id": "health",
+      "href": "/portal/health/",
+      "tier": "priority",
+      "group": "harness",
+      "domain": "platform",
+      "label": "Health"
+    },
+    {
+      "id": "dod",
+      "href": "/portal/dod/",
+      "tier": "priority",
+      "group": "plane",
+      "domain": "platform",
+      "label": "DOD"
+    },
+    {
+      "id": "compliance",
+      "href": "/portal/compliance/",
+      "tier": "priority",
+      "group": "ops",
+      "domain": "control",
+      "label": "Compliance"
+    },
+    {
+      "id": "catalog",
+      "href": "/portal/catalog/",
+      "tier": "overflow",
+      "group": "registry",
+      "domain": "knowledge",
+      "label": "Catalog"
+    },
+    {
+      "id": "packages",
+      "href": "/portal/packages/",
+      "tier": "overflow",
+      "group": "registry",
+      "domain": "platform",
+      "label": "Packages"
+    },
+    {
+      "id": "brands",
+      "href": "/portal/brands/",
+      "tier": "overflow",
+      "group": "registry",
+      "domain": "knowledge",
+      "label": "Brands"
+    },
+    {
+      "id": "glossary",
+      "href": "/portal/glossary/",
+      "tier": "overflow",
+      "group": "registry",
+      "domain": "knowledge",
+      "label": "Glossary"
+    },
+    {
+      "id": "surfaces",
+      "href": "/portal/surfaces/",
+      "tier": "overflow",
+      "group": "registry",
+      "domain": "knowledge",
+      "label": "Surfaces"
+    },
+    {
+      "id": "skills",
+      "href": "/portal/skills/",
+      "tier": "overflow",
+      "group": "registry",
+      "domain": "knowledge",
+      "label": "Skills"
+    },
+    {
+      "id": "vault",
+      "href": "/portal/vault/",
+      "tier": "overflow",
+      "group": "secrets",
+      "domain": "identity",
+      "label": "Vault"
+    },
+    {
+      "id": "env",
+      "href": "/portal/env/",
+      "tier": "overflow",
+      "group": "secrets",
+      "domain": "identity",
+      "label": "Env"
+    },
+    {
+      "id": "concepts",
+      "href": "/portal/concepts/",
+      "tier": "overflow",
+      "group": "registry",
+      "domain": "knowledge",
+      "label": "Concepts"
+    },
+    {
+      "id": "concepts-graph",
+      "href": "/portal/concepts/graph/",
+      "tier": "overflow",
+      "group": "registry",
+      "domain": "knowledge",
+      "label": "Concept graph"
+    },
+    {
+      "id": "partners",
+      "href": "/portal/partners/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "label": "Partners"
+    },
+    {
+      "id": "partner-health",
+      "href": "/portal/partner/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "label": "Partner health"
+    },
+    {
+      "id": "account",
+      "href": "/portal/account/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "label": "Account"
+    },
+    {
+      "id": "partner-history",
+      "href": "/portal/partner-history/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "label": "Partner history"
+    },
+    {
+      "id": "limits",
+      "href": "/portal/limits/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "label": "Limits"
+    },
+    {
+      "id": "limits-lab",
+      "href": "/portal/limits-lab/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "label": "Limits lab"
+    },
+    {
+      "id": "bookmakers",
+      "href": "/portal/bookmakers/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "label": "Bookmakers"
+    },
+    {
+      "id": "factory",
+      "href": "/portal/factory/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "label": "Factory"
+    },
+    {
+      "id": "tennis",
+      "href": "/portal/tennis/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "trading",
+      "label": "Tennis"
+    },
+    {
+      "id": "prediction-report",
+      "href": "/registry/prediction/report/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "trading",
+      "label": "Prediction"
+    },
+    {
+      "id": "dashboard",
+      "href": "/portal/dashboard/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "control",
+      "label": "Dashboard"
+    },
+    {
+      "id": "toc",
+      "href": "/portal/toc/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "control",
+      "label": "TOC"
+    },
+    {
+      "id": "monitoring",
+      "href": "/monitoring/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "control",
+      "label": "Monitoring"
+    },
+    {
+      "id": "identity",
+      "href": "/portal/identity/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "identity",
+      "label": "Identity"
+    },
+    {
+      "id": "wiki",
+      "href": "https://wiki.factory-wager.com/wiki-index.html",
+      "tier": "overflow",
+      "group": "other",
+      "domain": "platform",
+      "label": "Wiki"
+    },
+    {
+      "id": "agent-odds",
+      "href": "/portal/agent-odds/",
+      "tier": "unlisted"
+    },
+    {
+      "id": "doctor",
+      "href": "/portal/doctor/",
+      "tier": "unlisted"
+    },
+    {
+      "id": "tools",
+      "href": "/portal/tools/",
+      "tier": "unlisted"
+    },
+    {
+      "id": "failures",
+      "href": "/portal/failures/",
+      "tier": "unlisted"
+    },
+    {
+      "id": "bunfig",
+      "href": "/portal/bunfig/",
+      "tier": "unlisted"
+    },
+    {
+      "id": "console-format",
+      "href": "/portal/console-format/",
+      "tier": "unlisted"
+    },
+    {
+      "id": "install-hygiene",
+      "href": "/portal/install-hygiene/",
+      "tier": "unlisted"
+    },
+    {
+      "id": "science",
+      "href": "/portal/science/",
+      "tier": "unlisted"
+    }
+  ],
+  "domainLanes": [
+    {
+      "id": "partner",
+      "label": "Partner desk",
+      "description": "Package groups · account dossier · limit raises · bookmakers · Factory Telegram · seat capital",
+      "doc": "docs/harness/tenants/partner-domain-map.md",
+      "boardIds": [
+        "partners",
+        "partner-health",
+        "account",
+        "partner-history",
+        "limits",
+        "limits-lab",
+        "bookmakers",
+        "factory"
+      ]
+    },
+    {
+      "id": "trading",
+      "label": "Trading",
+      "description": "Tennis HQ runtime · prediction reports · live desk metrics",
+      "doc": "docs/harness/tenants/tennis-hq-registry.md",
+      "boardIds": [
+        "tennis",
+        "prediction-report"
+      ]
+    },
+    {
+      "id": "control",
+      "label": "Control loop",
+      "description": "Ops snapshot · TOC · dashboard · monitoring · compliance (MA/NJ)",
+      "doc": "docs/harness/tenants/ops-loop-throughput.md",
+      "boardIds": [
+        "ops",
+        "compliance",
+        "dashboard",
+        "toc",
+        "monitoring"
+      ]
+    },
+    {
+      "id": "identity",
+      "label": "Identity & secrets",
+      "description": "Auth board · vault · env inject · lockout / geo / JIT",
+      "doc": "lib/identity/README.md",
+      "boardIds": [
+        "vault",
+        "env",
+        "identity"
+      ]
+    },
+    {
+      "id": "knowledge",
+      "label": "Knowledge",
+      "description": "Glossary · concepts · brands · catalog · surfaces · skills",
+      "doc": "docs/portal-foundation.md",
+      "boardIds": [
+        "catalog",
+        "brands",
+        "glossary",
+        "surfaces",
+        "skills",
+        "concepts",
+        "concepts-graph"
+      ]
+    },
+    {
+      "id": "platform",
+      "label": "Platform",
+      "description": "Packages graph · health · DOD · wiki hub",
+      "doc": "docs/harness/AUTHORITY.md",
+      "boardIds": [
+        "home",
+        "registry",
+        "health",
+        "dod",
+        "packages",
+        "wiki"
+      ]
     }
   ]
 }

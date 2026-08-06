@@ -1,8 +1,8 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "kind": "tennis-hq-agent-auth",
   "path": "/registry/tennis/agent-auth.json",
-  "generatedAt": "2026-07-31T11:28:01.526Z",
+  "generatedAt": "2026-08-05T02:48:46.377Z",
   "tenantId": "tennis",
   "consumer": "tennis-hq-cloud-agent",
   "label": "Tennis HQ · FactoryWager registry auth",
@@ -33,6 +33,24 @@
   "planes": {
     "read": "Public Pages/R2 mirror — GET/HEAD without token",
     "write": "Bearer FACTORY_WAGER_TOKEN — local serve-public or private publish path (Pages rejects writes)"
+  },
+  "producerRuntime": {
+    "url": "https://tennis.factory-wager.com",
+    "worker": "tennis-hq",
+    "platform": "cloudflare-workers",
+    "ownership": "factorywager-operator",
+    "versionPath": "/api/version",
+    "contractBasePath": "/api/v1",
+    "contractAuth": {
+      "mode": "bearer-fail-closed",
+      "producerEnvKey": "PARTNER_API_TOKEN",
+      "registryTokenAccepted": false,
+      "unauthenticatedStatuses": [
+        401,
+        503
+      ]
+    },
+    "releaseVerification": "bun run cloudflare:deploy:verify"
   },
   "docs": [
     "docs/harness/tenants/tennis-hq-registry.md",

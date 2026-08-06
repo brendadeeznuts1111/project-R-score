@@ -119,10 +119,10 @@ export function listProfileAudit(db: Database, code?: string): ProfileAuditRow[]
     code
       ? db
           .query(
-            'SELECT * FROM partner_profile_audit WHERE partner_code = ? ORDER BY recorded_at DESC'
+            'SELECT * FROM partner_profile_audit WHERE partner_code = ? ORDER BY recorded_at DESC, id DESC'
           )
           .all(code)
-      : db.query('SELECT * FROM partner_profile_audit ORDER BY recorded_at DESC').all()
+      : db.query('SELECT * FROM partner_profile_audit ORDER BY recorded_at DESC, id DESC').all()
   ) as Array<Record<string, unknown>>;
   return rows.map(r => ({
     id: Number(r.id),
@@ -138,10 +138,20 @@ export function listProfileAudit(db: Database, code?: string): ProfileAuditRow[]
 export function lastProfileAuditHash(db: Database, code: string): string | null {
   const row = db
     .query(
-      'SELECT file_hash FROM partner_profile_audit WHERE partner_code = ? ORDER BY recorded_at DESC LIMIT 1'
+      'SELECT file_hash FROM partner_profile_audit WHERE partner_code = ? ORDER BY recorded_at DESC, id DESC LIMIT 1'
     )
     .get(code) as { file_hash: string } | null | undefined;
   return row?.file_hash ?? null;
+}
+
+/** Last recorded action for a partner code, or null when never recorded. */
+export function lastProfileAuditAction(db: Database, code: string): ProfileAuditAction | null {
+  const row = db
+    .query(
+      'SELECT action FROM partner_profile_audit WHERE partner_code = ? ORDER BY recorded_at DESC, id DESC LIMIT 1'
+    )
+    .get(code) as { action: ProfileAuditAction } | null | undefined;
+  return row?.action ?? null;
 }
 
 // ─── diff ────────────────────────────────────────────────────────────────────
@@ -174,10 +184,17 @@ export function diffPartnerProfiles(opts: {
   );
   const bound = new Set(
     (
-      db.query('SELECT DISTINCT profile_key FROM partner_profile_bindings').all() as Array<{
+      db
+        .query(
+          `SELECT DISTINCT b.profile_key, n.call_sign
+           FROM partner_profile_bindings b
+           LEFT JOIN tree_nodes n ON n.id = b.tree_node_id`
+        )
+        .all() as Array<{
         profile_key: string;
+        call_sign: string | null;
       }>
-    ).map(r => r.profile_key)
+    ).map(r => r.call_sign?.match(/^([A-Z]{3,6})-\d{3}$/)?.[1] ?? r.profile_key)
   );
 
   const added: string[] = [];
@@ -218,8 +235,10 @@ export function recordDiffAudit(
     recorded++;
   }
   for (const code of diff.removed) {
-    recordProfileAudit(db, code, 'remove', '', 'diff --record — no TOML');
-    recorded++;
+    if (lastProfileAuditAction(db, code) !== 'remove') {
+      recordProfileAudit(db, code, 'remove', '', 'diff --record — no TOML');
+      recorded++;
+    }
   }
   return recorded;
 }

@@ -1,8 +1,13 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/docs/runtime/transpiler — Bun.Transpiler.scanImports
 /**
  * Package-level dependency mapping from a file-level import adjacency.
- * Used by tools/packages-metafile-audit.ts (schema v12+).
+ * Used by tools/packages-metafile-audit.ts (claim packages-graph-map-v13).
+ *
+ * Bake top-level (schema v13 additive): `board`, `openActions`, `glance` via
+ * {@link PACKAGES_GRAPH_BOARD}, {@link filterOpenCouplingActions},
+ * {@link buildPackagesGraphGlance}.
  */
 
 import type { PackageVaultMap } from './packages-vault-map.ts';
@@ -1119,4 +1124,90 @@ export function formatIntraPackageMermaid(
   }
   lines.push(`  end`);
   return lines.join('\n') + '\n';
+}
+
+/** Non-ok coupling actions for operator / agent triage (bake top-level openActions). */
+export type OpenCouplingAction = NonNullable<PackageGraphMap['actions']>[number] & {
+  action: Exclude<CouplingAction, 'ok'>;
+};
+
+/** Compact operator rollup on packages-graph-map bake (schema v13 additive). */
+export type PackagesGraphGlance = {
+  score: number;
+  grade: string;
+  packageCount: number;
+  consumed: number;
+  dormant: number;
+  openActions: number;
+  avgPackageScore: number | null;
+  orphanCount: number;
+  cycleCount: number;
+  hubCount: number;
+  externalEdges: number;
+  crossPackageEdges: number;
+  topHub: string | null;
+  surfacesPages: number | null;
+  surfacesRegOrphan: number | null;
+};
+
+/** Portal board for this bake. */
+export const PACKAGES_GRAPH_BOARD = '/portal/packages/' as const;
+
+/**
+ * Filter coupling actions to open work (exclude ok).
+ */
+export function filterOpenCouplingActions(
+  actions: PackageGraphMap['actions'] | null | undefined
+): OpenCouplingAction[] {
+  return (actions ?? []).filter(
+    (a): a is OpenCouplingAction => !!a && a.action !== 'ok' && typeof a.package === 'string'
+  );
+}
+
+/**
+ * Build operator glance from map + audit totals (+ optional surfaces summary).
+ */
+export function buildPackagesGraphGlance(input: {
+  score: number;
+  grade: string;
+  map: PackageGraphMap;
+  totals: {
+    orphanCount: number;
+    cycleCount: number;
+    hubCount: number;
+    externalEdges: number;
+    crossPackageEdges: number;
+    openActions?: number;
+    avgPackageScore?: number;
+  };
+  surfacesSummary?: {
+    portalPages?: number;
+    registryOrphanFromPortal?: number;
+  } | null;
+}): PackagesGraphGlance {
+  const summary = input.map.summary;
+  const openFromActions = filterOpenCouplingActions(input.map.actions).length;
+  return {
+    score: input.score,
+    grade: input.grade,
+    packageCount: summary?.packageCount ?? input.map.packages.length,
+    consumed: summary?.consumed ?? 0,
+    dormant: summary?.dormant ?? 0,
+    openActions: input.totals.openActions ?? summary?.openActions ?? openFromActions,
+    avgPackageScore: input.totals.avgPackageScore ?? summary?.avgPackageScore ?? null,
+    orphanCount: input.totals.orphanCount,
+    cycleCount: input.totals.cycleCount,
+    hubCount: input.totals.hubCount,
+    externalEdges: input.totals.externalEdges,
+    crossPackageEdges: input.totals.crossPackageEdges,
+    topHub: summary?.topHub ?? null,
+    surfacesPages:
+      typeof input.surfacesSummary?.portalPages === 'number'
+        ? input.surfacesSummary.portalPages
+        : null,
+    surfacesRegOrphan:
+      typeof input.surfacesSummary?.registryOrphanFromPortal === 'number'
+        ? input.surfacesSummary.registryOrphanFromPortal
+        : null,
+  };
 }

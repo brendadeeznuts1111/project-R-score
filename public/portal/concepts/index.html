@@ -4,7 +4,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="portal-poll-ms" content="60000" />
     <title>Concepts · FactoryWager</title>
+    <meta
+      name="description"
+      content="FactoryWager portal semantic vocabulary — domain ownership, concept lifecycle, usage, and provenance."
+    />
     <meta name="theme-color" content="#0d1117" />
     <meta name="application-name" content="FactoryWager" />
     <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
@@ -17,182 +22,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/portal/style.css" />
-    <style>
-      .cx-wrap {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 24px 48px;
-      }
-      .cx-stats {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 10px;
-        margin: 16px 0 20px;
-      }
-      .cx-stat {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 12px 14px;
-      }
-      .cx-stat .k {
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-dim);
-      }
-      .cx-stat .v {
-        font-size: 20px;
-        font-weight: 650;
-        font-variant-numeric: tabular-nums;
-      }
-      .cx-stat.ok .v {
-        color: var(--green, #3fb950);
-      }
-      .cx-stat.bad .v {
-        color: var(--red, #f85149);
-      }
-      .cx-panel {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 16px 18px;
-        margin-bottom: 16px;
-      }
-      .cx-panel h2 {
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: var(--text-dim);
-        margin: 0 0 12px;
-      }
-      .cx-model {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 8px;
-      }
-      .cx-model-step {
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 12px;
-      }
-      .cx-model-step strong {
-        display: block;
-        margin-bottom: 4px;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 12px;
-      }
-      .cx-domains {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 8px;
-      }
-      .cx-domain-tile {
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 10px 12px;
-        cursor: pointer;
-        background: transparent;
-        color: inherit;
-        text-align: left;
-        font: inherit;
-      }
-      .cx-domain-tile:hover,
-      .cx-domain-tile.active {
-        border-color: var(--accent, #58a6ff);
-        background: rgba(88, 166, 255, 0.08);
-      }
-      .cx-domain-tile .name {
-        font-weight: 600;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 12px;
-      }
-      .cx-domain-tile .meta {
-        font-size: 11px;
-        color: var(--text-dim);
-        margin-top: 4px;
-      }
-      .cx-filters {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-        margin-bottom: 12px;
-      }
-      .cx-filters label {
-        font-size: 12px;
-        color: var(--text-dim);
-        display: flex;
-        gap: 6px;
-        align-items: center;
-      }
-      .cx-filters select,
-      .cx-filters input[type='search'] {
-        background: var(--bg, #0d1117);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        color: inherit;
-        font: inherit;
-        font-size: 12px;
-        padding: 4px 8px;
-      }
-      .cx-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12px;
-      }
-      .cx-table th {
-        text-align: left;
-        padding: 6px 8px;
-        color: var(--text-dim);
-        font-weight: 500;
-        border-bottom: 1px solid var(--border);
-        position: sticky;
-        top: 0;
-        background: var(--surface);
-      }
-      .cx-table td {
-        padding: 6px 8px;
-        border-bottom: 1px solid rgba(48, 54, 61, 0.4);
-      }
-      .cx-table td.mono {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 11px;
-      }
-      .cx-table td.dim,
-      .dim {
-        color: var(--text-dim);
-        font-size: 11px;
-      }
-      .cx-table-wrap {
-        max-height: 480px;
-        overflow: auto;
-      }
-      .cx-pill {
-        display: inline-block;
-        padding: 1px 7px;
-        border-radius: 999px;
-        font-size: 10px;
-        font-weight: 600;
-      }
-      .cx-pill.used {
-        background: rgba(63, 185, 80, 0.12);
-        color: var(--green, #3fb950);
-      }
-      .cx-pill.unused,
-      .cx-pill.surface-only {
-        background: rgba(139, 148, 158, 0.12);
-        color: var(--text-dim);
-      }
-      @media (max-width: 800px) {
-        .cx-stats {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-        .cx-model {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="/portal/concepts/concepts.css" />
   </head>
   <body>
     <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
@@ -205,51 +35,92 @@
         <span class="logo-page">Concepts</span>
       </h1>
         <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" data-group="other">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · bun run ops:snapshot" data-group="ops" data-cli="bun run ops:snapshot">Ops</a>
-        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-cli="bun run monorepo:health:bake">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · bun run compliance:bake" data-group="ops" data-cli="bun run compliance:bake">Compliance</a>
+        <a href="/" class="nav-link" title="public lander · portal entry" data-group="other" data-domain="platform">Home</a>
+        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · C4/C5 loop · partner handshake panel · bun run ops:snapshot" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot" data-registry="/registry/ops-summary.json">Ops</a>
+        <a href="/portal/" class="nav-link" title="portal hub · board index · weave surfaces" data-group="registry" data-domain="platform">Registry</a>
+        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-domain="platform" data-cli="bun run monorepo:health:bake" data-registry="/registry/monorepo-health.json">Health</a>
+        <a href="/portal/dod/" class="nav-link" title="visual proof review · public-plane gate · bun run public:audit:verify" data-group="plane" data-domain="platform" data-cli="bun run public:audit:verify">DOD</a>
+        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · shadow matrix · bun run compliance:bake" data-group="ops" data-domain="control" data-cli="bun run compliance:bake" data-registry="/registry/compliance-board.json">Compliance</a>
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-cli="bun run glossary:portal" role="menuitem">Glossary</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-            <a href="/portal/concepts/" class="nav-link active" aria-current="page" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
-            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
-            <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
-            <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
-            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · bun run telegram:handshake:catalog" data-group="ops" data-cli="bun run telegram:handshake:catalog" role="menuitem">Partners</a>
-            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog" data-group="ops" role="menuitem">Account</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Partner history</a>
-            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-cli="bun run bookmakers:bake" role="menuitem">Bookmakers</a>
-            <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem">Monitoring</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub" data-group="other" role="menuitem">Wiki</a>
+          <div class="nav-group" role="group" aria-label="Ops · domain" data-group="ops">
+            <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
+            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · seat capital · bun run telegram:handshake:catalog" data-group="ops" data-domain="partner" data-cli="bun run telegram:handshake:catalog" data-registry="/registry/partners-ops.json" role="menuitem">Partners</a>
+            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed" data-group="ops" data-domain="partner" data-cli="bun run ops:dossier:seed" data-registry="/registry/partners-ops.json" role="menuitem">Account</a>
+            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Partner history</a>
+            <a href="/portal/limits/" class="nav-link" title="multi-factor partner limit raises · CLV · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Limits</a>
+            <a href="/portal/limits-lab/" class="nav-link" title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:predict" data-registry="/registry/limit-forecast-lab.json" role="menuitem">Limits lab</a>
+            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-domain="partner" data-cli="bun run bookmakers:bake" data-registry="/registry/bookmakers.json" role="menuitem">Bookmakers</a>
+            <a href="/portal/factory/" class="nav-link" title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify" data-group="ops" data-domain="partner" data-cli="bun run telegram:verify" data-registry="/registry/telegram-handshake.json" role="menuitem">Factory</a>
+            <a href="/portal/tennis/" class="nav-link" title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake" data-group="ops" data-domain="trading" data-cli="bun run tennis:board:bake" data-registry="/registry/tennis/agent-auth.json" role="menuitem">Tennis</a>
+            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-domain="trading" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
+            <a href="/portal/dashboard/" class="nav-link" title="KPIs · TOC · compliance plane · proof-index pins" data-group="ops" data-domain="control" role="menuitem">Dashboard</a>
+            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope fixture board · bun run ops:seed:toc" data-group="ops" data-domain="control" data-cli="bun run ops:seed:toc" data-registry="/registry/toc-ops.json" role="menuitem">TOC</a>
+            <a href="/monitoring/" class="nav-link" title="routing · env · compliance tile · proof status · bun run ops:snapshot --no-seed" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot --no-seed" data-registry="/registry/monitoring.json" role="menuitem">Monitoring</a>
+            <a href="/portal/identity/" class="nav-link" title="auth board · lockout · anomaly · geo · JIT · bun test tests/identity-*.test.ts" data-group="ops" data-domain="identity" data-cli="bun test tests/identity-*.test.ts" data-registry="/registry/identity-board.json" role="menuitem">Identity</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Secrets" data-group="secrets">
+            <div class="nav-group-label" aria-hidden="true">Secrets</div>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-registry="/registry/vault-health.json" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="Registry" data-group="registry">
+            <div class="nav-group-label" aria-hidden="true">Registry</div>
+            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-domain="knowledge" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
+            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-domain="platform" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" data-registry="/registry/packages-graph-map.json" role="menuitem">Packages</a>
+            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-domain="knowledge" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
+            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-domain="knowledge" data-cli="bun run glossary:portal" data-registry="/registry/domain-glossary.json" role="menuitem">Glossary</a>
+            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" data-registry="/registry/surfaces-state.json" role="menuitem">Surfaces</a>
+            <a href="/portal/skills/" class="nav-link" title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate" data-group="registry" data-domain="knowledge" data-cli="bun run skills:validate" data-registry="/registry/harness-skills-catalog.json" role="menuitem">Skills</a>
+            <a href="/portal/concepts/" class="nav-link active" aria-current="page" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
+            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-domain="knowledge" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
+          </div>
+          <div class="nav-group" role="group" aria-label="More" data-group="other">
+            <div class="nav-group-label" aria-hidden="true">More</div>
+            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub · wiki-index" data-group="other" data-domain="platform" role="menuitem">Wiki</a>
+          </div>
           </div>
         </div>
       </nav>
       </div>
     </header>
     <main class="cx-wrap">
-      <p class="dim">
-        Portal semantic vocabulary — domains, usage, and provenance ·
-        <code>bun run concepts:bake</code> ·
-        <a href="/registry/concepts-state.json">concepts-state.json</a> · CLI
-        <code>bun run concept:audit -- --domain-summary</code>
-        ·
-        <a href="/portal/concepts/graph/">concept graph</a>
-      </p>
+      <section class="cx-hero" aria-labelledby="cx-hero-title">
+        <p class="cx-eyebrow">Portal semantic vocabulary</p>
+        <h2 id="cx-hero-title">Domain owns meaning. Concepts stay stable.</h2>
+        <p class="cx-hero-sub">
+          Inventory of portal concepts with lifecycle, provenance, and board usage — keep business
+          domain, namespace, concept identity, and runtime shape distinct.
+        </p>
+        <div class="cx-hero-meta">
+          <span id="cx-gate" class="cx-gate" aria-live="polite">…</span>
+          <span id="cx-baked" class="cx-baked">loading…</span>
+          <div class="cx-source-links" aria-label="Related artifacts">
+            <a href="/registry/concepts-state.json">concepts-state.json</a>
+            <a href="/portal/concepts/graph/">concept graph</a>
+            <a href="/portal/glossary/">glossary</a>
+            <a href="/portal/surfaces/">surfaces</a>
+          </div>
+        </div>
+      </section>
+
       <section class="cx-panel" aria-labelledby="cx-model-title">
-        <h2 id="cx-model-title">Domain → concept → shape → surface</h2>
+        <div class="cx-panel-head">
+          <div>
+            <h2 id="cx-model-title">Domain → concept → shape → surface</h2>
+            <p class="cx-panel-desc">
+              Operator model for extending vocabulary, contracts, and boards ·
+              <a
+                href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/DOMAIN_CONCEPT_SHAPE.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                >DOMAIN_CONCEPT_SHAPE.md</a
+              >
+              · CLI <code>bun run concept:audit -- --domain-summary</code>
+            </p>
+          </div>
+        </div>
         <div class="cx-model">
           <div class="cx-model-step" data-model-step="domain">
             <strong>1 · Domain</strong>
@@ -268,34 +139,71 @@
             <span class="dim">Board, API, artifact, or workflow that consumes it.</span>
           </div>
         </div>
-        <p class="dim" style="margin: 12px 0 0">
-          Keep business domain, namespace, concept identity, and runtime shape distinct ·
-          <a
-            href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/DOMAIN_CONCEPT_SHAPE.md"
-            target="_blank"
-            rel="noopener noreferrer"
-            >operator model</a
-          >
-        </p>
       </section>
-      <div class="cx-stats" id="cx-stats"></div>
+
+      <div class="cx-stats" id="cx-stats" aria-label="Concept summary"></div>
+      <div class="cx-issues" id="cx-issues" aria-live="polite"></div>
+
       <div class="cx-panel" id="cx-graph-panel">
-        <h2>Concept graph</h2>
-        <div class="cx-stats" id="cx-graph-stats" style="margin: 0 0 12px; grid-template-columns: repeat(4, minmax(0, 1fr))"></div>
-        <p class="dim" style="margin: 0">
-          seeAlso · surface · domain hubs ·
-          <a href="/portal/concepts/graph/">open interactive board</a> ·
-          <a href="/registry/concepts-graph.json">concepts-graph.json</a> ·
-          <code>bun run concept:graph:bake</code>
-        </p>
+        <div class="cx-panel-head">
+          <div>
+            <h2>Concept graph</h2>
+            <p class="cx-panel-desc">
+              seeAlso · surface · domain hubs ·
+              <a href="/portal/concepts/graph/">open interactive board</a> ·
+              <a href="/registry/concepts-graph.json">concepts-graph.json</a> ·
+              <code>bun run concept:graph:bake</code>
+            </p>
+          </div>
+        </div>
+        <div
+          class="cx-stats"
+          id="cx-graph-stats"
+          style="margin: 0; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr))"
+        ></div>
       </div>
+
       <div class="cx-panel">
-        <h2>Domain summary</h2>
+        <div class="cx-panel-head">
+          <div>
+            <h2>Domain summary</h2>
+            <p class="cx-panel-desc">Filter the inventory by business lane. Bar width = concept count.</p>
+          </div>
+        </div>
         <div class="cx-domains" id="cx-domains" role="group" aria-label="Domain filter"></div>
       </div>
+
       <div class="cx-panel">
-        <h2>Concepts</h2>
+        <div class="cx-panel-head">
+          <div>
+            <h2>Board usage</h2>
+            <p class="cx-panel-desc">
+              Top consumers from the concept audit rollup · click through to the board.
+            </p>
+          </div>
+        </div>
+        <div class="cx-boards" id="cx-boards" aria-label="Board usage"></div>
+      </div>
+
+      <div class="cx-panel">
+        <div class="cx-panel-head">
+          <div>
+            <h2>Concepts</h2>
+            <p class="cx-panel-desc">
+              Shareable filters via URL hash · ids link into
+              <a href="/portal/glossary/">glossary</a>.
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center">
+            <span class="cx-count" id="cx-count">…</span>
+            <button type="button" class="cx-clear" id="cx-clear" disabled>Clear filters</button>
+          </div>
+        </div>
         <div class="cx-filters">
+          <label>
+            Search
+            <input id="cx-q" type="search" placeholder="id, label, group, provenance" aria-label="Search concepts" />
+          </label>
           <label>
             Domain
             <select id="cx-domain" aria-label="Filter by domain">
@@ -312,28 +220,35 @@
             </select>
           </label>
           <label>
+            Status
+            <select id="cx-status" aria-label="Filter by status">
+              <option value="">all</option>
+            </select>
+          </label>
+          <label>
+            Namespace
+            <select id="cx-ns" aria-label="Filter by namespace">
+              <option value="">all</option>
+            </select>
+          </label>
+          <label class="cx-check">
             <input id="cx-group-domain" type="checkbox" />
             Group by domain
           </label>
-          <label>
-            Search
-            <input id="cx-q" type="search" placeholder="id or label" aria-label="Search concepts" />
-          </label>
-          <span class="dim" id="cx-count"></span>
         </div>
         <div class="cx-table-wrap">
-          <table class="cx-table">
+          <table class="portal-table cx-table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Label</th>
-                <th>Domain</th>
-                <th>Namespace</th>
-                <th>Group</th>
-                <th>Status</th>
-                <th>Provenance</th>
-                <th>Usage</th>
-                <th>Kind</th>
+                <th class="sortable" data-sort="id" scope="col">ID</th>
+                <th class="sortable" data-sort="label" scope="col">Label</th>
+                <th class="sortable" data-sort="domain" scope="col">Domain</th>
+                <th class="sortable" data-sort="namespace" scope="col">Namespace</th>
+                <th class="sortable" data-sort="group" scope="col">Group</th>
+                <th class="sortable" data-sort="status" scope="col">Status</th>
+                <th class="sortable" data-sort="provenance" scope="col">Provenance</th>
+                <th class="sortable" data-sort="usage" scope="col">Usage</th>
+                <th class="sortable" data-sort="kind" scope="col">Kind</th>
               </tr>
             </thead>
             <tbody id="cx-rows">
@@ -345,177 +260,7 @@
         </div>
       </div>
     </main>
-    <script type="module">
-      const $ = id => document.getElementById(id);
-      const esc = s =>
-        String(s).replace(
-          /[&<>"]/g,
-          c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]
-        );
-      const pill = k => `<span class="cx-pill ${esc(k)}">${esc(k)}</span>`;
-
-      let state = null;
-      let domainFilter = '';
-
-      function pct(n) {
-        return `${Math.round((n ?? 0) * 100)}%`;
-      }
-
-      function renderStats() {
-        const s = state.summary ?? {};
-        const ok = state.gate === 'pass';
-        $('cx-stats').innerHTML = [
-          ['Gate', state.gate ?? 'unset', ok ? 'ok' : 'bad'],
-          ['Concepts', s.totalPortal ?? 0, ''],
-          ['Provenance', pct(s.provenanceCoverage), ''],
-          ['Used UI', s.usedUi ?? 0, ''],
-          ['Unused', s.unusedUi ?? 0, ''],
-        ]
-          .map(
-            ([k, v, c]) =>
-              `<div class="cx-stat ${c}"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`
-          )
-          .join('');
-      }
-
-      function renderDomainTiles() {
-        const tiles = state.domainSummary ?? [];
-        const sel = $('cx-domain');
-        const current = sel.value;
-        sel.innerHTML =
-          `<option value="">all</option>` +
-          tiles.map(d => `<option value="${esc(d.domain)}">${esc(d.domain)}</option>`).join('');
-        if ([...sel.options].some(o => o.value === current)) sel.value = current;
-
-        $('cx-domains').innerHTML =
-          `<button type="button" class="cx-domain-tile${domainFilter === '' ? ' active' : ''}" data-domain="">` +
-          `<div class="name">all</div><div class="meta">${state.summary?.totalPortal ?? 0} concepts</div></button>` +
-          tiles
-            .map(d => {
-              const prov =
-                d.provenancePct != null
-                  ? `${d.provenancePct}% provenance`
-                  : d.count
-                    ? `${Math.round(((d.provenance ?? 0) / d.count) * 100)}% provenance`
-                    : '—';
-              return (
-                `<button type="button" class="cx-domain-tile${domainFilter === d.domain ? ' active' : ''}" data-domain="${esc(d.domain)}">` +
-                `<div class="name">${esc(d.domain)}</div>` +
-                `<div class="meta">${d.count} · ${d.used} used · ${d.unused} unused · ${esc(prov)}</div></button>`
-              );
-            })
-            .join('');
-
-        for (const btn of $('cx-domains').querySelectorAll('[data-domain]')) {
-          btn.addEventListener('click', () => {
-            domainFilter = btn.getAttribute('data-domain') ?? '';
-            sel.value = domainFilter;
-            renderDomainTiles();
-            renderRows();
-          });
-        }
-      }
-
-      function filteredConcepts() {
-        const kind = $('cx-kind').value;
-        const q = ($('cx-q').value ?? '').trim().toLowerCase();
-        return (state.concepts ?? []).filter(c => {
-          if (domainFilter && c.domain !== domainFilter) return false;
-          if (kind && c.kind !== kind) return false;
-          if (q && !`${c.id} ${c.label}`.toLowerCase().includes(q)) return false;
-          return true;
-        });
-      }
-
-      function renderRows() {
-        let rows = filteredConcepts();
-        const groupByDomain = $('cx-group-domain').checked;
-        if (groupByDomain) {
-          rows = [...rows].sort(
-            (a, b) => a.domain.localeCompare(b.domain) || a.id.localeCompare(b.id)
-          );
-        }
-        $('cx-count').textContent = `${rows.length} shown`;
-        let lastDomain = null;
-        $('cx-rows').innerHTML =
-          rows
-            .map(c => {
-              let groupRow = '';
-              if (groupByDomain && c.domain !== lastDomain) {
-                lastDomain = c.domain;
-                groupRow =
-                  `<tr><td colspan="9" class="dim" style="padding-top:12px"><strong>${esc(c.domain)}</strong></td></tr>`;
-              }
-              return (
-                groupRow +
-                `<tr>` +
-                `<td class="mono"><a href="/portal/glossary/#glossary:${esc(c.id)}">${esc(c.id)}</a></td>` +
-                `<td>${esc(c.label)}</td>` +
-                `<td class="mono">${esc(c.domain)}</td>` +
-                `<td class="mono dim">${esc(c.namespace ?? '')}</td>` +
-                `<td class="mono dim">${esc(c.group)}</td>` +
-                `<td>${esc(c.status)}</td>` +
-                `<td class="mono dim">${esc(c.provenance || '—')}</td>` +
-                `<td class="mono">${c.usage}</td>` +
-                `<td>${pill(c.kind)}</td>` +
-                `</tr>`
-              );
-            })
-            .join('') || '<tr><td colspan="9" class="dim">no concepts match filters</td></tr>';
-      }
-
-      function bindFilters() {
-        $('cx-domain').addEventListener('change', () => {
-          domainFilter = $('cx-domain').value;
-          renderDomainTiles();
-          renderRows();
-        });
-        $('cx-kind').addEventListener('change', renderRows);
-        $('cx-group-domain').addEventListener('change', renderRows);
-        $('cx-q').addEventListener('input', renderRows);
-      }
-
-      async function renderGraphSummary() {
-        const box = $('cx-graph-stats');
-        if (!box) return;
-        try {
-          const res = await fetch('/registry/concepts-graph.json', { cache: 'no-store' });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const g = await res.json();
-          const s = g.summary ?? {};
-          box.innerHTML = [
-            ['Nodes', s.nodes ?? 0],
-            ['Edges', s.edges ?? 0],
-            ['seeAlso', s.seeAlsoEdges ?? 0],
-            ['Used', s.used ?? 0],
-          ]
-            .map(
-              ([k, v]) =>
-                `<div class="cx-stat"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`
-            )
-            .join('');
-        } catch (e) {
-          box.innerHTML = `<div class="cx-stat"><div class="k">Graph</div><div class="v dim" style="font-size:13px">bake missing</div></div>`;
-        }
-      }
-
-      try {
-        const res = await fetch('/registry/concepts-state.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        state = await res.json();
-        renderStats();
-        renderDomainTiles();
-        bindFilters();
-        renderRows();
-        await renderGraphSummary();
-      } catch (e) {
-        $('cx-stats').innerHTML = '';
-        $('cx-domains').innerHTML = `<p class="dim">unavailable</p>`;
-        $('cx-rows').innerHTML =
-          `<tr><td colspan="9" class="dim">concepts-state.json unavailable — run <code>bun run concepts:bake</code> (${esc(e.message)})</td></tr>`;
-        await renderGraphSummary();
-      }
-    </script>
+    <script type="module" src="/portal/concepts/concepts-board.js"></script>
     <script type="module" src="/portal/data.js"></script>
     <script type="module" src="/portal/topbar.js"></script>
     <script type="module" src="/portal/components/sidebar.js"></script>
@@ -528,6 +273,8 @@
       <a href="/portal/ops/">Ops</a> ·
       <a href="/portal/toc/">TOC</a> ·
       <a href="/portal/partners/">Partners</a> ·
+      <a href="/portal/tennis/">Tennis</a> ·
+      <a href="/portal/bookmakers/">Bookmakers</a> ·
       <a href="/portal/packages/">Packages</a> ·
       <a href="/portal/brands/">Brands</a> ·
       <a href="/portal/glossary/">Glossary</a> ·
@@ -539,6 +286,7 @@
       <a href="/portal/dod/">DOD</a> ·
       <a href="/portal/env/">Env</a> ·
       <a href="/portal/vault/">Vault</a> ·
+      <a href="https://wiki.factory-wager.com/wiki-index.html" target="_blank" rel="noopener noreferrer">Wiki</a> ·
       <a href="/registry/monorepo-health.json">Monorepo health</a> ·
       <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
     </p>

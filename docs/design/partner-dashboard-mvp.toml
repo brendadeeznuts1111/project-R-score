@@ -1,0 +1,1431 @@
+# Machine-readable planning artifact for docs/design/partner-dashboard-mvp.md.
+# This is not runtime configuration and is not a new source of business truth.
+
+[plan]
+schema = "factorywager.partner-dashboard-plan.v2"
+status = "proposal"
+last_reviewed = "2026-08-05"
+owner = "@factorywager/partners"
+
+[domain]
+id = "partners"
+primary_concept_namespaces = ["partner", "out"]
+
+[package]
+target_name = "@factorywager/partners"
+target_workspace = "packages/partners"
+implementation_status = "scaffolded"
+
+[toolchain]
+authority = "config/bun-channels.toml"
+governance = "docs/design/bun-channel-governance.md"
+status_artifact = "public/registry/bun-channel-status.json"
+policy = "reference-only-partner-domain-does-not-own-runtime-or-type-channels"
+
+[shapes.dashboard_artifact]
+type = "PartnerDashboardArtifact"
+schema = "factorywager.partners-dashboard.v1"
+active_legacy_schema = "factorywager.partners-dashboard.v1"
+retired_legacy_schema = "factorywager.partners-dashboard.v2"
+path = "/registry/partners-dashboard.json"
+canonical_join_type = "PartnerCode"
+canonical_wire_key = "partnerCode"
+display_identity_label = "CODE"
+artifact_embeds_colors = false
+
+[surfaces.portal]
+board_id = "partners"
+host_surface_id = "score"
+route = "/portal/partners/"
+page_concept_id = "page.partners"
+target_consumer = "PartnerDashboardArtifact"
+
+[surfaces.portal.consumer_contract]
+entrypoint_path = "public/portal/partners/index.html"
+implementation_status = "current-compatibility"
+active_input_mode = "legacy-multi-artifact"
+required_input_refs = [
+  "/registry/telegram-handshake.json",
+  "/registry/seat-capital-desk.json",
+  "/registry/telegram-handshake-catalog.json",
+  "/registry/scrape-wire-taxonomy.json",
+  "/registry/partners-ops.json",
+  "/registry/partner-profiles.json",
+  "/registry/limit-raises.json",
+]
+optional_input_refs = ["/registry/soft-accounting-export.json"]
+target_shape_ref = "shapes.dashboard_artifact"
+target_input_mode = "canonical-single-artifact"
+retirement_condition = "portal-loads-only-target-artifact"
+
+[semantic_model]
+semantic_order = ["business-domain", "concept", "parsed-shape", "consuming-surface"]
+presentation_layer = "theme-after-surface"
+authority = "docs/DOMAIN_CONCEPT_SHAPE.md"
+policy = "theme roles present meaning but never define or replace domain state"
+
+[nomenclature]
+policy = "canonical-types-and-axis-qualified-wire-keys"
+business_domain = "owner of stable business meaning; not a hostname or concept namespace"
+vocabulary_namespace = "first dotted concept-id segment; not business ownership"
+concept_id = "stable semantic identity; reuse before proposing a new concept"
+parsed_shape = "validated representation trusted after an ingress or adapter boundary"
+surface = "portal, API, artifact, CLI, or operator consumer"
+theme_role = "presentation-only alias resolved through public/portal/theme.jsonc"
+source_system = "authority named in provenance"
+connector = "I/O boundary owning timeout, circuit breaker, and last-known-good behavior"
+adapter = "pure parser and normalizer from one connector payload to canonical facts"
+port = "core-owned typed interface receiving canonical facts"
+projection = "read-model join producing the dashboard artifact"
+
+[[nomenclature.term]]
+canonical = "PartnerCode"
+wire_path = "partners[].partnerCode"
+owner_domain = "partners"
+meaning = "canonical partner join key"
+forbidden_core_aliases = ["partnerId", "code"]
+
+[[nomenclature.term]]
+canonical = "PartnerLifecycleState"
+wire_path = "partners[].lifecycle.state"
+owner_domain = "partners"
+meaning = "canonical eight-state onboarding and relationship lifecycle"
+forbidden_core_aliases = ["status", "ops.limits.lifecycle_state"]
+legacy_compatibility_aliases = ["PartnerLifecycleStatus", "lifecycle.status"]
+current_type = "PartnerLifecycleStatus"
+target_type = "PartnerLifecycleState"
+migration_status = "planned"
+
+[[nomenclature.term]]
+canonical = "PartnerOperationalPhase"
+wire_path = "partners[].operationalPhase"
+owner_domain = "partners"
+meaning = "derived operator summary; never lifecycle authority"
+forbidden_core_aliases = ["lifecycle", "status"]
+current_type = "PartnerPhase"
+target_type = "PartnerOperationalPhase"
+migration_status = "planned"
+
+[[nomenclature.term]]
+canonical = "OutId"
+wire_path = "partners[].outs[].outId"
+owner_domain = "partners"
+meaning = "canonical partner sportsbook-account identity"
+forbidden_core_aliases = ["accountId", "CODE-N"]
+implementation_status = "planned"
+
+[[nomenclature.term]]
+canonical = "ExternalPartnerRef"
+wire_path = "partners[].identity.externalPartnerRefs[]"
+owner_domain = "partners"
+meaning = "source-qualified non-canonical partner identifier"
+forbidden_core_aliases = ["id", "partnerId"]
+
+[[nomenclature.term]]
+canonical = "ExternalAccountRef"
+wire_path = "partners[].outs[].externalAccountRefs[]"
+owner_domain = "trading"
+meaning = "source-qualified non-canonical provider account identifier"
+forbidden_core_aliases = ["id", "accountId"]
+
+[[nomenclature.term]]
+canonical = "OutOperationalStatus"
+wire_path = "partners[].outs[].operationalStatus"
+owner_domain = "partners"
+meaning = "whether an out can be operated"
+forbidden_core_aliases = ["status", "fundStatus", "providerStatus"]
+
+[[nomenclature.term]]
+canonical = "OutFundingStatus"
+wire_path = "partners[].outs[].fundingStatus"
+owner_domain = "accounting"
+meaning = "funding completeness for an explicitly scoped account"
+forbidden_core_aliases = ["status", "operationalStatus"]
+
+[[nomenclature.term]]
+canonical = "ProviderConnectionStatus"
+wire_path = "partners[].outs[].providerConnectionStatus"
+owner_domain = "trading"
+meaning = "external provider connectivity only"
+forbidden_core_aliases = ["status", "operationalStatus"]
+
+[[nomenclature.term]]
+canonical = "ConnectorDataStatus"
+wire_path = "connectorSnapshots.*.dataStatus"
+owner_domain = "operations"
+meaning = "configured connector result availability and freshness"
+forbidden_core_aliases = ["status", "lifecycle"]
+
+[[nomenclature.term]]
+canonical = "MoneyAmount"
+owner_domain = "accounting"
+meaning = "currency plus safe integer minorUnits"
+wire_shape = "{ currency, minorUnits }"
+forbidden_core_aliases = ["balanceNumber", "amountCents", "floatAmount"]
+
+[[nomenclature.term]]
+canonical = "AccountScope"
+wire_path = "partners[].accounting.*.accountScope"
+owner_domain = "accounting"
+meaning = "structured partner, out, or rail financial scope"
+forbidden_core_aliases = ["scope", "colonDelimitedScope"]
+
+[[nomenclature.term]]
+canonical = "AttentionReasonCode"
+wire_path = "partners[].attention[].reasonCode"
+owner_domain = "partners"
+meaning = "stable machine reason for an operator action"
+forbidden_core_aliases = ["code", "message"]
+
+[metadata.decision_log]
+partner_identity = "PartnerCode is the only canonical partner join key; external partnerId values stay qualified"
+money_storage = "Financial amounts and balances use integer minor units with explicit currency and scope"
+telegram_boundary = "Telegram owns communication transport and cannot own lifecycle or accounting truth"
+legacy_ops = "legacy-ops is the eighth compatibility adapter and has an explicit retirement condition"
+frozen_mapping = "Sports Terminal frozen maps to suspended with mandatory queryable provenance"
+
+[deprecation_calendar.legacy_ops]
+status = "active"
+owner = "@factorywager/partners/compatibility"
+announced_at = "2026-08-05"
+cutoff_date = "2026-11-03"
+check_cadence = "weekly"
+enforcement = "partner-dashboard-plan-validator-fails-after-cutoff-until-status-retired"
+notification_target = "partner-platform-slack"
+scheduled_enforcement_status = "required-not-yet-wired"
+removal_runbook = [
+  "verify-zero-legacy-ingress-translations-for-30-days",
+  "verify-all-four-current-partners-have-canonical-profiles",
+  "remove-legacyOps-artifact-key-and-connector",
+  "remove-legacy-partners-ops-v2-adapter",
+  "remove-compatibility-projection-tests-and-update-contract-version",
+]
+
+[identity.partner_code]
+type = "PartnerCode"
+wire_field = "partnerCode"
+pattern = "^[A-Z]{3,6}$"
+role = "canonical-cross-domain-business-join-key"
+display_label = "CODE"
+bare_partner_id_policy = "forbidden-in-core-use-qualified-external-ref"
+
+[identity.tree_node_id]
+type = "TreeNodeId"
+role = "operations-entity-primary-key"
+join_policy = "may-reference-partner-code-but-never-replace-it"
+
+[identity.partner_call_sign]
+type = "PartnerCallSign"
+pattern = "^[A-Z]{3,6}-[0-9]{3}$"
+
+[identity.seat_call_sign]
+type = "SeatCallSign"
+pattern = "^[A-Z]{3,6}-[0-9]{3}(?:-SUB[0-9]{2}){0,2}$"
+
+[identity.out_id]
+type = "OutId"
+pattern = "^out-([A-Z]{3,6})-([1-9][0-9]*)$"
+role = "canonical-partner-scoped-out-identity"
+target_parser = "parseCanonicalOutId"
+implementation_status = "planned"
+
+[identity.legacy_seat_out_token]
+type = "LegacySeatOutToken"
+pattern = "^([A-Z]{3,6})-([1-9][0-9]*)$"
+policy = "ingress-only"
+
+[ingress]
+translator = "IngressTranslator"
+owner = "@factorywager/partners/compatibility"
+stage = "before-core-parse"
+callers = ["http-bff", "cli", "artifact-adapter"]
+unknown_mapping = "reject"
+telemetry_counter = "partner_ingress_translation_total"
+
+[ingress.mappings.legacy_seat_out_token]
+from_pattern = "^([A-Z]{3,6})-([1-9][0-9]*)$"
+to_template = "out-{code}-{sequence}"
+canonical_pattern = "^out-([A-Z]{3,6})-([1-9][0-9]*)$"
+canonical_parser = "parseCanonicalOutId"
+canonical_parser_implementation_status = "planned"
+emit_deprecation_warning = true
+preserve_original_as_provenance = true
+sunset_condition = "zero-production-translations-for-30-days-and-all-producers-canonical"
+
+[lifecycle]
+state_type = "PartnerLifecycleState"
+state_field = "state"
+states = [
+  "signup",
+  "materialized",
+  "kyc_pending",
+  "active",
+  "cultivating",
+  "graduated",
+  "suspended",
+  "terminated",
+]
+operational_phase_type = "PartnerOperationalPhase"
+operational_phase_field = "operationalPhase"
+operational_phase_authority = "derived"
+
+[lifecycle.compatibility]
+legacy_type_alias = "PartnerLifecycleStatus"
+legacy_field = "lifecycle.status"
+
+[[lifecycle.external_state_mappings]]
+source_system_id = "sports-terminal"
+adapter_id = "sports-terminal"
+adapter_version = "2"
+external_state = "frozen"
+canonical_state = "suspended"
+mapping_method = "declared"
+confidence = "exact"
+
+[provenance.fact]
+required = true
+fields = [
+  "sourceSystemId",
+  "adapterId",
+  "adapterVersion",
+  "observedAt",
+  "mappingMethod",
+  "confidence",
+]
+optional_fields = ["sourceRecordRef"]
+lifecycle_required_fields = ["originalValue"]
+fact_time_field = "effectiveAt"
+mapping_methods = ["identity", "declared", "derived", "heuristic"]
+confidence_values = ["exact", "approximate", "unknown"]
+
+[money]
+representation = "integer-minor-units"
+currency = "explicit-iso-4217"
+scope = "partner-or-out-or-rail-discriminated-union"
+sqlite_storage = "INTEGER"
+cross_currency_sum = false
+
+[out_status_dimensions]
+operational_status = ["unknown", "ready", "deferred", "paused", "blocked"]
+funding_status = ["unknown", "unfunded", "partial", "funded"]
+provider_connection_status = ["unknown", "active", "inactive", "pending"]
+legacy_fund_status_policy = "translate-with-provenance-never-copy"
+policy = "never-collapse-into-one-status-field"
+
+[concepts]
+registry = "public/registry/domain-glossary.json"
+portal_authority = "lib/portal/semantic-vocabulary.ts"
+domain_authority = "lib/portal/concept-domains.ts"
+policy = "reuse-active-concepts-and-record-true-gaps-without-semantic-aliasing"
+proposal_gap_policy = "allowed-only-while-plan-status-is-proposal"
+
+[[concepts.binding]]
+key = "surface.page"
+concept_id = "page.partners"
+business_domain = "portal"
+relation = "surface"
+theme_role = "page_canvas"
+
+[[concepts.binding]]
+key = "surface.api"
+concept_id = "api.partner"
+business_domain = "infrastructure"
+relation = "surface"
+
+[[concepts.binding]]
+key = "surface.partner_route"
+concept_id = "ui.route.partnerHash"
+business_domain = "portal"
+relation = "surface"
+theme_role = "link_default"
+
+[[concepts.binding]]
+key = "field.status"
+concept_id = "ui.semantic.status"
+business_domain = "portal"
+relation = "presentation-field"
+
+[[concepts.binding]]
+key = "field.source"
+concept_id = "ui.semantic.source"
+business_domain = "portal"
+relation = "presentation-field"
+
+[[concepts.binding]]
+key = "field.artifact"
+concept_id = "ui.semantic.artifact"
+business_domain = "portal"
+relation = "presentation-field"
+
+[[concepts.binding]]
+key = "filter.partner"
+concept_id = "ui.filter.partnerId"
+business_domain = "portal"
+relation = "stable-ui-concept-id-only-not-core-wire-key"
+
+[[concepts.binding]]
+key = "section.telegram"
+concept_id = "section.partnersTelegram"
+business_domain = "portal"
+relation = "section"
+theme_role = "panel_default"
+
+[[concepts.binding]]
+key = "section.accounting"
+concept_id = "section.partnersAccounting"
+business_domain = "portal"
+relation = "section"
+theme_role = "panel_default"
+
+[[concepts.binding]]
+key = "section.accounts_limits"
+concept_id = "section.partnersAccountsLimits"
+business_domain = "portal"
+relation = "section"
+theme_role = "panel_default"
+
+[[concepts.binding]]
+key = "section.onboard"
+concept_id = "section.partnersOnboard"
+business_domain = "portal"
+relation = "route-compatibility-section"
+
+[[concepts.binding]]
+key = "section.deposits"
+concept_id = "section.partnersDeposits"
+business_domain = "portal"
+relation = "route-compatibility-section"
+
+[[concepts.binding]]
+key = "section.partner_message"
+concept_id = "section.partnersPartnerMessage"
+business_domain = "portal"
+relation = "route-compatibility-section"
+
+[[concepts.binding]]
+key = "section.outs"
+concept_id = "section.partnersOuts"
+business_domain = "portal"
+relation = "section"
+theme_role = "panel_default"
+
+[[concepts.binding]]
+key = "section.books"
+concept_id = "section.partnersBookDetail"
+business_domain = "portal"
+relation = "route-compatibility-section"
+
+[[concepts.binding]]
+key = "section.tags"
+concept_id = "section.partnersTags"
+business_domain = "portal"
+relation = "route-compatibility-section"
+
+[[concepts.binding]]
+key = "phase.operator_ready"
+concept_id = "partner.phase.operator_ready"
+business_domain = "partners"
+relation = "derived-state"
+theme_role = "status_ok"
+
+[[concepts.binding]]
+key = "phase.onboarding"
+concept_id = "partner.phase.onboarding"
+business_domain = "partners"
+relation = "derived-state"
+theme_role = "status_warn"
+
+[[concepts.binding]]
+key = "phase.incomplete"
+concept_id = "partner.phase.incomplete"
+business_domain = "partners"
+relation = "derived-state"
+theme_role = "status_bad"
+
+[[concepts.binding]]
+key = "phase.paused"
+concept_id = "partner.phase.paused"
+business_domain = "partners"
+relation = "derived-state"
+theme_role = "status_neutral"
+
+[[concepts.binding]]
+key = "out.ready"
+concept_id = "out.status.ready"
+business_domain = "partners"
+relation = "operational-state"
+theme_role = "status_ok"
+
+[[concepts.binding]]
+key = "out.deferred"
+concept_id = "out.status.deferred"
+business_domain = "partners"
+relation = "operational-state"
+theme_role = "status_warn"
+
+[[concepts.binding]]
+key = "out.paused"
+concept_id = "out.status.paused"
+business_domain = "partners"
+relation = "operational-state"
+theme_role = "status_neutral"
+
+[[concepts.binding]]
+key = "out.blocked"
+concept_id = "out.status.blocked"
+business_domain = "partners"
+relation = "operational-state"
+theme_role = "status_bad"
+
+[[concepts.binding]]
+key = "funding.partial"
+concept_id = "out.status.partial"
+business_domain = "partners"
+relation = "legacy-presentation-only"
+theme_role = "status_warn"
+
+[[concepts.binding]]
+key = "funding.funded"
+concept_id = "out.status.funded"
+business_domain = "partners"
+relation = "legacy-presentation-only"
+theme_role = "status_ok"
+
+[[concepts.binding]]
+key = "accounting.deposit"
+concept_id = "accounting.deposit"
+business_domain = "accounting"
+relation = "ledger-entry-type"
+
+[[concepts.binding]]
+key = "accounting.credit"
+concept_id = "accounting.credit"
+business_domain = "accounting"
+relation = "ledger-entry-type"
+
+[[concepts.binding]]
+key = "accounting.settlement"
+concept_id = "accounting.settlement"
+business_domain = "accounting"
+relation = "ledger-entry-type"
+
+[[concepts.binding]]
+key = "accounting.free_roll"
+concept_id = "accounting.free_roll"
+business_domain = "accounting"
+relation = "ledger-entry-type"
+
+[[concepts.binding]]
+key = "telegram.handshake"
+concept_id = "telegram.handshake"
+business_domain = "telegram"
+relation = "communication-fact"
+
+[[concepts.binding]]
+key = "telegram.membership"
+concept_id = "telegram.membership"
+business_domain = "telegram"
+relation = "communication-fact"
+
+[[concepts.binding]]
+key = "telegram.accounting_topic"
+concept_id = "telegram.topic.accounting"
+business_domain = "telegram"
+relation = "communication-topic"
+
+[[concepts.gap]]
+key = "partner.lifecycle_state"
+candidate_concept_id = "partner.lifecycle_state"
+business_domain = "partners"
+blocking = false
+reason = "no existing concept represents the canonical partner relationship lifecycle"
+must_not_alias = ["ops.limits.lifecycle_state"]
+
+[[concepts.gap]]
+key = "out.funding_status"
+candidate_concept_id = "accounting.funding_status"
+business_domain = "accounting"
+blocking = false
+reason = "partial and funded have legacy out-status concepts but unknown and unfunded lack an exact shared concept"
+must_not_alias = ["out.status.blocked", "ops.limits.monitoring_status"]
+
+[[concepts.gap]]
+key = "partner.profile"
+candidate_concept_id = "partner.profile"
+business_domain = "partners"
+blocking = false
+reason = "ops.limits.profile is an account-limit profile and cannot represent canonical partner identity"
+must_not_alias = ["ops.limits.profile"]
+
+[[concepts.gap]]
+key = "partner.lifecycle_provenance"
+candidate_concept_id = "partner.lifecycle_provenance"
+business_domain = "partners"
+blocking = false
+reason = "queryable lifecycle source and mapping evidence needs a stable partner concept"
+must_not_alias = ["ui.semantic.source"]
+
+[[concepts.gap]]
+key = "provider.connection_status"
+candidate_concept_id = "provider.connection_status"
+business_domain = "trading"
+blocking = false
+reason = "provider connectivity is distinct from out readiness and funding"
+must_not_alias = ["out.status.ready", "ops.limits.monitoring_status"]
+
+[[concepts.gap]]
+key = "connector.data_status"
+candidate_concept_id = "connector.data_status"
+business_domain = "operations"
+blocking = false
+reason = "connector freshness includes stale, which ui.semantic.status does not model"
+must_not_alias = ["ui.semantic.status", "ui.semantic.tone"]
+
+[[concepts.gap]]
+key = "accounting.scoped_balance"
+candidate_concept_id = "accounting.scoped_balance"
+business_domain = "accounting"
+blocking = false
+reason = "a partner balance position requires AccountScope, MoneyAmount, and as-of time"
+must_not_alias = ["balanceCents"]
+
+[[concepts.gap]]
+key = "partner.source_conflict"
+candidate_concept_id = "partner.source_conflict"
+business_domain = "partners"
+blocking = false
+reason = "cross-adapter conflict is forensic partner data rather than generic UI status"
+must_not_alias = ["ui.semantic.status"]
+
+[[concepts.gap]]
+key = "partner.attention_item"
+candidate_concept_id = "partner.attention_item"
+business_domain = "partners"
+blocking = false
+reason = "deterministic operator actions need a stable partner-domain meaning"
+must_not_alias = ["ops.limits.monitoring_status"]
+
+[[concepts.gap]]
+key = "ui.filter.partner_code"
+candidate_concept_id = "ui.filter.partnerCode"
+business_domain = "portal"
+blocking = false
+reason = "existing stable UI concept says partnerId and must migrate without changing core wire nomenclature"
+must_not_alias = []
+
+[[concepts.gap]]
+key = "section.summary"
+candidate_concept_id = "section.partnersSummary"
+business_domain = "portal"
+blocking = false
+reason = "page.partners is a page identity rather than the summary region"
+must_not_alias = []
+
+[[concepts.gap]]
+key = "section.roster"
+candidate_concept_id = "section.partnersRoster"
+business_domain = "portal"
+blocking = false
+reason = "no existing section concept identifies the cross-domain partner roster"
+must_not_alias = ["section.partnersAccountsLimits"]
+
+[[concepts.gap]]
+key = "section.profile"
+candidate_concept_id = "section.partnersProfile"
+business_domain = "portal"
+blocking = false
+reason = "onboarding and account-limit profile concepts are narrower than partner profile and lifecycle"
+must_not_alias = ["section.partnersOnboard", "ops.limits.profile"]
+
+[[concepts.gap]]
+key = "section.attention"
+candidate_concept_id = "section.partnersAttention"
+business_domain = "portal"
+blocking = false
+reason = "attention combines identity, accounting, Telegram, limits, and adapter issues"
+must_not_alias = ["ops.limits.monitoring_status"]
+
+[[concepts.gap]]
+key = "section.integrations"
+candidate_concept_id = "section.partnersIntegrations"
+business_domain = "portal"
+blocking = false
+reason = "connection freshness is broader than the compliance data-connection audit section"
+must_not_alias = ["section.dataConnectionAudit"]
+
+[theme]
+source = "public/portal/theme.jsonc"
+version = "1.3.0"
+resolver = "lib/portal/theme.ts"
+generated_css = "public/portal/theme-tokens.css"
+default_scheme = "dark"
+supported_schemes = ["dark", "light"]
+policy = "semantic-role-reference-only-no-raw-colors-and-labels-remain-required"
+allow_raw_color_literals = false
+color_is_not_status = true
+color_only_signal = false
+foundational_roles = [
+  "panel_border",
+  "text_primary",
+  "text_secondary",
+  "interactive_active",
+  "status_old",
+  "freshness_old",
+  "group_harness",
+  "group_secrets",
+]
+
+[theme.roles]
+page_canvas = "layers.canvas"
+panel_default = "layers.card"
+panel_elevated = "layers.elevated"
+panel_border = "layers.border"
+text_primary = "scheme.text"
+text_secondary = "scheme.textDim"
+link_default = "semantic.link.default"
+interactive_active = "semantic.badge.active"
+status_ok = "tones.ok"
+status_warn = "tones.warn"
+status_old = "tones.old"
+status_bad = "tones.bad"
+status_info = "tones.info"
+status_neutral = "tones.skip"
+freshness_ok = "semantic.status.fresh"
+freshness_stale = "semantic.status.stale"
+freshness_old = "semantic.status.old"
+freshness_critical = "semantic.status.critical"
+group_registry = "semantic.group.registry"
+group_operations = "semantic.group.ops"
+group_harness = "semantic.group.harness"
+group_secrets = "semantic.group.secrets"
+group_other = "semantic.group.other"
+
+[theme.components.page]
+canvas = "layers.canvas"
+max_width = "layout.maxWidth"
+padding_inline = "layout.padInline"
+padding_block = "layout.padBlock"
+text = "scheme.text"
+text_muted = "scheme.textDim"
+
+[theme.components.panel]
+surface = "layers.card"
+border = "layers.border"
+radius = "layout.radii.md"
+padding = "layout.spacing.4"
+gap = "layout.spacing.4"
+shadow = "layout.shadows.sm"
+
+[theme.components.elevated_panel]
+surface = "layers.elevated"
+border = "layers.border"
+radius = "layout.radii.md"
+padding = "layout.spacing.4"
+gap = "layout.spacing.4"
+shadow = "layout.shadows.md"
+
+[theme.components.filter_chip]
+surface = "semantic.badge.default"
+surface_hover = "semantic.badge.hover"
+surface_active = "semantic.badge.active"
+border = "layers.border"
+radius = "layout.radii.full"
+font_size = "typography.fontSizes.sm"
+motion_duration = "animation.duration.fast"
+motion_easing = "animation.easing.easeOut"
+
+[[presentation.state]]
+axis = "partnerLifecycleState"
+value = "signup"
+theme_role = "status_neutral"
+label_required = true
+
+[[presentation.state]]
+axis = "partnerLifecycleState"
+value = "materialized"
+theme_role = "status_info"
+label_required = true
+
+[[presentation.state]]
+axis = "partnerLifecycleState"
+value = "kyc_pending"
+theme_role = "status_warn"
+label_required = true
+
+[[presentation.state]]
+axis = "partnerLifecycleState"
+value = "active"
+theme_role = "status_ok"
+label_required = true
+
+[[presentation.state]]
+axis = "partnerLifecycleState"
+value = "cultivating"
+theme_role = "status_info"
+label_required = true
+
+[[presentation.state]]
+axis = "partnerLifecycleState"
+value = "graduated"
+theme_role = "status_ok"
+label_required = true
+
+[[presentation.state]]
+axis = "partnerLifecycleState"
+value = "suspended"
+theme_role = "status_bad"
+label_required = true
+
+[[presentation.state]]
+axis = "partnerLifecycleState"
+value = "terminated"
+theme_role = "status_neutral"
+label_required = true
+
+[[presentation.state]]
+axis = "partnerOperationalPhase"
+value = "operator_ready"
+concept_id = "partner.phase.operator_ready"
+theme_role = "status_ok"
+label_required = true
+
+[[presentation.state]]
+axis = "partnerOperationalPhase"
+value = "onboarding"
+concept_id = "partner.phase.onboarding"
+theme_role = "status_warn"
+label_required = true
+
+[[presentation.state]]
+axis = "partnerOperationalPhase"
+value = "incomplete"
+concept_id = "partner.phase.incomplete"
+theme_role = "status_bad"
+label_required = true
+
+[[presentation.state]]
+axis = "partnerOperationalPhase"
+value = "paused"
+concept_id = "partner.phase.paused"
+theme_role = "status_neutral"
+label_required = true
+
+[[presentation.state]]
+axis = "outOperationalStatus"
+value = "unknown"
+theme_role = "status_neutral"
+label_required = true
+
+[[presentation.state]]
+axis = "outOperationalStatus"
+value = "ready"
+concept_id = "out.status.ready"
+theme_role = "status_ok"
+label_required = true
+
+[[presentation.state]]
+axis = "outOperationalStatus"
+value = "deferred"
+concept_id = "out.status.deferred"
+theme_role = "status_warn"
+label_required = true
+
+[[presentation.state]]
+axis = "outOperationalStatus"
+value = "paused"
+concept_id = "out.status.paused"
+theme_role = "status_neutral"
+label_required = true
+
+[[presentation.state]]
+axis = "outOperationalStatus"
+value = "blocked"
+concept_id = "out.status.blocked"
+theme_role = "status_bad"
+label_required = true
+
+[[presentation.state]]
+axis = "outFundingStatus"
+value = "unknown"
+theme_role = "status_neutral"
+label_required = true
+
+[[presentation.state]]
+axis = "outFundingStatus"
+value = "unfunded"
+theme_role = "status_bad"
+label_required = true
+
+[[presentation.state]]
+axis = "outFundingStatus"
+value = "partial"
+concept_id = "out.status.partial"
+theme_role = "status_warn"
+label_required = true
+
+[[presentation.state]]
+axis = "outFundingStatus"
+value = "funded"
+concept_id = "out.status.funded"
+theme_role = "status_ok"
+label_required = true
+
+[[presentation.state]]
+axis = "providerConnectionStatus"
+value = "unknown"
+theme_role = "status_neutral"
+label_required = true
+
+[[presentation.state]]
+axis = "providerConnectionStatus"
+value = "active"
+theme_role = "status_ok"
+label_required = true
+
+[[presentation.state]]
+axis = "providerConnectionStatus"
+value = "inactive"
+theme_role = "status_bad"
+label_required = true
+
+[[presentation.state]]
+axis = "providerConnectionStatus"
+value = "pending"
+theme_role = "status_warn"
+label_required = true
+
+[[presentation.state]]
+axis = "connectorDataStatus"
+value = "ok"
+proposed_concept_id = "connector.data_status"
+theme_role = "freshness_ok"
+label_required = true
+
+[[presentation.state]]
+axis = "connectorDataStatus"
+value = "stale"
+proposed_concept_id = "connector.data_status"
+theme_role = "freshness_stale"
+label_required = true
+
+[[presentation.state]]
+axis = "connectorDataStatus"
+value = "unavailable"
+proposed_concept_id = "connector.data_status"
+theme_role = "freshness_critical"
+label_required = true
+
+[[presentation.state]]
+axis = "attentionSeverity"
+value = "info"
+theme_role = "status_info"
+label_required = true
+
+[[presentation.state]]
+axis = "attentionSeverity"
+value = "warn"
+theme_role = "status_warn"
+label_required = true
+
+[[presentation.state]]
+axis = "attentionSeverity"
+value = "block"
+theme_role = "status_bad"
+label_required = true
+
+[governance.money_sql]
+command = "bun run lint:money-sql:staged"
+hook = "scripts/pre-commit.ts"
+column_name_contains = ["balance", "amount", "price"]
+forbidden_storage_types = ["REAL", "FLOAT", "DOUBLE", "DOUBLE PRECISION"]
+preferred_storage = "INTEGER-minor-units"
+allowed_exact_fallback = "NUMERIC(20,0)"
+
+[data_migrations.money_integer]
+owner = "root-operations-db-partner-ledger"
+runbook = "docs/design/partner-money-integer-migration.md"
+command = "bun run partner:money:migrate -- --db <operations.db>"
+canonical_columns = ["amount_minor", "balance_after_minor"]
+legacy_columns = ["amount", "balance_after"]
+phases = ["plan", "prepare", "backfill", "verify", "finalize"]
+default_phase = "plan"
+mutations_require_apply = true
+finalize_requires_new_backup = true
+mixed_partner_currencies = "reject"
+backfill_rounding = "reject-values-beyond-iso-4217-minor-unit-precision"
+
+[runtime]
+authority = "config/bun-channels.toml"
+reviewed_production_pin = "1.3.14"
+reader_minimum = ">=1.3.14"
+static_toml_loader = "import-with-type-toml"
+dynamic_toml_loader = "Bun.Glob+Bun.file+Bun.TOML.parse"
+writer = "not-required-for-mvp"
+writer_candidate = "Bun.TOML.stringify"
+writer_candidate_status = "observed-on-1.4.0-canary-not-on-reviewed-production-pin"
+mutation_policy = "do-not-enable-native-writes-before-runtime-promotion-and-contract-proof"
+
+[core]
+owns = [
+  "partner-code",
+  "profile",
+  "lifecycle",
+  "phase-derivation",
+  "book-account-reference",
+  "risk-and-sor-policy",
+  "cultivation-policy",
+  "commercial-agreement-terms",
+  "dashboard-read-model",
+]
+must_not_import = ["telegram-api", "bun:sqlite", "vault-crypto", "portal-dom"]
+
+[reconciliation]
+identity_precedence = ["profiles-registry"]
+capacity_precedence = ["tennis-contract", "sports-terminal", "legacy-ops-registry"]
+communication_precedence = ["telegram-handshake"]
+finance_precedence = ["accounting-ledger"]
+conflict_policy = "emit-conflict-never-latest-wins"
+registered_outs_metric = "distinct-from-active-outs"
+profile_coverage = "four-current-codes-or-explicit-migration-reason"
+
+[connector_defaults.resilience]
+timeout_ms = 3000
+stale_acceptable_seconds = 300
+max_last_known_good_age_seconds = 86400
+on_failure = "show_last_known_good_with_warning"
+circuit_breaker_threshold = 3
+circuit_breaker_open_seconds = 60
+circuit_breaker_recovery_successes = 1
+required_source_failure = "use-last-known-good-within-stale-window-else-fail-bake"
+optional_source_failure = "use-last-known-good-within-max-age-else-mark-unavailable"
+
+[[connectors]]
+id = "profiles-registry"
+snapshot_key = "profiles"
+source_system_id = "factorywager-partner-profile"
+source_owner_domain = "partners"
+adapter_id = "profile-artifact"
+adapter_version = "1"
+target_owner_package = "@factorywager/partners"
+target_adapter_export = "./adapters/profile"
+port = "PartnerProfileReadPort"
+implementation_status = "planned"
+enabled = true
+input_kind = "registry-artifact"
+required = true
+input_ref = "/registry/partner-profiles.json"
+authoritative_fact_paths = ["partners[].identity", "partners[].lifecycle"]
+visual_group = "registry"
+provides = ["identity", "lifecycle", "policy", "agreement", "account-references"]
+region_ids = ["summary", "roster", "profile", "accounts-limits", "attention"]
+
+[[connectors]]
+id = "accounting-ledger"
+snapshot_key = "accounting"
+source_system_id = "root-operations-db"
+source_owner_domain = "accounting"
+adapter_id = "accounting-ledger"
+adapter_version = "1"
+target_owner_package = "@factorywager/partners"
+target_adapter_export = "./adapters/accounting"
+port = "AccountingReadPort"
+implementation_status = "planned"
+enabled = true
+input_kind = "sqlite-table"
+required = false
+input_ref = "partner_ledger"
+authoritative_fact_paths = [
+  "partners[].accounting.balancePositions",
+  "partners[].accounting.fundingPositions",
+  "partners[].accounting.recentEntries",
+]
+visual_group = "operations"
+provides = ["balance-positions", "funding-status", "ledger-entries", "proofs"]
+region_ids = ["summary", "roster", "accounting", "attention"]
+
+[[connectors]]
+id = "telegram-handshake"
+snapshot_key = "telegram"
+source_system_id = "factorywager-telegram"
+source_owner_domain = "telegram"
+adapter_id = "telegram-handshake"
+adapter_version = "1"
+target_owner_package = "@factorywager/partners"
+target_adapter_export = "./adapters/telegram"
+port = "CommunicationReadPort"
+implementation_status = "planned"
+enabled = true
+input_kind = "registry-artifact"
+required = false
+input_ref = "/registry/telegram-handshake.json"
+authoritative_fact_paths = ["partners[].communication"]
+visual_group = "operations"
+provides = ["chat-linkage", "handshake", "membership", "topic-readiness"]
+region_ids = ["roster", "telegram", "attention"]
+
+[[connectors]]
+id = "limits-registry"
+snapshot_key = "limits"
+source_system_id = "factorywager-limits"
+source_owner_domain = "compliance"
+adapter_id = "limits-artifact"
+adapter_version = "1"
+target_owner_package = "@factorywager/partners"
+target_adapter_export = "./adapters/limits"
+port = "LimitReadPort"
+implementation_status = "planned"
+enabled = true
+input_kind = "registry-artifact"
+required = false
+input_ref = "/registry/limit-raises.json"
+authoritative_fact_paths = ["partners[].limits", "partners[].outs[].limitCoverageRatio"]
+visual_group = "operations"
+provides = ["limit-coverage", "observed-limits"]
+region_ids = ["roster", "accounts-limits", "attention"]
+
+[[connectors]]
+id = "bookmakers-registry"
+snapshot_key = "bookmakers"
+source_system_id = "factorywager-bookmakers"
+source_owner_domain = "trading"
+adapter_id = "bookmakers-registry"
+adapter_version = "1"
+target_owner_package = "@factorywager/partners"
+target_adapter_export = "./adapters/bookmakers"
+port = "BookmakerCatalogPort"
+implementation_status = "planned"
+enabled = true
+input_kind = "registry-artifact"
+required = false
+input_ref = "/registry/bookmakers.json"
+authoritative_fact_paths = [
+  "partners[].outs[].sportsbookId",
+  "partners[].outs[].sportsbookDisplayMetadata",
+]
+visual_group = "registry"
+provides = ["sportsbook-identity", "aliases", "display-metadata"]
+region_ids = ["accounts-limits"]
+
+[[connectors]]
+id = "tennis-contract"
+snapshot_key = "tennis"
+source_system_id = "tennis-hq"
+source_owner_domain = "trading"
+adapter_id = "tennis-contract"
+adapter_version = "1"
+target_owner_package = "@factorywager/partners"
+target_adapter_export = "./adapters/tennis"
+port = "CapacityReadPort"
+implementation_status = "planned"
+enabled = true
+input_kind = "registry-artifact"
+required = false
+input_ref = "/registry/tennis/partner-contracts.json"
+authoritative_fact_paths = ["partners[].outs[].activeCapacity"]
+visual_group = "operations"
+provides = ["active-outs", "executable-capacity", "freshness"]
+region_ids = ["roster", "integrations", "attention"]
+
+[[connectors]]
+id = "sports-terminal"
+snapshot_key = "sportsTerminal"
+source_system_id = "sports-terminal"
+source_owner_domain = "trading"
+adapter_id = "sports-terminal"
+adapter_version = "2"
+target_owner_package = "@factorywager/partners"
+target_adapter_export = "./adapters/sports-terminal"
+port = "IntegrationHealthReadPort"
+implementation_status = "blocked"
+enabled = false
+blocking_reason = "one exact parsed sports-terminal package export or registry artifact is required"
+input_kind = "unresolved"
+required = false
+input_ref = ""
+authoritative_fact_paths = []
+visual_group = "operations"
+provides = ["external-state", "gate-observations", "integration-health"]
+region_ids = ["profile", "integrations", "attention"]
+
+[[connectors]]
+id = "legacy-ops-registry"
+snapshot_key = "legacyOps"
+source_system_id = "factorywager-partners-ops"
+source_owner_domain = "partners"
+adapter_id = "legacy-partners-ops"
+adapter_version = "2"
+target_owner_package = "@factorywager/partners"
+target_adapter_export = "./compatibility/legacy-partners-ops"
+current_owner_module = "lib/telegram/partner-ops-registry.ts"
+port = "LegacyPartnerProjectionPort"
+implementation_status = "current-compatibility"
+enabled = true
+input_kind = "registry-artifact"
+required = false
+input_ref = "/registry/partners-ops.json"
+authoritative_fact_paths = []
+visual_group = "other"
+provides = ["compatibility-observations"]
+region_ids = ["summary", "roster", "attention"]
+retirement_condition = "all-consumers-on-canonical-profiles-and-dashboard-artifact"
+
+[[surfaces.portal.regions]]
+region_id = "summary"
+dom_id = "partners-stats"
+implementation_status = "current"
+label = "Partner summary"
+surface_kind = "composite-region"
+business_domains = ["partners", "accounting", "telegram", "compliance"]
+theme_role = "panel_default"
+concept_refs = ["page.partners", "ui.semantic.status", "ui.semantic.source"]
+proposed_concept_id = "section.partnersSummary"
+concept_status = "proposed"
+connectors = ["profiles-registry", "accounting-ledger", "legacy-ops-registry"]
+
+[[surfaces.portal.regions]]
+region_id = "roster"
+dom_id = "partner-roster"
+implementation_status = "planned"
+label = "Partner roster"
+surface_kind = "composite-region"
+business_domains = ["partners"]
+theme_role = "panel_default"
+concept_refs = ["page.partners", "ui.filter.partnerId", "ui.semantic.status"]
+proposed_concept_id = "section.partnersRoster"
+concept_status = "proposed"
+connectors = [
+  "profiles-registry",
+  "accounting-ledger",
+  "telegram-handshake",
+  "limits-registry",
+  "tennis-contract",
+  "legacy-ops-registry",
+]
+
+[[surfaces.portal.regions]]
+region_id = "profile"
+dom_id = "partner-profile"
+implementation_status = "current"
+label = "Profile and lifecycle"
+surface_kind = "composite-region"
+business_domains = ["partners"]
+theme_role = "panel_default"
+concept_refs = ["page.partners", "ui.semantic.status", "ui.semantic.source"]
+proposed_concept_id = "section.partnersProfile"
+concept_status = "proposed"
+connectors = ["profiles-registry", "sports-terminal"]
+
+[[surfaces.portal.regions]]
+region_id = "accounts-limits"
+dom_id = "section:accounts-limits"
+implementation_status = "current"
+label = "Accounts and limits"
+surface_kind = "registered-section"
+business_domains = ["partners", "compliance", "trading"]
+route_anchor = "accounts-limits"
+route_dom_id = "section:accounts-limits"
+theme_role = "panel_default"
+concept_refs = ["section.partnersAccountsLimits", "section.partnersOuts"]
+concept_status = "existing"
+connectors = ["profiles-registry", "limits-registry", "bookmakers-registry"]
+
+[[surfaces.portal.regions]]
+region_id = "accounting"
+dom_id = "section:accounting"
+implementation_status = "current"
+label = "Accounting position"
+surface_kind = "registered-section"
+business_domains = ["accounting"]
+route_anchor = "accounting"
+route_dom_id = "section:accounting"
+theme_role = "panel_default"
+concept_refs = [
+  "section.partnersAccounting",
+  "accounting.deposit",
+  "accounting.settlement",
+]
+concept_status = "existing"
+connectors = ["accounting-ledger"]
+
+[[surfaces.portal.regions]]
+region_id = "telegram"
+dom_id = "section:telegram"
+implementation_status = "current"
+label = "Telegram readiness"
+surface_kind = "registered-section"
+business_domains = ["telegram"]
+route_anchor = "telegram"
+route_dom_id = "section:telegram"
+theme_role = "panel_default"
+concept_refs = [
+  "section.partnersTelegram",
+  "telegram.handshake",
+  "telegram.membership",
+]
+concept_status = "existing"
+connectors = ["telegram-handshake"]
+
+[[surfaces.portal.regions]]
+region_id = "attention"
+dom_id = "partner-attention"
+implementation_status = "planned"
+label = "Attention queue"
+surface_kind = "composite-region"
+business_domains = ["partners", "accounting", "telegram", "compliance", "trading"]
+theme_role = "panel_elevated"
+concept_refs = ["page.partners", "ui.semantic.status", "ui.semantic.source"]
+proposed_concept_id = "section.partnersAttention"
+concept_status = "proposed"
+connectors = [
+  "profiles-registry",
+  "accounting-ledger",
+  "telegram-handshake",
+  "limits-registry",
+  "tennis-contract",
+  "sports-terminal",
+  "legacy-ops-registry",
+]
+
+[[surfaces.portal.regions]]
+region_id = "integrations"
+dom_id = "partner-integrations"
+implementation_status = "planned"
+label = "Integration freshness"
+surface_kind = "composite-region"
+business_domains = ["partners", "infrastructure", "trading"]
+theme_role = "panel_default"
+concept_refs = [
+  "api.partner",
+  "ui.semantic.artifact",
+  "ui.semantic.source",
+  "ui.semantic.status",
+]
+proposed_concept_id = "section.partnersIntegrations"
+concept_status = "proposed"
+connectors = ["tennis-contract", "sports-terminal"]
+
+[[surfaces.portal.section_mount_compatibility]]
+anchor = "telegram"
+dom_id = "section:telegram"
+concept_id = "section.partnersTelegram"
+target_region_id = "telegram"
+compatibility_mode = "preserve-render"
+
+[[surfaces.portal.section_mount_compatibility]]
+anchor = "accounting"
+dom_id = "section:accounting"
+concept_id = "section.partnersAccounting"
+target_region_id = "accounting"
+compatibility_mode = "preserve-render"
+
+[[surfaces.portal.section_mount_compatibility]]
+anchor = "accounts-limits"
+dom_id = "section:accounts-limits"
+concept_id = "section.partnersAccountsLimits"
+target_region_id = "accounts-limits"
+compatibility_mode = "preserve-render"
+
+[[surfaces.portal.section_mount_compatibility]]
+anchor = "onboard"
+dom_id = "section:onboard"
+concept_id = "section.partnersOnboard"
+target_region_id = "profile"
+compatibility_mode = "preserve-render"
+
+[[surfaces.portal.section_mount_compatibility]]
+anchor = "deposits"
+dom_id = "section:deposits"
+concept_id = "section.partnersDeposits"
+target_region_id = "accounting"
+compatibility_mode = "preserve-render"
+
+[[surfaces.portal.section_mount_compatibility]]
+anchor = "partner-message"
+dom_id = "section:partner-message"
+concept_id = "section.partnersPartnerMessage"
+target_region_id = "telegram"
+compatibility_mode = "preserve-render"
+
+[[surfaces.portal.section_mount_compatibility]]
+anchor = "outs"
+dom_id = "section:outs"
+concept_id = "section.partnersOuts"
+target_region_id = "accounts-limits"
+compatibility_mode = "preserve-render"
+
+[[surfaces.portal.section_mount_compatibility]]
+anchor = "books"
+dom_id = "section:books"
+concept_id = "section.partnersBookDetail"
+target_region_id = "accounts-limits"
+compatibility_mode = "preserve-render"
+
+[[surfaces.portal.section_mount_compatibility]]
+anchor = "tag-filter-bar"
+dom_id = "section:tag-filter-bar"
+concept_id = "section.partnersTags"
+target_region_id = "roster"
+compatibility_mode = "preserve-render"
+
+[[surfaces.portal.partner_hash_route_compatibility]]
+route_type = "partners"
+pattern = "partners"
+anchor_kind = "static"
+anchor_template = "partner-panel"
+concept_id = "page.partners"
+
+[[surfaces.portal.partner_hash_route_compatibility]]
+route_type = "partner"
+pattern = "partner/:code"
+anchor_kind = "template"
+anchor_template = "partner-detail-{code}"
+concept_id = "page.partners"
+
+[[surfaces.portal.partner_hash_route_compatibility]]
+route_type = "out"
+pattern = "partner/:code/out/:outId"
+anchor_kind = "template"
+anchor_template = "out-card-{outId}"
+concept_id = "section.partnersOuts"
+
+[[surfaces.portal.partner_hash_route_compatibility]]
+route_type = "accounting"
+pattern = "partner/:code/accounting"
+anchor_kind = "static"
+anchor_template = "accounting-ledger"
+concept_id = "section.partnersAccounting"
+
+[[surfaces.portal.partner_hash_route_compatibility]]
+route_type = "telegram"
+pattern = "partner/:code/telegram/:topic"
+anchor_kind = "static"
+anchor_template = "telegram-thread"
+concept_id = "section.partnersTelegram"
+
+[[surfaces.portal.partner_hash_route_compatibility]]
+route_type = "book"
+pattern = "book/:bookId"
+anchor_kind = "template"
+anchor_template = "book-card-{bookId}"
+concept_id = "section.partnersBookDetail"
+
+[delivery]
+slices = [
+  "package-core-and-compatibility-exports",
+  "materialize-current-profiles",
+  "transactional-minor-unit-ledger",
+  "adapter-projections",
+  "dashboard-artifact",
+  "portal-consumer",
+  "sports-terminal-consumer",
+  "remove-legacy-duplicates",
+]
+
+[non_goals]
+items = [
+  "move-all-telegram-code",
+  "move-soft-accounting-mutations",
+  "make-tennis-source-of-truth",
+  "merge-adjacent-portal-routes",
+  "publish-or-deploy",
+]

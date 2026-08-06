@@ -101,7 +101,7 @@ export const SCRAPE_BOOK_REGISTRY: readonly ScrapeBookRegistryEntry[] = SCRAPE_B
 
 export const SCRAPE_BOOK_KEYS = SCRAPE_BOOK_ROWS.map(
   ([key]) => key
-) as unknown as readonly ScrapeBookKey[];
+) satisfies readonly ScrapeBookKey[];
 
 export const SCRAPE_BOOK_ALIASES: Readonly<Record<string, ScrapeBookKey>> = Object.fromEntries(
   SCRAPE_BOOK_REGISTRY.flatMap(row => row.aliases.map(alias => [wireKey(alias), row.key] as const))
@@ -328,7 +328,7 @@ export type ScrapeStateKey = (typeof SCRAPE_STATE_ROWS)[number][0];
 /** Full postal-code registry (51). Prefer this over the fixture jurisdiction subset. */
 export const SCRAPE_STATE_KEYS = SCRAPE_STATE_ROWS.map(
   ([code]) => code
-) as unknown as readonly ScrapeStateKey[];
+) satisfies readonly ScrapeStateKey[];
 
 /** @deprecated Use {@link SCRAPE_STATE_KEYS} — full registry. Kept as alias. */
 export const SCRAPE_JURISDICTION_KEYS = SCRAPE_STATE_KEYS;

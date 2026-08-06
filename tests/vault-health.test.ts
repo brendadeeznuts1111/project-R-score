@@ -22,6 +22,7 @@ import {
   liveItemsFromListJson,
   type VaultLiveItem,
 } from '../lib/security/vault-health.ts';
+import { classifyCloudflareTokenVerify } from '../tools/vault-health-bake.ts';
 
 describe('vault-health', () => {
   test('liveItemsFromListJson parses items shape with states', () => {
@@ -95,6 +96,23 @@ describe('vault-health', () => {
     expect(report.summary.trashedItems).toBe(1);
   });
 
+  test('list-failure fail-closed: omit vault from map and skip its refs (no invented missing)', () => {
+    // Bake CLI drops failed vaults from liveByVault and scores only listed vaults.
+    // Empty map entry would invent referencedMissing for every key in that vault.
+    const listedOnly = new Map([['cloudflare', live.get('cloudflare')!]]);
+    const allRefs = [
+      { envKey: 'GOOD', vault: 'factorywager', item: 'Good Token' },
+      { envKey: 'DNS', vault: 'cloudflare', item: 'DNS Token' },
+    ];
+    const failed = new Set(['factorywager']);
+    const scored = allRefs.filter(r => r.vault && !failed.has(r.vault));
+    const report = computeVaultHealth(scored, listedOnly, '2026-08-05T00:00:00Z');
+    expect(report.referenced.map(r => r.envKey)).toEqual(['DNS']);
+    expect(report.summary.referencedMissing).toBe(0);
+    expect(report.summary.healthy).toBe(true);
+    // Bake still forces unhealthy when listFailures.length > 0 (CLI layer).
+  });
+
   test('vault rollup tracks trashed titles sorted', () => {
     const report = computeVaultHealth([], live);
     const fw = report.vaults.find(v => v.name === 'factorywager')!;
@@ -144,5 +162,64 @@ describe('vault-health', () => {
       }))
       .sort((a, b) => a.envKey.localeCompare(b.envKey));
     expect(inventory).toMatchSnapshot();
+  });
+  test('token probes fold into health — expired token fails the gate', () => {
+    const report = computeVaultHealth([], new Map(), '2026-08-05T00:00:00Z', {
+      tokenProbes: [
+        { envKey: 'CLOUDFLARE_API_TOKEN', kind: 'cloudflare', status: 'ok', statusCode: 200, checkedAt: '2026-08-05T00:00:00Z' },
+        { envKey: 'CLOUDFLARE_DNS_API_TOKEN', kind: 'cloudflare', status: 'invalid', statusCode: 401, checkedAt: '2026-08-05T00:00:00Z' },
+      ],
+    });
+    expect(report.summary.tokensOk).toBe(1);
+    expect(report.summary.tokensInvalid).toBe(1);
+    expect(report.summary.tokensUnreachable).toBe(0);
+    expect(report.summary.healthy).toBe(false);
+    expect(report.tokenProbes).toHaveLength(2);
+    expect(report.tokenProbes.map(p => p.envKey).sort()).toEqual([
+      'CLOUDFLARE_API_TOKEN',
+      'CLOUDFLARE_DNS_API_TOKEN',
+    ]);
+  });
+
+  test('no token probes keeps health unchanged (backward compat)', () => {
+    const report = computeVaultHealth([], new Map(), '2026-08-05T00:00:00Z');
+    expect(report.tokenProbes).toEqual([]);
+    expect(report.summary.tokensOk).toBe(0);
+    expect(report.summary.tokensInvalid).toBe(0);
+    expect(report.summary.tokensUnreachable).toBe(0);
+    expect(report.summary.healthy).toBe(true);
+  });
+
+  test('unreachable token issuer is visible without marking a token invalid', () => {
+    const report = computeVaultHealth([], new Map(), '2026-08-05T00:00:00Z', {
+      tokenProbes: [
+        {
+          envKey: 'CLOUDFLARE_API_TOKEN',
+          kind: 'cloudflare',
+          status: 'unreachable',
+          statusCode: 503,
+          checkedAt: '2026-08-05T00:00:00Z',
+        },
+      ],
+    });
+    expect(report.summary.tokensUnreachable).toBe(1);
+    expect(report.summary.tokensInvalid).toBe(0);
+    expect(report.summary.healthy).toBe(true);
+  });
+
+  test('Cloudflare token verification honors lifecycle state and transport failures', () => {
+    expect(
+      classifyCloudflareTokenVerify(200, { success: true, result: { status: 'active' } })
+    ).toBe('ok');
+    expect(
+      classifyCloudflareTokenVerify(200, { success: true, result: { status: 'expired' } })
+    ).toBe('invalid');
+    expect(
+      classifyCloudflareTokenVerify(200, { success: true, result: { status: 'disabled' } })
+    ).toBe('invalid');
+    expect(classifyCloudflareTokenVerify(401, null)).toBe('invalid');
+    expect(classifyCloudflareTokenVerify(429, null)).toBe('unreachable');
+    expect(classifyCloudflareTokenVerify(503, null)).toBe('unreachable');
+    expect(classifyCloudflareTokenVerify(200, null)).toBe('unreachable');
   });
 });
