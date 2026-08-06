@@ -1,0 +1,1694 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bun Agent – Production v1.12</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#0b0e14; color:#e8edf5; font-family:system-ui, sans-serif; padding:24px; }
+    .container { max-width:1800px; margin:0 auto; }
+    h1 { font-size:28px; font-weight:600; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+    h1 small { font-size:14px; font-weight:400; color:#7a8ba3; }
+    .subhead { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; margin-bottom:24px; color:#7a8ba3; border-bottom:1px solid #1e2630; padding-bottom:12px; font-size:14px; gap:8px; }
+    .badge { background:#1e2630; padding:4px 12px; border-radius:20px; font-size:12px; color:#b6c8e0; display:inline-block; }
+    .badge .highlight { color:#5fc3f4; font-weight:500; }
+    .tabs { display:flex; gap:0; border-bottom:1px solid #1e2834; margin-bottom:24px; flex-wrap:wrap; }
+    .tabs .tab { padding:10px 20px; cursor:pointer; background:#131b24; border:1px solid transparent; border-radius:8px 8px 0 0; margin-right:4px; font-weight:500; transition:0.2s; }
+    .tabs .tab.active { background:#1e2834; border-color:#1e2834; border-bottom-color:#131b24; color:#5fc3f4; }
+    .tabs .tab:hover { background:#1a212a; }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+    .card { background:#131b24; border-radius:16px; border:1px solid #1e2834; overflow:hidden; margin-bottom:24px; }
+    .card-header { padding:14px 20px; border-bottom:1px solid #1e2834; display:flex; justify-content:space-between; align-items:center; font-weight:500; font-size:15px; flex-wrap:wrap; gap:8px; }
+    .card-body { padding:16px 20px 20px; overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:14px; }
+    th { text-align:left; padding:10px 8px; color:#7a8ba3; font-weight:500; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #1e2834; white-space:nowrap; }
+    td { padding:10px 8px; border-bottom:1px solid #1a212a; vertical-align:middle; }
+    .status-badge { display:inline-block; padding:2px 10px; border-radius:12px; font-size:11px; font-weight:500; }
+    .status-online { background:#1a3a2a; color:#6fcf97; }
+    .status-offline { background:#3a1a1a; color:#f28b82; }
+    .status-pending { background:#2a2a1a; color:#f9ca7f; }
+    .status-danger { background:#3a1a1a; color:#f28b82; }
+    .btn { background:#1e2834; border:none; color:#e8edf5; padding:6px 14px; border-radius:8px; font-size:13px; cursor:pointer; transition:background 0.2s; display:inline-flex; align-items:center; gap:6px; }
+    .btn:hover { background:#2a3644; }
+    .btn-primary { background:#2a6f9c; color:#fff; }
+    .btn-primary:hover { background:#3a8fc4; }
+    .btn-success { background:#1f6e43; color:#fff; }
+    .btn-success:hover { background:#2a8f55; }
+    .btn-danger { background:#6f2a2a; color:#fff; }
+    .btn-danger:hover { background:#8f3a3a; }
+    .btn-warning { background:#7a6a2a; color:#fff; }
+    .btn-warning:hover { background:#9a8a3a; }
+    .btn-sm { padding:4px 10px; font-size:12px; }
+    .flex { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .mt-2 { margin-top:8px; }
+    .text-muted { color:#7a8ba3; font-size:12px; }
+    .pill { display:inline-block; background:#1a212a; padding:2px 10px; border-radius:12px; font-size:11px; color:#b6c8e0; margin-right:4px; }
+    .partner-pill { display:inline-block; background:#1a2a3a; padding:2px 10px; border-radius:12px; font-size:10px; color:#5fc3f4; border:1px solid #2a4a6a; margin-right:4px; }
+    .live-panel { max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
+    .live-item { background:#0e1620; border-radius:10px; padding:10px 14px; border-left:3px solid #2a6f9c; font-size:13px; }
+    .live-item .meta { display:flex; justify-content:space-between; color:#7a8ba3; font-size:11px; margin-top:4px; }
+    .empty-state { color:#7a8ba3; text-align:center; padding:30px 0; font-size:14px; }
+    .filter-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; background:#131b24; padding:12px 16px; border-radius:12px; border:1px solid #1e2834; align-items:center; }
+    .filter-bar select, .filter-bar input { background:#1e2834; color:#e8edf5; border:none; padding:6px 12px; border-radius:8px; font-size:13px; cursor:pointer; }
+    .filter-bar button { background:#2a6f9c; border:none; color:#fff; padding:6px 16px; border-radius:8px; font-size:13px; cursor:pointer; }
+    .filter-bar button:hover { background:#3a8fc4; }
+    .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center; }
+    .modal.active { display:flex; }
+    .modal-content { background:#131b24; padding:30px; border-radius:16px; max-width:550px; width:90%; border:1px solid #1e2834; max-height:90vh; overflow-y:auto; }
+    .modal-content h2 { margin-bottom:16px; }
+    .modal-content label { display:block; margin:8px 0 4px; font-size:13px; color:#b6c8e0; }
+    .modal-content input, .modal-content select, .modal-content textarea { width:100%; padding:8px; margin-bottom:12px; background:#1e2834; color:#e8edf5; border:1px solid #1e2834; border-radius:8px; }
+    .modal-content button { width:100%; }
+    .toast { position:fixed; bottom:20px; right:20px; background:#1f6e43; color:#fff; padding:12px 20px; border-radius:8px; font-size:14px; z-index:2000; display:none; box-shadow:0 4px 12px rgba(0,0,0,0.5); }
+    .chart-container { height:150px; margin-top:8px; }
+    .comparison-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:12px; }
+    .comparison-card { background:#0e1620; border-radius:10px; padding:12px; border:1px solid #1e2834; }
+    .comparison-card .book-name { font-weight:600; color:#5fc3f4; }
+    .latency-badge { background:#2a2a1a; padding:2px 8px; border-radius:10px; font-size:11px; color:#f9ca7f; }
+    .limit-indicator { color:#6fcf97; font-weight:500; }
+    .edge-highlight { color:#f28b82; font-weight:600; }
+    .ml-badge { background:#2a2a6f; color:#b6c8e0; padding:2px 8px; border-radius:10px; font-size:10px; }
+    .health-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(120px,1fr)); gap:8px; margin-top:8px; }
+    .health-card { background:#0e1620; padding:8px 12px; border-radius:8px; border:1px solid #1e2834; text-align:center; }
+    .health-card .region { font-weight:600; color:#5fc3f4; }
+    .health-card .count { font-size:20px; font-weight:700; color:#6fcf97; }
+    /* Package update specific styles */
+    .pkg-selected { background:#1a2a3a; }
+    .pkg-cursor { border-left:3px solid #5fc3f4; padding-left:6px; }
+    .pkg-indicator { font-weight:700; margin-right:8px; }
+    .pkg-version-major { color:#f28b82; }
+    .pkg-version-minor { color:#f9ca7f; }
+    .pkg-version-patch { color:#6fcf97; }
+    .pkg-version-unchanged { color:#7a8ba3; }
+    .workspace-tag { background:#1a212a; padding:1px 6px; border-radius:8px; font-size:10px; color:#b6c8e0; }
+    .pkg-group-header { background:#0e1620; font-weight:600; color:#5fc3f4; padding:6px 8px; border-bottom:1px solid #1a212a; }
+    .pkg-target-underline { text-decoration: underline; text-underline-offset: 2px; }
+    .progress-bar { width:100%; height:4px; background:#1e2834; border-radius:2px; margin:8px 0; overflow:hidden; }
+    .progress-bar .fill { height:100%; background:#6fcf97; width:0%; transition:width 0.3s; }
+    .terminal-output { background:#0a0a0a; padding:8px; border-radius:8px; font-family:monospace; font-size:12px; max-height:200px; overflow-y:auto; color:#b6c8e0; white-space:pre-wrap; border:1px solid #1e2834; }
+    @media (max-width:640px) { body { padding:12px; } h1 { font-size:20px; } .card-header { flex-direction:column; align-items:flex-start; } .filter-bar { flex-direction:column; align-items:stretch; } .filter-bar select, .filter-bar button { width:100%; } .modal-content { padding:20px; } .tabs .tab { font-size:13px; padding:8px 14px; } }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <h1>🧠 Bun Agent <small>Live Odds Intelligence v1.12 · System Control Panel</small></h1>
+  <div class="subhead">
+    <span>📍 <span class="highlight">Fonbet</span> · BetMGM · Stake · <span id="bookCount">—</span> monitored</span>
+    <span>
+      <span class="badge">⚡ Bun fetch</span>
+      <span class="badge">📦 Interactive Update</span>
+      <span class="badge">🧮 ML Models</span>
+      <span class="badge">📊 Backtest</span>
+      <span class="badge">🤖 Auto‑Bet</span>
+    </span>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab" data-tab="events">📅 Events</div>
+    <div class="tab" data-tab="detail">📈 Detail</div>
+    <div class="tab" data-tab="edges">⚡ Edges</div>
+    <div class="tab" data-tab="live">📡 Live</div>
+    <div class="tab" data-tab="backtest">📊 Backtest</div>
+    <div class="tab" data-tab="alerts">🚨 Rules</div>
+    <div class="tab active" data-tab="packages">📦 Packages</div>
+    <div class="tab" data-tab="registry">📚 Registry</div>
+    <div class="tab" data-tab="system">🖥️ System</div>
+  </div>
+
+  <!-- TAB 1: EVENTS (simplified placeholder - same as v1.08) -->
+  <div class="tab-content" id="tab-events">
+    <div class="filter-bar">
+      <select id="filterSportEvents"><option value="">All Sports</option></select>
+      <select id="filterLeagueEvents"><option value="">All Leagues</option></select>
+      <select id="filterStatusEvents"><option value="">All Status</option></select>
+      <select id="filterPartnerEvents"><option value="">All Partners</option></select>
+      <button id="applyEventsFilter">Apply</button>
+      <button id="refreshEvents" class="btn btn-sm">↻ Refresh</button>
+      <span style="margin-left:auto;" class="text-muted" id="eventsCount">0 events</span>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>📋 Events</span></div>
+      <div class="card-body" id="eventsTableContainer"><div class="empty-state">Loading events…</div></div>
+    </div>
+  </div>
+
+  <!-- TAB 2: DETAIL -->
+  <div class="tab-content" id="tab-detail">
+    <div class="card">
+      <div class="card-header"><span>📈 Event Detail</span><div class="flex"><input type="text" id="eventIdInput" placeholder="Event ID" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;width:120px;" /><button id="loadEventBtn" class="btn btn-primary btn-sm">Load</button></div></div>
+      <div class="card-body"><div id="eventDetailContainer"><div class="empty-state">Enter an event ID to view details.</div></div><div id="liveComparisonContainer" style="margin-top:16px;"></div><div id="crossMarketContainer" style="margin-top:16px;"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>📊 Odds History Chart</span></div>
+      <div class="card-body"><div class="chart-container"><canvas id="detailChart" width="600" height="150"></canvas></div><div class="flex mt-2"><span class="text-muted">Market: <select id="detailMarketType"><option value="moneyline">Moneyline</option><option value="spread">Spread</option><option value="total">Total</option></select></span><button id="refreshChart" class="btn btn-sm">↻ Refresh</button></div></div>
+    </div>
+  </div>
+
+  <!-- TAB 3: EDGES -->
+  <div class="tab-content" id="tab-edges">
+    <div class="filter-bar">
+      <select id="filterEdgeSport"><option value="">All Sports</option></select>
+      <select id="filterEdgeLeague"><option value="">All Leagues</option></select>
+      <input type="number" id="filterEdgeMin" placeholder="Min edge %" step="0.1" style="width:120px;" />
+      <select id="filterEdgeType"><option value="">All Types</option><option value="arbitrage">Arbitrage</option><option value="value">Value</option><option value="steam">Steam</option></select>
+      <select id="filterEdgePartner"><option value="">All Partners</option></select>
+      <button id="applyEdgeFilter">Apply</button>
+      <button id="refreshEdges" class="btn btn-sm">↻ Refresh</button>
+      <span style="margin-left:auto;" class="text-muted" id="edgesCount">0 opportunities</span>
+    </div>
+    <div class="card"><div class="card-header"><span>⚡ Live Edge Opportunities</span></div><div class="card-body" id="edgesTableContainer"><div class="empty-state">Loading edges…</div></div></div>
+    <div class="card"><div class="card-header"><span>📊 Partner Health</span></div><div class="card-body" id="healthContainer"><div class="empty-state">Loading partner health…</div></div></div>
+    <div class="card"><div class="card-header"><span>📈 Rule Performance</span></div><div class="card-body" id="rulePerformanceContainer"><div class="empty-state">No performance data yet.</div></div></div>
+  </div>
+
+  <!-- TAB 4: LIVE FEED -->
+  <div class="tab-content" id="tab-live">
+    <div class="card">
+      <div class="card-header"><span>📡 Real‑time WebSocket Feed</span><span class="text-muted" id="wsStatus">🟢 Connected</span></div>
+      <div class="card-body" style="max-height:500px; overflow-y:auto;" id="liveFeedContainer"><div class="empty-state">Waiting for live updates…</div></div>
+    </div>
+  </div>
+
+  <!-- TAB 5: BACKTEST -->
+  <div class="tab-content" id="tab-backtest">
+    <div class="filter-bar">
+      <select id="backtestRuleSelect"><option value="">Select Rule</option></select>
+      <input type="date" id="backtestStart" /><input type="date" id="backtestEnd" />
+      <button id="runBacktestBtn" class="btn btn-primary">▶ Run Backtest</button>
+    </div>
+    <div class="card"><div class="card-header"><span>📊 Backtest Results</span></div><div class="card-body" id="backtestResultsContainer"><div class="empty-state">Run a backtest to see results.</div></div></div>
+  </div>
+
+  <!-- TAB 6: ALERT RULES -->
+  <div class="tab-content" id="tab-alerts">
+    <div class="card">
+      <div class="card-header"><span>🚨 Alert Rules</span><button id="addRuleBtn" class="btn btn-success btn-sm">+ Add Rule</button></div>
+      <div class="card-body" id="rulesTableContainer"><div class="empty-state">Loading rules…</div></div>
+    </div>
+    <div class="card"><div class="card-header"><span>📜 Alert History</span></div><div class="card-body live-panel" id="alertHistoryContainer"><div class="empty-state">No alerts triggered yet.</div></div></div>
+  </div>
+
+  <!-- TAB 7: PACKAGES (FIXED & ENHANCED) -->
+  <div class="tab-content active" id="tab-packages">
+    <div class="filter-bar">
+      <div class="flex">
+        <button id="pkgToggleLatest" class="btn btn-sm" style="background:#1e2834;">--latest</button>
+        <button id="pkgToggleRecursive" class="btn btn-sm" style="background:#1e2834;">--recursive</button>
+        <button id="pkgToggleForce" class="btn btn-sm" style="background:#1e2834;">--force</button>
+        <button id="pkgToggleFrozen" class="btn btn-sm" style="background:#1e2834;">--frozen-lockfile</button>
+        <button id="pkgToggleNoSave" class="btn btn-sm" style="background:#1e2834;">--no-save</button>
+        <button id="pkgToggleProduction" class="btn btn-sm" style="background:#1e2834;">--production</button>
+        <button id="pkgToggleDryRun" class="btn btn-sm" style="background:#2a6f9c;">--dry-run</button>
+        <button id="pkgToggleSilent" class="btn btn-sm" style="background:#1e2834;">--silent</button>
+        <button id="pkgToggleVerbose" class="btn btn-sm" style="background:#1e2834;">--verbose</button>
+      </div>
+      <div class="flex">
+        <select id="pkgWorkspaceFilter"><option value="">All Workspaces</option></select>
+        <button id="pkgDryRunPreview" class="btn btn-warning btn-sm">Preview (dry-run)</button>
+        <button id="pkgUpdateSelected" class="btn btn-success btn-sm">Update Selected</button>
+        <button id="pkgCancelUpdate" class="btn btn-danger btn-sm" style="display:none;">Cancel (Ctrl+C)</button>
+        <button id="pkgRefresh" class="btn btn-sm">↻ Refresh</button>
+        <button id="pkgUseMock" class="btn btn-sm" style="display:none;">Use offline demo</button>
+        <span style="margin-left:auto;" class="text-muted" id="pkgCount">0 packages</span>
+      </div>
+    </div>
+    <div id="pkgFetchError" style="display:none; margin-bottom:12px; padding:10px 14px; background:#3a1a1a; border:1px solid #6f2a2a; border-radius:10px; color:#f28b82; font-size:13px;"></div>
+    <div class="card">
+      <div class="card-header">
+        <span>📦 Dependencies</span>
+        <span class="text-muted" id="lockfileHash">Lockfile: —</span>
+      </div>
+      <div class="card-body">
+        <div id="packagesTableContainer"><div class="empty-state">Loading packages…</div></div>
+        <div class="progress-bar" id="pkgProgress"><div class="fill" id="pkgProgressFill"></div></div>
+        <div id="pkgTerminal" class="terminal-output" style="display:none; margin-top:8px;"></div>
+        <div id="pkgError" style="display:none; color:#f28b82; margin-top:8px;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>📋 Lockfile Diff Preview</span></div>
+      <div class="card-body" id="lockfileDiffContainer"><div class="empty-state">No changes yet.</div></div>
+    </div>
+  </div>
+
+  <!-- TAB: REGISTRY – snapshot browse + allowlisted publish -->
+  <div class="tab-content" id="tab-registry">
+    <div class="card">
+      <div class="card-header"><span>📦 Registry Configuration</span></div>
+      <div class="card-body">
+        <div class="flex" style="margin-bottom:8px;">
+          <select id="registryPreset" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;">
+            <option value="local">local</option>
+            <option value="prod">prod</option>
+          </select>
+          <button id="registryRefreshHealth" class="btn btn-sm">↻ Health</button>
+          <label class="text-muted" style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="registryLivePackument" />
+            Live packument
+          </label>
+          <span class="text-muted" id="registryUrlDisplay">—</span>
+        </div>
+        <div id="registryStatus" class="text-muted">Browse uses public/registry/registry.json; enable Live packument for allowlisted registry fetch.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span>🔍 Browse Packages</span>
+        <div class="flex">
+          <input type="text" id="registrySearch" placeholder="Search packages…" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;width:200px;" />
+          <button id="registrySearchBtn" class="btn btn-sm btn-primary">Search</button>
+          <a href="/portal/packages/" class="btn btn-sm" style="text-decoration:none;">Portal graph</a>
+        </div>
+      </div>
+      <div class="card-body" id="registryPackagesContainer"><div class="empty-state">Search the registry snapshot.</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>📤 Publish</span><span class="text-muted" id="registryPublishLane">lane: local bun publish</span></div>
+      <div class="card-body">
+        <div class="flex" style="margin-bottom:8px;">
+          <select id="registryWorkspace" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;min-width:220px;">
+            <option value="">Select workspace…</option>
+          </select>
+          <select id="registryAccess" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;">
+            <option value="public">public</option>
+            <option value="restricted">restricted</option>
+          </select>
+          <input type="text" id="registryTag" placeholder="tag (latest)" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;width:120px;" />
+        </div>
+        <div class="flex" style="margin-bottom:8px;">
+          <label class="text-muted"><input type="checkbox" id="registryDryRun" checked /> Dry run</label>
+          <label class="text-muted"><input type="checkbox" id="registryTolerateRepublish" /> Tolerate republish</label>
+          <button id="registryPublishDryBtn" class="btn btn-warning btn-sm">Publish dry-run</button>
+          <button id="registryPublishConfirmBtn" class="btn btn-success btn-sm">Publish (confirm)</button>
+          <button id="registryFactoryDryBtn" class="btn btn-warning btn-sm" style="display:none;">Factory dry-run</button>
+          <button id="registryFactoryConfirmBtn" class="btn btn-success btn-sm" style="display:none;">Factory publish</button>
+        </div>
+        <div class="progress-bar" id="registryProgress"><div class="fill" id="registryProgressFill"></div></div>
+        <div id="registryTerminal" class="terminal-output" style="display:none; margin-top:8px;"></div>
+        <div id="registryPublishError" style="display:none; color:#f28b82; margin-top:8px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 8: SYSTEM – Bun native APIs -->
+  <div class="tab-content" id="tab-system">
+    <div class="card">
+      <div class="card-header">
+        <span>🖥️ System Info</span>
+        <button id="sysRefreshInfo" class="btn btn-sm">↻</button>
+      </div>
+      <div class="card-body" id="systemInfoContainer"><div class="empty-state">Loading…</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>📁 File Explorer</span><span class="text-muted">sandboxed to project root</span></div>
+      <div class="card-body">
+        <div class="flex" style="margin-bottom:8px;">
+          <input type="text" id="filePathInput" value="." placeholder="relative/path" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;flex:1;" />
+          <button id="fileListBtn" class="btn btn-sm btn-primary">List</button>
+          <button id="fileUpBtn" class="btn btn-sm">⬆ Up</button>
+        </div>
+        <div id="fileListContainer"><div class="empty-state">Enter a path to list files.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>📄 File Viewer</span></div>
+      <div class="card-body">
+        <div class="flex" style="margin-bottom:8px;">
+          <input type="text" id="fileReadPath" placeholder="package.json" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;flex:1;" />
+          <button id="fileReadBtn" class="btn btn-sm btn-primary">Read</button>
+        </div>
+        <div id="fileMeta" class="text-muted" style="margin-bottom:6px;"></div>
+        <div id="fileContentContainer" class="terminal-output" style="display:block; max-height:300px;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>📋 Processes</span><button id="sysRefreshProcs" class="btn btn-sm">↻</button></div>
+      <div class="card-body" id="processesContainer"><div class="empty-state">Loading processes…</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>⏳ Async Tasks (Bun.peek)</span><button id="sysRefreshPeek" class="btn btn-sm">↻</button></div>
+      <div class="card-body" id="peekTasksContainer"><div class="empty-state">No desk tasks.</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>🔐 Password Hash (Bun.password)</span></div>
+      <div class="card-body">
+        <div class="flex" style="margin-bottom:8px;">
+          <input type="text" id="hashInput" placeholder="Plain text" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;flex:1;" />
+          <button id="hashBtn" class="btn btn-sm btn-primary">Hash</button>
+        </div>
+        <div id="hashResult" class="text-muted" style="word-break:break-all;"></div>
+        <div class="flex" style="margin-top:8px;">
+          <input type="text" id="verifyPlain" placeholder="Verify plain" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;flex:1;" />
+          <input type="text" id="verifyHash" placeholder="Hash" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;flex:1;" />
+          <button id="verifyBtn" class="btn btn-sm">Verify</button>
+        </div>
+        <div id="verifyResult" class="text-muted" style="margin-top:6px;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>🔍 Glob Search (Bun.Glob)</span></div>
+      <div class="card-body">
+        <div class="flex" style="margin-bottom:8px;">
+          <input type="text" id="globPatternInput" value="lib/operator-research/**/*.ts" placeholder="**/*.ts" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;flex:1;" />
+          <button id="globSearchBtn" class="btn btn-sm btn-primary">Search</button>
+        </div>
+        <div id="globResultsContainer" class="terminal-output" style="display:block; max-height:200px;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>🔬 Inspect (Bun.inspect)</span></div>
+      <div class="card-body">
+        <div class="flex" style="margin-bottom:8px;">
+          <input type="text" id="inspectInput" value='{"hello":"bun","nested":{"a":1}}' style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;flex:1;font-family:monospace;" />
+          <button id="inspectBtn" class="btn btn-sm btn-primary">Inspect</button>
+        </div>
+        <div id="inspectResult" class="terminal-output" style="display:block; max-height:180px;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>🌱 Env (Bun.env · DESK_* writable)</span></div>
+      <div class="card-body">
+        <div class="flex" style="margin-bottom:8px;">
+          <input type="text" id="envKeyInput" placeholder="DESK_FOO" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;width:180px;" />
+          <input type="text" id="envValueInput" placeholder="value" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;flex:1;" />
+          <button id="envSetBtn" class="btn btn-sm btn-primary">Set</button>
+          <button id="envRefreshBtn" class="btn btn-sm">↻</button>
+        </div>
+        <div id="envContainer" style="max-height:220px;overflow:auto;font-size:12px;font-family:monospace;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALS (bet, rule) reused from v1.08 -->
+  <div class="modal" id="betModal">
+    <div class="modal-content">
+      <h2>🤖 Place Bet</h2>
+      <div id="betDetails"><p><strong>Event:</strong> <span id="betEventName">—</span></p><p><strong>Market:</strong> <span id="betMarket">—</span></p><p><strong>Edge:</strong> <span id="betEdge">—</span></p><p><strong>Partners:</strong> <span id="betPartners">—</span></p></div>
+      <label>Stake ($)</label><input type="number" id="betStake" value="25" step="5" min="1" />
+      <label>Bookmaker</label><select id="betBookmaker"><option value="fonbet">Fonbet</option><option value="betmgm">BetMGM</option><option value="stake">Stake</option></select>
+      <div class="flex" style="gap:8px; margin-top:8px;"><button id="confirmBetBtn" class="btn btn-success">Confirm Bet</button><button id="cancelBetBtn" class="btn btn-sm" style="background:transparent;">Cancel</button></div>
+      <div id="betResult" style="margin-top:12px; display:none;"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="ruleModal">
+    <div class="modal-content">
+      <h2 id="ruleModalTitle">Edit Rule</h2>
+      <input type="hidden" id="ruleEditId" />
+      <label>ID</label><input type="text" id="ruleId" placeholder="unique-id" />
+      <label>Name</label><input type="text" id="ruleName" placeholder="Price movement > 5%" />
+      <label>Description</label><input type="text" id="ruleDescription" placeholder="Trigger when odds change…" />
+      <label>Condition</label><input type="text" id="ruleCondition" placeholder="price_change_percent > 5" />
+      <label>Channels (comma)</label><input type="text" id="ruleChannels" placeholder="ws, telegram" />
+      <label>Email recipients</label><input type="text" id="ruleEmailRecipients" placeholder="admin@example.com" />
+      <label>Active</label><select id="ruleActive"><option value="true">Yes</option><option value="false">No</option></select>
+      <label>Period</label><select id="rulePeriod"><option value="all">All</option><option value="prematch">Prematch</option><option value="live">Live</option></select>
+      <label>Pattern</label><select id="rulePattern"><option value="">None</option><option value="spike">Spike</option><option value="drift">Drift</option><option value="reversal">Reversal</option><option value="arbitrage">Arbitrage</option></select>
+      <label>Market Type</label><select id="ruleMarketType"><option value="all">All</option><option value="moneyline">Moneyline</option><option value="spread">Spread</option><option value="total">Total</option></select>
+      <label>Geo</label><input type="text" id="ruleGeo" placeholder="US" />
+      <label>State</label><input type="text" id="ruleState" placeholder="NV" />
+      <label>Edge min (%)</label><input type="number" id="ruleEdgeMin" placeholder="2.0" step="0.1" />
+      <label>Edge max (%)</label><input type="number" id="ruleEdgeMax" placeholder="10.0" step="0.1" />
+      <label>Limit min (USD)</label><input type="number" id="ruleLimitMin" placeholder="10" />
+      <label>Limit max (USD)</label><input type="number" id="ruleLimitMax" placeholder="500" />
+      <label>Latency threshold (ms)</label><input type="number" id="ruleLatencyThreshold" placeholder="200" />
+      <label>Bookmaker comparison</label><input type="text" id="ruleBookmakerComparison" placeholder="fonbet_vs_betmgm" />
+      <label>Partner IDs</label><input type="text" id="rulePartnerIds" placeholder="draftkings, hard-rock-florida" />
+      <div class="flex" style="gap:8px; margin-top:8px;"><button id="saveRuleBtn" class="btn btn-primary">Save</button><button id="deleteRuleBtn" class="btn btn-danger" style="display:none;">Delete</button><button id="cancelRuleBtn" class="btn btn-sm" style="background:transparent;">Cancel</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="registryDetailModal">
+    <div class="modal-content" style="max-width:720px;">
+      <h2 id="registryDetailTitle">Package</h2>
+      <div id="registryDetailBody" class="text-muted">Loading…</div>
+      <div class="flex" style="gap:8px; margin-top:16px;">
+        <button id="registryDetailCopy" class="btn btn-primary btn-sm">Copy name</button>
+        <button id="registryDetailCopyReadme" class="btn btn-sm" style="display:none;">Copy README</button>
+        <a id="registryDetailPortal" href="/portal/packages/" class="btn btn-sm" style="text-decoration:none;">Portal</a>
+        <button id="registryDetailClose" class="btn btn-sm" style="background:transparent;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+// @see https://bun.com/docs/pm/cli/update — bun update --interactive flags
+// @see https://bun.com/docs/pm/cli/publish#custom-registry
+const API_BASE = ''; // same-origin when served from agent desk (8790)
+
+let packages = [];
+let selectedPackages = new Set();
+let cursorIndex = 0;
+let useLatest = false;
+let useRecursive = false;
+let useForce = false;
+let useFrozen = false;
+let useNoSave = false;
+let useProduction = false;
+let useDryRun = true; // safe default
+let useSilent = false;
+let useVerbose = false;
+let isUpdating = false;
+let lockfileHash = '';
+let workspaceFilter = '';
+let workspaceOptionsBuilt = false;
+let allowMockFallback = false;
+let csrfToken = '';
+let updateAbort = null;
+
+function activeFilteredPackages() {
+  if (!workspaceFilter) return packages;
+  return packages.filter(p => p.workspace === workspaceFilter);
+}
+
+function clampCursor() {
+  const list = activeFilteredPackages();
+  if (list.length === 0) { cursorIndex = 0; return; }
+  if (cursorIndex < 0) cursorIndex = 0;
+  if (cursorIndex >= list.length) cursorIndex = list.length - 1;
+}
+
+function setToggleBtn(id, on) {
+  const el = document.getElementById(id);
+  if (el) el.style.background = on ? '#2a6f9c' : '#1e2834';
+}
+
+async function ensureCsrf() {
+  if (csrfToken) return csrfToken;
+  const res = await fetch(`${API_BASE}/api/csrf`, { credentials: 'include' });
+  if (!res.ok) throw new Error(`CSRF bootstrap failed: HTTP ${res.status}`);
+  const data = await res.json();
+  csrfToken = data.csrfToken || res.headers.get('x-csrf-token') || '';
+  if (!csrfToken) throw new Error('No CSRF token returned');
+  return csrfToken;
+}
+
+document.addEventListener('keydown', (e) => {
+  const packagesTab = document.getElementById('tab-packages');
+  if (!packagesTab || !packagesTab.classList.contains('active')) return;
+  // Don't steal keys from inputs/selects
+  const tag = (e.target && e.target.tagName) || '';
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+  const key = e.key;
+  if ((e.ctrlKey || e.metaKey) && (key === 'c' || key === 'C' || key === 'd' || key === 'D')) {
+    e.preventDefault();
+    cancelUpdate();
+    return;
+  }
+
+  const navKeys = ['ArrowUp', 'ArrowDown', ' ', 'a', 'A', 'n', 'N', 'i', 'I', 'u', 'U', 'l', 'L', 'Enter'];
+  if (!navKeys.includes(key)) return;
+  e.preventDefault();
+
+  const list = activeFilteredPackages();
+  clampCursor();
+
+  if (key === 'ArrowDown') {
+    cursorIndex = Math.min(cursorIndex + 1, Math.max(list.length - 1, 0));
+    renderPackages();
+  } else if (key === 'ArrowUp') {
+    cursorIndex = Math.max(cursorIndex - 1, 0);
+    renderPackages();
+  } else if (key === ' ') {
+    if (list[cursorIndex]) togglePackageSelection(list[cursorIndex].name);
+  } else if (key === 'a' || key === 'A') {
+    selectAllPackages();
+  } else if (key === 'n' || key === 'N' || key === 'u' || key === 'U') {
+    selectedPackages.clear();
+    renderPackages();
+  } else if (key === 'i' || key === 'I') {
+    invertSelection();
+  } else if (key === 'l' || key === 'L') {
+    toggleLatest();
+  } else if (key === 'Enter') {
+    if (useDryRun) previewDryRun();
+    else updateSelectedPackages({ confirm: true });
+  }
+});
+
+function generateMockPackages(recursive = false) {
+  const deps = [
+    { name: 'react', current: '17.0.2', range: '^17.0.0', target: '17.0.3', latest: '18.2.0', type: 'dependencies' },
+    { name: 'react-dom', current: '17.0.2', range: '^17.0.0', target: '17.0.3', latest: '18.2.0', type: 'dependencies' },
+    { name: 'next', current: '12.3.4', range: '^12.0.0', target: '12.3.5', latest: '13.5.6', type: 'dependencies' },
+    { name: 'express', current: '4.18.0', range: '^4.0.0', target: '4.18.1', latest: '4.19.2', type: 'dependencies' },
+    { name: 'lodash', current: '4.17.20', range: '^4.0.0', target: '4.17.21', latest: '4.17.21', type: 'dependencies' },
+    { name: '@babel/core', current: '7.20.0', range: '^7.0.0', target: '7.20.1', latest: '7.24.0', type: 'devDependencies' },
+    { name: 'eslint', current: '8.0.0', range: '^8.0.0', target: '8.1.0', latest: '9.0.0', type: 'devDependencies' },
+    { name: 'jest', current: '29.0.0', range: '^29.0.0', target: '29.1.0', latest: '29.7.0', type: 'devDependencies' },
+    { name: '@types/react', current: '18.0.0', range: '^18.0.0', target: '18.0.1', latest: '18.2.0', type: 'devDependencies' },
+    { name: 'typescript', current: '4.9.0', range: '^4.0.0', target: '4.9.1', latest: '5.4.0', type: 'devDependencies' },
+    { name: 'webpack', current: '5.0.0', range: '^5.0.0', target: '5.1.0', latest: '5.91.0', type: 'peerDependencies' },
+    { name: 'react-router', current: '6.0.0', range: '^6.0.0', target: '6.1.0', latest: '6.22.0', type: 'peerDependencies' },
+    { name: 'chokidar', current: '3.5.0', range: '^3.0.0', target: '3.5.1', latest: '3.6.0', type: 'optionalDependencies' },
+    { name: 'fsevents', current: '2.3.0', range: '^2.0.0', target: '2.3.1', latest: '2.3.3', type: 'optionalDependencies' },
+  ];
+  if (recursive) {
+    for (const ws of ['frontend', 'backend', 'shared']) {
+      deps.push({ name: `@${ws}/utils`, current: '1.0.0', range: '^1.0.0', target: '1.0.1', latest: '1.2.0', type: 'dependencies', workspace: ws });
+      deps.push({ name: `@${ws}/config`, current: '2.0.0', range: '^2.0.0', target: '2.0.1', latest: '2.3.0', type: 'dependencies', workspace: ws });
+    }
+  }
+  return deps.map(p => ({ ...p, originalTarget: p.target }));
+}
+
+function showFetchError(msg) {
+  const box = document.getElementById('pkgFetchError');
+  const mockBtn = document.getElementById('pkgUseMock');
+  box.style.display = 'block';
+  box.textContent = msg;
+  mockBtn.style.display = 'inline-flex';
+}
+
+function clearFetchError() {
+  document.getElementById('pkgFetchError').style.display = 'none';
+  document.getElementById('pkgUseMock').style.display = 'none';
+}
+
+async function fetchPackages() {
+  clearFetchError();
+  try {
+    const params = new URLSearchParams();
+    if (useRecursive) params.append('recursive', 'true');
+    if (useProduction) params.append('production', 'true');
+    // Never ask API for latestAsTarget — we toggle client-side via originalTarget
+    const res = await fetch(`${API_BASE}/api/package?${params}`, { credentials: 'include' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (data.ok === false) throw new Error(data.error || 'package snapshot failed');
+    lockfileHash = data.lockfileHash || '—';
+    document.getElementById('lockfileHash').textContent = `Lockfile: ${lockfileHash}`;
+    const deps = (data.dependencies || []).map(p => ({
+      ...p,
+      originalTarget: p.originalTarget || p.target,
+      target: useLatest ? (p.latest || p.target) : (p.originalTarget || p.target),
+    }));
+    return deps;
+  } catch (err) {
+    const msg = 'Failed to load packages: ' + (err.message || err);
+    showFetchError(msg + ' — click "Use offline demo" to continue with mock data.');
+    showToast(msg);
+    if (allowMockFallback) {
+      lockfileHash = 'mock';
+      document.getElementById('lockfileHash').textContent = 'Lockfile: mock';
+      return generateMockPackages(useRecursive);
+    }
+    return null; // signal failure — do not silently mock
+  }
+}
+
+function rebuildWorkspaceFilterOptions() {
+  const wsFilter = document.getElementById('pkgWorkspaceFilter');
+  const prev = workspaceFilter;
+  const workspaces = [...new Set(packages.map(p => p.workspace).filter(Boolean))].sort();
+  wsFilter.innerHTML = '<option value="">All Workspaces</option>' +
+    workspaces.map(w => `<option value="${w}">${w}</option>`).join('');
+  wsFilter.value = workspaces.includes(prev) ? prev : '';
+  workspaceFilter = wsFilter.value;
+  workspaceOptionsBuilt = true;
+}
+
+function renderPackages() {
+  const container = document.getElementById('packagesTableContainer');
+  const pkgList = activeFilteredPackages();
+  clampCursor();
+  document.getElementById('pkgCount').textContent = `${pkgList.length} packages` +
+    (selectedPackages.size ? ` · ${selectedPackages.size} selected` : '');
+
+  if (!pkgList.length) {
+    container.innerHTML = '<div class="empty-state">No packages found.</div>';
+    updateDiffPreview([]);
+    return;
+  }
+
+  const groups = {};
+  for (const pkg of pkgList) {
+    const type = pkg.type || 'dependencies';
+    (groups[type] ||= []).push(pkg);
+  }
+
+  let html = `<table><thead><tr>
+    <th style="width:30px;">#</th>
+    <th style="width:30px;">Sel</th>
+    <th>Package</th>
+    <th>Range</th>
+    <th>Current</th>
+    <th>Target</th>
+    <th>Latest</th>
+    ${useRecursive ? '<th>Workspace</th>' : ''}
+    <th>Change</th>
+    <th>Changelog</th>
+  </tr></thead><tbody>`;
+
+  let globalIndex = 0;
+  for (const [type, pkgs] of Object.entries(groups)) {
+    html += `<tr class="pkg-group-header"><td colspan="${useRecursive ? 10 : 9}">${type}</td></tr>`;
+    for (const pkg of pkgs) {
+      const isSelected = selectedPackages.has(pkg.name);
+      const isCursor = globalIndex === cursorIndex;
+      const versionChange = compareVersions(pkg.current, pkg.target);
+      const changeClass = versionChange === 'major' ? 'pkg-version-major' :
+                          versionChange === 'minor' ? 'pkg-version-minor' :
+                          versionChange === 'patch' ? 'pkg-version-patch' : 'pkg-version-unchanged';
+      const indicator = isSelected ? '■' : '□';
+      const cursorMarker = isCursor ? '❯' : '';
+      const workspaceCol = useRecursive ? `<td>${pkg.workspace || '—'}</td>` : '';
+      const changelogLink = versionChange !== 'none'
+        ? `<a href="https://www.npmjs.com/package/${encodeURIComponent(pkg.name)}/v/${encodeURIComponent(pkg.target)}" target="_blank" rel="noopener" style="color:#5fc3f4;">📄</a>`
+        : '—';
+      const targetUnderline = (pkg.target !== pkg.current) ? 'pkg-target-underline' : '';
+
+      html += `<tr data-pkg-index="${globalIndex}" data-pkg-name="${pkg.name.replace(/"/g, '&quot;')}" class="${isCursor ? 'pkg-cursor' : ''} ${isSelected ? 'pkg-selected' : ''}" style="cursor:pointer;">
+        <td>${cursorMarker}</td>
+        <td class="pkg-indicator">${indicator}</td>
+        <td><strong>${pkg.name}</strong></td>
+        <td><span class="pill">${pkg.range || '—'}</span></td>
+        <td>${pkg.current}</td>
+        <td class="${changeClass} ${targetUnderline}">${pkg.target}</td>
+        <td>${pkg.latest}</td>
+        ${workspaceCol}
+        <td><span class="pill ${changeClass}">${versionChange}</span></td>
+        <td>${changelogLink}</td>
+      </tr>`;
+      globalIndex++;
+    }
+  }
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+
+  // Click-to-select (restored) — event delegation
+  container.querySelector('table')?.addEventListener('click', (ev) => {
+    const a = ev.target.closest('a');
+    if (a) return; // changelog links
+    const tr = ev.target.closest('tr[data-pkg-name]');
+    if (!tr) return;
+    const name = tr.getAttribute('data-pkg-name');
+    const idx = Number(tr.getAttribute('data-pkg-index'));
+    if (Number.isFinite(idx)) cursorIndex = idx;
+    togglePackageSelection(name);
+  });
+
+  const selectedRows = pkgList.filter(p => selectedPackages.has(p.name));
+  updateDiffPreview(selectedRows.length ? selectedRows : pkgList.filter(p => p.target !== p.current));
+}
+
+function updateDiffPreview(changedPackages) {
+  const diffContainer = document.getElementById('lockfileDiffContainer');
+  if (!changedPackages.length) {
+    diffContainer.innerHTML = '<div class="text-muted">No changes. Lockfile will remain unchanged.</div>';
+    return;
+  }
+  const label = selectedPackages.size
+    ? `<span class="text-muted">Selected updates (${changedPackages.length}):</span> `
+    : `<span class="text-muted">Outdated packages (${changedPackages.length}):</span> `;
+  diffContainer.innerHTML = `<div>${label}${changedPackages.map(p =>
+    `${p.name} (${p.current} → <strong>${p.target}</strong>)`).join(', ')}</div>`;
+}
+
+function togglePackageSelection(name) {
+  if (selectedPackages.has(name)) selectedPackages.delete(name);
+  else selectedPackages.add(name);
+  renderPackages();
+}
+
+function selectAllPackages() {
+  for (const pkg of activeFilteredPackages()) selectedPackages.add(pkg.name);
+  renderPackages();
+}
+
+function invertSelection() {
+  const list = activeFilteredPackages();
+  const newSel = new Set();
+  for (const pkg of list) {
+    if (!selectedPackages.has(pkg.name)) newSel.add(pkg.name);
+  }
+  selectedPackages = newSel;
+  renderPackages();
+}
+
+function recalcTargets() {
+  packages = packages.map(pkg => {
+    const original = pkg.originalTarget ?? pkg.target;
+    return {
+      ...pkg,
+      originalTarget: original,
+      target: useLatest ? (pkg.latest || original) : original,
+    };
+  });
+  renderPackages();
+}
+
+function toggleLatest() {
+  useLatest = !useLatest;
+  setToggleBtn('pkgToggleLatest', useLatest);
+  recalcTargets();
+}
+function toggleRecursive() {
+  useRecursive = !useRecursive;
+  setToggleBtn('pkgToggleRecursive', useRecursive);
+  workspaceOptionsBuilt = false;
+  refreshPackages();
+}
+function toggleForce() { useForce = !useForce; setToggleBtn('pkgToggleForce', useForce); }
+function toggleFrozen() { useFrozen = !useFrozen; setToggleBtn('pkgToggleFrozen', useFrozen); }
+function toggleNoSave() { useNoSave = !useNoSave; setToggleBtn('pkgToggleNoSave', useNoSave); }
+function toggleProduction() {
+  useProduction = !useProduction;
+  setToggleBtn('pkgToggleProduction', useProduction);
+  refreshPackages();
+}
+function toggleDryRun() { useDryRun = !useDryRun; setToggleBtn('pkgToggleDryRun', useDryRun); }
+function toggleSilent() { useSilent = !useSilent; setToggleBtn('pkgToggleSilent', useSilent); }
+function toggleVerbose() { useVerbose = !useVerbose; setToggleBtn('pkgToggleVerbose', useVerbose); }
+
+async function refreshPackages() {
+  const data = await fetchPackages();
+  if (data == null) {
+    document.getElementById('packagesTableContainer').innerHTML =
+      '<div class="empty-state">Could not load packages. Check the error above.</div>';
+    return;
+  }
+  packages = data;
+  selectedPackages.clear();
+  cursorIndex = 0;
+  rebuildWorkspaceFilterOptions();
+  renderPackages();
+}
+
+function cancelUpdate() {
+  if (updateAbort) {
+    updateAbort.abort();
+    updateAbort = null;
+  }
+  if (isUpdating) {
+    isUpdating = false;
+    document.getElementById('pkgCancelUpdate').style.display = 'none';
+    const terminal = document.getElementById('pkgTerminal');
+    terminal.style.display = 'block';
+    terminal.textContent += '\n⏹ Cancelled (Ctrl+C / Ctrl+D).\n';
+    showToast('Update cancelled.');
+  }
+}
+
+function buildFlags(extra = {}) {
+  return {
+    latest: useLatest,
+    force: useForce,
+    frozenLockfile: useFrozen,
+    noSave: useNoSave,
+    production: useProduction,
+    recursive: useRecursive,
+    dryRun: extra.dryRun ?? useDryRun,
+    confirm: extra.confirm === true,
+    silent: useSilent,
+    verbose: useVerbose,
+  };
+}
+
+async function previewDryRun() {
+  await updateSelectedPackages({ dryRun: true, confirm: false });
+}
+
+async function updateSelectedPackages(opts = {}) {
+  if (isUpdating) return;
+  const selected = packages.filter(p => selectedPackages.has(p.name));
+  if (!selected.length) {
+    showToast('No packages selected.');
+    return;
+  }
+
+  const dryRun = opts.dryRun ?? useDryRun;
+  const confirm = opts.confirm === true && !dryRun;
+
+  if (!dryRun && !confirm) {
+    // Safety: require explicit confirm when dry-run toggle is off
+    const ok = window.confirm(
+      `Apply bun update to ${selected.length} package(s)?\n\n` +
+      selected.map(p => `• ${p.name}: ${p.current} → ${p.target}`).join('\n')
+    );
+    if (!ok) return;
+  }
+
+  isUpdating = true;
+  updateAbort = new AbortController();
+  const progressFill = document.getElementById('pkgProgressFill');
+  const terminal = document.getElementById('pkgTerminal');
+  const errorDiv = document.getElementById('pkgError');
+  const cancelBtn = document.getElementById('pkgCancelUpdate');
+  terminal.style.display = 'block';
+  errorDiv.style.display = 'none';
+  cancelBtn.style.display = 'inline-flex';
+  progressFill.style.width = '0%';
+  terminal.textContent = dryRun
+    ? '⏳ Dry-run preview (no lockfile write)…\n'
+    : '⏳ Starting bun update…\n';
+
+  try {
+    await ensureCsrf();
+    const body = {
+      selected: selected.map(p => p.name),
+      stream: true,
+      dryRun,
+      flags: { ...buildFlags({ dryRun, confirm: !dryRun }), confirm: !dryRun },
+    };
+
+    const res = await fetch(`${API_BASE}/api/update`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'text/event-stream',
+        'x-csrf-token': csrfToken,
+      },
+      body: JSON.stringify(body),
+      signal: updateAbort.signal,
+    });
+
+    if (!res.ok) {
+      const errBody = await res.text();
+      throw new Error(`HTTP ${res.status}: ${errBody.slice(0, 200)}`);
+    }
+
+    const ctype = res.headers.get('content-type') || '';
+    if (ctype.includes('text/event-stream') && res.body) {
+      await consumeSse(res.body, progressFill, terminal);
+    } else {
+      // JSON fallback
+      const data = await res.json();
+      for (const ev of data.events || []) appendEvent(ev, progressFill, terminal);
+      if (data.result) appendEvent(data.result, progressFill, terminal);
+      progressFill.style.width = '100%';
+    }
+
+    if (!dryRun) await refreshPackages();
+    showToast(dryRun ? 'Dry-run complete.' : 'Update completed.');
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      terminal.textContent += '\n⏹ Aborted.\n';
+    } else {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = `❌ Update failed: ${err.message}`;
+      showToast('Update failed. Check terminal.');
+    }
+  } finally {
+    isUpdating = false;
+    updateAbort = null;
+    cancelBtn.style.display = 'none';
+  }
+}
+
+async function consumeSse(body, progressFill, terminal) {
+  const reader = body.getReader();
+  const dec = new TextDecoder();
+  let buf = '';
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    const parts = buf.split('\n\n');
+    buf = parts.pop() || '';
+    for (const chunk of parts) {
+      const line = chunk.split('\n').find(l => l.startsWith('data: '));
+      if (!line) continue;
+      try {
+        const ev = JSON.parse(line.slice(6));
+        appendEvent(ev, progressFill, terminal);
+      } catch { /* ignore malformed */ }
+    }
+  }
+}
+
+function appendEvent(ev, progressFill, terminal) {
+  if (!ev || !ev.type) return;
+  if (ev.type === 'start') {
+    terminal.textContent += `$ ${ (ev.command || []).join(' ') }\n`;
+    terminal.textContent += ev.dryRun ? '(dry-run)\n' : '(live update)\n';
+  } else if (ev.type === 'stdout') {
+    if (!useSilent) terminal.textContent += ev.line + '\n';
+  } else if (ev.type === 'stderr') {
+    terminal.textContent += '⚠ ' + ev.line + '\n';
+  } else if (ev.type === 'progress') {
+    progressFill.style.width = `${Math.min(100, ev.percent || 0)}%`;
+  } else if (ev.type === 'done') {
+    progressFill.style.width = '100%';
+    terminal.textContent += ev.ok
+      ? `\n✅ Done (exit ${ev.exitCode}). Lockfile ${ev.lockfileHashBefore} → ${ev.lockfileHashAfter}` +
+        (ev.changed ? ' (changed)\n' : ' (unchanged)\n')
+      : `\n❌ Failed: ${ev.error || 'unknown'} (exit ${ev.exitCode})\n`;
+    if (ev.lockfileHashAfter) {
+      lockfileHash = ev.lockfileHashAfter;
+      document.getElementById('lockfileHash').textContent = `Lockfile: ${lockfileHash}`;
+    }
+    terminal.scrollTop = terminal.scrollHeight;
+  }
+  if (useVerbose && ev.type !== 'progress') {
+    terminal.scrollTop = terminal.scrollHeight;
+  } else if (ev.type === 'stdout' || ev.type === 'stderr' || ev.type === 'done') {
+    terminal.scrollTop = terminal.scrollHeight;
+  }
+}
+
+/** Semver compare — 0.x.y treats minor as breaking (major). */
+function compareVersions(current, target) {
+  const parse = (v) => {
+    const clean = String(v || '0').split('-')[0].split('+')[0];
+    const parts = clean.split('.').map(n => parseInt(n, 10) || 0);
+    while (parts.length < 3) parts.push(0);
+    return parts;
+  };
+  const c = parse(current);
+  const t = parse(target);
+  if (c[0] !== t[0]) return 'major';
+  // 0.x.y: minor bump is breaking
+  if (c[0] === 0 && c[1] !== t[1]) return 'major';
+  if (c[1] !== t[1]) return 'minor';
+  if (c[2] !== t[2]) return 'patch';
+  return 'none';
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  setTimeout(() => toast.style.display = 'none', 3200);
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById(`tab-${tabId}`).classList.add('active');
+  document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+  if (tabId === 'packages' && packages.length === 0) refreshPackages();
+  if (tabId === 'system') loadSystemTab();
+  if (tabId === 'registry') loadRegistryTab();
+}
+
+// ──────────────────────────────────────────────────────────────
+// REGISTRY TAB – snapshot browse + allowlisted publish
+// ──────────────────────────────────────────────────────────────
+let registryPreset = 'local';
+let registryPresets = [];
+let registryLivePackument = false;
+let registryDetailName = '';
+let registryDetailVersion = '';
+let registryDetailReadme = '';
+let registryDetailReadmeHtml = '';
+let registryReadmeView = 'rendered'; // 'rendered' | 'raw'
+let registryPublishing = false;
+
+/** Escape for HTML text/attrs (browser stand-in for Bun.escapeHTML). */
+function esc(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function syncPublishLaneUi() {
+  const local = registryPreset === 'local';
+  document.getElementById('registryPublishLane').textContent = local
+    ? 'lane: local bun publish → http://localhost:3000/'
+    : 'lane: factory publish (R2) — not bun publish to Pages';
+  document.getElementById('registryPublishDryBtn').style.display = local ? '' : 'none';
+  document.getElementById('registryPublishConfirmBtn').style.display = local ? '' : 'none';
+  document.getElementById('registryFactoryDryBtn').style.display = local ? 'none' : '';
+  document.getElementById('registryFactoryConfirmBtn').style.display = local ? 'none' : '';
+  document.getElementById('registryAccess').disabled = !local;
+  document.getElementById('registryTag').disabled = !local;
+  document.getElementById('registryTolerateRepublish').disabled = !local;
+}
+
+async function loadRegistryTab() {
+  await loadRegistryPresets();
+  await loadRegistryHealth();
+  await loadRegistryWorkspaces();
+  await browseRegistryPackages(document.getElementById('registrySearch').value || '');
+  syncPublishLaneUi();
+}
+
+async function loadRegistryPresets() {
+  try {
+    const data = await apiJson('/api/registry/presets');
+    registryPresets = data.presets || [];
+    const sel = document.getElementById('registryPreset');
+    const cur = sel.value || registryPreset;
+    sel.replaceChildren();
+    for (const p of registryPresets) {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = `${p.id} — ${p.label}`;
+      sel.appendChild(opt);
+    }
+    if ([...sel.options].some(o => o.value === cur)) sel.value = cur;
+    registryPreset = sel.value || 'local';
+    const meta = registryPresets.find(p => p.id === registryPreset);
+    document.getElementById('registryUrlDisplay').textContent = meta?.url || '—';
+  } catch (e) {
+    document.getElementById('registryStatus').textContent = 'Presets unavailable: ' + e.message;
+  }
+}
+
+async function loadRegistryHealth() {
+  try {
+    const h = await apiJson(`/api/registry/health?preset=${encodeURIComponent(registryPreset)}`);
+    const ping = h.ping
+      ? (h.ping.ok ? `ping ${h.ping.status}` : `ping fail (${h.ping.error || h.ping.status})`)
+      : 'ping n/a';
+    document.getElementById('registryStatus').textContent =
+      `Snapshot: ${h.snapshot.ok ? 'ok' : 'empty'} · ${h.snapshot.packageCount} packages · ${ping} · refresh via bun run factory:snapshot`;
+    document.getElementById('registryUrlDisplay').textContent = h.url || '—';
+  } catch (e) {
+    document.getElementById('registryStatus').textContent = 'Health error: ' + e.message;
+  }
+}
+
+async function loadRegistryWorkspaces() {
+  try {
+    const data = await apiJson('/api/registry/workspaces');
+    const sel = document.getElementById('registryWorkspace');
+    const prev = sel.value;
+    sel.replaceChildren();
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Select workspace…';
+    sel.appendChild(placeholder);
+    for (const w of data.workspaces || []) {
+      const opt = document.createElement('option');
+      opt.value = w.dir;
+      opt.textContent = `${w.name}@${w.version} (packages/${w.dir})`;
+      sel.appendChild(opt);
+    }
+    if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
+  } catch (e) {
+    showToast('Workspaces: ' + e.message);
+  }
+}
+
+async function browseRegistryPackages(search = '') {
+  const container = document.getElementById('registryPackagesContainer');
+  try {
+    const data = await apiJson(`/api/registry/packages?q=${encodeURIComponent(search)}`);
+    const pkgs = data.results || [];
+    if (!pkgs.length) {
+      container.innerHTML = '<div class="empty-state">No packages found in snapshot.</div>';
+      return;
+    }
+    let html = `<table><thead><tr>
+      <th>Package</th><th>Version</th><th>Type</th><th>Description</th><th></th>
+    </tr></thead><tbody>`;
+    for (const pkg of pkgs) {
+      const enc = encodeURIComponent(pkg.name);
+      html += `<tr>
+        <td><strong>${esc(pkg.name)}</strong></td>
+        <td>${esc(pkg.version)}</td>
+        <td><span class="pill">${esc(pkg.type)}</span></td>
+        <td class="text-muted">${esc(pkg.description || '—')}</td>
+        <td><button type="button" class="btn btn-sm btn-primary registry-view-btn" data-pkg="${enc}">View</button></td>
+      </tr>`;
+    }
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+    container.querySelectorAll('.registry-view-btn').forEach(btn => {
+      btn.addEventListener('click', () =>
+        openRegistryDetail(decodeURIComponent(btn.dataset.pkg || ''))
+      );
+    });
+  } catch (e) {
+    container.innerHTML = `<div class="empty-state">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+function paintRegistryReadmeBody() {
+  const host = document.getElementById('registryReadmeBody');
+  if (!host) return;
+  if (registryReadmeView === 'raw' || !registryDetailReadmeHtml) {
+    host.innerHTML = '';
+    const pre = document.createElement('pre');
+    pre.className = 'terminal-output';
+    pre.style.cssText = 'display:block;max-height:280px;white-space:pre-wrap;word-break:break-word;';
+    pre.textContent = registryDetailReadme;
+    host.appendChild(pre);
+  } else {
+    // Server-rendered Bun.markdown.html (tagFilter) — do not markdown-parse on the client.
+    host.innerHTML =
+      `<div class="registry-readme-html" style="max-height:280px;overflow:auto;line-height:1.45;font-size:13px;">${registryDetailReadmeHtml}</div>`;
+  }
+  document.querySelectorAll('[data-readme-view]').forEach(btn => {
+    const on = btn.getAttribute('data-readme-view') === registryReadmeView;
+    btn.classList.toggle('btn-primary', on);
+  });
+}
+
+async function openRegistryDetail(name, highlightVersion) {
+  registryDetailName = name;
+  registryDetailReadme = '';
+  registryDetailReadmeHtml = '';
+  registryReadmeView = 'rendered';
+  if (highlightVersion) registryDetailVersion = highlightVersion;
+  const liveCb = document.getElementById('registryLivePackument');
+  if (liveCb) registryLivePackument = !!liveCb.checked;
+  const modal = document.getElementById('registryDetailModal');
+  const copyReadmeBtn = document.getElementById('registryDetailCopyReadme');
+  if (copyReadmeBtn) copyReadmeBtn.style.display = 'none';
+  document.getElementById('registryDetailTitle').textContent = name;
+  document.getElementById('registryDetailBody').textContent = 'Loading…';
+  modal.classList.add('active');
+  try {
+    const qs = new URLSearchParams();
+    const ver = highlightVersion || registryDetailVersion;
+    if (ver) qs.set('version', ver);
+    if (registryLivePackument) {
+      qs.set('live', '1');
+      qs.set('preset', registryPreset || 'local');
+    }
+    const qStr = qs.toString() ? `?${qs}` : '';
+    const detail = await apiJson(
+      `/api/registry/packages/${name.split('/').map(encodeURIComponent).join('/')}${qStr}`
+    );
+    const highlight = registryDetailVersion || highlightVersion || '';
+    const selected = detail.selectedVersion || detail.latest || '';
+    const versionsHtml = (detail.versions || []).length
+      ? (detail.versions || [])
+          .map(v =>
+            v === highlight || v === selected
+              ? `<strong class="edge-highlight">${esc(v)}</strong>`
+              : esc(v)
+          )
+          .join(', ')
+      : '—';
+    const tags = Object.entries(detail.distTags || {})
+      .map(([k, v]) => `${esc(k)}=${esc(v)}`)
+      .join(', ') || '—';
+    const st = detail.storage || {};
+    const hasReadme = typeof detail.readme === 'string' && detail.readme.length > 0;
+    registryDetailReadme = hasReadme ? detail.readme : '';
+    registryDetailReadmeHtml =
+      typeof detail.readmeHtml === 'string' && detail.readmeHtml.length > 0
+        ? detail.readmeHtml
+        : '';
+    if (!registryDetailReadmeHtml) registryReadmeView = 'raw';
+    if (copyReadmeBtn) copyReadmeBtn.style.display = hasReadme ? '' : 'none';
+    const readmeBlock = hasReadme
+      ? `<div style="margin-top:12px;">
+          <div class="flex" style="justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;flex-wrap:wrap;">
+            <strong>README</strong>
+            <span class="text-muted">${esc(detail.readmeFilename || 'README.md')} · ${detail.readme.length} chars · Bun.markdown.html</span>
+            <span class="flex" style="gap:4px;">
+              <button type="button" class="btn btn-sm btn-primary" data-readme-view="rendered">Rendered</button>
+              <button type="button" class="btn btn-sm" data-readme-view="raw">Raw</button>
+            </span>
+          </div>
+          <div id="registryReadmeBody"></div>
+        </div>`
+      : `<p class="text-muted" style="margin-top:12px;">No README in snapshot for this version (publish with Bun ≥1.3.14 or factory readme auto-detect).</p>`;
+    document.getElementById('registryDetailBody').innerHTML = `
+      <p><strong>Latest:</strong> ${esc(detail.latest || '—')}
+        ${selected && selected !== detail.latest ? ` · <strong>Showing:</strong> ${esc(selected)}` : ''}</p>
+      <p><strong>Type:</strong> ${esc(detail.type || '—')}</p>
+      <p><strong>Description:</strong> ${esc(detail.description || '—')}</p>
+      <p><strong>Published:</strong> ${esc(detail.publishedAt || '—')} · ${esc(detail.publisher || '—')}</p>
+      <p><strong>Dist-tags:</strong> ${tags}</p>
+      <p><strong>Versions:</strong> ${versionsHtml}</p>
+      <p><strong>Storage:</strong> ${st.size != null ? esc(String(st.size)) + ' B' : '—'}
+        ${st.checksum ? ' · sha ' + esc(String(st.checksum).slice(0, 16)) + '…' : ''}</p>
+      ${highlight ? `<p class="text-muted">Deep link version: <code>${esc(highlight)}</code></p>` : ''}
+      ${readmeBlock}
+      <p class="text-muted" style="margin-top:8px;">
+        Source: <strong>${esc(detail.source || 'snapshot')}</strong>
+        ${detail.preset ? ` · preset <code>${esc(detail.preset)}</code>` : ''}
+        ${detail.liveError ? ` · live error: ${esc(detail.liveError)}` : ''}
+      </p>`;
+    if (hasReadme) {
+      paintRegistryReadmeBody();
+      document.querySelectorAll('[data-readme-view]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          registryReadmeView = btn.getAttribute('data-readme-view') || 'raw';
+          paintRegistryReadmeBody();
+        });
+      });
+    }
+  } catch (e) {
+    document.getElementById('registryDetailBody').textContent = e.message;
+  }
+}
+
+function closeRegistryDetail() {
+  document.getElementById('registryDetailModal').classList.remove('active');
+}
+
+async function runRegistryPublish({ confirm, factory }) {
+  if (registryPublishing) return;
+  const workspace = document.getElementById('registryWorkspace').value;
+  if (!workspace) {
+    showToast('Select a workspace under packages/');
+    return;
+  }
+  const checkboxDry = document.getElementById('registryDryRun').checked;
+  // Dry-run button → always dry; confirm button → live only when checkbox off + dialog
+  const useDry = confirm ? checkboxDry : true;
+  if (confirm && !useDry) {
+    if (!window.confirm(`Live publish packages/${workspace}?`)) return;
+  }
+  registryPublishing = true;
+  const terminal = document.getElementById('registryTerminal');
+  const errEl = document.getElementById('registryPublishError');
+  const fill = document.getElementById('registryProgressFill');
+  terminal.style.display = 'block';
+  terminal.textContent = '';
+  errEl.style.display = 'none';
+  fill.style.width = '0%';
+
+  const path = factory ? '/api/registry/factory-publish' : '/api/registry/publish';
+  const live = confirm && !useDry;
+  const body = factory
+    ? { workspace, dryRun: !live, confirm: live, stream: true }
+    : {
+        workspace,
+        preset: 'local',
+        access: document.getElementById('registryAccess').value || 'public',
+        tag: document.getElementById('registryTag').value || undefined,
+        dryRun: !live,
+        confirm: live,
+        tolerateRepublish: document.getElementById('registryTolerateRepublish').checked,
+        stream: true,
+      };
+
+  try {
+    await ensureCsrf();
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/event-stream',
+        'x-csrf-token': csrfToken,
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `HTTP ${res.status}`);
+    }
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const chunks = buf.split('\n\n');
+      buf = chunks.pop() || '';
+      for (const chunk of chunks) {
+        const line = chunk.split('\n').find(l => l.startsWith('data: '));
+        if (!line) continue;
+        let ev;
+        try { ev = JSON.parse(line.slice(6)); } catch { continue; }
+        if (ev.type === 'start') {
+          terminal.textContent += `$ ${ (ev.command || []).join(' ') }\n`;
+        } else if (ev.type === 'stdout' || ev.type === 'stderr') {
+          terminal.textContent += (ev.line || '') + '\n';
+        } else if (ev.type === 'progress') {
+          fill.style.width = (ev.percent || 0) + '%';
+        } else if (ev.type === 'done') {
+          fill.style.width = '100%';
+          if (ev.ok) showToast(ev.dryRun ? 'Dry-run ok' : 'Publish completed');
+          else {
+            errEl.style.display = 'block';
+            errEl.textContent = ev.error || 'Publish failed';
+            showToast('Publish failed');
+          }
+        }
+      }
+    }
+  } catch (e) {
+    errEl.style.display = 'block';
+    errEl.textContent = e.message;
+    showToast(e.message);
+  } finally {
+    registryPublishing = false;
+  }
+}
+
+function handleRegistryDeepLink() {
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get('tab');
+  const reg = params.get('registry');
+  const pkg = params.get('package');
+  const version = params.get('version') || '';
+  const live = params.get('live') === '1' || params.get('live') === 'true';
+  if (reg === 'local' || reg === 'prod') {
+    registryPreset = reg;
+    const sel = document.getElementById('registryPreset');
+    if (sel) sel.value = reg;
+  }
+  if (live) {
+    registryLivePackument = true;
+    const cb = document.getElementById('registryLivePackument');
+    if (cb) cb.checked = true;
+  }
+  if (tab === 'registry' || reg || pkg) {
+    switchTab('registry');
+  }
+  if (pkg) {
+    registryDetailVersion = version;
+    if (version) document.getElementById('registrySearch').value = pkg;
+    // open after tab load (presets/workspaces fetch)
+    setTimeout(() => openRegistryDetail(pkg, version || undefined), 250);
+  }
+}
+
+// ──────────────────────────────────────────────────────────────
+// SYSTEM TAB – Bun native APIs (sandboxed)
+// ──────────────────────────────────────────────────────────────
+let currentFsPath = '.';
+let lastHash = '';
+
+async function apiJson(path, opts = {}) {
+  const headers = { ...(opts.headers || {}) };
+  if (opts.method && opts.method !== 'GET') {
+    await ensureCsrf();
+    headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+    headers['x-csrf-token'] = csrfToken;
+  }
+  const res = await fetch(`${API_BASE}${path}`, { credentials: 'include', ...opts, headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  return data;
+}
+
+async function loadSystemInfo() {
+  const el = document.getElementById('systemInfoContainer');
+  try {
+    const info = await apiJson('/api/system/info');
+    const whichRows = Object.entries(info.which || {}).map(([k,v]) =>
+      `<div><strong>${k}</strong> <span class="text-muted">${v || 'not found'}</span></div>`).join('');
+    const colorSwatches = (info.colors || []).map(c =>
+      `<span style="display:inline-block;width:18px;height:18px;border-radius:4px;background:${c.css||c.hex};margin-right:4px;vertical-align:middle;" title="${c.hex}"></span>`
+    ).join('');
+    el.innerHTML = `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:13px;">
+        <div><strong>Bun</strong> ${info.bun.version}</div>
+        <div><strong>Revision</strong> <code>${(info.bun.revision||'').slice(0,12)}</code></div>
+        <div><strong>OS</strong> ${info.os} / ${info.arch}</div>
+        <div><strong>PID</strong> ${info.pid} · up ${info.uptimeSec}s</div>
+        <div style="grid-column:1/-1;"><strong>CWD</strong> <code>${info.cwd}</code></div>
+        <div style="grid-column:1/-1;"><strong>Root</strong> <code>${info.root}</code></div>
+        <div style="grid-column:1/-1;"><strong>Bun.color</strong> ${colorSwatches}</div>
+        <div style="grid-column:1/-1; display:grid; grid-template-columns:1fr 1fr; gap:6px;">${whichRows}</div>
+        <div style="grid-column:1/-1;"><strong>Env keys (sample)</strong> <span class="text-muted">${(info.envKeys||[]).slice(0,12).join(', ')}</span></div>
+      </div>`;
+  } catch (e) {
+    el.innerHTML = `<div class="empty-state">Error: ${e.message}</div>`;
+  }
+}
+
+async function listFiles(path) {
+  currentFsPath = path || '.';
+  document.getElementById('filePathInput').value = currentFsPath;
+  const container = document.getElementById('fileListContainer');
+  try {
+    const data = await apiJson('/api/system/fs/ls', {
+      method: 'POST',
+      body: JSON.stringify({ path: currentFsPath }),
+    });
+    if (!data.entries?.length) {
+      container.innerHTML = '<div class="empty-state">Empty directory.</div>';
+      return;
+    }
+    let html = `<table><thead><tr><th>Type</th><th>Name</th><th>Size</th><th>MIME</th></tr></thead><tbody>`;
+    for (const e of data.entries) {
+      const icon = e.type === 'dir' ? '📁' : '📄';
+      html += `<tr data-fs-path="${e.path}" data-fs-type="${e.type}" style="cursor:pointer;">
+        <td>${icon}</td><td><strong>${e.name}</strong></td>
+        <td>${e.size == null ? '—' : e.size}</td>
+        <td class="text-muted">${e.mime || '—'}</td></tr>`;
+    }
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+    container.querySelector('table')?.addEventListener('click', (ev) => {
+      const tr = ev.target.closest('tr[data-fs-path]');
+      if (!tr) return;
+      const p = tr.getAttribute('data-fs-path');
+      const t = tr.getAttribute('data-fs-type');
+      if (t === 'dir') listFiles(p);
+      else {
+        document.getElementById('fileReadPath').value = p;
+        readFile(p);
+      }
+    });
+  } catch (e) {
+    container.innerHTML = `<div class="empty-state">Error: ${e.message}</div>`;
+  }
+}
+
+async function readFile(path) {
+  const p = path || document.getElementById('fileReadPath').value;
+  if (!p) return;
+  try {
+    const data = await apiJson('/api/system/fs/read', {
+      method: 'POST',
+      body: JSON.stringify({ path: p }),
+    });
+    document.getElementById('fileMeta').textContent =
+      `${data.rel} · ${data.mime} · ${data.size} bytes` + (data.truncated ? ' · truncated' : '');
+    document.getElementById('fileContentContainer').textContent = data.content;
+  } catch (e) {
+    document.getElementById('fileContentContainer').textContent = `Error: ${e.message}`;
+  }
+}
+
+async function loadProcesses() {
+  const el = document.getElementById('processesContainer');
+  try {
+    const data = await apiJson('/api/system/processes?limit=40');
+    if (!data.processes?.length) {
+      el.innerHTML = '<div class="empty-state">No processes.</div>';
+      return;
+    }
+    let html = `<table><thead><tr><th>User</th><th>PID</th><th>CPU</th><th>MEM</th><th>Command</th></tr></thead><tbody>`;
+    for (const p of data.processes) {
+      html += `<tr><td>${p.user}</td><td>${p.pid}</td><td>${p.cpu}</td><td>${p.mem}</td><td style="max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.command}</td></tr>`;
+    }
+    html += `</tbody></table>`;
+    el.innerHTML = html;
+  } catch (e) {
+    el.innerHTML = `<div class="empty-state">Error: ${e.message}</div>`;
+  }
+}
+
+async function loadPeekTasks() {
+  const el = document.getElementById('peekTasksContainer');
+  try {
+    const data = await apiJson('/api/system/peek');
+    if (!data.tasks?.length) {
+      el.innerHTML = '<div class="empty-state">No registered desk tasks.</div>';
+      return;
+    }
+    el.innerHTML = `<table><thead><tr><th>ID</th><th>Kind</th><th>Peek</th><th>Created</th></tr></thead><tbody>` +
+      data.tasks.map(t => `<tr><td><code>${t.id.slice(0,12)}</code></td><td>${t.kind||'—'}</td><td>${t.peekStatus}</td><td class="text-muted">${t.createdAt||'—'}</td></tr>`).join('') +
+      `</tbody></table>`;
+  } catch (e) {
+    el.innerHTML = `<div class="empty-state">Error: ${e.message}</div>`;
+  }
+}
+
+async function loadEnv() {
+  const el = document.getElementById('envContainer');
+  try {
+    const data = await apiJson('/api/system/env');
+    el.innerHTML = data.vars.slice(0, 80).map(v =>
+      `<div><span style="color:${v.sensitive?'#f9ca7f':'#5fc3f4'}">${v.key}</span>=${v.value}</div>`
+    ).join('');
+  } catch (e) {
+    el.textContent = `Error: ${e.message}`;
+  }
+}
+
+function loadSystemTab() {
+  loadSystemInfo();
+  listFiles(currentFsPath);
+  loadProcesses();
+  loadPeekTasks();
+  loadEnv();
+}
+
+document.getElementById('sysRefreshInfo')?.addEventListener('click', loadSystemInfo);
+document.getElementById('sysRefreshProcs')?.addEventListener('click', loadProcesses);
+document.getElementById('sysRefreshPeek')?.addEventListener('click', loadPeekTasks);
+document.getElementById('fileListBtn')?.addEventListener('click', () => listFiles(document.getElementById('filePathInput').value || '.'));
+document.getElementById('fileUpBtn')?.addEventListener('click', () => {
+  const parts = currentFsPath.replace(/\\/g, '/').split('/').filter(Boolean);
+  parts.pop();
+  listFiles(parts.length ? parts.join('/') : '.');
+});
+document.getElementById('fileReadBtn')?.addEventListener('click', () => readFile());
+document.getElementById('hashBtn')?.addEventListener('click', async () => {
+  const plain = document.getElementById('hashInput').value;
+  if (!plain) return;
+  try {
+    const data = await apiJson('/api/system/password/hash', { method: 'POST', body: JSON.stringify({ plain }) });
+    lastHash = data.hashed;
+    document.getElementById('hashResult').textContent = `Hashed (${data.algorithm}): ${data.hashed}`;
+    document.getElementById('verifyHash').value = data.hashed;
+  } catch (e) {
+    document.getElementById('hashResult').textContent = `Error: ${e.message}`;
+  }
+});
+document.getElementById('verifyBtn')?.addEventListener('click', async () => {
+  try {
+    const data = await apiJson('/api/system/password/verify', {
+      method: 'POST',
+      body: JSON.stringify({
+        plain: document.getElementById('verifyPlain').value || document.getElementById('hashInput').value,
+        hash: document.getElementById('verifyHash').value || lastHash,
+      }),
+    });
+    document.getElementById('verifyResult').textContent = data.valid ? '✅ valid' : '❌ invalid';
+  } catch (e) {
+    document.getElementById('verifyResult').textContent = `Error: ${e.message}`;
+  }
+});
+document.getElementById('globSearchBtn')?.addEventListener('click', async () => {
+  const pattern = document.getElementById('globPatternInput').value;
+  const el = document.getElementById('globResultsContainer');
+  try {
+    const data = await apiJson('/api/system/search', { method: 'POST', body: JSON.stringify({ pattern }) });
+    el.textContent = data.results?.length ? data.results.join('\n') : 'No matches.';
+  } catch (e) {
+    el.textContent = `Error: ${e.message}`;
+  }
+});
+document.getElementById('inspectBtn')?.addEventListener('click', async () => {
+  const el = document.getElementById('inspectResult');
+  try {
+    const object = JSON.parse(document.getElementById('inspectInput').value);
+    const data = await apiJson('/api/system/inspect', { method: 'POST', body: JSON.stringify({ object, depth: 3 }) });
+    el.textContent = data.inspected;
+  } catch (e) {
+    el.textContent = `Error: ${e.message}`;
+  }
+});
+document.getElementById('envSetBtn')?.addEventListener('click', async () => {
+  try {
+    await apiJson('/api/system/env', {
+      method: 'POST',
+      body: JSON.stringify({
+        key: document.getElementById('envKeyInput').value,
+        value: document.getElementById('envValueInput').value,
+      }),
+    });
+    showToast('Env set (process-local)');
+    loadEnv();
+  } catch (e) {
+    showToast(e.message);
+  }
+});
+document.getElementById('envRefreshBtn')?.addEventListener('click', loadEnv);
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+
+document.getElementById('pkgToggleLatest').addEventListener('click', toggleLatest);
+document.getElementById('pkgToggleRecursive').addEventListener('click', toggleRecursive);
+document.getElementById('pkgToggleForce').addEventListener('click', toggleForce);
+document.getElementById('pkgToggleFrozen').addEventListener('click', toggleFrozen);
+document.getElementById('pkgToggleNoSave').addEventListener('click', toggleNoSave);
+document.getElementById('pkgToggleProduction').addEventListener('click', toggleProduction);
+document.getElementById('pkgToggleDryRun').addEventListener('click', toggleDryRun);
+document.getElementById('pkgToggleSilent').addEventListener('click', toggleSilent);
+document.getElementById('pkgToggleVerbose').addEventListener('click', toggleVerbose);
+document.getElementById('pkgUpdateSelected').addEventListener('click', () =>
+  updateSelectedPackages({ confirm: true, dryRun: useDryRun })
+);
+document.getElementById('pkgDryRunPreview').addEventListener('click', previewDryRun);
+document.getElementById('pkgCancelUpdate').addEventListener('click', cancelUpdate);
+document.getElementById('pkgRefresh').addEventListener('click', refreshPackages);
+document.getElementById('pkgUseMock').addEventListener('click', () => {
+  allowMockFallback = true;
+  clearFetchError();
+  refreshPackages();
+});
+
+// Workspace filter — options rebuilt only in refreshPackages, not every render
+document.getElementById('pkgWorkspaceFilter').addEventListener('change', (e) => {
+  workspaceFilter = e.target.value || '';
+  cursorIndex = 0;
+  renderPackages();
+});
+
+setToggleBtn('pkgToggleDryRun', useDryRun);
+
+document.getElementById('registryPreset')?.addEventListener('change', (e) => {
+  registryPreset = e.target.value || 'local';
+  syncPublishLaneUi();
+  loadRegistryHealth();
+});
+document.getElementById('registryLivePackument')?.addEventListener('change', (e) => {
+  registryLivePackument = !!e.target.checked;
+});
+document.getElementById('registryRefreshHealth')?.addEventListener('click', loadRegistryHealth);
+document.getElementById('registrySearchBtn')?.addEventListener('click', () =>
+  browseRegistryPackages(document.getElementById('registrySearch').value || '')
+);
+document.getElementById('registrySearch')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') browseRegistryPackages(e.target.value || '');
+});
+document.getElementById('registryPublishDryBtn')?.addEventListener('click', () =>
+  runRegistryPublish({ confirm: false, factory: false })
+);
+document.getElementById('registryPublishConfirmBtn')?.addEventListener('click', () =>
+  runRegistryPublish({ confirm: true, factory: false })
+);
+document.getElementById('registryFactoryDryBtn')?.addEventListener('click', () =>
+  runRegistryPublish({ confirm: false, factory: true })
+);
+document.getElementById('registryFactoryConfirmBtn')?.addEventListener('click', () =>
+  runRegistryPublish({ confirm: true, factory: true })
+);
+document.getElementById('registryDetailClose')?.addEventListener('click', closeRegistryDetail);
+document.getElementById('registryDetailCopy')?.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(registryDetailName);
+    showToast('Copied ' + registryDetailName);
+  } catch {
+    showToast(registryDetailName);
+  }
+});
+document.getElementById('registryDetailCopyReadme')?.addEventListener('click', async () => {
+  if (!registryDetailReadme) return;
+  try {
+    await navigator.clipboard.writeText(registryDetailReadme);
+    showToast('Copied README');
+  } catch {
+    showToast('README copy failed');
+  }
+});
+document.getElementById('registryDetailModal')?.addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeRegistryDetail();
+});
+
+ensureCsrf().catch(() => {});
+if (document.getElementById('tab-packages').classList.contains('active')) {
+  refreshPackages();
+}
+handleRegistryDeepLink();
+
+console.log('🧠 Bun Agent Dashboard v1.12 – system + packages + registry desk ready.');
+</script>
+<script type="module" src="/portal/data.js"></script>
+<script type="module" src="/portal/topbar.js"></script>
+</body>
+</html>

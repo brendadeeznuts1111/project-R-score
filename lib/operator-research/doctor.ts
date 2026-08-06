@@ -6,6 +6,7 @@
 // @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/webview — Bun.WebView
+// @see https://bun.com/blog/bun-v1.3.12#bun-webview-headless-browser-automation — await using WebView
 // @see https://bun.com/docs/runtime/image — Bun.Image
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
@@ -57,9 +58,9 @@ export async function getToolAvailability(
 
 export async function checkWebView(timeoutMs = 2000): Promise<CapabilityCheck> {
   const started = Number(Bun.nanoseconds());
-  let view: Bun.WebView | undefined;
   try {
-    view = new Bun.WebView({ width: 320, height: 240, headless: true });
+    // Bun.WebView is AsyncDisposable — await using closes the view at scope exit.
+    await using view = new Bun.WebView({ width: 320, height: 240, headless: true });
     await Promise.race([
       view.navigate('about:blank'),
       Bun.sleep(timeoutMs).then(() => {
@@ -77,13 +78,6 @@ export async function checkWebView(timeoutMs = 2000): Promise<CapabilityCheck> {
       elapsedMs: (Number(Bun.nanoseconds()) - started) / 1_000_000,
       error: err instanceof Error ? err.message : String(err),
     };
-  } finally {
-    try {
-      // @ts-expect-error close() availability varies by Bun channel
-      view?.close?.();
-    } catch {
-      /* ignore */
-    }
   }
 }
 

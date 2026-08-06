@@ -21,8 +21,10 @@ import {
   resolvePartnerContext,
   ruleMatchesPartners,
 } from './partner-filters.ts';
-import { ensureMatchingSchema } from './schema.ts';
+import { ensureAlertsSchema } from './alerts-schema.ts';
 import { detectSmartMoney, type SmartMoneySignal } from './smart-money.ts';
+
+export { ensureAlertsSchema } from './alerts-schema.ts';
 
 const ALERTS_TOML_PATH = joinPath(ROOT, 'config/operator-research/alerts.toml');
 
@@ -104,21 +106,6 @@ export type AlertEvent = {
   channels?: AlertChannel[];
 };
 
-const ALERTS_SCHEMA = `
-CREATE TABLE IF NOT EXISTS alerts (
-  id TEXT PRIMARY KEY,
-  type TEXT NOT NULL,
-  rule_id TEXT NOT NULL,
-  severity TEXT NOT NULL,
-  title TEXT NOT NULL,
-  details TEXT NOT NULL,
-  payload_json TEXT NOT NULL,
-  created_at TEXT NOT NULL
-);
-CREATE INDEX IF NOT EXISTS idx_alerts_created ON alerts(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_alerts_type ON alerts(type);
-`;
-
 const METRIC_TO_TYPE: Record<string, AlertType> = {
   arb_percent: 'arbitrage',
   price_change_percent: 'movement',
@@ -151,11 +138,6 @@ export function setAlertSink(fn: AlertSink | null): void {
 
 export function clearAlertRulesCache(): void {
   rulesCache = null;
-}
-
-export function ensureAlertsSchema(db: Database = openOddsDb()): void {
-  ensureMatchingSchema(db);
-  db.exec(ALERTS_SCHEMA);
 }
 
 /** Parse `metric > number` conditions into type + threshold. */
@@ -488,9 +470,8 @@ async function upsertEventAlertRule(
   input: AlertRuleInput,
   normalized: AlertRule
 ): Promise<AlertRule> {
-  const { listEventAlertConfigs, saveEventAlertConfigs } = await import(
-    '../../research/event-alert-engine.ts'
-  );
+  const { listEventAlertConfigs, saveEventAlertConfigs } =
+    await import('../../research/event-alert-engine.ts');
   const configs = await listEventAlertConfigs();
   const trigger = normalized.type as 'new_event' | 'price_change' | 'limit_change';
   const wantTelegram =
@@ -575,9 +556,8 @@ export async function upsertAlertRule(input: AlertRuleInput): Promise<AlertRule>
 
 export async function deleteAlertRule(id: string): Promise<boolean> {
   // brand-ok — opaque research/wire id
-  const { listEventAlertConfigs, saveEventAlertConfigs } = await import(
-    '../../research/event-alert-engine.ts'
-  );
+  const { listEventAlertConfigs, saveEventAlertConfigs } =
+    await import('../../research/event-alert-engine.ts');
   const configs = await listEventAlertConfigs();
   const withoutEvent = configs.filter(c => c.id !== id);
   if (withoutEvent.length !== configs.length) {

@@ -14,6 +14,10 @@ export type OddsSchedulerHandle = {
   stop: () => void;
   /** Last tick results (may be empty before first fire). */
   lastResults: () => MonitorTickResult[];
+  /** Cron expression in use (or interval fallback marker). */
+  cronExpr: string;
+  /** Hosts being monitored. */
+  hosts: string[];
 };
 
 export type StartOddsMonitorOptions = {
@@ -114,5 +118,7 @@ export function startOddsMonitor(opts: StartOddsMonitorOptions = {}): OddsSchedu
       }
     },
     lastResults: () => last,
+    cronExpr: cronJob ? expr : `interval:30s`,
+    hosts: [...hosts],
   };
 }

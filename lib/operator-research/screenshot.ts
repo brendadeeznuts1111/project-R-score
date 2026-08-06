@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
+// @see https://bun.com/blog/bun-v1.3.12#bun-webview-headless-browser-automation — await using WebView
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
 import { joinPath } from '../path-bun.ts';
 import { buildScreenshotEvidenceRecord } from '../screenshot-remediation.ts';
@@ -20,26 +21,17 @@ async function loadPlaceholderPng(): Promise<Uint8Array> {
 }
 
 async function captureWebViewPng(url: string, timeoutMs: number): Promise<Uint8Array> {
-  const wv = new Bun.WebView({ width: 1280, height: 720, headless: true });
-  try {
-    const nav = wv.navigate(url);
-    await Promise.race([
-      nav,
-      Bun.sleep(timeoutMs).then(() => {
-        throw new Error(`WebView navigate timeout ${timeoutMs}ms`);
-      }),
-    ]);
-    await Bun.sleep(1200);
-    const ss = await wv.screenshot({ format: 'png' });
-    return new Uint8Array(ss);
-  } finally {
-    try {
-      // @ts-expect-error close() availability varies by Bun channel
-      wv.close?.();
-    } catch {
-      /* ignore */
-    }
-  }
+  await using wv = new Bun.WebView({ width: 1280, height: 720, headless: true });
+  const nav = wv.navigate(url);
+  await Promise.race([
+    nav,
+    Bun.sleep(timeoutMs).then(() => {
+      throw new Error(`WebView navigate timeout ${timeoutMs}ms`);
+    }),
+  ]);
+  await Bun.sleep(1200);
+  const ss = await wv.screenshot({ format: 'png' });
+  return new Uint8Array(ss);
 }
 
 export async function captureScreenshot(

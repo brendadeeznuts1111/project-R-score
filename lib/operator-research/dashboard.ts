@@ -23,6 +23,39 @@ import { checkApiKey } from './auth/api-key.ts';
 import { checkCsrf, issueCsrf, isMutatingMethod, getSessionId } from './auth/csrf.ts';
 import { authenticatePartnerRequest, jsonWithRequestId } from './auth/partner-request.ts';
 import {
+  getPackageSnapshot,
+  runPackageUpdate,
+  updateEventsToSse,
+  type UpdateFlags,
+} from './package-update.ts';
+import {
+  listPresets,
+  listPublishableWorkspaces,
+  packageNameFromPathSuffix,
+  parseRegistryPreset,
+  publishEventsToSse,
+  registryHealth,
+  resolveRegistryPackage,
+  runBunPublish,
+  runFactoryPublish,
+  searchRegistryPackages,
+  type PublishFlags,
+} from './registry-desk.ts';
+import {
+  getEnvView,
+  getSystemInfo,
+  globSearch,
+  hashPassword,
+  inspectValue,
+  listDirectory,
+  listProcesses,
+  peekTasks,
+  readProjectFile,
+  setDeskEnv,
+  verifyPassword,
+  writeProjectFile,
+} from './system-panel.ts';
+import {
   alertsTomlPath,
   deleteAlertRule,
   evaluateAlerts,
@@ -40,10 +73,16 @@ import { getPlatformSnapshot } from './platform.ts';
 import { respondBunFile, resolveUnderRoot } from './http/bun-file.ts';
 import { EXPORTS_DIR, ROOT, SCREENSHOTS_DIR } from './paths.ts';
 import { getTask, getTaskPromise, listTaskIds, resolveTaskView } from './tasks.ts';
+import { buildDeskJobsSnapshot } from './desk-jobs.ts';
 import { startOddsDashboard, type OddsDashboardServer } from './odds/dashboard.ts';
+import type { OddsSchedulerHandle } from './odds/scheduler.ts';
 
 const AGENT_ODDS_DIR = joinPath(ROOT, 'public/portal/agent-odds');
 const PUBLIC_PORTAL_DIR = joinPath(ROOT, 'public/portal');
+const AGENT_ODDS_V112 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.12.html');
+const AGENT_ODDS_V111 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.11.html');
+const AGENT_ODDS_V110 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.10.html');
+const AGENT_ODDS_V107 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.07.html');
 const AGENT_ODDS_EVENTS_V105 = joinPath(AGENT_ODDS_DIR, 'dashboard-events-v1.05.html');
 const AGENT_ODDS_V105 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.05.html');
 const AGENT_ODDS_V104 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.04.html');
@@ -53,8 +92,27 @@ const AGENT_ODDS_PARTNER_V105 = joinPath(AGENT_ODDS_DIR, 'dashboard-partner-v1.0
 
 async function agentOddsHtml(req: Request, preferred?: string): Promise<Response> {
   const candidates = preferred
-    ? [preferred, AGENT_ODDS_EVENTS_V105, AGENT_ODDS_V105, AGENT_ODDS_V104, AGENT_ODDS_V103]
-    : [AGENT_ODDS_EVENTS_V105, AGENT_ODDS_V105, AGENT_ODDS_V104, AGENT_ODDS_V103];
+    ? [
+        preferred,
+        AGENT_ODDS_V112,
+        AGENT_ODDS_V111,
+        AGENT_ODDS_V110,
+        AGENT_ODDS_V107,
+        AGENT_ODDS_EVENTS_V105,
+        AGENT_ODDS_V105,
+        AGENT_ODDS_V104,
+        AGENT_ODDS_V103,
+      ]
+    : [
+        AGENT_ODDS_V112,
+        AGENT_ODDS_V111,
+        AGENT_ODDS_V110,
+        AGENT_ODDS_V107,
+        AGENT_ODDS_EVENTS_V105,
+        AGENT_ODDS_V105,
+        AGENT_ODDS_V104,
+        AGENT_ODDS_V103,
+      ];
   const issued = issueCsrf(req);
   const cookieHeaders = issued.setCookie ? { 'set-cookie': issued.setCookie } : undefined;
   for (const path of candidates) {
@@ -221,6 +279,8 @@ export type ResearchDashboardServer = {
   stop: () => void;
   odds?: OddsDashboardServer;
   research?: ResearchAgentHandle;
+  /** Optional Bun.cron odds monitor (owned by agent serve when --monitor). */
+  oddsMonitor?: OddsSchedulerHandle;
 };
 
 // eslint-disable-next-line harness/no-unknown-function-param -- HTTP JSON response edge
@@ -247,6 +307,8 @@ export function startResearchDashboard(
     oddsPort?: number;
     withResearchAgent?: boolean;
     researchIntervalMs?: number;
+    /** Optional in-process odds monitor (Bun.cron); stopped by caller or stop(). */
+    oddsMonitor?: OddsSchedulerHandle;
   } = {}
 ): ResearchDashboardServer {
   const port = opts.port ?? 8790;
@@ -265,6 +327,8 @@ export function startResearchDashboard(
           runImmediately: true,
           live: Bun.env.RESEARCH_AGENT_LIVE === '1',
         });
+
+  const oddsMonitor = opts.oddsMonitor;
 
   const server = Bun.serve({
     port,
@@ -303,6 +367,390 @@ export function startResearchDashboard(
         return json(await getPlatformSnapshot());
       }
 
+      // ── System panel (Bun.file / Glob / which / spawn / password / peek) ──
+      if (url.pathname === '/api/system/jobs' || url.pathname === '/api/desk/jobs') {
+        return json(
+          buildDeskJobsSnapshot({
+            research,
+            odds,
+            oddsMonitor,
+          })
+        );
+      }
+
+      if (url.pathname === '/api/system/info' || url.pathname === '/api/system/info/') {
+        return json(await getSystemInfo());
+      }
+
+      if (url.pathname === '/api/system/processes' || url.pathname === '/api/processes') {
+        try {
+          return json(await listProcesses(Number(url.searchParams.get('limit') ?? '40')));
+        } catch (err) {
+          return json({ error: err instanceof Error ? err.message : String(err) }, 500);
+        }
+      }
+
+      if (url.pathname === '/api/system/tasks' || url.pathname === '/api/system/peek') {
+        return json(peekTasks());
+      }
+
+      if (url.pathname === '/api/system/env' || url.pathname === '/api/env') {
+        if (req.method === 'GET') {
+          return json(getEnvView({ includeValues: url.searchParams.get('values') !== '0' }));
+        }
+        if (req.method === 'POST') {
+          let body: { key?: string; value?: string };
+          try {
+            body = (await req.json()) as typeof body;
+          } catch {
+            return json({ error: 'Invalid JSON' }, 400);
+          }
+          try {
+            const result = setDeskEnv(String(body.key ?? ''), String(body.value ?? ''));
+            return json({ ok: true, ...result });
+          } catch (err) {
+            return json(
+              { ok: false, error: err instanceof Error ? err.message : String(err) },
+              400
+            );
+          }
+        }
+        return json({ error: 'method not allowed' }, 405);
+      }
+
+      if (url.pathname === '/api/system/fs/ls' || url.pathname === '/api/fs/ls') {
+        if (req.method !== 'POST' && req.method !== 'GET') {
+          return json({ error: 'method not allowed' }, 405);
+        }
+        try {
+          const path =
+            req.method === 'GET'
+              ? (url.searchParams.get('path') ?? '.')
+              : String(((await req.json()) as { path?: string }).path ?? '.');
+          return json(await listDirectory(path));
+        } catch (err) {
+          return json({ error: err instanceof Error ? err.message : String(err) }, 400);
+        }
+      }
+
+      if (url.pathname === '/api/system/fs/read' || url.pathname === '/api/fs/read') {
+        if (req.method !== 'POST' && req.method !== 'GET') {
+          return json({ error: 'method not allowed' }, 405);
+        }
+        try {
+          const path =
+            req.method === 'GET'
+              ? (url.searchParams.get('path') ?? '')
+              : String(((await req.json()) as { path?: string }).path ?? '');
+          if (!path) return json({ error: 'path required' }, 400);
+          return json(await readProjectFile(path));
+        } catch (err) {
+          return json({ error: err instanceof Error ? err.message : String(err) }, 400);
+        }
+      }
+
+      if (url.pathname === '/api/system/fs/write' || url.pathname === '/api/fs/write') {
+        if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        let body: { path?: string; content?: string };
+        try {
+          body = (await req.json()) as typeof body;
+        } catch {
+          return json({ error: 'Invalid JSON' }, 400);
+        }
+        try {
+          const result = await writeProjectFile(
+            String(body.path ?? ''),
+            String(body.content ?? '')
+          );
+          return json({ ok: true, ...result });
+        } catch (err) {
+          return json({ ok: false, error: err instanceof Error ? err.message : String(err) }, 403);
+        }
+      }
+
+      if (url.pathname === '/api/system/search' || url.pathname === '/api/search') {
+        if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        let body: { pattern?: string; cwd?: string };
+        try {
+          body = (await req.json()) as typeof body;
+        } catch {
+          return json({ error: 'Invalid JSON' }, 400);
+        }
+        try {
+          return json(await globSearch(String(body.pattern ?? ''), body.cwd));
+        } catch (err) {
+          return json({ error: err instanceof Error ? err.message : String(err) }, 400);
+        }
+      }
+
+      if (url.pathname === '/api/system/password/hash' || url.pathname === '/api/password/hash') {
+        if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        try {
+          const { plain } = (await req.json()) as { plain?: string };
+          return json(await hashPassword(String(plain ?? '')));
+        } catch (err) {
+          return json({ error: err instanceof Error ? err.message : String(err) }, 400);
+        }
+      }
+
+      if (
+        url.pathname === '/api/system/password/verify' ||
+        url.pathname === '/api/password/verify'
+      ) {
+        if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        try {
+          const { plain, hash } = (await req.json()) as { plain?: string; hash?: string };
+          return json(await verifyPassword(String(plain ?? ''), String(hash ?? '')));
+        } catch (err) {
+          return json({ error: err instanceof Error ? err.message : String(err) }, 400);
+        }
+      }
+
+      if (url.pathname === '/api/system/inspect' || url.pathname === '/api/inspect') {
+        if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        try {
+          const body = (await req.json()) as { object?: unknown; depth?: number };
+          return json(inspectValue(body.object, body.depth));
+        } catch (err) {
+          return json({ error: err instanceof Error ? err.message : String(err) }, 400);
+        }
+      }
+
+      if (url.pathname === '/api/package' || url.pathname === '/api/package/') {
+        try {
+          const snap = await getPackageSnapshot({
+            production: url.searchParams.get('production') === 'true',
+            recursive: url.searchParams.get('recursive') === 'true',
+            latestAsTarget: url.searchParams.get('latest') === 'true',
+          });
+          return json(snap);
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err);
+          return json({ ok: false, error: message }, 500);
+        }
+      }
+
+      if (url.pathname === '/api/update' || url.pathname === '/api/update/') {
+        if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        let body: {
+          selected?: string[];
+          flags?: UpdateFlags & { confirm?: boolean };
+          stream?: boolean;
+          dryRun?: boolean;
+        };
+        try {
+          body = (await req.json()) as typeof body;
+        } catch {
+          return json({ ok: false, error: 'Invalid JSON body' }, 400);
+        }
+        const selected = Array.isArray(body.selected) ? body.selected.map(String) : [];
+        const confirm = body.flags?.confirm === true;
+        const explicitDry = body.dryRun ?? body.flags?.dryRun;
+        const flags: UpdateFlags = {
+          latest: !!body.flags?.latest,
+          force: !!body.flags?.force,
+          frozenLockfile: !!body.flags?.frozenLockfile,
+          noSave: !!body.flags?.noSave,
+          production: !!body.flags?.production,
+          recursive: !!body.flags?.recursive,
+          // Safe default: dry-run unless confirm:true (or dryRun:false)
+          dryRun: confirm ? false : explicitDry !== false,
+        };
+        const wantStream =
+          body.stream === true || (req.headers.get('accept') ?? '').includes('text/event-stream');
+
+        if (wantStream) {
+          return new Response(updateEventsToSse(runPackageUpdate(selected, flags)), {
+            headers: {
+              'content-type': 'text/event-stream; charset=utf-8',
+              'cache-control': 'no-store',
+              connection: 'keep-alive',
+            },
+          });
+        }
+
+        const events = [];
+        for await (const ev of runPackageUpdate(selected, flags)) {
+          events.push(ev);
+        }
+        const done = events.find(e => e.type === 'done');
+        return json({
+          ok: done?.type === 'done' ? done.ok : false,
+          dryRun: flags.dryRun !== false,
+          events,
+          result: done,
+        });
+      }
+
+      if (url.pathname === '/api/update/stream' || url.pathname === '/api/update/stream/') {
+        // GET EventSource helper — always dry-run (mutating updates require POST + CSRF).
+        const selected = (url.searchParams.get('selected') ?? '')
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+        const flags: UpdateFlags = {
+          latest: url.searchParams.get('latest') === '1',
+          force: url.searchParams.get('force') === '1',
+          frozenLockfile: url.searchParams.get('frozen') === '1',
+          noSave: url.searchParams.get('noSave') === '1',
+          production: url.searchParams.get('production') === '1',
+          recursive: url.searchParams.get('recursive') === '1',
+          dryRun: true,
+        };
+        return new Response(updateEventsToSse(runPackageUpdate(selected, flags)), {
+          headers: {
+            'content-type': 'text/event-stream; charset=utf-8',
+            'cache-control': 'no-store',
+            connection: 'keep-alive',
+          },
+        });
+      }
+
+      // ── Registry browser + publish (snapshot + allowlisted presets) ──
+      if (url.pathname === '/api/registry/presets' || url.pathname === '/api/registry/presets/') {
+        return json({ presets: listPresets() });
+      }
+
+      if (url.pathname === '/api/registry/health' || url.pathname === '/api/registry/health/') {
+        const preset = parseRegistryPreset(url.searchParams.get('preset')) ?? 'local';
+        return json(await registryHealth(preset));
+      }
+
+      if (
+        url.pathname === '/api/registry/workspaces' ||
+        url.pathname === '/api/registry/workspaces/'
+      ) {
+        return json({ workspaces: await listPublishableWorkspaces() });
+      }
+
+      if (url.pathname === '/api/registry/packages' || url.pathname === '/api/registry/packages/') {
+        const q = url.searchParams.get('q') ?? url.searchParams.get('search') ?? '';
+        const type = url.searchParams.get('type') ?? '';
+        return json(await searchRegistryPackages(q, type));
+      }
+
+      if (url.pathname.startsWith('/api/registry/packages/')) {
+        const suffix = url.pathname.slice('/api/registry/packages/'.length);
+        const name = packageNameFromPathSuffix(suffix);
+        if (!name) return json({ error: 'package name required' }, 400);
+        const version = url.searchParams.get('version');
+        const live =
+          url.searchParams.get('live') === '1' || url.searchParams.get('live') === 'true';
+        const preset = parseRegistryPreset(url.searchParams.get('preset')) ?? 'local';
+        const detail = await resolveRegistryPackage(name, { version, live, preset });
+        if (!detail) return json({ error: 'package not found', name }, 404);
+        return json(detail);
+      }
+
+      if (url.pathname === '/api/registry/publish' || url.pathname === '/api/registry/publish/') {
+        if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        let body: {
+          workspace?: string;
+          preset?: string;
+          access?: 'public' | 'restricted';
+          tag?: string;
+          dryRun?: boolean;
+          confirm?: boolean;
+          tolerateRepublish?: boolean;
+          gzipLevel?: number;
+          stream?: boolean;
+        };
+        try {
+          body = (await req.json()) as typeof body;
+        } catch {
+          return json({ ok: false, error: 'Invalid JSON body' }, 400);
+        }
+        const preset = parseRegistryPreset(body.preset ?? 'local');
+        if (!preset) return json({ ok: false, error: 'preset must be local|prod' }, 400);
+        if (preset !== 'local') {
+          return json(
+            {
+              ok: false,
+              error: 'bun publish only allowed for preset=local; use /api/registry/factory-publish',
+            },
+            400
+          );
+        }
+        const workspace = String(body.workspace ?? '').trim();
+        if (!workspace) return json({ ok: false, error: 'workspace required' }, 400);
+        const confirm = body.confirm === true;
+        const dryRun = confirm ? false : body.dryRun !== false;
+        const flags: PublishFlags = {
+          access: body.access,
+          tag: body.tag,
+          dryRun,
+          tolerateRepublish: !!body.tolerateRepublish,
+          gzipLevel: body.gzipLevel,
+        };
+        const wantStream =
+          body.stream === true || (req.headers.get('accept') ?? '').includes('text/event-stream');
+        if (wantStream) {
+          return new Response(publishEventsToSse(runBunPublish(workspace, flags)), {
+            headers: {
+              'content-type': 'text/event-stream; charset=utf-8',
+              'cache-control': 'no-store',
+              connection: 'keep-alive',
+            },
+          });
+        }
+        const events = [];
+        for await (const ev of runBunPublish(workspace, flags)) events.push(ev);
+        const done = events.find(e => e.type === 'done');
+        return json({
+          ok: done?.type === 'done' ? done.ok : false,
+          dryRun,
+          events,
+          result: done,
+        });
+      }
+
+      if (
+        url.pathname === '/api/registry/factory-publish' ||
+        url.pathname === '/api/registry/factory-publish/'
+      ) {
+        if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        let body: {
+          workspace?: string;
+          dryRun?: boolean;
+          confirm?: boolean;
+          stream?: boolean;
+        };
+        try {
+          body = (await req.json()) as typeof body;
+        } catch {
+          return json({ ok: false, error: 'Invalid JSON body' }, 400);
+        }
+        const workspace = String(body.workspace ?? '').trim();
+        if (!workspace) return json({ ok: false, error: 'workspace required' }, 400);
+        const confirm = body.confirm === true;
+        const dryRun = confirm ? false : body.dryRun !== false;
+        const wantStream =
+          body.stream === true || (req.headers.get('accept') ?? '').includes('text/event-stream');
+        if (wantStream) {
+          return new Response(
+            publishEventsToSse(runFactoryPublish(workspace, { dryRun, confirm })),
+            {
+              headers: {
+                'content-type': 'text/event-stream; charset=utf-8',
+                'cache-control': 'no-store',
+                connection: 'keep-alive',
+              },
+            }
+          );
+        }
+        const events = [];
+        for await (const ev of runFactoryPublish(workspace, { dryRun, confirm })) {
+          events.push(ev);
+        }
+        const done = events.find(e => e.type === 'done');
+        return json({
+          ok: done?.type === 'done' ? done.ok : false,
+          dryRun,
+          events,
+          result: done,
+        });
+      }
+
       if (url.pathname === '/api/partners/health') {
         const auth = authenticatePartnerRequest(req, 'read');
         if (!auth.ok) {
@@ -330,6 +778,7 @@ export function startResearchDashboard(
         if (!auth.ok) {
           return jsonWithRequestId({ ok: false, error: auth.error }, auth.status, auth.requestId);
         }
+
         // brand-ok — opaque research/wire id
         let body: { partnerId?: string; message?: string; topic?: string } | null = null; // brand-ok — opaque research/wire id
         try {
@@ -433,7 +882,6 @@ export function startResearchDashboard(
             return jsonWithRequestId({ ok: false, error: auth.error }, auth.status, auth.requestId);
           }
           let body: {
-            // brand-ok — opaque research/wire id
             partnerId?: string; // brand-ok — opaque research/wire id
             sport?: string;
             league?: string;
@@ -937,13 +1385,36 @@ export function startResearchDashboard(
       if (
         url.pathname === '/' ||
         url.pathname === '/index.html' ||
-        url.pathname === '/dashboard.html' ||
-        url.pathname === '/dashboard-events-v1.05.html'
+        url.pathname === '/dashboard.html'
       ) {
+        return agentOddsHtml(req, AGENT_ODDS_V105);
+      }
+      if (
+        url.pathname === '/dashboard-v1.12.html' ||
+        url.pathname === '/system' ||
+        url.pathname === '/system.html' ||
+        url.pathname === '/registry' ||
+        url.pathname === '/registry.html'
+      ) {
+        return agentOddsHtml(req, AGENT_ODDS_V112);
+      }
+      if (url.pathname === '/packages' || url.pathname === '/packages.html') {
+        return agentOddsHtml(req, AGENT_ODDS_V111);
+      }
+      if (url.pathname === '/dashboard-v1.11.html') {
+        return agentOddsHtml(req, AGENT_ODDS_V111);
+      }
+      if (url.pathname === '/dashboard-v1.10.html') {
+        return agentOddsHtml(req, AGENT_ODDS_V110);
+      }
+      if (url.pathname === '/dashboard-v1.07.html') {
+        return agentOddsHtml(req, AGENT_ODDS_V107);
+      }
+      if (url.pathname === '/dashboard-events-v1.05.html') {
         return agentOddsHtml(req, AGENT_ODDS_EVENTS_V105);
       }
       if (url.pathname === '/dashboard-v1.05.html') {
-        return agentOddsHtml(req, AGENT_ODDS_EVENTS_V105);
+        return agentOddsHtml(req, AGENT_ODDS_V105);
       }
       if (url.pathname === '/dashboard-v1.04.html') {
         return agentOddsHtml(req, AGENT_ODDS_V104);
@@ -1017,7 +1488,9 @@ export function startResearchDashboard(
     url: `http://${hostname}:${server.port}/`,
     odds,
     research,
+    oddsMonitor,
     stop() {
+      oddsMonitor?.stop();
       research?.stop();
       server.stop(true);
       odds?.stop();
