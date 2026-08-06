@@ -11,7 +11,7 @@
  *   - Request logging
  */
 
-import { authenticate, authenticateOptional, handleCorsPreflight, getCorsHeaders, requireAdmin } from "@auth/middleware";
+import { authenticate, authenticateOptional, requireAdmin } from "@auth/middleware";
 import { createLogger } from "@utils/logger";
 import { TerminalError, NotFoundError, RateLimitError } from "@utils/errors";
 import type { AuthContext } from "@utils/types";
@@ -49,7 +49,15 @@ import {
   handleExecuteArbitrage,
   handleGetProviderMarkets,
 } from "./prediction-market-routes";
-import { getSecurityHeaders, applySecurityHeaders, getRequestId, logRequest, logResponse, createTimer } from "@middleware/security";
+import {
+  applySecurityHeaders,
+  createTimer,
+  getCorsHeaders,
+  getRequestId,
+  handleCorsPreflight,
+  logRequest,
+  logResponse,
+} from "@middleware/security";
 
 const logger = createLogger("Router");
 

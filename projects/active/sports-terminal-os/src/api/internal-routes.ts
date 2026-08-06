@@ -22,9 +22,13 @@ const logger = createLogger("InternalRoutes");
 function validateInternalAuth(req: Request): boolean {
   const token = process.env.INTERNAL_API_TOKEN;
   if (!token) {
-    // No token configured — allow in dev, reject in production
-    logger.warn("INTERNAL_API_TOKEN not set — internal endpoints are OPEN");
-    return true;
+    const allowDevelopmentRequest = process.env.NODE_ENV !== "production";
+    logger.warn(
+      allowDevelopmentRequest
+        ? "INTERNAL_API_TOKEN not set — internal endpoints are open outside production"
+        : "INTERNAL_API_TOKEN not set — rejecting internal endpoint request"
+    );
+    return allowDevelopmentRequest;
   }
 
   // Check X-Internal-Token header first
@@ -39,6 +43,13 @@ function validateInternalAuth(req: Request): boolean {
   }
 
   return false;
+}
+
+function internalUnauthorizedResponse(): Response {
+  return Response.json(
+    { error: "Unauthorized — invalid or missing INTERNAL_API_TOKEN" },
+    { status: 401 }
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -64,10 +75,7 @@ interface UpdateCookiesBody {
 export async function handleUpdateCookies(req: Request, _auth?: unknown): Promise<Response> {
   // Auth gate
   if (!validateInternalAuth(req)) {
-    return Response.json(
-      { error: "Unauthorized — invalid or missing INTERNAL_API_TOKEN" },
-      { status: 401 }
-    );
+    return internalUnauthorizedResponse();
   }
 
   // Parse body
@@ -159,7 +167,11 @@ export async function handleUpdateCookies(req: Request, _auth?: unknown): Promis
  * Lightweight health check for internal workers.
  * Returns active session count + nearest cookie expiry.
  */
-export function handleInternalHealth(_req: Request, _auth?: unknown): Response {
+export function handleInternalHealth(req: Request, _auth?: unknown): Response {
+  if (!validateInternalAuth(req)) {
+    return internalUnauthorizedResponse();
+  }
+
   const sessions = listActiveSessions();
   const nearestExpiry = sessions.length > 0
     ? Math.min(...sessions.map((s) => s.expiresAt))
