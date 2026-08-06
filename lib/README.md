@@ -70,11 +70,15 @@ the planned resolution lane (not a commitment date).
   [#427](https://github.com/brendadeeznuts1111/project-R-score/pull/427)).
 - Probe temp dirs → [`tmp-probe.ts`](./tmp-probe.ts) (`makeTempDir` /
   `removeTempDir`); verification/docs/http probes no longer use `mkdtemp` /
-  `node:os` tmpdir.
+  `node:os` tmpdir
+  ([#428](https://github.com/brendadeeznuts1111/project-R-score/pull/428)).
+- `node:url` / `url` banned in harness ESLint
+  ([#426](https://github.com/brendadeeznuts1111/project-R-score/pull/426)).
 
 Product FS migration (mkdir / sync JSON / path URL): PR
 [#422](https://github.com/brendadeeznuts1111/project-R-score/pull/422) — spine
-[`bun-fs-utils.ts`](./bun-fs-utils.ts) · [`bun-path-url.ts`](./bun-path-url.ts).
+[`bun-fs-utils.ts`](./bun-fs-utils.ts) · [`bun-path-url.ts`](./bun-path-url.ts)
+· [`tmp-probe.ts`](./tmp-probe.ts).
 
 ## Spine (root modules — keep here)
 
@@ -83,18 +87,19 @@ Every `lib/*.ts` module is listed. Grouped for scan; paths stay flat under
 
 ### Barrel · path · runtime control
 
-| Module                                       | Purpose                                                                       |
-| -------------------------------------------- | ----------------------------------------------------------------------------- |
-| [`index.ts`](./index.ts)                     | Public barrel (`LIB_INFO`, `FW`)                                              |
-| [`path-bun.ts`](./path-bun.ts)               | Bun-native path helpers (ratchet: no `node:path` in `lib/`)                   |
-| [`bun-fs-utils.ts`](./bun-fs-utils.ts)       | Sync `ensureDirSync` / `readJsonSync` (peek+write · `Bun.mmap`; no `node:fs`) |
-| [`bun-path-url.ts`](./bun-path-url.ts)       | `Bun.fileURLToPath` / `pathToFileURL` (prefer over `node:url`)                |
-| [`bun-executable.ts`](./bun-executable.ts)   | Absolute `bun` argv0 via `Bun.which` · entrypoint · version fingerprint       |
-| [`bun-runtime-env.ts`](./bun-runtime-env.ts) | Typed assessment of Bun/runtime control-plane env keys                        |
-| [`env-check.ts`](./env-check.ts)             | Secret-safe env checklist (set / missing / placeholder only)                  |
-| [`text.ts`](./text.ts)                       | Small shared text helpers                                                     |
-| [`retry.ts`](./retry.ts)                     | Exponential backoff for network / proof operations                            |
-| [`repository.ts`](./repository.ts)           | Re-export of `ScopedRepository` / `Scope` (import-path fix)                   |
+| Module                                       | Purpose                                                                  |
+| -------------------------------------------- | ------------------------------------------------------------------------ |
+| [`index.ts`](./index.ts)                     | Public barrel (`LIB_INFO`, `FW`)                                         |
+| [`path-bun.ts`](./path-bun.ts)               | Bun-native path helpers (ratchet: no `node:path` in `lib/`)              |
+| [`bun-fs-utils.ts`](./bun-fs-utils.ts)       | Sync `ensureDirSync` / `readJsonSync` / mint helpers (mmap · peek write) |
+| [`tmp-probe.ts`](./tmp-probe.ts)             | Probe temp dirs: `makeTempDir` · `removeTempDir` · `systemTempDir`       |
+| [`bun-path-url.ts`](./bun-path-url.ts)       | `Bun.fileURLToPath` / `pathToFileURL` (prefer over `node:url`)           |
+| [`bun-executable.ts`](./bun-executable.ts)   | Absolute `bun` argv0 via `Bun.which` · entrypoint · version fingerprint  |
+| [`bun-runtime-env.ts`](./bun-runtime-env.ts) | Typed assessment of Bun/runtime control-plane env keys                   |
+| [`env-check.ts`](./env-check.ts)             | Secret-safe env checklist (set / missing / placeholder only)             |
+| [`text.ts`](./text.ts)                       | Small shared text helpers                                                |
+| [`retry.ts`](./retry.ts)                     | Exponential backoff for network / proof operations                       |
+| [`repository.ts`](./repository.ts)           | Re-export of `ScopedRepository` / `Scope` (import-path fix)              |
 
 ### Bun API wrappers · output · media
 
