@@ -69,6 +69,60 @@ export async function loadConceptGraph() {
 }
 
 /**
+ * Build operator-facing coverage and structure insights from the baked graph.
+ * @param {object} graph
+ * @returns {string}
+ */
+export function buildInsightsHtml(graph) {
+  const summary = graph.summary || {};
+  const nodes = Array.isArray(graph.nodes) ? graph.nodes : [];
+  const clusters = (
+    (Array.isArray(graph.report?.clusters) && graph.report.clusters) ||
+    (Array.isArray(graph.clusters) && graph.clusters) ||
+    []
+  )
+    .slice()
+    .sort((a, b) => (b.size ?? 0) - (a.size ?? 0))
+    .slice(0, 3);
+  const corridors = (Array.isArray(graph.corridors) ? graph.corridors : [])
+    .slice()
+    .sort((a, b) => (b.edges ?? 0) - (a.edges ?? 0))
+    .slice(0, 3);
+  const bridges = nodes
+    .filter(node => node.nodeKind === 'concept' && (node.bridgeScore ?? 0) > 0)
+    .sort((a, b) => b.bridgeScore - a.bridgeScore)
+    .slice(0, 3);
+
+  const row = (label, value) =>
+    `<div class="stat"><span class="k">${label}</span><span>${value}</span></div>`;
+  const rows = [
+    row(
+      'coverage',
+      `used ${summary.used ?? '—'} · unused ${summary.unused ?? '—'} · surface-only ${summary.surfaceOnly ?? '—'}`
+    ),
+    row(
+      'structure',
+      `bridges ${summary.bridges ?? '—'} · clusters ${summary.clusters ?? '—'} · corridors ${summary.corridors ?? '—'}`
+    ),
+  ];
+  for (const cluster of clusters) {
+    rows.push(
+      row(
+        'cluster',
+        `${String(cluster.id).replace(/^cluster:/, '')} ×${cluster.size} · ${cluster.domain}`
+      )
+    );
+  }
+  for (const corridor of corridors) {
+    rows.push(row('corridor', `${corridor.fromDomain} → ${corridor.toDomain} ×${corridor.edges}`));
+  }
+  for (const bridge of bridges) {
+    rows.push(row('bridge', `${bridge.id} · ${bridge.bridgeScore}`));
+  }
+  return rows.join('');
+}
+
+/**
  * @param {object} GRAPH
  * @param {{ canvas: HTMLCanvasElement, els: Record<string, HTMLElement|null> }} ui
  */
@@ -257,10 +311,7 @@ export function mountConceptGraph(GRAPH, ui) {
         ['hubs', s.domainHubEdges ?? '—'],
         ['Usage Σ', s.totalUsage ?? '—'],
       ]
-        .map(
-          ([k, v]) =>
-            `<div class="stat"><span class="k">${k}</span><span>${v}</span></div>`
-        )
+        .map(([k, v]) => `<div class="stat"><span class="k">${k}</span><span>${v}</span></div>`)
         .join('');
     }
     const boardsEl = $('boards');
@@ -273,14 +324,15 @@ export function mountConceptGraph(GRAPH, ui) {
           )
           .join('') || '<div class="meta">none</div>';
     }
+    const insightsEl = $('insights');
+    if (insightsEl) insightsEl.innerHTML = buildInsightsHtml(GRAPH);
     const domains = [
       ...new Set(ns.filter(n => n.nodeKind === 'concept').map(n => n.domain)),
     ].sort();
     const legendEl = $('legend');
     if (legendEl) {
       const layerSwatches = ALL_LAYERS.map(
-        L =>
-          `<span class="swatch" style="border-color:${LAYER_COLOR[L]};color:#e6edf3">${L}</span>`
+        L => `<span class="swatch" style="border-color:${LAYER_COLOR[L]};color:#e6edf3">${L}</span>`
       ).join('');
       const hopHint =
         '<span class="swatch" title="hop rings">hop 0 solid · 1 bright · 2 mid · 3 dim</span>';
@@ -416,8 +468,7 @@ export function mountConceptGraph(GRAPH, ui) {
       let r = node.nodeKind === 'domainHub' ? 14 : 4 + Math.min(10, node.degree);
       if (usageSize && node.nodeKind === 'concept') r += Math.min(8, Math.sqrt(node.usageUi || 0));
       const dim = selected && selected !== node && !pathIds.has(node.id);
-      const hopAlpha =
-        hopDepth > 0 && node.hop != null ? (HOP_ALPHA[node.hop] ?? 0.25) : 1;
+      const hopAlpha = hopDepth > 0 && node.hop != null ? (HOP_ALPHA[node.hop] ?? 0.25) : 1;
       ctx.beginPath();
       ctx.fillStyle = color;
       ctx.globalAlpha = dim ? 0.18 : hopAlpha;
@@ -478,8 +529,7 @@ export function mountConceptGraph(GRAPH, ui) {
     const detail = $('detail');
     if (!detail) return;
     if (!node) {
-      detail.textContent =
-        'Click a node · hops 0–3 · layer chips · / search · f freeze · e PNG';
+      detail.textContent = 'Click a node · hops 0–3 · layer chips · / search · f freeze · e PNG';
       return;
     }
     const neighbors = edges
@@ -491,8 +541,7 @@ export function mountConceptGraph(GRAPH, ui) {
       });
     const pathTo = $('pathTo')?.value?.trim();
     const path = pathTo ? shortest(node.id, pathTo) : null;
-    const hopLabel =
-      hopDepth > 0 && hopDist.has(node.id) ? ` · hop ${hopDist.get(node.id)}` : '';
+    const hopLabel = hopDepth > 0 && hopDist.has(node.id) ? ` · hop ${hopDist.get(node.id)}` : '';
     detail.innerHTML =
       `<div class="id">${node.id}</div>` +
       `<div><strong>${node.label}</strong>${hopLabel}</div>` +
@@ -502,9 +551,7 @@ export function mountConceptGraph(GRAPH, ui) {
       `<div>usage ui/surface · ${node.usageUi} / ${node.usageSurface} · degree · ${node.degree}</div>` +
       `<div>boards · ${node.boards?.length ? node.boards.join(', ') : '—'}</div>` +
       `<div>provenance · ${node.provenance || '—'}</div>` +
-      (path
-        ? `<div style="margin-top:8px;color:#3fb950">path · ${path.join(' → ')}</div>`
-        : '') +
+      (path ? `<div style="margin-top:8px;color:#3fb950">path · ${path.join(' → ')}</div>` : '') +
       (neighbors.length
         ? `<div style="margin-top:8px">neighbors · ${neighbors.slice(0, 14).join(', ')}${neighbors.length > 14 ? '…' : ''}</div>`
         : '') +
@@ -692,6 +739,6 @@ async function main() {
   }
 }
 
-if (document.getElementById('c')) {
+if (typeof document !== 'undefined' && document.getElementById('c')) {
   main();
 }
