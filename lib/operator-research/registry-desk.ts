@@ -7,6 +7,7 @@
  *
  * @see https://bun.com/docs/pm/cli/publish#custom-registry
  * @see https://bun.com/blog/bun-v1.3.14#bun-publish-now-sends-readme-metadata-to-the-registry
+ * @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html (readmeHtml)
  * @see https://bun.com/docs/runtime/file-io — Bun.file
  * @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
  * @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
@@ -15,8 +16,12 @@
  * @see docs/adr/0002-registry-index-ssot.md
  */
 
+import { renderReadmeHTML } from '../factory/markdown.ts';
 import { joinPath, relativePath, resolvePath } from '../path-bun.ts';
 import { ROOT } from './paths.ts';
+
+/** Cap rendered README body size in the desk detail payload. */
+const README_HTML_MAX_CHARS = 120_000;
 
 export type RegistryPresetId = 'local' | 'prod';
 
@@ -77,6 +82,8 @@ export type RegistryPackageDetail = {
   /** From Bun 1.3.14+ publish body / factory index (snapshot). */
   readme?: string;
   readmeFilename?: string;
+  /** Server-rendered HTML via Bun.markdown.html (tagFilter). */
+  readmeHtml?: string;
   storage?: {
     r2Key?: string;
     size?: number;
@@ -215,6 +222,13 @@ export async function getRegistryPackage(
       : readme
         ? 'README.md'
         : undefined;
+  const readmeHtml = readme
+    ? renderReadmeHTML(
+        readme.length > README_HTML_MAX_CHARS
+          ? `${readme.slice(0, README_HTML_MAX_CHARS)}\n\n…(truncated)`
+          : readme
+      )
+    : undefined;
   return {
     name,
     latest,
@@ -227,6 +241,7 @@ export async function getRegistryPackage(
     type: rel?.type,
     readme,
     readmeFilename,
+    readmeHtml,
     storage: rel?.storage
       ? {
           r2Key: rel.storage.r2Key,

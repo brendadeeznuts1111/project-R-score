@@ -20,13 +20,13 @@ Event, edge, rule, sportsbook, and host identities use brands from
 
 ## Bun 1.3.12 map (desk)
 
-| Feature                                | Owner here                                                                         |
-| -------------------------------------- | ---------------------------------------------------------------------------------- |
-| In-process `Bun.cron`                  | `odds/scheduler.ts` · optional on `agent serve --monitor`                          |
-| `Bun.markdown.ansi`                    | CLI `agent registry-readme` via [`../factory/markdown.ts`](../factory/markdown.ts) |
-| `Bun.WebView`                          | `doctor.ts` / `screenshot.ts` (short-lived `await using`)                          |
-| TCP_DEFER_ACCEPT / async native stacks | Free at runtime — no desk code                                                     |
-| Publish `readme` metadata              | Bun **1.3.14** + ingest — not a 1.3.12 feature                                     |
+| Feature                                | Owner here                                                                                             |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| In-process `Bun.cron`                  | `odds/scheduler.ts` · optional on `agent serve --monitor`                                              |
+| `Bun.markdown.ansi` / `.html`          | CLI `registry-readme` · detail API `readmeHtml` via [`../factory/markdown.ts`](../factory/markdown.ts) |
+| `Bun.WebView`                          | `doctor.ts` / `screenshot.ts` (short-lived `await using`)                                              |
+| TCP_DEFER_ACCEPT / async native stacks | Free at runtime — no desk code                                                                         |
+| Publish `readme` metadata              | Bun **1.3.14** + ingest — not a 1.3.12 feature                                                         |
 
 Do **not** wrap the odds SQLite singleton (`openOddsDb`) in `using` — it is
 process-lived.

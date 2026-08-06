@@ -997,6 +997,8 @@ let registryPresets = [];
 let registryDetailName = '';
 let registryDetailVersion = '';
 let registryDetailReadme = '';
+let registryDetailReadmeHtml = '';
+let registryReadmeView = 'rendered'; // 'rendered' | 'raw'
 let registryPublishing = false;
 
 /** Escape for HTML text/attrs (browser stand-in for Bun.escapeHTML). */
@@ -1123,9 +1125,32 @@ async function browseRegistryPackages(search = '') {
   }
 }
 
+function paintRegistryReadmeBody() {
+  const host = document.getElementById('registryReadmeBody');
+  if (!host) return;
+  if (registryReadmeView === 'raw' || !registryDetailReadmeHtml) {
+    host.innerHTML = '';
+    const pre = document.createElement('pre');
+    pre.className = 'terminal-output';
+    pre.style.cssText = 'display:block;max-height:280px;white-space:pre-wrap;word-break:break-word;';
+    pre.textContent = registryDetailReadme;
+    host.appendChild(pre);
+  } else {
+    // Server-rendered Bun.markdown.html (tagFilter) — do not markdown-parse on the client.
+    host.innerHTML =
+      `<div class="registry-readme-html" style="max-height:280px;overflow:auto;line-height:1.45;font-size:13px;">${registryDetailReadmeHtml}</div>`;
+  }
+  document.querySelectorAll('[data-readme-view]').forEach(btn => {
+    const on = btn.getAttribute('data-readme-view') === registryReadmeView;
+    btn.classList.toggle('btn-primary', on);
+  });
+}
+
 async function openRegistryDetail(name, highlightVersion) {
   registryDetailName = name;
   registryDetailReadme = '';
+  registryDetailReadmeHtml = '';
+  registryReadmeView = 'rendered';
   if (highlightVersion) registryDetailVersion = highlightVersion;
   const modal = document.getElementById('registryDetailModal');
   const copyReadmeBtn = document.getElementById('registryDetailCopyReadme');
@@ -1157,14 +1182,23 @@ async function openRegistryDetail(name, highlightVersion) {
     const st = detail.storage || {};
     const hasReadme = typeof detail.readme === 'string' && detail.readme.length > 0;
     registryDetailReadme = hasReadme ? detail.readme : '';
+    registryDetailReadmeHtml =
+      typeof detail.readmeHtml === 'string' && detail.readmeHtml.length > 0
+        ? detail.readmeHtml
+        : '';
+    if (!registryDetailReadmeHtml) registryReadmeView = 'raw';
     if (copyReadmeBtn) copyReadmeBtn.style.display = hasReadme ? '' : 'none';
     const readmeBlock = hasReadme
       ? `<div style="margin-top:12px;">
-          <div class="flex" style="justify-content:space-between;margin-bottom:6px;">
+          <div class="flex" style="justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;flex-wrap:wrap;">
             <strong>README</strong>
-            <span class="text-muted">${esc(detail.readmeFilename || 'README.md')} · ${detail.readme.length} chars · Bun 1.3.14+ metadata</span>
+            <span class="text-muted">${esc(detail.readmeFilename || 'README.md')} · ${detail.readme.length} chars · Bun.markdown.html</span>
+            <span class="flex" style="gap:4px;">
+              <button type="button" class="btn btn-sm btn-primary" data-readme-view="rendered">Rendered</button>
+              <button type="button" class="btn btn-sm" data-readme-view="raw">Raw</button>
+            </span>
           </div>
-          <pre class="terminal-output" style="display:block;max-height:280px;white-space:pre-wrap;word-break:break-word;">${esc(detail.readme)}</pre>
+          <div id="registryReadmeBody"></div>
         </div>`
       : `<p class="text-muted" style="margin-top:12px;">No README in snapshot for this version (publish with Bun ≥1.3.14 or factory readme auto-detect).</p>`;
     document.getElementById('registryDetailBody').innerHTML = `
@@ -1180,6 +1214,15 @@ async function openRegistryDetail(name, highlightVersion) {
       ${highlight ? `<p class="text-muted">Deep link version: <code>${esc(highlight)}</code></p>` : ''}
       ${readmeBlock}
       <p class="text-muted" style="margin-top:8px;">Phase 0: snapshot only (not live packument).</p>`;
+    if (hasReadme) {
+      paintRegistryReadmeBody();
+      document.querySelectorAll('[data-readme-view]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          registryReadmeView = btn.getAttribute('data-readme-view') || 'raw';
+          paintRegistryReadmeBody();
+        });
+      });
+    }
   } catch (e) {
     document.getElementById('registryDetailBody').textContent = e.message;
   }

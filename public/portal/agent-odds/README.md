@@ -76,7 +76,7 @@ Or set `AGENT_DEMO_USER` / `AGENT_DEMO_PASS`. **Not for production.**
 | GET      | `/api/system/jobs` · `/api/desk/jobs`          | Research agent · odds dashboard · optional `Bun.cron` monitor status  |
 | GET      | `/api/registry/presets`                        | Allowlisted registry presets (`local` · `prod`)                       |
 | GET      | `/api/registry/packages?q=`                    | Search `public/registry/registry.json` (Phase 0 snapshot)             |
-| GET      | `/api/registry/packages/:name`                 | Package detail from snapshot (`?version=` · includes `readme` / `readmeFilename` when baked) |
+| GET      | `/api/registry/packages/:name`                 | Package detail (`?version=` · `readme` / `readmeFilename` / `readmeHtml` when baked) |
 | GET      | `/api/registry/health?preset=`                 | Snapshot + optional local `/-/ping`                                   |
 | GET      | `/api/registry/workspaces`                     | Publishable `packages/*` workspaces                                   |
 | POST     | `/api/registry/publish`                        | Local `bun publish --registry` (CSRF · dry-run default · `confirm`)   |
@@ -99,7 +99,8 @@ bun run ops:snapshot
 ```
 
 Detail modal shows snapshot `readme` / `readmeFilename` when present (Bun ≥1.3.14 publish
-metadata · escaped plain text, not rendered markdown). Use `?version=` to pick a release.
+metadata). API also returns `readmeHtml` from server-side `Bun.markdown.html` (`tagFilter`).
+Modal defaults to **Rendered** with a **Raw** toggle (escaped text). Use `?version=` to pick a release.
 
 **Serve + Bun 1.3.12 desk jobs:**
 

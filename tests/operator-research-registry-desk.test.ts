@@ -108,6 +108,8 @@ describe('registry-desk snapshot browse', () => {
     if (detail.readme) {
       expect(detail.readme.length).toBeGreaterThan(0);
       expect(detail.readmeFilename).toBe('README.md');
+      expect(detail.readmeHtml).toBeTruthy();
+      expect(detail.readmeHtml!.toLowerCase()).not.toContain('<script');
     }
   });
 
@@ -125,6 +127,15 @@ describe('registry-desk snapshot browse', () => {
     expect(found.readme!.length).toBeGreaterThan(0);
     expect(found.readmeFilename).toBeTruthy();
     expect(found.selectedVersion).toBeTruthy();
+    expect(found.readmeHtml).toBeTruthy();
+    expect(found.readmeHtml!).toContain('<');
+  });
+
+  test('readmeHtml uses Bun.markdown.html tagFilter (no raw script tags)', async () => {
+    const { renderReadmeHTML } = await import('../lib/factory/markdown.ts');
+    const html = renderReadmeHTML('# Hi\n\n<script>alert(1)</script>\n\n**ok**');
+    expect(html.toLowerCase()).not.toContain('<script');
+    expect(html).toMatch(/ok|strong|b/i);
   });
 
   test('getRegistryPackage returns null for missing', async () => {
