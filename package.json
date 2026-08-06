@@ -1897,6 +1897,8 @@
     "workspace-taxonomy:bake": "bun scripts/bake-workspace-taxonomy.ts",
     "workspace-taxonomy:check": "bun scripts/bake-workspace-taxonomy.ts --check",
     "workspace-taxonomy:explain": "bun tools/workspace-taxonomy.ts explain",
+    "partner-surface-inventory:bake": "bun scripts/bake-partner-surface-inventory.ts",
+    "partner-surface-inventory:check": "bun scripts/bake-partner-surface-inventory.ts --check",
     "concept:domain:list": "bun scripts/concept-domain-list.ts",
     "concept:domain:stats": "bun scripts/concept-domain-stats.ts",
     "concept:propose": "bun scripts/concept-propose.ts",

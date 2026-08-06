@@ -57,6 +57,10 @@ export const CANONICAL_REPO_DOCS = {
   /** Session lane ↔ chrome Domain ↔ ConceptDomain correlations */
   workspaceTaxonomy: 'lib/docs/workspace-taxonomy.ts',
   workspaceLaneCrossMap: 'docs/harness/tenants/workspace-lane-cross-map.md',
+  /** Partner surface join (taxonomy · boards · brands · wire) — map before rename */
+  partnerSurfaceInventory: 'docs/design/partner-surface-inventory.md',
+  partnerSurfaceInventoryLib: 'lib/docs/partner-surface-inventory.ts',
+  partnerTypeReferenceMap: 'docs/design/partner-type-reference-map.md',
   /** Velocity baseline + day-loop honesty */
   velocityBaseline: 'docs/organization/VELOCITY_BASELINE.md',
   /** JIT harness thesis index */
@@ -182,6 +186,9 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   archiveNamingGrammar: 'Archive filename grammar (<t>-<lane>-<slug>)',
   workspaceTaxonomy: 'Workspace taxonomy crosswalk (session · chrome · concept)',
   workspaceLaneCrossMap: 'Workspace lane cross-map tenant (claim workspace-lane-cross-map)',
+  partnerSurfaceInventory: 'Partner surface inventory (map before rename)',
+  partnerSurfaceInventoryLib: 'Partner surface inventory row SSOT',
+  partnerTypeReferenceMap: 'Partner type / identity reference map',
   velocityBaseline: 'Velocity baseline + day-loop honesty',
   harnessIndex: 'JIT harness thesis index',
   harnessProof: 'Proof claim kinds',

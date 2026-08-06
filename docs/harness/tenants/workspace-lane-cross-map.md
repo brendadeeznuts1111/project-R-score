@@ -25,6 +25,10 @@ Domain lanes or ConceptDomains.
 Session ∩ chrome token overlap is essentially `{partner}` (string homonym only).
 Chrome `partner` ≠ ConceptDomain `partners` ≠ commit scope `ops`/`partners`.
 
+Full partner surface join (boards · brands · wire traps · docs):
+[`docs/design/partner-surface-inventory.md`](../../design/partner-surface-inventory.md)
+· `/registry/partner-surface-inventory.json`.
+
 ## Lib contract
 
 [`lib/docs/workspace-taxonomy.ts`](../../../lib/docs/workspace-taxonomy.ts):
