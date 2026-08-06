@@ -204,14 +204,16 @@ listed under **Domain lifecycle** above.
 | [`constants/`](./constants/)                 | Shared constants barrel                                                    | `index.ts`                                                 |
 | [`core/`](./core/)                           | Core types and infrastructure                                              | `index.ts`                                                 |
 | [`db/`](./db/)                               | Database connection helpers (SQLite / ops DB)                              | `connection.ts`                                            |
-| [`docs/`](./docs/)                           | Path SSOT, tokens, doc builders, Bun brand usages                          | `index.ts` · `repo-docs.ts`                                |
+| [`docs/`](./docs/)                           | Path SSOT, tokens, doc builders, Bun brand usages (**Area map**)           | [README Area map](./docs/README.md#area-map) · `repo-docs.ts` |
+
 | [`doctor/`](./doctor/)                       | Doctor board index (`hub` — tools/ + install policy)                       | domain README · `install/` · portal-cli doctor             |
 | [`dod/`](./dod/)                             | Agent image proof pipeline (verify, watermark, evidence)                   | `evidence.ts` · `verifier.ts`                              |
 | [`experiments/`](./experiments/)             | Multi-factor partner-policy experiment engine                              | `engine.ts` · `design.ts`                                  |
 | [`factory/`](./factory/)                     | Internal registry client, CLI, artifact scaffolding                        | `artifact.ts` · `registry.ts`                              |
 | [`glossary/`](./glossary/)                   | Glossary utilities beside portal / Kalshi SSOT bakes                       | `tournament-snap.ts`                                       |
 | [`harness/`](./harness/)                     | Harness proof paths, monorepo health, CI discovery                         | `proof.ts` · `monorepo-health.ts`                          |
-| [`http/`](./http/)                           | `Bun.serve` / fetch / portal / static HTTP surfaces                        | `bun-server.ts` · `fetch-headers.ts`                       |
+| [`http/`](./http/)                           | `Bun.serve` / fetch / portal / static HTTP surfaces (**Area map**)         | [README Area map](./http/README.md#area-map) · `bun-server.ts` |
+
 | [`identity/`](./identity/)                   | Auth layer (lockout, MFA, geo, WebAuthn, JIT)                              | `identity.ts` · `lockout.ts`                               |
 | [`images/`](./images/)                       | `Bun.Image` helpers for Tennis HQ / portal                                 | `avatar-response.ts`                                       |
 | [`install/`](./install/)                     | Machine bunfig / install policy (code SSOT)                                | `machine-bunfig-policy.ts`                                 |
@@ -220,7 +222,7 @@ listed under **Domain lifecycle** above.
 | [`monitoring/`](./monitoring/)               | Registry + ops health dashboard slices                                     | `collect.ts` · `page.ts`                                   |
 | [`net/`](./net/)                             | Network helpers (HTTPS proxy CONNECT reuse)                                | `proxy.ts`                                                 |
 | [`operations/`](./operations/)               | Ops tree, limits, scrapers, compliance HTTP (**mega** — use Area map)      | [README Area map](./operations/README.md) · `db.ts`        |
-| [`operator-research/`](./operator-research/) | Bookmaker research, odds, edge engine                                      | `edge-engine.ts` · `index.ts`                              |
+| [`operator-research/`](./operator-research/) | Bookmaker research, odds, edge engine (**mega** — use Area map)            | [README Area map](./operator-research/README.md#area-map) · `edge-engine.ts` |
 | [`package/`](./package/)                     | Package manager graph helpers                                              | `package-manager.ts`                                       |
 | [`pages/`](./pages/)                         | Cloudflare Pages / Bun-only function helpers (edge-safe)                   | `pages-function.ts` · `r2-types.ts`                        |
 | [`partner-profile/`](./partner-profile/)     | Canonical partner record, ledger, settlement                               | `schema.ts` · `ledger.ts`                                  |
