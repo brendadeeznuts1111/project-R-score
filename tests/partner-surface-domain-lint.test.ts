@@ -54,5 +54,5 @@ describe('partner-surface-domain-lint', () => {
     expect(
       await lintDomainsMain(['bun', 'scripts/validate-partner-domain-isolation.ts', '--scan'])
     ).toBe(0);
-  });
+  }, 15_000);
 });

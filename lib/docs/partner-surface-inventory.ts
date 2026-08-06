@@ -889,6 +889,33 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     },
   }),
   row({
+    id: 'wire.kalshi.outId',
+    aspect: 'wire-field',
+    machine: 'identity',
+    token: 'outId',
+    typeOrExport: 'OutId',
+    repo: 'Kalshi-bot',
+    path: 'Kalshi-bot/src/partner',
+    properties: ['execution/provider wire', 'legacy raw string before extraction boundary'],
+    owner: 'execution adapter',
+    notes:
+      'Explicit compatibility boundary for the pinned Kalshi partner submodule; new package-core code must parse to OutId',
+    wireField: {
+      wireName: 'outId',
+      sourceSystemId: 'kalshi',
+      resolvesTo: 'OutId',
+      brandedType: 'OutId',
+      pattern: 'outId',
+      patterns: ['outId', 'out_id'],
+      quarantineOnFail: true,
+      boundaryPathGlobs: [
+        'Kalshi-bot/src/partner/**',
+        'Kalshi-bot/tools/partner-*.ts',
+        'Kalshi-bot/tools/provision-fantasy402-vault.ts',
+      ],
+    },
+  }),
+  row({
     id: 'wire.externalRef',
     aspect: 'wire-field',
     machine: 'identity',
