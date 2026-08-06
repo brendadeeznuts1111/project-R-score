@@ -21,20 +21,21 @@ Full testing / hooks map: [DEVELOPMENT-WORKFLOW.md](../DEVELOPMENT-WORKFLOW.md).
 ## REF:ID Validation
 
 Design-doc **REF:ID**s are numbered fragment ids for operator flags / TOC
-(baseline: [`docs/design/bun-types-inventory.md`](../design/bun-types-inventory.md)
-§4.1). They keep flags tables, HTML anchors, TOC links, and tool code
-(`flagDocRef`) in sync.
+(baseline:
+[`docs/design/bun-types-inventory.md`](../design/bun-types-inventory.md) §4.1).
+They keep flags tables, HTML anchors, TOC links, and tool code (`flagDocRef`) in
+sync.
 
 ### Rules (v2)
 
-| Rule | Example / note |
-| ---- | -------------- |
-| Shape | `{section}.{kebab-keyword}` → `4.1.refresh` · `4.1.max-age-days` |
-| href | Always `#` + REF:ID (table may use empty / `—` / `auto` to derive) |
-| Keyword | kebab-case, 2–32 chars, no leading/trailing `-` |
-| Reserved | Never use leaves `index` · `top` · `toc` · `anchor` |
-| Unique | One REF:ID / `<a id>` value per document |
-| Tooling | Code flag rows must match anchors (`requireToolCoverage`) |
+| Rule      | Example / note                                                          |
+| --------- | ----------------------------------------------------------------------- |
+| Shape     | `{section}.{kebab-keyword}` → `4.1.refresh` · `4.1.max-age-days`        |
+| href      | Always `#` + REF:ID (table may use empty / `—` / `auto` to derive)      |
+| Keyword   | kebab-case, 2–32 chars, no leading/trailing `-`                         |
+| Reserved  | Never use leaves `index` · `top` · `toc` · `anchor`                     |
+| Unique    | One REF:ID / `<a id>` value per document                                |
+| Tooling   | Code flag rows must match anchors (`requireToolCoverage`)               |
 | Placement | Section id (e.g. `4.1`) on the line immediately above the Flags heading |
 
 Style summary also lives in
@@ -60,28 +61,38 @@ bun run docs:map:check
 
 ### Defaults
 
-| Flag / field | Default |
-| ------------ | ------- |
-| command | `check` |
-| `--section` | `4.1` |
-| `--doc` | `docs/design/bun-types-inventory.md` |
-| `--script` (scaffold) | `bun:types-status` |
-| `--default` (scaffold) | `off` |
-| validation mode | soft (format → warn; missing anchor/href → error) |
+| Flag / field           | Default                                           |
+| ---------------------- | ------------------------------------------------- |
+| command                | `check`                                           |
+| `--section`            | `4.1`                                             |
+| `--doc`                | `docs/design/bun-types-inventory.md`              |
+| `--script` (scaffold)  | `bun:types-status`                                |
+| `--default` (scaffold) | `off`                                             |
+| validation mode        | soft (format → warn; missing anchor/href → error) |
 
 ### Validation presets
 
-| Mode | How | Behavior |
-| ---- | --- | -------- |
-| soft | default `check` | Format length/kebab → **warn**; missing anchors, href mismatch, duplicates → **error** |
-| strict format | `--strict-format` / `--refid-strict` | Format issues → **error** |
-| skip | `--skip-refid-check` | No validation (exit 0) — drafts / fast local loops only |
+| Mode          | How                                  | Behavior                                                                               |
+| ------------- | ------------------------------------ | -------------------------------------------------------------------------------------- |
+| soft          | default `check`                      | Format length/kebab → **warn**; missing anchors, href mismatch, duplicates → **error** |
+| strict format | `--strict-format` / `--refid-strict` | Format issues → **error**                                                              |
+| skip          | `--skip-refid-check`                 | No validation (exit 0) — drafts / fast local loops only                                |
+| write hrefs   | `--write-hrefs`                      | Fill empty / `—` / `auto` href cells with `[`#REF`](#REF)`, then validate              |
 
-Registered document for `check`:
+Registered document for `check` (no `--doc`):
 
-| Doc | Tool rows |
-| --- | --------- |
+| Doc                                  | Tool rows                                           |
+| ------------------------------------ | --------------------------------------------------- |
 | `docs/design/bun-types-inventory.md` | `tools/bun-types-status.ts` → `buildStatusFlagRows` |
+
+Ad-hoc draft:
+
+```bash
+bun tools/docs-refid.ts check --doc=path/to/draft.md --write-hrefs \
+  --section-ref=4.1 --section-heading='### Flags / settings'
+```
+
+Taken keywords get a numeric suffix from suggest (`refresh` → `4.1.refresh-2`).
 
 ### Adding a flag
 
@@ -90,19 +101,20 @@ Registered document for `check`:
 2. Paste scaffold output (comment + `<a id>` + table row) into the design doc.  
    `bun run docs:refid:scaffold --section=4.1 --flag=--my-flag`
 3. Wire code with `flagDocRef('my-flag')` (or equivalent).
-4. Prove: `bun run docs:refid:check` · `bun test tests/docs-refid-cli.contract.test.ts`
+4. Prove: `bun run docs:refid:check` ·
+   `bun test tests/docs-refid-cli.contract.test.ts`
 
 ### Proof
 
-| Gate | Command |
-| ---- | ------- |
-| In-process library | `bun test tests/docs-ref-id.test.ts` |
+| Gate                        | Command                                          |
+| --------------------------- | ------------------------------------------------ |
+| In-process library          | `bun test tests/docs-ref-id.test.ts`             |
 | **CLI subprocess contract** | `bun test tests/docs-refid-cli.contract.test.ts` |
-| Package script | `bun run docs:refid:check` |
+| Package script              | `bun run docs:refid:check`                       |
 
 Subprocess tests spawn `bun tools/docs-refid.ts` / `docs-refid-check.ts` and
-assert exit codes + stdout (help text, ok line, JSON schema
-`factorywager/ref-id/v2`).
+assert exit codes + stdout (help, presets, JSON schema `factorywager/ref-id/v2`,
+fixture failure modes under `tests/fixtures/ref-id/`, `--write-hrefs` fill).
 
 ## Testing & concept changes
 
@@ -159,7 +171,7 @@ Prefer branded IDs and wire-boundary parse-once — see root
 | -------------------- | ---------------------------------------------------------------------------------- |
 | Index                | [docs/README.md](../README.md)                                                     |
 | Dev / test workflow  | [DEVELOPMENT-WORKFLOW.md](../DEVELOPMENT-WORKFLOW.md)                              |
-| REF:ID validation    | [§ REF:ID Validation](#refid-validation) · `bun run docs:refid:check`            |
+| REF:ID validation    | [§ REF:ID Validation](#refid-validation) · `bun run docs:refid:check`              |
 | Concept lifecycle    | [CONCEPT_LIFECYCLE.md](../CONCEPT_LIFECYCLE.md)                                    |
 | Surface coverage map | [SURFACE_COVERAGE.md](../SURFACE_COVERAGE.md) · `bun run surface-coverage:map`     |
 | Install / bunfig     | [UNIFIED.md](../UNIFIED.md)                                                        |

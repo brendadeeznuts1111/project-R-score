@@ -30,16 +30,16 @@ bun run check:brands:all
 
 ## Bun.markdown.Options (HTML)
 
-SSOT presets: [`lib/markdown/options.ts`](../lib/markdown/options.ts). Defaults match
-[docs options table](https://bun.com/docs/runtime/markdown#options) (GFM
+SSOT presets: [`lib/markdown/options.ts`](../lib/markdown/options.ts). Defaults
+match [docs options table](https://bun.com/docs/runtime/markdown#options) (GFM
 tables/strikethrough/tasklists **on**; headings/autolinks/wiki/math/tagFilter
 **off**).
 
-| Prefer | Avoid |
-| ------ | ----- |
-| `headings: true` or `{ ids: true }` | blog-era `headingIds` / `autolinkHeadings` (no-ops) |
-| `MARKDOWN_PRESET_PORTAL` / `_README` / `_SECURE` / `_DESIGN` | ad-hoc option soup per call site |
-| `tagFilter: true` for untrusted HTML | raw HTML without filter |
+| Prefer                                                       | Avoid                                               |
+| ------------------------------------------------------------ | --------------------------------------------------- |
+| `headings: true` or `{ ids: true }`                          | blog-era `headingIds` / `autolinkHeadings` (no-ops) |
+| `MARKDOWN_PRESET_PORTAL` / `_README` / `_SECURE` / `_DESIGN` | ad-hoc option soup per call site                    |
+| `tagFilter: true` for untrusted HTML                         | raw HTML without filter                             |
 
 Proof: `bun test tests/markdown-options.test.ts`.
 
@@ -70,6 +70,7 @@ Numbered fragment ids for operator docs (baseline: bun-types inventory §4.1).
 ```bash
 bun run docs:refid:check           # errors fail; format orphans warn
 bun run docs:refid:check:strict    # format warns → errors
+bun tools/docs-refid.ts check --write-hrefs   # fill empty/—/auto href cells
 bun run docs:refid:suggest --section=4.1 --flag=--foo-bar
 bun run docs:refid:list            # taken ids in registered / --doc
 bun run docs:refid:scaffold --section=4.1 --flag=--foo-bar
@@ -77,7 +78,8 @@ bun run docs:map:check             # includes REF:ID (unless --skip-refid-check)
 ```
 
 **href DX:** table `href` may be empty, `—`, or `auto` — checker treats it as
-`#` + REF:ID. Prefer explicit `[#4.1.x](#4.1.x)` in committed docs.
+`#` + REF:ID. Use `--write-hrefs` to materialize `[`#4.1.x`](#4.1.x)` cells.
+Prefer explicit links in committed docs.
 
 Library: [`lib/docs/ref-id.ts`](../lib/docs/ref-id.ts) · CLI:
 [`tools/docs-refid.ts`](../tools/docs-refid.ts) · design note:

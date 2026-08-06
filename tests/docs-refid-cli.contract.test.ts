@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/test — bun:test
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 /**
  * Contract tests: run REF:ID validator / CLI as a subprocess and assert
  * stdout / exit codes (not in-process imports of the check path).
@@ -139,6 +140,78 @@ describe('docs-refid CLI contract (subprocess)', () => {
     expect(r.exitCode).not.toBe(0);
     expect(r.stderr + r.stdout).toMatch(/usage:|keyword|flag/i);
   });
+
+  test('suggest renumbers when keyword is already taken', () => {
+    const r = run(['suggest', '--section=4.1', '--keyword=refresh']);
+    expect(r.exitCode).toBe(0);
+    expect(r.stdout).toContain('4.1.refresh-2');
+    expect(r.stdout).toContain('#4.1.refresh-2');
+  });
+
+  test('--help mentions --write-hrefs and --section-ref', () => {
+    const r = run(['--help']);
+    expect(r.exitCode).toBe(0);
+    expect(r.stdout).toContain('--write-hrefs');
+    expect(r.stdout).toContain('--section-ref');
+    expect(r.stdout).toContain('--section-heading');
+    expect(r.stdout).toContain('refresh-2');
+  });
+
+  test('check --doc placement fixture fails with section-placement', () => {
+    const r = run([
+      'check',
+      '--doc=tests/fixtures/ref-id/placement-bad.md',
+      '--section-ref=4.1',
+      '--section-heading=### Flags / settings',
+      '--json',
+    ]);
+    expect(r.exitCode).not.toBe(0);
+    const body = JSON.parse(r.stdout) as {
+      issues: Array<{ kind: string }>;
+    };
+    expect(body.issues.some(i => i.kind === 'section-placement')).toBe(true);
+  });
+
+  test('check --doc comment-orphan fixture fails comment-missing-anchor', () => {
+    const r = run([
+      'check',
+      '--doc=tests/fixtures/ref-id/comment-orphan.md',
+      '--json',
+    ]);
+    expect(r.exitCode).not.toBe(0);
+    const body = JSON.parse(r.stdout) as {
+      issues: Array<{ kind: string; refId?: string }>;
+    };
+    expect(
+      body.issues.some(
+        i => i.kind === 'comment-missing-anchor' && i.refId === '4.1.orphan-leaf'
+      )
+    ).toBe(true);
+  });
+
+  test('check --write-hrefs fills auto cells in a temp --doc', async () => {
+    const rel = `tests/fixtures/ref-id/.tmp-href-write-${Bun.randomUUIDv7()}.md`;
+    const abs = resolvePath(REPO, rel);
+    const src = resolvePath(REPO, 'tests/fixtures/ref-id/href-auto.md');
+    await Bun.write(abs, Bun.file(src));
+    try {
+      const r = run([
+        'check',
+        `--doc=${rel}`,
+        '--write-hrefs',
+        '--section-ref=4.1',
+        '--section-heading=### Flags / settings',
+      ]);
+      expect(r.exitCode).toBe(0);
+      expect(r.stdout).toMatch(/wrote 2 href cell/);
+      const after = await Bun.file(abs).text();
+      expect(after).toContain('[`#4.1.refresh`](#4.1.refresh)');
+      expect(after).toContain('[`#4.1.strict`](#4.1.strict)');
+      expect(after).not.toMatch(/\|\s*auto\s*\|/);
+    } finally {
+      Bun.spawnSync(['rm', '-f', abs], { cwd: REPO });
+    }
+  });
 });
 
 describe('docs-refid-check thin entry (subprocess)', () => {
@@ -149,6 +222,7 @@ describe('docs-refid-check thin entry (subprocess)', () => {
     expect(r.stdout).toContain('DEFAULTS');
     expect(r.stdout).toContain('--strict-format');
     expect(r.stdout).toContain('--skip-refid-check');
+    expect(r.stdout).toContain('--write-hrefs');
     expect(r.stdout).toContain('docs/design/bun-types-inventory.md');
   });
 

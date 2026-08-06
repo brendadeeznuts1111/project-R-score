@@ -170,6 +170,12 @@ export function hrefFromRefId(refId: string): string {
   return `#${refId.trim()}`;
 }
 
+/** True when a flags-table href cell should be treated as derived from REF:ID. */
+export function isAutoHref(href: string): boolean {
+  const h = href.trim();
+  return !h || h === '—' || h === '-' || h.toLowerCase() === 'auto';
+}
+
 /**
  * True when a table href is allowed for REF:ID:
  *  - exact `#` + REF:ID
@@ -177,9 +183,52 @@ export function hrefFromRefId(refId: string): string {
  */
 export function hrefMatchesRefId(href: string, refId: string): boolean {
   // brand-ok — REF:ID fragment
-  const h = href.trim();
-  if (!h || h === '—' || h === '-' || h.toLowerCase() === 'auto') return true;
-  return h === hrefFromRefId(refId);
+  if (isAutoHref(href)) return true;
+  return href.trim() === hrefFromRefId(refId);
+}
+
+/**
+ * Fill empty / `—` / `auto` href cells in a Flags table with `[`#REF`](#REF)`.
+ * Returns rewritten markdown + how many cells were filled (0 → text unchanged).
+ */
+export function fillAutoHrefsInMarkdown(text: string): { text: string; filled: number } {
+  const lines = text.split(/\r?\n/);
+  let headers: string[] | null = null;
+  let refIdx = -1;
+  let hrefIdx = -1;
+  let filled = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i]!;
+    const line = raw.trim();
+    if (!line.startsWith('|')) {
+      headers = null;
+      continue;
+    }
+    const cells = splitTableRow(line);
+    if (cells.length < 2) continue;
+    if (cells.every(c => /^:?-+:?$/.test(c.replace(/\s/g, '')))) continue;
+
+    if (!headers) {
+      const lower = cells.map(c => c.toLowerCase());
+      refIdx = lower.findIndex(c => c === 'ref:id' || c === 'refid' || c === 'ref id');
+      hrefIdx = lower.findIndex(c => c === 'href');
+      if (refIdx >= 0 && hrefIdx >= 0) headers = cells;
+      continue;
+    }
+
+    const refId = stripMd(cells[refIdx] ?? '');
+    const hrefRaw = cells[hrefIdx] ?? '';
+    const href = stripMd(hrefRaw);
+    if (!refId || !isAutoHref(href)) continue;
+
+    const expected = hrefFromRefId(refId);
+    cells[hrefIdx] = `[\`${expected}\`](${expected})`;
+    lines[i] = `| ${cells.join(' | ')} |`;
+    filled++;
+  }
+
+  return { text: filled > 0 ? lines.join('\n') : text, filled };
 }
 
 /**
