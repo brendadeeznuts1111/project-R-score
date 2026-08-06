@@ -123,13 +123,17 @@ function eslintStep(fullLint: boolean): Step {
 function testStep(mainHead: boolean): Step {
   return {
     name: 'test-changed',
-    // bun-test-changed defaults to --parallel (implies --isolate)
+    // Full CI includes bake/doctor tests that inspect shared repository files.
+    // Keep the dirty-tree fast lane parallel, but serialize the main-head lane
+    // so those filesystem contracts cannot observe another test's fixture.
     cmd: mainHead
-      ? ['bun', 'run', 'test:changed', '--', '--main-head']
+      ? ['bun', 'run', 'test:changed', '--', '--main-head', '--serial']
       : ['bun', 'run', 'test:changed'],
-    owner: 'scripts/bun-test-changed.ts · --changed --parallel · --main-head',
+    owner: mainHead
+      ? 'scripts/bun-test-changed.ts · --changed --main-head --serial'
+      : 'scripts/bun-test-changed.ts · --changed --parallel',
     repair: mainHead
-      ? 'bun run test:changed:main'
+      ? 'bun run test:changed -- --main-head --serial'
       : 'bun run test:changed  # or --serial / BUN_TEST_SERIAL=1',
   };
 }
