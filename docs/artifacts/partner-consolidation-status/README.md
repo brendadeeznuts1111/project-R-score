@@ -2,7 +2,8 @@
 
 This directory contains a derived, reviewable proposal snapshot of the partner
 consolidation lane. The default view includes readiness metrics, a connector
-implementation-state graph, and the exact connector cutover table.
+implementation-state graph, and the exact connector cutover table. Its Sports
+Terminal row is backed by a four-row API/HTML boundary audit extract.
 
 - `artifact.json` is the canonical dashboard payload for the snapshot.
 - `index.html` is the generated, self-contained, read-only reader.
@@ -20,6 +21,12 @@ Its sources remain:
 - `scripts/validate-partner-dashboard-plan.ts` for enforced plan counts;
 - the semantic and type/reference maps for human interpretation;
 - Git history for delivered foundation work.
+
+The connector table's Sports Terminal row records why it remains blocked: the
+React page is mounted, but the matching `partnerRoutes` module is not mounted by
+the main API router; its detail shape also mixes bare IDs, private
+contact/Telegram fields, lifecycle, limits, and floating-point money. The row
+and its SQL extract are cutover evidence, not a new API authority.
 
 Regenerate `index.html` from `artifact.json` with the validated portable-artifact
 builder supplied by the Data Analytics dashboard workflow. The generated reader

@@ -229,11 +229,20 @@ trusted JSON artifact. Today, only the profile-coverage and legacy compatibility
 slices implement that boundary; the current portal still reads its documented
 7+1 compatibility inputs.
 
-There is no canonical partner HTTP route yet. Authentication integration is
-unwired, and no inbound JSON, Blob, explicit MIME, FormData, or multipart
-contract has been selected. The browser's outbound GET transport does not imply
-an inbound API Content-Type contract. Legacy APIs remain inventory sources, not
-the canonical partner API.
+There is no canonical partner HTTP route yet. Sports Terminal contains an
+existing `partnerRoutes(req)` module and a mounted React `/partners` page that
+calls it, but the module is not imported or mounted by the main API router or
+server entrypoint. Its header claims JWT/admin protection while its exported
+boundary receives no auth context. The list/detail shapes use bare `partnerId`;
+the detail response mixes contact data, Telegram config, lifecycle, limits, and
+floating-point money. These surfaces are now exact cutover evidence, not an
+approved connector. The closest read candidate is
+`GET /api/partners/:id/sources/health`, which still needs authenticated mounting,
+`ExternalPartnerRef` resolution, response parsing, and a money-free projection.
+No inbound JSON, Blob, explicit MIME, FormData, or multipart contract has been
+selected. The browser's outbound GET transport does not imply an inbound API
+Content-Type contract. Legacy APIs remain inventory sources, not the canonical
+partner API.
 
 Target source precedence is field-specific; only the profile-coverage and
 legacy-ops boundaries are implemented in the current slice:

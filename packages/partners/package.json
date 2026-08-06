@@ -19,6 +19,6 @@
   "module": "./src/index.ts",
   "scripts": {
     "build": "bun run tsc --project ./tsconfig.json",
-    "test": "bun test ../../tests/partners-package.test.ts ../../tests/partner-dashboard-artifact.test.ts ../../tests/partner-legacy-ops-adapter.test.ts ../../tests/partner-consumer-contract.test.ts ../../tests/partner-profile-coverage.test.ts"
+    "test": "bun test ../../tests/partners-package.test.ts ../../tests/partner-dashboard-artifact.test.ts ../../tests/partner-legacy-ops-adapter.test.ts ../../tests/partner-consumer-contract.test.ts ../../tests/partner-profile-coverage.test.ts ../../tests/partner-dashboard-proposal.test.ts"
   }
 }

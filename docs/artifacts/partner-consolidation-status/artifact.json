@@ -125,7 +125,7 @@
       {
         "id": "proposal_context",
         "type": "markdown",
-        "body": "## Proposal snapshot\n\nThis is a read-only design and delivery artifact—not the production partner dashboard. It separates implemented package boundaries, planned canonical connectors, blocked inputs, and temporary compatibility visibility."
+        "body": "## Proposal snapshot\n\nThis is a read-only design and delivery artifact—not the production partner dashboard. Sports Terminal remains blocked: its UI exists, but its partner API module is unmounted and unsafe as a canonical input."
       },
       {
         "id": "status_metrics",
@@ -246,7 +246,7 @@
           "status": "blocked",
           "required": "no",
           "port": "IntegrationHealthReadPort",
-          "nextAction": "Input, IDs, auth, money"
+          "nextAction": "Unmounted route; define auth, IDs, and parsed money-free shape"
         },
         {
           "order": 8,

@@ -228,8 +228,27 @@ credentials, Telegram tokens, or remote payloads.
 | bookmakers registry               | bookmakers adapter                           | canonical `SportsbookId`, aliases, display metadata                                                                                       | partner account status                                     |
 | limits artifacts                  | limits adapter                               | out/book coverage and observed limits                                                                                                     | bookmaker or partner identity                              |
 | Tennis contract                   | Tennis adapter                               | active outs, per-bet capacity, source/freshness                                                                                           | canonical profile identity                                 |
-| Sports Terminal                   | Sports compatibility adapter                 | external state, gate observations, integration health                                                                                     | a second profile store or lifecycle enum                   |
+| Sports Terminal                   | planned Sports compatibility adapter         | external state, gate observations, integration health after an authenticated parsed boundary exists                                        | a second profile store, lifecycle enum, contact/Telegram payload, or floating-point money |
 | Kalshi partner registry           | execution adapter                            | provider/out/skin capacity and qualified external refs                                                                                    | canonical partner IDs, money ledger truth                  |
+
+### Sports Terminal API and HTML cutover evidence
+
+The existing Sports Terminal surfaces are implementation references, not a
+connector contract. The React `/partners` route is mounted and calls the paths
+below, but `partnerRoutes` is not imported or mounted by the main API router or
+server entrypoint. Its file header describes JWT/admin protection while the
+exported router receives only `Request`, so that claim is not enforced at this
+boundary.
+
+| Candidate | Current evidence | Canonical decision |
+| --- | --- | --- |
+| React `/partners` | Page-local `PartnerListItem`/request types; calls list, create, transition, deposit, limit, and evaluate paths | Reuse list/detail information architecture only; do not copy the duplicate schema or mutation surface |
+| `GET /api/partners` | Handler exists, returns unqualified `partnerId` list records, but its router is unmounted | Keep blocked until mounted behind explicit authentication and a parsed adapter response |
+| `GET /api/partners/:id` | Mixes contact data, Telegram config, lifecycle, limits, and floating-point balance/exposure fields | Never consume directly; project only qualified external state and integration health |
+| `GET /api/partners/:id/sources/health` | Closest match for `IntegrationHealthReadPort`; still unmounted and keyed by an unqualified path ID | Define `ExternalPartnerRef` resolution, authentication, response parsing, and a money-free projection first |
+
+This evidence narrows the unresolved input choice without promoting a dead or
+unsafe route. The `sports-terminal` connector remains `blocked` in the TOML.
 
 ## MVP changes caused by this map
 
