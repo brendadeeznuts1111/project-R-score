@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
 import {
+  buildStagedTestCommand,
   gitEnv,
   SCRATCH_LINK_DIRS,
   SCRATCH_PATHSPEC,
@@ -15,6 +16,51 @@ function sh(cmd: string[], opts: { cwd?: string; env?: Record<string, string> } 
 }
 
 describe('test-changed-staged helpers', () => {
+  test('bounds parallel workers by default', () => {
+    expect(buildStagedTestCommand(['--bail=1'])).toEqual([
+      'bun',
+      'test',
+      '--changed',
+      '--pass-with-no-tests',
+      '--parallel=6',
+      '--bail=1',
+    ]);
+  });
+
+  test('--serial and BUN_TEST_SERIAL disable staged worker injection', () => {
+    const expected = ['bun', 'test', '--changed', '--pass-with-no-tests', '--bail=1'];
+    expect(buildStagedTestCommand(['--serial', '--bail=1'])).toEqual(expected);
+    expect(buildStagedTestCommand(['--bail=1'], { BUN_TEST_SERIAL: '1' })).toEqual(expected);
+    expect(buildStagedTestCommand(['--bail=1'], { BUN_TEST_SERIAL: 'true' })).toEqual(expected);
+  });
+
+  test('keeps wrapper-only flags out of the Bun test command', () => {
+    expect(buildStagedTestCommand(['--', '--dry-run', '--serial', '--bail=1'])).toEqual([
+      'bun',
+      'test',
+      '--changed',
+      '--pass-with-no-tests',
+      '--bail=1',
+    ]);
+  });
+
+  test('preserves explicit parallel or isolate choices without adding the staged default', () => {
+    expect(buildStagedTestCommand(['--parallel=2'])).toEqual([
+      'bun',
+      'test',
+      '--changed',
+      '--pass-with-no-tests',
+      '--parallel=2',
+    ]);
+    expect(buildStagedTestCommand(['--isolate'])).toEqual([
+      'bun',
+      'test',
+      '--changed',
+      '--pass-with-no-tests',
+      '--isolate',
+    ]);
+  });
+
   test('stagedDeletions parses name-only diff output', () => {
     expect(stagedDeletions('lib/a.ts\nscripts/b.ts\n')).toEqual(['lib/a.ts', 'scripts/b.ts']);
     expect(stagedDeletions('')).toEqual([]);
