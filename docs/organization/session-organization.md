@@ -1,12 +1,13 @@
 # Session Organization — Projects Workspace
 
 Generated: 2026-08-06 · Source: `~/.reasonix/projects/-Users-nolarose-Projects/sessions/`
-Scope: the 31 active sessions in the `~/Projects` workspace (archived sessions in
+Scope: the 29 active sessions in the `~/Projects` workspace (archived sessions in
 `~/.reasonix/archive/` are excluded).
 
 ## What this is
 
-An inventory of every active Reasonix session for this workspace: each session
+An inventory of every active Reasonix session for this workspace (29 after
+2026-08-06 empty-session trash): each session
 is assigned a **context-derived title** (the "rename"), grouped into a **lane**,
 and placed on the timeline so the archive reads as a coherent work history.
 
