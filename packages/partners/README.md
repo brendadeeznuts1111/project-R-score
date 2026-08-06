@@ -36,6 +36,13 @@ stop for manual review. A manual selection must still name a registered
 substring guesses are rejected. Loading `/registry/bookmakers.json` remains the
 planned bookmakers connector's responsibility.
 
+The implemented `./adapters/bookmakers` boundary parses the checked-in public
+v0.4 catalog and projects only canonical sportsbook identity, label, skin, brand
+group, and sanitized web URL. It enforces `object key === id === slug`, rejects
+duplicate normalized hosts, and fails if ops-only fields appear. Catalog
+loading, timeout, and last-known-good behavior remain connector
+responsibilities; public display limits never become executable account limits.
+
 Three implemented observation adapters now parse the existing integration
 artifacts without taking over their domains:
 

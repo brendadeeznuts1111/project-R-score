@@ -86,7 +86,18 @@ exact_match_policy = "exact-host-with-www-normalization"
 alternate_host_policy = "explicit-host-alias-only"
 unknown_host_policy = "manual-review-no-parent-domain-or-substring-guess"
 manual_resolution_policy = "operator-selected-registered-sportsbook-id"
+registry_input_status = "implemented-public-catalog-parser"
 registry_io_status = "planned-owned-by-bookmakers-registry-connector"
+
+[adapters.bookmakers_catalog]
+export = "./adapters/bookmakers"
+implementation_status = "implemented"
+schema_version = 2
+artifact_name = "@factorywager/bookmakers"
+identity_policy = "object-key-equals-id-equals-slug"
+host_policy = "unique-normalized-host"
+projection_policy = "id-slug-label-skin-brand-group-web-url-only"
+ops_only_field_policy = "reject"
 
 [adapters.tennis_capacity]
 export = "./adapters/tennis-capacity"
@@ -1336,8 +1347,9 @@ adapter_id = "bookmakers-registry"
 adapter_version = "1"
 target_owner_package = "@factorywager/partners"
 target_adapter_export = "./adapters/bookmakers"
+target_adapter_implementation_status = "implemented"
 port = "BookmakerCatalogPort"
-implementation_status = "planned"
+implementation_status = "partial"
 enabled = true
 input_kind = "registry-artifact"
 required = false
@@ -1347,6 +1359,7 @@ authoritative_fact_paths = [
 ]
 visual_group = "registry"
 provides = ["sportsbook-identity", "aliases", "display-metadata"]
+does_not_provide = ["live-limits", "credentials", "provider-health", "account-status"]
 region_ids = ["accounts-limits"]
 
 [[connectors]]

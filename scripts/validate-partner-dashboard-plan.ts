@@ -16,6 +16,8 @@ import {
   LEGACY_OUT_ID_WARNING_CODE,
   LEGACY_SEAT_OUT_TOKEN_PATTERN,
   BET_STRUCTURES,
+  BOOKMAKER_CATALOG_ARTIFACT_NAME,
+  BOOKMAKER_CATALOG_SCHEMA_VERSION,
   CAPABILITY_SUPPORT_VALUES,
   CREDENTIAL_READINESS_VALUES,
   EXECUTION_AUTHORIZATION_STATUSES,
@@ -160,7 +162,7 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     port: 'BookmakerCatalogPort',
     inputKind: 'registry-artifact',
     inputRef: '/registry/bookmakers.json',
-    implementationStatus: 'planned',
+    implementationStatus: 'partial',
     authoritativeFactPaths:
       PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['bookmakers-registry'],
   },
@@ -477,6 +479,7 @@ export async function validatePartnerDashboardPlan(
     partnersPackage.exports?.['./adapters'] !== './src/adapters/index.ts' ||
     partnersPackage.exports?.['./adapters/bookmaker-account'] !==
       './src/adapters/bookmaker-account.ts' ||
+    partnersPackage.exports?.['./adapters/bookmakers'] !== './src/adapters/bookmakers.ts' ||
     partnersPackage.exports?.['./adapters/limit-changes'] !== './src/adapters/limit-changes.ts' ||
     partnersPackage.exports?.['./adapters/profile-coverage'] !==
       './src/adapters/profile-coverage.ts' ||
@@ -566,12 +569,27 @@ export async function validatePartnerDashboardPlan(
       'manual-review-no-parent-domain-or-substring-guess' ||
     plan.adapters?.bookmaker_account_resolver?.manual_resolution_policy !==
       'operator-selected-registered-sportsbook-id' ||
+    plan.adapters?.bookmaker_account_resolver?.registry_input_status !==
+      'implemented-public-catalog-parser' ||
     plan.adapters?.bookmaker_account_resolver?.registry_io_status !==
       'planned-owned-by-bookmakers-registry-connector'
   ) {
     errors.push(
       'bookmaker account resolver must remain fail-closed and separate from registry I/O'
     );
+  }
+  if (
+    plan.adapters?.bookmakers_catalog?.export !== './adapters/bookmakers' ||
+    plan.adapters?.bookmakers_catalog?.implementation_status !== 'implemented' ||
+    plan.adapters?.bookmakers_catalog?.schema_version !== BOOKMAKER_CATALOG_SCHEMA_VERSION ||
+    plan.adapters?.bookmakers_catalog?.artifact_name !== BOOKMAKER_CATALOG_ARTIFACT_NAME ||
+    plan.adapters?.bookmakers_catalog?.identity_policy !== 'object-key-equals-id-equals-slug' ||
+    plan.adapters?.bookmakers_catalog?.host_policy !== 'unique-normalized-host' ||
+    plan.adapters?.bookmakers_catalog?.projection_policy !==
+      'id-slug-label-skin-brand-group-web-url-only' ||
+    plan.adapters?.bookmakers_catalog?.ops_only_field_policy !== 'reject'
+  ) {
+    errors.push('bookmaker catalog adapter must preserve public identity and redaction policy');
   }
   if (
     plan.out_capabilities?.schema !== PARTNER_OUT_CAPABILITY_SCHEMA_V1 ||
