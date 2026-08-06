@@ -1,10 +1,14 @@
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
 // @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortSignal.timeout
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/api/file-io#reading-files-bun-file — Bun.file
 /**
  * FanDuel Tier 4 scrape agent (same loop as DraftKings).
  *
- * Default: offline fixture. Optional live JSON when BASELINE_SCRAPE_LIVE=1.
- * HTML scrape stub fails closed.
+ * Default: offline seed fixture (CI-safe). Optional live JSON when
+ * BASELINE_SCRAPE_LIVE=1. HTML path: committed HTML fixture parse by default;
+ * optional Bun.WebView live capture when `--html` + (`--live` or
+ * OPERATOR_WEBVIEW_SCRAPE=1).
  *
  * @see https://bun.com/docs/api/fetch — fetch
  * @see docs/harness/tenants/partner-limits.md
@@ -14,10 +18,18 @@ import { expandScrapedLimitSeeds } from '../../baseline-scraped-limits.ts';
 import { asSportsbookId, asStateCode } from '../domain.ts';
 import { parseGenericLimitsPayload } from '../scraper-targets.ts';
 import type { LimitObservation } from '../limit-observation-wire.ts';
+import { captureHtmlViaWebView } from '../webview-html.ts';
+import { parseFanDuelHtml } from './fanduel-parse.ts';
 
 export const FANDUEL_AGENT_ID = 'fanduel-agent' as const;
 export const FANDUEL_SPORTSBOOK = asSportsbookId('fanduel');
 export const FANDUEL_LIVE_URL = 'https://api.fanduel.com/odds/v1/limits?state=NJ';
+/** Opt-in live HTML target (override with FANDUEL_HTML_URL). */
+export const FANDUEL_HTML_URL = Bun.env.FANDUEL_HTML_URL ?? 'https://sportsbook.fanduel.com/';
+
+export const FANDUEL_HTML_FIXTURE_PATH = Bun.fileURLToPath(
+  new URL('../fixtures/fanduel-limits.html', import.meta.url)
+);
 
 export type FanDuelAgentResult = {
   ok: boolean;
@@ -79,13 +91,78 @@ function parsePayloadToObservations(
   }));
 }
 
-export function scrapeFanDuelHtmlStub(): FanDuelAgentResult {
-  return {
-    ok: false,
-    mode: 'html_stub',
-    observations: [],
-    error: 'FanDuel HTML scrape not implemented (fails closed)',
-  };
+function wantsWebViewHtml(options: { live?: boolean }): boolean {
+  return (
+    options.live === true ||
+    Bun.env.OPERATOR_WEBVIEW_SCRAPE === '1' ||
+    Bun.env.OPERATOR_WEBVIEW_SCRAPE === 'true'
+  );
+}
+
+/** Load committed synthetic HTML fixture (CI default for `--html`). */
+export async function loadFanDuelHtmlFixture(): Promise<string> {
+  const file = Bun.file(FANDUEL_HTML_FIXTURE_PATH);
+  if (!(await file.exists())) {
+    throw new Error(`FanDuel HTML fixture missing: ${FANDUEL_HTML_FIXTURE_PATH}`);
+  }
+  return await file.text();
+}
+
+async function scrapeFanDuelHtmlFixture(
+  observedAt: string,
+  error: string | null = null
+): Promise<FanDuelAgentResult> {
+  const html = await loadFanDuelHtmlFixture();
+  const observations = await parseFanDuelHtml(html, {
+    observedAt,
+    mode: 'html_fixture',
+    referenceUrl: `file://${FANDUEL_HTML_FIXTURE_PATH}`,
+  });
+  if (observations.length === 0) {
+    return {
+      ok: false,
+      mode: 'html_fixture',
+      observations: [],
+      error: error ?? 'FanDuel HTML fixture parse returned zero rows (fails closed)',
+    };
+  }
+  return { ok: true, mode: 'html_fixture', observations, error };
+}
+
+async function scrapeFanDuelHtmlLive(
+  timeoutMs: number,
+  observedAt: string
+): Promise<FanDuelAgentResult> {
+  try {
+    const html = await captureHtmlViaWebView(FANDUEL_HTML_URL, { timeoutMs });
+    const observations = await parseFanDuelHtml(html, {
+      observedAt,
+      mode: 'html_live',
+      referenceUrl: FANDUEL_HTML_URL,
+    });
+    if (observations.length > 0) {
+      return { ok: true, mode: 'html_live', observations, error: null };
+    }
+    return scrapeFanDuelHtmlFixture(
+      observedAt,
+      'live HTML parse empty; used html_fixture fallback'
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`[fanduel-agent] WebView HTML error: ${message}`);
+    return scrapeFanDuelHtmlFixture(
+      observedAt,
+      `live WebView unavailable; used html_fixture fallback (${message})`
+    );
+  }
+}
+
+/**
+ * HTML scrape entry — fixture by default; WebView when live-gated.
+ * @deprecated Prefer runFanDuelAgent({ html: true }) — kept for older tests.
+ */
+export async function scrapeFanDuelHtmlStub(): Promise<FanDuelAgentResult> {
+  return scrapeFanDuelHtmlFixture(new Date().toISOString());
 }
 
 async function fetchLiveJson(timeoutMs: number): Promise<unknown | null> {
@@ -105,11 +182,16 @@ async function fetchLiveJson(timeoutMs: number): Promise<unknown | null> {
 
 export type RunFanDuelAgentOptions = {
   live?: boolean;
+  /** HTML fixture parse; with live / OPERATOR_WEBVIEW_SCRAPE=1 → WebView then same parser. */
   html?: boolean;
   timeoutMs?: number;
   observedAt?: string;
 };
 
+/**
+ * Run the FanDuel agent. Seed fixture by default; live JSON when requested;
+ * HTML path uses committed HTML fixture (or gated WebView + same parser).
+ */
 export async function runFanDuelAgent(
   options: RunFanDuelAgentOptions = {}
 ): Promise<FanDuelAgentResult> {
@@ -120,7 +202,10 @@ export async function runFanDuelAgent(
     Bun.env.BASELINE_SCRAPE_LIVE === 'true';
 
   if (options.html) {
-    return scrapeFanDuelHtmlStub();
+    if (wantsWebViewHtml(options)) {
+      return scrapeFanDuelHtmlLive(options.timeoutMs ?? 18_000, observedAt);
+    }
+    return scrapeFanDuelHtmlFixture(observedAt);
   }
 
   if (live) {
