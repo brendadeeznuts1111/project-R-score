@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bun Agent – Operator Desk v1.13</title>
+    <link rel="canonical" href="https://score.factory-wager.com/v1.13" />
     <style>
       * {
         margin: 0;
@@ -66,6 +67,14 @@
         flex-wrap: wrap;
         gap: 8px;
         justify-content: flex-end;
+      }
+      .api-notice {
+        margin: 12px 0;
+        padding: 12px 14px;
+        border: 1px solid color-mix(in srgb, var(--warn) 55%, var(--line));
+        border-radius: 10px;
+        background: color-mix(in srgb, var(--warn) 10%, var(--surface));
+        color: var(--text);
       }
       h1 {
         font-size: 28px;
@@ -652,6 +661,7 @@
           ><span class="badge">📦 Bun.TOML</span></span
         >
       </div>
+      <p class="api-notice" id="apiAvailabilityNotice" role="status" aria-live="polite" hidden></p>
       <nav class="tabs" id="mainTabs" role="tablist" aria-label="Operator desk views">
         <button
           type="button"
@@ -1303,7 +1313,8 @@
         oddsCursor = 0,
         oddsRows = [],
         streamPaused = false,
-        streamConnected = false;
+        streamConnected = false,
+        pagesApiUnavailable = false;
       let filterOptions = { sports: [], leagues: [], statuses: [] },
         chartPoints = [],
         eventAlertConfigs = [];
@@ -1323,9 +1334,8 @@
       async function ensureCsrf() {
         if (csrfToken) return csrfToken;
         try {
-          const res = await fetch(CSRF_API, { credentials: 'same-origin' });
-          const data = await res.json();
-          csrfToken = data.csrfToken || res.headers.get('x-csrf-token') || '';
+          const data = await fetchJson(CSRF_API, { credentials: 'same-origin' });
+          csrfToken = data.csrfToken || '';
         } catch {
           csrfToken = '';
         }
@@ -1342,6 +1352,78 @@
         if (key) h['x-api-key'] = key;
         if (csrfToken) h['x-csrf-token'] = csrfToken;
         return h;
+      }
+      function pagesApiError() {
+        const error = new Error('This API is not deployed on the Cloudflare Pages preview.');
+        error.code = 'PAGES_API_ROUTE_NOT_FOUND';
+        return error;
+      }
+      function markPagesApiUnavailable() {
+        if (pagesApiUnavailable) return;
+        pagesApiUnavailable = true;
+        closeOddsStream();
+        const notice = document.getElementById('apiAvailabilityNotice');
+        notice.textContent =
+          'Preview shell only: operator APIs run on the Bun service and are not deployed on Cloudflare Pages.';
+        notice.hidden = false;
+        document.getElementById('dataModeBadge').textContent = '⚠ Preview shell · APIs unavailable';
+        for (const id of [
+          'runResearchCycle',
+          'applyEventsFilter',
+          'refreshEvents',
+          'refreshSignals',
+          'refreshHealth',
+          'streamPause',
+          'streamReconnect',
+          'backtestSubmit',
+          'saveRuleBtn',
+          'deleteRuleBtn',
+          'reloadRulesBtn',
+          'reloadEventAlertsBtn',
+          'saveEventAlertsBtn',
+          'evaluateAlertsBtn',
+        ]) {
+          const control = document.getElementById(id);
+          if (control) control.disabled = true;
+        }
+      }
+      async function fetchJson(url, init) {
+        if (pagesApiUnavailable) throw pagesApiError();
+        const response = await fetch(url, init);
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('json')) {
+          const error = new Error('API returned an unexpected response.');
+          error.status = response.status;
+          throw error;
+        }
+        const data = await response.json();
+        if (data?.code === 'PAGES_API_ROUTE_NOT_FOUND') {
+          markPagesApiUnavailable();
+          throw pagesApiError();
+        }
+        if (!response.ok) {
+          const error = new Error(data?.error || data?.detail || 'API request failed.');
+          error.status = response.status;
+          throw error;
+        }
+        return data;
+      }
+      function renderPagesApiUnavailable() {
+        const unavailable = '<div class="empty-state">Unavailable on this Pages preview.</div>';
+        for (const id of [
+          'eventsTableContainer',
+          'rulesTableContainer',
+          'alertHistoryContainer',
+          'signalsTableContainer',
+        ]) {
+          const container = document.getElementById(id);
+          if (container) container.innerHTML = unavailable;
+        }
+        const eventsCount = document.getElementById('eventsCount');
+        const signalsCount = document.getElementById('signalsCount');
+        if (eventsCount) eventsCount.textContent = 'Unavailable';
+        if (signalsCount) signalsCount.textContent = 'Unavailable';
+        setStreamStatus('Live odds API is not deployed on this Pages preview', 'error');
       }
       function formatEdge(edge) {
         if (!edge || edge.min == null) return '—';
@@ -1389,19 +1471,21 @@
           const id = document.getElementById('eventIdInput').value;
           if (id) loadChart(id);
         }
-        if (tabId === 'signals') fetchSignals().then(renderSignals);
+        if (tabId === 'signals') {
+          if (pagesApiUnavailable) renderPagesApiUnavailable();
+          else fetchSignals().then(renderSignals);
+        }
         if (tabId === 'health' && !healthData) loadHealth();
         if (tabId === 'live' && !oddsEventSource && !streamPaused) connectOddsStream();
         if (tabId === 'backtest') populateBacktestRules();
       }
       async function fetchEvents() {
+        if (pagesApiUnavailable) return [];
         try {
           const session = document.getElementById('filterSessionEvents')?.value || '';
           const qs = new URLSearchParams({ limit: '100' });
           if (session) qs.set('session', session);
-          const res = await fetch(EVENTS_API + '?' + qs.toString());
-          if (!res.ok) throw new Error();
-          const data = await res.json();
+          const data = await fetchJson(EVENTS_API + '?' + qs.toString());
           if (data.filters) filterOptions = data.filters;
           usingLive = true;
           return data.events || [];
@@ -1412,17 +1496,17 @@
         }
       }
       async function fetchRules() {
+        if (pagesApiUnavailable) return [];
         try {
-          const res = await fetch(RULES_API);
-          if (!res.ok) throw new Error();
-          return (await res.json()).rules || [];
+          return (await fetchJson(RULES_API)).rules || [];
         } catch {
           return [];
         }
       }
       async function fetchAlertHistory() {
+        if (pagesApiUnavailable) return [];
         try {
-          const data = await (await fetch(ALERTS_API + '?limit=40')).json();
+          const data = await fetchJson(ALERTS_API + '?limit=40');
           return (data.alerts || []).map(a => ({
             rule_id: a.rule_id || a.ruleId,
             type: a.type,
@@ -1443,10 +1527,10 @@
       }
       async function fetchSignals() {
         const period = document.getElementById('filterSignalPeriod')?.value || 'all';
+        if (pagesApiUnavailable) return [];
         try {
           return (
-            (await (await fetch(SIGNALS_API + '?period=' + encodeURIComponent(period))).json())
-              .signals || []
+            (await fetchJson(SIGNALS_API + '?period=' + encodeURIComponent(period))).signals || []
           );
         } catch {
           return [];
@@ -1843,6 +1927,10 @@
       }
       function connectOddsStream() {
         closeOddsStream();
+        if (pagesApiUnavailable) {
+          setStreamStatus('Live odds API is not deployed on this Pages preview', 'error');
+          return;
+        }
         streamPaused = false;
         document.getElementById('streamPause').textContent = 'Pause';
         const params = new URLSearchParams({ limit: '100' });
@@ -1942,6 +2030,12 @@
         const ruleId = document.getElementById('backtestRule').value;
         const error = document.getElementById('backtestError');
         error.hidden = true;
+        if (pagesApiUnavailable) {
+          error.textContent = 'Backtest analysis requires the Bun operator API.';
+          error.hidden = false;
+          error.focus();
+          return;
+        }
         if (!file || !ruleId) {
           error.textContent = 'Select one alert rule and one CSV file.';
           error.hidden = false;
@@ -2216,6 +2310,13 @@
       }
       async function loadHealth(refresh = false) {
         if (healthLoading) return;
+        if (pagesApiUnavailable) {
+          document.getElementById('bookCount').textContent = '—';
+          renderHealth(null, 'Partner health is not deployed on this Pages preview.');
+          document.getElementById('healthRefreshStatus').textContent =
+            'Partner health is not deployed on this Pages preview.';
+          return;
+        }
         healthLoading = true;
         const panel = document.getElementById('tab-health');
         const button = document.getElementById('refreshHealth');
@@ -2346,6 +2447,10 @@
       }
       async function loadAllData() {
         await ensureCsrf();
+        if (pagesApiUnavailable) {
+          renderPagesApiUnavailable();
+          return;
+        }
         eventsData = await fetchEvents();
         populateSelects();
         renderEvents(eventsData);

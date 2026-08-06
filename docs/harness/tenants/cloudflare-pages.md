@@ -142,6 +142,18 @@ Use Cloudflare MCP `execute` in Cursor to inspect failed builds (`deployments/{i
 | `cloudflare:publish` | `ops:snapshot` → registry git gate → optional `--commit --push` → deploy + taxonomy |
 | `cloudflare:publish:push` | Same with commit + push |
 
+Branch deploys are explicit and fail closed:
+
+```bash
+bun tools/cloudflare-pages-deploy.ts --branch my-preview --wait
+```
+
+The deploy helper sends Cloudflare a multipart `branch` field, then requires the
+returned deployment metadata to match both the requested branch and its expected
+`preview`/`production` environment. Malformed, empty, repeated, or unknown flags
+fail before authentication or network access. `--verify` is production-only
+because the edge verifier targets the production Pages hostname.
+
 Discovery manifest (Layer 5): `/.well-known/mcp.json` on Pages (see [`public/.well-known/mcp.json`](../../../public/.well-known/mcp.json)). Regenerate: `bun run sync:well-known-mcp`. Proof artifact: `bun run verify:cloudflare-token:save` → [`public/registry/cloudflare-token-scope-proof.json`](../../../public/registry/cloudflare-token-scope-proof.json).
 
 `verify:pages-edge` also checks the shared browser-security header contract on a
@@ -177,7 +189,7 @@ Publish source is `public/` (includes `index.html` + registry/robots/sitemaps + 
 
 TOC tenant runbook: [`toc-ops.md`](toc-ops.md). **MCP does not serve TOC desk data** — use MCP for Pages deploy/logs; use `/portal/toc` or `ct` for partner ops.
 
-**Do not enable Pages “Single-page application” rewrites** (`/* → /index.html 200`). That serves the landing shell for every path (including `.json`) and hides the portal. Prefer real files + `public/_redirects` (trailing-slash only) + `public/_headers` (JSON content-type and static security headers). Root `functions/_middleware.ts` applies the same browser-security contract to Pages Functions while preserving route CORS and cache headers.
+**Do not enable Pages “Single-page application” rewrites** (`/* → /index.html 200`). That serves the landing shell for every path (including `.json`) and hides the portal. Prefer real files + exact aliases/trailing-slash rules in `public/_redirects` + `public/404.html` + `public/_headers` (JSON content-type and static security headers). Root `functions/_middleware.ts` applies the same browser-security contract to Pages Functions while preserving route CORS and cache headers. `functions/api/[[path]].ts` returns a no-store problem+json 404 for unmatched APIs so a Bun-only endpoint can never masquerade as the static command centre.
 
 Before deploy (or in CI):
 
@@ -217,9 +229,10 @@ Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**, **
 | `functions/api/release/script.ts` · `script.meta.ts` | Release proof scripts |
 | `functions/api/doc-refs/index.ts` · `script.ts` · `script.meta.ts` | Doc refs API |
 | `functions/api/sqlite/version.ts` | SQLite version (edge-safe) |
+| `functions/api/[[path]].ts` | Fail-closed JSON 404 for unmatched `/api/*` routes; specific Functions win |
 | `functions-bun-only/` | Local Bun handlers (auth/DOD/catalog) — **not** deployed to Pages |
 
-Static routing: [`public/_redirects`](../../../public/_redirects) (trailing-slash 301 only) · [`public/_headers`](../../../public/_headers) (JSON content-type, cache, security headers) · [`functions/_middleware.ts`](../../../functions/_middleware.ts) (edge parity). **No SPA rewrite.**
+Static routing: [`public/_redirects`](../../../public/_redirects) (exact aliases + trailing-slash redirects) · [`public/404.html`](../../../public/404.html) (truthful unknown-path boundary) · [`public/_headers`](../../../public/_headers) (JSON content-type, cache, security headers) · [`functions/_middleware.ts`](../../../functions/_middleware.ts) (edge parity). **No SPA rewrite.**
 
 Preview deployments are public by default. Protect them with Workers & Pages →
 `project-r-score` → Settings → General → Enable access policy. This Pages-owned

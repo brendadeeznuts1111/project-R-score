@@ -40,6 +40,10 @@ describe('Bun Agent dashboard v1.13 preview', () => {
         expect(html).toContain('tab-button-backtest');
         expect(html).toContain('EventSource');
         expect(html).toContain('/api/csrf');
+        expect(html).toContain('rel="canonical" href="https://score.factory-wager.com/v1.13"');
+        expect(html).toContain('apiAvailabilityNotice');
+        expect(html).toContain('PAGES_API_ROUTE_NOT_FOUND');
+        expect(html).toContain('Live odds API is not deployed on this Pages preview');
         compileInlineScripts(html);
       }
     } finally {

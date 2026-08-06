@@ -4,6 +4,7 @@
 // @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --verify
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/reference/node/util/parseArgs — parseArgs
 /**
  * Trigger Cloudflare Pages deploy, optionally wait for completion, then smoke-verify.
  *
@@ -17,6 +18,7 @@
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
+import { parseArgs } from 'util';
 
 /** Load Reasonix global env when token not already set (matches setup script). */
 async function loadReasonixEnv(): Promise<void> {
@@ -35,12 +37,46 @@ async function loadReasonixEnv(): Promise<void> {
 
 const ACCOUNT_ID = Bun.env.CLOUDFLARE_ACCOUNT_ID?.trim() || CLOUDFLARE_DEFAULTS.accountId;
 const PROJECT = Bun.env.PAGES_PROJECT?.trim() || CLOUDFLARE_DEFAULTS.pages.project;
-const BRANCH = Bun.argv.find((a, i) => Bun.argv[i - 1] === '--branch') ?? 'main';
-const WAIT = Bun.argv.includes('--wait') || Bun.argv.includes('--verify');
-const VERIFY = Bun.argv.includes('--verify');
-const VERIFY_TAXONOMY = Bun.argv.includes('--taxonomy') || Bun.env.PAGES_VERIFY_TAXONOMY === '1';
 const POLL_MS = 15_000;
 const MAX_POLLS = 12;
+
+export type PagesDeployArgs = {
+  branch: string;
+  wait: boolean;
+  verify: boolean;
+  taxonomy: boolean;
+};
+
+/** Parse deploy flags strictly so malformed preview requests never fall back to production. */
+export function parsePagesDeployArgs(argv: readonly string[]): PagesDeployArgs {
+  const { values, tokens } = parseArgs({
+    args: [...argv],
+    options: {
+      branch: { type: 'string' },
+      wait: { type: 'boolean' },
+      verify: { type: 'boolean' },
+      taxonomy: { type: 'boolean' },
+    },
+    strict: true,
+    allowPositionals: false,
+    tokens: true,
+  });
+  if (tokens.filter(token => token.kind === 'option' && token.name === 'branch').length > 1) {
+    throw new Error('--branch may be specified only once');
+  }
+  const branch = (values.branch ?? CLOUDFLARE_DEFAULTS.pages.productionBranch).trim();
+  if (!branch) throw new Error('--branch requires a non-empty branch name');
+  const verify = values.verify === true;
+  if (verify && branch !== CLOUDFLARE_DEFAULTS.pages.productionBranch) {
+    throw new Error('--verify targets the production hostname and cannot verify a preview branch');
+  }
+  return {
+    branch,
+    wait: values.wait === true || verify,
+    verify,
+    taxonomy: values.taxonomy === true || Bun.env.PAGES_VERIFY_TAXONOMY === '1',
+  };
+}
 
 export type CfResponse<T> = {
   success: boolean;
@@ -102,13 +138,51 @@ export function ensureCloudflareHttpSuccess<T>(
 }
 
 type DeployStage = { name: string; status: string };
-type Deployment = {
+export type PagesDeployment = {
   id: string; // brand-ok — Cloudflare Pages deployment UUID
   url?: string;
+  environment?: 'preview' | 'production';
   latest_stage?: DeployStage;
   stages?: DeployStage[];
-  deployment_trigger?: { metadata?: { commit_hash?: string } };
+  deployment_trigger?: { metadata?: { branch?: string; commit_hash?: string } };
 };
+
+/** Build the Cloudflare request body without manually setting its multipart boundary. */
+export function createPagesDeploymentForm(branch: string): FormData {
+  const form = new FormData();
+  form.set('branch', branch);
+  return form;
+}
+
+/** Prove Cloudflare accepted the requested branch/environment before treating a deploy as valid. */
+export function assertPagesDeploymentTarget(
+  deployment: PagesDeployment,
+  requestedBranch: string,
+  productionBranch = CLOUDFLARE_DEFAULTS.pages.productionBranch
+): void {
+  const actualBranch = deployment.deployment_trigger?.metadata?.branch;
+  if (actualBranch !== requestedBranch) {
+    throw new Error(
+      `Cloudflare deployed branch ${actualBranch ?? '(missing)'}; expected ${requestedBranch}`
+    );
+  }
+  const expectedEnvironment = requestedBranch === productionBranch ? 'production' : 'preview';
+  if (deployment.environment !== expectedEnvironment) {
+    throw new Error(
+      `Cloudflare deployed environment ${deployment.environment ?? '(missing)'}; expected ${expectedEnvironment}`
+    );
+  }
+}
+
+/** A metadata-free 304 can prove only the pinned production target, never a preview. */
+export function assertPagesNotModifiedTarget(
+  requestedBranch: string,
+  productionBranch = CLOUDFLARE_DEFAULTS.pages.productionBranch
+): void {
+  if (requestedBranch !== productionBranch) {
+    throw new Error('Cloudflare returned 304 without metadata for a preview deployment');
+  }
+}
 
 async function cf<T>(path: string, init?: RequestInit): Promise<CfResponse<T>> {
   const token = Bun.env.CLOUDFLARE_API_TOKEN?.trim();
@@ -117,31 +191,31 @@ async function cf<T>(path: string, init?: RequestInit): Promise<CfResponse<T>> {
   }
   const method = init?.method ?? 'GET';
   const requestLabel = `${method} ${path}`;
+  const headers = new Headers(init?.headers);
+  headers.set('authorization', `Bearer ${token}`);
   const res = await fetch(`https://api.cloudflare.com/client/v4${path}`, {
     ...init,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
+    headers,
   });
   const body = parseCloudflareApiResponse<T>(await res.text(), res.status, requestLabel);
   return ensureCloudflareHttpSuccess(body, res.status, requestLabel);
 }
 
-async function triggerDeploy(): Promise<string | null> {
-  console.log(`🚀 Triggering Pages deploy → ${PROJECT} (${BRANCH})`);
-  const body = await cf<Deployment>(
+async function triggerDeploy(branch: string): Promise<string | null> {
+  console.log(`🚀 Triggering Pages deploy → ${PROJECT} (${branch})`);
+  const body = await cf<PagesDeployment>(
     `/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/deployments`,
-    { method: 'POST', body: JSON.stringify({ branch: BRANCH }) }
+    { method: 'POST', body: createPagesDeploymentForm(branch) }
   );
   if (body.notModified) {
+    assertPagesNotModifiedTarget(branch);
     console.log('ℹ️  Pages content unchanged (HTTP 304) — verifying current production');
     return null;
   }
   if (!body.success || !body.result?.id) {
     throw new Error(body.errors?.map(e => e.message).join('; ') || 'deploy trigger failed');
   }
+  assertPagesDeploymentTarget(body.result, branch);
   console.log(`   deploy id: ${body.result.id}`);
   console.log(`   preview:   ${body.result.url ?? '—'}`);
   return body.result.id;
@@ -149,8 +223,8 @@ async function triggerDeploy(): Promise<string | null> {
 
 async function fetchDeploy(
   deployId: string // brand-ok — Cloudflare Pages deployment UUID (wire/API)
-): Promise<Deployment> {
-  const body = await cf<Deployment>(
+): Promise<PagesDeployment> {
+  const body = await cf<PagesDeployment>(
     `/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/deployments/${deployId}`
   );
   if (!body.success || !body.result) {
@@ -169,16 +243,18 @@ async function deployLogTail(
 }
 
 async function waitForDeploy(
-  deployId: string // brand-ok — Cloudflare Pages deployment UUID (wire/API)
+  deployId: string, // brand-ok — Cloudflare Pages deployment UUID (wire/API)
+  branch: string
 ): Promise<void> {
   for (let i = 1; i <= MAX_POLLS; i++) {
     const d = await fetchDeploy(deployId);
+    assertPagesDeploymentTarget(d, branch);
     const stage = d.latest_stage;
     const label = stage ? `${stage.name}:${stage.status}` : 'unknown';
     console.log(`   [${i}/${MAX_POLLS}] ${label}`);
     if (stage?.status === 'success' && stage.name === 'deploy') {
       console.log('✅ Deploy succeeded');
-      console.log(`   https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`);
+      console.log(`   ${d.url ?? `https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`}`);
       return;
     }
     if (stage?.status === 'failure') {
@@ -221,13 +297,14 @@ async function runTennisSsotReleaseVerify(): Promise<void> {
 }
 
 async function main() {
+  const args = parsePagesDeployArgs(Bun.argv.slice(2));
   await loadReasonixEnv();
-  const deployId = await triggerDeploy();
-  if (WAIT && deployId) await waitForDeploy(deployId);
-  if (VERIFY) {
-    await runEdgeVerify(VERIFY_TAXONOMY);
+  const deployId = await triggerDeploy(args.branch);
+  if (args.wait && deployId) await waitForDeploy(deployId, args.branch);
+  if (args.verify) {
+    await runEdgeVerify(args.taxonomy);
     await runTennisSsotReleaseVerify();
-  } else if (!WAIT) {
+  } else if (!args.wait) {
     console.log('   tip: bun run cloudflare:deploy:wait — poll until live');
     console.log('   tip: bun run cloudflare:deploy:verify — wait + edge smoke');
     console.log(

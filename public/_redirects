@@ -1,8 +1,10 @@
-# Cloudflare Pages — trailing-slash only (no /* → index.html SPA mode).
+# Cloudflare Pages — explicit aliases + trailing-slash redirects (no wildcard SPA rewrite).
 # Do NOT map /path/ → /path/index.html (200) — CF strips .html and loops.
 # Real files under public/ serve directory indexes natively.
 # @see docs/harness/tenants/cloudflare-pages.md
 
+/v1.13/                  /v1.13                                  308
+/v1.13                   /portal/agent-odds/dashboard-v1.13      200
 /portal/ops              /portal/ops/              301
 /portal/toc              /portal/toc/              301
 /portal                  /portal/                  301
