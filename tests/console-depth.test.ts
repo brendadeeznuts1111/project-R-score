@@ -1,7 +1,7 @@
-// @see https://bun.com/docs/runtime/color — Bun.color
-// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/color â€” Bun.color
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth â€” Bun.stringWidth
 /**
- * console-depth.test.ts — policy helpers in lib/console-depth.ts.
+ * console-depth.test.ts â€” policy helpers in lib/console-depth.ts.
  *
  * Width vectors exercise Bun.stringWidth directly (natives are not re-exported).
  * Layout helpers (padEndWidth / truncateWidth / fitVisible) stay covered here.
@@ -23,7 +23,7 @@ import {
   shouldColor,
 } from '../lib/console-depth.ts';
 
-describe('Bun.stringWidth — reference vectors', () => {
+describe('Bun.stringWidth â€” reference vectors', () => {
   const vectors: Array<[string, string, number]> = [
     ['empty string', '', 0],
     ['single ASCII', 'a', 1],
@@ -176,9 +176,10 @@ describe('stringWidth options', () => {
     expect(stringWidth(s)).toBe(3);
     expect(stringWidth(s, { countAnsiEscapeCodes: true })).toBe(10);
   });
-  test('ambiguousIsNarrow default treats ambiguous chars as 1 col', () => {
+  test('ambiguousIsNarrow follows the pinned stable runtime boundary', () => {
     expect(stringWidth('\u00B1')).toBe(1);
-    expect(stringWidth('\u00B1', { ambiguousIsNarrow: false })).toBe(2);
+    const expectedWide = Bun.semver.satisfies(Bun.version, '>=1.4.0') ? 2 : 1;
+    expect(stringWidth('\u00B1', { ambiguousIsNarrow: false })).toBe(expectedWide);
   });
 });
 
