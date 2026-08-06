@@ -33,6 +33,24 @@ describe('repository root policy', () => {
     expect(rootOutputRoute('snapshots/')?.owner).toBe('portal-snapshot');
   });
 
+  test('retired root parking names are not allowlisted and route if resurrected', () => {
+    const retired = [
+      'database',
+      'herdr-worktrees',
+      'logs',
+      'services',
+      'src',
+      'utils',
+      'workers',
+    ] as const;
+    for (const name of retired) {
+      expect(ALLOWED_ROOT_DIRS.has(name)).toBe(false);
+      expect(rootOutputRoute(`${name}/`)?.action).toMatch(/do not recreate|delete if reappear/);
+    }
+    expect(ROOT_DIRECTORY_ROUTES.utils.target).toBe('lib/utils/');
+    expect(ROOT_DIRECTORY_ROUTES['herdr-worktrees'].target).toContain('.worktrees');
+  });
+
   test('known file producers have actionable owners', () => {
     expect(rootOutputRoute('test-metafile.json')).toMatchObject({
       owner: 'bun-file-analyzer-tests',

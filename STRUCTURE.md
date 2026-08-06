@@ -167,7 +167,7 @@ Git remotes on this checkout: `origin` → `project-R-score`; `cascade` → `cas
 
 `ROOT_INTEGRATIONS` in policy (explicit owner + purpose): `_includes`, `artifact-registry`, `functions-bun-only`, `jobs`, `migrations`, `warehouse`.
 
-**Allowlist ghosts** (in `CORE_ROOT_DIRECTORIES`, absent on disk — do not resurrect without an owner): `database`, `herdr-worktrees`, `logs`, `services`, `src`, `utils`, `workers`.
+**Retired root parking** (not allowlisted — hygiene `unexpected-root-dir` + route in [`config/repo-root-policy.ts`](config/repo-root-policy.ts) `ROOT_DIRECTORY_ROUTES`): `database`, `herdr-worktrees`, `logs`, `services`, `src`, `utils`, `workers`.
 
 #### Delivery wiring (root → host)
 
@@ -255,9 +255,6 @@ Detail: [`docs/organization/HOMEBASE_DISCOVERY.md`](docs/organization/HOMEBASE_D
 - Further freezes under `projects/archive/` as packages leave the install graph.
 - Curate remaining `scratch/bun-v1.3.9-examples/`.
 - Optional: physical move of root-parked nested repos out of `~/Projects` entirely.
-- Kalshi-bot gitlink bump: parent may lag the submodule worktree — bump only after the Kalshi lane merges (do not pin an unmerged feature tip from primary).
-- Trim allowlist ghosts in [`config/repo-root-policy.ts`](config/repo-root-policy.ts) (`database`, `herdr-worktrees`, `logs`, `services`, `src`, `utils`, `workers`) when no revival path remains.
-
 Session archive map: [`docs/organization/session-organization.md`](docs/organization/session-organization.md).
 
 Maintained by the platform team. Run `bun run dashboard` for live views, or use active CLIs under [`tools/cli/`](tools/cli/) (e.g. `endpoint-status.ts`).
