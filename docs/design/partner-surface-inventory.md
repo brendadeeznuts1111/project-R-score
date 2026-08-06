@@ -103,15 +103,23 @@ Chrome-nav and portal-board rows for Domain `partner` are **derived live** from
 drift silently. Validate bags with `bun run partner-surface-inventory:validate`
 and wire traps with `bun run partner-surface-inventory:lint-wires`:
 
-| Layer | Check                                                                                                   |
-| ----- | ------------------------------------------------------------------------------------------------------- |
-| A     | brand-manifest + `Bun.file.exists` + brand linking (`domain` · `registryRef` · `isActive` · `category`) |
-| B     | baked JSON vs bag: schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy`   |
-| C     | `lint-wires`: glob coverage + naked `partnerId` / `partner_id` `: string` outside `boundaryPathGlobs`   |
+| Layer | Check                                                                                                     |
+| ----- | --------------------------------------------------------------------------------------------------------- |
+| A     | brand-manifest + `Bun.file.exists` + brand linking (`domain` · `registryRef` · `isActive` · `category`)   |
+| B     | baked JSON vs bag: schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy`     |
+| C     | `lint-wires`: glob coverage + naked `partnerId` / `partner_id` `: string` outside `boundaryPathGlobs`     |
+| D     | `lint-domains`: inventory brand types used outside home path globs (default **warn**; `--strict` → error) |
 
 Layer A/B stay on `partner-surface-inventory:validate`. Layer C is
-`partner-surface-inventory:lint-wires` only (do not alias validate → wire
-traps).
+`partner-surface-inventory:lint-wires`. Layer D is
+`partner-surface-inventory:lint-domains` (do not alias validate → wire/domain
+lints).
+
+```bash
+bun run partner-surface-inventory:lint-domains
+bun scripts/validate-partner-domain-isolation.ts --rules
+bun scripts/validate-partner-domain-isolation.ts --scan --strict
+```
 
 Registry bag notes:
 
