@@ -369,6 +369,9 @@ projects/archive/lazycodex/
 
 # Local workspace clutter — worktrees, session artifacts
 .kimi/
+# Grok / agent git worktrees nested under the primary checkout (lane hygiene)
+.worktrees/
+/.worktrees/
 herdr-worktrees/
 /~/
 /index.html
@@ -376,6 +379,9 @@ herdr-worktrees/
 photo_*.jpg
 artifacts/*.docx
 artifacts/*.zip
+# Local PR body drafts and ad-hoc dumps at repo root (not release artifacts)
+/artifacts/*.md
+/artifacts/*.html
 
 # Harness / pre-commit regenerable (local only — never stage)
 # Docs: scripts/BUN_NATIVE.md · docs/harness/FEEDBACK.md

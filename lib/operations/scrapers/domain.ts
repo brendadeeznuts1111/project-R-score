@@ -4,5 +4,6 @@ export {
   asSportsbookId,
   asStateCode,
   parseSportsbookId,
+  tryStateCode,
   type SportsbookId,
 } from '../../types/branded.ts';

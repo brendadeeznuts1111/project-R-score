@@ -24,7 +24,7 @@ Event, edge, rule, sportsbook, and host identities use brands from
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | In-process `Bun.cron`                  | `odds/scheduler.ts` · optional on `agent serve --monitor`                                              |
 | `Bun.markdown.ansi` / `.html`          | CLI `registry-readme` · detail API `readmeHtml` via [`../factory/markdown.ts`](../factory/markdown.ts) |
-| `Bun.WebView`                          | `doctor.ts` / `screenshot.ts` (short-lived `await using`)                                              |
+| `Bun.WebView`                          | `doctor.ts` / `screenshot.ts` (PNG evidence) · Tier 4 HTML via [`../operations/scrapers/webview-html.ts`](../operations/scrapers/webview-html.ts) |
 | TCP_DEFER_ACCEPT / async native stacks | Free at runtime — no desk code                                                                         |
 | Publish `readme` metadata              | Bun **1.3.14** + ingest — not a 1.3.12 feature                                                         |
 
@@ -39,12 +39,25 @@ bun run agent detect-edges --host hardrock.bet --seed-fixtures
 bun run agent monitor-odds --once --hosts hardrock.bet
 bun run scrape:odds bet365
 bun run agent scrape odds --source bet365
+# DraftKings HTML: fixture parse by default (CI-safe)
+bun run scrape:odds draftkings --html
+# Opt-in live WebView HTML (never default on agent serve):
+#   bun run scrape:odds draftkings --html --live
+#   OPERATOR_WEBVIEW_SCRAPE=1 bun run scrape:odds draftkings --html
 bun run agent serve --port 8790
 # optional Bun.cron monitor (or OPERATOR_ODDS_MONITOR=1):
 bun run agent serve --monitor
 bun run agent registry-readme event-store --version 1.0.0
 bun tools/branded-id-check.ts --strict lib/operator-research
 ```
+
+**HTML / WebView scrape gates** (Tier 4 DraftKings first): `--html` alone reads the
+committed fixture under `lib/operations/scrapers/fixtures/` (`mode: html_fixture`).
+Live capture requires `--html` **and** (`--live` or `OPERATOR_WEBVIEW_SCRAPE=1`) →
+short-lived `await using Bun.WebView` in
+[`lib/operations/scrapers/webview-html.ts`](../operations/scrapers/webview-html.ts).
+`agent serve` does **not** start scrapes by default. Details:
+[`lib/operations/scrapers/README.md`](../operations/scrapers/README.md).
 
 CLI: [`tools/operator-agent.ts`](../../tools/operator-agent.ts)
 (`bun run agent …`). Portal dashboard serve (separate):

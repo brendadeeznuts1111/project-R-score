@@ -46,7 +46,7 @@ export function checkApiKey(req: Request): AuthResult {
   if (!provided) {
     return { ok: false, status: 401, error: 'Missing API key (Authorization: Bearer or X-Api-Key)' };
   }
-  // Constant-time-ish compare via Bun.password / subtle — for opaque keys use timingSafeEqual
+  // Constant-time-ish compare for opaque keys (length mismatch is not secret).
   const enc = new TextEncoder();
   for (let i = 0; i < keys.length; i++) {
     const a = enc.encode(keys[i]!);
@@ -58,11 +58,23 @@ export function checkApiKey(req: Request): AuthResult {
   return { ok: false, status: 401, error: 'Invalid API key' };
 }
 
-function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
+/** Timing-safe byte compare (same length required). Shared with partner-request. */
+export function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
   if (a.byteLength !== b.byteLength) return false;
   let out = 0;
   for (let i = 0; i < a.byteLength; i++) out |= a[i]! ^ b[i]!;
   return out === 0;
+}
+
+/** True if `provided` matches any configured token under timing-safe equality. */
+export function tokenMatchesAny(provided: string, tokens: readonly string[]): boolean {
+  const enc = new TextEncoder();
+  const b = enc.encode(provided);
+  for (const token of tokens) {
+    const a = enc.encode(token);
+    if (a.byteLength === b.byteLength && timingSafeEqual(a, b)) return true;
+  }
+  return false;
 }
 
 /** Paths that stay open even when auth is enabled. */
