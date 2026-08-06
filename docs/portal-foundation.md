@@ -455,7 +455,7 @@ Wired into `ci:harness` as gate `portal-foundation` and appended to `verify-all`
 - Local: `GET /api/operations/summary` → [`buildOpsSummary`](../lib/operations/ops-summary.ts) (`source: live`)
 - Pages: same path → snapshot [`ops-summary.json`](../public/registry/ops-summary.json)
 - Regenerate snapshot: `bun run ops:snapshot`
-- Triage: `bun run ops:diagnose` · runbook [`docs/harness/ops-summary-endpoint.md`](../harness/ops-summary-endpoint.md)
+- Triage: `bun run ops:diagnose` · runbook [`docs/harness/ops-summary-endpoint.md`](harness/ops-summary-endpoint.md)
 
 **Layer 2 — portal registry fetches (full panels)**
 

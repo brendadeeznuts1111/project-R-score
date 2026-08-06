@@ -4,10 +4,10 @@
 
 | Piece | Path |
 |-------|------|
-| Schema | `partner_profile_bindings` in [`lib/operations/schema.ts`](../../lib/operations/schema.ts) |
-| Bridge | [`lib/operations/partner-profile-bridge.ts`](../../lib/operations/partner-profile-bridge.ts) |
+| Schema | `partner_profile_bindings` in [`lib/operations/schema.ts`](../../../lib/operations/schema.ts) |
+| Bridge | [`lib/operations/partner-profile-bridge.ts`](../../../lib/operations/partner-profile-bridge.ts) |
 | Templates | [`config/partner-templates/`](../../../config/partner-templates/) (TOML, standalone — not Sports Terminal nested build) |
-| Brands | `TreeNodeId`, `PartnerTemplateId`, `PartnerProfileKey` in [`lib/types/branded/operations.ts`](../../lib/types/branded/operations.ts) |
+| Brands | `TreeNodeId`, `PartnerTemplateId`, `PartnerProfileKey` in [`lib/types/branded/operations.ts`](../../../lib/types/branded/operations.ts) |
 | Summary | `buildOpsSummary().partners` · portal panel **Partner profiles** |
 | Sync | `applyOpsSyncEvent(..., db)` binds on `account_assigned` / `telegram_linked` |
 | Backfill | `bun scripts/backfill-partner-bindings.ts` |
@@ -103,7 +103,7 @@ Tests: `tests/play-dispatcher-gate.test.ts` · `tests/toc-play-routing.test.ts`.
 
 ## Phase I2b — TOC weightedScore routing (before template gate)
 
-After auto-bind, `rankPlayRecipients` orders agents by baked TOC `weightedScore` (readiness × expertWeight × limit freshness × Gate 12 — see [`lib/toc-ops/return-efficiency.ts`](../../lib/toc-ops/return-efficiency.ts)).
+After auto-bind, `rankPlayRecipients` orders agents by baked TOC `weightedScore` (readiness × expertWeight × limit freshness × Gate 12 — see [`lib/toc-ops/return-efficiency.ts`](../../../lib/toc-ops/return-efficiency.ts)).
 
 When `buffer.throttleOnboarding` is true and an agent has a TOC-bound call sign with `0 < weightedScore < 0.5`, dispatch **defers** before `evaluateForNode`:
 
@@ -123,7 +123,7 @@ Override baked snapshot in tests via `publishAndDispatch(..., { routingContext }
 | `play.gate.denied` / `play.gate.adjusted` / `play.gate.defer` | `plays` | Dispatch gate / TOC routing defer |
 | `play.settled` | `plays` | Settlement (profileKey attached when bound) |
 
-Helpers: `enqueueIdentityChannelEvent`, `enqueuePartnerWelcomeEvent`, `enqueueOnboardCompleteEvent`, `enqueuePlayGatedChannelEvent` in [`lib/channels/outbox.ts`](../../lib/channels/outbox.ts).
+Helpers: `enqueueIdentityChannelEvent`, `enqueuePartnerWelcomeEvent`, `enqueueOnboardCompleteEvent`, `enqueuePlayGatedChannelEvent` in [`lib/channels/outbox.ts`](../../../lib/channels/outbox.ts).
 
 Deep identity (cellphone → profile → seat → ChatChannelMeta → templates): [`partner-onboarding-package.md`](partner-onboarding-package.md).
 

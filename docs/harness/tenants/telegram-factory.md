@@ -38,7 +38,7 @@ Bot API has no membership list. On each drained update, Bun upserts `chat.id` in
 | Directory table | `bun run telegram:ops -- directory` |
 | Rich directory (package join) | `bun run telegram:ops -- directory --rich` |
 | Refresh titles / member counts | `bun run telegram:ops -- directory --refresh` or `telegram:discover -- --refresh` |
-| Handshake (package groups) | [`partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md) · `bun run telegram:handshake:catalog` |
+| Handshake (package groups) | [`partner-package-group-handshake.md`](partner-package-group-handshake.md) · `bun run telegram:handshake:catalog` |
 | Broadcast (direct) | `bun run telegram:ops -- send --all "text"` | Rate-limited immediate send + `ops_broadcast_log` |
 | Broadcast (queued) | `bun run telegram:ops -- send --all --queue "text"` | Enqueue per chat; drain via `telegram:ops:consume` |
 
