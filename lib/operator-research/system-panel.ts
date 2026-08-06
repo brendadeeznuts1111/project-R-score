@@ -22,9 +22,8 @@ const MAX_GLOB = 80;
 const SENSITIVE_ENV =
   /^(.*_)?(SECRET|TOKEN|PASSWORD|PASSWD|PRIVATE|API_KEY|AUTH|CREDENTIAL|COOKIE|SESSION)(_.*)?$/i;
 
-/** Paths relative to ROOT that may be written from the desk. */
+/** Paths relative to ROOT that may be written from the desk (not package.json). */
 const WRITE_ALLOW = [
-  /^package\.json$/,
   /^\.env\.desk(\.local)?$/,
   /^\.env\.example$/,
   /^config\/operator-research\/[^/]+\.toml$/,
@@ -222,7 +221,7 @@ export async function writeProjectFile(
   if (!resolved.ok) throw new Error(resolved.error);
   if (!isWritableRel(resolved.rel)) {
     throw new Error(
-      `Write forbidden for ${resolved.rel}. Allowed: package.json, .env.desk, config/**/*.toml, data/exports/*`
+      `Write forbidden for ${resolved.rel}. Allowed: .env.desk, config/**/*.toml, data/exports/*`
     );
   }
   const bytes = Buffer.byteLength(content, 'utf8');

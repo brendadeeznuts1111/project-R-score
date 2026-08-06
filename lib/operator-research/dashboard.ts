@@ -21,7 +21,11 @@ import {
 } from '../research/index.ts';
 import { checkApiKey } from './auth/api-key.ts';
 import { checkCsrf, issueCsrf, isMutatingMethod, getSessionId } from './auth/csrf.ts';
-import { authenticatePartnerRequest, jsonWithRequestId } from './auth/partner-request.ts';
+import {
+  authenticatePartnerRequest,
+  isLoopbackHostname,
+  jsonWithRequestId,
+} from './auth/partner-request.ts';
 import {
   getPackageSnapshot,
   runPackageUpdate,
@@ -144,6 +148,42 @@ function withCsrfGate(req: Request): Response | null {
   const csrf = checkCsrf(req);
   if (csrf.ok) return null;
   return json({ ok: false, error: csrf.error, csrf: true }, csrf.status);
+}
+
+/**
+ * Partner auth for system-panel routes after CSRF.
+ * - `read`: same-origin OK when tokens configured; open when none.
+ * - `write`: token required when configured; open only on loopback bind.
+ */
+function requirePartnerAuth(
+  req: Request,
+  sensitivity: 'read' | 'write',
+  bindHostname: string
+):
+  | { ok: true; requestId: string; mode: 'open' | 'token' | 'same-origin' } // brand-ok — opaque research/wire id
+  | { ok: false; response: Response } {
+  const auth = authenticatePartnerRequest(req, sensitivity);
+  if (!auth.ok) {
+    return {
+      ok: false,
+      response: jsonWithRequestId({ ok: false, error: auth.error }, auth.status, auth.requestId),
+    };
+  }
+  if (sensitivity === 'write' && auth.mode === 'open' && !isLoopbackHostname(bindHostname)) {
+    return {
+      ok: false,
+      response: jsonWithRequestId(
+        {
+          ok: false,
+          error:
+            'System writes require PARTNER_API_TOKEN (or OPERATOR_RESEARCH_API_KEY) when not bound to loopback',
+        },
+        503,
+        auth.requestId
+      ),
+    };
+  }
+  return { ok: true, requestId: auth.requestId, mode: auth.mode };
 }
 
 function serializeRule(r: AlertRule) {
@@ -396,9 +436,13 @@ export function startResearchDashboard(
 
       if (url.pathname === '/api/system/env' || url.pathname === '/api/env') {
         if (req.method === 'GET') {
+          const auth = requirePartnerAuth(req, 'read', hostname);
+          if (!auth.ok) return auth.response;
           return json(getEnvView({ includeValues: url.searchParams.get('values') !== '0' }));
         }
         if (req.method === 'POST') {
+          const auth = requirePartnerAuth(req, 'write', hostname);
+          if (!auth.ok) return auth.response;
           let body: { key?: string; value?: string };
           try {
             body = (await req.json()) as typeof body;
@@ -422,6 +466,8 @@ export function startResearchDashboard(
         if (req.method !== 'POST' && req.method !== 'GET') {
           return json({ error: 'method not allowed' }, 405);
         }
+        const auth = requirePartnerAuth(req, 'read', hostname);
+        if (!auth.ok) return auth.response;
         try {
           const path =
             req.method === 'GET'
@@ -437,6 +483,8 @@ export function startResearchDashboard(
         if (req.method !== 'POST' && req.method !== 'GET') {
           return json({ error: 'method not allowed' }, 405);
         }
+        const auth = requirePartnerAuth(req, 'read', hostname);
+        if (!auth.ok) return auth.response;
         try {
           const path =
             req.method === 'GET'
@@ -451,6 +499,8 @@ export function startResearchDashboard(
 
       if (url.pathname === '/api/system/fs/write' || url.pathname === '/api/fs/write') {
         if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        const auth = requirePartnerAuth(req, 'write', hostname);
+        if (!auth.ok) return auth.response;
         let body: { path?: string; content?: string };
         try {
           body = (await req.json()) as typeof body;
@@ -470,6 +520,8 @@ export function startResearchDashboard(
 
       if (url.pathname === '/api/system/search' || url.pathname === '/api/search') {
         if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        const auth = requirePartnerAuth(req, 'read', hostname);
+        if (!auth.ok) return auth.response;
         let body: { pattern?: string; cwd?: string };
         try {
           body = (await req.json()) as typeof body;
@@ -485,6 +537,8 @@ export function startResearchDashboard(
 
       if (url.pathname === '/api/system/password/hash' || url.pathname === '/api/password/hash') {
         if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        const auth = requirePartnerAuth(req, 'write', hostname);
+        if (!auth.ok) return auth.response;
         try {
           const { plain } = (await req.json()) as { plain?: string };
           return json(await hashPassword(String(plain ?? '')));
@@ -498,6 +552,8 @@ export function startResearchDashboard(
         url.pathname === '/api/password/verify'
       ) {
         if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        const auth = requirePartnerAuth(req, 'write', hostname);
+        if (!auth.ok) return auth.response;
         try {
           const { plain, hash } = (await req.json()) as { plain?: string; hash?: string };
           return json(await verifyPassword(String(plain ?? ''), String(hash ?? '')));

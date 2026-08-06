@@ -2,13 +2,14 @@
 /**
  * Partner / desk request auth for Bun Agent APIs.
  *
- * - Same-origin (desk) GET → allowed without token
- * - Cross-origin + POST/sensitive → require PARTNER_API_TOKEN or OPERATOR_RESEARCH_API_KEY
- * - When no tokens configured → open (local ops mode)
+ * - Same-origin (desk) GET/`read` → allowed without token when tokens configured
+ * - `write`/`execute` → always require token when tokens configured (no same-origin bypass)
+ * - When no tokens configured → open (local ops mode). Dashboard write routes should
+ *   additionally reject open mode when bind hostname is not loopback (503).
  */
 
 import { randomUUIDv7 } from 'bun';
-import { checkApiKey, extractApiKey } from './api-key.ts';
+import { checkApiKey, extractApiKey, tokenMatchesAny } from './api-key.ts';
 
 export type PartnerAuthResult =
   | { ok: true; mode: 'open' | 'token' | 'same-origin'; requestId: string } // brand-ok — opaque research/wire id
@@ -28,6 +29,11 @@ function configuredPartnerTokens(): string[] {
 
 export function requestIdFrom(req: Request): string {
   return req.headers.get('x-request-id')?.trim() || randomUUIDv7();
+}
+
+export function isLoopbackHostname(hostname: string): boolean {
+  const h = hostname.trim().toLowerCase();
+  return h === '127.0.0.1' || h === 'localhost' || h === '::1' || h === '[::1]';
 }
 
 export function isSameOriginRequest(req: Request): boolean {
@@ -83,7 +89,7 @@ export function authenticatePartnerRequest(
   }
 
   const provided = extractApiKey(req);
-  if (provided && tokens.includes(provided)) {
+  if (provided && tokenMatchesAny(provided, tokens)) {
     return { ok: true, mode: 'token', requestId };
   }
 
