@@ -22,11 +22,12 @@ have?** It joins sibling maps; it does **not** replace them.
 2. [Homonym machines](#homonym-machines-do-not-nest)
 3. [Validation layers A–D](#validation-layers-ad)
 4. [Row + bag schema](#row--bag-schema)
-5. [Live-derived rows](#live-derived-rows)
-6. [Operator commands](#operator-commands)
-7. [Minimum surface set](#minimum-surface-set-summary)
-8. [Generated full table](#generated-full-table)
-9. [Out of scope](#out-of-scope)
+5. [Example rows (ASH)](#example-rows-ash-from-partners-ops)
+6. [Live-derived rows](#live-derived-rows)
+7. [Operator commands](#operator-commands)
+8. [Minimum surface set](#minimum-surface-set-summary)
+9. [Generated full table](#generated-full-table)
+10. [Out of scope](#out-of-scope)
 
 ## What this owns
 
@@ -56,12 +57,21 @@ bun tools/workspace-taxonomy.ts explain partner
 
 Do **not** alias validate → wire/domain lints. Each layer has its own command.
 
-| Layer | Command                                  | Checks                                                                                                                                                    | Default severity                         |
-| ----- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| A     | `partner-surface-inventory:validate`     | brand-manifest · bag linking · lifecycle · fitness · partner-code/out-id ↔ partners-ops · mintAuthority in `brand.module` · test-corpus `hasTestCoverage` | **error** (some drifts **warn**)         |
-| B     | `partner-surface-inventory:validate`     | baked JSON vs registry bag: schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy`                                            | **error**                                |
-| C     | `partner-surface-inventory:lint-wires`   | naked brand annotations outside `boundaryPathGlobs` — [wire-lint.md](./wire-lint.md)                                                                      | **error** (glob empty checkout **warn**) |
-| D     | `partner-surface-inventory:lint-domains` | brand types used outside home path globs                                                                                                                  | **warn** (`--strict` → **error**)        |
+| Layer              | Command                                  | Checks                                                                                                                                                                                                                                                           | Default severity                                  |
+| ------------------ | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| A — bags / linking | `partner-surface-inventory:validate`     | Logical correctness of inventory rows: brand-manifest membership · bag linking (`domain` · `registryRef` · `isActive`) · lifecycle · fitness · live `partner-code` / `out-id` ↔ `partners-ops` · mintAuthority in `brand.module` · test-corpus `hasTestCoverage` | **error** (many drifts **warn**)                  |
+| B — registry shape | `partner-surface-inventory:validate`     | Physical correctness of **registry artifacts** named by `registry` bags (e.g. `partners-ops.json`): schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy`                                                                           | **error**                                         |
+| C — wire lint      | `partner-surface-inventory:lint-wires`   | Naked brand annotations outside `boundaryPathGlobs` — [wire-lint.md](./wire-lint.md)                                                                                                                                                                             | **error** (empty optional checkout glob **warn**) |
+| D — domain lint    | `partner-surface-inventory:lint-domains` | Brand types used outside home path globs                                                                                                                                                                                                                         | **warn** (`--strict` → **error**)                 |
+
+**A vs B (same command):** Layer A asks whether the inventory’s labels and
+cross-refs make sense (wrong `brandRef`, missing `callSign`, mint symbol not in
+`brand.module`). Layer B asks whether each **baked registry JSON** still matches
+its `registry` bag contract (schema id, required keys, forbidden money keys).
+When `validate` fails, the message prefix / wording tells you which: fix a bag
+link (A) or an artifact / bag omit list (B). Neither layer re-validates the
+serialised `partner-surface-inventory.json` bake itself — that is
+`partner-surface-inventory:check` (deep-equal).
 
 Pre-commit (`scripts/pre-commit.ts`):
 
@@ -242,6 +252,48 @@ Notes:
 | ----------------- | ---------------------------------------------------- |
 | `homonymDistinct` | Must be true when the token collides across machines |
 | `conceptDomain`   | Related ConceptDomain token when applicable          |
+
+## Example rows (ASH from partners-ops)
+
+Live rows are **separate aspects** (not one mega-row). Values below match the
+current `partners-ops` bake for partner **ASH**.
+
+### `partner-code` row
+
+| Field                     | Value                           |
+| ------------------------- | ------------------------------- |
+| `id`                      | `partner-code.ASH`              |
+| `aspect`                  | `partner-code`                  |
+| `machine`                 | `identity`                      |
+| `token`                   | `ASH`                           |
+| `href`                    | `/portal/partners/#partner/ASH` |
+| `partnerCode.brandRef`    | `PartnerCode`                   |
+| `partnerCode.registryRef` | `partners-ops`                  |
+| `partnerCode.phase`       | `operator_ready`                |
+| `partnerCode.callSign`    | `ASH-001`                       |
+
+`ASH` is the PartnerCode; `ASH-001` is the call sign (`PartnerCallSignCode`
+shape `CODE-NNN`) — not the partner code itself.
+
+### `out-id` rows (two seats)
+
+| Field               | `out-ASH-1`        | `out-ASH-2`        |
+| ------------------- | ------------------ | ------------------ |
+| `id`                | `out-id.out-ASH-1` | `out-id.out-ASH-2` |
+| `aspect`            | `out-id`           | `out-id`           |
+| `machine`           | `identity`         | `identity`         |
+| `token`             | `out-ASH-1`        | `out-ASH-2`        |
+| `outId.brandRef`    | `OutId`            | `OutId`            |
+| `outId.registryRef` | `partners-ops`     | `partners-ops`     |
+| `outId.partnerCode` | `ASH`              | `ASH`              |
+| `outId.status`      | `ready`            | `deferred`         |
+
+### How Layers A/B read this
+
+| Layer | What it proves for ASH                                                                                                                                             |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| A     | `brandRef` → active `PartnerCode` / `OutId` brands · codes/outs exist in `partners-ops` · `callSign` matches `^[A-Z]{3,6}-[0-9]{3}$` · phase/status drift warns    |
+| B     | `partners-ops.json` still satisfies the `registry` bag for token `partners-ops` (schema · top keys · omits · money policy) — independent of any single partner row |
 
 ## Live-derived rows
 
