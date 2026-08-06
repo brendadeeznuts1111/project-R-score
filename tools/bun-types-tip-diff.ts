@@ -83,20 +83,6 @@ async function pathExists(path: string): Promise<boolean> {
   }
 }
 
-async function dirHasGit(path: string): Promise<boolean> {
-  // .git may be a file (worktree) or directory
-  try {
-    const proc = Bun.spawn(['git', '-C', path, 'rev-parse', '--git-dir'], {
-      stdout: 'pipe',
-      stderr: 'pipe',
-    });
-    const code = await proc.exited;
-    return code === 0;
-  } catch {
-    return false;
-  }
-}
-
 async function gitText(cwd: string, args: string[]): Promise<{ ok: boolean; text: string }> {
   const proc = Bun.spawn(['git', '-C', cwd, ...args], {
     stdout: 'pipe',
