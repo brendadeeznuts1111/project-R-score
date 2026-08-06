@@ -26,7 +26,12 @@ import {
   validateRefIdFormat,
 } from '../lib/docs/ref-id.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
-import { printRefIdIssues, refIdRegistry, runRefIdChecks } from './docs-refid-check.ts';
+import {
+  printRefIdIssues,
+  refIdRegistry,
+  runRefIdChecks,
+  writeAutoHrefs,
+} from './docs-refid-check.ts';
 import { BUN_TYPES_INVENTORY_DOC } from './bun-types-status.ts';
 
 const REPO = resolvePath(import.meta.dir, '..');
@@ -56,11 +61,15 @@ COMMANDS
 OPTIONS
   --strict-format · --refid-strict   Format warns (length/kebab) become errors
   --skip-refid-check                 check: exit 0 without validating (fast-pass)
+  --write-hrefs                      check: fill empty/—/auto href cells from REF:ID
   --json                             Machine output (check / suggest / list / scaffold)
   --section=<path>                   Section number path (default: 4.1)
   --keyword=<leaf>                   Keyword leaf (kebab preferred)
   --flag=<--cli-flag>                CLI flag; normalized to keyword (e.g. --maxAgeDays)
   --doc=<path>                       Markdown doc (default: ${BUN_TYPES_INVENTORY_DOC})
+                                     check: validate only this file (registry opts if registered)
+  --section-ref=<id>                 check --doc: placement section id (e.g. 4.1)
+  --section-heading=<md>             check --doc: exact Flags heading line
   --script=<name>                    scaffold package.json script (default: bun:types-status)
   --shortcode=<s>                    scaffold shortcode cell (default: —)
   --default=<s>                      scaffold default cell (default: off)
@@ -83,6 +92,7 @@ VALIDATION PRESETS
   soft (default)     format length/kebab → warn; errors fail process
   --strict-format    format issues → error
   --skip-refid-check skip validation entirely (exit 0)
+  --write-hrefs      rewrite auto href cells, then validate
 
 REF:ID RULES (summary)
   shape       {section}.{kebab-keyword}   e.g. 4.1.refresh · 4.1.max-age-days
@@ -94,7 +104,11 @@ REF:ID RULES (summary)
 EXAMPLES
   bun tools/docs-refid.ts check
   bun tools/docs-refid.ts check --strict-format --json
+  bun tools/docs-refid.ts check --doc=path/to/draft.md --write-hrefs
+  bun tools/docs-refid.ts check --doc=draft.md --section-ref=4.1 \\
+      --section-heading='### Flags / settings'
   bun tools/docs-refid.ts suggest --section=4.1 --flag=--foo-bar
+  bun tools/docs-refid.ts suggest --section=4.1 --keyword=refresh   # → 4.1.refresh-2 if taken
   bun tools/docs-refid.ts list --doc=${BUN_TYPES_INVENTORY_DOC}
   bun tools/docs-refid.ts scaffold --section=4.1 --flag=--new-flag
 
@@ -119,7 +133,24 @@ async function cmdCheck(argv: string[]): Promise<void> {
   const skip = argv.includes('--skip-refid-check');
   const strictFormat = argv.includes('--strict-format') || argv.includes('--refid-strict');
   const asJson = argv.includes('--json');
-  const issues = await runRefIdChecks({ skip, strictFormat });
+  const writeHrefs = argv.includes('--write-hrefs');
+  const doc = flagValue(argv, '--doc') ?? undefined;
+  const sectionRefId = flagValue(argv, '--section-ref') ?? undefined;
+  const sectionHeading = flagValue(argv, '--section-heading') ?? undefined;
+  if (writeHrefs && !skip) {
+    const written = await writeAutoHrefs({ doc });
+    for (const w of written) {
+      if (w.filled > 0) console.info(`✏️  wrote ${w.filled} href cell(s) in ${w.file}`);
+      else if (doc) console.info(`(no auto href cells to fill in ${w.file})`);
+    }
+  }
+  const issues = await runRefIdChecks({
+    skip,
+    strictFormat,
+    doc,
+    sectionRefId,
+    sectionHeading,
+  });
   if (asJson) {
     process.stdout.write(
       `${JSON.stringify({ schema: 'factorywager/ref-id/v2', count: issues.length, issues }, null, 2)}\n`

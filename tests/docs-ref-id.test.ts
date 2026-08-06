@@ -3,8 +3,10 @@ import { describe, expect, test } from 'bun:test';
 import {
   checkRefIdDocument,
   collectTakenRefIds,
+  fillAutoHrefsInMarkdown,
   hrefFromRefId,
   hrefMatchesRefId,
+  isAutoHref,
   normalizeRefIdKeyword,
   parseRefId,
   scaffoldFlagSnippet,
@@ -196,5 +198,26 @@ describe('REF:ID markdown extract + check', () => {
     expect(issues.some(i => i.kind === 'comment-missing-anchor' && i.refId === '4.1.refresh')).toBe(
       true
     );
+  });
+
+  test('isAutoHref + fillAutoHrefsInMarkdown rewrites empty/—/auto cells', () => {
+    expect(isAutoHref('')).toBe(true);
+    expect(isAutoHref('—')).toBe(true);
+    expect(isAutoHref('auto')).toBe(true);
+    expect(isAutoHref('#4.1.refresh')).toBe(false);
+
+    const md = `
+| Script | REF:ID | href |
+| --- | --- | --- |
+| x | \`4.1.refresh\` | auto |
+| y | \`4.1.strict\` | — |
+| z | \`4.1.json\` | \`#4.1.json\` |
+`;
+    const { text, filled } = fillAutoHrefsInMarkdown(md);
+    expect(filled).toBe(2);
+    expect(text).toContain('[`#4.1.refresh`](#4.1.refresh)');
+    expect(text).toContain('[`#4.1.strict`](#4.1.strict)');
+    expect(text).toContain('`#4.1.json`');
+    expect(text).not.toMatch(/\|\s*auto\s*\|/);
   });
 });

@@ -17,7 +17,12 @@
  * Package: `bun run docs:refid:check` · also wired into `docs:map:check` (unless --skip-refid-check).
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
-import { checkRefIdDocument, type RefIdIssue, type ToolFlagRef } from '../lib/docs/ref-id.ts';
+import {
+  checkRefIdDocument,
+  fillAutoHrefsInMarkdown,
+  type RefIdIssue,
+  type ToolFlagRef,
+} from '../lib/docs/ref-id.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import {
   BUN_TYPES_INVENTORY_DOC,
@@ -61,10 +66,35 @@ export function refIdRegistry(): RefIdRegistryEntry[] {
 export async function runRefIdChecks(opts: {
   strictFormat?: boolean;
   skip?: boolean;
+  /**
+   * When set, validate only this repo-relative markdown path.
+   * Uses registry opts (tool coverage / placement) when the path is registered;
+   * otherwise validates the file alone (no tool coverage).
+   */
+  doc?: string;
+  /** Override / set placement section id for ad-hoc `--doc` checks. */
+  sectionRefId?: string; // brand-ok — design-doc section fragment (REF:ID), not domain brand
+  sectionHeading?: string;
 }): Promise<RefIdIssue[]> {
   if (opts.skip) return [];
   const issues: RefIdIssue[] = [];
-  for (const entry of refIdRegistry()) {
+  const entries = opts.doc
+    ? (() => {
+        const registered = refIdRegistry().find(e => e.doc === opts.doc);
+        if (registered) return [registered];
+        return [
+          {
+            doc: opts.doc!,
+            toolFlags: () => [],
+            requireToolCoverage: false,
+            sectionRefId: opts.sectionRefId,
+            sectionHeading: opts.sectionHeading,
+          } satisfies RefIdRegistryEntry,
+        ];
+      })()
+    : refIdRegistry();
+
+  for (const entry of entries) {
     const abs = joinPath(REPO, entry.doc);
     if (!(await Bun.file(abs).exists())) {
       issues.push({
@@ -81,12 +111,31 @@ export async function runRefIdChecks(opts: {
         strictFormat: opts.strictFormat === true,
         toolFlags: entry.toolFlags(),
         requireToolCoverage: entry.requireToolCoverage === true,
-        sectionRefId: entry.sectionRefId,
-        sectionHeading: entry.sectionHeading,
+        sectionRefId: opts.sectionRefId ?? entry.sectionRefId,
+        sectionHeading: opts.sectionHeading ?? entry.sectionHeading,
       })
     );
   }
   return issues;
+}
+
+/** Fill auto href cells in registry docs (or a single `--doc`) and write back. */
+export async function writeAutoHrefs(opts: {
+  doc?: string;
+}): Promise<Array<{ file: string; filled: number }>> {
+  const entries = opts.doc ? [{ doc: opts.doc }] : refIdRegistry().map(e => ({ doc: e.doc }));
+  const out: Array<{ file: string; filled: number }> = [];
+  for (const entry of entries) {
+    const abs = joinPath(REPO, entry.doc);
+    if (!(await Bun.file(abs).exists())) continue;
+    const before = await Bun.file(abs).text();
+    const { text, filled } = fillAutoHrefsInMarkdown(before);
+    if (filled > 0) {
+      await Bun.write(abs, text.endsWith('\n') ? text : `${text}\n`);
+    }
+    out.push({ file: entry.doc, filled });
+  }
+  return out;
 }
 
 export function printRefIdIssues(issues: RefIdIssue[]): void {
@@ -123,6 +172,8 @@ Prefer the multi-command CLI for DX:
 OPTIONS
   --strict-format · --refid-strict   Format warns become errors
   --skip-refid-check                 Exit 0 without validating
+  --write-hrefs                      Fill empty/—/auto href cells from REF:ID
+  --doc=<path>                       Check one markdown file (registry opts if registered)
   --json                             Machine-readable issues array
   -h · --help                        This help
 
@@ -139,7 +190,24 @@ SEE ALSO
   const skip = argv.includes('--skip-refid-check');
   const strictFormat = argv.includes('--strict-format') || argv.includes('--refid-strict');
   const asJson = argv.includes('--json');
-  const issues = await runRefIdChecks({ skip, strictFormat });
+  const writeHrefs = argv.includes('--write-hrefs');
+  const docEq = argv.find(a => a.startsWith('--doc='));
+  const doc = docEq ? docEq.slice('--doc='.length) || undefined : undefined;
+  const sectionRefEq = argv.find(a => a.startsWith('--section-ref='));
+  const sectionHeadingEq = argv.find(a => a.startsWith('--section-heading='));
+  const sectionRefId = sectionRefEq
+    ? sectionRefEq.slice('--section-ref='.length) || undefined
+    : undefined;
+  const sectionHeading = sectionHeadingEq
+    ? sectionHeadingEq.slice('--section-heading='.length) || undefined
+    : undefined;
+  if (writeHrefs && !skip) {
+    const written = await writeAutoHrefs({ doc });
+    for (const w of written) {
+      if (w.filled > 0) console.info(`✏️  wrote ${w.filled} href cell(s) in ${w.file}`);
+    }
+  }
+  const issues = await runRefIdChecks({ skip, strictFormat, doc, sectionRefId, sectionHeading });
   if (asJson) {
     process.stdout.write(
       `${JSON.stringify({ schema: 'factorywager/ref-id/v2', count: issues.length, issues }, null, 2)}\n`
