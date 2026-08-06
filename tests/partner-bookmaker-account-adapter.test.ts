@@ -1,27 +1,58 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  parseBookmakerCatalogArtifact,
   resolveBookmakerAccount,
-  type BookmakerAccountCatalogEntry,
 } from '../packages/partners/src/index.ts';
 
-const REGISTRY = {
-  'hard-rock-florida': {
-    id: 'hard-rock-florida',
-    label: 'Hard Rock Bet Florida',
-    skin: 'HardRockBet Florida',
-    brandGroup: 'Hard Rock International',
-    urls: { web: 'https://hardrockfl.sportsbook.hardrock.bet' },
+const ARTIFACT = {
+  schemaVersion: 2,
+  generatedAt: '2026-08-06T12:00:00.000Z',
+  artifact: {
+    name: '@factorywager/bookmakers',
+    version: '0.4.1',
+    checksum: 'a'.repeat(64),
+    source: 'artifact-registry',
   },
-  'parlay21-com': {
-    id: 'parlay21-com',
-    label: 'Parlay21',
-    skin: 'Parlay21',
-    brandGroup: 'Parlay21',
-    urls: { web: 'https://parlay21.com' },
+  bookmakers: {
+    'hard-rock-florida': {
+      id: 'hard-rock-florida',
+      slug: 'hard-rock-florida',
+      label: 'Hard Rock Bet Florida',
+      skin: 'HardRockBet Florida',
+      brandGroup: 'Hard Rock International',
+      urls: { web: 'https://hardrockfl.sportsbook.hardrock.bet' },
+    },
+    'parlay21-com': {
+      id: 'parlay21-com',
+      slug: 'parlay21-com',
+      label: 'Parlay21',
+      skin: 'Parlay21',
+      brandGroup: 'Parlay21',
+      urls: { web: 'https://parlay21.com' },
+    },
   },
-} as const satisfies Readonly<Record<string, BookmakerAccountCatalogEntry>>;
+};
+
+const REGISTRY = parseBookmakerCatalogArtifact(ARTIFACT).registry;
 
 describe('partner bookmaker account adapter', () => {
+  test('parses the checked-in public catalog into a safe partner intake projection', async () => {
+    const artifact = await Bun.file(`${import.meta.dir}/../public/registry/bookmakers.json`).json();
+    const projection = parseBookmakerCatalogArtifact(artifact);
+    expect(Object.keys(projection.registry)).toHaveLength(10);
+    expect(projection.registry['hard-rock-florida']).toEqual({
+      id: 'hard-rock-florida',
+      slug: 'hard-rock-florida',
+      label: 'Hard Rock Florida',
+      skin: 'HardRockBet Florida',
+      brandGroup: 'Hard Rock International',
+      urls: { web: 'https://hardrockfl.sportsbook.hardrock.bet/' },
+    });
+    expect(JSON.stringify(projection.registry)).not.toMatch(
+      /apiKeyEnv|restBaseUrl|webViewConfig|color|note/
+    );
+  });
+
   test('resolves exact registry hosts and carries skin metadata', () => {
     expect(
       resolveBookmakerAccount({
@@ -81,7 +112,7 @@ describe('partner bookmaker account adapter', () => {
     });
   });
 
-  test('rejects secret-bearing URLs, unknown targets, and ambiguous registry hosts', () => {
+  test('rejects secret-bearing URLs and unknown targets', () => {
     expect(() =>
       resolveBookmakerAccount({
         accountEntrypointUrl: 'https://user:secret@parlay21.com/login?token=x',
@@ -95,14 +126,37 @@ describe('partner bookmaker account adapter', () => {
         hostAliases: { 'newskin.example': 'missing-book' },
       })
     ).toThrow('is not registered');
-    expect(() =>
-      resolveBookmakerAccount({
-        accountEntrypointUrl: 'https://parlay21.com/login',
-        registry: {
-          ...REGISTRY,
-          duplicate: { id: 'other-book', urls: { web: 'https://www.parlay21.com' } },
-        },
-      })
-    ).toThrow('matches multiple registered sportsbooks');
+  });
+
+  test('rejects catalog identity drift, duplicate hosts, and ops-only fields', () => {
+    const identityDrift = structuredClone(ARTIFACT);
+    identityDrift.bookmakers['parlay21-com'].slug = 'wrong-book';
+    expect(() => parseBookmakerCatalogArtifact(identityDrift)).toThrow(
+      'object key === id === slug'
+    );
+
+    const duplicateHost = structuredClone(ARTIFACT) as typeof ARTIFACT & {
+      bookmakers: Record<string, unknown>;
+    };
+    duplicateHost.bookmakers['other-book'] = {
+      id: 'other-book',
+      slug: 'other-book',
+      label: 'Other',
+      urls: { web: 'https://www.parlay21.com' },
+    };
+    expect(() => parseBookmakerCatalogArtifact(duplicateHost)).toThrow(
+      'duplicates host owned by parlay21-com'
+    );
+
+    const leakedOps = structuredClone(ARTIFACT) as typeof ARTIFACT & {
+      bookmakers: Record<string, unknown>;
+    };
+    leakedOps.bookmakers['parlay21-com'] = {
+      ...ARTIFACT.bookmakers['parlay21-com'],
+      apiKeyEnv: 'SECRET_NAME',
+    };
+    expect(() => parseBookmakerCatalogArtifact(leakedOps)).toThrow(
+      'apiKeyEnv is ops-only and forbidden'
+    );
   });
 });

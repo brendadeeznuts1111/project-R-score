@@ -1,16 +1,7 @@
 import { parseSportsbookId } from '../core/identifiers.ts';
 import type { PartnerOutCapabilitySnapshot } from '../core/out-capabilities.ts';
 import type { SportsbookId } from '../core/types.ts';
-
-export type BookmakerAccountCatalogEntry = {
-  id?: unknown;
-  slug?: string;
-  label?: string;
-  skin?: string;
-  brandGroup?: string;
-  domain?: string;
-  urls?: { web?: string | null };
-};
+import type { BookmakerCatalogEntry } from './bookmakers.ts';
 
 export type BookmakerAccountResolution =
   | {
@@ -26,7 +17,7 @@ export type BookmakerAccountResolution =
 
 export type ResolveBookmakerAccountInput = {
   accountEntrypointUrl: string;
-  registry: Readonly<Record<string, BookmakerAccountCatalogEntry>>;
+  registry: Readonly<Record<string, BookmakerCatalogEntry>>;
   /** Explicit host-to-SportsbookId aliases owned by the bookmaker adapter. */
   hostAliases?: Readonly<Record<string, unknown>>;
   /** Explicit operator choice; never inferred from a partial host match. */
@@ -59,9 +50,8 @@ function comparableHost(value: string): string {
   return normalizeHost(value).replace(/^www\./, '');
 }
 
-function catalogHost(entry: BookmakerAccountCatalogEntry, key: string): string | undefined {
-  const source = entry.urls?.web ?? entry.domain;
-  if (!source) return undefined;
+function catalogHost(entry: BookmakerCatalogEntry, key: string): string {
+  const source = entry.urls.web;
   try {
     const parsed = new URL(source.includes('://') ? source : `https://${source}`);
     return normalizeHost(parsed.hostname);
@@ -70,17 +60,11 @@ function catalogHost(entry: BookmakerAccountCatalogEntry, key: string): string |
   }
 }
 
-function entryId(entry: BookmakerAccountCatalogEntry, key: string): SportsbookId {
-  return parseSportsbookId(entry.id ?? entry.slug ?? key);
-}
-
 function findBySportsbookId(
-  registry: Readonly<Record<string, BookmakerAccountCatalogEntry>>,
+  registry: Readonly<Record<string, BookmakerCatalogEntry>>,
   sportsbookId: SportsbookId
-): BookmakerAccountCatalogEntry {
-  const matches = Object.entries(registry).filter(
-    ([key, entry]) => entryId(entry, key) === sportsbookId
-  );
+): BookmakerCatalogEntry {
+  const matches = Object.values(registry).filter(entry => entry.id === sportsbookId);
   if (matches.length !== 1) {
     throw new TypeError(
       matches.length === 0
@@ -88,11 +72,11 @@ function findBySportsbookId(
         : `sportsbook ${sportsbookId} is registered more than once`
     );
   }
-  return matches[0]![1];
+  return matches[0]!;
 }
 
 function resolved(
-  entry: BookmakerAccountCatalogEntry,
+  entry: BookmakerCatalogEntry,
   id: SportsbookId,
   account: { value: string; host: string },
   resolutionMethod: 'exact' | 'alias' | 'manual'
@@ -120,15 +104,15 @@ export function resolveBookmakerAccount(
   const account = parseAccountEntrypointUrl(input.accountEntrypointUrl);
   const exactMatches = Object.entries(input.registry).filter(([key, entry]) => {
     const host = catalogHost(entry, key);
-    return host !== undefined && comparableHost(host) === comparableHost(account.host);
+    return comparableHost(host) === comparableHost(account.host);
   });
-  const exactIds = new Set(exactMatches.map(([key, entry]) => entryId(entry, key)));
+  const exactIds = new Set(exactMatches.map(([, entry]) => entry.id));
   if (exactIds.size > 1) {
     throw new TypeError(`account host ${account.host} matches multiple registered sportsbooks`);
   }
   if (exactMatches[0]) {
-    const [key, entry] = exactMatches[0];
-    return resolved(entry, entryId(entry, key), account, 'exact');
+    const [, entry] = exactMatches[0];
+    return resolved(entry, entry.id, account, 'exact');
   }
 
   const aliasEntries = Object.entries(input.hostAliases ?? {}).filter(

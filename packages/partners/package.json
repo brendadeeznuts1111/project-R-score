@@ -11,6 +11,7 @@
     ".": "./src/index.ts",
     "./adapters": "./src/adapters/index.ts",
     "./adapters/bookmaker-account": "./src/adapters/bookmaker-account.ts",
+    "./adapters/bookmakers": "./src/adapters/bookmakers.ts",
     "./adapters/limit-changes": "./src/adapters/limit-changes.ts",
     "./adapters/profile-coverage": "./src/adapters/profile-coverage.ts",
     "./adapters/telegram-handshake": "./src/adapters/telegram-handshake.ts",
