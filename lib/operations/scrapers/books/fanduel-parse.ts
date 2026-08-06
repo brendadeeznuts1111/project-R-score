@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 /**
- * DraftKings HTML → LimitObservation[] (synthetic [data-fw-limit] contract).
+ * FanDuel HTML → LimitObservation[] (synthetic [data-fw-limit] contract).
  *
  * @see docs/WIRE_BOUNDARY.md
  * @see docs/harness/tenants/partner-limits.md
@@ -14,28 +14,28 @@ import {
 } from '../fw-limit-html-parse.ts';
 import type { LimitObservation } from '../limit-observation-wire.ts';
 
-export const DRAFTKINGS_HTML_SPORTSBOOK = asSportsbookId('draftkings');
-export const DRAFTKINGS_HTML_AGENT = 'draftkings-agent' as const;
+export const FANDUEL_HTML_SPORTSBOOK = asSportsbookId('fanduel');
+export const FANDUEL_HTML_AGENT = 'fanduel-agent' as const;
 
-export type DraftKingsHtmlMode = FwLimitHtmlMode;
+export type FanDuelHtmlMode = FwLimitHtmlMode;
 
-export type ParseDraftKingsHtmlOptions = {
+export type ParseFanDuelHtmlOptions = {
   observedAt: string;
-  mode: DraftKingsHtmlMode;
+  mode: FanDuelHtmlMode;
   referenceUrl?: string | null;
 };
 
 /**
- * Parse synthetic DraftKings limits HTML at the wire boundary.
- * Empty / malicious input → empty array (fail closed; no throw of interior unknown).
+ * Parse synthetic FanDuel limits HTML at the wire boundary.
+ * Empty / malicious input → empty array (fail closed).
  */
-export async function parseDraftKingsHtml(
+export async function parseFanDuelHtml(
   html: string,
-  options: ParseDraftKingsHtmlOptions
+  options: ParseFanDuelHtmlOptions
 ): Promise<LimitObservation[]> {
   const shared: ParseFwLimitHtmlOptions = {
-    sportsbook: DRAFTKINGS_HTML_SPORTSBOOK,
-    agent: DRAFTKINGS_HTML_AGENT,
+    sportsbook: FANDUEL_HTML_SPORTSBOOK,
+    agent: FANDUEL_HTML_AGENT,
     observedAt: options.observedAt,
     mode: options.mode,
     referenceUrl: options.referenceUrl,

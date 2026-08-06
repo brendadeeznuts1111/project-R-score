@@ -39,10 +39,11 @@ bun run agent detect-edges --host hardrock.bet --seed-fixtures
 bun run agent monitor-odds --once --hosts hardrock.bet
 bun run scrape:odds bet365
 bun run agent scrape odds --source bet365
-# DraftKings HTML: fixture parse by default (CI-safe)
+# DraftKings / FanDuel HTML: fixture parse by default (CI-safe)
 bun run scrape:odds draftkings --html
+bun run scrape:odds fanduel --html
 # Opt-in live WebView HTML (never default on agent serve):
-#   bun run scrape:odds draftkings --html --live
+#   bun run scrape:odds fanduel --html --live
 #   OPERATOR_WEBVIEW_SCRAPE=1 bun run scrape:odds draftkings --html
 bun run agent serve --port 8790
 # optional Bun.cron monitor (or OPERATOR_ODDS_MONITOR=1):
@@ -51,7 +52,7 @@ bun run agent registry-readme event-store --version 1.0.0
 bun tools/branded-id-check.ts --strict lib/operator-research
 ```
 
-**HTML / WebView scrape gates** (Tier 4 DraftKings first): `--html` alone reads the
+**HTML / WebView scrape gates** (Tier 4 DraftKings · FanDuel): `--html` alone reads the
 committed fixture under `lib/operations/scrapers/fixtures/` (`mode: html_fixture`).
 Live capture requires `--html` **and** (`--live` or `OPERATOR_WEBVIEW_SCRAPE=1`) →
 short-lived `await using Bun.WebView` in

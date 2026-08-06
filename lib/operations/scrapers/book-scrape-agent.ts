@@ -15,9 +15,9 @@ import type { SportsbookId } from './domain.ts';
 export type BookScrapeOptions = {
   live?: boolean;
   /**
-   * HTML path — DraftKings uses fixture parse by default; live WebView when
-   * combined with `live` / `OPERATOR_WEBVIEW_SCRAPE=1`. Other books may stub
-   * fail-closed until a parser ships.
+   * HTML path — DraftKings / FanDuel use fixture parse by default; live WebView
+   * when combined with `live` / `OPERATOR_WEBVIEW_SCRAPE=1`. Other books may
+   * stub fail-closed until a parser ships.
    */
   html?: boolean;
   timeoutMs?: number;
