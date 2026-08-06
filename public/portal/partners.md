@@ -54,15 +54,21 @@ Hash routes: `#partners` · `#partner/CODE` · `#partner/CODE/accounting` ·
 ```bash
 bun run telegram:handshake:catalog
 bun run telegram:handshake:invite-gap
+bun run telegram:handshake:readiness --deep
 bun run telegram:package-group:accounting
+bun run telegram:ops -- link-package-group CODE -100… --invite 'https://t.me/+…'
 bun run seat:desk:refresh
 bun run seat:desk:partner-message CALL --json
 bun run partners:build
 bun run partners:validate
+bun run partner-surface-inventory:validate
 bun run soft:accounting:bake
 # Soft live: bun run soft:accounting:from-ct
 bun run bookmakers:desk-coverage   # outs BOOK labels ↔ registry
 bun run ops:snapshot --no-seed     # dod-queue + partners embeds
+# Flags / REF:ID (handshake · lint-wires · onboard) stay in sync
+bun run docs:refid:check
+bun run docs:refid:audit
 ```
 
 ## Failure paths
@@ -88,7 +94,14 @@ bun run ops:snapshot --no-seed     # dod-queue + partners embeds
 | Pages vs local | [routing.md](./routing.md) |
 | Ops pulse | [ops.md](./ops.md) · [index.md](./index.md) |
 
-Docs: [`partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md) ·
+Docs: [`partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md)
+(Flags REF:ID §1.1 · `telegram:ops`) ·
 [`seat-capital-desk.md`](../../docs/harness/tenants/seat-capital-desk.md) ·
 [`partner-domain-map.md`](../../docs/harness/tenants/partner-domain-map.md) ·
-[`telegram-factory.md`](../../docs/harness/tenants/telegram-factory.md).
+[`partner-surface-inventory.md`](../../docs/design/partner-surface-inventory.md)
+(lint-wires Flags · documentation register) ·
+[`unified-partner-profile.md`](../../docs/design/unified-partner-profile.md)
+(`partner:onboard` Flags) ·
+[`telegram-factory.md`](../../docs/harness/tenants/telegram-factory.md) ·
+[`@factorywager/partners`](../../packages/partners/README.md) ·
+[wiki partner/Telegram tenants](../../wiki-index.md#operator--portal--telegram).

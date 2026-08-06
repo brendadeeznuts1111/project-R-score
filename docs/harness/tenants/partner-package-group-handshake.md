@@ -10,6 +10,9 @@
 | This spec | [`partner-package-group-handshake.md`](partner-package-group-handshake.md) |
 | Partner identity spine | [`partner-onboarding-package.md`](partner-onboarding-package.md) |
 | Factory Telegram | [`telegram-factory.md`](telegram-factory.md) |
+| Portal board | [`/portal/partners/`](../../../public/portal/partners/) · [`partners.md`](../../../public/portal/partners.md) |
+| Partners package | [`@factorywager/partners`](../../../packages/partners/README.md) · `./adapters/telegram-handshake` |
+| REF:ID Flags | §1.1 table below · `bun run docs:refid:check` · `telegramOpsToolFlags` in [`ref-id-tool-flags.ts`](../../../lib/docs/ref-id-tool-flags.ts) |
 | Package title grammar (factory) | [`lib/telegram/surfaces.ts`](../../../lib/telegram/surfaces.ts) `formatPackageGroupTitle` |
 | Package title grammar (ct) | [`toc-ops-repo/src/central-tool/telegram-surfaces.ts`](../../../toc-ops-repo/src/central-tool/telegram-surfaces.ts) `packageGroupTitle` |
 | Registry | [`lib/telegram/package-group-registry.ts`](../../../lib/telegram/package-group-registry.ts) |

@@ -85,6 +85,17 @@ Contract authority:
 - [`docs/design/partner-dashboard-semantic-map.md`](../../docs/design/partner-dashboard-semantic-map.md)
 - [`docs/design/partner-type-reference-map.md`](../../docs/design/partner-type-reference-map.md)
 - [`docs/design/partner-dashboard-field-lineage.md`](../../docs/design/partner-dashboard-field-lineage.md)
+
+Operator mesh (portal · Telegram · inventory · REF:ID):
+
+| Concern | Path / command |
+| ------- | -------------- |
+| Portal board | [`/portal/partners/`](../../public/portal/partners/) · [`public/portal/partners.md`](../../public/portal/partners.md) |
+| Handshake runbook | [`partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md) · `bun run telegram:handshake:catalog` |
+| Factory Telegram | [`telegram-factory.md`](../../docs/harness/tenants/telegram-factory.md) |
+| Surface inventory | [`partner-surface-inventory.md`](../../docs/design/partner-surface-inventory.md) · `bun run partner-surface-inventory:validate` |
+| Documentation register REF:IDs | `PARTNER_DOCUMENTATION_REFS` · `bun run docs:refid:check` · `docs:refid:audit` |
+| Wiki tenant map | [wiki-index § Operator · portal · Telegram](../../wiki-index.md#operator--portal--telegram) |
 - [`docs/design/partner-code-consolidation.md`](../../docs/design/partner-code-consolidation.md)
 - [`public/registry/partner-profile-coverage.json`](../../public/registry/partner-profile-coverage.json)
 

@@ -200,11 +200,14 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 | Ops snapshot            | [`ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md)                                                            |
 | Public plane            | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                            |
 | serve-public bind       | [`serve-public-bind.md`](docs/harness/tenants/serve-public-bind.md) · `brand:status:bind` · `brand:status:lifecycle` |
-| Factory Telegram        | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md)                                                    |
-| Package-group handshake | [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md)                      |
+| Factory Telegram        | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · portal [`partners.md`](public/portal/partners.md) |
+| Package-group handshake | [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) · Flags REF:ID §1.1 (`docs:refid:check`) |
+| Partner surface inventory | [`partner-surface-inventory.md`](docs/design/partner-surface-inventory.md) · bake `/registry/partner-surface-inventory.json` |
+| Partner domain map      | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · package [`@factorywager/partners`](packages/partners/README.md) |
 | Seat capital desk       | [`seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md)                                                  |
-| Partner onboard         | [`partner-onboarding-package.md`](docs/harness/tenants/partner-onboarding-package.md)                                |
+| Partner onboard         | [`partner-onboarding-package.md`](docs/harness/tenants/partner-onboarding-package.md) · profile Flags REF:ID ([unified-partner-profile](docs/design/unified-partner-profile.md)) |
 | Ops partner bridge      | [`ops-partner-bridge.md`](docs/harness/tenants/ops-partner-bridge.md)                                                |
+| REF:ID flags / TOC      | [CONTRIBUTING § REF:ID](docs/contributing/CONTRIBUTING.md#refid-validation) · `bun run docs:refid:check` · `docs:refid:audit` |
 | Workspace lane cross-map | [`workspace-lane-cross-map.md`](docs/harness/tenants/workspace-lane-cross-map.md)                                  |
 | Command centre          | [`command-centre.md`](docs/harness/tenants/command-centre.md)                                                        |
 | Portal doctor           | [`portal-doctor.md`](docs/harness/tenants/portal-doctor.md)                                                          |
@@ -325,8 +328,12 @@ bun run harness:status
 bun run ops:snapshot --no-seed
 bun run compliance:verify
 bun run telegram:handshake:readiness --deep
+bun run telegram:handshake:catalog
 bun run test:seat-desk
 bun test tests/identity-*.test.ts
+bun run docs:refid:check
+bun run docs:refid:audit          # flags-table-only=0
+bun run partner-surface-inventory:validate
 bun run verify:portal:static
 bun run public:audit:verify
 bun run skills:validate
