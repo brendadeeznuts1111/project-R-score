@@ -1,994 +1,2824 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bun Agent – Operator Desk v1.13</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { color-scheme: dark; --bg:#0b0e14; --surface:#131b24; --surface-2:#1e2834; --line:#263343; --text:#e8edf5; --muted:#8fa1b8; --accent:#5fc3f4; --ok:#6fcf97; --warn:#f9ca7f; --bad:#f28b82; }
-    body { background: radial-gradient(1100px 540px at 15% -15%, #1a2b3d 0%, var(--bg) 58%); color: var(--text); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; padding: 24px; min-height: 100vh; }
-    .container { max-width: 1800px; margin: 0 auto; }
-    .skip-link { position: fixed; top: 8px; left: 8px; transform: translateY(-160%); background: var(--accent); color: #07111b; padding: 8px 12px; border-radius: 8px; z-index: 3000; font-weight: 700; }
-    .skip-link:focus { transform: translateY(0); }
-    .desk-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
-    .desk-badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
-    h1 { font-size: 28px; font-weight: 600; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-    h1 small { font-size: 14px; font-weight: 400; color: #7a8ba3; }
-    .subhead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 24px; color: #7a8ba3; border-bottom: 1px solid #1e2630; padding-bottom: 12px; font-size: 14px; gap: 8px; }
-    .badge { background: #1e2630; padding: 4px 12px; border-radius: 20px; font-size: 12px; color: #b6c8e0; display: inline-block; }
-    .tabs { display: flex; gap: 0; border-bottom: 1px solid #1e2834; margin-bottom: 24px; flex-wrap: wrap; }
-    .tabs .tab { padding: 10px 20px; cursor: pointer; background: #131b24; color: var(--text); border: 1px solid transparent; border-radius: 8px 8px 0 0; margin-right: 4px; font: inherit; font-weight: 500; }
-    .tabs .tab.active { background: #1e2834; border-color: #1e2834; border-bottom-color: #131b24; color: #5fc3f4; }
-    .tab:focus-visible, .btn:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-    .tab-content { display: none; } .tab-content.active { display: block; }
-    .card { background: #131b24; border-radius: 16px; border: 1px solid #1e2834; overflow: hidden; margin-bottom: 24px; }
-    .card-header { padding: 14px 20px; border-bottom: 1px solid #1e2834; display: flex; justify-content: space-between; align-items: center; font-weight: 500; font-size: 15px; flex-wrap: wrap; gap: 8px; }
-    .card-body { padding: 16px 20px 20px; overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th { text-align: left; padding: 10px 8px; color: #7a8ba3; font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #1e2834; white-space: nowrap; }
-    td { padding: 10px 8px; border-bottom: 1px solid #1a212a; vertical-align: middle; }
-    .status-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
-    .status-online { background: #1a3a2a; color: #6fcf97; }
-    .status-offline { background: #3a1a1a; color: #f28b82; }
-    .status-pending { background: #2a2a1a; color: #f9ca7f; }
-    .btn { background: #1e2834; border: none; color: #e8edf5; padding: 6px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-    .btn:hover { background: #2a3644; }
-    .btn-primary { background: #2a6f9c; color: #fff; }
-    .btn-success { background: #1f6e43; color: #fff; }
-    .btn-danger { background: #6f2a2a; color: #fff; }
-    .btn-sm { padding: 4px 10px; font-size: 12px; }
-    .flex { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .mt-2 { margin-top: 8px; } .text-muted { color: #7a8ba3; font-size: 12px; }
-    .pill { display: inline-block; background: #1a212a; padding: 2px 10px; border-radius: 12px; font-size: 11px; color: #b6c8e0; margin-right: 4px; }
-    .live-panel { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-    .live-item { background: #0e1620; border-radius: 10px; padding: 10px 14px; border-left: 3px solid #2a6f9c; font-size: 13px; }
-    .live-item .meta { display: flex; justify-content: space-between; color: #7a8ba3; font-size: 11px; margin-top: 4px; }
-    .empty-state { color: #7a8ba3; text-align: center; padding: 30px 0; font-size: 14px; }
-    .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; background: #131b24; padding: 12px 16px; border-radius: 12px; border: 1px solid #1e2834; align-items: center; }
-    .filter-bar select { background: #1e2834; color: #e8edf5; border: none; padding: 6px 12px; border-radius: 8px; font-size: 13px; }
-    .filter-bar button { background: #2a6f9c; border: none; color: #fff; padding: 6px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; }
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
-    .modal.active { display: flex; }
-    .modal-content { background: #131b24; padding: 30px; border-radius: 16px; max-width: 520px; width: 90%; border: 1px solid #1e2834; max-height: 90vh; overflow-y: auto; }
-    .modal-content label { display: block; margin: 8px 0 4px; font-size: 13px; color: #b6c8e0; }
-    .modal-content input, .modal-content select { width: 100%; padding: 8px; margin-bottom: 12px; background: #1e2834; color: #e8edf5; border: 1px solid #1e2834; border-radius: 8px; }
-    .toast { position: fixed; bottom: 20px; right: 20px; background: #1f6e43; color: #fff; padding: 12px 20px; border-radius: 8px; z-index: 2000; display: none; }
-    .chart-container { height: 150px; margin-top: 8px; }
-    .chart-container canvas { width: 100%; height: 150px; }
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
-    .kpi { background: #0e1620; border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
-    .kpi-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
-    .kpi-value { margin: 5px 0 0; font-size: 22px; font-weight: 700; }
-    .analytics-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-    .analytics-grid .card { min-width: 0; }
-    .metric-note { color: var(--muted); font-size: 12px; line-height: 1.5; }
-    .distribution-list { display: grid; gap: 10px; }
-    .distribution-row { display: grid; grid-template-columns: 64px minmax(80px, 1fr) 36px; gap: 10px; align-items: center; font-size: 12px; }
-    .distribution-track { height: 10px; overflow: hidden; border-radius: 999px; background: #1e2834; }
-    .distribution-fill { display: block; height: 100%; min-width: 2px; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--ok)); }
-    .kind-list { display: grid; gap: 10px; }
-    .kind-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 9px; background: #0e1620; }
-    .health-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; list-style: none; }
-    .health-row { display: flex; justify-content: space-between; flex-wrap: wrap; min-width: 0; gap: 12px; background: #0e1620; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
-    .health-row-meta { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 6px; text-align: right; }
-    .liquidity-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; border: 1px solid var(--line); }
-    .liquidity-high { color: var(--ok); background: #142e22; }
-    .liquidity-medium { color: var(--accent); background: #142738; }
-    .liquidity-low { color: var(--warn); background: #302914; }
-    .liquidity-illiquid { color: var(--bad); background: #351a1a; }
-    .liquidity-unknown { color: var(--muted); background: #1a212a; }
-    @media (max-width: 760px) {
-      body { padding: 14px; }
-      h1 { font-size: 23px; }
-      .desk-badges { justify-content: flex-start; }
-      .tabs { gap: 6px; border: 0; }
-      .tabs .tab { flex: 1 1 calc(50% - 6px); margin: 0; border-radius: 8px; border-color: var(--line); }
-      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .health-list, .analytics-grid { grid-template-columns: 1fr; }
-      .card-header, .card-body { padding-left: 14px; padding-right: 14px; }
-      .modal-content { padding: 20px; width: calc(100% - 24px); }
-    }
-  </style>
-</head>
-<body>
-  <a class="skip-link" href="#main-content">Skip to dashboard</a>
-  <main class="container" id="main-content">
-    <header class="desk-header">
-      <h1>🧠 Bun Agent <small>Operator Desk v1.13 · v1.05 contracts · v1.07 workflow</small></h1>
-      <div class="desk-badges" aria-label="Dashboard capabilities">
-        <span class="badge">🛡️ CSRF protected</span>
-        <span class="badge">📡 Signals + alerts</span>
-        <span class="badge">🧪 Truthful API states</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bun Agent – Operator Desk v1.13</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        color-scheme: dark;
+        --bg: #0b0e14;
+        --surface: #131b24;
+        --surface-2: #1e2834;
+        --line: #263343;
+        --text: #e8edf5;
+        --muted: #8fa1b8;
+        --accent: #5fc3f4;
+        --ok: #6fcf97;
+        --warn: #f9ca7f;
+        --bad: #f28b82;
+      }
+      body {
+        background: radial-gradient(1100px 540px at 15% -15%, #1a2b3d 0%, var(--bg) 58%);
+        color: var(--text);
+        font-family:
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+        padding: 24px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1800px;
+        margin: 0 auto;
+      }
+      .skip-link {
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        transform: translateY(-160%);
+        background: var(--accent);
+        color: #07111b;
+        padding: 8px 12px;
+        border-radius: 8px;
+        z-index: 3000;
+        font-weight: 700;
+      }
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+      .desk-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .desk-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+      h1 {
+        font-size: 28px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      h1 small {
+        font-size: 14px;
+        font-weight: 400;
+        color: #7a8ba3;
+      }
+      .subhead {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        color: #7a8ba3;
+        border-bottom: 1px solid #1e2630;
+        padding-bottom: 12px;
+        font-size: 14px;
+        gap: 8px;
+      }
+      .badge {
+        background: #1e2630;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        color: #b6c8e0;
+        display: inline-block;
+      }
+      .tabs {
+        display: flex;
+        gap: 0;
+        border-bottom: 1px solid #1e2834;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+      }
+      .tabs .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        background: #131b24;
+        color: var(--text);
+        border: 1px solid transparent;
+        border-radius: 8px 8px 0 0;
+        margin-right: 4px;
+        font: inherit;
+        font-weight: 500;
+      }
+      .tabs .tab.active {
+        background: #1e2834;
+        border-color: #1e2834;
+        border-bottom-color: #131b24;
+        color: #5fc3f4;
+      }
+      .tab:focus-visible,
+      .btn:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      .card {
+        background: #131b24;
+        border-radius: 16px;
+        border: 1px solid #1e2834;
+        overflow: hidden;
+        margin-bottom: 24px;
+      }
+      .card-header {
+        padding: 14px 20px;
+        border-bottom: 1px solid #1e2834;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 500;
+        font-size: 15px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .card-body {
+        padding: 16px 20px 20px;
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      th {
+        text-align: left;
+        padding: 10px 8px;
+        color: #7a8ba3;
+        font-weight: 500;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid #1e2834;
+        white-space: nowrap;
+      }
+      td {
+        padding: 10px 8px;
+        border-bottom: 1px solid #1a212a;
+        vertical-align: middle;
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+      }
+      .status-online {
+        background: #1a3a2a;
+        color: #6fcf97;
+      }
+      .status-offline {
+        background: #3a1a1a;
+        color: #f28b82;
+      }
+      .status-pending {
+        background: #2a2a1a;
+        color: #f9ca7f;
+      }
+      .btn {
+        background: #1e2834;
+        border: none;
+        color: #e8edf5;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .btn:hover {
+        background: #2a3644;
+      }
+      .btn-primary {
+        background: #2a6f9c;
+        color: #fff;
+      }
+      .btn-success {
+        background: #1f6e43;
+        color: #fff;
+      }
+      .btn-danger {
+        background: #6f2a2a;
+        color: #fff;
+      }
+      .btn-sm {
+        padding: 4px 10px;
+        font-size: 12px;
+      }
+      .flex {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .mt-2 {
+        margin-top: 8px;
+      }
+      .text-muted {
+        color: #7a8ba3;
+        font-size: 12px;
+      }
+      .pill {
+        display: inline-block;
+        background: #1a212a;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        color: #b6c8e0;
+        margin-right: 4px;
+      }
+      .live-panel {
+        max-height: 220px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .live-item {
+        background: #0e1620;
+        border-radius: 10px;
+        padding: 10px 14px;
+        border-left: 3px solid #2a6f9c;
+        font-size: 13px;
+      }
+      .live-item .meta {
+        display: flex;
+        justify-content: space-between;
+        color: #7a8ba3;
+        font-size: 11px;
+        margin-top: 4px;
+      }
+      .empty-state {
+        color: #7a8ba3;
+        text-align: center;
+        padding: 30px 0;
+        font-size: 14px;
+      }
+      .filter-bar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+        background: #131b24;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid #1e2834;
+        align-items: center;
+      }
+      .filter-bar select {
+        background: #1e2834;
+        color: #e8edf5;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+      }
+      .filter-bar button {
+        background: #2a6f9c;
+        border: none;
+        color: #fff;
+        padding: 6px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal.active {
+        display: flex;
+      }
+      .modal-content {
+        background: #131b24;
+        padding: 30px;
+        border-radius: 16px;
+        max-width: 520px;
+        width: 90%;
+        border: 1px solid #1e2834;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .modal-content label {
+        display: block;
+        margin: 8px 0 4px;
+        font-size: 13px;
+        color: #b6c8e0;
+      }
+      .modal-content input,
+      .modal-content select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 12px;
+        background: #1e2834;
+        color: #e8edf5;
+        border: 1px solid #1e2834;
+        border-radius: 8px;
+      }
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #1f6e43;
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 8px;
+        z-index: 2000;
+        display: none;
+      }
+      .chart-container {
+        height: 150px;
+        margin-top: 8px;
+      }
+      .chart-container canvas {
+        width: 100%;
+        height: 150px;
+      }
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .kpi {
+        background: #0e1620;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+      }
+      .kpi-label {
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .kpi-value {
+        margin: 5px 0 0;
+        font-size: 22px;
+        font-weight: 700;
+      }
+      .analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .analytics-grid .card {
+        min-width: 0;
+      }
+      .metric-note {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      .distribution-list {
+        display: grid;
+        gap: 10px;
+      }
+      .distribution-row {
+        display: grid;
+        grid-template-columns: 64px minmax(80px, 1fr) 36px;
+        gap: 10px;
+        align-items: center;
+        font-size: 12px;
+      }
+      .distribution-track {
+        height: 10px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #1e2834;
+      }
+      .distribution-fill {
+        display: block;
+        height: 100%;
+        min-width: 2px;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--accent), var(--ok));
+      }
+      .kind-list {
+        display: grid;
+        gap: 10px;
+      }
+      .kind-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 9px 11px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #0e1620;
+      }
+      .health-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        list-style: none;
+      }
+      .health-row {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        min-width: 0;
+        gap: 12px;
+        background: #0e1620;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+      }
+      .health-row-meta {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        text-align: right;
+      }
+      .liquidity-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        border: 1px solid var(--line);
+      }
+      .liquidity-high {
+        color: var(--ok);
+        background: #142e22;
+      }
+      .liquidity-medium {
+        color: var(--accent);
+        background: #142738;
+      }
+      .liquidity-low {
+        color: var(--warn);
+        background: #302914;
+      }
+      .liquidity-illiquid {
+        color: var(--bad);
+        background: #351a1a;
+      }
+      .liquidity-unknown {
+        color: var(--muted);
+        background: #1a212a;
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .stream-toolbar,
+      .form-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .stream-status {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .stream-status[data-state='connected'] {
+        color: var(--ok);
+      }
+      .stream-status[data-state='error'] {
+        color: var(--bad);
+      }
+      .odds-feed {
+        list-style: none;
+        display: grid;
+        gap: 8px;
+        max-height: min(60vh, 480px);
+        overflow: auto;
+      }
+      .odds-feed li {
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--accent);
+        border-radius: 10px;
+        background: #0e1620;
+        padding: 11px 13px;
+      }
+      .odds-feed-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+      .field {
+        display: grid;
+        gap: 6px;
+        min-width: 0;
+      }
+      .field label {
+        color: #b6c8e0;
+        font-size: 13px;
+      }
+      .field input,
+      .field select {
+        width: 100%;
+        min-height: 44px;
+        padding: 8px 10px;
+        background: #1e2834;
+        color: var(--text);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .error-summary {
+        color: var(--bad);
+        border: 1px solid #6f2a2a;
+        background: #30191b;
+        border-radius: 10px;
+        padding: 12px;
+        margin-top: 12px;
+      }
+      .warning-list {
+        margin: 8px 0 0 20px;
+        color: var(--warn);
+      }
+      progress {
+        width: 100%;
+        margin: 8px 0;
+      }
+      @media (max-width: 760px) {
+        body {
+          padding: 14px;
+        }
+        h1 {
+          font-size: 23px;
+        }
+        .desk-badges {
+          justify-content: flex-start;
+        }
+        .tabs {
+          gap: 6px;
+          border: 0;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          padding: 2px 2px 8px;
+          scrollbar-width: thin;
+        }
+        .tabs .tab {
+          flex: 0 0 auto;
+          min-height: 44px;
+          margin: 0;
+          border-radius: 8px;
+          border-color: var(--line);
+        }
+        .kpi-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .health-list,
+        .analytics-grid {
+          grid-template-columns: 1fr;
+        }
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        .stream-toolbar .btn,
+        .form-actions .btn {
+          min-height: 44px;
+        }
+        .card-header,
+        .card-body {
+          padding-left: 14px;
+          padding-right: 14px;
+        }
+        .modal-content {
+          padding: 20px;
+          width: calc(100% - 24px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to dashboard</a>
+    <main class="container" id="main-content">
+      <header class="desk-header">
+        <h1>🧠 Bun Agent <small>Operator Desk v1.13 · v1.05 contracts · v1.07 workflow</small></h1>
+        <div class="desk-badges" aria-label="Dashboard capabilities">
+          <span class="badge">🛡️ CSRF protected</span>
+          <span class="badge">📡 Signals + alerts</span>
+          <span class="badge">🧪 Truthful API states</span>
+        </div>
+      </header>
+      <div class="subhead">
+        <span
+          >TOML rules · <span id="bookCount">—</span> books · stable default remains
+          <a href="/dashboard-v1.05.html" style="color: #5fc3f4">v1.05</a></span
+        >
+        <span
+          ><span class="badge" id="dataModeBadge">Connecting…</span
+          ><span class="badge">📦 Bun.TOML</span></span
+        >
       </div>
-    </header>
-    <div class="subhead">
-      <span>TOML rules · <span id="bookCount">—</span> books · stable default remains <a href="/dashboard-v1.05.html" style="color:#5fc3f4">v1.05</a></span>
-      <span><span class="badge" id="dataModeBadge">Connecting…</span><span class="badge">📦 Bun.TOML</span></span>
-    </div>
-    <nav class="tabs" id="mainTabs" role="tablist" aria-label="Operator desk views">
-      <button type="button" class="tab" id="tab-button-events" role="tab" aria-selected="false" aria-controls="tab-events" tabindex="-1" data-tab="events">📅 Events</button>
-      <button type="button" class="tab" id="tab-button-detail" role="tab" aria-selected="false" aria-controls="tab-detail" tabindex="-1" data-tab="detail">📈 Detail</button>
-      <button type="button" class="tab active" id="tab-button-signals" role="tab" aria-selected="true" aria-controls="tab-signals" tabindex="0" data-tab="signals">⚡ Edges</button>
-      <button type="button" class="tab" id="tab-button-alerts" role="tab" aria-selected="false" aria-controls="tab-alerts" tabindex="-1" data-tab="alerts">🚨 Rules</button>
-      <button type="button" class="tab" id="tab-button-health" role="tab" aria-selected="false" aria-controls="tab-health" tabindex="-1" data-tab="health">💚 Health</button>
-    </nav>
+      <nav class="tabs" id="mainTabs" role="tablist" aria-label="Operator desk views">
+        <button
+          type="button"
+          class="tab"
+          id="tab-button-events"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tab-events"
+          tabindex="-1"
+          data-tab="events"
+        >
+          📅 Events
+        </button>
+        <button
+          type="button"
+          class="tab"
+          id="tab-button-detail"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tab-detail"
+          tabindex="-1"
+          data-tab="detail"
+        >
+          📈 Detail
+        </button>
+        <button
+          type="button"
+          class="tab active"
+          id="tab-button-signals"
+          role="tab"
+          aria-selected="true"
+          aria-controls="tab-signals"
+          tabindex="0"
+          data-tab="signals"
+        >
+          ⚡ Edges
+        </button>
+        <button
+          type="button"
+          class="tab"
+          id="tab-button-live"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tab-live"
+          tabindex="-1"
+          data-tab="live"
+        >
+          📡 Live
+        </button>
+        <button
+          type="button"
+          class="tab"
+          id="tab-button-backtest"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tab-backtest"
+          tabindex="-1"
+          data-tab="backtest"
+        >
+          📊 Backtest
+        </button>
+        <button
+          type="button"
+          class="tab"
+          id="tab-button-alerts"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tab-alerts"
+          tabindex="-1"
+          data-tab="alerts"
+        >
+          🚨 Rules
+        </button>
+        <button
+          type="button"
+          class="tab"
+          id="tab-button-health"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tab-health"
+          tabindex="-1"
+          data-tab="health"
+        >
+          💚 Health
+        </button>
+      </nav>
 
-    <section class="tab-content" id="tab-events" role="tabpanel" aria-labelledby="tab-button-events" hidden>
-      <div class="filter-bar">
-        <select id="filterSportEvents" aria-label="Filter events by sport"><option value="">All Sports</option></select>
-        <select id="filterLeagueEvents" aria-label="Filter events by league"><option value="">All Leagues</option></select>
-        <select id="filterStatusEvents" aria-label="Filter events by status"><option value="">All Status</option></select>
-        <select id="filterSessionEvents" aria-label="Filter events by session"><option value="">All Sessions</option><option value="live">Live</option><option value="pregame">Pregame</option></select>
-        <button id="applyEventsFilter">Apply</button>
-        <button id="refreshEvents" class="btn btn-sm">↻ Refresh</button>
-        <button id="runResearchCycle" class="btn btn-sm btn-primary">▶ Research cycle</button>
-        <span style="margin-left:auto;" class="text-muted" id="eventsCount">0 events</span>
-      </div>
-      <div class="card"><div class="card-header"><span>📋 Events</span></div>
-        <div class="card-body" id="eventsTableContainer"><div class="empty-state">Loading…</div></div></div>
-    </section>
-
-    <section class="tab-content" id="tab-detail" role="tabpanel" aria-labelledby="tab-button-detail" hidden>
-      <div class="card">
-        <div class="card-header"><span>📈 Event Detail</span>
-          <div class="flex">
-            <label for="eventIdInput" class="text-muted">Event ID</label>
-            <input id="eventIdInput" placeholder="e.g. 42" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;width:120px;" />
-            <button id="loadEventBtn" class="btn btn-primary btn-sm">Load</button>
-          </div>
+      <section
+        class="tab-content"
+        id="tab-events"
+        role="tabpanel"
+        aria-labelledby="tab-button-events"
+        hidden
+      >
+        <div class="filter-bar">
+          <select id="filterSportEvents" aria-label="Filter events by sport">
+            <option value="">All Sports</option>
+          </select>
+          <select id="filterLeagueEvents" aria-label="Filter events by league">
+            <option value="">All Leagues</option>
+          </select>
+          <select id="filterStatusEvents" aria-label="Filter events by status">
+            <option value="">All Status</option>
+          </select>
+          <select id="filterSessionEvents" aria-label="Filter events by session">
+            <option value="">All Sessions</option>
+            <option value="live">Live</option>
+            <option value="pregame">Pregame</option>
+          </select>
+          <button id="applyEventsFilter">Apply</button>
+          <button id="refreshEvents" class="btn btn-sm">↻ Refresh</button>
+          <button id="runResearchCycle" class="btn btn-sm btn-primary">▶ Research cycle</button>
+          <span style="margin-left: auto" class="text-muted" id="eventsCount">0 events</span>
         </div>
-        <div class="card-body"><div id="eventDetailContainer"><div class="empty-state">Enter an event ID.</div></div></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span>📊 Odds History</span></div>
-        <div class="card-body">
-          <div class="chart-container"><canvas id="detailChart" width="600" height="150" aria-label="Odds history chart" role="img"></canvas></div>
-          <div class="flex mt-2">
-            <label class="text-muted" for="detailMarketType">Market</label><select id="detailMarketType"><option value="moneyline">Moneyline</option><option value="spread">Spread</option><option value="total">Total</option></select>
-            <label class="text-muted" for="detailHistoryWindow">Window</label><select id="detailHistoryWindow"><option value="0">All</option><option value="5">5m</option><option value="60">1h</option><option value="360">6h</option></select>
-            <button id="refreshChart" class="btn btn-sm">↻ Refresh</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="tab-content" id="tab-alerts" role="tabpanel" aria-labelledby="tab-button-alerts" hidden>
-      <div class="card">
-        <div class="card-header">
-          <span>🚨 Alert Rules (alerts.toml)</span>
-          <div class="flex">
-            <button id="reloadRulesBtn" class="btn btn-sm">↻ Reload TOML</button>
-            <button id="addRuleBtn" class="btn btn-success btn-sm">+ Add Rule</button>
-          </div>
-        </div>
-        <div class="card-body" id="rulesTableContainer"><div class="empty-state">Loading…</div></div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <span>📡 Event Monitor Alerts</span>
-          <div class="flex">
-            <button id="reloadEventAlertsBtn" class="btn btn-sm">↻ Reload</button>
-            <button id="saveEventAlertsBtn" class="btn btn-primary btn-sm">Save</button>
-          </div>
-        </div>
-        <div class="card-body">
-          <p class="text-muted" style="margin-bottom:12px;">new_event · price_change · limit_change — stored in data/research/alerts.json</p>
-          <div class="filter-bar" style="margin-bottom:12px;">
-            <label class="text-muted" for="evtAlertThreshold">Price threshold %</label>
-            <input type="number" id="evtAlertThreshold" step="0.1" value="2" style="background:#1e2834;border:none;color:#e8edf5;padding:6px 12px;border-radius:8px;width:80px;" />
-            <label class="text-muted" for="evtAlertTelegram">Telegram chat</label>
-            <input type="text" id="evtAlertTelegram" placeholder="ops chat id (optional)" style="background:#1e2834;border:none;color:#e8edf5;padding:6px 12px;border-radius:8px;min-width:180px;" />
-            <label class="text-muted">Partners</label>
-            <label class="text-muted" style="display:inline-flex;align-items:center;gap:4px;"><input type="checkbox" id="evtPartnerHr" value="hard-rock-florida" checked /> hard-rock</label>
-            <label class="text-muted" style="display:inline-flex;align-items:center;gap:4px;"><input type="checkbox" id="evtPartnerFonbet" value="fonbet" checked /> fonbet</label>
-            <label class="text-muted" style="display:inline-flex;align-items:center;gap:4px;"><input type="checkbox" id="evtPartnerAll" /> all (*)</label>
-            <label class="text-muted" for="evtAlertEnabled">Enabled</label>
-            <select id="evtAlertEnabled" style="background:#1e2834;color:#e8edf5;border:none;padding:6px 12px;border-radius:8px;"><option value="true">Yes</option><option value="false">No</option></select>
-          </div>
-          <div id="eventAlertsTableContainer"><div class="empty-state">Loading…</div></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span>📜 Alert History</span></div>
-        <div class="card-body live-panel" id="alertHistoryContainer"><div class="empty-state">No alerts yet.</div></div>
-      </div>
-    </section>
-
-    <section class="tab-content active" id="tab-signals" role="tabpanel" aria-labelledby="tab-button-signals">
-      <div class="filter-bar">
-        <select id="filterSignalPeriod" aria-label="Filter signals by period"><option value="all">All Periods</option><option value="prematch">Prematch</option><option value="live">Live</option></select>
-        <button id="refreshSignals" class="btn btn-sm">↻ Refresh</button>
-        <button id="evaluateAlertsBtn" class="btn btn-primary btn-sm">Evaluate Alerts</button>
-        <span style="margin-left:auto;" class="text-muted" id="signalsCount">0 signals</span>
-      </div>
-      <dl class="kpi-grid" aria-label="Signal analytics">
-        <div class="kpi"><dt class="kpi-label">Returned signals</dt><dd class="kpi-value" id="signalKpiTotal">0</dd></div>
-        <div class="kpi"><dt class="kpi-label">Arbitrage</dt><dd class="kpi-value" id="signalKpiArbitrage">0</dd></div>
-        <div class="kpi"><dt class="kpi-label">Movement</dt><dd class="kpi-value" id="signalKpiMovement">0</dd></div>
-        <div class="kpi"><dt class="kpi-label">Rule matched</dt><dd class="kpi-value" id="signalKpiMatched">0</dd></div>
-        <div class="kpi"><dt class="kpi-label">Avg arb edge</dt><dd class="kpi-value" id="signalKpiAvgArb">—</dd></div>
-        <div class="kpi"><dt class="kpi-label">Max arb edge</dt><dd class="kpi-value" id="signalKpiMaxArb">—</dd></div>
-      </dl>
-      <div class="analytics-grid">
         <div class="card">
-          <div class="card-header"><span>📊 Arbitrage Edge Distribution</span><span class="metric-note" id="arbDistributionSummary">No arbitrage signals</span></div>
-          <div class="card-body"><div class="distribution-list" id="arbDistribution" aria-live="polite"></div></div>
+          <div class="card-header"><span>📋 Events</span></div>
+          <div class="card-body" id="eventsTableContainer">
+            <div class="empty-state">Loading…</div>
+          </div>
         </div>
-        <div class="card">
-          <div class="card-header"><span>🧭 Signal Mix</span><span class="metric-note">Current response window</span></div>
-          <div class="card-body"><div class="kind-list" id="signalKindBreakdown" aria-live="polite"></div></div>
-        </div>
-      </div>
-      <p class="metric-note" style="margin:-8px 0 16px;">Kelly and confidence are intentionally withheld: the signal contract does not expose priced probabilities.</p>
-      <div class="card"><div class="card-header"><span>⚡ Detected Edges &amp; Signals</span><span class="text-muted">Arbitrage · line movement · rule matches</span></div>
-        <div class="card-body" id="signalsTableContainer"><div class="empty-state">Loading…</div></div></div>
-    </section>
+      </section>
 
-    <section class="tab-content" id="tab-health" role="tabpanel" aria-labelledby="tab-button-health" aria-busy="false" hidden>
-      <dl class="kpi-grid" aria-label="Partner health summary">
-        <div class="kpi"><dt class="kpi-label">Partners</dt><dd class="kpi-value" id="healthTotal">—</dd></div>
-        <div class="kpi"><dt class="kpi-label">Online</dt><dd class="kpi-value" id="healthOnline">—</dd></div>
-        <div class="kpi"><dt class="kpi-label">Needs attention</dt><dd class="kpi-value" id="healthAttention">—</dd></div>
-        <div class="kpi"><dt class="kpi-label">Snapshot</dt><dd class="kpi-value" id="healthGenerated">—</dd></div>
-      </dl>
-      <div class="analytics-grid">
+      <section
+        class="tab-content"
+        id="tab-detail"
+        role="tabpanel"
+        aria-labelledby="tab-button-detail"
+        hidden
+      >
         <div class="card">
-          <div class="card-header"><span>🏷️ Liquidity Tiers</span><span class="metric-note">Registry-backed</span></div>
-          <div class="card-body"><div class="distribution-list" id="healthLiquidityMix" aria-live="polite"></div></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span>💵 Limit Coverage</span><span class="metric-note">Registry max-bet fields</span></div>
+          <div class="card-header">
+            <span>📈 Event Detail</span>
+            <div class="flex">
+              <label for="eventIdInput" class="text-muted">Event ID</label>
+              <input
+                id="eventIdInput"
+                placeholder="e.g. 42"
+                style="
+                  background: #1e2834;
+                  border: 1px solid #1e2834;
+                  padding: 6px 12px;
+                  border-radius: 8px;
+                  color: #e8edf5;
+                  width: 120px;
+                "
+              />
+              <button id="loadEventBtn" class="btn btn-primary btn-sm">Load</button>
+            </div>
+          </div>
           <div class="card-body">
-            <div class="kpi-grid" style="margin:0;">
-              <div class="kpi"><div class="kpi-label">Known limits</div><div class="kpi-value" id="healthLimitKnown">—</div></div>
-              <div class="kpi"><div class="kpi-label">Median max</div><div class="kpi-value" id="healthLimitMedian">—</div></div>
-              <div class="kpi"><div class="kpi-label">Highest max</div><div class="kpi-value" id="healthLimitMax">—</div></div>
+            <div id="eventDetailContainer"><div class="empty-state">Enter an event ID.</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span>📊 Odds History</span></div>
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas
+                id="detailChart"
+                width="600"
+                height="150"
+                aria-label="Odds history chart"
+                role="img"
+              ></canvas>
+            </div>
+            <div class="flex mt-2">
+              <label class="text-muted" for="detailMarketType">Market</label
+              ><select id="detailMarketType">
+                <option value="moneyline">Moneyline</option>
+                <option value="spread">Spread</option>
+                <option value="total">Total</option>
+              </select>
+              <label class="text-muted" for="detailHistoryWindow">Window</label
+              ><select id="detailHistoryWindow">
+                <option value="0">All</option>
+                <option value="5">5m</option>
+                <option value="60">1h</option>
+                <option value="360">6h</option>
+              </select>
+              <button id="refreshChart" class="btn btn-sm">↻ Refresh</button>
             </div>
           </div>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span>💚 Partner Health</span><div class="flex"><span class="metric-note" id="healthRefreshStatus" role="status" aria-live="polite"></span><button type="button" id="refreshHealth" class="btn btn-sm">↻ Refresh</button></div></div>
-        <div class="card-body"><ul class="health-list" id="healthPartners"><li class="empty-state">Loading partner health…</li></ul></div>
-      </div>
-    </section>
+      </section>
 
-    <div class="modal" id="ruleModal" role="dialog" aria-modal="true" aria-labelledby="ruleModalTitle">
-      <div class="modal-content" tabindex="-1">
-        <h2 id="ruleModalTitle">Edit Rule</h2>
-        <input type="hidden" id="ruleEditId" />
-        <label for="ruleId">ID</label><input id="ruleId" />
-        <label for="ruleName">Name</label><input id="ruleName" />
-        <label for="ruleDescription">Description</label><input id="ruleDescription" />
-        <label for="ruleCondition">Condition</label><input id="ruleCondition" placeholder="price_change_percent > 5" />
-        <label for="rulePeriod">Period</label>
-        <select id="rulePeriod"><option value="all">All</option><option value="prematch">Prematch</option><option value="live">Live</option></select>
-        <label for="rulePattern">Pattern</label>
-        <select id="rulePattern"><option value="">None</option><option value="spike">Spike</option><option value="drift">Drift</option><option value="reversal">Reversal</option><option value="arbitrage">Arbitrage</option></select>
-        <label for="ruleEdgeMin">Threshold / Edge min (%)</label><input type="number" id="ruleEdgeMin" step="0.1" placeholder="2.0" />
-        <label for="ruleEdgeMax">Edge max (%) optional</label><input type="number" id="ruleEdgeMax" step="0.1" placeholder="10.0" />
-        <label for="ruleChannels">Channels</label><input id="ruleChannels" placeholder="ws, email, telegram" />
-        <label for="ruleTelegramChat">Telegram chat ID</label><input id="ruleTelegramChat" placeholder="optional ops chat override" />
-        <label for="ruleEmailRecipients">Email recipients</label><input id="ruleEmailRecipients" />
-        <label for="ruleMarketType">Market type</label><input id="ruleMarketType" placeholder="moneyline | spread | total | all" />
-        <label for="ruleGeo">Geo</label><input id="ruleGeo" placeholder="US | UK | EU | all" />
-        <label for="ruleState">State</label><input id="ruleState" placeholder="NV (optional)" />
-        <label for="ruleLimitMin">Limit min / max (USD stake band)</label>
-        <div class="flex" style="gap:8px;">
-          <input type="number" id="ruleLimitMin" placeholder="min" aria-label="Minimum stake limit" style="flex:1;" />
-          <input type="number" id="ruleLimitMax" placeholder="max" aria-label="Maximum stake limit" style="flex:1;" />
+      <section
+        class="tab-content"
+        id="tab-alerts"
+        role="tabpanel"
+        aria-labelledby="tab-button-alerts"
+        hidden
+      >
+        <div class="card">
+          <div class="card-header">
+            <span>🚨 Alert Rules (alerts.toml)</span>
+            <div class="flex">
+              <button id="reloadRulesBtn" class="btn btn-sm">↻ Reload TOML</button>
+              <button id="addRuleBtn" class="btn btn-success btn-sm">+ Add Rule</button>
+            </div>
+          </div>
+          <div class="card-body" id="rulesTableContainer">
+            <div class="empty-state">Loading…</div>
+          </div>
         </div>
-        <label for="ruleLatency">Latency threshold (ms)</label><input type="number" id="ruleLatency" placeholder="200" />
-        <label for="ruleBookCompare">Bookmaker comparison</label><input id="ruleBookCompare" placeholder="fonbet_vs_betmgm" />
-        <label for="rulePartnerIds">Partner IDs</label><input id="rulePartnerIds" placeholder="hard-rock-florida, fonbet" />
-        <label for="ruleActive">Active</label><select id="ruleActive"><option value="true">Yes</option><option value="false">No</option></select>
-        <div class="flex" style="gap:8px;margin-top:8px;">
-          <button id="saveRuleBtn" class="btn btn-primary">Save</button>
-          <button id="deleteRuleBtn" class="btn btn-danger" style="display:none;">Delete</button>
-          <button id="cancelRuleBtn" class="btn btn-sm" style="background:transparent;">Cancel</button>
+        <div class="card">
+          <div class="card-header">
+            <span>📡 Event Monitor Alerts</span>
+            <div class="flex">
+              <button id="reloadEventAlertsBtn" class="btn btn-sm">↻ Reload</button>
+              <button id="saveEventAlertsBtn" class="btn btn-primary btn-sm">Save</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <p class="text-muted" style="margin-bottom: 12px">
+              new_event · price_change · limit_change — stored in data/research/alerts.json
+            </p>
+            <div class="filter-bar" style="margin-bottom: 12px">
+              <label class="text-muted" for="evtAlertThreshold">Price threshold %</label>
+              <input
+                type="number"
+                id="evtAlertThreshold"
+                step="0.1"
+                value="2"
+                style="
+                  background: #1e2834;
+                  border: none;
+                  color: #e8edf5;
+                  padding: 6px 12px;
+                  border-radius: 8px;
+                  width: 80px;
+                "
+              />
+              <label class="text-muted" for="evtAlertTelegram">Telegram chat</label>
+              <input
+                type="text"
+                id="evtAlertTelegram"
+                placeholder="ops chat id (optional)"
+                style="
+                  background: #1e2834;
+                  border: none;
+                  color: #e8edf5;
+                  padding: 6px 12px;
+                  border-radius: 8px;
+                  min-width: 180px;
+                "
+              />
+              <label class="text-muted">Partners</label>
+              <label class="text-muted" style="display: inline-flex; align-items: center; gap: 4px"
+                ><input type="checkbox" id="evtPartnerHr" value="hard-rock-florida" checked />
+                hard-rock</label
+              >
+              <label class="text-muted" style="display: inline-flex; align-items: center; gap: 4px"
+                ><input type="checkbox" id="evtPartnerFonbet" value="fonbet" checked />
+                fonbet</label
+              >
+              <label class="text-muted" style="display: inline-flex; align-items: center; gap: 4px"
+                ><input type="checkbox" id="evtPartnerAll" /> all (*)</label
+              >
+              <label class="text-muted" for="evtAlertEnabled">Enabled</label>
+              <select
+                id="evtAlertEnabled"
+                style="
+                  background: #1e2834;
+                  color: #e8edf5;
+                  border: none;
+                  padding: 6px 12px;
+                  border-radius: 8px;
+                "
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+            <div id="eventAlertsTableContainer"><div class="empty-state">Loading…</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span>📜 Alert History</span></div>
+          <div class="card-body live-panel" id="alertHistoryContainer">
+            <div class="empty-state">No alerts yet.</div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="tab-content active"
+        id="tab-signals"
+        role="tabpanel"
+        aria-labelledby="tab-button-signals"
+      >
+        <div class="filter-bar">
+          <select id="filterSignalPeriod" aria-label="Filter signals by period">
+            <option value="all">All Periods</option>
+            <option value="prematch">Prematch</option>
+            <option value="live">Live</option>
+          </select>
+          <button id="refreshSignals" class="btn btn-sm">↻ Refresh</button>
+          <button id="evaluateAlertsBtn" class="btn btn-primary btn-sm">Evaluate Alerts</button>
+          <span style="margin-left: auto" class="text-muted" id="signalsCount">0 signals</span>
+        </div>
+        <dl class="kpi-grid" aria-label="Signal analytics">
+          <div class="kpi">
+            <dt class="kpi-label">Returned signals</dt>
+            <dd class="kpi-value" id="signalKpiTotal">0</dd>
+          </div>
+          <div class="kpi">
+            <dt class="kpi-label">Arbitrage</dt>
+            <dd class="kpi-value" id="signalKpiArbitrage">0</dd>
+          </div>
+          <div class="kpi">
+            <dt class="kpi-label">Movement</dt>
+            <dd class="kpi-value" id="signalKpiMovement">0</dd>
+          </div>
+          <div class="kpi">
+            <dt class="kpi-label">Rule matched</dt>
+            <dd class="kpi-value" id="signalKpiMatched">0</dd>
+          </div>
+          <div class="kpi">
+            <dt class="kpi-label">Avg arb edge</dt>
+            <dd class="kpi-value" id="signalKpiAvgArb">—</dd>
+          </div>
+          <div class="kpi">
+            <dt class="kpi-label">Max arb edge</dt>
+            <dd class="kpi-value" id="signalKpiMaxArb">—</dd>
+          </div>
+        </dl>
+        <div class="analytics-grid">
+          <div class="card">
+            <div class="card-header">
+              <span>📊 Arbitrage Edge Distribution</span
+              ><span class="metric-note" id="arbDistributionSummary">No arbitrage signals</span>
+            </div>
+            <div class="card-body">
+              <div class="distribution-list" id="arbDistribution" aria-live="polite"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span>🧭 Signal Mix</span><span class="metric-note">Current response window</span>
+            </div>
+            <div class="card-body">
+              <div class="kind-list" id="signalKindBreakdown" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+        <p class="metric-note" style="margin: -8px 0 16px">
+          Kelly and confidence are intentionally withheld: the signal contract does not expose
+          priced probabilities.
+        </p>
+        <div class="card">
+          <div class="card-header">
+            <span>⚡ Detected Edges &amp; Signals</span
+            ><span class="text-muted">Arbitrage · line movement · rule matches</span>
+          </div>
+          <div class="card-body" id="signalsTableContainer">
+            <div class="empty-state">Loading…</div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="tab-content"
+        id="tab-live"
+        role="tabpanel"
+        aria-labelledby="tab-button-live"
+        hidden
+      >
+        <article class="card" aria-labelledby="liveHeading">
+          <div class="card-header">
+            <span id="liveHeading">📡 Persisted Odds Stream</span>
+            <span
+              id="streamStatus"
+              class="stream-status"
+              role="status"
+              aria-live="polite"
+              data-state="idle"
+              >Not connected</span
+            >
+          </div>
+          <div class="card-body">
+            <div class="stream-toolbar">
+              <select id="streamSession" aria-label="Filter streamed odds by session">
+                <option value="all">All sessions</option>
+                <option value="pregame">Pregame</option>
+                <option value="live">Live</option>
+              </select>
+              <button type="button" id="streamPause" class="btn">Pause</button>
+              <button type="button" id="streamReconnect" class="btn btn-primary">Reconnect</button>
+              <button type="button" id="streamClear" class="btn">Clear display</button>
+            </div>
+            <p class="metric-note" id="streamSummary">
+              Live delivery of persisted observations. Source labels distinguish live and fixture
+              inputs.
+            </p>
+            <p id="streamAnnouncer" class="sr-only" role="status" aria-live="polite"></p>
+            <ol id="liveFeed" class="odds-feed" aria-label="Latest persisted odds observations">
+              <li class="empty-state">Open this view to connect.</li>
+            </ol>
+          </div>
+        </article>
+      </section>
+
+      <section
+        class="tab-content"
+        id="tab-backtest"
+        role="tabpanel"
+        aria-labelledby="tab-button-backtest"
+        hidden
+      >
+        <article class="card" aria-labelledby="backtestHeading">
+          <div class="card-header">
+            <span id="backtestHeading">📊 Analyze Settled Historical Outcomes</span
+            ><span class="metric-note">Deterministic · uploaded CSV</span>
+          </div>
+          <div class="card-body">
+            <form id="backtestForm" enctype="multipart/form-data">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="backtestRule">Alert rule</label
+                  ><select id="backtestRule" name="ruleId" required>
+                    <option value="">Select a rule</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="backtestFile">Historical evidence CSV</label
+                  ><input
+                    id="backtestFile"
+                    name="file"
+                    type="file"
+                    accept=".csv,text/csv"
+                    required
+                    aria-describedby="backtestHelp backtestFileState"
+                  />
+                </div>
+              </div>
+              <p id="backtestHelp" class="metric-note">
+                Maximum 10 MiB. Required: timestamp, rule_id, edge_pct, outcome, odds_decimal.
+                Optional: stake. Timestamps use UTC with milliseconds.
+              </p>
+              <p id="backtestFileState" class="metric-note" role="status" aria-live="polite">
+                No file selected.
+              </p>
+              <progress id="backtestProgress" hidden aria-label="Analyzing CSV"></progress>
+              <div class="form-actions">
+                <button type="submit" id="backtestSubmit" class="btn btn-primary">
+                  Analyze CSV</button
+                ><button type="reset" class="btn">Clear</button>
+              </div>
+            </form>
+            <div id="backtestError" class="error-summary" role="alert" tabindex="-1" hidden></div>
+          </div>
+        </article>
+        <section id="backtestResults" aria-labelledby="backtestResultsHeading" hidden>
+          <h2 id="backtestResultsHeading" style="font-size: 18px; margin-bottom: 12px">
+            Backtest results
+          </h2>
+          <dl class="kpi-grid" id="backtestKpis"></dl>
+          <div class="card">
+            <div class="card-header"><span>Evidence &amp; validation</span></div>
+            <div class="card-body">
+              <p id="backtestSource" class="metric-note"></p>
+              <p id="backtestValidation" class="metric-note"></p>
+              <ul id="backtestWarnings" class="warning-list"></ul>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section
+        class="tab-content"
+        id="tab-health"
+        role="tabpanel"
+        aria-labelledby="tab-button-health"
+        aria-busy="false"
+        hidden
+      >
+        <dl class="kpi-grid" aria-label="Partner health summary">
+          <div class="kpi">
+            <dt class="kpi-label">Partners</dt>
+            <dd class="kpi-value" id="healthTotal">—</dd>
+          </div>
+          <div class="kpi">
+            <dt class="kpi-label">Online</dt>
+            <dd class="kpi-value" id="healthOnline">—</dd>
+          </div>
+          <div class="kpi">
+            <dt class="kpi-label">Needs attention</dt>
+            <dd class="kpi-value" id="healthAttention">—</dd>
+          </div>
+          <div class="kpi">
+            <dt class="kpi-label">Snapshot</dt>
+            <dd class="kpi-value" id="healthGenerated">—</dd>
+          </div>
+        </dl>
+        <div class="analytics-grid">
+          <div class="card">
+            <div class="card-header">
+              <span>🏷️ Liquidity Tiers</span><span class="metric-note">Registry-backed</span>
+            </div>
+            <div class="card-body">
+              <div class="distribution-list" id="healthLiquidityMix" aria-live="polite"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span>💵 Limit Coverage</span><span class="metric-note">Registry max-bet fields</span>
+            </div>
+            <div class="card-body">
+              <div class="kpi-grid" style="margin: 0">
+                <div class="kpi">
+                  <div class="kpi-label">Known limits</div>
+                  <div class="kpi-value" id="healthLimitKnown">—</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-label">Median max</div>
+                  <div class="kpi-value" id="healthLimitMedian">—</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-label">Highest max</div>
+                  <div class="kpi-value" id="healthLimitMax">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span>💚 Partner Health</span>
+            <div class="flex">
+              <span
+                class="metric-note"
+                id="healthRefreshStatus"
+                role="status"
+                aria-live="polite"
+              ></span
+              ><button type="button" id="refreshHealth" class="btn btn-sm">↻ Refresh</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <ul class="health-list" id="healthPartners">
+              <li class="empty-state">Loading partner health…</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div
+        class="modal"
+        id="ruleModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ruleModalTitle"
+      >
+        <div class="modal-content" tabindex="-1">
+          <h2 id="ruleModalTitle">Edit Rule</h2>
+          <input type="hidden" id="ruleEditId" />
+          <label for="ruleId">ID</label><input id="ruleId" /> <label for="ruleName">Name</label
+          ><input id="ruleName" /> <label for="ruleDescription">Description</label
+          ><input id="ruleDescription" /> <label for="ruleCondition">Condition</label
+          ><input id="ruleCondition" placeholder="price_change_percent > 5" />
+          <label for="rulePeriod">Period</label>
+          <select id="rulePeriod">
+            <option value="all">All</option>
+            <option value="prematch">Prematch</option>
+            <option value="live">Live</option>
+          </select>
+          <label for="rulePattern">Pattern</label>
+          <select id="rulePattern">
+            <option value="">None</option>
+            <option value="spike">Spike</option>
+            <option value="drift">Drift</option>
+            <option value="reversal">Reversal</option>
+            <option value="arbitrage">Arbitrage</option>
+          </select>
+          <label for="ruleEdgeMin">Threshold / Edge min (%)</label
+          ><input type="number" id="ruleEdgeMin" step="0.1" placeholder="2.0" />
+          <label for="ruleEdgeMax">Edge max (%) optional</label
+          ><input type="number" id="ruleEdgeMax" step="0.1" placeholder="10.0" />
+          <label for="ruleChannels">Channels</label
+          ><input id="ruleChannels" placeholder="ws, email, telegram" />
+          <label for="ruleTelegramChat">Telegram chat ID</label
+          ><input id="ruleTelegramChat" placeholder="optional ops chat override" />
+          <label for="ruleEmailRecipients">Email recipients</label
+          ><input id="ruleEmailRecipients" /> <label for="ruleMarketType">Market type</label
+          ><input id="ruleMarketType" placeholder="moneyline | spread | total | all" />
+          <label for="ruleGeo">Geo</label><input id="ruleGeo" placeholder="US | UK | EU | all" />
+          <label for="ruleState">State</label><input id="ruleState" placeholder="NV (optional)" />
+          <label for="ruleLimitMin">Limit min / max (USD stake band)</label>
+          <div class="flex" style="gap: 8px">
+            <input
+              type="number"
+              id="ruleLimitMin"
+              placeholder="min"
+              aria-label="Minimum stake limit"
+              style="flex: 1"
+            />
+            <input
+              type="number"
+              id="ruleLimitMax"
+              placeholder="max"
+              aria-label="Maximum stake limit"
+              style="flex: 1"
+            />
+          </div>
+          <label for="ruleLatency">Latency threshold (ms)</label
+          ><input type="number" id="ruleLatency" placeholder="200" />
+          <label for="ruleBookCompare">Bookmaker comparison</label
+          ><input id="ruleBookCompare" placeholder="fonbet_vs_betmgm" />
+          <label for="rulePartnerIds">Partner IDs</label
+          ><input id="rulePartnerIds" placeholder="hard-rock-florida, fonbet" />
+          <label for="ruleActive">Active</label
+          ><select id="ruleActive">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+          <div class="flex" style="gap: 8px; margin-top: 8px">
+            <button id="saveRuleBtn" class="btn btn-primary">Save</button>
+            <button id="deleteRuleBtn" class="btn btn-danger" style="display: none">Delete</button>
+            <button id="cancelRuleBtn" class="btn btn-sm" style="background: transparent">
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  </main>
-  <script id="v113-inline">
-  window.__BUN_AGENT_V113__ = true;
-  const RULES_API = '/api/alerts/rules';
-  const RULES_RELOAD_API = '/api/alerts/rules/reload';
-  const EVENTS_API = '/api/events';
-  const ALERTS_API = '/api/alerts';
-  const SIGNALS_API = '/api/signals';
-  const HEALTH_API = '/api/partners/health';
-  const RESEARCH_ALERTS_API = '/api/research/alerts';
-  const CSRF_API = '/api/csrf';
-  let currentTab = 'signals', eventsData = [], rulesData = [], alertHistory = [], editingRuleId = null, usingLive = false, healthData = null, healthLoading = false, lastFocusedElement = null;
-  let filterOptions = { sports: [], leagues: [], statuses: [] }, chartPoints = [], eventAlertConfigs = [];
-  let csrfToken = '';
-  function esc(value) {
-    return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[ch]);
-  }
-  function fmtStart(ts) {
-    if (ts == null) return '—';
-    const n = Number(ts);
-    if (!Number.isFinite(n)) return '—';
-    return new Date(n < 1e12 ? n * 1000 : n).toLocaleString();
-  }
-  async function ensureCsrf() {
-    if (csrfToken) return csrfToken;
-    try {
-      const res = await fetch(CSRF_API, { credentials: 'same-origin' });
-      const data = await res.json();
-      csrfToken = data.csrfToken || res.headers.get('x-csrf-token') || '';
-    } catch { csrfToken = ''; }
-    return csrfToken;
-  }
-  function apiHeaders() {
-    const h = { 'content-type': 'application/json' };
-    const key = localStorage.getItem('OPERATOR_RESEARCH_API_KEY') || localStorage.getItem('PARTNER_API_TOKEN');
-    if (key) h['x-api-key'] = key;
-    if (csrfToken) h['x-csrf-token'] = csrfToken;
-    return h;
-  }
-  function formatEdge(edge) {
-    if (!edge || edge.min == null) return '—';
-    const min = (Number(edge.min) * 100).toFixed(1) + '%';
-    return edge.max != null ? min + '–' + (Number(edge.max) * 100).toFixed(1) + '%' : '≥' + min;
-  }
-  function formatUsd(value) {
-    const amount = Number(value);
-    return Number.isFinite(amount)
-      ? new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount)
-      : 'Unknown';
-  }
-  function showToast(msg) {
-    const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block';
-    setTimeout(() => { t.style.display = 'none'; }, 3000);
-  }
-  function switchTab(tabId, moveFocus = false) {
-    const panel = document.getElementById('tab-' + tabId);
-    const selectedTab = document.querySelector('.tab[data-tab="' + tabId + '"]');
-    if (!panel || !selectedTab) return;
-    document.querySelectorAll('.tab-content').forEach(el => {
-      const active = el === panel;
-      el.classList.toggle('active', active);
-      el.hidden = !active;
-    });
-    document.querySelectorAll('.tab').forEach(el => {
-      const active = el === selectedTab;
-      el.classList.toggle('active', active);
-      el.setAttribute('aria-selected', String(active));
-      el.tabIndex = active ? 0 : -1;
-    });
-    currentTab = tabId;
-    history.replaceState(null, '', '#' + tabId);
-    if (moveFocus) selectedTab.focus();
-    if (tabId === 'detail') { const id = document.getElementById('eventIdInput').value; if (id) loadChart(id); }
-    if (tabId === 'signals') fetchSignals().then(renderSignals);
-    if (tabId === 'health' && !healthData) loadHealth();
-  }
-  async function fetchEvents() {
-    try {
-      const session = document.getElementById('filterSessionEvents')?.value || '';
-      const qs = new URLSearchParams({ limit: '100' });
-      if (session) qs.set('session', session);
-      const res = await fetch(EVENTS_API + '?' + qs.toString()); if (!res.ok) throw new Error();
-      const data = await res.json(); if (data.filters) filterOptions = data.filters; usingLive = true;
-      return data.events || [];
-    } catch {
-      usingLive = false;
-      filterOptions = { sports: [], leagues: [], statuses: [], sessions: [] };
-      return [];
-    }
-  }
-  async function fetchRules() {
-    try { const res = await fetch(RULES_API); if (!res.ok) throw new Error(); return (await res.json()).rules || []; }
-    catch { return []; }
-  }
-  async function fetchAlertHistory() {
-    try {
-      const data = await (await fetch(ALERTS_API + '?limit=40')).json();
-      return (data.alerts || []).map(a => ({
-        rule_id: a.rule_id || a.ruleId,
-        type: a.type,
-        message: a.message || a.title || a.details,
-        title: a.title,
-        timestamp: typeof a.timestamp === 'number' ? a.timestamp : Date.parse(a.createdAt || a.created_at) || Date.now(),
-        partner_ids: a.partner_ids || [],
-        partner_labels: a.partner_labels || [],
-        partners: a.partners || [],
-        books: a.books || [],
-      }));
-    } catch { return []; }
-  }
-  async function fetchSignals() {
-    const period = document.getElementById('filterSignalPeriod')?.value || 'all';
-    try { return (await (await fetch(SIGNALS_API + '?period=' + encodeURIComponent(period))).json()).signals || []; }
-    catch { return []; }
-  }
-  function populateSelects() {
-    const fill = (id, vals, label) => {
-      const select = document.getElementById(id);
-      const current = select.value;
-      select.replaceChildren(new Option(label, ''), ...vals.map(value => new Option(value, value)));
-      if (vals.includes(current)) select.value = current;
-    };
-    fill('filterSportEvents', filterOptions.sports || [], 'All Sports');
-    fill('filterLeagueEvents', filterOptions.leagues || [], 'All Leagues');
-    fill('filterStatusEvents', filterOptions.statuses || [], 'All Status');
-  }
-  function renderEvents(events) {
-    const c = document.getElementById('eventsTableContainer');
-    document.getElementById('eventsCount').textContent = events.length + ' events';
-    if (!events.length) { c.innerHTML = '<div class="empty-state">No events.</div>'; return; }
-    c.innerHTML = '<table><thead><tr><th>ID</th><th>Sport</th><th>League</th><th>Home</th><th>Away</th><th>Start</th><th>Session</th><th>Partners</th><th></th></tr></thead><tbody>' +
-      events.map(ev => {
-        const sess = ev.session || (ev.status === 'live' ? 'live' : 'pregame');
-        const sc = sess === 'live' ? 'status-online' : (ev.status === 'finished' ? 'status-offline' : 'status-pending');
-        const pids = (ev.partner_event_ids || []).map(p => p.partner_id + ':' + p.partner_event_id).join(', ')
-          || (ev.partner_hosts || []).join(', ') || '—';
-        const matchup = (ev.home_team || '—') + ' vs ' + (ev.away_team || '—');
-        return '<tr><td>'+esc(ev.id)+'</td><td><span class="pill">'+esc(ev.sport||'—')+'</span></td><td>'+esc(ev.league||'—')+'</td><td>'+esc(ev.home_team||'—')+'</td><td>'+esc(ev.away_team||'—')+'</td><td>'+esc(fmtStart(ev.start_time))+'</td><td><span class="status-badge '+sc+'">'+esc(sess)+'</span></td><td class="text-muted" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+esc(pids)+'">'+esc(pids)+'</td><td><button class="btn btn-sm btn-primary load-event-detail" data-id="'+esc(ev.id)+'" aria-label="View details for '+esc(matchup)+'">View</button></td></tr>';
-      }).join('') + '</tbody></table>';
-    document.querySelectorAll('.load-event-detail').forEach(btn => btn.addEventListener('click', () => {
-      document.getElementById('eventIdInput').value = btn.dataset.id; loadEventDetail(btn.dataset.id); switchTab('detail');
-    }));
-  }
-  function renderRules(rules) {
-    const c = document.getElementById('rulesTableContainer');
-    if (!rules.length) { c.innerHTML = '<div class="empty-state">No rules.</div>'; return; }
-    c.innerHTML = '<table><thead><tr><th>ID</th><th>Type</th><th>Condition</th><th>Partners / Geo</th><th>Channels</th><th>Active</th><th></th></tr></thead><tbody>' +
-      rules.map(r => {
-        const ab = r.active ? 'status-online' : 'status-offline';
-        const partnerBits = [
-          r.bookmaker_comparison,
-          (r.partner_ids||[]).join(','),
-          r.geo && r.geo !== 'all' ? 'geo:'+r.geo : null,
-          r.state ? 'st:'+r.state : null,
-          r.market_type && r.market_type !== 'all' ? r.market_type : null,
-        ].filter(Boolean).join(' · ') || (r.source || 'toml');
-        return '<tr><td><code>'+esc(r.id)+'</code></td><td><span class="pill">'+esc(r.type||'—')+'</span></td><td><code>'+esc(r.condition||'—')+'</code></td><td class="text-muted" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+esc(partnerBits)+'">'+esc(partnerBits)+'</td><td>'+esc((r.channels||[]).join(', '))+'</td><td><span class="status-badge '+ab+'">'+(r.active?'Yes':'No')+'</span></td><td><button class="btn btn-sm edit-rule" data-id="'+esc(r.id)+'">Edit</button> <button class="btn btn-sm btn-danger delete-rule" data-id="'+esc(r.id)+'">Del</button></td></tr>';
-      }).join('') + '</tbody></table>';
-    document.querySelectorAll('.edit-rule').forEach(b => b.addEventListener('click', () => openRuleEditor(b.dataset.id)));
-    document.querySelectorAll('.delete-rule').forEach(b => b.addEventListener('click', () => deleteRule(b.dataset.id)));
-  }
-  function renderAlertHistory(history) {
-    const c = document.getElementById('alertHistoryContainer');
-    if (!history.length) { c.innerHTML = '<div class="empty-state">No alerts.</div>'; return; }
-    c.innerHTML = history.slice(0, 15).map(a => {
-      const kind = a.type || a.rule_id || '';
-      const isEvt = ['new_event','price_change','limit_change'].includes(kind);
-      const partners = (a.partner_labels && a.partner_labels.length)
-        ? a.partner_labels
-        : (a.books || a.partner_ids || []);
-      const partnerHtml = partners.length
-        ? '<div style="margin-top:4px;">' + partners.slice(0, 4).map(p => '<span class="pill">' + esc(p) + '</span>').join(' ') + '</div>'
-        : '';
-      return '<div class="live-item" style="'+(isEvt?'border-left-color:#f9ca7f;':'')+'"><div>🔔 <strong>'+esc(kind)+'</strong> '+esc(a.message||a.title||'')+'</div>'+partnerHtml+'<div class="meta"><span>'+esc(a.rule_id||'')+'</span><span>'+esc(new Date(a.timestamp).toLocaleTimeString())+'</span></div></div>';
-    }).join('');
-  }
-  function appendDistributionRow(container, labelText, count, total, labelClass = '') {
-    const row = document.createElement('div');
-    row.className = 'distribution-row';
-    const label = document.createElement('span');
-    label.className = labelClass;
-    label.textContent = labelText;
-    const track = document.createElement('span');
-    track.className = 'distribution-track';
-    const fill = document.createElement('span');
-    fill.className = 'distribution-fill';
-    fill.style.width = count > 0 && total > 0 ? Math.max(2, (count / total) * 100) + '%' : '0';
-    track.append(fill);
-    const value = document.createElement('strong');
-    value.textContent = String(count);
-    row.append(label, track, value);
-    container.append(row);
-  }
-  function renderSignalAnalytics(signals) {
-    const rows = Array.isArray(signals) ? signals : [];
-    const arbitrage = rows.filter(signal => signal.kind === 'arbitrage');
-    const movement = rows.filter(signal => signal.kind === 'movement');
-    const matched = rows.filter(signal => (signal.matched_rules || signal.matchedRuleIds || []).length > 0);
-    const arbEdges = arbitrage
-      .map(signal => Number(signal.edge_pct ?? Number(signal.edge) * 100))
-      .filter(Number.isFinite);
-    const avgArb = arbEdges.length ? arbEdges.reduce((sum, edge) => sum + edge, 0) / arbEdges.length : null;
-    const maxArb = arbEdges.length ? Math.max(...arbEdges) : null;
-    document.getElementById('signalKpiTotal').textContent = String(rows.length);
-    document.getElementById('signalKpiArbitrage').textContent = String(arbitrage.length);
-    document.getElementById('signalKpiMovement').textContent = String(movement.length);
-    document.getElementById('signalKpiMatched').textContent = String(matched.length);
-    document.getElementById('signalKpiAvgArb').textContent = avgArb == null ? '—' : avgArb.toFixed(2) + '%';
-    document.getElementById('signalKpiMaxArb').textContent = maxArb == null ? '—' : maxArb.toFixed(2) + '%';
-
-    const distribution = document.getElementById('arbDistribution');
-    distribution.replaceChildren();
-    const buckets = [
-      { label: '<1%', count: arbEdges.filter(edge => edge < 1).length },
-      { label: '1–3%', count: arbEdges.filter(edge => edge >= 1 && edge < 3).length },
-      { label: '3–5%', count: arbEdges.filter(edge => edge >= 3 && edge < 5).length },
-      { label: '≥5%', count: arbEdges.filter(edge => edge >= 5).length },
-    ];
-    if (arbEdges.length) {
-      for (const bucket of buckets) appendDistributionRow(distribution, bucket.label, bucket.count, arbEdges.length);
-    } else {
-      const empty = document.createElement('div');
-      empty.className = 'empty-state';
-      empty.textContent = 'No arbitrage signals in this response window.';
-      distribution.append(empty);
-    }
-    document.getElementById('arbDistributionSummary').textContent = arbEdges.length + ' arb signal' + (arbEdges.length === 1 ? '' : 's');
-
-    const kinds = document.getElementById('signalKindBreakdown');
-    kinds.replaceChildren();
-    const kindCounts = new Map();
-    for (const signal of rows) {
-      const kind = signal.kind || 'unknown';
-      kindCounts.set(kind, (kindCounts.get(kind) || 0) + 1);
-    }
-    for (const kind of ['arbitrage', 'movement', 'smart_money', ...kindCounts.keys()]) {
-      if (!kindCounts.has(kind)) continue;
-      const item = document.createElement('div');
-      item.className = 'kind-row';
-      const label = document.createElement('span');
-      label.textContent = kind.replaceAll('_', ' ');
-      const count = document.createElement('strong');
-      count.textContent = String(kindCounts.get(kind));
-      item.append(label, count);
-      kinds.append(item);
-      kindCounts.delete(kind);
-    }
-    if (!rows.length) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-state';
-      empty.textContent = 'No signals in this response window.';
-      kinds.append(empty);
-    }
-  }
-  function renderSignals(signals) {
-    signals = signals || [];
-    renderSignalAnalytics(signals);
-    const c = document.getElementById('signalsTableContainer');
-    document.getElementById('signalsCount').textContent = signals.length + ' signals';
-    if (!signals.length) { c.innerHTML = '<div class="empty-state">No signals.</div>'; return; }
-    c.innerHTML = '<table><thead><tr><th>Kind</th><th>Pattern</th><th>Period</th><th>Edge</th><th>Title</th><th>Matched</th><th>Time</th></tr></thead><tbody>' +
-      signals.map(s => {
-        const edge = s.edge_pct != null ? s.edge_pct + '%' : (s.edge != null ? (s.edge*100).toFixed(2) + '%' : '—');
-        const matched = (s.matched_rules || s.matchedRuleIds || []).join(', ') || '—';
-        return '<tr><td><span class="pill">'+esc(s.kind||'')+'</span></td><td>'+esc(s.pattern||'—')+'</td><td>'+esc(s.period||'all')+'</td><td><strong>'+esc(edge)+'</strong></td><td>'+esc(s.title||'')+'</td><td><code>'+esc(matched)+'</code></td><td>'+esc(new Date(s.timestamp||Date.now()).toLocaleTimeString())+'</td></tr>';
-      }).join('') + '</tbody></table>';
-  }
-  function renderEventDetail(event, mappings) {
-    const c = document.getElementById('eventDetailContainer');
-    if (!event) { c.innerHTML = '<div class="empty-state">Not found.</div>'; return; }
-    const mapHtml = (mappings && mappings.length)
-      ? '<div class="mt-2"><strong>Partner event IDs</strong><ul style="margin:6px 0 0 18px;">' +
-        mappings.map(m => '<li><code>'+esc(m.partnerId)+'</code> → <code>'+esc(m.partnerEventId)+'</code> · canon <code>'+esc(m.canonicalId)+'</code>'+(m.session?' · '+esc(m.session):'')+'</li>').join('') +
-        '</ul></div>'
-      : '';
-    c.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;"><div><strong>ID</strong> '+esc(event.id)+'</div><div><strong>Sport</strong> '+esc(event.sport||'—')+'</div><div><strong>League</strong> '+esc(event.league||'—')+'</div><div><strong>Home</strong> '+esc(event.home_team||'—')+'</div><div><strong>Away</strong> '+esc(event.away_team||'—')+'</div><div><strong>Status</strong> '+esc(event.status||'—')+'</div><div><strong>Start</strong> '+esc(fmtStart(event.start_time))+'</div></div><div class="mt-2 text-muted">Partners: '+esc((event.partner_hosts||[]).join(', ')||'—')+'</div>' + mapHtml;
-    loadChart(event.id);
-  }
-  function renderEventAlerts(configs) {
-    const c = document.getElementById('eventAlertsTableContainer');
-    if (!c) return;
-    if (!configs.length) { c.innerHTML = '<div class="empty-state">No event alert configs.</div>'; return; }
-    c.innerHTML = '<table><thead><tr><th>ID</th><th>Trigger</th><th>Event</th><th>Partners</th><th>Threshold</th><th>Telegram</th><th>Enabled</th></tr></thead><tbody>' +
-      configs.map(a => '<tr><td><code>'+esc(a.id)+'</code></td><td><span class="pill">'+esc(a.trigger||'')+'</span></td><td><code>'+esc(a.eventId||'*')+'</code></td><td>'+esc((a.partnerIds&&a.partnerIds.length)?a.partnerIds.join(', '):'*')+'</td><td>'+esc(a.threshold!=null?a.threshold+'%':'—')+'</td><td>'+esc(a.telegramChatId||'ops/partner')+'</td><td>'+(a.enabled?'Yes':'No')+'</td></tr>').join('') +
-      '</tbody></table>';
-  }
-  async function fetchEventAlerts() {
-    try {
-      const data = await (await fetch(RESEARCH_ALERTS_API)).json();
-      return data.alerts || [];
-    } catch { return []; }
-  }
-  function renderHealth(data, errorMessage = '') {
-    const partners = data?.health || data?.partners || [];
-    const total = data?.summary?.total ?? data?.count ?? partners.length;
-    const online = data?.summary?.online ?? partners.filter(p => ['active', 'online', 'low_balance'].includes(p.status)).length;
-    const attention = data?.summary
-      ? (data.summary.degraded || 0) + (data.summary.offline || 0) + (data.summary.lowBalance || 0) + (data.summary.critical || 0)
-      : partners.filter(p => ['degraded', 'offline', 'low_balance', 'critical'].includes(p.status)).length;
-    document.getElementById('healthTotal').textContent = data ? String(total) : 'Unavailable';
-    document.getElementById('healthOnline').textContent = data ? String(online) : '—';
-    document.getElementById('healthAttention').textContent = data ? String(attention) : '—';
-    document.getElementById('healthGenerated').textContent = data?.generatedAt ? new Date(data.generatedAt).toLocaleTimeString() : '—';
-    const tierMix = document.getElementById('healthLiquidityMix');
-    tierMix.replaceChildren();
-    const byLiquidity = data?.summary?.byLiquidity || {};
-    const tierEntries = Object.entries(byLiquidity).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-    for (const [tier, count] of tierEntries) {
-      const safeTier = ['high', 'medium', 'low', 'illiquid'].includes(tier) ? tier : 'unknown';
-      appendDistributionRow(tierMix, tier, count, total, 'liquidity-badge liquidity-' + safeTier);
-    }
-    if (data && !tierEntries.length) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-state';
-      empty.textContent = 'No liquidity tiers recorded.';
-      tierMix.append(empty);
-    }
-    if (!data) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-state';
-      empty.textContent = 'Liquidity tiers unavailable.';
-      tierMix.append(empty);
-    }
-
-    const maxLimits = partners
-      .filter(partner => partner.maxBetUsd != null)
-      .map(partner => Number(partner.maxBetUsd))
-      .filter(value => Number.isFinite(value) && value >= 0)
-      .sort((a, b) => a - b);
-    const median = maxLimits.length
-      ? (maxLimits[Math.floor((maxLimits.length - 1) / 2)] + maxLimits[Math.ceil((maxLimits.length - 1) / 2)]) / 2
-      : null;
-    document.getElementById('healthLimitKnown').textContent = data ? maxLimits.length + '/' + total : '—';
-    document.getElementById('healthLimitMedian').textContent = median == null ? '—' : formatUsd(median);
-    document.getElementById('healthLimitMax').textContent = maxLimits.length ? formatUsd(maxLimits[maxLimits.length - 1]) : '—';
-
-    const container = document.getElementById('healthPartners');
-    container.replaceChildren();
-    if (!data) {
-      const error = document.createElement('li');
-      error.className = 'empty-state';
-      error.setAttribute('role', 'alert');
-      error.textContent = errorMessage || 'Partner health is unavailable.';
-      container.append(error);
-      return;
-    }
-    if (!partners.length) {
-      const empty = document.createElement('li');
-      empty.className = 'empty-state';
-      empty.textContent = 'No partner health records in the registry.';
-      container.append(empty);
-      return;
-    }
-    const statusRank = { critical: 0, offline: 0, degraded: 1, low_balance: 2, active: 4, online: 4 };
-    const liquidityRank = { illiquid: 0, low: 1, medium: 2, high: 3 };
-    const sortedPartners = partners.slice().sort((a, b) =>
-      (statusRank[a.status] ?? 3) - (statusRank[b.status] ?? 3)
-      || (liquidityRank[a.liquidityTier] ?? 4) - (liquidityRank[b.liquidityTier] ?? 4)
-      || String(a.label || a.id).localeCompare(String(b.label || b.id))
-    );
-    for (const partner of sortedPartners) {
-      const row = document.createElement('li');
-      row.className = 'health-row';
-      const identity = document.createElement('span');
-      const label = document.createElement('strong');
-      label.textContent = partner.label || partner.name || partner.id || 'Partner';
-      const details = document.createElement('div');
-      details.className = 'metric-note';
-      const balance = partner.balanceAmount ?? partner.balance?.amount;
-      const probe = partner.lastProbe ? new Date(partner.lastProbe).toLocaleString() : 'Unknown';
-      details.textContent = 'Balance: ' + (balance != null && Number.isFinite(Number(balance)) ? formatUsd(balance) : 'Unknown') + ' · Last probe: ' + probe;
-      identity.append(label, details);
-      const meta = document.createElement('span');
-      meta.className = 'health-row-meta';
-      const tier = partner.liquidityTier || partner.liquidity_tier || 'unknown';
-      const tierBadge = document.createElement('span');
-      tierBadge.className = 'liquidity-badge liquidity-' + (['high', 'medium', 'low', 'illiquid'].includes(tier) ? tier : 'unknown');
-      tierBadge.textContent = 'Liquidity: ' + tier;
-      const status = document.createElement('span');
-      const statusClass = ['active', 'online'].includes(partner.status)
-        ? 'status-online'
-        : ['critical', 'offline'].includes(partner.status) ? 'status-offline' : 'status-pending';
-      status.className = 'status-badge ' + statusClass;
-      status.textContent = 'Status: ' + String(partner.status || 'unknown').replaceAll('_', ' ');
-      meta.append(tierBadge, status);
-      row.append(identity, meta);
-      container.append(row);
-    }
-  }
-  async function loadHealth(refresh = false) {
-    if (healthLoading) return;
-    healthLoading = true;
-    const panel = document.getElementById('tab-health');
-    const button = document.getElementById('refreshHealth');
-    const refreshStatus = document.getElementById('healthRefreshStatus');
-    const previous = healthData;
-    panel.setAttribute('aria-busy', 'true');
-    button.disabled = true;
-    button.textContent = 'Refreshing…';
-    refreshStatus.textContent = '';
-    try {
-      const res = await fetch(HEALTH_API + (refresh ? '?refresh=1' : ''));
-      if (!res.ok) {
-        const error = new Error(String(res.status));
-        error.status = res.status;
-        throw error;
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </main>
+    <script id="v113-inline">
+      window.__BUN_AGENT_V113__ = true;
+      const RULES_API = '/api/alerts/rules';
+      const RULES_RELOAD_API = '/api/alerts/rules/reload';
+      const EVENTS_API = '/api/events';
+      const ALERTS_API = '/api/alerts';
+      const SIGNALS_API = '/api/signals';
+      const ODDS_STREAM_API = '/api/stream/odds';
+      const BACKTEST_UPLOAD_API = '/api/backtest/upload';
+      const HEALTH_API = '/api/partners/health';
+      const RESEARCH_ALERTS_API = '/api/research/alerts';
+      const CSRF_API = '/api/csrf';
+      let currentTab = 'signals',
+        eventsData = [],
+        rulesData = [],
+        alertHistory = [],
+        editingRuleId = null,
+        usingLive = false,
+        healthData = null,
+        healthLoading = false,
+        lastFocusedElement = null;
+      let oddsEventSource = null,
+        oddsCursor = 0,
+        oddsRows = [],
+        streamPaused = false,
+        streamConnected = false;
+      let filterOptions = { sports: [], leagues: [], statuses: [] },
+        chartPoints = [],
+        eventAlertConfigs = [];
+      let csrfToken = '';
+      function esc(value) {
+        return String(value ?? '').replace(
+          /[&<>"']/g,
+          ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]
+        );
       }
-      healthData = await res.json();
-      renderHealth(healthData);
-      const total = healthData.summary?.total ?? healthData.count ?? (healthData.health || healthData.partners || []).length;
-      document.getElementById('bookCount').textContent = Number.isFinite(Number(total)) ? String(total) : '—';
-      refreshStatus.textContent = refresh ? 'Health refreshed.' : 'Health loaded.';
-    } catch (error) {
-      const requiresCredentials = error?.status === 401 || error?.status === 403;
-      const message = requiresCredentials ? 'Partner health requires read credentials.' : 'Partner health is unavailable.';
-      if (previous) {
-        healthData = previous;
-        renderHealth(previous);
-        refreshStatus.textContent = 'Refresh failed; showing stale data.';
-      } else {
-        healthData = null;
-        document.getElementById('bookCount').textContent = '—';
-        renderHealth(null, message);
-        refreshStatus.textContent = message;
+      function fmtStart(ts) {
+        if (ts == null) return '—';
+        const n = Number(ts);
+        if (!Number.isFinite(n)) return '—';
+        return new Date(n < 1e12 ? n * 1000 : n).toLocaleString();
       }
-    } finally {
-      healthLoading = false;
-      panel.setAttribute('aria-busy', 'false');
-      button.disabled = false;
-      button.textContent = '↻ Refresh';
-    }
-  }
-  function renderChart(data) {
-    chartPoints = data || [];
-    const windowMin = Number(document.getElementById('detailHistoryWindow').value || 0);
-    let pts = chartPoints;
-    if (windowMin > 0) { const cut = Date.now() - windowMin * 60000; pts = pts.filter(p => p.timestamp >= cut); }
-    const canvas = document.getElementById('detailChart'); const ctx = canvas.getContext('2d');
-    const w = canvas.width, h = canvas.height; ctx.clearRect(0,0,w,h);
-    if (!pts.length) { ctx.fillStyle='#7a8ba3'; ctx.fillText('No history data', 20, h/2); return; }
-    const groups = {}; for (const p of pts) { const b = p.bookmaker || 'unknown'; (groups[b] ||= []).push(p); }
-    ctx.strokeStyle='#1e2834'; ctx.beginPath(); ctx.moveTo(40,20); ctx.lineTo(40,h-20); ctx.lineTo(w-20,h-20); ctx.stroke();
-    const colors = ['#5fc3f4','#6fcf97','#f9ca7f','#f28b82']; let ci = 0;
-    for (const [book, points] of Object.entries(groups)) {
-      if (points.length < 2) continue;
-      const sorted = points.slice().sort((a,b)=>a.timestamp-b.timestamp);
-      const minV = Math.min(...sorted.map(p=>p.odds_decimal)), maxV = Math.max(...sorted.map(p=>p.odds_decimal));
-      const range = maxV - minV || 0.1; ctx.strokeStyle = colors[ci%colors.length]; ctx.lineWidth=2; ctx.beginPath();
-      const step = (w-60)/(sorted.length-1);
-      sorted.forEach((p,i) => { const x=40+i*step, y=h-20-((p.odds_decimal-minV)/range)*(h-40); i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
-      ctx.stroke(); ctx.fillStyle=colors[ci%colors.length]; ctx.font='10px sans-serif'; ctx.fillText(book,w-80,20+ci*15); ci++;
-    }
-  }
-  async function loadEventDetail(id) {
-    try {
-      const data = await (await fetch(EVENTS_API + '/' + encodeURIComponent(id))).json();
-      renderEventDetail(data.event || data, data.partner_mappings || []);
-    } catch { renderEventDetail(null, []); showToast('Event detail unavailable'); }
-  }
-  async function loadChart(id) {
-    const market = document.getElementById('detailMarketType').value;
-    try {
-      const data = await (await fetch(EVENTS_API + '/' + encodeURIComponent(id) + '/history?market=' + encodeURIComponent(market))).json();
-      renderChart(data.points || []);
-    } catch { renderChart([]); showToast('History unavailable'); }
-  }
-  async function loadAllData() {
-    await ensureCsrf();
-    eventsData = await fetchEvents(); populateSelects(); renderEvents(eventsData);
-    rulesData = await fetchRules(); renderRules(rulesData);
-    eventAlertConfigs = await fetchEventAlerts();
-    renderEventAlerts(eventAlertConfigs);
-    if (eventAlertConfigs.length) {
-      const priceCfg = eventAlertConfigs.find(a => a.trigger === 'price_change');
-      if (priceCfg?.threshold != null) document.getElementById('evtAlertThreshold').value = priceCfg.threshold;
-      const withTg = eventAlertConfigs.find(a => a.telegramChatId);
-      if (withTg?.telegramChatId) document.getElementById('evtAlertTelegram').value = withTg.telegramChatId;
-      document.getElementById('evtAlertEnabled').value = String(eventAlertConfigs.every(a => a.enabled));
-      const pids = eventAlertConfigs[0]?.partnerIds || [];
-      const allP = !pids.length;
-      const allEl = document.getElementById('evtPartnerAll');
-      const hrEl = document.getElementById('evtPartnerHr');
-      const fbEl = document.getElementById('evtPartnerFonbet');
-      if (allEl) allEl.checked = allP;
-      if (hrEl) hrEl.checked = allP || pids.includes('hard-rock-florida');
-      if (fbEl) fbEl.checked = allP || pids.includes('fonbet');
-    }
-    alertHistory = await fetchAlertHistory(); renderAlertHistory(alertHistory);
-    renderSignals(await fetchSignals());
-    document.getElementById('dataModeBadge').textContent = usingLive ? '⚡ live APIs' : '⚠ APIs unavailable';
-    await loadHealth();
-  }
-  function openRuleEditor(ruleId) {
-    lastFocusedElement = document.activeElement;
-    const modal = document.getElementById('ruleModal'); const del = document.getElementById('deleteRuleBtn');
-    if (ruleId) {
-      const r = rulesData.find(x => x.id === ruleId); if (!r) return;
-      document.getElementById('ruleModalTitle').textContent = 'Edit Rule'; del.style.display = 'inline-block';
-      document.getElementById('ruleEditId').value = ruleId;
-      document.getElementById('ruleId').value = r.id; document.getElementById('ruleId').disabled = true;
-      document.getElementById('ruleName').value = r.name || '';
-      document.getElementById('ruleDescription').value = r.description || '';
-      document.getElementById('ruleCondition').value = r.condition || '';
-      document.getElementById('rulePeriod').value = r.period || 'all';
-      document.getElementById('rulePattern').value = r.pattern || '';
-      document.getElementById('ruleEdgeMin').value = r.edge?.min != null ? (Number(r.edge.min)*100) : '';
-      document.getElementById('ruleEdgeMax').value = r.edge?.max != null ? (Number(r.edge.max)*100) : '';
-      document.getElementById('ruleChannels').value = (r.channels||[]).join(', ');
-      document.getElementById('ruleTelegramChat').value = r.telegram_chat_id || r.telegramChatId || '';
-      document.getElementById('ruleEmailRecipients').value = (r.email_recipients||[]).join(', ');
-      document.getElementById('ruleMarketType').value = r.market_type || '';
-      document.getElementById('ruleGeo').value = r.geo || '';
-      document.getElementById('ruleState').value = r.state || '';
-      document.getElementById('ruleLimitMin').value = r.limit?.min != null ? r.limit.min : '';
-      document.getElementById('ruleLimitMax').value = r.limit?.max != null ? r.limit.max : '';
-      document.getElementById('ruleLatency').value = r.latency_threshold != null ? r.latency_threshold : '';
-      document.getElementById('ruleBookCompare').value = r.bookmaker_comparison || '';
-      document.getElementById('rulePartnerIds').value = (r.partner_ids||[]).join(', ');
-      document.getElementById('ruleActive').value = String(!!r.active);
-      editingRuleId = ruleId;
-    } else {
-      document.getElementById('ruleModalTitle').textContent = 'Add Rule'; del.style.display = 'none';
-      document.getElementById('ruleEditId').value = ''; document.getElementById('ruleId').value = ''; document.getElementById('ruleId').disabled = false;
-      ['ruleName','ruleDescription','ruleCondition','ruleEmailRecipients','ruleEdgeMin','ruleEdgeMax','ruleTelegramChat','ruleMarketType','ruleGeo','ruleState','ruleLimitMin','ruleLimitMax','ruleLatency','ruleBookCompare','rulePartnerIds'].forEach(id => document.getElementById(id).value = '');
-      document.getElementById('ruleChannels').value = 'ws'; document.getElementById('rulePeriod').value = 'all';
-      document.getElementById('rulePattern').value = ''; document.getElementById('ruleActive').value = 'true'; editingRuleId = null;
-    }
-    modal.classList.add('active');
-    modal.querySelector('.modal-content').focus();
-  }
-  function closeRuleEditor() {
-    document.getElementById('ruleModal').classList.remove('active');
-    if (lastFocusedElement instanceof HTMLElement) lastFocusedElement.focus();
-  }
-  async function saveRule() {
-    await ensureCsrf();
-    const id = document.getElementById('ruleId').value.trim();
-    const name = document.getElementById('ruleName').value.trim();
-    const condition = document.getElementById('ruleCondition').value.trim();
-    if (!id || !name || !condition) { showToast('ID, Name, Condition required'); return; }
-    const edgeMinPct = parseFloat(document.getElementById('ruleEdgeMin').value);
-    const edgeMaxPct = parseFloat(document.getElementById('ruleEdgeMax').value);
-    let edge; if (Number.isFinite(edgeMinPct)) { edge = { min: edgeMinPct/100 }; if (Number.isFinite(edgeMaxPct)) edge.max = edgeMaxPct/100; }
-    const existing = rulesData.find(x => x.id === (editingRuleId || id));
-    const limitMin = parseFloat(document.getElementById('ruleLimitMin').value);
-    const limitMax = parseFloat(document.getElementById('ruleLimitMax').value);
-    let limit; if (Number.isFinite(limitMin) || Number.isFinite(limitMax)) {
-      limit = {}; if (Number.isFinite(limitMin)) limit.min = limitMin; if (Number.isFinite(limitMax)) limit.max = limitMax;
-    }
-    const latency = parseFloat(document.getElementById('ruleLatency').value);
-    const partnerIds = document.getElementById('rulePartnerIds').value.split(',').map(s=>s.trim()).filter(Boolean);
-    const rule = {
-      id, name, description: document.getElementById('ruleDescription').value.trim(), condition,
-      type: existing?.type,
-      threshold: Number.isFinite(edgeMinPct) ? edgeMinPct : existing?.threshold,
-      period: document.getElementById('rulePeriod').value || 'all',
-      pattern: document.getElementById('rulePattern').value || undefined, edge,
-      channels: document.getElementById('ruleChannels').value.split(',').map(s=>s.trim()).filter(Boolean),
-      email_recipients: document.getElementById('ruleEmailRecipients').value.split(',').map(s=>s.trim()).filter(Boolean),
-      telegram_chat_id: document.getElementById('ruleTelegramChat').value.trim() || undefined,
-      market_type: document.getElementById('ruleMarketType').value.trim() || undefined,
-      geo: document.getElementById('ruleGeo').value.trim() || undefined,
-      state: document.getElementById('ruleState').value.trim() || undefined,
-      limit,
-      latency_threshold: Number.isFinite(latency) ? latency : undefined,
-      bookmaker_comparison: document.getElementById('ruleBookCompare').value.trim() || undefined,
-      event_id: existing?.event_id || undefined,
-      partner_ids: partnerIds.length ? partnerIds : undefined,
-      active: document.getElementById('ruleActive').value === 'true',
-    };
-    try {
-      const res = await fetch(RULES_API, { method: editingRuleId ? 'PUT' : 'POST', headers: apiHeaders(), credentials: 'same-origin', body: JSON.stringify(rule) });
-      const data = await res.json(); if (!res.ok || data.ok === false) throw new Error(data.error || res.status);
-      rulesData = await fetchRules(); renderRules(rulesData);
-      eventAlertConfigs = await fetchEventAlerts(); renderEventAlerts(eventAlertConfigs);
-      showToast('✅ Saved (' + (data.rule?.source || 'toml') + ')'); closeRuleEditor();
-    } catch (e) { showToast('Save failed: ' + (e.message||e)); }
-  }
-  async function deleteRule(ruleId) {
-    if (!confirm('Delete ' + ruleId + '?')) return;
-    await ensureCsrf();
-    try {
-      const res = await fetch(RULES_API + '/' + encodeURIComponent(ruleId), { method: 'DELETE', headers: apiHeaders(), credentials: 'same-origin' });
-      const data = await res.json().catch(()=>({})); if (!res.ok || data.ok === false) throw new Error(data.error || res.status);
-      rulesData = await fetchRules(); renderRules(rulesData); showToast('🗑️ Deleted');
-    } catch (e) { showToast('Delete failed: ' + (e.message||e)); }
-  }
-  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
-  document.getElementById('mainTabs').addEventListener('keydown', event => {
-    const tabs = [...document.querySelectorAll('.tab')];
-    const index = tabs.indexOf(document.activeElement);
-    if (index < 0) return;
-    let next = index;
-    if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
-    else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
-    else if (event.key === 'Home') next = 0;
-    else if (event.key === 'End') next = tabs.length - 1;
-    else return;
-    event.preventDefault();
-    switchTab(tabs[next].dataset.tab, true);
-  });
-  document.getElementById('applyEventsFilter').addEventListener('click', async () => {
-    eventsData = await fetchEvents();
-    populateSelects();
-    let f = eventsData;
-    const sport = document.getElementById('filterSportEvents').value;
-    const league = document.getElementById('filterLeagueEvents').value;
-    const status = document.getElementById('filterStatusEvents').value;
-    if (sport) f = f.filter(e => e.sport === sport);
-    if (league) f = f.filter(e => e.league === league);
-    if (status) f = f.filter(e => e.status === status);
-    renderEvents(f);
-  });
-  document.getElementById('refreshEvents').addEventListener('click', async () => { eventsData = await fetchEvents(); populateSelects(); renderEvents(eventsData); });
-  document.getElementById('runResearchCycle')?.addEventListener('click', async () => {
-    try {
-      await ensureCsrf();
-      const res = await fetch('/api/research/cycle', { method: 'POST', headers: apiHeaders(), credentials: 'same-origin' });
-      const data = await res.json();
-      if (!res.ok || data.ok === false) throw new Error(data.error || res.status);
-      showToast('▶ Cycle: ' + (data.events||0) + ' events · ' + (data.snapshotsStored||0) + ' snaps · ' + (data.alertsFired||0) + ' alerts');
-      eventsData = await fetchEvents(); populateSelects(); renderEvents(eventsData);
-    } catch (e) { showToast('Research cycle failed: ' + (e.message || e)); }
-  });
-  document.getElementById('loadEventBtn').addEventListener('click', () => { const id = document.getElementById('eventIdInput').value.trim(); if (id) loadEventDetail(id); });
-  document.getElementById('refreshChart').addEventListener('click', () => { const id = document.getElementById('eventIdInput').value.trim(); if (id) loadChart(id); });
-  document.getElementById('detailMarketType').addEventListener('change', () => { const id = document.getElementById('eventIdInput').value.trim(); if (id) loadChart(id); });
-  document.getElementById('detailHistoryWindow').addEventListener('change', () => renderChart(chartPoints));
-  document.getElementById('addRuleBtn').addEventListener('click', () => openRuleEditor());
-  document.getElementById('cancelRuleBtn').addEventListener('click', closeRuleEditor);
-  document.getElementById('saveRuleBtn').addEventListener('click', saveRule);
-  document.getElementById('deleteRuleBtn').addEventListener('click', () => { const id = document.getElementById('ruleEditId').value; if (id) deleteRule(id); closeRuleEditor(); });
-  document.getElementById('ruleModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeRuleEditor(); });
-  document.addEventListener('keydown', event => { if (event.key === 'Escape' && document.getElementById('ruleModal').classList.contains('active')) closeRuleEditor(); });
-  document.getElementById('refreshHealth').addEventListener('click', () => loadHealth(true));
-  document.getElementById('reloadRulesBtn').addEventListener('click', async () => {
-    try {
-      await ensureCsrf();
-      const data = await (await fetch(RULES_RELOAD_API, { method: 'POST', headers: apiHeaders(), credentials: 'same-origin' })).json();
-      rulesData = data.rules || await fetchRules(); renderRules(rulesData);
-      showToast('↻ Reloaded ' + (data.count || rulesData.length) + ' rules from TOML');
-    } catch (e) { showToast('Reload failed: ' + (e.message||e)); }
-  });
-  document.getElementById('reloadEventAlertsBtn')?.addEventListener('click', async () => {
-    eventAlertConfigs = await fetchEventAlerts();
-    renderEventAlerts(eventAlertConfigs);
-    showToast('↻ Event alerts: ' + eventAlertConfigs.length);
-  });
-  document.getElementById('saveEventAlertsBtn')?.addEventListener('click', async () => {
-    try {
-      await ensureCsrf();
-      const threshold = parseFloat(document.getElementById('evtAlertThreshold').value);
-      const telegramChatId = document.getElementById('evtAlertTelegram').value.trim() || undefined;
-      const enabled = document.getElementById('evtAlertEnabled').value === 'true';
-      const allPartners = document.getElementById('evtPartnerAll')?.checked;
-      const partnerIds = allPartners ? [] : [
-        document.getElementById('evtPartnerHr')?.checked ? 'hard-rock-florida' : null,
-        document.getElementById('evtPartnerFonbet')?.checked ? 'fonbet' : null,
-      ].filter(Boolean);
-      let configs = eventAlertConfigs.length ? eventAlertConfigs.slice() : [
-        { id: 'evt-all-new', eventId: '*', partnerIds: [], trigger: 'new_event', actions: ['telegram'], enabled: true, createdAt: new Date().toISOString() },
-        { id: 'evt-all-price-2pct', eventId: '*', partnerIds: [], trigger: 'price_change', threshold: 2, actions: ['telegram'], enabled: true, createdAt: new Date().toISOString() },
-        { id: 'evt-all-limit', eventId: '*', partnerIds: [], trigger: 'limit_change', actions: ['telegram'], enabled: true, createdAt: new Date().toISOString() },
-      ];
-      configs = configs.map(c => ({
-        ...c,
-        enabled,
-        partnerIds,
-        telegramChatId: telegramChatId || c.telegramChatId,
-        threshold: c.trigger === 'price_change' && Number.isFinite(threshold) ? threshold : c.threshold,
-      }));
-      const res = await fetch(RESEARCH_ALERTS_API, { method: 'PUT', headers: apiHeaders(), credentials: 'same-origin', body: JSON.stringify({ alerts: configs }) });
-      const data = await res.json();
-      if (!res.ok || data.ok === false) throw new Error(data.error || res.status);
-      eventAlertConfigs = data.alerts || configs;
-      renderEventAlerts(eventAlertConfigs);
-      showToast('✅ Event alerts saved');
-    } catch (e) { showToast('Save event alerts failed: ' + (e.message || e)); }
-  });
-  document.getElementById('refreshSignals').addEventListener('click', async () => renderSignals(await fetchSignals()));
-  document.getElementById('filterSignalPeriod').addEventListener('change', async () => renderSignals(await fetchSignals()));
-  document.getElementById('evaluateAlertsBtn').addEventListener('click', async () => {
-    try {
-      await ensureCsrf();
-      const period = document.getElementById('filterSignalPeriod').value || 'all';
-      const data = await (await fetch(ALERTS_API + '?evaluate=1&period=' + encodeURIComponent(period), { credentials: 'same-origin' })).json();
-      showToast('Evaluated → ' + (data.count || 0) + ' new alerts');
-      alertHistory = await fetchAlertHistory(); renderAlertHistory(alertHistory);
-      renderSignals(await fetchSignals());
-    } catch (e) { showToast('Evaluate failed: ' + (e.message||e)); }
-  });
-  const initialTab = ['events','detail','signals','alerts','health'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'signals';
-  switchTab(initialTab);
-  populateSelects(); loadAllData();
-  setInterval(() => { if (['events','alerts','signals'].includes(currentTab)) loadAllData(); }, 30000);
-  console.log('🧠 Bun Agent Dashboard v1.13 (v1.05 contracts · v1.07 workflow) loaded.');
-  </script>
-<script type="module" src="/portal/data.js"></script>
-<script type="module" src="/portal/topbar.js"></script>
-</body>
+      async function ensureCsrf() {
+        if (csrfToken) return csrfToken;
+        try {
+          const res = await fetch(CSRF_API, { credentials: 'same-origin' });
+          const data = await res.json();
+          csrfToken = data.csrfToken || res.headers.get('x-csrf-token') || '';
+        } catch {
+          csrfToken = '';
+        }
+        return csrfToken;
+      }
+      function apiHeaders() {
+        return requestHeaders(true);
+      }
+      function requestHeaders(json = false) {
+        const h = json ? { 'content-type': 'application/json' } : {};
+        const key =
+          localStorage.getItem('OPERATOR_RESEARCH_API_KEY') ||
+          localStorage.getItem('PARTNER_API_TOKEN');
+        if (key) h['x-api-key'] = key;
+        if (csrfToken) h['x-csrf-token'] = csrfToken;
+        return h;
+      }
+      function formatEdge(edge) {
+        if (!edge || edge.min == null) return '—';
+        const min = (Number(edge.min) * 100).toFixed(1) + '%';
+        return edge.max != null ? min + '–' + (Number(edge.max) * 100).toFixed(1) + '%' : '≥' + min;
+      }
+      function formatUsd(value) {
+        const amount = Number(value);
+        return Number.isFinite(amount)
+          ? new Intl.NumberFormat(undefined, {
+              style: 'currency',
+              currency: 'USD',
+              maximumFractionDigits: 0,
+            }).format(amount)
+          : 'Unknown';
+      }
+      function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.style.display = 'block';
+        setTimeout(() => {
+          t.style.display = 'none';
+        }, 3000);
+      }
+      function switchTab(tabId, moveFocus = false) {
+        const panel = document.getElementById('tab-' + tabId);
+        const selectedTab = document.querySelector('.tab[data-tab="' + tabId + '"]');
+        if (!panel || !selectedTab) return;
+        document.querySelectorAll('.tab-content').forEach(el => {
+          const active = el === panel;
+          el.classList.toggle('active', active);
+          el.hidden = !active;
+        });
+        document.querySelectorAll('.tab').forEach(el => {
+          const active = el === selectedTab;
+          el.classList.toggle('active', active);
+          el.setAttribute('aria-selected', String(active));
+          el.tabIndex = active ? 0 : -1;
+        });
+        currentTab = tabId;
+        history.replaceState(null, '', '#' + tabId);
+        if (moveFocus) selectedTab.focus();
+        if (moveFocus) selectedTab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        if (tabId === 'detail') {
+          const id = document.getElementById('eventIdInput').value;
+          if (id) loadChart(id);
+        }
+        if (tabId === 'signals') fetchSignals().then(renderSignals);
+        if (tabId === 'health' && !healthData) loadHealth();
+        if (tabId === 'live' && !oddsEventSource && !streamPaused) connectOddsStream();
+        if (tabId === 'backtest') populateBacktestRules();
+      }
+      async function fetchEvents() {
+        try {
+          const session = document.getElementById('filterSessionEvents')?.value || '';
+          const qs = new URLSearchParams({ limit: '100' });
+          if (session) qs.set('session', session);
+          const res = await fetch(EVENTS_API + '?' + qs.toString());
+          if (!res.ok) throw new Error();
+          const data = await res.json();
+          if (data.filters) filterOptions = data.filters;
+          usingLive = true;
+          return data.events || [];
+        } catch {
+          usingLive = false;
+          filterOptions = { sports: [], leagues: [], statuses: [], sessions: [] };
+          return [];
+        }
+      }
+      async function fetchRules() {
+        try {
+          const res = await fetch(RULES_API);
+          if (!res.ok) throw new Error();
+          return (await res.json()).rules || [];
+        } catch {
+          return [];
+        }
+      }
+      async function fetchAlertHistory() {
+        try {
+          const data = await (await fetch(ALERTS_API + '?limit=40')).json();
+          return (data.alerts || []).map(a => ({
+            rule_id: a.rule_id || a.ruleId,
+            type: a.type,
+            message: a.message || a.title || a.details,
+            title: a.title,
+            timestamp:
+              typeof a.timestamp === 'number'
+                ? a.timestamp
+                : Date.parse(a.createdAt || a.created_at) || Date.now(),
+            partner_ids: a.partner_ids || [],
+            partner_labels: a.partner_labels || [],
+            partners: a.partners || [],
+            books: a.books || [],
+          }));
+        } catch {
+          return [];
+        }
+      }
+      async function fetchSignals() {
+        const period = document.getElementById('filterSignalPeriod')?.value || 'all';
+        try {
+          return (
+            (await (await fetch(SIGNALS_API + '?period=' + encodeURIComponent(period))).json())
+              .signals || []
+          );
+        } catch {
+          return [];
+        }
+      }
+      function populateSelects() {
+        const fill = (id, vals, label) => {
+          const select = document.getElementById(id);
+          const current = select.value;
+          select.replaceChildren(
+            new Option(label, ''),
+            ...vals.map(value => new Option(value, value))
+          );
+          if (vals.includes(current)) select.value = current;
+        };
+        fill('filterSportEvents', filterOptions.sports || [], 'All Sports');
+        fill('filterLeagueEvents', filterOptions.leagues || [], 'All Leagues');
+        fill('filterStatusEvents', filterOptions.statuses || [], 'All Status');
+      }
+      function renderEvents(events) {
+        const c = document.getElementById('eventsTableContainer');
+        document.getElementById('eventsCount').textContent = events.length + ' events';
+        if (!events.length) {
+          c.innerHTML = '<div class="empty-state">No events.</div>';
+          return;
+        }
+        c.innerHTML =
+          '<table><thead><tr><th>ID</th><th>Sport</th><th>League</th><th>Home</th><th>Away</th><th>Start</th><th>Session</th><th>Partners</th><th></th></tr></thead><tbody>' +
+          events
+            .map(ev => {
+              const sess = ev.session || (ev.status === 'live' ? 'live' : 'pregame');
+              const sc =
+                sess === 'live'
+                  ? 'status-online'
+                  : ev.status === 'finished'
+                    ? 'status-offline'
+                    : 'status-pending';
+              const pids =
+                (ev.partner_event_ids || [])
+                  .map(p => p.partner_id + ':' + p.partner_event_id)
+                  .join(', ') ||
+                (ev.partner_hosts || []).join(', ') ||
+                '—';
+              const matchup = (ev.home_team || '—') + ' vs ' + (ev.away_team || '—');
+              return (
+                '<tr><td>' +
+                esc(ev.id) +
+                '</td><td><span class="pill">' +
+                esc(ev.sport || '—') +
+                '</span></td><td>' +
+                esc(ev.league || '—') +
+                '</td><td>' +
+                esc(ev.home_team || '—') +
+                '</td><td>' +
+                esc(ev.away_team || '—') +
+                '</td><td>' +
+                esc(fmtStart(ev.start_time)) +
+                '</td><td><span class="status-badge ' +
+                sc +
+                '">' +
+                esc(sess) +
+                '</span></td><td class="text-muted" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' +
+                esc(pids) +
+                '">' +
+                esc(pids) +
+                '</td><td><button class="btn btn-sm btn-primary load-event-detail" data-id="' +
+                esc(ev.id) +
+                '" aria-label="View details for ' +
+                esc(matchup) +
+                '">View</button></td></tr>'
+              );
+            })
+            .join('') +
+          '</tbody></table>';
+        document.querySelectorAll('.load-event-detail').forEach(btn =>
+          btn.addEventListener('click', () => {
+            document.getElementById('eventIdInput').value = btn.dataset.id;
+            loadEventDetail(btn.dataset.id);
+            switchTab('detail');
+          })
+        );
+      }
+      function renderRules(rules) {
+        const c = document.getElementById('rulesTableContainer');
+        if (!rules.length) {
+          c.innerHTML = '<div class="empty-state">No rules.</div>';
+          return;
+        }
+        c.innerHTML =
+          '<table><thead><tr><th>ID</th><th>Type</th><th>Condition</th><th>Partners / Geo</th><th>Channels</th><th>Active</th><th></th></tr></thead><tbody>' +
+          rules
+            .map(r => {
+              const ab = r.active ? 'status-online' : 'status-offline';
+              const partnerBits =
+                [
+                  r.bookmaker_comparison,
+                  (r.partner_ids || []).join(','),
+                  r.geo && r.geo !== 'all' ? 'geo:' + r.geo : null,
+                  r.state ? 'st:' + r.state : null,
+                  r.market_type && r.market_type !== 'all' ? r.market_type : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ') ||
+                r.source ||
+                'toml';
+              return (
+                '<tr><td><code>' +
+                esc(r.id) +
+                '</code></td><td><span class="pill">' +
+                esc(r.type || '—') +
+                '</span></td><td><code>' +
+                esc(r.condition || '—') +
+                '</code></td><td class="text-muted" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' +
+                esc(partnerBits) +
+                '">' +
+                esc(partnerBits) +
+                '</td><td>' +
+                esc((r.channels || []).join(', ')) +
+                '</td><td><span class="status-badge ' +
+                ab +
+                '">' +
+                (r.active ? 'Yes' : 'No') +
+                '</span></td><td><button class="btn btn-sm edit-rule" data-id="' +
+                esc(r.id) +
+                '">Edit</button> <button class="btn btn-sm btn-danger delete-rule" data-id="' +
+                esc(r.id) +
+                '">Del</button></td></tr>'
+              );
+            })
+            .join('') +
+          '</tbody></table>';
+        document
+          .querySelectorAll('.edit-rule')
+          .forEach(b => b.addEventListener('click', () => openRuleEditor(b.dataset.id)));
+        document
+          .querySelectorAll('.delete-rule')
+          .forEach(b => b.addEventListener('click', () => deleteRule(b.dataset.id)));
+      }
+      function renderAlertHistory(history) {
+        const c = document.getElementById('alertHistoryContainer');
+        if (!history.length) {
+          c.innerHTML = '<div class="empty-state">No alerts.</div>';
+          return;
+        }
+        c.innerHTML = history
+          .slice(0, 15)
+          .map(a => {
+            const kind = a.type || a.rule_id || '';
+            const isEvt = ['new_event', 'price_change', 'limit_change'].includes(kind);
+            const partners =
+              a.partner_labels && a.partner_labels.length
+                ? a.partner_labels
+                : a.books || a.partner_ids || [];
+            const partnerHtml = partners.length
+              ? '<div style="margin-top:4px;">' +
+                partners
+                  .slice(0, 4)
+                  .map(p => '<span class="pill">' + esc(p) + '</span>')
+                  .join(' ') +
+                '</div>'
+              : '';
+            return (
+              '<div class="live-item" style="' +
+              (isEvt ? 'border-left-color:#f9ca7f;' : '') +
+              '"><div>🔔 <strong>' +
+              esc(kind) +
+              '</strong> ' +
+              esc(a.message || a.title || '') +
+              '</div>' +
+              partnerHtml +
+              '<div class="meta"><span>' +
+              esc(a.rule_id || '') +
+              '</span><span>' +
+              esc(new Date(a.timestamp).toLocaleTimeString()) +
+              '</span></div></div>'
+            );
+          })
+          .join('');
+      }
+      function appendDistributionRow(container, labelText, count, total, labelClass = '') {
+        const row = document.createElement('div');
+        row.className = 'distribution-row';
+        const label = document.createElement('span');
+        label.className = labelClass;
+        label.textContent = labelText;
+        const track = document.createElement('span');
+        track.className = 'distribution-track';
+        const fill = document.createElement('span');
+        fill.className = 'distribution-fill';
+        fill.style.width = count > 0 && total > 0 ? Math.max(2, (count / total) * 100) + '%' : '0';
+        track.append(fill);
+        const value = document.createElement('strong');
+        value.textContent = String(count);
+        row.append(label, track, value);
+        container.append(row);
+      }
+      function renderSignalAnalytics(signals) {
+        const rows = Array.isArray(signals) ? signals : [];
+        const arbitrage = rows.filter(signal => signal.kind === 'arbitrage');
+        const movement = rows.filter(signal => signal.kind === 'movement');
+        const matched = rows.filter(
+          signal => (signal.matched_rules || signal.matchedRuleIds || []).length > 0
+        );
+        const arbEdges = arbitrage
+          .map(signal => Number(signal.edge_pct ?? Number(signal.edge) * 100))
+          .filter(Number.isFinite);
+        const avgArb = arbEdges.length
+          ? arbEdges.reduce((sum, edge) => sum + edge, 0) / arbEdges.length
+          : null;
+        const maxArb = arbEdges.length ? Math.max(...arbEdges) : null;
+        document.getElementById('signalKpiTotal').textContent = String(rows.length);
+        document.getElementById('signalKpiArbitrage').textContent = String(arbitrage.length);
+        document.getElementById('signalKpiMovement').textContent = String(movement.length);
+        document.getElementById('signalKpiMatched').textContent = String(matched.length);
+        document.getElementById('signalKpiAvgArb').textContent =
+          avgArb == null ? '—' : avgArb.toFixed(2) + '%';
+        document.getElementById('signalKpiMaxArb').textContent =
+          maxArb == null ? '—' : maxArb.toFixed(2) + '%';
+
+        const distribution = document.getElementById('arbDistribution');
+        distribution.replaceChildren();
+        const buckets = [
+          { label: '<1%', count: arbEdges.filter(edge => edge < 1).length },
+          { label: '1–3%', count: arbEdges.filter(edge => edge >= 1 && edge < 3).length },
+          { label: '3–5%', count: arbEdges.filter(edge => edge >= 3 && edge < 5).length },
+          { label: '≥5%', count: arbEdges.filter(edge => edge >= 5).length },
+        ];
+        if (arbEdges.length) {
+          for (const bucket of buckets)
+            appendDistributionRow(distribution, bucket.label, bucket.count, arbEdges.length);
+        } else {
+          const empty = document.createElement('div');
+          empty.className = 'empty-state';
+          empty.textContent = 'No arbitrage signals in this response window.';
+          distribution.append(empty);
+        }
+        document.getElementById('arbDistributionSummary').textContent =
+          arbEdges.length + ' arb signal' + (arbEdges.length === 1 ? '' : 's');
+
+        const kinds = document.getElementById('signalKindBreakdown');
+        kinds.replaceChildren();
+        const kindCounts = new Map();
+        for (const signal of rows) {
+          const kind = signal.kind || 'unknown';
+          kindCounts.set(kind, (kindCounts.get(kind) || 0) + 1);
+        }
+        for (const kind of ['arbitrage', 'movement', 'smart_money', ...kindCounts.keys()]) {
+          if (!kindCounts.has(kind)) continue;
+          const item = document.createElement('div');
+          item.className = 'kind-row';
+          const label = document.createElement('span');
+          label.textContent = kind.replaceAll('_', ' ');
+          const count = document.createElement('strong');
+          count.textContent = String(kindCounts.get(kind));
+          item.append(label, count);
+          kinds.append(item);
+          kindCounts.delete(kind);
+        }
+        if (!rows.length) {
+          const empty = document.createElement('div');
+          empty.className = 'empty-state';
+          empty.textContent = 'No signals in this response window.';
+          kinds.append(empty);
+        }
+      }
+      function renderSignals(signals) {
+        signals = signals || [];
+        renderSignalAnalytics(signals);
+        const c = document.getElementById('signalsTableContainer');
+        document.getElementById('signalsCount').textContent = signals.length + ' signals';
+        if (!signals.length) {
+          c.innerHTML = '<div class="empty-state">No signals.</div>';
+          return;
+        }
+        c.innerHTML =
+          '<table><thead><tr><th>Kind</th><th>Pattern</th><th>Period</th><th>Edge</th><th>Title</th><th>Matched</th><th>Time</th></tr></thead><tbody>' +
+          signals
+            .map(s => {
+              const edge =
+                s.edge_pct != null
+                  ? s.edge_pct + '%'
+                  : s.edge != null
+                    ? (s.edge * 100).toFixed(2) + '%'
+                    : '—';
+              const matched = (s.matched_rules || s.matchedRuleIds || []).join(', ') || '—';
+              return (
+                '<tr><td><span class="pill">' +
+                esc(s.kind || '') +
+                '</span></td><td>' +
+                esc(s.pattern || '—') +
+                '</td><td>' +
+                esc(s.period || 'all') +
+                '</td><td><strong>' +
+                esc(edge) +
+                '</strong></td><td>' +
+                esc(s.title || '') +
+                '</td><td><code>' +
+                esc(matched) +
+                '</code></td><td>' +
+                esc(new Date(s.timestamp || Date.now()).toLocaleTimeString()) +
+                '</td></tr>'
+              );
+            })
+            .join('') +
+          '</tbody></table>';
+      }
+      function setStreamStatus(text, state = 'idle') {
+        const status = document.getElementById('streamStatus');
+        status.textContent = text;
+        status.dataset.state = state;
+      }
+      function renderOddsFeed() {
+        const feed = document.getElementById('liveFeed');
+        feed.replaceChildren();
+        if (!oddsRows.length) {
+          const empty = document.createElement('li');
+          empty.className = 'empty-state';
+          empty.textContent = streamConnected
+            ? 'Connected; waiting for persisted odds.'
+            : 'No displayed observations.';
+          feed.append(empty);
+          return;
+        }
+        for (const row of oddsRows.slice().reverse()) {
+          const item = document.createElement('li');
+          const article = document.createElement('article');
+          const title = document.createElement('div');
+          title.className = 'odds-feed-title';
+          const matchup = document.createElement('strong');
+          matchup.textContent =
+            [row.awayTeam, row.homeTeam].filter(Boolean).join(' at ') ||
+            'Event ' + (row.eventId ?? 'unknown');
+          const price = document.createElement('strong');
+          price.textContent =
+            row.oddsDecimal == null ? 'Price —' : Number(row.oddsDecimal).toFixed(3);
+          title.append(matchup, price);
+          const details = document.createElement('p');
+          details.className = 'metric-note';
+          details.textContent = [
+            row.market,
+            row.selection,
+            row.bookmaker || row.host,
+            'source: ' + (row.source || 'unknown'),
+          ]
+            .filter(Boolean)
+            .join(' · ');
+          const time = document.createElement('time');
+          time.className = 'metric-note';
+          const value = Number(row.timestamp);
+          const date = Number.isFinite(value)
+            ? new Date(value < 1e12 ? value * 1000 : value)
+            : new Date();
+          time.dateTime = date.toISOString();
+          time.textContent = date.toLocaleString() + ' · row ' + row.id;
+          article.append(title, details, time);
+          item.append(article);
+          feed.append(item);
+        }
+      }
+      function receiveOdds(event) {
+        let envelope;
+        try {
+          envelope = JSON.parse(event.data);
+        } catch {
+          setStreamStatus('Invalid stream payload', 'error');
+          return;
+        }
+        if (!Array.isArray(envelope.rows) || !Number.isSafeInteger(envelope.cursor)) return;
+        const byId = new Map(oddsRows.map(row => [row.id, row]));
+        for (const row of envelope.rows) if (Number.isSafeInteger(row?.id)) byId.set(row.id, row);
+        oddsRows = [...byId.values()].sort((a, b) => a.id - b.id).slice(-200);
+        oddsCursor = Math.max(oddsCursor, envelope.cursor);
+        streamConnected = true;
+        setStreamStatus('Receiving · ' + oddsRows.length + ' displayed', 'connected');
+        document.getElementById('streamSummary').textContent =
+          'Cursor ' +
+          oddsCursor +
+          ' · last event ' +
+          new Date().toLocaleTimeString() +
+          ' · retained ' +
+          oddsRows.length +
+          '/200';
+        document.getElementById('streamAnnouncer').textContent =
+          envelope.count +
+          ' new odds observation' +
+          (envelope.count === 1 ? '' : 's') +
+          ' received.';
+        renderOddsFeed();
+      }
+      function closeOddsStream() {
+        oddsEventSource?.close();
+        oddsEventSource = null;
+        streamConnected = false;
+      }
+      function connectOddsStream() {
+        closeOddsStream();
+        streamPaused = false;
+        document.getElementById('streamPause').textContent = 'Pause';
+        const params = new URLSearchParams({ limit: '100' });
+        const session = document.getElementById('streamSession').value;
+        if (session !== 'all') params.set('session', session);
+        if (oddsCursor > 0) params.set('cursor', String(oddsCursor));
+        setStreamStatus('Connecting…');
+        oddsEventSource = new EventSource(ODDS_STREAM_API + '?' + params.toString());
+        oddsEventSource.addEventListener('connected', event => {
+          streamConnected = true;
+          try {
+            const data = JSON.parse(event.data);
+            oddsCursor = Math.max(oddsCursor, Number(data.cursor) || 0);
+          } catch {}
+          setStreamStatus('Connected; waiting for observations', 'connected');
+          renderOddsFeed();
+        });
+        oddsEventSource.addEventListener('snapshot', receiveOdds);
+        oddsEventSource.addEventListener('odds', receiveOdds);
+        oddsEventSource.addEventListener('stream_error', event => {
+          try {
+            const data = JSON.parse(event.data);
+            setStreamStatus(data.message || 'Stream unavailable; retrying', 'error');
+          } catch {
+            setStreamStatus('Stream unavailable; retrying', 'error');
+          }
+        });
+        oddsEventSource.onerror = () => {
+          if (!streamPaused) setStreamStatus('Connection interrupted; retrying', 'error');
+        };
+      }
+      function populateBacktestRules() {
+        const select = document.getElementById('backtestRule');
+        const selected = select.value;
+        select.replaceChildren(
+          new Option('Select a rule', ''),
+          ...rulesData.map(rule => new Option(rule.name || rule.id, rule.id))
+        );
+        if (rulesData.some(rule => rule.id === selected)) select.value = selected;
+      }
+      function renderBacktestResult(payload) {
+        const data = payload.data;
+        const kpis = [
+          ['Accepted', data.acceptedRows],
+          ['Rejected', data.rejectedRows],
+          ['Date range', data.startTimestamp.slice(0, 10) + ' → ' + data.endTimestamp.slice(0, 10)],
+          ['Avg edge', data.avgEdgePct + '%'],
+          ['Wins', data.wins],
+          ['Losses', data.losses],
+          ['Pushes', data.pushes],
+          ['Total stake', '$' + data.totalStake.toFixed(2)],
+          ['P&L', '$' + data.totalProfit.toFixed(2)],
+          ['ROI', data.roiPct + '%'],
+        ];
+        const container = document.getElementById('backtestKpis');
+        container.replaceChildren();
+        for (const [labelText, valueText] of kpis) {
+          const item = document.createElement('div');
+          item.className = 'kpi';
+          const label = document.createElement('dt');
+          label.className = 'kpi-label';
+          label.textContent = labelText;
+          const value = document.createElement('dd');
+          value.className = 'kpi-value';
+          value.textContent = String(valueText);
+          item.append(label, value);
+          container.append(item);
+        }
+        document.getElementById('backtestSource').textContent =
+          payload.file.name +
+          ' · ' +
+          payload.file.size.toLocaleString() +
+          ' bytes · analyzed ' +
+          new Date(payload.analyzedAt).toLocaleString() +
+          ' · SHA-256 ' +
+          data.inputSha256;
+        document.getElementById('backtestValidation').textContent =
+          'Settled-outcome analysis for ' +
+          data.ruleName +
+          '. Metrics use accepted rows only; stake mode: ' +
+          data.stakeMode +
+          '. Maximum drawdown: $' +
+          data.maxDrawdown.toFixed(2) +
+          '.';
+        const warnings = document.getElementById('backtestWarnings');
+        warnings.replaceChildren();
+        for (const warning of data.warnings || []) {
+          const item = document.createElement('li');
+          item.textContent = 'Row ' + warning.row + ': ' + warning.message;
+          warnings.append(item);
+        }
+        document.getElementById('backtestResults').hidden = false;
+      }
+      async function submitBacktest(event) {
+        event.preventDefault();
+        const file = document.getElementById('backtestFile').files[0];
+        const ruleId = document.getElementById('backtestRule').value;
+        const error = document.getElementById('backtestError');
+        error.hidden = true;
+        if (!file || !ruleId) {
+          error.textContent = 'Select one alert rule and one CSV file.';
+          error.hidden = false;
+          error.focus();
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024 || !file.name.toLowerCase().endsWith('.csv')) {
+          error.textContent = 'Choose a .csv file no larger than 10 MiB.';
+          error.hidden = false;
+          error.focus();
+          return;
+        }
+        await ensureCsrf();
+        const form = new FormData();
+        form.set('ruleId', ruleId);
+        form.set('file', file);
+        const progress = document.getElementById('backtestProgress');
+        const submit = document.getElementById('backtestSubmit');
+        progress.hidden = false;
+        submit.disabled = true;
+        document.getElementById('backtestFile').disabled = true;
+        try {
+          const response = await fetch(BACKTEST_UPLOAD_API, {
+            method: 'POST',
+            headers: requestHeaders(false),
+            credentials: 'same-origin',
+            body: form,
+          });
+          const payload = await response.json();
+          if (!response.ok || !payload.ok)
+            throw new Error(payload.error || 'Backtest upload failed');
+          renderBacktestResult(payload);
+          document.getElementById('backtestFileState').textContent = payload.data.rejectedRows
+            ? 'Partial success: rejected rows are listed below.'
+            : 'Analysis complete; all rows accepted.';
+        } catch (cause) {
+          error.textContent = cause instanceof Error ? cause.message : 'Backtest upload failed';
+          error.hidden = false;
+          error.focus();
+        } finally {
+          progress.hidden = true;
+          submit.disabled = false;
+          document.getElementById('backtestFile').disabled = false;
+        }
+      }
+      function renderEventDetail(event, mappings) {
+        const c = document.getElementById('eventDetailContainer');
+        if (!event) {
+          c.innerHTML = '<div class="empty-state">Not found.</div>';
+          return;
+        }
+        const mapHtml =
+          mappings && mappings.length
+            ? '<div class="mt-2"><strong>Partner event IDs</strong><ul style="margin:6px 0 0 18px;">' +
+              mappings
+                .map(
+                  m =>
+                    '<li><code>' +
+                    esc(m.partnerId) +
+                    '</code> → <code>' +
+                    esc(m.partnerEventId) +
+                    '</code> · canon <code>' +
+                    esc(m.canonicalId) +
+                    '</code>' +
+                    (m.session ? ' · ' + esc(m.session) : '') +
+                    '</li>'
+                )
+                .join('') +
+              '</ul></div>'
+            : '';
+        c.innerHTML =
+          '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;"><div><strong>ID</strong> ' +
+          esc(event.id) +
+          '</div><div><strong>Sport</strong> ' +
+          esc(event.sport || '—') +
+          '</div><div><strong>League</strong> ' +
+          esc(event.league || '—') +
+          '</div><div><strong>Home</strong> ' +
+          esc(event.home_team || '—') +
+          '</div><div><strong>Away</strong> ' +
+          esc(event.away_team || '—') +
+          '</div><div><strong>Status</strong> ' +
+          esc(event.status || '—') +
+          '</div><div><strong>Start</strong> ' +
+          esc(fmtStart(event.start_time)) +
+          '</div></div><div class="mt-2 text-muted">Partners: ' +
+          esc((event.partner_hosts || []).join(', ') || '—') +
+          '</div>' +
+          mapHtml;
+        loadChart(event.id);
+      }
+      function renderEventAlerts(configs) {
+        const c = document.getElementById('eventAlertsTableContainer');
+        if (!c) return;
+        if (!configs.length) {
+          c.innerHTML = '<div class="empty-state">No event alert configs.</div>';
+          return;
+        }
+        c.innerHTML =
+          '<table><thead><tr><th>ID</th><th>Trigger</th><th>Event</th><th>Partners</th><th>Threshold</th><th>Telegram</th><th>Enabled</th></tr></thead><tbody>' +
+          configs
+            .map(
+              a =>
+                '<tr><td><code>' +
+                esc(a.id) +
+                '</code></td><td><span class="pill">' +
+                esc(a.trigger || '') +
+                '</span></td><td><code>' +
+                esc(a.eventId || '*') +
+                '</code></td><td>' +
+                esc(a.partnerIds && a.partnerIds.length ? a.partnerIds.join(', ') : '*') +
+                '</td><td>' +
+                esc(a.threshold != null ? a.threshold + '%' : '—') +
+                '</td><td>' +
+                esc(a.telegramChatId || 'ops/partner') +
+                '</td><td>' +
+                (a.enabled ? 'Yes' : 'No') +
+                '</td></tr>'
+            )
+            .join('') +
+          '</tbody></table>';
+      }
+      async function fetchEventAlerts() {
+        try {
+          const data = await (await fetch(RESEARCH_ALERTS_API)).json();
+          return data.alerts || [];
+        } catch {
+          return [];
+        }
+      }
+      function renderHealth(data, errorMessage = '') {
+        const partners = data?.health || data?.partners || [];
+        const total = data?.summary?.total ?? data?.count ?? partners.length;
+        const online =
+          data?.summary?.online ??
+          partners.filter(p => ['active', 'online', 'low_balance'].includes(p.status)).length;
+        const attention = data?.summary
+          ? (data.summary.degraded || 0) +
+            (data.summary.offline || 0) +
+            (data.summary.lowBalance || 0) +
+            (data.summary.critical || 0)
+          : partners.filter(p =>
+              ['degraded', 'offline', 'low_balance', 'critical'].includes(p.status)
+            ).length;
+        document.getElementById('healthTotal').textContent = data ? String(total) : 'Unavailable';
+        document.getElementById('healthOnline').textContent = data ? String(online) : '—';
+        document.getElementById('healthAttention').textContent = data ? String(attention) : '—';
+        document.getElementById('healthGenerated').textContent = data?.generatedAt
+          ? new Date(data.generatedAt).toLocaleTimeString()
+          : '—';
+        const tierMix = document.getElementById('healthLiquidityMix');
+        tierMix.replaceChildren();
+        const byLiquidity = data?.summary?.byLiquidity || {};
+        const tierEntries = Object.entries(byLiquidity).sort(
+          (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+        );
+        for (const [tier, count] of tierEntries) {
+          const safeTier = ['high', 'medium', 'low', 'illiquid'].includes(tier) ? tier : 'unknown';
+          appendDistributionRow(
+            tierMix,
+            tier,
+            count,
+            total,
+            'liquidity-badge liquidity-' + safeTier
+          );
+        }
+        if (data && !tierEntries.length) {
+          const empty = document.createElement('div');
+          empty.className = 'empty-state';
+          empty.textContent = 'No liquidity tiers recorded.';
+          tierMix.append(empty);
+        }
+        if (!data) {
+          const empty = document.createElement('div');
+          empty.className = 'empty-state';
+          empty.textContent = 'Liquidity tiers unavailable.';
+          tierMix.append(empty);
+        }
+
+        const maxLimits = partners
+          .filter(partner => partner.maxBetUsd != null)
+          .map(partner => Number(partner.maxBetUsd))
+          .filter(value => Number.isFinite(value) && value >= 0)
+          .sort((a, b) => a - b);
+        const median = maxLimits.length
+          ? (maxLimits[Math.floor((maxLimits.length - 1) / 2)] +
+              maxLimits[Math.ceil((maxLimits.length - 1) / 2)]) /
+            2
+          : null;
+        document.getElementById('healthLimitKnown').textContent = data
+          ? maxLimits.length + '/' + total
+          : '—';
+        document.getElementById('healthLimitMedian').textContent =
+          median == null ? '—' : formatUsd(median);
+        document.getElementById('healthLimitMax').textContent = maxLimits.length
+          ? formatUsd(maxLimits[maxLimits.length - 1])
+          : '—';
+
+        const container = document.getElementById('healthPartners');
+        container.replaceChildren();
+        if (!data) {
+          const error = document.createElement('li');
+          error.className = 'empty-state';
+          error.setAttribute('role', 'alert');
+          error.textContent = errorMessage || 'Partner health is unavailable.';
+          container.append(error);
+          return;
+        }
+        if (!partners.length) {
+          const empty = document.createElement('li');
+          empty.className = 'empty-state';
+          empty.textContent = 'No partner health records in the registry.';
+          container.append(empty);
+          return;
+        }
+        const statusRank = {
+          critical: 0,
+          offline: 0,
+          degraded: 1,
+          low_balance: 2,
+          active: 4,
+          online: 4,
+        };
+        const liquidityRank = { illiquid: 0, low: 1, medium: 2, high: 3 };
+        const sortedPartners = partners
+          .slice()
+          .sort(
+            (a, b) =>
+              (statusRank[a.status] ?? 3) - (statusRank[b.status] ?? 3) ||
+              (liquidityRank[a.liquidityTier] ?? 4) - (liquidityRank[b.liquidityTier] ?? 4) ||
+              String(a.label || a.id).localeCompare(String(b.label || b.id))
+          );
+        for (const partner of sortedPartners) {
+          const row = document.createElement('li');
+          row.className = 'health-row';
+          const identity = document.createElement('span');
+          const label = document.createElement('strong');
+          label.textContent = partner.label || partner.name || partner.id || 'Partner';
+          const details = document.createElement('div');
+          details.className = 'metric-note';
+          const balance = partner.balanceAmount ?? partner.balance?.amount;
+          const probe = partner.lastProbe
+            ? new Date(partner.lastProbe).toLocaleString()
+            : 'Unknown';
+          details.textContent =
+            'Balance: ' +
+            (balance != null && Number.isFinite(Number(balance)) ? formatUsd(balance) : 'Unknown') +
+            ' · Last probe: ' +
+            probe;
+          identity.append(label, details);
+          const meta = document.createElement('span');
+          meta.className = 'health-row-meta';
+          const tier = partner.liquidityTier || partner.liquidity_tier || 'unknown';
+          const tierBadge = document.createElement('span');
+          tierBadge.className =
+            'liquidity-badge liquidity-' +
+            (['high', 'medium', 'low', 'illiquid'].includes(tier) ? tier : 'unknown');
+          tierBadge.textContent = 'Liquidity: ' + tier;
+          const status = document.createElement('span');
+          const statusClass = ['active', 'online'].includes(partner.status)
+            ? 'status-online'
+            : ['critical', 'offline'].includes(partner.status)
+              ? 'status-offline'
+              : 'status-pending';
+          status.className = 'status-badge ' + statusClass;
+          status.textContent =
+            'Status: ' + String(partner.status || 'unknown').replaceAll('_', ' ');
+          meta.append(tierBadge, status);
+          row.append(identity, meta);
+          container.append(row);
+        }
+      }
+      async function loadHealth(refresh = false) {
+        if (healthLoading) return;
+        healthLoading = true;
+        const panel = document.getElementById('tab-health');
+        const button = document.getElementById('refreshHealth');
+        const refreshStatus = document.getElementById('healthRefreshStatus');
+        const previous = healthData;
+        panel.setAttribute('aria-busy', 'true');
+        button.disabled = true;
+        button.textContent = 'Refreshing…';
+        refreshStatus.textContent = '';
+        try {
+          const res = await fetch(HEALTH_API + (refresh ? '?refresh=1' : ''));
+          if (!res.ok) {
+            const error = new Error(String(res.status));
+            error.status = res.status;
+            throw error;
+          }
+          healthData = await res.json();
+          renderHealth(healthData);
+          const total =
+            healthData.summary?.total ??
+            healthData.count ??
+            (healthData.health || healthData.partners || []).length;
+          document.getElementById('bookCount').textContent = Number.isFinite(Number(total))
+            ? String(total)
+            : '—';
+          refreshStatus.textContent = refresh ? 'Health refreshed.' : 'Health loaded.';
+        } catch (error) {
+          const requiresCredentials = error?.status === 401 || error?.status === 403;
+          const message = requiresCredentials
+            ? 'Partner health requires read credentials.'
+            : 'Partner health is unavailable.';
+          if (previous) {
+            healthData = previous;
+            renderHealth(previous);
+            refreshStatus.textContent = 'Refresh failed; showing stale data.';
+          } else {
+            healthData = null;
+            document.getElementById('bookCount').textContent = '—';
+            renderHealth(null, message);
+            refreshStatus.textContent = message;
+          }
+        } finally {
+          healthLoading = false;
+          panel.setAttribute('aria-busy', 'false');
+          button.disabled = false;
+          button.textContent = '↻ Refresh';
+        }
+      }
+      function renderChart(data) {
+        chartPoints = data || [];
+        const windowMin = Number(document.getElementById('detailHistoryWindow').value || 0);
+        let pts = chartPoints;
+        if (windowMin > 0) {
+          const cut = Date.now() - windowMin * 60000;
+          pts = pts.filter(p => p.timestamp >= cut);
+        }
+        const canvas = document.getElementById('detailChart');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width,
+          h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        if (!pts.length) {
+          ctx.fillStyle = '#7a8ba3';
+          ctx.fillText('No history data', 20, h / 2);
+          return;
+        }
+        const groups = {};
+        for (const p of pts) {
+          const b = p.bookmaker || 'unknown';
+          (groups[b] ||= []).push(p);
+        }
+        ctx.strokeStyle = '#1e2834';
+        ctx.beginPath();
+        ctx.moveTo(40, 20);
+        ctx.lineTo(40, h - 20);
+        ctx.lineTo(w - 20, h - 20);
+        ctx.stroke();
+        const colors = ['#5fc3f4', '#6fcf97', '#f9ca7f', '#f28b82'];
+        let ci = 0;
+        for (const [book, points] of Object.entries(groups)) {
+          if (points.length < 2) continue;
+          const sorted = points.slice().sort((a, b) => a.timestamp - b.timestamp);
+          const minV = Math.min(...sorted.map(p => p.odds_decimal)),
+            maxV = Math.max(...sorted.map(p => p.odds_decimal));
+          const range = maxV - minV || 0.1;
+          ctx.strokeStyle = colors[ci % colors.length];
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          const step = (w - 60) / (sorted.length - 1);
+          sorted.forEach((p, i) => {
+            const x = 40 + i * step,
+              y = h - 20 - ((p.odds_decimal - minV) / range) * (h - 40);
+            i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+          });
+          ctx.stroke();
+          ctx.fillStyle = colors[ci % colors.length];
+          ctx.font = '10px sans-serif';
+          ctx.fillText(book, w - 80, 20 + ci * 15);
+          ci++;
+        }
+      }
+      async function loadEventDetail(id) {
+        try {
+          const data = await (await fetch(EVENTS_API + '/' + encodeURIComponent(id))).json();
+          renderEventDetail(data.event || data, data.partner_mappings || []);
+        } catch {
+          renderEventDetail(null, []);
+          showToast('Event detail unavailable');
+        }
+      }
+      async function loadChart(id) {
+        const market = document.getElementById('detailMarketType').value;
+        try {
+          const data = await (
+            await fetch(
+              EVENTS_API +
+                '/' +
+                encodeURIComponent(id) +
+                '/history?market=' +
+                encodeURIComponent(market)
+            )
+          ).json();
+          renderChart(data.points || []);
+        } catch {
+          renderChart([]);
+          showToast('History unavailable');
+        }
+      }
+      async function loadAllData() {
+        await ensureCsrf();
+        eventsData = await fetchEvents();
+        populateSelects();
+        renderEvents(eventsData);
+        rulesData = await fetchRules();
+        renderRules(rulesData);
+        populateBacktestRules();
+        eventAlertConfigs = await fetchEventAlerts();
+        renderEventAlerts(eventAlertConfigs);
+        if (eventAlertConfigs.length) {
+          const priceCfg = eventAlertConfigs.find(a => a.trigger === 'price_change');
+          if (priceCfg?.threshold != null)
+            document.getElementById('evtAlertThreshold').value = priceCfg.threshold;
+          const withTg = eventAlertConfigs.find(a => a.telegramChatId);
+          if (withTg?.telegramChatId)
+            document.getElementById('evtAlertTelegram').value = withTg.telegramChatId;
+          document.getElementById('evtAlertEnabled').value = String(
+            eventAlertConfigs.every(a => a.enabled)
+          );
+          const pids = eventAlertConfigs[0]?.partnerIds || [];
+          const allP = !pids.length;
+          const allEl = document.getElementById('evtPartnerAll');
+          const hrEl = document.getElementById('evtPartnerHr');
+          const fbEl = document.getElementById('evtPartnerFonbet');
+          if (allEl) allEl.checked = allP;
+          if (hrEl) hrEl.checked = allP || pids.includes('hard-rock-florida');
+          if (fbEl) fbEl.checked = allP || pids.includes('fonbet');
+        }
+        alertHistory = await fetchAlertHistory();
+        renderAlertHistory(alertHistory);
+        renderSignals(await fetchSignals());
+        document.getElementById('dataModeBadge').textContent = usingLive
+          ? '⚡ live APIs'
+          : '⚠ APIs unavailable';
+        await loadHealth();
+      }
+      function openRuleEditor(ruleId) {
+        lastFocusedElement = document.activeElement;
+        const modal = document.getElementById('ruleModal');
+        const del = document.getElementById('deleteRuleBtn');
+        if (ruleId) {
+          const r = rulesData.find(x => x.id === ruleId);
+          if (!r) return;
+          document.getElementById('ruleModalTitle').textContent = 'Edit Rule';
+          del.style.display = 'inline-block';
+          document.getElementById('ruleEditId').value = ruleId;
+          document.getElementById('ruleId').value = r.id;
+          document.getElementById('ruleId').disabled = true;
+          document.getElementById('ruleName').value = r.name || '';
+          document.getElementById('ruleDescription').value = r.description || '';
+          document.getElementById('ruleCondition').value = r.condition || '';
+          document.getElementById('rulePeriod').value = r.period || 'all';
+          document.getElementById('rulePattern').value = r.pattern || '';
+          document.getElementById('ruleEdgeMin').value =
+            r.edge?.min != null ? Number(r.edge.min) * 100 : '';
+          document.getElementById('ruleEdgeMax').value =
+            r.edge?.max != null ? Number(r.edge.max) * 100 : '';
+          document.getElementById('ruleChannels').value = (r.channels || []).join(', ');
+          document.getElementById('ruleTelegramChat').value =
+            r.telegram_chat_id || r.telegramChatId || '';
+          document.getElementById('ruleEmailRecipients').value = (r.email_recipients || []).join(
+            ', '
+          );
+          document.getElementById('ruleMarketType').value = r.market_type || '';
+          document.getElementById('ruleGeo').value = r.geo || '';
+          document.getElementById('ruleState').value = r.state || '';
+          document.getElementById('ruleLimitMin').value = r.limit?.min != null ? r.limit.min : '';
+          document.getElementById('ruleLimitMax').value = r.limit?.max != null ? r.limit.max : '';
+          document.getElementById('ruleLatency').value =
+            r.latency_threshold != null ? r.latency_threshold : '';
+          document.getElementById('ruleBookCompare').value = r.bookmaker_comparison || '';
+          document.getElementById('rulePartnerIds').value = (r.partner_ids || []).join(', ');
+          document.getElementById('ruleActive').value = String(!!r.active);
+          editingRuleId = ruleId;
+        } else {
+          document.getElementById('ruleModalTitle').textContent = 'Add Rule';
+          del.style.display = 'none';
+          document.getElementById('ruleEditId').value = '';
+          document.getElementById('ruleId').value = '';
+          document.getElementById('ruleId').disabled = false;
+          [
+            'ruleName',
+            'ruleDescription',
+            'ruleCondition',
+            'ruleEmailRecipients',
+            'ruleEdgeMin',
+            'ruleEdgeMax',
+            'ruleTelegramChat',
+            'ruleMarketType',
+            'ruleGeo',
+            'ruleState',
+            'ruleLimitMin',
+            'ruleLimitMax',
+            'ruleLatency',
+            'ruleBookCompare',
+            'rulePartnerIds',
+          ].forEach(id => (document.getElementById(id).value = ''));
+          document.getElementById('ruleChannels').value = 'ws';
+          document.getElementById('rulePeriod').value = 'all';
+          document.getElementById('rulePattern').value = '';
+          document.getElementById('ruleActive').value = 'true';
+          editingRuleId = null;
+        }
+        modal.classList.add('active');
+        modal.querySelector('.modal-content').focus();
+      }
+      function closeRuleEditor() {
+        document.getElementById('ruleModal').classList.remove('active');
+        if (lastFocusedElement instanceof HTMLElement) lastFocusedElement.focus();
+      }
+      async function saveRule() {
+        await ensureCsrf();
+        const id = document.getElementById('ruleId').value.trim();
+        const name = document.getElementById('ruleName').value.trim();
+        const condition = document.getElementById('ruleCondition').value.trim();
+        if (!id || !name || !condition) {
+          showToast('ID, Name, Condition required');
+          return;
+        }
+        const edgeMinPct = parseFloat(document.getElementById('ruleEdgeMin').value);
+        const edgeMaxPct = parseFloat(document.getElementById('ruleEdgeMax').value);
+        let edge;
+        if (Number.isFinite(edgeMinPct)) {
+          edge = { min: edgeMinPct / 100 };
+          if (Number.isFinite(edgeMaxPct)) edge.max = edgeMaxPct / 100;
+        }
+        const existing = rulesData.find(x => x.id === (editingRuleId || id));
+        const limitMin = parseFloat(document.getElementById('ruleLimitMin').value);
+        const limitMax = parseFloat(document.getElementById('ruleLimitMax').value);
+        let limit;
+        if (Number.isFinite(limitMin) || Number.isFinite(limitMax)) {
+          limit = {};
+          if (Number.isFinite(limitMin)) limit.min = limitMin;
+          if (Number.isFinite(limitMax)) limit.max = limitMax;
+        }
+        const latency = parseFloat(document.getElementById('ruleLatency').value);
+        const partnerIds = document
+          .getElementById('rulePartnerIds')
+          .value.split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+        const rule = {
+          id,
+          name,
+          description: document.getElementById('ruleDescription').value.trim(),
+          condition,
+          type: existing?.type,
+          threshold: Number.isFinite(edgeMinPct) ? edgeMinPct : existing?.threshold,
+          period: document.getElementById('rulePeriod').value || 'all',
+          pattern: document.getElementById('rulePattern').value || undefined,
+          edge,
+          channels: document
+            .getElementById('ruleChannels')
+            .value.split(',')
+            .map(s => s.trim())
+            .filter(Boolean),
+          email_recipients: document
+            .getElementById('ruleEmailRecipients')
+            .value.split(',')
+            .map(s => s.trim())
+            .filter(Boolean),
+          telegram_chat_id: document.getElementById('ruleTelegramChat').value.trim() || undefined,
+          market_type: document.getElementById('ruleMarketType').value.trim() || undefined,
+          geo: document.getElementById('ruleGeo').value.trim() || undefined,
+          state: document.getElementById('ruleState').value.trim() || undefined,
+          limit,
+          latency_threshold: Number.isFinite(latency) ? latency : undefined,
+          bookmaker_comparison:
+            document.getElementById('ruleBookCompare').value.trim() || undefined,
+          event_id: existing?.event_id || undefined,
+          partner_ids: partnerIds.length ? partnerIds : undefined,
+          active: document.getElementById('ruleActive').value === 'true',
+        };
+        try {
+          const res = await fetch(RULES_API, {
+            method: editingRuleId ? 'PUT' : 'POST',
+            headers: apiHeaders(),
+            credentials: 'same-origin',
+            body: JSON.stringify(rule),
+          });
+          const data = await res.json();
+          if (!res.ok || data.ok === false) throw new Error(data.error || res.status);
+          rulesData = await fetchRules();
+          renderRules(rulesData);
+          eventAlertConfigs = await fetchEventAlerts();
+          renderEventAlerts(eventAlertConfigs);
+          showToast('✅ Saved (' + (data.rule?.source || 'toml') + ')');
+          closeRuleEditor();
+        } catch (e) {
+          showToast('Save failed: ' + (e.message || e));
+        }
+      }
+      async function deleteRule(ruleId) {
+        if (!confirm('Delete ' + ruleId + '?')) return;
+        await ensureCsrf();
+        try {
+          const res = await fetch(RULES_API + '/' + encodeURIComponent(ruleId), {
+            method: 'DELETE',
+            headers: apiHeaders(),
+            credentials: 'same-origin',
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || data.ok === false) throw new Error(data.error || res.status);
+          rulesData = await fetchRules();
+          renderRules(rulesData);
+          showToast('🗑️ Deleted');
+        } catch (e) {
+          showToast('Delete failed: ' + (e.message || e));
+        }
+      }
+      document
+        .querySelectorAll('.tab')
+        .forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+      document.getElementById('mainTabs').addEventListener('keydown', event => {
+        const tabs = [...document.querySelectorAll('.tab')];
+        const index = tabs.indexOf(document.activeElement);
+        if (index < 0) return;
+        let next = index;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        switchTab(tabs[next].dataset.tab, true);
+      });
+      document.getElementById('applyEventsFilter').addEventListener('click', async () => {
+        eventsData = await fetchEvents();
+        populateSelects();
+        let f = eventsData;
+        const sport = document.getElementById('filterSportEvents').value;
+        const league = document.getElementById('filterLeagueEvents').value;
+        const status = document.getElementById('filterStatusEvents').value;
+        if (sport) f = f.filter(e => e.sport === sport);
+        if (league) f = f.filter(e => e.league === league);
+        if (status) f = f.filter(e => e.status === status);
+        renderEvents(f);
+      });
+      document.getElementById('refreshEvents').addEventListener('click', async () => {
+        eventsData = await fetchEvents();
+        populateSelects();
+        renderEvents(eventsData);
+      });
+      document.getElementById('runResearchCycle')?.addEventListener('click', async () => {
+        try {
+          await ensureCsrf();
+          const res = await fetch('/api/research/cycle', {
+            method: 'POST',
+            headers: apiHeaders(),
+            credentials: 'same-origin',
+          });
+          const data = await res.json();
+          if (!res.ok || data.ok === false) throw new Error(data.error || res.status);
+          showToast(
+            '▶ Cycle: ' +
+              (data.events || 0) +
+              ' events · ' +
+              (data.snapshotsStored || 0) +
+              ' snaps · ' +
+              (data.alertsFired || 0) +
+              ' alerts'
+          );
+          eventsData = await fetchEvents();
+          populateSelects();
+          renderEvents(eventsData);
+        } catch (e) {
+          showToast('Research cycle failed: ' + (e.message || e));
+        }
+      });
+      document.getElementById('loadEventBtn').addEventListener('click', () => {
+        const id = document.getElementById('eventIdInput').value.trim();
+        if (id) loadEventDetail(id);
+      });
+      document.getElementById('refreshChart').addEventListener('click', () => {
+        const id = document.getElementById('eventIdInput').value.trim();
+        if (id) loadChart(id);
+      });
+      document.getElementById('detailMarketType').addEventListener('change', () => {
+        const id = document.getElementById('eventIdInput').value.trim();
+        if (id) loadChart(id);
+      });
+      document
+        .getElementById('detailHistoryWindow')
+        .addEventListener('change', () => renderChart(chartPoints));
+      document.getElementById('addRuleBtn').addEventListener('click', () => openRuleEditor());
+      document.getElementById('cancelRuleBtn').addEventListener('click', closeRuleEditor);
+      document.getElementById('saveRuleBtn').addEventListener('click', saveRule);
+      document.getElementById('deleteRuleBtn').addEventListener('click', () => {
+        const id = document.getElementById('ruleEditId').value;
+        if (id) deleteRule(id);
+        closeRuleEditor();
+      });
+      document.getElementById('ruleModal').addEventListener('click', e => {
+        if (e.target === e.currentTarget) closeRuleEditor();
+      });
+      document.addEventListener('keydown', event => {
+        if (
+          event.key === 'Escape' &&
+          document.getElementById('ruleModal').classList.contains('active')
+        )
+          closeRuleEditor();
+      });
+      document.getElementById('refreshHealth').addEventListener('click', () => loadHealth(true));
+      document.getElementById('streamPause').addEventListener('click', () => {
+        if (streamPaused) {
+          connectOddsStream();
+          return;
+        }
+        streamPaused = true;
+        closeOddsStream();
+        document.getElementById('streamPause').textContent = 'Resume';
+        setStreamStatus('Paused at cursor ' + oddsCursor);
+      });
+      document.getElementById('streamReconnect').addEventListener('click', connectOddsStream);
+      document.getElementById('streamClear').addEventListener('click', () => {
+        oddsRows = [];
+        renderOddsFeed();
+        document.getElementById('streamSummary').textContent =
+          'Display cleared; server data was not deleted.';
+      });
+      document.getElementById('streamSession').addEventListener('change', () => {
+        oddsCursor = 0;
+        oddsRows = [];
+        connectOddsStream();
+      });
+      document.getElementById('backtestFile').addEventListener('change', event => {
+        const file = event.currentTarget.files[0];
+        document.getElementById('backtestFileState').textContent = file
+          ? file.name + ' · ' + file.size.toLocaleString() + ' bytes'
+          : 'No file selected.';
+      });
+      document.getElementById('backtestForm').addEventListener('submit', submitBacktest);
+      document.getElementById('backtestForm').addEventListener('reset', () => {
+        setTimeout(() => {
+          document.getElementById('backtestFileState').textContent = 'No file selected.';
+          document.getElementById('backtestError').hidden = true;
+          document.getElementById('backtestResults').hidden = true;
+        });
+      });
+      document.getElementById('reloadRulesBtn').addEventListener('click', async () => {
+        try {
+          await ensureCsrf();
+          const data = await (
+            await fetch(RULES_RELOAD_API, {
+              method: 'POST',
+              headers: apiHeaders(),
+              credentials: 'same-origin',
+            })
+          ).json();
+          rulesData = data.rules || (await fetchRules());
+          renderRules(rulesData);
+          showToast('↻ Reloaded ' + (data.count || rulesData.length) + ' rules from TOML');
+        } catch (e) {
+          showToast('Reload failed: ' + (e.message || e));
+        }
+      });
+      document.getElementById('reloadEventAlertsBtn')?.addEventListener('click', async () => {
+        eventAlertConfigs = await fetchEventAlerts();
+        renderEventAlerts(eventAlertConfigs);
+        showToast('↻ Event alerts: ' + eventAlertConfigs.length);
+      });
+      document.getElementById('saveEventAlertsBtn')?.addEventListener('click', async () => {
+        try {
+          await ensureCsrf();
+          const threshold = parseFloat(document.getElementById('evtAlertThreshold').value);
+          const telegramChatId =
+            document.getElementById('evtAlertTelegram').value.trim() || undefined;
+          const enabled = document.getElementById('evtAlertEnabled').value === 'true';
+          const allPartners = document.getElementById('evtPartnerAll')?.checked;
+          const partnerIds = allPartners
+            ? []
+            : [
+                document.getElementById('evtPartnerHr')?.checked ? 'hard-rock-florida' : null,
+                document.getElementById('evtPartnerFonbet')?.checked ? 'fonbet' : null,
+              ].filter(Boolean);
+          let configs = eventAlertConfigs.length
+            ? eventAlertConfigs.slice()
+            : [
+                {
+                  id: 'evt-all-new',
+                  eventId: '*',
+                  partnerIds: [],
+                  trigger: 'new_event',
+                  actions: ['telegram'],
+                  enabled: true,
+                  createdAt: new Date().toISOString(),
+                },
+                {
+                  id: 'evt-all-price-2pct',
+                  eventId: '*',
+                  partnerIds: [],
+                  trigger: 'price_change',
+                  threshold: 2,
+                  actions: ['telegram'],
+                  enabled: true,
+                  createdAt: new Date().toISOString(),
+                },
+                {
+                  id: 'evt-all-limit',
+                  eventId: '*',
+                  partnerIds: [],
+                  trigger: 'limit_change',
+                  actions: ['telegram'],
+                  enabled: true,
+                  createdAt: new Date().toISOString(),
+                },
+              ];
+          configs = configs.map(c => ({
+            ...c,
+            enabled,
+            partnerIds,
+            telegramChatId: telegramChatId || c.telegramChatId,
+            threshold:
+              c.trigger === 'price_change' && Number.isFinite(threshold) ? threshold : c.threshold,
+          }));
+          const res = await fetch(RESEARCH_ALERTS_API, {
+            method: 'PUT',
+            headers: apiHeaders(),
+            credentials: 'same-origin',
+            body: JSON.stringify({ alerts: configs }),
+          });
+          const data = await res.json();
+          if (!res.ok || data.ok === false) throw new Error(data.error || res.status);
+          eventAlertConfigs = data.alerts || configs;
+          renderEventAlerts(eventAlertConfigs);
+          showToast('✅ Event alerts saved');
+        } catch (e) {
+          showToast('Save event alerts failed: ' + (e.message || e));
+        }
+      });
+      document
+        .getElementById('refreshSignals')
+        .addEventListener('click', async () => renderSignals(await fetchSignals()));
+      document
+        .getElementById('filterSignalPeriod')
+        .addEventListener('change', async () => renderSignals(await fetchSignals()));
+      document.getElementById('evaluateAlertsBtn').addEventListener('click', async () => {
+        try {
+          await ensureCsrf();
+          const period = document.getElementById('filterSignalPeriod').value || 'all';
+          const data = await (
+            await fetch(ALERTS_API + '?evaluate=1&period=' + encodeURIComponent(period), {
+              credentials: 'same-origin',
+            })
+          ).json();
+          showToast('Evaluated → ' + (data.count || 0) + ' new alerts');
+          alertHistory = await fetchAlertHistory();
+          renderAlertHistory(alertHistory);
+          renderSignals(await fetchSignals());
+        } catch (e) {
+          showToast('Evaluate failed: ' + (e.message || e));
+        }
+      });
+      window.addEventListener('pagehide', closeOddsStream);
+      const initialTab = [
+        'events',
+        'detail',
+        'signals',
+        'live',
+        'backtest',
+        'alerts',
+        'health',
+      ].includes(location.hash.slice(1))
+        ? location.hash.slice(1)
+        : 'signals';
+      switchTab(initialTab);
+      populateSelects();
+      loadAllData();
+      setInterval(() => {
+        if (['events', 'alerts', 'signals'].includes(currentTab)) loadAllData();
+      }, 30000);
+      console.log('🧠 Bun Agent Dashboard v1.13 (v1.05 contracts · v1.07 workflow) loaded.');
+    </script>
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+  </body>
 </html>

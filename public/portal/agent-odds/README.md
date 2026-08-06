@@ -5,7 +5,7 @@ Local agent shell dashboards (not Tennis HQ Worker).
 | Version             | Route / file                                     | Notes                                                                                                |
 | ------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
 | **v1.05** (default) | `/` · `/dashboard.html` · `dashboard-v1.05.html` | Stable events desk · signals · rules · alerts · CSRF-protected mutations                             |
-| v1.13 (preview)     | `/v1.13` · `dashboard-v1.13.html`                | v1.07 workflow · v1.05 contracts · arb analytics · partner tiers/limits · accessible tabs            |
+| v1.13 (preview)     | `/v1.13` · `dashboard-v1.13.html`                | v1.07 workflow · v1.05 contracts · replayable odds SSE · settled-outcome CSV analysis                 |
 | v1.12               | `/system` · `dashboard-v1.12.html`               | **System** tab · Bun.file/Glob/which/spawn/password/peek · package updates                           |
 | v1.11               | `/packages` · `dashboard-v1.11.html`             | Package update tab fixes · click-select · `originalTarget` · real SSE `/api/update` · dry-run · CSRF |
 | v1.10               | `dashboard-v1.10.html`                           | Package tab (buggy: no click, mock fallback, simulated progress)                                     |
@@ -35,6 +35,8 @@ Or set `AGENT_DEMO_USER` / `AGENT_DEMO_PASS`. **Not for production.**
 - **`POST /api/bet` is an in-memory mock.** No real money, no live book
   placement.
 - **Backtest** uses synthetic outcomes, not exchange history.
+- **v1.13 CSV analysis** uses only uploaded settled outcomes; it does not run
+  the legacy synthetic simulator or re-evaluate alert predicates.
 - **ML** fields are deterministic annotations from edge math (XGBoost/LSTM
   labels only — no trained weights).
 
@@ -66,6 +68,8 @@ Or set `AGENT_DEMO_USER` / `AGENT_DEMO_PASS`. **Not for production.**
 | GET      | `/api/odds/*`                                  | Partner-enriched odds                                                 |
 | WS       | `/ws`                                          | Live feed topic `agent-odds`                                          |
 | GET      | `/api/platform`                                | Capabilities                                                          |
+| GET      | `/api/stream/odds`                             | Persisted odds SSE with cursor replay                                 |
+| POST     | `/api/backtest/upload`                         | CSRF-protected settled-outcome CSV analysis                           |
 | GET      | `/api/system/info`                             | Bun.version / revision / which / Bun.color                            |
 | GET/POST | `/api/system/fs/ls` · `/fs/read` · `/fs/write` | Sandboxed file explorer (project root only)                           |
 | GET      | `/api/system/processes`                        | `Bun.spawn(['ps','aux'])`                                             |

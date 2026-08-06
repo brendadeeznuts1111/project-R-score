@@ -205,6 +205,7 @@ export type OddsQueryFilter = {
 
 export type OddsQueryRow = {
   id: number;
+  eventId: number | null;
   selection: string;
   oddsDecimal: number | null;
   oddsAmerican: number | null;
@@ -218,6 +219,7 @@ export type OddsQueryRow = {
   awayTeam: string | null;
   league: string | null;
   sport: string | null;
+  source: string | null;
 };
 
 export function queryNormalizedOdds(
@@ -260,6 +262,7 @@ export function queryNormalizedOdds(
   const sql = `
     SELECT
       o.id,
+      o.event_id AS eventId,
       o.selection,
       o.odds_decimal AS oddsDecimal,
       o.odds_american AS oddsAmerican,
@@ -272,7 +275,8 @@ export function queryNormalizedOdds(
       th.name AS homeTeam,
       ta.name AS awayTeam,
       l.name AS league,
-      COALESCE(l.sport, th.sport, ta.sport) AS sport
+      COALESCE(l.sport, th.sport, ta.sport) AS sport,
+      json_extract(o.metadata, '$.source') AS source
     FROM odds_normalized o
     LEFT JOIN bookmakers b ON b.id = o.bookmaker_id
     LEFT JOIN events e ON e.id = o.event_id
@@ -285,4 +289,54 @@ export function queryNormalizedOdds(
     LIMIT ?
   `;
   return db.query(sql).all(...params) as OddsQueryRow[];
+}
+
+/** Cursor query for same-origin SSE consumers. Rows are ordered oldest → newest. */
+export function queryNormalizedOddsAfter(
+  afterId: number,
+  filter: Pick<OddsQueryFilter, 'session' | 'limit'> = {},
+  db: Database = openOddsDb()
+): OddsQueryRow[] {
+  ensureNormalizationSchema(db);
+  const clauses = ['o.id > ?'];
+  const params: Array<number | string> = [
+    Number.isFinite(afterId) ? Math.max(0, Math.floor(afterId)) : 0,
+  ];
+  if (filter.session) {
+    clauses.push('o.session = ?');
+    params.push(filter.session);
+  }
+  const limit = Math.min(Math.max(filter.limit ?? 50, 1), 500);
+  params.push(limit);
+  return db
+    .query(
+      `SELECT
+        o.id,
+        o.event_id AS eventId,
+        o.selection,
+        o.odds_decimal AS oddsDecimal,
+        o.odds_american AS oddsAmerican,
+        o.odds_handicap AS oddsHandicap,
+        o.timestamp,
+        o.session,
+        mt.code AS marketCode,
+        b.name AS bookmaker,
+        b.host AS host,
+        th.name AS homeTeam,
+        ta.name AS awayTeam,
+        l.name AS league,
+        COALESCE(l.sport, th.sport, ta.sport) AS sport,
+        json_extract(o.metadata, '$.source') AS source
+      FROM odds_normalized o
+      LEFT JOIN bookmakers b ON b.id = o.bookmaker_id
+      LEFT JOIN events e ON e.id = o.event_id
+      LEFT JOIN teams th ON th.id = e.home_team_id
+      LEFT JOIN teams ta ON ta.id = e.away_team_id
+      LEFT JOIN leagues l ON l.id = e.league_id
+      LEFT JOIN market_types mt ON mt.id = o.market_type_id
+      WHERE ${clauses.join(' AND ')}
+      ORDER BY o.id ASC
+      LIMIT ?`
+    )
+    .all(...params) as OddsQueryRow[];
 }

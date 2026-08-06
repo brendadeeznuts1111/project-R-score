@@ -21,7 +21,12 @@ import {
 } from '../research/index.ts';
 import { checkApiKey } from './auth/api-key.ts';
 import { checkCsrf, issueCsrf, isMutatingMethod, getSessionId } from './auth/csrf.ts';
-import { authenticatePartnerRequest, jsonWithRequestId } from './auth/partner-request.ts';
+import {
+  authenticatePartnerRequest,
+  jsonWithRequestId,
+  requestIdFrom,
+} from './auth/partner-request.ts';
+import { BACKTEST_UPLOAD_MAX_BYTES, analyzeBacktestCsv } from './backtest-upload.ts';
 import {
   getPackageSnapshot,
   runPackageUpdate,
@@ -55,6 +60,8 @@ import {
 import { getEvent, listEventFilterOptions, listEvents } from './matching/events-query.ts';
 import { queryOddsHistorySeries } from './matching/history-query.ts';
 import { detectSignals, type OddsPeriod } from './matching/signals.ts';
+import { oddsStreamResponse } from './signals-sse.ts';
+import { parseRuleId } from '../types/branded.ts';
 import { buildBookTelegramIndex, sendPartnerSignal } from './partners-signal.ts';
 import { getPlatformSnapshot } from './platform.ts';
 import { respondBunFile, resolveUnderRoot } from './http/bun-file.ts';
@@ -132,6 +139,27 @@ function withCsrfGate(req: Request): Response | null {
   const csrf = checkCsrf(req);
   if (csrf.ok) return null;
   return json({ ok: false, error: csrf.error, csrf: true }, csrf.status);
+}
+
+function methodNotAllowed(req: Request, allow: string): Response {
+  const requestId = requestIdFrom(req);
+  const response = jsonWithRequestId({ ok: false, error: 'method not allowed' }, 405, requestId);
+  const headers = new Headers(response.headers);
+  headers.set('allow', allow);
+  return new Response(response.body, { status: response.status, headers });
+}
+
+function parseBoundedInteger(
+  raw: string | null,
+  fallback: number,
+  min: number,
+  max: number
+): number | null {
+  if (raw == null || raw === '') return fallback;
+  if (!/^\d+$/.test(raw)) return null;
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value) || value < min) return null;
+  return Math.min(value, max);
 }
 
 function serializeRule(r: AlertRule) {
@@ -315,7 +343,8 @@ export function startResearchDashboard(
   const server = Bun.serve({
     port,
     hostname,
-    async fetch(req) {
+    maxRequestBodySize: BACKTEST_UPLOAD_MAX_BYTES + 1024 * 1024,
+    async fetch(req, server) {
       const url = new URL(req.url);
 
       if (url.pathname === '/health') {
@@ -342,8 +371,207 @@ export function startResearchDashboard(
         );
       }
 
+      if (url.pathname === '/api/stream/odds' || url.pathname === '/api/stream/odds/') {
+        if (req.method !== 'GET') return methodNotAllowed(req, 'GET');
+        const auth = authenticatePartnerRequest(req, 'read');
+        if (!auth.ok) {
+          return jsonWithRequestId({ ok: false, error: auth.error }, auth.status, auth.requestId);
+        }
+        if (url.searchParams.has('api_key')) {
+          return jsonWithRequestId(
+            { ok: false, error: 'Credentials are not accepted in the URL' },
+            400,
+            auth.requestId
+          );
+        }
+        const sessionRaw = url.searchParams.get('session') ?? 'all';
+        if (!['all', 'pregame', 'live'].includes(sessionRaw)) {
+          return jsonWithRequestId(
+            { ok: false, error: 'session must be all, pregame, or live' },
+            400,
+            auth.requestId
+          );
+        }
+        const limit = parseBoundedInteger(url.searchParams.get('limit'), 100, 1, 500);
+        const cursorRaw = req.headers.get('last-event-id') ?? url.searchParams.get('cursor');
+        const cursor = parseBoundedInteger(cursorRaw, 0, 0, Number.MAX_SAFE_INTEGER);
+        if (limit == null || cursor == null) {
+          return jsonWithRequestId(
+            { ok: false, error: 'limit and cursor must be non-negative integers' },
+            400,
+            auth.requestId
+          );
+        }
+        server.timeout(req, 0);
+        return oddsStreamResponse(req, {
+          requestId: auth.requestId,
+          cursor,
+          limit,
+          session: sessionRaw === 'all' ? undefined : sessionRaw,
+        });
+      }
+
+      if (url.pathname === '/api/signals' || url.pathname === '/api/signals/') {
+        if (req.method !== 'GET') return methodNotAllowed(req, 'GET');
+        const auth = authenticatePartnerRequest(req, 'read');
+        if (!auth.ok) {
+          return jsonWithRequestId({ ok: false, error: auth.error }, auth.status, auth.requestId);
+        }
+        const periodRaw = url.searchParams.get('period') ?? 'all';
+        if (!['prematch', 'live', 'all'].includes(periodRaw)) {
+          return jsonWithRequestId(
+            { ok: false, error: 'period must be all, prematch, or live' },
+            400,
+            auth.requestId
+          );
+        }
+        const limit = parseBoundedInteger(url.searchParams.get('limit'), 50, 1, 200);
+        if (limit == null) {
+          return jsonWithRequestId(
+            { ok: false, error: 'limit must be a positive integer' },
+            400,
+            auth.requestId
+          );
+        }
+        try {
+          const period = periodRaw as OddsPeriod;
+          const signals = await detectSignals({ period, limit });
+          return jsonWithRequestId(
+            {
+              count: signals.length,
+              period,
+              signals: signals.map(signal => ({
+                ...signal,
+                edge_pct: Number((signal.edge * 100).toFixed(3)),
+                matched_rules: signal.matchedRuleIds,
+              })),
+            },
+            200,
+            auth.requestId
+          );
+        } catch {
+          return jsonWithRequestId(
+            { ok: false, error: 'Signals are temporarily unavailable' },
+            500,
+            auth.requestId
+          );
+        }
+      }
+
+      if (
+        (url.pathname === '/api/backtest/upload' || url.pathname === '/api/backtest/upload/') &&
+        req.method !== 'POST'
+      ) {
+        return methodNotAllowed(req, 'POST');
+      }
+
       const csrfBlock = withCsrfGate(req);
       if (csrfBlock) return csrfBlock;
+
+      if (url.pathname === '/api/backtest/upload' || url.pathname === '/api/backtest/upload/') {
+        const auth = authenticatePartnerRequest(req, 'write');
+        if (!auth.ok) {
+          return jsonWithRequestId({ ok: false, error: auth.error }, auth.status, auth.requestId);
+        }
+        const contentType = req.headers.get('content-type')?.toLowerCase() ?? '';
+        if (!contentType.startsWith('multipart/form-data;')) {
+          return jsonWithRequestId(
+            { ok: false, error: 'Content-Type must be multipart/form-data' },
+            415,
+            auth.requestId
+          );
+        }
+        const contentLength = Number(req.headers.get('content-length') ?? '0');
+        if (
+          Number.isFinite(contentLength) &&
+          contentLength > BACKTEST_UPLOAD_MAX_BYTES + 1024 * 1024
+        ) {
+          return jsonWithRequestId(
+            { ok: false, error: 'Upload exceeds the 10 MiB limit' },
+            413,
+            auth.requestId
+          );
+        }
+        let form: FormData;
+        try {
+          form = await req.formData();
+        } catch {
+          return jsonWithRequestId(
+            { ok: false, error: 'Malformed multipart form data' },
+            400,
+            auth.requestId
+          );
+        }
+        const files = form.getAll('file').filter(value => value instanceof File);
+        if (files.length !== 1 || form.getAll('file').length !== 1) {
+          return jsonWithRequestId(
+            { ok: false, error: 'Exactly one CSV file is required' },
+            400,
+            auth.requestId
+          );
+        }
+        const file = files[0];
+        if (file.size === 0) {
+          return jsonWithRequestId({ ok: false, error: 'CSV file is empty' }, 422, auth.requestId);
+        }
+        if (file.size > BACKTEST_UPLOAD_MAX_BYTES) {
+          return jsonWithRequestId(
+            { ok: false, error: 'CSV file exceeds the 10 MiB limit' },
+            413,
+            auth.requestId
+          );
+        }
+        const isCsvName = file.name.toLowerCase().endsWith('.csv');
+        const isCsvType =
+          file.type === '' || ['text/csv', 'application/csv'].includes(file.type.toLowerCase());
+        if (!isCsvName || !isCsvType) {
+          return jsonWithRequestId(
+            { ok: false, error: 'Upload must be a .csv file with a CSV media type' },
+            415,
+            auth.requestId
+          );
+        }
+        const ruleValue = form.get('ruleId');
+        if (typeof ruleValue !== 'string' || ruleValue.trim() === '') {
+          return jsonWithRequestId({ ok: false, error: 'ruleId is required' }, 400, auth.requestId);
+        }
+        let ruleId;
+        try {
+          ruleId = parseRuleId(ruleValue.trim());
+        } catch {
+          return jsonWithRequestId({ ok: false, error: 'ruleId is invalid' }, 400, auth.requestId);
+        }
+        const rules = await loadAlertRules();
+        const rule = rules.find(candidate => candidate.id === String(ruleId));
+        if (!rule) {
+          return jsonWithRequestId(
+            { ok: false, error: 'Alert rule not found' },
+            404,
+            auth.requestId
+          );
+        }
+        const analysis = analyzeBacktestCsv(await file.text(), {
+          ruleId,
+          ruleName: rule.name ?? rule.id,
+        });
+        if (!analysis.ok) {
+          return jsonWithRequestId(
+            { ok: false, error: analysis.error, warnings: analysis.warnings ?? [] },
+            analysis.status,
+            auth.requestId
+          );
+        }
+        return jsonWithRequestId(
+          {
+            ok: true,
+            file: { name: file.name, size: file.size, type: file.type || 'text/csv' },
+            analyzedAt: new Date().toISOString(),
+            data: analysis.result,
+          },
+          200,
+          auth.requestId
+        );
+      }
 
       if (url.pathname === '/api/platform') {
         return json(await getPlatformSnapshot());
@@ -1130,27 +1358,6 @@ export function startResearchDashboard(
           }
         }
         return json({ error: 'method not allowed' }, 405);
-      }
-
-      if (url.pathname === '/api/signals' || url.pathname === '/api/signals/') {
-        const periodParam = (url.searchParams.get('period') ?? 'all') as OddsPeriod;
-        const period: OddsPeriod =
-          periodParam === 'prematch' || periodParam === 'live' || periodParam === 'all'
-            ? periodParam
-            : 'all';
-        const signals = await detectSignals({
-          period,
-          limit: Number(url.searchParams.get('limit') ?? '50'),
-        });
-        return json({
-          count: signals.length,
-          period,
-          signals: signals.map(s => ({
-            ...s,
-            edge_pct: Number((s.edge * 100).toFixed(3)),
-            matched_rules: s.matchedRuleIds,
-          })),
-        });
       }
 
       if (url.pathname === '/api/alerts') {
