@@ -584,6 +584,9 @@ export async function validatePartnerDashboardPlan(
     const targetContract = PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.target;
     const currentCompatibilityContract =
       PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.currentCompatibility;
+    const currentFetchTransport = portalConsumerContract.current_fetch_transport as
+      | AnyRecord
+      | undefined;
     const legacyComparison = portalConsumerContract.legacy_comparison as AnyRecord | undefined;
     const legacyComparisonRequired = (legacyComparison?.required_input_refs ?? []).map(String);
     const legacyComparisonOptional = (legacyComparison?.optional_input_refs ?? []).map(String);
@@ -622,6 +625,23 @@ export async function validatePartnerDashboardPlan(
       );
     }
     if (consumerStatus === currentCompatibilityContract.implementationStatus) {
+      if (
+        currentFetchTransport?.module_ref !==
+          currentCompatibilityContract.fetchTransport.moduleRef ||
+        currentFetchTransport?.export_name !==
+          currentCompatibilityContract.fetchTransport.exportName ||
+        currentFetchTransport?.required_failure_policy !==
+          currentCompatibilityContract.fetchTransport.requiredFailurePolicy ||
+        currentFetchTransport?.optional_failure_policy !==
+          currentCompatibilityContract.fetchTransport.optionalFailurePolicy ||
+        !boardHtml.includes(
+          `import { ${currentCompatibilityContract.fetchTransport.exportName} } from '${currentCompatibilityContract.fetchTransport.moduleRef}'`
+        )
+      ) {
+        errors.push(
+          'current-compatibility portal must use the shared structured JSON fetch transport'
+        );
+      }
       if (
         !sameMembers(observedInputs.required, requiredInputs) ||
         !sameMembers(observedInputs.optional, optionalInputs)

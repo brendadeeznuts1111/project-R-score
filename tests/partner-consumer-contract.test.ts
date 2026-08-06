@@ -17,6 +17,12 @@ describe('partner dashboard consumer contract', () => {
     expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.currentCompatibility).toEqual({
       implementationStatus: 'current-compatibility',
       inputMode: 'legacy-multi-artifact',
+      fetchTransport: {
+        moduleRef: '/portal/fetch-json.js',
+        exportName: 'fetchJsonResult',
+        requiredFailurePolicy: 'throw-structured-error',
+        optionalFailurePolicy: 'explicit-catch-to-null',
+      },
       requiredInputRefs: PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
       optionalInputRefs: PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
     });

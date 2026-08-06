@@ -1130,6 +1130,7 @@
         summarizePartnerDesk,
       } from '/portal/partners/partners-board.js';
       import { mountFreshnessBadge } from '/portal/data-freshness.js';
+      import { fetchJsonResult } from '/portal/fetch-json.js';
       import {
         escHtml,
         renderPortalStatGrid,
@@ -1368,9 +1369,16 @@
       }
 
       async function loadJson(path) {
-        const res = await fetch(path, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`${path} HTTP ${res.status}`);
-        return res.json();
+        const result = await fetchJsonResult(path);
+        if (!result.ok) {
+          const details = [
+            result.kind,
+            result.status ? `HTTP ${result.status}` : '',
+            result.error,
+          ].filter(Boolean);
+          throw new Error(`${path} ${details.join(' · ')}`);
+        }
+        return result.data;
       }
 
       function indexBooks(taxonomy) {

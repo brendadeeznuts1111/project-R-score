@@ -87,6 +87,12 @@ canonical_input_ref = "/registry/partners-dashboard.json"
 canonical_failure_policy = "error-never-fallback"
 automatic_legacy_fallback = false
 
+[surfaces.portal.consumer_contract.current_fetch_transport]
+module_ref = "/portal/fetch-json.js"
+export_name = "fetchJsonResult"
+required_failure_policy = "throw-structured-error"
+optional_failure_policy = "explicit-catch-to-null"
+
 [surfaces.portal.consumer_contract.legacy_comparison]
 implementation_status = "planned"
 activation = "explicit-search-param"

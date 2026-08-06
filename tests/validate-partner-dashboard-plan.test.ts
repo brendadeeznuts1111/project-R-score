@@ -257,6 +257,22 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors.some(error => error.includes('portal registry input map'))).toBe(true);
   });
 
+  it('pins the current portal to the shared structured JSON fetch transport', async () => {
+    const plan = copyPlan();
+    plan.surfaces.portal.consumer_contract.current_fetch_transport.export_name = 'fetchJson';
+    const html = await Bun.file('public/portal/partners/index.html').text();
+    const result = await validatePartnerDashboardPlan(plan, {
+      boardHtml: html.replace(
+        "import { fetchJsonResult } from '/portal/fetch-json.js'",
+        "import { fetchJson } from '/portal/fetch-json.js'"
+      ),
+    });
+
+    expect(result.errors).toContain(
+      'current-compatibility portal must use the shared structured JSON fetch transport'
+    );
+  });
+
   it('rejects ambiguous target naming and premature canonical-consumer claims', async () => {
     const plan = copyPlan();
     plan.surfaces.portal.consumer = 'PartnerDashboardArtifact';

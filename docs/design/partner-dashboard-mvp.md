@@ -344,7 +344,10 @@ colors, and other non-authoritative facts. It does not manufacture canonical
 dashboard records, lifecycle facts, active outs, or resolved Sportsbook IDs. A
 browser-neutral package contract now owns the current input inventory, canonical
 artifact path, and query-only legacy comparison policy; the browser loader
-itself remains planned. A `profile-coverage-registry` adapter and redacted
+itself remains planned. The current compatibility board now delegates its
+unchanged 7+1 JSON calls to the shared `/portal/fetch-json.js` transport for
+timeouts, explicit JSON `Accept`, same-origin credentials, MIME diagnostics, and
+structured errors. A `profile-coverage-registry` adapter and redacted
 `partner-profile-coverage.json` artifact now prove only `PartnerCode`, call sign,
 and source profile document revision; lifecycle, phase, credentials, funding,
 Telegram, accounting, money, and policy are structurally excluded. The remaining
