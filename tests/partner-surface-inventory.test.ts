@@ -63,4 +63,19 @@ describe('partner surface inventory', () => {
     expect(machines.has('chromeDomain')).toBe(true);
     expect(machines.has('conceptDomain')).toBe(true);
   });
+
+  test('schema v2 bags appear on brand registry wire chrome taxonomy rows', () => {
+    const inv = buildPartnerSurfaceInventory('1970-01-01T00:00:00.000Z');
+    expect(inv.schemaVersion).toBe(2);
+    const brands = inv.rows.filter(r => r.aspect === 'brand');
+    expect(brands.every(r => r.brand)).toBe(true);
+    const regs = inv.rows.filter(r => r.aspect === 'registry');
+    expect(regs.every(r => r.registry)).toBe(true);
+    const wires = inv.rows.filter(r => r.aspect === 'wire-field');
+    expect(wires.every(r => r.wireField)).toBe(true);
+    const nav = inv.rows.filter(r => r.aspect === 'chrome-nav');
+    expect(nav.every(r => r.chromeNav)).toBe(true);
+    const tax = inv.rows.filter(r => r.aspect === 'taxonomy');
+    expect(tax.every(r => r.taxonomy?.homonymDistinct)).toBe(true);
+  });
 });

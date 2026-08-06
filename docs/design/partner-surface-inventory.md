@@ -5,6 +5,9 @@
 **Principle** `map-before-rename` — inventory joins overloaded “partner”
 surfaces before any token rename.
 
+**Schema** v2 — structured bags: `brand` · `registry` · `wireField` · `chromeNav` ·
+`taxonomy` (aspect-conditional).
+
 **SSOT (rows)** [`lib/docs/partner-surface-inventory.ts`](../../lib/docs/partner-surface-inventory.ts)
 
 **Registry** [`/registry/partner-surface-inventory.json`](../../public/registry/partner-surface-inventory.json)
@@ -31,7 +34,14 @@ shape does it have?** It does **not** replace:
 bun tools/workspace-taxonomy.ts explain partner
 bun run partner-surface-inventory:bake
 bun run partner-surface-inventory:check
+bun run partner-surface-inventory:validate
 bun test tests/partner-surface-inventory.test.ts
+```
+
+Compact table (bags):
+
+```bash
+bun -e 'const inv=await Bun.file("public/registry/partner-surface-inventory.json").json(); console.log(Bun.inspect.table(inv.rows.filter(r=>r.brand||r.registry||r.wireField).map(r=>({aspect:r.aspect,token:r.token,bag:r.brand?"brand":r.registry?"registry":"wire",detail:JSON.stringify(r.brand??r.registry??r.wireField)})),["aspect","token","bag","detail"],{colors:true}))'
 ```
 
 ## Row schema
@@ -49,10 +59,17 @@ Each row in the lib SSOT / registry bake:
 | `href` | public URL when applicable |
 | `properties` | key attrs (domain, registry, brand shape, cli) |
 | `owner` | owning lane / doc |
+| `brand` | (brand only) pattern · mintAuthority · module · interiorOnly · replaces |
+| `registry` | (registry only) schemaId · artifactPath · omits · moneyPolicy |
+| `wireField` | (wire-field only) wireName · sourceSystemId · resolvesTo · quarantineOnFail |
+| `chromeNav` | (chrome-nav / portal-board) domain · group · tier · registryArtifact |
+| `taxonomy` | (taxonomy) homonymDistinct · conceptDomain |
 
 Chrome-nav and portal-board rows for Domain `partner` are **derived live** from
 [`chrome-catalog.ts`](../../lib/portal/chrome-catalog.ts) so board adds cannot
-drift silently.
+drift silently. Validate bags with
+`bun run partner-surface-inventory:validate` (brand-manifest + `Bun.file.exists`
+— not `lib:domains:check`).
 
 ## Minimum surface set (summary)
 
