@@ -310,7 +310,8 @@ interior, path/name allowlists, suppressions.
     · [`docs/audit/README.md`](docs/audit/README.md) · claim
     `audit-findings-catalog`
   - Doc map integrity → `bun run docs:map:check` (also pre-commit when SSOT docs
-    staged)
+    staged) · REF:ID v2 → `bun run docs:refid:check` (anchors · href · uniqueness;
+    `--skip-refid-check` fast-pass; library [`lib/docs/ref-id.ts`](lib/docs/ref-id.ts))
   - Import cycles / deep relative imports → `bun run check:import-graph`
     (`ci:core` merge proof → branch-protected Harness CI; ratchets may only go
     down — **0 strong** cycles, **0 deep imports** (both burned to zero

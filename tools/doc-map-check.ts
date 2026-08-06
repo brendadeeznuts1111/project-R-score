@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-openineditor — Bun.openInEditor
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -6,12 +7,18 @@
  * doc-map-check.ts — verify platform doc SSOT paths and root/docs markdown links.
  *
  * Scope: root MD + docs/* SSOT + lib/docs/repo-docs.ts CANONICAL_* paths.
+ * Also runs REF:ID v2 checks (docs/design anchors · flags · tool rows) unless
+ * `--skip-refid-check`. Strict format: `--refid-strict` / `--strict-format`.
  * Does not scan projects/active.
  *
  * Usage:
  *   bun tools/doc-map-check.ts
  *   bun tools/doc-map-check.ts --open        # open first broken target
  *   bun tools/doc-map-check.ts --json
+ *   bun tools/doc-map-check.ts --skip-refid-check
+ *   bun tools/doc-map-check.ts --refid-strict
+ *
+ * Alias for REF:ID only: `bun run docs:refid:check`
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { resolvePath, relativePath, dirnamePath } from '../lib/path-bun';
@@ -21,6 +28,7 @@ import {
   CANONICAL_TOOLS,
   CANONICAL_DOC_ROLES,
 } from '../lib/docs/repo-docs.ts';
+import { printRefIdIssues, runRefIdChecks } from './docs-refid-check.ts';
 
 const REPO = resolvePath(import.meta.dir, '..');
 
@@ -165,6 +173,8 @@ async function main(): Promise<void> {
   const argv = Bun.argv.slice(2);
   const asJson = argv.includes('--json');
   const open = argv.includes('--open');
+  const skipRefId = argv.includes('--skip-refid-check');
+  const strictFormat = argv.includes('--refid-strict') || argv.includes('--strict-format');
 
   const issues: Issue[] = [];
   issues.push(...(await checkCanonical()));
@@ -172,10 +182,23 @@ async function main(): Promise<void> {
     issues.push(...(await checkMarkdownLinks(f)));
   }
 
+  const refIdIssues = await runRefIdChecks({ skip: skipRefId, strictFormat });
+
   if (asJson) {
-    process.stdout.write(`${JSON.stringify({ count: issues.length, issues }, null, 2)}\n`);
+    process.stdout.write(
+      `${JSON.stringify(
+        {
+          count: issues.length + refIdIssues.length,
+          issues,
+          refIdIssues,
+        },
+        null,
+        2
+      )}\n`
+    );
   } else {
     printIssues(issues);
+    if (!skipRefId) printRefIdIssues(refIdIssues);
   }
 
   if (open && issues.length > 0 && typeof Bun.openInEditor === 'function') {
@@ -185,7 +208,8 @@ async function main(): Promise<void> {
     Bun.openInEditor(abs, { line: first.line ?? 1 });
   }
 
-  if (issues.length > 0) process.exitCode = 1;
+  const refIdErrors = refIdIssues.filter(i => i.severity === 'error');
+  if (issues.length > 0 || refIdErrors.length > 0) process.exitCode = 1;
 }
 
 if (isModuleEntrypoint(import.meta)) {
