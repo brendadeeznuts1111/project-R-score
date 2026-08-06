@@ -12,6 +12,7 @@ import {
   canonicalArtifactBytes,
   evaluateIssueRegistryHealth,
   issueSearchUrl,
+  semanticSourceHash,
   validateIssueTaxonomy,
 } from '../public/portal/issues/issues-board.js';
 
@@ -20,23 +21,25 @@ describe('GitHub issue taxonomy portal', () => {
     const artifact = await Bun.file('public/registry/github-issue-taxonomy.json').json();
     const manifest = await Bun.file('public/registry/bake-manifest.json').json();
     const validation = validateIssueTaxonomy(artifact);
-    const health = evaluateIssueRegistryHealth(artifact, manifest);
+    const health = await evaluateIssueRegistryHealth(artifact, manifest);
 
     expect(validation).toEqual({ ok: true, errors: [] });
     expect(health.ok).toBeTrue();
     expect(health.errors).toEqual([]);
     expect(health.checks.every(check => check.ok)).toBeTrue();
     expect(health.entry?.bytes).toBe(canonicalArtifactBytes(artifact));
+    expect(await semanticSourceHash(artifact)).toBe(artifact.audit.sourceHash);
     expect(artifact.dimensions.filter((row: { required: boolean }) => row.required)).toHaveLength(6);
   });
 
   test('missing, stale, and byte-drifted registry evidence degrades explicitly', async () => {
     const artifact = await Bun.file('public/registry/github-issue-taxonomy.json').json();
+    const manifest = await Bun.file('public/registry/bake-manifest.json').json();
     const stale = structuredClone(artifact);
     stale.audit.sourceHash = 'stale';
     expect(validateIssueTaxonomy(stale).ok).toBeFalse();
 
-    const missing = evaluateIssueRegistryHealth(artifact, null);
+    const missing = await evaluateIssueRegistryHealth(artifact, null);
     expect(missing.ok).toBeFalse();
     expect(missing.errors).toContain('bake manifest is unavailable or malformed');
 
@@ -44,9 +47,28 @@ describe('GitHub issue taxonomy portal', () => {
       kind: 'registry-bake-manifest',
       entries: [{ path: '/registry/github-issue-taxonomy.json', bytes: 1 }],
     };
-    const drifted = evaluateIssueRegistryHealth(artifact, driftedManifest);
+    const drifted = await evaluateIssueRegistryHealth(artifact, driftedManifest);
     expect(drifted.ok).toBeFalse();
     expect(drifted.errors).toContain('bake manifest byte count does not match the taxonomy payload');
+
+    const sameLengthDrift = structuredClone(artifact);
+    sameLengthDrift.labels[0].github.description = sameLengthDrift.labels[0].github.description.replace(
+      /.$/,
+      character => (character === '.' ? '!' : '.')
+    );
+    expect(canonicalArtifactBytes(sameLengthDrift)).toBe(canonicalArtifactBytes(artifact));
+    const sameLengthHealth = await evaluateIssueRegistryHealth(sameLengthDrift, manifest);
+    expect(sameLengthHealth.ok).toBeFalse();
+    expect(sameLengthHealth.errors).toContain(
+      'source hash does not match the semantic taxonomy payload'
+    );
+
+    const malformedRule = structuredClone(artifact);
+    malformedRule.legalCombinations = [null];
+    expect(validateIssueTaxonomy(malformedRule).ok).toBeFalse();
+    const malformedHealth = await evaluateIssueRegistryHealth(malformedRule, manifest);
+    expect(malformedHealth.ok).toBeFalse();
+    expect(malformedHealth.errors).toContain('legal rule rows require an id and description');
   });
 
   test('board is accessible, static-compatible, and never fetches GitHub', async () => {

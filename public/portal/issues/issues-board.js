@@ -53,6 +53,7 @@ export function validateIssueTaxonomy(value) {
 
   const dimensions = rows(value.dimensions);
   const labels = rows(value.labels);
+  const legalCombinations = rows(value.legalCombinations);
   const dimensionKeys = dimensions.map(row => (isRecord(row) ? text(row.key) : ''));
   if (dimensions.length === 0 || dimensionKeys.some(key => !key)) {
     errors.push('semantic dimensions are missing or malformed');
@@ -95,11 +96,29 @@ export function validateIssueTaxonomy(value) {
     errors.push('labels are missing or duplicated');
   }
 
+  const legalRuleIds = [];
+  for (const rule of legalCombinations) {
+    if (!isRecord(rule) || !text(rule.id) || !text(rule.description)) {
+      errors.push('legal rule rows require an id and description');
+      continue;
+    }
+    legalRuleIds.push(rule.id);
+  }
+  if (
+    legalCombinations.length === 0 ||
+    new Set(legalRuleIds).size !== legalCombinations.length
+  ) {
+    errors.push('legal rules are missing, malformed, or duplicated');
+  }
+
   const audit = isRecord(value.audit) ? value.audit : {};
   const provenance = isRecord(value.provenance) ? value.provenance : {};
   if (audit.ok !== true) errors.push('producer audit is not healthy');
   if (audit.dimensions !== dimensions.length || audit.labels !== labels.length) {
     errors.push('producer audit counts do not match the payload');
+  }
+  if (audit.legalRules !== legalCombinations.length) {
+    errors.push('producer legal-rule count does not match the payload');
   }
   if (!/^[0-9a-f]{64}$/.test(text(audit.sourceHash))) {
     errors.push('source hash is missing or malformed');
@@ -120,13 +139,28 @@ export function canonicalArtifactBytes(artifact) {
   return new TextEncoder().encode(serialized).byteLength;
 }
 
+/** @param {unknown} artifact */
+export async function semanticSourceHash(artifact) {
+  if (!isRecord(artifact)) return '';
+  const semanticSource = JSON.stringify({
+    dimensions: rows(artifact.dimensions),
+    labels: rows(artifact.labels),
+    legalCombinations: rows(artifact.legalCombinations),
+  });
+  const digest = await globalThis.crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(semanticSource)
+  );
+  return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
 /**
  * Combine artifact checks with bake-manifest evidence. A timestamp is optional
  * because this artifact is intentionally deterministic and timestamp-free.
  * @param {unknown} artifact
  * @param {unknown} manifest
  */
-export function evaluateIssueRegistryHealth(artifact, manifest) {
+export async function evaluateIssueRegistryHealth(artifact, manifest) {
   const validation = validateIssueTaxonomy(artifact);
   const checks = [
     { ok: validation.ok, label: 'Registry schema, identities, dimensions, and labels validate' },
@@ -156,8 +190,10 @@ export function evaluateIssueRegistryHealth(artifact, manifest) {
 
   const hash =
     isRecord(artifact) && isRecord(artifact.audit) ? text(artifact.audit.sourceHash) : '';
-  const hashOk = /^[0-9a-f]{64}$/.test(hash);
-  checks.push({ ok: hashOk, label: 'Source freshness fingerprint is present and valid' });
+  const computedHash = await semanticSourceHash(artifact);
+  const hashOk = /^[0-9a-f]{64}$/.test(hash) && hash === computedHash;
+  checks.push({ ok: hashOk, label: 'Source freshness fingerprint matches the semantic payload' });
+  if (!hashOk) errors.push('source hash does not match the semantic taxonomy payload');
 
   return {
     ok: errors.length === 0,
@@ -272,7 +308,11 @@ function renderRules(artifact) {
   const rules = document.getElementById('issue-rules');
   if (!rules) return;
   rules.innerHTML = rows(artifact.legalCombinations)
-    .map(rule => `<li><strong>${escHtml(rule.id)}</strong> — ${escHtml(rule.description)}</li>`)
+    .filter(isRecord)
+    .map(
+      rule =>
+        `<li><strong>${escHtml(text(rule.id))}</strong> — ${escHtml(text(rule.description))}</li>`
+    )
     .join('');
 }
 
@@ -385,7 +425,7 @@ async function loadBoard() {
 
   taxonomy = taxonomyResult.data;
   const manifest = manifestResult.ok ? manifestResult.data : null;
-  const health = evaluateIssueRegistryHealth(taxonomy, manifest);
+  const health = await evaluateIssueRegistryHealth(taxonomy, manifest);
   setGate(health);
   renderSummary(taxonomy);
   renderIdentity(taxonomy);
