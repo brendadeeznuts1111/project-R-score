@@ -16,6 +16,8 @@ they are; spine modules stay at `lib/<name>.ts`.
 
 ```bash
 bun run lib:domains:check          # domain README indexes (∥ cheap / pre-commit on lib/)
+bun run lib:area-maps:check        # ## Area map paths/globs resolve (when maps present)
+bun run lib:area-maps:check:orphans  # report top-level .ts not listed in map
 bun run check:path-bun && bun run check:bun-env
 bun tools/doc-map-check.ts
 bun tools/harness-violations.ts --path lib/types --rule unknown
@@ -191,59 +193,79 @@ Every first-level `lib/*/` directory (alphabetical). Each row requires a local
 `README.md` (`bun run lib:domains:check`). Default status is **active** unless
 listed under **Domain lifecycle** above.
 
-| Domain                                       | Purpose                                                                    | Entry hint                                                 |
-| -------------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| [`accounts/`](./accounts/)                   | Tree-node partners / agents / sub-agents (growth, promotion, play routing) | `accounts.ts` · `account-types.ts`                         |
-| [`ai/`](./ai/)                               | AI operations managers                                                     | `ai-operations-manager.ts`                                 |
-| [`audit/`](./audit/)                         | Audit findings sibling SSOT (not BunToken)                                 | `audit-finding.ts` · `index.ts`                            |
-| [`auth/`](./auth/)                           | Edge-safe auth contracts for Bun-only Pages handlers                       | `session.ts` · `oidc.ts`                                   |
-| [`automation/`](./automation/)               | Automated partner account management (Bun-native)                          | `provision-accounts.ts`                                    |
-| [`bookmakers/`](./bookmakers/)               | Bookmaker catalog v0.4 contracts + v0.3 migration                          | `v04-types.ts` · `merge.ts`                                |
-| [`channels/`](./channels/)                   | Ops messaging: R2 append log + SQLite outbox projectors                    | `channels.ts` · `outbox.ts`                                |
-| [`concept-registry/`](./concept-registry/)   | Persistent versioned glossary concept store                                | `schema.ts` · `repo.ts`                                    |
-| [`constants/`](./constants/)                 | Shared constants barrel                                                    | `index.ts`                                                 |
-| [`core/`](./core/)                           | Core types and infrastructure                                              | `index.ts`                                                 |
-| [`db/`](./db/)                               | Database connection helpers (SQLite / ops DB)                              | `connection.ts`                                            |
-| [`docs/`](./docs/)                           | Path SSOT, tokens, doc builders, Bun brand usages (**Area map**)           | [README Area map](./docs/README.md#area-map) · `repo-docs.ts` |
+| Domain                                     | Purpose                                                                    | Entry hint                                                    |
+| ------------------------------------------ | -------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| [`accounts/`](./accounts/)                 | Tree-node partners / agents / sub-agents (growth, promotion, play routing) | `accounts.ts` · `account-types.ts`                            |
+| [`ai/`](./ai/)                             | AI operations managers                                                     | `ai-operations-manager.ts`                                    |
+| [`audit/`](./audit/)                       | Audit findings sibling SSOT (not BunToken)                                 | `audit-finding.ts` · `index.ts`                               |
+| [`auth/`](./auth/)                         | Edge-safe auth contracts for Bun-only Pages handlers                       | `session.ts` · `oidc.ts`                                      |
+| [`automation/`](./automation/)             | Automated partner account management (Bun-native)                          | `provision-accounts.ts`                                       |
+| [`bookmakers/`](./bookmakers/)             | Bookmaker catalog v0.4 contracts + v0.3 migration                          | `v04-types.ts` · `merge.ts`                                   |
+| [`channels/`](./channels/)                 | Ops messaging: R2 append log + SQLite outbox projectors                    | `channels.ts` · `outbox.ts`                                   |
+| [`concept-registry/`](./concept-registry/) | Persistent versioned glossary concept store                                | `schema.ts` · `repo.ts`                                       |
+| [`constants/`](./constants/)               | Shared constants barrel                                                    | `index.ts`                                                    |
+| [`core/`](./core/)                         | Core types and infrastructure                                              | `index.ts`                                                    |
+| [`db/`](./db/)                             | Database connection helpers (SQLite / ops DB)                              | `connection.ts`                                               |
+| [`docs/`](./docs/)                         | Path SSOT, tokens, doc builders, Bun brand usages (**Area map**)           | [README Area map](./docs/README.md#area-map) · `repo-docs.ts` |
 
-| [`doctor/`](./doctor/)                       | Doctor board index (`hub` — tools/ + install policy)                       | domain README · `install/` · portal-cli doctor             |
-| [`dod/`](./dod/)                             | Agent image proof pipeline (verify, watermark, evidence)                   | `evidence.ts` · `verifier.ts`                              |
-| [`experiments/`](./experiments/)             | Multi-factor partner-policy experiment engine                              | `engine.ts` · `design.ts`                                  |
-| [`factory/`](./factory/)                     | Internal registry client, CLI, artifact scaffolding                        | `artifact.ts` · `registry.ts`                              |
-| [`glossary/`](./glossary/)                   | Glossary utilities beside portal / Kalshi SSOT bakes                       | `tournament-snap.ts`                                       |
-| [`harness/`](./harness/)                     | Harness proof paths, monorepo health, CI discovery (**Area map**)          | [README Area map](./harness/README.md#area-map) · `proof.ts` |
+| [`doctor/`](./doctor/) | Doctor board index (`hub` — tools/ + install policy)
+| domain README · `install/` · portal-cli doctor | | [`dod/`](./dod/) | Agent
+image proof pipeline (verify, watermark, evidence) | `evidence.ts` ·
+`verifier.ts` | | [`experiments/`](./experiments/) | Multi-factor partner-policy
+experiment engine | `engine.ts` · `design.ts` | | [`factory/`](./factory/) |
+Internal registry client, CLI, artifact scaffolding | `artifact.ts` ·
+`registry.ts` | | [`glossary/`](./glossary/) | Glossary utilities beside portal
+/ Kalshi SSOT bakes | `tournament-snap.ts` | | [`harness/`](./harness/) |
+Harness proof paths, monorepo health, CI discovery (**Area map**) |
+[README Area map](./harness/README.md#area-map) · `proof.ts` |
 
-| [`http/`](./http/)                           | `Bun.serve` / fetch / portal / static HTTP surfaces (**Area map**)         | [README Area map](./http/README.md#area-map) · `bun-server.ts` |
+| [`http/`](./http/) | `Bun.serve` / fetch / portal / static HTTP surfaces
+(**Area map**) | [README Area map](./http/README.md#area-map) · `bun-server.ts`
+|
 
-| [`identity/`](./identity/)                   | Auth layer (lockout, MFA, geo, WebAuthn, JIT)                              | `identity.ts` · `lockout.ts`                               |
-| [`images/`](./images/)                       | `Bun.Image` helpers for Tennis HQ / portal                                 | `avatar-response.ts`                                       |
-| [`install/`](./install/)                     | Machine bunfig / install policy (code SSOT)                                | `machine-bunfig-policy.ts`                                 |
-| [`macros/`](./macros/)                       | Bundle-time Bun macros (git commit · repo parts)                           | `git-commit.ts` · `github-repository.ts`                   |
-| [`mcp/`](./mcp/)                             | MCP / domain helpers                                                       | `stdio-jsonrpc.ts`                                         |
-| [`monitoring/`](./monitoring/)               | Registry + ops health dashboard slices                                     | `collect.ts` · `page.ts`                                   |
-| [`net/`](./net/)                             | Network helpers (HTTPS proxy CONNECT reuse)                                | `proxy.ts`                                                 |
-| [`operations/`](./operations/)               | Ops tree, limits, scrapers, compliance HTTP (**mega** — use Area map)      | [README Area map](./operations/README.md) · `db.ts`        |
-| [`operator-research/`](./operator-research/) | Bookmaker research, odds, edge engine (**mega** — use Area map)            | [README Area map](./operator-research/README.md#area-map) · `edge-engine.ts` |
-| [`package/`](./package/)                     | Package manager graph helpers                                              | `package-manager.ts`                                       |
-| [`pages/`](./pages/)                         | Cloudflare Pages / Bun-only function helpers (edge-safe)                   | `pages-function.ts` · `r2-types.ts`                        |
-| [`partner-profile/`](./partner-profile/)     | Canonical partner record, ledger, settlement                               | `schema.ts` · `ledger.ts`                                  |
-| [`performance/`](./performance/)             | Cache / shallow memory estimates (`bun:jsc`)                               | `cache-manager.ts` · `memory-estimate.ts`                  |
-| [`portal/`](./portal/)                       | Portal-facing SSOTs (no barrel — import modules directly)                  | domain README                                              |
-| [`prediction/`](./prediction/)               | Coverage prediction backtests and accuracy rollups                         | domain README                                              |
-| [`provisioning/`](./provisioning/)           | Provisioning queue + sandboxed WebView signup                              | `queue.ts` · `run-automated.ts`                            |
-| [`r2/`](./r2/)                               | R2 storage and analytics                                                   | `r2-storage-enhanced.ts`                                   |
-| [`registry/`](./registry/)                   | Public artifact contracts and bake validators                              | `contracts.ts` · `bake-manifest.ts`                        |
-| [`research/`](./research/)                   | Partner market / limit crawlers and snapshot store                         | domain README                                              |
-| [`routing/`](./routing/)                     | HTTP/route helpers for portal and edge                                     | `loader.ts`                                                |
-| [`rss/`](./rss/)                             | RSS managers                                                               | `rss-manager.ts`                                           |
-| [`security/`](./security/)                   | Secrets, R2 creds, vault health, hash wrappers                             | `index.ts` · `r2-credentials.ts`                           |
-| [`shared/`](./shared/)                       | Cross-cutting shared helpers                                               | `tools/`                                                   |
-| [`surfaces/`](./surfaces/)                   | Public edge surface inventory (hosts · shortcodes)                         | `inventory.ts` · `doctor-check.ts`                         |
-| [`telegram/`](./telegram/)                   | Factory Telegram bots, handshakes, seat desk (**mega** — use Area map)     | [README Area map](./telegram/README.md) · `ops-bot.ts`     |
-| [`tennis/`](./tennis/)                       | Portal tennis desk (metrics, avatars, live)                                | domain README                                              |
-| [`theme/`](./theme/)                         | Colors / styled logging                                                    | `colors.ts`                                                |
-| [`toc-ops/`](./toc-ops/)                     | TOC Ops Drum / Buffer / Rope fixture surface                               | domain README · `types.ts`                                 |
-| [`types/`](./types/)                         | Branded IDs and shared types                                               | `branded.ts` · [branded/README](./types/branded/README.md) |
-| [`utils/`](./utils/)                         | General utilities barrel                                                   | `index.ts`                                                 |
-| [`venues/`](./venues/)                       | Market venue brand identity (desk badges)                                  | `venue-brand.ts`                                           |
-| [`verification/`](./verification/)           | Install-env / bundler / runtime channel probes (**Area map**)              | [README Area map](./verification/README.md#area-map)       |
+| [`identity/`](./identity/) | Auth layer (lockout, MFA, geo, WebAuthn, JIT) |
+`identity.ts` · `lockout.ts` | | [`images/`](./images/) | `Bun.Image` helpers
+for Tennis HQ / portal | `avatar-response.ts` | | [`install/`](./install/) |
+Machine bunfig / install policy (code SSOT) | `machine-bunfig-policy.ts` | |
+[`macros/`](./macros/) | Bundle-time Bun macros (git commit · repo parts) |
+`git-commit.ts` · `github-repository.ts` | | [`mcp/`](./mcp/) | MCP / domain
+helpers | `stdio-jsonrpc.ts` | | [`monitoring/`](./monitoring/) | Registry + ops
+health dashboard slices | `collect.ts` · `page.ts` | | [`net/`](./net/) |
+Network helpers (HTTPS proxy CONNECT reuse) | `proxy.ts` | |
+[`operations/`](./operations/) | Ops tree, limits, scrapers, compliance HTTP
+(**mega** — use Area map) | [README Area map](./operations/README.md) · `db.ts`
+| | [`operator-research/`](./operator-research/) | Bookmaker research, odds,
+edge engine (**mega** — use Area map) |
+[README Area map](./operator-research/README.md#area-map) · `edge-engine.ts` | |
+[`package/`](./package/) | Package manager graph helpers | `package-manager.ts`
+| | [`pages/`](./pages/) | Cloudflare Pages / Bun-only function helpers
+(edge-safe) | `pages-function.ts` · `r2-types.ts` | |
+[`partner-profile/`](./partner-profile/) | Canonical partner record, ledger,
+settlement | `schema.ts` · `ledger.ts` | | [`performance/`](./performance/) |
+Cache / shallow memory estimates (`bun:jsc`) | `cache-manager.ts` ·
+`memory-estimate.ts` | | [`portal/`](./portal/) | Portal-facing SSOTs (no barrel
+— import modules directly) | domain README | | [`prediction/`](./prediction/) |
+Coverage prediction backtests and accuracy rollups | domain README | |
+[`provisioning/`](./provisioning/) | Provisioning queue + sandboxed WebView
+signup | `queue.ts` · `run-automated.ts` | | [`r2/`](./r2/) | R2 storage and
+analytics | `r2-storage-enhanced.ts` | | [`registry/`](./registry/) | Public
+artifact contracts and bake validators | `contracts.ts` · `bake-manifest.ts` | |
+[`research/`](./research/) | Partner market / limit crawlers and snapshot store
+| domain README | | [`routing/`](./routing/) | HTTP/route helpers for portal and
+edge | `loader.ts` | | [`rss/`](./rss/) | RSS managers | `rss-manager.ts` | |
+[`security/`](./security/) | Secrets, R2 creds, vault health, hash wrappers |
+`index.ts` · `r2-credentials.ts` | | [`shared/`](./shared/) | Cross-cutting
+shared helpers | `tools/` | | [`surfaces/`](./surfaces/) | Public edge surface
+inventory (hosts · shortcodes) | `inventory.ts` · `doctor-check.ts` | |
+[`telegram/`](./telegram/) | Factory Telegram bots, handshakes, seat desk
+(**mega** — use Area map) | [README Area map](./telegram/README.md) ·
+`ops-bot.ts` | | [`tennis/`](./tennis/) | Portal tennis desk (metrics, avatars,
+live) | domain README | | [`theme/`](./theme/) | Colors / styled logging |
+`colors.ts` | | [`toc-ops/`](./toc-ops/) | TOC Ops Drum / Buffer / Rope fixture
+surface | domain README · `types.ts` | | [`types/`](./types/) | Branded IDs and
+shared types | `branded.ts` · [branded/README](./types/branded/README.md) | |
+[`utils/`](./utils/) | General utilities barrel | `index.ts` | |
+[`venues/`](./venues/) | Market venue brand identity (desk badges) |
+`venue-brand.ts` | | [`verification/`](./verification/) | Install-env / bundler
+/ runtime channel probes (**Area map**) |
+[README Area map](./verification/README.md#area-map) |

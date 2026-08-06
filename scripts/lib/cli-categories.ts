@@ -101,6 +101,8 @@ export const CLI_SPECIAL: Record<string, string> = {
   'check:bun-env': 'Ratchet: no process.env under lib/ + scripts/',
   'projects:roots:check': 'Ratchet: product-leaf README.md + package.json under projects/',
   'lib:domains:check': 'Ratchet: every first-level lib/*/ has README.md',
+  'lib:area-maps:check': 'Ratchet: ## Area map entry paths/globs resolve under domain',
+  'lib:area-maps:check:orphans': 'Report top-level .ts not listed in Area map (warn)',
   'build:defines':
     'AST build constants (BUILD_VERSION/TIME/COMMIT) + DEBUG DCE via Bun.build/--define',
   'build:defines:dev': 'build:defines with DEBUG=true / --feature=DEBUG',
@@ -222,6 +224,8 @@ export const CLI_CORE_CMDS = new Set([
   'registry:projects',
   'projects:roots:check',
   'lib:domains:check',
+  'lib:area-maps:check',
+  'lib:area-maps:check:orphans',
   'build:defines',
   'build:defines:dev',
   'build:defines:compile',

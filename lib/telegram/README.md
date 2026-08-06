@@ -1,5 +1,11 @@
 # Telegram — operations + factory portal bot
 
+<!-- area-map-verified: 2026-08-06 -->
+
+> **AGENT PROTOCOL:** Do not list files recursively. Read the **## Area map**
+> below, pick one cluster, and open only the entry paths listed for that
+> cluster. Prefer `bun run lib:area-maps:check` when editing this map.
+
 Tree-aware Telegram integration for the sports betting operations platform and
 multi-tenant portal webhook.
 

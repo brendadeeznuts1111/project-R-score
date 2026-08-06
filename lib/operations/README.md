@@ -1,5 +1,12 @@
 # Operations — sports betting platform
 
+<!-- area-map-verified: 2026-08-06 -->
+
+> **AGENT PROTOCOL:** Do not list files recursively. Read the **## Area map**
+> below, pick one cluster, and open only the entry paths listed for that cluster
+> (plus adjacent modules you prove you need). Prefer
+> `bun run lib:area-maps:check` when editing this map.
+
 Tree-structured agent management with HMAC-signed play distribution.
 
 **Scale:** ~27k lines · ~90+ `.ts` files (largest `lib/` domain). Prefer the
