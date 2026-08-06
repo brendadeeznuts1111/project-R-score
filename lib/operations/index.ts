@@ -28,9 +28,13 @@ export {
 } from './partner-profile-bridge.ts';
 export {
   buildOpsSummary,
+  buildOpsDomainSummary,
+  buildOpsSummaryProofStrip,
   queryGrowth,
   queryBunUtilsProof,
   type OpsSummaryPayload,
+  type OpsSummaryDomainPayload,
+  type OpsSummaryProofStrip,
   type OpsSummaryGrowth,
   type OpsSummaryBunUtils,
   type OpsSummaryPartners,

@@ -4,12 +4,29 @@
  */
 import { describe, expect, test } from 'bun:test';
 import { openOperationsDb } from '../lib/operations/db.ts';
-import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
+import {
+  buildOpsDomainSummary,
+  buildOpsSummary,
+  buildOpsSummaryProofStrip,
+} from '../lib/operations/ops-summary.ts';
 import { FactorialEngine } from '../lib/experiments/index.ts';
 import { runCoverageBacktest } from '../lib/prediction/index.ts';
 import { asTreeNodeId, unbrand } from '../lib/types/branded.ts';
 import { seedAccountLimitsDemo } from '../lib/account-limits-repo.ts';
 import { PartnerAnalyticsRepository } from '../lib/operations/partner-analytics-repo.ts';
+
+const PROOF_STRIP_KEYS = [
+  'bunUtils',
+  'registryClient',
+  'docsCoverage',
+  'cloudflareTokenScope',
+  'cloudflarePages',
+  'proofTaxonomy',
+  'channelMeta',
+  'routing',
+  'monorepoHealth',
+  'bunBrandMap',
+] as const;
 
 describe('buildOpsSummary', () => {
   test('live and snapshot use the same top-level contract keys', () => {
@@ -21,6 +38,31 @@ describe('buildOpsSummary', () => {
     expect(snap.source).toBe('snapshot');
     expect(live.prediction).toHaveProperty('coverage');
     expect(live.experiments).toHaveProperty('recent');
+    db.close();
+  });
+
+  test('domain and proof strip compose the full wire payload', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const domain = buildOpsDomainSummary(db, 'live');
+    const proof = buildOpsSummaryProofStrip();
+    const full = buildOpsSummary(db, 'live');
+    // Same composition path as buildOpsSummary (proof re-run may new timestamp/hash)
+    const composedKeys = Object.keys({ ...domain, ...proof }).sort();
+
+    for (const key of PROOF_STRIP_KEYS) {
+      expect(domain).not.toHaveProperty(key);
+      expect(proof).toHaveProperty(key);
+      expect(full).toHaveProperty(key);
+    }
+    expect(domain).toHaveProperty('liquidity');
+    expect(domain).toHaveProperty('limitPatterns');
+    expect(proof).not.toHaveProperty('liquidity');
+
+    expect(Object.keys(full).sort()).toEqual(composedKeys);
+    expect(full.liquidity).toEqual(domain.liquidity);
+    expect(full.bunUtils.total).toBe(proof.bunUtils.total);
+    expect(full.bunUtils.proofHash).toMatch(/^[a-f0-9]{64}$/);
+    expect(full.monorepoHealth.path).toBe('/registry/monorepo-health.json');
     db.close();
   });
 
