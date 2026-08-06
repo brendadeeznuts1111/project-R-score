@@ -95,6 +95,8 @@ describe('test-changed-staged helpers', () => {
     expect(SCRATCH_LINK_DIRS).toContain('Kalshi-bot');
     expect(SCRATCH_PATHSPEC).toContain(':(exclude)projects/');
     expect(SCRATCH_PATHSPEC).toContain(':(exclude)Kalshi-bot');
+    // Kalshi-bot is optional — linker skips when the submodule is not checked out
+    // (dangling symlink → ENOENT in glossary dump consumers). See buildScratchRepo.
   });
 
   test('scratch git add -A never leaks the node_modules symlink into an inherited index', async () => {
