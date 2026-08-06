@@ -11,8 +11,6 @@
  * @see lib/operator-research/partners-signal.ts
  */
 
-// eslint-disable-next-line no-restricted-imports -- ensure parent dirs before sqlite/file write
-import { mkdirSync } from 'node:fs';
 import { joinPath } from '../path-bun.ts';
 import type { Database } from 'bun:sqlite';
 import { ensureAlertsSchema } from '../operator-research/matching/alerts-schema.ts';
@@ -31,7 +29,6 @@ const ALERTS_JSON = joinPath(ROOT, 'data/research/alerts.json');
 async function loadConfigs(): Promise<EventAlertConfig[]> {
   const file = Bun.file(ALERTS_JSON);
   if (!(await file.exists())) {
-    mkdirSync(joinPath(ROOT, 'data/research'), { recursive: true });
     const defaults: EventAlertConfig[] = [
       {
         id: 'evt-all-new',
@@ -78,7 +75,7 @@ export async function listEventAlertConfigs(): Promise<EventAlertConfig[]> {
 }
 
 export async function saveEventAlertConfigs(configs: EventAlertConfig[]): Promise<void> {
-  mkdirSync(joinPath(ROOT, 'data/research'), { recursive: true });
+  // Bun.write creates intermediate path segments (no node:fs mkdir).
   await Bun.write(ALERTS_JSON, JSON.stringify(configs, null, 2));
 }
 

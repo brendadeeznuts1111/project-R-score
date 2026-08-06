@@ -9,8 +9,6 @@
  * @see lib/research/canonicalizer.ts
  */
 
-// eslint-disable-next-line no-restricted-imports -- ensure parent dirs before sqlite/file write
-import { mkdirSync } from 'node:fs';
 import { joinPath } from '../path-bun.ts';
 import type { Database } from 'bun:sqlite';
 import { ROOT } from '../operator-research/paths.ts';
@@ -69,9 +67,8 @@ function snapshotDir(canonicalId: string, partnerId: string): string {
 
 async function maybeArchiveR2(key: string, snapshot: EventSnapshot): Promise<boolean> {
   try {
-    const { resolveR2BridgeConfig, uploadJsonToR2 } = await import(
-      '../../scripts/lib/r2-bridge.ts'
-    );
+    const { resolveR2BridgeConfig, uploadJsonToR2 } =
+      await import('../../scripts/lib/r2-bridge.ts');
     const r2 = resolveR2BridgeConfig();
     await uploadJsonToR2(r2, key, snapshot);
     return true;
@@ -132,7 +129,6 @@ export async function storeSnapshot(
 ): Promise<StoreSnapshotResult> {
   ensureCanonicalSchema(db);
   const dir = snapshotDir(snapshot.canonicalId, snapshot.partnerId);
-  mkdirSync(dir, { recursive: true });
 
   const previous = await getLatestSnapshot(snapshot.canonicalId, snapshot.partnerId);
   const isNew = !previous;
