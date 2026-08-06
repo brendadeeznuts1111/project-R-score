@@ -286,6 +286,23 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'multi-factor raises · ops-summary.limitChanges · /api/agents/v1/limits/raises',
   },
   {
+    path: '/portal/agent-odds/',
+    name: 'Agent odds dashboard',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'standalone agent odds dashboard · versioned local HTML snapshots',
+  },
+  {
+    path: '/portal/partner/',
+    name: 'Partner health portal',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    critical: true,
+    note: 'partner domain health · profile alignment · per-out checks · /registry/partner-health.json',
+  },
+  {
     path: '/portal/partners/',
     name: 'Partners desk portal',
     category: 'portal',

@@ -7,8 +7,13 @@ import {
   isTestSourcePath,
   readPrecommitEnvironment,
 } from '../scripts/pre-commit.ts';
+import { STAGED_TEST_PARALLELISM } from '../scripts/bun-test-changed-staged.ts';
 
 describe('pre-commit path gates', () => {
+  it('bounds staged test worker pressure', () => {
+    expect(STAGED_TEST_PARALLELISM).toBe(6);
+  });
+
   it('selects skill validation paths', () => {
     expect(isSkillValidationPath('.agents/skills/demo/SKILL.md')).toBe(true);
     expect(isSkillValidationPath('lib/agent-skills-paths.ts')).toBe(true);

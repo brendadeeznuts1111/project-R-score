@@ -13,8 +13,8 @@ import {
 describe('packages-metafile-audit', () => {
   // Lazy memoized reports: hooks have a fixed ~5s timeout (unconfigurable),
   // and three sequential full-monorepo audits exceeded it under parallel-lane
-  // load. Deferring into the first awaiting test puts the cost inside the
-  // 10s test budget; each report is still computed at most once.
+  // load. Deferring into the first awaiting test puts the cost inside an
+  // explicit integration-test budget; each report is still computed at most once.
   let deepP: Promise<PackageAuditReport> | undefined;
   let shallowP: Promise<PackageAuditReport> | undefined;
   let crossP: Promise<PackageAuditReport> | undefined;
@@ -133,20 +133,28 @@ describe('packages-metafile-audit', () => {
     expect(md).toContain(String((await getDeep()).score));
   });
 
-  test('cross-check attaches Transpiler compare', async () => {
-    expect((await getCross()).crossCheck).toBeDefined();
-  });
+  test(
+    'cross-check attaches Transpiler compare',
+    async () => {
+      expect((await getCross()).crossCheck).toBeDefined();
+    },
+    { timeout: 30_000 }
+  );
 
-  test('vault plane attaches env.template coupling', async () => {
-    const report = await runPackagesMetafileAudit({ vault: true });
-    expect(report.schemaVersion).toBe(13);
-    expect(report.map.vault).toBeDefined();
-    expect(report.map.vault!.summary.packagesWithEnv).toBeGreaterThan(0);
-    expect(report.map.summary?.vaultPackagesWithEnv).toBe(
-      report.map.vault!.summary.packagesWithEnv
-    );
-    expect(report.map.vault!.envHits.every(h => typeof h.inTemplate === 'boolean')).toBe(true);
-  });
+  test(
+    'vault plane attaches env.template coupling',
+    async () => {
+      const report = await runPackagesMetafileAudit({ vault: true });
+      expect(report.schemaVersion).toBe(13);
+      expect(report.map.vault).toBeDefined();
+      expect(report.map.vault!.summary.packagesWithEnv).toBeGreaterThan(0);
+      expect(report.map.summary?.vaultPackagesWithEnv).toBe(
+        report.map.vault!.summary.packagesWithEnv
+      );
+      expect(report.map.vault!.envHits.every(h => typeof h.inTemplate === 'boolean')).toBe(true);
+    },
+    { timeout: 30_000 }
+  );
 
   test(
     'env inventory attaches compact harness scan with owners',

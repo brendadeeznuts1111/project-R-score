@@ -13,6 +13,7 @@ Route catalog SSOT: [`lib/http/public-routes.ts`](../../lib/http/public-routes.t
 | Surface | HTML / MD | Primary bake | Live / edge notes |
 |---------|-----------|--------------|-------------------|
 | Partners | [`/portal/partners/`](./partners/) · [partners.md](./partners.md) | `partners-ops.json` · handshake · seat | Hash routes `#partner/CODE/…` |
+| Partner health | [`/portal/partner/`](./partner/) | `partner-health.json` | Baked readiness + loopback live checks |
 | Limits | [`/portal/limits/`](./limits/) · [limits.md](./limits.md) | `limit-raises.json` | Pages read snapshot; mutations local |
 | Limits lab | [`/portal/limits-lab/`](./limits-lab/) | `limit-forecast-lab.json` | Predict / backtest UI |
 | Bookmakers | [`/portal/bookmakers/`](./bookmakers/) · [bookmakers.md](./bookmakers.md) | `bookmakers.json` (v0.4.1) · desk coverage | Static mirror only |

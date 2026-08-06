@@ -1,24 +1,24 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-08-05T09:19:23.324Z",
+  "generated": "2026-08-06T00:13:52.100Z",
   "path": "/registry/portal-chrome.json",
   "runtime": {
     "bunVersion": "1.4.0",
-    "bunRevision": "a227ad99"
+    "bunRevision": "3f93daaf"
   },
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 24,
+    "overflowNav": 25,
     "footerLinks": 20,
     "components": 21,
     "scripts": 6,
     "badgeSources": 6,
-    "unlistedSurfaces": 7,
-    "boardCoverage": 37,
+    "unlistedSurfaces": 8,
+    "boardCoverage": 39,
     "domainLanes": 6,
     "groups": {
-      "ops": 15,
+      "ops": 16,
       "harness": 1,
       "registry": 9,
       "secrets": 2,
@@ -221,6 +221,17 @@
       "note": "package groups · telegram forums · accounting · deposits · seat capital",
       "cli": "bun run telegram:handshake:catalog",
       "registryArtifact": "/registry/partners-ops.json"
+    },
+    {
+      "id": "partner-health",
+      "label": "Partner health",
+      "href": "/portal/partner/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "note": "partner domain readiness · profile alignment · per-out checks",
+      "cli": "bun run partner:health:bake",
+      "registryArtifact": "/registry/partner-health.json"
     },
     {
       "id": "account",
@@ -636,6 +647,11 @@
   ],
   "unlistedSurfaces": [
     {
+      "id": "agent-odds",
+      "href": "/portal/agent-odds/",
+      "reason": "specialized agent odds workspace · direct product route"
+    },
+    {
       "id": "doctor",
       "href": "/portal/doctor/",
       "reason": "harness control-plane · portal:doctor · badge source on doctor-state"
@@ -809,6 +825,14 @@
       "label": "Partners"
     },
     {
+      "id": "partner-health",
+      "href": "/portal/partner/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "label": "Partner health"
+    },
+    {
       "id": "account",
       "href": "/portal/account/",
       "tier": "overflow",
@@ -913,6 +937,11 @@
       "label": "Wiki"
     },
     {
+      "id": "agent-odds",
+      "href": "/portal/agent-odds/",
+      "tier": "unlisted"
+    },
+    {
       "id": "doctor",
       "href": "/portal/doctor/",
       "tier": "unlisted"
@@ -956,6 +985,7 @@
       "doc": "docs/harness/tenants/partner-domain-map.md",
       "boardIds": [
         "partners",
+        "partner-health",
         "account",
         "partner-history",
         "limits",

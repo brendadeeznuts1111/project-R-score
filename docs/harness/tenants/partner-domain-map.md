@@ -14,6 +14,8 @@ the registry bake.
 | FactoryWager | `lib/telegram/soft-accounting-export.ts` | Soft→Factory read-only export wire v1 + play/week/book-type builders + partner chrome (no Soft mutation) |
 | FactoryWager | `tools/bake-soft-accounting-export.ts` | Bake/check/import `/registry/soft-accounting-export.json` (`soft:accounting:bake` · `:check` · `:from-ct`; partners-ops bookType enrich on fixture) |
 | FactoryWager | `/portal/account/` · `/portal/partners/` | Soft plays / weeks / book-type chrome (`ops.view.per_*`) · Soft Balance stays in toc-ops `ct` |
+| FactoryWager | `/portal/partner/` · `public/registry/partner-health.json` | Partner-domain readiness, profile↔binding alignment, and passwordless per-out health. Bake/check: `bun run partner:health:bake` / `partner:health:bake:check` |
+| FactoryWager | `lib/telegram/daily-capacity-report.ts` · `daily-finance-report.ts` · `event-alerts.ts` | Preference-aware partner reports and new-event alerts over the rate-limited Factory Telegram client. OS cron lifecycle: `telegram:daily-report:cron:*` · `partner:finance-report:cron:*` · `telegram:event-alerts:cron:*` |
 | FactoryWager | `lib/telegram/telegram-glossary.ts` | Wire/topics + message chrome MVP: `telegram.message.*` · `telegram.status.{delivered,failed}` · `telegram.action.{reply,forward,pin}` |
 | FactoryWager | `lib/telegram/partner-ops-color-kernel.ts` | `PARTNER_OPS_COLORS` (9-key closed palette, Bun.color-validated) + `PARTNER_OPS_CONCEPT_COLORS` (65 concept→key; includes `publish.*` soft-pass) |
 | FactoryWager | `lib/telegram/partner-ops-events.ts` | 11 event codes (`PARTNER_OPS_EVENT_CODES`) + `PARTNER_OPS_EVENT_GLOSSARY` → `event.*` |

@@ -53,6 +53,7 @@ type PageKey =
   | 'compliance'
   | 'limits'
   | 'partners'
+  | 'partner-health'
   | 'account'
   | 'partner-history'
   | 'doctor'
@@ -120,6 +121,12 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
     file: 'partners/index.html',
     active: 'partners',
     pageLabel: 'Partners',
+    brandBadge: 'ops',
+  },
+  {
+    file: 'partner/index.html',
+    active: 'partner-health',
+    pageLabel: 'Partner health',
     brandBadge: 'ops',
   },
   {

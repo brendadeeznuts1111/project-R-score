@@ -198,6 +198,20 @@ export const PORTAL_PAGE_CONCEPT_DEFINITIONS = [
     synonyms: ['package graph', 'packages board'],
   },
   {
+    path: '/portal/agent-odds/',
+    id: 'page.agentOdds',
+    label: 'Agent odds dashboard',
+    description: 'Standalone portal page for agent odds monitoring and local dashboard snapshots.',
+    synonyms: ['agent odds', 'odds dashboard'],
+  },
+  {
+    path: '/portal/partner/',
+    id: 'page.partnerHealth',
+    label: 'Partner health',
+    description: 'Portal page for partner profile alignment, Telegram output, and finance health.',
+    synonyms: ['partner health', 'partner status'],
+  },
+  {
     path: '/portal/partners/',
     id: 'page.partners',
     label: 'Partners',

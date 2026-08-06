@@ -116,6 +116,13 @@ describe('portal route wiring', () => {
     expect(redirects).toContain('/portal/partners');
   });
 
+  test('partner health portal is first-class in route SSOT', async () => {
+    expect(PORTAL_HTML_ROUTES).toContain('/portal/partner/');
+    expect(PORTAL_TRAILING_SLASH_SOURCES).toContain('/portal/partner');
+    expect(publicRouteCatalog().some(route => route.path === '/portal/partner/')).toBe(true);
+    expect(await Bun.file('public/portal/partner/index.html').exists()).toBe(true);
+  });
+
   test('partner-history portal is first-class in route SSOT', async () => {
     expect(await Bun.file('public/portal/partner-history/index.html').exists()).toBe(true);
     const redirects = await Bun.file('public/_redirects').text();

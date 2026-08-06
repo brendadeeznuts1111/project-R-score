@@ -3,7 +3,7 @@
 Human-readable view of **board surface inventories** and **HTML/JS usage**
 from the same SSOT as `bun run validate:surface-coverage`.
 
-| Generated | `2026-08-05T11:56:03.174Z` |
+| Generated | `2026-08-06T00:43:32.722Z` |
 | --- | --- |
 | Boards | partner-history · partners · limits · account |
 | Validator | [`scripts/validate-surface-coverage.ts`](../scripts/validate-surface-coverage.ts) |
@@ -14,7 +14,7 @@ from the same SSOT as `bun run validate:surface-coverage`.
 | Board | Files scanned | Usages | Surface allowlist | Dead allowlist (unused chrome) |
 | --- | ---: | ---: | ---: | ---: |
 | partner-history | 5 | 244 | 34 | 23 |
-| partners | 3 | 86 | 11 | 0 |
+| partners | 3 | 83 | 11 | 0 |
 | limits | 2 | 101 | 21 | 1 |
 | account | 3 | 148 | 14 | 2 |
 
@@ -224,15 +224,15 @@ _…2 more concepts_
 
 | Concept | Count | Sample files |
 | --- | ---: | --- |
-| `ops.view.per_play` | 7 | `public/portal/partners/index.html` |
+| `ops.view.per_play` | 6 | `public/portal/partners/index.html` |
 | `out.status.ready` | 5 | `public/portal/partners/index.html` |
 | `page.partners` | 5 | `public/portal/partners/index.html` |
-| `ops.view.per_book_type` | 4 | `public/portal/partners/index.html` |
-| `ops.view.per_week` | 4 | `public/portal/partners/index.html` |
 | `telegram.handshake` | 4 | `public/portal/partners/index.html` |
 | `telegram.seat_desk` | 4 | `public/portal/partners/index.html` |
 | `accounting.free_roll` | 3 | `public/portal/partners/index.html` |
 | `ops.limits.effective_limit` | 3 | `public/portal/partners/index.html` |
+| `ops.view.per_book_type` | 3 | `public/portal/partners/index.html` |
+| `ops.view.per_week` | 3 | `public/portal/partners/index.html` |
 | `section.partnersAccounting` | 3 | `public/portal/partners/index.html` |
 | `section.partnersAccountsLimits` | 3 | `public/portal/partners/index.html` |
 | `section.partnersBookDetail` | 3 | `public/portal/partners/index.html` |

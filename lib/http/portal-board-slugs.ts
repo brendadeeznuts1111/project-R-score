@@ -29,6 +29,8 @@ export const PORTAL_BOARD_SLUGS = [
   'limits-lab',
   'packages',
   'account',
+  'agent-odds',
+  'partner',
   'partner-history',
   'partners',
   'science',

@@ -287,6 +287,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     cli: 'bun run ops:limits:demo',
   },
   {
+    id: 'partner-health',
+    label: 'Partner health',
+    href: '/portal/partner/',
+    note: 'domain readiness · profile alignment · out health',
+    group: 'ops',
+    cli: 'bun run partner:health:bake',
+  },
+  {
     id: 'partners',
     label: 'Partners',
     href: '/portal/partners/',

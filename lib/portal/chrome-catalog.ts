@@ -406,6 +406,17 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     registryArtifact: '/registry/partners-ops.json',
   },
   {
+    id: 'partner-health',
+    label: 'Partner health',
+    href: '/portal/partner/',
+    tier: 'overflow',
+    group: 'ops',
+    domain: 'partner',
+    note: 'partner domain readiness · profile alignment · per-out checks',
+    cli: 'bun run partner:health:bake',
+    registryArtifact: '/registry/partner-health.json',
+  },
+  {
     id: 'account',
     label: 'Account',
     href: '/portal/account/',
@@ -552,6 +563,11 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
  * Still first-class surfaces — link via weave, tools hub, or direct URL.
  */
 export const PORTAL_CHROME_UNLISTED: PortalChromeUnlistedSurface[] = [
+  {
+    id: 'agent-odds',
+    href: '/portal/agent-odds/',
+    reason: 'specialized agent odds workspace · direct product route',
+  },
   {
     id: 'doctor',
     href: '/portal/doctor/',

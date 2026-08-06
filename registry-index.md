@@ -54,6 +54,7 @@ Primary consumers of baked registry JSON. Full board index: [`wiki-index.md`](wi
 | Ops | [/portal/ops/](https://score.factory-wager.com/portal/ops/) | `ops-summary.json` · weave |
 | Compliance | [/portal/compliance/](https://score.factory-wager.com/portal/compliance/) | `compliance-board.json` |
 | Partner limits | [/portal/limits/](https://score.factory-wager.com/portal/limits/) | `limit-raises.json` |
+| Partner health | [/portal/partner/](https://score.factory-wager.com/portal/partner/) | `partner-health.json` |
 | Partner history | [/portal/partner-history/](https://score.factory-wager.com/portal/partner-history/) | limit / partner slices |
 | TOC Ops | [/portal/toc/](https://score.factory-wager.com/portal/toc/) | `toc-ops.json` |
 | Bookmakers | [/portal/bookmakers/](https://score.factory-wager.com/portal/bookmakers/) | `bookmakers.json` |

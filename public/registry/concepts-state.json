@@ -1,13 +1,13 @@
 {
   "kind": "concepts-state",
   "schemaVersion": 1,
-  "bakedAt": "2026-08-05T15:46:09.188Z",
+  "bakedAt": "2026-08-06T00:27:55.194Z",
   "gate": "pass",
   "summary": {
-    "totalPortal": 142,
-    "withProvenance": 142,
+    "totalPortal": 144,
+    "withProvenance": 144,
     "provenanceCoverage": 1,
-    "usedUi": 81,
+    "usedUi": 82,
     "unusedUi": 9,
     "surfaceOnly": 26,
     "metadataIssues": 0,
@@ -15,15 +15,15 @@
     "inventoryMisses": 0,
     "deprecatedUsed": 0,
     "bakeDrift": 0,
-    "detailRows": 142
+    "detailRows": 144
   },
   "domainSummary": [
     {
       "domain": "portal",
-      "count": 84,
-      "used": 76,
+      "count": 86,
+      "used": 78,
       "unused": 8,
-      "provenance": 84,
+      "provenance": 86,
       "provenancePct": 100
     },
     {
@@ -61,7 +61,7 @@
     {
       "board": "partners",
       "files": 3,
-      "usages": 86,
+      "usages": 83,
       "allowlist": 11
     },
     {
@@ -170,7 +170,7 @@
       "group": "ops.dod",
       "category": "ops",
       "status": "active",
-      "provenance": "lane/dod-visual-proof",
+      "provenance": "PR#347",
       "usage": 1,
       "kind": "used"
     },
@@ -182,7 +182,7 @@
       "group": "ops.dod",
       "category": "ops",
       "status": "active",
-      "provenance": "lane/dod-visual-proof",
+      "provenance": "PR#347",
       "usage": 1,
       "kind": "used"
     },
@@ -194,7 +194,7 @@
       "group": "ops.dod",
       "category": "ops",
       "status": "active",
-      "provenance": "lane/dod-visual-proof",
+      "provenance": "PR#347",
       "usage": 1,
       "kind": "used"
     },
@@ -787,6 +787,18 @@
       "kind": "used"
     },
     {
+      "id": "page.agentOdds",
+      "label": "Agent odds dashboard",
+      "domain": "portal",
+      "namespace": "page",
+      "group": "page.agentOdds",
+      "category": "page",
+      "status": "active",
+      "provenance": "legacy",
+      "usage": 0,
+      "kind": "used"
+    },
+    {
       "id": "page.bookmakers",
       "label": "Bookmaker registry",
       "domain": "portal",
@@ -1023,7 +1035,7 @@
       "category": "page",
       "status": "active",
       "provenance": "legacy",
-      "usage": 0,
+      "usage": 2,
       "kind": "used"
     },
     {
@@ -1032,6 +1044,18 @@
       "domain": "portal",
       "namespace": "page",
       "group": "page.packages",
+      "category": "page",
+      "status": "active",
+      "provenance": "legacy",
+      "usage": 0,
+      "kind": "used"
+    },
+    {
+      "id": "page.partnerHealth",
+      "label": "Partner health",
+      "domain": "portal",
+      "namespace": "page",
+      "group": "page.partnerHealth",
       "category": "page",
       "status": "active",
       "provenance": "legacy",

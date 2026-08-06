@@ -295,6 +295,16 @@
       "sections": []
     },
     {
+      "path": "/portal/agent-odds/",
+      "concept": "page.agentOdds",
+      "sections": []
+    },
+    {
+      "path": "/portal/partner/",
+      "concept": "page.partnerHealth",
+      "sections": []
+    },
+    {
       "path": "/portal/partners/",
       "concept": "page.partners",
       "sections": [
@@ -415,13 +425,13 @@
     }
   ],
   "summary": {
-    "concepts": 457,
-    "active": 447,
+    "concepts": 459,
+    "active": 449,
     "deprecated": 10,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 320,
+    "portalSemantics": 322,
     "categories": {
       "market": 33,
       "model": 18,
@@ -429,7 +439,7 @@
       "pipeline": 41,
       "tournament": 99,
       "trading": 59,
-      "ui": 178,
+      "ui": 180,
       "warehouse": 27
     },
     "kinds": {
@@ -453,13 +463,13 @@
       "registry": 39,
       "sport": 11,
       "tournament": 6,
-      "ui": 252
+      "ui": 254
     },
     "semanticTypes": {
       "classification": 162,
       "location": 4,
       "presentation": 14,
-      "resource": 106,
+      "resource": 108,
       "state": 33,
       "version": 1
     },
@@ -467,7 +477,7 @@
       "badge": 61,
       "chip": 125,
       "code": 35,
-      "heading": 71,
+      "heading": 73,
       "link": 24,
       "token": 4
     }
@@ -4659,6 +4669,72 @@
       "synonyms": [
         "package graph",
         "packages board"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "correlationId": "legacy",
+      "addedAt": "2026-01-01",
+      "domain": "portal",
+      "namespace": "page",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "page.agentOdds",
+      "label": "Agent odds dashboard",
+      "description": "Standalone portal page for agent odds monitoring and local dashboard snapshots.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "agent odds",
+        "odds dashboard"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "correlationId": "legacy",
+      "addedAt": "2026-01-01",
+      "domain": "portal",
+      "namespace": "page",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "page.partnerHealth",
+      "label": "Partner health",
+      "description": "Portal page for partner profile alignment, Telegram output, and finance health.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "partner health",
+        "partner status"
       ],
       "values": null,
       "valueLabels": null,

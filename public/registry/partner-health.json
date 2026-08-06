@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-06T00:10:33.354Z",
+  "health": {
+    "ok": true,
+    "generatedAt": "2026-08-06T00:10:33.340Z",
+    "opsDb": {
+      "ok": true
+    },
+    "bindings": {
+      "ok": true,
+      "count": 0
+    },
+    "ledger": {
+      "ok": true,
+      "count": 0,
+      "partners": 0
+    },
+    "capacity": {
+      "ok": true,
+      "count": 0
+    },
+    "profiles": {
+      "ok": true,
+      "count": 0
+    },
+    "alignment": {
+      "profilesWithoutBinding": [],
+      "bindingsWithoutProfile": []
+    }
+  },
+  "outChecks": {
+    "generatedAt": "2026-08-06T00:10:33.354Z",
+    "checked": 0,
+    "ok": 0,
+    "degraded": []
+  }
+}

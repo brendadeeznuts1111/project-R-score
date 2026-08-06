@@ -2,9 +2,9 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-08-05T09:23:47.882Z",
+  "generated": "2026-08-06T00:13:52.101Z",
   "summary": {
-    "surfaces": 32,
+    "surfaces": 33,
     "artifacts": 42,
     "components": 21,
     "wiki": 6,
@@ -220,6 +220,14 @@
       "note": "account raises · multi-factor score · drivers",
       "group": "ops",
       "cli": "bun run ops:limits:demo"
+    },
+    {
+      "id": "partner-health",
+      "label": "Partner health",
+      "href": "/portal/partner/",
+      "note": "domain readiness · profile alignment · out health",
+      "group": "ops",
+      "cli": "bun run partner:health:bake"
     },
     {
       "id": "partners",

@@ -16,6 +16,7 @@ import { consumeLinkNonce } from './link-nonce.ts';
 import { runOpsCommand, tryOpenOpsDb } from './ops-bridge.ts';
 import { handleFlowCallback } from './flows/callbacks.ts';
 import { deliverFlowOutput, flowOutputToPlainText } from './flows/deliver.ts';
+import { handleNotificationCallback, isNotificationCallback } from './inline-confirmation.ts';
 import { commandToFlowId, findFlowNodeByTelegram } from './flows/registry.ts';
 import { gateFactoryCommand } from './ops-acl.ts';
 import { dispatchOpsFlowOutput } from './ops-commands.ts';
@@ -356,6 +357,21 @@ export class TelegramBot {
         cq.id,
         seatResult?.toast.slice(0, 80) ?? 'Unknown desk action.'
       );
+      return;
+    }
+
+    if (isNotificationCallback(data)) {
+      const db = tryOpenOpsDb(deps.env);
+      if (!db) {
+        await answerCallbackQuery(token, cq.id, 'Ops DB unavailable.');
+        return;
+      }
+      try {
+        const result = handleNotificationCallback({ data, db });
+        await answerCallbackQuery(token, cq.id, result.toast.slice(0, 80));
+      } finally {
+        db.close();
+      }
       return;
     }
 
