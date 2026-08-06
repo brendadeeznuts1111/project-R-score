@@ -3,19 +3,27 @@
  * Body markdown renders through Bun.markdown.html with the shared
  * PORTAL_MARKDOWN_PARSER feature set; all dynamic text is HTML-escaped.
  * @see https://bun.com/docs/runtime/markdown#bun-markdown-html
+ * @see https://bun.com/docs/runtime/markdown#heading-ids — headings: { ids }
+ * @see https://bun.com/docs/runtime/markdown#options — wikiLinks · latexMath · autolinks
+ * @see https://bun.com/blog/bun-v1.3.8#bun-markdown-built-in-markdown-parser — ship note
+ *   (blog names `headingIds` / `autolinkHeadings` are obsolete; use `headings` object)
  */
 
 import type { SkillDetail } from './skills-catalog.ts';
 
-/** GFM-ish parser flags shared by portal markdown surfaces. */
+/**
+ * GFM-ish parser flags for portal skill HTML.
+ * Current Bun.markdown.Options (1.3.14+ / docs) — not the flat 1.3.8 blog aliases.
+ */
 export const PORTAL_MARKDOWN_PARSER = {
   tables: true,
   strikethrough: true,
   tasklists: true,
-  tagfilter: true,
+  tagFilter: true,
   autolinks: true,
-  headingIds: true,
-} as const;
+  /** Heading IDs + in-heading autolinks (`headings: true` ≡ both). */
+  headings: true,
+} as const satisfies Bun.markdown.Options;
 
 function mdToHtml(md: string): string {
   try {
