@@ -73,7 +73,9 @@ import { getPlatformSnapshot } from './platform.ts';
 import { respondBunFile, resolveUnderRoot } from './http/bun-file.ts';
 import { EXPORTS_DIR, ROOT, SCREENSHOTS_DIR } from './paths.ts';
 import { getTask, getTaskPromise, listTaskIds, resolveTaskView } from './tasks.ts';
+import { buildDeskJobsSnapshot } from './desk-jobs.ts';
 import { startOddsDashboard, type OddsDashboardServer } from './odds/dashboard.ts';
+import type { OddsSchedulerHandle } from './odds/scheduler.ts';
 
 const AGENT_ODDS_DIR = joinPath(ROOT, 'public/portal/agent-odds');
 const PUBLIC_PORTAL_DIR = joinPath(ROOT, 'public/portal');
@@ -277,6 +279,8 @@ export type ResearchDashboardServer = {
   stop: () => void;
   odds?: OddsDashboardServer;
   research?: ResearchAgentHandle;
+  /** Optional Bun.cron odds monitor (owned by agent serve when --monitor). */
+  oddsMonitor?: OddsSchedulerHandle;
 };
 
 // eslint-disable-next-line harness/no-unknown-function-param -- HTTP JSON response edge
@@ -303,6 +307,8 @@ export function startResearchDashboard(
     oddsPort?: number;
     withResearchAgent?: boolean;
     researchIntervalMs?: number;
+    /** Optional in-process odds monitor (Bun.cron); stopped by caller or stop(). */
+    oddsMonitor?: OddsSchedulerHandle;
   } = {}
 ): ResearchDashboardServer {
   const port = opts.port ?? 8790;
@@ -321,6 +327,8 @@ export function startResearchDashboard(
           runImmediately: true,
           live: Bun.env.RESEARCH_AGENT_LIVE === '1',
         });
+
+  const oddsMonitor = opts.oddsMonitor;
 
   const server = Bun.serve({
     port,
@@ -360,6 +368,16 @@ export function startResearchDashboard(
       }
 
       // ── System panel (Bun.file / Glob / which / spawn / password / peek) ──
+      if (url.pathname === '/api/system/jobs' || url.pathname === '/api/desk/jobs') {
+        return json(
+          buildDeskJobsSnapshot({
+            research,
+            odds,
+            oddsMonitor,
+          })
+        );
+      }
+
       if (url.pathname === '/api/system/info' || url.pathname === '/api/system/info/') {
         return json(await getSystemInfo());
       }
@@ -1467,7 +1485,9 @@ export function startResearchDashboard(
     url: `http://${hostname}:${server.port}/`,
     odds,
     research,
+    oddsMonitor,
     stop() {
+      oddsMonitor?.stop();
       research?.stop();
       server.stop(true);
       odds?.stop();

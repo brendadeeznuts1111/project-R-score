@@ -73,6 +73,7 @@ Or set `AGENT_DEMO_USER` / `AGENT_DEMO_PASS`. **Not for production.**
 | POST     | `/api/system/search`                           | `Bun.Glob`                                                            |
 | POST     | `/api/system/inspect`                          | `Bun.inspect`                                                         |
 | GET      | `/api/system/peek`                             | Desk task `Bun.peek` statuses                                         |
+| GET      | `/api/system/jobs` · `/api/desk/jobs`          | Research agent · odds dashboard · optional `Bun.cron` monitor status  |
 | GET      | `/api/registry/presets`                        | Allowlisted registry presets (`local` · `prod`)                       |
 | GET      | `/api/registry/packages?q=`                    | Search `public/registry/registry.json` (Phase 0 snapshot)             |
 | GET      | `/api/registry/packages/:name`                 | Package detail from snapshot (`?version=` · includes `readme` / `readmeFilename` when baked) |
@@ -99,6 +100,18 @@ bun run ops:snapshot
 
 Detail modal shows snapshot `readme` / `readmeFilename` when present (Bun ≥1.3.14 publish
 metadata · escaped plain text, not rendered markdown). Use `?version=` to pick a release.
+
+**Serve + Bun 1.3.12 desk jobs:**
+
+```bash
+bun run agent:serve
+# optional in-process odds monitor (Bun.cron):
+bun run agent serve --monitor
+# or: OPERATOR_ODDS_MONITOR=1 bun run agent:serve
+curl -s http://127.0.0.1:8790/api/system/jobs | head
+# ANSI README in terminal (Bun.markdown.ansi — not the HTML modal):
+bun run agent registry-readme event-store --version 1.0.0
+```
 
 **Deep links:**
 
