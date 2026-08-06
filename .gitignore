@@ -204,6 +204,8 @@ test*-*
 
 # Generated files
 *.generated.*
+# Partner-surface inventory tables — committed bake (docs:check)
+!docs/design/partner-surface-inventory.generated.md
 *.auto.*
 *.build.*
 *.dist.*
