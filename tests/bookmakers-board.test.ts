@@ -158,6 +158,9 @@ describe('bookmakers board shell', () => {
     expect(script).toContain('export function filterBooks');
     expect(script).toContain('deskCoverageHtml');
     expect(script).toContain('DESK_COVERAGE_URL');
+    expect(script).toContain('BOOK_COLS');
+    expect(script).toContain('renderPortalTableRows');
+    expect(script).toContain('renderPortalStatGrid');
   });
 
   test('committed bake renders through normalizeBooks', async () => {

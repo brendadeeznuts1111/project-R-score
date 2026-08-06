@@ -9,10 +9,26 @@
 import { bindCopyButtons } from '../copy-cli.js';
 import { fetchJsonResult } from '../fetch-json.js';
 import { BAKE_SOURCES, ageLabel, pickGeneratedAt } from '../command-centre-core.js';
+import { escHtml, renderPortalTableRows } from '../components/portal-ui.js';
 
 /** Freshness thresholds (ms). */
 const FRESH_MS = 24 * 60 * 60 * 1000;
 const STALE_MS = 7 * 24 * 60 * 60 * 1000;
+
+const BAKE_STATUS_COLS = [
+  { key: 'status', label: 'Status' },
+  { key: 'group', label: 'Group' },
+  { key: 'artifact', label: 'Artifact' },
+  { key: 'board', label: 'Board' },
+  { key: 'cli', label: 'CLI' },
+];
+
+const BAKE_AGE_COLS = [
+  { key: 'status', label: 'Status' },
+  { key: 'artifact', label: 'Artifact' },
+  { key: 'age', label: 'Age' },
+  { key: 'summary', label: 'Summary' },
+];
 
 const GROUP_LABEL = {
   registry: 'Registry',
@@ -103,11 +119,7 @@ function ageStatus(iso) {
 }
 
 function escapeHtml(s) {
-  return String(s ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+  return escHtml(s);
 }
 
 function summarizeBake(id, data) {
@@ -165,43 +177,52 @@ let bakeRowsCache = [];
 let bakeFilterGroup = 'all';
 
 function filteredBakeRows() {
-  return bakeRowsCache.filter(
-    r => bakeFilterGroup === 'all' || r.b.group === bakeFilterGroup
-  );
+  return bakeRowsCache.filter(r => bakeFilterGroup === 'all' || r.b.group === bakeFilterGroup);
 }
 
 function renderBakeRows() {
   const tbody = document.getElementById('bake-status-body');
   if (!tbody) return;
   const rows = filteredBakeRows();
-  if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="5" class="dim">No bakes in this group</td></tr>`;
-    renderBakeAgeRows();
-    return;
-  }
-  tbody.innerHTML = rows
-    .map(r => {
+  tbody.innerHTML = renderPortalTableRows(
+    BAKE_STATUS_COLS,
+    rows.map(r => {
       const g = r.b.group || 'other';
       const gLabel = GROUP_LABEL[g] || g;
-      const rowClass =
-        r.status === 'missing' ? 'missing' : r.status === 'stale' || r.status === 'old' ? 'stale' : '';
       const pill = `<span class="bake-status-pill ${escapeHtml(r.status)}">${escapeHtml(r.statusLabel)}</span>`;
       const art = r.ok
         ? `<a href="${escapeHtml(r.b.href)}">${escapeHtml(r.b.label)}</a>`
         : escapeHtml(r.b.label);
       const cli = escapeHtml(r.b.cli || '');
-      return `<tr class="${rowClass}" data-group="${escapeHtml(g)}" data-status="${escapeHtml(r.status)}">
-        <td>${pill}</td>
-        <td><span class="bake-group-tag">${escapeHtml(gLabel)}</span></td>
-        <td>${art}</td>
-        <td><a href="${escapeHtml(r.b.board)}">board</a></td>
-        <td>
-          <button type="button" class="copy-cli" data-cli="${cli}" title="Copy rebake CLI">copy</button>
-          <code class="bake-cli" title="${cli}">${cli}</code>
-        </td>
-      </tr>`;
-    })
-    .join('');
+      return [
+        { html: pill },
+        { html: `<span class="bake-group-tag">${escapeHtml(gLabel)}</span>` },
+        { html: art },
+        { html: `<a href="${escapeHtml(r.b.board)}">board</a>` },
+        {
+          html:
+            `<button type="button" class="copy-cli" data-cli="${cli}" title="Copy rebake CLI">copy</button>` +
+            `<code class="bake-cli" title="${cli}">${cli}</code>`,
+        },
+      ];
+    }),
+    {
+      emptyMessage: 'No bakes in this group',
+      rowClass: i => {
+        const r = rows[i];
+        if (r.status === 'missing') return 'missing';
+        if (r.status === 'stale' || r.status === 'old') return 'stale';
+        return undefined;
+      },
+      rowAttrs: i => {
+        const r = rows[i];
+        return {
+          'data-group': r.b.group || 'other',
+          'data-status': r.status,
+        };
+      },
+    }
+  );
   renderBakeAgeRows();
   bindCopyButtons();
 }
@@ -211,12 +232,9 @@ function renderBakeAgeRows() {
   const tbody = document.getElementById('bake-age-body');
   if (!tbody) return;
   const rows = filteredBakeRows();
-  if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="4" class="dim">No bakes in this group</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = rows
-    .map(r => {
+  tbody.innerHTML = renderPortalTableRows(
+    BAKE_AGE_COLS,
+    rows.map(r => {
       const pill = `<span class="bake-status-pill ${escapeHtml(r.status)}">${escapeHtml(r.statusLabel)}</span>`;
       const art = r.ok
         ? `<a href="${escapeHtml(r.b.href)}">${escapeHtml(r.b.label)}</a>`
@@ -227,14 +245,24 @@ function renderBakeAgeRows() {
       const summary = r.ok
         ? escapeHtml((r.extra || '').replace(/^\s*·\s*/, '') || '—')
         : '<span class="dim">—</span>';
-      return `<tr data-status="${escapeHtml(r.status)}" data-group="${escapeHtml(r.b.group || 'other')}">
-        <td>${pill}</td>
-        <td>${art}</td>
-        <td class="bake-age-cell">${age}</td>
-        <td class="bake-summary-cell">${summary}</td>
-      </tr>`;
-    })
-    .join('');
+      return [
+        { html: pill },
+        { html: art },
+        { html: age, className: 'bake-age-cell' },
+        { html: summary, className: 'bake-summary-cell' },
+      ];
+    }),
+    {
+      emptyMessage: 'No bakes in this group',
+      rowAttrs: i => {
+        const r = rows[i];
+        return {
+          'data-status': r.status,
+          'data-group': r.b.group || 'other',
+        };
+      },
+    }
+  );
 }
 
 function renderBakeMeta() {
@@ -304,8 +332,7 @@ async function fillBakeStatus() {
       }
       const at = pickGeneratedAt(r.data);
       const st = ageStatus(at);
-      const sort =
-        st.key === 'missing' ? 0 : st.key === 'old' ? 1 : st.key === 'stale' ? 2 : 3;
+      const sort = st.key === 'missing' ? 0 : st.key === 'old' ? 1 : st.key === 'stale' ? 2 : 3;
       return {
         b,
         ok: true,
@@ -346,7 +373,7 @@ async function fillSnapshotWidget() {
   if (r.ok && r.data) {
     const n = Array.isArray(r.data?.accounts)
       ? r.data.accounts.length
-      : r.data?.summary?.accounts ?? '—';
+      : (r.data?.summary?.accounts ?? '—');
     el.innerHTML = `<p class="dim">Catalog snapshot · accounts=${n} · <a href="${url}">JSON</a> · generated ${ageLabel(pickGeneratedAt(r.data))}</p>
       <p class="dim">Scope snapshots (local tree, not Pages):
       <button type="button" class="copy-cli" data-cli="bun run portal-cli snapshot list">copy</button>
@@ -370,21 +397,147 @@ async function fillSnapshotWidget() {
  * [capability, type, protocol, version, api, status, usedIn, sourceUrl]
  */
 const CAPABILITY_FALLBACK = [
-  ['Vault config (TOML)', 'config', 'Bun', 'Bun ≥1.4', 'import with { type: "toml" }', 'Available', 'config/vault-map.toml', 'https://bun.sh/docs/runtime/loaders#toml'],
-  ['Secret inject', 'secrets', 'pass-cli', 'pass-cli ≥2.2', 'pass-cli inject -i/-o', 'Implemented', 'portal-cli secret inject', ''],
-  ['Vault & item list', 'secrets', 'pass-cli', 'pass-cli ≥2.2', 'pass-cli vault list · item list', 'Implemented', 'portal-cli secret vaults', ''],
-  ['Secret view', 'secrets', 'pass-cli', 'pass-cli ≥2.2', 'pass-cli item view', 'Implemented', 'portal-cli secret get', ''],
-  ['Snapshot testing', 'test', 'Bun', 'Bun ≥1.0', 'expect().toMatchSnapshot()', 'Implemented', 'portal-cli vault health', 'https://bun.com/docs/test/snapshots'],
-  ['Update snapshots', 'test', 'Bun', 'Bun ≥1.0', 'bun test --update-snapshots', 'Implemented', 'portal-cli vault health --update', ''],
-  ['Pack workspace', 'pkg', 'Bun', 'Bun ≥1.0', 'bun pm pack', 'Implemented', 'portal-cli pm pack', ''],
+  [
+    'Vault config (TOML)',
+    'config',
+    'Bun',
+    'Bun ≥1.4',
+    'import with { type: "toml" }',
+    'Available',
+    'config/vault-map.toml',
+    'https://bun.sh/docs/runtime/loaders#toml',
+  ],
+  [
+    'Secret inject',
+    'secrets',
+    'pass-cli',
+    'pass-cli ≥2.2',
+    'pass-cli inject -i/-o',
+    'Implemented',
+    'portal-cli secret inject',
+    '',
+  ],
+  [
+    'Vault & item list',
+    'secrets',
+    'pass-cli',
+    'pass-cli ≥2.2',
+    'pass-cli vault list · item list',
+    'Implemented',
+    'portal-cli secret vaults',
+    '',
+  ],
+  [
+    'Secret view',
+    'secrets',
+    'pass-cli',
+    'pass-cli ≥2.2',
+    'pass-cli item view',
+    'Implemented',
+    'portal-cli secret get',
+    '',
+  ],
+  [
+    'Snapshot testing',
+    'test',
+    'Bun',
+    'Bun ≥1.0',
+    'expect().toMatchSnapshot()',
+    'Implemented',
+    'portal-cli vault health',
+    'https://bun.com/docs/test/snapshots',
+  ],
+  [
+    'Update snapshots',
+    'test',
+    'Bun',
+    'Bun ≥1.0',
+    'bun test --update-snapshots',
+    'Implemented',
+    'portal-cli vault health --update',
+    '',
+  ],
+  [
+    'Pack workspace',
+    'pkg',
+    'Bun',
+    'Bun ≥1.0',
+    'bun pm pack',
+    'Implemented',
+    'portal-cli pm pack',
+    '',
+  ],
   ['List deps', 'pkg', 'Bun', 'Bun ≥1.0', 'bun pm ls', 'Implemented', 'portal-cli pm ls', ''],
-  ['Packages graph', 'pkg', 'Bun', 'Bun ≥1.0', 'packages-graph-map bake · portal-cli pm graph', 'Implemented', 'portal-cli pm graph', ''],
-  ['Security scanner', 'security', 'Bun', 'Bun ≥1.4', 'bun pm scan · [install.security]', 'Implemented', 'portal-cli scanner doctor', 'https://bun.com/docs/pm/security-scanner-api'],
-  ['Linker policy verification', 'config', 'Bun', 'Bun ≥1.4', 'bun.lock configVersion field', 'Implemented', 'portal-cli doctor · install:verify', 'https://bun.com/docs/pm/cli/install#default-strategy'],
-  ['Unified Doctor', 'dev', 'Bun', 'Bun ≥1.4', 'bun run portal:doctor', 'Implemented', 'CI, developer checks', ''],
-  ['Bunfig (machine)', 'config', 'Bun', 'Bun ≥1.4', '~/.bunfig.toml', 'Implemented', 'Machine-level policy', 'https://bun.com/docs/runtime/bunfig'],
-  ['Bunfig (project)', 'config', 'Bun', 'Bun ≥1.4', './bunfig.toml', 'Implemented', 'Project-level overrides', 'https://bun.com/docs/runtime/bunfig'],
-  ['Bunfig merge', 'config', 'Bun', 'Bun ≥1.4', 'Shallow merge: machine → project', 'Implemented', 'Effective config resolution', ''],
+  [
+    'Packages graph',
+    'pkg',
+    'Bun',
+    'Bun ≥1.0',
+    'packages-graph-map bake · portal-cli pm graph',
+    'Implemented',
+    'portal-cli pm graph',
+    '',
+  ],
+  [
+    'Security scanner',
+    'security',
+    'Bun',
+    'Bun ≥1.4',
+    'bun pm scan · [install.security]',
+    'Implemented',
+    'portal-cli scanner doctor',
+    'https://bun.com/docs/pm/security-scanner-api',
+  ],
+  [
+    'Linker policy verification',
+    'config',
+    'Bun',
+    'Bun ≥1.4',
+    'bun.lock configVersion field',
+    'Implemented',
+    'portal-cli doctor · install:verify',
+    'https://bun.com/docs/pm/cli/install#default-strategy',
+  ],
+  [
+    'Unified Doctor',
+    'dev',
+    'Bun',
+    'Bun ≥1.4',
+    'bun run portal:doctor',
+    'Implemented',
+    'CI, developer checks',
+    '',
+  ],
+  [
+    'Bunfig (machine)',
+    'config',
+    'Bun',
+    'Bun ≥1.4',
+    '~/.bunfig.toml',
+    'Implemented',
+    'Machine-level policy',
+    'https://bun.com/docs/runtime/bunfig',
+  ],
+  [
+    'Bunfig (project)',
+    'config',
+    'Bun',
+    'Bun ≥1.4',
+    './bunfig.toml',
+    'Implemented',
+    'Project-level overrides',
+    'https://bun.com/docs/runtime/bunfig',
+  ],
+  [
+    'Bunfig merge',
+    'config',
+    'Bun',
+    'Bun ≥1.4',
+    'Shallow merge: machine → project',
+    'Implemented',
+    'Effective config resolution',
+    '',
+  ],
   [
     'Doctor groups',
     'dev',
@@ -395,9 +548,36 @@ const CAPABILITY_FALLBACK = [
     'Group-based checks',
     '',
   ],
-  ['Dashboard launcher', 'cli', 'Bun', 'Bun ≥1.0', 'portal-cli dashboard --view', 'Implemented', '/', ''],
-  ['ANSI color', 'display', 'Bun', 'Bun ≥1.0', 'Bun.color(hex, "ansi-16m")', 'Implemented', 'vault-map status lines', ''],
-  ['File I/O', 'io', 'Bun', 'Bun ≥1.0', 'Bun.file · Bun.write', 'Implemented', 'bakes · snapshots', ''],
+  [
+    'Dashboard launcher',
+    'cli',
+    'Bun',
+    'Bun ≥1.0',
+    'portal-cli dashboard --view',
+    'Implemented',
+    '/',
+    '',
+  ],
+  [
+    'ANSI color',
+    'display',
+    'Bun',
+    'Bun ≥1.0',
+    'Bun.color(hex, "ansi-16m")',
+    'Implemented',
+    'vault-map status lines',
+    '',
+  ],
+  [
+    'File I/O',
+    'io',
+    'Bun',
+    'Bun ≥1.0',
+    'Bun.file · Bun.write',
+    'Implemented',
+    'bakes · snapshots',
+    '',
+  ],
 ];
 
 /** @type {string[][]} */
@@ -438,13 +618,7 @@ export function normalizeCapabilityRows(data) {
       const hasBun = bunApi && bunApi !== '—';
       const hasProton = protonCli && protonCli !== '—';
       protocol =
-        hasBun && hasProton
-          ? 'Bun + pass-cli'
-          : hasBun
-            ? 'Bun'
-            : hasProton
-              ? 'pass-cli'
-              : '—';
+        hasBun && hasProton ? 'Bun + pass-cli' : hasBun ? 'Bun' : hasProton ? 'pass-cli' : '—';
     }
     const src = typeof r.source === 'string' && r.source.startsWith('http') ? r.source : '';
     return [
@@ -533,7 +707,8 @@ function renderBunCliReference(filter = '') {
     .map((group, idx) => {
       const flags = (group.flags || []).filter(f => {
         if (!q) return true;
-        const hay = `${f.flag} ${f.short || ''} ${f.description || ''} ${f.type || ''}`.toLowerCase();
+        const hay =
+          `${f.flag} ${f.short || ''} ${f.description || ''} ${f.type || ''}`.toLowerCase();
         return hay.includes(q);
       });
       if (!flags.length) return '';

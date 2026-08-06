@@ -8,12 +8,25 @@
 
 import { bindCopyButtons } from '../copy-cli.js';
 import { bootGlossaryUx } from '../components/glossary-ux.js';
-import { escHtml } from '../components/portal-ui.js';
+import { escHtml, renderPortalStatGrid, renderPortalTableRows } from '../components/portal-ui.js';
 
 export const REGISTRY_URL = '/registry/bookmakers.json';
 export const DESK_COVERAGE_URL = '/registry/bookmakers-desk-coverage.json';
 export const GLOSSARY_URL = '/registry/domain-glossary.json';
 const POLL_MS = 60_000;
+
+/** Column contract for the main books table (static thead in index.html). */
+export const BOOK_COLS = [
+  { key: 'id', label: 'ID' },
+  { key: 'label', label: 'Label' },
+  { key: 'domain', label: 'Domain' },
+  { key: 'fetcher', label: 'Fetcher' },
+  { key: 'maxBet', label: 'Max bet' },
+  { key: 'lifecycle', label: 'Lifecycle' },
+  { key: 'sports', label: 'Sports' },
+  { key: 'regions', label: 'Regions' },
+  { key: 'status', label: 'Status' },
+];
 
 /** @deprecated prefer escHtml from portal-ui — kept as board export for tests */
 export function esc(value) {
@@ -187,7 +200,8 @@ export function regionsHtml(regions) {
   return parts.map(r => `<span class="portal-chip portal-chip--muted">${esc(r)}</span>`).join('');
 }
 
-export function rowHtml(book, glossaryIds) {
+/** Cell fragments for one book row (shared with `rowHtml` / paint). */
+export function bookCells(book, glossaryIds) {
   const status = bookStatus(book);
   const color = book.color
     ? `<span class="portal-dot" style="background:${esc(book.color)}" title="${esc(book.color)}"></span>`
@@ -210,42 +224,52 @@ export function rowHtml(book, glossaryIds) {
     ? `<span class="max-bet">${esc(maxBet)}</span>`
     : '<span class="dim">—</span>';
   const life = lifecycleChipsHtml(book.lifecycle);
-  return `<tr data-id="${esc(book.id)}" data-slug="${esc(book.slug || book.id)}" data-fetcher="${esc(book.fetcherType)}" data-tier="${esc(book.liquidityTier || '')}">
-    <td class="col-id">${color}<code>${esc(book.id || '?')}</code></td>
-    <td><div class="book-label">${esc(book.label || '?')}</div>${brandBits}</td>
-    <td>${domainCell}</td>
-    <td>${fetcher}${tier}</td>
-    <td class="col-max">${maxCell}</td>
-    <td class="col-life">${life || '<span class="dim">—</span>'}</td>
-    <td class="col-sports">${sportsChipsHtml(book.supportedSports, glossaryIds)}</td>
-    <td class="col-regions">${regionsHtml(book.regions)}</td>
-    <td class="status-text ${status === 'ok' ? 'ok' : 'bad'}">${status}</td>
-  </tr>`;
+  return [
+    { html: `${color}<code>${esc(book.id || '?')}</code>`, className: 'col-id' },
+    { html: `<div class="book-label">${esc(book.label || '?')}</div>${brandBits}` },
+    { html: domainCell },
+    { html: `${fetcher}${tier}` },
+    { html: maxCell, className: 'col-max' },
+    { html: life || '<span class="dim">—</span>', className: 'col-life' },
+    { html: sportsChipsHtml(book.supportedSports, glossaryIds), className: 'col-sports' },
+    { html: regionsHtml(book.regions), className: 'col-regions' },
+    {
+      html: status,
+      className: `status-text ${status === 'ok' ? 'ok' : 'bad'}`,
+    },
+  ];
+}
+
+export function rowHtml(book, glossaryIds) {
+  return renderPortalTableRows(BOOK_COLS, [bookCells(book, glossaryIds)], {
+    rowAttrs: () => ({
+      'data-id': book.id || '',
+      'data-slug': book.slug || book.id || '',
+      'data-fetcher': book.fetcherType || '',
+      'data-tier': book.liquidityTier || '',
+    }),
+  });
 }
 
 export function statsHtml(summary, counts) {
   const s = summary || {};
-  const rows = [
-    { k: 'Books', v: s.count ?? counts.all, hint: 'registry rows', tone: 'muted' },
-    { k: 'Webview', v: s.webview ?? counts.webview, hint: 'browser fetcher', tone: 'muted' },
-    { k: 'REST', v: s.rest ?? counts.rest, hint: 'API fetcher', tone: 'muted' },
-    { k: 'Seat', v: s.seat ?? counts.seat, hint: 'seat / soft books', tone: 'muted' },
+  return renderPortalStatGrid([
+    { label: 'Books', value: s.count ?? counts.all, hint: 'registry rows', tone: 'muted' },
     {
-      k: 'Sports',
-      v: Array.isArray(s.sports) ? s.sports.length : uniqueSports([]).length,
+      label: 'Webview',
+      value: s.webview ?? counts.webview,
+      hint: 'browser fetcher',
+      tone: 'muted',
+    },
+    { label: 'REST', value: s.rest ?? counts.rest, hint: 'API fetcher', tone: 'muted' },
+    { label: 'Seat', value: s.seat ?? counts.seat, hint: 'seat / soft books', tone: 'muted' },
+    {
+      label: 'Sports',
+      value: Array.isArray(s.sports) ? s.sports.length : uniqueSports([]).length,
       hint: 'unique sports',
       tone: 'muted',
     },
-  ];
-  return rows
-    .map(
-      r => `<div class="portal-stat ${esc(r.tone)}">
-        <div class="k">${esc(r.k)}</div>
-        <div class="v">${esc(r.v)}</div>
-        <div class="hint">${esc(r.hint)}</div>
-      </div>`
-    )
-    .join('');
+  ]);
 }
 
 export async function loadGlossarySportIds() {
@@ -254,9 +278,7 @@ export async function loadGlossarySportIds() {
     const res = await fetch(GLOSSARY_URL, { headers: { Accept: 'application/json' } });
     if (!res.ok) return ids;
     const payload = await res.json();
-    const entries = Array.isArray(payload)
-      ? payload
-      : (payload.entries ?? payload.concepts ?? []);
+    const entries = Array.isArray(payload) ? payload : (payload.entries ?? payload.concepts ?? []);
     for (const e of entries) {
       if (e && typeof e.id === 'string') ids.add(e.id);
     }
@@ -368,9 +390,10 @@ export function initBookmakersBoard(root = document) {
     }
 
     if (sportsEl) {
-      const sports = Array.isArray(summary.sports) && summary.sports.length
-        ? summary.sports
-        : uniqueSports(books);
+      const sports =
+        Array.isArray(summary.sports) && summary.sports.length
+          ? summary.sports
+          : uniqueSports(books);
       sportsEl.innerHTML = sports.length
         ? sportsChipsHtml(sports, glossaryIds)
         : '<span class="dim">No sports listed</span>';
@@ -418,12 +441,22 @@ export function initBookmakersBoard(root = document) {
       }
     }
 
-    if (filtered.length === 0) {
-      bodyEl.innerHTML =
-        '<tr><td colspan="9" class="dim">No books match this filter</td></tr>';
-    } else {
-      bodyEl.innerHTML = filtered.map(b => rowHtml(b, glossaryIds)).join('');
-    }
+    bodyEl.innerHTML = renderPortalTableRows(
+      BOOK_COLS,
+      filtered.map(b => bookCells(b, glossaryIds)),
+      {
+        emptyMessage: 'No books match this filter',
+        rowAttrs: i => {
+          const b = filtered[i];
+          return {
+            'data-id': b.id || '',
+            'data-slug': b.slug || b.id || '',
+            'data-fetcher': b.fetcherType || '',
+            'data-tier': b.liquidityTier || '',
+          };
+        },
+      }
+    );
     bootGlossaryUx();
   };
 
@@ -444,7 +477,9 @@ export function initBookmakersBoard(root = document) {
         metaEl.innerHTML = `<span class="status-text bad">load failed: ${esc(err.message)}</span>`;
       }
       if (bodyEl) {
-        bodyEl.innerHTML = `<tr><td colspan="7" class="status-text bad">${esc(err.message)}</td></tr>`;
+        bodyEl.innerHTML = renderPortalTableRows(BOOK_COLS, [], {
+          emptyHtml: `<tr><td colspan="${BOOK_COLS.length}" class="status-text bad">${esc(err.message)}</td></tr>`,
+        });
       }
     }
   }

@@ -40,6 +40,11 @@ export type PortalTableCell =
 
 export type PortalTableRowOpts = {
   emptyMessage?: string;
+  /**
+   * Full empty-state markup (must be `<tr>…</tr>` fragment(s)).
+   * When set, overrides `emptyMessage`.
+   */
+  emptyHtml?: string;
   rowClass?: (rowIndex: number) => string | undefined;
   /** Extra attributes on each `<tr>` (id, data-*, aria-*). Values are escaped. */
   rowAttrs?: (rowIndex: number) => Record<string, string> | undefined;
@@ -139,6 +144,7 @@ export function renderPortalTableRows(
   opts: PortalTableRowOpts = {}
 ): string {
   if (!rows.length) {
+    if (opts.emptyHtml != null && opts.emptyHtml !== '') return opts.emptyHtml;
     const msg = opts.emptyMessage ?? 'No rows';
     return `<tr><td colspan="${columns.length}" class="dim">${escHtml(msg)}</td></tr>`;
   }
@@ -203,5 +209,57 @@ export function renderPortalPanel(
     `<div class="portal-panel-head"><h2>${escHtml(title)}</h2>${desc}</div>` +
     bodyHtml +
     `</section>`
+  );
+}
+
+export type PortalErrorOpts = {
+  title: string;
+  message: string;
+  /** Machine / HTTP code shown under the message */
+  code?: string;
+  /** Pre-escaped action row HTML (buttons / links). */
+  actionsHtml?: string;
+  /** Extra pre-escaped body (CLI hints, etc.). */
+  footerHtml?: string;
+};
+
+/** Actionable failure card — `.portal-error`. */
+export function renderPortalError(opts: PortalErrorOpts): string {
+  const code =
+    opts.code != null && opts.code !== ''
+      ? `<p class="portal-error-code"><code>${escHtml(opts.code)}</code></p>`
+      : '';
+  const actions =
+    opts.actionsHtml != null && opts.actionsHtml !== ''
+      ? `<div class="portal-error-actions">${opts.actionsHtml}</div>`
+      : '';
+  const footer = opts.footerHtml != null && opts.footerHtml !== '' ? opts.footerHtml : '';
+  return (
+    `<div class="portal-error" role="alert">` +
+    `<h3>${escHtml(opts.title)}</h3>` +
+    `<p>${escHtml(opts.message)}</p>` +
+    code +
+    actions +
+    footer +
+    `</div>`
+  );
+}
+
+/** Shimmer placeholders for stat grids / panels. */
+export function renderPortalSkeleton(count = 4): string {
+  const n = Math.max(0, Math.min(24, Math.floor(count)));
+  return Array.from({ length: n }, () => `<div class="portal-skeleton"></div>`).join('');
+}
+
+/** Bake/audit gate pill — `.portal-gate` + tone. */
+export function renderPortalGate(
+  label: string,
+  tone: 'ok' | 'warn' | 'bad' | 'drift' | '' = 'ok'
+): string {
+  const cls = tone ? `portal-gate ${tone}` : 'portal-gate';
+  return (
+    `<span class="${escHtml(cls)}">` +
+    `<span class="dot" aria-hidden="true"></span>${escHtml(label)}` +
+    `</span>`
   );
 }

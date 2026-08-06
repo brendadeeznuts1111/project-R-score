@@ -8,8 +8,9 @@
 
 /** @param {string|number|boolean|null|undefined} value */
 export function escHtml(value) {
-  return String(value ?? '').replace(/[&<>"']/g, c =>
-    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
+  return String(value ?? '').replace(
+    /[&<>"']/g,
+    c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
   );
 }
 
@@ -105,10 +106,11 @@ function resolveCells(columns, row) {
  * `<tr>` fragments for boards that keep a static thead and fill tbody.
  * @param {Array<{ key: string, label: string, className?: string }>} columns
  * @param {Array<Array<unknown>|Record<string, unknown>>} rows
- * @param {{ emptyMessage?: string, rowClass?: (i:number)=>string|undefined, rowAttrs?: (i:number)=>Record<string,string>|undefined }} [opts]
+ * @param {{ emptyMessage?: string, emptyHtml?: string, rowClass?: (i:number)=>string|undefined, rowAttrs?: (i:number)=>Record<string,string>|undefined }} [opts]
  */
 export function renderPortalTableRows(columns, rows, opts = {}) {
   if (!rows || !rows.length) {
+    if (opts.emptyHtml != null && opts.emptyHtml !== '') return opts.emptyHtml;
     const msg = opts.emptyMessage || 'No rows';
     return `<tr><td colspan="${columns.length}" class="dim">${escHtml(msg)}</td></tr>`;
   }
@@ -164,13 +166,56 @@ export function renderPortalTable(columns, rows, opts = {}) {
  * @param {{ desc?: string }} [opts]
  */
 export function renderPortalPanel(title, bodyHtml, opts = {}) {
-  const desc = opts.desc
-    ? `<p class="portal-panel-desc">${escHtml(opts.desc)}</p>`
-    : '';
+  const desc = opts.desc ? `<p class="portal-panel-desc">${escHtml(opts.desc)}</p>` : '';
   return (
     `<section class="portal-panel">` +
     `<div class="portal-panel-head"><h2>${escHtml(title)}</h2>${desc}</div>` +
     bodyHtml +
     `</section>`
+  );
+}
+
+/**
+ * Actionable failure card — `.portal-error`.
+ * @param {{ title: string, message: string, code?: string, actionsHtml?: string, footerHtml?: string }} opts
+ */
+export function renderPortalError(opts) {
+  const code =
+    opts.code != null && opts.code !== ''
+      ? `<p class="portal-error-code"><code>${escHtml(opts.code)}</code></p>`
+      : '';
+  const actions =
+    opts.actionsHtml != null && opts.actionsHtml !== ''
+      ? `<div class="portal-error-actions">${opts.actionsHtml}</div>`
+      : '';
+  const footer = opts.footerHtml != null && opts.footerHtml !== '' ? opts.footerHtml : '';
+  return (
+    `<div class="portal-error" role="alert">` +
+    `<h3>${escHtml(opts.title)}</h3>` +
+    `<p>${escHtml(opts.message)}</p>` +
+    code +
+    actions +
+    footer +
+    `</div>`
+  );
+}
+
+/** @param {number} [count] */
+export function renderPortalSkeleton(count = 4) {
+  const n = Math.max(0, Math.min(24, Math.floor(count)));
+  return Array.from({ length: n }, () => `<div class="portal-skeleton"></div>`).join('');
+}
+
+/**
+ * Bake/audit gate pill — `.portal-gate` + tone.
+ * @param {string} label
+ * @param {'ok'|'warn'|'bad'|'drift'|''} [tone]
+ */
+export function renderPortalGate(label, tone = 'ok') {
+  const cls = tone ? `portal-gate ${tone}` : 'portal-gate';
+  return (
+    `<span class="${escHtml(cls)}">` +
+    `<span class="dot" aria-hidden="true"></span>${escHtml(label)}` +
+    `</span>`
   );
 }
