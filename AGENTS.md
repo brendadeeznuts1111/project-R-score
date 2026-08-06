@@ -264,9 +264,14 @@ interior, path/name allowlists, suppressions.
   formatted files. Keep Prettier as the formatter; do not hand-normalize around
   it.
 - **PR bodies:** start every pull-request description from
-  [`.github/pull_request_template.md`](.github/pull_request_template.md),
-  preserve its required sections, and complete the applicable fields. Do not
-  construct or send PR bodies through shell HEREDOCs.
+  [`.github/pull_request_template.md`](.github/pull_request_template.md)
+  (P0:
+  [`.github/pull_request_template_p0.md`](.github/pull_request_template_p0.md)).
+  Required: **Summary** · **Claim → evidence** (filled table —
+  `bun scripts/check-pr-claim.ts`) · **Test plan** · **Checklist** · **Local
+  merge proof**. Optional sections: write `n/a` — do not delete headings.
+  Preserve section titles agents and scanners rely on. Do not construct or send
+  PR bodies through shell HEREDOCs.
 - **Task routing:**
   - Brands →
     [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) +

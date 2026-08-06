@@ -24,8 +24,8 @@ GitHub Issues are a **human queue**, not the concept or domain graph.
 |----------|------|
 | Portal gap | [`.github/ISSUE_TEMPLATE/portal-gap.md`](../../.github/ISSUE_TEMPLATE/portal-gap.md) |
 | Bookmakers catalog | [`.github/ISSUE_TEMPLATE/bookmakers-catalog.md`](../../.github/ISSUE_TEMPLATE/bookmakers-catalog.md) |
-| Default PR | [`.github/pull_request_template.md`](../../.github/pull_request_template.md) |
-| P0 PR | [`.github/pull_request_template_p0.md`](../../.github/pull_request_template_p0.md) |
+| Default PR | [`.github/pull_request_template.md`](../../.github/pull_request_template.md) — Claim → evidence required; optional sections `n/a` |
+| P0 PR | [`.github/pull_request_template_p0.md`](../../.github/pull_request_template_p0.md) — production blocker; same claim table |
 
 P0 issue templates share a short **Routing** block (Domain · Tracker · Concept) for
 filters only — security/arch labels stay as-is.
