@@ -33,6 +33,8 @@ Common root causes:
 
 MCP HTTP servers in [`.mcp.json`](../../../.mcp.json) send `Authorization: Bearer ${CLOUDFLARE_API_TOKEN}` to Cloudflare-hosted endpoints. **There is no Cloudflare Access or Worker proxy** — the only runtime boundary is the token minted in the [Cloudflare dashboard](https://dash.cloudflare.com/profile/api-tokens).
 
+**Cursor vs VS Code auth:** Cursor reads `.mcp.json` directly and resolves the token via `envFile` (project `.env`) + `${CLOUDFLARE_API_TOKEN}`. VS Code uses generated [`.vscode/mcp.json`](../../../.vscode/mcp.json) (`bun run mcp:sync`) — HTTP servers have no `envFile` in the VS Code schema, so sync rewrites Cloudflare headers to `Bearer ${input:cloudflare-api-token}` (prompt once; IDE stores the value).
+
 **Operational confidence vs runtime authorization:** Harness commands (`cloudflare:env:assert-live`, `cloudflare:env:validate`) prove local pins and declared token scope. They do **not** restrict what MCP can do at runtime — that remains dashboard-only.
 
 SSOT: [`CLOUDFLARE_TOKEN_PERMISSIONS`](../../../config/r2-env.ts) in `config/r2-env.ts`.

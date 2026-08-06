@@ -1,5 +1,12 @@
 {
-  "inputs": [],
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "cloudflare-api-token",
+      "description": "CLOUDFLARE_API_TOKEN from Proton Pass / project .env",
+      "password": true
+    }
+  ],
   "servers": {
     "bun-docs": {
       "type": "stdio",
@@ -56,41 +63,36 @@
       "type": "http",
       "url": "https://mcp.cloudflare.com/mcp",
       "headers": {
-        "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
-      },
-      "envFile": "${workspaceFolder}/.env"
+        "Authorization": "Bearer ${input:cloudflare-api-token}"
+      }
     },
     "cloudflare-docs": {
       "type": "http",
       "url": "https://docs.mcp.cloudflare.com/mcp",
       "headers": {
-        "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
-      },
-      "envFile": "${workspaceFolder}/.env"
+        "Authorization": "Bearer ${input:cloudflare-api-token}"
+      }
     },
     "cloudflare-bindings": {
       "type": "http",
       "url": "https://bindings.mcp.cloudflare.com/mcp",
       "headers": {
-        "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
-      },
-      "envFile": "${workspaceFolder}/.env"
+        "Authorization": "Bearer ${input:cloudflare-api-token}"
+      }
     },
     "cloudflare-builds": {
       "type": "http",
       "url": "https://builds.mcp.cloudflare.com/mcp",
       "headers": {
-        "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
-      },
-      "envFile": "${workspaceFolder}/.env"
+        "Authorization": "Bearer ${input:cloudflare-api-token}"
+      }
     },
     "cloudflare-observability": {
       "type": "http",
       "url": "https://observability.mcp.cloudflare.com/mcp",
       "headers": {
-        "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
-      },
-      "envFile": "${workspaceFolder}/.env"
+        "Authorization": "Bearer ${input:cloudflare-api-token}"
+      }
     }
   }
 }
