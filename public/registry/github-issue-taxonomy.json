@@ -1,0 +1,427 @@
+{
+  "schema": "factorywager.github-issue-taxonomy.public.v1",
+  "artifactVersion": 1,
+  "artifactId": "github-issue-taxonomy",
+  "conceptId": "registry.github_issue_taxonomy",
+  "path": "/registry/github-issue-taxonomy.json",
+  "color": {
+    "colorKey": "middleware",
+    "token": "--partner-ops-middleware",
+    "hex": "#D29922",
+    "css": "#d29922"
+  },
+  "ownership": {
+    "owner": "platform / governance",
+    "plane": "public",
+    "authority": [
+      "config/github-issue-taxonomy.ts",
+      "docs/harness/AUTHORITY.md",
+      "docs/harness/tenants/github-issue-taxonomy.md",
+      "registry-index.md"
+    ]
+  },
+  "dimensions": [
+    {
+      "key": "type",
+      "required": true,
+      "values": [
+        "bug",
+        "enhancement"
+      ]
+    },
+    {
+      "key": "priority",
+      "required": true,
+      "values": [
+        "p0",
+        "p1",
+        "p2"
+      ]
+    },
+    {
+      "key": "plane",
+      "required": true,
+      "values": [
+        "domain",
+        "governance",
+        "local",
+        "portal",
+        "public"
+      ]
+    },
+    {
+      "key": "runtime",
+      "required": true,
+      "values": [
+        "agnostic",
+        "bun"
+      ]
+    },
+    {
+      "key": "team",
+      "required": true,
+      "values": [
+        "infrastructure"
+      ]
+    },
+    {
+      "key": "status",
+      "required": true,
+      "values": [
+        "active",
+        "blocked",
+        "done",
+        "planned"
+      ]
+    },
+    {
+      "key": "urgency",
+      "required": false,
+      "values": [
+        "high"
+      ]
+    },
+    {
+      "key": "concern",
+      "required": false,
+      "values": [
+        "resource-management"
+      ]
+    }
+  ],
+  "labels": [
+    {
+      "key": "concern.resource-management",
+      "dimension": "concern",
+      "value": "resource-management",
+      "github": {
+        "name": "resource-management",
+        "description": "Resource management and memory leak issues",
+        "hex": "fb850f"
+      },
+      "color": {
+        "colorKey": "research",
+        "token": "--partner-ops-research",
+        "hex": "#F0883E",
+        "css": "#f0883e"
+      }
+    },
+    {
+      "key": "plane.domain",
+      "dimension": "plane",
+      "value": "domain",
+      "github": {
+        "name": "plane-domain",
+        "description": "domain ownership plane",
+        "hex": "d29922"
+      },
+      "color": {
+        "colorKey": "middleware",
+        "token": "--partner-ops-middleware",
+        "hex": "#D29922",
+        "css": "#d29922"
+      }
+    },
+    {
+      "key": "plane.governance",
+      "dimension": "plane",
+      "value": "governance",
+      "github": {
+        "name": "plane-governance",
+        "description": "governance ownership plane",
+        "hex": "d29922"
+      },
+      "color": {
+        "colorKey": "middleware",
+        "token": "--partner-ops-middleware",
+        "hex": "#D29922",
+        "css": "#d29922"
+      }
+    },
+    {
+      "key": "plane.local",
+      "dimension": "plane",
+      "value": "local",
+      "github": {
+        "name": "plane-local",
+        "description": "local ownership plane",
+        "hex": "d29922"
+      },
+      "color": {
+        "colorKey": "middleware",
+        "token": "--partner-ops-middleware",
+        "hex": "#D29922",
+        "css": "#d29922"
+      }
+    },
+    {
+      "key": "plane.portal",
+      "dimension": "plane",
+      "value": "portal",
+      "github": {
+        "name": "plane-portal",
+        "description": "portal ownership plane",
+        "hex": "3fb950"
+      },
+      "color": {
+        "colorKey": "tennis",
+        "token": "--partner-ops-tennis",
+        "hex": "#3FB950",
+        "css": "#3fb950"
+      }
+    },
+    {
+      "key": "plane.public",
+      "dimension": "plane",
+      "value": "public",
+      "github": {
+        "name": "plane-public",
+        "description": "public ownership plane",
+        "hex": "1f6feb"
+      },
+      "color": {
+        "colorKey": "polymarket",
+        "token": "--partner-ops-polymarket",
+        "hex": "#1F6FEB",
+        "css": "#1f6feb"
+      }
+    },
+    {
+      "key": "priority.p0",
+      "dimension": "priority",
+      "value": "p0",
+      "github": {
+        "name": "p0",
+        "description": "Priority 0 incident or release blocker",
+        "hex": "f85149"
+      },
+      "color": {
+        "colorKey": "trading",
+        "token": "--partner-ops-trading",
+        "hex": "#F85149",
+        "css": "#f85149"
+      }
+    },
+    {
+      "key": "priority.p1",
+      "dimension": "priority",
+      "value": "p1",
+      "github": {
+        "name": "p1",
+        "description": "Priority 1 work",
+        "hex": "bfdadc"
+      },
+      "color": {
+        "colorKey": "middleware",
+        "token": "--partner-ops-middleware",
+        "hex": "#D29922",
+        "css": "#d29922"
+      }
+    },
+    {
+      "key": "priority.p2",
+      "dimension": "priority",
+      "value": "p2",
+      "github": {
+        "name": "p2",
+        "description": "Priority 2 work",
+        "hex": "8b949e"
+      },
+      "color": {
+        "colorKey": "env",
+        "token": "--partner-ops-env",
+        "hex": "#8B949E",
+        "css": "#8b949e"
+      }
+    },
+    {
+      "key": "runtime.agnostic",
+      "dimension": "runtime",
+      "value": "agnostic",
+      "github": {
+        "name": "runtime-agnostic",
+        "description": "Work with no runtime-specific contract",
+        "hex": "8b949e"
+      },
+      "color": {
+        "colorKey": "env",
+        "token": "--partner-ops-env",
+        "hex": "#8B949E",
+        "css": "#8b949e"
+      }
+    },
+    {
+      "key": "runtime.bun",
+      "dimension": "runtime",
+      "value": "bun",
+      "github": {
+        "name": "bun-native",
+        "description": "Issues related to Bun native APIs and patterns",
+        "hex": "0969da"
+      },
+      "color": {
+        "colorKey": "kalshi",
+        "token": "--partner-ops-kalshi",
+        "hex": "#58A6FF",
+        "css": "#58a6ff"
+      }
+    },
+    {
+      "key": "status.active",
+      "dimension": "status",
+      "value": "active",
+      "github": {
+        "name": "status-active",
+        "description": "Issue lifecycle status: active",
+        "hex": "d29922"
+      },
+      "color": {
+        "colorKey": "middleware",
+        "token": "--partner-ops-middleware",
+        "hex": "#D29922",
+        "css": "#d29922"
+      }
+    },
+    {
+      "key": "status.blocked",
+      "dimension": "status",
+      "value": "blocked",
+      "github": {
+        "name": "status-blocked",
+        "description": "Issue lifecycle status: blocked",
+        "hex": "f85149"
+      },
+      "color": {
+        "colorKey": "trading",
+        "token": "--partner-ops-trading",
+        "hex": "#F85149",
+        "css": "#f85149"
+      }
+    },
+    {
+      "key": "status.done",
+      "dimension": "status",
+      "value": "done",
+      "github": {
+        "name": "status-done",
+        "description": "Issue lifecycle status: done",
+        "hex": "3fb950"
+      },
+      "color": {
+        "colorKey": "tennis",
+        "token": "--partner-ops-tennis",
+        "hex": "#3FB950",
+        "css": "#3fb950"
+      }
+    },
+    {
+      "key": "status.planned",
+      "dimension": "status",
+      "value": "planned",
+      "github": {
+        "name": "status-planned",
+        "description": "Issue lifecycle status: planned",
+        "hex": "d29922"
+      },
+      "color": {
+        "colorKey": "middleware",
+        "token": "--partner-ops-middleware",
+        "hex": "#D29922",
+        "css": "#d29922"
+      }
+    },
+    {
+      "key": "team.infrastructure",
+      "dimension": "team",
+      "value": "infrastructure",
+      "github": {
+        "name": "team-infrastructure",
+        "description": "Issues assigned to infrastructure team",
+        "hex": "d1242f"
+      },
+      "color": {
+        "colorKey": "trading",
+        "token": "--partner-ops-trading",
+        "hex": "#F85149",
+        "css": "#f85149"
+      }
+    },
+    {
+      "key": "type.bug",
+      "dimension": "type",
+      "value": "bug",
+      "github": {
+        "name": "bug",
+        "description": "Something isn't working",
+        "hex": "d73a4a"
+      },
+      "color": {
+        "colorKey": "trading",
+        "token": "--partner-ops-trading",
+        "hex": "#F85149",
+        "css": "#f85149"
+      }
+    },
+    {
+      "key": "type.enhancement",
+      "dimension": "type",
+      "value": "enhancement",
+      "github": {
+        "name": "enhancement",
+        "description": "New feature or request",
+        "hex": "a2eeef"
+      },
+      "color": {
+        "colorKey": "tennis",
+        "token": "--partner-ops-tennis",
+        "hex": "#3FB950",
+        "css": "#3fb950"
+      }
+    },
+    {
+      "key": "urgency.high",
+      "dimension": "urgency",
+      "value": "high",
+      "github": {
+        "name": "high-priority",
+        "description": "High priority issues requiring prompt attention",
+        "hex": "ff6b00"
+      },
+      "color": {
+        "colorKey": "research",
+        "token": "--partner-ops-research",
+        "hex": "#F0883E",
+        "css": "#f0883e"
+      }
+    }
+  ],
+  "legalCombinations": [
+    {
+      "id": "p0-bug-only",
+      "description": "Priority p0 is reserved for bug and incident work."
+    },
+    {
+      "id": "bug-not-planned",
+      "description": "Bug issues enter as active, blocked, or done rather than planned."
+    }
+  ],
+  "audit": {
+    "ok": true,
+    "dimensions": 8,
+    "requiredDimensions": 6,
+    "labels": 19,
+    "legalRules": 2,
+    "sourceHash": "ac5f2b1da93b3a0419a3cac07dda2280d3ada355087ab876e94f6bc8aec3da72",
+    "errors": []
+  },
+  "provenance": {
+    "generatedBy": "tools/bake-github-issue-taxonomy.ts",
+    "sourceSchema": "factorywager.github-issue-taxonomy.v1",
+    "sources": [
+      "config/github-issue-taxonomy.ts",
+      "lib/telegram/partner-ops-color-kernel.ts"
+    ],
+    "sourceHash": "ac5f2b1da93b3a0419a3cac07dda2280d3ada355087ab876e94f6bc8aec3da72",
+    "runtime": "bun"
+  }
+}

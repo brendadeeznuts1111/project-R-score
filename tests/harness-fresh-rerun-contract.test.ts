@@ -339,6 +339,13 @@ describe('fresh-rerun contract', () => {
     expect(p?.owner).toBe('platform / governance');
   });
 
+  test('github-issue-taxonomy-public freshRerun is the public bake suite', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'github-issue-taxonomy-public');
+    expect(p?.freshRerun).toBe('bun test tests/github-issue-taxonomy-public.test.ts');
+    expect(p?.gateClass).toBe('continuous');
+    expect(p?.owner).toBe('platform / governance');
+  });
+
   test('macros-embed-boundaries freshRerun is macros embed-commit suite', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'macros-embed-boundaries');
     expect(p?.freshRerun).toBe('bun test tests/macros/embed-commit.test.ts');

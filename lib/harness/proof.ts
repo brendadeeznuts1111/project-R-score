@@ -461,6 +461,26 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'platform / governance',
   },
   {
+    id: 'github-issue-taxonomy-public',
+    claim:
+      'The public GitHub issue taxonomy is a deterministic, credential-free projection with exact source, color-kernel, registry-index, and drift parity',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun test tests/github-issue-taxonomy-public.test.ts',
+      'tests/github-issue-taxonomy-public.test.ts',
+      'lib/github-issue-taxonomy-public.ts',
+      'lib/github-issue-taxonomy-public-wire.ts',
+      'tools/bake-github-issue-taxonomy.ts',
+      'public/registry/github-issue-taxonomy.json',
+      'docs/harness/tenants/github-issue-taxonomy.md',
+    ],
+    freshRerun: 'bun test tests/github-issue-taxonomy-public.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'platform / governance',
+  },
+  {
     id: 'macros-embed-boundaries',
     claim:
       'Bundle-time macros inline git commit/branch and GitHub repo parts under bun build (no runtime substitution)',

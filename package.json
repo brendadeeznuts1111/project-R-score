@@ -1940,6 +1940,8 @@
     "bake:sportsbook-opening-baseline:check": "bun tools/bake-sportsbook-opening-baseline.ts --check",
     "bake:scrape-wire-taxonomy": "bun tools/bake-scrape-wire-taxonomy.ts",
     "bake:scrape-wire-taxonomy:check": "bun tools/bake-scrape-wire-taxonomy.ts --check",
+    "github-issue-taxonomy:bake": "bun tools/bake-github-issue-taxonomy.ts",
+    "github-issue-taxonomy:check": "bun tools/bake-github-issue-taxonomy.ts --check",
     "tennis:agent-auth:bake": "bun tools/bake-tennis-agent-auth.ts",
     "tennis:agent-auth:check": "bun tools/bake-tennis-agent-auth.ts --check",
     "tennis:partner-contracts:bake": "bun tools/bake-tennis-partner-contracts.ts",
