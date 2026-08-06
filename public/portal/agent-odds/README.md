@@ -106,6 +106,14 @@ Detail modal shows `readme` / `readmeFilename` / `readmeHtml` (`Bun.markdown.htm
 GET /api/registry/packages/event-store?live=1&preset=local&version=1.0.0
 ```
 
+**Live journey proof** (ephemeral HTTP in CI; optional real `:3000`):
+
+```bash
+bun test tests/operator-research-registry-live-journey.test.ts
+bun run serve:public   # other terminal
+bun run agent:registry:live-smoke
+```
+
 **Serve + Bun 1.3.12 desk jobs:**
 
 ```bash

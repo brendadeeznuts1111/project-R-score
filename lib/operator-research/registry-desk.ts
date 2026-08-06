@@ -105,6 +105,11 @@ export type ResolveRegistryPackageOpts = {
   version?: string | null;
   live?: boolean;
   preset?: RegistryPresetId;
+  /**
+   * Override packument base URL (journey/smoke). Must still be used only from
+   * trusted callers — desk HTTP route never forwards a free-form registry URL.
+   */
+  registryBaseUrl?: string;
   /** Test seam — defaults to global fetch. */
   fetchImpl?: typeof fetch;
   timeoutMs?: number;
@@ -301,10 +306,11 @@ export function detailFromPackument(
 export async function fetchRegistryPackument(
   presetId: RegistryPresetId,
   packageName: string,
-  opts: { fetchImpl?: typeof fetch; timeoutMs?: number } = {}
+  opts: { fetchImpl?: typeof fetch; timeoutMs?: number; registryBaseUrl?: string } = {}
 ): Promise<{ ok: true; packument: NpmPackument } | { ok: false; error: string; status?: number }> {
   const preset = REGISTRY_PRESETS[presetId];
-  const url = buildPackumentUrl(preset.url, packageName);
+  const base = opts.registryBaseUrl ?? preset.url;
+  const url = buildPackumentUrl(base, packageName);
   const fetchImpl = opts.fetchImpl ?? fetch;
   const timeoutMs = opts.timeoutMs ?? PACKUMENT_TIMEOUT_MS;
   try {
@@ -380,6 +386,7 @@ export async function resolveRegistryPackage(
   const live = await fetchRegistryPackument(preset, name, {
     fetchImpl: opts.fetchImpl,
     timeoutMs: opts.timeoutMs,
+    registryBaseUrl: opts.registryBaseUrl,
   });
 
   if (!live.ok) {
