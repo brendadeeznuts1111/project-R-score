@@ -7,7 +7,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
-// @see https://bun.com/docs/runtime/utils#bun-resolve-sync — Bun.resolveSync
+// @see https://bun.com/docs/runtime/utils#bun-resolvesync — Bun.resolveSync
 // @see https://bun.com/reference/bun/argv — Bun.argv
 /**
  * bun-types-inventory.ts — **deep** inventory of pinned `bun-types`:

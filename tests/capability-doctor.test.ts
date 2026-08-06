@@ -71,7 +71,7 @@ describe('capability-doctor', () => {
     expect(ok.checked.minPassCliRows).toBe(1);
   });
 
-  test('repo baked subset doctor is green for this Bun runtime', async () => {
+  test('repo baked subset doctor reports the pinned runtime channel honestly', async () => {
     const baked = (await Bun.file(
       'public/registry/capability-map-subset.json'
     ).json()) as CapabilityMapSubset;
@@ -82,7 +82,13 @@ describe('capability-doctor', () => {
       passCliAvailable: true,
       generatedAt: '2026-07-28T00:00:00.000Z',
     });
-    expect(report.bunOk).toBe(true);
+    const unsupported = baked.rows.filter(
+      row => row.minBun && !Bun.semver.satisfies(Bun.version, `>=${row.minBun}`)
+    );
+    expect(report.bunOk).toBe(unsupported.length === 0);
+    expect(report.failing.filter(failure => failure.field === 'minBun')).toHaveLength(
+      unsupported.length
+    );
     expect(report.checked.minBunRows).toBeGreaterThan(30);
   });
 

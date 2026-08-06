@@ -135,7 +135,9 @@ describe('verifyBunApis (offline)', () => {
     const typesBunMetadata = (await Bun.file(
       Bun.resolveSync('@types/bun/package.json', process.cwd())
     ).json()) as { version: string };
-    expect(metadata.version).toBe(root.catalog['bun-types']);
+    expect(root.catalog['bun-types']).toBe(
+      `file:tools/vendor/bun-types/bun-types-${metadata.version}.tgz`
+    );
     expect(typesBunMetadata.version).toBe(root.catalog['@types/bun']);
     expect(metadata.repositoryUrl).toBe(BUN_REPOSITORY_URL);
     expect(metadata.repositoryDirectory).toBe('packages/bun-types');

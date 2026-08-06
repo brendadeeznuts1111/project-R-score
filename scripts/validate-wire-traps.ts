@@ -1,9 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-pathtofileurl — Bun.pathToFileURL
-// @see https://bun.com/docs/runtime/utils#bun-markdown — Bun.markdown.ansi
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
 /**
  * validate-wire-traps.ts — Layer C inventory-aware naked partnerId lint + glob proof.
  *

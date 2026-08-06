@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
-// @see https://bun.com/docs/runtime/utils#bun-markdown — Bun.markdown.ansi
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
 /**
  * Tiny CLI for workspace taxonomy homonyms.
  *

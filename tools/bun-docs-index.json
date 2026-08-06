@@ -1,7 +1,7 @@
 {
-  "generated": "2026-08-05T22:16:28.986Z",
+  "generated": "2026-08-06T21:05:07.912Z",
   "source": "https://bun.com/docs/llms.txt",
-  "bunVersion": "1.4.0",
+  "bunVersion": "1.3.14",
   "upstreamBunVersion": "1.4.0",
   "taxonomy": "tools/bun-docs-taxonomy.json",
   "taxonomyTagged": 74,

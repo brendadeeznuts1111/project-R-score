@@ -2,7 +2,7 @@
 // @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
-// @see https://bun.com/docs/runtime/semver#bun-semver-satisfies — Bun.semver.satisfies
+// @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver.satisfies
 import { joinPath } from '../path-bun.ts';
 
 const DEFAULT_ROOT = joinPath(import.meta.dir, '../..');
