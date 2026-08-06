@@ -890,8 +890,8 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.markdown.html options': 'https://bun.com/docs/runtime/markdown#options',
   'parser-options': 'https://bun.com/docs/runtime/markdown#parser-options',
   'Bun.markdown.render parser options': 'https://bun.com/docs/runtime/markdown#parser-options',
-  'parser-options-2': 'https://bun.com/docs/runtime/markdown#parser-options',
-  'Bun.markdown.react parser options': 'https://bun.com/docs/runtime/markdown#parser-options',
+  'parser-options-2': 'https://bun.com/docs/runtime/markdown#parser-options-2',
+  'Bun.markdown.react parser options': 'https://bun.com/docs/runtime/markdown#parser-options-2',
   'Bun.YAML': 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
   YAML: 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
   'Bun.hash': 'https://bun.com/docs/runtime/hashing#bun-hash',
@@ -1997,9 +1997,8 @@ async function suggestAudit(query: string, opts?: { json?: boolean }): Promise<b
     );
     process.exit(1);
   }
-  const { loadAuditCatalog, searchAuditCatalog, printAuditEntry } = await import(
-    './audit-catalog.ts'
-  );
+  const { loadAuditCatalog, searchAuditCatalog, printAuditEntry } =
+    await import('./audit-catalog.ts');
   const { resolveAuditAlias } = await import('../lib/audit/audit-refs.ts');
   let catalog: Awaited<ReturnType<typeof loadAuditCatalog>>;
   try {

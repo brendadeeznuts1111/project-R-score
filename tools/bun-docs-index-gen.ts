@@ -110,6 +110,9 @@ async function main(): Promise<void> {
     'https://bun.com/docs/guides/util/import-meta-dir.md': [
       'get-the-directory-of-the-current-file',
     ],
+    // Mintlify: second “Parser options” under Bun.markdown.react → #parser-options-2
+    // (markdown scrape only sees one #parser-options heading).
+    'https://bun.com/docs/runtime/markdown.md': ['parser-options-2'],
   };
   for (const e of entries) {
     const extras = MANUAL_ANCHORS[e.url];

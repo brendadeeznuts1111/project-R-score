@@ -29,7 +29,7 @@
 // @see https://bun.com/docs/runtime/markdown#available-overrides — available-overrides
 // @see https://bun.com/docs/runtime/markdown#options — options
 // @see https://bun.com/docs/runtime/markdown#parser-options — parser-options
-// @see https://bun.com/docs/runtime/markdown#parser-options — parser-options-2
+// @see https://bun.com/docs/runtime/markdown#parser-options-2 — parser-options-2
 // @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — BUN_OPTIONS
 // @see https://bun.com/docs/bundler/executables#embedding-runtime-arguments — embedding-runtime-arguments
 // @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — file-uploads
@@ -502,10 +502,16 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'const html = Bun.markdown.html("some markdown", {\n  tables: true, // GFM tables (default: true)\n  strikethrough: true, // GFM strikethrough (default: true)\n  tasklists: true, // GFM task lists (default: true)\n  tagFilter: true, // GFM tag filter for disallowed HTML tags\n  autolinks: true, // Autolink URLs, emails, and www. links\n});',
     },
   ],
-  // Official docs — Bun.markdown.react Parser options (#parser-options).
-  // Shared path for both parser-options and parser-options-2 aliases (last-wins
-  // shape from the docs scrape; body must include headings + autolinks).
+  // Official docs — Bun.markdown.render Parser options (#parser-options).
   'runtime/markdown#parser-options': [
+    {
+      lang: 'ts',
+      body: 'const result = Bun.markdown.render(\n  "Visit www.example.com",\n  {\n    link: (children, { href }) => `[${children}](${href})`,\n    paragraph: children => children,\n  },\n  { autolinks: true },\n);',
+    },
+  ],
+  // Official docs — Bun.markdown.react Parser options (#parser-options-2).
+  // Mintlify suffixes the second “Parser options” heading; md scrape only sees one.
+  'runtime/markdown#parser-options-2': [
     {
       lang: 'tsx',
       body: 'const el = Bun.markdown.react("## Hello World", undefined, {\n  headings: { ids: true },\n  autolinks: true,\n});',
@@ -843,8 +849,8 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'Bun.markdown.render': 'runtime/markdown#bun-markdown-render',
   'parser-options': 'runtime/markdown#parser-options',
   'Bun.markdown.render parser options': 'runtime/markdown#parser-options',
-  'parser-options-2': 'runtime/markdown#parser-options',
-  'Bun.markdown.react parser options': 'runtime/markdown#parser-options',
+  'parser-options-2': 'runtime/markdown#parser-options-2',
+  'Bun.markdown.react parser options': 'runtime/markdown#parser-options-2',
   BUN_OPTIONS: 'bundler/executables#runtime-arguments-via-bun-options',
   'runtime-arguments-via-bun-options': 'bundler/executables#runtime-arguments-via-bun-options',
   'Runtime arguments via BUN_OPTIONS': 'bundler/executables#runtime-arguments-via-bun-options',
