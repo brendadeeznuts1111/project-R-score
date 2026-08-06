@@ -1,5 +1,8 @@
 # Bookmaker registry tenant
 
+<!-- REF:ID 0.1.bookmakers-registry -->
+<a id="0.1.bookmakers-registry"></a>
+
 Canonical bookmaker registry for the sportsbook deep-link pipeline, exposed as a
 first-class portal surface on the live domain.
 

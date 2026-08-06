@@ -1,10 +1,12 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML
 // @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 
 import { CONCEPT_DOMAINS, inferDomain } from '../lib/portal/concept-domains.ts';
+import { PARTNER_DOCUMENTATION_REFS } from '../lib/docs/partner-surface-inventory.ts';
 import { PARTNER_LIFECYCLE_STATUSES, PARTNER_PHASES } from '../lib/partner-profile/schema.ts';
 import { portalTheme, renderThemeTokensCss } from '../lib/portal/theme.ts';
 import { PARTNER_HASH_PATTERN_INITS } from '../lib/portal/url-planes.ts';
@@ -72,6 +74,9 @@ const SPORTS_TERMINAL_REQUIRED_BLOCKERS = [
   'authenticated route integration',
   'integer-minor-unit money wire',
 ] as const;
+const PARTNER_DASHBOARD_DOCUMENTATION_REF = PARTNER_DOCUMENTATION_REFS.find(
+  ref => ref.id === 'doc.partner-dashboard-mvp'
+)!;
 
 type AnyRecord = Record<string, any>;
 
@@ -464,6 +469,41 @@ export async function validatePartnerDashboardPlan(
     errors.push('plan.status must be proposal or implementation-ready');
   }
   if (plan.domain?.id !== 'partners') errors.push('domain.id must be partners');
+  const documentation = plan.documentation as AnyRecord | undefined;
+  if (documentation?.inventory_row_id !== PARTNER_DASHBOARD_DOCUMENTATION_REF.id) {
+    errors.push(`documentation.inventory_row_id must be ${PARTNER_DASHBOARD_DOCUMENTATION_REF.id}`);
+  }
+  if (documentation?.ref_id !== PARTNER_DASHBOARD_DOCUMENTATION_REF.refId) {
+    errors.push(`documentation.ref_id must be ${PARTNER_DASHBOARD_DOCUMENTATION_REF.refId}`);
+  }
+  if (documentation?.markdown_path !== PARTNER_DASHBOARD_DOCUMENTATION_REF.path) {
+    errors.push(`documentation.markdown_path must be ${PARTNER_DASHBOARD_DOCUMENTATION_REF.path}`);
+  }
+  if (
+    !Bun.deepEquals(
+      documentation?.concept_domains,
+      [...PARTNER_DASHBOARD_DOCUMENTATION_REF.conceptDomains],
+      true
+    )
+  ) {
+    errors.push('documentation.concept_domains must match the partner documentation SSOT');
+  }
+  if (
+    !Bun.deepEquals(
+      documentation?.chrome_domains,
+      [...PARTNER_DASHBOARD_DOCUMENTATION_REF.chromeDomains],
+      true
+    )
+  ) {
+    errors.push('documentation.chrome_domains must match the partner documentation SSOT');
+  }
+  if (
+    documentation?.primary_portal_href !== PARTNER_DASHBOARD_DOCUMENTATION_REF.primaryPortalHref
+  ) {
+    errors.push(
+      `documentation.primary_portal_href must be ${PARTNER_DASHBOARD_DOCUMENTATION_REF.primaryPortalHref}`
+    );
+  }
   for (const [field, expected] of Object.entries(PARTNERS_PACKAGE_TARGET)) {
     if (plan.package?.[field] !== expected) {
       errors.push(`package.${field} must be ${expected}`);

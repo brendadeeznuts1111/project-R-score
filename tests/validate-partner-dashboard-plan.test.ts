@@ -46,6 +46,28 @@ describe('partner dashboard semantic plan', () => {
     );
   });
 
+  it('rejects documentation REF:ID, domain, and portal mapping drift', async () => {
+    const plan = copyPlan();
+    plan.documentation.ref_id = '0.1.wrong-partner-doc';
+    plan.documentation.concept_domains = ['partners'];
+    plan.documentation.chrome_domains = ['knowledge'];
+    plan.documentation.primary_portal_href = '/portal/wrong/';
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).toContain(
+      'documentation.ref_id must be 0.1.partner-dashboard-mvp'
+    );
+    expect(result.errors).toContain(
+      'documentation.concept_domains must match the partner documentation SSOT'
+    );
+    expect(result.errors).toContain(
+      'documentation.chrome_domains must match the partner documentation SSOT'
+    );
+    expect(result.errors).toContain(
+      'documentation.primary_portal_href must be /portal/partners/'
+    );
+  });
+
   it('checks state axes against independent runtime constants', async () => {
     const plan = copyPlan();
     plan.lifecycle.states[0] = 'invented';

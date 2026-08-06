@@ -1,5 +1,8 @@
 # Partner type and reference map
 
+<!-- REF:ID 0.1.partner-type-reference-map -->
+<a id="0.1.partner-type-reference-map"></a>
+
 Status: proposed canonical map (2026-08-06)
 
 **Surfaces (repo / path / href / taxonomy machines):** see

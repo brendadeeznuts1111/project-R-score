@@ -1,5 +1,8 @@
 # Partner Profile — unified CODE-keyed partner model
 
+<!-- REF:ID 0.1.partner-profile-readme -->
+<a id="0.1.partner-profile-readme"></a>
+
 One canonical partner record across FactoryWager ops and Sports Terminal:
 `lib/partner-profile/schema.ts` (model + validation), `parse.ts` (TOML
 parse), `bake.ts` (baked registry), `register.ts` (phase 2 — bookmaker

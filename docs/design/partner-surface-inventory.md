@@ -1,12 +1,15 @@
 # Partner surface inventory
 
+<!-- REF:ID 0.1.partner-surface-inventory -->
+<a id="0.1.partner-surface-inventory"></a>
+
 **Claim** `partner-surface-inventory`
 
 **Principle** `map-before-rename` — inventory joins overloaded “partner”
 surfaces before any token rename.
 
-**Schema** v2 — aspect-conditional bags: `brand` · `partnerCode` · `outId` ·
-`registry` · `wireField` · `chromeNav` · `taxonomy`
+**Schema** v3 — aspect-conditional bags: `brand` · `partnerCode` · `outId` ·
+`registry` · `wireField` · `chromeNav` · `taxonomy` · `documentation`
 
 |                   | Path                                                                                               |
 | ----------------- | -------------------------------------------------------------------------------------------------- |
@@ -144,7 +147,7 @@ bag.
 | `package`      | npm / workspace package         | —             |
 | `lib-module`   | High-signal lib path            | —             |
 | `wire-field`   | Naked wire trap / allowlist     | `wireField`   |
-| `doc-tenant`   | Design / tenant doc pointer     | —             |
+| `doc-tenant`   | Design / tenant doc pointer     | `documentation` |
 | `cross-repo`   | External repo surface           | —             |
 
 ### Machines
@@ -267,6 +270,22 @@ Notes:
 | ----------------- | ---------------------------------------------------- |
 | `homonymDistinct` | Must be true when the token collides across machines |
 | `conceptDomain`   | Related ConceptDomain token when applicable          |
+
+### Bag: `documentation`
+
+The canonical documentation register is `PARTNER_DOCUMENTATION_REFS` in the
+inventory library. `bun run docs:refid:check` consumes the same rows, so a
+partner document cannot be added to the SSOT without a valid document-local
+REF:ID anchor.
+
+| Field               | Meaning                                                                 |
+| ------------------- | ----------------------------------------------------------------------- |
+| `refId`             | Document-local REF:ID v2 fragment                                       |
+| `conceptDomains`    | Business domains described by the document; first entry is primary      |
+| `chromeDomains`     | Portal Chrome Domain lanes where the document's surfaces are mounted    |
+| `primaryPortalHref` | Primary operator-facing portal route                                    |
+| `authority`         | `ssot` · `contract` · `runbook` · `implementation` · `plan` · `derived` |
+| `machineRefs`       | Machine-readable contracts or implementation sources governed by it     |
 
 ## Example rows (ASH from partners-ops)
 

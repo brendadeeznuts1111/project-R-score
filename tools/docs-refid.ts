@@ -101,6 +101,8 @@ DEFAULTS
 REGISTERED DOCS (check)
   ${BUN_TYPES_INVENTORY_DOC}
     ↔ tools/bun-types-status.ts flag rows (requireToolCoverage)
+  ${refIdRegistry().length - 1} partner authority docs
+    ↔ lib/docs/partner-surface-inventory.ts PARTNER_DOCUMENTATION_REFS
 
 VALIDATION PRESETS
   soft (default)     format length/kebab → warn; errors fail process

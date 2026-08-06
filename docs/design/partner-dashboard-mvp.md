@@ -1,5 +1,8 @@
 # Partner dashboard MVP
 
+<!-- REF:ID 0.1.partner-dashboard-mvp -->
+<a id="0.1.partner-dashboard-mvp"></a>
+
 Status: implementation outline (2026-08-05)
 
 The dashboard domain contract is supported by the separate

@@ -47,6 +47,9 @@ describe('partner-surface-docs', () => {
     expect(md).toContain('## Domains');
     expect(md).toContain('## Partner boards');
     expect(md).toContain('## Live PartnerCodes');
+    expect(md).toContain('## Documentation authority');
+    expect(md).toContain('`0.1.partner-dashboard-mvp`');
+    expect(md).toContain('`partners`, `accounting`, `telegram`');
     expect(md).toContain('`/portal/partners/#partner/SPEN`');
     expect(PARTNER_SURFACE_GENERATED_DOC_REL).toBe(
       'docs/design/partner-surface-inventory.generated.md'

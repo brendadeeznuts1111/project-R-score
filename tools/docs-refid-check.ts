@@ -24,6 +24,7 @@ import {
   type ToolFlagRef,
 } from '../lib/docs/ref-id.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
+import { PARTNER_DOCUMENTATION_REFS } from '../lib/docs/partner-surface-inventory.ts';
 import {
   BUN_TYPES_INVENTORY_DOC,
   FLAGS_DOC_SECTION_REF,
@@ -66,13 +67,11 @@ export function refIdRegistry(): RefIdRegistryEntry[] {
         }));
       },
     },
-    docOnly('docs/design/partner-surface-inventory.md'),
-    docOnly('docs/design/unified-partner-profile.md'),
     docOnly('docs/IMAGES.md'),
     docOnly('docs/harness/tenants/complexity-floor.md'),
     docOnly('docs/harness/tenants/monorepo-workspaces.md'),
     docOnly('docs/harness/tenants/ops-snapshot.md'),
-    docOnly('docs/harness/tenants/partner-package-group-handshake.md'),
+    ...PARTNER_DOCUMENTATION_REFS.map(ref => docOnly(ref.path)),
   ];
 }
 

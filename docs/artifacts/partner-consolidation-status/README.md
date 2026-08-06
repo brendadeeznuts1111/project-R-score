@@ -1,5 +1,8 @@
 # Partner dashboard MVP proposal
 
+<!-- REF:ID 0.1.partner-consolidation-status -->
+<a id="0.1.partner-consolidation-status"></a>
+
 This directory contains a derived, reviewable proposal snapshot of the partner
 consolidation lane. The default view includes readiness metrics, a connector
 implementation-state graph, and the exact connector cutover table. Its Sports

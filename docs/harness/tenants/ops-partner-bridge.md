@@ -1,5 +1,8 @@
 # Ops partner profile bridge (Identity lane)
 
+<!-- REF:ID 0.1.ops-partner-bridge -->
+<a id="0.1.ops-partner-bridge"></a>
+
 **Claim:** partner identity is rooted in ops `tree_nodes`; Partner Profile OS is an **adapter**, not a peer ledger.
 
 | Piece | Path |

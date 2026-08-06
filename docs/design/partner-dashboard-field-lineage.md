@@ -1,5 +1,8 @@
 # Partner dashboard field lineage and risk audit
 
+<!-- REF:ID 0.1.partner-dashboard-field-lineage -->
+<a id="0.1.partner-dashboard-field-lineage"></a>
+
 Status: executable-contract audit (2026-08-06)
 
 This document maps the implemented `PartnerDashboardArtifact` v1 wire to its

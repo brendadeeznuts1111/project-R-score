@@ -1,5 +1,8 @@
 # Partner-Ops Domain Map
 
+<!-- REF:ID 0.1.partner-domain-map -->
+<a id="0.1.partner-domain-map"></a>
+
 Cross-repo domain model for the seat capital desk — **Kalshi-bot** owns shared
 glossary cores, **FactoryWager** owns the Factory overlay, the color kernel, and
 the registry bake.

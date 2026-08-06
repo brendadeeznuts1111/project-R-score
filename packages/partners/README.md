@@ -1,5 +1,8 @@
 # `@factorywager/partners`
 
+<!-- REF:ID 0.1.partners-package-readme -->
+<a id="0.1.partners-package-readme"></a>
+
 Private workspace authority for parsed partner-domain identifiers, ingress
 compatibility, and the colorless dashboard read-model contract while the MVP is
 extracted from legacy portal, Telegram, accounting, limits, Tennis, and Sports

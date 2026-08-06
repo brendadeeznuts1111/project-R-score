@@ -1,5 +1,8 @@
 # Partner limit raises
 
+<!-- REF:ID 0.1.partner-limits -->
+<a id="0.1.partner-limits"></a>
+
 **Plane:** ops SQLite (`operations.db`) · public Pages bake · agent API
 **Artifacts:** `public/registry/limit-raises.json` · portal `/portal/limits/` ·
 ops-summary `limitChanges` **Secrets:** none for board bake; agent read paths
@@ -509,4 +512,3 @@ enum / type → throw at the edge.
 **Go signal:** endpoints that emit limit-change / raise rows return these
 fields per the table above; then bind UI columns and bake `derivesFrom` graph
 edges. Until then, no lifecycle UI and no invented derivation edges.
-

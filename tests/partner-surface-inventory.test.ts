@@ -1,5 +1,11 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  PORTAL_DOMAIN_LANE_META,
+  PORTAL_OVERFLOW_NAV,
+  PORTAL_PRIORITY_NAV,
+} from '../lib/portal/chrome-catalog.ts';
+import { CONCEPT_DOMAINS } from '../lib/portal/concept-domains.ts';
+import {
   allPartnerSurfaceRows,
   buildPartnerSurfaceInventory,
   listPartnerChromeNavItems,
@@ -7,6 +13,7 @@ import {
   partnerChromeNavSurfaceRows,
   partnerCodeSurfaceRows,
   partnerDeskHrefs,
+  PARTNER_DOCUMENTATION_REFS,
 } from '../lib/docs/partner-surface-inventory.ts';
 import { explainHomonym } from '../lib/docs/workspace-taxonomy.ts';
 
@@ -87,6 +94,56 @@ describe('partner surface inventory', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
+  test('canonical partner docs have REF:ID anchors and typed portal/domain mappings', async () => {
+    const conceptDomains = new Set<string>(CONCEPT_DOMAINS);
+    const chromeDomains = new Set(PORTAL_DOMAIN_LANE_META.map(domain => domain.id));
+    const chromeByPortalPath = new Map(
+      [...PORTAL_PRIORITY_NAV, ...PORTAL_OVERFLOW_NAV]
+        .filter(item => item.domain)
+        .map(item => [new URL(item.href, 'https://score.factory-wager.com').pathname, item.domain!])
+    );
+    expect(new Set(PARTNER_DOCUMENTATION_REFS.map(ref => ref.path)).size).toBe(
+      PARTNER_DOCUMENTATION_REFS.length
+    );
+
+    const discovered = new Set<string>();
+    for (const pattern of [
+      'docs/**/*.md',
+      'public/portal/**/*.md',
+      'packages/partners/**/*.md',
+      'lib/partner-profile/**/*.md',
+      'lib/bookmakers/**/*.md',
+    ]) {
+      for await (const path of new Bun.Glob(pattern).scan({
+        cwd: `${import.meta.dir}/..`,
+        onlyFiles: true,
+      })) {
+        const lower = path.toLowerCase();
+        if ((lower.includes('partner') || lower.includes('bookmaker')) && !lower.endsWith('.generated.md')) {
+          discovered.add(path);
+        }
+      }
+    }
+    const mappedPaths = new Set(PARTNER_DOCUMENTATION_REFS.map(ref => ref.path));
+    expect([...discovered].filter(path => !mappedPaths.has(path)).sort()).toEqual([]);
+
+    for (const ref of PARTNER_DOCUMENTATION_REFS) {
+      const file = Bun.file(`${import.meta.dir}/../${ref.path}`);
+      expect(await file.exists()).toBe(true);
+      const markdown = await file.text();
+      expect(markdown).toContain(`<!-- REF:ID ${ref.refId} -->`);
+      expect(markdown).toContain(`<a id="${ref.refId}"></a>`);
+      expect(ref.conceptDomains.every(domain => conceptDomains.has(domain))).toBe(true);
+      expect(ref.chromeDomains.every(domain => chromeDomains.has(domain))).toBe(true);
+      expect(ref.primaryPortalHref.startsWith('/portal/')).toBe(true);
+      const primaryPortalPath = new URL(
+        ref.primaryPortalHref,
+        'https://score.factory-wager.com'
+      ).pathname;
+      expect(ref.chromeDomains).toContain(chromeByPortalPath.get(primaryPortalPath)!);
+    }
+  });
+
   test('partner homonym still spans session + chrome + concept', () => {
     const exp = explainHomonym('partner');
     const machines = new Set(exp.hits.map(h => h.machine));
@@ -95,9 +152,9 @@ describe('partner surface inventory', () => {
     expect(machines.has('conceptDomain')).toBe(true);
   });
 
-  test('schema v2 bags appear on brand registry wire chrome taxonomy rows', () => {
+  test('schema v3 bags appear on brand registry wire chrome taxonomy and documentation rows', () => {
     const inv = buildPartnerSurfaceInventory('1970-01-01T00:00:00.000Z');
-    expect(inv.schemaVersion).toBe(2);
+    expect(inv.schemaVersion).toBe(3);
     const brands = inv.rows.filter(r => r.aspect === 'brand');
     expect(brands.every(r => r.brand)).toBe(true);
     expect(brands.every(r => typeof r.brand?.isActive === 'boolean')).toBe(true);
@@ -110,6 +167,10 @@ describe('partner surface inventory', () => {
     expect(nav.every(r => r.chromeNav)).toBe(true);
     const tax = inv.rows.filter(r => r.aspect === 'taxonomy');
     expect(tax.every(r => r.taxonomy?.homonymDistinct)).toBe(true);
+    const docs = inv.rows.filter(r => r.aspect === 'doc-tenant');
+    expect(docs).toHaveLength(PARTNER_DOCUMENTATION_REFS.length);
+    expect(docs.every(r => r.documentation)).toBe(true);
+    expect(docs.every(r => r.href === r.documentation?.primaryPortalHref)).toBe(true);
   });
 
   test('partner-code rows derive from live partners-ops codes', () => {
