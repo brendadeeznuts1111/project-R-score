@@ -72,13 +72,29 @@ target_shape_ref = "shapes.dashboard_artifact"
 target_input_mode = "canonical-single-artifact"
 retirement_condition = "portal-loads-only-target-artifact"
 transition_implementation_status = "planned"
-transition_input_mode = "canonical-single-artifact-with-explicit-legacy-compare"
-primary_input_ref = "/registry/partners-dashboard.json"
+transition_input_mode = "canonical-single-artifact-with-explicit-legacy-comparison"
+canonical_primary_input_ref = "/registry/partners-dashboard.json"
 canonical_failure_policy = "error-never-fallback"
 automatic_legacy_fallback = false
-legacy_compare_query_key = "compare"
-legacy_compare_query_value = "legacy"
-legacy_compare_failure_policy = "warn-never-fallback"
+
+[surfaces.portal.consumer_contract.legacy_comparison]
+implementation_status = "planned"
+activation = "explicit-search-param"
+search_param = "compare"
+search_value = "legacy"
+load_order = "after-canonical-validation"
+result_role = "diagnostic-only"
+failure_policy = "warn-never-fallback"
+required_input_refs = [
+  "/registry/telegram-handshake.json",
+  "/registry/seat-capital-desk.json",
+  "/registry/telegram-handshake-catalog.json",
+  "/registry/scrape-wire-taxonomy.json",
+  "/registry/partners-ops.json",
+  "/registry/partner-profiles.json",
+  "/registry/limit-raises.json",
+]
+optional_input_refs = ["/registry/soft-accounting-export.json"]
 
 [semantic_model]
 semantic_order = ["business-domain", "concept", "parsed-shape", "consuming-surface"]

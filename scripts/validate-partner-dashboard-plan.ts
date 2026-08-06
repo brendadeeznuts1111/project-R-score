@@ -18,10 +18,11 @@ import {
   INGRESS_TRANSLATION_COUNTER,
   LEGACY_OUT_ID_WARNING_CODE,
   LEGACY_SEAT_OUT_TOKEN_PATTERN,
+  PARTNER_DASHBOARD_ARTIFACT_REF,
   PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
-  PARTNER_DASHBOARD_CONSUMER_CONTRACT,
-  PARTNER_DASHBOARD_CURRENT_OPTIONAL_INPUTS,
-  PARTNER_DASHBOARD_CURRENT_REQUIRED_INPUTS,
+  PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
+  PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
+  PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT,
   PARTNER_DASHBOARD_SEMANTIC_GAPS,
   PARTNER_CODE_PATTERN,
   PARTNERS_PACKAGE_TARGET,
@@ -396,7 +397,7 @@ export async function validatePartnerDashboardPlan(
     partnersPackage.exports?.['./portal'] !== './src/portal/index.ts'
   ) {
     errors.push(
-      'packages/partners must remain private and export dashboard-plan, core, boundary, and compatibility'
+      'packages/partners must remain private and export dashboard-plan, core, boundary, compatibility, and portal'
     );
   }
   if (
@@ -477,6 +478,9 @@ export async function validatePartnerDashboardPlan(
     'public',
     dashboardArtifactRef.replace(/^\//, '')
   );
+  if (dashboardArtifactRef !== PARTNER_DASHBOARD_ARTIFACT_REF) {
+    errors.push('dashboard artifact path must match the package portal contract');
+  }
   if (
     plan.plan?.status === 'implementation-ready' &&
     (!dashboardArtifactRef.startsWith('/registry/') ||
@@ -499,8 +503,11 @@ export async function validatePartnerDashboardPlan(
     const declaredInputs = [...requiredInputs, ...optionalInputs];
     const observedInputs = portalRegistryInputs(boardHtml);
     const observedCombined = [...observedInputs.required, ...observedInputs.optional];
+    const consumerStatus = portalConsumerContract.implementation_status;
+    const inputMode = portalConsumerContract.active_input_mode;
     if (
-      portalConsumerContract.entrypoint_path !== PARTNER_DASHBOARD_CONSUMER_CONTRACT.entrypointPath
+      portalConsumerContract.entrypoint_path !==
+      PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.entrypointPath
     ) {
       errors.push('portal consumer contract entrypoint must be the partners board HTML');
     } else if (
@@ -514,57 +521,72 @@ export async function validatePartnerDashboardPlan(
     if (declaredInputs.some(inputRef => !inputRef.startsWith('/registry/'))) {
       errors.push('portal consumer input refs must use /registry/ paths');
     }
-    if (
-      !sameMembers(observedInputs.required, requiredInputs) ||
-      !sameMembers(observedInputs.optional, optionalInputs)
-    ) {
-      errors.push(
-        `portal registry input map does not match HTML (required: ${observedInputs.required.join(', ')}; optional: ${observedInputs.optional.join(', ')})`
-      );
-    }
-    if (
-      !sameMembers(requiredInputs, PARTNER_DASHBOARD_CURRENT_REQUIRED_INPUTS) ||
-      !sameMembers(optionalInputs, PARTNER_DASHBOARD_CURRENT_OPTIONAL_INPUTS)
-    ) {
-      errors.push('portal current input refs must match the package consumer contract');
-    }
     if (portalConsumerContract.target_shape_ref !== 'shapes.dashboard_artifact') {
       errors.push('portal consumer target_shape_ref must be shapes.dashboard_artifact');
     }
     if (
       portalConsumerContract.target_input_mode !==
-        PARTNER_DASHBOARD_CONSUMER_CONTRACT.target.inputMode ||
+        PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.target.inputMode ||
       portalConsumerContract.retirement_condition !==
-        PARTNER_DASHBOARD_CONSUMER_CONTRACT.target.retirementCondition
+        PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.target.retirementCondition
     ) {
       errors.push(
         'portal consumer contract must declare the canonical one-artifact retirement shape'
       );
     }
-    const transitionContract = PARTNER_DASHBOARD_CONSUMER_CONTRACT.transition;
+    const transitionContract = PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.transition;
+    const legacyComparison = portalConsumerContract.legacy_comparison as AnyRecord | undefined;
+    const legacyComparisonRequired = (legacyComparison?.required_input_refs ?? []).map(String);
+    const legacyComparisonOptional = (legacyComparison?.optional_input_refs ?? []).map(String);
+    const legacyComparisonInputs = [...legacyComparisonRequired, ...legacyComparisonOptional];
     if (
       portalConsumerContract.transition_implementation_status !==
         transitionContract.implementationStatus ||
       portalConsumerContract.transition_input_mode !== transitionContract.inputMode ||
-      portalConsumerContract.primary_input_ref !== transitionContract.primaryInputRef ||
+      portalConsumerContract.canonical_primary_input_ref !==
+        transitionContract.canonicalPrimaryInputRef ||
       portalConsumerContract.canonical_failure_policy !==
         transitionContract.canonicalFailurePolicy ||
       portalConsumerContract.automatic_legacy_fallback !==
         transitionContract.automaticLegacyFallback ||
-      portalConsumerContract.legacy_compare_query_key !==
-        transitionContract.legacyCompare.queryKey ||
-      portalConsumerContract.legacy_compare_query_value !==
-        transitionContract.legacyCompare.queryValue ||
-      portalConsumerContract.legacy_compare_failure_policy !==
-        transitionContract.legacyCompare.failurePolicy
+      legacyComparison?.implementation_status !==
+        transitionContract.legacyComparison.implementationStatus ||
+      legacyComparison?.activation !== transitionContract.legacyComparison.activation ||
+      legacyComparison?.search_param !== transitionContract.legacyComparison.searchParam ||
+      legacyComparison?.search_value !== transitionContract.legacyComparison.searchValue ||
+      legacyComparison?.load_order !== transitionContract.legacyComparison.loadOrder ||
+      legacyComparison?.result_role !== transitionContract.legacyComparison.resultRole ||
+      legacyComparison?.failure_policy !== transitionContract.legacyComparison.failurePolicy ||
+      !sameMembers(
+        legacyComparisonRequired,
+        transitionContract.legacyComparison.requiredInputRefs
+      ) ||
+      !sameMembers(
+        legacyComparisonOptional,
+        transitionContract.legacyComparison.optionalInputRefs
+      ) ||
+      !unique(legacyComparisonInputs) ||
+      legacyComparisonInputs.some(inputRef => !/^\/registry\/[^/].*\.json$/.test(inputRef))
     ) {
       errors.push(
         'portal transition contract must require canonical primary and explicit query-only legacy compare'
       );
     }
-    const consumerStatus = portalConsumerContract.implementation_status;
-    const inputMode = portalConsumerContract.active_input_mode;
     if (consumerStatus === 'current-compatibility') {
+      if (
+        !sameMembers(observedInputs.required, requiredInputs) ||
+        !sameMembers(observedInputs.optional, optionalInputs)
+      ) {
+        errors.push(
+          `portal registry input map does not match HTML (required: ${observedInputs.required.join(', ')}; optional: ${observedInputs.optional.join(', ')})`
+        );
+      }
+      if (
+        !sameMembers(requiredInputs, PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS) ||
+        !sameMembers(optionalInputs, PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS)
+      ) {
+        errors.push('portal current input refs must match the package consumer contract');
+      }
       if (inputMode !== 'legacy-multi-artifact') {
         errors.push('current-compatibility portal consumer must use legacy-multi-artifact mode');
       }

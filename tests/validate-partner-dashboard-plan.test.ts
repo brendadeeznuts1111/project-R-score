@@ -243,6 +243,86 @@ describe('partner dashboard semantic plan', () => {
     );
   });
 
+  it('rejects drift across every planned transition and legacy-comparison field', async () => {
+    const mutations: Array<[string, (plan: ReturnType<typeof copyPlan>) => void]> = [
+      ['dashboard artifact path must match the package portal contract', plan => {
+        plan.shapes.dashboard_artifact.path = '/registry/wrong.json';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.transition_implementation_status = 'implemented';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.transition_input_mode = 'automatic-fallback';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.canonical_primary_input_ref = '/registry/wrong.json';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.canonical_failure_policy = 'fallback';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.automatic_legacy_fallback = true;
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.activation = 'hash';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.search_param = 'mode';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.search_value = 'true';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.load_order = 'before-canonical';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.result_role = 'fallback';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.failure_policy = 'fail-primary';
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.required_input_refs.pop();
+      }],
+      ['portal transition contract', plan => {
+        plan.surfaces.portal.consumer_contract.legacy_comparison.optional_input_refs.push(
+          '/not-registry/value.txt'
+        );
+      }],
+    ];
+
+    for (const [expectedError, mutate] of mutations) {
+      const plan = copyPlan();
+      mutate(plan);
+      const result = await validatePartnerDashboardPlan(plan);
+      expect(result.errors.some(error => error.includes(expectedError))).toBe(true);
+    }
+
+    const activeTransition = copyPlan();
+    activeTransition.surfaces.portal.consumer_contract.implementation_status = 'transition';
+    const activeResult = await validatePartnerDashboardPlan(activeTransition);
+    expect(activeResult.errors).toContain('portal consumer contract has invalid implementation_status');
+  });
+
+  it('stops comparing the live legacy HTML after the canonical consumer is implemented', async () => {
+    const plan = copyPlan();
+    plan.surfaces.portal.consumer_contract.implementation_status = 'implemented';
+    plan.surfaces.portal.consumer_contract.active_input_mode = 'canonical-single-artifact';
+    plan.surfaces.portal.consumer_contract.required_input_refs = [
+      '/registry/partners-dashboard.json',
+    ];
+    plan.surfaces.portal.consumer_contract.optional_input_refs = [];
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).not.toContain(
+      'portal current input refs must match the package consumer contract'
+    );
+    expect(result.errors.some(error => error.includes('portal registry input map'))).toBe(false);
+    expect(result.errors).toContain(
+      'implemented portal consumer requires the canonical dashboard artifact to exist'
+    );
+  });
+
   it('turns the active legacy-ops cutoff into a hard removal gate', async () => {
     const result = await validatePartnerDashboardPlan(copyPlan(), {
       now: new Date('2026-11-03T00:00:00Z'),
