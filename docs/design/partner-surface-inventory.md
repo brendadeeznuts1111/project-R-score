@@ -35,7 +35,8 @@ bun tools/workspace-taxonomy.ts explain partner
 bun run partner-surface-inventory:bake
 bun run partner-surface-inventory:check
 bun run partner-surface-inventory:validate
-bun test tests/partner-surface-inventory.test.ts
+bun run partner-surface-inventory:lint-wires
+bun test tests/partner-surface-inventory.test.ts tests/partner-surface-wire-lint.test.ts
 ```
 
 Compact table (bags):
@@ -61,20 +62,21 @@ Each row in the lib SSOT / registry bake:
 | `owner` | owning lane / doc |
 | `brand` | (brand only) pattern · mintAuthority · module · interiorOnly · replaces |
 | `registry` | (registry only) schemaId · schemaIdField · artifactPath · omits · moneyPolicy · requiredTopKeys · conceptIds |
-| `wireField` | (wire-field only) wireName · sourceSystemId · resolvesTo · quarantineOnFail |
+| `wireField` | (wire-field only) wireName · sourceSystemId · resolvesTo · quarantineOnFail · boundaryPathGlobs |
 | `chromeNav` | (chrome-nav / portal-board) domain · group · tier · registryArtifact |
 | `taxonomy` | (taxonomy) homonymDistinct · conceptDomain |
 
 Chrome-nav and portal-board rows for Domain `partner` are **derived live** from
 [`chrome-catalog.ts`](../../lib/portal/chrome-catalog.ts) so board adds cannot
 drift silently. Validate bags with
-`bun run partner-surface-inventory:validate`:
+`bun run partner-surface-inventory:validate` and wire traps with
+`bun run partner-surface-inventory:lint-wires`:
 
 | Layer | Check |
 | ----- | ----- |
 | A | brand-manifest + `Bun.file.exists` (not `lib:domains:check`) |
 | B | baked JSON vs bag: schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy` |
-| C | ast-grep naked `partnerId: string` (deferred — separate lint) |
+| C | inventory-aware lint: naked `partnerId` / `partner_id` `: string` outside `boundaryPathGlobs` |
 
 Registry bag notes:
 
@@ -84,6 +86,16 @@ Registry bag notes:
   `omits` array do not count as present keys).
 - partners-ops may expose `credentials.username` as a public board label; vault
   secrets (`password`, `vaultKey`, `apiKey`) stay in `omits`.
+
+Wire bag notes:
+
+- `boundaryPathGlobs` allowlists adapter trees (e.g. `Kalshi-bot/**`,
+  `projects/active/sports-terminal-os/**`) where raw wire ids are parsed.
+- Interior code must use `PartnerCode` / `ExternalPartnerRef`, or suppress with
+  `// wire-ok` / `// brand-ok` (same / prev / next line).
+- Adding a new external client = add a `wire-field` row with
+  `resolvesTo: ExternalPartnerRef` + `boundaryPathGlobs` — no separate
+  ast-grep allowlist.
 
 ## Minimum surface set (summary)
 

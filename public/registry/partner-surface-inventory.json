@@ -2,7 +2,7 @@
   "kind": "partner-surface-inventory",
   "schemaVersion": 2,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-06T18:55:56.077Z",
+  "bakedAt": "2026-08-06T19:02:09.404Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",
@@ -674,7 +674,7 @@
       "aspect": "wire-field",
       "token": "partner_id",
       "repo": "sports-terminal",
-      "path": "Sports Terminal API /partners",
+      "path": "projects/active/sports-terminal-os",
       "properties": [
         "snake_case wire",
         "blocked connector"
@@ -686,7 +686,10 @@
         "wireName": "partner_id",
         "sourceSystemId": "sports-terminal",
         "resolvesTo": "ExternalPartnerRef",
-        "quarantineOnFail": true
+        "quarantineOnFail": true,
+        "boundaryPathGlobs": [
+          "projects/active/sports-terminal-os/**"
+        ]
       }
     },
     {
@@ -694,7 +697,7 @@
       "aspect": "wire-field",
       "token": "partners[].id",
       "repo": "Kalshi-bot",
-      "path": "Kalshi partner registry",
+      "path": "Kalshi-bot",
       "properties": [
         "e.g. partner-spen",
         "join via partners[].code → PartnerCode"
@@ -706,7 +709,10 @@
         "wireName": "partners[].id",
         "sourceSystemId": "kalshi",
         "resolvesTo": "ExternalPartnerRef",
-        "quarantineOnFail": true
+        "quarantineOnFail": true,
+        "boundaryPathGlobs": [
+          "Kalshi-bot/**"
+        ]
       }
     },
     {
@@ -726,7 +732,8 @@
         "wireName": "partnerId",
         "sourceSystemId": "pandora",
         "resolvesTo": "ExternalPartnerRef",
-        "quarantineOnFail": true
+        "quarantineOnFail": true,
+        "boundaryPathGlobs": []
       }
     },
     {
