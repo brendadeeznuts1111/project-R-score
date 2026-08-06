@@ -14,6 +14,22 @@ import type {
   SourceSystemId,
   TreeNodeId,
 } from './types.ts';
+import {
+  asAdapterId,
+  asAttentionReasonCode,
+  asCurrencyCode,
+  asExternalAccountId,
+  asExternalPartnerId,
+  asLedgerEntryId,
+  asOutId,
+  asPartnerCallSignCode,
+  asPartnerCode,
+  asPartnerProfileVersionCode,
+  asRailId,
+  asSourceSystemId,
+  asSportsbookId,
+  asTreeNodeId,
+} from '../../../../lib/types/branded.ts';
 
 export const PARTNER_CODE_PATTERN = '^[A-Z]{3,6}$';
 export const PARTNER_CALL_SIGN_PATTERN = '^([A-Z]{3,6})-([0-9]{3})$';
@@ -36,7 +52,7 @@ function parseExactString(value: unknown, label: string): string {
 export function parsePartnerCode(value: unknown): PartnerCode {
   const code = parseExactString(value, 'PartnerCode');
   if (!PARTNER_CODE_RE.test(code)) throw new TypeError(`Invalid PartnerCode: ${code}`);
-  return code as PartnerCode;
+  return asPartnerCode(code);
 }
 
 export function parsePartnerCallSign(value: unknown, expectedCode?: PartnerCode): PartnerCallSign {
@@ -45,11 +61,11 @@ export function parsePartnerCallSign(value: unknown, expectedCode?: PartnerCode)
   if (!match || (expectedCode !== undefined && match[1] !== expectedCode)) {
     throw new TypeError(`Invalid PartnerCallSign: ${callSign}`);
   }
-  return callSign as PartnerCallSign;
+  return asPartnerCallSignCode(callSign);
 }
 
 export function parseProfileDocumentVersion(value: unknown): ProfileDocumentVersion {
-  return parseExactString(value, 'ProfileDocumentVersion') as ProfileDocumentVersion;
+  return asPartnerProfileVersionCode(parseExactString(value, 'ProfileDocumentVersion'));
 }
 
 export type CanonicalOutIdentity = {
@@ -67,7 +83,7 @@ export function parseCanonicalOutIdentity(value: unknown): CanonicalOutIdentity 
     throw new TypeError(`OutId sequence must be a positive safe integer: ${raw}`);
   }
   return {
-    outId: raw as OutId,
+    outId: asOutId(raw),
     partnerCode: parsePartnerCode(match[1]),
     sequence,
   };
@@ -80,25 +96,25 @@ export function parseCanonicalOutId(value: unknown): OutId {
 export function parseCurrencyCode(value: unknown): CurrencyCode {
   const code = parseExactString(value, 'CurrencyCode');
   if (!CURRENCY_CODE_RE.test(code)) throw new TypeError(`Invalid CurrencyCode: ${code}`);
-  return code as CurrencyCode;
+  return asCurrencyCode(code);
 }
 
 export function parseSportsbookId(value: unknown): SportsbookId {
   const id = parseExactString(value, 'SportsbookId');
   if (!SLUG_ID_RE.test(id)) throw new TypeError(`Invalid SportsbookId: ${id}`);
-  return id as SportsbookId;
+  return asSportsbookId(id);
 }
 
 export function parseTreeNodeId(value: unknown): TreeNodeId {
-  return parseExactString(value, 'TreeNodeId') as TreeNodeId;
+  return asTreeNodeId(parseExactString(value, 'TreeNodeId'));
 }
 
 export function parseRailId(value: unknown): RailId {
-  return parseExactString(value, 'RailId') as RailId;
+  return asRailId(parseExactString(value, 'RailId'));
 }
 
 export function parseLedgerEntryId(value: unknown): LedgerEntryId {
-  return parseExactString(value, 'LedgerEntryId') as LedgerEntryId;
+  return asLedgerEntryId(parseExactString(value, 'LedgerEntryId'));
 }
 
 export function parseAttentionReasonCode(value: unknown): AttentionReasonCode {
@@ -106,25 +122,25 @@ export function parseAttentionReasonCode(value: unknown): AttentionReasonCode {
   if (!ATTENTION_REASON_RE.test(code)) {
     throw new TypeError(`Invalid AttentionReasonCode: ${code}`);
   }
-  return code as AttentionReasonCode;
+  return asAttentionReasonCode(code);
 }
 
 export function parseSourceSystemId(value: unknown): SourceSystemId {
   const id = parseExactString(value, 'SourceSystemId');
   if (!SLUG_ID_RE.test(id)) throw new TypeError(`Invalid SourceSystemId: ${id}`);
-  return id as SourceSystemId;
+  return asSourceSystemId(id);
 }
 
 export function parseAdapterId(value: unknown): AdapterId {
   const id = parseExactString(value, 'AdapterId');
   if (!SLUG_ID_RE.test(id)) throw new TypeError(`Invalid AdapterId: ${id}`);
-  return id as AdapterId;
+  return asAdapterId(id);
 }
 
 export function parseExternalPartnerId(value: unknown): ExternalPartnerId {
-  return parseExactString(value, 'ExternalPartnerId') as ExternalPartnerId;
+  return asExternalPartnerId(parseExactString(value, 'ExternalPartnerId'));
 }
 
 export function parseExternalAccountId(value: unknown): ExternalAccountId {
-  return parseExactString(value, 'ExternalAccountId') as ExternalAccountId;
+  return asExternalAccountId(parseExactString(value, 'ExternalAccountId'));
 }

@@ -9,6 +9,7 @@
 import { BrandValidationError } from '../../core/core-errors.ts';
 import {
   defineBrandConstructors,
+  defineValidatedBrandConstructors,
   type BrandSpec,
   type BrandValidationSpec,
   type BrandedString,
@@ -41,10 +42,30 @@ export type ExperimentVariantId = BrandedString<'ExperimentVariantId'>;
 export type ExperimentAssignmentId = BrandedString<'ExperimentAssignmentId'>;
 /** Partner profile binding key (tree node ↔ template). */
 export type PartnerProfileKey = BrandedString<'PartnerProfileKey'>;
+/** Canonical uppercase partner business join key. */
+export type PartnerCode = BrandedString<'PartnerCode'>;
+/** Canonical partner operator call sign (for example ASH-001). */
+export type PartnerCallSignCode = BrandedString<'PartnerCallSignCode'>;
+/** Version value carried by a canonical partner profile document. */
+export type PartnerProfileVersionCode = BrandedString<'PartnerProfileVersionCode'>;
 /** Partner onboarding template identifier. */
 export type PartnerTemplateId = BrandedString<'PartnerTemplateId'>;
-/** Seat-intake out token (e.g. SPEN-1 / CODE-1). */
+/** Canonical partner out identity (`out-{PartnerCode}-{positive integer}`). */
 export type OutId = BrandedString<'OutId'>;
+/** Immutable partner ledger entry identity. */
+export type LedgerEntryId = BrandedString<'LedgerEntryId'>;
+/** ISO-4217-style currency code used with integer minor-unit money. */
+export type CurrencyCode = BrandedString<'CurrencyCode'>;
+/** Stable machine-readable reason for operator attention. */
+export type AttentionReasonCode = BrandedString<'AttentionReasonCode'>;
+/** Source-qualified system identity recorded in provenance. */
+export type SourceSystemId = BrandedString<'SourceSystemId'>;
+/** Adapter implementation identity recorded in provenance. */
+export type AdapterId = BrandedString<'AdapterId'>;
+/** Source-owned non-canonical partner identity. */
+export type ExternalPartnerId = BrandedString<'ExternalPartnerId'>;
+/** Source-owned non-canonical account identity. */
+export type ExternalAccountId = BrandedString<'ExternalAccountId'>;
 /** Policy gate decision row id. */
 export type GateDecisionId = BrandedString<'GateDecisionId'>;
 /** Unified ops channel outbox event id. */
@@ -68,6 +89,37 @@ export type StateCode = BrandedString<'StateCode'>;
  */
 export type ZipCode = BrandedString<'ZipCode'>;
 
+const PARTNER_CODE_VALIDATION = {
+  shape: 'pattern',
+  pattern: '^[A-Z]{3,6}$',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+const PARTNER_CALL_SIGN_CODE_VALIDATION = {
+  shape: 'pattern',
+  pattern: '^[A-Z]{3,6}-[0-9]{3}$',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+const CANONICAL_OUT_ID_VALIDATION = {
+  shape: 'pattern',
+  pattern: '^out-[A-Z]{3,6}-[1-9][0-9]*$',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+const CURRENCY_CODE_VALIDATION = {
+  shape: 'pattern',
+  pattern: '^[A-Z]{3}$',
+  ingressNormalization: 'trim-uppercase',
+} as const satisfies BrandValidationSpec;
+const ATTENTION_REASON_CODE_VALIDATION = {
+  shape: 'pattern',
+  pattern: '^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+const SLUG_ID_VALIDATION = {
+  shape: 'pattern',
+  pattern: '^[a-z0-9][a-z0-9-]*$',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+
 const operation = defineBrandConstructors('OperationId');
 const resource = defineBrandConstructors('ResourceId');
 const project = defineBrandConstructors('ProjectId');
@@ -87,8 +139,24 @@ const experiment = defineBrandConstructors('ExperimentId');
 const experimentVariant = defineBrandConstructors('ExperimentVariantId');
 const experimentAssignment = defineBrandConstructors('ExperimentAssignmentId');
 const partnerProfileKey = defineBrandConstructors('PartnerProfileKey');
+const partnerCode = defineValidatedBrandConstructors('PartnerCode', PARTNER_CODE_VALIDATION);
+const partnerCallSignCode = defineValidatedBrandConstructors(
+  'PartnerCallSignCode',
+  PARTNER_CALL_SIGN_CODE_VALIDATION
+);
+const partnerProfileVersionCode = defineBrandConstructors('PartnerProfileVersionCode');
 const partnerTemplateId = defineBrandConstructors('PartnerTemplateId');
-const outId = defineBrandConstructors('OutId');
+const outId = defineValidatedBrandConstructors('OutId', CANONICAL_OUT_ID_VALIDATION);
+const ledgerEntryId = defineBrandConstructors('LedgerEntryId');
+const currencyCode = defineValidatedBrandConstructors('CurrencyCode', CURRENCY_CODE_VALIDATION);
+const attentionReasonCode = defineValidatedBrandConstructors(
+  'AttentionReasonCode',
+  ATTENTION_REASON_CODE_VALIDATION
+);
+const sourceSystemId = defineValidatedBrandConstructors('SourceSystemId', SLUG_ID_VALIDATION);
+const adapterId = defineValidatedBrandConstructors('AdapterId', SLUG_ID_VALIDATION);
+const externalPartnerId = defineBrandConstructors('ExternalPartnerId');
+const externalAccountId = defineBrandConstructors('ExternalAccountId');
 const gateDecisionId = defineBrandConstructors('GateDecisionId');
 const opsChannelEventId = defineBrandConstructors('OpsChannelEventId');
 const limitForecastIssueId = defineBrandConstructors('LimitForecastIssueId');
@@ -170,9 +238,50 @@ export const parseExperimentAssignmentId = experimentAssignment.parse;
 export const asPartnerProfileKey = partnerProfileKey.as;
 export const tryPartnerProfileKey = partnerProfileKey.try;
 export const parsePartnerProfileKey = partnerProfileKey.parse;
+
+export const asPartnerCode = partnerCode.as;
+export const tryPartnerCode = partnerCode.try;
+export const parsePartnerCode = partnerCode.parse;
+
+export const asPartnerCallSignCode = partnerCallSignCode.as;
+export const tryPartnerCallSignCode = partnerCallSignCode.try;
+export const parsePartnerCallSignCode = partnerCallSignCode.parse;
+
+export const asPartnerProfileVersionCode = partnerProfileVersionCode.as;
+export const tryPartnerProfileVersionCode = partnerProfileVersionCode.try;
+export const parsePartnerProfileVersionCode = partnerProfileVersionCode.parse;
+
 export const asOutId = outId.as;
 export const tryOutId = outId.try;
 export const parseOutId = outId.parse;
+
+export const asLedgerEntryId = ledgerEntryId.as;
+export const tryLedgerEntryId = ledgerEntryId.try;
+export const parseLedgerEntryId = ledgerEntryId.parse;
+
+export const asCurrencyCode = currencyCode.as;
+export const tryCurrencyCode = currencyCode.try;
+export const parseCurrencyCode = currencyCode.parse;
+
+export const asAttentionReasonCode = attentionReasonCode.as;
+export const tryAttentionReasonCode = attentionReasonCode.try;
+export const parseAttentionReasonCode = attentionReasonCode.parse;
+
+export const asSourceSystemId = sourceSystemId.as;
+export const trySourceSystemId = sourceSystemId.try;
+export const parseSourceSystemId = sourceSystemId.parse;
+
+export const asAdapterId = adapterId.as;
+export const tryAdapterId = adapterId.try;
+export const parseAdapterId = adapterId.parse;
+
+export const asExternalPartnerId = externalPartnerId.as;
+export const tryExternalPartnerId = externalPartnerId.try;
+export const parseExternalPartnerId = externalPartnerId.parse;
+
+export const asExternalAccountId = externalAccountId.as;
+export const tryExternalAccountId = externalAccountId.try;
+export const parseExternalAccountId = externalAccountId.parse;
 
 export const asPartnerTemplateId = partnerTemplateId.as;
 export const tryPartnerTemplateId = partnerTemplateId.try;
@@ -429,6 +538,29 @@ export const OPERATIONS_BRAND_SPECS = [
     description: 'Partner profile binding key for tree node ↔ template',
   },
   {
+    name: 'PartnerCode',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Canonical uppercase partner business join key',
+    validation: PARTNER_CODE_VALIDATION,
+  },
+  {
+    name: 'PartnerCallSignCode',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Canonical partner operator call sign',
+    validation: PARTNER_CALL_SIGN_CODE_VALIDATION,
+  },
+  {
+    name: 'PartnerProfileVersionCode',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Canonical partner profile document version',
+  },
+  {
     name: 'PartnerTemplateId',
     domain: 'operations',
     tiers: ['as', 'try', 'parse'],
@@ -440,7 +572,61 @@ export const OPERATIONS_BRAND_SPECS = [
     domain: 'operations',
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal'],
-    description: 'Seat-intake out token (e.g. SPEN-1 / CODE-1)',
+    description: 'Canonical partner out identity (for example out-SPEN-1)',
+    validation: CANONICAL_OUT_ID_VALIDATION,
+  },
+  {
+    name: 'LedgerEntryId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Immutable partner ledger entry identity',
+  },
+  {
+    name: 'CurrencyCode',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'ISO-style currency code for minor-unit money',
+    validation: CURRENCY_CODE_VALIDATION,
+  },
+  {
+    name: 'AttentionReasonCode',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Stable machine-readable operator attention reason',
+    validation: ATTENTION_REASON_CODE_VALIDATION,
+  },
+  {
+    name: 'SourceSystemId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Source-qualified system identity for provenance',
+    validation: SLUG_ID_VALIDATION,
+  },
+  {
+    name: 'AdapterId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Adapter implementation identity for provenance',
+    validation: SLUG_ID_VALIDATION,
+  },
+  {
+    name: 'ExternalPartnerId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['wire-input'],
+    description: 'Source-owned non-canonical partner identity',
+  },
+  {
+    name: 'ExternalAccountId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['wire-input'],
+    description: 'Source-owned non-canonical account identity',
   },
   {
     name: 'GateDecisionId',

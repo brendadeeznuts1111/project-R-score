@@ -7,6 +7,12 @@
     "strict": true,
     "tsBuildInfoFile": "../../.cache/tsbuildinfo/packages-partners.tsbuildinfo"
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*",
+    "../../lib/core/core-errors.ts",
+    "../../lib/core/core-types.ts",
+    "../../lib/types/branded.ts",
+    "../../lib/types/branded/**/*"
+  ],
   "exclude": ["node_modules", "dist", "build"]
 }

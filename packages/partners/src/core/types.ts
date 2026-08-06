@@ -1,28 +1,42 @@
-declare const partnerBrand: unique symbol;
+import type {
+  AdapterId,
+  AttentionReasonCode,
+  CurrencyCode,
+  ExternalAccountId,
+  ExternalPartnerId,
+  LedgerEntryId,
+  OutId,
+  PartnerCallSignCode,
+  PartnerCode,
+  PartnerProfileVersionCode,
+  RailId,
+  SourceSystemId,
+  SportsbookId,
+  TreeNodeId,
+} from '../../../../lib/types/branded.ts';
+import { asAttentionReasonCode, asSourceSystemId } from '../../../../lib/types/branded.ts';
 
-type PartnerBrand<Name extends string> = string & {
-  readonly [partnerBrand]: Name;
+export type {
+  AdapterId,
+  AttentionReasonCode,
+  CurrencyCode,
+  ExternalAccountId,
+  ExternalPartnerId,
+  LedgerEntryId,
+  OutId,
+  PartnerCode,
+  RailId,
+  SourceSystemId,
+  SportsbookId,
+  TreeNodeId,
 };
-
-export type PartnerCode = PartnerBrand<'PartnerCode'>;
-export type PartnerCallSign = PartnerBrand<'PartnerCallSign'>;
-export type ProfileDocumentVersion = PartnerBrand<'ProfileDocumentVersion'>;
-export type OutId = PartnerBrand<'OutId'>;
-export type TreeNodeId = PartnerBrand<'TreeNodeId'>;
-export type RailId = PartnerBrand<'RailId'>;
-export type SportsbookId = PartnerBrand<'SportsbookId'>;
-export type LedgerEntryId = PartnerBrand<'LedgerEntryId'>;
-export type CurrencyCode = PartnerBrand<'CurrencyCode'>;
-export type AttentionReasonCode = PartnerBrand<'AttentionReasonCode'>;
-export type SourceSystemId = PartnerBrand<'SourceSystemId'>;
-export type AdapterId = PartnerBrand<'AdapterId'>;
-export type ExternalPartnerId = PartnerBrand<'ExternalPartnerId'>;
-export type ExternalAccountId = PartnerBrand<'ExternalAccountId'>;
+export type PartnerCallSign = PartnerCallSignCode;
+export type ProfileDocumentVersion = PartnerProfileVersionCode;
 
 export type JsonPrimitive = string | number | boolean | null;
 export type JsonValue = JsonPrimitive | JsonValue[] | { [key: string]: JsonValue };
 
-export const CANONICAL_PROFILE_SOURCE_SYSTEM_ID = 'factorywager-partner-profile' as SourceSystemId;
+export const CANONICAL_PROFILE_SOURCE_SYSTEM_ID = asSourceSystemId('factorywager-partner-profile');
 export const PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1 = 'factorywager.partners-dashboard.v1';
 
 export const PARTNER_LIFECYCLE_STATES = [
@@ -230,5 +244,6 @@ export type PartnerDashboardBuildInput = {
   partners: PartnerDashboardRecord[];
 };
 
-export const PROFILE_MIGRATION_REQUIRED_REASON =
-  'partner.profile.migration_required' as AttentionReasonCode;
+export const PROFILE_MIGRATION_REQUIRED_REASON = asAttentionReasonCode(
+  'partner.profile.migration_required'
+);

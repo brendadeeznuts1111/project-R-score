@@ -211,6 +211,37 @@ export function defineBrandConstructors<B extends BrandName>(kind: B) {
   return { as, try: tryFn, parse } as const;
 }
 
+/** Define a constructor trio that enforces the catalog's canonical runtime shape. */
+export function defineValidatedBrandConstructors<B extends BrandName>(
+  kind: B,
+  validation: BrandValidationSpec
+) {
+  const validate = (value: string, tier: ConstructorTier): BrandedString<B> => {
+    const normalized = normalizeForIngress(value, validation);
+    const valid =
+      normalized.length > 0 &&
+      (validation.shape === 'nonblank' ||
+        new RegExp(validation.pattern, validation.flags).test(normalized));
+    if (!valid) throw new BrandValidationError(kind, value);
+    logMint(kind, tier, normalized);
+    return normalized as BrandedString<B>;
+  };
+  const as = (value: string): BrandedString<B> => validate(value, 'as');
+  const tryFn = (value: string | undefined | null): BrandedString<B> | undefined => {
+    if (value == null || String(value).trim() === '') return undefined;
+    try {
+      return validate(String(value), 'try');
+    } catch {
+      return undefined;
+    }
+  };
+  const parse = (value: unknown): BrandedString<B> => {
+    if (typeof value !== 'string') throw new BrandValidationError(kind, asWireReject(value));
+    return validate(value, 'parse');
+  };
+  return { as, try: tryFn, parse } as const;
+}
+
 /** @deprecated Use makeBrandedString; retained for source compatibility. */
 export const makeId = makeBrandedString;
 /** @deprecated Use tryBrandedString; retained for source compatibility. */

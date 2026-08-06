@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-06T03:23:00.816Z",
+  "generatedAt": "2026-08-06T08:28:13.313Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -12,13 +12,13 @@
     "colorKernel": "public/portal/theme.jsonc"
   },
   "summary": {
-    "brands": 82,
+    "brands": 92,
     "domains": 10,
-    "ids": 65,
+    "ids": 70,
     "keys": 3,
-    "codes": 14,
-    "covered": 59,
-    "referencedUnconstructed": 8,
+    "codes": 19,
+    "covered": 70,
+    "referencedUnconstructed": 7,
     "unused": 15,
     "cataloguedProjects": 35,
     "trackedProjects": 32,
@@ -95,7 +95,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 29,
+      "brandCount": 39,
       "colorKey": "accent",
       "color": "#58a6ff",
       "tone": "info"
@@ -1765,26 +1765,28 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 9,
+        "references": 12,
         "constructors": {
           "as": 14,
-          "try": 2,
+          "try": 3,
           "parse": 0
         },
         "guards": 0,
         "files": [
           "lib/ai/anomaly-detector.ts",
+          "lib/operator-research/backtest.ts",
           "lib/operator-research/edge-engine.ts",
           "tools/agent-odds-dashboard-serve.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 9,
-            "constructionCalls": 16,
+            "references": 12,
+            "constructionCalls": 17,
             "guardCalls": 0,
             "files": [
               "lib/ai/anomaly-detector.ts",
+              "lib/operator-research/backtest.ts",
               "lib/operator-research/edge-engine.ts",
               "tools/agent-odds-dashboard-serve.ts"
             ]
@@ -1901,23 +1903,25 @@
         "status": "covered",
         "references": 2,
         "constructors": {
-          "as": 1,
+          "as": 2,
           "try": 0,
           "parse": 1
         },
         "guards": 0,
         "files": [
           "config/github-issue-taxonomy.ts",
+          "lib/github-issue-taxonomy-public.ts",
           "lib/github-issue-taxonomy-wire.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
             "references": 2,
-            "constructionCalls": 2,
+            "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
               "config/github-issue-taxonomy.ts",
+              "lib/github-issue-taxonomy-public.ts",
               "lib/github-issue-taxonomy-wire.ts"
             ]
           },
@@ -3345,11 +3349,11 @@
       ],
       "coverage": {
         "status": "covered",
-        "references": 287,
+        "references": 294,
         "constructors": {
-          "as": 105,
+          "as": 106,
           "try": 2,
-          "parse": 13
+          "parse": 15
         },
         "guards": 0,
         "files": [
@@ -3369,8 +3373,8 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 287,
-            "constructionCalls": 120,
+            "references": 294,
+            "constructionCalls": 123,
             "guardCalls": 0,
             "files": [
               "lib/accounts/accounts.ts",
@@ -3429,27 +3433,33 @@
       "tone": "info",
       "glossaryConcepts": [],
       "coverage": {
-        "status": "referenced-unconstructed",
-        "references": 5,
+        "status": "covered",
+        "references": 11,
         "constructors": {
-          "as": 0,
+          "as": 1,
           "try": 0,
-          "parse": 0
+          "parse": 2
         },
         "guards": 0,
         "files": [
           "lib/operations/rail-limits.ts",
-          "lib/operations/reconciliation.ts"
+          "lib/operations/reconciliation.ts",
+          "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/core/identifiers.ts",
+          "packages/partners/src/core/types.ts"
         ],
         "scopes": {
           "spine": {
-            "status": "referenced-unconstructed",
-            "references": 5,
-            "constructionCalls": 0,
+            "status": "covered",
+            "references": 11,
+            "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
               "lib/operations/rail-limits.ts",
-              "lib/operations/reconciliation.ts"
+              "lib/operations/reconciliation.ts",
+              "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/core/identifiers.ts",
+              "packages/partners/src/core/types.ts"
             ]
           },
           "projects": {
@@ -3864,6 +3874,223 @@
       }
     },
     {
+      "name": "PartnerCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Canonical uppercase partner business join key",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[A-Z]{3,6}$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asPartnerCode",
+        "try": "tryPartnerCode",
+        "parse": "parsePartnerCode"
+      },
+      "guard": "BRAND_GUARDS.isPartnerCode",
+      "shortName": "partnerCode",
+      "envName": "PARTNER_CODE",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 28,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 35
+        },
+        "guards": 0,
+        "files": [
+          "lib/telegram/handshake-desk.ts",
+          "lib/telegram/package-group-registry.ts",
+          "lib/telegram/verify-package-group-handshake.ts",
+          "packages/partners/src/adapters/profile-coverage.ts",
+          "packages/partners/src/boundary/assemble-dashboard-artifact.ts",
+          "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/compatibility/ingress-translator.ts",
+          "packages/partners/src/compatibility/legacy-partners-ops.ts",
+          "packages/partners/src/core/identifiers.ts",
+          "packages/partners/src/core/types.ts",
+          "scripts/validate-partner-dashboard-plan.ts",
+          "tools/telegram-handshake-invite-gap.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 28,
+            "constructionCalls": 36,
+            "guardCalls": 0,
+            "files": [
+              "lib/telegram/handshake-desk.ts",
+              "lib/telegram/package-group-registry.ts",
+              "lib/telegram/verify-package-group-handshake.ts",
+              "packages/partners/src/adapters/profile-coverage.ts",
+              "packages/partners/src/boundary/assemble-dashboard-artifact.ts",
+              "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/compatibility/ingress-translator.ts",
+              "packages/partners/src/compatibility/legacy-partners-ops.ts",
+              "packages/partners/src/core/identifiers.ts",
+              "packages/partners/src/core/types.ts",
+              "scripts/validate-partner-dashboard-plan.ts",
+              "tools/telegram-handshake-invite-gap.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "PartnerCallSignCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Canonical partner operator call sign",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[A-Z]{3,6}-[0-9]{3}$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asPartnerCallSignCode",
+        "try": "tryPartnerCallSignCode",
+        "parse": "parsePartnerCallSignCode"
+      },
+      "guard": "BRAND_GUARDS.isPartnerCallSignCode",
+      "shortName": "partnerCallSignCode",
+      "envName": "PARTNER_CALL_SIGN_CODE",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 2,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "packages/partners/src/core/identifiers.ts",
+          "packages/partners/src/core/types.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 2,
+            "constructionCalls": 1,
+            "guardCalls": 0,
+            "files": [
+              "packages/partners/src/core/identifiers.ts",
+              "packages/partners/src/core/types.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "PartnerProfileVersionCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Canonical partner profile document version",
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asPartnerProfileVersionCode",
+        "try": "tryPartnerProfileVersionCode",
+        "parse": "parsePartnerProfileVersionCode"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPartnerProfileVersionCode",
+      "shortName": "partnerProfileVersionCode",
+      "envName": "PARTNER_PROFILE_VERSION_CODE",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 2,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "packages/partners/src/core/identifiers.ts",
+          "packages/partners/src/core/types.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 2,
+            "constructionCalls": 1,
+            "guardCalls": 0,
+            "files": [
+              "packages/partners/src/core/identifiers.ts",
+              "packages/partners/src/core/types.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
       "name": "PartnerTemplateId",
       "domain": "operations",
       "tiers": [
@@ -3953,17 +4180,18 @@
       "mint": [
         "system-internal"
       ],
-      "description": "Seat-intake out token (e.g. SPEN-1 / CODE-1)",
+      "description": "Canonical partner out identity (for example out-SPEN-1)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^out-[A-Z]{3,6}-[1-9][0-9]*$",
+        "ingressNormalization": "trim"
+      },
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
       "constructors": {
         "as": "asOutId",
         "try": "tryOutId",
         "parse": "parseOutId"
-      },
-      "validation": {
-        "shape": "nonblank",
-        "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isOutId",
       "shortName": "outId",
@@ -3974,28 +4202,526 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 5,
+        "references": 33,
         "constructors": {
-          "as": 1,
+          "as": 2,
           "try": 1,
           "parse": 0
         },
         "guards": 0,
         "files": [
           "lib/partner-profile/register.ts",
+          "packages/partners/src/boundary/assemble-dashboard-artifact.ts",
+          "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/compatibility/ingress-translator.ts",
+          "packages/partners/src/compatibility/legacy-partners-ops.ts",
+          "packages/partners/src/core/identifiers.ts",
+          "packages/partners/src/core/types.ts",
           "scripts/lib/partners-env-join.ts",
           "scripts/validate-partner-dashboard-plan.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 5,
-            "constructionCalls": 2,
+            "references": 33,
+            "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
               "lib/partner-profile/register.ts",
+              "packages/partners/src/boundary/assemble-dashboard-artifact.ts",
+              "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/compatibility/ingress-translator.ts",
+              "packages/partners/src/compatibility/legacy-partners-ops.ts",
+              "packages/partners/src/core/identifiers.ts",
+              "packages/partners/src/core/types.ts",
               "scripts/lib/partners-env-join.ts",
               "scripts/validate-partner-dashboard-plan.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "LedgerEntryId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Immutable partner ledger entry identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asLedgerEntryId",
+        "try": "tryLedgerEntryId",
+        "parse": "parseLedgerEntryId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isLedgerEntryId",
+      "shortName": "ledgerEntryId",
+      "envName": "LEDGER_ENTRY_ID",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 7,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 2
+        },
+        "guards": 0,
+        "files": [
+          "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/core/identifiers.ts",
+          "packages/partners/src/core/types.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 7,
+            "constructionCalls": 3,
+            "guardCalls": 0,
+            "files": [
+              "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/core/identifiers.ts",
+              "packages/partners/src/core/types.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "CurrencyCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "ISO-style currency code for minor-unit money",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[A-Z]{3}$",
+        "ingressNormalization": "trim-uppercase"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asCurrencyCode",
+        "try": "tryCurrencyCode",
+        "parse": "parseCurrencyCode"
+      },
+      "guard": "BRAND_GUARDS.isCurrencyCode",
+      "shortName": "currencyCode",
+      "envName": "CURRENCY_CODE",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 23,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 2
+        },
+        "guards": 0,
+        "files": [
+          "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/core/identifiers.ts",
+          "packages/partners/src/core/types.ts",
+          "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/core/utils/formatters/currency.ts",
+          "projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/financial-reporting/financial-reporting/services/enhanced-regulatory-export-service.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 7,
+            "constructionCalls": 3,
+            "guardCalls": 0,
+            "files": [
+              "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/core/identifiers.ts",
+              "packages/partners/src/core/types.ts"
+            ]
+          },
+          "projects": {
+            "status": "referenced-unconstructed",
+            "references": 16,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": [
+              "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/core/utils/formatters/currency.ts",
+              "projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/financial-reporting/financial-reporting/services/enhanced-regulatory-export-service.ts"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "AttentionReasonCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Stable machine-readable operator attention reason",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asAttentionReasonCode",
+        "try": "tryAttentionReasonCode",
+        "parse": "parseAttentionReasonCode"
+      },
+      "guard": "BRAND_GUARDS.isAttentionReasonCode",
+      "shortName": "attentionReasonCode",
+      "envName": "ATTENTION_REASON_CODE",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 8,
+        "constructors": {
+          "as": 2,
+          "try": 0,
+          "parse": 2
+        },
+        "guards": 0,
+        "files": [
+          "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/core/identifiers.ts",
+          "packages/partners/src/core/types.ts",
+          "scripts/validate-partner-dashboard-plan.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 8,
+            "constructionCalls": 4,
+            "guardCalls": 0,
+            "files": [
+              "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/core/identifiers.ts",
+              "packages/partners/src/core/types.ts",
+              "scripts/validate-partner-dashboard-plan.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "SourceSystemId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Source-qualified system identity for provenance",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asSourceSystemId",
+        "try": "trySourceSystemId",
+        "parse": "parseSourceSystemId"
+      },
+      "guard": "BRAND_GUARDS.isSourceSystemId",
+      "shortName": "sourceSystemId",
+      "envName": "SOURCE_SYSTEM_ID",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 14,
+        "constructors": {
+          "as": 2,
+          "try": 0,
+          "parse": 6
+        },
+        "guards": 0,
+        "files": [
+          "packages/partners/src/adapters/profile-coverage.ts",
+          "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/compatibility/legacy-partners-ops.ts",
+          "packages/partners/src/core/identifiers.ts",
+          "packages/partners/src/core/types.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 14,
+            "constructionCalls": 8,
+            "guardCalls": 0,
+            "files": [
+              "packages/partners/src/adapters/profile-coverage.ts",
+              "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/compatibility/legacy-partners-ops.ts",
+              "packages/partners/src/core/identifiers.ts",
+              "packages/partners/src/core/types.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AdapterId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Adapter implementation identity for provenance",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asAdapterId",
+        "try": "tryAdapterId",
+        "parse": "parseAdapterId"
+      },
+      "guard": "BRAND_GUARDS.isAdapterId",
+      "shortName": "adapterId",
+      "envName": "ADAPTER_ID",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 11,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 4
+        },
+        "guards": 0,
+        "files": [
+          "packages/partners/src/adapters/profile-coverage.ts",
+          "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/compatibility/legacy-partners-ops.ts",
+          "packages/partners/src/core/identifiers.ts",
+          "packages/partners/src/core/types.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 11,
+            "constructionCalls": 5,
+            "guardCalls": 0,
+            "files": [
+              "packages/partners/src/adapters/profile-coverage.ts",
+              "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/compatibility/legacy-partners-ops.ts",
+              "packages/partners/src/core/identifiers.ts",
+              "packages/partners/src/core/types.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ExternalPartnerId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "Source-owned non-canonical partner identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asExternalPartnerId",
+        "try": "tryExternalPartnerId",
+        "parse": "parseExternalPartnerId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isExternalPartnerId",
+      "shortName": "externalPartnerId",
+      "envName": "EXTERNAL_PARTNER_ID",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 6,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 2
+        },
+        "guards": 0,
+        "files": [
+          "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/core/identifiers.ts",
+          "packages/partners/src/core/types.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 6,
+            "constructionCalls": 3,
+            "guardCalls": 0,
+            "files": [
+              "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/core/identifiers.ts",
+              "packages/partners/src/core/types.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ExternalAccountId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "Source-owned non-canonical account identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asExternalAccountId",
+        "try": "tryExternalAccountId",
+        "parse": "parseExternalAccountId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isExternalAccountId",
+      "shortName": "externalAccountId",
+      "envName": "EXTERNAL_ACCOUNT_ID",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 6,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 2
+        },
+        "guards": 0,
+        "files": [
+          "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/core/identifiers.ts",
+          "packages/partners/src/core/types.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 6,
+            "constructionCalls": 3,
+            "guardCalls": 0,
+            "files": [
+              "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/core/identifiers.ts",
+              "packages/partners/src/core/types.ts"
             ]
           },
           "projects": {
@@ -4239,7 +4965,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 4,
+        "references": 6,
         "constructors": {
           "as": 1,
           "try": 2,
@@ -4247,16 +4973,18 @@
         },
         "guards": 0,
         "files": [
+          "lib/operator-research/bet-mock.ts",
           "lib/operator-research/edge-engine.ts",
           "tools/agent-odds-dashboard-serve.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 4,
+            "references": 6,
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
+              "lib/operator-research/bet-mock.ts",
               "lib/operator-research/edge-engine.ts",
               "tools/agent-odds-dashboard-serve.ts"
             ]
@@ -4304,24 +5032,28 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 2,
+        "references": 5,
         "constructors": {
           "as": 3,
-          "try": 0,
+          "try": 1,
           "parse": 0
         },
         "guards": 0,
         "files": [
-          "lib/operator-research/edge-engine.ts"
+          "lib/operator-research/bet-mock.ts",
+          "lib/operator-research/edge-engine.ts",
+          "tools/agent-odds-dashboard-serve.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 2,
-            "constructionCalls": 3,
+            "references": 5,
+            "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
-              "lib/operator-research/edge-engine.ts"
+              "lib/operator-research/bet-mock.ts",
+              "lib/operator-research/edge-engine.ts",
+              "tools/agent-odds-dashboard-serve.ts"
             ]
           },
           "projects": {
@@ -4370,11 +5102,11 @@
       ],
       "coverage": {
         "status": "covered",
-        "references": 59,
+        "references": 79,
         "constructors": {
-          "as": 49,
-          "try": 1,
-          "parse": 16
+          "as": 44,
+          "try": 8,
+          "parse": 19
         },
         "guards": 0,
         "files": [
@@ -4388,14 +5120,14 @@
           "lib/operations/scrapers/books/betrivers.ts",
           "lib/operations/scrapers/books/caesars.ts",
           "lib/operations/scrapers/books/circa.ts",
-          "lib/operations/scrapers/books/draftkings.ts",
-          "lib/operations/scrapers/books/espnbet.ts"
+          "lib/operations/scrapers/books/draftkings-parse.ts",
+          "lib/operations/scrapers/books/draftkings.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 59,
-            "constructionCalls": 66,
+            "references": 79,
+            "constructionCalls": 71,
             "guardCalls": 0,
             "files": [
               "lib/bookmakers/desk-coverage.ts",
@@ -4408,8 +5140,8 @@
               "lib/operations/scrapers/books/betrivers.ts",
               "lib/operations/scrapers/books/caesars.ts",
               "lib/operations/scrapers/books/circa.ts",
-              "lib/operations/scrapers/books/draftkings.ts",
-              "lib/operations/scrapers/books/espnbet.ts"
+              "lib/operations/scrapers/books/draftkings-parse.ts",
+              "lib/operations/scrapers/books/draftkings.ts"
             ]
           },
           "projects": {
@@ -4458,10 +5190,10 @@
       ],
       "coverage": {
         "status": "covered",
-        "references": 65,
+        "references": 69,
         "constructors": {
-          "as": 58,
-          "try": 7,
+          "as": 61,
+          "try": 10,
           "parse": 0
         },
         "guards": 0,
@@ -4482,8 +5214,8 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 65,
-            "constructionCalls": 65,
+            "references": 69,
+            "constructionCalls": 71,
             "guardCalls": 0,
             "files": [
               "lib/operations/account-limit-profiles.ts",
@@ -4966,10 +5698,10 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 40,
+        "references": 58,
         "constructors": {
-          "as": 2,
-          "try": 4,
+          "as": 5,
+          "try": 9,
           "parse": 1
         },
         "guards": 0,
@@ -4979,18 +5711,19 @@
           "lib/http/host-lineage.ts",
           "lib/http/host-planes.ts",
           "lib/http/portal-weave.ts",
+          "lib/operator-research/odds/connection-pool.ts",
+          "lib/operator-research/odds/odds-parser.ts",
+          "lib/operator-research/odds/odds-store.ts",
+          "lib/operator-research/odds/pipeline.ts",
+          "lib/operator-research/odds/types.ts",
           "lib/surfaces/inventory.ts",
-          "lib/verification/cloudflare-access-live.ts",
-          "lib/verification/pages-edge-weave-subdomains.ts",
-          "scripts/bake-surfaces.ts",
-          "scripts/lib/domain-branding.ts",
-          "tools/brand-status.ts"
+          "lib/verification/cloudflare-access-live.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 40,
-            "constructionCalls": 7,
+            "references": 58,
+            "constructionCalls": 15,
             "guardCalls": 0,
             "files": [
               "lib/http/bun-serve-lifecycle.ts",
@@ -4998,12 +5731,13 @@
               "lib/http/host-lineage.ts",
               "lib/http/host-planes.ts",
               "lib/http/portal-weave.ts",
+              "lib/operator-research/odds/connection-pool.ts",
+              "lib/operator-research/odds/odds-parser.ts",
+              "lib/operator-research/odds/odds-store.ts",
+              "lib/operator-research/odds/pipeline.ts",
+              "lib/operator-research/odds/types.ts",
               "lib/surfaces/inventory.ts",
-              "lib/verification/cloudflare-access-live.ts",
-              "lib/verification/pages-edge-weave-subdomains.ts",
-              "scripts/bake-surfaces.ts",
-              "scripts/lib/domain-branding.ts",
-              "tools/brand-status.ts"
+              "lib/verification/cloudflare-access-live.ts"
             ]
           },
           "projects": {

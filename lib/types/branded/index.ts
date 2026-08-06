@@ -27,6 +27,7 @@ export {
   constructorNamesForBrand,
   createBrandGuard,
   defineBrandConstructors,
+  defineValidatedBrandConstructors,
   makeBrandedString,
   parseBrandedString,
   tryBrandedString,
@@ -118,7 +119,18 @@ import type {
   ExperimentVariantId,
   ExperimentAssignmentId,
   PartnerProfileKey,
+  PartnerCode,
+  PartnerCallSignCode,
+  PartnerProfileVersionCode,
   PartnerTemplateId,
+  OutId,
+  LedgerEntryId,
+  CurrencyCode,
+  AttentionReasonCode,
+  SourceSystemId,
+  AdapterId,
+  ExternalPartnerId,
+  ExternalAccountId,
   GateDecisionId,
   OpsChannelEventId,
   LimitForecastIssueId,
@@ -227,6 +239,12 @@ export type AnyId =
   | ExperimentId
   | ExperimentVariantId
   | ExperimentAssignmentId
+  | OutId
+  | LedgerEntryId
+  | SourceSystemId
+  | AdapterId
+  | ExternalPartnerId
+  | ExternalAccountId
   | PartnerTemplateId
   | GateDecisionId
   | OpsChannelEventId
@@ -262,6 +280,11 @@ export type AnyBrandedValue =
   | GithubIssueUrgencyCode
   | GithubIssueConcernCode
   | PartnerProfileKey
+  | PartnerCode
+  | PartnerCallSignCode
+  | PartnerProfileVersionCode
+  | CurrencyCode
+  | AttentionReasonCode
   | StateCode
   | ZipCode
   | SurfaceStatusCode

@@ -15,6 +15,8 @@ import type {
   AccessDomainId,
   AccessKeyId,
   AccountId,
+  AdapterId,
+  AttentionReasonCode,
   AnyBrandedValue,
   AnyId,
   ApexDomainId,
@@ -24,11 +26,14 @@ import type {
   AuditEntryId,
   ChallengeId,
   CorrelationId,
+  CurrencyCode,
   DeploymentId,
   DocumentId,
   DomId,
   EdgeId,
   EventId,
+  ExternalAccountId,
+  ExternalPartnerId,
   FeedId,
   HostId,
   GithubIssueArtifactId,
@@ -36,10 +41,15 @@ import type {
   GithubIssueLabelKey,
   IdentityId,
   JobId,
+  LedgerEntryId,
   LimitForecastIssueId,
   OperationId,
   OidcClientId,
+  OutId,
+  PartnerCallSignCode,
+  PartnerCode,
   PartnerProfileKey,
+  PartnerProfileVersionCode,
   PipelineId,
   PolicyId,
   PortalAccountId,
@@ -49,6 +59,7 @@ import type {
   ResourceId,
   SessionId,
   SnapshotId,
+  SourceSystemId,
   SportsbookId,
   StateCode,
   StepId,
@@ -66,6 +77,8 @@ import {
   asAccessDomainId,
   asAccessKeyId,
   asAccountId,
+  asAdapterId,
+  asAttentionReasonCode,
   asApexDomainId,
   asAuditId,
   asAuditFindingId,
@@ -74,6 +87,7 @@ import {
   asEvidenceId,
   asChallengeId,
   asCorrelationId,
+  asCurrencyCode,
   asDecisionId,
   asDeploymentId,
   asDocumentId,
@@ -81,6 +95,8 @@ import {
   asDocTokenId,
   asEdgeId,
   asEventId,
+  asExternalAccountId,
+  asExternalPartnerId,
   asExperimentAssignmentId,
   asExperimentId,
   asExperimentVariantId,
@@ -92,17 +108,22 @@ import {
   asGithubIssuePriorityCode,
   asIdentityId,
   asJobId,
+  asLedgerEntryId,
   asLimitForecastIssueId,
   asGateDecisionId,
   asLinkNonceId,
   asLoopId,
   asOperationId,
+  asOutId,
   asOidcClientId,
   asOpsChannelEventId,
   asPagesProjectId,
   asPublishLaneId,
   asSurfaceBackendCode,
   asPartnerProfileKey,
+  asPartnerCallSignCode,
+  asPartnerCode,
+  asPartnerProfileVersionCode,
   asPartnerTemplateId,
   asPipelineId,
   asPolicyId,
@@ -114,6 +135,7 @@ import {
   asRunId,
   asSessionId,
   asSnapshotId,
+  asSourceSystemId,
   asSportsbookId,
   asStepId,
   asStateCode,
@@ -150,6 +172,19 @@ const documentId: DocumentId = asDocumentId('doc-1');
 const portalTenantId: PortalTenantId = asPortalTenantId('factory');
 const portalAccountId: PortalAccountId = asPortalAccountId('account-1');
 const partnerProfileKey: PartnerProfileKey = asPartnerProfileKey('profile-1');
+const partnerCode: PartnerCode = asPartnerCode('SPEN');
+const partnerCallSign: PartnerCallSignCode = asPartnerCallSignCode('SPEN-001');
+const partnerProfileVersion: PartnerProfileVersionCode = asPartnerProfileVersionCode('v1.0');
+const outId: OutId = asOutId('out-SPEN-1');
+const ledgerEntryId: LedgerEntryId = asLedgerEntryId('ledger-entry-1');
+const currencyCode: CurrencyCode = asCurrencyCode('USD');
+const attentionReason: AttentionReasonCode = asAttentionReasonCode(
+  'partner.profile.migration_required'
+);
+const sourceSystemId: SourceSystemId = asSourceSystemId('factorywager-partner-profile');
+const adapterId: AdapterId = asAdapterId('legacy-seat-adapter');
+const externalPartnerId: ExternalPartnerId = asExternalPartnerId('external-partner-1');
+const externalAccountId: ExternalAccountId = asExternalAccountId('external-account-1');
 const domId: DomId = asDomId('section:onboard');
 
 // @ts-expect-error — SessionId is not a UserId
@@ -221,6 +256,12 @@ const crossPortalTenantAsAccount: PortalAccountId = portalTenantId;
 
 // @ts-expect-error — PortalAccountId is not a PortalTenantId
 const crossPortalAccountAsTenant: PortalTenantId = portalAccountId;
+
+// @ts-expect-error — a partner business code is not an out identity
+const crossPartnerCodeAsOut: OutId = partnerCode;
+
+// @ts-expect-error — an external source account is not a canonical ledger entry
+const crossExternalAccountAsLedger: LedgerEntryId = externalAccountId;
 
 const auditFindingId: AuditFindingId = asAuditFindingId('finding-1');
 const auditConceptId: AuditConceptId = asAuditConceptId('concept-1');
@@ -303,7 +344,7 @@ if (isBrandedValue('SessionId', guardInput)) {
   void guardedSession;
 }
 
-// ─── 6. Aggregate unions cover the complete 69-value catalog (63 IDs + key/codes) ─
+// ─── 6. Aggregate unions cover the complete 92-value catalog ─────────────────
 
 const everyId: readonly AnyId[] = [
   asSessionId('s'),
@@ -362,6 +403,12 @@ const everyId: readonly AnyId[] = [
   asPagesProjectId('project-r-score'),
   asPublishLaneId('prod-write'),
   asAccessDomainId('score.factory-wager.com/portal'),
+  outId,
+  ledgerEntryId,
+  sourceSystemId,
+  adapterId,
+  externalPartnerId,
+  externalAccountId,
   githubIssueArtifactId,
   githubIssueConceptId,
 ];
@@ -376,6 +423,11 @@ const everyBrandedValue: readonly AnyBrandedValue[] = [
   asSurfaceStatusCode('live'),
   asSurfaceAccessCode('public'),
   asSurfaceBackendCode('cloudflare-pages'),
+  partnerCode,
+  partnerCallSign,
+  partnerProfileVersion,
+  currencyCode,
+  attentionReason,
 ];
 
 // @ts-expect-error — a key is a branded value, not an ID
