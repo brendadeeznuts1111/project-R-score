@@ -1,0 +1,12 @@
+[operator]
+id = "espnbet"
+name = "ESPN Bet"
+host = "espnbet.com"
+url = "https://espnbet.com"
+identity = "brand:espnbet"
+
+geo = ["US"]
+markets = ["american-football", "basketball", "baseball", "hockey", "soccer"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["penn", "thescore"]
+probe_paths = ["/"]

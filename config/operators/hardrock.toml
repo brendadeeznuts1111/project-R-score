@@ -1,0 +1,12 @@
+[operator]
+id = "hardrock"
+name = "Hard Rock Bet"
+host = "hardrock.bet"
+url = "https://hardrock.bet"
+identity = "brand:hardrock"
+
+geo = ["US-FL", "US-AZ"]
+markets = ["basketball", "american-football", "baseball", "hockey"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["hardrock"]
+probe_paths = ["/", "/sportsbook"]

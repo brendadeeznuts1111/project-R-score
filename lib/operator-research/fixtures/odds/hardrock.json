@@ -1,0 +1,34 @@
+{
+  "host": "hardrock.bet",
+  "sportsbookId": "hardrock",
+  "timestamp": 1754400000000,
+  "markets": [
+    {
+      "id": "mlb-nyy-bos-ml",
+      "name": "NYY vs BOS Moneyline",
+      "sport": "baseball",
+      "league": "MLB",
+      "marketType": "moneyline",
+      "startTime": "2026-08-06T23:05:00.000Z",
+      "session": "pregame",
+      "selections": [
+        { "name": "NYY", "price": 1.91 },
+        { "name": "BOS", "price": 1.95 }
+      ]
+    },
+    {
+      "id": "mlb-nyy-bos-total",
+      "name": "NYY vs BOS Total",
+      "sport": "baseball",
+      "league": "MLB",
+      "marketType": "total",
+      "startTime": "2026-08-06T23:05:00.000Z",
+      "session": "pregame",
+      "selections": [
+        { "name": "Over 8.5", "price": 1.87 },
+        { "name": "Under 8.5", "price": 1.95 }
+      ]
+    }
+  ],
+  "limits": { "maxBet": 1000, "minBet": 1, "currency": "USD" }
+}

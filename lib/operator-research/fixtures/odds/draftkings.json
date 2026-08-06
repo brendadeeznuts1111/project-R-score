@@ -1,0 +1,16 @@
+{
+  "host": "sportsbook.draftkings.com",
+  "sportsbookId": "draftkings",
+  "timestamp": 1754400000000,
+  "markets": [
+    {
+      "id": "mlb-nyy-bos-ml",
+      "name": "NYY vs BOS Moneyline",
+      "selections": [
+        { "name": "NYY", "price": 1.88 },
+        { "name": "BOS", "price": 1.98 }
+      ]
+    }
+  ],
+  "limits": { "maxBet": 2500, "minBet": 0.1, "currency": "USD" }
+}

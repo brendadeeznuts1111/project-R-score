@@ -1,0 +1,12 @@
+[operator]
+id = "betfair"
+name = "Betfair"
+host = "betfair.com"
+url = "https://betfair.com"
+identity = "brand:betfair"
+
+geo = ["GB", "IE", "AU"]
+markets = ["soccer", "tennis", "horse-racing", "basketball"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["betfair", "flutter"]
+probe_paths = ["/", "/exchange"]

@@ -1,0 +1,69 @@
+[[teams]]
+canonical = "New York Yankees"
+short = "NYY"
+sport = "baseball"
+league = "MLB"
+aliases = ["Yankees", "NY Yankees", "NYY"]
+
+[[teams]]
+canonical = "Boston Red Sox"
+short = "BOS"
+sport = "baseball"
+league = "MLB"
+aliases = ["Red Sox", "Boston", "BOS"]
+
+[[teams]]
+canonical = "Los Angeles Lakers"
+short = "LAL"
+sport = "basketball"
+league = "NBA"
+aliases = ["Lakers", "LA Lakers", "LAL"]
+
+[[teams]]
+canonical = "Boston Celtics"
+short = "BOS"
+sport = "basketball"
+league = "NBA"
+aliases = ["Celtics", "Boston", "BOS"]
+
+[[teams]]
+canonical = "Kansas City Chiefs"
+short = "KC"
+sport = "american-football"
+league = "NFL"
+aliases = ["Chiefs", "KC Chiefs", "KAN"]
+
+[[teams]]
+canonical = "San Francisco 49ers"
+short = "SF"
+sport = "american-football"
+league = "NFL"
+aliases = ["49ers", "Niners", "SF 49ers"]
+
+[[teams]]
+canonical = "Manchester City"
+short = "MCI"
+sport = "soccer"
+league = "EPL"
+aliases = ["Man City", "City", "MCFC"]
+
+[[teams]]
+canonical = "Arsenal"
+short = "ARS"
+sport = "soccer"
+league = "EPL"
+aliases = ["Arsenal FC", "Gunners", "AFC"]
+
+[[teams]]
+canonical = "Los Angeles Dodgers"
+short = "LAD"
+sport = "baseball"
+league = "MLB"
+aliases = ["Dodgers", "LA Dodgers", "LAD"]
+
+[[teams]]
+canonical = "New York Mets"
+short = "NYM"
+sport = "baseball"
+league = "MLB"
+aliases = ["Mets", "NY Mets", "NYM"]

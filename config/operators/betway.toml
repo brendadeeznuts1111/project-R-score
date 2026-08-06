@@ -1,0 +1,12 @@
+[operator]
+id = "betway"
+name = "Betway"
+host = "betway.com"
+url = "https://betway.com"
+identity = "brand:betway"
+
+geo = ["GB", "CA", "ZA"]
+markets = ["soccer", "tennis", "basketball", "esports"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["betway"]
+probe_paths = ["/"]

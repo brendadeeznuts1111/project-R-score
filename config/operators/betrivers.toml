@@ -1,0 +1,12 @@
+[operator]
+id = "betrivers"
+name = "BetRivers"
+host = "betrivers.com"
+url = "https://betrivers.com"
+identity = "brand:betrivers"
+
+geo = ["US"]
+markets = ["american-football", "basketball", "baseball", "hockey", "tennis"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["kambi"]
+probe_paths = ["/"]

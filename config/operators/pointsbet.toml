@@ -1,0 +1,12 @@
+[operator]
+id = "pointsbet"
+name = "PointsBet"
+host = "pointsbet.com"
+url = "https://pointsbet.com"
+identity = "brand:pointsbet"
+
+geo = ["AU", "US"]
+markets = ["australian-rules", "rugby", "soccer", "tennis", "basketball"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["pointsbet"]
+probe_paths = ["/"]

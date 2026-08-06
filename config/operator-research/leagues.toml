@@ -1,0 +1,48 @@
+[[leagues]]
+name = "NBA"
+sport = "basketball"
+country = "US"
+season = "2025-2026"
+aliases = ["National Basketball Association", "nba"]
+
+[[leagues]]
+name = "MLB"
+sport = "baseball"
+country = "US"
+season = "2026"
+aliases = ["Major League Baseball", "mlb"]
+
+[[leagues]]
+name = "NFL"
+sport = "american-football"
+country = "US"
+season = "2025-2026"
+aliases = ["National Football League", "nfl"]
+
+[[leagues]]
+name = "NHL"
+sport = "hockey"
+country = "US"
+season = "2025-2026"
+aliases = ["National Hockey League", "nhl"]
+
+[[leagues]]
+name = "ATP"
+sport = "tennis"
+country = "INT"
+season = "2026"
+aliases = ["atp tour", "atp"]
+
+[[leagues]]
+name = "WTA"
+sport = "tennis"
+country = "INT"
+season = "2026"
+aliases = ["wta tour", "wta"]
+
+[[leagues]]
+name = "EPL"
+sport = "soccer"
+country = "GB"
+season = "2025-2026"
+aliases = ["Premier League", "English Premier League", "epl"]

@@ -1,0 +1,109 @@
+[defaults]
+enabled = true
+min_arb_edge_pct = 1.5
+min_move_pct = 5
+min_delay_ms = 10000
+
+[[rules]]
+id = "price-move"
+name = "Price movement > 5%"
+description = "Trigger when odds change more than 5% in any direction"
+active = true
+condition = "price_change_percent > 5"
+channels = ["ws", "email"]
+email_recipients = ["admin@example.com"]
+period = "all"
+pattern = "spike"
+market_type = "all"
+geo = "US"
+latency_threshold = 200
+bookmaker_comparison = "fonbet_vs_betmgm"
+
+[rules.edge]
+min = 0.05
+
+[rules.limit]
+min = 10
+max = 500
+
+[[rules]]
+id = "arbitrage"
+name = "Arbitrage opportunity > 2%"
+active = true
+condition = "arb_percent > 2"
+channels = ["ws"]
+email_recipients = []
+period = "live"
+pattern = "arbitrage"
+market_type = "moneyline"
+geo = "all"
+latency_threshold = 300
+
+[rules.edge]
+min = 0.02
+
+[rules.limit]
+min = 5
+max = 1000
+
+[[rules]]
+id = "delay-10s"
+name = "Cross-book delay > 10s"
+active = true
+condition = "delay_ms > 10000"
+channels = ["ws"]
+email_recipients = []
+period = "all"
+latency_threshold = 10000
+
+[[rules]]
+id = "smart-money"
+name = "Smart money score > 0.6"
+active = true
+condition = "smart_money_score > 0.6"
+channels = ["ws"]
+email_recipients = []
+period = "prematch"
+pattern = "drift"
+
+[rules.edge]
+min = 0.015
+
+[[rules]]
+id = "line-drift"
+name = "Line drift > 3%"
+description = "Sustained drift across the book"
+active = false
+condition = "price_change_percent > 3"
+channels = ["ws"]
+email_recipients = []
+period = "prematch"
+pattern = "drift"
+market_type = "spread"
+geo = "UK"
+
+[rules.edge]
+min = 0.03
+max = 0.15
+
+[[rules]]
+id = "cross-market-arb"
+name = "Cross-market arbitrage"
+active = true
+condition = "arb_percent > 1.5"
+channels = ["ws", "email"]
+email_recipients = ["ops@example.com"]
+period = "live"
+pattern = "arbitrage"
+market_type = "moneyline"
+geo = "US"
+state = "NV"
+latency_threshold = 200
+bookmaker_comparison = "fonbet_vs_betmgm"
+
+[rules.edge]
+min = 0.015
+
+[rules.limit]
+min = 10
+max = 500

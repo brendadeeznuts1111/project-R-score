@@ -1,0 +1,12 @@
+[operator]
+id = "underdog"
+name = "Underdog Fantasy"
+host = "underdogfantasy.com"
+url = "https://underdogfantasy.com"
+identity = "brand:underdog"
+
+geo = ["US"]
+markets = ["basketball", "american-football", "baseball", "hockey"]
+lifecycle = ["pre_match"]
+expected_stack = ["underdog"]
+probe_paths = ["/"]
