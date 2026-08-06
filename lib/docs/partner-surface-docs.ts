@@ -7,28 +7,15 @@
  */
 import {
   buildPartnerSurfaceInventory,
+  partnerDeskHrefs,
   type PartnerSurfaceInventory,
   type PartnerSurfaceRow,
 } from './partner-surface-inventory.ts';
 
+export { partnerDeskHrefs };
+
 export const PARTNER_SURFACE_GENERATED_DOC_REL =
   'docs/design/partner-surface-inventory.generated.md';
-
-/** Portal deep-links for a canonical PartnerCode (desk hash contract). */
-export function partnerDeskHrefs(code: string): {
-  readonly partnersHref: string;
-  readonly accountingHref: string;
-  readonly accountHref: string;
-  readonly historyHref: string;
-} {
-  const normalized = code.trim().toUpperCase();
-  return {
-    partnersHref: `/portal/partners/#partner/${normalized}`,
-    accountingHref: `/portal/partners/#partner/${normalized}/accounting`,
-    accountHref: `/portal/account/?account=${encodeURIComponent(normalized)}`,
-    historyHref: `/portal/partner-history/?account=${encodeURIComponent(normalized)}`,
-  };
-}
 
 export type LivePartnerCodeRow = {
   readonly code: string;

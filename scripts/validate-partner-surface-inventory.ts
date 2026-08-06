@@ -176,14 +176,52 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
           level: 'error',
           message: `${row.id}: wire-field aspect missing wireField bag`,
         });
-      } else if (
-        row.wireField.resolvesTo === 'PartnerCode' &&
-        row.wireField.sourceSystemId !== 'canonical'
-      ) {
-        issues.push({
-          level: 'warn',
-          message: `${row.id}: wire resolvesTo PartnerCode from ${row.wireField.sourceSystemId} — prefer ExternalPartnerRef`,
-        });
+      } else {
+        const bag = row.wireField;
+        if (!bag.resolvesTo?.trim()) {
+          issues.push({
+            level: 'error',
+            message: `${row.id}: wireField.resolvesTo is required`,
+          });
+        }
+        if (bag.pattern !== undefined && !/^[A-Za-z_][A-Za-z0-9_]*$/.test(bag.pattern)) {
+          issues.push({
+            level: 'error',
+            message: `${row.id}: wireField.pattern must be a simple identifier (got "${bag.pattern}")`,
+          });
+        }
+        for (const p of bag.patterns ?? []) {
+          if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(p)) {
+            issues.push({
+              level: 'error',
+              message: `${row.id}: wireField.patterns entry must be a simple identifier (got "${p}")`,
+            });
+          }
+        }
+        if (bag.nakedType && bag.nakedType !== 'string' && bag.nakedType !== 'number') {
+          issues.push({
+            level: 'error',
+            message: `${row.id}: wireField.nakedType must be "string" or "number"`,
+          });
+        }
+        const hasSimplePattern =
+          (bag.pattern && /^[A-Za-z_][A-Za-z0-9_]*$/.test(bag.pattern)) ||
+          (bag.patterns?.some(p => /^[A-Za-z_][A-Za-z0-9_]*$/.test(p)) ?? false) ||
+          /^[A-Za-z_][A-Za-z0-9_]*$/.test(bag.wireName) ||
+          /^[A-Za-z_][A-Za-z0-9_]*$/.test(row.token);
+        const hasGlobs = (bag.boundaryPathGlobs?.length ?? 0) > 0;
+        if (!hasSimplePattern && !hasGlobs) {
+          issues.push({
+            level: 'warn',
+            message: `${row.id}: wire-field has no simple pattern and no boundaryPathGlobs — lint cannot use this row`,
+          });
+        }
+        if (bag.resolvesTo === 'PartnerCode' && bag.sourceSystemId !== 'canonical') {
+          issues.push({
+            level: 'warn',
+            message: `${row.id}: wire resolvesTo PartnerCode from ${bag.sourceSystemId} — prefer ExternalPartnerRef`,
+          });
+        }
       }
     }
 

@@ -77,12 +77,12 @@ Each row in the lib SSOT / registry bake:
 | `typeOrExport` | TypeScript export or wire label when known                                                                            |
 | `repo`         | project-R-score · Kalshi-bot · toc-ops · sports-terminal                                                              |
 | `path`         | source path or package                                                                                                |
-| `href`         | public URL when applicable                                                                                            |
+| `href`         | public portal/registry URL when applicable (domains → lanes/concepts/partners; brands → `/portal/brands/#domain=operations&q=…`; live PartnerCode → `partnerDeskHrefs`) |
 | `properties`   | key attrs (domain, registry, brand shape, cli)                                                                        |
 | `owner`        | owning lane / doc                                                                                                     |
 | `brand`        | (brand only) pattern · mintAuthority · module · interiorOnly · replaces · domain · registryRef? · isActive · category |
 | `registry`     | (registry only) schemaId · schemaIdField · artifactPath · omits · moneyPolicy · requiredTopKeys · conceptIds          |
-| `wireField`    | (wire-field only) wireName · sourceSystemId · resolvesTo · quarantineOnFail · boundaryPathGlobs                       |
+| `wireField`    | (wire-field only) wireName · pattern(s) · brandedType · resolvesTo · nakedType · boundaryPathGlobs · strict · requireReason |
 | `chromeNav`    | (chrome-nav / portal-board) domain · group · tier · registryArtifact                                                  |
 | `taxonomy`     | (taxonomy) homonymDistinct · conceptDomain                                                                            |
 
@@ -107,7 +107,7 @@ and wire traps with `bun run partner-surface-inventory:lint-wires`:
 | ----- | --------------------------------------------------------------------------------------------------------- |
 | A     | brand-manifest + `Bun.file.exists` + brand linking (`domain` · `registryRef` · `isActive` · `category`)   |
 | B     | baked JSON vs bag: schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy`     |
-| C     | `lint-wires`: glob coverage + naked `partnerId` / `partner_id` `: string` outside `boundaryPathGlobs`     |
+| C     | `lint-wires`: inventory-driven naked brand annotations outside `boundaryPathGlobs` — see [wire-lint.md](./wire-lint.md) |
 | D     | `lint-domains`: inventory brand types used outside home path globs (default **warn**; `--strict` → error) |
 
 Layer A/B stay on `partner-surface-inventory:validate`. Layer C is
@@ -130,10 +130,12 @@ Registry bag notes:
 - partners-ops may expose `credentials.username` as a public board label; vault
   secrets (`password`, `vaultKey`, `apiKey`) stay in `omits`.
 
-Wire bag notes:
+Wire bag notes — full guide: [wire-lint.md](./wire-lint.md).
 
-- `boundaryPathGlobs` allowlists adapter trees (e.g. `Kalshi-bot/**`,
-  `projects/active/sports-terminal-os/**`) where raw wire ids are parsed.
+- Rules are **inventory-driven**: `pattern` / `patterns` + `brandedType` +
+  `boundaryPathGlobs` (same engine for `partnerId`, `outId`, …).
+- `ExternalPartnerRef` rows are allowlists for raw wire strings — **not**
+  skipped.
 - Glob coverage: 0 matches + empty/missing tree → **warn** (optional nested
   checkout); 0 matches + tree has files → **error**. Pass `--strict-globs` (or
   `WIRE_TRAP_STRICT_GLOBS=1`) to fail empty checkouts too.
@@ -141,11 +143,11 @@ Wire bag notes:
   allowlisted naked annotations (migration).
 - `requireReason`: `// wire-ok` on matching files must include
   `// wire-ok: <reason>`.
-- Interior code must use `PartnerCode` / `ExternalPartnerRef`, or suppress with
-  `// wire-ok` / `// brand-ok` (same / prev / next line).
-- Adding a new external client = add a `wire-field` row with
-  `resolvesTo: ExternalPartnerRef` + `boundaryPathGlobs` — no separate ast-grep
-  allowlist.
+- Interior code must use branded types / refs, or suppress with `// wire-ok` /
+  `// brand-ok` (same / prev / next line).
+- Money (`money: number`) deferred — no `MoneyAmount` brand yet.
+- Pre-commit path-gates `--scan` (+ `--strict-globs` when inventory SSOT
+  staged). Escape: `SKIP_WIRE_LINT=1`.
 
 ## Minimum surface set (summary)
 

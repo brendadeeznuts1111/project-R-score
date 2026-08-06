@@ -12,8 +12,10 @@
  *   bun scripts/validate-wire-traps.ts --hlp
  *   bun scripts/validate-wire-traps.ts --why
  *   bun scripts/validate-wire-traps.ts --document
+ *   bun scripts/validate-wire-traps.ts --rules
  *   bun scripts/validate-wire-traps.ts --scan
  *   bun scripts/validate-wire-traps.ts --scan --strict-globs
+ *   bun scripts/validate-wire-traps.ts --scan --fix
  *
  * Does **not** replace partner-surface-inventory:validate (Layers A/B).
  * Allowlist SSOT = wire-field rows in partner-surface-inventory.
@@ -22,13 +24,19 @@ import { stringWidth } from 'bun';
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { colorize, padEndWidth, shouldColor, termWidth } from '../lib/console-depth.ts';
 import { buildPartnerSurfaceInventory } from '../lib/docs/partner-surface-inventory.ts';
-import { scanWireTraps, type WireTrapIssue } from '../lib/docs/partner-surface-wire-lint.ts';
+import {
+  applyWireOkFixes,
+  buildWireLintRules,
+  scanWireTraps,
+  type WireTrapIssue,
+} from '../lib/docs/partner-surface-wire-lint.ts';
 import { resolvePath } from './lib/fs-bun.ts';
 
 const ROOT = resolvePath(import.meta.dir, '..');
 const DOCUMENT_REL = 'docs/design/partner-surface-inventory.md';
+const WIRE_LINT_DOC_REL = 'docs/design/wire-lint.md';
 
-const HELP_TEXT = `partner-surface-inventory lint-wires — Layer C naked partnerId traps
+const HELP_TEXT = `partner-surface-inventory lint-wires — Layer C inventory-driven brand traps
 
 Usage:
   bun run partner-surface-inventory:lint-wires [-- flags]
@@ -40,44 +48,46 @@ Scan requires --scan (the package.json script passes it).
 Flags:
   -h, --help, --hlp   Show this help (default when no args)
   --why               Why this gate exists (claim + allowlist model)
-  --document          Print design-doc path + wire-bag excerpt
+  --document          Inventory + wire-lint.md excerpts
+  --rules             Dump built rules (brandedType · patterns · globs)
   --scan              Run the wire-trap scan
   --strict-globs      With --scan (or alone): fail when an allowlist glob
-                      matches 0 files (also WIRE_TRAP_STRICT_GLOBS=1);
-                      default warns on empty nested checkouts
+                      matches 0 files (also WIRE_TRAP_STRICT_GLOBS=1)
+  --fix               With --scan: append // wire-ok on non-strict
+                      allowlisted hits only (never trap-row errors)
 
 Layers (do not conflate):
   A/B  bun run partner-surface-inventory:validate
   C    bun run partner-surface-inventory:lint-wires   ← --scan
 
 Fix a hit:
-  1. Brand as PartnerCode / ExternalPartnerRef after the boundary, or
+  1. Brand as OutId / PartnerCode / ExternalPartnerRef after the boundary, or
   2. Add // wire-ok: <reason> (or // brand-ok) on same/prev/next line, or
-  3. Register the adapter: wire-field row with boundaryPathGlobs in
-     lib/docs/partner-surface-inventory.ts then bake.
+  3. Register the adapter: wire-field row with pattern + boundaryPathGlobs, or
+  4. For non-strict allowlists: --scan --fix
 `;
 
 const WHY_MARKDOWN = `# Why lint-wires (Layer C)
 
 **Claim** \`partner-surface-inventory\` — map partner surfaces before rename;
-Layer C stops bare \`partnerId: string\` / \`partner_id: string\` from leaking
-into interior code.
+Layer C stops bare brand annotations (\`partnerId: string\`, \`outId: string\`,
+…) from leaking into interior code.
 
 ## The bug pattern
 
 Boards and adapters join many sources. An unqualified \`partnerId\` may mean
 Sports snake_case wire, Kalshi registry id, Pandora remote id, or a tree node.
-Promoting it to \`PartnerCode\` without a parse edge is a Layer-2/3 bug.
+Promoting it to \`PartnerCode\` without a parse edge is a Layer-2/3 bug. The
+same trap applies to \`outId\` → \`OutId\` and other brands.
 
-## Inventory-aware allowlist (not blanket ast-grep)
+## Inventory-driven rules (not blanket ast-grep)
 
-\`wire-field\` rows with \`resolvesTo: ExternalPartnerRef\` and non-empty
-\`boundaryPathGlobs\` are the **only** places naked wire annotations are
-expected. Trap rows (empty globs, e.g. unqualified \`partnerId\`) document
-unregistered adapters and shape the error fix text.
+Every \`wire-field\` row contributes **patterns** + **brandedType** +
+\`boundaryPathGlobs\`. Rows with the same brandedType merge. \`ExternalPartnerRef\`
+rows are allowlists for raw wire strings — they are **not** skipped.
 
-New external client → add a wire-field row + globs → bake. No separate
-ast-grep allowlist to maintain.
+New brand → add a wire-field row (\`pattern\`, \`brandedType\`, globs) → bake.
+Guide: \`docs/design/wire-lint.md\`.
 
 ## Suppressions
 
@@ -87,7 +97,7 @@ ast-grep allowlist to maintain.
 
 ## Related
 
-- Design: \`${DOCUMENT_REL}\`
+- Design: \`${DOCUMENT_REL}\` · \`docs/design/wire-lint.md\`
 - SSOT: \`lib/docs/partner-surface-inventory.ts\`
 - Engine: \`lib/docs/partner-surface-wire-lint.ts\`
 - Layers A/B: \`bun run partner-surface-inventory:validate\`
@@ -124,13 +134,14 @@ export function printWhy(): void {
 
 export async function printDocument(): Promise<void> {
   const abs = resolvePath(ROOT, DOCUMENT_REL);
+  const wireAbs = resolvePath(ROOT, WIRE_LINT_DOC_REL);
   const file = Bun.file(abs);
   if (!(await file.exists())) {
     console.error(`❌ document missing: ${DOCUMENT_REL}`);
     return;
   }
   const text = await file.text();
-  const wireStart = text.indexOf('Wire bag notes:');
+  const wireStart = text.indexOf('Wire bag notes');
   const nextHeading = text.indexOf('\n## ', wireStart === -1 ? 0 : wireStart);
   const excerpt =
     wireStart === -1
@@ -146,9 +157,49 @@ export async function printDocument(): Promise<void> {
   console.info(`Document: ${linked}`);
   console.info(`Absolute: ${abs}`);
   console.info('');
-  printAnsiMarkdown(`## Wire bag notes (from design doc)\n\n${excerpt}\n`);
-  console.info(`Full doc: bun run partner-surface-inventory:lint-wires -- --document`);
-  console.info(`Open:     bun -e 'Bun.openInEditor(${JSON.stringify(abs)})'`);
+  printAnsiMarkdown(`## Wire bag notes (from inventory design doc)\n\n${excerpt}\n`);
+
+  const wireDoc = Bun.file(wireAbs);
+  if (await wireDoc.exists()) {
+    const wireText = await wireDoc.text();
+    const purpose = wireText.indexOf('## Purpose');
+    const how = wireText.indexOf('## How it works');
+    const adding = wireText.indexOf('## Adding a new rule');
+    const end = adding === -1 ? how + 800 : adding;
+    const guide =
+      purpose === -1
+        ? wireText.slice(0, 600)
+        : wireText.slice(purpose, end === -1 ? purpose + 900 : end).trim();
+    const wireHref = Bun.pathToFileURL(wireAbs).href;
+    const wireLinked =
+      shouldColor() && process.stdout.isTTY
+        ? `\u001b]8;;${wireHref}\u001b\\${WIRE_LINT_DOC_REL}\u001b]8;;\u001b\\`
+        : WIRE_LINT_DOC_REL;
+    console.info(`Guide: ${wireLinked}`);
+    console.info('');
+    printAnsiMarkdown(`${guide}\n`);
+  }
+
+  console.info(`Open: bun -e 'Bun.openInEditor(${JSON.stringify(wireAbs)})'`);
+}
+
+export function printRules(): void {
+  const inv = buildPartnerSurfaceInventory();
+  const rules = buildWireLintRules(inv.rows);
+  const rows = rules.map(r => ({
+    brandedType: r.brandedType,
+    patterns: r.patterns.join(', '),
+    naked: r.nakedType,
+    globs: r.globs.length ? r.globs.join(' · ') : '(trap — no globs)',
+    strict: r.strict ? 'yes' : 'no',
+    rows: String(r.rowIds.length),
+  }));
+  console.log(
+    Bun.inspect.table(rows, ['brandedType', 'patterns', 'naked', 'strict', 'rows', 'globs'], {
+      colors: shouldColor(),
+    })
+  );
+  console.info(`\n${rules.length} rule families · guide: ${WIRE_LINT_DOC_REL} · --scan to enforce`);
 }
 
 function osc8FileLink(relPath: string, root: string): string {
@@ -247,8 +298,12 @@ async function main(argv: readonly string[] = Bun.argv): Promise<number> {
     await printDocument();
     return 0;
   }
+  if (hasFlag(args, '--rules')) {
+    printRules();
+    return 0;
+  }
 
-  const known = new Set(['--scan', '--strict-globs']);
+  const known = new Set(['--scan', '--strict-globs', '--fix']);
   const unknown = args.filter(a => a.startsWith('-') && !known.has(a));
   if (unknown.length > 0) {
     console.error(`Unknown option(s): ${unknown.join(', ')}\n`);
@@ -261,12 +316,36 @@ async function main(argv: readonly string[] = Bun.argv): Promise<number> {
     return 0;
   }
 
+  if (hasFlag(args, '--fix') && !hasFlag(args, '--scan')) {
+    console.error('❌ --fix requires --scan\n');
+    printHelp();
+    return 2;
+  }
+
   const inv = buildPartnerSurfaceInventory();
   const result = await scanWireTraps({
     root: ROOT,
     rows: inv.rows,
     strictGlobs: wantsStrictGlobs(args),
   });
+
+  if (hasFlag(args, '--fix') && result.fixable.length > 0) {
+    const applied = await applyWireOkFixes({
+      root: ROOT,
+      fixes: result.fixable.map(h => ({
+        file: h.file,
+        line: h.line,
+        reason: `${h.brandedType} boundary`,
+      })),
+    });
+    console.info(`✏️  --fix: wrote ${applied.length} // wire-ok annotation(s)`);
+    for (const a of applied.slice(0, 20)) {
+      console.info(`   ${a.file}:${a.line}`);
+    }
+    if (applied.length > 20) console.info(`   … +${applied.length - 20} more`);
+  } else if (hasFlag(args, '--fix')) {
+    console.info('✏️  --fix: nothing to write (no non-strict allowlisted naked hits)');
+  }
 
   const errors = result.issues.filter(i => i.level === 'error');
   const warns = result.issues.filter(i => i.level === 'warn');
@@ -286,19 +365,17 @@ async function main(argv: readonly string[] = Bun.argv): Promise<number> {
   if (errors.length === 0) {
     console.info(
       `✅ partner-surface-inventory lint-wires: scanned ${result.scannedFiles} files · ` +
-        `${result.allowGlobs.length} allow globs · ${warns.length} warn · ` +
-        `allow=[${result.allowGlobs.join(', ') || '∅'}]`
+        `${result.rules.length} rules · ${result.allowGlobs.length} allow globs · ${warns.length} warn · ` +
+        `fixable=${result.fixable.length}`
     );
     return 0;
   }
 
   console.error(
     `\n❌ ${errors.length} error(s), ${warns.length} warning(s)\n` +
-      `Allowed boundaryPathGlobs:\n  ${
-        result.allowGlobs.join('\n  ') || '(none — add wire-field boundaryPathGlobs)'
-      }\n` +
-      `Why:  bun run partner-surface-inventory:lint-wires -- --why\n` +
-      `Help: bun run partner-surface-inventory:lint-wires -- --hlp`
+      `Rules: bun scripts/validate-wire-traps.ts --rules\n` +
+      `Why:   bun scripts/validate-wire-traps.ts --why\n` +
+      `Help:  bun scripts/validate-wire-traps.ts --hlp`
   );
   return 1;
 }
@@ -307,4 +384,4 @@ if (isModuleEntrypoint(import.meta)) {
   process.exit(await main());
 }
 
-export { main, HELP_TEXT, WHY_MARKDOWN, DOCUMENT_REL };
+export { main, HELP_TEXT, WHY_MARKDOWN, DOCUMENT_REL, WIRE_LINT_DOC_REL };

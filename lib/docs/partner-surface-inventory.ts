@@ -96,18 +96,33 @@ export type PartnerSurfaceRegistryBag = {
 };
 
 /**
- * Wire-field semantics — never promote bare partnerId to PartnerCode.
+ * Wire-field semantics — inventory-driven naked brand traps (Layer C).
  *
- * `boundaryPathGlobs` allowlists adapter/wire files where naked
- * `partnerId: string` / `partner_id: string` is expected at the parse edge.
+ * `pattern` / `patterns` name the TypeScript identifier(s) to match.
+ * `brandedType` is the type to use after the boundary (defaults to `resolvesTo`).
+ * `boundaryPathGlobs` allowlists adapter files where naked annotations are OK.
  * Consumed by `bun run partner-surface-inventory:lint-wires`.
+ *
+ * @see docs/design/wire-lint.md
  */
 export type PartnerSurfaceWireFieldBag = {
   readonly wireName: string;
   readonly sourceSystemId: string; // brand-ok — adapter source label (kalshi|sports|…), not SourceSystemId
-  readonly resolvesTo: 'ExternalPartnerRef' | 'PartnerCode';
+  /**
+   * Target brand / ref family. ExternalPartnerRef rows are allowlists for raw
+   * wire strings — they are not skipped by the linter.
+   */
+  readonly resolvesTo: string;
+  /** Display / error branded type (defaults to resolvesTo). */
+  readonly brandedType?: string;
+  /** Single identifier to match (defaults: simple wireName or token). */
+  readonly pattern?: string;
+  /** Extra identifiers (e.g. partnerId + partner_id). */
+  readonly patterns?: readonly string[];
+  /** Annotation RHS to match — default `string` (money may use `number`). */
+  readonly nakedType?: 'string' | 'number';
   readonly quarantineOnFail: boolean;
-  /** Path prefixes/globs where naked wire id annotations are allowed. */
+  /** Path prefixes/globs where naked annotations are allowed. */
   readonly boundaryPathGlobs?: readonly string[];
   /**
    * When true (default), allowlisted hits are silent.
@@ -195,6 +210,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'SessionLaneId',
     repo: 'project-R-score',
     path: 'lib/docs/workspace-taxonomy.ts',
+    href: '/portal/lanes/',
     properties: ['SESSION_LANES', 'archive <lane>', 'display: partner'],
     owner: 'organization / naming-grammar',
     notes: 'Filename token in <t>-<lane>-<slug>; not chrome Domain or ConceptDomain',
@@ -208,7 +224,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'PortalChromeDomainLane',
     repo: 'project-R-score',
     path: 'lib/portal/chrome-catalog.ts',
-    href: undefined,
+    href: '/portal/partners/',
     properties: ['PORTAL_DOMAIN_LANE_META', 'label: Partner desk', 'ISSUE-ROUTING Domain'],
     owner: 'portal chrome / ISSUE-ROUTING',
     notes: 'Homonym of session lane partner; boards use data-domain=partner',
@@ -222,6 +238,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'ConceptDomain',
     repo: 'project-R-score',
     path: 'lib/portal/concept-domains.ts',
+    href: '/portal/concepts/#domain=partners',
     properties: ['CONCEPT_DOMAINS', 'prefix partner.', 'prefix out.'],
     owner: 'concepts / DOMAIN_CONCEPT_SHAPE',
     notes: 'Plural token — not chrome partner and not PartnerCode',
@@ -235,6 +252,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'commitScopeHint',
     repo: 'project-R-score',
     path: 'lib/docs/workspace-taxonomy.ts',
+    href: '/portal/lanes/',
     properties: ['commitScopeHints', 'type(partner):', 'open set'],
     owner: 'workspace taxonomy correlations',
     notes: 'Guidance only — not a frozen enum',
@@ -248,6 +266,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'commitScopeHint',
     repo: 'project-R-score',
     path: 'lib/docs/workspace-taxonomy.ts',
+    href: '/portal/lanes/',
     properties: ['commitScopeHints', 'type(partners):', 'open set'],
     owner: 'workspace taxonomy correlations',
     taxonomy: { homonymDistinct: true, conceptDomain: 'partners' },
@@ -260,6 +279,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'commitScopeHint',
     repo: 'project-R-score',
     path: 'lib/docs/workspace-taxonomy.ts',
+    href: '/portal/lanes/',
     properties: ['commitScopeHints', 'type(ops):', 'open set'],
     owner: 'workspace taxonomy correlations',
     notes: 'Common commit scope for partner-desk work; not a Domain lane',
@@ -295,6 +315,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'PartnerCode',
     repo: 'project-R-score',
     path: 'lib/types/branded/operations.ts',
+    href: '/portal/brands/#domain=operations&q=PartnerCode',
     properties: ['^[A-Z]{3,6}$', 'canonical business join key', 'parsePartnerCode'],
     owner: 'partners core / branded operations',
     notes: 'Only unqualified partner key — see partner-type-reference-map',
@@ -318,6 +339,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'PartnerCallSignCode',
     repo: 'project-R-score',
     path: 'lib/types/branded/operations.ts',
+    href: '/portal/brands/#domain=operations&q=PartnerCallSignCode',
     properties: ['CODE-NNN', 'derived from PartnerCode'],
     owner: 'partners core',
     brand: {
@@ -338,6 +360,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'PartnerProfileKey',
     repo: 'project-R-score',
     path: 'lib/types/branded/operations.ts',
+    href: '/portal/brands/#domain=operations&q=PartnerProfileKey',
     properties: ['pp-${treeNodeId}', 'compatibility binding'],
     owner: 'operations',
     notes: 'Not dashboard or partner business identity',
@@ -359,6 +382,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'PartnerTemplateId',
     repo: 'project-R-score',
     path: 'lib/types/branded/operations.ts',
+    href: '/portal/brands/#domain=operations&q=PartnerTemplateId',
     properties: ['onboarding template slug'],
     owner: 'operations / config',
     brand: {
@@ -379,6 +403,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'OutId',
     repo: 'project-R-score',
     path: 'lib/types/branded/operations.ts',
+    href: '/portal/brands/#domain=operations&q=OutId',
     properties: ['out-{PartnerCode}-{n}', 'bookmaker account identity'],
     owner: 'partners core',
     brand: {
@@ -401,6 +426,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'ExternalPartnerId',
     repo: 'project-R-score',
     path: 'lib/types/branded/operations.ts',
+    href: '/portal/brands/#domain=operations&q=ExternalPartnerId',
     properties: ['source-owned non-canonical', 'never bare partnerId in core'],
     owner: 'adapter boundary',
     brand: {
@@ -421,6 +447,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'TreeNodeId',
     repo: 'project-R-score',
     path: 'lib/types/branded/operations.ts',
+    href: '/portal/brands/#domain=operations&q=TreeNodeId',
     properties: ['ops tree node PK', 'partner|agent|sub_agent'],
     owner: 'operations',
     brand: {
@@ -441,6 +468,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'PartnerCode',
     repo: 'project-R-score',
     path: 'packages/partners/src/core/identifiers.ts',
+    href: '/portal/brands/#domain=operations&q=PartnerCode',
     properties: ['parsePartnerCode', 'parsePartnerCallSign', 'parseCanonicalOutIdentity'],
     owner: '@factorywager/partners',
     notes: 'Package re-export parsers — brand name remains PartnerCode in manifest',
@@ -465,6 +493,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: '@factorywager/partners',
     repo: 'project-R-score',
     path: 'packages/partners/',
+    href: '/portal/partners/',
     properties: [
       './core',
       './boundary',
@@ -485,6 +514,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'PartnerProfile',
     repo: 'project-R-score',
     path: 'lib/partner-profile/',
+    href: '/portal/partner/',
     properties: ['schema.ts', 'partner-health', 'ledger', 'onboard'],
     owner: 'partner profile / seat desk',
   }),
@@ -505,6 +535,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'partner-ops-glossary',
     repo: 'project-R-score',
     path: 'lib/telegram/partner-ops-glossary.ts',
+    href: '/portal/concepts/#domain=partners',
     properties: ['Factory overlay concepts', 'deposit.method.*', 'telegram.topic.*'],
     owner: 'partner-domain-map',
   }),
@@ -514,6 +545,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'PARTNER_OPS_COLORS',
     repo: 'project-R-score',
     path: 'lib/telegram/partner-ops-color-kernel.ts',
+    href: '/portal/partners/',
     properties: ['9-key palette', 'PARTNER_OPS_CONCEPT_COLORS'],
     owner: 'partner-ops color kernel',
   }),
@@ -523,6 +555,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'PARTNER_OPS_EVENT_CODES',
     repo: 'project-R-score',
     path: 'lib/telegram/partner-ops-events.ts',
+    href: '/portal/partners/',
     properties: ['11 event codes', 'PARTNER_OPS_EVENT_GLOSSARY'],
     owner: 'partner-ops events',
   }),
@@ -684,9 +717,11 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       wireName: 'partnerId',
       sourceSystemId: 'unqualified',
       resolvesTo: 'ExternalPartnerRef',
+      brandedType: 'ExternalPartnerRef',
+      pattern: 'partnerId',
+      patterns: ['partnerId', 'partner_id'],
       quarantineOnFail: true,
-      // No boundaryPathGlobs — unqualified is the trap itself; use // wire-ok / brand-ok
-      // or a source-specific wire-field row when adding a real adapter.
+      // Trap row — no globs; use // wire-ok or a source-specific wire-field row.
     },
   }),
   row({
@@ -703,6 +738,9 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       wireName: 'partner_id',
       sourceSystemId: 'sports-terminal',
       resolvesTo: 'ExternalPartnerRef',
+      brandedType: 'ExternalPartnerRef',
+      pattern: 'partner_id',
+      patterns: ['partner_id', 'partnerId'],
       quarantineOnFail: true,
       boundaryPathGlobs: ['projects/active/sports-terminal-os/**'],
     },
@@ -717,10 +755,13 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     path: 'Kalshi-bot',
     properties: ['e.g. partner-spen', 'join via partners[].code → PartnerCode'],
     owner: 'execution adapter',
+    notes: 'Complex wireName — contributes Kalshi-bot/** allowlist to ExternalPartnerRef family',
     wireField: {
       wireName: 'partners[].id',
       sourceSystemId: 'kalshi',
       resolvesTo: 'ExternalPartnerRef',
+      brandedType: 'ExternalPartnerRef',
+      // no simple pattern — globs allow partnerId/partner_id from sibling rows
       quarantineOnFail: true,
       boundaryPathGlobs: ['Kalshi-bot/**'],
     },
@@ -739,9 +780,52 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       wireName: 'partnerId',
       sourceSystemId: 'pandora',
       resolvesTo: 'ExternalPartnerRef',
+      brandedType: 'ExternalPartnerRef',
+      pattern: 'partnerId',
       quarantineOnFail: true,
-      // Adapter not landed yet — empty globs warn until paths are registered.
+      // Adapter not landed — empty globs warn until paths are registered.
       boundaryPathGlobs: [],
+    },
+  }),
+  row({
+    id: 'wire.outId',
+    aspect: 'wire-field',
+    machine: 'identity',
+    token: 'outId',
+    typeOrExport: 'OutId',
+    repo: 'project-R-score',
+    path: 'lib/telegram',
+    properties: ['seat desk / intake wire', 'parse to OutId'],
+    owner: 'seat capital desk',
+    wireField: {
+      wireName: 'outId',
+      sourceSystemId: 'seat-desk',
+      resolvesTo: 'OutId',
+      brandedType: 'OutId',
+      pattern: 'outId',
+      patterns: ['outId', 'out_id'],
+      quarantineOnFail: true,
+      boundaryPathGlobs: ['lib/telegram/seat-*.ts', 'lib/telegram/seat-desk-*.ts'],
+    },
+  }),
+  row({
+    id: 'wire.externalRef',
+    aspect: 'wire-field',
+    machine: 'identity',
+    token: 'externalRef',
+    typeOrExport: 'ExternalPartnerId',
+    repo: 'project-R-score',
+    path: 'docs/design/partner-type-reference-map.md',
+    properties: ['source-owned non-canonical', 'trap until adapter globs land'],
+    owner: 'partner-type-reference-map',
+    wireField: {
+      wireName: 'externalRef',
+      sourceSystemId: 'unqualified',
+      resolvesTo: 'ExternalPartnerId',
+      brandedType: 'ExternalPartnerId',
+      pattern: 'externalRef',
+      quarantineOnFail: true,
+      // Trap — register boundaryPathGlobs when an adapter lands.
     },
   }),
 
@@ -752,6 +836,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'partner-domain-map',
     repo: 'project-R-score',
     path: 'docs/harness/tenants/partner-domain-map.md',
+    href: '/portal/concepts/#domain=partners',
     properties: ['glossary cores + Factory overlay', 'seat capital desk'],
     owner: 'partner-ops domain',
   }),
@@ -771,6 +856,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'partner-package-group-handshake',
     repo: 'project-R-score',
     path: 'docs/harness/tenants/partner-package-group-handshake.md',
+    href: '/portal/factory/',
     properties: ['Telegram package groups', 'handshake catalog'],
     owner: 'Factory Telegram',
   }),
@@ -780,6 +866,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'partner-onboarding-package',
     repo: 'project-R-score',
     path: 'docs/harness/tenants/partner-onboarding-package.md',
+    href: '/portal/partner/',
     properties: ['onboarding package'],
     owner: 'partner onboarding',
   }),
@@ -789,6 +876,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'ops-partner-bridge',
     repo: 'project-R-score',
     path: 'docs/harness/tenants/ops-partner-bridge.md',
+    href: '/portal/partners/',
     properties: ['ops ↔ partner bridge'],
     owner: 'ops-partner-bridge',
   }),
@@ -798,6 +886,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'partner-type-reference-map',
     repo: 'project-R-score',
     path: 'docs/design/partner-type-reference-map.md',
+    href: '/portal/brands/#domain=operations&q=PartnerCode',
     properties: ['identity graph', 'fitness scores', 'translation matrix'],
     owner: 'partners design',
   }),
@@ -807,6 +896,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'partner-dashboard-mvp',
     repo: 'project-R-score',
     path: 'docs/design/partner-dashboard-mvp.md',
+    href: '/portal/partners/',
     properties: ['MVP contract', 'partner-dashboard-mvp.toml'],
     owner: 'partners design',
   }),
@@ -816,6 +906,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'partner-code-consolidation',
     repo: 'project-R-score',
     path: 'docs/design/partner-code-consolidation.md',
+    href: '/portal/brands/#domain=operations&q=PartnerCode',
     properties: ['consolidation review'],
     owner: 'partners design',
   }),
@@ -835,6 +926,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'naming-grammar',
     repo: 'project-R-score',
     path: 'docs/organization/naming-grammar.md',
+    href: '/portal/lanes/',
     properties: ['<t>-<lane>-<slug>', 'session lane partner'],
     owner: 'organization',
   }),
@@ -847,6 +939,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     typeOrExport: 'glossary concept',
     repo: 'Kalshi-bot',
     path: 'Kalshi-bot/src/institutions/glossary.ts',
+    href: '/portal/concepts/#domain=partners',
     properties: ['shared cores', 'partner.phase.onboarding|operator_ready|…'],
     owner: 'Kalshi glossary / partner-domain-map',
     notes: 'Factory must not re-declare Kalshi cores',
@@ -857,6 +950,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'Soft Balance',
     repo: 'toc-ops',
     path: 'toc-ops (ct)',
+    href: '/portal/toc/',
     properties: ['Soft Balance', 'MessageLog', 'phones'],
     owner: 'toc-ops',
     notes: 'Not a FactoryWager partner board — Soft stays in toc-ops',
@@ -873,6 +967,22 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     notes: 'IA reference only — do not copy schema',
   }),
 ] as const;
+
+/** Portal deep-links for a canonical PartnerCode (desk hash contract). */
+export function partnerDeskHrefs(code: string): {
+  readonly partnersHref: string;
+  readonly accountingHref: string;
+  readonly accountHref: string;
+  readonly historyHref: string;
+} {
+  const normalized = code.trim().toUpperCase();
+  return {
+    partnersHref: `/portal/partners/#partner/${normalized}`,
+    accountingHref: `/portal/partners/#partner/${normalized}/accounting`,
+    accountHref: `/portal/account/?account=${encodeURIComponent(normalized)}`,
+    historyHref: `/portal/partner-history/?account=${encodeURIComponent(normalized)}`,
+  };
+}
 
 /** Live chrome nav items with Domain lane partner. */
 export function listPartnerChromeNavItems(): readonly PortalChromeNavItem[] {
