@@ -8,6 +8,7 @@
  *   bun tools/workspace-taxonomy.ts list
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
+import { logTable } from '../lib/console-depth.ts';
 import {
   SESSION_LANES,
   WORKSPACE_TAXONOMY_CORRELATIONS,
@@ -41,7 +42,7 @@ async function main(): Promise<number> {
       concepts: r.conceptDomains.join(', '),
       scopes: r.commitScopeHints.join(', ') || '—',
     }));
-    console.log(Bun.inspect.table(rows, ['sessionLane', 'chrome', 'concepts', 'scopes']));
+    logTable(rows, ['sessionLane', 'chrome', 'concepts', 'scopes']);
     console.log(
       `\n${SESSION_LANES.length} session lanes · ${WORKSPACE_TAXONOMY_CORRELATIONS.length} correlations`
     );
