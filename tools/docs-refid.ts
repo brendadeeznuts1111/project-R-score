@@ -40,18 +40,69 @@ function flagValue(argv: string[], name: string): string | null {
 }
 
 function printHelp(): void {
-  console.log(`docs-refid — REF:ID v2 (check · suggest · list · scaffold)
+  console.log(`docs-refid — REF:ID v2 validation & DX (check · suggest · list · scaffold)
 
-Usage:
-  bun tools/docs-refid.ts check [--strict-format] [--json] [--skip-refid-check]
-  bun tools/docs-refid.ts suggest --section=4.1 --keyword=leaf | --flag=--cli-flag
-                              [--doc=path] [--json]
-  bun tools/docs-refid.ts list [--doc=path] [--json]
-  bun tools/docs-refid.ts scaffold --section=4.1 --flag=--foo [--script=name] [--json]
+USAGE
+  bun tools/docs-refid.ts <command> [options]
+  bun run docs:refid[:check|:suggest|:list|:scaffold] …
 
-Default --doc for suggest/list/scaffold: ${BUN_TYPES_INVENTORY_DOC}
+COMMANDS
+  check      Validate registered design docs + tool flag rows (default command)
+  suggest    Free REF:ID under a section (normalizes --flag / camelCase → kebab)
+  list       Numbered REF:IDs / section anchors in a doc
+  scaffold   Paste-ready <!-- REF:ID --> + <a id> + flags table row
+  help       This message
 
-Rules: lib/docs/ref-id.ts · style: docs/DEVELOPMENT-STANDARDS.md § REF:ID
+OPTIONS
+  --strict-format · --refid-strict   Format warns (length/kebab) become errors
+  --skip-refid-check                 check: exit 0 without validating (fast-pass)
+  --json                             Machine output (check / suggest / list / scaffold)
+  --section=<path>                   Section number path (default: 4.1)
+  --keyword=<leaf>                   Keyword leaf (kebab preferred)
+  --flag=<--cli-flag>                CLI flag; normalized to keyword (e.g. --maxAgeDays)
+  --doc=<path>                       Markdown doc (default: ${BUN_TYPES_INVENTORY_DOC})
+  --script=<name>                    scaffold package.json script (default: bun:types-status)
+  --shortcode=<s>                    scaffold shortcode cell (default: —)
+  --default=<s>                      scaffold default cell (default: off)
+  --all                              list: include slug TOC ids (not only numbered)
+  -h · --help                        Show this help
+
+DEFAULTS
+  command     check
+  --section   4.1
+  --doc       ${BUN_TYPES_INVENTORY_DOC}
+  --script    bun:types-status
+  --default   off
+  href        always derived as # + REF:ID (table may use empty / — / auto)
+
+REGISTERED DOCS (check)
+  ${BUN_TYPES_INVENTORY_DOC}
+    ↔ tools/bun-types-status.ts flag rows (requireToolCoverage)
+
+VALIDATION PRESETS
+  soft (default)     format length/kebab → warn; errors fail process
+  --strict-format    format issues → error
+  --skip-refid-check skip validation entirely (exit 0)
+
+REF:ID RULES (summary)
+  shape       {section}.{kebab-keyword}   e.g. 4.1.refresh · 4.1.max-age-days
+  href        # + REF:ID
+  keyword     2–32 chars · no leading/trailing - · no index|top|toc|anchor
+  unique      per document (anchors + flags table)
+  placement   section id on line immediately above Flags heading (when configured)
+
+EXAMPLES
+  bun tools/docs-refid.ts check
+  bun tools/docs-refid.ts check --strict-format --json
+  bun tools/docs-refid.ts suggest --section=4.1 --flag=--foo-bar
+  bun tools/docs-refid.ts list --doc=${BUN_TYPES_INVENTORY_DOC}
+  bun tools/docs-refid.ts scaffold --section=4.1 --flag=--new-flag
+
+SEE ALSO
+  lib/docs/ref-id.ts
+  docs/DEVELOPMENT-STANDARDS.md § REF:ID
+  docs/contributing/CONTRIBUTING.md § REF:ID Validation
+  bun run docs:map:check          # includes REF:ID unless --skip-refid-check
 `);
 }
 

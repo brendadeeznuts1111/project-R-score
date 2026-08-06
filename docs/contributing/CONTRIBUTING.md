@@ -18,9 +18,91 @@ bun run harness:status
 
 Full testing / hooks map: [DEVELOPMENT-WORKFLOW.md](../DEVELOPMENT-WORKFLOW.md).
 
-Design-doc **REF:ID** rules (flags / TOC fragments): see
-[DEVELOPMENT-STANDARDS.md — REF:ID](../DEVELOPMENT-STANDARDS.md#refid-design-doc-flags--toc)
-· `bun run docs:refid:check` · `bun run docs:refid:suggest`.
+## REF:ID Validation
+
+Design-doc **REF:ID**s are numbered fragment ids for operator flags / TOC
+(baseline: [`docs/design/bun-types-inventory.md`](../design/bun-types-inventory.md)
+§4.1). They keep flags tables, HTML anchors, TOC links, and tool code
+(`flagDocRef`) in sync.
+
+### Rules (v2)
+
+| Rule | Example / note |
+| ---- | -------------- |
+| Shape | `{section}.{kebab-keyword}` → `4.1.refresh` · `4.1.max-age-days` |
+| href | Always `#` + REF:ID (table may use empty / `—` / `auto` to derive) |
+| Keyword | kebab-case, 2–32 chars, no leading/trailing `-` |
+| Reserved | Never use leaves `index` · `top` · `toc` · `anchor` |
+| Unique | One REF:ID / `<a id>` value per document |
+| Tooling | Code flag rows must match anchors (`requireToolCoverage`) |
+| Placement | Section id (e.g. `4.1`) on the line immediately above the Flags heading |
+
+Style summary also lives in
+[DEVELOPMENT-STANDARDS.md — REF:ID](../DEVELOPMENT-STANDARDS.md#refid-design-doc-flags--toc).
+Library: [`lib/docs/ref-id.ts`](../../lib/docs/ref-id.ts).
+
+### Commands
+
+```bash
+# Validate registered docs + tool flags (soft format warns)
+bun run docs:refid:check
+# Same; format issues fail
+bun run docs:refid:check:strict
+# Multi-command CLI
+bun tools/docs-refid.ts help
+bun tools/docs-refid.ts check --json
+bun tools/docs-refid.ts suggest --section=4.1 --flag=--foo-bar
+bun tools/docs-refid.ts list
+bun tools/docs-refid.ts scaffold --section=4.1 --flag=--new-flag
+# Included in doc map gate (unless --skip-refid-check)
+bun run docs:map:check
+```
+
+### Defaults
+
+| Flag / field | Default |
+| ------------ | ------- |
+| command | `check` |
+| `--section` | `4.1` |
+| `--doc` | `docs/design/bun-types-inventory.md` |
+| `--script` (scaffold) | `bun:types-status` |
+| `--default` (scaffold) | `off` |
+| validation mode | soft (format → warn; missing anchor/href → error) |
+
+### Validation presets
+
+| Mode | How | Behavior |
+| ---- | --- | -------- |
+| soft | default `check` | Format length/kebab → **warn**; missing anchors, href mismatch, duplicates → **error** |
+| strict format | `--strict-format` / `--refid-strict` | Format issues → **error** |
+| skip | `--skip-refid-check` | No validation (exit 0) — drafts / fast local loops only |
+
+Registered document for `check`:
+
+| Doc | Tool rows |
+| --- | --------- |
+| `docs/design/bun-types-inventory.md` | `tools/bun-types-status.ts` → `buildStatusFlagRows` |
+
+### Adding a flag
+
+1. Suggest a free id:  
+   `bun run docs:refid:suggest --section=4.1 --flag=--my-flag`
+2. Paste scaffold output (comment + `<a id>` + table row) into the design doc.  
+   `bun run docs:refid:scaffold --section=4.1 --flag=--my-flag`
+3. Wire code with `flagDocRef('my-flag')` (or equivalent).
+4. Prove: `bun run docs:refid:check` · `bun test tests/docs-refid-cli.contract.test.ts`
+
+### Proof
+
+| Gate | Command |
+| ---- | ------- |
+| In-process library | `bun test tests/docs-ref-id.test.ts` |
+| **CLI subprocess contract** | `bun test tests/docs-refid-cli.contract.test.ts` |
+| Package script | `bun run docs:refid:check` |
+
+Subprocess tests spawn `bun tools/docs-refid.ts` / `docs-refid-check.ts` and
+assert exit codes + stdout (help text, ok line, JSON schema
+`factorywager/ref-id/v2`).
 
 ## Testing & concept changes
 
@@ -77,6 +159,7 @@ Prefer branded IDs and wire-boundary parse-once — see root
 | -------------------- | ---------------------------------------------------------------------------------- |
 | Index                | [docs/README.md](../README.md)                                                     |
 | Dev / test workflow  | [DEVELOPMENT-WORKFLOW.md](../DEVELOPMENT-WORKFLOW.md)                              |
+| REF:ID validation    | [§ REF:ID Validation](#refid-validation) · `bun run docs:refid:check`            |
 | Concept lifecycle    | [CONCEPT_LIFECYCLE.md](../CONCEPT_LIFECYCLE.md)                                    |
 | Surface coverage map | [SURFACE_COVERAGE.md](../SURFACE_COVERAGE.md) · `bun run surface-coverage:map`     |
 | Install / bunfig     | [UNIFIED.md](../UNIFIED.md)                                                        |

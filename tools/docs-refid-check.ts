@@ -110,12 +110,29 @@ export function printRefIdIssues(issues: RefIdIssue[]): void {
 async function main(): Promise<void> {
   const argv = Bun.argv.slice(2);
   if (argv.includes('--help') || argv.includes('-h')) {
-    console.log(`docs-refid-check — REF:ID v2 validation
+    console.log(`docs-refid-check — REF:ID v2 validation only (thin entry)
 
-  bun tools/docs-refid-check.ts
-  bun tools/docs-refid-check.ts --strict-format
-  bun tools/docs-refid-check.ts --json
-  bun tools/docs-refid-check.ts --skip-refid-check
+USAGE
+  bun tools/docs-refid-check.ts [options]
+  bun run docs:refid:check
+
+Prefer the multi-command CLI for DX:
+  bun tools/docs-refid.ts help
+  bun run docs:refid:suggest | :list | :scaffold
+
+OPTIONS
+  --strict-format · --refid-strict   Format warns become errors
+  --skip-refid-check                 Exit 0 without validating
+  --json                             Machine-readable issues array
+  -h · --help                        This help
+
+DEFAULTS
+  mode     soft (format length/kebab → warn; missing anchors/href → error)
+  registry ${BUN_TYPES_INVENTORY_DOC} ↔ bun:types-status flags
+
+SEE ALSO
+  tools/docs-refid.ts · lib/docs/ref-id.ts
+  docs/contributing/CONTRIBUTING.md § REF:ID Validation
 `);
     return;
   }
