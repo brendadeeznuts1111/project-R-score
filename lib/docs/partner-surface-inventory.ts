@@ -22,12 +22,16 @@ export const PARTNER_SURFACE_ASPECTS = [
   'portal-board',
   'registry',
   'brand',
+  'partner-code',
   'package',
   'lib-module',
   'wire-field',
   'doc-tenant',
   'cross-repo',
 ] as const;
+
+/** Fitness 1 (unsafe/ambiguous) … 5 (ready to reuse) — see partner-type-reference-map. */
+export type PartnerSurfaceFitnessScore = 1 | 2 | 3 | 4 | 5;
 
 export type PartnerSurfaceAspect = (typeof PARTNER_SURFACE_ASPECTS)[number];
 
@@ -55,6 +59,9 @@ export type PartnerSurfaceRepo = 'project-R-score' | 'Kalshi-bot' | 'toc-ops' | 
  * Optional lifecycle fields (`deprecatedAt` · `deprecationReason` · `replacedBy`)
  * document sunset; Layer A warns when inactive/deprecated brands are still
  * referenced by wire-field / portal-board / registry consumers.
+ *
+ * Optional fitness (`fitnessScore` · `hasTestCoverage`) scores provenance /
+ * reuse readiness (type-reference-map 1–5) for the generated health matrix.
  */
 export type PartnerSurfaceBrandBag = {
   readonly pattern?: string;
@@ -79,6 +86,23 @@ export type PartnerSurfaceBrandBag = {
   readonly deprecationReason?: string;
   /** Successor brand token (`typeOrExport` / inventory brand token). */
   readonly replacedBy?: string;
+  /** 1–5 reuse fitness (partner-type-reference-map). */
+  readonly fitnessScore?: PartnerSurfaceFitnessScore;
+  /** Whether mint/parse constructors have focused tests. */
+  readonly hasTestCoverage?: boolean;
+};
+
+/**
+ * Live PartnerCode instance — desk code linked to the PartnerCode brand +
+ * registry that holds instances (usually partners-ops).
+ */
+export type PartnerSurfacePartnerCodeBag = {
+  /** Inventory brand token / typeOrExport (must resolve to an active brand). */
+  readonly brandRef: string;
+  /** Inventory registry token that lists this code. */
+  readonly registryRef: string;
+  /** Operator phase when known (e.g. operator_ready). */
+  readonly phase?: string;
 };
 
 export type PartnerSurfaceMoneyPolicy = 'integerMinorUnits' | 'forbidden' | 'unset';
@@ -173,6 +197,7 @@ export type PartnerSurfaceRow = {
   readonly owner: string;
   readonly notes?: string;
   readonly brand?: PartnerSurfaceBrandBag;
+  readonly partnerCode?: PartnerSurfacePartnerCodeBag;
   readonly registry?: PartnerSurfaceRegistryBag;
   readonly wireField?: PartnerSurfaceWireFieldBag;
   readonly chromeNav?: PartnerSurfaceChromeNavBag;
@@ -198,6 +223,8 @@ function row(partial: PartnerSurfaceRow): PartnerSurfaceRow {
   if (partial.notes !== undefined) (out as { notes?: string }).notes = partial.notes;
   if (partial.brand !== undefined)
     (out as { brand?: PartnerSurfaceBrandBag }).brand = partial.brand;
+  if (partial.partnerCode !== undefined)
+    (out as { partnerCode?: PartnerSurfacePartnerCodeBag }).partnerCode = partial.partnerCode;
   if (partial.registry !== undefined)
     (out as { registry?: PartnerSurfaceRegistryBag }).registry = partial.registry;
   if (partial.wireField !== undefined)
@@ -339,6 +366,8 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       registryRef: 'partners-ops',
       isActive: true,
       category: 'identity',
+      fitnessScore: 4,
+      hasTestCoverage: true,
     },
   }),
   row({
@@ -360,6 +389,8 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       domain: 'operations',
       isActive: true,
       category: 'identity',
+      fitnessScore: 4,
+      hasTestCoverage: true,
     },
   }),
   row({
@@ -382,6 +413,8 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       registryRef: 'partner-profiles',
       isActive: true,
       category: 'profile',
+      fitnessScore: 4,
+      hasTestCoverage: true,
     },
   }),
   row({
@@ -403,6 +436,8 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       registryRef: 'partner-contracts',
       isActive: true,
       category: 'template',
+      fitnessScore: 5,
+      hasTestCoverage: true,
     },
   }),
   row({
@@ -426,6 +461,8 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       registryRef: 'partners-ops',
       isActive: true,
       category: 'identity',
+      fitnessScore: 2,
+      hasTestCoverage: true,
     },
   }),
   row({
@@ -447,6 +484,8 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       domain: 'cross-domain',
       isActive: true,
       category: 'external',
+      fitnessScore: 1,
+      hasTestCoverage: true,
     },
   }),
   row({
@@ -468,6 +507,8 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       registryRef: 'workspace-lane-map',
       isActive: true,
       category: 'node',
+      fitnessScore: 5,
+      hasTestCoverage: true,
     },
   }),
   row({
@@ -492,6 +533,78 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       registryRef: 'partners-ops',
       isActive: true,
       category: 'identity',
+      fitnessScore: 4,
+      hasTestCoverage: true,
+    },
+  }),
+
+  // ── Live PartnerCodes (desk instances; sync with partners-ops bake) ──
+  row({
+    id: 'partner-code.ASH',
+    aspect: 'partner-code',
+    machine: 'identity',
+    token: 'ASH',
+    typeOrExport: 'PartnerCode',
+    repo: 'project-R-score',
+    path: 'public/registry/partners-ops.json',
+    href: '/portal/partners/#partner/ASH',
+    properties: ['live desk code', 'brandRef=PartnerCode', 'registryRef=partners-ops'],
+    owner: 'partners-ops',
+    partnerCode: {
+      brandRef: 'PartnerCode',
+      registryRef: 'partners-ops',
+      phase: 'operator_ready',
+    },
+  }),
+  row({
+    id: 'partner-code.BIL',
+    aspect: 'partner-code',
+    machine: 'identity',
+    token: 'BIL',
+    typeOrExport: 'PartnerCode',
+    repo: 'project-R-score',
+    path: 'public/registry/partners-ops.json',
+    href: '/portal/partners/#partner/BIL',
+    properties: ['live desk code', 'brandRef=PartnerCode', 'registryRef=partners-ops'],
+    owner: 'partners-ops',
+    partnerCode: {
+      brandRef: 'PartnerCode',
+      registryRef: 'partners-ops',
+      phase: 'operator_ready',
+    },
+  }),
+  row({
+    id: 'partner-code.NOV',
+    aspect: 'partner-code',
+    machine: 'identity',
+    token: 'NOV',
+    typeOrExport: 'PartnerCode',
+    repo: 'project-R-score',
+    path: 'public/registry/partners-ops.json',
+    href: '/portal/partners/#partner/NOV',
+    properties: ['live desk code', 'brandRef=PartnerCode', 'registryRef=partners-ops'],
+    owner: 'partners-ops',
+    partnerCode: {
+      brandRef: 'PartnerCode',
+      registryRef: 'partners-ops',
+      phase: 'operator_ready',
+    },
+  }),
+  row({
+    id: 'partner-code.SPEN',
+    aspect: 'partner-code',
+    machine: 'identity',
+    token: 'SPEN',
+    typeOrExport: 'PartnerCode',
+    repo: 'project-R-score',
+    path: 'public/registry/partners-ops.json',
+    href: '/portal/partners/#partner/SPEN',
+    properties: ['live desk code', 'brandRef=PartnerCode', 'registryRef=partners-ops'],
+    owner: 'partners-ops',
+    partnerCode: {
+      brandRef: 'PartnerCode',
+      registryRef: 'partners-ops',
+      phase: 'operator_ready',
     },
   }),
 

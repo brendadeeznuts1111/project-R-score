@@ -1,12 +1,16 @@
 import { describe, expect, test } from 'bun:test';
 import {
   BRAND_LINK_CROSS_DOMAIN,
+  checkBrandFitnessFields,
   checkBrandLifecycleFields,
   checkBrandLinkingBag,
   checkDeprecatedBrandReferences,
+  checkPartnerCodeBag,
   collectAllowedBrandLinkDomains,
+  collectBrandBagsByToken,
   collectInventoryBrandTokens,
   isBrandLifecycleDate,
+  isPartnerSurfaceFitnessScore,
 } from '../lib/docs/partner-surface-brand-check.ts';
 import {
   allPartnerSurfaceRows,
@@ -127,6 +131,53 @@ describe('partner-surface-brand-check', () => {
       new Set(['PartnerCode'])
     );
     expect(issues.some(i => i.level === 'error' && i.message.includes('replacedBy'))).toBe(true);
+  });
+
+  test('inventory brands carry fitness metadata', () => {
+    const brands = allPartnerSurfaceRows().filter(r => r.aspect === 'brand');
+    for (const r of brands) {
+      expect(r.brand?.fitnessScore).toBeDefined();
+      expect(isPartnerSurfaceFitnessScore(r.brand!.fitnessScore!)).toBe(true);
+      expect(typeof r.brand?.hasTestCoverage).toBe('boolean');
+    }
+    expect(brands.find(r => r.token === 'PartnerCode')!.brand!.fitnessScore).toBe(4);
+    expect(brands.find(r => r.token === 'OutId')!.brand!.fitnessScore).toBe(2);
+    expect(brands.find(r => r.token === 'ExternalPartnerId')!.brand!.fitnessScore).toBe(1);
+  });
+
+  test('checkBrandFitnessFields rejects out-of-range scores', () => {
+    const issues = checkBrandFitnessFields('brand.demo', {
+      mintAuthority: 'x',
+      module: 'lib/types/branded/operations.ts',
+      interiorOnly: false,
+      domain: 'operations',
+      isActive: true,
+      category: 'identity',
+      fitnessScore: 9 as unknown as 1,
+    });
+    expect(issues.some(i => i.level === 'error' && i.message.includes('fitnessScore'))).toBe(true);
+  });
+
+  test('checkPartnerCodeBag requires active brand with registryRef', () => {
+    const rows = allPartnerSurfaceRows();
+    const brandByToken = collectBrandBagsByToken(rows);
+    const registryTokens = new Set(rows.filter(r => r.aspect === 'registry').map(r => r.token));
+    const ok = checkPartnerCodeBag(
+      'partner-code.SPEN',
+      'SPEN',
+      { brandRef: 'PartnerCode', registryRef: 'partners-ops', phase: 'operator_ready' },
+      { brandByToken, registryTokens, liveCodes: new Set(['SPEN']) }
+    );
+    expect(ok.filter(i => i.level === 'error')).toEqual([]);
+
+    const bad = checkPartnerCodeBag(
+      'partner-code.ZZZ',
+      'ZZZ',
+      { brandRef: 'NotABrand', registryRef: 'partners-ops' },
+      { brandByToken, registryTokens, liveCodes: new Set(['SPEN']) }
+    );
+    expect(bad.some(i => i.level === 'error' && i.message.includes('brandRef'))).toBe(true);
+    expect(bad.some(i => i.level === 'warn' && i.message.includes('not present'))).toBe(true);
   });
 
   test('checkDeprecatedBrandReferences warns wire/portal/registry consumers', () => {

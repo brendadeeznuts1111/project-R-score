@@ -2,7 +2,7 @@
   "kind": "partner-surface-inventory",
   "schemaVersion": 2,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-06T20:07:08.450Z",
+  "bakedAt": "2026-08-06T20:25:22.807Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",
@@ -202,7 +202,9 @@
         "domain": "operations",
         "registryRef": "partners-ops",
         "isActive": true,
-        "category": "identity"
+        "category": "identity",
+        "fitnessScore": 4,
+        "hasTestCoverage": true
       }
     },
     {
@@ -226,7 +228,9 @@
         "interiorOnly": false,
         "domain": "operations",
         "isActive": true,
-        "category": "identity"
+        "category": "identity",
+        "fitnessScore": 4,
+        "hasTestCoverage": true
       }
     },
     {
@@ -251,7 +255,9 @@
         "domain": "operations",
         "registryRef": "partner-profiles",
         "isActive": true,
-        "category": "profile"
+        "category": "profile",
+        "fitnessScore": 4,
+        "hasTestCoverage": true
       }
     },
     {
@@ -274,7 +280,9 @@
         "domain": "operations",
         "registryRef": "partner-contracts",
         "isActive": true,
-        "category": "template"
+        "category": "template",
+        "fitnessScore": 5,
+        "hasTestCoverage": true
       }
     },
     {
@@ -303,7 +311,9 @@
         "domain": "operations",
         "registryRef": "partners-ops",
         "isActive": true,
-        "category": "identity"
+        "category": "identity",
+        "fitnessScore": 2,
+        "hasTestCoverage": true
       }
     },
     {
@@ -329,7 +339,9 @@
         ],
         "domain": "cross-domain",
         "isActive": true,
-        "category": "external"
+        "category": "external",
+        "fitnessScore": 1,
+        "hasTestCoverage": true
       }
     },
     {
@@ -353,7 +365,9 @@
         "domain": "operations",
         "registryRef": "workspace-lane-map",
         "isActive": true,
-        "category": "node"
+        "category": "node",
+        "fitnessScore": 5,
+        "hasTestCoverage": true
       }
     },
     {
@@ -383,7 +397,93 @@
         "domain": "operations",
         "registryRef": "partners-ops",
         "isActive": true,
-        "category": "identity"
+        "category": "identity",
+        "fitnessScore": 4,
+        "hasTestCoverage": true
+      }
+    },
+    {
+      "id": "partner-code.ASH",
+      "aspect": "partner-code",
+      "token": "ASH",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live desk code",
+        "brandRef=PartnerCode",
+        "registryRef=partners-ops"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "PartnerCode",
+      "href": "/portal/partners/#partner/ASH",
+      "partnerCode": {
+        "brandRef": "PartnerCode",
+        "registryRef": "partners-ops",
+        "phase": "operator_ready"
+      }
+    },
+    {
+      "id": "partner-code.BIL",
+      "aspect": "partner-code",
+      "token": "BIL",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live desk code",
+        "brandRef=PartnerCode",
+        "registryRef=partners-ops"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "PartnerCode",
+      "href": "/portal/partners/#partner/BIL",
+      "partnerCode": {
+        "brandRef": "PartnerCode",
+        "registryRef": "partners-ops",
+        "phase": "operator_ready"
+      }
+    },
+    {
+      "id": "partner-code.NOV",
+      "aspect": "partner-code",
+      "token": "NOV",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live desk code",
+        "brandRef=PartnerCode",
+        "registryRef=partners-ops"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "PartnerCode",
+      "href": "/portal/partners/#partner/NOV",
+      "partnerCode": {
+        "brandRef": "PartnerCode",
+        "registryRef": "partners-ops",
+        "phase": "operator_ready"
+      }
+    },
+    {
+      "id": "partner-code.SPEN",
+      "aspect": "partner-code",
+      "token": "SPEN",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live desk code",
+        "brandRef=PartnerCode",
+        "registryRef=partners-ops"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "PartnerCode",
+      "href": "/portal/partners/#partner/SPEN",
+      "partnerCode": {
+        "brandRef": "PartnerCode",
+        "registryRef": "partners-ops",
+        "phase": "operator_ready"
       }
     },
     {
