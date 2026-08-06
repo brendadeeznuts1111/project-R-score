@@ -118,8 +118,8 @@ Example: session #15 → `20260802-2351-partner-accounting-integration-bake.json
 
 ## Housekeeping recommendations
 
-- **Delete (empty, zero turns):** `20260722-122910.133695000`,
-  `20260804-143051.125737000`.
+- **Deleted (empty, zero turns) — 2026-08-06:** `20260722-122910…` and
+  `20260804-143051…` moved to Reasonix `.trash/` (0-byte `*.jsonl`).
 - **Likely complete — can archive:** #1 (guide review), #5 (staging fix +
   ratchet), #9 (partner domain map committed), #15 (accounting integration
   proven end-to-end), #23 (rebase done), #26 (PR reviewed for merge).
