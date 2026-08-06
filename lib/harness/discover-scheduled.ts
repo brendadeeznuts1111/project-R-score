@@ -111,6 +111,24 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     reason: 'One-shot entry for spine tenant ops-snapshot',
   },
   {
+    id: 'pkg-anchor-scan-cron-register',
+    source: 'package-script',
+    match: 'ops:anchor:scan:cron:register',
+    reason: 'OS cron registration control for the governed stale-anchor analytics worker',
+  },
+  {
+    id: 'pkg-anchor-scan-cron-remove',
+    source: 'package-script',
+    match: 'ops:anchor:scan:cron:remove',
+    reason: 'OS cron removal control for the governed stale-anchor analytics worker',
+  },
+  {
+    id: 'pkg-anchor-scan-cron-preview',
+    source: 'package-script',
+    match: 'ops:anchor:scan:cron:preview',
+    reason: 'Read-only schedule preview for the governed stale-anchor analytics worker',
+  },
+  {
     id: 'pkg-sweep-domain-cron',
     source: 'package-script',
     match: 'sweep:domain:cron',

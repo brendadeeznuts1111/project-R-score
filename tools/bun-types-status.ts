@@ -544,7 +544,7 @@ async function main(): Promise<number> {
   const report = buildStatusReport(inputs, args);
 
   if (args.json) {
-    console.log(JSON.stringify(report, null, 2));
+    process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
   } else {
     printSection('Verdict');
     printMap([

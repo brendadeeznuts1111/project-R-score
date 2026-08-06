@@ -487,7 +487,7 @@ describe('inspect family catalog relations', () => {
       'https://bun.com/docs/runtime/markdown#parser-options'
     );
     expect(byName.get('parser-options-2')?.docsUrl).toBe(
-      'https://bun.com/docs/runtime/markdown#parser-options'
+      'https://bun.com/docs/runtime/markdown#parser-options-2'
     );
     expect(byName.get('options')?.examples?.[0]?.body).toContain('tables: true');
     expect(byName.get('parser-options-2')?.examples?.[0]?.body).toContain(

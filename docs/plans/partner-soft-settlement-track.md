@@ -1,5 +1,8 @@
 # Partner settlement + Soft weave — product track plan
 
+<!-- REF:ID 0.1.partner-soft-settlement-track -->
+<a id="0.1.partner-soft-settlement-track"></a>
+
 Separate from the Aug 2026 **authority + honesty** wave (concepts, brands, glossary,
 validation). This track lands operator-facing partner ledger, settlement automation,
 and Soft accounting UI on `main`.

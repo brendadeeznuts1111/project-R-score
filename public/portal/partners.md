@@ -1,5 +1,8 @@
 # Partners
 
+<!-- REF:ID 0.1.partners-portal-source -->
+<a id="0.1.partners-portal-source"></a>
+
 Package **Telegram** forums, **Accounting** deals, **betting deposits** (max bet /
 rails), Soft **plays** / weeks / book types, and partner messages.
 

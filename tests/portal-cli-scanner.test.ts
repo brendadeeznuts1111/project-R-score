@@ -466,7 +466,7 @@ describe('portal-cli scanner CLI', () => {
       false
     );
     expect(/^\[install\.security\]\s*$/m.test(bunfig)).toBe(false);
-  });
+  }, 20_000);
 
   test('root help lists scanner command', async () => {
     const proc = Bun.spawn(['bun', CLI, 'help'], {

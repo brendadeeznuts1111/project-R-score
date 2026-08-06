@@ -1,8 +1,8 @@
 {
   "kind": "partner-surface-inventory",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-06T20:37:47.470Z",
+  "bakedAt": "2026-08-06T21:49:10.314Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",
@@ -848,6 +848,38 @@
       }
     },
     {
+      "id": "wire.kalshi.outId",
+      "aspect": "wire-field",
+      "token": "outId",
+      "repo": "Kalshi-bot",
+      "path": "Kalshi-bot/src/partner",
+      "properties": [
+        "execution/provider wire",
+        "legacy raw string before extraction boundary"
+      ],
+      "owner": "execution adapter",
+      "machine": "identity",
+      "typeOrExport": "OutId",
+      "notes": "Explicit compatibility boundary for the pinned Kalshi partner submodule; new package-core code must parse to OutId",
+      "wireField": {
+        "wireName": "outId",
+        "sourceSystemId": "kalshi",
+        "resolvesTo": "OutId",
+        "brandedType": "OutId",
+        "pattern": "outId",
+        "patterns": [
+          "outId",
+          "out_id"
+        ],
+        "quarantineOnFail": true,
+        "boundaryPathGlobs": [
+          "Kalshi-bot/src/partner/**",
+          "Kalshi-bot/tools/partner-*.ts",
+          "Kalshi-bot/tools/provision-fantasy402-vault.ts"
+        ]
+      }
+    },
+    {
       "id": "wire.externalRef",
       "aspect": "wire-field",
       "token": "externalRef",
@@ -870,67 +902,36 @@
       }
     },
     {
-      "id": "doc.partner-domain-map",
+      "id": "doc.partner-surface-inventory",
       "aspect": "doc-tenant",
-      "token": "partner-domain-map",
+      "token": "partner-surface-inventory",
       "repo": "project-R-score",
-      "path": "docs/harness/tenants/partner-domain-map.md",
+      "path": "docs/design/partner-surface-inventory.md",
       "properties": [
-        "glossary cores + Factory overlay",
-        "seat capital desk"
+        "documentation register",
+        "surface/type/wire join"
       ],
-      "owner": "partner-ops domain",
-      "href": "/portal/concepts/#domain=partners"
-    },
-    {
-      "id": "doc.partner-limits",
-      "aspect": "doc-tenant",
-      "token": "partner-limits",
-      "repo": "project-R-score",
-      "path": "docs/harness/tenants/partner-limits.md",
-      "properties": [
-        "limit raises",
-        "ops:limits:demo"
-      ],
-      "owner": "partner limits",
-      "href": "/portal/limits/"
-    },
-    {
-      "id": "doc.partner-package-group-handshake",
-      "aspect": "doc-tenant",
-      "token": "partner-package-group-handshake",
-      "repo": "project-R-score",
-      "path": "docs/harness/tenants/partner-package-group-handshake.md",
-      "properties": [
-        "Telegram package groups",
-        "handshake catalog"
-      ],
-      "owner": "Factory Telegram",
-      "href": "/portal/factory/"
-    },
-    {
-      "id": "doc.partner-onboarding-package",
-      "aspect": "doc-tenant",
-      "token": "partner-onboarding-package",
-      "repo": "project-R-score",
-      "path": "docs/harness/tenants/partner-onboarding-package.md",
-      "properties": [
-        "onboarding package"
-      ],
-      "owner": "partner onboarding",
-      "href": "/portal/partner/"
-    },
-    {
-      "id": "doc.ops-partner-bridge",
-      "aspect": "doc-tenant",
-      "token": "ops-partner-bridge",
-      "repo": "project-R-score",
-      "path": "docs/harness/tenants/ops-partner-bridge.md",
-      "properties": [
-        "ops ↔ partner bridge"
-      ],
-      "owner": "ops-partner-bridge",
-      "href": "/portal/partners/"
+      "owner": "partner surface inventory",
+      "href": "/portal/partners/",
+      "documentation": {
+        "refId": "0.1.partner-surface-inventory",
+        "conceptDomains": [
+          "partners",
+          "portal",
+          "registry",
+          "operations"
+        ],
+        "chromeDomains": [
+          "partner",
+          "knowledge"
+        ],
+        "primaryPortalHref": "/portal/partners/",
+        "authority": "ssot",
+        "machineRefs": [
+          "lib/docs/partner-surface-inventory.ts",
+          "public/registry/partner-surface-inventory.json"
+        ]
+      }
     },
     {
       "id": "doc.partner-type-reference-map",
@@ -944,7 +945,24 @@
         "translation matrix"
       ],
       "owner": "partners design",
-      "href": "/portal/brands/#domain=operations&q=PartnerCode"
+      "href": "/portal/brands/#domain=operations&q=PartnerCode",
+      "documentation": {
+        "refId": "0.1.partner-type-reference-map",
+        "conceptDomains": [
+          "partners",
+          "operations"
+        ],
+        "chromeDomains": [
+          "knowledge",
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/brands/#domain=operations&q=PartnerCode",
+        "authority": "contract",
+        "machineRefs": [
+          "lib/types/branded/operations.ts",
+          "packages/partners/src/core/identifiers.ts"
+        ]
+      }
     },
     {
       "id": "doc.partner-dashboard-mvp",
@@ -953,11 +971,98 @@
       "repo": "project-R-score",
       "path": "docs/design/partner-dashboard-mvp.md",
       "properties": [
-        "MVP contract",
-        "partner-dashboard-mvp.toml"
+        "MVP composition and cutover contract"
       ],
-      "owner": "partners design",
-      "href": "/portal/partners/"
+      "owner": "@factorywager/partners",
+      "href": "/portal/partners/",
+      "documentation": {
+        "refId": "0.1.partner-dashboard-mvp",
+        "conceptDomains": [
+          "partners",
+          "accounting",
+          "telegram",
+          "compliance",
+          "trading",
+          "portal",
+          "operations"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/partners/",
+        "authority": "contract",
+        "machineRefs": [
+          "docs/design/partner-dashboard-mvp.toml",
+          "packages/partners/src/dashboard-plan.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.partner-dashboard-semantic-map",
+      "aspect": "doc-tenant",
+      "token": "partner-dashboard-semantic-map",
+      "repo": "project-R-score",
+      "path": "docs/design/partner-dashboard-semantic-map.md",
+      "properties": [
+        "domain → concept → shape → surface → theme"
+      ],
+      "owner": "partners nomenclature",
+      "href": "/portal/partners/",
+      "documentation": {
+        "refId": "0.1.partner-dashboard-semantic-map",
+        "conceptDomains": [
+          "partners",
+          "accounting",
+          "telegram",
+          "compliance",
+          "trading",
+          "portal"
+        ],
+        "chromeDomains": [
+          "partner",
+          "knowledge"
+        ],
+        "primaryPortalHref": "/portal/partners/",
+        "authority": "contract",
+        "machineRefs": [
+          "docs/design/partner-dashboard-mvp.toml",
+          "lib/portal/concept-domains.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.partner-dashboard-field-lineage",
+      "aspect": "doc-tenant",
+      "token": "partner-dashboard-field-lineage",
+      "repo": "project-R-score",
+      "path": "docs/design/partner-dashboard-field-lineage.md",
+      "properties": [
+        "field provenance",
+        "source precedence",
+        "risk audit"
+      ],
+      "owner": "partners reconciliation",
+      "href": "/portal/partners/",
+      "documentation": {
+        "refId": "0.1.partner-dashboard-field-lineage",
+        "conceptDomains": [
+          "partners",
+          "accounting",
+          "telegram",
+          "compliance",
+          "trading",
+          "data"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/partners/",
+        "authority": "contract",
+        "machineRefs": [
+          "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/dashboard-plan.ts"
+        ]
+      }
     },
     {
       "id": "doc.partner-code-consolidation",
@@ -966,10 +1071,122 @@
       "repo": "project-R-score",
       "path": "docs/design/partner-code-consolidation.md",
       "properties": [
-        "consolidation review"
+        "source review",
+        "best/worst reuse decisions"
       ],
-      "owner": "partners design",
-      "href": "/portal/brands/#domain=operations&q=PartnerCode"
+      "owner": "partners extraction",
+      "href": "/portal/partners/",
+      "documentation": {
+        "refId": "0.1.partner-code-consolidation",
+        "conceptDomains": [
+          "partners",
+          "operations",
+          "portal"
+        ],
+        "chromeDomains": [
+          "partner",
+          "knowledge"
+        ],
+        "primaryPortalHref": "/portal/partners/",
+        "authority": "plan",
+        "machineRefs": [
+          "packages/partners/",
+          "docs/design/partner-dashboard-mvp.toml"
+        ]
+      }
+    },
+    {
+      "id": "doc.unified-partner-profile",
+      "aspect": "doc-tenant",
+      "token": "unified-partner-profile",
+      "repo": "project-R-score",
+      "path": "docs/design/unified-partner-profile.md",
+      "properties": [
+        "canonical profile shape",
+        "CODE join"
+      ],
+      "owner": "partner profile",
+      "href": "/portal/partner/",
+      "documentation": {
+        "refId": "0.1.unified-partner-profile",
+        "conceptDomains": [
+          "partners",
+          "accounting",
+          "compliance",
+          "operations"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/partner/",
+        "authority": "contract",
+        "machineRefs": [
+          "lib/partner-profile/schema.ts",
+          "config/partner-profiles/"
+        ]
+      }
+    },
+    {
+      "id": "doc.partner-money-integer-migration",
+      "aspect": "doc-tenant",
+      "token": "partner-money-integer-migration",
+      "repo": "project-R-score",
+      "path": "docs/design/partner-money-integer-migration.md",
+      "properties": [
+        "integer minor units",
+        "dual-write/backfill/finalize"
+      ],
+      "owner": "partner accounting",
+      "href": "/portal/partners/#section:accounting",
+      "documentation": {
+        "refId": "0.1.partner-money-integer-migration",
+        "conceptDomains": [
+          "accounting",
+          "partners",
+          "operations"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/partners/#section:accounting",
+        "authority": "runbook",
+        "machineRefs": [
+          "scripts/migrate-money-to-integers.ts",
+          "lib/partner-profile/ledger.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.partner-domain-map",
+      "aspect": "doc-tenant",
+      "token": "partner-domain-map",
+      "repo": "project-R-score",
+      "path": "docs/harness/tenants/partner-domain-map.md",
+      "properties": [
+        "glossary cores + Factory overlay",
+        "seat capital desk"
+      ],
+      "owner": "partner-ops domain",
+      "href": "/portal/concepts/#domain=partners",
+      "documentation": {
+        "refId": "0.1.partner-domain-map",
+        "conceptDomains": [
+          "partners",
+          "accounting",
+          "telegram",
+          "operations"
+        ],
+        "chromeDomains": [
+          "knowledge",
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/concepts/#domain=partners",
+        "authority": "ssot",
+        "machineRefs": [
+          "lib/telegram/partner-ops-glossary.ts",
+          "lib/portal/concept-domains.ts"
+        ]
+      }
     },
     {
       "id": "doc.workspace-lane-cross-map",
@@ -978,11 +1195,29 @@
       "repo": "project-R-score",
       "path": "docs/harness/tenants/workspace-lane-cross-map.md",
       "properties": [
-        "claim workspace-lane-cross-map",
-        "correlations not containment"
+        "session/chrome/concept correlations",
+        "no containment"
       ],
-      "owner": "harness docs",
-      "href": "/portal/lanes/"
+      "owner": "workspace taxonomy",
+      "href": "/portal/lanes/",
+      "documentation": {
+        "refId": "0.1.workspace-lane-cross-map",
+        "conceptDomains": [
+          "operations",
+          "portal",
+          "partners"
+        ],
+        "chromeDomains": [
+          "knowledge",
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/lanes/",
+        "authority": "ssot",
+        "machineRefs": [
+          "lib/docs/workspace-taxonomy.ts",
+          "public/registry/workspace-lane-map.json"
+        ]
+      }
     },
     {
       "id": "doc.naming-grammar",
@@ -995,7 +1230,406 @@
         "session lane partner"
       ],
       "owner": "organization",
-      "href": "/portal/lanes/"
+      "href": "/portal/lanes/",
+      "documentation": {
+        "refId": "0.1.naming-grammar",
+        "conceptDomains": [
+          "operations",
+          "partners"
+        ],
+        "chromeDomains": [
+          "knowledge"
+        ],
+        "primaryPortalHref": "/portal/lanes/",
+        "authority": "contract",
+        "machineRefs": [
+          "lib/docs/workspace-taxonomy.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.partner-profile-readme",
+      "aspect": "doc-tenant",
+      "token": "partner-profile README",
+      "repo": "project-R-score",
+      "path": "lib/partner-profile/README.md",
+      "properties": [
+        "profile runtime and operator commands"
+      ],
+      "owner": "partner profile",
+      "href": "/portal/partner/",
+      "documentation": {
+        "refId": "0.1.partner-profile-readme",
+        "conceptDomains": [
+          "partners",
+          "accounting",
+          "operations"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/partner/",
+        "authority": "implementation",
+        "machineRefs": [
+          "lib/partner-profile/schema.ts",
+          "lib/partner-profile/onboard.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.bookmakers-registry",
+      "aspect": "doc-tenant",
+      "token": "bookmakers-registry",
+      "repo": "project-R-score",
+      "path": "docs/harness/tenants/bookmakers-registry.md",
+      "properties": [
+        "sportsbook identity",
+        "skin and host catalog"
+      ],
+      "owner": "@factorywager/bookmakers",
+      "href": "/portal/bookmakers/",
+      "documentation": {
+        "refId": "0.1.bookmakers-registry",
+        "conceptDomains": [
+          "trading",
+          "registry",
+          "partners"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/bookmakers/",
+        "authority": "ssot",
+        "machineRefs": [
+          "public/registry/bookmakers.json",
+          "packages/partners/src/adapters/bookmakers.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.bookmakers-open-issues",
+      "aspect": "doc-tenant",
+      "token": "bookmakers-open-issues",
+      "repo": "project-R-score",
+      "path": "docs/harness/tenants/bookmakers-open-issues.md",
+      "properties": [
+        "catalog gaps",
+        "operator review queue"
+      ],
+      "owner": "@factorywager/bookmakers",
+      "href": "/portal/bookmakers/",
+      "documentation": {
+        "refId": "0.1.bookmakers-open-issues",
+        "conceptDomains": [
+          "trading",
+          "partners",
+          "operations"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/bookmakers/",
+        "authority": "plan",
+        "machineRefs": [
+          "public/registry/bookmakers-open-issues.json"
+        ]
+      }
+    },
+    {
+      "id": "doc.bookmakers-readme",
+      "aspect": "doc-tenant",
+      "token": "bookmakers README",
+      "repo": "project-R-score",
+      "path": "lib/bookmakers/README.md",
+      "properties": [
+        "registry merge and resolution behavior"
+      ],
+      "owner": "@factorywager/bookmakers",
+      "href": "/portal/bookmakers/",
+      "documentation": {
+        "refId": "0.1.bookmakers-readme",
+        "conceptDomains": [
+          "trading",
+          "registry",
+          "partners"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/bookmakers/",
+        "authority": "implementation",
+        "machineRefs": [
+          "lib/bookmakers/merged-registry.ts",
+          "lib/bookmakers/resolve.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.bookmakers-portal-source",
+      "aspect": "doc-tenant",
+      "token": "bookmakers portal source",
+      "repo": "project-R-score",
+      "path": "public/portal/bookmakers.md",
+      "properties": [
+        "bookmaker catalog board guide"
+      ],
+      "owner": "portal Partner desk",
+      "href": "/portal/bookmakers/",
+      "documentation": {
+        "refId": "0.1.bookmakers-portal-source",
+        "conceptDomains": [
+          "portal",
+          "trading",
+          "partners"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/bookmakers/",
+        "authority": "implementation",
+        "machineRefs": [
+          "public/portal/bookmakers/index.html",
+          "public/registry/bookmakers.json"
+        ]
+      }
+    },
+    {
+      "id": "doc.partner-limits",
+      "aspect": "doc-tenant",
+      "token": "partner-limits",
+      "repo": "project-R-score",
+      "path": "docs/harness/tenants/partner-limits.md",
+      "properties": [
+        "limit raises",
+        "ops:limits:demo"
+      ],
+      "owner": "partner limits",
+      "href": "/portal/limits/",
+      "documentation": {
+        "refId": "0.1.partner-limits",
+        "conceptDomains": [
+          "compliance",
+          "partners",
+          "trading"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/limits/",
+        "authority": "contract",
+        "machineRefs": [
+          "public/registry/limit-raises.json",
+          "packages/partners/src/adapters/limit-changes.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.partner-package-group-handshake",
+      "aspect": "doc-tenant",
+      "token": "partner-package-group-handshake",
+      "repo": "project-R-score",
+      "path": "docs/harness/tenants/partner-package-group-handshake.md",
+      "properties": [
+        "Telegram package groups",
+        "handshake catalog"
+      ],
+      "owner": "Factory Telegram",
+      "href": "/portal/factory/",
+      "documentation": {
+        "refId": "0.1.partner-package-group-handshake",
+        "conceptDomains": [
+          "telegram",
+          "partners",
+          "operations"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/factory/",
+        "authority": "contract",
+        "machineRefs": [
+          "lib/telegram/package-group-registry.ts",
+          "packages/partners/src/adapters/telegram-handshake.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.partner-onboarding-package",
+      "aspect": "doc-tenant",
+      "token": "partner-onboarding-package",
+      "repo": "project-R-score",
+      "path": "docs/harness/tenants/partner-onboarding-package.md",
+      "properties": [
+        "identity chain",
+        "onboarding package"
+      ],
+      "owner": "partner onboarding",
+      "href": "/portal/partner/",
+      "documentation": {
+        "refId": "0.1.partner-onboarding-package",
+        "conceptDomains": [
+          "partners",
+          "telegram",
+          "operations"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/partner/",
+        "authority": "contract",
+        "machineRefs": [
+          "lib/operations/partner-onboard-package.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.ops-partner-bridge",
+      "aspect": "doc-tenant",
+      "token": "ops-partner-bridge",
+      "repo": "project-R-score",
+      "path": "docs/harness/tenants/ops-partner-bridge.md",
+      "properties": [
+        "ops tree identity",
+        "profile adapter boundary"
+      ],
+      "owner": "ops-partner bridge",
+      "href": "/portal/partners/",
+      "documentation": {
+        "refId": "0.1.ops-partner-bridge",
+        "conceptDomains": [
+          "operations",
+          "partners"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/partners/",
+        "authority": "contract",
+        "machineRefs": [
+          "lib/operations/partner-profile-bridge.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.partner-soft-settlement-track",
+      "aspect": "doc-tenant",
+      "token": "partner-soft-settlement-track",
+      "repo": "project-R-score",
+      "path": "docs/plans/partner-soft-settlement-track.md",
+      "properties": [
+        "settlement delivery track",
+        "Soft read-only weave"
+      ],
+      "owner": "partner settlement",
+      "href": "/portal/partners/#section:accounting",
+      "documentation": {
+        "refId": "0.1.partner-soft-settlement-track",
+        "conceptDomains": [
+          "accounting",
+          "partners",
+          "operations"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/partners/#section:accounting",
+        "authority": "plan",
+        "machineRefs": [
+          "lib/partner-profile/settlement-runner.ts",
+          "lib/partner-profile/ledger.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.partners-package-readme",
+      "aspect": "doc-tenant",
+      "token": "@factorywager/partners README",
+      "repo": "project-R-score",
+      "path": "packages/partners/README.md",
+      "properties": [
+        "package boundary",
+        "implemented/planned truth"
+      ],
+      "owner": "@factorywager/partners",
+      "href": "/portal/partners/",
+      "documentation": {
+        "refId": "0.1.partners-package-readme",
+        "conceptDomains": [
+          "partners",
+          "operations",
+          "portal"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/partners/",
+        "authority": "implementation",
+        "machineRefs": [
+          "packages/partners/package.json",
+          "packages/partners/src/index.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.partners-portal-source",
+      "aspect": "doc-tenant",
+      "token": "partners portal source",
+      "repo": "project-R-score",
+      "path": "public/portal/partners.md",
+      "properties": [
+        "human board guide",
+        "registry/CLI routing"
+      ],
+      "owner": "portal Partner desk",
+      "href": "/portal/partners/",
+      "documentation": {
+        "refId": "0.1.partners-portal-source",
+        "conceptDomains": [
+          "portal",
+          "partners",
+          "accounting",
+          "telegram"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/partners/",
+        "authority": "implementation",
+        "machineRefs": [
+          "public/portal/partners/index.html",
+          "lib/portal/page-concepts.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.partner-consolidation-status-artifact",
+      "aspect": "doc-tenant",
+      "token": "partner-consolidation-status artifact",
+      "repo": "project-R-score",
+      "path": "docs/artifacts/partner-consolidation-status/README.md",
+      "properties": [
+        "review snapshot",
+        "not partner-domain SSOT"
+      ],
+      "owner": "partner MVP proposal artifact",
+      "href": "/portal/partners/",
+      "documentation": {
+        "refId": "0.1.partner-consolidation-status",
+        "conceptDomains": [
+          "analytics",
+          "partners",
+          "portal"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/partners/",
+        "authority": "derived",
+        "machineRefs": [
+          "docs/artifacts/partner-consolidation-status/artifact.json",
+          "docs/artifacts/partner-consolidation-status/index.html"
+        ]
+      }
     },
     {
       "id": "cross.kalshi.partner-phase",

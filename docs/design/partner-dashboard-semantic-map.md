@@ -1,5 +1,8 @@
 # Partner dashboard semantic map
 
+<!-- REF:ID 0.1.partner-dashboard-semantic-map -->
+<a id="0.1.partner-dashboard-semantic-map"></a>
+
 Status: proposed MVP contract (2026-08-05)
 
 This map joins the partner dashboard's domain language, registered concepts,

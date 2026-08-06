@@ -46,6 +46,28 @@ describe('partner dashboard semantic plan', () => {
     );
   });
 
+  it('rejects documentation REF:ID, domain, and portal mapping drift', async () => {
+    const plan = copyPlan();
+    plan.documentation.ref_id = '0.1.wrong-partner-doc';
+    plan.documentation.concept_domains = ['partners'];
+    plan.documentation.chrome_domains = ['knowledge'];
+    plan.documentation.primary_portal_href = '/portal/wrong/';
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).toContain(
+      'documentation.ref_id must be 0.1.partner-dashboard-mvp'
+    );
+    expect(result.errors).toContain(
+      'documentation.concept_domains must match the partner documentation SSOT'
+    );
+    expect(result.errors).toContain(
+      'documentation.chrome_domains must match the partner documentation SSOT'
+    );
+    expect(result.errors).toContain(
+      'documentation.primary_portal_href must be /portal/partners/'
+    );
+  });
+
   it('checks state axes against independent runtime constants', async () => {
     const plan = copyPlan();
     plan.lifecycle.states[0] = 'invented';
@@ -170,8 +192,11 @@ describe('partner dashboard semantic plan', () => {
     const plan = copyPlan();
     plan.package.components.out_capability_contract = 'planned';
     plan.package.components.bookmaker_account_resolver = 'planned';
+    plan.package.components.tennis_capacity_adapter = 'planned';
     plan.shapes.out_capability_snapshot.schema = 'factorywager.partner-out-capability.v2';
     plan.adapters.bookmaker_account_resolver.unknown_host_policy = 'guess-parent-domain';
+    plan.adapters.bookmakers_catalog.ops_only_field_policy = 'allow';
+    plan.adapters.tennis_capacity.execution_evidence_policy = 'offline-is-good-enough';
     plan.out_capabilities.bet_structures = ['straight', 'parlay'];
     plan.out_capabilities.limit_kinds = ['max_stake'];
     plan.out_capabilities.promotions_gate_execution = true;
@@ -179,6 +204,8 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors).toContain('package component statuses must distinguish implemented artifact core from planned adapters');
     expect(result.errors).toContain('out capability snapshot must match the implemented private preflight contract');
     expect(result.errors).toContain('bookmaker account resolver must remain fail-closed and separate from registry I/O');
+    expect(result.errors).toContain('bookmaker catalog adapter must preserve public identity and redaction policy');
+    expect(result.errors).toContain('integration observation adapters must preserve source authority and redaction');
     expect(result.errors).toContain('out_capabilities must match the package-owned execution constraint axes');
   });
 

@@ -100,7 +100,7 @@ Telegram stay in `toc-ops-repo` (`ct`); Pages exposes the baked board at
 | Bun native capabilities                           | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) (WebView, markdown.ansi, Terminal/PTY, Bun.Image, cron, UDP) · [Utilities guides map](docs/BUN_NATIVE_CAPABILITIES.md#utilities-guides-map) (`lib/bun-executable.ts` · `lib/bun-path-url.ts`)                                                                                                                                                                                                                                                     |
 | Bun capability × brand map                        | [`docs/harness/tenants/bun-brand-cross-map.md`](docs/harness/tenants/bun-brand-cross-map.md) · `/portal/brands/` · `bun run bun:brand-map:check`                                                                                                                                                                                                                                                                                                                                                                       |
 | Bun token/catalog operate                         | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · [`lib/docs/docs-artifact-paths.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/docs-artifact-paths.ts) (`docs:refresh:fast` daily · `docs:feeds:refresh` · full `docs:refresh`)                                                                                                                                                                                                                                                 |
-| Bun-types inventory (pin · tip · usage)           | [`docs/design/bun-types-inventory.md`](docs/design/bun-types-inventory.md) · [`tools/bun-types-inventory.json`](tools/bun-types-inventory.json) (`bun:types-inventory:write` · `bun:types-ci` — not partner-surface)                                                                                                                                                                                                                                                                                                   |
+| Bun-types inventory (pin · tip · usage)           | [`docs/design/bun-types-inventory.md`](docs/design/bun-types-inventory.md) · [`tools/bun-types-inventory.json`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/bun-types-inventory.json) (`bun:types-inventory:write` · `bun:types-ci` — not partner-surface)                                                                                                                                                                                                                                                                                                   |
 | TokenRef (interior) / BunToken (export)           | [`lib/docs/token-ref.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/token-ref.ts) · [`lib/docs/bun-token.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/bun-token.ts)                                                                                                                                                                                                                                                                                    |
 | Projects triage                                   | [`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md)                                                                                                                                                                                                                                                                                                                                                                                                             |
 | Path SSOT (code)                                  | [`lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts)                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -312,8 +312,8 @@ interior, path/name allowlists, suppressions.
   - Doc map integrity → `bun run docs:map:check` (also pre-commit when SSOT docs
     staged) · REF:ID v2 → `bun run docs:refid:check` · `docs:refid:suggest` ·
     `docs:refid:list` · `docs:refid:scaffold` (anchors · href · uniqueness;
-    `--skip-refid-check` fast-pass; library [`lib/docs/ref-id.ts`](lib/docs/ref-id.ts)
-    · CLI [`tools/docs-refid.ts`](tools/docs-refid.ts))
+    `--skip-refid-check` fast-pass; library [`lib/docs/ref-id.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/ref-id.ts)
+    · CLI [`tools/docs-refid.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/docs-refid.ts))
   - Import cycles / deep relative imports → `bun run check:import-graph`
     (`ci:core` merge proof → branch-protected Harness CI; ratchets may only go
     down — **0 strong** cycles, **0 deep imports** (both burned to zero
@@ -442,8 +442,8 @@ single runs) · `export` (hierarchical llms-full.txt) · **Bun-types inventory
 pipeline** (pin SSOT · tip-diff · usage — **not** partner-surface): full map
 [`docs/design/bun-types-inventory.md`](docs/design/bun-types-inventory.md).
 Commands: `bun:types-inventory` / `:write` / `:check` → committed
-[`tools/bun-types-inventory.json`](tools/bun-types-inventory.json) +
-[`tools/bun-types-inventory.md`](tools/bun-types-inventory.md); tip-diff /
+[`tools/bun-types-inventory.json`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/bun-types-inventory.json) +
+[`tools/bun-types-inventory.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/bun-types-inventory.md); tip-diff /
 changelog / usage → gitignored `.cache/bun-types-*/`; stack
 `bun:types-report:local` · soft CI `bun:types-ci` (end of `bun:ci`); morning
 dashboard `bun:types-status` (+ `:refresh`); skip `BUN_TYPES_CI=0` /
@@ -451,7 +451,7 @@ dashboard `bun:types-status` (+ `:refresh`); skip `BUN_TYPES_CI=0` /
 Deep parse: multi-line + **one-liner** + **union-branch** anonymous objects ·
 getters · maxDepth 3+. Console inspect depth (separate axis):
 [object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth)
-· `bunfig [console] depth = 6` · [`lib/console-depth.ts`](lib/console-depth.ts).
+· `bunfig [console] depth = 6` · [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts).
 
 Operate loop (feeds → scrape → catalog with embedded `releaseHits` → integrity):
 [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · **daily**

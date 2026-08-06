@@ -79,7 +79,7 @@
       {
         "id": "connector_state_chart",
         "title": "Connector implementation state",
-        "subtitle": "All eight source boundaries are named; canonical connectors remain planned, Sports Terminal is blocked, and legacy operations is compatibility-only.",
+        "subtitle": "All eight source boundaries are named; four observation/catalog parsers are implemented, Sports Terminal is blocked, and legacy operations is compatibility-only.",
         "type": "bar",
         "dataset": "connector_status_summary",
         "sourceId": "partner_plan",
@@ -129,7 +129,7 @@
           "language": "sql",
           "description": "Materializes reviewed package-component and connector counts from the partner MVP TOML.",
           "executed_at": "2026-08-06T05:20:33Z",
-          "sql": "SELECT 11 AS implementedComponents, 15 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
+          "sql": "SELECT 14 AS implementedComponents, 18 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
         }
       },
       {
@@ -196,8 +196,8 @@
         {
           "canonicalProfiles": 0,
           "profileTarget": 4,
-          "implementedComponents": 11,
-          "totalComponents": 15,
+          "implementedComponents": 14,
+          "totalComponents": 18,
           "connectors": 8,
           "blockedConnectors": 1,
           "semanticGaps": 15
@@ -206,8 +206,13 @@
       "connector_status_summary": [
         {
           "status": "Planned",
-          "count": 6,
-          "meaning": "Canonical connector and port are contracted; implementation is not complete"
+          "count": 2,
+          "meaning": "Connector contract exists; its source adapter is not implemented"
+        },
+        {
+          "status": "Partial",
+          "count": 4,
+          "meaning": "Observation parser is implemented; loading, resilience, or reconciliation remains"
         },
         {
           "status": "Blocked",
@@ -243,37 +248,37 @@
           "order": 3,
           "connector": "telegram-handshake",
           "owner": "telegram",
-          "status": "planned",
+          "status": "partial",
           "required": "no",
           "port": "CommunicationReadPort",
-          "nextAction": "Handshake projection"
+          "nextAction": "Loader, resilience, and dashboard reconciliation"
         },
         {
           "order": 4,
           "connector": "limits-registry",
           "owner": "compliance",
-          "status": "planned",
+          "status": "partial",
           "required": "no",
-          "port": "LimitReadPort",
-          "nextAction": "Per-out limit coverage"
+          "port": "LimitChangeObservationPort",
+          "nextAction": "Change-event attention reconciliation"
         },
         {
           "order": 5,
           "connector": "bookmakers-registry",
           "owner": "trading",
-          "status": "planned",
+          "status": "partial",
           "required": "no",
           "port": "BookmakerCatalogPort",
-          "nextAction": "Sportsbook ID aliases"
+          "nextAction": "Loader, resilience, and explicit host aliases"
         },
         {
           "order": 6,
           "connector": "tennis-contract",
           "owner": "trading",
-          "status": "planned",
+          "status": "partial",
           "required": "no",
           "port": "CapacityReadPort",
-          "nextAction": "Capacity and freshness"
+          "nextAction": "Loader, LKG resilience, and execution reconciliation"
         },
         {
           "order": 7,
@@ -313,7 +318,7 @@
         "language": "sql",
         "description": "Materializes reviewed package-component and connector counts from the partner MVP TOML.",
         "executed_at": "2026-08-06T05:20:33Z",
-        "sql": "SELECT 11 AS implementedComponents, 15 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
+        "sql": "SELECT 14 AS implementedComponents, 18 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
       }
     },
     {

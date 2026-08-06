@@ -1,5 +1,8 @@
 # Partner ledger integer-money migration
 
+<!-- REF:ID 0.1.partner-money-integer-migration -->
+<a id="0.1.partner-money-integer-migration"></a>
+
 Status: implementation-ready Phase 2 runbook
 
 Owner: root operations database / partner accounting adapter

@@ -1,5 +1,8 @@
 # `@factorywager/partners`
 
+<!-- REF:ID 0.1.partners-package-readme -->
+<a id="0.1.partners-package-readme"></a>
+
 Private workspace authority for parsed partner-domain identifiers, ingress
 compatibility, and the colorless dashboard read-model contract while the MVP is
 extracted from legacy portal, Telegram, accounting, limits, Tennis, and Sports
@@ -35,6 +38,31 @@ stop for manual review. A manual selection must still name a registered
 `SportsbookId`; URL credentials, query tokens, fragments, ambiguous hosts, and
 substring guesses are rejected. Loading `/registry/bookmakers.json` remains the
 planned bookmakers connector's responsibility.
+
+The implemented `./adapters/bookmakers` boundary parses the checked-in public
+v0.4 catalog and projects only canonical sportsbook identity, label, skin, brand
+group, and sanitized web URL. It enforces `object key === id === slug`, rejects
+duplicate normalized hosts, and fails if ops-only fields appear. Catalog
+loading, timeout, and last-known-good behavior remain connector
+responsibilities; public display limits never become executable account limits.
+
+Three implemented observation adapters now parse the existing integration
+artifacts without taking over their domains:
+
+- `./adapters/tennis-capacity` accepts only the pinned
+  `https://tennis.factory-wager.com/api/v1` contract paths. Live bakes may emit
+  credential and integer `max_stake` evidence; offline joins are visibility only
+  and require explicit book-reference mapping.
+- `./adapters/telegram-handshake` emits handshake phase, DM linkage, gaps, and
+  next steps. It drops invite URLs and does not invent membership counts or
+  configured topics absent from the artifact.
+- `./adapters/limit-changes` maps tree nodes and sportsbook references
+  explicitly, converts exact USD values to integer cents, and marks every row
+  `currentExecutionCeiling: false`.
+
+Connector loading, last-known-good resilience, reconciliation into the public
+dashboard artifact, liquidity reservation, accounting posting, and Telegram
+delivery remain outside these pure adapters.
 
 The browser-neutral `./portal` contract now owns the current input inventory,
 the canonical artifact path, and the future query-only `?compare=legacy` policy.

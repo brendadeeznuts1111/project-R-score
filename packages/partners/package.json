@@ -11,7 +11,11 @@
     ".": "./src/index.ts",
     "./adapters": "./src/adapters/index.ts",
     "./adapters/bookmaker-account": "./src/adapters/bookmaker-account.ts",
+    "./adapters/bookmakers": "./src/adapters/bookmakers.ts",
+    "./adapters/limit-changes": "./src/adapters/limit-changes.ts",
     "./adapters/profile-coverage": "./src/adapters/profile-coverage.ts",
+    "./adapters/telegram-handshake": "./src/adapters/telegram-handshake.ts",
+    "./adapters/tennis-capacity": "./src/adapters/tennis-capacity.ts",
     "./boundary": "./src/boundary/index.ts",
     "./compatibility": "./src/compatibility/index.ts",
     "./compatibility/legacy-partners-ops": "./src/compatibility/legacy-partners-ops.ts",
@@ -24,6 +28,6 @@
   "module": "./src/index.ts",
   "scripts": {
     "build": "bun run tsc --project ./tsconfig.json",
-    "test": "bun test ../../tests/partners-package.test.ts ../../tests/partner-dashboard-artifact.test.ts ../../tests/partner-out-capabilities.test.ts ../../tests/partner-bookmaker-account-adapter.test.ts ../../tests/partner-legacy-ops-adapter.test.ts ../../tests/partner-consumer-contract.test.ts ../../tests/partner-profile-coverage.test.ts ../../tests/partner-dashboard-proposal.test.ts"
+    "test": "bun test ../../tests/partners-package.test.ts ../../tests/partner-dashboard-artifact.test.ts ../../tests/partner-out-capabilities.test.ts ../../tests/partner-bookmaker-account-adapter.test.ts ../../tests/partner-limit-changes-adapter.test.ts ../../tests/partner-telegram-handshake-adapter.test.ts ../../tests/partner-tennis-capacity-adapter.test.ts ../../tests/partner-integration-artifacts.test.ts ../../tests/partner-legacy-ops-adapter.test.ts ../../tests/partner-consumer-contract.test.ts ../../tests/partner-profile-coverage.test.ts ../../tests/partner-dashboard-proposal.test.ts"
   }
 }

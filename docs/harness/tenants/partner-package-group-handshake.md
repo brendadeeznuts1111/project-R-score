@@ -1,5 +1,8 @@
 # Partner package-group handshake (factory ↔ ct, manual v0)
 
+<!-- REF:ID 0.1.partner-package-group-handshake -->
+<a id="0.1.partner-package-group-handshake"></a>
+
 **SSOT** for bridging factory partner onboard to Soft-desk package Telegram groups without crossing plane ownership.
 
 | Role | Doc / code |

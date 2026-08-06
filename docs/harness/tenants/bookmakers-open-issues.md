@@ -1,5 +1,8 @@
 # Bookmakers open issues
 
+<!-- REF:ID 0.1.bookmakers-open-issues -->
+<a id="0.1.bookmakers-open-issues"></a>
+
 Remaining gaps after `@factorywager/bookmakers@0.4.1` publish + public bake.
 
 **Human tickets:** open a GitHub issue with the **Bookmakers catalog** or **Portal gap**

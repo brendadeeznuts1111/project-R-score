@@ -1,5 +1,8 @@
 # Partner identity deep integration (Players · Profiles · Cellphones · Telegram)
 
+<!-- REF:ID 0.1.partner-onboarding-package -->
+<a id="0.1.partner-onboarding-package"></a>
+
 **SSOT** for the identity chain that terminates in structured, templated, keyboard-driven Telegram flows — subordinated to TOC (Ready gate, Soft on leaf, Connection Last, least capital per asset).
 
 | Role | Doc / code |

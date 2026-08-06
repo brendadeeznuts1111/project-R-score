@@ -1,5 +1,8 @@
 # Bookmakers
 
+<!-- REF:ID 0.1.bookmakers-readme -->
+<a id="0.1.bookmakers-readme"></a>
+
 Bookmaker catalog v0.4 contracts and the v0.3 migration boundary.
 
 | Module | Role |

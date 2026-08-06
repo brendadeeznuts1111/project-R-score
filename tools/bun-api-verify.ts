@@ -96,8 +96,8 @@ function findDocUrl(api: string): string | null {
 
 const KNOWN_BUN_TYPES_GAPS: Readonly<Record<string, { version: string; reason: string }>> = {
   'Bun.TOML.stringify': {
-    version: '1.4.0-canary.20260519T150915',
-    reason: 'runtime 1.4 API is not declared by the pinned bun-types canary package',
+    version: '1.4.0-tip.ed700c20',
+    reason: 'runtime 1.4 API is not declared by the pinned bun-types tip package',
   },
 };
 

@@ -1,5 +1,8 @@
 # Unified Partner Profile
 
+<!-- REF:ID 0.1.unified-partner-profile -->
+<a id="0.1.unified-partner-profile"></a>
+
 Design v0 — one canonical partner model across FactoryWager ops and Sports
 Terminal. Approved 2026-08-02 (full merge · CODE as single key · registry-linked
 books · vault-only credentials).

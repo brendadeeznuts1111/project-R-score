@@ -59,6 +59,10 @@ export function formatPartnerSurfaceGeneratedMarkdown(
       const bh = b.href ?? '';
       return ah.localeCompare(bh) || a.token.localeCompare(b.token);
     });
+  const docs = inv.rows
+    .filter(r => r.aspect === 'doc-tenant')
+    .slice()
+    .sort((a, b) => a.path.localeCompare(b.path));
 
   const lines: string[] = [
     '# Partner surface inventory (generated)',
@@ -214,6 +218,25 @@ export function formatPartnerSurfaceGeneratedMarkdown(
       );
     }
     lines.push('');
+  }
+
+  lines.push(
+    '## Documentation authority',
+    '',
+    '| Document / REF:ID | ConceptDomains | Chrome Domains | Portal | Authority | Machine refs |',
+    '| ----------------- | -------------- | -------------- | ------ | --------- | ------------ |'
+  );
+
+  for (const r of docs) {
+    const bag = r.documentation;
+    if (!bag) continue;
+    const docHref = `../../${r.path}#${bag.refId}`;
+    const conceptDomains = bag.conceptDomains.map(domain => `\`${domain}\``).join(', ');
+    const chromeDomains = bag.chromeDomains.map(domain => `\`${domain}\``).join(', ');
+    const machineRefs = bag.machineRefs?.map(ref => `\`${ref}\``).join('<br>') ?? '—';
+    lines.push(
+      `| [\`${r.path}\`](${docHref})<br>\`${bag.refId}\` | ${conceptDomains} | ${chromeDomains} | ${cell(bag.primaryPortalHref)} | \`${bag.authority}\` | ${machineRefs} |`
+    );
   }
 
   lines.push(

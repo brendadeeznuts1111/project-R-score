@@ -1,5 +1,8 @@
 # Bookmakers registry · @factorywager/bookmakers@0.4.1
 
+<!-- REF:ID 0.1.bookmakers-portal-source -->
+<a id="0.1.bookmakers-portal-source"></a>
+
 Canonical **book / sportsbook** registry for the deep-link pipeline — **Pages
 public catalog only** (`schemaVersion: 2`, package **0.4.1**). Ops credentials
 live under `artifact-registry/bookmakers/v0.4.0/ops/` and are **never** deployed

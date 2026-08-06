@@ -130,8 +130,9 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'Session archive lane ↔ chrome Domain ↔ ConceptDomain correlations bake to workspace-lane-map.json (not containment)',
     kinds: ['unit'],
     gateClass: 'human-only',
-    gateRef: 'bun test tests/workspace-taxonomy.test.ts',
+    gateRef: 'none',
     evidence: [
+      'bun test tests/workspace-taxonomy.test.ts && bun run workspace-taxonomy:check',
       'bun test tests/workspace-taxonomy.test.ts',
       'bun run workspace-taxonomy:check',
       'lib/docs/workspace-taxonomy.ts',

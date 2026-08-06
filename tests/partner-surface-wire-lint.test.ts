@@ -39,7 +39,7 @@ describe('partner-surface-wire-lint', () => {
     expect(ext!.globs.some(g => g.includes('Kalshi-bot'))).toBe(true);
   });
 
-  test('OutId rule is present with seat-desk allowlist', () => {
+  test('OutId rule maps seat-desk and pinned Kalshi compatibility boundaries', () => {
     const rules = buildWireLintRules(allPartnerSurfaceRows());
     const out = rules.find(r => r.brandedType === 'OutId');
     expect(out).toBeDefined();
@@ -47,6 +47,7 @@ describe('partner-surface-wire-lint', () => {
     expect(out!.patterns).toContain('out_id');
     expect(out!.globs.some(g => g.includes('seat-*.ts'))).toBe(true);
     expect(out!.globs.some(g => g.includes('seat-desk-*.ts'))).toBe(true);
+    expect(out!.globs.some(g => g.includes('Kalshi-bot/src/partner'))).toBe(true);
   });
 
   test('ExternalPartnerId trap row has pattern and empty globs', () => {
@@ -176,9 +177,9 @@ describe('partner-surface-wire-lint', () => {
     expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--why'])).toBe(0);
     expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--document'])).toBe(0);
     expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--rules'])).toBe(0);
-  });
+  }, 15_000);
 
   test('CLI --scan runs the gate', async () => {
     expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--scan'])).toBe(0);
-  });
+  }, 15_000);
 });

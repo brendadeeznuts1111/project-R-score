@@ -34,8 +34,8 @@ export const PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS = {
     'partners[].accounting.recentEntries',
     'partners[].outs[].fundingStatus',
   ],
-  'telegram-handshake': ['partners[].communication'],
-  'limits-registry': ['partners[].limits', 'partners[].outs[].limitCoverageRatio'],
+  'telegram-handshake': ['partners[].communication.handshakeStatus'],
+  'limits-registry': [],
   'bookmakers-registry': ['partners[].outs[].sportsbookId'],
   'tennis-contract': [
     'activeOutIds',
@@ -142,6 +142,14 @@ export type PartnerDashboardPlanToml = {
     readonly owner: '@factorywager/partners';
   };
   readonly package: typeof PARTNERS_PACKAGE_TARGET;
+  readonly documentation: {
+    readonly inventory_row_id: 'doc.partner-dashboard-mvp';
+    readonly ref_id: '0.1.partner-dashboard-mvp';
+    readonly markdown_path: 'docs/design/partner-dashboard-mvp.md';
+    readonly concept_domains: readonly string[];
+    readonly chrome_domains: readonly string[];
+    readonly primary_portal_href: '/portal/partners/';
+  };
   readonly concepts: {
     readonly gap: readonly PartnerDashboardConceptGap[];
     readonly binding: readonly Record<string, unknown>[];

@@ -4,6 +4,9 @@ title: Archive naming grammar
 
 # Archive naming grammar — `<t>-<lane>-<slug>`
 
+<!-- REF:ID 0.1.naming-grammar -->
+<a id="0.1.naming-grammar"></a>
+
 Reusable **filename / folder** grammar for human-facing archive artifacts in
 this workspace. It is **not** a domain ID, brand, git-branch, or commit message
 format.

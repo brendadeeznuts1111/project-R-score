@@ -1,13 +1,13 @@
 {
   "kind": "concepts-state",
   "schemaVersion": 1,
-  "bakedAt": "2026-08-06T04:14:24.203Z",
+  "bakedAt": "2026-08-06T20:57:34.493Z",
   "gate": "pass",
   "summary": {
-    "totalPortal": 145,
-    "withProvenance": 145,
+    "totalPortal": 146,
+    "withProvenance": 146,
     "provenanceCoverage": 1,
-    "usedUi": 83,
+    "usedUi": 84,
     "unusedUi": 9,
     "surfaceOnly": 26,
     "metadataIssues": 0,
@@ -15,15 +15,15 @@
     "inventoryMisses": 0,
     "deprecatedUsed": 0,
     "bakeDrift": 0,
-    "detailRows": 145
+    "detailRows": 146
   },
   "domainSummary": [
     {
       "domain": "portal",
-      "count": 87,
-      "used": 79,
+      "count": 88,
+      "used": 80,
       "unused": 8,
-      "provenance": 87,
+      "provenance": 88,
       "provenancePct": 100
     },
     {
@@ -1008,6 +1008,18 @@
       "domain": "portal",
       "namespace": "page",
       "group": "page.issueTaxonomy",
+      "category": "page",
+      "status": "active",
+      "provenance": "legacy",
+      "usage": 1,
+      "kind": "used"
+    },
+    {
+      "id": "page.lanes",
+      "label": "Workspace lane crosswalk",
+      "domain": "portal",
+      "namespace": "page",
+      "group": "page.lanes",
       "category": "page",
       "status": "active",
       "provenance": "legacy",

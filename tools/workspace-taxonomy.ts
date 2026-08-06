@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
-// @see https://bun.com/docs/runtime/utils#bun-markdown — Bun.markdown.ansi
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
 /**
  * Tiny CLI for workspace taxonomy homonyms.
  *
@@ -8,6 +8,7 @@
  *   bun tools/workspace-taxonomy.ts list
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
+import { logTable } from '../lib/console-depth.ts';
 import {
   SESSION_LANES,
   WORKSPACE_TAXONOMY_CORRELATIONS,
@@ -41,7 +42,7 @@ async function main(): Promise<number> {
       concepts: r.conceptDomains.join(', '),
       scopes: r.commitScopeHints.join(', ') || '—',
     }));
-    console.log(Bun.inspect.table(rows, ['sessionLane', 'chrome', 'concepts', 'scopes']));
+    logTable(rows, ['sessionLane', 'chrome', 'concepts', 'scopes']);
     console.log(
       `\n${SESSION_LANES.length} session lanes · ${WORKSPACE_TAXONOMY_CORRELATIONS.length} correlations`
     );

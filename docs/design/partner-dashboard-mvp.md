@@ -1,5 +1,8 @@
 # Partner dashboard MVP
 
+<!-- REF:ID 0.1.partner-dashboard-mvp -->
+<a id="0.1.partner-dashboard-mvp"></a>
+
 Status: implementation outline (2026-08-05)
 
 The dashboard domain contract is supported by the separate
@@ -334,6 +337,22 @@ unknown host becomes manual review, and a manual choice must still resolve to a
 registered `SportsbookId`. It does not guess from substrings or parent domains.
 The resolver is pure; loading the bookmaker artifact and probing a provider
 remain planned connector work.
+
+### Integration observations now implemented
+
+The Tennis, Telegram, and limit-change artifacts now have package-owned parsing
+boundaries. Tennis live v1 data may contribute canonical out activity,
+credential readiness, and integer max-stake evidence after an explicit external
+book-reference mapping. Offline Tennis joins never become execution evidence.
+
+Telegram contributes handshake phase, DM linkage, gaps, and next steps only. Its
+current public artifact does not expose membership counts or configured topic
+keys, so the adapter does not fabricate them and drops invite URLs.
+
+`limit-raises.json` is now correctly classified as historical change evidence.
+It can drive attention and audit rows, but it is not current limit coverage and
+cannot satisfy max stake, gross payout, or net win execution checks. Those still
+require a fresh Tennis/provider capability observation.
 
 Maximum stake, gross payout, net win, and reservable liquidity are independent
 checks. Each critical ceiling is explicitly `known`, `not_applicable`, or
