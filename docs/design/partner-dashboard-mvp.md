@@ -321,6 +321,24 @@ surfaces while presenting their partner-keyed health and freshness.
 | Attention      | all adapters                               | deterministic action rows with deep links/CLI hints                                | automated remediation                |
 | Integrations   | Tennis/Sports Terminal adapters            | availability and freshness only                                                    | embedding product dashboards         |
 
+## PPH intake and execution preflight
+
+The implemented private `PartnerOutCapabilitySnapshot` joins a sanitized account
+URL to `PartnerCode`, canonical `OutId`, `SportsbookId`, and optional skin
+metadata. It keeps straight, parlay, and same-game-parlay support explicit and
+separates wager market catalogs from promotional offers.
+
+Maximum stake, gross payout, net win, and reservable liquidity are independent
+checks. Each critical ceiling is explicitly `known`, `not_applicable`, or
+`unknown`; missing evidence yields `manual_review`, never “unlimited.” Scoped
+facts override global facts, equal-specificity ambiguity is rejected, and
+cross-currency comparison is forbidden. The caller supplies projected payout and
+win as integer `MoneyAmount` values from its price boundary.
+
+The contract and pure evaluator are implemented, but provider probing,
+onboarding integration, execution reservation, accounting posting, and Telegram
+delivery remain with their owning adapters and services.
+
 ## State and failure behavior
 
 - Missing optional adapters never erase a partner profile.

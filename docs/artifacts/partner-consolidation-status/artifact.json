@@ -93,7 +93,7 @@
           "language": "sql",
           "description": "Materializes reviewed package-component and connector counts from the partner MVP TOML.",
           "executed_at": "2026-08-06T05:20:33Z",
-          "sql": "SELECT 8 AS implementedComponents, 12 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
+          "sql": "SELECT 10 AS implementedComponents, 14 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
         }
       },
       {
@@ -160,8 +160,8 @@
         {
           "canonicalProfiles": 0,
           "profileTarget": 4,
-          "implementedComponents": 8,
-          "totalComponents": 12,
+          "implementedComponents": 10,
+          "totalComponents": 14,
           "connectors": 8,
           "blockedConnectors": 1,
           "semanticGaps": 15
@@ -277,7 +277,7 @@
         "language": "sql",
         "description": "Materializes reviewed package-component and connector counts from the partner MVP TOML.",
         "executed_at": "2026-08-06T05:20:33Z",
-        "sql": "SELECT 8 AS implementedComponents, 12 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
+        "sql": "SELECT 10 AS implementedComponents, 14 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
       }
     },
     {
