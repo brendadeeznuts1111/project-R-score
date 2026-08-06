@@ -418,6 +418,7 @@ bun tools/bun-doc-refs.ts suggest "Bun.secrets"   # → catalog DOC + SHIP/FIX/B
 bun tools/bun-doc-refs.ts url "Bun.stringWidth"   # → canonical URL
 bun tools/bun-docs-catalog.ts get Bun.WebView     # full catalog entry
 bun run docs:catalog:export                       # compact TSV for agents
+bun run bun:types-inventory                       # deep Bun surface from bun-types (v3)
 ```
 
 Commands: `url` `list` `suggest` (catalog → canonical map → index) · `catalog` ·
@@ -425,7 +426,18 @@ Commands: `url` `list` `suggest` (catalog → canonical map → index) · `catal
 `deepcheck` (repo links vs index) · `validate` (HTTP links) · `integrity`
 (4-layer proof; `--fix` self-heals taxonomy aliases, `--fix-dry` previews) ·
 `status` (includes tier-A coverage) · `schedule` (Bun.cron daemon; `--once` for
-single runs) · `export` (hierarchical llms-full.txt)
+single runs) · `export` (hierarchical llms-full.txt) · **deep types inventory v3**
+`bun run bun:types-inventory` / `:write` / `:check` — flags: `--shallow` ·
+`--no-interfaces` · `--no-type-aliases` · `--no-props` · `--tip-diff` ·
+`--module=bun:jsc` · `--kind=function,method,property` →
+[`tools/bun-types-inventory.md`](tools/bun-types-inventory.md) — top-level +
+namespace/class/**interface**/**`type X = {…}`** methods & properties
+(maxDepth 2) + satellites (`bun:jsc` · `bun:ffi` · `bun:sqlite` · `bun:test`),
+not the utils docs page.
+**Tip-diff (local CI, GHA disabled):** `bun run bun:types-inventory:tip-diff`
+fetches oven-sh/bun `packages/bun-types` into `.cache/` (or `--prefer-local`
+`~/bun`) and reports tip-only/pin-only vs catalog pin; `:tip-diff:strict` fails
+on policy breach; reports under `.cache/bun-types-tip-diff/`
 
 Operate loop (feeds → scrape → catalog with embedded `releaseHits` → integrity):
 [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · **daily**
