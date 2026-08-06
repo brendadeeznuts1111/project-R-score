@@ -21,7 +21,13 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 
 **Full identity integration** (cellphone → profile → seat → ChatChannelMeta → HTML templates): [`partner-onboarding-package.md`](partner-onboarding-package.md).
 
-**Package group bridge:** [`partner-package-group-handshake.md`](partner-package-group-handshake.md) · machine ref: `bun run telegram:handshake:catalog`
+**Package group bridge:** [`partner-package-group-handshake.md`](partner-package-group-handshake.md)
+· machine ref: `bun run telegram:handshake:catalog` · CLI Flags REF:ID §1.1
+(`link-package-group` `--invite` / `--no-dm` / `--no-ack` / `--requested-by`)
+validated by `bun run docs:refid:check` (tool SSOT
+[`lib/docs/ref-id-tool-flags.ts`](../../../lib/docs/ref-id-tool-flags.ts)
+`telegramOpsToolFlags`). Portal board: [`/portal/partners/`](../../../public/portal/partners/)
+· source map [`public/portal/partners.md`](../../../public/portal/partners.md).
 
 **Seat capital desk** (pinned Liquidity/Outs table + Fill keyboard): [`seat-capital-desk.md`](seat-capital-desk.md) · `bun run seat:desk:refresh SPEN-001`
 

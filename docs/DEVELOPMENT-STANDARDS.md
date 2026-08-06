@@ -70,6 +70,8 @@ Numbered fragment ids for operator docs (baseline: bun-types inventory §4.1).
 ```bash
 bun run docs:refid:check           # planes + project discovery; errors fail
 bun run docs:refid:check:strict    # format warns → errors
+bun run docs:refid:check:dry-run   # report + audit inventory; always exit 0
+bun run docs:refid:audit           # classify docs/**/*.md (Flags / REF:ID)
 bun tools/docs-refid.ts check --registry-only   # skip discovery globs
 bun tools/docs-refid.ts check --write-hrefs   # fill empty/—/auto href cells
 bun run docs:refid:suggest --section=4.1 --flag=--foo-bar
@@ -82,11 +84,22 @@ bun run docs:map:check             # includes REF:ID (unless --skip-refid-check)
 discovery (`docs/**` · `public/portal/**` when markup present). See
 [CONTRIBUTING — REF:ID Validation](./contributing/CONTRIBUTING.md#refid-validation).
 
+**Tool ↔ table:** Flag owners list leaves in
+[`lib/docs/ref-id-tool-flags.ts`](../lib/docs/ref-id-tool-flags.ts)
+(`requireToolCoverage`). Partner documentation register paths live in
+`PARTNER_DOCUMENTATION_REFS`
+([`partner-surface-inventory.ts`](../lib/docs/partner-surface-inventory.ts)).
+
+**Audit gate:** `bun run docs:refid:audit` must report **flags-table-only=0**.
+Board maps with a trailing `Flags` column are not REF:ID surfaces.
+
 **href DX:** table `href` may be empty, `—`, or `auto` — checker treats it as
 `#` + REF:ID. Use `--write-hrefs` to materialize `[`#4.1.x`](#4.1.x)` cells.
 Prefer explicit links in committed docs.
 
-Library: [`lib/docs/ref-id.ts`](../lib/docs/ref-id.ts) · CLI:
+Library: [`lib/docs/ref-id.ts`](../lib/docs/ref-id.ts) ·
+[`ref-id-audit.ts`](../lib/docs/ref-id-audit.ts) ·
+[`ref-id-tool-flags.ts`](../lib/docs/ref-id-tool-flags.ts) · CLI:
 [`tools/docs-refid.ts`](../tools/docs-refid.ts) · design note:
 [`docs/design/bun-types-inventory.md`](./design/bun-types-inventory.md) (Flags).
 

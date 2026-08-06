@@ -310,10 +310,14 @@ interior, path/name allowlists, suppressions.
     · [`docs/audit/README.md`](docs/audit/README.md) · claim
     `audit-findings-catalog`
   - Doc map integrity → `bun run docs:map:check` (also pre-commit when SSOT docs
-    staged) · REF:ID v2 → `bun run docs:refid:check` · `docs:refid:suggest` ·
-    `docs:refid:list` · `docs:refid:scaffold` (anchors · href · uniqueness;
-    `--skip-refid-check` fast-pass; library [`lib/docs/ref-id.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/ref-id.ts)
-    · CLI [`tools/docs-refid.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/docs-refid.ts))
+    staged) · REF:ID v2 → `bun run docs:refid:check` · `docs:refid:check:dry-run` ·
+    `docs:refid:audit` · `docs:refid:suggest` · `docs:refid:list` ·
+    `docs:refid:scaffold` (anchors · href · uniqueness · tool↔table coverage;
+    `--skip-refid-check` fast-pass; audit must show **flags-table-only=0**;
+    library [`lib/docs/ref-id.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/ref-id.ts)
+    · [`ref-id-tool-flags.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/ref-id-tool-flags.ts)
+    · CLI [`tools/docs-refid.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/docs-refid.ts)
+    · [CONTRIBUTING § REF:ID](docs/contributing/CONTRIBUTING.md#refid-validation))
   - Import cycles / deep relative imports → `bun run check:import-graph`
     (`ci:core` merge proof → branch-protected Harness CI; ratchets may only go
     down — **0 strong** cycles, **0 deep imports** (both burned to zero
