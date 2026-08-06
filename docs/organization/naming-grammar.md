@@ -75,6 +75,9 @@ Crosswalk (correlations, not nesting):
 · [`lib/docs/workspace-taxonomy.ts`](../../lib/docs/workspace-taxonomy.ts) ·
 `/portal/lanes/`.
 
+Partner stem overload (session · chrome · concept · boards · brands · wire):
+[`docs/design/partner-surface-inventory.md`](../design/partner-surface-inventory.md).
+
 ## Where to use / not use
 
 | Surface                                 | Use?      | Instead                                                                  |

@@ -522,6 +522,14 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'session archive lanes correlated with chrome Domain and ConceptDomain',
   },
   {
+    path: '/registry/partner-surface-inventory.json',
+    name: 'Partner surface inventory projection',
+    category: 'registry',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'map-before-rename · taxonomy · boards · brands · wire traps · docs',
+  },
+  {
     path: '/registry/github-issue-taxonomy.json',
     name: 'GitHub issue taxonomy projection',
     category: 'registry',
@@ -529,6 +537,7 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     okStatuses: [200],
     note: 'deterministic semantic dimensions · provider labels · public color projection',
   },
+
   {
     path: '/portal/concepts/',
     name: 'Concepts inventory',

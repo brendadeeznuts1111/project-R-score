@@ -2,6 +2,12 @@
 
 Status: proposed canonical map (2026-08-06)
 
+**Surfaces (repo / path / href / taxonomy machines):** see
+[partner-surface-inventory.md](./partner-surface-inventory.md) ·
+[`lib/docs/partner-surface-inventory.ts`](../../lib/docs/partner-surface-inventory.ts)
+· `/registry/partner-surface-inventory.json`. This type map owns the identity
+graph; the surface inventory joins boards, brands, wire traps, and docs.
+
 This map is the type-level companion to the
 [partner consolidation review](./partner-code-consolidation.md),
 [dashboard MVP](./partner-dashboard-mvp.md), and machine-readable
