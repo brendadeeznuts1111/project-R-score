@@ -1,9 +1,10 @@
+// @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
-// @see https://bun.com/docs/runtime/semver#bun-semver-satisfies — Bun.semver.satisfies
+// @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
 import { joinPath } from '../path-bun.ts';
 import { ROOT } from './paths.ts';
 

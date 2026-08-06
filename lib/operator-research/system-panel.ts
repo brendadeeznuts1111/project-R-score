@@ -5,9 +5,9 @@
  * @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
  * @see https://bun.com/docs/runtime/glob — Bun.Glob
  * @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
- * @see https://bun.com/docs/runtime/utils#bun-password — Bun.password
+ * @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
  * @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
- * @see https://bun.com/docs/runtime/utils#bun-color — Bun.color
+ * @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
  */
 import { basenamePath, joinPath, normalizePath, relativePath, resolvePath } from '../path-bun.ts';
 import { ROOT } from './paths.ts';

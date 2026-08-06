@@ -1,7 +1,7 @@
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
 // @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortSignal.timeout
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
-// @see https://bun.com/docs/api/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 /**
  * FanDuel Tier 4 scrape agent (same loop as DraftKings).
  *

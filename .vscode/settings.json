@@ -80,5 +80,8 @@
     "BUN_INSTALL": "${env:HOME}/.bun"
   },
   "bun.runtime": "bun",
-  "bun.test.enabled": true
+  "bun.test.enabled": true,
+  "npm.autoDetect": "off",
+  "npm.packageManager": "bun",
+  "npm.exclude": "**/plum-spruce-dawn-dune1/**"
 }
