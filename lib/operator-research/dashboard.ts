@@ -29,6 +29,19 @@ import {
   type UpdateFlags,
 } from './package-update.ts';
 import {
+  getRegistryPackage,
+  listPresets,
+  listPublishableWorkspaces,
+  packageNameFromPathSuffix,
+  parseRegistryPreset,
+  publishEventsToSse,
+  registryHealth,
+  runBunPublish,
+  runFactoryPublish,
+  searchRegistryPackages,
+  type PublishFlags,
+} from './registry-desk.ts';
+import {
   getEnvView,
   getSystemInfo,
   globSearch,
@@ -572,6 +585,148 @@ export function startResearchDashboard(
             'cache-control': 'no-store',
             connection: 'keep-alive',
           },
+        });
+      }
+
+      // ── Registry browser + publish (snapshot + allowlisted presets) ──
+      if (url.pathname === '/api/registry/presets' || url.pathname === '/api/registry/presets/') {
+        return json({ presets: listPresets() });
+      }
+
+      if (url.pathname === '/api/registry/health' || url.pathname === '/api/registry/health/') {
+        const preset = parseRegistryPreset(url.searchParams.get('preset')) ?? 'local';
+        return json(await registryHealth(preset));
+      }
+
+      if (
+        url.pathname === '/api/registry/workspaces' ||
+        url.pathname === '/api/registry/workspaces/'
+      ) {
+        return json({ workspaces: await listPublishableWorkspaces() });
+      }
+
+      if (url.pathname === '/api/registry/packages' || url.pathname === '/api/registry/packages/') {
+        const q = url.searchParams.get('q') ?? url.searchParams.get('search') ?? '';
+        const type = url.searchParams.get('type') ?? '';
+        return json(await searchRegistryPackages(q, type));
+      }
+
+      if (url.pathname.startsWith('/api/registry/packages/')) {
+        const suffix = url.pathname.slice('/api/registry/packages/'.length);
+        const name = packageNameFromPathSuffix(suffix);
+        if (!name) return json({ error: 'package name required' }, 400);
+        const version = url.searchParams.get('version');
+        const detail = await getRegistryPackage(name, version);
+        if (!detail) return json({ error: 'package not found', name }, 404);
+        return json(detail);
+      }
+
+      if (url.pathname === '/api/registry/publish' || url.pathname === '/api/registry/publish/') {
+        if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        let body: {
+          workspace?: string;
+          preset?: string;
+          access?: 'public' | 'restricted';
+          tag?: string;
+          dryRun?: boolean;
+          confirm?: boolean;
+          tolerateRepublish?: boolean;
+          gzipLevel?: number;
+          stream?: boolean;
+        };
+        try {
+          body = (await req.json()) as typeof body;
+        } catch {
+          return json({ ok: false, error: 'Invalid JSON body' }, 400);
+        }
+        const preset = parseRegistryPreset(body.preset ?? 'local');
+        if (!preset) return json({ ok: false, error: 'preset must be local|prod' }, 400);
+        if (preset !== 'local') {
+          return json(
+            {
+              ok: false,
+              error: 'bun publish only allowed for preset=local; use /api/registry/factory-publish',
+            },
+            400
+          );
+        }
+        const workspace = String(body.workspace ?? '').trim();
+        if (!workspace) return json({ ok: false, error: 'workspace required' }, 400);
+        const confirm = body.confirm === true;
+        const dryRun = confirm ? false : body.dryRun !== false;
+        const flags: PublishFlags = {
+          access: body.access,
+          tag: body.tag,
+          dryRun,
+          tolerateRepublish: !!body.tolerateRepublish,
+          gzipLevel: body.gzipLevel,
+        };
+        const wantStream =
+          body.stream === true || (req.headers.get('accept') ?? '').includes('text/event-stream');
+        if (wantStream) {
+          return new Response(publishEventsToSse(runBunPublish(workspace, flags)), {
+            headers: {
+              'content-type': 'text/event-stream; charset=utf-8',
+              'cache-control': 'no-store',
+              connection: 'keep-alive',
+            },
+          });
+        }
+        const events = [];
+        for await (const ev of runBunPublish(workspace, flags)) events.push(ev);
+        const done = events.find(e => e.type === 'done');
+        return json({
+          ok: done?.type === 'done' ? done.ok : false,
+          dryRun,
+          events,
+          result: done,
+        });
+      }
+
+      if (
+        url.pathname === '/api/registry/factory-publish' ||
+        url.pathname === '/api/registry/factory-publish/'
+      ) {
+        if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+        let body: {
+          workspace?: string;
+          dryRun?: boolean;
+          confirm?: boolean;
+          stream?: boolean;
+        };
+        try {
+          body = (await req.json()) as typeof body;
+        } catch {
+          return json({ ok: false, error: 'Invalid JSON body' }, 400);
+        }
+        const workspace = String(body.workspace ?? '').trim();
+        if (!workspace) return json({ ok: false, error: 'workspace required' }, 400);
+        const confirm = body.confirm === true;
+        const dryRun = confirm ? false : body.dryRun !== false;
+        const wantStream =
+          body.stream === true || (req.headers.get('accept') ?? '').includes('text/event-stream');
+        if (wantStream) {
+          return new Response(
+            publishEventsToSse(runFactoryPublish(workspace, { dryRun, confirm })),
+            {
+              headers: {
+                'content-type': 'text/event-stream; charset=utf-8',
+                'cache-control': 'no-store',
+                connection: 'keep-alive',
+              },
+            }
+          );
+        }
+        const events = [];
+        for await (const ev of runFactoryPublish(workspace, { dryRun, confirm })) {
+          events.push(ev);
+        }
+        const done = events.find(e => e.type === 'done');
+        return json({
+          ok: done?.type === 'done' ? done.ok : false,
+          dryRun,
+          events,
+          result: done,
         });
       }
 
@@ -1216,7 +1371,9 @@ export function startResearchDashboard(
       if (
         url.pathname === '/dashboard-v1.12.html' ||
         url.pathname === '/system' ||
-        url.pathname === '/system.html'
+        url.pathname === '/system.html' ||
+        url.pathname === '/registry' ||
+        url.pathname === '/registry.html'
       ) {
         return agentOddsHtml(req, AGENT_ODDS_V112);
       }

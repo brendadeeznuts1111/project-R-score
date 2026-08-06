@@ -5,7 +5,7 @@ Local agent shell dashboards (not Tennis HQ Worker).
 | Version             | Route / file                                     | Notes                                                                                                |
 | ------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
 | **v1.05** (default) | `/` · `/dashboard.html` · `dashboard-v1.05.html` | Stable events desk · signals · rules · alerts · CSRF-protected mutations                             |
-| v1.12               | `/system` · `dashboard-v1.12.html`               | **System** tab · Bun.file/Glob/which/spawn/password/peek · package updates                           |
+| v1.12               | `/system` · `/registry` · `dashboard-v1.12.html` | **System** + **Registry** tabs · package updates · snapshot browse · dry-run publish                 |
 | v1.11               | `/packages` · `dashboard-v1.11.html`             | Package update tab fixes · click-select · `originalTarget` · real SSE `/api/update` · dry-run · CSRF |
 | v1.10               | `dashboard-v1.10.html`                           | Package tab (buggy: no click, mock fallback, simulated progress)                                     |
 | v1.07               | `dashboard-v1.07.html`                           | Trading desk · WebSocket · mock bet · backtest · ML annotate                                         |
@@ -73,7 +73,42 @@ Or set `AGENT_DEMO_USER` / `AGENT_DEMO_PASS`. **Not for production.**
 | POST     | `/api/system/search`                           | `Bun.Glob`                                                            |
 | POST     | `/api/system/inspect`                          | `Bun.inspect`                                                         |
 | GET      | `/api/system/peek`                             | Desk task `Bun.peek` statuses                                         |
+| GET      | `/api/registry/presets`                        | Allowlisted registry presets (`local` · `prod`)                       |
+| GET      | `/api/registry/packages?q=`                    | Search `public/registry/registry.json` (Phase 0 snapshot)             |
+| GET      | `/api/registry/packages/:name`                 | Package detail from snapshot (`?version=` · includes `readme` / `readmeFilename` when baked) |
+| GET      | `/api/registry/health?preset=`                 | Snapshot + optional local `/-/ping`                                   |
+| GET      | `/api/registry/workspaces`                     | Publishable `packages/*` workspaces                                   |
+| POST     | `/api/registry/publish`                        | Local `bun publish --registry` (CSRF · dry-run default · `confirm`)   |
+| POST     | `/api/registry/factory-publish`                | Factory/R2 publish lane (CSRF · dry-run default · `confirm`)          |
 
-## Tabs (v1.12 system route)
+## Registry tab (v1.12)
 
-Packages · **System** · Events · Detail · Edges · Live · Backtest · Rules
+Allowlisted presets only (no free-form registry URL):
+
+| Preset  | URL                                              | Browse (Phase 0)     | Publish                                      |
+| ------- | ------------------------------------------------ | -------------------- | -------------------------------------------- |
+| `local` | `http://localhost:3000/`                         | Snapshot + ping      | `bun publish --registry` (dry-run default)   |
+| `prod`  | `https://registry.factory-wager.com/api/npm`     | Snapshot only        | `factory publish` (not `bun publish`→Pages)  |
+
+**Snapshot refresh** (do not invent `build:registry` / `npm install`→index):
+
+```bash
+bun run factory:snapshot
+bun run ops:snapshot
+```
+
+Detail modal shows snapshot `readme` / `readmeFilename` when present (Bun ≥1.3.14 publish
+metadata · escaped plain text, not rendered markdown). Use `?version=` to pick a release.
+
+**Deep links:**
+
+```
+/registry?tab=registry&registry=local&package=event-store
+/dashboard-v1.12.html?tab=registry&registry=prod&package=@factorywager/registry-client&version=1.0.0
+```
+
+Pages / public score hosts are **not** publish targets ([ADR-0002](../../../docs/adr/0002-registry-index-ssot.md)).
+
+## Tabs (v1.12)
+
+Packages · **Registry** · **System** · Events · Detail · Edges · Live · Backtest · Rules

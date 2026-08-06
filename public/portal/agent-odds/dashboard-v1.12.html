@@ -117,6 +117,7 @@
     <div class="tab" data-tab="backtest">📊 Backtest</div>
     <div class="tab" data-tab="alerts">🚨 Rules</div>
     <div class="tab active" data-tab="packages">📦 Packages</div>
+    <div class="tab" data-tab="registry">📚 Registry</div>
     <div class="tab" data-tab="system">🖥️ System</div>
   </div>
 
@@ -233,6 +234,61 @@
     <div class="card">
       <div class="card-header"><span>📋 Lockfile Diff Preview</span></div>
       <div class="card-body" id="lockfileDiffContainer"><div class="empty-state">No changes yet.</div></div>
+    </div>
+  </div>
+
+  <!-- TAB: REGISTRY – snapshot browse + allowlisted publish -->
+  <div class="tab-content" id="tab-registry">
+    <div class="card">
+      <div class="card-header"><span>📦 Registry Configuration</span></div>
+      <div class="card-body">
+        <div class="flex" style="margin-bottom:8px;">
+          <select id="registryPreset" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;">
+            <option value="local">local</option>
+            <option value="prod">prod</option>
+          </select>
+          <button id="registryRefreshHealth" class="btn btn-sm">↻ Health</button>
+          <span class="text-muted" id="registryUrlDisplay">—</span>
+        </div>
+        <div id="registryStatus" class="text-muted">Phase 0 browse uses public/registry/registry.json (factory:snapshot / ops:snapshot).</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span>🔍 Browse Packages</span>
+        <div class="flex">
+          <input type="text" id="registrySearch" placeholder="Search packages…" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;width:200px;" />
+          <button id="registrySearchBtn" class="btn btn-sm btn-primary">Search</button>
+          <a href="/portal/packages/" class="btn btn-sm" style="text-decoration:none;">Portal graph</a>
+        </div>
+      </div>
+      <div class="card-body" id="registryPackagesContainer"><div class="empty-state">Search the registry snapshot.</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span>📤 Publish</span><span class="text-muted" id="registryPublishLane">lane: local bun publish</span></div>
+      <div class="card-body">
+        <div class="flex" style="margin-bottom:8px;">
+          <select id="registryWorkspace" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;min-width:220px;">
+            <option value="">Select workspace…</option>
+          </select>
+          <select id="registryAccess" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;">
+            <option value="public">public</option>
+            <option value="restricted">restricted</option>
+          </select>
+          <input type="text" id="registryTag" placeholder="tag (latest)" style="background:#1e2834;border:1px solid #1e2834;padding:6px 12px;border-radius:8px;color:#e8edf5;width:120px;" />
+        </div>
+        <div class="flex" style="margin-bottom:8px;">
+          <label class="text-muted"><input type="checkbox" id="registryDryRun" checked /> Dry run</label>
+          <label class="text-muted"><input type="checkbox" id="registryTolerateRepublish" /> Tolerate republish</label>
+          <button id="registryPublishDryBtn" class="btn btn-warning btn-sm">Publish dry-run</button>
+          <button id="registryPublishConfirmBtn" class="btn btn-success btn-sm">Publish (confirm)</button>
+          <button id="registryFactoryDryBtn" class="btn btn-warning btn-sm" style="display:none;">Factory dry-run</button>
+          <button id="registryFactoryConfirmBtn" class="btn btn-success btn-sm" style="display:none;">Factory publish</button>
+        </div>
+        <div class="progress-bar" id="registryProgress"><div class="fill" id="registryProgressFill"></div></div>
+        <div id="registryTerminal" class="terminal-output" style="display:none; margin-top:8px;"></div>
+        <div id="registryPublishError" style="display:none; color:#f28b82; margin-top:8px;"></div>
+      </div>
     </div>
   </div>
 
@@ -364,11 +420,25 @@
     </div>
   </div>
 
+  <div class="modal" id="registryDetailModal">
+    <div class="modal-content" style="max-width:720px;">
+      <h2 id="registryDetailTitle">Package</h2>
+      <div id="registryDetailBody" class="text-muted">Loading…</div>
+      <div class="flex" style="gap:8px; margin-top:16px;">
+        <button id="registryDetailCopy" class="btn btn-primary btn-sm">Copy name</button>
+        <button id="registryDetailCopyReadme" class="btn btn-sm" style="display:none;">Copy README</button>
+        <a id="registryDetailPortal" href="/portal/packages/" class="btn btn-sm" style="text-decoration:none;">Portal</a>
+        <button id="registryDetailClose" class="btn btn-sm" style="background:transparent;">Close</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 </div>
 
 <script>
 // @see https://bun.com/docs/pm/cli/update — bun update --interactive flags
+// @see https://bun.com/docs/pm/cli/publish#custom-registry
 const API_BASE = ''; // same-origin when served from agent desk (8790)
 
 let packages = [];
@@ -916,6 +986,322 @@ function switchTab(tabId) {
   document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
   if (tabId === 'packages' && packages.length === 0) refreshPackages();
   if (tabId === 'system') loadSystemTab();
+  if (tabId === 'registry') loadRegistryTab();
+}
+
+// ──────────────────────────────────────────────────────────────
+// REGISTRY TAB – snapshot browse + allowlisted publish
+// ──────────────────────────────────────────────────────────────
+let registryPreset = 'local';
+let registryPresets = [];
+let registryDetailName = '';
+let registryDetailVersion = '';
+let registryDetailReadme = '';
+let registryPublishing = false;
+
+/** Escape for HTML text/attrs (browser stand-in for Bun.escapeHTML). */
+function esc(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function syncPublishLaneUi() {
+  const local = registryPreset === 'local';
+  document.getElementById('registryPublishLane').textContent = local
+    ? 'lane: local bun publish → http://localhost:3000/'
+    : 'lane: factory publish (R2) — not bun publish to Pages';
+  document.getElementById('registryPublishDryBtn').style.display = local ? '' : 'none';
+  document.getElementById('registryPublishConfirmBtn').style.display = local ? '' : 'none';
+  document.getElementById('registryFactoryDryBtn').style.display = local ? 'none' : '';
+  document.getElementById('registryFactoryConfirmBtn').style.display = local ? 'none' : '';
+  document.getElementById('registryAccess').disabled = !local;
+  document.getElementById('registryTag').disabled = !local;
+  document.getElementById('registryTolerateRepublish').disabled = !local;
+}
+
+async function loadRegistryTab() {
+  await loadRegistryPresets();
+  await loadRegistryHealth();
+  await loadRegistryWorkspaces();
+  await browseRegistryPackages(document.getElementById('registrySearch').value || '');
+  syncPublishLaneUi();
+}
+
+async function loadRegistryPresets() {
+  try {
+    const data = await apiJson('/api/registry/presets');
+    registryPresets = data.presets || [];
+    const sel = document.getElementById('registryPreset');
+    const cur = sel.value || registryPreset;
+    sel.replaceChildren();
+    for (const p of registryPresets) {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = `${p.id} — ${p.label}`;
+      sel.appendChild(opt);
+    }
+    if ([...sel.options].some(o => o.value === cur)) sel.value = cur;
+    registryPreset = sel.value || 'local';
+    const meta = registryPresets.find(p => p.id === registryPreset);
+    document.getElementById('registryUrlDisplay').textContent = meta?.url || '—';
+  } catch (e) {
+    document.getElementById('registryStatus').textContent = 'Presets unavailable: ' + e.message;
+  }
+}
+
+async function loadRegistryHealth() {
+  try {
+    const h = await apiJson(`/api/registry/health?preset=${encodeURIComponent(registryPreset)}`);
+    const ping = h.ping
+      ? (h.ping.ok ? `ping ${h.ping.status}` : `ping fail (${h.ping.error || h.ping.status})`)
+      : 'ping n/a';
+    document.getElementById('registryStatus').textContent =
+      `Snapshot: ${h.snapshot.ok ? 'ok' : 'empty'} · ${h.snapshot.packageCount} packages · ${ping} · refresh via bun run factory:snapshot`;
+    document.getElementById('registryUrlDisplay').textContent = h.url || '—';
+  } catch (e) {
+    document.getElementById('registryStatus').textContent = 'Health error: ' + e.message;
+  }
+}
+
+async function loadRegistryWorkspaces() {
+  try {
+    const data = await apiJson('/api/registry/workspaces');
+    const sel = document.getElementById('registryWorkspace');
+    const prev = sel.value;
+    sel.replaceChildren();
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Select workspace…';
+    sel.appendChild(placeholder);
+    for (const w of data.workspaces || []) {
+      const opt = document.createElement('option');
+      opt.value = w.dir;
+      opt.textContent = `${w.name}@${w.version} (packages/${w.dir})`;
+      sel.appendChild(opt);
+    }
+    if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
+  } catch (e) {
+    showToast('Workspaces: ' + e.message);
+  }
+}
+
+async function browseRegistryPackages(search = '') {
+  const container = document.getElementById('registryPackagesContainer');
+  try {
+    const data = await apiJson(`/api/registry/packages?q=${encodeURIComponent(search)}`);
+    const pkgs = data.results || [];
+    if (!pkgs.length) {
+      container.innerHTML = '<div class="empty-state">No packages found in snapshot.</div>';
+      return;
+    }
+    let html = `<table><thead><tr>
+      <th>Package</th><th>Version</th><th>Type</th><th>Description</th><th></th>
+    </tr></thead><tbody>`;
+    for (const pkg of pkgs) {
+      const enc = encodeURIComponent(pkg.name);
+      html += `<tr>
+        <td><strong>${esc(pkg.name)}</strong></td>
+        <td>${esc(pkg.version)}</td>
+        <td><span class="pill">${esc(pkg.type)}</span></td>
+        <td class="text-muted">${esc(pkg.description || '—')}</td>
+        <td><button type="button" class="btn btn-sm btn-primary registry-view-btn" data-pkg="${enc}">View</button></td>
+      </tr>`;
+    }
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+    container.querySelectorAll('.registry-view-btn').forEach(btn => {
+      btn.addEventListener('click', () =>
+        openRegistryDetail(decodeURIComponent(btn.dataset.pkg || ''))
+      );
+    });
+  } catch (e) {
+    container.innerHTML = `<div class="empty-state">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+async function openRegistryDetail(name, highlightVersion) {
+  registryDetailName = name;
+  registryDetailReadme = '';
+  if (highlightVersion) registryDetailVersion = highlightVersion;
+  const modal = document.getElementById('registryDetailModal');
+  const copyReadmeBtn = document.getElementById('registryDetailCopyReadme');
+  if (copyReadmeBtn) copyReadmeBtn.style.display = 'none';
+  document.getElementById('registryDetailTitle').textContent = name;
+  document.getElementById('registryDetailBody').textContent = 'Loading…';
+  modal.classList.add('active');
+  try {
+    const verQ = highlightVersion || registryDetailVersion
+      ? `?version=${encodeURIComponent(highlightVersion || registryDetailVersion)}`
+      : '';
+    const detail = await apiJson(
+      `/api/registry/packages/${name.split('/').map(encodeURIComponent).join('/')}${verQ}`
+    );
+    const highlight = registryDetailVersion || highlightVersion || '';
+    const selected = detail.selectedVersion || detail.latest || '';
+    const versionsHtml = (detail.versions || []).length
+      ? (detail.versions || [])
+          .map(v =>
+            v === highlight || v === selected
+              ? `<strong class="edge-highlight">${esc(v)}</strong>`
+              : esc(v)
+          )
+          .join(', ')
+      : '—';
+    const tags = Object.entries(detail.distTags || {})
+      .map(([k, v]) => `${esc(k)}=${esc(v)}`)
+      .join(', ') || '—';
+    const st = detail.storage || {};
+    const hasReadme = typeof detail.readme === 'string' && detail.readme.length > 0;
+    registryDetailReadme = hasReadme ? detail.readme : '';
+    if (copyReadmeBtn) copyReadmeBtn.style.display = hasReadme ? '' : 'none';
+    const readmeBlock = hasReadme
+      ? `<div style="margin-top:12px;">
+          <div class="flex" style="justify-content:space-between;margin-bottom:6px;">
+            <strong>README</strong>
+            <span class="text-muted">${esc(detail.readmeFilename || 'README.md')} · ${detail.readme.length} chars · Bun 1.3.14+ metadata</span>
+          </div>
+          <pre class="terminal-output" style="display:block;max-height:280px;white-space:pre-wrap;word-break:break-word;">${esc(detail.readme)}</pre>
+        </div>`
+      : `<p class="text-muted" style="margin-top:12px;">No README in snapshot for this version (publish with Bun ≥1.3.14 or factory readme auto-detect).</p>`;
+    document.getElementById('registryDetailBody').innerHTML = `
+      <p><strong>Latest:</strong> ${esc(detail.latest || '—')}
+        ${selected && selected !== detail.latest ? ` · <strong>Showing:</strong> ${esc(selected)}` : ''}</p>
+      <p><strong>Type:</strong> ${esc(detail.type || '—')}</p>
+      <p><strong>Description:</strong> ${esc(detail.description || '—')}</p>
+      <p><strong>Published:</strong> ${esc(detail.publishedAt || '—')} · ${esc(detail.publisher || '—')}</p>
+      <p><strong>Dist-tags:</strong> ${tags}</p>
+      <p><strong>Versions:</strong> ${versionsHtml}</p>
+      <p><strong>Storage:</strong> ${st.size != null ? esc(String(st.size)) + ' B' : '—'}
+        ${st.checksum ? ' · sha ' + esc(String(st.checksum).slice(0, 16)) + '…' : ''}</p>
+      ${highlight ? `<p class="text-muted">Deep link version: <code>${esc(highlight)}</code></p>` : ''}
+      ${readmeBlock}
+      <p class="text-muted" style="margin-top:8px;">Phase 0: snapshot only (not live packument).</p>`;
+  } catch (e) {
+    document.getElementById('registryDetailBody').textContent = e.message;
+  }
+}
+
+function closeRegistryDetail() {
+  document.getElementById('registryDetailModal').classList.remove('active');
+}
+
+async function runRegistryPublish({ confirm, factory }) {
+  if (registryPublishing) return;
+  const workspace = document.getElementById('registryWorkspace').value;
+  if (!workspace) {
+    showToast('Select a workspace under packages/');
+    return;
+  }
+  const checkboxDry = document.getElementById('registryDryRun').checked;
+  // Dry-run button → always dry; confirm button → live only when checkbox off + dialog
+  const useDry = confirm ? checkboxDry : true;
+  if (confirm && !useDry) {
+    if (!window.confirm(`Live publish packages/${workspace}?`)) return;
+  }
+  registryPublishing = true;
+  const terminal = document.getElementById('registryTerminal');
+  const errEl = document.getElementById('registryPublishError');
+  const fill = document.getElementById('registryProgressFill');
+  terminal.style.display = 'block';
+  terminal.textContent = '';
+  errEl.style.display = 'none';
+  fill.style.width = '0%';
+
+  const path = factory ? '/api/registry/factory-publish' : '/api/registry/publish';
+  const live = confirm && !useDry;
+  const body = factory
+    ? { workspace, dryRun: !live, confirm: live, stream: true }
+    : {
+        workspace,
+        preset: 'local',
+        access: document.getElementById('registryAccess').value || 'public',
+        tag: document.getElementById('registryTag').value || undefined,
+        dryRun: !live,
+        confirm: live,
+        tolerateRepublish: document.getElementById('registryTolerateRepublish').checked,
+        stream: true,
+      };
+
+  try {
+    await ensureCsrf();
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/event-stream',
+        'x-csrf-token': csrfToken,
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `HTTP ${res.status}`);
+    }
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const chunks = buf.split('\n\n');
+      buf = chunks.pop() || '';
+      for (const chunk of chunks) {
+        const line = chunk.split('\n').find(l => l.startsWith('data: '));
+        if (!line) continue;
+        let ev;
+        try { ev = JSON.parse(line.slice(6)); } catch { continue; }
+        if (ev.type === 'start') {
+          terminal.textContent += `$ ${ (ev.command || []).join(' ') }\n`;
+        } else if (ev.type === 'stdout' || ev.type === 'stderr') {
+          terminal.textContent += (ev.line || '') + '\n';
+        } else if (ev.type === 'progress') {
+          fill.style.width = (ev.percent || 0) + '%';
+        } else if (ev.type === 'done') {
+          fill.style.width = '100%';
+          if (ev.ok) showToast(ev.dryRun ? 'Dry-run ok' : 'Publish completed');
+          else {
+            errEl.style.display = 'block';
+            errEl.textContent = ev.error || 'Publish failed';
+            showToast('Publish failed');
+          }
+        }
+      }
+    }
+  } catch (e) {
+    errEl.style.display = 'block';
+    errEl.textContent = e.message;
+    showToast(e.message);
+  } finally {
+    registryPublishing = false;
+  }
+}
+
+function handleRegistryDeepLink() {
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get('tab');
+  const reg = params.get('registry');
+  const pkg = params.get('package');
+  const version = params.get('version') || '';
+  if (reg === 'local' || reg === 'prod') {
+    registryPreset = reg;
+    const sel = document.getElementById('registryPreset');
+    if (sel) sel.value = reg;
+  }
+  if (tab === 'registry' || reg || pkg) {
+    switchTab('registry');
+  }
+  if (pkg) {
+    registryDetailVersion = version;
+    if (version) document.getElementById('registrySearch').value = pkg;
+    // open after tab load (presets/workspaces fetch)
+    setTimeout(() => openRegistryDetail(pkg, version || undefined), 250);
+  }
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -1180,12 +1566,59 @@ document.getElementById('pkgWorkspaceFilter').addEventListener('change', (e) => 
 
 setToggleBtn('pkgToggleDryRun', useDryRun);
 
+document.getElementById('registryPreset')?.addEventListener('change', (e) => {
+  registryPreset = e.target.value || 'local';
+  syncPublishLaneUi();
+  loadRegistryHealth();
+});
+document.getElementById('registryRefreshHealth')?.addEventListener('click', loadRegistryHealth);
+document.getElementById('registrySearchBtn')?.addEventListener('click', () =>
+  browseRegistryPackages(document.getElementById('registrySearch').value || '')
+);
+document.getElementById('registrySearch')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') browseRegistryPackages(e.target.value || '');
+});
+document.getElementById('registryPublishDryBtn')?.addEventListener('click', () =>
+  runRegistryPublish({ confirm: false, factory: false })
+);
+document.getElementById('registryPublishConfirmBtn')?.addEventListener('click', () =>
+  runRegistryPublish({ confirm: true, factory: false })
+);
+document.getElementById('registryFactoryDryBtn')?.addEventListener('click', () =>
+  runRegistryPublish({ confirm: false, factory: true })
+);
+document.getElementById('registryFactoryConfirmBtn')?.addEventListener('click', () =>
+  runRegistryPublish({ confirm: true, factory: true })
+);
+document.getElementById('registryDetailClose')?.addEventListener('click', closeRegistryDetail);
+document.getElementById('registryDetailCopy')?.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(registryDetailName);
+    showToast('Copied ' + registryDetailName);
+  } catch {
+    showToast(registryDetailName);
+  }
+});
+document.getElementById('registryDetailCopyReadme')?.addEventListener('click', async () => {
+  if (!registryDetailReadme) return;
+  try {
+    await navigator.clipboard.writeText(registryDetailReadme);
+    showToast('Copied README');
+  } catch {
+    showToast('README copy failed');
+  }
+});
+document.getElementById('registryDetailModal')?.addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeRegistryDetail();
+});
+
 ensureCsrf().catch(() => {});
 if (document.getElementById('tab-packages').classList.contains('active')) {
   refreshPackages();
 }
+handleRegistryDeepLink();
 
-console.log('🧠 Bun Agent Dashboard v1.12 – system panel + package updates ready.');
+console.log('🧠 Bun Agent Dashboard v1.12 – system + packages + registry desk ready.');
 </script>
 <script type="module" src="/portal/data.js"></script>
 <script type="module" src="/portal/topbar.js"></script>
