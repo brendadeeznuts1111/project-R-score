@@ -451,7 +451,7 @@ dashboard `bun:types-status` (+ `:refresh`); skip `BUN_TYPES_CI=0` /
 Deep parse: multi-line + **one-liner** + **union-branch** anonymous objects ·
 getters · maxDepth 3+. Console inspect depth (separate axis):
 [object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth)
-· `bunfig [console] depth = 6` · [`lib/console-depth.ts`](lib/console-depth.ts).
+· `bunfig [console] depth = 6` · [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts).
 
 Operate loop (feeds → scrape → catalog with embedded `releaseHits` → integrity):
 [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · **daily**
