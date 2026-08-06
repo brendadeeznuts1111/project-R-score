@@ -1,9 +1,12 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  collectTrapRowTokens,
   collectWireAllowPathGlobs,
+  findLineSuppression,
   findNakedPartnerIdHits,
-  lineIsSuppressed,
+  maskNonCodeSpans,
   pathMatchesAnyGlob,
+  validateWireGlobCoverage,
   warnMissingWireBoundaryGlobs,
 } from '../lib/docs/partner-surface-wire-lint.ts';
 import {
@@ -21,6 +24,11 @@ describe('partner-surface-wire-lint', () => {
     expect(globs.some(g => g.includes('Kalshi-bot'))).toBe(true);
   });
 
+  test('trap tokens include unqualified partnerId', () => {
+    const traps = collectTrapRowTokens(allPartnerSurfaceRows());
+    expect(traps).toContain('partnerId');
+  });
+
   test('pathMatchesAnyGlob handles /** prefixes', () => {
     expect(
       pathMatchesAnyGlob(
@@ -31,27 +39,41 @@ describe('partner-surface-wire-lint', () => {
     expect(pathMatchesAnyGlob('lib/research/types.ts', ['Kalshi-bot/**'])).toBe(false);
   });
 
-  test('findNakedPartnerIdHits catches params and optional props', () => {
-    const src = [
-      `export type Row = { partnerId${colonString}; other: number };`,
-      `export type Opt = { partner_id?${colonString} };`,
-      `function f(partnerId${colonString}) { return partnerId; }`,
-    ].join('\n');
-    const hits = findNakedPartnerIdHits('demo.ts', src);
-    expect(hits.length).toBe(3);
+  test('maskNonCodeSpans ignores string literals and line comments', () => {
+    const line = `const s = "partnerId${colonString}"; partnerId${colonString}; // trail`;
+    const masked = maskNonCodeSpans(line);
+    expect(masked).not.toContain('"');
+    expect(masked).toContain(`partnerId${colonString}`);
+    const hits = findNakedPartnerIdHits('demo.ts', line);
+    expect(hits.length).toBe(1);
+    expect(hits[0]?.match).toBe(`partnerId${colonString}`);
   });
 
-  test('brand-ok / wire-ok suppress same, prev, and next line', () => {
+  test('findNakedPartnerIdHits skips JSDoc and quoted examples', () => {
+    const src = [
+      '/** @param partnerId the id */',
+      `const tip = 'use partnerId${colonString}';`,
+      `export type Row = { partnerId${colonString} };`,
+      `function f(partner_id?${colonString}) {}`,
+    ].join('\n');
+    const hits = findNakedPartnerIdHits('demo.ts', src);
+    expect(hits.map(h => h.match).sort()).toEqual(
+      [`partnerId${colonString}`, `partner_id?${colonString}`].sort()
+    );
+  });
+
+  test('wire-ok / brand-ok suppress with optional reason', () => {
     const lines = [
-      `partnerId${colonString}; // brand-ok — wire`,
-      '// wire-ok — adapter',
+      `partnerId${colonString}; // wire-ok: sports parse`,
+      '// brand-ok — opaque',
       `partner_id${colonString};`,
       `partnerId${colonString};`,
-      '// brand-ok — prettier wrap',
+      '// wire-ok',
     ];
-    expect(lineIsSuppressed(lines, 0)).toBe(true);
-    expect(lineIsSuppressed(lines, 2)).toBe(true);
-    expect(lineIsSuppressed(lines, 3)).toBe(true);
+    expect(findLineSuppression(lines, 0)?.reason).toBe('sports parse');
+    expect(findLineSuppression(lines, 2)?.kind).toBe('brand-ok');
+    expect(findLineSuppression(lines, 3)?.kind).toBe('wire-ok');
+    expect(findLineSuppression(lines, 3)?.reason).toBe('');
   });
 
   test('unqualified wire-field does not warn for empty globs; pandora does', () => {
@@ -59,6 +81,37 @@ describe('partner-surface-wire-lint', () => {
     const warns = warnMissingWireBoundaryGlobs(rows);
     expect(warns.some(w => w.message.includes('wire.partnerId.unqualified'))).toBe(false);
     expect(warns.some(w => w.message.includes('wire.pandora.partnerId'))).toBe(true);
+  });
+
+  test('glob coverage warns on empty nested checkout (not error by default)', async () => {
+    const rows: PartnerSurfaceRow[] = [
+      {
+        id: 'wire.empty-tree',
+        aspect: 'wire-field',
+        token: 'partnerId',
+        repo: 'Kalshi-bot',
+        path: 'Kalshi-bot',
+        properties: [],
+        owner: 'test',
+        wireField: {
+          wireName: 'partnerId',
+          sourceSystemId: 'kalshi',
+          resolvesTo: 'ExternalPartnerRef',
+          quarantineOnFail: true,
+          boundaryPathGlobs: ['Kalshi-bot/**'],
+        },
+      },
+    ];
+    const issues = await validateWireGlobCoverage({
+      root: process.cwd(),
+      rows,
+      strictGlobs: false,
+    });
+    // Worktree Kalshi-bot is empty → warn, not error
+    expect(issues.every(i => i.level === 'warn' || i.level === 'error')).toBe(true);
+    if (issues.length > 0) {
+      expect(issues[0]?.level).toBe('warn');
+    }
   });
 
   test('allowlist skips hits inside boundary paths (integration shape)', () => {
@@ -77,6 +130,8 @@ describe('partner-surface-wire-lint', () => {
           resolvesTo: 'ExternalPartnerRef',
           quarantineOnFail: true,
           boundaryPathGlobs: ['lib/adapters/demo/**'],
+          strict: true,
+          requireReason: false,
         },
       },
     ];

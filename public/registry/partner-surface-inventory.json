@@ -2,7 +2,7 @@
   "kind": "partner-surface-inventory",
   "schemaVersion": 2,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-06T19:02:09.404Z",
+  "bakedAt": "2026-08-06T19:08:14.673Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",

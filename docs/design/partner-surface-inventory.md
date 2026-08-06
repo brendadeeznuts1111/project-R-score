@@ -76,7 +76,10 @@ drift silently. Validate bags with
 | ----- | ----- |
 | A | brand-manifest + `Bun.file.exists` (not `lib:domains:check`) |
 | B | baked JSON vs bag: schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy` |
-| C | inventory-aware lint: naked `partnerId` / `partner_id` `: string` outside `boundaryPathGlobs` |
+| C | `lint-wires`: glob coverage + naked `partnerId` / `partner_id` `: string` outside `boundaryPathGlobs` |
+
+Layer A/B stay on `partner-surface-inventory:validate`. Layer C is
+`partner-surface-inventory:lint-wires` only (do not alias validate → wire traps).
 
 Registry bag notes:
 
@@ -91,6 +94,13 @@ Wire bag notes:
 
 - `boundaryPathGlobs` allowlists adapter trees (e.g. `Kalshi-bot/**`,
   `projects/active/sports-terminal-os/**`) where raw wire ids are parsed.
+- Glob coverage: 0 matches + empty/missing tree → **warn** (optional nested
+  checkout); 0 matches + tree has files → **error**. Pass `--strict-globs` (or
+  `WIRE_TRAP_STRICT_GLOBS=1`) to fail empty checkouts too.
+- `strict` (default true): allowlisted hits silent; `strict: false` warns on
+  allowlisted naked annotations (migration).
+- `requireReason`: `// wire-ok` on matching files must include
+  `// wire-ok: <reason>`.
 - Interior code must use `PartnerCode` / `ExternalPartnerRef`, or suppress with
   `// wire-ok` / `// brand-ok` (same / prev / next line).
 - Adding a new external client = add a `wire-field` row with

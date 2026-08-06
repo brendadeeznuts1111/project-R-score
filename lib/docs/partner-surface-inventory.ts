@@ -92,6 +92,13 @@ export type PartnerSurfaceWireFieldBag = {
   readonly quarantineOnFail: boolean;
   /** Path prefixes/globs where naked wire id annotations are allowed. */
   readonly boundaryPathGlobs?: readonly string[];
+  /**
+   * When true (default), allowlisted hits are silent.
+   * When false, allowlisted naked annotations warn (migration aid).
+   */
+  readonly strict?: boolean;
+  /** When true, `// wire-ok` on matching files must include a reason. */
+  readonly requireReason?: boolean;
 };
 
 /** Live chrome / board nav contract. */
