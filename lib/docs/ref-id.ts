@@ -56,6 +56,8 @@ export type RefIdIssue = {
   file: string;
   line?: number;
   refId?: string; // brand-ok — design-doc fragment key (REF:ID v2), not domain brand
+  /** Coverage plane when emitted by docs-refid-check (design · portal · discovery · …). */
+  plane?: string; // brand-ok — coverage plane label for check JSON, not domain brand
   detail: string;
 };
 

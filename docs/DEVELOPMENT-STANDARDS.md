@@ -68,14 +68,19 @@ Numbered fragment ids for operator docs (baseline: bun-types inventory §4.1).
 | Comments  | optional `<!-- REF:ID … -->` must have a matching `<a id>`              |
 
 ```bash
-bun run docs:refid:check           # errors fail; format orphans warn
+bun run docs:refid:check           # planes + project discovery; errors fail
 bun run docs:refid:check:strict    # format warns → errors
+bun tools/docs-refid.ts check --registry-only   # skip discovery globs
 bun tools/docs-refid.ts check --write-hrefs   # fill empty/—/auto href cells
 bun run docs:refid:suggest --section=4.1 --flag=--foo-bar
 bun run docs:refid:list            # taken ids in registered / --doc
 bun run docs:refid:scaffold --section=4.1 --flag=--foo-bar
 bun run docs:map:check             # includes REF:ID (unless --skip-refid-check)
 ```
+
+**Coverage planes:** design (flags) · domain · portal · harness · lib (guides) ·
+discovery (`docs/**` · `public/portal/**` when markup present). See
+[CONTRIBUTING — REF:ID Validation](./contributing/CONTRIBUTING.md#refid-validation).
 
 **href DX:** table `href` may be empty, `—`, or `auto` — checker treats it as
 `#` + REF:ID. Use `--write-hrefs` to materialize `[`#4.1.x`](#4.1.x)` cells.
