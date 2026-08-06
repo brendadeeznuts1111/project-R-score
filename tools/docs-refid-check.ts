@@ -21,6 +21,7 @@ import { checkRefIdDocument, type RefIdIssue, type ToolFlagRef } from '../lib/do
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import {
   BUN_TYPES_INVENTORY_DOC,
+  FLAGS_DOC_SECTION_REF,
   buildStatusFlagRows,
   defaultStatusCli,
 } from './bun-types-status.ts';
@@ -33,6 +34,8 @@ export type RefIdRegistryEntry = {
   /** Tooling flags that must resolve into the doc */
   toolFlags: () => ToolFlagRef[];
   requireToolCoverage?: boolean;
+  sectionRefId?: string;
+  sectionHeading?: string;
 };
 
 /** Documents that participate in REF:ID v2 checks. */
@@ -41,6 +44,8 @@ export function refIdRegistry(): RefIdRegistryEntry[] {
     {
       doc: BUN_TYPES_INVENTORY_DOC,
       requireToolCoverage: true,
+      sectionRefId: FLAGS_DOC_SECTION_REF,
+      sectionHeading: '### Flags / settings',
       toolFlags: () => {
         const rows = buildStatusFlagRows(defaultStatusCli());
         return rows.map((r): ToolFlagRef => ({
@@ -76,6 +81,8 @@ export async function runRefIdChecks(opts: {
         strictFormat: opts.strictFormat === true,
         toolFlags: entry.toolFlags(),
         requireToolCoverage: entry.requireToolCoverage === true,
+        sectionRefId: entry.sectionRefId,
+        sectionHeading: entry.sectionHeading,
       })
     );
   }
