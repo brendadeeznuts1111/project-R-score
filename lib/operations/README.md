@@ -35,6 +35,15 @@ belong under the nearest area (search by prefix: `play-*`, `ops-*`, `toc-*`,
 | **Seeds / fixtures**     | [`ops-seed.ts`](ops-seed.ts)                                                                              | [`dod-seed.ts`](dod-seed.ts) · [`prediction-seed.ts`](prediction-seed.ts) · [`tenant-registry-seed.ts`](tenant-registry-seed.ts)                                                                                                                                                                                                                                    |
 | **Barrel**               | [`index.ts`](index.ts)                                                                                    | Prefer direct imports when you know the module                                                                                                                                                                                                                                                                                                                      |
 
+### Maintainability notes (drill-down)
+
+| Topic | Guidance |
+| ----- | -------- |
+| **ops-summary façade** | Legitimate portal bake sink (`buildOpsSummary` → live API + `ops:snapshot`). Domain slices (liquidity, tree, plays, limits, TOC, loop) are core; harness proof strips (monorepo health, CF pages/token, docs coverage, bun brand map) create type gravity — prefer splitting domain vs proof composition when changing the payload. |
+| **God files** | `ops-summary.ts` · `state-regulation.ts` · `limit-patterns.ts` · `scrapers/scrape-wire-taxonomy.ts` (>800 LOC). Prefer section TOCs / export maps before physical moves. |
+| **Coverage floors cycle** | Capacity in operations (`platform-coverage`); floor keys resolve in [`../experiments/engine.ts`](../experiments/engine.ts) (`COVERAGE_FLOOR_KEYS`). Name both sides when adding edges. |
+| **TOC ownership** | Types/export = [`../toc-ops/`](../toc-ops/); SQLite seed / soft-balance = `toc-*.ts` here. Tenant: [toc-ops](../../docs/harness/tenants/toc-ops.md). Not the ct Soft plane. |
+
 ## Entities
 
 | Entity     | Role                                                  |

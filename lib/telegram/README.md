@@ -34,6 +34,16 @@ the **Area map** first. Inventory SSOT: [`../README.md`](../README.md).
 | **DOD accounting photos**     | ingest from `ops-bot` / `bot`                                                     | [`../dod/telegram-accounting-ingest.ts`](../dod/telegram-accounting-ingest.ts) · `/verifydod`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | **Linking**                   | [`link-nonce.ts`](link-nonce.ts)                                                  | portal `/start link_*` · `tools/telegram-link-chat.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
+### Maintainability notes (drill-down)
+
+| Topic | Guidance |
+| ----- | -------- |
+| **Dual bots** | Intentional multi-plane: production = Pages webhook → R2 `telegram-updates` → `telegram:ops:consume` → [`bot.ts`](bot.ts); long-poll [`ops-bot.ts`](ops-bot.ts) is host-local when `OPS_DB_PATH` is openable. Not product duplication. Tenant: [telegram-factory](../../docs/harness/tenants/telegram-factory.md). |
+| **Edge allowlist** | No `bun:sqlite` only on [`webhook-pages.ts`](webhook-pages.ts) + [`telegram-update.ts`](telegram-update.ts). Everything else is Bun-only. |
+| **R2 topics** | `telegram-updates` (Pages write / consumer drain) · `telegram-commands` (`ops-bridge` when no local DB) · channel outbox via `processChannelOutbox`. |
+| **God files** | [`seat-intake.ts`](seat-intake.ts) (~1k, intentional cycle leaf) · [`partner-ops-registry.ts`](partner-ops-registry.ts) (~966 bake aggregator). Prefer projection vs I/O splits over bot merges. |
+| **Cycle belt** | Bidirectional with [`../operations/`](../operations/) and [`../channels/outbox.ts`](../channels/outbox.ts). Prefer snapshot JSON for reverse deps when adding ops→telegram edges. |
+
 ## Factory webhook commands
 
 | Command         | Description                                          |
