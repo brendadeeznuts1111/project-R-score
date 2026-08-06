@@ -25,6 +25,7 @@ export const PORTAL_HTML_ROUTES = [
   '/portal/failures/',
   '/portal/glossary/',
   '/portal/identity/',
+  '/portal/issues/',
   '/portal/install-hygiene/',
   '/portal/limits/',
   '/portal/limits-lab/',
@@ -65,6 +66,7 @@ export const PORTAL_TRAILING_SLASH_SOURCES = [
   '/portal/failures',
   '/portal/glossary',
   '/portal/identity',
+  '/portal/issues',
   '/portal/install-hygiene',
   '/portal/limits',
   '/portal/limits-lab',
@@ -104,6 +106,7 @@ export const PORTAL_MARKDOWN_SLUGS = [
   'packages',
   'brands',
   'glossary',
+  'issues',
   'monitoring',
   'dashboard',
 ] as const;

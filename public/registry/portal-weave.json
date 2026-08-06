@@ -2,9 +2,9 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-08-06T00:13:52.101Z",
+  "generated": "2026-08-06T04:14:03.371Z",
   "summary": {
-    "surfaces": 33,
+    "surfaces": 34,
     "artifacts": 43,
     "components": 21,
     "wiki": 6,
@@ -110,6 +110,19 @@
       "note": "market · model · trading · warehouse · pipeline concepts",
       "group": "registry",
       "cli": "bun run glossary:portal"
+    },
+    {
+      "id": "issues",
+      "label": "Issues",
+      "href": "/portal/issues/",
+      "conceptId": "portal.github_issue_taxonomy",
+      "colorKey": "middleware",
+      "note": "repository issue spine · semantic labels · ownership · registry drift health",
+      "group": "registry",
+      "cli": "bun run github-issue-taxonomy:check",
+      "relatedArtifactIds": [
+        "github-issue-taxonomy"
+      ]
     },
     {
       "id": "surfaces",

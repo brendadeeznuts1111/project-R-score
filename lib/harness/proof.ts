@@ -481,6 +481,26 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'platform / governance',
   },
   {
+    id: 'github-issue-taxonomy-portal',
+    claim:
+      'The static issue taxonomy board consumes only baked registry contracts and exposes accessible semantic groups, distinct identities, ownership, and explicit drift health without GitHub API access',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun test tests/github-issue-taxonomy-portal.test.ts',
+      'tests/github-issue-taxonomy-portal.test.ts',
+      'public/portal/issues/index.html',
+      'public/portal/issues/issues-board.js',
+      'public/portal/issues/issues.css',
+      'public/registry/github-issue-taxonomy.json',
+      'docs/harness/tenants/github-issue-taxonomy.md',
+    ],
+    freshRerun: 'bun test tests/github-issue-taxonomy-portal.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'platform / governance',
+  },
+  {
     id: 'macros-embed-boundaries',
     claim:
       'Bundle-time macros inline git commit/branch and GitHub repo parts under bun build (no runtime substitution)',

@@ -119,6 +119,12 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   `bun test tests/github-issue-taxonomy-public.test.ts` · evidence
   [`public/registry/github-issue-taxonomy.json`](../../public/registry/github-issue-taxonomy.json)
   · [`tenants/github-issue-taxonomy.md`](tenants/github-issue-taxonomy.md)
+- **`github-issue-taxonomy-portal`** — static baked-contract consumer exposes
+  semantic groups, distinct identities, ownership, and explicit schema/hash/
+  manifest drift health without browser GitHub API access (`unit` + `boundary`)
+  _Ratchet_ → `bun test tests/github-issue-taxonomy-portal.test.ts` · evidence
+  [`public/portal/issues/`](../../public/portal/issues/) ·
+  [`tenants/github-issue-taxonomy.md`](tenants/github-issue-taxonomy.md)
 - **`macros-embed-boundaries`** — `bun build` macros inline commit/branch + repo
   parts; no substitute under plain `bun scripts/*.ts` (`unit` + `boundary`)
   _Ratchet_ → `bun test tests/macros/embed-commit.test.ts` · evidence
@@ -353,6 +359,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `github-repository-ref-boundaries` | human-only | `bun test tests/github-repository-ref.test.ts`                                                                                                                       |
 | `github-issue-governance`          | continuous | `ci:harness` changed-test selection · `bun test tests/github-issue-tooling.test.ts`                                                                                  |
 | `github-issue-taxonomy-public`     | continuous | `ci:harness` changed-test selection · `bun test tests/github-issue-taxonomy-public.test.ts`                                                                          |
+| `github-issue-taxonomy-portal`     | continuous | `ci:harness` changed-test selection · `bun test tests/github-issue-taxonomy-portal.test.ts`                                                                          |
 | `macros-embed-boundaries`          | human-only | `bun test tests/macros/embed-commit.test.ts`                                                                                                                         |
 | `security-hash-boundaries`         | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/security-hash/`                                                                                            |
 | `url-pattern-boundaries`           | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-urlpattern.test.ts tests/bun-site-url.test.ts tests/factory-production.test.ts tests/portal-url-planes.test.ts` |
@@ -407,7 +414,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 
 Counts (must match `gateClass` tallies):
 
-continuous 32 · workflow 9 · human-only 32.
+continuous 33 · workflow 9 · human-only 32.
 
 Discover (display only, not gates): `bun run harness:status` ·
 `bun run docs:fresh-rerun`.

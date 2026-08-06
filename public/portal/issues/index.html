@@ -1,42 +1,40 @@
-<!DOCTYPE html>
-<!-- @see docs/portal-foundation.md — portal doctor board; reads /registry/doctor-state.json -->
+<!doctype html>
+<!-- @see docs/harness/tenants/github-issue-taxonomy.md · public schema v1 -->
 <html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="portal-poll-ms" content="60000" />
-  <title>Doctor · FactoryWager</title>
-  <meta name="theme-color" content="#0d1117" />
-  <meta name="application-name" content="FactoryWager" />
-  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
-  <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/portal/style.css" />
-  <style>
-    .doc-group-chip.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: color-mix(in srgb, var(--accent) 12%, var(--surface));
-    }
-    .doc-group-chip.bad { color: var(--red, #f85149); }
-    .doc-group-chip.ok { color: var(--green, #3fb950); }
-    .portal-error .portal-error-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-  </style>
-</head>
-<body>
-  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <h1 class="logo">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="portal-poll-ms" content="60000" />
+    <title>Issue taxonomy · FactoryWager</title>
+    <meta
+      name="description"
+      content="Repository-governed GitHub issue dimensions, labels, ownership, and public registry drift health."
+    />
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="application-name" content="FactoryWager" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <link rel="stylesheet" href="/portal/issues/issues.css" />
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
         <span class="logo-icon" aria-hidden="true"></span>
         <span class="brand-wordmark">FactoryWager</span>
-        <span class="brand-badge">ops</span>
-        <span class="logo-page">Doctor</span>
+        <span class="brand-badge">governance</span>
+        <span class="logo-page">Issues</span>
       </h1>
-      <nav class="topbar-nav" aria-label="Primary">
+        <nav class="topbar-nav" aria-label="Primary">
         <a href="/" class="nav-link" title="public lander · portal entry" data-group="other" data-domain="platform">Home</a>
         <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · C4/C5 loop · partner handshake panel · bun run ops:snapshot" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot" data-registry="/registry/ops-summary.json">Ops</a>
         <a href="/portal/" class="nav-link" title="portal hub · board index · weave surfaces" data-group="registry" data-domain="platform">Registry</a>
@@ -74,7 +72,7 @@
             <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-domain="platform" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" data-registry="/registry/packages-graph-map.json" role="menuitem">Packages</a>
             <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-domain="knowledge" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
             <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-domain="knowledge" data-cli="bun run glossary:portal" data-registry="/registry/domain-glossary.json" role="menuitem">Glossary</a>
-            <a href="/portal/issues/" class="nav-link" title="repository issue spine · labels · ownership · public drift health · bun run github-issue-taxonomy:check" data-group="registry" data-domain="knowledge" data-cli="bun run github-issue-taxonomy:check" data-registry="/registry/github-issue-taxonomy.json" role="menuitem">Issues</a>
+            <a href="/portal/issues/" class="nav-link active" aria-current="page" title="repository issue spine · labels · ownership · public drift health · bun run github-issue-taxonomy:check" data-group="registry" data-domain="knowledge" data-cli="bun run github-issue-taxonomy:check" data-registry="/registry/github-issue-taxonomy.json" role="menuitem">Issues</a>
             <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" data-registry="/registry/surfaces-state.json" role="menuitem">Surfaces</a>
             <a href="/portal/skills/" class="nav-link" title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate" data-group="registry" data-domain="knowledge" data-cli="bun run skills:validate" data-registry="/registry/harness-skills-catalog.json" role="menuitem">Skills</a>
             <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
@@ -87,116 +85,126 @@
           </div>
         </div>
       </nav>
-      <div class="topbar-status">
-        <a href="/portal/doctor/" class="nav-link active" aria-current="page" title="portal doctor · bun run portal:doctor">Doctor</a>
-      </div>
-    </div>
-  </header>
-
-  <main class="portal-page">
-    <section class="portal-hero portal-hero--card" aria-labelledby="doc-hero-title">
-      <p class="portal-eyebrow">Harness control plane · offline gates</p>
-      <h2 id="doc-hero-title">Portal doctor — linker, bakes, bunfig, infra</h2>
-      <p class="hero-sub">
-        Unified offline health gate for the portal control plane. Reads baked
-        <code>doctor-state.json</code>; loopback can re-run via
-        <code>POST /api/doctor/run</code>. CLI:
-        <code data-copy>bun run portal:doctor --verbose</code>.
-      </p>
-      <div class="portal-hero-meta">
-        <span id="doc-gate" class="portal-gate" aria-live="polite">…</span>
-        <span id="doc-baked" class="portal-baked">loading…</span>
-        <div class="portal-source-links" aria-label="Related artifacts">
-          <a href="/registry/doctor-state.json">doctor-state.json</a>
-          <a href="/portal/bunfig/">bunfig</a>
-          <a href="/portal/tools/">CLI tools</a>
-          <a href="/portal/health/">health</a>
+        <div class="topbar-status">
+          <a href="/portal/issues.md" class="nav-link nav-md" title="Markdown view">MD</a>
+          <a href="/portal/health/" class="topbar-health-link" title="System health">
+            <span id="health-dot" class="health-dot unknown"></span>
+            <span id="health-label" class="health-label">Connecting…</span>
+          </a>
         </div>
       </div>
-    </section>
+    </header>
 
-    <div class="portal-actions">
-      <button type="button" id="doc-run" title="Loopback only: re-run doctor + bake">Run doctor</button>
-      <button type="button" class="copy-cli portal-clear" data-cli="bun run portal:doctor --verbose">Copy CLI</button>
-      <a class="portal-clear" href="/registry/doctor-state.json" style="display:inline-flex;align-items:center;text-decoration:none">Open JSON</a>
-    </div>
-    <p class="dim" id="doc-run-status"></p>
-
-    <div id="doc-error" hidden></div>
-
-    <div id="doc-stats" class="portal-stat-grid" aria-label="Doctor summary"></div>
-
-    <section class="portal-panel" aria-labelledby="doc-groups-title">
-      <div class="portal-panel-head">
+    <main class="issue-board portal-page" data-glossary-concept="page.issueTaxonomy">
+      <section class="portal-hero portal-hero--card issue-hero" aria-labelledby="issue-title">
         <div>
-          <h2 id="doc-groups-title">By group</h2>
-          <p class="portal-panel-desc">Click a group chip to filter checks · shareable via URL hash.</p>
+          <p class="portal-eyebrow">Repository governance · static public contract</p>
+          <h2 id="issue-title">Issue meaning, ownership, and drift health</h2>
+          <p class="hero-sub">
+            A credential-free view of the issue spine baked from repository authority. The board
+            stays usable when GitHub is unavailable and never queries the GitHub API.
+          </p>
         </div>
-      </div>
-      <div id="doc-groups" class="dim" style="display:flex;flex-wrap:wrap;gap:8px">—</div>
-    </section>
+        <div class="issue-health-block" aria-live="polite" aria-atomic="true">
+          <span id="issue-gate" class="portal-gate warn">
+            <span class="dot" aria-hidden="true"></span>Checking registry
+          </span>
+          <span id="issue-freshness" class="portal-baked">Loading manifest evidence…</span>
+        </div>
+        <div class="portal-source-links" aria-label="Issue taxonomy resources">
+          <a href="/registry/github-issue-taxonomy.json">Registry JSON</a>
+          <a href="/registry/portal-weave.json">Portal weave</a>
+          <a
+            href="https://github.com/brendadeeznuts1111/project-R-score/issues?q=is%3Aissue"
+            target="_blank"
+            rel="noopener noreferrer"
+            >GitHub issues</a
+          >
+        </div>
+      </section>
 
-    <section class="portal-panel" aria-labelledby="doc-checks-title">
-      <div class="portal-panel-head">
-        <div>
-          <h2 id="doc-checks-title">Checks</h2>
-          <p class="portal-panel-desc">Fix commands are copy-ready when auto-fixable.</p>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <span class="portal-count" id="doc-count">…</span>
-          <button type="button" class="portal-clear" id="doc-clear" disabled>Clear filters</button>
-        </div>
-      </div>
-      <div class="portal-toolbar">
-        <label>
-          Search
-          <input type="search" id="doc-q" placeholder="Check id, message, fix…" aria-label="Search checks" />
-        </label>
-        <label>
-          Group
-          <select id="doc-group" aria-label="Filter by group">
-            <option value="">all groups</option>
-          </select>
-        </label>
-        <label>
-          Level
-          <select id="doc-level" aria-label="Filter by level">
-            <option value="">all levels</option>
-          </select>
-        </label>
-        <label>
-          Status
-          <select id="doc-ok" aria-label="Filter by pass/fail">
-            <option value="">all</option>
-            <option value="pass">pass only</option>
-            <option value="fail">fail only</option>
-          </select>
-        </label>
-      </div>
-      <div class="table-wrap">
-        <table class="portal-table">
-          <thead>
-            <tr>
-              <th scope="col">Status</th>
-              <th scope="col">Group</th>
-              <th scope="col">Check</th>
-              <th scope="col">Level</th>
-              <th scope="col">What</th>
-              <th scope="col">Fix</th>
-            </tr>
-          </thead>
-          <tbody id="doc-body"><tr><td colspan="6" class="dim">Loading…</td></tr></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
+      <div id="issue-error" hidden></div>
+      <section id="issue-summary" class="portal-stat-grid" aria-label="Taxonomy summary"></section>
 
-  <script type="module" src="/portal/data.js"></script>
-  <script type="module" src="/portal/doctor/doctor-board.js"></script>
-  <script type="module" src="/portal/topbar.js"></script>
-  <script type="module" src="/portal/components/sidebar.js"></script>
-  <script type="module" src="/portal/components/footer.js"></script>
-  <footer class="footer" data-portal-chrome="footer">
+      <div class="issue-overview-grid">
+        <section class="portal-panel" aria-labelledby="issue-identity-title">
+          <div class="portal-panel-head">
+            <div>
+              <h2 id="issue-identity-title">Identity and ownership</h2>
+              <p class="portal-panel-desc">Registry producer and portal consumer stay distinct.</p>
+            </div>
+          </div>
+          <dl id="issue-identity" class="issue-definition-list">
+            <div>
+              <dt>Status</dt>
+              <dd>Loading…</dd>
+            </div>
+          </dl>
+          <div id="issue-authority" class="issue-authority" aria-label="Authority links"></div>
+        </section>
+
+        <section class="portal-panel" aria-labelledby="issue-audit-title">
+          <div class="portal-panel-head">
+            <div>
+              <h2 id="issue-audit-title">Registry health</h2>
+              <p class="portal-panel-desc">Schema, source hash, counts, and manifest bytes.</p>
+            </div>
+          </div>
+          <ul id="issue-audit" class="issue-check-list" aria-live="polite">
+            <li><span aria-hidden="true">…</span> Waiting for baked evidence</li>
+          </ul>
+        </section>
+      </div>
+
+      <section class="portal-panel" aria-labelledby="issue-groups-title">
+        <div class="portal-panel-head issue-panel-head">
+          <div>
+            <h2 id="issue-groups-title">Semantic groups</h2>
+            <p class="portal-panel-desc">
+              Required and optional dimensions are named in text; color is supporting evidence.
+            </p>
+          </div>
+          <span id="issue-results" class="portal-count" role="status">Loading…</span>
+        </div>
+        <div class="issue-toolbar" aria-label="Taxonomy filters">
+          <label>
+            <span>Search labels</span>
+            <input
+              id="issue-search"
+              type="search"
+              placeholder="p0, portal, blocked…"
+              autocomplete="off"
+            />
+          </label>
+          <label>
+            <span>Requirement</span>
+            <select id="issue-requirement">
+              <option value="all">All dimensions</option>
+              <option value="required">Required only</option>
+              <option value="optional">Optional only</option>
+            </select>
+          </label>
+        </div>
+        <div id="issue-groups" class="issue-groups" aria-live="polite"></div>
+      </section>
+
+      <section class="portal-panel" aria-labelledby="issue-rules-title">
+        <div class="portal-panel-head">
+          <div>
+            <h2 id="issue-rules-title">Legal combinations</h2>
+            <p class="portal-panel-desc">
+              Cross-dimension rules enforced by the repository parser.
+            </p>
+          </div>
+        </div>
+        <ol id="issue-rules" class="issue-rules">
+          <li>Loading…</li>
+        </ol>
+      </section>
+    </main>
+
+    <notification-center aria-live="polite"></notification-center>
+    <footer class="footer" data-portal-chrome="footer">
     <p>
       <strong>FactoryWager</strong> ·
       <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
@@ -227,5 +235,11 @@
       · <span data-footer-ts>…</span>
     </p>
   </footer>
-</body>
+
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/issues/issues-board.js"></script>
+    <script type="module" src="/portal/components/notification.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+  </body>
 </html>

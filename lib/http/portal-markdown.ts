@@ -39,6 +39,15 @@ Rebuild an existing fixture with the seed tool force flag.
   skills: `# Skills\n\nInstalled Kimi skills registry (name, description, last updated) with downloadable \`.skill\` packages when available.\n`,
   monitoring: `# Monitoring\n\nRegistry + integrity metrics. Regenerate: \`bun run ops:snapshot\` bakes JSON embed into this page.\n`,
   dashboard: `# Dashboard\n\nExecutive proof summary — routing, channel meta, release features.\n`,
+  issues: `# GitHub issue taxonomy
+
+Static, credential-free view of repository issue meaning, ownership, and drift health.
+
+- Board: [/portal/issues/](/portal/issues/)
+- Registry: [/registry/github-issue-taxonomy.json](/registry/github-issue-taxonomy.json)
+- Portal concept: \`portal.github_issue_taxonomy\`
+- Producer check: \`bun run github-issue-taxonomy:check\`
+`,
 };
 
 export function portalMarkdownExists(slug: string): boolean {

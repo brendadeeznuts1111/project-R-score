@@ -1,13 +1,13 @@
 {
   "kind": "concepts-state",
   "schemaVersion": 1,
-  "bakedAt": "2026-08-06T00:27:55.194Z",
+  "bakedAt": "2026-08-06T04:14:24.203Z",
   "gate": "pass",
   "summary": {
-    "totalPortal": 144,
-    "withProvenance": 144,
+    "totalPortal": 145,
+    "withProvenance": 145,
     "provenanceCoverage": 1,
-    "usedUi": 82,
+    "usedUi": 83,
     "unusedUi": 9,
     "surfaceOnly": 26,
     "metadataIssues": 0,
@@ -15,15 +15,15 @@
     "inventoryMisses": 0,
     "deprecatedUsed": 0,
     "bakeDrift": 0,
-    "detailRows": 144
+    "detailRows": 145
   },
   "domainSummary": [
     {
       "domain": "portal",
-      "count": 86,
-      "used": 78,
+      "count": 87,
+      "used": 79,
       "unused": 8,
-      "provenance": 86,
+      "provenance": 87,
       "provenancePct": 100
     },
     {
@@ -1000,6 +1000,18 @@
       "status": "active",
       "provenance": "legacy",
       "usage": 0,
+      "kind": "used"
+    },
+    {
+      "id": "page.issueTaxonomy",
+      "label": "GitHub issue taxonomy",
+      "domain": "portal",
+      "namespace": "page",
+      "group": "page.issueTaxonomy",
+      "category": "page",
+      "status": "active",
+      "provenance": "legacy",
+      "usage": 1,
       "kind": "used"
     },
     {

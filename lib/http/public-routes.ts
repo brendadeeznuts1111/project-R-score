@@ -504,6 +504,22 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: '/registry/domain-glossary.json schema v3 · sections[] hash/domId/conceptId · URLPattern.hash deep links',
   },
   {
+    path: '/portal/issues/',
+    name: 'GitHub issue taxonomy',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: '/registry/github-issue-taxonomy.json · credential-free ownership and drift board',
+  },
+  {
+    path: '/registry/github-issue-taxonomy.json',
+    name: 'GitHub issue taxonomy projection',
+    category: 'registry',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'deterministic semantic dimensions · provider labels · public color projection',
+  },
+  {
     path: '/portal/concepts/',
     name: 'Concepts inventory',
     category: 'portal',

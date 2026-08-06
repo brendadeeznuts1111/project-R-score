@@ -161,6 +161,14 @@ export const PORTAL_PAGE_CONCEPT_DEFINITIONS = [
     synonyms: ['identity board', 'authentication controls'],
   },
   {
+    path: '/portal/issues/',
+    id: 'page.issueTaxonomy',
+    label: 'GitHub issue taxonomy',
+    description:
+      'Portal page for repository-governed issue dimensions, provider labels, ownership, and public registry drift health.',
+    synonyms: ['issue spine', 'issue labels', 'issue governance', 'GitHub taxonomy'],
+  },
+  {
     path: '/portal/install-hygiene/',
     id: 'page.installHygiene',
     label: 'Install hygiene',

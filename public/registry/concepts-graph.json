@@ -1,36 +1,36 @@
 {
   "kind": "concept-graph",
   "schemaVersion": 5,
-  "generatedAt": "2026-08-06T00:27:55.467Z",
+  "generatedAt": "2026-08-06T04:14:24.350Z",
   "summary": {
-    "nodes": 148,
-    "edges": 630,
-    "seeAlsoEdges": 351,
+    "nodes": 149,
+    "edges": 634,
+    "seeAlsoEdges": 354,
     "seeAlsoByLayer": {
       "sameGroup": 88,
       "crossGroup": 48,
       "crossDomain": 86,
-      "pageBridge": 129
+      "pageBridge": 132
     },
     "surfaceEdges": 135,
     "groupEdges": 0,
-    "domainHubEdges": 144,
+    "domainHubEdges": 145,
     "domains": 4,
     "namespaces": 5,
-    "used": 82,
+    "used": 83,
     "unused": 35,
     "surfaceOnly": 27,
-    "totalUsage": 403,
-    "bridges": 126,
+    "totalUsage": 404,
+    "bridges": 127,
     "clusters": 11,
     "corridors": 6
   },
   "domainSummary": [
     {
       "domain": "portal",
-      "nodes": 86,
-      "edges": 230,
-      "usage": 211
+      "nodes": 87,
+      "edges": 233,
+      "usage": 212
     },
     {
       "domain": "compliance",
@@ -408,6 +408,14 @@
       "domain": "portal",
       "hubs": [
         "page.installHygiene"
+      ]
+    },
+    {
+      "id": "cluster:page.issueTaxonomy",
+      "size": 1,
+      "domain": "portal",
+      "hubs": [
+        "page.issueTaxonomy"
       ]
     },
     {
@@ -860,123 +868,123 @@
       {
         "id": "ui.semantic.artifact",
         "label": "Artifact",
-        "bridgeScore": 37,
-        "betweenness": 0.11712887813150834
+        "bridgeScore": 38,
+        "betweenness": 0.11837601440566119
       },
       {
         "id": "ui.semantic.surface",
         "label": "Surface",
-        "bridgeScore": 35,
-        "betweenness": 0.06850389754610316
+        "bridgeScore": 36,
+        "betweenness": 0.06957589868854182
       },
       {
         "id": "ui.semantic.resources",
         "label": "Resources",
-        "bridgeScore": 34,
-        "betweenness": 0.05684162056632359
+        "bridgeScore": 35,
+        "betweenness": 0.05780815353022905
       },
       {
         "id": "page.partners",
         "label": "Partners",
         "bridgeScore": 14,
-        "betweenness": 0.052191743877733954
+        "betweenness": 0.051960571821661236
       },
       {
         "id": "page.limitPatterns",
         "label": "Partner limit patterns",
         "bridgeScore": 9,
-        "betweenness": 0.04623231504869095
+        "betweenness": 0.046446931351667886
       },
       {
         "id": "ops.limits.limit_delta",
         "label": "Limit delta",
         "bridgeScore": 9,
-        "betweenness": 0.0397260898429543
+        "betweenness": 0.03936084776382103
       },
       {
         "id": "page.dodReview",
         "label": "DOD visual-proof review",
         "bridgeScore": 7,
-        "betweenness": 0.008725012128561548
+        "betweenness": 0.008704825234325031
       },
       {
         "id": "page.accountDossier",
         "label": "Account dossier",
         "bridgeScore": 6,
-        "betweenness": 0.005959755677981621
+        "betweenness": 0.005941553211914582
       },
       {
         "id": "page.partnerHistory",
         "label": "Partner limit history",
         "bridgeScore": 5,
-        "betweenness": 0.01799993807380462
+        "betweenness": 0.01806541735314654
       },
       {
         "id": "ops.limits.change_direction",
         "label": "Limit change direction",
         "bridgeScore": 5,
-        "betweenness": 0.013112765257118054
+        "betweenness": 0.013038601798471064
       }
     ],
     "topCentral": [
       {
         "id": "ui.semantic.artifact",
         "label": "Artifact",
-        "betweenness": 0.11712887813150834,
-        "seeAlsoDegree": 41
+        "betweenness": 0.11837601440566119,
+        "seeAlsoDegree": 42
       },
       {
         "id": "ui.semantic.source",
         "label": "Source",
-        "betweenness": 0.11072481182846647,
+        "betweenness": 0.11085446288405264,
         "seeAlsoDegree": 11
       },
       {
         "id": "ops.limits.effective_limit",
         "label": "Effective limit",
-        "betweenness": 0.07578938783592379,
+        "betweenness": 0.07530522037881528,
         "seeAlsoDegree": 12
       },
       {
         "id": "ui.semantic.surface",
         "label": "Surface",
-        "betweenness": 0.06850389754610316,
-        "seeAlsoDegree": 37
+        "betweenness": 0.06957589868854182,
+        "seeAlsoDegree": 38
       },
       {
         "id": "ui.action.filter",
         "label": "Apply filters",
-        "betweenness": 0.060606284503965366,
+        "betweenness": 0.06023396852195937,
         "seeAlsoDegree": 9
       },
       {
         "id": "ui.semantic.resources",
         "label": "Resources",
-        "betweenness": 0.05684162056632359,
-        "seeAlsoDegree": 37
+        "betweenness": 0.05780815353022905,
+        "seeAlsoDegree": 38
       },
       {
         "id": "page.partners",
         "label": "Partners",
-        "betweenness": 0.052191743877733954,
+        "betweenness": 0.051960571821661236,
         "seeAlsoDegree": 14
       },
       {
         "id": "page.limitPatterns",
         "label": "Partner limit patterns",
-        "betweenness": 0.04623231504869095,
+        "betweenness": 0.046446931351667886,
         "seeAlsoDegree": 9
       },
       {
         "id": "ops.limits.limit_delta",
         "label": "Limit delta",
-        "betweenness": 0.0397260898429543,
+        "betweenness": 0.03936084776382103,
         "seeAlsoDegree": 14
       },
       {
         "id": "ops.limits.evidence_trace",
         "label": "Limit evidence trace",
-        "betweenness": 0.038523624954155844,
+        "betweenness": 0.03861710235357344,
         "seeAlsoDegree": 8
       }
     ]
@@ -996,7 +1004,7 @@
       "usageSurface": 0,
       "boards": [],
       "kind": "hub",
-      "degree": 86,
+      "degree": 87,
       "seeAlsoCount": 0,
       "seeAlsoByLayer": {
         "sameGroup": 0,
@@ -1026,18 +1034,18 @@
         "tennis"
       ],
       "kind": "used",
-      "degree": 47,
+      "degree": 48,
       "seeAlsoCount": 2,
       "seeAlsoByLayer": {
         "sameGroup": 4,
         "crossGroup": 0,
         "crossDomain": 3,
-        "pageBridge": 34
+        "pageBridge": 35
       },
-      "bridgeScore": 37,
+      "bridgeScore": 38,
       "clusterId": "cluster:ui.filter.jurisdiction",
-      "seeAlsoDegree": 41,
-      "betweenness": 0.11712887813150834
+      "seeAlsoDegree": 42,
+      "betweenness": 0.11837601440566119
     },
     {
       "id": "ops.limits.account",
@@ -1067,7 +1075,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 8,
-      "betweenness": 0.03343983716686717
+      "betweenness": 0.03308651323369923
     },
     {
       "id": "ops.limits.lifecycle_state",
@@ -1098,7 +1106,7 @@
       "bridgeScore": 0,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 5,
-      "betweenness": 0.00825195413805031
+      "betweenness": 0.008137326695864405
     },
     {
       "id": "ui.semantic.resources",
@@ -1116,18 +1124,18 @@
         "health-fields"
       ],
       "kind": "used",
-      "degree": 39,
+      "degree": 40,
       "seeAlsoCount": 2,
       "seeAlsoByLayer": {
         "sameGroup": 3,
         "crossGroup": 0,
         "crossDomain": 0,
-        "pageBridge": 34
+        "pageBridge": 35
       },
-      "bridgeScore": 34,
+      "bridgeScore": 35,
       "clusterId": "cluster:ui.filter.jurisdiction",
-      "seeAlsoDegree": 37,
-      "betweenness": 0.05684162056632359
+      "seeAlsoDegree": 38,
+      "betweenness": 0.05780815353022905
     },
     {
       "id": "ui.semantic.surface",
@@ -1145,18 +1153,18 @@
         "health-fields"
       ],
       "kind": "used",
-      "degree": 39,
+      "degree": 40,
       "seeAlsoCount": 2,
       "seeAlsoByLayer": {
         "sameGroup": 2,
         "crossGroup": 0,
         "crossDomain": 1,
-        "pageBridge": 34
+        "pageBridge": 35
       },
-      "bridgeScore": 35,
+      "bridgeScore": 36,
       "clusterId": "cluster:ui.filter.jurisdiction",
-      "seeAlsoDegree": 37,
-      "betweenness": 0.06850389754610316
+      "seeAlsoDegree": 38,
+      "betweenness": 0.06957589868854182
     },
     {
       "id": "page.limitPatterns",
@@ -1185,7 +1193,7 @@
       "bridgeScore": 9,
       "clusterId": "cluster:page.limitPatterns",
       "seeAlsoDegree": 9,
-      "betweenness": 0.04623231504869095
+      "betweenness": 0.046446931351667886
     },
     {
       "id": "hub:domain:compliance",
@@ -1241,7 +1249,7 @@
       "bridgeScore": 14,
       "clusterId": "cluster:page.partners",
       "seeAlsoDegree": 14,
-      "betweenness": 0.052191743877733954
+      "betweenness": 0.051960571821661236
     },
     {
       "id": "hub:domain:operations",
@@ -1299,7 +1307,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 11,
-      "betweenness": 0.11072481182846647
+      "betweenness": 0.11085446288405264
     },
     {
       "id": "api.partner",
@@ -1329,7 +1337,7 @@
       "bridgeScore": 4,
       "clusterId": "cluster:api.agent",
       "seeAlsoDegree": 6,
-      "betweenness": 0.017494818543298277
+      "betweenness": 0.017317280022022898
     },
     {
       "id": "ops.limits.limit_delta",
@@ -1358,7 +1366,7 @@
       "bridgeScore": 9,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 14,
-      "betweenness": 0.0397260898429543
+      "betweenness": 0.03936084776382103
     },
     {
       "id": "ops.limits.effective_limit",
@@ -1387,7 +1395,7 @@
       "bridgeScore": 4,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 12,
-      "betweenness": 0.07578938783592379
+      "betweenness": 0.07530522037881528
     },
     {
       "id": "section.partnersAccounting",
@@ -1417,7 +1425,7 @@
       "bridgeScore": 5,
       "clusterId": "cluster:section.partnersTelegram",
       "seeAlsoDegree": 11,
-      "betweenness": 0.003604815029083406
+      "betweenness": 0.0035547481536794697
     },
     {
       "id": "api.agent",
@@ -1446,7 +1454,7 @@
       "bridgeScore": 4,
       "clusterId": "cluster:api.agent",
       "seeAlsoDegree": 6,
-      "betweenness": 0.029528719987880807
+      "betweenness": 0.02960429431113419
     },
     {
       "id": "ui.action.filter",
@@ -1476,7 +1484,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 9,
-      "betweenness": 0.060606284503965366
+      "betweenness": 0.06023396852195937
     },
     {
       "id": "api.identity",
@@ -1505,7 +1513,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:api.agent",
       "seeAlsoDegree": 5,
-      "betweenness": 0.006190277448068254
+      "betweenness": 0.0061697464420044
     },
     {
       "id": "api.prediction",
@@ -1534,7 +1542,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:api.prediction",
       "seeAlsoDegree": 5,
-      "betweenness": 0.002092683354379404
+      "betweenness": 0.0020673538884494586
     },
     {
       "id": "ui.semantic.status",
@@ -1565,7 +1573,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.012143698712603831
+      "betweenness": 0.012101859193845758
     },
     {
       "id": "section.partnersTelegram",
@@ -1595,7 +1603,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:section.partnersTelegram",
       "seeAlsoDegree": 8,
-      "betweenness": 0.0002287743350790572
+      "betweenness": 0.00022559691375851474
     },
     {
       "id": "ui.filter.partnerId",
@@ -1625,7 +1633,7 @@
       "bridgeScore": 4,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 8,
-      "betweenness": 0.03634160686061113
+      "betweenness": 0.03588534002921138
     },
     {
       "id": "ui.semantic.hostname",
@@ -1684,7 +1692,7 @@
       "bridgeScore": 4,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 8,
-      "betweenness": 0.038523624954155844
+      "betweenness": 0.03861710235357344
     },
     {
       "id": "ops.limits.change_direction",
@@ -1713,7 +1721,7 @@
       "bridgeScore": 5,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 8,
-      "betweenness": 0.013112765257118054
+      "betweenness": 0.013038601798471064
     },
     {
       "id": "ops.limits.role_type",
@@ -1742,7 +1750,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 8,
-      "betweenness": 0.00890431839989975
+      "betweenness": 0.008786964588430615
     },
     {
       "id": "api.limit_cache",
@@ -1771,7 +1779,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:api.prediction",
       "seeAlsoDegree": 3,
-      "betweenness": 0.001242749994350507
+      "betweenness": 0.0012254895777623054
     },
     {
       "id": "api.limit_events",
@@ -1800,7 +1808,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:api.prediction",
       "seeAlsoDegree": 3,
-      "betweenness": 0.0005508895713761271
+      "betweenness": 0.0005432383273292364
     },
     {
       "id": "ops.limits.influence_score",
@@ -1829,7 +1837,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 7,
-      "betweenness": 0.013100399054808731
+      "betweenness": 0.013041660969994448
     },
     {
       "id": "ops.limits.pattern_surface",
@@ -1859,7 +1867,7 @@
       "bridgeScore": 4,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 7,
-      "betweenness": 0.01869963949456279
+      "betweenness": 0.01855064515040235
     },
     {
       "id": "ops.limits.jurisdiction_policy",
@@ -1889,7 +1897,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 7,
-      "betweenness": 0.016006186802880646
+      "betweenness": 0.015783810780655362
     },
     {
       "id": "ops.limits.sport",
@@ -1918,7 +1926,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 7,
-      "betweenness": 0.02913217270797408
+      "betweenness": 0.028937996908578827
     },
     {
       "id": "ops.limits.profile",
@@ -1948,7 +1956,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 7,
-      "betweenness": 0.010796793366442235
+      "betweenness": 0.010646803966926788
     },
     {
       "id": "ui.filter.window",
@@ -1977,7 +1985,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 7,
-      "betweenness": 0.021166407547152842
+      "betweenness": 0.02101811731024114
     },
     {
       "id": "section.partnersAccountsLimits",
@@ -2006,7 +2014,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:section.partnersTelegram",
       "seeAlsoDegree": 7,
-      "betweenness": 0.00013811595376766694
+      "betweenness": 0.00013619767663200489
     },
     {
       "id": "api.bookmaker_feed",
@@ -2066,7 +2074,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:section.recentLimitChanges",
       "seeAlsoDegree": 4,
-      "betweenness": 0.006446732464227451
+      "betweenness": 0.006388760169901059
     },
     {
       "id": "ui.filter.sportsbook",
@@ -2096,7 +2104,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 5,
-      "betweenness": 0.015480193053700202
+      "betweenness": 0.015362315469523907
     },
     {
       "id": "ops.limits.data_coverage",
@@ -2125,7 +2133,7 @@
       "bridgeScore": 4,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 6,
-      "betweenness": 0.010455853820009344
+      "betweenness": 0.010353249679316575
     },
     {
       "id": "ops.limits.prediction",
@@ -2154,7 +2162,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 6,
-      "betweenness": 0.0035949878467447897
+      "betweenness": 0.0035450574599844454
     },
     {
       "id": "page.accountDossier",
@@ -2183,7 +2191,7 @@
       "bridgeScore": 6,
       "clusterId": "cluster:page.accountDossier",
       "seeAlsoDegree": 6,
-      "betweenness": 0.005959755677981621
+      "betweenness": 0.005941553211914582
     },
     {
       "id": "section.partnersDeposits",
@@ -2212,7 +2220,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:section.partnersTelegram",
       "seeAlsoDegree": 6,
-      "betweenness": 0.00014885882363475193
+      "betweenness": 0.00014679133997315814
     },
     {
       "id": "ops.limits.agent",
@@ -2241,7 +2249,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 6,
-      "betweenness": 0.010362461488907779
+      "betweenness": 0.01040536471778838
     },
     {
       "id": "ops.limits.downline",
@@ -2270,7 +2278,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 6,
-      "betweenness": 0.0013790792447086904
+      "betweenness": 0.0013641481966197456
     },
     {
       "id": "ops.limits.node",
@@ -2299,7 +2307,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 6,
-      "betweenness": 0.00454292066044901
+      "betweenness": 0.004486141817583359
     },
     {
       "id": "ops.limits.partner",
@@ -2328,7 +2336,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 6,
-      "betweenness": 0.006414660713937125
+      "betweenness": 0.006350905185880054
     },
     {
       "id": "page.dodReview",
@@ -2355,7 +2363,7 @@
       "bridgeScore": 7,
       "clusterId": "cluster:page.dodReview",
       "seeAlsoDegree": 7,
-      "betweenness": 0.008725012128561548
+      "betweenness": 0.008704825234325031
     },
     {
       "id": "page.tennis",
@@ -2384,7 +2392,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.tennis",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "ops.limits.market_phase",
@@ -2413,7 +2421,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 5,
-      "betweenness": 0.003988386555500302
+      "betweenness": 0.003949179813972536
     },
     {
       "id": "section.perNodeBreakdown",
@@ -2443,7 +2451,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:section.recentLimitChanges",
       "seeAlsoDegree": 4,
-      "betweenness": 0.00532131140504234
+      "betweenness": 0.005253568010281314
     },
     {
       "id": "section.partnersOuts",
@@ -2473,7 +2481,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:section.partnersTelegram",
       "seeAlsoDegree": 4,
-      "betweenness": 0.00006155816014970945
+      "betweenness": 0.0000607031857031857
     },
     {
       "id": "ui.action.reset",
@@ -2503,7 +2511,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.0032326783003922763
+      "betweenness": 0.003187779990664606
     },
     {
       "id": "ops.limits.monitoring_status",
@@ -2533,7 +2541,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 5,
-      "betweenness": 0.0041086053092972245
+      "betweenness": 0.004067324174950924
     },
     {
       "id": "page.partnerHistory",
@@ -2562,7 +2570,7 @@
       "bridgeScore": 5,
       "clusterId": "cluster:page.partnerHistory",
       "seeAlsoDegree": 5,
-      "betweenness": 0.01799993807380462
+      "betweenness": 0.01806541735314654
     },
     {
       "id": "section.downlineContext",
@@ -2592,7 +2600,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.0024982553745053105
+      "betweenness": 0.002469891628657417
     },
     {
       "id": "section.openingBaseline",
@@ -2621,7 +2629,7 @@
       "bridgeScore": 5,
       "clusterId": "cluster:section.openingBaseline",
       "seeAlsoDegree": 5,
-      "betweenness": 0.012281147615992947
+      "betweenness": 0.012304826315576571
     },
     {
       "id": "section.partnersOnboard",
@@ -2650,7 +2658,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:section.partnersTelegram",
       "seeAlsoDegree": 5,
-      "betweenness": 0.0022815134892525822
+      "betweenness": 0.0022498258019018518
     },
     {
       "id": "section.partnersPartnerMessage",
@@ -2708,7 +2716,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 5,
-      "betweenness": 0.007611535172325596
+      "betweenness": 0.007637326007020548
     },
     {
       "id": "ops.limits.tree",
@@ -2737,7 +2745,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 5,
-      "betweenness": 0.0004363680368237121
+      "betweenness": 0.000430307369645605
     },
     {
       "id": "ops.metric.visible_changes",
@@ -2766,7 +2774,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.summary.partner_limit_trace",
       "seeAlsoDegree": 5,
-      "betweenness": 0.011990124290433616
+      "betweenness": 0.011840591678396708
     },
     {
       "id": "ui.filter.profile",
@@ -2795,7 +2803,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 5,
-      "betweenness": 0.006037695495087925
+      "betweenness": 0.005970026129399219
     },
     {
       "id": "hub:domain:infrastructure",
@@ -2851,7 +2859,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 4,
-      "betweenness": 0.00004924652811976756
+      "betweenness": 0.00004856254856254856
     },
     {
       "id": "section.limitRaisePrediction",
@@ -2880,7 +2888,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.0012616961999497443
+      "betweenness": 0.001244172641617109
     },
     {
       "id": "section.sportsbookPatterns",
@@ -2909,7 +2917,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.013018781324564898
+      "betweenness": 0.012983652562966923
     },
     {
       "id": "ui.route.partnerHash",
@@ -2938,7 +2946,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:section.partnersTelegram",
       "seeAlsoDegree": 4,
-      "betweenness": 0.00009513533841318733
+      "betweenness": 0.00009381401426855973
     },
     {
       "id": "ops.limits.multi_structure",
@@ -2967,7 +2975,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 4,
-      "betweenness": 0.0024898009951798508
+      "betweenness": 0.002471407941989869
     },
     {
       "id": "ops.limits.sub_agent",
@@ -2996,7 +3004,7 @@
       "bridgeScore": 0,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 4,
-      "betweenness": 0.0000882919897004404
+      "betweenness": 0.00008706571206571207
     },
     {
       "id": "section.dataConnectionAudit",
@@ -3025,7 +3033,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.003208585254272548
+      "betweenness": 0.0031901706347960317
     },
     {
       "id": "section.stateZipPatterns",
@@ -3054,7 +3062,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.012592873933344323
+      "betweenness": 0.012547315306935805
     },
     {
       "id": "section.jurisdictionCatalog",
@@ -3083,7 +3091,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.010949583502173411
+      "betweenness": 0.010959025345820736
     },
     {
       "id": "ui.filter.jurisdiction",
@@ -3112,7 +3120,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 4,
-      "betweenness": 0.007155756871901333
+      "betweenness": 0.0070887463921666255
     },
     {
       "id": "ops.panel.partner_limit_history",
@@ -3141,7 +3149,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ops.panel.limit_overview",
       "seeAlsoDegree": 4,
-      "betweenness": 0.004085787320832322
+      "betweenness": 0.004053321548990925
     },
     {
       "id": "ops.filter.window",
@@ -3168,7 +3176,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.filter.window.48h",
       "seeAlsoDegree": 5,
-      "betweenness": 0.019772481040086675
+      "betweenness": 0.019643550893550892
     },
     {
       "id": "ops.limits.market_type",
@@ -3197,7 +3205,7 @@
       "bridgeScore": 0,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 3,
-      "betweenness": 0.00016415509373255853
+      "betweenness": 0.0001618751618751619
     },
     {
       "id": "ops.limits.policy_code",
@@ -3227,7 +3235,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.limits.sport",
       "seeAlsoDegree": 3,
-      "betweenness": 0.002776592192765576
+      "betweenness": 0.0027509286889628014
     },
     {
       "id": "ops.limits.competition",
@@ -3314,7 +3322,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:section.patternSummary",
       "seeAlsoDegree": 3,
-      "betweenness": 0.0008917236628837377
+      "betweenness": 0.0008793386120103525
     },
     {
       "id": "ui.action.searchProfiles",
@@ -3372,7 +3380,7 @@
       "bridgeScore": 0,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 3,
-      "betweenness": 0.0030274636529814664
+      "betweenness": 0.003001603062877573
     },
     {
       "id": "section.complianceKpis",
@@ -3401,7 +3409,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:section.complianceKpis",
       "seeAlsoDegree": 3,
-      "betweenness": 0.0013580224901781081
+      "betweenness": 0.0013520178124742533
     },
     {
       "id": "ui.filter.state",
@@ -3430,7 +3438,7 @@
       "bridgeScore": 0,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 3,
-      "betweenness": 0.0013094886334322953
+      "betweenness": 0.0012913012913012912
     },
     {
       "id": "ops.dod.ingest",
@@ -3457,7 +3465,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.dod.ingest",
       "seeAlsoDegree": 4,
-      "betweenness": 0.00015594733904593058
+      "betweenness": 0.00015378140378140376
     },
     {
       "id": "ops.dod.reconcile",
@@ -3484,7 +3492,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.dod.ingest",
       "seeAlsoDegree": 4,
-      "betweenness": 0.0015273109204153696
+      "betweenness": 0.001506098268742934
     },
     {
       "id": "ops.metric.active_filters",
@@ -3513,7 +3521,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.summary.partner_limit_trace",
       "seeAlsoDegree": 3,
-      "betweenness": 0.00675574575194265
+      "betweenness": 0.006661915949832336
     },
     {
       "id": "ops.metric.deltas",
@@ -3542,7 +3550,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.summary.partner_limit_trace",
       "seeAlsoDegree": 3,
-      "betweenness": 0.0009043922239342556
+      "betweenness": 0.0009011968551896919
     },
     {
       "id": "ops.metric.high_water",
@@ -3571,7 +3579,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:ops.metric.high_water",
       "seeAlsoDegree": 3,
-      "betweenness": 0.00028112912728297347
+      "betweenness": 0.00027722455607070995
     },
     {
       "id": "ops.metric.proof_coverage",
@@ -3600,7 +3608,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.dod.ingest",
       "seeAlsoDegree": 3,
-      "betweenness": 0.0029624882434062046
+      "betweenness": 0.002921342573358896
     },
     {
       "id": "ops.summary.partner_limit_trace",
@@ -3629,7 +3637,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.summary.partner_limit_trace",
       "seeAlsoDegree": 3,
-      "betweenness": 0.00643474544076157
+      "betweenness": 0.006442490179191982
     },
     {
       "id": "page.identity",
@@ -3656,7 +3664,7 @@
       "bridgeScore": 4,
       "clusterId": "cluster:page.identity",
       "seeAlsoDegree": 4,
-      "betweenness": 0.003359861128930792
+      "betweenness": 0.003381426209137332
     },
     {
       "id": "section.partnersBookDetail",
@@ -3714,7 +3722,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 2,
-      "betweenness": 0.005236593698929941
+      "betweenness": 0.0051846587836554495
     },
     {
       "id": "page.operations",
@@ -3741,7 +3749,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.operations",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.toc",
@@ -3768,7 +3776,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.toc",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "ui.filter.window.30d",
@@ -3797,7 +3805,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 2,
-      "betweenness": 0.00010670081092616303
+      "betweenness": 0.00010521885521885521
     },
     {
       "id": "ui.filter.window.48h",
@@ -3826,7 +3834,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 2,
-      "betweenness": 0.00010670081092616303
+      "betweenness": 0.00010521885521885521
     },
     {
       "id": "ui.filter.window.7d",
@@ -3855,7 +3863,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 2,
-      "betweenness": 0.00010670081092616303
+      "betweenness": 0.00010521885521885521
     },
     {
       "id": "ui.semantic.plane",
@@ -3884,7 +3892,7 @@
       "bridgeScore": 0,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 2,
-      "betweenness": 0.006796020880527923
+      "betweenness": 0.00675019425019425
     },
     {
       "id": "ui.semantic.port",
@@ -3942,7 +3950,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 2,
-      "betweenness": 0.0008890111822666345
+      "betweenness": 0.0008920419451132939
     },
     {
       "id": "ops.dod.meta_log",
@@ -3969,7 +3977,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.dod.ingest",
       "seeAlsoDegree": 3,
-      "betweenness": 0.001401589999787577
+      "betweenness": 0.0013942641091533867
     },
     {
       "id": "ops.metric.decreases",
@@ -4056,7 +4064,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.summary.partner_limit_trace",
       "seeAlsoDegree": 2,
-      "betweenness": 0.0012459245581635965
+      "betweenness": 0.0012286200504113243
     },
     {
       "id": "ops.panel.limit_overview",
@@ -4085,7 +4093,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.panel.limit_overview",
       "seeAlsoDegree": 2,
-      "betweenness": 0.0006923186846025312
+      "betweenness": 0.0006827031473163849
     },
     {
       "id": "ops.table.limit_changes",
@@ -4114,7 +4122,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.table.limit_changes",
       "seeAlsoDegree": 2,
-      "betweenness": 0.001131738307507857
+      "betweenness": 0.0011160197199035812
     },
     {
       "id": "ops.table.per_account",
@@ -4143,7 +4151,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.table.per_account",
       "seeAlsoDegree": 2,
-      "betweenness": 0.0016175139414576038
+      "betweenness": 0.0015950484700484704
     },
     {
       "id": "ops.table.recent_changes",
@@ -4172,7 +4180,34 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.summary.partner_limit_trace",
       "seeAlsoDegree": 2,
-      "betweenness": 0.0005151165522484345
+      "betweenness": 0.0005079621556894284
+    },
+    {
+      "id": "page.issueTaxonomy",
+      "label": "GitHub issue taxonomy",
+      "nodeKind": "concept",
+      "domain": "portal",
+      "domainLabel": "Portal",
+      "namespace": "page",
+      "group": "page.issueTaxonomy",
+      "provenance": "legacy",
+      "usage": 1,
+      "usageUi": 1,
+      "usageSurface": 0,
+      "boards": [],
+      "kind": "used",
+      "degree": 4,
+      "seeAlsoCount": 3,
+      "seeAlsoByLayer": {
+        "sameGroup": 0,
+        "crossGroup": 0,
+        "crossDomain": 0,
+        "pageBridge": 3
+      },
+      "bridgeScore": 3,
+      "clusterId": "cluster:page.issueTaxonomy",
+      "seeAlsoDegree": 3,
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "ui.action.export",
@@ -4201,7 +4236,7 @@
       "bridgeScore": 0,
       "clusterId": "cluster:ui.action.export",
       "seeAlsoDegree": 2,
-      "betweenness": 0.00004924652811976756
+      "betweenness": 0.00004856254856254856
     },
     {
       "id": "ui.action.refresh",
@@ -4230,7 +4265,7 @@
       "bridgeScore": 0,
       "clusterId": "cluster:ui.filter.jurisdiction",
       "seeAlsoDegree": 2,
-      "betweenness": 0.03310894223443127
+      "betweenness": 0.03316709633250915
     },
     {
       "id": "page.agentOdds",
@@ -4257,7 +4292,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.agentOdds",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.bookmakers",
@@ -4284,7 +4319,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.bookmakers",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.brandKeymap",
@@ -4311,7 +4346,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.brandKeymap",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.bunfig",
@@ -4338,7 +4373,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.bunfig",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.catalog",
@@ -4365,7 +4400,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.catalog",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.compliance",
@@ -4392,7 +4427,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.compliance",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.concepts",
@@ -4419,7 +4454,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.concepts",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.consoleFormat",
@@ -4446,7 +4481,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.consoleFormat",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.dashboard",
@@ -4473,7 +4508,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.dashboard",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.doctor",
@@ -4500,7 +4535,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.doctor",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.environment",
@@ -4527,7 +4562,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.environment",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.factoryRegistry",
@@ -4554,7 +4589,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.factoryRegistry",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.failures",
@@ -4581,7 +4616,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.failures",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.glossary",
@@ -4608,7 +4643,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.glossary",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.health",
@@ -4635,7 +4670,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.health",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.installHygiene",
@@ -4662,7 +4697,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.installHygiene",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.limitForecastLab",
@@ -4689,7 +4724,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.limitForecastLab",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.packages",
@@ -4716,7 +4751,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.packages",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.partnerHealth",
@@ -4743,7 +4778,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.partnerHealth",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.registry",
@@ -4770,7 +4805,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.registry",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.science",
@@ -4797,7 +4832,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.science",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.skills",
@@ -4824,7 +4859,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.skills",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.surfaces",
@@ -4851,7 +4886,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.surfaces",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.tools",
@@ -4878,7 +4913,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.tools",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "page.vault",
@@ -4905,7 +4940,7 @@
       "bridgeScore": 3,
       "clusterId": "cluster:page.vault",
       "seeAlsoDegree": 3,
-      "betweenness": 0.000007350981857554655
+      "betweenness": 0.000007070738486617928
     },
     {
       "id": "ui.semantic.kind",
@@ -5019,7 +5054,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.filter.account.all",
       "seeAlsoDegree": 2,
-      "betweenness": 0.003398106648377504
+      "betweenness": 0.0033509107227055945
     },
     {
       "id": "ops.filter.sportsbook.all",
@@ -5046,7 +5081,7 @@
       "bridgeScore": 2,
       "clusterId": "cluster:ops.filter.sportsbook.all",
       "seeAlsoDegree": 2,
-      "betweenness": 0.0009542101091396865
+      "betweenness": 0.0009409571909571908
     },
     {
       "id": "ops.filter.window.30d",
@@ -5073,7 +5108,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.filter.window.48h",
       "seeAlsoDegree": 2,
-      "betweenness": 0.00005745428280639548
+      "betweenness": 0.00005665630665630665
     },
     {
       "id": "ops.filter.window.48h",
@@ -5100,7 +5135,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.filter.window.48h",
       "seeAlsoDegree": 2,
-      "betweenness": 0.00005745428280639548
+      "betweenness": 0.00005665630665630665
     },
     {
       "id": "ops.filter.window.7d",
@@ -5127,7 +5162,7 @@
       "bridgeScore": 1,
       "clusterId": "cluster:ops.filter.window.48h",
       "seeAlsoDegree": 2,
-      "betweenness": 0.00005745428280639548
+      "betweenness": 0.00005665630665630665
     },
     {
       "id": "ui.semantic.package",
@@ -7594,6 +7629,33 @@
     },
     {
       "source": "page.installHygiene",
+      "target": "ui.semantic.surface",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.issueTaxonomy",
+      "target": "hub:domain:portal",
+      "kind": "domainHub",
+      "weight": 0.75
+    },
+    {
+      "source": "page.issueTaxonomy",
+      "target": "ui.semantic.artifact",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.issueTaxonomy",
+      "target": "ui.semantic.resources",
+      "kind": "seeAlso",
+      "weight": 1,
+      "layer": "pageBridge"
+    },
+    {
+      "source": "page.issueTaxonomy",
       "target": "ui.semantic.surface",
       "kind": "seeAlso",
       "weight": 1,
