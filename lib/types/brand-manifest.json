@@ -1,13 +1,14 @@
 {
   "version": 3,
-  "generatedAt": "2026-08-05T23:47:57.586Z",
+  "generatedAt": "2026-08-06T03:22:59.978Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 69,
-  "domainCount": 9,
+  "brandCount": 82,
+  "domainCount": 10,
   "domains": [
     "audit",
     "deployment",
     "documents",
+    "governance",
     "identity",
     "operations",
     "portal",
@@ -16,9 +17,9 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 63,
-    "key": 1,
-    "code": 5
+    "id": 65,
+    "key": 3,
+    "code": 14
   },
   "domainCatalog": [
     {
@@ -35,6 +36,11 @@
       "name": "documents",
       "module": "lib/types/branded/documents.ts",
       "brandCount": 3
+    },
+    {
+      "name": "governance",
+      "module": "lib/types/branded/governance.ts",
+      "brandCount": 13
     },
     {
       "name": "identity",
@@ -767,6 +773,383 @@
       "guard": "BRAND_GUARDS.isRuleId",
       "shortName": "ruleId",
       "envName": "RULE_ID"
+    },
+    {
+      "name": "GithubIssueArtifactId",
+      "domain": "governance",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Issue-spine artifact identity governed by the repository taxonomy",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9][a-z0-9._-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/governance.ts",
+      "constructors": {
+        "as": "asGithubIssueArtifactId",
+        "try": "tryGithubIssueArtifactId",
+        "parse": "parseGithubIssueArtifactId"
+      },
+      "guard": "BRAND_GUARDS.isGithubIssueArtifactId",
+      "shortName": "githubIssueArtifactId",
+      "envName": "GITHUB_ISSUE_ARTIFACT_ID"
+    },
+    {
+      "name": "GithubIssueConceptId",
+      "domain": "governance",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Optional glossary concept identity carried by issue-spine metadata",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[A-Za-z][A-Za-z0-9_]*(?:\\.[A-Za-z0-9_]+)*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/governance.ts",
+      "constructors": {
+        "as": "asGithubIssueConceptId",
+        "try": "tryGithubIssueConceptId",
+        "parse": "parseGithubIssueConceptId"
+      },
+      "guard": "BRAND_GUARDS.isGithubIssueConceptId",
+      "shortName": "githubIssueConceptId",
+      "envName": "GITHUB_ISSUE_CONCEPT_ID"
+    },
+    {
+      "name": "GithubIssueLabelKey",
+      "domain": "governance",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Semantic dimension.value key for a governed GitHub issue label",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z][a-z0-9_]*\\.[a-z0-9][a-z0-9_-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "key",
+      "module": "lib/types/branded/governance.ts",
+      "constructors": {
+        "as": "asGithubIssueLabelKey",
+        "try": "tryGithubIssueLabelKey",
+        "parse": "parseGithubIssueLabelKey"
+      },
+      "guard": "BRAND_GUARDS.isGithubIssueLabelKey",
+      "shortName": "githubIssueLabelKey",
+      "envName": "GITHUB_ISSUE_LABEL_KEY"
+    },
+    {
+      "name": "GithubIssueLabelNameKey",
+      "domain": "governance",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "GitHub-facing label name projected from the semantic taxonomy",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "key",
+      "module": "lib/types/branded/governance.ts",
+      "constructors": {
+        "as": "asGithubIssueLabelNameKey",
+        "try": "tryGithubIssueLabelNameKey",
+        "parse": "parseGithubIssueLabelNameKey"
+      },
+      "guard": "BRAND_GUARDS.isGithubIssueLabelNameKey",
+      "shortName": "githubIssueLabelNameKey",
+      "envName": "GITHUB_ISSUE_LABEL_NAME_KEY"
+    },
+    {
+      "name": "GithubIssueDimensionCode",
+      "domain": "governance",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Issue taxonomy dimension code",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(type|priority|plane|runtime|team|status|urgency|concern)$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/governance.ts",
+      "constructors": {
+        "as": "asGithubIssueDimensionCode",
+        "try": "tryGithubIssueDimensionCode",
+        "parse": "parseGithubIssueDimensionCode"
+      },
+      "guard": "BRAND_GUARDS.isGithubIssueDimensionCode",
+      "shortName": "githubIssueDimensionCode",
+      "envName": "GITHUB_ISSUE_DIMENSION_CODE"
+    },
+    {
+      "name": "GithubIssueTypeCode",
+      "domain": "governance",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Issue-spine type value",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(bug|enhancement)$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/governance.ts",
+      "constructors": {
+        "as": "asGithubIssueTypeCode",
+        "try": "tryGithubIssueTypeCode",
+        "parse": "parseGithubIssueTypeCode"
+      },
+      "guard": "BRAND_GUARDS.isGithubIssueTypeCode",
+      "shortName": "githubIssueTypeCode",
+      "envName": "GITHUB_ISSUE_TYPE_CODE"
+    },
+    {
+      "name": "GithubIssuePriorityCode",
+      "domain": "governance",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Issue-spine priority value",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^p[0-2]$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/governance.ts",
+      "constructors": {
+        "as": "asGithubIssuePriorityCode",
+        "try": "tryGithubIssuePriorityCode",
+        "parse": "parseGithubIssuePriorityCode"
+      },
+      "guard": "BRAND_GUARDS.isGithubIssuePriorityCode",
+      "shortName": "githubIssuePriorityCode",
+      "envName": "GITHUB_ISSUE_PRIORITY_CODE"
+    },
+    {
+      "name": "GithubIssuePlaneCode",
+      "domain": "governance",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Issue-spine ownership plane",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(governance|domain|local|public|portal)$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/governance.ts",
+      "constructors": {
+        "as": "asGithubIssuePlaneCode",
+        "try": "tryGithubIssuePlaneCode",
+        "parse": "parseGithubIssuePlaneCode"
+      },
+      "guard": "BRAND_GUARDS.isGithubIssuePlaneCode",
+      "shortName": "githubIssuePlaneCode",
+      "envName": "GITHUB_ISSUE_PLANE_CODE"
+    },
+    {
+      "name": "GithubIssueRuntimeCode",
+      "domain": "governance",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Issue-spine runtime ownership value",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(bun|agnostic)$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/governance.ts",
+      "constructors": {
+        "as": "asGithubIssueRuntimeCode",
+        "try": "tryGithubIssueRuntimeCode",
+        "parse": "parseGithubIssueRuntimeCode"
+      },
+      "guard": "BRAND_GUARDS.isGithubIssueRuntimeCode",
+      "shortName": "githubIssueRuntimeCode",
+      "envName": "GITHUB_ISSUE_RUNTIME_CODE"
+    },
+    {
+      "name": "GithubIssueTeamCode",
+      "domain": "governance",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Issue-spine owning team value",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(infrastructure)$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/governance.ts",
+      "constructors": {
+        "as": "asGithubIssueTeamCode",
+        "try": "tryGithubIssueTeamCode",
+        "parse": "parseGithubIssueTeamCode"
+      },
+      "guard": "BRAND_GUARDS.isGithubIssueTeamCode",
+      "shortName": "githubIssueTeamCode",
+      "envName": "GITHUB_ISSUE_TEAM_CODE"
+    },
+    {
+      "name": "GithubIssueStatusCode",
+      "domain": "governance",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Issue-spine lifecycle status",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(planned|active|blocked|done)$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/governance.ts",
+      "constructors": {
+        "as": "asGithubIssueStatusCode",
+        "try": "tryGithubIssueStatusCode",
+        "parse": "parseGithubIssueStatusCode"
+      },
+      "guard": "BRAND_GUARDS.isGithubIssueStatusCode",
+      "shortName": "githubIssueStatusCode",
+      "envName": "GITHUB_ISSUE_STATUS_CODE"
+    },
+    {
+      "name": "GithubIssueUrgencyCode",
+      "domain": "governance",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Optional issue urgency facet",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(high)$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/governance.ts",
+      "constructors": {
+        "as": "asGithubIssueUrgencyCode",
+        "try": "tryGithubIssueUrgencyCode",
+        "parse": "parseGithubIssueUrgencyCode"
+      },
+      "guard": "BRAND_GUARDS.isGithubIssueUrgencyCode",
+      "shortName": "githubIssueUrgencyCode",
+      "envName": "GITHUB_ISSUE_URGENCY_CODE"
+    },
+    {
+      "name": "GithubIssueConcernCode",
+      "domain": "governance",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Optional issue concern facet",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(resource-management)$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/governance.ts",
+      "constructors": {
+        "as": "asGithubIssueConcernCode",
+        "try": "tryGithubIssueConcernCode",
+        "parse": "parseGithubIssueConcernCode"
+      },
+      "guard": "BRAND_GUARDS.isGithubIssueConcernCode",
+      "shortName": "githubIssueConcernCode",
+      "envName": "GITHUB_ISSUE_CONCERN_CODE"
     },
     {
       "name": "OperationId",

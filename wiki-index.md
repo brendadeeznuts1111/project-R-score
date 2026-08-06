@@ -24,7 +24,7 @@ owns the machine-artifact companion.
 | Plane           | Coverage                                | Authority                                                                                                                              | Drift check                               |
 | --------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | Portal pages    | 34/34                                   | [`lib/portal/page-concepts.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/page-concepts.ts)           | `bun run wiki:coverage:check`             |
-| Harness tenants | 49/49                                   | [`docs/harness/tenants/`](docs/harness/tenants/)                                                                                       | `bun run wiki:coverage:check`             |
+| Harness tenants | 50/50                                   | [`docs/harness/tenants/`](docs/harness/tenants/)                                                                                       | `bun run wiki:coverage:check`             |
 | Registry links  | Curated links present                   | [`public/registry/`](public/registry/)                                                                                                 | paths must exist under `public/registry/` |
 | Wiki links      | Published entrypoints                   | `_config.yml` · [`tools/wiki-link-check.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/wiki-link-check.ts) | `bun run wiki:links:check`                |
 | Public plane    | Portal · registry · monitoring · lander | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                              | `bun run public:discover:check`           |
@@ -248,6 +248,7 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 | Bookmaker registry         | [`bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md)       |
 | Bookmaker open issues      | [`bookmakers-open-issues.md`](docs/harness/tenants/bookmakers-open-issues.md) |
 | Bun capability × brand map | [`bun-brand-cross-map.md`](docs/harness/tenants/bun-brand-cross-map.md)       |
+| GitHub issue taxonomy      | [`github-issue-taxonomy.md`](docs/harness/tenants/github-issue-taxonomy.md)   |
 | Limits forecast lab        | [`limit-forecast-lab.md`](docs/harness/tenants/limit-forecast-lab.md)         |
 | Partner domain map         | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md)         |
 | Prediction report          | [`prediction-report.md`](docs/harness/tenants/prediction-report.md)           |

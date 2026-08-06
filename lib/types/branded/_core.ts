@@ -47,6 +47,7 @@ export type BrandDomain =
   | 'security'
   | 'deployment'
   | 'audit'
+  | 'governance'
   | 'operations'
   | 'portal'
   | 'surfaces';

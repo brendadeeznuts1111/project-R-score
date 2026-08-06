@@ -276,6 +276,7 @@ config/*
 !config/runtime-flags.json
 !config/scraper-targets.ts
 !config/tenants.ts
+!config/github-issue-taxonomy.ts
 # Homebase harness SSOT (must clone into worktrees; not machine secrets)
 !config/bun-dx-catalog.ts
 !config/repo-root-policy.ts
