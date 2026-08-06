@@ -51,15 +51,34 @@ export type StatusCli = {
   maxAgeDays: number;
 };
 
-/** One Flags/settings row — script · REF:ID · --flag · shortcode · default · current. */
+/**
+ * Design-doc path for Flags REF:ID / href (Contents §4.1).
+ * @see docs/design/bun-types-inventory.md
+ */
+export const BUN_TYPES_INVENTORY_DOC = 'docs/design/bun-types-inventory.md';
+/** Contents number for Commands → Flags / settings. */
+export const FLAGS_DOC_SECTION_REF = '4.1';
+/** Fragment for the Flags section (`<a id="4.1">` in the design doc). */
+export const FLAGS_DOC_SECTION_HREF = '#4.1';
+
+/** One Flags/settings row — REF:ID ≡ doc number path; href ≡ `#` + REF:ID. */
 export type StatusFlagRow = {
   script: string;
+  /** Contents-number path, e.g. `4.1.refresh` (matches design-doc anchor). */
   refId: string;
+  /** Markdown/HTML fragment, e.g. `#4.1.refresh`. */
+  href: string;
   flag: string;
   shortcode: string;
   default: string;
   current: string;
 };
+
+/** Build REF:ID + href from a flag leaf under §4.1. */
+export function flagDocRef(leaf: string): Pick<StatusFlagRow, 'refId' | 'href'> {
+  const refId = `${FLAGS_DOC_SECTION_REF}.${leaf}`;
+  return { refId, href: `#${refId}` };
+}
 
 export type TipDiffSnapshot = {
   present: boolean;
@@ -144,51 +163,49 @@ export function defaultStatusCli(): StatusCli {
 }
 
 /**
- * Flag rows for TTY / report.json — separate REF:ID, --flag, shortcode, default, current.
+ * Flag rows for TTY / report.json — REF:ID / href match design-doc §4.1 anchors.
  */
 export function buildStatusFlagRows(cli: StatusCli): StatusFlagRow[] {
   const onOff = (v: boolean) => (v ? 'on' : 'off');
+  const row = (
+    leaf: string,
+    fields: Omit<StatusFlagRow, 'refId' | 'href' | 'script'>
+  ): StatusFlagRow => ({
+    script: 'bun:types-status',
+    ...flagDocRef(leaf),
+    ...fields,
+  });
   return [
-    {
-      script: 'bun:types-status',
-      refId: 'types-status.refresh',
+    row('refresh', {
       flag: '--refresh',
       shortcode: '—',
       default: 'off',
       current: onOff(cli.refresh),
-    },
-    {
-      script: 'bun:types-status',
-      refId: 'types-status.strict',
+    }),
+    row('strict', {
       flag: '--strict',
       shortcode: '—',
       default: 'soft (exit 0)',
       current: cli.strict ? 'strict (exit 1 on warn/fail)' : 'soft (exit 0)',
-    },
-    {
-      script: 'bun:types-status',
-      refId: 'types-status.max-age-days',
+    }),
+    row('max-age-days', {
       flag: '--max-age-days',
       shortcode: '—',
       default: String(DEFAULT_MAX_AGE_DAYS),
       current: String(cli.maxAgeDays),
-    },
-    {
-      script: 'bun:types-status',
-      refId: 'types-status.json',
+    }),
+    row('json', {
       flag: '--json',
       shortcode: '—',
       default: 'off',
       current: onOff(cli.json),
-    },
-    {
-      script: 'bun:types-status',
-      refId: 'types-status.help',
+    }),
+    row('help', {
       flag: '--help',
       shortcode: '-h',
       default: '—',
       current: onOff(cli.help),
-    },
+    }),
   ];
 }
 
@@ -361,11 +378,13 @@ function renderStatusMd(report: StatusReport): string {
     '',
     '## Flags / settings',
     '',
-    '| Script | REF:ID | --flag | shortcode | default | current |',
-    '| ------ | ------ | ------ | --------- | ------- | ------- |',
+    `Doc: [\`${BUN_TYPES_INVENTORY_DOC}\`](../../${BUN_TYPES_INVENTORY_DOC}) · section [\`${FLAGS_DOC_SECTION_REF}\`](../../${BUN_TYPES_INVENTORY_DOC}${FLAGS_DOC_SECTION_HREF})`,
+    '',
+    '| Script | REF:ID | href | --flag | shortcode | default | current |',
+    '| ------ | ------ | ---- | ------ | --------- | ------- | ------- |',
     ...report.flags.map(
       f =>
-        `| \`${f.script}\` | \`${f.refId}\` | \`${f.flag}\` | ${f.shortcode === '—' ? '—' : `\`${f.shortcode}\``} | ${f.default} | ${f.current} |`
+        `| \`${f.script}\` | \`${f.refId}\` | [\`${f.href}\`](../../${BUN_TYPES_INVENTORY_DOC}${f.href}) | \`${f.flag}\` | ${f.shortcode === '—' ? '—' : `\`${f.shortcode}\``} | ${f.default} | ${f.current} |`
     ),
     '',
   ];
@@ -600,16 +619,19 @@ async function main(): Promise<number> {
     printMap([
       { key: 'script', value: 'bun:types-status' },
       { key: 'command', value: 'bun tools/bun-types-status.ts' },
+      { key: 'doc', value: BUN_TYPES_INVENTORY_DOC },
+      { key: 'section', value: `${FLAGS_DOC_SECTION_REF}  ${FLAGS_DOC_SECTION_HREF}` },
     ]);
     printPreviewTable(
       report.flags.map(f => ({
         'REF:ID': f.refId,
+        href: f.href,
         '--flag': f.flag,
         shortcode: f.shortcode,
         default: f.default,
         current: f.current,
       })),
-      ['REF:ID', '--flag', 'shortcode', 'default', 'current']
+      ['REF:ID', 'href', '--flag', 'shortcode', 'default', 'current']
     );
 
     printSection('Next steps');
