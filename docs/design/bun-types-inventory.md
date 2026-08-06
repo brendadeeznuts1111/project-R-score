@@ -63,23 +63,43 @@ usage, and status do.
 
 ## Commands
 
-| Command                                       | Purpose                                                | Typical exit                            |
-| --------------------------------------------- | ------------------------------------------------------ | --------------------------------------- |
-| `bun run bun:types-inventory`                 | Print / scan deep surface (no write)                   | `0`                                     |
-| `bun run bun:types-inventory:write`           | Refresh committed JSON + MD SSOT                       | `0`                                     |
-| `bun run bun:types-inventory:check`           | Fail if committed inventory is stale                   | `0` / `1`                               |
-| `bun run bun:types-inventory:tip-diff`        | Pin vs tip (may fetch)                                 | policy-dependent                        |
-| `bun run bun:types-inventory:tip-diff:local`  | Tip from local/`~/bun` · `--prefer-local --no-fetch`   | soft `0` unless `--strict`              |
-| `bun run bun:types-inventory:tip-diff:strict` | Tip-diff hard fail on policy breach                    | `0` / `1`                               |
-| `bun run bun:types-usage`                     | Usage scan → `.cache/bun-types-usage/`                 | `0`                                     |
-| `bun run bun:types-usage:unused`              | Unused type-likes report                               | `0`                                     |
-| `bun run bun:types-changelog` · `:tip`        | Standalone changelog (tip-diff also wires this)        | `0`                                     |
-| `bun run bun:types-report`                    | Tip-diff + changelog + usage                           | tip/usage status                        |
-| `bun run bun:types-report:local`              | Same with `--prefer-local`                             | tip/usage status                        |
-| `bun run bun:types-ci`                        | Alias: report `--prefer-local` (soft in `bun:ci`)      | `0` on tip **warn** when soft           |
-| `bun run bun:types-ci:strict`                 | Report `--prefer-local --strict`                       | `1` on drift                            |
-| `bun run bun:types-status`                    | Compose inventory + tip + usage → verdict / next steps | `0` soft; `--strict` → `1` on warn/fail |
-| `bun run bun:types-status:refresh`            | Same after `bun:types-report:local`                    | same                                    |
+**Script** = `package.json` name (`bun run <script>`). **Command** = underlying
+`bun tools/…` invocation (from the script value).
+
+| Script                                | Command                                                     | Purpose                                                | Exit                                    |
+| ------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------ | --------------------------------------- |
+| `bun:types-inventory`                 | `bun tools/bun-types-inventory.ts`                          | Print / scan deep surface (no write)                   | `0`                                     |
+| `bun:types-inventory:write`           | `bun tools/bun-types-inventory.ts --write`                  | Refresh committed JSON + MD SSOT                       | `0`                                     |
+| `bun:types-inventory:check`           | `bun tools/bun-types-inventory.ts --check`                  | Fail if committed inventory is stale                   | `0` / `1`                               |
+| `bun:types-inventory:tip-diff`        | `bun tools/bun-types-tip-diff.ts`                           | Pin vs tip (may fetch)                                 | policy-dependent                        |
+| `bun:types-inventory:tip-diff:local`  | `bun tools/bun-types-tip-diff.ts --prefer-local --no-fetch` | Tip from local/`~/bun`                                 | soft `0` unless `--strict`              |
+| `bun:types-inventory:tip-diff:strict` | `bun tools/bun-types-tip-diff.ts --strict`                  | Tip-diff hard fail on policy breach                    | `0` / `1`                               |
+| `bun:types-usage`                     | `bun tools/bun-types-usage.ts`                              | Usage scan → `.cache/bun-types-usage/`                 | `0`                                     |
+| `bun:types-usage:unused`              | `bun tools/bun-types-usage.ts --unused`                     | Unused type-likes report                               | `0`                                     |
+| `bun:types-changelog`                 | `bun tools/bun-types-changelog.ts`                          | Standalone changelog                                   | `0`                                     |
+| `bun:types-changelog:tip`             | `bun tools/bun-types-changelog.ts --tip --prefer-local`     | Changelog from local tip                               | `0`                                     |
+| `bun:types-report`                    | `bun tools/bun-types-report.ts`                             | Tip-diff + changelog + usage                           | tip/usage status                        |
+| `bun:types-report:local`              | `bun tools/bun-types-report.ts --prefer-local`              | Same with `--prefer-local`                             | tip/usage status                        |
+| `bun:types-ci`                        | `bun tools/bun-types-report.ts --prefer-local`              | Soft report at end of `bun:ci`                         | `0` on tip **warn** when soft           |
+| `bun:types-ci:strict`                 | `bun tools/bun-types-report.ts --prefer-local --strict`     | Hard fail on tip policy breach                         | `1` on drift                            |
+| `bun:types-status`                    | `bun tools/bun-types-status.ts`                             | Compose inventory + tip + usage → verdict / next steps | `0` soft; `--strict` → `1` on warn/fail |
+| `bun:types-status:refresh`            | `bun tools/bun-types-status.ts --refresh`                   | Same after `bun:types-report:local`                    | same                                    |
+
+### Flags / settings
+
+**REF:ID** = `types-<tool>.<flag>` slug. Doc **current** cannot show process
+argv — live default vs current is printed by `bun run bun:types-status` (Flags
+section + `report.json` `flags[]`).
+
+| Script             | REF:ID                      | --flag           | shortcode | default       | current                     |
+| ------------------ | --------------------------- | ---------------- | --------- | ------------- | --------------------------- |
+| `bun:types-status` | `types-status.refresh`      | `--refresh`      | —         | off           | live via `bun:types-status` |
+| `bun:types-status` | `types-status.strict`       | `--strict`       | —         | soft (exit 0) | live via `bun:types-status` |
+| `bun:types-status` | `types-status.max-age-days` | `--max-age-days` | —         | `14`          | live via `bun:types-status` |
+| `bun:types-status` | `types-status.json`         | `--json`         | —         | off           | live via `bun:types-status` |
+| `bun:types-status` | `types-status.help`         | `--help`         | `-h`      | —             | live via `bun:types-status` |
+| shared             | `types.shared.strict`       | `--strict`       | —         | soft          | see tool                    |
+| shared             | `types.shared.prefer-local` | `--prefer-local` | —         | off           | baked into `:local` / `:ci` |
 
 Useful inventory flags (see tool `--help`): `--shallow` · `--no-interfaces` ·
 `--no-type-aliases` · `--no-props` · `--no-enums` · `--no-nested-objects` ·

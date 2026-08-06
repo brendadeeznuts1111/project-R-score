@@ -1,8 +1,11 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  DEFAULT_MAX_AGE_DAYS,
   buildNextSteps,
+  buildStatusFlagRows,
   buildStatusReport,
   computeVerdict,
+  parseStatusCli,
   type StatusInputs,
 } from '../tools/bun-types-status.ts';
 
@@ -129,5 +132,40 @@ describe('bun-types-status', () => {
     expect(report.verdict).toBe('ok');
     expect(report.nextSteps.length).toBeGreaterThan(0);
     expect(report.usage.byModule?.[0]?.module).toBe('bun');
+    expect(report.flags.length).toBe(5);
+  });
+
+  test('buildStatusFlagRows separates REF:ID, --flag, shortcode, default, current', () => {
+    const rows = buildStatusFlagRows(parseStatusCli([]));
+    expect(rows.map(r => r.refId)).toEqual([
+      'types-status.refresh',
+      'types-status.strict',
+      'types-status.max-age-days',
+      'types-status.json',
+      'types-status.help',
+    ]);
+    expect(rows.every(r => r.script === 'bun:types-status')).toBe(true);
+    expect(rows.find(r => r.refId === 'types-status.refresh')?.flag).toBe('--refresh');
+    expect(rows.find(r => r.refId === 'types-status.help')?.shortcode).toBe('-h');
+    expect(rows.find(r => r.refId === 'types-status.refresh')?.shortcode).toBe('—');
+    expect(rows.find(r => r.refId === 'types-status.max-age-days')?.default).toBe(
+      String(DEFAULT_MAX_AGE_DAYS)
+    );
+    expect(rows.find(r => r.refId === 'types-status.strict')?.default).toBe('soft (exit 0)');
+    expect(rows.find(r => r.refId === 'types-status.refresh')?.current).toBe('off');
+    expect(rows.find(r => r.refId === 'types-status.max-age-days')?.current).toBe(
+      String(DEFAULT_MAX_AGE_DAYS)
+    );
+  });
+
+  test('buildStatusFlagRows current reflects fixture argv', () => {
+    const cli = parseStatusCli(['--refresh', '--max-age-days=7', '--strict']);
+    const rows = buildStatusFlagRows(cli);
+    expect(rows.find(r => r.refId === 'types-status.refresh')?.current).toBe('on');
+    expect(rows.find(r => r.refId === 'types-status.max-age-days')?.current).toBe('7');
+    expect(rows.find(r => r.refId === 'types-status.strict')?.current).toContain('strict');
+    const report = buildStatusReport(baseInputs({ maxAgeDays: 7 }), cli);
+    expect(report.flags.find(f => f.refId === 'types-status.refresh')?.current).toBe('on');
+    expect(report.maxAgeDays).toBe(7);
   });
 });
