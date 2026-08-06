@@ -23,6 +23,7 @@ The dashboard artifact carries semantic values and labels, never raw colors.
 | Meaning                      | Canonical name / wire path or shape                     | Owner      | Do not use in new core contracts               |
 | ---------------------------- | ------------------------------------------------------- | ---------- | ---------------------------------------------- |
 | Partner join identity        | `PartnerCode` / `partnerCode`                           | partners   | bare `partnerId`, generic `code`               |
+| Source profile revision      | `ProfileDocumentVersion` / `profileDocumentVersion`     | partners   | artifact schema or template version            |
 | Partner relationship state   | `PartnerLifecycleState` / `lifecycle.state`             | partners   | generic `status`, `ops.limits.lifecycle_state` |
 | Derived operator roll-up     | `PartnerOperationalPhase` / `operationalPhase`          | partners   | `phase` as lifecycle authority                 |
 | Sportsbook account identity  | `OutId` / `outId`                                       | partners   | `accountId`, `CODE-N` in core                  |
@@ -37,7 +38,10 @@ The dashboard artifact carries semantic values and labels, never raw colors.
 
 `CODE-N` is named `LegacySeatOutToken`. The implemented pure `IngressTranslator`
 maps it to `out-CODE-N` before the implemented `parseCanonicalOutId` is called.
-HTTP/BFF, CLI, and artifact-adapter wiring is still unwired. `TreeNodeId`
+HTTP/BFF, CLI, and artifact-adapter wiring is still unwired. There is no
+canonical partner HTTP route, authentication integration, accepted inbound
+media-type list, or multipart contract. The current browser GET transport is an
+outbound compatibility concern and does not define an inbound API. `TreeNodeId`
 remains the operations entity primary key; it may reference a partner but never
 replaces `PartnerCode`.
 
@@ -102,31 +106,37 @@ Partner hash routes are a separate compatibility plane: `#partners`,
 
 ## Connector map
 
-| Snapshot key     | Connector             | Source owner | Adapter → core port                                      | Authority                       |
-| ---------------- | --------------------- | ------------ | -------------------------------------------------------- | ------------------------------- |
-| `profiles`       | `profile-coverage-registry` | partners | `profile-coverage-artifact` v1 → `PartnerProfileCoverageReadPort` | identity coverage only          |
-| `accounting`     | `accounting-ledger`   | accounting   | `accounting-ledger` v1 → `AccountingReadPort`            | scoped balances, ledger         |
-| `telegram`       | `telegram-handshake`  | telegram     | `telegram-handshake` v1 → `CommunicationReadPort`        | handshake, membership           |
-| `limits`         | `limits-registry`     | compliance   | `limits-artifact` v1 → `LimitReadPort`                   | effective limits, coverage      |
-| `bookmakers`     | `bookmakers-registry` | trading      | `bookmakers-registry` v1 → `BookmakerCatalogPort`        | book identity, display metadata |
-| `tennis`         | `tennis-contract`     | trading      | `tennis-contract` v1 → `CapacityReadPort`                | executable capacity             |
-| `sportsTerminal` | `sports-terminal`     | trading      | blocked until one exact input is selected                | no current authority            |
-| `legacyOps`      | `legacy-ops-registry` | partners     | `legacy-partners-ops` v2 → `LegacyPartnerProjectionPort` | compatibility observations only |
+| Snapshot key     | Connector                  | Source owner | Adapter → core port                                              | Authority                       |
+| ---------------- | -------------------------- | ------------ | ---------------------------------------------------------------- | ------------------------------- |
+| `profiles`       | `canonical-profile-config` | partners     | planned `canonical-profile-config` v1 → `PartnerProfileReadPort` | identity, lifecycle, policy     |
+| `accounting`     | `accounting-ledger`        | accounting   | `accounting-ledger` v1 → `AccountingReadPort`                    | scoped balances, ledger         |
+| `telegram`       | `telegram-handshake`       | telegram     | `telegram-handshake` v1 → `CommunicationReadPort`                | handshake, membership           |
+| `limits`         | `limits-registry`          | compliance   | `limits-artifact` v1 → `LimitReadPort`                           | effective limits, coverage      |
+| `bookmakers`     | `bookmakers-registry`      | trading      | `bookmakers-registry` v1 → `BookmakerCatalogPort`                | book identity, display metadata |
+| `tennis`         | `tennis-contract`          | trading      | `tennis-contract` v1 → `CapacityReadPort`                        | executable capacity             |
+| `sportsTerminal` | `sports-terminal`          | trading      | blocked until one exact input is selected                        | no current authority            |
+| `legacyOps`      | `legacy-ops-registry`      | partners     | `legacy-partners-ops` v2 → `LegacyPartnerProjectionPort`         | compatibility observations only |
 
 The private `packages/partners` workspace now exports the TOML-facing plan
 types, semantic-gap map, canonical identifier parsers, ingress-only out
 translation, v1 artifact boundary, pure artifact assembler, and the redacted
-profile-coverage adapter/read-port contract. Its remaining connector ports and
-canonical source adapters are still planned. The selective legacy ops
+profile-coverage adapter/artifact-reader contract. Its remaining connector ports
+and canonical source adapters are still planned. The selective legacy ops
 compatibility adapter is implemented; it preserves partner/out visibility while
 dropping non-authoritative and sensitive source fields, and it returns narrow
 observations rather than canonical dashboard records. Profile coverage is the
-first implemented connector; the other non-legacy source adapters remain
-planned. Sports Terminal is disabled and blocked on one exact parsed input. The
-required coverage artifact currently has zero entries and reports all four
-current CODEs missing, so the plan must remain `proposal` until coverage is
-materialized. The portal consumer contract is package-owned, but its browser
-loader and generated public delivery modules remain planned.
+first implemented adapter/boundary and an independent readiness gate; its I/O
+and resilience connector wiring remain planned. It does not occupy the final
+`profiles` snapshot or supply lifecycle facts. The other non-legacy source
+adapters remain planned. Sports Terminal is disabled and blocked on one exact
+parsed input, explicit external-ID resolution, authenticated route integration,
+and an integer-minor-unit money wire. The required coverage artifact currently
+has zero entries and reports all four current CODEs missing, so the plan must
+remain `proposal` until coverage is materialized. The portal consumer contract
+is package-owned, but its browser loader and generated public delivery modules
+remain planned. The existing 7+1 compatibility loads use the shared
+`/portal/fetch-json.js` transport; that is a current transport hardening, not
+the canonical single-artifact loader.
 
 Resilience belongs to connectors, not pure adapters. Defaults are a three-second
 timeout, three-failure circuit threshold, five-minute stale window, and a
@@ -137,6 +147,10 @@ snapshot, connector, adapter, port, and region references. Weekly scheduling and
 Slack delivery remain requirements that are not yet wired. Final removal still
 requires zero legacy translations for 30 days and canonical profile coverage for
 all four current partners.
+
+Those connector/bake defaults do not configure the current browser helper. The
+implemented 7+1 compatibility fetch transport owns a separate five-second
+request timeout; the canonical single-artifact browser loader remains planned.
 
 ## Concept gaps
 
