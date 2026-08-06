@@ -215,6 +215,7 @@ test*-*
 *.bun-build
 *.tar.gz
 *.tgz
+!third_party/bun-types/*.tgz
 *.tar
 *.zip
 
@@ -267,10 +268,6 @@ lib/auth/*
 !lib/auth/session.ts
 !lib/auth/oidc.ts
 !lib/auth/README.md
-!projects/active/sports-terminal-os/src/auth/
-!projects/active/sports-terminal-os/src/auth/**
-!projects/active/sports-terminal-os/test/auth/
-!projects/active/sports-terminal-os/test/auth/**
 **/credentials/
 !config/
 config/*
@@ -384,9 +381,6 @@ projects/archive/lazycodex/
 # Grok / agent git worktrees nested under the primary checkout (lane hygiene)
 .worktrees/
 /.worktrees/
-# Codex/agent nested worktrees (often other remotes: plum / Kalshi-bot / king-zippy)
-.codex-worktrees/
-/.codex-worktrees/
 herdr-worktrees/
 /~/
 /index.html
@@ -404,7 +398,6 @@ artifacts/reports/
 /artifacts/browser/
 /artifacts/phase2-hero.webp
 /artifacts/root-hygiene/
-/artifacts/worktree-quarantine/
 /artifacts/snapshots/
 # reports/ already ignored above (harness-gate-timing · ci-*-timing · inventories)
 
