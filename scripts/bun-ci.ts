@@ -66,6 +66,11 @@ const steps: CiStep[] = [
     cwd: `${repoRoot}/projects/active/factorywager/registry`,
   },
   { name: 'core', command: ['bun', 'run', 'ci:core'], cwd: repoRoot },
+  {
+    name: 'snapshot-api',
+    command: ['bun', 'run', 'test:partner-cli:snapshots'],
+    cwd: repoRoot,
+  },
   { name: 'types', command: ['bun', 'run', 'ci:types'], cwd: repoRoot },
   { name: 'security', command: ['bun', 'run', 'ci:security'], cwd: repoRoot },
   {

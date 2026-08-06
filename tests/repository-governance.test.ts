@@ -30,6 +30,7 @@ describe('repository governance', () => {
     expect(packageJson.scripts['bun:ci']).not.toContain('R2_BUCKET_NAME=');
     const localCi = await Bun.file(`${import.meta.dir}/../scripts/bun-ci.ts`).text();
     expect(localCi).toContain("['bun', 'run', 'ci:core']");
+    expect(localCi).toContain("['bun', 'run', 'test:partner-cli:snapshots']");
     expect(localCi).toContain("['bun', 'run', 'ci:types']");
     expect(localCi).toContain("['bun', 'run', 'ci:security']");
     expect(localCi).toContain("['bun', 'run', 'ci:portal-registry']");
@@ -37,6 +38,10 @@ describe('repository governance', () => {
     expect(localCi).not.toContain("type: 'macro'");
     expect(localCi).toContain("Bun.env.R2_BUCKET_NAME");
     expect(localCi).toContain('factory-wager-wiki');
+    expect(localCi).toContain('Bun.spawn([bunExecutable');
+    expect(packageJson.scripts['test:partner-cli:snapshots']).toBe(
+      'bun test tests/partner-cli-snapshots.test.ts'
+    );
   });
 
   test('release tags in the v* namespace are immutable', () => {
