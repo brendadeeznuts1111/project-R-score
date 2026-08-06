@@ -44,6 +44,7 @@ import {
   type JsonRpcMessage,
   type ToolCallResult,
 } from '../lib/mcp/stdio-jsonrpc.ts';
+import { assertBunStablePin } from '../lib/verification/bun-runtime-pin.ts';
 
 const MANIFEST_VERSION = '1.3.0';
 const SERVER_NAME = 'bun-docs';
@@ -294,6 +295,8 @@ function handleRequest(msg: JsonRpcMessage): JsonRpcMessage | null {
           name: SERVER_NAME,
           version: SERVER_VERSION,
           manifestVersion: MANIFEST_VERSION,
+          bunVersion: Bun.version,
+          bunRevision: Bun.revision,
         },
       });
     case 'tools/list':
@@ -304,6 +307,7 @@ function handleRequest(msg: JsonRpcMessage): JsonRpcMessage | null {
 }
 
 async function main() {
+  const runtimePin = await assertBunStablePin();
   const workspaceRoot = Bun.env.BUN_DOCS_ROOT || process.cwd();
   const built = await buildDocIndex(workspaceRoot);
   docs = built.docs;
@@ -314,7 +318,7 @@ async function main() {
 
   const log = (s: string) => process.stderr.write(`${s}\n`);
   log(
-    `[${SERVER_NAME}] v${SERVER_VERSION} · ${docs.length} docs (bun-types ${docsVersion}) · rg:${Bun.which('rg') ? 'yes' : 'no'}`
+    `[${SERVER_NAME}] v${SERVER_VERSION} · Bun ${runtimePin.runtime} (${runtimePin.revision}) · ${docs.length} docs (bun-types ${docsVersion}) · rg:${Bun.which('rg') ? 'yes' : 'no'}`
   );
   if (indexMeta.stale)
     log(`[${SERVER_NAME}] ⚠ docs ${docsVersion} < runtime ${indexMeta.runtimeVersion}`);
@@ -334,5 +338,8 @@ async function main() {
 }
 
 if (import.meta.main) {
-  void main();
+  void main().catch(error => {
+    console.error(`[${SERVER_NAME}] fatal:`, error);
+    process.exit(1);
+  });
 }

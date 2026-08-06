@@ -53,6 +53,21 @@ A same-version lint would erase the experiment boundary and is therefore not a
 valid Project R invariant. The invariant is that each package matches its own
 selected channel and the resulting TypeScript gates pass.
 
+Runtime compatibility and runtime channel identity are also distinct. The
+`engines.bun` range is a compatibility floor; it does not authorize a newer
+canary process in the stable production lane. Pre-commit and `bun:ci` require
+the executing `Bun.version` to equal `.bun-version`, require `packageManager`
+to equal `bun@<that version>`, and require that exact pin to satisfy
+`engines.bun`. `bun:ci` then resolves one absolute Bun executable and reuses it
+for every child process so a later `PATH` lookup cannot cross channels.
+
+Long-lived Project R MCP entrypoints apply the same network-free assertion at
+startup and publish `bunVersion` plus `bunRevision` in MCP `serverInfo`.
+Replacing the Bun executable does not change a process already in memory, so a
+channel correction requires a controlled client/MCP restart. Process age or
+duplicate count alone is restart evidence, not authority to terminate another
+active agent session.
+
 ## Source interpretation
 
 - The stable updater API determines the latest stable runtime version.
@@ -113,6 +128,7 @@ This keeps business-domain configuration separate from build/runtime governance.
 ## Proof
 
 ```bash
+bun run bun:runtime:check
 bun run bun:channel:check
 bun test tests/bun-channel-doctor.test.ts tests/bun-channel-doctor-cron.test.ts
 bun run type-check:ci

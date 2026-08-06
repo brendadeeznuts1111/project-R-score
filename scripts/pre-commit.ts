@@ -11,12 +11,14 @@
 /** Bun-native Husky pre-commit orchestration. */
 
 import { $ } from 'bun';
+import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { resolvePath } from '../lib/path-bun.ts';
+import { checkBunPin, type BunPinCheck } from '../lib/verification/bun-runtime-pin.ts';
 import { isMoneySqlScannable } from './lint-money-sql.ts';
 
+export { checkBunPin, type BunPinCheck } from '../lib/verification/bun-runtime-pin.ts';
+
 const REPO_ROOT = resolvePath(import.meta.dir, '..');
-const BUN_VERSION_FILE = resolvePath(REPO_ROOT, '.bun-version');
-const PACKAGE_JSON_FILE = resolvePath(REPO_ROOT, 'package.json');
 const SKILL_VALIDATION_PATH_RE =
   /^(\.agents\/skills\/|lib\/agent-skills-paths\.ts$|scripts\/validate-agent-skills\.ts$|tests\/agent-skills-validation\.test\.ts$)/;
 const TEST_SOURCE_PATH_RE = /\.(ts|tsx|js|jsx|mts|cts)$/;
@@ -38,79 +40,6 @@ export function readPrecommitEnvironment(env: Environment = Bun.env): PrecommitE
     skipGitleaks: env.SKIP_GITLEAKS === '1',
     skipQualityConcept: env.SKIP_QUALITY_CONCEPT === '1',
     skipTestChanged: env.SKIP_TEST_CHANGED === '1',
-  };
-}
-
-export type BunPinCheck = {
-  ok: boolean;
-  runtime: string;
-  enginesBun: string | null;
-  bunVersionFile: string | null;
-  packageManager: string | null;
-  message: string;
-};
-
-/** Enforce package.json engines.bun; .bun-version is advisory SSOT for mise/asdf. */
-export async function checkBunPin(
-  runtime: string = Bun.version,
-  options: { root?: string } = {}
-): Promise<BunPinCheck> {
-  const root = options.root ?? REPO_ROOT;
-  const pkgPath = options.root ? resolvePath(root, 'package.json') : PACKAGE_JSON_FILE;
-  const pinPath = options.root ? resolvePath(root, '.bun-version') : BUN_VERSION_FILE;
-
-  let enginesBun: string | null = null;
-  let packageManager: string | null = null;
-  try {
-    const pkg = (await Bun.file(pkgPath).json()) as {
-      engines?: { bun?: string };
-      packageManager?: string;
-    };
-    enginesBun = pkg.engines?.bun ?? null;
-    packageManager = pkg.packageManager ?? null;
-  } catch {
-    return {
-      ok: false,
-      runtime,
-      enginesBun: null,
-      bunVersionFile: null,
-      packageManager: null,
-      message: `unable to read ${pkgPath}`,
-    };
-  }
-
-  let bunVersionFile: string | null = null;
-  if (await Bun.file(pinPath).exists()) {
-    bunVersionFile = (await Bun.file(pinPath).text()).trim() || null;
-  }
-
-  if (!enginesBun) {
-    return {
-      ok: false,
-      runtime,
-      enginesBun: null,
-      bunVersionFile,
-      packageManager,
-      message: 'package.json missing engines.bun',
-    };
-  }
-
-  const ok = Bun.semver.satisfies(runtime, enginesBun);
-  const parts = [
-    `engines.bun ${enginesBun}`,
-    `runtime ${runtime}`,
-    bunVersionFile ? `.bun-version ${bunVersionFile}` : null,
-    packageManager ? `packageManager ${packageManager}` : null,
-  ].filter(Boolean);
-  return {
-    ok,
-    runtime,
-    enginesBun,
-    bunVersionFile,
-    packageManager,
-    message: ok
-      ? `Bun pin ok · ${parts.join(' · ')}`
-      : `Bun ${runtime} does not satisfy engines.bun ${enginesBun}`,
   };
 }
 
@@ -138,7 +67,8 @@ async function runCommand(
   command: string[],
   options: { quiet?: boolean; env?: Environment } = {}
 ): Promise<{ exitCode: number; stdout: string; stderr: string }> {
-  const shell = $`${command}`
+  const resolvedCommand = command[0] === 'bun' ? bunSpawnArgs(command.slice(1)) : command;
+  const shell = $`${resolvedCommand}`
     .cwd(REPO_ROOT)
     .env(options.env ?? Bun.env)
     .nothrow();
@@ -172,7 +102,7 @@ export async function runPrecommit(args: string[] = Bun.argv.slice(2)): Promise<
   const dryRun = args.includes('--dry-run');
   const environment = readPrecommitEnvironment();
 
-  section('bun pin (.bun-version ‖ engines)', true);
+  section('bun stable pin (.bun-version ‖ packageManager ‖ engines)', true);
   const pin = await checkBunPin();
   if (!pin.ok) {
     console.error(`❌ ${pin.message}`);

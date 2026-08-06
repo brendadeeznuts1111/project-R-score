@@ -48,8 +48,13 @@ const PARTNER_PROFILE_COVERAGE_REGISTRY = resolvePath(
 );
 const PARTNERS_OPS_REGISTRY = resolvePath(REPO_ROOT, 'public/registry/partners-ops.json');
 const PARTNERS_PACKAGE_JSON = resolvePath(REPO_ROOT, 'packages/partners/package.json');
-const SPORTS_TERMINAL_BLOCKING_REASON =
-  'one exact parsed input, explicit external-ID resolution, authenticated route integration, and integer-minor-unit money wire are required';
+const SPORTS_TERMINAL_REQUIRED_BLOCKERS = [
+  'exact parsed input',
+  'external-ID resolution',
+  'authenticated route integration',
+  'integer-minor-unit money wire',
+  'passing Sports Terminal typecheck',
+] as const;
 
 type AnyRecord = Record<string, any>;
 
@@ -1083,7 +1088,9 @@ export async function validatePartnerDashboardPlan(
       }
       if (
         connector.id === 'sports-terminal' &&
-        connector.blocking_reason !== SPORTS_TERMINAL_BLOCKING_REASON
+        !SPORTS_TERMINAL_REQUIRED_BLOCKERS.every(blocker =>
+          connector.blocking_reason.includes(blocker)
+        )
       ) {
         errors.push('sports-terminal blocking reason must name every unresolved boundary');
       }

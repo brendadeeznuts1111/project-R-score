@@ -43,6 +43,7 @@ import {
   type ToolCallResult,
 } from '../lib/mcp/stdio-jsonrpc.ts';
 import { BUN_DX_CATALOG, searchCatalog } from '../config/bun-dx-catalog.ts';
+import { assertBunStablePin } from '../lib/verification/bun-runtime-pin.ts';
 import {
   baseName,
   checkGitStatus,
@@ -1482,6 +1483,7 @@ async function dispatch(
 
 // ── MCP Stdio Loop ─────────────────────────────────────────────
 async function main() {
+  const runtimePin = await assertBunStablePin();
   console.error(
     `[dx-mcp] v${SERVER_VERSION} bun=${BUN_VERSION} transport=${Bun.env.DX_MCP_NDJSON === '1' ? 'ndjson' : 'content-length'}`
   );
@@ -1510,7 +1512,12 @@ async function main() {
             rpcOk(id, {
               protocolVersion: '2024-11-05',
               capabilities: { tools: {} },
-              serverInfo: { name: 'dx-mcp', version: SERVER_VERSION, bunVersion: BUN_VERSION },
+              serverInfo: {
+                name: 'dx-mcp',
+                version: SERVER_VERSION,
+                bunVersion: runtimePin.runtime,
+                bunRevision: runtimePin.revision,
+              },
             })
           );
           break;

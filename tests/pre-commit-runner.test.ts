@@ -73,10 +73,11 @@ describe('pre-commit environment', () => {
   });
 });
 
-describe('pre-commit bun pin', () => {
-  it('accepts runtime that satisfies engines.bun (>=1.3.14)', async () => {
+describe('pre-commit Bun stable pin', () => {
+  it('accepts the exact reviewed stable runtime', async () => {
     const pin = await checkBunPin('1.3.14');
     expect(pin.ok).toBe(true);
+    expect(pin.issues).toEqual([]);
     expect(pin.enginesBun).toBe('>=1.3.14');
     expect(pin.bunVersionFile).toBe('1.3.14');
     expect(pin.packageManager).toBe('bun@1.3.14');
@@ -85,6 +86,13 @@ describe('pre-commit bun pin', () => {
   it('rejects runtime below engines.bun', async () => {
     const pin = await checkBunPin('1.3.13');
     expect(pin.ok).toBe(false);
-    expect(pin.message).toContain('does not satisfy');
+    expect(pin.message).toContain('does not equal reviewed pin');
+  });
+
+  it('rejects a newer canary even when it satisfies the engine floor', async () => {
+    const pin = await checkBunPin('1.4.0');
+    expect(Bun.semver.satisfies('1.4.0', pin.enginesBun!)).toBe(true);
+    expect(pin.ok).toBe(false);
+    expect(pin.message).toContain('runtime 1.4.0 does not equal reviewed pin 1.3.14');
   });
 });

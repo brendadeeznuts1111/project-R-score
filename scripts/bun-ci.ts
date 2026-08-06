@@ -11,6 +11,8 @@
  * Git identity uses lib/macros helpers at runtime (not `type: "macro"`).
  */
 import { getGitBranch, getGitCommitHash } from '../lib/macros/git-commit.ts';
+import { bunSpawnArgs, resolveBunExecutable } from '../lib/bun-executable.ts';
+import { checkBunPin } from './pre-commit.ts';
 
 const DEFAULT_R2_BUCKET_NAME = 'factory-wager-wiki';
 
@@ -23,9 +25,17 @@ const sha = getGitCommitHash();
 const branch = getGitBranch();
 const shortSha = sha ? sha.slice(0, 8) : 'unknown';
 const ciNote = Bun.env.CI === 'true' || Bun.env.CI === '1' ? ' · CI=1' : '';
+const pin = await checkBunPin();
+
+if (!pin.ok) {
+  console.error(`bun:ci refused to start · ${pin.message}`);
+  process.exit(1);
+}
+
+const bunExecutable = resolveBunExecutable();
 
 console.info(
-  `bun:ci · ${shortSha} · ${branch || 'unknown'}${ciNote} · R2_BUCKET_NAME=${Bun.env.R2_BUCKET_NAME}`
+  `bun:ci · ${shortSha} · ${branch || 'unknown'}${ciNote} · Bun ${Bun.version} (${Bun.revision}) · ${bunExecutable} · R2_BUCKET_NAME=${Bun.env.R2_BUCKET_NAME}`
 );
 
 const steps = [
@@ -46,7 +56,8 @@ const steps = [
 
 for (const step of steps) {
   console.info(`\n== bun:ci · ${step.name} ==`);
-  const proc = Bun.spawn([...step.command], {
+  const [, ...args] = step.command;
+  const proc = Bun.spawn(bunSpawnArgs([...args]), {
     cwd: step.cwd,
     stdin: 'inherit',
     stdout: 'inherit',
