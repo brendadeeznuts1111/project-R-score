@@ -1,6 +1,7 @@
 # Tenant audit: Tennis HQ dashboard UI surfaces
 
-**Probed** 2026-08-05T22:33Z (UTC) via `/api/version` + ledger cache + favicon · tip docs refreshed same day  
+**Probed** 2026-08-06 (UTC) via `/api/version` + R2 ledger/executions + desk
+serverFn · tip docs refreshed same day  
 **Claim** dual-surface inventory + path traces + ranked findings  
 **Owners** producer `plum-spruce-dawn-dune1` (Market Desk) · this monorepo
 (`/portal/tennis/` board) · Cloudflare edge (Worker networking)
@@ -17,9 +18,9 @@ Two live UIs share the Tennis HQ brand and must not be collapsed into one:
 | Market Desk | `https://tennis.factory-wager.com` | [`plum-spruce-dawn-dune1`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1) ([CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md)) · Worker `tennis-hq` · local sibling `~/Projects/plum-spruce-dawn-dune1` | Interactive desk SPA |
 | Portal board | `https://factory-wager.com/portal/tennis/` | [`public/portal/tennis/`](../../../public/portal/tennis/) | Baked registry evidence board |
 
-Live identity (desk tip = git tip): `tennis-hq@1.4.0` · SHA `30f7c70`
-(`30f7c702b23f59ae6e7eae1cb5d2bd61c4589f15`) · Worker deployment
-`3847207a` · probed via `/api/version` 2026-08-05T22:33Z.
+Live identity (desk tip = git tip): `tennis-hq@1.4.0` · SHA `8f21bf2`
+(`8f21bf25ce47f11828a388a5e77650152104a2be`) · deploymentId
+`a930f52c-4160-4240-af1c-56e4444a9727` · probed via `/api/version` 2026-08-06.
 Matches producer `origin/main` after Wrangler redeploy + `deploy:verify:prod`.
 
 ```mermaid
@@ -164,16 +165,18 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
 
 | URL | Status | Notes |
 | --- | ------ | ----- |
-| `/` | 200 | Title `Tennis HQ · Market Desk`; SSR “Loading desk…” shell |
+| `/` | 200 | Title `Tennis HQ · Market Desk`; SSR “Loading desk…” shell (client hydrates via serverFn) |
 | `/api/health` | 200 | `ok`, package `tennis-hq@1.4.0` (prefer `/api/version` for tip SHA) |
-| `/api/version` | 200 | tip SHA `30f7c70` · Worker `3847207a…` · 2026-08-05T22:33Z |
+| `/api/version` | 200 | tip SHA `8f21bf2` · deploymentId `a930f52c…` · 2026-08-05T22:43Z |
+| `/_serverFn/<payload-id>` | **200** | requires header `x-tsr-serverFn: true` (without it → 500 `HTTPError`); seed desk payload ~44KB |
 | `/api/glossary` | 200 | 300 entries · live `generatedAt` refreshes on probe |
 | `/build-id.json` | 200 | packageVersion 1.4.0 |
 | `/api/export/hq-json` | 200 | schema `hq-desk/v1` · **`row_count`: 71** · `source: hybrid` |
 | `/api/partners/health` | 200 | engine snapshot · `everProbed: true` · summary online/degraded |
 | `/api/partners/health?probe=1` | **200** | live probe ok · `engine: fetch+AbortSignal.timeout` · 6 liveProbes |
-| `/api/partners/executions` | 200 | **`count`: 4** · `source: cache` (published partner-executions-latest) |
-| `/api/partners/ledger?partner=ASH` | 200 | **`count`: 3** · `source: cache` · balanceCents 299880 |
+| `/api/partners/executions` | 200 | **`count`: 4** · `source: cache` · **`meta.cache: url`** (R2) |
+| `/api/partners/ledger?partner=ASH` | 200 | **`count`: 3** · `source: cache` · **`meta.cache: url`** · balanceCents 299880 |
+| `/api/partners/accounts` | 200 | **public GET** · seat-capital DTO (no secrets) · overrides soft-fail on edge |
 | `/api/v1/research/status` | **401** | JSON `unauthorized` (fail-closed; 503 only if secret missing) |
 | `/api/v1/marketdata/desk` | **401** | JSON `unauthorized` (wired — not SPA 404) |
 | `/api/v1/trading/executions` | **401** | JSON `unauthorized` (wired — not SPA 404) |
@@ -213,10 +216,10 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
    return JSON **401** unauth (not SPA 404). Residual risk is **authenticated
    payload quality** + edge ledger emptiness, not route absence. Ownership
    residual: **producer** data plane.
-2. ~~**Surfaces inventory overclaims**~~ — **Closed 2026-08-05 tip refresh** and
-   re-aligned after full v1 suite. `[surfaces.tennis].note` +
-   `surfaces-state.json` pin production tip `30f7c70` / Worker `3847207a` and
-   state all five v1 domains fail-closed unauth. Ownership was **monorepo**.
+2. ~~**Surfaces inventory overclaims**~~ — **Closed 2026-08-06 tip refresh.**
+   `[surfaces.tennis].note` + `surfaces-state.json` pin production tip
+   `8f21bf2` / deploymentId `a930f52c…` and state all five v1 domains
+   fail-closed unauth + R2-first partner caches. Ownership was **monorepo**.
 
 ### P1 — Empty / soft-fail desk (UI looks broken)
 
@@ -229,15 +232,23 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
    stubs). `/api/export/warehouse-json` is **401** without
    `PARTNER_API_TOKEN` (expected fail-closed; not SPA 404). Ownership was
    **producer** ops.
-5. ~~**Edge storage soft-fail (executions empty)**~~ — **Closed 2026-08-05.**
-   Producer [#11](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/pull/11)
-   publishes `partner-executions-latest.json`; live edge returns **`count`: 4**
-   · `source: cache` when SQLite is unavailable. Residual: live ledger still
-   soft-fails empty (D1 dual-driver future). Ownership was **producer**.
+5. ~~**Edge storage soft-fail (executions empty)**~~ — **Closed 2026-08-05 ·
+   R2-first 2026-08-06.** Producer
+   [#11](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/pull/11) /
+   [#13](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/pull/13)
+   publish partner snapshots to R2; live edge returns **`count`: 4**
+   executions / **`count`: 3** ASH ledger with **`meta.cache: url`** when
+   SQLite is unavailable. Residual: live ledger **writes** still 503 on edge
+   (no D1). Ownership was **producer**.
 6. ~~**Partner live probe 500**~~ — **Closed 2026-08-05 re-probe.**
    `?probe=1` returns **200** with `engine: fetch+AbortSignal.timeout`,
    `liveProbes: 6`, summary online/degraded. Ownership was **Cloudflare edge**
    + **producer** probe path.
+6b. ~~**SSR “Loading desk…” looks hung**~~ — **Closed 2026-08-06 (probe
+   artifact).** Bare `GET /_serverFn/<id>` without TanStack header returns
+   **500** `HTTPError`; browser client sets `x-tsr-serverFn: true` and gets
+   **200** seed desk payload (~44KB). Curl/bot probes must send that header.
+   Ownership: **docs / probe hygiene** (not a producer outage).
 
 ### P2 — Portal consumer drift
 
@@ -256,16 +267,38 @@ never fail-open for v1; missing token → **503** `contract_auth_unconfigured`.
     `/favicon.svg`, `/favicon.ico` (PNG), and `/site.webmanifest` return **200**
     (producer #12). Residual: `/manifest.json` alias optional only.
     Ownership was **producer**.
-11. ~~**Git tip leads production**~~ — **Closed 2026-08-05.** Live tip is
-    `30f7c70` / Worker `3847207a` (ledger cache #12 on `origin/main`); verified via
-    `/api/version` + `deploy:verify:prod`. Ownership was **operator**.
+11. ~~**Git tip leads production**~~ — **Closed 2026-08-06.** Live tip is
+    `8f21bf2` / deploymentId `a930f52c…` (R2-only snapshots #13 on
+    `origin/main`); verified via `/api/version` + partner `meta.cache=url`.
+    Ownership was **operator**.
 
 ### P3 — Hygiene
 
 12. **APIs unused by UI** — `/api/glossary`, `/api/health`,
-    `/api/partners/accounts`, `/api/ops/pipeline` exist without panel callers.
+    `/api/ops/pipeline` exist without panel callers (accounts/ledger/executions
+    feed partner panels via public GETs — see auth matrix below).
 13. **Stub adapters** — BETER live fetch returns `[]`; `StubOrderAdapter`
     default fill path in partner router.
+
+### Partner API auth matrix (2026-08-06)
+
+| Route | Methods | Gate | Live unauth |
+| ----- | ------- | ---- | ----------- |
+| `/api/partners/health` · `health.stream` | GET | **open** (desk chips) | 200 snapshot / soft-fail |
+| `/api/partners/ledger` | GET | **open** (edge R2/static cache) | 200 `source: cache` · `meta.cache: url` |
+| `/api/partners/ledger` | POST | `assertPartnerApiAccess` write | 401 without token (or same-origin desk) |
+| `/api/partners/executions` | GET | **open** (edge R2 cache) | 200 `meta.cache: url` |
+| `/api/partners/accounts` | GET | **open** (seat-capital DTO, no secrets) | 200 · overrides edge soft-fail |
+| `/api/partners/accounts` | POST/DELETE | write gate | 401 / 503 |
+| `/api/partners/execute` · `settle` · ledger seed/transfer/post-fee | POST | write gate | 401 without token |
+| `/api/v1/*` (five domains) | GET | **strict bearer** (`assertPartnerServiceAccessAsync`) | **401** `unauthorized` |
+| `/api/export/warehouse-json` · `warehouse-csv` | GET | partner bearer | **401** |
+| `/api/export/hq-json` | GET | open | 200 hybrid export |
+
+**Intentional:** desk SPA has no embedded `PARTNER_API_TOKEN`; public partner
+**reads** + same-origin writes keep the UI usable. External clients must use
+bearer for v1 contracts and mutates. Do not collapse public partner GETs into
+v1 bearer without a desk token handoff design.
 
 ---
 
@@ -275,18 +308,17 @@ Documentation-only audit — **do not** apply these without an explicit fix lane
 
 | Lane | Action |
 | ---- | ------ |
-| Producer | Keep publish loop (`hq-export` · `partner-executions` · `partner-ledger` · warehouse overlays); D1 dual-driver for live writes |
+| Producer | Keep publish loop (`hq-export` · `partner-executions` · `partner-ledger` · warehouse overlays); optional D1 dual-driver for live **writes** only |
 | Monorepo | After each producer deploy: refresh tip in `tennis-hq-registry.md` + `[surfaces.tennis].note` + `bun run surfaces:bake`; re-run `tennis:board:bake` when event-store drifts; re-open pass-cli for authenticated v1 payload smoke |
-| Edge | Residual: D1 dual-driver for live ledger **writes** (GET caches shipped) |
+| Edge | Residual: live ledger **writes** on edge (GET R2 caches shipped in #13) |
 
-**Done this tip lane:** production tip pin `30f7c70` / Worker `3847207a` ·
-surfaces note accuracy · `tennis-desk.js` inventory · `PARTNER_API_TOKEN`
-configured (all five v1 unauth **401**) · Wrangler redeploy matched
-`origin/main` · board bake refreshed 2026-08-05T22:07Z · findings
-#1/#3/#4/#5/#6/#7/#10/#11 closed · ledger GET cache + favicon.ico shipped (#12); residual D1 for live writes.
+**Done this tip lane (2026-08-06):** production tip pin `8f21bf2` /
+deploymentId `a930f52c…` · R2-first partner ledger+executions
+(`meta.cache=url`) · surfaces note accuracy · desk serverFn probe hygiene
+(`x-tsr-serverFn`) · partner GET vs bearer matrix documented · all five v1
+unauth **401** · residual live **writes** only.
 
-Out of scope here: Pages deploy, vault token mint (pass-cli session down), edge
-DO/D1 redesign.
+Out of scope here: Pages deploy, vault token mint, edge DO/D1 redesign.
 
 ---
 
