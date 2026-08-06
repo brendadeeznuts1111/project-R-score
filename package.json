@@ -1998,6 +1998,7 @@
     "docs:native:sync": "bun tools/bun-native-capabilities-sync.ts --write",
     "docs:native:preview": "bun tools/bun-native-capabilities-sync.ts --preview",
     "docs:map:check": "bun tools/doc-map-check.ts",
+    "wiki:coverage:check": "bun tools/wiki-index-coverage.ts",
     "wiki:links:check": "bun tools/wiki-link-check.ts",
     "wiki:links:fix": "bun tools/wiki-link-check.ts --fix",
     "docs:links:check": "bun tools/md-link-check.ts",
