@@ -20,18 +20,19 @@ Linked from **Partners** desk nav (`/portal/partners/` → Agent odds).
 ## Run
 
 ```bash
-# Full live desk (local)
-bun run agent:odds-dashboard
-# → http://127.0.0.1:3000/
-# → WebSocket ws://127.0.0.1:3000/ws
-
-# Portal static plane (same monorepo)
+# Recommended: portal + live desk one process (Stage 2)
 bun run serve:public
 # → http://127.0.0.1:<port>/portal/agent-odds/
-# Partner chips load from registry bakes when agent APIs are absent.
+# → same-origin /api/edges · /api/partners/health · WS /ws
+
+# Standalone desk only (legacy / isolated)
+bun run agent:odds-dashboard
+# → http://127.0.0.1:3000/
 ```
 
-Optional: set `window.AGENT_API_BASE = 'http://127.0.0.1:3000'` on a static page to point UI at a live agent.
+Handlers: `lib/operator-research/agent-odds-http.ts` (shared by both entrypoints).
+
+On Cloudflare Pages (static only), partner chips still load from registry bakes when APIs are absent.
 
 ## Demo login (local mock only)
 

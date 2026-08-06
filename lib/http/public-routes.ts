@@ -18,13 +18,7 @@
 export type PublicRouteKind = 'simd-route' | 'fetch-handler' | 'hot-static' | 'file-static';
 
 export type PublicRouteCategory =
-  | 'ready'
-  | 'health'
-  | 'api'
-  | 'portal'
-  | 'registry'
-  | 'proof'
-  | 'monitoring';
+  'ready' | 'health' | 'api' | 'portal' | 'registry' | 'proof' | 'monitoring';
 
 export type PublicRouteDef = {
   path: string;
@@ -291,7 +285,7 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     category: 'portal',
     kind: 'file-static',
     okStatuses: [200],
-    note: 'partner-adjacent trading desk · static registry chips on Pages · live APIs via bun run agent:odds-dashboard',
+    note: 'partner-adjacent trading desk · static on Pages · live APIs via serve:public (same-origin) or agent:odds-dashboard',
   },
   {
     path: '/portal/partner/',

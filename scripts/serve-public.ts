@@ -152,6 +152,12 @@ import { attachServePublicErrorHandler } from '../lib/http/serve-public-error.ts
 import { isPublicReadPath } from '../lib/http/public-read-path.ts';
 import { registryBoardRedirectFor } from '../lib/http/registry-board-negotiate.ts';
 import { getDb, getMonitoringData } from '../lib/db/connection.ts';
+import {
+  agentOddsWebSocketHandlers,
+  handleAgentOddsRequest,
+  startAgentOddsBroadcast,
+  stopAgentOddsBroadcast,
+} from '../lib/operator-research/agent-odds-http.ts';
 
 /** Env/CLI/TOML bind prefs — omit port/hostname on Bun.serve when Bun env chain wins. */
 const bindPrefs = resolveServePublicBindPrefs(undefined, Bun.env, process.argv);
@@ -1802,9 +1808,8 @@ async function partnerHealthApi(req: Request, server?: RouteServer): Promise<Res
     );
   }
   try {
-    const { buildPartnerHealthBake } = await import(
-      '../lib/partner-profile/partner-health-bake.ts'
-    );
+    const { buildPartnerHealthBake } =
+      await import('../lib/partner-profile/partner-health-bake.ts');
     const bake = await buildPartnerHealthBake();
     return json({ ok: bake.health.ok, ...bake });
   } catch (e) {
@@ -1894,6 +1899,11 @@ async function packagesGraphRebake(req: Request, server?: RouteServer): Promise<
 async function fetchHandler(req: Request, server?: RouteServer): Promise<Response> {
   const url = new URL(req.url);
   const path = url.pathname;
+
+  // Agent-odds desk APIs + WebSocket upgrade (shared with standalone agent:odds-dashboard).
+  // Mounted here so /portal/agent-odds/ has same-origin live edges/health/ws.
+  const agentOdds = await handleAgentOddsRequest(req, server);
+  if (agentOdds !== null) return agentOdds;
 
   // Primary APIs + portal boards + health/llms + __hmr live on `routes` (buildPublicRoutes).
   // fetch = unmatched only: markdown stubs, encoded registry, static, npm PUT/GET.
@@ -2442,6 +2452,8 @@ function createServer(options: Pick<BunServeOptions, 'port' | 'hostname'> = {}):
       development: SERVE_DEVELOPMENT,
       routes,
       fetch: fetchHandler,
+      // Agent-odds live feed (same handlers as tools/agent-odds-dashboard-serve.ts)
+      websocket: agentOddsWebSocketHandlers() as BunServeOptions['websocket'],
     } satisfies BunServeOptions,
     { development: SERVE_DEVELOPMENT }
   );
@@ -2543,9 +2555,15 @@ assertServerPortUrlAligned(bind.server);
 const { ephemeralFallback } = bind;
 activeServer = bind.server;
 const base = bind.loopbackOrigin;
+startAgentOddsBroadcast(bind.server);
 
 async function gracefulShutdown(signal: string): Promise<void> {
   console.log(`${signal} — graceful stop (server.stop)…`);
+  try {
+    stopAgentOddsBroadcast();
+  } catch {
+    /* ignore */
+  }
   try {
     liveReloadHub?.stop();
   } catch {
@@ -2572,6 +2590,9 @@ process.on('SIGINT', () => {
 });
 
 console.log(`Local portal:  ${base}/portal/ops/`);
+console.log(
+  `Agent odds:    ${base}/portal/agent-odds/  (APIs /api/edges · /api/partners/health · WS /ws)`
+);
 console.log(`Monitoring:    ${base}/monitoring`);
 console.log(`Live API:      ${base}/api/operations/summary`);
 console.log(`Monitoring API ${base}/api/monitoring`);
@@ -2615,9 +2636,8 @@ if (LIVE_RELOAD && liveReloadHub) {
 // UTC schedule, no-overlap (next fire waits for snapshot Promise).
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process
 if (Bun.env.OPS_SNAPSHOT_CRON === '1') {
-  const { registerOpsSnapshotCron, OPS_SNAPSHOT_SCHEDULE } = await import(
-    '../lib/operations/snapshot-cron.ts'
-  );
+  const { registerOpsSnapshotCron, OPS_SNAPSHOT_SCHEDULE } =
+    await import('../lib/operations/snapshot-cron.ts');
   registerOpsSnapshotCron();
   console.log(
     `Cron:          ops-snapshot @ ${OPS_SNAPSHOT_SCHEDULE} UTC (in-process Bun.cron, no-overlap)`
@@ -2627,9 +2647,8 @@ if (Bun.env.OPS_SNAPSHOT_CRON === '1') {
 // Tier 4 scrape agents → artifacts/raw-limits/ (JSONL; no registry bake)
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process
 if (Bun.env.BASELINE_SCRAPE_CRON === '1') {
-  const { registerBaselineScrapeCron, BASELINE_SCRAPE_CRON_SCHEDULE } = await import(
-    '../lib/operations/scrapers/scrape-cron.ts'
-  );
+  const { registerBaselineScrapeCron, BASELINE_SCRAPE_CRON_SCHEDULE } =
+    await import('../lib/operations/scrapers/scrape-cron.ts');
   registerBaselineScrapeCron();
   console.log(
     `Cron:          baseline-scrape @ ${BASELINE_SCRAPE_CRON_SCHEDULE} UTC (in-process Bun.cron, no-overlap)`
