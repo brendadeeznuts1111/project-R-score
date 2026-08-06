@@ -1,25 +1,37 @@
 # Bun Agent – Live Odds Intelligence
 
-Local agent shell dashboards (not Tennis HQ Worker).
+Partner-adjacent **portal board** + optional **local Bun agent** (not Tennis HQ Worker).
 
-| Version             | Route / file                                     | Notes                                                                                                |
-| ------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| **v1.05** (default) | `/` · `/dashboard.html` · `dashboard-v1.05.html` | Stable events desk · signals · rules · alerts · CSRF-protected mutations                             |
-| v1.12               | `/system` · `/registry` · `dashboard-v1.12.html` | **System** + **Registry** tabs · package updates · snapshot browse · dry-run publish                 |
-| v1.11               | `/packages` · `dashboard-v1.11.html`             | Package update tab fixes · click-select · `originalTarget` · real SSE `/api/update` · dry-run · CSRF |
-| v1.10               | `dashboard-v1.10.html`                           | Package tab (buggy: no click, mock fallback, simulated progress)                                     |
-| v1.07               | `dashboard-v1.07.html`                           | Trading desk · WebSocket · mock bet · backtest · ML annotate                                         |
-| v1.06               | `dashboard-v1.06.html`                           | Uncovered Edges · tabs · events · alerts · Kelly · steam · value                                     |
-| v1.03+liquidity     | `dashboard-v1.03.html`                           | Partner health · liquidity filters                                                                   |
-| v1.02               | `dashboard-v1.02.html`                           | SSE · FormData · pool / prefetch                                                                     |
+| Plane | URL | What works |
+|-------|-----|------------|
+| **Pages / serve-public** | `/portal/agent-odds/` on `score.factory-wager.com` | Static desk · partner chips from `/registry/bookmakers.json` + `partners-ops.json` |
+| **Live agent** | `bun run agent:odds-dashboard` → `http://127.0.0.1:3000/` | Edges · WS · mock bet · backtest · full APIs |
+
+Linked from **Partners** desk nav (`/portal/partners/` → Agent odds).
+
+| Version | Route / file | Notes |
+|---------|--------------|--------|
+| **v1.07** (default index) | `/portal/agent-odds/` · `dashboard-v1.07.html` | Trading desk · static registry fallback · WS · mock bet · backtest · ML |
+| v1.12 | `dashboard-v1.12.html` | System + Registry tabs (agent process) |
+| v1.06 | `dashboard-v1.06.html` | Uncovered Edges |
+| v1.05 | `dashboard-v1.05.html` | Events desk · CSRF mutations |
+| v1.03+liquidity | `dashboard-v1.03.html` | Partner health · liquidity filters |
 
 ## Run
 
 ```bash
+# Full live desk (local)
 bun run agent:odds-dashboard
 # → http://127.0.0.1:3000/
 # → WebSocket ws://127.0.0.1:3000/ws
+
+# Portal static plane (same monorepo)
+bun run serve:public
+# → http://127.0.0.1:<port>/portal/agent-odds/
+# Partner chips load from registry bakes when agent APIs are absent.
 ```
+
+Optional: set `window.AGENT_API_BASE = 'http://127.0.0.1:3000'` on a static page to point UI at a live agent.
 
 ## Demo login (local mock only)
 

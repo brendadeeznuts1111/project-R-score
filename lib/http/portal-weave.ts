@@ -352,6 +352,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     cli: 'bun run bookmakers:bake',
   },
   {
+    id: 'agent-odds',
+    label: 'Agent odds',
+    href: '/portal/agent-odds/',
+    note: 'trading desk shell · partner liquidity from registry bakes · live APIs local agent only',
+    group: 'ops',
+    cli: 'bun run agent:odds-dashboard',
+  },
+  {
     id: 'factory',
     label: 'Factory',
     href: '/portal/factory/',
