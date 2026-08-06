@@ -15,6 +15,7 @@ import {
   checkBrandLinkingBag,
   checkDeprecatedBrandReferences,
   checkLiveCodesCoveredByInventory,
+  checkPartnerCodeArtifactPresence,
   checkPartnerCodeBag,
   collectAllowedBrandLinkDomains,
   collectBrandBagsByToken,
@@ -22,7 +23,12 @@ import {
 } from '../lib/docs/partner-surface-brand-check.ts';
 import { livePartnerCodesFromPartnersOps } from '../lib/docs/partner-surface-docs.ts';
 import {
+  checkBrandTestCoverageEvidence,
+  loadTestCorpusText,
+} from '../lib/docs/partner-surface-fitness-evidence.ts';
+import {
   buildPartnerSurfaceInventory,
+  type PartnerSurfaceLiveCode,
   type PartnerSurfaceRow,
 } from '../lib/docs/partner-surface-inventory.ts';
 import { checkRegistryArtifact } from '../lib/docs/partner-surface-registry-check.ts';
@@ -107,13 +113,14 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
   const brandByToken = collectBrandBagsByToken(rows);
 
   let liveCodes: Set<string> | undefined;
+  let liveByCode: Map<string, string | undefined> | undefined;
   const partnersOpsFile = Bun.file(PARTNERS_OPS_PATH);
   if (await partnersOpsFile.exists()) {
     try {
       const artifact = await partnersOpsFile.json();
-      liveCodes = new Set(
-        livePartnerCodesFromPartnersOps(artifact).map(c => c.code.trim().toUpperCase())
-      );
+      const live = livePartnerCodesFromPartnersOps(artifact);
+      liveCodes = new Set(live.map(c => c.code.trim().toUpperCase()));
+      liveByCode = new Map(live.map(c => [c.code.trim().toUpperCase(), c.phase]));
     } catch {
       issues.push({
         level: 'warn',
@@ -316,12 +323,29 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
   if (liveCodes) {
     issues.push(...checkLiveCodesCoveredByInventory(rows, liveCodes));
   }
+  if (liveByCode) {
+    issues.push(...checkPartnerCodeArtifactPresence(rows, liveByCode));
+  }
+
+  const corpus = await loadTestCorpusText(ROOT);
+  issues.push(...checkBrandTestCoverageEvidence(rows, corpus));
 
   return issues;
 }
 
+async function loadLivePartnerCodes(): Promise<readonly PartnerSurfaceLiveCode[]> {
+  const file = Bun.file(PARTNERS_OPS_PATH);
+  if (!(await file.exists())) return [];
+  try {
+    return livePartnerCodesFromPartnersOps(await file.json());
+  } catch {
+    return [];
+  }
+}
+
 async function main(): Promise<number> {
-  const inv = buildPartnerSurfaceInventory();
+  const livePartnerCodes = await loadLivePartnerCodes();
+  const inv = buildPartnerSurfaceInventory(new Date().toISOString(), { livePartnerCodes });
   if (inv.schemaVersion < 2) {
     console.error('expected schemaVersion >= 2 (structured bags)');
     return 1;

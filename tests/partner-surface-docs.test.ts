@@ -19,9 +19,14 @@ describe('partner-surface-docs', () => {
   });
 
   test('generated markdown includes brand linking columns', () => {
-    const md = formatPartnerSurfaceGeneratedMarkdown(buildPartnerSurfaceInventory('—'), [
+    const live = [
+      { code: 'ASH', phase: 'operator_ready' },
       { code: 'SPEN', phase: 'operator_ready' },
-    ]);
+    ];
+    const md = formatPartnerSurfaceGeneratedMarkdown(
+      buildPartnerSurfaceInventory('—', { livePartnerCodes: live }),
+      live
+    );
     expect(md).toContain('## Brands');
     expect(md).toContain('| `PartnerCode` | `operations` | `partners-ops` | yes | `identity` |');
     expect(md).toContain('| `ExternalPartnerId` | `cross-domain` | — | yes | `external` |');

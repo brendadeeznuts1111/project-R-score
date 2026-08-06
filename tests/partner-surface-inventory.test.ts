@@ -1,13 +1,20 @@
 import { describe, expect, test } from 'bun:test';
 import {
-  PARTNER_SURFACE_STATIC_ROWS,
   allPartnerSurfaceRows,
   buildPartnerSurfaceInventory,
   listPartnerChromeNavItems,
   partnerChromeNavSurfaceRows,
+  partnerCodeSurfaceRows,
   partnerDeskHrefs,
 } from '../lib/docs/partner-surface-inventory.ts';
 import { explainHomonym } from '../lib/docs/workspace-taxonomy.ts';
+
+const LIVE_FIXTURE = [
+  { code: 'ASH', phase: 'operator_ready' },
+  { code: 'BIL', phase: 'operator_ready' },
+  { code: 'NOV', phase: 'operator_ready' },
+  { code: 'SPEN', phase: 'operator_ready' },
+] as const;
 
 describe('partner surface inventory', () => {
   test('every chrome nav with domain partner appears as chrome-nav row', () => {
@@ -98,14 +105,20 @@ describe('partner surface inventory', () => {
     expect(tax.every(r => r.taxonomy?.homonymDistinct)).toBe(true);
   });
 
-  test('partner-code rows link PartnerCode brand and partners-ops', () => {
-    const codes = allPartnerSurfaceRows().filter(r => r.aspect === 'partner-code');
-    expect(codes.length).toBeGreaterThanOrEqual(4);
+  test('partner-code rows derive from live partners-ops codes', () => {
+    expect(partnerCodeSurfaceRows([]).length).toBe(0);
+    const codes = partnerCodeSurfaceRows(LIVE_FIXTURE);
+    expect(codes.length).toBe(4);
     for (const r of codes) {
       expect(r.partnerCode?.brandRef).toBe('PartnerCode');
       expect(r.partnerCode?.registryRef).toBe('partners-ops');
+      expect(r.properties).toContain('derived-from-partners-ops');
       expect(r.href).toBe(`/portal/partners/#partner/${r.token}`);
     }
     expect(new Set(codes.map(r => r.token))).toEqual(new Set(['ASH', 'BIL', 'NOV', 'SPEN']));
+    const inv = buildPartnerSurfaceInventory('1970-01-01T00:00:00.000Z', {
+      livePartnerCodes: LIVE_FIXTURE,
+    });
+    expect(inv.rows.filter(r => r.aspect === 'partner-code').length).toBe(4);
   });
 });

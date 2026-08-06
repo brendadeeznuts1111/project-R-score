@@ -306,6 +306,39 @@ export function checkLiveCodesCoveredByInventory(
 }
 
 /**
+ * Prove each partner-code token exists in the partners-ops artifact and that
+ * phase matches when both sides declare it.
+ */
+export function checkPartnerCodeArtifactPresence(
+  rows: readonly PartnerSurfaceRow[],
+  liveByCode: ReadonlyMap<string, string | undefined>
+): readonly BrandLinkIssue[] {
+  const issues: BrandLinkIssue[] = [];
+  for (const r of rows) {
+    if (r.aspect !== 'partner-code' || !r.partnerCode) continue;
+    const code = r.token.trim().toUpperCase();
+    if (!liveByCode.has(code)) {
+      issues.push({
+        level: 'error',
+        message:
+          `${r.id}: partner-code "${code}" not found in partners-ops.json ` +
+          `partners[].code (registry presence failed)`,
+      });
+      continue;
+    }
+    const livePhase = liveByCode.get(code);
+    const bagPhase = r.partnerCode.phase?.trim();
+    if (bagPhase && livePhase && bagPhase !== livePhase) {
+      issues.push({
+        level: 'warn',
+        message: `${r.id}: partnerCode.phase "${bagPhase}" drifts from partners-ops phase "${livePhase}"`,
+      });
+    }
+  }
+  return issues;
+}
+
+/**
  * Lifecycle field consistency on a single brand bag.
  * `brandTokens` = inventory brand tokens ∪ typeOrExport names (for replacedBy).
  */

@@ -23,8 +23,10 @@ const PARTNERS_OPS_PATH = resolvePath(ROOT, 'public/registry/partners-ops.json')
 const CHECK = Bun.argv.includes('--check');
 
 async function render(): Promise<{ markdown: string; warned: boolean }> {
-  const inv = buildPartnerSurfaceInventory('—');
   const { codes, warned } = await loadLivePartnerCodes(PARTNERS_OPS_PATH);
+  const inv = buildPartnerSurfaceInventory('—', {
+    livePartnerCodes: codes ?? [],
+  });
   return {
     markdown: formatPartnerSurfaceGeneratedMarkdown(inv, codes),
     warned,
