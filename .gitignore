@@ -75,6 +75,8 @@ out/
 .cursor/
 !/.cursor/
 !/.cursor/mcp.json
+# Personal/editor settings (not shared SSOT; mcp.json remains force-included)
+/.cursor/settings.json
 
 # Cursor auto-generated boilerplate & session artifacts
 **/.cursor/rules/use-bun-instead-of-node-vite-npm-pnpm.mdc

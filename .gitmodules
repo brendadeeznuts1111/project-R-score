@@ -1,3 +1,6 @@
 [submodule "Kalshi-bot"]
 	path = Kalshi-bot
 	url = https://github.com/brendadeeznuts1111/Kalshi-bot.git
+	# Local untracked WIP inside the submodule must not dirty primary `git status`
+	# (still surfaces real submodule commit drift / tracked modifications).
+	ignore = untracked
