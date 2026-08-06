@@ -325,13 +325,32 @@ Out of scope here: Pages deploy, vault token mint, edge DO/D1 redesign.
 ## F. Re-probe commands
 
 ```bash
-# Desk identity + contracts
-curl -fsS https://tennis.factory-wager.com/api/version
-curl -sS -o /dev/null -w '%{http_code}\n' https://tennis.factory-wager.com/api/v1/research/status
-curl -sS -o /dev/null -w '%{http_code}\n' https://tennis.factory-wager.com/api/v1/marketdata/desk
+# Desk identity
+curl -fsS https://tennis.factory-wager.com/api/version | jq '{shortSha,packageVersion,deploymentId,message}'
+
+# All five v1 contracts — unauth must be 401 (not SPA HTML / 503)
+for p in research/status marketdata/desk trading/executions partners/capacity accounting/finance; do
+  printf '%s ' "$p"
+  curl -sS -o /dev/null -w '%{http_code}\n' "https://tennis.factory-wager.com/api/v1/$p"
+done
+
+# R2-first partner GET caches (edge has no local SQLite)
+curl -fsS https://tennis.factory-wager.com/api/partners/ledger?partner=ASH \
+  | jq '{ok,count,source,meta}'
+curl -fsS https://tennis.factory-wager.com/api/partners/executions \
+  | jq '{ok,count,source,meta}'
+# expect source=cache · meta.cache=url · meta.cacheUrl on pub-*.r2.dev
+
+# Desk serverFn — bare GET without TanStack header returns 500 HTTPError
+# (browser sets x-tsr-serverFn: true). Payload id rotates per deploy; copy from
+# Network tab or assets/desk-server-*.js handler hash when probing.
+# DESK_SF_ID=<hash from desk-server bundle>
+# curl -sS -H 'x-tsr-serverFn: true' \
+#   "https://tennis.factory-wager.com/_serverFn/$DESK_SF_ID" | head -c 120
 
 # Portal bake age
-curl -fsS https://factory-wager.com/registry/tennis/board-metrics.json | bun -e 'console.log(JSON.parse(await Bun.stdin.text()).generatedAt)'
+curl -fsS https://factory-wager.com/registry/tennis/board-metrics.json \
+  | bun -e 'console.log(JSON.parse(await Bun.stdin.text()).generatedAt)'
 
 # Harness
 bun run tennis:agent-auth:check
