@@ -140,7 +140,14 @@ function parseNonNegativeInteger(value: unknown, field: string): number {
 }
 
 function parseHealthMode(value: unknown): ScrapeAgentHealthEntry['mode'] {
-  if (value === 'idle' || value === 'fixture' || value === 'live' || value === 'html_stub') {
+  if (
+    value === 'idle' ||
+    value === 'fixture' ||
+    value === 'live' ||
+    value === 'html_stub' ||
+    value === 'html_fixture' ||
+    value === 'html_live'
+  ) {
     return value;
   }
   throw new Error('ScrapeAgentHealthEntry: invalid mode');

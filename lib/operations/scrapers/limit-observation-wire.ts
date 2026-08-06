@@ -27,7 +27,7 @@ export type LimitObservation = {
   sourceRef: string;
   observedAt: string;
   agent: string;
-  mode: 'fixture' | 'live' | 'html_stub';
+  mode: 'fixture' | 'live' | 'html_stub' | 'html_fixture' | 'html_live';
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -52,7 +52,15 @@ function parsePhase(value: unknown): OpeningMarketPhase {
 }
 
 function parseMode(value: unknown): LimitObservation['mode'] {
-  if (value === 'live' || value === 'html_stub' || value === 'fixture') return value;
+  if (
+    value === 'live' ||
+    value === 'html_stub' ||
+    value === 'html_fixture' ||
+    value === 'html_live' ||
+    value === 'fixture'
+  ) {
+    return value;
+  }
   return 'fixture';
 }
 
