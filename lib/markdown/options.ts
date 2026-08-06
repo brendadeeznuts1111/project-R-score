@@ -117,6 +117,9 @@ export const MARKDOWN_PRESET_PORTAL = {
   tagFilter: true,
   autolinks: true,
   headings: true, // ids + in-heading autolinks
+  /** GFM extras (Bun 1.3.8+): [[wiki links]] + inline LaTeX. */
+  wikiLinks: true,
+  latexMath: true,
 } as const satisfies Bun.markdown.Options;
 
 /** README / registry desk HTML: heading anchors + URL/www autolinks + tag filter. */
