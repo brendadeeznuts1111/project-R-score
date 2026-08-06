@@ -2,6 +2,27 @@
 
 Verification helpers — install-env probes and channel checks.
 
+**Scale:** ~11k lines · ~37 modules. Prefer the **Area map** first. Inventory
+SSOT: [`../README.md`](../README.md). Maps are cluster indexes, not exhaustive
+file lists.
+
+## Area map
+
+| Area | Paths (entry) | Role |
+| ---- | ------------- | ---- |
+| Types / taxonomy | [`types.ts`](types.ts) · [`subsystem.ts`](subsystem.ts) · [`proof-taxonomy.ts`](proof-taxonomy.ts) · [`proof-consistency.ts`](proof-consistency.ts) · [`proof-diff.ts`](proof-diff.ts) · [`jsonld.ts`](jsonld.ts) · [`canonical-coverage.ts`](canonical-coverage.ts) | Report shapes, pillars, dashboard proof contracts |
+| Channel resolve / doctor | [`channels.ts`](channels.ts) · [`bun-channel-doctor.ts`](bun-channel-doctor.ts) · [`bun-release-channel.ts`](bun-release-channel.ts) · [`channel-suite.ts`](channel-suite.ts) · [`channel-proof.ts`](channel-proof.ts) · [`channel-meta-refresh.ts`](channel-meta-refresh.ts) · [`networking-channel.ts`](networking-channel.ts) | GitHub Releases resolve + stable/canary/main tip doctor ([`config/bun-channels.toml`](../../config/bun-channels.toml)) |
+| Runtime pin / nits | [`bun-runtime-pin.ts`](bun-runtime-pin.ts) · [`bun-runtime-nits-probes.ts`](bun-runtime-nits-probes.ts) · [`resolve-bun-binary.ts`](resolve-bun-binary.ts) · [`ratchet.ts`](ratchet.ts) | Version pin, runtime nits suite, ratchet DB |
+| Install / PM | [`install-env-probes.ts`](install-env-probes.ts) · [`install-env-config.ts`](install-env-config.ts) · [`install-platform.ts`](install-platform.ts) · [`pm-registry-probes.ts`](pm-registry-probes.ts) · [`registry-client-probes.ts`](registry-client-probes.ts) | Install-env + install-platform + registry client proofs |
+| Bundler | [`bundler-loader-probes.ts`](bundler-loader-probes.ts) | Asset Processing loader proofs (`css` / `jsonc` / `ts` / …) |
+| Cloudflare Access / Pages | [`cloudflare-access-live.ts`](cloudflare-access-live.ts) · [`cloudflare-access-policy.ts`](cloudflare-access-policy.ts) · [`cloudflare-access-token.ts`](cloudflare-access-token.ts) · [`cloudflare-token-scope.ts`](cloudflare-token-scope.ts) · [`cloudflare-pages-preflight.ts`](cloudflare-pages-preflight.ts) | Live Access probes, token scope, Pages preflight |
+| Pages edge / publish plane | [`pages-edge-weave.ts`](pages-edge-weave.ts) · [`pages-edge-weave-subdomains.ts`](pages-edge-weave-subdomains.ts) · [`publish-plane-weave.ts`](publish-plane-weave.ts) · [`publish-plane-color.ts`](publish-plane-color.ts) · [`links.ts`](links.ts) | Edge weave, publish-plane color, link checks |
+| Soft / tennis SSOT | [`ssot-flow-soft.ts`](ssot-flow-soft.ts) · [`tennis-ssot-release.ts`](tennis-ssot-release.ts) · [`release-preview.ts`](release-preview.ts) | Soft flow SSOT + tennis release surface + release preview filters |
+
+**Operate:** `bun run verify-all` · `verify:channel:meta` · `verify:proof-taxonomy:save` ·
+[`docs/platform-routing.md`](../../docs/platform-routing.md) ·
+[`docs/harness/PROOF.md`](../../docs/harness/PROOF.md).
+
 | File | Purpose |
 |------|---------|
 | `channels.ts` | Channel resolve via GitHub Releases (`bun upgrade` feeds) |
