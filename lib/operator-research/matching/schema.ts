@@ -42,20 +42,38 @@ function tableHasColumn(db: Database, table: string, column: string): boolean {
   return cols.some(c => c.name === column);
 }
 
+function addColumnIfMissing(
+  db: Database,
+  table: 'bookmakers' | 'events',
+  column: 'tier' | 'sport' | 'league_name' | 'external_ids',
+  ddl: string
+): void {
+  if (tableHasColumn(db, table, column)) return;
+  try {
+    db.exec(ddl);
+  } catch (error) {
+    // Another process may win between PRAGMA table_info and ALTER TABLE.
+    if (tableHasColumn(db, table, column)) return;
+    throw error;
+  }
+}
+
 /** Idempotent migrations for columns added after first normalize pass. */
 export function migrateMatchingColumns(db: Database): void {
-  if (!tableHasColumn(db, 'bookmakers', 'tier')) {
-    db.exec(`ALTER TABLE bookmakers ADD COLUMN tier INTEGER DEFAULT 3`);
-  }
-  if (!tableHasColumn(db, 'events', 'sport')) {
-    db.exec(`ALTER TABLE events ADD COLUMN sport TEXT`);
-  }
-  if (!tableHasColumn(db, 'events', 'league_name')) {
-    db.exec(`ALTER TABLE events ADD COLUMN league_name TEXT`);
-  }
-  if (!tableHasColumn(db, 'events', 'external_ids')) {
-    db.exec(`ALTER TABLE events ADD COLUMN external_ids TEXT`);
-  }
+  addColumnIfMissing(
+    db,
+    'bookmakers',
+    'tier',
+    `ALTER TABLE bookmakers ADD COLUMN tier INTEGER DEFAULT 3`
+  );
+  addColumnIfMissing(db, 'events', 'sport', `ALTER TABLE events ADD COLUMN sport TEXT`);
+  addColumnIfMissing(db, 'events', 'league_name', `ALTER TABLE events ADD COLUMN league_name TEXT`);
+  addColumnIfMissing(
+    db,
+    'events',
+    'external_ids',
+    `ALTER TABLE events ADD COLUMN external_ids TEXT`
+  );
 }
 
 export function ensureMatchingSchema(db: Database = openOddsDb()): Database {

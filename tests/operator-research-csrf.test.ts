@@ -15,6 +15,24 @@ describe('operator-research Bun.CSRF', () => {
     expect(isMutatingMethod('GET')).toBe(false);
   });
 
+  test('registry publish POSTs require CSRF session binding', () => {
+    // Desk wires POST /api/registry/publish + /factory-publish behind withCsrfGate.
+    const issued = issueCsrf(new Request('http://127.0.0.1:8790/'));
+    const bare = new Request('http://127.0.0.1:8790/api/registry/publish', {
+      method: 'POST',
+    });
+    expect(checkCsrf(bare).ok).toBe(false);
+
+    const ok = new Request('http://127.0.0.1:8790/api/registry/factory-publish', {
+      method: 'POST',
+      headers: {
+        cookie: `${CSRF_COOKIE}=${issued.sessionId}`,
+        [CSRF_HEADER]: issued.token,
+      },
+    });
+    expect(checkCsrf(ok).ok).toBe(true);
+  });
+
   test('issue + verify bound to sessionId', () => {
     const req0 = new Request('http://127.0.0.1:8790/');
     const issued = issueCsrf(req0);

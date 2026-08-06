@@ -15,7 +15,7 @@
 import { mkdirSync } from 'node:fs';
 import { joinPath } from '../path-bun.ts';
 import type { Database } from 'bun:sqlite';
-import { ensureAlertsSchema } from '../operator-research/matching/alerts.ts';
+import { ensureAlertsSchema } from '../operator-research/matching/alerts-schema.ts';
 import {
   normalizeSignalChatId,
   resolveTelegramTarget,

@@ -95,8 +95,11 @@ Commands:
   test-webview [--json]
   test-image [--json]
   doctor [--json]
-  serve [--port N] [--no-odds] [--no-research]
+  serve [--port N] [--no-odds] [--no-research] [--monitor|--no-monitor]
   research-cycle [--live] [--json]
+  registry-readme <name> [--version V] [--json]
+  scrape odds --source <bookId> [--live] [--html]
+  scrape odds <bookId> [--live] [--html]
   seed [--json]
   normalize-odds --host <host> [--fixture <id>] [--session pregame|live]
   query-odds [--sport s] [--league l] [--market m] [--host h] [--limit N]
@@ -113,6 +116,9 @@ Examples:
   bun run agent research-cycle --live --json
   bun run agent detect-edges --host hardrock.bet --window 5 --seed-fixtures
   bun run agent monitor-odds --once --hosts hardrock.bet
+  bun run scrape:odds bet365
+  bun run agent scrape odds --source bet365
+  bun run agent scrape odds bet365 --live
   bun run agent seed
   bun run agent normalize-odds --host hardrock.bet --fixture hardrock
   bun run agent movements --minPct 1
@@ -455,15 +461,42 @@ async function cmdDoctor(args: string[]) {
   if (!report.bun.satisfies || !report.checks.image.ok) process.exitCode = 1;
 }
 
+function wantOddsMonitor(args: string[]): boolean {
+  if (flag(args, '--no-monitor')) return false;
+  if (flag(args, '--monitor')) return true;
+  return Bun.env.OPERATOR_ODDS_MONITOR === '1';
+}
+
 async function cmdServe(args: string[]) {
   const port = Number(opt(args, '--port', '8790'));
+  const hostsRaw = opt(args, '--hosts', '');
+  const hosts = hostsRaw
+    ? hostsRaw
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean)
+    : [...HIGH_PRIORITY_BOOKS];
+
+  const oddsMonitor = wantOddsMonitor(args)
+    ? startOddsMonitor({
+        hosts,
+        fixtureFallback: !flag(args, '--no-fixture'),
+        store: !flag(args, '--no-store'),
+        window: Number(opt(args, '--window', '5')),
+        fireImmediately: true,
+        quiet: flag(args, '--quiet'),
+      })
+    : undefined;
+
   const dash = startResearchDashboard({
     port,
     withOdds: !flag(args, '--no-odds'),
     withResearchAgent: !flag(args, '--no-research'),
+    oddsMonitor,
   });
   console.log(`research dashboard → ${dash.url}`);
   console.log(`  GET ${dash.url}api/platform`);
+  console.log(`  GET ${dash.url}api/system/jobs`);
   console.log(`  GET ${dash.url}api/tasks/:id`);
   console.log(`  GET ${dash.url}api/research/markets`);
   console.log(`  GET ${dash.url}api/research/limits?partnerId=hard-rock-florida`);
@@ -475,11 +508,65 @@ async function cmdServe(args: string[]) {
     console.log(`odds dashboard   → ${dash.odds.url}`);
     console.log(`  GET ${dash.odds.url}api/odds?league=MLB&market=moneyline`);
   }
-  process.on('SIGINT', () => {
+  if (oddsMonitor) {
+    console.log(
+      `odds monitor     → Bun.cron ${oddsMonitor.cronExpr} · ${oddsMonitor.hosts.join(', ')}`
+    );
+  } else {
+    console.log(`odds monitor     → off (pass --monitor or OPERATOR_ODDS_MONITOR=1)`);
+  }
+  const shutdown = () => {
     dash.stop();
     process.exit(0);
-  });
+  };
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
   await new Promise(() => {});
+}
+
+async function cmdRegistryReadme(args: string[]) {
+  const { getRegistryPackage } = await import('../lib/operator-research/registry-desk.ts');
+  const { renderReadmeAnsi } = await import('../lib/factory/markdown.ts');
+  const name = args.find(a => !a.startsWith('-'));
+  if (!name) {
+    console.error('Usage: bun run agent registry-readme <package> [--version V] [--json]');
+    process.exitCode = 1;
+    return;
+  }
+  const version = opt(args, '--version', '') || undefined;
+  const detail = await getRegistryPackage(name, version);
+  if (!detail) {
+    console.error(`Package not found in snapshot: ${name}`);
+    process.exitCode = 1;
+    return;
+  }
+  if (flag(args, '--json')) {
+    console.log(
+      JSON.stringify(
+        {
+          name: detail.name,
+          selectedVersion: detail.selectedVersion,
+          readme: detail.readme ?? null,
+          readmeFilename: detail.readmeFilename ?? null,
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
+  if (!detail.readme) {
+    console.error(
+      `No README in snapshot for ${detail.name}@${detail.selectedVersion ?? '?'} (refresh factory:snapshot / publish with Bun ≥1.3.14)`
+    );
+    process.exitCode = 1;
+    return;
+  }
+  const columns = process.stdout.columns || 80;
+  const header = `${detail.name}@${detail.selectedVersion ?? '?'} · ${detail.readmeFilename ?? 'README.md'}\n`;
+  process.stdout.write(header + '\n');
+  process.stdout.write(renderReadmeAnsi(detail.readme, columns));
+  if (!detail.readme.endsWith('\n')) process.stdout.write('\n');
 }
 
 async function cmdResearchCycle(args: string[]) {
@@ -654,6 +741,42 @@ async function cmdSmartMoney(args: string[]) {
   console.log(JSON.stringify({ count: signals.length, signals }, null, 2)); // console-ok
 }
 
+/**
+ * Thin UX sugar over tools/baseline-scrape-book.ts (Tier 4 book agents).
+ * Does not belong on `factory` (R2 registry lane).
+ */
+async function cmdScrape(args: string[]) {
+  const kind = args[0];
+  if (kind !== 'odds') {
+    console.error(
+      'Usage: bun run agent scrape odds --source <bookId> [--live] [--html]\n' +
+        '   or: bun run scrape:odds <bookId> [--live]\n' +
+        'Sink: artifacts/raw-limits/<bookId>.jsonl'
+    );
+    process.exitCode = 1;
+    return;
+  }
+  const rest = args.slice(1);
+  const sourceEq = rest.find(a => a.startsWith('--source='))?.slice('--source='.length);
+  const sourceFlag = opt(rest, '--source', '') || sourceEq || '';
+  const positional = rest.find(a => !a.startsWith('-'));
+  const bookRaw = (sourceFlag || positional || '').trim();
+  if (!bookRaw) {
+    const { trackedScrapeBooks } = await import('../lib/operations/scrapers/books/registry.ts');
+    console.error(
+      'Usage: bun run agent scrape odds --source <bookId> [--live] [--html]\n' +
+        `Registered: ${trackedScrapeBooks().join(', ')}\n` +
+        'Alias: bun run scrape:odds <bookId>'
+    );
+    process.exitCode = 1;
+    return;
+  }
+  const { parseSportsbookId } = await import('../lib/types/branded.ts');
+  const { runBookCli } = await import('./baseline-scrape-book.ts');
+  const flags = rest.filter(a => a.startsWith('--') && !a.startsWith('--source'));
+  await runBookCli(parseSportsbookId(bookRaw), flags);
+}
+
 async function cmdQueryOdds(args: string[]) {
   await seedAll();
   const rows = queryNormalizedOdds({
@@ -731,6 +854,12 @@ switch (cmd) {
     break;
   case 'serve':
     await cmdServe(rest);
+    break;
+  case 'registry-readme':
+    await cmdRegistryReadme(rest);
+    break;
+  case 'scrape':
+    await cmdScrape(rest);
     break;
   case 'seed':
     await cmdSeed(rest);
