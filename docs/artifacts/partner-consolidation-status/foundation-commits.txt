@@ -1,10 +1,13 @@
-Generated: 2026-08-05T21:55:34Z
-Command: git log --reverse --format='%h %s' origin/main..HEAD
+Generated: 2026-08-06T05:20:33Z
+Scope: foundation commits summarized by the proposal; excludes this artifact refresh
+Command: git log --reverse --format='%h %s' origin/main..HEAD^
 
-b07bc493f fix(bun): ground recent runtime release contracts
-b53e4b2ad feat(bun): add read-only channel governance
-96a1aaacf feat(partners): establish dashboard contract workspace
-0d8a42f6a feat(partners): enforce integer money migration
-fcae7ddfb test(snapshot): track compile-only type contracts
-07962dae9 feat(agents): add Project R operations skill
-e84868d33 fix(bun): make cron verification release-aware
+e4b263806 feat(partners): add canonical dashboard artifact core
+69594188a feat(partners): add selective legacy ops adapter
+529f558db feat(partners): define portal consumer contract
+eecad4dcc fix(partners): make portal transition contract durable
+e79fe8f66 fix(partners): retire legacy portal comparison cleanly
+c37c25d34 feat(partners): add redacted profile coverage boundary
+5ac802b4b refactor(partners): adopt shared portal fetch transport
+1a933d7a2 fix(partners): align dashboard boundary contracts
+fa7747de8 docs(partners): align dashboard SSOT maps
