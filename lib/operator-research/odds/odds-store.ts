@@ -1,8 +1,10 @@
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// eslint-disable-next-line no-restricted-imports -- sync SQLite open must create its parent first
+import { mkdirSync } from 'node:fs';
 import { Database } from 'bun:sqlite';
-import { joinPath } from '../../path-bun.ts';
+import { dirnamePath, joinPath } from '../../path-bun.ts';
 import { DATA_DIR, ensureResearchDirs } from '../paths.ts';
 import type { HostId } from '../../types/branded.ts';
 import type { EdgeSignal, OddsSnapshot } from './types.ts';
@@ -43,8 +45,20 @@ let dbSingleton: Database | null = null;
 
 export function openOddsDb(path = ODDS_DB_PATH): Database {
   if (dbSingleton && path === ODDS_DB_PATH) return dbSingleton;
+  mkdirSync(dirnamePath(path), { recursive: true });
   const db = new Database(path, { create: true });
-  db.exec(SCHEMA);
+  db.exec('PRAGMA busy_timeout = 5000');
+  try {
+    db.exec(`BEGIN IMMEDIATE;\n${SCHEMA}\nCOMMIT;`);
+  } catch (error) {
+    try {
+      db.exec('ROLLBACK');
+    } catch {
+      /* transaction may not have started */
+    }
+    db.close();
+    throw error;
+  }
   if (path === ODDS_DB_PATH) dbSingleton = db;
   return db;
 }
