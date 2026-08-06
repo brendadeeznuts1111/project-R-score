@@ -318,6 +318,7 @@ async function main(): Promise<void> {
         shallow: false,
         interfaces: true,
         properties: true,
+        typeAliases: true,
         deprecatedFile: f === 'deprecated.d.ts',
       }),
     );
@@ -334,6 +335,7 @@ async function main(): Promise<void> {
     shallow: false,
     interfaces: true,
     properties: true,
+    typeAliases: true,
   });
 
   const reasons: string[] = [];

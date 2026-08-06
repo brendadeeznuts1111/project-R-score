@@ -428,11 +428,12 @@ Commands: `url` `list` `suggest` (catalog → canonical map → index) · `catal
 `status` (includes tier-A coverage) · `schedule` (Bun.cron daemon; `--once` for
 single runs) · `export` (hierarchical llms-full.txt) · **deep types inventory v3**
 `bun run bun:types-inventory` / `:write` / `:check` — flags: `--shallow` ·
-`--no-interfaces` · `--no-props` · `--tip-diff` · `--module=bun:jsc` ·
-`--kind=function,method,property` →
+`--no-interfaces` · `--no-type-aliases` · `--no-props` · `--tip-diff` ·
+`--module=bun:jsc` · `--kind=function,method,property` →
 [`tools/bun-types-inventory.md`](tools/bun-types-inventory.md) — top-level +
-namespace/class/**interface** methods & properties (maxDepth 2) + satellites
-(`bun:jsc` · `bun:ffi` · `bun:sqlite` · `bun:test`), not the utils docs page.
+namespace/class/**interface**/**`type X = {…}`** methods & properties
+(maxDepth 2) + satellites (`bun:jsc` · `bun:ffi` · `bun:sqlite` · `bun:test`),
+not the utils docs page.
 **Tip-diff (local CI, GHA disabled):** `bun run bun:types-inventory:tip-diff`
 fetches oven-sh/bun `packages/bun-types` into `.cache/` (or `--prefer-local`
 `~/bun`) and reports tip-only/pin-only vs catalog pin; `:tip-diff:strict` fails

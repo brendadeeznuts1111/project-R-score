@@ -10,7 +10,7 @@
  * bun-types-inventory.ts — **deep** inventory of pinned `bun-types`:
  *
  *  - Top-level module members (function / namespace / class / const / var / interface / type)
- *  - Nested namespace · class · **interface** methods/properties (multi-depth)
+ *  - Nested namespace · class · **interface** · **`type X = {…}`** methods/properties
  *  - Satellite modules: bun:jsc · bun:ffi · bun:sqlite · bun:test · serve/sql/s3/redis/shell …
  *  - Optional tip-vs-pin diff (`~/bun/packages/bun-types` or `BUN_TYPES_TIP`)
  *  - AGENTS.md grounded-map hits + repo call-site counts (qualified paths)
@@ -18,13 +18,14 @@
  * Not the docs-only utils page (`export-bun-api-index` is separate SSOT).
  *
  * Usage:
- *   bun tools/bun-types-inventory.ts                 # deep (interfaces + methods + props)
+ *   bun tools/bun-types-inventory.ts                 # deep (iface + type aliases + props)
  *   bun tools/bun-types-inventory.ts --shallow       # top-level only
- *   bun tools/bun-types-inventory.ts --no-interfaces # skip interface body members
- *   bun tools/bun-types-inventory.ts --no-props      # methods only inside scopes
- *   bun tools/bun-types-inventory.ts --tip-diff      # pin vs local Bun git types
+ *   bun tools/bun-types-inventory.ts --no-interfaces
+ *   bun tools/bun-types-inventory.ts --no-type-aliases
+ *   bun tools/bun-types-inventory.ts --no-props
+ *   bun tools/bun-types-inventory.ts --tip-diff
  *   bun tools/bun-types-inventory.ts --write · --check · --json · --no-counts · --full-scan
- *   bun tools/bun-types-inventory.ts --module=bun:jsc · --kind=function,method
+ *   bun tools/bun-types-inventory.ts --module=bun:jsc · --kind=function,method,property
  *
  * Scripts: bun:types-inventory · :write · :check
  */
@@ -95,6 +96,8 @@ export type InventoryResult = {
     shallow: boolean;
     interfaces: boolean;
     properties: boolean;
+    /** Open `type X = { … }` object-literal aliases */
+    typeAliases: boolean;
     counted: boolean;
     moduleFilter: string | null;
     kindFilter: MemberKind[] | null;
@@ -298,7 +301,7 @@ type ScopeFrame = {
   /** Path segments after module prefix, e.g. ['inspect'] or ['Spawn'] */
   path: string[];
   /** kind of scope container */
-  kind: 'module' | 'namespace' | 'class' | 'interface' | 'other';
+  kind: 'module' | 'namespace' | 'class' | 'interface' | 'type' | 'other';
   /** brace depth when this scope opened */
   openDepth: number;
 };
@@ -370,11 +373,72 @@ const SKIP_METHOD_NAMES = new Set([
   'undefined',
 ]);
 
-/** Scopes that nest children in deep mode */
-function isNestingKind(kind: string, interfaces: boolean): boolean {
+/** Scopes that nest children in deep mode (type aliases need object-body check). */
+function isNestingKind(
+  kind: string,
+  opts: { interfaces: boolean; typeAliases: boolean },
+): boolean {
   if (kind === 'namespace' || kind === 'class') return true;
-  if (kind === 'interface' && interfaces) return true;
+  if (kind === 'interface' && opts.interfaces) return true;
+  if (kind === 'type' && opts.typeAliases) return true;
   return false;
+}
+
+/** Strip balanced `<…>` so generic defaults like `P = {}` do not fake object bodies. */
+export function stripAngleGenerics(s: string): string {
+  let out = '';
+  let depth = 0;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i]!;
+    if (c === '<') {
+      depth++;
+      continue;
+    }
+    if (c === '>') {
+      depth = Math.max(0, depth - 1);
+      continue;
+    }
+    if (depth === 0) out += c;
+  }
+  return out;
+}
+
+/**
+ * True when `type Name… = {` is an object-type alias (not `= string | …`).
+ * Looks ahead a few lines for multi-line `type Foo =\n  {`.
+ */
+export function typeAliasOpensObjectBody(
+  trimmed: string,
+  lines: string[],
+  lineIndex: number,
+): boolean {
+  if (!/^(?:export\s+)?type\s+/.test(trimmed)) return false;
+  let buf = trimmed;
+  let look = lineIndex + 1;
+  for (let step = 0; step < 12; step++) {
+    const stripped = stripAngleGenerics(buf.replace(/\s+/g, ' ').trim());
+    if (/^(?:export\s+)?type\s+[A-Za-z_][\w]*\s*=\s*\{/.test(stripped)) return true;
+    // finished non-object assignment
+    if (
+      /^(?:export\s+)?type\s+[A-Za-z_][\w]*\s*=/.test(stripped) &&
+      stripped.includes(';') &&
+      !/=\s*\{/.test(stripped)
+    ) {
+      return false;
+    }
+    if (look >= lines.length) break;
+    const next = lines[look]!.trim();
+    look++;
+    if (!next || next.startsWith('//') || next.startsWith('*') || next.startsWith('/*')) continue;
+    buf += ' ' + next;
+  }
+  return /^(?:export\s+)?type\s+[A-Za-z_][\w]*\s*=\s*\{/.test(
+    stripAngleGenerics(buf.replace(/\s+/g, ' ').trim()),
+  );
+}
+
+function isHarvestScope(kind: ScopeFrame['kind']): boolean {
+  return kind === 'class' || kind === 'interface' || kind === 'type' || kind === 'namespace';
 }
 
 function settingFor(moduleId: string, path: string[], leaf: string): string {
@@ -448,15 +512,19 @@ export type ParseDtsOpts = {
   shallow?: boolean;
   /** Open interface bodies and harvest methods/props (default true when not shallow) */
   interfaces?: boolean;
-  /** Harvest `name: Type` properties inside class/interface (default true when not shallow) */
+  /** Harvest `name: Type` properties inside class/interface/type (default true when not shallow) */
   properties?: boolean;
+  /** Open `type X = { … }` object-literal aliases (default true when not shallow) */
+  typeAliases?: boolean;
 };
 
 /**
  * Parse all `declare module "…"` blocks in a .d.ts file into inventory rows.
  *
- * Nesting scopes: **namespace**, **class**, and optionally **interface**.
- * Type aliases never open scopes (object-type `{` would corrupt parents).
+ * Nesting scopes: **namespace**, **class**, optionally **interface**, and
+ * **`type X = { … }`** object aliases (not unions / generic-only types).
+ * Members are harvested only at the immediate body brace depth (anonymous nested
+ * objects do not invent false fields on the parent type).
  */
 export function parseDtsFile(
   text: string,
@@ -466,6 +534,7 @@ export function parseDtsFile(
   const shallow = opts.shallow === true;
   const interfaces = opts.interfaces !== false && !shallow;
   const properties = opts.properties !== false && !shallow;
+  const typeAliases = opts.typeAliases !== false && !shallow;
 
   const lines = text.split(/\r?\n/);
   const out: RawMember[] = [];
@@ -498,6 +567,7 @@ export function parseDtsFile(
     i++;
     while (i < lines.length && depth > 0) {
       let line = lines[i]!;
+      const depthAtLineStart = depth;
 
       if (inBlockComment) {
         const end = line.indexOf('*/');
@@ -553,9 +623,17 @@ export function parseDtsFile(
               overloads: 1,
             });
           }
-          if (isNestingKind(kind, interfaces)) {
-            // multi-line headers stay pending until `{` increases depth
-            if (!trimmed.endsWith(';')) {
+          const mayNest = isNestingKind(kind, { interfaces, typeAliases });
+          if (mayNest) {
+            if (kind === 'type') {
+              if (typeAliasOpensObjectBody(trimmed, lines, i)) {
+                pending = {
+                  path: [...top.path, name],
+                  kind: 'type',
+                  openDepth: -1,
+                };
+              }
+            } else if (!trimmed.endsWith(';')) {
               pending = {
                 path: [...top.path, name],
                 kind: kind as 'namespace' | 'class' | 'interface',
@@ -565,54 +643,32 @@ export function parseDtsFile(
           }
         } else if (
           !shallow &&
-          (top.kind === 'class' || top.kind === 'namespace' || top.kind === 'interface')
+          isHarvestScope(top.kind) &&
+          // only immediate body — not fields inside nested anonymous `{ … }`
+          depthAtLineStart === top.openDepth
         ) {
-          const staticM = trimmed.match(STATIC_METHOD_RE);
-          const instM =
-            !staticM && (top.kind === 'class' || top.kind === 'interface')
-              ? trimmed.match(INSTANCE_METHOD_RE)
-              : top.kind === 'namespace'
-                ? null
+          // skip index / mapped signatures
+          if (!trimmed.startsWith('[') && !trimmed.startsWith('<')) {
+            const staticM = trimmed.match(STATIC_METHOD_RE);
+            const instM =
+              !staticM &&
+              (top.kind === 'class' || top.kind === 'interface' || top.kind === 'type')
+                ? trimmed.match(INSTANCE_METHOD_RE)
                 : null;
-          // namespace function decls already handled by DECL_RE
-          if (staticM || instM) {
-            const name = (staticM ?? instM)![1]!;
-            if (!SKIP_METHOD_NAMES.has(name) && !name.startsWith('_')) {
-              const jsdoc = precedingJsdoc(lines, i);
-              const setting = settingFor(moduleId, top.path, name);
-              const rest = trimmed.slice(trimmed.indexOf(name) + name.length);
-              push({
-                kind: 'method',
-                name,
-                parent: parentSetting(moduleId, top.path),
-                setting,
-                module: moduleId,
-                depth: stack.length - 1,
-                form: formFor('method', setting, rest, lines, i),
-                default: extractDefault(jsdoc),
-                notes: extractNotes(jsdoc),
-                source: sourceRel,
-                line: i + 1,
-                deprecated: /@deprecated/i.test(jsdoc),
-                overloads: 1,
-              });
-            }
-          } else if (properties && (top.kind === 'class' || top.kind === 'interface')) {
-            const propM = trimmed.match(PROPERTY_RE);
-            if (propM) {
-              const name = propM[1]!;
+            if (staticM || instM) {
+              const name = (staticM ?? instM)![1]!;
               if (!SKIP_METHOD_NAMES.has(name) && !name.startsWith('_')) {
                 const jsdoc = precedingJsdoc(lines, i);
                 const setting = settingFor(moduleId, top.path, name);
                 const rest = trimmed.slice(trimmed.indexOf(name) + name.length);
                 push({
-                  kind: 'property',
+                  kind: 'method',
                   name,
                   parent: parentSetting(moduleId, top.path),
                   setting,
                   module: moduleId,
                   depth: stack.length - 1,
-                  form: formFor('property', setting, rest, lines, i),
+                  form: formFor('method', setting, rest, lines, i),
                   default: extractDefault(jsdoc),
                   notes: extractNotes(jsdoc),
                   source: sourceRel,
@@ -620,6 +676,34 @@ export function parseDtsFile(
                   deprecated: /@deprecated/i.test(jsdoc),
                   overloads: 1,
                 });
+              }
+            } else if (
+              properties &&
+              (top.kind === 'class' || top.kind === 'interface' || top.kind === 'type')
+            ) {
+              const propM = trimmed.match(PROPERTY_RE);
+              if (propM) {
+                const name = propM[1]!;
+                if (!SKIP_METHOD_NAMES.has(name) && !name.startsWith('_')) {
+                  const jsdoc = precedingJsdoc(lines, i);
+                  const setting = settingFor(moduleId, top.path, name);
+                  const rest = trimmed.slice(trimmed.indexOf(name) + name.length);
+                  push({
+                    kind: 'property',
+                    name,
+                    parent: parentSetting(moduleId, top.path),
+                    setting,
+                    module: moduleId,
+                    depth: stack.length - 1,
+                    form: formFor('property', setting, rest, lines, i),
+                    default: extractDefault(jsdoc),
+                    notes: extractNotes(jsdoc),
+                    source: sourceRel,
+                    line: i + 1,
+                    deprecated: /@deprecated/i.test(jsdoc),
+                    overloads: 1,
+                  });
+                }
               }
             }
           }
@@ -636,6 +720,7 @@ export function parseDtsFile(
           stack.push(pending);
           pending = null;
         } else if (trimmed.endsWith(';') || trimmed.includes('}')) {
+          // type Foo = string;  or failed open
           pending = null;
         }
       }
@@ -655,7 +740,13 @@ export function parseDtsFile(
 export function parseBunModuleDts(
   text: string,
   sourceRel: string,
-  opts: { deprecated?: boolean; shallow?: boolean; interfaces?: boolean; properties?: boolean } = {},
+  opts: {
+    deprecated?: boolean;
+    shallow?: boolean;
+    interfaces?: boolean;
+    properties?: boolean;
+    typeAliases?: boolean;
+  } = {},
 ): RawMember[] {
   const wrapped = text.includes('declare module')
     ? text
@@ -665,6 +756,7 @@ export function parseBunModuleDts(
     shallow: opts.shallow,
     interfaces: opts.interfaces,
     properties: opts.properties,
+    typeAliases: opts.typeAliases,
   });
 }
 
@@ -850,6 +942,7 @@ export async function buildInventory(opts: {
   shallow?: boolean;
   interfaces?: boolean;
   properties?: boolean;
+  typeAliases?: boolean;
   tipDiff?: boolean;
   moduleFilter?: string | null;
   kindFilter?: MemberKind[] | null;
@@ -858,7 +951,8 @@ export async function buildInventory(opts: {
   const shallow = opts.shallow === true;
   const interfaces = opts.interfaces !== false && !shallow;
   const properties = opts.properties !== false && !shallow;
-  const parseOpts: ParseDtsOpts = { shallow, interfaces, properties };
+  const typeAliases = opts.typeAliases !== false && !shallow;
+  const parseOpts: ParseDtsOpts = { shallow, interfaces, properties, typeAliases };
   const types = await resolveBunTypesRoot(repoRoot);
 
   const files: string[] = [];
@@ -972,6 +1066,7 @@ export async function buildInventory(opts: {
       shallow,
       interfaces,
       properties,
+      typeAliases,
       counted,
       moduleFilter: opts.moduleFilter ?? null,
       kindFilter: opts.kindFilter ?? null,
@@ -1010,7 +1105,7 @@ export function renderMarkdown(inv: InventoryResult): string {
   lines.push('# bun-types inventory (deep v3)');
   lines.push('');
   lines.push(
-    'Generated from pinned **bun-types** — top-level + nested namespace/class/**interface** methods & properties + satellite modules. Not the docs-only utils page.',
+    'Generated from pinned **bun-types** — top-level + nested namespace/class/**interface**/**type X = {…}** methods & properties + satellite modules. Not the docs-only utils page.',
   );
   lines.push('');
   lines.push('| Field | Value |');
@@ -1022,7 +1117,7 @@ export function renderMarkdown(inv: InventoryResult): string {
   lines.push(`| Types root | \`${inv.types.root}\` |`);
   lines.push(`| Source files | ${inv.types.files.map(f => `\`${f}\``).join(', ')} |`);
   lines.push(
-    `| Mode | ${inv.mode.shallow ? 'shallow' : 'deep'}${inv.mode.interfaces ? ' · interfaces' : ''}${inv.mode.properties ? ' · props' : ''}${inv.mode.moduleFilter ? ` · module=${inv.mode.moduleFilter}` : ''} |`,
+    `| Mode | ${inv.mode.shallow ? 'shallow' : 'deep'}${inv.mode.interfaces ? ' · interfaces' : ''}${inv.mode.typeAliases ? ' · typeAliases' : ''}${inv.mode.properties ? ' · props' : ''}${inv.mode.moduleFilter ? ` · module=${inv.mode.moduleFilter}` : ''} |`,
   );
   lines.push(
     `| Scan roots | ${inv.scan.roots.map(r => `\`${r}/\``).join(', ')}${inv.scan.counted ? '' : ' *(counts skipped)*'} |`,
@@ -1054,7 +1149,7 @@ export function renderMarkdown(inv: InventoryResult): string {
   }
   lines.push('');
   lines.push(
-    'Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inventory:check` · flags: `--shallow` · `--no-interfaces` · `--no-props` · `--tip-diff`',
+    'Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inventory:check` · flags: `--shallow` · `--no-interfaces` · `--no-type-aliases` · `--no-props` · `--tip-diff`',
   );
   lines.push('');
 
@@ -1180,6 +1275,7 @@ function parseCli(argv: string[]) {
     shallow: argv.includes('--shallow'),
     noInterfaces: argv.includes('--no-interfaces'),
     noProps: argv.includes('--no-props'),
+    noTypeAliases: argv.includes('--no-type-aliases'),
     tipDiff: argv.includes('--tip-diff'),
     moduleFilter,
     kindFilter,
@@ -1199,8 +1295,9 @@ Usage:
   --no-counts       Skip repo call-site walk
   --full-scan       Also scan packages/ and projects/
   --shallow         Top-level only
-  --no-interfaces   Do not open interface bodies (class/namespace only)
-  --no-props        Skip name: Type properties inside class/interface
+  --no-interfaces   Do not open interface bodies
+  --no-type-aliases Do not open type X = { … } object aliases
+  --no-props        Skip name: Type properties inside class/interface/type
   --tip-diff        Compare pin vs ~/bun/packages/bun-types (or BUN_TYPES_TIP)
   --module=ID       Filter e.g. bun · bun:jsc · bun:test
   --kind=a,b        function,method,class,namespace,const,var,interface,type,property
@@ -1221,6 +1318,7 @@ async function main(): Promise<void> {
     shallow: args.shallow,
     interfaces: !args.noInterfaces,
     properties: !args.noProps,
+    typeAliases: !args.noTypeAliases,
     tipDiff: args.tipDiff,
     moduleFilter: args.moduleFilter,
     kindFilter: args.kindFilter,
@@ -1234,7 +1332,7 @@ async function main(): Promise<void> {
     );
     console.log(`root: ${inv.types.root}`);
     console.log(
-      `mode: ${inv.mode.shallow ? 'shallow' : 'deep'}${inv.mode.interfaces ? '+iface' : ''}${inv.mode.properties ? '+props' : ''}`,
+      `mode: ${inv.mode.shallow ? 'shallow' : 'deep'}${inv.mode.interfaces ? '+iface' : ''}${inv.mode.typeAliases ? '+type' : ''}${inv.mode.properties ? '+props' : ''}`,
     );
     console.log(
       `modules: ${Object.entries(inv.summary.byModule)

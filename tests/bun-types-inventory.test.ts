@@ -6,6 +6,8 @@ import {
   parseDtsFile,
   renderMarkdown,
   stableInventoryPayload,
+  stripAngleGenerics,
+  typeAliasOpensObjectBody,
   type InventoryResult,
 } from '../tools/bun-types-inventory.ts';
 
@@ -50,6 +52,21 @@ declare module "bun" {
       function deep(): void;
     }
   }
+
+  type BunLockFile = {
+    lockfileVersion: 0 | 1;
+    workspaces: {
+      [workspace: string]: string;
+    };
+    overrides?: Record<string, string>;
+  };
+
+  type Component<P = {}> = string | ((props: P) => any);
+
+  type WebSocketOptionsTLS = {
+    tls: boolean;
+    serverName?: string;
+  };
 }
 `;
     const members = parseDtsFile(dts, 'bun.d.ts');
@@ -83,6 +100,52 @@ declare module "bun" {
     expect(settings).toContain('Bun.outer.inner.deep');
     const deep = members.find(m => m.setting === 'Bun.outer.inner.deep')!;
     expect(deep.depth).toBe(2);
+
+    // type X = { … } fields
+    expect(settings).toContain('Bun.BunLockFile');
+    expect(settings).toContain('Bun.BunLockFile.lockfileVersion');
+    expect(settings).toContain('Bun.BunLockFile.workspaces');
+    expect(settings).toContain('Bun.BunLockFile.overrides');
+    // nested anonymous object fields must NOT become BunLockFile children
+    expect(settings.some(s => s === 'Bun.BunLockFile.workspace')).toBe(false);
+
+    // generic default P = {} must not open as object body
+    expect(settings).toContain('Bun.Component');
+    expect(settings.filter(s => s.startsWith('Bun.Component.'))).toHaveLength(0);
+
+    expect(settings).toContain('Bun.WebSocketOptionsTLS.tls');
+    expect(settings).toContain('Bun.WebSocketOptionsTLS.serverName');
+  });
+
+  test('typeAliasOpensObjectBody + stripAngleGenerics', () => {
+    expect(stripAngleGenerics('type Component<P = {}> = string')).toBe('type Component = string');
+    expect(
+      typeAliasOpensObjectBody('type Component<P = {}> = string | ((props: P) => any);', [], 0),
+    ).toBe(false);
+    expect(
+      typeAliasOpensObjectBody('type BunLockFile = {', ['type BunLockFile = {', '  a: number;', '};'], 0),
+    ).toBe(true);
+    const multi = ['type Foo =', '  {', '    bar: string;', '  };'];
+    expect(typeAliasOpensObjectBody(multi[0]!, multi, 0)).toBe(true);
+  });
+
+  test('--no-type-aliases skips type object bodies', () => {
+    const dts = `
+declare module "bun" {
+  type Opts = {
+    port: number;
+  };
+  interface Server {
+    stop(): void;
+  }
+}
+`;
+    const withT = parseDtsFile(dts, 'bun.d.ts', { typeAliases: true });
+    const noT = parseDtsFile(dts, 'bun.d.ts', { typeAliases: false });
+    expect(withT.some(m => m.setting === 'Bun.Opts.port')).toBe(true);
+    expect(noT.some(m => m.setting === 'Bun.Opts.port')).toBe(false);
+    expect(noT.some(m => m.setting === 'Bun.Opts')).toBe(true);
+    expect(noT.some(m => m.setting === 'Bun.Server.stop')).toBe(true);
   });
 
   test('--no-interfaces skips interface body harvest', () => {
@@ -179,10 +242,12 @@ describe('render + stable payload v3', () => {
         shallow: false,
         interfaces: true,
         properties: true,
+        typeAliases: true,
         counted: true,
         moduleFilter: null,
         kindFilter: null,
       },
+
       scan: { roots: ['lib'], counted: true },
       summary: {
         total: 2,
