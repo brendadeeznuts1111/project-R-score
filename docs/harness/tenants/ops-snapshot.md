@@ -58,13 +58,24 @@ TOC demo seed) runs unless `--no-seed`. **Outside** that block, snapshot **alway
 refreshes `catalog-snapshot.json` and re-exports `toc-ops.json` (+ soft/identity
 bridge).
 
-| Flag | When seed runs | `force` | `ifEmpty` | Notes |
-|------|----------------|---------|-----------|-------|
-| *(default)* | When the domain is empty (`is*Empty` / missing `toc-ops.json`) | `false` | `true` | No-op if data already present |
-| `--seed` | Always enter each seed call | `false` | `false` | Bypasses the empty gate (`ifEmpty: false`) so seeders run even when data exists (inserts more demo rows; not a wipe) |
-| `--seed-force` | Always | `true` | `false` | Overwrite / re-seed; also force-seeds TOC identity bridge + Soft Balance on the always-on TOC export |
-| `--seed-tenants` | (with seed block) | tenants only: `true` | — | `seedTenantRegistries({ force: true })`; other domains keep default/seed/`--seed-force` rules |
-| `--no-seed` | Never | — | — | Skips the whole demo-seed block (catalog + TOC export still run) |
+<!-- REF:ID 1.1.default -->
+<a id="1.1.default"></a>
+<!-- REF:ID 1.1.seed -->
+<a id="1.1.seed"></a>
+<!-- REF:ID 1.1.seed-force -->
+<a id="1.1.seed-force"></a>
+<!-- REF:ID 1.1.seed-tenants -->
+<a id="1.1.seed-tenants"></a>
+<!-- REF:ID 1.1.no-seed -->
+<a id="1.1.no-seed"></a>
+
+| Script | REF:ID | href | --flag | When seed runs | `force` | `ifEmpty` | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `ops:snapshot` | `1.1.default` | [`#1.1.default`](#1.1.default) | `(default)` | When the domain is empty (`is*Empty` / missing `toc-ops.json`) | `false` | `true` | No-op if data already present |
+| `ops:snapshot` | `1.1.seed` | [`#1.1.seed`](#1.1.seed) | `--seed` | Always enter each seed call | `false` | `false` | Bypasses the empty gate (`ifEmpty: false`) so seeders run even when data exists (inserts more demo rows; not a wipe) |
+| `ops:snapshot` | `1.1.seed-force` | [`#1.1.seed-force`](#1.1.seed-force) | `--seed-force` | Always | `true` | `false` | Overwrite / re-seed; also force-seeds TOC identity bridge + Soft Balance on the always-on TOC export |
+| `ops:snapshot` | `1.1.seed-tenants` | [`#1.1.seed-tenants`](#1.1.seed-tenants) | `--seed-tenants` | (with seed block) | tenants only: `true` | — | `seedTenantRegistries({ force: true })`; other domains keep default/seed/`--seed-force` rules |
+| `ops:snapshot` | `1.1.no-seed` | [`#1.1.no-seed`](#1.1.no-seed) | `--no-seed` | Never | — | — | Skips the whole demo-seed block (catalog + TOC export still run) |
 
 Combinations (as coded):
 

@@ -199,12 +199,21 @@ bun run telegram:ops -- link-package-group ASH -1003937534779 --no-dm
 bun run telegram:ops -- link-package-group ASH -1003937534779 --requested-by ASH-001
 ```
 
-| Flag | Effect |
-|------|--------|
-| `--invite <url>` | Store invite; include in DM |
-| `--no-dm` | Skip package-room DM |
-| `--no-ack` | Skip `ack_package_group_linked` JSONL append |
-| `--requested-by <call-sign>` | Audit trail + prefer that seat's telegram_id for DM |
+<!-- REF:ID 1.1.invite -->
+<a id="1.1.invite"></a>
+<!-- REF:ID 1.1.no-dm -->
+<a id="1.1.no-dm"></a>
+<!-- REF:ID 1.1.no-ack -->
+<a id="1.1.no-ack"></a>
+<!-- REF:ID 1.1.requested-by -->
+<a id="1.1.requested-by"></a>
+
+| Script | REF:ID | href | --flag | Effect |
+| --- | --- | --- | --- | --- |
+| `telegram:ops` | `1.1.invite` | [`#1.1.invite`](#1.1.invite) | `--invite <url>` | Store invite; include in DM |
+| `telegram:ops` | `1.1.no-dm` | [`#1.1.no-dm`](#1.1.no-dm) | `--no-dm` | Skip package-room DM |
+| `telegram:ops` | `1.1.no-ack` | [`#1.1.no-ack`](#1.1.no-ack) | `--no-ack` | Skip `ack_package_group_linked` JSONL append |
+| `telegram:ops` | `1.1.requested-by` | [`#1.1.requested-by`](#1.1.requested-by) | `--requested-by <call-sign>` | Audit trail + prefer that seat's telegram_id for DM |
 
 ### `designate-dm-seat` (post-link seat ack)
 

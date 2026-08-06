@@ -46,11 +46,18 @@ With `--stdin`: empty or out-of-scope paths → skip (exit 0). Without `--stdin`
 
 Put Bun flags **immediately after** `bun` (before `run`); trailing flags go to the script ([runtime note](https://bun.com/docs/runtime)):
 
-| Flag | Use |
-|------|-----|
-| [`bun --smol run test:code-quality`](https://bun.com/docs/runtime) | Memory-tight CI / containers; GC runs more often so the heap grows slower. Alias: `bun run test:code-quality:smol`. |
-| [`bun --console-depth 4 run check:harness-complexity -- --report`](https://bun.com/docs/runtime/console#object-inspection-depth) | Deeper `console.log` object inspection for debug dumps of hits / AST-shaped objects (default depth `2`). |
-| [`--cwd` / `--env-file` / `--config`](https://bun.com/docs/runtime) | Global context if you ever invoke the probe outside the repo root; freshRerun assumes workspace cwd + default `bunfig.toml`. |
+<!-- REF:ID 1.1.smol -->
+<a id="1.1.smol"></a>
+<!-- REF:ID 1.1.console-depth -->
+<a id="1.1.console-depth"></a>
+<!-- REF:ID 1.1.cwd -->
+<a id="1.1.cwd"></a>
+
+| Script | REF:ID | href | --flag | Use |
+| --- | --- | --- | --- | --- |
+| `check:harness-complexity` | `1.1.smol` | [`#1.1.smol`](#1.1.smol) | `bun --smol run test:code-quality` | Memory-tight CI / containers; GC runs more often so the heap grows slower. Alias: `bun run test:code-quality:smol`. |
+| `check:harness-complexity` | `1.1.console-depth` | [`#1.1.console-depth`](#1.1.console-depth) | `bun --console-depth 4 run check:harness-complexity -- --report` | Deeper `console.log` object inspection for debug dumps of hits / AST-shaped objects (default depth `2`). |
+| `check:harness-complexity` | `1.1.cwd` | [`#1.1.cwd`](#1.1.cwd) | `--cwd` | Global context if you ever invoke the probe outside the repo root; freshRerun assumes workspace cwd + default `bunfig.toml`. |
 
 Neither flag changes the floor or proof; they are environment tunings only.
 

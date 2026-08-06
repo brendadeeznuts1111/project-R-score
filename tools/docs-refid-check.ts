@@ -45,6 +45,12 @@ export type RefIdRegistryEntry = {
 
 /** Documents that participate in REF:ID v2 checks. */
 export function refIdRegistry(): RefIdRegistryEntry[] {
+  /** Docs with operator Flags tables converted to REF:ID (no tool flagDocRef yet). */
+  const docOnly = (doc: string): RefIdRegistryEntry => ({
+    doc,
+    requireToolCoverage: false,
+    toolFlags: () => [],
+  });
   return [
     {
       doc: BUN_TYPES_INVENTORY_DOC,
@@ -60,6 +66,13 @@ export function refIdRegistry(): RefIdRegistryEntry[] {
         }));
       },
     },
+    docOnly('docs/design/partner-surface-inventory.md'),
+    docOnly('docs/design/unified-partner-profile.md'),
+    docOnly('docs/IMAGES.md'),
+    docOnly('docs/harness/tenants/complexity-floor.md'),
+    docOnly('docs/harness/tenants/monorepo-workspaces.md'),
+    docOnly('docs/harness/tenants/ops-snapshot.md'),
+    docOnly('docs/harness/tenants/partner-package-group-handshake.md'),
   ];
 }
 
@@ -138,15 +151,17 @@ export async function writeAutoHrefs(opts: {
   return out;
 }
 
-export function printRefIdIssues(issues: RefIdIssue[]): void {
+export function printRefIdIssues(issues: RefIdIssue[], opts: { dryRun?: boolean } = {}): void {
+  const dry = opts.dryRun === true;
+  const prefix = dry ? '[dry-run] ' : '';
   if (issues.length === 0) {
-    console.info('✅ docs:refid:check — REF:ID v2 ok (anchors · href · uniqueness)');
+    console.info(`✅ ${prefix}docs:refid:check — REF:ID v2 ok (anchors · href · uniqueness)`);
     return;
   }
   const errors = issues.filter(i => i.severity === 'error');
   const warns = issues.filter(i => i.severity === 'warn');
   console.info(
-    `\n${errors.length ? '❌' : '⚠️'} docs:refid:check — ${errors.length} error(s) · ${warns.length} warn(s)\n`
+    `\n${errors.length && !dry ? '❌' : '⚠️'} ${prefix}docs:refid:check — ${errors.length} error(s) · ${warns.length} warn(s)${dry ? ' (exit 0)' : ''}\n`
   );
   for (const i of issues) {
     const loc = i.line != null ? `${i.file}:${i.line}` : i.file;
@@ -171,6 +186,7 @@ Prefer the multi-command CLI for DX:
 
 OPTIONS
   --strict-format · --refid-strict   Format warns become errors
+  --dry-run                          Report issues + always exit 0
   --skip-refid-check                 Exit 0 without validating
   --write-hrefs                      Fill empty/—/auto href cells from REF:ID
   --doc=<path>                       Check one markdown file (registry opts if registered)
@@ -208,14 +224,15 @@ SEE ALSO
     }
   }
   const issues = await runRefIdChecks({ skip, strictFormat, doc, sectionRefId, sectionHeading });
+  const dryRun = argv.includes('--dry-run');
   if (asJson) {
     process.stdout.write(
-      `${JSON.stringify({ schema: 'factorywager/ref-id/v2', count: issues.length, issues }, null, 2)}\n`
+      `${JSON.stringify({ schema: 'factorywager/ref-id/v2', count: issues.length, issues, dryRun }, null, 2)}\n`
     );
   } else {
-    printRefIdIssues(issues);
+    printRefIdIssues(issues, { dryRun });
   }
-  if (issues.some(i => i.severity === 'error')) process.exitCode = 1;
+  if (!dryRun && issues.some(i => i.severity === 'error')) process.exitCode = 1;
 }
 
 if (isModuleEntrypoint(import.meta)) {

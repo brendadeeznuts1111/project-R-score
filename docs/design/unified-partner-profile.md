@@ -123,13 +123,24 @@ bun run partner:onboard --code JOHNNY --url https://rc.youwager.lv \
 
 Where each field lands (schema-correct homes, not the CLI names):
 
-| Flag            | Profile field                                    |
-| --------------- | ------------------------------------------------ |
-| `--deal`        | `settlement.commissionPct`                       |
-| `--currency`    | `settlement.currency` (uppercased)               |
-| `--hold-target` | `settlement.holdTargetPct`                       |
-| `--initial-balance` | `balance.initialCapitalRequirement`          |
-| `--funding-method`  | `books.<bookKey>.funding.method`             |
+<!-- REF:ID 1.1.deal -->
+<a id="1.1.deal"></a>
+<!-- REF:ID 1.1.currency -->
+<a id="1.1.currency"></a>
+<!-- REF:ID 1.1.hold-target -->
+<a id="1.1.hold-target"></a>
+<!-- REF:ID 1.1.initial-balance -->
+<a id="1.1.initial-balance"></a>
+<!-- REF:ID 1.1.funding-method -->
+<a id="1.1.funding-method"></a>
+
+| Script | REF:ID | href | --flag | Profile field |
+| --- | --- | --- | --- | --- |
+| `partner:onboard` | `1.1.deal` | [`#1.1.deal`](#1.1.deal) | `--deal` | `settlement.commissionPct` |
+| `partner:onboard` | `1.1.currency` | [`#1.1.currency`](#1.1.currency) | `--currency` | `settlement.currency` (uppercased) |
+| `partner:onboard` | `1.1.hold-target` | [`#1.1.hold-target`](#1.1.hold-target) | `--hold-target` | `settlement.holdTargetPct` |
+| `partner:onboard` | `1.1.initial-balance` | [`#1.1.initial-balance`](#1.1.initial-balance) | `--initial-balance` | `balance.initialCapitalRequirement` |
+| `partner:onboard` | `1.1.funding-method` | [`#1.1.funding-method`](#1.1.funding-method) | `--funding-method` | `books.<bookKey>.funding.method` |
 
 On successful registration, the accounting stub (`lib/partner-profile/
 accounting-stub.ts`) initializes the partner ledger (`partner_ledger` table in

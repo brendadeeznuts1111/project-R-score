@@ -90,13 +90,24 @@ status**, **Brand health**, **Partner codes**, and **OutIds**.
 
 ### `lint-wires` flags
 
-| Flag                                    | Meaning                                                                  |
-| --------------------------------------- | ------------------------------------------------------------------------ |
-| _(no args)_ · `-h` · `--help` · `--hlp` | Usage (teaching default; no scan)                                        |
-| `--scan`                                | Run the wire-trap scan (`package.json` passes this)                      |
-| `--why`                                 | Claim / allowlist rationale                                              |
-| `--document`                            | Path + wire-bag excerpt from this design doc                             |
-| `--strict-globs`                        | Fail when an allowlist glob matches 0 files (`WIRE_TRAP_STRICT_GLOBS=1`) |
+<!-- REF:ID 4.1.help -->
+<a id="4.1.help"></a>
+<!-- REF:ID 4.1.scan -->
+<a id="4.1.scan"></a>
+<!-- REF:ID 4.1.why -->
+<a id="4.1.why"></a>
+<!-- REF:ID 4.1.document -->
+<a id="4.1.document"></a>
+<!-- REF:ID 4.1.strict-globs -->
+<a id="4.1.strict-globs"></a>
+
+| Script | REF:ID | href | --flag | Meaning |
+| --- | --- | --- | --- | --- |
+| `lint-wires` | `4.1.help` | [`#4.1.help`](#4.1.help) | `-h` | Usage (teaching default; no scan) |
+| `lint-wires` | `4.1.scan` | [`#4.1.scan`](#4.1.scan) | `--scan` | Run the wire-trap scan (`package.json` passes this) |
+| `lint-wires` | `4.1.why` | [`#4.1.why`](#4.1.why) | `--why` | Claim / allowlist rationale |
+| `lint-wires` | `4.1.document` | [`#4.1.document`](#4.1.document) | `--document` | Path + wire-bag excerpt from this design doc |
+| `lint-wires` | `4.1.strict-globs` | [`#4.1.strict-globs`](#4.1.strict-globs) | `--strict-globs` | Fail when an allowlist glob matches 0 files (`WIRE_TRAP_STRICT_GLOBS=1`) |
 
 ## Row + bag schema
 
