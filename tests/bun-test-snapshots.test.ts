@@ -25,6 +25,7 @@ describe('test-snapshots SSOT', () => {
     const snaps = TEST_SNAPSHOT_SUITES.map(s => s.snapRel);
     expect(new Set(snaps).size).toBe(snaps.length);
     expect(TEST_SNAPSHOT_SUITES.some(s => s.id === 'capability-map')).toBe(true);
+    expect(TEST_SNAPSHOT_SUITES.some(s => s.id === 'partner-cli')).toBe(true);
     expect(TEST_SNAPSHOT_SUITES.some(s => s.id === 'vault-health')).toBe(true);
   });
 
@@ -43,15 +44,17 @@ exports[\`other 1\`] = \`"x"\`;
   });
 
   test('bunTestArgsForSuites is always file-scoped', () => {
-    const args = bunTestArgsForSuites(
-      TEST_SNAPSHOT_SUITES.filter(s => s.id === 'capability-map'),
-      true
-    );
+    const suites = TEST_SNAPSHOT_SUITES.filter(s => s.id === 'capability-map');
+    const args = bunTestArgsForSuites(suites, true);
     expect(args[0]).toBe('test');
     expect(args).toContain('tests/capability-map-subset.test.ts');
-    expect(args).toContain('--update-snapshots');
+    expect(args).toContain('-u');
     // never bare repo-wide update without file paths
-    expect(args.indexOf('test') + 1).not.toBe(args.indexOf('--update-snapshots'));
+    expect(args.indexOf('test') + 1).not.toBe(args.indexOf('-u'));
+
+    const runArgs = bunTestArgsForSuites(suites, false);
+    expect(runArgs).toEqual(['test', 'tests/capability-map-subset.test.ts']);
+    expect(runArgs).not.toContain('-u');
   });
 
   test('countMatchSnapshotCalls counts matchers', () => {

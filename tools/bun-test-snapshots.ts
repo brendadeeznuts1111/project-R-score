@@ -11,12 +11,13 @@
  *
  *   bun tools/bun-test-snapshots.ts --list
  *   bun tools/bun-test-snapshots.ts --check
+ *   bun tools/bun-test-snapshots.ts --test                # check + run catalog suites
  *   bun tools/bun-test-snapshots.ts --update              # all catalog suites, file-scoped
  *   bun tools/bun-test-snapshots.ts --update --id capability-map
  *   bun tools/bun-test-snapshots.ts --prune-orphans       # delete uncatalogued .snap files
  *   bun tools/bun-test-snapshots.ts --prune-orphans --dry-run
  *
- * Never runs bare `bun test --update-snapshots` repo-wide (that thrash-updates every suite).
+ * Never runs bare `bun test -u` repo-wide (that thrash-updates every suite).
  * Data-plane local store (gitignored artifacts/snapshots/) is separate — use:
  *   portal-cli snapshot prune --keep=5
  */
@@ -40,14 +41,16 @@ function usage(): void {
 
   --list                 Catalog of bun:test snapshot suites (SSOT)
   --check                Orphan / missing / header / entry-count gate
-  --update               File-scoped bun test … --update-snapshots
-  --id <suite>           Limit --update (capability-map · vault-health · …)
+  --test                 Check, then run every catalogued snapshot suite
+  --update               File-scoped bun test … -u
+  --id <suite>           Limit --test / --update (capability-map · vault-health · …)
   --prune-orphans        Delete uncatalogued tests/__snapshots__/*.snap
   --dry-run              With --prune-orphans: print only
   --json                 Machine JSON for --check / --list
 
 Examples:
   bun run check:snapshots
+  bun run test:snapshots
   bun run test:snapshots:update -- --id capability-map
   bun run portal-cli capabilities health --update
 `);
@@ -62,12 +65,25 @@ async function main(): Promise<void> {
 
   const list = argv.includes('--list');
   const check = argv.includes('--check');
+  const runTests = argv.includes('--test');
   const update = argv.includes('--update');
   const pruneOrphans = argv.includes('--prune-orphans');
   const dryRun = argv.includes('--dry-run');
   const asJson = argv.includes('--json');
   const idIdx = argv.indexOf('--id');
   const idArg = idIdx >= 0 ? argv[idIdx + 1] : undefined;
+
+  const selectedSuites = (): readonly TestSnapshotSuite[] => {
+    if (!idArg) return TEST_SNAPSHOT_SUITES;
+    const one = resolveSuite(idArg);
+    if (!one) {
+      console.error(
+        `unknown suite id "${idArg}" — known: ${TEST_SNAPSHOT_SUITES.map(s => s.id).join(', ')}`
+      );
+      process.exit(1);
+    }
+    return [one];
+  };
 
   if (list) {
     if (asJson) {
@@ -76,7 +92,7 @@ async function main(): Promise<void> {
       const idW = Math.max(...TEST_SNAPSHOT_SUITES.map(s => Bun.stringWidth(s.id)), 8);
       const body: string[] = [
         cliTone.dim('SSOT  lib/portal/bun-test-snapshots.ts'),
-        cliTone.dim('policy  file-scoped --update-snapshots only'),
+        cliTone.dim('policy  file-scoped -u only'),
         '',
       ];
       for (const s of TEST_SNAPSHOT_SUITES) {
@@ -141,18 +157,28 @@ async function main(): Promise<void> {
     process.exit(report.ok ? 0 : 1);
   }
 
-  if (update) {
-    let suites: readonly TestSnapshotSuite[] = TEST_SNAPSHOT_SUITES;
-    if (idArg) {
-      const one = resolveSuite(idArg);
-      if (!one) {
-        console.error(
-          `unknown suite id "${idArg}" — known: ${TEST_SNAPSHOT_SUITES.map(s => s.id).join(', ')}`
-        );
-        process.exit(1);
+  if (runTests) {
+    const report = await checkTestSnapshots(ROOT);
+    if (!report.ok) {
+      for (const finding of report.findings.filter(f => f.severity === 'error')) {
+        console.error(`${finding.code} · ${finding.path} · ${finding.detail}`);
       }
-      suites = [one];
+      process.exit(1);
     }
+    const args = bunTestArgsForSuites(selectedSuites(), false);
+    console.log(`  → bun ${args.join(' ')}`);
+    const proc = Bun.spawn(bunSpawnArgs(args), {
+      cwd: ROOT,
+      stdout: 'inherit',
+      stderr: 'inherit',
+      stdin: 'inherit',
+      env: { ...Bun.env },
+    });
+    process.exit((await proc.exited) ?? 1);
+  }
+
+  if (update) {
+    const suites = selectedSuites();
     const args = bunTestArgsForSuites(suites, true);
     console.log(`  → bun ${args.join(' ')}`);
     const proc = Bun.spawn(bunSpawnArgs(args), {

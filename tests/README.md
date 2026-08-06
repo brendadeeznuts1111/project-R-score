@@ -13,7 +13,7 @@ smallest relevant lane during development.
 | `tests/journey/`             | Multi-step operator and tenant journeys                                                           |
 | `tests/toc-ops/`             | TOC operations fixtures and focused suites                                                        |
 | `tests/fixtures/`            | Checked-in immutable inputs; never use tracked production artifacts as writable fixtures          |
-| `tests/__snapshots__/`       | Reviewed `bun:test` snapshots (SSOT catalog: `lib/portal/bun-test-snapshots.ts`)                        |
+| `tests/__snapshots__/`       | Reviewed `bun:test` snapshots (SSOT catalog: `lib/portal/bun-test-snapshots.ts`)                  |
 | `tests/preload.ts`           | Minimal process-wide environment normalization                                                    |
 | `tests/harness.ts`           | Explicitly imported databases, temporary workspaces, scoped environment, and local server helpers |
 | `tests/limit-quarantine.txt` | Limit-lane crash/hang quarantine metadata                                                         |
@@ -56,15 +56,18 @@ bun test tests/registry-contracts.test.ts
 
 ## Bun snapshot testing (reviewed SSOT)
 
-Committed file snapshots use Bun's `toMatchSnapshot()` → `tests/__snapshots__/*.snap`
-([docs](https://bun.com/docs/test/snapshots)). Catalog SSOT:
+Committed file snapshots use Bun's `toMatchSnapshot()` →
+`tests/__snapshots__/*.snap` ([docs](https://bun.com/docs/test/snapshots)).
+Catalog SSOT:
 [`lib/portal/bun-test-snapshots.ts`](../lib/portal/bun-test-snapshots.ts).
 
 ```bash
 bun run check:snapshots              # orphan / missing / bad Bun Snapshot v1 header
 bun run test:snapshots               # run all catalogued snapshot suites
-bun run test:snapshots:update        # file-scoped --update-snapshots (all suites)
+bun run test:snapshots:update        # file-scoped -u (all suites)
 bun run test:snapshots:update -- --id capability-map
+bun run test:partner-cli:snapshots        # typed Bun.spawn contract
+bun run test:partner-cli:snapshots:update # file-scoped bun test … -u
 bun run vault:health:update          # vault inventory snap only
 bun run bake:capabilities:update     # rebake AGENTS matrix + capability snap
 bun run portal-cli vault health --update
@@ -73,11 +76,15 @@ bun run portal-cli capabilities health --update
 
 **Rules (match Bun):**
 
-- Always pass the test **file** when updating: `bun test tests/foo.test.ts --update-snapshots`.
-  Never run bare `bun test --update-snapshots` (rewrites every suite).
-- Snap files must start with `// Bun Snapshot v1, https://bun.sh/docs/test/snapshots`.
-- After intentional output changes: update → review `git diff tests/__snapshots__/` → commit.
-- Orphan snap files (no catalog entry): `bun tools/bun-test-snapshots.ts --prune-orphans`.
+- Always pass the test **file** when updating: `bun test tests/foo.test.ts -u`
+  (`-u` is Bun's native alias for `--update-snapshots`). Never run bare
+  `bun test -u` (rewrites every suite).
+- Snap files must start with
+  `// Bun Snapshot v1, https://bun.sh/docs/test/snapshots`.
+- After intentional output changes: update → review
+  `git diff tests/__snapshots__/` → commit.
+- Orphan snap files (no catalog entry):
+  `bun tools/bun-test-snapshots.ts --prune-orphans`.
 
 **Not the same store:** gitignored `snapshots/` is portal **data-plane** capture
 (`portal-cli snapshot run`). Local retention only (not R2):
@@ -86,7 +93,6 @@ bun run portal-cli capabilities health --update
 bun run portal-cli snapshot prune --keep=5
 bun run portal-cli snapshot prune --keep=3 --scope prediction --dry-run
 ```
-
 
 The test speed and CI model are documented in
 [`docs/BUN_TEST_SPEED.md`](../docs/BUN_TEST_SPEED.md).
