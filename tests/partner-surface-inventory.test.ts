@@ -69,6 +69,8 @@ describe('partner surface inventory', () => {
     expect(inv.schemaVersion).toBe(2);
     const brands = inv.rows.filter(r => r.aspect === 'brand');
     expect(brands.every(r => r.brand)).toBe(true);
+    expect(brands.every(r => typeof r.brand?.isActive === 'boolean')).toBe(true);
+    expect(brands.every(r => Boolean(r.brand?.domain && r.brand?.category))).toBe(true);
     const regs = inv.rows.filter(r => r.aspect === 'registry');
     expect(regs.every(r => r.registry)).toBe(true);
     const wires = inv.rows.filter(r => r.aspect === 'wire-field');

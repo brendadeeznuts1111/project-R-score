@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 /**
  * partner-surface-wire-lint.ts — Layer C: inventory-aware naked partnerId traps.
  *
@@ -31,7 +32,7 @@ export type WireTrapIssue = {
 };
 
 export type WireAllowEntry = {
-  readonly rowId: string;
+  readonly rowId: string; // brand-ok — inventory row key, not a domain entity id
   readonly token: string;
   readonly globs: readonly string[];
   readonly strict: boolean;
@@ -424,7 +425,7 @@ export async function scanWireTraps(options: {
       const trapHint =
         trapTokens.length > 0
           ? `No wire-field allowlist matches this path (trap tokens: ${trapTokens.join(', ')}). Add a wire-field row with boundaryPathGlobs to register this adapter.`
-          : 'Naked partnerId/partner_id: string outside any wire-field allowlist. Add a wire-field row or suppress with // wire-ok: <reason>.';
+          : 'Naked partnerId / partner_id string annotation outside any wire-field allowlist. Add a wire-field row or suppress with // wire-ok: <reason>.';
 
       hits.push(hit);
       issues.push({

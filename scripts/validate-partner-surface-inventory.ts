@@ -12,6 +12,10 @@
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import {
+  checkBrandLinkingBag,
+  collectAllowedBrandLinkDomains,
+} from '../lib/docs/partner-surface-brand-check.ts';
+import {
   buildPartnerSurfaceInventory,
   type PartnerSurfaceRow,
 } from '../lib/docs/partner-surface-inventory.ts';
@@ -23,6 +27,7 @@ const MANIFEST_PATH = resolvePath(ROOT, 'lib/types/brand-manifest.json');
 
 type BrandManifestEntry = {
   name: string;
+  domain?: string;
   module?: string;
   validation?: { pattern?: string };
   constructors?: Record<string, string>;
@@ -33,13 +38,18 @@ type Issue = { level: 'error' | 'warn'; message: string };
 async function loadBrandNames(): Promise<{
   names: Set<string>;
   byName: Map<string, BrandManifestEntry>;
+  domains: Set<string>;
 }> {
   const manifest = (await Bun.file(MANIFEST_PATH).json()) as {
     brands?: BrandManifestEntry[];
   };
   const byName = new Map<string, BrandManifestEntry>();
-  for (const b of manifest.brands ?? []) byName.set(b.name, b);
-  return { names: new Set(byName.keys()), byName };
+  const domains = new Set<string>();
+  for (const b of manifest.brands ?? []) {
+    byName.set(b.name, b);
+    if (b.domain) domains.add(b.domain);
+  }
+  return { names: new Set(byName.keys()), byName, domains };
 }
 
 function aspectBagRules(row: PartnerSurfaceRow, issues: Issue[]): void {
@@ -77,8 +87,9 @@ function aspectBagRules(row: PartnerSurfaceRow, issues: Issue[]): void {
 
 async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
   const issues: Issue[] = [];
-  const { names: brandNames, byName } = await loadBrandNames();
+  const { names: brandNames, byName, domains: manifestDomains } = await loadBrandNames();
   const registryTokens = new Set(rows.filter(r => r.aspect === 'registry').map(r => r.token));
+  const allowedBrandDomains = collectAllowedBrandLinkDomains(rows, manifestDomains);
 
   for (const row of rows) {
     aspectBagRules(row, issues);
@@ -112,6 +123,13 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
             message: `${row.id}: brand.module missing ${row.brand.module}`,
           });
         }
+        issues.push(
+          ...checkBrandLinkingBag(row.id, row.brand, {
+            allowedDomains: allowedBrandDomains,
+            registryTokens,
+            manifestDomain: entry?.domain,
+          })
+        );
       }
     }
 

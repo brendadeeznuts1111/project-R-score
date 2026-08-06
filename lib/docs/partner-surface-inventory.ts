@@ -45,13 +45,30 @@ export type PartnerSurfaceMachine = (typeof PARTNER_SURFACE_MACHINES)[number];
 
 export type PartnerSurfaceRepo = 'project-R-score' | 'Kalshi-bot' | 'toc-ops' | 'sports-terminal';
 
-/** Layer-2 bag on brand rows — checkable against brand-manifest. */
+/**
+ * Layer-2 bag on brand rows — checkable against brand-manifest.
+ *
+ * Linking metadata (`domain` · `registryRef` · `isActive` · `category`) joins
+ * brands to brand-catalog domains, registry artifacts, and live-code readiness
+ * without changing mint/pattern Layer A checks.
+ */
 export type PartnerSurfaceBrandBag = {
   readonly pattern?: string;
   readonly mintAuthority: string;
   readonly module: string;
   readonly interiorOnly: boolean;
   readonly replaces?: readonly string[];
+  /**
+   * Brand-catalog domain (`operations`, …), inventory taxonomy
+   * conceptDomain/chromeDomain token, or sentinel `cross-domain`.
+   */
+  readonly domain: string;
+  /** Inventory `registry` row token that holds instances; omit when none. */
+  readonly registryRef?: string;
+  /** false = deprecated/legacy — still documented, not live-code SSOT. */
+  readonly isActive: boolean;
+  /** Doc grouping: identity · profile · template · external · node */
+  readonly category: string;
 };
 
 export type PartnerSurfaceMoneyPolicy = 'integerMinorUnits' | 'forbidden' | 'unset';
@@ -65,7 +82,7 @@ export type PartnerSurfaceMoneyPolicy = 'integerMinorUnits' | 'forbidden' | 'uns
  * only expose a numeric `schemaVersion`).
  */
 export type PartnerSurfaceRegistryBag = {
-  readonly schemaId: string;
+  readonly schemaId: string; // brand-ok — registry schema label, not a domain SchemaId
   /** Which artifact field must equal `schemaId`. Default: auto (schema|kind|schemaVersion). */
   readonly schemaIdField?: 'schema' | 'kind' | 'schemaVersion' | 'none';
   readonly artifactPath: string;
@@ -87,7 +104,7 @@ export type PartnerSurfaceRegistryBag = {
  */
 export type PartnerSurfaceWireFieldBag = {
   readonly wireName: string;
-  readonly sourceSystemId: string;
+  readonly sourceSystemId: string; // brand-ok — adapter source label (kalshi|sports|…), not SourceSystemId
   readonly resolvesTo: 'ExternalPartnerRef' | 'PartnerCode';
   readonly quarantineOnFail: boolean;
   /** Path prefixes/globs where naked wire id annotations are allowed. */
@@ -287,6 +304,10 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       module: 'lib/types/branded/operations.ts',
       interiorOnly: false,
       replaces: ['partnerId', 'partner_id'],
+      domain: 'operations',
+      registryRef: 'partners-ops',
+      isActive: true,
+      category: 'identity',
     },
   }),
   row({
@@ -304,6 +325,9 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       mintAuthority: 'parsePartnerCallSignCode',
       module: 'lib/types/branded/operations.ts',
       interiorOnly: false,
+      domain: 'operations',
+      isActive: true,
+      category: 'identity',
     },
   }),
   row({
@@ -321,6 +345,10 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       mintAuthority: 'asPartnerProfileKey',
       module: 'lib/types/branded/operations.ts',
       interiorOnly: true,
+      domain: 'operations',
+      registryRef: 'partner-profiles',
+      isActive: true,
+      category: 'profile',
     },
   }),
   row({
@@ -337,6 +365,10 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       mintAuthority: 'asPartnerTemplateId',
       module: 'lib/types/branded/operations.ts',
       interiorOnly: true,
+      domain: 'operations',
+      registryRef: 'partner-contracts',
+      isActive: true,
+      category: 'template',
     },
   }),
   row({
@@ -355,6 +387,10 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       module: 'lib/types/branded/operations.ts',
       interiorOnly: false,
       replaces: ['accountId', 'SPEN-1 legacy'],
+      domain: 'operations',
+      registryRef: 'partners-ops',
+      isActive: true,
+      category: 'identity',
     },
   }),
   row({
@@ -372,6 +408,9 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       module: 'lib/types/branded/operations.ts',
       interiorOnly: false,
       replaces: ['partnerId'],
+      domain: 'cross-domain',
+      isActive: true,
+      category: 'external',
     },
   }),
   row({
@@ -388,6 +427,10 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       mintAuthority: 'asTreeNodeId',
       module: 'lib/types/branded/operations.ts',
       interiorOnly: true,
+      domain: 'operations',
+      registryRef: 'workspace-lane-map',
+      isActive: true,
+      category: 'node',
     },
   }),
   row({
@@ -407,6 +450,10 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       module: 'packages/partners/src/core/identifiers.ts',
       interiorOnly: false,
       replaces: ['partnerId'],
+      domain: 'operations',
+      registryRef: 'partners-ops',
+      isActive: true,
+      category: 'identity',
     },
   }),
 
@@ -917,18 +964,18 @@ export type PartnerSurfaceInventory = {
   readonly bakedAt: string;
   readonly principle: 'map-before-rename';
   readonly chromeDomain: {
-    readonly id: string;
+    readonly id: string; // brand-ok — chrome Domain lane token (partner)
     readonly label: string;
     readonly description: string;
     readonly doc: string;
   };
   readonly conceptDomain: {
-    readonly id: string;
+    readonly id: string; // brand-ok — ConceptDomain token (partners)
     readonly label: string;
     readonly description: string;
   };
   readonly sessionLane: {
-    readonly id: string;
+    readonly id: string; // brand-ok — SessionLaneId token mirrored as string for bake JSON
     readonly display: string;
     readonly description: string;
   };
