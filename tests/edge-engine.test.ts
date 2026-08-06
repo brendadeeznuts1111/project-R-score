@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  attachMlPredictions,
   detectEdges,
   expectedValuePct,
   filterEdges,
@@ -10,6 +11,7 @@ import {
   partnerEligibleForEdge,
   twoWayArbProfit,
   type AgentEvent,
+  type EdgeOpportunity,
 } from '../lib/operator-research/edge-engine.ts';
 import type { MergedPartnerHealth } from '../lib/bookmakers/merged-registry.ts';
 import { asEventId, asSportsbookId } from '../lib/types/branded.ts';
@@ -80,6 +82,21 @@ describe('detectEdges', () => {
     expect(arb).toBeDefined();
     expect(arb!.edge_percent).toBeGreaterThan(0);
     expect(arb!.bookmakers).toHaveLength(2);
+    expect(arb!.ml?.model).toBe('SharpProxy');
+    expect(arb!.ml?.predicted_prob).toBeGreaterThan(0);
+  });
+
+  test('attachMlPredictions fills model fields', () => {
+    const bare = {
+      id: 'x-steam',
+      type: 'steam',
+      edge_percent: 8,
+      confidence: 0.7,
+      odds: { book1: '2.0', book2: '2.2' },
+    } as unknown as EdgeOpportunity;
+    const [out] = attachMlPredictions([bare]);
+    expect(out?.ml?.model).toBe('LSTM');
+    expect(out?.ml?.confidence).toBeGreaterThan(0);
   });
 
   test('does not publish edges from deferred partner quotes', () => {

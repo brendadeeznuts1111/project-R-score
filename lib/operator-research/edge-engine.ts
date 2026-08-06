@@ -64,6 +64,14 @@ export type AgentEvent = {
   limits: { min: number; max: number };
 };
 
+export type MlModelName = 'XGBoost' | 'LSTM' | 'Ensemble' | 'SharpProxy';
+
+export type EdgeMlAnnotation = {
+  predicted_prob: number;
+  confidence: number;
+  model: MlModelName;
+};
+
 export type EdgeOpportunity = {
   id: EdgeId;
   event_id: EventId;
@@ -85,6 +93,8 @@ export type EdgeOpportunity = {
   latency_adjusted: boolean;
   liquidity_tiers: string[];
   timestamp: number;
+  /** Synthetic model annotation — not a live trained model. */
+  ml?: EdgeMlAnnotation;
 };
 
 export type AlertRule = {
@@ -508,7 +518,44 @@ export function detectEdges(
   }
 
   edges.sort((a, b) => b.edge_percent - a.edge_percent);
-  return edges;
+  return attachMlPredictions(edges);
+}
+
+/**
+ * Annotate edges with mock ML fields (no external model runtime).
+ * predicted_prob derived from edge math / implied odds.
+ */
+export function attachMlPredictions(edges: EdgeOpportunity[]): EdgeOpportunity[] {
+  return edges.map(e => {
+    if (e.ml) return e;
+    const o1 = Number(e.odds.book1);
+    const implied = o1 > 1 ? 1 / o1 : 0.5;
+    // value: shift implied by edge; arb: near fair 0.5; steam: follow move
+    let predicted = implied;
+    let model: MlModelName = 'Ensemble';
+    if (e.type === 'value') {
+      predicted = Math.min(0.95, Math.max(0.05, implied * (1 + e.edge_percent / 100)));
+      model = 'Ensemble';
+    } else if (e.type === 'arbitrage') {
+      predicted = 0.5;
+      model = 'SharpProxy';
+    } else {
+      predicted = Math.min(0.92, Math.max(0.08, implied + e.edge_percent / 200));
+      model = 'LSTM';
+    }
+    const mlConf = Math.min(
+      0.99,
+      Math.max(0.1, e.confidence * (e.type === 'arbitrage' ? 0.95 : 0.88)),
+    );
+    return {
+      ...e,
+      ml: {
+        predicted_prob: +predicted.toFixed(4),
+        confidence: +mlConf.toFixed(3),
+        model,
+      },
+    };
+  });
 }
 
 export function filterEdges(
