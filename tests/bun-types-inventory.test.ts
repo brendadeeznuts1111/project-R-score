@@ -2,6 +2,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   agentsMapHits,
+  extractClosedObjectFields,
   parseBunModuleDts,
   parseDtsFile,
   propertyOpensObjectBody,
@@ -188,15 +189,56 @@ declare module "bun" {
     expect(typeAliasOpensObjectBody(multi[0]!, multi, 0)).toBe(true);
   });
 
-  test('propertyOpensObjectBody detects anon objects, skips unions', () => {
+  test('propertyOpensObjectBody detects anon objects and union branches', () => {
     expect(propertyOpensObjectBody('cpuTime: {', ['cpuTime: {', '  user: number;', '};'], 0)).toBe(
       true,
     );
     expect(propertyOpensObjectBody('maxRSS: number;', ['maxRSS: number;'], 0)).toBe(false);
     const multi = ['proxy?:', '  | string', '  | {', '    url: string;', '  };'];
-    expect(propertyOpensObjectBody(multi[0]!, multi, 0)).toBe(false);
+    expect(propertyOpensObjectBody(multi[0]!, multi, 0)).toBe(true);
     const bare = ['connect:', '  {', '    hostname: string;', '  };'];
     expect(propertyOpensObjectBody(bare[0]!, bare, 0)).toBe(true);
+  });
+
+  test('extractClosedObjectFields harvests one-liners and nested union objects', () => {
+    expect(extractClosedObjectFields('?: { level?: number }')).toEqual([
+      { name: 'level', rest: ': number' },
+    ]);
+    const union = extractClosedObjectFields(
+      ': string | { url: string; headers?: { auth?: string } }',
+    );
+    expect(union?.map(f => f.name)).toEqual(['url', 'headers']);
+    expect(extractClosedObjectFields(': {')).toBeNull(); // multi-line incomplete
+  });
+
+  test('inline one-liner props, union object branches, getters', () => {
+    const dts = `
+declare module "bun" {
+  interface X {
+    options?: { level?: number; dict?: ArrayBuffer };
+  }
+  type Proxy = {
+    proxy?:
+      | string
+      | {
+          url: string;
+          headers?: { auth?: string };
+        };
+  };
+  class CString {
+    get arrayBuffer(): ArrayBuffer;
+  }
+}
+`;
+    const members = parseDtsFile(dts, 'bun.d.ts');
+    const settings = members.map(m => m.setting);
+    expect(settings).toContain('Bun.X.options.level');
+    expect(settings).toContain('Bun.X.options.dict');
+    expect(settings).toContain('Bun.Proxy.proxy.url');
+    expect(settings).toContain('Bun.Proxy.proxy.headers.auth');
+    const ab = members.find(m => m.setting === 'Bun.CString.arrayBuffer')!;
+    expect(ab.kind).toBe('method');
+    expect(ab.form).toMatch(/^get Bun\.CString\.arrayBuffer/);
   });
 
   test('--no-enums and --no-nested-objects flags', () => {

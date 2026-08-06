@@ -1,10 +1,12 @@
 // @see https://bun.com/docs/runtime/color — Bun.color
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/console#object-inspection-depth — console depth 2 vs 4
 /**
  * console-depth.test.ts — policy helpers in lib/console-depth.ts.
  *
  * Width vectors exercise Bun.stringWidth directly (natives are not re-exported).
  * Layout helpers (padEndWidth / truncateWidth / fitVisible) stay covered here.
+ * Object-inspection depth anchors the official Bun console docs fixture.
  */
 
 import { describe, expect, spyOn, test } from 'bun:test';
@@ -208,6 +210,24 @@ describe('inspect / getConsoleDepth', () => {
     const deep = { a: { b: { c: { d: 1 } } } };
     expect(inspect(deep, { depth: 1 })).toContain('[Object ...]');
     expect(inspect(deep, { depth: 4 })).toContain('d: 1');
+  });
+
+  /**
+   * Official docs fixture:
+   * https://bun.com/docs/runtime/console#object-inspection-depth
+   * Default depth 2 truncates at `c`; depth 4 reveals `d: "deep"`.
+   */
+  test('docs object-inspection-depth: default 2 vs depth 4', () => {
+    const nested = { a: { b: { c: { d: 'deep' } } } };
+    const d2 = inspect(nested, { depth: 2, colors: false });
+    const d4 = inspect(nested, { depth: 4, colors: false });
+    expect(d2).toContain('[Object ...]');
+    expect(d2).not.toContain('deep');
+    expect(d4).toContain("d: \"deep\"");
+    expect(d4).not.toContain('[Object ...]');
+    // repo bunfig pin (6) expands full tree via policy default
+    const pin = inspect(nested, { colors: false });
+    expect(pin).toContain("d: \"deep\"");
   });
   test('compact mode produces a single line', () => {
     const out = inspect({ a: { b: 1 } }, { compact: true });

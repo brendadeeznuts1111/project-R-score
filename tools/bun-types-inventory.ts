@@ -40,6 +40,7 @@ import {
   printArtifacts,
   printBanner,
   printDone,
+  printDeepestChains,
   printHistogram,
   printMap,
   printPreviewTable,
@@ -337,6 +338,8 @@ const STATIC_METHOD_RE = /^(?:export\s+)?static\s+(?:async\s+)?([A-Za-z_][A-Za-z
 /** Instance / interface method — name( or name<T>( */
 const INSTANCE_METHOD_RE =
   /^(?:export\s+)?(?:async\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?:<[^>]*>)?\s*\(/;
+/** Accessor: get name( */
+const GETTER_RE = /^(?:export\s+)?(?:readonly\s+)?get\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(/;
 /** Interface/class property: name: Type or name?: Type (not call signatures) */
 const PROPERTY_RE = /^(?:export\s+)?(?:readonly\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(\?)?\s*:\s*(?!\()/;
 /** Enum member: name = value, or bare name (optional trailing comma) */
@@ -464,9 +467,10 @@ export function typeAliasOpensObjectBody(
 }
 
 /**
- * True when a property type opens an **anonymous object** body (`name?: {` or
- * multi-line `name?:\n  {`). Does **not** open unions that begin with `|`
- * (e.g. `proxy?: string | { url }`) — those stay leaf properties.
+ * True when a property type has an **anonymous object** body to open:
+ *  - `name?: {` / multi-line `name?:\n  {`
+ *  - union branches `name?: string | { url }` or multi-line `| { … }`
+ * Index-only / primitive / bare-identifier types stay false.
  */
 export function propertyOpensObjectBody(
   trimmed: string,
@@ -480,13 +484,24 @@ export function propertyOpensObjectBody(
   if (nameAt < 0) return false;
   let buf = trimmed.slice(nameAt + name.length);
   let look = lineIndex + 1;
-  for (let step = 0; step < 10; step++) {
+  for (let step = 0; step < 14; step++) {
     const s = buf.replace(/\s+/g, ' ').trim();
+    // direct object or union-with-object (same or accumulated lines)
     if (/^\??\s*:\s*\{/.test(s)) return true;
-    if (/^\??\s*:\s*\|/.test(s)) return false;
-    // bare `name:` / `name?:` — keep reading for `{` on following lines
+    if (/\|\s*\{/.test(s)) return true;
+    // finished primitive/identifier assignment with no `{` seen
+    if (/^\??\s*:\s*[^{|]/.test(s) && (s.includes(';') || s.includes(',')) && !s.includes('{')) {
+      return false;
+    }
+    // bare `name:` / `name?:` — keep reading
     const bareColon = /^\??\s*:\s*$/.test(s);
-    if (!bareColon && /^\??\s*:\s*[^{|]/.test(s)) return false;
+    // mid-union without object yet — keep reading
+    const midUnion =
+      /^\??\s*:\s*(\|\s*)?[A-Za-z0-9_.<>,\s|&()[\]'"`-]*$/.test(s) && !s.includes('{');
+    if (!bareColon && !midUnion && /^\??\s*:\s*[^{|]/.test(s) && s.includes('{') === false) {
+      // still allow incomplete multi-line types without terminator
+      if (s.includes(';') || s.includes(',')) return false;
+    }
     if (look >= lines.length) break;
     const next = lines[look]!.trim();
     look++;
@@ -494,8 +509,133 @@ export function propertyOpensObjectBody(
     buf += ' ' + next;
   }
   const final = buf.replace(/\s+/g, ' ').trim();
-  if (/^\??\s*:\s*\|/.test(final)) return false;
-  return /^\??\s*:\s*\{/.test(final);
+  return /^\??\s*:\s*\{/.test(final) || /\|\s*\{/.test(final);
+}
+
+/**
+ * Extract named fields from a **closed** object type in a property rest string
+ * (`?: { level?: number }` or `string | { url: string; headers?: { a: 1 } }`).
+ * Returns null when the first object body is not closed on the provided text
+ * (caller should open a multi-line scope instead).
+ */
+export function extractClosedObjectFields(
+  afterPropName: string
+): Array<{ name: string; rest: string }> | null {
+  const colon = afterPropName.indexOf(':');
+  if (colon < 0) return null;
+  const typePart = afterPropName.slice(colon + 1);
+  const open = findFirstObjectBrace(typePart);
+  if (open < 0) return null;
+  const balanced = takeBalancedBraces(typePart, open);
+  if (!balanced || !balanced.closed) return null;
+  return parseObjectBodyFields(balanced.inner);
+}
+
+/** Index of first `{` that starts an object type (skip `{` inside strings — rare). */
+function findFirstObjectBrace(s: string): number {
+  // prefer after `:` type start or after `|` branch
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '{') return i;
+  }
+  return -1;
+}
+
+function takeBalancedBraces(
+  s: string,
+  openIdx: number
+): { inner: string; closed: boolean; end: number } | null {
+  if (openIdx < 0 || s[openIdx] !== '{') return null;
+  let depth = 0;
+  for (let i = openIdx; i < s.length; i++) {
+    const c = s[i]!;
+    if (c === '{') depth++;
+    else if (c === '}') {
+      depth--;
+      if (depth === 0) {
+        return { inner: s.slice(openIdx + 1, i), closed: true, end: i };
+      }
+    }
+  }
+  return { inner: s.slice(openIdx + 1), closed: false, end: s.length };
+}
+
+/** Parse top-level `name?: Type` fields inside an object body (supports nested `{…}` types). */
+export function parseObjectBodyFields(inner: string): Array<{ name: string; rest: string }> {
+  const fields: Array<{ name: string; rest: string }> = [];
+  // normalize newlines to spaces for single-pass scan; keep enough structure for `:`
+  const text = inner.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
+  let i = 0;
+  while (i < text.length) {
+    while (i < text.length && /[\s,;]/.test(text[i]!)) i++;
+    if (i >= text.length) break;
+    // skip index / mapped signatures
+    if (text[i] === '[') {
+      let d = 0;
+      while (i < text.length) {
+        if (text[i] === '[') d++;
+        else if (text[i] === ']') {
+          d--;
+          if (d === 0) {
+            i++;
+            break;
+          }
+        }
+        i++;
+      }
+      // skip through type until , or ;
+      while (i < text.length && text[i] !== ',' && text[i] !== ';') {
+        if (text[i] === '{') {
+          const b = takeBalancedBraces(text, i);
+          i = b ? b.end + 1 : text.length;
+        } else if (text[i] === '<') {
+          let gd = 1;
+          i++;
+          while (i < text.length && gd > 0) {
+            if (text[i] === '<') gd++;
+            else if (text[i] === '>') gd--;
+            i++;
+          }
+        } else i++;
+      }
+      continue;
+    }
+    const slice = text.slice(i);
+    const m = slice.match(/^(?:readonly\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(\?)?\s*:\s*/);
+    if (!m) break;
+    const name = m[1]!;
+    if (SKIP_METHOD_NAMES.has(name) || name.startsWith('_')) {
+      i += m[0].length;
+      continue;
+    }
+    i += m[0].length;
+    const typeStart = i;
+    // scan type until top-level , or ;
+    let depthBrace = 0;
+    let depthAngle = 0;
+    let depthParen = 0;
+    while (i < text.length) {
+      const c = text[i]!;
+      if (c === '{') depthBrace++;
+      else if (c === '}') depthBrace = Math.max(0, depthBrace - 1);
+      else if (c === '<') depthAngle++;
+      else if (c === '>') depthAngle = Math.max(0, depthAngle - 1);
+      else if (c === '(') depthParen++;
+      else if (c === ')') depthParen = Math.max(0, depthParen - 1);
+      else if (
+        (c === ',' || c === ';') &&
+        depthBrace === 0 &&
+        depthAngle === 0 &&
+        depthParen === 0
+      ) {
+        break;
+      }
+      i++;
+    }
+    const typeText = text.slice(typeStart, i).trim();
+    fields.push({ name, rest: `: ${typeText}` });
+    if (text[i] === ',' || text[i] === ';') i++;
+  }
+  return fields;
 }
 
 function isHarvestScope(kind: ScopeFrame['kind']): boolean {
@@ -608,8 +748,9 @@ export type ParseDtsOpts = {
  *
  * Nesting scopes: **namespace**, **class**, **enum**, optionally **interface**,
  * **`type X = { … }`** object aliases, and (when nestedObjects) **anonymous
- * object** types on properties. Index/mapped signatures still never become
- * named children. Union-first property types (`x?: string | {…}`) stay leaves.
+ * object** types on properties (multi-line scopes + closed one-liners +
+ * union object branches). Index/mapped signatures still never become named
+ * children. Getters (`get name()`) harvest as methods.
  */
 export function parseDtsFile(
   text: string,
@@ -639,6 +780,42 @@ export function parseDtsFile(
     out.push(raw);
   };
 
+  /** Push closed object-type fields (and recursive nested objects) under path. */
+  const pushClosedObjectFields = (
+    fields: Array<{ name: string; rest: string }>,
+    path: string[],
+    sourceLine: number,
+    jsdoc: string
+  ) => {
+    for (const f of fields) {
+      if (SKIP_METHOD_NAMES.has(f.name) || f.name.startsWith('_')) continue;
+      const setting = settingFor(moduleIdForFields, path, f.name);
+      push({
+        kind: 'property',
+        name: f.name,
+        parent: parentSetting(moduleIdForFields, path),
+        setting,
+        module: moduleIdForFields,
+        depth: path.length,
+        form: formFor('property', setting, f.rest, [], 0),
+        default: extractDefault(jsdoc),
+        notes: extractNotes(jsdoc),
+        source: sourceRel,
+        line: sourceLine,
+        deprecated: /@deprecated/i.test(jsdoc),
+        overloads: 1,
+      });
+      if (!nestedObjects) continue;
+      const nested = extractClosedObjectFields(f.rest);
+      if (nested && nested.length > 0) {
+        pushClosedObjectFields(nested, [...path, f.name], sourceLine, jsdoc);
+      }
+    }
+  };
+
+  // moduleId filled per declare-module block; helper closes over current id via reassignment
+  let moduleIdForFields = 'bun';
+
   let i = 0;
   let inBlockComment = false;
   while (i < lines.length) {
@@ -648,6 +825,7 @@ export function parseDtsFile(
       continue;
     }
     const moduleId = modMatch[1]!;
+    moduleIdForFields = moduleId;
     let depth = 1;
     const stack: ScopeFrame[] = [{ path: [], kind: 'module', openDepth: 1 }];
     let pending: ScopeFrame | null = null;
@@ -762,18 +940,25 @@ export function parseDtsFile(
                 }
               }
             } else {
-              const staticM = trimmed.match(STATIC_METHOD_RE);
+              const getterM =
+                top.kind === 'class' || top.kind === 'interface' || top.kind === 'type'
+                  ? trimmed.match(GETTER_RE)
+                  : null;
+              const staticM = !getterM ? trimmed.match(STATIC_METHOD_RE) : null;
               const instM =
+                !getterM &&
                 !staticM &&
                 (top.kind === 'class' || top.kind === 'interface' || top.kind === 'type')
                   ? trimmed.match(INSTANCE_METHOD_RE)
                   : null;
-              if (staticM || instM) {
-                const name = (staticM ?? instM)![1]!;
+              if (getterM || staticM || instM) {
+                const name = (getterM ?? staticM ?? instM)![1]!;
                 if (!SKIP_METHOD_NAMES.has(name) && !name.startsWith('_')) {
                   const jsdoc = precedingJsdoc(lines, i);
                   const setting = settingFor(moduleId, top.path, name);
-                  const rest = trimmed.slice(trimmed.indexOf(name) + name.length);
+                  const rest = getterM
+                    ? trimmed.slice(trimmed.indexOf('get') + 3).trim()
+                    : trimmed.slice(trimmed.indexOf(name) + name.length);
                   push({
                     kind: 'method',
                     name,
@@ -781,7 +966,12 @@ export function parseDtsFile(
                     setting,
                     module: moduleId,
                     depth: stack.length - 1,
-                    form: formFor('method', setting, rest, lines, i),
+                    form: getterM
+                      ? `get ${setting}${rest.includes('(') ? rest.slice(rest.indexOf('(')) : '()'}`.slice(
+                          0,
+                          160
+                        )
+                      : formFor('method', setting, rest, lines, i),
                     default: extractDefault(jsdoc),
                     notes: extractNotes(jsdoc),
                     source: sourceRel,
@@ -816,13 +1006,20 @@ export function parseDtsFile(
                       deprecated: /@deprecated/i.test(jsdoc),
                       overloads: 1,
                     });
-                    // nest into anonymous object type for depth 2+ fields
+                    // closed one-liner / union object fields, else multi-line scope
                     if (nestedObjects && propertyOpensObjectBody(trimmed, lines, i)) {
-                      pending = {
-                        path: [...top.path, name],
-                        kind: 'type',
-                        openDepth: -1,
-                      };
+                      const closed = extractClosedObjectFields(rest);
+                      if (closed) {
+                        if (closed.length > 0) {
+                          pushClosedObjectFields(closed, [...top.path, name], i + 1, jsdoc);
+                        }
+                      } else {
+                        pending = {
+                          path: [...top.path, name],
+                          kind: 'type',
+                          openDepth: -1,
+                        };
+                      }
                     }
                   }
                 }
@@ -841,8 +1038,12 @@ export function parseDtsFile(
           pending.openDepth = depth;
           stack.push(pending);
           pending = null;
-        } else if (trimmed.endsWith(';') || trimmed.includes('}')) {
-          // type Foo = string;  or failed open
+        } else if (
+          // only cancel when the declaration clearly ended without opening a body
+          (trimmed.endsWith(';') && !trimmed.includes('{')) ||
+          // closed on a later line without ever opening (rare)
+          (depth === depthBefore && trimmed === '};')
+        ) {
           pending = null;
         }
       }
@@ -1518,6 +1719,12 @@ async function main(): Promise<void> {
         .sort((a, b) => Number(a[0]) - Number(b[0]))
         .map(([d, n]) => [`d${d}`, n] as [string, number])
     );
+    if (inv.summary.maxDepth >= 2) {
+      printDeepestChains(
+        inv.members.map(m => ({ setting: m.setting, depth: m.depth, kind: m.kind })),
+        { limit: args.verbose ? 20 : 8, inspectDepth: 4 }
+      );
+    }
 
     if (inv.tipDiff) {
       printSection('Tip-diff (inline)');
