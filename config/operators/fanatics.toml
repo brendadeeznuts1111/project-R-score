@@ -1,0 +1,18 @@
+[operator]
+id = "fanatics"
+name = "Fanatics Sportsbook"
+host = "sportsbook.fanatics.com"
+url = "https://sportsbook.fanatics.com"
+identity = "brand:fanatics"
+
+geo = ["US"]
+markets = ["american-football", "basketball", "baseball", "hockey", "tennis"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["fanatics"]
+probe_paths = ["/", "/sportsbook"]
+
+[scrape]
+agent_id = "fanatics-agent"
+live_url = "https://sportsbook.fanatics.com/api/v1/limits?state=NJ"
+html = false
+jurisdiction = "NJ"

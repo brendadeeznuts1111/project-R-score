@@ -10,3 +10,9 @@ markets = ["basketball", "american-football", "baseball", "hockey"]
 lifecycle = ["pre_match", "live"]
 expected_stack = ["hardrock"]
 probe_paths = ["/", "/sportsbook"]
+
+[scrape]
+agent_id = "hardrock-agent"
+live_url = "https://www.hardrock.bet/api/v1/limits?state=NJ"
+html = false
+jurisdiction = "NJ"

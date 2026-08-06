@@ -28,12 +28,12 @@ import { trackedScrapeBooks } from './books/registry.ts';
 import { runAllRegisteredAgents } from './run-book-agent.ts';
 import { evaluateScrapeAlerts } from './scrape-alert.ts';
 import type { BookScrapeOptions } from './book-scrape-agent.ts';
+import { resolveScrapeCronSchedule, resolveScrapeCronTitle } from './scrape-agents-config.ts';
 
-/** UTC — every 15 minutes. Override with BASELINE_SCRAPE_CRON_SCHEDULE. */
-export const BASELINE_SCRAPE_CRON_SCHEDULE =
-  (Bun.env.BASELINE_SCRAPE_CRON_SCHEDULE || '*/15 * * * *').trim() || '*/15 * * * *';
+/** UTC — every 15 minutes. Env `BASELINE_SCRAPE_CRON_SCHEDULE` or `config/scrape-agents.toml` `[cron]`. */
+export const BASELINE_SCRAPE_CRON_SCHEDULE = resolveScrapeCronSchedule();
 
-export const BASELINE_SCRAPE_CRON_TITLE = 'baseline-scrape';
+export const BASELINE_SCRAPE_CRON_TITLE = resolveScrapeCronTitle();
 
 export type ScrapeCronScheduler = (
   schedule: string,

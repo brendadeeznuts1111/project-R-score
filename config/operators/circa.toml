@@ -1,0 +1,18 @@
+[operator]
+id = "circa"
+name = "Circa Sports"
+host = "circasports.com"
+url = "https://www.circasports.com"
+identity = "brand:circa"
+
+geo = ["US-NV"]
+markets = ["american-football", "basketball", "baseball", "hockey"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["circa"]
+probe_paths = ["/"]
+
+[scrape]
+agent_id = "circa-agent"
+live_url = "https://www.circasports.com/api/v1/limits?state=NJ"
+html = false
+jurisdiction = "NJ"

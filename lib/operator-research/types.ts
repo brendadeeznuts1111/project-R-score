@@ -1,3 +1,14 @@
+/** Optional Tier 4 scrape policy from config/operators/*.toml `[scrape]`. */
+export type OperatorScrapeConfig = {
+  agentId: string; // brand-ok — scrape agent slug (e.g. draftkings-agent), not a catalog *Id
+  liveUrl: string;
+  html: boolean;
+  htmlUrl?: string;
+  htmlFixture?: string;
+  /** Wire jurisdiction code; branded at scrape boundary. */
+  jurisdiction: string; // brand-ok — StateCode after asStateCode/tryStateCode
+};
+
 /** Operator declarative truth from config/operators/*.toml */
 export type OperatorConfig = {
   id: string; // brand-ok — opaque research/wire id
@@ -11,6 +22,7 @@ export type OperatorConfig = {
   expectedStack: string[];
   probePaths: string[];
   sourcePath: string;
+  scrape?: OperatorScrapeConfig;
 };
 
 export type SeedDomain = {

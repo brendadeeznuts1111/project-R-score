@@ -10,3 +10,9 @@ markets = ["tennis", "american-football", "basketball", "hockey", "mma", "boxing
 lifecycle = ["pre_match", "live"]
 expected_stack = ["kambi"]
 probe_paths = ["/", "/en/sports"]
+
+[scrape]
+agent_id = "betmgm-agent"
+live_url = "https://api.betmgm.com/odds/v1/limits?state=NJ"
+html = false
+jurisdiction = "NJ"

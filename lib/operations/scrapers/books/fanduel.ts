@@ -18,18 +18,27 @@ import { expandScrapedLimitSeeds } from '../../baseline-scraped-limits.ts';
 import { asSportsbookId, asStateCode } from '../domain.ts';
 import { parseGenericLimitsPayload } from '../scraper-targets.ts';
 import type { LimitObservation } from '../limit-observation-wire.ts';
+import {
+  requireBookScrapeConfig,
+  resolveHtmlLiveUrl,
+  resolveHtmlTimeoutMs,
+  resolveJsonTimeoutMs,
+} from '../scrape-agents-config.ts';
 import { captureHtmlViaWebView } from '../webview-html.ts';
 import { parseFanDuelHtml } from './fanduel-parse.ts';
 
 export const FANDUEL_AGENT_ID = 'fanduel-agent' as const;
 export const FANDUEL_SPORTSBOOK = asSportsbookId('fanduel');
-export const FANDUEL_LIVE_URL = 'https://api.fanduel.com/odds/v1/limits?state=NJ';
-/** Opt-in live HTML target (override with FANDUEL_HTML_URL). */
-export const FANDUEL_HTML_URL = Bun.env.FANDUEL_HTML_URL ?? 'https://sportsbook.fanduel.com/';
 
-export const FANDUEL_HTML_FIXTURE_PATH = Bun.fileURLToPath(
-  new URL('../fixtures/fanduel-limits.html', import.meta.url)
-);
+const fdScrape = requireBookScrapeConfig('fanduel');
+
+export const FANDUEL_LIVE_URL = fdScrape.liveUrl;
+/** Opt-in live HTML target (override with FANDUEL_HTML_URL). */
+export const FANDUEL_HTML_URL = resolveHtmlLiveUrl('fanduel', 'FANDUEL_HTML_URL');
+
+export const FANDUEL_HTML_FIXTURE_PATH =
+  fdScrape.htmlFixtureAbs ??
+  Bun.fileURLToPath(new URL('../fixtures/fanduel-limits.html', import.meta.url));
 
 export type FanDuelAgentResult = {
   ok: boolean;
@@ -203,13 +212,13 @@ export async function runFanDuelAgent(
 
   if (options.html) {
     if (wantsWebViewHtml(options)) {
-      return scrapeFanDuelHtmlLive(options.timeoutMs ?? 18_000, observedAt);
+      return scrapeFanDuelHtmlLive(resolveHtmlTimeoutMs(options.timeoutMs), observedAt);
     }
     return scrapeFanDuelHtmlFixture(observedAt);
   }
 
   if (live) {
-    const data = await fetchLiveJson(options.timeoutMs ?? 10_000);
+    const data = await fetchLiveJson(resolveJsonTimeoutMs(options.timeoutMs));
     if (data != null) {
       const observations = parsePayloadToObservations(data, observedAt, 'live');
       if (observations.length > 0) {

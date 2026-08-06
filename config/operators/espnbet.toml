@@ -10,3 +10,9 @@ markets = ["american-football", "basketball", "baseball", "hockey", "soccer"]
 lifecycle = ["pre_match", "live"]
 expected_stack = ["penn", "thescore"]
 probe_paths = ["/"]
+
+[scrape]
+agent_id = "espnbet-agent"
+live_url = "https://sportsbook.espn.com/apis/v1/limits?state=NJ"
+html = false
+jurisdiction = "NJ"
