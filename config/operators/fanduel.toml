@@ -1,0 +1,12 @@
+[operator]
+id = "fanduel"
+name = "FanDuel"
+host = "sportsbook.fanduel.com"
+url = "https://sportsbook.fanduel.com"
+identity = "brand:fanduel"
+
+geo = ["US"]
+markets = ["tennis", "american-football", "basketball", "hockey", "mma", "boxing", "baseball"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["fanduel", "flutter"]
+probe_paths = ["/", "/navigation"]

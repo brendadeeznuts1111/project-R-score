@@ -1,0 +1,12 @@
+[operator]
+id = "draftkings"
+name = "DraftKings"
+host = "sportsbook.draftkings.com"
+url = "https://sportsbook.draftkings.com"
+identity = "brand:draftkings"
+
+geo = ["US"]
+markets = ["tennis", "american-football", "basketball", "baseball", "mma", "boxing"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["draftkings"]
+probe_paths = ["/", "/sportsbook"]

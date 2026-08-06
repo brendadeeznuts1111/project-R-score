@@ -1,0 +1,12 @@
+[operator]
+id = "pinnacle"
+name = "Pinnacle"
+host = "www.pinnacle.com"
+url = "https://www.pinnacle.com"
+identity = "brand:pinnacle"
+
+geo = ["US", "GB", "CA"]
+markets = ["tennis", "tabletennis", "soccer"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["pinnacle"]
+probe_paths = ["/", "/en/"]

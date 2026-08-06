@@ -1,0 +1,12 @@
+[operator]
+id = "smarkets"
+name = "Smarkets"
+host = "smarkets.com"
+url = "https://smarkets.com"
+identity = "brand:smarkets"
+
+geo = ["GB"]
+markets = ["soccer", "tennis", "politics", "horse-racing"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["smarkets"]
+probe_paths = ["/"]

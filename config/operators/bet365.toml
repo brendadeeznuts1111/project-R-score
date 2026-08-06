@@ -1,0 +1,12 @@
+[operator]
+id = "bet365"
+name = "bet365"
+host = "bet365.com"
+url = "https://bet365.com"
+identity = "brand:bet365"
+
+geo = ["GB", "EU"]
+markets = ["soccer", "tennis", "basketball", "cricket"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["bet365"]
+probe_paths = ["/", "/en/"]

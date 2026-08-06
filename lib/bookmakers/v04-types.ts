@@ -13,11 +13,9 @@
 
 export type BookFetcher = 'rest' | 'webview' | 'seat';
 export type LifecycleMode = 'pre_match' | 'live' | 'exchange' | 'virtual';
-export type LiquidityTier = 'high' | 'medium' | 'low' | 'unknown';
+export type LiquidityTier = 'high' | 'medium' | 'low' | 'illiquid' | 'unknown';
 
-export type BookRegion =
-  | { country: string; stateCode?: string }
-  | string;
+export type BookRegion = { country: string; stateCode?: string } | string;
 
 export interface BookUrls {
   web: string | null;
@@ -38,6 +36,21 @@ export interface BookContact {
   opsDesk: string | null;
 }
 
+/** Desk / agent payment rails (public-safe labels). */
+export type PaymentMethod =
+  | 'crypto'
+  | 'credit_card'
+  | 'debit_card'
+  | 'bank_wire'
+  | 'ach'
+  | 'p2p'
+  | 'cash'
+  | 'seat'
+  | string;
+
+/** High-level provider lane for filters / partner details. */
+export type ProviderType = 'crypto' | 'pph' | 'fiat' | 'hybrid' | 'unknown' | string;
+
 /** Pages-safe public row (no secrets, no live balance/health). */
 export interface PublicBookmakerV04 {
   id: string; // brand-ok — route slug; equals slug by design
@@ -51,6 +64,10 @@ export interface PublicBookmakerV04 {
   sports: string[];
   regions: BookRegion[];
   limits: BookLimits;
+  /** e.g. ['crypto', 'credit_card', 'p2p'] — optional until catalog bake fills it */
+  paymentMethods?: PaymentMethod[];
+  /** 'crypto' | 'pph' | 'fiat' | 'hybrid' — optional until catalog bake fills it */
+  providerType?: ProviderType;
   color?: string;
   webViewConfig?: Record<string, unknown>;
   note?: string;

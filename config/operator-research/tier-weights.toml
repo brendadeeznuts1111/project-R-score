@@ -1,0 +1,13 @@
+# Tier weighting for smart-money / movement scoring.
+# Higher weight = sharper signal when that tier moves first.
+
+[weights]
+1 = 1.0   # sharp
+2 = 0.55  # medium
+3 = 0.25  # recreational
+
+[smart_money]
+# Flag when a tier-1 book moves at least this much (%) and recreational books lag.
+min_tier1_move_pct = 1.5
+min_lag_ms = 5000
+score_threshold = 0.6

@@ -1,0 +1,34 @@
+[[market_types]]
+code = "moneyline"
+label = "Moneyline"
+sport = "*"
+format = "decimal"
+keywords = ["moneyline", "ml", "win", "match winner", "h2h"]
+
+[[market_types]]
+code = "spread"
+label = "Point Spread"
+sport = "*"
+format = "decimal"
+keywords = ["spread", "point spread", "handicap", "puck line", "run line"]
+
+[[market_types]]
+code = "total"
+label = "Total (Over/Under)"
+sport = "*"
+format = "decimal"
+keywords = ["total", "over/under", "ou", "over under", "totals"]
+
+[[market_types]]
+code = "asian_handicap"
+label = "Asian Handicap"
+sport = "*"
+format = "asian"
+keywords = ["asian handicap", "ah", "asian"]
+
+[[market_types]]
+code = "team_total"
+label = "Team Total"
+sport = "*"
+format = "decimal"
+keywords = ["team total", "team over/under", "team ou"]

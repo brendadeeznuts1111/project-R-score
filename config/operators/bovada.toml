@@ -1,0 +1,12 @@
+[operator]
+id = "bovada"
+name = "Bovada"
+host = "bovada.lv"
+url = "https://bovada.lv"
+identity = "brand:bovada"
+
+geo = ["GLOBAL"]
+markets = ["american-football", "basketball", "baseball", "soccer", "tennis"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["bovada"]
+probe_paths = ["/", "/sports"]

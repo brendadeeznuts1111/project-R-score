@@ -1,0 +1,12 @@
+[operator]
+id = "thunderpick"
+name = "Thunderpick"
+host = "thunderpick.io"
+url = "https://thunderpick.io"
+identity = "brand:thunderpick"
+
+geo = ["GLOBAL"]
+markets = ["esports", "soccer", "tennis", "basketball"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["thunderpick"]
+probe_paths = ["/", "/esports"]

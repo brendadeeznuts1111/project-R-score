@@ -1,0 +1,12 @@
+[operator]
+id = "betmgm"
+name = "BetMGM"
+host = "sports.betmgm.com"
+url = "https://sports.betmgm.com"
+identity = "brand:betmgm"
+
+geo = ["US"]
+markets = ["tennis", "american-football", "basketball", "hockey", "mma", "boxing", "baseball"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["kambi"]
+probe_paths = ["/", "/en/sports"]

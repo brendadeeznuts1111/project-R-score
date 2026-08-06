@@ -1,0 +1,12 @@
+[operator]
+id = "cloudbet"
+name = "Cloudbet"
+host = "cloudbet.com"
+url = "https://cloudbet.com"
+identity = "brand:cloudbet"
+
+geo = ["GLOBAL"]
+markets = ["soccer", "tennis", "basketball", "esports", "mma"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["cloudbet"]
+probe_paths = ["/", "/sports"]

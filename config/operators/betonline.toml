@@ -1,0 +1,12 @@
+[operator]
+id = "betonline"
+name = "BetOnline"
+host = "betonline.ag"
+url = "https://betonline.ag"
+identity = "brand:betonline"
+
+geo = ["GLOBAL"]
+markets = ["american-football", "basketball", "baseball", "soccer", "tennis"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["betonline"]
+probe_paths = ["/"]

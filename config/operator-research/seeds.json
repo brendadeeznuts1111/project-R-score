@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "generatedFor": "operator-research batch enrich",
+  "limit": 20,
+  "domains": [
+    {
+      "id": "draftkings",
+      "host": "sportsbook.draftkings.com",
+      "url": "https://sportsbook.draftkings.com"
+    },
+    {
+      "id": "fanduel",
+      "host": "sportsbook.fanduel.com",
+      "url": "https://sportsbook.fanduel.com"
+    },
+    {
+      "id": "betmgm",
+      "host": "sports.betmgm.com",
+      "url": "https://sports.betmgm.com"
+    },
+    {
+      "id": "caesars",
+      "host": "sportsbook.caesars.com",
+      "url": "https://sportsbook.caesars.com"
+    },
+    {
+      "id": "hardrock",
+      "host": "hardrock.bet",
+      "url": "https://hardrock.bet"
+    },
+    {
+      "id": "bet365",
+      "host": "bet365.com",
+      "url": "https://bet365.com"
+    },
+    {
+      "id": "betway",
+      "host": "betway.com",
+      "url": "https://betway.com"
+    },
+    {
+      "id": "pinnacle",
+      "host": "www.pinnacle.com",
+      "url": "https://www.pinnacle.com"
+    },
+    {
+      "id": "stake",
+      "host": "stake.com",
+      "url": "https://stake.com"
+    },
+    {
+      "id": "bovada",
+      "host": "bovada.lv",
+      "url": "https://bovada.lv"
+    },
+    {
+      "id": "betonline",
+      "host": "betonline.ag",
+      "url": "https://betonline.ag"
+    },
+    {
+      "id": "pointsbet",
+      "host": "pointsbet.com",
+      "url": "https://pointsbet.com"
+    },
+    {
+      "id": "betrivers",
+      "host": "betrivers.com",
+      "url": "https://betrivers.com"
+    },
+    {
+      "id": "espnbet",
+      "host": "espnbet.com",
+      "url": "https://espnbet.com"
+    },
+    {
+      "id": "betfair",
+      "host": "betfair.com",
+      "url": "https://betfair.com"
+    },
+    {
+      "id": "smarkets",
+      "host": "smarkets.com",
+      "url": "https://smarkets.com"
+    },
+    {
+      "id": "prizepicks",
+      "host": "prizepicks.com",
+      "url": "https://prizepicks.com"
+    },
+    {
+      "id": "underdog",
+      "host": "underdogfantasy.com",
+      "url": "https://underdogfantasy.com"
+    },
+    {
+      "id": "cloudbet",
+      "host": "cloudbet.com",
+      "url": "https://cloudbet.com"
+    },
+    {
+      "id": "thunderpick",
+      "host": "thunderpick.io",
+      "url": "https://thunderpick.io"
+    }
+  ]
+}

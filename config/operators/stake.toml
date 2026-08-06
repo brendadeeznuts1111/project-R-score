@@ -1,0 +1,12 @@
+[operator]
+id = "stake"
+name = "Stake"
+host = "stake.com"
+url = "https://stake.com"
+identity = "brand:stake"
+
+geo = ["GLOBAL"]
+markets = ["soccer", "tennis", "basketball", "esports", "mma"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["softswiss"]
+probe_paths = ["/", "/sports"]

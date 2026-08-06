@@ -1,0 +1,12 @@
+[operator]
+id = "caesars"
+name = "Caesars Sportsbook"
+host = "sportsbook.caesars.com"
+url = "https://sportsbook.caesars.com"
+identity = "brand:caesars"
+
+geo = ["US"]
+markets = ["tennis", "tabletennis", "soccer", "basketball", "american-football"]
+lifecycle = ["pre_match", "live"]
+expected_stack = ["williamhill", "openbet"]
+probe_paths = ["/", "/us"]

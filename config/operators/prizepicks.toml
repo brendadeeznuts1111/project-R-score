@@ -1,0 +1,12 @@
+[operator]
+id = "prizepicks"
+name = "PrizePicks"
+host = "prizepicks.com"
+url = "https://prizepicks.com"
+identity = "brand:prizepicks"
+
+geo = ["US"]
+markets = ["basketball", "american-football", "baseball", "hockey", "soccer"]
+lifecycle = ["pre_match"]
+expected_stack = ["prizepicks"]
+probe_paths = ["/"]

@@ -1,0 +1,32 @@
+{
+  "host": "hardrock.bet",
+  "sportsbookId": "hardrock",
+  "timestamp": 1754400060000,
+  "markets": [
+    {
+      "id": "mlb-nyy-bos-ml",
+      "name": "NYY vs BOS Moneyline",
+      "selections": [
+        { "name": "NYY", "price": 2.15 },
+        { "name": "BOS", "price": 1.75 }
+      ]
+    },
+    {
+      "id": "mlb-nyy-bos-total",
+      "name": "NYY vs BOS Total",
+      "selections": [
+        { "name": "Over 8.5", "price": 1.7 },
+        { "name": "Under 8.5", "price": 2.15 }
+      ]
+    },
+    {
+      "id": "mlb-nyy-bos-spread",
+      "name": "NYY vs BOS Spread",
+      "selections": [
+        { "name": "NYY -1.5", "price": 2.4 },
+        { "name": "BOS +1.5", "price": 1.6 }
+      ]
+    }
+  ],
+  "limits": { "maxBet": 400, "minBet": 1, "currency": "USD" }
+}
