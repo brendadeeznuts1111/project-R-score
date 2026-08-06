@@ -1,23 +1,40 @@
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
 // @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortSignal.timeout
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/api/file-io#reading-files-bun-file — Bun.file
 /**
  * DraftKings Tier 4 scrape agent.
  *
- * Default: offline fixture (CI-safe). Optional live JSON fetch when
- * BASELINE_SCRAPE_LIVE=1. HTML scrape is stubbed and fails closed.
+ * Default: offline seed fixture (CI-safe). Optional live JSON when
+ * BASELINE_SCRAPE_LIVE=1. HTML path: committed HTML fixture parse by default;
+ * optional Bun.WebView live capture when `--html` + (`--live` or
+ * OPERATOR_WEBVIEW_SCRAPE=1).
  *
  * @see https://bun.com/docs/api/fetch — fetch
  * @see docs/harness/tenants/partner-limits.md
  */
 
+import { joinPath } from '../../../path-bun.ts';
 import { expandScrapedLimitSeeds } from '../../baseline-scraped-limits.ts';
 import { asSportsbookId, asStateCode } from '../domain.ts';
 import { parseGenericLimitsPayload } from '../scraper-targets.ts';
 import type { LimitObservation } from '../limit-observation-wire.ts';
+import { captureHtmlViaWebView } from '../webview-html.ts';
+import { parseDraftKingsHtml } from './draftkings-parse.ts';
 
 export const DRAFTKINGS_AGENT_ID = 'draftkings-agent' as const;
 export const DRAFTKINGS_SPORTSBOOK = asSportsbookId('draftkings');
 export const DRAFTKINGS_LIVE_URL = 'https://api.draftkings.com/odds/v1/limits?state=NJ';
+/** Opt-in live HTML target (override with DRAFTKINGS_HTML_URL). */
+export const DRAFTKINGS_HTML_URL =
+  Bun.env.DRAFTKINGS_HTML_URL ?? 'https://sportsbook.draftkings.com/';
+
+export const DRAFTKINGS_HTML_FIXTURE_PATH = joinPath(
+  import.meta.dir,
+  '..',
+  'fixtures',
+  'draftkings-limits.html'
+);
 
 export type DraftKingsAgentResult = {
   ok: boolean;
@@ -79,14 +96,78 @@ function parsePayloadToObservations(
   }));
 }
 
-/** HTML scrape stub — fails closed until a real parser is approved. */
-export function scrapeDraftKingsHtmlStub(): DraftKingsAgentResult {
-  return {
-    ok: false,
-    mode: 'html_stub',
-    observations: [],
-    error: 'DraftKings HTML scrape not implemented (fails closed)',
-  };
+function wantsWebViewHtml(options: { live?: boolean }): boolean {
+  return (
+    options.live === true ||
+    Bun.env.OPERATOR_WEBVIEW_SCRAPE === '1' ||
+    Bun.env.OPERATOR_WEBVIEW_SCRAPE === 'true'
+  );
+}
+
+/** Load committed synthetic HTML fixture (CI default for `--html`). */
+export async function loadDraftKingsHtmlFixture(): Promise<string> {
+  const file = Bun.file(DRAFTKINGS_HTML_FIXTURE_PATH);
+  if (!(await file.exists())) {
+    throw new Error(`DraftKings HTML fixture missing: ${DRAFTKINGS_HTML_FIXTURE_PATH}`);
+  }
+  return await file.text();
+}
+
+async function scrapeDraftKingsHtmlFixture(
+  observedAt: string,
+  error: string | null = null
+): Promise<DraftKingsAgentResult> {
+  const html = await loadDraftKingsHtmlFixture();
+  const observations = await parseDraftKingsHtml(html, {
+    observedAt,
+    mode: 'html_fixture',
+    referenceUrl: `file://${DRAFTKINGS_HTML_FIXTURE_PATH}`,
+  });
+  if (observations.length === 0) {
+    return {
+      ok: false,
+      mode: 'html_fixture',
+      observations: [],
+      error: error ?? 'DraftKings HTML fixture parse returned zero rows (fails closed)',
+    };
+  }
+  return { ok: true, mode: 'html_fixture', observations, error };
+}
+
+async function scrapeDraftKingsHtmlLive(
+  timeoutMs: number,
+  observedAt: string
+): Promise<DraftKingsAgentResult> {
+  try {
+    const html = await captureHtmlViaWebView(DRAFTKINGS_HTML_URL, { timeoutMs });
+    const observations = await parseDraftKingsHtml(html, {
+      observedAt,
+      mode: 'html_live',
+      referenceUrl: DRAFTKINGS_HTML_URL,
+    });
+    if (observations.length > 0) {
+      return { ok: true, mode: 'html_live', observations, error: null };
+    }
+    return scrapeDraftKingsHtmlFixture(
+      observedAt,
+      'live HTML parse empty; used html_fixture fallback'
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`[draftkings-agent] WebView HTML error: ${message}`);
+    return scrapeDraftKingsHtmlFixture(
+      observedAt,
+      `live WebView unavailable; used html_fixture fallback (${message})`
+    );
+  }
+}
+
+/**
+ * HTML scrape entry — fixture by default; WebView when live-gated.
+ * @deprecated Prefer runDraftKingsAgent({ html: true }) — kept for older tests.
+ */
+export async function scrapeDraftKingsHtmlStub(): Promise<DraftKingsAgentResult> {
+  return scrapeDraftKingsHtmlFixture(new Date().toISOString());
 }
 
 async function fetchLiveJson(timeoutMs: number): Promise<unknown | null> {
@@ -106,15 +187,15 @@ async function fetchLiveJson(timeoutMs: number): Promise<unknown | null> {
 
 export type RunDraftKingsAgentOptions = {
   live?: boolean;
-  /** Attempt HTML stub (always fails closed). */
+  /** HTML fixture parse; with live / OPERATOR_WEBVIEW_SCRAPE=1 → WebView then same parser. */
   html?: boolean;
   timeoutMs?: number;
   observedAt?: string;
 };
 
 /**
- * Run the DraftKings agent. Fixture by default; live JSON when requested;
- * HTML path fails closed without writing observations.
+ * Run the DraftKings agent. Seed fixture by default; live JSON when requested;
+ * HTML path uses committed HTML fixture (or gated WebView + same parser).
  */
 export async function runDraftKingsAgent(
   options: RunDraftKingsAgentOptions = {}
@@ -126,7 +207,10 @@ export async function runDraftKingsAgent(
     Bun.env.BASELINE_SCRAPE_LIVE === 'true';
 
   if (options.html) {
-    return scrapeDraftKingsHtmlStub();
+    if (wantsWebViewHtml(options)) {
+      return scrapeDraftKingsHtmlLive(options.timeoutMs ?? 18_000, observedAt);
+    }
+    return scrapeDraftKingsHtmlFixture(observedAt);
   }
 
   if (live) {

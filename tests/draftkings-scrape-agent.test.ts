@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/test/index#run-tests — bun:test
 // @see https://bun.com/docs/test — bun:test
+// @see https://bun.com/docs/runtime/utils#bun-pathtofileurl — Bun.pathToFileURL
 import { describe, expect, test, beforeAll, afterAll } from 'bun:test';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -19,8 +20,12 @@ import {
 } from '../lib/operations/scrapers/raw-limits-store.ts';
 import {
   runDraftKingsAgent,
-  scrapeDraftKingsHtmlStub,
+  loadDraftKingsHtmlFixture,
+  DRAFTKINGS_HTML_FIXTURE_PATH,
+  DRAFTKINGS_SPORTSBOOK,
 } from '../lib/operations/scrapers/books/draftkings.ts';
+import { parseDraftKingsHtml } from '../lib/operations/scrapers/books/draftkings-parse.ts';
+import { captureHtmlViaWebView } from '../lib/operations/scrapers/webview-html.ts';
 
 describe('DraftKings Tier 4 scrape agent', () => {
   let root: string;
@@ -46,9 +51,10 @@ describe('DraftKings Tier 4 scrape agent', () => {
       sourceRef: 'scrape:fixture/dk',
       observedAt: '2026-07-31T00:00:00.000Z',
       agent: 'draftkings-agent',
-      mode: 'fixture',
+      mode: 'html_fixture',
     });
     expect(obs.jurisdiction).toBe('NJ');
+    expect(obs.mode).toBe('html_fixture');
     expect(observationCellKey(obs)).toContain('draftkings|basketball');
   });
 
@@ -64,11 +70,52 @@ describe('DraftKings Tier 4 scrape agent', () => {
     expect(result.observations.every(o => o.agent === 'draftkings-agent')).toBe(true);
   });
 
-  test('HTML stub fails closed', () => {
-    const stub = scrapeDraftKingsHtmlStub();
-    expect(stub.ok).toBe(false);
-    expect(stub.observations).toHaveLength(0);
-    expect(stub.error).toMatch(/fails closed/i);
+  test('HTML fixture parse yields branded LimitObservation rows', async () => {
+    const html = await loadDraftKingsHtmlFixture();
+    const rows = await parseDraftKingsHtml(html, {
+      observedAt: '2026-08-06T12:00:00.000Z',
+      mode: 'html_fixture',
+      referenceUrl: `file://${DRAFTKINGS_HTML_FIXTURE_PATH}`,
+    });
+    expect(rows.length).toBeGreaterThanOrEqual(1);
+    expect(rows.every(o => o.sportsbook === DRAFTKINGS_SPORTSBOOK)).toBe(true);
+    expect(rows.every(o => o.mode === 'html_fixture')).toBe(true);
+    expect(rows.every(o => typeof o.openingMaxUsd === 'number' && o.openingMaxUsd! > 0)).toBe(
+      true
+    );
+  });
+
+  test('empty / malicious HTML fails closed (no rows)', async () => {
+    const empty = await parseDraftKingsHtml('', {
+      observedAt: '2026-08-06T12:00:00.000Z',
+      mode: 'html_fixture',
+    });
+    expect(empty).toEqual([]);
+    const junk = await parseDraftKingsHtml('<html><body><script>alert(1)</script></body></html>', {
+      observedAt: '2026-08-06T12:00:00.000Z',
+      mode: 'html_fixture',
+    });
+    expect(junk).toEqual([]);
+    const noMax = await parseDraftKingsHtml(
+      '<tr data-fw-limit data-sport="basketball" data-market="match_winner"></tr>',
+      {
+        observedAt: '2026-08-06T12:00:00.000Z',
+        mode: 'html_fixture',
+      }
+    );
+    expect(noMax).toEqual([]);
+  });
+
+  test('--html default uses html_fixture mode', async () => {
+    const result = await runDraftKingsAgent({
+      html: true,
+      live: false,
+      observedAt: '2026-08-06T12:00:00.000Z',
+    });
+    expect(result.ok).toBe(true);
+    expect(result.mode).toBe('html_fixture');
+    expect(result.observations.length).toBeGreaterThanOrEqual(1);
+    expect(result.error).toBeNull();
   });
 
   test('JSONL append + latest-by-cell + health', async () => {
@@ -76,11 +123,7 @@ describe('DraftKings Tier 4 scrape agent', () => {
       live: false,
       observedAt: '2026-07-31T12:00:00.000Z',
     });
-    const { appended } = await appendLimitObservations(
-      root,
-      'draftkings',
-      result.observations
-    );
+    const { appended } = await appendLimitObservations(root, 'draftkings', result.observations);
     expect(appended).toBe(result.observations.length);
 
     // Second run with later timestamp — latest cells stay same count
@@ -111,4 +154,29 @@ describe('DraftKings Tier 4 scrape agent', () => {
     const health = await readScrapeAgentHealth(root);
     expect(health?.books[0]?.sportsbook).toBe('draftkings');
   });
+});
+
+describe('DraftKings WebView HTML (optional)', () => {
+  const enabled =
+    Bun.env.OPERATOR_WEBVIEW_SCRAPE === '1' || Bun.env.OPERATOR_WEBVIEW_SCRAPE === 'true';
+
+  test.skipIf(!enabled)(
+    'WebView evaluate of fixture file:// yields parseable HTML',
+    async () => {
+      const fileUrl = Bun.pathToFileURL(DRAFTKINGS_HTML_FIXTURE_PATH).href;
+      const html = await captureHtmlViaWebView(fileUrl, {
+        timeoutMs: 15_000,
+        settleMs: 200,
+      });
+      expect(html).toContain('data-fw-limit');
+      const rows = await parseDraftKingsHtml(html, {
+        observedAt: '2026-08-06T12:00:00.000Z',
+        mode: 'html_live',
+        referenceUrl: fileUrl,
+      });
+      expect(rows.length).toBeGreaterThanOrEqual(1);
+      expect(rows.every(o => o.sportsbook === DRAFTKINGS_SPORTSBOOK)).toBe(true);
+    },
+    30_000
+  );
 });
