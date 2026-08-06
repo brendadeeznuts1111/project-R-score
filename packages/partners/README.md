@@ -40,6 +40,7 @@ Contract authority:
 - [`docs/design/partner-dashboard-mvp.toml`](../../docs/design/partner-dashboard-mvp.toml)
 - [`docs/design/partner-dashboard-semantic-map.md`](../../docs/design/partner-dashboard-semantic-map.md)
 - [`docs/design/partner-type-reference-map.md`](../../docs/design/partner-type-reference-map.md)
+- [`docs/design/partner-dashboard-field-lineage.md`](../../docs/design/partner-dashboard-field-lineage.md)
 - [`docs/design/partner-code-consolidation.md`](../../docs/design/partner-code-consolidation.md)
 - [`public/registry/partner-profile-coverage.json`](../../public/registry/partner-profile-coverage.json)
 
@@ -51,6 +52,8 @@ bun run partner-profile:coverage:bake:check
 ```
 
 No production `partners-dashboard.json` is emitted until profile coverage is
-complete, lifecycle and other canonical facts are provenance-complete, and any
-legacy-only record carries an explicit `partner.profile.migration_required`
-attention item.
+complete, lifecycle and other contested canonical facts carry sufficient source
+evidence, freshness is computed rather than caller-asserted, and any non-profile
+record carries an explicit `partner.profile.migration_required` attention item.
+The legacy adapter cannot create a record by itself because lifecycle remains a
+mandatory canonical fact.
