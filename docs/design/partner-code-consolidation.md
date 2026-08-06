@@ -26,6 +26,9 @@ The current implementation is healthy but fragmented:
 - `public/registry/partners-ops.json` contains 4 partners and 10 outs.
 - `public/registry/partner-profiles.json` is valid and current but contains 0
   real profiles.
+- `public/registry/partner-profile-coverage.json` is the new redacted coverage
+  boundary. It is structurally valid with 0 entries and explicitly fails the
+  four-CODE readiness gate until profiles are materialized.
 - `public/portal/partners/index.html` is 2,586 lines and joins profile,
   partners-ops, Telegram handshake, seat desk, limits, bookkeeping, and Soft
   data in the browser.

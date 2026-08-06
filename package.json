@@ -1872,6 +1872,8 @@
     "validate:ledger": "bun scripts/validate-partner-ledger-schema.ts",
     "partner-profile:bake": "bun lib/partner-profile/bake.ts",
     "partner-profile:bake:check": "bun lib/partner-profile/bake.ts --check",
+    "partner-profile:coverage:bake": "bun scripts/bake-partner-profile-coverage.ts",
+    "partner-profile:coverage:bake:check": "bun scripts/bake-partner-profile-coverage.ts --check",
     "partner:bookmaker:register": "bun tools/register-partner-bookmaker.ts",
     "partner:onboard": "bun tools/partner-onboard.ts",
     "partner:book:add": "bun tools/partner-book-add.ts",

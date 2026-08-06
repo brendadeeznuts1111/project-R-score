@@ -163,6 +163,7 @@ temp/
 profiles/
 *.profile.json
 *-profile-*.json
+!public/registry/partner-profile-coverage.json
 *.cpuprofile
 /concept-audit.json
 CPU.*.md

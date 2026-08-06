@@ -23,9 +23,10 @@ artifact_assembler = "implemented"
 ingress_translator = "implemented"
 legacy_ops_adapter = "implemented"
 portal_consumer_contract = "implemented"
+profile_coverage_adapter = "implemented"
 browser_loader = "planned"
-connector_ports = "planned"
-source_adapters = "planned"
+connector_ports = "partial"
+source_adapters = "partial"
 reconciliation = "planned"
 
 [toolchain]
@@ -46,6 +47,15 @@ display_identity_label = "CODE"
 artifact_embeds_colors = false
 active_out_identity_field = "activeOutIds"
 conflict_value_policy = "redacted-json-scalars-only"
+
+[shapes.profile_coverage_artifact]
+type = "PartnerProfileCoverageArtifact"
+schema = "factorywager.partner-profile-coverage.v1"
+path = "/registry/partner-profile-coverage.json"
+implementation_status = "implemented"
+public_fact_paths = ["generatedAt", "evidenceByPartnerCode.*.callSign", "evidenceByPartnerCode.*.profileDocumentVersion"]
+forbidden_fact_classes = ["lifecycle", "phase", "credentials", "funding", "telegram", "accounting", "money", "policy"]
+lifecycle_authority = false
 
 [surfaces.portal]
 board_id = "partners"
@@ -122,6 +132,13 @@ wire_path = "partners[].partnerCode"
 owner_domain = "partners"
 meaning = "canonical partner join key"
 forbidden_core_aliases = ["partnerId", "code"]
+
+[[nomenclature.term]]
+canonical = "ProfileDocumentVersion"
+wire_path = "evidenceByPartnerCode.*.profileDocumentVersion"
+owner_domain = "partners"
+meaning = "source profile document revision; not the coverage artifact schema or template version"
+forbidden_core_aliases = ["schemaVersion", "templateVersion"]
 
 [[nomenclature.term]]
 canonical = "PartnerLifecycleState"
@@ -1020,7 +1037,7 @@ owns = [
   "commercial-agreement-terms",
   "dashboard-read-model",
 ]
-implemented_now = ["partner-code", "dashboard-artifact-boundary", "artifact-assembler"]
+implemented_now = ["partner-code", "dashboard-artifact-boundary", "artifact-assembler", "profile-coverage-adapter"]
 planned = [
   "profile",
   "lifecycle-domain-logic",
@@ -1034,7 +1051,7 @@ planned = [
 must_not_import = ["telegram-api", "bun:sqlite", "vault-crypto", "portal-dom"]
 
 [reconciliation]
-identity_precedence = ["profiles-registry"]
+profile_coverage_precedence = ["profile-coverage-registry"]
 capacity_precedence = ["tennis-contract", "sports-terminal", "legacy-ops-registry"]
 communication_precedence = ["telegram-handshake"]
 finance_precedence = ["accounting-ledger"]
@@ -1054,23 +1071,23 @@ required_source_failure = "use-last-known-good-within-stale-window-else-fail-bak
 optional_source_failure = "use-last-known-good-within-max-age-else-mark-unavailable"
 
 [[connectors]]
-id = "profiles-registry"
+id = "profile-coverage-registry"
 snapshot_key = "profiles"
 source_system_id = "factorywager-partner-profile"
 source_owner_domain = "partners"
-adapter_id = "profile-artifact"
+adapter_id = "profile-coverage-artifact"
 adapter_version = "1"
 target_owner_package = "@factorywager/partners"
-target_adapter_export = "./adapters/profile"
-port = "PartnerProfileReadPort"
-implementation_status = "planned"
+target_adapter_export = "./adapters/profile-coverage"
+port = "PartnerProfileCoverageReadPort"
+implementation_status = "implemented"
 enabled = true
 input_kind = "registry-artifact"
 required = true
-input_ref = "/registry/partner-profiles.json"
-authoritative_fact_paths = ["partners[].identity", "partners[].lifecycle"]
+input_ref = "/registry/partner-profile-coverage.json"
+authoritative_fact_paths = ["evidenceByPartnerCode.*"]
 visual_group = "registry"
-provides = ["identity", "lifecycle", "policy", "agreement", "account-references"]
+provides = ["identity-coverage"]
 region_ids = ["summary", "roster", "profile", "accounts-limits", "attention"]
 
 [[connectors]]
@@ -1235,7 +1252,7 @@ theme_role = "panel_default"
 concept_refs = ["page.partners", "ui.semantic.status", "ui.semantic.source"]
 proposed_concept_id = "section.partnersSummary"
 concept_status = "proposed"
-connectors = ["profiles-registry", "accounting-ledger", "legacy-ops-registry"]
+connectors = ["profile-coverage-registry", "accounting-ledger", "legacy-ops-registry"]
 
 [[surfaces.portal.regions]]
 region_id = "roster"
@@ -1249,7 +1266,7 @@ concept_refs = ["page.partners", "ui.filter.partnerId", "ui.semantic.status"]
 proposed_concept_id = "section.partnersRoster"
 concept_status = "proposed"
 connectors = [
-  "profiles-registry",
+  "profile-coverage-registry",
   "accounting-ledger",
   "telegram-handshake",
   "limits-registry",
@@ -1268,7 +1285,7 @@ theme_role = "panel_default"
 concept_refs = ["page.partners", "ui.semantic.status", "ui.semantic.source"]
 proposed_concept_id = "section.partnersProfile"
 concept_status = "proposed"
-connectors = ["profiles-registry", "sports-terminal"]
+connectors = ["profile-coverage-registry", "sports-terminal"]
 
 [[surfaces.portal.regions]]
 region_id = "accounts-limits"
@@ -1282,7 +1299,7 @@ route_dom_id = "section:accounts-limits"
 theme_role = "panel_default"
 concept_refs = ["section.partnersAccountsLimits", "section.partnersOuts"]
 concept_status = "existing"
-connectors = ["profiles-registry", "limits-registry", "bookmakers-registry"]
+connectors = ["profile-coverage-registry", "limits-registry", "bookmakers-registry"]
 
 [[surfaces.portal.regions]]
 region_id = "accounting"
@@ -1332,7 +1349,7 @@ concept_refs = ["page.partners", "ui.semantic.status", "ui.semantic.source"]
 proposed_concept_id = "section.partnersAttention"
 concept_status = "proposed"
 connectors = [
-  "profiles-registry",
+  "profile-coverage-registry",
   "accounting-ledger",
   "telegram-handshake",
   "limits-registry",

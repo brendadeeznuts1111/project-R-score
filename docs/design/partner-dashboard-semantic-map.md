@@ -104,7 +104,7 @@ Partner hash routes are a separate compatibility plane: `#partners`,
 
 | Snapshot key     | Connector             | Source owner | Adapter → core port                                      | Authority                       |
 | ---------------- | --------------------- | ------------ | -------------------------------------------------------- | ------------------------------- |
-| `profiles`       | `profiles-registry`   | partners     | `profile-artifact` v1 → `PartnerProfileReadPort`         | identity, lifecycle             |
+| `profiles`       | `profile-coverage-registry` | partners | `profile-coverage-artifact` v1 → `PartnerProfileCoverageReadPort` | identity coverage only          |
 | `accounting`     | `accounting-ledger`   | accounting   | `accounting-ledger` v1 → `AccountingReadPort`            | scoped balances, ledger         |
 | `telegram`       | `telegram-handshake`  | telegram     | `telegram-handshake` v1 → `CommunicationReadPort`        | handshake, membership           |
 | `limits`         | `limits-registry`     | compliance   | `limits-artifact` v1 → `LimitReadPort`                   | effective limits, coverage      |
@@ -115,14 +115,16 @@ Partner hash routes are a separate compatibility plane: `#partners`,
 
 The private `packages/partners` workspace now exports the TOML-facing plan
 types, semantic-gap map, canonical identifier parsers, ingress-only out
-translation, v1 artifact boundary, and pure artifact assembler. Its connector
-ports and canonical source adapters are still planned. The selective legacy ops
+translation, v1 artifact boundary, pure artifact assembler, and the redacted
+profile-coverage adapter/read-port contract. Its remaining connector ports and
+canonical source adapters are still planned. The selective legacy ops
 compatibility adapter is implemented; it preserves partner/out visibility while
 dropping non-authoritative and sensitive source fields, and it returns narrow
-observations rather than canonical dashboard records. The first six connectors
-have real inputs but planned extracted adapters; Sports Terminal is disabled and
-blocked on one exact parsed input. The required profile artifact currently has
-zero profiles, so the plan must remain `proposal` until canonical coverage is
+observations rather than canonical dashboard records. Profile coverage is the
+first implemented connector; the other non-legacy source adapters remain
+planned. Sports Terminal is disabled and blocked on one exact parsed input. The
+required coverage artifact currently has zero entries and reports all four
+current CODEs missing, so the plan must remain `proposal` until coverage is
 materialized. The portal consumer contract is package-owned, but its browser
 loader and generated public delivery modules remain planned.
 

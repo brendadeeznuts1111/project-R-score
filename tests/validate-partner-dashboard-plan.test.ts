@@ -31,7 +31,8 @@ describe('partner dashboard semantic plan', () => {
       portalRequiredInputs: 7,
       portalOptionalInputs: 1,
       presentationStates: 31,
-      canonicalProfiles: 0,
+      profileCoverageEntries: 0,
+      missingProfileCoverage: 4,
     });
   });
 
@@ -114,6 +115,17 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors).toContain('region has invalid business domain not-a-domain');
   });
 
+  it('rejects profile coverage boundary drift into lifecycle or private facts', async () => {
+    const plan = copyPlan();
+    plan.shapes.profile_coverage_artifact.lifecycle_authority = true;
+    plan.shapes.profile_coverage_artifact.public_fact_paths.push('telegram.chatId');
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).toContain(
+      'profile coverage artifact must remain redacted identity evidence only'
+    );
+  });
+
   it('rejects identifier and ingress translation drift from package parsers', async () => {
     const plan = copyPlan();
     plan.package.components.reconciliation = 'implemented';
@@ -151,7 +163,7 @@ describe('partner dashboard semantic plan', () => {
     plan.connectors[0].region_ids.push('unknown-region');
     plan.surfaces.portal.regions[0].connectors.push('unknown-connector');
     plan.surfaces.portal.regions[1].connectors = plan.surfaces.portal.regions[1].connectors.filter(
-      (connectorKey: string) => connectorKey !== 'profiles-registry'
+      (connectorKey: string) => connectorKey !== 'profile-coverage-registry'
     );
     const legacyConnector = plan.connectors.find(
       (connector: Record<string, unknown>) => connector.id === 'legacy-ops-registry'
@@ -170,6 +182,29 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors).toContain(
       'connector legacy-ops-registry target compatibility adapter must be implemented'
     );
+  });
+
+  it('pins the profile connector to redacted coverage evidence', async () => {
+    const plan = copyPlan();
+    const connector = plan.connectors.find(
+      (candidate: Record<string, unknown>) =>
+        candidate.id === 'profile-coverage-registry'
+    );
+    if (!connector) throw new Error('profile coverage connector fixture missing');
+    connector.adapter_id = 'profile-artifact';
+    connector.target_adapter_export = './adapters/profile';
+    connector.provides = ['identity', 'lifecycle'];
+    connector.authoritative_fact_paths = ['partners[].lifecycle'];
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).toContain(
+      'profile-coverage-registry connector must expose only implemented identity coverage'
+    );
+    expect(
+      result.errors.some(error =>
+        error.includes('profile-coverage-registry has invalid authoritative fact path')
+      )
+    ).toBe(true);
   });
 
   it('separately rejects section-mount and partner-hash-route drift', async () => {
@@ -391,50 +426,54 @@ describe('partner dashboard semantic plan', () => {
       'implementation-ready plans require every connector to be implemented'
     );
     expect(result.errors).toContain(
-      'implementation-ready plans require at least one canonical partner profile'
+      'implementation-ready plans require complete partner profile coverage; missing ASH, BIL, NOV, SPEN'
     );
   });
 
-  it('rejects inconsistent canonical profile artifact counts', async () => {
+  it('rejects private fields at the public profile coverage boundary', async () => {
     const result = await validatePartnerDashboardPlan(copyPlan(), {
-      partnerProfiles: {
-        schemaVersion: 1,
-        profiles: { ASH: { identity: { code: 'ASH' } } },
-        summary: { count: 0 },
+      partnerProfileCoverage: {
+        schema: 'factorywager.partner-profile-coverage.v1',
+        generatedAt: '2026-08-05T12:00:00.000Z',
+        evidenceByPartnerCode: {
+          ASH: {
+            callSign: 'ASH-001',
+            profileDocumentVersion: '1.0.0',
+            lifecycle: 'active',
+          },
+        },
       },
+      requiredPartnerCodes: ['ASH'],
     });
 
-    expect(result.errors).toContain('partner profile artifact summary.count must match profiles');
     expect(
-      result.errors.some(error => error.includes('canonical partner profile ASH is invalid'))
+      result.errors.some(error => error.includes('partner profile coverage artifact is invalid'))
     ).toBe(true);
   });
 
-  it('recognizes a schema-valid canonical profile for readiness accounting', async () => {
+  it('recognizes complete redacted profile coverage for readiness accounting', async () => {
     const plan = copyPlan();
     plan.plan.status = 'implementation-ready';
     const result = await validatePartnerDashboardPlan(plan, {
-      partnerProfiles: {
-        schemaVersion: 1,
-        profiles: {
+      partnerProfileCoverage: {
+        schema: 'factorywager.partner-profile-coverage.v1',
+        generatedAt: '2026-08-05T12:00:00.000Z',
+        evidenceByPartnerCode: {
           ASH: {
-            meta: {
-              templateId: 'partner-active',
-              name: 'ASH partner',
-              version: '1.0.0',
-              source: 'promoted',
-            },
-            identity: { code: 'ASH', callSign: 'ASH-001', status: 'onboarded' },
-            lifecycle: { status: 'active', phase: 'incomplete' },
+            callSign: 'ASH-001',
+            profileDocumentVersion: '1.0.0',
           },
         },
-        summary: { count: 1 },
       },
+      requiredPartnerCodes: ['ASH'],
     });
 
-    expect(result.summary.canonicalProfiles).toBe(1);
-    expect(result.errors).not.toContain(
-      'implementation-ready plans require at least one canonical partner profile'
-    );
+    expect(result.summary).toMatchObject({
+      profileCoverageEntries: 1,
+      missingProfileCoverage: 0,
+    });
+    expect(
+      result.errors.some(error => error.includes('require complete partner profile coverage'))
+    ).toBe(false);
   });
 });

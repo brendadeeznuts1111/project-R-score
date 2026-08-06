@@ -323,9 +323,9 @@ surfaces while presenting their partner-keyed health and freshness.
   visible warning and source timestamp.
 - Optional connectors use last-known-good data for at most 24 hours, then become
   `unavailable`; they never erase the canonical partner record.
-- The required profile connector may use last-known-good data only inside the
+- The required profile-coverage connector may use last-known-good data only inside the
   300-second stale window. Beyond that, the bake fails rather than inventing
-  identity or policy.
+  identity coverage. It has no lifecycle or policy authority.
 - One successful probe closes the circuit. Every fallback is represented in
   `connectorSnapshots`, partner-level provenance, and deterministic attention
   rows.
@@ -344,11 +344,16 @@ colors, and other non-authoritative facts. It does not manufacture canonical
 dashboard records, lifecycle facts, active outs, or resolved Sportsbook IDs. A
 browser-neutral package contract now owns the current input inventory, canonical
 artifact path, and query-only legacy comparison policy; the browser loader
-itself remains planned. The remaining slices are:
+itself remains planned. A `profile-coverage-registry` adapter and redacted
+`partner-profile-coverage.json` artifact now prove only `PartnerCode`, call sign,
+and source profile document revision; lifecycle, phase, credentials, funding,
+Telegram, accounting, money, and policy are structurally excluded. The remaining
+slices are:
 
-1. Join a redacted `partner-profiles.json`; emit attention for legacy records
-   without a real profile.
-2. Add a minimum profile-coverage gate for the four known CODEs.
+1. Materialize redacted coverage for the four known CODEs; emit attention for
+   legacy records without coverage.
+2. Define a defensible lifecycle source with effective-time provenance; do not
+   infer it from profile coverage.
 3. Add accounting and Telegram adapter summaries.
 4. Implement reconciliation/source precedence over typed adapter results.
 5. Point the board at the new artifact; retain old fetches behind a temporary
@@ -377,8 +382,9 @@ itself remains planned. The remaining slices are:
 - Browser code fetches one partner-domain artifact for primary rendering.
 - No DOM module imports SQLite, Telegram transport, vault, or profile TOML code.
 - Existing hash routes remain valid.
-- `partner-profiles.json` no longer reports zero profiles for active partners,
-  unless each legacy-only record has an explicit migration reason.
+- `partner-profile-coverage.json` contains all active partner CODEs, unless each
+  legacy-only record has an explicit migration reason. The legacy full-profile
+  artifact is not a canonical dashboard input.
 - Focused gates pass: profile/schema, read-model, board, portal route, concept,
   surface, ledger, import graph, workspace validation, and type-check.
 - The full local `bun run bun:ci` is required before merge.
@@ -392,6 +398,7 @@ bun test tests/partners-board.test.ts tests/partners-portal.test.ts
 bun run partners:governance
 bun run partner:dashboard-plan:validate
 bun run partner:dashboard-plan:validate -- --unregistered
+bun run partner-profile:coverage:bake:check
 bun --cwd=packages/partners run build
 bun run lint:money-sql:staged
 bun run validate:surface-coverage
