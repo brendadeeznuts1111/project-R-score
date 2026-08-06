@@ -14,7 +14,7 @@
  *   - Always runs after hard steps unless `BUN_TYPES_CI=0` / `SKIP_BUN_TYPES_CI=1`
  *   - Default soft: tip-diff **warn** still exits 0 (does not fail bun:ci)
  *   - Hard gate: `BUN_TYPES_CI_STRICT=1` → `bun run bun:types-ci:strict`
- *   - Manual: `bun run bun:types-ci` · reports under `.cache/bun-types-*/`
+ *   - Manual: `bun run bun:types-ci` · reports under `.cache/bun-types-*`
  */
 import { getGitBranch, getGitCommitHash } from '../lib/macros/git-commit.ts';
 import { checkBunPin } from '../lib/verification/bun-runtime-pin.ts';
@@ -80,8 +80,7 @@ const skipTypesCi =
   Bun.env.BUN_TYPES_CI === 'false' ||
   Bun.env.SKIP_BUN_TYPES_CI === '1' ||
   Bun.env.SKIP_BUN_TYPES_CI === 'true';
-const typesCiStrict =
-  Bun.env.BUN_TYPES_CI_STRICT === '1' || Bun.env.BUN_TYPES_CI_STRICT === 'true';
+const typesCiStrict = Bun.env.BUN_TYPES_CI_STRICT === '1' || Bun.env.BUN_TYPES_CI_STRICT === 'true';
 
 if (!skipTypesCi) {
   steps.push({
@@ -109,7 +108,7 @@ for (const step of steps) {
   if (exitCode !== 0) {
     if (step.soft) {
       console.warn(
-        `bun:ci · ${step.name} exited ${exitCode} (soft — not failing merge proof; set BUN_TYPES_CI_STRICT=1 to enforce)`,
+        `bun:ci · ${step.name} exited ${exitCode} (soft — not failing merge proof; set BUN_TYPES_CI_STRICT=1 to enforce)`
       );
       continue;
     }
