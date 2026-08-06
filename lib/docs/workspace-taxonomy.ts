@@ -200,7 +200,7 @@ export function correlationsForSessionLane(lane: SessionLaneId): WorkspaceTaxono
 
 export type HomonymMachineHit = {
   readonly machine: 'sessionLane' | 'chromeDomain' | 'conceptDomain' | 'commitScopeHint';
-  readonly id: string;
+  readonly id: string; // brand-ok — opaque taxonomy token across machines, not a domain *Id
   readonly label: string;
   readonly note: string;
 };

@@ -21,13 +21,7 @@ import {
 } from '../verification/publish-plane-weave.ts';
 
 export type PortalWeaveGroup =
-  | 'ops'
-  | 'harness'
-  | 'registry'
-  | 'secrets'
-  | 'wiki'
-  | 'plane'
-  | 'other';
+  'ops' | 'harness' | 'registry' | 'secrets' | 'wiki' | 'plane' | 'other';
 
 export type PortalWeaveLink = {
   /** Stable slug for UI chips / filters */
