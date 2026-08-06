@@ -1,8 +1,8 @@
 // @see https://github.com/oven-sh/setup-bun#using-version-file
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file
 import { describe, expect, test } from 'bun:test';
-import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
+import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
 const SETUP_BUN_SHA = '0c5077e51419868618aeaa5fe8019c62421857d6';
@@ -20,7 +20,9 @@ async function githubYamlFiles(): Promise<string[]> {
 
 describe('Bun channel surfaces', () => {
   test('network-free runtime check reports the exact executing revision', async () => {
-    const process = Bun.spawn(bunSpawnArgs(['tools/bun-runtime-pin.ts', '--json']), {
+    const resolvedBun = resolveVerificationBunBinary();
+    expect(resolvedBun.matchesRuntime).toBe(true);
+    const process = Bun.spawn([resolvedBun.path, 'tools/bun-runtime-pin.ts', '--json'], {
       cwd: ROOT,
       stdout: 'pipe',
       stderr: 'pipe',

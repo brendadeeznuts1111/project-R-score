@@ -11,9 +11,9 @@
 /** Bun-native Husky pre-commit orchestration. */
 
 import { $ } from 'bun';
-import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import { checkBunPin, type BunPinCheck } from '../lib/verification/bun-runtime-pin.ts';
+import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
 import { isMoneySqlScannable } from './lint-money-sql.ts';
 
 export { checkBunPin, type BunPinCheck } from '../lib/verification/bun-runtime-pin.ts';
@@ -67,7 +67,13 @@ async function runCommand(
   command: string[],
   options: { quiet?: boolean; env?: Environment } = {}
 ): Promise<{ exitCode: number; stdout: string; stderr: string }> {
-  const resolvedCommand = command[0] === 'bun' ? bunSpawnArgs(command.slice(1)) : command;
+  const resolvedBun = command[0] === 'bun' ? resolveVerificationBunBinary() : null;
+  if (resolvedBun && !resolvedBun.matchesRuntime) {
+    throw new Error(
+      `pre-commit child executable ${resolvedBun.path} reports ${resolvedBun.spawnedVersion ?? 'an unknown version'}, expected ${resolvedBun.runtimeVersion}`
+    );
+  }
+  const resolvedCommand = resolvedBun ? [resolvedBun.path, ...command.slice(1)] : command;
   const shell = $`${resolvedCommand}`
     .cwd(REPO_ROOT)
     .env(options.env ?? Bun.env)
