@@ -418,19 +418,72 @@ export function findNakedHitsForRule(
     if (/^\s*\/\//.test(raw)) continue;
 
     const masked = maskNonCodeSpans(raw);
-    rule.regex.lastIndex = 0;
-    const m = rule.regex.exec(masked);
-    if (!m) continue;
-    hits.push({
-      file,
-      line: i + 1,
-      match: m[0] ?? '',
-      text: trimmed,
-      brandedType: rule.brandedType,
-      ruleId: rule.rowIds[0] ?? rule.brandedType,
-    });
+    for (const m of masked.matchAll(rule.regex)) {
+      hits.push({
+        file,
+        line: i + 1,
+        match: m[0] ?? '',
+        text: trimmed,
+        brandedType: rule.brandedType,
+        ruleId: rule.rowIds[0] ?? rule.brandedType,
+      });
+    }
   }
   return hits;
+}
+
+/** Append `// wire-ok: <reason>` to a source line (idempotent if already present). */
+export function appendWireOkComment(line: string, reason: string): string {
+  if (/(?:brand-ok|wire-ok)\b/.test(line)) return line;
+  const trimmedRight = line.replace(/\s+$/, '');
+  const reasonText = reason.trim() || 'boundary';
+  return `${trimmedRight} // wire-ok: ${reasonText}`;
+}
+
+export type WireOkFixResult = {
+  readonly file: string;
+  readonly line: number;
+  readonly before: string;
+  readonly after: string;
+};
+
+/**
+ * Auto-insert `// wire-ok` on allowlisted naked hits (never on trap/outside-allowlist errors).
+ */
+export async function applyWireOkFixes(options: {
+  readonly root: string;
+  readonly fixes: readonly { file: string; line: number; reason: string }[];
+  readonly dryRun?: boolean;
+}): Promise<readonly WireOkFixResult[]> {
+  const byFile = new Map<string, { line: number; reason: string }[]>();
+  for (const f of options.fixes) {
+    const list = byFile.get(f.file) ?? [];
+    list.push({ line: f.line, reason: f.reason });
+    byFile.set(f.file, list);
+  }
+
+  const results: WireOkFixResult[] = [];
+  for (const [rel, entries] of byFile) {
+    const abs = `${options.root.replace(/\/$/, '')}/${rel}`;
+    const text = await Bun.file(abs).text();
+    const lines = text.split(/\r?\n/);
+    const sorted = [...entries].sort((a, b) => b.line - a.line);
+    let wrote = false;
+    for (const e of sorted) {
+      const idx = e.line - 1;
+      if (idx < 0 || idx >= lines.length) continue;
+      const before = lines[idx] ?? '';
+      const after = appendWireOkComment(before, e.reason);
+      if (after === before) continue;
+      lines[idx] = after;
+      results.push({ file: rel, line: e.line, before, after });
+      wrote = true;
+    }
+    if (!options.dryRun && wrote) {
+      await Bun.write(abs, lines.join('\n'));
+    }
+  }
+  return results;
 }
 
 /** @deprecated use findNakedHitsForRule with buildWireLintRules */
@@ -476,6 +529,8 @@ export type ScanWireTrapsResult = {
   readonly rules: readonly WireLintRule[];
   readonly trapTokens: readonly string[];
   readonly hits: readonly WireTrapHit[];
+  /** Allowlisted naked hits lacking suppression (candidates for --fix). */
+  readonly fixable: readonly WireTrapHit[];
   readonly issues: readonly WireTrapIssue[];
   readonly scannedFiles: number;
 };
@@ -503,6 +558,7 @@ export async function scanWireTraps(options: {
     })),
   ];
   const hits: WireTrapHit[] = [];
+  const fixable: WireTrapHit[] = [];
   let scannedFiles = 0;
 
   const pattern = options.globPattern ?? '**/*.{ts,tsx}';
@@ -548,14 +604,16 @@ export async function scanWireTraps(options: {
         }
 
         if (allowedHere) {
+          // Only non-strict allowlists surface + accept --fix (strict = silent OK).
           if (!rule.strict) {
+            fixable.push(hit);
             issues.push({
               level: 'warn',
               file: hit.file,
               line: hit.line,
               match: hit.match,
               message: `${hit.file}:${hit.line}: naked \`${hit.match}\` in non-strict allowlist (${rule.brandedType})`,
-              fix: `Prefer ${rule.brandedType} at the boundary, or set strict:true once migrated`,
+              fix: `Prefer ${rule.brandedType}, // wire-ok: <reason>, or --fix`,
             });
           }
           continue;
@@ -583,7 +641,7 @@ export async function scanWireTraps(options: {
     }
   }
 
-  return { allowGlobs, allowEntries, rules, trapTokens, hits, issues, scannedFiles };
+  return { allowGlobs, allowEntries, rules, trapTokens, hits, fixable, issues, scannedFiles };
 }
 
 export function wireBagAllowsBoundary(bag: PartnerSurfaceWireFieldBag, file: string): boolean {

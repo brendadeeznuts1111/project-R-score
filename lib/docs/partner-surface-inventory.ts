@@ -785,12 +785,9 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       resolvesTo: 'OutId',
       brandedType: 'OutId',
       pattern: 'outId',
+      patterns: ['outId', 'out_id'],
       quarantineOnFail: true,
-      boundaryPathGlobs: [
-        'lib/telegram/seat-intake.ts',
-        'lib/telegram/seat-desk-book-max.ts',
-        'lib/telegram/seat-desk-callback.ts',
-      ],
+      boundaryPathGlobs: ['lib/telegram/seat-*.ts', 'lib/telegram/seat-desk-*.ts'],
     },
   }),
   row({

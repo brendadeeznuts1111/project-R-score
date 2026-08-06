@@ -2,7 +2,7 @@
   "kind": "partner-surface-inventory",
   "schemaVersion": 2,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-06T19:35:18.576Z",
+  "bakedAt": "2026-08-06T20:04:26.724Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",
@@ -801,11 +801,14 @@
         "resolvesTo": "OutId",
         "brandedType": "OutId",
         "pattern": "outId",
+        "patterns": [
+          "outId",
+          "out_id"
+        ],
         "quarantineOnFail": true,
         "boundaryPathGlobs": [
-          "lib/telegram/seat-intake.ts",
-          "lib/telegram/seat-desk-book-max.ts",
-          "lib/telegram/seat-desk-callback.ts"
+          "lib/telegram/seat-*.ts",
+          "lib/telegram/seat-desk-*.ts"
         ]
       }
     },

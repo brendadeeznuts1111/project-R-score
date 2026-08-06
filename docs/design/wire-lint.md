@@ -71,19 +71,27 @@ Same / previous / next line. Optional `: reason`; required when the bag sets
 bun run partner-surface-inventory:lint-wires          # --scan via package.json
 bun scripts/validate-wire-traps.ts                   # help
 bun scripts/validate-wire-traps.ts --why
-bun scripts/validate-wire-traps.ts --document
+bun scripts/validate-wire-traps.ts --document        # inventory + this guide
+bun scripts/validate-wire-traps.ts --rules           # dump rule families
 bun scripts/validate-wire-traps.ts --scan --strict-globs
+bun scripts/validate-wire-traps.ts --scan --fix     # non-strict allowlist only
 ```
+
+`--fix` appends `// wire-ok: <brandedType> boundary` on **non-strict**
+allowlisted naked hits. It never rewrites trap-row or outside-allowlist errors
+(those need a brand, a new glob, or a hand-written suppression).
 
 Pre-commit path-gates `--scan` (and `--strict-globs` when inventory SSOT is
 staged). Escape: `SKIP_WIRE_LINT=1`.
+
+Inventory validate also checks wire bags (`pattern` / `patterns` / `nakedType` /
+`resolvesTo`) so bad rows fail at Layer A/B before Layer C.
 
 ## Deferred
 
 | Topic | Why |
 | ----- | --- |
 | `money: number` → brand | No `MoneyAmount` brand yet; ledger uses `_minor` integers — see [partner-money-integer-migration.md](./partner-money-integer-migration.md) |
-| `--fix` | Auto `// wire-ok` stubs — follow-up |
 
 ## Related
 

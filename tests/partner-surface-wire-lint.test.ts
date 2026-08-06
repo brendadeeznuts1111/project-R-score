@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  appendWireOkComment,
   buildNakedAnnotationRegex,
   buildWireLintRules,
   collectTrapRowTokens,
@@ -20,6 +21,7 @@ import {
 import {
   DOCUMENT_REL,
   HELP_TEXT,
+  WIRE_LINT_DOC_REL,
   WHY_MARKDOWN,
   main as lintWiresMain,
 } from '../scripts/validate-wire-traps.ts';
@@ -41,8 +43,10 @@ describe('partner-surface-wire-lint', () => {
     const rules = buildWireLintRules(allPartnerSurfaceRows());
     const out = rules.find(r => r.brandedType === 'OutId');
     expect(out).toBeDefined();
-    expect(out!.patterns).toEqual(['outId']);
-    expect(out!.globs.some(g => g.includes('seat-intake'))).toBe(true);
+    expect(out!.patterns).toContain('outId');
+    expect(out!.patterns).toContain('out_id');
+    expect(out!.globs.some(g => g.includes('seat-*.ts'))).toBe(true);
+    expect(out!.globs.some(g => g.includes('seat-desk-*.ts'))).toBe(true);
   });
 
   test('ExternalPartnerId trap row has pattern and empty globs', () => {
@@ -95,10 +99,18 @@ describe('partner-surface-wire-lint', () => {
 
   test('findNakedHitsForRule reports brandedType on hits', () => {
     const rule = buildWireLintRules(allPartnerSurfaceRows()).find(r => r.brandedType === 'OutId')!;
-    const src = `function f(outId${colonString}) {}`;
+    const src = `function f(outId${colonString}, out_id${colonString}) {}`;
     const hits = findNakedHitsForRule('demo.ts', src, rule);
-    expect(hits.length).toBe(1);
+    expect(hits.length).toBe(2);
     expect(hits[0]?.brandedType).toBe('OutId');
+    expect(hits.map(h => h.match)).toContain(`out_id${colonString}`);
+  });
+
+  test('appendWireOkComment is idempotent', () => {
+    const line = `outId${colonString};`;
+    const once = appendWireOkComment(line, 'OutId boundary');
+    expect(once).toContain('// wire-ok: OutId boundary');
+    expect(appendWireOkComment(once, 'again')).toBe(once);
   });
 
   test('wire-ok / brand-ok suppress with optional reason', () => {
@@ -152,14 +164,18 @@ describe('partner-surface-wire-lint', () => {
     }
   });
 
-  test('CLI --hlp / --why / --document exit 0', async () => {
+  test('CLI --hlp / --why / --document / --rules exit 0', async () => {
     expect(HELP_TEXT).toContain('--scan');
+    expect(HELP_TEXT).toContain('--fix');
+    expect(HELP_TEXT).toContain('--rules');
     expect(WHY_MARKDOWN).toContain('Layer C');
     expect(DOCUMENT_REL).toBe('docs/design/partner-surface-inventory.md');
+    expect(WIRE_LINT_DOC_REL).toBe('docs/design/wire-lint.md');
     expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts'])).toBe(0);
     expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--hlp'])).toBe(0);
     expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--why'])).toBe(0);
     expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--document'])).toBe(0);
+    expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--rules'])).toBe(0);
   });
 
   test('CLI --scan runs the gate', async () => {
