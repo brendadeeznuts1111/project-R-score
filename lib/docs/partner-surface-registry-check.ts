@@ -26,6 +26,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 /** Depth-first collect every object key path (dot + [i] for arrays). */
 export function collectObjectKeyPaths(
+  // eslint-disable-next-line harness/no-unknown-function-param -- JSON walk edge
   value: unknown,
   prefix = ''
 ): readonly { path: string; key: string; value: unknown }[] {
@@ -45,7 +46,10 @@ export function collectObjectKeyPaths(
   return out;
 }
 
-export function artifactSchemaIdentity(artifact: unknown): {
+export function artifactSchemaIdentity(
+  // eslint-disable-next-line harness/no-unknown-function-param -- baked JSON edge
+  artifact: unknown
+): {
   field: 'schema' | 'kind' | 'schemaVersion' | null;
   value: string | null;
 } {
@@ -69,7 +73,7 @@ function isMoneyBearingKey(key: string): boolean {
 function checkMoneyPolicy(
   policy: PartnerSurfaceMoneyPolicy,
   keys: readonly { path: string; key: string; value: unknown }[],
-  rowId: string
+  rowId: string // brand-ok — inventory row key, not a domain entity id
 ): RegistryCheckIssue[] {
   const issues: RegistryCheckIssue[] = [];
   if (policy === 'unset') return issues;
@@ -105,8 +109,9 @@ function checkMoneyPolicy(
  * Check a parsed registry artifact against the inventory registry bag.
  */
 export function checkRegistryArtifact(
-  rowId: string,
+  rowId: string, // brand-ok — inventory row key, not a domain entity id
   bag: PartnerSurfaceRegistryBag,
+  // eslint-disable-next-line harness/no-unknown-function-param -- baked JSON edge
   artifact: unknown
 ): readonly RegistryCheckIssue[] {
   const issues: RegistryCheckIssue[] = [];

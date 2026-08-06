@@ -82,7 +82,7 @@ export type PartnerSurfaceMoneyPolicy = 'integerMinorUnits' | 'forbidden' | 'uns
  * only expose a numeric `schemaVersion`).
  */
 export type PartnerSurfaceRegistryBag = {
-  readonly schemaId: string;
+  readonly schemaId: string; // brand-ok — registry schema label, not a domain SchemaId
   /** Which artifact field must equal `schemaId`. Default: auto (schema|kind|schemaVersion). */
   readonly schemaIdField?: 'schema' | 'kind' | 'schemaVersion' | 'none';
   readonly artifactPath: string;
@@ -104,7 +104,7 @@ export type PartnerSurfaceRegistryBag = {
  */
 export type PartnerSurfaceWireFieldBag = {
   readonly wireName: string;
-  readonly sourceSystemId: string;
+  readonly sourceSystemId: string; // brand-ok — adapter source label (kalshi|sports|…), not SourceSystemId
   readonly resolvesTo: 'ExternalPartnerRef' | 'PartnerCode';
   readonly quarantineOnFail: boolean;
   /** Path prefixes/globs where naked wire id annotations are allowed. */
@@ -964,18 +964,18 @@ export type PartnerSurfaceInventory = {
   readonly bakedAt: string;
   readonly principle: 'map-before-rename';
   readonly chromeDomain: {
-    readonly id: string;
+    readonly id: string; // brand-ok — chrome Domain lane token (partner)
     readonly label: string;
     readonly description: string;
     readonly doc: string;
   };
   readonly conceptDomain: {
-    readonly id: string;
+    readonly id: string; // brand-ok — ConceptDomain token (partners)
     readonly label: string;
     readonly description: string;
   };
   readonly sessionLane: {
-    readonly id: string;
+    readonly id: string; // brand-ok — SessionLaneId token mirrored as string for bake JSON
     readonly display: string;
     readonly description: string;
   };
