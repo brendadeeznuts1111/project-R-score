@@ -38,9 +38,28 @@ const OUT_DIR = resolvePath(REPO_ROOT, '.cache/bun-types-status');
 const OUT_JSON = resolvePath(OUT_DIR, 'report.json');
 const OUT_MD = resolvePath(OUT_DIR, 'report.md');
 
-const DEFAULT_MAX_AGE_DAYS = 14;
+export const DEFAULT_MAX_AGE_DAYS = 14;
 
 export type StatusVerdict = 'ok' | 'warn' | 'fail';
+
+/** Parsed CLI for status tool (defaults vs current in Flags table). */
+export type StatusCli = {
+  refresh: boolean;
+  strict: boolean;
+  json: boolean;
+  help: boolean;
+  maxAgeDays: number;
+};
+
+/** One Flags/settings row — script · REF:ID · --flag · shortcode · default · current. */
+export type StatusFlagRow = {
+  script: string;
+  refId: string;
+  flag: string;
+  shortcode: string;
+  default: string;
+  current: string;
+};
 
 export type TipDiffSnapshot = {
   present: boolean;
@@ -93,9 +112,10 @@ export type StatusReport = {
   tip: TipDiffSnapshot;
   usage: UsageSnapshot;
   maxAgeDays: number;
+  flags: StatusFlagRow[];
 };
 
-function parseCli(argv: string[]) {
+export function parseStatusCli(argv: string[]): StatusCli {
   let maxAgeDays = DEFAULT_MAX_AGE_DAYS;
   for (const a of argv) {
     if (a.startsWith('--max-age-days=')) {
@@ -110,6 +130,66 @@ function parseCli(argv: string[]) {
     help: argv.includes('--help') || argv.includes('-h'),
     maxAgeDays,
   };
+}
+
+/** Default StatusCli (no argv) — soft morning check. */
+export function defaultStatusCli(): StatusCli {
+  return {
+    refresh: false,
+    strict: false,
+    json: false,
+    help: false,
+    maxAgeDays: DEFAULT_MAX_AGE_DAYS,
+  };
+}
+
+/**
+ * Flag rows for TTY / report.json — separate REF:ID, --flag, shortcode, default, current.
+ */
+export function buildStatusFlagRows(cli: StatusCli): StatusFlagRow[] {
+  const onOff = (v: boolean) => (v ? 'on' : 'off');
+  return [
+    {
+      script: 'bun:types-status',
+      refId: 'types-status.refresh',
+      flag: '--refresh',
+      shortcode: '—',
+      default: 'off',
+      current: onOff(cli.refresh),
+    },
+    {
+      script: 'bun:types-status',
+      refId: 'types-status.strict',
+      flag: '--strict',
+      shortcode: '—',
+      default: 'soft (exit 0)',
+      current: cli.strict ? 'strict (exit 1 on warn/fail)' : 'soft (exit 0)',
+    },
+    {
+      script: 'bun:types-status',
+      refId: 'types-status.max-age-days',
+      flag: '--max-age-days',
+      shortcode: '—',
+      default: String(DEFAULT_MAX_AGE_DAYS),
+      current: String(cli.maxAgeDays),
+    },
+    {
+      script: 'bun:types-status',
+      refId: 'types-status.json',
+      flag: '--json',
+      shortcode: '—',
+      default: 'off',
+      current: onOff(cli.json),
+    },
+    {
+      script: 'bun:types-status',
+      refId: 'types-status.help',
+      flag: '--help',
+      shortcode: '-h',
+      default: '—',
+      current: onOff(cli.help),
+    },
+  ];
 }
 
 function daysBetween(iso: string | undefined, nowMs: number): number | undefined {
@@ -223,7 +303,10 @@ export function buildNextSteps(inputs: StatusInputs, verdict: StatusVerdict): st
   return steps.slice(0, 4);
 }
 
-export function buildStatusReport(inputs: StatusInputs): StatusReport {
+export function buildStatusReport(
+  inputs: StatusInputs,
+  cli: StatusCli = defaultStatusCli()
+): StatusReport {
   const nowMs = inputs.nowMs ?? Date.now();
   const inv = { ...inputs.inventory };
   if (inv.present && inv.generated && inv.ageDays === undefined) {
@@ -232,7 +315,7 @@ export function buildStatusReport(inputs: StatusInputs): StatusReport {
   const normalized: StatusInputs = {
     ...inputs,
     inventory: inv,
-    maxAgeDays: inputs.maxAgeDays ?? DEFAULT_MAX_AGE_DAYS,
+    maxAgeDays: inputs.maxAgeDays ?? cli.maxAgeDays ?? DEFAULT_MAX_AGE_DAYS,
     nowMs,
   };
   const { verdict, reasons } = computeVerdict(normalized);
@@ -247,6 +330,7 @@ export function buildStatusReport(inputs: StatusInputs): StatusReport {
     tip: normalized.tip,
     usage: normalized.usage,
     maxAgeDays: normalized.maxAgeDays ?? DEFAULT_MAX_AGE_DAYS,
+    flags: buildStatusFlagRows(cli),
   };
 }
 
@@ -274,6 +358,15 @@ function renderStatusMd(report: StatusReport): string {
     '## Next steps',
     '',
     ...report.nextSteps.map(s => `- ${s}`),
+    '',
+    '## Flags / settings',
+    '',
+    '| Script | REF:ID | --flag | shortcode | default | current |',
+    '| ------ | ------ | ------ | --------- | ------- | ------- |',
+    ...report.flags.map(
+      f =>
+        `| \`${f.script}\` | \`${f.refId}\` | \`${f.flag}\` | ${f.shortcode === '—' ? '—' : `\`${f.shortcode}\``} | ${f.default} | ${f.current} |`
+    ),
     '',
   ];
   if (report.usage.byModule?.length) {
@@ -394,9 +487,12 @@ async function refreshLocal(strict: boolean): Promise<number> {
 }
 
 async function main(): Promise<number> {
-  const args = parseCli(Bun.argv.slice(2));
+  const args = parseStatusCli(Bun.argv.slice(2));
   if (args.help) {
     console.log(`bun-types-status — morning dashboard (inventory · tip-diff · usage)
+
+  Script:  bun:types-status
+  Command: bun tools/bun-types-status.ts
 
   (default)           Read caches; do not re-run tip/usage
   --refresh           Run bun:types-report:local first
@@ -426,7 +522,7 @@ async function main(): Promise<number> {
     usage: await loadUsage(),
     maxAgeDays: args.maxAgeDays,
   };
-  const report = buildStatusReport(inputs);
+  const report = buildStatusReport(inputs, args);
 
   if (args.json) {
     console.log(JSON.stringify(report, null, 2));
@@ -499,6 +595,22 @@ async function main(): Promise<number> {
         );
       }
     }
+
+    printSection('Flags');
+    printMap([
+      { key: 'script', value: 'bun:types-status' },
+      { key: 'command', value: 'bun tools/bun-types-status.ts' },
+    ]);
+    printPreviewTable(
+      report.flags.map(f => ({
+        'REF:ID': f.refId,
+        '--flag': f.flag,
+        shortcode: f.shortcode,
+        default: f.default,
+        current: f.current,
+      })),
+      ['REF:ID', '--flag', 'shortcode', 'default', 'current']
+    );
 
     printSection('Next steps');
     for (const s of report.nextSteps) console.info(`  • ${s}`);
