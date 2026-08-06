@@ -3,15 +3,19 @@
 // @see https://bun.com/docs/runtime/utils#bun-openineditor — Bun.openInEditor
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
- * doc-map-check.ts — verify platform doc SSOT paths and root/docs markdown links.
+ * doc-map-check.ts — verify platform doc SSOT paths, markdown links, and REF:IDs.
  *
  * Scope: root MD + docs/* SSOT + lib/docs/repo-docs.ts CANONICAL_* paths.
+ * Section-number REF:ID allowlist via lib/docs/refid-check.ts.
  * Does not scan projects/active.
  *
  * Usage:
  *   bun tools/doc-map-check.ts
  *   bun tools/doc-map-check.ts --open        # open first broken target
  *   bun tools/doc-map-check.ts --json
+ *   bun tools/doc-map-check.ts --refid-strict
+ *   bun tools/doc-map-check.ts --skip-refid-check
+ *   bun run docs:refid:check                 # alias: --refid-strict
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { resolvePath, relativePath, dirnamePath } from '../lib/path-bun';
@@ -21,6 +25,16 @@ import {
   CANONICAL_TOOLS,
   CANONICAL_DOC_ROLES,
 } from '../lib/docs/repo-docs.ts';
+import {
+  REFID_DOC_ALLOWLIST,
+  checkRefIdDocument,
+  type RefIdIssue,
+} from '../lib/docs/refid-check.ts';
+import {
+  BUN_TYPES_INVENTORY_DOC,
+  buildStatusFlagRows,
+  defaultStatusCli,
+} from './bun-types-status.ts';
 
 const REPO = resolvePath(import.meta.dir, '..');
 
@@ -44,7 +58,8 @@ const ROOT_MD = [
 ] as const;
 
 type Issue = {
-  kind: 'canonical-missing' | 'broken-link';
+  kind: 'canonical-missing' | 'broken-link' | RefIdIssue['kind'];
+  severity?: 'error' | 'warn';
   file: string;
   line?: number;
   target: string;
@@ -139,12 +154,61 @@ async function checkMarkdownLinks(relFile: string): Promise<Issue[]> {
   return issues;
 }
 
+async function checkRefIds(opts: { strict: boolean }): Promise<Issue[]> {
+  const issues: Issue[] = [];
+  const toolingByDoc = new Map<string, { refId: string; href: string }[]>();
+  toolingByDoc.set(
+    BUN_TYPES_INVENTORY_DOC,
+    buildStatusFlagRows(defaultStatusCli()).map(r => ({ refId: r.refId, href: r.href }))
+  );
+
+  for (const entry of REFID_DOC_ALLOWLIST) {
+    const abs = resolvePath(REPO, entry.path);
+    if (!(await Bun.file(abs).exists())) {
+      issues.push({
+        kind: 'canonical-missing',
+        severity: 'error',
+        file: entry.path,
+        target: entry.path,
+        detail: 'REF:ID allowlist file missing',
+      });
+      continue;
+    }
+    const text = await Bun.file(abs).text();
+    const found = checkRefIdDocument({
+      path: entry.path,
+      text,
+      toolingRefs: toolingByDoc.get(entry.path) ?? [],
+      sectionRefId: entry.sectionRefId,
+      sectionHeading: entry.sectionHeading,
+      strict: opts.strict,
+    });
+    for (const i of found) {
+      issues.push({
+        kind: i.kind,
+        severity: i.severity,
+        file: i.file,
+        line: i.line,
+        target: i.target,
+        detail: i.detail,
+      });
+    }
+  }
+  return issues;
+}
+
 function printIssues(issues: Issue[]): void {
   if (issues.length === 0) {
-    console.info('✅ doc-map-check: all CANONICAL_* paths and SSOT markdown links OK');
+    console.info('✅ doc-map-check: all CANONICAL_* paths, SSOT markdown links, and REF:IDs OK');
     return;
   }
-  console.info(`\n❌ doc-map-check: ${issues.length} issue(s)\n`);
+  const errors = issues.filter(i => (i.severity ?? 'error') === 'error');
+  const warns = issues.filter(i => i.severity === 'warn');
+  console.info(
+    `\n❌ doc-map-check: ${errors.length} error(s)` +
+      (warns.length ? `, ${warns.length} warning(s)` : '') +
+      `\n`
+  );
   const byFile = new Map<string, Issue[]>();
   for (const i of issues) {
     if (!byFile.has(i.file)) byFile.set(i.file, []);
@@ -154,8 +218,9 @@ function printIssues(issues: Issue[]): void {
     console.info(`## ${file}`);
     for (const r of rows) {
       const loc = r.line != null ? `${file}:${r.line}` : file;
+      const sev = r.severity ?? 'error';
       console.info(`  ${loc}`);
-      console.info(`    [${r.kind}] ${r.target}${r.detail ? `  (${r.detail})` : ''}`);
+      console.info(`    [${sev}/${r.kind}] ${r.target}${r.detail ? `  (${r.detail})` : ''}`);
     }
     console.info('');
   }
@@ -165,11 +230,19 @@ async function main(): Promise<void> {
   const argv = Bun.argv.slice(2);
   const asJson = argv.includes('--json');
   const open = argv.includes('--open');
+  const refidStrict = argv.includes('--refid-strict');
+  const skipRefid =
+    argv.includes('--skip-refid-check') ||
+    Bun.env.SKIP_DOC_REFID === '1' ||
+    Bun.env.SKIP_DOC_REFID === 'true';
 
   const issues: Issue[] = [];
   issues.push(...(await checkCanonical()));
   for (const f of ROOT_MD) {
     issues.push(...(await checkMarkdownLinks(f)));
+  }
+  if (!skipRefid) {
+    issues.push(...(await checkRefIds({ strict: refidStrict })));
   }
 
   if (asJson) {
@@ -185,7 +258,9 @@ async function main(): Promise<void> {
     Bun.openInEditor(abs, { line: first.line ?? 1 });
   }
 
-  if (issues.length > 0) process.exitCode = 1;
+  // Warnings alone do not fail soft mode; errors do. Strict promotes format warns → errors.
+  const hard = issues.filter(i => (i.severity ?? 'error') === 'error');
+  if (hard.length > 0) process.exitCode = 1;
 }
 
 if (isModuleEntrypoint(import.meta)) {

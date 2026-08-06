@@ -86,17 +86,17 @@ usage, and status do.
 | `bun:types-status`                    | `bun tools/bun-types-status.ts`                             | Compose inventory + tip + usage → verdict / next steps | `0` soft; `--strict` → `1` on warn/fail |
 | `bun:types-status:refresh`            | `bun tools/bun-types-status.ts --refresh`                   | Same after `bun:types-report:local`                    | same                                    |
 
-<a id="4.1"></a> <a id="4.1.refresh"></a> <a id="4.1.strict"></a>
-<a id="4.1.max-age-days"></a> <a id="4.1.json"></a> <a id="4.1.help"></a>
-<a id="4.1.shared.strict"></a> <a id="4.1.shared.prefer-local"></a>
+<a id="4.1.refresh"></a> <a id="4.1.strict"></a> <a id="4.1.max-age-days"></a>
+<a id="4.1.json"></a> <a id="4.1.help"></a> <a id="4.1.shared.strict"></a>
+<a id="4.1.shared.prefer-local"></a> <a id="4.1"></a>
 
 ### Flags / settings
 
-**REF:ID** = Contents section number path under §4 (`4.1.<leaf>`). **href** =
-`#` + REF:ID (HTML anchors above). Doc **current** cannot show process argv —
-live default vs current is printed by `bun run bun:types-status` (Flags section
-
-- `report.json` `flags[]`).
+**REF:ID** = Contents section number path under §4 (`4.1.<leaf>`). **href** MUST
+equal `#` + REF:ID (HTML anchors immediately above this heading). Validate with
+`bun run docs:refid:check` (or `docs:map:check --refid-strict`). Doc **current**
+cannot show process argv — live default vs current is printed by
+`bun run bun:types-status` (Flags section + `report.json` `flags[]`).
 
 | Script             | REF:ID                    | href                                                   | --flag           | shortcode | default       | current                     |
 | ------------------ | ------------------------- | ------------------------------------------------------ | ---------------- | --------- | ------------- | --------------------------- |
