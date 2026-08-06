@@ -17,6 +17,7 @@ layers, or outputs.
 2. [Not this (partner-surface)](#not-this-partner-surface)
 3. [Artifacts](#artifacts)
 4. [Commands](#commands)
+   - [4.1 Flags / settings](#4.1)
 5. [Local CI (`bun:ci`)](#local-ci-bunci)
 6. [Operator workflow](#operator-workflow)
 7. [Tools map](#tools-map)
@@ -85,21 +86,27 @@ usage, and status do.
 | `bun:types-status`                    | `bun tools/bun-types-status.ts`                             | Compose inventory + tip + usage → verdict / next steps | `0` soft; `--strict` → `1` on warn/fail |
 | `bun:types-status:refresh`            | `bun tools/bun-types-status.ts --refresh`                   | Same after `bun:types-report:local`                    | same                                    |
 
+<a id="4.1"></a> <a id="4.1.refresh"></a> <a id="4.1.strict"></a>
+<a id="4.1.max-age-days"></a> <a id="4.1.json"></a> <a id="4.1.help"></a>
+<a id="4.1.shared.strict"></a> <a id="4.1.shared.prefer-local"></a>
+
 ### Flags / settings
 
-**REF:ID** = `types-<tool>.<flag>` slug. Doc **current** cannot show process
-argv — live default vs current is printed by `bun run bun:types-status` (Flags
-section + `report.json` `flags[]`).
+**REF:ID** = Contents section number path under §4 (`4.1.<leaf>`). **href** =
+`#` + REF:ID (HTML anchors above). Doc **current** cannot show process argv —
+live default vs current is printed by `bun run bun:types-status` (Flags section
 
-| Script             | REF:ID                      | --flag           | shortcode | default       | current                     |
-| ------------------ | --------------------------- | ---------------- | --------- | ------------- | --------------------------- |
-| `bun:types-status` | `types-status.refresh`      | `--refresh`      | —         | off           | live via `bun:types-status` |
-| `bun:types-status` | `types-status.strict`       | `--strict`       | —         | soft (exit 0) | live via `bun:types-status` |
-| `bun:types-status` | `types-status.max-age-days` | `--max-age-days` | —         | `14`          | live via `bun:types-status` |
-| `bun:types-status` | `types-status.json`         | `--json`         | —         | off           | live via `bun:types-status` |
-| `bun:types-status` | `types-status.help`         | `--help`         | `-h`      | —             | live via `bun:types-status` |
-| shared             | `types.shared.strict`       | `--strict`       | —         | soft          | see tool                    |
-| shared             | `types.shared.prefer-local` | `--prefer-local` | —         | off           | baked into `:local` / `:ci` |
+- `report.json` `flags[]`).
+
+| Script             | REF:ID                    | href                                                   | --flag           | shortcode | default       | current                     |
+| ------------------ | ------------------------- | ------------------------------------------------------ | ---------------- | --------- | ------------- | --------------------------- |
+| `bun:types-status` | `4.1.refresh`             | [`#4.1.refresh`](#4.1.refresh)                         | `--refresh`      | —         | off           | live via `bun:types-status` |
+| `bun:types-status` | `4.1.strict`              | [`#4.1.strict`](#4.1.strict)                           | `--strict`       | —         | soft (exit 0) | live via `bun:types-status` |
+| `bun:types-status` | `4.1.max-age-days`        | [`#4.1.max-age-days`](#4.1.max-age-days)               | `--max-age-days` | —         | `14`          | live via `bun:types-status` |
+| `bun:types-status` | `4.1.json`                | [`#4.1.json`](#4.1.json)                               | `--json`         | —         | off           | live via `bun:types-status` |
+| `bun:types-status` | `4.1.help`                | [`#4.1.help`](#4.1.help)                               | `--help`         | `-h`      | —             | live via `bun:types-status` |
+| shared             | `4.1.shared.strict`       | [`#4.1.shared.strict`](#4.1.shared.strict)             | `--strict`       | —         | soft          | see tool                    |
+| shared             | `4.1.shared.prefer-local` | [`#4.1.shared.prefer-local`](#4.1.shared.prefer-local) | `--prefer-local` | —         | off           | baked into `:local` / `:ci` |
 
 Useful inventory flags (see tool `--help`): `--shallow` · `--no-interfaces` ·
 `--no-type-aliases` · `--no-props` · `--no-enums` · `--no-nested-objects` ·

@@ -1,10 +1,13 @@
 import { describe, expect, test } from 'bun:test';
 import {
   DEFAULT_MAX_AGE_DAYS,
+  FLAGS_DOC_SECTION_HREF,
+  FLAGS_DOC_SECTION_REF,
   buildNextSteps,
   buildStatusFlagRows,
   buildStatusReport,
   computeVerdict,
+  flagDocRef,
   parseStatusCli,
   type StatusInputs,
 } from '../tools/bun-types-status.ts';
@@ -135,25 +138,32 @@ describe('bun-types-status', () => {
     expect(report.flags.length).toBe(5);
   });
 
-  test('buildStatusFlagRows separates REF:ID, --flag, shortcode, default, current', () => {
+  test('flagDocRef maps leaf to Contents §4.1 number + href', () => {
+    expect(FLAGS_DOC_SECTION_REF).toBe('4.1');
+    expect(FLAGS_DOC_SECTION_HREF).toBe('#4.1');
+    expect(flagDocRef('refresh')).toEqual({ refId: '4.1.refresh', href: '#4.1.refresh' });
+  });
+
+  test('buildStatusFlagRows REF:ID matches doc number href', () => {
     const rows = buildStatusFlagRows(parseStatusCli([]));
     expect(rows.map(r => r.refId)).toEqual([
-      'types-status.refresh',
-      'types-status.strict',
-      'types-status.max-age-days',
-      'types-status.json',
-      'types-status.help',
+      '4.1.refresh',
+      '4.1.strict',
+      '4.1.max-age-days',
+      '4.1.json',
+      '4.1.help',
     ]);
+    expect(rows.every(r => r.href === `#${r.refId}`)).toBe(true);
     expect(rows.every(r => r.script === 'bun:types-status')).toBe(true);
-    expect(rows.find(r => r.refId === 'types-status.refresh')?.flag).toBe('--refresh');
-    expect(rows.find(r => r.refId === 'types-status.help')?.shortcode).toBe('-h');
-    expect(rows.find(r => r.refId === 'types-status.refresh')?.shortcode).toBe('—');
-    expect(rows.find(r => r.refId === 'types-status.max-age-days')?.default).toBe(
+    expect(rows.find(r => r.refId === '4.1.refresh')?.flag).toBe('--refresh');
+    expect(rows.find(r => r.refId === '4.1.help')?.shortcode).toBe('-h');
+    expect(rows.find(r => r.refId === '4.1.refresh')?.shortcode).toBe('—');
+    expect(rows.find(r => r.refId === '4.1.max-age-days')?.default).toBe(
       String(DEFAULT_MAX_AGE_DAYS)
     );
-    expect(rows.find(r => r.refId === 'types-status.strict')?.default).toBe('soft (exit 0)');
-    expect(rows.find(r => r.refId === 'types-status.refresh')?.current).toBe('off');
-    expect(rows.find(r => r.refId === 'types-status.max-age-days')?.current).toBe(
+    expect(rows.find(r => r.refId === '4.1.strict')?.default).toBe('soft (exit 0)');
+    expect(rows.find(r => r.refId === '4.1.refresh')?.current).toBe('off');
+    expect(rows.find(r => r.refId === '4.1.max-age-days')?.current).toBe(
       String(DEFAULT_MAX_AGE_DAYS)
     );
   });
@@ -161,11 +171,12 @@ describe('bun-types-status', () => {
   test('buildStatusFlagRows current reflects fixture argv', () => {
     const cli = parseStatusCli(['--refresh', '--max-age-days=7', '--strict']);
     const rows = buildStatusFlagRows(cli);
-    expect(rows.find(r => r.refId === 'types-status.refresh')?.current).toBe('on');
-    expect(rows.find(r => r.refId === 'types-status.max-age-days')?.current).toBe('7');
-    expect(rows.find(r => r.refId === 'types-status.strict')?.current).toContain('strict');
+    expect(rows.find(r => r.refId === '4.1.refresh')?.current).toBe('on');
+    expect(rows.find(r => r.refId === '4.1.max-age-days')?.current).toBe('7');
+    expect(rows.find(r => r.refId === '4.1.strict')?.current).toContain('strict');
     const report = buildStatusReport(baseInputs({ maxAgeDays: 7 }), cli);
-    expect(report.flags.find(f => f.refId === 'types-status.refresh')?.current).toBe('on');
+    expect(report.flags.find(f => f.refId === '4.1.refresh')?.current).toBe('on');
+    expect(report.flags.find(f => f.refId === '4.1.refresh')?.href).toBe('#4.1.refresh');
     expect(report.maxAgeDays).toBe(7);
   });
 });
