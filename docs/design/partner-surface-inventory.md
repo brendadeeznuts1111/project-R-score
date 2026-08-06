@@ -16,6 +16,10 @@ surfaces before any token rename.
 Answers: **what kind of partner is this, where does it live, what shape does it
 have?** It joins sibling maps; it does **not** replace them.
 
+It is also **not** the Bun-types pin/tip pipeline
+([`bun-types-inventory.md`](./bun-types-inventory.md) ·
+`tools/bun-types-inventory.json`).
+
 ## Contents
 
 1. [What this owns](#what-this-owns)

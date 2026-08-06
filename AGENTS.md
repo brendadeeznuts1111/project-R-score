@@ -74,7 +74,7 @@ Telegram stay in `toc-ops-repo` (`ct`); Pages exposes the baked board at
 | Local merge + Cloudflare delivery (key reference) | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · [`docs/harness/tenants/cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · `bun run bun:ci`                                                                                                                                                                                                                                                                                                                                                   |
 | Repository review (JIT)                           | [`docs/harness/REVIEW.md`](docs/harness/REVIEW.md)                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | Proof / install journey                           | [`docs/harness/PROOF.md`](docs/harness/PROOF.md) · `bun run proof:install`                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| Issue / PR human routing                          | [`docs/harness/ISSUE-ROUTING.md`](docs/harness/ISSUE-ROUTING.md) · Domain · Tracker · Concept on issue templates (GitHub is not concept SSOT)                                                                                                                                                                                                                                                                                                                                                                         |
+| Issue / PR human routing                          | [`docs/harness/ISSUE-ROUTING.md`](docs/harness/ISSUE-ROUTING.md) · Domain · Tracker · Concept on issue templates (GitHub is not concept SSOT)                                                                                                                                                                                                                                                                                                                                                                          |
 | Docs index                                        | [`docs/README.md`](docs/)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | Workspace map                                     | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | Coding standards                                  | [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)                                                                                                                                                                                                                                                                                                                                |
@@ -82,8 +82,8 @@ Telegram stay in `toc-ops-repo` (`ct`); Pages exposes the baked board at
 | Import boundaries                                 | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md)                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | Wire boundary (parse once)                        | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | Domain → concept → shape → surface                | [`docs/DOMAIN_CONCEPT_SHAPE.md`](docs/DOMAIN_CONCEPT_SHAPE.md) · ownership → meaning → parsed contract → consumer                                                                                                                                                                                                                                                                                                                                                                                                      |
-| Partner dashboard contract                       | [`docs/design/partner-dashboard-mvp.md`](docs/design/partner-dashboard-mvp.md) · [`docs/design/partner-dashboard-mvp.toml`](docs/design/partner-dashboard-mvp.toml) · `bun run partner:dashboard-plan:validate`                                                                                                                                                                                                                                                                                                             |
-| Bun channel/type governance                      | [`docs/design/bun-channel-governance.md`](docs/design/bun-channel-governance.md) · [`config/bun-channels.toml`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/bun-channels.toml) · `bun run bun:channel:check`                                                                                                                                                                                                                                                                                                                                                   |
+| Partner dashboard contract                        | [`docs/design/partner-dashboard-mvp.md`](docs/design/partner-dashboard-mvp.md) · [`docs/design/partner-dashboard-mvp.toml`](docs/design/partner-dashboard-mvp.toml) · `bun run partner:dashboard-plan:validate`                                                                                                                                                                                                                                                                                                        |
+| Bun channel/type governance                       | [`docs/design/bun-channel-governance.md`](docs/design/bun-channel-governance.md) · [`config/bun-channels.toml`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/bun-channels.toml) · `bun run bun:channel:check`                                                                                                                                                                                                                                                                                |
 | Portal foundation (static UI)                     | [`docs/portal-foundation.md`](docs/portal-foundation.md) · `bun run verify:portal:static` · `bun run public:audit:verify` · color kernel Claim/Evidence: `bun run validate:colors` / `test:colors` (claim `color-kernel-theme-aliases`) · [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md) · `serve:public:hot` · bind policy [`serve-public-bind.md`](docs/harness/tenants/serve-public-bind.md) · `bun run brand:status:bind` / `brand:status:lifecycle` · `bun run check:serve-shape` |
 | TOC Ops portal board (fixture)                    | [`docs/harness/tenants/toc-ops.md`](docs/harness/tenants/toc-ops.md) · `/portal/toc/` · `bun run ops:seed:toc` · `bun run test:toc-ops`                                                                                                                                                                                                                                                                                                                                                                                |
 | Ops loop throughput                               | [`docs/harness/tenants/ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) · `bun run ops:loop:baseline` / `ops:loop:post` / `ops:outbox:requeue` · claim `ops-loop-throughput`                                                                                                                                                                                                                                                                                                                      |
@@ -91,8 +91,8 @@ Telegram stay in `toc-ops-repo` (`ct`); Pages exposes the baked board at
 | Seat capital desk                                 | [`docs/harness/tenants/seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md) · `bun run seat:desk:refresh` · `seat:desk:topic-prompts` · `telegram:package-group:accounting`                                                                                                                                                                                                                                                                                                                               |
 | Compliance portal (MA/NJ)                         | [`docs/harness/tenants/compliance-portal.md`](docs/harness/tenants/compliance-portal.md) · `/portal/compliance/` · `bun run compliance:bake` / `compliance:verify`                                                                                                                                                                                                                                                                                                                                                     |
 | Partner limit raises                              | [`docs/harness/tenants/partner-limits.md`](docs/harness/tenants/partner-limits.md) · `/portal/limits/` · `ops:limits:demo` · `ops:limits:predict` · bake `ops:snapshot` → `limit-raises.json`                                                                                                                                                                                                                                                                                                                          |
-| Tennis HQ registry auth (cloud agent)             | [`docs/harness/tenants/tennis-hq-registry.md`](docs/harness/tenants/tennis-hq-registry.md) · `/registry/tennis/agent-auth.json` · `/portal/tennis/` · `FACTORY_WAGER_TOKEN` · producer [CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md)                                                                                                                                                                                                                                                                                          |
-| Bookmaker registry                                | [`docs/harness/tenants/bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md) · `/portal/bookmakers/` · `/registry/bookmakers.json` · `@factorywager/bookmakers` artifact · `bun run bookmakers:bake` · `weave --package` runbook (same tenant doc)                                                                                                                                                                                                                                                          |
+| Tennis HQ registry auth (cloud agent)             | [`docs/harness/tenants/tennis-hq-registry.md`](docs/harness/tenants/tennis-hq-registry.md) · `/registry/tennis/agent-auth.json` · `/portal/tennis/` · `FACTORY_WAGER_TOKEN` · producer [CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md)                                                                                                                                                                                                                          |
+| Bookmaker registry                                | [`docs/harness/tenants/bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md) · `/portal/bookmakers/` · `/registry/bookmakers.json` · `@factorywager/bookmakers` artifact · `bun run bookmakers:bake` · `weave --package` runbook (same tenant doc)                                                                                                                                                                                                                                                     |
 | Identity / auth (Phase 0–2b)                      | [`lib/identity/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/identity/README.md) · lockout · anomaly · geo · password strength · JIT                                                                                                                                                                                                                                                                                                                                                 |
 | Ops snapshot / registry bake                      | [`docs/harness/tenants/ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md) · `bun run ops:snapshot`                                                                                                                                                                                                                                                                                                                                                                                                                |
 | Proton / vault deploy                             | [`docs/harness/tenants/proton-integration.md`](docs/harness/tenants/proton-integration.md) · `bun run proton:inject:factorywager:reasonix`                                                                                                                                                                                                                                                                                                                                                                             |
@@ -100,6 +100,7 @@ Telegram stay in `toc-ops-repo` (`ct`); Pages exposes the baked board at
 | Bun native capabilities                           | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) (WebView, markdown.ansi, Terminal/PTY, Bun.Image, cron, UDP) · [Utilities guides map](docs/BUN_NATIVE_CAPABILITIES.md#utilities-guides-map) (`lib/bun-executable.ts` · `lib/bun-path-url.ts`)                                                                                                                                                                                                                                                     |
 | Bun capability × brand map                        | [`docs/harness/tenants/bun-brand-cross-map.md`](docs/harness/tenants/bun-brand-cross-map.md) · `/portal/brands/` · `bun run bun:brand-map:check`                                                                                                                                                                                                                                                                                                                                                                       |
 | Bun token/catalog operate                         | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · [`lib/docs/docs-artifact-paths.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/docs-artifact-paths.ts) (`docs:refresh:fast` daily · `docs:feeds:refresh` · full `docs:refresh`)                                                                                                                                                                                                                                                 |
+| Bun-types inventory (pin · tip · usage)           | [`docs/design/bun-types-inventory.md`](docs/design/bun-types-inventory.md) · [`tools/bun-types-inventory.json`](tools/bun-types-inventory.json) (`bun:types-inventory:write` · `bun:types-ci` — not partner-surface)                                                                                                                                                                                                                                                                                                   |
 | TokenRef (interior) / BunToken (export)           | [`lib/docs/token-ref.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/token-ref.ts) · [`lib/docs/bun-token.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/bun-token.ts)                                                                                                                                                                                                                                                                                    |
 | Projects triage                                   | [`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md)                                                                                                                                                                                                                                                                                                                                                                                                             |
 | Path SSOT (code)                                  | [`lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts)                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -230,21 +231,23 @@ interior, path/name allowlists, suppressions.
   repository-wide because hosted-runner billing locks jobs before step 1; never
   make a hosted check a merge dependency. Do not leave verified work
   uncommitted.
-- **Squash-merge delivery loop:** `main` is branch-protected — no direct
-  pushes, and history is squash-only. Per batch: `git push -u origin HEAD:refs/heads/<lane>` →
-  open a PR (`gh pr create --fill`) → run the local authority `bun run bun:ci`
-  → squash-merge (`gh pr merge --squash --delete-branch`) → sync local:
-  `git sync-main` (alias `!git fetch origin main && git reset --soft origin/main`
-  — `git pull --ff-only` fails after a squash by design, and the trees are
+- **Squash-merge delivery loop:** `main` is branch-protected — no direct pushes,
+  and history is squash-only. Per batch:
+  `git push -u origin HEAD:refs/heads/<lane>` → open a PR
+  (`gh pr create --fill`) → run the local authority `bun run bun:ci` →
+  squash-merge (`gh pr merge --squash --delete-branch`) → sync local:
+  `git sync-main` (alias
+  `!git fetch origin main && git reset --soft origin/main` —
+  `git pull --ff-only` fails after a squash by design, and the trees are
   content-identical so `--soft` loses nothing). **`git sync-main` gotcha:**
   `--soft` moves `HEAD` only — index and working tree keep the pre-merge
   content, so the just-merged files show as staged afterwards. They are
   byte-identical to the new `HEAD`; clear the staged state with the targeted,
-  hook-safe pattern per file — `git show origin/main:<path> > <path> && git
-  add <path>` — **not** `git reset --hard` (blocked by the repo's
-  `block_destructive_git.sh` in the primary checkout) and **not**
-  `git restore --staged .` (would unstage another lane's staged files in the
-  shared primary). Recommended conflict ergonomics:
+  hook-safe pattern per file —
+  `git show origin/main:<path> > <path> && git add <path>` — **not**
+  `git reset --hard` (blocked by the repo's `block_destructive_git.sh` in the
+  primary checkout) and **not** `git restore --staged .` (would unstage another
+  lane's staged files in the shared primary). Recommended conflict ergonomics:
   `git config --global merge.conflictstyle zdiff3` (base + ours + theirs makes
   timestamp-only conflicts in generated artifacts obvious).
 - **Root-dir hygiene:** untracked root-level dirs that are not part of the
@@ -318,28 +321,29 @@ interior, path/name allowlists, suppressions.
     [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts)
     policy (`logTable` / `logDepth` / `inspectTable` / `jsonOut` / `colorize`);
     TTY primitives via `import { stringWidth, stripANSI, … } from 'bun'` · hub
-    [`lib/bun-runtime.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/bun-runtime.md) · `bun run check:console-format`
-    (pre-commit when `lib/`/`scripts/`/`tools/` staged: **staged mode** blocks
-    new raw `console.table` + pretty-JSON console dumps + direct
-    `Bun.inspect.table` + `console.dir`, `// console-ok` suppresses intentional
-    machine output; **ratchet** (ci:core merge proof) 3 pinned `--json`
-    branches + 0 direct `inspect.table` call sites (string-aware scanner skips
-    doc data/comments/object keys) 2026-07-28, may only go down, scanned over
-    the **git index tree** (HEAD ∪ staged) so other lanes' dirty files are
-    excluded; owner re-pin:
+    [`lib/bun-runtime.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/bun-runtime.md)
+    · `bun run check:console-format` (pre-commit when `lib/`/`scripts/`/`tools/`
+    staged: **staged mode** blocks new raw `console.table` + pretty-JSON console
+    dumps + direct `Bun.inspect.table` + `console.dir`, `// console-ok`
+    suppresses intentional machine output; **ratchet** (ci:core merge proof) 3
+    pinned `--json` branches + 0 direct `inspect.table` call sites (string-aware
+    scanner skips doc data/comments/object keys) 2026-07-28, may only go down,
+    scanned over the **git index tree** (HEAD ∪ staged) so other lanes' dirty
+    files are excluded; owner re-pin:
     `bun scripts/lint-console-format.ts --write-baseline`) · scanner SSOT
-    [`lib/console-format-scan.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-format-scan.ts) · board
-    `/portal/console-format/` via `bun run console-format:bake` →
+    [`lib/console-format-scan.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-format-scan.ts)
+    · board `/portal/console-format/` via `bun run console-format:bake` →
     `console-format-state.json` · doctor gate `console-format-gate`
     (`--full --group gates`) · eslint `no-console` no longer allows `table`
   - Vault drift (Proton Pass) → `bun run vault:health:bake` (exit 1 when an
     env-referenced item is missing/trashed; board at `/portal/vault/`; engine
-    [`lib/security/vault-health.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/vault-health.ts); restore
-    trashed via `bun tools/portal-cli.ts secret untrash <vault>/<title>`)
+    [`lib/security/vault-health.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/vault-health.ts);
+    restore trashed via
+    `bun tools/portal-cli.ts secret untrash <vault>/<title>`)
   - Test failures board → `bun run failures:bake` (JUnit → `/portal/failures/` +
     per-failure replay commands; chain `bun run test:ci:report`; parser
-    [`lib/failure-report.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/failure-report.ts); CI bakes via test-sharded
-    `failures-report` job)
+    [`lib/failure-report.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/failure-report.ts);
+    CI bakes via test-sharded `failures-report` job)
   - Monorepo health score → `bun run check:monorepo-health` (ci:core after
     import-graph; pre-commit `--tests-only` when health sources staged) · claim
     `monorepo-health-score` · baseline `scripts/monorepo-health-baseline.json` ·
@@ -426,31 +430,16 @@ Commands: `url` `list` `suggest` (catalog → canonical map → index) · `catal
 `deepcheck` (repo links vs index) · `validate` (HTTP links) · `integrity`
 (4-layer proof; `--fix` self-heals taxonomy aliases, `--fix-dry` previews) ·
 `status` (includes tier-A coverage) · `schedule` (Bun.cron daemon; `--once` for
-single runs) · `export` (hierarchical llms-full.txt) · **deep types inventory v3**
-`bun run bun:types-inventory` / `:write` / `:check` — flags: `--shallow` ·
-`--no-interfaces` · `--no-type-aliases` · `--no-props` · `--no-enums` ·
-`--no-nested-objects` · `--tip-diff` · `--module=bun:jsc` ·
-`--kind=function,method,property,enum` →
-[`tools/bun-types-inventory.md`](tools/bun-types-inventory.md) — top-level +
-namespace/class/**interface**/**`type X = {…}`**/**enum** methods, properties,
-enum-members + anonymous nested object fields (maxDepth 3) + satellites
-(`bun:jsc` · `bun:ffi` · `bun:sqlite` · `bun:test`), not the utils docs page.
-**Tip-diff (local CI, GHA disabled):** `bun run bun:types-inventory:tip-diff`
-fetches oven-sh/bun `packages/bun-types` into `.cache/` (or `--prefer-local`
-`~/bun`) and reports tip-only/pin-only vs catalog pin; `:tip-diff:strict` fails
-on policy breach; reports under `.cache/bun-types-tip-diff/`.
-**Usage (Phase 4):** `bun run bun:types-usage` / `:unused` cross-references
-inventory type-likes (class/interface/type) with codebase chains, type
-positions, and `from "bun"` imports → `.cache/bun-types-usage/`.
-**Changelog (Phase 5):** `bun run bun:types-changelog` · `:tip` diffs two
-inventory snapshots (or pin vs tip types) into Added/Removed/Changed under
-`.cache/bun-types-changelog/`. **Wired:** `bun:types-inventory:tip-diff` always
-emits that changelog (unless `--no-changelog`). **Full stack:**
-`bun run bun:types-report` · `:local` runs tip-diff+changelog then usage.
-**Local CI (soft):** `bun run bun:types-ci` (prefer-local report; tip **warn** exits 0).
-Wired as a **soft** step at the end of `bun run bun:ci` (does not fail merge on warn).
-Skip: `BUN_TYPES_CI=0` or `SKIP_BUN_TYPES_CI=1`. Hard gate: `BUN_TYPES_CI_STRICT=1`
-or `bun run bun:types-ci:strict`. Reports under `.cache/bun-types-*/` (not committed).
+single runs) · `export` (hierarchical llms-full.txt) · **Bun-types inventory
+pipeline** (pin SSOT · tip-diff · usage — **not** partner-surface): full map
+[`docs/design/bun-types-inventory.md`](docs/design/bun-types-inventory.md).
+Commands: `bun:types-inventory` / `:write` / `:check` → committed
+[`tools/bun-types-inventory.json`](tools/bun-types-inventory.json) +
+[`tools/bun-types-inventory.md`](tools/bun-types-inventory.md); tip-diff /
+changelog / usage → gitignored `.cache/bun-types-*/`; stack
+`bun:types-report:local` · soft CI `bun:types-ci` (end of `bun:ci`); skip
+`BUN_TYPES_CI=0` / `SKIP_BUN_TYPES_CI=1`; hard `BUN_TYPES_CI_STRICT=1` or
+`bun:types-ci:strict`.
 
 Operate loop (feeds → scrape → catalog with embedded `releaseHits` → integrity):
 [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · **daily**
@@ -542,7 +531,8 @@ ignores it) > bunfig > `2`. Prefer `inspect` / `logDepth` / `logTable` /
 `inspectTable` / `jsonOut` / `inspectCustom` over raw `console.log(obj)` /
 `console.table`. TTY width/ANSI:
 `import { stringWidth, stripANSI, wrapAnsi, sliceAnsi } from 'bun'`. Hub:
-[`lib/bun-runtime.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/bun-runtime.md). Related:
+[`lib/bun-runtime.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/bun-runtime.md).
+Related:
 [`lib/deep-equals.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/deep-equals.ts)
 ·
 [`lib/security/index.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/index.ts)
@@ -565,85 +555,340 @@ Each row maps to a documented API — Bun or Proton Pass CLI — with type, vers
 tables: `bun run packages:docs-index` · CI: `bun run packages:docs-index:check`
 · re-audit dates: `bun run packages:docs-index --bump-verified`.
 
-| Capability                        | Type      | Version                   | Bun API                                                                                                                                    | Proton CLI                                                  | Used in                                                                                                  | Status      | Source                                                                                                                                                                                                        | Example (snippet)                                                                                                                                 |
-| --------------------------------- | --------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| **Vault config (TOML)**           | config    | Bun ≥1.4                  | `import x from './vault-map.toml' with { type: 'toml' }`                                                                                   | —                                                           | autofill map loading                                                                                     | Available   | [Bun TOML loader](https://bun.sh/docs/runtime/loaders#toml)                                                                                                                                                   | `const map = await import('./vault-map.toml', { with: { type: 'toml' } });`                                                                       |
-| **Vault inject**                  | secrets   | pass‑cli ≥2.2             | —                                                                                                                                          | `pass-cli inject -i/--in-file -o/--out-file -f`             | `portal-cli secret inject` · `vault:resolve --inject`                                                    | Implemented | [pass-cli inject](https://protonpass.github.io/pass-cli/commands/contents/inject/)                                                                                                                            | `bun run portal-cli secret inject -i env.template -o .env -f`                                                                                     |
-| **SSH agent load**                | ssh       | pass‑cli ≥2.2             | —                                                                                                                                          | `pass-cli ssh-agent load --vault-name`                      | `vault:resolve --ssh`                                                                                    | Implemented | [Proton Pass CLI](https://protonpass.github.io/pass-cli/)                                                                                                                                                     | `bun run vault:resolve:ssh`                                                                                                                       |
-| **Secure share**                  | secrets   | pass‑cli ≥2.2             | —                                                                                                                                          | `pass-cli share list` · `item share` · `invite accept <id>` | `portal-cli secret share` / `invite accept`                                                              | Implemented | [pass-cli share](https://protonpass.github.io/pass-cli/)                                                                                                                                                      | `bun run portal-cli secret invite accept <INVITE_ID>`                                                                                             |
-| **Secret retrieval**              | secrets   | pass‑cli ≥2.2             | —                                                                                                                                          | `pass-cli item view` (not `item get`)                       | `portal-cli secret get` · autofill                                                                       | Implemented | [pass-cli item](https://protonpass.github.io/pass-cli/)                                                                                                                                                       | `bun run portal-cli secret get 'pass://factorywager/…/password'`                                                                                  |
-| **Vault & item listing**          | secrets   | pass‑cli ≥2.2             | —                                                                                                                                          | `pass-cli vault list` · `item list --output json`           | `portal-cli secret vaults` · vault-health bake                                                           | Implemented | same                                                                                                                                                                                                          | `bun run portal-cli secret items factorywager`                                                                                                    |
-| **Spawn external process**        | runtime   | Bun ≥1.0                  | `Bun.spawn(cmd, { stdout: "inherit", stderr: "inherit", stdin: "inherit" })`                                                               | —                                                           | all subcommands                                                                                          | Implemented | [Bun.spawn](https://bun.sh/docs/api/spawn)                                                                                                                                                                    | `Bun.spawn(["git", "rev-parse", "HEAD"], { stdout: "inherit", stderr: "inherit" })`                                                               |
-| **URLPattern portal routing**     | routing   | Bun ≥1.3.4 · perf ≥1.3.12 | Precompiled `URLPattern` · `test()` classify · `exec()` extract                                                                            | —                                                           | `lib/portal/url-planes.ts` · glossary/partner hashes                                                     | Implemented | [API ship](https://bun.com/blog/bun-v1.3.4#urlpattern-api) · [1.3.12 performance](https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster)                                                           | `new URLPattern({ hash: "glossary\\::concept" })`                                                                                                 |
-| **HTTPS proxy CONNECT reuse**     | network   | Bun ≥1.3.12               | `fetch(url, { proxy })`                                                                                                                    | —                                                           | `lib/net/proxy.ts` · `tests/fetch-proxy-keepalive.test.ts`                                               | Implemented | [Bun 1.3.12 ship note](https://bun.com/blog/bun-v1.3.12#keep-alive-for-https-proxy-connect-tunnels) · [proxy guide](https://bun.com/docs/guides/http/proxy)                                                   | `await fetch(url, { proxy: "http://proxy.internal:8080" })`                                                                                       |
-| **Streaming file write**          | io        | Bun ≥1.0                  | `Bun.write(path, response)`                                                                                                                | —                                                           | snapshot asset capture                                                                                   | Implemented | [Bun.write](https://bun.sh/docs/api/file-io)                                                                                                                                                                  | `await Bun.write(snapshotDir + "/report.html", fetch(url))`                                                                                       |
-| **Glob scanning**                 | io        | Bun ≥1.0                  | `Bun.glob(pattern)` → async iterator                                                                                                       | —                                                           | manifest grep                                                                                            | Implemented | [Bun.glob](https://bun.sh/docs/api/glob)                                                                                                                                                                      | `for await (const f of Bun.glob("snapshots/*/manifest.txt")) { ... }`                                                                             |
-| **File existence & read**         | io        | Bun ≥1.0                  | `Bun.file(path).exists()`, `.text()`                                                                                                       | —                                                           | snapshot index & manifest                                                                                | Implemented | [Bun.file](https://bun.sh/docs/api/file-io)                                                                                                                                                                   | `if (await Bun.file("snapshots/index.jsonl").exists()) { ... }`                                                                                   |
-| **ANSI color output**             | display   | Bun ≥1.0                  | `Bun.color(hex, "ansi-16m")`                                                                                                               | —                                                           | vault-map status lines · autofill                                                                        | Implemented | [Bun.color](https://bun.com/docs/runtime/color)                                                                                                                                                               | `Bun.color("#2DA44E", "ansi-16m")`                                                                                                                |
-| **Vault health gate**             | test      | Bun ≥1.0                  | `expect().toMatchSnapshot()`                                                                                                               | pass-cli list (bake only)                                   | `portal-cli vault health` · Harness Gates                                                                | Implemented | [snapshots](https://bun.com/docs/test/snapshots) · `/portal/vault/`                                                                                                                                           | `bun run portal-cli vault health`                                                                                                                 |
-| **Portal dashboard launcher**     | cli       | Bun ≥1.0                  | `Bun.spawn` (optional `--open`)                                                                                                            | —                                                           | `portal-cli dashboard --view=…`                                                                          | Implemented | boards SSOT chrome-catalog                                                                                                                                                                                    | `bun run portal-cli dashboard --view=packages --open`                                                                                             |
-| **Nav badges (baked)**            | ui        | —                         | `fetch` registry JSON                                                                                                                      | —                                                           | topbar overflow counts                                                                                   | Implemented | `public/portal/nav-badges.js`                                                                                                                                                                                 | failures / vault active / packages / monorepo score                                                                                               |
-| **Watch mode (hard restart)**     | dev       | Bun ≥1.0                  | `bun --watch`                                                                                                                              | —                                                           | portal-cli development · long-running commands                                                           | Available   | [watch mode](https://bun.com/docs/runtime/watch-mode)                                                                                                                                                         | `bun --watch tools/portal-cli.ts snapshot run`                                                                                                    |
-| **Hot reload (state-preserving)** | dev       | Bun ≥1.0                  | `bun --hot`                                                                                                                                | —                                                           | portal and dashboard development                                                                         | Available   | [hot mode](https://bun.com/docs/runtime/watch-mode#hot-mode)                                                                                                                                                  | `bun --hot tools/portal-cli.ts dashboard`                                                                                                         |
-| **No clear screen on reload**     | dev       | Bun ≥1.0                  | `bun --no-clear-screen`                                                                                                                    | —                                                           | development with persistent logs                                                                         | Available   | [watch mode](https://bun.com/docs/runtime/watch-mode)                                                                                                                                                         | `bun --watch --no-clear-screen tools/portal-cli.ts snapshot run`                                                                                  |
-| **Debugger**                      | debug     | Bun ≥1.0                  | `bun --inspect` · `--inspect-wait` · `--inspect-brk`                                                                                       | —                                                           | debugging portal CLI and tests                                                                           | Available   | [debugger](https://bun.com/docs/runtime/debugger)                                                                                                                                                             | `bun --inspect-brk tools/portal-cli.ts probe lockfile`                                                                                            |
-| **Working directory**             | env       | Bun ≥1.0                  | `bun --cwd`                                                                                                                                | —                                                           | run snapshots and commands from a selected project                                                       | Available   | [runtime context](https://bun.com/docs/runtime/index#global-configuration-context)                                                                                                                            | `bun --cwd /path tools/portal-cli.ts snapshot list`                                                                                               |
-| **Custom Bun config**             | config    | Bun ≥1.0                  | `bun --config`                                                                                                                             | —                                                           | portal-specific `bunfig.toml` selection                                                                  | Available   | [runtime context](https://bun.com/docs/runtime/index#global-configuration-context)                                                                                                                            | `bun --config ./bunfig.toml tools/portal-cli.ts --help`                                                                                           |
-| **Define constants**              | env       | Bun ≥1.0                  | `bun --define`                                                                                                                             | —                                                           | compile-time feature and environment constants                                                           | Available   | [define constants](https://bun.com/docs/guides/runtime/define-constant)                                                                                                                                       | `bun --define 'process.env.NODE_ENV:"production"' tools/portal-cli.ts --help`                                                                     |
-| **Custom export conditions**      | env       | Bun ≥1.0                  | `bun --conditions`                                                                                                                         | —                                                           | monorepo package resolution                                                                              | Available   | [dependency resolution](https://bun.com/docs/runtime/index#dependency-module-resolution)                                                                                                                      | `bun --conditions custom tools/portal-cli.ts pm ls`                                                                                               |
-| **Silent command echo**           | output    | Bun ≥1.0                  | `bun --silent`                                                                                                                             | —                                                           | CI and package-script pipes                                                                              | Available   | [general execution options](https://bun.com/docs/runtime/index#general-execution-options)                                                                                                                     | `bun --silent run portal-cli --help`                                                                                                              |
-| **Low memory mode**               | perf      | Bun ≥1.0                  | `bun --smol`                                                                                                                               | —                                                           | constrained CI runners                                                                                   | Available   | [runtime process control](https://bun.com/docs/runtime/index#runtime-process-control)                                                                                                                         | `bun --smol tools/portal-cli.ts vault health`                                                                                                     |
-| **Prefer cached packages**        | network   | Bun ≥1.0                  | `bun --prefer-offline`                                                                                                                     | —                                                           | cache-first and intermittently connected runs                                                            | Available   | [auto-install](https://bun.com/docs/runtime/auto-install)                                                                                                                                                     | `bun --prefer-offline tools/portal-cli.ts pm ls`                                                                                                  |
-| **Auto-install fallback**         | deps      | Bun ≥1.0                  | `bun --install=fallback`                                                                                                                   | —                                                           | scripts that may reference missing local packages                                                        | Available   | [auto-install](https://bun.com/docs/runtime/auto-install)                                                                                                                                                     | `bun --install=fallback tools/portal-cli.ts --help`                                                                                               |
-| **Console depth flag**            | runtime   | Bun ≥1.0                  | `bun --console-depth=N`                                                                                                                    | —                                                           | portal-cli child spawns · `lib/console-depth.ts`                                                         | Implemented | [runtime · --console-depth](https://bun.com/docs/runtime#general-execution-options)                                                                                                                           | `bun tools/portal-cli.ts --console-depth=4 probe lockfile`                                                                                        |
-| **Child PTY (Bun.Terminal)**      | runtime   | Bun ≥1.3.5                | `new Bun.Terminal` · `Bun.spawn({ terminal })`                                                                                             | —                                                           | `lib/terminal.ts` · `tests/terminal.test.ts`                                                             | Implemented | [PTY guide](https://bun.com/docs/runtime/child-process#terminal-pty-support) · [reference](https://bun.com/reference/bun/Terminal) · [bun-types](https://github.com/oven-sh/bun/tree/main/packages/bun-types) | `await using t = new Bun.Terminal({ cols: 80, rows: 24, data: (_t, d) => process.stdout.write(d) }); Bun.spawn(["echo", "ok"], { terminal: t });` |
-| **Image chart generation**        | image     | Bun ≥1.0                  | `new Bun.Image(file).png()`                                                                                                                | —                                                           | report chart rendering (future)                                                                          | Available   | [Bun.Image](https://bun.sh/docs/api/image)                                                                                                                                                                    | `const img = new Bun.Image(await Bun.file("chart.png").arrayBuffer()); img.resize(800,600);`                                                      |
-| **Built‑in test runner**          | test      | Bun ≥1.0                  | `bun:test` – `describe`, `test`, `expect`                                                                                                  | —                                                           | unit tests                                                                                               | Implemented | [Bun test](https://bun.sh/docs/test/writing-tests)                                                                                                                                                            | `import { describe, test, expect } from "bun:test";`                                                                                              |
-| **Snapshot testing**              | test      | Bun ≥1.0                  | `expect().toMatchSnapshot()`                                                                                                               | —                                                           | `portal vault health` · `portal capabilities health` · `check:snapshots` SSOT                            | Implemented | [bun test snapshots](https://bun.com/docs/test/snapshots)                                                                                                                                                     | `expect(report).toMatchSnapshot()`                                                                                                                |
-| **Update snapshots**              | test      | Bun ≥1.0                  | `bun test <file> --update-snapshots`                                                                                                       | —                                                           | `portal vault health --update` · `portal capabilities health --update` · `bun run test:snapshots:update` | Implemented | same                                                                                                                                                                                                          | `bun test tests/capability-map-subset.test.ts --update-snapshots`                                                                                 |
-| **Runtime version**               | runtime   | Bun ≥1.0                  | `Bun.version` · `Bun.revision`                                                                                                             | —                                                           | `capabilities doctor` · bake provenance                                                                  | Implemented | [Bun.version](https://bun.com/docs/runtime/utils#bun-version) · [revision](https://bun.com/docs/runtime/utils#bun-revision)                                                                                   | `Bun.version` · `Bun.revision.slice(0, 8)`                                                                                                        |
-| **Environment variables**         | runtime   | Bun ≥1.0                  | `Bun.env` (alias of `process.env`)                                                                                                         | —                                                           | all modules                                                                                              | Implemented | [Bun.env](https://bun.com/docs/runtime/utils#bun-env)                                                                                                                                                         | `const scope = Bun.env.PORTAL_SCOPE \|\| "prediction"`                                                                                            |
-| **Module main detection**         | runtime   | Bun ≥1.0                  | `Bun.main`                                                                                                                                 | —                                                           | CLI entry guard                                                                                          | Implemented | [Bun.main](https://bun.com/docs/runtime/utils#bun-main)                                                                                                                                                       | `if (import.meta.path === Bun.main) { … }`                                                                                                        |
-| **Sleep**                         | runtime   | Bun ≥1.0                  | `Bun.sleep(ms)` · `Bun.sleepSync(ms)`                                                                                                      | —                                                           | rate limiting · short polls                                                                              | Available   | [Bun.sleep](https://bun.com/docs/runtime/utils#bun-sleep) · [sleepSync](https://bun.com/docs/runtime/utils#bun-sleepsync)                                                                                     | `await Bun.sleep(1000)`                                                                                                                           |
-| **Which (PATH probe)**            | runtime   | Bun ≥1.0                  | `Bun.which(bin, opts?)`                                                                                                                    | —                                                           | pass-cli discovery · portal-cli secret which                                                             | Implemented | [Bun.which](https://bun.com/docs/runtime/utils#bun-which)                                                                                                                                                     | `Bun.which("pass-cli")`                                                                                                                           |
-| **UUID v7**                       | runtime   | Bun ≥1.0                  | `Bun.randomUUIDv7()`                                                                                                                       | —                                                           | snapshot ids · request ids (future)                                                                      | Available   | [Bun.randomUUIDv7](https://bun.com/docs/runtime/utils#bun-randomuuidv7)                                                                                                                                       | `Bun.randomUUIDv7()`                                                                                                                              |
-| **Promise peek**                  | runtime   | Bun ≥1.0                  | `Bun.peek(promise)` · `peek.status`                                                                                                        | —                                                           | avoid microticks (advanced)                                                                              | Available   | [Bun.peek](https://bun.com/docs/runtime/utils#bun-peek)                                                                                                                                                       | `Bun.peek(Promise.resolve(1))`                                                                                                                    |
-| **Open in editor**                | dev       | Bun ≥1.0                  | `Bun.openInEditor(path, opts?)`                                                                                                            | —                                                           | jump-to-source from CLI (future)                                                                         | Available   | [Bun.openInEditor](https://bun.com/docs/runtime/utils#bun-openineditor)                                                                                                                                       | `Bun.openInEditor(import.meta.path, { line: 10 })`                                                                                                |
-| **Deep equals**                   | test      | Bun ≥1.0                  | `Bun.deepEquals(a, b, strict?)`                                                                                                            | —                                                           | `bake:capabilities:check` · capabilityMapsDeepEqual · `expect().toEqual`                                 | Implemented | [Bun.deepEquals](https://bun.com/docs/runtime/utils#bun-deepequals)                                                                                                                                           | `Bun.deepEquals(stable(a), stable(b), true)`                                                                                                      |
-| **Escape HTML**                   | security  | Bun ≥1.0                  | `Bun.escapeHTML(value)`                                                                                                                    | —                                                           | portal report strings (future)                                                                           | Available   | [Bun.escapeHTML](https://bun.com/docs/runtime/utils#bun-escapehtml)                                                                                                                                           | `Bun.escapeHTML("<script>")`                                                                                                                      |
-| **Structured debug output**       | dev       | Bun ≥1.0                  | `Bun.inspect(obj, { colors, depth })` · `Bun.inspect.custom`                                                                               | —                                                           | `snapshot run --debug` · custom class print                                                              | Implemented | [Bun.inspect](https://bun.com/docs/runtime/utils#bun-inspect) · [custom](https://bun.com/docs/runtime/utils#bun-inspect-custom)                                                                               | `Bun.inspect(manifest, { colors: true, depth: 4 })`                                                                                               |
-| **Inspect table**                 | display   | Bun ≥1.0                  | `Bun.inspect.table(rows, cols?, { colors })`                                                                                               | —                                                           | `portal-cli pm graph` · doctor · bake:all summary                                                        | Implemented | [Bun.inspect.table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)                                                                                                      | `Bun.inspect.table(rows, ["step", "ms"], { colors: true })`                                                                                       |
-| **Semantic versioning**           | dev       | Bun ≥1.0                  | `Bun.semver.satisfies` · `Bun.semver.order`                                                                                                | —                                                           | `portal-cli capabilities doctor` · minBun/minPassCli floors                                              | Implemented | [Bun.semver](https://bun.com/docs/runtime/semver)                                                                                                                                                             | `Bun.semver.satisfies(Bun.version, ">=1.4.0")`                                                                                                    |
-| **String width (Unicode)**        | display   | Bun ≥1.0                  | `Bun.stringWidth(s, opts?)`                                                                                                                | —                                                           | `lib/portal/cli-chrome` pad/truncate/columns · snapshot-core                                             | Implemented | [Bun.stringWidth](https://bun.com/docs/runtime/utils#bun-stringwidth)                                                                                                                                         | `padDisplay(s, w)` via `Bun.stringWidth(s)`                                                                                                       |
-| **Strip ANSI**                    | display   | Bun ≥1.0                  | `Bun.stripANSI(text)`                                                                                                                      | —                                                           | doctor / CLI plain width · logs                                                                          | Implemented | [Bun.stripANSI](https://bun.com/docs/runtime/utils#bun-stripansi)                                                                                                                                             | `Bun.stripANSI("\u001b[31mred\u001b[0m")`                                                                                                         |
-| **Wrap ANSI text**                | display   | Bun ≥1.0                  | `Bun.wrapAnsi(text, columns, opts?)`                                                                                                       | —                                                           | doctor frames · long CLI help                                                                            | Implemented | [Bun.wrapAnsi](https://bun.com/docs/runtime/utils#bun-wrapansi)                                                                                                                                               | `Bun.wrapAnsi(line, 80, { hard: false, wordWrap: true })`                                                                                         |
-| **file:// ↔ path**               | io        | Bun ≥1.0                  | `Bun.fileURLToPath` · `Bun.pathToFileURL`                                                                                                  | —                                                           | import.meta.url → abs path · path → URL                                                                  | Implemented | [fileURLToPath](https://bun.com/docs/runtime/utils#bun-fileurltopath) · [pathToFileURL](https://bun.com/docs/runtime/utils#bun-pathtofileurl)                                                                 | `Bun.fileURLToPath(import.meta.url)`                                                                                                              |
-| **GZIP compress**                 | compress  | Bun ≥1.0                  | `Bun.gzipSync` · `Bun.gunzipSync`                                                                                                          | —                                                           | artifact packs · oneliners proof                                                                         | Available   | [gzipSync](https://bun.com/docs/runtime/utils#bun-gzipsync) · [gunzipSync](https://bun.com/docs/runtime/utils#bun-gunzipsync)                                                                                 | `Bun.gunzipSync(Bun.gzipSync(buf))`                                                                                                               |
-| **DEFLATE compress**              | compress  | Bun ≥1.0                  | `Bun.deflateSync` · `Bun.inflateSync`                                                                                                      | —                                                           | wire payloads (future)                                                                                   | Available   | [deflateSync](https://bun.com/docs/runtime/utils#bun-deflatesync) · [inflateSync](https://bun.com/docs/runtime/utils#bun-inflatesync)                                                                         | `Bun.inflateSync(Bun.deflateSync(buf))`                                                                                                           |
-| **Zstandard compress**            | compress  | Bun ≥1.0                  | `Bun.zstdCompress(Sync)` · `Bun.zstdDecompress(Sync)`                                                                                      | —                                                           | large registry bakes (future)                                                                            | Available   | [zstdCompress](https://bun.com/docs/runtime/utils#bun-zstdcompress-bun-zstdcompresssync) · [zstdDecompress](https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync)                     | `Bun.zstdCompressSync(buf, { level: 6 })`                                                                                                         |
-| **High-precision timer**          | perf      | Bun ≥1.0                  | `Bun.nanoseconds()`                                                                                                                        | —                                                           | bake:all · doctor elapsed                                                                                | Implemented | [Bun.nanoseconds](https://bun.com/docs/runtime/utils#bun-nanoseconds)                                                                                                                                         | `const t0 = Bun.nanoseconds()`                                                                                                                    |
-| **ReadableStream consumers**      | io        | Bun ≥1.0                  | `Bun.readableStreamToText` · `ToBytes` · `ToJSON` · `ToArray` · `ToBlob` · `ToFormData` · `ToArrayBuffer`                                  | —                                                           | fetch body → text/json                                                                                   | Available   | [readableStreamTo\*](https://bun.com/docs/runtime/utils#bun-readablestreamto)                                                                                                                                 | `await Bun.readableStreamToText(res.body!)`                                                                                                       |
-| **Module resolveSync**            | deps      | Bun ≥1.0                  | `Bun.resolveSync(spec, root)`                                                                                                              | —                                                           | package path probes                                                                                      | Available   | [Bun.resolveSync](https://bun.com/docs/runtime/utils#bun-resolvesync)                                                                                                                                         | `Bun.resolveSync("./package.json", import.meta.dir)`                                                                                              |
-| **JSC serialize**                 | runtime   | Bun ≥1.0                  | `serialize` / `deserialize` from `bun:jsc`                                                                                                 | —                                                           | structured clone buffers (future)                                                                        | Available   | [utils · bun:jsc](https://bun.com/docs/runtime/utils#serialize-deserialize-in-bun-jsc)                                                                                                                        | `deserialize(serialize({ a: 1 }))`                                                                                                                |
-| **Shallow memory estimate**       | perf      | Bun ≥1.0                  | `estimateShallowMemoryUsageOf` from `bun:jsc`                                                                                              | —                                                           | cache diagnostics (`shallowMemoryUsage`) · heap triage                                                   | Implemented | [estimateShallowMemoryUsageOf](https://bun.com/docs/runtime/utils#estimateshallowmemoryusageof-in-bun-jsc)                                                                                                    | `estimateCacheValueMemory(value)`                                                                                                                 |
-| **Pack workspace**                | pkg       | Bun ≥1.0                  | `bun pm pack`                                                                                                                              | —                                                           | `portal-cli pm pack`                                                                                     | Implemented | [bun pm pack](https://bun.com/docs/pm/cli/pm#pack)                                                                                                                                                            | `bun run portal-cli pm pack --dry-run`                                                                                                            |
-| **List dependencies**             | pkg       | Bun ≥1.0                  | `bun pm ls`                                                                                                                                | —                                                           | `portal-cli pm ls`                                                                                       | Implemented | [bun pm ls](https://bun.com/docs/pm/cli/pm#ls)                                                                                                                                                                | `bun run portal-cli pm ls`                                                                                                                        |
-| **Bump version**                  | pkg       | Bun ≥1.0                  | `bun pm version`                                                                                                                           | —                                                           | `portal-cli pm version`                                                                                  | Implemented | [bun pm version](https://bun.com/docs/pm/cli/pm#version)                                                                                                                                                      | `bun run portal-cli pm version --no-git-tag-version`                                                                                              |
-| **Manage package.json**           | pkg       | Bun ≥1.0                  | `bun pm pkg get/set/delete/fix`                                                                                                            | —                                                           | `portal-cli pm pkg …`                                                                                    | Implemented | [bun pm pkg](https://bun.com/docs/pm/cli/pm#pkg)                                                                                                                                                              | `bun run portal-cli pm pkg get name`                                                                                                              |
-| **Trust lifecycle scripts**       | security  | Bun ≥1.0                  | `bun pm trust` / `untrusted`                                                                                                               | —                                                           | `portal-cli pm trust`                                                                                    | Implemented | [bun pm trust](https://bun.com/docs/pm/cli/pm#trust)                                                                                                                                                          | `bun run portal-cli pm untrusted`                                                                                                                 |
-| **Security scanner**              | security  | Bun ≥1.4                  | `bun pm scan` · `[install.security] scanner`                                                                                               | `SOCKET_API_KEY` (optional; free mode preferred)            | `portal-cli scanner` (policy · estimate · scan --oneshot · doctor)                                       | Implemented | [Security Scanner API](https://bun.com/docs/pm/security-scanner-api)                                                                                                                                          | `bun run portal-cli scanner policy` · `scanner scan --oneshot --force`                                                                            |
-| **Cache inspection**              | infra     | Bun ≥1.0                  | `bun pm cache`                                                                                                                             | —                                                           | `portal-cli pm cache`                                                                                    | Implemented | [bun pm cache](https://bun.com/docs/pm/cli/pm#cache)                                                                                                                                                          | `bun run portal-cli pm cache`                                                                                                                     |
-| **Curated runtime flags catalog** | cli       | Bun ≥1.0                  | `config/runtime-flags.json` SSOT (14 curated · harvest set) · context-scoped shortcodes · `-i` ≡ `--install=fallback` (not `--no-install`) | —                                                           | `portal-cli flags` · `portal:flags:check` · doctor catalog-\*                                            | Implemented | [runtime options](https://bun.com/docs/runtime/index#general-execution-options) · [auto-install](https://bun.com/docs/runtime/auto-install)                                                                   | `bun run portal:flags` · `portal:flags:check` · `portal-cli doctor --group catalog`                                                               |
-| **Linker policy verification**    | config    | Bun ≥1.4                  | `bun.lock` `configVersion` field                                                                                                           | —                                                           | `install:verify` · `portal-cli doctor` (linker-config-version · machine-isolated-linker)                 | Implemented | [Default strategy](https://bun.com/docs/pm/cli/install#default-strategy) · [isolated installs](https://bun.com/docs/pm/isolated-installs)                                                                     | `bun run portal-cli doctor` · `portal-cli doctor --verbose` · unit: `probeLockfileConfigVersion`                                                  |
-| **Cloudflare Access (live)**      | security  | Bun ≥1.0                  | Live HTTPS probe (Access 302 / www-authenticate)                                                                                           | —                                                           | `portal-cli doctor` group `infra` · `infra-ledger-access` · `infra-portal-access`                        | Implemented | [Access policies](https://developers.cloudflare.com/cloudflare-one/access-controls/policies/) · [`.cloudflare-access.yml`](.cloudflare-access.yml)                                                            | `bun tools/portal-cli.ts doctor --env ci --group infra`                                                                                           |
-| **Unified Doctor**                | dev       | Bun ≥1.4                  | `bun run portal:doctor`                                                                                                                    | —                                                           | CI · developer checks · `/portal/doctor/` · `bake:doctor`                                                | Implemented | claim portal-doctor · [isolated installs](https://bun.com/docs/pm/isolated-installs)                                                                                                                          | `bun run portal:doctor --verbose` · `portal-cli doctor --json`                                                                                    |
-| **Bunfig (machine)**              | config    | Bun ≥1.4                  | `~/.bunfig.toml`                                                                                                                           | —                                                           | Machine-level install policy SSOT                                                                        | Implemented | [runtime/bunfig](https://bun.com/docs/runtime/bunfig) · [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                  | `linker` · `globalStore` · `minimumReleaseAge` · `cache.dir`                                                                                      |
-| **Bunfig (project)**              | config    | Bun ≥1.4                  | `./bunfig.toml`                                                                                                                            | —                                                           | Project-level overrides only (no machine keys)                                                           | Implemented | same · doctor `bunfig-project-no-machine-keys`                                                                                                                                                                | scopes · `[test]` · `frozenLockfile`                                                                                                              |
-| **Bunfig merge**                  | config    | Bun ≥1.4                  | Shallow merge: machine → project                                                                                                           | —                                                           | Effective install config resolution                                                                      | Implemented | doctor `bunfig-merge-consistency`                                                                                                                                                                             | `bun run install:verify`                                                                                                                          |
-| **Doctor groups**                 | dev       | Bun ≥1.4                  | `linker` · `bakes` · `catalog` · `gates` · `bunfig`                                                                                        | —                                                           | Group-based portal doctor checks                                                                         | Implemented | `tools/lib/portal-cli-doctor.ts`                                                                                                                                                                              | `portal-cli doctor --group bunfig` · `--group catalog,bunfig`                                                                                     |
-| **Lockfile hash**                 | integrity | Bun ≥1.0                  | `bun pm hash`                                                                                                                              | —                                                           | `portal-cli pm hash`                                                                                     | Implemented | [bun pm hash](https://bun.com/docs/pm/cli/pm#hash)                                                                                                                                                            | `bun run portal-cli pm hash`                                                                                                                      |
-| **PM utilities (full group)**     | pkg       | Bun ≥1.0                  | `bun pm`                                                                                                                                   | —                                                           | `portal-cli pm` passthrough                                                                              | Implemented | [bun pm](https://bun.com/docs/pm/cli/pm)                                                                                                                                                                      | `bun run portal-cli pm whoami`                                                                                                                    |
-| **Package graph bake**            | audit     | Bun ≥1.0                  | `Bun.file` + `Bun.write` (bake) · `Bun.inspect.table` (view)                                                                               | —                                                           | `audit:packages --bake` · `portal-cli pm graph`                                                          | Implemented | claim `packages-graph-map-v13` · surfaces v3 (page→registry · lib hubs · orphan triage) · [pm/filter](https://bun.com/docs/pm/filter)                                                                         | `bun run portal-cli pm graph` · `bun run audit:packages -- --bake`                                                                                |
-| **Install age gate + excludes**   | security  | Bun ≥1.3                  | `minimumReleaseAge` / `minimumReleaseAgeExcludes` (bunfig)                                                                                 | —                                                           | machine `~/.bunfig.toml` · `bunfig:bake` · `portal-cli bunfig status`                                    | Implemented | [minimum release age](https://bun.com/docs/pm/cli/install#minimum-release-age) · [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                         | `bun run bunfig:bake` · `bun run portal-cli bunfig status`                                                                                        |
-| **Bunfig state bake**             | audit     | Bun ≥1.3                  | `Bun.TOML.parse` (machine+project merge, per-key provenance)                                                                               | —                                                           | `bunfig:bake` → `bunfig-state.json` · `portal-cli bunfig status                                          | check`      | Implemented                                                                                                                                                                                                   | [`scripts/bake-bunfig.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/scripts/bake-bunfig.ts) · `bake:all` step `bunfig`                                                                     | `bun run bunfig:bake` · `bun run portal-cli bunfig check` |
-| **Surfaces state bake**           | audit     | Bun ≥1.3                  | `Bun.TOML.parse` (`config/surfaces.toml` + Access/wrangler/r2-env cross-check)                                                             | —                                                           | `surfaces:bake` → `surfaces-state.json` · subdomain + publish-lane SSOT                                  | Implemented | [`config/surfaces.toml`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/surfaces.toml) · `bake:all` step `surfaces`                                                                                                                                   | `bun run surfaces:bake` · `bun run surfaces:check`                                                                                                |
+| Capability | Type | Version | Bun API | Proton CLI | Used in | Status | Source
+| Example (snippet) | | --------------------------------- | --------- |
+------------------------- |
+------------------------------------------------------------------------------------------------------------------------------------------
+
+| ----------------------------------------------------------- |
+--------------------------------------------------------------------------------------------------------
+
+| ----------- |
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+|
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+| --------------------------------------------------------- | | **Vault config
+(TOML)** | config | Bun ≥1.4 |
+`import x from './vault-map.toml' with { type: 'toml' }` | — | autofill map
+loading | Available |
+[Bun TOML loader](https://bun.sh/docs/runtime/loaders#toml) |
+`const map = await import('./vault-map.toml', { with: { type: 'toml' } });` | |
+**Vault inject** | secrets | pass‑cli ≥2.2 | — |
+`pass-cli inject -i/--in-file -o/--out-file -f` | `portal-cli secret inject` ·
+`vault:resolve --inject` | Implemented |
+[pass-cli inject](https://protonpass.github.io/pass-cli/commands/contents/inject/)
+| `bun run portal-cli secret inject -i env.template -o .env -f` | | **SSH agent
+load** | ssh | pass‑cli ≥2.2 | — | `pass-cli ssh-agent load --vault-name` |
+`vault:resolve --ssh` | Implemented |
+[Proton Pass CLI](https://protonpass.github.io/pass-cli/) |
+`bun run vault:resolve:ssh` | | **Secure share** | secrets | pass‑cli ≥2.2 | — |
+`pass-cli share list` · `item share` · `invite accept <id>` |
+`portal-cli secret share` / `invite accept` | Implemented |
+[pass-cli share](https://protonpass.github.io/pass-cli/) |
+`bun run portal-cli secret invite accept <INVITE_ID>` | | **Secret retrieval** |
+secrets | pass‑cli ≥2.2 | — | `pass-cli item view` (not `item get`) |
+`portal-cli secret get` · autofill | Implemented |
+[pass-cli item](https://protonpass.github.io/pass-cli/) |
+`bun run portal-cli secret get 'pass://factorywager/…/password'` | | **Vault &
+item listing** | secrets | pass‑cli ≥2.2 | — | `pass-cli vault list` ·
+`item list --output json` | `portal-cli secret vaults` · vault-health bake |
+Implemented | same | `bun run portal-cli secret items factorywager` | | **Spawn
+external process** | runtime | Bun ≥1.0 |
+`Bun.spawn(cmd, { stdout: "inherit", stderr: "inherit", stdin: "inherit" })` | —
+| all subcommands | Implemented | [Bun.spawn](https://bun.sh/docs/api/spawn) |
+`Bun.spawn(["git", "rev-parse", "HEAD"], { stdout: "inherit", stderr: "inherit" })`
+| | **URLPattern portal routing** | routing | Bun ≥1.3.4 · perf ≥1.3.12 |
+Precompiled `URLPattern` · `test()` classify · `exec()` extract | — |
+`lib/portal/url-planes.ts` · glossary/partner hashes | Implemented |
+[API ship](https://bun.com/blog/bun-v1.3.4#urlpattern-api) ·
+[1.3.12 performance](https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster)
+| `new URLPattern({ hash: "glossary\\::concept" })` | | **HTTPS proxy CONNECT
+reuse** | network | Bun ≥1.3.12 | `fetch(url, { proxy })` | — |
+`lib/net/proxy.ts` · `tests/fetch-proxy-keepalive.test.ts` | Implemented |
+[Bun 1.3.12 ship note](https://bun.com/blog/bun-v1.3.12#keep-alive-for-https-proxy-connect-tunnels)
+· [proxy guide](https://bun.com/docs/guides/http/proxy) |
+`await fetch(url, { proxy: "http://proxy.internal:8080" })` | | **Streaming file
+write** | io | Bun ≥1.0 | `Bun.write(path, response)` | — | snapshot asset
+capture | Implemented | [Bun.write](https://bun.sh/docs/api/file-io) |
+`await Bun.write(snapshotDir + "/report.html", fetch(url))` | | **Glob
+scanning** | io | Bun ≥1.0 | `Bun.glob(pattern)` → async iterator | — | manifest
+grep | Implemented | [Bun.glob](https://bun.sh/docs/api/glob) |
+`for await (const f of Bun.glob("snapshots/*/manifest.txt")) { ... }` | | **File
+existence & read** | io | Bun ≥1.0 | `Bun.file(path).exists()`, `.text()` | — |
+snapshot index & manifest | Implemented |
+[Bun.file](https://bun.sh/docs/api/file-io) |
+`if (await Bun.file("snapshots/index.jsonl").exists()) { ... }` | | **ANSI color
+output** | display | Bun ≥1.0 | `Bun.color(hex, "ansi-16m")` | — | vault-map
+status lines · autofill | Implemented |
+[Bun.color](https://bun.com/docs/runtime/color) |
+`Bun.color("#2DA44E", "ansi-16m")` | | **Vault health gate** | test | Bun ≥1.0 |
+`expect().toMatchSnapshot()` | pass-cli list (bake only) |
+`portal-cli vault health` · Harness Gates | Implemented |
+[snapshots](https://bun.com/docs/test/snapshots) · `/portal/vault/` |
+`bun run portal-cli vault health` | | **Portal dashboard launcher** | cli | Bun
+≥1.0 | `Bun.spawn` (optional `--open`) | — | `portal-cli dashboard --view=…` |
+Implemented | boards SSOT chrome-catalog |
+`bun run portal-cli dashboard --view=packages --open` | | **Nav badges (baked)**
+| ui | — | `fetch` registry JSON | — | topbar overflow counts | Implemented |
+`public/portal/nav-badges.js` | failures / vault active / packages / monorepo
+score | | **Watch mode (hard restart)** | dev | Bun ≥1.0 | `bun --watch` | — |
+portal-cli development · long-running commands | Available |
+[watch mode](https://bun.com/docs/runtime/watch-mode) |
+`bun --watch tools/portal-cli.ts snapshot run` | | **Hot reload
+(state-preserving)** | dev | Bun ≥1.0 | `bun --hot` | — | portal and dashboard
+development | Available |
+[hot mode](https://bun.com/docs/runtime/watch-mode#hot-mode) |
+`bun --hot tools/portal-cli.ts dashboard` | | **No clear screen on reload** |
+dev | Bun ≥1.0 | `bun --no-clear-screen` | — | development with persistent logs
+| Available | [watch mode](https://bun.com/docs/runtime/watch-mode) |
+`bun --watch --no-clear-screen tools/portal-cli.ts snapshot run` | |
+**Debugger** | debug | Bun ≥1.0 | `bun --inspect` · `--inspect-wait` ·
+`--inspect-brk` | — | debugging portal CLI and tests | Available |
+[debugger](https://bun.com/docs/runtime/debugger) |
+`bun --inspect-brk tools/portal-cli.ts probe lockfile` | | **Working directory**
+| env | Bun ≥1.0 | `bun --cwd` | — | run snapshots and commands from a selected
+project | Available |
+[runtime context](https://bun.com/docs/runtime/index#global-configuration-context)
+| `bun --cwd /path tools/portal-cli.ts snapshot list` | | **Custom Bun config**
+| config | Bun ≥1.0 | `bun --config` | — | portal-specific `bunfig.toml`
+selection | Available |
+[runtime context](https://bun.com/docs/runtime/index#global-configuration-context)
+| `bun --config ./bunfig.toml tools/portal-cli.ts --help` | | **Define
+constants** | env | Bun ≥1.0 | `bun --define` | — | compile-time feature and
+environment constants | Available |
+[define constants](https://bun.com/docs/guides/runtime/define-constant) |
+`bun --define 'process.env.NODE_ENV:"production"' tools/portal-cli.ts --help` |
+| **Custom export conditions** | env | Bun ≥1.0 | `bun --conditions` | — |
+monorepo package resolution | Available |
+[dependency resolution](https://bun.com/docs/runtime/index#dependency-module-resolution)
+| `bun --conditions custom tools/portal-cli.ts pm ls` | | **Silent command
+echo** | output | Bun ≥1.0 | `bun --silent` | — | CI and package-script pipes |
+Available |
+[general execution options](https://bun.com/docs/runtime/index#general-execution-options)
+| `bun --silent run portal-cli --help` | | **Low memory mode** | perf | Bun ≥1.0
+| `bun --smol` | — | constrained CI runners | Available |
+[runtime process control](https://bun.com/docs/runtime/index#runtime-process-control)
+| `bun --smol tools/portal-cli.ts vault health` | | **Prefer cached packages** |
+network | Bun ≥1.0 | `bun --prefer-offline` | — | cache-first and intermittently
+connected runs | Available |
+[auto-install](https://bun.com/docs/runtime/auto-install) |
+`bun --prefer-offline tools/portal-cli.ts pm ls` | | **Auto-install fallback** |
+deps | Bun ≥1.0 | `bun --install=fallback` | — | scripts that may reference
+missing local packages | Available |
+[auto-install](https://bun.com/docs/runtime/auto-install) |
+`bun --install=fallback tools/portal-cli.ts --help` | | **Console depth flag** |
+runtime | Bun ≥1.0 | `bun --console-depth=N` | — | portal-cli child spawns ·
+`lib/console-depth.ts` | Implemented |
+[runtime · --console-depth](https://bun.com/docs/runtime#general-execution-options)
+| `bun tools/portal-cli.ts --console-depth=4 probe lockfile` | | **Child PTY
+(Bun.Terminal)** | runtime | Bun ≥1.3.5 | `new Bun.Terminal` ·
+`Bun.spawn({ terminal })` | — | `lib/terminal.ts` · `tests/terminal.test.ts` |
+Implemented |
+[PTY guide](https://bun.com/docs/runtime/child-process#terminal-pty-support) ·
+[reference](https://bun.com/reference/bun/Terminal) ·
+[bun-types](https://github.com/oven-sh/bun/tree/main/packages/bun-types) |
+`await using t = new Bun.Terminal({ cols: 80, rows: 24, data: (_t, d) => process.stdout.write(d) }); Bun.spawn(["echo", "ok"], { terminal: t });`
+| | **Image chart generation** | image | Bun ≥1.0 | `new Bun.Image(file).png()`
+| — | report chart rendering (future) | Available |
+[Bun.Image](https://bun.sh/docs/api/image) |
+`const img = new Bun.Image(await Bun.file("chart.png").arrayBuffer()); img.resize(800,600);`
+| | **Built‑in test runner** | test | Bun ≥1.0 | `bun:test` – `describe`,
+`test`, `expect` | — | unit tests | Implemented |
+[Bun test](https://bun.sh/docs/test/writing-tests) |
+`import { describe, test, expect } from "bun:test";` | | **Snapshot testing** |
+test | Bun ≥1.0 | `expect().toMatchSnapshot()` | — | `portal vault health` ·
+`portal capabilities health` · `check:snapshots` SSOT | Implemented |
+[bun test snapshots](https://bun.com/docs/test/snapshots) |
+`expect(report).toMatchSnapshot()` | | **Update snapshots** | test | Bun ≥1.0 |
+`bun test <file> --update-snapshots` | — | `portal vault health --update` ·
+`portal capabilities health --update` · `bun run test:snapshots:update` |
+Implemented | same |
+`bun test tests/capability-map-subset.test.ts --update-snapshots` | | **Runtime
+version** | runtime | Bun ≥1.0 | `Bun.version` · `Bun.revision` | — |
+`capabilities doctor` · bake provenance | Implemented |
+[Bun.version](https://bun.com/docs/runtime/utils#bun-version) ·
+[revision](https://bun.com/docs/runtime/utils#bun-revision) | `Bun.version` ·
+`Bun.revision.slice(0, 8)` | | **Environment variables** | runtime | Bun ≥1.0 |
+`Bun.env` (alias of `process.env`) | — | all modules | Implemented |
+[Bun.env](https://bun.com/docs/runtime/utils#bun-env) |
+`const scope = Bun.env.PORTAL_SCOPE \|\| "prediction"` | | **Module main
+detection** | runtime | Bun ≥1.0 | `Bun.main` | — | CLI entry guard |
+Implemented | [Bun.main](https://bun.com/docs/runtime/utils#bun-main) |
+`if (import.meta.path === Bun.main) { … }` | | **Sleep** | runtime | Bun ≥1.0 |
+`Bun.sleep(ms)` · `Bun.sleepSync(ms)` | — | rate limiting · short polls |
+Available | [Bun.sleep](https://bun.com/docs/runtime/utils#bun-sleep) ·
+[sleepSync](https://bun.com/docs/runtime/utils#bun-sleepsync) |
+`await Bun.sleep(1000)` | | **Which (PATH probe)** | runtime | Bun ≥1.0 |
+`Bun.which(bin, opts?)` | — | pass-cli discovery · portal-cli secret which |
+Implemented | [Bun.which](https://bun.com/docs/runtime/utils#bun-which) |
+`Bun.which("pass-cli")` | | **UUID v7** | runtime | Bun ≥1.0 |
+`Bun.randomUUIDv7()` | — | snapshot ids · request ids (future) | Available |
+[Bun.randomUUIDv7](https://bun.com/docs/runtime/utils#bun-randomuuidv7) |
+`Bun.randomUUIDv7()` | | **Promise peek** | runtime | Bun ≥1.0 |
+`Bun.peek(promise)` · `peek.status` | — | avoid microticks (advanced) |
+Available | [Bun.peek](https://bun.com/docs/runtime/utils#bun-peek) |
+`Bun.peek(Promise.resolve(1))` | | **Open in editor** | dev | Bun ≥1.0 |
+`Bun.openInEditor(path, opts?)` | — | jump-to-source from CLI (future) |
+Available |
+[Bun.openInEditor](https://bun.com/docs/runtime/utils#bun-openineditor) |
+`Bun.openInEditor(import.meta.path, { line: 10 })` | | **Deep equals** | test |
+Bun ≥1.0 | `Bun.deepEquals(a, b, strict?)` | — | `bake:capabilities:check` ·
+capabilityMapsDeepEqual · `expect().toEqual` | Implemented |
+[Bun.deepEquals](https://bun.com/docs/runtime/utils#bun-deepequals) |
+`Bun.deepEquals(stable(a), stable(b), true)` | | **Escape HTML** | security |
+Bun ≥1.0 | `Bun.escapeHTML(value)` | — | portal report strings (future) |
+Available | [Bun.escapeHTML](https://bun.com/docs/runtime/utils#bun-escapehtml)
+| `Bun.escapeHTML("<script>")` | | **Structured debug output** | dev | Bun ≥1.0
+| `Bun.inspect(obj, { colors, depth })` · `Bun.inspect.custom` | — |
+`snapshot run --debug` · custom class print | Implemented |
+[Bun.inspect](https://bun.com/docs/runtime/utils#bun-inspect) ·
+[custom](https://bun.com/docs/runtime/utils#bun-inspect-custom) |
+`Bun.inspect(manifest, { colors: true, depth: 4 })` | | **Inspect table** |
+display | Bun ≥1.0 | `Bun.inspect.table(rows, cols?, { colors })` | — |
+`portal-cli pm graph` · doctor · bake:all summary | Implemented |
+[Bun.inspect.table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)
+| `Bun.inspect.table(rows, ["step", "ms"], { colors: true })` | | **Semantic
+versioning** | dev | Bun ≥1.0 | `Bun.semver.satisfies` · `Bun.semver.order` | —
+| `portal-cli capabilities doctor` · minBun/minPassCli floors | Implemented |
+[Bun.semver](https://bun.com/docs/runtime/semver) |
+`Bun.semver.satisfies(Bun.version, ">=1.4.0")` | | **String width (Unicode)** |
+display | Bun ≥1.0 | `Bun.stringWidth(s, opts?)` | — | `lib/portal/cli-chrome`
+pad/truncate/columns · snapshot-core | Implemented |
+[Bun.stringWidth](https://bun.com/docs/runtime/utils#bun-stringwidth) |
+`padDisplay(s, w)` via `Bun.stringWidth(s)` | | **Strip ANSI** | display | Bun
+≥1.0 | `Bun.stripANSI(text)` | — | doctor / CLI plain width · logs | Implemented
+| [Bun.stripANSI](https://bun.com/docs/runtime/utils#bun-stripansi) |
+`Bun.stripANSI("\u001b[31mred\u001b[0m")` | | **Wrap ANSI text** | display | Bun
+≥1.0 | `Bun.wrapAnsi(text, columns, opts?)` | — | doctor frames · long CLI help
+| Implemented | [Bun.wrapAnsi](https://bun.com/docs/runtime/utils#bun-wrapansi)
+| `Bun.wrapAnsi(line, 80, { hard: false, wordWrap: true })` | | **file:// ↔
+path** | io | Bun ≥1.0 | `Bun.fileURLToPath` · `Bun.pathToFileURL` | — |
+import.meta.url → abs path · path → URL | Implemented |
+[fileURLToPath](https://bun.com/docs/runtime/utils#bun-fileurltopath) ·
+[pathToFileURL](https://bun.com/docs/runtime/utils#bun-pathtofileurl) |
+`Bun.fileURLToPath(import.meta.url)` | | **GZIP compress** | compress | Bun ≥1.0
+| `Bun.gzipSync` · `Bun.gunzipSync` | — | artifact packs · oneliners proof |
+Available | [gzipSync](https://bun.com/docs/runtime/utils#bun-gzipsync) ·
+[gunzipSync](https://bun.com/docs/runtime/utils#bun-gunzipsync) |
+`Bun.gunzipSync(Bun.gzipSync(buf))` | | **DEFLATE compress** | compress | Bun
+≥1.0 | `Bun.deflateSync` · `Bun.inflateSync` | — | wire payloads (future) |
+Available | [deflateSync](https://bun.com/docs/runtime/utils#bun-deflatesync) ·
+[inflateSync](https://bun.com/docs/runtime/utils#bun-inflatesync) |
+`Bun.inflateSync(Bun.deflateSync(buf))` | | **Zstandard compress** | compress |
+Bun ≥1.0 | `Bun.zstdCompress(Sync)` · `Bun.zstdDecompress(Sync)` | — | large
+registry bakes (future) | Available |
+[zstdCompress](https://bun.com/docs/runtime/utils#bun-zstdcompress-bun-zstdcompresssync)
+·
+[zstdDecompress](https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync)
+| `Bun.zstdCompressSync(buf, { level: 6 })` | | **High-precision timer** | perf
+| Bun ≥1.0 | `Bun.nanoseconds()` | — | bake:all · doctor elapsed | Implemented |
+[Bun.nanoseconds](https://bun.com/docs/runtime/utils#bun-nanoseconds) |
+`const t0 = Bun.nanoseconds()` | | **ReadableStream consumers** | io | Bun ≥1.0
+| `Bun.readableStreamToText` · `ToBytes` · `ToJSON` · `ToArray` · `ToBlob` ·
+`ToFormData` · `ToArrayBuffer` | — | fetch body → text/json | Available |
+[readableStreamTo\*](https://bun.com/docs/runtime/utils#bun-readablestreamto) |
+`await Bun.readableStreamToText(res.body!)` | | **Module resolveSync** | deps |
+Bun ≥1.0 | `Bun.resolveSync(spec, root)` | — | package path probes | Available |
+[Bun.resolveSync](https://bun.com/docs/runtime/utils#bun-resolvesync) |
+`Bun.resolveSync("./package.json", import.meta.dir)` | | **JSC serialize** |
+runtime | Bun ≥1.0 | `serialize` / `deserialize` from `bun:jsc` | — | structured
+clone buffers (future) | Available |
+[utils · bun:jsc](https://bun.com/docs/runtime/utils#serialize-deserialize-in-bun-jsc)
+| `deserialize(serialize({ a: 1 }))` | | **Shallow memory estimate** | perf |
+Bun ≥1.0 | `estimateShallowMemoryUsageOf` from `bun:jsc` | — | cache diagnostics
+(`shallowMemoryUsage`) · heap triage | Implemented |
+[estimateShallowMemoryUsageOf](https://bun.com/docs/runtime/utils#estimateshallowmemoryusageof-in-bun-jsc)
+| `estimateCacheValueMemory(value)` | | **Pack workspace** | pkg | Bun ≥1.0 |
+`bun pm pack` | — | `portal-cli pm pack` | Implemented |
+[bun pm pack](https://bun.com/docs/pm/cli/pm#pack) |
+`bun run portal-cli pm pack --dry-run` | | **List dependencies** | pkg | Bun
+≥1.0 | `bun pm ls` | — | `portal-cli pm ls` | Implemented |
+[bun pm ls](https://bun.com/docs/pm/cli/pm#ls) | `bun run portal-cli pm ls` | |
+**Bump version** | pkg | Bun ≥1.0 | `bun pm version` | — |
+`portal-cli pm version` | Implemented |
+[bun pm version](https://bun.com/docs/pm/cli/pm#version) |
+`bun run portal-cli pm version --no-git-tag-version` | | **Manage package.json**
+| pkg | Bun ≥1.0 | `bun pm pkg get/set/delete/fix` | — | `portal-cli pm pkg …` |
+Implemented | [bun pm pkg](https://bun.com/docs/pm/cli/pm#pkg) |
+`bun run portal-cli pm pkg get name` | | **Trust lifecycle scripts** | security
+| Bun ≥1.0 | `bun pm trust` / `untrusted` | — | `portal-cli pm trust` |
+Implemented | [bun pm trust](https://bun.com/docs/pm/cli/pm#trust) |
+`bun run portal-cli pm untrusted` | | **Security scanner** | security | Bun ≥1.4
+| `bun pm scan` · `[install.security] scanner` | `SOCKET_API_KEY` (optional;
+free mode preferred) | `portal-cli scanner` (policy · estimate · scan --oneshot
+· doctor) | Implemented |
+[Security Scanner API](https://bun.com/docs/pm/security-scanner-api) |
+`bun run portal-cli scanner policy` · `scanner scan --oneshot --force` | |
+**Cache inspection** | infra | Bun ≥1.0 | `bun pm cache` | — |
+`portal-cli pm cache` | Implemented |
+[bun pm cache](https://bun.com/docs/pm/cli/pm#cache) |
+`bun run portal-cli pm cache` | | **Curated runtime flags catalog** | cli | Bun
+≥1.0 | `config/runtime-flags.json` SSOT (14 curated · harvest set) ·
+context-scoped shortcodes · `-i` ≡ `--install=fallback` (not `--no-install`) | —
+| `portal-cli flags` · `portal:flags:check` · doctor catalog-\* | Implemented |
+[runtime options](https://bun.com/docs/runtime/index#general-execution-options)
+· [auto-install](https://bun.com/docs/runtime/auto-install) |
+`bun run portal:flags` · `portal:flags:check` ·
+`portal-cli doctor --group catalog` | | **Linker policy verification** | config
+| Bun ≥1.4 | `bun.lock` `configVersion` field | — | `install:verify` ·
+`portal-cli doctor` (linker-config-version · machine-isolated-linker) |
+Implemented |
+[Default strategy](https://bun.com/docs/pm/cli/install#default-strategy) ·
+[isolated installs](https://bun.com/docs/pm/isolated-installs) |
+`bun run portal-cli doctor` · `portal-cli doctor --verbose` · unit:
+`probeLockfileConfigVersion` | | **Cloudflare Access (live)** | security | Bun
+≥1.0 | Live HTTPS probe (Access 302 / www-authenticate) | — |
+`portal-cli doctor` group `infra` · `infra-ledger-access` ·
+`infra-portal-access` | Implemented |
+[Access policies](https://developers.cloudflare.com/cloudflare-one/access-controls/policies/)
+· [`.cloudflare-access.yml`](.cloudflare-access.yml) |
+`bun tools/portal-cli.ts doctor --env ci --group infra` | | **Unified Doctor** |
+dev | Bun ≥1.4 | `bun run portal:doctor` | — | CI · developer checks ·
+`/portal/doctor/` · `bake:doctor` | Implemented | claim portal-doctor ·
+[isolated installs](https://bun.com/docs/pm/isolated-installs) |
+`bun run portal:doctor --verbose` · `portal-cli doctor --json` | | **Bunfig
+(machine)** | config | Bun ≥1.4 | `~/.bunfig.toml` | — | Machine-level install
+policy SSOT | Implemented |
+[runtime/bunfig](https://bun.com/docs/runtime/bunfig) ·
+[`docs/UNIFIED.md`](docs/UNIFIED.md) | `linker` · `globalStore` ·
+`minimumReleaseAge` · `cache.dir` | | **Bunfig (project)** | config | Bun ≥1.4 |
+`./bunfig.toml` | — | Project-level overrides only (no machine keys) |
+Implemented | same · doctor `bunfig-project-no-machine-keys` | scopes · `[test]`
+· `frozenLockfile` | | **Bunfig merge** | config | Bun ≥1.4 | Shallow merge:
+machine → project | — | Effective install config resolution | Implemented |
+doctor `bunfig-merge-consistency` | `bun run install:verify` | | **Doctor
+groups** | dev | Bun ≥1.4 | `linker` · `bakes` · `catalog` · `gates` · `bunfig`
+| — | Group-based portal doctor checks | Implemented |
+`tools/lib/portal-cli-doctor.ts` | `portal-cli doctor --group bunfig` ·
+`--group catalog,bunfig` | | **Lockfile hash** | integrity | Bun ≥1.0 |
+`bun pm hash` | — | `portal-cli pm hash` | Implemented |
+[bun pm hash](https://bun.com/docs/pm/cli/pm#hash) |
+`bun run portal-cli pm hash` | | **PM utilities (full group)** | pkg | Bun ≥1.0
+| `bun pm` | — | `portal-cli pm` passthrough | Implemented |
+[bun pm](https://bun.com/docs/pm/cli/pm) | `bun run portal-cli pm whoami` | |
+**Package graph bake** | audit | Bun ≥1.0 | `Bun.file` + `Bun.write` (bake) ·
+`Bun.inspect.table` (view) | — | `audit:packages --bake` · `portal-cli pm graph`
+| Implemented | claim `packages-graph-map-v13` · surfaces v3 (page→registry ·
+lib hubs · orphan triage) · [pm/filter](https://bun.com/docs/pm/filter) |
+`bun run portal-cli pm graph` · `bun run audit:packages -- --bake` | | **Install
+age gate + excludes** | security | Bun ≥1.3 | `minimumReleaseAge` /
+`minimumReleaseAgeExcludes` (bunfig) | — | machine `~/.bunfig.toml` ·
+`bunfig:bake` · `portal-cli bunfig status` | Implemented |
+[minimum release age](https://bun.com/docs/pm/cli/install#minimum-release-age) ·
+[`docs/UNIFIED.md`](docs/UNIFIED.md) | `bun run bunfig:bake` ·
+`bun run portal-cli bunfig status` | | **Bunfig state bake** | audit | Bun ≥1.3
+| `Bun.TOML.parse` (machine+project merge, per-key provenance) | — |
+`bunfig:bake` → `bunfig-state.json` ·
+`portal-cli bunfig status                                          | check` |
+Implemented |
+[`scripts/bake-bunfig.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/scripts/bake-bunfig.ts)
+· `bake:all` step `bunfig` | `bun run bunfig:bake` ·
+`bun run portal-cli bunfig check` | | **Surfaces state bake** | audit | Bun ≥1.3
+| `Bun.TOML.parse` (`config/surfaces.toml` + Access/wrangler/r2-env cross-check)
+| — | `surfaces:bake` → `surfaces-state.json` · subdomain + publish-lane SSOT |
+Implemented |
+[`config/surfaces.toml`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/surfaces.toml)
+· `bake:all` step `surfaces` | `bun run surfaces:bake` ·
+`bun run surfaces:check` |

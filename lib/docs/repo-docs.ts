@@ -45,6 +45,9 @@ export const CANONICAL_REPO_DOCS = {
   bunNativeCapabilities: 'docs/BUN_NATIVE_CAPABILITIES.md',
   /** Bun token/catalog operate loop (RSS → scrape → catalog → integrity) */
   bunDocsOperate: 'docs/BUN_DOCS_OPERATE.md',
+  /** Bun-types pin inventory + tip-diff + usage (not partner-surface) */
+  bunTypesInventory: 'docs/design/bun-types-inventory.md',
+  bunTypesInventoryJson: 'tools/bun-types-inventory.json',
   /** TokenRef interior + BunToken export (knowledge unit) */
   tokenRef: 'lib/docs/token-ref.ts',
   bunToken: 'lib/docs/bun-token.ts',
@@ -179,6 +182,8 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   platformRouting: 'Local vs Pages routing map',
   bunNativeCapabilities: 'Bun native capabilities note (browser, md, scheduler, datagram)',
   bunDocsOperate: 'Bun token/catalog operate (RSS → scrape → catalog)',
+  bunTypesInventory: 'Bun-types inventory pipeline (pin SSOT · tip-diff · usage)',
+  bunTypesInventoryJson: 'Bun-types inventory JSON SSOT (committed under tools/)',
   tokenRef: 'TokenRef interior knowledge-unit schema',
   bunToken: 'BunToken agent export contract (northstar)',
   organizationHistory: 'Homebase discovery / organization map',
