@@ -12,8 +12,9 @@
 /**
  * bun-types-inventory.ts — **deep** inventory of pinned `bun-types`:
  *
- *  - Top-level module members (function / namespace / class / const / var / interface / type)
- *  - Nested namespace · class · **interface** · **`type X = {…}`** methods/properties
+ *  - Top-level module members (function / namespace / class / const / var / interface / type / enum)
+ *  - Nested namespace · class · **interface** · **`type X = {…}`** · **enum** methods/properties/members
+ *  - **Anonymous nested object** fields on properties (`cpuTime: { user; system }` → depth 2+)
  *  - Satellite modules: bun:jsc · bun:ffi · bun:sqlite · bun:test · serve/sql/s3/redis/shell …
  *  - Optional tip-vs-pin diff (`~/bun/packages/bun-types` or `BUN_TYPES_TIP`)
  *  - AGENTS.md grounded-map hits + repo call-site counts (qualified paths)
@@ -21,14 +22,16 @@
  * Not the docs-only utils page (`export-bun-api-index` is separate SSOT).
  *
  * Usage:
- *   bun tools/bun-types-inventory.ts                 # deep (iface + type aliases + props)
+ *   bun tools/bun-types-inventory.ts                 # deep (iface + type aliases + props + enums + nested objects)
  *   bun tools/bun-types-inventory.ts --shallow       # top-level only
  *   bun tools/bun-types-inventory.ts --no-interfaces
  *   bun tools/bun-types-inventory.ts --no-type-aliases
  *   bun tools/bun-types-inventory.ts --no-props
+ *   bun tools/bun-types-inventory.ts --no-enums
+ *   bun tools/bun-types-inventory.ts --no-nested-objects
  *   bun tools/bun-types-inventory.ts --tip-diff
  *   bun tools/bun-types-inventory.ts --write · --check · --json · --no-counts · --full-scan
- *   bun tools/bun-types-inventory.ts --module=bun:jsc · --kind=function,method,property
+ *   bun tools/bun-types-inventory.ts --module=bun:jsc · --kind=function,method,property,enum
  *
  * Scripts: bun:types-inventory · :write · :check
  */
@@ -56,6 +59,8 @@ export type MemberKind =
   | 'var'
   | 'interface'
   | 'type'
+  | 'enum'
+  | 'enum-member'
   | 'method'
   | 'property';
 
@@ -110,6 +115,10 @@ export type InventoryResult = {
     properties: boolean;
     /** Open `type X = { … }` object-literal aliases */
     typeAliases: boolean;
+    /** Open `enum` / `const enum` bodies and harvest members */
+    enums: boolean;
+    /** Open anonymous object types on properties (`prop: { … }`) for depth 2+ fields */
+    nestedObjects: boolean;
     counted: boolean;
     moduleFilter: string | null;
     kindFilter: MemberKind[] | null;
@@ -315,13 +324,14 @@ type ScopeFrame = {
   /** Path segments after module prefix, e.g. ['inspect'] or ['Spawn'] */
   path: string[];
   /** kind of scope container */
-  kind: 'module' | 'namespace' | 'class' | 'interface' | 'type' | 'other';
+  kind: 'module' | 'namespace' | 'class' | 'interface' | 'type' | 'enum' | 'other';
   /** brace depth when this scope opened */
   openDepth: number;
 };
 
+/** `const enum` must precede bare `const` so the longer form wins. */
 const DECL_RE =
-  /^(?:export\s+)?(?:declare\s+)?(function|namespace|class|const|var|let|interface|type)\s+([A-Za-z_][A-Za-z0-9_]*)\b(.*)$/;
+  /^(?:export\s+)?(?:declare\s+)?(const\s+enum|function|namespace|class|const|var|let|interface|type|enum)\s+([A-Za-z_][A-Za-z0-9_]*)\b(.*)$/;
 
 const STATIC_METHOD_RE = /^(?:export\s+)?static\s+(?:async\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*[<(]/;
 /** Instance / interface method — name( or name<T>( */
@@ -329,6 +339,8 @@ const INSTANCE_METHOD_RE =
   /^(?:export\s+)?(?:async\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?:<[^>]*>)?\s*\(/;
 /** Interface/class property: name: Type or name?: Type (not call signatures) */
 const PROPERTY_RE = /^(?:export\s+)?(?:readonly\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(\?)?\s*:\s*(?!\()/;
+/** Enum member: name = value, or bare name (optional trailing comma) */
+const ENUM_MEMBER_RE = /^(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?:=\s*([^,;/}]+))?\s*,?\s*$/;
 
 const SKIP_METHOD_NAMES = new Set([
   'if',
@@ -387,10 +399,14 @@ const SKIP_METHOD_NAMES = new Set([
 ]);
 
 /** Scopes that nest children in deep mode (type aliases need object-body check). */
-function isNestingKind(kind: string, opts: { interfaces: boolean; typeAliases: boolean }): boolean {
+function isNestingKind(
+  kind: string,
+  opts: { interfaces: boolean; typeAliases: boolean; enums: boolean }
+): boolean {
   if (kind === 'namespace' || kind === 'class') return true;
   if (kind === 'interface' && opts.interfaces) return true;
   if (kind === 'type' && opts.typeAliases) return true;
+  if (kind === 'enum' && opts.enums) return true;
   return false;
 }
 
@@ -447,8 +463,54 @@ export function typeAliasOpensObjectBody(
   );
 }
 
+/**
+ * True when a property type opens an **anonymous object** body (`name?: {` or
+ * multi-line `name?:\n  {`). Does **not** open unions that begin with `|`
+ * (e.g. `proxy?: string | { url }`) — those stay leaf properties.
+ */
+export function propertyOpensObjectBody(
+  trimmed: string,
+  lines: string[],
+  lineIndex: number
+): boolean {
+  const propM = trimmed.match(PROPERTY_RE);
+  if (!propM) return false;
+  const name = propM[1]!;
+  const nameAt = trimmed.indexOf(name);
+  if (nameAt < 0) return false;
+  let buf = trimmed.slice(nameAt + name.length);
+  let look = lineIndex + 1;
+  for (let step = 0; step < 10; step++) {
+    const s = buf.replace(/\s+/g, ' ').trim();
+    if (/^\??\s*:\s*\{/.test(s)) return true;
+    if (/^\??\s*:\s*\|/.test(s)) return false;
+    // bare `name:` / `name?:` — keep reading for `{` on following lines
+    const bareColon = /^\??\s*:\s*$/.test(s);
+    if (!bareColon && /^\??\s*:\s*[^{|]/.test(s)) return false;
+    if (look >= lines.length) break;
+    const next = lines[look]!.trim();
+    look++;
+    if (!next || next.startsWith('//') || next.startsWith('*') || next.startsWith('/*')) continue;
+    buf += ' ' + next;
+  }
+  const final = buf.replace(/\s+/g, ' ').trim();
+  if (/^\??\s*:\s*\|/.test(final)) return false;
+  return /^\??\s*:\s*\{/.test(final);
+}
+
 function isHarvestScope(kind: ScopeFrame['kind']): boolean {
-  return kind === 'class' || kind === 'interface' || kind === 'type' || kind === 'namespace';
+  return (
+    kind === 'class' ||
+    kind === 'interface' ||
+    kind === 'type' ||
+    kind === 'namespace' ||
+    kind === 'enum'
+  );
+}
+
+function normalizeDeclKind(raw: string): MemberKind | 'let' {
+  if (raw === 'const enum' || raw === 'enum') return 'enum';
+  return raw as MemberKind | 'let';
 }
 
 function settingFor(moduleId: string, path: string[], leaf: string): string {
@@ -491,9 +553,14 @@ function formFor(
     }
     return `${setting}${sig}`.replace(/\s+/g, ' ').slice(0, 160);
   }
-  if (kind === 'namespace') return `${setting}.*`;
+  if (kind === 'namespace' || kind === 'enum') return `${setting}.*`;
   if (kind === 'class') return `new ${setting}(…)`;
   if (kind === 'interface' || kind === 'type') return setting;
+  if (kind === 'enum-member') {
+    const t = rest.trim();
+    if (t.startsWith('=')) return `${setting} ${t.split(',')[0]!.trim()}`.slice(0, 140);
+    return setting;
+  }
   if (kind === 'const' || kind === 'var' || kind === 'property') {
     const t = rest.trim();
     if (t.startsWith(':') || t.startsWith('?:'))
@@ -527,15 +594,22 @@ export type ParseDtsOpts = {
   properties?: boolean;
   /** Open `type X = { … }` object-literal aliases (default true when not shallow) */
   typeAliases?: boolean;
+  /** Open `enum` / `const enum` bodies (default true when not shallow) */
+  enums?: boolean;
+  /**
+   * Open anonymous object types on properties for nested field harvest
+   * (default true when properties enabled and not shallow).
+   */
+  nestedObjects?: boolean;
 };
 
 /**
  * Parse all `declare module "…"` blocks in a .d.ts file into inventory rows.
  *
- * Nesting scopes: **namespace**, **class**, optionally **interface**, and
- * **`type X = { … }`** object aliases (not unions / generic-only types).
- * Members are harvested only at the immediate body brace depth (anonymous nested
- * objects do not invent false fields on the parent type).
+ * Nesting scopes: **namespace**, **class**, **enum**, optionally **interface**,
+ * **`type X = { … }`** object aliases, and (when nestedObjects) **anonymous
+ * object** types on properties. Index/mapped signatures still never become
+ * named children. Union-first property types (`x?: string | {…}`) stay leaves.
  */
 export function parseDtsFile(
   text: string,
@@ -546,6 +620,8 @@ export function parseDtsFile(
   const interfaces = opts.interfaces !== false && !shallow;
   const properties = opts.properties !== false && !shallow;
   const typeAliases = opts.typeAliases !== false && !shallow;
+  const enums = opts.enums !== false && !shallow;
+  const nestedObjects = opts.nestedObjects !== false && properties && !shallow;
 
   const lines = text.split(/\r?\n/);
   const out: RawMember[] = [];
@@ -610,7 +686,7 @@ export function parseDtsFile(
         const top = stack[stack.length - 1]!;
         const decl = trimmed.match(DECL_RE);
         if (decl) {
-          let kind = decl[1]! as MemberKind | 'let';
+          let kind = normalizeDeclKind(decl[1]!);
           if (kind === 'let') kind = 'var';
           const name = decl[2]!;
           const rest = decl[3] ?? '';
@@ -634,7 +710,7 @@ export function parseDtsFile(
               overloads: 1,
             });
           }
-          const mayNest = isNestingKind(kind, { interfaces, typeAliases });
+          const mayNest = isNestingKind(kind, { interfaces, typeAliases, enums });
           if (mayNest) {
             if (kind === 'type') {
               if (typeAliasOpensObjectBody(trimmed, lines, i)) {
@@ -647,7 +723,7 @@ export function parseDtsFile(
             } else if (!trimmed.endsWith(';')) {
               pending = {
                 path: [...top.path, name],
-                kind: kind as 'namespace' | 'class' | 'interface',
+                kind: kind as 'namespace' | 'class' | 'interface' | 'enum',
                 openDepth: -1,
               };
             }
@@ -655,57 +731,57 @@ export function parseDtsFile(
         } else if (
           !shallow &&
           isHarvestScope(top.kind) &&
-          // only immediate body — not fields inside nested anonymous `{ … }`
+          // only immediate body of current named/anon scope
           depthAtLineStart === top.openDepth
         ) {
           // skip index / mapped signatures
           if (!trimmed.startsWith('[') && !trimmed.startsWith('<')) {
-            const staticM = trimmed.match(STATIC_METHOD_RE);
-            const instM =
-              !staticM && (top.kind === 'class' || top.kind === 'interface' || top.kind === 'type')
-                ? trimmed.match(INSTANCE_METHOD_RE)
-                : null;
-            if (staticM || instM) {
-              const name = (staticM ?? instM)![1]!;
-              if (!SKIP_METHOD_NAMES.has(name) && !name.startsWith('_')) {
-                const jsdoc = precedingJsdoc(lines, i);
-                const setting = settingFor(moduleId, top.path, name);
-                const rest = trimmed.slice(trimmed.indexOf(name) + name.length);
-                push({
-                  kind: 'method',
-                  name,
-                  parent: parentSetting(moduleId, top.path),
-                  setting,
-                  module: moduleId,
-                  depth: stack.length - 1,
-                  form: formFor('method', setting, rest, lines, i),
-                  default: extractDefault(jsdoc),
-                  notes: extractNotes(jsdoc),
-                  source: sourceRel,
-                  line: i + 1,
-                  deprecated: /@deprecated/i.test(jsdoc),
-                  overloads: 1,
-                });
-              }
-            } else if (
-              properties &&
-              (top.kind === 'class' || top.kind === 'interface' || top.kind === 'type')
-            ) {
-              const propM = trimmed.match(PROPERTY_RE);
-              if (propM) {
-                const name = propM[1]!;
-                if (!SKIP_METHOD_NAMES.has(name) && !name.startsWith('_')) {
+            if (top.kind === 'enum' && enums) {
+              const em = trimmed.match(ENUM_MEMBER_RE);
+              if (em && !SKIP_METHOD_NAMES.has(em[1]!)) {
+                const name = em[1]!;
+                if (!name.startsWith('_')) {
                   const jsdoc = precedingJsdoc(lines, i);
                   const setting = settingFor(moduleId, top.path, name);
                   const rest = trimmed.slice(trimmed.indexOf(name) + name.length);
                   push({
-                    kind: 'property',
+                    kind: 'enum-member',
                     name,
                     parent: parentSetting(moduleId, top.path),
                     setting,
                     module: moduleId,
                     depth: stack.length - 1,
-                    form: formFor('property', setting, rest, lines, i),
+                    form: formFor('enum-member', setting, rest, lines, i),
+                    default: em[2]?.trim() || '—',
+                    notes: extractNotes(jsdoc),
+                    source: sourceRel,
+                    line: i + 1,
+                    deprecated: /@deprecated/i.test(jsdoc),
+                    overloads: 1,
+                  });
+                }
+              }
+            } else {
+              const staticM = trimmed.match(STATIC_METHOD_RE);
+              const instM =
+                !staticM &&
+                (top.kind === 'class' || top.kind === 'interface' || top.kind === 'type')
+                  ? trimmed.match(INSTANCE_METHOD_RE)
+                  : null;
+              if (staticM || instM) {
+                const name = (staticM ?? instM)![1]!;
+                if (!SKIP_METHOD_NAMES.has(name) && !name.startsWith('_')) {
+                  const jsdoc = precedingJsdoc(lines, i);
+                  const setting = settingFor(moduleId, top.path, name);
+                  const rest = trimmed.slice(trimmed.indexOf(name) + name.length);
+                  push({
+                    kind: 'method',
+                    name,
+                    parent: parentSetting(moduleId, top.path),
+                    setting,
+                    module: moduleId,
+                    depth: stack.length - 1,
+                    form: formFor('method', setting, rest, lines, i),
                     default: extractDefault(jsdoc),
                     notes: extractNotes(jsdoc),
                     source: sourceRel,
@@ -713,6 +789,42 @@ export function parseDtsFile(
                     deprecated: /@deprecated/i.test(jsdoc),
                     overloads: 1,
                   });
+                }
+              } else if (
+                properties &&
+                (top.kind === 'class' || top.kind === 'interface' || top.kind === 'type')
+              ) {
+                const propM = trimmed.match(PROPERTY_RE);
+                if (propM) {
+                  const name = propM[1]!;
+                  if (!SKIP_METHOD_NAMES.has(name) && !name.startsWith('_')) {
+                    const jsdoc = precedingJsdoc(lines, i);
+                    const setting = settingFor(moduleId, top.path, name);
+                    const rest = trimmed.slice(trimmed.indexOf(name) + name.length);
+                    push({
+                      kind: 'property',
+                      name,
+                      parent: parentSetting(moduleId, top.path),
+                      setting,
+                      module: moduleId,
+                      depth: stack.length - 1,
+                      form: formFor('property', setting, rest, lines, i),
+                      default: extractDefault(jsdoc),
+                      notes: extractNotes(jsdoc),
+                      source: sourceRel,
+                      line: i + 1,
+                      deprecated: /@deprecated/i.test(jsdoc),
+                      overloads: 1,
+                    });
+                    // nest into anonymous object type for depth 2+ fields
+                    if (nestedObjects && propertyOpensObjectBody(trimmed, lines, i)) {
+                      pending = {
+                        path: [...top.path, name],
+                        kind: 'type',
+                        openDepth: -1,
+                      };
+                    }
+                  }
                 }
               }
             }
@@ -756,6 +868,8 @@ export function parseBunModuleDts(
     interfaces?: boolean;
     properties?: boolean;
     typeAliases?: boolean;
+    enums?: boolean;
+    nestedObjects?: boolean;
   } = {}
 ): RawMember[] {
   const wrapped = text.includes('declare module') ? text : `declare module "bun" {\n${text}\n}\n`;
@@ -765,6 +879,8 @@ export function parseBunModuleDts(
     interfaces: opts.interfaces,
     properties: opts.properties,
     typeAliases: opts.typeAliases,
+    enums: opts.enums,
+    nestedObjects: opts.nestedObjects,
   });
 }
 
@@ -956,6 +1072,8 @@ export async function buildInventory(opts: {
   interfaces?: boolean;
   properties?: boolean;
   typeAliases?: boolean;
+  enums?: boolean;
+  nestedObjects?: boolean;
   tipDiff?: boolean;
   moduleFilter?: string | null;
   kindFilter?: MemberKind[] | null;
@@ -965,7 +1083,16 @@ export async function buildInventory(opts: {
   const interfaces = opts.interfaces !== false && !shallow;
   const properties = opts.properties !== false && !shallow;
   const typeAliases = opts.typeAliases !== false && !shallow;
-  const parseOpts: ParseDtsOpts = { shallow, interfaces, properties, typeAliases };
+  const enums = opts.enums !== false && !shallow;
+  const nestedObjects = opts.nestedObjects !== false && properties && !shallow;
+  const parseOpts: ParseDtsOpts = {
+    shallow,
+    interfaces,
+    properties,
+    typeAliases,
+    enums,
+    nestedObjects,
+  };
   const types = await resolveBunTypesRoot(repoRoot);
 
   const files: string[] = [];
@@ -1077,6 +1204,8 @@ export async function buildInventory(opts: {
       interfaces,
       properties,
       typeAliases,
+      enums,
+      nestedObjects,
       counted,
       moduleFilter: opts.moduleFilter ?? null,
       kindFilter: opts.kindFilter ?? null,
@@ -1115,7 +1244,7 @@ export function renderMarkdown(inv: InventoryResult): string {
   lines.push('# bun-types inventory (deep v3)');
   lines.push('');
   lines.push(
-    'Generated from pinned **bun-types** — top-level + nested namespace/class/**interface**/**type X = {…}** methods & properties + satellite modules. Not the docs-only utils page.'
+    'Generated from pinned **bun-types** — top-level + nested namespace/class/**interface**/**type X = {…}**/**enum** methods, properties, enum-members + anonymous nested object fields + satellite modules. Not the docs-only utils page.'
   );
   lines.push('');
   lines.push('| Field | Value |');
@@ -1129,7 +1258,7 @@ export function renderMarkdown(inv: InventoryResult): string {
   lines.push(`| Types root | \`${inv.types.root}\` |`);
   lines.push(`| Source files | ${inv.types.files.map(f => `\`${f}\``).join(', ')} |`);
   lines.push(
-    `| Mode | ${inv.mode.shallow ? 'shallow' : 'deep'}${inv.mode.interfaces ? ' · interfaces' : ''}${inv.mode.typeAliases ? ' · typeAliases' : ''}${inv.mode.properties ? ' · props' : ''}${inv.mode.moduleFilter ? ` · module=${inv.mode.moduleFilter}` : ''} |`
+    `| Mode | ${inv.mode.shallow ? 'shallow' : 'deep'}${inv.mode.interfaces ? ' · interfaces' : ''}${inv.mode.typeAliases ? ' · typeAliases' : ''}${inv.mode.properties ? ' · props' : ''}${inv.mode.enums ? ' · enums' : ''}${inv.mode.nestedObjects ? ' · nestedObjects' : ''}${inv.mode.moduleFilter ? ` · module=${inv.mode.moduleFilter}` : ''} |`
   );
   lines.push(
     `| Scan roots | ${inv.scan.roots.map(r => `\`${r}/\``).join(', ')}${inv.scan.counted ? '' : ' *(counts skipped)*'} |`
@@ -1161,7 +1290,7 @@ export function renderMarkdown(inv: InventoryResult): string {
   }
   lines.push('');
   lines.push(
-    'Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inventory:check` · flags: `--shallow` · `--no-interfaces` · `--no-type-aliases` · `--no-props` · `--tip-diff`'
+    'Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inventory:check` · flags: `--shallow` · `--no-interfaces` · `--no-type-aliases` · `--no-props` · `--no-enums` · `--no-nested-objects` · `--tip-diff`'
   );
   lines.push('');
 
@@ -1290,6 +1419,8 @@ function parseCli(argv: string[]) {
     noInterfaces: argv.includes('--no-interfaces'),
     noProps: argv.includes('--no-props'),
     noTypeAliases: argv.includes('--no-type-aliases'),
+    noEnums: argv.includes('--no-enums'),
+    noNestedObjects: argv.includes('--no-nested-objects'),
     tipDiff: argv.includes('--tip-diff'),
     verbose: argv.includes('--verbose') || argv.includes('-v'),
     moduleFilter,
@@ -1314,9 +1445,11 @@ Usage:
   --no-interfaces   Do not open interface bodies
   --no-type-aliases Do not open type X = { … } object aliases
   --no-props        Skip name: Type properties inside class/interface/type
+  --no-enums        Skip enum / const enum bodies and members
+  --no-nested-objects  Do not open anonymous prop: { … } object types
   --tip-diff        Compare pin vs ~/bun/packages/bun-types (or BUN_TYPES_TIP)
   --module=ID       Filter e.g. bun · bun:jsc · bun:test
-  --kind=a,b        function,method,class,namespace,const,var,interface,type,property
+  --kind=a,b        function,method,class,namespace,const,var,interface,type,enum,enum-member,property
   -h, --help
 `);
 }
@@ -1335,6 +1468,8 @@ async function main(): Promise<void> {
     interfaces: !args.noInterfaces,
     properties: !args.noProps,
     typeAliases: !args.noTypeAliases,
+    enums: !args.noEnums,
+    nestedObjects: !args.noNestedObjects,
     tipDiff: args.tipDiff,
     moduleFilter: args.moduleFilter,
     kindFilter: args.kindFilter,
@@ -1354,7 +1489,7 @@ async function main(): Promise<void> {
       { key: 'types root', value: inv.types.root },
       {
         key: 'mode',
-        value: `${inv.mode.shallow ? 'shallow' : 'deep'}${inv.mode.interfaces ? ' · iface' : ''}${inv.mode.typeAliases ? ' · typeAlias' : ''}${inv.mode.properties ? ' · props' : ''}${inv.scan.counted ? ' · counts' : ''}`,
+        value: `${inv.mode.shallow ? 'shallow' : 'deep'}${inv.mode.interfaces ? ' · iface' : ''}${inv.mode.typeAliases ? ' · typeAlias' : ''}${inv.mode.properties ? ' · props' : ''}${inv.mode.enums ? ' · enums' : ''}${inv.mode.nestedObjects ? ' · nestedObj' : ''}${inv.scan.counted ? ' · counts' : ''}`,
       },
       {
         key: 'members',
