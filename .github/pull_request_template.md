@@ -152,6 +152,9 @@ Only when a commit set `SKIP_*=1`. Policy:
 - [ ] Prettier on every touched `lib/**/*.ts`
       (`bun x prettier --write <file...>` or `format:harness`)
 - [ ] Brands / wire: no new bare `*Id: string` or interior `unknown` params
+- [ ] If adding/removing a first-level `lib/*/` **domain**: update
+      [`lib/README.md`](../lib/README.md) Domains table + lifecycle (default
+      active; non-default status only when needed) · `bun run lib:domains:check`
 - [ ] Docs/JIT updated only when an owner moved (`docs/harness/`, `repo-docs`,
       AGENTS)
 - [ ] Concept lifecycle / agents tenant docs updated when vocabulary or wire

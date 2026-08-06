@@ -155,10 +155,41 @@ Every `lib/*.ts` module is listed. Grouped for scan; paths stay flat under
 | [`account-limits-repo.ts`](./account-limits-repo.ts) | Account limit history + raise detection (SQLite)  |
 | [`zip-enrichment-repo.ts`](./zip-enrichment-repo.ts) | ZIP-cluster stats over play enrichment / analysis |
 
+## Domain lifecycle
+
+**Default = `active`.** Do **not** paste `Status: active` on every domain README
+(noise). Only declare status when it is **not** the default.
+
+| Status                 | Meaning                                                                                                    |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------- |
+| _(omitted)_ / `active` | Normal product or platform surface — OK to extend                                                          |
+| `hub`                  | Index / routing domain: README + pointers; implementation may live under `tools/`, other domains, or spine |
+| `experimental`         | Lab / not production-default; may change without deprecation theater                                       |
+| `frozen`               | Bugfixes only; no new features                                                                             |
+| `deprecated`           | Scheduled for removal or merge; README must say successor                                                  |
+
+Optional one-liner in a domain README (non-default only):
+
+```markdown
+**Status:** `hub` — implementation in tools/portal-cli-doctor*; this dir is the
+board index.
+```
+
+Non-default inventory (keep short — prefer shrinking):
+
+| Domain                 | Status | Note                                                                                 |
+| ---------------------- | ------ | ------------------------------------------------------------------------------------ |
+| [`doctor/`](./doctor/) | `hub`  | No `.ts` here; doctor probes/CLI under `tools/` · policy in [`install/`](./install/) |
+
+Do **not** merge first-level domains without an import-graph + ownership pass.
+Overlaps (`auth`/`identity`, `research`/`operator-research`, `pages`/`portal`)
+are usually intentional plane splits, not accidental duplicates.
+
 ## Domains
 
 Every first-level `lib/*/` directory (alphabetical). Each row requires a local
-`README.md` (`bun run lib:domains:check`).
+`README.md` (`bun run lib:domains:check`). Default status is **active** unless
+listed under **Domain lifecycle** above.
 
 | Domain                                       | Purpose                                                                    | Entry hint                                                 |
 | -------------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------- |
@@ -174,7 +205,7 @@ Every first-level `lib/*/` directory (alphabetical). Each row requires a local
 | [`core/`](./core/)                           | Core types and infrastructure                                              | `index.ts`                                                 |
 | [`db/`](./db/)                               | Database connection helpers (SQLite / ops DB)                              | `connection.ts`                                            |
 | [`docs/`](./docs/)                           | Path SSOT, tokens, doc builders, Bun brand usages                          | `index.ts` · `repo-docs.ts`                                |
-| [`doctor/`](./doctor/)                       | Doctor-state bake helpers for `portal-cli doctor`                          | domain README · `install/` policy                          |
+| [`doctor/`](./doctor/)                       | Doctor board index (`hub` — tools/ + install policy)                       | domain README · `install/` · portal-cli doctor             |
 | [`dod/`](./dod/)                             | Agent image proof pipeline (verify, watermark, evidence)                   | `evidence.ts` · `verifier.ts`                              |
 | [`experiments/`](./experiments/)             | Multi-factor partner-policy experiment engine                              | `engine.ts` · `design.ts`                                  |
 | [`factory/`](./factory/)                     | Internal registry client, CLI, artifact scaffolding                        | `artifact.ts` · `registry.ts`                              |
