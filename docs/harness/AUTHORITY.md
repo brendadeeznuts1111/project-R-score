@@ -1,26 +1,39 @@
 # Authority (capability ≠ permission)
 
-Upstream thesis: [Maximize autonomy inside explicit authority](https://github.com/lopopolo/harness-engineering/tree/trunk/docs/authority).
+Upstream thesis:
+[Maximize autonomy inside explicit authority](https://github.com/lopopolo/harness-engineering/tree/trunk/docs/authority).
 
-Capability (`bun run`, git, tools) is not a grant. Keep reversible work broad; stage consequential effects.
+Capability (`bun run`, git, tools) is not a grant. Keep reversible work broad;
+stage consequential effects.
 
 ## Reversible (broad envelope)
 
-Inspect, edit, type-check, test, format, lint staged files, local builds, draft commits **when asked**.
+Inspect, edit, type-check, test, format, lint staged files, local builds, draft
+commits **when asked**.
 
 ## Consequential (narrow grant)
 
-- **`git commit`** — user asks to commit (or delivery rule after an explicit ship batch)
-- **`git push` / PR** — user asks to push or open a PR; if the change touches a proof-claim owner, the PR body includes pasted output of that claim’s `freshRerun` ([`FRESH-RERUN.md`](FRESH-RERUN.md)). Non-draft PRs: after **2026-07-28 UTC**, empty Claim→evidence tables fail Harness Gates (`check-pr-claim.ts`); drafts stay skipped. Rollback if false positives: extend `WARN_UNTIL_ISO`, do not drop the invariant.
-- **`--force` / history rewrite** — explicit user request; never force-push `main` without warning
+- **`git commit`** — user asks to commit (or delivery rule after an explicit
+  ship batch)
+- **`git push` / PR** — user asks to push or open a PR; if the change touches a
+  proof-claim owner, the PR body includes pasted output of that claim’s
+  `freshRerun` ([`FRESH-RERUN.md`](FRESH-RERUN.md)). Non-draft PRs: after
+  **2026-07-28 UTC**, empty Claim→evidence tables fail Harness Gates
+  (`check-pr-claim.ts`); drafts stay skipped. Rollback if false positives:
+  extend `WARN_UNTIL_ISO`, do not drop the invariant.
+- **`--force` / history rewrite** — explicit user request; never force-push
+  `main` without warning
 - **Skip hooks (`--no-verify`)** — explicit user request only
-- **Secrets / credentials in trajectory** — prefer ambient sidecar / env already loaded; do not paste keys into chat or commit `.env`
+- **Secrets / credentials in trajectory** — prefer ambient sidecar / env already
+  loaded; do not paste keys into chat or commit `.env`
 - **Production deploy / cutover** — separate approve after canary/prep evidence
 - **Sweep another agent’s dirty tree** — forbidden — claim a **lane** first
 
 ## Parallel lanes
 
-Before editing: `git status`. Own disjoint paths. Never stage `projects/active/utilities/proton-pass/**` or other foreign WIP into an unrelated commit. Name the lane split in the commit message when relevant.
+Before editing: `git status`. Own disjoint paths. Never stage
+`projects/active/utilities/proton-pass/**` or other foreign WIP into an
+unrelated commit. Name the lane split in the commit message when relevant.
 
 ## Remotes
 
@@ -29,28 +42,41 @@ Before editing: `git status`. Own disjoint paths. Never stage `projects/active/u
 
 ## GitHub context
 
-Interior identity is **owner / name / host / remote slot**, not a single `REPO_URL`. Resolve via [`lib/github-repository-ref.ts`](../../lib/github-repository-ref.ts): Actions `GITHUB_REPOSITORY` (+ `GITHUB_REPOSITORY_OWNER`, `GITHUB_SERVER_URL`) → `git remote get-url` → [`CANONICAL_REMOTES`](../../lib/docs/repo-docs.ts). Derive `https://…` only at the link edge (`htmlUrl` / `treeUrl` / `commitUrl`). Garbage Actions or unparseable git remotes **fail loud** — never silent hardcode disguised as env.
+Interior identity is **owner / name / host / remote slot**, not a single
+`REPO_URL`. Resolve via
+[`lib/github-repository-ref.ts`](../../lib/github-repository-ref.ts): Actions
+`GITHUB_REPOSITORY` (+ `GITHUB_REPOSITORY_OWNER`, `GITHUB_SERVER_URL`) →
+`git remote get-url` → [`CANONICAL_REMOTES`](../../lib/docs/repo-docs.ts).
+Derive `https://…` only at the link edge (`htmlUrl` / `treeUrl` / `commitUrl`).
+Garbage Actions or unparseable git remotes **fail loud** — never silent hardcode
+disguised as env.
 
-Bun create envs (`GITHUB_TOKEN`, `GITHUB_ACCESS_TOKEN`, `GITHUB_API_DOMAIN`) are **create-auth / API host** only — not repository identity. Prefer Actions `GITHUB_REPOSITORY*` on CI. Do not invent a novel env zoo in UNIFIED; Actions wire + Bun create tables are enough.
+Bun create envs (`GITHUB_TOKEN`, `GITHUB_ACCESS_TOKEN`, `GITHUB_API_DOMAIN`) are
+**create-auth / API host** only — not repository identity. Prefer Actions
+`GITHUB_REPOSITORY*` on CI. Do not invent a novel env zoo in UNIFIED; Actions
+wire + Bun create tables are enough.
 
 ### Issue metadata writes
 
 The repository taxonomy is authoritative; GitHub labels are a provider
-projection. `bun run issues:audit` is read-only. `bun run issues:sync-labels`
-is dry-run only. A label write requires the deliberately named
-`issues:sync-labels:write` command plus an exact
-`--confirm=owner/name`; it reports every create/update and never deletes
-labels. Tokens remain ambient. Issue auditing and synchronization are local
-operator commands and do not make Actions authoritative.
+projection. `bun run issues:audit` is read-only. `bun run issues:sync-labels` is
+dry-run only. A label write requires the deliberately named
+`issues:sync-labels:write` command plus an exact `--confirm=owner/name`; it
+reports every create/update and never deletes labels. Tokens remain ambient.
+Issue auditing and synchronization are local operator commands and do not make
+Actions authoritative.
 
 ### Bundle-time vs runtime
 
-| Path | Mechanism | Repo docs | Bun docs | Other external |
-|------|-----------|-----------|----------|----------------|
-| `bun run ci:harness` / `bun scripts/*.ts` | Runtime: `resolveGitHubRepositoryRef` + `git rev-parse` / Actions env | [`lib/github-repository-ref.ts`](../../lib/github-repository-ref.ts) · [`CANONICAL_REMOTES`](../../lib/docs/repo-docs.ts) | [Bun.env](https://bun.com/docs/runtime/utils#bun-env) · [spawnSync](https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync) | GitHub Actions `GITHUB_REPOSITORY*` |
-| `bun build …` | Macro inline `{ type: "macro" }` for commit / repo parts | [`lib/macros/`](../../lib/macros/) · [`lib/macros/README.md`](../../lib/macros/README.md) · `bun tools/bun-doc-refs.ts bundler` | [macros](https://bun.com/docs/bundler/macros) · [serializability](https://bun.com/docs/bundler/macros#serializability) · [bundler](https://bun.com/docs/bundler/index) · [plugins](https://bun.com/docs/bundler/plugins) (unused here) | — |
+| Path                                      | Mechanism                                                             | Repo docs                                                                                                                       | Bun docs                                                                                                                                                                                                                               | Other external                      |
+| ----------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| `bun run ci:harness` / `bun scripts/*.ts` | Runtime: `resolveGitHubRepositoryRef` + `git rev-parse` / Actions env | [`lib/github-repository-ref.ts`](../../lib/github-repository-ref.ts) · [`CANONICAL_REMOTES`](../../lib/docs/repo-docs.ts)       | [Bun.env](https://bun.com/docs/runtime/utils#bun-env) · [spawnSync](https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync)                                                                                             | GitHub Actions `GITHUB_REPOSITORY*` |
+| `bun build …`                             | Macro inline `{ type: "macro" }` for commit / repo parts              | [`lib/macros/`](../../lib/macros/) · [`lib/macros/README.md`](../../lib/macros/README.md) · `bun tools/bun-doc-refs.ts bundler` | [macros](https://bun.com/docs/bundler/macros) · [serializability](https://bun.com/docs/bundler/macros#serializability) · [bundler](https://bun.com/docs/bundler/index) · [plugins](https://bun.com/docs/bundler/plugins) (unused here) | —                                   |
 
-Macros do **not** substitute under a plain `bun scripts/foo.ts` run. Keep runtime resolve for live scripts; use macros only for bundle consumers. Full lib map: [`PROOF.md` Lib surface](PROOF.md#lib-surface--docs-vs-bun-vs-other-external).
+Macros do **not** substitute under a plain `bun scripts/foo.ts` run. Keep
+runtime resolve for live scripts; use macros only for bundle consumers. Full lib
+map:
+[`PROOF.md` Lib surface](PROOF.md#lib-surface--docs-vs-bun-vs-other-external).
 
 ## Local CI authority (`main`)
 
@@ -76,26 +102,36 @@ an open, disjoint lane owns an existing failure, the commit must record the
 failing command, exact evidence, and owning lane; GitHub status is never a
 substitute for that local evidence.
 
+**PR bodies:** every non-draft PR fills Claim → evidence with commands that
+exited 0, and the **Local merge proof** block in
+[`.github/pull_request_template.md`](../../.github/pull_request_template.md).
+Prefer targeted suites from Claim → evidence for scoped changes; use full
+`bun run bun:ci` when merge-blocking confidence is required. Side signals
+(Cloudflare Pages, Socket, CodeRabbit) may pass or fail independently — they do
+not authorize or block merge. Bun-native `node:*` leftovers under `lib/` are
+tracked in [`lib/README.md`](../../lib/README.md) (**Bun-native exceptions**);
+do not treat hosted green as proof those bans still hold.
+
 **bun:ci env + macros**
 
-| Concern | Contract |
-|---------|----------|
-| Env load | `bun --env-file ~/.reasonix/.env scripts/bun-ci.ts` ([Bun env files](https://bun.com/docs/runtime/environment-variables)) |
-| Bucket default | `Bun.env.R2_BUCKET_NAME` defaults to `factory-wager-wiki` inside [`scripts/bun-ci.ts`](../../scripts/bun-ci.ts) when unset (same as [`config/r2-env.ts`](../../config/r2-env.ts)); typed in [`env.d.ts`](../../env.d.ts) |
-| Identity banner | Runtime `getGitCommitHash` / `getGitBranch` from [`lib/macros/git-commit.ts`](../../lib/macros/git-commit.ts) — **not** `with { type: "macro" }` (macros only inline under [`bun build`](https://bun.com/docs/bundler/macros)) |
-| Build-time macro proof | claim `macros-embed-boundaries` · `bun test tests/macros/embed-commit.test.ts` |
-| Color | Bun-native `NO_COLOR` / `FORCE_COLOR` — no custom color layer in bun:ci |
+| Concern                | Contract                                                                                                                                                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Env load               | `bun --env-file ~/.reasonix/.env scripts/bun-ci.ts` ([Bun env files](https://bun.com/docs/runtime/environment-variables))                                                                                                      |
+| Bucket default         | `Bun.env.R2_BUCKET_NAME` defaults to `factory-wager-wiki` inside [`scripts/bun-ci.ts`](../../scripts/bun-ci.ts) when unset (same as [`config/r2-env.ts`](../../config/r2-env.ts)); typed in [`env.d.ts`](../../env.d.ts)       |
+| Identity banner        | Runtime `getGitCommitHash` / `getGitBranch` from [`lib/macros/git-commit.ts`](../../lib/macros/git-commit.ts) — **not** `with { type: "macro" }` (macros only inline under [`bun build`](https://bun.com/docs/bundler/macros)) |
+| Build-time macro proof | claim `macros-embed-boundaries` · `bun test tests/macros/embed-commit.test.ts`                                                                                                                                                 |
+| Color                  | Bun-native `NO_COLOR` / `FORCE_COLOR` — no custom color layer in bun:ci                                                                                                                                                        |
 
 **Delivery:**
 
-| Setting | Status |
-|---------|--------|
-| GitHub Actions | **disabled** at repository level; retained workflow YAML is reference-only |
-| Required hosted status checks | **none** |
-| Local merge proof | `bun run bun:ci` |
-| Require pull request before merging | **on** (`required_pull_request_reviews`, 0 approvals) |
-| Review-thread resolution | **on** |
-| Linear history / no force-push | **on** |
+| Setting                              | Status                                                                                                                                                                                                  |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GitHub Actions                       | **disabled** at repository level; retained workflow YAML is reference-only                                                                                                                              |
+| Required hosted status checks        | **none**                                                                                                                                                                                                |
+| Local merge proof                    | `bun run bun:ci`                                                                                                                                                                                        |
+| Require pull request before merging  | **on** (`required_pull_request_reviews`, 0 approvals)                                                                                                                                                   |
+| Review-thread resolution             | **on**                                                                                                                                                                                                  |
+| Linear history / no force-push       | **on**                                                                                                                                                                                                  |
 | Cloudflare Pages (`project-r-score`) | External Git integration remains the deploy signal; it does not depend on GitHub Actions. Pins/SSOT: `config/r2-env.ts` · `bun run cloudflare:env` / `:assert-apex` · claim `cloudflare-pages-env-ssot` |
 
 ### Local operate loop
@@ -108,7 +144,8 @@ substitute for that local evidence.
 - `security-scanner.yml` is retained reference-only and maps to the local
   `ci:security` boundary inside `bun:ci`.
 - Day loop: `bun run ci:harness:fast` · husky pre-commit / pre-push
-- Status discover: `bun run harness:status`; hosted Actions state is not merge evidence.
+- Status discover: `bun run harness:status`; hosted Actions state is not merge
+  evidence.
 - Main governance still requires a PR, resolved review threads, linear history,
   and non-destructive updates. Probe: `gh api repos/<org>/<repo>/rulesets`.
 
@@ -118,8 +155,12 @@ extend `bun:ci` when a new merge boundary is needed.
 
 ## Credential custody
 
-Install / R2 / registry tokens stay in machine env or Bun secrets — not in the prompt. Soft try\* merges: [`lib/security/r2-credentials.ts`](../../lib/security/r2-credentials.ts).
+Install / R2 / registry tokens stay in machine env or Bun secrets — not in the
+prompt. Soft try\* merges:
+[`lib/security/r2-credentials.ts`](../../lib/security/r2-credentials.ts).
 
 ## Interpret instructions through this contract
 
-“Ship it” means pass gates + commit + push **only if** the user asked for delivery. “Merge” means the protected workflow, not bypass. When irreversible scope is ambiguous, ask.
+“Ship it” means pass gates + commit + push **only if** the user asked for
+delivery. “Merge” means the protected workflow, not bypass. When irreversible
+scope is ambiguous, ask.
