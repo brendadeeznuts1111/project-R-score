@@ -37,6 +37,8 @@ bun test tests/operator-odds-pipeline.test.ts
 bun test tests/operator-research-desk-jobs.test.ts
 bun run agent detect-edges --host hardrock.bet --seed-fixtures
 bun run agent monitor-odds --once --hosts hardrock.bet
+bun run scrape:odds bet365
+bun run agent scrape odds --source bet365
 bun run agent serve --port 8790
 # optional Bun.cron monitor (or OPERATOR_ODDS_MONITOR=1):
 bun run agent serve --monitor

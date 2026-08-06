@@ -7,6 +7,8 @@
  *   bun tools/baseline-scrape-book.ts draftkings
  *   bun tools/baseline-scrape-book.ts fanduel --live
  *   bun run baseline:scrape-draftkings
+ *   bun run scrape:odds bet365
+ *   bun run agent scrape odds --source bet365
  */
 
 import { joinPath } from '../lib/path-bun.ts';
@@ -44,7 +46,11 @@ async function main(): Promise<void> {
   const bookId = args[0];
   if (!bookId) {
     console.error(
-      `Usage: baseline-scrape-book.ts <bookId> [--live|--html]\nRegistered: ${trackedScrapeBooks().join(', ')}`
+      `Usage: baseline-scrape-book.ts <bookId> [--live|--html]
+   or: bun run scrape:odds <bookId> [--live]
+   or: bun run agent scrape odds --source <bookId> [--live]
+Registered: ${trackedScrapeBooks().join(', ')}
+Sink: artifacts/raw-limits/<bookId>.jsonl`
     );
     process.exit(1);
   }

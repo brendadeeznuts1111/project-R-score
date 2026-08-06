@@ -98,6 +98,8 @@ Commands:
   serve [--port N] [--no-odds] [--no-research] [--monitor|--no-monitor]
   research-cycle [--live] [--json]
   registry-readme <name> [--version V] [--json]
+  scrape odds --source <bookId> [--live] [--html]
+  scrape odds <bookId> [--live] [--html]
   seed [--json]
   normalize-odds --host <host> [--fixture <id>] [--session pregame|live]
   query-odds [--sport s] [--league l] [--market m] [--host h] [--limit N]
@@ -114,6 +116,9 @@ Examples:
   bun run agent research-cycle --live --json
   bun run agent detect-edges --host hardrock.bet --window 5 --seed-fixtures
   bun run agent monitor-odds --once --hosts hardrock.bet
+  bun run scrape:odds bet365
+  bun run agent scrape odds --source bet365
+  bun run agent scrape odds bet365 --live
   bun run agent seed
   bun run agent normalize-odds --host hardrock.bet --fixture hardrock
   bun run agent movements --minPct 1
@@ -736,6 +741,42 @@ async function cmdSmartMoney(args: string[]) {
   console.log(JSON.stringify({ count: signals.length, signals }, null, 2)); // console-ok
 }
 
+/**
+ * Thin UX sugar over tools/baseline-scrape-book.ts (Tier 4 book agents).
+ * Does not belong on `factory` (R2 registry lane).
+ */
+async function cmdScrape(args: string[]) {
+  const kind = args[0];
+  if (kind !== 'odds') {
+    console.error(
+      'Usage: bun run agent scrape odds --source <bookId> [--live] [--html]\n' +
+        '   or: bun run scrape:odds <bookId> [--live]\n' +
+        'Sink: artifacts/raw-limits/<bookId>.jsonl'
+    );
+    process.exitCode = 1;
+    return;
+  }
+  const rest = args.slice(1);
+  const sourceEq = rest.find(a => a.startsWith('--source='))?.slice('--source='.length);
+  const sourceFlag = opt(rest, '--source', '') || sourceEq || '';
+  const positional = rest.find(a => !a.startsWith('-'));
+  const bookRaw = (sourceFlag || positional || '').trim();
+  if (!bookRaw) {
+    const { trackedScrapeBooks } = await import('../lib/operations/scrapers/books/registry.ts');
+    console.error(
+      'Usage: bun run agent scrape odds --source <bookId> [--live] [--html]\n' +
+        `Registered: ${trackedScrapeBooks().join(', ')}\n` +
+        'Alias: bun run scrape:odds <bookId>'
+    );
+    process.exitCode = 1;
+    return;
+  }
+  const { parseSportsbookId } = await import('../lib/types/branded.ts');
+  const { runBookCli } = await import('./baseline-scrape-book.ts');
+  const flags = rest.filter(a => a.startsWith('--') && !a.startsWith('--source'));
+  await runBookCli(parseSportsbookId(bookRaw), flags);
+}
+
 async function cmdQueryOdds(args: string[]) {
   await seedAll();
   const rows = queryNormalizedOdds({
@@ -816,6 +857,9 @@ switch (cmd) {
     break;
   case 'registry-readme':
     await cmdRegistryReadme(rest);
+    break;
+  case 'scrape':
+    await cmdScrape(rest);
     break;
   case 'seed':
     await cmdSeed(rest);
