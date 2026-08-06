@@ -8,6 +8,7 @@
   "references": [
     { "path": "./tsconfig.check.json" },
     { "path": "./packages/business" },
+    { "path": "./packages/bun-release-contracts" },
     { "path": "./packages/docs-tools" },
     { "path": "./packages/guards" },
     { "path": "./packages/partners" },

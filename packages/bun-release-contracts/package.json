@@ -1,0 +1,19 @@
+{
+  "name": "@factorywager/bun-release-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic Bun release-announcement inventories for executable contract adoption",
+  "exports": {
+    ".": "./src/index.ts",
+    "./generator": "./src/generator.ts",
+    "./package.json": "./package.json"
+  },
+  "module": "./src/index.ts",
+  "scripts": {
+    "build": "bun run tsc --project ./tsconfig.json",
+    "generate": "bun ./src/cli.ts",
+    "check": "bun ./src/cli.ts --check",
+    "test": "bun test ../../tests/bun-release-contract-generator.test.ts"
+  }
+}
