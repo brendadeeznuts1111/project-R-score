@@ -1,11 +1,17 @@
-// @see https://bun.com/reference/bun/BunInspectOptions — BunInspectOptions
-// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth · [console] depth · default 2
+// @see https://bun.com/docs/runtime/console — console AsyncIterable stdin · enableANSIColors surface
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @see https://bun.com/reference/bun/BunInspectOptions — BunInspectOptions (depth · colors · sorted · compact)
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI (use from "bun", not re-export)
+// @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi (use from "bun", not re-export)
 // @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
-// @see https://bun.com/docs/runtime/color — Bun.color
-// @see https://bun.com/docs/runtime/console — --console-depth / [console] depth
-// @see https://bun.com/docs/bundler/loaders#toml — TOML import attribute
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi (call directly)
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/bundler/loaders#toml — TOML import attribute (bunfig)
 /**
  * console-depth.ts — policy layer over Bun natives for harness output.
  *
@@ -17,10 +23,13 @@
  *   - padEndWidth / truncateWidth / fitVisible (layout over stringWidth/sliceAnsi)
  *
  * Markdown ANSI: call `Bun.markdown.ansi` directly (no wrapper).
- * Guide: ./bun-runtime.md · note: ./console-depth.md
+ * Guide: ./bun-runtime.md · note: ./console-depth.md · format gate: ./console-format-scan.ts
+ * Proof: tests/console-depth.test.ts · claim `console-depth-boundaries`
  *
  * Depth: explicit option > `--console-depth` > `BUN_CONSOLE_DEPTH` (escape) >
  * bunfig `[console] depth` (repo pin 6) > 2.
+ * Official docs fixture (depth 2 truncates · depth 4 reveals leaf):
+ *   https://bun.com/docs/runtime/console#object-inspection-depth
  * Color: `shouldColor()` === `Bun.enableANSIColors` (process-start / assignment;
  * not mid-process env mutation). Never `import { enableANSIColors }` — frozen snapshot.
  */
@@ -66,7 +75,9 @@ function argDepth(): number | null {
 
 /**
  * Effective inspect depth for wrappers.
- * @see https://bun.com/docs/runtime/console — depth precedence (flag > bunfig)
+ * Native layer (plain `console.log`): flag > bunfig > 2.
+ * Policy adds `BUN_CONSOLE_DEPTH` escape (runtime does not read it).
+ * @see https://bun.com/docs/runtime/console#object-inspection-depth — flag · bunfig · default 2
  */
 export function getConsoleDepth(): number {
   return argDepth() ?? parseDepth(bunEnv.BUN_CONSOLE_DEPTH) ?? BUNFIG_DEPTH ?? DEFAULT_DEPTH;
@@ -74,7 +85,8 @@ export function getConsoleDepth(): number {
 
 /**
  * ANSI gate — `Bun.enableANSIColors` (startup env/TTY, or explicit assignment).
- * @see https://bun.com/docs/runtime/console — Bun.enableANSIColors
+ * @see https://bun.com/docs/runtime/console — console + ANSI-related runtime surface
+ * @see https://bun.com/docs/runtime/color#flexible-input — Bun.color for gated colorize()
  */
 export function shouldColor(): boolean {
   return Bun.enableANSIColors;
@@ -97,12 +109,20 @@ function resolveInspectOptions(options: InspectOptions = {}): BunInspectOptions 
   };
 }
 
-/** Bun.inspect with project depth + ANSI gate. */
+/**
+ * Bun.inspect with project depth + ANSI gate.
+ * @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+ * @see https://bun.com/docs/runtime/console#object-inspection-depth — depth knob
+ */
 export function inspect<T>(value: T, options: InspectOptions = {}): string {
   return bunInspect(value, resolveInspectOptions(options));
 }
 
-/** console.log replacement with project depth. */
+/**
+ * console.log replacement with project depth (via inspect string).
+ * Prefer over raw `console.log(obj)` for harness output.
+ * @see https://bun.com/docs/runtime/console#object-inspection-depth
+ */
 export function logDepth<T>(value: T, options: InspectOptions = {}): void {
   console.info(inspect(value, options));
 }
@@ -126,6 +146,10 @@ export function inspectTable<T extends object>(
   return columns?.length ? bunInspect.table(rows, columns, opts) : bunInspect.table(rows, opts);
 }
 
+/**
+ * Print Bun.inspect.table (string path — not raw console.table).
+ * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
+ */
 export function logTable<T extends object>(
   data: T | T[],
   columns?: string[],
@@ -136,19 +160,23 @@ export function logTable<T extends object>(
 
 /**
  * Machine JSON for `--json` branches (pretty by default; `{ compact: true }` → JSONL).
+ * Gate allows this site via `// console-ok` — sole pretty-JSON choke for CLIs.
  */
 export function jsonOut<T>(value: T, options: { compact?: boolean } = {}): void {
   console.info(options.compact ? JSON.stringify(value) : JSON.stringify(value, null, 2)); // console-ok — --json choke point
 }
 
-/** Alias of Bun.inspect.custom for `[inspectCustom]()` overrides. */
+/**
+ * Alias of Bun.inspect.custom for `[inspectCustom]()` overrides.
+ * @see https://bun.com/docs/runtime/utils#bun-inspect-custom
+ */
 export const inspectCustom = bunInspect.custom;
 
 const ANSI_RESET = '\x1b[0m';
 
 /**
  * Colorize via Bun.color `"ansi"` when `shouldColor()`.
- * @see https://bun.com/docs/runtime/color
+ * @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
  */
 export function colorize(text: string, swatch: string): string {
   if (!shouldColor()) return text;

@@ -526,10 +526,14 @@ Skill:
 ## Console depth (output verbosity)
 
 Object-inspection depth has two layers sharing one SSOT
-(`bunfig.toml [console] depth = 6`). **Native layer** (plain `console.log`):
-`--console-depth=N` flag > bunfig `[console] depth` (`6`) > Bun default `2`.
-**Policy layer**
-([`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts)):
+(`bunfig.toml [console] depth = 6`). Canonical Bun docs:
+[object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth)
+(default **2**; flag overrides bunfig; fixture depth **4** reveals nested
+leaves). **Native layer** (plain `console.log`): `--console-depth=N` flag >
+bunfig `[console] depth` (`6`) > Bun default `2`. **Policy layer**
+([`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts)
+· note
+[`lib/console-depth.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.md)):
 explicit `depth` > `--console-depth` > `BUN_CONSOLE_DEPTH` (escape; runtime
 ignores it) > bunfig > `2`. Prefer `inspect` / `logDepth` / `logTable` /
 `inspectTable` / `jsonOut` / `inspectCustom` over raw `console.log(obj)` /
@@ -544,8 +548,8 @@ Related:
 
 | Kind           | References                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Repo           | claim `console-depth-boundaries` · wrapper [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts) · [`tests/console-depth.test.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tests/console-depth.test.ts) · [`tools/benchmarks/console-depth-perf.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/benchmarks/console-depth-perf.ts) · deep-equals wrapper [`lib/deep-equals.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/deep-equals.ts) · hash wrapper `security-hash-boundaries` |
-| Bun            | [runtime/console](https://bun.com/docs/runtime/console) · [runtime/utils](https://bun.com/docs/runtime/utils) (`inspect` · `.table` · `.custom` · `stringWidth`) · [hashing](https://bun.com/docs/runtime/hashing)                                                                                                                                                                                                                                                                                                                                                                                                       |
+| Repo           | claim `console-depth-boundaries` · wrapper [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts) · note [`lib/console-depth.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.md) · format scan [`lib/console-format-scan.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-format-scan.ts) · [`tests/console-depth.test.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tests/console-depth.test.ts) · [`tools/benchmarks/console-depth-perf.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/benchmarks/console-depth-perf.ts) · deep-equals wrapper [`lib/deep-equals.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/deep-equals.ts) · hash wrapper `security-hash-boundaries` |
+| Bun            | [object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth) · [runtime/console](https://bun.com/docs/runtime/console) · [Bun.inspect](https://bun.com/docs/runtime/utils#bun-inspect) · [inspect.table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options) · [inspect.custom](https://bun.com/docs/runtime/utils#bun-inspect-custom) · [stringWidth](https://bun.com/docs/runtime/utils#bun-stringwidth) · [stripANSI](https://bun.com/docs/runtime/utils#bun-stripansi) · [wrapAnsi](https://bun.com/docs/runtime/utils#bun-wrapansi) · [sliceAnsi](https://bun.com/reference/bun/sliceAnsi) · [Bun.color](https://bun.com/docs/runtime/color#flexible-input) · [markdown.ansi](https://bun.com/docs/runtime/markdown#ansi-terminal-output) |
 | Other external | [Bun repository](https://github.com/oven-sh/bun) · [bun-types current source](https://github.com/oven-sh/bun/tree/main/packages/bun-types) · [bun-types 1.3.14 pin](https://github.com/oven-sh/bun/tree/bun-v1.3.14/packages/bun-types)                                                                                                                                                                                                                                                                                                                                                                                  |
 
 ## Grounded capability map
@@ -685,7 +689,7 @@ missing local packages | Available |
 `bun --install=fallback tools/portal-cli.ts --help` | | **Console depth flag** |
 runtime | Bun ≥1.0 | `bun --console-depth=N` | — | portal-cli child spawns ·
 `lib/console-depth.ts` | Implemented |
-[runtime · --console-depth](https://bun.com/docs/runtime#general-execution-options)
+[object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth)
 | `bun tools/portal-cli.ts --console-depth=4 probe lockfile` | | **Child PTY
 (Bun.Terminal)** | runtime | Bun ≥1.3.5 | `new Bun.Terminal` ·
 `Bun.spawn({ terminal })` | — | `lib/terminal.ts` · `tests/terminal.test.ts` |

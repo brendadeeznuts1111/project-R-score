@@ -1,6 +1,8 @@
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/api/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/console#object-inspection-depth — prefer logDepth / inspect (not raw console.log depth)
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — prefer inspectTable / logTable
 /**
  * console-format-scan.ts — shared scanner for the console-format ratchet.
  * Single source for patterns + repo scan, consumed by:
@@ -11,15 +13,15 @@
  * (logTable / logDepth / inspectTable / jsonOut), not raw console.table,
  * pretty-JSON dumps, direct Bun.inspect.table, or console.dir.
  * Suppress an intentional machine-output line with `// console-ok`.
+ *
+ * Policy SSOT: ./console-depth.ts · note: ./console-depth.md · hub: ./bun-runtime.md
+ * Canonical depth docs: https://bun.com/docs/runtime/console#object-inspection-depth
  */
 
 export const SCANNED_DIRS = ['lib', 'scripts', 'tools'];
 
 export type ConsoleFormatPatternId =
-  | 'console-table'
-  | 'pretty-json-console'
-  | 'direct-inspect-table'
-  | 'console-dir';
+  'console-table' | 'pretty-json-console' | 'direct-inspect-table' | 'console-dir';
 
 export type ConsoleFormatPattern = {
   id: ConsoleFormatPatternId;
