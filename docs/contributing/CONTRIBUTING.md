@@ -45,10 +45,12 @@ Library: [`lib/docs/ref-id.ts`](../../lib/docs/ref-id.ts).
 ### Commands
 
 ```bash
-# Validate registered docs + tool flags (soft format warns)
+# Validate coverage planes + discovery (soft format warns)
 bun run docs:refid:check
 # Same; format issues fail
 bun run docs:refid:check:strict
+# Hard/guide registry only (skip project discovery globs)
+bun tools/docs-refid.ts check --registry-only
 # Report-only (never fails) + inventory of Flags tables across docs/
 bun run docs:refid:check:dry-run
 # Inventory only: registered · Flags-only candidates · leave-as-is
@@ -75,6 +77,7 @@ bun run docs:map:check
 | `--default` (scaffold) | `off`                                             |
 | `--roots` (audit)      | `docs` (recursive `**/*.md`)                      |
 | validation mode        | soft (format → warn; missing anchor/href → error) |
+| project scan           | `docs/**/*.md` · `public/portal/**/*.md` (markup) |
 
 ### Validation presets
 
@@ -83,18 +86,30 @@ bun run docs:map:check
 | soft          | default `check`                      | Format length/kebab → **warn**; missing anchors, href mismatch, duplicates → **error** |
 | strict format | `--strict-format` / `--refid-strict` | Format issues → **error**                                                              |
 | dry-run       | `--dry-run` / `docs:refid:check:dry-run` | Full validation + **audit inventory**; **always exit 0**                           |
+| registry-only | `--registry-only`                    | Skip discovery globs (planes registry only)                                            |
 | skip          | `--skip-refid-check`                 | No validation (exit 0) — drafts / fast local loops only                                |
 | write hrefs   | `--write-hrefs`                      | Fill empty / `—` / `auto` href cells with `[`#REF`](#REF)`, then validate              |
 
-Registered document for `check` (no `--doc`):
+### Coverage planes
 
-| Doc | Tool rows | Coverage |
-| --- | --------- | -------- |
-| `docs/design/bun-types-inventory.md` | `tools/bun-types-status.ts` → `buildStatusFlagRows` | **requireToolCoverage** |
-| `docs/design/partner-surface-inventory.md` | `lib/docs/ref-id-tool-flags.ts` → `lintWiresToolFlags` | **requireToolCoverage** |
-| `docs/design/unified-partner-profile.md` | `partnerOnboardToolFlags` | **requireToolCoverage** |
-| `docs/IMAGES.md` | `imagesGenerateToolFlags` | **requireToolCoverage** |
-| harness tenants (ops-snapshot · handshake · monorepo · complexity) | matching `*ToolFlags` | **requireToolCoverage** |
+| Plane | Role | Docs |
+| ----- | ---- | ---- |
+| design | flags + guides | inventory · partner surface / onboard / IMAGES · partner authority guides |
+| domain | guide | `docs/DOMAIN_CONCEPT_SHAPE.md` (when it carries REF:ID markup) |
+| portal | guide | `docs/portal-foundation.md` (when markup present) |
+| harness | flags + guides | AUTHORITY · ops-snapshot · handshake · monorepo · complexity |
+| lib | guide | `lib/docs/ref-id.ts` (help/JSON only · not markdown-scanned) |
+| discovery | scan | other `docs/**` · `public/portal/**` with REF:ID markup |
+
+Flag owners (`requireToolCoverage`):
+
+| Doc | Tool rows |
+| --- | --------- |
+| `docs/design/bun-types-inventory.md` | `tools/bun-types-status.ts` → `buildStatusFlagRows` |
+| `docs/design/partner-surface-inventory.md` | `lintWiresToolFlags` |
+| `docs/design/unified-partner-profile.md` | `partnerOnboardToolFlags` |
+| `docs/IMAGES.md` | `imagesGenerateToolFlags` |
+| harness tenants (ops-snapshot · handshake · monorepo · complexity) | matching `*ToolFlags` |
 
 Tool flag SSOT: [`lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts).
 `bun run docs:refid:audit` must report **flags-table-only=0**. Board maps with a
@@ -131,7 +146,8 @@ Taken keywords get a numeric suffix from suggest (`refresh` → `4.1.refresh-2`)
 Subprocess tests spawn `bun tools/docs-refid.ts` / `docs-refid-check.ts` and
 assert exit codes + stdout (help, presets, JSON schema `factorywager/ref-id/v2`,
 fixture failure modes under `tests/fixtures/ref-id/`, `--write-hrefs` fill,
-`--dry-run`, `audit` / `factorywager/ref-id-audit/v1`).
+coverage planes + `--registry-only`, `--dry-run`,
+`audit` / `factorywager/ref-id-audit/v1`).
 
 ## Testing & concept changes
 

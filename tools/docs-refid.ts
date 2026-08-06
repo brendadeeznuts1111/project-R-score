@@ -40,7 +40,7 @@ import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import {
   printRefIdIssues,
   refIdRegistry,
-  runRefIdChecks,
+  runRefIdCheckReport,
   writeAutoHrefs,
 } from './docs-refid-check.ts';
 import { BUN_TYPES_INVENTORY_DOC } from './bun-types-status.ts';
@@ -63,7 +63,7 @@ USAGE
   bun run docs:refid[:check|:audit|:suggest|:list|:scaffold] …
 
 COMMANDS
-  check      Validate registered design docs + tool flag rows (default command)
+  check      Validate coverage planes + project discovery (default command)
   audit      Inventory markdown for REF:ID / Flags tables (design + docs/)
   suggest    Free REF:ID under a section (normalizes --flag / camelCase → kebab)
   list       Numbered REF:IDs / section anchors in a doc
@@ -73,6 +73,7 @@ COMMANDS
 OPTIONS
   --strict-format · --refid-strict   Format warns (length/kebab) become errors
   --dry-run                          check: report errors but always exit 0; also run audit inventory
+  --registry-only                    check: hard/guide registry only (skip discovery)
   --skip-refid-check                 check: exit 0 without validating (fast-pass)
   --write-hrefs                      check: fill empty/—/auto href cells from REF:ID
   --json                             Machine output (check / audit / suggest / list / scaffold)
@@ -97,17 +98,33 @@ DEFAULTS
   --script    bun:types-status
   --default   off
   href        always derived as # + REF:ID (table may use empty / — / auto)
+  check       registry planes + project discovery (unless --registry-only / --doc)
+
+COVERAGE PLANES
+  design   ${BUN_TYPES_INVENTORY_DOC}
+             ↔ tools/bun-types-status.ts flag rows (requireToolCoverage)
+           + partner / IMAGES flag owners (lib/docs/ref-id-tool-flags.ts)
+  domain   docs/DOMAIN_CONCEPT_SHAPE.md (guide — domain → concept → shape → surface)
+  portal   docs/portal-foundation.md (guide — static portal / boards)
+  harness  docs/harness/AUTHORITY.md + tenant flag docs
+  lib      lib/docs/ref-id.ts (guide — library SSOT; not markdown-scanned)
 
 REGISTERED DOCS (check)
-  ${BUN_TYPES_INVENTORY_DOC}
-    ↔ tools/bun-types-status.ts flag rows (requireToolCoverage)
-  ${refIdRegistry().length - 1} partner authority docs
-    ↔ lib/docs/partner-surface-inventory.ts PARTNER_DOCUMENTATION_REFS
+  flags    ${BUN_TYPES_INVENTORY_DOC} + ref-id-tool-flags owners  [design/harness]
+  guide    partner authority docs · plane anchors
+  guide    lib/docs/ref-id.ts  [lib · help/JSON only]
+  ${refIdRegistry().filter(e => e.markdown !== false).length} markdown registry rows total
+
+PROJECT SCAN
+  globs    docs/**/*.md · public/portal/**/*.md
+  when     file has REF:ID markup (flag table · <!-- REF:ID --> · numbered <a id>)
+  skip     --registry-only · --doc=<path> · --skip-refid-check
 
 VALIDATION PRESETS
   soft (default)     format length/kebab → warn; errors fail process
   --strict-format    format issues → error
   --dry-run          validate + inventory; never fail (report only)
+  --registry-only    registry planes only (no discovery)
   --skip-refid-check skip validation entirely (exit 0)
   --write-hrefs      rewrite auto href cells, then validate
 
@@ -121,6 +138,7 @@ REF:ID RULES (summary)
 EXAMPLES
   bun tools/docs-refid.ts check
   bun tools/docs-refid.ts check --strict-format --json
+  bun tools/docs-refid.ts check --registry-only
   bun tools/docs-refid.ts check --dry-run
   bun tools/docs-refid.ts audit
   bun tools/docs-refid.ts check --doc=path/to/draft.md --write-hrefs
@@ -132,7 +150,8 @@ EXAMPLES
   bun tools/docs-refid.ts scaffold --section=4.1 --flag=--new-flag
 
 SEE ALSO
-  lib/docs/ref-id.ts · lib/docs/ref-id-audit.ts
+  lib/docs/ref-id.ts · lib/docs/ref-id-audit.ts · lib/docs/ref-id-tool-flags.ts
+  docs/DOMAIN_CONCEPT_SHAPE.md · docs/portal-foundation.md
   docs/DEVELOPMENT-STANDARDS.md § REF:ID
   docs/contributing/CONTRIBUTING.md § REF:ID Validation
   bun run docs:map:check          # includes REF:ID unless --skip-refid-check
@@ -236,6 +255,7 @@ async function cmdCheck(argv: string[]): Promise<void> {
   const strictFormat = argv.includes('--strict-format') || argv.includes('--refid-strict');
   const asJson = argv.includes('--json');
   const writeHrefs = argv.includes('--write-hrefs');
+  const registryOnly = argv.includes('--registry-only');
   const doc = flagValue(argv, '--doc') ?? undefined;
   const sectionRefId = flagValue(argv, '--section-ref') ?? undefined;
   const sectionHeading = flagValue(argv, '--section-heading') ?? undefined;
@@ -246,13 +266,15 @@ async function cmdCheck(argv: string[]): Promise<void> {
       else if (doc) console.info(`(no auto href cells to fill in ${w.file})`);
     }
   }
-  const issues = await runRefIdChecks({
+  const report = await runRefIdCheckReport({
     skip,
     strictFormat,
     doc,
     sectionRefId,
     sectionHeading,
+    registryOnly,
   });
+  const issues = report.issues;
   if (dryRun && !skip) {
     const audit = await buildAuditReport(argv, { dryRun: true });
     audit.validationIssues = issues;
@@ -264,6 +286,9 @@ async function cmdCheck(argv: string[]): Promise<void> {
             dryRun: true,
             count: issues.length,
             issues,
+            planes: report.planes,
+            registry: report.registry,
+            scanned: report.scanned,
             audit,
           },
           null,
@@ -279,7 +304,15 @@ async function cmdCheck(argv: string[]): Promise<void> {
   if (asJson) {
     process.stdout.write(
       `${JSON.stringify(
-        { schema: 'factorywager/ref-id/v2', count: issues.length, issues, dryRun: false },
+        {
+          schema: 'factorywager/ref-id/v2',
+          count: issues.length,
+          issues,
+          planes: report.planes,
+          registry: report.registry,
+          scanned: report.scanned,
+          dryRun: false,
+        },
         null,
         2
       )}\n`

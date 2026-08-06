@@ -43,7 +43,14 @@ describe('docs-refid CLI contract (subprocess)', () => {
     expect(r.stdout).toContain('--strict-format');
     expect(r.stdout).toContain('--skip-refid-check');
     expect(r.stdout).toContain('--dry-run');
+    expect(r.stdout).toContain('--registry-only');
     expect(r.stdout).toContain('REGISTERED DOCS');
+    expect(r.stdout).toContain('COVERAGE PLANES');
+    expect(r.stdout).toContain('PROJECT SCAN');
+    expect(r.stdout).toContain('domain');
+    expect(r.stdout).toContain('portal');
+    expect(r.stdout).toContain('docs/DOMAIN_CONCEPT_SHAPE.md');
+    expect(r.stdout).toContain('docs/portal-foundation.md');
     expect(r.stdout).toContain('check');
     expect(r.stdout).toContain('audit');
     expect(r.stdout).toContain('suggest');
@@ -71,11 +78,37 @@ describe('docs-refid CLI contract (subprocess)', () => {
       schema: string;
       count: number;
       issues: unknown[];
+      planes: Record<string, { registryDocs: number; scannedDocs: number; issueCount: number }>;
+      registry: Array<{
+        doc: string;
+        plane: string;
+        role: string;
+        requireToolCoverage: boolean;
+      }>;
+      scanned: number;
     };
     expect(body.schema).toBe('factorywager/ref-id/v2');
     expect(body.count).toBe(0);
     expect(Array.isArray(body.issues)).toBe(true);
     expect(body.issues).toHaveLength(0);
+    expect(body.planes.design.registryDocs).toBeGreaterThanOrEqual(1);
+    expect(body.planes.domain.registryDocs).toBeGreaterThanOrEqual(1);
+    expect(body.planes.portal.registryDocs).toBeGreaterThanOrEqual(1);
+    expect(body.planes.harness.registryDocs).toBeGreaterThanOrEqual(1);
+    expect(body.planes.lib.registryDocs).toBeGreaterThanOrEqual(1);
+    expect(typeof body.scanned).toBe('number');
+    const flags = body.registry.find(e => e.doc === 'docs/design/bun-types-inventory.md');
+    expect(flags?.plane).toBe('design');
+    expect(flags?.role).toBe('flags');
+    expect(flags?.requireToolCoverage).toBe(true);
+  });
+
+  test('check --registry-only exits 0 without discovery', () => {
+    const r = run(['check', '--registry-only', '--json']);
+    expect(r.exitCode).toBe(0);
+    const body = JSON.parse(r.stdout) as { scanned: number; count: number };
+    expect(body.scanned).toBe(0);
+    expect(body.count).toBe(0);
   });
 
   test('check --skip-refid-check exits 0 without validating', () => {
@@ -258,7 +291,10 @@ describe('docs-refid-check thin entry (subprocess)', () => {
     expect(r.stdout).toContain('DEFAULTS');
     expect(r.stdout).toContain('--strict-format');
     expect(r.stdout).toContain('--skip-refid-check');
+    expect(r.stdout).toContain('--registry-only');
     expect(r.stdout).toContain('--write-hrefs');
+    expect(r.stdout).toContain('COVERAGE PLANES');
+    expect(r.stdout).toContain('PROJECT SCAN');
     expect(r.stdout).toContain('docs/design/bun-types-inventory.md');
   });
 
@@ -271,8 +307,15 @@ describe('docs-refid-check thin entry (subprocess)', () => {
   test('--json schema matches multi-CLI', () => {
     const r = run(['--json'], CHECK);
     expect(r.exitCode).toBe(0);
-    const body = JSON.parse(r.stdout) as { schema: string; count: number };
+    const body = JSON.parse(r.stdout) as {
+      schema: string;
+      count: number;
+      planes: Record<string, { registryDocs: number }>;
+      scanned: number;
+    };
     expect(body.schema).toBe('factorywager/ref-id/v2');
     expect(body.count).toBe(0);
+    expect(body.planes.design.registryDocs).toBeGreaterThanOrEqual(1);
+    expect(typeof body.scanned).toBe('number');
   });
 });
