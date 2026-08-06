@@ -146,6 +146,7 @@ Only when a commit set `SKIP_*=1`. Policy:
 - [ ] `SKIP_QUALITY_CONCEPT=1` — reason + local proof:
 - [ ] `SKIP_GITLEAKS=1` — reason + local proof:
 - [ ] `SKIP_WIRE_LINT=1` — reason + local proof:
+- [ ] `SKIP_DOMAIN_LINT=1` — reason + local proof:
 
 ## Checklist
 
