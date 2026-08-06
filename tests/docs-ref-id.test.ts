@@ -2,8 +2,13 @@
 import { describe, expect, test } from 'bun:test';
 import {
   checkRefIdDocument,
+  collectTakenRefIds,
   hrefFromRefId,
+  hrefMatchesRefId,
+  normalizeRefIdKeyword,
   parseRefId,
+  scaffoldFlagSnippet,
+  scanMarkdownRefIds,
   suggestRefId,
   validateRefIdFormat,
   extractFlagTableRows,
@@ -47,10 +52,35 @@ describe('REF:ID v2 format', () => {
     expect(flagDocRef('refresh')).toEqual({ refId: '4.1.refresh', href: '#4.1.refresh' });
   });
 
-  test('suggestRefId avoids taken ids', () => {
+  test('suggestRefId avoids taken ids and normalizes flags', () => {
     const taken = new Set(['4.1.refresh']);
     expect(suggestRefId('4.1', 'refresh', taken)).toBe('4.1.refresh-2');
     expect(suggestRefId('4.1', 'json', taken)).toBe('4.1.json');
+    expect(suggestRefId('4.1', '--maxAgeDays', new Set())).toBe('4.1.max-age-days');
+  });
+
+  test('normalizeRefIdKeyword + hrefMatchesRefId auto fill', () => {
+    expect(normalizeRefIdKeyword('--max-age-days')).toBe('max-age-days');
+    expect(normalizeRefIdKeyword('maxAgeDays')).toBe('max-age-days');
+    expect(normalizeRefIdKeyword('Prefer Local')).toBe('prefer-local');
+    expect(hrefMatchesRefId('', '4.1.refresh')).toBe(true);
+    expect(hrefMatchesRefId('auto', '4.1.refresh')).toBe(true);
+    expect(hrefMatchesRefId('—', '4.1.refresh')).toBe(true);
+    expect(hrefMatchesRefId('#4.1.refresh', '4.1.refresh')).toBe(true);
+    expect(hrefMatchesRefId('#wrong', '4.1.refresh')).toBe(false);
+  });
+
+  test('scaffoldFlagSnippet emits anchor + row', () => {
+    const s = scaffoldFlagSnippet({
+      section: '4.1',
+      keyword: '--foo-bar',
+      script: 'bun:types-status',
+    });
+    expect(s.refId).toBe('4.1.foo-bar');
+    expect(s.href).toBe('#4.1.foo-bar');
+    expect(s.markdown).toContain('<a id="4.1.foo-bar"></a>');
+    expect(s.markdown).toContain('`4.1.foo-bar`');
+    expect(s.markdown).toContain('<!-- REF:ID 4.1.foo-bar -->');
   });
 });
 
@@ -107,5 +137,30 @@ describe('REF:ID markdown extract + check', () => {
     const rows = buildStatusFlagRows(defaultStatusCli());
     expect(rows.every(r => r.href === `#${r.refId}`)).toBe(true);
     expect(BUN_TYPES_INVENTORY_DOC).toBe('docs/design/bun-types-inventory.md');
+  });
+
+  test('empty/auto href is accepted when REF:ID is valid', () => {
+    const md = `
+<a id="4.1.foo"></a>
+| REF:ID | href |
+| --- | --- |
+| \`4.1.foo\` | auto |
+`;
+    const issues = checkRefIdDocument(md, 'auto.md');
+    expect(issues.filter(i => i.severity === 'error')).toEqual([]);
+  });
+
+  test('collectTakenRefIds unions anchors and table', () => {
+    const md = `
+<a id="4.1"></a>
+<a id="4.1.refresh"></a>
+| REF:ID | href |
+| --- | --- |
+| \`4.1.refresh\` | auto |
+`;
+    const scan = scanMarkdownRefIds(md, 't.md');
+    const taken = collectTakenRefIds(scan);
+    expect(taken.has('4.1')).toBe(true);
+    expect(taken.has('4.1.refresh')).toBe(true);
   });
 });
