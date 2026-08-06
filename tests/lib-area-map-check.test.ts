@@ -8,6 +8,7 @@ import {
   globToRegExp,
   isExternalPath,
   isPathToken,
+  issueToOpenPath,
   MEGA_DOMAINS,
   verifiedAgeDays,
 } from '../tools/lib-area-map-check.ts';
@@ -82,6 +83,22 @@ describe('lib-area-map-check helpers', () => {
   test('mega allowlist includes portal', () => {
     expect(MEGA_DOMAINS).toContain('portal');
     expect(MEGA_DOMAINS).toContain('operations');
+  });
+
+  test('issueToOpenPath resolves README and module paths for Bun.openInEditor', () => {
+    const readme = issueToOpenPath({
+      kind: 'missing-verified',
+      domain: 'http',
+      detail: 'missing stamp',
+    });
+    expect(readme?.endsWith('lib/http/README.md')).toBe(true);
+
+    const modulePath = issueToOpenPath({
+      kind: 'orphan-top-level',
+      domain: 'http',
+      path: 'sha256.ts',
+    });
+    expect(modulePath?.endsWith('lib/http/sha256.ts')).toBe(true);
   });
 });
 
