@@ -8,6 +8,9 @@ export function lintMessage(entryId: string, prefix?: string): string {
 }
 
 export function importPathMessage(moduleName: string): string {
+  if (moduleName === 'url' || moduleName === 'node:url') {
+    return 'Use lib/bun-path-url (Bun.fileURLToPath / pathToFileURL) or the global URL; avoid node:url / url. See https://bun.com/docs/runtime/utils#bun-fileurltopath';
+  }
   const entry = getBunDxEntry(
     moduleName.includes('child_process')
       ? 'spawn.exec'

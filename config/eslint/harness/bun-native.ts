@@ -1,26 +1,38 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/utils#bun-fileurltopath — Bun.fileURLToPath
+// @see https://bun.com/docs/runtime/utils#bun-pathtofileurl — Bun.pathToFileURL
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 /**
  * Bun-native ESLint rules — restricted imports and syntax from DX catalog.
+ *
+ * Allowlisted exceptions (eslint-disable + lib/README Bun-native exceptions):
+ * mintable-secret, verification/docs probes — not a free pass for node:url.
  */
 import type { Linter } from 'eslint';
 import { HARNESS_IGNORES, HARNESS_PATHS, STRICT_INVENTORY } from './rollout.ts';
 import { importPathMessage, lintMessage, syntaxMessage } from './messages.ts';
+
+/** Prefer lib/bun-path-url over node:url / url. */
+const URL_MODULE_MESSAGE =
+  'Use lib/bun-path-url (Bun.fileURLToPath / pathToFileURL) or the global URL; avoid node:url / url. See https://bun.com/docs/runtime/utils#bun-fileurltopath · exceptions: lib/README.md';
 
 function importPaths(): Linter.RuleEntry {
   const paths = [
     { name: 'node:fs', message: importPathMessage('node:fs') },
     { name: 'node:fs/promises', message: lintMessage('file.read', 'Use Bun.file() async APIs.') },
     { name: 'fs', message: importPathMessage('fs') },
+    { name: 'node:url', message: URL_MODULE_MESSAGE },
+    { name: 'url', message: URL_MODULE_MESSAGE },
     { name: 'node:child_process', message: importPathMessage('node:child_process') },
     { name: 'child_process', message: importPathMessage('child_process') },
     { name: 'node:crypto', message: lintMessage('crypto.hash', 'Avoid node:crypto.') },
     { name: 'crypto', message: lintMessage('crypto.hash', 'Avoid crypto.') },
     { name: 'node:zlib', message: lintMessage('zlib.compress', 'Avoid node:zlib.') },
     { name: 'zlib', message: lintMessage('zlib.compress', 'Avoid zlib.') },
+
     { name: 'axios', message: lintMessage('http.fetch', 'Avoid axios.') },
     { name: 'node-fetch', message: lintMessage('http.fetch', 'Avoid node-fetch.') },
     { name: 'node:http', message: lintMessage('http.serve', 'Avoid node:http for servers.') },

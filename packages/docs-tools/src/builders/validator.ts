@@ -1,6 +1,6 @@
 // lib/docs/builders/validator.ts — Documentation URL validation
+// URL is a platform global (no node:url / url import).
 
-import { URL } from 'url';
 import {
   DocumentationProvider,
   DocumentationCategory,
