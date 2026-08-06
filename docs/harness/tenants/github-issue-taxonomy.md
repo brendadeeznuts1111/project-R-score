@@ -18,7 +18,7 @@ This tenant does not make GitHub Issues the concept or domain graph.
 | Phase | Issue | Status after this slice |
 |---|---|---|
 | Typed taxonomy + parse-once spine | [#238](https://github.com/brendadeeznuts1111/project-R-score/issues/238) | implemented |
-| Form, doctor, audit, label synchronization | [#239](https://github.com/brendadeeznuts1111/project-R-score/issues/239) | not implemented |
+| Form, doctor, audit, label synchronization | [#239](https://github.com/brendadeeznuts1111/project-R-score/issues/239) | implemented |
 | Deterministic public registry bake | [#240](https://github.com/brendadeeznuts1111/project-R-score/issues/240) | not implemented |
 | Static portal consumer | [#241](https://github.com/brendadeeznuts1111/project-R-score/issues/241) | not implemented |
 
@@ -46,11 +46,34 @@ parses every required value once, applies legal-combination rules, and returns
 `githubIssueSpineToWire` is the explicit serialization edge. It strips brands
 without leaking GitHub credentials or resolving mutable provider state.
 
+## Local tooling
+
+The general harness issue form emits a fenced JSON spine. The wire boundary
+also accepts the earlier HTML-comment block during migration. The audit is
+read-only and checks parse failures, title priority/plane compatibility,
+required label parity, conflicting labels, and unknown provider labels.
+
+```bash
+bun run issues:audit -- --issue=235,236
+bun run issues:sync-labels -- --dry-run
+bun run issues:sync-labels:write -- --confirm=brendadeeznuts1111/project-R-score
+```
+
+Label synchronization never deletes labels. Dry-run is the default at the tool
+boundary; writes require `--write`, the exact `owner/name` confirmation, and an
+ambient GitHub token. `PORT` and `BUN_PORT` are server bind inputs and are not
+read by this client-only tool; an explicit `--api-url` controls test or
+GitHub Enterprise endpoints.
+
+The specialized P0 Markdown templates remain valid legacy entrypoints. They
+are not silently rewritten into the general form.
+
 ## Proof
 
 ```bash
 bun tools/brand-manifest.ts
 bun test tests/branded-catalog.test.ts tests/github-issue-taxonomy.test.ts
+bun test tests/github-issue-tooling.test.ts
 bun run check:brands:all
 bun run type-check
 bun run bun:ci

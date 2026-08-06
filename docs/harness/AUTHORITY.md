@@ -33,6 +33,16 @@ Interior identity is **owner / name / host / remote slot**, not a single `REPO_U
 
 Bun create envs (`GITHUB_TOKEN`, `GITHUB_ACCESS_TOKEN`, `GITHUB_API_DOMAIN`) are **create-auth / API host** only — not repository identity. Prefer Actions `GITHUB_REPOSITORY*` on CI. Do not invent a novel env zoo in UNIFIED; Actions wire + Bun create tables are enough.
 
+### Issue metadata writes
+
+The repository taxonomy is authoritative; GitHub labels are a provider
+projection. `bun run issues:audit` is read-only. `bun run issues:sync-labels`
+is dry-run only. A label write requires the deliberately named
+`issues:sync-labels:write` command plus an exact
+`--confirm=owner/name`; it reports every create/update and never deletes
+labels. Tokens remain ambient. Issue auditing and synchronization are local
+operator commands and do not make Actions authoritative.
+
 ### Bundle-time vs runtime
 
 | Path | Mechanism | Repo docs | Bun docs | Other external |
