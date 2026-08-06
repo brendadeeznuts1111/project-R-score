@@ -215,7 +215,7 @@ test*-*
 *.bun-build
 *.tar.gz
 *.tgz
-!third_party/bun-types/*.tgz
+!tools/vendor/bun-types/*.tgz
 *.tar
 *.zip
 

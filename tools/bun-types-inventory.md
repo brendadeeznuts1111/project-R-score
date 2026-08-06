@@ -5,7 +5,7 @@ Generated from pinned **bun-types** — top-level + nested namespace/class/**int
 | Field | Value |
 | --- | --- |
 | Schema | `factorywager/bun-types-inventory/v3` |
-| Generated | 2026-08-06T20:18:42.404Z |
+| Generated | 2026-08-06T20:23:38.830Z |
 | Runtime | Bun 1.3.14 (`0d9b296a`) |
 | bun-types | bun-types@1.4.0-tip.ed700c20 |
 | Types root | `/Users/nolarose/.grok/worktrees/nolarose-projects/lib-cleanup-grok/node_modules/bun-types` |

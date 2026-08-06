@@ -119,7 +119,7 @@
     "axios": "1.18.1",
     "body-parser": "2.3.0",
     "brace-expansion": "1.1.18",
-    "bun-types": "file:third_party/bun-types/bun-types-1.4.0-tip.ed700c20.tgz",
+    "bun-types": "file:tools/vendor/bun-types/bun-types-1.4.0-tip.ed700c20.tgz",
     "fast-uri": "3.1.5",
     "form-data": "4.0.6",
     "hono": "4.12.34",
@@ -131,7 +131,7 @@
     "@types/bun": "1.3.14",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
-    "bun-types": "file:third_party/bun-types/bun-types-1.4.0-tip.ed700c20.tgz",
+    "bun-types": "file:tools/vendor/bun-types/bun-types-1.4.0-tip.ed700c20.tgz",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "typescript": "6.0.3",
@@ -708,7 +708,7 @@
 
     "browserslist": ["browserslist@4.28.7", "", { "dependencies": { "baseline-browser-mapping": "^2.10.44", "caniuse-lite": "^1.0.30001806", "electron-to-chromium": "^1.5.393", "node-releases": "^2.0.51", "update-browserslist-db": "^1.2.3" }, "bin": { "browserslist": "cli.js" } }, "sha512-JxV13hNrFxqjOc8alRbq9dK1MM79NEXYpma2B2J4wAtpWS5zIEIKqWPGCl7N4o7Uc7B7itylh7SuDujATRyyTw=="],
 
-    "bun-types": ["bun-types@third_party/bun-types/bun-types-1.4.0-tip.ed700c20.tgz", { "dependencies": { "@types/node": "*" } }, "sha512-LUvBisVv3crIsp+ZmG90Dh99QGO2PBZKeDE202AmS1+4xwOtD4sKhMKunCLXROdYKRqiN3MO9Ja1n+M90VDHPA=="],
+    "bun-types": ["bun-types@tools/vendor/bun-types/bun-types-1.4.0-tip.ed700c20.tgz", { "dependencies": { "@types/node": "*" } }, "sha512-LUvBisVv3crIsp+ZmG90Dh99QGO2PBZKeDE202AmS1+4xwOtD4sKhMKunCLXROdYKRqiN3MO9Ja1n+M90VDHPA=="],
 
     "bundle-name": ["bundle-name@4.1.0", "", { "dependencies": { "run-applescript": "^7.0.0" } }, "sha512-tjwM5exMg6BGRI+kNmTntNsvdZS1X8BFYS6tnJ2hdH0kVxM6/eVZ2xy+FqStSWvYmtfFMDLIxurorHwDKfDz5Q=="],
 
