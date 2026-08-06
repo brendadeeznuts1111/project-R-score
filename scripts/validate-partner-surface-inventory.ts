@@ -14,9 +14,13 @@ import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import {
   checkBrandLinkingBag,
   checkDeprecatedBrandReferences,
+  checkLiveCodesCoveredByInventory,
+  checkPartnerCodeBag,
   collectAllowedBrandLinkDomains,
+  collectBrandBagsByToken,
   collectInventoryBrandTokens,
 } from '../lib/docs/partner-surface-brand-check.ts';
+import { livePartnerCodesFromPartnersOps } from '../lib/docs/partner-surface-docs.ts';
 import {
   buildPartnerSurfaceInventory,
   type PartnerSurfaceRow,
@@ -26,6 +30,7 @@ import { resolvePath } from './lib/fs-bun.ts';
 
 const ROOT = resolvePath(import.meta.dir, '..');
 const MANIFEST_PATH = resolvePath(ROOT, 'lib/types/brand-manifest.json');
+const PARTNERS_OPS_PATH = resolvePath(ROOT, 'public/registry/partners-ops.json');
 
 type BrandManifestEntry = {
   name: string;
@@ -85,6 +90,12 @@ function aspectBagRules(row: PartnerSurfaceRow, issues: Issue[]): void {
       message: `${row.id}: taxonomy bag only allowed on aspect=taxonomy`,
     });
   }
+  if (row.partnerCode && row.aspect !== 'partner-code') {
+    issues.push({
+      level: 'error',
+      message: `${row.id}: partnerCode bag only allowed on aspect=partner-code`,
+    });
+  }
 }
 
 async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
@@ -93,6 +104,23 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
   const registryTokens = new Set(rows.filter(r => r.aspect === 'registry').map(r => r.token));
   const allowedBrandDomains = collectAllowedBrandLinkDomains(rows, manifestDomains);
   const brandTokens = collectInventoryBrandTokens(rows);
+  const brandByToken = collectBrandBagsByToken(rows);
+
+  let liveCodes: Set<string> | undefined;
+  const partnersOpsFile = Bun.file(PARTNERS_OPS_PATH);
+  if (await partnersOpsFile.exists()) {
+    try {
+      const artifact = await partnersOpsFile.json();
+      liveCodes = new Set(
+        livePartnerCodesFromPartnersOps(artifact).map(c => c.code.trim().toUpperCase())
+      );
+    } catch {
+      issues.push({
+        level: 'warn',
+        message: 'partners-ops.json present but failed to parse — skip partner-code live sync',
+      });
+    }
+  }
 
   for (const row of rows) {
     aspectBagRules(row, issues);
@@ -171,6 +199,23 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
             message: `${row.id}: moneyPolicy=forbidden but softBalance not in omits`,
           });
         }
+      }
+    }
+
+    if (row.aspect === 'partner-code') {
+      if (!row.partnerCode) {
+        issues.push({
+          level: 'error',
+          message: `${row.id}: partner-code aspect missing partnerCode bag`,
+        });
+      } else {
+        issues.push(
+          ...checkPartnerCodeBag(row.id, row.token, row.partnerCode, {
+            brandByToken,
+            registryTokens,
+            liveCodes,
+          })
+        );
       }
     }
 
@@ -268,6 +313,9 @@ async function validate(rows: readonly PartnerSurfaceRow[]): Promise<Issue[]> {
   }
 
   issues.push(...checkDeprecatedBrandReferences(rows));
+  if (liveCodes) {
+    issues.push(...checkLiveCodesCoveredByInventory(rows, liveCodes));
+  }
 
   return issues;
 }

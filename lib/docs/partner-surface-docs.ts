@@ -118,6 +118,45 @@ export function formatPartnerSurfaceGeneratedMarkdown(
 
   lines.push(
     '',
+    '## Brand health',
+    '',
+    '| Brand | Fitness | Tests | Active | Category | Registry |',
+    '| ----- | ------- | ----- | ------ | -------- | -------- |'
+  );
+
+  for (const r of brands) {
+    const bag = r.brand;
+    if (!bag) continue;
+    const fitness = bag.fitnessScore === undefined ? '—' : String(bag.fitnessScore);
+    const tests = bag.hasTestCoverage === undefined ? '—' : bag.hasTestCoverage ? 'yes' : 'no';
+    lines.push(
+      `| \`${r.token}\` | ${fitness} | ${tests} | ${bag.isActive ? 'yes' : 'no'} | \`${bag.category}\` | ${cell(bag.registryRef)} |`
+    );
+  }
+
+  const partnerCodes = inv.rows
+    .filter(r => r.aspect === 'partner-code')
+    .slice()
+    .sort(sortByToken);
+
+  lines.push(
+    '',
+    '## Partner codes',
+    '',
+    '| Code | Brand | Registry | Phase | Href |',
+    '| ---- | ----- | -------- | ----- | ---- |'
+  );
+
+  for (const r of partnerCodes) {
+    const bag = r.partnerCode;
+    if (!bag) continue;
+    lines.push(
+      `| \`${r.token}\` | \`${bag.brandRef}\` | \`${bag.registryRef}\` | ${bag.phase ? `\`${bag.phase}\`` : '—'} | ${cell(r.href)} |`
+    );
+  }
+
+  lines.push(
+    '',
     '## Partner boards',
     '',
     '| Aspect | Token | Href | Registry |',

@@ -8,7 +8,12 @@
  *
  * @see docs/design/partner-surface-inventory.md
  */
-import type { PartnerSurfaceBrandBag, PartnerSurfaceRow } from './partner-surface-inventory.ts';
+import type {
+  PartnerSurfaceBrandBag,
+  PartnerSurfaceFitnessScore,
+  PartnerSurfacePartnerCodeBag,
+  PartnerSurfaceRow,
+} from './partner-surface-inventory.ts';
 
 export const PARTNER_SURFACE_BRAND_CATEGORIES = [
   'identity',
@@ -143,7 +148,160 @@ export function checkBrandLinkingBag(
   }
 
   issues.push(...checkBrandLifecycleFields(rowId, bag, options.brandTokens));
+  issues.push(...checkBrandFitnessFields(rowId, bag));
 
+  return issues;
+}
+
+export function isPartnerSurfaceFitnessScore(value: number): value is PartnerSurfaceFitnessScore {
+  return Number.isInteger(value) && value >= 1 && value <= 5;
+}
+
+/** Fitness / test-coverage consistency on a brand bag. */
+export function checkBrandFitnessFields(
+  rowId: string, // brand-ok — inventory row key
+  bag: PartnerSurfaceBrandBag
+): readonly BrandLinkIssue[] {
+  const issues: BrandLinkIssue[] = [];
+
+  if (bag.fitnessScore !== undefined) {
+    if (!isPartnerSurfaceFitnessScore(bag.fitnessScore)) {
+      issues.push({
+        level: 'error',
+        message: `${rowId}: brand.fitnessScore must be an integer 1–5 (got ${String(bag.fitnessScore)})`,
+      });
+    } else if (bag.fitnessScore >= 4 && bag.hasTestCoverage === false) {
+      issues.push({
+        level: 'warn',
+        message: `${rowId}: brand.fitnessScore=${bag.fitnessScore} but hasTestCoverage=false`,
+      });
+    }
+  }
+
+  if (bag.hasTestCoverage !== undefined && typeof bag.hasTestCoverage !== 'boolean') {
+    issues.push({
+      level: 'error',
+      message: `${rowId}: brand.hasTestCoverage must be a boolean`,
+    });
+  }
+
+  return issues;
+}
+
+/**
+ * partner-code rows must link an active brand with registryRef and a registry
+ * token; optional liveCodes (from partners-ops) warn on inventory drift.
+ */
+export type BrandBagByTokenEntry = {
+  readonly rowId: string; // brand-ok — opaque inventory brand row key
+  readonly bag: PartnerSurfaceBrandBag;
+};
+
+export function checkPartnerCodeBag(
+  rowId: string, // brand-ok — inventory row key
+  token: string,
+  bag: PartnerSurfacePartnerCodeBag,
+  options: {
+    readonly brandByToken: ReadonlyMap<string, BrandBagByTokenEntry>;
+    readonly registryTokens: ReadonlySet<string>;
+    readonly liveCodes?: ReadonlySet<string>;
+  }
+): readonly BrandLinkIssue[] {
+  const issues: BrandLinkIssue[] = [];
+
+  if (!bag.brandRef?.trim()) {
+    issues.push({
+      level: 'error',
+      message: `${rowId}: partnerCode.brandRef is required`,
+    });
+    return issues;
+  }
+  if (!bag.registryRef?.trim()) {
+    issues.push({
+      level: 'error',
+      message: `${rowId}: partnerCode.registryRef is required`,
+    });
+    return issues;
+  }
+
+  const brand = options.brandByToken.get(bag.brandRef);
+  if (!brand) {
+    issues.push({
+      level: 'error',
+      message: `${rowId}: partnerCode.brandRef "${bag.brandRef}" is not an inventory brand token`,
+    });
+  } else {
+    if (!brand.bag.isActive) {
+      issues.push({
+        level: 'error',
+        message: `${rowId}: partnerCode.brandRef "${bag.brandRef}" is inactive (${brand.rowId})`,
+      });
+    }
+    if (!brand.bag.registryRef?.trim()) {
+      issues.push({
+        level: 'error',
+        message: `${rowId}: partnerCode.brandRef "${bag.brandRef}" has no brand.registryRef`,
+      });
+    } else if (brand.bag.registryRef !== bag.registryRef) {
+      issues.push({
+        level: 'warn',
+        message:
+          `${rowId}: partnerCode.registryRef "${bag.registryRef}" drifts from ` +
+          `brand.registryRef "${brand.bag.registryRef}"`,
+      });
+    }
+  }
+
+  if (!options.registryTokens.has(bag.registryRef)) {
+    issues.push({
+      level: 'error',
+      message: `${rowId}: partnerCode.registryRef "${bag.registryRef}" has no inventory registry row`,
+    });
+  }
+
+  if (options.liveCodes && !options.liveCodes.has(token.trim().toUpperCase())) {
+    issues.push({
+      level: 'warn',
+      message: `${rowId}: partner-code "${token}" not present in partners-ops live codes`,
+    });
+  }
+
+  return issues;
+}
+
+export function collectBrandBagsByToken(
+  rows: readonly PartnerSurfaceRow[]
+): Map<string, BrandBagByTokenEntry> {
+  const map = new Map<string, BrandBagByTokenEntry>();
+  for (const r of rows) {
+    if (r.aspect !== 'brand' || !r.brand) continue;
+    map.set(r.token, { rowId: r.id, bag: r.brand });
+    // Prefer the primary brand row when typeOrExport aliases collide
+    // (e.g. parsers.partners-package also exports PartnerCode).
+    if (r.typeOrExport && !map.has(r.typeOrExport)) {
+      map.set(r.typeOrExport, { rowId: r.id, bag: r.brand });
+    }
+  }
+  return map;
+}
+
+/** Warn when partners-ops has a code with no inventory partner-code row. */
+export function checkLiveCodesCoveredByInventory(
+  rows: readonly PartnerSurfaceRow[],
+  liveCodes: ReadonlySet<string>
+): readonly BrandLinkIssue[] {
+  const inventoried = new Set(
+    rows.filter(r => r.aspect === 'partner-code').map(r => r.token.trim().toUpperCase())
+  );
+  const issues: BrandLinkIssue[] = [];
+  for (const code of liveCodes) {
+    if (!inventoried.has(code)) {
+      issues.push({
+        level: 'warn',
+        message: `partners-ops live code "${code}" has no inventory partner-code row`,
+      });
+    }
+  }
   return issues;
 }
 

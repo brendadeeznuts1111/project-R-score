@@ -97,4 +97,15 @@ describe('partner surface inventory', () => {
     const tax = inv.rows.filter(r => r.aspect === 'taxonomy');
     expect(tax.every(r => r.taxonomy?.homonymDistinct)).toBe(true);
   });
+
+  test('partner-code rows link PartnerCode brand and partners-ops', () => {
+    const codes = allPartnerSurfaceRows().filter(r => r.aspect === 'partner-code');
+    expect(codes.length).toBeGreaterThanOrEqual(4);
+    for (const r of codes) {
+      expect(r.partnerCode?.brandRef).toBe('PartnerCode');
+      expect(r.partnerCode?.registryRef).toBe('partners-ops');
+      expect(r.href).toBe(`/portal/partners/#partner/${r.token}`);
+    }
+    expect(new Set(codes.map(r => r.token))).toEqual(new Set(['ASH', 'BIL', 'NOV', 'SPEN']));
+  });
 });

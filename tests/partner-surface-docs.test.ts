@@ -28,6 +28,10 @@ describe('partner-surface-docs', () => {
     expect(md).toContain('## Brand status');
     expect(md).toContain('| Brand | Active | Deprecated | Reason | Replaced by |');
     expect(md).toContain('| `PartnerCode` | yes | — | — | — |');
+    expect(md).toContain('## Brand health');
+    expect(md).toContain('| `PartnerCode` | 4 | yes | yes | `identity` |');
+    expect(md).toContain('## Partner codes');
+    expect(md).toContain('| `SPEN` | `PartnerCode` | `partners-ops` |');
     expect(md).toContain('## Domains');
     expect(md).toContain('## Partner boards');
     expect(md).toContain('## Live PartnerCodes');

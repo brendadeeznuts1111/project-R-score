@@ -50,6 +50,28 @@
 | `PartnerTemplateId` | yes | — | — | — |
 | `TreeNodeId` | yes | — | — | — |
 
+## Brand health
+
+| Brand | Fitness | Tests | Active | Category | Registry |
+| ----- | ------- | ----- | ------ | -------- | -------- |
+| `ExternalPartnerId` | 1 | yes | yes | `external` | — |
+| `OutId` | 2 | yes | yes | `identity` | `partners-ops` |
+| `parsePartnerCode` | 4 | yes | yes | `identity` | `partners-ops` |
+| `PartnerCallSignCode` | 4 | yes | yes | `identity` | — |
+| `PartnerCode` | 4 | yes | yes | `identity` | `partners-ops` |
+| `PartnerProfileKey` | 4 | yes | yes | `profile` | `partner-profiles` |
+| `PartnerTemplateId` | 5 | yes | yes | `template` | `partner-contracts` |
+| `TreeNodeId` | 5 | yes | yes | `node` | `workspace-lane-map` |
+
+## Partner codes
+
+| Code | Brand | Registry | Phase | Href |
+| ---- | ----- | -------- | ----- | ---- |
+| `ASH` | `PartnerCode` | `partners-ops` | `operator_ready` | `/portal/partners/#partner/ASH` |
+| `BIL` | `PartnerCode` | `partners-ops` | `operator_ready` | `/portal/partners/#partner/BIL` |
+| `NOV` | `PartnerCode` | `partners-ops` | `operator_ready` | `/portal/partners/#partner/NOV` |
+| `SPEN` | `PartnerCode` | `partners-ops` | `operator_ready` | `/portal/partners/#partner/SPEN` |
+
 ## Partner boards
 
 | Aspect | Token | Href | Registry |

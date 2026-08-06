@@ -71,7 +71,7 @@ Each row in the lib SSOT / registry bake:
 
 | Field          | Meaning                                                                                                               |
 | -------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `aspect`       | taxonomy · chrome-nav · portal-board · registry · brand · package · lib-module · wire-field · doc-tenant · cross-repo |
+| `aspect`       | taxonomy · chrome-nav · portal-board · registry · brand · partner-code · package · lib-module · wire-field · doc-tenant · cross-repo |
 | `machine`      | optional: sessionLane · chromeDomain · conceptDomain · commitScope · identity · artifact · nav                        |
 | `token`        | English / id as agents see it                                                                                         |
 | `typeOrExport` | TypeScript export or wire label when known                                                                            |
@@ -80,7 +80,8 @@ Each row in the lib SSOT / registry bake:
 | `href`         | public portal/registry URL when applicable (domains → lanes/concepts/partners; brands → `/portal/brands/#domain=operations&q=…`; live PartnerCode → `partnerDeskHrefs`) |
 | `properties`   | key attrs (domain, registry, brand shape, cli)                                                                        |
 | `owner`        | owning lane / doc                                                                                                     |
-| `brand`        | (brand only) pattern · mintAuthority · module · interiorOnly · replaces · domain · registryRef? · isActive · category · deprecatedAt? · deprecationReason? · replacedBy? |
+| `brand`        | (brand only) pattern · mintAuthority · module · interiorOnly · replaces · domain · registryRef? · isActive · category · deprecatedAt? · deprecationReason? · replacedBy? · fitnessScore? · hasTestCoverage? |
+| `partnerCode`  | (partner-code only) brandRef · registryRef · phase?                                                                   |
 | `registry`     | (registry only) schemaId · schemaIdField · artifactPath · omits · moneyPolicy · requiredTopKeys · conceptIds          |
 | `wireField`    | (wire-field only) wireName · pattern(s) · brandedType · resolvesTo · nakedType · boundaryPathGlobs · strict · requireReason |
 | `chromeNav`    | (chrome-nav / portal-board) domain · group · tier · registryArtifact                                                  |
@@ -97,11 +98,19 @@ Brand linking metadata (Layer A cross-checks):
 | `deprecatedAt`      | Optional ISO date when sunsetting started                                                                         |
 | `deprecationReason` | Optional why (required when `deprecatedAt` or recommended when `isActive=false`)                                  |
 | `replacedBy`        | Optional successor brand token                                                                                    |
+| `fitnessScore`      | Optional 1–5 reuse fitness (type-reference-map scale)                                                             |
+| `hasTestCoverage`   | Optional whether mint/parse constructors have focused tests                                                       |
+
+`partner-code` rows are live desk codes (ASH / BIL / …). Each must
+`brandRef` → an **active** brand with `registryRef`, and `registryRef` → an
+inventory registry row. Validate warns when inventory codes drift from
+`partners-ops.json`.
 
 `bun run partner-surface-inventory:validate` enforces domain ∈ allowlist and
 `registryRef` → existing registry row when set. Inactive / deprecated brands
 still referenced by wire-field, portal-board/chrome-nav, or registry consumers
-emit **warn**. Generated docs include a **Brand status** section.
+emit **warn**. Generated docs include **Brand status**, **Brand health**, and
+**Partner codes** sections.
 
 Chrome-nav and portal-board rows for Domain `partner` are **derived live** from
 [`chrome-catalog.ts`](../../lib/portal/chrome-catalog.ts) so board adds cannot
@@ -110,7 +119,7 @@ and wire traps with `bun run partner-surface-inventory:lint-wires`:
 
 | Layer | Check                                                                                                     |
 | ----- | --------------------------------------------------------------------------------------------------------- |
-| A     | brand-manifest + `Bun.file.exists` + brand linking + lifecycle (`deprecatedAt` · references warn)         |
+| A     | brand-manifest + brand linking + lifecycle + fitness + partner-code ↔ partners-ops sync                   |
 | B     | baked JSON vs bag: schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy`     |
 | C     | `lint-wires`: inventory-driven naked brand annotations outside `boundaryPathGlobs` — see [wire-lint.md](./wire-lint.md) |
 | D     | `lint-domains`: inventory brand types used outside home path globs (default **warn**; `--strict` → error) |
