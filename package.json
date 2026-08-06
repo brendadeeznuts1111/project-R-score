@@ -18,7 +18,7 @@
   "catalog": {
     "zod": "3.23.0",
     "@types/bun": "1.3.14",
-    "bun-types": "1.4.0-canary.20260519T150915",
+    "bun-types": "file:third_party/bun-types/bun-types-1.4.0-tip.ed700c20.tgz",
     "typescript": "6.0.3",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -2521,7 +2521,7 @@
     "axios": "1.18.1",
     "body-parser": "2.3.0",
     "brace-expansion": "1.1.18",
-    "bun-types": "1.4.0-canary.20260519T150915",
+    "bun-types": "file:third_party/bun-types/bun-types-1.4.0-tip.ed700c20.tgz",
     "fast-uri": "3.1.5",
     "form-data": "4.0.6",
     "hono": "4.12.34",
