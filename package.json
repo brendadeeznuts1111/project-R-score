@@ -1900,6 +1900,7 @@
     "partner-surface-inventory:bake": "bun scripts/bake-partner-surface-inventory.ts",
     "partner-surface-inventory:check": "bun scripts/bake-partner-surface-inventory.ts --check",
     "partner-surface-inventory:validate": "bun scripts/validate-partner-surface-inventory.ts",
+    "partner-surface-inventory:lint-wires": "bun scripts/validate-wire-traps.ts --scan",
     "concept:domain:list": "bun scripts/concept-domain-list.ts",
     "concept:domain:stats": "bun scripts/concept-domain-stats.ts",
     "concept:propose": "bun scripts/concept-propose.ts",

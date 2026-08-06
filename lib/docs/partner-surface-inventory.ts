@@ -78,12 +78,27 @@ export type PartnerSurfaceRegistryBag = {
   readonly requiredTopKeys?: readonly string[];
 };
 
-/** Wire-field semantics — never promote bare partnerId to PartnerCode. */
+/**
+ * Wire-field semantics — never promote bare partnerId to PartnerCode.
+ *
+ * `boundaryPathGlobs` allowlists adapter/wire files where naked
+ * `partnerId: string` / `partner_id: string` is expected at the parse edge.
+ * Consumed by `bun run partner-surface-inventory:lint-wires`.
+ */
 export type PartnerSurfaceWireFieldBag = {
   readonly wireName: string;
   readonly sourceSystemId: string;
   readonly resolvesTo: 'ExternalPartnerRef' | 'PartnerCode';
   readonly quarantineOnFail: boolean;
+  /** Path prefixes/globs where naked wire id annotations are allowed. */
+  readonly boundaryPathGlobs?: readonly string[];
+  /**
+   * When true (default), allowlisted hits are silent.
+   * When false, allowlisted naked annotations warn (migration aid).
+   */
+  readonly strict?: boolean;
+  /** When true, `// wire-ok` on matching files must include a reason. */
+  readonly requireReason?: boolean;
 };
 
 /** Live chrome / board nav contract. */
@@ -623,6 +638,8 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       sourceSystemId: 'unqualified',
       resolvesTo: 'ExternalPartnerRef',
       quarantineOnFail: true,
+      // No boundaryPathGlobs — unqualified is the trap itself; use // wire-ok / brand-ok
+      // or a source-specific wire-field row when adding a real adapter.
     },
   }),
   row({
@@ -632,7 +649,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'partner_id',
     typeOrExport: 'ExternalPartnerRef',
     repo: 'sports-terminal',
-    path: 'Sports Terminal API /partners',
+    path: 'projects/active/sports-terminal-os',
     properties: ['snake_case wire', 'blocked connector'],
     owner: 'sports-terminal adapter (planned)',
     wireField: {
@@ -640,6 +657,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       sourceSystemId: 'sports-terminal',
       resolvesTo: 'ExternalPartnerRef',
       quarantineOnFail: true,
+      boundaryPathGlobs: ['projects/active/sports-terminal-os/**'],
     },
   }),
   row({
@@ -649,7 +667,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     token: 'partners[].id',
     typeOrExport: 'ExternalPartnerRef',
     repo: 'Kalshi-bot',
-    path: 'Kalshi partner registry',
+    path: 'Kalshi-bot',
     properties: ['e.g. partner-spen', 'join via partners[].code → PartnerCode'],
     owner: 'execution adapter',
     wireField: {
@@ -657,6 +675,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       sourceSystemId: 'kalshi',
       resolvesTo: 'ExternalPartnerRef',
       quarantineOnFail: true,
+      boundaryPathGlobs: ['Kalshi-bot/**'],
     },
   }),
   row({
@@ -674,6 +693,8 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       sourceSystemId: 'pandora',
       resolvesTo: 'ExternalPartnerRef',
       quarantineOnFail: true,
+      // Adapter not landed yet — empty globs warn until paths are registered.
+      boundaryPathGlobs: [],
     },
   }),
 
