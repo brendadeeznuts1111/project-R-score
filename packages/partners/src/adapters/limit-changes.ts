@@ -52,13 +52,13 @@ export type ParseLimitChangesOptions = {
   sportsbookAliases?: Readonly<Record<string, unknown>>;
 };
 
-function betStructure(value: unknown, path: string): BetStructure {
+function parseBetStructure(value: unknown, path: string): BetStructure {
   const raw = wireText(value, path);
   if (raw === 'straight' || raw === 'parlay' || raw === 'same_game_parlay') return raw;
   throw new TypeError(`${path} must be straight|parlay|same_game_parlay`);
 }
 
-function secondsToTimestamp(value: unknown, path: string): string {
+function parseSecondsToTimestamp(value: unknown, path: string): string {
   const seconds = wireNonnegativeInteger(value, path);
   const timestamp = new Date(seconds * 1000).toISOString();
   return wireTimestamp(timestamp, path);
@@ -114,7 +114,7 @@ export function parseLimitChangesArtifact(
         currency: parseCurrencyCode('USD'),
         minorUnits: usdMajorToMinor(raise.new_limit, `${path}.new_limit`),
       };
-      const changedAt = secondsToTimestamp(raise.increased_at, `${path}.increased_at`);
+      const changedAt = parseSecondsToTimestamp(raise.increased_at, `${path}.increased_at`);
       const limitRef = wireNonnegativeInteger(raise.limit_id, `${path}.limit_id`);
       const provenance: FactProvenance = {
         sourceSystemId: parseSourceSystemId('factorywager-limits'),
@@ -132,7 +132,7 @@ export function parseLimitChangesArtifact(
         sportsbookId: candidate,
         sport: wireText(raise.sport_id, `${path}.sport_id`),
         market: wireText(raise.market_id, `${path}.market_id`),
-        betStructure: betStructure(raise.bet_type, `${path}.bet_type`),
+        betStructure: parseBetStructure(raise.bet_type, `${path}.bet_type`),
         previousReportedMaxStake: previous,
         reportedMaxStakeAfterChange: next,
         direction:
