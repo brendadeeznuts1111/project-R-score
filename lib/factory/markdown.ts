@@ -2,23 +2,36 @@
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
 // @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
 // @see https://bun.com/docs/runtime/markdown#heading-ids — headings / headings.ids
-// @see https://bun.com/docs/runtime/markdown#options — wikiLinks · latexMath · autolinks
+// @see https://bun.com/docs/runtime/markdown#options — Bun.markdown.Options table
 /**
  * Factory markdown helpers — Bun runtime only (CLI / local tools).
  *
  * Do **not** import this from Cloudflare Pages Functions / Workers: there is no
  * `Bun` global on the edge. Portal HTML rendering stays client-side or static.
  *
- * Options use current `Bun.markdown.Options` (`headings`, not blog-era `headingIds`).
+ * Option presets SSOT: {@link ../markdown/options.ts}.
  */
+import {
+  MARKDOWN_PRESET_README,
+  markdownHtml,
+  type MarkdownHtmlOptions,
+} from '../markdown/options.ts';
+
+export {
+  MARKDOWN_OPTIONS_DEFAULTS,
+  MARKDOWN_OPTION_CATALOG,
+  MARKDOWN_PRESET_DESIGN,
+  MARKDOWN_PRESET_PORTAL,
+  MARKDOWN_PRESET_README,
+  MARKDOWN_PRESET_SECURE,
+  markdownHtml,
+  mergeMarkdownOptions,
+  type MarkdownHtmlOptions,
+} from '../markdown/options.ts';
 
 /** GFM HTML for READMEs (headings, autolinks, tag filter). Bun-local only. */
-export function renderReadmeHTML(markdown: string): string {
-  return Bun.markdown.html(markdown, {
-    headings: true, // ids + autolink headings
-    autolinks: { url: true, www: true },
-    tagFilter: true,
-  } satisfies Bun.markdown.Options);
+export function renderReadmeHTML(markdown: string, overrides?: MarkdownHtmlOptions): string {
+  return markdownHtml(markdown, { ...MARKDOWN_PRESET_README, ...overrides });
 }
 
 /** ANSI terminal README (prefer over hand-rolled render callbacks when enough). */

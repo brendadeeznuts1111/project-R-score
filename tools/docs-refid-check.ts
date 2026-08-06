@@ -34,7 +34,7 @@ export type RefIdRegistryEntry = {
   /** Tooling flags that must resolve into the doc */
   toolFlags: () => ToolFlagRef[];
   requireToolCoverage?: boolean;
-  sectionRefId?: string;
+  sectionRefId?: string; // brand-ok — design-doc section fragment (REF:ID), not domain brand
   sectionHeading?: string;
 };
 
