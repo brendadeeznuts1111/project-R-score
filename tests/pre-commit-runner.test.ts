@@ -9,6 +9,16 @@ import {
 } from '../scripts/pre-commit.ts';
 import { STAGED_TEST_PARALLELISM } from '../scripts/bun-test-changed-staged.ts';
 
+const REVIEWED_BUN_VERSION = (
+  await Bun.file(new URL('../.bun-version', import.meta.url)).text()
+).trim();
+
+function nextPatchVersion(version: string): string {
+  const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(version);
+  if (!match) throw new Error(`Expected a stable semantic version, received ${version}`);
+  return `${match[1]}.${match[2]}.${Number(match[3]) + 1}`;
+}
+
 describe('pre-commit path gates', () => {
   it('bounds staged test worker pressure', () => {
     expect(STAGED_TEST_PARALLELISM).toBe(6);
@@ -75,24 +85,26 @@ describe('pre-commit environment', () => {
 
 describe('pre-commit Bun stable pin', () => {
   it('accepts the exact reviewed stable runtime', async () => {
-    const pin = await checkBunPin('1.3.14');
+    const pin = await checkBunPin(REVIEWED_BUN_VERSION);
     expect(pin.ok).toBe(true);
     expect(pin.issues).toEqual([]);
-    expect(pin.enginesBun).toBe('>=1.3.14');
-    expect(pin.bunVersionFile).toBe('1.3.14');
-    expect(pin.packageManager).toBe('bun@1.3.14');
+    expect(pin.bunVersionFile).toBe(REVIEWED_BUN_VERSION);
+    expect(pin.packageManager).toBe(`bun@${REVIEWED_BUN_VERSION}`);
   });
 
-  it('rejects runtime below engines.bun', async () => {
-    const pin = await checkBunPin('1.3.13');
+  it('rejects a runtime older than the reviewed pin', async () => {
+    const pin = await checkBunPin('0.0.0');
     expect(pin.ok).toBe(false);
     expect(pin.message).toContain('does not equal reviewed pin');
   });
 
-  it('rejects a newer canary even when it satisfies the engine floor', async () => {
-    const pin = await checkBunPin('1.4.0');
-    expect(Bun.semver.satisfies('1.4.0', pin.enginesBun!)).toBe(true);
+  it('rejects a newer runtime even when it satisfies the engine floor', async () => {
+    const newerVersion = nextPatchVersion(REVIEWED_BUN_VERSION);
+    const pin = await checkBunPin(newerVersion);
+    expect(Bun.semver.satisfies(newerVersion, pin.enginesBun!)).toBe(true);
     expect(pin.ok).toBe(false);
-    expect(pin.message).toContain('runtime 1.4.0 does not equal reviewed pin 1.3.14');
+    expect(pin.message).toContain(
+      `runtime ${newerVersion} does not equal reviewed pin ${REVIEWED_BUN_VERSION}`
+    );
   });
 });

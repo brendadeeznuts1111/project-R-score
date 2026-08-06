@@ -58,8 +58,9 @@ Runtime compatibility and runtime channel identity are also distinct. The
 canary process in the stable production lane. Pre-commit and `bun:ci` require
 the executing `Bun.version` to equal `.bun-version`, require `packageManager`
 to equal `bun@<that version>`, and require that exact pin to satisfy
-`engines.bun`. `bun:ci` then resolves one absolute Bun executable and reuses it
-for every child process so a later `PATH` lookup cannot cross channels.
+`engines.bun`. `bun:ci` then resolves and verifies the current process's Bun
+executable and reuses it for every child so a later `PATH` lookup cannot cross
+channels.
 
 Long-lived Project R MCP entrypoints apply the same network-free assertion at
 startup and publish `bunVersion` plus `bunRevision` in MCP `serverInfo`.

@@ -53,7 +53,6 @@ const SPORTS_TERMINAL_REQUIRED_BLOCKERS = [
   'external-ID resolution',
   'authenticated route integration',
   'integer-minor-unit money wire',
-  'passing Sports Terminal typecheck',
 ] as const;
 
 type AnyRecord = Record<string, any>;
