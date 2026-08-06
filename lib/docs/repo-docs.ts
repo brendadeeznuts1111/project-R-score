@@ -52,6 +52,8 @@ export const CANONICAL_REPO_DOCS = {
   organizationHistory: 'docs/organization/HOMEBASE_DISCOVERY.md',
   /** Reasonix session rename map · lane taxonomy (workspace archive) */
   sessionOrganization: 'docs/organization/session-organization.md',
+  /** Archive filename grammar `<t>-<lane>-<slug>` (sessions · quarantine · scratch) */
+  archiveNamingGrammar: 'docs/organization/naming-grammar.md',
   /** Velocity baseline + day-loop honesty */
   velocityBaseline: 'docs/organization/VELOCITY_BASELINE.md',
   /** JIT harness thesis index */
@@ -174,6 +176,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   bunToken: 'BunToken agent export contract (northstar)',
   organizationHistory: 'Homebase discovery / organization map',
   sessionOrganization: 'Reasonix session rename map · lane taxonomy',
+  archiveNamingGrammar: 'Archive filename grammar (<t>-<lane>-<slug>)',
   velocityBaseline: 'Velocity baseline + day-loop honesty',
   harnessIndex: 'JIT harness thesis index',
   harnessProof: 'Proof claim kinds',
