@@ -219,7 +219,7 @@ listed under **Domain lifecycle** above.
 | [`mcp/`](./mcp/)                             | MCP / domain helpers                                                       | `stdio-jsonrpc.ts`                                         |
 | [`monitoring/`](./monitoring/)               | Registry + ops health dashboard slices                                     | `collect.ts` · `page.ts`                                   |
 | [`net/`](./net/)                             | Network helpers (HTTPS proxy CONNECT reuse)                                | `proxy.ts`                                                 |
-| [`operations/`](./operations/)               | Ops tree, limits, scrapers, compliance HTTP                                | domain README · `limits/`                                  |
+| [`operations/`](./operations/)               | Ops tree, limits, scrapers, compliance HTTP (**mega** — use Area map)      | [README Area map](./operations/README.md) · `db.ts`        |
 | [`operator-research/`](./operator-research/) | Bookmaker research, odds, edge engine                                      | `edge-engine.ts` · `index.ts`                              |
 | [`package/`](./package/)                     | Package manager graph helpers                                              | `package-manager.ts`                                       |
 | [`pages/`](./pages/)                         | Cloudflare Pages / Bun-only function helpers (edge-safe)                   | `pages-function.ts` · `r2-types.ts`                        |
@@ -236,7 +236,7 @@ listed under **Domain lifecycle** above.
 | [`security/`](./security/)                   | Secrets, R2 creds, vault health, hash wrappers                             | `index.ts` · `r2-credentials.ts`                           |
 | [`shared/`](./shared/)                       | Cross-cutting shared helpers                                               | `tools/`                                                   |
 | [`surfaces/`](./surfaces/)                   | Public edge surface inventory (hosts · shortcodes)                         | `inventory.ts` · `doctor-check.ts`                         |
-| [`telegram/`](./telegram/)                   | Factory Telegram bots, handshakes, partner ops colors                      | domain README · `ops-bot` surface                          |
+| [`telegram/`](./telegram/)                   | Factory Telegram bots, handshakes, seat desk (**mega** — use Area map)     | [README Area map](./telegram/README.md) · `ops-bot.ts`     |
 | [`tennis/`](./tennis/)                       | Portal tennis desk (metrics, avatars, live)                                | domain README                                              |
 | [`theme/`](./theme/)                         | Colors / styled logging                                                    | `colors.ts`                                                |
 | [`toc-ops/`](./toc-ops/)                     | TOC Ops Drum / Buffer / Rope fixture surface                               | domain README · `types.ts`                                 |

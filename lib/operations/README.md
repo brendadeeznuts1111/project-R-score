@@ -2,74 +2,67 @@
 
 Tree-structured agent management with HMAC-signed play distribution.
 
+**Scale:** ~27k lines · ~96 `.ts` files (largest `lib/` domain). Use the **Area
+map** below before opening random files. Inventory SSOT for all domains:
+[`../README.md`](../README.md).
+
+**Coupling (lib graph):** heavy with [`../telegram/`](../telegram/),
+[`../channels/`](../channels/), [`../types/`](../types/),
+[`../toc-ops/`](../toc-ops/), [`../partner-profile/`](../partner-profile/),
+[`../prediction/`](../prediction/).
+
+## Area map
+
+| Area                     | Start here                                                                                                | Also                                                                                                                                                                                                                                            |
+| ------------------------ | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **DB + schema**          | [`db.ts`](db.ts) · [`schema.ts`](schema.ts)                                                               | [`backup.ts`](backup.ts) · [`postgres-bridge.ts`](postgres-bridge.ts)                                                                                                                                                                           |
+| **Play loop**            | [`play-dispatcher.ts`](play-dispatcher.ts) · [`play-signing.ts`](play-signing.ts)                         | [`play-settlement.ts`](play-settlement.ts) · [`play-validation.ts`](play-validation.ts) · [`ops-settle-batch.ts`](ops-settle-batch.ts) · [`liquidity.ts`](liquidity.ts) · [`cut-engine.ts`](cut-engine.ts)                                      |
+| **Ops loop throughput**  | [`ops-loop-metrics.ts`](ops-loop-metrics.ts)                                                              | [`ops-loop-fixture.ts`](ops-loop-fixture.ts) · [`ops-loop-gate-backfill.ts`](ops-loop-gate-backfill.ts) · tenant [ops-loop-throughput](../../docs/harness/tenants/ops-loop-throughput.md)                                                       |
+| **Summary / portal**     | [`ops-summary.ts`](ops-summary.ts)                                                                        | [`ops-summary-diagnose.ts`](ops-summary-diagnose.ts) · [`ops-sync.ts`](ops-sync.ts) · [`portal-snapshot-cron.ts`](portal-snapshot-cron.ts) · [`snapshot-cron.ts`](snapshot-cron.ts)                                                             |
+| **Accounts / tree**      | [`account-service.ts`](account-service.ts)                                                                | [`account-limit-profiles.ts`](account-limit-profiles.ts) · [`account-dossier-seed.ts`](account-dossier-seed.ts)                                                                                                                                 |
+| **Partner onboard**      | [`partner-onboarding.ts`](partner-onboarding.ts)                                                          | [`partner-onboard-package.ts`](partner-onboard-package.ts) · [`partner-profile-bridge.ts`](partner-profile-bridge.ts) · [`partner-profile-seed.ts`](partner-profile-seed.ts) · [`partner-compliance-onboard.ts`](partner-compliance-onboard.ts) |
+| **Limits / raises**      | [`limit-raise-agent-api.ts`](limit-raise-agent-api.ts) · [`limit-raise-report.ts`](limit-raise-report.ts) | [`limit-patterns.ts`](limit-patterns.ts) · [`partner-analytics-repo.ts`](partner-analytics-repo.ts) · [`limits/`](limits/) · [partner-limits](../../docs/harness/tenants/partner-limits.md)                                                     |
+| **Coverage / liquidity** | [`platform-coverage.ts`](platform-coverage.ts)                                                            | [`coverage-analytics.ts`](coverage-analytics.ts) · [`liquidity.ts`](liquidity.ts) · [`rail-limits.ts`](rail-limits.ts)                                                                                                                          |
+| **State compliance**     | [`state-regulation.ts`](state-regulation.ts) · [`state-compliance-http.ts`](state-compliance-http.ts)     | [`compliance-policy-kpis.ts`](compliance-policy-kpis.ts) · [`regulation-policy-catalog.ts`](regulation-policy-catalog.ts) · [`fraud-guard.ts`](fraud-guard.ts)                                                                                  |
+| **Baselines / books**    | [`baseline-scraped-limits.ts`](baseline-scraped-limits.ts)                                                | [`baseline-sportsbook-policies.ts`](baseline-sportsbook-policies.ts) · [`book-reconcile.ts`](book-reconcile.ts) · [`sportsbook-opening-baseline.ts`](sportsbook-opening-baseline.ts)                                                            |
+| **Scrapers**             | [`scrapers/README.md`](scrapers/README.md)                                                                | [`scrapers/books/`](scrapers/books/) · [`scrapers/run-book-agent.ts`](scrapers/run-book-agent.ts) · `config/scrape-agents.toml`                                                                                                                 |
+| **TOC bridge**           | [`toc-ops-seed.ts`](toc-ops-seed.ts)                                                                      | [`toc-identity-bridge.ts`](toc-identity-bridge.ts) · [`toc-soft-balance.ts`](toc-soft-balance.ts) · [`toc-play-routing.ts`](toc-play-routing.ts) · [`../toc-ops/`](../toc-ops/)                                                                 |
+| **Seeds / fixtures**     | [`ops-seed.ts`](ops-seed.ts)                                                                              | [`dod-seed.ts`](dod-seed.ts) · [`prediction-seed.ts`](prediction-seed.ts) · [`tenant-registry-seed.ts`](tenant-registry-seed.ts) · catalogs under `sports-*.ts`                                                                                 |
+| **Barrel**               | [`index.ts`](index.ts)                                                                                    | Prefer direct imports for tree-shaking clarity                                                                                                                                                                                                  |
+
 ## Entities
 
-| Entity | Role |
-|--------|------|
-| Operations | Platform operator — funding, infrastructure |
-| Expert | Person with edge in a sport/market, generates plays |
-| Partner | Agent who grew to manage their own down-tree |
-| Agent | Manages sportsbook accounts, places bets |
-| Sub-agent | Downstream of agent/partner, Telegram-delivered plays |
-| Rail | Funding channel (PayPal, Venmo, CashApp, wire) |
-| Play | HMAC-signed wager recommendation from expert |
+| Entity     | Role                                                  |
+| ---------- | ----------------------------------------------------- |
+| Operations | Platform operator — funding, infrastructure           |
+| Expert     | Person with edge in a sport/market, generates plays   |
+| Partner    | Agent who grew to manage their own down-tree          |
+| Agent      | Manages sportsbook accounts, places bets              |
+| Sub-agent  | Downstream of agent/partner, Telegram-delivered plays |
+| Rail       | Funding channel (PayPal, Venmo, CashApp, wire)        |
+| Play       | HMAC-signed wager recommendation from expert          |
 
-## Modules (this package)
+## Prove / tenants
 
-| Path | Purpose |
-|------|---------|
-| [`db.ts`](db.ts) | `openOperationsDb` · `DEFAULT_OPS_DB_PATH` (`data/operations.db`) |
-| [`schema.ts`](schema.ts) | `initSchema` / `migrateSchema` — core + provision + coverage + experiments + prediction |
-| [`ops-summary.ts`](ops-summary.ts) | Portal/Pages summary payload (`buildOpsSummary`) |
-| [`platform-coverage.ts`](platform-coverage.ts) | Platforms, coverage snapshots, `canOfferOnPlatform` |
-| [`liquidity.ts`](liquidity.ts) | `ensurePosition` · `reservePlay` / `releasePlay` · coverage-gated reserve |
-| [`play-signing.ts`](play-signing.ts) | `Bun.CryptoHasher("sha256")` HMAC play signing |
-| [`play-settlement.ts`](play-settlement.ts) | Settle play — per-node liquidity + `play.settled` outbox fan-out + experiment outcomes |
-| [`ops-settle-batch.ts`](ops-settle-batch.ts) | Batch settle pending distributed plays + drain outbox |
-| [`ops-loop-metrics.ts`](ops-loop-metrics.ts) | Row-aligned `loopCompletionRate` + CE/LE/RP proxies |
-| [`ops-loop-gate-backfill.ts`](ops-loop-gate-backfill.ts) | Legacy gate + settle outbox attribution |
-| [`ops-loop-fixture.ts`](ops-loop-fixture.ts) | Single- + multi-node throughput fixtures |
-| [`snapshot-cron.ts`](snapshot-cron.ts) | In-process cron: snapshot · sync · settle |
-| [`play-dispatcher.ts`](play-dispatcher.ts) | Publish + gate + reserve + Telegram outbox |
-| [`state-regulation.ts`](state-regulation.ts) | MA/NJ limits · geo columns (`state_code`/`age`/`location`/`zip_code`) · scope · dispatcher |
-| [`state-compliance-http.ts`](state-compliance-http.ts) | Mock Bun.serve API · `ComplianceClient` · `ops:compliance:mock` · demo partners |
-| [`partner-analytics-repo.ts`](partner-analytics-repo.ts) | Multi-factor raise context · seal proofs · `exportLimitRaisesSnapshot` |
-| [`limit-raise-report.ts`](limit-raise-report.ts) | `LimitRaiseReport` · Bun.inspect.table sections |
-| [`limit-raise-agent-api.ts`](limit-raise-agent-api.ts) | Agent HTTP: raises / record / summary / analyze / predictions |
-| [`limit-patterns.ts`](limit-patterns.ts) | Connected partner/downline/book/state/ZIP pattern snapshot |
-| [`account-service.ts`](account-service.ts) | Tree nodes, portal sync |
-| [`cut-engine.ts`](cut-engine.ts) | Cut cascade allocations |
-| [`backup.ts`](backup.ts) | DB backup helpers |
-| [`index.ts`](index.ts) | Barrel exports |
-
-Partner limits tenant: [`docs/harness/tenants/partner-limits.md`](../../docs/harness/tenants/partner-limits.md) · `bun run ops:limits:demo` · `/portal/limits/`.
-
-Prove loop: `bun run ops:settle` · `ops:outbox:requeue` · `bun test tests/ops-loop-hardening.test.ts` · tenant [`docs/harness/tenants/ops-loop-throughput.md`](../../docs/harness/tenants/ops-loop-throughput.md).
+| Concern               | Command / doc                                                                                                                                                        |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Partner limits        | [partner-limits](../../docs/harness/tenants/partner-limits.md) · `bun run ops:limits:demo` · `/portal/limits/`                                                       |
+| Ops loop              | `bun run ops:settle` · `ops:outbox:requeue` · `bun test tests/ops-loop-hardening.test.ts` · [ops-loop-throughput](../../docs/harness/tenants/ops-loop-throughput.md) |
+| Snapshot              | `bun run ops:snapshot` → `public/registry/ops-summary.json`                                                                                                          |
+| Dual-mode experiments | [`.agents/skills/ops-dual-mode-experiments`](../../.agents/skills/ops-dual-mode-experiments/SKILL.md)                                                                |
 
 ### Compliance mock · `bun run -` · console depth
 
 ```bash
-# File or stdin (TypeScript on stdin — no temp transpile)
 bun run ops:compliance:mock
-printf '%s\n' 'import "./tools/state-compliance-mock.ts";' | bun run -   # ops:compliance:mock:pipe
-
-# Enhancement report (deepEquals rows + table + SHA-256; expand nested states)
-bun --console-depth=6 tools/show-enhancements.ts        # ops:enhancements
-cat tools/show-enhancements.ts | bun --console-depth=6 run -   # ops:enhancements:pipe
-
-# Live partner panel against a running mock (depth expands nested licenses)
-bun --console-depth=6 tools/show-enhancements.ts --status=demo-ma-licensed --state=MA
-
-# Ad-hoc partner query (no temp file)
-partner=demo-ma-licensed
+bun --console-depth=6 tools/show-enhancements.ts
+# Ad-hoc:
 bun --console-depth=4 run - <<EOF
 import { ComplianceClient } from "./lib/operations/state-compliance-http.ts";
 const client = new ComplianceClient();
-console.log(await client.getStatus("$partner", "MA"));
+console.log(await client.getStatus("demo-ma-licensed", "MA"));
 EOF
 ```
-
-`--console-depth` (and `BUN_CONSOLE_DEPTH` / `lib/console-depth.ts`) controls nested `console.log` / `Bun.inspect` output when debugging `expectedState` / `actualState` in the report.
 
 ## Quick start
 
@@ -97,13 +90,13 @@ Env: `OPS_DB_PATH` overrides the default DB path.
 
 ## Adjacent packages (not under this directory)
 
-| Package | Role | CLI |
-|---------|------|-----|
-| [`lib/experiments/`](../experiments/) | Factorial partner-policy experiments (C4) | `bun run ops:experiments` |
-| [`lib/prediction/`](../prediction/) | Coverage prediction backtest (C5) | `bun run ops:prediction` |
-| [`lib/provisioning/`](../provisioning/) | Manual / automated_test queue | `bun run ops:provision-queue` |
-
-Skill (lanes + prove): [`.agents/skills/ops-dual-mode-experiments/SKILL.md`](../../.agents/skills/ops-dual-mode-experiments/SKILL.md).
+| Package                                 | Role                                      | CLI                           |
+| --------------------------------------- | ----------------------------------------- | ----------------------------- |
+| [`lib/experiments/`](../experiments/)   | Factorial partner-policy experiments (C4) | `bun run ops:experiments`     |
+| [`lib/prediction/`](../prediction/)     | Coverage prediction backtest (C5)         | `bun run ops:prediction`      |
+| [`lib/provisioning/`](../provisioning/) | Manual / automated_test queue             | `bun run ops:provision-queue` |
+| [`lib/telegram/`](../telegram/)         | Bot / webhook / outbox delivery           | `bun run telegram:verify`     |
+| [`lib/channels/`](../channels/)         | Outbox projectors                         | —                             |
 
 ### Coverage floors (experiments → offer gate)
 
@@ -112,43 +105,28 @@ Skill (lanes + prove): [`.agents/skills/ops-dual-mode-experiments/SKILL.md`](../
 
 `min_coverage_pct` · `coverage_floor` · `minPlatformCoverage`
 
-(`COVERAGE_FLOOR_KEYS` in [`lib/experiments/engine.ts`](../experiments/engine.ts)).
+(`COVERAGE_FLOOR_KEYS` in
+[`lib/experiments/engine.ts`](../experiments/engine.ts)).
 
 ## Portal + Cloudflare Pages + local API
 
-**One payload:** `buildOpsSummary` → `OpsSummaryPayload` (experiments C4 + prediction C5).
+**One payload:** `buildOpsSummary` → `OpsSummaryPayload` (experiments C4 +
+prediction C5).
 
-| Surface | Endpoint | Source |
-|---------|----------|--------|
-| Local portal | `bun run serve:public` → `/api/operations/summary` | **Live** SQLite (`source: "live"`) |
-| Local static fallback | `/registry/ops-summary.json` | File from last `ops:snapshot` |
-| Pages Function | `/api/operations/summary` | Snapshot via ASSETS (Workers have no bun:sqlite) |
-| Pages static | `/registry/ops-summary.json` | Same file |
-| Builder SSOT | [`ops-summary.ts`](ops-summary.ts) | Used by live local + `ops:snapshot` |
+| Surface               | Endpoint                                           | Source                                           |
+| --------------------- | -------------------------------------------------- | ------------------------------------------------ |
+| Local portal          | `bun run serve:public` → `/api/operations/summary` | **Live** SQLite (`source: "live"`)               |
+| Local static fallback | `/registry/ops-summary.json`                       | File from last `ops:snapshot`                    |
+| Pages Function        | `/api/operations/summary`                          | Snapshot via ASSETS (Workers have no bun:sqlite) |
+| Pages static          | `/registry/ops-summary.json`                       | Same file                                        |
+| Builder SSOT          | [`ops-summary.ts`](ops-summary.ts)                 | Used by live local + `ops:snapshot`              |
 
 ```bash
-# Local (aligned live API)
 bun run serve:public
-# open http://localhost:3000/portal/ops/
-# curl  http://localhost:3000/api/operations/summary
-
-# Before Pages deploy (freeze live → static)
-bun run ops:snapshot   # → public/registry/ops-summary.json + prediction/*
+# http://localhost:3000/portal/ops/
+bun run ops:snapshot   # freeze live → public/registry/*
 ```
 
-### Invocation (`bun run` vs `bunx`)
-
-Monorepo scripts prefer **`bun run ops:*`**. Package `bin` entries also allow **bunx**
-([docs](https://bun.com/docs/pm/bunx)):
-
-| Style | Example |
-|-------|---------|
-| Script (default) | `bun run ops:prediction report --webview` |
-| Direct file | `bun tools/ops-prediction.ts report --webview` |
-| bunx + bin | `bunx --bun ops-prediction report --webview` |
-
-Per bunx rules: place **`--bun` before** the binary name so shebangs run under Bun;
-flags **after** the name (`report`, `--webview`) pass through to the tool.
 ## Prove (ops SSOT)
 
 ```bash
@@ -157,5 +135,4 @@ bun test tests/experiments-*.test.ts tests/prediction-*.test.ts
 bun run ops:experiments --help
 bun run ops:prediction --help
 bun run ops:snapshot --out /tmp/ops-summary.json
-bun run serve:public   # local live /api/operations/summary
 ```
