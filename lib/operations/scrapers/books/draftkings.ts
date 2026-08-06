@@ -14,7 +14,6 @@
  * @see docs/harness/tenants/partner-limits.md
  */
 
-import { joinPath } from '../../../path-bun.ts';
 import { expandScrapedLimitSeeds } from '../../baseline-scraped-limits.ts';
 import { asSportsbookId, asStateCode } from '../domain.ts';
 import { parseGenericLimitsPayload } from '../scraper-targets.ts';
@@ -29,11 +28,8 @@ export const DRAFTKINGS_LIVE_URL = 'https://api.draftkings.com/odds/v1/limits?st
 export const DRAFTKINGS_HTML_URL =
   Bun.env.DRAFTKINGS_HTML_URL ?? 'https://sportsbook.draftkings.com/';
 
-export const DRAFTKINGS_HTML_FIXTURE_PATH = joinPath(
-  import.meta.dir,
-  '..',
-  'fixtures',
-  'draftkings-limits.html'
+export const DRAFTKINGS_HTML_FIXTURE_PATH = Bun.fileURLToPath(
+  new URL('../fixtures/draftkings-limits.html', import.meta.url)
 );
 
 export type DraftKingsAgentResult = {
