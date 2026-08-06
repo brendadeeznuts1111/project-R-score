@@ -53,10 +53,10 @@ consumer evidence.
 | ---------------- | ---------------------------------------------------------------------------------------------------- |
 | Runtime          | `https://tennis.factory-wager.com`                                                                   |
 | Worker           | `tennis-hq`                                                                                          |
-| Production tip   | [`30f7c70`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/commit/30f7c702b23f59ae6e7eae1cb5d2bd61c4589f15) · `tennis-hq@1.4.0` · `/api/version` · `feat(edge): publish partner-ledger cache + favicon.ico (#12)` |
-| Worker version   | `3847207a`                                                                                           |
-| Git tip (`main`) | Matches production tip after Wrangler redeploy (`cloudflare:deploy` + `deploy:verify:prod` 2026-08-05) |
-| Verified         | 2026-08-05 · tip `30f7c70` · executions+ledger **cache** · favicon.ico **200** · unauth all five v1 **401** |
+| Production tip   | [`8f21bf2`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/commit/8f21bf25ce47f11828a388a5e77650152104a2be) · `tennis-hq@1.4.0` · `/api/version` · `feat(edge): R2-only partner ledger/executions snapshots (no D1) (#13)` |
+| Deployment id    | `a930f52c-4160-4240-af1c-56e4444a9727` (from `/api/version` · `deploymentId`)                         |
+| Git tip (`main`) | Matches production tip after Wrangler redeploy (`cloudflare:deploy` + `deploy:verify:prod`)          |
+| Verified         | 2026-08-06 · tip `8f21bf2` · ledger+executions **R2 cache** (`meta.cache=url`) · favicon.ico **200** · unauth all five v1 **401** · desk serverFn **200** with `x-tsr-serverFn: true` |
 | Inventory        | `config/surfaces.toml` → `/registry/surfaces-state.json` (re-bake after tip change)                  |
 | Cross-host probe | `bun run verify:weave -- --subdomains` → version, glossary, all five configured v1 bearer rejections |
 
@@ -185,7 +185,7 @@ not import files from the sibling Tennis HQ source tree. The soft-pass extracts
 `package/registry/contracts/v1/manifest.json` from the tarball and requires
 package-version parity plus exactly these five authenticated read domains:
 
-| Domain     | Runtime path                     | Contract package export               | Live tip `30f7c70` |
+| Domain     | Runtime path                     | Contract package export               | Live tip `8f21bf2` |
 | ---------- | -------------------------------- | ------------------------------------- | ------------------ |
 | research   | `GET /api/v1/research/status`    | `contracts/v1/research.schema.json`   | **wired** (unauth **401**) |
 | marketdata | `GET /api/v1/marketdata/desk`    | `contracts/v1/marketdata.schema.json` | **wired** (unauth **401**) |
