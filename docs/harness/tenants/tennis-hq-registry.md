@@ -198,7 +198,10 @@ probes return JSON **401** (not SPA HTML). Runtime reads require
 `PARTNER_API_TOKEN` (provider-side `OPERATOR_API_TOKEN` alias) and fail closed
 when it is absent (`401` unauthorized when set; `503`
 `contract_auth_unconfigured` only when missing). Payload quality (empty desk
-rows, warehouse payloads) is separate from route wiring; executions+ledger GETs use published caches on edge (POST ledger still 503).
+rows, warehouse payloads) is separate from route wiring. Executions+ledger **GETs**
+are R2-first published caches on edge (`meta.cache=url` when SQLite is
+unavailable); live ledger **writes** still **503** on edge (no D1). Unauth
+write POSTs without bearer return **401** when the secret is set.
 `FACTORY_WAGER_TOKEN` remains registry/package authentication and is not a
 runtime API credential.
 
