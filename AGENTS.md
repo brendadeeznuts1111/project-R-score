@@ -312,8 +312,8 @@ interior, path/name allowlists, suppressions.
   - Doc map integrity → `bun run docs:map:check` (also pre-commit when SSOT docs
     staged) · REF:ID v2 → `bun run docs:refid:check` · `docs:refid:suggest` ·
     `docs:refid:list` · `docs:refid:scaffold` (anchors · href · uniqueness;
-    `--skip-refid-check` fast-pass; library [`lib/docs/ref-id.ts`](lib/docs/ref-id.ts)
-    · CLI [`tools/docs-refid.ts`](tools/docs-refid.ts))
+    `--skip-refid-check` fast-pass; library [`lib/docs/ref-id.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/ref-id.ts)
+    · CLI [`tools/docs-refid.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/docs-refid.ts))
   - Import cycles / deep relative imports → `bun run check:import-graph`
     (`ci:core` merge proof → branch-protected Harness CI; ratchets may only go
     down — **0 strong** cycles, **0 deep imports** (both burned to zero
