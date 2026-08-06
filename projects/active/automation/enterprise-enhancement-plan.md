@@ -1,9 +1,9 @@
 # Enterprise Enhancement Plan v2.0 — Execution Blueprint (Stack-Corrected)
 
-**Owner:** Engineering
-**Target Go-Live:** 2026-08-25 (3 weeks from start)
-**Status:** `DRAFT` → `IN_PROGRESS` (Phase 0–1)
-**Merge Proof:** `bun run bun:ci`
+**Owner:** Engineering  
+**Target Go-Live:** 2026-08-25 (3 weeks from start)  
+**Status:** `DRAFT` → `IN_PROGRESS` (Phase 0–1)  
+**Merge Proof:** `bun run bun:ci`  
 
 ---
 
@@ -40,9 +40,9 @@
 
 ### 1.1 Bet Ticker D1→R2 migration + extract `@factorywager/shade-pipeline` (6–8 days)
 
-**GitHub Issue:** [#284](https://github.com/brendadeeznuts1111/project-R-score/issues/284)
-**Labels:** `enhancement`, `phase-1`, `infrastructure`
-**Branch:** `feat/shade-pipeline-extract`
+**GitHub Issue:** [#284](https://github.com/brendadeeznuts1111/project-R-score/issues/284)  
+**Labels:** `enhancement`, `phase-1`, `infrastructure`  
+**Branch:** `feat/shade-pipeline-extract`  
 
 #### Objective
 Eliminate the $530/mo D1 cost by migrating all Bet Ticker read/write ops to R2, and extract the normalized odds engine into a local workspace package (`@factorywager/shade-pipeline`) that `cascade-mover` and `Registry` can import directly.
@@ -85,9 +85,9 @@ journalctl -u bet-ticker -f | grep "D1_FALLBACK_ACTIVE"
 
 ### 1.2 Integrate `lib/identity` into Sports Terminal OS (4–6 days)
 
-**GitHub Issue:** [#285](https://github.com/brendadeeznuts1111/project-R-score/issues/285)
-**Labels:** `enhancement`, `phase-1`, `security`
-**Branch:** `feat/identity-sports-terminal`
+**GitHub Issue:** [#285](https://github.com/brendadeeznuts1111/project-R-score/issues/285)  
+**Labels:** `enhancement`, `phase-1`, `security`  
+**Branch:** `feat/identity-sports-terminal`  
 **Dependency:** Phase 1.1 (#284) complete + `bun run bun:ci` green
 
 #### Objective
@@ -133,7 +133,7 @@ curl -I https://sports-terminal.internal/health | grep "200 OK"
 
 ### 2.1 Cross-system signal bridge: Cascade Mover → Partner Risk Engine (4–5 days)
 
-**Branch:** `feat/signal-bridge`
+**Branch:** `feat/signal-bridge`  
 
 #### Objective
 Consume Cascade Mover's existing `AccumulationMessage` broadcasts (WebSocket `/ws` + MCP `/mcp/stream`) and feed them into Sports Terminal OS's Partner Risk Engine as normalized REST payloads. No new transport layer — just a thin adapter.
@@ -168,7 +168,7 @@ Cascade Mover WS /ws  ──►  Signal Relay Worker  ──►  POST /api/partn
 
 ### 2.2 Unified Profile & Registry Automation (5–6 days)
 
-**Branch:** `feat/unified-registry`
+**Branch:** `feat/unified-registry`  
 
 #### Objective
 One canonical YAML per league (`nfl.yaml`, `nba.yaml`) → transpiler → 3 output dialects (cascade-mover TOML, partner TOML, registry SQL).
@@ -199,7 +199,7 @@ One canonical YAML per league (`nfl.yaml`, `nba.yaml`) → transpiler → 3 outp
 
 ### 3.1 Promote `codepoint` → `api-inspector` active tooling (3–4 days)
 
-**Branch:** `feat/api-inspector`
+**Branch:** `feat/api-inspector`  
 
 #### Objective
 Unified playground for proxy debug, MCP introspection, and broadcast WebSocket tracing.

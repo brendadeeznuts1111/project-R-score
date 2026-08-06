@@ -1,4 +1,3 @@
-// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 /**
  * Resolve a bookmaker from the public v0.4 (or v0.3) registry mirror.
  * Shared by partner registration CLI and portal consumers.
@@ -19,10 +18,7 @@ export interface BookmakerRegistryEntry {
 
 /** Host from v0.3 domain or v0.4 urls.web. */
 export function bookmakerHost(entry: BookmakerRegistryEntry): string {
-  if (entry.domain)
-    return String(entry.domain)
-      .replace(/^https?:\/\//i, '')
-      .replace(/\/$/, '');
+  if (entry.domain) return String(entry.domain).replace(/^https?:\/\//i, '').replace(/\/$/, '');
   const web = entry.urls?.web;
   if (typeof web === 'string' && web) {
     try {

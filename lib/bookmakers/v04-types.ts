@@ -15,7 +15,9 @@ export type BookFetcher = 'rest' | 'webview' | 'seat';
 export type LifecycleMode = 'pre_match' | 'live' | 'exchange' | 'virtual';
 export type LiquidityTier = 'high' | 'medium' | 'low' | 'unknown';
 
-export type BookRegion = { country: string; stateCode?: string } | string;
+export type BookRegion =
+  | { country: string; stateCode?: string }
+  | string;
 
 export interface BookUrls {
   web: string | null;

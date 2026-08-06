@@ -168,10 +168,7 @@ function entrySports(b: { sports?: string[]; supportedSports?: string[] }): stri
 }
 
 function entryWeb(b: { urls?: { web?: string }; domain?: string }): string | undefined {
-  return (
-    b.urls?.web ??
-    (b.domain ? `https://${String(b.domain).replace(/^https?:\/\//, '')}` : undefined)
-  );
+  return b.urls?.web ?? (b.domain ? `https://${String(b.domain).replace(/^https?:\/\//, '')}` : undefined);
 }
 
 /** Build the bake payload (pure, testable). Accepts v0.3 and v0.4 field names. */
@@ -183,7 +180,7 @@ export function buildBookmakersBake(
 ): BookmakersBakeResult {
   const issues: string[] = [];
   const entries = Object.values(bookmakers) as Array<{
-    id?: string; // brand-ok — external bookmaker catalog wire id
+    id?: string;
     slug?: string;
     fetcher?: string;
     fetcherType?: string;
@@ -266,9 +263,9 @@ async function main(): Promise<void> {
         `--local requires ${LOCAL_PACKAGE_DIR}/dist or public-catalog.json (run bookmakers:prepare-publish)`
       );
     }
-    const pkg = JSON.parse(await Bun.file(joinPath(LOCAL_PACKAGE_DIR, 'package.json')).text()) as {
-      version?: string;
-    };
+    const pkg = JSON.parse(
+      await Bun.file(joinPath(LOCAL_PACKAGE_DIR, 'package.json')).text()
+    ) as { version?: string };
     version = pkg.version ?? '0.4.0';
     checksum = '0'.repeat(64); // local bake — checksum filled on registry publish
   } else {
@@ -294,7 +291,11 @@ async function main(): Promise<void> {
     (module.default as Record<string, unknown> | undefined)?.BOOKMAKERS ??
     module.default ??
     module;
-  const payload = buildBookmakersBake(candidate as Record<string, unknown>, version, checksum);
+  const payload = buildBookmakersBake(
+    candidate as Record<string, unknown>,
+    version,
+    checksum
+  );
   if (useLocal) {
     payload.artifact.source = 'local-package';
   }

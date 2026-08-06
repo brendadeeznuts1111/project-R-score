@@ -34,7 +34,9 @@ import {
 /** Baked @factorywager/bookmakers registry mirror (SSOT: scripts/bake-bookmakers-board.ts). */
 export const BOOKMAKERS_REGISTRY_PATH = 'public/registry/bookmakers.json';
 
-export type { BookmakerRegistryEntry as BookmakerEntry } from '../lib/bookmakers/resolve.ts';
+export type {
+  BookmakerRegistryEntry as BookmakerEntry,
+} from '../lib/bookmakers/resolve.ts';
 
 export {
   loadBookmakerRegistry,

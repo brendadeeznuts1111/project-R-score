@@ -1,7 +1,4 @@
 #!/usr/bin/env bun
-// @see https://bun.com/reference/bun/argv — Bun.argv
-// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
-// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * Sync monorepo public catalog → deeplink package public-catalog.json + rebuild tarball.
@@ -15,7 +12,6 @@
  *   bun run factory:publish artifacts/deeplink-automation/packages/bookmakers/factorywager-bookmakers-0.4.0.tgz \
  *     --name @factorywager/bookmakers --version 0.4.0 --type library
  */
-// eslint-disable-next-line no-restricted-imports -- Bun has no recursive mkdir API for arbitrary paths
 import { mkdirSync } from 'node:fs';
 import { joinPath } from '../lib/path-bun.ts';
 
@@ -117,12 +113,8 @@ export type PublicBookmaker = (typeof PUBLIC_BOOKMAKERS)[keyof typeof PUBLIC_BOO
 
   console.log(`✓ ${catalogPath}`);
   console.log(`✓ ${tgzPath}`);
-  console.log(
-    `Next: bun run factory:publish ${tgzPath} --name @factorywager/bookmakers --version ${VERSION} --type library`
-  );
-  console.log(
-    `Then: bun lib/factory/cli.ts snapshot public/registry/registry.json && bun run bookmakers:bake`
-  );
+  console.log(`Next: bun run factory:publish ${tgzPath} --name @factorywager/bookmakers --version ${VERSION} --type library`);
+  console.log(`Then: bun lib/factory/cli.ts snapshot public/registry/registry.json && bun run bookmakers:bake`);
 }
 
 if (import.meta.main) {

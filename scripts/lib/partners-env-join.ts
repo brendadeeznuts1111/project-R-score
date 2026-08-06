@@ -1,5 +1,3 @@
-// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
-// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Join partners-ops + telegram-handshake + vault-map into an env-board plane.
  * Keys / presence only — never secret values or staging passwords.

@@ -1,5 +1,3 @@
-// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
-// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 function isJsonRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
