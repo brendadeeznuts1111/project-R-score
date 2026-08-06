@@ -5,10 +5,10 @@ Generated from pinned **bun-types** — top-level + nested namespace/class/**int
 | Field | Value |
 | --- | --- |
 | Schema | `factorywager/bun-types-inventory/v3` |
-| Generated | 2026-08-06T20:23:38.830Z |
+| Generated | 2026-08-06T20:31:42.870Z |
 | Runtime | Bun 1.3.14 (`0d9b296a`) |
 | bun-types | bun-types@1.4.0-tip.ed700c20 |
-| Types root | `/Users/nolarose/.grok/worktrees/nolarose-projects/lib-cleanup-grok/node_modules/bun-types` |
+| Types root | `/Users/nolarose/.grok/worktrees/nolarose-projects/2026-08-06-3e0e2535/node_modules/bun-types` |
 | Source files | `bun.d.ts`, `deprecated.d.ts`, `serve.d.ts`, `sql.d.ts`, `s3.d.ts`, `redis.d.ts`, `shell.d.ts`, `security.d.ts`, `wasm.d.ts`, `jsc.d.ts`, `ffi.d.ts`, `sqlite.d.ts`, `test.d.ts`, `bundle.d.ts` |
 | Mode | deep · interfaces · typeAliases · props |
 | Scan roots | `lib/`, `tools/`, `scripts/`, `tests/`, `config/` |
@@ -38,7 +38,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | interface | `Bun.ArchiveExtractOptions` | `Bun.ArchiveExtractOptions` | — | — | 0 | 1 | Options for extracting archive contents. | `bun.d.ts:9076` |
 | 0 | type | `Bun.ArchiveInput` | `Bun.ArchiveInput` | — | — | 0 | 1 | Input data for creating an archive. Can be: | `bun.d.ts:9030` |
 | 0 | interface | `Bun.ArchiveOptions` | `Bun.ArchiveOptions` | — | — | 0 | 1 | Options for creating an Archive instance. | `bun.d.ts:9055` |
-| 0 | const | `Bun.argv` | `Bun.argv: string[];` | — | — | 334 | 1 | The raw arguments passed to the process, including flags passed to Bun. If you want to easily read flags passed to your script, consider using `process.argv`… | `bun.d.ts:523` |
+| 0 | const | `Bun.argv` | `Bun.argv: string[];` | — | — | 333 | 1 | The raw arguments passed to the process, including flags passed to Bun. If you want to easily read flags passed to your script, consider using `process.argv`… | `bun.d.ts:523` |
 | 0 | class | `Bun.ArrayBufferSink` | `new Bun.ArrayBufferSink(…)` | — | — | 12 | 1 | Fast incremental writer that becomes an {@link ArrayBuffer} on end(). | `bun.d.ts:1912` |
 | 0 | type | `Bun.ArrayBufferView` | `Bun.ArrayBufferView` | — | — | 0 | 1 | — | `bun.d.ts:18` |
 | 0 | type | `Bun.ArrayType` | `Bun.ArrayType` | — | — | 0 | 1 | — | `sql.d.ts:15` |
@@ -67,7 +67,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | interface | `Bun.BunRegisterPlugin` | `Bun.BunRegisterPlugin` | — | — | 0 | 1 | Extend Bun's module resolution and loading behavior | `bun.d.ts:5767` |
 | 0 | interface | `Bun.BunRequest` | `Bun.BunRequest` | — | — | 2 | 1 | — | `serve.d.ts:816` |
 | 0 | interface | `Bun.CloseEventInit` | `Bun.CloseEventInit` | — | — | 0 | 1 | — | `bun.d.ts:109` |
-| 0 | function | `Bun.color` | `Bun.color( input: ColorInput, outputFormat?: /** * True color ANSI color string, for use in terminals * @example \x1b[38;2;100;200;200m */ \| "ansi" \| "ansi-16" ` | — | yes | 207 | 6 | Converts formats of colors | `bun.d.ts:4612` |
+| 0 | function | `Bun.color` | `Bun.color( input: ColorInput, outputFormat?: /** * True color ANSI color string, for use in terminals * @example \x1b[38;2;100;200;200m */ \| "ansi" \| "ansi-16" ` | — | yes | 208 | 6 | Converts formats of colors | `bun.d.ts:4612` |
 | 0 | type | `Bun.ColorInput` | `Bun.ColorInput` | — | — | 0 | 1 | Valid inputs for {@link color} | `bun.d.ts:4592` |
 | 0 | interface | `Bun.CompileBuildOptions` | `Bun.CompileBuildOptions` | — | — | 0 | 1 | — | `bun.d.ts:3064` |
 | 0 | type | `Bun.CompressionFormat` | `Bun.CompressionFormat` | — | — | 0 | 1 | Extends the standard web formats with `brotli` and `zstd` support. | `bun.d.ts:5220` |
@@ -84,7 +84,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | interface | `Bun.CronJob` | `Bun.CronJob` | — | — | 8 | 1 | A handle to an in-process cron job returned by {@link Bun.cron} when called with a callback. | `bun.d.ts:7594` |
 | 0 | type | `Bun.CronWithAutocomplete` | `Bun.CronWithAutocomplete` | — | — | 0 | 1 | A cron schedule: a 5-field expression (`minute hour day month weekday`) or a nickname. | `bun.d.ts:7565` |
 | 0 | class | `Bun.CryptoHasher` | `new Bun.CryptoHasher(…)` | — | — | 230 | 1 | Hardware-accelerated cryptographic hash functions | `bun.d.ts:4968` |
-| 0 | namespace | `Bun.CSRF` | `Bun.CSRF.*` | — | — | 15 | 1 | Generate and verify CSRF tokens | `bun.d.ts:2290` |
+| 0 | namespace | `Bun.CSRF` | `Bun.CSRF.*` | — | — | 14 | 1 | Generate and verify CSRF tokens | `bun.d.ts:2290` |
 | 0 | type | `Bun.CSRFAlgorithm` | `Bun.CSRFAlgorithm` | — | — | 0 | 1 | — | `bun.d.ts:2222` |
 | 0 | interface | `Bun.CSRFGenerateOptions` | `Bun.CSRFGenerateOptions` | — | — | 0 | 1 | — | `bun.d.ts:2224` |
 | 0 | interface | `Bun.CSRFVerifyOptions` | `Bun.CSRFVerifyOptions` | — | — | 0 | 1 | — | `bun.d.ts:2252` |
@@ -104,8 +104,8 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | const | `Bun.embeddedFiles` | `Bun.embeddedFiles: ReadonlyArray<Blob>;` | — | — | 1 | 1 | A list of files embedded into the standalone executable. Lexigraphically sorted by name. | `bun.d.ts:4149` |
 | 0 | const | `Bun.enableANSIColors` | `Bun.enableANSIColors: boolean;` | — | — | 14 | 1 | Are ANSI colors enabled for stdin and stdout? | `bun.d.ts:4776` |
 | 0 | type | `Bun.Encoding` | `Bun.Encoding` | — | — | 0 | 1 | — | `bun.d.ts:31` |
-| 0 | const | `Bun.env` | `Bun.env: Env & NodeJS.ProcessEnv & ImportMetaEnv;` | — | yes | 693 | 1 | The environment variables of the process | `bun.d.ts:518` |
-| 0 | function | `Bun.env` | `Bun.env(newEnv?: Record<string, string \| undefined> \| NodeJS.Dict<string> \| undefined): $;` | process.env | yes | 693 | 1 | Change the default environment variables for shells created by this instance. | `shell.d.ts:61` |
+| 0 | const | `Bun.env` | `Bun.env: Env & NodeJS.ProcessEnv & ImportMetaEnv;` | — | yes | 688 | 1 | The environment variables of the process | `bun.d.ts:518` |
+| 0 | function | `Bun.env` | `Bun.env(newEnv?: Record<string, string \| undefined> \| NodeJS.Dict<string> \| undefined): $;` | process.env | yes | 688 | 1 | Change the default environment variables for shells created by this instance. | `shell.d.ts:61` |
 | 0 | interface | `Bun.Env` | `Bun.Env` | — | — | 0 | 1 | — | `bun.d.ts:503` |
 | 0 | const | `Bun.Err` | `Bun.Err` | — | — | 0 | 4 | — | `bun.d.ts:7413` |
 | 0 | interface | `Bun.ErrorEventInit` | `Bun.ErrorEventInit` | — | — | 0 | 1 | — | `bun.d.ts:101` |
@@ -126,7 +126,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | var | `Bun.fetch` | `Bun.fetch: typeof globalThis.fetch;` | — | — | 8 | 1 | — | `bun.d.ts:4890` |
 | 0 | interface | `Bun.FetchEvent` | `Bun.FetchEvent` | — | — | 0 | 1 | — | `bun.d.ts:180` |
 | 0 | type | `Bun.FFIFunctionCallable` | `Bun.FFIFunctionCallable` | — | — | 0 | 1 | — | `bun.d.ts:5561` |
-| 0 | function | `Bun.file` | `Bun.file(path: string \| URL, options?: BlobPropertyBag): BunFile;` | — | yes | 2138 | 3 | [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) powered by the fastest system calls available for operating on files. | `bun.d.ts:4142` |
+| 0 | function | `Bun.file` | `Bun.file(path: string \| URL, options?: BlobPropertyBag): BunFile;` | — | yes | 2136 | 3 | [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) powered by the fastest system calls available for operating on files. | `bun.d.ts:4142` |
 | 0 | interface | `Bun.FileBlob` | `Bun.FileBlob` | — | — | 0 | 1 | — | `bun.d.ts:2097` |
 | 0 | interface | `Bun.FileSink` | `Bun.FileSink` | — | — | 0 | 1 | Fast incremental writer for files and pipes. | `s3.d.ts:7` |
 | 0 | class | `Bun.FileSystemRouter` | `new Bun.FileSystemRouter(…)` | — | — | 10 | 1 | — | `bun.d.ts:8015` |
@@ -207,7 +207,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | interface | `Bun.PluginConstraints` | `Bun.PluginConstraints` | — | — | 0 | 1 | — | `bun.d.ts:5411` |
 | 0 | const | `Bun.postgres` *(deprecated)* | `Bun.postgres: SQL;` | — | — | 0 | 1 | SQL client for PostgreSQL | `sql.d.ts:895` |
 | 0 | function | `Bun.randomUUIDv5` | `Bun.randomUUIDv5( name: string \| BufferSource, namespace: string \| BufferSource \| "dns" \| "url" \| "oid" \| "x500", /** * @default "hex" */ encoding?: "hex" \| "ba` | — | — | 0 | 2 | Generate a UUIDv5, which is a name-based UUID based on the SHA-1 hash of a namespace UUID and a name. | `bun.d.ts:9446` |
-| 0 | function | `Bun.randomUUIDv7` | `Bun.randomUUIDv7( /** * @default "hex" */ encoding?: "hex" \| "base64" \| "base64url", /** * @default Date.now() */ timestamp?: number \| Date, ): string;` | — | yes | 331 | 2 | Generate a UUIDv7, which is a sequential ID based on the current timestamp with a random component. | `bun.d.ts:9400` |
+| 0 | function | `Bun.randomUUIDv7` | `Bun.randomUUIDv7( /** * @default "hex" */ encoding?: "hex" \| "base64" \| "base64url", /** * @default Date.now() */ timestamp?: number \| Date, ): string;` | — | yes | 330 | 2 | Generate a UUIDv7, which is a sequential ID based on the current timestamp with a random component. | `bun.d.ts:9400` |
 | 0 | type | `Bun.ReadableIO` *(deprecated)* | `Bun.ReadableIO` | — | — | 0 | 1 | — | `deprecated.d.ts:154` |
 | 0 | type | `Bun.ReadableStreamController` | `Bun.ReadableStreamController` | — | — | 0 | 1 | — | `bun.d.ts:24` |
 | 0 | interface | `Bun.ReadableStreamDefaultReadManyResult` | `Bun.ReadableStreamDefaultReadManyResult` | — | — | 0 | 1 | — | `bun.d.ts:151` |
@@ -571,8 +571,8 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 1 | property | `Bun.CryptoHasher.hashInto` | `Bun.CryptoHasher.hashInto: NodeJS.TypedArray,` | — | — | 0 | 1 | — | `bun.d.ts:5035` |
 | 1 | property | `Bun.CryptoHasher.input` | `Bun.CryptoHasher.input: Bun.BlobOrStringOrBuffer,` | — | — | 0 | 2 | — | `bun.d.ts:5034` |
 | 1 | method | `Bun.CryptoHasher.update` | `Bun.CryptoHasher.update(input: Bun.BlobOrStringOrBuffer, inputEncoding?: import("crypto").Encoding): CryptoHasher;` | — | — | 0 | 1 | Update the hash with data | `bun.d.ts:4992` |
-| 1 | function | `Bun.CSRF.generate` | `Bun.CSRF.generate(secret?: string, options?: CSRFGenerateOptions): string;` | — | — | 19 | 1 | Generate a CSRF token. | `bun.d.ts:2297` |
-| 1 | function | `Bun.CSRF.verify` | `Bun.CSRF.verify(token: string, options?: CSRFVerifyOptions): boolean;` | — | — | 13 | 1 | Verify a CSRF token. | `bun.d.ts:2305` |
+| 1 | function | `Bun.CSRF.generate` | `Bun.CSRF.generate(secret?: string, options?: CSRFGenerateOptions): string;` | — | — | 16 | 1 | Generate a CSRF token. | `bun.d.ts:2297` |
+| 1 | function | `Bun.CSRF.verify` | `Bun.CSRF.verify(token: string, options?: CSRFVerifyOptions): boolean;` | — | — | 11 | 1 | Verify a CSRF token. | `bun.d.ts:2305` |
 | 1 | property | `Bun.CSRFGenerateOptions.algorithm` | `Bun.CSRFGenerateOptions.algorithm?: CSRFAlgorithm;` | "sha256" | — | 0 | 1 | The algorithm to use for the token. | `bun.d.ts:2241` |
 | 1 | property | `Bun.CSRFGenerateOptions.encoding` | `Bun.CSRFGenerateOptions.encoding?: "base64" \| "base64url" \| "hex";` | "base64url" | — | 0 | 1 | The encoding of the token. | `bun.d.ts:2235` |
 | 1 | property | `Bun.CSRFGenerateOptions.expiresIn` | `Bun.CSRFGenerateOptions.expiresIn?: number;` | 24 | — | 0 | 1 | The number of milliseconds until the token expires. 0 means the token never expires. | `bun.d.ts:2229` |

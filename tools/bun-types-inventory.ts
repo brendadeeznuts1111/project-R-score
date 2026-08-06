@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils — Bun utils surface (partial docs page)
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -29,8 +32,17 @@
  *
  * Scripts: bun:types-inventory · :write · :check
  */
-import { logTable } from '../lib/console-depth.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
+import {
+  printArtifacts,
+  printBanner,
+  printDone,
+  printHistogram,
+  printMap,
+  printPreviewTable,
+  printSection,
+  ttyDim,
+} from './lib/bun-types-tty.ts';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -171,7 +183,9 @@ async function readText(path: string): Promise<string> {
   return Bun.file(path).text();
 }
 
-export async function readCatalogBunTypesVersion(repoRoot: string = REPO_ROOT): Promise<string | null> {
+export async function readCatalogBunTypesVersion(
+  repoRoot: string = REPO_ROOT
+): Promise<string | null> {
   const pkgPath = joinPath(repoRoot, 'package.json');
   if (!(await pathExists(pkgPath))) return null;
   try {
@@ -201,7 +215,7 @@ export async function resolveBunTypesRoot(repoRoot: string = REPO_ROOT): Promise
   const wantVersion = await readCatalogBunTypesVersion(repoRoot);
 
   const tryDir = async (
-    dir: string,
+    dir: string
   ): Promise<{ root: string; version: string; packageName: string } | null> => {
     const pkgPath = joinPath(dir, 'package.json');
     const dts = joinPath(dir, 'bun.d.ts');
@@ -243,7 +257,7 @@ export async function resolveBunTypesRoot(repoRoot: string = REPO_ROOT): Promise
   }
   if (hits.length === 0) {
     throw new Error(
-      `bun-types not found. Tried:\n${tried.map(t => `  - ${t}`).join('\n')}\nRun bun install.`,
+      `bun-types not found. Tried:\n${tried.map(t => `  - ${t}`).join('\n')}\nRun bun install.`
     );
   }
   if (wantVersion) {
@@ -314,8 +328,7 @@ const STATIC_METHOD_RE = /^(?:export\s+)?static\s+(?:async\s+)?([A-Za-z_][A-Za-z
 const INSTANCE_METHOD_RE =
   /^(?:export\s+)?(?:async\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?:<[^>]*>)?\s*\(/;
 /** Interface/class property: name: Type or name?: Type (not call signatures) */
-const PROPERTY_RE =
-  /^(?:export\s+)?(?:readonly\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(\?)?\s*:\s*(?!\()/;
+const PROPERTY_RE = /^(?:export\s+)?(?:readonly\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(\?)?\s*:\s*(?!\()/;
 
 const SKIP_METHOD_NAMES = new Set([
   'if',
@@ -374,10 +387,7 @@ const SKIP_METHOD_NAMES = new Set([
 ]);
 
 /** Scopes that nest children in deep mode (type aliases need object-body check). */
-function isNestingKind(
-  kind: string,
-  opts: { interfaces: boolean; typeAliases: boolean },
-): boolean {
+function isNestingKind(kind: string, opts: { interfaces: boolean; typeAliases: boolean }): boolean {
   if (kind === 'namespace' || kind === 'class') return true;
   if (kind === 'interface' && opts.interfaces) return true;
   if (kind === 'type' && opts.typeAliases) return true;
@@ -410,7 +420,7 @@ export function stripAngleGenerics(s: string): string {
 export function typeAliasOpensObjectBody(
   trimmed: string,
   lines: string[],
-  lineIndex: number,
+  lineIndex: number
 ): boolean {
   if (!/^(?:export\s+)?type\s+/.test(trimmed)) return false;
   let buf = trimmed;
@@ -433,7 +443,7 @@ export function typeAliasOpensObjectBody(
     buf += ' ' + next;
   }
   return /^(?:export\s+)?type\s+[A-Za-z_][\w]*\s*=\s*\{/.test(
-    stripAngleGenerics(buf.replace(/\s+/g, ' ').trim()),
+    stripAngleGenerics(buf.replace(/\s+/g, ' ').trim())
   );
 }
 
@@ -458,7 +468,7 @@ function formFor(
   setting: string,
   rest: string,
   lines: string[],
-  lineIndex: number,
+  lineIndex: number
 ): string {
   if (kind === 'function' || kind === 'method') {
     let sig = rest.trim();
@@ -486,7 +496,8 @@ function formFor(
   if (kind === 'interface' || kind === 'type') return setting;
   if (kind === 'const' || kind === 'var' || kind === 'property') {
     const t = rest.trim();
-    if (t.startsWith(':') || t.startsWith('?:')) return `${setting}${t.split('=')[0]!.trim()}`.slice(0, 140);
+    if (t.startsWith(':') || t.startsWith('?:'))
+      return `${setting}${t.split('=')[0]!.trim()}`.slice(0, 140);
     return setting;
   }
   return setting;
@@ -529,7 +540,7 @@ export type ParseDtsOpts = {
 export function parseDtsFile(
   text: string,
   sourceRel: string,
-  opts: ParseDtsOpts = {},
+  opts: ParseDtsOpts = {}
 ): RawMember[] {
   const shallow = opts.shallow === true;
   const interfaces = opts.interfaces !== false && !shallow;
@@ -651,8 +662,7 @@ export function parseDtsFile(
           if (!trimmed.startsWith('[') && !trimmed.startsWith('<')) {
             const staticM = trimmed.match(STATIC_METHOD_RE);
             const instM =
-              !staticM &&
-              (top.kind === 'class' || top.kind === 'interface' || top.kind === 'type')
+              !staticM && (top.kind === 'class' || top.kind === 'interface' || top.kind === 'type')
                 ? trimmed.match(INSTANCE_METHOD_RE)
                 : null;
             if (staticM || instM) {
@@ -746,11 +756,9 @@ export function parseBunModuleDts(
     interfaces?: boolean;
     properties?: boolean;
     typeAliases?: boolean;
-  } = {},
+  } = {}
 ): RawMember[] {
-  const wrapped = text.includes('declare module')
-    ? text
-    : `declare module "bun" {\n${text}\n}\n`;
+  const wrapped = text.includes('declare module') ? text : `declare module "bun" {\n${text}\n}\n`;
   return parseDtsFile(wrapped, sourceRel, {
     deprecatedFile: opts.deprecated,
     shallow: opts.shallow,
@@ -764,13 +772,15 @@ export function parseBunModuleDts(
 // Tip vs pin
 // ---------------------------------------------------------------------------
 
-export async function resolveTipTypesRoot(): Promise<{ root: string; revision: string | null } | null> {
+export async function resolveTipTypesRoot(): Promise<{
+  root: string;
+  revision: string | null;
+} | null> {
   const env = Bun.env.BUN_TYPES_TIP;
   const home = Bun.env.HOME ?? '';
-  const candidates = [
-    env,
-    home ? joinPath(home, 'bun', 'packages', 'bun-types') : null,
-  ].filter(Boolean) as string[];
+  const candidates = [env, home ? joinPath(home, 'bun', 'packages', 'bun-types') : null].filter(
+    Boolean
+  ) as string[];
   for (const root of candidates) {
     if (await pathExists(joinPath(root, 'bun.d.ts'))) {
       let revision: string | null = null;
@@ -796,7 +806,7 @@ export async function computeTipDiff(
   pinMembers: RawMember[],
   tipRoot: string,
   tipRevision: string | null,
-  parseOpts: ParseDtsOpts,
+  parseOpts: ParseDtsOpts
 ): Promise<TipDiff> {
   const tipRaw: RawMember[] = [];
   for (const f of INVENTORY_DTS_FILES) {
@@ -842,7 +852,7 @@ export function agentsMapHits(haystack: string, setting: string, leaf: string): 
   if (haystack.includes(setting)) return true;
   // Bun.X leaf for top-level
   if (setting.startsWith('Bun.') && haystack.includes(`Bun.${leaf}`)) {
-    // only exact-ish: avoid Bun.spawn matching Bun.spawnSync via includes? 
+    // only exact-ish: avoid Bun.spawn matching Bun.spawnSync via includes?
     // "Bun.spawn" is contained in "Bun.spawnSync" — use word boundary after
     const re = new RegExp(`Bun\\.${leaf}(?![A-Za-z0-9_])`);
     if (re.test(haystack)) return true;
@@ -857,7 +867,7 @@ export function agentsMapHits(haystack: string, setting: string, leaf: string): 
 export async function countCallSitesDeep(
   repoRoot: string,
   settings: string[],
-  scanRoots: string[],
+  scanRoots: string[]
 ): Promise<Map<string, number>> {
   const counts = new Map<string, number>();
   for (const s of settings) counts.set(s, 0);
@@ -903,7 +913,7 @@ export async function countCallSitesDeep(
           const leaf = s.slice(s.indexOf('.') + 1);
           if (!leaf || leaf.includes('.')) continue;
           const re = new RegExp(
-            `import\\s*\\{[^}]*\\b${leaf}\\b[^}]*\\}\\s*from\\s*['"]${mod.replace(':', '\\:')}['"]`,
+            `import\\s*\\{[^}]*\\b${leaf}\\b[^}]*\\}\\s*from\\s*['"]${mod.replace(':', '\\:')}['"]`
           );
           if (re.test(text)) counts.set(s, (counts.get(s) ?? 0) + 1);
           // bare serialize( after import is too noisy — skip
@@ -915,7 +925,10 @@ export async function countCallSitesDeep(
           const mod = m[4]!;
           if (named) {
             for (const spec of named.split(',')) {
-              const id = spec.trim().split(/\s+as\s+/)[0]!.trim();
+              const id = spec
+                .trim()
+                .split(/\s+as\s+/)[0]!
+                .trim();
               if (!id) continue;
               // map to Bun.id for module bun, else mod.id
               const setting = mod === 'bun' ? `Bun.${id}` : `${mod}.${id}`;
@@ -967,7 +980,7 @@ export async function buildInventory(opts: {
       ...parseDtsFile(text, f, {
         ...parseOpts,
         deprecatedFile: f === 'deprecated.d.ts',
-      }),
+      })
     );
   }
 
@@ -1004,10 +1017,7 @@ export async function buildInventory(opts: {
   });
 
   const haystack = await loadAgentsMapHaystack(joinPath(repoRoot, 'AGENTS.md'));
-  const scanRoots = [
-    ...DEFAULT_SCAN_ROOTS,
-    ...(opts.fullScan ? FULL_SCAN_EXTRA : []),
-  ].map(String);
+  const scanRoots = [...DEFAULT_SCAN_ROOTS, ...(opts.fullScan ? FULL_SCAN_EXTRA : [])].map(String);
 
   const counted = opts.countSites !== false;
   let counts = new Map<string, number>();
@@ -1015,7 +1025,7 @@ export async function buildInventory(opts: {
     counts = await countCallSitesDeep(
       repoRoot,
       members.map(m => m.setting),
-      scanRoots,
+      scanRoots
     );
   }
 
@@ -1105,25 +1115,27 @@ export function renderMarkdown(inv: InventoryResult): string {
   lines.push('# bun-types inventory (deep v3)');
   lines.push('');
   lines.push(
-    'Generated from pinned **bun-types** — top-level + nested namespace/class/**interface**/**type X = {…}** methods & properties + satellite modules. Not the docs-only utils page.',
+    'Generated from pinned **bun-types** — top-level + nested namespace/class/**interface**/**type X = {…}** methods & properties + satellite modules. Not the docs-only utils page.'
   );
   lines.push('');
   lines.push('| Field | Value |');
   lines.push('| --- | --- |');
   lines.push(`| Schema | \`${inv.schema}\` |`);
   lines.push(`| Generated | ${inv.generated} |`);
-  lines.push(`| Runtime | Bun ${inv.runtime.bunVersion} (\`${inv.runtime.bunRevision.slice(0, 8)}\`) |`);
+  lines.push(
+    `| Runtime | Bun ${inv.runtime.bunVersion} (\`${inv.runtime.bunRevision.slice(0, 8)}\`) |`
+  );
   lines.push(`| bun-types | ${inv.types.package}@${inv.types.version} |`);
   lines.push(`| Types root | \`${inv.types.root}\` |`);
   lines.push(`| Source files | ${inv.types.files.map(f => `\`${f}\``).join(', ')} |`);
   lines.push(
-    `| Mode | ${inv.mode.shallow ? 'shallow' : 'deep'}${inv.mode.interfaces ? ' · interfaces' : ''}${inv.mode.typeAliases ? ' · typeAliases' : ''}${inv.mode.properties ? ' · props' : ''}${inv.mode.moduleFilter ? ` · module=${inv.mode.moduleFilter}` : ''} |`,
+    `| Mode | ${inv.mode.shallow ? 'shallow' : 'deep'}${inv.mode.interfaces ? ' · interfaces' : ''}${inv.mode.typeAliases ? ' · typeAliases' : ''}${inv.mode.properties ? ' · props' : ''}${inv.mode.moduleFilter ? ` · module=${inv.mode.moduleFilter}` : ''} |`
   );
   lines.push(
-    `| Scan roots | ${inv.scan.roots.map(r => `\`${r}/\``).join(', ')}${inv.scan.counted ? '' : ' *(counts skipped)*'} |`,
+    `| Scan roots | ${inv.scan.roots.map(r => `\`${r}/\``).join(', ')}${inv.scan.counted ? '' : ' *(counts skipped)*'} |`
   );
   lines.push(
-    `| Total members | **${inv.summary.total}** (top **${inv.summary.topLevel}** · nested **${inv.summary.nested}** · maxDepth **${inv.summary.maxDepth}**) |`,
+    `| Total members | **${inv.summary.total}** (top **${inv.summary.topLevel}** · nested **${inv.summary.nested}** · maxDepth **${inv.summary.maxDepth}**) |`
   );
   const depthParts = Object.entries(inv.summary.byDepth)
     .sort((a, b) => Number(a[0]) - Number(b[0]))
@@ -1139,17 +1151,17 @@ export function renderMarkdown(inv: InventoryResult): string {
   lines.push(`| By module | ${modParts.join(' · ')} |`);
   lines.push(`| AGENTS map hits | ${inv.summary.agentsMapHits} / ${inv.summary.total} |`);
   lines.push(
-    `| Call sites > 0 | ${inv.summary.withCallSites} · zero ${inv.summary.zeroCallSites} |`,
+    `| Call sites > 0 | ${inv.summary.withCallSites} · zero ${inv.summary.zeroCallSites} |`
   );
   if (inv.tipDiff) {
     lines.push(
-      `| Tip diff | tip \`${inv.tipDiff.tipRevision ?? '?'}\` · shared **${inv.tipDiff.shared}** · pin-only **${inv.tipDiff.pinOnly.length}** · tip-only **${inv.tipDiff.tipOnly.length}** |`,
+      `| Tip diff | tip \`${inv.tipDiff.tipRevision ?? '?'}\` · shared **${inv.tipDiff.shared}** · pin-only **${inv.tipDiff.pinOnly.length}** · tip-only **${inv.tipDiff.tipOnly.length}** |`
     );
     lines.push(`| Tip root | \`${inv.tipDiff.tipRoot}\` |`);
   }
   lines.push('');
   lines.push(
-    'Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inventory:check` · flags: `--shallow` · `--no-interfaces` · `--no-type-aliases` · `--no-props` · `--tip-diff`',
+    'Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inventory:check` · flags: `--shallow` · `--no-interfaces` · `--no-type-aliases` · `--no-props` · `--tip-diff`'
   );
   lines.push('');
 
@@ -1160,14 +1172,16 @@ export function renderMarkdown(inv: InventoryResult): string {
       lines.push(`### Tip-only (${inv.tipDiff.tipOnly.length})`);
       lines.push('');
       for (const s of inv.tipDiff.tipOnly.slice(0, 80)) lines.push(`- \`${s}\``);
-      if (inv.tipDiff.tipOnly.length > 80) lines.push(`- … +${inv.tipDiff.tipOnly.length - 80} more`);
+      if (inv.tipDiff.tipOnly.length > 80)
+        lines.push(`- … +${inv.tipDiff.tipOnly.length - 80} more`);
       lines.push('');
     }
     if (inv.tipDiff.pinOnly.length) {
       lines.push(`### Pin-only (${inv.tipDiff.pinOnly.length})`);
       lines.push('');
       for (const s of inv.tipDiff.pinOnly.slice(0, 80)) lines.push(`- \`${s}\``);
-      if (inv.tipDiff.pinOnly.length > 80) lines.push(`- … +${inv.tipDiff.pinOnly.length - 80} more`);
+      if (inv.tipDiff.pinOnly.length > 80)
+        lines.push(`- … +${inv.tipDiff.pinOnly.length - 80} more`);
       lines.push('');
     }
   }
@@ -1210,7 +1224,7 @@ function memberTable(members: InventoryMember[]): string {
   ];
   for (const m of members) {
     rows.push(
-      `| ${m.depth} | ${m.kind} | \`${mdEscape(m.setting)}\`${m.deprecated ? ' *(deprecated)*' : ''} | \`${mdEscape(m.form)}\` | ${mdEscape(m.default)} | ${m.agentsMap ? 'yes' : '—'} | ${m.callSites < 0 ? '—' : m.callSites} | ${m.overloads} | ${mdEscape(m.notes)} | \`${m.source}:${m.line}\` |`,
+      `| ${m.depth} | ${m.kind} | \`${mdEscape(m.setting)}\`${m.deprecated ? ' *(deprecated)*' : ''} | \`${mdEscape(m.form)}\` | ${mdEscape(m.default)} | ${m.agentsMap ? 'yes' : '—'} | ${m.callSites < 0 ? '—' : m.callSites} | ${m.overloads} | ${mdEscape(m.notes)} | \`${m.source}:${m.line}\` |`
     );
   }
   return rows.join('\n');
@@ -1277,6 +1291,7 @@ function parseCli(argv: string[]) {
     noProps: argv.includes('--no-props'),
     noTypeAliases: argv.includes('--no-type-aliases'),
     tipDiff: argv.includes('--tip-diff'),
+    verbose: argv.includes('--verbose') || argv.includes('-v'),
     moduleFilter,
     kindFilter,
     help: argv.includes('--help') || argv.includes('-h'),
@@ -1292,6 +1307,7 @@ Usage:
   --write           Write tools/bun-types-inventory.json + .md
   --check           Exit 1 if committed JSON stable payload differs
   --json            Print full inventory JSON
+  --verbose / -v    Larger preview table (default is map + short sample)
   --no-counts       Skip repo call-site walk
   --full-scan       Also scan packages/ and projects/
   --shallow         Top-level only
@@ -1327,76 +1343,84 @@ async function main(): Promise<void> {
   if (args.json) {
     process.stdout.write(`${JSON.stringify(inv, null, 2)}\n`);
   } else {
-    console.log(
-      `bun-types ${inv.types.package}@${inv.types.version} · runtime ${inv.runtime.bunVersion} · ${inv.summary.total} members (top ${inv.summary.topLevel} · nested ${inv.summary.nested} · maxDepth ${inv.summary.maxDepth})`,
+    printBanner('bun-types-inventory', 'deep surface map from pinned bun-types');
+    printSection('Pin map');
+    printMap([
+      {
+        key: 'bun-types',
+        value: `${inv.types.package}@${inv.types.version}`,
+      },
+      { key: 'runtime', value: `Bun ${inv.runtime.bunVersion}` },
+      { key: 'types root', value: inv.types.root },
+      {
+        key: 'mode',
+        value: `${inv.mode.shallow ? 'shallow' : 'deep'}${inv.mode.interfaces ? ' · iface' : ''}${inv.mode.typeAliases ? ' · typeAlias' : ''}${inv.mode.properties ? ' · props' : ''}${inv.scan.counted ? ' · counts' : ''}`,
+      },
+      {
+        key: 'members',
+        value: `${inv.summary.total}`,
+        note: `top ${inv.summary.topLevel} · nested ${inv.summary.nested} · maxDepth ${inv.summary.maxDepth}`,
+      },
+      {
+        key: 'agentsMap',
+        value: `${inv.summary.agentsMapHits}/${inv.summary.total}`,
+      },
+      {
+        key: 'callSites>0',
+        value: String(inv.summary.withCallSites),
+        note: `zero ${inv.summary.zeroCallSites}`,
+      },
+    ]);
+
+    printHistogram('Module map', Object.entries(inv.summary.byModule) as Array<[string, number]>);
+    printHistogram(
+      'Kind map',
+      Object.entries(inv.summary.byKind).map(([k, n]) => [k, n ?? 0] as [string, number])
     );
-    console.log(`root: ${inv.types.root}`);
-    console.log(
-      `mode: ${inv.mode.shallow ? 'shallow' : 'deep'}${inv.mode.interfaces ? '+iface' : ''}${inv.mode.typeAliases ? '+type' : ''}${inv.mode.properties ? '+props' : ''}`,
-    );
-    console.log(
-      `modules: ${Object.entries(inv.summary.byModule)
-        .map(([k, n]) => `${k}=${n}`)
-        .join(' · ')}`,
-    );
-    console.log(
-      `depth: ${Object.entries(inv.summary.byDepth)
+    printHistogram(
+      'Depth map',
+      Object.entries(inv.summary.byDepth)
         .sort((a, b) => Number(a[0]) - Number(b[0]))
-        .map(([d, n]) => `d${d}=${n}`)
-        .join(' · ')}`,
+        .map(([d, n]) => [`d${d}`, n] as [string, number])
     );
-    console.log(
-      `agentsMap ${inv.summary.agentsMapHits}/${inv.summary.total} · callSites>0 ${inv.summary.withCallSites} · zero ${inv.summary.zeroCallSites}`,
-    );
+
     if (inv.tipDiff) {
-      console.log(
-        `tipDiff: shared ${inv.tipDiff.shared} · pin-only ${inv.tipDiff.pinOnly.length} · tip-only ${inv.tipDiff.tipOnly.length} (${inv.tipDiff.tipRevision ?? '?'})`,
-      );
+      printSection('Tip-diff (inline)');
+      printMap([
+        { key: 'shared', value: String(inv.tipDiff.shared) },
+        { key: 'tip-only', value: String(inv.tipDiff.tipOnly.length) },
+        { key: 'pin-only', value: String(inv.tipDiff.pinOnly.length) },
+        { key: 'tip rev', value: inv.tipDiff.tipRevision ?? '?' },
+      ]);
     }
-    // Prefer high-signal nested API methods for TTY preview
-    const apiNested = inv.members.filter(
-      m =>
-        m.depth > 0 &&
-        (m.kind === 'method' || m.kind === 'function') &&
-        (m.setting.includes('Server') ||
-          m.setting.includes('inspect') ||
-          m.setting.includes('peek') ||
-          m.setting.includes('semver') ||
-          m.setting.includes('dns') ||
-          m.setting.includes('SQL') ||
-          m.setting.includes('Glob') ||
-          m.setting.includes('Terminal')),
-    );
-    const preview = inv.mode.shallow
-      ? inv.members
-      : [
-          ...inv.members.filter(m => m.depth === 0 && m.module === 'bun' && m.kind !== 'interface' && m.kind !== 'type').slice(0, 50),
-          ...apiNested.slice(0, 40),
-          ...inv.members.filter(m => m.module !== 'bun' && m.depth === 0).slice(0, 25),
-        ];
-    logTable(
-      preview.map(m => ({
-        d: String(m.depth),
+
+    // Compact high-signal sample (map-first: short table)
+    const sampleLimit = args.verbose ? 40 : 12;
+    const highSignal = inv.members
+      .filter(
+        m => m.callSites > 0 && (m.kind === 'function' || m.kind === 'class' || m.kind === 'const')
+      )
+      .sort((a, b) => b.callSites - a.callSites)
+      .slice(0, sampleLimit);
+    printSection(args.verbose ? 'Preview (verbose)' : 'Top callSites (sample)');
+    printPreviewTable(
+      highSignal.map(m => ({
         kind: m.kind,
         setting: m.setting,
-        agentsMap: m.agentsMap ? 'yes' : '',
-        callSites: m.callSites < 0 ? '—' : String(m.callSites),
-        notes: m.notes.slice(0, 48),
+        sites: String(m.callSites),
+        notes: m.notes.slice(0, 40),
       })),
-      ['d', 'kind', 'setting', 'agentsMap', 'callSites', 'notes'],
-      { colors: true },
+      ['kind', 'setting', 'sites', 'notes'],
+      Math.max(0, inv.summary.withCallSites - highSignal.length)
     );
-    if (!inv.mode.shallow && inv.members.length > preview.length) {
-      console.log(`… ${inv.members.length - preview.length} more rows (see --write MD/JSON)`);
-    }
+    console.info(ttyDim('  full table: --verbose · artifacts: --write · machine: --json'));
   }
 
   if (args.write) {
     await Bun.write(OUT_JSON, `${JSON.stringify(inv, null, 2)}\n`);
     await Bun.write(OUT_MD, renderMarkdown(inv));
     if (!args.json) {
-      console.log(`\nwrote ${OUT_JSON}`);
-      console.log(`wrote ${OUT_MD}`);
+      printArtifacts([OUT_JSON, OUT_MD]);
     }
   }
 
@@ -1417,7 +1441,7 @@ async function main(): Promise<void> {
       for (const k of old) if (!cur.has(k)) console.error(`  - ${k}`);
       process.exit(1);
     }
-    if (!args.json) console.log('✓ bun-types-inventory.json up to date');
+    if (!args.json) printDone(true, 'bun-types-inventory.json up to date');
   }
 }
 

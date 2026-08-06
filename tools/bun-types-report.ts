@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/reference/bun/argv — Bun.argv
 /**
@@ -18,6 +19,13 @@
  * Script: bun run bun:types-report
  */
 import { resolvePath } from '../lib/path-bun.ts';
+import {
+  printArtifacts,
+  printBanner,
+  printDone,
+  printPipeline,
+  printSection,
+} from './lib/bun-types-tty.ts';
 
 const REPO_ROOT = resolvePath(import.meta.dir, '..');
 const bunBin = process.execPath.includes('bun') ? process.execPath : 'bun';
@@ -34,7 +42,7 @@ function parseCli(argv: string[]) {
 }
 
 async function run(label: string, args: string[]): Promise<number> {
-  console.info(`\n== bun:types-report · ${label} ==`);
+  printSection(`Step · ${label}`);
   const proc = Bun.spawn([bunBin, ...args], {
     cwd: REPO_ROOT,
     stdout: 'inherit',
@@ -59,6 +67,16 @@ async function main(): Promise<void> {
     return;
   }
 
+  printBanner('bun-types-report', 'local authority stack · tip map + usage map');
+  printPipeline([
+    { id: 'tip-diff', label: 'Pin vs tip (+ changelog)', status: 'run' },
+    {
+      id: 'usage',
+      label: 'Codebase type-like usage',
+      status: args.skipUsage ? 'skip' : 'pending',
+    },
+  ]);
+
   const tipArgs = ['tools/bun-types-tip-diff.ts'];
   if (args.preferLocal) tipArgs.push('--prefer-local');
   if (args.noFetch) tipArgs.push('--no-fetch');
@@ -66,17 +84,32 @@ async function main(): Promise<void> {
   if (args.skipChangelog) tipArgs.push('--no-changelog');
 
   const tipCode = await run('tip-diff + changelog', tipArgs);
-  if (tipCode !== 0) process.exit(tipCode);
+  if (tipCode !== 0) {
+    printDone(false, 'tip-diff failed');
+    process.exit(tipCode);
+  }
 
   if (!args.skipUsage) {
     const usageCode = await run('usage', ['tools/bun-types-usage.ts']);
-    if (usageCode !== 0) process.exit(usageCode);
+    if (usageCode !== 0) {
+      printDone(false, 'usage scan failed');
+      process.exit(usageCode);
+    }
   }
 
-  console.info('\n✓ bun:types-report complete');
-  console.info('  .cache/bun-types-tip-diff/report.md');
-  console.info('  .cache/bun-types-changelog/CHANGELOG.md');
-  if (!args.skipUsage) console.info('  .cache/bun-types-usage/report.md');
+  printPipeline([
+    { id: 'tip-diff', label: 'Pin vs tip (+ changelog)', status: 'ok' },
+    {
+      id: 'usage',
+      label: 'Codebase type-like usage',
+      status: args.skipUsage ? 'skip' : 'ok',
+    },
+  ]);
+
+  const arts = ['.cache/bun-types-tip-diff/report.md', '.cache/bun-types-changelog/CHANGELOG.md'];
+  if (!args.skipUsage) arts.push('.cache/bun-types-usage/report.md');
+  printArtifacts(arts);
+  printDone(true, 'bun:types-report complete');
 }
 
 if (import.meta.main) {

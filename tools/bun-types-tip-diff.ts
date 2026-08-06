@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -28,13 +31,8 @@
  *   bun run bun:types-inventory:tip-diff:strict
  *   bun run bun:types-report                        # tip-diff + usage + changelog
  */
-import { logTable } from '../lib/console-depth.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
-import {
-  diffInventories,
-  renderChangelogMd,
-  type ChangelogResult,
-} from './bun-types-changelog.ts';
+import { diffInventories, renderChangelogMd, type ChangelogResult } from './bun-types-changelog.ts';
 import {
   INVENTORY_DTS_FILES,
   computeTipDiff,
@@ -43,6 +41,15 @@ import {
   type TipDiff,
 } from './bun-types-inventory.ts';
 import { BUN_TYPES_TIP_CACHE, fetchUpstreamBunTypes } from './bun-types-tip-fetch.ts';
+import {
+  printArtifacts,
+  printBanner,
+  printDone,
+  printMap,
+  printPreviewTable,
+  printSection,
+  verdictBadge,
+} from './lib/bun-types-tty.ts';
 
 const TOOLS_DIR = resolvePath(import.meta.dir);
 const REPO_ROOT = resolvePath(TOOLS_DIR, '..');
@@ -97,10 +104,12 @@ async function gitText(cwd: string, args: string[]): Promise<{ ok: boolean; text
 /** Re-export for callers that imported fetch from tip-diff. */
 export { fetchUpstreamBunTypes } from './bun-types-tip-fetch.ts';
 
-async function resolveTipSource(opts: {
-  noFetch: boolean;
-  preferLocal: boolean;
-}): Promise<{ root: string; revision: string | null; source: Report['tip']['source']; fetched: boolean }> {
+async function resolveTipSource(opts: { noFetch: boolean; preferLocal: boolean }): Promise<{
+  root: string;
+  revision: string | null;
+  source: Report['tip']['source'];
+  fetched: boolean;
+}> {
   const envTip = Bun.env.BUN_TYPES_TIP?.trim();
   if (envTip && (await pathExists(joinPath(envTip, 'bun.d.ts')))) {
     let revision: string | null = null;
@@ -112,11 +121,7 @@ async function resolveTipSource(opts: {
 
   const home = Bun.env.HOME ?? '';
   const localClone = home ? joinPath(home, 'bun', 'packages', 'bun-types') : '';
-  if (
-    opts.preferLocal &&
-    localClone &&
-    (await pathExists(joinPath(localClone, 'bun.d.ts')))
-  ) {
+  if (opts.preferLocal && localClone && (await pathExists(joinPath(localClone, 'bun.d.ts')))) {
     let revision: string | null = null;
     const rev = await gitText(joinPath(home, 'bun'), ['rev-parse', '--short', 'HEAD']);
     if (rev.ok) revision = rev.text;
@@ -131,7 +136,7 @@ async function resolveTipSource(opts: {
       return { root: localClone, revision, source: 'local-clone', fetched: false };
     }
     throw new Error(
-      'No tip types available. Unset --no-fetch, set BUN_TYPES_TIP, or clone oven-sh/bun to ~/bun.',
+      'No tip types available. Unset --no-fetch, set BUN_TYPES_TIP, or clone oven-sh/bun to ~/bun.'
     );
   }
 
@@ -195,7 +200,7 @@ function renderReportMd(report: Report): string {
     lines.push('## Changelog (wired Phase 5)');
     lines.push('');
     lines.push(
-      `+${c.added} −${c.removed} ~${c.changed} · full narrative: \`.cache/bun-types-changelog/CHANGELOG.md\``,
+      `+${c.added} −${c.removed} ~${c.changed} · full narrative: \`.cache/bun-types-changelog/CHANGELOG.md\``
     );
     lines.push('');
   }
@@ -234,7 +239,7 @@ function parseCli(argv: string[]) {
 
 async function loadMembersFromTypesRoot(
   typesRoot: string,
-  opts: { deprecatedFile?: (f: string) => boolean } = {},
+  opts: { deprecatedFile?: (f: string) => boolean } = {}
 ) {
   const raw = [];
   for (const f of INVENTORY_DTS_FILES) {
@@ -247,7 +252,7 @@ async function loadMembersFromTypesRoot(
         properties: true,
         typeAliases: true,
         deprecatedFile: opts.deprecatedFile?.(f) ?? f === 'deprecated.d.ts',
-      }),
+      })
     );
   }
   const byKey = new Map<string, (typeof raw)[0]>();
@@ -314,12 +319,17 @@ async function main(): Promise<void> {
     if (args.strict) verdict = 'fail';
     else if (verdict === 'ok') verdict = 'warn';
   } else if (diff.tipOnly.length > 0) {
-    reasons.push(`tip-only ${diff.tipOnly.length} (new upstream surface; under max ${args.maxTipOnly})`);
+    reasons.push(
+      `tip-only ${diff.tipOnly.length} (new upstream surface; under max ${args.maxTipOnly})`
+    );
     if (verdict === 'ok') verdict = 'warn';
   }
-  if (changelog && (changelog.summary.added || changelog.summary.removed || changelog.summary.changed)) {
+  if (
+    changelog &&
+    (changelog.summary.added || changelog.summary.removed || changelog.summary.changed)
+  ) {
     reasons.push(
-      `changelog +${changelog.summary.added} −${changelog.summary.removed} ~${changelog.summary.changed}`,
+      `changelog +${changelog.summary.added} −${changelog.summary.removed} ~${changelog.summary.changed}`
     );
   }
 
@@ -360,37 +370,54 @@ async function main(): Promise<void> {
   if (args.json) {
     process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
   } else {
-    console.log(
-      `tip-diff · pin ${report.pin.package}@${report.pin.version} vs tip ${report.tip.revision ?? '?'} (${report.tip.source})`,
-    );
-    console.log(
-      `shared ${diff.shared} · tip-only ${diff.tipOnly.length} · pin-only ${diff.pinOnly.length} · verdict ${report.verdict}`,
-    );
+    printBanner('bun-types-tip-diff', 'pin vs tip surface map (local authority)');
+    printSection('Map');
+    printMap([
+      {
+        key: 'pin',
+        value: `${report.pin.package}@${report.pin.version}`,
+      },
+      {
+        key: 'tip',
+        value: `${report.tip.revision ?? '?'}`,
+        note: report.tip.source,
+      },
+      { key: 'shared', value: String(diff.shared) },
+      { key: 'tip-only', value: String(diff.tipOnly.length) },
+      { key: 'pin-only', value: String(diff.pinOnly.length) },
+      { key: 'verdict', value: verdictBadge(report.verdict) },
+    ]);
     if (changelog) {
-      console.log(
-        `changelog +${changelog.summary.added} −${changelog.summary.removed} ~${changelog.summary.changed}`,
-      );
+      printSection('Changelog map');
+      printMap([
+        { key: 'added', value: `+${changelog.summary.added}` },
+        { key: 'removed', value: `−${changelog.summary.removed}` },
+        { key: 'changed', value: `~${changelog.summary.changed}` },
+        { key: 'unchanged', value: String(changelog.summary.unchanged) },
+      ]);
     }
     if (diff.tipOnly.length) {
-      logTable(
-        diff.tipOnly.slice(0, 30).map(setting => ({ setting })),
+      printSection('Tip-only settings');
+      printPreviewTable(
+        diff.tipOnly.slice(0, 20).map(setting => ({ setting })),
         ['setting'],
-        { colors: true },
+        Math.max(0, diff.tipOnly.length - 20)
       );
-      if (diff.tipOnly.length > 30) console.log(`… +${diff.tipOnly.length - 30} tip-only`);
     }
     if (diff.pinOnly.length) {
-      console.log('pin-only:');
-      for (const s of diff.pinOnly.slice(0, 20)) console.log(`  - ${s}`);
+      printSection('Pin-only settings');
+      printPreviewTable(
+        diff.pinOnly.slice(0, 20).map(setting => ({ setting })),
+        ['setting'],
+        Math.max(0, diff.pinOnly.length - 20)
+      );
     }
     if (!args.noWrite) {
-      console.log(`wrote ${OUT_JSON}`);
-      console.log(`wrote ${OUT_MD}`);
-      if (changelog) {
-        console.log(`wrote ${CHANGELOG_MD}`);
-        console.log(`wrote ${CHANGELOG_JSON}`);
-      }
+      const arts = [OUT_JSON, OUT_MD];
+      if (changelog) arts.push(CHANGELOG_MD, CHANGELOG_JSON);
+      printArtifacts(arts);
     }
+    printDone(report.verdict !== 'fail', `tip-diff ${report.verdict}`);
   }
 
   if (args.strict && verdict === 'fail') process.exit(1);

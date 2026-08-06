@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
@@ -8,10 +11,15 @@
  * **codebase type/value usage**.
  *
  * Single-pass scan (not O(members × files)):
- *  - `Bun.Name` / `bun:jsc.Name` chains
- *  - type positions `: Bun.Name` / `as Bun.Name`
+ *  - `Bun.Name` / `bun:jsc.Name` chains (with **prefix crediting**:
+ *    `Bun.Foo.Bar` also credits tracked `Bun.Foo`)
+ *  - type positions `: Bun.Name` / `as Bun.Name` / `typeof Bun.Name` /
+ *    `satisfies Bun.Name`
  *  - `import { Name } from "bun"` / `from "bun:jsc"`
  *  - optional `--props`: `.leaf` for inventory property leaves
+ *  - per-file hit map (capped via `--max-files-per-hit`) — see `hits[].fileHits`
+ *  - module rollup (`summary.byModule`) + entirely-unused modules
+ *    (`summary.unusedModules`)
  *
  * Usage:
  *   bun tools/bun-types-usage.ts
@@ -20,12 +28,23 @@
  *   bun tools/bun-types-usage.ts --props
  *   bun tools/bun-types-usage.ts --strict --max-unused=2000
  *   bun tools/bun-types-usage.ts --json
+ *   bun tools/bun-types-usage.ts --csv
+ *   bun tools/bun-types-usage.ts --max-files-per-hit=20
  *
  * Scripts: bun:types-usage · bun:types-usage:unused
  */
-import { logTable } from '../lib/console-depth.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import type { InventoryMember, InventoryResult, MemberKind } from './bun-types-inventory.ts';
+import {
+  printArtifacts,
+  printBanner,
+  printDone,
+  printHistogram,
+  printMap,
+  printPreviewTable,
+  printSection,
+  ttyDim,
+} from './lib/bun-types-tty.ts';
 
 const TOOLS_DIR = resolvePath(import.meta.dir);
 const REPO_ROOT = resolvePath(TOOLS_DIR, '..');
@@ -36,6 +55,16 @@ const OUT_MD = joinPath(OUT_DIR, 'report.md');
 
 const DEFAULT_SCAN = ['lib', 'tools', 'scripts', 'tests', 'config'] as const;
 const DEFAULT_KINDS: MemberKind[] = ['class', 'interface', 'type'];
+const DEFAULT_MAX_FILES_PER_HIT = 15;
+
+export type FileHit = {
+  file: string;
+  chain: number;
+  typePos: number;
+  imp: number;
+  prop: number;
+  total: number;
+};
 
 export type UsageHit = {
   setting: string;
@@ -47,10 +76,20 @@ export type UsageHit = {
   importRefs: number;
   propRefs: number;
   total: number;
+  /** Top-N files referencing this setting (capped by --max-files-per-hit). */
+  fileHits: FileHit[];
+};
+
+export type ModuleRollup = {
+  module: string;
+  tracked: number;
+  used: number;
+  unused: number;
+  totalRefs: number;
 };
 
 export type UsageReport = {
-  schema: 'factorywager/bun-types-usage/v1';
+  schema: 'factorywager/bun-types-usage/v2';
   generated: string;
   inventory: { path: string; totalMembers: number; tracked: number };
   scan: { roots: string[]; files: number };
@@ -59,14 +98,33 @@ export type UsageReport = {
     used: number;
     unused: number;
     topUsed: Array<{ setting: string; total: number }>;
+    byModule: ModuleRollup[];
+    /** Modules where no tracked member has any reference. */
+    unusedModules: string[];
   };
   hits: UsageHit[];
 };
 
+/** Split a chain `Bun.Foo.Bar` / `bun:mod.X.Y` into tracked prefixes. */
+export function trackedPrefixes(chain: string, tracked: Set<string>): string[] {
+  const out: string[] = [];
+  // `bun:mod.X.Y` → split on '.' but keep `bun:mod` as the module root unit.
+  const parts = chain.split('.');
+  // Re-join: first segment may itself contain ':' (bun:sqlite). Rebuild candidates.
+  // candidates: bun:sqlite.Database.Statement → [bun:sqlite.Database, bun:sqlite.Database.Statement]
+  // Bun.Foo.Bar → [Bun.Foo, Bun.Foo.Bar]
+  let acc = parts[0]!;
+  for (let i = 1; i < parts.length; i++) {
+    acc = `${acc}.${parts[i]}`;
+    if (tracked.has(acc)) out.push(acc);
+  }
+  return out;
+}
+
 export function selectTrackedMembers(
   members: InventoryMember[],
   kinds: MemberKind[],
-  opts: { topLevelOnly?: boolean } = {},
+  opts: { topLevelOnly?: boolean } = {}
 ): InventoryMember[] {
   const set = new Set(kinds);
   return members.filter(m => {
@@ -80,14 +138,11 @@ export function selectTrackedMembers(
 export function attributeFileText(
   text: string,
   tracked: Map<string, InventoryMember>,
-  opts: { props: boolean; propLeaves: Map<string, string[]> },
+  opts: { props: boolean; propLeaves: Map<string, string[]> }
 ): Map<string, { chain: number; typePos: number; imp: number; prop: number }> {
   const out = new Map<string, { chain: number; typePos: number; imp: number; prop: number }>();
-  const bump = (
-    setting: string,
-    field: 'chain' | 'typePos' | 'imp' | 'prop',
-    n = 1,
-  ) => {
+  const trackedSet = new Set(tracked.keys());
+  const bump = (setting: string, field: 'chain' | 'typePos' | 'imp' | 'prop', n = 1) => {
     if (!tracked.has(setting) && field !== 'prop') return;
     // prop uses propLeaves map of leaf → settings
     let row = out.get(setting);
@@ -98,30 +153,31 @@ export function attributeFileText(
     row[field] += n;
   };
 
-  // Chains: Bun.Foo.Bar or bun:jsc.Foo
-  const chainRe = /\bBun(?:\.[A-Za-z_][A-Za-z0-9_]*)+|\bbun:[A-Za-z0-9_-]+(?:\.[A-Za-z_][A-Za-z0-9_]*)+/g;
+  // Chains: Bun.Foo.Bar or bun:jsc.Foo — credit every tracked prefix.
+  const chainRe =
+    /\bBun(?:\.[A-Za-z_][A-Za-z0-9_]*)+|\bbun:[A-Za-z0-9_-]+(?:\.[A-Za-z_][A-Za-z0-9_]*)+/g;
   let m: RegExpExecArray | null;
   while ((m = chainRe.exec(text)) !== null) {
-    const chain = m[0]!;
-    if (tracked.has(chain)) bump(chain, 'chain');
-    // also credit prefixes Bun.Foo when chain is Bun.Foo.bar? only exact inventory keys
+    for (const s of trackedPrefixes(m[0]!, trackedSet)) bump(s, 'chain');
   }
 
-  // Type positions with full Bun.X path
+  // Type positions with full Bun.X path: `: X`, `as X`, `typeof X`, `satisfies X`.
   const typePosRe =
-    /(?::|\bas)\s*((?:Bun(?:\.[A-Za-z_][A-Za-z0-9_]*)+|bun:[A-Za-z0-9_-]+(?:\.[A-Za-z_][A-Za-z0-9_]*)+))/g;
+    /(?::|\bas\b|\btypeof\b|\bsatisfies\b)\s*((?:Bun(?:\.[A-Za-z_][A-Za-z0-9_]*)+|bun:[A-Za-z0-9_-]+(?:\.[A-Za-z_][A-Za-z0-9_]*)+))/g;
   while ((m = typePosRe.exec(text)) !== null) {
-    const s = m[1]!;
-    if (tracked.has(s)) bump(s, 'typePos');
+    for (const s of trackedPrefixes(m[1]!, trackedSet)) bump(s, 'typePos');
   }
 
   // import { A, B as C } from "bun" | "bun:jsc"
-  const importRe =
-    /import\s*(?:type\s*)?\{([^}]+)\}\s*from\s*['"](bun(?::[A-Za-z0-9_-]+)?)['"]/g;
+  const importRe = /import\s*(?:type\s*)?\{([^}]+)\}\s*from\s*['"](bun(?::[A-Za-z0-9_-]+)?)['"]/g;
   while ((m = importRe.exec(text)) !== null) {
     const mod = m[2]!;
     for (const spec of m[1]!.split(',')) {
-      const id = spec.trim().replace(/^type\s+/, '').split(/\s+as\s+/)[0]!.trim();
+      const id = spec
+        .trim()
+        .replace(/^type\s+/, '')
+        .split(/\s+as\s+/)[0]!
+        .trim();
       if (!id) continue;
       const setting = mod === 'bun' ? `Bun.${id}` : `${mod}.${id}`;
       if (tracked.has(setting)) bump(setting, 'imp');
@@ -174,12 +230,15 @@ export async function scanUsage(opts: {
     }
   }
 
-  const totals = new Map<
+  const totals = new Map<string, { chain: number; typePos: number; imp: number; prop: number }>();
+  // per-setting → per-file counters (for hits[].fileHits)
+  const fileMap = new Map<
     string,
-    { chain: number; typePos: number; imp: number; prop: number }
+    Map<string, { chain: number; typePos: number; imp: number; prop: number }>
   >();
   for (const s of tracked.keys()) {
     totals.set(s, { chain: 0, typePos: 0, imp: 0, prop: 0 });
+    fileMap.set(s, new Map());
   }
 
   const scanRoots = opts.scanRoots ?? [...DEFAULT_SCAN];
@@ -202,6 +261,7 @@ export async function scanUsage(opts: {
         if (!props && !/bun/i.test(text)) continue;
 
         const fileHits = attributeFileText(text, tracked, { props, propLeaves });
+        const relPath = `${root}/${rel}`;
         for (const [setting, c] of fileHits) {
           const row = totals.get(setting);
           if (!row) continue;
@@ -209,6 +269,16 @@ export async function scanUsage(opts: {
           row.typePos += c.typePos;
           row.imp += c.imp;
           row.prop += c.prop;
+          const fm = fileMap.get(setting)!;
+          let fr = fm.get(relPath);
+          if (!fr) {
+            fr = { chain: 0, typePos: 0, imp: 0, prop: 0 };
+            fm.set(relPath, fr);
+          }
+          fr.chain += c.chain;
+          fr.typePos += c.typePos;
+          fr.imp += c.imp;
+          fr.prop += c.prop;
         }
       }
     } catch {
@@ -216,10 +286,23 @@ export async function scanUsage(opts: {
     }
   }
 
+  const maxFilesPerHit = opts.maxFilesPerHit ?? DEFAULT_MAX_FILES_PER_HIT;
   const hits: UsageHit[] = [];
   for (const [setting, member] of tracked) {
     const t = totals.get(setting) ?? { chain: 0, typePos: 0, imp: 0, prop: 0 };
     const total = t.chain + t.typePos + t.imp + t.prop;
+    const fm = fileMap.get(setting)!;
+    const fileHits: FileHit[] = [...fm.entries()]
+      .map(([file, f]) => ({
+        file,
+        chain: f.chain,
+        typePos: f.typePos,
+        imp: f.imp,
+        prop: f.prop,
+        total: f.chain + f.typePos + f.imp + f.prop,
+      }))
+      .sort((a, b) => b.total - a.total || a.file.localeCompare(b.file))
+      .slice(0, maxFilesPerHit);
     hits.push({
       setting,
       kind: member.kind,
@@ -230,6 +313,7 @@ export async function scanUsage(opts: {
       importRefs: t.imp,
       propRefs: t.prop,
       total,
+      fileHits,
     });
   }
   hits.sort((a, b) => b.total - a.total || a.setting.localeCompare(b.setting));
@@ -237,8 +321,26 @@ export async function scanUsage(opts: {
   const used = hits.filter(h => h.total > 0);
   const unused = hits.filter(h => h.total === 0);
 
+  // Module rollup
+  const moduleMap = new Map<string, ModuleRollup>();
+  for (const h of hits) {
+    let r = moduleMap.get(h.module);
+    if (!r) {
+      r = { module: h.module, tracked: 0, used: 0, unused: 0, totalRefs: 0 };
+      moduleMap.set(h.module, r);
+    }
+    r.tracked++;
+    if (h.total > 0) r.used++;
+    else r.unused++;
+    r.totalRefs += h.total;
+  }
+  const byModule = [...moduleMap.values()].sort(
+    (a, b) => b.totalRefs - a.totalRefs || a.module.localeCompare(b.module)
+  );
+  const unusedModules = byModule.filter(r => r.used === 0).map(r => r.module);
+
   return {
-    schema: 'factorywager/bun-types-usage/v1',
+    schema: 'factorywager/bun-types-usage/v2',
     generated: new Date().toISOString(),
     inventory: {
       path: invPath,
@@ -251,6 +353,8 @@ export async function scanUsage(opts: {
       used: used.length,
       unused: unused.length,
       topUsed: used.slice(0, 25).map(h => ({ setting: h.setting, total: h.total })),
+      byModule,
+      unusedModules,
     },
     hits,
   };
@@ -265,19 +369,35 @@ export function renderUsageMd(report: UsageReport): string {
     '| Field | Value |',
     '| --- | --- |',
     `| Generated | ${report.generated} |`,
+    `| Schema | \`${report.schema}\` |`,
     `| Inventory | ${report.inventory.totalMembers} members · tracked **${report.inventory.tracked}** |`,
     `| Scan | ${report.scan.roots.map(r => `\`${r}/\``).join(', ')} · ${report.scan.files} files |`,
     `| Used | **${report.summary.used}** |`,
     `| Unused | **${report.summary.unused}** |`,
     '',
-    '## Top used',
+    '## Module rollup',
     '',
-    '| Setting | kind | Total | chain | type-pos | import | prop |',
-    '| --- | --- | ---: | ---: | ---: | ---: | ---: |',
+    '| Module | tracked | used | unused | total refs |',
+    '| --- | ---: | ---: | ---: | ---: |',
   ];
-  for (const h of report.hits.filter(x => x.total > 0).slice(0, 50)) {
+  for (const r of report.summary.byModule) {
+    lines.push(`| \`${r.module}\` | ${r.tracked} | ${r.used} | ${r.unused} | ${r.totalRefs} |`);
+  }
+  lines.push('');
+  if (report.summary.unusedModules.length > 0) {
     lines.push(
-      `| \`${h.setting}\` | ${h.kind} | ${h.total} | ${h.chainRefs} | ${h.typePosRefs} | ${h.importRefs} | ${h.propRefs} |`,
+      `> **Entirely unused modules:** ${report.summary.unusedModules.map(m => `\`${m}\``).join(', ')}`
+    );
+    lines.push('');
+  }
+  lines.push('## Top used');
+  lines.push('');
+  lines.push('| Setting | kind | Total | chain | type-pos | import | prop | top file |');
+  lines.push('| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |');
+  for (const h of report.hits.filter(x => x.total > 0).slice(0, 50)) {
+    const topFile = h.fileHits[0];
+    lines.push(
+      `| \`${h.setting}\` | ${h.kind} | ${h.total} | ${h.chainRefs} | ${h.typePosRefs} | ${h.importRefs} | ${h.propRefs} | ${topFile ? `\`${topFile.file}\` (${topFile.total})` : '—'} |`
     );
   }
   lines.push('');
@@ -294,6 +414,46 @@ export function renderUsageMd(report: UsageReport): string {
   lines.push('```');
   lines.push('');
   return `${lines.join('\n')}\n`;
+}
+
+/** CSV export — one row per hit (sorted by total desc). */
+export function renderUsageCsv(report: UsageReport): string {
+  const header = [
+    'setting',
+    'kind',
+    'module',
+    'depth',
+    'chainRefs',
+    'typePosRefs',
+    'importRefs',
+    'propRefs',
+    'total',
+    'fileHitsCount',
+    'topFile',
+  ];
+  const esc = (s: string | number) => {
+    const v = String(s);
+    return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+  };
+  const rows = report.hits.map(h => {
+    const top = h.fileHits[0];
+    return [
+      h.setting,
+      h.kind,
+      h.module,
+      h.depth,
+      h.chainRefs,
+      h.typePosRefs,
+      h.importRefs,
+      h.propRefs,
+      h.total,
+      h.fileHits.length,
+      top ? top.file : '',
+    ]
+      .map(esc)
+      .join(',');
+  });
+  return `${[header.join(','), ...rows].join('\n')}\n`;
 }
 
 function parseCli(argv: string[]) {
@@ -346,7 +506,8 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  console.info('bun-types-usage: scanning…');
+  printBanner('bun-types-usage', 'inventory type-likes × codebase map');
+  console.info(ttyDim('  scanning…'));
   const t0 = Bun.nanoseconds();
   const report = await scanUsage({
     kinds: args.kinds ?? undefined,
@@ -357,13 +518,39 @@ async function main(): Promise<void> {
   if (args.json) {
     process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
   } else {
-    console.log(
-      `tracked ${report.summary.tracked} · used ${report.summary.used} · unused ${report.summary.unused} · ${report.scan.files} files · ${ms.toFixed(0)}ms`,
-    );
+    printSection('Coverage map');
+    printMap([
+      {
+        key: 'tracked',
+        value: String(report.summary.tracked),
+        note: 'depth-0 class/interface/type (default)',
+      },
+      { key: 'used', value: String(report.summary.used) },
+      { key: 'unused', value: String(report.summary.unused) },
+      {
+        key: 'scan',
+        value: `${report.scan.files} files`,
+        note: `${report.scan.roots.join(', ')} · ${ms.toFixed(0)}ms`,
+      },
+      {
+        key: 'inventory',
+        value: String(report.inventory.totalMembers),
+        note: report.inventory.path.replace(REPO_ROOT + '/', ''),
+      },
+    ]);
+
+    if (report.summary.byModule?.length) {
+      printHistogram(
+        'Module coverage',
+        report.summary.byModule.map(m => [m.module, m.used] as [string, number])
+      );
+    }
+
+    printSection(args.unusedOnly ? 'Unused (sample)' : 'Top used');
     const rows = (
       args.unusedOnly
-        ? report.hits.filter(h => h.total === 0).slice(0, 40)
-        : report.hits.filter(h => h.total > 0).slice(0, 35)
+        ? report.hits.filter(h => h.total === 0).slice(0, 20)
+        : report.hits.filter(h => h.total > 0).slice(0, 16)
     ).map(h => ({
       setting: h.setting,
       kind: h.kind,
@@ -372,19 +559,24 @@ async function main(): Promise<void> {
       typePos: String(h.typePosRefs),
       imp: String(h.importRefs),
     }));
-    if (rows.length) {
-      logTable(rows, ['setting', 'kind', 'total', 'chain', 'typePos', 'imp'], { colors: true });
-    }
+    printPreviewTable(
+      rows,
+      ['setting', 'kind', 'total', 'chain', 'typePos', 'imp'],
+      args.unusedOnly
+        ? Math.max(0, report.summary.unused - 20)
+        : Math.max(0, report.summary.used - 16)
+    );
   }
 
   if (args.write) {
     await Bun.spawn(['mkdir', '-p', OUT_DIR]).exited;
     await Bun.write(OUT_JSON, `${JSON.stringify(report, null, 2)}\n`);
     await Bun.write(OUT_MD, renderUsageMd(report));
-    if (!args.json) {
-      console.log(`wrote ${OUT_JSON}`);
-      console.log(`wrote ${OUT_MD}`);
-    }
+    if (!args.json) printArtifacts([OUT_JSON, OUT_MD]);
+  }
+
+  if (!args.json) {
+    printDone(true, `usage map · ${report.summary.used} used / ${report.summary.tracked} tracked`);
   }
 
   if (args.strict && report.summary.unused > args.maxUnused) {

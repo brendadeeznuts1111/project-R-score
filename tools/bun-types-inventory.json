@@ -1,6 +1,6 @@
 {
   "schema": "factorywager/bun-types-inventory/v3",
-  "generated": "2026-08-06T20:23:38.830Z",
+  "generated": "2026-08-06T20:31:42.870Z",
   "runtime": {
     "bunVersion": "1.3.14",
     "bunRevision": "0d9b296af33f2b851fcbf4df3e9ec89751734ba4"
@@ -8,7 +8,7 @@
   "types": {
     "package": "bun-types",
     "version": "1.4.0-tip.ed700c20",
-    "root": "/Users/nolarose/.grok/worktrees/nolarose-projects/lib-cleanup-grok/node_modules/bun-types",
+    "root": "/Users/nolarose/.grok/worktrees/nolarose-projects/2026-08-06-3e0e2535/node_modules/bun-types",
     "files": [
       "bun.d.ts",
       "deprecated.d.ts",
@@ -282,7 +282,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 334
+      "callSites": 333
     },
     {
       "kind": "class",
@@ -775,7 +775,7 @@
       "deprecated": false,
       "overloads": 6,
       "agentsMap": true,
-      "callSites": 207
+      "callSites": 208
     },
     {
       "kind": "type",
@@ -1064,7 +1064,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 15
+      "callSites": 14
     },
     {
       "kind": "type",
@@ -1404,7 +1404,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 693
+      "callSites": 688
     },
     {
       "kind": "function",
@@ -1421,7 +1421,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 693
+      "callSites": 688
     },
     {
       "kind": "interface",
@@ -1778,7 +1778,7 @@
       "deprecated": false,
       "overloads": 3,
       "agentsMap": true,
-      "callSites": 2138
+      "callSites": 2136
     },
     {
       "kind": "interface",
@@ -3155,7 +3155,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": true,
-      "callSites": 331
+      "callSites": 330
     },
     {
       "kind": "type",
@@ -9258,7 +9258,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 19
+      "callSites": 16
     },
     {
       "kind": "function",
@@ -9275,7 +9275,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 13
+      "callSites": 11
     },
     {
       "kind": "property",
