@@ -60,7 +60,7 @@ Each row in the lib SSOT / registry bake:
 | `properties` | key attrs (domain, registry, brand shape, cli) |
 | `owner` | owning lane / doc |
 | `brand` | (brand only) pattern · mintAuthority · module · interiorOnly · replaces |
-| `registry` | (registry only) schemaId · artifactPath · omits · moneyPolicy |
+| `registry` | (registry only) schemaId · schemaIdField · artifactPath · omits · moneyPolicy · requiredTopKeys · conceptIds |
 | `wireField` | (wire-field only) wireName · sourceSystemId · resolvesTo · quarantineOnFail |
 | `chromeNav` | (chrome-nav / portal-board) domain · group · tier · registryArtifact |
 | `taxonomy` | (taxonomy) homonymDistinct · conceptDomain |
@@ -68,8 +68,22 @@ Each row in the lib SSOT / registry bake:
 Chrome-nav and portal-board rows for Domain `partner` are **derived live** from
 [`chrome-catalog.ts`](../../lib/portal/chrome-catalog.ts) so board adds cannot
 drift silently. Validate bags with
-`bun run partner-surface-inventory:validate` (brand-manifest + `Bun.file.exists`
-— not `lib:domains:check`).
+`bun run partner-surface-inventory:validate`:
+
+| Layer | Check |
+| ----- | ----- |
+| A | brand-manifest + `Bun.file.exists` (not `lib:domains:check`) |
+| B | baked JSON vs bag: schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy` |
+| C | ast-grep naked `partnerId: string` (deferred — separate lint) |
+
+Registry bag notes:
+
+- `conceptIds` are glossary / relatedConcept refs (may include `*`) — **not** JSON
+  path walks.
+- `omits` are enforced by walking object **key names** (string values in an
+  `omits` array do not count as present keys).
+- partners-ops may expose `credentials.username` as a public board label; vault
+  secrets (`password`, `vaultKey`, `apiKey`) stay in `omits`.
 
 ## Minimum surface set (summary)
 

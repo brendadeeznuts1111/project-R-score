@@ -56,13 +56,26 @@ export type PartnerSurfaceBrandBag = {
 
 export type PartnerSurfaceMoneyPolicy = 'integerMinorUnits' | 'forbidden' | 'unset';
 
-/** Layer-3 bag on registry rows — file + schema + omit policy. */
+/**
+ * Layer-3 bag on registry rows — file + schema + omit policy.
+ *
+ * `conceptIds` are glossary / relatedConcept refs (may include `*`); they are
+ * **not** JSON paths. Use `requiredTopKeys` for artifact shape presence.
+ * `schemaIdField: 'none'` means schemaId is documentation-only (artifacts that
+ * only expose a numeric `schemaVersion`).
+ */
 export type PartnerSurfaceRegistryBag = {
   readonly schemaId: string;
+  /** Which artifact field must equal `schemaId`. Default: auto (schema|kind|schemaVersion). */
+  readonly schemaIdField?: 'schema' | 'kind' | 'schemaVersion' | 'none';
   readonly artifactPath: string;
+  /** Glossary / relatedConcept ids — not path-checked against the artifact. */
   readonly conceptIds?: readonly string[];
+  /** Object keys that must be absent anywhere in the artifact (key-name walk). */
   readonly omits: readonly string[];
   readonly moneyPolicy: PartnerSurfaceMoneyPolicy;
+  /** Top-level keys that must exist on the baked JSON object. */
+  readonly requiredTopKeys?: readonly string[];
 };
 
 /** Wire-field semantics — never promote bare partnerId to PartnerCode. */
@@ -465,10 +478,13 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     owner: 'partner-ops-registry',
     registry: {
       schemaId: 'factorywager.partners-ops.v2',
+      schemaIdField: 'schema',
       artifactPath: 'public/registry/partners-ops.json',
       conceptIds: ['partner.phase.*', 'out.status.*', 'ops.view.per_account'],
-      omits: ['vaultKey', 'credentials', 'softBalance', 'apiKey'],
+      // credentials.username is a public board label; vault secrets must stay out
+      omits: ['vaultKey', 'password', 'softBalance', 'apiKey', 'api_key'],
       moneyPolicy: 'integerMinorUnits',
+      requiredTopKeys: ['schema', 'partners', 'summary'],
     },
   }),
   row({
@@ -482,10 +498,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['partner:health:bake', 'board: /portal/partner/'],
     owner: 'lib/partner-profile/partner-health',
     registry: {
-      schemaId: 'partner-health.v1',
+      schemaId: '1',
+      schemaIdField: 'schemaVersion',
       artifactPath: 'public/registry/partner-health.json',
       omits: ['vaultKey', 'credentials', 'softBalance', 'password'],
       moneyPolicy: 'forbidden',
+      requiredTopKeys: ['schemaVersion', 'health'],
     },
   }),
   row({
@@ -500,10 +518,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     owner: 'partner-profile bake',
     notes: 'Compatibility input — not new canonical authority',
     registry: {
-      schemaId: 'partner-profiles.legacy',
+      schemaId: '1',
+      schemaIdField: 'schemaVersion',
       artifactPath: 'public/registry/partner-profiles.json',
-      omits: ['vaultKey', 'credentials'],
+      omits: ['vaultKey', 'credentials', 'password'],
       moneyPolicy: 'unset',
+      requiredTopKeys: ['schemaVersion', 'profiles'],
     },
   }),
   row({
@@ -517,10 +537,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['CODE', 'call sign', 'document revision'],
     owner: 'packages/partners profile-coverage adapter',
     registry: {
-      schemaId: 'partner-profile-coverage.v1',
+      schemaId: 'factorywager.partner-profile-coverage.v1',
+      schemaIdField: 'schema',
       artifactPath: 'public/registry/partner-profile-coverage.json',
-      omits: ['vaultKey', 'credentials', 'softBalance'],
+      omits: ['vaultKey', 'credentials', 'softBalance', 'password'],
       moneyPolicy: 'forbidden',
+      requiredTopKeys: ['schema', 'evidenceByPartnerCode'],
     },
   }),
   row({
@@ -535,10 +557,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     owner: 'tennis-hq-registry',
     notes: 'Trading chrome Domain; partner-adjacent contracts',
     registry: {
-      schemaId: 'tennis.partner-contracts',
+      schemaId: 'tennis-partner-contracts',
+      schemaIdField: 'kind',
       artifactPath: 'public/registry/tennis/partner-contracts.json',
-      omits: ['vaultKey', 'credentials'],
+      omits: ['vaultKey', 'credentials', 'password', 'softBalance'],
       moneyPolicy: 'integerMinorUnits',
+      requiredTopKeys: ['kind', 'partners', 'summary'],
     },
   }),
   row({
@@ -552,10 +576,12 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['claim workspace-lane-cross-map', 'partner correlation row'],
     owner: 'workspace taxonomy',
     registry: {
-      schemaId: 'workspace-lane-map.v1',
+      schemaId: 'workspace-lane-map',
+      schemaIdField: 'kind',
       artifactPath: 'public/registry/workspace-lane-map.json',
-      omits: ['softBalance', 'credentials'],
+      omits: ['softBalance', 'credentials', 'password', 'vaultKey'],
       moneyPolicy: 'forbidden',
+      requiredTopKeys: ['kind', 'sessionLanes', 'chromeDomains', 'correlations'],
     },
   }),
   row({
@@ -569,10 +595,14 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     properties: ['claim partner-surface-inventory', 'structured bags'],
     owner: 'partner surface inventory',
     registry: {
-      schemaId: 'partner-surface-inventory.v1',
+      schemaId: 'partner-surface-inventory',
+      schemaIdField: 'kind',
       artifactPath: 'public/registry/partner-surface-inventory.json',
-      omits: ['softBalance', 'credentials', 'vaultKey'],
+      // omit lists appear as string *values* in this bake; key-name walk must not
+      // treat those as present keys. Soft/money fields must not be object keys.
+      omits: ['softBalance', 'password', 'vaultKey', 'apiKey'],
       moneyPolicy: 'forbidden',
+      requiredTopKeys: ['kind', 'rows', 'principle'],
     },
   }),
 
