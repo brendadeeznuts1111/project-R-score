@@ -5,8 +5,33 @@
  */
 import { bindCopyButtons } from '../copy-cli.js';
 import { fetchJsonResult } from '../fetch-json.js';
+import {
+  escHtml,
+  renderPortalError,
+  renderPortalSkeleton,
+  renderPortalStatGrid,
+  renderPortalTable,
+  renderPortalTableRows,
+} from '../components/portal-ui.js';
 
 const STATE_URL = '/registry/surfaces-state.json';
+
+/** Column contract for the main surfaces table (static thead in index.html). */
+export const SURFACE_COLS = [
+  { key: 'id', label: 'id' },
+  { key: 'host', label: 'host' },
+  { key: 'subdomain', label: 'subdomain' },
+  { key: 'status', label: 'status' },
+  { key: 'access', label: 'access' },
+  { key: 'backend', label: 'backend' },
+  { key: 'pages', label: 'pages project' },
+];
+
+const LANE_COLS = [
+  { key: 'id', label: 'id' },
+  { key: 'protocol', label: 'protocol' },
+  { key: 'entry', label: 'entry' },
+];
 
 /** @type {any} */
 let state = null;
@@ -19,11 +44,7 @@ let loading = false;
 const $ = id => document.getElementById(id);
 
 function esc(s) {
-  return String(s ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+  return escHtml(s);
 }
 
 function ageLabel(iso) {
@@ -125,11 +146,13 @@ function filteredSurfaces(surfaces) {
 function showSkeletons() {
   const stats = $('sf-stats');
   if (stats) {
-    stats.innerHTML = Array.from({ length: 6 }, () => `<div class="portal-skeleton"></div>`).join('');
+    stats.innerHTML = renderPortalSkeleton(6);
   }
   const body = $('sf-body');
   if (body) {
-    body.innerHTML = '<tr><td colspan="7" class="dim">Loading surfaces-state.json…</td></tr>';
+    body.innerHTML = renderPortalTableRows(SURFACE_COLS, [], {
+      emptyMessage: 'Loading surfaces-state.json…',
+    });
   }
   const gate = $('sf-gate');
   if (gate) {
@@ -165,23 +188,25 @@ function showMissingBake() {
   const err = $('sf-error');
   if (err) {
     err.hidden = false;
-    err.innerHTML = `<div class="portal-error" role="alert">
-      <h3>Surfaces bake unavailable</h3>
-      <p>Could not load <code>/registry/surfaces-state.json</code>. Run the bake locally or retry after deploy.</p>
-      <div class="portal-error-actions">
-        <button type="button" class="portal-clear" id="sf-retry">Retry</button>
-        <a class="portal-clear" href="/registry/surfaces-state.json" style="display:inline-flex;align-items:center;text-decoration:none">Open JSON</a>
-      </div>
-      <p class="dim" style="margin-top:10px;margin-bottom:0">Local fix: <code data-copy>bun run surfaces:bake</code> · verify <code data-copy>bun run surfaces:check</code></p>
-    </div>`;
+    err.innerHTML = renderPortalError({
+      title: 'Surfaces bake unavailable',
+      message:
+        'Could not load /registry/surfaces-state.json. Run the bake locally or retry after deploy.',
+      actionsHtml:
+        `<button type="button" class="portal-clear" id="sf-retry">Retry</button>` +
+        `<a class="portal-clear" href="/registry/surfaces-state.json" style="display:inline-flex;align-items:center;text-decoration:none">Open JSON</a>`,
+      footerHtml: `<p class="dim" style="margin-top:10px;margin-bottom:0">Local fix: <code data-copy>bun run surfaces:bake</code> · verify <code data-copy>bun run surfaces:check</code></p>`,
+    });
     bindCopyButtons(err);
     $('sf-retry')?.addEventListener('click', () => void load());
   }
 
   const body = $('sf-body');
   if (body) {
-    body.innerHTML =
-      '<tr><td colspan="7" class="dim">Missing /registry/surfaces-state.json — use Retry above or run <code>bun run surfaces:bake</code></td></tr>';
+    body.innerHTML = renderPortalTableRows(SURFACE_COLS, [], {
+      emptyMessage:
+        'Missing /registry/surfaces-state.json — use Retry above or run bun run surfaces:bake',
+    });
   }
 }
 
@@ -191,10 +216,7 @@ function showFetchError(msg) {
   if (err && !err.hidden) {
     const box = err.querySelector('.portal-error');
     if (box) {
-      box.insertAdjacentHTML(
-        'beforeend',
-        `<p><code>${esc(msg)}</code></p>`
-      );
+      box.insertAdjacentHTML('beforeend', `<p><code>${esc(msg)}</code></p>`);
     }
   }
 }
@@ -276,30 +298,33 @@ function renderStats() {
     }
   );
 
-  stats.innerHTML = items
-    .map(item => {
+  stats.innerHTML = renderPortalStatGrid(
+    items.map(item => {
       const active =
         item.filter?.kind === 'status'
           ? statusFilter === item.filter.value
           : item.filter?.kind === 'backend'
             ? backendFilter === item.filter.value
             : false;
-      const disabled = item.filter == null ? ' disabled' : '';
-      const activeCls = active ? ' active' : '';
-      const dataAttr = item.filter
-        ? item.filter.kind === 'status'
-          ? ` data-status-filter="${esc(item.filter.value)}"`
-          : ` data-backend-filter="${esc(item.filter.value)}"`
-        : '';
-      return (
-        `<button type="button" class="portal-stat ${item.cls}${activeCls}"${disabled}${dataAttr}>` +
-        `<span class="k">${esc(item.label)}</span>` +
-        `<span class="v">${esc(item.value)}</span>` +
-        `<span class="hint">${esc(item.hint)}</span>` +
-        `</button>`
-      );
+      /** @type {Record<string, string>|undefined} */
+      let attrs;
+      if (item.filter?.kind === 'status') {
+        attrs = { 'data-status-filter': item.filter.value };
+      } else if (item.filter?.kind === 'backend') {
+        attrs = { 'data-backend-filter': item.filter.value };
+      }
+      return {
+        label: item.label,
+        value: item.value,
+        hint: item.hint,
+        tone: /** @type {'ok'|'warn'|'bad'|'muted'|''} */ (item.cls || 'muted'),
+        button: true,
+        active,
+        disabled: item.filter == null,
+        attrs,
+      };
     })
-    .join('');
+  );
 
   for (const btn of stats.querySelectorAll('[data-status-filter]')) {
     btn.addEventListener('click', () => {
@@ -358,29 +383,30 @@ function renderRows() {
   const rows = filteredSurfaces(surfaces);
   if (count) count.textContent = `${rows.length} shown`;
 
-  body.innerHTML = rows.length
-    ? rows
-        .map(s => {
-          const rowCls =
-            s.status === 'live'
-              ? 'row-ok'
-              : s.status === 'retired' || s.status === 'broken' || s.status === 'dangling'
-                ? 'row-bad'
-                : s.status === 'vanity' || s.status === 'staged'
-                  ? 'row-warn'
-                  : '';
-          return `<tr class="${rowCls}">
-        <td class="mono"><code>${esc(s.id)}</code></td>
-        <td class="mono"><code>${esc(s.host)}</code></td>
-        <td class="mono"><code>${esc(s.subdomain ?? '—')}</code></td>
-        <td><span class="sf-pill ${esc(s.status)}">${esc(s.status)}</span></td>
-        <td>${esc(s.access)}</td>
-        <td class="mono"><code>${esc(s.backendCode ?? '—')}</code></td>
-        <td class="mono"><code>${esc(s.pagesProject ?? '—')}</code></td>
-      </tr>`;
-        })
-        .join('')
-    : `<tr><td colspan="7" class="dim">${hasActiveFilters() ? 'No surfaces match filters' : 'No surfaces in bake'}</td></tr>`;
+  body.innerHTML = renderPortalTableRows(
+    SURFACE_COLS,
+    rows.map(s => [
+      { html: `<code>${esc(s.id)}</code>`, className: 'mono' },
+      { html: `<code>${esc(s.host)}</code>`, className: 'mono' },
+      { html: `<code>${esc(s.subdomain ?? '—')}</code>`, className: 'mono' },
+      { html: `<span class="sf-pill ${esc(s.status)}">${esc(s.status)}</span>` },
+      s.access,
+      { html: `<code>${esc(s.backendCode ?? '—')}</code>`, className: 'mono' },
+      { html: `<code>${esc(s.pagesProject ?? '—')}</code>`, className: 'mono' },
+    ]),
+    {
+      emptyMessage: hasActiveFilters() ? 'No surfaces match filters' : 'No surfaces in bake',
+      rowClass: i => {
+        const s = rows[i];
+        if (s.status === 'live') return 'row-ok';
+        if (s.status === 'retired' || s.status === 'broken' || s.status === 'dangling') {
+          return 'row-bad';
+        }
+        if (s.status === 'vanity' || s.status === 'staged') return 'row-warn';
+        return undefined;
+      },
+    }
+  );
 }
 
 function renderLanes() {
@@ -388,12 +414,14 @@ function renderLanes() {
   if (!lanes || !state) return;
   const list = Array.isArray(state.publishLanes) ? state.publishLanes : [];
   lanes.innerHTML = list.length
-    ? `<div class="table-wrap"><table class="portal-table"><thead><tr><th>id</th><th>protocol</th><th>entry</th></tr></thead><tbody>${list
-        .map(
-          l =>
-            `<tr><td class="mono"><code>${esc(l.id)}</code></td><td>${esc(l.protocol)}</td><td class="mono"><code>${esc(l.entry)}</code></td></tr>`
-        )
-        .join('')}</tbody></table></div>`
+    ? renderPortalTable(
+        LANE_COLS,
+        list.map(l => [
+          { html: `<code>${esc(l.id)}</code>`, className: 'mono' },
+          l.protocol,
+          { html: `<code>${esc(l.entry)}</code>`, className: 'mono' },
+        ])
+      )
     : '—';
 }
 

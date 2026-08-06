@@ -3,7 +3,10 @@ import { describe, expect, test } from 'bun:test';
 import {
   escHtml,
   renderPortalChip,
+  renderPortalError,
+  renderPortalGate,
   renderPortalPanel,
+  renderPortalSkeleton,
   renderPortalStatGrid,
   renderPortalTable,
   renderPortalTableRows,
@@ -79,6 +82,12 @@ describe('lib/portal/ui-html', () => {
     expect(empty).toContain('Empty');
     expect(empty).not.toContain('<tbody');
 
+    const customEmpty = renderPortalTableRows(cols, [], {
+      emptyHtml: '<tr><td colspan="2" class="status-text bad">boom</td></tr>',
+    });
+    expect(customEmpty).toContain('status-text bad');
+    expect(customEmpty).toContain('boom');
+
     const rows = renderPortalTableRows(
       cols,
       [[{ html: '<b>x</b>' }, 'y']],
@@ -93,6 +102,25 @@ describe('lib/portal/ui-html', () => {
     expect(rows).toContain('<b>x</b>');
     expect(rows).toContain('>y</td>');
   });
+
+  test('error, skeleton, and gate builders', () => {
+    const err = renderPortalError({
+      title: 'Load failed',
+      message: 'Could not fetch bake',
+      code: 'HTTP 404',
+      actionsHtml: '<button type="button">Retry</button>',
+    });
+    expect(err).toContain('portal-error');
+    expect(err).toContain('Load failed');
+    expect(err).toContain('HTTP 404');
+    expect(err).toContain('Retry');
+
+    expect(renderPortalSkeleton(3)).toBe(
+      '<div class="portal-skeleton"></div>'.repeat(3)
+    );
+    expect(renderPortalGate('audit ok', 'ok')).toContain('portal-gate ok');
+    expect(renderPortalGate('drift', 'drift')).toContain('portal-gate drift');
+  });
 });
 
 describe('browser portal-ui twin', () => {
@@ -106,9 +134,43 @@ describe('browser portal-ui twin', () => {
       'renderPortalTable',
       'renderPortalTableRows',
       'renderPortalPanel',
+      'renderPortalError',
+      'renderPortalSkeleton',
+      'renderPortalGate',
     ]) {
       expect(src).toContain(`export function ${name}`);
     }
+  });
+
+  test('public component matches shared state-builder output', async () => {
+    const browser = await import('../public/portal/components/portal-ui.js');
+    const cols = [
+      { key: 'id', label: 'ID' },
+      { key: 'name', label: 'Name' },
+    ];
+    const emptyOpts = {
+      emptyHtml: '<tr><td colspan="2" class="status-text bad">unavailable</td></tr>',
+    };
+    const errorOpts = {
+      title: 'Load <failed>',
+      message: 'Could not fetch & render',
+      code: 'HTTP "404"',
+      actionsHtml: '<button type="button">Retry</button>',
+      footerHtml: '<p class="dim">Run the bake</p>',
+    };
+
+    expect(browser.renderPortalTableRows(cols, [], emptyOpts)).toBe(
+      renderPortalTableRows(cols, [], emptyOpts)
+    );
+    expect(browser.renderPortalError(errorOpts)).toBe(renderPortalError(errorOpts));
+    expect(browser.renderPortalSkeleton(3)).toBe(renderPortalSkeleton(3));
+    expect(browser.renderPortalGate('drift <unsafe>', 'drift')).toBe(
+      renderPortalGate('drift <unsafe>', 'drift')
+    );
+    expect(browser.renderPortalError(errorOpts)).toContain('Load &lt;failed&gt;');
+    expect(browser.renderPortalGate('drift <unsafe>', 'drift')).toContain(
+      'drift &lt;unsafe&gt;'
+    );
   });
 
   test('partners board imports portal-ui row and stat builders', async () => {
@@ -152,7 +214,24 @@ describe('browser portal-ui twin', () => {
     expect(html).toContain('portal-panel');
     expect(js).toContain('portal-chip');
     expect(js).toContain('portal-pill');
+    expect(js).toContain('renderPortalTableRows');
+    expect(js).toContain('renderPortalStatGrid');
+    expect(js).toContain('BOOK_COLS');
     expect(js).not.toContain('fetcher-pill');
+  });
+
+  test('surfaces and tools boards import portal-ui row builders', async () => {
+    const surfaces = await Bun.file('public/portal/surfaces/surfaces-board.js').text();
+    expect(surfaces).toContain("from '../components/portal-ui.js'");
+    expect(surfaces).toContain('renderPortalTableRows');
+    expect(surfaces).toContain('renderPortalStatGrid');
+    expect(surfaces).toContain('renderPortalError');
+    expect(surfaces).toContain('SURFACE_COLS');
+
+    const tools = await Bun.file('public/portal/tools/tools-hub.js').text();
+    expect(tools).toContain("from '../components/portal-ui.js'");
+    expect(tools).toContain('renderPortalTableRows');
+    expect(tools).toContain('BAKE_STATUS_COLS');
   });
 
   test('migrated boards prefer portal-table over data-table/ops-table', async () => {
@@ -173,7 +252,11 @@ describe('browser portal-ui twin', () => {
       const src = await Bun.file(p).text();
       expect(src, p).not.toMatch(/class="data-table"/);
       expect(src, p).not.toMatch(/class="ops-table"/);
-      expect(src, p).toContain('portal-table');
+      // Markup may use class="portal-table", or JS may emit it via renderPortalTable*
+      expect(
+        /portal-table|renderPortalTable/.test(src),
+        `${p} should use portal-table or renderPortalTable*`
+      ).toBe(true);
     }
   });
 

@@ -12,7 +12,7 @@ Portal-facing TypeScript SSOTs. **No barrel** (`index.ts`) — import modules di
 | Color / theme | `theme` · `portal-kernel-palette` · `color-kernel-align` | `theme.jsonc` aliases vs kernels |
 | Capabilities | `capability-map-subset` · `capability-doctor` | AGENTS capability map bake/doctor |
 | Scores | `css-enhancement-score` · `power-ui-score` | Board enhancement scoring |
-| Shared UI HTML | `ui-html` | Pure builders for `.portal-table` · `.portal-stat` · chips (browser twin: `public/portal/components/portal-ui.js`) |
+| Shared UI HTML | `ui-html` | Pure builders: `.portal-table` · `.portal-stat` · chips · panel · error · skeleton · gate (browser twin: `public/portal/components/portal-ui.js`) |
 | Other | `command-centre-api` · `bun-test-snapshots` | Command centre payload; snapshot helpers |
 
 ## Hash SSOT
