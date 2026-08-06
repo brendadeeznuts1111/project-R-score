@@ -265,6 +265,10 @@ lib/auth/*
 !lib/auth/session.ts
 !lib/auth/oidc.ts
 !lib/auth/README.md
+!projects/active/sports-terminal-os/src/auth/
+!projects/active/sports-terminal-os/src/auth/**
+!projects/active/sports-terminal-os/test/auth/
+!projects/active/sports-terminal-os/test/auth/**
 **/credentials/
 !config/
 config/*

@@ -300,7 +300,7 @@ WebSocket messages follow `{ type, provider, data }` format:
 |------|-----------|-----------|-------------|
 | **JWT** | HS256 signed tokens via `jose` library | Production default | `DEV_BYPASS_JWT=true` skips verification |
 | **API Key** | `X-API-Key` header to proxy bridge | Internal service calls | — |
-| **Session (Buckeye)** | Cloudflare-protected session cookie | Direct Buckeye API access | — |
+| **Session (Buckeye)** | `buckeye_session_id` mapped to an active connector session | Direct Buckeye API access | — |
 | **Dev Bypass** | All auth checks return true | Local development | `DEV_BYPASS_JWT=true` |
 
 ### 7.2 Auth Decision Flow

@@ -88,7 +88,14 @@ Proxy endpoints to Buckeye use `X-API-Key` header. Key is stored in environment 
 
 ### 2.3 Session Authentication
 
-Buckeye sessions use a JWT + `cf_clearance` cookie combination for Cloudflare-protected upstream at `fantasy402.com:443`.
+Buckeye connector sessions are selected with the `buckeye_session_id` cookie.
+The value is resolved at the ingress boundary against an active, unexpired row
+in `buckeye_sessions`; upstream JWT and `cf_clearance` values remain inside the
+connector session repository and never enter partner-domain contracts.
+
+Internal cookie-refresh and session-health endpoints require
+`INTERNAL_API_TOKEN` through `X-Internal-Token` or a bearer token. When the
+token is absent, those endpoints fail closed in production.
 
 ### 2.4 Dev Bypass
 
@@ -6381,4 +6388,3 @@ data: {"code":"AUTH_EXPIRED","message":"JWT token has expired","timestamp":"2025
 *End of API Contract v5.2.0*
 
 *This document is the authoritative specification for all Sports Terminal OS API endpoints. Implementation agents must follow this contract precisely for method, path, auth, request/response shapes, and error codes.*
-
