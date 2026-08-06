@@ -5,6 +5,7 @@ Local agent shell dashboards (not Tennis HQ Worker).
 | Version             | Route / file                                     | Notes                                                                                                |
 | ------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
 | **v1.05** (default) | `/` · `/dashboard.html` · `dashboard-v1.05.html` | Stable events desk · signals · rules · alerts · CSRF-protected mutations                             |
+| v1.13 (preview)     | `/v1.13` · `dashboard-v1.13.html`                | v1.07 workflow shell · v1.05 events, signals, rules, health contracts · accessible tabs              |
 | v1.12               | `/system` · `dashboard-v1.12.html`               | **System** tab · Bun.file/Glob/which/spawn/password/peek · package updates                           |
 | v1.11               | `/packages` · `dashboard-v1.11.html`             | Package update tab fixes · click-select · `originalTarget` · real SSE `/api/update` · dry-run · CSRF |
 | v1.10               | `dashboard-v1.10.html`                           | Package tab (buggy: no click, mock fallback, simulated progress)                                     |

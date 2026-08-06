@@ -64,6 +64,7 @@ import { startOddsDashboard, type OddsDashboardServer } from './odds/dashboard.t
 
 const AGENT_ODDS_DIR = joinPath(ROOT, 'public/portal/agent-odds');
 const PUBLIC_PORTAL_DIR = joinPath(ROOT, 'public/portal');
+const AGENT_ODDS_V113 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.13.html');
 const AGENT_ODDS_V112 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.12.html');
 const AGENT_ODDS_V111 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.11.html');
 const AGENT_ODDS_V110 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.10.html');
@@ -79,6 +80,7 @@ async function agentOddsHtml(req: Request, preferred?: string): Promise<Response
   const candidates = preferred
     ? [
         preferred,
+        AGENT_ODDS_V113,
         AGENT_ODDS_V112,
         AGENT_ODDS_V111,
         AGENT_ODDS_V110,
@@ -89,6 +91,7 @@ async function agentOddsHtml(req: Request, preferred?: string): Promise<Response
         AGENT_ODDS_V103,
       ]
     : [
+        AGENT_ODDS_V113,
         AGENT_ODDS_V112,
         AGENT_ODDS_V111,
         AGENT_ODDS_V110,
@@ -1212,6 +1215,13 @@ export function startResearchDashboard(
         url.pathname === '/dashboard.html'
       ) {
         return agentOddsHtml(req, AGENT_ODDS_V105);
+      }
+      if (
+        url.pathname === '/dashboard-v1.13.html' ||
+        url.pathname === '/v1.13' ||
+        url.pathname === '/v1.13.html'
+      ) {
+        return agentOddsHtml(req, AGENT_ODDS_V113);
       }
       if (
         url.pathname === '/dashboard-v1.12.html' ||

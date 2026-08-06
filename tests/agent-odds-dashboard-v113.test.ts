@@ -1,0 +1,57 @@
+import { describe, expect, test } from 'bun:test';
+import { startResearchDashboard } from '../lib/operator-research/dashboard.ts';
+
+function compileInlineScripts(html: string): void {
+  const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
+    .map(match => match[1]?.trim())
+    .filter((script): script is string => Boolean(script));
+
+  expect(scripts.length).toBeGreaterThan(0);
+  for (const script of scripts) {
+    expect(() => new Function(script)).not.toThrow();
+  }
+}
+
+describe('Bun Agent dashboard v1.13 preview', () => {
+  test('serves the preview without replacing the v1.05 default', async () => {
+    const dash = startResearchDashboard({
+      port: 0,
+      withOdds: false,
+      withResearchAgent: false,
+    });
+
+    try {
+      const home = await fetch(dash.url);
+      expect(home.status).toBe(200);
+      expect(await home.text()).toContain('v1.05');
+
+      for (const path of ['v1.13', 'v1.13.html', 'dashboard-v1.13.html']) {
+        const response = await fetch(new URL(path, dash.url));
+        expect(response.status).toBe(200);
+        const html = await response.text();
+        expect(html).toContain('Operator Desk v1.13');
+        expect(html).toContain('role="tablist"');
+        expect(html).toContain('aria-selected="true"');
+        expect(html).toContain('filterSignalPeriod');
+        expect(html).toContain('/api/csrf');
+        compileInlineScripts(html);
+      }
+    } finally {
+      dash.stop();
+    }
+  });
+
+  test('only advertises contracts mounted by the main dashboard server', async () => {
+    const html = await Bun.file(
+      new URL('../public/portal/agent-odds/dashboard-v1.13.html', import.meta.url),
+    ).text();
+
+    expect(html).toContain('/api/events');
+    expect(html).toContain('/api/signals');
+    expect(html).toContain('/api/alerts');
+    expect(html).toContain('/api/partners/health');
+    expect(html).not.toContain('/api/backtest');
+    expect(html).not.toContain('/api/bet');
+    expect(html).not.toContain('new WebSocket');
+  });
+});
