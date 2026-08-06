@@ -18,16 +18,16 @@ Homepage: [README hub](/).
 
 This hub covers every committed portal page (`public/portal/*/index.html` plus
 Home) and harness tenant runbook under `docs/harness/tenants/`. Registry JSON
-remains intentionally curated here;
-[`registry-index.md`](registry-index.md) owns the machine-artifact companion.
+remains intentionally curated here; [`registry-index.md`](registry-index.md)
+owns the machine-artifact companion.
 
-| Plane           | Coverage                                | Authority                                                                 | Drift check                     |
-| --------------- | --------------------------------------- | ------------------------------------------------------------------------- | ------------------------------- |
-| Portal pages    | 31 boards + Home                        | [`lib/portal/page-concepts.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/page-concepts.ts)              | compare [Portal boards](#portal-boards) to `public/portal/*/index.html` |
-| Harness tenants | all `docs/harness/tenants/*.md`         | [`docs/harness/tenants/`](docs/harness/tenants/)                          | list dir vs [Tenants](#harness-tenants) |
-| Registry links  | Curated links present                   | [`public/registry/`](public/registry/)                                    | paths must exist under `public/registry/` |
-| Wiki links      | Published entrypoints                   | `_config.yml` · [`tools/wiki-link-check.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/wiki-link-check.ts)    | `bun run wiki:links:check`      |
-| Public plane    | Portal · registry · monitoring · lander | [`public-plane.md`](docs/harness/tenants/public-plane.md)                 | `bun run public:discover:check` |
+| Plane           | Coverage                                | Authority                                                                                                                              | Drift check                               |
+| --------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| Portal pages    | 34/34                                   | [`lib/portal/page-concepts.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/page-concepts.ts)           | `bun run wiki:coverage:check`             |
+| Harness tenants | 49/49                                   | [`docs/harness/tenants/`](docs/harness/tenants/)                                                                                       | `bun run wiki:coverage:check`             |
+| Registry links  | Curated links present                   | [`public/registry/`](public/registry/)                                                                                                 | paths must exist under `public/registry/` |
+| Wiki links      | Published entrypoints                   | `_config.yml` · [`tools/wiki-link-check.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/wiki-link-check.ts) | `bun run wiki:links:check`                |
+| Public plane    | Portal · registry · monitoring · lander | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                              | `bun run public:discover:check`           |
 
 ## Platform entry
 
@@ -77,12 +77,12 @@ Routing: [`docs/platform-routing.md`](docs/platform-routing.md)
 Bidirectional SSOT between GitHub Pages (this wiki) and Cloudflare Pages
 (portal + registry):
 
-| Mechanism                                                                                                  | Role                                                                        |
-| ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| [`portal-weave.json`](https://score.factory-wager.com/registry/portal-weave.json) | Machine cross-links: `surfaces[]`, `artifacts[]`, **`wiki[]`**, `scripts[]` |
-| [`lib/http/wiki-nav.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/wiki-nav.ts)                                    | Portal chrome wiki URL · weave `wiki[]` bake source                         |
-| [`registry-index.md`](registry-index.md)                                                                   | Registry-focused wiki companion                                             |
-| Portal ops dashboard                                                                                       | Renders weave surfaces + wiki links from JSON                               |
+| Mechanism                                                                                                      | Role                                                                        |
+| -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| [`portal-weave.json`](https://score.factory-wager.com/registry/portal-weave.json)                              | Machine cross-links: `surfaces[]`, `artifacts[]`, **`wiki[]`**, `scripts[]` |
+| [`lib/http/wiki-nav.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/wiki-nav.ts) | Portal chrome wiki URL · weave `wiki[]` bake source                         |
+| [`registry-index.md`](registry-index.md)                                                                       | Registry-focused wiki companion                                             |
+| Portal ops dashboard                                                                                           | Renders weave surfaces + wiki links from JSON                               |
 
 Rebake weave after doc changes: `bun run ops:snapshot --no-seed` or
 `bun run compliance:bake`.
@@ -107,40 +107,41 @@ Full concept-lane acceptance: `bun run quality:concept`.
 Live boards under `public/portal/<name>/` (plus Home). Product/ops first, then
 control-plane, then niche.
 
-| Board               | Live                                                                                | Doc                                                                                                                                                                                 |
-| ------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Home                | [/portal/](https://score.factory-wager.com/portal/)                                 | [`docs/portal-foundation.md`](docs/portal-foundation.md)                                                                                                                            |
-| Account dossier     | [/portal/account/](https://score.factory-wager.com/portal/account/)                 | [`partner-limits.md`](docs/harness/tenants/partner-limits.md) · [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md)                                               |
-| Bookmakers          | [/portal/bookmakers/](https://score.factory-wager.com/portal/bookmakers/)           | [`bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md)                                                                                                             |
-| Ops                 | [/portal/ops/](https://score.factory-wager.com/portal/ops/)                         | [`ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md)                                                                                                             |
-| TOC Ops             | [/portal/toc/](https://score.factory-wager.com/portal/toc/)                         | [`toc-ops.md`](docs/harness/tenants/toc-ops.md)                                                                                                                                     |
-| Compliance          | [/portal/compliance/](https://score.factory-wager.com/portal/compliance/)           | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md)                                                                                                                 |
-| Console format      | [/portal/console-format/](https://score.factory-wager.com/portal/console-format/)   | [`portal-doctor.md`](docs/harness/tenants/portal-doctor.md) · `bun run console-format:bake`                                                                                         |
-| Limits              | [/portal/limits/](https://score.factory-wager.com/portal/limits/)                   | [`partner-limits.md`](docs/harness/tenants/partner-limits.md)                                                                                                                       |
-| Limits forecast lab | [/portal/limits-lab/](https://score.factory-wager.com/portal/limits-lab/)           | [`limit-forecast-lab.md`](docs/harness/tenants/limit-forecast-lab.md)                                                                                                               |
-| Partner health      | [/portal/partner/](https://score.factory-wager.com/portal/partner/)                 | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · `bun run partner:health:bake`                                                                              |
-| Partner history     | [/portal/partner-history/](https://score.factory-wager.com/portal/partner-history/) | [`partner-limits.md`](docs/harness/tenants/partner-limits.md)                                                                                                                       |
-| Partners            | [/portal/partners/](https://score.factory-wager.com/portal/partners/)               | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · [`seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md)                                         |
-| Dashboard           | [/portal/dashboard/](https://score.factory-wager.com/portal/dashboard/)             | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                           |
-| Health              | [/portal/health/](https://score.factory-wager.com/portal/health/)                   | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                           |
-| Env                 | [/portal/env/](https://score.factory-wager.com/portal/env/)                         | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                           |
-| DOD                 | [/portal/dod/](https://score.factory-wager.com/portal/dod/)                         | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                           |
-| Skills              | [/portal/skills/](https://score.factory-wager.com/portal/skills/)                   | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                           |
-| Packages            | [/portal/packages/](https://score.factory-wager.com/portal/packages/)               | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md)                                                                                                                     |
-| Doctor              | [/portal/doctor/](https://score.factory-wager.com/portal/doctor/)                   | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                                                |
-| Bunfig              | [/portal/bunfig/](https://score.factory-wager.com/portal/bunfig/)                   | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                                                |
-| Install hygiene     | [/portal/install-hygiene/](https://score.factory-wager.com/portal/install-hygiene/) | [`docs/UNIFIED.md`](docs/UNIFIED.md) · `bake:install-hygiene`                                                                                                                       |
-| Vault               | [/portal/vault/](https://score.factory-wager.com/portal/vault/)                     | [`proton-integration.md`](docs/harness/tenants/proton-integration.md)                                                                                                               |
-| Failures            | [/portal/failures/](https://score.factory-wager.com/portal/failures/)               | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                           |
-| Brands              | [/portal/brands/](https://score.factory-wager.com/portal/brands/)                   | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                           |
-| Catalog             | [/portal/catalog/](https://score.factory-wager.com/portal/catalog/)                 | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                           |
-| Glossary            | [/portal/glossary/](https://score.factory-wager.com/portal/glossary/)               | [`docs/portal-foundation.md`](docs/portal-foundation.md) · `bun run glossary:portal`                                                                                                |
-| Concepts            | [/portal/concepts/](https://score.factory-wager.com/portal/concepts/)               | [graph](https://score.factory-wager.com/portal/concepts/graph/) · [`docs/CONCEPT_LIFECYCLE.md`](docs/CONCEPT_LIFECYCLE.md) · `bun run quality:concept`                              |
-| Surfaces            | [/portal/surfaces/](https://score.factory-wager.com/portal/surfaces/)               | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                           |
-| Tools               | [/portal/tools/](https://score.factory-wager.com/portal/tools/)                     | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                           |
-| Factory             | [/portal/factory/](https://score.factory-wager.com/portal/factory/)                 | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md)                                                                                                                   |
-| Identity            | [/portal/identity/](https://score.factory-wager.com/portal/identity/)               | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                           |
-| Science             | [/portal/science/](https://score.factory-wager.com/portal/science/)                 | —                                                                                                                                                                                   |
+| Board               | Live                                                                                | Doc                                                                                                                                                                                                                                                              |
+| ------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Home                | [/portal/](https://score.factory-wager.com/portal/)                                 | [`docs/portal-foundation.md`](docs/portal-foundation.md)                                                                                                                                                                                                         |
+| Account dossier     | [/portal/account/](https://score.factory-wager.com/portal/account/)                 | [`partner-limits.md`](docs/harness/tenants/partner-limits.md) · [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md)                                                                                                                            |
+| Agent odds          | [/portal/agent-odds/](https://score.factory-wager.com/portal/agent-odds/)           | [`full-ui-performance-audit.md`](docs/harness/tenants/full-ui-performance-audit.md)                                                                                                                                                                              |
+| Bookmakers          | [/portal/bookmakers/](https://score.factory-wager.com/portal/bookmakers/)           | [`bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md)                                                                                                                                                                                          |
+| Ops                 | [/portal/ops/](https://score.factory-wager.com/portal/ops/)                         | [`ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md)                                                                                                                                                                                          |
+| TOC Ops             | [/portal/toc/](https://score.factory-wager.com/portal/toc/)                         | [`toc-ops.md`](docs/harness/tenants/toc-ops.md)                                                                                                                                                                                                                  |
+| Compliance          | [/portal/compliance/](https://score.factory-wager.com/portal/compliance/)           | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md)                                                                                                                                                                                              |
+| Console format      | [/portal/console-format/](https://score.factory-wager.com/portal/console-format/)   | [`portal-doctor.md`](docs/harness/tenants/portal-doctor.md) · `bun run console-format:bake`                                                                                                                                                                      |
+| Limits              | [/portal/limits/](https://score.factory-wager.com/portal/limits/)                   | [`partner-limits.md`](docs/harness/tenants/partner-limits.md)                                                                                                                                                                                                    |
+| Limits forecast lab | [/portal/limits-lab/](https://score.factory-wager.com/portal/limits-lab/)           | [`limit-forecast-lab.md`](docs/harness/tenants/limit-forecast-lab.md)                                                                                                                                                                                            |
+| Partner health      | [/portal/partner/](https://score.factory-wager.com/portal/partner/)                 | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · `bun run partner:health:bake`                                                                                                                                                            |
+| Partner history     | [/portal/partner-history/](https://score.factory-wager.com/portal/partner-history/) | [`partner-limits.md`](docs/harness/tenants/partner-limits.md)                                                                                                                                                                                                    |
+| Partners            | [/portal/partners/](https://score.factory-wager.com/portal/partners/)               | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · [`seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md)                                                                                                                      |
+| Dashboard           | [/portal/dashboard/](https://score.factory-wager.com/portal/dashboard/)             | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
+| Health              | [/portal/health/](https://score.factory-wager.com/portal/health/)                   | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
+| Env                 | [/portal/env/](https://score.factory-wager.com/portal/env/)                         | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
+| DOD                 | [/portal/dod/](https://score.factory-wager.com/portal/dod/)                         | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
+| Skills              | [/portal/skills/](https://score.factory-wager.com/portal/skills/)                   | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
+| Packages            | [/portal/packages/](https://score.factory-wager.com/portal/packages/)               | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md)                                                                                                                                                                                                  |
+| Doctor              | [/portal/doctor/](https://score.factory-wager.com/portal/doctor/)                   | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                                                                                                                             |
+| Bunfig              | [/portal/bunfig/](https://score.factory-wager.com/portal/bunfig/)                   | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                                                                                                                             |
+| Install hygiene     | [/portal/install-hygiene/](https://score.factory-wager.com/portal/install-hygiene/) | [`docs/UNIFIED.md`](docs/UNIFIED.md) · `bake:install-hygiene`                                                                                                                                                                                                    |
+| Vault               | [/portal/vault/](https://score.factory-wager.com/portal/vault/)                     | [`proton-integration.md`](docs/harness/tenants/proton-integration.md)                                                                                                                                                                                            |
+| Failures            | [/portal/failures/](https://score.factory-wager.com/portal/failures/)               | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
+| Brands              | [/portal/brands/](https://score.factory-wager.com/portal/brands/)                   | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
+| Catalog             | [/portal/catalog/](https://score.factory-wager.com/portal/catalog/)                 | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
+| Glossary            | [/portal/glossary/](https://score.factory-wager.com/portal/glossary/)               | [`docs/portal-foundation.md`](docs/portal-foundation.md) · `bun run glossary:portal`                                                                                                                                                                             |
+| Concepts            | [/portal/concepts/](https://score.factory-wager.com/portal/concepts/)               | [graph](https://score.factory-wager.com/portal/concepts/graph/) · [`docs/CONCEPT_LIFECYCLE.md`](docs/CONCEPT_LIFECYCLE.md) · `bun run quality:concept`                                                                                                           |
+| Surfaces            | [/portal/surfaces/](https://score.factory-wager.com/portal/surfaces/)               | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
+| Tools               | [/portal/tools/](https://score.factory-wager.com/portal/tools/)                     | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
+| Factory             | [/portal/factory/](https://score.factory-wager.com/portal/factory/)                 | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md)                                                                                                                                                                                                |
+| Identity            | [/portal/identity/](https://score.factory-wager.com/portal/identity/)               | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
+| Science             | [/portal/science/](https://score.factory-wager.com/portal/science/)                 | —                                                                                                                                                                                                                                                                |
 | Tennis              | [/portal/tennis/](https://score.factory-wager.com/portal/tennis/)                   | runtime [tennis.factory-wager.com](https://tennis.factory-wager.com/) · agent-auth [`/registry/tennis/agent-auth.json`](https://score.factory-wager.com/registry/tennis/agent-auth.json) · [`tennis-hq-registry.md`](docs/harness/tenants/tennis-hq-registry.md) |
 
 ## Registry artifacts (key bakes)
@@ -204,6 +205,8 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 | Command centre          | [`command-centre.md`](docs/harness/tenants/command-centre.md)                                                        |
 | Portal doctor           | [`portal-doctor.md`](docs/harness/tenants/portal-doctor.md)                                                          |
 | Portal snapshot cron    | [`portal-snapshot-cron.md`](docs/harness/tenants/portal-snapshot-cron.md)                                            |
+| Bake resilience         | [`bake-resilience.md`](docs/harness/tenants/bake-resilience.md)                                                      |
+| Full UI performance     | [`full-ui-performance-audit.md`](docs/harness/tenants/full-ui-performance-audit.md)                                  |
 | Remaining work          | [`remaining-work.md`](docs/harness/tenants/remaining-work.md)                                                        |
 
 ### Cloudflare · deploy · vault
@@ -232,21 +235,25 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 | Monorepo health               | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md)                     |
 | Monorepo workspaces           | [`monorepo-workspaces.md`](docs/harness/tenants/monorepo-workspaces.md)             |
 | Bun migration                 | [`bun-migrate.md`](docs/harness/tenants/bun-migrate.md)                             |
+| Bun channel doctor            | [`bun-channel-doctor.md`](docs/harness/tenants/bun-channel-doctor.md)               |
 | Channel metadata verification | [`channel-meta-verification.md`](docs/harness/tenants/channel-meta-verification.md) |
+| Codex task portfolio          | [`codex-thread-portfolio.md`](docs/harness/tenants/codex-thread-portfolio.md)       |
 | Orphan modules                | [`orphan-modules.md`](docs/harness/tenants/orphan-modules.md)                       |
 | Types covered                 | [`types-covered.md`](docs/harness/tenants/types-covered.md)                         |
 
 ### Domain · registry · analysis
 
-| Tenant                     | Doc                                                                     |
-| -------------------------- | ----------------------------------------------------------------------- |
-| Bookmaker registry         | [`bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md) |
-| Bun capability × brand map | [`bun-brand-cross-map.md`](docs/harness/tenants/bun-brand-cross-map.md) |
-| Limits forecast lab        | [`limit-forecast-lab.md`](docs/harness/tenants/limit-forecast-lab.md)   |
-| Partner domain map         | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md)   |
-| Prediction report          | [`prediction-report.md`](docs/harness/tenants/prediction-report.md)     |
-| Tennis HQ registry         | [`tennis-hq-registry.md`](docs/harness/tenants/tennis-hq-registry.md)   |
-| Agent endpoints × wire     | [`agents.md`](docs/harness/tenants/agents.md)                           |
+| Tenant                     | Doc                                                                           |
+| -------------------------- | ----------------------------------------------------------------------------- |
+| Bookmaker registry         | [`bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md)       |
+| Bookmaker open issues      | [`bookmakers-open-issues.md`](docs/harness/tenants/bookmakers-open-issues.md) |
+| Bun capability × brand map | [`bun-brand-cross-map.md`](docs/harness/tenants/bun-brand-cross-map.md)       |
+| Limits forecast lab        | [`limit-forecast-lab.md`](docs/harness/tenants/limit-forecast-lab.md)         |
+| Partner domain map         | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md)         |
+| Prediction report          | [`prediction-report.md`](docs/harness/tenants/prediction-report.md)           |
+| Tennis HQ registry         | [`tennis-hq-registry.md`](docs/harness/tenants/tennis-hq-registry.md)         |
+| Tennis HQ UI audit         | [`tennis-hq-ui-audit.md`](docs/harness/tenants/tennis-hq-ui-audit.md)         |
+| Agent endpoints × wire     | [`agents.md`](docs/harness/tenants/agents.md)                                 |
 
 ### Code · lib
 
@@ -266,6 +273,7 @@ run the focused loop:
 
 ```bash
 bun run quality:concept
+bun run wiki:coverage:check
 bun run wiki:links:check
 bun run docs:map:check
 bun run public:discover:check

@@ -48,6 +48,14 @@ const CORE_STEPS: CoreStep[] = [
     cmd: ['bun', 'run', 'docs:native:check'],
   },
   {
+    name: 'wiki-coverage',
+    cmd: ['bun', 'run', 'wiki:coverage:check'],
+  },
+  {
+    name: 'wiki-links',
+    cmd: ['bun', 'run', 'wiki:links:check'],
+  },
+  {
     name: 'import-graph',
     cmd: ['bun', 'scripts/check-import-graph.ts'],
   },
