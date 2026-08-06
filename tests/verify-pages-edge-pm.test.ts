@@ -2,6 +2,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   artifactRegistryApi,
+  artifactRegistryHealthUrl,
   buildPmProofReport,
   cleanManifest,
   manifestParity,
@@ -57,6 +58,18 @@ describe('pm-registry-probes parsing', () => {
     );
     expect(scopedPackumentUrl('https://reg.example', 'lodash')).toBe(
       'https://reg.example/lodash'
+    );
+    expect(scopedPackumentUrl('http://127.0.0.1:4873/api/npm/', 'lodash')).toBe(
+      'http://127.0.0.1:4873/api/npm/lodash'
+    );
+  });
+
+  test('artifactRegistryHealthUrl discards npm registry path prefixes', () => {
+    expect(artifactRegistryHealthUrl('https://registry.factory-wager.com/api/npm')).toBe(
+      'https://registry.factory-wager.com/api/registry/health'
+    );
+    expect(artifactRegistryHealthUrl('https://reg.example/custom/npm/')).toBe(
+      'https://reg.example/api/registry/health'
     );
   });
 });
@@ -215,15 +228,19 @@ describe('pm-registry-probes network fail-soft', () => {
   });
 
   test('artifactRegistryApi passes on live JSON, fails on served errors, skips on network throw', async () => {
+    let requestedUrl = '';
     const live = await artifactRegistryApi(
-      (() =>
-        Promise.resolve(
+      ((input: string | URL | Request) => {
+        requestedUrl = String(input);
+        return Promise.resolve(
           Response.json({ ok: true }, { headers: { 'content-type': 'application/json' } })
-        )) as unknown as typeof fetch,
-      'https://reg.example'
+        );
+      }) as typeof fetch,
+      'https://reg.example/api/npm'
     );
     expect(live.ok).toBe(true);
     expect(live.skipped).toBe(false);
+    expect(requestedUrl).toBe('https://reg.example/api/registry/health');
 
     const down = await artifactRegistryApi(
       (() => Promise.resolve(new Response('err', { status: 500 }))) as unknown as typeof fetch,

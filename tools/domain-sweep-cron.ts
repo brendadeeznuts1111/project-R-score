@@ -20,49 +20,59 @@
 
 import { scheduleInProcess, parseCron } from '../lib/harness/cron.ts';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
+import { captureProcess, summarizeProcessOutput } from '../lib/harness/process-capture.ts';
 
-export {};
+export const FULL_EVERY = 4; // every 4th tick runs subprocess gates too
 
-const EXPR = Bun.argv[2] ?? '*/15 * * * *';
-const FULL_EVERY = 4; // every 4th tick runs subprocess gates too
+export interface SweepCronState {
+  running: boolean;
+  tick: number;
+}
 
-let running = false;
-let tick = 0;
-
-async function runSweep(full: boolean): Promise<void> {
+async function runSweep(full: boolean, tick: number): Promise<void> {
   const args = full ? [] : ['--fast'];
   const t0 = Bun.nanoseconds();
-  const proc = Bun.spawn(bunSpawnArgs(['tools/domain-sweep.ts', ...args]), {
-    stdout: 'pipe',
-    stderr: 'pipe',
+  const result = await captureProcess(bunSpawnArgs(['tools/domain-sweep.ts', ...args]), {
     env: { ...Bun.env },
   });
-  const out = await new Response(proc.stdout).text();
-  const code = await proc.exited;
   const ms = Math.round((Bun.nanoseconds() - t0) / 1e6);
-  const summary = out.trim().split('\n').filter(Boolean).pop() ?? `exit ${code}`;
-  const line = `${new Date().toISOString()} tick=${tick} ${full ? 'full' : 'fast'} exit=${code} ${ms}ms ${summary}`;
-  if (code === 0) console.info(line);
+  const summary = summarizeProcessOutput(result) || `exit ${result.exitCode}`;
+  const line = `${new Date().toISOString()} tick=${tick} ${full ? 'full' : 'fast'} exit=${result.exitCode} ${ms}ms ${summary}`;
+  if (result.exitCode === 0) console.info(line);
   else console.error(`❌ ${line}`);
 }
 
-async function fire() {
-  if (running) {
-    console.error('⏭  sweep tick skipped — previous run still active');
+export async function fireSweep(
+  state: SweepCronState,
+  sweep: (full: boolean, tick: number) => Promise<void> = runSweep,
+  logError: (message: string) => void = console.error
+): Promise<void> {
+  if (state.running) {
+    logError('⏭  sweep tick skipped — previous run still active');
     return;
   }
-  running = true;
-  tick++;
+  state.running = true;
+  state.tick++;
   try {
-    await runSweep(tick % FULL_EVERY === 0);
+    await sweep(state.tick % FULL_EVERY === 0, state.tick);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    logError(`❌ sweep tick ${state.tick} crashed · ${detail}`);
   } finally {
-    running = false;
+    state.running = false;
   }
 }
 
-const next = parseCron(EXPR);
-console.info(
-  `⏰ domain-sweep cron armed: ${EXPR} (UTC) · full gates every ${FULL_EVERY} ticks · next ${next?.toISOString() ?? '?'}`
-);
-scheduleInProcess(EXPR, fire);
-await fire(); // first run immediately
+async function main(): Promise<void> {
+  const expression = Bun.argv[2] ?? '*/15 * * * *';
+  const state: SweepCronState = { running: false, tick: 0 };
+  const next = parseCron(expression);
+  console.info(
+    `⏰ domain-sweep cron armed: ${expression} (UTC) · full gates every ${FULL_EVERY} ticks · next ${next?.toISOString() ?? '?'}`
+  );
+  using job = scheduleInProcess(expression, () => fireSweep(state));
+  await fireSweep(state); // first run immediately
+  await new Promise<void>(() => {}); // the daemon owns the CronJob lifetime
+}
+
+if (import.meta.main) await main();
