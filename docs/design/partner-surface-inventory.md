@@ -103,15 +103,23 @@ Chrome-nav and portal-board rows for Domain `partner` are **derived live** from
 drift silently. Validate bags with `bun run partner-surface-inventory:validate`
 and wire traps with `bun run partner-surface-inventory:lint-wires`:
 
-| Layer | Check                                                                                                   |
-| ----- | ------------------------------------------------------------------------------------------------------- |
-| A     | brand-manifest + `Bun.file.exists` + brand linking (`domain` · `registryRef` · `isActive` · `category`) |
-| B     | baked JSON vs bag: schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy`   |
-| C     | `lint-wires`: glob coverage + naked `partnerId` / `partner_id` `: string` outside `boundaryPathGlobs`   |
+| Layer | Check                                                                                                     |
+| ----- | --------------------------------------------------------------------------------------------------------- |
+| A     | brand-manifest + `Bun.file.exists` + brand linking (`domain` · `registryRef` · `isActive` · `category`)   |
+| B     | baked JSON vs bag: schema identity · `requiredTopKeys` · omitted **key names** absent · `moneyPolicy`     |
+| C     | `lint-wires`: glob coverage + naked `partnerId` / `partner_id` `: string` outside `boundaryPathGlobs`     |
+| D     | `lint-domains`: inventory brand types used outside home path globs (default **warn**; `--strict` → error) |
 
 Layer A/B stay on `partner-surface-inventory:validate`. Layer C is
-`partner-surface-inventory:lint-wires` only (do not alias validate → wire
-traps).
+`partner-surface-inventory:lint-wires`. Layer D is
+`partner-surface-inventory:lint-domains` (do not alias validate → wire/domain
+lints).
+
+```bash
+bun run partner-surface-inventory:lint-domains
+bun scripts/validate-partner-domain-isolation.ts --rules
+bun scripts/validate-partner-domain-isolation.ts --scan --strict
+```
 
 Registry bag notes:
 
@@ -178,7 +186,16 @@ Unqualified `partnerId` / Sports `partner_id` / Kalshi registry `id` / Pandora
 
 ## Full table
 
-Regenerate from lib (TTY):
+Generated tables (domains · brands with linking metadata · boards · live
+PartnerCodes) are committed at
+[`partner-surface-inventory.generated.md`](./partner-surface-inventory.generated.md):
+
+```bash
+bun run partner-surface-inventory:docs
+bun run partner-surface-inventory:docs:check
+```
+
+TTY dump of every inventory row:
 
 ```bash
 bun -e 'import { formatPartnerSurfaceMarkdown } from "./lib/docs/partner-surface-inventory.ts"; console.log(formatPartnerSurfaceMarkdown())'
