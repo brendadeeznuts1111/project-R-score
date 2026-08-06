@@ -275,6 +275,7 @@ export const FUNCTIONS_LIB_IMPORT_ALLOWLIST = [
   'lib/types/branded/audit.ts',
   'lib/types/branded/deployment.ts',
   'lib/types/branded/documents.ts',
+  'lib/types/branded/governance.ts',
   'lib/types/branded/identity.ts',
   'lib/types/branded/index.ts',
   'lib/types/branded/operations.ts',

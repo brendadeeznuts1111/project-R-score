@@ -70,6 +70,7 @@ const BRAND_DOMAIN_COLORS = {
   security: { colorKey: 'red', hex: portalTheme.dark.red, tone: 'bad' },
   deployment: { colorKey: 'yellow', hex: portalTheme.dark.yellow, tone: 'warn' },
   audit: { colorKey: 'orange', hex: '#f0883e', tone: 'warn' },
+  governance: { colorKey: 'orange', hex: portalTheme.dark.orange, tone: 'warn' },
   operations: { colorKey: 'accent', hex: portalTheme.dark.accent, tone: 'info' },
   portal: { colorKey: 'green', hex: portalTheme.dark.green, tone: 'ok' },
   surfaces: { colorKey: 'purple', hex: '#a371f7', tone: 'info' },

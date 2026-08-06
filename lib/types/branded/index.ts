@@ -44,6 +44,7 @@ export * from './documents.ts';
 export * from './security.ts';
 export * from './deployment.ts';
 export * from './audit.ts';
+export * from './governance.ts';
 export * from './operations.ts';
 export * from './portal.ts';
 export * from './surfaces.ts';
@@ -55,6 +56,7 @@ import { DOCUMENT_BRAND_SPECS } from './documents.ts';
 import { SECURITY_BRAND_SPECS } from './security.ts';
 import { DEPLOYMENT_BRAND_SPECS } from './deployment.ts';
 import { AUDIT_BRAND_SPECS } from './audit.ts';
+import { GOVERNANCE_BRAND_SPECS } from './governance.ts';
 import { OPERATIONS_BRAND_SPECS } from './operations.ts';
 import { PORTAL_BRAND_SPECS } from './portal.ts';
 import { SURFACES_BRAND_SPECS } from './surfaces.ts';
@@ -81,6 +83,21 @@ import type {
   DodId,
   RuleId,
 } from './audit.ts';
+import type {
+  GithubIssueArtifactId,
+  GithubIssueConceptId,
+  GithubIssueLabelKey,
+  GithubIssueLabelNameKey,
+  GithubIssueDimensionCode,
+  GithubIssueTypeCode,
+  GithubIssuePriorityCode,
+  GithubIssuePlaneCode,
+  GithubIssueRuntimeCode,
+  GithubIssueTeamCode,
+  GithubIssueStatusCode,
+  GithubIssueUrgencyCode,
+  GithubIssueConcernCode,
+} from './governance.ts';
 import type {
   OperationId,
   ResourceId,
@@ -139,6 +156,7 @@ export const BRAND_CATALOG = [
   ...SECURITY_BRAND_SPECS,
   ...DEPLOYMENT_BRAND_SPECS,
   ...AUDIT_BRAND_SPECS,
+  ...GOVERNANCE_BRAND_SPECS,
   ...OPERATIONS_BRAND_SPECS,
   ...PORTAL_BRAND_SPECS,
   ...SURFACES_BRAND_SPECS,
@@ -189,6 +207,8 @@ export type AnyId =
   | EvidenceId
   | DodId
   | RuleId
+  | GithubIssueArtifactId
+  | GithubIssueConceptId
   | OperationId
   | ResourceId
   | ProjectId
@@ -230,6 +250,17 @@ export type AnyId =
 /** Union of all branded strings, including IDs, keys, and validated codes. */
 export type AnyBrandedValue =
   | AnyId
+  | GithubIssueLabelKey
+  | GithubIssueLabelNameKey
+  | GithubIssueDimensionCode
+  | GithubIssueTypeCode
+  | GithubIssuePriorityCode
+  | GithubIssuePlaneCode
+  | GithubIssueRuntimeCode
+  | GithubIssueTeamCode
+  | GithubIssueStatusCode
+  | GithubIssueUrgencyCode
+  | GithubIssueConcernCode
   | PartnerProfileKey
   | StateCode
   | ZipCode

@@ -11,6 +11,27 @@ function runtimeConstructor(name: string): RuntimeConstructor {
 }
 
 function sampleFor(name: string): { input: string; expected: string } {
+  if (name === 'GithubIssueArtifactId') {
+    return { input: 'github-issue-taxonomy', expected: 'github-issue-taxonomy' };
+  }
+  if (name === 'GithubIssueConceptId') {
+    return { input: 'governance.issue_taxonomy', expected: 'governance.issue_taxonomy' };
+  }
+  if (name === 'GithubIssueLabelKey') return { input: 'priority.p1', expected: 'priority.p1' };
+  if (name === 'GithubIssueLabelNameKey') return { input: 'high-priority', expected: 'high-priority' };
+  if (name === 'GithubIssueDimensionCode') return { input: 'priority', expected: 'priority' };
+  if (name === 'GithubIssueTypeCode') return { input: 'bug', expected: 'bug' };
+  if (name === 'GithubIssuePriorityCode') return { input: 'p1', expected: 'p1' };
+  if (name === 'GithubIssuePlaneCode') return { input: 'domain', expected: 'domain' };
+  if (name === 'GithubIssueRuntimeCode') return { input: 'bun', expected: 'bun' };
+  if (name === 'GithubIssueTeamCode') {
+    return { input: 'infrastructure', expected: 'infrastructure' };
+  }
+  if (name === 'GithubIssueStatusCode') return { input: 'active', expected: 'active' };
+  if (name === 'GithubIssueUrgencyCode') return { input: 'high', expected: 'high' };
+  if (name === 'GithubIssueConcernCode') {
+    return { input: 'resource-management', expected: 'resource-management' };
+  }
   if (name === 'StateCode') return { input: 'ma', expected: 'MA' };
   if (name === 'SportsbookId') return { input: 'DraftKings', expected: 'draftkings' };
   if (name === 'ZipCode') return { input: '02139', expected: '02139' };
@@ -38,19 +59,20 @@ function sampleFor(name: string): { input: string; expected: string } {
 }
 
 describe('branded domain-value catalog', () => {
-  test('catalog is a unique 69-value, 9-domain contract', () => {
-    expect(branded.BRAND_CATALOG).toHaveLength(69);
+  test('catalog is a unique 82-value, 10-domain contract', () => {
+    expect(branded.BRAND_CATALOG).toHaveLength(82);
 
     const names = branded.BRAND_CATALOG.map(spec => spec.name);
     const domains = new Set(branded.BRAND_CATALOG.map(spec => spec.domain));
     const kinds = branded.BRAND_CATALOG.map(spec => branded.brandKindFromName(spec.name));
 
     expect(new Set(names).size).toBe(names.length);
-    expect(domains.size).toBe(9);
+    expect(domains.size).toBe(10);
+    expect(domains.has('governance')).toBeTrue();
     expect(domains.has('surfaces')).toBeTrue();
-    expect(kinds.filter(kind => kind === 'id')).toHaveLength(63);
-    expect(kinds.filter(kind => kind === 'key')).toHaveLength(1);
-    expect(kinds.filter(kind => kind === 'code')).toHaveLength(5);
+    expect(kinds.filter(kind => kind === 'id')).toHaveLength(65);
+    expect(kinds.filter(kind => kind === 'key')).toHaveLength(3);
+    expect(kinds.filter(kind => kind === 'code')).toHaveLength(14);
   });
 
   test('entity names and generated symbols are collision-free after normalization', () => {
@@ -89,7 +111,7 @@ describe('branded domain-value catalog', () => {
   });
 
   test('generated guards cover every canonical runtime shape', () => {
-    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(69);
+    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(82);
 
     for (const spec of branded.BRAND_CATALOG) {
       const guardName = `is${spec.name}` as keyof typeof branded.BRAND_GUARDS;

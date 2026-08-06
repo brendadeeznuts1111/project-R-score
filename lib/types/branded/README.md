@@ -10,7 +10,7 @@ text must not travel through the harness as a bare `string`.
 - **Source catalog:** [`index.ts`](./index.ts) → `BRAND_CATALOG`
 - **Generated record:** [`brand-manifest.json`](../brand-manifest.json) — never
   hand-edit
-- **Inventory:** 61 values across 9 domains: 55 IDs, 1 key, and 5 codes
+- **Inventory:** 82 values across 10 domains: 65 IDs, 3 keys, and 14 codes
 - **Runtime:** branded values remain ordinary strings; the nominal tag is
   type-only
 - **Shape guards:** `BRAND_GUARDS.isX(value)` and `isBrandedValue(name, value)`
@@ -26,17 +26,18 @@ authoritative.
 
 ## Domain routing
 
-| Domain     | Values                                                                  | Module                             |
-| ---------- | ----------------------------------------------------------------------- | ---------------------------------- |
-| session    | 5 session, terminal, request, correlation, and snapshot IDs             | [`session.ts`](./session.ts)       |
-| identity   | 6 user, account, identity, OIDC-client, access-key, and token IDs       | [`identity.ts`](./identity.ts)     |
-| documents  | 3 document, zone, and Bun documentation-token IDs                       | [`documents.ts`](./documents.ts)   |
-| security   | 2 challenge and policy IDs                                              | [`security.ts`](./security.ts)     |
-| deployment | 1 deployment ID                                                         | [`deployment.ts`](./deployment.ts) |
-| audit      | 6 version, audit, finding, concept, entry, and evidence IDs             | [`audit.ts`](./audit.ts)           |
-| operations | 23 values: ops IDs, `PartnerProfileKey`, `SportsbookId`, `StateCode`, `ZipCode` | [`operations.ts`](./operations.ts) |
-| portal     | 5 portal tenant, Telegram user, portal account, link-nonce, and DOM mount IDs | [`portal.ts`](./portal.ts)         |
-| surfaces   | 10 host/apex/subdomain/surface/Pages/publish/Access IDs + status/access/backend codes | [`surfaces.ts`](./surfaces.ts) |
+| Domain     | Values                                                                                   | Module                                 |
+| ---------- | ---------------------------------------------------------------------------------------- | -------------------------------------- |
+| session    | 5 session, terminal, request, correlation, and snapshot IDs                              | [`session.ts`](./session.ts)           |
+| identity   | 6 user, account, identity, OIDC-client, access-key, and token IDs                        | [`identity.ts`](./identity.ts)         |
+| documents  | 3 document, zone, and Bun documentation-token IDs                                        | [`documents.ts`](./documents.ts)       |
+| security   | 2 challenge and policy IDs                                                               | [`security.ts`](./security.ts)         |
+| deployment | 1 deployment ID                                                                          | [`deployment.ts`](./deployment.ts)     |
+| audit      | 8 version, audit, finding, concept, entry, evidence, DOD, and rule IDs                   | [`audit.ts`](./audit.ts)               |
+| governance | 13 GitHub issue artifact/concept IDs plus label, dimension, and lifecycle keys/codes     | [`governance.ts`](./governance.ts)     |
+| operations | 29 values: ops IDs, `PartnerProfileKey`, `SportsbookId`, `StateCode`, and `ZipCode`      | [`operations.ts`](./operations.ts)     |
+| portal     | 5 portal tenant, Telegram user, portal account, link-nonce, and DOM mount IDs            | [`portal.ts`](./portal.ts)             |
+| surfaces   | 10 host/apex/subdomain/surface/Pages/publish/Access IDs + status/access/backend codes    | [`surfaces.ts`](./surfaces.ts)         |
 
 `StateCode` and `ZipCode` have format-aware constructors. Do not replace those
 constructors with the generic factory. `HostId` / `AccessDomainId` are also

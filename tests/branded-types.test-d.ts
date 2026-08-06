@@ -31,6 +31,9 @@ import type {
   EventId,
   FeedId,
   HostId,
+  GithubIssueArtifactId,
+  GithubIssueConceptId,
+  GithubIssueLabelKey,
   IdentityId,
   JobId,
   LimitForecastIssueId,
@@ -83,6 +86,10 @@ import {
   asExperimentVariantId,
   asFeedId,
   asHostId,
+  asGithubIssueArtifactId,
+  asGithubIssueConceptId,
+  asGithubIssueLabelKey,
+  asGithubIssuePriorityCode,
   asIdentityId,
   asJobId,
   asLimitForecastIssueId,
@@ -219,6 +226,12 @@ const auditFindingId: AuditFindingId = asAuditFindingId('finding-1');
 const auditConceptId: AuditConceptId = asAuditConceptId('concept-1');
 const auditEntryId: AuditEntryId = asAuditEntryId('entry-1');
 const auditLogId: AuditId = asAuditId('au-1');
+const githubIssueArtifactId: GithubIssueArtifactId =
+  asGithubIssueArtifactId('github-issue-taxonomy');
+const githubIssueConceptId: GithubIssueConceptId = asGithubIssueConceptId(
+  'governance.issue_taxonomy'
+);
+const githubIssueLabelKey: GithubIssueLabelKey = asGithubIssueLabelKey('priority.p1');
 
 // @ts-expect-error — AuditFindingId is not an AuditConceptId
 const crossFindingAsConcept: AuditConceptId = auditFindingId;
@@ -234,6 +247,11 @@ const crossLogAsEntry: AuditEntryId = auditLogId;
 const crossConceptAsEntry: AuditEntryId = auditConceptId;
 // @ts-expect-error — AuditConceptId is not AuditId (log entry)
 const crossConceptAsLog: AuditId = auditConceptId;
+
+// @ts-expect-error — an issue artifact identity is not its concept identity
+const crossIssueArtifactAsConcept: GithubIssueConceptId = githubIssueArtifactId;
+// @ts-expect-error — a semantic label key is not an issue artifact identity
+const crossIssueLabelAsArtifact: GithubIssueArtifactId = githubIssueLabelKey;
 
 // ─── 2. Same-brand assignment compiles ──────────────────────────────────────
 
@@ -344,10 +362,14 @@ const everyId: readonly AnyId[] = [
   asPagesProjectId('project-r-score'),
   asPublishLaneId('prod-write'),
   asAccessDomainId('score.factory-wager.com/portal'),
+  githubIssueArtifactId,
+  githubIssueConceptId,
 ];
 
 const everyBrandedValue: readonly AnyBrandedValue[] = [
   ...everyId,
+  githubIssueLabelKey,
+  asGithubIssuePriorityCode('p1'),
   asPartnerProfileKey('profile-key'),
   asStateCode('MA'),
   asZipCode('02139'),
