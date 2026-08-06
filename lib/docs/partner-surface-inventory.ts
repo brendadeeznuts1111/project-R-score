@@ -45,13 +45,30 @@ export type PartnerSurfaceMachine = (typeof PARTNER_SURFACE_MACHINES)[number];
 
 export type PartnerSurfaceRepo = 'project-R-score' | 'Kalshi-bot' | 'toc-ops' | 'sports-terminal';
 
-/** Layer-2 bag on brand rows — checkable against brand-manifest. */
+/**
+ * Layer-2 bag on brand rows — checkable against brand-manifest.
+ *
+ * Linking metadata (`domain` · `registryRef` · `isActive` · `category`) joins
+ * brands to brand-catalog domains, registry artifacts, and live-code readiness
+ * without changing mint/pattern Layer A checks.
+ */
 export type PartnerSurfaceBrandBag = {
   readonly pattern?: string;
   readonly mintAuthority: string;
   readonly module: string;
   readonly interiorOnly: boolean;
   readonly replaces?: readonly string[];
+  /**
+   * Brand-catalog domain (`operations`, …), inventory taxonomy
+   * conceptDomain/chromeDomain token, or sentinel `cross-domain`.
+   */
+  readonly domain: string;
+  /** Inventory `registry` row token that holds instances; omit when none. */
+  readonly registryRef?: string;
+  /** false = deprecated/legacy — still documented, not live-code SSOT. */
+  readonly isActive: boolean;
+  /** Doc grouping: identity · profile · template · external · node */
+  readonly category: string;
 };
 
 export type PartnerSurfaceMoneyPolicy = 'integerMinorUnits' | 'forbidden' | 'unset';
@@ -287,6 +304,10 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       module: 'lib/types/branded/operations.ts',
       interiorOnly: false,
       replaces: ['partnerId', 'partner_id'],
+      domain: 'operations',
+      registryRef: 'partners-ops',
+      isActive: true,
+      category: 'identity',
     },
   }),
   row({
@@ -304,6 +325,9 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       mintAuthority: 'parsePartnerCallSignCode',
       module: 'lib/types/branded/operations.ts',
       interiorOnly: false,
+      domain: 'operations',
+      isActive: true,
+      category: 'identity',
     },
   }),
   row({
@@ -321,6 +345,10 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       mintAuthority: 'asPartnerProfileKey',
       module: 'lib/types/branded/operations.ts',
       interiorOnly: true,
+      domain: 'operations',
+      registryRef: 'partner-profiles',
+      isActive: true,
+      category: 'profile',
     },
   }),
   row({
@@ -337,6 +365,10 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       mintAuthority: 'asPartnerTemplateId',
       module: 'lib/types/branded/operations.ts',
       interiorOnly: true,
+      domain: 'operations',
+      registryRef: 'partner-contracts',
+      isActive: true,
+      category: 'template',
     },
   }),
   row({
@@ -355,6 +387,10 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       module: 'lib/types/branded/operations.ts',
       interiorOnly: false,
       replaces: ['accountId', 'SPEN-1 legacy'],
+      domain: 'operations',
+      registryRef: 'partners-ops',
+      isActive: true,
+      category: 'identity',
     },
   }),
   row({
@@ -372,6 +408,9 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       module: 'lib/types/branded/operations.ts',
       interiorOnly: false,
       replaces: ['partnerId'],
+      domain: 'cross-domain',
+      isActive: true,
+      category: 'external',
     },
   }),
   row({
@@ -388,6 +427,10 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       mintAuthority: 'asTreeNodeId',
       module: 'lib/types/branded/operations.ts',
       interiorOnly: true,
+      domain: 'operations',
+      registryRef: 'workspace-lane-map',
+      isActive: true,
+      category: 'node',
     },
   }),
   row({
@@ -407,6 +450,10 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       module: 'packages/partners/src/core/identifiers.ts',
       interiorOnly: false,
       replaces: ['partnerId'],
+      domain: 'operations',
+      registryRef: 'partners-ops',
+      isActive: true,
+      category: 'identity',
     },
   }),
 
