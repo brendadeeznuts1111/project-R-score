@@ -2,7 +2,7 @@
   "kind": "partner-surface-inventory",
   "schemaVersion": 2,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-06T20:25:22.807Z",
+  "bakedAt": "2026-08-06T20:29:49.623Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",
@@ -223,7 +223,7 @@
       "href": "/portal/brands/#domain=operations&q=PartnerCallSignCode",
       "brand": {
         "pattern": "^[A-Z]{3,6}-[0-9]{3}$",
-        "mintAuthority": "parsePartnerCallSignCode",
+        "mintAuthority": "parsePartnerCallSignCode parsePartnerCallSign",
         "module": "lib/types/branded/operations.ts",
         "interiorOnly": false,
         "domain": "operations",
@@ -301,7 +301,7 @@
       "href": "/portal/brands/#domain=operations&q=OutId",
       "brand": {
         "pattern": "^out-[A-Z]{3,6}-[1-9][0-9]*$",
-        "mintAuthority": "parseOutId",
+        "mintAuthority": "parseOutId asOutId",
         "module": "lib/types/branded/operations.ts",
         "interiorOnly": false,
         "replaces": [
@@ -400,90 +400,6 @@
         "category": "identity",
         "fitnessScore": 4,
         "hasTestCoverage": true
-      }
-    },
-    {
-      "id": "partner-code.ASH",
-      "aspect": "partner-code",
-      "token": "ASH",
-      "repo": "project-R-score",
-      "path": "public/registry/partners-ops.json",
-      "properties": [
-        "live desk code",
-        "brandRef=PartnerCode",
-        "registryRef=partners-ops"
-      ],
-      "owner": "partners-ops",
-      "machine": "identity",
-      "typeOrExport": "PartnerCode",
-      "href": "/portal/partners/#partner/ASH",
-      "partnerCode": {
-        "brandRef": "PartnerCode",
-        "registryRef": "partners-ops",
-        "phase": "operator_ready"
-      }
-    },
-    {
-      "id": "partner-code.BIL",
-      "aspect": "partner-code",
-      "token": "BIL",
-      "repo": "project-R-score",
-      "path": "public/registry/partners-ops.json",
-      "properties": [
-        "live desk code",
-        "brandRef=PartnerCode",
-        "registryRef=partners-ops"
-      ],
-      "owner": "partners-ops",
-      "machine": "identity",
-      "typeOrExport": "PartnerCode",
-      "href": "/portal/partners/#partner/BIL",
-      "partnerCode": {
-        "brandRef": "PartnerCode",
-        "registryRef": "partners-ops",
-        "phase": "operator_ready"
-      }
-    },
-    {
-      "id": "partner-code.NOV",
-      "aspect": "partner-code",
-      "token": "NOV",
-      "repo": "project-R-score",
-      "path": "public/registry/partners-ops.json",
-      "properties": [
-        "live desk code",
-        "brandRef=PartnerCode",
-        "registryRef=partners-ops"
-      ],
-      "owner": "partners-ops",
-      "machine": "identity",
-      "typeOrExport": "PartnerCode",
-      "href": "/portal/partners/#partner/NOV",
-      "partnerCode": {
-        "brandRef": "PartnerCode",
-        "registryRef": "partners-ops",
-        "phase": "operator_ready"
-      }
-    },
-    {
-      "id": "partner-code.SPEN",
-      "aspect": "partner-code",
-      "token": "SPEN",
-      "repo": "project-R-score",
-      "path": "public/registry/partners-ops.json",
-      "properties": [
-        "live desk code",
-        "brandRef=PartnerCode",
-        "registryRef=partners-ops"
-      ],
-      "owner": "partners-ops",
-      "machine": "identity",
-      "typeOrExport": "PartnerCode",
-      "href": "/portal/partners/#partner/SPEN",
-      "partnerCode": {
-        "brandRef": "PartnerCode",
-        "registryRef": "partners-ops",
-        "phase": "operator_ready"
       }
     },
     {
@@ -1524,6 +1440,94 @@
         "tier": "overflow",
         "registryArtifact": "telegram-handshake",
         "cli": "bun run telegram:verify"
+      }
+    },
+    {
+      "id": "partner-code.ASH",
+      "aspect": "partner-code",
+      "token": "ASH",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live desk code",
+        "derived-from-partners-ops",
+        "brandRef=PartnerCode",
+        "registryRef=partners-ops"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "PartnerCode",
+      "href": "/portal/partners/#partner/ASH",
+      "partnerCode": {
+        "brandRef": "PartnerCode",
+        "registryRef": "partners-ops",
+        "phase": "operator_ready"
+      }
+    },
+    {
+      "id": "partner-code.BIL",
+      "aspect": "partner-code",
+      "token": "BIL",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live desk code",
+        "derived-from-partners-ops",
+        "brandRef=PartnerCode",
+        "registryRef=partners-ops"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "PartnerCode",
+      "href": "/portal/partners/#partner/BIL",
+      "partnerCode": {
+        "brandRef": "PartnerCode",
+        "registryRef": "partners-ops",
+        "phase": "operator_ready"
+      }
+    },
+    {
+      "id": "partner-code.NOV",
+      "aspect": "partner-code",
+      "token": "NOV",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live desk code",
+        "derived-from-partners-ops",
+        "brandRef=PartnerCode",
+        "registryRef=partners-ops"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "PartnerCode",
+      "href": "/portal/partners/#partner/NOV",
+      "partnerCode": {
+        "brandRef": "PartnerCode",
+        "registryRef": "partners-ops",
+        "phase": "operator_ready"
+      }
+    },
+    {
+      "id": "partner-code.SPEN",
+      "aspect": "partner-code",
+      "token": "SPEN",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-ops.json",
+      "properties": [
+        "live desk code",
+        "derived-from-partners-ops",
+        "brandRef=PartnerCode",
+        "registryRef=partners-ops"
+      ],
+      "owner": "partners-ops",
+      "machine": "identity",
+      "typeOrExport": "PartnerCode",
+      "href": "/portal/partners/#partner/SPEN",
+      "partnerCode": {
+        "brandRef": "PartnerCode",
+        "registryRef": "partners-ops",
+        "phase": "operator_ready"
       }
     }
   ],

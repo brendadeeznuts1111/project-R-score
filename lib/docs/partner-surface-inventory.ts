@@ -383,7 +383,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     owner: 'partners core',
     brand: {
       pattern: '^[A-Z]{3,6}-[0-9]{3}$',
-      mintAuthority: 'parsePartnerCallSignCode',
+      mintAuthority: 'parsePartnerCallSignCode parsePartnerCallSign',
       module: 'lib/types/branded/operations.ts',
       interiorOnly: false,
       domain: 'operations',
@@ -453,7 +453,7 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     owner: 'partners core',
     brand: {
       pattern: '^out-[A-Z]{3,6}-[1-9][0-9]*$',
-      mintAuthority: 'parseOutId',
+      mintAuthority: 'parseOutId asOutId',
       module: 'lib/types/branded/operations.ts',
       interiorOnly: false,
       replaces: ['accountId', 'SPEN-1 legacy'],
@@ -535,76 +535,6 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       category: 'identity',
       fitnessScore: 4,
       hasTestCoverage: true,
-    },
-  }),
-
-  // ── Live PartnerCodes (desk instances; sync with partners-ops bake) ──
-  row({
-    id: 'partner-code.ASH',
-    aspect: 'partner-code',
-    machine: 'identity',
-    token: 'ASH',
-    typeOrExport: 'PartnerCode',
-    repo: 'project-R-score',
-    path: 'public/registry/partners-ops.json',
-    href: '/portal/partners/#partner/ASH',
-    properties: ['live desk code', 'brandRef=PartnerCode', 'registryRef=partners-ops'],
-    owner: 'partners-ops',
-    partnerCode: {
-      brandRef: 'PartnerCode',
-      registryRef: 'partners-ops',
-      phase: 'operator_ready',
-    },
-  }),
-  row({
-    id: 'partner-code.BIL',
-    aspect: 'partner-code',
-    machine: 'identity',
-    token: 'BIL',
-    typeOrExport: 'PartnerCode',
-    repo: 'project-R-score',
-    path: 'public/registry/partners-ops.json',
-    href: '/portal/partners/#partner/BIL',
-    properties: ['live desk code', 'brandRef=PartnerCode', 'registryRef=partners-ops'],
-    owner: 'partners-ops',
-    partnerCode: {
-      brandRef: 'PartnerCode',
-      registryRef: 'partners-ops',
-      phase: 'operator_ready',
-    },
-  }),
-  row({
-    id: 'partner-code.NOV',
-    aspect: 'partner-code',
-    machine: 'identity',
-    token: 'NOV',
-    typeOrExport: 'PartnerCode',
-    repo: 'project-R-score',
-    path: 'public/registry/partners-ops.json',
-    href: '/portal/partners/#partner/NOV',
-    properties: ['live desk code', 'brandRef=PartnerCode', 'registryRef=partners-ops'],
-    owner: 'partners-ops',
-    partnerCode: {
-      brandRef: 'PartnerCode',
-      registryRef: 'partners-ops',
-      phase: 'operator_ready',
-    },
-  }),
-  row({
-    id: 'partner-code.SPEN',
-    aspect: 'partner-code',
-    machine: 'identity',
-    token: 'SPEN',
-    typeOrExport: 'PartnerCode',
-    repo: 'project-R-score',
-    path: 'public/registry/partners-ops.json',
-    href: '/portal/partners/#partner/SPEN',
-    properties: ['live desk code', 'brandRef=PartnerCode', 'registryRef=partners-ops'],
-    owner: 'partners-ops',
-    partnerCode: {
-      brandRef: 'PartnerCode',
-      registryRef: 'partners-ops',
-      phase: 'operator_ready',
     },
   }),
 
@@ -1181,11 +1111,66 @@ export function partnerPortalBoardSurfaceRows(): readonly PartnerSurfaceRow[] {
   });
 }
 
-export function allPartnerSurfaceRows(): readonly PartnerSurfaceRow[] {
+/** Live desk PartnerCode row sourced from partners-ops (or a test fixture). */
+export type PartnerSurfaceLiveCode = {
+  readonly code: string;
+  readonly phase?: string;
+};
+
+/**
+ * Derive partner-code aspect rows from live partners-ops codes (chrome-nav style).
+ * Empty input → no partner-code rows (bake/validate should pass live codes).
+ */
+export function partnerCodeSurfaceRows(
+  liveCodes: readonly PartnerSurfaceLiveCode[] = []
+): readonly PartnerSurfaceRow[] {
+  return [...liveCodes]
+    .map(c => ({
+      code: c.code.trim().toUpperCase(),
+      phase: c.phase?.trim() || undefined,
+    }))
+    .filter(c => /^[A-Z]{3,6}$/.test(c.code))
+    .sort((a, b) => a.code.localeCompare(b.code))
+    .map(c => {
+      const hrefs = partnerDeskHrefs(c.code);
+      return row({
+        id: `partner-code.${c.code}`,
+        aspect: 'partner-code',
+        machine: 'identity',
+        token: c.code,
+        typeOrExport: 'PartnerCode',
+        repo: 'project-R-score',
+        path: 'public/registry/partners-ops.json',
+        href: hrefs.partnersHref,
+        properties: [
+          'live desk code',
+          'derived-from-partners-ops',
+          'brandRef=PartnerCode',
+          'registryRef=partners-ops',
+        ],
+        owner: 'partners-ops',
+        partnerCode: {
+          brandRef: 'PartnerCode',
+          registryRef: 'partners-ops',
+          ...(c.phase ? { phase: c.phase } : {}),
+        },
+      });
+    });
+}
+
+export type PartnerSurfaceBuildOptions = {
+  /** When set, partner-code rows are derived from these codes (partners-ops bake). */
+  readonly livePartnerCodes?: readonly PartnerSurfaceLiveCode[];
+};
+
+export function allPartnerSurfaceRows(
+  options: PartnerSurfaceBuildOptions = {}
+): readonly PartnerSurfaceRow[] {
   return [
     ...PARTNER_SURFACE_STATIC_ROWS,
     ...partnerChromeNavSurfaceRows(),
     ...partnerPortalBoardSurfaceRows(),
+    ...partnerCodeSurfaceRows(options.livePartnerCodes ?? []),
   ];
 }
 
@@ -1224,7 +1209,8 @@ export type PartnerSurfaceInventory = {
 };
 
 export function buildPartnerSurfaceInventory(
-  bakedAt: string = new Date().toISOString()
+  bakedAt: string = new Date().toISOString(),
+  options: PartnerSurfaceBuildOptions = {}
 ): PartnerSurfaceInventory {
   const chrome = PORTAL_DOMAIN_LANE_META.find(m => m.id === 'partner');
   if (!chrome) throw new Error('missing chrome Domain partner');
@@ -1256,7 +1242,7 @@ export function buildPartnerSurfaceInventory(
       description: session.description,
     },
     commitScopeHints: partnerCorr?.commitScopeHints ?? [],
-    rows: allPartnerSurfaceRows(),
+    rows: allPartnerSurfaceRows(options),
     docs: {
       inventory: 'docs/design/partner-surface-inventory.md',
       typeReference: 'docs/design/partner-type-reference-map.md',

@@ -29,9 +29,9 @@
 | Brand | Domain | Registry | Active | Category | Href | Mint |
 | ----- | ------ | -------- | ------ | -------- | ---- | ---- |
 | `ExternalPartnerId` | `cross-domain` | — | yes | `external` | `/portal/brands/#domain=operations&q=ExternalPartnerId` | `asExternalPartnerId` |
-| `OutId` | `operations` | `partners-ops` | yes | `identity` | `/portal/brands/#domain=operations&q=OutId` | `parseOutId` |
+| `OutId` | `operations` | `partners-ops` | yes | `identity` | `/portal/brands/#domain=operations&q=OutId` | `parseOutId asOutId` |
 | `parsePartnerCode` → `PartnerCode` | `operations` | `partners-ops` | yes | `identity` | `/portal/brands/#domain=operations&q=PartnerCode` | `packages/partners parsePartnerCode` |
-| `PartnerCallSignCode` | `operations` | — | yes | `identity` | `/portal/brands/#domain=operations&q=PartnerCallSignCode` | `parsePartnerCallSignCode` |
+| `PartnerCallSignCode` | `operations` | — | yes | `identity` | `/portal/brands/#domain=operations&q=PartnerCallSignCode` | `parsePartnerCallSignCode parsePartnerCallSign` |
 | `PartnerCode` | `operations` | `partners-ops` | yes | `identity` | `/portal/brands/#domain=operations&q=PartnerCode` | `parsePartnerCode` |
 | `PartnerProfileKey` | `operations` | `partner-profiles` | yes | `profile` | `/portal/brands/#domain=operations&q=PartnerProfileKey` | `asPartnerProfileKey` |
 | `PartnerTemplateId` | `operations` | `partner-contracts` | yes | `template` | `/portal/brands/#domain=operations&q=PartnerTemplateId` | `asPartnerTemplateId` |

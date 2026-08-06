@@ -5,6 +5,7 @@ import {
   checkBrandLifecycleFields,
   checkBrandLinkingBag,
   checkDeprecatedBrandReferences,
+  checkPartnerCodeArtifactPresence,
   checkPartnerCodeBag,
   collectAllowedBrandLinkDomains,
   collectBrandBagsByToken,
@@ -13,7 +14,12 @@ import {
   isPartnerSurfaceFitnessScore,
 } from '../lib/docs/partner-surface-brand-check.ts';
 import {
+  checkBrandTestCoverageEvidence,
+  mintAuthoritySearchTerms,
+} from '../lib/docs/partner-surface-fitness-evidence.ts';
+import {
   allPartnerSurfaceRows,
+  partnerCodeSurfaceRows,
   type PartnerSurfaceRow,
 } from '../lib/docs/partner-surface-inventory.ts';
 
@@ -159,7 +165,9 @@ describe('partner-surface-brand-check', () => {
   });
 
   test('checkPartnerCodeBag requires active brand with registryRef', () => {
-    const rows = allPartnerSurfaceRows();
+    const rows = allPartnerSurfaceRows({
+      livePartnerCodes: [{ code: 'SPEN', phase: 'operator_ready' }],
+    });
     const brandByToken = collectBrandBagsByToken(rows);
     const registryTokens = new Set(rows.filter(r => r.aspect === 'registry').map(r => r.token));
     const ok = checkPartnerCodeBag(
@@ -178,6 +186,38 @@ describe('partner-surface-brand-check', () => {
     );
     expect(bad.some(i => i.level === 'error' && i.message.includes('brandRef'))).toBe(true);
     expect(bad.some(i => i.level === 'warn' && i.message.includes('not present'))).toBe(true);
+  });
+
+  test('checkPartnerCodeArtifactPresence errors when code missing from ops', () => {
+    const rows = partnerCodeSurfaceRows([{ code: 'SPEN', phase: 'operator_ready' }]);
+    const missing = checkPartnerCodeArtifactPresence(rows, new Map());
+    expect(missing.some(i => i.level === 'error' && i.message.includes('not found'))).toBe(true);
+    const ok = checkPartnerCodeArtifactPresence(
+      rows,
+      new Map([['SPEN', 'operator_ready']])
+    );
+    expect(ok.filter(i => i.level === 'error')).toEqual([]);
+    const phaseDrift = checkPartnerCodeArtifactPresence(
+      rows,
+      new Map([['SPEN', 'onboarding']])
+    );
+    expect(phaseDrift.some(i => i.message.includes('phase'))).toBe(true);
+  });
+
+  test('mintAuthoritySearchTerms + test-coverage evidence', () => {
+    expect(mintAuthoritySearchTerms('packages/partners parsePartnerCode')).toEqual([
+      'parsePartnerCode',
+    ]);
+    expect(mintAuthoritySearchTerms('asTreeNodeId')).toEqual(['asTreeNodeId']);
+    const rows = allPartnerSurfaceRows();
+    const partnerCode = rows.find(r => r.token === 'PartnerCode')!;
+    const issuesTrue = checkBrandTestCoverageEvidence(
+      [partnerCode],
+      'expect(parsePartnerCode("SPEN")).toBeDefined()'
+    );
+    expect(issuesTrue).toEqual([]);
+    const issuesMissing = checkBrandTestCoverageEvidence([partnerCode], '// no mint symbols here');
+    expect(issuesMissing.some(i => i.message.includes('hasTestCoverage=true'))).toBe(true);
   });
 
   test('checkDeprecatedBrandReferences warns wire/portal/registry consumers', () => {
