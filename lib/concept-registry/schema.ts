@@ -20,11 +20,7 @@
 // `// brand-ok` (the owning glossary lane uses the same convention).
 
 import { Database } from 'bun:sqlite';
-// Sync mkdir required: bun:sqlite opens a file handle before any async file
-// helper could create the parent dir; Bun.file is async-only.
-// eslint-disable-next-line no-restricted-imports -- mkdirSync for the gitignored data/ DB dir
-import { mkdirSync } from 'node:fs';
-
+import { ensureParentDirSync } from '../bun-fs-utils.ts';
 import { joinPath } from '../path-bun.ts';
 
 const REPO_ROOT = joinPath(import.meta.dir, '..', '..');
@@ -124,7 +120,8 @@ export function openConceptRegistryDb(path?: string): Database {
   const resolved =
     path ?? Bun.env.CONCEPT_REGISTRY_DB ?? joinPath(REPO_ROOT, 'data', 'concept-registry.db');
   if (resolved !== ':memory:') {
-    mkdirSync(joinPath(resolved, '..'), { recursive: true });
+    // Sync parent ensure — bun:sqlite open cannot await Bun.write.
+    ensureParentDirSync(resolved);
   }
   const db = new Database(resolved, resolved === ':memory:' ? undefined : { create: true });
   if (resolved !== ':memory:') {

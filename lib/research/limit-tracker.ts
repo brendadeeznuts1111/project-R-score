@@ -5,15 +5,10 @@
  * @see https://bun.com/docs/runtime/sqlite
  */
 
+// @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 import { Database } from 'bun:sqlite';
-// eslint-disable-next-line no-restricted-imports -- ensure parent dirs before sqlite/file write
-import { mkdirSync } from 'node:fs';
+import { ensureParentDirSync } from '../bun-fs-utils.ts';
 import { joinPath } from '../path-bun.ts';
-
-function dirnamePath(p: string): string {
-  const i = p.lastIndexOf('/');
-  return i <= 0 ? '.' : p.slice(0, i) || '/';
-}
 
 export type LimitObservation = {
   // brand-ok — opaque research/wire id
@@ -66,7 +61,7 @@ export function openLimitsDb(path = DEFAULT_DB): Database {
     db = null;
   }
   dbPath = path;
-  mkdirSync(dirnamePath(path), { recursive: true });
+  ensureParentDirSync(path);
   db = new Database(path, { create: true });
   db.run('PRAGMA journal_mode = WAL');
   db.run(`
