@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Partner artifact contracts, ingress compatibility, and validated assembler",
+  "engines": {
+    "bun": ">=1.3.14"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./adapters": "./src/adapters/index.ts",

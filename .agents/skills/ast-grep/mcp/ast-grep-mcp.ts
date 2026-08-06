@@ -13,6 +13,7 @@ import {
   type JsonRpcMessage,
   type ToolCallResult,
 } from '../../../../lib/mcp/stdio-jsonrpc.ts';
+import { assertBunStablePin } from '../../../../lib/verification/bun-runtime-pin.ts';
 
 const SERVER_NAME = 'ast-grep';
 const SERVER_VERSION = '0.23.0';
@@ -1171,7 +1172,12 @@ function handleRequest(msg: JsonRpcMessage): JsonRpcMessage | null {
       return rpcOk(id, {
         protocolVersion: '2024-11-05',
         capabilities: { tools: {} },
-        serverInfo: { name: SERVER_NAME, version: SERVER_VERSION },
+        serverInfo: {
+          name: SERVER_NAME,
+          version: SERVER_VERSION,
+          bunVersion: Bun.version,
+          bunRevision: Bun.revision,
+        },
       });
     case 'tools/list':
       return rpcOk(id, { tools: TOOLS });
@@ -1181,6 +1187,7 @@ function handleRequest(msg: JsonRpcMessage): JsonRpcMessage | null {
 }
 
 async function main() {
+  await assertBunStablePin();
   const log = (s: string) => process.stderr.write(`${s}\n`);
   try {
     const bin = await resolveBinary();
@@ -1204,4 +1211,7 @@ async function main() {
   }
 }
 
-main();
+void main().catch(error => {
+  console.error(`[${SERVER_NAME}] fatal:`, error);
+  process.exit(1);
+});

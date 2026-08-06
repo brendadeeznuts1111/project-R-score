@@ -249,6 +249,11 @@ boundary.
 
 This evidence narrows the unresolved input choice without promoting a dead or
 unsafe route. The `sports-terminal` connector remains `blocked` in the TOML.
+Its package proof is also explicitly incomplete: `bun run type-check:sto`
+currently fails on unresolved `@auth/session` and `@auth/middleware` aliases,
+follow-on implicit-`any` parameters, and one `unknown`-to-`string` router
+argument. These are connector cutover TODOs, not tests to skip or grounds to
+weaken the root TypeScript gate.
 
 ## MVP changes caused by this map
 

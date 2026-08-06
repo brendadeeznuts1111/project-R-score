@@ -1033,13 +1033,13 @@ backfill_rounding = "reject-values-beyond-iso-4217-minor-unit-precision"
 
 [runtime]
 authority = "config/bun-channels.toml"
-reviewed_production_pin = "1.3.14"
-reader_minimum = ">=1.3.14"
+status_artifact = "public/registry/bun-channel-status.json"
+production_channel_key = "policy.runtime_channel"
 static_toml_loader = "import-with-type-toml"
 dynamic_toml_loader = "Bun.Glob+Bun.file+Bun.TOML.parse"
 writer = "not-required-for-mvp"
 writer_candidate = "Bun.TOML.stringify"
-writer_candidate_status = "observed-on-1.4.0-canary-not-on-reviewed-production-pin"
+writer_candidate_status = "requires-runtime-promotion-and-version-scoped-contract-proof"
 mutation_policy = "do-not-enable-native-writes-before-runtime-promotion-and-contract-proof"
 
 [core]
@@ -1238,7 +1238,7 @@ target_adapter_export = "./adapters/sports-terminal"
 port = "IntegrationHealthReadPort"
 implementation_status = "blocked"
 enabled = false
-blocking_reason = "one exact parsed input, explicit external-ID resolution, authenticated route integration, and integer-minor-unit money wire are required"
+blocking_reason = "one exact parsed input, explicit external-ID resolution, authenticated route integration, integer-minor-unit money wire, and a passing Sports Terminal typecheck are required"
 input_kind = "unresolved"
 required = false
 input_ref = ""
