@@ -51,6 +51,10 @@ export type PartnerSurfaceRepo = 'project-R-score' | 'Kalshi-bot' | 'toc-ops' | 
  * Linking metadata (`domain` · `registryRef` · `isActive` · `category`) joins
  * brands to brand-catalog domains, registry artifacts, and live-code readiness
  * without changing mint/pattern Layer A checks.
+ *
+ * Optional lifecycle fields (`deprecatedAt` · `deprecationReason` · `replacedBy`)
+ * document sunset; Layer A warns when inactive/deprecated brands are still
+ * referenced by wire-field / portal-board / registry consumers.
  */
 export type PartnerSurfaceBrandBag = {
   readonly pattern?: string;
@@ -69,6 +73,12 @@ export type PartnerSurfaceBrandBag = {
   readonly isActive: boolean;
   /** Doc grouping: identity · profile · template · external · node */
   readonly category: string;
+  /** ISO date (`YYYY-MM-DD` or full ISO-8601) when deprecation started. */
+  readonly deprecatedAt?: string;
+  /** Why the brand is deprecated / inactive. */
+  readonly deprecationReason?: string;
+  /** Successor brand token (`typeOrExport` / inventory brand token). */
+  readonly replacedBy?: string;
 };
 
 export type PartnerSurfaceMoneyPolicy = 'integerMinorUnits' | 'forbidden' | 'unset';

@@ -37,6 +37,19 @@
 | `PartnerTemplateId` | `operations` | `partner-contracts` | yes | `template` | `/portal/brands/#domain=operations&q=PartnerTemplateId` | `asPartnerTemplateId` |
 | `TreeNodeId` | `operations` | `workspace-lane-map` | yes | `node` | `/portal/brands/#domain=operations&q=TreeNodeId` | `asTreeNodeId` |
 
+## Brand status
+
+| Brand | Active | Deprecated | Reason | Replaced by |
+| ----- | ------ | ---------- | ------ | ----------- |
+| `ExternalPartnerId` | yes | — | — | — |
+| `OutId` | yes | — | — | — |
+| `parsePartnerCode` | yes | — | — | — |
+| `PartnerCallSignCode` | yes | — | — | — |
+| `PartnerCode` | yes | — | — | — |
+| `PartnerProfileKey` | yes | — | — | — |
+| `PartnerTemplateId` | yes | — | — | — |
+| `TreeNodeId` | yes | — | — | — |
+
 ## Partner boards
 
 | Aspect | Token | Href | Registry |
