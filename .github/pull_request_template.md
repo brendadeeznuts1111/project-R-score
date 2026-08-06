@@ -8,12 +8,13 @@
 
 ## Claim → evidence
 
-State the user/ops claim this PR closes. Match kind to evidence ([PROOF.md](../docs/harness/PROOF.md)).
-**Non-draft PRs fail CI** when this table has no filled row (`bun scripts/check-pr-claim.ts`).
+State the user/ops claim this PR closes. Match kind to evidence
+([PROOF.md](../docs/harness/PROOF.md)). **Non-draft PRs fail CI** when this
+table has no filled row (`bun scripts/check-pr-claim.ts`).
 
 | Claim (one sentence) | Kind (`unit` / `boundary` / `journey` / `deployed`) | Evidence (command or path that exited 0) |
-|----------------------|-----------------------------------------------------|------------------------------------------|
-| | | |
+| -------------------- | --------------------------------------------------- | ---------------------------------------- |
+|                      |                                                     |                                          |
 
 <!-- Shape only (replace the blank row — do not paste this as a table line):
      Terminal markdown uses Bun native ANSI · unit · bun test tests/bun-markdown-ansi.test.ts
@@ -23,87 +24,97 @@ Install/layout touched → also `bun run proof:install`.
 
 ## Portal / partner-domain
 
-Fill when this PR touches portal boards, partner glossary, or Soft/Factory domain map.
-Skip when N/A.
+Fill when this PR touches portal boards, partner glossary, or Soft/Factory
+domain map. Skip when N/A.
 
 Human routing (optional — GitHub is not concept SSOT):
 
-| Field | Value |
-|-------|-------|
-| **Domain** | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` · or n/a |
-| **Tracker** | e.g. `BM-1` · link to `*-open-issues.md` · or n/a |
-| **Concept** | glossary id only if vocabulary changed · or n/a |
+| Field       | Value                                                                              |
+| ----------- | ---------------------------------------------------------------------------------- |
+| **Domain**  | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` · or n/a |
+| **Tracker** | e.g. `BM-1` · link to `*-open-issues.md` · or n/a                                  |
+| **Concept** | glossary id only if vocabulary changed · or n/a                                    |
 
-| Surface | Path / doc | Touched? |
-|---------|------------|----------|
-| Board slug | `/portal/<slug>/` · `PORTAL_BOARD_SLUGS` | |
-| Registry bake | `/registry/<artifact>.json` | |
-| Partner domain | [partner-domain-map.md](../docs/harness/tenants/partner-domain-map.md) | |
-| Soft handshake | [soft-handshake.md](../docs/design/soft-handshake.md) | |
+| Surface        | Path / doc                                                             | Touched? |
+| -------------- | ---------------------------------------------------------------------- | -------- |
+| Board slug     | `/portal/<slug>/` · `PORTAL_BOARD_SLUGS`                               |          |
+| Registry bake  | `/registry/<artifact>.json`                                            |          |
+| Partner domain | [partner-domain-map.md](../docs/harness/tenants/partner-domain-map.md) |          |
+| Soft handshake | [soft-handshake.md](../docs/design/soft-handshake.md)                  |          |
 
-- [ ] Board · route · chrome · page-concepts stay synced (if board added/removed)
+- [ ] Board · route · chrome · page-concepts stay synced (if board
+      added/removed)
 - [ ] Glossary / partners-ops bake checked when overlay concepts moved
 - [ ] If **Concept** filled: `bun run concept:audit --strict` green
-- [ ] If **Tracker** filled: mark acceptance on the tenant open-issues doc in this PR
+- [ ] If **Tracker** filled: mark acceptance on the tenant open-issues doc in
+      this PR
 
 ## Artifact publish
 
-Fill when publishing or rebaking a registry package (bookmakers, factory libs, ops snapshot).
-Skip when N/A.
+Fill when publishing or rebaking a registry package (bookmakers, factory libs,
+ops snapshot). Skip when N/A.
 
-| Step | Command / note |
-|------|----------------|
-| Package + version | e.g. `@factorywager/bookmakers@0.4.x` |
-| Publish | `bun run factory:publish …` or package-specific prepare |
-| Snapshot / bake | `factory snapshot` · `bookmakers:bake` · `ops:snapshot` |
-| Pages mirror | committed under `public/registry/` (ops never on Pages) |
+| Step              | Command / note                                          |
+| ----------------- | ------------------------------------------------------- |
+| Package + version | e.g. `@factorywager/bookmakers@0.4.x`                   |
+| Publish           | `bun run factory:publish …` or package-specific prepare |
+| Snapshot / bake   | `factory snapshot` · `bookmakers:bake` · `ops:snapshot` |
+| Pages mirror      | committed under `public/registry/` (ops never on Pages) |
 
-- [ ] Public artifact has no secrets (`restBaseUrl`, `apiKeyEnv`, `envVars`, balance/health)
+- [ ] Public artifact has no secrets (`restBaseUrl`, `apiKeyEnv`, `envVars`,
+      balance/health)
 - [ ] Ops plane (if any) stays under `artifact-registry/…/ops/` only
 
 ## Naming (v0.4 bookmakers / public catalog)
 
 Required when editing bookmaker registry rows or the public catalog shape.
-Tenant: [bookmakers-registry.md](../docs/harness/tenants/bookmakers-registry.md).
+Tenant:
+[bookmakers-registry.md](../docs/harness/tenants/bookmakers-registry.md).
 
-| Field | Rule |
-|-------|------|
-| `id` / `slug` | **`id === slug`** (route primary key; no UUID) |
-| `fetcher` | `rest` \| `webview` \| `seat` (not `fetcherType`) |
-| `sports` | array of sport keys (not `supportedSports`) |
-| `urls.web` | primary public URL under `urls.{ web, api, limitsPage, termsPage }` |
+| Field         | Rule                                                                |
+| ------------- | ------------------------------------------------------------------- |
+| `id` / `slug` | **`id === slug`** (route primary key; no UUID)                      |
+| `fetcher`     | `rest` \| `webview` \| `seat` (not `fetcherType`)                   |
+| `sports`      | array of sport keys (not `supportedSports`)                         |
+| `urls.web`    | primary public URL under `urls.{ web, api, limitsPage, termsPage }` |
 
 - [ ] Public rows use v0.4 names (`fetcher`, `sports`, `urls.web`)
 - [ ] `id === slug` on every row touched
-- [ ] `bun run bookmakers:bake:check` (or migrate + board tests) when catalog changed
+- [ ] `bun run bookmakers:bake:check` (or migrate + board tests) when catalog
+      changed
 
 ## Concept-lane proof (when vocabulary / boards / limit-row wire change)
 
-Keep kinds in `unit|boundary|journey|deployed`. Map: [CONCEPT_LIFECYCLE.md](../docs/CONCEPT_LIFECYCLE.md).
+Keep kinds in `unit|boundary|journey|deployed`. Map:
+[CONCEPT_LIFECYCLE.md](../docs/CONCEPT_LIFECYCLE.md).
 
-| Claim | Kind | Evidence |
-|-------|------|----------|
-| Concept audit passes | unit | `bun run concept:audit --strict` |
-| Surface coverage passes | unit | `bun run validate:surface-coverage` |
-| Wire enums valid/invalid | unit | `bun test tests/limit-row-wire.test.ts` |
-| Board slug registered | unit | `PORTAL_BOARD_SLUGS` + `public/portal/<slug>/` + page-concepts |
-| Deprecation has `replacedBy` | unit | vocabulary + consumers retargeted |
-| Glossary bake current | unit | `bun run glossary:portal:check` |
+| Claim                        | Kind | Evidence                                                       |
+| ---------------------------- | ---- | -------------------------------------------------------------- |
+| Concept audit passes         | unit | `bun run concept:audit --strict`                               |
+| Surface coverage passes      | unit | `bun run validate:surface-coverage`                            |
+| Wire enums valid/invalid     | unit | `bun test tests/limit-row-wire.test.ts`                        |
+| Board slug registered        | unit | `PORTAL_BOARD_SLUGS` + `public/portal/<slug>/` + page-concepts |
+| Deprecation has `replacedBy` | unit | vocabulary + consumers retargeted                              |
+| Glossary bake current        | unit | `bun run glossary:portal:check`                                |
 
 ### Concept-lane gates
 
-- [ ] `concept:audit --strict` · `validate:surface-coverage` (allowlist warnings OK)
+- [ ] `concept:audit --strict` · `validate:surface-coverage` (allowlist warnings
+      OK)
 - [ ] Wire field change → `tests/limit-row-wire.test.ts`
-- [ ] Board add/remove → slugs, page-concepts, public-routes, `_redirects`, `public/portal/<slug>/`
+- [ ] Board add/remove → slugs, page-concepts, public-routes, `_redirects`,
+      `public/portal/<slug>/`
 - [ ] Deprecate → `replacedBy` + successor bound in surface maps / HTML
 
 Skip only when no concept/board/wire impact.
 
 ## Fresh-rerun paste
 
-Required when this PR moves an owner of a [`CRITICAL_PROOF_PATHS`](../lib/harness/proof.ts) claim.
-Lookup: `bun run docs:fresh-rerun` · [FRESH-RERUN.md](../docs/harness/FRESH-RERUN.md).
-Soft tip: if the body mentions a proof id in backticks, include that claim’s `freshRerun` command too.
+Required when this PR moves an owner of a
+[`CRITICAL_PROOF_PATHS`](../lib/harness/proof.ts) claim. Lookup:
+`bun run docs:fresh-rerun` · [FRESH-RERUN.md](../docs/harness/FRESH-RERUN.md).
+Soft tip: if the body mentions a proof id in backticks, include that claim’s
+`freshRerun` command too.
 
 ```text
 # paste fresh-rerun / claim re-proof output here
@@ -111,9 +122,10 @@ Soft tip: if the body mentions a proof id in backticks, include that claim’s `
 
 ## Color Kernel (when theme / kernels touched)
 
-When touching `theme.jsonc`, kernel palettes, or `claim-reporter` / `color-kernel-align`
-([`color-kernel-paths.ts`](../lib/portal/color-kernel-paths.ts)).
-CI always runs `validate:colors:strict` via `test:colors` (claim `color-kernel-theme-aliases`).
+When touching `theme.jsonc`, kernel palettes, or `claim-reporter` /
+`color-kernel-align`
+([`color-kernel-paths.ts`](../lib/portal/color-kernel-paths.ts)). CI always runs
+`validate:colors:strict` via `test:colors` (claim `color-kernel-theme-aliases`).
 
 - [ ] `bun run validate:colors` (or `:strict`) exits 0
 - [ ] Extended keys left intentional (not forced onto theme SSOT)
@@ -137,13 +149,37 @@ Only when a commit set `SKIP_*=1`. Policy:
 ## Checklist
 
 - [ ] Did **not** sweep a parallel lane (foreign dirty trees left out)
-- [ ] Prettier on every touched `lib/**/*.ts` (`bun x prettier --write <file...>` or `format:harness`)
+- [ ] Prettier on every touched `lib/**/*.ts`
+      (`bun x prettier --write <file...>` or `format:harness`)
 - [ ] Brands / wire: no new bare `*Id: string` or interior `unknown` params
-- [ ] Docs/JIT updated only when an owner moved (`docs/harness/`, `repo-docs`, AGENTS)
-- [ ] Concept lifecycle / agents tenant docs updated when vocabulary or wire contract moved
+- [ ] Docs/JIT updated only when an owner moved (`docs/harness/`, `repo-docs`,
+      AGENTS)
+- [ ] Concept lifecycle / agents tenant docs updated when vocabulary or wire
+      contract moved
 - [ ] If spine touched: `bun run type-check` (`tsconfig.check.json`)
 - [ ] Any `SKIP_*` escape justified above (or N/A)
-- [ ] **Open issues closed** (optional): linked issues resolved by this PR — list `#…` or N/A
+- [ ] **Open issues closed** (optional): linked issues resolved by this PR —
+      list `#…` or N/A
+
+## Local merge proof (required — GHA is not merge authority)
+
+Operator machine / clean worktree. Policy:
+[`docs/harness/AUTHORITY.md`](../docs/harness/AUTHORITY.md) (**Local CI
+authority**). Hosted checks (Pages, Socket, bot review) are side signals — never
+a substitute.
+
+- [ ] Claim → evidence commands exited 0 (prefer over full suite when scoped)
+- [ ] `bun run lint:bun-native:changed` (or `check:harness` when rolling out
+      harness paths)
+- [ ] If merge-blocking confidence needed: `bun run bun:ci` on a **clean** tree
+- [ ] Remaining `node:fs` / `node:url` / `node:zlib` under `lib/` are listed
+      below (or this PR removes them). See [`lib/README.md`](../lib/README.md)
+      **Bun-native exceptions**.
+
+### Known exceptions (this PR)
+
+- [ ] None
+- [ ] Listed: …
 
 ## Test plan
 
@@ -152,6 +188,8 @@ Only when a commit set `SKIP_*=1`. Policy:
 # Concept-lane default:
 # bun run concept:audit --strict
 # bun run validate:surface-coverage
+# Merge confidence (clean tree):
+# bun run bun:ci
 ```
 
 ## Notes for reviewers

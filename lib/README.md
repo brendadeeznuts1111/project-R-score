@@ -42,7 +42,27 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | Image metadata                            | [`image-metadata.ts`](./image-metadata.ts)                                                                  |
 | Screenshot TEST-003                       | [`screenshot-remediation.ts`](./screenshot-remediation.ts)                                                  |
 | Path (Bun)                                | [`path-bun.ts`](./path-bun.ts)                                                                              |
+| Sync FS spine                             | [`bun-fs-utils.ts`](./bun-fs-utils.ts) (`ensureDirSync` · `readJsonSync`)                                   |
 | FS helpers (scripts plane)                | [`../scripts/lib/fs-bun.ts`](../scripts/lib/fs-bun.ts) re-exports path-bun                                  |
+| ESLint bun-native ban                     | [`../config/eslint/harness/bun-native.ts`](../config/eslint/harness/bun-native.ts)                          |
+
+## Bun-native exceptions (`node:*` still present)
+
+Default: `lib/` uses Bun I/O (`Bun.file` / `Bun.write` / `Bun.mmap` / spine
+helpers). ESLint harness bans `node:fs`, `node:url`, `node:zlib`, etc. Remaining
+call sites need an explicit reason (and usually a line-level `eslint-disable`
+with that reason). Prefer shrinking this table over growing it.
+
+| File / cluster                                                                                                                                            | Why allowed for now                                               | Prefer instead                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------- |
+| [`security/mintable-secret.ts`](./security/mintable-secret.ts)                                                                                            | Sync `requireSecret` / constructors; file modes `0o600` / `0o700` | Design async mint path or governed sync wrapper (lane 3) |
+| [`dod/evidence.ts`](./dod/evidence.ts)                                                                                                                    | PNG IDAT `inflateSync` via `node:zlib` (not gzip container)       | Bun inflate/gunzip only if format-proven                 |
+| Probe `mkdtemp` / `tmpdir` in [`verification/`](./verification/), [`docs/`](./docs/) probes, [`http/bun-defaults-proof.ts`](./http/bun-defaults-proof.ts) | Scratch dirs for runtime contract probes — not product I/O        | Shared Bun temp helper (lane 3)                          |
+| Per-file `eslint-disable` with rationale                                                                                                                  | Documented intentional dual port                                  | Remove when call site migrates                           |
+
+Product FS migration (mkdir / sync JSON / path URL): PR
+[#422](https://github.com/brendadeeznuts1111/project-R-score/pull/422) — spine
+[`bun-fs-utils.ts`](./bun-fs-utils.ts) · [`bun-path-url.ts`](./bun-path-url.ts).
 
 ## Spine (root modules — keep here)
 
@@ -51,18 +71,18 @@ Every `lib/*.ts` module is listed. Grouped for scan; paths stay flat under
 
 ### Barrel · path · runtime control
 
-| Module                                       | Purpose                                                                         |
-| -------------------------------------------- | ------------------------------------------------------------------------------- |
-| [`index.ts`](./index.ts)                     | Public barrel (`LIB_INFO`, `FW`)                                                |
-| [`path-bun.ts`](./path-bun.ts)               | Bun-native path helpers (ratchet: no `node:path` in `lib/`)                     |
-| [`bun-fs-utils.ts`](./bun-fs-utils.ts)       | Sync `ensureDirSync` / `readJsonSync` (peek+write · `Bun.mmap`; no `node:fs`)   |
-| [`bun-path-url.ts`](./bun-path-url.ts)       | `Bun.fileURLToPath` / `pathToFileURL` (prefer over `node:url`)                  |
-| [`bun-executable.ts`](./bun-executable.ts)   | Absolute `bun` argv0 via `Bun.which` · entrypoint · version fingerprint         |
-| [`bun-runtime-env.ts`](./bun-runtime-env.ts) | Typed assessment of Bun/runtime control-plane env keys                          |
-| [`env-check.ts`](./env-check.ts)             | Secret-safe env checklist (set / missing / placeholder only)                    |
-| [`text.ts`](./text.ts)                       | Small shared text helpers                                                       |
-| [`retry.ts`](./retry.ts)                     | Exponential backoff for network / proof operations                              |
-| [`repository.ts`](./repository.ts)           | Re-export of `ScopedRepository` / `Scope` (import-path fix)                     |
+| Module                                       | Purpose                                                                       |
+| -------------------------------------------- | ----------------------------------------------------------------------------- |
+| [`index.ts`](./index.ts)                     | Public barrel (`LIB_INFO`, `FW`)                                              |
+| [`path-bun.ts`](./path-bun.ts)               | Bun-native path helpers (ratchet: no `node:path` in `lib/`)                   |
+| [`bun-fs-utils.ts`](./bun-fs-utils.ts)       | Sync `ensureDirSync` / `readJsonSync` (peek+write · `Bun.mmap`; no `node:fs`) |
+| [`bun-path-url.ts`](./bun-path-url.ts)       | `Bun.fileURLToPath` / `pathToFileURL` (prefer over `node:url`)                |
+| [`bun-executable.ts`](./bun-executable.ts)   | Absolute `bun` argv0 via `Bun.which` · entrypoint · version fingerprint       |
+| [`bun-runtime-env.ts`](./bun-runtime-env.ts) | Typed assessment of Bun/runtime control-plane env keys                        |
+| [`env-check.ts`](./env-check.ts)             | Secret-safe env checklist (set / missing / placeholder only)                  |
+| [`text.ts`](./text.ts)                       | Small shared text helpers                                                     |
+| [`retry.ts`](./retry.ts)                     | Exponential backoff for network / proof operations                            |
+| [`repository.ts`](./repository.ts)           | Re-export of `ScopedRepository` / `Scope` (import-path fix)                   |
 
 ### Bun API wrappers · output · media
 
