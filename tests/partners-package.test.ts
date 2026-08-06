@@ -4,12 +4,12 @@ import {
   PARTNERS_PACKAGE_TARGET,
 } from '../packages/partners/src/index.ts';
 
-describe('@factorywager/partners scaffold', () => {
+describe('@factorywager/partners core', () => {
   it('exports the canonical workspace target', () => {
     expect(PARTNERS_PACKAGE_TARGET).toEqual({
       target_name: '@factorywager/partners',
       target_workspace: 'packages/partners',
-      implementation_status: 'scaffolded',
+      implementation_status: 'artifact-core-implemented',
     });
   });
 

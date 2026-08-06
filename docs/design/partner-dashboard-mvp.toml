@@ -14,7 +14,16 @@ primary_concept_namespaces = ["partner", "out"]
 [package]
 target_name = "@factorywager/partners"
 target_workspace = "packages/partners"
-implementation_status = "scaffolded"
+implementation_status = "artifact-core-implemented"
+
+[package.components]
+identifiers = "implemented"
+artifact_boundary = "implemented"
+artifact_assembler = "implemented"
+ingress_translator = "implemented"
+connector_ports = "planned"
+source_adapters = "planned"
+reconciliation = "planned"
 
 [toolchain]
 authority = "config/bun-channels.toml"
@@ -32,6 +41,8 @@ canonical_join_type = "PartnerCode"
 canonical_wire_key = "partnerCode"
 display_identity_label = "CODE"
 artifact_embeds_colors = false
+active_out_identity_field = "activeOutIds"
+conflict_value_policy = "redacted-json-scalars-only"
 
 [surfaces.portal]
 board_id = "partners"
@@ -227,7 +238,7 @@ type = "OutId"
 pattern = "^out-([A-Z]{3,6})-([1-9][0-9]*)$"
 role = "canonical-partner-scoped-out-identity"
 target_parser = "parseCanonicalOutId"
-implementation_status = "planned"
+implementation_status = "implemented"
 
 [identity.legacy_seat_out_token]
 type = "LegacySeatOutToken"
@@ -237,8 +248,11 @@ policy = "ingress-only"
 [ingress]
 translator = "IngressTranslator"
 owner = "@factorywager/partners/compatibility"
+implementation_status = "translator-implemented"
 stage = "before-core-parse"
 callers = ["http-bff", "cli", "artifact-adapter"]
+caller_integration_status = "unwired"
+telemetry_emission_status = "unwired"
 unknown_mapping = "reject"
 telemetry_counter = "partner_ingress_translation_total"
 
@@ -247,8 +261,9 @@ from_pattern = "^([A-Z]{3,6})-([1-9][0-9]*)$"
 to_template = "out-{code}-{sequence}"
 canonical_pattern = "^out-([A-Z]{3,6})-([1-9][0-9]*)$"
 canonical_parser = "parseCanonicalOutId"
-canonical_parser_implementation_status = "planned"
+canonical_parser_implementation_status = "implemented"
 emit_deprecation_warning = true
+deprecation_warning_code = "partner.out_id.legacy_translated"
 preserve_original_as_provenance = true
 sunset_condition = "zero-production-translations-for-30-days-and-all-producers-canonical"
 
@@ -966,6 +981,7 @@ writer_candidate_status = "observed-on-1.4.0-canary-not-on-reviewed-production-p
 mutation_policy = "do-not-enable-native-writes-before-runtime-promotion-and-contract-proof"
 
 [core]
+ownership_status = "target-contract"
 owns = [
   "partner-code",
   "profile",
@@ -976,6 +992,17 @@ owns = [
   "cultivation-policy",
   "commercial-agreement-terms",
   "dashboard-read-model",
+]
+implemented_now = ["partner-code", "dashboard-artifact-boundary", "artifact-assembler"]
+planned = [
+  "profile",
+  "lifecycle-domain-logic",
+  "phase-derivation",
+  "book-account-reference-adapters",
+  "risk-and-sor-policy",
+  "cultivation-policy",
+  "commercial-agreement-terms",
+  "adapter-reconciliation",
 ]
 must_not_import = ["telegram-api", "bun:sqlite", "vault-crypto", "portal-dom"]
 
@@ -1156,6 +1183,7 @@ adapter_id = "legacy-partners-ops"
 adapter_version = "2"
 target_owner_package = "@factorywager/partners"
 target_adapter_export = "./compatibility/legacy-partners-ops"
+target_adapter_implementation_status = "planned"
 current_owner_module = "lib/telegram/partner-ops-registry.ts"
 port = "LegacyPartnerProjectionPort"
 implementation_status = "current-compatibility"

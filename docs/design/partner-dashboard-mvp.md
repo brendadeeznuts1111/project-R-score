@@ -9,19 +9,19 @@ release feeds, npm channels, or cron schedules.
 
 ## Authority map
 
-| Artifact | Owns | Must not own |
-| --- | --- | --- |
-| `partner-dashboard-mvp.toml` | MVP composition, connector/region bindings, ingress compatibility, resilience, theme references, and retirement gates | Runtime/type channel values or generated dashboard data |
-| `partner-dashboard-semantic-map.md` | Human-readable nomenclature and concept/surface interpretation | A second machine contract |
-| `partner-type-reference-map.md` | Existing-to-canonical type/reference decisions and migration evidence | Dashboard layout or runtime policy |
-| `config/bun-channels.toml` | Bun/runtime/type/feed/schedule policy | Partner business semantics |
-| `partners-dashboard.json` | No policy | Derived read model only; safe to regenerate |
-| `@factorywager/partners` | Parsed domain types, ports, pure adapters, and projection code | Telegram transport, accounting storage, or theme token ownership |
+| Artifact                            | Owns                                                                                                                  | Must not own                                                     |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `partner-dashboard-mvp.toml`        | MVP composition, connector/region bindings, ingress compatibility, resilience, theme references, and retirement gates | Runtime/type channel values or generated dashboard data          |
+| `partner-dashboard-semantic-map.md` | Human-readable nomenclature and concept/surface interpretation                                                        | A second machine contract                                        |
+| `partner-type-reference-map.md`     | Existing-to-canonical type/reference decisions and migration evidence                                                 | Dashboard layout or runtime policy                               |
+| `config/bun-channels.toml`          | Bun/runtime/type/feed/schedule policy                                                                                 | Partner business semantics                                       |
+| `partners-dashboard.json`           | No policy                                                                                                             | Derived read model only; safe to regenerate                      |
+| `@factorywager/partners`            | Target owner for parsed domain types, ports, pure adapters, and projection code; currently the artifact-core slice    | Telegram transport, accounting storage, or theme token ownership |
 
 The TOML is the machine-readable MVP planning SSOT. The semantic and type maps
 explain its vocabulary and migration evidence; validators enforce that they do
-not silently become competing contracts. Global DX may register these paths,
-but it never copies their values.
+not silently become competing contracts. Global DX may register these paths, but
+it never copies their values.
 
 ## Outcome
 
@@ -68,6 +68,7 @@ type PartnerDashboardArtifact = {
     | 'legacyOps',
     ConnectorSnapshot
   >;
+  activeOutIds: OutId[]; // explicit live-capacity set; distinct from registered outs
   summary: {
     partnerCount: number;
     canonicalProfileCount: number;
@@ -81,7 +82,7 @@ type PartnerDashboardArtifact = {
     partnerCode: PartnerCode;
     fieldPath: string;
     adapterIds: string[];
-    values: unknown[];
+    values: Array<string | number | boolean | null>; // redacted forensic scalars only
   }>;
   partners: PartnerDashboardRecord[];
 };
@@ -247,10 +248,10 @@ rather than being claimed as implemented.
 
 ## Ingress translation
 
-The planned `IngressTranslator` will live in
-`@factorywager/partners/compatibility` and run before the core parser. HTTP/BFF
-handlers, CLIs, and connector adapters will call the same pure translator. It
-will not be embedded in the core or limited to one deployment transport.
+The pure `IngressTranslator` now lives in `@factorywager/partners/compatibility`
+and runs before the core parser. Its HTTP/BFF, CLI, and connector-adapter
+callers are still unwired; once added, each will call this same translator. It
+is not embedded in the core or limited to one deployment transport.
 
 The sole MVP rewrite is:
 
@@ -258,11 +259,13 @@ The sole MVP rewrite is:
 CODE-N  →  out-CODE-N
 ```
 
-The translator validates `^([A-Z]{3,6})-([1-9][0-9]*)$`, emits a deprecation
-counter/warning, retains the original input in fact provenance, and then calls
-the planned canonical `parseCanonicalOutId`. Unknown aliases are rejected rather
-than guessed. The mapping can be removed only after production translation count
-remains zero for 30 days and every producer emits canonical IDs.
+The translator validates `^([A-Z]{3,6})-([1-9][0-9]*)$`, returns the canonical
+ID plus the SSOT-owned counter/warning metadata, retains the original input for
+fact provenance, and then calls `parseCanonicalOutId`. Ingress callers—not the
+pure translator—emit the warning and increment the counter. Unknown aliases are
+rejected rather than guessed. The mapping can be removed only after production
+translation count remains zero for 30 days and every producer emits canonical
+IDs.
 
 ## Page structure
 
@@ -330,19 +333,21 @@ surfaces while presenting their partner-keyed health and freshness.
 ## First implementation slices
 
 The private `packages/partners` workspace now owns the target package identity,
-TOML-facing plan types, and unresolved semantic-gap map. The remaining slices
-are:
+TOML-facing plan types, unresolved semantic-gap map, canonical identifier
+parsers, ingress-only out translation, the v1 artifact boundary, and the pure
+artifact assembler over already reconciled records. It performs no I/O, does not
+yet join adapters or apply source precedence, and emits no production artifact
+by itself. The remaining slices are:
 
-1. Define the artifact types and pure builder in `@factorywager/partners`.
-2. Implement a compatibility adapter over `partners-ops.v2` so the four current
+1. Implement a compatibility adapter over `partners-ops.v2` so the four current
    partners render immediately.
-3. Join `partner-profiles.json`; emit attention for legacy records without a
-   real profile.
-4. Add a minimum profile-coverage gate for the four known CODEs.
-5. Add accounting and Telegram adapter summaries.
-6. Point the board at the new artifact; retain old fetches behind a temporary
+2. Join a redacted `partner-profiles.json`; emit attention for legacy records
+   without a real profile.
+3. Add a minimum profile-coverage gate for the four known CODEs.
+4. Add accounting and Telegram adapter summaries.
+5. Point the board at the new artifact; retain old fetches behind a temporary
    debug flag for comparison tests.
-7. Split the current inline board controller into small browser modules and use
+6. Split the current inline board controller into small browser modules and use
    shared `lib/portal/ui-html` builders.
 
 ## Acceptance criteria
@@ -361,7 +366,7 @@ are:
 - Legacy out translation happens only in `IngressTranslator`, emits telemetry,
   and passes the result through the canonical parser.
 - Connector timeout, stale, last-known-good, and circuit-breaker behavior
-  matches the TOML plan and is covered by builder tests.
+  matches the TOML plan and is covered by adapter/reconciliation tests.
 - Pre-commit rejects new floating-point financial SQL storage.
 - Browser code fetches one partner-domain artifact for primary rendering.
 - No DOM module imports SQLite, Telegram transport, vault, or profile TOML code.

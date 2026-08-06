@@ -5,3 +5,6 @@ export {
   type PartnerDashboardConceptGapId,
   type PartnerDashboardPlanToml,
 } from './dashboard-plan.ts';
+export * from './boundary/index.ts';
+export * from './compatibility/index.ts';
+export * from './core/index.ts';

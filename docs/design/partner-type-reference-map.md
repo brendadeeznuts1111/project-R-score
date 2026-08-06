@@ -71,26 +71,27 @@ Fitness is scored from 1 (unsafe or ambiguous) to 5 (ready to reuse).
 
 ## Translation decision matrix
 
-`IngressTranslator` is a pure compatibility service invoked before the core
-parser by HTTP/BFF handlers, CLIs, and artifact adapters.
+`IngressTranslator` is an implemented pure compatibility service intended to run
+before the core parser. HTTP/BFF, CLI, and artifact-adapter callers remain
+unwired.
 
-| Incoming source / field      | Example          | Canonical result                                              | Translation rule                                                            | Failure behavior                                | Retirement                                                        |
-| ---------------------------- | ---------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------- |
-| Profile or handshake `code`  | `SPEN`           | `PartnerCode("SPEN")`                                         | Trim, uppercase, validate `PartnerCode`; no alias lookup                    | Reject invalid CODE                             | Permanent boundary normalization                                  |
-| Base call-sign               | `SPEN-001`       | `PartnerCallSign` + `PartnerCode("SPEN")`                     | Validate base grammar and derive CODE                                       | Reject mismatched/invalid call-sign             | Permanent derived alias                                           |
-| Nested operations seat       | `SPEN-001-SUB02` | `SeatCallSign` + `PartnerCode("SPEN")`                        | Operations parser preserves full seat path and derives CODE                 | Reject depth/grammar drift                      | Permanent operations reference                                    |
-| Legacy seat out              | `SPEN-1`         | `OutId("out-SPEN-1")`                                         | Planned `IngressTranslator.legacyOutId`, then planned `parseCanonicalOutId` | Reject; never guess sequence                    | Remove after zero translations for 30 days and producer migration |
-| partners-ops/Tennis out      | `out-SPEN-1`     | same `OutId`                                                  | Canonical parse only                                                        | Reject invalid canonical ID                     | No translation                                                    |
-| Sports Terminal `partner_id` | `partner-42`     | `ExternalPartnerRef` plus resolved `PartnerCode`              | Require an explicit source-qualified resolution row                         | Quarantine unresolved record and emit attention | Adapter remains; duplicate profile authority retires              |
-| Kalshi `partners[].code`     | `SPEN`           | `PartnerCode("SPEN")`                                         | Validate CODE                                                               | Reject invalid CODE                             | Permanent adapter boundary                                        |
-| Kalshi registry `id`         | `partner-spen`   | `ExternalPartnerRef { sourceSystemId: "kalshi", externalId }` | Preserve as a source-qualified identity reference; join through TOML CODE   | Quarantine if CODE association is missing       | Never promote external ID                                         |
-| Pandora wire `partnerId`     | `118`            | provider-scoped `ExternalPartnerRef`                          | Preserve only; resolution requires an explicit adapter mapping              | Do not infer from numeric ID                    | Never promote remote ID                                           |
-| Sports lifecycle             | `frozen`         | `suspended` lifecycle fact                                    | Declared state map with mandatory provenance                                | Reject unknown state or quarantine record       | Mapping remains while source emits `frozen`                       |
+| Incoming source / field      | Example          | Canonical result                                              | Translation rule                                                           | Failure behavior                                | Retirement                                                        |
+| ---------------------------- | ---------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------- |
+| Profile or handshake `code`  | `SPEN`           | `PartnerCode("SPEN")`                                         | Trim, uppercase, validate `PartnerCode`; no alias lookup                   | Reject invalid CODE                             | Permanent boundary normalization                                  |
+| Base call-sign               | `SPEN-001`       | `PartnerCallSign` + `PartnerCode("SPEN")`                     | Validate base grammar and derive CODE                                      | Reject mismatched/invalid call-sign             | Permanent derived alias                                           |
+| Nested operations seat       | `SPEN-001-SUB02` | `SeatCallSign` + `PartnerCode("SPEN")`                        | Operations parser preserves full seat path and derives CODE                | Reject depth/grammar drift                      | Permanent operations reference                                    |
+| Legacy seat out              | `SPEN-1`         | `OutId("out-SPEN-1")`                                         | Implemented `IngressTranslator.translateOutId`, then `parseCanonicalOutId` | Reject; never guess sequence                    | Remove after zero translations for 30 days and producer migration |
+| partners-ops/Tennis out      | `out-SPEN-1`     | same `OutId`                                                  | Canonical parse only                                                       | Reject invalid canonical ID                     | No translation                                                    |
+| Sports Terminal `partner_id` | `partner-42`     | `ExternalPartnerRef` plus resolved `PartnerCode`              | Require an explicit source-qualified resolution row                        | Quarantine unresolved record and emit attention | Adapter remains; duplicate profile authority retires              |
+| Kalshi `partners[].code`     | `SPEN`           | `PartnerCode("SPEN")`                                         | Validate CODE                                                              | Reject invalid CODE                             | Permanent adapter boundary                                        |
+| Kalshi registry `id`         | `partner-spen`   | `ExternalPartnerRef { sourceSystemId: "kalshi", externalId }` | Preserve as a source-qualified identity reference; join through TOML CODE  | Quarantine if CODE association is missing       | Never promote external ID                                         |
+| Pandora wire `partnerId`     | `118`            | provider-scoped `ExternalPartnerRef`                          | Preserve only; resolution requires an explicit adapter mapping             | Do not infer from numeric ID                    | Never promote remote ID                                           |
+| Sports lifecycle             | `frozen`         | `suspended` lifecycle fact                                    | Declared state map with mandatory provenance                               | Reject unknown state or quarantine record       | Mapping remains while source emits `frozen`                       |
 
-Every successful non-identity translation increments
-`partner_ingress_translation_total` with mapping and caller labels. The
-dashboard exposes aggregate compatibility use, never raw external identifiers as
-primary keys.
+Every successful non-identity translation returns metadata for
+`partner_ingress_translation_total` plus its warning code. Future callers must
+increment that counter with mapping and caller labels. The dashboard exposes
+aggregate compatibility use, never raw external identifiers as primary keys.
 
 ## Domain type map
 

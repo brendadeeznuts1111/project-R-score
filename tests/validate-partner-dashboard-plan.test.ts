@@ -100,7 +100,9 @@ describe('partner dashboard semantic plan', () => {
     plan.surfaces.portal.regions[0].business_domains.push('not-a-domain');
 
     const result = await validatePartnerDashboardPlan(plan);
-    expect(result.errors).toContain('package.implementation_status must be scaffolded');
+    expect(result.errors).toContain(
+      'package.implementation_status must be artifact-core-implemented'
+    );
     expect(result.errors.some(error => error.includes('PartnerCode wire_path must be'))).toBe(true);
     expect(result.errors.some(error => error.includes('invalid owner_domain source-adapter'))).toBe(
       true
@@ -110,6 +112,36 @@ describe('partner dashboard semantic plan', () => {
     );
     expect(result.errors.some(error => error.includes('page.partners already exists'))).toBe(true);
     expect(result.errors).toContain('region has invalid business domain not-a-domain');
+  });
+
+  it('rejects identifier and ingress translation drift from package parsers', async () => {
+    const plan = copyPlan();
+    plan.package.components.reconciliation = 'implemented';
+    plan.shapes.dashboard_artifact.active_out_identity_field = 'hiddenCountOnly';
+    plan.identity.partner_code.pattern = '^wrong$';
+    plan.identity.out_id.implementation_status = 'planned';
+    plan.ingress.stage = 'inside-core';
+    plan.ingress.mappings.legacy_seat_out_token.from_pattern = '^unsafe$';
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).toContain(
+      'package component statuses must distinguish implemented artifact core from planned adapters'
+    );
+    expect(result.errors).toContain(
+      'dashboard artifact must expose active OutIds and scalar-only conflict evidence'
+    );
+    expect(result.errors).toContain(
+      'identity.partner_code must match the package-owned PartnerCode parser'
+    );
+    expect(result.errors).toContain(
+      'identity.out_id must match the implemented canonical OutId parser'
+    );
+    expect(result.errors).toContain(
+      'ingress must declare the implemented pre-core rejecting translator'
+    );
+    expect(result.errors).toContain(
+      'legacy seat OutId mapping must match the package ingress translator'
+    );
   });
 
   it('rejects connector identity, requiredness, and reciprocal-region drift', async () => {

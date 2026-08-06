@@ -14,7 +14,12 @@ import { portalTheme, renderThemeTokensCss } from '../lib/portal/theme.ts';
 import { PARTNER_HASH_PATTERN_INITS } from '../lib/portal/url-planes.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import {
+  CANONICAL_OUT_ID_PATTERN,
+  INGRESS_TRANSLATION_COUNTER,
+  LEGACY_OUT_ID_WARNING_CODE,
+  LEGACY_SEAT_OUT_TOKEN_PATTERN,
   PARTNER_DASHBOARD_SEMANTIC_GAPS,
+  PARTNER_CODE_PATTERN,
   PARTNERS_PACKAGE_TARGET,
   type PartnerDashboardConceptGapId,
 } from '../packages/partners/src/index.ts';
@@ -378,9 +383,71 @@ export async function validatePartnerDashboardPlan(
   if (
     partnersPackage.name !== PARTNERS_PACKAGE_TARGET.target_name ||
     partnersPackage.private !== true ||
-    partnersPackage.exports?.['./dashboard-plan'] !== './src/dashboard-plan.ts'
+    partnersPackage.exports?.['./dashboard-plan'] !== './src/dashboard-plan.ts' ||
+    partnersPackage.exports?.['./core'] !== './src/core/index.ts' ||
+    partnersPackage.exports?.['./boundary'] !== './src/boundary/index.ts' ||
+    partnersPackage.exports?.['./compatibility'] !== './src/compatibility/index.ts'
   ) {
-    errors.push('packages/partners must remain a private workspace exporting ./dashboard-plan');
+    errors.push(
+      'packages/partners must remain private and export dashboard-plan, core, boundary, and compatibility'
+    );
+  }
+  if (
+    plan.package?.components?.identifiers !== 'implemented' ||
+    plan.package?.components?.artifact_boundary !== 'implemented' ||
+    plan.package?.components?.artifact_assembler !== 'implemented' ||
+    plan.package?.components?.ingress_translator !== 'implemented' ||
+    plan.package?.components?.connector_ports !== 'planned' ||
+    plan.package?.components?.source_adapters !== 'planned' ||
+    plan.package?.components?.reconciliation !== 'planned'
+  ) {
+    errors.push(
+      'package component statuses must distinguish implemented artifact core from planned adapters'
+    );
+  }
+  if (
+    plan.shapes?.dashboard_artifact?.active_out_identity_field !== 'activeOutIds' ||
+    plan.shapes?.dashboard_artifact?.conflict_value_policy !== 'redacted-json-scalars-only'
+  ) {
+    errors.push('dashboard artifact must expose active OutIds and scalar-only conflict evidence');
+  }
+  if (
+    plan.identity?.partner_code?.pattern !== PARTNER_CODE_PATTERN ||
+    plan.identity?.partner_code?.type !== 'PartnerCode'
+  ) {
+    errors.push('identity.partner_code must match the package-owned PartnerCode parser');
+  }
+  if (
+    plan.identity?.out_id?.pattern !== CANONICAL_OUT_ID_PATTERN ||
+    plan.identity?.out_id?.type !== 'OutId' ||
+    plan.identity?.out_id?.target_parser !== 'parseCanonicalOutId' ||
+    plan.identity?.out_id?.implementation_status !== 'implemented'
+  ) {
+    errors.push('identity.out_id must match the implemented canonical OutId parser');
+  }
+  if (
+    plan.ingress?.translator !== 'IngressTranslator' ||
+    plan.ingress?.implementation_status !== 'translator-implemented' ||
+    plan.ingress?.caller_integration_status !== 'unwired' ||
+    plan.ingress?.telemetry_emission_status !== 'unwired' ||
+    plan.ingress?.stage !== 'before-core-parse' ||
+    plan.ingress?.unknown_mapping !== 'reject' ||
+    plan.ingress?.telemetry_counter !== INGRESS_TRANSLATION_COUNTER
+  ) {
+    errors.push('ingress must declare the implemented pre-core rejecting translator');
+  }
+  const legacyOutMapping = plan.ingress?.mappings?.legacy_seat_out_token;
+  if (
+    legacyOutMapping?.from_pattern !== LEGACY_SEAT_OUT_TOKEN_PATTERN ||
+    legacyOutMapping?.canonical_pattern !== CANONICAL_OUT_ID_PATTERN ||
+    legacyOutMapping?.to_template !== 'out-{code}-{sequence}' ||
+    legacyOutMapping?.canonical_parser !== 'parseCanonicalOutId' ||
+    legacyOutMapping?.canonical_parser_implementation_status !== 'implemented' ||
+    legacyOutMapping?.emit_deprecation_warning !== true ||
+    legacyOutMapping?.deprecation_warning_code !== LEGACY_OUT_ID_WARNING_CODE ||
+    legacyOutMapping?.preserve_original_as_provenance !== true
+  ) {
+    errors.push('legacy seat OutId mapping must match the package ingress translator');
   }
   if (plan.shapes?.dashboard_artifact?.canonical_join_type !== 'PartnerCode') {
     errors.push('dashboard artifact canonical_join_type must be PartnerCode');

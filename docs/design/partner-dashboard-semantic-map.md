@@ -35,10 +35,11 @@ The dashboard artifact carries semantic values and labels, never raw colors.
 | Financial value              | `MoneyAmount` / `{currency, minorUnits}`                | accounting | floating-point balance/amount                  |
 | Operator action reason       | `AttentionReasonCode` / `reasonCode`                    | partners   | display message as machine key                 |
 
-`CODE-N` is named `LegacySeatOutToken`. The planned compatibility
-`IngressTranslator` maps it to `out-CODE-N` before the planned
-`parseCanonicalOutId` is called. `TreeNodeId` remains the operations entity
-primary key; it may reference a partner but never replaces `PartnerCode`.
+`CODE-N` is named `LegacySeatOutToken`. The implemented pure `IngressTranslator`
+maps it to `out-CODE-N` before the implemented `parseCanonicalOutId` is called.
+HTTP/BFF, CLI, and artifact-adapter wiring is still unwired. `TreeNodeId`
+remains the operations entity primary key; it may reference a partner but never
+replaces `PartnerCode`.
 
 ## Boundary vocabulary
 
@@ -112,9 +113,10 @@ Partner hash routes are a separate compatibility plane: `#partners`,
 | `sportsTerminal` | `sports-terminal`     | trading      | blocked until one exact input is selected                | no current authority            |
 | `legacyOps`      | `legacy-ops-registry` | partners     | `legacy-partners-ops` v2 → `LegacyPartnerProjectionPort` | compatibility observations only |
 
-The private `packages/partners` workspace is now scaffolded and exports the
-TOML-facing plan types plus the exact semantic-gap map. Its ports, adapters, and
-dashboard builder are still planned. The first six connectors have real inputs
+The private `packages/partners` workspace now exports the TOML-facing plan
+types, semantic-gap map, canonical identifier parsers, ingress-only out
+translation, v1 artifact boundary, and pure artifact assembler. Its connector
+ports and adapters are still planned. The first six connectors have real inputs
 but planned extracted adapters; Sports Terminal is disabled and blocked on one
 exact parsed input; only the legacy ops projection is a current compatibility
 implementation. The required profile artifact currently has zero profiles, so
