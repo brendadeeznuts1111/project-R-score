@@ -8,6 +8,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — bun test --changed
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
 /**
  * Staged-scoped changed-test runner for pre-commit.
  *
@@ -19,7 +20,7 @@
  * delta, then runs `bun test --changed` inside it: selection sees only the
  * files this commit actually touches. Foreign worktree dirt is invisible.
  *
- *   bun scripts/test-changed-staged.ts [--bail=1] [--serial] [extra bun test flags]
+ *   bun scripts/bun-test-changed-staged.ts [--bail=1] [--serial] [extra bun test flags]
  *
  * Fallback: if the scratch-repo setup fails for any reason, it warns and
  * runs the legacy worktree `bun test --changed` so the gate never wedges.
@@ -44,7 +45,28 @@ export const SCRATCH_PATHSPEC = ['.', ':(exclude)projects/', ':(exclude)Kalshi-b
 export const SCRATCH_LINK_DIRS = ['node_modules', 'projects', 'Kalshi-bot'] as const;
 /** Bound worker-process pressure for Argon2/SQLite-heavy changed suites. */
 export const STAGED_TEST_PARALLELISM = 6;
-const forwarded = Bun.argv.slice(2).filter(a => a !== '--');
+
+/** Build the shared scratch/fallback command while keeping serial mode wrapper-local. */
+export function buildStagedTestCommand(
+  argv: string[],
+  env: Record<string, string | undefined> = {}
+): string[] {
+  const serial =
+    argv.includes('--serial') || env.BUN_TEST_SERIAL === '1' || env.BUN_TEST_SERIAL === 'true';
+  const forwarded = argv.filter(arg => arg !== '--' && arg !== '--serial' && arg !== '--dry-run');
+  const hasParallel = forwarded.some(arg => arg === '--parallel' || arg.startsWith('--parallel='));
+  const hasIsolate = forwarded.includes('--isolate');
+  const command = ['bun', 'test', '--changed', '--pass-with-no-tests'];
+
+  // Bun workers imply a fresh global per file. Preserve explicit runner choices;
+  // otherwise use the bounded staged-gate default.
+  if (!serial && !hasParallel && !hasIsolate) {
+    command.push(`--parallel=${STAGED_TEST_PARALLELISM}`);
+  }
+
+  command.push(...forwarded);
+  return command;
+}
 
 /**
  * Hermetic git env: partial commits (`git commit -- <paths>`) run hooks with
@@ -221,9 +243,10 @@ async function buildScratchRepo(tmp: string): Promise<void> {
 }
 
 async function main(): Promise<number> {
+  const command = buildStagedTestCommand(Bun.argv.slice(2), Bun.env);
   if (Bun.argv.includes('--dry-run')) {
     console.info(
-      '[dry-run] test-changed-staged: would run bun test --changed in a HEAD ∪ staged scratch repo'
+      `[dry-run] test-changed-staged: would run ${command.join(' ')} in a HEAD ∪ staged scratch repo`
     );
     return 0;
   }
@@ -237,7 +260,7 @@ async function main(): Promise<number> {
         `falling back to worktree bun test --changed`
     );
     removeIndexTreeSync(tmp);
-    const legacy = Bun.spawn(['bun', 'test', '--changed', '--pass-with-no-tests', ...forwarded], {
+    const legacy = Bun.spawn(command, {
       cwd: ROOT,
       stdout: 'inherit',
       stderr: 'inherit',
@@ -248,27 +271,17 @@ async function main(): Promise<number> {
   }
 
   try {
-    const proc = Bun.spawn(
-      [
-        'bun',
-        'test',
-        '--changed',
-        '--pass-with-no-tests',
-        `--parallel=${STAGED_TEST_PARALLELISM}`,
-        ...forwarded,
-      ],
-      {
-        cwd: tmp,
-        stdout: 'inherit',
-        stderr: 'inherit',
-        stdin: 'inherit',
-        env: {
-          ...testRunEnv(),
-          // brand-coverage projects/ enumeration (see buildScratchRepo 6b).
-          KIMI_STAGED_PROJECTS_LS_FILES: `${tmp}/.staged-projects-ls-files`,
-        },
-      }
-    );
+    const proc = Bun.spawn(command, {
+      cwd: tmp,
+      stdout: 'inherit',
+      stderr: 'inherit',
+      stdin: 'inherit',
+      env: {
+        ...testRunEnv(),
+        // brand-coverage projects/ enumeration (see buildScratchRepo 6b).
+        KIMI_STAGED_PROJECTS_LS_FILES: `${tmp}/.staged-projects-ls-files`,
+      },
+    });
     return (await proc.exited) ?? 1;
   } finally {
     removeIndexTreeSync(tmp);
