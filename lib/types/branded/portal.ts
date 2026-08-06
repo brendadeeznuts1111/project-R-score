@@ -9,12 +9,14 @@ import { defineBrandConstructors, type BrandSpec, type BrandedString } from './_
 
 export type PortalTenantId = BrandedString<'PortalTenantId'>;
 export type TelegramUserId = BrandedString<'TelegramUserId'>;
+export type TelegramChatId = BrandedString<'TelegramChatId'>;
 export type PortalAccountId = BrandedString<'PortalAccountId'>;
 export type LinkNonceId = BrandedString<'LinkNonceId'>;
 export type DomId = BrandedString<'DomId'>;
 
 const portalTenant = defineBrandConstructors('PortalTenantId');
 const telegramUser = defineBrandConstructors('TelegramUserId');
+const telegramChat = defineBrandConstructors('TelegramChatId');
 const portalAccount = defineBrandConstructors('PortalAccountId');
 const linkNonce = defineBrandConstructors('LinkNonceId');
 const dom = defineBrandConstructors('DomId');
@@ -26,6 +28,10 @@ export const parsePortalTenantId = portalTenant.parse;
 export const asTelegramUserId = telegramUser.as;
 export const tryTelegramUserId = telegramUser.try;
 export const parseTelegramUserId = telegramUser.parse;
+
+export const asTelegramChatId = telegramChat.as;
+export const tryTelegramChatId = telegramChat.try;
+export const parseTelegramChatId = telegramChat.parse;
 
 export const asPortalAccountId = portalAccount.as;
 export const tryPortalAccountId = portalAccount.try;
@@ -53,6 +59,13 @@ export const PORTAL_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['wire-input'],
     description: 'Telegram user id from Bot API',
+  },
+  {
+    name: 'TelegramChatId',
+    domain: 'portal',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['wire-input'],
+    description: 'Telegram chat_id from Bot API (msg.chat.id / callback query)',
   },
   {
     name: 'PortalAccountId',

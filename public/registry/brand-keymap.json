@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-06T08:28:13.313Z",
+  "generatedAt": "2026-08-06T18:41:03.659Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -12,12 +12,12 @@
     "colorKernel": "public/portal/theme.jsonc"
   },
   "summary": {
-    "brands": 92,
+    "brands": 93,
     "domains": 10,
-    "ids": 70,
+    "ids": 71,
     "keys": 3,
     "codes": 19,
-    "covered": 70,
+    "covered": 71,
     "referencedUnconstructed": 7,
     "unused": 15,
     "cataloguedProjects": 35,
@@ -103,7 +103,7 @@
     {
       "name": "portal",
       "module": "lib/types/branded/portal.ts",
-      "brandCount": 5,
+      "brandCount": 6,
       "colorKey": "green",
       "color": "#3fb950",
       "tone": "ok"
@@ -1767,28 +1767,28 @@
         "status": "covered",
         "references": 12,
         "constructors": {
-          "as": 14,
+          "as": 12,
           "try": 3,
           "parse": 0
         },
         "guards": 0,
         "files": [
           "lib/ai/anomaly-detector.ts",
+          "lib/operator-research/agent-odds-http.ts",
           "lib/operator-research/backtest.ts",
-          "lib/operator-research/edge-engine.ts",
-          "tools/agent-odds-dashboard-serve.ts"
+          "lib/operator-research/edge-engine.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
             "references": 12,
-            "constructionCalls": 17,
+            "constructionCalls": 15,
             "guardCalls": 0,
             "files": [
               "lib/ai/anomaly-detector.ts",
+              "lib/operator-research/agent-odds-http.ts",
               "lib/operator-research/backtest.ts",
-              "lib/operator-research/edge-engine.ts",
-              "tools/agent-odds-dashboard-serve.ts"
+              "lib/operator-research/edge-engine.ts"
             ]
           },
           "projects": {
@@ -3907,11 +3907,11 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 28,
+        "references": 31,
         "constructors": {
           "as": 1,
           "try": 0,
-          "parse": 35
+          "parse": 36
         },
         "guards": 0,
         "files": [
@@ -3921,18 +3921,18 @@
           "packages/partners/src/adapters/profile-coverage.ts",
           "packages/partners/src/boundary/assemble-dashboard-artifact.ts",
           "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/boundary/out-capability-snapshot.ts",
           "packages/partners/src/compatibility/ingress-translator.ts",
           "packages/partners/src/compatibility/legacy-partners-ops.ts",
           "packages/partners/src/core/identifiers.ts",
-          "packages/partners/src/core/types.ts",
-          "scripts/validate-partner-dashboard-plan.ts",
-          "tools/telegram-handshake-invite-gap.ts"
+          "packages/partners/src/core/out-capabilities.ts",
+          "packages/partners/src/core/types.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 28,
-            "constructionCalls": 36,
+            "references": 31,
+            "constructionCalls": 37,
             "guardCalls": 0,
             "files": [
               "lib/telegram/handshake-desk.ts",
@@ -3941,12 +3941,12 @@
               "packages/partners/src/adapters/profile-coverage.ts",
               "packages/partners/src/boundary/assemble-dashboard-artifact.ts",
               "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/boundary/out-capability-snapshot.ts",
               "packages/partners/src/compatibility/ingress-translator.ts",
               "packages/partners/src/compatibility/legacy-partners-ops.ts",
               "packages/partners/src/core/identifiers.ts",
-              "packages/partners/src/core/types.ts",
-              "scripts/validate-partner-dashboard-plan.ts",
-              "tools/telegram-handshake-invite-gap.ts"
+              "packages/partners/src/core/out-capabilities.ts",
+              "packages/partners/src/core/types.ts"
             ]
           },
           "projects": {
@@ -4202,7 +4202,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 33,
+        "references": 36,
         "constructors": {
           "as": 2,
           "try": 1,
@@ -4216,6 +4216,7 @@
           "packages/partners/src/compatibility/ingress-translator.ts",
           "packages/partners/src/compatibility/legacy-partners-ops.ts",
           "packages/partners/src/core/identifiers.ts",
+          "packages/partners/src/core/out-capabilities.ts",
           "packages/partners/src/core/types.ts",
           "scripts/lib/partners-env-join.ts",
           "scripts/validate-partner-dashboard-plan.ts"
@@ -4223,7 +4224,7 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 33,
+            "references": 36,
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
@@ -4233,6 +4234,7 @@
               "packages/partners/src/compatibility/ingress-translator.ts",
               "packages/partners/src/compatibility/legacy-partners-ops.ts",
               "packages/partners/src/core/identifiers.ts",
+              "packages/partners/src/core/out-capabilities.ts",
               "packages/partners/src/core/types.ts",
               "scripts/lib/partners-env-join.ts",
               "scripts/validate-partner-dashboard-plan.ts"
@@ -4353,11 +4355,12 @@
         "constructors": {
           "as": 1,
           "try": 0,
-          "parse": 2
+          "parse": 3
         },
         "guards": 0,
         "files": [
           "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/boundary/out-capability-snapshot.ts",
           "packages/partners/src/core/identifiers.ts",
           "packages/partners/src/core/types.ts",
           "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/core/utils/formatters/currency.ts",
@@ -4367,10 +4370,11 @@
           "spine": {
             "status": "covered",
             "references": 7,
-            "constructionCalls": 3,
+            "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
               "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/boundary/out-capability-snapshot.ts",
               "packages/partners/src/core/identifiers.ts",
               "packages/partners/src/core/types.ts"
             ]
@@ -4496,12 +4500,13 @@
         "constructors": {
           "as": 2,
           "try": 0,
-          "parse": 6
+          "parse": 7
         },
         "guards": 0,
         "files": [
           "packages/partners/src/adapters/profile-coverage.ts",
           "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/boundary/out-capability-snapshot.ts",
           "packages/partners/src/compatibility/legacy-partners-ops.ts",
           "packages/partners/src/core/identifiers.ts",
           "packages/partners/src/core/types.ts"
@@ -4510,11 +4515,12 @@
           "spine": {
             "status": "covered",
             "references": 14,
-            "constructionCalls": 8,
+            "constructionCalls": 9,
             "guardCalls": 0,
             "files": [
               "packages/partners/src/adapters/profile-coverage.ts",
               "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/boundary/out-capability-snapshot.ts",
               "packages/partners/src/compatibility/legacy-partners-ops.ts",
               "packages/partners/src/core/identifiers.ts",
               "packages/partners/src/core/types.ts"
@@ -4568,12 +4574,13 @@
         "constructors": {
           "as": 1,
           "try": 0,
-          "parse": 4
+          "parse": 5
         },
         "guards": 0,
         "files": [
           "packages/partners/src/adapters/profile-coverage.ts",
           "packages/partners/src/boundary/dashboard-artifact.ts",
+          "packages/partners/src/boundary/out-capability-snapshot.ts",
           "packages/partners/src/compatibility/legacy-partners-ops.ts",
           "packages/partners/src/core/identifiers.ts",
           "packages/partners/src/core/types.ts"
@@ -4582,11 +4589,12 @@
           "spine": {
             "status": "covered",
             "references": 11,
-            "constructionCalls": 5,
+            "constructionCalls": 6,
             "guardCalls": 0,
             "files": [
               "packages/partners/src/adapters/profile-coverage.ts",
               "packages/partners/src/boundary/dashboard-artifact.ts",
+              "packages/partners/src/boundary/out-capability-snapshot.ts",
               "packages/partners/src/compatibility/legacy-partners-ops.ts",
               "packages/partners/src/core/identifiers.ts",
               "packages/partners/src/core/types.ts"
@@ -4973,9 +4981,9 @@
         },
         "guards": 0,
         "files": [
+          "lib/operator-research/agent-odds-http.ts",
           "lib/operator-research/bet-mock.ts",
-          "lib/operator-research/edge-engine.ts",
-          "tools/agent-odds-dashboard-serve.ts"
+          "lib/operator-research/edge-engine.ts"
         ],
         "scopes": {
           "spine": {
@@ -4984,9 +4992,9 @@
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
+              "lib/operator-research/agent-odds-http.ts",
               "lib/operator-research/bet-mock.ts",
-              "lib/operator-research/edge-engine.ts",
-              "tools/agent-odds-dashboard-serve.ts"
+              "lib/operator-research/edge-engine.ts"
             ]
           },
           "projects": {
@@ -5040,9 +5048,9 @@
         },
         "guards": 0,
         "files": [
+          "lib/operator-research/agent-odds-http.ts",
           "lib/operator-research/bet-mock.ts",
-          "lib/operator-research/edge-engine.ts",
-          "tools/agent-odds-dashboard-serve.ts"
+          "lib/operator-research/edge-engine.ts"
         ],
         "scopes": {
           "spine": {
@@ -5051,9 +5059,9 @@
             "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
+              "lib/operator-research/agent-odds-http.ts",
               "lib/operator-research/bet-mock.ts",
-              "lib/operator-research/edge-engine.ts",
-              "tools/agent-odds-dashboard-serve.ts"
+              "lib/operator-research/edge-engine.ts"
             ]
           },
           "projects": {
@@ -5102,11 +5110,11 @@
       ],
       "coverage": {
         "status": "covered",
-        "references": 79,
+        "references": 83,
         "constructors": {
           "as": 44,
           "try": 8,
-          "parse": 19
+          "parse": 23
         },
         "guards": 0,
         "files": [
@@ -5126,8 +5134,8 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 79,
-            "constructionCalls": 71,
+            "references": 83,
+            "constructionCalls": 75,
             "guardCalls": 0,
             "files": [
               "lib/bookmakers/desk-coverage.ts",
@@ -5459,6 +5467,68 @@
               "lib/telegram/ops-commands.ts",
               "tools/identity-admin.ts",
               "tools/telegram-ops-consumer.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "TelegramChatId",
+      "domain": "portal",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "Telegram chat_id from Bot API (msg.chat.id / callback query)",
+      "kind": "id",
+      "module": "lib/types/branded/portal.ts",
+      "constructors": {
+        "as": "asTelegramChatId",
+        "try": "tryTelegramChatId",
+        "parse": "parseTelegramChatId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isTelegramChatId",
+      "shortName": "telegramChatId",
+      "envName": "TELEGRAM_CHAT_ID",
+      "colorKey": "green",
+      "color": "#3fb950",
+      "tone": "ok",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 2,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/telegram/partner-ops-registry.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 2,
+            "constructionCalls": 1,
+            "guardCalls": 0,
+            "files": [
+              "lib/telegram/partner-ops-registry.ts"
             ]
           },
           "projects": {
@@ -6616,7 +6686,7 @@
     },
     {
       "project": "projects/active/sports-terminal-os",
-      "sourceFiles": 176,
+      "sourceFiles": 178,
       "brandedFiles": 1,
       "brands": [
         "RequestId"
