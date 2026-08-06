@@ -319,6 +319,14 @@ async function main(): Promise<void> {
   }
 
   const libFiles = staged.filter(f => f.replace(/^\.\//, '').startsWith('lib/'));
+  const areaMapToolStaged = staged.some(f => {
+    const n = f.replace(/^\.\//, '');
+    return (
+      n === 'tools/lib-area-map-check.ts' ||
+      n === 'tests/lib-area-map-check.test.ts' ||
+      n === 'package.json'
+    );
+  });
   if (libFiles.length > 0) {
     console.info(`📚 Lib domain indexes (${libFiles.length} path(s) staged)...`);
     const code = await runGate('lib-domains', ['bun', 'run', 'lib:domains:check'], timings);
@@ -330,11 +338,13 @@ async function main(): Promise<void> {
       await writeTimings(timings, full);
       process.exit(1);
     }
-    console.info(`🗺️  Lib Area map paths (${libFiles.length} path(s) staged)...`);
+  }
+  if (libFiles.length > 0 || areaMapToolStaged) {
+    console.info(`🗺️  Lib Area map paths...`);
     const mapCode = await runGate('lib-area-maps', ['bun', 'run', 'lib:area-maps:check'], timings);
     if (mapCode !== 0) {
       console.error(
-        '❌ Lib Area map path contract failed — fix ## Area map entry paths/globs\n' +
+        '❌ Lib Area map path contract failed — fix ## Area map / Ownership map entry paths/globs\n' +
           '   bun run lib:area-maps:check'
       );
       await writeTimings(timings, full);

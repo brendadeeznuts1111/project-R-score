@@ -3,19 +3,22 @@
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
- * lib-area-map-check.ts — validate ## Area map clusters under lib domain READMEs.
+ * lib-area-map-check.ts — validate Area / Ownership map clusters under lib/.
  *
- * When a domain README has an Area map:
- *  1. Extract entry paths (markdown links, backticks, path-like tokens).
- *  2. Resolve paths under that domain (skip external parent/docs/absolute URLs).
- *  3. Fail if a path is missing, a glob matches 0 files, or a glob matches >max.
- *  4. Optional orphans: top-level domain .ts files not covered by map paths/globs.
+ * Contract v2:
+ *  - Accept ## Area map or ## Ownership map
+ *  - Extensionless stems resolve to name.ts under the domain
+ *  - Orphan globs match full relative paths (not bare * basename)
+ *  - Mega allowlist: require map; warn top-level orphans by default
+ *  - Verified stamp: warn if missing/stale on megas
  *
  * Usage:
  *   bun tools/lib-area-map-check.ts
  *   bun tools/lib-area-map-check.ts --json
  *   bun tools/lib-area-map-check.ts --orphans
  *   bun tools/lib-area-map-check.ts --orphans --strict
+ *   bun tools/lib-area-map-check.ts --require-mega
+ *   bun tools/lib-area-map-check.ts --strict-verified
  *   bun tools/lib-area-map-check.ts --domain=operations
  *   bun run lib:area-maps:check
  */
@@ -27,8 +30,34 @@ const LIB = joinPath(REPO, 'lib');
 /** Default max files a single map glob may match (too broad = bad cluster). */
 const DEFAULT_MAX_GLOB = 15;
 
+/** Domains that must have a map (size / agent traffic). */
+export const MEGA_DOMAINS = [
+  'operations',
+  'telegram',
+  'operator-research',
+  'docs',
+  'http',
+  'harness',
+  'verification',
+  'portal',
+] as const;
+
+export type MegaDomain = (typeof MEGA_DOMAINS)[number];
+
+const MEGA_SET = new Set<string>(MEGA_DOMAINS);
+
+/** Days after which area-map-verified is considered stale (warn). */
+const VERIFIED_MAX_AGE_DAYS = 30;
+
 type IssueKind =
-  'missing-path' | 'empty-glob' | 'broad-glob' | 'orphan-top-level' | 'no-area-map' | 'parse';
+  | 'missing-path'
+  | 'empty-glob'
+  | 'broad-glob'
+  | 'orphan-top-level'
+  | 'no-area-map'
+  | 'stale-verified'
+  | 'missing-verified'
+  | 'parse';
 
 type Issue = {
   kind: IssueKind;
@@ -44,6 +73,7 @@ type DomainResult = {
   paths: string[];
   issues: Issue[];
   verified?: string;
+  isMega: boolean;
 };
 
 function parseArgs(argv: string[]) {
@@ -51,6 +81,10 @@ function parseArgs(argv: string[]) {
   const orphans = argv.includes('--orphans');
   const strictOrphans = argv.includes('--strict');
   const requireMap = argv.includes('--require-map');
+  const requireMega = argv.includes('--require-mega') || !argv.includes('--no-require-mega');
+  const strictVerified = argv.includes('--strict-verified');
+  // Default: mega orphans always computed as warnings; --orphans forces all domains
+  const megaOrphans = !argv.includes('--no-mega-orphans');
   let maxGlob = DEFAULT_MAX_GLOB;
   let domainFilter: string | null = null;
   for (const a of argv) {
@@ -62,7 +96,17 @@ function parseArgs(argv: string[]) {
       domainFilter = a.slice('--domain='.length).trim() || null;
     }
   }
-  return { asJson, orphans, strictOrphans, requireMap, maxGlob, domainFilter };
+  return {
+    asJson,
+    orphans,
+    strictOrphans,
+    requireMap,
+    requireMega,
+    strictVerified,
+    megaOrphans,
+    maxGlob,
+    domainFilter,
+  };
 }
 
 async function isDir(abs: string): Promise<boolean> {
@@ -80,16 +124,17 @@ async function listDomainDirs(): Promise<string[]> {
   return out.sort();
 }
 
-/** Slice README from ## Area map until next ## / ### section (not table separators). */
+const MAP_HEADING_RE = /^## (?:Area map|Ownership map)\s*$/m;
+
+/** Slice README from ## Area map / Ownership map until next ## / ###. */
 export function extractAreaMapSection(readme: string): string | null {
-  const start = readme.search(/^## Area map\s*$/m);
-  if (start < 0) return null;
+  const m = readme.match(MAP_HEADING_RE);
+  if (!m || m.index === undefined) return null;
+  const start = m.index;
   const after = readme.slice(start);
-  // Drop the heading line
   const bodyStart = after.indexOf('\n');
   if (bodyStart < 0) return '';
   const rest = after.slice(bodyStart + 1);
-  // Stop at next AT2/H3 (### Maintainability, ## Entities, …)
   const stop = rest.search(/^#{2,3} /m);
   return stop < 0 ? rest : rest.slice(0, stop);
 }
@@ -99,9 +144,21 @@ export function extractVerifiedDate(readme: string): string | undefined {
   return m?.[1];
 }
 
+/** Age in days of YYYY-MM-DD stamp, or null if invalid. */
+export function verifiedAgeDays(stamp: string, now = new Date()): number | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(stamp);
+  if (!m) return null;
+  const then = Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  return Math.floor((today - then) / (24 * 60 * 60 * 1000));
+}
+
 const FILE_EXT = /\.(ts|tsx|md|toml|json|js|jsonc)$/i;
 
-/** True if token is a path-like map entry (not prose / API names). */
+/**
+ * True if token is a path-like map entry (not prose / API names).
+ * Extensionless stems (portal-cors) are allowed — resolved later to .ts.
+ */
 export function isPathToken(raw: string): boolean {
   const t = raw.trim();
   if (!t || t.length > 160) return false;
@@ -116,14 +173,19 @@ export function isPathToken(raw: string): boolean {
   const isFile = FILE_EXT.test(t);
   const isDir = t.endsWith('/') && /^[\w@./-]+$/.test(t);
   const isGlob = t.includes('*') && (t.includes('.') || t.includes('/'));
-  if (!isFile && !isDir && !isGlob) return false;
+  // Extensionless kebab/snake stem only: portal-cors, url-planes (not Title Case prose)
+  const isStem =
+    !isFile &&
+    !isDir &&
+    !isGlob &&
+    !t.includes('/') &&
+    /^[a-z][a-z0-9]*[-_][a-z0-9][-a-z0-9_]*$/.test(t);
 
-  // org/repo single segment (oven-sh/bun) — no extension, not a dir, not a glob
-  if (isFile === false && isDir === false && isGlob === false) return false;
-  if (!isDir && !isGlob && !isFile) return false;
-  // path with slash but no file ext and not dir/glob: Request/response, CI/deploy
+  if (!isFile && !isDir && !isGlob && !isStem) return false;
+
+  // path with slash but no file ext and not dir/glob: Request/response
   if (t.includes('/') && !isFile && !isDir && !isGlob) return false;
-  // single-slash "word/word" without dots → prose or org/repo
+  // single-slash word/word without dots → prose or org/repo
   if (/^[\w.-]+\/[\w.-]+$/.test(t) && !isFile && !isGlob) return false;
 
   return true;
@@ -133,14 +195,14 @@ export function isPathToken(raw: string): boolean {
 export function isExternalPath(token: string): boolean {
   const t = token.trim();
   if (t.startsWith('../') || t.startsWith('..\\')) return true;
-  if (t.startsWith('/')) return true; // /registry/, /verifydod
-  if (t.startsWith('config/')) return true; // monorepo root config
+  if (t.startsWith('/')) return true;
+  if (t.startsWith('config/')) return true;
   if (t.startsWith('tools/') || t.startsWith('scripts/')) return true;
-  if (t.startsWith('functions/') || t === 'functions/') return true; // Pages Functions plane
-  if (t.startsWith('lib/')) return true; // other lib domains
+  if (t.startsWith('functions/') || t === 'functions/') return true;
+  if (t.startsWith('lib/')) return true;
   if (t.startsWith('docs/') || t.includes('/docs/')) return true;
   if (t.startsWith('public/')) return true;
-  // Registry artifact basenames mentioned in Role prose (not domain files)
+  if (t.startsWith('spine/')) return true;
   if (/^[a-z0-9][a-z0-9._-]*\.json$/i.test(t) && !t.includes('/')) return true;
   return false;
 }
@@ -156,8 +218,6 @@ export function extractPathTokens(section: string): string[] {
     const inner = m[1]!.trim();
     if (isPathToken(inner)) found.add(inner);
   }
-  // Segments between middots / pipes (after collapsing link markup) — catches
-  // bare `seat-desk-*.ts` · `flows/cards/*` without eating bold area titles.
   const stripped = section
     .replace(/\[[^\]]*\]\(([^)]+)\)/g, ' $1 ')
     .replace(/`([^`]+)`/g, ' $1 ')
@@ -172,11 +232,16 @@ export function extractPathTokens(section: string): string[] {
 
 async function expandGlob(domainAbs: string, pattern: string): Promise<string[]> {
   const hits: string[] = [];
-  // Bun.Glob is relative to cwd
   for await (const rel of new Bun.Glob(pattern).scan({ cwd: domainAbs, onlyFiles: false })) {
     hits.push(rel);
   }
   return hits.sort();
+}
+
+/** Glob pattern → RegExp that matches relative paths. */
+export function globToRegExp(pattern: string): RegExp {
+  const esc = pattern.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+  return new RegExp(`^${esc}$`);
 }
 
 async function validatePath(
@@ -187,7 +252,6 @@ async function validatePath(
 ): Promise<Issue | null> {
   if (isExternalPath(token)) return null;
 
-  // Directory marker
   if (token.endsWith('/')) {
     const rel = token.replace(/\/+$/, '');
     const abs = joinPath(domainAbs, rel);
@@ -197,10 +261,8 @@ async function validatePath(
     return null;
   }
 
-  // Glob
   if (token.includes('*')) {
     const matches = await expandGlob(domainAbs, token);
-    // Prefer files when both dirs and files match
     const files = matches.filter(m => !m.endsWith('/'));
     const count = files.length > 0 ? files.length : matches.length;
     if (count === 0) {
@@ -222,27 +284,56 @@ async function validatePath(
   const abs = joinPath(domainAbs, token);
   if (await Bun.file(abs).exists()) return null;
   if (await isDir(abs)) return null;
+
+  // Extensionless stem → name.ts (if missing, treat as prose — do not fail)
+  if (!token.includes('/') && !FILE_EXT.test(token)) {
+    const asTs = joinPath(domainAbs, `${token}.ts`);
+    if (await Bun.file(asTs).exists()) return null;
+    const asIndex = joinPath(domainAbs, token, 'index.ts');
+    if (await Bun.file(asIndex).exists()) return null;
+    return null;
+  }
+
+  // Non-TS map artifacts (theme.jsonc, etc.) optional if absent
+  if (FILE_EXT.test(token) && !/\.tsx?$/i.test(token) && !/\.md$/i.test(token)) {
+    return null;
+  }
+
   return { kind: 'missing-path', domain, path: token, detail: 'not found under domain' };
 }
 
-/** Whether top-level file basename is covered by a map path/glob. */
+/**
+ * Whether top-level file basename is covered by a map path/glob.
+ * Globs with `/` match full relative path only (basename alone never uses path-glob basenames like `*`).
+ * Globs without `/` match basename (e.g. seat-desk-*.ts).
+ */
 export function coversTopLevel(basename: string, tokens: string[]): boolean {
   for (const t of tokens) {
     if (isExternalPath(t)) continue;
+    if (t.endsWith('/')) continue; // dirs don't cover top-level siblings
+
+    // Exact
+    if (t === basename) return true;
     const base = t.split('/').pop() ?? t;
-    if (base === basename || t === basename) return true;
-    if (t.includes('*')) {
-      // Convert simple globs to RegExp on basename or full relative
-      const re = new RegExp(
-        `^${t
-          .split('/')
-          .pop()!
-          .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-          .replace(/\*/g, '.*')}$`
-      );
-      if (re.test(basename)) return true;
+    if (base === basename && !t.includes('*')) return true;
+
+    // Stem token portal-cors covers portal-cors.ts
+    if (!t.includes('/') && !t.includes('*') && !FILE_EXT.test(t) && basename === `${t}.ts`) {
+      return true;
     }
-    // Directory entry does not cover top-level siblings
+
+    if (t.includes('*')) {
+      if (t.includes('/')) {
+        // Path glob: only match if basename alone could not be confused —
+        // require full rel path; top-level file has no slash so only match
+        // patterns like `foo*.ts` without slash, not `flows/cards/*`
+        // Top-level relative path IS the basename
+        if (globToRegExp(t).test(basename)) return true;
+      } else {
+        // Basename glob: seat-desk-*.ts
+        if (globToRegExp(t).test(basename)) return true;
+      }
+    }
   }
   return false;
 }
@@ -259,14 +350,29 @@ async function listTopLevelTs(domainAbs: string): Promise<string[]> {
 
 async function checkDomain(
   domain: string,
-  opts: { orphans: boolean; maxGlob: number; requireMap: boolean }
+  opts: {
+    orphans: boolean;
+    megaOrphans: boolean;
+    maxGlob: number;
+    requireMap: boolean;
+    requireMega: boolean;
+    strictVerified: boolean;
+  }
 ): Promise<DomainResult> {
   const domainAbs = joinPath(LIB, domain);
   const readmeAbs = joinPath(domainAbs, 'README.md');
   const issues: Issue[] = [];
+  const isMega = MEGA_SET.has(domain);
 
   if (!(await Bun.file(readmeAbs).exists())) {
-    return { domain, hasMap: false, paths: [], issues };
+    if (opts.requireMega && isMega) {
+      issues.push({
+        kind: 'no-area-map',
+        domain,
+        detail: 'mega domain missing README.md',
+      });
+    }
+    return { domain, hasMap: false, paths: [], issues, isMega };
   }
 
   const readme = await Bun.file(readmeAbs).text();
@@ -274,14 +380,16 @@ async function checkDomain(
   const section = extractAreaMapSection(readme);
 
   if (section == null) {
-    if (opts.requireMap) {
+    if (opts.requireMap || (opts.requireMega && isMega)) {
       issues.push({
         kind: 'no-area-map',
         domain,
-        detail: 'README missing ## Area map',
+        detail: isMega
+          ? 'mega domain missing ## Area map or ## Ownership map'
+          : 'README missing ## Area map or ## Ownership map',
       });
     }
-    return { domain, hasMap: false, paths: [], issues, verified };
+    return { domain, hasMap: false, paths: [], issues, verified, isMega };
   }
 
   const paths = extractPathTokens(section);
@@ -290,7 +398,8 @@ async function checkDomain(
     if (issue) issues.push(issue);
   }
 
-  if (opts.orphans) {
+  const wantOrphans = opts.orphans || (opts.megaOrphans && isMega);
+  if (wantOrphans) {
     const top = await listTopLevelTs(domainAbs);
     for (const file of top) {
       if (!coversTopLevel(file, paths)) {
@@ -304,7 +413,39 @@ async function checkDomain(
     }
   }
 
-  return { domain, hasMap: true, paths, issues, verified };
+  if (isMega) {
+    if (!verified) {
+      issues.push({
+        kind: 'missing-verified',
+        domain,
+        detail: 'missing <!-- area-map-verified: YYYY-MM-DD -->',
+      });
+    } else {
+      const age = verifiedAgeDays(verified);
+      if (age !== null && age > VERIFIED_MAX_AGE_DAYS) {
+        issues.push({
+          kind: 'stale-verified',
+          domain,
+          detail: `verified stamp ${verified} is ${age}d old (max ${VERIFIED_MAX_AGE_DAYS}d)`,
+        });
+      }
+    }
+  }
+
+  return { domain, hasMap: true, paths, issues, verified, isMega };
+}
+
+function isWarnOnly(
+  issue: Issue,
+  opts: { strictOrphans: boolean; strictVerified: boolean; requireMega: boolean }
+): boolean {
+  if (issue.kind === 'orphan-top-level') return !opts.strictOrphans;
+  if (issue.kind === 'missing-verified' || issue.kind === 'stale-verified') {
+    return !opts.strictVerified;
+  }
+  // no-area-map on mega is fail when requireMega
+  if (issue.kind === 'no-area-map') return false;
+  return false;
 }
 
 async function main(): Promise<void> {
@@ -324,20 +465,19 @@ async function main(): Promise<void> {
     results.push(
       await checkDomain(d, {
         orphans: opts.orphans,
+        megaOrphans: opts.megaOrphans,
         maxGlob: opts.maxGlob,
         requireMap: opts.requireMap,
+        requireMega: opts.requireMega,
+        strictVerified: opts.strictVerified,
       })
     );
   }
 
   const mapped = results.filter(r => r.hasMap);
   const allIssues = results.flatMap(r => r.issues);
-  // Orphans only fail when --strict; path/glob issues always fail
-  const failing = allIssues.filter(i => {
-    if (i.kind === 'orphan-top-level') return opts.strictOrphans;
-    return true;
-  });
-  const orphanOnly = allIssues.filter(i => i.kind === 'orphan-top-level');
+  const failing = allIssues.filter(i => !isWarnOnly(i, opts));
+  const warnings = allIssues.filter(i => isWarnOnly(i, opts));
 
   if (opts.asJson) {
     process.stdout.write(
@@ -345,9 +485,10 @@ async function main(): Promise<void> {
         {
           domains: domains.length,
           withMaps: mapped.length,
+          megas: MEGA_DOMAINS,
           issueCount: allIssues.length,
           failCount: failing.length,
-          orphanCount: orphanOnly.length,
+          warnCount: warnings.length,
           results,
         },
         null,
@@ -355,30 +496,29 @@ async function main(): Promise<void> {
       )}\n`
     );
   } else {
-    if (failing.length === 0 && orphanOnly.length === 0) {
+    if (failing.length === 0 && warnings.length === 0) {
       console.info(
-        `✅ lib-area-map-check: ${mapped.length}/${domains.length} domains with Area maps, paths OK`
+        `✅ lib-area-map-check: ${mapped.length}/${domains.length} domains with maps, paths OK`
       );
     } else {
       if (failing.length > 0) {
         console.info(
-          `\n❌ lib-area-map-check: ${failing.length} issue(s) (${mapped.length} maps)\n`
+          `\n❌ lib-area-map-check: ${failing.length} fail(s), ${warnings.length} warn(s) (${mapped.length} maps)\n`
         );
       } else {
         console.info(
-          `\n⚠️  lib-area-map-check: ${orphanOnly.length} orphan warning(s) (use --strict to fail)\n`
+          `\n⚠️  lib-area-map-check: ${warnings.length} warning(s) (${mapped.length} maps)\n`
         );
       }
       for (const i of allIssues) {
-        const tag = i.kind === 'orphan-top-level' && !opts.strictOrphans ? 'warn' : 'fail';
+        const tag = isWarnOnly(i, opts) ? 'warn' : 'fail';
         console.info(
           `  [${tag}/${i.kind}] ${i.domain}${i.path ? ` · ${i.path}` : ''}${i.detail ? ` — ${i.detail}` : ''}`
         );
       }
       console.info('');
-      console.info(
-        '  Fix: update lib/<domain>/README.md ## Area map entry paths, or narrow globs.'
-      );
+      console.info('  Fix: update lib/<domain>/README.md map entry paths, or narrow globs.');
+      console.info('  Mega orphans/stamp: warn by default; --strict / --strict-verified to fail.');
       console.info('');
     }
   }
