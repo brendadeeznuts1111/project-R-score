@@ -53,6 +53,10 @@ bun test tests/partner-surface-inventory.test.ts tests/partner-surface-wire-lint
 | `--document` | Path + wire-bag excerpt from this design doc |
 | `--strict-globs` | Fail when an allowlist glob matches 0 files (`WIRE_TRAP_STRICT_GLOBS=1`) |
 
+Pre-commit (`scripts/pre-commit.ts`): runs `--scan` when staged `.ts`/`.tsx` or
+inventory bake/doc changes; adds `--strict-globs` when inventory/lint SSOT is
+staged. Escape: `SKIP_WIRE_LINT=1` (reason in commit message).
+
 Compact table (bags):
 
 ```bash
