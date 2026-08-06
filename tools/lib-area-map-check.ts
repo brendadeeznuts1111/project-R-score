@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/docs/runtime/utils#bun-openineditor — Bun.openInEditor
 /**
  * lib-area-map-check.ts — validate Area / Ownership map clusters under lib/.
  *
@@ -11,6 +12,7 @@
  *  - Orphan globs match full relative paths (not bare * basename)
  *  - Mega allowlist: require map; warn top-level orphans by default
  *  - Verified stamp: warn if missing/stale on megas
+ *  - --open / --open=N: Bun.openInEditor on first N issues (bunfig [debug].editor)
  *
  * Usage:
  *   bun tools/lib-area-map-check.ts
@@ -20,6 +22,8 @@
  *   bun tools/lib-area-map-check.ts --require-mega
  *   bun tools/lib-area-map-check.ts --strict-verified
  *   bun tools/lib-area-map-check.ts --domain=operations
+ *   bun tools/lib-area-map-check.ts --open
+ *   bun tools/lib-area-map-check.ts --open=3
  *   bun run lib:area-maps:check
  */
 import { joinPath, resolvePath } from '../lib/path-bun';
@@ -87,6 +91,8 @@ function parseArgs(argv: string[]) {
   const megaOrphans = !argv.includes('--no-mega-orphans');
   let maxGlob = DEFAULT_MAX_GLOB;
   let domainFilter: string | null = null;
+  /** 0 = do not open; N = open first N issues via Bun.openInEditor */
+  let openCount = 0;
   for (const a of argv) {
     if (a.startsWith('--max-glob=')) {
       const n = Number(a.slice('--max-glob='.length));
@@ -94,6 +100,11 @@ function parseArgs(argv: string[]) {
     }
     if (a.startsWith('--domain=')) {
       domainFilter = a.slice('--domain='.length).trim() || null;
+    }
+    if (a === '--open') openCount = 1;
+    if (a.startsWith('--open=')) {
+      const n = Number(a.slice('--open='.length));
+      openCount = Number.isFinite(n) && n > 0 ? Math.floor(n) : 1;
     }
   }
   return {
@@ -106,6 +117,7 @@ function parseArgs(argv: string[]) {
     megaOrphans,
     maxGlob,
     domainFilter,
+    openCount,
   };
 }
 
@@ -448,6 +460,52 @@ function isWarnOnly(
   return false;
 }
 
+/** Resolve an issue to an absolute path for Bun.openInEditor (README and/or module). */
+export function issueToOpenPath(issue: Issue): string | null {
+  const domainAbs = joinPath(LIB, issue.domain);
+  const readme = joinPath(domainAbs, 'README.md');
+  if (
+    issue.kind === 'no-area-map' ||
+    issue.kind === 'missing-verified' ||
+    issue.kind === 'stale-verified' ||
+    issue.kind === 'empty-glob' ||
+    issue.kind === 'broad-glob'
+  ) {
+    return readme;
+  }
+  if (issue.path) {
+    // Prefer the concrete file when present
+    const candidate = joinPath(domainAbs, issue.path);
+    return candidate;
+  }
+  return readme;
+}
+
+/**
+ * Open first N issues in the editor (repo bunfig [debug].editor, else $VISUAL/$EDITOR).
+ * @see https://bun.com/docs/runtime/utils#bun-openineditor
+ */
+function openIssuesInEditor(issues: Issue[], count: number): void {
+  if (count <= 0 || issues.length === 0) return;
+  if (typeof Bun.openInEditor !== 'function') {
+    console.error('❌ Bun.openInEditor unavailable on this runtime');
+    return;
+  }
+  const n = Math.min(count, issues.length);
+  const seen = new Set<string>();
+  let opened = 0;
+  for (let i = 0; i < issues.length && opened < n; i++) {
+    const issue = issues[i]!;
+    const abs = issueToOpenPath(issue);
+    if (!abs || seen.has(abs)) continue;
+    seen.add(abs);
+    const rel = abs.startsWith(REPO) ? abs.slice(REPO.length + 1) : abs;
+    console.info(`✏️  open ${rel}  [${issue.kind}] ${issue.domain}`);
+    Bun.openInEditor(abs);
+    opened++;
+  }
+}
+
 async function main(): Promise<void> {
   const opts = parseArgs(Bun.argv.slice(2));
   let domains = await listDomainDirs();
@@ -519,8 +577,15 @@ async function main(): Promise<void> {
       console.info('');
       console.info('  Fix: update lib/<domain>/README.md map entry paths, or narrow globs.');
       console.info('  Mega orphans/stamp: warn by default; --strict / --strict-verified to fail.');
+      console.info('  Open: bun tools/lib-area-map-check.ts --open   (or --open=3)');
       console.info('');
     }
+  }
+
+  if (opts.openCount > 0 && allIssues.length > 0) {
+    // Prefer fails first, then warnings
+    const ordered = [...failing, ...warnings];
+    openIssuesInEditor(ordered, opts.openCount);
   }
 
   if (failing.length > 0) process.exitCode = 1;
