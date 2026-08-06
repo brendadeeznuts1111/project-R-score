@@ -3,6 +3,8 @@ import {
   checkBunPin,
   isConceptSsotPath,
   isPartnerDashboardPlanPath,
+  isPartnerWireInventorySsotPath,
+  isPartnerWireLintPath,
   isSkillValidationPath,
   isTestSourcePath,
   readPrecommitEnvironment,
@@ -49,6 +51,16 @@ describe('pre-commit path gates', () => {
     expect(isConceptSsotPath('lib/http/skills-catalog.ts')).toBe(false);
   });
 
+  it('selects partner wire-lint paths', () => {
+    expect(isPartnerWireLintPath('lib/foo.ts')).toBe(true);
+    expect(isPartnerWireLintPath('x.tsx')).toBe(true);
+    expect(isPartnerWireLintPath('public/registry/partner-surface-inventory.json')).toBe(true);
+    expect(isPartnerWireLintPath('docs/design/partner-surface-inventory.md')).toBe(true);
+    expect(isPartnerWireLintPath('docs/README.md')).toBe(false);
+    expect(isPartnerWireInventorySsotPath('lib/docs/partner-surface-inventory.ts')).toBe(true);
+    expect(isPartnerWireInventorySsotPath('lib/foo.ts')).toBe(false);
+  });
+
   it('selects partner dashboard semantic plan paths', () => {
     expect(isPartnerDashboardPlanPath('docs/design/partner-dashboard-mvp.toml')).toBe(true);
     expect(isPartnerDashboardPlanPath('docs/design/partner-dashboard-semantic-map.md')).toBe(true);
@@ -74,11 +86,13 @@ describe('pre-commit environment', () => {
         SKIP_GITLEAKS: '1',
         SKIP_QUALITY_CONCEPT: '0',
         SKIP_TEST_CHANGED: '1',
+        SKIP_WIRE_LINT: '1',
       })
     ).toEqual({
       skipGitleaks: true,
       skipQualityConcept: false,
       skipTestChanged: true,
+      skipWireLint: true,
     });
   });
 });

@@ -33,6 +33,7 @@ export type PrecommitEnvironment = {
   skipGitleaks: boolean;
   skipQualityConcept: boolean;
   skipTestChanged: boolean;
+  skipWireLint: boolean;
 };
 
 export function readPrecommitEnvironment(env: Environment = Bun.env): PrecommitEnvironment {
@@ -40,6 +41,7 @@ export function readPrecommitEnvironment(env: Environment = Bun.env): PrecommitE
     skipGitleaks: env.SKIP_GITLEAKS === '1',
     skipQualityConcept: env.SKIP_QUALITY_CONCEPT === '1',
     skipTestChanged: env.SKIP_TEST_CHANGED === '1',
+    skipWireLint: env.SKIP_WIRE_LINT === '1',
   };
 }
 
@@ -57,6 +59,29 @@ export function isConceptSsotPath(path: string): boolean {
 
 export function isPartnerDashboardPlanPath(path: string): boolean {
   return PARTNER_DASHBOARD_PLAN_PATH_RE.test(path);
+}
+
+/** Staged paths that should trigger partner-surface wire-trap lint (Layer C). */
+export function isPartnerWireLintPath(path: string): boolean {
+  if (/\.(ts|tsx)$/.test(path)) return true;
+  return (
+    path === 'public/registry/partner-surface-inventory.json' ||
+    path === 'docs/design/partner-surface-inventory.md'
+  );
+}
+
+/**
+ * Inventory / lint SSOT paths — when staged, also pass --strict-globs so allowlist
+ * rot fails the commit. Ordinary .ts commits use --scan only (empty nested
+ * checkouts like Kalshi-bot/ in worktrees warn, not error).
+ */
+export function isPartnerWireInventorySsotPath(path: string): boolean {
+  return (
+    path === 'lib/docs/partner-surface-inventory.ts' ||
+    path === 'lib/docs/partner-surface-wire-lint.ts' ||
+    path === 'scripts/validate-wire-traps.ts' ||
+    path === 'public/registry/partner-surface-inventory.json'
+  );
 }
 
 function section(label: string, first = false): void {
@@ -268,6 +293,31 @@ export async function runPrecommit(args: string[] = Bun.argv.slice(2)): Promise<
     }
   } else {
     console.info('  ⏭️  no concept SSOT staged — skip quality:concept');
+  }
+
+  section('partner-surface wire lint (path-gated)');
+  if (environment.skipWireLint) {
+    console.info('  ⏭️  SKIP_WIRE_LINT=1');
+  } else if (stagedFiles.some(isPartnerWireLintPath)) {
+    const strictGlobs = stagedFiles.some(isPartnerWireInventorySsotPath);
+    const wireCmd = [
+      'bun',
+      'scripts/validate-wire-traps.ts',
+      '--scan',
+      ...(strictGlobs ? (['--strict-globs'] as const) : []),
+    ];
+    if (dryRun) {
+      console.info(`  [dry-run] ${wireCmd.join(' ')}`);
+    } else {
+      const code = await requireCommand(
+        [...wireCmd],
+        '❌ Wire lint failed. Use PartnerCode / ExternalPartnerRef, add // wire-ok: <reason>, register boundaryPathGlobs, or SKIP_WIRE_LINT=1 with reason in commit message.\n' +
+          '   Help: bun scripts/validate-wire-traps.ts --hlp · Why: bun scripts/validate-wire-traps.ts --why'
+      );
+      if (code !== 0) return code;
+    }
+  } else {
+    console.info('  ⏭️  no staged .ts/.tsx or partner-surface inventory — skip wire lint');
   }
 
   console.info(
