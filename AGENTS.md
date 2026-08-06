@@ -432,7 +432,11 @@ single runs) · `export` (hierarchical llms-full.txt) · **deep types inventory 
 `--kind=function,method,property` →
 [`tools/bun-types-inventory.md`](tools/bun-types-inventory.md) — top-level +
 namespace/class/**interface** methods & properties (maxDepth 2) + satellites
-(`bun:jsc` · `bun:ffi` · `bun:sqlite` · `bun:test`), not the utils docs page
+(`bun:jsc` · `bun:ffi` · `bun:sqlite` · `bun:test`), not the utils docs page.
+**Tip-diff (local CI, GHA disabled):** `bun run bun:types-inventory:tip-diff`
+fetches oven-sh/bun `packages/bun-types` into `.cache/` (or `--prefer-local`
+`~/bun`) and reports tip-only/pin-only vs catalog pin; `:tip-diff:strict` fails
+on policy breach; reports under `.cache/bun-types-tip-diff/`
 
 Operate loop (feeds → scrape → catalog with embedded `releaseHits` → integrity):
 [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · **daily**
