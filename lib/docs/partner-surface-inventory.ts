@@ -1064,9 +1064,16 @@ export function partnerDeskHrefs(code: string): {
   };
 }
 
+type PartnerChromeNavItem = PortalChromeNavItem & {
+  domain: 'partner';
+  group: NonNullable<PortalChromeNavItem['group']>;
+};
+
 /** Live chrome nav items with Domain lane partner. */
-export function listPartnerChromeNavItems(): readonly PortalChromeNavItem[] {
-  return [...PORTAL_PRIORITY_NAV, ...PORTAL_OVERFLOW_NAV].filter(n => n.domain === 'partner');
+export function listPartnerChromeNavItems(): readonly PartnerChromeNavItem[] {
+  return [...PORTAL_PRIORITY_NAV, ...PORTAL_OVERFLOW_NAV].filter(
+    (item): item is PartnerChromeNavItem => item.domain === 'partner' && item.group !== undefined
+  );
 }
 
 function registryTokenFromHref(registryArtifact: string | undefined): string | undefined {
@@ -1076,7 +1083,7 @@ function registryTokenFromHref(registryArtifact: string | undefined): string | u
   return base.includes('/') ? base.split('/').pop() : base;
 }
 
-function chromeNavBag(item: PortalChromeNavItem): PartnerSurfaceChromeNavBag {
+function chromeNavBag(item: PartnerChromeNavItem): PartnerSurfaceChromeNavBag {
   const bag: PartnerSurfaceChromeNavBag = {
     domain: item.domain,
     group: item.group,
