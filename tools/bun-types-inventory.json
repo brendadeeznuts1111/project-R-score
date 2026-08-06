@@ -1,6 +1,6 @@
 {
   "schema": "factorywager/bun-types-inventory/v3",
-  "generated": "2026-08-06T20:31:42.870Z",
+  "generated": "2026-08-06T20:39:33.359Z",
   "runtime": {
     "bunVersion": "1.3.14",
     "bunRevision": "0d9b296af33f2b851fcbf4df3e9ec89751734ba4"
@@ -31,6 +31,8 @@
     "interfaces": true,
     "properties": true,
     "typeAliases": true,
+    "enums": true,
+    "nestedObjects": true,
     "counted": true,
     "moduleFilter": null,
     "kindFilter": null
@@ -46,9 +48,9 @@
     "counted": true
   },
   "summary": {
-    "total": 2266,
-    "topLevel": 453,
-    "nested": 1813,
+    "total": 2364,
+    "topLevel": 454,
+    "nested": 1910,
     "byKind": {
       "namespace": 29,
       "interface": 225,
@@ -58,25 +60,28 @@
       "const": 107,
       "var": 3,
       "method": 581,
-      "property": 946
+      "property": 1012,
+      "enum": 1,
+      "enum-member": 31
     },
     "byModule": {
-      "bun": 1790,
+      "bun": 1856,
       "bun:bundle": 2,
-      "bun:ffi": 47,
+      "bun:ffi": 79,
       "bun:jsc": 48,
       "bun:sqlite": 116,
       "bun:test": 263
     },
     "byDepth": {
-      "0": 453,
-      "1": 1493,
-      "2": 320
+      "0": 454,
+      "1": 1524,
+      "2": 363,
+      "3": 23
     },
-    "agentsMapHits": 68,
-    "withCallSites": 157,
-    "zeroCallSites": 2109,
-    "maxDepth": 2
+    "agentsMapHits": 70,
+    "withCallSites": 158,
+    "zeroCallSites": 2206,
+    "maxDepth": 3
   },
   "tipDiff": null,
   "members": [
@@ -197,7 +202,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 35
+      "callSites": 39
     },
     {
       "kind": "type",
@@ -282,7 +287,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 333
+      "callSites": 336
     },
     {
       "kind": "class",
@@ -299,7 +304,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 12
+      "callSites": 13
     },
     {
       "kind": "type",
@@ -469,7 +474,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 95
+      "callSites": 98
     },
     {
       "kind": "namespace",
@@ -775,7 +780,7 @@
       "deprecated": false,
       "overloads": 6,
       "agentsMap": true,
-      "callSites": 208
+      "callSites": 213
     },
     {
       "kind": "type",
@@ -860,7 +865,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": false,
-      "callSites": 20
+      "callSites": 21
     },
     {
       "kind": "class",
@@ -877,7 +882,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 27
+      "callSites": 28
     },
     {
       "kind": "interface",
@@ -911,7 +916,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 13
+      "callSites": 14
     },
     {
       "kind": "type",
@@ -979,7 +984,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 181
+      "callSites": 183
     },
     {
       "kind": "interface",
@@ -1047,7 +1052,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 230
+      "callSites": 238
     },
     {
       "kind": "namespace",
@@ -1064,7 +1069,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 14
+      "callSites": 16
     },
     {
       "kind": "type",
@@ -1183,7 +1188,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 121
+      "callSites": 123
     },
     {
       "kind": "function",
@@ -1217,7 +1222,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 10
+      "callSites": 11
     },
     {
       "kind": "type",
@@ -1285,7 +1290,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 24
+      "callSites": 25
     },
     {
       "kind": "interface",
@@ -1353,7 +1358,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 1
+      "callSites": 2
     },
     {
       "kind": "const",
@@ -1370,7 +1375,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 14
+      "callSites": 15
     },
     {
       "kind": "type",
@@ -1404,7 +1409,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 688
+      "callSites": 714
     },
     {
       "kind": "function",
@@ -1421,7 +1426,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 688
+      "callSites": 714
     },
     {
       "kind": "interface",
@@ -1540,7 +1545,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 50
+      "callSites": 55
     },
     {
       "kind": "interface",
@@ -1727,7 +1732,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 8
+      "callSites": 9
     },
     {
       "kind": "interface",
@@ -1778,7 +1783,7 @@
       "deprecated": false,
       "overloads": 3,
       "agentsMap": true,
-      "callSites": 2136
+      "callSites": 2187
     },
     {
       "kind": "interface",
@@ -1846,7 +1851,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 26
+      "callSites": 31
     },
     {
       "kind": "type",
@@ -1880,7 +1885,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 23
+      "callSites": 26
     },
     {
       "kind": "function",
@@ -1931,7 +1936,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 311
+      "callSites": 323
     },
     {
       "kind": "interface",
@@ -1965,7 +1970,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 13
+      "callSites": 14
     },
     {
       "kind": "function",
@@ -1982,7 +1987,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 24
+      "callSites": 25
     },
     {
       "kind": "const",
@@ -1999,7 +2004,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 67
+      "callSites": 73
     },
     {
       "kind": "interface",
@@ -2067,7 +2072,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 182
+      "callSites": 192
     },
     {
       "kind": "namespace",
@@ -2084,7 +2089,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 182
+      "callSites": 192
     },
     {
       "kind": "interface",
@@ -2169,7 +2174,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 8
+      "callSites": 15
     },
     {
       "kind": "function",
@@ -2186,7 +2191,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 230
+      "callSites": 250
     },
     {
       "kind": "namespace",
@@ -2203,7 +2208,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 230
+      "callSites": 250
     },
     {
       "kind": "const",
@@ -2220,7 +2225,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 15
+      "callSites": 21
     },
     {
       "kind": "const",
@@ -2237,7 +2242,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 4
+      "callSites": 5
     },
     {
       "kind": "type",
@@ -2339,7 +2344,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": false,
-      "callSites": 15
+      "callSites": 16
     },
     {
       "kind": "type",
@@ -2390,7 +2395,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 40
+      "callSites": 41
     },
     {
       "kind": "namespace",
@@ -2407,7 +2412,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 34
+      "callSites": 40
     },
     {
       "kind": "interface",
@@ -2560,7 +2565,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 63
+      "callSites": 70
     },
     {
       "kind": "interface",
@@ -2628,7 +2633,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 181
+      "callSites": 195
     },
     {
       "kind": "interface",
@@ -2934,7 +2939,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 38
+      "callSites": 42
     },
     {
       "kind": "namespace",
@@ -2985,7 +2990,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 31
+      "callSites": 34
     },
     {
       "kind": "function",
@@ -3002,7 +3007,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 61
+      "callSites": 67
     },
     {
       "kind": "namespace",
@@ -3019,7 +3024,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 61
+      "callSites": 67
     },
     {
       "kind": "type",
@@ -3070,7 +3075,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 8
+      "callSites": 9
     },
     {
       "kind": "interface",
@@ -3155,7 +3160,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": true,
-      "callSites": 330
+      "callSites": 335
     },
     {
       "kind": "type",
@@ -3410,7 +3415,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 10
+      "callSites": 12
     },
     {
       "kind": "class",
@@ -3529,7 +3534,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 20
+      "callSites": 21
     },
     {
       "kind": "interface",
@@ -3563,7 +3568,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 90
+      "callSites": 100
     },
     {
       "kind": "var",
@@ -3580,7 +3585,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 9
+      "callSites": 11
     },
     {
       "kind": "class",
@@ -3733,7 +3738,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 35
+      "callSites": 38
     },
     {
       "kind": "namespace",
@@ -3767,7 +3772,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 46
+      "callSites": 49
     },
     {
       "kind": "function",
@@ -3784,7 +3789,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 281
+      "callSites": 293
     },
     {
       "kind": "namespace",
@@ -3886,7 +3891,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": false,
-      "callSites": 1
+      "callSites": 2
     },
     {
       "kind": "class",
@@ -4141,7 +4146,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 166
+      "callSites": 170
     },
     {
       "kind": "function",
@@ -4158,7 +4163,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 13
+      "callSites": 14
     },
     {
       "kind": "function",
@@ -4175,7 +4180,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 48
+      "callSites": 49
     },
     {
       "kind": "interface",
@@ -4294,7 +4299,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": true,
-      "callSites": 519
+      "callSites": 536
     },
     {
       "kind": "namespace",
@@ -4328,7 +4333,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": false,
-      "callSites": 201
+      "callSites": 210
     },
     {
       "kind": "const",
@@ -4345,7 +4350,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 4
+      "callSites": 5
     },
     {
       "kind": "class",
@@ -4362,7 +4367,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 24
+      "callSites": 25
     },
     {
       "kind": "interface",
@@ -4379,7 +4384,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 24
+      "callSites": 25
     },
     {
       "kind": "namespace",
@@ -4396,7 +4401,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 24
+      "callSites": 25
     },
     {
       "kind": "interface",
@@ -4515,7 +4520,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 23
+      "callSites": 24
     },
     {
       "kind": "const",
@@ -4583,7 +4588,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 142
+      "callSites": 150
     },
     {
       "kind": "interface",
@@ -4617,7 +4622,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 44
+      "callSites": 45
     },
     {
       "kind": "interface",
@@ -4804,7 +4809,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 46
+      "callSites": 54
     },
     {
       "kind": "interface",
@@ -4923,7 +4928,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 25
+      "callSites": 26
     },
     {
       "kind": "interface",
@@ -5025,7 +5030,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 40
+      "callSites": 41
     },
     {
       "kind": "interface",
@@ -5093,7 +5098,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": false,
-      "callSites": 19
+      "callSites": 21
     },
     {
       "kind": "type",
@@ -5365,7 +5370,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 290
+      "callSites": 308
     },
     {
       "kind": "const",
@@ -5620,7 +5625,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 94
+      "callSites": 96
     },
     {
       "kind": "namespace",
@@ -5637,7 +5642,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 94
+      "callSites": 96
     },
     {
       "kind": "function",
@@ -5654,7 +5659,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 139
+      "callSites": 147
     },
     {
       "kind": "interface",
@@ -5756,7 +5761,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 29
+      "callSites": 30
     },
     {
       "kind": "interface",
@@ -5807,7 +5812,7 @@
       "deprecated": false,
       "overloads": 5,
       "agentsMap": true,
-      "callSites": 939
+      "callSites": 973
     },
     {
       "kind": "type",
@@ -5841,7 +5846,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 11
+      "callSites": 12
     },
     {
       "kind": "interface",
@@ -5875,7 +5880,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 1
+      "callSites": 2
     },
     {
       "kind": "function",
@@ -5892,7 +5897,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 10
+      "callSites": 11
     },
     {
       "kind": "function",
@@ -5909,7 +5914,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 1
+      "callSites": 2
     },
     {
       "kind": "function",
@@ -5926,7 +5931,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 9
+      "callSites": 10
     },
     {
       "kind": "type",
@@ -9258,7 +9263,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 16
+      "callSites": 20
     },
     {
       "kind": "function",
@@ -9275,7 +9280,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 11
+      "callSites": 14
     },
     {
       "kind": "property",
@@ -9530,7 +9535,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 9
+      "callSites": 10
     },
     {
       "kind": "function",
@@ -9547,7 +9552,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 19
+      "callSites": 20
     },
     {
       "kind": "function",
@@ -9564,7 +9569,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 14
+      "callSites": 15
     },
     {
       "kind": "const",
@@ -10686,7 +10691,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 8
+      "callSites": 9
     },
     {
       "kind": "method",
@@ -11723,7 +11728,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 62
+      "callSites": 72
     },
     {
       "kind": "function",
@@ -11740,7 +11745,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": true,
-      "callSites": 164
+      "callSites": 180
     },
     {
       "kind": "function",
@@ -11893,7 +11898,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 70
+      "callSites": 73
     },
     {
       "kind": "interface",
@@ -12080,7 +12085,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 32
+      "callSites": 40
     },
     {
       "kind": "interface",
@@ -12250,7 +12255,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 39
+      "callSites": 55
     },
     {
       "kind": "interface",
@@ -12284,7 +12289,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 25
+      "callSites": 35
     },
     {
       "kind": "interface",
@@ -17894,7 +17899,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 43
+      "callSites": 46
     },
     {
       "kind": "type",
@@ -25548,6 +25553,227 @@
     },
     {
       "kind": "property",
+      "name": "development",
+      "parent": "Bun.BuildConfig.jsx",
+      "setting": "Bun.BuildConfig.jsx.development",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.BuildConfig.jsx.development?: boolean;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2896,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "factory",
+      "parent": "Bun.BuildConfig.jsx",
+      "setting": "Bun.BuildConfig.jsx.factory",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.BuildConfig.jsx.factory?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2893,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "fragment",
+      "parent": "Bun.BuildConfig.jsx",
+      "setting": "Bun.BuildConfig.jsx.fragment",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.BuildConfig.jsx.fragment?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2894,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "importSource",
+      "parent": "Bun.BuildConfig.jsx",
+      "setting": "Bun.BuildConfig.jsx.importSource",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.BuildConfig.jsx.importSource?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2892,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "runtime",
+      "parent": "Bun.BuildConfig.jsx",
+      "setting": "Bun.BuildConfig.jsx.runtime",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.BuildConfig.jsx.runtime?: \"automatic\" | \"classic\";",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2891,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "sideEffects",
+      "parent": "Bun.BuildConfig.jsx",
+      "setting": "Bun.BuildConfig.jsx.sideEffects",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.BuildConfig.jsx.sideEffects?: boolean;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2895,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "copyright",
+      "parent": "Bun.CompileBuildOptions.windows",
+      "setting": "Bun.CompileBuildOptions.windows.copyright",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.CompileBuildOptions.windows.copyright?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 3116,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "description",
+      "parent": "Bun.CompileBuildOptions.windows",
+      "setting": "Bun.CompileBuildOptions.windows.description",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.CompileBuildOptions.windows.description?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 3115,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "hideConsole",
+      "parent": "Bun.CompileBuildOptions.windows",
+      "setting": "Bun.CompileBuildOptions.windows.hideConsole",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.CompileBuildOptions.windows.hideConsole?: boolean;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 3110,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "icon",
+      "parent": "Bun.CompileBuildOptions.windows",
+      "setting": "Bun.CompileBuildOptions.windows.icon",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.CompileBuildOptions.windows.icon?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 3111,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "publisher",
+      "parent": "Bun.CompileBuildOptions.windows",
+      "setting": "Bun.CompileBuildOptions.windows.publisher",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.CompileBuildOptions.windows.publisher?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 3113,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "title",
+      "parent": "Bun.CompileBuildOptions.windows",
+      "setting": "Bun.CompileBuildOptions.windows.title",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.CompileBuildOptions.windows.title?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 3112,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "version",
+      "parent": "Bun.CompileBuildOptions.windows",
+      "setting": "Bun.CompileBuildOptions.windows.version",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.CompileBuildOptions.windows.version?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 3114,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": true,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
       "name": "autoOrient",
       "parent": "Bun.Image.ConstructorOptions",
       "setting": "Bun.Image.ConstructorOptions.autoOrient",
@@ -27537,6 +27763,295 @@
     },
     {
       "kind": "property",
+      "name": "involuntary",
+      "parent": "Bun.ResourceUsage.contextSwitches",
+      "setting": "Bun.ResourceUsage.contextSwitches.involuntary",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.ResourceUsage.contextSwitches.involuntary: number;",
+      "default": "—",
+      "notes": "Involuntary context switches (context switches initiated by the system scheduler).",
+      "source": "bun.d.ts",
+      "line": 7162,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "voluntary",
+      "parent": "Bun.ResourceUsage.contextSwitches",
+      "setting": "Bun.ResourceUsage.contextSwitches.voluntary",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.ResourceUsage.contextSwitches.voluntary: number;",
+      "default": "—",
+      "notes": "Voluntary context switches (context switches that the process initiated).",
+      "source": "bun.d.ts",
+      "line": 7158,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "system",
+      "parent": "Bun.ResourceUsage.cpuTime",
+      "setting": "Bun.ResourceUsage.cpuTime.system",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.ResourceUsage.cpuTime.system: number;",
+      "default": "—",
+      "notes": "System CPU time used by the process, in microseconds.",
+      "source": "bun.d.ts",
+      "line": 7176,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "total",
+      "parent": "Bun.ResourceUsage.cpuTime",
+      "setting": "Bun.ResourceUsage.cpuTime.total",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.ResourceUsage.cpuTime.total: number;",
+      "default": "—",
+      "notes": "Total CPU time used by the process, in microseconds.",
+      "source": "bun.d.ts",
+      "line": 7180,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "user",
+      "parent": "Bun.ResourceUsage.cpuTime",
+      "setting": "Bun.ResourceUsage.cpuTime.user",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.ResourceUsage.cpuTime.user: number;",
+      "default": "—",
+      "notes": "User CPU time used by the process, in microseconds.",
+      "source": "bun.d.ts",
+      "line": 7172,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "received",
+      "parent": "Bun.ResourceUsage.messages",
+      "setting": "Bun.ResourceUsage.messages.received",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.ResourceUsage.messages.received: number;",
+      "default": "—",
+      "notes": "The number of IPC messages received.",
+      "source": "bun.d.ts",
+      "line": 7198,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "sent",
+      "parent": "Bun.ResourceUsage.messages",
+      "setting": "Bun.ResourceUsage.messages.sent",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.ResourceUsage.messages.sent: number;",
+      "default": "—",
+      "notes": "The number of IPC messages sent.",
+      "source": "bun.d.ts",
+      "line": 7194,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "out",
+      "parent": "Bun.ResourceUsage.ops",
+      "setting": "Bun.ResourceUsage.ops.out",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.ResourceUsage.ops.out: number;",
+      "default": "—",
+      "notes": "The number of output operations via the file system.",
+      "source": "bun.d.ts",
+      "line": 7211,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "checksumAlgorithm",
+      "parent": "Bun.S3ListObjectsResponse.contents",
+      "setting": "Bun.S3ListObjectsResponse.contents.checksumAlgorithm",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.S3ListObjectsResponse.contents.checksumAlgorithm?: \"CRC32\" | \"CRC32C\" | \"SHA1\" | \"SHA256\" | \"CRC64NVME\";",
+      "default": "—",
+      "notes": "The algorithm that was used to create a checksum of the object.",
+      "source": "s3.d.ts",
+      "line": 745,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "checksumType",
+      "parent": "Bun.S3ListObjectsResponse.contents",
+      "setting": "Bun.S3ListObjectsResponse.contents.checksumType",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.S3ListObjectsResponse.contents.checksumType?: \"COMPOSITE\" | \"FULL_OBJECT\";",
+      "default": "—",
+      "notes": "The checksum type that is used to calculate the object's checksum value.",
+      "source": "s3.d.ts",
+      "line": 747,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "eTag",
+      "parent": "Bun.S3ListObjectsResponse.contents",
+      "setting": "Bun.S3ListObjectsResponse.contents.eTag",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.S3ListObjectsResponse.contents.eTag?: string;",
+      "default": "—",
+      "notes": "The entity tag is a hash of the object. The ETag reflects changes only to the contents of an object, not its metadata. The ETag may or may not be an MD5 dige…",
+      "source": "s3.d.ts",
+      "line": 757,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "key",
+      "parent": "Bun.S3ListObjectsResponse.contents",
+      "setting": "Bun.S3ListObjectsResponse.contents.key",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.S3ListObjectsResponse.contents.key: string;",
+      "default": "—",
+      "notes": "The name that you assign to an object. You use the object key to retrieve the object.",
+      "source": "s3.d.ts",
+      "line": 759,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "lastModified",
+      "parent": "Bun.S3ListObjectsResponse.contents",
+      "setting": "Bun.S3ListObjectsResponse.contents.lastModified",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.S3ListObjectsResponse.contents.lastModified?: string;",
+      "default": "—",
+      "notes": "Creation date of the object.",
+      "source": "s3.d.ts",
+      "line": 761,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "owner",
+      "parent": "Bun.S3ListObjectsResponse.contents",
+      "setting": "Bun.S3ListObjectsResponse.contents.owner",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.S3ListObjectsResponse.contents.owner?: {",
+      "default": "—",
+      "notes": "The owner of the object",
+      "source": "s3.d.ts",
+      "line": 763,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "restoreStatus",
+      "parent": "Bun.S3ListObjectsResponse.contents",
+      "setting": "Bun.S3ListObjectsResponse.contents.restoreStatus",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.S3ListObjectsResponse.contents.restoreStatus?: {",
+      "default": "—",
+      "notes": "Specifies the restoration status of an object. Objects in certain storage classes must be restored before they can be retrieved.",
+      "source": "s3.d.ts",
+      "line": 770,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "size",
+      "parent": "Bun.S3ListObjectsResponse.contents",
+      "setting": "Bun.S3ListObjectsResponse.contents.size",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.S3ListObjectsResponse.contents.size?: number;",
+      "default": "—",
+      "notes": "Size in bytes of the object",
+      "source": "s3.d.ts",
+      "line": 777,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "storageClass",
+      "parent": "Bun.S3ListObjectsResponse.contents",
+      "setting": "Bun.S3ListObjectsResponse.contents.storageClass",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.S3ListObjectsResponse.contents.storageClass?:",
+      "default": "—",
+      "notes": "The class of storage used to store the object.",
+      "source": "s3.d.ts",
+      "line": 779,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
       "name": "description",
       "parent": "Bun.Security.Advisory",
       "setting": "Bun.Security.Advisory.description",
@@ -27940,6 +28455,40 @@
       "line": 789,
       "deprecated": false,
       "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "data",
+      "parent": "Bun.Server.options",
+      "setting": "Bun.Server.options.data",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.Server.options.data?: undefined;",
+      "default": "—",
+      "notes": "Data to store on the WebSocket instance",
+      "source": "serve.d.ts",
+      "line": 951,
+      "deprecated": false,
+      "overloads": 2,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "headers",
+      "parent": "Bun.Server.options",
+      "setting": "Bun.Server.options.headers",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.Server.options.headers?: HeadersInit;",
+      "default": "—",
+      "notes": "—",
+      "source": "serve.d.ts",
+      "line": 930,
+      "deprecated": false,
+      "overloads": 2,
       "agentsMap": false,
       "callSites": 0
     },
@@ -29060,6 +29609,193 @@
       "notes": "Callback executed when a connection attempt completes (SQLite)",
       "source": "sql.d.ts",
       "line": 191,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "eliminate",
+      "parent": "Bun.TranspilerOptions.exports",
+      "setting": "Bun.TranspilerOptions.exports.eliminate",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.TranspilerOptions.exports.eliminate?: string[];",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2457,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "replace",
+      "parent": "Bun.TranspilerOptions.exports",
+      "setting": "Bun.TranspilerOptions.exports.replace",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.TranspilerOptions.exports.replace?: Record<string, string>;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2458,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "baseUrl",
+      "parent": "Bun.TSConfig.compilerOptions",
+      "setting": "Bun.TSConfig.compilerOptions.baseUrl",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.TSConfig.compilerOptions.baseUrl?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2378,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "importsNotUsedAsValues",
+      "parent": "Bun.TSConfig.compilerOptions",
+      "setting": "Bun.TSConfig.compilerOptions.importsNotUsedAsValues",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.TSConfig.compilerOptions.importsNotUsedAsValues?: \"remove\" | \"preserve\" | \"error\";",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2385,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "jsx",
+      "parent": "Bun.TSConfig.compilerOptions",
+      "setting": "Bun.TSConfig.compilerOptions.jsx",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.TSConfig.compilerOptions.jsx?: \"preserve\" | \"react\" | \"react-jsx\" | \"react-jsxdev\";",
+      "default": "—",
+      "notes": "\"preserve\" is not supported yet",
+      "source": "bun.d.ts",
+      "line": 2380,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "jsxFactory",
+      "parent": "Bun.TSConfig.compilerOptions",
+      "setting": "Bun.TSConfig.compilerOptions.jsxFactory",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.TSConfig.compilerOptions.jsxFactory?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2381,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "jsxFragmentFactory",
+      "parent": "Bun.TSConfig.compilerOptions",
+      "setting": "Bun.TSConfig.compilerOptions.jsxFragmentFactory",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.TSConfig.compilerOptions.jsxFragmentFactory?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2382,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "jsxImportSource",
+      "parent": "Bun.TSConfig.compilerOptions",
+      "setting": "Bun.TSConfig.compilerOptions.jsxImportSource",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.TSConfig.compilerOptions.jsxImportSource?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2383,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "moduleSuffixes",
+      "parent": "Bun.TSConfig.compilerOptions",
+      "setting": "Bun.TSConfig.compilerOptions.moduleSuffixes",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.TSConfig.compilerOptions.moduleSuffixes?: any;",
+      "default": "—",
+      "notes": "moduleSuffixes is not supported yet",
+      "source": "bun.d.ts",
+      "line": 2387,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "paths",
+      "parent": "Bun.TSConfig.compilerOptions",
+      "setting": "Bun.TSConfig.compilerOptions.paths",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.TSConfig.compilerOptions.paths?: Record<string, string[]>;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2377,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "useDefineForClassFields",
+      "parent": "Bun.TSConfig.compilerOptions",
+      "setting": "Bun.TSConfig.compilerOptions.useDefineForClassFields",
+      "module": "bun",
+      "depth": 2,
+      "form": "Bun.TSConfig.compilerOptions.useDefineForClassFields?: boolean;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 2384,
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
@@ -30511,6 +31247,397 @@
       "callSites": 0
     },
     {
+      "kind": "property",
+      "name": "displayName",
+      "parent": "Bun.S3ListObjectsResponse.contents.owner",
+      "setting": "Bun.S3ListObjectsResponse.contents.owner.displayName",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.S3ListObjectsResponse.contents.owner.displayName?: string;",
+      "default": "—",
+      "notes": "The display name of the owner.",
+      "source": "s3.d.ts",
+      "line": 767,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "id",
+      "parent": "Bun.S3ListObjectsResponse.contents.owner",
+      "setting": "Bun.S3ListObjectsResponse.contents.owner.id",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.S3ListObjectsResponse.contents.owner.id?: string;",
+      "default": "—",
+      "notes": "The ID of the owner.",
+      "source": "s3.d.ts",
+      "line": 765,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "isRestoreInProgress",
+      "parent": "Bun.S3ListObjectsResponse.contents.restoreStatus",
+      "setting": "Bun.S3ListObjectsResponse.contents.restoreStatus.isRestoreInProgress",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.S3ListObjectsResponse.contents.restoreStatus.isRestoreInProgress?: boolean;",
+      "default": "—",
+      "notes": "Specifies whether the object is currently being restored.",
+      "source": "s3.d.ts",
+      "line": 772,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "restoreExpiryDate",
+      "parent": "Bun.S3ListObjectsResponse.contents.restoreStatus",
+      "setting": "Bun.S3ListObjectsResponse.contents.restoreStatus.restoreExpiryDate",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.S3ListObjectsResponse.contents.restoreStatus.restoreExpiryDate?: string;",
+      "default": "—",
+      "notes": "Indicates when the restored copy will expire. This value is populated only if the object has already been restored.",
+      "source": "s3.d.ts",
+      "line": 774,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "code",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.code",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.code: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 126,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "column",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.column",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.column?: string | undefined;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 137,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "constraint",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.constraint",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.constraint?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 139,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "dataType",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.dataType",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.dataType?: string | undefined;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 138,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "detail",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.detail",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.detail?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 128,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "errno",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.errno",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.errno?: string | undefined;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 127,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "file",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.file",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.file?: string | undefined;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 140,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": true,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "hint",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.hint",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.hint?: string | undefined;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 129,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "internalPosition",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.internalPosition",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.internalPosition?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 132,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "internalQuery",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.internalQuery",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.internalQuery?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 133,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "line",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.line",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.line?: string | undefined;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 141,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "position",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.position",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.position?: string | undefined;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 131,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "routine",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.routine",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.routine?: string | undefined;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 142,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "schema",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.schema",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.schema?: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 135,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "severity",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.severity",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.severity?: string | undefined;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 130,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "table",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.table",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.table?: string | undefined;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 136,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "where",
+      "parent": "Bun.SQL.PostgresError.options",
+      "setting": "Bun.SQL.PostgresError.options.where",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.SQL.PostgresError.options.where?: string | undefined;",
+      "default": "—",
+      "notes": "—",
+      "source": "sql.d.ts",
+      "line": 134,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "hostname",
+      "parent": "Bun.udp.ConnectSocketOptions.connect",
+      "setting": "Bun.udp.ConnectSocketOptions.connect.hostname",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.udp.ConnectSocketOptions.connect.hostname: string;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 6622,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "property",
+      "name": "port",
+      "parent": "Bun.udp.ConnectSocketOptions.connect",
+      "setting": "Bun.udp.ConnectSocketOptions.connect.port",
+      "module": "bun",
+      "depth": 3,
+      "form": "Bun.udp.ConnectSocketOptions.connect.port: number;",
+      "default": "—",
+      "notes": "—",
+      "source": "bun.d.ts",
+      "line": 6623,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
       "kind": "function",
       "name": "feature",
       "parent": null,
@@ -30525,7 +31652,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 7
+      "callSites": 10
     },
     {
       "kind": "interface",
@@ -30662,6 +31789,23 @@
       "overloads": 1,
       "agentsMap": false,
       "callSites": 0
+    },
+    {
+      "kind": "enum",
+      "name": "FFIType",
+      "parent": null,
+      "setting": "bun:ffi.FFIType",
+      "module": "bun:ffi",
+      "depth": 0,
+      "form": "bun:ffi.FFIType.*",
+      "default": "—",
+      "notes": "—",
+      "source": "ffi.d.ts",
+      "line": 20,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 3
     },
     {
       "kind": "type",
@@ -31049,6 +32193,533 @@
       "notes": "Can C/FFI code call this function from a separate thread?",
       "source": "ffi.d.ts",
       "line": 520,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "bool",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.bool",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.bool = 11",
+      "default": "11",
+      "notes": "Boolean value",
+      "source": "ffi.d.ts",
+      "line": 269,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "buffer",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.buffer",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.buffer = 20",
+      "default": "20",
+      "notes": "—",
+      "source": "ffi.d.ts",
+      "line": 340,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "char",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.char",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.char = 0",
+      "default": "0",
+      "notes": "—",
+      "source": "ffi.d.ts",
+      "line": 21,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "cstring",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.cstring",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.cstring = 14",
+      "default": "14",
+      "notes": "When used as a `returns`, this will automatically become a {@link CString}.",
+      "source": "ffi.d.ts",
+      "line": 313,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "double",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.double",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.double = 9",
+      "default": "9",
+      "notes": "IEEE-754 double precision float",
+      "source": "ffi.d.ts",
+      "line": 241,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "f32",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.f32",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.f32 = 10",
+      "default": "10",
+      "notes": "Alias of {@link FFIType.float}",
+      "source": "ffi.d.ts",
+      "line": 256,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "f64",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.f64",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.f64 = 9",
+      "default": "9",
+      "notes": "Alias of {@link FFIType.double}",
+      "source": "ffi.d.ts",
+      "line": 246,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "float",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.float",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.float = 10",
+      "default": "10",
+      "notes": "IEEE-754 single precision float",
+      "source": "ffi.d.ts",
+      "line": 251,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "i16",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.i16",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.i16 = 3",
+      "default": "3",
+      "notes": "16-bit signed integer",
+      "source": "ffi.d.ts",
+      "line": 135,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "i32",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.i32",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.i32 = 5",
+      "default": "5",
+      "notes": "32-bit signed integer",
+      "source": "ffi.d.ts",
+      "line": 186,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "i64",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.i64",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.i64 = 7",
+      "default": "7",
+      "notes": "i64 is a 64-bit signed integer",
+      "source": "ffi.d.ts",
+      "line": 227,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "i64_fast",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.i64_fast",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.i64_fast = 15",
+      "default": "15",
+      "notes": "Attempt to coerce `BigInt` into a `Number` if it fits. This improves performance",
+      "source": "ffi.d.ts",
+      "line": 324,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "i8",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.i8",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.i8 = 1",
+      "default": "1",
+      "notes": "8-bit signed integer",
+      "source": "ffi.d.ts",
+      "line": 59,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "int",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.int",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.int = 5",
+      "default": "5",
+      "notes": "32-bit signed integer",
+      "source": "ffi.d.ts",
+      "line": 196,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "int16_t",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.int16_t",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.int16_t = 3",
+      "default": "3",
+      "notes": "16-bit signed integer",
+      "source": "ffi.d.ts",
+      "line": 116,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "int32_t",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.int32_t",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.int32_t = 5",
+      "default": "5",
+      "notes": "32-bit signed integer",
+      "source": "ffi.d.ts",
+      "line": 179,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "int64_t",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.int64_t",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.int64_t = 7",
+      "default": "7",
+      "notes": "int64 is a 64-bit signed integer",
+      "source": "ffi.d.ts",
+      "line": 223,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "int8_t",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.int8_t",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.int8_t = 1",
+      "default": "1",
+      "notes": "8-bit signed integer",
+      "source": "ffi.d.ts",
+      "line": 40,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "napi_env",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.napi_env",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.napi_env = 18",
+      "default": "18",
+      "notes": "—",
+      "source": "ffi.d.ts",
+      "line": 338,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "napi_value",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.napi_value",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.napi_value = 19",
+      "default": "19",
+      "notes": "—",
+      "source": "ffi.d.ts",
+      "line": 339,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "pointer",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.pointer",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.pointer = 12",
+      "default": "12",
+      "notes": "Pointer value",
+      "source": "ffi.d.ts",
+      "line": 292,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "ptr",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.ptr",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.ptr = 12",
+      "default": "12",
+      "notes": "Pointer value",
+      "source": "ffi.d.ts",
+      "line": 286,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "u16",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.u16",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.u16 = 4",
+      "default": "4",
+      "notes": "16-bit unsigned integer",
+      "source": "ffi.d.ts",
+      "line": 174,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "u32",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.u32",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.u32 = 6",
+      "default": "6",
+      "notes": "32-bit unsigned integer",
+      "source": "ffi.d.ts",
+      "line": 218,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "u64",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.u64",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.u64 = 8",
+      "default": "8",
+      "notes": "64-bit unsigned integer",
+      "source": "ffi.d.ts",
+      "line": 236,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "u64_fast",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.u64_fast",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.u64_fast = 16",
+      "default": "16",
+      "notes": "Attempt to coerce `BigInt` into a `Number` if it fits. This improves performance",
+      "source": "ffi.d.ts",
+      "line": 335,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "u8",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.u8",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.u8 = 2",
+      "default": "2",
+      "notes": "8-bit unsigned integer",
+      "source": "ffi.d.ts",
+      "line": 96,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "uint16_t",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.uint16_t",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.uint16_t = 4",
+      "default": "4",
+      "notes": "16-bit unsigned integer",
+      "source": "ffi.d.ts",
+      "line": 155,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "uint32_t",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.uint32_t",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.uint32_t = 6",
+      "default": "6",
+      "notes": "32-bit unsigned integer",
+      "source": "ffi.d.ts",
+      "line": 212,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "uint64_t",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.uint64_t",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.uint64_t = 8",
+      "default": "8",
+      "notes": "64-bit unsigned integer",
+      "source": "ffi.d.ts",
+      "line": 232,
+      "deprecated": false,
+      "overloads": 1,
+      "agentsMap": false,
+      "callSites": 0
+    },
+    {
+      "kind": "enum-member",
+      "name": "uint8_t",
+      "parent": "bun:ffi.FFIType",
+      "setting": "bun:ffi.FFIType.uint8_t",
+      "module": "bun:ffi",
+      "depth": 1,
+      "form": "bun:ffi.FFIType.uint8_t = 2",
+      "default": "2",
+      "notes": "8-bit unsigned integer",
+      "source": "ffi.d.ts",
+      "line": 78,
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
@@ -34333,7 +36004,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 1226
+      "callSites": 1234
     },
     {
       "kind": "interface",
@@ -34401,7 +36072,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 1243
+      "callSites": 1251
     },
     {
       "kind": "interface",
@@ -34775,7 +36446,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 1233
+      "callSites": 1241
     },
     {
       "kind": "interface",

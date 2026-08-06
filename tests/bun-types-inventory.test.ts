@@ -4,6 +4,7 @@ import {
   agentsMapHits,
   parseBunModuleDts,
   parseDtsFile,
+  propertyOpensObjectBody,
   renderMarkdown,
   stableInventoryPayload,
   stripAngleGenerics,
@@ -67,6 +68,35 @@ declare module "bun" {
     tls: boolean;
     serverName?: string;
   };
+
+  interface ResourceUsage {
+    cpuTime: {
+      user: number;
+      system: number;
+      total: number;
+    };
+    maxRSS: number;
+  }
+
+  type DeepNest = {
+    outer: {
+      middle: {
+        leaf: string;
+      };
+    };
+  };
+
+  enum FFIType {
+    char = 0,
+    int8_t = 1,
+    i8 = 1,
+    buffer = 20,
+  }
+
+  const enum Direction {
+    Up,
+    Down,
+  }
 }
 `;
     const members = parseDtsFile(dts, 'bun.d.ts');
@@ -106,8 +136,37 @@ declare module "bun" {
     expect(settings).toContain('Bun.BunLockFile.lockfileVersion');
     expect(settings).toContain('Bun.BunLockFile.workspaces');
     expect(settings).toContain('Bun.BunLockFile.overrides');
-    // nested anonymous object fields must NOT become BunLockFile children
+    // index-signature keys still never become named children
     expect(settings.some(s => s === 'Bun.BunLockFile.workspace')).toBe(false);
+
+    // anonymous nested object props (depth 2+)
+    expect(settings).toContain('Bun.ResourceUsage.cpuTime');
+    expect(settings).toContain('Bun.ResourceUsage.cpuTime.user');
+    expect(settings).toContain('Bun.ResourceUsage.cpuTime.system');
+    expect(settings).toContain('Bun.ResourceUsage.cpuTime.total');
+    expect(settings).toContain('Bun.ResourceUsage.maxRSS');
+    const cpuUser = members.find(m => m.setting === 'Bun.ResourceUsage.cpuTime.user')!;
+    expect(cpuUser.kind).toBe('property');
+    expect(cpuUser.depth).toBe(2);
+    expect(cpuUser.parent).toBe('Bun.ResourceUsage.cpuTime');
+
+    // triple nest → depth 3
+    expect(settings).toContain('Bun.DeepNest.outer.middle.leaf');
+    const leaf = members.find(m => m.setting === 'Bun.DeepNest.outer.middle.leaf')!;
+    expect(leaf.depth).toBe(3);
+
+    // enums + members
+    expect(settings).toContain('Bun.FFIType');
+    expect(settings).toContain('Bun.FFIType.char');
+    expect(settings).toContain('Bun.FFIType.int8_t');
+    expect(settings).toContain('Bun.FFIType.i8');
+    expect(settings).toContain('Bun.FFIType.buffer');
+    const charMem = members.find(m => m.setting === 'Bun.FFIType.char')!;
+    expect(charMem.kind).toBe('enum-member');
+    expect(charMem.default).toBe('0');
+    expect(members.find(m => m.setting === 'Bun.FFIType')!.kind).toBe('enum');
+    expect(settings).toContain('Bun.Direction.Up');
+    expect(settings).toContain('Bun.Direction.Down');
 
     // generic default P = {} must not open as object body
     expect(settings).toContain('Bun.Component');
@@ -127,6 +186,43 @@ declare module "bun" {
     ).toBe(true);
     const multi = ['type Foo =', '  {', '    bar: string;', '  };'];
     expect(typeAliasOpensObjectBody(multi[0]!, multi, 0)).toBe(true);
+  });
+
+  test('propertyOpensObjectBody detects anon objects, skips unions', () => {
+    expect(propertyOpensObjectBody('cpuTime: {', ['cpuTime: {', '  user: number;', '};'], 0)).toBe(
+      true,
+    );
+    expect(propertyOpensObjectBody('maxRSS: number;', ['maxRSS: number;'], 0)).toBe(false);
+    const multi = ['proxy?:', '  | string', '  | {', '    url: string;', '  };'];
+    expect(propertyOpensObjectBody(multi[0]!, multi, 0)).toBe(false);
+    const bare = ['connect:', '  {', '    hostname: string;', '  };'];
+    expect(propertyOpensObjectBody(bare[0]!, bare, 0)).toBe(true);
+  });
+
+  test('--no-enums and --no-nested-objects flags', () => {
+    const dts = `
+declare module "bun" {
+  enum FFIType {
+    char = 0,
+  }
+  interface ResourceUsage {
+    cpuTime: {
+      user: number;
+    };
+  }
+}
+`;
+    const full = parseDtsFile(dts, 'bun.d.ts');
+    expect(full.some(m => m.setting === 'Bun.FFIType.char')).toBe(true);
+    expect(full.some(m => m.setting === 'Bun.ResourceUsage.cpuTime.user')).toBe(true);
+
+    const noEnum = parseDtsFile(dts, 'bun.d.ts', { enums: false });
+    expect(noEnum.some(m => m.setting === 'Bun.FFIType')).toBe(true);
+    expect(noEnum.some(m => m.setting === 'Bun.FFIType.char')).toBe(false);
+
+    const noNest = parseDtsFile(dts, 'bun.d.ts', { nestedObjects: false });
+    expect(noNest.some(m => m.setting === 'Bun.ResourceUsage.cpuTime')).toBe(true);
+    expect(noNest.some(m => m.setting === 'Bun.ResourceUsage.cpuTime.user')).toBe(false);
   });
 
   test('--no-type-aliases skips type object bodies', () => {
@@ -243,6 +339,8 @@ describe('render + stable payload v3', () => {
         interfaces: true,
         properties: true,
         typeAliases: true,
+        enums: true,
+        nestedObjects: true,
         counted: true,
         moduleFilter: null,
         kindFilter: null,
