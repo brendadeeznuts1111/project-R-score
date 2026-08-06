@@ -9,14 +9,15 @@ release feeds, npm channels, or cron schedules.
 
 ## Authority map
 
-| Artifact                            | Owns                                                                                                                                                                                           | Must not own                                                     |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `partner-dashboard-mvp.toml`        | MVP composition, connector/region bindings, ingress compatibility, resilience, theme references, and retirement gates                                                                          | Runtime/type channel values or generated dashboard data          |
-| `partner-dashboard-semantic-map.md` | Human-readable nomenclature and concept/surface interpretation                                                                                                                                 | A second machine contract                                        |
-| `partner-type-reference-map.md`     | Existing-to-canonical type/reference decisions and migration evidence                                                                                                                          | Dashboard layout or runtime policy                               |
-| `config/bun-channels.toml`          | Bun/runtime/type/feed/schedule policy                                                                                                                                                          | Partner business semantics                                       |
-| `partners-dashboard.json`           | Derived read model only; safe to regenerate                                                                                                                                                    | Policy or source truth                                           |
-| `@factorywager/partners`            | Target owner for parsed domain types, ports, pure adapters, and projection code; currently artifact core, ingress and legacy compatibility, profile coverage, and the portal consumer contract | Telegram transport, accounting storage, or theme token ownership |
+| Artifact                             | Owns                                                                                                                                                                                           | Must not own                                                     |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `partner-dashboard-mvp.toml`         | MVP composition, connector/region bindings, ingress compatibility, resilience, theme references, and retirement gates                                                                          | Runtime/type channel values or generated dashboard data          |
+| `partner-dashboard-semantic-map.md`  | Human-readable nomenclature and concept/surface interpretation                                                                                                                                 | A second machine contract                                        |
+| `partner-type-reference-map.md`      | Existing-to-canonical type/reference decisions and migration evidence                                                                                                                          | Dashboard layout or runtime policy                               |
+| `partner-dashboard-field-lineage.md` | Implemented field-to-source trace, type fitness, and unresolved wire risks                                                                                                                     | A second source-precedence contract                              |
+| `config/bun-channels.toml`           | Bun/runtime/type/feed/schedule policy                                                                                                                                                          | Partner business semantics                                       |
+| `partners-dashboard.json`            | Derived read model only; safe to regenerate                                                                                                                                                    | Policy or source truth                                           |
+| `@factorywager/partners`             | Target owner for parsed domain types, ports, pure adapters, and projection code; currently artifact core, ingress and legacy compatibility, profile coverage, and the portal consumer contract | Telegram transport, accounting storage, or theme token ownership |
 
 The TOML is the machine-readable MVP planning SSOT. The semantic and type maps
 explain its vocabulary and migration evidence; validators enforce that they do
@@ -175,11 +176,7 @@ type ExternalAccountRef = {
 };
 
 type OutOperationalStatus =
-  | 'unknown'
-  | 'ready'
-  | 'deferred'
-  | 'paused'
-  | 'blocked';
+  'unknown' | 'ready' | 'deferred' | 'paused' | 'blocked';
 type OutFundingStatus = 'unknown' | 'unfunded' | 'partial' | 'funded';
 type ProviderConnectionStatus = 'unknown' | 'active' | 'inactive' | 'pending';
 type ConnectorDataStatus = 'ok' | 'stale' | 'unavailable';
@@ -211,7 +208,10 @@ The branded identifier and reference decisions are defined in the
 concept/surface/theme bindings are in the
 [semantic map](./partner-dashboard-semantic-map.md). Brands serialize as
 validated strings at the JSON boundary. Canonical `OutId` is
-`out-{PartnerCode}-{n}`; the older `CODE-N` seat form is ingress-only.
+`out-{PartnerCode}-{n}`; the older `CODE-N` seat form is ingress-only. The
+executable field-to-source trace and the gaps discovered between planned
+connectors and the implemented wire are recorded in the
+[field-lineage audit](./partner-dashboard-field-lineage.md).
 
 Every lifecycle value carries the mandatory provenance block. Once its blocked
 adapter has an exact input contract, a Sports Terminal `frozen` value must
@@ -237,18 +237,19 @@ boundary receives no auth context. The list/detail shapes use bare `partnerId`;
 the detail response mixes contact data, Telegram config, lifecycle, limits, and
 floating-point money. These surfaces are now exact cutover evidence, not an
 approved connector. The closest read candidate is
-`GET /api/partners/:id/sources/health`, which still needs authenticated mounting,
-`ExternalPartnerRef` resolution, response parsing, and a money-free projection.
-No inbound JSON, Blob, explicit MIME, FormData, or multipart contract has been
-selected. The browser's outbound GET transport does not imply an inbound API
-Content-Type contract. Legacy APIs remain inventory sources, not the canonical
-partner API.
+`GET /api/partners/:id/sources/health`, which still needs authenticated
+mounting, `ExternalPartnerRef` resolution, response parsing, and a money-free
+projection. No inbound JSON, Blob, explicit MIME, FormData, or multipart
+contract has been selected. The browser's outbound GET transport does not imply
+an inbound API Content-Type contract. Legacy APIs remain inventory sources, not
+the canonical partner API.
 
 Target source precedence is field-specific; only the profile-coverage and
 legacy-ops boundaries are implemented in the current slice:
 
 - identity and policy: canonical profile;
-- live capacity: fresh Tennis/Sports adapter, with a labeled legacy fallback;
+- live capacity: fresh Tennis adapter, then an authenticated Sports adapter once
+  its blocked boundary is resolved; legacy observations never author capacity;
 - communication: Telegram adapter only;
 - finance: accounting adapter only;
 - disagreements: explicit `conflicts` rows, never silent latest-value wins.
@@ -257,10 +258,12 @@ Registered outs and active live-capacity outs are distinct metrics. Current
 artifacts report 10 registered ops outs and 5 active Tennis outs.
 
 `legacyOps` is an explicit compatibility adapter, not an invisible fallback. It
-may keep a current partner visible while profiles are materialized, but every
-such record emits a profile-coverage attention item. Bare external `partnerId`
-values are retained only as source-qualified external identity references; they
-are not provenance or join keys.
+may preserve current partner/out observations while profiles are materialized,
+but it cannot create a canonical dashboard record by itself: v1 still requires a
+defensible lifecycle fact. A non-profile record also requires a
+profile-migration attention item. Bare external `partnerId` values are retained
+only as source-qualified external identity references; they are not provenance
+or join keys.
 
 Its hard cutoff is 2026-11-03. The semantic-plan validator fails after that date
 until the connector and `legacyOps` snapshot key are removed under the v2
@@ -330,8 +333,10 @@ surfaces while presenting their partner-keyed health and freshness.
   attention rows.
 - No plaintext credentials, raw provider account output, tokens, or secret vault
   values enter the artifact.
-- Profile, accounting, and Telegram facts retain provenance; the UI does not
-  infer absent production fields.
+- Lifecycle facts retain field-level provenance. Connector snapshots provide
+  dataset-level status for the other planned sources; accounting, Telegram,
+  status, and capacity facts still need typed source evidence before the
+  production bake. The UI does not infer absent fields.
 - Money uses integer minor units with explicit currency and account scope; the
   read model never sums incompatible currencies or scopes.
 - Root lifecycle remains the canonical eight-state model. Sports Terminal
@@ -355,9 +360,10 @@ browser compatibility helper's five-second request timeout, which is owned by
   inside the 300-second stale window. Beyond that, the dashboard bake fails
   rather than inventing identity coverage. It has no lifecycle or policy
   authority.
-- One successful probe closes the circuit. Every fallback is represented in
-  `connectorSnapshots`, partner-level provenance, and deterministic attention
-  rows.
+- One successful probe closes the circuit. The target requires every fallback to
+  appear in connector snapshots, affected fact evidence, and deterministic
+  attention rows. The implemented artifact currently enforces only lifecycle
+  provenance; the shared resilience evaluator remains a required slice.
 
 ## First implementation slices
 
@@ -406,8 +412,9 @@ slices are:
 - Every canonical dashboard record has defensible lifecycle/profile provenance.
   A migration reason may preserve legacy runtime visibility, but it never waives
   the four-CODE implementation-readiness gate.
-- Every row has CODE, lifecycle/phase provenance, out readiness, scoped
-  balances, Telegram handshake readiness, and deterministic attention actions.
+- Every row has CODE, lifecycle provenance, an explainable derived phase, out
+  readiness, scoped balances, Telegram handshake readiness, and deterministic
+  attention actions.
 - No new core/read-model field is named bare `partnerId`; external identifiers
   are qualified by their source system.
 - All money values are safe integer minor units with currency, and all balances

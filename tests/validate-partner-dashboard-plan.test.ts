@@ -219,9 +219,46 @@ describe('partner dashboard semantic plan', () => {
     );
     expect(
       result.errors.some(error =>
-        error.includes('canonical-profile-config has invalid authoritative fact path')
+        error.includes(
+          'canonical-profile-config authoritative_fact_paths must match the implemented v1 artifact contract'
+        )
       )
     ).toBe(true);
+  });
+
+  it('pins connector authority to fields accepted by the implemented v1 artifact', async () => {
+    const plan = copyPlan();
+    const profile = plan.connectors.find(
+      (candidate: Record<string, unknown>) => candidate.id === 'canonical-profile-config'
+    );
+    const accounting = plan.connectors.find(
+      (candidate: Record<string, unknown>) => candidate.id === 'accounting-ledger'
+    );
+    if (!profile || !accounting) throw new Error('connector fixtures missing');
+    profile.authoritative_fact_paths.push('partners[].policy');
+    accounting.authoritative_fact_paths = ['partners[].accounting.fundingPositions'];
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).toContain(
+      'connector canonical-profile-config authoritative_fact_paths must match the implemented v1 artifact contract'
+    );
+    expect(result.errors).toContain(
+      'connector accounting-ledger authoritative_fact_paths must match the implemented v1 artifact contract'
+    );
+  });
+
+  it('rejects precedence that promotes a compatibility observation into canonical truth', async () => {
+    const plan = copyPlan();
+    plan.reconciliation.capacity_precedence.push('legacy-ops-registry');
+    plan.reconciliation.finance_precedence = ['legacy-ops-registry', 'accounting-ledger'];
+
+    const result = await validatePartnerDashboardPlan(plan);
+    expect(result.errors).toContain(
+      'reconciliation capacity_precedence must match executable connector authority in order'
+    );
+    expect(result.errors).toContain(
+      'reconciliation finance_precedence must match executable connector authority in order'
+    );
   });
 
   it('separately rejects section-mount and partner-hash-route drift', async () => {

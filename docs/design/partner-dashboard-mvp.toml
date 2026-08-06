@@ -1070,7 +1070,7 @@ must_not_import = ["telegram-api", "bun:sqlite", "vault-crypto", "portal-dom"]
 
 [reconciliation]
 profile_precedence = ["canonical-profile-config"]
-capacity_precedence = ["tennis-contract", "sports-terminal", "legacy-ops-registry"]
+capacity_precedence = ["tennis-contract", "sports-terminal"]
 communication_precedence = ["telegram-handshake"]
 finance_precedence = ["accounting-ledger"]
 conflict_policy = "emit-conflict-never-latest-wins"
@@ -1103,7 +1103,14 @@ enabled = true
 input_kind = "private-toml-glob"
 required = true
 input_ref = "config/partner-profiles/*.toml"
-authoritative_fact_paths = ["partners[].identity", "partners[].lifecycle", "partners[].policy"]
+authoritative_fact_paths = [
+  "partners[].partnerCode",
+  "partners[].callSign",
+  "partners[].lifecycle",
+  "partners[].identity",
+  "partners[].outs[].outId",
+  "partners[].outs[].externalAccountRefs",
+]
 visual_group = "registry"
 provides = ["identity", "lifecycle", "policy"]
 region_ids = ["summary", "roster", "profile", "accounts-limits", "attention"]
@@ -1125,8 +1132,8 @@ required = false
 input_ref = "partner_ledger"
 authoritative_fact_paths = [
   "partners[].accounting.balancePositions",
-  "partners[].accounting.fundingPositions",
   "partners[].accounting.recentEntries",
+  "partners[].outs[].fundingStatus",
 ]
 visual_group = "operations"
 provides = ["balance-positions", "funding-status", "ledger-entries", "proofs"]
@@ -1189,7 +1196,6 @@ required = false
 input_ref = "/registry/bookmakers.json"
 authoritative_fact_paths = [
   "partners[].outs[].sportsbookId",
-  "partners[].outs[].sportsbookDisplayMetadata",
 ]
 visual_group = "registry"
 provides = ["sportsbook-identity", "aliases", "display-metadata"]
@@ -1210,7 +1216,12 @@ enabled = true
 input_kind = "registry-artifact"
 required = false
 input_ref = "/registry/tennis/partner-contracts.json"
-authoritative_fact_paths = ["partners[].outs[].activeCapacity"]
+authoritative_fact_paths = [
+  "activeOutIds",
+  "partners[].outs[].maxBet",
+  "partners[].outs[].operationalStatus",
+  "partners[].integrations.tennis",
+]
 visual_group = "operations"
 provides = ["active-outs", "executable-capacity", "freshness"]
 region_ids = ["roster", "integrations", "attention"]

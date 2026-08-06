@@ -12,6 +12,46 @@ export const PARTNERS_PACKAGE_TARGET = {
   implementation_status: 'artifact-core-implemented',
 } as const;
 
+/**
+ * Exact v1 dashboard paths that each connector may author after reconciliation.
+ *
+ * `provides` in the TOML describes adapter capabilities. This map is narrower:
+ * every value must be a real field accepted by PartnerDashboardArtifact v1.
+ * Derived summary fields and connectorSnapshots are owned by the assembler, not
+ * by an individual source connector.
+ */
+export const PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS = {
+  'canonical-profile-config': [
+    'partners[].partnerCode',
+    'partners[].callSign',
+    'partners[].lifecycle',
+    'partners[].identity',
+    'partners[].outs[].outId',
+    'partners[].outs[].externalAccountRefs',
+  ],
+  'accounting-ledger': [
+    'partners[].accounting.balancePositions',
+    'partners[].accounting.recentEntries',
+    'partners[].outs[].fundingStatus',
+  ],
+  'telegram-handshake': ['partners[].communication'],
+  'limits-registry': ['partners[].limits', 'partners[].outs[].limitCoverageRatio'],
+  'bookmakers-registry': ['partners[].outs[].sportsbookId'],
+  'tennis-contract': [
+    'activeOutIds',
+    'partners[].outs[].maxBet',
+    'partners[].outs[].operationalStatus',
+    'partners[].integrations.tennis',
+  ],
+  'sports-terminal': [],
+  'legacy-ops-registry': [],
+} as const;
+
+export type PartnerDashboardConnectorId =
+  keyof typeof PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS;
+export type PartnerDashboardAuthoritativeFactPath =
+  (typeof PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS)[PartnerDashboardConnectorId][number];
+
 export const PARTNER_DASHBOARD_SEMANTIC_GAPS = [
   {
     key: 'partner.lifecycle_state',

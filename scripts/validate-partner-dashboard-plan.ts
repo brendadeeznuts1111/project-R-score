@@ -19,6 +19,7 @@ import {
   PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
   PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
   PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
+  PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS,
   PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT,
   PARTNER_PROFILE_COVERAGE_INPUT_REF,
   PARTNER_PROFILE_COVERAGE_SCHEMA_V1,
@@ -85,6 +86,7 @@ type ConnectorContract = {
   inputKind: string;
   inputRef: string;
   implementationStatus: 'implemented' | 'planned' | 'blocked' | 'current-compatibility';
+  authoritativeFactPaths: readonly string[];
 };
 
 const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
@@ -96,6 +98,8 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     inputKind: 'private-toml-glob',
     inputRef: 'config/partner-profiles/*.toml',
     implementationStatus: 'planned',
+    authoritativeFactPaths:
+      PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['canonical-profile-config'],
   },
   'accounting-ledger': {
     snapshotKey: 'accounting',
@@ -105,6 +109,8 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     inputKind: 'sqlite-table',
     inputRef: 'partner_ledger',
     implementationStatus: 'planned',
+    authoritativeFactPaths:
+      PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['accounting-ledger'],
   },
   'telegram-handshake': {
     snapshotKey: 'telegram',
@@ -114,6 +120,8 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     inputKind: 'registry-artifact',
     inputRef: '/registry/telegram-handshake.json',
     implementationStatus: 'planned',
+    authoritativeFactPaths:
+      PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['telegram-handshake'],
   },
   'limits-registry': {
     snapshotKey: 'limits',
@@ -123,6 +131,7 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     inputKind: 'registry-artifact',
     inputRef: '/registry/limit-raises.json',
     implementationStatus: 'planned',
+    authoritativeFactPaths: PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['limits-registry'],
   },
   'bookmakers-registry': {
     snapshotKey: 'bookmakers',
@@ -132,6 +141,8 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     inputKind: 'registry-artifact',
     inputRef: '/registry/bookmakers.json',
     implementationStatus: 'planned',
+    authoritativeFactPaths:
+      PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['bookmakers-registry'],
   },
   'tennis-contract': {
     snapshotKey: 'tennis',
@@ -141,6 +152,7 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     inputKind: 'registry-artifact',
     inputRef: '/registry/tennis/partner-contracts.json',
     implementationStatus: 'planned',
+    authoritativeFactPaths: PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['tennis-contract'],
   },
   'sports-terminal': {
     snapshotKey: 'sportsTerminal',
@@ -150,6 +162,7 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     inputKind: 'unresolved',
     inputRef: '',
     implementationStatus: 'blocked',
+    authoritativeFactPaths: PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['sports-terminal'],
   },
   'legacy-ops-registry': {
     snapshotKey: 'legacyOps',
@@ -159,6 +172,8 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     inputKind: 'registry-artifact',
     inputRef: '/registry/partners-ops.json',
     implementationStatus: 'current-compatibility',
+    authoritativeFactPaths:
+      PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['legacy-ops-registry'],
   },
 };
 
@@ -275,6 +290,14 @@ function unique(values: string[]): boolean {
 
 function sameMembers(actual: string[], expected: readonly string[]): boolean {
   return actual.length === expected.length && expected.every(value => actual.includes(value));
+}
+
+function sameSequence(actual: readonly string[] | undefined, expected: readonly string[]): boolean {
+  return (
+    Array.isArray(actual) &&
+    actual.length === expected.length &&
+    expected.every((value, index) => actual[index] === value)
+  );
 }
 
 function resolveThemeToken(ref: string): unknown {
@@ -602,8 +625,7 @@ export async function validatePartnerDashboardPlan(
     const currentCompatibilityContract =
       PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.currentCompatibility;
     const currentFetchTransport = portalConsumerContract.current_fetch_transport as
-      | AnyRecord
-      | undefined;
+      AnyRecord | undefined;
     const legacyComparison = portalConsumerContract.legacy_comparison as AnyRecord | undefined;
     const legacyComparisonRequired = (legacyComparison?.required_input_refs ?? []).map(String);
     const legacyComparisonOptional = (legacyComparison?.optional_input_refs ?? []).map(String);
@@ -969,11 +991,20 @@ export async function validatePartnerDashboardPlan(
     errors.push(`connector snapshot keys do not match the ${legacyStatus} legacy contract`);
   }
   if (
-    !sameMembers(plan.reconciliation?.profile_precedence ?? [], ['canonical-profile-config']) ||
+    !sameSequence(plan.reconciliation?.profile_precedence, ['canonical-profile-config']) ||
     plan.reconciliation?.profile_coverage !==
       'all-four-current-codes-required-for-implementation-ready'
   ) {
     errors.push('reconciliation must separate canonical profile authority from coverage readiness');
+  }
+  for (const [field, expectedPrecedence] of [
+    ['capacity_precedence', ['tennis-contract', 'sports-terminal']],
+    ['communication_precedence', ['telegram-handshake']],
+    ['finance_precedence', ['accounting-ledger']],
+  ] as const) {
+    if (!sameSequence(plan.reconciliation?.[field], expectedPrecedence)) {
+      errors.push(`reconciliation ${field} must match executable connector authority in order`);
+    }
   }
   for (const [key, precedence] of Object.entries(plan.reconciliation ?? {})) {
     if (!key.endsWith('_precedence') || !Array.isArray(precedence)) continue;
@@ -1025,10 +1056,13 @@ export async function validatePartnerDashboardPlan(
     if (!Array.isArray(connector.provides) || connector.provides.length === 0) {
       errors.push(`connector ${connector.id} must provide at least one fact kind`);
     }
-    for (const path of connector.authoritative_fact_paths ?? []) {
-      if (!/^partners\[\]\./.test(path)) {
-        errors.push(`connector ${connector.id} has invalid authoritative fact path ${path}`);
-      }
+    if (
+      !Array.isArray(connector.authoritative_fact_paths) ||
+      !sameMembers(connector.authoritative_fact_paths, expected.authoritativeFactPaths)
+    ) {
+      errors.push(
+        `connector ${connector.id} authoritative_fact_paths must match the implemented v1 artifact contract`
+      );
     }
     if (
       connector.id === 'canonical-profile-config' &&

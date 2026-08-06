@@ -1,6 +1,9 @@
 export {
+  PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS,
   PARTNER_DASHBOARD_SEMANTIC_GAPS,
   PARTNERS_PACKAGE_TARGET,
+  type PartnerDashboardAuthoritativeFactPath,
+  type PartnerDashboardConnectorId,
   type PartnerDashboardConceptGap,
   type PartnerDashboardConceptGapId,
   type PartnerDashboardPlanToml,
