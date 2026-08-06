@@ -38,4 +38,30 @@ describe('issue routing templates', () => {
     expect(p0).toContain('Tracker');
     expect(p0).toContain('Concept');
   });
+
+  test('default PR template encodes local authority + claim table shape', async () => {
+    const main = await Bun.file('.github/pull_request_template.md').text();
+    // check-pr-claim.ts hard-depends on this exact heading + table headers
+    expect(main).toContain('## Claim → evidence');
+    expect(main).toContain('Claim (one sentence)');
+    expect(main).toMatch(/unit.*boundary.*journey.*deployed/i);
+    expect(main).toContain('Local merge proof');
+    expect(main).toContain('bun run bun:ci');
+    expect(main).toContain('GHA is not merge authority');
+    // optional sections stay present for agents (fill with n/a)
+    expect(main).toContain('## Portal / partner-domain');
+    expect(main).toContain('## Harness / Bun tooling');
+    expect(main).toContain('## Escape hatches used');
+    expect(main).toContain('SKIP_WIRE_LINT');
+    expect(main).toContain('check-pr-claim.ts');
+  });
+
+  test('P0 PR template keeps claim table + local authority', async () => {
+    const p0 = await Bun.file('.github/pull_request_template_p0.md').text();
+    expect(p0).toMatch(/##\s*Claim\s*→\s*evidence/i);
+    expect(p0).toContain('Claim (one sentence)');
+    expect(p0).toContain('Local merge proof');
+    expect(p0).toContain('bun run bun:ci');
+    expect(p0).toContain('pull_request_template.md');
+  });
 });
