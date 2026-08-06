@@ -33,6 +33,9 @@ describe('Bun Agent dashboard v1.13 preview', () => {
         expect(html).toContain('role="tablist"');
         expect(html).toContain('aria-selected="true"');
         expect(html).toContain('filterSignalPeriod');
+        expect(html).toContain('signalKpiAvgArb');
+        expect(html).toContain('healthLiquidityMix');
+        expect(html).toContain('healthLimitMedian');
         expect(html).toContain('/api/csrf');
         compileInlineScripts(html);
       }
@@ -50,6 +53,8 @@ describe('Bun Agent dashboard v1.13 preview', () => {
     expect(html).toContain('/api/signals');
     expect(html).toContain('/api/alerts');
     expect(html).toContain('/api/partners/health');
+    expect(html).not.toContain('/api/edges');
+    expect(html).not.toContain('/api/partners/liquidity');
     expect(html).not.toContain('/api/backtest');
     expect(html).not.toContain('/api/bet');
     expect(html).not.toContain('new WebSocket');

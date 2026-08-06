@@ -56,19 +56,36 @@
     .toast { position: fixed; bottom: 20px; right: 20px; background: #1f6e43; color: #fff; padding: 12px 20px; border-radius: 8px; z-index: 2000; display: none; }
     .chart-container { height: 150px; margin-top: 8px; }
     .chart-container canvas { width: 100%; height: 150px; }
-    .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
     .kpi { background: #0e1620; border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
     .kpi-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
-    .kpi-value { margin-top: 5px; font-size: 22px; font-weight: 700; }
-    .health-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-    .health-row { display: flex; justify-content: space-between; gap: 12px; background: #0e1620; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+    .kpi-value { margin: 5px 0 0; font-size: 22px; font-weight: 700; }
+    .analytics-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .analytics-grid .card { min-width: 0; }
+    .metric-note { color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .distribution-list { display: grid; gap: 10px; }
+    .distribution-row { display: grid; grid-template-columns: 64px minmax(80px, 1fr) 36px; gap: 10px; align-items: center; font-size: 12px; }
+    .distribution-track { height: 10px; overflow: hidden; border-radius: 999px; background: #1e2834; }
+    .distribution-fill { display: block; height: 100%; min-width: 2px; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--ok)); }
+    .kind-list { display: grid; gap: 10px; }
+    .kind-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 9px; background: #0e1620; }
+    .health-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; list-style: none; }
+    .health-row { display: flex; justify-content: space-between; flex-wrap: wrap; min-width: 0; gap: 12px; background: #0e1620; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+    .health-row-meta { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 6px; text-align: right; }
+    .liquidity-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; border: 1px solid var(--line); }
+    .liquidity-high { color: var(--ok); background: #142e22; }
+    .liquidity-medium { color: var(--accent); background: #142738; }
+    .liquidity-low { color: var(--warn); background: #302914; }
+    .liquidity-illiquid { color: var(--bad); background: #351a1a; }
+    .liquidity-unknown { color: var(--muted); background: #1a212a; }
     @media (max-width: 760px) {
       body { padding: 14px; }
       h1 { font-size: 23px; }
       .desk-badges { justify-content: flex-start; }
       .tabs { gap: 6px; border: 0; }
       .tabs .tab { flex: 1 1 calc(50% - 6px); margin: 0; border-radius: 8px; border-color: var(--line); }
-      .kpi-grid, .health-list { grid-template-columns: 1fr; }
+      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .health-list, .analytics-grid { grid-template-columns: 1fr; }
       .card-header, .card-body { padding-left: 14px; padding-right: 14px; }
       .modal-content { padding: 20px; width: calc(100% - 24px); }
     }
@@ -185,20 +202,55 @@
         <button id="evaluateAlertsBtn" class="btn btn-primary btn-sm">Evaluate Alerts</button>
         <span style="margin-left:auto;" class="text-muted" id="signalsCount">0 signals</span>
       </div>
-      <div class="card"><div class="card-header"><span>⚡ Detected Edges &amp; Signals</span><span class="text-muted">Arbitrage · movement · smart money</span></div>
+      <dl class="kpi-grid" aria-label="Signal analytics">
+        <div class="kpi"><dt class="kpi-label">Returned signals</dt><dd class="kpi-value" id="signalKpiTotal">0</dd></div>
+        <div class="kpi"><dt class="kpi-label">Arbitrage</dt><dd class="kpi-value" id="signalKpiArbitrage">0</dd></div>
+        <div class="kpi"><dt class="kpi-label">Movement</dt><dd class="kpi-value" id="signalKpiMovement">0</dd></div>
+        <div class="kpi"><dt class="kpi-label">Rule matched</dt><dd class="kpi-value" id="signalKpiMatched">0</dd></div>
+        <div class="kpi"><dt class="kpi-label">Avg arb edge</dt><dd class="kpi-value" id="signalKpiAvgArb">—</dd></div>
+        <div class="kpi"><dt class="kpi-label">Max arb edge</dt><dd class="kpi-value" id="signalKpiMaxArb">—</dd></div>
+      </dl>
+      <div class="analytics-grid">
+        <div class="card">
+          <div class="card-header"><span>📊 Arbitrage Edge Distribution</span><span class="metric-note" id="arbDistributionSummary">No arbitrage signals</span></div>
+          <div class="card-body"><div class="distribution-list" id="arbDistribution" aria-live="polite"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span>🧭 Signal Mix</span><span class="metric-note">Current response window</span></div>
+          <div class="card-body"><div class="kind-list" id="signalKindBreakdown" aria-live="polite"></div></div>
+        </div>
+      </div>
+      <p class="metric-note" style="margin:-8px 0 16px;">Kelly and confidence are intentionally withheld: the signal contract does not expose priced probabilities.</p>
+      <div class="card"><div class="card-header"><span>⚡ Detected Edges &amp; Signals</span><span class="text-muted">Arbitrage · line movement · rule matches</span></div>
         <div class="card-body" id="signalsTableContainer"><div class="empty-state">Loading…</div></div></div>
     </section>
 
-    <section class="tab-content" id="tab-health" role="tabpanel" aria-labelledby="tab-button-health" hidden>
-      <div class="kpi-grid" aria-label="Partner health summary">
-        <div class="kpi"><div class="kpi-label">Partners</div><div class="kpi-value" id="healthTotal">—</div></div>
-        <div class="kpi"><div class="kpi-label">Online</div><div class="kpi-value" id="healthOnline">—</div></div>
-        <div class="kpi"><div class="kpi-label">Source</div><div class="kpi-value" id="healthSource">—</div></div>
-        <div class="kpi"><div class="kpi-label">Updated</div><div class="kpi-value" id="healthGenerated">—</div></div>
+    <section class="tab-content" id="tab-health" role="tabpanel" aria-labelledby="tab-button-health" aria-busy="false" hidden>
+      <dl class="kpi-grid" aria-label="Partner health summary">
+        <div class="kpi"><dt class="kpi-label">Partners</dt><dd class="kpi-value" id="healthTotal">—</dd></div>
+        <div class="kpi"><dt class="kpi-label">Online</dt><dd class="kpi-value" id="healthOnline">—</dd></div>
+        <div class="kpi"><dt class="kpi-label">Needs attention</dt><dd class="kpi-value" id="healthAttention">—</dd></div>
+        <div class="kpi"><dt class="kpi-label">Snapshot</dt><dd class="kpi-value" id="healthGenerated">—</dd></div>
+      </dl>
+      <div class="analytics-grid">
+        <div class="card">
+          <div class="card-header"><span>🏷️ Liquidity Tiers</span><span class="metric-note">Registry-backed</span></div>
+          <div class="card-body"><div class="distribution-list" id="healthLiquidityMix" aria-live="polite"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span>💵 Limit Coverage</span><span class="metric-note">Registry max-bet fields</span></div>
+          <div class="card-body">
+            <div class="kpi-grid" style="margin:0;">
+              <div class="kpi"><div class="kpi-label">Known limits</div><div class="kpi-value" id="healthLimitKnown">—</div></div>
+              <div class="kpi"><div class="kpi-label">Median max</div><div class="kpi-value" id="healthLimitMedian">—</div></div>
+              <div class="kpi"><div class="kpi-label">Highest max</div><div class="kpi-value" id="healthLimitMax">—</div></div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="card">
-        <div class="card-header"><span>💚 Partner Health</span><button type="button" id="refreshHealth" class="btn btn-sm">↻ Refresh</button></div>
-        <div class="card-body"><div class="health-list" id="healthPartners"><div class="empty-state">Loading…</div></div></div>
+        <div class="card-header"><span>💚 Partner Health</span><div class="flex"><span class="metric-note" id="healthRefreshStatus" role="status" aria-live="polite"></span><button type="button" id="refreshHealth" class="btn btn-sm">↻ Refresh</button></div></div>
+        <div class="card-body"><ul class="health-list" id="healthPartners"><li class="empty-state">Loading partner health…</li></ul></div>
       </div>
     </section>
 
@@ -250,7 +302,7 @@
   const HEALTH_API = '/api/partners/health';
   const RESEARCH_ALERTS_API = '/api/research/alerts';
   const CSRF_API = '/api/csrf';
-  let currentTab = 'signals', eventsData = [], rulesData = [], alertHistory = [], editingRuleId = null, usingLive = false, healthData = null, lastFocusedElement = null;
+  let currentTab = 'signals', eventsData = [], rulesData = [], alertHistory = [], editingRuleId = null, usingLive = false, healthData = null, healthLoading = false, lastFocusedElement = null;
   let filterOptions = { sports: [], leagues: [], statuses: [] }, chartPoints = [], eventAlertConfigs = [];
   let csrfToken = '';
   function esc(value) {
@@ -282,6 +334,12 @@
     if (!edge || edge.min == null) return '—';
     const min = (Number(edge.min) * 100).toFixed(1) + '%';
     return edge.max != null ? min + '–' + (Number(edge.max) * 100).toFixed(1) + '%' : '≥' + min;
+  }
+  function formatUsd(value) {
+    const amount = Number(value);
+    return Number.isFinite(amount)
+      ? new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount)
+      : 'Unknown';
   }
   function showToast(msg) {
     const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block';
@@ -409,9 +467,89 @@
       return '<div class="live-item" style="'+(isEvt?'border-left-color:#f9ca7f;':'')+'"><div>🔔 <strong>'+esc(kind)+'</strong> '+esc(a.message||a.title||'')+'</div>'+partnerHtml+'<div class="meta"><span>'+esc(a.rule_id||'')+'</span><span>'+esc(new Date(a.timestamp).toLocaleTimeString())+'</span></div></div>';
     }).join('');
   }
+  function appendDistributionRow(container, labelText, count, total, labelClass = '') {
+    const row = document.createElement('div');
+    row.className = 'distribution-row';
+    const label = document.createElement('span');
+    label.className = labelClass;
+    label.textContent = labelText;
+    const track = document.createElement('span');
+    track.className = 'distribution-track';
+    const fill = document.createElement('span');
+    fill.className = 'distribution-fill';
+    fill.style.width = count > 0 && total > 0 ? Math.max(2, (count / total) * 100) + '%' : '0';
+    track.append(fill);
+    const value = document.createElement('strong');
+    value.textContent = String(count);
+    row.append(label, track, value);
+    container.append(row);
+  }
+  function renderSignalAnalytics(signals) {
+    const rows = Array.isArray(signals) ? signals : [];
+    const arbitrage = rows.filter(signal => signal.kind === 'arbitrage');
+    const movement = rows.filter(signal => signal.kind === 'movement');
+    const matched = rows.filter(signal => (signal.matched_rules || signal.matchedRuleIds || []).length > 0);
+    const arbEdges = arbitrage
+      .map(signal => Number(signal.edge_pct ?? Number(signal.edge) * 100))
+      .filter(Number.isFinite);
+    const avgArb = arbEdges.length ? arbEdges.reduce((sum, edge) => sum + edge, 0) / arbEdges.length : null;
+    const maxArb = arbEdges.length ? Math.max(...arbEdges) : null;
+    document.getElementById('signalKpiTotal').textContent = String(rows.length);
+    document.getElementById('signalKpiArbitrage').textContent = String(arbitrage.length);
+    document.getElementById('signalKpiMovement').textContent = String(movement.length);
+    document.getElementById('signalKpiMatched').textContent = String(matched.length);
+    document.getElementById('signalKpiAvgArb').textContent = avgArb == null ? '—' : avgArb.toFixed(2) + '%';
+    document.getElementById('signalKpiMaxArb').textContent = maxArb == null ? '—' : maxArb.toFixed(2) + '%';
+
+    const distribution = document.getElementById('arbDistribution');
+    distribution.replaceChildren();
+    const buckets = [
+      { label: '<1%', count: arbEdges.filter(edge => edge < 1).length },
+      { label: '1–3%', count: arbEdges.filter(edge => edge >= 1 && edge < 3).length },
+      { label: '3–5%', count: arbEdges.filter(edge => edge >= 3 && edge < 5).length },
+      { label: '≥5%', count: arbEdges.filter(edge => edge >= 5).length },
+    ];
+    if (arbEdges.length) {
+      for (const bucket of buckets) appendDistributionRow(distribution, bucket.label, bucket.count, arbEdges.length);
+    } else {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.textContent = 'No arbitrage signals in this response window.';
+      distribution.append(empty);
+    }
+    document.getElementById('arbDistributionSummary').textContent = arbEdges.length + ' arb signal' + (arbEdges.length === 1 ? '' : 's');
+
+    const kinds = document.getElementById('signalKindBreakdown');
+    kinds.replaceChildren();
+    const kindCounts = new Map();
+    for (const signal of rows) {
+      const kind = signal.kind || 'unknown';
+      kindCounts.set(kind, (kindCounts.get(kind) || 0) + 1);
+    }
+    for (const kind of ['arbitrage', 'movement', 'smart_money', ...kindCounts.keys()]) {
+      if (!kindCounts.has(kind)) continue;
+      const item = document.createElement('div');
+      item.className = 'kind-row';
+      const label = document.createElement('span');
+      label.textContent = kind.replaceAll('_', ' ');
+      const count = document.createElement('strong');
+      count.textContent = String(kindCounts.get(kind));
+      item.append(label, count);
+      kinds.append(item);
+      kindCounts.delete(kind);
+    }
+    if (!rows.length) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.textContent = 'No signals in this response window.';
+      kinds.append(empty);
+    }
+  }
   function renderSignals(signals) {
+    signals = signals || [];
+    renderSignalAnalytics(signals);
     const c = document.getElementById('signalsTableContainer');
-    document.getElementById('signalsCount').textContent = (signals||[]).length + ' signals';
+    document.getElementById('signalsCount').textContent = signals.length + ' signals';
     if (!signals.length) { c.innerHTML = '<div class="empty-state">No signals.</div>'; return; }
     c.innerHTML = '<table><thead><tr><th>Kind</th><th>Pattern</th><th>Period</th><th>Edge</th><th>Title</th><th>Matched</th><th>Time</th></tr></thead><tbody>' +
       signals.map(s => {
@@ -445,60 +583,144 @@
       return data.alerts || [];
     } catch { return []; }
   }
-  function renderHealth(data) {
+  function renderHealth(data, errorMessage = '') {
     const partners = data?.health || data?.partners || [];
     const total = data?.summary?.total ?? data?.count ?? partners.length;
     const online = data?.summary?.online ?? partners.filter(p => ['active', 'online', 'low_balance'].includes(p.status)).length;
+    const attention = data?.summary
+      ? (data.summary.degraded || 0) + (data.summary.offline || 0) + (data.summary.lowBalance || 0) + (data.summary.critical || 0)
+      : partners.filter(p => ['degraded', 'offline', 'low_balance', 'critical'].includes(p.status)).length;
     document.getElementById('healthTotal').textContent = data ? String(total) : 'Unavailable';
     document.getElementById('healthOnline').textContent = data ? String(online) : '—';
-    document.getElementById('healthSource').textContent = data ? (data.source || 'registry') : '—';
+    document.getElementById('healthAttention').textContent = data ? String(attention) : '—';
     document.getElementById('healthGenerated').textContent = data?.generatedAt ? new Date(data.generatedAt).toLocaleTimeString() : '—';
+    const tierMix = document.getElementById('healthLiquidityMix');
+    tierMix.replaceChildren();
+    const byLiquidity = data?.summary?.byLiquidity || {};
+    const tierEntries = Object.entries(byLiquidity).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    for (const [tier, count] of tierEntries) {
+      const safeTier = ['high', 'medium', 'low', 'illiquid'].includes(tier) ? tier : 'unknown';
+      appendDistributionRow(tierMix, tier, count, total, 'liquidity-badge liquidity-' + safeTier);
+    }
+    if (data && !tierEntries.length) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.textContent = 'No liquidity tiers recorded.';
+      tierMix.append(empty);
+    }
+    if (!data) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.textContent = 'Liquidity tiers unavailable.';
+      tierMix.append(empty);
+    }
+
+    const maxLimits = partners
+      .filter(partner => partner.maxBetUsd != null)
+      .map(partner => Number(partner.maxBetUsd))
+      .filter(value => Number.isFinite(value) && value >= 0)
+      .sort((a, b) => a - b);
+    const median = maxLimits.length
+      ? (maxLimits[Math.floor((maxLimits.length - 1) / 2)] + maxLimits[Math.ceil((maxLimits.length - 1) / 2)]) / 2
+      : null;
+    document.getElementById('healthLimitKnown').textContent = data ? maxLimits.length + '/' + total : '—';
+    document.getElementById('healthLimitMedian').textContent = median == null ? '—' : formatUsd(median);
+    document.getElementById('healthLimitMax').textContent = maxLimits.length ? formatUsd(maxLimits[maxLimits.length - 1]) : '—';
+
     const container = document.getElementById('healthPartners');
     container.replaceChildren();
     if (!data) {
-      const error = document.createElement('div');
+      const error = document.createElement('li');
       error.className = 'empty-state';
       error.setAttribute('role', 'alert');
-      error.textContent = 'Partner health is unavailable.';
+      error.textContent = errorMessage || 'Partner health is unavailable.';
       container.append(error);
       return;
     }
     if (!partners.length) {
-      const empty = document.createElement('div');
+      const empty = document.createElement('li');
       empty.className = 'empty-state';
-      empty.textContent = 'No partner health records.';
+      empty.textContent = 'No partner health records in the registry.';
       container.append(empty);
       return;
     }
-    for (const partner of partners) {
-      const row = document.createElement('div');
+    const statusRank = { critical: 0, offline: 0, degraded: 1, low_balance: 2, active: 4, online: 4 };
+    const liquidityRank = { illiquid: 0, low: 1, medium: 2, high: 3 };
+    const sortedPartners = partners.slice().sort((a, b) =>
+      (statusRank[a.status] ?? 3) - (statusRank[b.status] ?? 3)
+      || (liquidityRank[a.liquidityTier] ?? 4) - (liquidityRank[b.liquidityTier] ?? 4)
+      || String(a.label || a.id).localeCompare(String(b.label || b.id))
+    );
+    for (const partner of sortedPartners) {
+      const row = document.createElement('li');
       row.className = 'health-row';
       const identity = document.createElement('span');
       const label = document.createElement('strong');
       label.textContent = partner.label || partner.name || partner.id || 'Partner';
+      const details = document.createElement('div');
+      details.className = 'metric-note';
+      const balance = partner.balanceAmount ?? partner.balance?.amount;
+      const probe = partner.lastProbe ? new Date(partner.lastProbe).toLocaleString() : 'Unknown';
+      details.textContent = 'Balance: ' + (balance != null && Number.isFinite(Number(balance)) ? formatUsd(balance) : 'Unknown') + ' · Last probe: ' + probe;
+      identity.append(label, details);
       const meta = document.createElement('span');
-      meta.className = 'text-muted';
-      meta.textContent = ' · ' + (partner.liquidityTier || partner.liquidity_tier || 'unknown liquidity');
-      identity.append(label, meta);
+      meta.className = 'health-row-meta';
+      const tier = partner.liquidityTier || partner.liquidity_tier || 'unknown';
+      const tierBadge = document.createElement('span');
+      tierBadge.className = 'liquidity-badge liquidity-' + (['high', 'medium', 'low', 'illiquid'].includes(tier) ? tier : 'unknown');
+      tierBadge.textContent = 'Liquidity: ' + tier;
       const status = document.createElement('span');
-      status.className = 'status-badge ' + (['active', 'online', 'low_balance'].includes(partner.status) ? 'status-online' : 'status-offline');
-      status.textContent = partner.status || 'unknown';
-      row.append(identity, status);
+      const statusClass = ['active', 'online'].includes(partner.status)
+        ? 'status-online'
+        : ['critical', 'offline'].includes(partner.status) ? 'status-offline' : 'status-pending';
+      status.className = 'status-badge ' + statusClass;
+      status.textContent = 'Status: ' + String(partner.status || 'unknown').replaceAll('_', ' ');
+      meta.append(tierBadge, status);
+      row.append(identity, meta);
       container.append(row);
     }
   }
   async function loadHealth(refresh = false) {
+    if (healthLoading) return;
+    healthLoading = true;
+    const panel = document.getElementById('tab-health');
+    const button = document.getElementById('refreshHealth');
+    const refreshStatus = document.getElementById('healthRefreshStatus');
+    const previous = healthData;
+    panel.setAttribute('aria-busy', 'true');
+    button.disabled = true;
+    button.textContent = 'Refreshing…';
+    refreshStatus.textContent = '';
     try {
       const res = await fetch(HEALTH_API + (refresh ? '?refresh=1' : ''));
-      if (!res.ok) throw new Error(String(res.status));
+      if (!res.ok) {
+        const error = new Error(String(res.status));
+        error.status = res.status;
+        throw error;
+      }
       healthData = await res.json();
       renderHealth(healthData);
       const total = healthData.summary?.total ?? healthData.count ?? (healthData.health || healthData.partners || []).length;
       document.getElementById('bookCount').textContent = Number.isFinite(Number(total)) ? String(total) : '—';
-    } catch {
-      healthData = null;
-      document.getElementById('bookCount').textContent = '—';
-      renderHealth(null);
+      refreshStatus.textContent = refresh ? 'Health refreshed.' : 'Health loaded.';
+    } catch (error) {
+      const requiresCredentials = error?.status === 401 || error?.status === 403;
+      const message = requiresCredentials ? 'Partner health requires read credentials.' : 'Partner health is unavailable.';
+      if (previous) {
+        healthData = previous;
+        renderHealth(previous);
+        refreshStatus.textContent = 'Refresh failed; showing stale data.';
+      } else {
+        healthData = null;
+        document.getElementById('bookCount').textContent = '—';
+        renderHealth(null, message);
+        refreshStatus.textContent = message;
+      }
+    } finally {
+      healthLoading = false;
+      panel.setAttribute('aria-busy', 'false');
+      button.disabled = false;
+      button.textContent = '↻ Refresh';
     }
   }
   function renderChart(data) {
