@@ -1,0 +1,108 @@
+name: General harness work
+description: Repository-governed issue metadata for harness, domain, tooling, registry, or portal work
+title: "[P1][HARNESS] "
+labels:
+  - enhancement
+  - p1
+  - plane-local
+  - bun-native
+  - team-infrastructure
+  - status-planned
+body:
+  - type: markdown
+    attributes:
+      value: |
+        GitHub labels are a provider projection. Keep the machine-readable spine below aligned with the selected routing values.
+
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: Type
+      options:
+        - enhancement
+        - bug
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - p1
+        - p2
+        - p0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: plane
+    attributes:
+      label: Ownership plane
+      options:
+        - local
+        - governance
+        - domain
+        - public
+        - portal
+    validations:
+      required: true
+
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: Runtime
+      options:
+        - bun
+        - agnostic
+    validations:
+      required: true
+
+  - type: dropdown
+    id: status
+    attributes:
+      label: Status
+      options:
+        - planned
+        - active
+        - blocked
+        - done
+    validations:
+      required: true
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: Describe the observable artifact outcome.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List locally reproducible proof and completion conditions.
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue_spine
+    attributes:
+      label: Machine-readable issue spine
+      description: Replace placeholders and keep every required dimension aligned with the title and labels.
+      render: json
+      value: |
+        {
+          "schema": "factorywager.issue-spine.v1",
+          "artifactId": "replace-me",
+          "conceptId": "governance.replace_me",
+          "type": "enhancement",
+          "priority": "p1",
+          "plane": "local",
+          "runtime": "bun",
+          "team": "infrastructure",
+          "status": "planned"
+        }
+    validations:
+      required: true

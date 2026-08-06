@@ -441,6 +441,26 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'lib/github-repository-ref.ts',
   },
   {
+    id: 'github-issue-governance',
+    claim:
+      'GitHub issue metadata parses once, audits without mutation, and plans deletion-free label synchronization with explicit write intent',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun test tests/github-issue-tooling.test.ts',
+      'tests/github-issue-tooling.test.ts',
+      'tools/github-issue-doctor.ts',
+      'lib/github-issue-tooling.ts',
+      'lib/github-issue-tooling-wire.ts',
+      '.github/ISSUE_TEMPLATE/harness.yml',
+      'docs/harness/tenants/github-issue-taxonomy.md',
+    ],
+    freshRerun: 'bun test tests/github-issue-tooling.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'platform / governance',
+  },
+  {
     id: 'macros-embed-boundaries',
     claim:
       'Bundle-time macros inline git commit/branch and GitHub repo parts under bun build (no runtime substitution)',

@@ -332,6 +332,13 @@ describe('fresh-rerun contract', () => {
     expect(p?.owner).toBe('lib/github-repository-ref.ts');
   });
 
+  test('github-issue-governance freshRerun is the issue tooling suite', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'github-issue-governance');
+    expect(p?.freshRerun).toBe('bun test tests/github-issue-tooling.test.ts');
+    expect(p?.gateClass).toBe('continuous');
+    expect(p?.owner).toBe('platform / governance');
+  });
+
   test('macros-embed-boundaries freshRerun is macros embed-commit suite', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'macros-embed-boundaries');
     expect(p?.freshRerun).toBe('bun test tests/macros/embed-commit.test.ts');
