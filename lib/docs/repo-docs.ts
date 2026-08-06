@@ -50,6 +50,8 @@ export const CANONICAL_REPO_DOCS = {
   bunToken: 'lib/docs/bun-token.ts',
   /** Homebase discovery / organization map */
   organizationHistory: 'docs/organization/HOMEBASE_DISCOVERY.md',
+  /** Reasonix session rename map · lane taxonomy (workspace archive) */
+  sessionOrganization: 'docs/organization/session-organization.md',
   /** Velocity baseline + day-loop honesty */
   velocityBaseline: 'docs/organization/VELOCITY_BASELINE.md',
   /** JIT harness thesis index */
@@ -171,6 +173,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   tokenRef: 'TokenRef interior knowledge-unit schema',
   bunToken: 'BunToken agent export contract (northstar)',
   organizationHistory: 'Homebase discovery / organization map',
+  sessionOrganization: 'Reasonix session rename map · lane taxonomy',
   velocityBaseline: 'Velocity baseline + day-loop honesty',
   harnessIndex: 'JIT harness thesis index',
   harnessProof: 'Proof claim kinds',
