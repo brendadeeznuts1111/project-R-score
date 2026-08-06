@@ -45,10 +45,17 @@ Numbered fragment ids for operator docs (baseline: bun-types inventory §4.1).
 ```bash
 bun run docs:refid:check           # errors fail; format orphans warn
 bun run docs:refid:check:strict    # format warns → errors
+bun run docs:refid:suggest --section=4.1 --flag=--foo-bar
+bun run docs:refid:list            # taken ids in registered / --doc
+bun run docs:refid:scaffold --section=4.1 --flag=--foo-bar
 bun run docs:map:check             # includes REF:ID (unless --skip-refid-check)
 ```
 
-Library: [`lib/docs/ref-id.ts`](../lib/docs/ref-id.ts) · design note:
+**href DX:** table `href` may be empty, `—`, or `auto` — checker treats it as
+`#` + REF:ID. Prefer explicit `[#4.1.x](#4.1.x)` in committed docs.
+
+Library: [`lib/docs/ref-id.ts`](../lib/docs/ref-id.ts) · CLI:
+[`tools/docs-refid.ts`](../tools/docs-refid.ts) · design note:
 [`docs/design/bun-types-inventory.md`](./design/bun-types-inventory.md) (Flags).
 
 ## Everyday

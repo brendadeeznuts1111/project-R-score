@@ -168,6 +168,84 @@ export function hrefFromRefId(refId: string): string {
   return `#${refId.trim()}`;
 }
 
+/**
+ * True when a table href is allowed for REF:ID:
+ *  - exact `#` + REF:ID
+ *  - empty / `—` / `-` / `auto` → treat as auto-filled from REF:ID (v2 DX)
+ */
+export function hrefMatchesRefId(href: string, refId: string): boolean {
+  // brand-ok — REF:ID fragment
+  const h = href.trim();
+  if (!h || h === '—' || h === '-' || h.toLowerCase() === 'auto') return true;
+  return h === hrefFromRefId(refId);
+}
+
+/**
+ * Normalize a flag / camelCase / spaced token into a kebab-case keyword leaf.
+ * Examples: `--max-age-days` → `max-age-days` · `maxAgeDays` → `max-age-days`
+ */
+export function normalizeRefIdKeyword(raw: string): string {
+  let s = raw.trim();
+  s = s.replace(/^-+/, '');
+  s = s.replace(/([a-z0-9])([A-Z])/g, '$1-$2');
+  s = s.replace(/[\s_./]+/g, '-');
+  s = s.toLowerCase();
+  s = s.replace(/[^a-z0-9.-]+/g, '-');
+  s = s.replace(/-+/g, '-');
+  s = s.replace(/^-+|-+$/g, '');
+  s = s.replace(/\.+/g, '.');
+  return s;
+}
+
+/** Collect all REF:ID / section anchors currently claimed in a scan. */
+export function collectTakenRefIds(scan: RefIdDocScan): Set<string> {
+  const taken = new Set<string>();
+  for (const a of scan.anchors) taken.add(a.id);
+  for (const r of scan.flagRows) taken.add(r.refId);
+  for (const c of scan.commentRefs) taken.add(c.refId);
+  for (const t of scan.tocLinks) {
+    const frag = t.href.startsWith('#') ? t.href.slice(1) : t.href;
+    if (frag) taken.add(frag);
+  }
+  return taken;
+}
+
+export type ScaffoldFlagOpts = {
+  section: string;
+  keyword: string;
+  script?: string;
+  flag?: string;
+  shortcode?: string;
+  defaultValue?: string;
+  current?: string;
+};
+
+/**
+ * Paste-ready Markdown for a new flag: comment, HTML anchor, table row.
+ * href is always derived from REF:ID.
+ */
+export function scaffoldFlagSnippet(opts: ScaffoldFlagOpts): {
+  refId: string; // brand-ok — design-doc fragment key (REF:ID v2), not domain brand
+  href: string;
+  markdown: string;
+} {
+  const keyword = normalizeRefIdKeyword(opts.keyword);
+  const refId = `${opts.section.replace(/^#+/, '').trim()}.${keyword}`;
+  const href = hrefFromRefId(refId);
+  const script = opts.script ?? 'bun:types-status';
+  const flag = opts.flag ?? `--${keyword}`;
+  const short = opts.shortcode ?? '—';
+  const def = opts.defaultValue ?? 'off';
+  const cur = opts.current ?? 'live via tool';
+  const markdown = [
+    `<!-- REF:ID ${refId} -->`,
+    `<a id="${refId}"></a>`,
+    '',
+    `| \`${script}\` | \`${refId}\` | [\`${href}\`](${href}) | \`${flag}\` | ${short === '—' ? '—' : `\`${short}\``} | ${def} | ${cur} |`,
+  ].join('\n');
+  return { refId, href, markdown };
+}
+
 export function extractHtmlAnchors(text: string, file: string): HtmlAnchor[] {
   const anchors: HtmlAnchor[] = [];
   const lines = text.split(/\r?\n/);
@@ -342,16 +420,16 @@ export function checkRefIdDocument(
     } else {
       seenTableRef.set(row.refId, row.line);
     }
-    // href match
+    // href match (empty / — / auto → filled from REF:ID)
     const expected = hrefFromRefId(row.refId);
-    if (row.href !== expected) {
+    if (!hrefMatchesRefId(row.href, row.refId)) {
       issues.push({
         severity: 'error',
         kind: 'href-mismatch',
         file,
         line: row.line,
         refId: row.refId,
-        detail: `href '${row.href}' must equal '${expected}'`,
+        detail: `href '${row.href}' must equal '${expected}' (or empty/—/auto to derive)`,
       });
     }
     // anchor exists
@@ -452,9 +530,11 @@ export function checkRefIdDocument(
   return issues;
 }
 
-/** Suggest next REF:ID under a section for a keyword leaf. */
+/** Suggest next REF:ID under a section for a keyword leaf (normalizes keyword). */
 export function suggestRefId(section: string, keyword: string, taken: ReadonlySet<string>): string {
-  const base = `${section.replace(/^#+/, '').trim()}.${keyword.trim().toLowerCase()}`;
+  const leaf = normalizeRefIdKeyword(keyword);
+  const sectionClean = section.replace(/^#+/, '').trim();
+  const base = `${sectionClean}.${leaf}`;
   if (!taken.has(base) && parseRefId(base)) return base;
   let n = 2;
   while (n < 1000) {
@@ -463,6 +543,18 @@ export function suggestRefId(section: string, keyword: string, taken: ReadonlySe
     n++;
   }
   return base;
+}
+
+/**
+ * Suggest under a section when only the section is known (picks next free `4.1.item-N`
+ * only if keyword omitted — prefer explicit keyword).
+ */
+export function suggestNextUnderSection(
+  section: string,
+  taken: ReadonlySet<string>,
+  keywordHint = 'item'
+): string {
+  return suggestRefId(section, keywordHint, taken);
 }
 
 function splitTableRow(line: string): string[] {
