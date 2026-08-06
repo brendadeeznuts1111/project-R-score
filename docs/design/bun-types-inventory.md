@@ -30,6 +30,7 @@ layers, or outputs.
 | Human + JSON changelog of that delta      | Wired by tip-diff → `.cache/bun-types-changelog/`       |
 | Which Bun type-likes the repo uses        | `bun:types-usage` / `:unused`                           |
 | One-shot tip + usage stack                | `bun:types-report` / `:local` · `bun:types-ci`          |
+| Morning dashboard (compose caches)        | `bun:types-status` (+ `:refresh`)                       |
 
 Docs catalog / `@see` / RSS operate loop stays in
 [`BUN_DOCS_OPERATE.md`](../BUN_DOCS_OPERATE.md) — related but a different
@@ -55,27 +56,30 @@ pipeline (token/catalog, not pin↔tip inventory).
 | Tip-diff report  | `.cache/bun-types-tip-diff/`                                             | no         | `report.json` / `report.md` — tip-only / pin-only / changed   |
 | Changelog        | `.cache/bun-types-changelog/`                                            | no         | `CHANGELOG.md` / `changelog.json`                             |
 | Usage            | `.cache/bun-types-usage/`                                                | no         | `report.json` / `report.md` — repo references                 |
+| Status dashboard | `.cache/bun-types-status/`                                               | no         | Composed verdict + next steps (`bun:types-status`)            |
 
-Inventory **write** does **not** land under `.cache/` — only tip-diff,
-changelog, and usage do.
+Inventory **write** does **not** land under `.cache/` — tip-diff, changelog,
+usage, and status do.
 
 ## Commands
 
-| Command                                       | Purpose                                              | Typical exit                  |
-| --------------------------------------------- | ---------------------------------------------------- | ----------------------------- |
-| `bun run bun:types-inventory`                 | Print / scan deep surface (no write)                 | `0`                           |
-| `bun run bun:types-inventory:write`           | Refresh committed JSON + MD SSOT                     | `0`                           |
-| `bun run bun:types-inventory:check`           | Fail if committed inventory is stale                 | `0` / `1`                     |
-| `bun run bun:types-inventory:tip-diff`        | Pin vs tip (may fetch)                               | policy-dependent              |
-| `bun run bun:types-inventory:tip-diff:local`  | Tip from local/`~/bun` · `--prefer-local --no-fetch` | soft `0` unless `--strict`    |
-| `bun run bun:types-inventory:tip-diff:strict` | Tip-diff hard fail on policy breach                  | `0` / `1`                     |
-| `bun run bun:types-usage`                     | Usage scan → `.cache/bun-types-usage/`               | `0`                           |
-| `bun run bun:types-usage:unused`              | Unused type-likes report                             | `0`                           |
-| `bun run bun:types-changelog` · `:tip`        | Standalone changelog (tip-diff also wires this)      | `0`                           |
-| `bun run bun:types-report`                    | Tip-diff + changelog + usage                         | tip/usage status              |
-| `bun run bun:types-report:local`              | Same with `--prefer-local`                           | tip/usage status              |
-| `bun run bun:types-ci`                        | Alias: report `--prefer-local` (soft in `bun:ci`)    | `0` on tip **warn** when soft |
-| `bun run bun:types-ci:strict`                 | Report `--prefer-local --strict`                     | `1` on drift                  |
+| Command                                       | Purpose                                                | Typical exit                            |
+| --------------------------------------------- | ------------------------------------------------------ | --------------------------------------- |
+| `bun run bun:types-inventory`                 | Print / scan deep surface (no write)                   | `0`                                     |
+| `bun run bun:types-inventory:write`           | Refresh committed JSON + MD SSOT                       | `0`                                     |
+| `bun run bun:types-inventory:check`           | Fail if committed inventory is stale                   | `0` / `1`                               |
+| `bun run bun:types-inventory:tip-diff`        | Pin vs tip (may fetch)                                 | policy-dependent                        |
+| `bun run bun:types-inventory:tip-diff:local`  | Tip from local/`~/bun` · `--prefer-local --no-fetch`   | soft `0` unless `--strict`              |
+| `bun run bun:types-inventory:tip-diff:strict` | Tip-diff hard fail on policy breach                    | `0` / `1`                               |
+| `bun run bun:types-usage`                     | Usage scan → `.cache/bun-types-usage/`                 | `0`                                     |
+| `bun run bun:types-usage:unused`              | Unused type-likes report                               | `0`                                     |
+| `bun run bun:types-changelog` · `:tip`        | Standalone changelog (tip-diff also wires this)        | `0`                                     |
+| `bun run bun:types-report`                    | Tip-diff + changelog + usage                           | tip/usage status                        |
+| `bun run bun:types-report:local`              | Same with `--prefer-local`                             | tip/usage status                        |
+| `bun run bun:types-ci`                        | Alias: report `--prefer-local` (soft in `bun:ci`)      | `0` on tip **warn** when soft           |
+| `bun run bun:types-ci:strict`                 | Report `--prefer-local --strict`                       | `1` on drift                            |
+| `bun run bun:types-status`                    | Compose inventory + tip + usage → verdict / next steps | `0` soft; `--strict` → `1` on warn/fail |
+| `bun run bun:types-status:refresh`            | Same after `bun:types-report:local`                    | same                                    |
 
 Useful inventory flags (see tool `--help`): `--shallow` · `--no-interfaces` ·
 `--no-type-aliases` · `--no-props` · `--no-enums` · `--no-nested-objects` ·
@@ -110,6 +114,12 @@ merge authority for this stack.
 bun run bun:types-inventory:write
 bun run bun:types-inventory:check
 
+# Morning check (reads caches; warn if tip/usage missing)
+bun run bun:types-status
+
+# Refresh tip+usage then re-render status
+bun run bun:types-status:refresh
+
 # Soft pin↔tip + usage (local tip, no network)
 bun run bun:types-ci
 
@@ -134,6 +144,7 @@ bun run bun:types-ci:strict
 | [`tools/bun-types-changelog.ts`](../../tools/bun-types-changelog.ts) | Snapshot / tip changelog            |
 | [`tools/bun-types-usage.ts`](../../tools/bun-types-usage.ts)         | Repo usage vs inventory             |
 | [`tools/bun-types-report.ts`](../../tools/bun-types-report.ts)       | Orchestrates tip-diff → usage       |
+| [`tools/bun-types-status.ts`](../../tools/bun-types-status.ts)       | Morning dashboard (compose caches)  |
 | [`tools/lib/bun-types-tty.ts`](../../tools/lib/bun-types-tty.ts)     | Shared TTY chrome                   |
 
 Agent entry summary also lives in [`AGENTS.md`](../../AGENTS.md) (Bun API
