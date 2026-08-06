@@ -24,7 +24,7 @@ export type WireTrapHit = {
   readonly match: string;
   readonly text: string;
   readonly brandedType: string;
-  readonly ruleId: string;
+  readonly ruleId: string; // brand-ok — opaque wire-lint rule key (row id / brandedType), not a domain RuleId
 };
 
 export type WireTrapIssue = {
