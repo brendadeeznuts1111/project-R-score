@@ -178,7 +178,16 @@ Unqualified `partnerId` / Sports `partner_id` / Kalshi registry `id` / Pandora
 
 ## Full table
 
-Regenerate from lib (TTY):
+Generated tables (domains · brands with linking metadata · boards · live
+PartnerCodes) are committed at
+[`partner-surface-inventory.generated.md`](./partner-surface-inventory.generated.md):
+
+```bash
+bun run partner-surface-inventory:docs
+bun run partner-surface-inventory:docs:check
+```
+
+TTY dump of every inventory row:
 
 ```bash
 bun -e 'import { formatPartnerSurfaceMarkdown } from "./lib/docs/partner-surface-inventory.ts"; console.log(formatPartnerSurfaceMarkdown())'
