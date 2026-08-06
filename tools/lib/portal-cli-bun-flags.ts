@@ -367,7 +367,7 @@ export type RuntimeFlagsCatalogHealth = {
   /** Curated flags whose description is missing from generated help (should be empty). */
   helpCoverageMisses: string[];
   /**
-   * Catalog tokens missing from live `bun --help` (runtime context only).
+   * Catalog tokens missing from live `bun run --help` (runtime context only).
    * Populated only when assess opts include bunHelpText / parity result.
    */
   bunHelpMisses: string[];
@@ -376,11 +376,11 @@ export type RuntimeFlagsCatalogHealth = {
 };
 
 export type AssessRuntimeFlagsOpts = {
-  /** When set, compare runtime-context tokens to this `bun --help` text. */
+  /** When set, compare runtime-context tokens to this `bun run --help` text. */
   bunHelpText?: string;
 };
 
-/** Parse long/short flag tokens from `bun --help` output. */
+/** Parse long/short flag tokens from Bun help output. */
 export function parseBunHelpTokens(helpText: string): {
   longs: Set<string>;
   shorts: Set<string>;
@@ -409,7 +409,7 @@ export function parseBunHelpTokens(helpText: string): {
 }
 
 /**
- * Runtime-context catalog tokens that do not appear in live `bun --help`.
+ * Runtime-context catalog tokens that do not appear in live `bun run --help`.
  * Short primary flags (e.g. `-i`) check shorts; long flags check longs; shortcodes check shorts.
  */
 export function findBunHelpMisses(catalog: RuntimeFlagEntry[], helpText: string): string[] {
@@ -545,7 +545,7 @@ export function assessRuntimeFlagsCatalog(
       : []),
     ...(bunHelpMisses.length
       ? [
-          `bun --help missing: ${bunHelpMisses.slice(0, 8).join(', ')}${bunHelpMisses.length > 8 ? '…' : ''}`,
+          `bun run --help missing: ${bunHelpMisses.slice(0, 8).join(', ')}${bunHelpMisses.length > 8 ? '…' : ''}`,
         ]
       : []),
   ];
@@ -571,6 +571,18 @@ export function assessRuntimeFlagsCatalog(
 /** Fetch live `bun --help` text (for parity checks). */
 export async function fetchBunHelpText(): Promise<string> {
   const proc = Bun.spawn([resolveBunExecutable(), '--help'], {
+    stdout: 'pipe',
+    stderr: 'pipe',
+    env: { ...Bun.env },
+  });
+  const text = await new Response(proc.stdout).text();
+  await proc.exited;
+  return text;
+}
+
+/** Fetch the runtime execution flag surface advertised by the pinned Bun. */
+export async function fetchBunRuntimeHelpText(): Promise<string> {
+  const proc = Bun.spawn([resolveBunExecutable(), 'run', '--help'], {
     stdout: 'pipe',
     stderr: 'pipe',
     env: { ...Bun.env },

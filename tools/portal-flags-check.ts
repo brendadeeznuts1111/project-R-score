@@ -3,17 +3,17 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/auto-install — runtime -i ≡ --install=fallback
 /**
- * Validate config/runtime-flags.json catalog (schema · shortcodes · bun --help parity · help coverage).
+ * Validate config/runtime-flags.json catalog (schema · shortcodes · bun run --help parity · help coverage).
  *
  *   bun run portal:flags:check
  *   bun tools/portal-flags-check.ts --json
  *
- * Exit 0 only when load + assess (with live bun --help) is healthy.
+ * Exit 0 only when load + assess (with live bun run --help) is healthy.
  */
 import {
   RUNTIME_FLAGS_CATALOG_PATH,
   assessRuntimeFlagsCatalog,
-  fetchBunHelpText,
+  fetchBunRuntimeHelpText,
   tryLoadRuntimeFlagsCatalog,
 } from './lib/portal-cli-bun-flags.ts';
 import { cliTone, frameBlock, kvLines } from '../lib/portal/cli-chrome.ts';
@@ -26,7 +26,7 @@ const loaded = await tryLoadRuntimeFlagsCatalog();
 let bunHelpText: string | undefined;
 if (!skipParity) {
   try {
-    bunHelpText = await fetchBunHelpText();
+    bunHelpText = await fetchBunRuntimeHelpText();
   } catch {
     bunHelpText = undefined;
   }
@@ -55,14 +55,14 @@ if (json) {
       ['deprecated', String(health.deprecated)],
       ['schema issues', String(health.schemaIssues.length)],
       ['shortcode conflicts', String(health.shortcodeConflicts.length)],
-      ['bun --help misses', String(health.bunHelpMisses.length)],
+      ['bun run --help misses', String(health.bunHelpMisses.length)],
       ['help misses', String(health.helpCoverageMisses.length)],
       ['unverified versions', String(health.unverifiedVersions.length)],
     ]),
   ];
   if (!ok) {
     body.push('');
-    if (parityFailed) body.push(cliTone.fail('· could not read bun --help'));
+    if (parityFailed) body.push(cliTone.fail('· could not read bun run --help'));
     for (const issue of health.issues.slice(0, 12)) {
       body.push(cliTone.fail(`· ${issue}`));
     }
@@ -77,7 +77,7 @@ if (json) {
       cliTone.ok(
         skipParity
           ? 'catalog healthy (parity skipped)'
-          : 'catalog healthy · harvest sets + bun --help parity + help'
+          : 'catalog healthy · harvest sets + bun run --help parity + help'
       )
     );
   }

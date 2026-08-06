@@ -190,7 +190,10 @@ describe('parseBunExecutionFlags', () => {
       '--console-depth'
     );
 
-    const proc = Bun.spawn(['bun', '--help'], { stdout: 'pipe', stderr: 'pipe' });
+    const proc = Bun.spawn([resolveBunExecutable(), 'run', '--help'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
     const runtimeHelp = await new Response(proc.stdout).text();
     expect(await proc.exited).toBe(0);
     for (const row of curated) {
@@ -304,7 +307,10 @@ describe('parseBunExecutionFlags', () => {
   });
 
   test('parseBunHelpTokens + parity catches missing tokens', async () => {
-    const proc = Bun.spawn(['bun', '--help'], { stdout: 'pipe', stderr: 'pipe' });
+    const proc = Bun.spawn([resolveBunExecutable(), 'run', '--help'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
     const help = await new Response(proc.stdout).text();
     expect(await proc.exited).toBe(0);
     const { longs, shorts } = parseBunHelpTokens(help);

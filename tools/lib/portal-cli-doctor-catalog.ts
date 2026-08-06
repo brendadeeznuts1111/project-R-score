@@ -8,7 +8,7 @@
  * Granular checks (group: catalog):
  *   catalog-json-schema         fatal — file loads + required fields
  *   catalog-shortcode-conflict  fatal — duplicate shortcodes / token collisions (per context)
- *   catalog-bun-help-parity     fatal — runtime tokens appear in live `bun --help`
+ *   catalog-bun-help-parity     fatal — runtime tokens appear in live `bun run --help`
  *   catalog-help-coverage       warn  — curated flags appear in generated BUN_FLAGS_HELP
  *   catalog-deprecated-flags    info  — deprecated rows present (dev awareness)
  *
@@ -18,7 +18,7 @@
 import {
   RUNTIME_FLAGS_CATALOG_PATH,
   assessRuntimeFlagsCatalog,
-  fetchBunHelpText,
+  fetchBunRuntimeHelpText,
   tryLoadRuntimeFlagsCatalog,
   type RuntimeFlagsCatalogHealth,
 } from './portal-cli-bun-flags.ts';
@@ -42,9 +42,9 @@ export type CatalogChecksResult = {
 
 export type RunCatalogChecksOpts = {
   cwd?: string;
-  /** Inject `bun --help` text (tests). When omitted, spawns `bun --help`. */
+  /** Inject `bun run --help` text (tests). When omitted, spawns `bun run --help`. */
   bunHelpText?: string;
-  /** Skip live bun --help spawn (offline pure tests). */
+  /** Skip live bun run --help spawn (offline pure tests). */
   skipBunHelpParity?: boolean;
 };
 
@@ -62,7 +62,7 @@ export async function runCatalogChecks(
   let bunHelpText = opts.bunHelpText;
   if (!opts.skipBunHelpParity && bunHelpText == null) {
     try {
-      bunHelpText = await fetchBunHelpText();
+      bunHelpText = await fetchBunRuntimeHelpText();
     } catch {
       bunHelpText = undefined;
     }
@@ -130,7 +130,7 @@ export async function runCatalogChecks(
     )
   );
 
-  // 3) Live bun --help parity (runtime context)
+  // 3) Live bun run --help parity (runtime context)
   const paritySkipped = opts.skipBunHelpParity || bunHelpText == null;
   const parityOk = paritySkipped || (health.bunHelpMisses.length === 0 && loaded.ok);
   checks.push(
@@ -141,16 +141,16 @@ export async function runCatalogChecks(
         group: 'catalog',
         ok: parityOk,
         message: paritySkipped
-          ? 'bun --help parity skipped'
+          ? 'bun run --help parity skipped'
           : health.bunHelpMisses.length === 0
-            ? `all runtime catalog tokens present in bun --help`
-            : `missing from bun --help: ${health.bunHelpMisses.slice(0, 6).join(', ')}${health.bunHelpMisses.length > 6 ? '…' : ''}`,
+            ? `all runtime catalog tokens present in bun run --help`
+            : `missing from bun run --help: ${health.bunHelpMisses.slice(0, 6).join(', ')}${health.bunHelpMisses.length > 6 ? '…' : ''}`,
         source: RUNTIME_DOCS,
       },
       {
         fixCommand: parityOk
           ? undefined
-          : `bun run portal:flags:check  # align ${RUNTIME_FLAGS_CATALOG_PATH} with bun --help (this Bun)`,
+          : `bun run portal:flags:check  # align ${RUNTIME_FLAGS_CATALOG_PATH} with bun run --help (this Bun)`,
         impact: 'Catalog claims flags Bun no longer advertises — harvest/help mislead operators',
         autoFixable: false,
         timeToFix: parityOk ? undefined : '5–15 min',
