@@ -1,13 +1,16 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 /**
- * partner-surface-wire-lint.ts — Layer C: inventory-aware naked partnerId traps.
+ * partner-surface-wire-lint.ts — Layer C: inventory-driven naked brand traps.
  *
- * Allowlist = wire-field rows with resolvesTo=ExternalPartnerRef and
- * non-empty `boundaryPathGlobs`. Trap rows (empty globs) document unregistered
- * adapters. Suppress with `// wire-ok` / `// brand-ok` (same / prev / next line).
+ * Each wire-field row contributes patterns + allowlist globs + a brandedType.
+ * ExternalPartnerRef rows are **not** skipped — they define where raw wire
+ * strings are correct. Other brands (OutId, …) use the same engine.
+ *
+ * Suppress with `// wire-ok` / `// brand-ok` (same / prev / next line).
  *
  * @see https://bun.com/docs/runtime/glob — Bun.Glob
  * @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+ * @see docs/design/wire-lint.md
  */
 
 import { stringWidth } from 'bun';
@@ -20,6 +23,8 @@ export type WireTrapHit = {
   readonly line: number;
   readonly match: string;
   readonly text: string;
+  readonly brandedType: string;
+  readonly ruleId: string;
 };
 
 export type WireTrapIssue = {
@@ -31,16 +36,30 @@ export type WireTrapIssue = {
   readonly fix?: string;
 };
 
+/** One lint family merged by brandedType (patterns ∪ globs from all contributing rows). */
+export type WireLintRule = {
+  readonly brandedType: string;
+  readonly patterns: readonly string[];
+  readonly nakedType: 'string' | 'number';
+  readonly globs: readonly string[];
+  readonly rowIds: readonly string[];
+  readonly trapTokens: readonly string[];
+  /** If any contributing row has strict:false → warn (not silent) inside allowlist. */
+  readonly strict: boolean;
+  /** If any contributing row has requireReason → warn on bare // wire-ok. */
+  readonly requireReason: boolean;
+  readonly regex: RegExp;
+};
+
+/** @deprecated use WireLintRule — kept for callers expecting allow-entry shape */
 export type WireAllowEntry = {
   readonly rowId: string; // brand-ok — inventory row key, not a domain entity id
   readonly token: string;
   readonly globs: readonly string[];
   readonly strict: boolean;
   readonly requireReason: boolean;
+  readonly brandedType: string;
 };
-
-/** Naked wire annotations we ban outside allowlisted boundary paths. */
-export const NAKED_PARTNER_ID_RE = /\b(partnerId|partner_id)\s*\??\s*:\s*string\b/g;
 
 const SUPPRESS_RE = /\/\/\s*(brand-ok|wire-ok)(?:\s*[:—-]\s*(.+))?/;
 
@@ -56,60 +75,166 @@ const DEFAULT_IGNORE_DIR_PARTS = [
   '.next',
 ] as const;
 
-/** Nested products not yet on the partner-surface inventory wire map. */
 const DEFAULT_SKIP_PREFIXES = ['projects/active/enterprise/'] as const;
+
+export function isSimpleIdent(name: string): boolean {
+  return /^[A-Za-z_][A-Za-z0-9_]*$/.test(name);
+}
+
+export function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function buildNakedAnnotationRegex(
+  patterns: readonly string[],
+  nakedType: 'string' | 'number' = 'string'
+): RegExp {
+  const alts = patterns.filter(isSimpleIdent).map(escapeRegex);
+  if (alts.length === 0) {
+    return /(?!)/g; // never matches
+  }
+  return new RegExp(`\\b(?:${alts.join('|')})\\s*\\??\\s*:\\s*${nakedType}\\b`, 'g');
+}
+
+/** Patterns declared on a wire-field row (explicit pattern/patterns, else simple wireName/token). */
+export function patternsForWireRow(row: PartnerSurfaceRow): readonly string[] {
+  const bag = row.wireField;
+  if (!bag) return [];
+  const out = new Set<string>();
+  if (bag.patterns) {
+    for (const p of bag.patterns) {
+      if (isSimpleIdent(p)) out.add(p);
+    }
+  }
+  if (bag.pattern && isSimpleIdent(bag.pattern)) out.add(bag.pattern);
+  if (isSimpleIdent(bag.wireName)) out.add(bag.wireName);
+  if (isSimpleIdent(row.token)) out.add(row.token);
+  return [...out].sort();
+}
+
+export function brandedTypeForWireRow(row: PartnerSurfaceRow): string {
+  const bag = row.wireField;
+  if (!bag) return '';
+  return bag.brandedType ?? bag.resolvesTo;
+}
+
+/**
+ * Build lint rules: one per brandedType, merging patterns and allowlist globs.
+ * Rows with only complex wireNames (e.g. partners[].id) still contribute globs.
+ */
+export function buildWireLintRules(rows: readonly PartnerSurfaceRow[]): readonly WireLintRule[] {
+  type Acc = {
+    brandedType: string;
+    patterns: Set<string>;
+    nakedType: 'string' | 'number';
+    globs: Set<string>;
+    rowIds: string[];
+    trapTokens: string[];
+    strict: boolean;
+    requireReason: boolean;
+  };
+  const byBrand = new Map<string, Acc>();
+
+  for (const row of rows) {
+    if (row.aspect !== 'wire-field' || !row.wireField) continue;
+    const bag = row.wireField;
+    const brandedType = brandedTypeForWireRow(row);
+    if (!brandedType) continue;
+
+    let acc = byBrand.get(brandedType);
+    if (!acc) {
+      acc = {
+        brandedType,
+        patterns: new Set(),
+        nakedType: bag.nakedType ?? 'string',
+        globs: new Set(),
+        rowIds: [],
+        trapTokens: [],
+        strict: true,
+        requireReason: false,
+      };
+      byBrand.set(brandedType, acc);
+    }
+
+    acc.rowIds.push(row.id);
+    for (const p of patternsForWireRow(row)) acc.patterns.add(p);
+    for (const g of bag.boundaryPathGlobs ?? []) {
+      const trimmed = g.replace(/^\/+/, '');
+      if (trimmed) acc.globs.add(trimmed);
+    }
+    if ((bag.boundaryPathGlobs?.length ?? 0) === 0) {
+      acc.trapTokens.push(row.token);
+    }
+    // Only rows that contribute globs affect allowlist severity (trap rows must
+    // not flip the whole brand family to non-strict).
+    if ((bag.boundaryPathGlobs?.length ?? 0) > 0 && bag.strict === false) {
+      acc.strict = false;
+    }
+    if (bag.requireReason === true) acc.requireReason = true;
+    if (bag.nakedType) acc.nakedType = bag.nakedType;
+  }
+
+  const rules: WireLintRule[] = [];
+  for (const acc of byBrand.values()) {
+    const patterns = [...acc.patterns].sort();
+    if (patterns.length === 0 && acc.globs.size === 0) continue;
+    // Glob-only rows (complex wireName) still need a sibling pattern on the brand —
+    // if this brand has no patterns at all, skip (cannot scan).
+    if (patterns.length === 0) continue;
+    rules.push({
+      brandedType: acc.brandedType,
+      patterns,
+      nakedType: acc.nakedType,
+      globs: [...acc.globs].sort(),
+      rowIds: acc.rowIds,
+      trapTokens: acc.trapTokens,
+      strict: acc.strict,
+      requireReason: acc.requireReason,
+      regex: buildNakedAnnotationRegex(patterns, acc.nakedType),
+    });
+  }
+  return rules.sort((a, b) => a.brandedType.localeCompare(b.brandedType));
+}
 
 export function collectWireAllowEntries(
   rows: readonly PartnerSurfaceRow[]
 ): readonly WireAllowEntry[] {
+  const rules = buildWireLintRules(rows);
   const out: WireAllowEntry[] = [];
-  for (const row of rows) {
-    if (row.aspect !== 'wire-field' || !row.wireField) continue;
-    if (row.wireField.resolvesTo !== 'ExternalPartnerRef') continue;
-    const globs = (row.wireField.boundaryPathGlobs ?? [])
-      .map(g => g.replace(/^\/+/, ''))
-      .filter(Boolean);
-    if (globs.length === 0) continue;
+  for (const rule of rules) {
+    if (rule.globs.length === 0) continue;
     out.push({
-      rowId: row.id,
-      token: row.token,
-      globs,
-      strict: row.wireField.strict ?? true,
-      requireReason: row.wireField.requireReason ?? false,
+      rowId: rule.rowIds[0] ?? rule.brandedType,
+      token: rule.patterns[0] ?? rule.brandedType,
+      globs: rule.globs,
+      strict: rule.strict,
+      requireReason: rule.requireReason,
+      brandedType: rule.brandedType,
     });
   }
   return out;
 }
 
 export function collectWireAllowPathGlobs(rows: readonly PartnerSurfaceRow[]): readonly string[] {
-  return [...new Set(collectWireAllowEntries(rows).flatMap(e => e.globs))].sort();
+  return [...new Set(buildWireLintRules(rows).flatMap(r => r.globs))].sort();
 }
 
 export function collectTrapRowTokens(rows: readonly PartnerSurfaceRow[]): readonly string[] {
-  const tokens: string[] = [];
-  for (const row of rows) {
-    if (row.aspect !== 'wire-field' || !row.wireField) continue;
-    if (row.wireField.resolvesTo !== 'ExternalPartnerRef') continue;
-    if ((row.wireField.boundaryPathGlobs?.length ?? 0) === 0) {
-      tokens.push(row.token);
-    }
-  }
-  return tokens;
+  return [...new Set(buildWireLintRules(rows).flatMap(r => r.trapTokens))].sort();
 }
 
-/** Warn when ExternalPartnerRef rows lack boundary globs (except unqualified trap docs). */
+/** Warn when a brand family has patterns but no globs (except unqualified traps). */
 export function warnMissingWireBoundaryGlobs(
   rows: readonly PartnerSurfaceRow[]
 ): readonly WireTrapIssue[] {
   const issues: WireTrapIssue[] = [];
   for (const row of rows) {
     if (row.aspect !== 'wire-field' || !row.wireField) continue;
-    if (row.wireField.resolvesTo !== 'ExternalPartnerRef') continue;
     if (row.wireField.sourceSystemId === 'unqualified') continue;
     if ((row.wireField.boundaryPathGlobs?.length ?? 0) === 0) {
       issues.push({
         level: 'warn',
-        message: `${row.id}: ExternalPartnerRef wire-field missing boundaryPathGlobs — add adapter paths so lint-wires can allowlist them`,
+        message: `${row.id}: wire-field missing boundaryPathGlobs — add adapter paths so lint-wires can allowlist them`,
         fix: 'Set wireField.boundaryPathGlobs on this inventory row when the adapter lands',
       });
     }
@@ -142,6 +267,13 @@ export function findAllowEntryForFile(
   return entries.find(e => pathMatchesAnyGlob(file, e.globs));
 }
 
+export function findRuleForFile(
+  file: string,
+  rules: readonly WireLintRule[]
+): WireLintRule | undefined {
+  return rules.find(r => r.globs.length > 0 && pathMatchesAnyGlob(file, r.globs));
+}
+
 /** Glob prefix used to decide missing vs stale (empty nested checkout). */
 export function globRootPrefix(globPattern: string): string {
   const g = globPattern.replace(/\\/g, '/').replace(/^\.\//, '');
@@ -153,14 +285,10 @@ export function globRootPrefix(globPattern: string): string {
 }
 
 async function pathHasAnyFile(root: string, prefix: string): Promise<boolean> {
-  const abs = `${root.replace(/\/$/, '')}/${prefix}`;
-  const dir = Bun.file(abs);
-  // Bun.file on a directory: exists may be true; probe with a shallow glob
   const probe = new Bun.Glob(`${prefix.replace(/\/$/, '')}/**/*`);
   for await (const _ of probe.scan({ cwd: root, onlyFiles: true, followSymlinks: false })) {
     return true;
   }
-  void dir;
   return false;
 }
 
@@ -174,21 +302,15 @@ async function globMatchCount(root: string, globPattern: string, limit = 1): Pro
   return n;
 }
 
-/**
- * Prove each allowlist glob matches ≥1 file.
- * - 0 matches + empty/missing tree → warn (optional nested checkout)
- * - 0 matches + tree has files → error (stale glob)
- * - `--strict-globs` / strictGlobs: empty tree also errors
- */
 export async function validateWireGlobCoverage(options: {
   readonly root: string;
   readonly rows: readonly PartnerSurfaceRow[];
   readonly strictGlobs?: boolean;
 }): Promise<readonly WireTrapIssue[]> {
   const issues: WireTrapIssue[] = [];
-  const entries = collectWireAllowEntries(options.rows);
-  for (const entry of entries) {
-    for (const globPattern of entry.globs) {
+  const rules = buildWireLintRules(options.rows);
+  for (const rule of rules) {
+    for (const globPattern of rule.globs) {
       const count = await globMatchCount(options.root, globPattern, 1);
       if (count > 0) continue;
       const prefix = globRootPrefix(globPattern);
@@ -196,14 +318,14 @@ export async function validateWireGlobCoverage(options: {
       if (!hasFiles && !options.strictGlobs) {
         issues.push({
           level: 'warn',
-          message: `${entry.rowId}: glob "${globPattern}" matches 0 files (tree "${prefix}" missing or empty — optional checkout)`,
+          message: `${rule.brandedType}: glob "${globPattern}" matches 0 files (tree "${prefix}" missing or empty — optional checkout)`,
           fix: `Checkout/populate ${prefix} or remove obsolete boundaryPathGlobs`,
         });
         continue;
       }
       issues.push({
         level: 'error',
-        message: `${entry.rowId}: glob "${globPattern}" for token "${entry.token}" matches 0 files`,
+        message: `${rule.brandedType}: glob "${globPattern}" matches 0 files`,
         fix: 'Fix boundaryPathGlobs or delete the obsolete wire-field allowlist entry',
       });
     }
@@ -234,25 +356,18 @@ export function findLineSuppression(
   return undefined;
 }
 
-/** @deprecated use findLineSuppression */
 export function lineIsSuppressed(lines: readonly string[], index: number): boolean {
   return findLineSuppression(lines, index) !== undefined;
 }
 
-/**
- * Strip line comments and quoted/template string spans so regex does not
- * fire on docs examples or JSDoc prose.
- */
 export function maskNonCodeSpans(line: string): string {
   let out = '';
   let i = 0;
   while (i < line.length) {
-    // line comment
     if (line[i] === '/' && line[i + 1] === '/') {
       out += ' '.repeat(line.length - i);
       break;
     }
-    // block comment start on this line (/* … */)
     if (line[i] === '/' && line[i + 1] === '*') {
       const end = line.indexOf('*/', i + 2);
       if (end === -1) {
@@ -287,31 +402,55 @@ export function maskNonCodeSpans(line: string): string {
   return out;
 }
 
-export function findNakedPartnerIdHits(file: string, source: string): readonly WireTrapHit[] {
+export function findNakedHitsForRule(
+  file: string,
+  source: string,
+  rule: WireLintRule
+): readonly WireTrapHit[] {
   const lines = source.split(/\r?\n/);
   const hits: WireTrapHit[] = [];
   for (let i = 0; i < lines.length; i++) {
     const raw = lines[i] ?? '';
     const trimmed = raw.trim();
-    // JSDoc / block-comment continuations
     if (trimmed.startsWith('*') || trimmed.startsWith('/**') || trimmed.startsWith('*/')) {
       continue;
     }
     if (/^\s*\/\//.test(raw)) continue;
 
     const masked = maskNonCodeSpans(raw);
-    NAKED_PARTNER_ID_RE.lastIndex = 0;
-    const m = NAKED_PARTNER_ID_RE.exec(masked);
+    rule.regex.lastIndex = 0;
+    const m = rule.regex.exec(masked);
     if (!m) continue;
     hits.push({
       file,
       line: i + 1,
       match: m[0] ?? '',
       text: trimmed,
+      brandedType: rule.brandedType,
+      ruleId: rule.rowIds[0] ?? rule.brandedType,
     });
   }
   return hits;
 }
+
+/** @deprecated use findNakedHitsForRule with buildWireLintRules */
+export function findNakedPartnerIdHits(file: string, source: string): readonly WireTrapHit[] {
+  const rule: WireLintRule = {
+    brandedType: 'ExternalPartnerRef',
+    patterns: ['partnerId', 'partner_id'],
+    nakedType: 'string',
+    globs: [],
+    rowIds: ['legacy'],
+    trapTokens: [],
+    strict: true,
+    requireReason: false,
+    regex: buildNakedAnnotationRegex(['partnerId', 'partner_id'], 'string'),
+  };
+  return findNakedHitsForRule(file, source, rule);
+}
+
+/** Legacy regex — prefer buildNakedAnnotationRegex from inventory rules. */
+export const NAKED_PARTNER_ID_RE = buildNakedAnnotationRegex(['partnerId', 'partner_id'], 'string');
 
 export function shouldScanPath(
   relPath: string,
@@ -334,6 +473,7 @@ export function shouldScanPath(
 export type ScanWireTrapsResult = {
   readonly allowGlobs: readonly string[];
   readonly allowEntries: readonly WireAllowEntry[];
+  readonly rules: readonly WireLintRule[];
   readonly trapTokens: readonly string[];
   readonly hits: readonly WireTrapHit[];
   readonly issues: readonly WireTrapIssue[];
@@ -341,8 +481,8 @@ export type ScanWireTrapsResult = {
 };
 
 /**
- * Scan TypeScript sources for naked partnerId/partner_id: string outside
- * inventory allowlisted boundary paths. Also validates glob coverage.
+ * Scan TypeScript sources for naked brand annotations outside inventory
+ * allowlisted boundary paths. Also validates glob coverage.
  */
 export async function scanWireTraps(options: {
   readonly root: string;
@@ -350,6 +490,7 @@ export async function scanWireTraps(options: {
   readonly globPattern?: string;
   readonly strictGlobs?: boolean;
 }): Promise<ScanWireTrapsResult> {
+  const rules = buildWireLintRules(options.rows);
   const allowEntries = collectWireAllowEntries(options.rows);
   const allowGlobs = collectWireAllowPathGlobs(options.rows);
   const trapTokens = collectTrapRowTokens(options.rows);
@@ -374,81 +515,81 @@ export async function scanWireTraps(options: {
     const rel = file.replace(/\\/g, '/');
     if (!shouldScanPath(rel)) continue;
 
-    const allow = findAllowEntryForFile(rel, allowEntries);
     const abs = `${options.root.replace(/\/$/, '')}/${rel}`;
     const source = await Bun.file(abs).text();
-    const fileHits = findNakedPartnerIdHits(rel, source);
-    if (fileHits.length === 0) {
-      if (!allow) scannedFiles += 1;
-      continue;
+    const lines = source.split(/\r?\n/);
+    let fileHadHit = false;
+
+    for (const rule of rules) {
+      const allowedHere = rule.globs.length > 0 && pathMatchesAnyGlob(rel, rule.globs);
+      const fileHits = findNakedHitsForRule(rel, source, rule);
+      if (fileHits.length === 0) continue;
+      fileHadHit = true;
+
+      for (const hit of fileHits) {
+        const suppression = findLineSuppression(lines, hit.line - 1);
+        if (suppression) {
+          if (
+            allowedHere &&
+            rule.requireReason &&
+            suppression.kind === 'wire-ok' &&
+            suppression.reason.length === 0
+          ) {
+            issues.push({
+              level: 'warn',
+              file: hit.file,
+              line: hit.line,
+              match: hit.match,
+              message: `${hit.file}:${hit.line}: // wire-ok missing reason (requireReason for ${rule.brandedType})`,
+              fix: `Use // wire-ok: <why this ${hit.match} is raw at the boundary>`,
+            });
+          }
+          continue;
+        }
+
+        if (allowedHere) {
+          if (!rule.strict) {
+            issues.push({
+              level: 'warn',
+              file: hit.file,
+              line: hit.line,
+              match: hit.match,
+              message: `${hit.file}:${hit.line}: naked \`${hit.match}\` in non-strict allowlist (${rule.brandedType})`,
+              fix: `Prefer ${rule.brandedType} at the boundary, or set strict:true once migrated`,
+            });
+          }
+          continue;
+        }
+
+        const trapHint =
+          rule.trapTokens.length > 0 || trapTokens.length > 0
+            ? `Expected type "${rule.brandedType}" but found naked "${hit.match}". Register boundaryPathGlobs on a wire-field row (trap tokens: ${[...new Set([...rule.trapTokens, ...trapTokens])].join(', ')}) or add // wire-ok: <reason>.`
+            : `Expected type "${rule.brandedType}" but found naked "${hit.match}". Use "${rule.brandedType}" or add // wire-ok if this is an external boundary.`;
+
+        hits.push(hit);
+        issues.push({
+          level: 'error',
+          file: hit.file,
+          line: hit.line,
+          match: hit.match,
+          message: `${hit.file}:${hit.line}: naked \`${hit.match}\` — want ${rule.brandedType}`,
+          fix: trapHint,
+        });
+      }
     }
 
-    scannedFiles += 1;
-    const lines = source.split(/\r?\n/);
-
-    for (const hit of fileHits) {
-      const suppression = findLineSuppression(lines, hit.line - 1);
-      if (suppression) {
-        if (
-          allow?.requireReason &&
-          suppression.kind === 'wire-ok' &&
-          suppression.reason.length === 0
-        ) {
-          issues.push({
-            level: 'warn',
-            file: hit.file,
-            line: hit.line,
-            match: hit.match,
-            message: `${hit.file}:${hit.line}: // wire-ok missing reason (requireReason on ${allow.rowId})`,
-            fix: 'Use // wire-ok: <why this wire parse is raw string>',
-          });
-        }
-        continue;
-      }
-
-      if (allow) {
-        // Allowlisted adapter path — naked wire id is expected.
-        // strict:false → still surface as warn so the edge stays visible.
-        if (!allow.strict) {
-          issues.push({
-            level: 'warn',
-            file: hit.file,
-            line: hit.line,
-            match: hit.match,
-            message: `${hit.file}:${hit.line}: naked \`${hit.match}\` in non-strict allowlist (${allow.rowId})`,
-            fix: 'Prefer ExternalPartnerRef at the boundary, or set strict:true once migrated',
-          });
-        }
-        continue;
-      }
-
-      const trapHint =
-        trapTokens.length > 0
-          ? `No wire-field allowlist matches this path (trap tokens: ${trapTokens.join(', ')}). Add a wire-field row with boundaryPathGlobs to register this adapter.`
-          : 'Naked partnerId / partner_id string annotation outside any wire-field allowlist. Add a wire-field row or suppress with // wire-ok: <reason>.';
-
-      hits.push(hit);
-      issues.push({
-        level: 'error',
-        file: hit.file,
-        line: hit.line,
-        match: hit.match,
-        message: `${hit.file}:${hit.line}: naked \`${hit.match}\``,
-        fix: trapHint,
-      });
+    if (fileHadHit || !findRuleForFile(rel, rules)) {
+      scannedFiles += 1;
     }
   }
 
-  return { allowGlobs, allowEntries, trapTokens, hits, issues, scannedFiles };
+  return { allowGlobs, allowEntries, rules, trapTokens, hits, issues, scannedFiles };
 }
 
-/** Exported for tests — bag shape helper. */
 export function wireBagAllowsBoundary(bag: PartnerSurfaceWireFieldBag, file: string): boolean {
-  if (bag.resolvesTo !== 'ExternalPartnerRef') return false;
   return pathMatchesAnyGlob(file, bag.boundaryPathGlobs ?? []);
 }
 
-/** Visible width helper re-export for CLI table layout. */
 export function visibleWidth(text: string): number {
   return stringWidth(text);
 }

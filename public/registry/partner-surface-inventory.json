@@ -696,6 +696,12 @@
         "wireName": "partnerId",
         "sourceSystemId": "unqualified",
         "resolvesTo": "ExternalPartnerRef",
+        "brandedType": "ExternalPartnerRef",
+        "pattern": "partnerId",
+        "patterns": [
+          "partnerId",
+          "partner_id"
+        ],
         "quarantineOnFail": true
       }
     },
@@ -716,6 +722,12 @@
         "wireName": "partner_id",
         "sourceSystemId": "sports-terminal",
         "resolvesTo": "ExternalPartnerRef",
+        "brandedType": "ExternalPartnerRef",
+        "pattern": "partner_id",
+        "patterns": [
+          "partner_id",
+          "partnerId"
+        ],
         "quarantineOnFail": true,
         "boundaryPathGlobs": [
           "projects/active/sports-terminal-os/**"
@@ -735,10 +747,12 @@
       "owner": "execution adapter",
       "machine": "identity",
       "typeOrExport": "ExternalPartnerRef",
+      "notes": "Complex wireName — contributes Kalshi-bot/** allowlist to ExternalPartnerRef family",
       "wireField": {
         "wireName": "partners[].id",
         "sourceSystemId": "kalshi",
         "resolvesTo": "ExternalPartnerRef",
+        "brandedType": "ExternalPartnerRef",
         "quarantineOnFail": true,
         "boundaryPathGlobs": [
           "Kalshi-bot/**"
@@ -762,8 +776,59 @@
         "wireName": "partnerId",
         "sourceSystemId": "pandora",
         "resolvesTo": "ExternalPartnerRef",
+        "brandedType": "ExternalPartnerRef",
+        "pattern": "partnerId",
         "quarantineOnFail": true,
         "boundaryPathGlobs": []
+      }
+    },
+    {
+      "id": "wire.outId",
+      "aspect": "wire-field",
+      "token": "outId",
+      "repo": "project-R-score",
+      "path": "lib/telegram",
+      "properties": [
+        "seat desk / intake wire",
+        "parse to OutId"
+      ],
+      "owner": "seat capital desk",
+      "machine": "identity",
+      "typeOrExport": "OutId",
+      "wireField": {
+        "wireName": "outId",
+        "sourceSystemId": "seat-desk",
+        "resolvesTo": "OutId",
+        "brandedType": "OutId",
+        "pattern": "outId",
+        "quarantineOnFail": true,
+        "boundaryPathGlobs": [
+          "lib/telegram/seat-intake.ts",
+          "lib/telegram/seat-desk-book-max.ts",
+          "lib/telegram/seat-desk-callback.ts"
+        ]
+      }
+    },
+    {
+      "id": "wire.externalRef",
+      "aspect": "wire-field",
+      "token": "externalRef",
+      "repo": "project-R-score",
+      "path": "docs/design/partner-type-reference-map.md",
+      "properties": [
+        "source-owned non-canonical",
+        "trap until adapter globs land"
+      ],
+      "owner": "partner-type-reference-map",
+      "machine": "identity",
+      "typeOrExport": "ExternalPartnerId",
+      "wireField": {
+        "wireName": "externalRef",
+        "sourceSystemId": "unqualified",
+        "resolvesTo": "ExternalPartnerId",
+        "brandedType": "ExternalPartnerId",
+        "pattern": "externalRef",
+        "quarantineOnFail": true
       }
     },
     {

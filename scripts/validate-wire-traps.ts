@@ -60,24 +60,24 @@ Fix a hit:
 const WHY_MARKDOWN = `# Why lint-wires (Layer C)
 
 **Claim** \`partner-surface-inventory\` — map partner surfaces before rename;
-Layer C stops bare \`partnerId: string\` / \`partner_id: string\` from leaking
-into interior code.
+Layer C stops bare brand annotations (\`partnerId: string\`, \`outId: string\`,
+…) from leaking into interior code.
 
 ## The bug pattern
 
 Boards and adapters join many sources. An unqualified \`partnerId\` may mean
 Sports snake_case wire, Kalshi registry id, Pandora remote id, or a tree node.
-Promoting it to \`PartnerCode\` without a parse edge is a Layer-2/3 bug.
+Promoting it to \`PartnerCode\` without a parse edge is a Layer-2/3 bug. The
+same trap applies to \`outId\` → \`OutId\` and other brands.
 
-## Inventory-aware allowlist (not blanket ast-grep)
+## Inventory-driven rules (not blanket ast-grep)
 
-\`wire-field\` rows with \`resolvesTo: ExternalPartnerRef\` and non-empty
-\`boundaryPathGlobs\` are the **only** places naked wire annotations are
-expected. Trap rows (empty globs, e.g. unqualified \`partnerId\`) document
-unregistered adapters and shape the error fix text.
+Every \`wire-field\` row contributes **patterns** + **brandedType** +
+\`boundaryPathGlobs\`. Rows with the same brandedType merge. \`ExternalPartnerRef\`
+rows are allowlists for raw wire strings — they are **not** skipped.
 
-New external client → add a wire-field row + globs → bake. No separate
-ast-grep allowlist to maintain.
+New brand → add a wire-field row (\`pattern\`, \`brandedType\`, globs) → bake.
+Guide: \`docs/design/wire-lint.md\`.
 
 ## Suppressions
 
@@ -87,7 +87,7 @@ ast-grep allowlist to maintain.
 
 ## Related
 
-- Design: \`${DOCUMENT_REL}\`
+- Design: \`${DOCUMENT_REL}\` · \`docs/design/wire-lint.md\`
 - SSOT: \`lib/docs/partner-surface-inventory.ts\`
 - Engine: \`lib/docs/partner-surface-wire-lint.ts\`
 - Layers A/B: \`bun run partner-surface-inventory:validate\`

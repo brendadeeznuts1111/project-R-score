@@ -96,18 +96,33 @@ export type PartnerSurfaceRegistryBag = {
 };
 
 /**
- * Wire-field semantics — never promote bare partnerId to PartnerCode.
+ * Wire-field semantics — inventory-driven naked brand traps (Layer C).
  *
- * `boundaryPathGlobs` allowlists adapter/wire files where naked
- * `partnerId: string` / `partner_id: string` is expected at the parse edge.
+ * `pattern` / `patterns` name the TypeScript identifier(s) to match.
+ * `brandedType` is the type to use after the boundary (defaults to `resolvesTo`).
+ * `boundaryPathGlobs` allowlists adapter files where naked annotations are OK.
  * Consumed by `bun run partner-surface-inventory:lint-wires`.
+ *
+ * @see docs/design/wire-lint.md
  */
 export type PartnerSurfaceWireFieldBag = {
   readonly wireName: string;
   readonly sourceSystemId: string; // brand-ok — adapter source label (kalshi|sports|…), not SourceSystemId
-  readonly resolvesTo: 'ExternalPartnerRef' | 'PartnerCode';
+  /**
+   * Target brand / ref family. ExternalPartnerRef rows are allowlists for raw
+   * wire strings — they are not skipped by the linter.
+   */
+  readonly resolvesTo: string;
+  /** Display / error branded type (defaults to resolvesTo). */
+  readonly brandedType?: string;
+  /** Single identifier to match (defaults: simple wireName or token). */
+  readonly pattern?: string;
+  /** Extra identifiers (e.g. partnerId + partner_id). */
+  readonly patterns?: readonly string[];
+  /** Annotation RHS to match — default `string` (money may use `number`). */
+  readonly nakedType?: 'string' | 'number';
   readonly quarantineOnFail: boolean;
-  /** Path prefixes/globs where naked wire id annotations are allowed. */
+  /** Path prefixes/globs where naked annotations are allowed. */
   readonly boundaryPathGlobs?: readonly string[];
   /**
    * When true (default), allowlisted hits are silent.
@@ -684,9 +699,11 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       wireName: 'partnerId',
       sourceSystemId: 'unqualified',
       resolvesTo: 'ExternalPartnerRef',
+      brandedType: 'ExternalPartnerRef',
+      pattern: 'partnerId',
+      patterns: ['partnerId', 'partner_id'],
       quarantineOnFail: true,
-      // No boundaryPathGlobs — unqualified is the trap itself; use // wire-ok / brand-ok
-      // or a source-specific wire-field row when adding a real adapter.
+      // Trap row — no globs; use // wire-ok or a source-specific wire-field row.
     },
   }),
   row({
@@ -703,6 +720,9 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       wireName: 'partner_id',
       sourceSystemId: 'sports-terminal',
       resolvesTo: 'ExternalPartnerRef',
+      brandedType: 'ExternalPartnerRef',
+      pattern: 'partner_id',
+      patterns: ['partner_id', 'partnerId'],
       quarantineOnFail: true,
       boundaryPathGlobs: ['projects/active/sports-terminal-os/**'],
     },
@@ -717,10 +737,13 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     path: 'Kalshi-bot',
     properties: ['e.g. partner-spen', 'join via partners[].code → PartnerCode'],
     owner: 'execution adapter',
+    notes: 'Complex wireName — contributes Kalshi-bot/** allowlist to ExternalPartnerRef family',
     wireField: {
       wireName: 'partners[].id',
       sourceSystemId: 'kalshi',
       resolvesTo: 'ExternalPartnerRef',
+      brandedType: 'ExternalPartnerRef',
+      // no simple pattern — globs allow partnerId/partner_id from sibling rows
       quarantineOnFail: true,
       boundaryPathGlobs: ['Kalshi-bot/**'],
     },
@@ -739,9 +762,55 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       wireName: 'partnerId',
       sourceSystemId: 'pandora',
       resolvesTo: 'ExternalPartnerRef',
+      brandedType: 'ExternalPartnerRef',
+      pattern: 'partnerId',
       quarantineOnFail: true,
-      // Adapter not landed yet — empty globs warn until paths are registered.
+      // Adapter not landed — empty globs warn until paths are registered.
       boundaryPathGlobs: [],
+    },
+  }),
+  row({
+    id: 'wire.outId',
+    aspect: 'wire-field',
+    machine: 'identity',
+    token: 'outId',
+    typeOrExport: 'OutId',
+    repo: 'project-R-score',
+    path: 'lib/telegram',
+    properties: ['seat desk / intake wire', 'parse to OutId'],
+    owner: 'seat capital desk',
+    wireField: {
+      wireName: 'outId',
+      sourceSystemId: 'seat-desk',
+      resolvesTo: 'OutId',
+      brandedType: 'OutId',
+      pattern: 'outId',
+      quarantineOnFail: true,
+      boundaryPathGlobs: [
+        'lib/telegram/seat-intake.ts',
+        'lib/telegram/seat-desk-book-max.ts',
+        'lib/telegram/seat-desk-callback.ts',
+      ],
+    },
+  }),
+  row({
+    id: 'wire.externalRef',
+    aspect: 'wire-field',
+    machine: 'identity',
+    token: 'externalRef',
+    typeOrExport: 'ExternalPartnerId',
+    repo: 'project-R-score',
+    path: 'docs/design/partner-type-reference-map.md',
+    properties: ['source-owned non-canonical', 'trap until adapter globs land'],
+    owner: 'partner-type-reference-map',
+    wireField: {
+      wireName: 'externalRef',
+      sourceSystemId: 'unqualified',
+      resolvesTo: 'ExternalPartnerId',
+      brandedType: 'ExternalPartnerId',
+      pattern: 'externalRef',
+      quarantineOnFail: true,
+      // Trap — register boundaryPathGlobs when an adapter lands.
     },
   }),
 
