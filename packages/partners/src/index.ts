@@ -8,3 +8,4 @@ export {
 export * from './boundary/index.ts';
 export * from './compatibility/index.ts';
 export * from './core/index.ts';
+export * from './portal/index.ts';

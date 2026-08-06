@@ -17,6 +17,11 @@ targets, money, Telegram IDs, limits, and presentation fields rather than
 promoting them into partner-domain truth. Its output is a narrow observation
 shape, not `PartnerDashboardRecord[]`.
 
+The browser-neutral `./portal` contract now owns the current input inventory,
+the canonical artifact path, and the future query-only `?compare=legacy` policy.
+The actual browser loader and generated public modules remain planned; canonical
+load failure must never fall back to legacy rendering.
+
 ```bash
 bun --cwd=packages/partners run build
 bun --cwd=packages/partners run test

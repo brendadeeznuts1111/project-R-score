@@ -123,7 +123,8 @@ observations rather than canonical dashboard records. The first six connectors
 have real inputs but planned extracted adapters; Sports Terminal is disabled and
 blocked on one exact parsed input. The required profile artifact currently has
 zero profiles, so the plan must remain `proposal` until canonical coverage is
-materialized.
+materialized. The portal consumer contract is package-owned, but its browser
+loader and generated public delivery modules remain planned.
 
 Resilience belongs to connectors, not pure adapters. Defaults are a three-second
 timeout, three-failure circuit threshold, five-minute stale window, and a

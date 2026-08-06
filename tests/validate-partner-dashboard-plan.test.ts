@@ -207,6 +207,9 @@ describe('partner dashboard semantic plan', () => {
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors.some(error => error.includes('portal registry input map'))).toBe(true);
+    expect(result.errors).toContain(
+      'portal current input refs must match the package consumer contract'
+    );
     expect(result.errors).toContain('portal consumer target_shape_ref must be shapes.dashboard_artifact');
   });
 
@@ -225,6 +228,7 @@ describe('partner dashboard semantic plan', () => {
     plan.surfaces.portal.target_consumer = 'WrongArtifact';
     plan.surfaces.portal.consumer_contract.implementation_status = 'implemented';
     plan.surfaces.portal.consumer_contract.active_input_mode = 'canonical-single-artifact';
+    plan.surfaces.portal.consumer_contract.automatic_legacy_fallback = true;
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors).toContain(
@@ -233,6 +237,9 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors).toContain('surfaces.portal.consumer is ambiguous; use target_consumer');
     expect(result.errors).toContain(
       'implemented portal consumer must load only the canonical dashboard artifact'
+    );
+    expect(result.errors).toContain(
+      'portal transition contract must require canonical primary and explicit query-only legacy compare'
     );
   });
 

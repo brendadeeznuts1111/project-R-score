@@ -341,8 +341,10 @@ by itself. A selective `partners-ops.v2` compatibility adapter now keeps the
 four current partner/out identities available as narrow observations while
 deliberately dropping credentials, payment targets, Telegram IDs, money, limits,
 colors, and other non-authoritative facts. It does not manufacture canonical
-dashboard records, lifecycle facts, active outs, or resolved Sportsbook IDs. The
-remaining slices are:
+dashboard records, lifecycle facts, active outs, or resolved Sportsbook IDs. A
+browser-neutral package contract now owns the current input inventory, canonical
+artifact path, and query-only legacy comparison policy; the browser loader
+itself remains planned. The remaining slices are:
 
 1. Join a redacted `partner-profiles.json`; emit attention for legacy records
    without a real profile.

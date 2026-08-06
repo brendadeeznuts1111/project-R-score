@@ -19,6 +19,9 @@ import {
   LEGACY_OUT_ID_WARNING_CODE,
   LEGACY_SEAT_OUT_TOKEN_PATTERN,
   PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
+  PARTNER_DASHBOARD_CONSUMER_CONTRACT,
+  PARTNER_DASHBOARD_CURRENT_OPTIONAL_INPUTS,
+  PARTNER_DASHBOARD_CURRENT_REQUIRED_INPUTS,
   PARTNER_DASHBOARD_SEMANTIC_GAPS,
   PARTNER_CODE_PATTERN,
   PARTNERS_PACKAGE_TARGET,
@@ -389,7 +392,8 @@ export async function validatePartnerDashboardPlan(
     partnersPackage.exports?.['./boundary'] !== './src/boundary/index.ts' ||
     partnersPackage.exports?.['./compatibility'] !== './src/compatibility/index.ts' ||
     partnersPackage.exports?.['./compatibility/legacy-partners-ops'] !==
-      './src/compatibility/legacy-partners-ops.ts'
+      './src/compatibility/legacy-partners-ops.ts' ||
+    partnersPackage.exports?.['./portal'] !== './src/portal/index.ts'
   ) {
     errors.push(
       'packages/partners must remain private and export dashboard-plan, core, boundary, and compatibility'
@@ -401,6 +405,8 @@ export async function validatePartnerDashboardPlan(
     plan.package?.components?.artifact_assembler !== 'implemented' ||
     plan.package?.components?.ingress_translator !== 'implemented' ||
     plan.package?.components?.legacy_ops_adapter !== 'implemented' ||
+    plan.package?.components?.portal_consumer_contract !== 'implemented' ||
+    plan.package?.components?.browser_loader !== 'planned' ||
     plan.package?.components?.connector_ports !== 'planned' ||
     plan.package?.components?.source_adapters !== 'planned' ||
     plan.package?.components?.reconciliation !== 'planned'
@@ -493,7 +499,9 @@ export async function validatePartnerDashboardPlan(
     const declaredInputs = [...requiredInputs, ...optionalInputs];
     const observedInputs = portalRegistryInputs(boardHtml);
     const observedCombined = [...observedInputs.required, ...observedInputs.optional];
-    if (portalConsumerContract.entrypoint_path !== 'public/portal/partners/index.html') {
+    if (
+      portalConsumerContract.entrypoint_path !== PARTNER_DASHBOARD_CONSUMER_CONTRACT.entrypointPath
+    ) {
       errors.push('portal consumer contract entrypoint must be the partners board HTML');
     } else if (
       !(await Bun.file(resolvePath(REPO_ROOT, portalConsumerContract.entrypoint_path)).exists())
@@ -514,15 +522,44 @@ export async function validatePartnerDashboardPlan(
         `portal registry input map does not match HTML (required: ${observedInputs.required.join(', ')}; optional: ${observedInputs.optional.join(', ')})`
       );
     }
+    if (
+      !sameMembers(requiredInputs, PARTNER_DASHBOARD_CURRENT_REQUIRED_INPUTS) ||
+      !sameMembers(optionalInputs, PARTNER_DASHBOARD_CURRENT_OPTIONAL_INPUTS)
+    ) {
+      errors.push('portal current input refs must match the package consumer contract');
+    }
     if (portalConsumerContract.target_shape_ref !== 'shapes.dashboard_artifact') {
       errors.push('portal consumer target_shape_ref must be shapes.dashboard_artifact');
     }
     if (
-      portalConsumerContract.target_input_mode !== 'canonical-single-artifact' ||
-      portalConsumerContract.retirement_condition !== 'portal-loads-only-target-artifact'
+      portalConsumerContract.target_input_mode !==
+        PARTNER_DASHBOARD_CONSUMER_CONTRACT.target.inputMode ||
+      portalConsumerContract.retirement_condition !==
+        PARTNER_DASHBOARD_CONSUMER_CONTRACT.target.retirementCondition
     ) {
       errors.push(
         'portal consumer contract must declare the canonical one-artifact retirement shape'
+      );
+    }
+    const transitionContract = PARTNER_DASHBOARD_CONSUMER_CONTRACT.transition;
+    if (
+      portalConsumerContract.transition_implementation_status !==
+        transitionContract.implementationStatus ||
+      portalConsumerContract.transition_input_mode !== transitionContract.inputMode ||
+      portalConsumerContract.primary_input_ref !== transitionContract.primaryInputRef ||
+      portalConsumerContract.canonical_failure_policy !==
+        transitionContract.canonicalFailurePolicy ||
+      portalConsumerContract.automatic_legacy_fallback !==
+        transitionContract.automaticLegacyFallback ||
+      portalConsumerContract.legacy_compare_query_key !==
+        transitionContract.legacyCompare.queryKey ||
+      portalConsumerContract.legacy_compare_query_value !==
+        transitionContract.legacyCompare.queryValue ||
+      portalConsumerContract.legacy_compare_failure_policy !==
+        transitionContract.legacyCompare.failurePolicy
+    ) {
+      errors.push(
+        'portal transition contract must require canonical primary and explicit query-only legacy compare'
       );
     }
     const consumerStatus = portalConsumerContract.implementation_status;

@@ -22,6 +22,8 @@ artifact_boundary = "implemented"
 artifact_assembler = "implemented"
 ingress_translator = "implemented"
 legacy_ops_adapter = "implemented"
+portal_consumer_contract = "implemented"
+browser_loader = "planned"
 connector_ports = "planned"
 source_adapters = "planned"
 reconciliation = "planned"
@@ -69,6 +71,14 @@ optional_input_refs = ["/registry/soft-accounting-export.json"]
 target_shape_ref = "shapes.dashboard_artifact"
 target_input_mode = "canonical-single-artifact"
 retirement_condition = "portal-loads-only-target-artifact"
+transition_implementation_status = "planned"
+transition_input_mode = "canonical-single-artifact-with-explicit-legacy-compare"
+primary_input_ref = "/registry/partners-dashboard.json"
+canonical_failure_policy = "error-never-fallback"
+automatic_legacy_fallback = false
+legacy_compare_query_key = "compare"
+legacy_compare_query_value = "legacy"
+legacy_compare_failure_policy = "warn-never-fallback"
 
 [semantic_model]
 semantic_order = ["business-domain", "concept", "parsed-shape", "consuming-surface"]
