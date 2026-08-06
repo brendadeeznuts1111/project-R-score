@@ -1,4 +1,4 @@
-// @see https://bun.com/docs/runtime/utils#bun-hash — Bun.hash
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 import { asHostId, tryHostId, trySportsbookId } from '../../types/branded.ts';
 import type { HostId } from '../../types/branded.ts';
 import type { SportsbookId } from '../../types/branded.ts';
