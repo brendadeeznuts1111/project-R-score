@@ -16,6 +16,13 @@ bun run ci:harness:fast       # local parity
 bun run harness:status
 ```
 
+`test:changed` stays the day-loop default. CI artifact path is `bun run test:ci`
+(JUnit). Live Inspector TestReporter stream (orthogonal, not a Jest plugin):
+`bun run test:inspect`. Flag × script matrix:
+[`docs/harness/tenants/bun-test-flags.md`](../harness/tenants/bun-test-flags.md) ·
+Inspector tenant:
+[`docs/harness/tenants/bun-test-inspect.md`](../harness/tenants/bun-test-inspect.md).
+
 Full testing / hooks map: [DEVELOPMENT-WORKFLOW.md](../DEVELOPMENT-WORKFLOW.md).
 
 ## REF:ID Validation
@@ -240,7 +247,9 @@ coverage planes + `--registry-only`, `--dry-run`, `audit` /
 | Change                                           | Gate                                                                       |
 | ------------------------------------------------ | -------------------------------------------------------------------------- |
 | Day-loop / general TS                            | `bun run test:changed` · `bun run test:dev`                                |
-| Monorepo suite (`tests/`)                        | `bun run test` or `bun run test:ci` (pathIgnore excludes toc-ops / Kalshi) |
+| Monorepo suite (`tests/`)                        | `bun run test` or `bun run test:ci` (JUnit; pathIgnore excludes toc-ops / Kalshi) |
+| Inspector live reporters                         | `bun run test:inspect` · [`bun-test-inspect.md`](../harness/tenants/bun-test-inspect.md) (orthogonal to JUnit) |
+| Flag × script matrix                             | [`bun-test-flags.md`](../harness/tenants/bun-test-flags.md)                |
 | Vocabulary, surface maps, surface-coverage tools | `bun run quality:concept`                                                  |
 
 `quality:concept` runs `concept:audit --strict`, `validate:surface-coverage`,

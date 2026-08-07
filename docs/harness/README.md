@@ -37,6 +37,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - oven-sh/bun contributing map (release · `bun-pr` · BuildKite/`bk` · ASan · WebKit — upstream only; never under `~/Projects`) → [`tenants/bun-upstream-contributing.md`](tenants/bun-upstream-contributing.md) · [bun.com contributing](https://bun.com/docs/project/contributing)
 - Bun `bun test` flags × package scripts / bunfig `[test]` (CLI vs config; JUnit vs Inspector) → [`tenants/bun-test-flags.md`](tenants/bun-test-flags.md)
 - Bun `bun test` Inspector reporters (TestReporter · LifecycleReporter · orthogonal to JUnit) → [`tenants/bun-test-inspect.md`](tenants/bun-test-inspect.md) · `bun run test:inspect` · `bun test tests/inspect-test-reporter.test.ts`
+- Bun-test docs/snapshot leaf sweep (wiki · hubs · capability-map bake) → [`bun-test-docs-sweep.md`](bun-test-docs-sweep.md) · catalog [`bun-test-docs-sweep.json`](bun-test-docs-sweep.json)
 - CLI flag allowlists / unknown `--*` guard → [`cli-constants-flags.md`](cli-constants-flags.md) · `ALLOWED_LONG_REGISTRY` · `bun run cli:flags:check`
 - Multi-lane subagent fanout (Tennis R2 · operator-research · spawn prompts) → [`SUBAGENT-FANOUT.md`](SUBAGENT-FANOUT.md) · machine catalog [`subagent-fanout.json`](subagent-fanout.json)
 - Read this index in-terminal (zero-overhead) → `bun ./docs/harness/README.md` · `bun run docs:harness`

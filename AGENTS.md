@@ -407,3 +407,9 @@ Packages decision tables: [`docs/packages/README.md`](docs/packages/README.md).
 Bench / CPU-profile metrics:
 [`docs/harness/tenants/bun-bench-profiling.md`](docs/harness/tenants/bun-bench-profiling.md)
 · `bun run bench:status`.
+
+`bun test` flag × script matrix:
+[`docs/harness/tenants/bun-test-flags.md`](docs/harness/tenants/bun-test-flags.md).
+Inspector TestReporter (orthogonal to JUnit):
+[`docs/harness/tenants/bun-test-inspect.md`](docs/harness/tenants/bun-test-inspect.md)
+· `bun run test:inspect`.

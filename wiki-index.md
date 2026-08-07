@@ -24,7 +24,7 @@ owns the machine-artifact companion.
 | Plane           | Coverage                                | Authority                                                                                                                              | Drift check                               |
 | --------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | Portal pages    | 36/36                                   | [`lib/portal/page-concepts.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/page-concepts.ts)           | `bun run wiki:coverage:check`             |
-| Harness tenants | 52/52                                   | [`docs/harness/tenants/`](docs/harness/tenants/)                                                                                       | `bun run wiki:coverage:check`             |
+| Harness tenants | 55/55                                   | [`docs/harness/tenants/`](docs/harness/tenants/)                                                                                       | `bun run wiki:coverage:check`             |
 | Registry links  | Curated links present                   | [`public/registry/`](public/registry/)                                                                                                 | paths must exist under `public/registry/` |
 | Wiki links      | Published entrypoints                   | `_config.yml` · [`tools/wiki-link-check.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/wiki-link-check.ts) | `bun run wiki:links:check`                |
 | Public plane    | Portal · registry · monitoring · lander | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                              | `bun run public:discover:check`           |
@@ -243,6 +243,8 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 | Monorepo workspaces           | [`monorepo-workspaces.md`](docs/harness/tenants/monorepo-workspaces.md)             |
 | Bun migration                 | [`bun-migrate.md`](docs/harness/tenants/bun-migrate.md)                             |
 | Bun upstream contributing     | [`bun-upstream-contributing.md`](docs/harness/tenants/bun-upstream-contributing.md) |
+| Bun test flags × scripts      | [`bun-test-flags.md`](docs/harness/tenants/bun-test-flags.md) · CLI vs bunfig · JUnit vs Inspector |
+| Bun test Inspector            | [`bun-test-inspect.md`](docs/harness/tenants/bun-test-inspect.md) · `bun run test:inspect` |
 | Bun channel doctor            | [`bun-channel-doctor.md`](docs/harness/tenants/bun-channel-doctor.md)               |
 | Channel metadata verification | [`channel-meta-verification.md`](docs/harness/tenants/channel-meta-verification.md) |
 | Codex task portfolio          | [`codex-thread-portfolio.md`](docs/harness/tenants/codex-thread-portfolio.md)       |
@@ -313,6 +315,12 @@ and remains safe when independent tests overlap.
 | Reset globals, sockets, timers, and subprocesses between files | [`--isolate`](https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel)                  | Diagnose leaked cross-file state without worker processes |
 | Split CI inventory                                             | [`--shard=M/N`](https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs) | Shard independent files across jobs                       |
 | Disable this repository's changed-test worker pool             | `bun run test:changed -- --serial`                                                                      | Project wrapper; not a `bun test --runInBand` flag        |
+
+FactoryWager script × flag matrix:
+[`docs/harness/tenants/bun-test-flags.md`](docs/harness/tenants/bun-test-flags.md).
+Live Inspector TestReporter stream (orthogonal to JUnit / `test:ci`):
+`bun run test:inspect` ·
+[`docs/harness/tenants/bun-test-inspect.md`](docs/harness/tenants/bun-test-inspect.md).
 
 `workerId` and `NODE_TEST_WORKER_ID` belong to Bun's Node-compatible
 [`node:test` TestContext](https://bun.com/reference/node/test/default/TestContext/workerId),
