@@ -1,198 +1,352 @@
 /**
- * Partner Profile OS — Telegram Integration
+ * Partner Profile OS — Telegram integration.
  *
- * - Auto-create forum topics for partners
- * - dispatchBySignalType(signal, result) → route to appropriate topic
- * - getTopicMapping(partnerId, signalType) → topic config
+ * The profile declares desired partner topics. This module owns the boundary
+ * between that declaration and Telegram's Bot API:
+ *   - configuration is parsed once from environment ingress;
+ *   - topic provisioning and message delivery use an injectable transport;
+ *   - topic mappings use an injectable store so production persistence can be
+ *     supplied without coupling the partner kernel to SQLite;
+ *   - every delivery returns a structured outcome.
  */
 
-import { type SignalContext, type GateResult } from "./partner-profile-schema";
+import {
+  parseExternalPartnerId,
+  parseTelegramChatId,
+  type ExternalPartnerId,
+  type TelegramChatId,
+} from "../../../../../../lib/types/branded.ts";
+import { h2Fetch } from "../../utils/h2-fetch";
+import { SendMessageClient, escapeHtml } from "../../telegram/SendMessageClient";
+import { type SignalContext, type GateResult, type ProfileTelegram } from "./partner-profile-schema";
 import { partnerProfileService } from "./partner-profile-service";
 
+export type TopicStatus = "pending" | "created" | "error";
+
 export interface TopicConfig {
+  partnerId: ExternalPartnerId;
   type: string;
   name: string;
-  chatId?: string;
-  status: "pending" | "created" | "error";
+  chatId?: TelegramChatId;
+  threadId?: number; // brand-ok — Telegram Bot API numeric forum-topic identifier
+  status: TopicStatus;
   error?: string;
 }
 
-/**
- * Auto-create Telegram groups/topics for a partner.
- *
- * Respects the partner's template telegram.groups configuration,
- * creating only groups with auto_create=true.
- */
-export async function autoCreateTelegramGroups(
-  partnerId: string
-): Promise<TopicConfig[]> {
-  const gateway = partnerProfileService.getGateway(partnerId);
-  if (!gateway) throw new Error(`Partner '${partnerId}' not found`);
-
-  const { groups, admin_bot_token_env } = gateway.profile.telegram;
-  const botToken = process.env[admin_bot_token_env];
-  if (!botToken) {
-    console.warn(`[TELEGRAM] Bot token not configured (env: ${admin_bot_token_env})`);
-  }
-
-  const results: TopicConfig[] = [];
-
-  for (const group of groups) {
-    if (!group.auto_create) continue;
-
-    const groupName = group.name.replace(/{partner_id}/g, partnerId);
-    try {
-      let chatId: string | undefined;
-
-      if (botToken) {
-        chatId = await createTelegramForumTopic(botToken, groupName);
-      }
-
-      results.push({
-        type: group.type,
-        name: groupName,
-        chatId,
-        status: chatId ? "created" : "pending",
-      });
-
-      // Persist mapping (best effort)
-      persistTopicMapping(partnerId, group.type, chatId, groupName);
-    } catch (error: any) {
-      results.push({
-        type: group.type,
-        name: groupName,
-        status: "error",
-        error: error.message,
-      });
-      persistTopicError(partnerId, group.type, error.message);
-    }
-  }
-
-  return results;
+export interface TelegramDispatchResult {
+  partnerId: ExternalPartnerId;
+  topicType: string;
+  topicName: string;
+  status: "sent" | "skipped" | "error";
+  error?: string;
 }
 
-/**
- * Dispatch an alert to the appropriate Telegram topic(s) based on signal type.
- */
-export async function dispatchBySignalType(
-  partnerId: string,
-  signal: SignalContext,
-  result: GateResult
-): Promise<void> {
-  const gateway = partnerProfileService.getGateway(partnerId);
-  if (!gateway) return;
-
-  const { groups, admin_bot_token_env } = gateway.profile.telegram;
-  const botToken = process.env[admin_bot_token_env];
-  if (!botToken) return;
-
-  // Determine alert type from signal
-  const alertType = result.action === "block" ? "compliance" : signal.type;
-
-  // Check if we should alert
-  if (!gateway.shouldAlert(alertType, result.adjustedStake ?? signal.suggestedStake)) {
-    return;
-  }
-
-  // Get target groups
-  const targetGroups = gateway.getAlertGroups(signal.type);
-  if (targetGroups.length === 0) return;
-
-  // Format payload
-  const payload = formatAlertPayload(partnerId, signal, result);
-
-  // Dispatch to each group
-  for (const group of targetGroups) {
-    try {
-      await sendTelegramMessage(botToken, group.name, payload);
-    } catch (err: any) {
-      console.error(`[TELEGRAM] Dispatch failed to ${group.name}: ${err.message}`);
-    }
-  }
+export interface PartnerTelegramGateway {
+  profile: { telegram: ProfileTelegram };
+  shouldAlert(type: string, stake: number): boolean;
+  getAlertGroups(signalType: string): Array<{ type: string; name: string }>;
 }
 
-/**
- * Get the topic mapping for a partner and signal type.
- */
-export function getTopicMapping(
-  partnerId: string,
-  signalType: string
-): TopicConfig | undefined {
-  const gateway = partnerProfileService.getGateway(partnerId);
-  if (!gateway) return undefined;
+export interface PartnerTelegramTransport {
+  createForumTopic(input: {
+    botToken: string;
+    chatId: TelegramChatId;
+    name: string;
+  }): Promise<{ threadId: number }>; // brand-ok — Telegram Bot API numeric forum-topic identifier
+  sendMessage(input: {
+    botToken: string;
+    chatId: TelegramChatId;
+    threadId: number; // brand-ok — Telegram Bot API numeric forum-topic identifier
+    text: string;
+  }): Promise<void>;
+}
 
-  const group = gateway.profile.telegram.groups.find((g) => g.type === signalType);
-  if (!group) return undefined;
+export interface PartnerTopicMappingStore {
+  get(partnerId: ExternalPartnerId, topicType: string): TopicConfig | undefined;
+  set(mapping: TopicConfig): void;
+}
 
+export interface PartnerTelegramIntegrationDependencies {
+  getGateway(partnerId: ExternalPartnerId): PartnerTelegramGateway | undefined;
+  readEnv(name: string): string | undefined;
+  transport: PartnerTelegramTransport;
+  mappings?: PartnerTopicMappingStore;
+}
+
+export interface PartnerTelegramIntegration {
+  autoCreateTelegramGroups(partnerId: unknown): Promise<TopicConfig[]>;
+  dispatchBySignalType(
+    partnerId: unknown,
+    signal: SignalContext,
+    result: GateResult
+  ): Promise<TelegramDispatchResult[]>;
+  getTopicMapping(partnerId: unknown, signalType: string): TopicConfig | undefined;
+}
+
+function mappingKey(partnerId: ExternalPartnerId, topicType: string): string {
+  return `${partnerId}\u0000${topicType}`;
+}
+
+export function createMemoryPartnerTopicMappingStore(): PartnerTopicMappingStore {
+  const mappings = new Map<string, TopicConfig>();
   return {
-    type: group.type,
-    name: group.name.replace(/{partner_id}/g, partnerId),
-    status: "pending",
+    get(partnerId, topicType) {
+      const mapping = mappings.get(mappingKey(partnerId, topicType));
+      return mapping ? structuredClone(mapping) : undefined;
+    },
+    set(mapping) {
+      mappings.set(mappingKey(mapping.partnerId, mapping.type), structuredClone(mapping));
+    },
   };
 }
 
-// ── Private ──
-
-async function createTelegramForumTopic(
-  botToken: string,
+function configuredValue(
+  readEnv: PartnerTelegramIntegrationDependencies["readEnv"],
   name: string
-): Promise<string | undefined> {
-  // Placeholder for actual Telegram Bot API call
-  // In production: POST https://api.telegram.org/bot{token}/createForumTopic
-  console.log(`[TELEGRAM] Creating forum topic: ${name}`);
-  return undefined; // Return chat_id/topic_id when created
+): string | undefined {
+  const value = readEnv(name)?.trim();
+  return value ? value : undefined;
 }
 
-async function sendTelegramMessage(
-  botToken: string,
-  chatIdOrName: string,
-  payload: AlertPayload
-): Promise<void> {
-  // Placeholder for actual Telegram Bot API call
-  console.log(`[TELEGRAM] Sending to ${chatIdOrName}: ${payload.message}`);
+function configuredChatId(
+  readEnv: PartnerTelegramIntegrationDependencies["readEnv"],
+  name: string
+): TelegramChatId | undefined {
+  const value = configuredValue(readEnv, name);
+  if (!value) return undefined;
+  const chatId = parseTelegramChatId(value);
+  const numeric = Number(chatId);
+  if (!Number.isSafeInteger(numeric) || numeric === 0) {
+    throw new TypeError(`${name} must contain a non-zero safe-integer Telegram chat ID`);
+  }
+  return chatId;
 }
 
-interface AlertPayload {
-  type: string;
-  partnerId: string;
-  signalId: string;
-  message: string;
-  timestamp: number;
+function configurationError(tokenEnv: string, chatEnv: string, token?: string, chatId?: TelegramChatId) {
+  const missing = [!token ? tokenEnv : undefined, !chatId ? chatEnv : undefined].filter(Boolean);
+  return missing.length > 0 ? `Missing Telegram configuration: ${missing.join(", ")}` : undefined;
 }
 
 function formatAlertPayload(
-  partnerId: string,
+  partnerId: ExternalPartnerId,
   signal: SignalContext,
   result: GateResult
-): AlertPayload {
+): string {
   const action = result.action.toUpperCase();
-  const message =
+  return (
     `[${action}] ${signal.type.toUpperCase()} on ${signal.bookId} | ` +
+    `Partner: ${partnerId} | ` +
     `Stake: ${result.adjustedStake ?? signal.suggestedStake} | ` +
     `Sport: ${signal.sport} | Market: ${signal.market}` +
-    (result.reason ? ` | Reason: ${result.reason}` : "");
-
-  return {
-    type: signal.type,
-    partnerId,
-    signalId: signal.signalId,
-    message,
-    timestamp: Math.floor(Date.now() / 1000),
-  };
-}
-
-function persistTopicMapping(
-  partnerId: string,
-  topicType: string,
-  chatId: string | undefined,
-  chatName: string
-): void {
-  // In production: INSERT INTO partner_telegram_topics
-  console.log(
-    `[TELEGRAM] Topic mapping: ${partnerId}/${topicType} → ${chatName} (${chatId ?? "pending"})`
+    (result.reason ? ` | Reason: ${result.reason}` : "")
   );
 }
 
-function persistTopicError(partnerId: string, topicType: string, error: string): void {
-  console.error(`[TELEGRAM] Topic error: ${partnerId}/${topicType} → ${error}`);
+export function createPartnerTelegramIntegration(
+  dependencies: PartnerTelegramIntegrationDependencies
+): PartnerTelegramIntegration {
+  const mappings = dependencies.mappings ?? createMemoryPartnerTopicMappingStore();
+
+  return {
+    async autoCreateTelegramGroups(partnerIdInput) {
+      const partnerId = parseExternalPartnerId(partnerIdInput);
+      const gateway = dependencies.getGateway(partnerId);
+      if (!gateway) throw new Error(`Partner '${partnerId}' not found`);
+
+      const telegram = gateway.profile.telegram;
+      if (!telegram.auto_create_groups) return [];
+
+      const tokenEnv = telegram.admin_bot_token_env;
+      const chatEnv = telegram.admin_chat_id_env;
+      const botToken = configuredValue(dependencies.readEnv, tokenEnv);
+      const chatId = configuredChatId(dependencies.readEnv, chatEnv);
+      const configError = configurationError(tokenEnv, chatEnv, botToken, chatId);
+      const results: TopicConfig[] = [];
+
+      for (const group of telegram.groups) {
+        if (!group.auto_create) continue;
+        const name = group.name.replace(/{partner_id}/g, partnerId);
+        const existing = mappings.get(partnerId, group.type);
+        if (
+          existing?.status === "created" &&
+          existing.name === name &&
+          existing.chatId === chatId &&
+          existing.threadId
+        ) {
+          results.push(existing);
+          continue;
+        }
+        if (configError || !botToken || !chatId) {
+          const mapping: TopicConfig = {
+            partnerId,
+            type: group.type,
+            name,
+            status: "pending",
+            error: configError,
+          };
+          mappings.set(mapping);
+          results.push(mapping);
+          continue;
+        }
+
+        try {
+          const { threadId } = await dependencies.transport.createForumTopic({
+            botToken,
+            chatId,
+            name,
+          });
+          const mapping: TopicConfig = {
+            partnerId,
+            type: group.type,
+            name,
+            chatId,
+            threadId,
+            status: "created",
+          };
+          mappings.set(mapping);
+          results.push(mapping);
+        } catch (error) {
+          const mapping: TopicConfig = {
+            partnerId,
+            type: group.type,
+            name,
+            chatId,
+            status: "error",
+            error: error instanceof Error ? error.message : String(error),
+          };
+          mappings.set(mapping);
+          results.push(mapping);
+        }
+      }
+      return results;
+    },
+
+    async dispatchBySignalType(partnerIdInput, signal, result) {
+      const partnerId = parseExternalPartnerId(partnerIdInput);
+      const gateway = dependencies.getGateway(partnerId);
+      if (!gateway) return [];
+
+      const telegram = gateway.profile.telegram;
+      const alertType = result.action === "block" ? "compliance" : signal.type;
+      if (!gateway.shouldAlert(alertType, result.adjustedStake ?? signal.suggestedStake)) return [];
+
+      const groups = gateway.getAlertGroups(alertType);
+      if (groups.length === 0) return [];
+
+      const botToken = configuredValue(dependencies.readEnv, telegram.admin_bot_token_env);
+      const text = formatAlertPayload(partnerId, signal, result);
+      const outcomes: TelegramDispatchResult[] = [];
+
+      for (const group of groups) {
+        const mapping = mappings.get(partnerId, group.type);
+        if (!botToken || mapping?.status !== "created" || !mapping.chatId || !mapping.threadId) {
+          outcomes.push({
+            partnerId,
+            topicType: group.type,
+            topicName: group.name,
+            status: "skipped",
+            error: !botToken
+              ? `Missing Telegram configuration: ${telegram.admin_bot_token_env}`
+              : `Telegram topic mapping is not ready for ${group.type}`,
+          });
+          continue;
+        }
+
+        try {
+          await dependencies.transport.sendMessage({
+            botToken,
+            chatId: mapping.chatId,
+            threadId: mapping.threadId,
+            text,
+          });
+          outcomes.push({
+            partnerId,
+            topicType: group.type,
+            topicName: mapping.name,
+            status: "sent",
+          });
+        } catch (error) {
+          outcomes.push({
+            partnerId,
+            topicType: group.type,
+            topicName: mapping.name,
+            status: "error",
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+      }
+      return outcomes;
+    },
+
+    getTopicMapping(partnerIdInput, signalType) {
+      const partnerId = parseExternalPartnerId(partnerIdInput);
+      const existing = mappings.get(partnerId, signalType);
+      if (existing) return existing;
+
+      const gateway = dependencies.getGateway(partnerId);
+      const group = gateway?.profile.telegram.groups.find(candidate => candidate.type === signalType);
+      if (!group) return undefined;
+      return {
+        partnerId,
+        type: group.type,
+        name: group.name.replace(/{partner_id}/g, partnerId),
+        status: "pending",
+      };
+    },
+  };
 }
+
+type TelegramApiResponse = {
+  ok?: boolean;
+  description?: string;
+  result?: { message_thread_id?: number };
+};
+
+const sendClients = new Map<string, SendMessageClient>();
+
+function sendClient(botToken: string): SendMessageClient {
+  let client = sendClients.get(botToken);
+  if (!client) {
+    client = new SendMessageClient(botToken);
+    sendClients.set(botToken, client);
+  }
+  return client;
+}
+
+export const telegramBotApiTransport: PartnerTelegramTransport = {
+  async createForumTopic({ botToken, chatId, name }) {
+    const response = await h2Fetch(`https://api.telegram.org/bot${botToken}/createForumTopic`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, name }),
+    });
+    const body = (await response.json()) as TelegramApiResponse;
+    const threadId = body.result?.message_thread_id;
+    if (!response.ok || body.ok !== true || !Number.isSafeInteger(threadId) || Number(threadId) <= 0) {
+      throw new Error(body.description || `Telegram createForumTopic failed with HTTP ${response.status}`);
+    }
+    return { threadId: Number(threadId) };
+  },
+
+  async sendMessage({ botToken, chatId, threadId, text }) {
+    const numericChatId = Number(chatId);
+    const result = await sendClient(botToken).sendToTopic(
+      numericChatId,
+      threadId,
+      escapeHtml(text),
+      { parse_mode: "HTML" }
+    );
+    if (!result.success) throw new Error(result.error || "Telegram sendMessage failed");
+  },
+};
+
+const defaultIntegration = createPartnerTelegramIntegration({
+  getGateway: partnerId => partnerProfileService.getGateway(partnerId),
+  readEnv: name => process.env[name],
+  transport: telegramBotApiTransport,
+});
+
+/** Compatibility name: provisions configured partner forum topics in one supergroup. */
+export const autoCreateTelegramGroups = defaultIntegration.autoCreateTelegramGroups;
+export const dispatchBySignalType = defaultIntegration.dispatchBySignalType;
+export const getTopicMapping = defaultIntegration.getTopicMapping;

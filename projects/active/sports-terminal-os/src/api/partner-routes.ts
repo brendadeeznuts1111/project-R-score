@@ -201,8 +201,20 @@ async function handleCreatePartner(req: Request): Promise<Response> {
       runtime: overrides?.runtime,
     });
 
-    // Auto-create Telegram groups (best effort)
-    autoCreateTelegramGroups(partnerId).catch(() => {});
+    // Provision Telegram topics asynchronously. The integration returns
+    // per-topic outcomes; surface failures instead of silently discarding them.
+    void autoCreateTelegramGroups(partnerId)
+      .then(outcomes => {
+        const failures = outcomes.filter(outcome => outcome.status === "error");
+        if (failures.length > 0) {
+          console.error(`[TELEGRAM] ${failures.length} partner topic(s) failed to provision`);
+        }
+      })
+      .catch(cause => {
+        console.error(
+          `[TELEGRAM] Partner topic provisioning failed: ${cause instanceof Error ? cause.message : String(cause)}`
+        );
+      });
 
     return json({
       partnerId: gateway.profile.partner_id,

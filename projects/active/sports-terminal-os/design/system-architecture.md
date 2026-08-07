@@ -366,6 +366,7 @@ Buckeye (fantasy402.com:443, Cloudflare-protected)
 | `PROXY_API_KEY` | No | — | `X-API-Key` header for proxy bridge |
 | `REDIS_URL` | No | — | Redis connection URL (enables Telegram Hub) |
 | `TELEGRAM_BOT_TOKEN` | No | — | Primary Telegram bot token |
+| `TELEGRAM_CHAT_ID` | No | — | Numeric supergroup ID for partner forum topics |
 | `ENABLE_ANALYTICS` | No | `false` | Enable analytics endpoints |
 | `ENABLE_RISK_ENGINE` | No | `false` | Enable risk scoring engine |
 | `KIMI_API_KEY` | No | — | Kimi AI API key for risk analysis |
@@ -389,6 +390,7 @@ API keys are referenced by environment variable name in TOML templates — never
 | `api_key_env` | `PIN_API_KEY` | Pinnacle API key |
 | `api_secret_env` | `PIN_API_SECRET` | Pinnacle API secret |
 | `admin_bot_token_env` | `TELEGRAM_BOT_TOKEN` | Telegram bot token reference |
+| `admin_chat_id_env` | `TELEGRAM_CHAT_ID` | Numeric supergroup ID reference for topic provisioning |
 
 ### 8.4 Telegram Hub Variables
 
