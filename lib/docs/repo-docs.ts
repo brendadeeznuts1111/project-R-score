@@ -114,6 +114,7 @@ export const CANONICAL_HARNESS = {
   screenshotRemediation: 'lib/screenshot-remediation.ts',
   operatorResearchPaths: 'lib/operator-research/paths.ts',
   pathBun: 'lib/path-bun.ts',
+  repoContainment: 'lib/repo-containment.ts',
   checkPathBun: 'scripts/check-path-bun.ts',
   checkBunEnv: 'scripts/check-bun-env.ts',
   harnessStatus: 'scripts/harness-status.ts',

@@ -8,13 +8,14 @@
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — cliOut dual-mode
 // @see https://bun.com/docs/project/contributing#download-release-build-from-pull-requests — bunx bun-pr
 // @see https://bun.com/docs/bundler/executables — --force
-import { basename, dirname, join, relative, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { cliOut, logTable } from '../../../lib/console/index.ts';
 import {
   applyUnknownLongOptionGuardFor,
   BUN_RELEASE_CONTRACTS_ALLOWED_LONG,
 } from '../../../lib/docs/ref-id-tool-flags.ts';
+import { assertPathInRepo } from '../../../lib/repo-containment.ts';
 import { prepareReleaseInventoryIndex, type PreparedReleaseInventoryIndex } from './catalog';
 import { fetchReleaseFeed, loadReleaseFeedSettings, selectReleaseFeedEntries } from './feed';
 import {
@@ -28,30 +29,16 @@ export { BUN_RELEASE_CONTRACTS_ALLOWED_LONG };
 const REPO_ROOT = resolve(import.meta.dir, '..', '..', '..');
 const DEFAULT_OUTPUT_DIR = resolve(import.meta.dir, '..', 'contracts');
 
-async function resolveExistingRealPath(path: string): Promise<string> {
-  const abs = resolve(path);
-  if (!(await Bun.file(abs).exists())) return abs;
-  const proc = Bun.spawn(['realpath', '--', abs], { stdout: 'pipe', stderr: 'pipe' });
-  const [stdout, exitCode] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
-  const resolved = stdout.trim();
-  return exitCode === 0 && resolved ? resolved : abs;
-}
-
 /** Gate --output-dir under the repository root unless --force. */
 export async function assertOutputDirInRepo(
   outputDir: string,
   opts: { force?: boolean; repoRoot?: string } = {}
 ): Promise<string> {
-  const abs = await resolveExistingRealPath(outputDir);
-  if (opts.force) return abs;
-  const root = await resolveExistingRealPath(opts.repoRoot ?? REPO_ROOT);
-  const rel = relative(root, abs);
-  if (rel.startsWith('..') || rel === '..') {
-    throw new Error(
-      `--output-dir must stay under the repository root (${root}); got ${abs}. Pass --force to override.`
-    );
-  }
-  return abs;
+  return assertPathInRepo(outputDir, {
+    force: opts.force,
+    repoRoot: opts.repoRoot ?? REPO_ROOT,
+    label: '--output-dir',
+  });
 }
 
 function positiveInteger(value: string | undefined, name: string, fallback?: number): number {

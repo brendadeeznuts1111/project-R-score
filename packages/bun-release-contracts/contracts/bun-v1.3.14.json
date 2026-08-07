@@ -4,8 +4,8 @@
   "releaseVersion": "1.3.14",
   "sourceUrl": "https://bun.com/blog/bun-v1.3.14",
   "counts": {
-    "planned": 374,
-    "executable": 6
+    "planned": 377,
+    "executable": 3
   },
   "items": [
     {
@@ -29,16 +29,16 @@
       "category": "image-inputs",
       "section": "Input sources",
       "announcement": "Bun.Image accepts path strings, ArrayBuffer/TypedArray (zero-copy), Blob/BunFile/S3File, and data: URLs. You can also use Bun.file(\"photo.jpg\").image() or blob.image() to start a pipeline.",
-      "status": "covered",
-      "testPath": "tests/image-metadata.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "image-transforms-dad327cb",
       "category": "image-transforms",
       "section": "Chainable transforms",
       "announcement": "The pipeline supports .resize(w, h?, {filter, fit, withoutEnlargement}), .rotate(90|180|270), .flip(), .flop(), and .modulate({brightness, saturation}). Output format is set with .jpeg(), .png(), .webp(), .heic(), or .avif() — each with format-specific quality/compression options.",
-      "status": "covered",
-      "testPath": "tests/image-metadata.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "image-filters-6c27ec84",
@@ -53,8 +53,8 @@
       "category": "image-output",
       "section": "Terminal methods",
       "announcement": "All processing runs off the main thread (except metadata()). Output via .bytes(), .buffer(), .blob(), .toBase64(), .dataurl(), .placeholder() (thumbhash), .metadata(), or .write(dest).",
-      "status": "covered",
-      "testPath": "tests/image-metadata.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "image-body-7f989cde",

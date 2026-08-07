@@ -33,12 +33,9 @@ import {
 } from '../lib/docs/ref-id-tool-flags.ts';
 import { extractImageEvidenceMeta } from '../lib/image-metadata.ts';
 import { captureScreenshot } from '../lib/operator-research/screenshot.ts';
-import {
-  ensureResearchDirs,
-  ROOT as REPO_ROOT,
-  SCREENSHOTS_DIR,
-} from '../lib/operator-research/paths.ts';
-import { joinPath, normalizePath, relativePath, resolvePath } from '../lib/path-bun.ts';
+import { ensureResearchDirs, SCREENSHOTS_DIR } from '../lib/operator-research/paths.ts';
+import { joinPath } from '../lib/path-bun.ts';
+import { assertPathInRepo, resolveExistingRealPath } from '../lib/repo-containment.ts';
 import {
   remediateScreenshotCapture,
   runTest003,
@@ -48,7 +45,7 @@ import {
   type Test003Response,
 } from '../lib/screenshot-remediation.ts';
 
-export { SCREENSHOT_ALLOWED_LONG };
+export { resolveExistingRealPath, SCREENSHOT_ALLOWED_LONG };
 
 const COMMANDS = ['capture', 'verify', 'remediate', 'meta'] as const;
 type Command = (typeof COMMANDS)[number];
@@ -70,7 +67,7 @@ function printHelp(): void {
 
 Commands:
   capture <url>       WebView PNG capture + TEST-003 gate + evidence write
-  verify <path>       PNG → TEST-003, or re-parse a .test003.json sidecar
+  verify <path>       PNG → TEST-003, or re-parse a .test003.json sidecar only
   remediate <png>     End-to-end remediateScreenshotCapture on a PNG
   meta <image-path>   Bun.Image metadata + digest only
 
@@ -82,6 +79,11 @@ Options:
   --force                Allow paths outside the repository root
   --json                 Machine-readable summary via cliOut
   -h, --help             Show this help
+
+Thumb planes:
+  On-disk <id>.thumb.webp is display-only (UI preview). The TEST-003 sidecar
+  thumbnail field is the evidence PNG plane (resizeScreenshotPng bytes + digest).
+  There is no digest parity claim between .thumb.webp and sidecar thumbnail.
 
 Docs:
   bun tools/bun-doc-refs.ts suggest "Bun.WebView"
@@ -107,31 +109,12 @@ export function assertHttpUrl(url: string): string {
   return parsed.href;
 }
 
-/** Resolve realpath when the path exists (falls back to normalized absolute). */
-export async function resolveExistingRealPath(path: string): Promise<string> {
-  const abs = normalizePath(resolvePath(path));
-  if (!(await Bun.file(abs).exists())) return abs;
-  const proc = Bun.spawn(['realpath', '--', abs], { stdout: 'pipe', stderr: 'pipe' });
-  const [stdout, exitCode] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
-  const resolved = stdout.trim();
-  return exitCode === 0 && resolved ? normalizePath(resolved) : abs;
-}
-
 /** Resolve a path and optionally require it under the repo root (realpath-aware). */
 export async function assertRepoPath(
   path: string,
   opts: { force?: boolean; label: string }
 ): Promise<string> {
-  const abs = await resolveExistingRealPath(path);
-  if (opts.force) return abs;
-  const root = await resolveExistingRealPath(REPO_ROOT);
-  const rel = relativePath(root, abs);
-  if (rel.startsWith('..') || rel === '..') {
-    throw new Error(
-      `${opts.label} must stay under the repository root (${root}); got ${abs}. Pass --force to override.`
-    );
-  }
-  return abs;
+  return assertPathInRepo(path, opts);
 }
 
 export function hasPngMagic(bytes: Uint8Array): boolean {
@@ -223,12 +206,19 @@ export async function runScreenshotCli(
     let test003: Test003Response | null = null;
     let evidencePath: string | undefined;
     if (result.pngBytes) {
-      const remediated = await remediateScreenshotCapture(result.pngBytes, {
-        subject: subject ?? url,
-      });
-      // Drop thumbnailBytes — binary must not land in --json / evidence sidecars.
-      const { thumbnailBytes: _thumb, ...gate } = remediated;
-      test003 = gate;
+      // Prefer the record minted during capture — avoid reminting a second EvidenceId.
+      if (result.record) {
+        test003 = runTest003(result.record, undefined, {
+          elapsedMs: result.observation.elapsedMs,
+        });
+      } else {
+        const remediated = await remediateScreenshotCapture(result.pngBytes, {
+          subject: subject ?? url,
+        });
+        // Drop thumbnailBytes — binary must not land in --json / evidence sidecars.
+        const { thumbnailBytes: _thumb, ...gate } = remediated;
+        test003 = gate;
+      }
       if (result.observation.evidenceId) {
         evidencePath = joinPath(outDir, `${result.observation.evidenceId}.test003.json`);
         await Bun.write(
@@ -237,6 +227,8 @@ export async function runScreenshotCli(
             {
               ...test003,
               evidenceId: String(test003.evidence.evidenceId),
+              // Sidecar thumbnail = PNG evidence plane; on-disk .thumb.webp is display-only.
+              thumbPlane: 'png-evidence',
               observation: result.observation,
             },
             null,
@@ -307,7 +299,8 @@ export async function runScreenshotCli(
   }
 
   if (command === 'verify') {
-    if (absTarget.endsWith('.test003.json') || absTarget.endsWith('.json')) {
+    // Sidecar parse only for TEST-003 evidence files — bare .json is not evidence.
+    if (absTarget.endsWith('.test003.json')) {
       const wire = await Bun.file(absTarget).json();
       const record = parseScreenshotEvidenceRecord(wire);
       const response = runTest003(record);

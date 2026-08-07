@@ -68,11 +68,20 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isCrop(value: unknown): value is { x: number; y: number; w: number; h: number } {
   if (!isRecord(value)) return false;
+  const { x, y, w, h } = value;
   return (
-    typeof value.x === 'number' &&
-    typeof value.y === 'number' &&
-    typeof value.w === 'number' &&
-    typeof value.h === 'number'
+    typeof x === 'number' &&
+    typeof y === 'number' &&
+    typeof w === 'number' &&
+    typeof h === 'number' &&
+    Number.isFinite(x) &&
+    Number.isFinite(y) &&
+    Number.isFinite(w) &&
+    Number.isFinite(h) &&
+    x >= 0 &&
+    y >= 0 &&
+    w >= 0 &&
+    h >= 0
   );
 }
 

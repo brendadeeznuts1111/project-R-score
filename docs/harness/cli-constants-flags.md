@@ -250,6 +250,9 @@ Commands (positionals): `capture` · `verify` · `remediate` · `meta`.
 `capture` requires an absolute `http(s)` URL, runs TEST-003 on the PNG bytes,
 writes `<evidenceId>.test003.json` beside the PNG, and exits non-zero on
 placeholder captures unless `--allow-placeholder` is set.
-`verify` accepts a PNG **or** a `.test003.json` sidecar (re-parses via
-`parseScreenshotEvidenceRecord`).
-Entry: [`tools/screenshot-cli.ts`](../../tools/screenshot-cli.ts).
+`verify` accepts a PNG **or** a `.test003.json` sidecar only (re-parses via
+`parseScreenshotEvidenceRecord`; bare `.json` is not a sidecar). Capture mints
+one `EvidenceId` for PNG + sidecar; on-disk `.thumb.webp` is display-only —
+TEST-003 `thumbnail` is the evidence PNG plane.
+Entry: [`tools/screenshot-cli.ts`](../../tools/screenshot-cli.ts) · containment
+[`lib/repo-containment.ts`](../../lib/repo-containment.ts).

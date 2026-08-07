@@ -1,11 +1,14 @@
 // @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
-import { mkdir, mkdtemp, rm } from 'node:fs/promises';
-import { join } from 'node:path';
+import { mkdir, mkdtemp, readdir, rm } from 'node:fs/promises';
+import { basename, join } from 'node:path';
 import { SCREENSHOT_ALLOWED_LONG } from '../lib/docs/ref-id-tool-flags.ts';
 import { ROOT as REPO_ROOT } from '../lib/operator-research/paths.ts';
+import { captureScreenshot } from '../lib/operator-research/screenshot.ts';
 import type { ScreenshotObservation } from '../lib/operator-research/types.ts';
+import { buildScreenshotEvidenceRecord } from '../lib/screenshot-remediation.ts';
+import { unbrand } from '../lib/types/branded.ts';
 import {
   assertHttpUrl,
   assertRepoPath,
@@ -26,8 +29,34 @@ async function mkRepoDataTemp(prefix: string): Promise<string> {
   return mkdtemp(join(base, prefix));
 }
 
-// captureExitCode is not exported — re-implement the gate table here via CLI mocks.
-// Import helper by re-exporting through a thin test of runScreenshotCli capture deps.
+/** Mock capture deps that mint one EvidenceId via buildScreenshotEvidenceRecord. */
+async function mockCaptureWithRecord(
+  outDir: string,
+  source: 'webview' | 'placeholder' = 'placeholder'
+) {
+  const { record } = await buildScreenshotEvidenceRecord(new Uint8Array(PNG_10), {
+    subject: 'mock',
+  });
+  const id = unbrand(record.evidenceId);
+  const observation: ScreenshotObservation = {
+    ok: true,
+    source,
+    pngPath: join(outDir, `${id}.png`),
+    thumbPath: join(outDir, `${id}.thumb.webp`),
+    evidenceId: id,
+    width: record.source.width,
+    height: record.source.height,
+    thumbBytes: PNG_10.byteLength,
+    elapsedMs: 1,
+    error: source === 'placeholder' ? 'webview unavailable' : undefined,
+  };
+  return {
+    observation,
+    pngBytes: new Uint8Array(PNG_10),
+    thumbBytes: new Uint8Array(PNG_10),
+    record,
+  };
+}
 
 describe('screenshot CLI helpers', () => {
   test('allowlist includes dual-mode, placeholder opt-in, and force', () => {
@@ -151,32 +180,19 @@ describe('screenshot CLI', () => {
   test('capture runs TEST-003, writes evidence JSON, and fails placeholder by default', async () => {
     const outDir = await mkRepoDataTemp('tmp-screenshot-cli-capture-');
     try {
-      const observation: ScreenshotObservation = {
-        ok: true,
-        source: 'placeholder',
-        pngPath: join(outDir, 'ev.png'),
-        thumbPath: join(outDir, 'ev.thumb.webp'),
-        evidenceId: '019fddd8-4563-7000-89b2-622bc8f9919f',
-        width: 10,
-        height: 10,
-        thumbBytes: PNG_10.byteLength,
-        elapsedMs: 1,
-        error: 'webview unavailable',
-      };
+      const mock = await mockCaptureWithRecord(outDir, 'placeholder');
       const failed = await runScreenshotCli(
         ['capture', 'https://example.com', '--out-dir', outDir, '--json'],
-        {
-          capture: async () => ({
-            observation,
-            pngBytes: new Uint8Array(PNG_10),
-            thumbBytes: new Uint8Array(PNG_10),
-          }),
-        }
+        { capture: async () => mock }
       );
       const failedBody = failed.payload as {
-        test003: { ok: boolean; code: string } | null;
+        test003: {
+          ok: boolean;
+          code: string;
+          evidence: { evidenceId: string }; // brand-ok — CLI JSON payload shape
+        } | null;
         evidencePath?: string;
-        observation: { source: string };
+        observation: { source: string; evidenceId?: string }; // brand-ok — CLI JSON payload shape
         exitCode: number;
       };
       expect(failedBody.observation.source).toBe('placeholder');
@@ -184,6 +200,22 @@ describe('screenshot CLI', () => {
       expect(failed.exitCode).toBe(1);
       expect(failedBody.evidencePath).toBeTruthy();
       expect(await Bun.file(failedBody.evidencePath!).exists()).toBe(true);
+
+      // Single EvidenceId: observation, nested evidence, sidecar basename, PNG stem.
+      const obsId = failedBody.observation.evidenceId!;
+      const evidenceId = failedBody.test003!.evidence.evidenceId;
+      expect(evidenceId).toBe(obsId);
+      expect(basename(failedBody.evidencePath!)).toBe(`${obsId}.test003.json`);
+      expect(basename(mock.observation.pngPath!, '.png')).toBe(obsId);
+
+      const sidecar = (await Bun.file(failedBody.evidencePath!).json()) as {
+        thumbPlane?: string;
+        evidence: { evidenceId: string }; // brand-ok — wire JSON
+        observation: { evidenceId: string }; // brand-ok — wire JSON
+      };
+      expect(sidecar.thumbPlane).toBe('png-evidence');
+      expect(sidecar.evidence.evidenceId).toBe(sidecar.observation.evidenceId);
+      expect(sidecar.evidence.evidenceId).toBe(obsId);
 
       const allowed = await runScreenshotCli(
         [
@@ -194,13 +226,7 @@ describe('screenshot CLI', () => {
           '--allow-placeholder',
           '--json',
         ],
-        {
-          capture: async () => ({
-            observation,
-            pngBytes: new Uint8Array(PNG_10),
-            thumbBytes: new Uint8Array(PNG_10),
-          }),
-        }
+        { capture: async () => mock }
       );
       // Placeholder allowed + TEST-003 pass on fixture → exit 0
       expect(allowed.exitCode).toBe(0);
@@ -220,20 +246,8 @@ describe('screenshot CLI', () => {
 
   test('verify re-parses a .test003.json sidecar via parseScreenshotEvidenceRecord', async () => {
     const dir = await mkRepoDataTemp('tmp-screenshot-cli-sidecar-');
-    const pngPath = join(dir, 'fixture.png');
     try {
-      await Bun.write(pngPath, PNG_10);
-      const observation: ScreenshotObservation = {
-        ok: true,
-        source: 'webview',
-        pngPath,
-        thumbPath: join(dir, 'fixture.thumb.webp'),
-        evidenceId: '019fddd8-4563-7000-89b2-622bc8f9919f',
-        width: 10,
-        height: 10,
-        thumbBytes: PNG_10.byteLength,
-        elapsedMs: 1,
-      };
+      const mock = await mockCaptureWithRecord(dir, 'webview');
       const captured = await runScreenshotCli(
         [
           'capture',
@@ -243,16 +257,17 @@ describe('screenshot CLI', () => {
           '--allow-placeholder',
           '--json',
         ],
-        {
-          capture: async () => ({
-            observation,
-            pngBytes: new Uint8Array(PNG_10),
-            thumbBytes: new Uint8Array(PNG_10),
-          }),
-        }
+        { capture: async () => mock }
       );
-      const capturedBody = captured.payload as { evidencePath?: string; exitCode: number };
+      const capturedBody = captured.payload as {
+        evidencePath?: string;
+        exitCode: number;
+        observation: { evidenceId?: string }; // brand-ok — CLI JSON payload shape
+        test003: { evidence: { evidenceId: string } } | null; // brand-ok — CLI JSON
+      };
       expect(capturedBody.evidencePath).toBeTruthy();
+      expect(capturedBody.test003!.evidence.evidenceId).toBe(capturedBody.observation.evidenceId);
+
       const verified = await runScreenshotCli([
         'verify',
         capturedBody.evidencePath!,
@@ -267,10 +282,52 @@ describe('screenshot CLI', () => {
       expect(verifiedBody.source).toBe('sidecar');
       expect(verifiedBody.code).toBe('TEST-003');
       expect(verifiedBody.evidence.kind).toBe('ScreenshotEvidence');
-      expect(verifiedBody.evidence.evidenceId).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-      );
+      expect(verifiedBody.evidence.evidenceId).toBe(capturedBody.observation.evidenceId);
       expect(verified.exitCode).toBe(verifiedBody.ok ? 0 : 1);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
+  test('captureScreenshot omits placeholder when allowPlaceholder is not true', async () => {
+    const outDir = await mkRepoDataTemp('tmp-screenshot-no-placeholder-');
+    try {
+      // Unreachable target + short timeout forces WebView failure in CI/sandbox.
+      const result = await captureScreenshot('https://127.0.0.1:1/', {
+        outDir,
+        timeoutMs: 200,
+        // allowPlaceholder omitted → fail closed
+      });
+      expect(result.observation.ok).toBe(false);
+      expect(result.observation.source).toBe('none');
+      expect(result.pngBytes).toBeUndefined();
+      expect(result.record).toBeUndefined();
+      const entries = await readdir(outDir);
+      expect(entries.filter(e => e.endsWith('.png') || e.endsWith('.webp'))).toEqual([]);
+    } finally {
+      await rm(outDir, { recursive: true, force: true });
+    }
+  });
+
+  test('verify on bare .json does not take sidecar parse path', async () => {
+    const dir = await mkRepoDataTemp('tmp-screenshot-cli-bare-json-');
+    const jsonPath = join(dir, 'random.json');
+    try {
+      // Valid-looking ScreenshotEvidence wire — must NOT be accepted via bare .json.
+      const { record } = await buildScreenshotEvidenceRecord(new Uint8Array(PNG_10), {
+        subject: 'bare-json',
+      });
+      await Bun.write(
+        jsonPath,
+        JSON.stringify({
+          code: 'TEST-003',
+          evidence: { ...record, evidenceId: unbrand(record.evidenceId) },
+        })
+      );
+      // Treated as PNG path → missing PNG magic (or empty/not PNG).
+      await expect(runScreenshotCli(['verify', jsonPath, '--json'])).rejects.toThrow(
+        /Not a PNG|Empty image|File not found/
+      );
     } finally {
       await rm(dir, { recursive: true, force: true });
     }

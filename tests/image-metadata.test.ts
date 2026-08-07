@@ -304,4 +304,30 @@ describe('lib/screenshot-remediation TEST-003', () => {
       /Invalid ScreenshotEvidenceRecord/
     );
   });
+
+  test('isScreenshotEvidenceRecord rejects crop with NaN or negative extents', async () => {
+    const { record } = await buildScreenshotEvidenceRecord(PNG_10, { subject: 'crop' });
+    const base = {
+      ...record,
+      evidenceId: unbrand(record.evidenceId),
+      crop: { x: 0, y: 0, w: 10, h: 10 },
+    };
+    expect(isScreenshotEvidenceRecord(base)).toBe(true);
+
+    expect(isScreenshotEvidenceRecord({ ...base, crop: { x: NaN, y: 0, w: 10, h: 10 } })).toBe(
+      false
+    );
+    expect(isScreenshotEvidenceRecord({ ...base, crop: { x: 0, y: Infinity, w: 10, h: 10 } })).toBe(
+      false
+    );
+    expect(isScreenshotEvidenceRecord({ ...base, crop: { x: -1, y: 0, w: 10, h: 10 } })).toBe(
+      false
+    );
+    expect(isScreenshotEvidenceRecord({ ...base, crop: { x: 0, y: 0, w: -5, h: 10 } })).toBe(
+      false
+    );
+    expect(() =>
+      parseScreenshotEvidenceRecord({ ...base, crop: { x: NaN, y: 0, w: 10, h: 10 } })
+    ).toThrow(/Invalid ScreenshotEvidenceRecord/);
+  });
 });

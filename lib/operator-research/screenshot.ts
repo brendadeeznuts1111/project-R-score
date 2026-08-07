@@ -5,8 +5,11 @@
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
 // @see https://bun.com/blog/bun-v1.3.12#bun-webview-headless-browser-automation — await using WebView
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
+import {
+  buildScreenshotEvidenceRecord,
+  type ScreenshotEvidenceRecord,
+} from '../screenshot-remediation.ts';
 import { joinPath } from '../path-bun.ts';
-import { buildScreenshotEvidenceRecord } from '../screenshot-remediation.ts';
 import { FIXTURES_DIR, SCREENSHOTS_DIR } from './paths.ts';
 import type { ScreenshotObservation } from './types.ts';
 
@@ -34,6 +37,14 @@ async function captureWebViewPng(url: string, timeoutMs: number): Promise<Uint8A
   return new Uint8Array(ss);
 }
 
+export type CaptureScreenshotResult = {
+  observation: ScreenshotObservation;
+  pngBytes?: Uint8Array;
+  thumbBytes?: Uint8Array;
+  /** Evidence record minted once during capture — pass to runTest003 (do not remint). */
+  record?: ScreenshotEvidenceRecord;
+};
+
 export async function captureScreenshot(
   url: string,
   opts: {
@@ -43,7 +54,7 @@ export async function captureScreenshot(
     /** Override default `data/operator-research/screenshots` output directory. */
     outDir?: string;
   } = {}
-): Promise<{ observation: ScreenshotObservation; pngBytes?: Uint8Array; thumbBytes?: Uint8Array }> {
+): Promise<CaptureScreenshotResult> {
   const started = Bun.nanoseconds();
   const timeoutMs = opts.timeoutMs ?? 18_000;
   const outDir = opts.outDir ?? SCREENSHOTS_DIR;
@@ -63,6 +74,7 @@ export async function captureScreenshot(
     return {
       pngBytes,
       thumbBytes: new Uint8Array(webp),
+      record,
       observation: {
         ok: true,
         source: 'webview',
@@ -77,7 +89,8 @@ export async function captureScreenshot(
     };
   } catch (err) {
     const elapsedMs = (Number(Bun.nanoseconds()) - Number(started)) / 1_000_000;
-    if (opts.allowPlaceholder === false) {
+    // Fail closed: omitted allowPlaceholder is false (matches CLI default).
+    if (opts.allowPlaceholder !== true) {
       return {
         observation: {
           ok: false,
@@ -109,6 +122,7 @@ export async function captureScreenshot(
     return {
       pngBytes,
       thumbBytes: webp,
+      record,
       observation: {
         ok: true,
         source: 'placeholder',
