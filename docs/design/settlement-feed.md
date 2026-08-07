@@ -86,3 +86,7 @@ A `Bun.cron` job (daily/weekly per `settlement.payoutFrequency` when set, defaul
 - `docs/design/unified-partner-profile.md` — `settlement.*`, `balance.*`, `accounting.*` model
 - `lib/partner-profile/ledger.ts` · `lib/partner-profile/accounting-stub.ts` · `tools/partner-settlement.ts`
 - Registry: `@factorywager/bookmakers` 0.3.0 (`fetcherType: "seat"`)
+- **Different plane:** agent-account freeze-on-win / daily+weekly Telegram invoices —
+  [`agent-account-settlement-reports.md`](agent-account-settlement-reports.md)
+  (commission on positive net winnings + Command settlement-balance carry; not
+  `partner_ledger`)

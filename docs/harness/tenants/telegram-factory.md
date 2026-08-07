@@ -191,6 +191,10 @@ aggregatePartnerFinance(db, days=7)          # ledger window per partner
 - `targetFor` override: `publishFinanceReports({ targetFor })` swaps the per-partner chat/topic resolution (`null` skips).
 - Same thread also receives daily capacity reports (`daily-capacity-report.ts`) and event alerts (`event-alerts.ts:238`).
 - **Weekly settlement** (`partner-settlement-cron.ts` → `settlement-runner.ts`) computes commission **amount** into the ledger + profile TOML only — it never posts to chat; the daily report posts the **rate**.
+- **Agent-account settlement reports (design):** freeze-on-win daily + weekly
+  Telegram invoices for account-provider agents — different plane from partner
+  CODE finance reports —
+  [`docs/design/agent-account-settlement-reports.md`](../../design/agent-account-settlement-reports.md).
 
 ### Inbound — proof photos → `dod_submissions` → `/portal/dod/`
 
