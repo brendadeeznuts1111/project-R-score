@@ -144,9 +144,10 @@ Forgetting step 1 → fail/throw in strict mode.
 Operator helper for testing **oven-sh/bun** PR binaries — outside
 `ALLOWED_LONG_REGISTRY`. Do not add `bun-pr` flags to Project-R CLI allowlists.
 
-| Piece | Detail |
-| ----- | ------ |
-| Auth | **`gh auth login`** primary; `GITHUB_TOKEN` / `GH_TOKEN` / `gh auth token` also work |
-| Invoke | `bunx bun-pr <pr\|branch\|URL>` · `bunx bun-pr --asan <pr>` (Linux x64) |
-| Docs | [contributing § download](https://bun.com/docs/project/contributing#download-release-build-from-pull-requests) · [`AUTHORITY.md`](AUTHORITY.md) |
-| Optional | `BUILDKITE_API_TOKEN` — Bun upstream `ci:status` only (not FactoryWager) |
+| Piece    | Detail                                                                                                                                               |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Auth     | **`gh auth login`** primary; `GITHUB_TOKEN` / `GH_TOKEN` / `gh auth token` also work                                                                 |
+| Invoke   | `bunx bun-pr <pr\|branch\|URL>` · `bunx bun-pr --asan <pr>` (Linux x64)                                                                              |
+| Docs     | [contributing § download](https://bun.com/docs/project/contributing#download-release-build-from-pull-requests) · [`AUTHORITY.md`](AUTHORITY.md)      |
+| Optional | `BUILDKITE_API_TOKEN` — Bun upstream `ci:status` only (not FactoryWager)                                                                             |
+| Full map | [`tenants/bun-upstream-contributing.md`](tenants/bun-upstream-contributing.md) — release · `bun-pr` · `bk`/BuildKite · ASan · WebKit (upstream only) |

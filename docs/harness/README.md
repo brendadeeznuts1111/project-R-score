@@ -32,6 +32,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Repository review (9 trajectory questions) → [`REVIEW.md`](REVIEW.md)
 - Repeat failure → earliest owner → [`FEEDBACK.md`](FEEDBACK.md)
 - Lanes / push / credentials / irreversible ops → [`AUTHORITY.md`](AUTHORITY.md)
+- oven-sh/bun contributing map (release · `bun-pr` · BuildKite/`bk` · ASan · WebKit — upstream only; never under `~/Projects`) → [`tenants/bun-upstream-contributing.md`](tenants/bun-upstream-contributing.md) · [bun.com contributing](https://bun.com/docs/project/contributing)
 - CLI flag allowlists / unknown `--*` guard → [`cli-constants-flags.md`](cli-constants-flags.md) · `ALLOWED_LONG_REGISTRY` · `bun run cli:flags:check`
 - Multi-lane subagent fanout (Tennis R2 · operator-research · spawn prompts) → [`SUBAGENT-FANOUT.md`](SUBAGENT-FANOUT.md) · machine catalog [`subagent-fanout.json`](subagent-fanout.json)
 - Read this index in-terminal (zero-overhead) → `bun ./docs/harness/README.md` · `bun run docs:harness`

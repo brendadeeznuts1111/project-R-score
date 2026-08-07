@@ -242,6 +242,7 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 | Monorepo health               | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md)                     |
 | Monorepo workspaces           | [`monorepo-workspaces.md`](docs/harness/tenants/monorepo-workspaces.md)             |
 | Bun migration                 | [`bun-migrate.md`](docs/harness/tenants/bun-migrate.md)                             |
+| Bun upstream contributing     | [`bun-upstream-contributing.md`](docs/harness/tenants/bun-upstream-contributing.md) |
 | Bun channel doctor            | [`bun-channel-doctor.md`](docs/harness/tenants/bun-channel-doctor.md)               |
 | Channel metadata verification | [`channel-meta-verification.md`](docs/harness/tenants/channel-meta-verification.md) |
 | Codex task portfolio          | [`codex-thread-portfolio.md`](docs/harness/tenants/codex-thread-portfolio.md)       |

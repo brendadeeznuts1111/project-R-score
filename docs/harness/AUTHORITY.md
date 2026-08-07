@@ -48,8 +48,8 @@ Interior identity is **owner / name / host / remote slot**, not a single
 `GITHUB_REPOSITORY` (+ `GITHUB_REPOSITORY_OWNER`, `GITHUB_SERVER_URL`) →
 `git remote get-url` → [`CANONICAL_REMOTES`](../../lib/docs/repo-docs.ts).
 Derive `https://…` only at the link edge (`htmlUrl` / `treeUrl` / `commitUrl` /
-`blobUrl` / `rawUrl`). Garbage Actions or unparseable git remotes **fail loud** —
-never silent hardcode disguised as env.
+`blobUrl` / `rawUrl`). Garbage Actions or unparseable git remotes **fail loud**
+— never silent hardcode disguised as env.
 
 **Global frozen constants** (canonical monorepo / cascade — no runtime probe):
 `GITHUB_ORIGIN` · `GITHUB_CASCADE` · `GITHUB_REMOTES` (`.url` · `.ownerName` ·
@@ -72,10 +72,16 @@ gh auth login                 # primary auth — not bun create's GITHUB_TOKEN t
 bunx bun-pr <pr-number>       # also: branch name, PR URL, or --asan <pr> (Linux x64)
 ```
 
-`GITHUB_TOKEN` / `GH_TOKEN` / `gh auth token` still satisfy artifact download when
-set. Optional and separate: `BUILDKITE_API_TOKEN` for Bun upstream
+`GITHUB_TOKEN` / `GH_TOKEN` / `gh auth token` still satisfy artifact download
+when set. Optional and separate: `BUILDKITE_API_TOKEN` for Bun upstream
 `bun run ci:status` (BuildKite) — not FactoryWager; no Pass vault item. Env
 comments: `env.template` · `.env.example` · `lib/env-check.ts`.
+
+**Full upstream contributing map** (release build · `bun-pr` · BuildKite/`bk` ·
+ASan · WebKit/JSC — oven-sh/bun only; never clone WebKit or run `build:local`
+under `~/Projects`):
+[`tenants/bun-upstream-contributing.md`](tenants/bun-upstream-contributing.md) ·
+[bun.com contributing](https://bun.com/docs/project/contributing).
 
 ### Issue metadata writes
 
