@@ -23,6 +23,9 @@ import { parseGitStatusPorcelain, type GitStatusEntry } from '../scripts/lib/git
 
 export {};
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('lane:status', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const JSON_MODE = argv.includes('--json');
 const STALE_HOURS = 48;
 
@@ -41,10 +44,6 @@ async function git(
   if (code !== 0) return '';
   return preserveLeadingWhitespace ? out.trimEnd() : out.trim();
 }
-
-const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('lane:status', Bun.argv.slice(2))
-  : Bun.argv.slice(2);
 const ROOT = await git(['rev-parse', '--show-toplevel']);
 if (!ROOT) {
   console.error('lane-status: not inside a git work tree');
