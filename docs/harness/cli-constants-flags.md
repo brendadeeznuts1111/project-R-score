@@ -160,6 +160,9 @@ bun run docs:refid:check
 | `packages:metafile-audit` | json · md · diff · out · glob · full-metafile · include-tests · cross-check · map · bake · shallow · apply-actions · dry-run · vault · vault-gap · env · no-pkg-json · strict · strict-actions (19) | [`tools/packages-metafile-audit.ts`](../../tools/packages-metafile-audit.ts) |
 | `harness:violations` | `json` · `open` · `path` · `rule` · `legacy-brands` · `limit` | [`tools/harness-violations.ts`](../../tools/harness-violations.ts) |
 | `portal:cli` | doctor · scanner · snapshot · graph · secret · flags · bunfig (union; ~50 leaves) | [`tools/portal-cli.ts`](../../tools/portal-cli.ts) — passthrough `pm` / `secret` / `probe` skip guard; Bun exec flags peeled first |
+| `bun:brand-map` | `check` · `write-baseline` · `json` | [`tools/bun-brand-map.ts`](../../tools/bun-brand-map.ts) |
+| `env:inventory` | `json` · `vault-only` · `ratchet` · `write-baseline` · `bake` | [`scripts/env-inventory.ts`](../../scripts/env-inventory.ts) |
+| `check:import-graph` | `json` · `write-baseline` | [`scripts/check-import-graph.ts`](../../scripts/check-import-graph.ts) |
 
 ---
 

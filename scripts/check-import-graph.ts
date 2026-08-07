@@ -26,6 +26,7 @@
  * Import edges via Bun.Transpiler.scanImports (ESM + require + dynamic import;
  * type-only ignored) — same SSOT as monorepo-health.
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { loaderForPath, scanSourceImports } from '../lib/harness/monorepo-health.ts';
 import { materializeIndexTree, removeIndexTreeSync } from './lib/index-tree.ts';
 
@@ -33,8 +34,9 @@ export {};
 
 const ROOT = process.cwd();
 const BASELINE_PATH = `${ROOT}/scripts/import-graph-baseline.json`;
-const WRITE_BASELINE = Bun.argv.includes('--write-baseline');
-const JSON_OUT = Bun.argv.includes('--json');
+const argv = applyUnknownLongOptionGuardFor('check:import-graph', Bun.argv.slice(2));
+const WRITE_BASELINE = argv.includes('--write-baseline');
+const JSON_OUT = argv.includes('--json');
 
 // Index tree (HEAD ∪ staged) — worktree dirt from other lanes cannot leak in.
 // Sync cleanup on exit covers the early process.exit paths below.

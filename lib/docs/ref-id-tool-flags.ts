@@ -583,6 +583,21 @@ export const HARNESS_VIOLATIONS_ALLOWED_LONG = [
   'limit',
 ] as const;
 
+/** § — bun:brand-map (`tools/bun-brand-map.ts`) */
+export const BUN_BRAND_MAP_ALLOWED_LONG = ['check', 'write-baseline', 'json'] as const;
+
+/** § — env:inventory (`scripts/env-inventory.ts`) */
+export const ENV_INVENTORY_ALLOWED_LONG = [
+  'json',
+  'vault-only',
+  'ratchet',
+  'write-baseline',
+  'bake',
+] as const;
+
+/** § — check:import-graph (`scripts/check-import-graph.ts`) */
+export const CHECK_IMPORT_GRAPH_ALLOWED_LONG = ['json', 'write-baseline'] as const;
+
 /**
  * § — portal:cli (`tools/portal-cli.ts` + doctor/scanner/secret/snapshot/graph).
  * Leading Bun runtime flags (`--smol`, `--console-depth`, …) are peeled by
@@ -693,7 +708,10 @@ export type AllowedLongCliName =
   | 'seat:desk'
   | 'packages:metafile-audit'
   | 'harness:violations'
-  | 'portal:cli';
+  | 'portal:cli'
+  | 'bun:brand-map'
+  | 'env:inventory'
+  | 'check:import-graph';
 
 /**
  * Central allowlist registry — code SSOT (not env JSON, not bun-types).
@@ -730,6 +748,9 @@ export const ALLOWED_LONG_REGISTRY = {
   'packages:metafile-audit': PACKAGES_METAFILE_AUDIT_ALLOWED_LONG,
   'harness:violations': HARNESS_VIOLATIONS_ALLOWED_LONG,
   'portal:cli': PORTAL_CLI_ALLOWED_LONG,
+  'bun:brand-map': BUN_BRAND_MAP_ALLOWED_LONG,
+  'env:inventory': ENV_INVENTORY_ALLOWED_LONG,
+  'check:import-graph': CHECK_IMPORT_GRAPH_ALLOWED_LONG,
 } as const satisfies Record<AllowedLongCliName, readonly string[]>;
 
 /** Apply guard using `ALLOWED_LONG_REGISTRY[cliName]`. */
