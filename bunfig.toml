@@ -69,9 +69,13 @@ frozenLockfile = true
 #   BUN_FEATURE_FLAG_DISABLE_STREAMING_INSTALL=1 bun install
 #
 # @see https://bun.com/docs/test/index#run-tests
+# @see https://bun.com/docs/test/configuration — root · preload · pathIgnorePatterns · timeout · smol
+# @see https://bun.com/docs/test/configuration#environment-variables — .env.test · NODE_ENV=test
 # @see https://bun.com/docs/test — per-test timeout (default 5000ms; CLI --timeout overrides)
 # @see https://bun.com/blog/bun-v1.3.13#bun-test-changed
-# @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel
+# @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — BUN_TEST_WORKER_ID
+# Env contract for hooks/scratch: scripts/bun-test-changed-staged.ts testRunEnv()
+# Template: .env.test.example → copy to gitignored .env.test
 [test]
 preload = "./tests/preload.ts"
 timeout = 10000

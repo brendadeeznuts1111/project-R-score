@@ -1,10 +1,19 @@
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
 import {
+  BUN_PARALLEL_WORKER_ENV_KEYS,
+  BUN_TEST_NODE_ENV,
+  STAGED_TEST_HANG_RETRIES,
+  STAGED_TEST_TIMEOUT_MS_DEFAULT,
+  awaitProcessWithTimeout,
   buildStagedTestCommand,
   gitEnv,
+  resolveStagedTestTimeoutMs,
+  resolveExplicitStagedTests,
+  runStagedBunTestWithRetries,
   SCRATCH_LINK_DIRS,
   SCRATCH_PATHSPEC,
+  shouldSkipStagedTestRun,
   stagedDeletions,
   testRunEnv,
 } from '../scripts/bun-test-changed-staged.ts';
@@ -61,6 +70,102 @@ describe('test-changed-staged helpers', () => {
     ]);
   });
 
+  test('scratch path uses --changed=HEAD~1 (ref diff avoids dirty-tree hang)', () => {
+    expect(buildStagedTestCommand(['--bail=1'], {}, { changedRef: 'HEAD~1' })).toEqual([
+      'bun',
+      'test',
+      '--changed=HEAD~1',
+      '--pass-with-no-tests',
+      '--parallel=6',
+      '--bail=1',
+    ]);
+  });
+
+  test('shouldSkipStagedTestRun short-circuits empty and non-code deltas', () => {
+    expect(shouldSkipStagedTestRun([])).toEqual({
+      skip: true,
+      reason: 'empty staged delta',
+    });
+    expect(shouldSkipStagedTestRun(['docs/README.md', 'AGENTS.md'])).toEqual({
+      skip: true,
+      reason: 'no code-like files in staged delta',
+    });
+    expect(shouldSkipStagedTestRun(['tests/harness.ts']).skip).toBe(false);
+  });
+
+  test('resolveStagedTestTimeoutMs defaults and validates env override', () => {
+    expect(resolveStagedTestTimeoutMs({})).toBe(STAGED_TEST_TIMEOUT_MS_DEFAULT);
+    expect(resolveStagedTestTimeoutMs({ STAGED_TEST_TIMEOUT_MS: '120000' })).toBe(120_000);
+    expect(() => resolveStagedTestTimeoutMs({ STAGED_TEST_TIMEOUT_MS: '50' })).toThrow(
+      />= 1000/
+    );
+  });
+
+  test('awaitProcessWithTimeout SIGKILLs a wedged child', async () => {
+    const proc = Bun.spawn(['sleep', '30'], {
+      stdout: 'ignore',
+      stderr: 'ignore',
+      stdin: 'ignore',
+    });
+    const result = await awaitProcessWithTimeout(proc, 200, 'fixture sleep');
+    expect(result).toEqual({ code: 1, timedOut: true });
+    expect(proc.killed || (await proc.exited) !== undefined).toBe(true);
+  });
+
+  test('runStagedBunTestWithRetries returns child exit code on success', async () => {
+    expect(STAGED_TEST_HANG_RETRIES).toBeGreaterThanOrEqual(2);
+    const result = await runStagedBunTestWithRetries({
+      command: ['bun', '-e', 'process.exit(0)'],
+      cwd: process.cwd(),
+      env: testRunEnv(),
+      timeoutMs: 5_000,
+      label: 'fixture-ok',
+      retries: 1,
+    });
+    expect(result).toEqual({ code: 0, timedOut: false, attempts: 1 });
+  });
+
+  test('runStagedBunTestWithRetries exhausts hang retries', async () => {
+    const started = Date.now();
+    const result = await runStagedBunTestWithRetries({
+      command: ['sleep', '30'],
+      cwd: process.cwd(),
+      env: testRunEnv(),
+      timeoutMs: 150,
+      label: 'fixture-hang',
+      retries: 2,
+    });
+    expect(result).toEqual({ code: 1, timedOut: true, attempts: 2 });
+    const elapsed = Date.now() - started;
+    expect(elapsed).toBeGreaterThanOrEqual(250);
+    expect(elapsed).toBeLessThan(3_000);
+  });
+
+  test('resolveExplicitStagedTests keeps staged tests and import neighbors', () => {
+    const paths = resolveExplicitStagedTests(process.cwd(), [
+      'scripts/bun-test-changed-staged.ts',
+      'tests/bun-test-changed-staged.test.ts',
+      'docs/README.md',
+    ]);
+    expect(paths).toContain('tests/bun-test-changed-staged.test.ts');
+    expect(paths).toContain('tests/pre-commit-runner.test.ts');
+    // Comment-only mentions (brand-coverage) must not be selected.
+    expect(paths).not.toContain('tests/brand-coverage.test.ts');
+  });
+
+  test('buildStagedTestCommand explicit testPaths omit --changed', () => {
+    expect(
+      buildStagedTestCommand(['--bail=1'], {}, { testPaths: ['tests/a.test.ts'] })
+    ).toEqual([
+      'bun',
+      'test',
+      '--pass-with-no-tests',
+      '--parallel=6',
+      '--bail=1',
+      'tests/a.test.ts',
+    ]);
+  });
+
   test('stagedDeletions parses name-only diff output', () => {
     expect(stagedDeletions('lib/a.ts\nscripts/b.ts\n')).toEqual(['lib/a.ts', 'scripts/b.ts']);
     expect(stagedDeletions('')).toEqual([]);
@@ -84,10 +189,27 @@ describe('test-changed-staged helpers', () => {
     expect(env.PATH).toBe(Bun.env.PATH); // everything else is preserved
   });
 
-  test('testRunEnv also strips NODE_ENV — tests run in dev semantics', () => {
-    const env = testRunEnv();
-    expect(env.NODE_ENV).toBeUndefined();
+  test('testRunEnv applies Bun-documented test env contract', () => {
+    expect(BUN_TEST_NODE_ENV).toBe('test');
+    const env = testRunEnv({
+      PATH: '/usr/bin',
+      NODE_ENV: 'production',
+      BUN_OPTIONS: '--hot',
+      BUN_TEST_WORKER_ID: 'forged',
+      JEST_WORKER_ID: 'forged',
+      GIT_INDEX_FILE: '/tmp/evil-index',
+      DO_NOT_TRACK: '',
+      TMPDIR: '',
+    });
+    expect(env.NODE_ENV).toBe('test');
+    expect(env.BUN_OPTIONS).toBeUndefined();
+    expect(env.DO_NOT_TRACK).toBe('1');
+    expect(env.TMPDIR.length).toBeGreaterThan(0);
     expect(env.GIT_INDEX_FILE).toBeUndefined();
+    for (const key of BUN_PARALLEL_WORKER_ENV_KEYS) {
+      expect(env[key]).toBeUndefined();
+    }
+    expect(env.PATH).toBe('/usr/bin');
   });
 
   test('scratch repo links heavyweight external trees needed by selected tests', () => {
