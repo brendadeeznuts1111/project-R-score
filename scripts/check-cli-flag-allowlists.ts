@@ -173,6 +173,30 @@ const cases: Case[] = [
     expectExit: [2],
     stdoutOrStderrIncludes: ['❌ Unknown long option(s) in docs:refid: --typo'],
   },
+  {
+    name: 'concept:audit unknown',
+    cmd: ['bun', 'scripts/concept-audit.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in concept:audit: --typo'],
+  },
+  {
+    name: 'concept:registry:graph unknown',
+    cmd: ['bun', 'scripts/concept-registry-graph.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in concept:registry:graph: --typo'],
+  },
+  {
+    name: 'concept:discover unknown',
+    cmd: ['bun', 'scripts/concept-discover.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in concept:discover: --typo'],
+  },
+  {
+    name: 'seat:desk unknown',
+    cmd: ['bun', 'tools/seat-desk-cli.ts', 'post', 'X', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in seat:desk: --typo'],
+  },
 ];
 
 function okExit(expect: Case['expectExit'], code: number): boolean {

@@ -150,11 +150,15 @@ describe('in-tool flagDocRef re-exports', () => {
       'monorepo:health',
       'brand:status',
       'docs:refid',
+      'concept:audit',
+      'concept:registry:graph',
+      'concept:discover',
+      'seat:desk',
     ] as const;
     for (const key of batch2) {
       expect(ALLOWED_LONG_REGISTRY[key].length).toBeGreaterThan(0);
     }
-    expect(Object.keys(ALLOWED_LONG_REGISTRY).length).toBeGreaterThanOrEqual(23);
+    expect(Object.keys(ALLOWED_LONG_REGISTRY).length).toBeGreaterThanOrEqual(27);
     // bun:pr:verify must include --diff (behavior-diff vs installed Bun)
     expect([...ALLOWED_LONG_REGISTRY['bun:pr:verify']]).toContain('diff');
   });

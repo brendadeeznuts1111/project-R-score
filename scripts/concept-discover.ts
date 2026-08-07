@@ -17,7 +17,11 @@
  * --auto-propose writes pending proposals to scripts/concept-lifecycle.json;
  * review them with bun run concept:review -- --list.
  */
-import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
+import { cliOut, colorize, logTable } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  CONCEPT_DISCOVER_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
 import {
   appendHistory,
   loadLifecycleStore,
@@ -26,6 +30,8 @@ import {
   type ConceptLifecycleStore,
   type ConceptProposal,
 } from '../lib/portal/concept-lifecycle.ts';
+
+export { CONCEPT_DISCOVER_ALLOWED_LONG };
 import {
   inferPortalSemanticDomain,
   PORTAL_SEMANTIC_CONCEPTS,
@@ -173,11 +179,14 @@ function argValues(argv: readonly string[], flag: string): string[] {
 }
 
 async function main(): Promise<void> {
-  const scans = argValues(Bun.argv, '--scan');
+  const argv = applyUnknownLongOptionGuardFor('concept:discover', Bun.argv.slice(2));
+  const scans = argValues(argv, '--scan');
   const roots = (scans.length > 0 ? scans : ['lib/']).map(p => `${ROOT}/${p.replace(/\/$/, '')}`);
   const autoPropose =
-    Bun.argv.includes('--auto-propose') || Bun.env.CONCEPT_DISCOVER_AUTO_PROPOSE === '1';
-  const wantJson = Bun.argv.includes('--output') && Bun.argv.includes('json');
+    argv.includes('--auto-propose') || Bun.env.CONCEPT_DISCOVER_AUTO_PROPOSE === '1';
+  const outIdx = argv.indexOf('--output');
+  const wantJson =
+    (outIdx >= 0 && argv[outIdx + 1] === 'json') || argv.some(a => a.startsWith('--output=json'));
   const actor = Bun.env.CONCEPT_DISCOVER_ACTOR ?? 'concept-discover';
 
   const store = await loadLifecycleStore();
@@ -188,7 +197,7 @@ async function main(): Promise<void> {
 
   if (!autoPropose) {
     if (wantJson) {
-      jsonOut({ scanned: roots.map(r => r.replace(`${ROOT}/`, '')), candidates });
+      cliOut({ scanned: roots.map(r => r.replace(`${ROOT}/`, '')), candidates }, { json: true });
       return;
     }
     console.log(
@@ -210,7 +219,7 @@ async function main(): Promise<void> {
   if (result.proposed.length > 0) await saveLifecycleStore(result.store);
 
   if (wantJson) {
-    jsonOut({ proposed: result.proposed, skipped: result.skipped });
+    cliOut({ proposed: result.proposed, skipped: result.skipped }, { json: true });
     return;
   }
   console.log(
