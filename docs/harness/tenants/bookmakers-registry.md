@@ -21,7 +21,7 @@ first-class portal surface on the live domain.
 | Route manifest | `/portal/bookmakers/` ([`lib/http/portal-route-manifest.ts`](../../../lib/http/portal-route-manifest.ts)) |
 | Chrome nav | `bookmakers` (overflow, ops) ([`lib/portal/chrome-catalog.ts`](../../../lib/portal/chrome-catalog.ts)) |
 | Suite | [`tests/bookmakers-registry-bake.test.ts`](../../../tests/bookmakers-registry-bake.test.ts) · [`tests/bookmakers-migrate-v04.test.ts`](../../../tests/bookmakers-migrate-v04.test.ts) · [`tests/bookmakers-board.test.ts`](../../../tests/bookmakers-board.test.ts) |
-| Open issues | [`bookmakers-open-issues.md`](./bookmakers-open-issues.md) — Orange777 · Pages/R2 lag · null limits · publish `--readme` |
+| Open issues | [`bookmakers-open-issues.md`](./bookmakers-open-issues.md) — Domain=`partner` · BM-1 blocked · BM-3/BM-4 open · BM-2/BM-5 done |
 
 ## v0.4 public vs ops
 
@@ -91,13 +91,13 @@ bun lib/factory/cli.ts snapshot public/registry/registry.json
 bun run bookmakers:bake   # or bookmakers:bake -- --local offline
 ```
 
-Always pass **`--readme <path>`** to the package README (BM-5). Auto-detect can
-attach a wrong/stale file when publishing a `.tgz`.
+Factory publish **defaults to the README inside the `.tgz` / package dir**
+(BM-5 closed). Explicit `--readme <path>` still wins when the tarball omits one;
+`--readme true` is legacy CWD-only.
 
-**Published:** `@factorywager/bookmakers@0.4.1` is on R2 (`factory list` shows
-latest 0.4.1). Public HTTP index at `registry.factory-wager.com` may lag until
-`public/registry/registry.json` is deployed to Pages — bake prefers the **local**
-snapshot (BM-2):
+**Published:** `@factorywager/bookmakers@0.4.1` is on R2 and on Pages
+(`score.factory-wager.com/registry/registry.json` dist-tag `latest` = `0.4.1` —
+BM-2 closed). Bake may still pin local:
 
 ```bash
 bun lib/factory/cli.ts snapshot public/registry/registry.json   # after publish
@@ -105,7 +105,7 @@ bun run bookmakers:bake -- --version 0.4.1
 bun run bookmakers:desk-coverage
 ```
 
-Remaining gaps (limits nulls, Orange777, live index lag): 
+Remaining partner gaps (Orange777 blocked · US/min limits open):
 [`bookmakers-open-issues.md`](./bookmakers-open-issues.md).
 
 ## Verification

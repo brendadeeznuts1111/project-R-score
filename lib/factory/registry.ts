@@ -33,6 +33,7 @@ import {
   factoryRegistryBucketFromEnv,
   tarballContentDisposition,
 } from './object-store';
+import { readPublishReadmeFromTarballBytes } from './publish-metadata';
 
 /** Registry index file name stored in the bucket root. */
 const INDEX_KEY = 'registry.json';
@@ -114,7 +115,9 @@ export class RegistryClient {
   /**
    * Publish an artifact to the registry.
    *
-   * Auto-detects `README.md` in CWD when `readme` option is `true` (default).
+   * When `readme` is omitted or `true`, prefer README inside an npm-style
+   * `.tgz` payload (BM-5), then fall back to a CWD `README*` glob. Pass an
+   * explicit string or `false` to override.
    */
   async publish(
     name: string,
@@ -128,7 +131,7 @@ export class RegistryClient {
       dependencies?: Record<string, string>;
       publisher?: string;
       distTag?: string;
-      /** README text, `true` to auto-detect `README.md` in CWD, or `false` to skip. */
+      /** README text, `true` to auto-detect, or `false` to skip. */
       readme?: string | boolean;
     }
   ): Promise<ArtifactRelease> {
@@ -138,25 +141,33 @@ export class RegistryClient {
     const distTag = options?.distTag ?? 'latest';
 
     const blob = data instanceof Blob ? data : new Blob([data]);
+    const bytes = new Uint8Array(await blob.arrayBuffer());
     const hasher = new Bun.CryptoHasher('sha256');
-    hasher.update(await blob.arrayBuffer());
+    hasher.update(bytes);
     const checksum = hasher.digest('hex');
 
     let readme: string | undefined;
     const readmeOpt = options?.readme;
     if (readmeOpt === undefined || readmeOpt === true) {
-      // Match bun publish v1.3.14: first README or README.* (case-insensitive).
-      try {
-        for await (const f of new Bun.Glob('[Rr][Ee][Aa][Dd][Mm][Ee]*').scan({
-          onlyFiles: true,
-        })) {
-          if (/^README(\..*)?$/i.test(f)) {
-            readme = await Bun.file(f).text();
-            break;
+      // BM-5: tarball-embedded README beats CWD (monorepo root is often wrong).
+      const looksGzip = bytes.length >= 2 && bytes[0] === 0x1f && bytes[1] === 0x8b;
+      if (looksGzip) {
+        readme = await readPublishReadmeFromTarballBytes(bytes);
+      }
+      if (readme === undefined) {
+        // Match bun publish v1.3.14: first README or README.* in CWD.
+        try {
+          for await (const f of new Bun.Glob('[Rr][Ee][Aa][Dd][Mm][Ee]*').scan({
+            onlyFiles: true,
+          })) {
+            if (/^README(\..*)?$/i.test(f)) {
+              readme = await Bun.file(f).text();
+              break;
+            }
           }
+        } catch {
+          // Binary, permission error, etc. — skip README silently
         }
-      } catch {
-        // Binary, permission error, etc. — skip README silently
       }
     } else if (typeof readmeOpt === 'string') {
       readme = readmeOpt;

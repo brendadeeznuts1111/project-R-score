@@ -5,6 +5,9 @@
  */
 
 import { describe, expect, test, mock, beforeEach, afterEach } from 'bun:test';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { RegistryClient } from '../lib/factory/registry.ts';
 import { createMemoryObjectStore } from '../lib/factory/object-store.ts';
 import type { RegistryIndex } from '../lib/factory/artifact.ts';
@@ -105,6 +108,49 @@ describe('RegistryClient — publish with README', () => {
       readme: '# Explicit README',
     });
     expect(release.readme).toBe('# Explicit README');
+  });
+
+  test('publish auto-detect prefers README inside tarball over CWD (BM-5)', async () => {
+    const client = mockClient();
+    const root = await mkdtemp(join(tmpdir(), 'factory-publish-bm5-'));
+    try {
+      const packageDir = join(root, 'package');
+      const tarballPath = join(root, 'pkg.tgz');
+      await mkdir(packageDir);
+      await writeFile(
+        join(packageDir, 'package.json'),
+        JSON.stringify({ name: 'pkg', version: '1.0.0' })
+      );
+      await writeFile(
+        join(packageDir, 'README.md'),
+        '# Tarball README\n\nPUBLIC_BOOKMAKERS · schemaVersion: 2\n'
+      );
+      const tar = Bun.spawnSync(['tar', '-czf', tarballPath, '-C', root, 'package'], {
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+      expect(tar.success, tar.stderr.toString()).toBe(true);
+
+      // Read via node fs — Bun.file is mocked in this suite.
+      const bytes = new Uint8Array(await readFile(tarballPath));
+
+      // Poison CWD detection so a regression would attach the wrong body.
+      Bun.file = mock(
+        () =>
+          ({
+            exists: async () => true,
+            text: async () => '# Wrong CWD README — monorepo root',
+          }) as unknown as ReturnType<typeof Bun.file>
+      );
+
+      const release = await client.publish('bm5-lib', '1.0.0', bytes, {
+        type: 'library',
+      });
+      expect(release.readme).toContain('PUBLIC_BOOKMAKERS');
+      expect(release.readme).not.toContain('Wrong CWD README');
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
   });
 
   test('publish without readme option defaults to auto-detect (no README)', async () => {

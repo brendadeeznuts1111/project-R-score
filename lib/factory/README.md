@@ -17,6 +17,7 @@ package registry.
 | `monitoring.ts`   | One-shot integrity cycle + in-process Bun cron complement                      |
 | `server.ts`       | Bun VM gateway: `routes` (health/ready/index/POST publish) + `fetch` object keys |
 | `cli.ts`          | CLI (env, publish, list, search, install, readme, snapshot, create, help)      |
+| `publish-metadata.ts` | package.json + README from publish path / `.tgz` (BM-5; prefer over CWD)   |
 | `semver.ts`       | Bun.semver wrappers: sortVersions, satisfiesRange, resolveVersion              |
 | `index.ts`        | Barrel exports                                                                 |
 
