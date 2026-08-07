@@ -40,18 +40,21 @@ export async function captureScreenshot(
     subject?: string;
     allowPlaceholder?: boolean;
     timeoutMs?: number;
+    /** Override default `data/operator-research/screenshots` output directory. */
+    outDir?: string;
   } = {}
 ): Promise<{ observation: ScreenshotObservation; pngBytes?: Uint8Array; thumbBytes?: Uint8Array }> {
   const started = Bun.nanoseconds();
   const timeoutMs = opts.timeoutMs ?? 18_000;
+  const outDir = opts.outDir ?? SCREENSHOTS_DIR;
   try {
     const pngBytes = await captureWebViewPng(url, timeoutMs);
     const { record, thumbnailBytes, elapsedMs } = await buildScreenshotEvidenceRecord(pngBytes, {
       subject: opts.subject ?? url,
     });
     const id = String(record.evidenceId);
-    const pngPath = joinPath(SCREENSHOTS_DIR, `${id}.png`);
-    const thumbPath = joinPath(SCREENSHOTS_DIR, `${id}.thumb.webp`);
+    const pngPath = joinPath(outDir, `${id}.png`);
+    const thumbPath = joinPath(outDir, `${id}.thumb.webp`);
     const webp = await new Bun.Image(thumbnailBytes)
       .resize(400, 300, { fit: 'inside', withoutEnlargement: true })
       .webp({ quality: 80 });
@@ -89,8 +92,8 @@ export async function captureScreenshot(
       subject: opts.subject ?? url,
     });
     const id = String(record.evidenceId);
-    const pngPath = joinPath(SCREENSHOTS_DIR, `${id}.png`);
-    const thumbPath = joinPath(SCREENSHOTS_DIR, `${id}.thumb.webp`);
+    const pngPath = joinPath(outDir, `${id}.png`);
+    const thumbPath = joinPath(outDir, `${id}.thumb.webp`);
     let webp: Uint8Array;
     try {
       webp = new Uint8Array(

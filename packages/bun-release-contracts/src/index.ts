@@ -35,6 +35,9 @@ export {
 } from './catalog';
 export {
   generateReleaseInventoryBatch,
+  runCli,
+  BUN_RELEASE_CONTRACTS_ALLOWED_LONG,
   type GenerateReleaseInventoryBatchOptions,
   type GenerateReleaseInventoryBatchResult,
+  type ReleaseContractsCliSummary,
 } from './cli';

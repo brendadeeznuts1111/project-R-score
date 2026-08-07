@@ -365,6 +365,28 @@ export function complexityFloorToolFlags(): ToolFlagRef[] {
 /** § — bun:pr:verify (`tools/bun-pr-verify.ts`) — no design Flags table; tool allowlist only */
 export const BUN_PR_VERIFY_ALLOWED_LONG = ['proof', 'json', 'diff'] as const;
 
+/** § — bun:release-contracts (`tools/bun-release-contracts.ts`) — no design Flags table; tool allowlist only */
+export const BUN_RELEASE_CONTRACTS_ALLOWED_LONG = [
+  'all',
+  'since',
+  'limit',
+  'concurrency',
+  'check',
+  'output-dir',
+  'json',
+  'help',
+] as const;
+
+/** § — screenshot (`tools/screenshot-cli.ts`) — no design Flags table; tool allowlist only */
+export const SCREENSHOT_ALLOWED_LONG = [
+  'subject',
+  'out-dir',
+  'timeout-ms',
+  'no-placeholder',
+  'json',
+  'help',
+] as const;
+
 /** § — bun:runtime-pin (`tools/bun-runtime-pin.ts`) */
 export const BUN_RUNTIME_PIN_ALLOWED_LONG = ['json'] as const;
 
@@ -2380,6 +2402,8 @@ export type AllowedLongCliName =
   | 'telegram:ops'
   | 'partner:onboard'
   | 'bun:pr:verify'
+  | 'bun:release-contracts'
+  | 'screenshot'
   | 'bun:runtime-pin'
   | 'glossary:health'
   | 'cloudflare:env:validate'
@@ -2705,6 +2729,8 @@ export const ALLOWED_LONG_REGISTRY = {
   'telegram:ops': TELEGRAM_OPS_ALLOWED_LONG,
   'partner:onboard': PARTNER_ONBOARD_ALLOWED_LONG,
   'bun:pr:verify': BUN_PR_VERIFY_ALLOWED_LONG,
+  'bun:release-contracts': BUN_RELEASE_CONTRACTS_ALLOWED_LONG,
+  screenshot: SCREENSHOT_ALLOWED_LONG,
   'bun:runtime-pin': BUN_RUNTIME_PIN_ALLOWED_LONG,
   'glossary:health': GLOSSARY_HEALTH_ALLOWED_LONG,
   'cloudflare:env:validate': CLOUDFLARE_ENV_VALIDATE_ALLOWED_LONG,

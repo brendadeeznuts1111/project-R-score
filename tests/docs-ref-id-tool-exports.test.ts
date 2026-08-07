@@ -6,7 +6,9 @@ import { describe, expect, test } from 'bun:test';
 import {
   ALLOWED_LONG_REGISTRY,
   BUN_PR_VERIFY_ALLOWED_LONG,
+  BUN_RELEASE_CONTRACTS_ALLOWED_LONG,
   BUN_RUNTIME_PIN_ALLOWED_LONG,
+  SCREENSHOT_ALLOWED_LONG,
   CLOUDFLARE_ENV_VALIDATE_ALLOWED_LONG,
   GLOSSARY_HEALTH_ALLOWED_LONG,
   IMAGES_GENERATE_ALLOWED_LONG,
@@ -127,6 +129,10 @@ describe('in-tool flagDocRef re-exports', () => {
     expect(ALLOWED_LONG_REGISTRY['telegram:ops']).toBe(TELEGRAM_OPS_ALLOWED_LONG);
     expect(ALLOWED_LONG_REGISTRY['bun:pr:verify']).toBe(BUN_PR_VERIFY_ALLOWED_LONG);
     expect([...BUN_PR_VERIFY_ALLOWED_LONG]).toEqual(['proof', 'json', 'diff']);
+    expect(ALLOWED_LONG_REGISTRY['bun:release-contracts']).toBe(BUN_RELEASE_CONTRACTS_ALLOWED_LONG);
+    expect([...BUN_RELEASE_CONTRACTS_ALLOWED_LONG]).toContain('json');
+    expect(ALLOWED_LONG_REGISTRY.screenshot).toBe(SCREENSHOT_ALLOWED_LONG);
+    expect([...SCREENSHOT_ALLOWED_LONG]).toContain('no-placeholder');
     expect(ALLOWED_LONG_REGISTRY['bun:runtime-pin']).toBe(BUN_RUNTIME_PIN_ALLOWED_LONG);
     expect(ALLOWED_LONG_REGISTRY['glossary:health']).toBe(GLOSSARY_HEALTH_ALLOWED_LONG);
     expect(ALLOWED_LONG_REGISTRY['cloudflare:env:validate']).toBe(

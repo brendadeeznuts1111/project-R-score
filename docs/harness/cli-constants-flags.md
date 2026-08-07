@@ -127,6 +127,8 @@ bun run docs:refid:check
 | Ops snapshot         | `bun tools/ops-snapshot.ts --typo`                                                    | 2               | `❌`                                                |
 | bun:pr:verify        | `bun tools/bun-pr-verify.ts 1 --typo`                                                 | 1 (throw)       | `❌ Unknown long option(s) in bun:pr:verify: --typo` |
 | bun:pr:verify strip  | `BUN_STRIP_UNKNOWN=true bun tools/bun-pr-verify.ts 99999 --typo`                      | 1 (missing bin) | `stripping` + `bun-99999 not on PATH`               |
+| bun:release-contracts | `bun tools/bun-release-contracts.ts --typo`                                          | 1 (throw)       | `❌ Unknown long option(s) in bun:release-contracts: --typo` |
+| screenshot           | `bun tools/screenshot-cli.ts --typo`                                                  | 1 (throw)       | `❌ Unknown long option(s) in screenshot: --typo`   |
 | bun:runtime-pin      | `bun tools/bun-runtime-pin.ts --typo`                                                 | 2               | `❌`                                                |
 | glossary:health      | `bun tools/glossary-health.ts --typo`                                                 | 2               | `❌`                                                |
 | cloudflare:env:validate | `bun tools/cloudflare-env-validate.ts --typo`                                      | 2               | `❌`                                                |
@@ -214,3 +216,33 @@ Forgetting step 1 → fail/throw in strict mode.
 | `--proof=…` | enum | `api` · `runtime` · `release` · `all` (default) |
 | `--json` | boolean | Machine summary via `cliOut` |
 | `<pr>` | positional | PR number (required) |
+
+### 2.6.1 `bun:release-contracts` (`BUN_RELEASE_CONTRACTS_ALLOWED_LONG`)
+
+| Flag | Type | Description |
+| ---- | ---- | ----------- |
+| `--all` | boolean | Generate every stable release in the Bun RSS feed |
+| `--since` | version | With `--all`, include releases at or after this version |
+| `--limit` | int | With `--all`, limit releases newest-first |
+| `--concurrency` | int | Concurrent blog fetches (default 4, max 8) |
+| `--check` | boolean | Drift-check only (no writes) |
+| `--output-dir` | path | Inventory output directory |
+| `--json` | boolean | Machine summary via `cliOut` |
+| `--help` | boolean | Usage |
+
+Entry: [`tools/bun-release-contracts.ts`](../../tools/bun-release-contracts.ts) · package
+[`packages/bun-release-contracts`](../../packages/bun-release-contracts).
+
+### 2.6.2 `screenshot` (`SCREENSHOT_ALLOWED_LONG`)
+
+| Flag | Type | Description |
+| ---- | ---- | ----------- |
+| `--subject` | string | Evidence subject label |
+| `--out-dir` | path | Capture output directory |
+| `--timeout-ms` | int | WebView navigate timeout |
+| `--no-placeholder` | boolean | Fail instead of placeholder PNG |
+| `--json` | boolean | Machine summary via `cliOut` |
+| `--help` | boolean | Usage |
+
+Commands (positionals): `capture` · `verify` · `remediate` · `meta`.
+Entry: [`tools/screenshot-cli.ts`](../../tools/screenshot-cli.ts).
