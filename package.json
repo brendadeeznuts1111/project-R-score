@@ -1717,6 +1717,8 @@
     "test:bun:1.3.14": "bun test tests/bun-1.3.14-web-api-fixes.test.ts tests/bun-toml-version-contract.test.ts",
     "test:bun:1.4.0": "bun test tests/bun-1.4.0-web-api-contract.test.ts tests/bun-1.4.0-cron-contract.test.ts tests/bun-toml-version-contract.test.ts",
     "test:dev": "NODE_ENV=test bun test --watch --parallel --pass-with-no-tests tests",
+    "test:inspect": "bun scripts/inspect-tests.ts",
+    "test:inspect:smoke": "bun scripts/inspect-tests.ts --quiet --json -- tests/inspect-test-reporter.test.ts -t \"helpers\"",
     "test:ci": "bash -c 'mkdir -p \"$(dirname \"${JUNIT_OUT:-tmp/junit.xml}\")\" && export GIT_SHA=\"${GIT_SHA:-$(git rev-parse HEAD 2>/dev/null || true)}\" && NODE_ENV=test bun test --timeout=30000 --pass-with-no-tests $(find tests -name \"*.test.ts\" -not -path \"*/node_modules/*\") --reporter=junit --reporter-outfile=\"${JUNIT_OUT:-tmp/junit.xml}\"'",
     "test:parallel": "NODE_ENV=test bun test --parallel --timeout=30000 --pass-with-no-tests tests",
     "test:changed": "bun scripts/bun-test-changed.ts",
