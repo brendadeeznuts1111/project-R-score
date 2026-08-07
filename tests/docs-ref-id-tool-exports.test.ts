@@ -132,7 +132,8 @@ describe('in-tool flagDocRef re-exports', () => {
     expect(ALLOWED_LONG_REGISTRY['bun:release-contracts']).toBe(BUN_RELEASE_CONTRACTS_ALLOWED_LONG);
     expect([...BUN_RELEASE_CONTRACTS_ALLOWED_LONG]).toContain('json');
     expect(ALLOWED_LONG_REGISTRY.screenshot).toBe(SCREENSHOT_ALLOWED_LONG);
-    expect([...SCREENSHOT_ALLOWED_LONG]).toContain('no-placeholder');
+    expect([...SCREENSHOT_ALLOWED_LONG]).toContain('allow-placeholder');
+    expect([...SCREENSHOT_ALLOWED_LONG]).toContain('force');
     expect(ALLOWED_LONG_REGISTRY['bun:runtime-pin']).toBe(BUN_RUNTIME_PIN_ALLOWED_LONG);
     expect(ALLOWED_LONG_REGISTRY['glossary:health']).toBe(GLOSSARY_HEALTH_ALLOWED_LONG);
     expect(ALLOWED_LONG_REGISTRY['cloudflare:env:validate']).toBe(

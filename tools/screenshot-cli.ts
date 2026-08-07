@@ -8,6 +8,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — cliOut dual-mode
+// @see https://bun.com/docs/bundler/executables — --force
 /**
  * screenshot-cli.ts — dedicated CLI for WebView capture + TEST-003 evidence.
  *
@@ -16,9 +17,9 @@
  *   bun run screenshot -- remediate <png-path> [--subject …] [--json]
  *   bun run screenshot -- meta <image-path> [--json]
  *
- * Wraps lib/operator-research/screenshot.ts · lib/screenshot-remediation.ts ·
- * lib/image-metadata.ts. Prefer this over ad-hoc WebView.screenshot calls when
- * you need TEST-003 digests, thumbnail bounds, and dual-mode summaries.
+ * Capture defaults to failing when WebView cannot capture (no silent placeholder).
+ * Pass `--allow-placeholder` to write the fixture PNG and still run TEST-003.
+ * Paths must stay under the repo root unless `--force`.
  *
  * Unknown long options: ALLOWED_LONG_REGISTRY['screenshot'] · BUN_STRIP_UNKNOWN.
  * Doc discovery: bun tools/bun-doc-refs.ts suggest "Bun.WebView" | "Bun.Image"
@@ -31,12 +32,14 @@ import {
 } from '../lib/docs/ref-id-tool-flags.ts';
 import { extractImageEvidenceMeta } from '../lib/image-metadata.ts';
 import { captureScreenshot } from '../lib/operator-research/screenshot.ts';
-import { resolvePath } from '../lib/path-bun.ts';
+import { ROOT as REPO_ROOT, SCREENSHOTS_DIR } from '../lib/operator-research/paths.ts';
+import { joinPath, normalizePath, relativePath, resolvePath } from '../lib/path-bun.ts';
 import {
   remediateScreenshotCapture,
   runTest003,
   buildScreenshotEvidenceRecord,
   TEST_003,
+  type Test003Response,
 } from '../lib/screenshot-remediation.ts';
 
 export { SCREENSHOT_ALLOWED_LONG };
@@ -44,22 +47,35 @@ export { SCREENSHOT_ALLOWED_LONG };
 const COMMANDS = ['capture', 'verify', 'remediate', 'meta'] as const;
 type Command = (typeof COMMANDS)[number];
 
+/** PNG signature bytes (89 50 4E 47 0D 0A 1A 0A). */
+const PNG_MAGIC = Uint8Array.of(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a);
+
+export type ScreenshotCliResult = {
+  payload: unknown;
+  exitCode: number;
+};
+
+export type ScreenshotCliDeps = {
+  capture?: typeof captureScreenshot;
+};
+
 function printHelp(): void {
   console.log(`Usage: bun run screenshot -- <command> [args] [options]
 
 Commands:
-  capture <url>       WebView PNG capture + TEST-003 evidence write
+  capture <url>       WebView PNG capture + TEST-003 gate + evidence write
   verify <png-path>   Build evidence from an on-disk PNG and run TEST-003
   remediate <png>     End-to-end remediateScreenshotCapture on a PNG
   meta <image-path>   Bun.Image metadata + digest only
 
 Options:
-  --subject <label>   Evidence subject (team/site/slug)
-  --out-dir <path>    Capture output directory (default: data/operator-research/screenshots)
-  --timeout-ms <n>    WebView navigate timeout (default: 18000)
-  --no-placeholder    Fail capture instead of writing the placeholder PNG
-  --json              Machine-readable summary via cliOut
-  -h, --help          Show this help
+  --subject <label>      Evidence subject (team/site/slug)
+  --out-dir <path>       Capture output directory (default: data/operator-research/screenshots)
+  --timeout-ms <n>       WebView navigate timeout (default: 18000)
+  --allow-placeholder    On WebView failure, write fixture PNG and continue TEST-003
+  --force                Allow paths outside the repository root
+  --json                 Machine-readable summary via cliOut
+  -h, --help             Show this help
 
 Docs:
   bun tools/bun-doc-refs.ts suggest "Bun.WebView"
@@ -71,15 +87,69 @@ function isCommand(value: string | undefined): value is Command {
   return value != null && (COMMANDS as readonly string[]).includes(value);
 }
 
+/** Reject non-http(s) capture targets. */
+export function assertHttpUrl(url: string): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error(`capture URL must be absolute http(s); got: ${url}`);
+  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    throw new Error(`capture URL must use http(s); got protocol ${parsed.protocol}`);
+  }
+  return parsed.href;
+}
+
+/** Resolve a path and optionally require it under the repo root. */
+export function assertRepoPath(path: string, opts: { force?: boolean; label: string }): string {
+  const abs = normalizePath(resolvePath(path));
+  if (opts.force) return abs;
+  const root = normalizePath(REPO_ROOT);
+  const rel = relativePath(root, abs);
+  if (rel.startsWith('..') || rel === '..') {
+    throw new Error(
+      `${opts.label} must stay under the repository root (${root}); got ${abs}. Pass --force to override.`
+    );
+  }
+  return abs;
+}
+
+export function hasPngMagic(bytes: Uint8Array): boolean {
+  if (bytes.byteLength < PNG_MAGIC.byteLength) return false;
+  for (let i = 0; i < PNG_MAGIC.byteLength; i++) {
+    if (bytes[i] !== PNG_MAGIC[i]) return false;
+  }
+  return true;
+}
+
 async function readPngBytes(path: string): Promise<Uint8Array> {
   const file = Bun.file(path);
   if (!(await file.exists())) throw new Error(`File not found: ${path}`);
   const bytes = new Uint8Array(await file.arrayBuffer());
   if (bytes.byteLength === 0) throw new Error(`Empty image: ${path}`);
+  if (!hasPngMagic(bytes)) {
+    throw new Error(`Not a PNG (missing signature): ${path}`);
+  }
   return bytes;
 }
 
-export async function runScreenshotCli(args = Bun.argv.slice(2)): Promise<unknown> {
+function captureExitCode(opts: {
+  observationOk: boolean;
+  source: string;
+  allowPlaceholder: boolean;
+  test003Ok: boolean | null;
+}): number {
+  if (!opts.observationOk) return 1;
+  if (opts.source === 'placeholder' && !opts.allowPlaceholder) return 1;
+  if (opts.test003Ok === false) return 1;
+  return 0;
+}
+
+export async function runScreenshotCli(
+  args = Bun.argv.slice(2),
+  deps: ScreenshotCliDeps = {}
+): Promise<ScreenshotCliResult> {
   const guarded = applyUnknownLongOptionGuardFor('screenshot', args, { onFail: 'throw' });
   const { values, positionals } = parseArgs({
     args: guarded,
@@ -87,7 +157,8 @@ export async function runScreenshotCli(args = Bun.argv.slice(2)): Promise<unknow
       subject: { type: 'string' },
       'out-dir': { type: 'string' },
       'timeout-ms': { type: 'string' },
-      'no-placeholder': { type: 'boolean', default: false },
+      'allow-placeholder': { type: 'boolean', default: false },
+      force: { type: 'boolean', default: false },
       json: { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
@@ -97,7 +168,7 @@ export async function runScreenshotCli(args = Bun.argv.slice(2)): Promise<unknow
 
   if (values.help || positionals.length === 0) {
     printHelp();
-    return undefined;
+    return { payload: undefined, exitCode: 0 };
   }
 
   const [command, target] = positionals;
@@ -108,46 +179,97 @@ export async function runScreenshotCli(args = Bun.argv.slice(2)): Promise<unknow
 
   const json = values.json === true;
   const subject = values.subject;
+  const force = values.force === true;
+  const allowPlaceholder = values['allow-placeholder'] === true;
+  const captureFn = deps.capture ?? captureScreenshot;
 
   if (command === 'capture') {
+    const url = assertHttpUrl(target);
     const timeoutMs = values['timeout-ms'] == null ? undefined : Number(values['timeout-ms']);
     if (timeoutMs != null && (!Number.isSafeInteger(timeoutMs) || timeoutMs <= 0)) {
       throw new Error('--timeout-ms must be a positive integer');
     }
-    const result = await captureScreenshot(target, {
+    const outDir = assertRepoPath(values['out-dir'] ?? SCREENSHOTS_DIR, {
+      force,
+      label: '--out-dir',
+    });
+    const result = await captureFn(url, {
       subject,
-      allowPlaceholder: values['no-placeholder'] !== true,
+      allowPlaceholder,
       timeoutMs,
-      outDir: values['out-dir'] ? resolvePath(values['out-dir']) : undefined,
+      outDir,
+    });
+
+    let test003: Test003Response | null = null;
+    let evidencePath: string | undefined;
+    if (result.pngBytes) {
+      const remediated = await remediateScreenshotCapture(result.pngBytes, {
+        subject: subject ?? url,
+      });
+      // Drop thumbnailBytes — binary must not land in --json / evidence sidecars.
+      const { thumbnailBytes: _thumb, ...gate } = remediated;
+      test003 = gate;
+      if (result.observation.evidenceId) {
+        evidencePath = joinPath(outDir, `${result.observation.evidenceId}.test003.json`);
+        await Bun.write(
+          evidencePath,
+          JSON.stringify(
+            {
+              ...test003,
+              evidenceId: String(test003.evidence.evidenceId),
+              observation: result.observation,
+            },
+            null,
+            2
+          )
+        );
+      }
+    }
+
+    const exitCode = captureExitCode({
+      observationOk: result.observation.ok,
+      source: result.observation.source,
+      allowPlaceholder,
+      test003Ok: test003?.ok ?? null,
     });
     const payload = {
       command,
       testId: TEST_003,
       bunVersion: Bun.version,
       observation: result.observation,
+      test003,
+      evidencePath,
+      exitCode,
     };
     if (json) {
       cliOut(payload, { json: true });
     } else {
       console.log(`screenshot capture · ${result.observation.source}`);
-      console.log(
-        statusLine('ok', String(result.observation.ok), result.observation.ok ? 'ok' : 'fail')
-      );
+      console.log(statusLine('ok', String(exitCode === 0), exitCode === 0 ? 'ok' : 'fail'));
       if (result.observation.pngPath) {
         console.log(statusLine('png', result.observation.pngPath));
       }
       if (result.observation.thumbPath) {
         console.log(statusLine('thumb', result.observation.thumbPath));
       }
+      if (evidencePath) console.log(statusLine('evidence', evidencePath));
+      if (test003) {
+        console.log(
+          statusLine(
+            TEST_003,
+            `${test003.status} · ${test003.remediation.action}`,
+            test003.ok ? 'ok' : 'fail'
+          )
+        );
+      }
       if (result.observation.error) {
         console.log(statusLine('note', result.observation.error, 'warn'));
       }
     }
-    if (!result.observation.ok) process.exitCode = 1;
-    return payload;
+    return { payload, exitCode };
   }
 
-  const absTarget = resolvePath(target);
+  const absTarget = assertRepoPath(target, { force, label: 'image path' });
   const bytes = await readPngBytes(absTarget);
 
   if (command === 'meta') {
@@ -161,7 +283,7 @@ export async function runScreenshotCli(args = Bun.argv.slice(2)): Promise<unknow
         ['path', 'width', 'height', 'format', 'size', 'algorithm', 'digest']
       );
     }
-    return payload;
+    return { payload, exitCode: 0 };
   }
 
   if (command === 'verify') {
@@ -182,8 +304,7 @@ export async function runScreenshotCli(args = Bun.argv.slice(2)): Promise<unknow
         ['id', 'ok', 'message']
       );
     }
-    if (!response.ok) process.exitCode = 1;
-    return payload;
+    return { payload, exitCode: response.ok ? 0 : 1 };
   }
 
   // remediate
@@ -227,13 +348,13 @@ export async function runScreenshotCli(args = Bun.argv.slice(2)): Promise<unknow
       ['plane', 'width', 'height', 'format', 'size']
     );
   }
-  if (!response.ok) process.exitCode = 1;
-  return payload;
+  return { payload, exitCode: response.ok ? 0 : 1 };
 }
 
 if (import.meta.main) {
   try {
-    await runScreenshotCli();
+    const { exitCode } = await runScreenshotCli();
+    process.exitCode = exitCode;
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;

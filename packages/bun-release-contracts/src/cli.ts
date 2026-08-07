@@ -438,12 +438,12 @@ export async function runCli(
       version: row.version,
       status: row.status,
       items: row.itemCount,
-      path: basename(row.path),
+      path: row.path,
     })),
     ['version', 'status', 'items', 'path']
   );
   console.log(
-    `${summary.index.status}: ${basename(summary.index.path)} (${summary.index.releaseCount} releases)`
+    `${summary.index.status}: ${summary.index.path} (${summary.index.releaseCount} releases)`
   );
   return summary;
 }

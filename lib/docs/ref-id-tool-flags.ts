@@ -382,7 +382,8 @@ export const SCREENSHOT_ALLOWED_LONG = [
   'subject',
   'out-dir',
   'timeout-ms',
-  'no-placeholder',
+  'allow-placeholder',
+  'force',
   'json',
   'help',
 ] as const;

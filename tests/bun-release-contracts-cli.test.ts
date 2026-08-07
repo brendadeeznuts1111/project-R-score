@@ -18,14 +18,30 @@ describe('bun:release-contracts CLI', () => {
     await expect(runCli(['--typo'])).rejects.toThrow(/unknown flag/);
   });
 
-  test('check --json returns a dual-mode summary for the installed Bun version', async () => {
-    const summary = await runCli([Bun.version, '--check', '--json']);
+  test('check --json returns a dual-mode summary for a committed inventory', async () => {
+    // Pin to a committed inventory version so the suite survives Bun tip drift.
+    const summary = await runCli(['1.3.14', '--check', '--json']);
     expect(summary).toBeDefined();
     expect(summary!.mode).toBe('check');
-    expect(summary!.bunVersion).toBe(Bun.version);
     expect(summary!.releases.length).toBe(1);
+    expect(summary!.releases[0]!.version).toBe('1.3.14');
     expect(summary!.releases[0]!.status).toBe('verified');
+    expect(summary!.releases[0]!.path).toContain('bun-v1.3.14.json');
     expect(summary!.releases[0]!.itemCount).toBeGreaterThan(0);
+    expect(summary!.index.path).toContain('index.json');
     expect(summary!.index.releaseCount).toBeGreaterThan(0);
+  });
+
+  test('strips unknown long options when BUN_STRIP_UNKNOWN=true', async () => {
+    const prev = Bun.env.BUN_STRIP_UNKNOWN;
+    Bun.env.BUN_STRIP_UNKNOWN = 'true';
+    try {
+      // --typo stripped; --help remains and short-circuits before network I/O.
+      const summary = await runCli(['--typo', '--help']);
+      expect(summary).toBeUndefined();
+    } finally {
+      if (prev === undefined) delete Bun.env.BUN_STRIP_UNKNOWN;
+      else Bun.env.BUN_STRIP_UNKNOWN = prev;
+    }
   });
 });

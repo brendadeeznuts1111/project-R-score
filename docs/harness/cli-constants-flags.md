@@ -238,11 +238,15 @@ Entry: [`tools/bun-release-contracts.ts`](../../tools/bun-release-contracts.ts) 
 | Flag | Type | Description |
 | ---- | ---- | ----------- |
 | `--subject` | string | Evidence subject label |
-| `--out-dir` | path | Capture output directory |
+| `--out-dir` | path | Capture output directory (must stay under repo unless `--force`) |
 | `--timeout-ms` | int | WebView navigate timeout |
-| `--no-placeholder` | boolean | Fail instead of placeholder PNG |
+| `--allow-placeholder` | boolean | On WebView failure, write fixture PNG and continue TEST-003 |
+| `--force` | boolean | Allow image/`--out-dir` paths outside the repository root |
 | `--json` | boolean | Machine summary via `cliOut` |
 | `--help` | boolean | Usage |
 
 Commands (positionals): `capture` · `verify` · `remediate` · `meta`.
+`capture` requires an absolute `http(s)` URL, runs TEST-003 on the PNG bytes,
+writes `<evidenceId>.test003.json` beside the PNG, and exits non-zero on
+placeholder captures unless `--allow-placeholder` is set.
 Entry: [`tools/screenshot-cli.ts`](../../tools/screenshot-cli.ts).
