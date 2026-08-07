@@ -130,9 +130,13 @@ Taken keywords get a numeric suffix from suggest (`refresh` → `4.1.refresh-2`)
    `bun run docs:refid:suggest --section=4.1 --flag=--my-flag`
 2. Paste scaffold output (comment + `<a id>` + table row) into the design doc.  
    `bun run docs:refid:scaffold --section=4.1 --flag=--my-flag`
-3. Wire code with `flagDocRef('my-flag')` (or equivalent).
+3. Wire code with `flagDocRef('my-flag')` — re-export from the CLI via
+   [`lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts)
+   (examples: `scripts/validate-wire-traps.ts`, `tools/partner-onboard.ts`,
+   `tools/telegram-ops.ts` · `bun-types-status` uses its own §4.1 helper).
 4. Prove: `bun run docs:refid:check` ·
-   `bun test tests/docs-refid-cli.contract.test.ts`
+   `bun test tests/docs-refid-cli.contract.test.ts` ·
+   `bun test tests/docs-ref-id-tool-exports.test.ts`
 
 ### Proof
 

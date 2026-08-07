@@ -31,10 +31,27 @@ import {
   scanWireTraps,
   type WireTrapIssue,
 } from '../lib/docs/partner-surface-wire-lint.ts';
+import {
+  LINT_WIRES_DOC,
+  LINT_WIRES_LEAVES,
+  LINT_WIRES_SECTION,
+  formatFlagDocRefLine,
+  lintWiresFlagDocRef,
+  lintWiresToolFlags,
+} from '../lib/docs/ref-id-tool-flags.ts';
 import { resolvePath } from './lib/fs-bun.ts';
 
+/** Re-export REF:ID SSOT for registry / tests (`flagDocRef` alias matches bun-types-status). */
+export {
+  LINT_WIRES_DOC,
+  LINT_WIRES_LEAVES,
+  LINT_WIRES_SECTION,
+  lintWiresFlagDocRef as flagDocRef,
+  lintWiresToolFlags,
+};
+
 const ROOT = resolvePath(import.meta.dir, '..');
-const DOCUMENT_REL = 'docs/design/partner-surface-inventory.md';
+const DOCUMENT_REL = LINT_WIRES_DOC;
 const WIRE_LINT_DOC_REL = 'docs/design/wire-lint.md';
 
 const HELP_TEXT = `partner-surface-inventory lint-wires — Layer C inventory-driven brand traps
@@ -66,6 +83,10 @@ Fix a hit:
   2. Add // wire-ok: <reason> (or // brand-ok) on same/prev/next line, or
   3. Register the adapter: wire-field row with pattern + boundaryPathGlobs, or
   4. For non-strict allowlists: --scan --fix
+
+REF:ID (${DOCUMENT_REL} §${LINT_WIRES_SECTION}):
+  ${formatFlagDocRefLine(LINT_WIRES_SECTION, LINT_WIRES_LEAVES)}
+  Prove: bun run docs:refid:check · import { flagDocRef } from this script
 `;
 
 const WHY_MARKDOWN = `# Why lint-wires (Layer C)

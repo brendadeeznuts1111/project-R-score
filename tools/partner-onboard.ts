@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * partner-onboard.ts — one-command partner onboarding (unified Partner Profile).
@@ -14,9 +15,27 @@
  * idempotently. --dry-run validates and prints the plan without writing.
  *
  * @see docs/design/unified-partner-profile.md
+ * @see lib/docs/ref-id-tool-flags.ts — partnerOnboardToolFlags / flagDocRef
  */
 
+import {
+  PARTNER_ONBOARD_DOC,
+  PARTNER_ONBOARD_LEAVES,
+  PARTNER_ONBOARD_SECTION,
+  formatFlagDocRefLine,
+  partnerOnboardFlagDocRef,
+  partnerOnboardToolFlags,
+} from '../lib/docs/ref-id-tool-flags.ts';
 import { onboardPartner } from '../lib/partner-profile/onboard';
+
+/** Re-export REF:ID SSOT for registry / tests (`flagDocRef` alias matches bun-types-status). */
+export {
+  PARTNER_ONBOARD_DOC,
+  PARTNER_ONBOARD_LEAVES,
+  PARTNER_ONBOARD_SECTION,
+  partnerOnboardFlagDocRef as flagDocRef,
+  partnerOnboardToolFlags,
+};
 
 function usage(): never {
   console.log(`Usage:
@@ -25,7 +44,11 @@ function usage(): never {
     [--book-key <key>] [--type <type>] [--maxBet <n>] [--name <name>] \\
     [--deal <pct>] [--initial-balance <n>] [--funding-method <wire|crypto|voucher|internal>] \\
     [--currency <ISO3>] [--hold-target <0..1>] \\
-    [--dry-run] [--skip-forum] [--no-bake]`);
+    [--dry-run] [--skip-forum] [--no-bake]
+
+Accounting Flags REF:ID (${PARTNER_ONBOARD_DOC} §${PARTNER_ONBOARD_SECTION}):
+  ${formatFlagDocRefLine(PARTNER_ONBOARD_SECTION, PARTNER_ONBOARD_LEAVES)}
+  Prove: bun run docs:refid:check · import { flagDocRef } from tools/partner-onboard.ts`);
   process.exit(1);
 }
 
