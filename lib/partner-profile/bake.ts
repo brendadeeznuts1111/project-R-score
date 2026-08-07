@@ -8,9 +8,9 @@
  * partner-profile:bake — bake unified Partner Profiles into the portal read plane.
  *
  * Reads every `config/partner-profiles/<CODE>.toml` (skip `.example.toml`),
- * validates against the v0 schema, and writes:
+ * validates against the private v0 schema, and writes a redacted projection:
  *   public/registry/partner-profiles.json
- *     { schemaVersion, generatedAt, profiles: Record<CODE, PartnerProfile>,
+ *     { schema, schemaVersion, generatedAt, profiles: Record<CODE, PublicPartnerProfile>,
  *       summary: { count, byLifecycle, byPhase } }
  *
  *   bun run partner-profile:bake          # write the bake
@@ -21,16 +21,34 @@
  */
 
 import { joinPath } from '../path-bun';
+import type { PartnerTemplateId } from '../types/branded';
 import { parsePartnerProfileToml } from './parse';
+import {
+  validatePartnerProfile,
+  type PartnerLifecycleStatus,
+  type PartnerPhase,
+  type PartnerProfile,
+} from './schema';
 
 export const PROFILES_DIR = 'config/partner-profiles';
 export const PARTNER_PROFILES_REGISTRY_PATH = 'public/registry/partner-profiles.json';
 export const PROFILES_GLOB = '*.toml';
+export const PARTNER_PROFILES_PUBLIC_SCHEMA = 'factorywager.partner-profile-public.v2' as const;
+
+export interface PublicPartnerProfile {
+  meta: { templateId: PartnerTemplateId; version: string };
+  identity: {
+    code: string; // brand-ok — partner CODE public projection key
+    callSign: string; // brand-ok — call sign CODE-NNN public projection
+  };
+  lifecycle: { status: PartnerLifecycleStatus; phase: PartnerPhase };
+}
 
 export interface PartnerProfilesBakeResult {
-  schemaVersion: 1;
+  schema: typeof PARTNER_PROFILES_PUBLIC_SCHEMA;
+  schemaVersion: 2;
   generatedAt: string;
-  profiles: Record<string, unknown>;
+  profiles: Record<string, PublicPartnerProfile>;
   summary: { count: number; byLifecycle: Record<string, number>; byPhase: Record<string, number> };
 }
 
@@ -60,18 +78,36 @@ export function buildPartnerProfilesBake(
   profiles: Record<string, unknown>,
   generatedAt = new Date().toISOString()
 ): PartnerProfilesBakeResult {
+  const publicProfiles: Record<string, PublicPartnerProfile> = {};
   const byLifecycle: Record<string, number> = {};
   const byPhase: Record<string, number> = {};
-  for (const profile of Object.values(profiles)) {
-    const lifecycle = (profile as { lifecycle?: { status?: string; phase?: string } }).lifecycle;
-    if (lifecycle?.status) byLifecycle[lifecycle.status] = (byLifecycle[lifecycle.status] ?? 0) + 1;
-    if (lifecycle?.phase) byPhase[lifecycle.phase] = (byPhase[lifecycle.phase] ?? 0) + 1;
+  for (const [code, candidate] of Object.entries(profiles)) {
+    const validation = validatePartnerProfile(candidate);
+    if (!validation.valid) {
+      throw new TypeError(`partner profile ${code} invalid: ${validation.issues.join('; ')}`);
+    }
+    const profile: PartnerProfile = validation.profile;
+    if (profile.identity.code !== code) {
+      throw new TypeError(
+        `partner profile key ${code} does not match identity.code ${profile.identity.code}`
+      );
+    }
+    const publicProfile: PublicPartnerProfile = {
+      meta: { templateId: profile.meta.templateId, version: profile.meta.version },
+      identity: { code: profile.identity.code, callSign: profile.identity.callSign },
+      lifecycle: { status: profile.lifecycle.status, phase: profile.lifecycle.phase },
+    };
+    publicProfiles[code] = publicProfile;
+    byLifecycle[publicProfile.lifecycle.status] =
+      (byLifecycle[publicProfile.lifecycle.status] ?? 0) + 1;
+    byPhase[publicProfile.lifecycle.phase] = (byPhase[publicProfile.lifecycle.phase] ?? 0) + 1;
   }
   return {
-    schemaVersion: 1,
+    schema: PARTNER_PROFILES_PUBLIC_SCHEMA,
+    schemaVersion: 2,
     generatedAt,
-    profiles,
-    summary: { count: Object.keys(profiles).length, byLifecycle, byPhase },
+    profiles: publicProfiles,
+    summary: { count: Object.keys(publicProfiles).length, byLifecycle, byPhase },
   };
 }
 

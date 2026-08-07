@@ -1,6 +1,8 @@
 # Example unified partner profile — copy to <CODE>.toml and fill in.
 # See docs/design/unified-partner-profile.md for the model + invariants.
-# Secrets: NEVER put passwords here — only vaultKey (see [books.*.account]).
+# PRIVATE operational input: the public bake is a redacted identity/lifecycle projection.
+# Secrets: NEVER put passwords, tokens, API secrets, or credentials anywhere in this file.
+# Only vaultKey references are allowed (see [books.*.account]).
 # Code must match the file name: config/partner-profiles/YOU.toml → CODE = YOU.
 
 [meta]

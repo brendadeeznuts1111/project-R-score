@@ -77,6 +77,17 @@ export type ProviderConnectionStatus = (typeof PROVIDER_CONNECTION_STATUSES)[num
 export const CONNECTOR_DATA_STATUSES = ['ok', 'stale', 'unavailable'] as const;
 export type ConnectorDataStatus = (typeof CONNECTOR_DATA_STATUSES)[number];
 
+export const CONNECTOR_SOURCE_MODES = ['current', 'last_known_good', 'none'] as const;
+export type ConnectorSourceMode = (typeof CONNECTOR_SOURCE_MODES)[number];
+
+export const CONNECTOR_SNAPSHOT_REASON_CODES = [
+  'current_fresh',
+  'current_stale',
+  'last_known_good',
+  'optional_source_unavailable',
+] as const;
+export type ConnectorSnapshotReasonCode = (typeof CONNECTOR_SNAPSHOT_REASON_CODES)[number];
+
 export const ATTENTION_SEVERITIES = ['info', 'warn', 'block'] as const;
 export type AttentionSeverity = (typeof ATTENTION_SEVERITIES)[number];
 
@@ -130,6 +141,11 @@ export type MoneyAmount = {
   minorUnits: number;
 };
 
+export type ObservedMoneyAmount = {
+  amount: MoneyAmount;
+  provenance: FactProvenance;
+};
+
 export type AccountScope =
   | { kind: 'partner'; partnerCode: PartnerCode }
   | { kind: 'out'; outId: OutId }
@@ -143,7 +159,10 @@ export type BalancePosition = {
 
 export type ConnectorSnapshot = {
   dataStatus: ConnectorDataStatus;
+  sourceMode: ConnectorSourceMode;
+  reasonCode: ConnectorSnapshotReasonCode;
   observedAt?: string;
+  ageSeconds?: number;
   inputRef: string;
   snapshotRef?: string;
 };
@@ -155,7 +174,8 @@ export type PartnerDashboardOut = {
   fundingStatus: OutFundingStatus;
   providerConnectionStatus?: ProviderConnectionStatus;
   externalAccountRefs: ExternalAccountRef[];
-  maxBet?: MoneyAmount;
+  /** Global observed max-stake ceiling; scoped execution limits stay in out capabilities. */
+  observedMaxStake?: ObservedMoneyAmount;
   limitCoverageRatio?: number;
 };
 
@@ -210,10 +230,22 @@ export type PartnerDashboardRecord = {
   attention: PartnerAttentionItem[];
 };
 
+export const PARTNER_SOURCE_CONFLICT_FIELD_PATHS = [
+  'partners[].lifecycle.state',
+  'partners[].outs[].sportsbookId',
+  'partners[].outs[].operationalStatus',
+  'partners[].outs[].fundingStatus',
+  'partners[].outs[].providerConnectionStatus',
+  'partners[].outs[].observedMaxStake.amount.currency',
+  'partners[].outs[].observedMaxStake.amount.minorUnits',
+  'partners[].outs[].limitCoverageRatio',
+] as const;
+export type PartnerSourceConflictFieldPath = (typeof PARTNER_SOURCE_CONFLICT_FIELD_PATHS)[number];
+
 export type PartnerSourceConflict = {
   partnerCode: PartnerCode;
-  fieldPath: string;
-  adapterIds: string[];
+  fieldPath: PartnerSourceConflictFieldPath;
+  adapterIds: AdapterId[];
   values: JsonPrimitive[];
 };
 

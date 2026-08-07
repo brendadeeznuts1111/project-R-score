@@ -197,11 +197,546 @@ export type PartnerBookAccount = {
 // ── Validation ─────────────────────────────────────────────────────────────
 
 export type ProfileValidation =
-  | { valid: true; profile: PartnerProfile }
-  | { valid: false; issues: string[] };
+  { valid: true; profile: PartnerProfile } | { valid: false; issues: string[] };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+const PARTNER_PROFILE_TOP_LEVEL_KEYS = [
+  'meta',
+  'identity',
+  'lineage',
+  'lifecycle',
+  'telegram',
+  'jurisdiction',
+  'rules',
+  'books',
+  'cultivation',
+  'settlement',
+  'balance',
+  'compliance',
+  'accounting',
+  'tracking',
+] as const;
+
+const FORBIDDEN_SECRET_FIELD_NAMES = new Set([
+  'apikey',
+  'apisecret',
+  'bearer',
+  'bearertoken',
+  'credential',
+  'credentials',
+  'password',
+  'passphrase',
+  'privatekey',
+  'secret',
+  'token',
+]);
+
+function fieldPath(parent: string, key: string): string {
+  return parent ? `${parent}.${key}` : key;
+}
+
+function normalizedFieldName(value: string): string {
+  return value.replace(/[-_]/g, '').toLowerCase();
+}
+
+// Walks untyped TOML/JSON before validatePartnerProfile narrows the shape.
+// eslint-disable-next-line harness/no-unknown-function-param -- boundary walk of raw profile input
+function rejectSecretBearingFields(value: unknown, path: string, issues: string[]): void {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => rejectSecretBearingFields(item, `${path}[${index}]`, issues));
+    return;
+  }
+  if (!isRecord(value)) return;
+  for (const [key, child] of Object.entries(value)) {
+    const nextPath = fieldPath(path, key);
+    if (FORBIDDEN_SECRET_FIELD_NAMES.has(normalizedFieldName(key))) {
+      issues.push(`${nextPath} not allowed — credentials are vault-only`);
+      continue;
+    }
+    rejectSecretBearingFields(child, nextPath, issues);
+  }
+}
+
+function exactKeys(
+  value: Record<string, unknown>,
+  allowed: readonly string[],
+  path: string,
+  issues: string[]
+): void {
+  const allowedSet = new Set(allowed);
+  for (const key of Object.keys(value)) {
+    if (!allowedSet.has(key)) issues.push(`${fieldPath(path, key)} is not allowed`);
+  }
+}
+
+function optionalRecord(
+  owner: Record<string, unknown>,
+  key: string,
+  path: string,
+  issues: string[]
+): Record<string, unknown> | undefined {
+  const value = owner[key];
+  if (value === undefined) return undefined;
+  if (!isRecord(value)) {
+    issues.push(`${fieldPath(path, key)} must be an object`);
+    return undefined;
+  }
+  return value;
+}
+
+function optionalString(
+  owner: Record<string, unknown>,
+  key: string,
+  path: string,
+  issues: string[],
+  options: { nonempty?: boolean; pattern?: RegExp } = {}
+): void {
+  const value = owner[key];
+  if (value === undefined) return;
+  if (
+    typeof value !== 'string' ||
+    (options.nonempty === true && value.length === 0) ||
+    (options.pattern && !options.pattern.test(value))
+  ) {
+    issues.push(`${fieldPath(path, key)} must be a valid string`);
+  }
+}
+
+function optionalBoolean(
+  owner: Record<string, unknown>,
+  key: string,
+  path: string,
+  issues: string[]
+): void {
+  const value = owner[key];
+  if (value !== undefined && typeof value !== 'boolean') {
+    issues.push(`${fieldPath(path, key)} must be a boolean`);
+  }
+}
+
+function optionalNumber(
+  owner: Record<string, unknown>,
+  key: string,
+  path: string,
+  issues: string[],
+  options: { min?: number; max?: number; integer?: boolean } = {}
+): void {
+  const value = owner[key];
+  if (value === undefined) return;
+  if (
+    typeof value !== 'number' ||
+    !Number.isFinite(value) ||
+    (options.integer === true && !Number.isSafeInteger(value)) ||
+    (options.min !== undefined && value < options.min) ||
+    (options.max !== undefined && value > options.max)
+  ) {
+    issues.push(`${fieldPath(path, key)} must be a valid finite number`);
+  }
+}
+
+function optionalStringArray(
+  owner: Record<string, unknown>,
+  key: string,
+  path: string,
+  issues: string[]
+): void {
+  const value = owner[key];
+  if (
+    value !== undefined &&
+    (!Array.isArray(value) || value.some(item => typeof item !== 'string'))
+  ) {
+    issues.push(`${fieldPath(path, key)} must be an array of strings`);
+  }
+}
+
+function optionalEnum(
+  owner: Record<string, unknown>,
+  key: string,
+  allowed: readonly string[],
+  path: string,
+  issues: string[]
+): void {
+  const value = owner[key];
+  if (value !== undefined && (typeof value !== 'string' || !allowed.includes(value))) {
+    issues.push(`${fieldPath(path, key)} must be one of ${allowed.join('|')}`);
+  }
+}
+
+function validateOptionalProfileSections(value: Record<string, unknown>, issues: string[]): void {
+  const lineage = optionalRecord(value, 'lineage', '', issues);
+  if (lineage) {
+    exactKeys(lineage, ['parent', 'expert', 'cutPct'], 'lineage', issues);
+    optionalString(lineage, 'parent', 'lineage', issues);
+    optionalString(lineage, 'expert', 'lineage', issues);
+    optionalNumber(lineage, 'cutPct', 'lineage', issues, { min: 0, max: 100 });
+  }
+
+  const telegram = optionalRecord(value, 'telegram', '', issues);
+  if (telegram) {
+    exactKeys(telegram, ['chatId', 'topics', 'preferences'], 'telegram', issues);
+    optionalString(telegram, 'chatId', 'telegram', issues, { pattern: TELEGRAM_CHAT_ID_RE });
+    const topics = optionalRecord(telegram, 'topics', 'telegram', issues);
+    if (topics) {
+      exactKeys(topics, TELEGRAM_TOPICS, 'telegram.topics', issues);
+      for (const topic of TELEGRAM_TOPICS) {
+        const topicId = topics[topic];
+        if (
+          topicId !== undefined &&
+          topicId !== null &&
+          (typeof topicId !== 'number' || !Number.isSafeInteger(topicId) || topicId < 0)
+        ) {
+          issues.push(`telegram.topics.${topic} must be a non-negative safe integer or null`);
+        }
+      }
+    }
+    const preferences = optionalRecord(telegram, 'preferences', 'telegram', issues);
+    if (preferences) {
+      exactKeys(
+        preferences,
+        ['dailyCapacity', 'newEvents', 'betConfirm', 'dailyFinance', 'newEventsSports'],
+        'telegram.preferences',
+        issues
+      );
+      for (const key of ['dailyCapacity', 'newEvents', 'betConfirm', 'dailyFinance']) {
+        optionalBoolean(preferences, key, 'telegram.preferences', issues);
+      }
+      optionalStringArray(preferences, 'newEventsSports', 'telegram.preferences', issues);
+    }
+  }
+
+  const jurisdiction = optionalRecord(value, 'jurisdiction', '', issues);
+  if (jurisdiction) {
+    exactKeys(
+      jurisdiction,
+      [
+        'type',
+        'allowedStates',
+        'allowedCountries',
+        'minimumAge',
+        'kycTier',
+        'geoFenceEnabled',
+        'taxForm',
+        'selfExclusionCheck',
+      ],
+      'jurisdiction',
+      issues
+    );
+    optionalEnum(
+      jurisdiction,
+      'type',
+      ['legal', 'offshore', 'pph', 'crypto'],
+      'jurisdiction',
+      issues
+    );
+    optionalStringArray(jurisdiction, 'allowedStates', 'jurisdiction', issues);
+    optionalStringArray(jurisdiction, 'allowedCountries', 'jurisdiction', issues);
+    optionalNumber(jurisdiction, 'minimumAge', 'jurisdiction', issues, { min: 18, integer: true });
+    optionalEnum(jurisdiction, 'kycTier', ['none', 'basic', 'full'], 'jurisdiction', issues);
+    optionalBoolean(jurisdiction, 'geoFenceEnabled', 'jurisdiction', issues);
+    optionalString(jurisdiction, 'taxForm', 'jurisdiction', issues);
+    optionalBoolean(jurisdiction, 'selfExclusionCheck', 'jurisdiction', issues);
+  }
+
+  const rules = optionalRecord(value, 'rules', '', issues);
+  if (rules) {
+    exactKeys(rules, ['sor'], 'rules', issues);
+    const sor = optionalRecord(rules, 'sor', 'rules', issues);
+    if (sor) {
+      exactKeys(
+        sor,
+        [
+          'eligibleTiers',
+          'maxExposurePerSignal',
+          'maxDailyExposure',
+          'maxSingleBet',
+          'bookWhitelist',
+          'bookBlacklist',
+          'signalGates',
+          'requireOpsecGreen',
+          'opsecScoreMax',
+        ],
+        'rules.sor',
+        issues
+      );
+      optionalStringArray(sor, 'eligibleTiers', 'rules.sor', issues);
+      optionalStringArray(sor, 'bookWhitelist', 'rules.sor', issues);
+      optionalStringArray(sor, 'bookBlacklist', 'rules.sor', issues);
+      for (const key of ['maxExposurePerSignal', 'maxDailyExposure', 'maxSingleBet']) {
+        optionalNumber(sor, key, 'rules.sor', issues, { min: 0, integer: true });
+      }
+      optionalBoolean(sor, 'requireOpsecGreen', 'rules.sor', issues);
+      optionalNumber(sor, 'opsecScoreMax', 'rules.sor', issues, {
+        min: 0,
+        max: 100,
+        integer: true,
+      });
+      const gates = optionalRecord(sor, 'signalGates', 'rules.sor', issues);
+      if (gates) {
+        exactKeys(gates, SIGNAL_GATES, 'rules.sor.signalGates', issues);
+        for (const key of SIGNAL_GATES)
+          optionalBoolean(gates, key, 'rules.sor.signalGates', issues);
+      }
+    }
+  }
+
+  const books = optionalRecord(value, 'books', '', issues);
+  if (books) {
+    for (const [bookKey, candidate] of Object.entries(books)) {
+      const path = `books.${bookKey}`;
+      if (!BOOK_KEY_RE.test(bookKey)) issues.push(`bookKey "${bookKey}" must match ${BOOK_KEY_RE}`);
+      if (!isRecord(candidate)) {
+        issues.push(`${path} must be an object`);
+        continue;
+      }
+      exactKeys(
+        candidate,
+        ['type', 'account', 'funding', 'limits', 'status', 'withdrawPath'],
+        path,
+        issues
+      );
+      if (typeof candidate.type !== 'string' || !BOOK_TYPES.includes(candidate.type as BookType)) {
+        issues.push(`${path}.type must be one of ${BOOK_TYPES.join('|')}`);
+      }
+      optionalEnum(
+        candidate,
+        'status',
+        ['ready', 'deferred', 'paused', 'blocked', 'partial', 'funded'],
+        path,
+        issues
+      );
+      optionalString(candidate, 'withdrawPath', path, issues);
+      const account = optionalRecord(candidate, 'account', path, issues);
+      if (account) {
+        exactKeys(account, ['username', 'vaultKey'], `${path}.account`, issues);
+        optionalString(account, 'username', `${path}.account`, issues);
+        optionalString(account, 'vaultKey', `${path}.account`, issues, { pattern: VAULT_KEY_RE });
+      }
+      const funding = optionalRecord(candidate, 'funding', path, issues);
+      if (funding) {
+        exactKeys(funding, ['method', 'rail', 'target'], `${path}.funding`, issues);
+        for (const key of ['method', 'rail', 'target']) {
+          optionalString(funding, key, `${path}.funding`, issues);
+        }
+      }
+      const limits = optionalRecord(candidate, 'limits', path, issues);
+      if (limits) {
+        exactKeys(limits, ['maxBet', 'freeRollPct'], `${path}.limits`, issues);
+        optionalNumber(limits, 'maxBet', `${path}.limits`, issues, { min: 0, integer: true });
+        optionalNumber(limits, 'freeRollPct', `${path}.limits`, issues, { min: 0, max: 100 });
+      }
+    }
+  }
+
+  const cultivation = optionalRecord(value, 'cultivation', '', issues);
+  if (cultivation) {
+    const keys = [
+      'initialDepositTarget',
+      'depositScheduleWeeks',
+      'depositAmounts',
+      'initialLimit',
+      'limitRaiseTarget',
+      'raiseRequestWeek',
+      'recreationalMix',
+      'roundStakes',
+      'casinoPlayPct',
+      'oddsBoostAcceptance',
+      'maxBetFrequencyDaily',
+      'requiredSportsDiversity',
+    ] as const;
+    exactKeys(cultivation, keys, 'cultivation', issues);
+    for (const key of [
+      'initialDepositTarget',
+      'depositScheduleWeeks',
+      'initialLimit',
+      'limitRaiseTarget',
+      'raiseRequestWeek',
+      'maxBetFrequencyDaily',
+      'requiredSportsDiversity',
+    ]) {
+      optionalNumber(cultivation, key, 'cultivation', issues, { min: 0, integer: true });
+    }
+    for (const key of ['recreationalMix', 'casinoPlayPct', 'oddsBoostAcceptance']) {
+      optionalNumber(cultivation, key, 'cultivation', issues, { min: 0, max: 100 });
+    }
+    optionalBoolean(cultivation, 'roundStakes', 'cultivation', issues);
+    const amounts = cultivation.depositAmounts;
+    if (
+      amounts !== undefined &&
+      (!Array.isArray(amounts) ||
+        amounts.some(
+          amount => typeof amount !== 'number' || !Number.isSafeInteger(amount) || amount < 0
+        ))
+    ) {
+      issues.push('cultivation.depositAmounts must be non-negative safe integers');
+    }
+  }
+
+  const settlement = optionalRecord(value, 'settlement', '', issues);
+  if (settlement) {
+    exactKeys(
+      settlement,
+      [
+        'commissionStructure',
+        'commissionPct',
+        'commissionTiers',
+        'makeupCarry',
+        'makeupCap',
+        'payoutFrequency',
+        'currency',
+        'holdTargetPct',
+      ],
+      'settlement',
+      issues
+    );
+    optionalString(settlement, 'commissionStructure', 'settlement', issues);
+    optionalNumber(settlement, 'commissionPct', 'settlement', issues, { min: 0, max: 100 });
+    optionalBoolean(settlement, 'makeupCarry', 'settlement', issues);
+    optionalNumber(settlement, 'makeupCap', 'settlement', issues, { min: 0, integer: true });
+    optionalString(settlement, 'payoutFrequency', 'settlement', issues);
+    optionalString(settlement, 'currency', 'settlement', issues, { pattern: /^[A-Z]{3}$/ });
+    optionalNumber(settlement, 'holdTargetPct', 'settlement', issues, { min: 0, max: 100 });
+    const tiers = settlement.commissionTiers;
+    if (
+      tiers !== undefined &&
+      (!Array.isArray(tiers) ||
+        tiers.some(
+          tier => typeof tier !== 'number' || !Number.isFinite(tier) || tier < 0 || tier > 1
+        ))
+    ) {
+      issues.push('settlement.commissionTiers must contain finite ratios from 0 to 1');
+    }
+  }
+
+  const balance = optionalRecord(value, 'balance', '', issues);
+  if (balance) {
+    exactKeys(
+      balance,
+      ['initialCapitalRequirement', 'marginCallThreshold', 'marginCallAction', 'autoInject'],
+      'balance',
+      issues
+    );
+    optionalNumber(balance, 'initialCapitalRequirement', 'balance', issues, { min: 0 });
+    optionalNumber(balance, 'marginCallThreshold', 'balance', issues, { min: 0 });
+    optionalEnum(balance, 'marginCallAction', ['notify', 'pause', 'block'], 'balance', issues);
+    optionalBoolean(balance, 'autoInject', 'balance', issues);
+  }
+
+  const compliance = optionalRecord(value, 'compliance', '', issues);
+  if (compliance) {
+    exactKeys(
+      compliance,
+      [
+        'autoSuspendRules',
+        'reviewRequiredFor',
+        'auditRetentionDays',
+        'maxOpsecScore',
+        'require2FA',
+      ],
+      'compliance',
+      issues
+    );
+    optionalBoolean(compliance, 'autoSuspendRules', 'compliance', issues);
+    optionalStringArray(compliance, 'reviewRequiredFor', 'compliance', issues);
+    optionalNumber(compliance, 'auditRetentionDays', 'compliance', issues, {
+      min: 0,
+      integer: true,
+    });
+    optionalNumber(compliance, 'maxOpsecScore', 'compliance', issues, {
+      min: 0,
+      max: 100,
+      integer: true,
+    });
+    optionalBoolean(compliance, 'require2FA', 'compliance', issues);
+  }
+
+  const accounting = optionalRecord(value, 'accounting', '', issues);
+  if (accounting) {
+    exactKeys(
+      accounting,
+      ['fundStatus', 'deposits', 'credits', 'freeRoll', 'ledger'],
+      'accounting',
+      issues
+    );
+    optionalEnum(
+      accounting,
+      'fundStatus',
+      ['ready', 'deferred', 'paused', 'blocked'],
+      'accounting',
+      issues
+    );
+    for (const [key, allowedKeys] of [
+      ['deposits', ['amount', 'date', 'rail']],
+      ['credits', ['amount', 'date']],
+    ] as const) {
+      const rows = accounting[key];
+      if (rows === undefined) continue;
+      if (!Array.isArray(rows)) {
+        issues.push(`accounting.${key} must be an array`);
+        continue;
+      }
+      rows.forEach((row, index) => {
+        const rowPath = `accounting.${key}[${index}]`;
+        if (!isRecord(row)) {
+          issues.push(`${rowPath} must be an object`);
+          return;
+        }
+        exactKeys(row, allowedKeys, rowPath, issues);
+        optionalNumber(row, 'amount', rowPath, issues, { min: 0 });
+        optionalString(row, 'date', rowPath, issues, { nonempty: true });
+        if (key === 'deposits') optionalString(row, 'rail', rowPath, issues, { nonempty: true });
+      });
+    }
+    const freeRoll = optionalRecord(accounting, 'freeRoll', 'accounting', issues);
+    if (freeRoll) {
+      exactKeys(freeRoll, ['total', 'used'], 'accounting.freeRoll', issues);
+      optionalNumber(freeRoll, 'total', 'accounting.freeRoll', issues, { min: 0 });
+      optionalNumber(freeRoll, 'used', 'accounting.freeRoll', issues, { min: 0 });
+    }
+    if (accounting.ledger !== undefined && !Array.isArray(accounting.ledger)) {
+      issues.push('accounting.ledger must be an array');
+    }
+  }
+
+  const tracking = optionalRecord(value, 'tracking', '', issues);
+  if (tracking) {
+    exactKeys(tracking, ['accounts', 'limits', 'communication'], 'tracking', issues);
+    const accounts = optionalRecord(tracking, 'accounts', 'tracking', issues);
+    if (accounts) {
+      exactKeys(accounts, ['total', 'ready', 'deferred', 'blocked'], 'tracking.accounts', issues);
+      for (const key of ['total', 'ready', 'deferred', 'blocked']) {
+        optionalNumber(accounts, key, 'tracking.accounts', issues, { min: 0, integer: true });
+      }
+    }
+    const limits = optionalRecord(tracking, 'limits', 'tracking', issues);
+    if (limits) {
+      exactKeys(limits, ['tracked', 'missing', 'coveragePct'], 'tracking.limits', issues);
+      optionalNumber(limits, 'tracked', 'tracking.limits', issues, { min: 0, integer: true });
+      optionalNumber(limits, 'missing', 'tracking.limits', issues, { min: 0, integer: true });
+      optionalNumber(limits, 'coveragePct', 'tracking.limits', issues, { min: 0, max: 100 });
+    }
+    const communication = optionalRecord(tracking, 'communication', 'tracking', issues);
+    if (communication) {
+      exactKeys(
+        communication,
+        ['chatLinked', 'topicsConfigured', 'topicsRequired', 'ready'],
+        'tracking.communication',
+        issues
+      );
+      optionalBoolean(communication, 'chatLinked', 'tracking.communication', issues);
+      optionalNumber(communication, 'topicsConfigured', 'tracking.communication', issues, {
+        min: 0,
+        integer: true,
+      });
+      optionalNumber(communication, 'topicsRequired', 'tracking.communication', issues, {
+        min: 0,
+        integer: true,
+      });
+      optionalBoolean(communication, 'ready', 'tracking.communication', issues);
+    }
+  }
 }
 
 /** Derive the ops phase from lifecycle status + completeness (pure). */
@@ -227,9 +762,12 @@ export function derivePhase(
 export function validatePartnerProfile(value: unknown): ProfileValidation {
   const issues: string[] = [];
   if (!isRecord(value)) return { valid: false, issues: ['profile is not an object'] };
+  exactKeys(value, PARTNER_PROFILE_TOP_LEVEL_KEYS, '', issues);
+  rejectSecretBearingFields(value, '', issues);
   if (!isRecord(value.meta)) {
     issues.push('meta required');
   } else {
+    exactKeys(value.meta, ['templateId', 'name', 'version', 'source'], 'meta', issues);
     if (typeof value.meta.templateId !== 'string' || value.meta.templateId.length === 0) {
       issues.push('meta.templateId required');
     }
@@ -244,6 +782,7 @@ export function validatePartnerProfile(value: unknown): ProfileValidation {
   if (!isRecord(value.identity)) {
     issues.push('identity required');
   } else {
+    exactKeys(value.identity, ['code', 'callSign', 'treeNodeId', 'status'], 'identity', issues);
     const code = value.identity.code;
     if (typeof code !== 'string' || !PARTNER_CODE_RE.test(code)) {
       issues.push(`identity.code must match ${PARTNER_CODE_RE}`);
@@ -264,6 +803,7 @@ export function validatePartnerProfile(value: unknown): ProfileValidation {
   if (!isRecord(value.lifecycle)) {
     issues.push('lifecycle required');
   } else {
+    exactKeys(value.lifecycle, ['status', 'phase'], 'lifecycle', issues);
     if (!isPartnerLifecycleStatus(value.lifecycle.status)) {
       issues.push(`lifecycle.status must be one of ${PARTNER_LIFECYCLE_STATUSES.join('|')}`);
     }
@@ -271,84 +811,7 @@ export function validatePartnerProfile(value: unknown): ProfileValidation {
       issues.push(`lifecycle.phase must be one of ${PARTNER_PHASES.join('|')}`);
     }
   }
-  if (value.books !== undefined) {
-    if (!isRecord(value.books)) {
-      issues.push('books must be an object keyed by bookKey');
-    } else {
-      for (const [bookKey, account] of Object.entries(value.books)) {
-        if (!BOOK_KEY_RE.test(bookKey)) {
-          issues.push(`bookKey "${bookKey}" must match ${BOOK_KEY_RE}`);
-        }
-        if (!isRecord(account)) {
-          issues.push(`books.${bookKey} must be an object`);
-          continue;
-        }
-        if (!BOOK_TYPES.includes(account.type as BookType)) {
-          issues.push(`books.${bookKey}.type must be one of ${BOOK_TYPES.join('|')}`);
-        }
-        const vaultKey = (account.account as Record<string, unknown> | undefined)?.vaultKey;
-        if (
-          vaultKey !== undefined &&
-          (typeof vaultKey !== 'string' || !VAULT_KEY_RE.test(vaultKey))
-        ) {
-          issues.push(`books.${bookKey}.account.vaultKey invalid`);
-        }
-        const username = (account.account as Record<string, unknown> | undefined)?.username;
-        if (username !== undefined && typeof username !== 'string') {
-          issues.push(`books.${bookKey}.account.username must be a string`);
-        }
-        if (account.password !== undefined) {
-          issues.push(`books.${bookKey}.password not allowed — credentials are vault-only`);
-        }
-      }
-    }
-  }
-  if (value.telegram !== undefined) {
-    if (!isRecord(value.telegram)) {
-      issues.push('telegram must be an object');
-    } else {
-      const chatId = value.telegram.chatId;
-      if (
-        chatId !== undefined &&
-        (typeof chatId !== 'string' || !TELEGRAM_CHAT_ID_RE.test(chatId))
-      ) {
-        issues.push('telegram.chatId must be a numeric telegram chat id');
-      }
-      if (value.telegram.topics !== undefined && !isRecord(value.telegram.topics)) {
-        issues.push('telegram.topics must be an object');
-      }
-      if (value.telegram.preferences !== undefined) {
-        if (!isRecord(value.telegram.preferences)) {
-          issues.push('telegram.preferences must be an object');
-        } else {
-          for (const [key, val] of Object.entries(value.telegram.preferences)) {
-            if (key === 'newEventsSports') {
-              if (!Array.isArray(val) || val.some(v => typeof v !== 'string')) {
-                issues.push('telegram.preferences.newEventsSports must be an array of strings');
-              }
-              continue;
-            }
-            if (typeof val !== 'boolean') {
-              issues.push(`telegram.preferences.${key} must be a boolean`);
-            }
-          }
-        }
-      }
-    }
-  }
-  if (value.settlement !== undefined) {
-    if (!isRecord(value.settlement)) {
-      issues.push('settlement must be an object');
-    } else if (
-      value.settlement.commissionPct !== undefined &&
-      (typeof value.settlement.commissionPct !== 'number' ||
-        !Number.isFinite(value.settlement.commissionPct) ||
-        value.settlement.commissionPct < 0 ||
-        value.settlement.commissionPct > 100)
-    ) {
-      issues.push('settlement.commissionPct must be a finite number from 0 to 100');
-    }
-  }
+  validateOptionalProfileSections(value, issues);
   if (issues.length > 0) return { valid: false, issues };
   return { valid: true, profile: value as PartnerProfile };
 }

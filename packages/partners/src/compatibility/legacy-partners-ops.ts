@@ -193,7 +193,10 @@ export function parseLegacyPartnersOpsProjection(input: unknown): LegacyPartnerP
     sourceSchema: LEGACY_PARTNERS_OPS_SCHEMA,
     connectorSnapshot: {
       dataStatus: 'ok',
+      sourceMode: 'current',
+      reasonCode: 'current_fresh',
       observedAt: generatedAt,
+      ageSeconds: 0,
       inputRef: LEGACY_PARTNERS_OPS_INPUT_REF,
     },
     partners,

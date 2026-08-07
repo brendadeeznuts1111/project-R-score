@@ -282,7 +282,7 @@ export function parsePartnerOutCapabilitySnapshot(value: unknown): PartnerOutCap
     book.brandGroup === undefined
       ? undefined
       : text(book.brandGroup, 'capability.sportsbook.brandGroup');
-  return {
+  const result: PartnerOutCapabilitySnapshot = {
     schema: PARTNER_OUT_CAPABILITY_SCHEMA_V1,
     partnerCode,
     outId: out.outId,
@@ -331,4 +331,18 @@ export function parsePartnerOutCapabilitySnapshot(value: unknown): PartnerOutCap
     },
     limits,
   };
+  const factProvenance = [
+    result.access.credentials.provenance,
+    result.access.authorization.provenance,
+    result.access.providerConnection.provenance,
+    ...result.betStructures.map(item => item.provenance),
+    result.wagerOfferCatalog.provenance,
+    result.promotionOfferCatalog.provenance,
+    ...result.limits.map(item => item.provenance),
+  ];
+  const snapshotObservedAtMs = Date.parse(result.observedAt);
+  if (factProvenance.some(item => Date.parse(item.observedAt) > snapshotObservedAtMs)) {
+    throw new TypeError('capability fact provenance must not be observed after the snapshot');
+  }
+  return result;
 }

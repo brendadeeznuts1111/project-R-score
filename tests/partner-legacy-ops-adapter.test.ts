@@ -12,7 +12,10 @@ describe('legacy partners-ops compatibility adapter', () => {
     expect(projection.sourceSchema).toBe('factorywager.partners-ops.v2');
     expect(projection.connectorSnapshot).toEqual({
       dataStatus: 'ok',
+      sourceMode: 'current',
+      reasonCode: 'current_fresh',
       observedAt: generatedAt,
+      ageSeconds: 0,
       inputRef: '/registry/partners-ops.json',
     });
     expect(projection.partners.map(partner => partner.partnerCode)).toEqual([

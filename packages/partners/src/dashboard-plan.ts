@@ -47,6 +47,19 @@ export const PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS = {
   'legacy-ops-registry': [],
 } as const;
 
+export const PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS = {
+  profiles: 'config/partner-profiles/*.toml',
+  accounting: 'partner_ledger',
+  telegram: '/registry/telegram-handshake.json',
+  limits: '/registry/limit-raises.json',
+  bookmakers: '/registry/bookmakers.json',
+  tennis: '/registry/tennis/partner-contracts.json',
+  sportsTerminal: '',
+  legacyOps: '/registry/partners-ops.json',
+} as const;
+
+export const PARTNER_DASHBOARD_REQUIRED_CONNECTOR_KEYS = ['profiles'] as const;
+
 export type PartnerDashboardConnectorId =
   keyof typeof PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS;
 export type PartnerDashboardAuthoritativeFactPath =

@@ -1,6 +1,7 @@
 {
-  "schemaVersion": 1,
-  "generatedAt": "2026-08-02T23:19:11.462Z",
+  "schema": "factorywager.partner-profile-public.v2",
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-07T06:22:33.108Z",
   "profiles": {},
   "summary": {
     "count": 0,
