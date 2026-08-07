@@ -37,10 +37,13 @@ type EnvMap = { [key: string]: string | undefined };
  * Bun-native + Actions GitHub env **key names** (never values).
  *
  * - Bun create: `GITHUB_TOKEN` · `GITHUB_ACCESS_TOKEN` · `GITHUB_API_DOMAIN`
+ *   (also related: process `BUN_CREATE_DIR` for global local-template root —
+ *   not a GitHub key; declared on `env.d.ts`)
  * - Actions identity: `GITHUB_REPOSITORY*` · `GITHUB_SERVER_URL`
  * - Bun test CI reporters also read `GITHUB_REPOSITORY` · `GITHUB_SERVER_URL` · `GITHUB_RUN_ID`
  *
  * @see https://bun.com/docs/runtime/templating/create
+ * @see https://bun.com/docs/runtime/templating/create#from-a-local-template
  */
 export const BUN_GITHUB_ENV = {
   /** Bun create — preferred over ACCESS_TOKEN when both set */

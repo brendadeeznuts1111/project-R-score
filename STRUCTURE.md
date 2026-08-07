@@ -256,6 +256,9 @@ Related (not root files): `lib/channels/` → `ops-outbox`;
   (`cliOut` · `tones` · chrome) · facade [`lib/console-depth.ts`](lib/console-depth.ts)
   · note [`lib/console-depth.md`](lib/console-depth.md) ·
   [AGENTS.md § Console depth](AGENTS.md#console-depth-output-verbosity)
+- **`bun create` / factory scaffold:** [AGENTS.md § bun create](AGENTS.md#bun-create-templating--scaffold)
+  · [`.bun-create/`](.bun-create/) · [`lib/factory/`](lib/factory/README.md)
+  · `bun run factory:create`
 - **Agent triage:** [`projects/README.md`](projects/README.md)
 - **Codex threads:** stable `RTH-###` identity, ranking, references, and
   bring-home parity →

@@ -14,6 +14,7 @@
 | Domain → concept → shape → surface | [DOMAIN_CONCEPT_SHAPE.md](./DOMAIN_CONCEPT_SHAPE.md) |
 | Bun capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) · [Utilities guides map](./BUN_NATIVE_CAPABILITIES.md#utilities-guides-map) |
 | Console depth / `bun run -` / `cliOut` | root [AGENTS.md § Console depth](../AGENTS.md#console-depth-output-verbosity) · domain [`lib/console/`](../lib/console/README.md) · note [`lib/console-depth.md`](../lib/console-depth.md) · hub [`lib/bun-runtime.md`](../lib/bun-runtime.md) · `bun test tests/console-depth.test.ts tests/console-lib.test.ts` |
+| `bun create` / factory scaffold | root [AGENTS.md § bun create](../AGENTS.md#bun-create-templating--scaffold) · [templating/create](https://bun.com/docs/runtime/templating/create) · [`lib/factory/README.md`](../lib/factory/README.md) · `.bun-create/` · `bun run factory:create` · env [`BUN_GITHUB_ENV`](../lib/github-repository-ref.ts) |
 | Bun channel/type governance | [design/bun-channel-governance.md](./design/bun-channel-governance.md) · `bun run bun:channel:check` |
 | Docs operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) · `bun run docs:refresh` |
 | Audit findings/concepts | [audit/README.md](./audit/README.md) · `bun tools/bun-doc-refs.ts suggest --audit "<q>"` · claim `audit-findings-catalog` |

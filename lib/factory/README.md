@@ -38,3 +38,32 @@ Live R2 uses
 via `createS3RegistryStore`. Unit tests inject `createMemoryObjectStore()` —
 green tests prove coordination, not deployed bucket health (`factory env` / live
 ping).
+
+## `factory create` → `bun create`
+
+Scaffolding **delegates to Bun** — factory only adds `--publish` (registry) and
+interactive spawn. Canonical Bun docs:
+[runtime/templating/create](https://bun.com/docs/runtime/templating/create)
+(*optional* — Bun needs no config; create only speeds setup). Empty project
+without a template: [bun init](https://bun.com/docs/runtime/templating/init).
+
+| Mode | Example |
+| ---- | ------- |
+| Local template (repo) | `bun run factory:create -- factory-library my-lib` |
+| Same, publish to R2 | `bun run factory:create -- factory-library my-lib --publish` |
+| React component env | `bun create ./MyComponent.tsx` (or `factory create ./MyComponent.tsx`) |
+| GitHub | `bun create user/repo dest` |
+| npm create-* | `bun create remix` ≡ `bunx create-remix` |
+
+**Template search path:** project [`.bun-create/<name>`](../../.bun-create/) ·
+`$HOME/.bun-create/<name>` · global override `BUN_CREATE_DIR`.  
+Ship template: [`.bun-create/factory-library`](../../.bun-create/factory-library/)
+(`package.json` `"bun-create": { preinstall, postinstall }`).
+
+**Flags** (passed through): `--force` · `--no-install` · `--no-git` · `--open`.  
+**Env** (GitHub / Enterprise): `GITHUB_TOKEN` (preferred) · `GITHUB_ACCESS_TOKEN`
+· `GITHUB_API_DOMAIN` — key names in
+[`BUN_GITHUB_ENV`](../github-repository-ref.ts).
+
+⚠️ Local templates **delete** an existing destination directory; remote templates
+do not overwrite without `--force`.

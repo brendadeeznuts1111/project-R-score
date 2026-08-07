@@ -47,6 +47,12 @@ declare module 'bun' {
     GITHUB_RUN_ID?: string;
     GITHUB_ACTIONS?: string;
     GH_TOKEN?: string;
+    /**
+     * Override global `bun create` template root (default `$HOME/.bun-create`).
+     * Project templates still resolve from `<repo>/.bun-create/<name>`.
+     * @see https://bun.com/docs/runtime/templating/create#from-a-local-template
+     */
+    BUN_CREATE_DIR?: string;
 
     /**
      * Unknown long-option CLI guard toggles — allowlists stay in
