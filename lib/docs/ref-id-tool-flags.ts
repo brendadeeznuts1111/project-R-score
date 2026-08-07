@@ -73,23 +73,39 @@ export function partnerOnboardToolFlags(): ToolFlagRef[] {
 /** §1.1 — images:generate (`scripts/images-generate.ts`) */
 export const IMAGES_GENERATE_DOC = 'docs/IMAGES.md' as const;
 export const IMAGES_GENERATE_SECTION = '1.1' as const;
+export const IMAGES_GENERATE_LEAVES = [
+  'source',
+  'out',
+  'size',
+  'format',
+  'quality',
+  'fit',
+  'max-pixels',
+  'json',
+  'dry-run',
+] as const;
+export function imagesGenerateFlagDocRef(leaf: (typeof IMAGES_GENERATE_LEAVES)[number] | string) {
+  return flagDocRefAt(IMAGES_GENERATE_SECTION, leaf);
+}
 export function imagesGenerateToolFlags(): ToolFlagRef[] {
-  return toolFlagsAt(
-    IMAGES_GENERATE_SECTION,
-    ['source', 'out', 'size', 'format', 'quality', 'fit', 'max-pixels', 'json', 'dry-run'],
-    'scripts/images-generate.ts'
-  );
+  return toolFlagsAt(IMAGES_GENERATE_SECTION, IMAGES_GENERATE_LEAVES, 'scripts/images-generate.ts');
 }
 
 /** §1.1 — ops:snapshot seed block (`tools/ops-snapshot.ts`) */
 export const OPS_SNAPSHOT_DOC = 'docs/harness/tenants/ops-snapshot.md' as const;
 export const OPS_SNAPSHOT_SECTION = '1.1' as const;
+export const OPS_SNAPSHOT_LEAVES = [
+  'default',
+  'seed',
+  'seed-force',
+  'seed-tenants',
+  'no-seed',
+] as const;
+export function opsSnapshotFlagDocRef(leaf: (typeof OPS_SNAPSHOT_LEAVES)[number] | string) {
+  return flagDocRefAt(OPS_SNAPSHOT_SECTION, leaf);
+}
 export function opsSnapshotToolFlags(): ToolFlagRef[] {
-  return toolFlagsAt(
-    OPS_SNAPSHOT_SECTION,
-    ['default', 'seed', 'seed-force', 'seed-tenants', 'no-seed'],
-    'tools/ops-snapshot.ts'
-  );
+  return toolFlagsAt(OPS_SNAPSHOT_SECTION, OPS_SNAPSHOT_LEAVES, 'tools/ops-snapshot.ts');
 }
 
 /** §1.1 — telegram:ops link-package-group (`tools/telegram-ops.ts`) */

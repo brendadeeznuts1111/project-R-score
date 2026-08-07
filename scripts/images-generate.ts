@@ -16,9 +16,27 @@
  *
  * Zero npm deps. Tennis HQ / portal asset pipeline.
  * @see docs/IMAGES.md
+ * @see lib/docs/ref-id-tool-flags.ts — imagesGenerateToolFlags / flagDocRef
  */
 import { joinPath, basenamePath, extnamePath, dirnamePath } from '../lib/path-bun.ts';
 import { jsonOut } from '../lib/console-depth.ts';
+import {
+  IMAGES_GENERATE_DOC,
+  IMAGES_GENERATE_LEAVES,
+  IMAGES_GENERATE_SECTION,
+  formatFlagDocRefLine,
+  imagesGenerateFlagDocRef,
+  imagesGenerateToolFlags,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+/** Re-export REF:ID SSOT for registry / tests (`flagDocRef` matches bun-types-status). */
+export {
+  IMAGES_GENERATE_DOC,
+  IMAGES_GENERATE_LEAVES,
+  IMAGES_GENERATE_SECTION,
+  imagesGenerateFlagDocRef as flagDocRef,
+  imagesGenerateToolFlags,
+};
 
 type Template = 'avatar' | 'hero' | 'match' | 'convert' | 'placeholder';
 type OutFormat = 'webp' | 'jpeg' | 'png' | 'avif';
@@ -150,15 +168,19 @@ Templates:
   placeholder  ThumbHash/LQIP data URLs (writes .txt next to --out)
 
 Options:
-  --source <path>     Input file or directory
-  --out <path>        Output file or directory
-  --size <WxH>        e.g. 128x128 (avatar/match)
-  --format <fmt>      webp | jpeg | png | avif (default webp)
-  --quality <1-100>   Encode quality (default 80; hero 85)
-  --fit <fill|inside> Resize fit (cover is accepted as fill)
-  --max-pixels <n>    Decompression bomb guard
-  --json              Machine summary via jsonOut
-  --dry-run           Plan only
+  --source <path>     Input file or directory  (${imagesGenerateFlagDocRef('source').refId})
+  --out <path>        Output file or directory  (${imagesGenerateFlagDocRef('out').refId})
+  --size <WxH>        e.g. 128x128 (avatar/match)  (${imagesGenerateFlagDocRef('size').refId})
+  --format <fmt>      webp | jpeg | png | avif (default webp)  (${imagesGenerateFlagDocRef('format').refId})
+  --quality <1-100>   Encode quality (default 80; hero 85)  (${imagesGenerateFlagDocRef('quality').refId})
+  --fit <fill|inside> Resize fit (cover is accepted as fill)  (${imagesGenerateFlagDocRef('fit').refId})
+  --max-pixels <n>    Decompression bomb guard  (${imagesGenerateFlagDocRef('max-pixels').refId})
+  --json              Machine summary via jsonOut  (${imagesGenerateFlagDocRef('json').refId})
+  --dry-run           Plan only  (${imagesGenerateFlagDocRef('dry-run').refId})
+
+REF:ID (${IMAGES_GENERATE_DOC} §${IMAGES_GENERATE_SECTION}):
+  ${formatFlagDocRefLine(IMAGES_GENERATE_SECTION, IMAGES_GENERATE_LEAVES)}
+  Prove: bun run docs:refid:check · import { flagDocRef } from scripts/images-generate.ts
 
 Examples:
   bun run images:generate --template=avatar --source=./warehouse/avatars --size=128x128 --out=./public/avatars
