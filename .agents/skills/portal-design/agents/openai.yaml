@@ -14,6 +14,10 @@ default_prompt: |
 
   Dual-plane: tennis.factory-wager.com (Worker + PARTNER_API_TOKEN) ≠ score…/portal/tennis/ (Pages evidence + Access).
 
+  Scaffold planes: boards = _page-template + builders; packages = factory create /
+  bun create (.bun-create/factory-library); bun init = upstream only; bunx-pr does
+  not exist (use gh + claim check). Never scaffold portal boards with bun create.
+
   Doctor:
     bun run portal:theme:check
     bun run validate:colors

@@ -103,12 +103,17 @@ After `lib/**/*.ts`: `bun x prettier --write <files>` then re-stage.
 
 ## Compose with siblings
 
-| Agent | When |
-| ----- | ---- |
+| Agent / plane | When |
+| ------------- | ---- |
 | public-discovery | Static anti-patterns under `public/` |
 | public-audit-gap-close | Close public-plane gap rows |
 | branded-ids | Typed domain brands (not visual) |
 | web-perf | Core Web Vitals / Lighthouse |
+| `factory create` / `.bun-create/factory-library` | New **library/package** only — hand off; packages board “Copy create” is the sole portal UX touchpoint |
+| `bun init` | Upstream empty-project scaffold — catalog only; not a Factory portal wrapper |
+| `bunx-pr` | **Does not exist** — use `gh` + `.github/pull_request_template.md` + `check-pr-claim` |
+
+Scaffold plane map: [`docs/design/portal-design-agent.md`](../../../docs/design/portal-design-agent.md#scaffold-planes-bun-init--bun-create--bunx-pr).
 
 Shared tooling: [references/agent-tooling.md](../references/agent-tooling.md)
 
@@ -117,6 +122,8 @@ Shared tooling: [references/agent-tooling.md](../references/agent-tooling.md)
 - Name this skill `brand-*` or conflate with typed branded IDs
 - Invent a second palette / `design.toml` color SSOT / parallel `tokens.css`
 - Hand-edit `theme-tokens.css` or ship a React kit for portal
+- Scaffold boards with `bun create` / `factory create` / `bun init`
+- Invent `bunx-pr`
 - Collapse Worker tennis host into Pages `/portal/tennis/`
 - Break `ui-html` ↔ `portal-ui.js` API parity
 - Sweep parallel-lane dirty trees
