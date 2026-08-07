@@ -1,0 +1,843 @@
+{
+  "generatedAt": "2026-08-07T20:44:42.434Z",
+  "harness": {
+    "generatedAt": "2026-08-07T20:44:42.434Z",
+    "perimeter": [
+      "lib",
+      "tools",
+      "docs",
+      "config",
+      "functions",
+      "scripts",
+      "tests",
+      "public/registry",
+      ".agents/skills"
+    ],
+    "findings": [
+      {
+        "kind": "similar-env",
+        "severity": "warn",
+        "id": "similar-env:ALERT_WEBHOOK_PORT|ALERT_WEBHOOK_URL",
+        "title": "Similar env var names: ALERT_WEBHOOK_PORT ↔ ALERT_WEBHOOK_URL",
+        "detail": "similarity=0.83 · hits 1 / 1",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "warn",
+        "id": "similar-env:BUN_TYPES_CI|BUN_TYPES_TIP",
+        "title": "Similar env var names: BUN_TYPES_CI ↔ BUN_TYPES_TIP",
+        "detail": "similarity=0.85 · hits 2 / 3",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "naming-cluster",
+        "severity": "info",
+        "id": "cluster:pages-plane",
+        "title": "Similar naming cluster: pages-plane",
+        "canonical": "factoryWagerPagesCustomUrl() · ROUTING_PROBE_BASE_URL · score.factory-wager.com",
+        "detail": "ROUTING_PROBE_BASE_URL (16) · PAGES_PUBLIC_URL (4) · factoryWagerPagesCustomUrl (17) · score.factory-wager.com (258) · customDomain (5)",
+        "samples": [
+          {
+            "file": "tools/routing-registry-proof.ts",
+            "line": 13,
+            "excerpt": "ROUTING_PROBE_BASE_URL=https://project-r-s"
+          },
+          {
+            "file": "tests/reference-discovery.test.ts",
+            "line": 13,
+            "excerpt": "ROUTING_PROBE_BASE_URL')).toBeLessThan(0.5"
+          },
+          {
+            "file": "public/registry/harness-skills-catalog.json",
+            "line": 286,
+            "excerpt": "ROUTING_PROBE_BASE_URL), orphan CANONICAL_"
+          },
+          {
+            "file": "lib/env-check.ts",
+            "line": 161,
+            "excerpt": "PAGES_PUBLIC_URL'],\n    hasCodeDefau"
+          },
+          {
+            "file": "lib/reference-discovery.ts",
+            "line": 87,
+            "excerpt": "PAGES_PUBLIC_URL',\n      'factoryWag"
+          },
+          {
+            "file": "lib/routing-proof.ts",
+            "line": 33,
+            "excerpt": "PAGES_PUBLIC_URL`.\n */\nexport functi"
+          }
+        ],
+        "repair": "Pages public / routing probes — not bun publish --registry"
+      },
+      {
+        "kind": "naming-cluster",
+        "severity": "info",
+        "id": "cluster:registry-bucket",
+        "title": "Similar naming cluster: registry-bucket",
+        "canonical": "factoryRegistryBucketFromEnv() · R2_REGISTRY_BUCKET · factory-wager-registry",
+        "detail": "R2_REGISTRY_BUCKET (15) · R2_BUCKET_NAME (38) · R2_BUCKET (72) · factoryRegistryBucketFromEnv (20) · factory-wager-registry (21) · registryDoctorBucket (6)",
+        "samples": [
+          {
+            "file": "tests/r2-env.test.ts",
+            "line": 107,
+            "excerpt": "R2_REGISTRY_BUCKET=factory-wager-regis"
+          },
+          {
+            "file": "scripts/registry-stack-doctor.ts",
+            "line": 142,
+            "excerpt": "R2_REGISTRY_BUCKET', DEFAULT_R2_BUCKET"
+          },
+          {
+            "file": "public/registry/monitoring.json",
+            "line": 156,
+            "excerpt": "R2_REGISTRY_BUCKET\",\n        \"Group\": "
+          },
+          {
+            "file": "tests/outbox-prod-opts.test.ts",
+            "line": 26,
+            "excerpt": "R2_BUCKET_NAME=bun-secrets for ben"
+          },
+          {
+            "file": "tests/repository-governance.test.ts",
+            "line": 43,
+            "excerpt": "R2_BUCKET_NAME=');\n    const local"
+          },
+          {
+            "file": "tests/repository-governance.test.ts",
+            "line": 53,
+            "excerpt": "R2_BUCKET_NAME\");\n    expect(local"
+          }
+        ],
+        "repair": "R2 object store bucket — see config/r2-env.ts"
+      },
+      {
+        "kind": "naming-cluster",
+        "severity": "info",
+        "id": "cluster:registry-plane",
+        "title": "Similar naming cluster: registry-plane",
+        "canonical": "factoryWagerRegistryUrlFromEnv() · REGISTRY_URL · registry.factory-wager.com",
+        "detail": "REGISTRY_URL (106) · FACTORY_REGISTRY_URL (20) · factoryWagerRegistryUrlFromEnv (36) · registry.factory-wager.com (89) · registryHost (18)",
+        "samples": [
+          {
+            "file": "tools/bun-utils-registry-proof.ts",
+            "line": 15,
+            "excerpt": "REGISTRY_URL=… API_KEY=… bun too"
+          },
+          {
+            "file": "tools/ops-snapshot.ts",
+            "line": 178,
+            "excerpt": "REGISTRY_URL || Bun.env.FACTORY_"
+          },
+          {
+            "file": "tools/ops-snapshot.ts",
+            "line": 178,
+            "excerpt": "REGISTRY_URL || '').replace(/\\/$"
+          },
+          {
+            "file": "tools/ops-snapshot.ts",
+            "line": 178,
+            "excerpt": "FACTORY_REGISTRY_URL || '').replace(/\\/$"
+          },
+          {
+            "file": "tests/reference-discovery.test.ts",
+            "line": 12,
+            "excerpt": "FACTORY_REGISTRY_URL')).toBeGreaterThan("
+          },
+          {
+            "file": "public/registry/env-inventory.json",
+            "line": 204,
+            "excerpt": "FACTORY_REGISTRY_URL\",\n      \"count\": 3,"
+          }
+        ],
+        "repair": "npm registry plane only — see docs/registry-client.md"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:AGENT_DEMO_PASS|AGENT_DEMO_USER",
+        "title": "Similar env var names: AGENT_DEMO_PASS ↔ AGENT_DEMO_USER",
+        "detail": "similarity=0.73 · hits 1 / 1",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:ALERT_WEBHOOK_URL|SLACK_WEBHOOK_URL",
+        "title": "Similar env var names: ALERT_WEBHOOK_URL ↔ SLACK_WEBHOOK_URL",
+        "detail": "similarity=0.76 · hits 1 / 3",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:API_BASE_URL|WIKI_BASE_URL",
+        "title": "Similar env var names: API_BASE_URL ↔ WIKI_BASE_URL",
+        "detail": "similarity=0.77 · hits 1 / 1",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:AWS_BUCKET_NAME|R2_BUCKET_NAME",
+        "title": "Similar env var names: AWS_BUCKET_NAME ↔ R2_BUCKET_NAME",
+        "detail": "similarity=0.80 · hits 2 / 6",
+        "repair": "Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:AWS_BUCKET_NAME|S3_BUCKET_NAME",
+        "title": "Similar env var names: AWS_BUCKET_NAME ↔ S3_BUCKET_NAME",
+        "detail": "similarity=0.80 · hits 2 / 2",
+        "repair": "Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:BASELINE_SCRAPE_ALERT_THRESHOLD|BASELINE_SCRAPE_ALERT_WEBHOOK",
+        "title": "Similar env var names: BASELINE_SCRAPE_ALERT_THRESHOLD ↔ BASELINE_SCRAPE_ALERT_WEBHOOK",
+        "detail": "similarity=0.81 · hits 1 / 6",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:BASELINE_SCRAPE_CRON|BASELINE_SCRAPE_LIVE",
+        "title": "Similar env var names: BASELINE_SCRAPE_CRON ↔ BASELINE_SCRAPE_LIVE",
+        "detail": "similarity=0.80 · hits 1 / 26",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:BUN_TYPES_CI|BUN_TYPES_DOCS",
+        "title": "Similar env var names: BUN_TYPES_CI ↔ BUN_TYPES_DOCS",
+        "detail": "similarity=0.79 · hits 2 / 1",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CAESARS_SCRAPE_COOKIE|CAESARS_SCRAPE_LOCATION",
+        "title": "Similar env var names: CAESARS_SCRAPE_COOKIE ↔ CAESARS_SCRAPE_LOCATION",
+        "detail": "similarity=0.74 · hits 4 / 2",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CLOUDFLARE_ACCESS_API_TOKEN|CLOUDFLARE_API_TOKEN",
+        "title": "Similar env var names: CLOUDFLARE_ACCESS_API_TOKEN ↔ CLOUDFLARE_API_TOKEN",
+        "detail": "similarity=0.74 · hits 1 / 15",
+        "repair": "Cloudflare token/account policy is multi-key by design — see docs/registry-client.md §Env naming"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CLOUDFLARE_ACCESS_API_TOKEN|CLOUDFLARE_DNS_API_TOKEN",
+        "title": "Similar env var names: CLOUDFLARE_ACCESS_API_TOKEN ↔ CLOUDFLARE_DNS_API_TOKEN",
+        "detail": "similarity=0.81 · hits 1 / 4",
+        "repair": "Cloudflare token/account policy is multi-key by design — see docs/registry-client.md §Env naming"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:COMPLIANCE_MOCK_URL|COMPLIANCE_URL",
+        "title": "Similar env var names: COMPLIANCE_MOCK_URL ↔ COMPLIANCE_URL",
+        "detail": "similarity=0.74 · hits 2 / 4",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_CATEGORY|CONCEPT_AUDIT_FILTER",
+        "title": "Similar env var names: CONCEPT_AUDIT_CATEGORY ↔ CONCEPT_AUDIT_FILTER",
+        "detail": "similarity=0.73 · hits 1 / 1",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_CATEGORY|CONCEPT_AUDIT_SORT",
+        "title": "Similar env var names: CONCEPT_AUDIT_CATEGORY ↔ CONCEPT_AUDIT_SORT",
+        "detail": "similarity=0.73 · hits 1 / 2",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_DESC|CONCEPT_AUDIT_GROUP",
+        "title": "Similar env var names: CONCEPT_AUDIT_DESC ↔ CONCEPT_AUDIT_GROUP",
+        "detail": "similarity=0.74 · hits 2 / 1",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_DESC|CONCEPT_AUDIT_SORT",
+        "title": "Similar env var names: CONCEPT_AUDIT_DESC ↔ CONCEPT_AUDIT_SORT",
+        "detail": "similarity=0.78 · hits 2 / 2",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_DESC|CONCEPT_AUDIT_STRICT",
+        "title": "Similar env var names: CONCEPT_AUDIT_DESC ↔ CONCEPT_AUDIT_STRICT",
+        "detail": "similarity=0.75 · hits 2 / 1",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_FILTER|CONCEPT_AUDIT_SORT",
+        "title": "Similar env var names: CONCEPT_AUDIT_FILTER ↔ CONCEPT_AUDIT_SORT",
+        "detail": "similarity=0.75 · hits 1 / 2",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_GROUP|CONCEPT_AUDIT_OUTPUT",
+        "title": "Similar env var names: CONCEPT_AUDIT_GROUP ↔ CONCEPT_AUDIT_OUTPUT",
+        "detail": "similarity=0.75 · hits 1 / 1",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_GROUP|CONCEPT_AUDIT_SORT",
+        "title": "Similar env var names: CONCEPT_AUDIT_GROUP ↔ CONCEPT_AUDIT_SORT",
+        "detail": "similarity=0.79 · hits 1 / 2",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_GROUP|CONCEPT_AUDIT_STRICT",
+        "title": "Similar env var names: CONCEPT_AUDIT_GROUP ↔ CONCEPT_AUDIT_STRICT",
+        "detail": "similarity=0.75 · hits 1 / 1",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_OUTPUT|CONCEPT_AUDIT_SORT",
+        "title": "Similar env var names: CONCEPT_AUDIT_OUTPUT ↔ CONCEPT_AUDIT_SORT",
+        "detail": "similarity=0.75 · hits 1 / 2",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_OUTPUT|CONCEPT_AUDIT_STRICT",
+        "title": "Similar env var names: CONCEPT_AUDIT_OUTPUT ↔ CONCEPT_AUDIT_STRICT",
+        "detail": "similarity=0.75 · hits 1 / 1",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_OUTPUT|CONCEPT_GRAPH_OUTPUT",
+        "title": "Similar env var names: CONCEPT_AUDIT_OUTPUT ↔ CONCEPT_GRAPH_OUTPUT",
+        "detail": "similarity=0.75 · hits 1 / 1",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_STRICT|CONCEPT_METADATA_STRICT",
+        "title": "Similar env var names: CONCEPT_AUDIT_STRICT ↔ CONCEPT_METADATA_STRICT",
+        "detail": "similarity=0.74 · hits 1 / 1",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_AUDIT_STRICT|DEEP_AUDIT_STRICT",
+        "title": "Similar env var names: CONCEPT_AUDIT_STRICT ↔ DEEP_AUDIT_STRICT",
+        "detail": "similarity=0.75 · hits 1 / 1",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_DISCOVER_ACTOR|CONCEPT_DISCOVER_AUTO_PROPOSE",
+        "title": "Similar env var names: CONCEPT_DISCOVER_ACTOR ↔ CONCEPT_DISCOVER_AUTO_PROPOSE",
+        "detail": "similarity=0.72 · hits 1 / 1",
+        "repair": "Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:CONCEPT_REGISTRY_DB|CONCEPT_REGISTRY_PORT",
+        "title": "Similar env var names: CONCEPT_REGISTRY_DB ↔ CONCEPT_REGISTRY_PORT",
+        "detail": "similarity=0.81 · hits 4 / 1",
+        "repair": "Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:DASHBOARD_TEST_PORT|DASHBOARD_TEST_PORT_RANGE",
+        "title": "Similar env var names: DASHBOARD_TEST_PORT ↔ DASHBOARD_TEST_PORT_RANGE",
+        "detail": "similarity=0.76 · hits 2 / 1",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:DATABASE_PORT|DATABASE_URL",
+        "title": "Similar env var names: DATABASE_PORT ↔ DATABASE_URL",
+        "detail": "similarity=0.77 · hits 1 / 4",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:DATABASE_URL|OPS_DATABASE_URL",
+        "title": "Similar env var names: DATABASE_URL ↔ OPS_DATABASE_URL",
+        "detail": "similarity=0.75 · hits 4 / 1",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:DEEP_AUDIT_JSON|DEEP_AUDIT_SEED",
+        "title": "Similar env var names: DEEP_AUDIT_JSON ↔ DEEP_AUDIT_SEED",
+        "detail": "similarity=0.73 · hits 1 / 1",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:DOD_DB_PATH|OPS_DB_PATH",
+        "title": "Similar env var names: DOD_DB_PATH ↔ OPS_DB_PATH",
+        "detail": "similarity=0.73 · hits 6 / 48",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:DOMAIN_REGISTRY_PATH|STATIC_REGISTRY_PATH",
+        "title": "Similar env var names: DOMAIN_REGISTRY_PATH ↔ STATIC_REGISTRY_PATH",
+        "detail": "similarity=0.75 · hits 6 / 1",
+        "repair": "Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:FW_INFRA_SECRETS_SERVICE|REGISTRY_SECRETS_SERVICE",
+        "title": "Similar env var names: FW_INFRA_SECRETS_SERVICE ↔ REGISTRY_SECRETS_SERVICE",
+        "detail": "similarity=0.75 · hits 1 / 2",
+        "repair": "Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:FW_SECRETS_SERVICE|PROFILE_SECRETS_SERVICE",
+        "title": "Similar env var names: FW_SECRETS_SERVICE ↔ PROFILE_SECRETS_SERVICE",
+        "detail": "similarity=0.74 · hits 1 / 1",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:GITHUB_ACTIONS|GITHUB_ACTOR",
+        "title": "Similar env var names: GITHUB_ACTIONS ↔ GITHUB_ACTOR",
+        "detail": "similarity=0.79 · hits 10 / 1",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:INTERNAL_WIKI_API_URL|INTERNAL_WIKI_URL",
+        "title": "Similar env var names: INTERNAL_WIKI_API_URL ↔ INTERNAL_WIKI_URL",
+        "detail": "similarity=0.81 · hits 1 / 1",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:OPERATIONS_DB|OPERATIONS_DB_PATH",
+        "title": "Similar env var names: OPERATIONS_DB ↔ OPERATIONS_DB_PATH",
+        "detail": "similarity=0.72 · hits 2 / 2",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:OPERATOR_API_TOKEN|PARTNER_API_TOKEN",
+        "title": "Similar env var names: OPERATOR_API_TOKEN ↔ PARTNER_API_TOKEN",
+        "detail": "similarity=0.72 · hits 4 / 7",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:OPS_SETTLE_CRON_SCHEDULE|OPS_SNAPSHOT_CRON_SCHEDULE",
+        "title": "Similar env var names: OPS_SETTLE_CRON_SCHEDULE ↔ OPS_SNAPSHOT_CRON_SCHEDULE",
+        "detail": "similarity=0.73 · hits 1 / 1",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:OPS_SETTLE_CRON_SCHEDULE|OPS_SYNC_CRON_SCHEDULE",
+        "title": "Similar env var names: OPS_SETTLE_CRON_SCHEDULE ↔ OPS_SYNC_CRON_SCHEDULE",
+        "detail": "similarity=0.79 · hits 1 / 1",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:OPS_SNAPSHOT_CRON_SCHEDULE|OPS_SYNC_CRON_SCHEDULE",
+        "title": "Similar env var names: OPS_SNAPSHOT_CRON_SCHEDULE ↔ OPS_SYNC_CRON_SCHEDULE",
+        "detail": "similarity=0.73 · hits 1 / 1",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:OPS_SNAPSHOT_CRON|OPS_SNAPSHOT_PATH",
+        "title": "Similar env var names: OPS_SNAPSHOT_CRON ↔ OPS_SNAPSHOT_PATH",
+        "detail": "similarity=0.76 · hits 2 / 2",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:OPS_SNAPSHOT_CRON|PORTAL_SNAPSHOT_CRON",
+        "title": "Similar env var names: OPS_SNAPSHOT_CRON ↔ PORTAL_SNAPSHOT_CRON",
+        "detail": "similarity=0.75 · hits 2 / 1",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:OPS_SNAPSHOT_PATH|OPS_SNAPSHOT_PUBLISH",
+        "title": "Similar env var names: OPS_SNAPSHOT_PATH ↔ OPS_SNAPSHOT_PUBLISH",
+        "detail": "similarity=0.75 · hits 2 / 1",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:PARTNER_LIMITS_API_TOKEN|PARTNER_LIMITS_API_URL",
+        "title": "Similar env var names: PARTNER_LIMITS_API_TOKEN ↔ PARTNER_LIMITS_API_URL",
+        "detail": "similarity=0.79 · hits 7 / 7",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:PLAY_SIGNING_SECRET|REPORT_SIGNING_SECRET",
+        "title": "Similar env var names: PLAY_SIGNING_SECRET ↔ REPORT_SIGNING_SECRET",
+        "detail": "similarity=0.76 · hits 4 / 10",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:PORTAL_SNAPSHOT_CRON_DRY_RUN|PORTAL_SNAPSHOT_CRON_MARKER",
+        "title": "Similar env var names: PORTAL_SNAPSHOT_CRON_DRY_RUN ↔ PORTAL_SNAPSHOT_CRON_MARKER",
+        "detail": "similarity=0.79 · hits 1 / 1",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:PORTAL_SNAPSHOT_CRON_DRY_RUN|PORTAL_SNAPSHOT_CRON_TITLE",
+        "title": "Similar env var names: PORTAL_SNAPSHOT_CRON_DRY_RUN ↔ PORTAL_SNAPSHOT_CRON_TITLE",
+        "detail": "similarity=0.75 · hits 1 / 1",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:PORTAL_SNAPSHOT_CRON_MARKER|PORTAL_SNAPSHOT_CRON_TITLE",
+        "title": "Similar env var names: PORTAL_SNAPSHOT_CRON_MARKER ↔ PORTAL_SNAPSHOT_CRON_TITLE",
+        "detail": "similarity=0.81 · hits 1 / 1",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:PORTAL_SNAPSHOT_CRON|PORTAL_SNAPSHOT_CRON_MARKER",
+        "title": "Similar env var names: PORTAL_SNAPSHOT_CRON ↔ PORTAL_SNAPSHOT_CRON_MARKER",
+        "detail": "similarity=0.74 · hits 1 / 1",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:PORTAL_SNAPSHOT_CRON|PORTAL_SNAPSHOT_CRON_TITLE",
+        "title": "Similar env var names: PORTAL_SNAPSHOT_CRON ↔ PORTAL_SNAPSHOT_CRON_TITLE",
+        "detail": "similarity=0.77 · hits 1 / 1",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:PORTAL_SNAPSHOT_CRON|PORTAL_SNAPSHOT_DIR",
+        "title": "Similar env var names: PORTAL_SNAPSHOT_CRON ↔ PORTAL_SNAPSHOT_DIR",
+        "detail": "similarity=0.80 · hits 1 / 1",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:PORTAL_SNAPSHOT_CRON|PORTAL_SNAPSHOT_SCOPES",
+        "title": "Similar env var names: PORTAL_SNAPSHOT_CRON ↔ PORTAL_SNAPSHOT_SCOPES",
+        "detail": "similarity=0.77 · hits 1 / 9",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:PORTAL_SNAPSHOT_DIR|PORTAL_SNAPSHOT_SCOPES",
+        "title": "Similar env var names: PORTAL_SNAPSHOT_DIR ↔ PORTAL_SNAPSHOT_SCOPES",
+        "detail": "similarity=0.73 · hits 1 / 9",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:PORTAL_SNAPSHOT_INPROCESS_SCHEDULE|PORTAL_SNAPSHOT_OS_SCHEDULE",
+        "title": "Similar env var names: PORTAL_SNAPSHOT_INPROCESS_SCHEDULE ↔ PORTAL_SNAPSHOT_OS_SCHEDULE",
+        "detail": "similarity=0.79 · hits 2 / 2",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:REGISTRY_AUTH|REGISTRY_URL",
+        "title": "Similar env var names: REGISTRY_AUTH ↔ REGISTRY_URL",
+        "detail": "similarity=0.77 · hits 1 / 8",
+        "repair": "Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:REGISTRY_PORT|REGISTRY_SECRET",
+        "title": "Similar env var names: REGISTRY_PORT ↔ REGISTRY_SECRET",
+        "detail": "similarity=0.73 · hits 1 / 4",
+        "repair": "Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:REGISTRY_PORT|REGISTRY_URL",
+        "title": "Similar env var names: REGISTRY_PORT ↔ REGISTRY_URL",
+        "detail": "similarity=0.77 · hits 1 / 8",
+        "repair": "Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:ROTOR_PULSE_CRON|ROTOR_PULSE_LOG",
+        "title": "Similar env var names: ROTOR_PULSE_CRON ↔ ROTOR_PULSE_LOG",
+        "detail": "similarity=0.81 · hits 1 / 3",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:SEARCH_BENCH_PROXY_URL|SEARCH_BENCH_REPO_URL",
+        "title": "Similar env var names: SEARCH_BENCH_PROXY_URL ↔ SEARCH_BENCH_REPO_URL",
+        "detail": "similarity=0.82 · hits 1 / 1",
+        "repair": "Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:SEARCH_BENCH_QUERY_RETRIES|SEARCH_BENCH_QUERY_TIMEOUT_MS",
+        "title": "Similar env var names: SEARCH_BENCH_QUERY_RETRIES ↔ SEARCH_BENCH_QUERY_TIMEOUT_MS",
+        "detail": "similarity=0.72 · hits 2 / 2",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TELEGRAM_CATALOG_RESEARCH_APPLY_SAFE|TELEGRAM_CATALOG_RESEARCH_CRON_TITLE",
+        "title": "Similar env var names: TELEGRAM_CATALOG_RESEARCH_APPLY_SAFE ↔ TELEGRAM_CATALOG_RESEARCH_CRON_TITLE",
+        "detail": "similarity=0.75 · hits 2 / 1",
+        "repair": "Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TELEGRAM_CATALOG_RESEARCH_APPLY_SAFE|TELEGRAM_CATALOG_RESEARCH_LLM_KEY",
+        "title": "Similar env var names: TELEGRAM_CATALOG_RESEARCH_APPLY_SAFE ↔ TELEGRAM_CATALOG_RESEARCH_LLM_KEY",
+        "detail": "similarity=0.78 · hits 2 / 1",
+        "repair": "Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TELEGRAM_CATALOG_RESEARCH_APPLY_SAFE|TELEGRAM_CATALOG_RESEARCH_LLM_MODEL",
+        "title": "Similar env var names: TELEGRAM_CATALOG_RESEARCH_APPLY_SAFE ↔ TELEGRAM_CATALOG_RESEARCH_LLM_MODEL",
+        "detail": "similarity=0.78 · hits 2 / 1",
+        "repair": "Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TELEGRAM_CATALOG_RESEARCH_APPLY_SAFE|TELEGRAM_CATALOG_RESEARCH_LLM_URL",
+        "title": "Similar env var names: TELEGRAM_CATALOG_RESEARCH_APPLY_SAFE ↔ TELEGRAM_CATALOG_RESEARCH_LLM_URL",
+        "detail": "similarity=0.78 · hits 2 / 2",
+        "repair": "Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TELEGRAM_CATALOG_RESEARCH_APPLY_SAFE|TELEGRAM_CATALOG_RESEARCH_TZ",
+        "title": "Similar env var names: TELEGRAM_CATALOG_RESEARCH_APPLY_SAFE ↔ TELEGRAM_CATALOG_RESEARCH_TZ",
+        "detail": "similarity=0.72 · hits 2 / 1",
+        "repair": "Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TELEGRAM_CATALOG_RESEARCH_CRON_SCHEDULE|TELEGRAM_CATALOG_RESEARCH_LLM_MODEL",
+        "title": "Similar env var names: TELEGRAM_CATALOG_RESEARCH_CRON_SCHEDULE ↔ TELEGRAM_CATALOG_RESEARCH_LLM_MODEL",
+        "detail": "similarity=0.74 · hits 1 / 1",
+        "repair": "Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TELEGRAM_CATALOG_RESEARCH_CRON_TITLE|TELEGRAM_CATALOG_RESEARCH_LLM_KEY",
+        "title": "Similar env var names: TELEGRAM_CATALOG_RESEARCH_CRON_TITLE ↔ TELEGRAM_CATALOG_RESEARCH_LLM_KEY",
+        "detail": "similarity=0.75 · hits 1 / 1",
+        "repair": "Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TELEGRAM_CATALOG_RESEARCH_CRON_TITLE|TELEGRAM_CATALOG_RESEARCH_LLM_MODEL",
+        "title": "Similar env var names: TELEGRAM_CATALOG_RESEARCH_CRON_TITLE ↔ TELEGRAM_CATALOG_RESEARCH_LLM_MODEL",
+        "detail": "similarity=0.75 · hits 1 / 1",
+        "repair": "Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TELEGRAM_CATALOG_RESEARCH_CRON_TITLE|TELEGRAM_CATALOG_RESEARCH_LLM_URL",
+        "title": "Similar env var names: TELEGRAM_CATALOG_RESEARCH_CRON_TITLE ↔ TELEGRAM_CATALOG_RESEARCH_LLM_URL",
+        "detail": "similarity=0.78 · hits 1 / 2",
+        "repair": "Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TELEGRAM_CATALOG_RESEARCH_CRON_TITLE|TELEGRAM_CATALOG_RESEARCH_TZ",
+        "title": "Similar env var names: TELEGRAM_CATALOG_RESEARCH_CRON_TITLE ↔ TELEGRAM_CATALOG_RESEARCH_TZ",
+        "detail": "similarity=0.75 · hits 1 / 1",
+        "repair": "Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TELEGRAM_CATALOG_RESEARCH_LLM_KEY|TELEGRAM_CATALOG_RESEARCH_TZ",
+        "title": "Similar env var names: TELEGRAM_CATALOG_RESEARCH_LLM_KEY ↔ TELEGRAM_CATALOG_RESEARCH_TZ",
+        "detail": "similarity=0.79 · hits 1 / 1",
+        "repair": "Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TELEGRAM_CATALOG_RESEARCH_LLM_MODEL|TELEGRAM_CATALOG_RESEARCH_TZ",
+        "title": "Similar env var names: TELEGRAM_CATALOG_RESEARCH_LLM_MODEL ↔ TELEGRAM_CATALOG_RESEARCH_TZ",
+        "detail": "similarity=0.74 · hits 1 / 1",
+        "repair": "Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TELEGRAM_CATALOG_RESEARCH_LLM_URL|TELEGRAM_CATALOG_RESEARCH_TZ",
+        "title": "Similar env var names: TELEGRAM_CATALOG_RESEARCH_LLM_URL ↔ TELEGRAM_CATALOG_RESEARCH_TZ",
+        "detail": "similarity=0.79 · hits 2 / 1",
+        "repair": "Telegram factory env family — verify against lib/telegram/telegram-config.ts; allowlist deliberate pairs"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TEMP|TMP",
+        "title": "Similar env var names: TEMP ↔ TMP",
+        "detail": "similarity=0.75 · hits 1 / 7",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      },
+      {
+        "kind": "similar-env",
+        "severity": "info",
+        "id": "similar-env:TERMINAL_SESSION_ID|TERM_SESSION_ID",
+        "title": "Similar env var names: TERMINAL_SESSION_ID ↔ TERM_SESSION_ID",
+        "detail": "similarity=0.79 · hits 1 / 1",
+        "repair": "Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)"
+      }
+    ],
+    "summary": {
+      "total": 83,
+      "errors": 0,
+      "warnings": 2,
+      "byKind": {
+        "similar-env": 80,
+        "naming-cluster": 3
+      }
+    }
+  },
+  "publicPlane": {
+    "generatedAt": "2026-08-07T20:44:41.844Z",
+    "perimeter": [
+      "public/portal",
+      "public/registry",
+      "public/monitoring",
+      "public/health",
+      "public/icons",
+      "public/index.html",
+      "public/llms.txt",
+      "public/llms-full.txt",
+      "public/_headers",
+      "public/_redirects",
+      "public/sitemap.xml",
+      "public/sitemap-pages.xml",
+      "public/site.webmanifest",
+      "public/manifest.json"
+    ],
+    "findings": [
+      {
+        "kind": "orphan-registry-artifact",
+        "severity": "info",
+        "id": "orphan-registry:partner-profile-coverage.json",
+        "title": "Registry JSON not referenced from public/portal or lander",
+        "detail": "partner-profile-coverage.json",
+        "repair": "Wire into portal dashboard or document in docs/harness/tenants/public-plane.md"
+      },
+      {
+        "kind": "orphan-registry-artifact",
+        "severity": "info",
+        "id": "orphan-registry:stale-anchors.json",
+        "title": "Registry JSON not referenced from public/portal or lander",
+        "detail": "stale-anchors.json",
+        "repair": "Wire into portal dashboard or document in docs/harness/tenants/public-plane.md"
+      }
+    ],
+    "summary": {
+      "total": 2,
+      "errors": 0,
+      "warnings": 0,
+      "byKind": {
+        "orphan-registry-artifact": 2
+      }
+    }
+  },
+  "summary": {
+    "totalFindings": 85,
+    "harnessErrors": 0,
+    "publicErrors": 0,
+    "harnessWarnings": 2,
+    "publicWarnings": 0
+  }
+}

@@ -1,0 +1,5 @@
+bun test v1.3.14 (0d9b296a)
+monorepo-health gate: score 34.7/100 (critical) · formula v1
+  dead 5.8% · large 41.4% · cycles 14 · dupDeps 0
+  baseline minScore≥30 · maxDead≤15 · maxLarge≤45 · maxCycles≤20
+✅ monorepo-health gate OK (tests + schema + ratchet)

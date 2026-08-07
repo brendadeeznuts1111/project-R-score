@@ -1,0 +1,4 @@
+$ bun run public:discover:check && bun run verify:portal:static && bun run audit:verify
+$ bun tools/public-discovery.ts --check --min-severity error
+$ bun tools/verify-portal.ts --static-only
+$ bun tools/audit-catalog.ts verify

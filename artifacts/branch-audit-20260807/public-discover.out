@@ -1,0 +1,6 @@
+public-discovery · 2 findings
+  errors=0 warnings=0
+  [INFO ] orphan-registry-artifact · Registry JSON not referenced from public/portal or lander
+         repair: Wire into portal dashboard or document in docs/harness/tenants/public-plane.md
+  [INFO ] orphan-registry-artifact · Registry JSON not referenced from public/portal or lander
+         repair: Wire into portal dashboard or document in docs/harness/tenants/public-plane.md

@@ -1,0 +1,7 @@
+branch	bucket	notes
+cursor/contract-screenshot-cli-45b7	park-open-pr	PR #592 draft — feature freeze, do not expand
+feat/bun-pr-diff	later-pr	Clean 3-file tip; open after cleanup
+cursor/bm-routing-tenant-owner-294c	docs-hygiene	Unique routing Domain vs Tenant/Owner docs
+feat/odds-edge-depth	park	One agent-odds tip retained; do not merge this pass
+feat/partner-surface-inventory-docs	park	Newest partner-surface tip with unique inventory diffs; do not merge this pass
+cursor/branch-audit-prune-ad8f	this-lane	Audit artifact + prune delivery

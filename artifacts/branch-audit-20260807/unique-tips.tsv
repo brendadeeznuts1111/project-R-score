@@ -1,0 +1,63 @@
+branch	ahead	behind	unique_cherry	date	subject
+agent/partner-dashboard-rebase-20260806	16	141	14	2026-08-06	Merge branch 'main' into agent/partner-dashboard-rebase-20260806
+agent/partner-opportunities	2	481	2	2026-08-01	chore(bake): refresh opportunity glossary and theme
+audit/partner-api-html-20260805	3	190	2	2026-08-05	fix(partners): match readiness to profile codes
+chore/deep-cleanup-tests	1	388	1	2026-08-03	test: deep cleanup — stale bakes, setSystemTime, suite env
+chore/direct-bun-markdown-ansi	3	519	3	2026-08-01	fix(pr): keep example out of claim table parse
+chore/root-clutter-reduction-phase-4.1	7	1959	7	2026-05-16	chore: Phase 4 Final Wrap-up
+codex/agent-odds-v1.13-live-backtest	7	171	5	2026-08-06	fix(pages): fail closed on preview routing
+codex/cloudflare-access-hardening	8	583	6	2026-07-31	ci: make Bun the local merge authority [skip actions]
+codex/github-issue-portal-review	3	181	3	2026-08-05	fix(portal): verify issue taxonomy payload integrity
+codex/limit-patterns-seed	10	1030	10	2026-07-28	feat(portal): add first-party registry discovery
+codex/partner-accounts-telegram-control	2	590	2	2026-07-31	feat(portal): partner integration — hash routes, tables, tags, telegram links
+codex/partner-cli-snapshots-20260806	2	69	1	2026-08-06	ci(bun): gate partner CLI snapshots
+codex/partner-history-control	4	590	4	2026-07-31	feat(portal): enhance partner limit history
+codex/partner-history-glossary	5	587	3	2026-07-31	Merge remote-tracking branch 'origin/main' into codex/partner-history-glossary
+codex/partner-integration-observations-20260806	19	74	19	2026-08-06	feat(partners): map docs to domains and portal
+codex/portal-design-tokens-v2	24	725	17	2026-07-30	feat(portal): expand design token system
+codex/telegram-notifications-review	9	189	8	2026-08-05	chore(review): prune merge-index formatter collateral
+cursor/2ef0930d	3	1691	3	2026-07-20	chore(homebase): apply harness format to bun-types vendor files
+cursor/bm-partner-publish-readme-294c	2	5	1	2026-08-07	merge(main): resolve factory README structure table (BM-5)
+cursor/bm-routing-tenant-owner-294c	2	3	2	2026-08-07	docs(routing): Domain=partner is desk loop, not nav-only
+cursor/contract-screenshot-cli-45b7	2	0	2	2026-08-07	fix(cli): harden screenshot capture gate and contract output
+docs/glossary-schema-v3-labels	3	517	3	2026-08-01	docs(portal): align glossary agent surfaces with schema v3
+docs/http-stack-native	3	555	3	2026-07-31	docs(harness): simplify HTTP stacks table and harness rule note
+docs/lib-area-maps-mega	2	164	2	2026-08-06	docs(lib): Area maps for mega domains (ops, telegram, research, docs, http)
+docs/partner-domain-map	2	591	2	2026-07-31	docs(partners): partner-ops domain map — mermaid diagrams + color kernel legend
+docs/readme-structure-refresh	2	481	2	2026-08-01	feat(harness): add URLPattern-aware portal link integrity
+docs/wiki-index-coverage	6	361	6	2026-08-03	feat(release): track Bun version and isolated test RSS
+feat/agent-odds-partner-liquidity	5	192	4	2026-08-05	fix(portal): honor partner health refresh semantics
+feat/agent-odds-v1.06-edges	3	191	2	2026-08-05	merge: harden agent odds v1.06 for main
+feat/agent-odds-webview-scrape	2	174	2	2026-08-06	fix(scrapers): drop deep import in DraftKings HTML fixture path
+feat/agent-registry-browser	8	175	8	2026-08-06	fix(import-graph): extract alerts-schema to break event-alert weak cycle
+feat/bun-pr-diff	1	39	1	2026-08-07	feat(bun): bun-pr-verify --diff — behavior diff vs installed Bun
+feat/bun-types-inventory-v3	3	114	3	2026-08-06	feat(inventory): open type X = { … } object aliases in deep inventory
+feat/cli-flag-allowlists-20260807	2	48	2	2026-08-07	docs(harness): keep cli-flags README link as a one-line index add
+feat/concept-domain-mapping	1	424	1	2026-08-02	feat(portal): business domain mapping for portal concepts
+feat/concept-lifecycle-phase1	4	425	4	2026-08-02	fix(portal): lifecycle review fixes — transitions, resubmit, health PK
+feat/concept-registry-phase1	4	425	4	2026-08-02	chore(bake): regenerate domain-glossary.json for color.kernel
+feat/concept-registry-service	2	424	2	2026-08-03	feat(concept-registry): auto-sync with code + graph CLI deepen (Phase 2)
+feat/doc-refid-check	1	86	1	2026-08-06	feat(docs): REF:ID validation in docs:map:check
+feat/doc-refid-deeper	1	85	1	2026-08-06	feat(docs): REF:ID suggest CLI, placement, empty-href fill
+feat/glossary-health	1	507	1	2026-08-01	feat: add glossary-health.ts registry health check script
+feat/ledger-glossary-fix	2	425	2	2026-08-02	chore(bake): rebake domain-glossary with labeled accounting overlays
+feat/ledger-residuals-polish	3	240	3	2026-08-05	test(partners): cover ledger color mappings
+feat/odds-edge-depth	2	148	2	2026-08-06	feat(agent): deepen odds edges — correct arb, value, steam velocity
+feat/partner-accounting-capture	2	442	2	2026-08-02	feat(partner): project partner_ledger into partners-ops bake
+feat/partner-bookmaker-account	2	131	2	2026-08-06	docs(partners): govern bookmaker account resolution
+feat/partner-brand-lifecycle	2	104	2	2026-08-06	fix(inventory): brand-ok opaque ruleId on WireTrapHit
+feat/partner-dashboard-artifact-20260805	12	177	11	2026-08-06	fix(bun): enforce stable channel across partner tooling
+feat/partner-inventory-wire-lint	4	113	4	2026-08-06	feat(docs): default lint-wires with no args to --hlp
+feat/partner-out-capabilities	2	134	2	2026-08-06	docs(partners): govern out capability preflight
+feat/partner-surface-deeper	2	99	2	2026-08-06	docs(lib): map partner-surface-fitness-evidence in docs Area
+feat/partner-surface-docs-layer-d	2	110	2	2026-08-06	feat(docs): partner-surface Layer D domain isolation lint
+feat/partner-surface-inventory-docs	4	111	4	2026-08-06	feat(docs): generate partner-surface inventory tables from linking metadata
+feat/partner-wire-lint-generic	3	105	3	2026-08-06	feat(docs): portal hrefs for partner domains, brands, and desk codes
+feat/portal-url-planes	5	514	5	2026-08-01	feat(harness): Prettier staged tests via isHarnessFormatPath
+feat/soft-accounting-weave	3	543	2	2026-07-31	fix(portal): harden optional Soft joins
+feat/telegram-notifications	7	338	7	2026-08-04	feat(portal): partner board — stale-bake badge + no-outs empty state
+feat/tournament-snap-ownership	2	341	2	2026-08-04	fix(glossary): harden tournament snap parse, CLI flags, ownership lookup
+fix/domain-sweep-resilience	3	424	3	2026-08-03	fix(harness): align domain sweep with Bun URL semantics
+fix/failures-stale-board	2	424	2	2026-08-02	chore(bake): refresh failures board to live 836-test run
+fix/resolve-bun-spawn-sweep	2	538	2	2026-07-31	fix(harness): route bunSpawnArgv through bunSpawnArgs
+test/verbose-fetch-smoke	2	557	2	2026-07-31	test(harness): parameterize VERBOSE_FETCH smoke with timeout
