@@ -45,7 +45,20 @@ console.log(hello());
 bun install
 bun test
 bun run build
+bun run bench          # Bun.nanoseconds throughput JSON
+bun run profile:cpu    # same workload under --cpu-prof → ./profiles/*.cpuprofile
 ```
+
+### Scaffold metrics
+
+| Script | Metric | Unit / shape | Profile |
+| ------ | ------ | ------------ | ------- |
+| `bench` | `helloThroughput` | JSON: `iterations`, `totalNs`, `meanNs`, `opsPerSec`, `bunVersion` | n/a |
+| `profile:cpu` | same workload | Bun `.cpuprofile` under `./profiles/` | `--cpu-prof` |
+
+Harness catalog (monorepo root): `bun run bench:status` ·
+[`docs/harness/tenants/bun-bench-profiling.md`](../../docs/harness/tenants/bun-bench-profiling.md).
+Upstream: [Bun benchmarking](https://bun.com/docs/project/benchmarking).
 
 ## Publish
 
