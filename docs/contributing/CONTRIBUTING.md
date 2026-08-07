@@ -120,6 +120,54 @@ REF:ID must have a tool row (`table-missing-tool` error).
 `bun run docs:refid:audit` must report **flags-table-only=0**. Board maps with a
 trailing `Flags` column are not REF:ID surfaces.
 
+### Unknown long-option allowlists (CLI guards)
+
+Shared helper: `unknownLongOptionLeaves(argv, allowed)` in
+[`lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts).  
+Storage is `readonly string[]` (`as const`); the helper builds a `Set` at check
+time. Always exempt: `--help` · `--hlp`.
+
+| Constant | CLI entry | PR series | Definition | REF:ID leaves (`*LEAVES`) | Extra meta (allowlist only) | Guard placement | Failure |
+| -------- | --------- | --------- | ---------- | ------------------------- | --------------------------- | --------------- | ------- |
+| `LINT_WIRES_ALLOWED_LONG` | `scripts/validate-wire-traps.ts` | #534 | SSOT file | §4.1 help · scan · why · document · strict-globs | rules · fix | after help/why/document/rules | stderr + return **2** |
+| `IMAGES_GENERATE_ALLOWED_LONG` | `scripts/images-generate.ts` | #534 | SSOT file | §1.1 source · out · size · format · quality · fit · max-pixels · json · dry-run | template | top of `parseArgs` | **throw** |
+| `OPS_SNAPSHOT_ALLOWED_LONG` | `tools/ops-snapshot.ts` | #534 | SSOT file | §1.1 seed · seed-force · seed-tenants · no-seed (`default` is table-only, no `--default`) | out · no-report · no-routing · no-static · force-routing · publish · no-channel-meta · no-compliance · no-monorepo-health · webview · no-toc-limits · seed-toc-limits-force | after `--help` | stderr + **exit 2** |
+| `PARTNER_ONBOARD_ALLOWED_LONG` | `tools/partner-onboard.ts` | #533 | **onboard tool** (not SSOT) | §1.1 deal · currency · hold-target · initial-balance · funding-method | code · url · username · password · telegram-user-id · chat · book-key · type · maxBet · name · dry-run · skip-forum · no-bake | start of `main()` | **throw** |
+| `TELEGRAM_OPS_ALLOWED_LONG` | `tools/telegram-ops.ts` | #535 | SSOT file | §1.1 invite · no-dm · no-ack · requested-by only | db · chat · all · kind · surface · preview · queue · direct · html · json · refresh · rich · mermaid · env · sync-env · force · dry-run · live · detail · deep | early `main()` before subcommand dispatch | stderr + **exit 2** |
+
+Prove CLI guards: `bun test tests/docs-ref-id-tool-exports.test.ts`.
+
+### PR meta-table (humans + agents) for REF:ID / CLI guard work
+
+When shipping allowlist or `requireToolCoverage` PRs, include both tables in the
+PR body (stable headers — agents and claim scanners rely on them).
+
+**Human (story · risk · rollback):**
+
+| Change | Risk (L/M/H) | Blast radius | Rollback | Depends on | Observability |
+| ------ | ------------ | ------------ | -------- | ---------- | ------------- |
+| … | M | which CLIs / operators | `git revert <merge_sha>` | prior PRs | grep stderr / dashboards |
+
+**Agent (parseable · executable):**
+
+| PR | Constant | Guard file | Verify_cmd | Expected_exit | On_fail |
+| -- | -------- | ---------- | ---------- | ------------- | ------- |
+| #N | `FOO_ALLOWED_LONG` | path | `bun test tests/docs-ref-id-tool-exports.test.ts` | 0 | block-merge |
+
+**Matrix delta (rollout sequence)** — keep one row per PR so reviewers see the
+series:
+
+| PR | Commit | CLI(s) | Guard |
+| -- | ------ | ------ | ----- |
+| #533 | `3a3390d93` | partner:onboard + bidirectional check | `PARTNER_ONBOARD_ALLOWED_LONG` + `tool-missing-table` / `table-missing-tool` |
+| #534 | `e360f76d2` | lint-wires · images:generate · ops:snapshot | `*_ALLOWED_LONG` |
+| #535 | `824890004` | telegram:ops | `TELEGRAM_OPS_ALLOWED_LONG` |
+
+**Known safe exemptions:** `--help` · `--hlp` always pass the long-option
+filter; short `-h` is handled per CLI (lint-wires also rejects other short
+opts). Positionals and Telegram negative chat ids (`-100…`) are not long
+options.
+
 Ad-hoc draft:
 
 ```bash
