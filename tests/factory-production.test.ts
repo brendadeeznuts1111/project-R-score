@@ -16,6 +16,7 @@ import {
   RegistryGatewayPatterns,
 } from '../lib/factory/server';
 import { onRequest as registryHealthOnRequest } from '../functions/api/registry/health';
+import { createEphemeralBoundServer } from './harness.ts';
 
 describe('parseRegistryObjectKey (lib)', () => {
   test('allows registry.json and factory prefixes', () => {
@@ -271,43 +272,41 @@ describe('registry VM server routes (Bun.serve routes)', () => {
       packages: {},
     });
     const client = new RegistryClient({ store });
-    const server = createRegistryServer({
-      client,
-      port: 0,
-      hostname: '127.0.0.1',
-      publishToken: 'publish-secret',
+    await using bound = createEphemeralBoundServer(() =>
+      createRegistryServer({
+        client,
+        port: 0,
+        hostname: '127.0.0.1',
+        publishToken: 'publish-secret',
+      })
+    );
+    const base = bound.origin;
+
+    const ready = await fetch(`${base}/ready`);
+    expect(ready.status).toBe(200);
+    expect((await ready.json()) as { ready: boolean }).toEqual({ ready: true });
+
+    const health = await fetch(`${base}/health`);
+    expect(health.ok).toBe(true);
+
+    const index = await fetch(`${base}/api/registry`);
+    expect(index.status).toBe(200);
+
+    const form = new FormData();
+    form.set('version', '2.0.0');
+    form.set('tags', 'latest');
+    form.set('file', new File([new Uint8Array([9, 9])], 'package.tgz'));
+    const published = await fetch(`${base}/api/registry/@factorywager/routes-test/versions`, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer publish-secret' },
+      body: form,
     });
-    try {
-      const base = `http://127.0.0.1:${server.port}`;
+    expect(published.status).toBe(201);
+    expect((await client.resolve('@factorywager/routes-test', 'latest'))?.version).toBe('2.0.0');
 
-      const ready = await fetch(`${base}/ready`);
-      expect(ready.status).toBe(200);
-      expect((await ready.json()) as { ready: boolean }).toEqual({ ready: true });
-
-      const health = await fetch(`${base}/health`);
-      expect(health.ok).toBe(true);
-
-      const index = await fetch(`${base}/api/registry`);
-      expect(index.status).toBe(200);
-
-      const form = new FormData();
-      form.set('version', '2.0.0');
-      form.set('tags', 'latest');
-      form.set('file', new File([new Uint8Array([9, 9])], 'package.tgz'));
-      const published = await fetch(`${base}/api/registry/@factorywager/routes-test/versions`, {
-        method: 'POST',
-        headers: { Authorization: 'Bearer publish-secret' },
-        body: form,
-      });
-      expect(published.status).toBe(201);
-      expect((await client.resolve('@factorywager/routes-test', 'latest'))?.version).toBe('2.0.0');
-
-      const head = await fetch(`${base}/api/registry/registry.json`, { method: 'HEAD' });
-      expect(head.status).toBe(200);
-      expect(await head.text()).toBe('');
-    } finally {
-      await server.stop(true);
-    }
+    const head = await fetch(`${base}/api/registry/registry.json`, { method: 'HEAD' });
+    expect(head.status).toBe(200);
+    expect(await head.text()).toBe('');
   });
 });
 

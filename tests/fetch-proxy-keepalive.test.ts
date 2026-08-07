@@ -13,7 +13,12 @@ import {
   isProxyObjectForm,
   type FetchProxyOptions,
 } from '../lib/net/proxy.ts';
-import { createTestWorkspace, withTestEnvironment } from './harness.ts';
+import {
+  bindEphemeralWithRetry,
+  createEphemeralServe,
+  createTestWorkspace,
+  withTestEnvironment,
+} from './harness.ts';
 
 type ProxyPhase = 'reading' | 'connecting' | 'tunneled' | 'closed';
 
@@ -72,7 +77,8 @@ function startConnectProxy(): ConnectProxy {
   const pendingConnections = new Set<Promise<Bun.Socket<ProxyUpstreamState>>>();
   const proxyAuthorization: string[] = [];
   const upstreams = new Set<Bun.Socket<ProxyUpstreamState>>();
-  const listener = Bun.listen<ProxyClientState>({
+  const listener = bindEphemeralWithRetry(() =>
+    Bun.listen<ProxyClientState>({
     hostname: '127.0.0.1',
     port: 0,
     socket: {
@@ -171,7 +177,8 @@ function startConnectProxy(): ConnectProxy {
         client.data?.upstream?.terminate();
       },
     },
-  });
+  }),
+  );
 
   return {
     connectHeaders,
@@ -219,9 +226,7 @@ describe('Bun fetch HTTPS proxy CONNECT keep-alive', () => {
       const originRequests: Headers[] = [];
       let targetRequests = 0;
       const startTarget = () =>
-        Bun.serve({
-          hostname: '127.0.0.1',
-          port: 0,
+        createEphemeralServe({
           tls: { key: Bun.file(keyPath), cert: Bun.file(certificatePath) },
           fetch(request) {
             originRequests.push(new Headers(request.headers));
@@ -229,8 +234,8 @@ describe('Bun fetch HTTPS proxy CONNECT keep-alive', () => {
             return Response.json({ targetRequests });
           },
         });
-      const primaryTarget = startTarget();
-      const secondaryTarget = startTarget();
+      await using primaryTarget = startTarget();
+      await using secondaryTarget = startTarget();
       await using primaryProxy = startConnectProxy();
       await using secondaryProxy = startConnectProxy();
 
@@ -241,7 +246,7 @@ describe('Bun fetch HTTPS proxy CONNECT keep-alive', () => {
         targetPort?: number;
       };
 
-      try {
+      {
         await withTestEnvironment({ NO_PROXY: undefined, no_proxy: undefined }, async () => {
           const fetchThrough = async (options: FetchThroughOptions = {}): Promise<void> => {
             const {
@@ -356,8 +361,6 @@ describe('Bun fetch HTTPS proxy CONNECT keep-alive', () => {
           true,
         );
         expect(originRequests.every(headers => headers.get('x-proxy-test') === null)).toBe(true);
-      } finally {
-        await Promise.all([primaryTarget.stop(true), secondaryTarget.stop(true)]);
       }
     },
     15_000,
