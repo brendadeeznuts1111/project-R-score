@@ -87,10 +87,10 @@ import {
   TELEGRAM_OPS_DOC,
   TELEGRAM_OPS_LEAVES,
   TELEGRAM_OPS_SECTION,
+  applyUnknownLongOptionGuardFor,
   formatFlagDocRefLine,
   telegramOpsFlagDocRef,
   telegramOpsToolFlags,
-  unknownLongOptionLeaves,
 } from '../lib/docs/ref-id-tool-flags.ts';
 
 /** Local + re-export alias (`flagDocRef` matches bun-types-status). */
@@ -1083,16 +1083,10 @@ async function cmdSeatMap(opts: CommonOpts): Promise<void> {
 
 async function main(): Promise<void> {
   await loadReasonixEnv();
-  const argv = Bun.argv.slice(2);
+  let argv = Bun.argv.slice(2);
   if (argv.length === 0 || argv[0] === '--help' || argv[0] === '-h') usage();
 
-  const unknown = unknownLongOptionLeaves(argv, TELEGRAM_OPS_ALLOWED_LONG);
-  if (unknown.length) {
-    console.error(
-      `unknown flag(s): ${unknown.map(u => `--${u}`).join(', ')} (see REF:ID §${TELEGRAM_OPS_SECTION} · --help)`
-    );
-    process.exit(2);
-  }
+  argv = applyUnknownLongOptionGuardFor('telegram:ops', argv);
 
   const cmd = argv[0]!;
   if (cmd === 'link-package-group' || cmd === 'link-package') {

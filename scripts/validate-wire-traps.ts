@@ -36,10 +36,10 @@ import {
   LINT_WIRES_DOC,
   LINT_WIRES_LEAVES,
   LINT_WIRES_SECTION,
+  applyUnknownLongOptionGuardFor,
   formatFlagDocRefLine,
   lintWiresFlagDocRef,
   lintWiresToolFlags,
-  unknownLongOptionLeaves,
 } from '../lib/docs/ref-id-tool-flags.ts';
 import { resolvePath } from './lib/fs-bun.ts';
 
@@ -328,22 +328,30 @@ async function main(argv: readonly string[] = Bun.argv): Promise<number> {
     return 0;
   }
 
-  const unknownLeaves = unknownLongOptionLeaves(args, LINT_WIRES_ALLOWED_LONG);
   // also catch short options other than -h (already handled above)
   const unknownShort = args.filter(a => /^-[^-]/.test(a) && a !== '-h');
-  if (unknownLeaves.length > 0 || unknownShort.length > 0) {
-    const bits = [...unknownLeaves.map(u => `--${u}`), ...unknownShort];
-    console.error(`Unknown option(s): ${bits.join(', ')}\n`);
+  if (unknownShort.length > 0) {
+    console.error(`Unknown option(s): ${unknownShort.join(', ')}\n`);
     printHelp();
     return 2;
   }
 
-  if (!hasFlag(args, '--scan') && !hasFlag(args, '--strict-globs')) {
+  // Long options: allowlist guard (BUN_STRIP_UNKNOWN / BUN_LOG_UNKNOWN via Bun.env)
+  let longArgs = args;
+  try {
+    longArgs = applyUnknownLongOptionGuardFor('lint-wires', args, { onFail: 'throw' });
+  } catch (err) {
+    console.error(`${err instanceof Error ? err.message : String(err)}\n`);
+    printHelp();
+    return 2;
+  }
+
+  if (!hasFlag(longArgs, '--scan') && !hasFlag(longArgs, '--strict-globs')) {
     printHelp();
     return 0;
   }
 
-  if (hasFlag(args, '--fix') && !hasFlag(args, '--scan')) {
+  if (hasFlag(longArgs, '--fix') && !hasFlag(longArgs, '--scan')) {
     console.error('❌ --fix requires --scan\n');
     printHelp();
     return 2;
@@ -353,10 +361,10 @@ async function main(argv: readonly string[] = Bun.argv): Promise<number> {
   const result = await scanWireTraps({
     root: ROOT,
     rows: inv.rows,
-    strictGlobs: wantsStrictGlobs(args),
+    strictGlobs: wantsStrictGlobs(longArgs),
   });
 
-  if (hasFlag(args, '--fix') && result.fixable.length > 0) {
+  if (hasFlag(longArgs, '--fix') && result.fixable.length > 0) {
     const applied = await applyWireOkFixes({
       root: ROOT,
       fixes: result.fixable.map(h => ({
@@ -370,7 +378,7 @@ async function main(argv: readonly string[] = Bun.argv): Promise<number> {
       console.info(`   ${a.file}:${a.line}`);
     }
     if (applied.length > 20) console.info(`   … +${applied.length - 20} more`);
-  } else if (hasFlag(args, '--fix')) {
+  } else if (hasFlag(longArgs, '--fix')) {
     console.info('✏️  --fix: nothing to write (no non-strict allowlisted naked hits)');
   }
 

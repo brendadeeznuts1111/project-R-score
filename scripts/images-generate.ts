@@ -25,10 +25,10 @@ import {
   IMAGES_GENERATE_DOC,
   IMAGES_GENERATE_LEAVES,
   IMAGES_GENERATE_SECTION,
+  applyUnknownLongOptionGuardFor,
   formatFlagDocRefLine,
   imagesGenerateFlagDocRef,
   imagesGenerateToolFlags,
-  unknownLongOptionLeaves,
 } from '../lib/docs/ref-id-tool-flags.ts';
 
 /** Re-export REF:ID SSOT for registry / tests (`flagDocRef` matches bun-types-status). */
@@ -123,13 +123,8 @@ async function loadTomlDefaults(): Promise<Partial<CliOpts>> {
   }
 }
 
-function parseArgs(argv: string[]): CliOpts {
-  const unknown = unknownLongOptionLeaves(argv, IMAGES_GENERATE_ALLOWED_LONG);
-  if (unknown.length) {
-    throw new Error(
-      `unknown flag(s): ${unknown.map(u => `--${u}`).join(', ')} (see REF:ID §${IMAGES_GENERATE_SECTION} · --help)`
-    );
-  }
+function parseArgs(rawArgv: string[]): CliOpts {
+  const argv = applyUnknownLongOptionGuardFor('images:generate', rawArgv, { onFail: 'throw' });
   const opts = { ...DEFAULTS };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
