@@ -83,12 +83,14 @@ import {
 } from '../lib/telegram/flows/seat-telegram.ts';
 import { sendTelegramBotMessage } from '../lib/telegram/telegram-api.ts';
 import {
+  TELEGRAM_OPS_ALLOWED_LONG,
   TELEGRAM_OPS_DOC,
   TELEGRAM_OPS_LEAVES,
   TELEGRAM_OPS_SECTION,
   formatFlagDocRefLine,
   telegramOpsFlagDocRef,
   telegramOpsToolFlags,
+  unknownLongOptionLeaves,
 } from '../lib/docs/ref-id-tool-flags.ts';
 
 /** Local + re-export alias (`flagDocRef` matches bun-types-status). */
@@ -96,6 +98,7 @@ const flagDocRef = telegramOpsFlagDocRef;
 
 /** Re-export REF:ID SSOT for registry / tests. */
 export {
+  TELEGRAM_OPS_ALLOWED_LONG,
   TELEGRAM_OPS_DOC,
   TELEGRAM_OPS_LEAVES,
   TELEGRAM_OPS_SECTION,
@@ -1082,6 +1085,14 @@ async function main(): Promise<void> {
   await loadReasonixEnv();
   const argv = Bun.argv.slice(2);
   if (argv.length === 0 || argv[0] === '--help' || argv[0] === '-h') usage();
+
+  const unknown = unknownLongOptionLeaves(argv, TELEGRAM_OPS_ALLOWED_LONG);
+  if (unknown.length) {
+    console.error(
+      `unknown flag(s): ${unknown.map(u => `--${u}`).join(', ')} (see REF:ID §${TELEGRAM_OPS_SECTION} · --help)`
+    );
+    process.exit(2);
+  }
 
   const cmd = argv[0]!;
   if (cmd === 'link-package-group' || cmd === 'link-package') {
