@@ -3,6 +3,9 @@ import { describe, expect, test } from 'bun:test';
 
 import mainRuleset from '../.github/rulesets/main.json' with { type: 'json' };
 import tagRuleset from '../.github/rulesets/release-tags.json' with { type: 'json' };
+import bunTestProfiles from '../.agents/skills/ast-grep/bun-test-profiles.json' with {
+  type: 'json',
+};
 import packageJson from '../package.json' with { type: 'json' };
 import { getReleaseSteps, RELEASE_COMMIT_PATHS } from '../scripts/release.ts';
 
@@ -11,6 +14,16 @@ function ruleTypes(ruleset: { rules: Array<{ type: string }> }): Set<string> {
 }
 
 describe('repository governance', () => {
+  test('Bun test profiles never repeat isolation already implied by parallel workers', () => {
+    for (const [name, profile] of Object.entries(bunTestProfiles.profiles)) {
+      const usesParallel = profile.args.some(argument => argument.startsWith('--parallel'));
+      expect(
+        usesParallel && profile.args.includes('--isolate'),
+        `${name} must not combine --parallel with redundant --isolate`
+      ).toBe(false);
+    }
+  });
+
   test('main is PR-only, linear, locally gated, and non-destructive', async () => {
     expect(mainRuleset.target).toBe('branch');
     expect(mainRuleset.enforcement).toBe('active');
@@ -30,7 +43,8 @@ describe('repository governance', () => {
     expect(packageJson.scripts['bun:ci']).not.toContain('R2_BUCKET_NAME=');
     const localCi = await Bun.file(`${import.meta.dir}/../scripts/bun-ci.ts`).text();
     expect(localCi).toContain("['bun', 'run', 'ci:core']");
-    expect(localCi).toContain("['bun', 'run', 'test:partner-cli:snapshots']");
+    expect(localCi).toContain("['bun', 'run', 'test:snapshots']");
+    expect(localCi).not.toContain("['bun', 'run', 'test:partner-cli:snapshots']");
     expect(localCi).toContain("['bun', 'run', 'ci:types']");
     expect(localCi).toContain("['bun', 'run', 'ci:security']");
     expect(localCi).toContain("['bun', 'run', 'ci:portal-registry']");
@@ -41,6 +55,9 @@ describe('repository governance', () => {
     expect(localCi).toContain('Bun.spawn([bunExecutable');
     expect(packageJson.scripts['test:partner-cli:snapshots']).toBe(
       'bun test tests/partner-cli-snapshots.test.ts'
+    );
+    expect(packageJson.scripts['test:snapshots']).toBe(
+      'bun tools/bun-test-snapshots.ts --test'
     );
   });
 

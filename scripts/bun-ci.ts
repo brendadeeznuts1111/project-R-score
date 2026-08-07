@@ -67,8 +67,8 @@ const steps: CiStep[] = [
   },
   { name: 'core', command: ['bun', 'run', 'ci:core'], cwd: repoRoot },
   {
-    name: 'snapshot-api',
-    command: ['bun', 'run', 'test:partner-cli:snapshots'],
+    name: 'snapshots',
+    command: ['bun', 'run', 'test:snapshots'],
     cwd: repoRoot,
   },
   { name: 'types', command: ['bun', 'run', 'ci:types'], cwd: repoRoot },

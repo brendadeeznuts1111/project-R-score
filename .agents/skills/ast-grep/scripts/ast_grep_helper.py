@@ -48,7 +48,7 @@ USAGE
     ast_grep_helper.py bun roadmap                    # security integration backlog
     ast_grep_helper.py bun bundle-threat --zone agents  # Bun.Transpiler threat scan
     ast_grep_helper.py bun features                   # Bun release highlights (v1.3.13 test CLI)
-    ast_grep_helper.py bun test-ci --profile ci       # bun test --parallel --isolate
+    ast_grep_helper.py bun test-ci --profile ci       # bun test --parallel (implies --isolate)
     ast_grep_helper.py bun test-ci --profile unit     # bun test unit (position filter)
     ast_grep_helper.py bun test-ci --profile network  # domain preset with bundled -t pattern
     ast_grep_helper.py bun test-list [--json-out]     # discovery index (filters, domains, files)

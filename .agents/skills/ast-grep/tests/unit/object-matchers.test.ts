@@ -90,7 +90,7 @@ describe("object matchers on test-runner shapes", () => {
     const assembled = assembleTestCommand(
       {
         ci: {
-          args: ["--parallel", "--isolate"],
+          args: ["--parallel"],
           cwd: ".agents/skills/ast-grep",
           env: { TZ: "Etc/UTC" },
         },

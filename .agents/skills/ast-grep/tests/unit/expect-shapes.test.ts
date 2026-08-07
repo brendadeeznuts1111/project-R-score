@@ -32,7 +32,7 @@ describe("expect-shapes catalog", () => {
 describe("expect-shapes — test-runner", () => {
   test("expectAssembledCommand", () => {
     const cmd = assembleTestCommand(
-      { ci: { args: ["--parallel", "--isolate"], cwd: ".agents/skills/ast-grep", env: { TZ: "Etc/UTC" } } },
+      { ci: { args: ["--parallel"], cwd: ".agents/skills/ast-grep", env: { TZ: "Etc/UTC" } } },
       { skillRoot: SKILL_ROOT, repoRoot: REPO_ROOT, profile: "ci" },
     );
     expectAssembledCommand(cmd);
