@@ -2119,6 +2119,7 @@
     "fix:pin-versions": "bun run scripts/fix-pin-versions.ts",
     "fix:default-exports-bulk": "bun run scripts/fix-default-exports-bulk.ts",
     "cli:docs": "bun run scripts/generate-cli-docs.ts",
+    "cli:flags:check": "bun scripts/check-cli-flag-allowlists.ts",
     "registry:projects": "bun run scripts/generate-project-registry.ts",
     "projects:roots:check": "bun tools/projects-root-check.ts",
     "lib:domains:check": "bun tools/lib-domains-check.ts",

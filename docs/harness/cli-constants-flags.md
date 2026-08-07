@@ -1,0 +1,138 @@
+# Project-R CLI Constants & Flags Reference
+
+Operator-facing Flag tables and agent verification for **long-option
+allowlists** already enforced in code.
+
+Code SSOT (do **not** invent a parallel allowlist module):
+
+| Piece                             | Path                                                                                                                                                                    |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Allowlists + guard                | [`lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts) · `ALLOWED_LONG_REGISTRY` · `applyUnknownLongOptionGuardFor`                                     |
+| Env toggles only                  | `BUN_STRIP_UNKNOWN` · `BUN_LOG_UNKNOWN` (`BUN_UNKNOWN_FLAG_ENV`)                                                                                                        |
+| REF:ID prove                      | `bun run docs:refid:check` · `bun test tests/docs-ref-id-tool-exports.test.ts`                                                                                          |
+| Agent one-shot                    | `bun run cli:flags:check`                                                                                                                                               |
+| Bun create / init / runtime knobs | [`AUTHORITY.md`](AUTHORITY.md) · [`lib/env-check.ts`](../../lib/env-check.ts) · [AGENTS § Unknown long options](../../AGENTS.md#unknown-long-options-bun_strip_unknown) |
+
+> **Accuracy note:** Leaves in the registry are **unprefixed** (`chat`, not
+> `--chat`). `--help` / `--hlp` are always exempt. `lint-wires` is registered.
+> Subcommands (`send`, `directory`, `readiness`, …) are **positional**.
+
+---
+
+## 1. Overview
+
+CLIs call `applyUnknownLongOptionGuardFor('<cli>', argv)` (or the leaf form)
+before parsing.
+
+| Mode                 | Env                      | Behavior                                                             |
+| -------------------- | ------------------------ | -------------------------------------------------------------------- |
+| **Strict** (default) | unset / not `true`       | Unknown `--*` → `❌` + Allowed list → **exit 2** (or throw → exit 1) |
+| **Strip**            | `BUN_STRIP_UNKNOWN=true` | Drop unknowns; warn unless `BUN_LOG_UNKNOWN=false`                   |
+
+---
+
+## 2. CLI flag allowlists (`ALLOWED_LONG_REGISTRY`)
+
+Leaves below mirror
+[`ALLOWED_LONG_REGISTRY`](../../lib/docs/ref-id-tool-flags.ts). Extend there
+first, then this table, then `docs:refid:check` when REF:ID leaves change.
+
+### 2.1 `telegram:ops` (`TELEGRAM_OPS_ALLOWED_LONG`)
+
+Entry: [`tools/telegram-ops.ts`](../../tools/telegram-ops.ts).
+
+| Flag             | Alias | Type                | Required | Default        | Description                                                | Example                        |
+| ---------------- | ----- | ------------------- | -------- | -------------- | ---------------------------------------------------------- | ------------------------------ |
+| `--chat`         | —     | string (repeatable) | yes\*    | —              | Target chat id (\*or `--all`)                              | `… send --chat -100123 "ping"` |
+| `--all`          | —     | boolean             | yes\*    | false          | All chats matching `--kind`                                | `… send --all "ok"`            |
+| `--kind`         | —     | enum                | no       | `active`       | `active`\|`inactive`\|`all`\|`group`\|`private`\|`channel` | `… --kind group`               |
+| `--surface`      | —     | string              | no       | —              | `hq` \| `ash-staging` \| `sandbox`                         | `… --surface ash-staging`      |
+| `--queue`        | —     | boolean             | no       | false          | Enqueue via outbox (not a queue name)                      | `… send --all --queue "text"`  |
+| `--direct`       | —     | boolean             | no       | true†          | Immediate send (†when `--queue` omitted)                   | `… --direct`                   |
+| `--preview`      | —     | boolean             | no       | false          | Resolve targets only                                       | `… --preview`                  |
+| `--html`         | —     | boolean             | no       | false          | `parse_mode=HTML`                                          | `… --html`                     |
+| `--db`           | —     | path                | no       | ops DB default | Ops SQLite path                                            | `… --db data/operations.db`    |
+| `--json`         | —     | boolean             | no       | false          | JSON output                                                | `… directory --json`           |
+| `--refresh`      | —     | boolean             | no       | false          | Refresh known-chat titles                                  | `… directory --refresh`        |
+| `--rich`         | —     | boolean             | no       | false          | Rich directory join                                        | `… directory --rich`           |
+| `--mermaid`      | —     | boolean             | no       | false          | Graph as Mermaid                                           | `… graph --mermaid`            |
+| `--env`          | —     | boolean             | no       | false          | Graph `.env` block                                         | `… graph --env`                |
+| `--sync-env`     | —     | boolean             | no       | false          | Sync telegram env                                          | `… graph --sync-env`           |
+| `--detail`       | —     | boolean             | no       | false          | Readiness detail                                           | `… readiness --detail`         |
+| `--deep`         | —     | boolean             | no       | false          | Readiness per-lane audit                                   | `… readiness --detail --deep`  |
+| `--live`         | —     | boolean             | no       | false          | Live Telegram probes                                       | `… readiness --live`           |
+| `--invite`       | —     | string              | no       | —              | link-package-group invite                                  | handshake §1.1                 |
+| `--no-dm`        | —     | boolean             | no       | false          | Skip DM                                                    | handshake §1.1                 |
+| `--no-ack`       | —     | boolean             | no       | false          | Skip ack                                                   | handshake §1.1                 |
+| `--requested-by` | —     | string              | no       | —              | Requestor id                                               | handshake §1.1                 |
+| `--force`        | —     | boolean             | no       | false          | Force (subcommand-specific)                                | —                              |
+| `--dry-run`      | —     | boolean             | no       | false          | Dry run                                                    | —                              |
+| `--help`         | `-h`  | boolean             | no       | false          | Help (always exempt)                                       | `… --help`                     |
+
+Tenant: [`telegram-factory.md`](tenants/telegram-factory.md) · handshake
+[`partner-package-group-handshake.md`](tenants/partner-package-group-handshake.md).
+
+### 2.2 `partner:onboard` (`PARTNER_ONBOARD_ALLOWED_LONG`)
+
+| Flag                                                                                                               | Type                     | Notes |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------ | ----- |
+| `--code` `--url` `--username` `--password` `--telegram-user-id` `--chat` `--book-key` `--type` `--maxBet` `--name` | identity/book            |       |
+| `--deal` `--currency` `--hold-target` `--initial-balance` `--funding-method`                                       | accounting (REF:ID §1.1) |       |
+| `--dry-run` `--skip-forum` `--no-bake`                                                                             | control                  |       |
+
+### 2.3 `images:generate` (`IMAGES_GENERATE_ALLOWED_LONG`)
+
+`--template` plus Flags-table leaves: `source` `out` `size` `format` `quality`
+`fit` `max-pixels` `json` `dry-run`. Doc: [`docs/IMAGES.md`](../IMAGES.md).
+
+### 2.4 `ops:snapshot` (`OPS_SNAPSHOT_ALLOWED_LONG`)
+
+Seed REF:ID leaves: `seed` `seed-force` `seed-tenants` `no-seed` (+ conceptual
+`default`). Bake toggles: `out` `no-report` `webview` `no-routing` `no-static`
+`force-routing` `publish` `no-channel-meta` `no-compliance` `no-monorepo-health`
+`no-toc-limits` `seed-toc-limits-force`.
+
+### 2.5 `lint-wires` (`LINT_WIRES_ALLOWED_LONG`)
+
+`help` `scan` `why` `document` `strict-globs` `rules` `fix`.
+
+---
+
+## 3. Environment variables (guard toggles only)
+
+| Env                      | Default           | Effect                                |
+| ------------------------ | ----------------- | ------------------------------------- |
+| `BUN_STRIP_UNKNOWN`      | unset             | Strict fail                           |
+| `BUN_STRIP_UNKNOWN=true` | —                 | Strip unknowns                        |
+| `BUN_LOG_UNKNOWN`        | on when stripping | Set `false` to silence strip warnings |
+
+Allowlists are **never** loaded from env JSON.
+
+---
+
+## 4. Agent verification
+
+```bash
+bun run cli:flags:check
+bun test tests/docs-ref-id-tool-exports.test.ts
+bun run docs:refid:check
+```
+
+| Scenario             | Command                                                                               | Exit            | Log pattern                                         |
+| -------------------- | ------------------------------------------------------------------------------------- | --------------- | --------------------------------------------------- |
+| Unknown telegram:ops | `bun tools/telegram-ops.ts send --chat 123 --typo`                                    | 2               | `❌ Unknown long option(s) in telegram:ops: --typo` |
+| Strip mode           | `BUN_STRIP_UNKNOWN=true bun tools/telegram-ops.ts send --chat 123 --typo --preview x` | ≠2 from unknown | `BUN_STRIP_UNKNOWN=true — stripping`                |
+| Partner onboard      | `bun tools/partner-onboard.ts --bad`                                                  | 1 (throw)       | `❌` + `unknown flag(s)`                            |
+| Images               | `bun scripts/images-generate.ts --typo`                                               | 1 (throw)       | `❌`                                                |
+| Ops snapshot         | `bun tools/ops-snapshot.ts --typo`                                                    | 2               | `❌`                                                |
+
+---
+
+## 5. Extending allowlists
+
+1. Add the leaf to the matching `*_ALLOWED_LONG` (and `*_LEAVES` when REF:ID).
+2. Parse it in the owning CLI.
+3. Update this document + Flags table in the paired design/tenant doc.
+4. `bun run docs:refid:check` · `bun run cli:flags:check`.
+
+Forgetting step 1 → fail/throw in strict mode.
