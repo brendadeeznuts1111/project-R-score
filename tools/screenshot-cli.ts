@@ -44,6 +44,7 @@ import {
   TEST_003,
   type Test003Response,
 } from '../lib/screenshot-remediation.ts';
+import { parseEvidenceId } from '../lib/types/branded.ts';
 
 export { resolveExistingRealPath, SCREENSHOT_ALLOWED_LONG };
 
@@ -212,8 +213,12 @@ export async function runScreenshotCli(
           elapsedMs: result.observation.elapsedMs,
         });
       } else {
+        // Injected capture deps may omit `record` — reuse observation.evidenceId so
+        // sidecar basename and nested evidence stay correlatable (no second mint).
+        const obsId = result.observation.evidenceId;
         const remediated = await remediateScreenshotCapture(result.pngBytes, {
           subject: subject ?? url,
+          ...(obsId != null ? { evidenceId: parseEvidenceId(obsId) } : {}),
         });
         // Drop thumbnailBytes — binary must not land in --json / evidence sidecars.
         const { thumbnailBytes: _thumb, ...gate } = remediated;

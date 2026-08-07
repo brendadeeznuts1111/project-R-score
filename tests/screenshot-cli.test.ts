@@ -332,4 +332,35 @@ describe('screenshot CLI', () => {
       await rm(dir, { recursive: true, force: true });
     }
   });
+
+  test('capture deps without record reuse observation.evidenceId (no remint)', async () => {
+    const outDir = await mkRepoDataTemp('tmp-screenshot-cli-no-record-');
+    try {
+      const withRecord = await mockCaptureWithRecord(outDir, 'webview');
+      const { record: _omit, ...withoutRecord } = withRecord;
+      const { payload, exitCode } = await runScreenshotCli(
+        [
+          'capture',
+          'https://example.com',
+          '--out-dir',
+          outDir,
+          '--allow-placeholder',
+          '--json',
+        ],
+        { capture: async () => withoutRecord }
+      );
+      const body = payload as {
+        observation: { evidenceId?: string }; // brand-ok — CLI JSON payload shape
+        test003: { evidence: { evidenceId: string } } | null; // brand-ok — CLI JSON
+        evidencePath?: string;
+      };
+      expect(exitCode).toBe(0);
+      expect(body.test003).toBeTruthy();
+      const obsId = body.observation.evidenceId!;
+      expect(body.test003!.evidence.evidenceId).toBe(obsId);
+      expect(basename(body.evidencePath!)).toBe(`${obsId}.test003.json`);
+    } finally {
+      await rm(outDir, { recursive: true, force: true });
+    }
+  });
 });
