@@ -550,6 +550,39 @@ export const SEAT_DESK_ALLOWED_LONG = [
   'thread-id',
 ] as const;
 
+/** § — packages:metafile-audit (`tools/packages-metafile-audit.ts`) */
+export const PACKAGES_METAFILE_AUDIT_ALLOWED_LONG = [
+  'json',
+  'md',
+  'diff',
+  'out',
+  'glob',
+  'full-metafile',
+  'include-tests',
+  'cross-check',
+  'map',
+  'bake',
+  'shallow',
+  'apply-actions',
+  'dry-run',
+  'vault',
+  'vault-gap',
+  'env',
+  'no-pkg-json',
+  'strict',
+  'strict-actions',
+] as const;
+
+/** § — harness:violations (`tools/harness-violations.ts`) */
+export const HARNESS_VIOLATIONS_ALLOWED_LONG = [
+  'json',
+  'open',
+  'path',
+  'rule',
+  'legacy-brands',
+  'limit',
+] as const;
+
 /** CLI names keyed in `ALLOWED_LONG_REGISTRY` (package-script style). */
 export type AllowedLongCliName =
   | 'lint-wires'
@@ -578,7 +611,9 @@ export type AllowedLongCliName =
   | 'concept:audit'
   | 'concept:registry:graph'
   | 'concept:discover'
-  | 'seat:desk';
+  | 'seat:desk'
+  | 'packages:metafile-audit'
+  | 'harness:violations';
 
 /**
  * Central allowlist registry — code SSOT (not env JSON, not bun-types).
@@ -612,6 +647,8 @@ export const ALLOWED_LONG_REGISTRY = {
   'concept:registry:graph': CONCEPT_REGISTRY_GRAPH_ALLOWED_LONG,
   'concept:discover': CONCEPT_DISCOVER_ALLOWED_LONG,
   'seat:desk': SEAT_DESK_ALLOWED_LONG,
+  'packages:metafile-audit': PACKAGES_METAFILE_AUDIT_ALLOWED_LONG,
+  'harness:violations': HARNESS_VIOLATIONS_ALLOWED_LONG,
 } as const satisfies Record<AllowedLongCliName, readonly string[]>;
 
 /** Apply guard using `ALLOWED_LONG_REGISTRY[cliName]`. */
