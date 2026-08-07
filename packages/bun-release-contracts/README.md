@@ -28,7 +28,14 @@ Generation is two-phase. Every selected post is fetched, parsed, and validated,
 then the future aggregate index is validated before any contract output is
 written. Changed files are staged on the same filesystem, inventories are
 installed first, and `index.json` is installed last as the batch commit marker.
-Check mode performs the same validation but never writes.
+An output lock serializes publishers, and a failed commit restores every target
+from its staged backup. Check mode performs the same validation but never
+writes.
+
+The publisher targets the repository's supported macOS and Linux operator/CI
+environments. Its atomic same-filesystem moves, cleanup, and real-path checks
+use argv-safe `Bun.spawn` calls to the platform `mv`, `rm`, and `realpath`
+utilities; native Windows is not currently supported.
 
 Each new announcement starts with `status: "planned"` and `testPath: null`.
 After adding a real assertion, change it to `status: "covered"` and record a
