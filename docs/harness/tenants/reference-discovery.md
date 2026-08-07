@@ -42,6 +42,8 @@ in `lib/reference-discovery.ts`:
 | Telegram catalog LLM   | `TELEGRAM_CATALOG_RESEARCH_LLM_KEY` (alias → `OPENAI_API_KEY`) · `..._LLM_MODEL` · `..._LLM_URL`               | `lib/telegram/catalog-research/llm-pass.ts`                                                              |
 | Concept audit controls | `CONCEPT_AUDIT_MIN_USAGE` · `..._MAX_USAGE`; `..._SHOW_UNUSED` · `..._SHOW_USED`; `..._SORT` · `..._STRICT`    | independent filter, display, ordering, and enforcement options in `scripts/concept-audit.ts`             |
 | Concept graph controls | `CONCEPT_GRAPH_BUNPORT` · `..._PORT`; `..._FORMAT` · `..._PORT`                                                | native-default bind selector, explicit port override, and output format in `scripts/concept-graph.ts`    |
+| Alert webhook bind     | `ALERT_WEBHOOK_PORT` (listen) · `ALERT_WEBHOOK_URL` (POST sink)                                                | orthogonal port vs URL — skill/cron patterns · not aliases                                               |
+| Bun types CI vs tip    | `BUN_TYPES_CI` (merge-proof types step toggle) · `BUN_TYPES_TIP` (tip checkout path for tip-diff)              | `docs/design/bun-types-inventory.md` · `tools/bun-types-tip-*.ts`                                        |
 
 Per-pair disambiguation table:
 [`docs/registry-client.md`](../../registry-client.md) §Env naming: similar

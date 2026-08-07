@@ -2,7 +2,7 @@
 
 Feature-freeze pass: classify remotes → prune squash leftovers → collapse duplicate WIP → park survivors → de-bloat gates.
 
-## Gate results
+## Gate results (pre-prune)
 
 | Gate | Exit | Notes |
 | ---- | ---- | ----- |
@@ -15,39 +15,42 @@ Feature-freeze pass: classify remotes → prune squash leftovers → collapse du
 | check:monorepo-health | 0 | ratchet OK · score 34.7 critical (large files) |
 | monorepo:health (TTY) | 1 | exits nonzero on critical grade (expected) |
 
-## Classification
+## Prune executed
 
-| Bucket | Count | File |
-| ------ | ----: | ---- |
-| Cherry-equivalent SAFE_DELETE | 133 | `safe-delete.txt` |
-| Stale unique (>300 behind / mega-relic) | 31 | `stale-delete.txt` |
-| Cluster collapse (duplicate WIP) | ~27 | `cluster-collapse-delete.txt` |
-| Combined unique delete list | see `all-delete.txt` | deduped |
-| Survivors | 5 + this lane | `survivors.tsv` |
+| Action | Count |
+| ------ | ----: |
+| Cherry-equivalent SAFE_DELETE | 133 |
+| Stale unique (>300 behind / mega-relic) | 31 |
+| Cluster collapse (duplicate WIP) | 27 |
+| Ancestry-merged leftovers | 32 |
+| **Total remotes deleted** | **222** (190 + 32) |
+| Failures | 0 |
 
-Unique tips with commits not patch-equivalent to main: **62** (includes open PR #592).
+Logs: `prune-log.txt` · lists: `safe-delete.txt` · `stale-delete.txt` · `cluster-collapse-delete.txt` · `ancestry-merged-delete.txt` · `all-delete.txt`
 
-## Survivors (park / later)
+## Remotes remaining (7)
 
-| Branch | Bucket | Notes |
-| ------ | ------ | ----- |
-| `cursor/contract-screenshot-cli-45b7` | park-open-pr | PR #592 draft — do not expand |
-| `feat/bun-pr-diff` | later-pr | Best post-cleanup small PR |
-| `cursor/bm-routing-tenant-owner-294c` | docs-hygiene | Domain vs Tenant/Owner routing docs |
-| `feat/odds-edge-depth` | park | Sole agent-odds tip retained |
-| `feat/partner-surface-inventory-docs` | park | Sole partner-surface tip retained |
+| Branch | Bucket |
+| ------ | ------ |
+| `main` | trunk |
+| `cursor/branch-audit-prune-ad8f` | this lane |
+| `cursor/contract-screenshot-cli-45b7` | park-open-pr (#592 draft) |
+| `feat/bun-pr-diff` | later-pr |
+| `feat/odds-edge-depth` | park |
+| `feat/partner-surface-inventory-docs` | park |
+| `cursor/bm-routing-tenant-owner-294c` | absorbed into this lane (delete after merge) |
 
-## Compose warnings (debloat candidates)
+## De-bloat landed in this lane
 
-1. `similar-env` ALERT_WEBHOOK_PORT ↔ ALERT_WEBHOOK_URL — orthogonal port/URL; allowlist if intentional
-2. `similar-env` BUN_TYPES_CI ↔ BUN_TYPES_TIP — deliberate siblings; allowlist if intentional
-
-Public orphans (info): `partner-profile-coverage.json`, `stale-anchors.json`.
+1. Allowlist `ALERT_WEBHOOK_PORT`↔`ALERT_WEBHOOK_URL` and `BUN_TYPES_CI`↔`BUN_TYPES_TIP` in `isAllowedSimilarEnvPair` (clears compose warn floor).
+2. Document INFO orphans `partner-profile-coverage.json` · `stale-anchors.json` in `public-plane.md`.
+3. Absorb BM routing Domain vs Tenant/Owner docs from `cursor/bm-routing-tenant-owner-294c`.
 
 ## Open issues (deferred)
 
 - #284 / #285 Phase 1 features — out of scope
 - #23 dashboard flake — out of scope
+- #592 screenshot CLI — parked draft
 
 ## Method
 
