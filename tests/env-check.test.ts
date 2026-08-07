@@ -25,5 +25,14 @@ describe('env-check', () => {
     expect(github?.group).toBe('github');
     expect(github?.secret).toBe(true);
     expect(github?.anyOf).toEqual(['GITHUB_TOKEN', 'GITHUB_ACCESS_TOKEN', 'GH_TOKEN']);
+    expect(github?.note).toMatch(/bunx bun-pr|gh auth/);
+  });
+
+  test('specs include optional BUILDKITE_API_TOKEN for Bun upstream CI only', () => {
+    const bk = ENV_CHECK_SPECS.find(s => s.key === 'BUILDKITE_API_TOKEN');
+    expect(bk).toBeDefined();
+    expect(bk?.severity).toBe('optional');
+    expect(bk?.secret).toBe(true);
+    expect(bk?.note).toMatch(/not FactoryWager/i);
   });
 });
