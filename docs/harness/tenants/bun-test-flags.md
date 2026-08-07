@@ -21,7 +21,7 @@ and wiring only — no new contract suite.
 (pre-commit).
 
 Inspector live stream (orthogonal, separate lane): `bun run test:inspect` ·
-tenant [`bun-test-inspect.md`](bun-test-inspect.md) when present on the branch.
+tenant [`bun-test-inspect.md`](bun-test-inspect.md).
 
 ## Precedence
 

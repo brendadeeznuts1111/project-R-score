@@ -169,6 +169,8 @@ When a decision is unresolved, read **one** owner in
 | Proton / vault deploy        | [`proton-integration.md`](docs/harness/tenants/proton-integration.md) · `proton:inject:factorywager:reasonix` |
 | Cloudflare Pages             | [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · `bun run cloudflare:env` |
 | Monorepo health              | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md) · `bun run check:monorepo-health` |
+| Bun test flags × scripts     | [`bun-test-flags.md`](docs/harness/tenants/bun-test-flags.md) · CLI vs bunfig · JUnit vs Inspector |
+| Bun test Inspector           | [`bun-test-inspect.md`](docs/harness/tenants/bun-test-inspect.md) · `bun run test:inspect` |
 | Branded IDs                  | [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) · `bun run check:brands:all` |
 
 Agent entry (full table): [`AGENTS.md`](AGENTS.md)
@@ -232,6 +234,8 @@ load): [`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-sc
 | `bun run telegram:handshake:readiness`     | Package-group handshake gates (`--deep`)                              |
 | `bun run test:seat-desk`                   | Seat capital desk + handshake snapshot tests                          |
 | `bun run harness:status`                   | Day-loop ratchets + proof status                                      |
+| `bun run test:inspect`                     | Bun TestReporter / LifecycleReporter stream (orthogonal to JUnit)     |
+| `bun run test:inspect:smoke`               | Quiet JSON smoke of inspect helpers                                   |
 | `bun run ops:limits:check`                 | Partner limit freshness / CLV alerts                                  |
 | `bun run public:audit:verify`              | Public plane discovery + portal static gate                           |
 | `bun run docs:native:check`                | Verify native-capability documentation evidence is synchronized       |

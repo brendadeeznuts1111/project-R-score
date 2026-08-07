@@ -73,6 +73,11 @@ SHARD=1/3 bun run test:shard
 Curated NOTE (TOC + fences): [`docs/guides/bun-test-flags-1.3.13.md`](../guides/bun-test-flags-1.3.13.md)  
 Ship: [v1.3.13](https://bun.com/blog/bun-v1.3.13) · Platform: [`BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md)
 
+FactoryWager script × flag matrix (CLI vs bunfig; JUnit vs Inspector):
+[`tenants/bun-test-flags.md`](tenants/bun-test-flags.md). Live Inspector stream:
+[`tenants/bun-test-inspect.md`](tenants/bun-test-inspect.md) ·
+`bun run test:inspect`.
+
 ## Suggest
 
 ```bash
