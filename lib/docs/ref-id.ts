@@ -48,7 +48,11 @@ export type RefIdIssueKind =
   | 'toc-href-mismatch'
   | 'orphan-anchor'
   | 'section-placement'
-  | 'comment-missing-anchor';
+  | 'comment-missing-anchor'
+  /** Tool REF:ID not present in markdown flags table (requireToolCoverage). */
+  | 'tool-missing-table'
+  /** Flags table REF:ID not covered by any tool flag row (requireToolCoverage). */
+  | 'table-missing-tool';
 
 export type RefIdIssue = {
   severity: RefIdSeverity;
@@ -567,9 +571,11 @@ export function checkRefIdDocument(
     }
   }
 
-  // tool flags
+  // tool flags ↔ table (bidirectional when requireToolCoverage)
   if (opts.toolFlags) {
+    const toolRefIds = new Set<string>();
     for (const t of opts.toolFlags) {
+      toolRefIds.add(t.refId);
       for (const f of validateRefIdFormat(t.refId, { strictFormat: opts.strictFormat })) {
         issues.push({
           severity: f.severity,
@@ -600,11 +606,24 @@ export function checkRefIdDocument(
       }
       if (opts.requireToolCoverage && !seenTableRef.has(t.refId)) {
         issues.push({
-          severity: 'warn',
-          kind: 'orphan-anchor',
+          severity: 'error',
+          kind: 'tool-missing-table',
           file,
           refId: t.refId,
-          detail: `tool REF:ID '${t.refId}' not listed in markdown flags table`,
+          detail: `tool REF:ID '${t.refId}' not listed in markdown flags table (requireToolCoverage)`,
+        });
+      }
+    }
+    if (opts.requireToolCoverage) {
+      for (const [refId, line] of seenTableRef) {
+        if (toolRefIds.has(refId)) continue;
+        issues.push({
+          severity: 'error',
+          kind: 'table-missing-tool',
+          file,
+          line,
+          refId,
+          detail: `flags table REF:ID '${refId}' has no matching tool flag row (requireToolCoverage)`,
         });
       }
     }

@@ -42,6 +42,27 @@ export function formatFlagDocRefLine(section: string, leaves: readonly string[])
   return leaves.map(leaf => `${leaf} → ${section}.${leaf}`).join(' · ');
 }
 
+/**
+ * Return long-option names from argv that are not in the allowed leaf set.
+ * Accepts leaves as `deal` matching `--deal`; ignores short `-x` and positionals.
+ * Use for optional soft/hard unknown-flag guards in CLIs with REF:ID tables.
+ */
+export function unknownLongOptionLeaves(
+  argv: readonly string[],
+  allowedLeaves: readonly string[]
+): string[] {
+  const allowed = new Set(allowedLeaves.map(l => l.toLowerCase()));
+  const unknown: string[] = [];
+  for (const a of argv) {
+    if (!a.startsWith('--') || a === '--') continue;
+    const raw = a.slice(2).split('=')[0] ?? '';
+    if (!raw) continue;
+    if (raw === 'help' || raw === 'hlp') continue; // common help aliases
+    if (!allowed.has(raw.toLowerCase())) unknown.push(raw);
+  }
+  return unknown;
+}
+
 /** §4.1 — lint-wires (`scripts/validate-wire-traps.ts`) */
 export const LINT_WIRES_DOC = 'docs/design/partner-surface-inventory.md' as const;
 export const LINT_WIRES_SECTION = '4.1' as const;

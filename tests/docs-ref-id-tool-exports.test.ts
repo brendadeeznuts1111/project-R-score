@@ -19,7 +19,9 @@ import {
   partnerOnboardToolFlags,
   telegramOpsFlagDocRef,
   telegramOpsToolFlags,
+  unknownLongOptionLeaves,
 } from '../lib/docs/ref-id-tool-flags.ts';
+import { PARTNER_ONBOARD_ALLOWED_LONG } from '../tools/partner-onboard.ts';
 import {
   flagDocRef as imagesGenerateFlagDocRefExport,
   imagesGenerateToolFlags as imagesGenerateFromTool,
@@ -101,5 +103,23 @@ describe('in-tool flagDocRef re-exports', () => {
       expect(out).toContain('REF:ID');
       expect(out).toContain(needle);
     }
+  });
+
+  test('unknownLongOptionLeaves + partner-onboard allowlist', () => {
+    expect(unknownLongOptionLeaves(['--deal', '30', '--code', 'X'], PARTNER_ONBOARD_LEAVES)).toEqual(
+      ['code']
+    );
+    expect(
+      unknownLongOptionLeaves(
+        ['--deal', '30', '--code', 'X', '--typo-flag'],
+        PARTNER_ONBOARD_ALLOWED_LONG
+      )
+    ).toEqual(['typo-flag']);
+    expect(
+      unknownLongOptionLeaves(
+        ['--deal=30', '--currency=USD', '--code', 'ASH'],
+        PARTNER_ONBOARD_ALLOWED_LONG
+      )
+    ).toEqual([]);
   });
 });

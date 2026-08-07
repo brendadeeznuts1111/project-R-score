@@ -206,6 +206,23 @@ export function buildStatusFlagRows(cli: StatusCli): StatusFlagRow[] {
       default: '—',
       current: onOff(cli.help),
     }),
+    // Shared tip/report flags (documented as script=shared in design Flags table)
+    {
+      script: 'shared',
+      ...flagDocRef('shared.strict'),
+      flag: '--strict',
+      shortcode: '—',
+      default: 'soft',
+      current: 'tip-diff / types-report / types-ci',
+    },
+    {
+      script: 'shared',
+      ...flagDocRef('shared.prefer-local'),
+      flag: '--prefer-local',
+      shortcode: '—',
+      default: 'off',
+      current: 'baked into :local / :ci / types-report',
+    },
   ];
 }
 

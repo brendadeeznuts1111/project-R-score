@@ -84,10 +84,12 @@ bun run docs:map:check             # includes REF:ID (unless --skip-refid-check)
 discovery (`docs/**` · `public/portal/**` when markup present). See
 [CONTRIBUTING — REF:ID Validation](./contributing/CONTRIBUTING.md#refid-validation).
 
-**Tool ↔ table:** Flag owners list leaves in
-[`lib/docs/ref-id-tool-flags.ts`](../lib/docs/ref-id-tool-flags.ts)
-(`requireToolCoverage`). Partner documentation register paths live in
-`PARTNER_DOCUMENTATION_REFS`
+**Tool ↔ table (bidirectional):** Flag owners list leaves in
+[`lib/docs/ref-id-tool-flags.ts`](../lib/docs/ref-id-tool-flags.ts) (or
+`buildStatusFlagRows` for bun-types). With `requireToolCoverage`, every tool
+REF:ID must appear in the Flags table (`tool-missing-table`) **and** every
+table REF:ID must have a tool row (`table-missing-tool`) — both **errors**.
+Partner documentation register paths live in `PARTNER_DOCUMENTATION_REFS`
 ([`partner-surface-inventory.ts`](../lib/docs/partner-surface-inventory.ts)).
 
 **Audit gate:** `bun run docs:refid:audit` must report **flags-table-only=0**.
