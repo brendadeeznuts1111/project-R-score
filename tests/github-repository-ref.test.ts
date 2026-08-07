@@ -1,11 +1,19 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  apiBaseUrl,
+  blobUrl,
+  BUN_GITHUB_ENV,
   commitUrl,
+  GITHUB_CASCADE,
+  GITHUB_DEFAULT_API_DOMAIN,
+  GITHUB_ORIGIN,
+  GITHUB_REMOTES,
   githubTokenPresence,
   htmlUrl,
   ownerName,
   parseGitRemoteUrl,
   parseOwnerName,
+  rawUrl,
   resolveGitHubRepositoryRef,
   treeUrl,
 } from '../lib/github-repository-ref';
@@ -141,6 +149,36 @@ describe('resolveGitHubRepositoryRef', () => {
   });
 });
 
+describe('global frozen constants', () => {
+  test('GITHUB_ORIGIN matches CANONICAL origin + link edge', () => {
+    expect(GITHUB_ORIGIN).toMatchObject({
+      remote: 'origin',
+      host: 'github.com',
+      owner: 'brendadeeznuts1111',
+      name: 'project-R-score',
+      ownerName: 'brendadeeznuts1111/project-R-score',
+      url: 'https://github.com/brendadeeznuts1111/project-R-score',
+      gitSsh: 'git@github.com:brendadeeznuts1111/project-R-score.git',
+      apiHost: GITHUB_DEFAULT_API_DOMAIN,
+    });
+    expect(GITHUB_REMOTES.origin).toBe(GITHUB_ORIGIN);
+  });
+
+  test('GITHUB_CASCADE is nested product remote', () => {
+    expect(GITHUB_CASCADE.name).toBe('cascade-mover-v3');
+    expect(GITHUB_CASCADE.url).toBe('https://github.com/brendadeeznuts1111/cascade-mover-v3');
+  });
+
+  test('BUN_GITHUB_ENV key names match Bun create + Actions wire', () => {
+    expect(BUN_GITHUB_ENV.TOKEN).toBe('GITHUB_TOKEN');
+    expect(BUN_GITHUB_ENV.ACCESS_TOKEN).toBe('GITHUB_ACCESS_TOKEN');
+    expect(BUN_GITHUB_ENV.API_DOMAIN).toBe('GITHUB_API_DOMAIN');
+    expect(BUN_GITHUB_ENV.REPOSITORY).toBe('GITHUB_REPOSITORY');
+    expect(BUN_GITHUB_ENV.SERVER_URL).toBe('GITHUB_SERVER_URL');
+    expect(BUN_GITHUB_ENV.RUN_ID).toBe('GITHUB_RUN_ID');
+  });
+});
+
 describe('link edge helpers', () => {
   const ref = {
     host: 'github.com',
@@ -161,6 +199,23 @@ describe('link edge helpers', () => {
 
   test('commitUrl', () => {
     expect(commitUrl(ref, 'abc123')).toBe('https://github.com/o/n/commit/abc123');
+  });
+
+  test('blobUrl + rawUrl encode path/branch', () => {
+    expect(blobUrl(ref, 'docs/AGENTS.md')).toBe(
+      'https://github.com/o/n/blob/main/docs/AGENTS.md'
+    );
+    expect(blobUrl(ref, 'lib/foo.ts', 'feat/bar')).toBe(
+      'https://github.com/o/n/blob/feat/bar/lib/foo.ts'
+    );
+    expect(rawUrl(ref, 'public/registry/x.json')).toBe(
+      'https://raw.githubusercontent.com/o/n/main/public/registry/x.json'
+    );
+  });
+
+  test('apiBaseUrl strips scheme and trailing slash', () => {
+    expect(apiBaseUrl()).toBe('https://api.github.com');
+    expect(apiBaseUrl('https://ghe.example/')).toBe('https://ghe.example');
   });
 });
 

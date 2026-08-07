@@ -1,12 +1,16 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/templating/create — Bun create GITHUB_TOKEN / GITHUB_API_DOMAIN
 /**
  * Granular GitHub repository identity (owner / name / host / remote).
- * URL is derived at the link edge via htmlUrl — not an interior SSOT.
+ * URL is derived at the link edge via htmlUrl / GITHUB_ORIGIN.url — not an interior SSOT.
  *
  * Resolve: Actions GITHUB_* → git remote → CANONICAL_REMOTES[slot].
  * Fail-loud on garbage Actions/git wire (never silent hardcode as "env").
  * Transport (e.g. fetch unix sockets) is intentionally out of scope here.
+ *
+ * Global frozen constants (`GITHUB_ORIGIN`, `BUN_GITHUB_ENV`) are for docs/portal/bake
+ * consumers that need a stable link edge without runtime resolve.
  *
  * @see ./docs/repo-docs.ts — CANONICAL_REMOTES
  */
@@ -29,6 +33,89 @@ export type GithubTokenPresence = {
 
 type EnvMap = { [key: string]: string | undefined };
 
+/**
+ * Bun-native + Actions GitHub env **key names** (never values).
+ *
+ * - Bun create: `GITHUB_TOKEN` · `GITHUB_ACCESS_TOKEN` · `GITHUB_API_DOMAIN`
+ * - Actions identity: `GITHUB_REPOSITORY*` · `GITHUB_SERVER_URL`
+ * - Bun test CI reporters also read `GITHUB_REPOSITORY` · `GITHUB_SERVER_URL` · `GITHUB_RUN_ID`
+ *
+ * @see https://bun.com/docs/runtime/templating/create
+ */
+export const BUN_GITHUB_ENV = {
+  /** Bun create — preferred over ACCESS_TOKEN when both set */
+  TOKEN: 'GITHUB_TOKEN',
+  /** Bun create — alias when TOKEN unset */
+  ACCESS_TOKEN: 'GITHUB_ACCESS_TOKEN',
+  /** Bun create — GitHub Enterprise / proxy API host */
+  API_DOMAIN: 'GITHUB_API_DOMAIN',
+  /** Actions — `owner/name` */
+  REPOSITORY: 'GITHUB_REPOSITORY',
+  /** Actions — owner (must agree with REPOSITORY when set) */
+  REPOSITORY_OWNER: 'GITHUB_REPOSITORY_OWNER',
+  /** Actions — e.g. https://github.com */
+  SERVER_URL: 'GITHUB_SERVER_URL',
+  /** Actions / Bun test reporters — run id */
+  RUN_ID: 'GITHUB_RUN_ID',
+  /** Actions — `"true"` when running on GitHub Actions */
+  ACTIONS: 'GITHUB_ACTIONS',
+  /** `gh` CLI token alias */
+  GH_TOKEN: 'GH_TOKEN',
+} as const;
+
+export type BunGitHubEnvKey = (typeof BUN_GITHUB_ENV)[keyof typeof BUN_GITHUB_ENV];
+
+/** Default github.com API host (override at runtime via `GITHUB_API_DOMAIN`). */
+export const GITHUB_DEFAULT_API_DOMAIN = 'api.github.com' as const;
+
+/** Default github.com web host. */
+export const GITHUB_DEFAULT_HOST = 'github.com' as const;
+
+/** Default branch for blob/raw link helpers. */
+export const GITHUB_DEFAULT_BRANCH = 'main' as const;
+
+/** Frozen remote slot + parts + link-edge `url` (from CANONICAL_REMOTES). */
+export type GitHubRemoteConstants = {
+  readonly remote: GitHubRemoteSlot;
+  readonly host: string;
+  readonly owner: string; // brand-ok — github login/org
+  readonly name: string; // brand-ok — repository name
+  /** Actions-style `owner/name`. */
+  readonly ownerName: string;
+  /** Link edge HTML home — prefer over inventing `REPO_URL`. */
+  readonly url: string;
+  /** `git@host:owner/name.git` clone form. */
+  readonly gitSsh: string;
+  /** Default API host for this public github.com remote. */
+  readonly apiHost: typeof GITHUB_DEFAULT_API_DOMAIN;
+};
+
+function remoteConstants(remote: GitHubRemoteSlot): GitHubRemoteConstants {
+  const c = CANONICAL_REMOTES[remote];
+  return {
+    remote,
+    host: c.host,
+    owner: c.owner,
+    name: c.name,
+    ownerName: `${c.owner}/${c.name}`,
+    url: c.url,
+    gitSsh: `git@${c.host}:${c.owner}/${c.name}.git`,
+    apiHost: GITHUB_DEFAULT_API_DOMAIN,
+  } as const;
+}
+
+/** Monorepo origin (`project-R-score`) — global frozen constants. */
+export const GITHUB_ORIGIN: GitHubRemoteConstants = remoteConstants('origin');
+
+/** Nested cascade product remote — do not default-push here. */
+export const GITHUB_CASCADE: GitHubRemoteConstants = remoteConstants('cascade');
+
+/** Both remote slots keyed for iteration / slot lookup. */
+export const GITHUB_REMOTES = {
+  origin: GITHUB_ORIGIN,
+  cascade: GITHUB_CASCADE,
+} as const satisfies Record<GitHubRemoteSlot, GitHubRemoteConstants>;
+
 /** Link edge only — not stored as the identity SSOT. */
 export function htmlUrl(ref: Pick<GitHubRepositoryRef, 'host' | 'owner' | 'name'>): string {
   return `https://${ref.host}/${ref.owner}/${ref.name}`;
@@ -39,18 +126,63 @@ export function ownerName(ref: Pick<GitHubRepositoryRef, 'owner' | 'name'>): str
   return `${ref.owner}/${ref.name}`;
 }
 
-/** Link edge: `/tree/<branch>` (branch segments URI-encoded). */
-export function treeUrl(ref: GitHubRepositoryRef, branch: string): string {
-  const branchPath = branch
+function encodePathSegments(path: string): string {
+  return path
+    .replace(/^\/+/, '')
+    .split('/')
+    .filter(Boolean)
+    .map(part => encodeURIComponent(part))
+    .join('/');
+}
+
+function encodeBranchPath(branch: string): string {
+  return branch
     .split('/')
     .map(part => encodeURIComponent(part))
     .join('/');
-  return `${htmlUrl(ref)}/tree/${branchPath}`;
+}
+
+/** Link edge: `/tree/<branch>` (branch segments URI-encoded). */
+export function treeUrl(
+  ref: Pick<GitHubRepositoryRef, 'host' | 'owner' | 'name'>,
+  branch: string
+): string {
+  return `${htmlUrl(ref)}/tree/${encodeBranchPath(branch)}`;
 }
 
 /** Link edge: `/commit/<sha>`. */
-export function commitUrl(ref: GitHubRepositoryRef, sha: string): string {
+export function commitUrl(
+  ref: Pick<GitHubRepositoryRef, 'host' | 'owner' | 'name'>,
+  sha: string
+): string {
   return `${htmlUrl(ref)}/commit/${sha}`;
+}
+
+/** Link edge: `/blob/<branch>/<path>` (branch + path segments URI-encoded). */
+export function blobUrl(
+  ref: Pick<GitHubRepositoryRef, 'host' | 'owner' | 'name'>,
+  path: string,
+  branch: string = GITHUB_DEFAULT_BRANCH
+): string {
+  return `${htmlUrl(ref)}/blob/${encodeBranchPath(branch)}/${encodePathSegments(path)}`;
+}
+
+/** Link edge: raw.githubusercontent.com content URL. */
+export function rawUrl(
+  ref: Pick<GitHubRepositoryRef, 'owner' | 'name'>,
+  path: string,
+  branch: string = GITHUB_DEFAULT_BRANCH
+): string {
+  return `https://raw.githubusercontent.com/${ref.owner}/${ref.name}/${encodeBranchPath(branch)}/${encodePathSegments(path)}`;
+}
+
+/** `https://` + API domain (Bun create `GITHUB_API_DOMAIN` or default). */
+export function apiBaseUrl(apiDomain: string = GITHUB_DEFAULT_API_DOMAIN): string {
+  const host = apiDomain
+    .trim()
+    .replace(/^https?:\/\//i, '')
+    .replace(/\/+$/, '');
+  return `https://${host || GITHUB_DEFAULT_API_DOMAIN}`;
 }
 
 export function parseOwnerName(full: string): { owner: string; name: string } | undefined {
@@ -104,12 +236,14 @@ export function parseGitRemoteUrl(
 }
 
 function hostFromServerUrl(serverUrl: string | undefined): string {
-  if (!serverUrl?.trim()) return 'github.com';
+  if (!serverUrl?.trim()) return GITHUB_DEFAULT_HOST;
   try {
     const u = new URL(serverUrl.trim());
-    return u.hostname || 'github.com';
+    return u.hostname || GITHUB_DEFAULT_HOST;
   } catch {
-    throw new Error(`GITHUB_SERVER_URL is not a valid URL: ${JSON.stringify(serverUrl)}`);
+    throw new Error(
+      `${BUN_GITHUB_ENV.SERVER_URL} is not a valid URL: ${JSON.stringify(serverUrl)}`
+    );
   }
 }
 
@@ -124,7 +258,7 @@ function readGitRemoteUrl(remote: GitHubRemoteSlot): string | undefined {
 }
 
 function fromCanonical(remote: GitHubRemoteSlot): GitHubRepositoryRef {
-  const c = CANONICAL_REMOTES[remote];
+  const c = GITHUB_REMOTES[remote];
   return {
     host: c.host,
     owner: c.owner,
@@ -146,20 +280,20 @@ export function resolveGitHubRepositoryRef(opts?: {
   const remote = opts?.remote ?? 'origin';
   const env = opts?.env ?? Bun.env;
 
-  const full = env.GITHUB_REPOSITORY?.trim();
+  const full = env[BUN_GITHUB_ENV.REPOSITORY]?.trim();
   if (full) {
     const fromFull = parseOwnerName(full);
     if (!fromFull) {
-      throw new Error(`GITHUB_REPOSITORY is not owner/name: ${JSON.stringify(full)}`);
+      throw new Error(`${BUN_GITHUB_ENV.REPOSITORY} is not owner/name: ${JSON.stringify(full)}`);
     }
-    const ownerEnv = env.GITHUB_REPOSITORY_OWNER?.trim();
+    const ownerEnv = env[BUN_GITHUB_ENV.REPOSITORY_OWNER]?.trim();
     if (ownerEnv && ownerEnv !== fromFull.owner) {
       throw new Error(
-        `GITHUB_REPOSITORY_OWNER (${JSON.stringify(ownerEnv)}) disagrees with GITHUB_REPOSITORY (${JSON.stringify(full)})`
+        `${BUN_GITHUB_ENV.REPOSITORY_OWNER} (${JSON.stringify(ownerEnv)}) disagrees with ${BUN_GITHUB_ENV.REPOSITORY} (${JSON.stringify(full)})`
       );
     }
     return {
-      host: hostFromServerUrl(env.GITHUB_SERVER_URL),
+      host: hostFromServerUrl(env[BUN_GITHUB_ENV.SERVER_URL]),
       owner: ownerEnv || fromFull.owner,
       name: fromFull.name,
       remote,
@@ -184,14 +318,14 @@ export function resolveGitHubRepositoryRef(opts?: {
 
 /** Presence only — never returns token values. Bun create prefers GITHUB_TOKEN. */
 export function githubTokenPresence(env: EnvMap = Bun.env): GithubTokenPresence {
-  const apiDomain = env.GITHUB_API_DOMAIN?.trim() || 'api.github.com';
-  if (env.GITHUB_TOKEN?.trim()) {
+  const apiDomain = env[BUN_GITHUB_ENV.API_DOMAIN]?.trim() || GITHUB_DEFAULT_API_DOMAIN;
+  if (env[BUN_GITHUB_ENV.TOKEN]?.trim()) {
     return { tokenSource: 'GITHUB_TOKEN', apiDomain };
   }
-  if (env.GITHUB_ACCESS_TOKEN?.trim()) {
+  if (env[BUN_GITHUB_ENV.ACCESS_TOKEN]?.trim()) {
     return { tokenSource: 'GITHUB_ACCESS_TOKEN', apiDomain };
   }
-  if (env.GH_TOKEN?.trim()) {
+  if (env[BUN_GITHUB_ENV.GH_TOKEN]?.trim()) {
     return { tokenSource: 'GH_TOKEN', apiDomain };
   }
   return { tokenSource: 'none', apiDomain };
