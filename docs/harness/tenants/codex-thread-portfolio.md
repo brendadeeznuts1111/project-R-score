@@ -55,6 +55,26 @@ Do not use `UID-7` or `Bun UID-7`:
 New root threads receive the next chronological `RTH-###` value. Existing values
 never change when score, state, lane, or title changes.
 
+## Intake and drift boundary
+
+The catalog is a Project R root-thread ledger, not a global Codex history. A
+task belongs in it only when its working directory is `/Users/nolarose/Projects`
+and its purpose is Project R delivery. Tasks rooted elsewhere can receive a
+clear context-derived title, but must remain outside this ledger.
+
+Before a portfolio review or title/pin apply:
+
+1. List recent Codex tasks and derive a concise purpose from their actual work,
+   artifacts, and final handoff—not from the opening prompt alone.
+2. Run `bun run threads:portfolio`; treat uncataloged Project R roots as intake
+   work, not as a reason to overwrite their context with a stale snapshot.
+3. Append each eligible root chronologically with its immutable provider
+   `sessionId`, next `RTH-###` reference, evidence, and closure/bring-home
+   action. Then run `bun run threads:portfolio:verify`.
+
+This boundary prevents the catalog snapshot from becoming a misleading claim
+that every visible task is known or that a task title proves merge status.
+
 ## Mapping schema
 
 Each root entry records:

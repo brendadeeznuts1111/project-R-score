@@ -23,6 +23,18 @@ description: Create, tighten, and validate Project R Codex skills. Use for SKILL
    `doctor` and `rate` phases. Add `precommit` only when the skill owns that
    command.
 
+## Thread-portfolio boundary
+
+When a skill or DX review also covers Codex task history, keep the two concerns
+separate: task titles are navigation metadata, while the Project R portfolio is
+the durable root-thread record. First inspect current tasks with the Codex task
+list, then run `bun run threads:portfolio` to expose catalog drift. Rename
+recent tasks from their evidenced purpose; do not infer delivery state from a
+title. Add Project R root tasks to
+`tools/codex-thread-portfolio.json` chronologically before claiming portfolio
+verification is clean. Tasks outside the Project R workspace may be renamed
+for clarity but must not be added to that catalog.
+
 ## Grounding rules
 
 - For Bun behavior, check `dx version`, the active command's `--help`, and the
