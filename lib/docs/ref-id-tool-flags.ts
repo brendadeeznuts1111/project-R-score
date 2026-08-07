@@ -373,6 +373,7 @@ export const BUN_RELEASE_CONTRACTS_ALLOWED_LONG = [
   'concurrency',
   'check',
   'output-dir',
+  'force',
   'json',
   'help',
 ] as const;

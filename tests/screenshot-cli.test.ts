@@ -1,7 +1,7 @@
 // @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { SCREENSHOT_ALLOWED_LONG } from '../lib/docs/ref-id-tool-flags.ts';
 import { ROOT as REPO_ROOT } from '../lib/operator-research/paths.ts';
@@ -18,6 +18,13 @@ const PNG_10 = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNk+M9Qz0AEYBxVSF+FAAhKDveksU63AAAAAElFTkSuQmCC',
   'base64'
 );
+
+/** Temp dir under repo `data/` (creates parent — staged scratch may lack `data/`). */
+async function mkRepoDataTemp(prefix: string): Promise<string> {
+  const base = join(REPO_ROOT, 'data');
+  await mkdir(base, { recursive: true });
+  return mkdtemp(join(base, prefix));
+}
 
 // captureExitCode is not exported — re-implement the gate table here via CLI mocks.
 // Import helper by re-exporting through a thin test of runScreenshotCli capture deps.
@@ -44,15 +51,15 @@ describe('screenshot CLI helpers', () => {
     expect(() => assertHttpUrl('not-a-url')).toThrow(/absolute http/);
   });
 
-  test('assertRepoPath rejects escapes unless --force', () => {
-    const inside = assertRepoPath('data/operator-research/screenshots', {
+  test('assertRepoPath rejects escapes unless --force', async () => {
+    const inside = await assertRepoPath('data/operator-research/screenshots', {
       label: '--out-dir',
     });
     expect(inside.startsWith(REPO_ROOT)).toBe(true);
-    expect(() =>
+    await expect(
       assertRepoPath('/tmp/outside-screenshot', { label: 'image path' })
-    ).toThrow(/repository root/);
-    const forced = assertRepoPath('/tmp/outside-screenshot', {
+    ).rejects.toThrow(/repository root/);
+    const forced = await assertRepoPath('/tmp/outside-screenshot', {
       force: true,
       label: 'image path',
     });
@@ -71,7 +78,7 @@ describe('screenshot CLI', () => {
   });
 
   test('meta --json reports Bun.Image dimensions and digest', async () => {
-    const dir = await mkdtemp(join(REPO_ROOT, 'data', 'tmp-screenshot-cli-meta-'));
+    const dir = await mkRepoDataTemp('tmp-screenshot-cli-meta-');
     const pngPath = join(dir, 'fixture.png');
     try {
       await Bun.write(pngPath, PNG_10);
@@ -92,7 +99,7 @@ describe('screenshot CLI', () => {
   });
 
   test('meta rejects non-PNG bytes', async () => {
-    const dir = await mkdtemp(join(REPO_ROOT, 'data', 'tmp-screenshot-cli-bad-'));
+    const dir = await mkRepoDataTemp('tmp-screenshot-cli-bad-');
     const path = join(dir, 'not.png');
     try {
       await Bun.write(path, 'hello');
@@ -103,7 +110,7 @@ describe('screenshot CLI', () => {
   });
 
   test('verify and remediate run TEST-003 on a PNG fixture', async () => {
-    const dir = await mkdtemp(join(REPO_ROOT, 'data', 'tmp-screenshot-cli-verify-'));
+    const dir = await mkRepoDataTemp('tmp-screenshot-cli-verify-');
     const pngPath = join(dir, 'fixture.png');
     try {
       await Bun.write(pngPath, PNG_10);
@@ -142,7 +149,7 @@ describe('screenshot CLI', () => {
   });
 
   test('capture runs TEST-003, writes evidence JSON, and fails placeholder by default', async () => {
-    const outDir = await mkdtemp(join(REPO_ROOT, 'data', 'tmp-screenshot-cli-capture-'));
+    const outDir = await mkRepoDataTemp('tmp-screenshot-cli-capture-');
     try {
       const observation: ScreenshotObservation = {
         ok: true,
@@ -209,5 +216,63 @@ describe('screenshot CLI', () => {
     await expect(
       runScreenshotCli(['capture', 'https://example.com', '--out-dir', '/tmp/nope', '--json'])
     ).rejects.toThrow(/repository root/);
+  });
+
+  test('verify re-parses a .test003.json sidecar via parseScreenshotEvidenceRecord', async () => {
+    const dir = await mkRepoDataTemp('tmp-screenshot-cli-sidecar-');
+    const pngPath = join(dir, 'fixture.png');
+    try {
+      await Bun.write(pngPath, PNG_10);
+      const observation: ScreenshotObservation = {
+        ok: true,
+        source: 'webview',
+        pngPath,
+        thumbPath: join(dir, 'fixture.thumb.webp'),
+        evidenceId: '019fddd8-4563-7000-89b2-622bc8f9919f',
+        width: 10,
+        height: 10,
+        thumbBytes: PNG_10.byteLength,
+        elapsedMs: 1,
+      };
+      const captured = await runScreenshotCli(
+        [
+          'capture',
+          'https://example.com',
+          '--out-dir',
+          dir,
+          '--allow-placeholder',
+          '--json',
+        ],
+        {
+          capture: async () => ({
+            observation,
+            pngBytes: new Uint8Array(PNG_10),
+            thumbBytes: new Uint8Array(PNG_10),
+          }),
+        }
+      );
+      const capturedBody = captured.payload as { evidencePath?: string; exitCode: number };
+      expect(capturedBody.evidencePath).toBeTruthy();
+      const verified = await runScreenshotCli([
+        'verify',
+        capturedBody.evidencePath!,
+        '--json',
+      ]);
+      const verifiedBody = verified.payload as {
+        source: string;
+        code: string;
+        ok: boolean;
+        evidence: { kind: string; evidenceId: string }; // brand-ok — CLI JSON payload shape
+      };
+      expect(verifiedBody.source).toBe('sidecar');
+      expect(verifiedBody.code).toBe('TEST-003');
+      expect(verifiedBody.evidence.kind).toBe('ScreenshotEvidence');
+      expect(verifiedBody.evidence.evidenceId).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+      );
+      expect(verified.exitCode).toBe(verifiedBody.ok ? 0 : 1);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
   });
 });

@@ -17,12 +17,15 @@ import {
 import {
   TEST_003,
   buildScreenshotEvidenceRecord,
+  isScreenshotEvidenceRecord,
+  parseScreenshotEvidenceRecord,
   remediateScreenshotCapture,
   runTest003,
   screenshotEvidenceEqual,
   type ScreenshotEvidenceRecord,
 } from '../lib/screenshot-remediation.ts';
 import { mintEvidenceIdAt } from '../lib/time.ts';
+import { unbrand } from '../lib/types/branded.ts';
 
 /** 10×10 PNG fixture. */
 const PNG_10 = Buffer.from(
@@ -275,5 +278,30 @@ describe('lib/screenshot-remediation TEST-003', () => {
     expect(second.ok).toBe(true);
     expect(second.unchanged).toBe(true);
     expect(second.remediation.message).toContain('Bun.deepEquals');
+  });
+
+  test('isScreenshotEvidenceRecord / parseScreenshotEvidenceRecord rebrand EvidenceId', async () => {
+    const { record } = await buildScreenshotEvidenceRecord(PNG_10, { subject: 'wire' });
+    const wire = {
+      ...record,
+      evidenceId: unbrand(record.evidenceId),
+    };
+    expect(isScreenshotEvidenceRecord(wire)).toBe(true);
+    const parsed = parseScreenshotEvidenceRecord(wire);
+    expect(unbrand(parsed.evidenceId)).toBe(unbrand(record.evidenceId));
+    expect(parsed.source).toEqual(record.source);
+
+    const sidecar = {
+      code: TEST_003,
+      evidence: wire,
+      observation: { ok: true },
+    };
+    const fromSidecar = parseScreenshotEvidenceRecord(sidecar);
+    expect(unbrand(fromSidecar.evidenceId)).toBe(unbrand(record.evidenceId));
+
+    expect(isScreenshotEvidenceRecord({ kind: 'ScreenshotEvidence' })).toBe(false);
+    expect(() => parseScreenshotEvidenceRecord({ kind: 'nope' })).toThrow(
+      /Invalid ScreenshotEvidenceRecord/
+    );
   });
 });

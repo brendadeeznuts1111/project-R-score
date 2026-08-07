@@ -20,6 +20,8 @@ import {
   extractImageEvidenceMeta,
   imageEvidenceMetaEqual,
   imageMetaChecksPassed,
+  isImageEvidenceMeta,
+  parseImageEvidenceMeta,
   resizeScreenshotPng,
   verifyImageEvidenceMeta,
   type ImageDigestAlgorithm,
@@ -37,7 +39,7 @@ import {
   type BunRuntimeFingerprint,
   type EvidenceTimingCheck,
 } from './time.ts';
-import { unbrand, type EvidenceId } from './types/branded.ts';
+import { parseEvidenceId, unbrand, type EvidenceId } from './types/branded.ts';
 
 /** Stable remediation / claim id for screenshot metadata evidence. */
 export const TEST_003 = 'TEST-003' as const;
@@ -59,6 +61,64 @@ export type ScreenshotEvidenceRecord = {
   thumbnail: ImageEvidenceMeta;
   crop?: { x: number; y: number; w: number; h: number };
 };
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value != null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function isCrop(value: unknown): value is { x: number; y: number; w: number; h: number } {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.x === 'number' &&
+    typeof value.y === 'number' &&
+    typeof value.w === 'number' &&
+    typeof value.h === 'number'
+  );
+}
+
+/** Type guard for wire `ScreenshotEvidence` rows (rebrands `EvidenceId`). */
+export function isScreenshotEvidenceRecord(value: unknown): value is ScreenshotEvidenceRecord {
+  if (!isRecord(value)) return false;
+  if (value.kind !== 'ScreenshotEvidence') return false;
+  if (value.testId !== TEST_003) return false;
+  if (typeof value.capturedAt !== 'string' || !value.capturedAt) return false;
+  if (typeof value.evidenceId !== 'string' || !value.evidenceId) return false;
+  try {
+    parseEvidenceId(value.evidenceId);
+  } catch {
+    return false;
+  }
+  if (!isImageEvidenceMeta(value.source) || !isImageEvidenceMeta(value.thumbnail)) return false;
+  if (value.subject != null && typeof value.subject !== 'string') return false;
+  if (value.team != null && typeof value.team !== 'string') return false;
+  if (value.crop != null && !isCrop(value.crop)) return false;
+  return true;
+}
+
+/**
+ * Parse wire `unknown` → {@link ScreenshotEvidenceRecord}.
+ * Accepts a bare evidence row or a TEST-003 sidecar that nests `evidence`.
+ */
+export function parseScreenshotEvidenceRecord(value: unknown): ScreenshotEvidenceRecord {
+  const candidate =
+    isRecord(value) && isRecord(value.evidence) && value.evidence.kind === 'ScreenshotEvidence'
+      ? value.evidence
+      : value;
+  if (!isScreenshotEvidenceRecord(candidate)) {
+    throw new Error('Invalid ScreenshotEvidenceRecord: structural validation failed');
+  }
+  return {
+    kind: 'ScreenshotEvidence',
+    testId: TEST_003,
+    capturedAt: candidate.capturedAt,
+    evidenceId: parseEvidenceId(String(candidate.evidenceId)),
+    subject: candidate.subject,
+    team: candidate.team,
+    source: parseImageEvidenceMeta(candidate.source),
+    thumbnail: parseImageEvidenceMeta(candidate.thumbnail),
+    crop: candidate.crop,
+  };
+}
 
 export type Test003Remediation = {
   action: 'accept' | 'recapture' | 'resize_fix' | 'reject';

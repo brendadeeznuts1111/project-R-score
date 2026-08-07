@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
@@ -32,12 +33,17 @@ import {
 } from '../lib/docs/ref-id-tool-flags.ts';
 import { extractImageEvidenceMeta } from '../lib/image-metadata.ts';
 import { captureScreenshot } from '../lib/operator-research/screenshot.ts';
-import { ROOT as REPO_ROOT, SCREENSHOTS_DIR } from '../lib/operator-research/paths.ts';
+import {
+  ensureResearchDirs,
+  ROOT as REPO_ROOT,
+  SCREENSHOTS_DIR,
+} from '../lib/operator-research/paths.ts';
 import { joinPath, normalizePath, relativePath, resolvePath } from '../lib/path-bun.ts';
 import {
   remediateScreenshotCapture,
   runTest003,
   buildScreenshotEvidenceRecord,
+  parseScreenshotEvidenceRecord,
   TEST_003,
   type Test003Response,
 } from '../lib/screenshot-remediation.ts';
@@ -64,7 +70,7 @@ function printHelp(): void {
 
 Commands:
   capture <url>       WebView PNG capture + TEST-003 gate + evidence write
-  verify <png-path>   Build evidence from an on-disk PNG and run TEST-003
+  verify <path>       PNG → TEST-003, or re-parse a .test003.json sidecar
   remediate <png>     End-to-end remediateScreenshotCapture on a PNG
   meta <image-path>   Bun.Image metadata + digest only
 
@@ -101,11 +107,24 @@ export function assertHttpUrl(url: string): string {
   return parsed.href;
 }
 
-/** Resolve a path and optionally require it under the repo root. */
-export function assertRepoPath(path: string, opts: { force?: boolean; label: string }): string {
+/** Resolve realpath when the path exists (falls back to normalized absolute). */
+export async function resolveExistingRealPath(path: string): Promise<string> {
   const abs = normalizePath(resolvePath(path));
+  if (!(await Bun.file(abs).exists())) return abs;
+  const proc = Bun.spawn(['realpath', '--', abs], { stdout: 'pipe', stderr: 'pipe' });
+  const [stdout, exitCode] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
+  const resolved = stdout.trim();
+  return exitCode === 0 && resolved ? normalizePath(resolved) : abs;
+}
+
+/** Resolve a path and optionally require it under the repo root (realpath-aware). */
+export async function assertRepoPath(
+  path: string,
+  opts: { force?: boolean; label: string }
+): Promise<string> {
+  const abs = await resolveExistingRealPath(path);
   if (opts.force) return abs;
-  const root = normalizePath(REPO_ROOT);
+  const root = await resolveExistingRealPath(REPO_ROOT);
   const rel = relativePath(root, abs);
   if (rel.startsWith('..') || rel === '..') {
     throw new Error(
@@ -189,7 +208,8 @@ export async function runScreenshotCli(
     if (timeoutMs != null && (!Number.isSafeInteger(timeoutMs) || timeoutMs <= 0)) {
       throw new Error('--timeout-ms must be a positive integer');
     }
-    const outDir = assertRepoPath(values['out-dir'] ?? SCREENSHOTS_DIR, {
+    await ensureResearchDirs();
+    const outDir = await assertRepoPath(values['out-dir'] ?? SCREENSHOTS_DIR, {
       force,
       label: '--out-dir',
     });
@@ -269,10 +289,10 @@ export async function runScreenshotCli(
     return { payload, exitCode };
   }
 
-  const absTarget = assertRepoPath(target, { force, label: 'image path' });
-  const bytes = await readPngBytes(absTarget);
+  const absTarget = await assertRepoPath(target, { force, label: 'image path' });
 
   if (command === 'meta') {
+    const bytes = await readPngBytes(absTarget);
     const meta = await extractImageEvidenceMeta(bytes);
     const payload = { command, path: absTarget, bunVersion: Bun.version, meta };
     if (json) {
@@ -287,6 +307,35 @@ export async function runScreenshotCli(
   }
 
   if (command === 'verify') {
+    if (absTarget.endsWith('.test003.json') || absTarget.endsWith('.json')) {
+      const wire = await Bun.file(absTarget).json();
+      const record = parseScreenshotEvidenceRecord(wire);
+      const response = runTest003(record);
+      const payload = {
+        command,
+        path: absTarget,
+        bunVersion: Bun.version,
+        source: 'sidecar',
+        ...response,
+      };
+      if (json) {
+        cliOut(payload, { json: true });
+      } else {
+        console.log(`${TEST_003} sidecar ${response.status} · ${response.remediation.action}`);
+        console.log(statusLine('message', response.remediation.message));
+        logTable(
+          response.checks.map(c => ({
+            id: c.id,
+            ok: c.ok ? 'pass' : 'FAIL',
+            message: c.message,
+          })),
+          ['id', 'ok', 'message']
+        );
+      }
+      return { payload, exitCode: response.ok ? 0 : 1 };
+    }
+
+    const bytes = await readPngBytes(absTarget);
     const { record, elapsedMs } = await buildScreenshotEvidenceRecord(bytes, { subject });
     const response = runTest003(record, undefined, { elapsedMs });
     const payload = { command, path: absTarget, bunVersion: Bun.version, ...response };
@@ -308,6 +357,7 @@ export async function runScreenshotCli(
   }
 
   // remediate
+  const bytes = await readPngBytes(absTarget);
   const response = await remediateScreenshotCapture(bytes, { subject });
   const payload = {
     command,

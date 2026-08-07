@@ -131,6 +131,7 @@ describe('in-tool flagDocRef re-exports', () => {
     expect([...BUN_PR_VERIFY_ALLOWED_LONG]).toEqual(['proof', 'json', 'diff']);
     expect(ALLOWED_LONG_REGISTRY['bun:release-contracts']).toBe(BUN_RELEASE_CONTRACTS_ALLOWED_LONG);
     expect([...BUN_RELEASE_CONTRACTS_ALLOWED_LONG]).toContain('json');
+    expect([...BUN_RELEASE_CONTRACTS_ALLOWED_LONG]).toContain('force');
     expect(ALLOWED_LONG_REGISTRY.screenshot).toBe(SCREENSHOT_ALLOWED_LONG);
     expect([...SCREENSHOT_ALLOWED_LONG]).toContain('allow-placeholder');
     expect([...SCREENSHOT_ALLOWED_LONG]).toContain('force');

@@ -226,7 +226,8 @@ Forgetting step 1 → fail/throw in strict mode.
 | `--limit` | int | With `--all`, limit releases newest-first |
 | `--concurrency` | int | Concurrent blog fetches (default 4, max 8) |
 | `--check` | boolean | Drift-check only (no writes) |
-| `--output-dir` | path | Inventory output directory |
+| `--output-dir` | path | Inventory output directory (must stay under repo unless `--force`) |
+| `--force` | boolean | Allow `--output-dir` outside the repository root |
 | `--json` | boolean | Machine summary via `cliOut` |
 | `--help` | boolean | Usage |
 
@@ -249,4 +250,6 @@ Commands (positionals): `capture` · `verify` · `remediate` · `meta`.
 `capture` requires an absolute `http(s)` URL, runs TEST-003 on the PNG bytes,
 writes `<evidenceId>.test003.json` beside the PNG, and exits non-zero on
 placeholder captures unless `--allow-placeholder` is set.
+`verify` accepts a PNG **or** a `.test003.json` sidecar (re-parses via
+`parseScreenshotEvidenceRecord`).
 Entry: [`tools/screenshot-cli.ts`](../../tools/screenshot-cli.ts).

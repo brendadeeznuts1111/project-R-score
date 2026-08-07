@@ -7,7 +7,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — cliOut dual-mode
 // @see https://bun.com/docs/project/contributing#download-release-build-from-pull-requests — bunx bun-pr
-import { basename, dirname, join, resolve } from 'node:path';
+// @see https://bun.com/docs/bundler/executables — --force
+import { basename, dirname, join, relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { cliOut, logTable } from '../../../lib/console/index.ts';
 import {
@@ -26,6 +27,32 @@ export { BUN_RELEASE_CONTRACTS_ALLOWED_LONG };
 
 const REPO_ROOT = resolve(import.meta.dir, '..', '..', '..');
 const DEFAULT_OUTPUT_DIR = resolve(import.meta.dir, '..', 'contracts');
+
+async function resolveExistingRealPath(path: string): Promise<string> {
+  const abs = resolve(path);
+  if (!(await Bun.file(abs).exists())) return abs;
+  const proc = Bun.spawn(['realpath', '--', abs], { stdout: 'pipe', stderr: 'pipe' });
+  const [stdout, exitCode] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
+  const resolved = stdout.trim();
+  return exitCode === 0 && resolved ? resolved : abs;
+}
+
+/** Gate --output-dir under the repository root unless --force. */
+export async function assertOutputDirInRepo(
+  outputDir: string,
+  opts: { force?: boolean; repoRoot?: string } = {}
+): Promise<string> {
+  const abs = await resolveExistingRealPath(outputDir);
+  if (opts.force) return abs;
+  const root = await resolveExistingRealPath(opts.repoRoot ?? REPO_ROOT);
+  const rel = relative(root, abs);
+  if (rel.startsWith('..') || rel === '..') {
+    throw new Error(
+      `--output-dir must stay under the repository root (${root}); got ${abs}. Pass --force to override.`
+    );
+  }
+  return abs;
+}
 
 function positiveInteger(value: string | undefined, name: string, fallback?: number): number {
   if (value == null && fallback != null) return fallback;
@@ -62,7 +89,8 @@ Options:
   --since <version>    With --all, include releases at or after this version
   --limit <count>      With --all, limit releases selected newest first
   --concurrency <n>    Concurrent blog fetches for batch generation (default: 4, max: 8)
-  --output-dir <path>  Inventory output directory
+  --output-dir <path>  Inventory output directory (must stay under repo unless --force)
+  --force              Allow --output-dir outside the repository root
   --check              Fail when an inventory or index is missing or stale
   --json               Machine-readable summary via cliOut
   -h, --help           Show this help
@@ -363,6 +391,7 @@ export async function runCli(
       concurrency: { type: 'string' },
       check: { type: 'boolean', default: false },
       'output-dir': { type: 'string' },
+      force: { type: 'boolean', default: false },
       json: { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
@@ -383,7 +412,10 @@ export async function runCli(
 
   const limit = values.limit == null ? undefined : positiveInteger(values.limit, '--limit');
   const concurrency = Math.min(8, positiveInteger(values.concurrency, '--concurrency', 4));
-  const outputDir = resolve(values['output-dir'] ?? DEFAULT_OUTPUT_DIR);
+  const outputDir = await assertOutputDirInRepo(values['output-dir'] ?? DEFAULT_OUTPUT_DIR, {
+    force: values.force === true,
+    repoRoot: REPO_ROOT,
+  });
   let versions: string[];
 
   if (values.all || positionals[0] === 'latest') {
