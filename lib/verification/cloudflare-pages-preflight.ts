@@ -9,7 +9,11 @@
  * @see tools/cloudflare-pages-preflight.ts
  */
 import { joinPath, resolvePath } from '../path-bun.ts';
-import { auditMcpCatalogParity, buildCloudflareTokenScopeProof } from './cloudflare-token-scope.ts';
+import {
+  auditMcpCatalogParity,
+  buildCloudflareTokenScopeProof,
+  CLOUDFLARE_MCP_HTTP_SERVERS,
+} from './cloudflare-token-scope.ts';
 import { runProofTaxonomyAudit } from './proof-taxonomy.ts';
 
 export const CLOUDFLARE_PAGES_PREFLIGHT_PATH = '/registry/cloudflare-pages-preflight.json';
@@ -70,7 +74,7 @@ async function stepTokenStatic(rootDir: string): Promise<CloudflarePagesPrefligh
       id: 'cloudflare-token-static',
       ok,
       detail: ok
-        ? `catalog ${proof.mcpCatalog.serverCount}/5 · tier ${proof.summary.tier}`
+        ? `catalog ${proof.mcpCatalog.serverCount}/${CLOUDFLARE_MCP_HTTP_SERVERS.length} · tier ${proof.summary.tier}`
         : `staticOk=${proof.summary.staticOk} catalog=${proof.mcpCatalog.ok}`,
     };
   } catch (e) {

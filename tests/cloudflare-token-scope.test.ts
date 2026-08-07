@@ -229,7 +229,7 @@ describe('auditMcpCatalogParity + proof builder', () => {
   test('repo .mcp.json matches well-known manifest', async () => {
     const { ok, rows } = await auditMcpCatalogParity(ROOT);
     expect(ok).toBe(true);
-    expect(rows.length).toBe(5);
+    expect(rows.length).toBe(4);
   });
 
   test('buildCloudflareTokenScopeProof static path passes without token', async () => {

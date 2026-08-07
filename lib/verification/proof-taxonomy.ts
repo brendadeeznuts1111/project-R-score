@@ -10,6 +10,9 @@
 import type { VerificationSubsystem, VerificationResult } from './types.ts';
 import { asAccountId } from '../types/branded.ts';
 import { auditProofConsistency, type ProofConsistencyRow } from './proof-consistency.ts';
+import { CLOUDFLARE_MCP_HTTP_SERVERS } from './cloudflare-token-scope.ts';
+
+const CLOUDFLARE_MCP_SERVER_FLOOR = CLOUDFLARE_MCP_HTTP_SERVERS.length;
 
 export type ProofTaxonomyContract = {
   /** Path under repo root */
@@ -262,8 +265,10 @@ export function auditProofTaxonomy(
 
   if (contract.path.endsWith('.well-known/mcp.json')) {
     const servers = raw.servers;
-    if (!Array.isArray(servers) || servers.length < 5) {
-      notes.push('servers[] incomplete (expected ≥5 Cloudflare MCP entries)');
+    if (!Array.isArray(servers) || servers.length < CLOUDFLARE_MCP_SERVER_FLOOR) {
+      notes.push(
+        `servers[] incomplete (expected ≥${CLOUDFLARE_MCP_SERVER_FLOOR} Cloudflare MCP entries)`
+      );
     }
     const auth = raw.auth as { env?: string } | undefined;
     if (auth?.env !== 'CLOUDFLARE_API_TOKEN') {
@@ -275,7 +280,9 @@ export function auditProofTaxonomy(
   if (contract.path.endsWith('cloudflare-token-scope-proof.json')) {
     const mcp = raw.mcpCatalog as { ok?: boolean; serverCount?: number } | undefined;
     if (!mcp?.ok) notes.push('mcpCatalog.ok is false');
-    if ((mcp?.serverCount ?? 0) < 5) notes.push('mcpCatalog.serverCount < 5');
+    if ((mcp?.serverCount ?? 0) < CLOUDFLARE_MCP_SERVER_FLOOR) {
+      notes.push(`mcpCatalog.serverCount < ${CLOUDFLARE_MCP_SERVER_FLOOR}`);
+    }
     const summary = raw.summary as { staticOk?: boolean } | undefined;
     if (summary?.staticOk === false) notes.push('summary.staticOk is false');
     rows = mcp?.serverCount ?? 0;

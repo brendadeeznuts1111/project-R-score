@@ -266,7 +266,6 @@ export const CANONICAL_EXTERNAL = {
       mcpServers: [
         'mcp__cloudflare__connect',
         'mcp__cloudflare-docs__connect',
-        'mcp__cloudflare-builds__connect',
         'mcp__cloudflare-bindings__connect',
         'mcp__cloudflare-observability__connect',
       ],

@@ -33,17 +33,6 @@
       "type": "http",
       "url": "http://100.64.250.26:8787/mcp"
     },
-    "cascade-mover-local": {
-      "type": "stdio",
-      "command": "bun",
-      "args": [
-        "${workspaceFolder}/projects/active/enterprise/cascade-mover-v3/src/server/cascade-mover-mcp.ts"
-      ],
-      "env": {
-        "NODE_ENV": "production"
-      },
-      "envFile": "${workspaceFolder}/projects/active/enterprise/cascade-mover-v3/.env"
-    },
     "ast-grep": {
       "type": "stdio",
       "command": "bun",
@@ -76,13 +65,6 @@
     "cloudflare-bindings": {
       "type": "http",
       "url": "https://bindings.mcp.cloudflare.com/mcp",
-      "headers": {
-        "Authorization": "Bearer ${input:cloudflare-api-token}"
-      }
-    },
-    "cloudflare-builds": {
-      "type": "http",
-      "url": "https://builds.mcp.cloudflare.com/mcp",
       "headers": {
         "Authorization": "Bearer ${input:cloudflare-api-token}"
       }

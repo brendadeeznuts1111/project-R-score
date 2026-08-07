@@ -1,18 +1,18 @@
 {
   "type": "CloudflarePagesPreflightReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-31T11:05:00.618Z",
+  "timestamp": "2026-08-07T09:53:36.978Z",
   "ok": true,
   "steps": [
     {
       "id": "well-known-mcp-parity",
       "ok": true,
-      "detail": "5 servers"
+      "detail": "4 servers"
     },
     {
       "id": "cloudflare-token-static",
       "ok": true,
-      "detail": "catalog 5/5 · tier minimal"
+      "detail": "catalog 4/4 · tier minimal"
     },
     {
       "id": "functions-import-graph",

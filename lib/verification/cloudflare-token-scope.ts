@@ -25,7 +25,6 @@ export const CLOUDFLARE_MCP_HTTP_SERVERS = [
   { name: 'cloudflare', url: 'https://mcp.cloudflare.com/mcp' },
   { name: 'cloudflare-docs', url: 'https://docs.mcp.cloudflare.com/mcp' },
   { name: 'cloudflare-bindings', url: 'https://bindings.mcp.cloudflare.com/mcp' },
-  { name: 'cloudflare-builds', url: 'https://builds.mcp.cloudflare.com/mcp' },
   { name: 'cloudflare-observability', url: 'https://observability.mcp.cloudflare.com/mcp' },
 ] as const;
 

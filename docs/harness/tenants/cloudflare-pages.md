@@ -78,7 +78,7 @@ MCP-Portal-Scoped
 
 Pages **Read** is required for `cloudflare:env:assert-live` and the Pages probe inside `cloudflare:env:validate` (GET project settings). Edit alone is not enough for the harness gates.
 
-If you use **all five** HTTP MCP servers in [`.mcp.json`](../../../.mcp.json) (`cloudflare`, `cloudflare-docs`, `cloudflare-bindings`, `cloudflare-builds`, `cloudflare-observability`), add the **MCP-full** extras from [`CLOUDFLARE_TOKEN_PERMISSIONS.mcpOptional`](../../../config/r2-env.ts) (Workers Scripts/R2/Observability as needed). Minimal tier is sufficient for Pages + DNS CNAME work only.
+If you use the Cloudflare HTTP MCP servers in [`.mcp.json`](../../../.mcp.json) (`cloudflare`, `cloudflare-docs`, `cloudflare-bindings`, `cloudflare-observability`), add the **MCP-full** extras from [`CLOUDFLARE_TOKEN_PERMISSIONS.mcpOptional`](../../../config/r2-env.ts) (Workers Scripts/R2/Observability as needed). Minimal tier is sufficient for Pages + DNS CNAME work only.
 
 **3. Account resources**
 

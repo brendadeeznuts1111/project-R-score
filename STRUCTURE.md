@@ -195,8 +195,8 @@ route in [`config/repo-root-policy.ts`](config/repo-root-policy.ts)
 | `.mcp.json`                                            | Local + remote MCP servers                               | `mcp`    |
 
 MCP servers (SSOT `.mcp.json`): `bun-docs`, `dx`, `cascade-mover` (HTTP),
-`cascade-mover-local`, `ast-grep`, `github`, `cloudflare`, `cloudflare-docs`,
-`cloudflare-bindings`, `cloudflare-builds`, `cloudflare-observability`.
+`ast-grep`, `github`, `cloudflare`, `cloudflare-docs`,
+`cloudflare-bindings`, `cloudflare-observability`.
 
 #### Not monorepo spine (local / nested only)
 
