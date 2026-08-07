@@ -25,7 +25,7 @@
     {
       "id": "L1",
       "title": "Wiki coverage for bun-test tenants",
-      "status": "READY",
+      "status": "DONE",
       "ownerGlobs": ["wiki-index.md"],
       "verify": ["bun run wiki:coverage:check"],
       "spawnPrompt": "Lane L1 only on branch cursor/bun-test-docs-sweep-294c. Edit wiki-index.md only. Under Harness quality · CI add rows: Bun test flags → docs/harness/tenants/bun-test-flags.md; Bun test Inspector → docs/harness/tenants/bun-test-inspect.md. Bump summary Harness tenants count to match wiki:coverage:check (expect 55/55). In Bun test concurrency section add one pointer that FactoryWager script matrix is tenants/bun-test-flags.md and live Inspector stream is test:inspect / bun-test-inspect.md (orthogonal to JUnit). Verify: bun run wiki:coverage:check exits 0. Pathspec commit only wiki-index.md. Do not touch other lanes."
@@ -33,7 +33,7 @@
     {
       "id": "L2",
       "title": "README CONTRIBUTING day-loop hubs",
-      "status": "READY",
+      "status": "DONE",
       "ownerGlobs": [
         "README.md",
         "docs/contributing/CONTRIBUTING.md",
@@ -47,7 +47,7 @@
     {
       "id": "L3",
       "title": "Capability map + AGENTS rows",
-      "status": "READY",
+      "status": "DONE",
       "ownerGlobs": [
         "docs/harness/capability-map.md",
         "AGENTS.md",
@@ -61,7 +61,7 @@
     {
       "id": "L4",
       "title": "Bake capability-map + snapshots",
-      "status": "SERIAL",
+      "status": "DONE",
       "dependsOn": ["L3"],
       "ownerGlobs": [
         "public/registry/capability-map-subset.json",

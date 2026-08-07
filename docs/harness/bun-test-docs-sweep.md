@@ -41,10 +41,10 @@ WAVE 0 (parallel)                 WAVE 1 (after L3)
 
 | ID | Lane | Status | Depends | Owner globs |
 | -- | ---- | ------ | ------- | ----------- |
-| **L1** | Wiki coverage | READY | — | `wiki-index.md` |
-| **L2** | Human hubs | READY | — | `README.md` · `docs/contributing/CONTRIBUTING.md` · `docs/harness/day-loop.md` |
-| **L3** | Capability map SSOT | READY | — | `docs/harness/capability-map.md` · `AGENTS.md` · `docs/harness/tenants/bun-test-flags.md` |
-| **L4** | Bake + snapshots | SERIAL | L3 | `public/registry/capability-map-*.json` · capability-map snapshots |
+| **L1** | Wiki coverage | DONE | — | `wiki-index.md` |
+| **L2** | Human hubs | DONE | — | `README.md` · `docs/contributing/CONTRIBUTING.md` · `docs/harness/day-loop.md` |
+| **L3** | Capability map SSOT | DONE | — | `docs/harness/capability-map.md` · `AGENTS.md` · `docs/harness/tenants/bun-test-flags.md` |
+| **L4** | Bake + snapshots | DONE | L3 | `public/registry/capability-map-*.json` · capability-map snapshots |
 
 ## Global rules (every leaf)
 
