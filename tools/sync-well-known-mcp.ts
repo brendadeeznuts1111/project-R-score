@@ -33,7 +33,6 @@ const servers = CLOUDFLARE_MCP_HTTP_SERVERS.map(({ name, url }) => {
     cloudflare: 'Cloudflare account and API operations',
     'cloudflare-docs': 'Cloudflare documentation search',
     'cloudflare-bindings': 'Workers bindings',
-    'cloudflare-builds': 'Workers Builds CI',
     'cloudflare-observability': 'Workers logs and metrics',
   };
   return {

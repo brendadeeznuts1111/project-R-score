@@ -15,7 +15,6 @@
         "cascade-mover",
         "cloudflare",
         "cloudflare-bindings",
-        "cloudflare-builds",
         "cloudflare-observability"
       ],
       "optional": [
@@ -35,9 +34,6 @@
         "cloudflare-bindings": [
           ".env (CLOUDFLARE_API_TOKEN)"
         ],
-        "cloudflare-builds": [
-          ".env (CLOUDFLARE_API_TOKEN)"
-        ],
         "cloudflare-observability": [
           ".env (CLOUDFLARE_API_TOKEN)"
         ]
@@ -53,7 +49,6 @@
         "durable-objects",
         "sandbox-sdk",
         "turnstile-spin",
-        "web-perf",
         "cloudflare-one",
         "cloudflare-one-migrations",
         "cloudflare-email-service"
@@ -88,18 +83,6 @@
       "type": "http",
       "description": "Cascade Mover v3 — sports intelligence via VPS (50 tools, live DB)",
       "url": "http://100.64.250.26:8787/mcp"
-    },
-    "cascade-mover-local": {
-      "type": "stdio",
-      "description": "Cascade Mover v3 — local (fallback, no live DB)",
-      "command": "bun",
-      "args": [
-        "${workspaceFolder}/projects/active/enterprise/cascade-mover-v3/src/server/cascade-mover-mcp.ts"
-      ],
-      "env": {
-        "NODE_ENV": "production"
-      },
-      "envFile": "${workspaceFolder}/projects/active/enterprise/cascade-mover-v3/.env"
     },
     "ast-grep": {
       "type": "stdio",
@@ -139,15 +122,6 @@
       "type": "http",
       "description": "Cloudflare bindings MCP — KV, D1, R2, AI, Vectorize primitives for Workers",
       "url": "https://bindings.mcp.cloudflare.com/mcp",
-      "headers": {
-        "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}"
-      },
-      "envFile": "${workspaceFolder}/.env"
-    },
-    "cloudflare-builds": {
-      "type": "http",
-      "description": "Cloudflare Workers Builds CI MCP (not Pages deploy history)",
-      "url": "https://builds.mcp.cloudflare.com/mcp",
       "headers": {
         "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}"
       },

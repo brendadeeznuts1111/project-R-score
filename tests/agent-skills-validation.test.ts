@@ -94,16 +94,28 @@ describe('validateAgentSkills', () => {
     expect(result.issues).toEqual([]);
   });
 
-  it('rejects unsupported frontmatter and active directories without SKILL.md', async () => {
+  it('rejects unsupported frontmatter and non-empty directories without SKILL.md', async () => {
     const root = await fixtureRoot();
     await writeSkill(root, 'demo-skill', { frontmatterExtra: 'triggers: [demo]' });
-    await mkdir(resolveAgentSkillsPath(root, 'broken-entry'), { recursive: true });
+    await mkdir(resolveAgentSkillsPath(root, 'broken-entry', 'agents'), { recursive: true });
+    await writeFile(resolveAgentSkillsPath(root, 'broken-entry', 'agents', 'openai.yaml'), 'name: x\n');
     await writeRegistry(root, ['demo-skill']);
 
     const result = await validateAgentSkills(root);
     expect(result.ok).toBe(false);
     expect(result.issues.map(item => item.code)).toContain('frontmatter-key');
     expect(result.issues.map(item => item.code)).toContain('skill-entry-broken');
+  });
+
+  it('ignores empty skill directories left without SKILL.md', async () => {
+    const root = await fixtureRoot();
+    await writeSkill(root, 'demo-skill');
+    await mkdir(resolveAgentSkillsPath(root, 'retired-skill'), { recursive: true });
+    await writeRegistry(root, ['demo-skill']);
+
+    const result = await validateAgentSkills(root);
+    expect(result.ok).toBe(true);
+    expect(result.issues.map(item => item.code)).not.toContain('skill-entry-broken');
   });
 
   it('rejects malformed registry entries and missing registered metadata', async () => {
@@ -123,18 +135,15 @@ describe('validateAgentSkills', () => {
     expect(result.issues.filter(item => item.code === 'registry-phase')).toHaveLength(2);
   });
 
-  it('rejects broken relative links but permits an unavailable optional linked skill', async () => {
+  it('rejects broken relative links in skill bodies', async () => {
     const root = await fixtureRoot();
     await writeSkill(root, 'demo-skill', { body: '# Demo\n\n[missing](references/missing.md)' });
-    await mkdir(resolveAgentSkillsPath(root, 'bet-ticker-worker'));
     await writeRegistry(root, ['demo-skill']);
 
     const result = await validateAgentSkills(root);
     expect(result.ok).toBe(false);
     expect(result.issues.map(item => item.code)).toContain('skill-link-broken');
-    expect(result.issues).toContainEqual(
-      expect.objectContaining({ level: 'warning', code: 'skill-link-unavailable' })
-    );
+    expect(result.issues.map(item => item.code)).not.toContain('skill-entry-broken');
   });
 
   it('keeps the repository skill plane valid', async () => {

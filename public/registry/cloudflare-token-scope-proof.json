@@ -2,19 +2,19 @@
   "type": "CloudflareTokenScopeProof",
   "version": "1.0.0",
   "subsystem": "other",
-  "timestamp": "2026-07-24T05:37:51.242Z",
-  "bunVersion": "1.4.0",
-  "bunRevision": "a227ad991b62",
+  "timestamp": "2026-08-07T09:53:26.543Z",
+  "bunVersion": "1.3.14",
+  "bunRevision": "0d9b296af33f",
   "reportPath": "/registry/cloudflare-token-scope-proof.json",
   "semanticTags": {
     "channel": "stable",
-    "targetVersion": "1.4.0",
-    "latestAtTestTime": "1.4.0",
-    "testSuiteCommit": "b4308c195837774287c0333fe31d995c71869282",
-    "provenanceId": "local-2026-07-24T05-37-51-021Z",
-    "testedAt": "2026-07-24T05:37:51.021Z",
-    "bunRevision": "a227ad991b62",
-    "runtimeVersion": "1.4.0",
+    "targetVersion": "1.3.14",
+    "latestAtTestTime": "1.3.14",
+    "testSuiteCommit": "fb92cbafc6d401722183508eafbe6ff9e2a1537a",
+    "provenanceId": "local-2026-08-07T09-53-26-536Z",
+    "testedAt": "2026-08-07T09:53:26.536Z",
+    "bunRevision": "0d9b296af33f",
+    "runtimeVersion": "1.3.14",
     "platform": "darwin",
     "arch": "arm64",
     "channelResolveSource": "runtime",
@@ -49,7 +49,7 @@
   },
   "mcpCatalog": {
     "ok": true,
-    "serverCount": 5,
+    "serverCount": 4,
     "rows": [
       {
         "name": "cloudflare",
@@ -67,12 +67,6 @@
         "name": "cloudflare-bindings",
         "repoUrl": "https://bindings.mcp.cloudflare.com/mcp",
         "wellKnownUrl": "https://bindings.mcp.cloudflare.com/mcp",
-        "ok": true
-      },
-      {
-        "name": "cloudflare-builds",
-        "repoUrl": "https://builds.mcp.cloudflare.com/mcp",
-        "wellKnownUrl": "https://builds.mcp.cloudflare.com/mcp",
         "ok": true
       },
       {
@@ -101,5 +95,5 @@
     "wellKnown": "/.well-known/mcp.json",
     "tenant": "/docs/harness/tenants/cloudflare-pages.md"
   },
-  "proofHash": "f68e8f68ac68cc5c361a181922639c26a9cc002e56e6142add76f1536c2c1807"
+  "proofHash": "dab574258c6cc328311a442e645c5f8f57a7aa08dbfeb10ab4ba66fd44b567d2"
 }

@@ -125,7 +125,7 @@ describe('verification proof taxonomy contract', () => {
     expect(proof.type).toBe('CloudflareTokenScopeProof');
     expect(proof.subsystem).toBe('other');
     expect(proof.mcpCatalog?.ok).toBe(true);
-    expect(proof.mcpCatalog?.serverCount).toBe(5);
+    expect(proof.mcpCatalog?.serverCount).toBe(4);
     expect(proof.summary?.staticOk).toBe(true);
   });
 
@@ -142,14 +142,14 @@ describe('verification proof taxonomy contract', () => {
     if (proof.ok) expect(proof.steps?.every(s => s.ok)).toBe(true);
   });
 
-  test('well-known/mcp.json lists five Cloudflare MCP servers', async () => {
+  test('well-known/mcp.json lists four Cloudflare MCP servers', async () => {
     const file = Bun.file(joinPath(ROOT, 'public/.well-known/mcp.json'));
     expect(await file.exists()).toBe(true);
     const manifest = (await file.json()) as {
       servers?: Array<{ name: string; url: string }>;
       auth?: { env?: string };
     };
-    expect(manifest.servers?.length).toBe(5);
+    expect(manifest.servers?.length).toBe(4);
     expect(manifest.auth?.env).toBe('CLOUDFLARE_API_TOKEN');
   });
 });

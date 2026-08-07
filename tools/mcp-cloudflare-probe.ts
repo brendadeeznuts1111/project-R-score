@@ -24,7 +24,6 @@ const ENDPOINTS = [
   { id: 'cloudflare', url: 'https://mcp.cloudflare.com/mcp' },
   { id: 'cloudflare-docs', url: 'https://docs.mcp.cloudflare.com/mcp' },
   { id: 'cloudflare-bindings', url: 'https://bindings.mcp.cloudflare.com/mcp' },
-  { id: 'cloudflare-builds', url: 'https://builds.mcp.cloudflare.com/mcp' },
   { id: 'cloudflare-observability', url: 'https://observability.mcp.cloudflare.com/mcp' },
 ] as const;
 

@@ -27,7 +27,7 @@ const ALLOWED_FRONTMATTER_KEYS = new Set([
   'metadata',
 ]);
 const SHARED_SKILL_ENTRIES = new Set(['references']);
-const OPTIONAL_LINKED_SKILL_ENTRIES = new Set(['bet-ticker-worker']);
+const OPTIONAL_LINKED_SKILL_ENTRIES = new Set<string>();
 const REQUIRED_REGISTRY_PHASES = ['doctor', 'rate'] as const;
 
 export type AgentSkillIssue = {
@@ -70,6 +70,17 @@ async function pathExists(path: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+/** True when a skill folder still has any file (symlink stubs, agents/, etc.). */
+async function skillEntryHasFiles(skillRoot: string): Promise<boolean> {
+  for await (const _ of new Bun.Glob('**/*').scan({
+    cwd: skillRoot,
+    onlyFiles: true,
+  })) {
+    return true;
+  }
+  return false;
 }
 
 function parseFrontmatter(
@@ -365,6 +376,10 @@ export async function validateAgentSkills(
       skillEntries.push(entry);
       continue;
     }
+
+    const entryRoot = resolveAgentSkillsPath(repoRoot, entry);
+    // Empty dirs left after deleting SKILL.md (e.g. staged-test scratch trees) are not skills.
+    if (!(await skillEntryHasFiles(entryRoot))) continue;
 
     const displayPath = agentSkillsDisplayPath(entry);
     if (OPTIONAL_LINKED_SKILL_ENTRIES.has(entry) && !(entry in registrySkills)) {

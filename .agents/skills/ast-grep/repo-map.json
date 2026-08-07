@@ -43,10 +43,6 @@
       "agents-sports-terminal-skill",
       "agents-partner-profile",
       "agents-cascade-mover",
-      "agents-domain-orchestrator",
-      "agents-domain-diagnostic",
-      "agents-self-healing-domain",
-      "agents-quantum-domain-ops",
       "agents-bun-playground",
       "agents-source-command-commit",
       "agents-project-r-skill-maintenance"
@@ -335,42 +331,6 @@
       "view": "digest",
       "tags": ["skill", "cascade", "mcp"],
       "description": "Sports intelligence and multi-market cascading (MCP-first)"
-    },
-    {
-      "id": "agents-domain-orchestrator",
-      "zone": "agents",
-      "name": "domain-orchestrator skill",
-      "path": ".agents/skills/domain-orchestrator",
-      "view": "digest",
-      "tags": ["skill", "orchestrator", "flow"],
-      "description": "Flow skill orchestration and domain API mapping"
-    },
-    {
-      "id": "agents-domain-diagnostic",
-      "zone": "agents",
-      "name": "domain-diagnostic-flow skill",
-      "path": ".agents/skills/domain-diagnostic-flow",
-      "view": "digest",
-      "tags": ["skill", "diagnostic", "healing"],
-      "description": "Domain health check and remediation flows"
-    },
-    {
-      "id": "agents-self-healing-domain",
-      "zone": "agents",
-      "name": "self-healing-domain skill",
-      "path": ".agents/skills/self-healing-domain",
-      "view": "digest",
-      "tags": ["skill", "healing", "domain"],
-      "description": "Automated diagnostic and healing workflows"
-    },
-    {
-      "id": "agents-quantum-domain-ops",
-      "zone": "agents",
-      "name": "quantum-domain-ops skill",
-      "path": ".agents/skills/quantum-domain-ops",
-      "view": "digest",
-      "tags": ["skill", "quantum", "domain"],
-      "description": "Quantum domain state and coherence operations"
     },
     {
       "id": "agents-bun-playground",
