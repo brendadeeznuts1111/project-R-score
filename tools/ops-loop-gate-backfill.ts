@@ -10,7 +10,13 @@
 import { resolveProductionOutboxOpts } from '../lib/channels/outbox-prod-opts.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { backfillOpsLoopGateAttribution } from '../lib/operations/ops-loop-gate-backfill.ts';
-import { logDepth } from '../lib/console-depth.ts';
+import { logDepth } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  OPS_LOOP_GATE_BACKFILL_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+export { OPS_LOOP_GATE_BACKFILL_ALLOWED_LONG };
 
 function usage(): never {
   console.log(`Usage: bun tools/ops-loop-gate-backfill.ts [options]
@@ -24,7 +30,7 @@ Options:
   process.exit(0);
 }
 
-const argv = Bun.argv.slice(2);
+const argv = applyUnknownLongOptionGuardFor('ops:loop:gate-backfill', Bun.argv.slice(2));
 if (argv.includes('--help') || argv.includes('-h')) usage();
 
 const dryRun = argv.includes('--dry-run');

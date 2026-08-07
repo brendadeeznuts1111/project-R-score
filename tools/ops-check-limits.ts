@@ -39,7 +39,13 @@ import {
   type MultiFactorEnrichedRaise,
 } from '../lib/operations/partner-analytics-repo.ts';
 import { LimitRaiseReport, printLimitRaiseReport } from '../lib/operations/limit-raise-report.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { cliOut } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  OPS_LIMITS_CHECK_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+export { OPS_LIMITS_CHECK_ALLOWED_LONG };
 
 const HELP = `Usage: ops-check-limits.ts [opts]
 
@@ -70,7 +76,7 @@ function parseArgs(): {
   forceSeed: boolean;
   inspect: boolean;
 } {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('ops:limits:check', Bun.argv.slice(2));
   const flags: Record<string, string> = {};
   let i = 0;
   while (i < args.length) {
@@ -202,7 +208,7 @@ function main(): void {
       }
       output.alerts = alertsMap;
     }
-    jsonOut(output);
+    cliOut(output, { json: true });
     return;
   }
 

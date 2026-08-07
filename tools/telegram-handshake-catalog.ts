@@ -14,9 +14,15 @@ import {
   HANDSHAKE_LANE_CATALOG,
   HANDSHAKE_VERIFY_CHECK_IDS,
 } from '../lib/telegram/handshake-catalog.ts';
-import { jsonOut, logDepth } from '../lib/console-depth.ts';
+import { cliOut, logDepth } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  TELEGRAM_HANDSHAKE_CATALOG_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
 
-const argv = Bun.argv.slice(2);
+export { TELEGRAM_HANDSHAKE_CATALOG_ALLOWED_LONG };
+
+const argv = applyUnknownLongOptionGuardFor('telegram:handshake:catalog', Bun.argv.slice(2));
 const wantJson = argv.includes('--json');
 const section = argv.find(a => !a.startsWith('-')) ?? 'all';
 
@@ -48,7 +54,7 @@ Single read-only reference for package-group handshake. Prose runbook:
 
 const out = sliceSection(section);
 if (wantJson) {
-  jsonOut(out);
+  cliOut(out, { json: true });
 } else if (section === 'all') {
   for (const line of formatHandshakeCatalogHuman(buildHandshakeCatalog())) console.log(line);
 } else {

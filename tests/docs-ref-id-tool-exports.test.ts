@@ -135,6 +135,21 @@ describe('in-tool flagDocRef re-exports', () => {
     expect(ALLOWED_LONG_REGISTRY['routing:registry-proof']).toBe(
       ROUTING_REGISTRY_PROOF_ALLOWED_LONG
     );
+    // Batch-2 operator CLIs — non-empty allowlists registered
+    const batch2 = [
+      'ops:seed:toc',
+      'discovery:compose',
+      'public:discovery',
+      'schema:audit',
+      'telegram:handshake:catalog',
+      'concept:health',
+      'ops:loop:gate-backfill',
+      'ops:limits:check',
+    ] as const;
+    for (const key of batch2) {
+      expect(ALLOWED_LONG_REGISTRY[key].length).toBeGreaterThan(0);
+    }
+    expect(Object.keys(ALLOWED_LONG_REGISTRY).length).toBeGreaterThanOrEqual(18);
   });
 
   test('unknownFlagPolicy defaults + Bun.env toggles', () => {

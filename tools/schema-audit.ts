@@ -26,12 +26,19 @@ import {
   auditScrapeWireSchema,
   type DeskColumnValues,
 } from '../lib/operations/scrapers/scrape-wire-audit.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { cliOut } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  SCHEMA_AUDIT_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+export { SCHEMA_AUDIT_ALLOWED_LONG };
 
 const root = joinPath(import.meta.dir, '..');
 const outPath = joinPath(root, 'public', 'registry', 'scrape-wire-schema-audit.json');
-const jsonMode = Bun.argv.includes('--json') || Bun.argv.includes('--json-only');
-const write = Bun.argv.includes('--write');
+const argv = applyUnknownLongOptionGuardFor('schema:audit', Bun.argv.slice(2));
+const jsonMode = argv.includes('--json') || argv.includes('--json-only');
+const write = argv.includes('--write');
 
 function deskValues(conceptId: PortalSemanticConceptKey): readonly string[] {
   const concept = PORTAL_SEMANTIC_CONCEPTS.find(c => c.id === conceptId);
@@ -53,7 +60,7 @@ if (write) {
 }
 
 if (jsonMode) {
-  jsonOut(report);
+  cliOut(report, { json: true });
 } else {
   const { summary, issues, bookVendorAliases } = report;
   console.info(

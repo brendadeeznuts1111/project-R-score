@@ -140,6 +140,14 @@ bun run docs:refid:check
 | `glossary:health` | `json` · `local` | [`tools/glossary-health.ts`](../../tools/glossary-health.ts) |
 | `cloudflare:env:validate` | `json` · `strict` | [`tools/cloudflare-env-validate.ts`](../../tools/cloudflare-env-validate.ts) |
 | `routing:registry-proof` | `write` · `publish` · `json` · `no-fail` · `no-previous` · `base` · `concurrency` | [`tools/routing-registry-proof.ts`](../../tools/routing-registry-proof.ts) |
+| `ops:seed:toc` | `force` | [`tools/ops-seed-toc.ts`](../../tools/ops-seed-toc.ts) |
+| `discovery:compose` | `json` · `check` · `skip-unused` · `min-severity` | [`tools/discovery-compose.ts`](../../tools/discovery-compose.ts) |
+| `public:discovery` | `json` · `check` · `min-severity` | [`tools/public-discovery.ts`](../../tools/public-discovery.ts) |
+| `schema:audit` | `json` · `json-only` · `write` | [`tools/schema-audit.ts`](../../tools/schema-audit.ts) |
+| `telegram:handshake:catalog` | `json` | [`tools/telegram-handshake-catalog.ts`](../../tools/telegram-handshake-catalog.ts) |
+| `concept:health` | `period` · `output` | [`scripts/concept-health.ts`](../../scripts/concept-health.ts) |
+| `ops:loop:gate-backfill` | `dry-run` · `no-outbox` · `r2` | [`tools/ops-loop-gate-backfill.ts`](../../tools/ops-loop-gate-backfill.ts) |
+| `ops:limits:check` | `partner` · `all` · `hours` · `clv` · `multi` · `capture` · `alerts` · `seed` · `force-seed` · `json` · `inspect` | [`tools/ops-check-limits.ts`](../../tools/ops-check-limits.ts) |
 
 ---
 

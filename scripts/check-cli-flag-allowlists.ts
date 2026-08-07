@@ -95,6 +95,54 @@ const cases: Case[] = [
     expectExit: [2],
     stdoutOrStderrIncludes: ['❌ Unknown long option(s) in routing:registry-proof: --typo'],
   },
+  {
+    name: 'ops:seed:toc unknown',
+    cmd: ['bun', 'tools/ops-seed-toc.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in ops:seed:toc: --typo'],
+  },
+  {
+    name: 'discovery:compose unknown',
+    cmd: ['bun', 'tools/discovery-compose.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in discovery:compose: --typo'],
+  },
+  {
+    name: 'public:discovery unknown',
+    cmd: ['bun', 'tools/public-discovery.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in public:discovery: --typo'],
+  },
+  {
+    name: 'schema:audit unknown',
+    cmd: ['bun', 'tools/schema-audit.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in schema:audit: --typo'],
+  },
+  {
+    name: 'telegram:handshake:catalog unknown',
+    cmd: ['bun', 'tools/telegram-handshake-catalog.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in telegram:handshake:catalog: --typo'],
+  },
+  {
+    name: 'concept:health unknown',
+    cmd: ['bun', 'scripts/concept-health.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in concept:health: --typo'],
+  },
+  {
+    name: 'ops:loop:gate-backfill unknown',
+    cmd: ['bun', 'tools/ops-loop-gate-backfill.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in ops:loop:gate-backfill: --typo'],
+  },
+  {
+    name: 'ops:limits:check unknown',
+    cmd: ['bun', 'tools/ops-check-limits.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in ops:limits:check: --typo'],
+  },
 ];
 
 function okExit(expect: Case['expectExit'], code: number): boolean {

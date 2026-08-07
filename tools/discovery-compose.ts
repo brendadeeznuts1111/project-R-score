@@ -16,9 +16,15 @@ import {
   type CombinedDiscoveryReport,
 } from '../lib/discovery-compose.ts';
 import type { ReferenceSeverity } from '../lib/reference-discovery.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { cliOut } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  DISCOVERY_COMPOSE_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
 
-const args = Bun.argv.slice(2);
+export { DISCOVERY_COMPOSE_ALLOWED_LONG };
+
+const args = applyUnknownLongOptionGuardFor('discovery:compose', Bun.argv.slice(2));
 const asJson = args.includes('--json');
 const check = args.includes('--check');
 const skipUnused = args.includes('--skip-unused');
@@ -28,7 +34,7 @@ const minSeverity = (args.find((a, i) => args[i - 1] === '--min-severity') ??
 const report: CombinedDiscoveryReport = await runCombinedDiscovery({ skipUnused });
 
 if (asJson) {
-  jsonOut(report);
+  cliOut(report, { json: true });
 } else {
   console.log(`discovery-compose · ${report.summary.totalFindings} findings`);
   console.log(
