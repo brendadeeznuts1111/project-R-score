@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/cron#bun-cron-path-schedule-title-os-level
 // @see https://bun.com/docs/runtime/cron#bun-cron-remove
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /** Register, inspect, or remove the OS-persistent Bun channel doctor. */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { parseCron, registerOsCron, removeOsCron } from '../lib/harness/cron.ts';
@@ -141,7 +142,9 @@ an exact wall-clock preview when the machine timezone is not UTC.
 }
 
 async function main(): Promise<void> {
-  const args = parseBunChannelCronArgs(Bun.argv.slice(2));
+  const args = parseBunChannelCronArgs(
+    applyUnknownLongOptionGuardFor('bun:channel:cron:preview', Bun.argv.slice(2))
+  );
   if (!args) {
     printUsage();
     process.exitCode = 1;

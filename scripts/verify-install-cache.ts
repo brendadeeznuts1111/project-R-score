@@ -7,6 +7,7 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/pm/isolated-installs — linker = isolated
 // @see https://bun.com/docs/pm/global-store — globalStore + absolute cache.dir
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Verify Bun install cache + global virtual store alignment.
  * Policy table SSOT: lib/install/machine-bunfig-policy.ts
@@ -15,6 +16,10 @@
  * @see docs/UNIFIED.md
  */
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('install:verify', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   FORBIDDEN_INSTALL_ENV_VARS,
   isEphemeralCiInstallEnv,
@@ -44,10 +49,10 @@ export {
 } from '../lib/install/machine-bunfig-policy.ts';
 
 const ROOT = `${import.meta.dir}/..`;
-const strict = Bun.argv.includes('--strict');
-const quiet = Bun.argv.includes('--quiet');
-const dryRun = Bun.argv.includes('--dry-run');
-const json = Bun.argv.includes('--json');
+const strict = argv.includes('--strict');
+const quiet = argv.includes('--quiet');
+const dryRun = argv.includes('--dry-run');
+const json = argv.includes('--json');
 
 /** Human label for the forbidden install-env pair (SSOT order). */
 const FORBIDDEN_INSTALL_ENV_LABEL = FORBIDDEN_INSTALL_ENV_VARS.join(' / ');

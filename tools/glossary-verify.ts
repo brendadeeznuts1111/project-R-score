@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Verify glossary board routes, hash patterns, and DOM section mounts.
  *   bun run glossary:verify
@@ -30,6 +31,9 @@ import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import { joinPath } from '../lib/path-bun.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('glossary:verify', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export type Status = 'LIVE' | 'STALE' | 'WARN';
 
 const statusColorMap: Record<Status, string> = {
@@ -519,9 +523,9 @@ async function main(): Promise<void> {
   const root = joinPath(import.meta.dir, '..');
   const result = await runGlossaryVerify({
     root,
-    json: Bun.argv.includes('--json'),
-    strict: Bun.argv.includes('--strict'),
-    dryRun: Bun.argv.includes('--dry-run'),
+    json: argv.includes('--json'),
+    strict: argv.includes('--strict'),
+    dryRun: argv.includes('--dry-run'),
   });
   if (result.exitCode !== 0) process.exit(result.exitCode);
 }

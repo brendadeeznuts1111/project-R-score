@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * DOD image evidence CLI — pack / verify / similar.
  *
@@ -135,7 +137,7 @@ async function cmdSimilar(args: string[]): Promise<void> {
 }
 
 if (import.meta.main) {
-  const argv = Bun.argv.slice(2);
+  const argv = applyUnknownLongOptionGuardFor('dod:pack', Bun.argv.slice(2));
   if (!argv.length || has(argv, '-h') || has(argv, '--help')) printHelp();
   const cmd = argv[0]!;
   const rest = argv.slice(1);

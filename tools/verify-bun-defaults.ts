@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/hashing#bun-password
 // @see https://bun.com/docs/runtime/hashing#bun-hash
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher
@@ -8,6 +9,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds
 // @see https://bun.com/docs/runtime/utils#bun-sleep
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * 12 Bun default-behavior checks (runtime-measured, not folklore).
  *
@@ -24,10 +26,13 @@ import { BunDefaultsReport, buildBunDefaultsProof } from '../lib/http/bun-defaul
 import { runDefaultsVerification } from '../lib/http/defaults-cron.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('check:bun-defaults', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 /** Programmatic entry for cron / importers. */
 export { runDefaultsVerification };
 
-const AS_JSON = process.argv.includes('--json');
+const AS_JSON = argv.includes('--json');
 const SAVE = process.argv.find(a => a.startsWith('--save='))?.slice('--save='.length);
 
 if (import.meta.main) {

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
 // @see https://bun.com/docs/bundler/index#basic-example — Bun.build
@@ -53,8 +54,9 @@ import {
 
 export { MONOREPO_HEALTH_ALLOWED_LONG };
 
-const argv = applyUnknownLongOptionGuardFor('monorepo:health', process.argv.slice(2));
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('monorepo:health', process.argv.slice(2))
+  : Bun.argv.slice(2);
 function flag(name: string): boolean {
   return argv.includes(name);
 }

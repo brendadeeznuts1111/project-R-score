@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Rotor pulse — in-process complement daemon for audit catalog integrity.
  *
@@ -133,7 +135,7 @@ function printPreview(schedule: string, count: number): number {
 }
 
 if (import.meta.main) {
-  const argv = Bun.argv.slice(2);
+  const argv = applyUnknownLongOptionGuardFor('pulse:once', Bun.argv.slice(2));
   if (argv[0] === 'preview') {
     const countRaw = Number(Bun.env.ROTOR_PULSE_PREVIEW_COUNT ?? '3');
     const count = Number.isFinite(countRaw) && countRaw > 0 ? Math.floor(countRaw) : 3;

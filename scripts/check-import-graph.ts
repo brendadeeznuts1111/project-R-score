@@ -34,7 +34,9 @@ export {};
 
 const ROOT = process.cwd();
 const BASELINE_PATH = `${ROOT}/scripts/import-graph-baseline.json`;
-const argv = applyUnknownLongOptionGuardFor('check:import-graph', Bun.argv.slice(2));
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('check:import-graph', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const WRITE_BASELINE = argv.includes('--write-baseline');
 const JSON_OUT = argv.includes('--json');
 

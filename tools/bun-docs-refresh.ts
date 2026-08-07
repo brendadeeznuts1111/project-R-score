@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bun-docs-refresh.ts — canonical docs stack refresh loop.
  *
@@ -19,6 +21,9 @@
  */
 import { resolvePath } from '../lib/path-bun';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('docs:refresh', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = resolvePath(import.meta.dir, '..');
 
 export type RefreshMode = 'full' | 'fast' | 'feeds';
@@ -114,7 +119,7 @@ async function runStep(step: RefreshStep): Promise<number> {
 }
 
 async function main(): Promise<void> {
-  const dryRun = Bun.argv.includes('--dry-run');
+  const dryRun = argv.includes('--dry-run');
   const opts = resolveRefreshOptions(Bun.argv);
   const steps = buildRefreshSteps(opts);
 

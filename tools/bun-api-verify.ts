@@ -8,6 +8,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/llms.txt
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Three-source Bun API verification harness — types · docs · runtime.
  *
@@ -39,6 +40,9 @@ import { BUN_API_ONELINERS, runOneliner } from './bun-api-oneliners.ts';
 import { OPS_ONELINERS, runOpsOneliner } from './bun-ops-oneliners.ts';
 import { CANONICAL_REFS } from './bun-doc-refs.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('docs:api-verify', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export const PROOF_MANIFEST_PATH = 'tools/bun-api-coverage-proof.json';
 
 export type ApiSymbolProof = {
@@ -313,8 +317,8 @@ function printReport(manifest: VerifyManifest, write: boolean): void {
 }
 
 if (import.meta.main) {
-  const live = Bun.argv.includes('--live');
-  const write = Bun.argv.includes('--write');
+  const live = argv.includes('--live');
+  const write = argv.includes('--write');
   const manifest = await verifyBunApis({ live, write });
   printReport(manifest, write);
   const failed =

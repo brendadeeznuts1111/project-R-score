@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -30,7 +31,9 @@ import {
 export { PROVISION_QUEUE_ALLOWED_LONG };
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
-const args = applyUnknownLongOptionGuardFor('provision:queue', process.argv.slice(2));
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('provision:queue', process.argv.slice(2))
+  : Bun.argv.slice(2);
 const cmd = args[0] ?? 'help';
 
 function flag(name: string): string | undefined {

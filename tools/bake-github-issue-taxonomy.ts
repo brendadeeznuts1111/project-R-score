@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /** Bake or verify the deterministic public GitHub issue taxonomy artifact. */
 
 import { joinPath } from '../lib/path-bun.ts';
@@ -12,12 +13,15 @@ import {
 } from '../lib/github-issue-taxonomy-public.ts';
 import { parseGithubIssueTaxonomyPublicArtifact } from '../lib/github-issue-taxonomy-public-wire.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('github-issue-taxonomy:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const root = joinPath(import.meta.dir, '..');
 const outPath = joinPath(root, 'public', 'registry', 'github-issue-taxonomy.json');
 const expected = buildGithubIssueTaxonomyPublicArtifact();
 const expectedText = serializeGithubIssueTaxonomyPublicArtifact(expected);
 
-if (Bun.argv.includes('--check')) {
+if (argv.includes('--check')) {
   const file = Bun.file(outPath);
   if (!(await file.exists())) {
     throw new Error(`${GITHUB_ISSUE_TAXONOMY_PUBLIC_PATH} is missing`);

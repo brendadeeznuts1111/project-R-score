@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
 // @see https://bun.com/docs/runtime/nodejs-compat#fetch — fetch
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bun-docs-reference-index.ts — Phase 0b: API reference index from bun.com/reference.
  *
@@ -14,6 +16,9 @@
 import { bunReference } from '../lib/docs/bun-site-url.ts';
 import { resolvePath } from '../lib/path-bun';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('docs:reference-index', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export const REFERENCE_URL = 'https://bun.com/reference';
 
 const ROOT = import.meta.dir;
@@ -264,7 +269,7 @@ export function referenceIndexHasUrl(
 }
 
 async function main(): Promise<void> {
-  const force = Bun.argv.includes('--force');
+  const force = argv.includes('--force');
   const { file, fetch: fr } = await refreshReferenceIndex({ force });
   const cacheNote = fr.fromCache ? (fr.notModified ? ' (304/cache)' : ' (cache fallback)') : '';
   console.info(

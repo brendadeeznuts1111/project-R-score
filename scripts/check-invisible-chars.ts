@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Ratchet: invisible / format Unicode code points must be written as \u
  * escapes in TypeScript source, never as literal bytes. Literal invisibles
@@ -19,6 +21,9 @@
  */
 export {};
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('check:invisible-chars', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = process.cwd();
 const DIRS = ['lib', 'scripts', 'tools', 'tests', 'config'] as const;
 
@@ -85,7 +90,7 @@ function report(title: string, hits: Hit[], out: (s: string) => void): void {
 }
 
 if (vsHits.length) {
-  if (Bun.argv.includes('--verbose')) {
+  if (argv.includes('--verbose')) {
     report(
       `WARN: ${vsHits.length} literal variation selectors (prefer \\uFE0F escapes; not failing):`,
       vsHits,

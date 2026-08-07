@@ -6,6 +6,7 @@
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML.parse
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bake-bunfig.ts — bake bunfig configuration reality → public/registry/bunfig-state.json
  *
@@ -25,11 +26,14 @@ import { homedir } from 'node:os';
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 import { resolvePath } from './lib/fs-bun';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('bunfig:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = resolvePath(import.meta.dir, '..');
 const MACHINE_PATH = `${homedir()}/.bunfig.toml`;
 const PROJECT_PATH = resolvePath(ROOT, 'bunfig.toml');
 const OUT_PATH = resolvePath(ROOT, 'public/registry/bunfig-state.json');
-const CHECK = Bun.argv.includes('--check');
+const CHECK = argv.includes('--check');
 
 /** Keys whose provenance the bake tracks (machine-owned policy + project surface). */
 const TRACKED_INSTALL_KEYS = [

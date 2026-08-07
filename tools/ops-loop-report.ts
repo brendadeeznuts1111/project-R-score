@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Capture ops loop throughput metrics to reports/ops-loop-*.json
  *
@@ -31,7 +32,9 @@ function usage(): never {
   process.exit(0);
 }
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:loop:baseline', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 if (argv.includes('--help') || argv.includes('-h')) usage();
 
 const outIdx = argv.indexOf('--out');

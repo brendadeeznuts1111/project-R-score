@@ -6,6 +6,7 @@
 // @see https://bun.com/docs/test/snapshots — toMatchSnapshot / --update-snapshots
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bun:test snapshot SSOT CLI (git-reviewed snaps under tests/__snapshots__/).
  *
@@ -57,7 +58,7 @@ Examples:
 }
 
 async function main(): Promise<void> {
-  const argv = Bun.argv.slice(2);
+  const argv = applyUnknownLongOptionGuardFor('bake:capabilities:update', Bun.argv.slice(2));
   if (argv.includes('--help') || argv.includes('-h') || argv.length === 0) {
     usage();
     process.exit(argv.length === 0 ? 1 : 0);

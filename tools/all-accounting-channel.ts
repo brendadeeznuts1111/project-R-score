@@ -1,9 +1,13 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /** @deprecated Use `bun tools/house-forum-channel.ts all-accounting` */
 import { ALL_ACCOUNTING_SURFACE_SLUG } from '../lib/telegram/surfaces.ts';
 import { brandHouseForumSurface, resolveHouseChatId } from './house-forum-channel.ts';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:all-accounting', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 let chatId = '';
 let brand = false;
 let postPrompt = false;

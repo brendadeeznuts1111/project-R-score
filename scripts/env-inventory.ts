@@ -34,7 +34,9 @@ import {
 } from './lib/env-secret-policy.ts';
 
 const ROOT = process.cwd();
-const argv = applyUnknownLongOptionGuardFor('env:inventory', Bun.argv.slice(2));
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('env:inventory', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const JSON_OUT = argv.includes('--json');
 const VAULT_ONLY = argv.includes('--vault-only');
 const RATCHET = argv.includes('--ratchet');

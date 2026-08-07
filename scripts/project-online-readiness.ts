@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { evaluateReadiness, loadDomainHealthSummary } from './lib/domain-health-read';
 import { jsonOut } from '../lib/console-depth';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 type Options = {
   domain: string;
@@ -50,7 +51,9 @@ function parseArgs(argv: string[]): Options {
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(Bun.argv.slice(2));
+  const options = parseArgs(
+    applyUnknownLongOptionGuardFor('project:online:check', Bun.argv.slice(2))
+  );
 
   const summary = await loadDomainHealthSummary({
     domain: options.domain,

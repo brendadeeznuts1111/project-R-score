@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { readText, writeText, listFilesSync } from './lib/fs-bun';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Pin all dependency versions to exact versions across the monorepo.
  *
@@ -23,6 +25,9 @@ import { readText, writeText, listFilesSync } from './lib/fs-bun';
  *   - URL-based versions
  */
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('fix:pin-versions', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = process.cwd();
 const EXCLUDE_DIRS = new Set([
   'node_modules',
@@ -36,7 +41,7 @@ const EXCLUDE_DIRS = new Set([
   '.bun-docs-cache',
 ]);
 
-const DRY_RUN = Bun.argv.includes('--dry-run');
+const DRY_RUN = argv.includes('--dry-run');
 
 const CARET_TILDE_RE = /^[\^~]/;
 const KEEP_PROTOCOLS = ['workspace:', 'catalog:', 'file:', 'git:', 'github:'];

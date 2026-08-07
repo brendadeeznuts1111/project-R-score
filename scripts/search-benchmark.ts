@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 import { fileExistsSync, joinPath, readText, resolvePath } from './lib/fs-bun';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
@@ -546,7 +548,7 @@ export async function main(): Promise<void> {
     overlap,
     queryTimeoutMs,
     queryRetries,
-  } = parseArgs(Bun.argv.slice(2));
+  } = parseArgs(applyUnknownLongOptionGuardFor('search:bench', Bun.argv.slice(2)));
   const effectiveConcurrency =
     !concurrencyExplicit && path.includes(',') ? Math.min(concurrency, 2) : concurrency;
   const loaded = await loadQueryPacks();

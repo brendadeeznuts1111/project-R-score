@@ -11,6 +11,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table (via logTable)
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals (via deepEquals)
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Live enhancement probe — score.factory-wager.com vs origin/main.
  *
@@ -919,7 +920,9 @@ export async function runLiveSnapshot(
 }
 
 async function main(): Promise<void> {
-  const { strictImage, json, thumb, quick, base } = parseArgs(Bun.argv.slice(2));
+  const { strictImage, json, thumb, quick, base } = parseArgs(
+    applyUnknownLongOptionGuardFor('snapshot:live', Bun.argv.slice(2))
+  );
   const { failed } = await runLiveSnapshot({ strictImage, json, thumb, quick, base });
   process.exit(failed ? 1 : 0);
 }

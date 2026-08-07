@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/pm/bunx — bunx (args after bin name; --bun before package)
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Ops factorial experiments CLI (`package.json` → `ops:experiments`).
  *
@@ -41,7 +42,9 @@ import { parseExperimentId, parseTreeNodeId, unbrand } from '../lib/types/brande
 import { jsonOut } from '../lib/console-depth.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:experiments', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const json = argv.includes('--json');
 const cmd = argv.find(a => !a.startsWith('-')) ?? 'help';
 

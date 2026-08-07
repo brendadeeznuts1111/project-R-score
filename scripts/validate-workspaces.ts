@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Workspace Validator — homebase hybrid model
  *
@@ -47,7 +48,9 @@ function relativeFrom(root: string, file: string): string {
   return f;
 }
 
-const args = Bun.argv.slice(2);
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('validate:workspaces', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const verbose = args.includes('--verbose') || Bun.env.VERBOSE === '1';
 
 /** Paths that may contain package.json but are never root workspace members. */

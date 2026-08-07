@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
@@ -7,6 +8,7 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Per-state limit details + shadow compliance report (signed table).
  *
@@ -24,6 +26,10 @@ import { deepEquals } from '../lib/deep-equals.ts';
 import { escapeHtml } from '../lib/escape-html.ts';
 import { getConsoleDepth, inspect as inspectDepth } from '../lib/console-depth.ts';
 import { startStateComplianceMock } from '../lib/operations/state-compliance-http.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:compliance:report', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   buildReportProofFromValue,
   formatReportProofLines,
@@ -336,7 +342,7 @@ ${body}
 }
 
 async function main(): Promise<void> {
-  if (Bun.argv.includes('--help') || Bun.argv.includes('-h')) {
+  if (argv.includes('--help') || argv.includes('-h')) {
     console.info(`Usage:
   bun run ops:compliance:report
   bun --console-depth=6 tools/enhanced-compliance-report.ts
@@ -370,7 +376,7 @@ async function main(): Promise<void> {
     const proof = buildReportProofFromValue(stableBody);
     const hints = proofScoreHints(proof);
 
-    if (Bun.argv.includes('--html')) {
+    if (argv.includes('--html')) {
       console.log(reportToHtml(data, base, proof.digest));
       return;
     }

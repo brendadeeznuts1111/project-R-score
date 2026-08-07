@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -15,11 +16,14 @@
  *   bun scripts/ci-harness.ts --verbose
  *   bun scripts/ci-harness.ts --fail-json
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { logCompact } from '../lib/console-depth';
 import { githubTokenPresence, resolveGitHubRepositoryRef } from '../lib/github-repository-ref';
 import { hasFlag } from './lib/cli-args';
 import { ensureDir, writeJson } from './lib/fs-bun';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ci:harness', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const repoRoot = `${import.meta.dir}/..`;
 const TIMING_PATH = `${repoRoot}/reports/ci-harness-timing.json`;
 

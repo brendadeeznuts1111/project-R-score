@@ -46,6 +46,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/utils#bun-resolvesync — Bun.resolveSync
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+
 /**
  * Bun API one-liner showcase — corrected, fixture-backed demos.
  *
@@ -224,11 +226,9 @@ export const SHOWCASE_DEMOS: readonly ShowcaseDemo[] = [
           return bytes;
         }
         // 1×1 PNG
-        return Uint8Array.from(
-          atob(
-            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
-          ),
-          c => c.charCodeAt(0)
+        // @see https://bun.com/docs/runtime/binary-data#frombase64 — Uint8Array.fromBase64
+        return Uint8Array.fromBase64(
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
         );
       })();
       const img = new Bun.Image(png);
@@ -833,7 +833,8 @@ Gates:
 `);
 }
 
-async function main(argv = Bun.argv.slice(2)): Promise<number> {
+async function main(rawArgv = Bun.argv.slice(2)): Promise<number> {
+  const argv = applyUnknownLongOptionGuardFor('docs:showcase', rawArgv);
   const verbose = argv.includes('--verbose') || argv.includes('-v');
   const args = argv.filter(a => a !== '--verbose' && a !== '-v');
   const cmd = args[0] ?? 'list';

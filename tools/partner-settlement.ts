@@ -1,4 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // partner-settlement.ts — desk-entry settlement posting (Phase 3, manual-first).
 //
@@ -37,6 +41,7 @@ import {
   SETTLEMENT_CRON_SCHEDULE,
   startOfWeek,
 } from '../lib/partner-profile/settlement-runner';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 export const SETTLEMENT_FUND_STATUSES = ['ready', 'deferred', 'paused', 'blocked'] as const;
 export type SettlementFundStatus = (typeof SETTLEMENT_FUND_STATUSES)[number];
@@ -346,7 +351,7 @@ export async function importSettlements(
 }
 
 async function main(): Promise<void> {
-  const argv = process.argv.slice(2);
+  const argv = applyUnknownLongOptionGuardFor('partner:settlement:import', Bun.argv.slice(2));
   const dryRun = argv.includes('--dry-run');
 
   if (argv[0] === 'run') {

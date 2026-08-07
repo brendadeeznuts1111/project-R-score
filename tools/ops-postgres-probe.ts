@@ -1,12 +1,17 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/sql
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /** CLI: probe Postgres readiness and export SQLite DDL for migration. */
 import { exportPostgresDdl, probePostgresOps } from '../lib/operations/postgres-bridge.ts';
 
-const exportOnly = Bun.argv.includes('--export-ddl');
-const probe = Bun.argv.includes('--probe') || !exportOnly;
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:postgres-probe', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
+const exportOnly = argv.includes('--export-ddl');
+const probe = argv.includes('--probe') || !exportOnly;
 
-if (exportOnly || Bun.argv.includes('--export-ddl')) {
+if (exportOnly || argv.includes('--export-ddl')) {
   console.log(exportPostgresDdl());
 }
 

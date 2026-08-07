@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Reference discovery CLI — unused paths, plane mismatches, similar naming clusters.
  *
@@ -24,7 +25,9 @@ import {
   type PublicDiscoveryReport,
 } from '../lib/public-discovery.ts';
 
-const args = Bun.argv.slice(2);
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('reference:discover', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const wantJson = args.includes('--json');
 const check = args.includes('--check');
 const skipUnused = args.includes('--skip-unused');

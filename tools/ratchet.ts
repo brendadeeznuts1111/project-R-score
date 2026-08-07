@@ -4,6 +4,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/bundler/executables — --force
 // @see ../lib/verification/ratchet.ts — ratchet mechanism
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Ratchet CLI — version-locked verification per channel.
  *
@@ -15,7 +16,9 @@
 import { getChannelDelta, ratchetVerify } from '../lib/verification/ratchet.ts';
 import { logTable } from '../lib/console-depth.ts';
 
-const args = Bun.argv.slice(2);
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ratchet', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const channel = args.find(a => a.startsWith('--channel='))?.slice(10) ?? 'stable';
 const force = args.includes('--force');
 

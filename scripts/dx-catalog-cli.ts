@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bun DX catalog CLI — discover one-liners and doc links from the harness catalog.
  */
@@ -25,7 +26,7 @@ function printTable(): void {
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('dx:catalog', Bun.argv.slice(2));
 
   if (args.includes('--json')) {
     jsonOut(BUN_DX_CATALOG);

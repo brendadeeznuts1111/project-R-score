@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
 import { jsonOut } from '../lib/console-depth';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 
@@ -342,7 +343,9 @@ export async function runDomainRegistryDoctor(options: Options): Promise<DoctorR
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(Bun.argv.slice(2));
+  const options = parseArgs(
+    applyUnknownLongOptionGuardFor('search:domain:doctor', Bun.argv.slice(2))
+  );
   if (options.doctor) {
     const doctor = await runDomainRegistryDoctor(options);
     if (options.json) {

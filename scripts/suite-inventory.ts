@@ -1,9 +1,11 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Per-file tests/ inventory — pass / fail / HANG with wall timeout.
  *
@@ -31,7 +33,9 @@ import {
 
 const ROOT = joinPath(import.meta.dir, '..');
 const OUT = joinPath(ROOT, 'tmp', 'test-file-report.json');
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('test:inventory', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const JSON_ONLY = argv.includes('--json');
 const PARALLEL_PROBE = argv.includes('--parallel-probe');
 

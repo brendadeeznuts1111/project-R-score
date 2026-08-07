@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bake / check scrape-wire-taxonomy.json (state · sport · market SSOT for Tier 4).
  *
@@ -10,6 +11,10 @@
  *   bun run bake:scrape-wire-taxonomy:check
  */
 import { joinPath } from '../lib/path-bun.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('bake:scrape-wire-taxonomy', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   buildScrapeWireTaxonomyArtifact,
   SCRAPE_WIRE_TAXONOMY_PATH,
@@ -17,7 +22,7 @@ import {
 
 const root = joinPath(import.meta.dir, '..');
 const outPath = joinPath(root, 'public', 'registry', 'scrape-wire-taxonomy.json');
-const check = Bun.argv.includes('--check');
+const check = argv.includes('--check');
 
 const artifact = buildScrapeWireTaxonomyArtifact();
 

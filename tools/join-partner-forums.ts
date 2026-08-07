@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Join package-group forums via MTProto user session (clears 2·house! when operator = partner).
  *
@@ -19,7 +21,9 @@ import {
 
 const { Api } = await import('../toc-ops-repo/node_modules/telegram/index.js');
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:join-partner-forums', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const dryRun = argv.includes('--dry-run');
 const codes = argv.filter(a => !a.startsWith('-')).map(c => c.toUpperCase());
 

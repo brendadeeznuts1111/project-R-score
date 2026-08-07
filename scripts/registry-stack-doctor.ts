@@ -6,6 +6,7 @@ import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { CLOUDFLARE_DEFAULTS, factoryWagerRegistryUrlFromEnv } from '../config/r2-env.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 type Options = {
   fix: boolean;
@@ -217,7 +218,7 @@ async function runDoctor(options: Options) {
 }
 
 if (isModuleEntrypoint(import.meta)) {
-  const options = parseArgs(Bun.argv.slice(2));
+  const options = parseArgs(applyUnknownLongOptionGuardFor('registry:doctor', Bun.argv.slice(2)));
   const result = await runDoctor(options);
   if (options.json) {
     jsonOut(result);

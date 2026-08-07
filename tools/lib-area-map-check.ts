@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-openineditor — Bun.openInEditor
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * lib-area-map-check.ts — validate Area / Ownership map clusters under lib/.
  *
@@ -572,11 +574,7 @@ export function issueToOpenPath(issue: Issue): string | null {
  * Editor: opts.editor → bunfig [debug].editor → $VISUAL → $EDITOR
  * @see https://bun.com/docs/runtime/utils#bun-openineditor
  */
-async function openIssuesInEditor(
-  issues: Issue[],
-  count: number,
-  editor?: string
-): Promise<void> {
+async function openIssuesInEditor(issues: Issue[], count: number, editor?: string): Promise<void> {
   if (count <= 0 || issues.length === 0) return;
   if (typeof Bun.openInEditor !== 'function') {
     console.error('❌ Bun.openInEditor unavailable on this runtime');
@@ -605,7 +603,7 @@ async function openIssuesInEditor(
 }
 
 async function main(): Promise<void> {
-  const opts = parseArgs(Bun.argv.slice(2));
+  const opts = parseArgs(applyUnknownLongOptionGuardFor('lib:area-maps:check', Bun.argv.slice(2)));
   let domains = await listDomainDirs();
   if (opts.domainFilter) {
     domains = domains.filter(d => d === opts.domainFilter);

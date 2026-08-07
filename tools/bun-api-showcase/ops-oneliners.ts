@@ -14,6 +14,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // @see https://bun.com/docs/runtime/bun-apis
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Ops-model Bun one-liners (Operations, Partners, Agents, Rails, Sportsbook
  * Accounts, Plays, Phones) — corrected and self-verifying versions of the
@@ -27,7 +28,9 @@
  * Usage: bun run showcase:ops [--live]
  */
 import { logTable } from '../../lib/console-depth.ts';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('showcase:ops', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const OPS = '.tmp/showcase/ops';
 await Bun.$`mkdir -p ${OPS}/{partners,transactions,plays}`.quiet();
 
@@ -207,7 +210,7 @@ export const opsDemos: OpsDemo[] = [
   },
 ];
 
-const live = Bun.argv.includes('--live');
+const live = argv.includes('--live');
 let pass = 0;
 let fail = 0;
 let skip = 0;

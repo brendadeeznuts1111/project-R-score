@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 // @see https://bun.com/docs/bundler/bytecode#combining-with-other-optimizations — --minify
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Optional portal CSS build — Bun lowers modern CSS (nesting, :lang/:is/:not,
  * logical props, media ranges, …) and can unlock deferred features
@@ -32,6 +34,9 @@ import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import { syncPortalTheme } from './sync-portal-theme.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('portal:css:build', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = resolvePath(import.meta.dir, '..');
 const SOURCE = joinPath(ROOT, 'public/portal/style.css');
 const OUTDIR = joinPath(ROOT, 'public/portal/dist');
@@ -39,8 +44,8 @@ const OUTDIR = joinPath(ROOT, 'public/portal/dist');
 /** Public URL prefix for any `url()` / asset paths the CSS loader rewrites. */
 const PUBLIC_PATH = '/portal/dist/';
 
-const minify = Bun.argv.includes('--minify');
-const check = Bun.argv.includes('--check');
+const minify = argv.includes('--minify');
+const check = argv.includes('--check');
 
 type BuildOpts = {
   naming: string;

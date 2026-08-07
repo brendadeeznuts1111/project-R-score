@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 import { readJson, resolvePath, scanFilesSync } from './lib/fs-bun';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * List packages in the monorepo with name, version, registry, and triage status.
  *
@@ -16,6 +18,9 @@ import { readJson, resolvePath, scanFilesSync } from './lib/fs-bun';
  * @see https://bun.com/docs/runtime/file-io — Bun.file
  */
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('packages:list', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = resolvePath();
 const SKIP_SEGMENTS = new Set([
   'node_modules',
@@ -28,9 +33,9 @@ const SKIP_SEGMENTS = new Set([
   '.wrangler',
 ]);
 const FILTER = Bun.argv.find(a => a.startsWith('--filter='))?.split('=')[1] || '';
-const INCLUDE_SCAFFOLDS = Bun.argv.includes('--include-scaffolds');
-const SHOW_PATHS = Bun.argv.includes('--paths');
-const WRITE_MD = Bun.argv.includes('--write');
+const INCLUDE_SCAFFOLDS = argv.includes('--include-scaffolds');
+const SHOW_PATHS = argv.includes('--paths');
+const WRITE_MD = argv.includes('--write');
 const REGISTRY_MD = resolvePath(ROOT, 'docs/packages/REGISTRY.md');
 
 function shouldSkipRel(rel: string): boolean {

@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/workers#creating-a-worker — Workers
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Regenerate public/.well-known/mcp.json from .mcp.json Cloudflare HTTP servers.
  *
@@ -10,10 +12,13 @@
 import { joinPath } from '../lib/path-bun.ts';
 import { CLOUDFLARE_MCP_HTTP_SERVERS } from '../lib/verification/cloudflare-token-scope.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('sync:well-known-mcp', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = joinPath(import.meta.dir, '..');
 const repoPath = joinPath(ROOT, '.mcp.json');
 const outPath = joinPath(ROOT, 'public/.well-known/mcp.json');
-const checkOnly = Bun.argv.includes('--check');
+const checkOnly = argv.includes('--check');
 
 const repo = JSON.parse(await Bun.file(repoPath).text()) as {
   mcpServers?: Record<string, { url?: string; type?: string }>;

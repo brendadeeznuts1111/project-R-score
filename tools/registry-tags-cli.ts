@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Registry proof dist-tag lifecycle CLI.
  *
@@ -27,7 +28,9 @@ import {
 } from '../lib/registry-tags.ts';
 import { logTable } from '../lib/console-depth.ts';
 
-const args = Bun.argv.slice(2);
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('registry:tags', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const cmd = args[0] ?? 'status';
 
 function packageArg(): ProofPackageId | 'all' {

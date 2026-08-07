@@ -15,7 +15,11 @@ import { ensureParentDirSync } from '../lib/bun-fs-utils.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { scanStaleAnchorsFromDb } from '../lib/operations/anchor-stability.ts';
 import { jsonOut } from '../lib/console-depth.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:anchor:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export const STALE_ANCHORS_ARTIFACT = 'public/registry/stale-anchors.json';
 export const STALE_ANCHORS_SCHEMA = 'stale-anchors.v1';
 
@@ -45,13 +49,13 @@ export async function bakeStaleAnchors(
 }
 
 if (import.meta.main) {
-  const json = Bun.argv.includes('--json');
-  const check = Bun.argv.includes('--check');
+  const json = argv.includes('--json');
+  const check = argv.includes('--check');
   const payload = await bakeStaleAnchors({
-    ...(Bun.argv.includes('--min-drift')
+    ...(argv.includes('--min-drift')
       ? { minDriftUsd: Number(Bun.argv[Bun.argv.indexOf('--min-drift') + 1]) }
       : {}),
-    ...(Bun.argv.includes('--max-variance')
+    ...(argv.includes('--max-variance')
       ? { maxVarianceUsd: Number(Bun.argv[Bun.argv.indexOf('--max-variance') + 1]) }
       : {}),
   });

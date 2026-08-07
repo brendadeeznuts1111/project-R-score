@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Telegram catalog research agent — deterministic analyzers + optional LLM pass.
  *
@@ -19,7 +20,9 @@ import {
   runCatalogResearchAgent,
 } from '../lib/telegram/catalog-research/agent.ts';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:catalog:research', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 let wantJson = false;
 let write = false;
 let useLlm = false;

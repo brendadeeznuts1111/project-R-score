@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Report-only inventory of Tier-A wrapper packages in the install tree.
  *
@@ -119,7 +120,7 @@ export async function collectWrapperInventory(
 }
 
 async function main(): Promise<void> {
-  const argv = Bun.argv.slice(2);
+  const argv = applyUnknownLongOptionGuardFor('inventory:wrappers', Bun.argv.slice(2));
   const rows = await collectWrapperInventory();
 
   if (wantsJson(argv)) {

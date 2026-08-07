@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bot API package-group forum enhance (no MTProto session required).
  *
@@ -18,7 +20,9 @@ import {
 } from '../lib/telegram/partner-forum-accounting.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:package-group:accounting', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 let partnerCode = '';
 let allPartners = false;
 let dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;

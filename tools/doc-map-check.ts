@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-openineditor — Bun.openInEditor
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * doc-map-check.ts — verify platform doc SSOT paths and root/docs markdown links.
  *
@@ -170,7 +171,7 @@ function printIssues(issues: Issue[]): void {
 }
 
 async function main(): Promise<void> {
-  const argv = Bun.argv.slice(2);
+  const argv = applyUnknownLongOptionGuardFor('docs:map:check', Bun.argv.slice(2));
   const asJson = argv.includes('--json');
   const open = argv.includes('--open');
   const skipRefId = argv.includes('--skip-refid-check');

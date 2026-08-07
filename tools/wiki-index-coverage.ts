@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Keep the human wiki index aligned with the committed portal and harness
  * tenant inventories.
@@ -14,6 +15,9 @@ import { resolvePath } from '../lib/path-bun.ts';
 import { PORTAL_PAGE_CONCEPT_DEFINITIONS } from '../lib/portal/page-concepts.ts';
 import { resolveRepoRelativeHref } from './wiki-link-check.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('wiki:coverage:check', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const REPO = resolvePath(import.meta.dir, '..');
 const WIKI_INDEX = 'wiki-index.md';
 const PORTAL_HOST = 'score.factory-wager.com';
@@ -138,7 +142,7 @@ export function registryArtifactPaths(root = REPO): string[] {
 }
 
 async function main(): Promise<void> {
-  const json = Bun.argv.includes('--json');
+  const json = argv.includes('--json');
   const content = await Bun.file(resolvePath(REPO, WIKI_INDEX)).text();
   const portalPaths = PORTAL_PAGE_CONCEPT_DEFINITIONS.map(page => page.path);
   const tenantPaths = trackedTenantPaths();

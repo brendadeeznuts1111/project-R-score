@@ -22,6 +22,7 @@
  * @see {@link ../config/r2-env.ts} Cloudflare / R2 / registry URL SSOT
  */
 
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { $ } from 'bun';
 import { factoryWagerRegistryUrlFromEnv, r2BucketUrlFromEnv } from '../config/r2-env.ts';
 
@@ -96,7 +97,9 @@ export function getReleaseSteps(type: ReleaseType): ReleaseStep[] {
  * Main release function
  */
 async function main(): Promise<void> {
-  const type = Bun.argv[2] as ReleaseType;
+  // Registry key is release:major; leave form covers patch/minor/major scripts.
+  const argv = applyUnknownLongOptionGuardFor('release', Bun.argv.slice(2));
+  const type = (argv.find(a => !a.startsWith('-')) ?? Bun.argv[2]) as ReleaseType;
 
   if (!type || !['patch', 'minor', 'major'].includes(type)) {
     console.error('❌ Usage: bun run release:<patch|minor|major>');

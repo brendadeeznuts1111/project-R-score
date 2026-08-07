@@ -4,6 +4,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Post-deploy smoke for Cloudflare Pages (production or preview URL).
  *
@@ -47,8 +48,11 @@ import {
 } from '../lib/glossary/tournament-snap.ts';
 import { joinPath } from '../lib/path-bun.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('verify:pages-edge', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const BASE = Bun.env.PAGES_VERIFY_BASE?.trim() || `https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`;
-const TAXONOMY = Bun.argv.includes('--taxonomy');
+const TAXONOMY = argv.includes('--taxonomy');
 
 type Check = { name: string; ok: boolean; detail: string; tier: 'core' | 'taxonomy' };
 
@@ -223,8 +227,8 @@ async function weaveMain() {
 }
 
 async function pmMain() {
-  const strict = Bun.argv.includes('--strict-pm');
-  const shouldSave = Bun.argv.includes('--save');
+  const strict = argv.includes('--strict-pm');
+  const shouldSave = argv.includes('--save');
   console.log(`PM publish-plane verify${strict ? ' (--strict-pm)' : ''}`);
   const probes = await runPmProbes();
   const rows: WeaveProbeRow[] = probes.map(p => ({
@@ -267,7 +271,7 @@ async function pmMain() {
  *   --tournament --offline local bake only (no network)
  */
 async function tournamentMain() {
-  const offline = Bun.argv.includes('--offline');
+  const offline = argv.includes('--offline');
   console.log(`Tournament series ownership verify${offline ? ' (--offline)' : ` → ${BASE}`}`);
 
   const issues: string[] = [];
@@ -527,11 +531,11 @@ async function main() {
 }
 
 if (import.meta.main) {
-  const entry = Bun.argv.includes('--weave')
+  const entry = argv.includes('--weave')
     ? weaveMain
-    : Bun.argv.includes('--pm')
+    : argv.includes('--pm')
       ? pmMain
-      : Bun.argv.includes('--tournament')
+      : argv.includes('--tournament')
         ? tournamentMain
         : main;
   entry().catch(e => {

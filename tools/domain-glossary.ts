@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bake the portal-facing domain glossary projection.
  *
@@ -39,6 +40,9 @@ import {
 } from '../lib/telegram/partner-ops-color-kernel.ts';
 import { CATEGORY_COLOR_KEYS, PORTAL_KERNEL_PALETTE } from '../lib/portal/portal-kernel-palette.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('glossary:portal', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export const DOMAIN_GLOSSARY_SOURCE_PATH = 'Kalshi-bot/research/registry/glossary-dump.json';
 export const DOMAIN_GLOSSARY_PATH = 'public/registry/domain-glossary.json';
 export const DOMAIN_GLOSSARY_URL = '/registry/domain-glossary.json';
@@ -362,7 +366,7 @@ async function main(): Promise<void> {
   const target = joinPath(root, DOMAIN_GLOSSARY_PATH);
   const serialized = `${JSON.stringify(payload, null, 2)}\n`;
 
-  if (Bun.argv.includes('--check')) {
+  if (argv.includes('--check')) {
     if (!(await Bun.file(target).exists())) {
       console.error(`❌ missing ${DOMAIN_GLOSSARY_PATH}; run bun run glossary:portal`);
       process.exit(1);

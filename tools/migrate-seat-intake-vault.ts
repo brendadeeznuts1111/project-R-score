@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 /**
  * migrate-seat-intake-vault.ts — phase 2 migration: move plaintext seat-intake
@@ -12,13 +13,15 @@
  * @see docs/design/unified-partner-profile.md — phase 2
  */
 
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { migrateSeatIntakePasswordsToVault } from '../lib/partner-profile/register';
 
 async function main(): Promise<void> {
-  const dbFlag = process.argv.indexOf('--db');
-  const intakeFlag = process.argv.indexOf('--intake-dir');
-  const dbPath = dbFlag !== -1 ? process.argv[dbFlag + 1] : undefined;
-  const intakeDir = intakeFlag !== -1 ? process.argv[intakeFlag + 1] : undefined;
+  const argv = applyUnknownLongOptionGuardFor('partner:vault:migrate', Bun.argv.slice(2));
+  const dbFlag = argv.indexOf('--db');
+  const intakeFlag = argv.indexOf('--intake-dir');
+  const dbPath = dbFlag !== -1 ? argv[dbFlag + 1] : undefined;
+  const intakeDir = intakeFlag !== -1 ? argv[intakeFlag + 1] : undefined;
 
   const { migrated, files } = await migrateSeatIntakePasswordsToVault(dbPath, intakeDir);
   console.log(

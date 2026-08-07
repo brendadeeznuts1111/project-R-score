@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Run bun ci / bun install with documented PM env defaults (prefer `ci` in GHA):
  * - https://bun.sh/docs/pm/global-cache (BUN_INSTALL_CACHE_DIR)
@@ -13,7 +15,9 @@ import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { applyBunInstallEnv } from './lib/bun-install-env.ts';
 
 const verbose = Bun.argv.includes('--verbose') || Bun.env.BUN_INSTALL_ENV_VERBOSE === '1';
-const args = Bun.argv.slice(2).filter(a => a !== '--verbose');
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('install:all', Bun.argv.slice(2)).filter(a => a !== '--verbose')
+  : Bun.argv.slice(2);
 const env = applyBunInstallEnv();
 
 if (args.length === 0) {

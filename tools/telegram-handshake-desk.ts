@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Package-group desk — registry + known chats + handshake status.
  *
@@ -21,7 +22,9 @@ import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:handshake:desk', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 let jsonlPath = PENDING_PACKAGE_GROUPS_JSONL;
 let dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;
 let wantJson = false;

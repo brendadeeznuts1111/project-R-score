@@ -22,6 +22,7 @@ import {
   type UnifiedContractCheck,
   type UnifiedStatusSnapshot,
 } from './lib/search-status-contract';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 type Options = {
   json: boolean;
@@ -244,7 +245,9 @@ function printText(status: UnifiedStatusSnapshot): void {
 }
 
 if (import.meta.main) {
-  const options = parseArgs(Bun.argv.slice(2));
+  const options = parseArgs(
+    applyUnknownLongOptionGuardFor('search:status:unified:strict', Bun.argv.slice(2))
+  );
   const unified = await buildUnifiedStatus(options);
   if (options.json) {
     jsonOut(unified);

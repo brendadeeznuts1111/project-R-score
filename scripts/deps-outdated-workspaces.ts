@@ -4,6 +4,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Recursive outdated report across monorepo workspaces + root.
  *
@@ -22,9 +23,12 @@ import { joinPath } from '../lib/path-bun.ts';
 
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('deps:outdated', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const root = joinPath(import.meta.dir, '..');
-const json = Bun.argv.includes('--json');
-const preferLatest = Bun.argv.includes('--latest');
+const json = argv.includes('--json');
+const preferLatest = argv.includes('--latest');
 
 async function pathExists(p: string): Promise<boolean> {
   return Bun.file(p).exists();

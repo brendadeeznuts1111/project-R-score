@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/typescript-6 — types allowlist audit for TS6/7
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Audit monorepo tsconfig*.json for TypeScript 6+ types discovery.
  *
@@ -19,6 +20,9 @@ import { Glob } from 'bun';
 import { logTable } from '../lib/console-depth';
 import { dirnamePath, resolvePath } from '../lib/path-bun';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('check:tsconfig-types', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 type TsConfig = {
   compilerOptions?: { types?: string[]; lib?: string[] };
   extends?: string | string[];
@@ -264,7 +268,7 @@ export async function auditTsconfigTypes(root = resolvePath(import.meta.dir, '..
 
 if (import.meta.main) {
   const strict =
-    Bun.argv.includes('--strict') ||
+    argv.includes('--strict') ||
     Bun.env.CI === 'true' ||
     Bun.env.CI === '1' ||
     Bun.env.GITHUB_ACTIONS === 'true';

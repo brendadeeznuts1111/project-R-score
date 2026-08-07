@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/guides/util/main — import.meta.main CLI entry guard
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Partner accounting domain-trigger pipeline.
  *
@@ -96,7 +97,9 @@ export function buildTriggerEvent(trigger: string, fields: PartnerEventFields): 
   });
 }
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('partners:event', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const trigger = argv.find(a => !a.startsWith('-'));
 const wantJson = argv.includes('--json');
 const dryRun = argv.includes('--dry-run');

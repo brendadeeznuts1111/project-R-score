@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Generate decision-table Markdown from docs/packages/docs-index.json.
  *
@@ -19,6 +21,9 @@
  */
 import { resolvePath } from './lib/fs-bun';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('packages:docs-index', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = resolvePath();
 const INDEX_PATH = resolvePath(ROOT, 'docs/packages/docs-index.json');
 const README_PATH = resolvePath(ROOT, 'docs/packages/README.md');
@@ -53,8 +58,8 @@ type DocsIndex = {
 
 type BumpSpec = { date: string; ids: 'all' | string[] };
 
-const WRITE = Bun.argv.includes('--write') || !Bun.argv.includes('--check');
-const CHECK = Bun.argv.includes('--check');
+const WRITE = argv.includes('--write') || !argv.includes('--check');
+const CHECK = argv.includes('--check');
 
 /** Parse --bump-verified[=DATE][=:ids] or space forms. */
 function parseBumpVerified(argv: string[]): BumpSpec | null {

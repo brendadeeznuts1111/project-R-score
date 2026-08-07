@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * List deprecated runtime flags from the catalog (removal planning).
  *
@@ -10,7 +11,10 @@
 import { RUNTIME_FLAGS_CATALOG_PATH, loadRuntimeFlagsCatalog } from './lib/portal-cli-bun-flags.ts';
 import { cliTone, columnTable, frameBlock } from '../lib/portal/cli-chrome.ts';
 
-const json = Bun.argv.includes('--json');
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('portal:flags:migrate', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
+const json = argv.includes('--json');
 const catalog = await loadRuntimeFlagsCatalog();
 const deprecated = catalog.filter(r => r.deprecated);
 

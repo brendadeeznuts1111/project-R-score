@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Report seat-capital desk book labels vs public bookmakers registry.
  *
@@ -15,16 +16,19 @@ import {
 import { loadBookmakerRegistry } from '../lib/bookmakers/resolve.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('bookmakers:desk-coverage', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const DESK_PATH = 'public/registry/seat-capital-desk.json';
 const REGISTRY_PATH = 'public/registry/bookmakers.json';
 const ARTIFACT_PUBLIC = 'artifact-registry/bookmakers/v0.4.0/public/books.json';
 const COVERAGE_BAKE = 'public/registry/bookmakers-desk-coverage.json';
 
 async function main(): Promise<void> {
-  const asJson = Bun.argv.includes('--json');
-  const applyMax = Bun.argv.includes('--apply-max');
-  const strict = Bun.argv.includes('--strict');
-  const writeBake = !Bun.argv.includes('--no-write');
+  const asJson = argv.includes('--json');
+  const applyMax = argv.includes('--apply-max');
+  const strict = argv.includes('--strict');
+  const writeBake = !argv.includes('--no-write');
 
   if (!(await Bun.file(DESK_PATH).exists())) {
     console.error(`missing ${DESK_PATH} — run seat:desk:refresh / ops:snapshot`);

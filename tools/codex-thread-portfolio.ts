@@ -8,6 +8,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see `codex app-server generate-json-schema --experimental` — thread/name/set
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Audit and apply the curated Project R Codex thread portfolio.
  *
@@ -71,12 +72,7 @@ export type ThreadLane =
   | 'tooling';
 
 export type ThreadQuality =
-  | 'production'
-  | 'verified'
-  | 'review-required'
-  | 'analysis-only'
-  | 'blocked'
-  | 'empty';
+  'production' | 'verified' | 'review-required' | 'analysis-only' | 'blocked' | 'empty';
 
 export type ThreadTitleTransport = 'app-server' | 'state-only';
 
@@ -582,10 +578,9 @@ export function readLocalThreadStatuses(
   const database = new Database(stateDatabasePath, { readonly: true });
   try {
     const rows = database
-      .query<
-        LocalThreadRow,
-        [string]
-      >('SELECT id AS opaqueKey, title, is_pinned AS isPinned FROM threads WHERE cwd = ?')
+      .query<LocalThreadRow, [string]>(
+        'SELECT id AS opaqueKey, title, is_pinned AS isPinned FROM threads WHERE cwd = ?'
+      )
       .all(portfolio.scope.cwd);
     const byOpaqueKey = new Map(rows.map(row => [row.opaqueKey, row]));
     return new Map(
@@ -630,10 +625,9 @@ export function inspectThreadInventory(
   const database = new Database(stateDatabasePath, { readonly: true });
   try {
     const rows = database
-      .query<
-        InventoryThreadRow,
-        [string]
-      >('SELECT id AS opaqueKey, created_at AS createdAt, source, thread_source AS threadSource FROM threads WHERE cwd = ?')
+      .query<InventoryThreadRow, [string]>(
+        'SELECT id AS opaqueKey, created_at AS createdAt, source, thread_source AS threadSource FROM threads WHERE cwd = ?'
+      )
       .all(portfolio.scope.cwd);
     const rootRows = rows
       .filter(row => row.source === 'vscode' || row.threadSource === 'user')
@@ -902,7 +896,11 @@ Options:
 }
 
 async function main(): Promise<void> {
-  const args = new Set(Bun.argv.slice(2).filter(argument => argument !== '--'));
+  const args = new Set(
+    applyUnknownLongOptionGuardFor('threads:portfolio', Bun.argv.slice(2)).filter(
+      argument => argument !== '--'
+    )
+  );
   if (args.has('--help')) {
     printHelp();
     return;

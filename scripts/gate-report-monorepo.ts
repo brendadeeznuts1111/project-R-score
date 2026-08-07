@@ -1,9 +1,12 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Run gate-map projects and emit monorepo HTML + JSON dashboard.
  *
@@ -41,7 +44,7 @@ function printUsage(): void {
 }
 
 async function main(): Promise<number> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('gate-report:monorepo', Bun.argv.slice(2));
   if (args.includes('--help') || args.includes('-h')) {
     printUsage();
     return 0;

@@ -21,6 +21,7 @@
  *   GET /api/domains         per-domain rollup (count, used, unused)
  *   GET /api/proposals       pending lifecycle proposals ([] when bake absent)
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { colorize } from '../lib/console-depth.ts';
 import {
   countPortalConceptUsagesDetailed,
@@ -31,7 +32,9 @@ import {
   type PortalSemanticConcept,
 } from '../lib/portal/semantic-vocabulary.ts';
 import { conceptCorrelationId, conceptDomain } from './validate-concept-metadata.ts';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('concept:serve', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const DEFAULT_PORT = 3042;
 const PROPOSALS_PATH = `${import.meta.dir}/concept-lifecycle.json`;
 const USAGE_CACHE_MS = 30_000;

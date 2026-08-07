@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * branded-id-check.ts — detector for unbranded ID declarations.
  *
@@ -135,11 +136,7 @@ async function fieldMaps(): Promise<FieldMaps> {
 }
 
 type StructuralKind =
-  | 'function-param'
-  | 'ingress-type-property'
-  | 'dto-property'
-  | 'object-literal'
-  | 'unknown';
+  'function-param' | 'ingress-type-property' | 'dto-property' | 'object-literal' | 'unknown';
 
 type Hit = {
   file: string;
@@ -854,7 +851,7 @@ Coverage: bun tools/brand-coverage.ts --attention`);
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('brand:baseline', Bun.argv.slice(2));
   if (args.includes('--help') || args.includes('-h')) {
     printHelp();
     return;

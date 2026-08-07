@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Baseline multi-tier sync CLI.
  *
@@ -173,7 +174,7 @@ async function syncAll(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('baseline:apply-overrides', Bun.argv.slice(2));
   const cmd = args[0] ?? 'status';
   const asJson = args.includes('--json');
   const live = args.includes('--live');

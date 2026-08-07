@@ -7,6 +7,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 import { jsonOut } from '../lib/console-depth.ts';
 import { ensureDir } from './lib/fs-bun.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 const PROFILE_DIRECTORY = 'reports/limit-forecast-lab/profiles';
 
@@ -15,7 +16,7 @@ function runKey(): string {
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('ops:limits:lab:profile', Bun.argv.slice(2));
   const iterations = args.find(value => value.startsWith('--bench=')) ?? '--bench=2500';
   const key = runKey();
   const profileName = `limit_forecast_${key}`;

@@ -4,6 +4,7 @@
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/guides/process/argv — Bun.argv
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Seed a full account-dossier demo (ASH tree + optional limit-demo) and bake.
  *
@@ -26,6 +27,9 @@ import {
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import { buildAccountDossier } from '../public/portal/account/account-dossier.js';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:dossier:seed', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 async function dossierCompleteness(
   accountId: string, // brand-ok — TreeNodeId wire for CLI summary
   bakePath: string | undefined,
@@ -70,10 +74,10 @@ function basenameNoExt(path: string): string {
   return i > 0 ? base.slice(0, i) : base;
 }
 
-const force = Bun.argv.includes('--force');
-const bake = Bun.argv.includes('--bake') || !Bun.argv.includes('--no-bake');
-const includeLimitDemo = Bun.argv.includes('--include-limit-demo');
-const refreshOpsSummary = Bun.argv.includes('--ops-summary') || bake;
+const force = argv.includes('--force');
+const bake = argv.includes('--bake') || !argv.includes('--no-bake');
+const includeLimitDemo = argv.includes('--include-limit-demo');
+const refreshOpsSummary = argv.includes('--ops-summary') || bake;
 const dbArg = Bun.argv.find(a => a.startsWith('--db='))?.slice('--db='.length);
 const lookbackArg = Bun.argv.find(a => a.startsWith('--hours='))?.slice('--hours='.length);
 const bakePathArg = Bun.argv.find(a => a.startsWith('--bake-path='))?.slice('--bake-path='.length);

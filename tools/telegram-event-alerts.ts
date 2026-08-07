@@ -11,6 +11,7 @@
 import { colorize, logTable } from '../lib/console-depth.ts';
 import { registerOsCron, removeOsCron } from '../lib/harness/cron.ts';
 import { runEventAlerts } from '../lib/telegram/event-alerts.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 export const EVENT_ALERTS_SCHEDULE = Bun.env.EVENT_ALERTS_SCHEDULE ?? '*/5 * * * *';
 export const EVENT_ALERTS_TITLE = 'telegram-event-alerts';
@@ -37,7 +38,9 @@ function parseArgv(
 }
 
 async function main(): Promise<void> {
-  const opts = parseArgv(Bun.argv.slice(2));
+  const opts = parseArgv(
+    applyUnknownLongOptionGuardFor('telegram:event-alerts', Bun.argv.slice(2))
+  );
   if (!opts) {
     console.log(`Usage: bun tools/telegram-event-alerts.ts <run|register|remove> [options]
 Options: --schedule <cron> · --title <name> · --baseline`);

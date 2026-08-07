@@ -2514,7 +2514,12 @@
     "agent:movements": "bun tools/operator-agent.ts movements --minPct 1",
     "agent:arb": "bun tools/operator-agent.ts arb --minEdgePct 1.5",
     "agent:alerts": "bun tools/operator-agent.ts alerts --evaluate",
-    "agent:registry:live-smoke": "bun scripts/agent-registry-live-smoke.ts"
+    "agent:registry:live-smoke": "bun scripts/agent-registry-live-smoke.ts",
+    "cli:allowlist:coverage": "bun scripts/cli-allowlist-coverage.ts",
+    "cli:allowlist:coverage:write": "bun scripts/cli-allowlist-coverage.ts --write",
+    "cli:allowlist:plan": "bun scripts/cli-allowlist-team-plan.ts --write",
+    "cli:allowlist:apply-registry": "bun scripts/cli-allowlist-apply-registry.ts --write",
+    "cli:allowlist:wire": "bun scripts/cli-allowlist-wire-batch.ts"
   },
   "private": "false",
   "files": [

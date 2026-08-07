@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables — bun build --compile
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * vault-cli — single entry for secret gap status / mint / export (compile-friendly).
  *
@@ -22,7 +24,9 @@ import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { inspect } from '../lib/console-depth.ts';
 import { getGapList, getVaultGapReport, secretRatchetOk } from '../scripts/lib/vault-gap-status.ts';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('vault:cli', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const cmd = argv[0] ?? 'status';
 
 async function runStatus(): Promise<number> {

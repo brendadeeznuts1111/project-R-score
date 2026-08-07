@@ -14,6 +14,7 @@
  *
  * @see lib/glossary/tournament-snap.ts
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { colorize, jsonOut } from '../lib/console-depth.ts';
 import {
   KNOWN_TOURNAMENT_KEYS,
@@ -48,7 +49,9 @@ export function positionalSnaps(argv: readonly string[]): string[] {
 }
 
 async function main(): Promise<void> {
-  const argv = Bun.argv;
+  const guarded = applyUnknownLongOptionGuardFor('verify:tournament-glossary', Bun.argv.slice(2));
+  // positionalSnaps expects full process.argv shape (flags/positionals from index 2).
+  const argv = [Bun.argv[0]!, Bun.argv[1]!, ...guarded];
   const asJson = argv.includes('--json');
   const listKnown = argv.includes('--list-known');
 

@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Probe Cloudflare remote MCP HTTP endpoints (auth + reachability).
  *
@@ -16,6 +17,9 @@
  */
 import { jsonOut } from '../lib/console-depth.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('mcp:cloudflare:probe', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ENDPOINTS = [
   { id: 'cloudflare', url: 'https://mcp.cloudflare.com/mcp' },
   { id: 'cloudflare-docs', url: 'https://docs.mcp.cloudflare.com/mcp' },
@@ -75,7 +79,7 @@ async function probeOne(
 }
 
 async function main(): Promise<void> {
-  const json = Bun.argv.includes('--json');
+  const json = argv.includes('--json');
   const token = Bun.env.CLOUDFLARE_API_TOKEN?.trim();
   if (!token) {
     console.error(

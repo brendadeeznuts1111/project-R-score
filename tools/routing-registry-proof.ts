@@ -32,7 +32,9 @@ import {
 
 export { ROUTING_REGISTRY_PROOF_ALLOWED_LONG };
 
-const argv = applyUnknownLongOptionGuardFor('routing:registry-proof', Bun.argv.slice(2));
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('routing:registry-proof', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const writeLocal = argv.includes('--write');
 const publishRemote = argv.includes('--publish');
 const jsonOnly = argv.includes('--json');

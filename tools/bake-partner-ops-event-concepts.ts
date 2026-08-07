@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bake static portal event-code → event.* map from TS glossary SSOT.
  *
@@ -13,6 +14,10 @@
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('partners:event-concepts:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   PARTNER_OPS_EVENT_CODES,
   PARTNER_OPS_EVENT_GLOSSARY,
@@ -90,7 +95,7 @@ export async function bakePartnerOpsEventConcepts(
 }
 
 if (isModuleEntrypoint(import.meta)) {
-  const check = Bun.argv.includes('--check');
+  const check = argv.includes('--check');
   try {
     const result = await bakePartnerOpsEventConcepts({ check });
     if (check) {

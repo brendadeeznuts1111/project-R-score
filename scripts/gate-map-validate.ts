@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Validate gate-map.json and print the project tree.
  *
@@ -24,7 +25,7 @@ function printUsage(): void {
 }
 
 async function main(): Promise<number> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('gate-map:validate', Bun.argv.slice(2));
   if (args.includes('--help') || args.includes('-h')) {
     printUsage();
     return 0;

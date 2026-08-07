@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/networking/fetch — fetch
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Ops summary endpoint diagnosis — shape, DB, snapshot freshness, routing drift.
  *
@@ -218,7 +220,7 @@ function printHuman(report: DiagnoseReport): void {
 }
 
 async function main(): Promise<void> {
-  const opts = parseArgs(process.argv.slice(2));
+  const opts = parseArgs(applyUnknownLongOptionGuardFor('ops:diagnose', Bun.argv.slice(2)));
   const report = await runDiagnose(opts);
   if (opts.json) {
     jsonOut(report);

@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Monorepo-health continuous gate — unit tests + score ratchet + schema.
  *
@@ -27,13 +28,16 @@ import { parseHealthReportSchemaIssues } from '../lib/harness/monorepo-health-ui
 import { joinPath } from '../lib/path-bun.ts';
 import { jsonOut, logDepth } from '../lib/console-depth.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('check:monorepo-health', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = process.cwd();
 const BASELINE_PATH = joinPath(ROOT, 'scripts/monorepo-health-baseline.json');
-const WRITE_BASELINE = Bun.argv.includes('--write-baseline');
-const TESTS_ONLY = Bun.argv.includes('--tests-only');
-const JSON_OUT = Bun.argv.includes('--json');
-const NO_HISTORY = Bun.argv.includes('--no-history') || Bun.env.CI === 'true';
-const NO_WRITE = Bun.argv.includes('--no-write');
+const WRITE_BASELINE = argv.includes('--write-baseline');
+const TESTS_ONLY = argv.includes('--tests-only');
+const JSON_OUT = argv.includes('--json');
+const NO_HISTORY = argv.includes('--no-history') || Bun.env.CI === 'true';
+const NO_WRITE = argv.includes('--no-write');
 
 export type MonorepoHealthBaseline = {
   formulaVersion: number;
@@ -157,9 +161,8 @@ async function main(): Promise<void> {
     await writeMonorepoHealthArtifacts(report, { archive: false });
     // Pages-facing registry bake (ops-summary + TOC + /api/health consume this).
     try {
-      const { reportToRegistryBake, MONOREPO_HEALTH_REGISTRY_REL } = await import(
-        '../lib/monitoring/monorepo-health-slice.ts'
-      );
+      const { reportToRegistryBake, MONOREPO_HEALTH_REGISTRY_REL } =
+        await import('../lib/monitoring/monorepo-health-slice.ts');
       const bake = reportToRegistryBake(report);
       await Bun.write(
         joinPath(ROOT, MONOREPO_HEALTH_REGISTRY_REL),

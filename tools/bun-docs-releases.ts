@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/nodejs-compat#fetch — fetch
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bun-docs-releases.ts — Phase 0 + 2b: RSS release index & release blog scrape.
  *
@@ -859,7 +861,7 @@ async function runScrape(force: boolean, limit?: number): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('docs:release-index', Bun.argv.slice(2));
   const sub = args[0] === 'scrape' ? 'scrape' : 'index';
   const force = args.includes('--force');
   if (sub === 'scrape') {

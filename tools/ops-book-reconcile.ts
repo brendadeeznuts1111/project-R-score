@@ -1,14 +1,18 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/webview
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /** CLI: scrape sportsbook balances and reconcile vs sb_accounts. */
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { runBookReconciliation } from '../lib/operations/book-reconcile.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
-const json = Bun.argv.includes('--json');
-const live = Bun.argv.includes('--live');
-const webview = Bun.argv.includes('--webview');
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:book-reconcile', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
+const json = argv.includes('--json');
+const live = argv.includes('--live');
+const webview = argv.includes('--webview');
 
 const db = openOperationsDb();
 const result = await runBookReconciliation(db, { live, webview });

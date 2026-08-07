@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/networking/fetch — Bun.fetch
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Safe-by-default GitHub issue audit and label synchronization.
  *
@@ -291,7 +292,9 @@ async function runSyncLabels(
 }
 
 async function main(): Promise<number> {
-  const args = parseGithubIssueToolArgs(Bun.argv.slice(2));
+  const args = parseGithubIssueToolArgs(
+    applyUnknownLongOptionGuardFor('issues:audit', Bun.argv.slice(2))
+  );
   const repository = resolveGitHubRepositoryRef({ remote: 'origin' });
   const network = parseGithubIssueToolNetwork(args.apiUrl, Bun.env);
   return args.command === 'audit'

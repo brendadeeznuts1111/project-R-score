@@ -11,6 +11,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 // @see https://bun.com/docs/guides/util/which-path-to-executable-bin — Bun.which
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Soft bake CLI — Factory registry export from Soft / toc-ops fixture.
  *
@@ -39,6 +40,10 @@ import {
 import { joinPath } from '../lib/path-bun.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import type { TocOpsSnapshot } from '../lib/toc-ops/types.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('soft:accounting:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   SOFT_ACCOUNTING_EXPORT_REL,
   SOFT_ACCOUNTING_EXPORT_SCHEMA,
@@ -303,10 +308,10 @@ export async function importSoftAccountingExportFromCt(options: { force?: boolea
 
 // Direct CLI entry (entrypoint guide) — not when this module is imported by tests.
 if (isModuleEntrypoint(import.meta)) {
-  const check = Bun.argv.includes('--check');
-  const fromCt = Bun.argv.includes('--from-ct');
-  const force = Bun.argv.includes('--force');
-  const wantJson = Bun.argv.includes('--json');
+  const check = argv.includes('--check');
+  const fromCt = argv.includes('--from-ct');
+  const force = argv.includes('--force');
+  const wantJson = argv.includes('--json');
   try {
     const result = fromCt
       ? await importSoftAccountingExportFromCt({ force })

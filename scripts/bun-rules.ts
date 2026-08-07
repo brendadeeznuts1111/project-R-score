@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/yaml — Bun.YAML
@@ -10,6 +11,7 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * FACTORYWAGER RIPGREP v4.0 - Rules Engine
  *
@@ -419,7 +421,7 @@ class RulesEngine {
 // ============================================================================
 
 async function main() {
-  const [command, ...args] = Bun.argv.slice(2);
+  const [command, ...args] = applyUnknownLongOptionGuardFor('rules', Bun.argv.slice(2));
   const engine = new RulesEngine();
 
   switch (command) {

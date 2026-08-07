@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * lane-status.ts — read-only lane / worktree / branch / bake-drift reporter.
  *
@@ -22,7 +23,7 @@ import { parseGitStatusPorcelain, type GitStatusEntry } from '../scripts/lib/git
 
 export {};
 
-const JSON_MODE = Bun.argv.includes('--json');
+const JSON_MODE = argv.includes('--json');
 const STALE_HOURS = 48;
 
 async function git(
@@ -41,6 +42,9 @@ async function git(
   return preserveLeadingWhitespace ? out.trimEnd() : out.trim();
 }
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('lane:status', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = await git(['rev-parse', '--show-toplevel']);
 if (!ROOT) {
   console.error('lane-status: not inside a git work tree');

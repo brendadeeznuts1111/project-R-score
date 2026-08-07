@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // @see https://bun.com/docs/runtime/file-io — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bake top-10 US sportsbook opening-limit baseline for portal boards.
  *
@@ -11,6 +12,10 @@
 
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('bake:sportsbook-opening-baseline', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   SPORTSBOOK_OPENING_BASELINE_PATH,
   buildSportsbookOpeningBaselineArtifact,
@@ -24,7 +29,7 @@ async function main(): Promise<void> {
   const payload = buildSportsbookOpeningBaselineArtifact();
   const serialized = `${JSON.stringify(payload, null, 2)}\n`;
 
-  if (Bun.argv.includes('--check')) {
+  if (argv.includes('--check')) {
     if (!(await Bun.file(target).exists())) {
       console.error(`❌ missing ${RELATIVE_PATH}; run bun run bake:sportsbook-opening-baseline`);
       process.exit(1);

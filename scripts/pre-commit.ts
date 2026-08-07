@@ -8,6 +8,7 @@
 // @see https://bun.com/docs/runtime/shell — Bun Shell
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /** Bun-native Husky pre-commit orchestration. */
 
 import { $ } from 'bun';
@@ -154,7 +155,9 @@ async function gitLines(args: string[]): Promise<string[]> {
     .filter(Boolean);
 }
 
-export async function runPrecommit(args: string[] = Bun.argv.slice(2)): Promise<number> {
+export async function runPrecommit(
+  args: string[] = applyUnknownLongOptionGuardFor('precommit', Bun.argv.slice(2))
+): Promise<number> {
   const dryRun = args.includes('--dry-run');
   const environment = readPrecommitEnvironment();
 

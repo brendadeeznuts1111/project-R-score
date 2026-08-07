@@ -45,7 +45,9 @@ const DEMO_USERS: { slug: string; role: IdentityRole; name: string; telegram: st
 
 // ── Arg parsing ──────────────────────────────────────────────────────────
 
-const args = applyUnknownLongOptionGuardFor('identity:admin', Bun.argv.slice(2));
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('identity:admin', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const sub = args[0];
 
 function flagValue(name: string): string | undefined {

@@ -43,7 +43,9 @@ import { withIndexTree } from './lib/index-tree.ts';
 
 const ROOT = process.cwd();
 const BASELINE_PATH = `${ROOT}/scripts/console-format-baseline.json`;
-const argv = applyUnknownLongOptionGuardFor('check:console-format', Bun.argv.slice(2));
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('check:console-format', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const WRITE_BASELINE = argv.includes('--write-baseline');
 const STAGED = argv.includes('--staged');
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Run one registered Tier 4 book agent by bookId.
  *
@@ -42,7 +43,9 @@ export async function runBookCli(
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2).filter(a => !a.startsWith('--'));
+  const args = applyUnknownLongOptionGuardFor('baseline:scrape-bet365', Bun.argv.slice(2)).filter(
+    a => !a.startsWith('--')
+  );
   const bookId = args[0];
   if (!bookId) {
     console.error(

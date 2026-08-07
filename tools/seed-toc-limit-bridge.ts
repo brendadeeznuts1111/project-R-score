@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/guides/process/argv — Bun.argv
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Seed sportsbook limit raises on TOC identity treeNodeIds (ASH/PAT by default).
  *
@@ -28,10 +30,13 @@ import {
 } from '../lib/toc-ops/limit-raises-join.ts';
 import { loadTocOpsSnapshotSync } from '../lib/toc-ops/export-snapshot.ts';
 
-const force = Bun.argv.includes('--reseed');
-const bake = Bun.argv.includes('--bake');
-const noCapture = Bun.argv.includes('--no-capture');
-const prove = !Bun.argv.includes('--no-prove');
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:limits:seed-toc-bridge', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
+const force = argv.includes('--reseed');
+const bake = argv.includes('--bake');
+const noCapture = argv.includes('--no-capture');
+const prove = !argv.includes('--no-prove');
 
 const db = openOperationsDb();
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Smart Search (Optimized Phase 2)
  * Hybrid code search with streaming, concurrent processing, and intelligent caching
@@ -1386,7 +1387,7 @@ function readinessToStatusLevel(value: string | undefined): StatusLevel {
 // ============================================================================
 
 async function main(): Promise<void> {
-  const parsed = parseArgs(Bun.argv.slice(2));
+  const parsed = parseArgs(applyUnknownLongOptionGuardFor('search:smart', Bun.argv.slice(2)));
   if (!parsed) return;
 
   const { query, options } = parsed;
@@ -1464,7 +1465,9 @@ async function main(): Promise<void> {
         heapUsedMB: Number((mem.heapUsed / (1024 * 1024)).toFixed(2)),
         heapTotalMB: Number((mem.heapTotal / (1024 * 1024)).toFixed(2)),
         externalMB: Number((mem.external / (1024 * 1024)).toFixed(2)),
-        arrayBuffersMB: Number((((mem as any).arrayBuffers || 0) / (1024 * 1024)).toFixed(2)),
+        arrayBuffersMB: Number(
+          (((mem as Record<string, unknown>).arrayBuffers || 0) / (1024 * 1024)).toFixed(2)
+        ),
       },
       cache: { enabled: options.cacheEnabled, size: globalSearchCache.size },
       hits,

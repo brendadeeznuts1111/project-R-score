@@ -1,10 +1,12 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --verify
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Generate portal tenant icons — SVG copy + Bun.Image WebP sizes (no WebView).
  *
@@ -407,7 +409,7 @@ export async function verifyPortalIcons(outRoot: string = OUT): Promise<{
 }
 
 if (import.meta.main) {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('icons:generate', Bun.argv.slice(2));
   if (args.includes('--verify')) {
     const { ok, errors } = await verifyPortalIcons();
     if (!ok) {

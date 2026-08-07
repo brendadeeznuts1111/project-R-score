@@ -43,6 +43,7 @@
  *   CONCEPT_INVENTORY_SORT             ≡ --sort
  *   CONCEPT_INVENTORY_DESC=1           ≡ --desc
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { randomUUIDv7 } from 'bun';
 import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
 import { inferDomain, isConceptDomain } from '../lib/portal/concept-domains.ts';
@@ -368,7 +369,8 @@ export function conceptRowsToMarkdown(rows: readonly ConceptInventoryRow[]): str
 }
 
 async function main(): Promise<void> {
-  const opts = parseConceptInventoryOptions();
+  const argv = applyUnknownLongOptionGuardFor('concept:inventory', Bun.argv.slice(2));
+  const opts = parseConceptInventoryOptions(argv);
   if (opts.help) {
     printHelp();
     return;

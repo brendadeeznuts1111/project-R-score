@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals (stable twin of fingerprint)
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bake portal doctor state → public/registry/doctor-state.json
  *
@@ -27,6 +28,10 @@
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { dirnamePath, ensureDir, joinPath, resolvePath } from '../scripts/lib/fs-bun.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('bake:doctor', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   runPortalDoctor,
   type PortalDoctorOpts,
@@ -656,12 +661,12 @@ export function shouldEmitDoctorStateCheckReport(forceReport: boolean): boolean 
 }
 
 if (isModuleEntrypoint(import.meta)) {
-  const full = Bun.argv.includes('--full');
-  const check = Bun.argv.includes('--check');
+  const full = argv.includes('--full');
+  const check = argv.includes('--check');
   // Portable fingerprint is default; --no-portable includes infra|gates in hash.
-  const portable = !Bun.argv.includes('--no-portable');
+  const portable = !argv.includes('--no-portable');
   // Explicit --report, or auto when GITHUB_ACTIONS / GITHUB_STEP_SUMMARY set.
-  const forceReport = Bun.argv.includes('--report');
+  const forceReport = argv.includes('--report');
   if (check) {
     const result = await checkDoctorState({ full, portable });
     if (shouldEmitDoctorStateCheckReport(forceReport)) {

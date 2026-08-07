@@ -9,6 +9,7 @@
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/utils#bun-resolvesync — Bun.resolveSync
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bun-types-inventory.ts — **deep** inventory of pinned `bun-types`:
  *
@@ -1656,7 +1657,7 @@ Usage:
 }
 
 async function main(): Promise<void> {
-  const args = parseCli(Bun.argv.slice(2));
+  const args = parseCli(applyUnknownLongOptionGuardFor('bun:types-inventory', Bun.argv.slice(2)));
   if (args.help) {
     printHelp();
     return;

@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * verify-package-info.ts — Verify package metadata + README from npm and custom registry.
  *
@@ -15,8 +17,11 @@
 import { CryptoHasher, inspect } from 'bun';
 import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const SAVE_PATH = 'public/registry/package-info.json';
-const SHOULD_SAVE = process.argv.includes('--save');
+const SHOULD_SAVE = argv.includes('--save');
 const LOCAL = Bun.env.REGISTRY_URL || 'http://localhost:3000';
 
 type PkgCheck = { name: string; registry: string; version: string; readme: string; ok: boolean };

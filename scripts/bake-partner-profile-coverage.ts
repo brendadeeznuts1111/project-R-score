@@ -6,7 +6,11 @@ import {
   PARTNER_PROFILE_COVERAGE_INPUT_REF,
   buildPartnerProfileCoverageArtifact,
 } from '../packages/partners/src/adapters/profile-coverage.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('partner-profile:coverage:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const outputPath = `public${PARTNER_PROFILE_COVERAGE_INPUT_REF}`;
 
 const { profiles, issues } = await loadAllProfiles();
@@ -20,7 +24,7 @@ if (issues.length > 0) {
 const artifact = buildPartnerProfileCoverageArtifact(profiles, new Date().toISOString());
 const body = `${JSON.stringify(artifact, null, 2)}\n`;
 
-if (Bun.argv.includes('--check')) {
+if (argv.includes('--check')) {
   const current = await Bun.file(outputPath)
     .json()
     .catch(() => null);

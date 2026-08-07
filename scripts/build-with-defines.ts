@@ -1,4 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --compile
+// @see https://bun.com/docs/bundler/bytecode#combining-with-other-optimizations — --minify
+// @see https://bun.com/docs/bundler/minifier#granular-control — --minify-syntax
+// @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --outfile
 // @see https://bun.com/docs/bundler/index#basic-example — Bun.build
 // @see https://bun.com/docs/guides/runtime/build-time-constants
 // @see https://bun.com/docs/guides/runtime/define-constant
@@ -13,10 +19,13 @@
  *
  * Runtime config stays Bun.env. Do not put secrets in --define.
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun';
 import { hasFlag } from './lib/cli-args';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('build:defines', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = joinPath(import.meta.dir, '..');
 const ENTRY = joinPath(ROOT, 'tools/fw-build-info.ts');
 const OUTDIR = joinPath(ROOT, 'dist');

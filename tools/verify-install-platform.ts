@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Project-scoped bun install platform verification.
  *
@@ -25,11 +26,14 @@ import { runProjectInstallPlatformVerification } from '../lib/verification/insta
 import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification/subsystem.ts';
 import type { VerificationResult } from '../lib/verification/types.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export const SAVE_PATH = 'public/registry/install-platform.json';
 
-const asJson = Bun.argv.includes('--json');
-const dryRun = Bun.argv.includes('--dry-run');
-const shouldSave = Bun.argv.includes('--save');
+const asJson = argv.includes('--json');
+const dryRun = argv.includes('--dry-run');
+const shouldSave = argv.includes('--save');
 
 const semanticTags = await buildSemanticTags('runtime');
 const report = await runProjectInstallPlatformVerification({ dryRun });

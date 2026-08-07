@@ -1,5 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Create a house forum via MTProto user session, then bind + brand via Bot API.
  *
@@ -31,7 +34,9 @@ const ICON_BY_SURFACE: Record<HouseForumSurfaceSlug, string> = {
   sandbox: 'SBX',
 };
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:all-accounting:create', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 let surfaces: HouseForumSurfaceSlug[] = [];
 let chatId = '';
 let bindOnly = false;

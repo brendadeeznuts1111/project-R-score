@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 // @see https://bun.com/docs/runtime/http/server#reference — Server
 // @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
@@ -299,7 +301,7 @@ function showHelp(): void {
  * Main CLI handler
  */
 async function main(): Promise<void> {
-  const args = process.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('status:matrix', Bun.argv.slice(2));
   const command = args[0];
 
   // Parse options

@@ -1,9 +1,11 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/bunx — bunx (args after bin name; --bun before package)
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Coverage prediction backtest CLI (`package.json` → `ops:prediction`).
  *
@@ -25,7 +27,9 @@ import { evaluateShadow, shadowLog } from '../lib/experiments/champion-challenge
 import { jsonOut } from '../lib/console-depth.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
-const args = process.argv.slice(2);
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:prediction', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const json = args.includes('--json');
 const cmd = args.find(a => !a.startsWith('-')) ?? 'help';
 

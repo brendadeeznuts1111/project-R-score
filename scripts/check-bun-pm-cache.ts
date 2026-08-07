@@ -4,6 +4,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/pm/cli/pm#cache — bun pm cache
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Health gate: `bun pm cache` path must match the effective Bun install cache
  * directory (BUN_INSTALL_CACHE_DIR or the default `~/.bun/install/cache`),
@@ -16,10 +17,13 @@ import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-bi
 import { resolveBunInstallCacheDir } from './lib/bun-install-env.ts';
 import { formatBytes } from './lib/format.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('check:bun-pm-cache', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = `${import.meta.dir}/..`;
-const strict = Bun.argv.includes('--strict');
-const json = Bun.argv.includes('--json');
-const quiet = Bun.argv.includes('--quiet');
+const strict = argv.includes('--strict');
+const json = argv.includes('--json');
+const quiet = argv.includes('--quiet');
 
 type Check = { ok: boolean; label: string; detail?: string };
 

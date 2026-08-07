@@ -16,13 +16,18 @@ import { colorize, logTable } from '../lib/console-depth.ts';
 import { conceptRegistryFetch } from '../lib/concept-registry/api.ts';
 import { migrateConceptRegistry } from '../lib/concept-registry/migrate.ts';
 import { openConceptRegistryDb } from '../lib/concept-registry/schema.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('concept:registry:serve', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 
 const port = PORTS.CONCEPT_REGISTRY;
 const hostname = '127.0.0.1';
 const dbPath = Bun.env.CONCEPT_REGISTRY_DB ?? 'data/concept-registry.db';
 
 const db = openConceptRegistryDb(dbPath);
-const scanUsage = !Bun.argv.includes('--no-scan');
+const scanUsage = !argv.includes('--no-scan');
 const summary = await migrateConceptRegistry(db, { scanUsage });
 
 logTable(

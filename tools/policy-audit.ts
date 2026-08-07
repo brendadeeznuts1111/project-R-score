@@ -5,10 +5,14 @@ import {
   auditRegulationPolicyCatalog,
   REGULATION_POLICY_CATALOG,
 } from '../lib/operations/regulation-policy-catalog.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('policy:audit', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const report = auditRegulationPolicyCatalog();
 
-if (Bun.argv.includes('--json')) {
+if (argv.includes('--json')) {
   jsonOut(report);
 } else {
   console.log(

@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Read-only brand coverage report.
  *
@@ -56,11 +57,7 @@ export type BrandCoverageRow = {
 };
 
 export type ProjectBrandAdoptionStatus =
-  | 'adopted'
-  | 'local-pattern'
-  | 'types-only'
-  | 'governed-no-usage'
-  | 'external-or-untracked';
+  'adopted' | 'local-pattern' | 'types-only' | 'governed-no-usage' | 'external-or-untracked';
 
 export type ProjectBrandAdoptionRow = {
   project: string;
@@ -483,7 +480,7 @@ function printRows(rows: readonly BrandCoverageRow[], attentionOnly: boolean): v
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('brand:coverage', Bun.argv.slice(2));
   const root = new URL('..', import.meta.url).pathname.replace(/\/$/, '');
   const files = await loadBrandConsumerFiles(root);
   const rows = analyzeBrandCoverage(files);

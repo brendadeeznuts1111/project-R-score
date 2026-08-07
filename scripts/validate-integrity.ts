@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Gated integrity checks after bun-migrate apply phases.
  *
@@ -34,7 +36,7 @@ function parseSection(args: string[]): MigrateSection[] | 'all' {
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('validate:integrity', Bun.argv.slice(2));
   const sections = parseSection(args);
   const rootsRaw = flagValue(args, '--roots');
   const roots = rootsRaw

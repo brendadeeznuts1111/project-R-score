@@ -52,6 +52,7 @@ import {
   parsePartnerProfileCoverageArtifact,
   type PartnerDashboardConceptGapId,
 } from '../packages/partners/src/index.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 const REPO_ROOT = resolvePath(import.meta.dir, '..');
 export const DEFAULT_PARTNER_DASHBOARD_PLAN = resolvePath(
@@ -1526,7 +1527,7 @@ export function listUnregisteredPartnerConcepts(plan: AnyRecord): UnregisteredPa
 }
 
 if (import.meta.main) {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('partner:dashboard-plan:validate', Bun.argv.slice(2));
   const showUnregistered = args.includes('--unregistered');
   const pathArg = args.find(arg => !arg.startsWith('--'));
   const path = pathArg ? resolvePath(process.cwd(), pathArg) : DEFAULT_PARTNER_DASHBOARD_PLAN;

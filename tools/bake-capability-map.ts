@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bake AGENTS.md grounded capability map → registry JSON.
  *
@@ -15,6 +16,10 @@
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('bake:capabilities', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   buildCapabilityMapFull,
   buildCapabilityMapSubset,
@@ -32,11 +37,11 @@ const ROOT = joinPath(import.meta.dir, '..');
 const AGENTS = joinPath(ROOT, 'AGENTS.md');
 const OUT_SUBSET = joinPath(ROOT, CAPABILITY_MAP_SUBSET_REL);
 const OUT_FULL = joinPath(ROOT, CAPABILITY_MAP_FULL_REL);
-const CHECK = Bun.argv.includes('--check');
-const WRITE = Bun.argv.includes('--write') || (!CHECK && !Bun.argv.includes('--help'));
+const CHECK = argv.includes('--check');
+const WRITE = argv.includes('--write') || (!CHECK && !argv.includes('--help'));
 
 async function main(): Promise<void> {
-  if (Bun.argv.includes('--help') || Bun.argv.includes('-h')) {
+  if (argv.includes('--help') || argv.includes('-h')) {
     console.log(`Usage: bun tools/bake-capability-map.ts [--write] [--check]
 
   --write   Parse AGENTS.md and write subset + full registry JSON (default)

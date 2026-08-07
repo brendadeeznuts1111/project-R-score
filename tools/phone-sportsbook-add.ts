@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/sqlite
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Journal active sportsbook geo evidence for a phone (welcome hard-gate input).
  *
@@ -12,6 +13,9 @@ import { jsonOut } from '../lib/console-depth.ts';
 import { DEFAULT_OPS_DB_PATH, openOperationsDb } from '../lib/operations/db.ts';
 import { addPhoneSportsbook } from '../lib/operations/phone-sportsbook-journal.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('phone:sportsbook:add', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 function argValue(flag: string): string | undefined {
   const i = Bun.argv.indexOf(flag);
   if (i < 0) return undefined;
@@ -49,7 +53,7 @@ function main(): void {
     evidenceNote: argValue('--note'),
   });
 
-  if (Bun.argv.includes('--json')) {
+  if (argv.includes('--json')) {
     jsonOut(row);
   } else {
     console.log(

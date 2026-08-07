@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Archive a portal semantic concept (terminal lifecycle state).
  *
@@ -78,5 +79,7 @@ export async function runArchive(argv: readonly string[]): Promise<number> {
 }
 
 if (import.meta.main) {
-  process.exit(await runArchive(Bun.argv.slice(2)));
+  process.exit(
+    await runArchive(applyUnknownLongOptionGuardFor('concept:archive', Bun.argv.slice(2)))
+  );
 }

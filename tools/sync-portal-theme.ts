@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Sync public/portal/theme.jsonc → theme-tokens.css (Bun jsonc loader).
  *
@@ -14,9 +16,12 @@ import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import { portalTheme, renderThemeTokensCss } from '../lib/portal/theme.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('portal:theme:sync', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = resolvePath(import.meta.dir, '..');
 const OUT = joinPath(ROOT, 'public/portal/theme-tokens.css');
-const check = Bun.argv.includes('--check');
+const check = argv.includes('--check');
 
 async function main(): Promise<void> {
   const css = renderThemeTokensCss(portalTheme);

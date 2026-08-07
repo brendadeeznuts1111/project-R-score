@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/bundler/index#basic-example — Bun.build
 // @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Produce the Cloudflare Pages static output without mutating readable sources.
  *
@@ -15,6 +16,9 @@
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { dirnamePath, joinPath, resolvePath } from '../lib/path-bun.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('portal:optimize', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = resolvePath(import.meta.dir, '..');
 const PUBLIC_ROOT = joinPath(ROOT, 'public');
 const DEFAULT_OUTDIR = joinPath(ROOT, 'tmp/pages-optimized');
@@ -365,7 +369,7 @@ export async function optimizePortalAssets(
 
 async function main(): Promise<void> {
   const outdir = resolvePath(ROOT, flagValue('outdir') ?? 'tmp/pages-optimized');
-  const reportPath = Bun.argv.includes('--no-report')
+  const reportPath = argv.includes('--no-report')
     ? undefined
     : resolvePath(ROOT, flagValue('report') ?? 'tools/performance/portal-performance-report.json');
   const report = await optimizePortalAssets({ outdir, reportPath });

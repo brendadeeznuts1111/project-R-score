@@ -22,7 +22,11 @@ import {
   unusedConceptCandidates,
 } from '../lib/concept-registry/repo.ts';
 import { openConceptRegistryDb } from '../lib/concept-registry/schema.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('concept:registry:usage-sync', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 function argValue(argv: readonly string[], flag: string): string | undefined {
   const eq = argv.find(a => a.startsWith(`${flag}=`));
   if (eq) return eq.slice(flag.length + 1);
@@ -35,8 +39,8 @@ const dbPath = Bun.env.CONCEPT_REGISTRY_DB ?? 'data/concept-registry.db';
 const db = openConceptRegistryDb(dbPath);
 
 const minUnusedDays = Number(argValue(Bun.argv, '--min-unused-days') ?? '90');
-const failOnOrphans = Bun.argv.includes('--fail-on-orphans');
-const outputJson = Bun.argv.includes('--output') && argValue(Bun.argv, '--output') === 'json';
+const failOnOrphans = argv.includes('--fail-on-orphans');
+const outputJson = argv.includes('--output') && argValue(Bun.argv, '--output') === 'json';
 
 await migrateConceptRegistry(db, { scanUsage: false });
 const report = await syncConceptUsage(db);

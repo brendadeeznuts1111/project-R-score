@@ -166,6 +166,18 @@ bun run docs:refid:check
 | `check:console-format` | `staged` · `write-baseline` | [`scripts/lint-console-format.ts`](../../scripts/lint-console-format.ts) |
 | `concept:review` | `list` · `output` · `id` · `approve` · `reject` · `reason` · `correlation-id` | [`scripts/concept-review.ts`](../../scripts/concept-review.ts) |
 | `concept:deprecate` | `replace-by` · `reason` | [`scripts/concept-deprecate.ts`](../../scripts/concept-deprecate.ts) |
+| *(team bulk)* | package.json entrypoints with `--*` | `ALLOWED_LONG_REGISTRY` (~300 keys) · coverage: `bun scripts/cli-allowlist-coverage.ts` · plan/wire: `cli-allowlist-team-plan` / `wire-batch` / `apply-registry` |
+
+### 2.8 Coverage goal (agent team)
+
+| Command | Role |
+| ------- | ---- |
+| `bun scripts/cli-allowlist-coverage.ts` | % of package.json tools/scripts entrypoints with long options that call the guard |
+| `bun scripts/cli-allowlist-team-plan.ts --write` | Partition remaining into `artifacts/cli-allowlist-team/batch-*.json` |
+| `bun scripts/cli-allowlist-apply-registry.ts --write` | Merge plan leaves into `ALLOWED_LONG_REGISTRY` |
+| `bun scripts/cli-allowlist-wire-batch.ts --batch=N --write` | Auto-wire common argv patterns for one batch |
+
+Target: **100%** of package.json entrypoints that parse `--*` long options.
 
 ---
 

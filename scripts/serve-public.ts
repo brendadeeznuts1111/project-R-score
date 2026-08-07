@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect — Bun.connect
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
@@ -57,6 +58,7 @@
  *   PUT /{name}               → npm-compatible publish (bun publish)
  *   /*                        → public/* static files
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import type { BunRequest } from 'bun';
 import { Database } from 'bun:sqlite';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
@@ -158,6 +160,9 @@ import {
   startAgentOddsBroadcast,
   stopAgentOddsBroadcast,
 } from '../lib/operator-research/agent-odds-http.ts';
+
+/** Unknown long-option allowlist (registry: serve:public). */
+applyUnknownLongOptionGuardFor('serve:public', Bun.argv.slice(2));
 
 /** Env/CLI/TOML bind prefs — omit port/hostname on Bun.serve when Bun env chain wins. */
 const bindPrefs = resolveServePublicBindPrefs(undefined, Bun.env, process.argv);

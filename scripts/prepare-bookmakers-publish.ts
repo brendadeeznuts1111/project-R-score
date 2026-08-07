@@ -1,4 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * Sync monorepo public catalog → deeplink package public-catalog.json + rebuild tarball.
@@ -12,7 +16,7 @@
  *   bun run factory:publish artifacts/deeplink-automation/packages/bookmakers/factorywager-bookmakers-0.4.0.tgz \
  *     --name @factorywager/bookmakers --version 0.4.0 --type library
  */
-import { mkdirSync } from 'node:fs';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { joinPath } from '../lib/path-bun.ts';
 
 const PACKAGE_DIR = 'artifacts/deeplink-automation/packages/bookmakers';
@@ -20,7 +24,8 @@ const PUBLIC_MIRROR = 'public/registry/bookmakers.json';
 const VERSION = '0.4.0';
 
 async function main(): Promise<void> {
-  const dry = Bun.argv.includes('--dry-run');
+  const argv = applyUnknownLongOptionGuardFor('bookmakers:prepare-publish', Bun.argv.slice(2));
+  const dry = argv.includes('--dry-run');
   if (!(await Bun.file(PUBLIC_MIRROR).exists())) {
     throw new Error(`missing ${PUBLIC_MIRROR}`);
   }
@@ -96,7 +101,7 @@ export type PublicBookmaker = (typeof PUBLIC_BOOKMAKERS)[keyof typeof PUBLIC_BOO
   }
 
   // Also copy PUBLIC into dist for tarball consumers
-  mkdirSync(joinPath(PACKAGE_DIR, 'dist'), { recursive: true });
+  await Bun.$`mkdir -p ${joinPath(PACKAGE_DIR, 'dist')}`.quiet();
   await Bun.write(
     joinPath(PACKAGE_DIR, 'dist/public-catalog.json'),
     `${JSON.stringify(packageCatalog, null, 2)}\n`
@@ -113,8 +118,12 @@ export type PublicBookmaker = (typeof PUBLIC_BOOKMAKERS)[keyof typeof PUBLIC_BOO
 
   console.log(`✓ ${catalogPath}`);
   console.log(`✓ ${tgzPath}`);
-  console.log(`Next: bun run factory:publish ${tgzPath} --name @factorywager/bookmakers --version ${VERSION} --type library`);
-  console.log(`Then: bun lib/factory/cli.ts snapshot public/registry/registry.json && bun run bookmakers:bake`);
+  console.log(
+    `Next: bun run factory:publish ${tgzPath} --name @factorywager/bookmakers --version ${VERSION} --type library`
+  );
+  console.log(
+    `Then: bun lib/factory/cli.ts snapshot public/registry/registry.json && bun run bookmakers:bake`
+  );
 }
 
 if (import.meta.main) {

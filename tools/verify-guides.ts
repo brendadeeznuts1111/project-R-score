@@ -10,6 +10,7 @@
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/guides — official guides index
 // @see https://bun.com/docs/runtime/networking/fetch#fetching-a-url-with-a-timeout — AbortSignal.timeout
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * verify-guides.ts — accessibility + command verification for official Bun
  * onboarding resources (guides index, npm→bun install guide, /get).
@@ -30,7 +31,9 @@ export type GuideCheck = {
   passed: boolean;
   canonical: string;
 };
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('verify:guides', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const TIMEOUT_MS = 10_000;
 
 async function head(url: string): Promise<{ status: number; finalUrl: string }> {
@@ -129,7 +132,7 @@ if (import.meta.main) {
   );
   console.log(`\n${proof.summary.passed}/${proof.summary.total} passed`);
   console.log(`Proof hash: ${proof.proofHash}`);
-  if (Bun.argv.includes('--save')) {
+  if (argv.includes('--save')) {
     await Bun.write('public/registry/guides-proof.json', JSON.stringify(proof, null, 2));
     console.log('💾 Saved to public/registry/guides-proof.json');
   }

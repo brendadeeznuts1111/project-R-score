@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/s3 — S3Client
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
@@ -677,7 +679,9 @@ async function uploadWithRetry(
 }
 
 export async function main(): Promise<void> {
-  const options = parseArgs(Bun.argv.slice(2));
+  const options = parseArgs(
+    applyUnknownLongOptionGuardFor('search:bench:snapshot:core:wide:local', Bun.argv.slice(2))
+  );
   const id = options.id || timestampId();
   const createdAt = new Date().toISOString();
 

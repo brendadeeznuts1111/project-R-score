@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bake the reader-facing branded-value glossary and project adoption map.
  *
@@ -24,6 +25,9 @@ import {
 } from './brand-coverage.ts';
 import { portalTheme } from '../lib/portal/theme.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('brand:keymap', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export const BRAND_KEYMAP_PATH = 'public/registry/brand-keymap.json';
 export const BRAND_KEYMAP_URL = '/registry/brand-keymap.json';
 export const DOMAIN_GLOSSARY_PATH = 'public/registry/domain-glossary.json';
@@ -272,7 +276,7 @@ async function main(): Promise<void> {
   const payload = buildBrandKeymap(manifest, files, projectRoots, undefined, glossaryConcepts);
   const target = `${root}/${BRAND_KEYMAP_PATH}`;
 
-  if (Bun.argv.includes('--check')) {
+  if (argv.includes('--check')) {
     if (!(await Bun.file(target).exists())) {
       console.error(`❌ missing ${BRAND_KEYMAP_PATH}; run bun tools/brand-keymap.ts`);
       process.exit(1);

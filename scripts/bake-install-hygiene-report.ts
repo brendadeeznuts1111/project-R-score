@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
@@ -18,11 +19,14 @@
  *   offline embed into public/portal/install-hygiene/index.html
  */
 
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { collectInstallCacheMonitoringSlice } from '../lib/monitoring/install-cache-slice.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { runNpmInstallCheck } from './check-npm-install.ts';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('bake:install-hygiene', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = `${import.meta.dir}/..`;
 const OUT_PATH = joinPath(ROOT, 'public/registry/install-hygiene-report.json');
 const BOARD_HTML = joinPath(ROOT, 'public/portal/install-hygiene/index.html');

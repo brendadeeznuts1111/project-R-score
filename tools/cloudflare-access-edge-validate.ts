@@ -1,10 +1,14 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /** Read-only Pages + Access + public-plane integration probe. */
 import { jsonOut } from '../lib/console-depth.ts';
 import { runCloudflareAccessEdgeProbe } from '../lib/verification/cloudflare-access-live.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('cloudflare:access:edge:validate', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const token = Bun.env.CLOUDFLARE_API_TOKEN?.trim();
 if (!token) {
   console.error(
@@ -15,7 +19,7 @@ if (!token) {
 
 try {
   const report = await runCloudflareAccessEdgeProbe({ apiToken: token });
-  if (Bun.argv.includes('--json')) {
+  if (argv.includes('--json')) {
     jsonOut(report);
   } else {
     console.log('Cloudflare Access edge integration');

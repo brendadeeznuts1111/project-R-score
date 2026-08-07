@@ -7,11 +7,15 @@
 import { joinPath } from '../lib/path-bun.ts';
 import { loadVaultMapFile } from '../lib/security/vault-map.ts';
 import { buildTennisAgentAuthArtifact, TENNIS_AGENT_AUTH_PATH } from '../lib/tennis/agent-auth.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('tennis:agent-auth:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const root = joinPath(import.meta.dir, '..');
 const outPath = joinPath(root, 'public', 'registry', 'tennis', 'agent-auth.json');
 const vaultMapPath = joinPath(root, 'config', 'vault-map.toml');
-const check = Bun.argv.includes('--check');
+const check = argv.includes('--check');
 
 const artifact = buildTennisAgentAuthArtifact(await loadVaultMapFile(vaultMapPath));
 

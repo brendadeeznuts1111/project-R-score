@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // tools/partner-deposit-import.ts — batch deposit import CLI (Phase 2).
@@ -24,6 +27,7 @@ import {
   parseDepositFile,
   type ImportDepositsResult,
 } from '../lib/partner-profile/deposit-import';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 function flag(argv: string[], name: string): string | undefined {
   const i = argv.indexOf(`--${name}`);
@@ -42,7 +46,7 @@ JSONL row:  {"code"?, "amount", "currency"?, "description"?, "accountScope"?, "c
 }
 
 async function main(): Promise<void> {
-  const argv = process.argv.slice(2);
+  const argv = applyUnknownLongOptionGuardFor('partner:deposit:import', Bun.argv.slice(2));
   const filePath = flag(argv, 'file');
   const defaultCode = flag(argv, 'code');
   const defaultSource = flag(argv, 'source');

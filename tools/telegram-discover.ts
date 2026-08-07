@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Discover Telegram Bot API assets the factory bot can access (granular).
  *
@@ -85,7 +86,7 @@ function parseArgs(argv: string[]): {
 }
 
 async function main(): Promise<void> {
-  const opts = parseArgs(Bun.argv.slice(2));
+  const opts = parseArgs(applyUnknownLongOptionGuardFor('telegram:discover', Bun.argv.slice(2)));
   const opsDbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;
 
   if (opts.refresh) {

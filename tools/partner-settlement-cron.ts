@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/cron#bun-cron-path-schedule-title-os-level — Bun.cron(path, schedule, title)
 // tools/partner-settlement-cron.ts — OS-level Bun.cron for the weekly
 // settlement runner (primary, reboot-surviving).
@@ -16,6 +17,7 @@
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { parseCron, registerOsCron, removeOsCron } from '../lib/harness/cron.ts';
 import { SETTLEMENT_CRON_SCHEDULE } from '../lib/partner-profile/settlement-runner';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 export const SETTLEMENT_CRON_WORKER =
   '/Users/nolarose/Projects/lib/partner-profile/settlement-cron-worker.ts';
@@ -54,7 +56,9 @@ function parseArgv(
 }
 
 async function main(): Promise<void> {
-  const opts = parseArgv(Bun.argv.slice(2));
+  const opts = parseArgv(
+    applyUnknownLongOptionGuardFor('partner:settlement:cron:preview', Bun.argv.slice(2))
+  );
   if (!opts) {
     console.log(`Usage: bun tools/partner-settlement-cron.ts <register|remove|preview> [options]
 OS Bun.cron for the weekly partner settlement runner.

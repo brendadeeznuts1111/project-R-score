@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bake-surfaces.ts — bake the FactoryWager surface inventory → surfaces-state.json
  *
@@ -43,10 +44,13 @@ import {
 } from '../lib/types/branded.ts';
 import { resolvePath } from './lib/fs-bun';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('surfaces:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = resolvePath(import.meta.dir, '..');
-const CHECK = Bun.argv.includes('--check');
-const PROBE = Bun.argv.includes('--probe');
-const ZONE_CHECK = Bun.argv.includes('--zone-check');
+const CHECK = argv.includes('--check');
+const PROBE = argv.includes('--probe');
+const ZONE_CHECK = argv.includes('--zone-check');
 const TOML = `${ROOT}/config/surfaces.toml`;
 const STATE_PATH = `${ROOT}/public/registry/surfaces-state.json`;
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * verify-registry-client.ts — Live probes for RegistryClient resolve/download/publish.
  *
@@ -21,6 +22,10 @@ import {
 } from '../lib/verification/canonical-coverage.ts';
 import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification/subsystem.ts';
 import { REGISTRY_CLIENT_CANONICAL_KEYS, validateCanonicalKeys } from './canonical-helpers.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   REGISTRY_CLIENT_PROOF_REPORT_PATH,
   REGISTRY_CLIENT_SDK_VERSION,
@@ -31,8 +36,8 @@ export const SAVE_PATH = 'public/registry/registry-client-proof.json';
 
 validateCanonicalKeys(REGISTRY_CLIENT_CANONICAL_KEYS);
 
-const asJson = Bun.argv.includes('--json');
-const shouldSave = Bun.argv.includes('--save');
+const asJson = argv.includes('--json');
+const shouldSave = argv.includes('--save');
 
 const semanticTags = await buildSemanticTags('runtime');
 const report = await runRegistryClientVerification();

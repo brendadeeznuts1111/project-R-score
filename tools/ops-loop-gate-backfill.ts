@@ -30,7 +30,9 @@ Options:
   process.exit(0);
 }
 
-const argv = applyUnknownLongOptionGuardFor('ops:loop:gate-backfill', Bun.argv.slice(2));
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:loop:gate-backfill', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 if (argv.includes('--help') || argv.includes('-h')) usage();
 
 const dryRun = argv.includes('--dry-run');
