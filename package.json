@@ -169,39 +169,34 @@
     },
     "benchmarks": {
       "performance": {
-        "description": "Performance benchmarking profile",
+        "description": "Harness Bun microbench + CPU profile catalog (see docs/harness/tenants/bun-bench-profiling.md)",
         "scripts": [
-          "benchmark"
+          "bench:status",
+          "bench:deep",
+          "bench:console-depth",
+          "search:bench",
+          "search:bench:gate",
+          "brand:bench:run",
+          "brand:bench:profile",
+          "ops:limits:lab:profile"
         ],
         "metrics": [
-          "cpu",
-          "memory",
-          "throughput",
-          "latency"
-        ]
-      },
-      "load": {
-        "description": "Load testing profile",
-        "scripts": [
-          "test:load",
-          "test:stress"
-        ],
-        "metrics": [
-          "concurrent-users",
-          "response-time",
-          "error-rate"
+          "latencyP50Ms",
+          "latencyP95Ms",
+          "opsPerSec",
+          "peakRssMB",
+          "peakHeapUsedMB",
+          "avgMemoryFootprint"
         ]
       },
       "security": {
-        "description": "Security benchmarking profile",
+        "description": "Security audit profile",
         "scripts": [
           "security:audit",
-          "security:check"
+          "security:guard:deps"
         ],
         "metrics": [
-          "vulnerabilities",
-          "compliance-score",
-          "security-posture"
+          "vulnerabilities"
         ]
       }
     },
@@ -1547,7 +1542,7 @@
     "testing": {
       "compatibility_suite": "bun run test:compatibility",
       "migration_tests": "bun run test:migration",
-      "performance_tests": "bun run test:performance"
+      "performance_tests": "bun run bench:status"
     }
   },
   "license": "MIT",
@@ -2180,6 +2175,8 @@
     "validate:bun-urls": "bun run scripts/validate-bun-urls.ts",
     "validate:github": "bun run scripts/bun-github-validation.ts",
     "bench:deep": "bun tools/benchmarks/deep-benchmark.ts",
+    "bench:console-depth": "bun tools/benchmarks/console-depth-perf.ts",
+    "bench:status": "bun tools/bench-status.ts",
     "hygiene": "bun scripts/repo-hygiene.ts",
     "health": "bun scripts/claude-health.ts",
     "docs:sync:integrated": "bun run tools/cli/integrated-cli.ts sync",

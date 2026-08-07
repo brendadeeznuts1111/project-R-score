@@ -62,6 +62,10 @@ export const CANONICAL_REPO_DOCS = {
   /** Session lane ↔ chrome Domain ↔ ConceptDomain correlations */
   workspaceTaxonomy: 'lib/docs/workspace-taxonomy.ts',
   workspaceLaneCrossMap: 'docs/harness/tenants/workspace-lane-cross-map.md',
+  /** Bun harness microbench + CPU profile metric catalog */
+  bunBenchProfiling: 'docs/harness/tenants/bun-bench-profiling.md',
+  /** Performance docs index (search pin + bench tenant pointer) */
+  performanceIndex: 'docs/performance/README.md',
   /** Partner surface join (taxonomy · boards · brands · wire) — map before rename */
   partnerSurfaceInventory: 'docs/design/partner-surface-inventory.md',
   partnerSurfaceInventoryLib: 'lib/docs/partner-surface-inventory.ts',
@@ -151,6 +155,9 @@ export const CANONICAL_TOOLS = {
   brandedTypeProof: 'tests/branded-types.test-d.ts',
   consoleDepthTest: 'tests/console-depth.test.ts',
   consoleDepthBench: 'tools/benchmarks/console-depth-perf.ts',
+  benchmarksReadme: 'tools/benchmarks/README.md',
+  benchStatus: 'tools/bench-status.ts',
+  deepBenchmark: 'tools/benchmarks/deep-benchmark.ts',
   terminalTest: 'tests/terminal.test.ts',
   deepEqualsTest: 'tests/deep-equals.test.ts',
   peekSettleTest: 'tests/peek-settle.test.ts',
@@ -196,6 +203,8 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   archiveNamingGrammar: 'Archive filename grammar (<t>-<lane>-<slug>)',
   workspaceTaxonomy: 'Workspace taxonomy crosswalk (session · chrome · concept)',
   workspaceLaneCrossMap: 'Workspace lane cross-map tenant (claim workspace-lane-cross-map)',
+  bunBenchProfiling: 'Bun bench + CPU profile metric catalog (claim bun-bench-profiling)',
+  performanceIndex: 'Performance docs index (search pin · bench tenant)',
   partnerSurfaceInventory: 'Partner surface inventory (map before rename)',
   partnerSurfaceInventoryLib: 'Partner surface inventory row SSOT',
   partnerTypeReferenceMap: 'Partner type / identity reference map',
