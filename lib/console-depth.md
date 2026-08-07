@@ -12,6 +12,8 @@ tables, and width layout.
 | Topic | URL |
 | ----- | --- |
 | Object inspection depth (`--console-depth` · `[console] depth` · default **2**) | [console#object-inspection-depth](https://bun.com/docs/runtime/console#object-inspection-depth) |
+| `bun run -` pipe code from stdin (TS/JSX, no temp file) | [runtime#bun-run-to-pipe-code-from-stdin](https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin) |
+| `bun run --console-depth` / flag placement | [runtime#bun-run-console-depth](https://bun.com/docs/runtime#bun-run-console-depth) |
 | Console page (stdin AsyncIterable · runtime surface) | [runtime/console](https://bun.com/docs/runtime/console) |
 | `Bun.inspect` | [utils#bun-inspect](https://bun.com/docs/runtime/utils#bun-inspect) |
 | `Bun.inspect.custom` | [utils#bun-inspect-custom](https://bun.com/docs/runtime/utils#bun-inspect-custom) |
@@ -23,6 +25,30 @@ tables, and width layout.
 | `Bun.sliceAnsi` | [reference/sliceAnsi](https://bun.com/reference/bun/sliceAnsi) |
 | `Bun.color` | [color#flexible-input](https://bun.com/docs/runtime/color#flexible-input) |
 | `Bun.markdown.ansi` (call directly — no wrapper here) | [markdown#ansi-terminal-output](https://bun.com/docs/runtime/markdown#ansi-terminal-output) |
+
+## `bun run -` + `--console-depth` (agents)
+
+Pipe a one-shot TypeScript snippet without writing a temp file:
+
+```bash
+# ✔️ Bun flags immediately after `bun`
+echo 'console.log({ a: { b: { c: { d: "deep" } } } })' | bun --console-depth=2 run -
+# → c: [Object ...]
+
+echo 'console.log({ a: { b: { c: { d: "deep" } } } })' | bun --console-depth=5 run -
+# → d: "deep"
+```
+
+**Flag order (same rule as `--watch`):** put Bun flags **before** `run`.
+
+```bash
+bun --console-depth=4 run -     # ✔️ applies to console.log
+bun run - --console-depth=4     # ❌ flag is argv for the stdin script, not Bun
+```
+
+This workspace’s `bunfig.toml` pins `[console] depth = 6`, so probes of the
+native flag from the repo root can look “always deep”. Contract test spawns
+from `/tmp` to isolate bunfig.
 
 ## Docs fixture (depth 2 vs 4)
 

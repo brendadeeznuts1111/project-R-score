@@ -50,7 +50,14 @@ object/table output — `inspect` / `logDepth` / `logTable` / `stripANSI` — no
 raw `console.log(obj)`, `console.table`, or `JSON.stringify(x, null, 2)` as
 default human output (`--json` branches excepted). Depth SSOT:
 `bunfig.toml [console] depth = 6`; local override `BUN_CONSOLE_DEPTH`
-(wrapper-only). Details: root [`AGENTS.md`](../AGENTS.md) "Console depth".
+(wrapper-only). Details: root [`AGENTS.md`](../AGENTS.md) "Console depth" ·
+note [`lib/console-depth.md`](../lib/console-depth.md).
+
+**Agent one-shot from stdin:** `echo '…' | bun --console-depth=N run -` —
+Bun flags **before** `run` (same rule as `--watch`). Canonical:
+[object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth)
+· [`bun run -`](https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin).
+Contract: `bun test tests/console-depth.test.ts -t "bun run - stdin"`.
 
 ## REF:ID (design-doc flags / TOC)
 

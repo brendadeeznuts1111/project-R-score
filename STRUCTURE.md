@@ -252,7 +252,9 @@ Related (not root files): `lib/channels/` → `ops-outbox`;
   `bun run packages:list` · `bun run registry:projects`
 - **Brands:** [`lib/types/branded/README.md`](lib/types/branded/README.md) ·
   `bun run check:brands:all`
-- **Console depth:** [`lib/console-depth.ts`](lib/console-depth.ts)
+- **Console depth / `bun run -`:** [`lib/console-depth.ts`](lib/console-depth.ts)
+  · note [`lib/console-depth.md`](lib/console-depth.md) ·
+  [AGENTS.md § Console depth](AGENTS.md#console-depth-output-verbosity)
 - **Agent triage:** [`projects/README.md`](projects/README.md)
 - **Codex threads:** stable `RTH-###` identity, ranking, references, and
   bring-home parity →

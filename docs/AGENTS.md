@@ -13,6 +13,7 @@
 | Wire boundary (full) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
 | Domain → concept → shape → surface | [DOMAIN_CONCEPT_SHAPE.md](./DOMAIN_CONCEPT_SHAPE.md) |
 | Bun capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) · [Utilities guides map](./BUN_NATIVE_CAPABILITIES.md#utilities-guides-map) |
+| Console depth / `bun run -` | root [AGENTS.md § Console depth](../AGENTS.md#console-depth-output-verbosity) · [`lib/console-depth.md`](../lib/console-depth.md) · hub [`lib/bun-runtime.md`](../lib/bun-runtime.md) · `bun test tests/console-depth.test.ts` |
 | Bun channel/type governance | [design/bun-channel-governance.md](./design/bun-channel-governance.md) · `bun run bun:channel:check` |
 | Docs operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) · `bun run docs:refresh` |
 | Audit findings/concepts | [audit/README.md](./audit/README.md) · `bun tools/bun-doc-refs.ts suggest --audit "<q>"` · claim `audit-findings-catalog` |

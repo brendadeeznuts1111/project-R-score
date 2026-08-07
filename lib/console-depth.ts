@@ -1,4 +1,6 @@
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth · [console] depth · default 2
+// @see https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin — bun run - (stdin, no temp file)
+// @see https://bun.com/docs/runtime#bun-run-console-depth — bun --console-depth N run …
 // @see https://bun.com/docs/runtime/console — console AsyncIterable stdin · enableANSIColors surface
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
