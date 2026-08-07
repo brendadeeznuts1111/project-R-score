@@ -51,6 +51,7 @@ tags = ["key", "API"]
   description = "Fixture slugs, env-var names, standard test vectors, codemod tables"
   paths = [
     '''scripts/bun-migrate\.ts''', # codemod table — "Token" keys are Bun API identifiers, not values
+    '''tests/portal-component-color-align\.test\.ts''', # "token:" keys are theme token paths ('semantic.vertical.sportsbook'), not values
     '''bet-ticker-worker-v1\.1/src/upstream/upstream\.test\.ts''', # hand-crafted fixture JWTs ('eyJhbG.valid.jwt')
     '''bet-ticker-worker-v1\.1/scripts/shared/sync-local-token-core\.test\.mjs''', # fixture JWT with literal '.sig'
     '''/dist/''', # built bundles — surface is the scanned src/, not the artifact

@@ -215,7 +215,7 @@ export type PortalTheme = {
 export const portalTheme = themeJson as PortalTheme;
 
 /** Flat palette keys → CSS custom properties (excludes nested neutral). */
-const FLAT_PALETTE_TO_CSS: Record<Exclude<keyof PortalThemePalette, 'neutral'>, string> = {
+export const FLAT_PALETTE_TO_CSS: Record<Exclude<keyof PortalThemePalette, 'neutral'>, string> = {
   bg: '--bg',
   surface: '--surface',
   surfaceHover: '--surface-hover',

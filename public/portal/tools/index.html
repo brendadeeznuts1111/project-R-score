@@ -188,6 +188,25 @@
       font-size: var(--text-xs, 0.625rem);
       text-transform: uppercase; letter-spacing: .04em; color: var(--text-dim);
     }
+    /* Operator verticals + profile tiers — semantic.vertical / semantic.tier tokens */
+    .vt-chip, .tier-badge {
+      display: inline-block;
+      font-size: var(--text-xs, 0.625rem);
+      font-weight: var(--font-weight-semibold, 600);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      padding: 2px 8px;
+      border-radius: var(--radius-full, 999px);
+      border: 1px solid var(--border);
+      line-height: var(--leading-tight, 1.25);
+    }
+    .vt-chip.sportsbook { color: var(--vertical-sportsbook); border-color: color-mix(in srgb, var(--vertical-sportsbook) 45%, var(--border)); background: color-mix(in srgb, var(--vertical-sportsbook) 10%, transparent); }
+    .vt-chip.crypto { color: var(--vertical-crypto); border-color: color-mix(in srgb, var(--vertical-crypto) 45%, var(--border)); background: color-mix(in srgb, var(--vertical-crypto) 10%, transparent); }
+    .vt-chip.pph { color: var(--vertical-pph); border-color: color-mix(in srgb, var(--vertical-pph) 45%, var(--border)); background: color-mix(in srgb, var(--vertical-pph) 10%, transparent); }
+    .vt-chip.sweepstakes { color: var(--vertical-sweepstakes); border-color: color-mix(in srgb, var(--vertical-sweepstakes) 45%, var(--border)); background: color-mix(in srgb, var(--vertical-sweepstakes) 10%, transparent); }
+    .tier-badge.retail { color: var(--tier-retail); border-color: color-mix(in srgb, var(--tier-retail) 45%, var(--border)); background: color-mix(in srgb, var(--tier-retail) 10%, transparent); }
+    .tier-badge.vip { color: var(--tier-vip); border-color: color-mix(in srgb, var(--tier-vip) 45%, var(--border)); background: color-mix(in srgb, var(--tier-vip) 10%, transparent); }
+    .tier-badge.sharp { color: var(--tier-sharp); border-color: color-mix(in srgb, var(--tier-sharp) 45%, var(--border)); background: color-mix(in srgb, var(--tier-sharp) 10%, transparent); }
     .bake-status-table code.bake-cli {
       display: inline-block; max-width: 22rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
       vertical-align: middle; font-size: var(--text-xs, 0.625rem);
@@ -394,6 +413,26 @@
         </thead>
         <tbody id="bake-status-body"><tr><td colspan="5" class="dim">Loading…</td></tr></tbody>
       </table>
+    </div>
+
+    <div class="tools-panel" id="theme-tokens-panel">
+      <h2 id="theme-tokens">Theme tokens</h2>
+      <p class="dim">
+        Operator verticals + profile tiers from <code>theme.jsonc</code>
+        (<code>--vertical-*</code> · <code>--tier-*</code>) — closed-palette aliases, gated by
+        <code>validate:colors</code> component plane.
+      </p>
+      <div class="theme-token-strip" aria-label="Operator vertical chips">
+        <span class="vt-chip sportsbook">Sportsbook</span>
+        <span class="vt-chip crypto">Crypto</span>
+        <span class="vt-chip pph">PPH</span>
+        <span class="vt-chip sweepstakes">Sweepstakes</span>
+      </div>
+      <div class="theme-token-strip" aria-label="Profile tier badges">
+        <span class="tier-badge retail">Retail</span>
+        <span class="tier-badge vip">VIP</span>
+        <span class="tier-badge sharp">Sharp</span>
+      </div>
     </div>
 
     <div class="tools-panel" id="bake-age-panel">

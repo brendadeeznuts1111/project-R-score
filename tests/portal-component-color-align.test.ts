@@ -3,6 +3,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   assessComponentColorAlign,
   COMPONENT_VAR_TOKEN_MAP,
+  tokenValue,
 } from '../lib/portal/component-color-align.ts';
 import { portalTheme } from '../lib/portal/theme.ts';
 
@@ -17,9 +18,37 @@ describe('component color-kernel alignment', () => {
 
   test('every mapped token path resolves to a theme value', () => {
     for (const path of Object.values(COMPONENT_VAR_TOKEN_MAP)) {
-      const [block, key] = path.split('.') as ['card' | 'dark', string];
-      expect((portalTheme[block] as Record<string, string>)[key], path).toBeString();
+      expect(tokenValue(portalTheme, path), path).toBeString();
     }
+  });
+
+  test('semantic alias paths resolve through the closed palette (no invented hex)', () => {
+    expect(tokenValue(portalTheme, 'semantic.vertical.sportsbook')).toBe('#3fb950');
+    expect(tokenValue(portalTheme, 'semantic.vertical.crypto')).toBe('#db6d28');
+    expect(tokenValue(portalTheme, 'semantic.vertical.pph')).toBe('#58a6ff');
+    expect(tokenValue(portalTheme, 'semantic.vertical.sweepstakes')).toBe('#f85149');
+    expect(tokenValue(portalTheme, 'semantic.tier.retail')).toBe('#3fb950');
+    expect(tokenValue(portalTheme, 'semantic.tier.vip')).toBe('#d29922');
+    expect(tokenValue(portalTheme, 'semantic.tier.sharp')).toBe('#f85149');
+  });
+
+  test('component using --vertical-* aligns with the resolved alias hex', async () => {
+    const result = await assessComponentColorAlign({
+      'virtual/vertical-chip.js':
+        '.chip { color: var(--vertical-sportsbook, #3fb950); border-color: var(--tier-vip, #d29922); }',
+    });
+    expect(result.ok).toBe(true);
+    expect(result.mismatches).toEqual([]);
+  });
+
+  test('drifted --vertical-* fallback mismatches via Bun.color', async () => {
+    const result = await assessComponentColorAlign({
+      'virtual/vertical-chip.js': '.chip { color: var(--vertical-sportsbook, #f85149); }',
+    });
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toMatchObject([
+      { variable: '--vertical-sportsbook', token: 'semantic.vertical.sportsbook' },
+    ]);
   });
 
   test('catches a drifted fallback via Bun.color HEX comparison', async () => {
