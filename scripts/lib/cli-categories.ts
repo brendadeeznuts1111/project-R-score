@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
 // @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --compile
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
@@ -6,9 +9,9 @@
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
-// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate
-// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
-// @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
+// @see https://bun.com/docs/test/parallel#isolate — --isolate
+// @see https://bun.com/docs/test/parallel#parallel — --parallel
+// @see https://bun.com/docs/test/parallel#one-timings-file-per-shard — --shard
 // @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 /**
  * Shared CLI category SSOT for `help` and `cli:docs`.

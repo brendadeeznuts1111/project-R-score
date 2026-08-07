@@ -2,8 +2,9 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/test/index#run-tests — bun test
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed / --watch
-// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
-// @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
+// @see https://bun.com/docs/test/parallel#isolate — --isolate
+// @see https://bun.com/docs/test/parallel#parallel — --parallel
+// @see https://bun.com/docs/test/parallel#one-timings-file-per-shard — --shard
 // @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom

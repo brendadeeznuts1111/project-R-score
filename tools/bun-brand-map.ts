@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/test/parallel#isolate — --isolate
+// @see https://bun.com/docs/test/parallel#parallel — --parallel
+// @see https://bun.com/docs/test/parallel#one-timings-file-per-shard — --shard
 // @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
@@ -13,7 +16,8 @@
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
-// @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — source digests
 // @see https://bun.com/reference/bun/argv — Bun.argv

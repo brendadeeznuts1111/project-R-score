@@ -226,7 +226,7 @@ export const SHOWCASE_DEMOS: readonly ShowcaseDemo[] = [
           return bytes;
         }
         // 1×1 PNG
-        // @see https://bun.com/docs/runtime/binary-data#frombase64 — Uint8Array.fromBase64
+        // @see https://bun.com/docs/runtime/binary-data — Uint8Array.fromBase64
         return Uint8Array.fromBase64(
           'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
         );
