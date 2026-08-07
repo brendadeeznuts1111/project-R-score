@@ -379,6 +379,47 @@ export const ROUTING_REGISTRY_PROOF_ALLOWED_LONG = [
   'concurrency',
 ] as const;
 
+/** § — ops:seed:toc (`tools/ops-seed-toc.ts`) */
+export const OPS_SEED_TOC_ALLOWED_LONG = ['force'] as const;
+
+/** § — discovery:compose (`tools/discovery-compose.ts`) */
+export const DISCOVERY_COMPOSE_ALLOWED_LONG = [
+  'json',
+  'check',
+  'skip-unused',
+  'min-severity',
+] as const;
+
+/** § — public:discovery (`tools/public-discovery.ts`) */
+export const PUBLIC_DISCOVERY_ALLOWED_LONG = ['json', 'check', 'min-severity'] as const;
+
+/** § — schema:audit (`tools/schema-audit.ts`) */
+export const SCHEMA_AUDIT_ALLOWED_LONG = ['json', 'json-only', 'write'] as const;
+
+/** § — telegram:handshake:catalog (`tools/telegram-handshake-catalog.ts`) */
+export const TELEGRAM_HANDSHAKE_CATALOG_ALLOWED_LONG = ['json'] as const;
+
+/** § — concept:health (`scripts/concept-health.ts`) */
+export const CONCEPT_HEALTH_ALLOWED_LONG = ['period', 'output'] as const;
+
+/** § — ops:loop:gate-backfill (`tools/ops-loop-gate-backfill.ts`) */
+export const OPS_LOOP_GATE_BACKFILL_ALLOWED_LONG = ['dry-run', 'no-outbox', 'r2'] as const;
+
+/** § — ops:limits:check (`tools/ops-check-limits.ts`) */
+export const OPS_LIMITS_CHECK_ALLOWED_LONG = [
+  'partner',
+  'all',
+  'hours',
+  'clv',
+  'multi',
+  'capture',
+  'alerts',
+  'seed',
+  'force-seed',
+  'json',
+  'inspect',
+] as const;
+
 /** CLI names keyed in `ALLOWED_LONG_REGISTRY` (package-script style). */
 export type AllowedLongCliName =
   | 'lint-wires'
@@ -390,7 +431,15 @@ export type AllowedLongCliName =
   | 'bun:runtime-pin'
   | 'glossary:health'
   | 'cloudflare:env:validate'
-  | 'routing:registry-proof';
+  | 'routing:registry-proof'
+  | 'ops:seed:toc'
+  | 'discovery:compose'
+  | 'public:discovery'
+  | 'schema:audit'
+  | 'telegram:handshake:catalog'
+  | 'concept:health'
+  | 'ops:loop:gate-backfill'
+  | 'ops:limits:check';
 
 /**
  * Central allowlist registry — code SSOT (not env JSON).
@@ -407,6 +456,14 @@ export const ALLOWED_LONG_REGISTRY = {
   'glossary:health': GLOSSARY_HEALTH_ALLOWED_LONG,
   'cloudflare:env:validate': CLOUDFLARE_ENV_VALIDATE_ALLOWED_LONG,
   'routing:registry-proof': ROUTING_REGISTRY_PROOF_ALLOWED_LONG,
+  'ops:seed:toc': OPS_SEED_TOC_ALLOWED_LONG,
+  'discovery:compose': DISCOVERY_COMPOSE_ALLOWED_LONG,
+  'public:discovery': PUBLIC_DISCOVERY_ALLOWED_LONG,
+  'schema:audit': SCHEMA_AUDIT_ALLOWED_LONG,
+  'telegram:handshake:catalog': TELEGRAM_HANDSHAKE_CATALOG_ALLOWED_LONG,
+  'concept:health': CONCEPT_HEALTH_ALLOWED_LONG,
+  'ops:loop:gate-backfill': OPS_LOOP_GATE_BACKFILL_ALLOWED_LONG,
+  'ops:limits:check': OPS_LIMITS_CHECK_ALLOWED_LONG,
 } as const satisfies Record<AllowedLongCliName, readonly string[]>;
 
 /** Apply guard using `ALLOWED_LONG_REGISTRY[cliName]`. */

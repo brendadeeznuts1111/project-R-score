@@ -11,8 +11,15 @@
  */
 import { seedTocOpsDemo } from '../lib/operations/toc-ops-seed.ts';
 import { cliOut } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  OPS_SEED_TOC_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
 
-const force = Bun.argv.includes('--force');
+export { OPS_SEED_TOC_ALLOWED_LONG };
+
+const argv = applyUnknownLongOptionGuardFor('ops:seed:toc', Bun.argv.slice(2));
+const force = argv.includes('--force');
 const result = await seedTocOpsDemo({ force, ifEmpty: !force });
 cliOut(result, { mode: 'depth' });
 

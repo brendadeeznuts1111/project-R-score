@@ -17,7 +17,13 @@
  * concept-lifecycle lane (lib/portal/concept-lifecycle.ts); this script reads
  * the JSON directly and tolerates the file being absent (treated as empty).
  */
-import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
+import { cliOut, colorize, logTable } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  CONCEPT_HEALTH_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+export { CONCEPT_HEALTH_ALLOWED_LONG };
 import { countPortalConceptUsages } from '../lib/portal/concept-usage.ts';
 import { PORTAL_SEMANTIC_CONCEPTS } from '../lib/portal/semantic-vocabulary.ts';
 import {
@@ -259,13 +265,14 @@ export async function runConceptHealth(opts: { periodDays: number }): Promise<Co
 }
 
 async function main(): Promise<void> {
-  const periodDays = resolveInt(Bun.argv, '--period', 'CONCEPT_HEALTH_PERIOD_DAYS', 30);
+  const argv = applyUnknownLongOptionGuardFor('concept:health', Bun.argv.slice(2));
+  const periodDays = resolveInt(argv, '--period', 'CONCEPT_HEALTH_PERIOD_DAYS', 30);
   const output =
-    resolveStr(Bun.argv, '--output', 'CONCEPT_HEALTH_OUTPUT') === 'json' ? 'json' : 'table';
+    resolveStr(argv, '--output', 'CONCEPT_HEALTH_OUTPUT') === 'json' ? 'json' : 'table';
   const report = await runConceptHealth({ periodDays });
 
   if (output === 'json') {
-    jsonOut(report);
+    cliOut(report, { json: true });
   } else {
     logTable(
       [

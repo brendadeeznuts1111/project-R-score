@@ -16,9 +16,15 @@ import {
   publicReportPasses,
   runPublicDiscovery,
 } from '../lib/public-discovery.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { cliOut } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  PUBLIC_DISCOVERY_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
 
-const args = Bun.argv.slice(2);
+export { PUBLIC_DISCOVERY_ALLOWED_LONG };
+
+const args = applyUnknownLongOptionGuardFor('public:discovery', Bun.argv.slice(2));
 const asJson = args.includes('--json');
 const check = args.includes('--check');
 const minSeverity = parsePublicSeverity(
@@ -28,7 +34,7 @@ const minSeverity = parsePublicSeverity(
 const report = await runPublicDiscovery();
 
 if (asJson) {
-  jsonOut(report);
+  cliOut(report, { json: true });
 } else {
   console.log(`public-discovery · ${report.summary.total} findings`);
   console.log(`  errors=${report.summary.errors} warnings=${report.summary.warnings}`);

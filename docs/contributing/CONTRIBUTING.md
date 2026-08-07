@@ -161,6 +161,7 @@ CI / production: leave `BUN_STRIP_UNKNOWN` unset. Local prototyping may set
 | `GLOSSARY_HEALTH_ALLOWED_LONG` | `glossary:health` · `tools/glossary-health.ts`   | SSOT       | (none)                                                                | json · local                | top-level guard                                  | **exit 2**        |
 | `CLOUDFLARE_ENV_VALIDATE_ALLOWED_LONG` | `cloudflare:env:validate` · `tools/cloudflare-env-validate.ts` | SSOT | (none)                                                     | json · strict               | top-level guard                                  | **exit 2**        |
 | `ROUTING_REGISTRY_PROOF_ALLOWED_LONG` | `routing:registry-proof` · `tools/routing-registry-proof.ts` | SSOT | (none)                                                       | write · publish · json · …  | top-level guard                                  | **exit 2**        |
+| `OPS_SEED_TOC_ALLOWED_LONG` · `DISCOVERY_COMPOSE_*` · `PUBLIC_DISCOVERY_*` · `SCHEMA_AUDIT_*` · `TELEGRAM_HANDSHAKE_CATALOG_*` · `CONCEPT_HEALTH_*` · `OPS_LOOP_GATE_BACKFILL_*` · `OPS_LIMITS_CHECK_*` | see `ALLOWED_LONG_REGISTRY` | SSOT | (none) | see [cli-constants-flags §2.7](../harness/cli-constants-flags.md) | top-level / parseArgs | **exit 2** |
 
 Prove CLI guards: `bun test tests/docs-ref-id-tool-exports.test.ts`.
 
