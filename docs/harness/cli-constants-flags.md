@@ -157,6 +157,8 @@ bun run docs:refid:check
 | `concept:registry:graph` | `output` · `orphans` · `centrality` | [`scripts/concept-registry-graph.ts`](../../scripts/concept-registry-graph.ts) |
 | `concept:discover` | `scan` · `auto-propose` · `output` | [`scripts/concept-discover.ts`](../../scripts/concept-discover.ts) |
 | `seat:desk` | `field` · `force-new` · `no-pin` · `no-publish` · `post` · `json` · `template` · `intake-only` · `rails-only` · `thread-id` | [`tools/seat-desk-cli.ts`](../../tools/seat-desk-cli.ts) |
+| `packages:metafile-audit` | json · md · diff · out · glob · full-metafile · include-tests · cross-check · map · bake · shallow · apply-actions · dry-run · vault · vault-gap · env · no-pkg-json · strict · strict-actions (19) | [`tools/packages-metafile-audit.ts`](../../tools/packages-metafile-audit.ts) |
+| `harness:violations` | `json` · `open` · `path` · `rule` · `legacy-brands` · `limit` | [`tools/harness-violations.ts`](../../tools/harness-violations.ts) |
 
 ---
 

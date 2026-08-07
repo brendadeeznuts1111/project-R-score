@@ -25,7 +25,13 @@
  * Docs: docs/WIRE_BOUNDARY.md · lib/types/branded/README.md
  */
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  HARNESS_VIOLATIONS_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
 import { resolvePath, relativePath } from '../lib/path-bun';
+
+export { HARNESS_VIOLATIONS_ALLOWED_LONG };
 
 const REPO = resolvePath(import.meta.dir, '..');
 
@@ -51,6 +57,7 @@ type Args = {
 };
 
 function parseArgs(argv: string[]): Args {
+  const guarded = applyUnknownLongOptionGuardFor('harness:violations', argv);
   const a: Args = {
     json: false,
     open: 0,
@@ -60,9 +67,9 @@ function parseArgs(argv: string[]): Args {
     limit: 200,
     help: false,
   };
-  for (let i = 0; i < argv.length; i++) {
-    const raw = argv[i]!;
-    const next = argv[i + 1];
+  for (let i = 0; i < guarded.length; i++) {
+    const raw = guarded[i]!;
+    const next = guarded[i + 1];
     if (raw === '--json') a.json = true;
     else if (raw === '--help' || raw === '-h') a.help = true;
     else if (raw === '--legacy-brands') a.legacyBrands = true;

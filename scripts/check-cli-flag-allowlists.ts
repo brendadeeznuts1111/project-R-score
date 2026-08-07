@@ -197,6 +197,18 @@ const cases: Case[] = [
     expectExit: [2],
     stdoutOrStderrIncludes: ['❌ Unknown long option(s) in seat:desk: --typo'],
   },
+  {
+    name: 'packages:metafile-audit unknown',
+    cmd: ['bun', 'tools/packages-metafile-audit.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in packages:metafile-audit: --typo'],
+  },
+  {
+    name: 'harness:violations unknown',
+    cmd: ['bun', 'tools/harness-violations.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in harness:violations: --typo'],
+  },
 ];
 
 function okExit(expect: Case['expectExit'], code: number): boolean {

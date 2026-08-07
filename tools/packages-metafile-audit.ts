@@ -22,7 +22,11 @@
  */
 import { Glob, sliceAnsi } from 'bun';
 import { joinPath } from '../lib/path-bun.ts';
-import { jsonOut, logTable } from '../lib/console-depth.ts';
+import { cliOut, logTable } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  PACKAGES_METAFILE_AUDIT_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
 import {
   buildPackageGraphMap,
   buildPackagesGraphGlance,
@@ -117,14 +121,7 @@ async function buildPackagesMetafile(entryAbs: string[]): Promise<{
 export type PackageAuditGrade = 'healthy' | 'needs-improvement' | 'critical';
 
 export type EntrypointKind =
-  | 'index'
-  | 'cli'
-  | 'main'
-  | 'bin'
-  | 'pkg-bin'
-  | 'pkg-module'
-  | 'pkg-exports'
-  | 'explicit';
+  'index' | 'cli' | 'main' | 'bin' | 'pkg-bin' | 'pkg-module' | 'pkg-exports' | 'explicit';
 
 export type PackageAuditReport = {
   schemaVersion: 13;
@@ -204,13 +201,18 @@ export type PackageAuditReport = {
   metafileFull?: unknown;
 };
 
+export { PACKAGES_METAFILE_AUDIT_ALLOWED_LONG };
+
+/** Guarded CLI argv (set in main before any argvFlag use). */
+let CLI_ARGV: string[] = process.argv.slice(2);
+
 function argvFlag(name: string): boolean {
-  return process.argv.includes(name);
+  return CLI_ARGV.includes(name);
 }
 
 function argvValue(name: string, fallback: string): string {
-  const i = process.argv.indexOf(name);
-  if (i >= 0 && process.argv[i + 1]) return process.argv[i + 1]!;
+  const i = CLI_ARGV.indexOf(name);
+  if (i >= 0 && CLI_ARGV[i + 1]) return CLI_ARGV[i + 1]!;
   return fallback;
 }
 
@@ -867,9 +869,8 @@ export async function runPackagesMetafileAudit(opts?: {
 
   let crossCheck: PackageAuditReport['crossCheck'];
   if (opts?.crossCheck) {
-    const { analyzeImportGraph, scanSourceImports, resolveRelativeImport } = await import(
-      '../lib/harness/monorepo-health.ts'
-    );
+    const { analyzeImportGraph, scanSourceImports, resolveRelativeImport } =
+      await import('../lib/harness/monorepo-health.ts');
     const absScanned = scannedRel.map(p => joinPath(ROOT, p));
     const absEntries = entryRel.map(p => joinPath(ROOT, p));
     const graph = await analyzeImportGraph(absScanned, absEntries);
@@ -1094,6 +1095,7 @@ export async function runPackagesMetafileAudit(opts?: {
 }
 
 async function main(): Promise<void> {
+  CLI_ARGV = applyUnknownLongOptionGuardFor('packages:metafile-audit', process.argv.slice(2));
   if (argvFlag('--help') || argvFlag('-h')) {
     console.log(`Usage: bun tools/packages-metafile-audit.ts [options]
 
@@ -1236,7 +1238,7 @@ Map v12: + template-default cover · archive placeholder removed · env inventor
   }
 
   if (argvFlag('--json')) {
-    jsonOut(report);
+    cliOut(report, { json: true });
   } else {
     writeLine(
       `📦 ${report.scanned} scanned · ${report.entrypoints.length} entrypoints · score ${report.score}/100 (${report.grade})`
