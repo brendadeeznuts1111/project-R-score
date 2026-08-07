@@ -316,8 +316,10 @@ interior, path/name allowlists, suppressions.
     `--skip-refid-check` fast-pass; audit must show **flags-table-only=0**;
     library [`lib/docs/ref-id.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/ref-id.ts)
     · [`ref-id-tool-flags.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/ref-id-tool-flags.ts)
+    (`ALLOWED_LONG_REGISTRY` · **`BUN_STRIP_UNKNOWN`** / `BUN_LOG_UNKNOWN`)
     · CLI [`tools/docs-refid.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/docs-refid.ts)
-    · [CONTRIBUTING § REF:ID](docs/contributing/CONTRIBUTING.md#refid-validation))
+    · [CONTRIBUTING § REF:ID](docs/contributing/CONTRIBUTING.md#refid-validation)
+    · [§ Unknown long options](#unknown-long-options-bun_strip_unknown))
   - Import cycles / deep relative imports → `bun run check:import-graph`
     (`ci:core` merge proof → branch-protected Harness CI; ratchets may only go
     down — **0 strong** cycles, **0 deep imports** (both burned to zero
@@ -560,6 +562,36 @@ Factory wrapper (passthrough + optional `--publish` to R2 registry):
 
 **Local-template warning:** destination folder is **deleted** if it already
 exists (unlike remote templates, which refuse overwrite without `--force`).
+
+## Unknown long options (`BUN_STRIP_UNKNOWN`)
+
+Flag CLIs with REF:ID tables hard-reject unknown `--flags` by default (exit
+**2** / throw). **Allowlists live in code only** —
+[`ALLOWED_LONG_REGISTRY`](lib/docs/ref-id-tool-flags.ts) in
+[`lib/docs/ref-id-tool-flags.ts`](lib/docs/ref-id-tool-flags.ts). Never put
+allowlist JSON in `.env`.
+
+| Bun.env key | Default | Behavior |
+| ----------- | ------- | -------- |
+| **`BUN_STRIP_UNKNOWN`** | unset / not `true` | Unknown long options → **fail** |
+| **`BUN_STRIP_UNKNOWN=true`** | — | **Strip** unknowns and continue (local prototyping) |
+| `BUN_LOG_UNKNOWN` | unset → **on** | When stripping, warn on stderr; set `false` to silence |
+
+```bash
+# CI / production / pre-commit truth
+unset BUN_STRIP_UNKNOWN   # or BUN_STRIP_UNKNOWN=false
+
+# Local only — soft-ignore typos while iterating a Flags table
+export BUN_STRIP_UNKNOWN=true
+# optional: export BUN_LOG_UNKNOWN=false
+```
+
+Helpers: `unknownFlagPolicy` · `checkUnknownLongOptions` ·
+`applyUnknownLongOptionGuard` · key names `BUN_UNKNOWN_FLAG_ENV`.  
+Always exempt: `--help` · `--hlp`.  
+Example + matrix: [`.env.example`](.env.example) ·
+[CONTRIBUTING § Unknown long-option allowlists](docs/contributing/CONTRIBUTING.md#unknown-long-option-allowlists-cli-guards).  
+Prove: `bun test tests/docs-ref-id-tool-exports.test.ts`.
 
 ## Console depth (output verbosity)
 

@@ -56,8 +56,12 @@ declare module 'bun' {
 
     /**
      * Unknown long-option CLI guard toggles — allowlists stay in
-     * `lib/docs/ref-id-tool-flags.ts` (`ALLOWED_LONG_REGISTRY`).
-     * `true` / unset semantics: see `unknownFlagPolicy`.
+     * `lib/docs/ref-id-tool-flags.ts` (`ALLOWED_LONG_REGISTRY` · `BUN_UNKNOWN_FLAG_ENV`).
+     * - `BUN_STRIP_UNKNOWN=true` → strip unknown `--flags` and continue (local only)
+     * - unset / not `true` → hard-fail (exit 2 / throw) — CI / production default
+     * - `BUN_LOG_UNKNOWN` → warn when stripping (default on; set `false` to silence)
+     * @see unknownFlagPolicy / applyUnknownLongOptionGuard
+     * @see AGENTS.md § Unknown long options
      */
     BUN_STRIP_UNKNOWN?: string;
     BUN_LOG_UNKNOWN?: string;

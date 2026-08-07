@@ -99,6 +99,13 @@ table REF:ID must have a tool row (`table-missing-tool`) — both **errors**.
 Partner documentation register paths live in `PARTNER_DOCUMENTATION_REFS`
 ([`partner-surface-inventory.ts`](../lib/docs/partner-surface-inventory.ts)).
 
+**Unknown long options:** allowlists stay in `ALLOWED_LONG_REGISTRY` (code).
+Bun.env only toggles policy — **`BUN_STRIP_UNKNOWN=true`** strips unknowns and
+continues (local prototyping); unset / not `true` **hard-fails** (exit 2 /
+throw). `BUN_LOG_UNKNOWN` defaults on when stripping. See root
+[AGENTS.md § Unknown long options](../AGENTS.md#unknown-long-options-bun_strip_unknown)
+· [`.env.example`](../.env.example).
+
 **Audit gate:** `bun run docs:refid:audit` must report **flags-table-only=0**.
 Board maps with a trailing `Flags` column are not REF:ID surfaces.
 
