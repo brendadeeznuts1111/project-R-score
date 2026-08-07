@@ -44,6 +44,15 @@
 **Labels:** `enhancement`, `phase-1`, `infrastructure`  
 **Branch:** `feat/shade-pipeline-extract`  
 
+#### Progress (monorepo)
+
+| Slice | Status | Notes |
+|-------|--------|-------|
+| **PR1 — package scaffold** | Landed / in-flight | `@factorywager/shade-pipeline` workspace shell · `implementation_status: scaffold-pending-extract` · proof `bun test tests/shade-pipeline-package.test.ts` · README under `packages/shade-pipeline/` |
+| Days 1–2 migrate + R2 adapter | **Blocked** | Nested `bet-ticker-worker-v1.1` checkout + D1/R2 vault (`fw-shade-prod`) |
+| Day 3 domain extract | **Blocked** | Same nested product + ADR `0009-migrate-d1-to-r2` |
+| Days 4–8 consumers / chaos / canary | **Blocked** | Nested trees + VPS |
+
 #### Objective
 Eliminate the $530/mo D1 cost by migrating all Bet Ticker read/write ops to R2, and extract the normalized odds engine into a local workspace package (`@factorywager/shade-pipeline`) that `cascade-mover` and `Registry` can import directly.
 

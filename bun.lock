@@ -83,6 +83,10 @@
       "name": "@factorywager/rip",
       "version": "0.1.0",
     },
+    "packages/shade-pipeline": {
+      "name": "@factorywager/shade-pipeline",
+      "version": "0.0.0",
+    },
     "projects/active/sports-terminal-os": {
       "name": "sports-terminal-os",
       "version": "5.2.0",
@@ -303,6 +307,8 @@
     "@factorywager/registry-client": ["@factorywager/registry-client@workspace:packages/registry-client"],
 
     "@factorywager/rip": ["@factorywager/rip@workspace:packages/rip"],
+
+    "@factorywager/shade-pipeline": ["@factorywager/shade-pipeline@workspace:packages/shade-pipeline"],
 
     "@factorywager/shared": ["@factorywager/shared@workspace:lib/shared"],
 
