@@ -93,14 +93,14 @@ a merge dependency. The canonical merge proof runs on the operator machine:
 bun run bun:ci
 ```
 
-`bun:ci` composes the former hosted boundaries: `ci:core`, TypeScript config and
-both type-check scopes, dependency/security audits, and portal/registry
-isolation. It loads the machine's existing `~/.reasonix/.env`, applies the
-non-secret registry bucket default, and installs the nested registry workspace
-with its frozen lockfile. A passing local command is the merge authority. When
-an open, disjoint lane owns an existing failure, the commit must record the
-failing command, exact evidence, and owning lane; GitHub status is never a
-substitute for that local evidence.
+`bun:ci` composes the former hosted boundaries: `ci:core`, the partner CLI
+`bun:test` snapshot API contract, TypeScript config and both type-check scopes,
+dependency/security audits, and portal/registry isolation. It loads the
+machine's existing `~/.reasonix/.env`, applies the non-secret registry bucket
+default, and installs the nested registry workspace with its frozen lockfile. A
+passing local command is the merge authority. When an open, disjoint lane owns
+an existing failure, the commit must record the failing command, exact evidence,
+and owning lane; GitHub status is never a substitute for that local evidence.
 
 **PR bodies:** every non-draft PR fills Claim → evidence with commands that
 exited 0, and the **Local merge proof** block in
@@ -138,6 +138,8 @@ do not treat hosted green as proof those bans still hold.
 
 - `bun:ci` = complete merge proof; run before every merge.
 - `ci:core` = install verify · hygiene · `ci:harness`.
+- `snapshot-api` = partner CLI stdout/stderr contract captured with
+  `toMatchSnapshot()` from argv-safe `Bun.spawn` subprocesses.
 - `ci:types` = config/import verification plus CI and full type scopes.
 - `ci:security` = dependency guard plus security audit.
 - `ci:portal-registry` = isolated writer tests plus clean-public-tree proof.

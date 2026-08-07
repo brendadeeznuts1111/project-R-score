@@ -203,7 +203,7 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 | Factory Telegram        | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · portal [`partners.md`](public/portal/partners.md) |
 | Package-group handshake | [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) · Flags REF:ID §1.1 (`docs:refid:check`) |
 | Partner surface inventory | [`partner-surface-inventory.md`](docs/design/partner-surface-inventory.md) · bake `/registry/partner-surface-inventory.json` |
-| Partner domain map      | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · package [`@factorywager/partners`](packages/partners/README.md) |
+| Partner domain map      | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · package [`@factorywager/partners`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/partners/README.md) |
 | Seat capital desk       | [`seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md)                                                  |
 | Partner onboard         | [`partner-onboarding-package.md`](docs/harness/tenants/partner-onboarding-package.md) · profile Flags REF:ID ([unified-partner-profile](docs/design/unified-partner-profile.md)) |
 | Ops partner bridge      | [`ops-partner-bridge.md`](docs/harness/tenants/ops-partner-bridge.md)                                                |
