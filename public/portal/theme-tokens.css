@@ -82,6 +82,13 @@
   --group-harness: var(--yellow);
   --group-secrets: var(--orange);
   --group-other: var(--text-dim);
+  --vertical-sportsbook: var(--green);
+  --vertical-crypto: var(--orange);
+  --vertical-pph: var(--accent);
+  --vertical-sweepstakes: var(--red);
+  --tier-retail: var(--green);
+  --tier-vip: var(--yellow);
+  --tier-sharp: var(--red);
   --text-xs: 0.625rem;
   --text-sm: 0.75rem;
   --text-base: 0.8125rem;

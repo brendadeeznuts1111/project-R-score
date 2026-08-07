@@ -75,6 +75,17 @@ export type PortalThemeSemantic = {
     secrets: string;
     other: string;
   };
+  vertical: {
+    sportsbook: string;
+    crypto: string;
+    pph: string;
+    sweepstakes: string;
+  };
+  tier: {
+    retail: string;
+    vip: string;
+    sharp: string;
+  };
 };
 
 export type PortalThemeLayers = {
@@ -337,6 +348,14 @@ export function renderThemeTokensCss(theme: PortalTheme = portalTheme): string {
     `  --group-harness: ${semantic.group.harness};`,
     `  --group-secrets: ${semantic.group.secrets};`,
     `  --group-other: ${semantic.group.other};`,
+    // Operator verticals (chips · badges) + profile tiers — closed palette aliases
+    `  --vertical-sportsbook: ${semantic.vertical.sportsbook};`,
+    `  --vertical-crypto: ${semantic.vertical.crypto};`,
+    `  --vertical-pph: ${semantic.vertical.pph};`,
+    `  --vertical-sweepstakes: ${semantic.vertical.sweepstakes};`,
+    `  --tier-retail: ${semantic.tier.retail};`,
+    `  --tier-vip: ${semantic.tier.vip};`,
+    `  --tier-sharp: ${semantic.tier.sharp};`,
     // Typography
     mapEntries(typography.fontSizes, k => `--text-${k}`),
     mapEntries(

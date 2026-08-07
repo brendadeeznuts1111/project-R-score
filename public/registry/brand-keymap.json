@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-06T18:41:03.659Z",
+  "generatedAt": "2026-08-07T07:36:39.281Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -17,9 +17,9 @@
     "ids": 71,
     "keys": 3,
     "codes": 19,
-    "covered": 71,
+    "covered": 70,
     "referencedUnconstructed": 7,
-    "unused": 15,
+    "unused": 16,
     "cataloguedProjects": 35,
     "trackedProjects": 32,
     "adoptedProjects": 2,
@@ -3349,11 +3349,11 @@
       ],
       "coverage": {
         "status": "covered",
-        "references": 294,
+        "references": 302,
         "constructors": {
           "as": 106,
           "try": 2,
-          "parse": 15
+          "parse": 16
         },
         "guards": 0,
         "files": [
@@ -3361,34 +3361,34 @@
           "lib/accounts/automation.ts",
           "lib/channels/outbox.ts",
           "lib/docs/bun-brand-usages.ts",
+          "lib/docs/partner-surface-inventory.ts",
           "lib/dod/verifier.ts",
           "lib/experiments/cluster.ts",
           "lib/experiments/design.ts",
           "lib/experiments/engine.ts",
           "lib/experiments/outcomes.ts",
           "lib/experiments/runner.ts",
-          "lib/experiments/switchback.ts",
-          "lib/http/public-routes.ts"
+          "lib/experiments/switchback.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 294,
-            "constructionCalls": 123,
+            "references": 302,
+            "constructionCalls": 124,
             "guardCalls": 0,
             "files": [
               "lib/accounts/accounts.ts",
               "lib/accounts/automation.ts",
               "lib/channels/outbox.ts",
               "lib/docs/bun-brand-usages.ts",
+              "lib/docs/partner-surface-inventory.ts",
               "lib/dod/verifier.ts",
               "lib/experiments/cluster.ts",
               "lib/experiments/design.ts",
               "lib/experiments/engine.ts",
               "lib/experiments/outcomes.ts",
               "lib/experiments/runner.ts",
-              "lib/experiments/switchback.ts",
-              "lib/http/public-routes.ts"
+              "lib/experiments/switchback.ts"
             ]
           },
           "projects": {
@@ -3841,7 +3841,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 5,
+        "references": 9,
         "constructors": {
           "as": 3,
           "try": 0,
@@ -3849,16 +3849,18 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/partner-surface-inventory.ts",
           "lib/operations/account-limit-profiles.ts",
           "lib/operations/partner-profile-bridge.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 5,
+            "references": 9,
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
+              "lib/docs/partner-surface-inventory.ts",
               "lib/operations/account-limit-profiles.ts",
               "lib/operations/partner-profile-bridge.ts"
             ]
@@ -3907,46 +3909,46 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 31,
+        "references": 60,
         "constructors": {
           "as": 1,
           "try": 0,
-          "parse": 36
+          "parse": 40
         },
         "guards": 0,
         "files": [
+          "lib/docs/partner-surface-docs.ts",
+          "lib/docs/partner-surface-inventory.ts",
           "lib/telegram/handshake-desk.ts",
           "lib/telegram/package-group-registry.ts",
           "lib/telegram/verify-package-group-handshake.ts",
+          "packages/partners/src/adapters/limit-changes.ts",
           "packages/partners/src/adapters/profile-coverage.ts",
+          "packages/partners/src/adapters/telegram-handshake.ts",
+          "packages/partners/src/adapters/tennis-capacity.ts",
           "packages/partners/src/boundary/assemble-dashboard-artifact.ts",
           "packages/partners/src/boundary/dashboard-artifact.ts",
-          "packages/partners/src/boundary/out-capability-snapshot.ts",
-          "packages/partners/src/compatibility/ingress-translator.ts",
-          "packages/partners/src/compatibility/legacy-partners-ops.ts",
-          "packages/partners/src/core/identifiers.ts",
-          "packages/partners/src/core/out-capabilities.ts",
-          "packages/partners/src/core/types.ts"
+          "packages/partners/src/boundary/out-capability-snapshot.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 31,
-            "constructionCalls": 37,
+            "references": 60,
+            "constructionCalls": 41,
             "guardCalls": 0,
             "files": [
+              "lib/docs/partner-surface-docs.ts",
+              "lib/docs/partner-surface-inventory.ts",
               "lib/telegram/handshake-desk.ts",
               "lib/telegram/package-group-registry.ts",
               "lib/telegram/verify-package-group-handshake.ts",
+              "packages/partners/src/adapters/limit-changes.ts",
               "packages/partners/src/adapters/profile-coverage.ts",
+              "packages/partners/src/adapters/telegram-handshake.ts",
+              "packages/partners/src/adapters/tennis-capacity.ts",
               "packages/partners/src/boundary/assemble-dashboard-artifact.ts",
               "packages/partners/src/boundary/dashboard-artifact.ts",
-              "packages/partners/src/boundary/out-capability-snapshot.ts",
-              "packages/partners/src/compatibility/ingress-translator.ts",
-              "packages/partners/src/compatibility/legacy-partners-ops.ts",
-              "packages/partners/src/core/identifiers.ts",
-              "packages/partners/src/core/out-capabilities.ts",
-              "packages/partners/src/core/types.ts"
+              "packages/partners/src/boundary/out-capability-snapshot.ts"
             ]
           },
           "projects": {
@@ -3993,7 +3995,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 2,
+        "references": 7,
         "constructors": {
           "as": 1,
           "try": 0,
@@ -4001,16 +4003,20 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/partner-surface-brand-check.ts",
+          "lib/docs/partner-surface-inventory.ts",
           "packages/partners/src/core/identifiers.ts",
           "packages/partners/src/core/types.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 2,
+            "references": 7,
             "constructionCalls": 1,
             "guardCalls": 0,
             "files": [
+              "lib/docs/partner-surface-brand-check.ts",
+              "lib/docs/partner-surface-inventory.ts",
               "packages/partners/src/core/identifiers.ts",
               "packages/partners/src/core/types.ts"
             ]
@@ -4123,7 +4129,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 26,
+        "references": 32,
         "constructors": {
           "as": 11,
           "try": 0,
@@ -4132,29 +4138,33 @@
         "guards": 0,
         "files": [
           "lib/channels/outbox.ts",
+          "lib/docs/partner-surface-inventory.ts",
           "lib/operations/onboarding-config.ts",
           "lib/operations/ops-loop-fixture.ts",
           "lib/operations/partner-onboard-package.ts",
           "lib/operations/partner-onboarding.ts",
           "lib/operations/partner-profile-bridge.ts",
           "lib/operations/partner-profile-seed.ts",
+          "lib/partner-profile/bake.ts",
           "lib/partner-profile/schema.ts",
           "tools/ops-loop-live-proof.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 26,
+            "references": 32,
             "constructionCalls": 11,
             "guardCalls": 0,
             "files": [
               "lib/channels/outbox.ts",
+              "lib/docs/partner-surface-inventory.ts",
               "lib/operations/onboarding-config.ts",
               "lib/operations/ops-loop-fixture.ts",
               "lib/operations/partner-onboard-package.ts",
               "lib/operations/partner-onboarding.ts",
               "lib/operations/partner-profile-bridge.ts",
               "lib/operations/partner-profile-seed.ts",
+              "lib/partner-profile/bake.ts",
               "lib/partner-profile/schema.ts",
               "tools/ops-loop-live-proof.ts"
             ]
@@ -4202,7 +4212,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 36,
+        "references": 58,
         "constructors": {
           "as": 2,
           "try": 1,
@@ -4210,34 +4220,38 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/partner-surface-brand-check.ts",
+          "lib/docs/partner-surface-docs.ts",
+          "lib/docs/partner-surface-inventory.ts",
           "lib/partner-profile/register.ts",
+          "packages/partners/src/adapters/tennis-capacity.ts",
           "packages/partners/src/boundary/assemble-dashboard-artifact.ts",
           "packages/partners/src/boundary/dashboard-artifact.ts",
           "packages/partners/src/compatibility/ingress-translator.ts",
           "packages/partners/src/compatibility/legacy-partners-ops.ts",
           "packages/partners/src/core/identifiers.ts",
           "packages/partners/src/core/out-capabilities.ts",
-          "packages/partners/src/core/types.ts",
-          "scripts/lib/partners-env-join.ts",
-          "scripts/validate-partner-dashboard-plan.ts"
+          "packages/partners/src/core/types.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 36,
+            "references": 58,
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
+              "lib/docs/partner-surface-brand-check.ts",
+              "lib/docs/partner-surface-docs.ts",
+              "lib/docs/partner-surface-inventory.ts",
               "lib/partner-profile/register.ts",
+              "packages/partners/src/adapters/tennis-capacity.ts",
               "packages/partners/src/boundary/assemble-dashboard-artifact.ts",
               "packages/partners/src/boundary/dashboard-artifact.ts",
               "packages/partners/src/compatibility/ingress-translator.ts",
               "packages/partners/src/compatibility/legacy-partners-ops.ts",
               "packages/partners/src/core/identifiers.ts",
               "packages/partners/src/core/out-capabilities.ts",
-              "packages/partners/src/core/types.ts",
-              "scripts/lib/partners-env-join.ts",
-              "scripts/validate-partner-dashboard-plan.ts"
+              "packages/partners/src/core/types.ts"
             ]
           },
           "projects": {
@@ -4355,10 +4369,12 @@
         "constructors": {
           "as": 1,
           "try": 0,
-          "parse": 3
+          "parse": 7
         },
         "guards": 0,
         "files": [
+          "packages/partners/src/adapters/limit-changes.ts",
+          "packages/partners/src/adapters/tennis-capacity.ts",
           "packages/partners/src/boundary/dashboard-artifact.ts",
           "packages/partners/src/boundary/out-capability-snapshot.ts",
           "packages/partners/src/core/identifiers.ts",
@@ -4370,9 +4386,11 @@
           "spine": {
             "status": "covered",
             "references": 7,
-            "constructionCalls": 4,
+            "constructionCalls": 8,
             "guardCalls": 0,
             "files": [
+              "packages/partners/src/adapters/limit-changes.ts",
+              "packages/partners/src/adapters/tennis-capacity.ts",
               "packages/partners/src/boundary/dashboard-artifact.ts",
               "packages/partners/src/boundary/out-capability-snapshot.ts",
               "packages/partners/src/core/identifiers.ts",
@@ -4500,11 +4518,14 @@
         "constructors": {
           "as": 2,
           "try": 0,
-          "parse": 7
+          "parse": 10
         },
         "guards": 0,
         "files": [
+          "packages/partners/src/adapters/limit-changes.ts",
           "packages/partners/src/adapters/profile-coverage.ts",
+          "packages/partners/src/adapters/telegram-handshake.ts",
+          "packages/partners/src/adapters/tennis-capacity.ts",
           "packages/partners/src/boundary/dashboard-artifact.ts",
           "packages/partners/src/boundary/out-capability-snapshot.ts",
           "packages/partners/src/compatibility/legacy-partners-ops.ts",
@@ -4515,10 +4536,13 @@
           "spine": {
             "status": "covered",
             "references": 14,
-            "constructionCalls": 9,
+            "constructionCalls": 12,
             "guardCalls": 0,
             "files": [
+              "packages/partners/src/adapters/limit-changes.ts",
               "packages/partners/src/adapters/profile-coverage.ts",
+              "packages/partners/src/adapters/telegram-handshake.ts",
+              "packages/partners/src/adapters/tennis-capacity.ts",
               "packages/partners/src/boundary/dashboard-artifact.ts",
               "packages/partners/src/boundary/out-capability-snapshot.ts",
               "packages/partners/src/compatibility/legacy-partners-ops.ts",
@@ -4570,15 +4594,18 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 11,
+        "references": 12,
         "constructors": {
           "as": 1,
           "try": 0,
-          "parse": 5
+          "parse": 9
         },
         "guards": 0,
         "files": [
+          "packages/partners/src/adapters/limit-changes.ts",
           "packages/partners/src/adapters/profile-coverage.ts",
+          "packages/partners/src/adapters/telegram-handshake.ts",
+          "packages/partners/src/adapters/tennis-capacity.ts",
           "packages/partners/src/boundary/dashboard-artifact.ts",
           "packages/partners/src/boundary/out-capability-snapshot.ts",
           "packages/partners/src/compatibility/legacy-partners-ops.ts",
@@ -4588,11 +4615,14 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 11,
-            "constructionCalls": 6,
+            "references": 12,
+            "constructionCalls": 10,
             "guardCalls": 0,
             "files": [
+              "packages/partners/src/adapters/limit-changes.ts",
               "packages/partners/src/adapters/profile-coverage.ts",
+              "packages/partners/src/adapters/telegram-handshake.ts",
+              "packages/partners/src/adapters/tennis-capacity.ts",
               "packages/partners/src/boundary/dashboard-artifact.ts",
               "packages/partners/src/boundary/out-capability-snapshot.ts",
               "packages/partners/src/compatibility/legacy-partners-ops.ts",
@@ -4642,7 +4672,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 6,
+        "references": 13,
         "constructors": {
           "as": 1,
           "try": 0,
@@ -4650,6 +4680,7 @@
         },
         "guards": 0,
         "files": [
+          "lib/docs/partner-surface-inventory.ts",
           "packages/partners/src/boundary/dashboard-artifact.ts",
           "packages/partners/src/core/identifiers.ts",
           "packages/partners/src/core/types.ts"
@@ -4657,10 +4688,11 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 6,
+            "references": 13,
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
+              "lib/docs/partner-surface-inventory.ts",
               "packages/partners/src/boundary/dashboard-artifact.ts",
               "packages/partners/src/core/identifiers.ts",
               "packages/partners/src/core/types.ts"
@@ -5110,11 +5142,11 @@
       ],
       "coverage": {
         "status": "covered",
-        "references": 83,
+        "references": 90,
         "constructors": {
           "as": 44,
           "try": 8,
-          "parse": 23
+          "parse": 29
         },
         "guards": 0,
         "files": [
@@ -5134,8 +5166,8 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 83,
-            "constructionCalls": 75,
+            "references": 90,
+            "constructionCalls": 81,
             "guardCalls": 0,
             "files": [
               "lib/bookmakers/desk-coverage.ts",
@@ -5510,26 +5542,22 @@
       "tone": "ok",
       "glossaryConcepts": [],
       "coverage": {
-        "status": "covered",
-        "references": 2,
+        "status": "unused",
+        "references": 0,
         "constructors": {
-          "as": 1,
+          "as": 0,
           "try": 0,
           "parse": 0
         },
         "guards": 0,
-        "files": [
-          "lib/telegram/partner-ops-registry.ts"
-        ],
+        "files": [],
         "scopes": {
           "spine": {
-            "status": "covered",
-            "references": 2,
-            "constructionCalls": 1,
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
             "guardCalls": 0,
-            "files": [
-              "lib/telegram/partner-ops-registry.ts"
-            ]
+            "files": []
           },
           "projects": {
             "status": "unused",
