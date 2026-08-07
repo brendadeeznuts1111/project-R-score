@@ -21,6 +21,13 @@ describe('portal theme (jsonc loader)', () => {
     expect(portalTheme.semantic.status.fresh).toBe('var(--tone-ok)');
     expect(portalTheme.semantic.status.critical).toBe('var(--tone-bad)');
     expect(portalTheme.semantic.group.ops).toBe('var(--green)');
+    expect(portalTheme.semantic.vertical.sportsbook).toBe('var(--green)');
+    expect(portalTheme.semantic.vertical.crypto).toBe('var(--orange)');
+    expect(portalTheme.semantic.vertical.pph).toBe('var(--accent)');
+    expect(portalTheme.semantic.vertical.sweepstakes).toBe('var(--red)');
+    expect(portalTheme.semantic.tier.retail).toBe('var(--green)');
+    expect(portalTheme.semantic.tier.vip).toBe('var(--yellow)');
+    expect(portalTheme.semantic.tier.sharp).toBe('var(--red)');
     expect(portalTheme.layers.card).toBe('var(--surface)');
     expect(portalTheme.typography.fontSizes.sm).toBe('0.75rem');
     expect(portalTheme.typography.fontWeights.semibold).toBe(600);
@@ -49,6 +56,13 @@ describe('portal theme (jsonc loader)', () => {
     expect(css).toContain('--status-fresh: var(--tone-ok)');
     expect(css).toContain('--status-critical: var(--tone-bad)');
     expect(css).toContain('--group-harness: var(--yellow)');
+    expect(css).toContain('--vertical-sportsbook: var(--green)');
+    expect(css).toContain('--vertical-crypto: var(--orange)');
+    expect(css).toContain('--vertical-pph: var(--accent)');
+    expect(css).toContain('--vertical-sweepstakes: var(--red)');
+    expect(css).toContain('--tier-retail: var(--green)');
+    expect(css).toContain('--tier-vip: var(--yellow)');
+    expect(css).toContain('--tier-sharp: var(--red)');
     expect(css).toContain('--bg-card: var(--surface)');
     expect(css).toContain('--text-sm: 0.75rem');
     expect(css).toContain('--font-weight-semibold: 600');

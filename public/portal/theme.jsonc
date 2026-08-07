@@ -133,6 +133,19 @@
       "secrets": "var(--orange)",
       "other": "var(--text-dim)",
     },
+    // Operator verticals (chips · badges) — closed palette aliases only
+    "vertical": {
+      "sportsbook": "var(--green)",
+      "crypto": "var(--orange)",
+      "pph": "var(--accent)",
+      "sweepstakes": "var(--red)",
+    },
+    // Profile tier badges — closed palette aliases only
+    "tier": {
+      "retail": "var(--green)",
+      "vip": "var(--yellow)",
+      "sharp": "var(--red)",
+    },
   },
 
   // Background / surface layers as aliases (scheme-aware via palette vars).
