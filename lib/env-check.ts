@@ -191,14 +191,22 @@ export const ENV_CHECK_SPECS: Spec[] = [
     hasCodeDefault: true,
     note: 'data/operations.db',
   },
-  // GitHub (Bun create auth · channel resolve / bun upgrade rate limits)
+  // GitHub (Bun create auth · channel resolve · bunx bun-pr artifact download)
   {
     key: 'GITHUB_TOKEN',
     group: 'github',
     severity: 'optional',
     secret: true,
     anyOf: ['GITHUB_TOKEN', 'GITHUB_ACCESS_TOKEN', 'GH_TOKEN'],
-    note: 'aliases: GITHUB_ACCESS_TOKEN · GH_TOKEN · or `gh auth login` (channels.ts gh-cli fallback)',
+    note: 'aliases: GITHUB_ACCESS_TOKEN · GH_TOKEN · or `gh auth login` / `gh auth token` (channels.ts · bunx bun-pr)',
+  },
+  // Bun upstream CI (oven-sh/bun BuildKite) — not FactoryWager
+  {
+    key: 'BUILDKITE_API_TOKEN',
+    group: 'runtime',
+    severity: 'optional',
+    secret: true,
+    note: 'optional · Bun upstream `bun run ci:status` only — not FactoryWager; no Pass vault item',
   },
   {
     key: 'TELEGRAM_BOT_FACTORY',

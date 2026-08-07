@@ -62,6 +62,21 @@ Bun create envs (`GITHUB_TOKEN`, `GITHUB_ACCESS_TOKEN`, `GITHUB_API_DOMAIN`) are
 `GITHUB_REPOSITORY*` on CI. Do not invent a novel env zoo in UNIFIED; Actions
 wire + Bun create tables (`BUN_GITHUB_ENV`) are enough.
 
+### `bunx bun-pr` + `gh` auth
+
+Download oven-sh/bun PR release builds without building locally
+([contributing § download](https://bun.com/docs/project/contributing#download-release-build-from-pull-requests)):
+
+```bash
+gh auth login                 # primary auth — not bun create's GITHUB_TOKEN table
+bunx bun-pr <pr-number>       # also: branch name, PR URL, or --asan <pr> (Linux x64)
+```
+
+`GITHUB_TOKEN` / `GH_TOKEN` / `gh auth token` still satisfy artifact download when
+set. Optional and separate: `BUILDKITE_API_TOKEN` for Bun upstream
+`bun run ci:status` (BuildKite) — not FactoryWager; no Pass vault item. Env
+comments: `env.template` · `.env.example` · `lib/env-check.ts`.
+
 ### Issue metadata writes
 
 The repository taxonomy is authoritative; GitHub labels are a provider
