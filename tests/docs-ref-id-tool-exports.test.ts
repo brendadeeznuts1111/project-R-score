@@ -5,6 +5,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   ALLOWED_LONG_REGISTRY,
+  BUN_PR_VERIFY_ALLOWED_LONG,
   IMAGES_GENERATE_ALLOWED_LONG,
   IMAGES_GENERATE_LEAVES,
   LINT_WIRES_ALLOWED_LONG,
@@ -120,6 +121,8 @@ describe('in-tool flagDocRef re-exports', () => {
     expect(ALLOWED_LONG_REGISTRY['images:generate']).toBe(IMAGES_GENERATE_ALLOWED_LONG);
     expect(ALLOWED_LONG_REGISTRY['ops:snapshot']).toBe(OPS_SNAPSHOT_ALLOWED_LONG);
     expect(ALLOWED_LONG_REGISTRY['telegram:ops']).toBe(TELEGRAM_OPS_ALLOWED_LONG);
+    expect(ALLOWED_LONG_REGISTRY['bun:pr:verify']).toBe(BUN_PR_VERIFY_ALLOWED_LONG);
+    expect([...BUN_PR_VERIFY_ALLOWED_LONG]).toEqual(['proof', 'json']);
   });
 
   test('unknownFlagPolicy defaults + Bun.env toggles', () => {

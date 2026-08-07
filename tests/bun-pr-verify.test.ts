@@ -45,4 +45,38 @@ describe('bun-pr-verify CLI', () => {
     expect(bin).toBeTruthy();
     expect(bin).not.toBe('bun'); // never a bare name
   });
+
+  test('unknown long option fails (allowlist)', async () => {
+    const proc = Bun.spawn(['bun', 'tools/bun-pr-verify.ts', '1', '--typo'], {
+      cwd: import.meta.dir ? new URL('..', import.meta.url).pathname : '.',
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const [stdout, stderr, exit] = await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+      proc.exited,
+    ]);
+    const out = stdout + stderr;
+    expect(out).toContain('Unknown long option(s) in bun:pr:verify: --typo');
+    expect(exit).not.toBe(0);
+  });
+
+  test('BUN_STRIP_UNKNOWN=true strips typo then fails missing PR build', async () => {
+    const proc = Bun.spawn(['bun', 'tools/bun-pr-verify.ts', '99999', '--typo'], {
+      cwd: import.meta.dir ? new URL('..', import.meta.url).pathname : '.',
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: { ...Bun.env, BUN_STRIP_UNKNOWN: 'true' },
+    });
+    const [stdout, stderr, exit] = await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+      proc.exited,
+    ]);
+    const out = stdout + stderr;
+    expect(out).toContain('BUN_STRIP_UNKNOWN=true — stripping');
+    expect(out).toContain('bun-99999 not on PATH');
+    expect(exit).not.toBe(0);
+  });
 });

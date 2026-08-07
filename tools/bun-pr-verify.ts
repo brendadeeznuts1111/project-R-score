@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @see https://bun.com/docs/project/contributing#download-release-build-from-pull-requests — bunx bun-pr
 /**
  * bun-pr-verify.ts — run the repo's Bun API/runtime proofs against an
  * unreleased Bun build from a GitHub PR.
@@ -11,15 +12,22 @@
  * Actions artifacts and exposes it as `bun-<pr>` on PATH):
  *   https://bun.com/docs/project/contributing#download-release-build-from-pull-requests
  *
- *   bun tools/bun-pr-verify.ts <pr-number> [--proof api|runtime|release|all]
- *   bun run bun:pr:verify 123456
+ *   bun tools/bun-pr-verify.ts <pr-number> [--proof api|runtime|release|all] [--json]
+ *   bun run bun:pr:verify -- <pr>
  *
  * Flow: resolve the PR build path → prepend to PATH → run the selected proofs
- * with that Bun → diff summary vs the installed baseline (Bun.version).
+ * with that Bun → dual-mode table/json summary vs the installed baseline.
+ *
+ * Unknown long options: ALLOWED_LONG_REGISTRY['bun:pr:verify'] · BUN_STRIP_UNKNOWN.
  */
 import { joinPath } from '../lib/path-bun.ts';
-import { resolveBunExecutable } from '../lib/bun-executable.ts';
-import { jsonOut, logTable } from '../lib/console-depth.ts';
+import { cliOut, logTable } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  BUN_PR_VERIFY_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+export { BUN_PR_VERIFY_ALLOWED_LONG };
 
 type ProofName = 'api' | 'runtime' | 'release' | 'all';
 const PROOFS: Record<Exclude<ProofName, 'all'>, string[]> = {
@@ -29,17 +37,18 @@ const PROOFS: Record<Exclude<ProofName, 'all'>, string[]> = {
 };
 
 function parseArgs(argv: string[]): { pr: string; proof: ProofName; json: boolean } {
-  const pr = argv.find(a => /^\d+$/.test(a));
+  const guarded = applyUnknownLongOptionGuardFor('bun:pr:verify', argv, { onFail: 'throw' });
+  const pr = guarded.find(a => /^\d+$/.test(a));
   if (!pr)
     throw new Error(
-      'usage: bun tools/bun-pr-verify.ts <pr-number> [--proof api|runtime|release|all]'
+      'usage: bun tools/bun-pr-verify.ts <pr-number> [--proof api|runtime|release|all] [--json]'
     );
-  const proofArg = argv.find(a => a.startsWith('--proof='))?.split('=')[1];
+  const proofArg = guarded.find(a => a.startsWith('--proof='))?.split('=')[1];
   const proof = (proofArg ?? 'all') as ProofName;
   if (!['api', 'runtime', 'release', 'all'].includes(proof)) {
     throw new Error(`unknown --proof=${proof} (api|runtime|release|all)`);
   }
-  return { pr, proof, json: argv.includes('--json') };
+  return { pr, proof, json: guarded.includes('--json') };
 }
 
 /** Resolve the bun-<pr> binary installed by `bunx bun-pr` (throws when absent). */
@@ -96,16 +105,18 @@ async function main(): Promise<void> {
     rows.push(await runProof(pr, n, prBun));
   }
 
+  const payload = {
+    pr,
+    installed,
+    prVersion,
+    prBun,
+    results: rows,
+    healthy: rows.every(r => r.exit === 0),
+  };
+
   if (json) {
-    jsonOut({
-      pr,
-      installed,
-      prVersion,
-      prBun,
-      results: rows,
-      healthy: rows.every(r => r.exit === 0),
-    });
-    return;
+    cliOut(payload, { json: true });
+    process.exit(payload.healthy ? 0 : 1);
   }
 
   console.log(`bun-pr verify #${pr}`);
@@ -118,11 +129,17 @@ async function main(): Promise<void> {
     })),
     ['proof', 'exit', 'tail']
   );
-  const ok = rows.every(r => r.exit === 0);
-  console.log(ok ? '✅ all proofs pass on the PR build' : '❌ some proofs failed on the PR build');
-  process.exit(ok ? 0 : 1);
+  console.log(
+    payload.healthy ? '✅ all proofs pass on the PR build' : '❌ some proofs failed on the PR build'
+  );
+  process.exit(payload.healthy ? 0 : 1);
 }
 
 if (import.meta.main) {
-  await main();
+  try {
+    await main();
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : String(e));
+    process.exit(1);
+  }
 }

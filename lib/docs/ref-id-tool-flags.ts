@@ -356,9 +356,17 @@ export function complexityFloorToolFlags(): ToolFlagRef[] {
   );
 }
 
+/** § — bun:pr:verify (`tools/bun-pr-verify.ts`) — no design Flags table; tool allowlist only */
+export const BUN_PR_VERIFY_ALLOWED_LONG = ['proof', 'json'] as const;
+
 /** CLI names keyed in `ALLOWED_LONG_REGISTRY` (package-script style). */
 export type AllowedLongCliName =
-  'lint-wires' | 'images:generate' | 'ops:snapshot' | 'telegram:ops' | 'partner:onboard';
+  | 'lint-wires'
+  | 'images:generate'
+  | 'ops:snapshot'
+  | 'telegram:ops'
+  | 'partner:onboard'
+  | 'bun:pr:verify';
 
 /**
  * Central allowlist registry — code SSOT (not env JSON).
@@ -370,6 +378,7 @@ export const ALLOWED_LONG_REGISTRY = {
   'ops:snapshot': OPS_SNAPSHOT_ALLOWED_LONG,
   'telegram:ops': TELEGRAM_OPS_ALLOWED_LONG,
   'partner:onboard': PARTNER_ONBOARD_ALLOWED_LONG,
+  'bun:pr:verify': BUN_PR_VERIFY_ALLOWED_LONG,
 } as const satisfies Record<AllowedLongCliName, readonly string[]>;
 
 /** Apply guard using `ALLOWED_LONG_REGISTRY[cliName]`. */
