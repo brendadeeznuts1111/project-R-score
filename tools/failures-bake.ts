@@ -33,6 +33,19 @@ const OUT_JSON = joinPath(ROOT, 'public', 'registry', 'failures.json');
 const OUT_HTML = joinPath(ROOT, 'public', 'portal', 'failures', 'index.html');
 const NO_FAIL = Bun.argv.includes('--no-fail');
 
+function formatEnvLine(report: TestFailuresReport): string {
+  const e = report.env ?? {};
+  const bits: string[] = [];
+  if (e.commit) bits.push(`commit <code>${escapeHtml(e.commit.slice(0, 12))}</code>`);
+  if (e.hostname) bits.push(`host <code>${escapeHtml(e.hostname)}</code>`);
+  if (e.ci) {
+    bits.push(
+      `ci <a href="${escapeHtml(e.ci)}">${escapeHtml(e.ci.replace(/^https?:\/\//, '').slice(0, 48))}</a>`
+    );
+  }
+  return bits.length ? ` · ${bits.join(' · ')}` : '';
+}
+
 /** Export for unit coverage of the stale-board template. */
 export function renderHtml(report: TestFailuresReport): string {
   const t = report.totals;
@@ -114,6 +127,8 @@ export function renderHtml(report: TestFailuresReport): string {
       <p class="hero-sub">
         Latest suite totals with per-failure <code>bun test</code> replay lines.
         Refresh via <code>bun run failures:bake</code> after a JUnit run.
+        Bun embeds <code>ci</code> / <code>commit</code> in JUnit when env is set
+        (<a href="https://bun.com/docs/test/reporters#environment-variables-in-junit-reports">docs</a>).
       </p>
       <div class="portal-hero-meta">
         <span class="portal-gate ${gateCls}" aria-live="polite"><span class="dot" aria-hidden="true"></span>${gateLabel}</span>
@@ -125,7 +140,7 @@ export function renderHtml(report: TestFailuresReport): string {
         </div>
       </div>
     </section>
-    <p class="dim">Sources: ${escapeHtml(report.sources.join(', '))}</p>
+    <p class="dim">Sources: ${escapeHtml(report.sources.join(', '))}${formatEnvLine(report)}</p>
     <div class="portal-stat-grid" aria-label="Failures summary">
       ${renderPortalStatGrid([
         { label: 'Tests', value: t.tests },

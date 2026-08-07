@@ -5,13 +5,19 @@ import {
   FAILURES_STALE_MS,
   failuresFromJunitXml,
   isFailuresReportStale,
+  junitEnvFromXml,
+  mergeJunitEnv,
   namePattern,
 } from '../lib/failure-report.ts';
 import { renderHtml } from '../tools/failures-bake.ts';
 
 const JUNIT = `<?xml version="1.0" encoding="UTF-8"?>
 <testsuites name="bun test" tests="3" assertions="10" failures="1" skipped="1" time="2.5">
-  <testsuite name="tests/foo.test.ts" file="tests/foo.test.ts" tests="3" failures="1" time="0">
+  <testsuite name="tests/foo.test.ts" file="tests/foo.test.ts" tests="3" failures="1" time="0" hostname="ci-runner-1">
+    <properties>
+      <property name="ci" value="https://github.com/org/repo/actions/runs/99" />
+      <property name="commit" value="abc123def456" />
+    </properties>
     <testcase name="passes fine" classname="foo" time="0.001" file="tests/foo.test.ts" />
     <testcase name="breaks &lt;badly&gt; (with regex+chars)" classname="foo" time="0.002" file="tests/foo.test.ts">
       <failure message="expect(received).toBe(expected)">Expected: 2
@@ -50,6 +56,31 @@ describe('test-failures parser', () => {
     expect(r.failures).toHaveLength(0);
   });
 
+  test('junitEnvFromXml reads Bun properties + hostname', () => {
+    const env = junitEnvFromXml(JUNIT);
+    expect(env).toEqual({
+      ci: 'https://github.com/org/repo/actions/runs/99',
+      commit: 'abc123def456',
+      hostname: 'ci-runner-1',
+    });
+  });
+
+  test('mergeJunitEnv first non-empty wins', () => {
+    const env = mergeJunitEnv([
+      {
+        source: 'a.xml',
+        xml: '<testsuites><testsuite hostname="a"><properties><property name="commit" value="aaa" /></properties></testsuite></testsuites>',
+      },
+      {
+        source: 'b.xml',
+        xml: '<testsuites><testsuite hostname="b"><properties><property name="commit" value="bbb" /><property name="ci" value="https://ci" /></properties></testsuite></testsuites>',
+      },
+    ]);
+    expect(env.commit).toBe('aaa');
+    expect(env.ci).toBe('https://ci');
+    expect(env.hostname).toBe('a');
+  });
+
   test('buildFailuresReport merges multiple docs and sorts', () => {
     const report = buildFailuresReport(
       [
@@ -68,6 +99,9 @@ describe('test-failures parser', () => {
     expect(report.generatedAt).toBe('2026-07-28T00:00:00Z');
     // Without mtimes, sourceAt falls back to bake time
     expect(report.sourceAt).toBe('2026-07-28T00:00:00Z');
+    expect(report.env.commit).toBe('abc123def456');
+    expect(report.env.ci).toContain('actions/runs/99');
+    expect(report.env.hostname).toBe('ci-runner-1');
   });
 
   test('sourceAt prefers max JUnit mtime over bake wall-clock', () => {
@@ -108,6 +142,15 @@ describe('test-failures parser', () => {
   test('report shape is a stable contract (snapshot)', () => {
     const report = buildFailuresReport([{ source: 'junit.xml', xml: JUNIT }], '2026-07-28T00:00:00Z');
     expect(report).toMatchSnapshot();
+  });
+
+  test('renderHtml surfaces JUnit env provenance', () => {
+    const report = buildFailuresReport([{ source: 'tmp/junit.xml', xml: JUNIT }], '2026-07-28T00:00:00Z');
+    const html = renderHtml(report);
+    expect(html).toContain('abc123def456'.slice(0, 12));
+    expect(html).toContain('ci-runner-1');
+    expect(html).toContain('actions/runs/99');
+    expect(html).toContain('environment-variables-in-junit-reports');
   });
 
   test('renderHtml embeds sourceAt and stale-board guard using STALE_MS', () => {

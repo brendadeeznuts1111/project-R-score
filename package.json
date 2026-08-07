@@ -5,7 +5,7 @@
   "engines": {
     "bun": ">=1.3.14"
   },
-  "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
+  "description": "\ud83d\ude80 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
     "packages": [
       "packages/*",
@@ -1112,7 +1112,7 @@
           }
         ],
         "spf": "v=spf1 include:_spf.protonmail.ch ~all",
-        "dkim": "pending — protonmail.domainkey/protonmail2.domainkey/protonmail3.domainkey CNAMEs not yet in Cloudflare zone",
+        "dkim": "pending \u2014 protonmail.domainkey/protonmail2.domainkey/protonmail3.domainkey CNAMEs not yet in Cloudflare zone",
         "dmarc": "v=DMARC1; p=quarantine; rua=mailto:admin@factory-wager.com; ruf=mailto:admin@factory-wager.com; fo=1",
         "verification": "protonmail-verification=96c089f0b6b18c1c28ff042ec54b48c7d6fe4daf"
       }
@@ -1714,7 +1714,7 @@
     "test:bun:1.3.14": "bun test tests/bun-1.3.14-web-api-fixes.test.ts tests/bun-toml-version-contract.test.ts",
     "test:bun:1.4.0": "bun test tests/bun-1.4.0-web-api-contract.test.ts tests/bun-1.4.0-cron-contract.test.ts tests/bun-toml-version-contract.test.ts",
     "test:dev": "NODE_ENV=test bun test --watch --parallel --pass-with-no-tests tests",
-    "test:ci": "bash -c 'mkdir -p \"$(dirname \"${JUNIT_OUT:-tmp/junit.xml}\")\" && NODE_ENV=test bun test --timeout=30000 --pass-with-no-tests $(find tests -name \"*.test.ts\" -not -path \"*/node_modules/*\") --reporter=junit --reporter-outfile=\"${JUNIT_OUT:-tmp/junit.xml}\"'",
+    "test:ci": "bash -c 'mkdir -p \"$(dirname \"${JUNIT_OUT:-tmp/junit.xml}\")\" && export GIT_SHA=\"${GIT_SHA:-$(git rev-parse HEAD 2>/dev/null || true)}\" && NODE_ENV=test bun test --timeout=30000 --pass-with-no-tests $(find tests -name \"*.test.ts\" -not -path \"*/node_modules/*\") --reporter=junit --reporter-outfile=\"${JUNIT_OUT:-tmp/junit.xml}\"'",
     "test:parallel": "NODE_ENV=test bun test --parallel --timeout=30000 --pass-with-no-tests tests",
     "test:changed": "bun scripts/bun-test-changed.ts",
     "test:changed:main": "bun scripts/bun-test-changed.ts --main-head",
@@ -1751,8 +1751,8 @@
     "ops:enhancements:html": "bun --console-depth=6 tools/show-enhancements.ts --html",
     "test:isolate": "NODE_ENV=test bun test --isolate --timeout=30000 --pass-with-no-tests tests",
     "test:shard": "bash -c 'NODE_ENV=test bun test --timeout=30000 --pass-with-no-tests tests --shard=\"${SHARD:-1/1}\"'",
-    "test:ci:shard": "bash -c 'mkdir -p \"$(dirname \"${JUNIT_OUT:-tmp/junit.xml}\")\" && NODE_ENV=test bun test --timeout=30000 --pass-with-no-tests $(find tests -name \"*.test.ts\" -not -path \"*/node_modules/*\") --shard=\"${SHARD:-1/4}\" --reporter=junit --reporter-outfile=\"${JUNIT_OUT:-tmp/junit.xml}\"'",
-    "test:ci:shard:parallel": "bash -c 'mkdir -p \"$(dirname \"${JUNIT_OUT:-tmp/junit.xml}\")\" && NODE_ENV=test bun test --parallel=4 --timeout=30000 --pass-with-no-tests $(find tests -name \"*.test.ts\" -not -path \"*/node_modules/*\") --shard=\"${SHARD:-1/4}\" --reporter=junit --reporter-outfile=\"${JUNIT_OUT:-tmp/junit.xml}\"'",
+    "test:ci:shard": "bash -c 'mkdir -p \"$(dirname \"${JUNIT_OUT:-tmp/junit.xml}\")\" && export GIT_SHA=\"${GIT_SHA:-$(git rev-parse HEAD 2>/dev/null || true)}\" && NODE_ENV=test bun test --timeout=30000 --pass-with-no-tests $(find tests -name \"*.test.ts\" -not -path \"*/node_modules/*\") --shard=\"${SHARD:-1/4}\" --reporter=junit --reporter-outfile=\"${JUNIT_OUT:-tmp/junit.xml}\"'",
+    "test:ci:shard:parallel": "bash -c 'mkdir -p \"$(dirname \"${JUNIT_OUT:-tmp/junit.xml}\")\" && export GIT_SHA=\"${GIT_SHA:-$(git rev-parse HEAD 2>/dev/null || true)}\" && NODE_ENV=test bun test --parallel=4 --timeout=30000 --pass-with-no-tests $(find tests -name \"*.test.ts\" -not -path \"*/node_modules/*\") --shard=\"${SHARD:-1/4}\" --reporter=junit --reporter-outfile=\"${JUNIT_OUT:-tmp/junit.xml}\"'",
     "test:inventory": "bun scripts/suite-inventory.ts",
     "failures:bake": "bun tools/failures-bake.ts",
     "identity:admin": "bun tools/identity-admin.ts",
@@ -2264,7 +2264,7 @@
     "check:routes": "bun tools/verify-networking.ts --routes-only",
     "check:formdata": "bun tools/verify-formdata.ts",
     "check:formdata:save": "bun tools/verify-formdata.ts --save",
-    "verify-all": "bun tools/verify-defaults.ts --save && bun tools/verify-networking.ts --save && bun tools/verify-bun-release.ts --save && bun tools/verify-package-info.ts --save && bun tools/verify-install-env.ts --save && bun tools/verify-registry-client.ts --save && bun tools/verify-install-platform.ts --dry-run --save && bun tools/verify-bun-runtime-nits.ts --save && bun tools/verify-bundler.ts --save && bun tools/build-doc-index.ts --save && bun tools/verify-docs-coverage.ts --save && bun -e 'const f=await Bun.file(\"public/registry/@factorywager/bun-utils-test/latest.json\").json();console.log(\"✅ Bun utils: \"+f.summary.passed+\"/\"+f.summary.total+\" passed\");const ip=await Bun.file(\"public/registry/install-platform.json\").json();console.log(\"✅ Install platform: \"+ip.summary.passed+\"/\"+ip.summary.total);const ie=await Bun.file(\"public/registry/install-env-proof.json\").json();console.log(\"✅ Install env: \"+ie.summary.passed+\"/\"+ie.summary.total+\" probes (6 env + scoped + read-plane)\");const rc=await Bun.file(\"public/registry/registry-client-proof.json\").json();console.log(\"✅ Registry client: \"+rc.summary.passed+\"/\"+rc.summary.total+\" probes (resolve + download + publish) v\"+rc.sdkVersion);const bl=await Bun.file(\"public/registry/bundler-loaders-proof.json\").json();console.log(\"✅ Bundler loaders: \"+bl.summary.passed+\"/\"+bl.summary.total);' && bun tools/verify-channel-meta.ts --prefer-artifacts --save && bun tools/verify-proof-taxonomy.ts --save && bun tools/verify-portal.ts && bun tools/verify-script-flags.ts",
+    "verify-all": "bun tools/verify-defaults.ts --save && bun tools/verify-networking.ts --save && bun tools/verify-bun-release.ts --save && bun tools/verify-package-info.ts --save && bun tools/verify-install-env.ts --save && bun tools/verify-registry-client.ts --save && bun tools/verify-install-platform.ts --dry-run --save && bun tools/verify-bun-runtime-nits.ts --save && bun tools/verify-bundler.ts --save && bun tools/build-doc-index.ts --save && bun tools/verify-docs-coverage.ts --save && bun -e 'const f=await Bun.file(\"public/registry/@factorywager/bun-utils-test/latest.json\").json();console.log(\"\u2705 Bun utils: \"+f.summary.passed+\"/\"+f.summary.total+\" passed\");const ip=await Bun.file(\"public/registry/install-platform.json\").json();console.log(\"\u2705 Install platform: \"+ip.summary.passed+\"/\"+ip.summary.total);const ie=await Bun.file(\"public/registry/install-env-proof.json\").json();console.log(\"\u2705 Install env: \"+ie.summary.passed+\"/\"+ie.summary.total+\" probes (6 env + scoped + read-plane)\");const rc=await Bun.file(\"public/registry/registry-client-proof.json\").json();console.log(\"\u2705 Registry client: \"+rc.summary.passed+\"/\"+rc.summary.total+\" probes (resolve + download + publish) v\"+rc.sdkVersion);const bl=await Bun.file(\"public/registry/bundler-loaders-proof.json\").json();console.log(\"\u2705 Bundler loaders: \"+bl.summary.passed+\"/\"+bl.summary.total);' && bun tools/verify-channel-meta.ts --prefer-artifacts --save && bun tools/verify-proof-taxonomy.ts --save && bun tools/verify-portal.ts && bun tools/verify-script-flags.ts",
     "verify:install-env": "bun tools/verify-install-env.ts",
     "verify:portal": "bun tools/verify-portal.ts",
     "verify:portal:static": "bun tools/verify-portal.ts --static-only",

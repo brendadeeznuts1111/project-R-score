@@ -1,9 +1,16 @@
+// @see https://bun.com/docs/test/reporters#environment-variables-in-junit-reports — JUnit <properties>
+// @see https://bun.com/docs/test/reporters#junit-xml-reporter — --reporter=junit
 /**
  * Test failures — parse Bun JUnit XML into a portal-ready failure report with
  * per-failure dev replay commands.
  *
  * Pure module (no fs) — the bake CLI supplies XML strings.
  * JUnit input comes from: bun test --reporter=junit --reporter-outfile=tmp/junit*.xml
+ *
+ * Bun embeds suite provenance as `<properties>` when env is set:
+ *   ci      ← GITHUB_RUN_ID + GITHUB_SERVER_URL + GITHUB_REPOSITORY (or CI_JOB_URL)
+ *   commit  ← GITHUB_SHA · CI_COMMIT_SHA · GIT_SHA
+ * Hostname is on `<testsuite hostname="…">` (machine identity).
  */
 
 export type TestFailure = {
@@ -15,6 +22,16 @@ export type TestFailure = {
   /** Ready-to-run replay commands for developers. */
   replayFile: string;
   replayTest: string;
+};
+
+/** Suite provenance from Bun JUnit properties / testsuite attributes. */
+export type JunitEnvProvenance = {
+  /** CI job / Actions run URL when available. */
+  ci?: string;
+  /** Git commit SHA when available. */
+  commit?: string;
+  /** Machine hostname from first testsuite attribute. */
+  hostname?: string;
 };
 
 export type FailureReportDoc = {
@@ -38,6 +55,8 @@ export type TestFailuresReport = {
   totals: { tests: number; failures: number; skipped: number; timeSeconds: number };
   failures: TestFailure[];
   healthy: boolean;
+  /** Commit / CI / hostname from Bun JUnit properties (empty when unset). */
+  env: JunitEnvProvenance;
 };
 
 /** Board is stale when the suite source (or bake time) is older than this. */
@@ -118,6 +137,35 @@ export function sourceAtFromDocs(docs: FailureReportDoc[]): string | undefined {
   return max > 0 ? new Date(max).toISOString() : undefined;
 }
 
+/**
+ * Extract Bun JUnit suite provenance from `<property name="ci|commit">` and
+ * `hostname` on the first `<testsuite>`.
+ * @see https://bun.com/docs/test/reporters#environment-variables-in-junit-reports
+ */
+export function junitEnvFromXml(xml: string): JunitEnvProvenance {
+  const env: JunitEnvProvenance = {};
+  for (const m of xml.matchAll(/<property\s+name="([^"]*)"\s+value="([^"]*)"\s*\/>/g)) {
+    const name = unescapeXml(m[1]!);
+    const value = unescapeXml(m[2]!);
+    if ((name === 'ci' || name === 'commit') && value) env[name] = value;
+  }
+  const host = xml.match(/<testsuite\b[^>]*\bhostname="([^"]*)"/);
+  if (host?.[1]) env.hostname = unescapeXml(host[1]);
+  return env;
+}
+
+/** Merge provenance across JUnit docs (first non-empty wins per field). */
+export function mergeJunitEnv(docs: FailureReportDoc[]): JunitEnvProvenance {
+  const out: JunitEnvProvenance = {};
+  for (const d of docs) {
+    const e = junitEnvFromXml(d.xml);
+    if (e.ci && !out.ci) out.ci = e.ci;
+    if (e.commit && !out.commit) out.commit = e.commit;
+    if (e.hostname && !out.hostname) out.hostname = e.hostname;
+  }
+  return out;
+}
+
 /** True when the suite source (preferred) or bake time is older than STALE_MS. */
 export function isFailuresReportStale(
   report: Pick<TestFailuresReport, 'sourceAt' | 'generatedAt'>,
@@ -161,5 +209,6 @@ export function buildFailuresReport(
     },
     failures: all,
     healthy: all.length === 0,
+    env: mergeJunitEnv(docs),
   };
 }
