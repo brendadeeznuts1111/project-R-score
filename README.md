@@ -20,7 +20,7 @@ from `public/` and `functions/`, with machine-readable proofs baked under
 | Role | Doc |
 |------|-----|
 | This hub | [Home](/) · [wiki.factory-wager.com](https://wiki.factory-wager.com/) |
-| AI agents | [`AGENTS.md`](AGENTS.md) → [`docs/AGENTS.md`](docs/AGENTS.md) |
+| AI agents | [`AGENTS.md`](AGENTS.md) (entry + capability map) · routing [`docs/AGENTS.md`](docs/AGENTS.md) |
 | Wiki full index | [`wiki-index.md`](wiki-index.md) — portal · registry · tenants · proof loop |
 | Registry index | [`registry-index.md`](registry-index.md) — bake map + portal consumers |
 | Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |

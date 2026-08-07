@@ -19,9 +19,9 @@ export const CANONICAL_REPO_DOCS = {
   wikiIndex: 'wiki-index.md',
   /** Registry bake index (portal consumers) */
   registryIndex: 'registry-index.md',
-  /** AI agent entrypoint (thin) */
+  /** AI agent entrypoint + grounded capability map SSOT */
   agents: 'AGENTS.md',
-  /** Full agent guide */
+  /** Thin agent routing tables (pointer → root AGENTS.md) */
   agentsFull: 'docs/AGENTS.md',
   /** Workspace map */
   structure: 'STRUCTURE.md',
@@ -158,6 +158,7 @@ export const CANONICAL_TOOLS = {
   benchmarksReadme: 'tools/benchmarks/README.md',
   benchStatus: 'tools/bench-status.ts',
   deepBenchmark: 'tools/benchmarks/deep-benchmark.ts',
+  velocityColdStart: 'tools/velocity-cold-start.ts',
   terminalTest: 'tests/terminal.test.ts',
   deepEqualsTest: 'tests/deep-equals.test.ts',
   peekSettleTest: 'tests/peek-settle.test.ts',
@@ -180,8 +181,8 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   readme: 'Human hub + scripts',
   wikiIndex: 'Wiki navigation hub (portal · registry · tenants)',
   registryIndex: 'Registry bake index (portal consumers)',
-  agents: 'AI agent entrypoint',
-  agentsFull: 'Full agent guide',
+  agents: 'AI agent entrypoint + capability map SSOT',
+  agentsFull: 'Agent routing tables (pointer → root AGENTS)',
   structure: 'Workspace map',
   standards: 'Coding standards (complete)',
   standardsQuick: 'Coding standards (quick)',
