@@ -24,6 +24,14 @@ contract as other domain Area maps).
 | Shared UI HTML        | [`ui-html.ts`](./ui-html.ts)                                                                                                                                                                                                                                                                          | Pure builders: portal-table, chips, panel, skeleton        |
 | Other                 | [`command-centre-api.ts`](./command-centre-api.ts) · [`bun-test-snapshots.ts`](./bun-test-snapshots.ts)                                                                                                                                                                                               | Command centre payload; snapshot helpers                   |
 
+**Portal Design agent** (theme · kernels · building blocks · dual-plane tennis
+vs Pages):
+[`.agents/skills/portal-design/`](../../.agents/skills/portal-design/) ·
+[`docs/design/portal-design-agent.md`](../../docs/design/portal-design-agent.md).
+Visual identity ≠ typed branded IDs (`/portal/brands/`). Template split:
+**jsonc** palette · **HTML** `_page-template` · **TS/JS** builders · **TOML**
+hosts only (`surfaces.toml`).
+
 ## Hash SSOT
 
 - Pattern inits: [`url-planes.ts`](./url-planes.ts)

@@ -5,7 +5,7 @@ Single source of truth for the FactoryWager static portal (`public/portal/`). Ne
 **Template:** [`public/portal/_page-template.html`](../public/portal/_page-template.html)  
 **Verify:** `bun run verify:portal:static` (CI) · `bun run verify:portal` (live server) · `bun run public:audit:verify` (discovery + static + audit)
 
-**Agents:** Public Discovery · Public Audit Gap Close — [`docs/harness/tenants/public-plane.md`](harness/tenants/public-plane.md)
+**Agents:** Portal Design ([`.agents/skills/portal-design/`](../.agents/skills/portal-design/) · [`docs/design/portal-design-agent.md`](design/portal-design-agent.md)) · Public Discovery · Public Audit Gap Close — [`docs/harness/tenants/public-plane.md`](harness/tenants/public-plane.md)
 
 ---
 
