@@ -45,9 +45,15 @@ import {
   startSpinner,
   parseHealthReportSchemaIssues,
 } from '../lib/harness/monorepo-health-ui.ts';
-import { getConsoleDepth } from '../lib/console-depth.ts';
+import { getConsoleDepth } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  MONOREPO_HEALTH_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
 
-const argv = process.argv.slice(2);
+export { MONOREPO_HEALTH_ALLOWED_LONG };
+
+const argv = applyUnknownLongOptionGuardFor('monorepo:health', process.argv.slice(2));
 
 function flag(name: string): boolean {
   return argv.includes(name);
