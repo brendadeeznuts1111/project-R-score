@@ -5,8 +5,17 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.write · Bun.file().delete()
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
+// @see https://bun.com/docs/runtime/console#object-inspection-depth — cliOut dual-mode
+// @see https://bun.com/docs/project/contributing#download-release-build-from-pull-requests — bunx bun-pr
+// @see https://bun.com/docs/bundler/executables — --force
 import { basename, dirname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
+import { cliOut, logTable } from '../../../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  BUN_RELEASE_CONTRACTS_ALLOWED_LONG,
+} from '../../../lib/docs/ref-id-tool-flags.ts';
+import { assertPathInRepo } from '../../../lib/repo-containment.ts';
 import { prepareReleaseInventoryIndex, type PreparedReleaseInventoryIndex } from './catalog';
 import { fetchReleaseFeed, loadReleaseFeedSettings, selectReleaseFeedEntries } from './feed';
 import {
@@ -15,8 +24,22 @@ import {
   type PreparedReleaseInventory,
 } from './generator';
 
+export { BUN_RELEASE_CONTRACTS_ALLOWED_LONG };
+
 const REPO_ROOT = resolve(import.meta.dir, '..', '..', '..');
 const DEFAULT_OUTPUT_DIR = resolve(import.meta.dir, '..', 'contracts');
+
+/** Gate --output-dir under the repository root unless --force. */
+export async function assertOutputDirInRepo(
+  outputDir: string,
+  opts: { force?: boolean; repoRoot?: string } = {}
+): Promise<string> {
+  return assertPathInRepo(outputDir, {
+    force: opts.force,
+    repoRoot: opts.repoRoot ?? REPO_ROOT,
+    label: '--output-dir',
+  });
+}
 
 function positiveInteger(value: string | undefined, name: string, fallback?: number): number {
   if (value == null && fallback != null) return fallback;
@@ -45,17 +68,41 @@ export async function mapConcurrent<T, R>(
 }
 
 function printHelp(): void {
-  console.log(`Usage: bun src/cli.ts [vMAJOR.MINOR.PATCH | latest] [options]
+  console.log(`Usage: bun run bun:release-contracts -- [vMAJOR.MINOR.PATCH | latest] [options]
+       bun packages/bun-release-contracts/src/cli.ts [vMAJOR.MINOR.PATCH | latest] [options]
 
 Options:
   --all                Generate every stable release present in the Bun RSS feed
   --since <version>    With --all, include releases at or after this version
   --limit <count>      With --all, limit releases selected newest first
   --concurrency <n>    Concurrent blog fetches for batch generation (default: 4, max: 8)
-  --output-dir <path>  Inventory output directory
+  --output-dir <path>  Inventory output directory (must stay under repo unless --force)
+  --force              Allow --output-dir outside the repository root
   --check              Fail when an inventory or index is missing or stale
-  -h, --help           Show this help`);
+  --json               Machine-readable summary via cliOut
+  -h, --help           Show this help
+
+Upstream Bun PR builds (not this CLI's flags):
+  bunx bun-pr <pr> && bun run bun:pr:verify -- <pr>
+  See docs/BUN_DOCS_OPERATE.md · docs/harness/cli-constants-flags.md §6`);
 }
+
+export type ReleaseContractsCliSummary = {
+  mode: 'check' | 'generate';
+  bunVersion: string;
+  outputDir: string;
+  releases: Array<{
+    version: string;
+    path: string;
+    status: 'verified' | 'generated' | 'unchanged';
+    itemCount: number;
+  }>;
+  index: {
+    path: string;
+    status: 'verified' | 'generated' | 'unchanged';
+    releaseCount: number;
+  };
+};
 
 export type GenerateReleaseInventoryBatchOptions = {
   versions: string[];
@@ -316,9 +363,14 @@ export async function generateReleaseInventoryBatch(
   return { inventories, index };
 }
 
-export async function runCli(args = Bun.argv.slice(2)): Promise<void> {
+export async function runCli(
+  args = Bun.argv.slice(2)
+): Promise<ReleaseContractsCliSummary | undefined> {
+  const guarded = applyUnknownLongOptionGuardFor('bun:release-contracts', args, {
+    onFail: 'throw',
+  });
   const { values, positionals } = parseArgs({
-    args,
+    args: guarded,
     options: {
       all: { type: 'boolean', default: false },
       since: { type: 'string' },
@@ -326,13 +378,18 @@ export async function runCli(args = Bun.argv.slice(2)): Promise<void> {
       concurrency: { type: 'string' },
       check: { type: 'boolean', default: false },
       'output-dir': { type: 'string' },
+      force: { type: 'boolean', default: false },
+      json: { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
     allowPositionals: true,
     strict: true,
   });
 
-  if (values.help) return printHelp();
+  if (values.help) {
+    printHelp();
+    return undefined;
+  }
   if (positionals.length > 1) throw new Error('Expected at most one version argument');
   if (values.all && positionals.length > 0) {
     throw new Error('Do not combine --all with a positional version');
@@ -342,7 +399,10 @@ export async function runCli(args = Bun.argv.slice(2)): Promise<void> {
 
   const limit = values.limit == null ? undefined : positiveInteger(values.limit, '--limit');
   const concurrency = Math.min(8, positiveInteger(values.concurrency, '--concurrency', 4));
-  const outputDir = resolve(values['output-dir'] ?? DEFAULT_OUTPUT_DIR);
+  const outputDir = await assertOutputDirInRepo(values['output-dir'] ?? DEFAULT_OUTPUT_DIR, {
+    force: values.force === true,
+    repoRoot: REPO_ROOT,
+  });
   let versions: string[];
 
   if (values.all || positionals[0] === 'latest') {
@@ -369,16 +429,42 @@ export async function runCli(args = Bun.argv.slice(2)): Promise<void> {
     concurrency,
     repoRoot: REPO_ROOT,
   });
-  for (const inventory of batch.inventories) {
-    const verb = values.check ? 'Verified' : inventory.changed ? 'Generated' : 'Unchanged';
-    console.log(`${verb}: ${inventory.outputPath}`);
-    console.log(`${inventory.itemCount} release announcements`);
+
+  const summary: ReleaseContractsCliSummary = {
+    mode: values.check ? 'check' : 'generate',
+    bunVersion: Bun.version,
+    outputDir,
+    releases: batch.inventories.map(inventory => ({
+      version: inventory.inventory.releaseVersion,
+      path: inventory.outputPath,
+      status: values.check ? 'verified' : inventory.changed ? 'generated' : 'unchanged',
+      itemCount: inventory.itemCount,
+    })),
+    index: {
+      path: batch.index.outputPath,
+      status: values.check ? 'verified' : batch.index.changed ? 'generated' : 'unchanged',
+      releaseCount: batch.index.releaseCount,
+    },
+  };
+
+  if (values.json) {
+    cliOut(summary, { json: true });
+    return summary;
   }
 
-  const indexVerb = values.check ? 'Verified' : batch.index.changed ? 'Generated' : 'Unchanged';
-  console.log(
-    `${indexVerb}: ${basename(batch.index.outputPath)} (${batch.index.releaseCount} releases)`
+  logTable(
+    summary.releases.map(row => ({
+      version: row.version,
+      status: row.status,
+      items: row.itemCount,
+      path: row.path,
+    })),
+    ['version', 'status', 'items', 'path']
   );
+  console.log(
+    `${summary.index.status}: ${summary.index.path} (${summary.index.releaseCount} releases)`
+  );
+  return summary;
 }
 
 if (import.meta.main) {

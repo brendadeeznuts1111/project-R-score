@@ -4,8 +4,8 @@
   "releaseVersion": "1.3.14",
   "sourceUrl": "https://bun.com/blog/bun-v1.3.14",
   "counts": {
-    "planned": 378,
-    "executable": 2
+    "planned": 377,
+    "executable": 3
   },
   "items": [
     {
@@ -21,8 +21,8 @@
       "category": "image",
       "section": "Bun.Image — Built-in Image Processing",
       "announcement": "Bun.Image provides a chainable pipeline for decoding, transforming, and encoding images, designed as a drop-in alternative to sharp for common server-side image operations.",
-      "status": "planned",
-      "testPath": null
+      "status": "covered",
+      "testPath": "tests/image-metadata.test.ts"
     },
     {
       "key": "image-inputs-f47860b0",

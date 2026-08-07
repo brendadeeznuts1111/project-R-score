@@ -5,17 +5,28 @@ inventories. It does not generate `test.todo()` placeholders and does not count
 planned announcements as executable coverage.
 
 ```bash
-# Active runtime or an explicit release
+# Root entry (allowlist + cliOut dual-mode; preferred for operators/agents)
+bun run bun:release-contracts -- v1.3.14
+bun run bun:release-contracts -- latest --check
+bun run bun:release-contracts -- --all --since v1.3.0 --limit 10 --json
+
+# Package-local aliases
 bun --filter @factorywager/bun-release-contracts generate
 bun --filter @factorywager/bun-release-contracts generate v1.3.14
-
-# Feed-driven generation (RSS URL and timeout come from config/bun-channels.toml)
 bun --filter @factorywager/bun-release-contracts generate:latest
 bun --filter @factorywager/bun-release-contracts generate:all --since v1.3.0 --limit 10
-
-# Deterministic drift checks
 bun --filter @factorywager/bun-release-contracts check v1.3.14
 bun --filter @factorywager/bun-release-contracts test
+```
+
+Unknown long options are guarded via
+`ALLOWED_LONG_REGISTRY['bun:release-contracts']` (`--json` for machine
+summaries). Against an unreleased Bun PR build use the upstream helper — do
+**not** invent `bunx-pr`:
+
+```bash
+bunx bun-pr <pr>                 # fetch oven-sh/bun PR build as bun-<pr>
+bun run bun:pr:verify -- <pr>    # run repo proofs on that build
 ```
 
 Inventories are written to `contracts/bun-v<version>.json`;

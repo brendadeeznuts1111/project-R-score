@@ -64,6 +64,18 @@ const cases: Case[] = [
     stdoutOrStderrIncludes: ['❌ Unknown long option(s) in bun:pr:verify: --typo'],
   },
   {
+    name: 'bun:release-contracts unknown',
+    cmd: ['bun', 'tools/bun-release-contracts.ts', '--typo'],
+    expectExit: [1],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in bun:release-contracts: --typo'],
+  },
+  {
+    name: 'screenshot unknown',
+    cmd: ['bun', 'tools/screenshot-cli.ts', '--typo'],
+    expectExit: [1],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in screenshot: --typo'],
+  },
+  {
     name: 'bun:pr:verify strip mode',
     cmd: ['bun', 'tools/bun-pr-verify.ts', '99999', '--typo', '--json'],
     env: { BUN_STRIP_UNKNOWN: 'true' },

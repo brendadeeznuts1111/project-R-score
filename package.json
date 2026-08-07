@@ -1582,6 +1582,8 @@
     "bun:runtime:check": "bun tools/bun-runtime-pin.ts",
     "bun:pr:verify": "bun tools/bun-pr-verify.ts",
     "bun:pr:fetch": "bunx bun-pr",
+    "bun:release-contracts": "bun tools/bun-release-contracts.ts",
+    "screenshot": "bun tools/screenshot-cli.ts",
     "bun:channel:check": "bun tools/bun-channel-doctor.ts --check",
     "bun:channel:report": "bun tools/bun-channel-doctor.ts --save",
     "bun:channel:cron:preview": "bun tools/bun-channel-doctor-cron.ts preview",
