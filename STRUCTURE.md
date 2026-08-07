@@ -52,6 +52,8 @@ Projects/
 │   ├── UNIFIED.md · WIRE_BOUNDARY.md · DEVELOPMENT-STANDARDS.md
 │   ├── BUN_DOCS_OPERATE.md  # Token/catalog operate (RSS → scrape → catalog)
 │   ├── organization/        # Root cleanup history
+│   ├── performance/         # Search pin + pointer to bun-bench-profiling tenant
+│   ├── harness/tenants/bun-bench-profiling.md  # Bun bench/profile metric SSOT
 │   └── packages/            # REGISTRY.md snapshot (regenerate via packages:list tooling)
 ├── examples/                # Demos & Bun feature showcases (opt-in context)
 ├── functions/               # Cloudflare Pages edge Functions (/api/* — edge-safe only, see tests/functions-edge-safety.test.ts)
@@ -77,7 +79,7 @@ Projects/
 ├── public/                  # Static assets + Cloudflare Pages output (project-r-score; SSOT config/r2-env)
 ├── scratch/                 # Bun playground (curated; archive/scratch has older copies)
 ├── scripts/                 # Automation, CI, fix-* remediations
-├── server/ · tests/ · tools/
+├── server/ · tests/ · tools/  # tools/benchmarks = Bun microbench runners (see bun-bench-profiling tenant)
 ├── migrations/ · warehouse/ # SQL deployment source · image-pipeline source media
 ├── bunfig.toml · package.json · tsconfig*.json
 └── registry.config.json5    # → config/ (symlink)

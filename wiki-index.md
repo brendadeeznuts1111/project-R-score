@@ -256,6 +256,7 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 | Bookmaker registry         | [`bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md)       |
 | Bookmaker open issues      | [`bookmakers-open-issues.md`](docs/harness/tenants/bookmakers-open-issues.md) |
 | Bun capability × brand map | [`bun-brand-cross-map.md`](docs/harness/tenants/bun-brand-cross-map.md)       |
+| Bun bench + profiling      | [`bun-bench-profiling.md`](docs/harness/tenants/bun-bench-profiling.md) · `bun run bench:status` · [`docs/performance/`](docs/performance/README.md) |
 | GitHub issue taxonomy      | [`github-issue-taxonomy.md`](docs/harness/tenants/github-issue-taxonomy.md)   |
 | Limits forecast lab        | [`limit-forecast-lab.md`](docs/harness/tenants/limit-forecast-lab.md)         |
 | Partner domain map         | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md)         |
