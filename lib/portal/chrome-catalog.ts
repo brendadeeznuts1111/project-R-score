@@ -11,6 +11,7 @@
  * @see public/portal/nav-badges.js
  */
 import { bunRuntimeProvenance } from '../bun-executable.ts';
+import { GITHUB_ORIGIN } from '../github-repository-ref.ts';
 import { PORTAL_WIKI_DROPDOWN_HREF } from '../http/wiki-nav.ts';
 
 export const PORTAL_CHROME_REGISTRY_REL = 'public/registry/portal-chrome.json';
@@ -680,7 +681,7 @@ export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'Monorepo health', href: '/registry/monorepo-health.json' },
   {
     label: 'GitHub',
-    href: 'https://github.com/brendadeeznuts1111/project-R-score',
+    href: GITHUB_ORIGIN.url,
     external: true,
   },
 ];

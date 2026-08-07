@@ -7,7 +7,7 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
 | Entry | Purpose |
 |-------|---------|
 | [`git-commit.ts`](./git-commit.ts) | `getGitCommitHash` / `getGitBranch` via `git rev-parse` |
-| [`github-repository.ts`](./github-repository.ts) | `getGitHubRepositoryParts` — serializable owner/name/host/remote |
+| [`github-repository.ts`](./github-repository.ts) | `getGitHubRepositoryParts` (+ derived `url`) · frozen `GITHUB_ORIGIN` / `getGitHubCanonicalConstants` |
 | [`index.ts`](./index.ts) | Re-exports |
 
 **Claim** `macros-embed-boundaries` · *Fresh-rerun* → `bun test tests/macros/embed-commit.test.ts`

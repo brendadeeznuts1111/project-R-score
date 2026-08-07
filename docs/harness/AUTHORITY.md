@@ -47,14 +47,20 @@ Interior identity is **owner / name / host / remote slot**, not a single
 [`lib/github-repository-ref.ts`](../../lib/github-repository-ref.ts): Actions
 `GITHUB_REPOSITORY` (+ `GITHUB_REPOSITORY_OWNER`, `GITHUB_SERVER_URL`) →
 `git remote get-url` → [`CANONICAL_REMOTES`](../../lib/docs/repo-docs.ts).
-Derive `https://…` only at the link edge (`htmlUrl` / `treeUrl` / `commitUrl`).
-Garbage Actions or unparseable git remotes **fail loud** — never silent hardcode
-disguised as env.
+Derive `https://…` only at the link edge (`htmlUrl` / `treeUrl` / `commitUrl` /
+`blobUrl` / `rawUrl`). Garbage Actions or unparseable git remotes **fail loud** —
+never silent hardcode disguised as env.
+
+**Global frozen constants** (canonical monorepo / cascade — no runtime probe):
+`GITHUB_ORIGIN` · `GITHUB_CASCADE` · `GITHUB_REMOTES` (`.url` · `.ownerName` ·
+`.gitSsh` · `.apiHost`). Bun-native + Actions **key names**: `BUN_GITHUB_ENV`
+(import from `lib/github-repository-ref.ts` or `lib/`). Prefer these over
+string-literal `https://github.com/…` in portal chrome / docs bakes.
 
 Bun create envs (`GITHUB_TOKEN`, `GITHUB_ACCESS_TOKEN`, `GITHUB_API_DOMAIN`) are
 **create-auth / API host** only — not repository identity. Prefer Actions
 `GITHUB_REPOSITORY*` on CI. Do not invent a novel env zoo in UNIFIED; Actions
-wire + Bun create tables are enough.
+wire + Bun create tables (`BUN_GITHUB_ENV`) are enough.
 
 ### Issue metadata writes
 

@@ -143,7 +143,7 @@ Every `lib/*.ts` module is listed. Grouped for scan; paths stay flat under
 
 | Module                                                                           | Purpose                                                   |
 | -------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| [`github-repository-ref.ts`](./github-repository-ref.ts)                         | Runtime owner/name/host/remote resolve (not `REPO_URL`)   |
+| [`github-repository-ref.ts`](./github-repository-ref.ts)                         | Runtime resolve + global `GITHUB_ORIGIN` / `BUN_GITHUB_ENV` (not `REPO_URL`) |
 | [`github-issue-taxonomy-public.ts`](./github-issue-taxonomy-public.ts)           | Public projection of repo-owned issue taxonomy → registry |
 | [`github-issue-taxonomy-public-wire.ts`](./github-issue-taxonomy-public-wire.ts) | Wire verify for public taxonomy artifact                  |
 | [`github-issue-taxonomy-wire.ts`](./github-issue-taxonomy-wire.ts)               | Parse-once boundary for `factorywager.issue-spine.v1`     |
