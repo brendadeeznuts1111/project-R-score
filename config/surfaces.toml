@@ -1,5 +1,7 @@
 # FactoryWager surfaces SSOT — every public hostname and what serves it.
 # Consumed by scripts/bake-surfaces.ts → public/registry/surfaces-state.json.
+# Visual identity (theme / color kernels / portal UI blocks) is NOT owned here —
+# see docs/design/portal-design-agent.md · .agents/skills/portal-design/.
 # Status vocabulary:
 #   live        — resolves and serves its documented purpose
 #   vanity      — resolves to the Pages app but does NOT serve its implied purpose

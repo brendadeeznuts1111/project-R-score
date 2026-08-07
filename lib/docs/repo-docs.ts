@@ -39,6 +39,8 @@ export const CANONICAL_REPO_DOCS = {
   conceptLifecycle: 'docs/CONCEPT_LIFECYCLE.md',
   /** Portal shared data + topbar foundation */
   portalFoundation: 'docs/portal-foundation.md',
+  /** Portal Design agent — theme · kernels · UI blocks · dual-plane hosts */
+  portalDesignAgent: 'docs/design/portal-design-agent.md',
   /** Local vs Pages routing map (domains · functions · auth) */
   platformRouting: 'docs/platform-routing.md',
   /** Newer Bun runtime APIs (WebView, markdown.ansi, cron, UDP) */
@@ -181,6 +183,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   wireBoundary: 'Wire boundary (parse once / unknown → domain)',
   conceptLifecycle: 'Concept lifecycle (vocabulary · wire · graph · audit)',
   portalFoundation: 'Portal static UI foundation',
+  portalDesignAgent: 'Portal Design agent (theme · kernels · UI blocks)',
   platformRouting: 'Local vs Pages routing map',
   bunNativeCapabilities: 'Bun native capabilities note (browser, md, scheduler, datagram)',
   bunDocsOperate: 'Bun token/catalog operate (RSS → scrape → catalog)',

@@ -47,6 +47,7 @@ export function renderPortalChip(label, opts = {}) {
 }
 
 /**
+ * Metric card nodes — `.portal-stat` only (host wraps `.portal-stat-grid`).
  * @param {Array<{
  *   label: string,
  *   value: string|number,
@@ -80,6 +81,79 @@ export function renderPortalStatGrid(items) {
     .join('');
 }
 
+/**
+ * Status strip — `.portal-banner`.
+ * @param {{ title: string, meta?: string, tone?: 'ok'|'warn'|'bad'|'', trailingHtml?: string }} opts
+ */
+export function renderPortalBanner(opts) {
+  const tone = opts.tone ?? '';
+  const cls = tone ? `portal-banner ${tone}` : 'portal-banner';
+  const meta =
+    opts.meta != null && opts.meta !== ''
+      ? `<div class="meta">${escHtml(opts.meta)}</div>`
+      : '';
+  const trailing =
+    opts.trailingHtml != null && opts.trailingHtml !== '' ? opts.trailingHtml : '';
+  return (
+    `<div class="${escHtml(cls)}" role="status">` +
+    `<span class="dot" aria-hidden="true"></span>` +
+    `<div><div class="title">${escHtml(opts.title)}</div>${meta}</div>` +
+    trailing +
+    `</div>`
+  );
+}
+
+/**
+ * In-page title row — `.portal-hero` / `.portal-hero--card`.
+ * @param {{ title: string, sub?: string, eyebrow?: string, metaHtml?: string, card?: boolean, titleTag?: 'h1'|'h2' }} opts
+ */
+export function renderPortalHero(opts) {
+  const tag = opts.titleTag ?? (opts.card ? 'h2' : 'h1');
+  const cls = opts.card ? 'portal-hero portal-hero--card' : 'portal-hero';
+  const eyebrow =
+    opts.eyebrow != null && opts.eyebrow !== ''
+      ? `<p class="portal-eyebrow">${escHtml(opts.eyebrow)}</p>`
+      : '';
+  const sub =
+    opts.sub != null && opts.sub !== ''
+      ? `<p class="hero-sub">${escHtml(opts.sub)}</p>`
+      : '';
+  const meta =
+    opts.metaHtml != null && opts.metaHtml !== ''
+      ? `<div class="portal-hero-meta">${opts.metaHtml}</div>`
+      : '';
+  return (
+    `<header class="${cls}">` +
+    eyebrow +
+    `<${tag} class="portal-hero__title">${escHtml(opts.title)}</${tag}>` +
+    sub +
+    meta +
+    `</header>`
+  );
+}
+
+/**
+ * Soft category pill — `.portal-pill`.
+ * @param {string} label
+ * @param {{ kind?: 'accent'|'rest'|'webview'|'ok'|'seat'|'warn'|'', className?: string }} [opts]
+ */
+export function renderPortalPill(label, opts = {}) {
+  const kind = opts.kind ? `portal-pill--${opts.kind}` : '';
+  const cls = ['portal-pill', kind, opts.className || ''].filter(Boolean).join(' ');
+  return `<span class="${escHtml(cls)}">${escHtml(label)}</span>`;
+}
+
+/**
+ * Table row rail class for `rowClass`.
+ * @param {'ok'|'warn'|'bad'|''|undefined} tone
+ */
+export function portalRowToneClass(tone) {
+  if (tone === 'ok') return 'row-ok';
+  if (tone === 'warn') return 'row-warn';
+  if (tone === 'bad') return 'row-bad';
+  return '';
+}
+
 /** @param {unknown} cell */
 function cellHtml(cell) {
   if (cell == null) return { html: '<span class="dim">—</span>', className: '' };
@@ -98,7 +172,7 @@ function cellHtml(cell) {
  */
 function resolveCells(columns, row) {
   return Array.isArray(row)
-    ? row
+    ? [...row]
     : columns.map(c => /** @type {Record<string,unknown>} */ (row)[c.key]);
 }
 
@@ -111,7 +185,7 @@ function resolveCells(columns, row) {
 export function renderPortalTableRows(columns, rows, opts = {}) {
   if (!rows || !rows.length) {
     if (opts.emptyHtml != null && opts.emptyHtml !== '') return opts.emptyHtml;
-    const msg = opts.emptyMessage || 'No rows';
+    const msg = opts.emptyMessage ?? 'No rows';
     return `<tr><td colspan="${columns.length}" class="dim">${escHtml(msg)}</td></tr>`;
   }
   return rows

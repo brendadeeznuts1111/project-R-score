@@ -464,6 +464,28 @@
         }
       }
     },
+    "portal-design": {
+      "path": ".agents/skills/portal-design",
+      "zone": "agents",
+      "phases": {
+        "doctor": {
+          "enabled": true,
+          "note": "bun run portal:theme:check && bun run validate:colors && bun run verify:portal:static"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "test": {
+          "enabled": true,
+          "note": "bun run test:colors"
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "portal theme/colors/static gates via doctor; Prettier on lib/**/*.ts"
+        }
+      }
+    },
     "ops-dual-mode-experiments": {
       "path": ".agents/skills/ops-dual-mode-experiments",
       "zone": "agents",

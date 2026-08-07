@@ -94,7 +94,10 @@ export function renderPortalChip(
   return `<span class="${cls}">${escHtml(label)}</span>`;
 }
 
-/** Metric cards — `.portal-stat-grid` + `.portal-stat`. */
+/**
+ * Metric card nodes — `.portal-stat` only.
+ * Callers wrap with `.portal-stat-grid` when they own the host element.
+ */
 export function renderPortalStatGrid(items: readonly PortalStatItem[]): string {
   return items
     .map(item => {
@@ -115,6 +118,82 @@ export function renderPortalStatGrid(items: readonly PortalStatItem[]): string {
       return `<div class="${cls}"${attrs}>${body}</div>`;
     })
     .join('');
+}
+
+export type PortalBannerTone = 'ok' | 'warn' | 'bad' | '';
+
+/** Status strip — `.portal-banner` + tone + title/meta. */
+export function renderPortalBanner(opts: {
+  title: string;
+  meta?: string;
+  tone?: PortalBannerTone;
+  /** Pre-escaped trailing HTML (actions). */
+  trailingHtml?: string;
+}): string {
+  const tone = opts.tone ?? '';
+  const cls = tone ? `portal-banner ${tone}` : 'portal-banner';
+  const meta =
+    opts.meta != null && opts.meta !== '' ? `<div class="meta">${escHtml(opts.meta)}</div>` : '';
+  const trailing = opts.trailingHtml != null && opts.trailingHtml !== '' ? opts.trailingHtml : '';
+  return (
+    `<div class="${escHtml(cls)}" role="status">` +
+    `<span class="dot" aria-hidden="true"></span>` +
+    `<div><div class="title">${escHtml(opts.title)}</div>${meta}</div>` +
+    trailing +
+    `</div>`
+  );
+}
+
+/** In-page title row — `.portal-hero` or raised `.portal-hero--card`. */
+export function renderPortalHero(opts: {
+  title: string;
+  sub?: string;
+  eyebrow?: string;
+  /** Pre-escaped meta row (gates / links). */
+  metaHtml?: string;
+  card?: boolean;
+  titleTag?: 'h1' | 'h2';
+}): string {
+  const tag = opts.titleTag ?? (opts.card ? 'h2' : 'h1');
+  const cls = opts.card ? 'portal-hero portal-hero--card' : 'portal-hero';
+  const eyebrow =
+    opts.eyebrow != null && opts.eyebrow !== ''
+      ? `<p class="portal-eyebrow">${escHtml(opts.eyebrow)}</p>`
+      : '';
+  const sub =
+    opts.sub != null && opts.sub !== '' ? `<p class="hero-sub">${escHtml(opts.sub)}</p>` : '';
+  const meta =
+    opts.metaHtml != null && opts.metaHtml !== ''
+      ? `<div class="portal-hero-meta">${opts.metaHtml}</div>`
+      : '';
+  return (
+    `<header class="${cls}">` +
+    eyebrow +
+    `<${tag} class="portal-hero__title">${escHtml(opts.title)}</${tag}>` +
+    sub +
+    meta +
+    `</header>`
+  );
+}
+
+export type PortalPillKind = 'accent' | 'rest' | 'webview' | 'ok' | 'seat' | 'warn' | '';
+
+/** Soft category pill — `.portal-pill` (+ `--*` kind). Complements chips. */
+export function renderPortalPill(
+  label: string,
+  opts: { kind?: PortalPillKind; className?: string } = {}
+): string {
+  const kind = opts.kind ? `portal-pill--${opts.kind}` : '';
+  const cls = ['portal-pill', kind, opts.className ?? ''].filter(Boolean).join(' ');
+  return `<span class="${escHtml(cls)}">${escHtml(label)}</span>`;
+}
+
+/** Table row rail class for `renderPortalTableRows` `rowClass`. */
+export function portalRowToneClass(tone: 'ok' | 'warn' | 'bad' | '' | undefined): string {
+  if (tone === 'ok') return 'row-ok';
+  if (tone === 'warn') return 'row-warn';
+  if (tone === 'bad') return 'row-bad';
+  return '';
 }
 
 function cellHtml(cell: PortalTableCell): { html: string; className: string } {

@@ -220,6 +220,14 @@ export function refIdRegistry(): RefIdRegistryEntry[] {
       requireToolCoverage: true,
       toolFlags: telegramOpsToolFlags,
     }),
+    flags({
+      doc: 'docs/design/portal-design-agent.md',
+      plane: 'design',
+      requireToolCoverage: false,
+      sectionRefId: FLAGS_DOC_SECTION_REF,
+      sectionHeading: '### Flags / settings',
+      toolFlags: () => [],
+    }),
   ];
 
   const covered = new Set(primary.map(e => e.doc));
