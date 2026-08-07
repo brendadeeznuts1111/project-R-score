@@ -28,6 +28,7 @@ validated by `bun run docs:refid:check` (tool SSOT
 [`lib/docs/ref-id-tool-flags.ts`](../../../lib/docs/ref-id-tool-flags.ts)
 `telegramOpsToolFlags`). Unknown long options rejected via
 `TELEGRAM_OPS_ALLOWED_LONG` (send · directory · handshake · readiness, …).
+Operator Flag tables: [`cli-constants-flags.md`](../cli-constants-flags.md) · `bun run cli:flags:check`.
 Portal board: [`/portal/partners/`](../../../public/portal/partners/)
 · source map [`public/portal/partners.md`](../../../public/portal/partners.md).
 
