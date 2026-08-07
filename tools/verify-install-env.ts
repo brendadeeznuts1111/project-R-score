@@ -23,7 +23,7 @@ import {
 import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification/subsystem.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('verify:install-env', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 import {
   INSTALL_ENV_PROOF_REPORT_PATH,

@@ -15,7 +15,7 @@ import { logDepth } from '../lib/console-depth.ts';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('ops:seed:all', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('ops:seed:partners', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 import {
   exportCatalogSnapshot,

@@ -27,7 +27,7 @@ import { loadReleaseIndex, parseReleaseEntries, fetchRssXml } from './bun-docs-r
 import { loadReferenceIndex } from './bun-docs-reference-index.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('verify:docs-coverage', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 export const SAVE_PATH = 'public/registry/docs-coverage-proof.json';
 export const ALLOWLIST_PATH = 'tools/docs-coverage-allowlist.json';

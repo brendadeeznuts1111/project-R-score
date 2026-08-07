@@ -167,6 +167,10 @@ bun run docs:refid:check
 | `concept:review` | `list` · `output` · `id` · `approve` · `reject` · `reason` · `correlation-id` | [`scripts/concept-review.ts`](../../scripts/concept-review.ts) |
 | `concept:deprecate` | `replace-by` · `reason` | [`scripts/concept-deprecate.ts`](../../scripts/concept-deprecate.ts) |
 | *(team bulk)* | package.json entrypoints with `--*` | `ALLOWED_LONG_REGISTRY` (~300 keys) · coverage: `bun scripts/cli-allowlist-coverage.ts` · plan/wire: `cli-allowlist-team-plan` / `wire-batch` / `apply-registry` |
+| `verify:portal` … `verify:*` | per-tool leaves (split from shared `verify-all`) | `tools/verify-*.ts` — never share one key across verify tools |
+| `bake:doctor` | `check` · `full` · `no-portable` · `report` | [`tools/bake-doctor.ts`](../../tools/bake-doctor.ts) |
+| `machine:bunfig:ensure` | `check` · `overwrite` | [`scripts/ensure-machine-bunfig.ts`](../../scripts/ensure-machine-bunfig.ts) |
+| `ops:seed:partners` / `:tenants` / `:dod` / `:prediction` | `force` each | split from shared `ops:seed:all` |
 
 ### 2.8 Coverage goal (agent team)
 

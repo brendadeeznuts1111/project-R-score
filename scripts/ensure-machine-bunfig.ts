@@ -26,7 +26,7 @@ import {
 import { joinPath } from './lib/fs-bun.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('bake:doctor', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('machine:bunfig:ensure', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 // Re-export SSOT for existing importers (tests / CLI).
 export {

@@ -1169,7 +1169,7 @@ export const SKILLS_VALIDATE_ALLOWED_LONG = ['json'] as const;
 export const CONCEPT_DOMAIN_STATS_ALLOWED_LONG = ['domain', 'output'] as const;
 
 /** § — bake:doctor (`scripts/ensure-machine-bunfig.ts`) — auto team plan */
-export const BAKE_DOCTOR_ALLOWED_LONG = ['check', 'overwrite'] as const;
+export const BAKE_DOCTOR_ALLOWED_LONG = ['check', 'full', 'no-portable', 'report'] as const;
 
 /** § — validate:integrity (`scripts/validate-integrity.ts`) — auto team plan */
 export const VALIDATE_INTEGRITY_ALLOWED_LONG = ['roots', 'section'] as const;
@@ -2317,6 +2317,55 @@ export const STATUS_MATRIX_ALLOWED_LONG = ['interval', 'json', 'light', 'timeout
 export const CLI_ALLOWLIST_APPLY_REGISTRY_ALLOWED_LONG = ['write'] as const;
 export const CLI_ALLOWLIST_WIRE_ALLOWED_LONG = ['batch', 'write'] as const;
 
+/** § — verify:portal (`tools/verify-portal.ts`) — audit split */
+export const VERIFY_PORTAL_ALLOWED_LONG = ['live-only', 'static-only'] as const;
+
+/** § — verify:docs-coverage (`tools/verify-docs-coverage.ts`) — audit split */
+export const VERIFY_DOCS_COVERAGE_ALLOWED_LONG = [
+  'json',
+  'no-strict',
+  'refresh-reference',
+  'refresh-rss',
+  'save',
+  'strict',
+] as const;
+
+/** § — verify:script-flags (`tools/verify-script-flags.ts`) — audit split */
+export const VERIFY_SCRIPT_FLAGS_ALLOWED_LONG = ['strict'] as const;
+
+/** § — verify:proof-taxonomy (`tools/verify-proof-taxonomy.ts`) — audit split */
+export const VERIFY_PROOF_TAXONOMY_ALLOWED_LONG = ['json', 'save'] as const;
+
+/** § — verify:package-info (`tools/verify-package-info.ts`) — audit split */
+export const VERIFY_PACKAGE_INFO_ALLOWED_LONG = ['save'] as const;
+
+/** § — verify:registry-client (`tools/verify-registry-client.ts`) — audit split */
+export const VERIFY_REGISTRY_CLIENT_ALLOWED_LONG = ['json', 'save'] as const;
+
+/** § — verify:install-platform (`tools/verify-install-platform.ts`) — audit split */
+export const VERIFY_INSTALL_PLATFORM_ALLOWED_LONG = ['dry-run', 'json', 'save'] as const;
+
+/** § — verify:install-env (`tools/verify-install-env.ts`) — audit split */
+export const VERIFY_INSTALL_ENV_ALLOWED_LONG = ['json', 'save'] as const;
+
+/** § — verify:bun-runtime-nits (`tools/verify-bun-runtime-nits.ts`) — audit split */
+export const VERIFY_BUN_RUNTIME_NITS_ALLOWED_LONG = ['save'] as const;
+
+/** § — machine:bunfig:ensure (`scripts/ensure-machine-bunfig.ts`) — audit split */
+export const MACHINE_BUNFIG_ENSURE_ALLOWED_LONG = ['check', 'overwrite'] as const;
+
+/** § — ops:seed:partners (`tools/ops-seed-partners.ts`) — audit split */
+export const OPS_SEED_PARTNERS_ALLOWED_LONG = ['force'] as const;
+
+/** § — ops:seed:tenants (`tools/ops-seed-tenants.ts`) — audit split */
+export const OPS_SEED_TENANTS_ALLOWED_LONG = ['force'] as const;
+
+/** § — ops:seed:dod (`tools/ops-seed-dod.ts`) — audit split */
+export const OPS_SEED_DOD_ALLOWED_LONG = ['force'] as const;
+
+/** § — ops:seed:prediction (`tools/ops-seed-prediction.ts`) — audit split */
+export const OPS_SEED_PREDICTION_ALLOWED_LONG = ['force'] as const;
+
 /** CLI names keyed in `ALLOWED_LONG_REGISTRY` (package-script style). */
 /** § — cli:allowlist:coverage (auto) */
 export const CLI_ALLOWLIST_COVERAGE_ALLOWED_LONG = ['json'] as const;
@@ -2364,7 +2413,6 @@ export type AllowedLongCliName =
   | 'validate:workspaces'
   | 'affected:list'
   | 'rules'
-  | 'cli:flags:check'
   | 'partner-surface-inventory:lint-domains'
   | 'search:bench:gate'
   | 'ci:bun:check'
@@ -2460,7 +2508,6 @@ export type AllowedLongCliName =
   | 'concept:registry:sync'
   | 'console-format:bake'
   | 'cli:allowlist:plan'
-  | 'verify-all'
   | 'check:bun-defaults'
   | 'portal:theme:sync'
   | 'ops:experiments'
@@ -2476,7 +2523,6 @@ export type AllowedLongCliName =
   | 'cloudflare:publish'
   | 'brand:coverage'
   | 'lib:area-maps:check'
-  | 'ops:seed:all'
   | 'policy:audit'
   | 'portal:css:build'
   | 'ops:anchor:scan'
@@ -2628,7 +2674,21 @@ export type AllowedLongCliName =
   | 'status:matrix'
   | 'cli:allowlist:coverage'
   | 'cli:allowlist:apply-registry'
-  | 'cli:allowlist:wire';
+  | 'cli:allowlist:wire'
+  | 'verify:portal'
+  | 'verify:docs-coverage'
+  | 'verify:script-flags'
+  | 'verify:proof-taxonomy'
+  | 'verify:package-info'
+  | 'verify:registry-client'
+  | 'verify:install-platform'
+  | 'verify:install-env'
+  | 'verify:bun-runtime-nits'
+  | 'machine:bunfig:ensure'
+  | 'ops:seed:partners'
+  | 'ops:seed:tenants'
+  | 'ops:seed:dod'
+  | 'ops:seed:prediction';
 
 /**
  * Central allowlist registry — code SSOT (not env JSON, not bun-types).
@@ -2677,7 +2737,6 @@ export const ALLOWED_LONG_REGISTRY = {
   'validate:workspaces': VALIDATE_WORKSPACES_ALLOWED_LONG,
   'affected:list': AFFECTED_LIST_ALLOWED_LONG,
   rules: RULES_ALLOWED_LONG,
-  'cli:flags:check': CLI_FLAGS_CHECK_ALLOWED_LONG,
   'partner-surface-inventory:lint-domains': PARTNER_SURFACE_INVENTORY_LINT_DOMAINS_ALLOWED_LONG,
   'search:bench:gate': SEARCH_BENCH_GATE_ALLOWED_LONG,
   'ci:bun:check': CI_BUN_CHECK_ALLOWED_LONG,
@@ -2773,7 +2832,6 @@ export const ALLOWED_LONG_REGISTRY = {
   'concept:registry:sync': CONCEPT_REGISTRY_SYNC_ALLOWED_LONG,
   'console-format:bake': CONSOLE_FORMAT_BAKE_ALLOWED_LONG,
   'cli:allowlist:plan': CLI_ALLOWLIST_PLAN_ALLOWED_LONG,
-  'verify-all': VERIFY_ALL_ALLOWED_LONG,
   'check:bun-defaults': CHECK_BUN_DEFAULTS_ALLOWED_LONG,
   'portal:theme:sync': PORTAL_THEME_SYNC_ALLOWED_LONG,
   'ops:experiments': OPS_EXPERIMENTS_ALLOWED_LONG,
@@ -2789,7 +2847,6 @@ export const ALLOWED_LONG_REGISTRY = {
   'cloudflare:publish': CLOUDFLARE_PUBLISH_ALLOWED_LONG,
   'brand:coverage': BRAND_COVERAGE_ALLOWED_LONG,
   'lib:area-maps:check': LIB_AREA_MAPS_CHECK_ALLOWED_LONG,
-  'ops:seed:all': OPS_SEED_ALL_ALLOWED_LONG,
   'policy:audit': POLICY_AUDIT_ALLOWED_LONG,
   'portal:css:build': PORTAL_CSS_BUILD_ALLOWED_LONG,
   'ops:anchor:scan': OPS_ANCHOR_SCAN_ALLOWED_LONG,
@@ -2942,6 +2999,20 @@ export const ALLOWED_LONG_REGISTRY = {
   'cli:allowlist:coverage': CLI_ALLOWLIST_COVERAGE_ALLOWED_LONG,
   'cli:allowlist:apply-registry': CLI_ALLOWLIST_APPLY_REGISTRY_ALLOWED_LONG,
   'cli:allowlist:wire': CLI_ALLOWLIST_WIRE_ALLOWED_LONG,
+  'verify:portal': VERIFY_PORTAL_ALLOWED_LONG,
+  'verify:docs-coverage': VERIFY_DOCS_COVERAGE_ALLOWED_LONG,
+  'verify:script-flags': VERIFY_SCRIPT_FLAGS_ALLOWED_LONG,
+  'verify:proof-taxonomy': VERIFY_PROOF_TAXONOMY_ALLOWED_LONG,
+  'verify:package-info': VERIFY_PACKAGE_INFO_ALLOWED_LONG,
+  'verify:registry-client': VERIFY_REGISTRY_CLIENT_ALLOWED_LONG,
+  'verify:install-platform': VERIFY_INSTALL_PLATFORM_ALLOWED_LONG,
+  'verify:install-env': VERIFY_INSTALL_ENV_ALLOWED_LONG,
+  'verify:bun-runtime-nits': VERIFY_BUN_RUNTIME_NITS_ALLOWED_LONG,
+  'machine:bunfig:ensure': MACHINE_BUNFIG_ENSURE_ALLOWED_LONG,
+  'ops:seed:partners': OPS_SEED_PARTNERS_ALLOWED_LONG,
+  'ops:seed:tenants': OPS_SEED_TENANTS_ALLOWED_LONG,
+  'ops:seed:dod': OPS_SEED_DOD_ALLOWED_LONG,
+  'ops:seed:prediction': OPS_SEED_PREDICTION_ALLOWED_LONG,
 } as const satisfies Record<AllowedLongCliName, readonly string[]>;
 
 /** Apply guard using ALLOWED_LONG_REGISTRY[cliName]. */

@@ -19,7 +19,7 @@ import { resolveServePublicVerifyBase } from '../lib/http/serve-public-bind.ts';
 import { collectPortalStaticViolations, PORTAL_ROOT_REL } from '../lib/portal-static-checks.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('verify:portal', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 import {
   PORTAL_MARKDOWN_SLUGS,

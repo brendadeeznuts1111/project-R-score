@@ -14,7 +14,7 @@ import { seedTenantRegistries } from '../lib/operations/tenant-registry-seed.ts'
 import { jsonOut } from '../lib/console-depth.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('ops:seed:all', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('ops:seed:tenants', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 const force = argv.includes('--force');
 const result = await seedTenantRegistries({ force });

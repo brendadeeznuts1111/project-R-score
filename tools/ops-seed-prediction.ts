@@ -16,7 +16,7 @@ import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { seedPredictionDemo } from '../lib/operations/prediction-seed.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('ops:seed:all', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('ops:seed:prediction', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 const force = argv.includes('--force');
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
