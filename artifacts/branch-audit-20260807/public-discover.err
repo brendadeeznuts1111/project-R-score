@@ -1,0 +1,1 @@
+$ bun tools/public-discovery.ts --check --min-severity error

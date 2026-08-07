@@ -1,0 +1,25 @@
+{
+  "primary": {
+    "path": "/workspace",
+    "branch": "cursor/branch-audit-prune-ad8f",
+    "head": "df185b294",
+    "aheadOfOriginMain": 0,
+    "behindOriginMain": 0,
+    "dirtyTotal": 1,
+    "dirtyByArea": {
+      "other": 1
+    },
+    "stagedFiles": [],
+    "bakeDriftFiles": []
+  },
+  "worktrees": [
+    {
+      "path": "/workspace",
+      "branch": "cursor/branch-audit-prune-ad8f",
+      "dirty": 1,
+      "ageHours": 0,
+      "flag": "dirty"
+    }
+  ],
+  "mergedBranches": []
+}

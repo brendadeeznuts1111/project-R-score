@@ -1,0 +1,25 @@
+$ bun scripts/check-monorepo-health.ts
+
+tests/monorepo-health-ui.test.ts:
+(pass) monorepo-health-ui > checkBunVersion satisfies min pin [0.09ms]
+(pass) monorepo-health-ui > parseHealthReportSchemaIssues accepts sample and rejects junk [0.31ms]
+(pass) monorepo-health-ui > metricTableRows preprocess columns [6.04ms]
+(pass) monorepo-health-ui > probeExternalTools finds bun [1.25ms]
+(pass) monorepo-health-history > records runs and computes trend delta [14.48ms]
+
+tests/monorepo-health.test.ts:
+(pass) monorepo-health formula > example calculation lands near 74 [0.04ms]
+(pass) monorepo-health formula > perfect metrics score 100 healthy [0.10ms]
+(pass) monorepo-health formula > grades bands [0.03ms]
+(pass) monorepo-health formula > clamps score to 0–100 [0.02ms]
+(pass) monorepo-health helpers > countCycles detects back-edge [0.18ms]
+(pass) monorepo-health helpers > parseCoveragePercent reads All-files table and Lines: summary [0.21ms]
+(pass) monorepo-health helpers > parseTestSummary reads pass/fail lines [0.07ms]
+(pass) monorepo-health helpers > loaderForPath maps extensions [0.03ms]
+(pass) Bun.Transpiler scan for import graph > scanSourceImports finds ESM, require, and dynamic import; skips type-only [0.36ms]
+(pass) Bun.Transpiler scan for import graph > scanSourceExports lists value exports only [0.08ms]
+
+ 15 pass
+ 0 fail
+ 50 expect() calls
+Ran 15 tests across 2 files. [170.00ms]

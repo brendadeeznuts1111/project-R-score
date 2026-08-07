@@ -1,0 +1,1 @@
+$ bun tools/reference-discovery.ts --check --skip-unused --min-severity error

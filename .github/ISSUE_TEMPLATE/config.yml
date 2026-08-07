@@ -5,7 +5,7 @@ contact_links:
     about: Concept ids live in vocabulary + concept:audit — do not invent concept labels on issues.
   - name: Partner domain map
     url: https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/harness/tenants/partner-domain-map.md
-    about: Domain ownership and concept prefixes (partner desk).
+    about: Partner-desk loop (outs → books → limits → liquidity). Bookmaker ≠ partner entity.
   - name: Bookmakers open issues (BM-*)
     url: https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/harness/tenants/bookmakers-open-issues.md
-    about: Residual catalog/desk/publish gaps tracked as BM-1…BM-5.
+    about: Tenant=bookmakers catalog (BM-*). Domain=partner = desk loop; bookmaker ≠ partner CODE.

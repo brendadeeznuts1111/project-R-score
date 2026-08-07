@@ -1,0 +1,260 @@
+Starting prune at 2026-08-07T20:45:41Z
+Total to delete: 190
+=== batch 1 size=25 (offset=0) ===
+⏭️  ref-only push (no content) — skipping content gates
+To https://github.com/brendadeeznuts1111/project-R-score
+ - [deleted]             agent/bun-stable-baseline-20260806
+ - [deleted]             agent/partner-dashboard-rebase-20260806
+ - [deleted]             agent/partner-opportunities
+ - [deleted]             audit/partner-api-html-20260805
+ - [deleted]             chore/bookmakers-mirror-0.3
+ - [deleted]             chore/deep-cleanup-tests
+ - [deleted]             chore/direct-bun-markdown-ansi
+ - [deleted]             chore/gitignore-worktrees-root
+ - [deleted]             chore/kalshi-bot-pin-pr26-20260807
+ - [deleted]             chore/kalshi-bot-submodule-11223e8
+ - [deleted]             chore/kalshi-bot-submodule-662f130
+ - [deleted]             chore/kalshi-submodule-bump
+ - [deleted]             chore/portal-color-kernel-align
+ - [deleted]             chore/prettier-harness-format
+ - [deleted]             chore/root-allowlist-ghosts
+ - [deleted]             chore/root-clutter-reduction-phase-4.1
+ - [deleted]             chore/root-codex-worktrees-ignore
+ - [deleted]             chore/root-hygiene-continue
+ - [deleted]             chore/soft-handshake-toc-pointer
+ - [deleted]             chore/submodule-cursor-hygiene
+ - [deleted]             chore/tennis-package-release-automation
+ - [deleted]             chore/vscode-bun-workspace-gate
+ - [deleted]             chore/wave-followup-polish
+ - [deleted]             codex/agent-odds-v1.13-live-backtest
+ - [deleted]             codex/bun-jsc-memory-accounting
+ok +25
+=== batch 2 size=25 (offset=25) ===
+⏭️  ref-only push (no content) — skipping content gates
+To https://github.com/brendadeeznuts1111/project-R-score
+ - [deleted]             codex/bun-release-contracts-package
+ - [deleted]             codex/cloudflare-access-hardening
+ - [deleted]             codex/cloudflare-preview-access
+ - [deleted]             codex/concept-graph-insights-review
+ - [deleted]             codex/concept-registry-enhance
+ - [deleted]             codex/domain-sweep-resilience-review
+ - [deleted]             codex/github-issue-portal-review
+ - [deleted]             codex/github-issue-public-registry-review
+ - [deleted]             codex/github-issue-taxonomy-domain-review
+ - [deleted]             codex/github-issue-tooling-review
+ - [deleted]             codex/lane-status-porcelain
+ - [deleted]             codex/limit-patterns-seed
+ - [deleted]             codex/partner-accounts-telegram-control
+ - [deleted]             codex/partner-cli-snapshots-20260806
+ - [deleted]             codex/partner-history-control
+ - [deleted]             codex/partner-history-glossary
+ - [deleted]             codex/partner-integration-observations-20260806
+ - [deleted]             codex/portal-design-tokens-v2
+ - [deleted]             codex/portal-ui-layout-review
+ - [deleted]             codex/recent-portal-regressions
+ - [deleted]             codex/soft-optional-join-fix
+ - [deleted]             codex/surfaces-check-readonly
+ - [deleted]             codex/telegram-notifications-review
+ - [deleted]             codex/vault-token-probe-hardening
+ - [deleted]             codex/wiki-coverage-review
+ok +25
+=== batch 3 size=25 (offset=50) ===
+⏭️  ref-only push (no content) — skipping content gates
+To https://github.com/brendadeeznuts1111/project-R-score
+ - [deleted]             cursor/2ef0930d
+ - [deleted]             cursor/bm-partner-publish-readme-294c
+ - [deleted]             docs/bun-pr-gh-auth-20260807
+ - [deleted]             docs/bun-terminal-north-star
+ - [deleted]             docs/bun-types-pipeline
+ - [deleted]             docs/bun-util-guides-map
+ - [deleted]             docs/bun-util-nits
+ - [deleted]             docs/bunpr-runbook
+ - [deleted]             docs/color-kernel-planes-table
+ - [deleted]             docs/fix-md-link-depths
+ - [deleted]             docs/glossary-schema-v3-labels
+ - [deleted]             docs/http-stack-native
+ - [deleted]             docs/lib-area-maps-mega
+ - [deleted]             docs/partner-deep-lineage-20260806
+ - [deleted]             docs/partner-domain-map
+ - [deleted]             docs/partner-surface-ab-example
+ - [deleted]             docs/partner-surface-inventory-tables
+ - [deleted]             docs/portal-terminal-markdown
+ - [deleted]             docs/readme-structure-refresh
+ - [deleted]             docs/session-naming-grammar
+ - [deleted]             docs/session-org-count-29
+ - [deleted]             docs/session-org-empty-trash
+ - [deleted]             docs/session-org-ground-refs
+ - [deleted]             docs/session-rename-context
+ - [deleted]             docs/settlement-feed
+ok +25
+=== batch 4 size=25 (offset=75) ===
+⏭️  ref-only push (no content) — skipping content gates
+To https://github.com/brendadeeznuts1111/project-R-score
+ - [deleted]             docs/soft-handshake-design
+ - [deleted]             docs/soft-handshake-tenant-align
+ - [deleted]             docs/structure-root-inventory
+ - [deleted]             docs/subagent-fanout-board
+ - [deleted]             docs/telegram-accounting-deep
+ - [deleted]             docs/tennis-exec-cache-live
+ - [deleted]             docs/tennis-hq-runtime-domain
+ - [deleted]             docs/tennis-ledger-cache-live
+ - [deleted]             docs/tennis-tip-heal-review
+ - [deleted]             docs/wiki-index-coverage
+ - [deleted]             docs/wiki-summary-fix
+ - [deleted]             feat/agent-odds-dashboard
+ - [deleted]             feat/agent-odds-fanduel-html-scrape
+ - [deleted]             feat/agent-odds-partner-liquidity
+ - [deleted]             feat/agent-odds-portal-stage1
+ - [deleted]             feat/agent-odds-serve-public
+ - [deleted]             feat/agent-odds-v1.02
+ - [deleted]             feat/agent-odds-v1.03
+ - [deleted]             feat/agent-odds-v1.06-edges
+ - [deleted]             feat/agent-odds-webview-scrape
+ - [deleted]             feat/agent-registry-browser
+ - [deleted]             feat/anchor-stability
+ - [deleted]             feat/bookmakers-pph-registry
+ - [deleted]             feat/bun-ci-env-macros
+ - [deleted]             feat/bun-docs-parser-options-2
+ok +25
+=== batch 5 size=25 (offset=100) ===
+⏭️  ref-only push (no content) — skipping content gates
+To https://github.com/brendadeeznuts1111/project-R-score
+ - [deleted]             feat/bun-pr-verify
+ - [deleted]             feat/bun-strip-unknown
+ - [deleted]             feat/bun-test-staged-serial
+ - [deleted]             feat/bun-types-flags-cols
+ - [deleted]             feat/bun-types-inventory-v3
+ - [deleted]             feat/bun-types-ref-href
+ - [deleted]             feat/bun-types-status
+ - [deleted]             feat/cli-flag-allowlists-20260807
+ - [deleted]             feat/concept-domain-mapping
+ - [deleted]             feat/concept-lifecycle-phase1
+ - [deleted]             feat/concept-registry-phase1
+ - [deleted]             feat/concept-registry-service
+ - [deleted]             feat/doc-refid-check
+ - [deleted]             feat/doc-refid-deeper
+ - [deleted]             feat/doc-refid-placement
+ - [deleted]             feat/github-global-constants
+ - [deleted]             feat/glossary-health
+ - [deleted]             feat/junit-hostname-hardening
+ - [deleted]             feat/ledger-account-scope
+ - [deleted]             feat/ledger-glossary-fix
+ - [deleted]             feat/ledger-residuals-polish
+ - [deleted]             feat/ledger-validate-env
+ - [deleted]             feat/mcp-sync-vscode-input
+ - [deleted]             feat/operator-odds-live-pipeline
+ - [deleted]             feat/ops-view-accounting-parity
+ok +25
+=== batch 6 size=25 (offset=125) ===
+⏭️  ref-only push (no content) — skipping content gates
+To https://github.com/brendadeeznuts1111/project-R-score
+ - [deleted]             feat/ops-view-glossary-unify
+ - [deleted]             feat/partner-accounting-capture
+ - [deleted]             feat/partner-bookmaker-account
+ - [deleted]             feat/partner-brand-lifecycle
+ - [deleted]             feat/partner-dashboard-artifact-20260805
+ - [deleted]             feat/partner-deposit-import
+ - [deleted]             feat/partner-domain-lint-precommit
+ - [deleted]             feat/partner-hub-onboarding
+ - [deleted]             feat/partner-inventory-precommit
+ - [deleted]             feat/partner-inventory-registry-tighten
+ - [deleted]             feat/partner-inventory-wire-lint
+ - [deleted]             feat/partner-ledger-perout
+ - [deleted]             feat/partner-ops-glossary-authority
+ - [deleted]             feat/partner-out-capabilities
+ - [deleted]             feat/partner-profiles-migration
+ - [deleted]             feat/partner-settlement-cli
+ - [deleted]             feat/partner-settlement-cron
+ - [deleted]             feat/partner-settlement-import
+ - [deleted]             feat/partner-settlement-run
+ - [deleted]             feat/partner-surface-bags
+ - [deleted]             feat/partner-surface-deeper
+ - [deleted]             feat/partner-surface-docs-layer-d
+ - [deleted]             feat/partner-surface-fitness
+ - [deleted]             feat/partners-board-balances
+ - [deleted]             feat/partners-ledger-history
+ok +25
+=== batch 7 size=25 (offset=150) ===
+⏭️  ref-only push (no content) — skipping content gates
+To https://github.com/brendadeeznuts1111/project-R-score
+ - [deleted]             feat/partner-surface-outs
+ - [deleted]             feat/partner-wire-lint-generic
+ - [deleted]             feat/portal-bun-util-integrate
+ - [deleted]             feat/portal-markdown-gfm-extras
+ - [deleted]             feat/portal-registry-board-design
+ - [deleted]             feat/portal-url-planes
+ - [deleted]             feat/refid-extend-write-hrefs
+ - [deleted]             feat/refid-unknown-flags-allowlists
+ - [deleted]             feat/scrape-agents-toml
+ - [deleted]             feat/seat-desk-ops-portal-wire
+ - [deleted]             feat/soft-accounting-export-bake
+ - [deleted]             feat/soft-accounting-weave
+ - [deleted]             feat/soft-book-type-chrome
+ - [deleted]             feat/soft-week-dossier-parity
+ - [deleted]             feat/surface-coverage
+ - [deleted]             feat/telegram-notifications
+ - [deleted]             feat/tennis-hq-contract-delivery
+ - [deleted]             feat/tournament-series-glossary
+ - [deleted]             feat/tournament-snap-ownership
+ - [deleted]             fix/bare-bun-spawn-rest
+ - [deleted]             fix/domain-sweep-resilience
+ - [deleted]             fix/entrypoint-isModuleEntrypoint
+ - [deleted]             fix/failures-stale-board
+ - [deleted]             fix/hooks-refonly-branded-ids
+ - [deleted]             fix/lane-status-tdz-20260807
+ok +25
+=== batch 8 size=15 (offset=175) ===
+⏭️  ref-only push (no content) — skipping content gates
+To https://github.com/brendadeeznuts1111/project-R-score
+ - [deleted]             fix/onboard-create-tree-node
+ - [deleted]             fix/operator-desk-system-auth
+ - [deleted]             fix/packument-scope-encoding
+ - [deleted]             fix/partner-register-bookmaker-resolve
+ - [deleted]             fix/resolve-bun-spawn-sweep
+ - [deleted]             fix/soft-bake-bun-utils-polish
+ - [deleted]             fix/soft-empty-ct-check
+ - [deleted]             fix/soft-from-ct-bun-which-opts
+ - [deleted]             fix/soft-from-ct-spawn
+ - [deleted]             fix/soft-from-ct-windows-sep
+ - [deleted]             fix/tournament-snap-explicit-tennis
+ - [deleted]             fix/verbose-fetch-debugger-north-star
+ - [deleted]             fix/wiki-links-agents-20260807
+ - [deleted]             test/verbose-fetch-format-compat
+ - [deleted]             test/verbose-fetch-smoke
+ok +15
+DONE ok=190 fail=0 total=190
+remaining remotes: 39
+⏭️  ref-only push (no content) — skipping content gates
+To https://github.com/brendadeeznuts1111/project-R-score
+ - [deleted]             chore/bun-standard-test-workflow
+ - [deleted]             chore/chrome-hide-harness-footer
+ - [deleted]             chore/chrome-hide-harness-nav
+ - [deleted]             chore/concepts-board-ssot-and-ops-filter
+ - [deleted]             chore/deprecate-ui-semantic-hubs
+ - [deleted]             chore/disable-install-time-scanner
+ - [deleted]             chore/docs-deep-enhance
+ - [deleted]             chore/fix-brand-keymap-and-tsconfig-audit
+ - [deleted]             chore/kalshi-bot-submodule-cross-venue
+ - [deleted]             chore/local-gates-skills
+ - [deleted]             chore/retire-root-oxlint
+ - [deleted]             codex/fix-kalshi-submodule-pin
+ - [deleted]             codex/limit-raise-proof-api
+ - [deleted]             codex/portal-cli-runtime-capabilities
+ - [deleted]             codex/portal-cli-runtime-help
+ - [deleted]             codex/portal-package-scope
+ - [deleted]             codex/refresh-pages-preflight
+ - [deleted]             codex/refresh-proof-taxonomy
+ - [deleted]             codex/test-harness-isolation
+ - [deleted]             docs/bun-native-skill-guidance
+ - [deleted]             docs/domain-concept-shape-authority
+ - [deleted]             docs/wiki-domain-skills
+ - [deleted]             feat/api-infrastructure-nodes
+ - [deleted]             feat/e3-wire-prep
+ - [deleted]             feat/github-repository-ref
+ - [deleted]             feat/ops-limits-lifecycle-state
+ - [deleted]             fix/concept-model-source-link
+ - [deleted]             fix/harness-flow-gaps
+ - [deleted]             fix/semantic-vocabulary-ssot
+ - [deleted]             merge/glossary-p1-to-main
+ - [deleted]             refactor/ui-filter-window
+ - [deleted]             warstrike-refractions

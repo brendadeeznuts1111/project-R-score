@@ -362,6 +362,22 @@ function isAllowedSimilarEnvPair(a: string, b: string): boolean {
     return true;
   }
 
+  // Alert webhook: listen port vs POST URL (orthogonal bind vs sink).
+  if (
+    (a === 'ALERT_WEBHOOK_PORT' && b === 'ALERT_WEBHOOK_URL') ||
+    (a === 'ALERT_WEBHOOK_URL' && b === 'ALERT_WEBHOOK_PORT')
+  ) {
+    return true;
+  }
+
+  // Bun types CI gate vs tip checkout path — deliberate siblings, not aliases.
+  if (
+    (a === 'BUN_TYPES_CI' && b === 'BUN_TYPES_TIP') ||
+    (a === 'BUN_TYPES_TIP' && b === 'BUN_TYPES_CI')
+  ) {
+    return true;
+  }
+
   return false;
 }
 
