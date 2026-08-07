@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Concept lifecycle history — newest first.
  *
@@ -60,5 +61,7 @@ export async function runHistory(argv: readonly string[]): Promise<number> {
 }
 
 if (import.meta.main) {
-  process.exit(await runHistory(Bun.argv.slice(2)));
+  process.exit(
+    await runHistory(applyUnknownLongOptionGuardFor('concept:history', Bun.argv.slice(2)))
+  );
 }

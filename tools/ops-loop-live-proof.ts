@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/sqlite
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Dispatch one gated play on the live operations DB, settle, and drain outbox.
  *
@@ -19,7 +20,10 @@ import { publishAndDispatch } from '../lib/operations/play-dispatcher.ts';
 import { PlaySigner } from '../lib/operations/play-signing.ts';
 import { asPartnerTemplateId, asTreeNodeId } from '../lib/types/branded/operations.ts';
 
-const dryRun = Bun.argv.includes('--dry-run');
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:loop:live', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
+const dryRun = argv.includes('--dry-run');
 
 async function main(): Promise<void> {
   const db = openOperationsDb();

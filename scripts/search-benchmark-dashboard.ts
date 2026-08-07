@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
 // @see https://bun.com/docs/runtime/s3 — S3Client
 import { fileExistsSync, readText, resolvePath } from './lib/fs-bun';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -6617,7 +6619,9 @@ async function main(): Promise<void> {
   process.on('unhandledRejection', error => {
     console.error('[search-bench:dashboard] unhandledRejection', error);
   });
-  const options = parseArgs(Bun.argv.slice(2));
+  const options = parseArgs(
+    applyUnknownLongOptionGuardFor('search:bench:dashboard', Bun.argv.slice(2))
+  );
   const buildMeta = await resolveBuildMeta();
   const dir = resolvePath(options.dir);
   const latestJson = resolvePath(dir, 'latest.json');
@@ -8065,13 +8069,20 @@ async function main(): Promise<void> {
                   ? Object.keys(parsed as Record<string, unknown>).slice(0, 12)
                   : [],
               version: Number.isFinite(Number((parsed as any)?.version))
-                ? Number((parsed as any).version)
+                ? Number((parsed as Record<string, unknown>).version)
                 : null,
-              ivLen: typeof (parsed as any)?.iv === 'string' ? (parsed as any).iv.length : null,
+              ivLen:
+                typeof (parsed as any)?.iv === 'string'
+                  ? (parsed as Record<string, unknown>).iv.length
+                  : null,
               dataLen:
-                typeof (parsed as any)?.data === 'string' ? (parsed as any).data.length : null,
+                typeof (parsed as any)?.data === 'string'
+                  ? (parsed as Record<string, unknown>).data.length
+                  : null,
               hmacLen:
-                typeof (parsed as any)?.hmac === 'string' ? (parsed as any).hmac.length : null,
+                typeof (parsed as any)?.hmac === 'string'
+                  ? (parsed as Record<string, unknown>).hmac.length
+                  : null,
             };
           } catch {
             envelope = { isJson: false, keys: [] };
@@ -8339,7 +8350,7 @@ async function main(): Promise<void> {
           try {
             const latest = (await remote.json()) as LatestApiPayload;
             const enriched = await enrichLatestWithGate(latest, 'r2');
-            (enriched as any).branding = {
+            (enriched as Record<string, unknown>).branding = {
               ...branding,
               requestedDomain,
               host: hostHeader || null,
@@ -8369,7 +8380,7 @@ async function main(): Promise<void> {
         try {
           const latest = (await Bun.file(latestJson).json()) as LatestApiPayload;
           const enriched = await enrichLatestWithGate(latest, 'local');
-          (enriched as any).branding = {
+          (enriched as Record<string, unknown>).branding = {
             ...branding,
             requestedDomain,
             host: hostHeader || null,
@@ -8805,7 +8816,7 @@ async function main(): Promise<void> {
           ...freshness,
         };
         raw.stages = stages;
-        raw.loopClosed = isLoopClosedByPolicy(stages as any).loopClosed;
+        raw.loopClosed = isLoopClosedByPolicy(stages as Record<string, unknown>).loopClosed;
         raw.loopClosedReason = formatLoopClosedReason(stages as any);
         return jsonResponse(raw, { source: 'local' });
       }

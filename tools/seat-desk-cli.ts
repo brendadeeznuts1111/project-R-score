@@ -81,7 +81,9 @@ function isPartnerTemplate(t: string | undefined): t is PartnerTemplate {
   );
 }
 
-const argv = applyUnknownLongOptionGuardFor('seat:desk', Bun.argv.slice(2));
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('seat:desk', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const command = argv[0];
 const callSign = argv[1]?.toUpperCase().trim();
 if (!command || command === '--help' || command === '-h') usage();

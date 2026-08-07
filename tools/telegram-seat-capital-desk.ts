@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Post or refresh package seat capital desk (one HTML message, edit in place).
  *
@@ -8,7 +10,9 @@
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 import { loadSeatIntake, publishSeatCapitalDesk } from '../lib/telegram/seat-capital-desk.ts';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:seat:desk', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 let pin = true;
 const positional: string[] = [];
 

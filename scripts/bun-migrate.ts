@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --format
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
@@ -21,6 +22,12 @@
  * @see scripts/BUN_NATIVE.md
  * @see tools/bun-docs-catalog.json
  */
+
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('bun-migrate', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const joinPath = (...parts: string[]) => parts.filter(Boolean).join('/').replace(/\/+/g, '/');
 const REPO_ROOT = joinPath(import.meta.dir, '..');
 const DEFAULT_ROOTS = ['lib', 'tools', 'scripts', 'packages'];

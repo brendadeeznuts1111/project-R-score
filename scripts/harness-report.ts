@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Grouped harness report — worst offenders, catalog groups, easy-fix standard catches.
  */
@@ -82,7 +84,7 @@ async function buildCombinedHarnessJson(repoRoot: string): Promise<string> {
 }
 
 async function main(): Promise<void> {
-  const opts = parseArgs(Bun.argv.slice(2));
+  const opts = parseArgs(applyUnknownLongOptionGuardFor('harness:promote', Bun.argv.slice(2)));
   const report = await buildHarnessReport(repoRoot);
 
   if (opts.jsonOut) {

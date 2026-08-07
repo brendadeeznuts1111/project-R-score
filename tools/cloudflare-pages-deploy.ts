@@ -4,6 +4,7 @@
 // @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --verify
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Trigger Cloudflare Pages deploy, optionally wait for completion, then smoke-verify.
  *
@@ -18,6 +19,9 @@ import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('cloudflare:deploy', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 /** Load Reasonix global env when token not already set (matches setup script). */
 async function loadReasonixEnv(): Promise<void> {
   if (Bun.env.CLOUDFLARE_API_TOKEN?.trim()) return;
@@ -36,9 +40,9 @@ async function loadReasonixEnv(): Promise<void> {
 const ACCOUNT_ID = Bun.env.CLOUDFLARE_ACCOUNT_ID?.trim() || CLOUDFLARE_DEFAULTS.accountId;
 const PROJECT = Bun.env.PAGES_PROJECT?.trim() || CLOUDFLARE_DEFAULTS.pages.project;
 const BRANCH = Bun.argv.find((a, i) => Bun.argv[i - 1] === '--branch') ?? 'main';
-const WAIT = Bun.argv.includes('--wait') || Bun.argv.includes('--verify');
-const VERIFY = Bun.argv.includes('--verify');
-const VERIFY_TAXONOMY = Bun.argv.includes('--taxonomy') || Bun.env.PAGES_VERIFY_TAXONOMY === '1';
+const WAIT = argv.includes('--wait') || argv.includes('--verify');
+const VERIFY = argv.includes('--verify');
+const VERIFY_TAXONOMY = argv.includes('--taxonomy') || Bun.env.PAGES_VERIFY_TAXONOMY === '1';
 const POLL_MS = 15_000;
 const MAX_POLLS = 12;
 

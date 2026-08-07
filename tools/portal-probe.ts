@@ -12,6 +12,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/pm/cli/install#dry-run — bun install --dry-run
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bun-native monorepo / portal probes — lockfile, workspaces, scope, semver, snapshots.
  *
@@ -35,7 +36,9 @@ import { joinPath } from '../lib/path-bun.ts';
 import { jsonOut, logTable } from '../lib/console-depth.ts';
 
 const ROOT = process.cwd();
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('portal:probe', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const asJson = argv.includes('--json');
 const help = argv.includes('--help') || argv.includes('-h');
 const cmd = argv.find(a => !a.startsWith('-')) || 'all';

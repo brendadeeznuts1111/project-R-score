@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/reference/bun/gc — Bun.gc
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -10,6 +11,7 @@
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
 // @see https://bun.com/docs/bundler/index#features — bun:bundle
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * verify-bun-release.ts — Verify Bun release features (TLS, perf, runtime, release notes).
  *
@@ -50,6 +52,10 @@ import {
 } from '../lib/verification/canonical-coverage.ts';
 import { generateJSONLD } from '../lib/verification/jsonld.ts';
 import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification/subsystem.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('check:release-tracker', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import type {
   ChannelAwareVerificationReport,
   SemanticTags,
@@ -802,9 +808,9 @@ function printProof(proof: ChannelAwareVerificationReport): void {
 }
 
 async function main(): Promise<void> {
-  const shouldSave = process.argv.includes('--save');
+  const shouldSave = argv.includes('--save');
   const channelArg = process.argv.find(a => a.startsWith('--channel='))?.split('=')[1];
-  const liveR2 = process.argv.includes('--live-r2');
+  const liveR2 = argv.includes('--live-r2');
 
   const proof = await runReleaseVerification({ channel: channelArg, save: shouldSave, liveR2 });
   printProof(proof);
@@ -813,9 +819,8 @@ async function main(): Promise<void> {
     await Bun.write(SAVE_PATH, JSON.stringify(proof, null, 2));
     console.log(`\n💾 Proof saved to ${SAVE_PATH}`);
     // Release-only proof strips suite=all embeds — do not leave a green meta bake.
-    const { invalidateChannelMetaBake } = await import(
-      '../lib/verification/channel-meta-refresh.ts'
-    );
+    const { invalidateChannelMetaBake } =
+      await import('../lib/verification/channel-meta-refresh.ts');
     await invalidateChannelMetaBake('verify-bun-release --save');
     console.log('⚠️  Invalidated channel-meta-bake.json (re-run bun run verify:channel:meta)');
   }

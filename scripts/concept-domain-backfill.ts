@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Auto-assign business `domain` on portal semantic concepts from id prefix.
  *
@@ -21,9 +22,12 @@ import {
 import { PORTAL_SEMANTIC_CONCEPTS } from '../lib/portal/semantic-vocabulary.ts';
 import { colorize, logTable } from '../lib/console-depth.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('concept:domain:backfill', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const VOCAB_PATH = `${import.meta.dir}/../lib/portal/semantic-vocabulary.ts`;
-const CHECK = Bun.argv.includes('--check');
-const DRY = Bun.argv.includes('--dry-run');
+const CHECK = argv.includes('--check');
+const DRY = argv.includes('--dry-run');
 
 export type PlanRow = {
   id: string; // brand-ok — glossary concept key

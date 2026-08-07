@@ -12,6 +12,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/webview — Bun.WebView
 import { BUN_GITHUB_RELEASES_URL } from '../lib/shared/tools/bun-urls.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 /**
  * bun-docs-catalog.ts — structured Bun doc catalog entries.
@@ -567,7 +568,9 @@ export function curatedPageUrl(pathWithOptionalHash: string): string {
 }
 
 /** Parse --version=1.4.0 or --version 1.4.0 from argv; default Bun.version. */
-export function parseVersionFlag(argv: string[] = Bun.argv.slice(2)): string {
+export function parseVersionFlag(
+  argv: string[] = applyUnknownLongOptionGuardFor('docs:catalog', Bun.argv.slice(2))
+): string {
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
     if (a.startsWith('--version=')) return normalizeBunVersion(a.slice(10));
@@ -1185,9 +1188,8 @@ export async function buildCatalog(opts?: {
 
   // Frozen guide fences (lang+code) — by TOKEN_GUIDE_PATH / page path.
   // Token-level fences are authoritative (drop peer-scavenge supplement junk).
-  const { guideExamplesForPage, guideExamplesForToken, TOKEN_GUIDE_PATH } = await import(
-    './bun-docs-guide-examples.ts'
-  );
+  const { guideExamplesForPage, guideExamplesForToken, TOKEN_GUIDE_PATH } =
+    await import('./bun-docs-guide-examples.ts');
   for (const e of map.values()) {
     const byToken = guideExamplesForToken(e.name);
     if (byToken.length > 0) {

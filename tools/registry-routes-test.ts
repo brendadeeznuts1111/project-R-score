@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Smoke-test registry / portal route surface and print Bun.inspect.table proof.
  *
@@ -21,6 +22,9 @@ import { RegistryClient } from '../lib/factory/registry.ts';
 import { createRegistryServer } from '../lib/factory/server.ts';
 import { logTable } from '../lib/console-depth.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('factory:routes:test', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 type Row = {
   path: string;
   method: string;
@@ -36,7 +40,7 @@ function flag(name: string): string | undefined {
 }
 
 const baseUrl = flag('url');
-const useFactory = !baseUrl && !Bun.argv.includes('--serve-public');
+const useFactory = !baseUrl && !argv.includes('--serve-public');
 
 const FACTORY_ENDPOINTS: Array<{ method?: string; path: string }> = [
   { path: '/ready' },

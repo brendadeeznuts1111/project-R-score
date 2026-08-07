@@ -19,6 +19,7 @@ import {
   openProfileAuditDb,
   recordDiffAudit,
 } from '../lib/partner-profile/profiles-diff.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 type Command = 'diff' | 'audit';
 
@@ -37,7 +38,9 @@ function parseArgv(argv: string[]): { command: Command; record: boolean; code?: 
 }
 
 async function main(): Promise<void> {
-  const opts = parseArgv(Bun.argv.slice(2));
+  const opts = parseArgv(
+    applyUnknownLongOptionGuardFor('partner:profiles:audit', Bun.argv.slice(2))
+  );
   if (!opts) {
     console.log(
       `Usage: bun tools/partner-profiles-diff.ts <diff|audit> [--record] [--code <CODE>]`

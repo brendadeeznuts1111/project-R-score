@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bind a house surface chat id into Reasonix env + optional brand bootstrap.
  *
@@ -21,7 +23,9 @@ import {
   type HouseForumSurfaceSlug,
 } from './house-forum-channel.ts';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:all-accounting:bind', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 let surface = '';
 let chatId = '';
 let envPath = defaultReasonixEnvPath();

@@ -24,7 +24,9 @@ import {
 
 export { PUBLIC_DISCOVERY_ALLOWED_LONG };
 
-const args = applyUnknownLongOptionGuardFor('public:discovery', Bun.argv.slice(2));
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('public:discovery', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const asJson = args.includes('--json');
 const check = args.includes('--check');
 const minSeverity = parsePublicSeverity(

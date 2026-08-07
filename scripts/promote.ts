@@ -1,5 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('promote', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
@@ -10,7 +15,7 @@
  * Bun.spawn for network ops that benefit from parallelism.
  */
 
-const skipTests = Bun.argv.includes('--no-test');
+const skipTests = argv.includes('--no-test');
 
 const step = (n: number, msg: string) => console.info(`\x1b[36m[${n}/6]\x1b[0m ${msg}`);
 const warn = (msg: string) => console.warn(`\x1b[33m  ⚠ ${msg}\x1b[0m`);

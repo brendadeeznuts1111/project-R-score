@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Regenerate public/registry/projects-registry.json from on-disk projects/.
  *
@@ -25,9 +26,12 @@ import {
 } from '../lib/projects-scan';
 import { logDepth } from '../lib/console-depth';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('registry:projects', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = process.cwd();
 const OUT = joinPath(ROOT, 'public/registry/projects-registry.json');
-const DRY = Bun.argv.includes('--dry-run');
+const DRY = argv.includes('--dry-run');
 
 /** Top-level entries under projects/active that are projects (not category folders). */
 const ACTIVE_SPECIALS = new Set([

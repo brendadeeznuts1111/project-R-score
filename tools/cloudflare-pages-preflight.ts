@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Pre-deploy gate — static checks before Cloudflare Pages push (no live token required).
  *
@@ -10,13 +12,17 @@
  * @see lib/verification/cloudflare-pages-preflight.ts
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('cloudflare:preflight', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   runCloudflarePagesPreflight,
   saveCloudflarePagesPreflight,
 } from '../lib/verification/cloudflare-pages-preflight.ts';
 
-const shouldSave = Bun.argv.includes('--save');
-const skipTaxonomy = Bun.argv.includes('--no-taxonomy');
+const shouldSave = argv.includes('--save');
+const skipTaxonomy = argv.includes('--no-taxonomy');
 
 async function main() {
   console.log('Cloudflare Pages preflight');

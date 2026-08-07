@@ -13,6 +13,7 @@ import type {
   BrandBenchViolation,
 } from './lib/brand-bench-types';
 import { createShutdown } from './lib/graceful-shutdown';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 const THRESHOLDS = {
   warn: {
@@ -210,7 +211,9 @@ export function evaluateBrandBench(
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(Bun.argv.slice(2));
+  const options = parseArgs(
+    applyUnknownLongOptionGuardFor('brand:bench:evaluate', Bun.argv.slice(2))
+  );
   let governance: BenchGovernance = {};
 
   let current: BrandBenchReport;

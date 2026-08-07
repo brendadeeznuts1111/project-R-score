@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Monotonic ratchet for the warning-only Bun capability usage baseline.
  *
@@ -59,7 +60,7 @@ export function parseBunBrandBaseline(
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('bun:brand-map:baseline:ratchet', Bun.argv.slice(2));
   const staged = args.includes('--staged');
   const baseIndex = args.indexOf('--base');
   const base = baseIndex >= 0 ? args[baseIndex + 1] : 'HEAD';

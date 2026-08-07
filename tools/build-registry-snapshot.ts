@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Production-grade registry snapshot CLI.
  *
@@ -14,7 +15,9 @@
 import { logDepth } from '../lib/console-depth.ts';
 import { buildRegistrySnapshot } from '../lib/registry-snapshot.ts';
 
-const args = Bun.argv.slice(2);
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('registry:snapshot', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const withRouting = !args.includes('--no-routing');
 const withReport = !args.includes('--no-report');
 const withWebView = args.includes('--webview') && !args.includes('--no-webview');

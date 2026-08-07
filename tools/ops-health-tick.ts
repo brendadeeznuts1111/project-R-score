@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 /**
  * Ops health tick — the daily maintenance consolidation:
@@ -10,6 +11,7 @@
  * Exit 1 when the integrity check fails.
  */
 
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { runIntegrityCheck } from '../lib/monitoring/integrity.ts';
 import { DODVerifier } from '../lib/dod/verifier.ts';
 import {
@@ -27,9 +29,9 @@ export type HealthTickResult = {
   timestamp: string;
 };
 
-function dbPathFromArgv(): string {
-  const i = Bun.argv.indexOf('--db');
-  return i >= 0 && Bun.argv[i + 1] ? Bun.argv[i + 1]! : DEFAULT_OPS_DB_PATH;
+function dbPathFromArgv(argv: readonly string[] = Bun.argv): string {
+  const i = argv.indexOf('--db');
+  return i >= 0 && argv[i + 1] ? argv[i + 1]! : DEFAULT_OPS_DB_PATH;
 }
 
 export async function runHealthTick(dbPath = DEFAULT_OPS_DB_PATH): Promise<HealthTickResult> {
@@ -67,7 +69,8 @@ export async function runHealthTick(dbPath = DEFAULT_OPS_DB_PATH): Promise<Healt
 }
 
 if (import.meta.main) {
-  const result = await runHealthTick(dbPathFromArgv());
+  const argv = applyUnknownLongOptionGuardFor('ops:health-tick', Bun.argv.slice(2));
+  const result = await runHealthTick(dbPathFromArgv(argv));
   console.log(`integrity: ${result.integrity.status} (${result.integrity.failures} failures)`);
   console.log(`dod cleanup: ${result.dodCleaned} stale pending removed`);
   console.log(

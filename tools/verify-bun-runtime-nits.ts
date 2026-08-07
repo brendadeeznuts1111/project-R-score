@@ -4,6 +4,7 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see docs/bun-runtime-nits.md — suite spec (Phase 1: 18 probes)
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * verify-bun-runtime-nits.ts — runtime TRUTH probes for easily-misused Bun
  * APIs. Records actual behavior (not Node parity) for inspect options, Web
@@ -24,6 +25,9 @@ import {
 } from '../lib/verification/bun-runtime-nits-probes.ts';
 import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification/subsystem.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export type NitProbe = {
   name: string;
   category: 'inspect' | 'streams' | 'url' | 'file-io';
@@ -104,7 +108,7 @@ if (import.meta.main) {
   console.log(`\n${proof.summary.passed}/${proof.summary.total} passed`);
   console.log(`Proof hash: ${proof.proofHash}`);
 
-  if (Bun.argv.includes('--save')) {
+  if (argv.includes('--save')) {
     await Bun.write('public/registry/bun-runtime-nits-proof.json', JSON.stringify(proof, null, 2));
     console.log('💾 Saved to public/registry/bun-runtime-nits-proof.json');
   }

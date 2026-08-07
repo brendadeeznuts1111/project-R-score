@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/reference/bun/RedisClient — Bun.RedisClient
+// @see https://bun.com/reference/bun/readableStreamToBytes — Bun.readableStreamToBytes
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/redis#getting-started — RedisClient
@@ -6,6 +9,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-readablestreamto — Bun.readableStreamTo
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 // @see https://bun.com/docs/llms.txt
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Three-source Bun API verification harness:
  *   1. Type definitions — local bun-types (bun.d.ts)
@@ -28,7 +32,9 @@ import {
   resolveBunTypesDir,
   typesContains,
 } from '../../lib/bun-api-proof.ts';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('showcase:verify', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const DOCS_INDEX = 'tools/bun-docs-index.json';
 const MANIFEST = 'tools/bun-api-showcase/proof-manifest.json';
 const BUN_TYPES_DIR = resolveBunTypesDir();
@@ -105,7 +111,7 @@ if (mismatches.length > 0) {
   for (const m of mismatches) console.log(`  ✗ ${m}`);
 }
 
-if (Bun.argv.includes('--write')) {
+if (argv.includes('--write')) {
   const out = {
     generated: new Date().toISOString(),
     bunVersion: Bun.version,

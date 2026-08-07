@@ -8,7 +8,11 @@ import {
   REGULATION_POLICY_CATALOG,
   resolveRegulationPolicy,
 } from '../lib/operations/regulation-policy-catalog.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('jurisdictions:docs', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export const JURISDICTIONS_DOC_PATH = 'docs/JURISDICTIONS.md';
 
 function money(value: number | null): string {
@@ -64,7 +68,7 @@ async function main(): Promise<void> {
   const root = joinPath(import.meta.dir, '..');
   const target = joinPath(root, JURISDICTIONS_DOC_PATH);
   const rendered = renderJurisdictionsDocs();
-  if (Bun.argv.includes('--check')) {
+  if (argv.includes('--check')) {
     if (!(await Bun.file(target).exists())) {
       console.error(`❌ missing ${JURISDICTIONS_DOC_PATH}`);
       process.exit(1);

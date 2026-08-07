@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --verify
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Full Pages publish loop: ops snapshot → registry git gate → optional commit/push → deploy + taxonomy verify.
  *
@@ -17,7 +19,9 @@ import { resolvePath } from '../lib/path-bun.ts';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
 
 const ROOT = resolvePath(import.meta.dir, '..');
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('cloudflare:publish', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const commit = argv.includes('--commit');
 const push = argv.includes('--push');
 const allowDirty = argv.includes('--allow-dirty');

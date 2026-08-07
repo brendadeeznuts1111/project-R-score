@@ -4,6 +4,7 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bun-types-status.ts — map-first morning dashboard for Bun-types pipeline.
  *
@@ -523,7 +524,9 @@ async function refreshLocal(strict: boolean): Promise<number> {
 }
 
 async function main(): Promise<number> {
-  const args = parseStatusCli(Bun.argv.slice(2));
+  const args = parseStatusCli(
+    applyUnknownLongOptionGuardFor('bun:types-status', Bun.argv.slice(2))
+  );
   if (args.help) {
     console.log(`bun-types-status — morning dashboard (inventory · tip-diff · usage)
 

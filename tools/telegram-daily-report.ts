@@ -19,6 +19,7 @@ import {
   runDailyCapacityReport,
 } from '../lib/telegram/daily-capacity-report.ts';
 import { buildSeatCapitalDeskSnapshot } from '../lib/telegram/seat-desk-snapshot.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 export const TELEGRAM_DAILY_REPORT_SCHEDULE = Bun.env.TELEGRAM_DAILY_REPORT_SCHEDULE ?? '0 9 * * *';
 export const TELEGRAM_DAILY_REPORT_TITLE = 'telegram-daily-capacity-report';
@@ -71,7 +72,9 @@ function previewCron(schedule: string, count: number): void {
 }
 
 async function main(): Promise<void> {
-  const opts = parseArgv(Bun.argv.slice(2));
+  const opts = parseArgv(
+    applyUnknownLongOptionGuardFor('telegram:daily-report', Bun.argv.slice(2))
+  );
   if (!opts) {
     console.log(`Usage: bun tools/telegram-daily-report.ts <run|preview|cron-preview|register|remove> [options]
 OS Bun.cron for the daily partner capacity report.

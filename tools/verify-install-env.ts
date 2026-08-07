@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * verify-install-env.ts — Runtime probes for Bun install BUN_CONFIG_* env vars.
  *
@@ -20,6 +21,10 @@ import {
   reportCanonicalCoverageGaps,
 } from '../lib/verification/canonical-coverage.ts';
 import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification/subsystem.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   INSTALL_ENV_PROOF_REPORT_PATH,
   runInstallEnvVerification,
@@ -27,8 +32,8 @@ import {
 
 export const SAVE_PATH = 'public/registry/install-env-proof.json';
 
-const asJson = Bun.argv.includes('--json');
-const shouldSave = Bun.argv.includes('--save');
+const asJson = argv.includes('--json');
+const shouldSave = argv.includes('--save');
 
 const semanticTags = await buildSemanticTags('runtime');
 const report = await runInstallEnvVerification();

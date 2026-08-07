@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
@@ -7,6 +8,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
 // @see https://bun.com/docs/runtime/environment-variables#configuring-bun
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Portal secret — thin wrapper over official Proton Pass CLI (`pass-cli`).
  *
@@ -1012,7 +1014,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
 }
 
 async function main(): Promise<void> {
-  const argv = Bun.argv.slice(2);
+  const argv = applyUnknownLongOptionGuardFor('portal:secret', Bun.argv.slice(2));
   await dispatchSecret(argv[0], argv.slice(1));
 }
 

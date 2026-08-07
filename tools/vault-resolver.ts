@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
@@ -7,6 +8,7 @@
 // @see https://protonpass.github.io/pass-cli/ — pass-cli
 // @see https://protonpass.github.io/pass-cli/commands/contents/inject/ — inject
 // @see https://protonpass.github.io/pass-cli/commands/contents/secret-references/ — pass:// URIs
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Vault map resolver — list env→vault inventory (no secret values), inject, SSH.
  *
@@ -27,6 +29,9 @@ import { semver } from 'bun';
 import { buildVaultMapBundle, colorize, type VaultMapEntry } from '../lib/security/vault-map.ts';
 import { runPassCli } from './portal-secret.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('vault:resolve', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const BUN_MIN = '1.3.14';
 if (!semver.satisfies(Bun.version, `>=${BUN_MIN}`)) {
   console.error(`  ❌ Bun ${Bun.version} < ${BUN_MIN} — upgrade required`);
@@ -88,10 +93,10 @@ function inventoryRow(e: VaultMapEntry): {
 }
 
 async function main(): Promise<void> {
-  const json = process.argv.includes('--json');
-  const check = process.argv.includes('--check');
-  const inject = process.argv.includes('--inject');
-  const ssh = process.argv.includes('--ssh');
+  const json = argv.includes('--json');
+  const check = argv.includes('--check');
+  const inject = argv.includes('--inject');
+  const ssh = argv.includes('--ssh');
 
   const bundle = await buildVaultMapBundle({ env: {} });
   const entries = bundle.entries.filter(e => e.vault && e.item);

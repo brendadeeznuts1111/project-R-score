@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Overwrite R2 `registry.json` from the static snapshot SSOT.
  *
@@ -17,9 +18,12 @@ import { jsonOut } from '../lib/console-depth.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { createS3RegistryStore } from '../lib/factory/object-store.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('registry:sync-index-r2', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = import.meta.dirname.replace(/\/tools$/, '');
 const SNAPSHOT = joinPath(ROOT, 'public/registry/registry.json');
-const dryRun = Bun.argv.includes('--dry-run');
+const dryRun = argv.includes('--dry-run');
 
 const raw = await Bun.file(SNAPSHOT).text();
 const parsed = JSON.parse(raw) as { packages?: unknown };

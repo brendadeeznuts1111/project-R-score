@@ -4,6 +4,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://developers.cloudflare.com/api/resources/user/subresources/tokens/methods/verify/ — token lifecycle response
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Vault health bake — cross-references config/vault-map.toml env refs against
  * LIVE Proton Pass item states, writes:
@@ -39,10 +40,13 @@ import {
 import { checkPatVaultMatrix, probePassSession } from '../lib/security/pass-session.ts';
 import { capturePassCli } from './portal-secret.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('vault:health:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = joinPath(import.meta.dir, '..');
 const OUT_JSON = joinPath(ROOT, 'public', 'registry', 'vault-health.json');
 const OUT_HTML = joinPath(ROOT, 'public', 'portal', 'vault', 'index.html');
-const NO_FAIL = Bun.argv.includes('--no-fail');
+const NO_FAIL = argv.includes('--no-fail');
 
 export type VaultListResult = { ok: true; items: VaultLiveItem[] } | { ok: false; code: number };
 

@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Scan for empty catch blocks and add basic error logging.
  *
@@ -13,10 +15,13 @@
 
 import { readText, writeText, listFilesSync } from './lib/fs-bun';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('fix:empty-catches', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = process.cwd();
 const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache', 'coverage']);
 
-const DRY_RUN = Bun.argv.includes('--dry-run');
+const DRY_RUN = argv.includes('--dry-run');
 
 function* walkFiles(): Generator<string> {
   for (const rel of listFilesSync('**/*.{ts,tsx,js,jsx,mjs,cjs}', { cwd: ROOT })) {

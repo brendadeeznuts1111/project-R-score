@@ -6,6 +6,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bun-types-tip-diff.ts — local authority tip-vs-pin gate for bun-types surface.
  *
@@ -264,7 +265,9 @@ async function loadMembersFromTypesRoot(
 }
 
 async function main(): Promise<void> {
-  const args = parseCli(Bun.argv.slice(2));
+  const args = parseCli(
+    applyUnknownLongOptionGuardFor('bun:types-inventory:tip-diff', Bun.argv.slice(2))
+  );
   if (args.help) {
     console.log(`bun-types-tip-diff — pin vs upstream bun-types (local CI)
 

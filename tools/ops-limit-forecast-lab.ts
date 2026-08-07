@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Build the read-only Limits Forecast Lab artifact.
  *
@@ -85,7 +86,7 @@ function loadPartnerSnapshots(path: string): {
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('ops:limits:lab', Bun.argv.slice(2));
   const databasePath = optionValue(args, 'db') ?? DEFAULT_OPS_DB_PATH;
   const outputPath = optionValue(args, 'out') ?? DEFAULT_OUTPUT;
   const benchmarkIterations = Math.max(1, Number(optionValue(args, 'bench') ?? '1'));

@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Portal foundation verification — static anti-patterns + optional live probes.
  *
@@ -15,6 +17,10 @@ import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { resolveServePublicVerifyBase } from '../lib/http/serve-public-bind.ts';
 import { collectPortalStaticViolations, PORTAL_ROOT_REL } from '../lib/portal-static-checks.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   PORTAL_MARKDOWN_SLUGS,
   PORTAL_NAV_PROBE_PATHS,
@@ -231,8 +237,8 @@ async function runLive() {
 }
 
 async function main() {
-  const staticOnly = Bun.argv.includes('--static-only');
-  const liveOnly = Bun.argv.includes('--live-only');
+  const staticOnly = argv.includes('--static-only');
+  const liveOnly = argv.includes('--live-only');
 
   if (!liveOnly) {
     console.log('Portal static verify');

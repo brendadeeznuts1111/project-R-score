@@ -4,10 +4,13 @@
 // @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — --cpu-prof
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { ensureDir } from './lib/fs-bun';
 import { createShutdown } from './lib/graceful-shutdown';
 import { jsonOut } from '../lib/console-depth';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('brand:bench:profile', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const joinPath = (...parts: string[]) => parts.filter(Boolean).join('/').replace(/\/+/g, '/');
 
 function nowRunId(): string {

@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Scan portal board HTML/JS for glossary concept usage and verify each
  * resolved id is covered by the board surface map ∪ shared field maps ∪
@@ -37,6 +38,10 @@ import {
 } from '../lib/portal/semantic-vocabulary.ts';
 import { ACCOUNT_DOSSIER_GLOSSARY } from '../public/portal/account/glossary-map.js';
 import { PARTNER_HISTORY_GLOSSARY } from '../public/portal/partner-history/glossary-map.js';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('validate:surface-coverage', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 
 export type BoardId = 'partner-history' | 'partners' | 'limits' | 'account';
 
@@ -383,10 +388,10 @@ export async function scanBoardConceptIds(board: BoardId): Promise<Set<string>> 
 }
 
 async function main(): Promise<void> {
-  const wantJson = Bun.argv.includes('--json');
-  const includeMetadata = Bun.argv.includes('--include-metadata');
-  const wantReport = Bun.argv.includes('--report');
-  const strict = Bun.argv.includes('--strict');
+  const wantJson = argv.includes('--json');
+  const includeMetadata = argv.includes('--include-metadata');
+  const wantReport = argv.includes('--report');
+  const strict = argv.includes('--strict');
 
   const result = await scanSurfaceCoverage({ includeMetadata });
   const { scanned, boards, orphans, inventoryMisses, deadAllowlist, missingCorrelationIds } =

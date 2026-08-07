@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Drain factory Telegram R2 queues → SQLite / bot handler / outbox projectors.
  *
@@ -31,6 +33,9 @@ import type { TelegramUserId } from '../lib/types/branded/portal.ts';
 import { resolveChannelR2BridgeConfig } from '../scripts/lib/r2-bridge.ts';
 import { S3Client } from 'bun';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:ops:consume', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const UPDATES_CURSOR_KEY = 'telegram-ops-consumer/updates-cursor.json';
 const COMMANDS_CURSOR_KEY = 'telegram-ops-consumer/cursor.json';
 
@@ -52,7 +57,7 @@ async function saveCursor(client: S3Client, key: string, lastSeq: number): Promi
 }
 
 async function main(): Promise<void> {
-  const dryRun = process.argv.includes('--dry-run');
+  const dryRun = argv.includes('--dry-run');
   const tg = loadTelegramEnv();
   const token = tg.effectiveToken;
   if (!token) {

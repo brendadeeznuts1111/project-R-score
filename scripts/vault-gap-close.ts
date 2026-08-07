@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/secrets — Bun.secrets
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * vault-gap-close.ts — close env vault gaps (Proton Pass + machine-local mint).
  *
@@ -43,7 +44,9 @@ const ROOT = resolvePath(import.meta.dir, '..');
 const TEMPLATE = resolvePath(ROOT, 'env.template');
 const VAULT = 'factorywager';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('vault:gap:close', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const SHOW = argv.includes('--show');
 const cmd =
   argv.find(a => !a.startsWith('-')) ??

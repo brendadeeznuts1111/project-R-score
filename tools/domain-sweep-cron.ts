@@ -18,6 +18,7 @@
  * docs/harness/cron.md) — the daemon's lifetime is owned by this process.
  */
 
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { scheduleInProcess, parseCron } from '../lib/harness/cron.ts';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { captureProcess, summarizeProcessOutput } from '../lib/harness/process-capture.ts';
@@ -64,7 +65,8 @@ export async function fireSweep(
 }
 
 async function main(): Promise<void> {
-  const expression = Bun.argv[2] ?? '*/15 * * * *';
+  const argv = applyUnknownLongOptionGuardFor('sweep:domain:cron', Bun.argv.slice(2));
+  const expression = argv.find(a => !a.startsWith('-')) ?? '*/15 * * * *';
   const state: SweepCronState = { running: false, tick: 0 };
   const next = parseCron(expression);
   console.info(

@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/api/spawn — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Propose a new portal semantic concept (pending review).
  *
@@ -151,5 +152,7 @@ export async function runPropose(argv: readonly string[]): Promise<number> {
 }
 
 if (import.meta.main) {
-  process.exit(await runPropose(Bun.argv.slice(2)));
+  process.exit(
+    await runPropose(applyUnknownLongOptionGuardFor('concept:propose', Bun.argv.slice(2)))
+  );
 }

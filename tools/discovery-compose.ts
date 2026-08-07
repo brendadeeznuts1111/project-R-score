@@ -24,7 +24,9 @@ import {
 
 export { DISCOVERY_COMPOSE_ALLOWED_LONG };
 
-const args = applyUnknownLongOptionGuardFor('discovery:compose', Bun.argv.slice(2));
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('discovery:compose', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const asJson = args.includes('--json');
 const check = args.includes('--check');
 const skipUnused = args.includes('--skip-unused');

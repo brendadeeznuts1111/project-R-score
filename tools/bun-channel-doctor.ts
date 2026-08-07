@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /** Read-only Bun channel check with an explicit opt-in status-artifact write. */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { jsonOut } from '../lib/console-depth.ts';
@@ -74,7 +75,9 @@ export async function runBunChannelDoctorCli(args: BunChannelDoctorCliArgs): Pro
 async function main(): Promise<void> {
   try {
     process.exitCode = await runBunChannelDoctorCli(
-      parseBunChannelDoctorCliArgs(Bun.argv.slice(2))
+      parseBunChannelDoctorCliArgs(
+        applyUnknownLongOptionGuardFor('bun:channel:report', Bun.argv.slice(2))
+      )
     );
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));

@@ -3,6 +3,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Idempotent partner-ledger money migration.
  *
@@ -390,7 +391,7 @@ function printReport(
 }
 
 async function main(): Promise<void> {
-  const argv = Bun.argv.slice(2);
+  const argv = applyUnknownLongOptionGuardFor('partner:money:migrate', Bun.argv.slice(2));
   const dbArg = flag(argv, 'db');
   if (!dbArg) throw new Error('missing required --db <path>; no database is selected implicitly');
   const dbPath = resolvePath(dbArg);

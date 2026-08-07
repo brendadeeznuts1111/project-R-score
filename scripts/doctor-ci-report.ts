@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Portal doctor CI report — one process: plain log + JSON artifact + step summary
  * + GitHub Actions workflow annotations on FAIL checks.
@@ -277,7 +278,9 @@ export async function runDoctorCiReport(opts: DoctorCiReportOpts = {}): Promise<
 }
 
 async function main(): Promise<number> {
-  const opts = parseArgs(Bun.argv.slice(2));
+  const opts = parseArgs(
+    applyUnknownLongOptionGuardFor('portal:doctor:ci:report', Bun.argv.slice(2))
+  );
   const { exitCode } = await runDoctorCiReport(opts);
   return exitCode;
 }

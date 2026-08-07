@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/auto-install — runtime -i ≡ --install=fallback
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Validate config/runtime-flags.json catalog (schema · shortcodes · bun run --help parity · help coverage).
  *
@@ -19,8 +20,11 @@ import {
 import { cliTone, frameBlock, kvLines } from '../lib/portal/cli-chrome.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
-const json = Bun.argv.includes('--json');
-const skipParity = Bun.argv.includes('--skip-parity');
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('portal:flags:check', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
+const json = argv.includes('--json');
+const skipParity = argv.includes('--skip-parity');
 
 const loaded = await tryLoadRuntimeFlagsCatalog();
 let bunHelpText: string | undefined;

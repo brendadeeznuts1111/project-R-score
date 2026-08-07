@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * verify-docs-coverage.ts — RSS + reference + canonical coverage verification.
  *
@@ -25,16 +26,19 @@ import { DOCS_CATALOG } from '../lib/docs/docs-artifact-paths.ts';
 import { loadReleaseIndex, parseReleaseEntries, fetchRssXml } from './bun-docs-releases.ts';
 import { loadReferenceIndex } from './bun-docs-reference-index.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export const SAVE_PATH = 'public/registry/docs-coverage-proof.json';
 export const ALLOWLIST_PATH = 'tools/docs-coverage-allowlist.json';
 export const CATALOG_PATH = DOCS_CATALOG;
 export const REVIEW_PATH = 'reports/release-scrape-review.jsonl';
 
-const asJson = Bun.argv.includes('--json');
-const shouldSave = Bun.argv.includes('--save');
-const refreshRss = Bun.argv.includes('--refresh-rss');
-const refreshReference = Bun.argv.includes('--refresh-reference');
-const strict = Bun.argv.includes('--strict') || !Bun.argv.includes('--no-strict');
+const asJson = argv.includes('--json');
+const shouldSave = argv.includes('--save');
+const refreshRss = argv.includes('--refresh-rss');
+const refreshReference = argv.includes('--refresh-reference');
+const strict = argv.includes('--strict') || !argv.includes('--no-strict');
 
 async function loadReviewRows(): Promise<ReturnType<typeof parseReviewJsonl>> {
   const file = Bun.file(REVIEW_PATH);

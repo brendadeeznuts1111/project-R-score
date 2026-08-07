@@ -18,6 +18,7 @@
 // @see https://bun.com/docs/runtime/bunfig#run-silent-suppress-reporting-the-command-being-run — --silent
 // @see https://bun.com/docs/runtime/index#general-execution-options — bun flags
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bake portal Bun CLI reference from live `bun --help` (+ curated catalog metadata).
  *
@@ -33,6 +34,9 @@ import {
   type RuntimeFlagEntry,
 } from './lib/portal-cli-bun-flags.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('bake:bun-cli-reference', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = joinPath(import.meta.dir, '..');
 const OUT = joinPath(ROOT, 'public/registry/bun-cli-reference.json');
 
@@ -311,7 +315,7 @@ const isMain =
   import.meta.path === Bun.main || process.argv[1]?.endsWith('bake-bun-cli-reference.ts');
 
 if (isMain) {
-  const check = Bun.argv.includes('--check');
+  const check = argv.includes('--check');
   const payload = await buildBunCliReference();
   const text = `${JSON.stringify(payload, null, 2)}\n`;
   if (check) {

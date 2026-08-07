@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Seed demo operations data for portal / ops dashboard.
  *
@@ -17,8 +18,11 @@ import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import { seedOperationsDemo } from '../lib/operations/ops-seed.ts';
 
-const force = Bun.argv.includes('--force');
-const showSummary = Bun.argv.includes('--summary');
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:seed', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
+const force = argv.includes('--force');
+const showSummary = argv.includes('--summary');
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 
 const db = openOperationsDb({ path: dbPath });

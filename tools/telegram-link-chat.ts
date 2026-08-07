@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Explicit Telegram chat bind for a call-sign / tree node (ChatChannelMeta).
  *
@@ -28,6 +30,9 @@ import {
 } from '../lib/telegram/flows/seat-telegram.ts';
 import { resolveLocale } from '../lib/telegram/flows/i18n.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:link-chat', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ref = process.argv[2];
 const chatRaw = process.argv[3];
 if (!ref || !chatRaw) {
@@ -39,9 +44,9 @@ if (!ref || !chatRaw) {
 
 const localeFlag = process.argv.find(a => a.startsWith('--locale='));
 const locale = resolveLocale(localeFlag?.split('=')[1]);
-const skipWelcome = process.argv.includes('--no-welcome');
-const reassign = process.argv.includes('--reassign');
-const shareDm = process.argv.includes('--share-dm');
+const skipWelcome = argv.includes('--no-welcome');
+const reassign = argv.includes('--reassign');
+const shareDm = argv.includes('--share-dm');
 
 const db = openOperationsDb();
 try {

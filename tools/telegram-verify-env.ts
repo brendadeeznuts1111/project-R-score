@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Verify factory Telegram env + Bot API reachability (getMe, webhook info).
  *
@@ -21,7 +22,9 @@ Options:
   process.exit(0);
 }
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:verify', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 if (argv.includes('--help') || argv.includes('-h')) usage();
 
 const jsonOnly = argv.includes('--json');

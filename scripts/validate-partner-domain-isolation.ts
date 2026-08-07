@@ -9,6 +9,7 @@
  *   bun scripts/validate-partner-domain-isolation.ts --scan --strict
  *   bun scripts/validate-partner-domain-isolation.ts --rules
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { inspectTable } from '../lib/console-depth.ts';
 import { buildPartnerSurfaceInventory } from '../lib/docs/partner-surface-inventory.ts';
@@ -45,7 +46,10 @@ function hasFlag(args: readonly string[], ...flags: string[]): boolean {
 }
 
 async function main(argv: readonly string[] = Bun.argv): Promise<number> {
-  const args = argsOf(argv);
+  const args = applyUnknownLongOptionGuardFor(
+    'partner-surface-inventory:lint-domains',
+    argsOf(argv)
+  );
   if (args.length === 0 || hasFlag(args, '-h', '--help', '--hlp')) {
     console.log(HELP);
     return 0;

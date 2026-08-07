@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Migrate committed/live v0.3 bookmakers bake → v0.4 public + ops artifacts.
  *
@@ -18,6 +19,9 @@ import { jsonOut } from '../lib/console-depth.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { migrateCatalogV03ToV04 } from '../lib/bookmakers/migrate-v03-to-v04.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('bookmakers:migrate', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const DEFAULT_IN = 'public/registry/bookmakers.json';
 const PUBLIC_OUT = 'public/registry/bookmakers.json';
 const ARTIFACT_PUBLIC = 'artifact-registry/bookmakers/v0.4.0/public/books.json';
@@ -31,8 +35,8 @@ function argValue(flag: string): string | undefined {
 
 async function main(): Promise<void> {
   const inPath = argValue('--in') ?? DEFAULT_IN;
-  const dry = Bun.argv.includes('--dry-run');
-  const asJson = Bun.argv.includes('--json');
+  const dry = argv.includes('--dry-run');
+  const asJson = argv.includes('--json');
 
   const raw = JSON.parse(await Bun.file(inPath).text()) as {
     schemaVersion?: number;
@@ -41,7 +45,7 @@ async function main(): Promise<void> {
   };
 
   // If already v0.4 public (schema 2 + fetcher field), re-split ops from enrichment only when forced.
-  if (raw.schemaVersion === 2 && !Bun.argv.includes('--force')) {
+  if (raw.schemaVersion === 2 && !argv.includes('--force')) {
     const sample = Object.values(raw.bookmakers ?? {})[0] as { fetcher?: string } | undefined;
     if (sample && typeof sample.fetcher === 'string') {
       if (!asJson) {

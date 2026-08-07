@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * verify-formdata.ts — Bun FormData file upload proof per docs guide.
  *
@@ -15,8 +17,11 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { inspect, CryptoHasher } from 'bun';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('check:formdata', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const BASE = Bun.env.HEALTH_URL || 'http://localhost:3000';
-const SHOULD_SAVE = process.argv.includes('--save');
+const SHOULD_SAVE = argv.includes('--save');
 const SAVE_PATH = 'public/registry/formdata-proof.json';
 const TOKEN = Bun.env.FACTORY_WAGER_TOKEN || Bun.env.REGISTRY_SECRET || 'dev-key';
 

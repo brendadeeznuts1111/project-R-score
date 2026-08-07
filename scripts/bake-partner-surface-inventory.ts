@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bake-partner-surface-inventory.ts → public/registry/partner-surface-inventory.json
  *
@@ -24,10 +25,13 @@ import {
 } from '../lib/docs/partner-surface-inventory.ts';
 import { resolvePath } from './lib/fs-bun.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('partner-surface-inventory:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = resolvePath(import.meta.dir, '..');
 const OUT_PATH = resolvePath(ROOT, 'public/registry/partner-surface-inventory.json');
 const PARTNERS_OPS_PATH = resolvePath(ROOT, 'public/registry/partners-ops.json');
-const CHECK = Bun.argv.includes('--check');
+const CHECK = argv.includes('--check');
 
 async function loadLiveFromPartnersOps(): Promise<{
   livePartnerCodes: readonly PartnerSurfaceLiveCode[];

@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * build-doc-index.ts — export CANONICAL_REFS + catalog metadata to registry proof JSON.
  *
@@ -13,7 +15,11 @@
 import { inspectTable } from '../lib/http/networking-report.ts';
 import { buildDocIndex, DOC_INDEX_PATH } from '../lib/docs/doc-index.ts';
 
-const SHOULD_SAVE = process.argv.includes('--save');
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('build:doc-index', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
+
+const SHOULD_SAVE = argv.includes('--save');
 
 const index = await buildDocIndex();
 

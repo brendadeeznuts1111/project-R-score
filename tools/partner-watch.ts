@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/guides/read-file/watch — fs.watch (the documented
 //     Bun watch API — `Bun.watch` is undefined in Bun 1.4.0-canary, verified)
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
@@ -22,6 +23,7 @@
 // eslint-disable-next-line no-restricted-imports -- file-watch only; Bun.watch does not exist
 import { watch, type FSWatcher } from 'node:fs';
 import { joinPath } from '../lib/path-bun';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 export const WATCH_ROOTS = ['config/partner-profiles', 'data', 'public/registry'];
 
@@ -53,7 +55,7 @@ async function runBakes(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const argv = process.argv.slice(2);
+  const argv = applyUnknownLongOptionGuardFor('partner:watch', Bun.argv.slice(2));
   const once = argv.includes('--once');
   const debounceMs = Number(argv[argv.indexOf('--debounce-ms') + 1] ?? 500) || 500;
 

@@ -1,5 +1,12 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('secrets:migrate', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 /**
  * Copy well-known secrets from Bun.env into Bun.secrets (OS credential store).
  *
@@ -12,7 +19,7 @@
  * @see https://bun.com/docs/runtime/environment-variables — Bun.env
  */
 
-const DRY = Bun.argv.includes('--dry-run');
+const DRY = argv.includes('--dry-run');
 const SERVICE = Bun.env.FW_SECRETS_SERVICE?.trim() || 'com.factorywager.app';
 
 const KEYS = [

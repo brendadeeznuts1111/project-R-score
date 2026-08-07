@@ -36,7 +36,9 @@ export { SCHEMA_AUDIT_ALLOWED_LONG };
 
 const root = joinPath(import.meta.dir, '..');
 const outPath = joinPath(root, 'public', 'registry', 'scrape-wire-schema-audit.json');
-const argv = applyUnknownLongOptionGuardFor('schema:audit', Bun.argv.slice(2));
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('schema:audit', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const jsonMode = argv.includes('--json') || argv.includes('--json-only');
 const write = argv.includes('--write');
 

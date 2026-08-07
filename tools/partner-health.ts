@@ -10,8 +10,12 @@
 
 import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
 import { runPartnerHealth } from '../lib/partner-profile/partner-health.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
-const asJson = Bun.argv.includes('--json');
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('partner:health', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
+const asJson = argv.includes('--json');
 
 const report = await runPartnerHealth();
 

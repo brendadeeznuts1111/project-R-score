@@ -22,7 +22,9 @@ import {
 
 export { TELEGRAM_HANDSHAKE_CATALOG_ALLOWED_LONG };
 
-const argv = applyUnknownLongOptionGuardFor('telegram:handshake:catalog', Bun.argv.slice(2));
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:handshake:catalog', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const wantJson = argv.includes('--json');
 const section = argv.find(a => !a.startsWith('-')) ?? 'all';
 

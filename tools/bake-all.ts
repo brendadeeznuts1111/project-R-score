@@ -6,6 +6,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bake:all — offline registry bake orchestrator.
  *
@@ -123,7 +124,7 @@ const SKIPPED = [
 ];
 
 async function main(): Promise<void> {
-  const flags = Bun.argv.slice(2);
+  const flags = applyUnknownLongOptionGuardFor('bake:all', Bun.argv.slice(2));
   const onlyFlag = flags.find(f => f.startsWith('--only='));
   const only = onlyFlag
     ? new Set(

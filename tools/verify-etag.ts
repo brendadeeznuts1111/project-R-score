@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/networking/fetch#custom-headers — custom headers
 // @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch / Bun.fetch
 // @see https://bun.com/docs/runtime/networking/fetch#preconnect-to-a-host — fetch.preconnect
@@ -13,6 +14,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * ETag verification suite — shared data-ETag across health formats.
  *
@@ -79,7 +81,9 @@ const CANONICAL = {
 
 // ── CLI ────────────────────────────────────────────────────────────────────
 
-const args = process.argv.slice(2);
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('check:etag', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const flag = (name: string): string | undefined => {
   const hit = args.find(a => a.startsWith(`--${name}=`));
   return hit?.slice(name.length + 3);

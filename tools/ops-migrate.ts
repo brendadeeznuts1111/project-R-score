@@ -3,6 +3,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/sqlite
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * One-shot migration: merge legacy data/accounts-*.db tree into data/operations.db SSOT.
  *
@@ -11,7 +12,9 @@
 import { Database } from 'bun:sqlite';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 
-const args = Bun.argv.slice(2);
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:migrate', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const dryRun = args.includes('--dry-run');
 const legacyFlag = args.find(a => a.startsWith('--legacy='))?.slice('--legacy='.length);
 const legacyPath = legacyFlag ?? 'data/accounts-operations.db';

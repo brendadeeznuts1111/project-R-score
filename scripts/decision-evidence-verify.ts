@@ -5,6 +5,7 @@
 import { jsonOut } from '../lib/console-depth';
 import { joinPath, readText, resolvePath } from './lib/fs-bun';
 import { sha256Hex } from './lib/hash';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 import type {
   DecisionEvidence,
@@ -91,9 +92,7 @@ async function verifyOne(root: string, evidencePath: string): Promise<DecisionVe
   if (digestExpected !== digestComputed)
     errors.push(`digest mismatch (${digestExpected} != ${digestComputed})`);
   const declared = (evidence.status || 'REVIEW_REQUIRED') as
-    | 'APPROVED'
-    | 'REVIEW_REQUIRED'
-    | 'REJECTED';
+    'APPROVED' | 'REVIEW_REQUIRED' | 'REJECTED';
   if (declared === 'APPROVED') {
     if (!hasT1) errors.push('missing verified T1 source');
     if (!hasT2) errors.push('missing verified T2 source');
@@ -162,7 +161,9 @@ export async function verifyDecisionEvidence(options: VerifyOptions): Promise<{
 }
 
 async function main(): Promise<void> {
-  const options = parseArgs(Bun.argv.slice(2));
+  const options = parseArgs(
+    applyUnknownLongOptionGuardFor('decision:evidence:verify', Bun.argv.slice(2))
+  );
   const summary = await verifyDecisionEvidence(options);
   if (options.json) {
     jsonOut(summary);

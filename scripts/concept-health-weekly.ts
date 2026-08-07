@@ -13,6 +13,7 @@
  * credentials are missing, a warning is printed and the command still exits
  * 0 with the console output.
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { colorize, jsonOut } from '../lib/console-depth.ts';
 import { PORTAL_SEMANTIC_CONCEPTS } from '../lib/portal/semantic-vocabulary.ts';
 import type { DomainConceptInput } from './concept-domain-list.ts';
@@ -27,7 +28,9 @@ import {
 } from './concept-health.ts';
 import { countPortalConceptUsages } from '../lib/portal/concept-usage.ts';
 import { runConceptMetadataValidation } from './validate-concept-metadata.ts';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('concept:health:weekly', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const WEEK_DAYS = 7;
 
 export type ConceptWeeklySummary = {

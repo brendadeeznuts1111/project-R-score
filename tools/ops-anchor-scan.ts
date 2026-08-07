@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Ops stale-anchor scan — detect partner books sitting at drifted, stable
  * max-stake limits (analytics signal; never places bets).
@@ -19,7 +20,10 @@ import { scanStaleAnchorsFromDb } from '../lib/operations/anchor-stability.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import { logTable } from '../lib/console-depth.ts';
 
-const json = Bun.argv.includes('--json');
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:anchor:scan', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
+const json = argv.includes('--json');
 
 function flagValue(name: string): string | undefined {
   const idx = Bun.argv.indexOf(`--${name}`);

@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * brand-manifest.ts — living institutional record for branded IDs.
  *
@@ -119,7 +120,7 @@ function stableJson(manifest: Manifest): string {
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('brand:manifest', Bun.argv.slice(2));
   const check = args.includes('--check');
   const jsonOnly = args.includes('--json');
   const manifest = buildManifest();

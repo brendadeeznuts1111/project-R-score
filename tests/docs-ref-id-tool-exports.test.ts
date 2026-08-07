@@ -167,7 +167,7 @@ describe('in-tool flagDocRef re-exports', () => {
     for (const key of batch2) {
       expect(ALLOWED_LONG_REGISTRY[key].length).toBeGreaterThan(0);
     }
-    expect(Object.keys(ALLOWED_LONG_REGISTRY).length).toBeGreaterThanOrEqual(36);
+    expect(Object.keys(ALLOWED_LONG_REGISTRY).length).toBeGreaterThanOrEqual(300);
     expect(ALLOWED_LONG_REGISTRY['portal:cli'].length).toBeGreaterThan(40);
     expect(ALLOWED_LONG_REGISTRY['bun:brand-map']).toEqual(['check', 'write-baseline', 'json']);
     expect(ALLOWED_LONG_REGISTRY['env:inventory']).toEqual([

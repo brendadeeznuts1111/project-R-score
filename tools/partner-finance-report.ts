@@ -19,6 +19,7 @@ import {
 import { aggregatePartnerFinance } from '../lib/partner-profile/finance-report.ts';
 import { openFinanceReportDb } from '../lib/telegram/daily-finance-report.ts';
 import { getPartnerVisual } from '../lib/telegram/partner-visuals.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 export const FINANCE_REPORT_SCHEDULE = Bun.env.FINANCE_REPORT_SCHEDULE ?? '0 9 * * *';
 export const FINANCE_REPORT_TITLE = 'partner-finance-report';
@@ -94,7 +95,9 @@ function previewCron(schedule: string, count: number): void {
 }
 
 async function main(): Promise<void> {
-  const opts = parseArgv(Bun.argv.slice(2));
+  const opts = parseArgv(
+    applyUnknownLongOptionGuardFor('partner:finance-report', Bun.argv.slice(2))
+  );
   if (!opts) {
     console.log(`Usage: bun tools/partner-finance-report.ts <run|preview|cron-preview|register|remove> [options]
 Options: --days <n> · --partner <CODE> · --schedule <cron> · --title <name> · --count <n>`);

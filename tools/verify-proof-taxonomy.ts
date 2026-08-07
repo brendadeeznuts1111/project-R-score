@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see lib/verification/proof-taxonomy.ts — PROOF_TAXONOMY_CONTRACTS
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Audit saved proof JSON artifacts against subsystem taxonomy contracts.
  *
@@ -18,9 +19,12 @@ import {
   saveProofTaxonomyAudit,
 } from '../lib/verification/proof-taxonomy.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = resolvePath(import.meta.dir, '..');
-const JSON_OUT = Bun.argv.includes('--json');
-const save = Bun.argv.includes('--save');
+const JSON_OUT = argv.includes('--json');
+const save = argv.includes('--save');
 
 if (import.meta.main) {
   const report = save ? await saveProofTaxonomyAudit(ROOT) : await runProofTaxonomyAudit(ROOT);

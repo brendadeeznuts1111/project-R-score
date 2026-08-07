@@ -3,6 +3,11 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('concepts:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 /**
  * bake-concepts.ts — bake portal concept inventory state →
  * public/registry/concepts-state.json (board at /portal/concepts/).
@@ -21,7 +26,7 @@ import {
 
 const ROOT = `${import.meta.dir}/..`;
 const OUT_PATH = `${ROOT}/public/registry/concepts-state.json`;
-const CHECK = Bun.argv.includes('--check');
+const CHECK = argv.includes('--check');
 
 export type ConceptsState = {
   kind: 'concepts-state';

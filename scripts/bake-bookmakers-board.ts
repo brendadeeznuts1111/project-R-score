@@ -6,6 +6,7 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/utils#bun-pathtofileurl — Bun.pathToFileURL
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bake-bookmakers-board.ts — bake the @factorywager/bookmakers artifact into the
  * portal read plane.
@@ -27,6 +28,9 @@ import { mkdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirnamePath, joinPath } from '../lib/path-bun.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('bookmakers:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export const BOOKMAKERS_REGISTRY_PATH = 'public/registry/bookmakers.json';
 export const BOOKMAKERS_BOARD_PATH = 'public/portal/bookmakers/index.html';
 export const BOOKMAKERS_ARTIFACT_NAME = '@factorywager/bookmakers';
@@ -168,7 +172,10 @@ function entrySports(b: { sports?: string[]; supportedSports?: string[] }): stri
 }
 
 function entryWeb(b: { urls?: { web?: string }; domain?: string }): string | undefined {
-  return b.urls?.web ?? (b.domain ? `https://${String(b.domain).replace(/^https?:\/\//, '')}` : undefined);
+  return (
+    b.urls?.web ??
+    (b.domain ? `https://${String(b.domain).replace(/^https?:\/\//, '')}` : undefined)
+  );
 }
 
 /** Build the bake payload (pure, testable). Accepts v0.3 and v0.4 field names. */
@@ -231,9 +238,9 @@ export function buildBookmakersBake(
 const LOCAL_PACKAGE_DIR = 'artifacts/deeplink-automation/packages/bookmakers';
 
 async function main(): Promise<void> {
-  const check = Bun.argv.includes('--check');
-  const asJson = Bun.argv.includes('--json');
-  const useLocal = Bun.argv.includes('--local');
+  const check = argv.includes('--check');
+  const asJson = argv.includes('--json');
+  const useLocal = argv.includes('--local');
   const versionFlag = (() => {
     const i = Bun.argv.indexOf('--version');
     return i >= 0 ? Bun.argv[i + 1] : undefined;
@@ -263,9 +270,9 @@ async function main(): Promise<void> {
         `--local requires ${LOCAL_PACKAGE_DIR}/dist or public-catalog.json (run bookmakers:prepare-publish)`
       );
     }
-    const pkg = JSON.parse(
-      await Bun.file(joinPath(LOCAL_PACKAGE_DIR, 'package.json')).text()
-    ) as { version?: string };
+    const pkg = JSON.parse(await Bun.file(joinPath(LOCAL_PACKAGE_DIR, 'package.json')).text()) as {
+      version?: string;
+    };
     version = pkg.version ?? '0.4.0';
     checksum = '0'.repeat(64); // local bake — checksum filled on registry publish
   } else {
@@ -291,11 +298,7 @@ async function main(): Promise<void> {
     (module.default as Record<string, unknown> | undefined)?.BOOKMAKERS ??
     module.default ??
     module;
-  const payload = buildBookmakersBake(
-    candidate as Record<string, unknown>,
-    version,
-    checksum
-  );
+  const payload = buildBookmakersBake(candidate as Record<string, unknown>, version, checksum);
   if (useLocal) {
     payload.artifact.source = 'local-package';
   }

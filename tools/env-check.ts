@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils — Bun.inspect.table
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Print secret-safe env checklist as a table.
  *
@@ -14,7 +15,9 @@ import { checkEnv } from '../lib/env-check.ts';
 import { jsonOut, logTable } from '../lib/console-depth.ts';
 import { describeChannelAuth, probeChannelAuth } from '../lib/verification/channels.ts';
 
-const args = Bun.argv.slice(2);
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('env:check', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const json = args.includes('--json');
 const strict = args.includes('--strict');
 const channelAuth = args.includes('--channel-auth');

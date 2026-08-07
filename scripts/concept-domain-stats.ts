@@ -8,6 +8,7 @@
  *
  * Env: CONCEPT_DOMAIN_STATS_DOMAIN · CONCEPT_DOMAIN_OUTPUT (flags win).
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
 import { countPortalConceptUsages } from '../lib/portal/concept-usage.ts';
 import {
@@ -19,7 +20,9 @@ import {
   conceptStatusOf,
   type DomainConceptInput,
 } from './concept-domain-list.ts';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('concept:domain:stats', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export type DomainGroupCount = {
   group: string; // brand-ok — two-segment concept id prefix
   count: number;

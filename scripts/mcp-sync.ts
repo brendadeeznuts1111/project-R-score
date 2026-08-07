@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * mcp-sync — generate .vscode/mcp.json from the SSOT .mcp.json.
  *
@@ -15,6 +16,9 @@
 
 import { buildVsCodeMcp, stringifyVsCodeMcp, type McpSsot } from './lib/mcp-sync-convert.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('mcp:sync', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const root = new URL('../', import.meta.url).pathname.replace(/\/$/, '');
 const ssotPath = `${root}/.mcp.json`;
 const vscodePath = `${root}/.vscode/mcp.json`;
@@ -23,7 +27,7 @@ async function main(): Promise<void> {
   const ssot = (await Bun.file(ssotPath).json()) as McpSsot;
   const generated = stringifyVsCodeMcp(buildVsCodeMcp(ssot, root));
 
-  if (Bun.argv.includes('--check')) {
+  if (argv.includes('--check')) {
     const current = await Bun.file(vscodePath).text();
     if (current === generated) {
       console.log('mcp-sync: .vscode/mcp.json is up to date');

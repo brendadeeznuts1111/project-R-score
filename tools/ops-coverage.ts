@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Ops coverage health one-liner / CLI.
  *
@@ -14,8 +16,11 @@ import {
 } from '../lib/operations/platform-coverage.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:coverage', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
-const json = process.argv.includes('--json');
+const json = argv.includes('--json');
 
 const db = openOperationsDb({ path: dbPath });
 try {

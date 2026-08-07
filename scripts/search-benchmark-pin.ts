@@ -4,6 +4,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { fileExistsSync, joinPath, readJson, readText, resolvePath, writeText } from './lib/fs-bun';
 import { jsonOut } from '../lib/console-depth';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 const dirnamePath = (p: string) => (p.includes('/') ? p.slice(0, p.lastIndexOf('/')) || '/' : '.');
 
@@ -939,7 +940,7 @@ export async function compare(
 }
 
 export async function main(): Promise<void> {
-  const args = parseArgs(Bun.argv.slice(2));
+  const args = parseArgs(applyUnknownLongOptionGuardFor('search:bench:gate', Bun.argv.slice(2)));
   if (!args) return;
 
   if (args.mode === 'pin') {

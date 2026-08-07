@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Partner secret provisioning — generates and stores per-partner credentials.
  *
@@ -83,7 +85,7 @@ async function provisionPartner(code: string): Promise<void> {
 }
 
 async function main() {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('proton:partner:provision', Bun.argv.slice(2));
   if (args.length === 0) {
     console.error(USAGE);
     process.exit(1);

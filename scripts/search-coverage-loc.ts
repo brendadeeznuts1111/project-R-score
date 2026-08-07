@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 import { joinPath, readText, resolvePath } from './lib/fs-bun';
 import { sha1Hex } from './lib/hash';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -116,7 +118,9 @@ async function fileStats(files: string[]): Promise<FileStat[]> {
 }
 
 async function main(): Promise<void> {
-  const { roots, overlap } = parseArgs(Bun.argv.slice(2));
+  const { roots, overlap } = parseArgs(
+    applyUnknownLongOptionGuardFor('search:coverage:loc', Bun.argv.slice(2))
+  );
   const files = await collectFiles(roots);
   const stats = await fileStats(files);
 

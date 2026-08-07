@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * projects-root-check.ts — enforce product-leaf root contract under projects/.
  *
@@ -15,6 +17,9 @@
  */
 import { joinPath, resolvePath } from '../lib/path-bun';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('projects:roots:check', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const REPO = resolvePath(import.meta.dir, '..');
 
 const ACTIVE_SPECIALS = new Set([
@@ -75,7 +80,7 @@ async function checkIndex(rel: string, issues: Issue[]): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const asJson = Bun.argv.includes('--json');
+  const asJson = argv.includes('--json');
   const issues: Issue[] = [];
   let leaves = 0;
 

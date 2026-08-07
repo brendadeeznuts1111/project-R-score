@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Legacy flag-style entry — prefer `portal-cli snapshot …`.
  */
@@ -30,7 +32,7 @@ const HELP = `Scope-aware data-plane snapshotter (legacy flags)
 `;
 
 async function main(): Promise<void> {
-  const args = process.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('snapshot:data-plane', Bun.argv.slice(2));
   if (args.includes('--help') || args.length === 0) {
     console.log(HELP);
     return;

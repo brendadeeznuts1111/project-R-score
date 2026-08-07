@@ -4,6 +4,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bake-console-format.ts — bake console-format ratchet state →
  * public/registry/console-format-state.json (portal board + CI trend).
@@ -21,10 +22,13 @@ import {
   type ConsoleFormatSummary,
 } from '../lib/console-format-scan.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('console-format:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = process.cwd();
 const BASELINE_PATH = `${ROOT}/scripts/console-format-baseline.json`;
 const OUT_PATH = `${ROOT}/public/registry/console-format-state.json`;
-const CHECK = Bun.argv.includes('--check');
+const CHECK = argv.includes('--check');
 
 const violations = await scanConsoleFormat(ROOT);
 const current = summarizeConsoleFormat(violations);

@@ -29,7 +29,11 @@
 import { joinPath } from '../lib/path-bun';
 import { BOOK_KEY_RE } from '../lib/partner-profile/schema';
 import { tomlStringify } from '../lib/toml-stringify';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('partners:profiles:seed', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export const SEAT_CAPITAL_DESK_PATH = 'public/registry/seat-capital-desk.json';
 export const PROFILES_DIR = 'config/partner-profiles';
 
@@ -157,7 +161,7 @@ export async function migrateSeatPartnersToProfiles(
 }
 
 async function main(): Promise<void> {
-  const dryRun = Bun.argv.includes('--dry-run');
+  const dryRun = argv.includes('--dry-run');
   const { written, skipped } = await migrateSeatPartnersToProfiles(process.cwd(), dryRun);
   for (const [code, outs] of Object.entries(skipped)) {
     for (const out of outs) console.log(`  · ${code}: skipped ${out}`);

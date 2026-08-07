@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * brand-catalog.ts — just-in-time brand discovery for agents and humans.
  *
@@ -172,7 +173,9 @@ function printIndex(m: Manifest, asJson: boolean): void {
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2).filter(a => a !== '--');
+  const args = applyUnknownLongOptionGuardFor('brand:catalog', Bun.argv.slice(2)).filter(
+    a => a !== '--'
+  );
   const asJson = args.includes('--json');
   const query = args.find(a => !a.startsWith('--'));
   const m = await load();

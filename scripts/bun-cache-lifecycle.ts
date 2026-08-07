@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * CI / self-hosted Bun install cache lifecycle.
  *
@@ -45,7 +46,9 @@ function renderPlan(plan: BunCacheLifecyclePlan, health: BunPmHealthReport): voi
 }
 
 async function main(): Promise<void> {
-  const args = parseArgs(Bun.argv.slice(2));
+  const args = parseArgs(
+    applyUnknownLongOptionGuardFor('install:cache:lifecycle', Bun.argv.slice(2))
+  );
   const dryRun = args.dryRun || !args.prune;
   const [plan, health] = await Promise.all([
     runBunCacheLifecycle({ dryRun, prune: args.prune }),

@@ -1,13 +1,17 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /** Read-health validation for the dedicated Cloudflare Access token. */
 import { jsonOut } from '../lib/console-depth.ts';
 import { runCloudflareAccessTokenProbe } from '../lib/verification/cloudflare-access-token.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('cloudflare:access:token:validate', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 if (import.meta.main) {
   try {
     const report = await runCloudflareAccessTokenProbe();
-    if (Bun.argv.includes('--json')) {
+    if (argv.includes('--json')) {
       jsonOut(report);
     } else {
       console.log('Cloudflare Access token read health OK');

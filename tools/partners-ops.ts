@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Partner-ops taxonomy CLI — validate · build · ledger append.
  *
@@ -24,7 +25,9 @@ import {
 } from '../lib/telegram/partner-ops-registry.ts';
 import { bakePartnerOpsEventConcepts } from './bake-partner-ops-event-concepts.ts';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('partners:build', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const cmd = argv.find(a => !a.startsWith('-')) ?? 'validate';
 const wantJson = argv.includes('--json');
 

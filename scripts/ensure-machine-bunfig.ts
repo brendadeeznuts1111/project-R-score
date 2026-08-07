@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Ensure ~/.bunfig.toml exists from config/machine.bunfig.toml.template.
  *
@@ -24,6 +25,9 @@ import {
 } from '../lib/install/machine-bunfig-policy.ts';
 import { joinPath } from './lib/fs-bun.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('bake:doctor', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 // Re-export SSOT for existing importers (tests / CLI).
 export {
   CACHE_DIR_PLACEHOLDER,
@@ -145,8 +149,8 @@ export async function ensureMachineBunfig(
 }
 
 if (import.meta.main) {
-  const overwrite = Bun.argv.includes('--overwrite');
-  const checkOnly = Bun.argv.includes('--check');
+  const overwrite = argv.includes('--overwrite');
+  const checkOnly = argv.includes('--check');
   const result = await ensureMachineBunfig({ overwrite, checkOnly });
   if (!result.ok) {
     console.error(

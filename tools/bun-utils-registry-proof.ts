@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Self-verifying Bun utility proof + optional local registry artifact.
  *
@@ -23,7 +24,9 @@ import { factoryWagerPagesCustomUrl, factoryWagerRegistryUrlFromEnv } from '../c
 import { buildBunUtilsProof, tableRows, type BunUtilsProofResult } from '../lib/bun-utils-proof.ts';
 import { jsonOut, logTable } from '../lib/console-depth.ts';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('bun:utils-proof', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const writeLocal = argv.includes('--write');
 const publishRemote = argv.includes('--publish');
 const jsonOnly = argv.includes('--json');

@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Test failures bake — parses Bun JUnit XML into:
  *   public/registry/failures.json        (machine report)
@@ -16,6 +17,10 @@
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { escapeHtml } from '../lib/escape-html.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('failures:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   escHtml,
   renderPortalPanel,
@@ -31,7 +36,7 @@ import {
 const ROOT = joinPath(import.meta.dir, '..');
 const OUT_JSON = joinPath(ROOT, 'public', 'registry', 'failures.json');
 const OUT_HTML = joinPath(ROOT, 'public', 'portal', 'failures', 'index.html');
-const NO_FAIL = Bun.argv.includes('--no-fail');
+const NO_FAIL = argv.includes('--no-fail');
 
 function formatEnvLine(report: TestFailuresReport): string {
   const e = report.env ?? {};
@@ -194,7 +199,7 @@ export function renderHtml(report: TestFailuresReport): string {
 async function main(): Promise<void> {
   const fromIdx = Bun.argv.indexOf('--from');
   const explicit = fromIdx >= 0 ? Bun.argv.slice(fromIdx + 1) : [];
-  const allMode = Bun.argv.includes('--all');
+  const allMode = argv.includes('--all');
   let files: string[];
   if (explicit.length > 0) {
     files = explicit;

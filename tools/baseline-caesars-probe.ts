@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Deep probe Caesars / American Wagering endpoints from the committed catalog.
  *
@@ -28,7 +29,9 @@ import {
 } from '../lib/operations/scrapers/books/caesars-parse.ts';
 import { asStateCode } from '../lib/types/branded.ts';
 
-const args = Bun.argv.slice(2);
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('baseline:caesars:probe', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const asJson = args.includes('--json');
 const tryLive = args.includes('--live');
 const bake = args.includes('--bake');

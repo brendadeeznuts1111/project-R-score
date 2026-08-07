@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Pre-commit ast-grep + semver gates.
  *
@@ -170,7 +171,7 @@ async function runGate(gate: Gate): Promise<{ id: string; ok: boolean; ms: numbe
 }
 
 async function main(): Promise<void> {
-  const mode = parseMode(Bun.argv.slice(2));
+  const mode = parseMode(applyUnknownLongOptionGuardFor('precommit:ast-grep', Bun.argv.slice(2)));
   let triggerFiles: string[] = [];
   let includePackages = mode === 'full';
 

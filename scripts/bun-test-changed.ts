@@ -6,6 +6,7 @@
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed / --changed=REF / --watch
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Day-loop wrapper for `bun test --changed` (+ parallel by default).
  *
@@ -168,7 +169,10 @@ export async function runTestChanged(
     env?: Record<string, string | undefined>;
   } & TestChangedDeps = {}
 ): Promise<number> {
-  const args = parseTestChangedArgs(opts.argv ?? Bun.argv.slice(2), opts.env ?? Bun.env);
+  const args = parseTestChangedArgs(
+    opts.argv ?? applyUnknownLongOptionGuardFor('test:changed', Bun.argv.slice(2)),
+    opts.env ?? Bun.env
+  );
   const resolveHead = opts.resolveMainHead ?? resolveMainHead;
   const listChanged = opts.listChangedFiles ?? listChangedFiles;
   const codeLike = opts.hasCodeLikeChange ?? hasCodeLikeChange;

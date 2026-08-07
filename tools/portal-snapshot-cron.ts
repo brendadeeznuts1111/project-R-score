@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/cron#bun-cron-path-schedule-title-os-level
 // @see https://bun.com/docs/runtime/cron#bun-cron-remove
 // @see https://bun.com/docs/runtime/cron#bun-cron-parse
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * OS-level Bun.cron for portal scope-aware snapshots (primary, reboot-surviving).
  *
@@ -60,7 +62,9 @@ function parseArgv(
 }
 
 async function main(): Promise<void> {
-  const opts = parseArgv(Bun.argv.slice(2));
+  const opts = parseArgv(
+    applyUnknownLongOptionGuardFor('portal:snapshot:cron:preview', Bun.argv.slice(2))
+  );
   if (!opts) {
     const scopes = resolvePortalSnapshotScopes().join(',');
     console.log(`Usage: bun tools/portal-snapshot-cron.ts <register|remove|preview> [options]

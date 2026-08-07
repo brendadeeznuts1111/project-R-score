@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bun-types-report.ts — one-shot local report stack:
  *
@@ -53,7 +54,7 @@ async function run(label: string, args: string[]): Promise<number> {
 }
 
 async function main(): Promise<void> {
-  const args = parseCli(Bun.argv.slice(2));
+  const args = parseCli(applyUnknownLongOptionGuardFor('bun:types-ci', Bun.argv.slice(2)));
   if (args.help) {
     console.log(`bun-types-report — tip-diff (+changelog) + usage
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
@@ -15,10 +17,13 @@
  *   bun scripts/affected-workspaces.ts test
  *   bun scripts/affected-workspaces.ts list
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { positionalArgs } from './lib/cli-args';
 import { readJsonSync } from './lib/fs-bun';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('affected:list', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = process.cwd();
 
 type PkgJson = {

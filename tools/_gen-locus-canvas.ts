@@ -229,7 +229,7 @@ function StatusSwatch({ status }: { status: string }) {
   );
 }
 
-export default function BunTokenLocusTable() {
+export function BunTokenLocusTable() {
   const theme = useHostTheme();
   const [statusFilter, setStatusFilter] = useCanvasState<StatusFilter>(
     "locus-status-col-filter-v3",

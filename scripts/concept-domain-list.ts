@@ -9,13 +9,16 @@
  *
  * Env: CONCEPT_DOMAIN_OUTPUT (json|table — flag wins).
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
 import { countPortalConceptUsages } from '../lib/portal/concept-usage.ts';
 import {
   PORTAL_SEMANTIC_CONCEPTS,
   PORTAL_SEMANTIC_DOMAINS,
 } from '../lib/portal/semantic-vocabulary.ts';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('concept:domain:list', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export type ConceptLifecycleStatus = 'active' | 'deprecated' | 'archived';
 
 /** Minimal structural shape — fixtures and PORTAL_SEMANTIC_CONCEPTS both fit. */

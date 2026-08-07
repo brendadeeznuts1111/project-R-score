@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Apply catalog-enhancements.json → catalog-overrides.json + regenerate handshake catalog.
  *
@@ -9,7 +11,9 @@
  */
 import { applyCatalogEnhancements } from '../lib/telegram/catalog-research/apply.ts';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:catalog:apply-enhancements', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const dryRun = argv.includes('--dry-run');
 const all = argv.includes('--all');
 

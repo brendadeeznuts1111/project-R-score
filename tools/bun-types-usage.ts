@@ -6,6 +6,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bun-types-usage.ts — Phase 4: cross-reference deep bun-types inventory with
  * **codebase type/value usage**.
@@ -485,7 +486,7 @@ function parseCli(argv: string[]) {
 }
 
 async function main(): Promise<void> {
-  const args = parseCli(Bun.argv.slice(2));
+  const args = parseCli(applyUnknownLongOptionGuardFor('bun:types-usage', Bun.argv.slice(2)));
   if (args.help) {
     console.log(`bun-types-usage — inventory × codebase usage (Phase 4)
 

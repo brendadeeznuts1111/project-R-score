@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bun CLI flag order in package.json scripts — `--watch` / `--hot` must follow `bun`, not `bun run`.
  *
@@ -13,6 +15,9 @@
  */
 import { joinPath } from '../lib/path-bun.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = joinPath(import.meta.dir, '..');
 const BASELINE_PATH = joinPath(import.meta.dir, 'verify-script-flags-baseline.json');
 
@@ -67,7 +72,7 @@ function key(v: Violation): string {
 }
 
 async function main() {
-  const strict = Bun.argv.includes('--strict');
+  const strict = argv.includes('--strict');
   const { keys: baseline, catalog } = await loadBaseline();
   const effectiveBaseline = strict ? new Set<string>() : baseline;
   const violations = await collectViolations();

@@ -18,7 +18,9 @@ import {
 
 export { OPS_SEED_TOC_ALLOWED_LONG };
 
-const argv = applyUnknownLongOptionGuardFor('ops:seed:toc', Bun.argv.slice(2));
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:seed:toc', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const force = argv.includes('--force');
 const result = await seedTocOpsDemo({ force, ifEmpty: !force });
 cliOut(result, { mode: 'depth' });

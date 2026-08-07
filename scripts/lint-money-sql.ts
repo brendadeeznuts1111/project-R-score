@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Financial SQL storage guard.
  *
@@ -20,7 +21,9 @@ export type MoneySqlViolation = {
   sqlType: string;
   text: string;
 };
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('lint:money-sql:staged', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const FINANCIAL_COLUMN_RE = /(balance|amount|price)/i;
 const COLUMN_DECLARATION_RE =
   /(?:^\s*|[,(]\s*)["`\[]?([A-Za-z_][A-Za-z0-9_]*)["`\]]?\s+(REAL|FLOAT|DOUBLE(?:\s+PRECISION)?)\b/gi;
@@ -115,7 +118,7 @@ function printViolations(violations: MoneySqlViolation[]): void {
 }
 
 if (import.meta.main) {
-  if (!Bun.argv.includes('--staged')) {
+  if (!argv.includes('--staged')) {
     console.error('usage: bun scripts/lint-money-sql.ts --staged');
     process.exit(2);
   }

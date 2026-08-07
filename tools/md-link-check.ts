@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * md-link-check.ts — live markdown relative-link ratchet (non-archive).
  *
@@ -16,6 +18,9 @@
  */
 import { dirnamePath, joinPath, relativePath, resolvePath } from '../lib/path-bun.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('docs:links:check', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const REPO = resolvePath(import.meta.dir, '..');
 
 const SCAN_ROOTS = ['docs', 'lib', '.agents', 'tools', 'examples'] as const;
@@ -129,7 +134,7 @@ async function collectFiles(): Promise<string[]> {
 }
 
 async function main(): Promise<void> {
-  const asJson = Bun.argv.includes('--json');
+  const asJson = argv.includes('--json');
   const files = await collectFiles();
   const issues: Issue[] = [];
   for (const abs of files) {

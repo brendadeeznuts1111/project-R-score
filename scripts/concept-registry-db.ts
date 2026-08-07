@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/api/sqlite — bun:sqlite
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Sync the portal semantic vocabulary into the local concept registry DB.
  *
@@ -21,6 +22,9 @@ import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
 import { countPortalConceptUsages } from '../lib/portal/concept-usage.ts';
 import { PORTAL_SEMANTIC_CONCEPTS } from '../lib/portal/semantic-vocabulary.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('concept:registry:sync', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 export const REGISTRY_DB_PATH = `${import.meta.dir}/../data/concept-registry.db`;
 
 export type ConceptRegistryRow = {
@@ -105,8 +109,8 @@ export function checkConceptRegistry(
 }
 
 async function main(): Promise<void> {
-  const check = Bun.argv.includes('--check');
-  const wantJson = Bun.argv.includes('--json');
+  const check = argv.includes('--check');
+  const wantJson = argv.includes('--json');
 
   mkdirSync(dirnamePath(REGISTRY_DB_PATH), { recursive: true });
   const db = new Database(REGISTRY_DB_PATH);

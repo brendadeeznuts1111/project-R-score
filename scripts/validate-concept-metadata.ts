@@ -4,6 +4,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Gate: new portal concepts must carry provenance + valid namespace/domain.
  *
@@ -41,6 +42,9 @@ import {
 } from '../lib/portal/semantic-vocabulary.ts';
 import { planDomainBackfill, writeDomainBackfill } from './concept-domain-backfill.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('validate:concept-metadata', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const BASELINE_PATH = `${import.meta.dir}/concept-metadata-baseline.json`;
 const VOCAB_PATH = `${import.meta.dir}/../lib/portal/semantic-vocabulary.ts`;
 
@@ -477,11 +481,11 @@ export async function runConceptMetadataFix(opts?: {
 }
 
 async function main(): Promise<void> {
-  const writeBaseline = Bun.argv.includes('--write-baseline');
-  const force = Bun.argv.includes('--force');
-  const asJson = Bun.argv.includes('--json');
-  const strict = Bun.argv.includes('--strict') || Bun.env.CONCEPT_METADATA_STRICT === '1';
-  const fix = Bun.argv.includes('--fix') || Bun.env.CONCEPT_METADATA_FIX === '1';
+  const writeBaseline = argv.includes('--write-baseline');
+  const force = argv.includes('--force');
+  const asJson = argv.includes('--json');
+  const strict = argv.includes('--strict') || Bun.env.CONCEPT_METADATA_STRICT === '1';
+  const fix = argv.includes('--fix') || Bun.env.CONCEPT_METADATA_FIX === '1';
 
   if (writeBaseline) {
     const result = await writeBaselineFromConcepts(PORTAL_SEMANTIC_CONCEPTS, BASELINE_PATH, {

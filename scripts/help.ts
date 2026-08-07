@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Monorepo CLI Help — prints categorized commands from package.json scripts.
  *
@@ -14,7 +16,9 @@ import pkg from '../package.json' assert { type: 'json' };
 import { describeCliScript, isHelpQuietKey, matchCliCategory } from './lib/cli-categories';
 
 const scripts = pkg.scripts as Record<string, string>;
-const args = Bun.argv.slice(2);
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('help', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const verbose = args.includes('--verbose');
 const filter = args.find(a => !a.startsWith('-'));
 

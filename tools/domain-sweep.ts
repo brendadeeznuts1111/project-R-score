@@ -10,6 +10,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
 // @see https://bun.com/docs/bundler/loaders#toml — Bun.TOML.parse
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * domain-sweep.ts — full-surface verification sweep (read-only against the edge).
  *
@@ -33,9 +34,12 @@
 import { logTable } from '../lib/console-depth.ts';
 import { captureProcess, summarizeProcessOutput } from '../lib/harness/process-capture.ts';
 
-const FAST = Bun.argv.includes('--fast');
-const JSON_MODE = Bun.argv.includes('--json');
-const NO_WRITE = Bun.argv.includes('--no-write');
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('sweep:domain', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
+const FAST = argv.includes('--fast');
+const JSON_MODE = argv.includes('--json');
+const NO_WRITE = argv.includes('--no-write');
 
 const DEFAULT_PAGES_ORIGIN = 'https://project-r-score.pages.dev';
 const DEFAULT_SCORE_ORIGIN = 'https://score.factory-wager.com';
@@ -430,7 +434,7 @@ async function runGates(config: DomainSweepConfig) {
 
 // ── main ────────────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
-  if (Bun.argv.includes('--help') || Bun.argv.includes('-h')) {
+  if (argv.includes('--help') || argv.includes('-h')) {
     console.info(USAGE);
     return;
   }

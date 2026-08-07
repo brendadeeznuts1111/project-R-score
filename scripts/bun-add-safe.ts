@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Safe `bun add` for root frozenLockfile policy.
  *
@@ -75,7 +76,7 @@ async function run(cmd: string[], label: string): Promise<number> {
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('add:safe', Bun.argv.slice(2));
   if (args.length === 0 || args[0] === '-h' || args[0] === '--help') {
     console.info(`Usage: bun scripts/bun-add-safe.ts <bun-add-args…>
 Defaults to --exact (bunfig install.exact=true). Skips inject for -g/--global, -E/--exact, or open ranges.

@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * wiki-link-check.ts — ensure GitHub Pages wiki markdown does not link to Jekyll-excluded trees.
  *
@@ -18,6 +20,9 @@ import { jsonOut } from '../lib/console-depth.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import { CANONICAL_REMOTES } from '../lib/docs/repo-docs.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('wiki:links:fix', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const REPO = resolvePath(import.meta.dir, '..');
 const BLOB = `${CANONICAL_REMOTES.origin.url}/blob/main`;
 
@@ -146,8 +151,8 @@ export function applyWikiLinkFixes(content: string, file = 'README.md'): string 
 }
 
 async function main(): Promise<void> {
-  const fix = process.argv.includes('--fix');
-  const json = process.argv.includes('--json');
+  const fix = argv.includes('--fix');
+  const json = argv.includes('--json');
   const allIssues: WikiLinkIssue[] = [];
 
   for (const rel of WIKI_MARKDOWN_PATHS) {

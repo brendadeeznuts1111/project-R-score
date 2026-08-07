@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Apply standard partner onboarding package to a tree node / call-sign.
  *
@@ -13,6 +15,10 @@
  */
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { parseComplianceOnboardFields } from '../lib/operations/partner-compliance-onboard.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('onboard:partner', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   applyPartnerOnboardPackage,
   buildOnboardChecklist,
@@ -45,11 +51,11 @@ if (!ref || ref.startsWith('--')) {
   process.exit(1);
 }
 
-const dryRun = process.argv.includes('--dry-run');
-const force = process.argv.includes('--force');
-const createPackageGroup = process.argv.includes('--create-package-group');
-const identityVerified = process.argv.includes('--identity-verified');
-const createTreeNode = process.argv.includes('--create-tree-node');
+const dryRun = argv.includes('--dry-run');
+const force = argv.includes('--force');
+const createPackageGroup = argv.includes('--create-package-group');
+const identityVerified = argv.includes('--identity-verified');
+const createTreeNode = argv.includes('--create-tree-node');
 
 const compliance = parseComplianceOnboardFields({
   state: flag('state'),

@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Verify package-group handshake lifecycle (JSONL + registry).
  *
@@ -18,7 +19,9 @@ import { PACKAGE_GROUP_FORUMS_META_DIR } from '../lib/telegram/package-group-for
 import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-env.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:handshake:verify', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 let partnerCode = '';
 let jsonlPath = PENDING_PACKAGE_GROUPS_JSONL;
 let forumsMetaDir = PACKAGE_GROUP_FORUMS_META_DIR;

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
@@ -29,6 +30,9 @@ import { logTable } from '../lib/console-depth.ts';
 import { isDirectorySync, joinPath, listEntriesSync } from './lib/fs-bun';
 import { isTildeCachePath } from './lib/bun-install-env.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('hygiene', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = joinPath(import.meta.dir, '..');
 
 // Patterns that should never appear as tracked/staged files
@@ -303,8 +307,8 @@ async function checkStaleIndexLock(): Promise<Violation[]> {
 }
 
 async function main() {
-  const stagedOnly = Bun.argv.includes('--staged');
-  const trackedOnly = Bun.argv.includes('--tracked');
+  const stagedOnly = argv.includes('--staged');
+  const trackedOnly = argv.includes('--tracked');
   const findings: Violation[] = [];
 
   if (stagedOnly && trackedOnly) {

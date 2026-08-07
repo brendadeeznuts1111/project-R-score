@@ -1,14 +1,18 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { isCanaryBunBuild } from '../lib/verification/bun-release-channel.ts';
 import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ci:bun:check', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 function parseSemver(version: string): { major: number; minor: number; patch: number } | null {
   const match = version.trim().match(/^(\d+)\.(\d+)\.(\d+)/);
   if (!match) return null;

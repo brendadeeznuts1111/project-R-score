@@ -13,7 +13,11 @@ import {
   partnerHealthBakeMatches,
   PARTNER_HEALTH_BAKE_PATH,
 } from '../lib/partner-profile/partner-health-bake.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('partner:health:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 function argValue(argv: readonly string[], flag: string): string | undefined {
   const eq = argv.find(a => a.startsWith(`${flag}=`));
   if (eq) return eq.slice(flag.length + 1);
@@ -22,7 +26,7 @@ function argValue(argv: readonly string[], flag: string): string | undefined {
   return undefined;
 }
 
-const check = Bun.argv.includes('--check');
+const check = argv.includes('--check');
 const outPath = argValue(Bun.argv, '--out') ?? PARTNER_HEALTH_BAKE_PATH;
 
 if (check) {

@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bake-workspace-taxonomy.ts — session/chrome/concept crosswalk →
  * public/registry/workspace-lane-map.json
@@ -14,9 +15,12 @@ import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { buildWorkspaceTaxonomyMap } from '../lib/docs/workspace-taxonomy.ts';
 import { resolvePath } from './lib/fs-bun.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('workspace-taxonomy:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ROOT = resolvePath(import.meta.dir, '..');
 const OUT_PATH = resolvePath(ROOT, 'public/registry/workspace-lane-map.json');
-const CHECK = Bun.argv.includes('--check');
+const CHECK = argv.includes('--check');
 
 async function main(): Promise<number> {
   if (CHECK) {

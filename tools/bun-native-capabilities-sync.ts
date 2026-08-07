@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
 // @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /** Check, update, or preview the generated Bun Markdown adoption block. */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import {
@@ -41,7 +42,9 @@ export function parseMode(argv: string[]): Mode | 'help' {
   return 'check';
 }
 
-export async function main(argv: string[] = Bun.argv.slice(2)): Promise<void> {
+export async function main(
+  argv: string[] = applyUnknownLongOptionGuardFor('docs:native:preview', Bun.argv.slice(2))
+): Promise<void> {
   const mode = parseMode(argv);
   if (mode === 'help') {
     printHelp();

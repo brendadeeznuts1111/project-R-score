@@ -5,6 +5,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Operator research agent CLI.
  *
@@ -879,7 +880,9 @@ async function cmdQueryOdds(args: string[]) {
   }
 }
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('agent', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const cmd = argv[0];
 const rest = argv.slice(1);
 

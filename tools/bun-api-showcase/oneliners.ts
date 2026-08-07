@@ -97,6 +97,7 @@
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/bun-apis
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bun API showcase — verified against Bun 1.4.0 on this machine.
  * Each demo is a corrected, runnable version of the one-liner set.
@@ -829,7 +830,9 @@ export const demos: ShowcaseDemo[] = [
 
 async function main(): Promise<void> {
   const live = Bun.argv.includes('--live');
-  const only = Bun.argv.slice(2).find(a => !a.startsWith('--'));
+  const only = applyUnknownLongOptionGuardFor('showcase', Bun.argv.slice(2)).find(
+    a => !a.startsWith('--')
+  );
   let pass = 0;
   let fail = 0;
   let skip = 0;

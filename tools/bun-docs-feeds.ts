@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
 // @see https://bun.com/docs/bundler/executables — --force
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bun-docs-feeds.ts — merged RSS + API reference feed indexes.
  *
@@ -158,7 +160,7 @@ export async function migrateLegacyFeeds(): Promise<DocsFeedsFile> {
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('docs:feeds:migrate', Bun.argv.slice(2));
   if (args.includes('--migrate-legacy')) {
     await migrateLegacyFeeds();
     return;

@@ -2,6 +2,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --deep
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Package-group handshake readiness — phased E2E gates before operator Telegram id.
  *
@@ -24,7 +25,9 @@ import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:handshake:readiness', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 let dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;
 let wantJson = false;
 let detail = false;

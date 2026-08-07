@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * TOC Ops Telegram surface pipeline — discovery · audit · mapping lanes.
  *
@@ -240,7 +242,9 @@ async function writeSummary(): Promise<void> {
 
 async function main(): Promise<void> {
   await loadReasonixEnv();
-  const opts = parseArgs(Bun.argv.slice(2));
+  const opts = parseArgs(
+    applyUnknownLongOptionGuardFor('telegram:surfaces:audit', Bun.argv.slice(2))
+  );
   await ensureOut();
   if (opts.refresh) {
     const dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;

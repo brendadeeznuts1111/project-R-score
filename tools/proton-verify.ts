@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Proton Pass vault reference verifier.
  *
@@ -14,6 +16,9 @@
  */
 import { jsonOut } from '../lib/console-depth.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('proton:verify', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const ENV_TEMPLATE = 'env.template';
 const PASS_RE = /\{\{\s*pass:\/\/([^/]+)\/([^/]+)\/(\S+?)\s*\}\}/g;
 
@@ -26,7 +31,7 @@ type VaultRef = {
 };
 
 async function main(): Promise<void> {
-  const wantJson = process.argv.includes('--json');
+  const wantJson = argv.includes('--json');
   const content = await Bun.file(ENV_TEMPLATE).text();
   const lines = content.split('\n');
   const refs: VaultRef[] = [];

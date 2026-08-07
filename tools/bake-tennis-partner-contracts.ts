@@ -4,6 +4,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bake public-safe Tennis partner contracts join.
  *
@@ -18,6 +19,10 @@
  */
 import { joinPath } from '../lib/path-bun.ts';
 import { TENNIS_HQ_RUNTIME_URL } from '../lib/tennis/agent-auth.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('tennis:partner-contracts:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   buildPartnerContractsFromLive,
   buildPartnerContractsFromOfflineJoin,
@@ -31,8 +36,8 @@ const outPath = joinPath(root, 'public', 'registry', 'tennis', 'partner-contract
 const partnersOpsPath = joinPath(root, 'public', 'registry', 'partners-ops.json');
 const handshakePath = joinPath(root, 'public', 'registry', 'telegram-handshake.json');
 
-const check = Bun.argv.includes('--check');
-const forceOffline = Bun.argv.includes('--offline');
+const check = argv.includes('--check');
+const forceOffline = argv.includes('--offline');
 
 async function loadOffline(): Promise<TennisPartnerContractsArtifact> {
   const partnersOps = (await Bun.file(partnersOpsPath).json()) as unknown;

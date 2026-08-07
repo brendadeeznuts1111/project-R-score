@@ -21,7 +21,9 @@ import { openConceptRegistryDb } from '../lib/concept-registry/schema.ts';
 
 export { CONCEPT_REGISTRY_GRAPH_ALLOWED_LONG };
 
-const argv = applyUnknownLongOptionGuardFor('concept:registry:graph', Bun.argv.slice(2));
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('concept:registry:graph', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const db = openConceptRegistryDb();
 const graph = buildConceptGraph(db);
 

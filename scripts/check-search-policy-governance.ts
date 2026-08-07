@@ -1,11 +1,16 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --verify
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { fileExists, readText, resolvePath } from './lib/fs-bun';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('search:policy:check', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 type PolicyShape = {
   policyVersion?: string;
   policyChangeRationale?: Record<string, string>;

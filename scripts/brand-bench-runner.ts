@@ -11,6 +11,7 @@ import {
   resolvePath,
   writeText,
 } from './lib/fs-bun';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -434,7 +435,7 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
 
 if (import.meta.main) {
   shutdown = createShutdown({ name: 'brand-bench-runner', quiet: false });
-  const options = parseArgs(Bun.argv.slice(2));
+  const options = parseArgs(applyUnknownLongOptionGuardFor('brand:bench:run', Bun.argv.slice(2)));
   const report = await runBrandBench(options);
   shutdown.dispose();
   if (options.quiet) {

@@ -14,6 +14,7 @@
  *   bun run concept:graph -- --bake
  *   bun run concept:graph -- --format json --domain compliance --no-hubs
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
 import { joinPath, normalizePath, resolvePath } from '../lib/path-bun.ts';
 import {
@@ -257,8 +258,7 @@ async function serveGraph(graph: ConceptGraph, opts: ConceptGraphOptions): Promi
           .filter(Boolean);
         // When layers are set without kinds, hop over seeAlso only (avoid hub pollution).
         const kinds = (kindsRaw.length ? kindsRaw : layers.length ? ['seeAlso'] : undefined) as
-          | Array<'seeAlso' | 'surface' | 'group' | 'domainHub'>
-          | undefined;
+          Array<'seeAlso' | 'surface' | 'group' | 'domainHub'> | undefined;
         const hopDepth = Number.isFinite(depth) ? depth : 2;
         const distances = egoNeighborhoodDistances(graph.edges, id, hopDepth, {
           kinds,
@@ -404,7 +404,8 @@ export async function runConceptGraph(opts: ConceptGraphOptions): Promise<Concep
 }
 
 async function main(): Promise<void> {
-  const opts = parseConceptGraphOptions();
+  const argv = applyUnknownLongOptionGuardFor('concept:graph', Bun.argv.slice(2));
+  const opts = parseConceptGraphOptions(argv);
   if (opts.help) {
     printHelp();
     return;

@@ -3,6 +3,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * check-package-scripts — block silent package.json script removals.
  *
@@ -43,7 +44,7 @@ async function readScripts(rev: 'staged' | 'worktree' | string): Promise<Record<
 }
 
 async function main() {
-  const argv = Bun.argv.slice(2);
+  const argv = applyUnknownLongOptionGuardFor('check:package-scripts', Bun.argv.slice(2));
   const againstIdx = argv.indexOf('--against');
   const worktreeMode = againstIdx !== -1;
 

@@ -15,7 +15,9 @@ import {
 
 export { CLOUDFLARE_ENV_VALIDATE_ALLOWED_LONG };
 
-const argv = applyUnknownLongOptionGuardFor('cloudflare:env:validate', Bun.argv.slice(2));
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('cloudflare:env:validate', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const asJson = argv.includes('--json');
 const strict = argv.includes('--strict');
 

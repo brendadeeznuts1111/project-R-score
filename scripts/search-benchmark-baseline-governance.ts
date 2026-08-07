@@ -4,6 +4,7 @@
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 import { fileExistsSync, joinPath, readText, resolvePath } from './lib/fs-bun';
 import { jsonOut } from '../lib/console-depth';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 type PinnedBaseline = {
   version?: number;
@@ -74,9 +75,9 @@ function validateBaseline(path: string, baseline: PinnedBaseline): ValidationRes
 
   if (!('previousSnapshotId' in baseline)) {
     errors.push('previousSnapshotId field is required (string or null)');
-  } else if (
-    !(baseline.previousSnapshotId === null || isNonEmptyString(baseline.previousSnapshotId))
-  ) {
+  } else if (!(
+    baseline.previousSnapshotId === null || isNonEmptyString(baseline.previousSnapshotId)
+  )) {
     errors.push('previousSnapshotId must be string or null');
   }
 
@@ -88,7 +89,7 @@ function validateBaseline(path: string, baseline: PinnedBaseline): ValidationRes
 }
 
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2);
+  const args = applyUnknownLongOptionGuardFor('search:bench:baseline:verify', Bun.argv.slice(2));
   if (args.includes('--help') || args.includes('-h')) {
     usage();
     return;

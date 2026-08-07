@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/sqlite
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Requeue failed ops_channel_outbox rows → pending, then optionally drain.
  *
@@ -14,10 +16,13 @@ import { resolveProductionOutboxOpts } from '../lib/channels/outbox-prod-opts.ts
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { queryLoopMetricsSlice } from '../lib/operations/ops-loop-metrics.ts';
 
-const dryRun = Bun.argv.includes('--dry-run');
-const drain = Bun.argv.includes('--drain');
-const useR2 = Bun.argv.includes('--r2');
-const useMemory = Bun.argv.includes('--memory');
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('ops:outbox:requeue', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
+const dryRun = argv.includes('--dry-run');
+const drain = argv.includes('--drain');
+const useR2 = argv.includes('--r2');
+const useMemory = argv.includes('--memory');
 const maxRetriesArg = Bun.argv.find(a => a.startsWith('--max-retries='));
 const maxRetries = maxRetriesArg ? Number(maxRetriesArg.split('=')[1]) : undefined;
 

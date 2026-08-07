@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/file-io — Bun.file
@@ -36,7 +38,7 @@ class IntegratedCLI {
   }
 
   async run() {
-    const args = Bun.argv.slice(2);
+    const args = applyUnknownLongOptionGuardFor('docs:sync:integrated', Bun.argv.slice(2));
     const command = args[0];
 
     switch (command) {

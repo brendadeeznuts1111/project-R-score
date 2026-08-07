@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/sqlite
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Add a phone into inventory.
  *
@@ -14,6 +15,9 @@ import { AccountService } from '../lib/operations/account-service.ts';
 import { addPhone } from '../lib/operations/phone-sportsbook-journal.ts';
 import { resolveOnboardTreeNodeId } from '../lib/operations/partner-onboard-package.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('phone:add', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 function argValue(flag: string): string | undefined {
   const i = Bun.argv.indexOf(flag);
   if (i < 0) return undefined;
@@ -41,7 +45,7 @@ function main(): void {
     new AccountService(db).issuePhone(result.phoneId, nodeId as string);
   }
 
-  if (Bun.argv.includes('--json')) {
+  if (argv.includes('--json')) {
     jsonOut({ ...result, assignedTo: assign ?? null });
   } else {
     console.log(

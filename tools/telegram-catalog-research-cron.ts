@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/cron#bun-cron-path-schedule-title-os-level
 // @see https://bun.com/docs/runtime/cron#bun-cron-remove
 // @see https://bun.com/docs/runtime/cron#bun-cron-parse
@@ -9,6 +10,7 @@
  *   bun run telegram:catalog:research:cron:preview
  *   bun run telegram:catalog:research:cron:remove
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { registerOsCron, removeOsCron } from '../lib/harness/cron.ts';
 import {
@@ -61,7 +63,9 @@ function parseArgv(
   return { command, schedule, title, count: Math.max(1, count) };
 }
 
-const opts = parseArgv(Bun.argv.slice(2));
+const opts = parseArgv(
+  applyUnknownLongOptionGuardFor('telegram:catalog:research:cron:preview', Bun.argv.slice(2))
+);
 if (!opts) {
   console.log(`Usage: bun tools/telegram-catalog-research-cron.ts <register|remove|preview> [options]
 

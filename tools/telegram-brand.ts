@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Apply TOC Ops Telegram branding — bot profile + concern-separated groups.
  *
@@ -75,7 +77,7 @@ Concerns are separate groups. Topics further split noise inside a group.
 }
 
 async function main(): Promise<void> {
-  const argv = Bun.argv.slice(2);
+  const argv = applyUnknownLongOptionGuardFor('telegram:brand', Bun.argv.slice(2));
   if (argv.includes('--help') || argv.includes('-h')) usage();
 
   if (argv.includes('--matrix')) {

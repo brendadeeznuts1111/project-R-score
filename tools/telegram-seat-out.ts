@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Patch book outs — payment rail + send-to (SPEN populates). Book logins stay local.
  *
@@ -28,7 +30,9 @@ function readFlag(name: string): string | undefined {
   return undefined;
 }
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:seat:out', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const positional: string[] = [];
 let publish = true;
 let applyDefault = false;

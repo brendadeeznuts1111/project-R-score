@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Forum invite gap report — linked DM seats still at 2·house! (partner not in group).
  *
@@ -25,7 +26,9 @@ import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 import { sendForumInviteDmsForGaps } from '../lib/telegram/forum-invite-gap.ts';
 
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('telegram:handshake:invite-gap', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 let dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;
 let refresh = false;
 let wantJson = false;

@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Bake tennis desk metrics for portal board.
  *
@@ -20,6 +21,10 @@
 import { Database } from 'bun:sqlite';
 import { joinPath } from '../lib/path-bun.ts';
 import { jsonOut } from '../lib/console-depth.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('tennis:board:bake', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   bucketMidCents,
   formatVolume,
@@ -179,7 +184,7 @@ function collectProfileNames(dbPath: string): string[] {
 }
 
 async function maybeGenerateAvatars(): Promise<number> {
-  if (Bun.argv.includes('--no-images')) return 0;
+  if (argv.includes('--no-images')) return 0;
   try {
     const proc = Bun.spawn(
       [
@@ -202,7 +207,7 @@ async function maybeGenerateAvatars(): Promise<number> {
 
 async function main(): Promise<void> {
   const dbPath = argValue('--db') ?? DEFAULT_DB;
-  const forceSample = Bun.argv.includes('--sample');
+  const forceSample = argv.includes('--sample');
   const matchLimit = Number(argValue('--match-limit') ?? '12') || 12;
 
   let metrics: TennisBoardMetrics;
@@ -284,7 +289,7 @@ async function main(): Promise<void> {
   console.log(`  ${OUT_DIR}/mid-distribution.json`);
   console.log(`  ${OUT_DIR}/live-matches.json`);
   console.log(`  ${OUT_DIR}/avatar-index.json`);
-  if (Bun.argv.includes('--json')) {
+  if (argv.includes('--json')) {
     jsonOut({
       metrics,
       liveMatches,

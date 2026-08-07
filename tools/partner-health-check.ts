@@ -15,7 +15,11 @@ import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 import { runOutHealthChecks } from '../lib/telegram/out-health.ts';
 import { alertOpsOnDegraded } from '../lib/telegram/out-health.ts';
 import { buildSeatCapitalDeskSnapshot } from '../lib/telegram/seat-desk-snapshot.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('partner:health-check', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 function argValue(argv: readonly string[], flag: string): string | undefined {
   const eq = argv.find(a => a.startsWith(`${flag}=`));
   if (eq) return eq.slice(flag.length + 1);
@@ -32,8 +36,8 @@ if (minBalance !== undefined && (!Number.isFinite(minBalance) || minBalance < 0)
 }
 const outFilter = argValue(Bun.argv, '--out');
 const partnerFilter = argValue(Bun.argv, '--partner');
-const doAlert = Bun.argv.includes('--alert');
-const asJson = Bun.argv.includes('--json');
+const doAlert = argv.includes('--alert');
+const asJson = argv.includes('--json');
 
 const snapshot = await buildSeatCapitalDeskSnapshot();
 const report = runOutHealthChecks({ snapshot, minBalance, outFilter, partnerFilter });

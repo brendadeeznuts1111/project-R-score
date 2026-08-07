@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Cloudflare token scope + MCP catalog parity proof.
  *
@@ -11,6 +12,10 @@
  * @see docs/harness/tenants/cloudflare-pages.md
  */
 import { jsonOut, logTable } from '../lib/console-depth.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('verify:cloudflare-token', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   CLOUDFLARE_TOKEN_SCOPE_PROOF_PATH,
   buildCloudflareTokenScopeProof,
@@ -18,10 +23,10 @@ import {
 
 export const SAVE_PATH = 'public/registry/cloudflare-token-scope-proof.json';
 
-const asJson = Bun.argv.includes('--json');
-const shouldSave = Bun.argv.includes('--save');
-const noLive = Bun.argv.includes('--no-live');
-const strict = Bun.argv.includes('--strict');
+const asJson = argv.includes('--json');
+const shouldSave = argv.includes('--save');
+const noLive = argv.includes('--no-live');
+const strict = argv.includes('--strict');
 
 const proof = await buildCloudflareTokenScopeProof({
   strict,

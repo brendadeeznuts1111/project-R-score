@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Canonical harness ESLint runner.
@@ -7,13 +9,13 @@
  *   bun scripts/lint-harness.ts --scope=lib --max-warnings=0
  *   bun scripts/lint-harness.ts --quiet --cache-location=.cache/eslint-bun-native
  */
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import {
   buildHarnessEslintArgs,
   type HarnessEslintOptions,
 } from '../config/eslint/harness/command.ts';
 import { HARNESS_ROOTS } from '../config/eslint/harness/rollout.ts';
-import { positionalArgs } from './lib/cli-args.ts';
 
 const repoRoot = `${import.meta.dir}/..`;
 
@@ -75,7 +77,8 @@ export function parseHarnessLintArgs(args: string[]): HarnessEslintOptions {
 }
 
 async function main(): Promise<void> {
-  const options = parseHarnessLintArgs(positionalArgs());
+  const argv = applyUnknownLongOptionGuardFor('lint', Bun.argv.slice(2));
+  const options = parseHarnessLintArgs(argv);
   const proc = Bun.spawn(bunSpawnArgs(buildHarnessEslintArgs(options)), {
     cwd: repoRoot,
     stdin: 'inherit',

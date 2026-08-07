@@ -3,6 +3,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/yaml — Bun.YAML
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /** Validate repository-local Codex skill structure and skill-loop registry alignment. */
 
 import { dirnamePath, resolvePath } from '../lib/path-bun.ts';
@@ -13,7 +14,9 @@ import {
   resolveAgentSkillsRoot,
 } from '../lib/agent-skills-paths.ts';
 import { jsonOut } from '../lib/console-depth.ts';
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('skills:validate', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 const DEFAULT_REPO_ROOT = resolvePath(import.meta.dir, '..');
 const SKILL_NAME_RE = /^[a-z0-9-]{1,64}$/;
 const ALLOWED_FRONTMATTER_KEYS = new Set([
@@ -481,7 +484,7 @@ function formatValidation(result: AgentSkillValidation): string {
 
 if (import.meta.main) {
   const result = await validateAgentSkills();
-  if (Bun.argv.includes('--json')) jsonOut(result);
+  if (argv.includes('--json')) jsonOut(result);
   else console.info(formatValidation(result));
   if (!result.ok) process.exit(1);
 }

@@ -26,8 +26,9 @@ export { GLOSSARY_HEALTH_ALLOWED_LONG };
 type Check = { name: string; ok: boolean; detail?: string };
 
 /** Guarded argv (allowlist · BUN_STRIP_UNKNOWN). */
-const argv = applyUnknownLongOptionGuardFor('glossary:health', Bun.argv.slice(2));
-
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('glossary:health', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 type GlossarySection = { hash?: string; domId?: string }; // brand-ok — opaque glossary registry section key
 type GlossarySurface = { sections?: GlossarySection[] };
 type GlossaryRegistry = {

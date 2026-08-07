@@ -1,9 +1,11 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime — bun run / --smol / bun run - (execute code from stdin)
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin (path lists)
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Fail closed: no lib/harness function exceeds complexity-baseline.json maxComplexity.
  *
@@ -35,7 +37,9 @@ import {
 import { joinPath } from '../lib/path-bun';
 
 const ROOT = joinPath(import.meta.dir, '..');
-const argv = Bun.argv.slice(2);
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('check:harness-complexity', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 
 function flagValue(name: string): string | undefined {
   const eq = argv.find(a => a.startsWith(`${name}=`));

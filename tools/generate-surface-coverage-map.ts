@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Generate a human-readable surface → concept dependency map from the same
  * board configs and scan used by `validate:surface-coverage`.
@@ -10,6 +11,10 @@
  *   bun run surface-coverage:map -- --stdout  # print only
  */
 import { API_INFRA_CONCEPTS } from '../lib/portal/semantic-vocabulary.ts';
+
+const argv = import.meta.main
+  ? applyUnknownLongOptionGuardFor('surface-coverage:map', Bun.argv.slice(2))
+  : Bun.argv.slice(2);
 import {
   getSurfaceBoardConfigs,
   scanSurfaceCoverage,
@@ -152,8 +157,8 @@ export function normalizeMapForCheck(md: string): string {
 }
 
 async function main(): Promise<void> {
-  const check = Bun.argv.includes('--check');
-  const stdoutOnly = Bun.argv.includes('--stdout');
+  const check = argv.includes('--check');
+  const stdoutOnly = argv.includes('--stdout');
   const md = await buildSurfaceCoverageMarkdown();
 
   if (stdoutOnly) {

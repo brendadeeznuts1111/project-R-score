@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * bun-types-changelog.ts — Phase 5: human-readable changelog from inventory JSON.
  *
@@ -101,7 +103,7 @@ function keyOf(m: { setting: string; kind: string }): string {
 export function diffInventories(
   fromMembers: Array<InventoryMember | MemberSnap>,
   toMembers: Array<InventoryMember | MemberSnap>,
-  labels: { from: string; to: string },
+  labels: { from: string; to: string }
 ): ChangelogResult {
   const fromMap = new Map<string, MemberSnap>();
   const toMap = new Map<string, MemberSnap>();
@@ -228,7 +230,7 @@ async function loadInventoryFile(path: string): Promise<InventoryResult> {
 
 async function inventoryFromTypesRoot(
   typesRoot: string,
-  label: string,
+  label: string
 ): Promise<{ members: MemberSnap[]; label: string }> {
   const parseOpts: ParseDtsOpts = {
     shallow: false,
@@ -268,7 +270,10 @@ async function loadFromGit(ref: string, path: string): Promise<InventoryResult> 
   return JSON.parse(text) as InventoryResult;
 }
 
-async function resolveTipRoot(preferLocal: boolean, noFetch: boolean): Promise<{
+async function resolveTipRoot(
+  preferLocal: boolean,
+  noFetch: boolean
+): Promise<{
   root: string;
   revision: string | null;
 }> {
@@ -329,7 +334,7 @@ function parseCli(argv: string[]) {
 }
 
 async function main(): Promise<void> {
-  const args = parseCli(Bun.argv.slice(2));
+  const args = parseCli(applyUnknownLongOptionGuardFor('bun:types-changelog', Bun.argv.slice(2)));
   if (args.help) {
     console.log(`bun-types-changelog — diff two inventory snapshots (Phase 5)
 
@@ -369,10 +374,7 @@ async function main(): Promise<void> {
     fromMembers = pin.members.map(toSnap);
     fromLabel = `pin@${pin.types.version}`;
     const tip = await resolveTipRoot(args.preferLocal, args.noFetch);
-    const inv = await inventoryFromTypesRoot(
-      tip.root,
-      `tip@${tip.revision ?? 'unknown'}`,
-    );
+    const inv = await inventoryFromTypesRoot(tip.root, `tip@${tip.revision ?? 'unknown'}`);
     toMembers = inv.members;
     toLabel = inv.label;
   } else {
@@ -385,11 +387,9 @@ async function main(): Promise<void> {
   if (args.json) {
     process.stdout.write(`${JSON.stringify(cl, null, 2)}\n`);
   } else {
+    console.log(`changelog · ${cl.fromLabel} → ${cl.toLabel}`);
     console.log(
-      `changelog · ${cl.fromLabel} → ${cl.toLabel}`,
-    );
-    console.log(
-      `+${cl.summary.added} −${cl.summary.removed} ~${cl.summary.changed} (=${cl.summary.unchanged})`,
+      `+${cl.summary.added} −${cl.summary.removed} ~${cl.summary.changed} (=${cl.summary.unchanged})`
     );
     if (cl.added.length) {
       console.log('\nAdded (sample):');
