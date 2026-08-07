@@ -21,16 +21,19 @@
 import { joinPath, basenamePath, extnamePath, dirnamePath } from '../lib/path-bun.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import {
+  IMAGES_GENERATE_ALLOWED_LONG,
   IMAGES_GENERATE_DOC,
   IMAGES_GENERATE_LEAVES,
   IMAGES_GENERATE_SECTION,
   formatFlagDocRefLine,
   imagesGenerateFlagDocRef,
   imagesGenerateToolFlags,
+  unknownLongOptionLeaves,
 } from '../lib/docs/ref-id-tool-flags.ts';
 
 /** Re-export REF:ID SSOT for registry / tests (`flagDocRef` matches bun-types-status). */
 export {
+  IMAGES_GENERATE_ALLOWED_LONG,
   IMAGES_GENERATE_DOC,
   IMAGES_GENERATE_LEAVES,
   IMAGES_GENERATE_SECTION,
@@ -121,6 +124,12 @@ async function loadTomlDefaults(): Promise<Partial<CliOpts>> {
 }
 
 function parseArgs(argv: string[]): CliOpts {
+  const unknown = unknownLongOptionLeaves(argv, IMAGES_GENERATE_ALLOWED_LONG);
+  if (unknown.length) {
+    throw new Error(
+      `unknown flag(s): ${unknown.map(u => `--${u}`).join(', ')} (see REF:ID §${IMAGES_GENERATE_SECTION} · --help)`
+    );
+  }
   const opts = { ...DEFAULTS };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;

@@ -75,16 +75,19 @@ import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 import { bakeInstallHygieneReport } from '../scripts/bake-install-hygiene-report.ts';
 import {
+  OPS_SNAPSHOT_ALLOWED_LONG,
   OPS_SNAPSHOT_DOC,
   OPS_SNAPSHOT_LEAVES,
   OPS_SNAPSHOT_SECTION,
   formatFlagDocRefLine,
   opsSnapshotFlagDocRef,
   opsSnapshotToolFlags,
+  unknownLongOptionLeaves,
 } from '../lib/docs/ref-id-tool-flags.ts';
 
 /** Re-export REF:ID SSOT for registry / tests (`flagDocRef` matches bun-types-status). */
 export {
+  OPS_SNAPSHOT_ALLOWED_LONG,
   OPS_SNAPSHOT_DOC,
   OPS_SNAPSHOT_LEAVES,
   OPS_SNAPSHOT_SECTION,
@@ -124,6 +127,16 @@ Seed block (when DB empty / demo) — REF:ID (${OPS_SNAPSHOT_DOC} §${OPS_SNAPSH
 See: ${OPS_SNAPSHOT_DOC}
 `);
   process.exit(0);
+}
+
+{
+  const unknown = unknownLongOptionLeaves(argv, OPS_SNAPSHOT_ALLOWED_LONG);
+  if (unknown.length) {
+    console.error(
+      `unknown flag(s): ${unknown.map(u => `--${u}`).join(', ')} (see REF:ID §${OPS_SNAPSHOT_SECTION} · --help)`
+    );
+    process.exit(2);
+  }
 }
 
 const outIdx = argv.indexOf('--out');

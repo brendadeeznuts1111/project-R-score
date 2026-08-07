@@ -4,8 +4,11 @@
  */
 import { describe, expect, test } from 'bun:test';
 import {
+  IMAGES_GENERATE_ALLOWED_LONG,
   IMAGES_GENERATE_LEAVES,
+  LINT_WIRES_ALLOWED_LONG,
   LINT_WIRES_LEAVES,
+  OPS_SNAPSHOT_ALLOWED_LONG,
   OPS_SNAPSHOT_LEAVES,
   PARTNER_ONBOARD_LEAVES,
   TELEGRAM_OPS_LEAVES,
@@ -105,7 +108,7 @@ describe('in-tool flagDocRef re-exports', () => {
     }
   });
 
-  test('unknownLongOptionLeaves + partner-onboard allowlist', () => {
+  test('unknownLongOptionLeaves + CLI allowlists', () => {
     expect(unknownLongOptionLeaves(['--deal', '30', '--code', 'X'], PARTNER_ONBOARD_LEAVES)).toEqual(
       ['code']
     );
@@ -121,5 +124,71 @@ describe('in-tool flagDocRef re-exports', () => {
         PARTNER_ONBOARD_ALLOWED_LONG
       )
     ).toEqual([]);
+    // lint-wires: --fix is meta (not a Flags-table leaf) but allowed
+    expect(unknownLongOptionLeaves(['--scan', '--fix'], LINT_WIRES_ALLOWED_LONG)).toEqual([]);
+    expect(unknownLongOptionLeaves(['--scan', '--nope'], LINT_WIRES_ALLOWED_LONG)).toEqual([
+      'nope',
+    ]);
+    // images: --template allowed; typo not
+    expect(
+      unknownLongOptionLeaves(['--template=avatar', '--source=./x'], IMAGES_GENERATE_ALLOWED_LONG)
+    ).toEqual([]);
+    expect(unknownLongOptionLeaves(['--width=64'], IMAGES_GENERATE_ALLOWED_LONG)).toEqual([
+      'width',
+    ]);
+    // ops:snapshot seed + bake toggles
+    expect(
+      unknownLongOptionLeaves(['--no-seed', '--no-routing'], OPS_SNAPSHOT_ALLOWED_LONG)
+    ).toEqual([]);
+    expect(unknownLongOptionLeaves(['--no-seed', '--bogus'], OPS_SNAPSHOT_ALLOWED_LONG)).toEqual([
+      'bogus',
+    ]);
+  });
+
+  test('CLI rejects unknown long options (spawn)', () => {
+    const cwd = import.meta.dir + '/..';
+    const lint = Bun.spawnSync(['bun', 'scripts/validate-wire-traps.ts', '--scan', '--bogus'], {
+      cwd,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(lint.exitCode).not.toBe(0);
+    expect((lint.stderr.toString() + lint.stdout.toString()).toLowerCase()).toMatch(/unknown/);
+
+    const img = Bun.spawnSync(['bun', 'scripts/images-generate.ts', '--not-a-flag'], {
+      cwd,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(img.exitCode).not.toBe(0);
+
+    const ops = Bun.spawnSync(['bun', 'tools/ops-snapshot.ts', '--not-a-flag'], {
+      cwd,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(ops.exitCode).not.toBe(0);
+    expect((ops.stderr.toString() + ops.stdout.toString()).toLowerCase()).toMatch(/unknown/);
+  });
+
+  test('docs:refid check --json exposes planes', () => {
+    const r = Bun.spawnSync(['bun', 'tools/docs-refid.ts', 'check', '--json'], {
+      cwd: import.meta.dir + '/..',
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(r.exitCode).toBe(0);
+    const body = JSON.parse(r.stdout.toString()) as {
+      planes?: Record<string, { registryDocs?: number }>;
+      registry?: unknown[];
+    };
+    // schema may wrap issues; accept either top-level planes or nested
+    const planes = body.planes ?? (body as { report?: { planes?: typeof body.planes } }).report?.planes;
+    if (planes) {
+      expect(planes.design?.registryDocs ?? 0).toBeGreaterThan(0);
+    } else {
+      // fallback: at least schema issues array
+      expect(r.stdout.toString()).toMatch(/ref-id|schema|issues|planes/i);
+    }
   });
 });

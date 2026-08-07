@@ -32,17 +32,20 @@ import {
   type WireTrapIssue,
 } from '../lib/docs/partner-surface-wire-lint.ts';
 import {
+  LINT_WIRES_ALLOWED_LONG,
   LINT_WIRES_DOC,
   LINT_WIRES_LEAVES,
   LINT_WIRES_SECTION,
   formatFlagDocRefLine,
   lintWiresFlagDocRef,
   lintWiresToolFlags,
+  unknownLongOptionLeaves,
 } from '../lib/docs/ref-id-tool-flags.ts';
 import { resolvePath } from './lib/fs-bun.ts';
 
 /** Re-export REF:ID SSOT for registry / tests (`flagDocRef` alias matches bun-types-status). */
 export {
+  LINT_WIRES_ALLOWED_LONG,
   LINT_WIRES_DOC,
   LINT_WIRES_LEAVES,
   LINT_WIRES_SECTION,
@@ -325,10 +328,12 @@ async function main(argv: readonly string[] = Bun.argv): Promise<number> {
     return 0;
   }
 
-  const known = new Set(['--scan', '--strict-globs', '--fix']);
-  const unknown = args.filter(a => a.startsWith('-') && !known.has(a));
-  if (unknown.length > 0) {
-    console.error(`Unknown option(s): ${unknown.join(', ')}\n`);
+  const unknownLeaves = unknownLongOptionLeaves(args, LINT_WIRES_ALLOWED_LONG);
+  // also catch short options other than -h (already handled above)
+  const unknownShort = args.filter(a => /^-[^-]/.test(a) && a !== '-h');
+  if (unknownLeaves.length > 0 || unknownShort.length > 0) {
+    const bits = [...unknownLeaves.map(u => `--${u}`), ...unknownShort];
+    console.error(`Unknown option(s): ${bits.join(', ')}\n`);
     printHelp();
     return 2;
   }
