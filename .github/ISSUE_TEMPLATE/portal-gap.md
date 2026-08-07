@@ -8,11 +8,15 @@ labels: portal, gap
 ## Routing (human queue only)
 
 GitHub is **not** concept/domain SSOT. Use these fields so humans can filter;
-concepts stay in vocabulary + `concept:audit`. Domains match portal chrome lanes.
+concepts stay in vocabulary + `concept:audit`. **Domain** = chrome nav lane
+(not entity ontology). For `BM-*` catalog gaps also set **Tenant** /
+**Owner** — [ISSUE-ROUTING.md](../../docs/harness/ISSUE-ROUTING.md).
 
 | Field | Value | Rule |
 |-------|-------|------|
-| **Domain** | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` | Required — chrome `domainLanes` |
+| **Domain** | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` | Required — chrome `domainLanes` (UI container) |
+| **Tenant** | e.g. `bookmakers` · or `n/a` | When a residual table owns the entity (bookmaker ≠ partner) |
+| **Owner** | chrome lane or tenant id · or `n/a` | When the fix lane differs from Tenant (e.g. BM-5 → `platform`) |
 | **Tracker** | e.g. `BM-1` · link to tenant `*-open-issues.md` · or `n/a` | Optional — residual product gap |
 | **Concept** | e.g. `telegram.topic.accounting` · or `n/a` | Only if vocabulary changes; must exist or land with PR + `concept:audit` |
 | **Surface** | e.g. `/portal/dod/` · `/registry/dod-queue.json` | Path operators hit |

@@ -7,6 +7,13 @@ Cross-repo domain model for the seat capital desk — **Kalshi-bot** owns shared
 glossary cores, **FactoryWager** owns the Factory overlay, the color kernel, and
 the registry bake.
 
+**Homonym / routing:** chrome Domain `partner` is a **nav lane**. The
+`/portal/bookmakers/` board lives under that lane for UI adjacency, but a
+**bookmaker is not a partner**. Catalog residuals use Tenant=`bookmakers`
+([bookmakers-open-issues.md](bookmakers-open-issues.md) ·
+[ISSUE-ROUTING.md](../ISSUE-ROUTING.md)). Partners *link* books via outs /
+`sportsbookId` — see [unified-partner-profile.md](../../design/unified-partner-profile.md).
+
 | Home | Module | Role |
 |------|--------|------|
 | Kalshi-bot | `src/institutions/glossary.ts` | Shared cores: `partner.phase.*`, `book.type.*`, `deposit.method.{venmo,crypto,wire,credit}`, `out.status.{ready,deferred,paused}`, `accounting.*`, `event.*` (31 ids) |
