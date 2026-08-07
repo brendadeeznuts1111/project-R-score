@@ -6,8 +6,9 @@ import {
   failuresFromJunitXml,
   isFailuresReportStale,
   namePattern,
+  parseJunitProvenance,
 } from '../lib/failure-report.ts';
-import { renderHtml } from '../tools/failures-bake.ts';
+import { renderHtml, renderProvenance } from '../tools/failures-bake.ts';
 
 const JUNIT = `<?xml version="1.0" encoding="UTF-8"?>
 <testsuites name="bun test" tests="3" assertions="10" failures="1" skipped="1" time="2.5">
@@ -126,5 +127,52 @@ describe('test-failures parser', () => {
     expect(html).not.toContain('tf-stale.ok');
     // Escaping: failure message with < is escaped in table
     expect(html).toContain('breaks &lt;badly&gt;');
+  });
+
+  test('parseJunitProvenance reads ci/commit/hostname from <properties>', () => {
+    const xml = `<testsuites tests="1"><testsuite>
+      <properties>
+        <property name="ci" value="https://github.com/o/r/actions/runs/42" />
+        <property name="commit" value="abc123def456" />
+        <property name="hostname" value="runner-01" />
+      </properties>
+      <testcase name="ok" file="a.test.ts" />
+    </testsuite></testsuites>`;
+    expect(parseJunitProvenance(xml)).toEqual({
+      ci: 'https://github.com/o/r/actions/runs/42',
+      commit: 'abc123def456',
+      hostname: 'runner-01',
+    });
+    // absent block → {}
+    expect(parseJunitProvenance('<testsuites/>')).toEqual({});
+    // unknown properties ignored
+    expect(parseJunitProvenance('<properties><property name="other" value="x"/></properties>')).toEqual({});
+  });
+
+  test('failuresFromJunitXml + buildFailuresReport surface provenance', () => {
+    const xml = `<testsuites tests="1" failures="1" time="1">
+      <testsuite name="s"><properties>
+        <property name="ci" value="https://ci.example/job/7" />
+        <property name="commit" value="deadbeef" />
+      </properties>
+      <testcase name="bad" file="b.test.ts"><failure>boom</failure></testcase></testsuite>
+    </testsuites>`;
+    const parsed = failuresFromJunitXml(xml);
+    expect(parsed.provenance).toEqual({ ci: 'https://ci.example/job/7', commit: 'deadbeef' });
+
+    const report = buildFailuresReport([{ source: 'junit.xml', xml }]);
+    expect(report.provenance).toEqual({ ci: 'https://ci.example/job/7', commit: 'deadbeef' });
+    // provenance absent when no <properties>
+    expect(buildFailuresReport([{ source: 'x', xml: '<testsuites/>' }]).provenance).toBeUndefined();
+  });
+
+  test('renderProvenance renders chips and escapes values', () => {
+    const html = renderProvenance({ ci: 'https://ci.example/job/1', commit: 'deadbeef1234', hostname: 'h1' });
+    expect(html).toContain('ci');
+    expect(html).toContain('https://ci.example/job/1');
+    expect(html).toContain('deadbeef1234');
+    expect(html).toContain('h1');
+    const escaped = renderProvenance({ ci: 'https://x.test/a?q=<b>&amp;' });
+    expect(escaped).not.toContain('<b>');
   });
 });

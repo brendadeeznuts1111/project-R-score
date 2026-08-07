@@ -33,6 +33,16 @@ const OUT_JSON = joinPath(ROOT, 'public', 'registry', 'failures.json');
 const OUT_HTML = joinPath(ROOT, 'public', 'portal', 'failures', 'index.html');
 const NO_FAIL = Bun.argv.includes('--no-fail');
 
+/** Provenance chips from the JUnit <properties> block (ci · commit · hostname). */
+export function renderProvenance(p: NonNullable<TestFailuresReport['provenance']>): string {
+  const chips: string[] = [];
+  if (p.ci)
+    chips.push(`ci <a href="${escHtml(p.ci)}" target="_blank" rel="noopener noreferrer">link</a>`);
+  if (p.commit) chips.push(`commit <code>${escHtml(p.commit.slice(0, 12))}</code>`);
+  if (p.hostname) chips.push(`host <code>${escHtml(p.hostname)}</code>`);
+  return `<span class="portal-provenance">${chips.join(' · ')}</span>`;
+}
+
 /** Export for unit coverage of the stale-board template. */
 export function renderHtml(report: TestFailuresReport): string {
   const t = report.totals;
@@ -118,6 +128,7 @@ export function renderHtml(report: TestFailuresReport): string {
       <div class="portal-hero-meta">
         <span class="portal-gate ${gateCls}" aria-live="polite"><span class="dot" aria-hidden="true"></span>${gateLabel}</span>
         <span class="portal-baked">suite ${escapeHtml(sourceAt)} · baked ${escapeHtml(report.generatedAt)}</span>
+        ${report.provenance ? renderProvenance(report.provenance) : ''}
         <div class="portal-source-links" aria-label="Related artifacts">
           <a href="/registry/failures.json">failures.json</a>
           <a href="/portal/doctor/">doctor</a>

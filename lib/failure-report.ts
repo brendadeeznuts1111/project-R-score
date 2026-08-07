@@ -17,6 +17,16 @@ export type TestFailure = {
   replayTest: string;
 };
 
+/** JUnit <properties> env provenance (Bun JUnit reporter §env vars in reports). */
+export type JunitProvenance = {
+  /** CI build URL (GITHUB_RUN_ID/GITHUB_SERVER_URL/GITHUB_REPOSITORY/CI_JOB_URL). */
+  ci?: string;
+  /** Git commit identifier (GITHUB_SHA/CI_COMMIT_SHA/GIT_SHA). */
+  commit?: string;
+  /** Machine hostname. */
+  hostname?: string;
+};
+
 export type FailureReportDoc = {
   source: string;
   xml: string;
@@ -35,6 +45,8 @@ export type TestFailuresReport = {
    */
   sourceAt: string;
   sources: string[];
+  /** Env provenance from the JUnit <properties> block (ci · commit · hostname). */
+  provenance?: JunitProvenance;
   totals: { tests: number; failures: number; skipped: number; timeSeconds: number };
   failures: TestFailure[];
   healthy: boolean;
@@ -66,6 +78,28 @@ export function namePattern(name: string): string {
   return trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * Parse the JUnit `<properties>` block — env provenance emitted by the Bun
+ * JUnit reporter (ci · commit · hostname). Returns {} when absent.
+ *
+ * @see https://bun.com/docs/test/reporters#environment-variables-in-junit-reports
+ */
+export function parseJunitProvenance(xml: string): JunitProvenance {
+  const props: JunitProvenance = {};
+  const block = xml.match(/<properties>([\s\S]*?)<\/properties>/);
+  if (!block) return props;
+  const propRe = /<property\b([^>]*)\/>/g;
+  for (const m of block[1]!.matchAll(propRe)) {
+    const a = attrs(m[1]!);
+    const name = a.name;
+    if (!name) continue;
+    if (name === 'ci') props.ci = a.value;
+    else if (name === 'commit') props.commit = a.value;
+    else if (name === 'hostname') props.hostname = a.value;
+  }
+  return props;
+}
+
 /** Parse one JUnit XML document into failures (testcase elements containing <failure>). */
 export function failuresFromJunitXml(xml: string): {
   failures: TestFailure[];
@@ -73,6 +107,7 @@ export function failuresFromJunitXml(xml: string): {
   failureCount: number;
   skipped: number;
   timeSeconds: number;
+  provenance: JunitProvenance;
 } {
   const failures: TestFailure[] = [];
   // <testcase ...> is either self-closing or has children — only those with <failure matter.
@@ -104,6 +139,7 @@ export function failuresFromJunitXml(xml: string): {
     failureCount: Number(ra.failures ?? failures.length),
     skipped: Number(ra.skipped ?? 0),
     timeSeconds: Number(ra.time ?? 0),
+    provenance: parseJunitProvenance(xml),
   };
 }
 
@@ -139,12 +175,16 @@ export function buildFailuresReport(
   let tests = 0,
     skipped = 0,
     timeSeconds = 0;
+  let provenance: JunitProvenance | undefined;
   for (const d of docs) {
     const r = failuresFromJunitXml(d.xml);
     all.push(...r.failures);
     tests += r.tests;
     skipped += r.skipped;
     timeSeconds += r.timeSeconds;
+    if (!provenance && (r.provenance.ci || r.provenance.commit || r.provenance.hostname)) {
+      provenance = r.provenance;
+    }
   }
   all.sort((a, b) => a.file.localeCompare(b.file) || a.name.localeCompare(b.name));
   const sourceAt = sourceAtFromDocs(docs) ?? generatedAt;
@@ -153,6 +193,7 @@ export function buildFailuresReport(
     generatedAt,
     sourceAt,
     sources: docs.map(d => d.source),
+    ...(provenance ? { provenance } : {}),
     totals: {
       tests,
       failures: all.length,
