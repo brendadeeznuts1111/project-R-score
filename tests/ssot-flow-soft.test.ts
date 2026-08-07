@@ -1,4 +1,6 @@
 // @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/file-io — Bun.write / Bun.file
 import { describe, expect, test } from 'bun:test';
 import {
   SSOT_FLOW_SOFT_ARTIFACT_ID,
@@ -8,6 +10,7 @@ import {
   SSOT_CONTRACT_DOMAINS,
   SSOT_CONTRACT_MANIFEST_ENTRY,
   SSOT_CONTRACT_SET,
+  TENNIS_HQ_ROOT_ENV,
   canonicalTennisHqCheckoutLabel,
   resolveTennisHqRoot,
 } from '../lib/verification/ssot-flow-soft.ts';
@@ -18,6 +21,28 @@ import {
   type PmProbeRow,
 } from '../lib/verification/pm-registry-probes.ts';
 import { joinPath } from '../lib/path-bun.ts';
+import { withTestEnvironment } from './harness.ts';
+
+async function writeMinimalTennisHq(root: string): Promise<string> {
+  await Bun.write(joinPath(root, 'package.json'), '{}\n');
+  await Bun.write(
+    joinPath(root, 'packages/tennis-hq-ssot/package.json'),
+    '{"name":"@tennis-hq/ssot","version":"9.9.9"}\n'
+  );
+  return root;
+}
+
+async function withScratchRoot<T>(
+  prefix: string,
+  run: (scratch: string) => Promise<T>
+): Promise<T> {
+  const scratch = joinPath(import.meta.dir, `../.tmp/${prefix}-${Bun.randomUUIDv7()}`);
+  try {
+    return await run(scratch);
+  } finally {
+    await Bun.$`rm -rf ${scratch}`.quiet();
+  }
+}
 
 describe('ssot-flow-soft resolve', () => {
   test('schema + report path pins', () => {
@@ -88,22 +113,93 @@ describe('ssot-flow-soft resolve', () => {
     expect(proof.summary && typeof proof.summary === 'object').toBe(true);
   });
 
-  test('resolveTennisHqRoot finds a sibling checkout without machine paths', async () => {
-    const scratch = joinPath(
-      import.meta.dir,
-      `../.tmp/ssot-root-${Bun.randomUUIDv7()}`
-    );
-    const tennisRoot = joinPath(scratch, 'king-zippy-umbra-acre');
-    try {
-      await Bun.write(joinPath(tennisRoot, 'package.json'), '{}\n');
-      await Bun.write(
-        joinPath(tennisRoot, 'packages/tennis-hq-ssot/package.json'),
-        '{"name":"@tennis-hq/ssot","version":"9.9.9"}\n'
-      );
-      expect(await resolveTennisHqRoot(scratch)).toBe(tennisRoot);
-    } finally {
-      await Bun.$`rm -rf ${scratch}`.quiet();
-    }
+  test('resolveTennisHqRoot prefers TENNIS_HQ_ROOT over sibling discovery', async () => {
+    await withScratchRoot('ssot-env', async (scratch) => {
+      const factoryRoot = joinPath(scratch, 'factory');
+      const envRoot = joinPath(scratch, 'custom-tennis-hq');
+      await Bun.write(joinPath(factoryRoot, '.keep'), '\n');
+      await writeMinimalTennisHq(envRoot);
+      await withTestEnvironment({ [TENNIS_HQ_ROOT_ENV]: envRoot }, async () => {
+        expect(await resolveTennisHqRoot(factoryRoot)).toBe(envRoot);
+      });
+    });
+  });
+
+  test('resolveTennisHqRoot finds primary sibling checkout (factoryRoot/king-zippy…)', async () => {
+    await withScratchRoot('ssot-primary', async (scratch) => {
+      const tennisRoot = joinPath(scratch, 'king-zippy-umbra-acre');
+      await writeMinimalTennisHq(tennisRoot);
+      await withTestEnvironment({ [TENNIS_HQ_ROOT_ENV]: undefined }, async () => {
+        expect(await resolveTennisHqRoot(scratch)).toBe(tennisRoot);
+      });
+    });
+  });
+
+  test('resolveTennisHqRoot finds common-dir sibling from a linked worktree', async () => {
+    await withScratchRoot('ssot-worktree', async (base) => {
+      const primary = joinPath(base, 'primary');
+      const worktree = joinPath(base, 'wt');
+      const tennisRoot = joinPath(base, 'king-zippy-umbra-acre');
+      await writeMinimalTennisHq(tennisRoot);
+      await Bun.write(joinPath(primary, 'README.md'), 'primary\n');
+
+      const gitEnv = {
+        ...Bun.env,
+        GIT_CONFIG_COUNT: '1',
+        GIT_CONFIG_KEY_0: 'commit.gpgsign',
+        GIT_CONFIG_VALUE_0: 'false',
+      };
+      const steps: string[][] = [
+        ['git', 'init', '-q', '-b', 'main', primary],
+        ['git', '-C', primary, 'add', 'README.md'],
+        [
+          'git',
+          '-C',
+          primary,
+          '-c',
+          'user.name=ssot-fixture',
+          '-c',
+          'user.email=ssot-fixture@local',
+          'commit',
+          '-qm',
+          'fixture',
+        ],
+        ['git', '-C', primary, 'worktree', 'add', '-q', worktree],
+      ];
+      for (const cmd of steps) {
+        const proc = Bun.spawnSync({ cmd, env: gitEnv, stdout: 'pipe', stderr: 'pipe' });
+        if (proc.exitCode !== 0) {
+          throw new Error(`${cmd.join(' ')}: ${proc.stderr.toString().trim()}`);
+        }
+      }
+
+      await withTestEnvironment({ [TENNIS_HQ_ROOT_ENV]: undefined }, async () => {
+        expect(await resolveTennisHqRoot(worktree)).toBe(tennisRoot);
+      });
+    });
+  });
+
+  test('resolveTennisHqRoot finds nested worktree ../../king-zippy shape', async () => {
+    await withScratchRoot('ssot-nested', async (base) => {
+      const factoryRoot = joinPath(base, 'nested', 'factory');
+      const tennisRoot = joinPath(base, 'king-zippy-umbra-acre');
+      await Bun.write(joinPath(factoryRoot, '.keep'), '\n');
+      await writeMinimalTennisHq(tennisRoot);
+      await withTestEnvironment({ [TENNIS_HQ_ROOT_ENV]: undefined }, async () => {
+        expect(await resolveTennisHqRoot(factoryRoot)).toBe(tennisRoot);
+      });
+    });
+  });
+
+  test('resolveTennisHqRoot fails closed when checkout is absent (staged-clone shape)', async () => {
+    await withScratchRoot('ssot-missing', async (scratch) => {
+      await Bun.write(joinPath(scratch, '.keep'), '\n');
+      await withTestEnvironment({ [TENNIS_HQ_ROOT_ENV]: undefined }, async () => {
+        await expect(resolveTennisHqRoot(scratch)).rejects.toThrow(
+          /Tennis HQ checkout not found for ssot:flow:soft\. Set TENNIS_HQ_ROOT/
+        );
+      });
+    });
   });
 });
 

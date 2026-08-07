@@ -215,10 +215,11 @@ describe('test-changed-staged helpers', () => {
   test('scratch repo links heavyweight external trees needed by selected tests', () => {
     expect(SCRATCH_LINK_DIRS).toContain('projects');
     expect(SCRATCH_LINK_DIRS).toContain('Kalshi-bot');
+    expect(SCRATCH_LINK_DIRS).toContain('king-zippy-umbra-acre');
     expect(SCRATCH_PATHSPEC).toContain(':(exclude)projects/');
     expect(SCRATCH_PATHSPEC).toContain(':(exclude)Kalshi-bot');
-    // Kalshi-bot is optional — linker skips when the submodule is not checked out
-    // (dangling symlink → ENOENT in glossary dump consumers). See buildScratchRepo.
+    // Kalshi-bot / Tennis HQ are optional — linker skips when the checkout is
+    // absent (dangling symlink → ENOENT in consumers). See buildScratchRepo · #236.
   });
 
   test('scratch git add -A never leaks the node_modules symlink into an inherited index', async () => {

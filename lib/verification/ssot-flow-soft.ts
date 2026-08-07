@@ -113,7 +113,8 @@ async function pathHasPackageJson(dir: string): Promise<boolean> {
 /**
  * Locate Tennis HQ checkout (gitignored sibling).
  * Order: TENNIS_HQ_ROOT → factoryRoot/king-zippy-umbra-acre →
- * git common-dir sibling → worktree ../../king-zippy-umbra-acre.
+ * primary checkout root + sibling of that root (via git common-dir) →
+ * worktree ../../king-zippy-umbra-acre.
  */
 export async function resolveTennisHqRoot(factoryRoot: string): Promise<string> {
   const tried: string[] = [];
@@ -132,7 +133,13 @@ export async function resolveTennisHqRoot(factoryRoot: string): Promise<string> 
     if (exitCode === 0) {
       const gitCommon = stdout.trim().replace(/[/\\]+$/, '');
       if (gitCommon) {
-        candidates.push(joinPath(gitCommon, '..', DEFAULT_TENNIS_HQ));
+        // common-dir is usually `<primary>/.git` — strip that leaf for the primary root.
+        const primaryRoot = /(?:^|[/\\])\.git$/i.test(gitCommon)
+          ? joinPath(gitCommon, '..')
+          : gitCommon;
+        candidates.push(joinPath(primaryRoot, DEFAULT_TENNIS_HQ));
+        // Operator layout: Tennis HQ sits next to the primary checkout (not inside it).
+        candidates.push(joinPath(primaryRoot, '..', DEFAULT_TENNIS_HQ));
       }
     }
   } catch {

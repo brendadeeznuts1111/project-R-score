@@ -54,7 +54,13 @@ export const SCRATCH_PATHSPEC = ['.', ':(exclude)projects/', ':(exclude)Kalshi-b
  * content never counts as "changed" anyway.
  */
 /** Optional heavyweight trees — skip when absent (no dangling symlinks). */
-export const SCRATCH_LINK_DIRS = ['node_modules', 'projects', 'Kalshi-bot'] as const;
+export const SCRATCH_LINK_DIRS = [
+  'node_modules',
+  'projects',
+  'Kalshi-bot',
+  // Tennis HQ is gitignored; link when present so ssot-flow-soft resolves in scratch (#236).
+  'king-zippy-umbra-acre',
+] as const;
 /** Bound worker-process pressure for Argon2/SQLite-heavy changed suites. */
 export const STAGED_TEST_PARALLELISM = 6;
 /**
