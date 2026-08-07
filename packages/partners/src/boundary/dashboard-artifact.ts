@@ -13,26 +13,35 @@ import {
   parseSourceSystemId,
   parseTreeNodeId,
 } from '../core/identifiers.ts';
+import { evaluateConnectorFreshness } from '../core/connector-freshness.ts';
 import {
   ATTENTION_SEVERITIES,
   CANONICAL_PROFILE_SOURCE_SYSTEM_ID,
   CONNECTOR_DATA_STATUSES,
+  CONNECTOR_SNAPSHOT_REASON_CODES,
+  CONNECTOR_SOURCE_MODES,
   OUT_FUNDING_STATUSES,
   OUT_OPERATIONAL_STATUSES,
   PARTNER_CONNECTOR_SNAPSHOT_KEYS,
   PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
   PARTNER_LIFECYCLE_STATES,
   PARTNER_OPERATIONAL_PHASES,
+  PARTNER_SOURCE_CONFLICT_FIELD_PATHS,
   PROVENANCE_CONFIDENCE_VALUES,
   PROVENANCE_MAPPING_METHODS,
   PROVIDER_CONNECTION_STATUSES,
   type AccountScope,
   type BalancePosition,
   type ConnectorSnapshot,
+  type FactProvenance,
   type MoneyAmount,
   type PartnerDashboardArtifact,
   type PartnerDashboardRecord,
 } from '../core/types.ts';
+import {
+  PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS,
+  PARTNER_DASHBOARD_REQUIRED_CONNECTOR_KEYS,
+} from '../dashboard-plan.ts';
 
 type WireRecord = Record<string, unknown>;
 
@@ -125,6 +134,35 @@ function assertMoneyAmount(value: unknown, path: string): asserts value is Money
   }
 }
 
+function assertFactProvenance(value: unknown, path: string): asserts value is FactProvenance {
+  assertRecord(value, path);
+  assertExactKeys(
+    value,
+    [
+      'sourceSystemId',
+      'sourceRecordRef',
+      'adapterId',
+      'adapterVersion',
+      'observedAt',
+      'originalValue',
+      'mappingMethod',
+      'confidence',
+    ],
+    path
+  );
+  parseSourceSystemId(value.sourceSystemId);
+  parseAdapterId(value.adapterId);
+  for (const field of ['adapterVersion', 'originalValue'] as const) {
+    assertString(value[field], `${path}.${field}`);
+  }
+  if (value.sourceRecordRef !== undefined) {
+    assertString(value.sourceRecordRef, `${path}.sourceRecordRef`);
+  }
+  assertIsoTime(value.observedAt, `${path}.observedAt`);
+  assertEnum(value.mappingMethod, PROVENANCE_MAPPING_METHODS, `${path}.mappingMethod`);
+  assertEnum(value.confidence, PROVENANCE_CONFIDENCE_VALUES, `${path}.confidence`);
+}
+
 function assertAccountScope(value: unknown, path: string): asserts value is AccountScope {
   assertRecord(value, path);
   if (value.kind === 'partner') {
@@ -164,16 +202,93 @@ function assertPartnerAccountScope(
   }
 }
 
-function assertConnectorSnapshot(value: unknown, path: string): asserts value is ConnectorSnapshot {
+function assertConnectorSnapshot(
+  value: unknown,
+  key: (typeof PARTNER_CONNECTOR_SNAPSHOT_KEYS)[number],
+  generatedAt: string,
+  path: string
+): asserts value is ConnectorSnapshot {
   assertRecord(value, path);
-  assertExactKeys(value, ['dataStatus', 'observedAt', 'inputRef', 'snapshotRef'], path);
+  assertExactKeys(
+    value,
+    [
+      'dataStatus',
+      'sourceMode',
+      'reasonCode',
+      'observedAt',
+      'ageSeconds',
+      'inputRef',
+      'snapshotRef',
+    ],
+    path
+  );
   assertEnum(value.dataStatus, CONNECTOR_DATA_STATUSES, `${path}.dataStatus`);
+  assertEnum(value.sourceMode, CONNECTOR_SOURCE_MODES, `${path}.sourceMode`);
+  assertEnum(value.reasonCode, CONNECTOR_SNAPSHOT_REASON_CODES, `${path}.reasonCode`);
   assertString(value.inputRef, `${path}.inputRef`, value.dataStatus === 'unavailable');
-  if (value.dataStatus !== 'unavailable' && value.observedAt === undefined) {
-    throw new TypeError(`${path}.observedAt is required for ${value.dataStatus} data`);
+  if (value.sourceMode !== 'none' && value.observedAt === undefined) {
+    throw new TypeError(`${path}.observedAt is required for ${value.sourceMode} data`);
   }
   if (value.observedAt !== undefined) assertIsoTime(value.observedAt, `${path}.observedAt`);
+  if (value.ageSeconds !== undefined) {
+    assertNonnegativeInteger(value.ageSeconds, `${path}.ageSeconds`);
+  }
   if (value.snapshotRef !== undefined) assertString(value.snapshotRef, `${path}.snapshotRef`);
+
+  const sourceMode = value.sourceMode;
+  const observation =
+    sourceMode === 'none' || value.observedAt === undefined
+      ? undefined
+      : {
+          observedAt: value.observedAt,
+          inputRef: value.inputRef,
+          ...(value.snapshotRef === undefined ? {} : { snapshotRef: value.snapshotRef }),
+        };
+  const decision = evaluateConnectorFreshness({
+    asOf: generatedAt,
+    expectedInputRef: PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS[key],
+    required: (PARTNER_DASHBOARD_REQUIRED_CONNECTOR_KEYS as readonly string[]).includes(key),
+    ...(sourceMode === 'current' ? { current: observation } : {}),
+    ...(sourceMode === 'last_known_good' ? { lastKnownGood: observation } : {}),
+  });
+  if (decision.disposition === 'fail_bake') {
+    throw new TypeError(`${path} cannot represent ${decision.reasonCode}`);
+  }
+  for (const field of [
+    'dataStatus',
+    'sourceMode',
+    'reasonCode',
+    'observedAt',
+    'ageSeconds',
+    'inputRef',
+    'snapshotRef',
+  ] as const) {
+    if (value[field] !== decision.snapshot[field]) {
+      throw new TypeError(`${path}.${field} does not match computed connector freshness`);
+    }
+  }
+}
+
+function assertConflictValue(value: unknown, fieldPath: string, path: string): void {
+  if (fieldPath === 'partners[].lifecycle.state') {
+    assertEnum(value, PARTNER_LIFECYCLE_STATES, path);
+  } else if (fieldPath === 'partners[].outs[].sportsbookId') {
+    parseSportsbookId(value);
+  } else if (fieldPath === 'partners[].outs[].operationalStatus') {
+    assertEnum(value, OUT_OPERATIONAL_STATUSES, path);
+  } else if (fieldPath === 'partners[].outs[].fundingStatus') {
+    assertEnum(value, OUT_FUNDING_STATUSES, path);
+  } else if (fieldPath === 'partners[].outs[].providerConnectionStatus') {
+    assertEnum(value, PROVIDER_CONNECTION_STATUSES, path);
+  } else if (fieldPath === 'partners[].outs[].observedMaxStake.amount.currency') {
+    parseCurrencyCode(value);
+  } else if (fieldPath === 'partners[].outs[].observedMaxStake.amount.minorUnits') {
+    assertNonnegativeInteger(value, path);
+  } else if (fieldPath === 'partners[].outs[].limitCoverageRatio') {
+    assertRatio(value, path);
+  } else {
+    throw new TypeError(`${path} has an unregistered conflict field path`);
+  }
 }
 
 function assertStringArray(value: unknown, path: string): asserts value is string[] {
@@ -214,41 +329,7 @@ function assertPartnerRecord(
   assertExactKeys(value.lifecycle, ['state', 'effectiveAt', 'provenance'], `${path}.lifecycle`);
   assertEnum(value.lifecycle.state, PARTNER_LIFECYCLE_STATES, `${path}.lifecycle.state`);
   assertIsoTime(value.lifecycle.effectiveAt, `${path}.lifecycle.effectiveAt`);
-  assertRecord(value.lifecycle.provenance, `${path}.lifecycle.provenance`);
-  const provenance = value.lifecycle.provenance;
-  assertExactKeys(
-    provenance,
-    [
-      'sourceSystemId',
-      'sourceRecordRef',
-      'adapterId',
-      'adapterVersion',
-      'observedAt',
-      'originalValue',
-      'mappingMethod',
-      'confidence',
-    ],
-    `${path}.lifecycle.provenance`
-  );
-  parseSourceSystemId(provenance.sourceSystemId);
-  parseAdapterId(provenance.adapterId);
-  for (const field of ['adapterVersion', 'originalValue'] as const) {
-    assertString(provenance[field], `${path}.lifecycle.provenance.${field}`);
-  }
-  if (provenance.sourceRecordRef !== undefined) {
-    assertString(provenance.sourceRecordRef, `${path}.lifecycle.provenance.sourceRecordRef`);
-  }
-  assertIsoTime(provenance.observedAt, `${path}.lifecycle.provenance.observedAt`);
-  assertEnum(
-    provenance.mappingMethod,
-    PROVENANCE_MAPPING_METHODS,
-    `${path}.lifecycle.provenance.mappingMethod`
-  );
-  assertEnum(
-    provenance.confidence,
-    PROVENANCE_CONFIDENCE_VALUES,
-    `${path}.lifecycle.provenance.confidence`
-  );
+  assertFactProvenance(value.lifecycle.provenance, `${path}.lifecycle.provenance`);
   assertEnum(value.operationalPhase, PARTNER_OPERATIONAL_PHASES, `${path}.operationalPhase`);
 
   assertRecord(value.identity, `${path}.identity`);
@@ -285,7 +366,7 @@ function assertPartnerRecord(
         'fundingStatus',
         'providerConnectionStatus',
         'externalAccountRefs',
-        'maxBet',
+        'observedMaxStake',
         'limitCoverageRatio',
       ],
       outPath
@@ -317,7 +398,19 @@ function assertPartnerRecord(
       parseSourceSystemId(ref.sourceSystemId);
       parseExternalAccountId(ref.externalId);
     }
-    if (out.maxBet !== undefined) assertMoneyAmount(out.maxBet, `${outPath}.maxBet`);
+    if (out.observedMaxStake !== undefined) {
+      assertRecord(out.observedMaxStake, `${outPath}.observedMaxStake`);
+      assertExactKeys(
+        out.observedMaxStake,
+        ['amount', 'provenance'],
+        `${outPath}.observedMaxStake`
+      );
+      assertMoneyAmount(out.observedMaxStake.amount, `${outPath}.observedMaxStake.amount`);
+      assertFactProvenance(
+        out.observedMaxStake.provenance,
+        `${outPath}.observedMaxStake.provenance`
+      );
+    }
     if (out.limitCoverageRatio !== undefined) {
       assertRatio(out.limitCoverageRatio, `${outPath}.limitCoverageRatio`);
     }
@@ -479,7 +572,12 @@ export function parsePartnerDashboardArtifact(value: unknown): PartnerDashboardA
     throw new TypeError('artifact.connectorSnapshots must contain the exact v1 connector key set');
   }
   for (const key of PARTNER_CONNECTOR_SNAPSHOT_KEYS) {
-    assertConnectorSnapshot(value.connectorSnapshots[key], `artifact.connectorSnapshots.${key}`);
+    assertConnectorSnapshot(
+      value.connectorSnapshots[key],
+      key,
+      value.generatedAt,
+      `artifact.connectorSnapshots.${key}`
+    );
   }
 
   assertArray(value.partners, 'artifact.partners');
@@ -567,8 +665,13 @@ export function parsePartnerDashboardArtifact(value: unknown): PartnerDashboardA
     assertExactKeys(conflict, ['partnerCode', 'fieldPath', 'adapterIds', 'values'], conflictPath);
     const code = parsePartnerCode(conflict.partnerCode);
     if (!partnerCodes.has(code)) throw new TypeError(`${conflictPath}.partnerCode is not present`);
-    assertString(conflict.fieldPath, `${conflictPath}.fieldPath`);
+    assertEnum(
+      conflict.fieldPath,
+      PARTNER_SOURCE_CONFLICT_FIELD_PATHS,
+      `${conflictPath}.fieldPath`
+    );
     assertStringArray(conflict.adapterIds, `${conflictPath}.adapterIds`);
+    conflict.adapterIds.forEach(adapterId => parseAdapterId(adapterId));
     assertArray(conflict.values, `${conflictPath}.values`);
     for (const [valueIndex, conflictValue] of conflict.values.entries()) {
       if (
@@ -579,9 +682,20 @@ export function parsePartnerDashboardArtifact(value: unknown): PartnerDashboardA
       ) {
         throw new TypeError(`${conflictPath}.values[${valueIndex}] must be a JSON scalar`);
       }
+      assertConflictValue(
+        conflictValue,
+        conflict.fieldPath,
+        `${conflictPath}.values[${valueIndex}]`
+      );
     }
     if (conflict.adapterIds.length < 2 || conflict.values.length !== conflict.adapterIds.length) {
       throw new TypeError(`${conflictPath} must describe two or more aligned source values`);
+    }
+    const distinctValues = new Set(
+      conflict.values.map(item => `${item === null ? 'null' : typeof item}:${String(item)}`)
+    );
+    if (distinctValues.size < 2) {
+      throw new TypeError(`${conflictPath} must contain two or more distinct normalized values`);
     }
   }
 

@@ -12,7 +12,10 @@ import {
   type PartnerProfile,
 } from '../lib/partner-profile/schema';
 import { parsePartnerProfileToml } from '../lib/partner-profile/parse';
-import { buildPartnerProfilesBake } from '../lib/partner-profile/bake';
+import {
+  buildPartnerProfilesBake,
+  PARTNER_PROFILES_PUBLIC_SCHEMA,
+} from '../lib/partner-profile/bake';
 
 const EXAMPLE_PATH = 'config/partner-profiles/.example.toml';
 
@@ -60,6 +63,57 @@ describe('validatePartnerProfile', () => {
     );
     expect(result.valid).toBe(false);
     if (!result.valid) expect(result.issues.some((i) => i.includes('vault-only'))).toBe(true);
+  });
+
+  test('rejects nested secret-bearing fields', () => {
+    const result = validatePartnerProfile(
+      baseProfile({
+        books: {
+          youwager: {
+            type: 'pph',
+            account: {
+              username: 'u',
+              vaultKey: 'partner:YOU:youwager',
+              password: 'must-not-cross-this-boundary',
+            },
+          },
+        },
+      })
+    );
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.issues).toContain(
+        'books.youwager.account.password not allowed — credentials are vault-only'
+      );
+    }
+  });
+
+  test('rejects unknown top-level and nested keys', () => {
+    const result = validatePartnerProfile(
+      baseProfile({
+        unexpected: true,
+        telegram: { chatId: '-1001234567890', surprise: true },
+      })
+    );
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.issues).toContain('unexpected is not allowed');
+      expect(result.issues).toContain('telegram.surprise is not allowed');
+    }
+  });
+
+  test('rejects negative and fractional maxBet limits', () => {
+    for (const maxBet of [-1, 1.5]) {
+      const result = validatePartnerProfile(
+        baseProfile({ books: { youwager: { type: 'pph', limits: { maxBet } } } })
+      );
+      expect(result.valid).toBe(false);
+      if (!result.valid) {
+        expect(result.issues.some(issue => issue.includes('books.youwager.limits.maxBet'))).toBe(
+          true
+        );
+      }
+    }
   });
 
   test('rejects an unknown book type', () => {
@@ -135,6 +189,37 @@ describe('bake', () => {
     expect(payload.summary.byLifecycle.active).toBe(1);
     expect(payload.summary.byLifecycle.signup).toBe(1);
     expect(payload.summary.byPhase.operator_ready).toBe(1);
+    expect(payload.schema).toBe(PARTNER_PROFILES_PUBLIC_SCHEMA);
+    expect(payload.schemaVersion).toBe(2);
+  });
+
+  test('buildPartnerProfilesBake exposes only the public projection', () => {
+    const payload = buildPartnerProfilesBake(
+      {
+        YOU: baseProfile({
+          telegram: { chatId: '-1001234567890' },
+          books: {
+            youwager: {
+              type: 'pph',
+              account: { username: 'private-user', vaultKey: 'partner:YOU:youwager' },
+              funding: { rail: 'private-rail' },
+            },
+          },
+          accounting: { fundStatus: 'ready' },
+        }),
+      },
+      'fixed'
+    );
+
+    expect(payload.profiles.YOU).toEqual({
+      meta: { templateId: 'partner-active', version: '1.0.0' },
+      identity: { code: 'YOU', callSign: 'YOU-001' },
+      lifecycle: { status: 'active', phase: 'operator_ready' },
+    });
+    const serialized = JSON.stringify(payload);
+    expect(serialized).not.toContain('private-user');
+    expect(serialized).not.toContain('partner:YOU:youwager');
+    expect(serialized).not.toContain('-1001234567890');
   });
 
   test('lifecycle enum covers the full v0 set', () => {

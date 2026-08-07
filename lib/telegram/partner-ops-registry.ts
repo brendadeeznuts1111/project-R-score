@@ -15,7 +15,6 @@
 import type { Database } from 'bun:sqlite';
 import type { PartnerOpsEvent } from './partner-ops-events.ts';
 import { isPartnerOpsEventCode } from './partner-ops-events.ts';
-import { asTelegramChatId, type TelegramChatId } from '../types/branded/portal.ts';
 import {
   PACKAGE_GROUP_FORUMS_META_DIR,
   loadPackageGroupForumMetadata,
@@ -194,7 +193,7 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
   const forumByCode = new Map<
     string,
     {
-      chatId?: TelegramChatId | null;
+      chatId?: string | number | null; // brand-ok — Telegram forum chat_id wire metadata
       topicsThreadMap?: Record<string, number | null | undefined>;
     }
   >();
@@ -210,7 +209,7 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
       });
       if (forumMeta) {
         forumByCode.set(code, {
-          chatId: forumMeta.chatId != null ? asTelegramChatId(String(forumMeta.chatId)) : null,
+          chatId: forumMeta.chatId,
           topicsThreadMap: forumMeta.topicsThreadMap,
         });
       }

@@ -23,6 +23,19 @@ payment targets, money, Telegram IDs, limits, and presentation fields rather
 than promoting them into partner-domain truth. Its output is a narrow
 observation shape, not `PartnerDashboardRecord[]`.
 
+The implemented pure `evaluateConnectorFreshness` contract derives every
+dashboard connector snapshot from the bake timestamp and a current or
+last-known-good observation. It pins the connector input ref, records source
+mode/reason/age, rejects excessive future clock skew, fails an expired required
+source, and marks an expired optional source unavailable. The artifact parser
+recomputes this decision, so callers cannot spoof `ok`. Network timeout,
+circuit-breaker state, and cache I/O remain planned connector responsibilities.
+
+Dashboard conflicts are now restricted to registered scalar field paths, branded
+adapter IDs, field-typed values, and distinct normalized evidence. The boundary
+prevents arbitrary secret-shaped conflict strings; reconciliation that creates
+those conflict rows remains planned.
+
 The package also exports the implemented private `PartnerOutCapabilitySnapshot`
 boundary and pure `evaluateExecutionConstraints` preflight. It models sanitized
 sportsbook/skin resolution, straight/parlay/SGP support, wager catalogs

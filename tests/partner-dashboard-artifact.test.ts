@@ -1,9 +1,11 @@
 import { describe, expect, test } from 'bun:test';
 import {
   PARTNER_CONNECTOR_SNAPSHOT_KEYS,
+  PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS,
   PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
   PROFILE_MIGRATION_REQUIRED_REASON,
   assemblePartnerDashboardArtifact,
+  evaluateConnectorFreshness,
   parseAttentionReasonCode,
   parseCanonicalOutId,
   parseCurrencyCode,
@@ -24,18 +26,25 @@ import {
 
 const NOW = '2026-08-05T18:00:00.000Z';
 
-  function connectorSnapshots(): PartnerDashboardBuildInput['connectorSnapshots'] {
+function connectorSnapshots(): PartnerDashboardBuildInput['connectorSnapshots'] {
   return Object.fromEntries(
-    PARTNER_CONNECTOR_SNAPSHOT_KEYS.map(key => [
-      key,
-      key === 'sportsTerminal'
-        ? ({ dataStatus: 'unavailable', inputRef: '' } satisfies ConnectorSnapshot)
-        : ({
-            dataStatus: 'ok',
-            observedAt: NOW,
-            inputRef: `/registry/${key}.json`,
-          } satisfies ConnectorSnapshot),
-    ])
+    PARTNER_CONNECTOR_SNAPSHOT_KEYS.map(key => {
+      const decision = evaluateConnectorFreshness({
+        asOf: NOW,
+        expectedInputRef: PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS[key],
+        required: key === 'profiles',
+        ...(key === 'sportsTerminal'
+          ? {}
+          : {
+              current: {
+                observedAt: NOW,
+                inputRef: PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS[key],
+              },
+            }),
+      });
+      if (decision.disposition === 'fail_bake') throw new Error(decision.reasonCode);
+      return [key, decision.snapshot satisfies ConnectorSnapshot];
+    })
   ) as PartnerDashboardBuildInput['connectorSnapshots'];
 }
 
@@ -78,7 +87,18 @@ function partnerRecord(options: { profile?: boolean } = {}): PartnerDashboardRec
         fundingStatus: 'funded',
         providerConnectionStatus: 'active',
         externalAccountRefs: [],
-        maxBet: { currency: parseCurrencyCode('USD'), minorUnits: 50_000 },
+        observedMaxStake: {
+          amount: { currency: parseCurrencyCode('USD'), minorUnits: 50_000 },
+          provenance: {
+            sourceSystemId: parseSourceSystemId('tennis-hq'),
+            adapterId: parseAdapterId('tennis-contract'),
+            adapterVersion: '1',
+            observedAt: NOW,
+            originalValue: '50000',
+            mappingMethod: 'identity',
+            confidence: 'exact',
+          },
+        },
         limitCoverageRatio: 1,
       },
     ],
@@ -172,7 +192,7 @@ describe('@factorywager/partners dashboard artifact', () => {
   test('rejects unsafe money, absent provenance, unexpected fields, and count drift', () => {
     const valid = assemblePartnerDashboardArtifact(buildInput());
     const unsafeMoney = structuredClone(valid) as PartnerDashboardArtifact;
-    unsafeMoney.partners[0].outs[0].maxBet!.minorUnits = 1.25;
+    unsafeMoney.partners[0].outs[0].observedMaxStake!.amount.minorUnits = 1.25;
     expect(() => parsePartnerDashboardArtifact(unsafeMoney)).toThrow('minorUnits');
 
     const absentProvenance = structuredClone(valid) as PartnerDashboardArtifact;
@@ -192,9 +212,9 @@ describe('@factorywager/partners dashboard artifact', () => {
     const leakedConflictValue = structuredClone(valid) as PartnerDashboardArtifact;
     (leakedConflictValue.conflicts as unknown[]).push({
       partnerCode: 'ASH',
-      fieldPath: 'identity.externalPartnerRefs',
+      fieldPath: 'partners[].outs[].operationalStatus',
       adapterIds: ['profile-artifact', 'sports-terminal'],
-      values: ['redacted', { apiToken: 'must-not-pass' }],
+      values: ['ready', { apiToken: 'must-not-pass' }],
     });
     expect(() => parsePartnerDashboardArtifact(leakedConflictValue)).toThrow('JSON scalar');
 
@@ -202,6 +222,71 @@ describe('@factorywager/partners dashboard artifact', () => {
     countDrift.summary.partnerCount = 2;
     expect(() => parsePartnerDashboardArtifact(countDrift)).toThrow(
       'summary.partnerCount does not match'
+    );
+  });
+
+  test('accepts only registered, typed, distinct conflict evidence', () => {
+    const input = buildInput();
+    input.conflicts = [
+      {
+        partnerCode: input.partners[0].partnerCode,
+        fieldPath: 'partners[].outs[].operationalStatus',
+        adapterIds: [parseAdapterId('tennis-contract'), parseAdapterId('sports-terminal')],
+        values: ['ready', 'blocked'],
+      },
+    ];
+    expect(assemblePartnerDashboardArtifact(input).conflicts).toHaveLength(1);
+
+    const unknownPath = structuredClone(assemblePartnerDashboardArtifact(input));
+    unknownPath.conflicts[0].fieldPath = 'partners[].identity.apiToken' as never;
+    expect(() => parsePartnerDashboardArtifact(unknownPath)).toThrow(
+      'artifact.conflicts[0].fieldPath must be one of'
+    );
+
+    const duplicateValues = structuredClone(assemblePartnerDashboardArtifact(input));
+    duplicateValues.conflicts[0].values = ['ready', 'ready'];
+    expect(() => parsePartnerDashboardArtifact(duplicateValues)).toThrow(
+      'distinct normalized values'
+    );
+
+    const invalidValue = structuredClone(assemblePartnerDashboardArtifact(input));
+    invalidValue.conflicts[0].values = ['ready', 'secret-token-value'];
+    expect(() => parsePartnerDashboardArtifact(invalidValue)).toThrow(
+      'must be one of unknown|ready|deferred|paused|blocked'
+    );
+  });
+
+  test('recomputes connector freshness instead of trusting caller status', () => {
+    const valid = assemblePartnerDashboardArtifact(buildInput());
+
+    const spoofedStatus = structuredClone(valid);
+    spoofedStatus.connectorSnapshots.tennis.observedAt = '2026-08-05T17:54:59.000Z';
+    spoofedStatus.connectorSnapshots.tennis.ageSeconds = 301;
+    expect(() => parsePartnerDashboardArtifact(spoofedStatus)).toThrow(
+      'dataStatus does not match computed connector freshness'
+    );
+
+    const spoofedAge = structuredClone(valid);
+    spoofedAge.connectorSnapshots.tennis.observedAt = '2026-08-05T17:59:59.000Z';
+    expect(() => parsePartnerDashboardArtifact(spoofedAge)).toThrow(
+      'ageSeconds does not match computed connector freshness'
+    );
+
+    const wrongInput = structuredClone(valid);
+    wrongInput.connectorSnapshots.tennis.inputRef = '/registry/wrong.json';
+    expect(() => parsePartnerDashboardArtifact(wrongInput)).toThrow(
+      'inputRef must match the configured connector input'
+    );
+
+    const missingRequired = structuredClone(valid);
+    missingRequired.connectorSnapshots.profiles = {
+      dataStatus: 'unavailable',
+      sourceMode: 'none',
+      reasonCode: 'optional_source_unavailable',
+      inputRef: PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS.profiles,
+    };
+    expect(() => parsePartnerDashboardArtifact(missingRequired)).toThrow(
+      'cannot represent required_source_unavailable'
     );
   });
 
@@ -252,7 +337,7 @@ describe('@factorywager/partners dashboard artifact', () => {
     const missingFreshTimestamp = structuredClone(valid) as PartnerDashboardArtifact;
     Reflect.deleteProperty(missingFreshTimestamp.connectorSnapshots.profiles, 'observedAt');
     expect(() => parsePartnerDashboardArtifact(missingFreshTimestamp)).toThrow(
-      'observedAt is required for ok data'
+      'observedAt is required for current data'
     );
 
     expect(() =>
