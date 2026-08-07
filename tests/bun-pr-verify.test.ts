@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { resolveBunExecutable } from '../lib/bun-executable.ts';
+import { diffProofArtifact } from '../tools/bun-pr-verify.ts';
 
 // The script is entrypoint-guarded; test the reachable pure behaviors via
 // spawning it: missing-arg usage and missing-PR-build error both exit non-zero
@@ -78,5 +79,35 @@ describe('bun-pr-verify CLI', () => {
     expect(out).toContain('BUN_STRIP_UNKNOWN=true — stripping');
     expect(out).toContain('bun-99999 not on PATH');
     expect(exit).not.toBe(0);
+  });
+});
+
+describe('diffProofArtifact', () => {
+  const base = {
+    apis: [{ name: 'Bun.file', stable: true }],
+    demos: [{ id: 'd1', ok: true }],
+    timestamp: '2026-01-01T00:00:00.000Z',
+    bunVersion: '1.3.14',
+  };
+
+  test('identical artifacts → no diffs (volatile keys ignored)', () => {
+    const diffs = diffProofArtifact('api', base, { ...base, timestamp: '2026-02-02T00:00:00.000Z' });
+    expect(diffs).toEqual([]);
+  });
+
+  test('changed probe value → reported with path', () => {
+    const changed = {
+      ...base,
+      apis: [{ name: 'Bun.file', stable: false }], // behavior flipped
+    };
+    const diffs = diffProofArtifact('api', base, changed);
+    expect(diffs.length).toBeGreaterThan(0);
+    expect(diffs[0]!.path).toContain('apis');
+    expect(diffs[0]!.installed).toEqual(true);
+    expect(diffs[0]!.pr).toEqual(false);
+  });
+
+  test('missing artifact (null) → no crash, treated as no diff', () => {
+    expect(diffProofArtifact('runtime', null, null)).toEqual([]);
   });
 });

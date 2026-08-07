@@ -357,7 +357,7 @@ export function complexityFloorToolFlags(): ToolFlagRef[] {
 }
 
 /** § — bun:pr:verify (`tools/bun-pr-verify.ts`) — no design Flags table; tool allowlist only */
-export const BUN_PR_VERIFY_ALLOWED_LONG = ['proof', 'json'] as const;
+export const BUN_PR_VERIFY_ALLOWED_LONG = ['proof', 'json', 'diff'] as const;
 
 /** § — bun:runtime-pin (`tools/bun-runtime-pin.ts`) */
 export const BUN_RUNTIME_PIN_ALLOWED_LONG = ['json'] as const;
