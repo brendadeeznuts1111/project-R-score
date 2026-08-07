@@ -54,17 +54,22 @@ tennis v1.
 
 ## Concept disambiguation
 
+Thesis: [`docs/DOMAIN_CONCEPT_SHAPE.md`](../DOMAIN_CONCEPT_SHAPE.md) · lanes board
+[`/portal/lanes/`](../../public/portal/lanes/).
+
 | Machine | Examples |
 | ------- | -------- |
-| DNS hostname | `tennis.*`, `score.*` |
+| DNS hostname | `tennis.*`, `score.*` ([`surfaces.toml`](../../config/surfaces.toml)) |
 | ConceptDomain | `trading`, `partners`, `portal` ([`concept-domains.ts`](../../lib/portal/concept-domains.ts)) |
 | Vocabulary namespace | `page.` · `ops.` · `ui.` · `api.` |
 | Chrome Domain lane | `partner` · `trading` · `control` |
+| Session archive lane | `tennis-hq` · `partner` (not a ConceptDomain) |
 
 Portal semantic vocabulary (~145) binds chrome. Domain glossary (~460) holds
 sports/partner/telegram meaning. Tennis board surface map is intentionally thin
 (`page.tennis` · `api.partner` · `ui.semantic.*`) — expand only with product
-intent.
+intent. Typed branded IDs (`SessionId`, `/portal/brands/` Bun×brand map) are a
+separate plane — hand off to [`branded-ids`](../../.agents/skills/branded-ids/).
 
 ## Building blocks
 
@@ -94,6 +99,7 @@ bun run verify:portal:static
 bun run portal:css:score:power
 bun run surfaces:check           # when surfaces.toml / dual-plane notes change
 bun run tennis:agent-auth:check  # when tennis registry evidence touched
+bun run verify:weave -- --subdomains  # cross-host tennis + score probes
 bun run skills:validate          # when the skill changes
 ```
 
@@ -101,7 +107,8 @@ bun run skills:validate          # when the skill changes
 <a id="4.1.validate-colors"></a> <a id="4.1.test-colors"></a>
 <a id="4.1.power-ui"></a> <a id="4.1.verify-static"></a>
 <a id="4.1.chrome-apply"></a> <a id="4.1.surfaces-check"></a>
-<a id="4.1.tennis-agent-auth"></a> <a id="4.1.skills-validate"></a>
+<a id="4.1.tennis-agent-auth"></a> <a id="4.1.verify-weave-subdomains"></a>
+<a id="4.1.skills-validate"></a>
 <a id="4.1"></a>
 
 ### Flags / settings
@@ -122,6 +129,7 @@ immediately above this heading. Validate: `bun run docs:refid:check`. Suggest:
 | `portal:chrome:apply` | `4.1.chrome-apply` | [`#4.1.chrome-apply`](#4.1.chrome-apply) | — | — | rewrite chrome | `bun run portal:chrome:apply` |
 | `surfaces:check` | `4.1.surfaces-check` | [`#4.1.surfaces-check`](#4.1.surfaces-check) | — | — | bake drift | `bun run surfaces:check` |
 | `tennis:agent-auth:check` | `4.1.tennis-agent-auth` | [`#4.1.tennis-agent-auth`](#4.1.tennis-agent-auth) | — | — | status artifact | `bun run tennis:agent-auth:check` |
+| `verify:weave` | `4.1.verify-weave-subdomains` | [`#4.1.verify-weave-subdomains`](#4.1.verify-weave-subdomains) | `--subdomains` | — | off | `bun run verify:weave -- --subdomains` |
 | `skills:validate` | `4.1.skills-validate` | [`#4.1.skills-validate`](#4.1.skills-validate) | — | — | skill layout | `bun run skills:validate` |
 
 ## Do not

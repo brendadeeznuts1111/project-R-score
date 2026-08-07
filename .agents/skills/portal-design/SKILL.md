@@ -92,6 +92,7 @@ bun run portal:css:score:power
 # when surfaces / tennis inventory touched:
 bun run surfaces:check
 bun run tennis:agent-auth:check
+bun run verify:weave -- --subdomains
 ```
 
 Fresh rerun (color claim): `bun run test:colors`

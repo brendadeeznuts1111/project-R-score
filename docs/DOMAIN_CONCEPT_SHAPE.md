@@ -85,5 +85,14 @@ and the [concept graph](https://score.factory-wager.com/portal/concepts/graph/).
   portal and registry.
 - `wiki.factory-wager.com` is the GitHub Pages documentation surface. It remains
   a separate delivery plane.
+- `tennis.factory-wager.com` is a separate Worker Market Desk plane — not Pages.
+  Portal evidence lives at `/portal/tennis/` only. See
+  [`docs/design/portal-design-agent.md`](design/portal-design-agent.md) (Portal
+  Design agent) and [`tennis-hq-registry.md`](harness/tenants/tennis-hq-registry.md).
 - Merge authority is local `bun run bun:ci`; hosted checks do not replace it.
 - Deploy only a merged `main` revision, using the Proton-backed Pages workflow.
+
+**Visual identity vs ConceptDomain:** theme / color kernels / venue marks are
+owned by Portal Design
+([`.agents/skills/portal-design/`](../.agents/skills/portal-design/)); typed
+branded IDs stay with [`branded-ids`](../.agents/skills/branded-ids/).

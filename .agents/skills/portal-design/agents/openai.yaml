@@ -19,6 +19,10 @@ default_prompt: |
     bun run validate:colors
     bun run verify:portal:static
     bun run portal:css:score:power
+  Dual-plane (when hosts/tennis touched):
+    bun run surfaces:check
+    bun run tennis:agent-auth:check
+    bun run verify:weave -- --subdomains
   Fresh rerun: bun run test:colors  (claim color-kernel-theme-aliases)
 
   Lane rule: stage only claimed portal/theme/skill files; never git add -A.

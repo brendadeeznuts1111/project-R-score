@@ -16,6 +16,12 @@ readiness)
 **Portal** [`/portal/tennis/`](../../../public/portal/tennis/) ·
 [`/portal/env/`](../../../public/portal/env/)
 
+**Dual-plane / UI chrome** — live Worker desk ≠ Pages evidence board. Visual
+unification (theme · kernels · primitives) is owned by Portal Design
+([`.agents/skills/portal-design/`](../../../.agents/skills/portal-design/) ·
+[`docs/design/portal-design-agent.md`](../../design/portal-design-agent.md)).
+Hostname inventory: [`config/surfaces.toml`](../../../config/surfaces.toml).
+
 **Producer runtime**
 [`https://tennis.factory-wager.com`](https://tennis.factory-wager.com) ·
 Cloudflare Worker `tennis-hq`
