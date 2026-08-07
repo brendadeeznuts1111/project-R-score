@@ -67,6 +67,8 @@ export function unknownLongOptionLeaves(
 export const LINT_WIRES_DOC = 'docs/design/partner-surface-inventory.md' as const;
 export const LINT_WIRES_SECTION = '4.1' as const;
 export const LINT_WIRES_LEAVES = ['help', 'scan', 'why', 'document', 'strict-globs'] as const;
+/** Full long-option allowlist (REF:ID leaves + teaching/meta flags not in Flags table). */
+export const LINT_WIRES_ALLOWED_LONG = [...LINT_WIRES_LEAVES, 'rules', 'fix'] as const;
 export function lintWiresFlagDocRef(leaf: (typeof LINT_WIRES_LEAVES)[number] | string) {
   return flagDocRefAt(LINT_WIRES_SECTION, leaf);
 }
@@ -105,6 +107,8 @@ export const IMAGES_GENERATE_LEAVES = [
   'json',
   'dry-run',
 ] as const;
+/** Full long-option allowlist (`--template` is template picker, not a Flags-table leaf). */
+export const IMAGES_GENERATE_ALLOWED_LONG = [...IMAGES_GENERATE_LEAVES, 'template'] as const;
 export function imagesGenerateFlagDocRef(leaf: (typeof IMAGES_GENERATE_LEAVES)[number] | string) {
   return flagDocRefAt(IMAGES_GENERATE_SECTION, leaf);
 }
@@ -121,6 +125,28 @@ export const OPS_SNAPSHOT_LEAVES = [
   'seed-force',
   'seed-tenants',
   'no-seed',
+] as const;
+/**
+ * Full long-option allowlist for ops:snapshot (seed REF:ID leaves + bake toggles).
+ * `default` is conceptual (no `--default` flag).
+ */
+export const OPS_SNAPSHOT_ALLOWED_LONG = [
+  'seed',
+  'seed-force',
+  'seed-tenants',
+  'no-seed',
+  'out',
+  'no-report',
+  'no-routing',
+  'no-static',
+  'force-routing',
+  'publish',
+  'no-channel-meta',
+  'no-compliance',
+  'no-monorepo-health',
+  'webview',
+  'no-toc-limits',
+  'seed-toc-limits-force',
 ] as const;
 export function opsSnapshotFlagDocRef(leaf: (typeof OPS_SNAPSHOT_LEAVES)[number] | string) {
   return flagDocRefAt(OPS_SNAPSHOT_SECTION, leaf);

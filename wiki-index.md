@@ -332,6 +332,7 @@ bun run telegram:handshake:catalog
 bun run test:seat-desk
 bun test tests/identity-*.test.ts
 bun run docs:refid:check
+bun run docs:refid:check --json   # planes · registry · discovery issue counts
 bun run docs:refid:audit          # flags-table-only=0
 bun run partner-surface-inventory:validate
 bun run verify:portal:static

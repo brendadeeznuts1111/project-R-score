@@ -53,6 +53,8 @@ bun run docs:refid:check:strict
 bun tools/docs-refid.ts check --registry-only
 # Report-only (never fails) + inventory of Flags tables across docs/
 bun run docs:refid:check:dry-run
+# Machine planes + registry (design · portal · harness · discovery)
+bun run docs:refid:check --json
 # Inventory only: registered · Flags-only candidates · leave-as-is
 bun run docs:refid:audit
 bun run docs:refid:audit --json
