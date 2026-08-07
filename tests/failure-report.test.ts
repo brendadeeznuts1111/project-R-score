@@ -65,6 +65,21 @@ describe('test-failures parser', () => {
     });
   });
 
+  test('junitEnvFromXml accepts property-form hostname fallback', () => {
+    // Docs list hostname as a <property>; runtime emits it on <testsuite>.
+    // Property-only input (no testsuite attr) must still yield hostname.
+    const env = junitEnvFromXml(
+      '<testsuites><testsuite><properties><property name="hostname" value="prop-host" /></properties><testcase name="x" /></testsuite></testsuites>'
+    );
+    expect(env.hostname).toBe('prop-host');
+
+    // When both forms present, the testsuite attribute wins.
+    const both = junitEnvFromXml(
+      '<testsuites><testsuite hostname="attr-host"><properties><property name="hostname" value="prop-host" /></properties><testcase name="x" /></testsuite></testsuites>'
+    );
+    expect(both.hostname).toBe('attr-host');
+  });
+
   test('mergeJunitEnv first non-empty wins', () => {
     const env = mergeJunitEnv([
       {
