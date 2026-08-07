@@ -13,6 +13,7 @@
  * here for a single import surface — not duplicated.
  */
 
+import { hashPassword } from '../security/password-hash.ts';
 import type { TokenId, TreeNodeId } from '../types/branded.ts';
 import {
   IdentityError,
@@ -62,7 +63,7 @@ export async function changePassword(
   const strength = validatePasswordStrength(newPassword);
   if (!strength.ok) throw new WeakPasswordError(strength.feedback);
 
-  const passwordHash = await Bun.password.hash(newPassword, { algorithm: 'argon2id' });
+  const passwordHash = await hashPassword(newPassword);
   identity.rotatePasswordHash(nodeId, passwordHash);
   identity.logAuthEvent({ nodeId, action: 'password_changed' });
 

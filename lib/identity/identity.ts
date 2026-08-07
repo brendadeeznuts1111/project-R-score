@@ -9,7 +9,8 @@
  * so `REFERENCES tree_nodes(id)` resolves against the account tree.
  *
  * Security invariants:
- *   - Passwords: argon2id via Bun.password; verified with Bun.password.verify
+ *   - Passwords: argon2id via Bun.password with OWASP-aligned defaults
+ *     (`lib/security/password-hash.ts`); verified with Bun.password.verify
  *     (constant-time). Plaintext passwords never touch the DB.
  *   - Sessions: the raw bearer token (branded TokenId) is NEVER stored —
  *     only its SHA-256 hex digest (token_hash PK). SessionId is derived
@@ -42,6 +43,7 @@
  */
 
 import { Database } from 'bun:sqlite';
+import { hashPassword } from '../security/password-hash.ts';
 import {
   asIdentityId,
   asPortalTenantId,
@@ -398,7 +400,7 @@ export class IdentitySystem {
       }
     }
 
-    const passwordHash = await Bun.password.hash(password, { algorithm: 'argon2id' });
+    const passwordHash = await hashPassword(password);
 
     this.db
       .query(
