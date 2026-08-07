@@ -2133,6 +2133,7 @@
     "rules": "bun run scripts/bun-rules.ts",
     "prelint": "bun run ci:bun:check",
     "lane:status": "bun tools/lane-status.ts",
+    "velocity:cold-start": "bun tools/velocity-cold-start.ts",
     "sweep:domain": "bun tools/domain-sweep.ts",
     "sweep:domain:fast": "bun tools/domain-sweep.ts --fast",
     "sweep:domain:cron": "bun tools/domain-sweep-cron.ts",

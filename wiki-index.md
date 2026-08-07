@@ -35,7 +35,7 @@ owns the machine-artifact companion.
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
 | Human hub          | [Home](/)                                                                                                                        |
 | Docs index         | [`docs/`](docs/)                                                                                                                 |
-| Agent entry        | [`AGENTS.md`](AGENTS.md) · [`docs/AGENTS.md`](docs/AGENTS.md)                                                                    |
+| Agent entry        | [`AGENTS.md`](AGENTS.md) (entry + capability map) · routing [`docs/AGENTS.md`](docs/AGENTS.md)                                   |
 | Workspace map      | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                   |
 | Harness JIT        | [`docs/harness/`](docs/harness/) · `bun run harness:status`                                                                      |
 | Coding standards   | [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)                                                                 |
