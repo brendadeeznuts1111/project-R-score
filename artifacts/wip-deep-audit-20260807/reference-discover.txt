@@ -1,0 +1,22 @@
+== reference:discover:check ==
+exit:0
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_DISCOVER_ACTOR ↔ CONCEPT_DISCOVER_AUTO_PROPOSE
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_REGISTRY_DB ↔ CONCEPT_REGISTRY_PORT
+         repair: Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md
+  [INFO ] similar-env · Similar env var names: DASHBOARD_TEST_PORT ↔ DASHBOARD_TEST_PORT_RANGE
+         repair: Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional
+  [INFO ] similar-env · Similar env var names: DATABASE_PORT ↔ DATABASE_URL
+         repair: Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional
+  [INFO ] similar-env · Similar env var names: DATABASE_URL ↔ OPS_DATABASE_URL
+         repair: Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional
+  [INFO ] similar-env · Similar env var names: DEEP_AUDIT_JSON ↔ DEEP_AUDIT_SEED
+         repair: Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)
+  [INFO ] similar-env · Similar env var names: DOD_DB_PATH ↔ OPS_DB_PATH
+         repair: Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)
+  [INFO ] similar-env · Similar env var names: DOMAIN_REGISTRY_PATH ↔ STATIC_REGISTRY_PATH
+         repair: Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md
+  [INFO ] similar-env · Similar env var names: FW_INFRA_SECRETS_SERVICE ↔ REGISTRY_SECRETS_SERVICE
+         repair: Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md
+  … 43 more (--json for full report)
