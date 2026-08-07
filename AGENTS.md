@@ -573,8 +573,14 @@ Flag CLIs with REF:ID tables hard-reject unknown `--flags` by default (exit
 [`lib/docs/ref-id-tool-flags.ts`](lib/docs/ref-id-tool-flags.ts). Never put
 allowlist JSON in `.env`.
 
-| Bun.env key | Default | Behavior |
-| ----------- | ------- | -------- |
+**Not bun-types / not oven-sh env.** `BUN_STRIP_UNKNOWN` and `BUN_LOG_UNKNOWN`
+are **FactoryWager harness** keys read via `Bun.env` (`BUN_UNKNOWN_FLAG_ENV`).
+They do **not** appear in `bun-types`. Real Bun CLI surfaces (e.g.
+`--console-depth`) use catalog + types: `bun tools/bun-doc-refs.ts suggest` ·
+`bun run bun:types-inventory`.
+
+| Harness env key | Default | Behavior |
+| --------------- | ------- | -------- |
 | **`BUN_STRIP_UNKNOWN`** | unset / not `true` | Unknown long options → **fail** |
 | **`BUN_STRIP_UNKNOWN=true`** | — | **Strip** unknowns and continue (local prototyping) |
 | `BUN_LOG_UNKNOWN` | unset → **on** | When stripping, warn on stderr; set `false` to silence |

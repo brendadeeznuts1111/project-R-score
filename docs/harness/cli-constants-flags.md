@@ -8,7 +8,7 @@ Code SSOT (do **not** invent a parallel allowlist module):
 | Piece                             | Path                                                                                                                                                                    |
 | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Allowlists + guard                | [`lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts) · `ALLOWED_LONG_REGISTRY` · `applyUnknownLongOptionGuardFor`                                     |
-| Env toggles only                  | `BUN_STRIP_UNKNOWN` · `BUN_LOG_UNKNOWN` (`BUN_UNKNOWN_FLAG_ENV`)                                                                                                        |
+| Env toggles only                  | `BUN_STRIP_UNKNOWN` · `BUN_LOG_UNKNOWN` (`BUN_UNKNOWN_FLAG_ENV`) — **harness**, not bun-types                                                                                                                                        |
 | REF:ID prove                      | `bun run docs:refid:check` · `bun test tests/docs-ref-id-tool-exports.test.ts`                                                                                          |
 | Agent one-shot                    | `bun run cli:flags:check`                                                                                                                                               |
 | Bun create / init / runtime knobs | [`AUTHORITY.md`](AUTHORITY.md) · [`lib/env-check.ts`](../../lib/env-check.ts) · [AGENTS § Unknown long options](../../AGENTS.md#unknown-long-options-bun_strip_unknown) |
@@ -148,6 +148,9 @@ bun run docs:refid:check
 | `concept:health` | `period` · `output` | [`scripts/concept-health.ts`](../../scripts/concept-health.ts) |
 | `ops:loop:gate-backfill` | `dry-run` · `no-outbox` · `r2` | [`tools/ops-loop-gate-backfill.ts`](../../tools/ops-loop-gate-backfill.ts) |
 | `ops:limits:check` | `partner` · `all` · `hours` · `clv` · `multi` · `capture` · `alerts` · `seed` · `force-seed` · `json` · `inspect` | [`tools/ops-check-limits.ts`](../../tools/ops-check-limits.ts) |
+| `identity:admin` | `as` · `db` · `json` · `limit` · `password` | [`tools/identity-admin.ts`](../../tools/identity-admin.ts) |
+| `provision:queue` | `dry-run` · `email` · `id` · `mode` · `partner` · `pass` · `platform` · `step` · `to` · `user` | [`tools/provision-queue.ts`](../../tools/provision-queue.ts) |
+| `monorepo:health` | `archive` · `inspect` · `interactive` · `interval` · `json` · `no-build` · `no-history` · `validate` · `watch` · `with-coverage` · `with-tests` | [`tools/monorepo-health.ts`](../../tools/monorepo-health.ts) |
 
 ---
 

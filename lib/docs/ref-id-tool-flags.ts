@@ -13,15 +13,21 @@
  * runtime docs, not a monorepo script.
  *
  * Unknown long-option guards: allowlists live in this file (`ALLOWED_LONG_REGISTRY`);
- * Bun.env only toggles behavior (`BUN_STRIP_UNKNOWN` · `BUN_LOG_UNKNOWN`).
+ * env toggles use the `BUN_` prefix because we read them via `Bun.env` — they are
+ * **FactoryWager harness policy**, not Bun runtime types (not in bun-types).
+ * `BUN_STRIP_UNKNOWN` · `BUN_LOG_UNKNOWN` — never invent these as oven-sh APIs.
+ *
+ * Real Bun surfaces elsewhere (e.g. `--console-depth`, `Bun.inspect`) are grounded
+ * via catalog `bun tools/bun-doc-refs.ts suggest` + bun-types where typed.
  */
 import { hrefFromRefId, type ToolFlagRef } from './ref-id.ts';
 
 type EnvMap = { [key: string]: string | undefined };
 
 /**
- * Bun.env key names for unknown long-option guard policy (not the allowlists).
- * Allowlists stay in code — see `ALLOWED_LONG_REGISTRY`.
+ * Harness env key names for unknown long-option guard policy (not allowlists,
+ * not bun-types). Allowlists stay in code — see `ALLOWED_LONG_REGISTRY`.
+ * Read with `Bun.env[key]` only.
  */
 export const BUN_UNKNOWN_FLAG_ENV = {
   /** `true` → strip unknown `--flags` and continue; else hard-fail (exit 2 / throw) */
@@ -420,6 +426,38 @@ export const OPS_LIMITS_CHECK_ALLOWED_LONG = [
   'inspect',
 ] as const;
 
+/** § — identity:admin (`tools/identity-admin.ts`) */
+export const IDENTITY_ADMIN_ALLOWED_LONG = ['as', 'db', 'json', 'limit', 'password'] as const;
+
+/** § — provision:queue (`tools/provision-queue.ts`) */
+export const PROVISION_QUEUE_ALLOWED_LONG = [
+  'dry-run',
+  'email',
+  'id',
+  'mode',
+  'partner',
+  'pass',
+  'platform',
+  'step',
+  'to',
+  'user',
+] as const;
+
+/** § — monorepo:health (`tools/monorepo-health.ts`) */
+export const MONOREPO_HEALTH_ALLOWED_LONG = [
+  'archive',
+  'inspect',
+  'interactive',
+  'interval',
+  'json',
+  'no-build',
+  'no-history',
+  'validate',
+  'watch',
+  'with-coverage',
+  'with-tests',
+] as const;
+
 /** CLI names keyed in `ALLOWED_LONG_REGISTRY` (package-script style). */
 export type AllowedLongCliName =
   | 'lint-wires'
@@ -439,10 +477,13 @@ export type AllowedLongCliName =
   | 'telegram:handshake:catalog'
   | 'concept:health'
   | 'ops:loop:gate-backfill'
-  | 'ops:limits:check';
+  | 'ops:limits:check'
+  | 'identity:admin'
+  | 'provision:queue'
+  | 'monorepo:health';
 
 /**
- * Central allowlist registry — code SSOT (not env JSON).
+ * Central allowlist registry — code SSOT (not env JSON, not bun-types).
  * CLIs should prefer `applyUnknownLongOptionGuard(argv, ALLOWED_LONG_REGISTRY[name], …)`.
  */
 export const ALLOWED_LONG_REGISTRY = {
@@ -464,6 +505,9 @@ export const ALLOWED_LONG_REGISTRY = {
   'concept:health': CONCEPT_HEALTH_ALLOWED_LONG,
   'ops:loop:gate-backfill': OPS_LOOP_GATE_BACKFILL_ALLOWED_LONG,
   'ops:limits:check': OPS_LIMITS_CHECK_ALLOWED_LONG,
+  'identity:admin': IDENTITY_ADMIN_ALLOWED_LONG,
+  'provision:queue': PROVISION_QUEUE_ALLOWED_LONG,
+  'monorepo:health': MONOREPO_HEALTH_ALLOWED_LONG,
 } as const satisfies Record<AllowedLongCliName, readonly string[]>;
 
 /** Apply guard using `ALLOWED_LONG_REGISTRY[cliName]`. */

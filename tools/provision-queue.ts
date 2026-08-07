@@ -21,10 +21,16 @@ import {
   type ProvisionStep,
 } from '../lib/provisioning/queue.ts';
 import { runAutomatedTestTask } from '../lib/provisioning/run-automated.ts';
-import { logDepth, logTable } from '../lib/console-depth.ts';
+import { logDepth, logTable } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  PROVISION_QUEUE_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+export { PROVISION_QUEUE_ALLOWED_LONG };
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
-const args = process.argv.slice(2);
+const args = applyUnknownLongOptionGuardFor('provision:queue', process.argv.slice(2));
 const cmd = args[0] ?? 'help';
 
 function flag(name: string): string | undefined {

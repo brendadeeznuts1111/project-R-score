@@ -22,7 +22,13 @@ import { IdentitySystem, type IdentityRole } from '../lib/identity/identity.ts';
 import { getTimeline } from '../lib/identity/timeline.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { asTelegramUserId, type TreeNodeId } from '../lib/types/branded.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { cliOut } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  IDENTITY_ADMIN_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+export { IDENTITY_ADMIN_ALLOWED_LONG };
 
 const ROOT = joinPath(import.meta.dir, '..');
 const DEFAULT_DB = joinPath(ROOT, 'data', 'accounts-operations.db');
@@ -39,7 +45,7 @@ const DEMO_USERS: { slug: string; role: IdentityRole; name: string; telegram: st
 
 // ── Arg parsing ──────────────────────────────────────────────────────────
 
-const args = Bun.argv.slice(2);
+const args = applyUnknownLongOptionGuardFor('identity:admin', Bun.argv.slice(2));
 const sub = args[0];
 
 function flagValue(name: string): string | undefined {
@@ -130,7 +136,7 @@ async function seedDemo(): Promise<void> {
 function aliases(): void {
   const board = collectBoardData(dbPath());
   if (hasFlag('--json')) {
-    jsonOut(board.aliases);
+    cliOut(board.aliases, { json: true });
     return;
   }
   if (board.aliases.length === 0) {
@@ -178,7 +184,7 @@ function timeline(): void {
     if (!nodeId) fail(`alias not found: ${slug}`);
     const events = getTimeline(identity, nodeId, { limit });
     if (hasFlag('--json')) {
-      jsonOut(events);
+      cliOut(events, { json: true });
       return;
     }
     if (events.length === 0) {

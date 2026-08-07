@@ -143,6 +143,24 @@ const cases: Case[] = [
     expectExit: [2],
     stdoutOrStderrIncludes: ['❌ Unknown long option(s) in ops:limits:check: --typo'],
   },
+  {
+    name: 'identity:admin unknown',
+    cmd: ['bun', 'tools/identity-admin.ts', 'aliases', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in identity:admin: --typo'],
+  },
+  {
+    name: 'provision:queue unknown',
+    cmd: ['bun', 'tools/provision-queue.ts', 'list', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in provision:queue: --typo'],
+  },
+  {
+    name: 'monorepo:health unknown',
+    cmd: ['bun', 'tools/monorepo-health.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in monorepo:health: --typo'],
+  },
 ];
 
 function okExit(expect: Case['expectExit'], code: number): boolean {
