@@ -82,6 +82,26 @@ import {
   setActiveCallSignForTelegram,
 } from '../lib/telegram/flows/seat-telegram.ts';
 import { sendTelegramBotMessage } from '../lib/telegram/telegram-api.ts';
+import {
+  TELEGRAM_OPS_DOC,
+  TELEGRAM_OPS_LEAVES,
+  TELEGRAM_OPS_SECTION,
+  formatFlagDocRefLine,
+  telegramOpsFlagDocRef,
+  telegramOpsToolFlags,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+/** Local + re-export alias (`flagDocRef` matches bun-types-status). */
+const flagDocRef = telegramOpsFlagDocRef;
+
+/** Re-export REF:ID SSOT for registry / tests. */
+export {
+  TELEGRAM_OPS_DOC,
+  TELEGRAM_OPS_LEAVES,
+  TELEGRAM_OPS_SECTION,
+  telegramOpsFlagDocRef as flagDocRef,
+  telegramOpsToolFlags,
+};
 
 function usage(): never {
   console.log(`Usage: bun tools/telegram-ops.ts <command> [options]
@@ -105,6 +125,9 @@ link-package-group:
   --no-dm             Skip package-room welcome DM
   --no-ack            Skip ack_package_group_linked JSONL append
   --db <path>
+  REF:ID (${TELEGRAM_OPS_DOC} §${TELEGRAM_OPS_SECTION}):
+    ${formatFlagDocRefLine(TELEGRAM_OPS_SECTION, TELEGRAM_OPS_LEAVES)}
+    Prove: bun run docs:refid:check · import { flagDocRef } from tools/telegram-ops.ts
 
 acknowledge-pending:
   <CODE>              Partner code with registry row
@@ -531,10 +554,10 @@ function parseLinkPackageGroupArgs(argv: string[]): LinkPackageGroupOpts | null 
     console.log(`Usage: bun tools/telegram-ops.ts link-package-group <CODE> <chat_id> [options]
 
 Options:
-  --invite <url>        Store invite link; include in welcome DM
-  --requested-by <cs>   Prefer this call-sign for DM telegram_id
-  --no-dm               Skip package-room welcome DM
-  --no-ack              Skip ack_package_group_linked JSONL append
+  --invite <url>        Store invite link; include in welcome DM  (${flagDocRef('invite').refId})
+  --requested-by <cs>   Prefer this call-sign for DM telegram_id  (${flagDocRef('requested-by').refId})
+  --no-dm               Skip package-room welcome DM  (${flagDocRef('no-dm').refId})
+  --no-ack              Skip ack_package_group_linked JSONL append  (${flagDocRef('no-ack').refId})
   --db <path>
 `);
     process.exit(0);

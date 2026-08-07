@@ -13,6 +13,18 @@
  */
 import { hrefFromRefId, type ToolFlagRef } from './ref-id.ts';
 
+/** Build REF:ID + href for a leaf under a section (tool-side `flagDocRef` pattern). */
+export function flagDocRefAt(
+  section: string,
+  leaf: string
+): {
+  refId: string; // brand-ok — design-doc fragment key (REF:ID v2), not domain brand
+  href: string;
+} {
+  const refId = `${section}.${leaf}`; // brand-ok — REF:ID fragment
+  return { refId, href: hrefFromRefId(refId) };
+}
+
 /** Build tool flag rows for a fixed section + keyword leaves. */
 export function toolFlagsAt(
   section: string,
@@ -20,31 +32,42 @@ export function toolFlagsAt(
   source: string
 ): ToolFlagRef[] {
   return leaves.map(leaf => {
-    const refId = `${section}.${leaf}`;
-    return { refId, href: hrefFromRefId(refId), source };
+    const { refId, href } = flagDocRefAt(section, leaf);
+    return { refId, href, source };
   });
+}
+
+/** Human one-liner for CLI --help: `leaf → section.leaf`. */
+export function formatFlagDocRefLine(section: string, leaves: readonly string[]): string {
+  return leaves.map(leaf => `${leaf} → ${section}.${leaf}`).join(' · ');
 }
 
 /** §4.1 — lint-wires (`scripts/validate-wire-traps.ts`) */
 export const LINT_WIRES_DOC = 'docs/design/partner-surface-inventory.md' as const;
 export const LINT_WIRES_SECTION = '4.1' as const;
+export const LINT_WIRES_LEAVES = ['help', 'scan', 'why', 'document', 'strict-globs'] as const;
+export function lintWiresFlagDocRef(leaf: (typeof LINT_WIRES_LEAVES)[number] | string) {
+  return flagDocRefAt(LINT_WIRES_SECTION, leaf);
+}
 export function lintWiresToolFlags(): ToolFlagRef[] {
-  return toolFlagsAt(
-    LINT_WIRES_SECTION,
-    ['help', 'scan', 'why', 'document', 'strict-globs'],
-    'scripts/validate-wire-traps.ts'
-  );
+  return toolFlagsAt(LINT_WIRES_SECTION, LINT_WIRES_LEAVES, 'scripts/validate-wire-traps.ts');
 }
 
 /** §1.1 — partner:onboard (`tools/partner-onboard.ts`) */
 export const PARTNER_ONBOARD_DOC = 'docs/design/unified-partner-profile.md' as const;
 export const PARTNER_ONBOARD_SECTION = '1.1' as const;
+export const PARTNER_ONBOARD_LEAVES = [
+  'deal',
+  'currency',
+  'hold-target',
+  'initial-balance',
+  'funding-method',
+] as const;
+export function partnerOnboardFlagDocRef(leaf: (typeof PARTNER_ONBOARD_LEAVES)[number] | string) {
+  return flagDocRefAt(PARTNER_ONBOARD_SECTION, leaf);
+}
 export function partnerOnboardToolFlags(): ToolFlagRef[] {
-  return toolFlagsAt(
-    PARTNER_ONBOARD_SECTION,
-    ['deal', 'currency', 'hold-target', 'initial-balance', 'funding-method'],
-    'tools/partner-onboard.ts'
-  );
+  return toolFlagsAt(PARTNER_ONBOARD_SECTION, PARTNER_ONBOARD_LEAVES, 'tools/partner-onboard.ts');
 }
 
 /** §1.1 — images:generate (`scripts/images-generate.ts`) */
@@ -72,12 +95,12 @@ export function opsSnapshotToolFlags(): ToolFlagRef[] {
 /** §1.1 — telegram:ops link-package-group (`tools/telegram-ops.ts`) */
 export const TELEGRAM_OPS_DOC = 'docs/harness/tenants/partner-package-group-handshake.md' as const;
 export const TELEGRAM_OPS_SECTION = '1.1' as const;
+export const TELEGRAM_OPS_LEAVES = ['invite', 'no-dm', 'no-ack', 'requested-by'] as const;
+export function telegramOpsFlagDocRef(leaf: (typeof TELEGRAM_OPS_LEAVES)[number] | string) {
+  return flagDocRefAt(TELEGRAM_OPS_SECTION, leaf);
+}
 export function telegramOpsToolFlags(): ToolFlagRef[] {
-  return toolFlagsAt(
-    TELEGRAM_OPS_SECTION,
-    ['invite', 'no-dm', 'no-ack', 'requested-by'],
-    'tools/telegram-ops.ts'
-  );
+  return toolFlagsAt(TELEGRAM_OPS_SECTION, TELEGRAM_OPS_LEAVES, 'tools/telegram-ops.ts');
 }
 
 /** §1.1 — bun --filter fan-out (runtime; no monorepo tool owner) */
