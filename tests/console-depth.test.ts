@@ -1,12 +1,15 @@
 // @see https://bun.com/docs/runtime/color — Bun.color
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — console depth 2 vs 4
+// @see https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin — bun run -
+// @see https://bun.com/docs/runtime#bun-run-console-depth — --console-depth with bun run
 /**
  * console-depth.test.ts — policy helpers in lib/console-depth.ts.
  *
  * Width vectors exercise Bun.stringWidth directly (natives are not re-exported).
  * Layout helpers (padEndWidth / truncateWidth / fitVisible) stay covered here.
  * Object-inspection depth anchors the official Bun console docs fixture.
+ * `bun run -` stdin + flag order: https://bun.com/docs/runtime
  */
 
 import { describe, expect, spyOn, test } from 'bun:test';
@@ -229,6 +232,34 @@ describe('inspect / getConsoleDepth', () => {
     const pin = inspect(nested, { colors: false });
     expect(pin).toContain("d: \"deep\"");
   });
+
+  /**
+   * `bun run -` pipes TS/JSX from stdin (no temp file).
+   * Flag order: `bun --console-depth N run -` (flags after `run -` are argv, not Bun flags).
+   * @see https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin
+   * @see https://bun.com/docs/runtime#bun-run-console-depth
+   * Spawn outside this repo so project bunfig `[console] depth = 6` does not mask the flag.
+   */
+  test('bun run - stdin + --console-depth (docs flag order)', () => {
+    const src = "console.log({ a: { b: { c: { d: 'deep' } } } })";
+    const run = (depth: number) => {
+      const r = Bun.spawnSync(['bun', `--console-depth=${depth}`, 'run', '-'], {
+        cwd: '/tmp',
+        stdin: new TextEncoder().encode(src),
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+      expect(r.exitCode).toBe(0);
+      return r.stdout.toString();
+    };
+    const shallow = run(2);
+    const deep = run(5);
+    expect(shallow).toContain('[Object ...]');
+    expect(shallow).not.toContain('deep');
+    expect(deep).toContain('deep');
+    expect(deep).not.toContain('[Object ...]');
+  });
+
   test('compact mode produces a single line', () => {
     const out = inspect({ a: { b: 1 } }, { compact: true });
     expect(out).not.toContain('\n');

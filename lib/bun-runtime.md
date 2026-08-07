@@ -322,6 +322,8 @@ Shebang: `#!/usr/bin/env bun`. Persistent knobs: `bunfig.toml`.
 
 Canonical Bun docs:
 [Object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth) ·
+[`bun run -` stdin](https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin) ·
+[`--console-depth` with run](https://bun.com/docs/runtime#bun-run-console-depth) ·
 module note [`console-depth.md`](./console-depth.md) · policy
 [`console-depth.ts`](./console-depth.ts).
 
@@ -342,16 +344,30 @@ console.log(nested);
 | Method                 | Command / config                         | Scope                  |
 | ---------------------- | ---------------------------------------- | ---------------------- |
 | **CLI flag**           | `bun --console-depth <number> script.ts` | Single run             |
+| **Stdin snippet**      | `bun --console-depth N run -`            | Piped one-shot TS/JSX  |
 | **Configuration file** | `[console] depth` in `bunfig.toml`       | Persistent across runs |
 | **Default**            | `2`                                      | Fallback               |
 
-The CLI flag takes precedence over the configuration file setting.
+The CLI flag takes precedence over the configuration file setting. Put Bun flags
+**immediately after `bun`** (before `run`); trailing flags are script argv.
 
 ```ts
 // With --console-depth 4
 console.log(nested);
 // { a: { b: { c: { d: 'deep' } } } }
 ```
+
+```bash
+# Agents / one-shots (no temp file)
+echo 'console.log({ a: { b: { c: { d: "deep" } } } })' | bun --console-depth=2 run -
+# → c: [Object ...]
+
+echo 'console.log({ a: { b: { c: { d: "deep" } } } })' | bun --console-depth=5 run -
+# → d: "deep"
+```
+
+Contract: `bun test tests/console-depth.test.ts -t "bun run - stdin"` (spawns
+from `/tmp` so this repo’s bunfig `depth = 6` does not mask the flag).
 
 ### FactoryWager layers
 

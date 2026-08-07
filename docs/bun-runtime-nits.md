@@ -25,6 +25,18 @@ bun run verify:bun-runtime-nits:save
 bun test tests/bun-runtime-nits-probes.test.ts
 ```
 
+## `bun run -` (stdin) + `--console-depth`
+
+| Command | Role |
+| ------- | ---- |
+| `echo '…' \| bun run -` | Execute TS/JSX from stdin (no temp file) |
+| `bun --console-depth=N run -` | Same + native inspect depth for `console.log` |
+
+Flag order: Bun flags **immediately after `bun`**, before `run` (same as `--watch`).
+@see [runtime#bun-run-to-pipe-code-from-stdin](https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin) ·
+[runtime#bun-run-console-depth](https://bun.com/docs/runtime#bun-run-console-depth).  
+Contract: `tests/console-depth.test.ts` (`bun run - stdin + --console-depth`).
+
 ## Inspect runtime truth (Bun 1.4)
 
 Project SSOT: [`lib/console-depth.ts`](../lib/console-depth.ts) exposes only options
