@@ -28,7 +28,6 @@
 
 import * as ts from 'typescript';
 import { jsonOut } from '../lib/console-depth.ts';
-import { BUN_BRAND_USAGES } from '../lib/docs/bun-brand-usages.ts';
 import {
   assertBunBrandUsages,
   mostSevereBunBrandProofState,
@@ -37,6 +36,8 @@ import {
   type BunBrandProofState,
   type BunBrandUsageDeclaration,
 } from '../lib/docs/bun-brand-contract.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+import { BUN_BRAND_USAGES } from '../lib/docs/bun-brand-usages.ts';
 
 export const BUN_BRAND_MAP_PATH = 'public/registry/bun-brand-map.json';
 export const BUN_BRAND_MAP_URL = '/registry/bun-brand-map.json';
@@ -1193,7 +1194,7 @@ export async function loadBunBrandMapInput(root: string, generatedAt?: string) {
 
 async function main(): Promise<void> {
   const root = new URL('..', import.meta.url).pathname.replace(/\/$/, '');
-  const args = new Set(Bun.argv.slice(2));
+  const args = new Set(applyUnknownLongOptionGuardFor('bun:brand-map', Bun.argv.slice(2)));
 
   if (args.has('--write-baseline')) {
     const input = await loadBunBrandMapInput(root);

@@ -19,8 +19,12 @@
  *   bun run audit:packages:env   — packages graph + env inventory bake
  */
 import { Glob } from 'bun';
+import { jsonOut, logTable } from '../lib/console-depth.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+import { buildPackageVaultMap } from '../lib/harness/packages-vault-map.ts';
 import { relativePath, resolvePath } from '../lib/path-bun.ts';
 import { parseEnvTemplate, scanTextForUsages, type EnvUsage } from './lib/env-defaults-scan.ts';
+import { buildEnvInventoryCompact } from './lib/env-inventory-compact.ts';
 import {
   SECRET_ALIASES,
   VAULT_REQUIRED_SECRETS,
@@ -28,12 +32,9 @@ import {
   dispositionForSecret,
   type SecretDisposition,
 } from './lib/env-secret-policy.ts';
-import { buildEnvInventoryCompact } from './lib/env-inventory-compact.ts';
-import { buildPackageVaultMap } from '../lib/harness/packages-vault-map.ts';
-import { jsonOut, logTable } from '../lib/console-depth.ts';
 
 const ROOT = process.cwd();
-const argv = Bun.argv.slice(2);
+const argv = applyUnknownLongOptionGuardFor('env:inventory', Bun.argv.slice(2));
 const JSON_OUT = argv.includes('--json');
 const VAULT_ONLY = argv.includes('--vault-only');
 const RATCHET = argv.includes('--ratchet');

@@ -157,12 +157,24 @@ describe('in-tool flagDocRef re-exports', () => {
       'packages:metafile-audit',
       'harness:violations',
       'portal:cli',
+      'bun:brand-map',
+      'env:inventory',
+      'check:import-graph',
     ] as const;
     for (const key of batch2) {
       expect(ALLOWED_LONG_REGISTRY[key].length).toBeGreaterThan(0);
     }
-    expect(Object.keys(ALLOWED_LONG_REGISTRY).length).toBeGreaterThanOrEqual(30);
+    expect(Object.keys(ALLOWED_LONG_REGISTRY).length).toBeGreaterThanOrEqual(33);
     expect(ALLOWED_LONG_REGISTRY['portal:cli'].length).toBeGreaterThan(40);
+    expect(ALLOWED_LONG_REGISTRY['bun:brand-map']).toEqual(['check', 'write-baseline', 'json']);
+    expect(ALLOWED_LONG_REGISTRY['env:inventory']).toEqual([
+      'json',
+      'vault-only',
+      'ratchet',
+      'write-baseline',
+      'bake',
+    ]);
+    expect(ALLOWED_LONG_REGISTRY['check:import-graph']).toEqual(['json', 'write-baseline']);
     // bun:pr:verify must include --diff (behavior-diff vs installed Bun)
     expect([...ALLOWED_LONG_REGISTRY['bun:pr:verify']]).toContain('diff');
   });

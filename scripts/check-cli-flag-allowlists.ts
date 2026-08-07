@@ -215,6 +215,24 @@ const cases: Case[] = [
     expectExit: [2],
     stdoutOrStderrIncludes: ['❌ Unknown long option(s) in portal:cli: --typo'],
   },
+  {
+    name: 'bun:brand-map unknown',
+    cmd: ['bun', 'tools/bun-brand-map.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in bun:brand-map: --typo'],
+  },
+  {
+    name: 'env:inventory unknown',
+    cmd: ['bun', 'scripts/env-inventory.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in env:inventory: --typo'],
+  },
+  {
+    name: 'check:import-graph unknown',
+    cmd: ['bun', 'scripts/check-import-graph.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in check:import-graph: --typo'],
+  },
 ];
 
 function okExit(expect: Case['expectExit'], code: number): boolean {
