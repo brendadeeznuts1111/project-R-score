@@ -153,6 +153,10 @@ bun run docs:refid:check
 | `monorepo:health` | `archive` · `inspect` · `interactive` · `interval` · `json` · `no-build` · `no-history` · `validate` · `watch` · `with-coverage` · `with-tests` | [`tools/monorepo-health.ts`](../../tools/monorepo-health.ts) |
 | `brand:status` | `once` · `repl` · `docs` · `watch` · `every` · `json` · `verbose` · `compact` · `lifecycle` · `flags` · `plane` · `lineage` · `zone` | [`tools/brand-status.ts`](../../tools/brand-status.ts) |
 | `docs:refid` | `strict-format` · `refid-strict` · `dry-run` · `registry-only` · `skip-refid-check` · `write-hrefs` · `json` · `section` · `keyword` · `flag` · `leaf` · `doc` · `section-ref` · `section-heading` · `script` · `shortcode` · `default` · `all` · `roots` | [`tools/docs-refid.ts`](../../tools/docs-refid.ts) |
+| `concept:audit` | watch · strict · output · filters (28 leaves) | [`scripts/concept-audit.ts`](../../scripts/concept-audit.ts) |
+| `concept:registry:graph` | `output` · `orphans` · `centrality` | [`scripts/concept-registry-graph.ts`](../../scripts/concept-registry-graph.ts) |
+| `concept:discover` | `scan` · `auto-propose` · `output` | [`scripts/concept-discover.ts`](../../scripts/concept-discover.ts) |
+| `seat:desk` | `field` · `force-new` · `no-pin` · `no-publish` · `post` · `json` · `template` · `intake-only` · `rails-only` · `thread-id` | [`tools/seat-desk-cli.ts`](../../tools/seat-desk-cli.ts) |
 
 ---
 

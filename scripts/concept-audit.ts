@@ -28,11 +28,17 @@
  * Watch mode uses Bun.file mtime polling (no node:fs) — `--watch-poll` is
  * an alias kept for CLI compatibility.
  */
-import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
+import { cliOut, colorize, logTable } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  CONCEPT_AUDIT_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
 import {
   countPortalConceptUsagesDetailed,
   type ConceptUsageBreakdown,
 } from '../lib/portal/concept-usage.ts';
+
+export { CONCEPT_AUDIT_ALLOWED_LONG };
 import {
   ACCOUNT_DOSSIER_SURFACE_CONCEPTS,
   API_INFRA_CONCEPTS,
@@ -274,49 +280,57 @@ function parseProvenanceFilter(raw: string | undefined): ConceptAuditProvenanceF
   return '';
 }
 
-export function parseConceptAuditOptions(argv: readonly string[] = Bun.argv): ConceptAuditOptions {
-  const outputRaw = resolveStr(argv, '--output', 'CONCEPT_AUDIT_OUTPUT');
-  const statusCsv = resolveCsv(argv, '--status', 'CONCEPT_AUDIT_FILTER');
+export function parseConceptAuditOptions(
+  argv: readonly string[] = Bun.argv.slice(2)
+): ConceptAuditOptions {
+  const guarded = applyUnknownLongOptionGuardFor('concept:audit', argv);
+  const outputRaw = resolveStr(guarded, '--output', 'CONCEPT_AUDIT_OUTPUT');
+  const statusCsv = resolveCsv(guarded, '--status', 'CONCEPT_AUDIT_FILTER');
   const headersRaw =
-    resolveStr(argv, '--output-headers', 'CONCEPT_AUDIT_OUTPUT_HEADERS') ??
+    resolveStr(guarded, '--output-headers', 'CONCEPT_AUDIT_OUTPUT_HEADERS') ??
     DEFAULT_OUTPUT_HEADERS.join(',');
 
   return {
-    watch: resolveBool(argv, '--watch', 'CONCEPT_AUDIT_WATCH', false),
-    watchPoll: resolveBool(argv, '--watch-poll', 'CONCEPT_AUDIT_WATCH_POLL', false),
-    watchPaths: resolveWatchPaths(argv),
-    watchDelayMs: resolveInt(argv, '--watch-delay-ms', 'CONCEPT_AUDIT_WATCH_DELAY_MS', 200),
-    strict: resolveBool(argv, '--strict', 'CONCEPT_AUDIT_STRICT', false),
-    strictUnused: resolveBool(argv, '--strict-unused', 'CONCEPT_AUDIT_STRICT_UNUSED', false),
+    watch: resolveBool(guarded, '--watch', 'CONCEPT_AUDIT_WATCH', false),
+    watchPoll: resolveBool(guarded, '--watch-poll', 'CONCEPT_AUDIT_WATCH_POLL', false),
+    watchPaths: resolveWatchPaths(guarded),
+    watchDelayMs: resolveInt(guarded, '--watch-delay-ms', 'CONCEPT_AUDIT_WATCH_DELAY_MS', 200),
+    strict: resolveBool(guarded, '--strict', 'CONCEPT_AUDIT_STRICT', false),
+    strictUnused: resolveBool(guarded, '--strict-unused', 'CONCEPT_AUDIT_STRICT_UNUSED', false),
     output: parseOutput(outputRaw),
-    quiet: resolveBool(argv, '--quiet', 'CONCEPT_AUDIT_QUIET', false),
-    verbose: resolveBool(argv, '--verbose', 'CONCEPT_AUDIT_VERBOSE', false),
+    quiet: resolveBool(guarded, '--quiet', 'CONCEPT_AUDIT_QUIET', false),
+    verbose: resolveBool(guarded, '--verbose', 'CONCEPT_AUDIT_VERBOSE', false),
     unusedOnly:
-      resolveBool(argv, '--unused', 'CONCEPT_AUDIT_SHOW_UNUSED', false) ||
-      resolveBool(argv, '--show-unused', 'CONCEPT_AUDIT_SHOW_UNUSED', false),
-    usedOnly: resolveBool(argv, '--show-used', 'CONCEPT_AUDIT_SHOW_USED', false),
-    showDeprecated: resolveBool(argv, '--show-deprecated', 'CONCEPT_AUDIT_SHOW_DEPRECATED', false),
-    showOrphans: resolveBool(argv, '--show-orphans', 'CONCEPT_AUDIT_SHOW_ORPHANS', false),
-    domainSummary: resolveBool(argv, '--domain-summary', 'CONCEPT_AUDIT_DOMAIN_SUMMARY', false),
+      resolveBool(guarded, '--unused', 'CONCEPT_AUDIT_SHOW_UNUSED', false) ||
+      resolveBool(guarded, '--show-unused', 'CONCEPT_AUDIT_SHOW_UNUSED', false),
+    usedOnly: resolveBool(guarded, '--show-used', 'CONCEPT_AUDIT_SHOW_USED', false),
+    showDeprecated: resolveBool(
+      guarded,
+      '--show-deprecated',
+      'CONCEPT_AUDIT_SHOW_DEPRECATED',
+      false
+    ),
+    showOrphans: resolveBool(guarded, '--show-orphans', 'CONCEPT_AUDIT_SHOW_ORPHANS', false),
+    domainSummary: resolveBool(guarded, '--domain-summary', 'CONCEPT_AUDIT_DOMAIN_SUMMARY', false),
     statuses: statusCsv,
-    boards: resolveCsv(argv, '--board', 'CONCEPT_AUDIT_BOARD'),
-    groups: resolveCsv(argv, '--group', 'CONCEPT_AUDIT_GROUP'),
-    domains: resolveCsv(argv, '--domain', 'CONCEPT_AUDIT_DOMAIN'),
-    namespaces: resolveCsv(argv, '--namespace', 'CONCEPT_AUDIT_NAMESPACE'),
-    categories: resolveCsv(argv, '--category', 'CONCEPT_AUDIT_CATEGORY'),
-    sort: parseSort(resolveStr(argv, '--sort', 'CONCEPT_AUDIT_SORT')),
-    sortDesc: resolveBool(argv, '--desc', 'CONCEPT_AUDIT_DESC', false),
-    minUsage: resolveInt(argv, '--min-usage', 'CONCEPT_AUDIT_MIN_USAGE', 0),
-    maxUsage: resolveInt(argv, '--max-usage', 'CONCEPT_AUDIT_MAX_USAGE', 9999),
+    boards: resolveCsv(guarded, '--board', 'CONCEPT_AUDIT_BOARD'),
+    groups: resolveCsv(guarded, '--group', 'CONCEPT_AUDIT_GROUP'),
+    domains: resolveCsv(guarded, '--domain', 'CONCEPT_AUDIT_DOMAIN'),
+    namespaces: resolveCsv(guarded, '--namespace', 'CONCEPT_AUDIT_NAMESPACE'),
+    categories: resolveCsv(guarded, '--category', 'CONCEPT_AUDIT_CATEGORY'),
+    sort: parseSort(resolveStr(guarded, '--sort', 'CONCEPT_AUDIT_SORT')),
+    sortDesc: resolveBool(guarded, '--desc', 'CONCEPT_AUDIT_DESC', false),
+    minUsage: resolveInt(guarded, '--min-usage', 'CONCEPT_AUDIT_MIN_USAGE', 0),
+    maxUsage: resolveInt(guarded, '--max-usage', 'CONCEPT_AUDIT_MAX_USAGE', 9999),
     provenanceFilter: parseProvenanceFilter(
-      resolveStr(argv, '--provenance', 'CONCEPT_AUDIT_PROVENANCE')
+      resolveStr(guarded, '--provenance', 'CONCEPT_AUDIT_PROVENANCE')
     ),
     outputHeaders: headersRaw
       .split(',')
       .map(h => h.trim())
       .filter(Boolean),
-    correlationId: resolveStr(argv, '--correlation-id', 'CONCEPT_AUDIT_CORRELATION_ID'),
-    help: argv.includes('--help') || argv.includes('-h'),
+    correlationId: resolveStr(guarded, '--correlation-id', 'CONCEPT_AUDIT_CORRELATION_ID'),
+    help: guarded.includes('--help') || guarded.includes('-h'),
   };
 }
 
@@ -712,13 +726,16 @@ function printMarkdown(report: ConceptAuditReport, opts: ConceptAuditOptions): v
 function printReport(report: ConceptAuditReport, opts: ConceptAuditOptions): void {
   if (opts.output === 'json') {
     if (opts.unusedOnly) {
-      jsonOut({
-        unused: report.unused,
-        surfaceOnly: report.surfaceOnly,
-        details: report.details,
-      });
+      cliOut(
+        {
+          unused: report.unused,
+          surfaceOnly: report.surfaceOnly,
+          details: report.details,
+        },
+        { json: true }
+      );
     } else {
-      jsonOut(report);
+      cliOut(report, { json: true });
     }
     return;
   }

@@ -10,17 +10,24 @@
 //
 // Nodes = every concept; edges from seeAlso / mapsTo / deprecatedBy.
 
-import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
+import { cliOut, colorize, logTable } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  CONCEPT_REGISTRY_GRAPH_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
 import { buildConceptGraph } from '../lib/concept-registry/repo.ts';
 import { renderConceptGraphMermaid } from '../lib/concept-registry/render.ts';
 import { openConceptRegistryDb } from '../lib/concept-registry/schema.ts';
 
+export { CONCEPT_REGISTRY_GRAPH_ALLOWED_LONG };
+
+const argv = applyUnknownLongOptionGuardFor('concept:registry:graph', Bun.argv.slice(2));
 const db = openConceptRegistryDb();
 const graph = buildConceptGraph(db);
 
 function outputMode(): 'table' | 'json' | 'mermaid' {
-  const i = Bun.argv.indexOf('--output');
-  const value = i !== -1 ? Bun.argv[i + 1] : undefined;
+  const i = argv.indexOf('--output');
+  const value = i !== -1 ? argv[i + 1] : undefined;
   if (value === 'json') return 'json';
   if (value === 'mermaid') return 'mermaid';
   return 'table';
@@ -29,7 +36,7 @@ function outputMode(): 'table' | 'json' | 'mermaid' {
 const mode = outputMode();
 
 if (mode === 'json') {
-  jsonOut(graph);
+  cliOut(graph, { json: true });
 } else if (mode === 'mermaid') {
   console.log(renderConceptGraphMermaid(graph));
 } else {
@@ -39,13 +46,13 @@ if (mode === 'json') {
       '#3fb950'
     )
   );
-  if (Bun.argv.includes('--centrality') || graph.summary.central.length > 0) {
+  if (argv.includes('--centrality') || graph.summary.central.length > 0) {
     logTable(
       graph.summary.central.map(c => ({ id: c.id, degree: c.degree })),
       ['id', 'degree']
     );
   }
-  if (Bun.argv.includes('--orphans')) {
+  if (argv.includes('--orphans')) {
     const connected = new Set<string>();
     for (const e of graph.edges) {
       connected.add(e.source);

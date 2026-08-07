@@ -498,6 +498,58 @@ export const DOCS_REFID_ALLOWED_LONG = [
   'roots',
 ] as const;
 
+/** § — concept:audit (`scripts/concept-audit.ts`) */
+export const CONCEPT_AUDIT_ALLOWED_LONG = [
+  'watch',
+  'watch-poll',
+  'watch-paths',
+  'watch-delay-ms',
+  'strict',
+  'strict-unused',
+  'output',
+  'quiet',
+  'verbose',
+  'unused',
+  'show-unused',
+  'show-used',
+  'show-deprecated',
+  'show-orphans',
+  'domain-summary',
+  'status',
+  'board',
+  'group',
+  'domain',
+  'namespace',
+  'category',
+  'sort',
+  'desc',
+  'min-usage',
+  'max-usage',
+  'provenance',
+  'output-headers',
+  'correlation-id',
+] as const;
+
+/** § — concept:registry:graph (`scripts/concept-registry-graph.ts`) */
+export const CONCEPT_REGISTRY_GRAPH_ALLOWED_LONG = ['output', 'orphans', 'centrality'] as const;
+
+/** § — concept:discover (`scripts/concept-discover.ts`) */
+export const CONCEPT_DISCOVER_ALLOWED_LONG = ['scan', 'auto-propose', 'output'] as const;
+
+/** § — seat:desk (`tools/seat-desk-cli.ts`) */
+export const SEAT_DESK_ALLOWED_LONG = [
+  'field',
+  'force-new',
+  'no-pin',
+  'no-publish',
+  'post',
+  'json',
+  'template',
+  'intake-only',
+  'rails-only',
+  'thread-id',
+] as const;
+
 /** CLI names keyed in `ALLOWED_LONG_REGISTRY` (package-script style). */
 export type AllowedLongCliName =
   | 'lint-wires'
@@ -522,7 +574,11 @@ export type AllowedLongCliName =
   | 'provision:queue'
   | 'monorepo:health'
   | 'brand:status'
-  | 'docs:refid';
+  | 'docs:refid'
+  | 'concept:audit'
+  | 'concept:registry:graph'
+  | 'concept:discover'
+  | 'seat:desk';
 
 /**
  * Central allowlist registry — code SSOT (not env JSON, not bun-types).
@@ -552,6 +608,10 @@ export const ALLOWED_LONG_REGISTRY = {
   'monorepo:health': MONOREPO_HEALTH_ALLOWED_LONG,
   'brand:status': BRAND_STATUS_ALLOWED_LONG,
   'docs:refid': DOCS_REFID_ALLOWED_LONG,
+  'concept:audit': CONCEPT_AUDIT_ALLOWED_LONG,
+  'concept:registry:graph': CONCEPT_REGISTRY_GRAPH_ALLOWED_LONG,
+  'concept:discover': CONCEPT_DISCOVER_ALLOWED_LONG,
+  'seat:desk': SEAT_DESK_ALLOWED_LONG,
 } as const satisfies Record<AllowedLongCliName, readonly string[]>;
 
 /** Apply guard using `ALLOWED_LONG_REGISTRY[cliName]`. */

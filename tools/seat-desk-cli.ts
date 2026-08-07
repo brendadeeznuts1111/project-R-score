@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 /**
@@ -37,6 +38,12 @@ import {
   summarizeSeatDeskPartnerView,
   type SeatDeskTopicPromptKind,
 } from '../lib/telegram/seat-desk-partner-message.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  SEAT_DESK_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+export { SEAT_DESK_ALLOWED_LONG };
 
 const TOPIC_TEMPLATES = ['topic-intake', 'topic-rails', 'topic-accounting'] as const;
 type TopicTemplate = (typeof TOPIC_TEMPLATES)[number];
@@ -74,11 +81,11 @@ function isPartnerTemplate(t: string | undefined): t is PartnerTemplate {
   );
 }
 
-const argv = Bun.argv.slice(2);
+const argv = applyUnknownLongOptionGuardFor('seat:desk', Bun.argv.slice(2));
 const command = argv[0];
 const callSign = argv[1]?.toUpperCase().trim();
 if (!command || command === '--help' || command === '-h') usage();
-if (command !== 'harness-rails' && !callSign) usage();
+if (command !== 'harness-rails' && command !== 'harness-staging' && !callSign) usage();
 
 let pin = true;
 let forceNew = false;
