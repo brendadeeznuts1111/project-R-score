@@ -31,7 +31,7 @@ Credential files were **left in place**; deletion is a human decision.
 | Hostname | Resolves | Serving |
 |----------|----------|---------|
 | `ledger.factory-wager.com` | Yes — Cloudflare proxy IPs | 302 → Cloudflare Access login (Access app live) |
-| `terminal.factory-wager.com` | **No** | CNAME **deleted 2026-07-28** (was dangling tunnel → 502). Brand/DNS overview: [`docs/brand-alignment.md`](../../../brand-alignment.md) |
+| `terminal.factory-wager.com` | **No** | CNAME **deleted 2026-07-28** (was dangling tunnel → 502). Brand/DNS overview: [`docs/brand-alignment.md`](../../brand-alignment.md) |
 | `reasonix.factory-wager.com` | **No** | — |
 
 ## Service management
@@ -42,7 +42,7 @@ Credential files were **left in place**; deletion is a human decision.
 
 ## Repo-side template
 
-~~[`scripts/cloudflared-reasonix.yml`](../../../scripts/cloudflared-reasonix.yml)~~ — **deleted 2026-07-28** (decommissioned; never installed, DNS never existed, tunnel creation needs the other CF account). Re-create from scratch if the surface is ever wanted.
+~~`scripts/cloudflared-reasonix.yml`~~ — **deleted 2026-07-28** (decommissioned; never installed, DNS never existed, tunnel creation needs the other CF account). Re-create from scratch if the surface is ever wanted.
 
 ## Gaps / recommended actions
 
@@ -51,7 +51,7 @@ Credential files were **left in place**; deletion is a human decision.
 3. ~~**Orphan credential decision**~~ — **RESOLVED 2026-07-28**: `293ba37a-…json` was the credential for `terminal.factory-wager.com` (CNAME **deleted**). Remaining optional: delete the dead tunnel in the **other** Cloudflare account's dashboard and remove the local credential file.
 4. ~~**`reasonix-serve`: install or decommission**~~ — **DECOMMISSIONED 2026-07-28** (template deleted, Access app dropped, `surfaces.reasonix` retired).
 5. **`tunnel:init` generator missing** — ledger configs cite a generator that does not exist; either restore it or stop claiming provenance.
-6. ~~**`terminal.factory-wager.com` dangling (502)**~~ — **RESOLVED 2026-07-28**: zone CNAME removed; host does not resolve. Not Sports Terminal. Full domain map: [`docs/brand-alignment.md`](../../../brand-alignment.md).
+6. ~~**`terminal.factory-wager.com` dangling (502)**~~ — **RESOLVED 2026-07-28**: zone CNAME removed; host does not resolve. Not Sports Terminal. Full domain map: [`docs/brand-alignment.md`](../../brand-alignment.md).
 
 ## Retirement
 
