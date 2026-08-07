@@ -148,6 +148,9 @@ export function junitEnvFromXml(xml: string): JunitEnvProvenance {
     const name = unescapeXml(m[1]!);
     const value = unescapeXml(m[2]!);
     if ((name === 'ci' || name === 'commit') && value) env[name] = value;
+    // Runtime emits hostname on <testsuite>; the docs table also lists a
+    // <property name="hostname"> form — accept both, testsuite wins.
+    if (name === 'hostname' && value && !env.hostname) env.hostname = value;
   }
   const host = xml.match(/<testsuite\b[^>]*\bhostname="([^"]*)"/);
   if (host?.[1]) env.hostname = unescapeXml(host[1]);
