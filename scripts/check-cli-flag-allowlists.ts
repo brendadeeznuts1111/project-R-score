@@ -71,6 +71,30 @@ const cases: Case[] = [
     expectExit: [1],
     stdoutOrStderrIncludes: ['BUN_STRIP_UNKNOWN=true — stripping', 'bun-99999 not on PATH'],
   },
+  {
+    name: 'bun:runtime-pin unknown',
+    cmd: ['bun', 'tools/bun-runtime-pin.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in bun:runtime-pin: --typo'],
+  },
+  {
+    name: 'glossary:health unknown',
+    cmd: ['bun', 'tools/glossary-health.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in glossary:health: --typo'],
+  },
+  {
+    name: 'cloudflare:env:validate unknown',
+    cmd: ['bun', 'tools/cloudflare-env-validate.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in cloudflare:env:validate: --typo'],
+  },
+  {
+    name: 'routing:registry-proof unknown',
+    cmd: ['bun', 'tools/routing-registry-proof.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in routing:registry-proof: --typo'],
+  },
 ];
 
 function okExit(expect: Case['expectExit'], code: number): boolean {

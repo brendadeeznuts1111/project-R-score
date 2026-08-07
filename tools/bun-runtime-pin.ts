@@ -5,12 +5,17 @@
 /** Network-free exact runtime/channel check for agents, hooks, and local operators. */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { cliOut, tones } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  BUN_RUNTIME_PIN_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
 import { checkBunPin } from '../lib/verification/bun-runtime-pin.ts';
 
+export { BUN_RUNTIME_PIN_ALLOWED_LONG };
+
 export async function runBunRuntimePinCli(argv: string[] = Bun.argv.slice(2)): Promise<number> {
-  const json = argv.includes('--json');
-  const unknown = argv.filter(value => value !== '--json');
-  if (unknown.length > 0) throw new Error(`Unknown Bun runtime pin option: ${unknown[0]}`);
+  const guarded = applyUnknownLongOptionGuardFor('bun:runtime-pin', argv, { onFail: 'throw' });
+  const json = guarded.includes('--json');
 
   const result = await checkBunPin();
   if (json) {

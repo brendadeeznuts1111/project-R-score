@@ -24,10 +24,12 @@ contract as other domain Area maps).
 | Shared UI HTML        | [`ui-html.ts`](./ui-html.ts) · browser twin `public/portal/components/portal-ui.js`                                                                                                                                                                                                                   | Pure builders: table · chips/pill · banner · hero · panel · skeleton · gate |
 | Other                 | [`command-centre-api.ts`](./command-centre-api.ts) · [`bun-test-snapshots.ts`](./bun-test-snapshots.ts)                                                                                                                                                                                               | Command centre payload; snapshot helpers                                    |
 
-**Portal Design agent** (theme · kernels · building blocks · dual-plane tennis
-vs Pages):
-[`.agents/skills/portal-design/`](../../.agents/skills/portal-design/) ·
-[`docs/design/portal-design-agent.md`](../../docs/design/portal-design-agent.md).
+## Portal Design agent
+
+Theme · kernels · building blocks · dual-plane tennis vs Pages (outside domain
+dir — not Area-map path tokens):
+[skill](../../.agents/skills/portal-design/) ·
+[design note](../../docs/design/portal-design-agent.md).
 Visual identity ≠ typed branded IDs (`/portal/brands/`). Template split:
 **jsonc** palette · **HTML** `_page-template` · **TS/JS** builders · **TOML**
 hosts only (`surfaces.toml`).

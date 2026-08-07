@@ -7,15 +7,22 @@
  * @see docs/harness/tenants/cloudflare-pages.md
  */
 import { runCloudflareTokenScopeProbe } from '../lib/verification/cloudflare-token-scope.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { cliOut } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  CLOUDFLARE_ENV_VALIDATE_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
 
-const asJson = Bun.argv.includes('--json');
-const strict = Bun.argv.includes('--strict');
+export { CLOUDFLARE_ENV_VALIDATE_ALLOWED_LONG };
+
+const argv = applyUnknownLongOptionGuardFor('cloudflare:env:validate', Bun.argv.slice(2));
+const asJson = argv.includes('--json');
+const strict = argv.includes('--strict');
 
 try {
   const report = await runCloudflareTokenScopeProbe({ strict });
   if (asJson) {
-    jsonOut(report);
+    cliOut(report, { json: true });
   } else {
     console.log('Cloudflare token scope OK');
     console.log(`  tier          ${report.tier}`);
