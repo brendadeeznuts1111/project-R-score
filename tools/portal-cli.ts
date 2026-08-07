@@ -1031,7 +1031,7 @@ async function dispatchCapabilities(sub: string | undefined, rest: string[]): Pr
   if (sub === 'docs') {
     console.log(`Capability map SSOT
 
-  AGENTS.md#grounded-capability-map
+  docs/harness/capability-map.md#grounded-capability-map
   public/registry/capability-map-subset.json   (tools hub · schema v3)
   public/registry/capability-map-full.json     (examples + sourceLabel)
   tests/__snapshots__/capability-map-subset.test.ts.snap
@@ -1093,7 +1093,7 @@ async function dispatchCapabilities(sub: string | undefined, rest: string[]): Pr
       'capabilities health: snapshots updated — commit tests/__snapshots__/capability-map-subset.test.ts.snap'
     );
     console.log(
-      '  (if AGENTS.md matrix changed, also commit public/registry/capability-map-*.json)'
+      '  (if capability-map.md matrix changed, also commit public/registry/capability-map-*.json)'
     );
   }
   process.exit(code);

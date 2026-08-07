@@ -32,28 +32,33 @@ Replaced by [`scripts/affected-workspaces.ts`](../../scripts/affected-workspaces
 ## Context fan-out (cold start)
 
 Measured **2026-08-07** with Bun 1.3.14 via
-`bun tools/velocity-cold-start.ts -- --json`
+`bun run velocity:cold-start -- --json`
 (`Bun.file().text()` + `Bun.nanoseconds()`; lines = split on newlines).
 Do not hand-edit without re-running that tool.
 
-Historical: 2026-07-21 → AGENTS 173 / docs/AGENTS 22 / total 522; 2026-07-29
-`wc -l` → AGENTS ~300 / total 677. Capability-map growth has since pushed root
-AGENTS to **753** lines (routing tables stay thin in `docs/AGENTS.md`).
+Historical: 2026-07-21 → AGENTS 173 / total 522; 2026-07-29 `wc -l` → AGENTS
+~300 / total 677; pre-Wave-2 2026-08-07 → AGENTS **753** / total **1142**.
+Wave 2 JIT extract moved the capability matrix out of root AGENTS.
 
 | File | Lines | Bytes | Read ns (sample) |
 |------|------:|------:|-----------------:|
-| AGENTS.md | 753 | 131969 | ~0.2–0.4 ms |
-| docs/AGENTS.md | 60 (routing pointer → root) | 6377 | ~0.3 ms |
-| .custom-instructions.md | 272 | 15405 | ~0.06 ms |
-| docs/WIRE_BOUNDARY.md | 57 | 2593 | ~0.02 ms |
-| **Total** | **1142** | **156344** | **~0.7–0.8 ms** |
+| AGENTS.md | 409 (entry + operating rules) | 25593 | ~0.3 ms |
+| docs/AGENTS.md | 62 (routing pointer → root) | 16278 | ~0.3 ms |
+| .custom-instructions.md | 272 | 15457 | ~0.06 ms |
+| docs/WIRE_BOUNDARY.md | 57 | 2593 | ~0.03 ms |
+| **Total** | **800** | **59921** | **~0.9 ms** |
 
-Roles: root `AGENTS.md` = entry + grounded capability map SSOT;
-`docs/AGENTS.md` = thin routing tables only (not a second “full guide”).
+Capability matrix lives at
+[`docs/harness/capability-map.md`](../harness/capability-map.md) (not counted in
+the cold-start four-file fan-out above).
 
-Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md).
-Wave 2 (optional): extract capability map so root entry returns toward
-~300–400 lines. Re-measure: `bun tools/velocity-cold-start.ts -- --json`.
+Roles: root `AGENTS.md` = agent entry + operating rules; grounded capability
+matrix SSOT = [`docs/harness/capability-map.md`](../harness/capability-map.md);
+`docs/AGENTS.md` = thin routing tables only.
+
+Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md) ·
+capability map extract (Wave 2). Re-measure:
+`bun run velocity:cold-start -- --json`.
 
 ## Competing precedents (Phase D)
 

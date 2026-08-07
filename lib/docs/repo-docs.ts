@@ -64,6 +64,8 @@ export const CANONICAL_REPO_DOCS = {
   workspaceLaneCrossMap: 'docs/harness/tenants/workspace-lane-cross-map.md',
   /** Bun harness microbench + CPU profile metric catalog */
   bunBenchProfiling: 'docs/harness/tenants/bun-bench-profiling.md',
+  /** Grounded Bun/Proton capability matrix (JIT extract from root AGENTS) */
+  capabilityMap: 'docs/harness/capability-map.md',
   /** Performance docs index (search pin + bench tenant pointer) */
   performanceIndex: 'docs/performance/README.md',
   /** Partner surface join (taxonomy · boards · brands · wire) — map before rename */
@@ -205,6 +207,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   workspaceTaxonomy: 'Workspace taxonomy crosswalk (session · chrome · concept)',
   workspaceLaneCrossMap: 'Workspace lane cross-map tenant (claim workspace-lane-cross-map)',
   bunBenchProfiling: 'Bun bench + CPU profile metric catalog (claim bun-bench-profiling)',
+  capabilityMap: 'Grounded Bun/Proton capability matrix (bake:capabilities SSOT)',
   performanceIndex: 'Performance docs index (search pin · bench tenant)',
   partnerSurfaceInventory: 'Partner surface inventory (map before rename)',
   partnerSurfaceInventoryLib: 'Partner surface inventory row SSOT',

@@ -18,7 +18,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  *  - **Anonymous nested object** fields on properties (`cpuTime: { user; system }` → depth 2+)
  *  - Satellite modules: bun:jsc · bun:ffi · bun:sqlite · bun:test · serve/sql/s3/redis/shell …
  *  - Optional tip-vs-pin diff (`~/bun/packages/bun-types` or `BUN_TYPES_TIP`)
- *  - AGENTS.md grounded-map hits + repo call-site counts (qualified paths)
+ *  - capability-map.md grounded-map hits + repo call-site counts (qualified paths)
  *
  * Not the docs-only utils page (`export-bun-api-index` is separate SSOT).
  *
@@ -155,7 +155,7 @@ const TOOLS_DIR = resolvePath(import.meta.dir);
 const REPO_ROOT = resolvePath(TOOLS_DIR, '..');
 const OUT_JSON = joinPath(TOOLS_DIR, 'bun-types-inventory.json');
 const OUT_MD = joinPath(TOOLS_DIR, 'bun-types-inventory.md');
-const AGENTS_MD = joinPath(REPO_ROOT, 'AGENTS.md');
+const CAPABILITY_MAP_MD = joinPath(REPO_ROOT, 'docs/harness/capability-map.md');
 
 const DEFAULT_SCAN_ROOTS = ['lib', 'tools', 'scripts', 'tests', 'config'] as const;
 const FULL_SCAN_EXTRA = ['packages', 'projects'] as const;
@@ -1155,7 +1155,9 @@ export async function computeTipDiff(
 // AGENTS map
 // ---------------------------------------------------------------------------
 
-export async function loadAgentsMapHaystack(agentsPath: string = AGENTS_MD): Promise<string> {
+export async function loadAgentsMapHaystack(
+  agentsPath: string = CAPABILITY_MAP_MD
+): Promise<string> {
   if (!(await pathExists(agentsPath))) return '';
   const text = await readText(agentsPath);
   const start = text.indexOf('## Grounded capability map');
@@ -1345,7 +1347,9 @@ export async function buildInventory(opts: {
     return a.kind.localeCompare(b.kind);
   });
 
-  const haystack = await loadAgentsMapHaystack(joinPath(repoRoot, 'AGENTS.md'));
+  const haystack = await loadAgentsMapHaystack(
+    joinPath(repoRoot, 'docs/harness/capability-map.md')
+  );
   const scanRoots = [...DEFAULT_SCAN_ROOTS, ...(opts.fullScan ? FULL_SCAN_EXTRA : [])].map(String);
 
   const counted = opts.countSites !== false;
@@ -1543,7 +1547,7 @@ export function renderMarkdown(inv: InventoryResult): string {
   lines.push('- Docs/canonical map: `tools/export-bun-api-index.ts` → `tools/bun-api-index.json`');
   lines.push('- Doc refs: `bun tools/bun-doc-refs.ts suggest "<api>"`');
   lines.push('- Utils proof: `bun run bun:utils-proof`');
-  lines.push('- AGENTS grounded map: `AGENTS.md` § Grounded capability map');
+  lines.push('- Grounded map: `docs/harness/capability-map.md` § Grounded capability map');
   lines.push('');
   return `${lines.join('\n')}\n`;
 }

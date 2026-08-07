@@ -5,7 +5,7 @@ Control plane for real `portal-cli` commands and baked registry freshness.
 - Board: [/portal/tools/](/portal/tools/)
 - Launcher: `bun run portal-cli dashboard` · `portal-cli dashboard --view=packages --open`
 - Nav badges: [`nav-badges.js`](../nav-badges.js) (registry JSON only)
-- Capability subset: board `#capabilities` · bake `/registry/capability-map-subset.json` · full `/registry/capability-map-full.json` · [AGENTS.md](../../AGENTS.md#grounded-capability-map)
+- Capability subset: board `#capabilities` · bake `/registry/capability-map-subset.json` · full `/registry/capability-map-full.json` · [capability-map.md](../../docs/harness/capability-map.md#grounded-capability-map)
 - Gates: `portal-cli capabilities health` · `portal-cli capabilities doctor` · `bun run check:snapshots`
 
 ## Real boards only
