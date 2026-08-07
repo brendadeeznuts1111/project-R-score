@@ -4,7 +4,9 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
- * Bake AGENTS.md grounded capability map → registry JSON.
+ * Bake grounded capability map → registry JSON.
+ *
+ * SSOT: docs/harness/capability-map.md (JIT extract from root AGENTS.md).
  *
  *   bun run bake:capabilities
  *   bun run bake:capabilities:check   # fail if registry files stale
@@ -26,6 +28,7 @@ import {
   capabilityFullMapsDeepEqual,
   capabilityMapsDeepEqual,
   CAPABILITY_MAP_FULL_REL,
+  CAPABILITY_MAP_MARKDOWN_REL,
   CAPABILITY_MAP_SUBSET_REL,
   serializeCapabilityMapFull,
   serializeCapabilityMapSubset,
@@ -34,7 +37,7 @@ import {
 } from '../lib/portal/capability-map-subset.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
-const AGENTS = joinPath(ROOT, 'AGENTS.md');
+const MAP_MD = joinPath(ROOT, CAPABILITY_MAP_MARKDOWN_REL);
 const OUT_SUBSET = joinPath(ROOT, CAPABILITY_MAP_SUBSET_REL);
 const OUT_FULL = joinPath(ROOT, CAPABILITY_MAP_FULL_REL);
 const CHECK = argv.includes('--check');
@@ -44,13 +47,13 @@ async function main(): Promise<void> {
   if (argv.includes('--help') || argv.includes('-h')) {
     console.log(`Usage: bun tools/bake-capability-map.ts [--write] [--check]
 
-  --write   Parse AGENTS.md and write subset + full registry JSON (default)
-  --check   Fail if registry files missing or out of sync with AGENTS.md
+  --write   Parse ${CAPABILITY_MAP_MARKDOWN_REL} and write subset + full registry JSON (default)
+  --check   Fail if registry files missing or out of sync with the markdown SSOT
 `);
     process.exit(0);
   }
 
-  const md = await Bun.file(AGENTS).text();
+  const md = await Bun.file(MAP_MD).text();
   const nextSubset = buildCapabilityMapSubset(md);
   const nextFull = buildCapabilityMapFull(md);
 

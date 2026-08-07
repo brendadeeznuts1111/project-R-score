@@ -8,7 +8,7 @@ Decision tables below are **generated** from [`docs-index.json`](./docs-index.js
 <!-- packages-docs-index:start -->
 ## Documentation index (decision table)
 
-**Purpose:** route readers to the right doc, show trustworthiness, and link each row to the [Grounded capability map](../../AGENTS.md#grounded-capability-map).  
+**Purpose:** route readers to the right doc, show trustworthiness, and link each row to the [Grounded capability map](../harness/capability-map.md#grounded-capability-map).  
 **Machine SSOT:** [`docs-index.json`](./docs-index.json) (edit JSON → `bun run packages:docs-index`).  
 **Last catalog pass:** `2026-07-28`.
 
@@ -50,7 +50,7 @@ Decision tables below are **generated** from [`docs-index.json`](./docs-index.js
 |----------|--------|
 | Can I trust it today? | **Status** + **Last verified** |
 | Is this for me? | **Audience** |
-| Which APIs does it depend on? | **Grounded capabilities** → [capability map](../../AGENTS.md#grounded-capability-map) |
+| Which APIs does it depend on? | **Grounded capabilities** → [capability map](../harness/capability-map.md#grounded-capability-map) |
 | Who owns fixes? | **Maintainer** |
 | When must I refresh it? | **Triggers** |
 | What do I type in the terminal? | **Related commands** |

@@ -59,13 +59,7 @@ import { runRuntimeEnvChecks } from './portal-cli-doctor-runtime-env.ts';
 export type PortalDoctorLevel = 'fatal' | 'warn' | 'info';
 export type PortalDoctorEnvScope = 'dev' | 'ci' | 'all';
 export type PortalDoctorGroup =
-  | 'linker'
-  | 'bakes'
-  | 'catalog'
-  | 'bunfig'
-  | 'runtime'
-  | 'infra'
-  | 'gates';
+  'linker' | 'bakes' | 'catalog' | 'bunfig' | 'runtime' | 'infra' | 'gates';
 
 export type PortalDoctorCheck = {
   id: string; // brand-ok — check id enum-like opaque key (linker-config-version, …)
@@ -732,7 +726,7 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
         },
         {
           fixCommand: capGate === 0 ? undefined : 'bun run bake:capabilities:check',
-          impact: 'Grounded capability map bake must match AGENTS.md',
+          impact: 'Grounded capability map bake must match docs/harness/capability-map.md',
           autoFixable: true,
           timeToFix: capGate === 0 ? undefined : '1–2 min',
           envScope: 'ci',

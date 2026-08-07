@@ -13,7 +13,7 @@ High-level map of the FactoryWager Enterprise Platform monorepo
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | This map                      | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                                                          |
 | Human hub                     | [`README.md`](README.md)                                                                                                                                                |
-| AI agents                     | [`AGENTS.md`](AGENTS.md) (entry + capability map SSOT) · routing [`docs/AGENTS.md`](docs/AGENTS.md)                                                                      |
+| AI agents                     | [`AGENTS.md`](AGENTS.md) (entry) · map [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · routing [`docs/AGENTS.md`](docs/AGENTS.md)                    |
 | Coding standards              | [`.custom-instructions.md`](.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)                                                 |
 | Bun install policy            | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                                    |
 | Bun channel / type governance | [`config/bun-channels.toml`](config/bun-channels.toml) · [`docs/design/bun-channel-governance.md`](docs/design/bun-channel-governance.md) · `bun run bun:channel:check` |
@@ -32,7 +32,7 @@ Projects/
 ├── .claude/                 # Claude commands / agents
 ├── .github/                 # Workflows, templates
 ├── _includes/               # Jekyll includes for wiki.factory-wager.com
-├── AGENTS.md                # Agent entry + grounded capability map SSOT
+├── AGENTS.md                # Agent entry (capability matrix → docs/harness/capability-map.md)
 ├── .custom-instructions.md  # Coding standards SSOT → docs/DEVELOPMENT-STANDARDS.md
 ├── README.md                # Human hub
 ├── STRUCTURE.md             # This file
@@ -48,7 +48,8 @@ Projects/
 ├── dashboard/               # Dashboard servers & UIs
 ├── docs/                    # Documentation (UNIFIED.md, AGENTS.md, guides)
 │   ├── README.md            # Docs index (SSOT navigation)
-│   ├── AGENTS.md            # Pointer → root AGENTS.md (operating rules + capability map SSOT)
+│   ├── AGENTS.md            # Pointer → root AGENTS.md (routing tables)
+│   ├── harness/capability-map.md  # Grounded Bun/Proton capability matrix (bake:capabilities)
 │   ├── UNIFIED.md · WIRE_BOUNDARY.md · DEVELOPMENT-STANDARDS.md
 │   ├── BUN_DOCS_OPERATE.md  # Token/catalog operate (RSS → scrape → catalog)
 │   ├── organization/        # Root cleanup history
