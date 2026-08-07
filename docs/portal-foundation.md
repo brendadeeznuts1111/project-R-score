@@ -372,7 +372,9 @@ flowchart LR
 
 ```bash
 bun run portal:theme:sync          # theme.jsonc → theme-tokens.css
+bun run portal:theme:watch         # same, but bun --watch — regenerates on every theme.jsonc edit
 bun run portal:theme:check         # tokens CSS stale + color-kernel aliases
+bun run dev:portal:theme           # one-command dev loop: theme watch + serve:public:hot (bun scripts/dev-portal.ts)
 bun run portal:colors:check        # alias Claim/Evidence (same as validate:colors)
 bun run validate:colors            # alias of portal:colors:check — paste for PRs
 bun run validate:colors:json       # ClaimReport JSON (status · checks[] · meta · floors)
@@ -582,7 +584,7 @@ bun run serve:public --watch
 bun run serve:public:hot --hot
 ```
 
-**Day-to-day:** `bun run serve:public:hot` for server edits; browser updates for static portal files come from SSE. Use `--watch` when you need a clean process restart.
+**Day-to-day:** `bun run serve:public:hot` for server edits; browser updates for static portal files come from SSE. Use `--watch` when you need a clean process restart. **Theme edits:** `bun run dev:portal:theme` runs the theme watcher (`portal:theme:watch`) next to `serve:public:hot` in one process — editing `theme.jsonc` regenerates `theme-tokens.css` and the server serves it on the next load, no manual sync.
 
 Disable browser SSE: `SERVE_PUBLIC_HMR=0`. Force on when bound `0.0.0.0`: `SERVE_PUBLIC_HMR=1` or `HOST=127.0.0.1`.
 
