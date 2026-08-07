@@ -1,10 +1,17 @@
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
 import {
+  STAGED_TEST_HANG_RETRIES,
+  STAGED_TEST_TIMEOUT_MS_DEFAULT,
+  awaitProcessWithTimeout,
   buildStagedTestCommand,
   gitEnv,
+  resolveStagedTestTimeoutMs,
+  resolveExplicitStagedTests,
+  runStagedBunTestWithRetries,
   SCRATCH_LINK_DIRS,
   SCRATCH_PATHSPEC,
+  shouldSkipStagedTestRun,
   stagedDeletions,
   testRunEnv,
 } from '../scripts/bun-test-changed-staged.ts';
@@ -58,6 +65,102 @@ describe('test-changed-staged helpers', () => {
       '--changed',
       '--pass-with-no-tests',
       '--isolate',
+    ]);
+  });
+
+  test('scratch path uses --changed=HEAD~1 (ref diff avoids dirty-tree hang)', () => {
+    expect(buildStagedTestCommand(['--bail=1'], {}, { changedRef: 'HEAD~1' })).toEqual([
+      'bun',
+      'test',
+      '--changed=HEAD~1',
+      '--pass-with-no-tests',
+      '--parallel=6',
+      '--bail=1',
+    ]);
+  });
+
+  test('shouldSkipStagedTestRun short-circuits empty and non-code deltas', () => {
+    expect(shouldSkipStagedTestRun([])).toEqual({
+      skip: true,
+      reason: 'empty staged delta',
+    });
+    expect(shouldSkipStagedTestRun(['docs/README.md', 'AGENTS.md'])).toEqual({
+      skip: true,
+      reason: 'no code-like files in staged delta',
+    });
+    expect(shouldSkipStagedTestRun(['tests/harness.ts']).skip).toBe(false);
+  });
+
+  test('resolveStagedTestTimeoutMs defaults and validates env override', () => {
+    expect(resolveStagedTestTimeoutMs({})).toBe(STAGED_TEST_TIMEOUT_MS_DEFAULT);
+    expect(resolveStagedTestTimeoutMs({ STAGED_TEST_TIMEOUT_MS: '120000' })).toBe(120_000);
+    expect(() => resolveStagedTestTimeoutMs({ STAGED_TEST_TIMEOUT_MS: '50' })).toThrow(
+      />= 1000/
+    );
+  });
+
+  test('awaitProcessWithTimeout SIGKILLs a wedged child', async () => {
+    const proc = Bun.spawn(['sleep', '30'], {
+      stdout: 'ignore',
+      stderr: 'ignore',
+      stdin: 'ignore',
+    });
+    const result = await awaitProcessWithTimeout(proc, 200, 'fixture sleep');
+    expect(result).toEqual({ code: 1, timedOut: true });
+    expect(proc.killed || (await proc.exited) !== undefined).toBe(true);
+  });
+
+  test('runStagedBunTestWithRetries returns child exit code on success', async () => {
+    expect(STAGED_TEST_HANG_RETRIES).toBeGreaterThanOrEqual(2);
+    const result = await runStagedBunTestWithRetries({
+      command: ['bun', '-e', 'process.exit(0)'],
+      cwd: process.cwd(),
+      env: testRunEnv(),
+      timeoutMs: 5_000,
+      label: 'fixture-ok',
+      retries: 1,
+    });
+    expect(result).toEqual({ code: 0, timedOut: false, attempts: 1 });
+  });
+
+  test('runStagedBunTestWithRetries exhausts hang retries', async () => {
+    const started = Date.now();
+    const result = await runStagedBunTestWithRetries({
+      command: ['sleep', '30'],
+      cwd: process.cwd(),
+      env: testRunEnv(),
+      timeoutMs: 150,
+      label: 'fixture-hang',
+      retries: 2,
+    });
+    expect(result).toEqual({ code: 1, timedOut: true, attempts: 2 });
+    const elapsed = Date.now() - started;
+    expect(elapsed).toBeGreaterThanOrEqual(250);
+    expect(elapsed).toBeLessThan(3_000);
+  });
+
+  test('resolveExplicitStagedTests keeps staged tests and import neighbors', () => {
+    const paths = resolveExplicitStagedTests(process.cwd(), [
+      'scripts/bun-test-changed-staged.ts',
+      'tests/bun-test-changed-staged.test.ts',
+      'docs/README.md',
+    ]);
+    expect(paths).toContain('tests/bun-test-changed-staged.test.ts');
+    expect(paths).toContain('tests/pre-commit-runner.test.ts');
+    // Comment-only mentions (brand-coverage) must not be selected.
+    expect(paths).not.toContain('tests/brand-coverage.test.ts');
+  });
+
+  test('buildStagedTestCommand explicit testPaths omit --changed', () => {
+    expect(
+      buildStagedTestCommand(['--bail=1'], {}, { testPaths: ['tests/a.test.ts'] })
+    ).toEqual([
+      'bun',
+      'test',
+      '--pass-with-no-tests',
+      '--parallel=6',
+      '--bail=1',
+      'tests/a.test.ts',
     ]);
   });
 
