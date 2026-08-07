@@ -26,7 +26,9 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 (`link-package-group` `--invite` / `--no-dm` / `--no-ack` / `--requested-by`)
 validated by `bun run docs:refid:check` (tool SSOT
 [`lib/docs/ref-id-tool-flags.ts`](../../../lib/docs/ref-id-tool-flags.ts)
-`telegramOpsToolFlags`). Portal board: [`/portal/partners/`](../../../public/portal/partners/)
+`telegramOpsToolFlags`). Unknown long options rejected via
+`TELEGRAM_OPS_ALLOWED_LONG` (send · directory · handshake · readiness, …).
+Portal board: [`/portal/partners/`](../../../public/portal/partners/)
 · source map [`public/portal/partners.md`](../../../public/portal/partners.md).
 
 **Seat capital desk** (pinned Liquidity/Outs table + Fill keyboard): [`seat-capital-desk.md`](seat-capital-desk.md) · `bun run seat:desk:refresh SPEN-001`

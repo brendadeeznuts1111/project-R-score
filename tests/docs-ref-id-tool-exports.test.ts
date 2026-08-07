@@ -11,6 +11,7 @@ import {
   OPS_SNAPSHOT_ALLOWED_LONG,
   OPS_SNAPSHOT_LEAVES,
   PARTNER_ONBOARD_LEAVES,
+  TELEGRAM_OPS_ALLOWED_LONG,
   TELEGRAM_OPS_LEAVES,
   imagesGenerateFlagDocRef,
   imagesGenerateToolFlags,
@@ -143,6 +144,16 @@ describe('in-tool flagDocRef re-exports', () => {
     expect(unknownLongOptionLeaves(['--no-seed', '--bogus'], OPS_SNAPSHOT_ALLOWED_LONG)).toEqual([
       'bogus',
     ]);
+    // telegram:ops — REF:ID leaves + send/directory meta
+    expect(
+      unknownLongOptionLeaves(
+        ['link-package-group', 'ASH', '-1001', '--invite=https://t.me/+x', '--db=./x.db'],
+        TELEGRAM_OPS_ALLOWED_LONG
+      )
+    ).toEqual([]);
+    expect(
+      unknownLongOptionLeaves(['send', '--all', '--queue', '--bogus'], TELEGRAM_OPS_ALLOWED_LONG)
+    ).toEqual(['bogus']);
   });
 
   test('CLI rejects unknown long options (spawn)', () => {
@@ -169,6 +180,14 @@ describe('in-tool flagDocRef re-exports', () => {
     });
     expect(ops.exitCode).not.toBe(0);
     expect((ops.stderr.toString() + ops.stdout.toString()).toLowerCase()).toMatch(/unknown/);
+
+    const tg = Bun.spawnSync(['bun', 'tools/telegram-ops.ts', 'send', '--not-a-flag'], {
+      cwd,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(tg.exitCode).not.toBe(0);
+    expect((tg.stderr.toString() + tg.stdout.toString()).toLowerCase()).toMatch(/unknown/);
   });
 
   test('docs:refid check --json exposes planes', () => {

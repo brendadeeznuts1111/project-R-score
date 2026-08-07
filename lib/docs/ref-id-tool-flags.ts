@@ -159,6 +159,33 @@ export function opsSnapshotToolFlags(): ToolFlagRef[] {
 export const TELEGRAM_OPS_DOC = 'docs/harness/tenants/partner-package-group-handshake.md' as const;
 export const TELEGRAM_OPS_SECTION = '1.1' as const;
 export const TELEGRAM_OPS_LEAVES = ['invite', 'no-dm', 'no-ack', 'requested-by'] as const;
+/**
+ * Full long-option allowlist for `telegram:ops` (all subcommands).
+ * REF:ID §1.1 leaves cover link-package-group only; the rest are send/directory/etc.
+ */
+export const TELEGRAM_OPS_ALLOWED_LONG = [
+  ...TELEGRAM_OPS_LEAVES,
+  'db',
+  'chat',
+  'all',
+  'kind',
+  'surface',
+  'preview',
+  'queue',
+  'direct',
+  'html',
+  'json',
+  'refresh',
+  'rich',
+  'mermaid',
+  'env',
+  'sync-env',
+  'force',
+  'dry-run',
+  'live',
+  'detail',
+  'deep',
+] as const;
 export function telegramOpsFlagDocRef(leaf: (typeof TELEGRAM_OPS_LEAVES)[number] | string) {
   return flagDocRefAt(TELEGRAM_OPS_SECTION, leaf);
 }
