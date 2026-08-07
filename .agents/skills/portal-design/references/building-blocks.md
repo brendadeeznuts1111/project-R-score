@@ -54,6 +54,17 @@ Venue `venue-*` stays separate (identity ≠ status tones).
 | `heading` | `renderPortalHero` title |
 | `code` / `link` / `token` | not yet — do not invent a dispatcher until atoms exist |
 
+## Adjacent planes (not UI primitives)
+
+| Plane | SSOT | Relation to builders |
+| ----- | ---- | -------------------- |
+| Package scaffold | `factory create` → `bun create` · `.bun-create/factory-library/` | Packages board clipboard only — not theme/chrome |
+| Empty Bun app | `bun init` (upstream) | None |
+| PR delivery | `gh` + claim check | **No** `bunx-pr` tool |
+| Board scaffold | `_page-template.html` · chrome apply | In lane — consume builders above |
+
+Full map: [`docs/design/portal-design-agent.md`](../../../../docs/design/portal-design-agent.md#scaffold-planes-bun-init--bun-create--bunx-pr).
+
 ## Doctor after builder edits
 
 ```bash
