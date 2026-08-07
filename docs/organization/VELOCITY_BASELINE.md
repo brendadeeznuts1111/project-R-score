@@ -31,17 +31,29 @@ Replaced by [`scripts/affected-workspaces.ts`](../../scripts/affected-workspaces
 
 ## Context fan-out (cold start)
 
-Measured with `wc -l` on 2026-07-29 (do not hand-edit without re-measuring). Historical 2026-07-21 snapshot was AGENTS 173 / docs/AGENTS 22 / total 522 — capability map growth moved root AGENTS to ~300 lines.
+Measured **2026-08-07** with Bun 1.3.14 via
+`bun tools/velocity-cold-start.ts -- --json`
+(`Bun.file().text()` + `Bun.nanoseconds()`; lines = split on newlines).
+Do not hand-edit without re-running that tool.
 
-| File | Lines |
-|------|------:|
-| AGENTS.md | 300 |
-| docs/AGENTS.md | 50 (pointer → root AGENTS + tables) |
-| .custom-instructions.md | 271 |
-| docs/WIRE_BOUNDARY.md | 56 |
-| **Total** | **677** |
+Historical: 2026-07-21 → AGENTS 173 / docs/AGENTS 22 / total 522; 2026-07-29
+`wc -l` → AGENTS ~300 / total 677. Capability-map growth has since pushed root
+AGENTS to **753** lines (routing tables stay thin in `docs/AGENTS.md`).
 
-Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md). Re-measure: `wc -l AGENTS.md docs/AGENTS.md .custom-instructions.md docs/WIRE_BOUNDARY.md`.
+| File | Lines | Bytes | Read ns (sample) |
+|------|------:|------:|-----------------:|
+| AGENTS.md | 753 | 131969 | ~0.2–0.4 ms |
+| docs/AGENTS.md | 60 (routing pointer → root) | 6377 | ~0.3 ms |
+| .custom-instructions.md | 272 | 15405 | ~0.06 ms |
+| docs/WIRE_BOUNDARY.md | 57 | 2593 | ~0.02 ms |
+| **Total** | **1142** | **156344** | **~0.7–0.8 ms** |
+
+Roles: root `AGENTS.md` = entry + grounded capability map SSOT;
+`docs/AGENTS.md` = thin routing tables only (not a second “full guide”).
+
+Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md).
+Wave 2 (optional): extract capability map so root entry returns toward
+~300–400 lines. Re-measure: `bun tools/velocity-cold-start.ts -- --json`.
 
 ## Competing precedents (Phase D)
 
