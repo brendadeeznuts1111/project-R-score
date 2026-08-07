@@ -2,10 +2,14 @@
 import { describe, expect, test } from 'bun:test';
 import {
   escHtml,
+  portalRowToneClass,
+  renderPortalBanner,
   renderPortalChip,
   renderPortalError,
   renderPortalGate,
+  renderPortalHero,
   renderPortalPanel,
+  renderPortalPill,
   renderPortalSkeleton,
   renderPortalStatGrid,
   renderPortalTable,
@@ -111,6 +115,8 @@ describe('lib/portal/ui-html', () => {
       actionsHtml: '<button type="button">Retry</button>',
     });
     expect(err).toContain('portal-error');
+    expect(err).toContain('portal-error-code');
+    expect(err).toContain('portal-error-actions');
     expect(err).toContain('Load failed');
     expect(err).toContain('HTTP 404');
     expect(err).toContain('Retry');
@@ -121,6 +127,36 @@ describe('lib/portal/ui-html', () => {
     expect(renderPortalGate('audit ok', 'ok')).toContain('portal-gate ok');
     expect(renderPortalGate('drift', 'drift')).toContain('portal-gate drift');
   });
+
+  test('banner, hero, pill, and row tone helpers', () => {
+    const banner = renderPortalBanner({
+      title: 'Runtime <ok>',
+      meta: 'probe 200',
+      tone: 'ok',
+    });
+    expect(banner).toContain('portal-banner ok');
+    expect(banner).toContain('Runtime &lt;ok&gt;');
+    expect(banner).toContain('probe 200');
+
+    const hero = renderPortalHero({
+      title: 'Tennis desk',
+      sub: 'Evidence board',
+      eyebrow: 'Trading',
+      card: true,
+      metaHtml: '<span class="portal-gate ok"><span class="dot"></span>pass</span>',
+    });
+    expect(hero).toContain('portal-hero--card');
+    expect(hero).toContain('portal-eyebrow');
+    expect(hero).toContain('hero-sub');
+    expect(hero).toContain('portal-hero-meta');
+    expect(hero).toContain('<h2 class="portal-hero__title">');
+
+    expect(renderPortalPill('rest', { kind: 'accent' })).toContain('portal-pill--accent');
+    expect(portalRowToneClass('ok')).toBe('row-ok');
+    expect(portalRowToneClass('warn')).toBe('row-warn');
+    expect(portalRowToneClass('bad')).toBe('row-bad');
+    expect(portalRowToneClass('')).toBe('');
+  });
 });
 
 describe('browser portal-ui twin', () => {
@@ -130,9 +166,13 @@ describe('browser portal-ui twin', () => {
       'escHtml',
       'renderToneChip',
       'renderPortalChip',
+      'renderPortalPill',
+      'renderPortalBanner',
+      'renderPortalHero',
       'renderPortalStatGrid',
       'renderPortalTable',
       'renderPortalTableRows',
+      'portalRowToneClass',
       'renderPortalPanel',
       'renderPortalError',
       'renderPortalSkeleton',
@@ -158,6 +198,13 @@ describe('browser portal-ui twin', () => {
       actionsHtml: '<button type="button">Retry</button>',
       footerHtml: '<p class="dim">Run the bake</p>',
     };
+    const bannerOpts = { title: 'Live <probe>', meta: 'ok', tone: 'ok' as const };
+    const heroOpts = {
+      title: 'Desk',
+      sub: 'sub <x>',
+      eyebrow: 'Lane',
+      card: true,
+    };
 
     expect(browser.renderPortalTableRows(cols, [], emptyOpts)).toBe(
       renderPortalTableRows(cols, [], emptyOpts)
@@ -167,6 +214,12 @@ describe('browser portal-ui twin', () => {
     expect(browser.renderPortalGate('drift <unsafe>', 'drift')).toBe(
       renderPortalGate('drift <unsafe>', 'drift')
     );
+    expect(browser.renderPortalBanner(bannerOpts)).toBe(renderPortalBanner(bannerOpts));
+    expect(browser.renderPortalHero(heroOpts)).toBe(renderPortalHero(heroOpts));
+    expect(browser.renderPortalPill('rest', { kind: 'ok' })).toBe(
+      renderPortalPill('rest', { kind: 'ok' })
+    );
+    expect(browser.portalRowToneClass('warn')).toBe(portalRowToneClass('warn'));
     expect(browser.renderPortalError(errorOpts)).toContain('Load &lt;failed&gt;');
     expect(browser.renderPortalGate('drift <unsafe>', 'drift')).toContain(
       'drift &lt;unsafe&gt;'

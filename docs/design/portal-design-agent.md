@@ -73,10 +73,13 @@ separate plane — hand off to [`branded-ids`](../../.agents/skills/branded-ids/
 
 ## Building blocks
 
-Priority backlog lives in the skill. Existing builders: `renderToneChip` ·
-`renderPortalChip` · `renderPortalStatGrid` · `renderPortalTable` /
-`renderPortalTableRows` · `renderPortalPanel` · `renderPortalError` ·
-`renderPortalSkeleton` · `renderPortalGate`.
+Matrix: [`.agents/skills/portal-design/references/building-blocks.md`](../../.agents/skills/portal-design/references/building-blocks.md).
+
+Builders (dual-API): `renderToneChip` · `renderPortalChip` · `renderPortalPill` ·
+`renderPortalBanner` · `renderPortalHero` · `renderPortalStatGrid` ·
+`renderPortalTable` / `renderPortalTableRows` · `portalRowToneClass` ·
+`renderPortalPanel` · `renderPortalError` · `renderPortalSkeleton` ·
+`renderPortalGate`.
 
 ## Contents
 

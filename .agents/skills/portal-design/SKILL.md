@@ -75,9 +75,11 @@ Disambiguate: DNS hostname ≠ ConceptDomain ≠ vocabulary namespace ≠ chrome
 
 ## Building-block backlog (priority)
 
-1. Grow `ui-html.ts` ↔ `portal-ui.js` (card / toolbar / banner / row rails / meta) — dual-API parity.
-2. Map `semantic-vocabulary` `uiRole` → one render path.
-3. Unification P1/P2: private CSS → primitives; limits / partner-history / doctor / vault → `_page-template`.
+Matrix: [references/building-blocks.md](references/building-blocks.md).
+
+1. Grow `ui-html.ts` ↔ `portal-ui.js` — **shipped:** banner · hero · pill · `portalRowToneClass`; **next:** toolbar · meta-row · card · freshness.
+2. Map `semantic-vocabulary` `uiRole` → one render path (chip/pill/gate first).
+3. Unification P1/P2: `cx-*` / `brand-*` / `ops-*` / `issue-*` → primitives; limits / partner-history / doctor / vault → `_page-template`.
 4. Triage unmapped component `var(--token, fallback)` into `COMPONENT_VAR_TOKEN_MAP`.
 5. Venue identity ≠ status tones; telegram/partner-ops extended keys stay non-primary chrome.
 6. CLI twin on `frameBlock` / `columnTable` / `formatIndexedCards`.
