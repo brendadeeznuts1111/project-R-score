@@ -43,3 +43,17 @@ When opening or triaging a ticket:
    [`naming-grammar.md`](../organization/naming-grammar.md) — do not reuse the
    issue **Domain** field as the filename `<lane>`. Homonyms:
    [`workspace-lane-cross-map.md`](tenants/workspace-lane-cross-map.md).
+
+## Resolved backlog (close when still open on GitHub)
+
+These landed on `main` before their GitHub issues were closed. Prefer
+`Closes #N` on the closing PR over silent archive.
+
+| Issue | Claim | Evidence |
+| ----- | ----- | -------- |
+| [#237](https://github.com/brendadeeznuts1111/project-R-score/issues/237)–[#241](https://github.com/brendadeeznuts1111/project-R-score/issues/241) | GitHub issue taxonomy spine | [`tenants/github-issue-taxonomy.md`](tenants/github-issue-taxonomy.md) · `bun run github-issue-taxonomy:check` |
+| [#235](https://github.com/brendadeeznuts1111/project-R-score/issues/235) | Ephemeral `Bun.serve`/`Bun.listen` port:0 retry under parallel fixtures | [#528](https://github.com/brendadeeznuts1111/project-R-score/pull/528) · `bun test tests/harness-utilities.test.ts` |
+| [#159](https://github.com/brendadeeznuts1111/project-R-score/issues/159) | `tests/tsconfig.snapshot.json` committed fixture | `git ls-files tests/tsconfig.snapshot.json` · `bun test tests/tsconfig-bun-types.test.ts` |
+| [#4](https://github.com/brendadeeznuts1111/project-R-score/issues/4) | OWASP-aligned `Bun.password` Factory defaults | [`lib/security/password-hash.ts`](../../lib/security/password-hash.ts) · `bun test tests/fixtures/security-hash/password/` |
+
+Still open by design: Phase 1 [#284](https://github.com/brendadeeznuts1111/project-R-score/issues/284) / [#285](https://github.com/brendadeeznuts1111/project-R-score/issues/285); dashboard flake [#23](https://github.com/brendadeeznuts1111/project-R-score/issues/23).
