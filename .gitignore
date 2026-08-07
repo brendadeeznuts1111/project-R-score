@@ -13,6 +13,8 @@
 # Unintegrated prototypes are not release artifacts. Promote deliberately into
 # projects/experimental/ with package, type, ownership, and brand contracts.
 /artifacts/deeplink-automation/
+# Worktree prune quarantine (local only — see artifacts/worktree-quarantine/*/README.md)
+/artifacts/worktree-quarantine/
 
 # Local symlinks inside nested enterprise repos
 projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/dashboard-worker
