@@ -4,6 +4,7 @@ import {
   attachServePublicErrorHandler,
   servePublicErrorHandler,
   servePublicErrorResponse,
+  throwServePublicDevelopmentError,
 } from '../lib/http/serve-public-error.ts';
 import type { BunServeOptions } from '../lib/http/bun-server.ts';
 
@@ -31,6 +32,12 @@ describe('serve-public error handler', () => {
     expect(typeof attached.fetch).toBe('function');
   });
 
+  test('development diagnostic route throws for Bun built-in rendering', () => {
+    expect(() => throwServePublicDevelopmentError()).toThrow(
+      'Intentional serve-public development error'
+    );
+  });
+
   test('attachServePublicErrorHandler sets JSON error when !development', async () => {
     const base = {
       fetch() {
@@ -46,6 +53,33 @@ describe('serve-public error handler', () => {
       expect(res.status).toBe(500);
       expect(await res.json()).toEqual({ error: 'Internal Server Error' });
     } finally {
+      console.error = prev;
+    }
+  });
+
+  test('production error callback replaces a thrown request with JSON on the wire', async () => {
+    const options = attachServePublicErrorHandler(
+      {
+        hostname: '127.0.0.1',
+        port: 0,
+        fetch() {
+          throw new Error('wire secret');
+        },
+      } satisfies BunServeOptions,
+      { development: false }
+    );
+    const prev = console.error;
+    console.error = () => {};
+    const server = Bun.serve(options);
+
+    try {
+      const response = await fetch(server.url);
+      expect(response.status).toBe(500);
+      expect(response.headers.get('Content-Type')).toContain('application/json');
+      expect(response.headers.get('Cache-Control')).toBe('no-store');
+      expect(await response.json()).toEqual({ error: 'Internal Server Error' });
+    } finally {
+      await server.stop(true);
       console.error = prev;
     }
   });

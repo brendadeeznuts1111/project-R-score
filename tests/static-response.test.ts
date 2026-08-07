@@ -58,20 +58,31 @@ describe('static-response', () => {
     expect(res304.status).toBe(304);
   });
 
-  test('respondFile 404 and Last-Modified 304', async () => {
+  test('respondFile emits weak ETag and honors both conditional validators', async () => {
     const miss = await respondFile(missingPath, new Request('http://t/x'));
     expect(miss.status).toBe(404);
 
     const ok = await respondFile(smallPath, new Request('http://t/x'));
     expect(ok.status).toBe(200);
     const lm = ok.headers.get('Last-Modified');
+    const etag = ok.headers.get('ETag');
     expect(lm).toBeTruthy();
+    expect(etag).toMatch(/^W\/"[a-f0-9]+-[a-f0-9]+"$/);
+
+    const etag304 = await respondFile(
+      smallPath,
+      new Request('http://t/x', { headers: { 'If-None-Match': etag! } })
+    );
+    expect(etag304.status).toBe(304);
+    expect(etag304.headers.get('ETag')).toBe(etag);
+    expect(etag304.headers.get('Last-Modified')).toBe(lm);
 
     const res304 = await respondFile(
       smallPath,
       new Request('http://t/x', { headers: { 'If-Modified-Since': lm! } })
     );
     expect(res304.status).toBe(304);
+    expect(res304.headers.get('ETag')).toBe(etag);
   });
 
   test('respondAuto uses cache map for second hit', async () => {

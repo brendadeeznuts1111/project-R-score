@@ -36,6 +36,11 @@ export function servePublicErrorHandler(error: unknown): Response {
   return servePublicErrorResponse(error);
 }
 
+/** Intentional development-only throw used to exercise Bun's built-in error page. */
+export function throwServePublicDevelopmentError(): never {
+  throw new Error('Intentional serve-public development error');
+}
+
 export type AttachServePublicErrorOptions = {
   development: boolean;
 };

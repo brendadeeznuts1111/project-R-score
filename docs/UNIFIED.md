@@ -406,6 +406,22 @@ bun run portal-cli dashboard --view=install-hygiene --open
 # open http://127.0.0.1:3000/portal/install-hygiene/?portal_fetch_debug=1
 ```
 
+Server-runtime debugging stays opt-in and uses Bun's WebKit Inspector Protocol:
+
+```bash
+bun run dev:portal                  # hot reload + Bun development error page
+bun run serve:public:inspect       # run immediately; attach when needed
+bun run serve:public:inspect-brk   # pause on the first source line
+bun run serve:public:inspect-wait  # do not run until a debugger attaches
+bun run serve:public:fetch-debug   # print fetch request/response headers
+bun run serve:public:fetch-curl    # also print reproducible curl commands
+```
+
+Bun prints the `debug.bun.sh` connection URL when an inspector command starts.
+Runtime-transpiled TypeScript uses Bun's automatic sourcemaps; no portal build
+flag is required. Browser-side `?portal_fetch_debug=1` remains separate from
+server-runtime fetch tracing.
+
 **`BUN_CONFIG_*` (env > bunfig)** — canonical:
 [configuring-with-environment-variables](https://bun.com/docs/pm/cli/install#configuring-with-environment-variables).
 SSOT: `tools/bun-install-env.ts` · runtime proof: `tools/verify-install-env.ts`

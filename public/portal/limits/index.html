@@ -10,6 +10,8 @@
     <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
     <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="stylesheet" href="../file-mode.css" />
+    <script src="../file-mode.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -267,6 +269,61 @@
       .pattern-summary__item small {
         color: var(--text-dim);
         font-size: 9px;
+      }
+      .limit-watch-controls {
+        align-items: end;
+        display: grid;
+        gap: 8px;
+        grid-template-columns: repeat(4, minmax(130px, 1fr));
+        margin: 14px 0;
+      }
+      .limit-watch-controls label {
+        color: var(--text-dim);
+        display: grid;
+        font-size: 9px;
+        font-weight: 700;
+        gap: 4px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .limit-watch-controls :is(select, input) {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        font: 600 12px/1.2 inherit;
+        min-height: 36px;
+        padding: 7px 9px;
+        width: 100%;
+      }
+      .limit-watch-summary {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        margin: 12px 0;
+      }
+      .limit-watch-summary > div {
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        display: grid;
+        gap: 3px;
+        padding: 10px;
+      }
+      .limit-watch-summary strong {
+        font: 700 18px/1 var(--font-mono, ui-monospace, monospace);
+      }
+      .limit-watch-summary span,
+      .limit-watch-operators span,
+      #limit-watch-status {
+        color: var(--text-dim);
+        font-size: 10px;
+      }
+      .limit-watch-operators {
+        display: grid;
+        gap: 3px;
+      }
+      .limit-watch-operators strong {
+        color: var(--text);
       }
       .prediction-layout {
         display: grid;
@@ -847,6 +904,10 @@
         overflow-wrap: anywhere;
       }
       @media (max-width: 880px) {
+        .limit-watch-controls,
+        .limit-watch-summary {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
         .profile-board {
           grid-template-columns: 1fr;
         }
@@ -874,6 +935,10 @@
         }
       }
       @media (max-width: 520px) {
+        .limit-watch-controls,
+        .limit-watch-summary {
+          grid-template-columns: 1fr;
+        }
         .section-heading {
           align-items: start;
           flex-direction: column;
@@ -1225,6 +1290,65 @@
             <tbody id="jurisdiction-policy-body"></tbody>
           </table>
         </div>
+      </section>
+
+      <section id="limit-watch" class="card" aria-labelledby="limit-watch-title">
+        <h2 id="limit-watch-title" class="section-heading">
+          <a class="section-anchor" href="#section:limit-watch">Cross-market limit watch</a>
+          <span class="section-heading__links">
+            <a href="/registry/limit-raises.json">Evidence</a>
+            <a href="/portal/glossary/#glossary:ops.limits.market_type">Market semantics</a>
+          </span>
+        </h2>
+        <p class="section-copy">
+          Geo-scoped operator comparisons join observed max stake, line movement, license state,
+          proof, and influence evidence. A stake-ready row is a capacity signal; price and edge
+          remain owned by the odds feed.
+        </p>
+        <div class="limit-watch-controls" role="search" aria-label="Limit watch filters">
+          <label for="watch-state">
+            State
+            <select id="watch-state"><option value="">All states</option></select>
+          </label>
+          <label for="watch-sport">
+            Sport
+            <select id="watch-sport"><option value="">All sports</option></select>
+          </label>
+          <label for="watch-market">
+            Market
+            <select id="watch-market"><option value="">All markets</option></select>
+          </label>
+          <label for="watch-min-stake">
+            Required stake
+            <input id="watch-min-stake" type="number" min="0" step="50" value="500" />
+          </label>
+        </div>
+        <div class="limit-watch-summary" aria-label="Limit watch summary">
+          <div><strong id="watch-actionable">0</strong><span>stake-ready signals</span></div>
+          <div><strong id="watch-cross-operator">0</strong><span>cross-operator markets</span></div>
+          <div><strong id="watch-states">0</strong><span>geo states</span></div>
+          <div><strong id="watch-operators">0</strong><span>operators</span></div>
+          <div><strong id="watch-capacity">$0</strong><span>highest shared capacity</span></div>
+        </div>
+        <div class="table-wrap">
+          <table aria-label="Cross-market, cross-operator, geo-enabled limit signals">
+            <thead>
+              <tr>
+                <th>Region</th>
+                <th>Market</th>
+                <th>Operators / observed max</th>
+                <th>Shared stake</th>
+                <th>Movement class</th>
+                <th>Sustainability</th>
+                <th>Readiness</th>
+              </tr>
+            </thead>
+            <tbody id="limit-watch-body">
+              <tr><td colspan="7" class="empty">Loading limit-watch evidence…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p id="limit-watch-status" role="status" aria-live="polite">Loading limit-watch evidence…</p>
       </section>
 
       <section id="pattern-explorer" aria-label="Limit pattern explorer">
@@ -2269,6 +2393,7 @@
         load();
         setInterval(load, POLL_INTERVAL);
       </script>
+      <script type="module" src="/portal/limits/limit-watch.js?v=1"></script>
       <script type="module" src="/portal/limits/limit-profiles.js?v=7"></script>
     </main>
     <footer class="footer" data-portal-chrome="footer">
