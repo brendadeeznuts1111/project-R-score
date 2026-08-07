@@ -145,6 +145,25 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'platform / harness',
   },
   {
+    id: 'bun-bench-profiling',
+    claim:
+      'Harness Bun microbench and CPU-profile suites have a named metric catalog (scripts · units · pins · profile flags)',
+    kinds: ['unit'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run bench:status -- --json',
+      'bun test tests/bench-status.test.ts',
+      'tools/bench-status.ts',
+      'docs/harness/tenants/bun-bench-profiling.md',
+      'docs/performance/README.md',
+      'tools/benchmarks/README.md',
+    ],
+    freshRerun: 'bun test tests/bench-status.test.ts && bun run bench:status -- --json',
+    freshRerunKind: 'claim',
+    owner: 'runtime-tooling',
+  },
+  {
     id: 'install-verify',
     claim: 'Factory install produces a working Bun workspace',
     kinds: ['journey', 'deployed'],

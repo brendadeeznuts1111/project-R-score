@@ -1774,6 +1774,9 @@ export const BASELINE_CAESARS_PROBE_ALLOWED_LONG = ['bake', 'json', 'live'] as c
 /** § — lane:status (`tools/lane-status.ts`) — auto team plan */
 export const LANE_STATUS_ALLOWED_LONG = ['count', 'json', 'left-right', 'merged', 'short'] as const;
 
+/** § — bench:status (`tools/bench-status.ts`) — harness Bun metric catalog */
+export const BENCH_STATUS_ALLOWED_LONG = ['json'] as const;
+
 /** § — glossary:verify (`tools/glossary-verify.ts`) — auto team plan */
 export const GLOSSARY_VERIFY_ALLOWED_LONG = ['dry-run', 'json', 'strict'] as const;
 
@@ -2587,6 +2590,7 @@ export type AllowedLongCliName =
   | 'baseline:apply-overrides'
   | 'baseline:caesars:probe'
   | 'lane:status'
+  | 'bench:status'
   | 'glossary:verify'
   | 'bun:channel:cron:preview'
   | 'ops:settle'
@@ -2911,6 +2915,7 @@ export const ALLOWED_LONG_REGISTRY = {
   'baseline:apply-overrides': BASELINE_APPLY_OVERRIDES_ALLOWED_LONG,
   'baseline:caesars:probe': BASELINE_CAESARS_PROBE_ALLOWED_LONG,
   'lane:status': LANE_STATUS_ALLOWED_LONG,
+  'bench:status': BENCH_STATUS_ALLOWED_LONG,
   'glossary:verify': GLOSSARY_VERIFY_ALLOWED_LONG,
   'bun:channel:cron:preview': BUN_CHANNEL_CRON_PREVIEW_ALLOWED_LONG,
   'ops:settle': OPS_SETTLE_ALLOWED_LONG,

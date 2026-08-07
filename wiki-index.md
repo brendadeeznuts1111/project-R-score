@@ -35,7 +35,7 @@ owns the machine-artifact companion.
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
 | Human hub          | [Home](/)                                                                                                                        |
 | Docs index         | [`docs/`](docs/)                                                                                                                 |
-| Agent entry        | [`AGENTS.md`](AGENTS.md) · [`docs/AGENTS.md`](docs/AGENTS.md)                                                                    |
+| Agent entry        | [`AGENTS.md`](AGENTS.md) (entry) · [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · routing [`docs/AGENTS.md`](docs/AGENTS.md) |
 | Workspace map      | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                   |
 | Harness JIT        | [`docs/harness/`](docs/harness/) · `bun run harness:status`                                                                      |
 | Coding standards   | [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)                                                                 |
@@ -256,6 +256,8 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 | Bookmaker registry         | [`bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md)       |
 | Bookmaker open issues      | [`bookmakers-open-issues.md`](docs/harness/tenants/bookmakers-open-issues.md) |
 | Bun capability × brand map | [`bun-brand-cross-map.md`](docs/harness/tenants/bun-brand-cross-map.md)       |
+| Bun bench + profiling      | [`bun-bench-profiling.md`](docs/harness/tenants/bun-bench-profiling.md) · `bun run bench:status` · [`docs/performance/`](docs/performance/README.md) |
+| Grounded capability map    | [`capability-map.md`](docs/harness/capability-map.md) · `bun run bake:capabilities` · `/registry/capability-map-subset.json` |
 | GitHub issue taxonomy      | [`github-issue-taxonomy.md`](docs/harness/tenants/github-issue-taxonomy.md)   |
 | Limits forecast lab        | [`limit-forecast-lab.md`](docs/harness/tenants/limit-forecast-lab.md)         |
 | Partner domain map         | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md)         |

@@ -39,6 +39,10 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   `bun test tests/workspace-taxonomy.test.ts` ·
   `bun run workspace-taxonomy:check` ·
   [`tenants/workspace-lane-cross-map.md`](tenants/workspace-lane-cross-map.md)
+- **`bun-bench-profiling`** — harness Bun microbench + CPU-profile metric
+  catalog (`unit`) _Ratchet_ → `bun test tests/bench-status.test.ts` ·
+  `bun run bench:status -- --json` ·
+  [`tenants/bun-bench-profiling.md`](tenants/bun-bench-profiling.md)
 - **`install-verify`** — Factory install produces a working Bun workspace
   (`journey` + `deployed`) _Ratchet_ → `bun run proof:install` ·
   `bun run install:verify` (CI: `repo-hygiene.yml`)
@@ -348,6 +352,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `branded-ids`                      | continuous | pre-commit brands staged‖smart; `ci:harness` smart; types when branded staged or `--full`                                                                            |
 | `bun-brand-cross-map`              | continuous | `ci:harness` · `bun run bun:brand-map:check`                                                                                                                         |
 | `workspace-lane-cross-map`         | human-only | `bun test tests/workspace-taxonomy.test.ts` · `bun run workspace-taxonomy:check`                                                                                     |
+| `bun-bench-profiling`              | human-only | `bun test tests/bench-status.test.ts` · `bun run bench:status -- --json`                                                                                             |
 | `install-verify`                   | continuous | `ci:core` · harness-gates                                                                                                                                            |
 | `install-verify-journey`           | human-only | `bun run test:install-verify`                                                                                                                                        |
 | `test-changed`                     | continuous | `ci:harness` · harness-gates                                                                                                                                         |

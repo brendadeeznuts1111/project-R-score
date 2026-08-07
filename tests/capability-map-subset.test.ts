@@ -3,7 +3,7 @@
 /**
  * Capability map subset — parse + bake integrity + drift snapshot.
  *
- * After legitimate AGENTS.md capability changes:
+ * After legitimate docs/harness/capability-map.md changes:
  *   bun run bake:capabilities
  *   bun test tests/capability-map-subset.test.ts --update-snapshots
  */
@@ -159,8 +159,8 @@ describe('capability-map-subset parse', () => {
     expect(f.rows[0]?.source).toBe('https://example.com/pass');
   });
 
-  test('repo AGENTS.md parses non-empty map', async () => {
-    const md = await Bun.file('AGENTS.md').text();
+  test('repo capability-map.md parses non-empty map', async () => {
+    const md = await Bun.file('docs/harness/capability-map.md').text();
     const rows = parseCapabilityTableFromMarkdown(md);
     expect(rows.length).toBeGreaterThanOrEqual(65);
     expect(rows.some(r => /item view|Secret retrieval|Vault inject/i.test(r.capability + r.api))).toBe(
@@ -198,8 +198,8 @@ describe('capability-map-subset parse', () => {
     expect(rows.filter(r => r.source?.startsWith('https://')).length).toBeGreaterThan(20);
   });
 
-  test('baked subset matches AGENTS (Bun.deepEquals) and snapshot contract', async () => {
-    const md = await Bun.file('AGENTS.md').text();
+  test('baked subset matches capability-map.md (Bun.deepEquals) and snapshot contract', async () => {
+    const md = await Bun.file('docs/harness/capability-map.md').text();
     const built = buildCapabilityMapSubset(md, '2026-07-28T00:00:00.000Z');
     const bakedPath = 'public/registry/capability-map-subset.json';
     const bakedFile = Bun.file(bakedPath);
@@ -222,7 +222,7 @@ describe('capability-map-subset parse', () => {
   });
 
   test('full bake present and row-aligned with subset', async () => {
-    const md = await Bun.file('AGENTS.md').text();
+    const md = await Bun.file('docs/harness/capability-map.md').text();
     const subset = buildCapabilityMapSubset(md, '2026-07-28T00:00:00.000Z');
     const full = buildCapabilityMapFull(md, '2026-07-28T00:00:00.000Z');
     expect(full.rowCount).toBe(subset.rowCount);

@@ -1,9 +1,10 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
-// templates/deep-benchmark.ts — Template for benchmarks with deep inspection
-// Run: bun templates/deep-benchmark.ts
-// Pipe: bun templates/deep-benchmark.ts | jq .summary
+// tools/benchmarks/deep-benchmark.ts — harness deep-inspect microbench
+// Run: bun run bench:deep  (or bun tools/benchmarks/deep-benchmark.ts)
+// Pipe: bun tools/benchmarks/deep-benchmark.ts | jq .summary
+// Catalog: bun run bench:status · docs/harness/tenants/bun-bench-profiling.md
 
 import { jsonOut } from '../../lib/console-depth.ts';
 
