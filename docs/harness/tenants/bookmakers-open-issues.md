@@ -5,17 +5,20 @@
 
 Remaining gaps after `@factorywager/bookmakers@0.4.1` publish + public bake.
 
-**Tenant** `bookmakers` — sportsbook **catalog** residuals (`BM-*`). A bookmaker
-is **not** a partner; partners reference books via outs / `sportsbookId`
+**Tenant** `bookmakers` — sportsbook **catalog** residuals (`BM-*`): who the
+book is, hosts, provider type, limits shape, desk match. A bookmaker is **not**
+a partner CODE; partners hold **outs** that reference books via `sportsbookId`
 ([unified-partner-profile.md](../../design/unified-partner-profile.md)).
 
-**Chrome Domain** for the board surface `/portal/bookmakers/` remains `partner`
-(nav container only — see [ISSUE-ROUTING.md](../ISSUE-ROUTING.md)). Do not read
-Domain=`partner` as “entity = partner”.
+**Domain** = `partner` because the **partner desk loop** owns
+outs → books → limits → liquidity → offers. The catalog is the sportsbook /
+provider surface in that supply chain (including host ↔ shared line-provider
+correlation). Do not read Domain=`partner` as “entity type = partner”. See
+[ISSUE-ROUTING.md](../ISSUE-ROUTING.md).
 
 **Human tickets:** open a GitHub issue with the **Bookmakers catalog** or
 **Portal gap** template. Set **Tenant** = `bookmakers`, **Tracker** = `BM-*`
-(this table), **Domain** = `partner` (board chrome lane), and **Owner** from the
+(this table), **Domain** = `partner` (partner-desk loop), and **Owner** from the
 row below. Do not use GitHub labels as concept SSOT — see
 [CONCEPT_LIFECYCLE.md](../../CONCEPT_LIFECYCLE.md).
 Parent runbook: [`bookmakers-registry.md`](./bookmakers-registry.md) · board

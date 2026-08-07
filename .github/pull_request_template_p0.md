@@ -32,8 +32,8 @@ State the user/ops claim this PR closes. Match kind to evidence
 ## Routing (optional)
 
 GitHub is not concept SSOT ([ISSUE-ROUTING.md](../docs/harness/ISSUE-ROUTING.md)).
-**Domain** = chrome nav lane; **Tenant** / **Owner** for entity residuals (`BM-*`).
-Bookmaker ≠ partner.
+**Domain** = desk lane (partner loop includes books); **Tenant** / **Owner** for
+`BM-*`. Bookmaker ≠ partner entity.
 
 | Field       | Value                                                                              |
 | ----------- | ---------------------------------------------------------------------------------- |

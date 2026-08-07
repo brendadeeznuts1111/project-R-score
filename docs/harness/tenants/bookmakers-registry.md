@@ -19,7 +19,7 @@ first-class portal surface on the live domain.
 | Bake local | `bun run bookmakers:bake -- --local` (uses local 0.4 package, no registry fetch) |
 | Weave | surface `bookmakers` · artifact `bookmakers-registry` ([`lib/http/portal-weave.ts`](../../../lib/http/portal-weave.ts)) |
 | Route manifest | `/portal/bookmakers/` ([`lib/http/portal-route-manifest.ts`](../../../lib/http/portal-route-manifest.ts)) |
-| Chrome nav | `bookmakers` (overflow, ops) — chrome **Domain** `partner` is nav-only; entity is bookmaker, not partner ([`lib/portal/chrome-catalog.ts`](../../../lib/portal/chrome-catalog.ts)) |
+| Chrome nav | `bookmakers` (overflow, ops) — **Domain** `partner` = partner-desk loop (outs → books → limits → liquidity); entity is bookmaker, not partner CODE ([`lib/portal/chrome-catalog.ts`](../../../lib/portal/chrome-catalog.ts)) |
 | Suite | [`tests/bookmakers-registry-bake.test.ts`](../../../tests/bookmakers-registry-bake.test.ts) · [`tests/bookmakers-migrate-v04.test.ts`](../../../tests/bookmakers-migrate-v04.test.ts) · [`tests/bookmakers-board.test.ts`](../../../tests/bookmakers-board.test.ts) |
 | Open issues | [`bookmakers-open-issues.md`](./bookmakers-open-issues.md) — Tenant=`bookmakers` · BM-1 blocked · BM-3/BM-4 open · BM-2/BM-5 done (Owner=`platform`) · routing [ISSUE-ROUTING.md](../ISSUE-ROUTING.md) |
 

@@ -7,15 +7,15 @@ labels: bookmakers, registry
 
 ## Routing (human queue only)
 
-GitHub is **not** concept/domain SSOT. A **bookmaker is not a partner** — partners
-link books via outs / `sportsbookId`. See
-[ISSUE-ROUTING.md](../../docs/harness/ISSUE-ROUTING.md).
+GitHub is **not** concept/domain SSOT. A **bookmaker is not a partner** —
+partners hold outs; books are the sportsbook / provider surface (`sportsbookId`).
+See [ISSUE-ROUTING.md](../../docs/harness/ISSUE-ROUTING.md).
 
 | Field | Value | Rule |
 |-------|-------|------|
-| **Domain** | `partner` | Chrome lane for `/portal/bookmakers/` (nav container only — not ontology) |
+| **Domain** | `partner` | Partner-desk loop (outs → books → limits → liquidity → offers) — not “entity = partner” |
 | **Tenant** | `bookmakers` | Required — catalog / `BM-*` SSOT |
-| **Owner** | `bookmakers` · `platform` | Catalog/desk → `bookmakers`; factory publish / Pages snapshot → `platform` |
+| **Owner** | `bookmakers` · `platform` | Catalog/desk/provider → `bookmakers`; factory publish / Pages snapshot → `platform` |
 | **Tracker** | e.g. `BM-1` (Orange777) · `BM-3` (webview maxBet) · or `n/a` | Prefer id from [bookmakers-open-issues.md](../../docs/harness/tenants/bookmakers-open-issues.md) |
 | **Concept** | usually `n/a` | Only if adding glossary chrome for books; never invent free-text “concepts” |
 | **Surface** | `/portal/bookmakers/` · `/registry/bookmakers.json` | |

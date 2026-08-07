@@ -484,10 +484,10 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/bookmakers/',
     tier: 'overflow',
     group: 'ops',
-    // Chrome Domain=partner is nav container only — bookmaker ≠ partner entity.
-    // Tenant=bookmakers · see docs/harness/ISSUE-ROUTING.md
+    // Domain=partner: partner-desk loop (outs → books → limits → liquidity).
+    // Bookmaker ≠ partner entity. Tenant=bookmakers · ISSUE-ROUTING.md
     domain: 'partner',
-    note: '@factorywager/bookmakers catalog (Tenant=bookmakers; chrome Domain=partner is nav-only)',
+    note: '@factorywager/bookmakers catalog (Tenant=bookmakers; Domain=partner = desk loop)',
     cli: 'bun run bookmakers:bake',
     registryArtifact: '/registry/bookmakers.json',
   },

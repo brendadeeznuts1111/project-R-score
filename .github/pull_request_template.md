@@ -53,8 +53,8 @@ freshRerun command too ([FRESH-RERUN.md](../docs/harness/FRESH-RERUN.md)).
 
 Optional human queue fields. GitHub is **not** concept SSOT
 ([ISSUE-ROUTING.md](../docs/harness/ISSUE-ROUTING.md)).
-**Domain** = chrome nav lane (UI container), not entity ontology.
-Bookmaker ≠ partner — use **Tenant** / **Owner** for `BM-*`.
+**Domain** = desk / business lane (partner = outs → books → limits → liquidity
+→ offers). Bookmaker ≠ partner entity — use **Tenant** / **Owner** for `BM-*`.
 
 | Field       | Value                                                                              |
 | ----------- | ---------------------------------------------------------------------------------- |
