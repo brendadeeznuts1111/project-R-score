@@ -283,8 +283,14 @@ config/*
 !config/runtime-flags.json
 !config/scraper-targets.ts
 !config/scrape-agents.toml
+!config/onboarding-defaults.toml
 !config/operators/
 !config/operators/**
+!config/partner-templates/
+!config/partner-templates/**
+!config/partner-profiles/
+config/partner-profiles/*
+!config/partner-profiles/.example.toml
 !config/tenants.ts
 !config/github-issue-taxonomy.ts
 # Homebase harness SSOT (must clone into worktrees; not machine secrets)

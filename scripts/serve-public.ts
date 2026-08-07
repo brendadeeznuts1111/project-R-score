@@ -101,9 +101,11 @@ import {
   getRouteStats,
   preloadStaticMap,
   respondAuto,
+  respondFile,
   respondStatic,
   type PreloadedStatic,
 } from '../lib/http/static-response.ts';
+import { portalCorsHeaders, portalOptionsResponse } from '../lib/http/portal-cors.ts';
 import {
   LiveReloadHub,
   maybeInjectLiveReloadResponse,
@@ -150,7 +152,10 @@ import {
   type ServePublicBindManifest,
 } from '../lib/http/serve-public-bind.ts';
 import { resolveServePublicBindPrefs } from '../lib/http/serve-public-config.ts';
-import { attachServePublicErrorHandler } from '../lib/http/serve-public-error.ts';
+import {
+  attachServePublicErrorHandler,
+  throwServePublicDevelopmentError,
+} from '../lib/http/serve-public-error.ts';
 import { isPublicReadPath } from '../lib/http/public-read-path.ts';
 import { registryBoardRedirectFor } from '../lib/http/registry-board-negotiate.ts';
 import { getDb, getMonitoringData } from '../lib/db/connection.ts';
@@ -831,7 +836,7 @@ async function staticFile(
   const cacheControl = LIVE_RELOAD
     ? 'no-store'
     : path.startsWith('/registry/')
-      ? 'public, max-age=60'
+      ? 'public, max-age=60, stale-while-revalidate=30'
       : 'public, max-age=300';
   // Skip memory cache for portal assets and mutable registry JSON when live-reload
   // is active. Registry bakes occur without changing this server module, so an
@@ -843,10 +848,18 @@ async function staticFile(
       path.endsWith('.css') ||
       path.endsWith('.md') ||
       (path.startsWith('/registry/') && path.endsWith('.json')));
-  const res = await respondAuto(fsPath, request, {
+  const responseOptions = {
     cache: skipMemoryCache ? undefined : fileRouteCache,
     cacheControl,
-  });
+    headers: path.startsWith('/registry/') ? portalCorsHeaders() : undefined,
+  };
+  // Limit raises are rebaked while the server is running. Keep this route on a
+  // native BunFile response so every request sees current bytes and retains
+  // Last-Modified / Range semantics instead of pinning a buffered first hit.
+  const res =
+    path === '/registry/limit-raises.json'
+      ? await respondFile(fsPath, request, responseOptions)
+      : await respondAuto(fsPath, request, responseOptions);
   return withLiveReload(withMarkdownAlternate(res, path));
 }
 
@@ -1905,6 +1918,10 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   const url = new URL(req.url);
   const path = url.pathname;
 
+  if (req.method === 'OPTIONS' && path.startsWith('/registry/')) {
+    return portalOptionsResponse();
+  }
+
   // Agent-odds desk APIs + WebSocket upgrade (shared with standalone agent:odds-dashboard).
   // Mounted here so /portal/agent-odds/ has same-origin live edges/health/ws.
   const agentOdds = await handleAgentOddsRequest(req, server);
@@ -2037,6 +2054,11 @@ function buildPublicRoutes() {
   return {
     // Exact static first (highest specificity)
     '/ready': ready,
+    ...(SERVE_DEVELOPMENT
+      ? {
+          '/__debug/error': () => throwServePublicDevelopmentError(),
+        }
+      : {}),
 
     // Dynamic health — handlers receive (req, server) on TCP
     '/health': (req: Request, server: RouteServer) => health(req, server),
@@ -2604,6 +2626,7 @@ console.log(`Monitoring API ${base}/api/monitoring`);
 console.log(`Registry:      ${base}/api/registry`);
 console.log(`Catalog:       ${base}/api/catalog`);
 console.log(`Prediction:    ${base}/registry/prediction/report/`);
+if (SERVE_DEVELOPMENT) console.log(`Dev error:     ${base}/__debug/error`);
 const publishReady = Boolean(configuredPublishToken());
 console.log(
   publishReady

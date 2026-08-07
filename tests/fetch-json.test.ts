@@ -54,10 +54,26 @@ describe('portal fetch-json', () => {
       contentType: 'application/json; charset=utf-8',
     });
     const [, init] = fetchSpy.mock.calls[0] ?? [];
-    expect(init?.cache).toBe('no-store');
+    expect(init?.cache).toBe('default');
     expect(init?.credentials).toBe('same-origin');
-    expect(new Headers(init?.headers).get('accept')).toContain('application/json');
+    const headers = new Headers(init?.headers);
+    expect(headers.get('accept')).toContain('application/json');
+    expect(headers.has('content-type')).toBe(false);
     expect(init?.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  test('preserves an explicit caller cache override', async () => {
+    const fetchSpy = spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response('{"ok":true}', {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })
+    );
+
+    await fetchJsonResult('/registry/live-state.json', { cache: 'no-store' });
+
+    const [, init] = fetchSpy.mock.calls[0] ?? [];
+    expect(init?.cache).toBe('no-store');
   });
 
   test('classifies HTTP and parse failures without throwing', async () => {

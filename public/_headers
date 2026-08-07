@@ -13,8 +13,9 @@
 
 /registry/*.json
   Content-Type: application/json; charset=utf-8
-  # Short TTL + revalidate so partner/ops bakes appear quickly on Pages CDN
-  Cache-Control: public, max-age=60, must-revalidate
+  Access-Control-Allow-Origin: *
+  # Reuse fresh registry data; allow a short stale window while refreshing it
+  Cache-Control: public, max-age=60, stale-while-revalidate=30
 
 /registry/bake-manifest.json
   Content-Type: application/json; charset=utf-8
@@ -22,6 +23,7 @@
 
 /registry/tennis/*.json
   Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
   Cache-Control: public, max-age=60, must-revalidate
 
 /registry/prediction/*

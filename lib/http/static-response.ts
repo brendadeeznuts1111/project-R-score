@@ -13,7 +13,7 @@
  *
  * **File (disk)** — `new Response(Bun.file(path))` per request:
  *   - exists-check + stream with backpressure
- *   - Last-Modified + If-Modified-Since → 304
+ *   - weak metadata ETag / If-None-Match + Last-Modified / If-Modified-Since → 304
  *   - Range handled by Bun when using Bun.file body
  *   - no implicit Cache-Control; the application owns cache policy
  *   - runtime 404 if missing
@@ -298,6 +298,25 @@ export async function respondFile(
 
   const lastModified = new Date(file.lastModified);
   const lastModifiedHttp = lastModified.toUTCString();
+  // Weak metadata validator keeps the response on the native BunFile path.
+  // A strong content hash would require buffering/reading the full artifact.
+  const etag = `W/"${file.size.toString(16)}-${Math.trunc(file.lastModified).toString(16)}"`;
+  const inm = request.headers.get('If-None-Match');
+  if (inm && etagMatches(inm, etag)) {
+    recordFileHit(path, true);
+    return new Response(null, {
+      status: 304,
+      headers: mergeHeaders(
+        {
+          ETag: etag,
+          'Last-Modified': lastModifiedHttp,
+          'Cache-Control': opts.cacheControl ?? 'public, max-age=60',
+          'X-Serve-Strategy': 'file',
+        },
+        opts.headers
+      ),
+    });
+  }
   const ims = request.headers.get('If-Modified-Since');
   if (ims) {
     const since = Date.parse(ims);
@@ -308,6 +327,7 @@ export async function respondFile(
         status: 304,
         headers: mergeHeaders(
           {
+            ETag: etag,
             'Last-Modified': lastModifiedHttp,
             'Cache-Control': opts.cacheControl ?? 'public, max-age=60',
             'X-Serve-Strategy': 'file',
@@ -322,6 +342,7 @@ export async function respondFile(
   const headers = mergeHeaders(
     {
       'Content-Type': opts.contentType ?? guessContentType(path),
+      ETag: etag,
       'Last-Modified': lastModifiedHttp,
       'Cache-Control': opts.cacheControl ?? 'public, max-age=60',
       'X-Serve-Strategy': 'file',

@@ -18,5 +18,27 @@ describe('tools/verify-script-flags', () => {
     const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf-8'));
     expect(pkg.scripts?.['serve:public:hot']).toBe('bun --hot scripts/serve-public.ts');
     expect(pkg.scripts?.['serve:public:watch']).toBe('bun --watch scripts/serve-public.ts');
+    expect(pkg.scripts?.['dev:portal']).toBe(
+      'SERVE_PUBLIC_DEV=1 bun run serve:public:hot'
+    );
+  });
+
+  test('serve:public exposes Bun inspector and native fetch-debug modes', () => {
+    const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf-8'));
+    expect(pkg.scripts?.['serve:public:inspect']).toBe(
+      'bun --inspect scripts/serve-public.ts'
+    );
+    expect(pkg.scripts?.['serve:public:inspect-brk']).toBe(
+      'bun --inspect-brk scripts/serve-public.ts'
+    );
+    expect(pkg.scripts?.['serve:public:inspect-wait']).toBe(
+      'bun --inspect-wait scripts/serve-public.ts'
+    );
+    expect(pkg.scripts?.['serve:public:fetch-debug']).toBe(
+      'BUN_CONFIG_VERBOSE_FETCH=true bun scripts/serve-public.ts'
+    );
+    expect(pkg.scripts?.['serve:public:fetch-curl']).toBe(
+      'BUN_CONFIG_VERBOSE_FETCH=curl bun scripts/serve-public.ts'
+    );
   });
 });

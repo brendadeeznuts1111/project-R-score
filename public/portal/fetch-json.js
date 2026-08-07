@@ -6,6 +6,7 @@
  * - GET only (no request body — GET/HEAD + body throws)
  * - AbortSignal timeout
  * - Explicit Accept for JSON
+ * - Normal browser caching; response Cache-Control owns dev/prod freshness
  * - Soft Content-Type check after response
  *
  * Bun-only `verbose: true` is **not** passed in the browser (extension, not web standard).
@@ -107,7 +108,7 @@ export async function fetchJsonResult(url, opts = {}) {
   /** @type {RequestInit} */
   const init = {
     method,
-    cache: opts.cache ?? 'no-store',
+    cache: opts.cache ?? 'default',
     credentials: opts.credentials ?? 'same-origin',
     headers,
     signal: opts.signal ?? AbortSignal.timeout(timeoutMs),
