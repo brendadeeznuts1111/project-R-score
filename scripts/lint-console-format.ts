@@ -38,12 +38,14 @@ import {
   type ConsoleFormatSummary,
   type ConsoleFormatViolation,
 } from '../lib/console-format-scan.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { withIndexTree } from './lib/index-tree.ts';
 
 const ROOT = process.cwd();
 const BASELINE_PATH = `${ROOT}/scripts/console-format-baseline.json`;
-const WRITE_BASELINE = Bun.argv.includes('--write-baseline');
-const STAGED = Bun.argv.includes('--staged');
+const argv = applyUnknownLongOptionGuardFor('check:console-format', Bun.argv.slice(2));
+const WRITE_BASELINE = argv.includes('--write-baseline');
+const STAGED = argv.includes('--staged');
 
 /** Violations in added lines of the staged diff (hunk-aware, no baseline). */
 async function stagedViolations(): Promise<ConsoleFormatViolation[]> {

@@ -233,6 +233,24 @@ const cases: Case[] = [
     expectExit: [2],
     stdoutOrStderrIncludes: ['❌ Unknown long option(s) in check:import-graph: --typo'],
   },
+  {
+    name: 'check:console-format unknown',
+    cmd: ['bun', 'scripts/lint-console-format.ts', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in check:console-format: --typo'],
+  },
+  {
+    name: 'concept:review unknown',
+    cmd: ['bun', 'scripts/concept-review.ts', '--list', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in concept:review: --typo'],
+  },
+  {
+    name: 'concept:deprecate unknown',
+    cmd: ['bun', 'scripts/concept-deprecate.ts', 'x', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in concept:deprecate: --typo'],
+  },
 ];
 
 function okExit(expect: Case['expectExit'], code: number): boolean {

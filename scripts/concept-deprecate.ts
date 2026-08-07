@@ -6,6 +6,7 @@
  *   bun scripts/concept-deprecate.ts <id> --replace-by <other-id> --reason "…"
  */
 import { colorize } from '../lib/console-depth.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import {
   appendHistory,
   loadLifecycleStore,
@@ -70,5 +71,6 @@ export async function runDeprecate(argv: readonly string[]): Promise<number> {
 }
 
 if (import.meta.main) {
-  process.exit(await runDeprecate(Bun.argv.slice(2)));
+  const argv = applyUnknownLongOptionGuardFor('concept:deprecate', Bun.argv.slice(2));
+  process.exit(await runDeprecate(argv));
 }

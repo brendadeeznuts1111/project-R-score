@@ -12,6 +12,7 @@
  * Env: CONCEPT_REVIEWER (recorded as reviewedBy).
  */
 import { colorize, jsonOut, logTable } from '../lib/console-depth.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import {
   appendHistory,
   insertConceptIntoVocabulary,
@@ -119,5 +120,6 @@ export async function runReview(argv: readonly string[]): Promise<number> {
 }
 
 if (import.meta.main) {
-  process.exit(await runReview(Bun.argv.slice(2)));
+  const argv = applyUnknownLongOptionGuardFor('concept:review', Bun.argv.slice(2));
+  process.exit(await runReview(argv));
 }

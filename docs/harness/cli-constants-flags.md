@@ -163,6 +163,9 @@ bun run docs:refid:check
 | `bun:brand-map` | `check` · `write-baseline` · `json` | [`tools/bun-brand-map.ts`](../../tools/bun-brand-map.ts) |
 | `env:inventory` | `json` · `vault-only` · `ratchet` · `write-baseline` · `bake` | [`scripts/env-inventory.ts`](../../scripts/env-inventory.ts) |
 | `check:import-graph` | `json` · `write-baseline` | [`scripts/check-import-graph.ts`](../../scripts/check-import-graph.ts) |
+| `check:console-format` | `staged` · `write-baseline` | [`scripts/lint-console-format.ts`](../../scripts/lint-console-format.ts) |
+| `concept:review` | `list` · `output` · `id` · `approve` · `reject` · `reason` · `correlation-id` | [`scripts/concept-review.ts`](../../scripts/concept-review.ts) |
+| `concept:deprecate` | `replace-by` · `reason` | [`scripts/concept-deprecate.ts`](../../scripts/concept-deprecate.ts) |
 
 ---
 
