@@ -135,7 +135,7 @@ describe('bun-types-status', () => {
     expect(report.verdict).toBe('ok');
     expect(report.nextSteps.length).toBeGreaterThan(0);
     expect(report.usage.byModule?.[0]?.module).toBe('bun');
-    expect(report.flags.length).toBe(5);
+    expect(report.flags.length).toBe(7); // 5 status CLI + 2 shared tip/report
   });
 
   test('flagDocRef maps leaf to Contents §4.1 number + href', () => {
@@ -152,9 +152,16 @@ describe('bun-types-status', () => {
       '4.1.max-age-days',
       '4.1.json',
       '4.1.help',
+      '4.1.shared.strict',
+      '4.1.shared.prefer-local',
     ]);
     expect(rows.every(r => r.href === `#${r.refId}`)).toBe(true);
-    expect(rows.every(r => r.script === 'bun:types-status')).toBe(true);
+    expect(rows.filter(r => !r.refId.includes('.shared.')).every(r => r.script === 'bun:types-status')).toBe(
+      true
+    );
+    expect(rows.filter(r => r.refId.includes('.shared.')).every(r => r.script === 'shared')).toBe(
+      true
+    );
     expect(rows.find(r => r.refId === '4.1.refresh')?.flag).toBe('--refresh');
     expect(rows.find(r => r.refId === '4.1.help')?.shortcode).toBe('-h');
     expect(rows.find(r => r.refId === '4.1.refresh')?.shortcode).toBe('—');

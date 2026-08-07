@@ -112,6 +112,9 @@ Flag owners (`requireToolCoverage`):
 | harness tenants (ops-snapshot · handshake · monorepo · complexity) | matching `*ToolFlags` |
 
 Tool flag SSOT: [`lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts).
+With **requireToolCoverage**, check is **bidirectional**: every tool REF:ID must
+appear in the Flags table (`tool-missing-table` error) **and** every table
+REF:ID must have a tool row (`table-missing-tool` error).
 `bun run docs:refid:audit` must report **flags-table-only=0**. Board maps with a
 trailing `Flags` column are not REF:ID surfaces.
 

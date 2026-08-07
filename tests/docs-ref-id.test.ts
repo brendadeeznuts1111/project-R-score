@@ -152,6 +152,46 @@ describe('REF:ID markdown extract + check', () => {
     expect(issues.filter(i => i.severity === 'error')).toEqual([]);
   });
 
+  test('requireToolCoverage is bidirectional (tool↔table)', () => {
+    const md = `
+<a id="4.1.a"></a>
+<a id="4.1.b"></a>
+| REF:ID | href |
+| --- | --- |
+| \`4.1.a\` | auto |
+| \`4.1.b\` | auto |
+`;
+    // tool has only a — table has a+b
+    const toolOnlyA = checkRefIdDocument(md, 't.md', {
+      requireToolCoverage: true,
+      toolFlags: [{ refId: '4.1.a', href: '#4.1.a', source: 'tool' }],
+    });
+    expect(toolOnlyA.some(i => i.kind === 'table-missing-tool' && i.refId === '4.1.b')).toBe(
+      true
+    );
+    // tool has a+c — table has a+b
+    const toolHasC = checkRefIdDocument(md, 't.md', {
+      requireToolCoverage: true,
+      toolFlags: [
+        { refId: '4.1.a', href: '#4.1.a', source: 'tool' },
+        { refId: '4.1.c', href: '#4.1.c', source: 'tool' },
+      ],
+    });
+    expect(toolHasC.some(i => i.kind === 'tool-missing-table' && i.refId === '4.1.c')).toBe(
+      true
+    );
+    expect(toolHasC.some(i => i.kind === 'missing-anchor' && i.refId === '4.1.c')).toBe(true);
+    // perfect match
+    const ok = checkRefIdDocument(md, 't.md', {
+      requireToolCoverage: true,
+      toolFlags: [
+        { refId: '4.1.a', href: '#4.1.a', source: 'tool' },
+        { refId: '4.1.b', href: '#4.1.b', source: 'tool' },
+      ],
+    });
+    expect(ok.filter(i => i.severity === 'error')).toEqual([]);
+  });
+
   test('collectTakenRefIds unions anchors and table', () => {
     const md = `
 <a id="4.1"></a>

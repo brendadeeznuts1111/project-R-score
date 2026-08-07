@@ -25,6 +25,7 @@ import {
   formatFlagDocRefLine,
   partnerOnboardFlagDocRef,
   partnerOnboardToolFlags,
+  unknownLongOptionLeaves,
 } from '../lib/docs/ref-id-tool-flags.ts';
 import { onboardPartner } from '../lib/partner-profile/onboard';
 
@@ -83,6 +84,30 @@ export interface AccountingFlags {
  * `undefined` (fields left unset — no prompts, no implicit defaults);
  * malformed values throw.
  */
+/**
+ * Accounting-flag long options allowed by the REF:ID table (§1.1).
+ * Identity/book flags are outside this set (validated by required-arg checks).
+ */
+export const ACCOUNTING_FLAG_LEAVES = PARTNER_ONBOARD_LEAVES;
+
+/** Full long-option allowlist for partner:onboard (identity + book + accounting + control). */
+export const PARTNER_ONBOARD_ALLOWED_LONG = [
+  'code',
+  'url',
+  'username',
+  'password',
+  'telegram-user-id',
+  'chat',
+  'book-key',
+  'type',
+  'maxBet',
+  'name',
+  'dry-run',
+  'skip-forum',
+  'no-bake',
+  ...PARTNER_ONBOARD_LEAVES,
+] as const;
+
 export function parseAccountingFlags(argv: string[]): AccountingFlags {
   const deal = numFlag(argv, 'deal');
   const initialBalance = numFlag(argv, 'initial-balance');
@@ -120,6 +145,12 @@ export function parseAccountingFlags(argv: string[]): AccountingFlags {
 
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
+  const unknown = unknownLongOptionLeaves(argv, PARTNER_ONBOARD_ALLOWED_LONG);
+  if (unknown.length) {
+    throw new Error(
+      `unknown flag(s): ${unknown.map(u => `--${u}`).join(', ')} (see REF:ID §${PARTNER_ONBOARD_SECTION} · --help)`
+    );
+  }
   const code = flag(argv, 'code');
   const url = flag(argv, 'url');
   const username = flag(argv, 'username');
