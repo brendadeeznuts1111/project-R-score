@@ -43,7 +43,7 @@ import { buildRegistryHealthReport } from './health';
 import { runIntegrityCycle } from './monitoring';
 import { registry } from './registry';
 import { type ArtifactType } from './artifact';
-import { readPublishPackageJson } from './publish-metadata';
+import { readPublishPackageJson, readPublishReadme } from './publish-metadata';
 
 const VERSION = '0.1.0';
 
@@ -72,7 +72,7 @@ Commands:
     --author <author>           Author/maintainer
     --publisher <publisher>     Publisher identity (default: factory-cli)
     --tag <tag>                 Dist-tag (default: latest)
-    --readme <path|bool>        README source: path, "true" (auto-detect), "false" (skip)
+    --readme <path|bool>        README: path, "true" (CWD), "false" (skip); default = package/tarball
   list                         List all packages
   search <query>               Search by name, description, or tags
   install <name> [<range>]     Download and extract an artifact (default range: latest)
@@ -108,7 +108,7 @@ Options:
   --author <author>             Author
   --publisher <publisher>       Publisher identity (default: factory-cli)
   --tag <tag>                   Dist-tag (default: latest)
-  --readme <path|bool>          README source (default: true = auto-detect README.md)`,
+  --readme <path|bool>          README source (default: README inside package/.tgz; "true"=CWD; "false"=skip)`,
   list: `factory list
 
 List all packages in the registry with their latest version and description.`,
@@ -278,6 +278,8 @@ async function cmdPublish(args: string[]): Promise<void> {
 
   // Resolve readme flag (parseArgs types boolean options as boolean | undefined;
   // CLI also accepts string path / "true"/"false" when typed loosely).
+  // Default (undefined): README from the publish path (package dir / .tgz) — BM-5.
+  // `--readme true` opts into legacy CWD glob; `--readme false` skips.
   let readmeOpt: string | boolean | undefined;
   const readmeFlag = values.readme as string | boolean | undefined;
   if (readmeFlag === 'false' || readmeFlag === false) {
@@ -291,18 +293,25 @@ async function cmdPublish(args: string[]): Promise<void> {
         readmeOpt = await readmeFile.text();
       } else {
         console.warn(
-          `Warning: --readme path "${readmeFlag}" not found, falling back to auto-detect`
+          `Warning: --readme path "${readmeFlag}" not found; using package/tarball README`
         );
-        readmeOpt = true;
+        readmeOpt = (await readPublishReadme(filePath)) ?? false;
       }
     } catch {
       console.warn(
-        `Warning: could not read --readme path "${readmeFlag}", falling back to auto-detect`
+        `Warning: could not read --readme path "${readmeFlag}"; using package/tarball README`
       );
-      readmeOpt = true;
+      readmeOpt = (await readPublishReadme(filePath)) ?? false;
+    }
+  } else {
+    const fromArtifact = await readPublishReadme(filePath);
+    readmeOpt = fromArtifact ?? false;
+    if (fromArtifact === undefined && filePath.endsWith('.tgz')) {
+      console.warn(
+        'Warning: no README* inside tarball; skipping README (pass --readme <path> or --readme true for CWD)'
+      );
     }
   }
-  // undefined → default (auto-detect README.md)
 
   // Read the artifact file
   let data: Blob;

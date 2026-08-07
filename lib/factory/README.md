@@ -5,20 +5,21 @@ package registry.
 
 ## Structure
 
-| File              | Role                                                                             |
-| ----------------- | -------------------------------------------------------------------------------- |
-| `artifact.ts`     | Branded ArtifactName/Version/Id types + ArtifactRelease schema                   |
-| `object-store.ts` | `RegistryObjectStore` — memory (tests) + `S3Client` SigV4 (live)                 |
-| `markdown.ts`     | `Bun.markdown` helpers — **Bun runtime only** (never import from `functions/`)   |
-| `registry.ts`     | RegistryClient: publish, install, list, search, fetchReadme                      |
-| `health.ts`       | Bun-host health report: R2 probe, package/version counts, integrity status       |
-| `integrity.ts`    | Full artifact size + SHA-256 verification                                        |
-| `alerts.ts`       | Slack and Telegram alert delivery without secret logging                         |
-| `monitoring.ts`   | One-shot integrity cycle + in-process Bun cron complement                        |
-| `server.ts`       | Bun VM gateway: `routes` (health/ready/index/POST publish) + `fetch` object keys |
-| `cli.ts`          | CLI (env, publish, list, search, install, readme, snapshot, create, help)        |
-| `semver.ts`       | Bun.semver wrappers: sortVersions, satisfiesRange, resolveVersion                |
-| `index.ts`        | Barrel exports                                                                   |
+| File                  | Role                                                                             |
+| --------------------- | -------------------------------------------------------------------------------- |
+| `artifact.ts`         | Branded ArtifactName/Version/Id types + ArtifactRelease schema                   |
+| `object-store.ts`     | `RegistryObjectStore` — memory (tests) + `S3Client` SigV4 (live)                 |
+| `markdown.ts`         | `Bun.markdown` helpers — **Bun runtime only** (never import from `functions/`)   |
+| `registry.ts`         | RegistryClient: publish, install, list, search, fetchReadme                      |
+| `health.ts`           | Bun-host health report: R2 probe, package/version counts, integrity status       |
+| `integrity.ts`        | Full artifact size + SHA-256 verification                                        |
+| `alerts.ts`           | Slack and Telegram alert delivery without secret logging                         |
+| `monitoring.ts`       | One-shot integrity cycle + in-process Bun cron complement                        |
+| `server.ts`           | Bun VM gateway: `routes` (health/ready/index/POST publish) + `fetch` object keys |
+| `cli.ts`              | CLI (env, publish, list, search, install, readme, snapshot, create, help)        |
+| `publish-metadata.ts` | package.json + README from publish path / `.tgz` (BM-5; prefer over CWD)         |
+| `semver.ts`           | Bun.semver wrappers: sortVersions, satisfiesRange, resolveVersion                |
+| `index.ts`            | Barrel exports                                                                   |
 
 ## Quick start
 

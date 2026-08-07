@@ -235,9 +235,11 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   [`tenants/reference-discovery.md`](tenants/reference-discovery.md) · skills
   `reference-discovery` · `audit-gap-close`
 - **`factory-registry-cli-v1`** — R2 artifact registry client + CLI (`publish`,
-  `install`, `list`, `search`, `readme`) with README auto-detection; live path
-  is SigV4 `S3Client` via `object-store.ts` (`unit` + `boundary`) _Ratchet_ →
-  `bun test tests/registry.test.ts tests/cli.test.ts` · `lib/factory/` sources
+  `install`, `list`, `search`, `readme`) with README auto-detection that prefers
+  package/tarball `README*` over CWD (BM-5); live path is SigV4 `S3Client` via
+  `object-store.ts` (`unit` + `boundary`) _Ratchet_ →
+  `bun test tests/registry.test.ts tests/cli.test.ts tests/factory-publish-metadata.test.ts`
+  · `lib/factory/` sources
 - **`factory-registry-pages-proxy-v1`** — Pages Function `/api/registry` serves
   allowlisted objects via R2 binding (`unit` + `boundary`) _Ratchet_ →
   `bun test tests/registry-pages-function.test.ts` ·
