@@ -7,13 +7,18 @@
   "exports": {
     ".": "./src/index.ts",
     "./generator": "./src/generator.ts",
+    "./feed": "./src/feed.ts",
+    "./catalog": "./src/catalog.ts",
     "./package.json": "./package.json"
   },
   "module": "./src/index.ts",
   "scripts": {
     "build": "bun run tsc --project ./tsconfig.json",
     "generate": "bun ./src/cli.ts",
+    "generate:latest": "bun ./src/cli.ts latest",
+    "generate:all": "bun ./src/cli.ts --all",
     "check": "bun ./src/cli.ts --check",
+    "check:latest": "bun ./src/cli.ts latest --check",
     "test": "bun test ../../tests/bun-release-contract-generator.test.ts"
   }
 }

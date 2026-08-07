@@ -1,0 +1,3052 @@
+{
+  "schemaVersion": 2,
+  "runtime": "bun",
+  "releaseVersion": "1.3.14",
+  "sourceUrl": "https://bun.com/blog/bun-v1.3.14",
+  "counts": {
+    "planned": 378,
+    "executable": 2
+  },
+  "items": [
+    {
+      "key": "image-7d16a42e",
+      "category": "image",
+      "section": "Bun.Image — Built-in Image Processing",
+      "announcement": "Bun now ships a built-in image processing API that handles JPEG, PNG, WebP, GIF, and BMP — plus HEIC, AVIF, and TIFF on macOS and Windows — with zero native module installs.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "image-71235cd1",
+      "category": "image",
+      "section": "Bun.Image — Built-in Image Processing",
+      "announcement": "Bun.Image provides a chainable pipeline for decoding, transforming, and encoding images, designed as a drop-in alternative to sharp for common server-side image operations.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "image-inputs-f47860b0",
+      "category": "image-inputs",
+      "section": "Input sources",
+      "announcement": "Bun.Image accepts path strings, ArrayBuffer/TypedArray (zero-copy), Blob/BunFile/S3File, and data: URLs. You can also use Bun.file(\"photo.jpg\").image() or blob.image() to start a pipeline.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "image-transforms-dad327cb",
+      "category": "image-transforms",
+      "section": "Chainable transforms",
+      "announcement": "The pipeline supports .resize(w, h?, {filter, fit, withoutEnlargement}), .rotate(90|180|270), .flip(), .flop(), and .modulate({brightness, saturation}). Output format is set with .jpeg(), .png(), .webp(), .heic(), or .avif() — each with format-specific quality/compression options.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "image-filters-6c27ec84",
+      "category": "image-filters",
+      "section": "Resize filters",
+      "announcement": "All sharp filters are supported: nearest, box, bilinear, cubic, mitchell, lanczos2, lanczos3, plus mks2013 and mks2021.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "image-output-2fb4b53f",
+      "category": "image-output",
+      "section": "Terminal methods",
+      "announcement": "All processing runs off the main thread (except metadata()). Output via .bytes(), .buffer(), .blob(), .toBase64(), .dataurl(), .placeholder() (thumbhash), .metadata(), or .write(dest).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "image-body-7f989cde",
+      "category": "image-body",
+      "section": "Body integration",
+      "announcement": "Bun.Image instances work directly as response/request bodies with automatic Content-Type:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "image-formats-3e8d73a5",
+      "category": "image-formats",
+      "section": "Platform-specific formats",
+      "announcement": "JPEG, PNG, WebP, GIF, and BMP use statically linked codecs and produce identical output across all platforms. HEIC, AVIF, and TIFF use OS system backends (ImageIO + vImage on macOS, WIC on Windows) with lazy symbol resolution for zero startup cost.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "image-performance-1cf89412",
+      "category": "image-performance",
+      "section": "Performance vs sharp 0.34.5",
+      "announcement": "Benchmarked on linux/x64 with 50 iterations and sharp.concurrency(1):",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "image-performance-1adbf702",
+      "category": "image-performance",
+      "section": "Performance vs sharp 0.34.5",
+      "announcement": "The performance comes from i16 fixed-point SIMD resize kernels, JPEG IDCT scaling to the smallest sufficient size, zero-copy ArrayBuffer borrowing, and a single pre-allocated arena for resize scratch memory.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "install-06370686",
+      "category": "install",
+      "section": "Global Virtual Store",
+      "announcement": "bun install --linker=isolated now supports a shared global virtual store via the install.globalStore = true option in bunfig.toml. Instead of cloning every package from the cache into each project's node_modules on every install, packages are materialized once into a global <cache>/links/ directory, and each project's node_modules/.bun/<pkg>@<ver> becomes a symlink into it.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "install-493b78dc",
+      "category": "install",
+      "section": "Global Virtual Store",
+      "announcement": "Warm installs — lockfile present, cache warm, node_modules wiped (the common CI path) — now perform ~1 symlink() per package instead of ~1 clonefileat() per file copy. On macOS APFS, clonefileat() holds a volume-wide kernel lock that made parallelization ineffective. The global store eliminates those calls entirely on the warm path.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "install-2ec406e6",
+      "category": "install",
+      "section": "Global Virtual Store",
+      "announcement": "Benchmarks — warm install of a ~1,400-package fixture on Apple Silicon macOS (hyperfine --warmup 3 --runs 10):",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "install-a7534131",
+      "category": "install",
+      "section": "Global Virtual Store",
+      "announcement": "This is still experimental, so the global store is off by default with the isolated linker.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "install-134a3627",
+      "category": "install",
+      "section": "Global Virtual Store",
+      "announcement": "To enable:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "install-ee4fe841",
+      "category": "install",
+      "section": "Global Virtual Store",
+      "announcement": "Or via environment variable:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "install-bb67ba6a",
+      "category": "install",
+      "section": "Global Virtual Store",
+      "announcement": "A package is eligible for the global store only when it comes from an immutable cache source (npm registry, git, tarball — unpatched, no trusted lifecycle scripts) and all of its transitive dependencies are also eligible. Ineligible packages fall back to per-project copies automatically.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "install-bb78fa40",
+      "category": "install",
+      "section": "Global Virtual Store",
+      "announcement": "The entry hash encodes the package's resolved dependency closure, so two projects that resolve a package to the same transitive versions share one on-disk entry, while a project with different resolutions gets its own.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "install-ad8b9c52",
+      "category": "install",
+      "section": "Global Virtual Store",
+      "announcement": "This release also fixes a pre-existing issue: Bun now synthesizes an implicit \"*\" optional peer dependency for entries that appear in peerDependenciesMeta but not in peerDependencies (matching pnpm/yarn behavior). This fixes compatibility with packages like webpack-cli.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-server-ea42f0e6",
+      "category": "http3-server",
+      "section": "HTTP/3 (QUIC) support in Bun.serve",
+      "announcement": "⚠️ Highly experimental. HTTP/3 support is new and likely has bugs. Do not deploy http3: true to production yet.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-server-d0a4e70f",
+      "category": "http3-server",
+      "section": "HTTP/3 (QUIC) support in Bun.serve",
+      "announcement": "Bun.serve now supports HTTP/3 over QUIC. Enable it with a single flag:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-server-654ef25c",
+      "category": "http3-server",
+      "section": "HTTP/3 (QUIC) support in Bun.serve",
+      "announcement": "When http3: true is set alongside tls, Bun binds TCP for HTTP/1.1+2 and UDP for HTTP/3 on the same port. Your existing fetch handler and routes work identically across all three protocols — no code changes needed. HTTP/1.1 and HTTP/2 responses automatically include Alt-Svc: h3=\":<port>\"; ma=86400 so browsers discover the QUIC endpoint.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-server-0339491d",
+      "category": "http3-server",
+      "section": "HTTP/3 (QUIC) support in Bun.serve",
+      "announcement": "You can also serve HTTP/3 only:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-server-707601a3",
+      "category": "http3-server",
+      "section": "HTTP/3 (QUIC) support in Bun.serve",
+      "announcement": "Everything you'd expect works over HTTP/3: new Response(readableStream) for streaming, new Response(Bun.file(\"large.bin\")), new Response(req.body) passthrough, req.url/req.headers/req.method across await boundaries, requestIP(), server.reload(), and graceful server.stop().",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-daa0e7f7",
+      "category": "performance",
+      "section": "Performance",
+      "announcement": "On Linux x64 (single process, loopback), HTTP/3 is significantly faster than HTTPS/1.1 from the same server instance:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-0e7bdf6b",
+      "category": "performance",
+      "section": "Performance",
+      "announcement": "~50% of HTTP/3 CPU time is inside lsquic; further optimizations may come in a future releas.e",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "limitations-b56b7161",
+      "category": "limitations",
+      "section": "Limitations",
+      "announcement": "WebSocket over HTTP/3 is not supported yet (server.upgrade() returns false). WebTransport is a separate project.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "limitations-022f380f",
+      "category": "limitations",
+      "section": "Limitations",
+      "announcement": "0-RTT is disabled.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "limitations-2e07f61b",
+      "category": "limitations",
+      "section": "Limitations",
+      "announcement": "unix: socket addresses skip the H3 listener (QUIC over Unix sockets is non-standard).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "limitations-640c4d6c",
+      "category": "limitations",
+      "section": "Limitations",
+      "announcement": "No trailer support, no Expect: 100-continue (matching HTTP/1.1 behavior).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "limitations-4461f305",
+      "category": "limitations",
+      "section": "Limitations",
+      "announcement": "Powered by lsquic v4.6.2.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http2-client-f63b7b04",
+      "category": "http2-client",
+      "section": "Experimental HTTP/2 Client for fetch()",
+      "announcement": "fetch() now supports HTTP/2 as an experimental feature. When enabled, Bun negotiates h2 via TLS ALPN — multiple concurrent fetches to the same origin share a single multiplexed TCP+TLS connection instead of opening separate HTTP/1.1 connections.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http2-client-c52251a6",
+      "category": "http2-client",
+      "section": "Experimental HTTP/2 Client for fetch()",
+      "announcement": "Enable it globally with an environment variable or CLI flag, or opt in per-request:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "multiplexing-connection-coalescing-38b81c6d",
+      "category": "multiplexing-connection-coalescing",
+      "section": "Multiplexing & connection coalescing",
+      "announcement": "Parallel fetches to the same origin share one TLS handshake and one connection. The first request opens the socket; subsequent requests attach to the same HTTP/2 session up to the server's MAX_CONCURRENT_STREAMS limit, with overflow queued automatically.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "per-request-protocol-control-35e3c465",
+      "category": "per-request-protocol-control",
+      "section": "Per-request protocol control",
+      "announcement": "The new protocol option in RequestInit lets you pin the HTTP version:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "per-request-protocol-control-b3f145b6",
+      "category": "per-request-protocol-control",
+      "section": "Per-request protocol control",
+      "announcement": "Accepted values: \"http2\", \"h2\", \"http1.1\", \"h1\".",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "what-works-48fddc03",
+      "category": "what-works",
+      "section": "What works",
+      "announcement": "Keep-alive pooling — idle HTTP/2 sessions (with HPACK state) are reused by subsequent requests",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "what-works-f445fdcc",
+      "category": "what-works",
+      "section": "What works",
+      "announcement": "Streaming request bodies — ReadableStream bodies are sent as DATA frames with proper flow control",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "what-works-a71f09f3",
+      "category": "what-works",
+      "section": "What works",
+      "announcement": "REFUSED_STREAM and graceful GOAWAY — transparently retried (up to 5 attempts) for replayable bodies",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "what-works-29d213e4",
+      "category": "what-works",
+      "section": "What works",
+      "announcement": "Content-Length enforcement per RFC 9113 §8.1.1",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "what-works-8b43a4ec",
+      "category": "what-works",
+      "section": "What works",
+      "announcement": "Expect: 100-continue support",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "hardening-0b4d5545",
+      "category": "hardening",
+      "section": "Hardening",
+      "announcement": "The HTTP/2 client also includes RFC 9113 conformance and denial-of-service protections:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "hardening-0d178ab3",
+      "category": "hardening",
+      "section": "Hardening",
+      "announcement": "CONTINUATION flood / HPACK bomb mitigation: 256 KiB cap on both header-block accumulation and decoded header lists, advertised via SETTINGS_MAX_HEADER_LIST_SIZE.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "hardening-3b645442",
+      "category": "hardening",
+      "section": "Hardening",
+      "announcement": "PING reflection attack mitigation: 1 MiB cap on queued PING/SETTINGS-ACK control frames prevents unbounded memory growth from malicious servers.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "hardening-da81cc77",
+      "category": "hardening",
+      "section": "Hardening",
+      "announcement": "The first server frame must be SETTINGS per RFC 9113 — connections that violate this are immediately terminated.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "hardening-66c08e35",
+      "category": "hardening",
+      "section": "Hardening",
+      "announcement": "RST_STREAM(NO_ERROR) mid-body now correctly fails the request instead of silently truncating the response.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "hardening-f25c36d3",
+      "category": "hardening",
+      "section": "Hardening",
+      "announcement": "REFUSED_STREAM retries only when no data has been delivered to the caller.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "hardening-d79935e2",
+      "category": "hardening",
+      "section": "Hardening",
+      "announcement": "Content-Length mismatches with actual DATA frame bytes are now detected and rejected.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "hardening-d72ee9b8",
+      "category": "hardening",
+      "section": "Hardening",
+      "announcement": "Trailers without END_STREAM are now rejected per spec.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "hardening-5f4307be",
+      "category": "hardening",
+      "section": "Hardening",
+      "announcement": "GOAWAY no longer drops already-completed streams.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "not-yet-supported-fd81a45b",
+      "category": "not-yet-supported",
+      "section": "Not yet supported",
+      "announcement": "HTTP proxies/CONNECT tunneling, Unix sockets, server push, and cleartext HTTP/2 (h2c) are not yet supported. The HTTP/1.1 path is completely unchanged when the flag is off and protocol is not set.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-947dac11",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "fetch() now supports an experimental HTTP/3 client using the protocol option. This uses an lsquic-backed QUIC transport that runs alongside the existing HTTP/1.1 and HTTP/2 paths.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-30df242e",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "⚠️ Highly experimental. This is an early preview — the API may change in future releases.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-d240b9ed",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "Both \"http3\" and \"h3\" are accepted as protocol values. The HTTP/3 client shares the same redirect, decompression, and response handling pipeline as HTTP/1.1 and HTTP/2, so existing fetch() behavior is preserved.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-4297bb86",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "What's supported:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-fd862ec9",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "All standard HTTP methods (GET, POST, PUT, DELETE, HEAD)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-ad5fd5ea",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "Request and response headers, JSON bodies, gzip compression",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-4f141f86",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "Redirects",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-4e289f5d",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "Large request/response bodies (1 MB+ round-trips)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-f00c36ad",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "Concurrent multiplexed requests over a single QUIC connection",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-ba968c55",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "Connection pooling and sequential reuse",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-215c3644",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "ReadableStream request body uploads",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-16d4c097",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "Full-duplex bidirectional streaming (server can respond while upload is still in progress)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-f39793ac",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "rejectUnauthorized TLS option (defaults to true)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-client-5c2f504a",
+      "category": "http3-client",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "announcement": "AbortSignal support",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-upgrade-3b0f387d",
+      "category": "http3-upgrade",
+      "section": "Alt-Svc HTTP/3 upgrades",
+      "announcement": "The HTTP/3 client can also automatically upgrade fetch() requests to HTTP/3 via the Alt-Svc header (RFC 7838). When a server advertises Alt-Svc: h3 in an HTTPS response, subsequent requests to that origin are routed over QUIC instead of TCP.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-upgrade-d3fe2d87",
+      "category": "http3-upgrade",
+      "section": "Alt-Svc HTTP/3 upgrades",
+      "announcement": "This is opt-in while the HTTP/3 client matures. Enable it with the CLI flag or environment variable:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "http3-upgrade-384addd9",
+      "category": "http3-upgrade",
+      "section": "Alt-Svc HTTP/3 upgrades",
+      "announcement": "The upgrade is transparent and per-origin — cross-origin redirects re-evaluate from HTTP/1.1, and requests that aren't eligible (proxied, unix socket, sendfile, or pinned to a specific protocol) gracefully fall back to TCP.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "fs-watch-637bd0c5",
+      "category": "fs-watch",
+      "section": "Rewritten fs.watch() backend on Linux, macOS, and FreeBSD",
+      "announcement": "Bun's fs.watch() implementation on POSIX platforms has been completely rewritten to talk directly to the OS file-watching APIs (inotify, FSEvents, kqueue) instead of routing through Bun's internal bundler watcher. This fixes several long-standing bugs and reduces complexity significantly.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "recursive-watching-now-tracks-new-directories-linux-386b9258",
+      "category": "recursive-watching-now-tracks-new-directories-linux",
+      "section": "Recursive watching now tracks new directories (Linux)",
+      "announcement": "Previously, fs.watch(\"dir\", { recursive: true }) only registered the directory tree that existed at the time watch() was called. Directories created after the watch started were never tracked, so files inside them were invisible to the watcher.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "deleted-and-recreated-files-emit-change-events-again-linux-db8e7358",
+      "category": "deleted-and-recreated-files-emit-change-events-again-linux",
+      "section": "Deleted-and-recreated files emit change events again (Linux)",
+      "announcement": "When a watched file was deleted and recreated, subsequent modifications to the recreated file would silently stop emitting change events. This is now fixed — the new inotify watch descriptor is correctly registered on recreation.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "macos-no-longer-spins-up-two-watcher-threads-475b7563",
+      "category": "macos-no-longer-spins-up-two-watcher-threads",
+      "section": "macOS no longer spins up two watcher threads",
+      "announcement": "Previously, fs.watch() on a directory on macOS would start both a kqueue watcher (via the bundler watcher) and an FSEvents CFRunLoop thread. The new implementation uses FSEvents exclusively for both files and directories, matching libuv's behavior and halving the thread overhead.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "orphans-669ede87",
+      "category": "orphans",
+      "section": "--no-orphans — exit when the parent process dies",
+      "announcement": "Bun now supports an opt-in mode that automatically exits when its parent process dies — even if the parent was SIGKILLed and never had a chance to forward a signal. On exit, Bun also recursively SIGKILLs every descendant process it spawned.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "orphans-40ab2712",
+      "category": "orphans",
+      "section": "--no-orphans — exit when the parent process dies",
+      "announcement": "This is useful when Bun is launched by a supervisor (Electron, a CI runner, a thin shim) that may be force-killed. Without this option, Bun would be silently reparented to launchd/init and keep running forever, along with anything it spawned.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "orphans-b84134fd",
+      "category": "orphans",
+      "section": "--no-orphans — exit when the parent process dies",
+      "announcement": "There are three equivalent ways to enable it:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "orphans-0a74bac7",
+      "category": "orphans",
+      "section": "--no-orphans — exit when the parent process dies",
+      "announcement": "The flag is automatically inherited by nested Bun processes, so enabling it once at the top level is sufficient.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "orphans-61459944",
+      "category": "orphans",
+      "section": "--no-orphans — exit when the parent process dies",
+      "announcement": "How it works:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "orphans-deb209af",
+      "category": "orphans",
+      "section": "--no-orphans — exit when the parent process dies",
+      "announcement": "Linux: Uses prctl(PR_SET_PDEATHSIG, SIGKILL) — kernel-delivered, no polling, no thread. Children spawned from the main thread also inherit PDEATHSIG by default so non-Bun descendants are covered.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "orphans-4797e1a1",
+      "category": "orphans",
+      "section": "--no-orphans — exit when the parent process dies",
+      "announcement": "macOS: Registers a EVFILT_PROC/NOTE_EXIT watch for the original parent pid on the existing event loop's kqueue — the same mechanism Bun already uses to watch child process exits. No dedicated thread, no extra file descriptor.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "orphans-74003566",
+      "category": "orphans",
+      "section": "--no-orphans — exit when the parent process dies",
+      "announcement": "On clean exit, Bun walks its process tree and uses a stop-verify-kill strategy for pid-reuse safety: each descendant is SIGSTOPped, its ppid is re-verified, and only then is it SIGKILLed. This prevents accidentally killing an unrelated process that recycled a stale pid.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "orphans-830ee4ad",
+      "category": "orphans",
+      "section": "--no-orphans — exit when the parent process dies",
+      "announcement": "macOS coverage is now comprehensive. Previously, bun run <script> and bunx on macOS had no parent-death watching — if the parent was killed, spawned scripts could be left orphaned. Bun now uses a dedicated kqueue watcher for these paths, monitoring both the parent process and child stdio. bun run --filter and bun run --parallel on macOS are also now covered.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "orphans-202a5371",
+      "category": "orphans",
+      "section": "--no-orphans — exit when the parent process dies",
+      "announcement": "Linux and macOS only (no-op on Windows).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "process-execve-support-ceb850a7",
+      "category": "process-execve-support",
+      "section": "process.execve() support",
+      "announcement": "Bun now implements process.execve(execPath, args, env), matching the API added in Node.js v24. This POSIX syscall replaces the current process image in-place — it never returns on success.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "process-execve-support-4843fd17",
+      "category": "process-execve-support",
+      "section": "process.execve() support",
+      "announcement": "Key details:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "process-execve-support-4384dacd",
+      "category": "process-execve-support",
+      "section": "process.execve() support",
+      "announcement": "stdio is inherited — file descriptors 0/1/2 are preserved across the exec boundary, while all other descriptors are marked close-on-exec to prevent leaks.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "process-execve-support-352e74a3",
+      "category": "process-execve-support",
+      "section": "process.execve() support",
+      "announcement": "Signal mask is reset before calling execve(2).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "process-execve-support-ff06e8ad",
+      "category": "process-execve-support",
+      "section": "process.execve() support",
+      "announcement": "Throws ERR_WORKER_UNSUPPORTED_OPERATION when called from a worker thread.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "process-execve-support-596b2d7a",
+      "category": "process-execve-support",
+      "section": "process.execve() support",
+      "announcement": "Throws ERR_FEATURE_UNAVAILABLE_ON_PLATFORM on Windows.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "process-execve-support-fad094ba",
+      "category": "process-execve-support",
+      "section": "process.execve() support",
+      "announcement": "Emits an ExperimentalWarning once per process, matching Node.js behavior.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "process-execve-support-6bd15ef4",
+      "category": "process-execve-support",
+      "section": "process.execve() support",
+      "announcement": "If execve fails, the process prints the error to stderr and aborts (consistent with Node.js behavior, since process state has already been mutated).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-terminal-on-windows-via-conpty-c8625fe8",
+      "category": "bun-terminal-on-windows-via-conpty",
+      "section": "Bun.Terminal on Windows via ConPTY",
+      "announcement": "Bun.Terminal and Bun.spawn({ terminal }) now work on Windows, powered by the Windows ConPTY API (CreatePseudoConsole). Previously, Bun.Terminal was only available on macOS and Linux.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "platform-differences-9861aafa",
+      "category": "platform-differences",
+      "section": "Platform differences",
+      "announcement": "The core behavior — child sees a TTY, write() reaches the child's stdin, child output reaches the data callback, resize() updates the child's window size — is the same on every platform. A few details differ on Windows:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "platform-differences-e401f7f3",
+      "category": "platform-differences",
+      "section": "Platform differences",
+      "announcement": "No termios on Windows. inputFlags, outputFlags, localFlags, and controlFlags always read as 0 and setting them is a no-op.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "platform-differences-37a6367f",
+      "category": "platform-differences",
+      "section": "Platform differences",
+      "announcement": "No echo without a child process. On POSIX, the kernel line discipline echoes write() input back to the data callback even with no process attached. ConPTY has no line discipline, so input is buffered for the next reader.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "platform-differences-66b5bbe9",
+      "category": "platform-differences",
+      "section": "Platform differences",
+      "announcement": "ConPTY re-encodes output. The data callback receives semantically equivalent — but not byte-identical — escape sequences compared to what the child emitted. Colors and text are preserved; cursor-positioning sequences may be reordered or coalesced.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "platform-differences-7c3d5db9",
+      "category": "platform-differences",
+      "section": "Platform differences",
+      "announcement": "Thanks to @dylan-conway for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "using-await-using-no-longer-lowered-when-targeting-bun-0fe89f30",
+      "category": "using-await-using-no-longer-lowered-when-targeting-bun",
+      "section": "using / await using no longer lowered when targeting Bun",
+      "announcement": "Bun's underlying JavaScript engine (JavaScriptCore) natively supports the Explicit Resource Management proposal (using and await using). Starting in this release, Bun no longer transpiles these declarations into __using / __callDispose helper calls wrapped in try/catch/finally when the target is Bun.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "using-await-using-no-longer-lowered-when-targeting-bun-bf0943a5",
+      "category": "using-await-using-no-longer-lowered-when-targeting-bun",
+      "section": "using / await using no longer lowered when targeting Bun",
+      "announcement": "This applies to:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "using-await-using-no-longer-lowered-when-targeting-bun-1de45402",
+      "category": "using-await-using-no-longer-lowered-when-targeting-bun",
+      "section": "using / await using no longer lowered when targeting Bun",
+      "announcement": "bun run / bun <file>",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "using-await-using-no-longer-lowered-when-targeting-bun-439102c9",
+      "category": "using-await-using-no-longer-lowered-when-targeting-bun",
+      "section": "using / await using no longer lowered when targeting Bun",
+      "announcement": "Bun.Transpiler({ target: \"bun\" })",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "using-await-using-no-longer-lowered-when-targeting-bun-fab962e0",
+      "category": "using-await-using-no-longer-lowered-when-targeting-bun",
+      "section": "using / await using no longer lowered when targeting Bun",
+      "announcement": "bun build --target=bun (including --compile and --bytecode)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "using-await-using-no-longer-lowered-when-targeting-bun-6bafafac",
+      "category": "using-await-using-no-longer-lowered-when-targeting-bun",
+      "section": "using / await using no longer lowered when targeting Bun",
+      "announcement": "Other targets (browser, node) continue to lower using as before.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "using-await-using-no-longer-lowered-when-targeting-bun-21115573",
+      "category": "using-await-using-no-longer-lowered-when-targeting-bun",
+      "section": "using / await using no longer lowered when targeting Bun",
+      "announcement": "Before:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "using-await-using-no-longer-lowered-when-targeting-bun-67ace8f1",
+      "category": "using-await-using-no-longer-lowered-when-targeting-bun",
+      "section": "using / await using no longer lowered when targeting Bun",
+      "announcement": "After:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "using-await-using-no-longer-lowered-when-targeting-bun-b5cbdddd",
+      "category": "using-await-using-no-longer-lowered-when-targeting-bun",
+      "section": "using / await using no longer lowered when targeting Bun",
+      "announcement": "This also fixes a bug where using inside a CommonJS module (.cjs) would inject an ESM import … from \"bun:wrap\" inside the CommonJS function wrapper, causing an Expected CommonJS module to have a function wrapper error instead of the expected TypeError for non-disposable values.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "sighup-and-sigbreak-signal-handling-on-windows-e88a62a0",
+      "category": "sighup-and-sigbreak-signal-handling-on-windows",
+      "section": "SIGHUP and SIGBREAK signal handling on Windows",
+      "announcement": "process.on('SIGHUP', …) and process.on('SIGBREAK', …) now correctly receive Windows console-control events, matching Node.js behavior:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "sighup-and-sigbreak-signal-handling-on-windows-c1431243",
+      "category": "sighup-and-sigbreak-signal-handling-on-windows",
+      "section": "SIGHUP and SIGBREAK signal handling on Windows",
+      "announcement": "Previously, these signal names were missing from Bun's Windows signal map, so registering a listener was treated as a plain EventEmitter event — no uv_signal_t was created, and the default handler would terminate the process immediately.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "sighup-and-sigbreak-signal-handling-on-windows-6bc932db",
+      "category": "sighup-and-sigbreak-signal-handling-on-windows",
+      "section": "SIGHUP and SIGBREAK signal handling on Windows",
+      "announcement": "Thanks to @ig-ant for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "websocket-permessagedeflate-false-now-respected-in-upgrade-reque-9ab85bcc",
+      "category": "websocket-permessagedeflate-false-now-respected-in-upgrade-reque",
+      "section": "WebSocket perMessageDeflate: false now respected in upgrade requests",
+      "announcement": "Previously, setting perMessageDeflate: false when creating a WebSocket connection was silently ignored — Bun always sent the Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits header in the upgrade request. This broke deployments where gateways or proxies reject upgrade requests that advertise unwanted extensions.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "websocket-permessagedeflate-false-now-respected-in-upgrade-reque-4db0c7e6",
+      "category": "websocket-permessagedeflate-false-now-respected-in-upgrade-reque",
+      "section": "WebSocket perMessageDeflate: false now respected in upgrade requests",
+      "announcement": "Now, passing perMessageDeflate: false correctly suppresses the extension header, matching the behavior of Node.js and the ws package.",
+      "status": "covered",
+      "testPath": "tests/bun-1.3.14-web-api-fixes.test.ts"
+    },
+    {
+      "key": "websocket-permessagedeflate-false-now-respected-in-upgrade-reque-86b94d64",
+      "category": "websocket-permessagedeflate-false-now-respected-in-upgrade-reque",
+      "section": "WebSocket perMessageDeflate: false now respected in upgrade requests",
+      "announcement": "Additionally, if the server responds with a Sec-WebSocket-Extensions header when the client did not offer any extensions, the handshake is now correctly failed per RFC 6455 §9.1 — matching upstream ws behavior.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "freebsd-and-android-support-d6708588",
+      "category": "freebsd-and-android-support",
+      "section": "FreeBSD and Android Support",
+      "announcement": "Bun now has 1st-party native builds for FreeBSD and Android.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "reduced-memory-usage-for-mongodb-mongoose-9240cfe1",
+      "category": "reduced-memory-usage-for-mongodb-mongoose",
+      "section": "Reduced memory usage for MongoDB & Mongoose",
+      "announcement": "All TLS-using APIs in Bun — Bun.connect, Bun.SQL (Postgres & MySQL), Valkey, upgradeTLS, new WebSocket(), and node:tls — now share a single native SSL_CTX cache per VM. Connections with identical TLS configurations reuse the same SSL_CTX instead of allocating a fresh one (~50 KB of BoringSSL state + cert/key parsing) per connection.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "reduced-memory-usage-for-mongodb-mongoose-b2769551",
+      "category": "reduced-memory-usage-for-mongodb-mongoose",
+      "section": "Reduced memory usage for MongoDB & Mongoose",
+      "announcement": "This is especially impactful for database connection pools: a Postgres or MySQL pool with sslmode=require and N connections previously created N separate SSL_CTX objects. Now it creates one.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "reduced-memory-usage-for-mongodb-mongoose-9c695cee",
+      "category": "reduced-memory-usage-for-mongodb-mongoose",
+      "section": "Reduced memory usage for MongoDB & Mongoose",
+      "announcement": "The cache is keyed by a SHA-256 digest of the TLS configuration fields. servername and ALPNProtocols are excluded from the digest (they're per-connection, not per-context), so Bun.connect({ tls: { servername: \"x\" } }) correctly shares the default SSL_CTX with tls: true.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "reduced-memory-usage-for-mongodb-mongoose-77f35f1f",
+      "category": "reduced-memory-usage-for-mongodb-mongoose",
+      "section": "Reduced memory usage for MongoDB & Mongoose",
+      "announcement": "This was the root cause behind long-standing memory leak reports when using tls.connect(), Bun.connect({tls}), socket.upgradeTLS(), and any library built on top of them (MongoDB, Mongoose, mysql2, etc.). Under connection churn — Postgres pools, Redis, fetch keepalive expiry, MongoDB heartbeats — RSS would grow rapidly until the garbage collector eventually frees the context. Now it avoids allocating unnecessary duplicate contexts.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "upgraded-javascriptcore-engine-456277f7",
+      "category": "upgraded-javascriptcore-engine",
+      "section": "Upgraded JavaScriptCore engine",
+      "announcement": "Bun's underlying JavaScript engine (JavaScriptCore) has been upgraded with 565 upstream commits, bringing numerous performance improvements, bug fixes, and new capabilities.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-performance-correctness-a0113248",
+      "category": "javascript-performance-correctness",
+      "section": "JavaScript performance & correctness",
+      "announcement": "Faster async functions — When an async function returns a value without any await, the returned promise is now optimized to avoid unnecessary overhead.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-performance-correctness-0fa53f81",
+      "category": "javascript-performance-correctness",
+      "section": "JavaScript performance & correctness",
+      "announcement": "Faster Array.prototype.shift — New fastShift implementation for arrays.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-performance-correctness-bd3a326e",
+      "category": "javascript-performance-correctness",
+      "section": "JavaScript performance & correctness",
+      "announcement": "Faster JSON.parse for short strings — JSString cells are now cached for short string values returned by JSON.parse.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-performance-correctness-2e3e431d",
+      "category": "javascript-performance-correctness",
+      "section": "JavaScript performance & correctness",
+      "announcement": "Faster String.prototype.startsWith/endsWith — Single-character checks now avoid resolving rope strings.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-performance-correctness-aa21bc4e",
+      "category": "javascript-performance-correctness",
+      "section": "JavaScript performance & correctness",
+      "announcement": "Faster Intl.NumberFormat creation — Optimized construction and improved external memory reporting for Intl.NumberFormat and Intl.PluralRules.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-performance-correctness-ecad300e",
+      "category": "javascript-performance-correctness",
+      "section": "JavaScript performance & correctness",
+      "announcement": "Faster Array.prototype.indexOf on NodeList — New fast path added.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bug-fixes-from-upstream-c705d53f",
+      "category": "bug-fixes-from-upstream",
+      "section": "Bug fixes from upstream",
+      "announcement": "Fixed Promise.prototype.finally throwing in SpeciesConstructor before calling then, matching spec behavior.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bug-fixes-from-upstream-cbab3b51",
+      "category": "bug-fixes-from-upstream",
+      "section": "Bug fixes from upstream",
+      "announcement": "Fixed Object.defineProperties Proxy trap ordering to match the spec.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bug-fixes-from-upstream-72520eb7",
+      "category": "bug-fixes-from-upstream",
+      "section": "Bug fixes from upstream",
+      "announcement": "Fixed megamorphic inline cache property ownership check.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bug-fixes-from-upstream-f86f7b40",
+      "category": "bug-fixes-from-upstream",
+      "section": "Bug fixes from upstream",
+      "announcement": "Fixed TypedArray toSorted/toReversed/with to correctly snapshot the span.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bug-fixes-from-upstream-b5c61adf",
+      "category": "bug-fixes-from-upstream",
+      "section": "Bug fixes from upstream",
+      "announcement": "Fixed Intl.Segmenter isWordLike off-by-one error.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bug-fixes-from-upstream-3c5c239f",
+      "category": "bug-fixes-from-upstream",
+      "section": "Bug fixes from upstream",
+      "announcement": "Fixed Intl.Locale to canonicalize before overriding language.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bug-fixes-from-upstream-233119a7",
+      "category": "bug-fixes-from-upstream",
+      "section": "Bug fixes from upstream",
+      "announcement": "Fixed Intl.DateTimeFormat to preserve original legacy [[TimeZone]].",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bug-fixes-from-upstream-fcb1aa24",
+      "category": "bug-fixes-from-upstream",
+      "section": "Bug fixes from upstream",
+      "announcement": "Fixed several RegExp JIT issues",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bug-fixes-from-upstream-2235030d",
+      "category": "bug-fixes-from-upstream",
+      "section": "Bug fixes from upstream",
+      "announcement": "Fixed JIT compiler issues with hole-handling when rematerializing sunk double arrays and escaping MultiGetByOffset constants not convertible to double.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "webassembly-55bd9f45",
+      "category": "webassembly",
+      "section": "WebAssembly",
+      "announcement": "Relaxed SIMD support — Implements the relaxed SIMD proposal, adding instructions like f32x4.relaxed_madd, i8x16.relaxed_swizzle, and more.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "webassembly-edc00a12",
+      "category": "webassembly",
+      "section": "WebAssembly",
+      "announcement": "Memory64 improvements — Atomics, bulk memory operations, and grow/size in the OMG tier now support 64-bit memory.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "webassembly-062eb11e",
+      "category": "webassembly",
+      "section": "WebAssembly",
+      "announcement": "Fixed integer division/remainder with INT_MIN/-1 in BBQ JIT.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "webassembly-dfe59b3c",
+      "category": "webassembly",
+      "section": "WebAssembly",
+      "announcement": "Fixed floating-point min/max negative-zero handling in BBQ JIT.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "webassembly-045af2cd",
+      "category": "webassembly",
+      "section": "WebAssembly",
+      "announcement": "Fixed crash on wide-arithmetic instructions.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "webassembly-f1769521",
+      "category": "webassembly",
+      "section": "WebAssembly",
+      "announcement": "Thanks to @sosukesuzuki for the upgrade!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-publish-now-sends-readme-metadata-to-the-registry-77aa2ba6",
+      "category": "bun-publish-now-sends-readme-metadata-to-the-registry",
+      "section": "bun publish now sends README metadata to the registry",
+      "announcement": "Previously, bun publish included README.md in the published tarball but didn't populate the readme or readmeFilename fields in the JSON body sent to the npm registry. This meant packages published with Bun showed an empty README when queried via the registry API (e.g. npm view <pkg> readme), even though the tarball contained one.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-publish-now-sends-readme-metadata-to-the-registry-b34ae557",
+      "category": "bun-publish-now-sends-readme-metadata-to-the-registry",
+      "section": "bun publish now sends README metadata to the registry",
+      "announcement": "Now, bun publish matches npm publish behavior by automatically finding the first README or README.* file (case-insensitive) in your workspace and including its contents in the version metadata sent to the registry. This works for both workspace publishes (bun publish) and tarball publishes (bun publish path.tgz). A readme field already present in package.json takes precedence.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "updated-sqlite-to-3-53-0-9e32f682",
+      "category": "updated-sqlite-to-3-53-0",
+      "section": "Updated SQLite to 3.53.0",
+      "announcement": "Bun's built-in SQLite has been updated from 3.51.2 to 3.53.0.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "updated-sqlite-to-3-53-0-c69a5967",
+      "category": "updated-sqlite-to-3-53-0",
+      "section": "Updated SQLite to 3.53.0",
+      "announcement": "Notable changes in SQLite 3.53.0 include:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "updated-sqlite-to-3-53-0-79501a1d",
+      "category": "updated-sqlite-to-3-53-0",
+      "section": "Updated SQLite to 3.53.0",
+      "announcement": "New SQLITE_DBCONFIG_FP_DIGITS option for controlling floating-point precision when converting doubles to text",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "updated-sqlite-to-3-53-0-340092ef",
+      "category": "updated-sqlite-to-3-53-0",
+      "section": "Updated SQLite to 3.53.0",
+      "announcement": "New SQLITE_LIMIT_PARSER_DEPTH limit for controlling the maximum depth of the SQL parser stack",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "updated-sqlite-to-3-53-0-6918c482",
+      "category": "updated-sqlite-to-3-53-0",
+      "section": "Updated SQLite to 3.53.0",
+      "announcement": "New SQLITE_PREPARE_FROM_DDL flag for enforcing schema-level security constraints during statement preparation",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "cross-language-lto-for-zig-c-on-linux-84cb49b1",
+      "category": "cross-language-lto-for-zig-c-on-linux",
+      "section": "Cross-language LTO for Zig ↔ C++ on Linux",
+      "announcement": "Bun's binary is now built with full link-time optimization (LTO) across the Zig and C++ boundaries on Linux. Previously, the Zig-compiled object file was a native ELF object that the linker could link but not optimize across — meaning hundreds of small cross-language function calls (Zig → C++, C → Zig, allocator calls) were never inlined.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "cross-language-lto-for-zig-c-on-linux-02903839",
+      "category": "cross-language-lto-for-zig-c-on-linux",
+      "section": "Cross-language LTO for Zig ↔ C++ on Linux",
+      "announcement": "By emitting the Zig object as LLVM bitcode and participating in the same LTO link pass as the C/C++ side, LLVM can now inline and optimize across language boundaries:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "cross-language-lto-for-zig-c-on-linux-dc11f872",
+      "category": "cross-language-lto-for-zig-c-on-linux",
+      "section": "Cross-language LTO for Zig ↔ C++ on Linux",
+      "announcement": "Measured impact (linux-x64):",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "cross-language-lto-for-zig-c-on-linux-8579b993",
+      "category": "cross-language-lto-for-zig-c-on-linux",
+      "section": "Cross-language LTO for Zig ↔ C++ on Linux",
+      "announcement": "This is a broad improvement — any hot path that crosses the Zig/C++ boundary benefits, including HTTP serving, text encoding/decoding, and HTML escaping.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-esm-module-loading-74883737",
+      "category": "faster-esm-module-loading",
+      "section": "Faster ESM module loading",
+      "announcement": "Fixed an internal parser oversight where an ~8KB struct was being copied by value on every AST node allocation, causing unnecessary memcpy overhead during transpilation. Passing it by pointer instead eliminates the redundant copies, reducing _platform_memmove overhead from 7.5% to 2.9% of self time in profiling.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-esm-module-loading-0e488633",
+      "category": "faster-esm-module-loading",
+      "section": "Faster ESM module loading",
+      "announcement": "On a benchmark loading 500 ESM files, this results in approximately 12% faster module loading (~140ms → ~123ms).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-esm-module-loading-b9819f4a",
+      "category": "faster-esm-module-loading",
+      "section": "Faster ESM module loading",
+      "announcement": "Thanks to @sosukesuzuki for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "reduced-gc-overhead-for-built-in-objects-085c540c",
+      "category": "reduced-gc-overhead-for-built-in-objects",
+      "section": "Reduced GC overhead for built-in objects",
+      "announcement": "Bun's incremental garbage collector previously re-scanned ~63 types of built-in objects (Request, Response, Subprocess, Stats, Dirent, Timeout, and more) after every mutator yield during incremental GC — even though these objects already use write barriers that guarantee correctness without the extra pass.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "reduced-gc-overhead-for-built-in-objects-4a569f8a",
+      "category": "reduced-gc-overhead-for-built-in-objects",
+      "section": "Reduced GC overhead for built-in objects",
+      "announcement": "This redundant work has been removed. Only visitChildren is called now for codegen'd classes, eliminating the overhead of re-walking every live instance of these common types during incremental GC cycles. Hand-written types that genuinely require output constraints (like EventTarget, AbortSignal, MessagePort, etc.) are unchanged.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "reduced-gc-overhead-for-built-in-objects-baddf1ea",
+      "category": "reduced-gc-overhead-for-built-in-objects",
+      "section": "Reduced GC overhead for built-in objects",
+      "announcement": "This should reduce GC pause times, especially in applications with many live built-in objects.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "smaller-binary-size-50bab361",
+      "category": "smaller-binary-size",
+      "section": "Smaller binary size",
+      "announcement": "Bun gets smaller on Windows and Linux. macOS binary size hasn't changed much.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tls-getcacertificatessystem-now-works-without-use-system-ca-b1d3ec98",
+      "category": "tls-getcacertificatessystem-now-works-without-use-system-ca",
+      "section": "tls.getCACertificates('system') now works without --use-system-ca",
+      "announcement": "Previously, tls.getCACertificates('system') returned an empty array [] unless --use-system-ca or NODE_USE_SYSTEM_CA=1 was explicitly set. Node.js returns the OS trust store unconditionally for 'system' — the flag only affects 'default'. Bun now matches this behavior.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tls-getcacertificatessystem-now-works-without-use-system-ca-e20f3ee0",
+      "category": "tls-getcacertificatessystem-now-works-without-use-system-ca",
+      "section": "tls.getCACertificates('system') now works without --use-system-ca",
+      "announcement": "System certificates are lazy-loaded on first demand, so there's no startup cost unless 'system' is actually queried or --use-system-ca is set.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tls-getcacertificatessystem-now-works-without-use-system-ca-36a21c73",
+      "category": "tls-getcacertificatessystem-now-works-without-use-system-ca",
+      "section": "tls.getCACertificates('system') now works without --use-system-ca",
+      "announcement": "This also fixes a data race that could cause segfaults or truncated certificate lists when multiple threads (e.g. Workers) accessed root certificates concurrently during initialization.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tls-getcacertificatessystem-now-works-without-use-system-ca-2f12731f",
+      "category": "tls-getcacertificatessystem-now-works-without-use-system-ca",
+      "section": "tls.getCACertificates('system') now works without --use-system-ca",
+      "announcement": "Thanks to @cirospaciari for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tls-getcacertificatessystem-no-longer-stalls-on-managed-macs-c0a8e789",
+      "category": "tls-getcacertificatessystem-no-longer-stalls-on-managed-macs",
+      "section": "tls.getCACertificates('system') no longer stalls on managed Macs",
+      "announcement": "On macOS, tls.getCACertificates('system') previously evaluated every keychain certificate using SecTrustEvaluateWithError with an SSL policy, causing trustd to attempt OCSP/CRL/AIA network fetches for each cert. On managed Macs running a NetworkExtension content filter, this turned a local lookup into ~10 seconds of wall-clock time as hundreds of outbound flows were individually signed and policy-denied by the filter.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tls-getcacertificatessystem-no-longer-stalls-on-managed-macs-125a53cf",
+      "category": "tls-getcacertificatessystem-no-longer-stalls-on-managed-macs",
+      "section": "tls.getCACertificates('system') no longer stalls on managed Macs",
+      "announcement": "This release rewrites the macOS keychain enumeration to match how Node.js and Chromium handle it:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tls-getcacertificatessystem-no-longer-stalls-on-managed-macs-3944cfcf",
+      "category": "tls-getcacertificatessystem-no-longer-stalls-on-managed-macs",
+      "section": "tls.getCACertificates('system') no longer stalls on managed Macs",
+      "announcement": "Removed kSecMatchTrustedOnly from the keychain query — this flag forced a redundant network-revocation-enabled evaluation of every cert before per-cert filtering even started.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tls-getcacertificatessystem-no-longer-stalls-on-managed-macs-2143572e",
+      "category": "tls-getcacertificatessystem-no-longer-stalls-on-managed-macs",
+      "section": "tls.getCACertificates('system') no longer stalls on managed Macs",
+      "announcement": "Replaced the trust-settings stub with a full parser — the previous implementation always returned UNSPECIFIED, causing every cert to fall through to the expensive SecTrustEvaluateWithError path. The new parser (ported from Node's IsTrustSettingsTrustedForPolicy) resolves certs via cheap local XPC lookups.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tls-getcacertificatessystem-no-longer-stalls-on-managed-macs-fe409869",
+      "category": "tls-getcacertificatessystem-no-longer-stalls-on-managed-macs",
+      "section": "tls.getCACertificates('system') no longer stalls on managed Macs",
+      "announcement": "Deferred SecTrustEvaluateWithError as a last resort — only certs with no decisive trust settings in any domain reach it, and when they do, it now uses SecPolicyCreateBasicX509 + SecTrustSetNetworkFetchAllowed(false) to avoid network access entirely.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tls-getcacertificatessystem-no-longer-stalls-on-managed-macs-b6e28e31",
+      "category": "tls-getcacertificatessystem-no-longer-stalls-on-managed-macs",
+      "section": "tls.getCACertificates('system') no longer stalls on managed Macs",
+      "announcement": "The result is functionally equivalent — OpenSSL still enforces EKU and basic-constraint checks at handshake time — but enumeration no longer triggers any network I/O.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "use-system-ca-on-windows-now-loads-intermediate-and-trustedpeopl-0d212598",
+      "category": "use-system-ca-on-windows-now-loads-intermediate-and-trustedpeopl",
+      "section": "--use-system-ca on Windows now loads intermediate and TrustedPeople certificates",
+      "announcement": "When using --use-system-ca or NODE_USE_SYSTEM_CA=1 on Windows, Bun now reads from the same certificate stores as Node.js, fixing unable to get local issuer certificate errors commonly seen in enterprise and intranet environments.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "use-system-ca-on-windows-now-loads-intermediate-and-trustedpeopl-15b575df",
+      "category": "use-system-ca-on-windows-now-loads-intermediate-and-trustedpeopl",
+      "section": "--use-system-ca on Windows now loads intermediate and TrustedPeople certificates",
+      "announcement": "Previously, Bun only enumerated the ROOT store for CURRENT_USER and LOCAL_MACHINE. This meant that when a server only sent a leaf certificate without its intermediates (very common on intranets with corporate proxies or self-signed certificates), Bun couldn't build the certificate chain — even though Windows had the intermediates cached in its CA store.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "use-system-ca-on-windows-now-loads-intermediate-and-trustedpeopl-9e3a13dc",
+      "category": "use-system-ca-on-windows-now-loads-intermediate-and-trustedpeopl",
+      "section": "--use-system-ca on Windows now loads intermediate and TrustedPeople certificates",
+      "announcement": "Bun now mirrors Node.js's ReadWindowsCertificates behavior:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "use-system-ca-on-windows-now-loads-intermediate-and-trustedpeopl-63fe6b23",
+      "category": "use-system-ca-on-windows-now-loads-intermediate-and-trustedpeopl",
+      "section": "--use-system-ca on Windows now loads intermediate and TrustedPeople certificates",
+      "announcement": "This brings --use-system-ca on Windows to parity with Node.js, making it significantly more reliable for enterprise environments with custom certificate authorities and proxy servers.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "event-loop-refactor-c1d678ab",
+      "category": "event-loop-refactor",
+      "section": "Event loop refactor",
+      "announcement": "Large parts of the event loop have been refactored to improve reliability and simplify memory management.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "event-loop-refactor-2452ece8",
+      "category": "event-loop-refactor",
+      "section": "Event loop refactor",
+      "announcement": "Along the way, this fixed:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "event-loop-refactor-03de8c31",
+      "category": "event-loop-refactor",
+      "section": "Event loop refactor",
+      "announcement": "DuplexUpgradeContext was never freed (full leak per tls.connect({socket: duplex}))",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "event-loop-refactor-a9c31468",
+      "category": "event-loop-refactor",
+      "section": "Event loop refactor",
+      "announcement": "UpgradedDuplex.onEndCallback was incorrectly wired to onReceivedData",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "event-loop-refactor-23352049",
+      "category": "event-loop-refactor",
+      "section": "Event loop refactor",
+      "announcement": "SSLWrapper.init leaked the strdup'd passphrase on error paths",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "event-loop-refactor-7c68eb2f",
+      "category": "event-loop-refactor",
+      "section": "Event loop refactor",
+      "announcement": "TLSSocket.memoryCost now correctly reports off-heap SSL state",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-2e9d2a24",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: memory leak in node:http where NodeHTTPResponse and its associated buffers were never freed when ondata was re-registered after the request body had already been fully received, also causing the event loop to stay alive unnecessarily",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-092ee667",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: res.setTimeout() on client-side IncomingMessage no longer keeps the event loop alive after the response completes. Previously, calling res.setTimeout(90000) would prevent the process from exiting for the full timeout duration, even when there was nothing left to do. The timer is now unref'd to match Node.js behavior. Also fixed res.setTimeout() to return this, clear the timer when called with 0, and stack listeners via res.on(\"timeout\", cb) for Node.js compatibility.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-69aa5752",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: use-after-free crash in HTTPS requests when checkServerIdentity rejects a certificate due to hostname mismatch",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-65b64603",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: checkServerIdentity callback passed to https.request() was ignored — the native check always ran instead",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-779ab14b",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: https.createServer() with a ca option incorrectly required client certificates, even when requestCert was not set to true",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-dd113ef0",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: TLS certificate identity verification now falls back to the Subject Common Name (CN) when the certificate has no SAN entries, matching Node.js behavior",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-9215d06f",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: use-after-free crash in node:zlib when an onerror callback issued a re-entrant write() followed by close() on native zlib/brotli/zstd handles",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-f1b649ab",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: heap-use-after-free crash in node:zlib when calling .reset() on a zlib, Brotli, or Zstd stream while an async .write() is still in progress on the threadpool",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-2ef33004",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: memory leak in crypto.scrypt where the callback and protected password/salt buffers were never released when the output buffer allocation failed (e.g. with an extremely large keylen)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-3e7a09d2",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: crypto.randomFill and crypto.randomFillSync bounds-checking bugs that could cause a heap overflow when offset exceeded 2²⁴ due to f32 precision loss, and a unit mismatch that caused integer underflow or silent under-fill for multi-byte typed arrays (e.g. Float64Array) when using the 3-argument form",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-6ec8bc47",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: crypto.subtle.unwrapKey('jwk', ...) promise never settling and leaking memory when the decrypted payload was valid JSON but not a valid JWK (e.g. missing the required kty field). The TypeError now correctly rejects the promise instead of escaping as an uncaught exception. Also fixed a smaller native memory leak when decrypted bytes weren't valid JSON at all.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-a4dd7209",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: process.dlopen crash when a native addon's init callback re-entrantly calls napi_module_register() (e.g. nested dlopen or registering additional modules from within an init function), which could invalidate the internal iterator and cause a use-after-free",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-a7caf17c",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: napi_create_external_arraybuffer and napi_create_external_buffer now correctly return napi_pending_exception when a NAPI exception is already pending, matching Node.js behavior. Previously, calling these functions with a pending exception could lead to double-frees or orphaned GC cells with permanently-disarmed destructors.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-fb8f042a",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: fuzzer-detected crash in process.setgroups() and process.hrtime() with unexpected input",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-8b5420dd",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: crash when lazy construction of process.stdin/process.stdout/process.stderr throws near the stack recursion limit and an uncaughtException listener is registered",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-79b812e3",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: process.stdin hanging or spinning at 100% CPU when reading from a FIFO pipe and the parent process dies or a new writer reappears during the drain loop",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-522ac18d",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: process.stdin.isRaw not updating after a successful setRawMode() call on Windows, which caused readline and other modules that check isRaw to incorrectly restore cooked mode",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-49936dcc",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: out-of-bounds read in Buffer.from() with invalid input in a less common encoding",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-6c5710c4",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: Buffer.copyBytesFrom() producing incorrect results or throwing RangeError: Out of memory when called with a TypedArray view that has a non-zero byteOffset into its backing ArrayBuffer",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-1fe1b982",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: memory leak in Buffer.from(string, 'hex') and Buffer.from(string, 'base64') when the input contained no valid encoded characters (e.g. Buffer.from('zz', 'hex')). The internal staging allocation was never freed when decoding produced zero bytes, causing ~4KB to leak per call. Also fixed a related issue where ffi.toBuffer(ptr, 0, finalizer) would silently drop the user's finalizer.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-8c9d4c70",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: crash and out-of-bounds read in Buffer#copy and Buffer#fill when a valueOf callback detaches or resizes the underlying ArrayBuffer during argument coercion",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-3299c3d6",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: memory leak in child_process stdout when reading from spawned processes — the internal FileReader.onPull memcpy path failed to free the drained buffer, causing linear RSS growth under sustained reads",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-bc53d422",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: memory leak in tlsSocket.setSession() where each call leaked one SSL_SESSION (~6.5 KB per call) due to a missing SSL_SESSION_free after d2i_SSL_SESSION",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-1265a88d",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: crash when calling TLSSocket.getServername() after the socket was closed, due to a null SSL pointer dereference",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-798749a8",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: use-after-free in tls.connect({socket: duplex}) when a pre-open duplex error races with the queued StartTLS task, causing freed Handlers memory to be read",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-941c4195",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: memory leaks in getPeerCertificate() on server-side TLS sockets (mTLS) where an X509 reference from SSL_get_peer_certificate was never freed and a BIO was leaked (~800 bytes per call) in X509Certificate.raw due to an incorrect destructor capture",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-51900bb6",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: memory leak in node:net when socket.connect() fails synchronously on reused handles (e.g. connecting to a nonexistent Unix socket path), which leaked one native socket struct per failed reconnect",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-c503d8b7",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: memory leak where fs.watch(path, { persistent: false }) watchers were never garbage collected after .close(), caused by a reference count underflow that permanently pinned each watcher as a GC root",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-e5de152b",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: memory leak in fs.watch() on macOS where the resolved directory path was never freed, leaking ~path-length bytes on every fs.watch(<directory>) call",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-0ef1ee0e",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: a use-after-free race condition in fs.watch on macOS where closing a watcher while events were firing could crash due to the CoreFoundation thread reading freed memory",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-40259c51",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: a crash on macOS where FSEventStreamCreate could return NULL under rapid fs.watch().close() churn, causing a CoreServices crash when the NULL stream was passed to FSEventStreamScheduleWithRunLoop",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-9b81784d",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed a crash in fs.readdirSync() with { encoding: 'buffer', recursive: true } when a subdirectory fails to open (e.g. due to a self-referential symlink causing ELOOP). An internal memory management bug caused a use-after-free in the error cleanup path, leading to crashes or corrupted results.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-cbf040f7",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: memory leak in fs.readdirSync() with { recursive: true, withFileTypes: true } when the call fails partway through (e.g. due to ELOOP or EACCES), where Dirent.path references were not properly released on the error path",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-5ebdd7b8",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: crash involving long file paths in fs.cp, fs.promises.cp, and fs.cpSync with { recursive: true }",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-df3174f4",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: fs.cp / fs.cpSync on Linux and FreeBSD copied symlinks with the source symlink's own path as the target instead of the path the symlink actually pointed at, causing copied symlinks to point back into the source tree and dangle if the source was deleted. Also fixed cpSync throwing ENOENT when copying a symlink to a destination whose parent directory doesn't exist.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-b20405e0",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: fs.cp/fs.cpSync on Windows leaking an OS handle for every symlink or junction in the source tree, which could exhaust the process handle table when copying large trees (e.g. node_modules with pnpm-style junctions)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-a165d78e",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: memory leak in fs.symlinkSync, fs.linkSync, and fs.renameSync where path arguments were not freed when a later argument was rejected, causing RSS to grow by hundreds of MB in error-heavy loops",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-967a0262",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: memory leak in dns.lookup and dns.resolve* when more than 32 concurrent c-ares DNS requests are in flight, where overflow results were never freed",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-8e82f431",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: use-after-free crashes in node:http2 when re-entrant JS callbacks (e.g. session.request() inside a timeout listener, an options getter, or a write callback) triggered a hashmap rehash, invalidating internal stream pointers. Streams are now heap-allocated and stable for the lifetime of the session. (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-957ee3f2",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: a crash in node:vm where SourceTextModule.link() with many imports could trigger a use-after-free when the garbage collector concurrently iterated the module's resolve cache during a HashMap rehash",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-c70bbd3a",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: ESM module evaluation where sibling static imports could incorrectly skip waiting for async-pending strongly connected components, causing TDZ errors when accessing bindings from cyclic module graphs with top-level await",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-2ae136c0",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: deadlock when a non-entry module with top-level await dynamically imports a module that imports it back",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-b4bebf50",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: importing a module with top-level await from multiple sibling imports in the same module graph caused a ReferenceError: Cannot access before initialization because sibling modules skipped the spec-mandated wait for the shared TLA dependency to settle (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-e2c3387f",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: node:test top-level test() ignoring { skip } and { todo } options — nested Suite#test honored them, but the top-level entry point did not",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-28b314c1",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: child processes spawned by Bun on macOS could inherit an effectively infinite RLIMIT_NOFILE soft limit, causing programs that read the limit into an int to misbehave (e.g. failing socket reads). The startup file descriptor limit raise is now capped at 1 << 20, matching Node.js. (@alii)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-6fb89a3d",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: use-after-free when reading .listener on a closed client socket created via Bun.connect()",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-22cef30b",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: use-after-free when accessing handle.listener on a socket that failed to connect, where the native socket's handlers pointer was left dangling after the per-connection Handlers allocation was freed",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-f9332401",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed a crash when calling socket.reload() or listener.reload() on active TCP/TLS sockets. Previously, reloading handlers reset the internal active connection counter to zero, which caused integer overflow panics in debug builds and segfaults (heap-use-after-free) in release builds. This affected reloads both inside and outside of socket event handlers.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-ea38c206",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: crash (NULL dereference / SIGSEGV) when closing a socket inside a TLS 1.2 renegotiation handshake callback (Bun.connect with TLS)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-5ca6b409",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: use-after-free in TLS server ALPN callback when handling concurrent handshakes, which could cause crashes or garbage data during protocol negotiation on servers with ALPNProtocols configured (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-c8755632",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: TLS sockets could leak memory and stay open indefinitely when SSL_shutdown failed to flush the close_notify alert (e.g. kernel buffer full or peer already gone), because the socket would wait for a peer event that never arrives. Now the socket closes immediately in this case. (@cirospaciari)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-5d9aa58c",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: use-after-free crash when calling flush() on a TLS socket after end(), where the deferred TLS close_notify handshake could dereference already-freed handler memory",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-2d69d1e2",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: DNS resolution hanging indefinitely on macOS when retrying without AI_ADDRCONFIG on loopback-only network configurations. The retry path was polling the wrong mach port, causing fetch(), Bun.connect(), and other network APIs to hang instead of completing the DNS lookup.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-59cff9e5",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.dns.lookup() with an oversized hostname could cause a crash",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-d43e0110",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: DNS resolution over TCP could trigger an assertion failure when c-ares requested both readable and writable polling on the same socket file descriptor. FilePoll now correctly merges both directions into a single epoll_ctl(CTL_MOD) call on Linux, and properly submits two EV_DELETE changes on kqueue (macOS/FreeBSD) when both directions are registered. (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-d92a6407",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: when using Bun.spawn with stdin: \"pipe\" without ever reading the .stdin property, the stdin pipe file descriptor would leak and remain open until the Subprocess was garbage collected — even after the child process had already exited. The stdin pipe fd is now properly closed when the child process exits.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-5b717bae",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.spawn incorrectly closing caller-owned file descriptors passed as extra stdio slots (index ≥ 3) after the subprocess was garbage collected, causing EACCES/EBADF errors on subsequent reuse of those descriptors (@cirospaciari)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-53e6a300",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.spawn returning null for proc.stdio[N] when a caller-supplied file descriptor was passed as extra stdio (index ≥ 3), instead of returning the fd number back. Caller-owned fds are now correctly exposed via proc.stdio[N] while still never being closed by the subprocess.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-829e0015",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.spawn reading uninitialized memory when stdio[N>=3] is undefined or a sparse array hole, which could expose garbage file descriptors or crash by dereferencing invalid pointers in release builds",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-fb149a1f",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: memory leak where Bun.spawn() subprocess objects were never garbage collected when stdout/stderr pipes drained asynchronously after the child process exited (e.g. when a grandchild process inherited the pipe)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-c30c4a2d",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.spawn({ ipc }) subprocesses were never garbage collected after the child exited, leaking the subprocess along with its stdout/stderr buffers, stdin FileSink, and other retained objects for the lifetime of the process",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-99696c78",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: memory leak in subprocess PipeReader when a stdout/stderr read failed with a real error (e.g. EBADF, EIO). The PipeReader struct, its buffered bytes, FilePoll, and pipe fd would all leak, and the leaked poll's keep-alive ref would prevent the event loop from ever exiting.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-eef1a691",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: subprocess 'exit' event not firing on Linux when multiple child processes exit simultaneously with stdio: 'ignore'. On Linux, the pidfd poll was registered with EPOLLONESHOT, which caused the kernel to disarm the fd before user-space could process it if a nested event loop tick occurred. The pidfd is now registered as level-triggered so a dropped event is harmlessly re-delivered.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-cbbef918",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: 2 rare crashes in Bun.serve()",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-ede3e411",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: memory leak in Bun.serve() when a direct ReadableStream handler writes synchronously without returning a promise — each such request leaked the internal response sink and its buffer (~400 bytes per request)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-c85c3266",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: GC root leak in Bun.serve() when a \"direct\" response stream rejects while a controller.end() or controller.flush(true) promise is pending due to transport backpressure",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-f59fd735",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: heap-use-after-free and RequestContext leak when a chunked request body exceeds maxRequestBodySize and the fetch handler returns a pending Promise",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-65b1089f",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: memory leak in server.fetch(string) where the intermediate URL buffer was leaked on every call",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-49a3c042",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: server.fetch() crashing with a segfault when passed a BigInt argument, now properly rejects with a TypeError",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-1b654388",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: memory leak when calling server.reload() with a WebSocket config that lacks open or message handlers — discarded handler functions were permanently rooted and never garbage collected",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-44d40fe2",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: crash in Bun.serve() when websocket.perMessageDeflate was set to a non-boolean primitive (e.g. number, string, bigint, or symbol). Now throws a TypeError with a descriptive message instead.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-4f7fdd6a",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.serve with development: true and a [serve.static] plugin whose setup() throws would cause requests to hang forever instead of returning an error",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-56f320c5",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: rare crash in server.upgrade() when an option getter (e.g. get data()) mutates req.headers during the upgrade",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-c89e0dbb",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: server.upgrade() crashing or firing the open handler twice when a user-defined getter on the data or headers option re-entrantly called server.upgrade() on the same request",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-db15ae9a",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.FileSystemRouter crashing with a panic when route filenames contained certain byte values",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-6c5fdb77",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: memory leak in Bun.FileSystemRouter where accessing .params on a MatchedRoute",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-92a18272",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: rare Bun.FileSystemRouter use-after-free crash",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-4d52bec4",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: rare heap corruption in Bun.file().json()",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-7531ab32",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: memory leak in Bun.zstdDecompressSync where the partial output buffer was not freed when streaming decompression failed (e.g. corrupt or truncated zstd frames), and a double-free when known-size fast-path decompression failed",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-05b7e0b7",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: file descriptor leak in Bun.Glob when encountering NAMETOOLONG errors during directory traversal (@alii)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-7cd2e123",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.pathToFileURL() crashing with an out-of-bounds panic when given a relative path that, when joined with cwd, exceeded 4096 bytes",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-ef3474ec",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: memory leak in Bun.password.hash() and Bun.password.hashSync() where the hash output buffer was not freed after being copied into a JavaScript string",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-c9a0a6a8",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: crash in Bun.markdown.ansi() when input contained invalid UTF-8 lead bytes (lone continuation bytes 0x80-0xBF and bytes 0xF8-0xFF) by treating them as replacement characters instead of passing them to the multibyte decoder",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-8a14dd66",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.S3Client({ queueSize }) panicking when queueSize exceeded 255, and silently overriding any valid queueSize (1–255) to 255",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-6644f9fd",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.s3.list() panicking when prefix, delimiter, continuationToken, or startAfter exceeded ~341 characters after URL-encoding, since S3 keys can be up to 1024 bytes and percent-encoding can triple that size.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-9aa03bde",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.Archive.prototype.files() memory leak when processing corrupted/truncated archives where previously-read entries were not freed on mid-stream readData failures",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-db922891",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.RedisClient getting permanently stuck in a failed state after reconnection attempts were exhausted, close() was called, or a fatal socket error occurred. Previously, calling client.connect() would not recover the client. Now connect() properly resets internal state and replays the handshake, allowing the client to recover without replacing the instance.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-e8b3712a",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: RedisClient TLS connections now properly verify hostnames against the server certificate when rejectUnauthorized: true is set. Previously, hostname mismatches and self-signed certificates were silently accepted due to unreachable verification code paths. Connections with mismatched hostnames now correctly reject with ERR_TLS_CERT_ALTNAME_INVALID, and untrusted certificates reject with the appropriate verification error.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-4267ac2c",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: FileSink memory leak where native instances were never freed when a pending buffered write failed (e.g. EPIPE after the reader closes), causing the FileSink, its outgoing buffer, and associated refs to leak for the lifetime of the process",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-6030e066",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: memory leak when passing Bun.file() as cert, key, or ca in TLS options — each config parse leaked one buffer per file",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-8049637e",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: crash in new Bun.Terminal() when passing a non-object argument (e.g. a number, string, or boolean) instead of an options object",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-1dfc83c0",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.udpSocket() leaked memory when creation failed (e.g. invalid port, bind failure, or throwing getter) because the internal strong reference prevented garbage collection of the wrapper object",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-c60de4ea",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: a use-after-free in UDPSocket.send() and UDPSocket.sendMany() where user code in valueOf() or toString() callbacks could detach an ArrayBuffer (via .transfer()) between payload capture and the actual send, causing reads from freed memory",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-14bc2f7a",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: heap out-of-bounds write in UDPSocket.sendMany() when the socket's connection state changed mid-iteration via user JS callbacks (e.g. valueOf(), array index getters). This could cause memory corruption or crashes when connect() or disconnect() was called synchronously during a sendMany() call.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-397cfca3",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: UDPSocket.setTTL() and UDPSocket.setMulticastTTL() crashing with a null pointer dereference when the argument's valueOf closes the socket during coercion",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-c4613882",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: import(\"bun:main\") was incorrectly resolved as the npm main package instead of the built-in bun:main module, due to a missing alias mapping in the runtime transpiler (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-153e24b9",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: use-after-free crash in HTMLRewriter.transform() when a document or element handler returns a rejected promise during the final end() chunk",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-5e3d77dc",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: memory leak in HTMLRewriter where handler structs allocated by .on() and .onDocument() were never freed when the rewriter was garbage-collected, causing unbounded memory growth",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-8573f9b8",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: HTMLRewriter attribute iterators could read freed memory when saved outside an element handler callback — calling .next() on a leaked iterator now safely returns {done: true} instead of dereferencing a dangling pointer. Iterators are also correctly detached when setAttribute or removeAttribute mutates the underlying attribute buffer.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-08bbbde2",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: bun:sql PostgreSQL connections that entered a .failed state (e.g. ECONNREFUSED, SSL refused with sslmode=require, or a normal close()) were never garbage collected, leaking the entire native connection including buffers, statements, and SSL state. The request queue's backing buffer was also not freed during cleanup.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-37696071",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: sql.unsafe() with multiple semicolon-separated statements in simple mode returned wrong column names for all result sets after the first, and leaked memory from previous field descriptors",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-f4a300e3",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: memory leak in bun:sql when querying PostgreSQL array-typed columns (text[], int8[], json[], bytea[], bool[], etc.) that caused RSS to grow ~72 MB per 1,000 iterations instead of stabilizing after warmup",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-46de7370",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: a potential heap buffer overflow when parsing binary-format int4[]/float4[] arrays from a malicious or buggy PostgreSQL server. The server-provided len field is now validated against the actual column byte length before iterating, preventing out-of-bounds reads and writes.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-c22c09e4",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: MySQL stored procedures called via prepared statements (tagged templates or sql.unsafe(..., params)) would resolve after only the first result set, causing the trailing OK packet to surface as an unhandled TypeError outside the caller's catch block",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-2c967b89",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: heap buffer overflow in sql MySQL client when the user-supplied parameter array was mutated (e.g. via a side-effecting getter) between query preparation and binding, which could cause out-of-bounds writes in release builds",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-8e007b31",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: MySQL sql client returning garbage error messages when a cached failed prepared statement was re-executed, caused by a dangling pointer into an overwritten socket read buffer",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-5d2e8a75",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: MySQL .raw() returning length-prefix bytes in the buffer for length-encoded columns (JSON, VARCHAR, TEXT, BLOB, ENUM, SET, GEOMETRY, NEWDECIMAL), causing garbled output when decoded as UTF-8",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-c70a14ef",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: MySQL client could panic or silently read out-of-bounds memory when a server sent a short auth nonce during AuthSwitchRequest for mysql_native_password. The client now validates nonce length and rejects with ERR_MYSQL_MISSING_AUTH_DATA before accessing the buffer. Also fixed potential divide-by-zero with empty nonces for caching_sha2_password and invalid indexing with empty public key payloads.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-73d95361",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: a use-after-free crash in bun:sql MySQL client when a prepared statement's column reallocation failed",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-c95f410b",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: MySQL BLOB parameters could be corrupted when ArrayBuffer.transfer() or GC occurred during query parameter binding",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-959d71f4",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: memory leak in MySQL adapter when using dynamic interpolation in SQL template literals",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-1ee32cef",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: a crash in Bun.sql MySQL client when a query's .catch() callback called connection.close()",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-c06fb9a0",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: SSL_CTX leak in Postgres and MySQL connections when path coercion throws after SSL context creation",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sql-68723a26",
+      "category": "bun-sql",
+      "section": "bun:sql",
+      "announcement": "Fixed: us_listen_socket_add_server_name not propagating duplicate-hostname errors, preventing App.h's rollback from firing",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-58ba3d6d",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: FormData multipart boundary format now matches WebKit exactly (----WebKitFormBoundary{hex} with 4 leading dashes and capital K), fixing compatibility issues with downstream multipart parsers including OpenAI's API",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-1a231d28",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: memory leak in FormData serialization when a Bun.file() entry fails to read (e.g. ENOENT). Previously, constructing a Response or Request from a FormData containing a valid Bun.file() followed by an invalid one would leak the already-read file buffers on each failed attempt.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-e5d2008a",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: TextDecoder.decode reading through a stale pointer when an options.stream getter detaches or transfers the input ArrayBuffer, which could cause incorrect output, non-deterministic behavior, or crashes due to heap corruption",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-0da19616",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: memory leak in TextDecoder when decoding UTF-16LE and UTF-16BE encoded buffers. Each successful call to .decode() leaked the decoded output buffer.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-18e3258e",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: empty Blob and File objects incorrectly displaying as [Blob detached] / [File detached] in console.log and after structuredClone",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-111b5fa5",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: use-after-free in Blob when a duplicated blob's content_type was heap-allocated, causing Response headers to read freed memory and return garbage values (e.g. after Bun.file(path, { type: \"...\" }) followed by new Response(file))",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-dd5da59a",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: memory leak in structured-clone deserialization of Blob/File objects where truncated or malformed payloads would leak allocated buffers for content_type, bytes payload, Store, and heap Blob on error paths",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-47d5d4ef",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: structuredClone() crash when serializing large ArrayBuffer, SharedArrayBuffer",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-693b77a0",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: memory leak in fetch() when following long HTTP redirect chains",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-b724da5a",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: memory leak when using fetch() with percent-encoded data: URLs, where the intermediate decoded buffer was never freed on each call",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-47ea36f4",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: fetch() silently hanging against certain hosts due to ECH GREASE being enabled in the TLS ClientHello. Some servers and middleboxes treated the encrypted_client_hello extension as hostile—completing the TLS handshake but never sending a response. This aligns Bun's fetch TLS behavior with curl, Node.js, and Bun's own node:tls.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-0b1a8302",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: WebSocket.close() and WebSocket.terminate() called during the CONNECTING state would leave the socket permanently stuck in CLOSING, never fire close/error events, prevent the process from exiting, and leak the WebSocket instance. Now correctly transitions to CLOSED, fires error then close (code 1006, wasClean: false) per the spec, and releases all internal references.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-498ba290",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: memory leak in WebSocket when TLS options were provided but the connection failed during option parsing or validation",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-e232ffda",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: memory leak where every new WebSocket(\"wss://…\") routed through an HTTP CONNECT proxy (tunnel mode) leaked one internal HTTPUpgradeClient struct due to a missing reference count release",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-4b0f5f5b",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: per-connection memory leak when using WebSocket clients over wss:// through an HTTP CONNECT proxy (tunnel mode). The internal I/O-layer reference was never released because the tunnel path doesn't adopt a uSockets socket, so the close handler never fired — leaking send/receive FIFOs, deflate state, and poll refs for every connection.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-d196e994",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: a TypeError [ERR_INVALID_STATE]: Controller is already closed error thrown when streaming small files (e.g. Bun.file(small).stream()) where the first pull returns data and EOF simultaneously, causing the controller's close() to be called twice",
+      "status": "covered",
+      "testPath": "tests/bun-1.3.14-web-api-fixes.test.ts"
+    },
+    {
+      "key": "web-apis-c95f87fe",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: a race condition where concurrent ReadableStream instances (e.g. process.stdin and fetch(file://...) bodies) could close each other due to a shared mutable closer array at the class factory scope. This caused stdin to be spuriously closed, breaking subsequent operations like setRawMode.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-a29057bc",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: concurrent ReadableStream instances (e.g. Bun.stdin.stream() and fetch(file://...) bodies) could spuriously close each other due to a shared mutable EOF flag, causing stdin to close unexpectedly with EBADF errors",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-15239906",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: TransformStream instances that were dropped without being explicitly closed, errored, or aborted were never garbage collected, causing an out-of-memory crash in long-running applications. A GC-root cycle between the global object's guarded objects set and the internal writable stream kept the entire stream graph permanently reachable.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-5d99b03b",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: a long-lived AbortSignal reused across many addEventListener/removeEventListener cycles would accumulate dead closures in memory indefinitely. Each call to addEventListener with a { signal } option registered an internal abort algorithm, but removing the listener (via removeEventListener, { once: true } firing, or removeAllEventListeners) never cleaned up that algorithm — causing unbounded memory growth on the signal.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-53aa28ae",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: A non-303 redirect with a ReadableStream body now correctly rejects with TypeError instead of UnexpectedRedirect.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-80844d76",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: AbortSignal.reason is now properly forwarded to the request body's ReadableStream.cancel(reason).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "security-7a134326",
+      "category": "security",
+      "section": "Security",
+      "announcement": "Fixed: HTTP request smuggling attack vector",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "security-cda1184e",
+      "category": "security",
+      "section": "Security",
+      "announcement": "Fixed: missing bounds check in maliciously-crafted Blob deserialization",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "security-bcf23afa",
+      "category": "security",
+      "section": "Security",
+      "announcement": "Fixed: integer overflow in IPC advanced serialization mode with malicious input",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "security-eeea8dde",
+      "category": "security",
+      "section": "Security",
+      "announcement": "Fixed: stack overflow crash when closing a deep chain of nested transferred MessagePorts",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "security-0ff1e181",
+      "category": "security",
+      "section": "Security",
+      "announcement": "Fixed: MessagePort memory leak when workers are terminated without explicitly closing their ports. When port.onmessage was assigned or port.ref() was called inside a Worker, the internal self-reference was never released during worker teardown, causing every such MessagePort to leak for the lifetime of the process.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "security-519741fe",
+      "category": "security",
+      "section": "Security",
+      "announcement": "Fixed: a race condition crash in MessageEvent when using BroadcastChannel or MessagePort where the GC marker thread could observe a torn variant in m_data during concurrent access, causing a SIGSEGV in release builds",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "security-5ddf4208",
+      "category": "security",
+      "section": "Security",
+      "announcement": "Fixed: segfault in worker.getHeapSnapshot() caused by a cross-thread race condition where the parent VM's HandleSet was mutated from the worker thread without holding the parent VM's lock",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "security-4fdea96e",
+      "category": "security",
+      "section": "Security",
+      "announcement": "Fixed: memory leak and crash when terminating Workers that have a PerformanceObserver without calling .disconnect() — a reference cycle between Performance and PerformanceObserver prevented both objects from being freed",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "security-b027503b",
+      "category": "security",
+      "section": "Security",
+      "announcement": "Fixed: IPC subprocess cleanup on Windows when uv_read_start fails after pipe open — the embedded SendQueue and its pending close task are now properly cancelled before the allocation is freed, preventing a use-after-free crash",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "security-a5a0b114",
+      "category": "security",
+      "section": "Security",
+      "announcement": "Fixed: a crash on Linux (glibc) during Worker teardown caused by a stale .eh_frame_hdr section reference in the stripped release binary",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "timers-2f4dfb16",
+      "category": "timers",
+      "section": "Timers",
+      "announcement": "Fixed: native memory leak in setTimeout when clearTimeout(t), t.refresh(), or t._repeat = N is called synchronously inside the timer's own callback. The native TimeoutObject struct was never freed because the post-callback cleanup only checked for the .FIRED state, missing transitions to .CANCELLED or .ACTIVE that occur when the timer is cleared, refreshed, or converted to an interval during execution.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "timers-c17541f8",
+      "category": "timers",
+      "section": "Timers",
+      "announcement": "Fixed: crash when calling clearImmediate on a setImmediate followed by garbage collection (Bun.gc(true)) — the cleared immediate's internal reference could panic during event loop cleanup if the GC had already finalized the JS wrapper",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "timers-ddb56f4c",
+      "category": "timers",
+      "section": "Timers",
+      "announcement": "Fixed: timer.ref() on an already-fired setTimeout or setImmediate no longer incorrectly keeps the event loop alive, which previously caused the process to hang indefinitely",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "timers-e252c4de",
+      "category": "timers",
+      "section": "Timers",
+      "announcement": "Fixed: setTimeout with an out-of-range delay no longer leaves a pending JS exception when the timeout overflow warning triggers user code that throws (e.g., a throwing getter on process._exiting), which previously caused crashes in debug builds and unexpected errors in release builds",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-f2db48b6",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bun install no longer hangs on stalled TLS handshakes and will instead timeout.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-dda1418a",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bunx @scope/name no longer matches unrelated system binaries in $PATH When running scoped packages with bunx, the bin name was guessed by stripping the scope (e.g. @uidotsh/install → install), then searched against the full system $PATH. If the guessed name collided with an existing system binary like /usr/bin/install, /usr/bin/git, or /usr/bin/find, the system binary would be silently executed instead of the package's actual bin.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-10faacef",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bun install --force now correctly replaces corrupted entries in the global store instead of silently keeping the broken version",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-caca161d",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bun install hanging indefinitely when a tarball download returns a 4xx/5xx HTTP error (e.g. 404 Not Found) during the install phase, particularly when resolving from an existing lockfile with an empty cache. Both the hoisted and isolated linkers now fail fast with a clear error message instead of blocking forever. (@alii)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-8d26a298",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bun install hanging indefinitely when a tarball integrity check fails with the isolated linker. When a tarball's SHA-512 didn't match the manifest (e.g. due to a registry redirect serving wrong content), the isolated installer would deadlock instead of reporting an error.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-85399bcc",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: a race condition in bun install where worker threads could read lockfile data (packages/string_bytes) that was simultaneously being reallocated by the main thread, potentially causing crashes or failed tarball resolution when installing workspaces with relative tarball paths",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-caec03c1",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bun add (and remove/link/unlink/bunx) crashing with a segfault when a positional argument exceeded 2048 bytes",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-8481f297",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: a type confusion bug in the bundler plugin error handling that could cause a segfault when the plugin builtin threw synchronously",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-aa3ac784",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: memory leak in Bun.build() when using sourcemap: 'inline' without outdir — the intermediate sourcemap JSON buffer was not being freed after base64-encoding",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-a4f4f4c0",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed a crash in Bun.build() and Bun.Transpiler when the loader or define options contained an empty-string key (e.g., loader: { \"\": \"js\", \".ts\": \"ts\" }) that left uninitialized memory slots, causing a segfault when the entries were later hashed or freed",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-cde75c7d",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: bun build --target=browser panic involving long \"browser\" field paths",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-850ae768",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: crash reading .referrer on a ResolveError after the resolving frame had returned, particularly with non-ASCII source paths",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-247962c7",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: bundler leaving behind empty else {} blocks after dead code elimination when not using --minify-syntax",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-25e6770a",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: crash with malicious input in Bun.Transpiler().transformSync()",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-347be493",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: crash in Bun.Transpiler when the loader argument contains non-Latin-1 (UTF-16) characters, now properly returns a TypeError instead of panicking",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "module-resolver-58c4f06d",
+      "category": "module-resolver",
+      "section": "Module resolver",
+      "announcement": "Fixed: wildcard exports patterns (e.g. \"./*\": \"./dist/packages/*\") failing to resolve subpaths containing @ characters, such as test-pkg/@scope/sub/index.js. The resolver incorrectly treated the @ in the subpath as a version delimiter, causing resolution to fail even though the file existed on disk. This notably affected ember-source@6.12 and its @ember/*, @glimmer/*, and @simple-dom/* subpackages.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "module-resolver-ce844974",
+      "category": "module-resolver",
+      "section": "Module resolver",
+      "announcement": "Fixed: crash in the module resolver when a previously inaccessible directory (e.g. due to EACCES) becomes readable again, caused by reading a cached error entry as a valid pointer",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "module-resolver-573d8f68",
+      "category": "module-resolver",
+      "section": "Module resolver",
+      "announcement": "Fixed: use-after-free when resolving module specifiers containing both a query string (?) and non-ASCII characters (e.g. import(\"./target.js?v=café\")), which could cause crashes or corrupted resolved paths",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "module-resolver-b010e11b",
+      "category": "module-resolver",
+      "section": "Module resolver",
+      "announcement": "Fixed: use-after-free crash when resolving http://, https://, or // specifiers containing non-ASCII characters",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "module-resolver-97455fe7",
+      "category": "module-resolver",
+      "section": "Module resolver",
+      "announcement": "Fixed: a use-after-free in the runtime auto-install path where enqueueDependencyToRoot could read from a dangling pointer into the lockfile's dependency buffer after it was reallocated by fromNPM",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "module-resolver-d6c276f4",
+      "category": "module-resolver",
+      "section": "Module resolver",
+      "announcement": "Fixed: auto-install resolution corruption where resolving a package's subpath (e.g. nanoid/non-secure) could fail with \"Cannot find module\" after auto-installing a second package, due to cached directory info pointing at a reused threadlocal buffer",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "module-resolver-2e22ae2e",
+      "category": "module-resolver",
+      "section": "Module resolver",
+      "announcement": "Fixed: memory leak when resolving tsconfig.json files with extends chains — intermediate TSConfigJSON structs and their paths maps were never freed, causing repeated leaks on every HMR reload or FileSystemRouter.reload() call",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "module-resolver-be2b6f57",
+      "category": "module-resolver",
+      "section": "Module resolver",
+      "announcement": "Fixed: memory leak in BunString__toThreadSafe where the original StringImpl reference was never released when creating an isolated copy for thread safety, causing one leaked StringImpl per call in code paths like Bun.file() and async fs.write()",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "dev-server-hmr-734c1fd2",
+      "category": "dev-server-hmr",
+      "section": "Dev server / HMR",
+      "announcement": "Fixed: stale asset index in Bun's dev server causing panics or crashes when one CSS file had a syntax error and another CSS file was subsequently edited",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "dev-server-hmr-0262b65f",
+      "category": "dev-server-hmr",
+      "section": "Dev server / HMR",
+      "announcement": "Fixed: use-after-free crash in Bun's dev server (Bun.serve with framework) when a \"use client\" directive is removed from a component that had a pending resolution failure, causing the directory watcher to read freed memory on the next file change",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "dev-server-hmr-f7ea11c6",
+      "category": "dev-server-hmr",
+      "section": "Dev server / HMR",
+      "announcement": "Fixed: double-free crash in Bun's dev server when shutting down after a directory watch resolves a previously-failing import dependency",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "dev-server-hmr-02f450af",
+      "category": "dev-server-hmr",
+      "section": "Dev server / HMR",
+      "announcement": "Fixed: HMR bundles crashing with X is not a function when a file has multiple import { ... } from statements referencing the same barrel package with sideEffects: false (regression from barrel import optimization in v1.3.0)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "dev-server-hmr-9b38bf57",
+      "category": "dev-server-hmr",
+      "section": "Dev server / HMR",
+      "announcement": "Fixed: use-after-free crash in bun dev when saving files in editors that use atomic rename (vim, emacs, IntelliJ) — the dev server's incremental graph stored pointers into a buffer that could be reallocated by the file watcher thread before the bundler consumed them",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "dev-server-hmr-e7489683",
+      "category": "dev-server-hmr",
+      "section": "Dev server / HMR",
+      "announcement": "Fixed: bun dev on Linux dropping file change notifications when multiple inotify events were coalesced into a single batch — e.g. an atomic-save creating a temp file and renaming it over the target in quick succession would silently lose the rename, leaving the file unwatched until restart",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "dev-server-hmr-eec91aeb",
+      "category": "dev-server-hmr",
+      "section": "Dev server / HMR",
+      "announcement": "Fixed: bun --hot on macOS stopping to detect file changes after the first atomic write (temp file + rename) when watching multiple imported modules, causing the module graph to oscillate between old and new state",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "dev-server-hmr-9f3c1497",
+      "category": "dev-server-hmr",
+      "section": "Dev server / HMR",
+      "announcement": "Fixed: --hot mode could print wrong source locations or silently drop errors when a file-watcher event arrived between a module's rejection and its error being reported — the reload now defers until the error is printed against the correct sourcemap",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-build-compile-9a703628",
+      "category": "bun-build-compile",
+      "section": "bun build --compile",
+      "announcement": "Fixed: ELF layout regression causing some executables on WSL1 to fail with ENOEXEC",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-build-compile-d46e92d3",
+      "category": "bun-build-compile",
+      "section": "bun build --compile",
+      "announcement": "Fixed: out-of-bounds write in toUTF16Alloc when handling invalid UTF-8 input in Windows bun build --compile metadata flag",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "css-parser-9a6eea11",
+      "category": "css-parser",
+      "section": "CSS Parser",
+      "announcement": "Fixed: CSS background-clip with vendor prefixes and multi-layer backgrounds could cause a double-free crash (≥2 background layers) and incorrect output where prefixed clip values were silently dropped instead of being flushed as separate declarations",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-4f486d3f",
+      "category": "bun-test",
+      "section": "bun test",
+      "announcement": "Fixed: crash in bun test --isolate on macOS ARM64 caused by the concurrent garbage collector visiting a half-initialized global object during test isolation swaps",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-12286e03",
+      "category": "bun-test",
+      "section": "bun test",
+      "announcement": "Fixed: bun test --isolate and bun test --parallel crashing with segfaults when test files load native NAPI addon whose deferred finalizers outlive the file's global object. The --parallel coordinator also no longer silently retries crashed workers, which previously masked panics and let the run exit 0. Fatal signals (SIGSEGV, SIGABRT, etc.) now abort the entire test run with a clear error message.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-df16123f",
+      "category": "bun-test",
+      "section": "bun test",
+      "announcement": "Fixed: bun test --changed silently skipping test files whose only dependency path to a changed source file went through a tsconfig paths alias with a bare-looking key (e.g. @/*, ~/*, components/*). The resolver's packages=external short-circuit was incorrectly marking these aliased imports as external before tsconfig paths could resolve them.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-875dfb08",
+      "category": "bun-test",
+      "section": "bun test",
+      "announcement": "Fixed: test.each() / describe.each() table arrays could be garbage collected between the .each(arr) call and the subsequent (\"name\", cb) invocation, causing callbacks to receive corrupted data or throwing Expected array, got … errors",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-f0eec456",
+      "category": "bun-test",
+      "section": "bun test",
+      "announcement": "Fixed: crash when a custom asymmetric matcher's implementation throws an exception during .asymmetricMatch() — the exception is now properly propagated to JavaScript instead of triggering an internal assertion failure",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-9b5e45ab",
+      "category": "bun-test",
+      "section": "bun test",
+      "announcement": "Fixed: mock.module / vi.mock calling the module resolver before validating the callback argument, which caused unexpected behavior",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-shell-f2c4319e",
+      "category": "bun-shell",
+      "section": "Bun Shell",
+      "announcement": "This release fixes over 70 bugs with the Bun Shell.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-shell-dffa5a9d",
+      "category": "bun-shell",
+      "section": "Bun Shell",
+      "announcement": "Fixed: cd in Bun's shell hanging forever when encountering errno values other than ENOTDIR/ENOENT/ENAMETOOLONG (e.g. EACCES, ELOOP, EIO). Now properly reports the error to stderr and exits with code 1.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-shell-6993f675",
+      "category": "bun-shell",
+      "section": "Bun Shell",
+      "announcement": "Fixed: a crash in Bun's shell when cd or .cwd() received a path longer than 4096 bytes — oversized paths now correctly return ENAMETOOLONG instead of segfaulting",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-shell-db4e3869",
+      "category": "bun-shell",
+      "section": "Bun Shell",
+      "announcement": "Fixed: [[ -f path ]] in Bun Shell incorrectly returned true for directories, character devices, sockets, and FIFOs instead of only regular files",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-shell-f1b1bebf",
+      "category": "bun-shell",
+      "section": "Bun Shell",
+      "announcement": "Fixed: shell tilde expansion dropping path segments after command substitutions in compound words (e.g. echo ~/$(echo bin)/subdir now correctly outputs /home/user/bin/subdir instead of /home/user/bin)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "typescript-types-be333d47",
+      "category": "typescript-types",
+      "section": "TypeScript types",
+      "announcement": "Fixed: bun-types FFI type declarations failing to compile under tsgo (TypeScript native preview) due to duplicate computed property keys in FFITypeToArgsType and FFITypeToReturnsType interfaces",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "windows-5f5734be",
+      "category": "windows",
+      "section": "Windows",
+      "announcement": "Fixed: Bun.connect() on Windows named pipes could crash (heap-buffer-overflow under ASAN) or leak memory on connection close due to the socket handlers being incorrectly marked as server mode instead of client mode",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "windows-3d9ca15a",
+      "category": "windows",
+      "section": "Windows",
+      "announcement": "Fixed: heap buffer overflows in Windows path normalization (normalizePathWindows) that could cause heap corruption when handling paths near or exceeding the 32,767 UTF-16 code unit limit. Affected code paths include UTF-8 to UTF-16 conversion, device paths (\\\\.\\), absolute path normalization, separator-free paths, and relative path joining with dirfd. Now properly returns ENAMETOOLONG instead of writing out of bounds.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "windows-9f320748",
+      "category": "windows",
+      "section": "Windows",
+      "announcement": "Fixed: crash on Windows (panic: integer overflow) when tearing down hundreds of spawned child processes during process exit, caused by an unsigned integer underflow in the libuv event loop's active_handles counter",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "windows-64b19c5b",
+      "category": "windows",
+      "section": "Windows",
+      "announcement": "Fixed: a panic on Windows when resolving error names from libuv error codes (e.g. ENOENT, EBADF) due to an integer overflow in internal errno translation (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "windows-50235df9",
+      "category": "windows",
+      "section": "Windows",
+      "announcement": "Fixed: a crash on Windows (Panic: invalid enum value) when libuv returned unmapped error codes during file system operations like fs.readFile",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "cli-and-runtime-f53c8c45",
+      "category": "cli-and-runtime",
+      "section": "CLI and runtime",
+      "announcement": "When piping Bun's output to tools like less, fzf, or fx (e.g. bun script.js | less), Bun would unconditionally restore its startup terminal (termios) snapshot at exit. Because termios state belongs to the underlying /dev/pts/* device — not the file descriptor — this would overwrite the raw mode that the downstream pager had already set, leaving it unresponsive to keypresses.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "cli-and-runtime-527e9fb5",
+      "category": "cli-and-runtime",
+      "section": "CLI and runtime",
+      "announcement": "The fix gates the exit-time tcsetattr on whether Bun actually modified the terminal during its lifetime. When Bun is a pipeline producer (stdout is a pipe), fds it never touched are now left alone at exit. When stdout is a TTY (e.g. bun run vim, crash handler, --watch reload), the unconditional restore is preserved so the shell prompt always comes back to a usable state.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "cli-and-runtime-31b133f6",
+      "category": "cli-and-runtime",
+      "section": "CLI and runtime",
+      "announcement": "Fixed: bun -p with top-level await expressions now returns the final completion value instead of the first awaited value — e.g. bun -p '(await 1) + 1' now correctly prints 2 instead of 1",
+      "status": "planned",
+      "testPath": null
+    }
+  ]
+}
