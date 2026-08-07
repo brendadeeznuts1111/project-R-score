@@ -7,6 +7,17 @@ Cross-repo domain model for the seat capital desk — **Kalshi-bot** owns shared
 glossary cores, **FactoryWager** owns the Factory overlay, the color kernel, and
 the registry bake.
 
+**Desk loop / routing:** Domain `partner` is the **partner-ops desk lane** —
+outs → books → limits → pooled liquidity → offers → execution (Telegram /
+login). `/portal/bookmakers/` sits here because the catalog is the sportsbook /
+provider surface in that loop, **not** because a bookmaker is a partner CODE.
+Partners hold outs; books are registry-linked (`sportsbookId`). Different hosts
+may share a line provider — correlate in the catalog, do not equate hostname
+with partner identity. Catalog residuals: Tenant=`bookmakers`
+([bookmakers-open-issues.md](bookmakers-open-issues.md) ·
+[ISSUE-ROUTING.md](../ISSUE-ROUTING.md) ·
+[unified-partner-profile.md](../../design/unified-partner-profile.md)).
+
 | Home | Module | Role |
 |------|--------|------|
 | Kalshi-bot | `src/institutions/glossary.ts` | Shared cores: `partner.phase.*`, `book.type.*`, `deposit.method.{venmo,crypto,wire,credit}`, `out.status.{ready,deferred,paused}`, `accounting.*`, `event.*` (31 ids) |

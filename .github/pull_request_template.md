@@ -53,10 +53,14 @@ freshRerun command too ([FRESH-RERUN.md](../docs/harness/FRESH-RERUN.md)).
 
 Optional human queue fields. GitHub is **not** concept SSOT
 ([ISSUE-ROUTING.md](../docs/harness/ISSUE-ROUTING.md)).
+**Domain** = desk / business lane (partner = outs → books → limits → liquidity
+→ offers). Bookmaker ≠ partner entity — use **Tenant** / **Owner** for `BM-*`.
 
 | Field       | Value                                                                              |
 | ----------- | ---------------------------------------------------------------------------------- |
 | **Domain**  | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` · or n/a |
+| **Tenant**  | e.g. `bookmakers` · or n/a                                                         |
+| **Owner**   | fix lane when ≠ Tenant (e.g. `platform` for BM-5) · or n/a                         |
 | **Tracker** | e.g. `BM-1` · link to `*-open-issues.md` · or n/a                                  |
 | **Concept** | glossary id only if vocabulary changed · or n/a                                    |
 | **Lane**    | worktree / branch purpose (e.g. `feat/console-depth-doc-refs`) · or n/a            |
