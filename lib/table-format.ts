@@ -1,55 +1,43 @@
-// @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
-// @see https://bun.com/docs/runtime/terminal — Bun.terminal / Bun.stdout
+// @see https://bun.com/docs/runtime/color#flexible-input — via lib/console shouldColor
+// @see https://bun.com/reference/bun/sliceAnsi — via lib/console fitVisible
 /**
  * Universal table formatter — rich ANSI-styled terminal tables.
  *
+ * Color/width SSOT: [`lib/console`](./console/README.md) (`shouldColor` · `termWidth` · `fitVisible`).
+ * Prefer `logTable` / `inspectTable` for simple columnar dumps; this module for
+ * box-drawing / alternate rows / per-column formatters.
+ *
  * Features:
- * - Uses Bun.terminal for proper color detection (respects NO_COLOR, isTTY)
+ * - ANSI gated by `shouldColor()` (same as logDepth/colorize)
  * - Auto-sizes columns to terminal width when no explicit width given
- * - ANSI color coding
- * - Smart column width limiting with ellipsis
- * - Alternating row backgrounds
- * - Left/right/center alignment per column
- * - Section separators
- * - Compact mode for chat
+ * - Smart column width limiting with ellipsis (ANSI/grapheme-safe)
+ * - Alternating row backgrounds · section separators · compact mode
  * - Unicode box-drawing with fallback to ASCII
  * - Supports Bun.inspect for rich cell values
  */
 import { stringWidth, inspect, semver } from 'bun';
+import {
+  padCenterWidth,
+  padEndWidth,
+  padStartWidth,
+  shouldColor,
+  termWidth,
+  truncateWidth,
+} from './console/index.ts';
 
 // ── Bun version check ────────────────────────────────────────────────────
 const BUN_MIN_TABLE = '1.3.0';
 export const BUN_TABLE_OK = semver.satisfies(Bun.version, `>=${BUN_MIN_TABLE}`);
 
-// ── Terminal detection (lazy, first-use only) ─────────────────────────────
-let _ttyCache: { isTTY: boolean; width: number } | undefined;
-
-function getTerminal(): { isTTY: boolean; width: number } {
-  if (_ttyCache) return _ttyCache;
-  let isTTY = false;
-  let width = 80;
-  try {
-    const t = new Bun.Terminal(Bun.stdout);
-    isTTY = t.isTTY === true;
-    width = typeof t.columns === 'number' && t.columns > 0 ? t.columns : 80;
-  } catch {
-    try {
-      isTTY = Bun.stdout.isTTY === true;
-    } catch {}
-  }
-  _ttyCache = { isTTY, width };
-  return _ttyCache;
+function getTerminalWidth(): number {
+  return termWidth();
 }
 
-// Lazy color detection — computed once, then cached
-let _noColor: boolean | undefined;
+/** Inverse of shouldColor — kept for local color wrappers. */
 function isNoColor(): boolean {
-  if (_noColor !== undefined) return _noColor;
-  _noColor =
-    !getTerminal().isTTY || Bun.env.NO_COLOR !== undefined || process.argv.includes('--no-color');
-  return _noColor;
+  return !shouldColor();
 }
 
 const C = (code: string) => (s: string) => (isNoColor() ? s : `\x1b[${code}m${s}\x1b[0m`);
@@ -107,8 +95,8 @@ export type TableOpts = {
 
 const DEFAULT_OPTS: TableOpts = {
   compact: false,
-  colors: !isNoColor(),
-  maxColWidth: Math.floor(getTerminal().width / 3),
+  colors: shouldColor(),
+  maxColWidth: Math.floor(getTerminalWidth() / 3),
   alternate: true,
   border: 'unicode',
 };
@@ -177,25 +165,27 @@ const BOX = {
   },
 };
 
-// ── Helpers ───────────────────────────────────────────────────────────────
+// ── Helpers (width via Bun.stringWidth · clip/pad via lib/console layout) ─
 function sw(s: TableCell): number {
   return stringWidth(String(s ?? ''));
 }
 
+/** Clip only — never pad (pad is a separate step with exact column width). */
 function truncate(s: string, max: number): string {
-  if (max <= 0 || sw(s) <= max) return s;
-  // Respect ANSI codes: don't count them in width
-  const clean = s.replace(/\x1b\[\d+m/g, '');
-  if (sw(clean) <= max) return s;
-  return s.slice(0, Math.max(0, max - 1)) + '…';
+  if (max <= 0) return '';
+  return truncateWidth(s, max, { ellipsis: '…' });
 }
 
+/** Expand only — does not clip (caller truncates first when needed). */
 function pad(s: string, w: number, align: 'left' | 'right' | 'center'): string {
-  const len = sw(s);
-  if (len >= w) return s;
-  const left = align === 'right' ? w - len : align === 'center' ? Math.floor((w - len) / 2) : 0;
-  const right = w - len - left;
-  return ' '.repeat(Math.max(0, left)) + s + ' '.repeat(Math.max(0, right));
+  switch (align) {
+    case 'right':
+      return padStartWidth(s, w);
+    case 'center':
+      return padCenterWidth(s, w);
+    default:
+      return padEndWidth(s, w);
+  }
 }
 
 function boxLine(parts: string[], b: typeof BOX.unicode): string {
@@ -229,7 +219,7 @@ export function formatTable(
   }
 
   // Compute column widths
-  const maxW = o.maxColWidth ?? Math.floor(getTerminal().width / 3);
+  const maxW = o.maxColWidth ?? Math.floor(getTerminalWidth() / 3);
   const widths = columns.map((col, i) => {
     const labelW = sw(col.label);
     const dataW = Math.max(

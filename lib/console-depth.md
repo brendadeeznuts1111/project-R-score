@@ -1,11 +1,12 @@
 # console-depth — module note
 
-Code: [`console-depth.ts`](./console-depth.ts) · Hub: [`bun-runtime.md`](./bun-runtime.md) ·
-Format ratchet: [`console-format-scan.ts`](./console-format-scan.ts)
+**Domain SSOT:** [`console/`](./console/README.md) · facade [`console-depth.ts`](./console-depth.ts)
+(compat re-export) · Hub: [`bun-runtime.md`](./bun-runtime.md) · Format ratchet:
+[`console-format-scan.ts`](./console-format-scan.ts)
 
 Policy layer over Bun natives for harness TTY / inspect output. Raw TTY
-primitives stay on `bun` imports; this module owns depth policy, ANSI gate,
-tables, and width layout.
+primitives stay on `bun` imports; `lib/console` owns depth policy, ANSI gate,
+tables, width layout, chrome, and dual-mode `cliOut`.
 
 ## Canonical Bun references
 
@@ -73,11 +74,16 @@ Repo pin: `bunfig.toml` `[console] depth = 6`. `BUN_CONSOLE_DEPTH` is
 
 ## Exports
 
+Import from `lib/console` (preferred for new code) or `lib/console-depth` (compat).
+
 | Export | Role |
 |--------|------|
 | `getConsoleDepth` / `inspect` / `logDepth` / `logCompact` | Depth: option → `--console-depth` → `BUN_CONSOLE_DEPTH` → bunfig → `2` |
-| `shouldColor` / `colorize` | `Bun.enableANSIColors` (startup / assignment — not mid-process `FORCE_COLOR`) |
+| `shouldColor` / `colorize` / `tones` | ANSI gate · swatches · semantic tones |
 | `inspectTable` / `logTable` / `jsonOut` | Table string + `--json` choke |
+| **`cliOut`** / `formatCliOut` | Dual-mode human/json (advanced CLI pattern) |
+| `fitVisible` / `padEndWidth` / `truncateWidth` | Visible-column layout |
+| `frameBlock` / `kvLines` / `columnTable` | Doctor / portal chrome |
 | `inspectCustom` | `Bun.inspect.custom` |
 | `padEndWidth` / `truncateWidth` / `fitVisible` | Layout over `stringWidth` / `sliceAnsi` |
 | `termWidth` | `process.stdout.columns ?? 80` |

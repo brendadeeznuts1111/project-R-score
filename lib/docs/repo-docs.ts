@@ -93,6 +93,8 @@ export const CANONICAL_HARNESS = {
   brandedFacade: 'lib/types/branded.ts',
   brandedMap: 'lib/types/branded/README.md',
   brandManifest: 'lib/types/brand-manifest.json',
+  consoleDomain: 'lib/console/README.md',
+  consoleFacade: 'lib/console/index.ts',
   consoleDepth: 'lib/console-depth.ts',
   consoleDepthGuide: 'lib/console-depth.md',
   bunRuntimeGuide: 'lib/bun-runtime.md',

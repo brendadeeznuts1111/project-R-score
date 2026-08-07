@@ -4,7 +4,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
 /** Network-free exact runtime/channel check for agents, hooks, and local operators. */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { cliOut, tones } from '../lib/console/index.ts';
 import { checkBunPin } from '../lib/verification/bun-runtime-pin.ts';
 
 export async function runBunRuntimePinCli(argv: string[] = Bun.argv.slice(2)): Promise<number> {
@@ -13,8 +13,12 @@ export async function runBunRuntimePinCli(argv: string[] = Bun.argv.slice(2)): P
   if (unknown.length > 0) throw new Error(`Unknown Bun runtime pin option: ${unknown[0]}`);
 
   const result = await checkBunPin();
-  if (json) jsonOut(result);
-  else console.info(`${result.ok ? 'PASS' : 'FAIL'} ${result.message}`);
+  if (json) {
+    cliOut(result, { json: true });
+  } else {
+    const tag = result.ok ? tones.ok('PASS') : tones.fail('FAIL');
+    console.info(`${tag} ${result.message}`);
+  }
   return result.ok ? 0 : 1;
 }
 

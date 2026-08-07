@@ -35,7 +35,7 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | Wire                                      | [`../docs/WIRE_BOUNDARY.md`](../docs/WIRE_BOUNDARY.md)                                                                        |
 | Brands                                    | [`types/branded/README.md`](./types/branded/README.md)                                                                        |
 | Bun native capabilities                   | [`../docs/BUN_NATIVE_CAPABILITIES.md`](../docs/BUN_NATIVE_CAPABILITIES.md)                                                    |
-| Console depth                             | [`console-depth.ts`](./console-depth.ts) · note [`console-depth.md`](./console-depth.md)                                      |
+| Console domain                            | [`console/`](./console/README.md) · facade [`console-depth.ts`](./console-depth.ts) · note [`console-depth.md`](./console-depth.md) |
 | Bun runtime hub (CLI · depth · utilities) | [`bun-runtime.md`](./bun-runtime.md) · flags [`../config/runtime-flags.json`](../config/runtime-flags.json)                   |
 | Terminal / PTY                            | [`terminal.ts`](./terminal.ts)                                                                                                |
 | Deep equals                               | [`deep-equals.ts`](./deep-equals.ts)                                                                                          |
@@ -107,9 +107,10 @@ Every `lib/*.ts` module is listed. Grouped for scan; paths stay flat under
 
 | Module                                                     | Purpose                                                                                                       |
 | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| [`console-depth.ts`](./console-depth.ts)                   | Inspect depth SSOT · hub [`bun-runtime.md`](./bun-runtime.md) · note [`console-depth.md`](./console-depth.md) |
+| [`console/`](./console/README.md)                          | TTY/inspect domain · `cliOut` · `tones` · chrome · depth · layout                                             |
+| [`console-depth.ts`](./console-depth.ts)                   | Compat facade → `console/` · hub [`bun-runtime.md`](./bun-runtime.md) · note [`console-depth.md`](./console-depth.md) |
 | [`console-format-scan.ts`](./console-format-scan.ts)       | Console-format ratchet scanner (patterns + repo scan)                                                         |
-| [`table-format.ts`](./table-format.ts)                     | Rich ANSI terminal tables (`Bun.stringWidth` / color)                                                         |
+| [`table-format.ts`](./table-format.ts)                     | Rich box tables (uses `shouldColor` + layout from `console/`)                                                 |
 | [`terminal.ts`](./terminal.ts)                             | `Bun.Terminal` PTY helpers (`spawnWithTerminal`)                                                              |
 | [`deep-equals.ts`](./deep-equals.ts)                       | `Bun.deepEquals` · strict · changed-index                                                                     |
 | [`peek-settle.ts`](./peek-settle.ts)                       | `Bun.peek` · `awaitSettled` · `awaitAllSettled` · `peekIfSettled`                                             |

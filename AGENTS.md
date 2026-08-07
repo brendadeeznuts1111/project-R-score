@@ -329,9 +329,11 @@ interior, path/name allowlists, suppressions.
     `bun scripts/check-import-graph.ts --write-baseline`)
   - Root quality → pinned Prettier + ESLint. Root Oxlint is retired; nested
     standalone products may retain an explicitly pinned toolchain they own.
-  - Console output formatting →
-    [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts)
-    policy (`logTable` / `logDepth` / `inspectTable` / `jsonOut` / `colorize`);
+  - Console output formatting → domain
+    [`lib/console/`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console/README.md)
+    (`logTable` / `logDepth` / `inspectTable` / `jsonOut` / **`cliOut`** dual-mode /
+    `tones` / chrome) · compat facade
+    [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts);
     TTY primitives via `import { stringWidth, stripANSI, … } from 'bun'` · hub
     [`lib/bun-runtime.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/bun-runtime.md)
     · `bun run check:console-format` (pre-commit when `lib/`/`scripts/`/`tools/`
@@ -552,8 +554,9 @@ leaves) ·
 [`lib/console-depth.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.md)):
 explicit `depth` > `--console-depth` > `BUN_CONSOLE_DEPTH` (escape; runtime
 ignores it) > bunfig > `2`. Prefer `inspect` / `logDepth` / `logTable` /
-`inspectTable` / `jsonOut` / `inspectCustom` over raw `console.log(obj)` /
-`console.table`. TTY width/ANSI:
+`inspectTable` / `jsonOut` / **`cliOut`** / `tones` / `inspectCustom` over raw
+`console.log(obj)` / `console.table`. Domain SSOT:
+[`lib/console/`](lib/console/README.md). TTY width/ANSI:
 `import { stringWidth, stripANSI, wrapAnsi, sliceAnsi } from 'bun'`. Hub:
 [`lib/bun-runtime.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/bun-runtime.md).
 Related:
@@ -585,7 +588,7 @@ bunfig: `bun test tests/console-depth.test.ts -t "bun run - stdin"`.
 
 | Kind           | References                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Repo           | claim `console-depth-boundaries` · wrapper [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts) · note [`lib/console-depth.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.md) · format scan [`lib/console-format-scan.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-format-scan.ts) · [`tests/console-depth.test.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tests/console-depth.test.ts) · [`tools/benchmarks/console-depth-perf.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/benchmarks/console-depth-perf.ts) · deep-equals wrapper [`lib/deep-equals.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/deep-equals.ts) · hash wrapper `security-hash-boundaries` |
+| Repo           | claim `console-depth-boundaries` · domain [`lib/console/`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console/README.md) · facade [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts) · note [`lib/console-depth.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.md) · format scan [`lib/console-format-scan.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-format-scan.ts) · [`tests/console-depth.test.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tests/console-depth.test.ts) · [`tests/console-lib.test.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tests/console-lib.test.ts) · [`tools/benchmarks/console-depth-perf.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/benchmarks/console-depth-perf.ts) · deep-equals wrapper [`lib/deep-equals.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/deep-equals.ts) · hash wrapper `security-hash-boundaries` |
 | Bun            | [object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth) · [`bun run -` stdin](https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin) · [`bun run --console-depth`](https://bun.com/docs/runtime#bun-run-console-depth) · [runtime/console](https://bun.com/docs/runtime/console) · [Bun.inspect](https://bun.com/docs/runtime/utils#bun-inspect) · [inspect.table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options) · [inspect.custom](https://bun.com/docs/runtime/utils#bun-inspect-custom) · [stringWidth](https://bun.com/docs/runtime/utils#bun-stringwidth) · [stripANSI](https://bun.com/docs/runtime/utils#bun-stripansi) · [wrapAnsi](https://bun.com/docs/runtime/utils#bun-wrapansi) · [sliceAnsi](https://bun.com/reference/bun/sliceAnsi) · [Bun.color](https://bun.com/docs/runtime/color#flexible-input) · [markdown.ansi](https://bun.com/docs/runtime/markdown#ansi-terminal-output) |
 | Other external | [Bun repository](https://github.com/oven-sh/bun) · [bun-types current source](https://github.com/oven-sh/bun/tree/main/packages/bun-types) · [bun-types 1.3.14 pin](https://github.com/oven-sh/bun/tree/bun-v1.3.14/packages/bun-types)                                                                                                                                                                                                                                                                                                                                                                                  |
 
