@@ -157,6 +157,10 @@ CI / production: leave `BUN_STRIP_UNKNOWN` unset. Local prototyping may set
 | `PARTNER_ONBOARD_ALLOWED_LONG` | `partner:onboard` · SSOT (+ re-export from tool) | SSOT       | §1.1 deal · currency · hold-target · initial-balance · funding-method | identity/book/control flags | start of `main()`             | **throw**    |
 | `TELEGRAM_OPS_ALLOWED_LONG`    | `telegram:ops` · `tools/telegram-ops.ts`         | SSOT       | §1.1 invite · no-dm · no-ack · requested-by                           | send/directory meta         | early `main()`                | **exit 2**   |
 | `BUN_PR_VERIFY_ALLOWED_LONG`   | `bun:pr:verify` · `tools/bun-pr-verify.ts`       | SSOT       | (none — no Flags table)                                               | proof · json                | `parseArgs` via `applyUnknownLongOptionGuardFor` | **throw** → **1** |
+| `BUN_RUNTIME_PIN_ALLOWED_LONG` | `bun:runtime-pin` · `tools/bun-runtime-pin.ts`   | SSOT       | (none)                                                                | json                        | `runBunRuntimePinCli`                            | **throw** → **2** |
+| `GLOSSARY_HEALTH_ALLOWED_LONG` | `glossary:health` · `tools/glossary-health.ts`   | SSOT       | (none)                                                                | json · local                | top-level guard                                  | **exit 2**        |
+| `CLOUDFLARE_ENV_VALIDATE_ALLOWED_LONG` | `cloudflare:env:validate` · `tools/cloudflare-env-validate.ts` | SSOT | (none)                                                     | json · strict               | top-level guard                                  | **exit 2**        |
+| `ROUTING_REGISTRY_PROOF_ALLOWED_LONG` | `routing:registry-proof` · `tools/routing-registry-proof.ts` | SSOT | (none)                                                       | write · publish · json · …  | top-level guard                                  | **exit 2**        |
 
 Prove CLI guards: `bun test tests/docs-ref-id-tool-exports.test.ts`.
 

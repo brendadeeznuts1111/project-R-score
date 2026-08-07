@@ -15,9 +15,18 @@
  *   bun run glossary:health --local   # read public/registry/domain-glossary.json
  */
 
-import { jsonOut } from '../lib/console-depth.ts';
+import { cliOut } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  GLOSSARY_HEALTH_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+export { GLOSSARY_HEALTH_ALLOWED_LONG };
 
 type Check = { name: string; ok: boolean; detail?: string };
+
+/** Guarded argv (allowlist · BUN_STRIP_UNKNOWN). */
+const argv = applyUnknownLongOptionGuardFor('glossary:health', Bun.argv.slice(2));
 
 type GlossarySection = { hash?: string; domId?: string }; // brand-ok — opaque glossary registry section key
 type GlossarySurface = { sections?: GlossarySection[] };
@@ -51,7 +60,7 @@ function hashMatches(hash: string): boolean {
 }
 
 async function loadRegistry(): Promise<GlossaryRegistry> {
-  if (Bun.argv.includes('--local')) {
+  if (argv.includes('--local')) {
     return (await Bun.file(LOCAL_REGISTRY).json()) as GlossaryRegistry;
   }
   const res = await fetch(LIVE_GLOSSARY_URL, { signal: AbortSignal.timeout(10_000) });
@@ -115,8 +124,8 @@ async function main() {
 
   const allOk = checks.every(c => c.ok);
 
-  if (Bun.argv.includes('--json')) {
-    jsonOut({ allOk, checks });
+  if (argv.includes('--json')) {
+    cliOut({ allOk, checks }, { json: true });
   } else {
     let md = '| Check | Status | Detail |\n| :--- | :--- | :--- |\n';
     for (const c of checks) {

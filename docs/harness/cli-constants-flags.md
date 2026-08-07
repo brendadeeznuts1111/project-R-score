@@ -127,6 +127,19 @@ bun run docs:refid:check
 | Ops snapshot         | `bun tools/ops-snapshot.ts --typo`                                                    | 2               | `❌`                                                |
 | bun:pr:verify        | `bun tools/bun-pr-verify.ts 1 --typo`                                                 | 1 (throw)       | `❌ Unknown long option(s) in bun:pr:verify: --typo` |
 | bun:pr:verify strip  | `BUN_STRIP_UNKNOWN=true bun tools/bun-pr-verify.ts 99999 --typo`                      | 1 (missing bin) | `stripping` + `bun-99999 not on PATH`               |
+| bun:runtime-pin      | `bun tools/bun-runtime-pin.ts --typo`                                                 | 2               | `❌`                                                |
+| glossary:health      | `bun tools/glossary-health.ts --typo`                                                 | 2               | `❌`                                                |
+| cloudflare:env:validate | `bun tools/cloudflare-env-validate.ts --typo`                                      | 2               | `❌`                                                |
+| routing:registry-proof | `bun tools/routing-registry-proof.ts --typo`                                        | 2               | `❌`                                                |
+
+### 2.7 Compact tool allowlists (no Flags table)
+
+| Registry key | Leaves | Entry |
+| ------------ | ------ | ----- |
+| `bun:runtime-pin` | `json` | [`tools/bun-runtime-pin.ts`](../../tools/bun-runtime-pin.ts) |
+| `glossary:health` | `json` · `local` | [`tools/glossary-health.ts`](../../tools/glossary-health.ts) |
+| `cloudflare:env:validate` | `json` · `strict` | [`tools/cloudflare-env-validate.ts`](../../tools/cloudflare-env-validate.ts) |
+| `routing:registry-proof` | `write` · `publish` · `json` · `no-fail` · `no-previous` · `base` · `concurrency` | [`tools/routing-registry-proof.ts`](../../tools/routing-registry-proof.ts) |
 
 ---
 

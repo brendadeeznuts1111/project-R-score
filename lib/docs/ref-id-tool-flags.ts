@@ -359,6 +359,26 @@ export function complexityFloorToolFlags(): ToolFlagRef[] {
 /** § — bun:pr:verify (`tools/bun-pr-verify.ts`) — no design Flags table; tool allowlist only */
 export const BUN_PR_VERIFY_ALLOWED_LONG = ['proof', 'json'] as const;
 
+/** § — bun:runtime-pin (`tools/bun-runtime-pin.ts`) */
+export const BUN_RUNTIME_PIN_ALLOWED_LONG = ['json'] as const;
+
+/** § — glossary:health (`tools/glossary-health.ts`) */
+export const GLOSSARY_HEALTH_ALLOWED_LONG = ['json', 'local'] as const;
+
+/** § — cloudflare:env:validate (`tools/cloudflare-env-validate.ts`) */
+export const CLOUDFLARE_ENV_VALIDATE_ALLOWED_LONG = ['json', 'strict'] as const;
+
+/** § — routing:registry-proof (`tools/routing-registry-proof.ts`) */
+export const ROUTING_REGISTRY_PROOF_ALLOWED_LONG = [
+  'write',
+  'publish',
+  'json',
+  'no-fail',
+  'no-previous',
+  'base',
+  'concurrency',
+] as const;
+
 /** CLI names keyed in `ALLOWED_LONG_REGISTRY` (package-script style). */
 export type AllowedLongCliName =
   | 'lint-wires'
@@ -366,7 +386,11 @@ export type AllowedLongCliName =
   | 'ops:snapshot'
   | 'telegram:ops'
   | 'partner:onboard'
-  | 'bun:pr:verify';
+  | 'bun:pr:verify'
+  | 'bun:runtime-pin'
+  | 'glossary:health'
+  | 'cloudflare:env:validate'
+  | 'routing:registry-proof';
 
 /**
  * Central allowlist registry — code SSOT (not env JSON).
@@ -379,6 +403,10 @@ export const ALLOWED_LONG_REGISTRY = {
   'telegram:ops': TELEGRAM_OPS_ALLOWED_LONG,
   'partner:onboard': PARTNER_ONBOARD_ALLOWED_LONG,
   'bun:pr:verify': BUN_PR_VERIFY_ALLOWED_LONG,
+  'bun:runtime-pin': BUN_RUNTIME_PIN_ALLOWED_LONG,
+  'glossary:health': GLOSSARY_HEALTH_ALLOWED_LONG,
+  'cloudflare:env:validate': CLOUDFLARE_ENV_VALIDATE_ALLOWED_LONG,
+  'routing:registry-proof': ROUTING_REGISTRY_PROOF_ALLOWED_LONG,
 } as const satisfies Record<AllowedLongCliName, readonly string[]>;
 
 /** Apply guard using `ALLOWED_LONG_REGISTRY[cliName]`. */

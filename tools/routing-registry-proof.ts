@@ -24,9 +24,15 @@ import {
   writeRoutingArtifact,
   ROUTING_ARTIFACT_PACKAGE,
 } from '../lib/routing-proof.ts';
-import { jsonOut, logTable } from '../lib/console-depth.ts';
+import { cliOut, logTable } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  ROUTING_REGISTRY_PROOF_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
 
-const argv = Bun.argv.slice(2);
+export { ROUTING_REGISTRY_PROOF_ALLOWED_LONG };
+
+const argv = applyUnknownLongOptionGuardFor('routing:registry-proof', Bun.argv.slice(2));
 const writeLocal = argv.includes('--write');
 const publishRemote = argv.includes('--publish');
 const jsonOnly = argv.includes('--json');
@@ -50,7 +56,7 @@ const result = await runRoutingProof({
 });
 
 if (jsonOnly) {
-  jsonOut(result);
+  cliOut(result, { json: true });
 } else {
   console.log('Registry routing proof v2');
   console.log(`Base: ${result.baseUrl} · concurrency ${result.concurrency}`);
