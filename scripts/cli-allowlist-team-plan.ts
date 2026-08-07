@@ -1,7 +1,8 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/reference/bun/argv — Bun.argv
-// @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * Build agent-team partitions + registry plan for 100% CLI allowlist coverage.
  *

@@ -98,10 +98,22 @@ export {
 // ── Telegram Integration ──
 export {
   autoCreateTelegramGroups,
+  createMemoryPartnerTopicMappingStore,
+  createPartnerTelegramIntegration,
   dispatchBySignalType,
   getTopicMapping,
+  telegramBotApiTransport,
 } from "./telegram-integration";
-export type { TopicConfig } from "./telegram-integration";
+export type {
+  PartnerTelegramGateway,
+  PartnerTelegramIntegration,
+  PartnerTelegramIntegrationDependencies,
+  PartnerTelegramTransport,
+  PartnerTopicMappingStore,
+  TelegramDispatchResult,
+  TopicConfig,
+  TopicStatus,
+} from "./telegram-integration";
 
 // ── Source Integration ──
 export {

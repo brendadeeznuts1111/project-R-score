@@ -1,0 +1,20 @@
+== public:audit:verify ==
+exit:0
+$ bun run public:discover:check && bun run verify:portal:static && bun run audit:verify
+$ bun tools/public-discovery.ts --check --min-severity error
+public-discovery · 2 findings
+  errors=0 warnings=0
+  [INFO ] orphan-registry-artifact · Registry JSON not referenced from public/portal or lander
+         repair: Wire into portal dashboard or document in docs/harness/tenants/public-plane.md
+  [INFO ] orphan-registry-artifact · Registry JSON not referenced from public/portal or lander
+         repair: Wire into portal dashboard or document in docs/harness/tenants/public-plane.md
+$ bun tools/verify-portal.ts --static-only
+Portal static verify
+✓ portal-foundation.md + page template present
+✓ portal route wiring (37 redirects · 21 markdown stubs)
+✓ portal static contract (public/portal: chrome · inline-health · process.env · ts-leak)
+✓ data.js + navigation.js + topbar.js contract
+✓ verification taxonomy portal chrome (subsystem filter + dedupe + audit panel)
+✅ portal verify passed
+$ bun tools/audit-catalog.ts verify
+✅ audit verify ok — 4 findings, 5 concepts (evidence · graph · relatedDocs · pages · orphans · catalog parity)

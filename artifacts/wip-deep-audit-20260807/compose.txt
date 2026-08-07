@@ -1,0 +1,6 @@
+== discover:compose:check ==
+exit:0
+$ bun tools/discovery-compose.ts --check --skip-unused --min-severity error
+discovery-compose · 85 findings
+  harness errors=0 warnings=2
+  public  errors=0 warnings=0

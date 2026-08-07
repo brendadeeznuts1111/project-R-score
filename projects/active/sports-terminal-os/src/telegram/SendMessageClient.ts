@@ -90,6 +90,8 @@ export class SendMessageClient {
       perChatRateMs?: number;
       globalRateMs?: number;
       maxRetries?: number;
+      fetch?: (url: string, init?: RequestInit) => Promise<Response>;
+      sleep?: (milliseconds: number) => Promise<void>;
     } = {}
   ) {
     this.apiUrl = `https://api.telegram.org/bot${botToken}`;
@@ -112,7 +114,6 @@ export class SendMessageClient {
       logger.debug(`Deduplicated message to ${chatId}`);
       return { success: true };
     }
-    this.recordDedup(dedupKey);
 
     // Build request body
     const body: Record<string, any> = {
@@ -131,9 +132,12 @@ export class SendMessageClient {
     }
 
     // Retry loop with exponential backoff
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    const maxRetries = this.options.maxRetries ?? MAX_RETRIES;
+    const fetchRequest = this.options.fetch ?? h2Fetch;
+    const sleep = this.options.sleep ?? Bun.sleep;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        const response = await h2Fetch(`${this.apiUrl}/sendMessage`, {
+        const response = await fetchRequest(`${this.apiUrl}/sendMessage`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
@@ -143,6 +147,9 @@ export class SendMessageClient {
 
         if (data.ok) {
           this.recordSend();
+          // A failed attempt must remain retryable. Only confirmed Telegram
+          // delivery enters the deduplication window.
+          this.recordDedup(dedupKey);
           return { success: true, messageId: data.result?.message_id };
         }
 
@@ -150,21 +157,21 @@ export class SendMessageClient {
         if (data.error_code === 429) {
           const retryAfter = data.parameters?.retry_after || 1;
           logger.warn(`Telegram rate limit, retry after ${retryAfter}s`);
-          await Bun.sleep(retryAfter * 1000);
+          await sleep(retryAfter * 1000);
           continue;
         }
 
         // Non-retryable error
         const errMsg = data.description || `Telegram error ${data.error_code}`;
-        if (attempt >= MAX_RETRIES) {
+        if (attempt >= maxRetries) {
           return { success: false, error: errMsg };
         }
       } catch (err: any) {
-        const isLastAttempt = attempt >= MAX_RETRIES;
+        const isLastAttempt = attempt >= maxRetries;
         if (isLastAttempt) {
           return {
             success: false,
-            error: `Network error after ${MAX_RETRIES} retries: ${err.message}`,
+            error: `Network error after ${maxRetries} retries: ${err.message}`,
           };
         }
 
@@ -173,7 +180,7 @@ export class SendMessageClient {
         logger.warn(
           `Send attempt ${attempt} failed: ${err.message}, retrying in ${backoffMs}ms`
         );
-        await Bun.sleep(backoffMs);
+        await sleep(backoffMs);
       }
     }
 
@@ -248,5 +255,4 @@ export class SendMessageClient {
     this.dedupMap.set(key, Date.now() + DEDUP_WINDOW_MS);
   }
 }
-
 
