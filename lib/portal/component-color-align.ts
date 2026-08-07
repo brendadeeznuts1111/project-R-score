@@ -20,7 +20,12 @@
  * them intentionally component-local.
  */
 import { joinPath, resolvePath } from '../path-bun.ts';
-import { portalTheme, type PortalTheme } from './theme.ts';
+import {
+  FLAT_PALETTE_TO_CSS,
+  portalTheme,
+  type PortalTheme,
+  type PortalThemePalette,
+} from './theme.ts';
 
 /** CSS var (as written in components) → theme token path (`card.*` or `dark.*`). */
 export const COMPONENT_VAR_TOKEN_MAP: Readonly<Record<string, string>> = {
@@ -55,6 +60,14 @@ export const COMPONENT_VAR_TOKEN_MAP: Readonly<Record<string, string>> = {
   '--tone-bad': 'dark.red',
   '--tone-info': 'dark.accent',
   '--tone-skip': 'dark.textDim',
+  // Operator verticals + profile tiers (semantic.* → closed-palette aliases)
+  '--vertical-sportsbook': 'semantic.vertical.sportsbook',
+  '--vertical-crypto': 'semantic.vertical.crypto',
+  '--vertical-pph': 'semantic.vertical.pph',
+  '--vertical-sweepstakes': 'semantic.vertical.sweepstakes',
+  '--tier-retail': 'semantic.tier.retail',
+  '--tier-vip': 'semantic.tier.vip',
+  '--tier-sharp': 'semantic.tier.sharp',
 };
 
 export type ComponentColorMismatch = {
@@ -92,10 +105,27 @@ function asColorKey(input: string, label: string): string {
   return `${r},${g},${b},${a.toFixed(3)}`;
 }
 
-function tokenValue(theme: PortalTheme, path: string): string | undefined {
-  const [block, key] = path.split('.') as ['card' | 'dark', string];
-  const palette = theme[block] as Record<string, string> | undefined;
-  return palette?.[key];
+/**
+ * Resolve a COMPONENT_VAR_TOKEN_MAP path to a concrete color value.
+ * - `card.*` / `dark.*` → palette hex
+ * - `semantic.<group>.<key>` → alias value (`var(--green)`) resolved to its
+ *   palette hex via the flat-palette var names (closed-palette discipline:
+ *   semantic keys never invent hex).
+ */
+export function tokenValue(theme: PortalTheme, path: string): string | undefined {
+  const parts = path.split('.') as ['card' | 'dark' | 'semantic', string, string?];
+  if (parts[0] === 'semantic') {
+    const group = theme.semantic[parts[1] as keyof PortalTheme['semantic']] as
+      Record<string, string> | undefined;
+    const alias = group?.[parts[2]!];
+    if (!alias) return undefined;
+    const varName = /var\((--[\w-]+)\)/.exec(alias)?.[1];
+    if (!varName) return undefined;
+    const key = Object.entries(FLAT_PALETTE_TO_CSS).find(([, v]) => v === varName)?.[0];
+    return key ? theme.dark[key as keyof PortalThemePalette] : undefined;
+  }
+  const palette = theme[parts[0]] as Record<string, string> | undefined;
+  return palette?.[parts[1]!];
 }
 
 /**
