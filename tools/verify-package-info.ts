@@ -18,7 +18,7 @@ import { CryptoHasher, inspect } from 'bun';
 import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('verify:package-info', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 const SAVE_PATH = 'public/registry/package-info.json';
 const SHOULD_SAVE = argv.includes('--save');

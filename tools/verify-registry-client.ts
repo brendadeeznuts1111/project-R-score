@@ -24,7 +24,7 @@ import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification
 import { REGISTRY_CLIENT_CANONICAL_KEYS, validateCanonicalKeys } from './canonical-helpers.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('verify:registry-client', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 import {
   REGISTRY_CLIENT_PROOF_REPORT_PATH,

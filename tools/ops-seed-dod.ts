@@ -16,7 +16,7 @@ import { seedDodDemo } from '../lib/operations/dod-seed.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('ops:seed:all', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('ops:seed:dod', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 const force = argv.includes('--force');
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;

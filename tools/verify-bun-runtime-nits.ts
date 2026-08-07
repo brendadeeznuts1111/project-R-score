@@ -26,7 +26,7 @@ import {
 import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification/subsystem.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('verify:bun-runtime-nits', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 export type NitProbe = {
   name: string;

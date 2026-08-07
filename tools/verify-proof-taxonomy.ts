@@ -20,7 +20,7 @@ import {
 } from '../lib/verification/proof-taxonomy.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('verify:proof-taxonomy', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 const ROOT = resolvePath(import.meta.dir, '..');
 const JSON_OUT = argv.includes('--json');

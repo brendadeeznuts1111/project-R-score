@@ -27,7 +27,7 @@ import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification
 import type { VerificationResult } from '../lib/verification/types.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('verify:install-platform', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 export const SAVE_PATH = 'public/registry/install-platform.json';
 

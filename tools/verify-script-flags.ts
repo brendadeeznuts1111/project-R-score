@@ -16,7 +16,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 import { joinPath } from '../lib/path-bun.ts';
 
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('verify-all', Bun.argv.slice(2))
+  ? applyUnknownLongOptionGuardFor('verify:script-flags', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 const ROOT = joinPath(import.meta.dir, '..');
 const BASELINE_PATH = joinPath(import.meta.dir, 'verify-script-flags-baseline.json');
