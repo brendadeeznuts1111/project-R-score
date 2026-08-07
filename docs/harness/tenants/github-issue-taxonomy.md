@@ -18,12 +18,18 @@ This tenant does not make GitHub Issues the concept or domain graph.
 
 ## Phase ownership
 
-| Phase                                      | Issue                                                                    | Status after this slice |
-| ------------------------------------------ | ------------------------------------------------------------------------ | ----------------------- |
-| Typed taxonomy + parse-once spine          | [#238](https://github.com/brendadeeznuts1111/project-R-score/issues/238) | implemented             |
-| Form, doctor, audit, label synchronization | [#239](https://github.com/brendadeeznuts1111/project-R-score/issues/239) | implemented             |
-| Deterministic public registry bake         | [#240](https://github.com/brendadeeznuts1111/project-R-score/issues/240) | implemented             |
-| Static portal consumer                     | [#241](https://github.com/brendadeeznuts1111/project-R-score/issues/241) | implemented             |
+| Phase                                      | Issue                                                                    | Status |
+| ------------------------------------------ | ------------------------------------------------------------------------ | ------ |
+| Parent spine (repo-governed metadata)      | [#237](https://github.com/brendadeeznuts1111/project-R-score/issues/237) | done on main |
+| Typed taxonomy + parse-once spine          | [#238](https://github.com/brendadeeznuts1111/project-R-score/issues/238) | done on main |
+| Form, doctor, audit, label synchronization | [#239](https://github.com/brendadeeznuts1111/project-R-score/issues/239) | done on main |
+| Deterministic public registry bake         | [#240](https://github.com/brendadeeznuts1111/project-R-score/issues/240) | done on main |
+| Static portal consumer                     | [#241](https://github.com/brendadeeznuts1111/project-R-score/issues/241) | done on main |
+
+Proof: `bun run github-issue-taxonomy:check` ·
+`bun test tests/github-issue-taxonomy*.test.ts tests/github-issue-tooling.test.ts`.
+Residual ops (not issue scope): `bun run issues:sync-labels:write` when projecting
+labels to GitHub.
 
 The portal consumes the preceding public artifact and does not query GitHub.
 

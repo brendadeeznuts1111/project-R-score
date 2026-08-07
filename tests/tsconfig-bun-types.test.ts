@@ -28,7 +28,8 @@ const MUST_INCLUDE_BUN = [
   'tests/tsconfig.bun-native-comprehensive.json',
 ] as const;
 
-const GENERATED_BUN_CONFIGS = ['tests/tsconfig.snapshot.json'] as const;
+/** Committed fixture for `bun run check:snapshot:types` (#159 — must stay in git). */
+const COMMITTED_BUN_CONFIGS = ['tests/tsconfig.snapshot.json'] as const;
 
 async function readJson(rel: string): Promise<Record<string, unknown>> {
   const path = joinPath(ROOT, rel);
@@ -62,9 +63,12 @@ describe('TypeScript 6+ bun types (tsconfig)', () => {
     }
   });
 
-  test('generated tsconfigs include bun types when present', async () => {
-    for (const rel of GENERATED_BUN_CONFIGS) {
-      if (!(await Bun.file(joinPath(ROOT, rel)).exists())) continue;
+  test('committed snapshot tsconfig exists and lists types: ["bun"] (#159)', async () => {
+    for (const rel of COMMITTED_BUN_CONFIGS) {
+      const path = joinPath(ROOT, rel);
+      expect(await Bun.file(path).exists(), `${rel} must be committed (not gitignored)`).toBe(
+        true
+      );
       const cfg = await readJson(rel);
       const types = typesArray(cfg);
       expect(types, `${rel} must set compilerOptions.types`).not.toBeNull();
