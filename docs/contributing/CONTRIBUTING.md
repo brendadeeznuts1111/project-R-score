@@ -156,6 +156,7 @@ CI / production: leave `BUN_STRIP_UNKNOWN` unset. Local prototyping may set
 | `OPS_SNAPSHOT_ALLOWED_LONG`    | `ops:snapshot` · `tools/ops-snapshot.ts`         | SSOT       | §1.1 seed · seed-force · seed-tenants · no-seed                       | bake toggles                | after `--help`                | **exit 2**   |
 | `PARTNER_ONBOARD_ALLOWED_LONG` | `partner:onboard` · SSOT (+ re-export from tool) | SSOT       | §1.1 deal · currency · hold-target · initial-balance · funding-method | identity/book/control flags | start of `main()`             | **throw**    |
 | `TELEGRAM_OPS_ALLOWED_LONG`    | `telegram:ops` · `tools/telegram-ops.ts`         | SSOT       | §1.1 invite · no-dm · no-ack · requested-by                           | send/directory meta         | early `main()`                | **exit 2**   |
+| `BUN_PR_VERIFY_ALLOWED_LONG`   | `bun:pr:verify` · `tools/bun-pr-verify.ts`       | SSOT       | (none — no Flags table)                                               | proof · json                | `parseArgs` via `applyUnknownLongOptionGuardFor` | **throw** → **1** |
 
 Prove CLI guards: `bun test tests/docs-ref-id-tool-exports.test.ts`.
 

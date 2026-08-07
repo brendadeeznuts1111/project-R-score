@@ -125,6 +125,8 @@ bun run docs:refid:check
 | Partner onboard      | `bun tools/partner-onboard.ts --bad`                                                  | 1 (throw)       | `❌` + `unknown flag(s)`                            |
 | Images               | `bun scripts/images-generate.ts --typo`                                               | 1 (throw)       | `❌`                                                |
 | Ops snapshot         | `bun tools/ops-snapshot.ts --typo`                                                    | 2               | `❌`                                                |
+| bun:pr:verify        | `bun tools/bun-pr-verify.ts 1 --typo`                                                 | 1 (throw)       | `❌ Unknown long option(s) in bun:pr:verify: --typo` |
+| bun:pr:verify strip  | `BUN_STRIP_UNKNOWN=true bun tools/bun-pr-verify.ts 99999 --typo`                      | 1 (missing bin) | `stripping` + `bun-99999 not on PATH`               |
 
 ---
 
@@ -139,15 +141,21 @@ Forgetting step 1 → fail/throw in strict mode.
 
 ---
 
-## 6. Upstream Bun: `bunx bun-pr` (not a Project-R allowlist)
+## 6. Upstream Bun: `bunx bun-pr` + Project-R `bun:pr:verify`
 
-Operator helper for testing **oven-sh/bun** PR binaries — outside
-`ALLOWED_LONG_REGISTRY`. Do not add `bun-pr` flags to Project-R CLI allowlists.
+| Piece | Detail |
+| ----- | ------ |
+| **Upstream** `bunx bun-pr` | oven-sh helper — **not** in `ALLOWED_LONG_REGISTRY`; do not invent its flags here |
+| Auth | **`gh auth login`** primary; `GITHUB_TOKEN` / `GH_TOKEN` also work |
+| Invoke fetch | `bunx bun-pr <pr\|branch\|URL>` · `bun run bun:pr:fetch -- <pr>` · `--asan` (Linux x64) |
+| **Project-R** verify | `bun run bun:pr:verify -- <pr> [--proof=api\|runtime\|release\|all] [--json]` · [`tools/bun-pr-verify.ts`](../../tools/bun-pr-verify.ts) |
+| Allowlist | `ALLOWED_LONG_REGISTRY['bun:pr:verify']` → `proof` · `json` (positional PR number) |
+| Docs | [contributing § download](https://bun.com/docs/project/contributing#download-release-build-from-pull-requests) · [`AUTHORITY.md`](AUTHORITY.md) · [`tenants/bun-upstream-contributing.md`](tenants/bun-upstream-contributing.md) |
 
-| Piece    | Detail                                                                                                                                               |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Auth     | **`gh auth login`** primary; `GITHUB_TOKEN` / `GH_TOKEN` / `gh auth token` also work                                                                 |
-| Invoke   | `bunx bun-pr <pr\|branch\|URL>` · `bunx bun-pr --asan <pr>` (Linux x64)                                                                              |
-| Docs     | [contributing § download](https://bun.com/docs/project/contributing#download-release-build-from-pull-requests) · [`AUTHORITY.md`](AUTHORITY.md)      |
-| Optional | `BUILDKITE_API_TOKEN` — Bun upstream `ci:status` only (not FactoryWager)                                                                             |
-| Full map | [`tenants/bun-upstream-contributing.md`](tenants/bun-upstream-contributing.md) — release · `bun-pr` · `bk`/BuildKite · ASan · WebKit (upstream only) |
+### 2.6 `bun:pr:verify` (`BUN_PR_VERIFY_ALLOWED_LONG`)
+
+| Flag | Type | Description |
+| ---- | ---- | ----------- |
+| `--proof=…` | enum | `api` · `runtime` · `release` · `all` (default) |
+| `--json` | boolean | Machine summary via `cliOut` |
+| `<pr>` | positional | PR number (required) |

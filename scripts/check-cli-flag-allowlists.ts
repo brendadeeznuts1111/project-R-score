@@ -57,6 +57,20 @@ const cases: Case[] = [
     expectExit: [2],
     stdoutOrStderrIncludes: ['❌ Unknown long option(s) in ops:snapshot: --typo'],
   },
+  {
+    name: 'bun:pr:verify unknown',
+    cmd: ['bun', 'tools/bun-pr-verify.ts', '1', '--typo'],
+    expectExit: [1],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in bun:pr:verify: --typo'],
+  },
+  {
+    name: 'bun:pr:verify strip mode',
+    cmd: ['bun', 'tools/bun-pr-verify.ts', '99999', '--typo', '--json'],
+    env: { BUN_STRIP_UNKNOWN: 'true' },
+    // stripped typo → missing bun-99999 path (exit 1), not unknown-flag exit 2
+    expectExit: [1],
+    stdoutOrStderrIncludes: ['BUN_STRIP_UNKNOWN=true — stripping', 'bun-99999 not on PATH'],
+  },
 ];
 
 function okExit(expect: Case['expectExit'], code: number): boolean {
