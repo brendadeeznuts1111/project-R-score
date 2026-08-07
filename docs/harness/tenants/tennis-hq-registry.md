@@ -164,8 +164,12 @@ set -a && source ~/.reasonix/tennis-hq-registry-token.env && set +a
 Offline only: Tennis HQ `ssot:build` → `ssot:check` → `ssot:pack` (no
 `bun publish`). Resolves the gitignored checkout via `TENNIS_HQ_ROOT` or
 `king-zippy-umbra-acre` next to the monorepo (worktrees use the git common-dir
-sibling). Version bumps stay operator-controlled (`bun pm version` inside Tennis
-HQ, not root `factorywager-enterprise`).
+sibling). Production bake still fails closed when no checkout is present (`Set
+TENNIS_HQ_ROOT`). Unit tests use synthetic checkouts under `.tmp/`; the staged
+`test:changed` scratch runner symlinks `king-zippy-umbra-acre` when that tree
+exists on the operator machine (skip if absent — no dangling link). Version
+bumps stay operator-controlled (`bun pm version` inside Tennis HQ, not root
+`factorywager-enterprise`).
 
 ```bash
 bun run ssot:flow:soft
