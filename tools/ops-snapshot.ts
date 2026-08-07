@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
@@ -73,8 +74,58 @@ import {
 import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-env.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 import { bakeInstallHygieneReport } from '../scripts/bake-install-hygiene-report.ts';
+import {
+  OPS_SNAPSHOT_DOC,
+  OPS_SNAPSHOT_LEAVES,
+  OPS_SNAPSHOT_SECTION,
+  formatFlagDocRefLine,
+  opsSnapshotFlagDocRef,
+  opsSnapshotToolFlags,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+/** Re-export REF:ID SSOT for registry / tests (`flagDocRef` matches bun-types-status). */
+export {
+  OPS_SNAPSHOT_DOC,
+  OPS_SNAPSHOT_LEAVES,
+  OPS_SNAPSHOT_SECTION,
+  opsSnapshotFlagDocRef as flagDocRef,
+  opsSnapshotToolFlags,
+};
 
 const argv = Bun.argv.slice(2);
+
+if (argv.includes('--help') || argv.includes('-h')) {
+  console.log(`ops:snapshot — registry bake for Pages + local portal
+
+Usage:
+  bun run ops:snapshot [options]
+
+Common options:
+  --out <path>          ops-summary.json path
+  --no-report           skip prediction report bake
+  --no-routing          skip routing proof
+  --no-static           skip static registry composite
+  --force-routing       force routing proof
+  --publish             publish proof artifacts
+  --no-channel-meta     skip channel meta merge
+  --no-compliance       skip compliance board bake
+  --no-monorepo-health  skip monorepo health bake
+  --webview             include WebView probes
+
+Seed block (when DB empty / demo) — REF:ID (${OPS_SNAPSHOT_DOC} §${OPS_SNAPSHOT_SECTION}):
+  (default)       empty-gate seed only  (${opsSnapshotFlagDocRef('default').refId})
+  --seed          always enter seeders  (${opsSnapshotFlagDocRef('seed').refId})
+  --seed-force    force re-seed         (${opsSnapshotFlagDocRef('seed-force').refId})
+  --seed-tenants  force tenant registries (${opsSnapshotFlagDocRef('seed-tenants').refId})
+  --no-seed       skip demo seed block  (${opsSnapshotFlagDocRef('no-seed').refId})
+  ${formatFlagDocRefLine(OPS_SNAPSHOT_SECTION, OPS_SNAPSHOT_LEAVES)}
+  Prove: bun run docs:refid:check · import { flagDocRef } from tools/ops-snapshot.ts
+
+See: ${OPS_SNAPSHOT_DOC}
+`);
+  process.exit(0);
+}
+
 const outIdx = argv.indexOf('--out');
 const outPath =
   (outIdx >= 0 ? argv[outIdx + 1] : undefined) ??
@@ -330,9 +381,8 @@ export async function buildRegistrySnapshot(options?: {
     }
 
     try {
-      const { buildHarnessSkillsCatalog, buildSkillsCatalog } = await import(
-        '../lib/http/skills-catalog.ts'
-      );
+      const { buildHarnessSkillsCatalog, buildSkillsCatalog } =
+        await import('../lib/http/skills-catalog.ts');
       const skillsCatalog = await buildSkillsCatalog();
       await Bun.write(
         `${root}/public/registry/skills-catalog.json`,
@@ -436,12 +486,10 @@ export async function buildRegistrySnapshot(options?: {
 
     // Always bake TOC fixture before ops-summary so `payload.toc` is available.
     try {
-      const { exportTocOpsSnapshot, buildDemoTocOpsFixture, withTocEnforcement } = await import(
-        '../lib/toc-ops/index.ts'
-      );
-      const { enrichTocFixtureWithIdentity } = await import(
-        '../lib/operations/toc-identity-bridge.ts'
-      );
+      const { exportTocOpsSnapshot, buildDemoTocOpsFixture, withTocEnforcement } =
+        await import('../lib/toc-ops/index.ts');
+      const { enrichTocFixtureWithIdentity } =
+        await import('../lib/operations/toc-identity-bridge.ts');
       const { seedTocSoftFromFixture } = await import('../lib/operations/toc-soft-balance.ts');
       let fixture = enrichTocFixtureWithIdentity(db, buildDemoTocOpsFixture(), {
         seed: true,
@@ -478,9 +526,8 @@ export async function buildRegistrySnapshot(options?: {
     // Monorepo health before ops-summary so payload.monorepoHealth + /registry/monorepo-health.json are fresh.
     if (cfg.withMonorepoHealth) {
       try {
-        const { bakeMonorepoHealthRegistry } = await import(
-          '../lib/monitoring/monorepo-health-slice.ts'
-        );
+        const { bakeMonorepoHealthRegistry } =
+          await import('../lib/monitoring/monorepo-health-slice.ts');
         const mh = await bakeMonorepoHealthRegistry({ root, log: false });
         console.log(
           `[ops-snapshot] monorepo-health → ${mh.score}/100 (${mh.grade}) · cycles ${mh.metrics.cyclicDependencyCount}`
@@ -534,9 +581,8 @@ export async function buildRegistrySnapshot(options?: {
 
     // Multi-factor limit raises: capture missing context + bake Pages/agent snapshot.
     try {
-      const { exportLimitRaisesSnapshot } = await import(
-        '../lib/operations/partner-analytics-repo.ts'
-      );
+      const { exportLimitRaisesSnapshot } =
+        await import('../lib/operations/partner-analytics-repo.ts');
       const lim = await exportLimitRaisesSnapshot(db, { root, lookbackHours: 48, capture: true });
       console.log(
         `[ops-snapshot] limit-raises → ${lim.raises} raise(s) · ${lim.partners} partner(s) · 48h`
@@ -552,9 +598,8 @@ export async function buildRegistrySnapshot(options?: {
       await import('../lib/telegram/handshake-snapshot.ts')
     ).emptyTelegramHandshakeSummarySlice();
     try {
-      const { exportTelegramHandshakeSnapshot, exportTelegramHandshakeCatalog } = await import(
-        '../lib/telegram/handshake-snapshot.ts'
-      );
+      const { exportTelegramHandshakeSnapshot, exportTelegramHandshakeCatalog } =
+        await import('../lib/telegram/handshake-snapshot.ts');
       const tg = loadTelegramEnv();
       await exportTelegramHandshakeCatalog(root);
       telegramHandshakeSlice = await exportTelegramHandshakeSnapshot(db, root, {
@@ -576,9 +621,8 @@ export async function buildRegistrySnapshot(options?: {
       await import('../lib/telegram/seat-desk-snapshot.ts')
     ).emptySeatCapitalDeskSummarySlice();
     try {
-      const { exportSeatCapitalDeskSnapshot } = await import(
-        '../lib/telegram/seat-desk-snapshot.ts'
-      );
+      const { exportSeatCapitalDeskSnapshot } =
+        await import('../lib/telegram/seat-desk-snapshot.ts');
       seatCapitalDeskSlice = await exportSeatCapitalDeskSnapshot(root);
       console.log(
         `[ops-snapshot] seat-capital-desk → ${seatCapitalDeskSlice.desks} desks · blocked ${seatCapitalDeskSlice.blocked} · incomplete outs ${seatCapitalDeskSlice.incompleteOuts}`
@@ -660,8 +704,7 @@ export async function buildRegistrySnapshot(options?: {
     }
 
     const registryClientSlice = payload.registryClient as
-      | { available?: boolean; passed?: number; total?: number; proofHash?: string }
-      | undefined;
+      { available?: boolean; passed?: number; total?: number; proofHash?: string } | undefined;
 
     // 4. Monitoring snapshot (+ env status — edge /api/env reads monitoring.env)
     const monitoring = await collectMonitoring(db, { source: 'snapshot' });
@@ -680,8 +723,7 @@ export async function buildRegistrySnapshot(options?: {
       registryClient: payload.registryClient as Record<string, unknown> | undefined,
       docsCoverage: payload.docsCoverage as Record<string, unknown> | undefined,
       networking: (payload as Record<string, unknown>).networking as
-        | Record<string, unknown>
-        | undefined,
+        Record<string, unknown> | undefined,
     });
     await Bun.write(monitoringPath, `${JSON.stringify(monitoringWithEnv, null, 2)}\n`);
 
