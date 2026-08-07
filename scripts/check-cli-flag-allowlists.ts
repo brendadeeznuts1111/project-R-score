@@ -161,6 +161,18 @@ const cases: Case[] = [
     expectExit: [2],
     stdoutOrStderrIncludes: ['❌ Unknown long option(s) in monorepo:health: --typo'],
   },
+  {
+    name: 'brand:status unknown',
+    cmd: ['bun', 'tools/brand-status.ts', '--once', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in brand:status: --typo'],
+  },
+  {
+    name: 'docs:refid unknown',
+    cmd: ['bun', 'tools/docs-refid.ts', 'check', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in docs:refid: --typo'],
+  },
 ];
 
 function okExit(expect: Case['expectExit'], code: number): boolean {

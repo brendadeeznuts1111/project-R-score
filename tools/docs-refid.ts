@@ -20,6 +20,10 @@
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import {
+  applyUnknownLongOptionGuardFor,
+  DOCS_REFID_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
+import {
   collectTakenRefIds,
   hrefFromRefId,
   normalizeRefIdKeyword,
@@ -29,6 +33,8 @@ import {
   suggestRefId,
   validateRefIdFormat,
 } from '../lib/docs/ref-id.ts';
+
+export { DOCS_REFID_ALLOWED_LONG };
 import {
   classifyMarkdownFile,
   printAuditReport,
@@ -454,7 +460,8 @@ async function cmdScaffold(argv: string[]): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const argv = Bun.argv.slice(2);
+  // Guard long options; keep subcommand positionals (check · audit · …).
+  const argv = applyUnknownLongOptionGuardFor('docs:refid', Bun.argv.slice(2));
   const cmd = argv[0] && !argv[0]!.startsWith('-') ? argv[0]! : 'check';
   const rest = cmd === argv[0] ? argv.slice(1) : argv;
   if (cmd === 'help' || rest.includes('--help') || rest.includes('-h')) {
