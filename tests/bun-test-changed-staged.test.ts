@@ -1,6 +1,8 @@
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
 import {
+  BUN_PARALLEL_WORKER_ENV_KEYS,
+  BUN_TEST_NODE_ENV,
   STAGED_TEST_HANG_RETRIES,
   STAGED_TEST_TIMEOUT_MS_DEFAULT,
   awaitProcessWithTimeout,
@@ -187,10 +189,27 @@ describe('test-changed-staged helpers', () => {
     expect(env.PATH).toBe(Bun.env.PATH); // everything else is preserved
   });
 
-  test('testRunEnv also strips NODE_ENV — tests run in dev semantics', () => {
-    const env = testRunEnv();
-    expect(env.NODE_ENV).toBeUndefined();
+  test('testRunEnv applies Bun-documented test env contract', () => {
+    expect(BUN_TEST_NODE_ENV).toBe('test');
+    const env = testRunEnv({
+      PATH: '/usr/bin',
+      NODE_ENV: 'production',
+      BUN_OPTIONS: '--hot',
+      BUN_TEST_WORKER_ID: 'forged',
+      JEST_WORKER_ID: 'forged',
+      GIT_INDEX_FILE: '/tmp/evil-index',
+      DO_NOT_TRACK: '',
+      TMPDIR: '',
+    });
+    expect(env.NODE_ENV).toBe('test');
+    expect(env.BUN_OPTIONS).toBeUndefined();
+    expect(env.DO_NOT_TRACK).toBe('1');
+    expect(env.TMPDIR.length).toBeGreaterThan(0);
     expect(env.GIT_INDEX_FILE).toBeUndefined();
+    for (const key of BUN_PARALLEL_WORKER_ENV_KEYS) {
+      expect(env[key]).toBeUndefined();
+    }
+    expect(env.PATH).toBe('/usr/bin');
   });
 
   test('scratch repo links heavyweight external trees needed by selected tests', () => {

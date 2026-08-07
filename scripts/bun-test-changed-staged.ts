@@ -7,8 +7,11 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
+// @see https://bun.com/docs/runtime/environment-variables#configuring-bun — TMPDIR · NO_COLOR · BUN_OPTIONS · DO_NOT_TRACK
+// @see https://bun.com/docs/test/configuration#environment-variables — .env.test · NODE_ENV=test
+// @see https://bun.com/docs/test/configuration — bunfig [test] timeout · preload · pathIgnorePatterns
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — bun test --changed
-// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel · BUN_TEST_WORKER_ID
 /**
  * Staged-scoped changed-test runner for pre-commit.
  *
@@ -27,6 +30,9 @@
  * Fallback: if the scratch-repo setup fails for any reason, it warns and
  * runs the legacy worktree `bun test --changed` under the same watchdog so
  * the gate never wedges indefinitely.
+ *
+ * Child env follows Bun's documented test contract (`NODE_ENV=test`, `TMPDIR`,
+ * no forged `BUN_TEST_WORKER_ID` / `JEST_WORKER_ID`) — see `testRunEnv()`.
  */
 import { hasCodeLikeChange } from './lib/git-changed.ts';
 import { isDirectorySync } from './lib/fs-bun.ts';
@@ -61,6 +67,34 @@ export const STAGED_TEST_TIMEOUT_MS_DEFAULT = 45_000;
 export const STAGED_TEST_HANG_RETRIES = 2;
 /** Scratch overlay commits use this message (HEAD~1 = baseline). */
 export const STAGED_OVERLAY_COMMIT_MESSAGE = 'staged overlay';
+
+/**
+ * Bun-documented test env (set by this runner for child `bun test`).
+ * @see https://bun.com/docs/test/configuration#environment-variables
+ */
+export const BUN_TEST_NODE_ENV = 'test' as const;
+
+/**
+ * Env vars Bun sets on `--parallel` workers — never forge; strip if inherited.
+ * @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel
+ */
+export const BUN_PARALLEL_WORKER_ENV_KEYS = ['BUN_TEST_WORKER_ID', 'JEST_WORKER_ID'] as const;
+
+/**
+ * Bun runtime knobs from the environment-variables docs that this runner
+ * explicitly manages for hermetic hook/scratch test children.
+ * @see https://bun.com/docs/runtime/environment-variables#configuring-bun
+ */
+export const BUN_TEST_RUNTIME_ENV = {
+  /** Required for intermediate assets; default platform temp when unset. */
+  TMPDIR: 'TMPDIR',
+  /** Prepends CLI args to every Bun invocation — cleared for hermetic tests. */
+  BUN_OPTIONS: 'BUN_OPTIONS',
+  /** Disable bun.report crash uploads from ephemeral hook runs. */
+  DO_NOT_TRACK: 'DO_NOT_TRACK',
+  NO_COLOR: 'NO_COLOR',
+  FORCE_COLOR: 'FORCE_COLOR',
+} as const;
 
 export type StagedTestCommandOptions = {
   /** When set, emit `--changed=<ref>` instead of dirty-tree `--changed`. */
@@ -137,16 +171,48 @@ export function gitEnv(): Record<string, string> {
 }
 
 /**
- * Test-run env: gitEnv() minus NODE_ENV. Bun loads the repo .env (which sets
- * NODE_ENV=production) into the hook process, and the scratch test runner
- * inherited it — tests that fail-closed in production (e.g. the
- * PARTNER_VAULT_MASTER_KEY policy in lib/security/partner-vault.ts) then
- * broke in the scratch run while passing locally with the dev fallback.
- * Tests always run in dev semantics; deployment env is never inherited.
+ * Child env for `bun test` under the staged/scratch runner.
+ *
+ * Bun docs:
+ * - `NODE_ENV=test` so `bun test` loads `.env.test` and matches `tests/preload.ts`
+ *   ([test configuration · environment variables](https://bun.com/docs/test/configuration#environment-variables))
+ * - Ensure `TMPDIR` (Bun intermediate assets)
+ * - Clear `BUN_OPTIONS` so a parent shell cannot prepend `--hot` / `--inspect`
+ * - Default `DO_NOT_TRACK=1` for ephemeral hook runs (no bun.report uploads)
+ * - Never forge `BUN_TEST_WORKER_ID` / `JEST_WORKER_ID` (Bun sets these under `--parallel`)
+ *
+ * Also strips hook `GIT_*` index vars via `gitEnv()`.
  */
-export function testRunEnv(): Record<string, string> {
-  const env = gitEnv();
-  delete env.NODE_ENV;
+export function testRunEnv(
+  base: Record<string, string | undefined> = Bun.env
+): Record<string, string> {
+  const env = Object.fromEntries(
+    Object.entries(base).filter(
+      ([k, v]) =>
+        v !== undefined &&
+        !/^GIT_(INDEX_FILE|DIR|WORK_TREE|COMMON_DIR|OBJECT_DIRECTORY|ALTERNATE_OBJECT_DIRECTORIES)/.test(
+          k
+        )
+    )
+  ) as Record<string, string>;
+
+  env.NODE_ENV = BUN_TEST_NODE_ENV;
+
+  // Hermetic: parent BUN_OPTIONS must not rewrite the bun test argv.
+  delete env.BUN_OPTIONS;
+
+  if (!env.DO_NOT_TRACK?.trim()) {
+    env.DO_NOT_TRACK = '1';
+  }
+
+  if (!env.TMPDIR?.trim()) {
+    env.TMPDIR = Bun.env.TMPDIR || Bun.env.TMP || '/tmp';
+  }
+
+  for (const key of BUN_PARALLEL_WORKER_ENV_KEYS) {
+    delete env[key];
+  }
+
   return env;
 }
 

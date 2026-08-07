@@ -140,6 +140,7 @@ yarn-error.log*
 .env.*
 !/.env.example
 !/.env.registry.example
+!/.env.test.example
 .env.development
 .env.production
 .env.staging
