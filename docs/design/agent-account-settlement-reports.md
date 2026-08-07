@@ -1,24 +1,41 @@
 # Agent-account settlement reports
 
 Status: **design** · owner: agent settlement / Telegram factory (transport) ·
-updated 2026-08-07
+updated 2026-08-07 · **mock anchor: 08 v3** (v2 obsolete)
 
 Greenfield relative to partner Soft Balance. This plane is **agent provides
-accounts → clickers play → commission on net winnings → freeze-on-win until
-paid**. It is not the partner CODE weekly ledger path in
-[`settlement-feed.md`](settlement-feed.md).
+accounts → clickers play → win-split on net winnings → freeze-on-win until
+per-account unlock (or rolling reduction)**. It is not the partner CODE weekly
+ledger path in [`settlement-feed.md`](settlement-feed.md).
 
 | Existing plane | This plane |
 | -------------- | ---------- |
-| Partner CODE · `partner_ledger` · signed net P&L × `commissionPct` | Agent owns N sportsbook accounts; commission on **positive** week net only |
+| Partner CODE · `partner_ledger` · signed net P&L × `commissionPct` | Agent owns N sportsbook accounts; **positive** week net only enters the split |
 | Daily finance/capacity → package `liquidity/outs` | Daily + weekly reports → **agent private Telegram group** |
-| `fundStatus` margin pause/block | Account **FROZEN** at settlement boundary until commission paid |
+| `fundStatus` margin pause/block | Account **FROZEN** at settlement; unlock via exact `unfreeze_price` |
 | No clicker entity | Clicker assigned per account; frozen ⇒ no clicker access |
-| Weekly settlement posts ledger only (no chat invoice) | Weekly report **is** the settlement invoice |
+| Weekly settlement posts ledger only (no chat invoice) | Weekly report **is** the settlement invoice (**Mock 08 v3**) |
 
 Reuse (transport / patterns only): report publisher shape in
 `lib/telegram/daily-*-report.ts`, `nf:` / `sd:` callback grammar, `Bun.cron`
 register CLIs, package-forum addressing patterns, Command/HQ outbox routing.
+
+---
+
+## Vocabulary
+
+| UI / reports | DB / code | Meaning |
+| ------------ | --------- | ------- |
+| **Win Cap (Guaranteed)** | `win_max` | Ceiling the Operation guarantees to pay if the account wins. Not `max_bet` (stake limit). |
+| **Agent keep rate** | `agent_keep_rate` (e.g. `0.30`) | Share of positive net credited to the agent |
+| **Op share rate** | `op_share_rate` (= `1 - agent_keep_rate`, e.g. `0.70`) | Share added to the rolling figure owed to the Operation |
+| **Rolling figure** | `rolling_figure` (agent-level) | Running amount owed to Op; accrues Op share each settle week |
+| **Unfreeze price** | `unfreeze_price` | Per winning account: **that account’s net win** (`net_pnl`). Exact payment required to unlock |
+| **Rolling reduction payment** | payment tag `ROLLING` | Money applied to rolling figure only — **does not** unfreeze any account |
+| **Unfreeze payment** | payment tag `ACCOUNT:<id>` | Must equal that account’s `unfreeze_price`; unlocks that account |
+
+Partner-dashboard wire alias `winMax` stays **forbidden**. This plane’s `win_max`
+is account-ops vocabulary surfaced as **Win Cap (Guaranteed)**.
 
 ---
 
@@ -27,107 +44,211 @@ register CLIs, package-forum addressing patterns, Command/HQ outbox routing.
 ```text
 AGENT (Account Provider)
 │
-├── Provides 3–10 accounts to Command
-├── Earns % commission on NET WINNINGS per account per week
-│     (commission only when week net_pnl > 0; 0% on losing / break-even weeks)
+├── Provides 3–10 accounts to Command / Operation
+├── On each winning account week (net_pnl > 0):
+│     ├── Agent keep  = net_pnl × agent_keep_rate   (e.g. 30%) → credit to agent
+│     └── Op share    = net_pnl × op_share_rate     (e.g. 70%) → added to rolling figure
 ├── Settles weekly on each account's settlement_day
 │
 └── When account has WINNING WEEK:
       ├── Account AUTO-FROZEN at settlement boundary
-      ├── Agent owes Command their commission (+ any prior unpaid remainder)
-      ├── Account stays FROZEN until agent pays in full
-      └── Once paid + Command confirms → unfreeze for next week
+      ├── unfreeze_price = net_pnl  (full net win — not the 70% alone)
+      ├── Account stays FROZEN until an unfreeze-tagged payment matches that price
+      └── Agent may also pay the general rolling figure without unlocking accounts
 ```
 
 ### Roles
 
 | Role | Owns | Does not |
 | ---- | ---- | -------- |
-| **Agent** | Account supply, commission payment, win-max requests | Clicker play decisions |
-| **Clicker** | Day-to-day wagering within win max | Settlement / unfreeze |
-| **Command** | Verify payment, approve win-max raises, unfreeze | Paying the agent's commission |
+| **Agent** | Account supply, keep credit, rolling / unfreeze payments, Win Cap requests | Clicker play decisions |
+| **Clicker** | Day-to-day wagering within Win Cap (Guaranteed) | Settlement / unfreeze |
+| **Command / Operation** | Verify payments, approve Win Cap raises, unfreeze, own rolling figure | Paying the agent’s keep (that is the agent’s credit) |
 
 ### Account status (this plane)
 
 | Status | Meaning |
 | ------ | ------- |
-| `ACTIVE` | Clicker may play; under win max |
-| `FROZEN` / `FROZEN_PENDING_PAYMENT` | Settlement freeze — winning week unpaid |
+| `ACTIVE` | Clicker may play; under Win Cap (Guaranteed) |
+| `FROZEN` / `FROZEN_PENDING_PAYMENT` | Settlement freeze — winning week; awaiting exact unfreeze payment |
 | `READY_FOR_ASSIGNMENT` / `POOL` | Losing or break-even week; available (optional pool return) |
 | `LIMITED` / `BANNED` | Ops / book constraints (orthogonal to settlement freeze) |
 
 `freeze_reason = SETTLEMENT_PENDING` is the settlement-specific freeze. Other
-freeze reasons (compliance, book lock) must not be cleared by commission pay.
+freeze reasons (compliance, book lock) must not be cleared by settlement pay.
 
 ---
 
-## 2. Commission and balance carry-forward
+## 2. Split math, rolling figure, payments
 
 ### Per-account week math
 
 ```text
-week_start_balance = accounts.week_start_balance   # snapshot at week open / last settle
+week_start_balance = accounts.week_start_balance
 week_end_balance   = accounts.current_balance
 net_pnl            = week_end_balance - week_start_balance
 
 if net_pnl > 0:
-  week_commission = net_pnl * commission_rate     # e.g. 0.30
+  agent_keep_amt   = net_pnl * agent_keep_rate      # e.g. 0.30 — credit to agent
+  op_share_amt     = net_pnl * op_share_rate        # e.g. 0.70 — to rolling figure
+  unfreeze_price   = net_pnl                        # exact unlock price
   account_status_next = FROZEN_PENDING_PAYMENT
 else:
-  week_commission = 0
+  agent_keep_amt = 0
+  op_share_amt   = 0
+  unfreeze_price = 0
   account_status_next = ACTIVE | READY_FOR_ASSIGNMENT
 ```
 
-### Prior-week remainder (“our way” balance)
+Agent-week totals:
 
-Command keeps a **settlement balance** per agent (internal books — not the
-sportsbook `current_balance`). When commission is settled out:
+```text
+total_net_winnings = Σ net_pnl        where net_pnl > 0
+AGENT_KEEPS        = Σ agent_keep_amt               # credit
+ADDED_TO_ROLLING   = Σ op_share_amt                 # debt accrual
+rolling_figure_after = rolling_figure_before + ADDED_TO_ROLLING
+                     − rolling_reduction_payments
+                     − op_share portions cleared by confirmed unfreeze payments
+```
 
-1. **Invoice total** = Σ this week’s winning commissions + **prior unpaid
-   remainder** still on the settlement balance.
-2. Agent pays (Cash / Venmo / Crypto, etc.).
-3. Command applies the payment **to the settlement balance** (partial OK):
-   - `settlement_balance_after = max(0, settlement_balance_before - amount_paid)`
-   - If remainder &gt; 0 → stays on the books; invoice next week still shows it;
-     winning accounts that generated unpaid commission **stay FROZEN**.
-   - If remainder = 0 → mark commissions `PAID`, unfreeze those accounts.
-4. On full settle for an account: roll the **sportsbook week window**:
-   - `week_start_balance = current_balance`
-   - `week_pnl = 0`, `commission_due = 0`, `agent_paid = 1` for that week row
-   - `last_settlement_date = now`, recompute `next_settlement_date` from
-     `settlement_day`
+### Worked example (Mock 08 v3 numbers)
 
-Losing weeks do **not** create makeup that reduces future commission. Prior
-losses are already reflected in a lower `week_start_balance` / bankroll; they
-do not credit the settlement balance.
+Winning accounts: +$140, +$300, +$300 → **total net winnings +$740**  
+`agent_keep_rate = 0.30`, `op_share_rate = 0.70`
 
-### Example
+| Line | Amount |
+| ---- | ------ |
+| **AGENT KEEPS (30%)** | **$222** (credit to agent) |
+| **ADDED TO ROLLING FIGURE (70%)** | **$518** (owed to Op) |
 
-| Week | Account P&amp;L | New commission (30%) | Prior remainder | Invoice | Paid | Remainder after |
-| ---- | --------------- | -------------------- | --------------- | ------- | ---- | --------------- |
-| W31  | +$740           | $222                 | $0              | $222    | $150 | $72             |
-| W32  | +$200           | $60                  | $72             | $132    | $132 | $0 → unfreeze   |
+| Account | Net win | Agent keep 30% | Op share 70% | Badge |
+| ------- | ------- | -------------- | ------------ | ----- |
+| ACC-142 | +$140 | $42 | $98 | `FROZEN — Pay $140 to unlock` |
+| ACC-143 | +$300 | $90 | $210 | `FROZEN — Pay $300 to unlock` |
+| ACC-145 | +$300 | $90 | $210 | `FROZEN — Pay $300 to unlock` |
+| ACC-144 (loss) | −$60 | $0 | $0 | not frozen for settlement |
 
-Daily report WTD projection should show **projected new commission only** plus
-a separate line for **outstanding prior remainder** when &gt; 0.
+If `rolling_figure_before = $200`:
+
+```text
+rolling_figure_after (pre-payments) = 200 + 518 = 718
+```
+
+### Two payment rails (model both; default unfreeze = per-account)
+
+| Rail | Tag | Amount rule | Effect |
+| ---- | --- | ----------- | ------ |
+| **Rolling reduction** | `ROLLING` | Any amount &gt; 0 | Decreases `rolling_figure` only. **No** account unfrozen. Shown on report as **Rolling Reduction Payments**. |
+| **Unfreeze** | `ACCOUNT:<id>` | **Must exactly equal** that account’s `unfreeze_price` (net win) | Unfreezes that account; clears its settlement freeze; reduces rolling by that account’s `op_share_amt`; rolls `week_start_balance` for that account |
+
+Default UX and automation: **per-account tagging for unfreezes**. Agents may still throw money at the general rolling figure to cut debt / credit utilization without unlocking seats.
+
+Partial / wrong-amount unfreeze-tagged payments do **not** unlock (hold as in-transit or reject to rolling-only per Command policy — default: leave in **payment-in-transit** until amount matches or Command retags).
+
+### Payment-in-transit
+
+Reports show a dedicated section for payments claimed but not yet Command-confirmed, including **destination tag/address** (Venmo handle, crypto address, cash desk id, etc.) so agent and Command share one reference.
 
 ---
 
-## 3. Daily Agent Report
+## 3. Mock 08 v3 — Weekly Settlement Report (structural anchor)
+
+**Mock 08 v2 is obsolete.** Regen **08 v3** first; after layout + math approval, batch-regen
+02 (limit profile matrix), 05 (varying raise rows), 07 (locked numbers).
+
+### Required layout blocks (in order)
+
+1. **Header** — Weekly Settlement Report · agent · week range · settlement day (TODAY)
+2. **Per-account PnL lines** — Start / End / P&amp;L / WIN|LOSS · Win Cap (Guaranteed)
+3. **Bold split headers** (prominent — the missing piece in v2):
+   - `AGENT KEEPS (30%): $222` — credit to agent
+   - `ADDED TO ROLLING FIGURE (70%): $518` — owed to Op
+4. **Rolling figure update** — `rolling_figure_before` → `rolling_figure_after`
+5. **Frozen badges** — each winner: `ACC-…: FROZEN — Pay $<unfreeze_price> to unlock`
+6. **Rolling Reduction Payments** — dedicated row(s); deducts from rolling total; clearly **not** an unlock
+7. **Payment-in-transit** — amount, method, **destination tag/address**, optional account tag
+8. **Next week / actions** — Adjust Win Cap (Guaranteed) · Confirm payment · Dispute · Ledger
+
+### Telegram template (08 v3 shape)
+
+```text
+📅 WEEKLY SETTLEMENT REPORT
+Agent: @AgentMike
+Week: July 31 — August 6, 2026
+Settlement Day: TUESDAY (TODAY)
+
+━━━━━━━━━━━━━━━━━━━━━━━
+💰 ACCOUNT PERFORMANCE
+━━━━━━━━━━━━━━━━━━━━━━━
+Account   Skin         Start    End      P&L     Win Cap (Guaranteed)  Result
+ACC-142   DGS-Alpha    $1,100   $1,240   +$140   $150                  🟢 WIN
+ACC-143   ASI-Prime    $2,900   $3,200   +$300   $300                  🟢 WIN
+ACC-144   PPHPro-Red   $950     $890     -$60    $100                  🔴 LOSS
+ACC-145   BookMaker-Bl $4,200   $4,500   +$300   $250                  🟢 WIN
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🧾 SETTLEMENT SPLIT
+━━━━━━━━━━━━━━━━━━━━━━━
+Total Net Winnings (winners):   +$740
+Agent keep rate / Op share:     30% / 70%
+
+AGENT KEEPS (30%):              $222      ← credit to agent
+ADDED TO ROLLING FIGURE (70%):  $518      ← owed to Operation
+
+Rolling figure:  $200  →  $718
+  (before)           (after accrual; before new payments)
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🧊 FROZEN — UNLOCK PRICES
+━━━━━━━━━━━━━━━━━━━━━━━
+ACC-142: FROZEN — Pay $140 to unlock
+ACC-143: FROZEN — Pay $300 to unlock
+ACC-145: FROZEN — Pay $300 to unlock
+ACC-144: ACTIVE (loss — not frozen)
+
+━━━━━━━━━━━━━━━━━━━━━━━
+📉 ROLLING REDUCTION PAYMENTS
+━━━━━━━━━━━━━━━━━━━━━━━
+(none this week | or: -$X tagged ROLLING — reduces debt, does not unfreeze)
+
+━━━━━━━━━━━━━━━━━━━━━━━
+💸 PAYMENT IN TRANSIT
+━━━━━━━━━━━━━━━━━━━━━━━
+$… via Venmo → @OpDeskVenmo
+Tag: ROLLING | ACCOUNT:ACC-142
+Status: awaiting Command confirm
+
+━━━━━━━━━━━━━━━━━━━━━━━
+📊 NEXT WEEK
+━━━━━━━━━━━━━━━━━━━━━━━
+[Adjust Win Cap] [Confirm Payment] [Dispute] [View Full Ledger]
+```
+
+### Inline buttons
+
+| Button | Behavior |
+| ------ | -------- |
+| Confirm Payment | Agent asserts payment sent (choose tag: rolling vs account) → Command verify queue |
+| Adjust Win Cap | Per-account Keep / Raise / Lower → `raise_request` type `WIN_MAX` (UI: Win Cap) |
+| Dispute | Ticket; snapshot immutable |
+| View Full Ledger | CSV / web for week snapshot |
+
+---
+
+## 4. Daily Agent Report
 
 ### Purpose
 
-Per-agent snapshot of **their accounts only**: today, win-max proximity,
-freezes, week trend, and what the settlement invoice is heading toward
-(including prior unpaid remainder).
+Per-agent snapshot: today, Win Cap (Guaranteed) proximity, freezes with unlock
+prices, week trend, projected keep vs rolling accrual, prior rolling figure.
 
 ### When / where
 
 | | |
 | - | - |
 | Time | End of clicker shift (e.g. 23:59 local) or 08:00 next day |
-| Channel | Agent private Telegram group (account handover group) |
-| Format | HTML Telegram message + inline action buttons |
+| Channel | Agent private Telegram group |
+| Format | HTML Telegram message + inline actions |
 
 ### Data pulls
 
@@ -136,11 +257,11 @@ freezes, week trend, and what the settlement invoice is heading toward
 | Agent’s accounts | `accounts` | `agent_id` |
 | Balances | `accounts` | `current_balance`, `week_start_balance` |
 | Today’s activity | `transactions` | `tx_type`, `amount`, `created_at` (+ clicker) |
-| Win max progress | `accounts` | `win_max`, week P&amp;L / lifetime week window |
-| Status | `accounts` | `status`, `freeze_reason` |
+| Win Cap progress | `accounts` | `win_max` (UI: Win Cap (Guaranteed)), week P&amp;L |
+| Status / unlock | `accounts` | `status`, `freeze_reason`, `unfreeze_price` |
 | Open exposure | `accounts` or derived | `open_bets_exposure` |
 | Settlement | `accounts` | `settlement_day`, `next_settlement_date` |
-| Rate / carry | agent + settlement balance | `commission_rate`, prior unpaid remainder |
+| Rates / rolling | agent books | `agent_keep_rate`, `rolling_figure` |
 
 ### Template (shape)
 
@@ -150,98 +271,31 @@ freezes, week trend, and what the settlement invoice is heading toward
 🗓️ Settlement: {day} ({N} days remaining)
 
 💰 YOUR ACCOUNTS SUMMARY
-  ACC-…  Skin  STATUS  $bal  ▓…  Win: $w / $win_max  [Near limit | 🧊 Pending payment]
+  ACC-…  Skin  STATUS  $bal  ▓…  Win Cap: $w / $win_max
+  ACC-…  FROZEN — Pay $unfreeze_price to unlock
 
 📈 TODAY'S ACTIVITY
-  ACC-…  ±$  (W/L counts)  Clicker: @…
+  ACC-…  ±$  (W/L)  Clicker: @…
 
 🎯 WEEK-TO-DATE PROJECTION
-  Total Net Winnings:     +$…
-  Your Commission (R%):   +$…          # new week only
-  Outstanding prior:      $…           # settlement balance remainder (omit if 0)
-  Projected invoice:      $…           # new + prior
-  Status: Winning week (so far) | …
-  ⚠️ If week ends positive, {accounts} FROZEN on {day} until commission settled.
+  Total Net Winnings (so far):  +$…
+  AGENT KEEPS (30%):            +$…     # credit
+  TO ROLLING FIGURE (70%):      +$…     # projected accrual
+  Rolling figure now:           $…
+  ⚠️ Winners freeze on {day}; unlock = pay each account's net win exactly.
 
 🔧 ACTIONS
-  [Adjust Win Max] [Request Unfreeze] [View Details] [Settle Early]
+  [Adjust Win Cap] [Pay Unlock] [Pay Rolling] [View Details]
 ```
 
 ### Inline buttons
 
 | Button | Behavior |
 | ------ | -------- |
-| Adjust Win Max | Pick account → new win max → create `raise_request` → notify Command |
-| Request Unfreeze | Frozen accounts only; agent attaches/claims payment proof → Command queue |
-| View Details | Full transaction dump (or link to ledger/CSV) for one account |
-| Settle Early | Optional; runs settlement math before `settlement_day` |
-
----
-
-## 4. Weekly Agent Report (settlement invoice)
-
-### Purpose
-
-1. Performance summary for the week  
-2. **Settlement invoice** (new commission + prior remainder)  
-3. Next-week setup (win maxes, which accounts available / frozen)
-
-### When / where
-
-| | |
-| - | - |
-| Time | Morning of settlement day (e.g. 08:00) |
-| Channel | Agent private Telegram group |
-| Trigger | Cron keyed by each account’s `settlement_day` (group by agent) |
-
-### Settlement side effects (same cron window)
-
-For each account of the agent when `today == settlement_day`:
-
-1. Persist `weekly_snapshots` row (immutable).
-2. Upsert `agent_commissions` row (`PENDING` if `week_commission > 0`).
-3. Add `week_commission` onto agent **settlement balance**.
-4. If `net_pnl > 0`: set `status=FROZEN`, `freeze_reason=SETTLEMENT_PENDING`;
-   DM clicker “frozen — pending payment”.
-5. If `net_pnl <= 0`: leave `ACTIVE` / return to pool; no freeze.
-6. Send weekly report to agent group.
-7. Post Command channel digest: agent owes **invoice total** (new + prior).
-
-### Template (shape)
-
-```text
-📅 WEEKLY SETTLEMENT REPORT
-Agent: @… · Week: {start} — {end} · Settlement Day: {DAY} (TODAY)
-
-💰 ACCOUNT PERFORMANCE
-  Account  Skin  Start  End  P&L  WIN|LOSS
-
-🧾 SETTLEMENT INVOICE
-  Total Winning Accounts:  N
-  Total Net Winnings:      +$…
-  Commission Rate:         R%
-  New commission:          $…
-  Prior unpaid remainder:  $…     # from settlement balance
-  ────────────────────────────────
-  YOU OWE COMMAND:         $…     # new + prior
-  Payment Methods: Cash / Venmo / Crypto
-  Contact @CommandBoss to settle
-
-🧊 POST-SETTLEMENT STATUS
-  Winning → FROZEN until payment · Losing → ACTIVE (never frozen for settle)
-
-📊 NEXT WEEK PREVIEW
-  [Adjust Win Maxes for Next Week] [Confirm Settlement] [Dispute] [View Full Ledger]
-```
-
-### Inline buttons
-
-| Button | Behavior |
-| ------ | -------- |
-| Confirm Settlement | Agent asserts payment sent → notify Command to verify |
-| Adjust Win Maxes | Per-account Keep / Raise / Lower → `raise_request` (applies for next week; account may stay frozen until pay) |
-| Dispute | Opens ticket; commission row → `DISPUTED` |
-| View Full Ledger | CSV / web ledger for the week snapshot |
+| Adjust Win Cap | Account → new Win Cap → `raise_request` → Command |
+| Pay Unlock | Frozen accounts only; amount locked to `unfreeze_price`; tag `ACCOUNT:<id>` |
+| Pay Rolling | Free amount → tag `ROLLING` |
+| View Details | Transaction dump / ledger link |
 
 ---
 
@@ -249,25 +303,25 @@ Agent: @… · Week: {start} — {end} · Settlement Day: {DAY} (TODAY)
 
 ```text
 Daily 23:59
-  └── Update accounts.week_pnl from transactions (all accounts)
-  └── Send Daily Agent Report (per agent)
+  └── Update accounts.week_pnl
+  └── Send Daily Agent Report
 
 Settlement day 08:00
-  └── Weekly report + freeze winning accounts + Command owe digest
+  └── Snapshot week · credit agent keep · accrue Op share to rolling_figure
+  └── Freeze each winner; set unfreeze_price = net_pnl
+  └── Send Mock-08-v3 weekly report + Command digest
 
-Agent pays → taps Confirm Settlement
-  └── Command verifies → /unfreeze or dashboard
-        ├── Apply payment to settlement balance (Command books)
-        ├── If remainder == 0 for those accounts:
-        │     status=ACTIVE, freeze_reason=NULL
-        │     week_start_balance = current_balance
-        │     agent_commissions.status = PAID
-        │     DM clicker resume + DM agent confirmed
-        └── Else: keep FROZEN; report remaining figure on next daily/weekly
+Payments
+  ├── tag ROLLING → reduce rolling_figure only
+  └── tag ACCOUNT:X + amount == unfreeze_price(X)
+        → unfreeze X
+        → reduce rolling by X.op_share_amt
+        → week_start_balance(X) = current_balance
+        → DM clicker resume · DM agent confirmed
 ```
 
-Win-max raise approved while frozen updates `accounts.win_max` (or
-`next_win_max`) but **does not** unfreeze.
+Win Cap raise approved while frozen updates `win_max` / `next_win_max` but
+**does not** unfreeze.
 
 ---
 
@@ -277,46 +331,59 @@ Win-max raise approved while frozen updates `accounts.win_max` (or
 
 | Field | Type | Purpose |
 | ----- | ---- | ------- |
-| `week_start_balance` | REAL | Snapshot at week open / last full settle |
+| `week_start_balance` | REAL | Snapshot at week open / last full unlock settle |
 | `week_pnl` | REAL | Running week P&amp;L |
-| `win_max` | REAL | Soft stop for clicker week wins |
-| `settlement_day` | TEXT/INT | Weekday key (e.g. `tue` / 2) |
-| `commission_rate` | REAL | Agent % (or inherited from agent row) |
-| `commission_due` | REAL | This week’s unpaid commission on this account |
-| `last_settlement_date` | DATETIME | Last completed settle |
-| `next_settlement_date` | DATETIME | From `settlement_day` |
-| `agent_paid` | INTEGER 0/1 | Paid for current settlement cycle |
+| `win_max` | REAL | **Win Cap (Guaranteed)** — DB name stays `win_max` |
+| `settlement_day` | TEXT/INT | Weekday key |
+| `agent_keep_rate` | REAL | Override or inherit from agent (e.g. `0.30`) |
+| `unfreeze_price` | REAL | Set at settle when `net_pnl > 0`; else 0 |
+| `op_share_amt` | REAL | This week’s Op share parked on the account row (audit) |
+| `agent_keep_amt` | REAL | This week’s agent keep (audit) |
+| `last_settlement_date` | DATETIME | |
+| `next_settlement_date` | DATETIME | |
 | `freeze_reason` | TEXT | `SETTLEMENT_PENDING` \| … |
 | `open_bets_exposure` | REAL | Optional denorm |
 | `clicker_id` | FK | Assigned clicker |
 
-### `agent_settlement_balances` (Command books)
+### `agent_rolling_figures` (Operation books — replaces vague “settlement balance”)
 
 | Field | Type | Purpose |
 | ----- | ---- | ------- |
-| `agent_id` | FK PK | Agent |
-| `balance` | REAL | Unpaid remainder (&gt; 0 means money still owed) |
+| `agent_id` | FK PK | |
+| `rolling_figure` | REAL | Amount owed to Op (≥ 0) |
 | `currency` | TEXT | Default USD |
-| `updated_at` | DATETIME | Last payment or settle accrual |
+| `updated_at` | DATETIME | |
 
-Payment application always hits this table first (“add/subtract our way”).
-Sportsbook `accounts.current_balance` is never rewritten by commission pay.
+Sportsbook `accounts.current_balance` is never rewritten by keep/rolling/pay.
 
-### `agent_commissions`
+### `agent_week_settlements` (per account per week — replaces old “commission invoice” framing)
 
 | Field | Type | Purpose |
 | ----- | ---- | ------- |
-| `commission_id` | PK | |
-| `agent_id` | FK | |
-| `account_id` | FK | |
+| `settlement_id` | PK | |
+| `agent_id` / `account_id` | FK | |
 | `week_start` / `week_end` | DATE | |
 | `week_pnl` | REAL | |
-| `commission_rate` | REAL | |
-| `commission_amount` | REAL | |
-| `status` | TEXT | `PENDING` \| `PAID` \| `WAIVED` \| `DISPUTED` \| `PARTIAL` |
-| `paid_at` | DATETIME | |
+| `agent_keep_rate` / `op_share_rate` | REAL | |
+| `agent_keep_amt` / `op_share_amt` | REAL | |
+| `unfreeze_price` | REAL | `max(week_pnl, 0)` |
+| `status` | TEXT | `OPEN` \| `UNLOCKED` \| `WAIVED` \| `DISPUTED` |
+| `unlocked_at` | DATETIME | |
 | `confirmed_by` | FK | Command operator |
-| `payment_method` | TEXT | Cash / Venmo / Crypto / … |
+
+### `settlement_payments`
+
+| Field | Type | Purpose |
+| ----- | ---- | ------- |
+| `payment_id` | PK | |
+| `agent_id` | FK | |
+| `amount` | REAL | |
+| `tag` | TEXT | `ROLLING` \| `ACCOUNT:<id>` |
+| `method` | TEXT | Cash / Venmo / Crypto / … |
+| `destination` | TEXT | Tag/address/handle shown in-transit |
+| `status` | TEXT | `IN_TRANSIT` \| `CONFIRMED` \| `REJECTED` \| `RETagged` |
+| `confirmed_by` | FK | |
+| `confirmed_at` | DATETIME | |
 
 ### `weekly_snapshots`
 
@@ -324,13 +391,16 @@ Sportsbook `accounts.current_balance` is never rewritten by commission pay.
 | ----- | ---- | ------- |
 | `snapshot_id` | PK | |
 | `account_id` | FK | |
-| `week_starting` | DATE | Canonical week start (align to settlement week, not necessarily ISO Monday) |
+| `week_starting` | DATE | Settlement week start |
 | `starting_balance` / `ending_balance` | REAL | |
 | `net_pnl` | REAL | |
+| `win_max` | REAL | Win Cap at end |
 | `win_max_hit` | INTEGER | |
+| `agent_keep_amt` / `op_share_amt` | REAL | |
+| `unfreeze_price` | REAL | |
 | `status_at_end` | TEXT | |
 
-Immutable once written — dispute flow references snapshot, does not rewrite.
+Immutable once written.
 
 ### `raise_requests`
 
@@ -338,7 +408,7 @@ Immutable once written — dispute flow references snapshot, does not rewrite.
 | ----- | ---- | ------- |
 | `request_id` | PK | |
 | `account_id` / `agent_id` | FK | |
-| `type` | TEXT | `WIN_MAX` |
+| `type` | TEXT | `WIN_MAX` (UI: Win Cap (Guaranteed)) |
 | `from_value` / `to_value` | REAL | |
 | `status` | TEXT | `PENDING` \| `APPROVED` \| `DENIED` |
 | `effective` | TEXT | `NEXT_WEEK` (default) |
@@ -350,39 +420,32 @@ Immutable once written — dispute flow references snapshot, does not rewrite.
 | Trigger | Action |
 | ------- | ------ |
 | Cron daily ~23:59 | Refresh `week_pnl`; send Daily Agent Report |
-| Cron settlement day ~08:00 | Weekly invoice; accrue settlement balance; freeze winners |
-| Cron settlement day ~08:01 | Command channel owe digest |
-| Event: Confirm Settlement | Notify Command; mark payment claimed |
-| Event: Command verifies pay | Apply to settlement balance; unfreeze iff remainder 0; roll `week_start_balance` |
-| Event: Adjust Win Max | `raise_request` → Command approve/deny |
-| Event: Dispute | Commission → `DISPUTED`; ticket |
+| Cron settlement day ~08:00 | Snapshot; credit keep; accrue rolling; freeze winners; set `unfreeze_price`; send 08 v3 report |
+| Cron settlement day ~08:01 | Command digest: rolling after + unlock price list |
+| Event: payment IN_TRANSIT | Show destination on report; notify Command |
+| Event: Command confirms `ROLLING` | Decrease `rolling_figure` |
+| Event: Command confirms `ACCOUNT:X` with exact price | Unfreeze X; decrease rolling by `op_share_amt`; week roll |
+| Event: Adjust Win Cap | `raise_request` → Command approve/deny |
+| Event: Dispute | Settlement row → `DISPUTED`; ticket |
 
-Cron contract: OS-persistent `Bun.cron` workers under `lib/harness/cron.ts`
-(same pattern as `partner:finance-report:cron:*` /
-`partner:settlement:cron:*`).
+Cron contract: OS-persistent `Bun.cron` via `lib/harness/cron.ts`.
 
 ---
 
-## 8. Telegram interaction (from report)
+## 8. Telegram interaction
 
 ```text
-Weekly report
-  → [Adjust Win Maxes]
-      → inline Keep / Raise / Lower per account
-      → raise_request PENDING
-      → Command channel [Approve] [Deny]
-      → on Approve: win_max (or next_win_max) updated; report message edited
-  → [Confirm Settlement]
-      → Command verifies against settlement_balance
-      → unfreeze + week roll only when remainder clears
+Weekly report (08 v3)
+  → [Adjust Win Cap] → Keep / Raise / Lower → raise_request → Command
+  → [Confirm Payment]
+        → choose ROLLING (any $) or ACCOUNT (amount locked to unfreeze_price)
+        → capture method + destination tag/address
+        → IN_TRANSIT until Command confirms
 ```
 
-Callback prefix proposal (avoid colliding with `sd:` / `nf:` / `play:` /
-`f:`): `as:` (agent-settlement) — e.g. `as:wm:`, `as:pay:`, `as:uf:`,
-`as:dispute:`.
-
-Webhook `lib/telegram/bot.ts` and long-poll `ops-bot.ts` must both route `as:*`
-(today `nf:*` is webhook-only — do not repeat that gap).
+Callback prefix: `as:` (agent-settlement) — `as:wm:`, `as:pay:rolling`,
+`as:pay:acc:`, `as:dispute:`. Wire on **both** webhook `bot.ts` and long-poll
+`ops-bot.ts`.
 
 ---
 
@@ -390,12 +453,11 @@ Webhook `lib/telegram/bot.ts` and long-poll `ops-bot.ts` must both route `as:*`
 
 | Problem | Solution |
 | ------- | -------- |
-| Agent doesn’t know amount owed | Weekly invoice = new commission + prior remainder |
-| Partial pay / forgotten remainder | Settlement balance carries until cleared |
-| Forgot settlement day | Report morning of `settlement_day` |
-| Clicker plays winning account before pay | Auto-freeze at boundary |
-| Hot account needs higher win max | Inline adjust → Command approve |
-| Who paid? | `agent_commissions` + settlement balance + `confirmed_by` |
+| Confusion over who keeps what | Bold **AGENT KEEPS (30%)** vs **ADDED TO ROLLING (70%)** on 08 v3 |
+| “Commission” misread as agent invoice only | Rolling figure is Op debt; keep is agent credit |
+| Win Cap vs max bet | UI **Win Cap (Guaranteed)**; DB `win_max` |
+| Unlock vs debt paydown | Per-account exact `unfreeze_price` vs general rolling reduction |
+| Partial / in-flight pays | Payment-in-transit + destination displayed |
 | Number disputes | Immutable `weekly_snapshots` |
 
 ---
@@ -403,13 +465,12 @@ Webhook `lib/telegram/bot.ts` and long-poll `ops-bot.ts` must both route `as:*`
 ## 10. Explicit non-goals (v1)
 
 - Do **not** dual-write into `partner_ledger` / Soft Balance / toc-ops `ct`.
-- Do **not** treat Sports Terminal `agent_billing` period rows as SSOT (may
-  later project).
-- No losing-week makeup credit against future commission.
-- No rewriting sportsbook balance when commission is paid — only Command
-  settlement balance + account freeze/week window fields.
-- `winMax` remains a **forbidden partner-dashboard wire alias**; this plane’s
-  `win_max` is account-ops vocabulary, not the partner dashboard MVP wire.
+- Do **not** treat Sports Terminal `agent_billing` as SSOT.
+- No losing-week makeup credit against rolling.
+- No rewriting sportsbook balance on pay — only rolling figure + freeze/week fields.
+- Do **not** unfreeze on rolling-only payments (even if rolling hits 0) unless
+  Command runs an explicit waive/unlock policy (out of band).
+- Mock 08 **v2** must not be reused; 02 / 05 / 07 wait until 08 v3 approved.
 
 ---
 
@@ -417,15 +478,24 @@ Webhook `lib/telegram/bot.ts` and long-poll `ops-bot.ts` must both route `as:*`
 
 | Phase | Deliverable |
 | ----- | ----------- |
-| **D0** | This design SSOT |
-| **D1** | Schema migration: account week fields, `agent_settlement_balances`, `agent_commissions`, `weekly_snapshots`, `raise_requests` + brands |
-| **D2** | Pure engines: week P&amp;L, invoice (new + prior), freeze/unfreeze, payment apply |
-| **D3** | Telegram templates + `as:*` callbacks + agent-group addressing |
-| **D4** | Cron workers: daily report, settlement-day invoice/freeze |
-| **D5** | Command verify / unfreeze ops commands + portal/queue bake (optional) |
+| **D0** | This design SSOT + Mock 08 v3 approval |
+| **D1** | Schema: week fields, `agent_rolling_figures`, `agent_week_settlements`, `settlement_payments`, snapshots, raise_requests + brands |
+| **D2** | Pure engines: split math, rolling apply, exact unfreeze, payment tags |
+| **D3** | Telegram 08 v3 / daily templates + `as:*` callbacks |
+| **D4** | Cron workers |
+| **D5** | Command confirm / retag ops + optional portal queue |
 
-Proof owners: unit tests on invoice/carry math; journey test on
-freeze → partial pay → remainder → full pay → unfreeze + week roll.
+Proof: unit tests on 30/70 split + rolling before/after; journey on freeze →
+rolling-only pay (still frozen) → exact unfreeze pay → unlock + week roll.
+
+---
+
+## 12. Mock regen sequence
+
+1. **08 v3** (this doc) — structural anchor — **do first**
+2. After layout + math sign-off: batch **02** (limit profile matrix), **05**
+   (varying raise rows), **07** (locked numbers)
+3. Align copy: always **Win Cap (Guaranteed)** in UI chrome of those mocks
 
 ---
 
@@ -437,5 +507,5 @@ freeze → partial pay → remainder → full pay → unfreeze + week roll.
 - [`../harness/tenants/telegram-factory.md`](../harness/tenants/telegram-factory.md) — report transport / cron
 - [`../harness/tenants/partner-domain-map.md`](../harness/tenants/partner-domain-map.md) — desk domain map
 - Reuse candidates: `lib/telegram/daily-finance-report.ts`,
-  `lib/partner-profile/settlement-runner.ts` (math shape only),
+  `lib/partner-profile/settlement-runner.ts` (scheduler shape only),
   `lib/harness/cron.ts`
