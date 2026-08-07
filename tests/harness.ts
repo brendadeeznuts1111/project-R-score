@@ -1,6 +1,8 @@
 // @see https://bun.com/docs/runtime/sqlite
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 // @see https://bun.com/docs/runtime/http/server#server-stop — server.stop
+// @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname — port: 0 ephemeral
+// @see https://bun.com/docs/runtime/networking/tcp#start-a-server-bun-listen — Bun.listen
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://github.com/oven-sh/bun/blob/b5036bc6a11be1389b5cb50549c407f956df76d3/test/harness.ts
 /**
@@ -13,6 +15,7 @@ import { Database } from 'bun:sqlite';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { basename, isAbsolute, relative, resolve, sep } from 'node:path';
 import { tmpdir } from 'node:os';
+import { isListenPortBusy } from '../lib/http/serve-public-bind.ts';
 
 export interface TestWorkspace extends AsyncDisposable {
   readonly root: string;
@@ -120,6 +123,129 @@ export interface TestJsonServer extends AsyncDisposable {
   url(pathname?: string): string;
 }
 
+/** Default retries when parallel workers race on OS ephemeral `port: 0` (issue #235). */
+export const EPHEMERAL_BIND_MAX_ATTEMPTS = 8;
+
+/**
+ * Retry a `port: 0` binder when Bun reports EADDRINUSE under parallel workers.
+ * Production busy-port policy lives in `lib/http/serve-public-bind.ts`; tests
+ * reuse the same busy detector so boundary fixtures stay deterministic.
+ */
+export function bindEphemeralWithRetry<T>(
+  create: () => T,
+  options: {
+    maxAttempts?: number;
+    isBusy?: (err: unknown) => boolean;
+  } = {}
+): T {
+  const maxAttempts = options.maxAttempts ?? EPHEMERAL_BIND_MAX_ATTEMPTS;
+  const isBusy = options.isBusy ?? isListenPortBusy;
+  if (!Number.isInteger(maxAttempts) || maxAttempts < 1) {
+    throw new TypeError(`maxAttempts must be a positive integer, got ${maxAttempts}`);
+  }
+
+  let lastErr: unknown;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      return create();
+    } catch (err) {
+      lastErr = err;
+      if (!isBusy(err) || attempt === maxAttempts) throw err;
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
+}
+
+export interface EphemeralServeHandle extends AsyncDisposable {
+  readonly server: ReturnType<typeof Bun.serve>;
+  readonly port: number;
+  readonly origin: string;
+}
+
+type EphemeralServeOptions = Omit<Serve.Options<undefined>, 'port' | 'hostname' | 'unix'> & {
+  hostname?: string;
+  maxAttempts?: number;
+  /** Override origin scheme (defaults to https when `tls` is set). */
+  protocol?: 'http' | 'https';
+};
+
+/**
+ * Loopback `Bun.serve({ port: 0 })` with EADDRINUSE retry + AsyncDisposable stop.
+ * Prefer this over raw `Bun.serve` in parallel boundary fixtures (#235).
+ */
+export function createEphemeralServe(options: EphemeralServeOptions): EphemeralServeHandle {
+  const hostname = options.hostname ?? '127.0.0.1';
+  const protocol = options.protocol ?? (options.tls ? 'https' : 'http');
+  const { maxAttempts, protocol: _protocol, hostname: _hostname, ...serveOptions } = options;
+
+  const server = bindEphemeralWithRetry(
+    () =>
+      Bun.serve({
+        ...serveOptions,
+        hostname,
+        port: 0,
+      }),
+    { maxAttempts }
+  );
+
+  const port = server.port;
+  if (port === undefined) {
+    void server.stop(true);
+    throw new Error('ephemeral serve did not bind a TCP port');
+  }
+  const origin = `${protocol}://127.0.0.1:${port}`;
+  let disposed = false;
+
+  return {
+    server,
+    port,
+    origin,
+    async [Symbol.asyncDispose](): Promise<void> {
+      if (disposed) return;
+      disposed = true;
+      await server.stop(true);
+    },
+  };
+}
+
+/**
+ * Wrap a factory that binds `port: 0` (e.g. `createRegistryServer`) with
+ * busy-port retry and AsyncDisposable cleanup.
+ */
+export function createEphemeralBoundServer<
+  T extends {
+    readonly port?: number;
+    stop: (closeActiveConnections?: boolean) => void | Promise<void>;
+  },
+>(
+  create: () => T,
+  options: { maxAttempts?: number; protocol?: 'http' | 'https' } = {}
+): AsyncDisposable & {
+  readonly server: T;
+  readonly port: number;
+  readonly origin: string;
+} {
+  const server = bindEphemeralWithRetry(create, { maxAttempts: options.maxAttempts });
+  const port = server.port;
+  if (port === undefined) {
+    void server.stop(true);
+    throw new Error('ephemeral bound server did not expose server.port');
+  }
+  const protocol = options.protocol ?? 'http';
+  const origin = `${protocol}://127.0.0.1:${port}`;
+  let disposed = false;
+  return {
+    server,
+    port,
+    origin,
+    async [Symbol.asyncDispose](): Promise<void> {
+      if (disposed) return;
+      disposed = true;
+      await server.stop(true);
+    },
+  };
+}
+
 /**
  * Start a loopback-only JSON fixture server on an operating-system-assigned
  * port. Routes match URL pathnames exactly.
@@ -128,9 +254,7 @@ export function createJsonTestServer(
   routes: Readonly<Record<string, TestJsonRoute>>
 ): TestJsonServer {
   let disposed = false;
-  const server = Bun.serve({
-    hostname: '127.0.0.1',
-    port: 0,
+  const handle = createEphemeralServe({
     fetch(request): Response {
       if (request.method !== 'GET') {
         return Response.json(
@@ -155,12 +279,7 @@ export function createJsonTestServer(
       });
     },
   });
-  const port = server.port;
-  if (port === undefined) {
-    void server.stop(true);
-    throw new Error('test JSON server did not bind a TCP port');
-  }
-  const origin = `http://127.0.0.1:${port}`;
+  const { origin, port } = handle;
 
   return {
     origin,
@@ -179,7 +298,7 @@ export function createJsonTestServer(
     async [Symbol.asyncDispose](): Promise<void> {
       if (disposed) return;
       disposed = true;
-      await server.stop(true);
+      await handle[Symbol.asyncDispose]();
     },
   };
 }
