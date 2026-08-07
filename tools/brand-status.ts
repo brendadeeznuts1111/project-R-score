@@ -39,7 +39,13 @@ import {
   shouldColor,
   termWidth,
   truncateWidth,
-} from '../lib/console-depth.ts';
+} from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  BRAND_STATUS_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+export { BRAND_STATUS_ALLOWED_LONG };
 import {
   LINEAGE_DEMO_HOST,
   dnsAccessLineageRows,
@@ -150,7 +156,7 @@ const BRAND_STATUS_FLAGS = [
 ] as const;
 
 function args(): CliOpts {
-  const a = Bun.argv.slice(2);
+  const a = applyUnknownLongOptionGuardFor('brand:status', Bun.argv.slice(2));
   const take = (flag: string): string | undefined => {
     const i = a.indexOf(flag);
     if (i < 0) return undefined;

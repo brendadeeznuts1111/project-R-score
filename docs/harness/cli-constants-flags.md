@@ -151,6 +151,8 @@ bun run docs:refid:check
 | `identity:admin` | `as` · `db` · `json` · `limit` · `password` | [`tools/identity-admin.ts`](../../tools/identity-admin.ts) |
 | `provision:queue` | `dry-run` · `email` · `id` · `mode` · `partner` · `pass` · `platform` · `step` · `to` · `user` | [`tools/provision-queue.ts`](../../tools/provision-queue.ts) |
 | `monorepo:health` | `archive` · `inspect` · `interactive` · `interval` · `json` · `no-build` · `no-history` · `validate` · `watch` · `with-coverage` · `with-tests` | [`tools/monorepo-health.ts`](../../tools/monorepo-health.ts) |
+| `brand:status` | `once` · `repl` · `docs` · `watch` · `every` · `json` · `verbose` · `compact` · `lifecycle` · `flags` · `plane` · `lineage` · `zone` | [`tools/brand-status.ts`](../../tools/brand-status.ts) |
+| `docs:refid` | `strict-format` · `refid-strict` · `dry-run` · `registry-only` · `skip-refid-check` · `write-hrefs` · `json` · `section` · `keyword` · `flag` · `leaf` · `doc` · `section-ref` · `section-heading` · `script` · `shortcode` · `default` · `all` · `roots` | [`tools/docs-refid.ts`](../../tools/docs-refid.ts) |
 
 ---
 

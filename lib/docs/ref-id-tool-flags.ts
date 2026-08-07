@@ -458,6 +458,46 @@ export const MONOREPO_HEALTH_ALLOWED_LONG = [
   'with-tests',
 ] as const;
 
+/** § — brand:status (`tools/brand-status.ts`) */
+export const BRAND_STATUS_ALLOWED_LONG = [
+  'once',
+  'repl',
+  'docs',
+  'watch',
+  'every',
+  'json',
+  'verbose',
+  'compact',
+  'lifecycle',
+  'flags',
+  'plane',
+  'lineage',
+  'zone',
+] as const;
+
+/** § — docs:refid (`tools/docs-refid.ts`) — all subcommands share one long-option set */
+export const DOCS_REFID_ALLOWED_LONG = [
+  'strict-format',
+  'refid-strict',
+  'dry-run',
+  'registry-only',
+  'skip-refid-check',
+  'write-hrefs',
+  'json',
+  'section',
+  'keyword',
+  'flag',
+  'leaf',
+  'doc',
+  'section-ref',
+  'section-heading',
+  'script',
+  'shortcode',
+  'default',
+  'all',
+  'roots',
+] as const;
+
 /** CLI names keyed in `ALLOWED_LONG_REGISTRY` (package-script style). */
 export type AllowedLongCliName =
   | 'lint-wires'
@@ -480,7 +520,9 @@ export type AllowedLongCliName =
   | 'ops:limits:check'
   | 'identity:admin'
   | 'provision:queue'
-  | 'monorepo:health';
+  | 'monorepo:health'
+  | 'brand:status'
+  | 'docs:refid';
 
 /**
  * Central allowlist registry — code SSOT (not env JSON, not bun-types).
@@ -508,6 +550,8 @@ export const ALLOWED_LONG_REGISTRY = {
   'identity:admin': IDENTITY_ADMIN_ALLOWED_LONG,
   'provision:queue': PROVISION_QUEUE_ALLOWED_LONG,
   'monorepo:health': MONOREPO_HEALTH_ALLOWED_LONG,
+  'brand:status': BRAND_STATUS_ALLOWED_LONG,
+  'docs:refid': DOCS_REFID_ALLOWED_LONG,
 } as const satisfies Record<AllowedLongCliName, readonly string[]>;
 
 /** Apply guard using `ALLOWED_LONG_REGISTRY[cliName]`. */
