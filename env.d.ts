@@ -47,6 +47,14 @@ declare module 'bun' {
     GITHUB_RUN_ID?: string;
     GITHUB_ACTIONS?: string;
     GH_TOKEN?: string;
+
+    /**
+     * Unknown long-option CLI guard toggles — allowlists stay in
+     * `lib/docs/ref-id-tool-flags.ts` (`ALLOWED_LONG_REGISTRY`).
+     * `true` / unset semantics: see `unknownFlagPolicy`.
+     */
+    BUN_STRIP_UNKNOWN?: string;
+    BUN_LOG_UNKNOWN?: string;
   }
 }
 

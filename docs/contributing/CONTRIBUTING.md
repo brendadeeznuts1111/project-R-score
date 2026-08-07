@@ -83,38 +83,39 @@ bun run docs:map:check
 
 ### Validation presets
 
-| Mode          | How                                  | Behavior                                                                               |
-| ------------- | ------------------------------------ | -------------------------------------------------------------------------------------- |
-| soft          | default `check`                      | Format length/kebab → **warn**; missing anchors, href mismatch, duplicates → **error** |
-| strict format | `--strict-format` / `--refid-strict` | Format issues → **error**                                                              |
-| dry-run       | `--dry-run` / `docs:refid:check:dry-run` | Full validation + **audit inventory**; **always exit 0**                           |
-| registry-only | `--registry-only`                    | Skip discovery globs (planes registry only)                                            |
-| skip          | `--skip-refid-check`                 | No validation (exit 0) — drafts / fast local loops only                                |
-| write hrefs   | `--write-hrefs`                      | Fill empty / `—` / `auto` href cells with `[`#REF`](#REF)`, then validate              |
+| Mode          | How                                      | Behavior                                                                               |
+| ------------- | ---------------------------------------- | -------------------------------------------------------------------------------------- |
+| soft          | default `check`                          | Format length/kebab → **warn**; missing anchors, href mismatch, duplicates → **error** |
+| strict format | `--strict-format` / `--refid-strict`     | Format issues → **error**                                                              |
+| dry-run       | `--dry-run` / `docs:refid:check:dry-run` | Full validation + **audit inventory**; **always exit 0**                               |
+| registry-only | `--registry-only`                        | Skip discovery globs (planes registry only)                                            |
+| skip          | `--skip-refid-check`                     | No validation (exit 0) — drafts / fast local loops only                                |
+| write hrefs   | `--write-hrefs`                          | Fill empty / `—` / `auto` href cells with `[`#REF`](#REF)`, then validate              |
 
 ### Coverage planes
 
-| Plane | Role | Docs |
-| ----- | ---- | ---- |
-| design | flags + guides | inventory · partner surface / onboard / IMAGES · partner authority guides |
-| domain | guide | `docs/DOMAIN_CONCEPT_SHAPE.md` (when it carries REF:ID markup) |
-| portal | guide | `docs/portal-foundation.md` (when markup present) |
-| harness | flags + guides | AUTHORITY · ops-snapshot · handshake · monorepo · complexity |
-| lib | guide | `lib/docs/ref-id.ts` (help/JSON only · not markdown-scanned) |
-| discovery | scan | other `docs/**` · `public/portal/**` with REF:ID markup |
+| Plane     | Role           | Docs                                                                      |
+| --------- | -------------- | ------------------------------------------------------------------------- |
+| design    | flags + guides | inventory · partner surface / onboard / IMAGES · partner authority guides |
+| domain    | guide          | `docs/DOMAIN_CONCEPT_SHAPE.md` (when it carries REF:ID markup)            |
+| portal    | guide          | `docs/portal-foundation.md` (when markup present)                         |
+| harness   | flags + guides | AUTHORITY · ops-snapshot · handshake · monorepo · complexity              |
+| lib       | guide          | `lib/docs/ref-id.ts` (help/JSON only · not markdown-scanned)              |
+| discovery | scan           | other `docs/**` · `public/portal/**` with REF:ID markup                   |
 
 Flag owners (`requireToolCoverage`):
 
-| Doc | Tool rows |
-| --- | --------- |
-| `docs/design/bun-types-inventory.md` | `tools/bun-types-status.ts` → `buildStatusFlagRows` |
-| `docs/design/partner-surface-inventory.md` | `lintWiresToolFlags` |
-| `docs/design/unified-partner-profile.md` | `partnerOnboardToolFlags` |
-| `docs/IMAGES.md` | `imagesGenerateToolFlags` |
-| harness tenants (ops-snapshot · handshake · monorepo · complexity) | matching `*ToolFlags` |
+| Doc                                                                | Tool rows                                           |
+| ------------------------------------------------------------------ | --------------------------------------------------- |
+| `docs/design/bun-types-inventory.md`                               | `tools/bun-types-status.ts` → `buildStatusFlagRows` |
+| `docs/design/partner-surface-inventory.md`                         | `lintWiresToolFlags`                                |
+| `docs/design/unified-partner-profile.md`                           | `partnerOnboardToolFlags`                           |
+| `docs/IMAGES.md`                                                   | `imagesGenerateToolFlags`                           |
+| harness tenants (ops-snapshot · handshake · monorepo · complexity) | matching `*ToolFlags`                               |
 
-Tool flag SSOT: [`lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts).
-With **requireToolCoverage**, check is **bidirectional**: every tool REF:ID must
+Tool flag SSOT:
+[`lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts). With
+**requireToolCoverage**, check is **bidirectional**: every tool REF:ID must
 appear in the Flags table (`tool-missing-table` error) **and** every table
 REF:ID must have a tool row (`table-missing-tool` error).
 `bun run docs:refid:audit` must report **flags-table-only=0**. Board maps with a
@@ -122,18 +123,39 @@ trailing `Flags` column are not REF:ID surfaces.
 
 ### Unknown long-option allowlists (CLI guards)
 
-Shared helper: `unknownLongOptionLeaves(argv, allowed)` in
+**Allowlists stay in code** — central registry `ALLOWED_LONG_REGISTRY` in
 [`lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts).  
-Storage is `readonly string[]` (`as const`); the helper builds a `Set` at check
-time. Always exempt: `--help` · `--hlp`.
+Do **not** put allowlist JSON in `.env` (untyped, escapes badly, cannot be
+checked by `docs:refid:check`).
 
-| Constant | CLI entry | PR series | Definition | REF:ID leaves (`*LEAVES`) | Extra meta (allowlist only) | Guard placement | Failure |
-| -------- | --------- | --------- | ---------- | ------------------------- | --------------------------- | --------------- | ------- |
-| `LINT_WIRES_ALLOWED_LONG` | `scripts/validate-wire-traps.ts` | #534 | SSOT file | §4.1 help · scan · why · document · strict-globs | rules · fix | after help/why/document/rules | stderr + return **2** |
-| `IMAGES_GENERATE_ALLOWED_LONG` | `scripts/images-generate.ts` | #534 | SSOT file | §1.1 source · out · size · format · quality · fit · max-pixels · json · dry-run | template | top of `parseArgs` | **throw** |
-| `OPS_SNAPSHOT_ALLOWED_LONG` | `tools/ops-snapshot.ts` | #534 | SSOT file | §1.1 seed · seed-force · seed-tenants · no-seed (`default` is table-only, no `--default`) | out · no-report · no-routing · no-static · force-routing · publish · no-channel-meta · no-compliance · no-monorepo-health · webview · no-toc-limits · seed-toc-limits-force | after `--help` | stderr + **exit 2** |
-| `PARTNER_ONBOARD_ALLOWED_LONG` | `tools/partner-onboard.ts` | #533 | **onboard tool** (not SSOT) | §1.1 deal · currency · hold-target · initial-balance · funding-method | code · url · username · password · telegram-user-id · chat · book-key · type · maxBet · name · dry-run · skip-forum · no-bake | start of `main()` | **throw** |
-| `TELEGRAM_OPS_ALLOWED_LONG` | `tools/telegram-ops.ts` | #535 | SSOT file | §1.1 invite · no-dm · no-ack · requested-by only | db · chat · all · kind · surface · preview · queue · direct · html · json · refresh · rich · mermaid · env · sync-env · force · dry-run · live · detail · deep | early `main()` before subcommand dispatch | stderr + **exit 2** |
+Shared helpers:
+
+| Helper                                                         | Role                                 |
+| -------------------------------------------------------------- | ------------------------------------ |
+| `unknownLongOptionLeaves(argv, allowed)`                       | Pure leaf scan (`Set` at check time) |
+| `checkUnknownLongOptions` / `applyUnknownLongOptionGuard(For)` | Policy + strip/fail                  |
+| `unknownFlagPolicy(Bun.env)`                                   | Reads toggles only                   |
+
+Always exempt: `--help` · `--hlp`.
+
+**Bun.env toggles** (see root [`.env.example`](../../.env.example)):
+
+| Key                      | Default         | Behavior                                                   |
+| ------------------------ | --------------- | ---------------------------------------------------------- |
+| `BUN_STRIP_UNKNOWN`      | unset / `false` | Hard-fail unknown `--flags` (exit **2** / throw)           |
+| `BUN_STRIP_UNKNOWN=true` | —               | Strip unknowns and continue (local prototyping)            |
+| `BUN_LOG_UNKNOWN`        | unset → **on**  | Warn when stripping; set `false` to silence strip warnings |
+
+CI / production: leave `BUN_STRIP_UNKNOWN` unset. Local prototyping may set
+`BUN_STRIP_UNKNOWN=true`.
+
+| Constant                       | CLI entry / registry key                         | Definition | REF:ID leaves (`*LEAVES`)                                             | Extra meta (allowlist only) | Guard                         | Failure      |
+| ------------------------------ | ------------------------------------------------ | ---------- | --------------------------------------------------------------------- | --------------------------- | ----------------------------- | ------------ |
+| `LINT_WIRES_ALLOWED_LONG`      | `lint-wires` · `scripts/validate-wire-traps.ts`  | SSOT       | §4.1 help · scan · why · document · strict-globs                      | rules · fix                 | after help/why/document/rules | return **2** |
+| `IMAGES_GENERATE_ALLOWED_LONG` | `images:generate` · `scripts/images-generate.ts` | SSOT       | §1.1 source · out · size · … · dry-run                                | template                    | top of `parseArgs`            | **throw**    |
+| `OPS_SNAPSHOT_ALLOWED_LONG`    | `ops:snapshot` · `tools/ops-snapshot.ts`         | SSOT       | §1.1 seed · seed-force · seed-tenants · no-seed                       | bake toggles                | after `--help`                | **exit 2**   |
+| `PARTNER_ONBOARD_ALLOWED_LONG` | `partner:onboard` · SSOT (+ re-export from tool) | SSOT       | §1.1 deal · currency · hold-target · initial-balance · funding-method | identity/book/control flags | start of `main()`             | **throw**    |
+| `TELEGRAM_OPS_ALLOWED_LONG`    | `telegram:ops` · `tools/telegram-ops.ts`         | SSOT       | §1.1 invite · no-dm · no-ack · requested-by                           | send/directory meta         | early `main()`                | **exit 2**   |
 
 Prove CLI guards: `bun test tests/docs-ref-id-tool-exports.test.ts`.
 
@@ -144,24 +166,24 @@ PR body (stable headers — agents and claim scanners rely on them).
 
 **Human (story · risk · rollback):**
 
-| Change | Risk (L/M/H) | Blast radius | Rollback | Depends on | Observability |
-| ------ | ------------ | ------------ | -------- | ---------- | ------------- |
-| … | M | which CLIs / operators | `git revert <merge_sha>` | prior PRs | grep stderr / dashboards |
+| Change | Risk (L/M/H) | Blast radius           | Rollback                 | Depends on | Observability            |
+| ------ | ------------ | ---------------------- | ------------------------ | ---------- | ------------------------ |
+| …      | M            | which CLIs / operators | `git revert <merge_sha>` | prior PRs  | grep stderr / dashboards |
 
 **Agent (parseable · executable):**
 
-| PR | Constant | Guard file | Verify_cmd | Expected_exit | On_fail |
-| -- | -------- | ---------- | ---------- | ------------- | ------- |
-| #N | `FOO_ALLOWED_LONG` | path | `bun test tests/docs-ref-id-tool-exports.test.ts` | 0 | block-merge |
+| PR  | Constant           | Guard file | Verify_cmd                                        | Expected_exit | On_fail     |
+| --- | ------------------ | ---------- | ------------------------------------------------- | ------------- | ----------- |
+| #N  | `FOO_ALLOWED_LONG` | path       | `bun test tests/docs-ref-id-tool-exports.test.ts` | 0             | block-merge |
 
 **Matrix delta (rollout sequence)** — keep one row per PR so reviewers see the
 series:
 
-| PR | Commit | CLI(s) | Guard |
-| -- | ------ | ------ | ----- |
-| #533 | `3a3390d93` | partner:onboard + bidirectional check | `PARTNER_ONBOARD_ALLOWED_LONG` + `tool-missing-table` / `table-missing-tool` |
-| #534 | `e360f76d2` | lint-wires · images:generate · ops:snapshot | `*_ALLOWED_LONG` |
-| #535 | `824890004` | telegram:ops | `TELEGRAM_OPS_ALLOWED_LONG` |
+| PR   | Commit      | CLI(s)                                      | Guard                                                                        |
+| ---- | ----------- | ------------------------------------------- | ---------------------------------------------------------------------------- |
+| #533 | `3a3390d93` | partner:onboard + bidirectional check       | `PARTNER_ONBOARD_ALLOWED_LONG` + `tool-missing-table` / `table-missing-tool` |
+| #534 | `e360f76d2` | lint-wires · images:generate · ops:snapshot | `*_ALLOWED_LONG`                                                             |
+| #535 | `824890004` | telegram:ops                                | `TELEGRAM_OPS_ALLOWED_LONG`                                                  |
 
 **Known safe exemptions:** `--help` · `--hlp` always pass the long-option
 filter; short `-h` is handled per CLI (lint-wires also rejects other short
@@ -186,26 +208,26 @@ Taken keywords get a numeric suffix from suggest (`refresh` → `4.1.refresh-2`)
 3. Wire code with `flagDocRef('my-flag')` — re-export from the CLI via
    [`lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts)
    (examples: `scripts/validate-wire-traps.ts`, `scripts/images-generate.ts`,
-   `tools/partner-onboard.ts`, `tools/telegram-ops.ts`, `tools/ops-snapshot.ts` ·
-   `bun-types-status` uses its own §4.1 helper).
+   `tools/partner-onboard.ts`, `tools/telegram-ops.ts`, `tools/ops-snapshot.ts`
+   · `bun-types-status` uses its own §4.1 helper).
 4. Prove: `bun run docs:refid:check` ·
    `bun test tests/docs-refid-cli.contract.test.ts` ·
    `bun test tests/docs-ref-id-tool-exports.test.ts`
 
 ### Proof
 
-| Gate                        | Command                                          |
-| --------------------------- | ------------------------------------------------ |
-| In-process library          | `bun test tests/docs-ref-id.test.ts`             |
-| Audit classifiers           | `bun test tests/docs-ref-id-audit.test.ts`       |
-| **CLI subprocess contract** | `bun test tests/docs-refid-cli.contract.test.ts` |
+| Gate                        | Command                                                  |
+| --------------------------- | -------------------------------------------------------- |
+| In-process library          | `bun test tests/docs-ref-id.test.ts`                     |
+| Audit classifiers           | `bun test tests/docs-ref-id-audit.test.ts`               |
+| **CLI subprocess contract** | `bun test tests/docs-refid-cli.contract.test.ts`         |
 | Package script              | `bun run docs:refid:check` · `:audit` · `:check:dry-run` |
 
 Subprocess tests spawn `bun tools/docs-refid.ts` / `docs-refid-check.ts` and
 assert exit codes + stdout (help, presets, JSON schema `factorywager/ref-id/v2`,
 fixture failure modes under `tests/fixtures/ref-id/`, `--write-hrefs` fill,
-coverage planes + `--registry-only`, `--dry-run`,
-`audit` / `factorywager/ref-id-audit/v1`).
+coverage planes + `--registry-only`, `--dry-run`, `audit` /
+`factorywager/ref-id-audit/v1`).
 
 ## Testing & concept changes
 

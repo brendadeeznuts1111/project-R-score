@@ -4,15 +4,18 @@
  */
 import { describe, expect, test } from 'bun:test';
 import {
+  ALLOWED_LONG_REGISTRY,
   IMAGES_GENERATE_ALLOWED_LONG,
   IMAGES_GENERATE_LEAVES,
   LINT_WIRES_ALLOWED_LONG,
   LINT_WIRES_LEAVES,
   OPS_SNAPSHOT_ALLOWED_LONG,
   OPS_SNAPSHOT_LEAVES,
+  PARTNER_ONBOARD_ALLOWED_LONG,
   PARTNER_ONBOARD_LEAVES,
   TELEGRAM_OPS_ALLOWED_LONG,
   TELEGRAM_OPS_LEAVES,
+  checkUnknownLongOptions,
   imagesGenerateFlagDocRef,
   imagesGenerateToolFlags,
   lintWiresFlagDocRef,
@@ -23,9 +26,10 @@ import {
   partnerOnboardToolFlags,
   telegramOpsFlagDocRef,
   telegramOpsToolFlags,
+  unknownFlagPolicy,
   unknownLongOptionLeaves,
 } from '../lib/docs/ref-id-tool-flags.ts';
-import { PARTNER_ONBOARD_ALLOWED_LONG } from '../tools/partner-onboard.ts';
+import { PARTNER_ONBOARD_ALLOWED_LONG as partnerOnboardAllowedReexport } from '../tools/partner-onboard.ts';
 import {
   flagDocRef as imagesGenerateFlagDocRefExport,
   imagesGenerateToolFlags as imagesGenerateFromTool,
@@ -109,6 +113,40 @@ describe('in-tool flagDocRef re-exports', () => {
     }
   });
 
+  test('ALLOWED_LONG_REGISTRY covers all guarded CLIs', () => {
+    expect(ALLOWED_LONG_REGISTRY['partner:onboard']).toEqual(PARTNER_ONBOARD_ALLOWED_LONG);
+    expect(partnerOnboardAllowedReexport).toEqual(PARTNER_ONBOARD_ALLOWED_LONG);
+    expect(ALLOWED_LONG_REGISTRY['lint-wires']).toBe(LINT_WIRES_ALLOWED_LONG);
+    expect(ALLOWED_LONG_REGISTRY['images:generate']).toBe(IMAGES_GENERATE_ALLOWED_LONG);
+    expect(ALLOWED_LONG_REGISTRY['ops:snapshot']).toBe(OPS_SNAPSHOT_ALLOWED_LONG);
+    expect(ALLOWED_LONG_REGISTRY['telegram:ops']).toBe(TELEGRAM_OPS_ALLOWED_LONG);
+  });
+
+  test('unknownFlagPolicy defaults + Bun.env toggles', () => {
+    expect(unknownFlagPolicy({})).toEqual({ stripUnknown: false, logUnknown: true });
+    expect(unknownFlagPolicy({ BUN_STRIP_UNKNOWN: 'true', BUN_LOG_UNKNOWN: 'false' })).toEqual({
+      stripUnknown: true,
+      logUnknown: false,
+    });
+  });
+
+  test('checkUnknownLongOptions strips when BUN_STRIP_UNKNOWN=true', () => {
+    const r = checkUnknownLongOptions(['--scan', '--bogus', '--fix'], LINT_WIRES_ALLOWED_LONG, {
+      env: { BUN_STRIP_UNKNOWN: 'true' },
+    });
+    expect(r.unknown).toEqual(['bogus']);
+    expect(r.shouldFail).toBe(false);
+    expect(r.argv).toEqual(['--scan', '--fix']);
+  });
+
+  test('checkUnknownLongOptions fails closed by default', () => {
+    const r = checkUnknownLongOptions(['--scan', '--bogus'], LINT_WIRES_ALLOWED_LONG, {
+      env: {},
+    });
+    expect(r.shouldFail).toBe(true);
+    expect(r.argv).toEqual(['--scan', '--bogus']);
+  });
+
   test('unknownLongOptionLeaves + CLI allowlists', () => {
     expect(unknownLongOptionLeaves(['--deal', '30', '--code', 'X'], PARTNER_ONBOARD_LEAVES)).toEqual(
       ['code']
@@ -158,10 +196,12 @@ describe('in-tool flagDocRef re-exports', () => {
 
   test('CLI rejects unknown long options (spawn)', () => {
     const cwd = import.meta.dir + '/..';
+    const env = { ...process.env, BUN_STRIP_UNKNOWN: 'false' };
     const lint = Bun.spawnSync(['bun', 'scripts/validate-wire-traps.ts', '--scan', '--bogus'], {
       cwd,
       stdout: 'pipe',
       stderr: 'pipe',
+      env,
     });
     expect(lint.exitCode).not.toBe(0);
     expect((lint.stderr.toString() + lint.stdout.toString()).toLowerCase()).toMatch(/unknown/);
@@ -170,6 +210,7 @@ describe('in-tool flagDocRef re-exports', () => {
       cwd,
       stdout: 'pipe',
       stderr: 'pipe',
+      env,
     });
     expect(img.exitCode).not.toBe(0);
 
@@ -177,6 +218,7 @@ describe('in-tool flagDocRef re-exports', () => {
       cwd,
       stdout: 'pipe',
       stderr: 'pipe',
+      env,
     });
     expect(ops.exitCode).not.toBe(0);
     expect((ops.stderr.toString() + ops.stdout.toString()).toLowerCase()).toMatch(/unknown/);
@@ -185,9 +227,29 @@ describe('in-tool flagDocRef re-exports', () => {
       cwd,
       stdout: 'pipe',
       stderr: 'pipe',
+      env,
     });
     expect(tg.exitCode).not.toBe(0);
     expect((tg.stderr.toString() + tg.stdout.toString()).toLowerCase()).toMatch(/unknown/);
+  });
+
+  test('CLI strips unknown long options when BUN_STRIP_UNKNOWN=true (spawn)', () => {
+    const cwd = import.meta.dir + '/..';
+    const env = {
+      ...process.env,
+      BUN_STRIP_UNKNOWN: 'true',
+      BUN_LOG_UNKNOWN: 'true',
+    };
+    // Guard runs before --help in parseArgs; strip then help → exit 0 + strip warning
+    const img = Bun.spawnSync(
+      ['bun', 'scripts/images-generate.ts', '--not-a-flag', '--help'],
+      { cwd, stdout: 'pipe', stderr: 'pipe', env }
+    );
+    expect(img.exitCode).toBe(0);
+    expect((img.stderr.toString() + img.stdout.toString()).toLowerCase()).toMatch(
+      /stripping|unknown/
+    );
+    expect(img.stdout.toString()).toMatch(/images:generate|Bun\.Image/i);
   });
 
   test('docs:refid check --json exposes planes', () => {

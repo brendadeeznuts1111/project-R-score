@@ -19,18 +19,20 @@
  */
 
 import {
+  PARTNER_ONBOARD_ALLOWED_LONG,
   PARTNER_ONBOARD_DOC,
   PARTNER_ONBOARD_LEAVES,
   PARTNER_ONBOARD_SECTION,
+  applyUnknownLongOptionGuardFor,
   formatFlagDocRefLine,
   partnerOnboardFlagDocRef,
   partnerOnboardToolFlags,
-  unknownLongOptionLeaves,
 } from '../lib/docs/ref-id-tool-flags.ts';
 import { onboardPartner } from '../lib/partner-profile/onboard';
 
 /** Re-export REF:ID SSOT for registry / tests (`flagDocRef` alias matches bun-types-status). */
 export {
+  PARTNER_ONBOARD_ALLOWED_LONG,
   PARTNER_ONBOARD_DOC,
   PARTNER_ONBOARD_LEAVES,
   PARTNER_ONBOARD_SECTION,
@@ -90,24 +92,6 @@ export interface AccountingFlags {
  */
 export const ACCOUNTING_FLAG_LEAVES = PARTNER_ONBOARD_LEAVES;
 
-/** Full long-option allowlist for partner:onboard (identity + book + accounting + control). */
-export const PARTNER_ONBOARD_ALLOWED_LONG = [
-  'code',
-  'url',
-  'username',
-  'password',
-  'telegram-user-id',
-  'chat',
-  'book-key',
-  'type',
-  'maxBet',
-  'name',
-  'dry-run',
-  'skip-forum',
-  'no-bake',
-  ...PARTNER_ONBOARD_LEAVES,
-] as const;
-
 export function parseAccountingFlags(argv: string[]): AccountingFlags {
   const deal = numFlag(argv, 'deal');
   const initialBalance = numFlag(argv, 'initial-balance');
@@ -144,13 +128,9 @@ export function parseAccountingFlags(argv: string[]): AccountingFlags {
 }
 
 async function main(): Promise<void> {
-  const argv = process.argv.slice(2);
-  const unknown = unknownLongOptionLeaves(argv, PARTNER_ONBOARD_ALLOWED_LONG);
-  if (unknown.length) {
-    throw new Error(
-      `unknown flag(s): ${unknown.map(u => `--${u}`).join(', ')} (see REF:ID §${PARTNER_ONBOARD_SECTION} · --help)`
-    );
-  }
+  const argv = applyUnknownLongOptionGuardFor('partner:onboard', process.argv.slice(2), {
+    onFail: 'throw',
+  });
   const code = flag(argv, 'code');
   const url = flag(argv, 'url');
   const username = flag(argv, 'username');

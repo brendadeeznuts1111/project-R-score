@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 // @see https://bun.com/docs/runtime/file-io — Bun.file (consumers)
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Tool ↔ design-doc REF:ID flag SSOT for registered docs.
  *
@@ -10,8 +11,24 @@
  * Bun runtime-only flags (filter fan-out · complexity floor) are still listed
  * so the doc table stays the operator contract; source labels use `bun` /
  * runtime docs, not a monorepo script.
+ *
+ * Unknown long-option guards: allowlists live in this file (`ALLOWED_LONG_REGISTRY`);
+ * Bun.env only toggles behavior (`BUN_STRIP_UNKNOWN` · `BUN_LOG_UNKNOWN`).
  */
 import { hrefFromRefId, type ToolFlagRef } from './ref-id.ts';
+
+type EnvMap = { [key: string]: string | undefined };
+
+/**
+ * Bun.env key names for unknown long-option guard policy (not the allowlists).
+ * Allowlists stay in code — see `ALLOWED_LONG_REGISTRY`.
+ */
+export const BUN_UNKNOWN_FLAG_ENV = {
+  /** `true` → strip unknown `--flags` and continue; else hard-fail (exit 2 / throw) */
+  STRIP_UNKNOWN: 'BUN_STRIP_UNKNOWN',
+  /** default on; when stripping, log a warning for each unknown set */
+  LOG_UNKNOWN: 'BUN_LOG_UNKNOWN',
+} as const;
 
 /** Build REF:ID + href for a leaf under a section (tool-side `flagDocRef` pattern). */
 export function flagDocRefAt(
@@ -63,6 +80,110 @@ export function unknownLongOptionLeaves(
   return unknown;
 }
 
+export type UnknownFlagPolicy = {
+  /** When true, drop unknown long options and continue. */
+  stripUnknown: boolean;
+  /** When true, warn on strip (fail path always prints an error). */
+  logUnknown: boolean;
+};
+
+/** Read Bun.env toggles — allowlists never come from the environment. */
+export function unknownFlagPolicy(env: EnvMap = Bun.env): UnknownFlagPolicy {
+  return {
+    stripUnknown: env[BUN_UNKNOWN_FLAG_ENV.STRIP_UNKNOWN] === 'true',
+    logUnknown: env[BUN_UNKNOWN_FLAG_ENV.LOG_UNKNOWN] !== 'false',
+  };
+}
+
+function stripUnknownLongOptions(
+  argv: readonly string[],
+  unknownLeaves: readonly string[]
+): string[] {
+  const drop = new Set(unknownLeaves.map(l => l.toLowerCase()));
+  return argv.filter(a => {
+    if (!a.startsWith('--') || a === '--') return true;
+    const raw = (a.slice(2).split('=')[0] ?? '').toLowerCase();
+    if (!raw || raw === 'help' || raw === 'hlp') return true;
+    return !drop.has(raw);
+  });
+}
+
+export type UnknownLongOptionCheck = {
+  unknown: string[];
+  /** Argv after optional strip. */
+  argv: string[];
+  stripUnknown: boolean;
+  logUnknown: boolean;
+  /** True when unknown present and not stripping — caller must exit/throw. */
+  shouldFail: boolean;
+};
+
+/**
+ * Pure check + optional strip (no exit). Prefer `applyUnknownLongOptionGuard` in CLIs.
+ */
+export function checkUnknownLongOptions(
+  argv: readonly string[],
+  allowedLeaves: readonly string[],
+  opts?: { env?: EnvMap }
+): UnknownLongOptionCheck {
+  const policy = unknownFlagPolicy(opts?.env);
+  const unknown = unknownLongOptionLeaves(argv, allowedLeaves);
+  if (unknown.length === 0) {
+    return {
+      unknown: [],
+      argv: [...argv],
+      stripUnknown: policy.stripUnknown,
+      logUnknown: policy.logUnknown,
+      shouldFail: false,
+    };
+  }
+  const next = policy.stripUnknown ? stripUnknownLongOptions(argv, unknown) : [...argv];
+  return {
+    unknown,
+    argv: next,
+    stripUnknown: policy.stripUnknown,
+    logUnknown: policy.logUnknown,
+    shouldFail: !policy.stripUnknown,
+  };
+}
+
+/**
+ * Enforce allowlist for a CLI. Returns (possibly stripped) argv.
+ * - Default: unknown → stderr + `process.exit(2)`
+ * - `onFail: 'throw'` for CLIs that catch Error in parse/main
+ * - `BUN_STRIP_UNKNOWN=true` → strip + optional warn, never fail
+ */
+export function applyUnknownLongOptionGuard(
+  argv: readonly string[],
+  allowedLeaves: readonly string[],
+  opts: {
+    cliName: string;
+    env?: EnvMap;
+    onFail?: 'exit' | 'throw';
+  }
+): string[] {
+  const result = checkUnknownLongOptions(argv, allowedLeaves, { env: opts.env });
+  if (result.unknown.length === 0) return result.argv;
+
+  const pretty = result.unknown.map(u => `--${u}`).join(', ');
+  if (result.stripUnknown) {
+    if (result.logUnknown) {
+      console.warn(
+        `⚠️  Unknown long option(s) in ${opts.cliName}: ${pretty} (${BUN_UNKNOWN_FLAG_ENV.STRIP_UNKNOWN}=true — stripping)`
+      );
+    }
+    return result.argv;
+  }
+
+  console.error(`❌ Unknown long option(s) in ${opts.cliName}: ${pretty}`);
+  console.error(`Allowed: ${allowedLeaves.map(l => `--${l}`).join(', ')}`);
+  if (opts.onFail === 'throw') {
+    throw new Error(`unknown flag(s): ${pretty}`);
+  }
+  process.exit(2);
+  return result.argv;
+}
+
 /** §4.1 — lint-wires (`scripts/validate-wire-traps.ts`) */
 export const LINT_WIRES_DOC = 'docs/design/partner-surface-inventory.md' as const;
 export const LINT_WIRES_SECTION = '4.1' as const;
@@ -85,6 +206,26 @@ export const PARTNER_ONBOARD_LEAVES = [
   'hold-target',
   'initial-balance',
   'funding-method',
+] as const;
+/**
+ * Full long-option allowlist for partner:onboard (identity + book + accounting + control).
+ * Identity/book flags sit outside `PARTNER_ONBOARD_LEAVES` (REF:ID §1.1 covers accounting only).
+ */
+export const PARTNER_ONBOARD_ALLOWED_LONG = [
+  'code',
+  'url',
+  'username',
+  'password',
+  'telegram-user-id',
+  'chat',
+  'book-key',
+  'type',
+  'maxBet',
+  'name',
+  'dry-run',
+  'skip-forum',
+  'no-bake',
+  ...PARTNER_ONBOARD_LEAVES,
 ] as const;
 export function partnerOnboardFlagDocRef(leaf: (typeof PARTNER_ONBOARD_LEAVES)[number] | string) {
   return flagDocRefAt(PARTNER_ONBOARD_SECTION, leaf);
@@ -213,4 +354,33 @@ export function complexityFloorToolFlags(): ToolFlagRef[] {
     ['smol', 'console-depth', 'cwd'],
     'bun runtime (complexity-floor)'
   );
+}
+
+/** CLI names keyed in `ALLOWED_LONG_REGISTRY` (package-script style). */
+export type AllowedLongCliName =
+  'lint-wires' | 'images:generate' | 'ops:snapshot' | 'telegram:ops' | 'partner:onboard';
+
+/**
+ * Central allowlist registry — code SSOT (not env JSON).
+ * CLIs should prefer `applyUnknownLongOptionGuard(argv, ALLOWED_LONG_REGISTRY[name], …)`.
+ */
+export const ALLOWED_LONG_REGISTRY = {
+  'lint-wires': LINT_WIRES_ALLOWED_LONG,
+  'images:generate': IMAGES_GENERATE_ALLOWED_LONG,
+  'ops:snapshot': OPS_SNAPSHOT_ALLOWED_LONG,
+  'telegram:ops': TELEGRAM_OPS_ALLOWED_LONG,
+  'partner:onboard': PARTNER_ONBOARD_ALLOWED_LONG,
+} as const satisfies Record<AllowedLongCliName, readonly string[]>;
+
+/** Apply guard using `ALLOWED_LONG_REGISTRY[cliName]`. */
+export function applyUnknownLongOptionGuardFor(
+  cliName: AllowedLongCliName,
+  argv: readonly string[],
+  opts?: { env?: EnvMap; onFail?: 'exit' | 'throw' }
+): string[] {
+  return applyUnknownLongOptionGuard(argv, ALLOWED_LONG_REGISTRY[cliName], {
+    cliName,
+    env: opts?.env,
+    onFail: opts?.onFail,
+  });
 }

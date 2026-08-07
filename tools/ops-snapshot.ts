@@ -79,10 +79,10 @@ import {
   OPS_SNAPSHOT_DOC,
   OPS_SNAPSHOT_LEAVES,
   OPS_SNAPSHOT_SECTION,
+  applyUnknownLongOptionGuardFor,
   formatFlagDocRefLine,
   opsSnapshotFlagDocRef,
   opsSnapshotToolFlags,
-  unknownLongOptionLeaves,
 } from '../lib/docs/ref-id-tool-flags.ts';
 
 /** Re-export REF:ID SSOT for registry / tests (`flagDocRef` matches bun-types-status). */
@@ -95,10 +95,17 @@ export {
   opsSnapshotToolFlags,
 };
 
-const argv = Bun.argv.slice(2);
+/**
+ * Parse CLI argv only when this file is the entrypoint.
+ * Importing for `flagDocRef` re-exports must not run guards against `bun test` argv
+ * (would `process.exit(2)` on Bun's own long options).
+ */
+let argv: string[] = [];
+if (import.meta.main) {
+  argv = Bun.argv.slice(2);
 
-if (argv.includes('--help') || argv.includes('-h')) {
-  console.log(`ops:snapshot — registry bake for Pages + local portal
+  if (argv.includes('--help') || argv.includes('-h')) {
+    console.log(`ops:snapshot — registry bake for Pages + local portal
 
 Usage:
   bun run ops:snapshot [options]
@@ -126,17 +133,10 @@ Seed block (when DB empty / demo) — REF:ID (${OPS_SNAPSHOT_DOC} §${OPS_SNAPSH
 
 See: ${OPS_SNAPSHOT_DOC}
 `);
-  process.exit(0);
-}
-
-{
-  const unknown = unknownLongOptionLeaves(argv, OPS_SNAPSHOT_ALLOWED_LONG);
-  if (unknown.length) {
-    console.error(
-      `unknown flag(s): ${unknown.map(u => `--${u}`).join(', ')} (see REF:ID §${OPS_SNAPSHOT_SECTION} · --help)`
-    );
-    process.exit(2);
+    process.exit(0);
   }
+
+  argv = applyUnknownLongOptionGuardFor('ops:snapshot', argv);
 }
 
 const outIdx = argv.indexOf('--out');
