@@ -159,6 +159,7 @@ bun run docs:refid:check
 | `seat:desk` | `field` · `force-new` · `no-pin` · `no-publish` · `post` · `json` · `template` · `intake-only` · `rails-only` · `thread-id` | [`tools/seat-desk-cli.ts`](../../tools/seat-desk-cli.ts) |
 | `packages:metafile-audit` | json · md · diff · out · glob · full-metafile · include-tests · cross-check · map · bake · shallow · apply-actions · dry-run · vault · vault-gap · env · no-pkg-json · strict · strict-actions (19) | [`tools/packages-metafile-audit.ts`](../../tools/packages-metafile-audit.ts) |
 | `harness:violations` | `json` · `open` · `path` · `rule` · `legacy-brands` · `limit` | [`tools/harness-violations.ts`](../../tools/harness-violations.ts) |
+| `portal:cli` | doctor · scanner · snapshot · graph · secret · flags · bunfig (union; ~50 leaves) | [`tools/portal-cli.ts`](../../tools/portal-cli.ts) — passthrough `pm` / `secret` / `probe` skip guard; Bun exec flags peeled first |
 
 ---
 

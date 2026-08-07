@@ -43,7 +43,10 @@ describe('portal-cli badge', () => {
   test('badge rejects unknown flags', async () => {
     const { code, err } = await run(['badge', '--wat']);
     expect(code).not.toBe(0);
-    expect(err.includes('Unknown badge flag')).toBe(true);
+    // portal:cli allowlist guard runs before command-local badge filter
+    expect(
+      err.includes('Unknown long option(s) in portal:cli') || err.includes('Unknown badge flag')
+    ).toBe(true);
   });
 });
 

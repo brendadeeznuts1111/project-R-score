@@ -209,6 +209,12 @@ const cases: Case[] = [
     expectExit: [2],
     stdoutOrStderrIncludes: ['❌ Unknown long option(s) in harness:violations: --typo'],
   },
+  {
+    name: 'portal:cli unknown',
+    cmd: ['bun', 'tools/portal-cli.ts', 'doctor', '--typo'],
+    expectExit: [2],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in portal:cli: --typo'],
+  },
 ];
 
 function okExit(expect: Case['expectExit'], code: number): boolean {

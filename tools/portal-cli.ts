@@ -71,10 +71,19 @@ import {
 } from './lib/portal-cli-bun-flags.ts';
 import { bunSpawnArgs, isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { dispatchScanner } from './lib/portal-cli-scanner.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { cliOut } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  PORTAL_CLI_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
+
+export { PORTAL_CLI_ALLOWED_LONG };
 
 /** Bun runtime flags harvested from argv (before portal-cli command). */
 let bunExecFlags: string[] = [];
+
+/** Commands that forward remaining flags to another binary (skip portal allowlist). */
+const PORTAL_CLI_PASSTHROUGH = new Set(['pm', 'secret', 'probe']);
 
 const SNAPSHOT_HELP = `Usage: portal-cli snapshot <subcommand> [options]
 
@@ -1039,9 +1048,8 @@ async function dispatchCapabilities(sub: string | undefined, rest: string[]): Pr
 
   if (sub === 'doctor') {
     const { joinPath } = await import('../lib/path-bun.ts');
-    const { formatCapabilityDoctorHuman, runCapabilityDoctor } = await import(
-      '../lib/portal/capability-doctor.ts'
-    );
+    const { formatCapabilityDoctorHuman, runCapabilityDoctor } =
+      await import('../lib/portal/capability-doctor.ts');
     const root = joinPath(import.meta.dir, '..');
     const bunOnly = rest.includes('--bun-only');
     // @see https://bun.com/docs/runtime/utils#bun-nanoseconds
@@ -1095,8 +1103,18 @@ async function main(): Promise<void> {
   // Harvest Bun runtime flags before portal-cli command (docs/runtime general options).
   const parsed = parseBunExecutionFlags(Bun.argv.slice(2));
   bunExecFlags = parsed.bunFlags;
-  const argv = parsed.rest;
+  let argv = parsed.rest;
   const cmd = argv[0];
+
+  // Unknown long-option guard (harness allowlist) — not applied to passthrough cmds.
+  // `pm graph` is FactoryWager-owned; other `pm *` / secret / probe skip.
+  if (cmd === 'pm' && argv[1] === 'graph') {
+    const head = argv.slice(0, 2);
+    const rest = applyUnknownLongOptionGuardFor('portal:cli', argv.slice(2));
+    argv = [...head, ...rest];
+  } else if (cmd && !PORTAL_CLI_PASSTHROUGH.has(cmd) && cmd !== 'help') {
+    argv = applyUnknownLongOptionGuardFor('portal:cli', argv);
+  }
 
   if (!cmd || cmd === 'help' || cmd === '--help' || cmd === '-h') {
     usage();
@@ -1219,7 +1237,7 @@ Related: portal-cli --help · portal-cli doctor --group catalog
         flags: all ? catalog : catalog.filter(r => r.curated),
         health,
       };
-      jsonOut(report);
+      cliOut(report, { json: true });
     } else {
       console.log(formatRuntimeFlagsTable({ all, verbose, catalog }));
     }
@@ -1343,7 +1361,7 @@ Related: vault health · capabilities · scanner · flags · install:verify
       }
     }
     if (argv.includes('--json')) {
-      jsonOut(report);
+      cliOut(report, { json: true });
     } else if (verbose) {
       console.log(formatPortalDoctorVerbose(report, { format }));
     } else {

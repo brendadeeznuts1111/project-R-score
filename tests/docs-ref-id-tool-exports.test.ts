@@ -156,11 +156,13 @@ describe('in-tool flagDocRef re-exports', () => {
       'seat:desk',
       'packages:metafile-audit',
       'harness:violations',
+      'portal:cli',
     ] as const;
     for (const key of batch2) {
       expect(ALLOWED_LONG_REGISTRY[key].length).toBeGreaterThan(0);
     }
-    expect(Object.keys(ALLOWED_LONG_REGISTRY).length).toBeGreaterThanOrEqual(29);
+    expect(Object.keys(ALLOWED_LONG_REGISTRY).length).toBeGreaterThanOrEqual(30);
+    expect(ALLOWED_LONG_REGISTRY['portal:cli'].length).toBeGreaterThan(40);
     // bun:pr:verify must include --diff (behavior-diff vs installed Bun)
     expect([...ALLOWED_LONG_REGISTRY['bun:pr:verify']]).toContain('diff');
   });
