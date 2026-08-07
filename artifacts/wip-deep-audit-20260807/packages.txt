@@ -1,0 +1,44 @@
+== audit:packages:json ==
+exit:0
+keys [
+  "schemaVersion", "kind", "generatedAt", "bunVersion", "root", "glob", "target", "score", "grade",
+  "scanned", "entrypoints", "entrypointKinds", "buildSuccess", "logCount", "leaves", "entrypointRoots",
+  "orphans", "externalInputs", "cycles", "hubs"
+]
+{
+  schemaVersion: 13,
+  kind: "packages-metafile-audit",
+  generatedAt: "2026-08-07T10:07:48.647Z",
+  bunVersion: "1.3.14",
+  root: ".",
+  glob: "packages/*/src/**/*.{ts,tsx}",
+  target: "bun",
+  score: 100,
+  grade: "healthy",
+  scanned: 51,
+  entrypoints: [
+    "packages/bun-release-contracts/src/cli.ts",
+    "packages/bun-release-contracts/src/index.ts",
+    "packages/business/src/index.ts", "packages/docs-tools/src/index.ts",
+    "packages/guards/src/index.ts", "packages/p2p/src/index.ts",
+    "packages/partners/src/adapters/index.ts",
+    "packages/partners/src/boundary/index.ts",
+    "packages/partners/src/compatibility/index.ts",
+    "packages/partners/src/core/index.ts", "packages/partners/src/index.ts",
+    "packages/partners/src/portal/index.ts",
+    "packages/registry-client/src/index.ts",
+    "packages/rip/src/cli.ts", "packages/rip/src/index.ts",
+    "packages/shade-pipeline/src/index.ts"
+  ],
+  entrypointKinds: {
+    "packages/registry-client/src/index.ts": "index",
+    "packages/guards/src/index.ts": "index",
+    "packages/docs-tools/src/index.ts": "index",
+    "packages/p2p/src/index.ts": "index",
+    "packages/partners/src/index.ts": "index",
+    "packages/partners/src/adapters/index.ts": "index",
+    "packages/partners/src/boundary/index.ts": "index",
+    "packages/partners/src/core/index.ts": "index",
+    "packages/partners/src/portal/index.ts": "index",
+    "packages/partners/src/compatibility/index.ts": "index",
+    "packages/business/src/index.ts": "ind

@@ -1,0 +1,42 @@
+== ops:audit:deep ==
+exit:0
+    avg_mov: 0.048892,
+    win_rate: 0.533333,
+    rlm: 12,
+    flags: [ "neutral", "high_rlm" ],
+  }, {
+    bookmaker: "fonbet",
+    total: 30,
+    avg_mov: -0.153409,
+    win_rate: 0.533333,
+    rlm: 12,
+    flags: [ "neutral", "high_rlm" ],
+  }, {
+    bookmaker: "pinnacle",
+    total: 30,
+    avg_mov: 0.06516,
+    win_rate: 0.533333,
+    rlm: 12,
+    flags: [ "neutral", "high_rlm" ],
+  }
+]
+
+🔍 ZIP clusters (deep):
+[
+  {
+    zip_prefix: "084",
+    total_plays: 4,
+    win_rate: 0.5,
+    avg_clv: -0.006520285690203298,
+  }, {
+    zip_prefix: "071",
+    total_plays: 4,
+    win_rate: 0.5,
+    avg_clv: 0.20903760173823693,
+  }, {
+    zip_prefix: "070",
+    total_plays: 4,
+    win_rate: 0.5,
+    avg_clv: -0.019745618454180658,
+  }
+]

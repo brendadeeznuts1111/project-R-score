@@ -1,0 +1,10 @@
+$ bun tools/audit-catalog.ts list
+harness-day-loop	AuditConcept	docs/audit/concepts/harness-day-loop.md	Harness day-loop scripts
+jacobian-nullspace	AuditConcept	docs/audit/concepts/jacobian-nullspace.md	Jacobian nullspace
+kalshi-shortlist-diversity	AuditConcept	docs/audit/concepts/kalshi-shortlist-diversity.md	Kalshi bot shortlist diversity constraints
+nagata-map	AuditConcept	docs/audit/concepts/nagata-map.md	Nagata map
+sha3-integrity	AuditConcept	docs/audit/concepts/sha3-integrity.md	SHA3 evidence integrity
+kalshi-repo-octagonai-kalshi-trading-bot-cli	AuditFinding	confirmed	docs/audit/findings/kalshi-repo-octagonai-kalshi-trading-bot-cli.md	Kalshi bot candidate: OctagonAI/kalshi-trading-bot-cli
+kalshi-repo-openfi-dao-kalshi-trading-bot	AuditFinding	confirmed	docs/audit/findings/kalshi-repo-openfi-dao-kalshi-trading-bot.md	Kalshi bot candidate: openfi-dao/kalshi-trading-bot
+kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot	AuditFinding	confirmed	docs/audit/findings/kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot.md	Kalshi bot candidate: RichardFeynmanEnthusiast/kalshi-polymarket-arbitrage-bot
+sample-fiber-demo-2026-07-21	AuditFinding	confirmed	docs/audit/findings/sample-fiber-demo-2026-07-21.md	Synthetic Nagata-type fiber in demo risk scores

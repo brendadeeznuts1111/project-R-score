@@ -242,7 +242,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   { term: 'bun test', path: 'test', description: 'Built-in test runner (bun:test)' },
   {
     term: '--isolate',
-    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    path: 'test/parallel#isolate',
     description:
       'bun test: run each test file in a fresh global environment within the same process (drain microtasks, close sockets, cancel timers, kill subprocesses). VM transpilation cache keeps shared deps parsed once.',
     minVersion: '1.3.13',
@@ -251,7 +251,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: 'bun test --isolate',
-    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    path: 'test/parallel#isolate',
     description:
       'bun test: run each test file in a fresh global environment within the same process. Shared deps reuse a VM-level transpilation cache. Implied by --parallel workers.',
     minVersion: '1.3.13',
@@ -260,7 +260,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: '--parallel',
-    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    path: 'test/parallel#parallel',
     description:
       'bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers auto --isolate; console buffered per file. ≠ bun run --parallel (Foreman scripts — pm/filter#parallel-and-sequential-mode). FactoryWager NOTE: docs/guides/bun-test-flags-1.3.13.md',
     minVersion: '1.3.13',
@@ -277,7 +277,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: 'bun test --parallel',
-    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    path: 'test/parallel#parallel',
     description:
       'Parallel workers for test files (work-stealing queue, atomic per-file console flush). Sets JEST_WORKER_ID and BUN_TEST_WORKER_ID. Callout: ≠ bun run --parallel — that is workspace Foreman mode at pm/filter#parallel-and-sequential-mode.',
     minVersion: '1.3.13',
@@ -293,7 +293,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: 'bun test flags',
-    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    path: 'test/parallel#parallel',
     description:
       'v1.3.13 NOTE family: --isolate, --parallel, --shard, --changed. Scannable TOC + fences: docs/guides/bun-test-flags-1.3.13.md. Day-loop wrappers: docs/harness/day-loop.md.',
     minVersion: '1.3.13',
@@ -302,7 +302,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: '--shard',
-    path: 'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
+    path: 'test/parallel#one-timings-file-per-shard',
     description:
       'bun test --shard=M/N: split test files across CI jobs (1-based, round-robin by sorted path). Empty shards exit 0. Composes with --changed and --randomize.',
     minVersion: '1.3.13',
@@ -311,7 +311,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: '--shard=M/N',
-    path: 'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
+    path: 'test/parallel#one-timings-file-per-shard',
     description:
       'Split bun test files across CI runners (Jest/Vitest/Playwright syntax). Index is 1-based; invalid inputs like 0/3 exit non-zero.',
     minVersion: '1.3.13',
@@ -320,7 +320,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: 'bun test --shard',
-    path: 'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
+    path: 'test/parallel#one-timings-file-per-shard',
     description:
       'Split bun test files across CI jobs with --shard=M/N (sorted paths, round-robin).',
     minVersion: '1.3.13',
@@ -356,7 +356,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: '--parallel=N',
-    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    path: 'test/parallel#parallel',
     description:
       'bun test --parallel=N: cap worker processes at N (default CPU count). Workers auto-enable --isolate.',
     minVersion: '1.3.13',

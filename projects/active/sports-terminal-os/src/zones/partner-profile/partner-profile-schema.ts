@@ -199,6 +199,7 @@ export const ProfileTelegramSchema = z.object({
   alert_stake_minimum: z.number().min(0).default(0),
   alert_types: z.array(z.string()).default([]),
   admin_bot_token_env: z.string().default("TELEGRAM_BOT_TOKEN"),
+  admin_chat_id_env: z.string().default("TELEGRAM_CHAT_ID"),
 });
 
 // ---------------------------------------------------------------------------

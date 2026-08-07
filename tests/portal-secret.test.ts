@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/test — bun:test
 // @see https://bun.com/docs/test/index#run-tests — bun:test
-// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
+// @see https://bun.com/docs/test/parallel#parallel — --parallel
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write

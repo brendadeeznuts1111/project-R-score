@@ -1,0 +1,752 @@
+{
+  "generatedAt": "2026-08-07T10:08Z",
+  "worktrees": [
+    {
+      "branch": "codex/partner-integration-observations-20260806",
+      "path": "/Users/nolarose/Projects/.codex-worktrees/partner-integrations",
+      "ahead": 19,
+      "behind": 61,
+      "dirty": 0,
+      "commits": [
+        "1655747b4 (origin/codex/partner-integration-observations-20260806, codex/partner-integration-observations-20260806) feat(partners): map docs to domains and portal",
+        "889ae667d test(docs): align REF links and parser slug",
+        "7a1a4bf2d fix(security): pin patched js yaml",
+        "5c09cc9f1 fix(cli): stream bun types status json",
+        "1c4fff820 docs(wiki): normalize console depth link",
+        "a4f92c507 chore(bake): refresh partner surface inventory",
+        "60d595761 docs(partners): map Kalshi out id boundary",
+        "50fb0a38c fix(harness): govern workspace and cron proofs"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "19 ahead / 61 behind \u2014 rebase required before review"
+    },
+    {
+      "branch": "feat/partner-surface-inventory-docs",
+      "path": "/Users/nolarose/Projects/.worktrees/partner-brand-bag-links",
+      "ahead": 4,
+      "behind": 98,
+      "dirty": 0,
+      "commits": [
+        "061085e49 (origin/feat/partner-surface-inventory-docs, feat/partner-surface-inventory-docs) feat(docs): generate partner-surface inventory tables from linking metadata",
+        "c4494cd98 fix(docs): brand-ok partner-surface inventory DTO keys for check:brands",
+        "10ad6b391 chore(bake): partner-surface-inventory brand linking metadata",
+        "191f8cab3 feat(docs): brand-bag linking metadata for domain/registry cross-checks"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "4 ahead / 98 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/partner-inventory-wire-lint",
+      "path": "/Users/nolarose/Projects/.worktrees/partner-inventory-wire-lint",
+      "ahead": 4,
+      "behind": 100,
+      "dirty": 0,
+      "commits": [
+        "6aeb50b32 (origin/feat/partner-inventory-wire-lint, feat/partner-inventory-wire-lint) feat(docs): default lint-wires with no args to --hlp",
+        "b6dcc06f6 feat(docs): add --hlp/--why/--document flags to lint-wires",
+        "0eee49b1c feat(docs): harden wire-trap lint with glob coverage and report table",
+        "74ef638a8 feat(docs): inventory-aware naked partnerId wire lint (Layer C)"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "4 ahead / 100 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/partner-wire-lint-generic",
+      "path": "/Users/nolarose/Projects/.worktrees/partner-wire-lint-generic",
+      "ahead": 3,
+      "behind": 92,
+      "dirty": 0,
+      "commits": [
+        "aef908160 (origin/feat/partner-wire-lint-generic, feat/partner-wire-lint-generic) feat(docs): portal hrefs for partner domains, brands, and desk codes",
+        "f2a92a141 feat(docs): deepen Layer C wire lint with --rules/--fix and bag checks",
+        "5046d0648 feat(docs): inventory-driven wire lint rules for partnerId and OutId"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "3 ahead / 92 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "codex/bun-release-contracts-hardened-20260806",
+      "path": "/private/tmp/project-r-bun-release-contracts-delivery",
+      "ahead": 2,
+      "behind": 52,
+      "dirty": 0,
+      "commits": [
+        "b095f90e3 (codex/bun-release-contracts-hardened-20260806) docs(bun): define contract publisher boundary",
+        "71784acb2 feat(bun): harden release contract inventory"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "2 ahead / 52 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "codex/partner-cli-snapshot-ci-20260806",
+      "path": "/Users/nolarose/Projects/.codex-worktrees/partner-cli-snapshots",
+      "ahead": 2,
+      "behind": 54,
+      "dirty": 0,
+      "commits": [
+        "1ddc35a5d (codex/partner-cli-snapshot-ci-20260806) fix(docs): restore wiki link gate",
+        "88c24dcdd ci(bun): gate partner CLI snapshots"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "2 ahead / 54 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/partner-surface-deeper",
+      "path": "/Users/nolarose/Projects/.worktrees/partner-surface-deeper",
+      "ahead": 2,
+      "behind": 86,
+      "dirty": 0,
+      "commits": [
+        "60544ecaa (origin/feat/partner-surface-deeper, feat/partner-surface-deeper) docs(lib): map partner-surface-fitness-evidence in docs Area",
+        "4f1fbca4c feat(inventory): live-derive partner-code rows + fitness evidence"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "2 ahead / 86 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/partner-brand-lifecycle",
+      "path": "/Users/nolarose/Projects/.worktrees/partner-brand-lifecycle",
+      "ahead": 2,
+      "behind": 91,
+      "dirty": 0,
+      "commits": [
+        "71959c69a (origin/feat/partner-brand-lifecycle, feat/partner-brand-lifecycle) fix(inventory): brand-ok opaque ruleId on WireTrapHit",
+        "f6cd73ba4 feat(inventory): brand lifecycle fields + reference warns + docs status"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "2 ahead / 91 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/partner-surface-docs-layer-d",
+      "path": "/Users/nolarose/Projects/.worktrees/partner-surface-docs-layer-d",
+      "ahead": 2,
+      "behind": 97,
+      "dirty": 0,
+      "commits": [
+        "f3758b177 (origin/feat/partner-surface-docs-layer-d, feat/partner-surface-docs-layer-d) feat(docs): partner-surface Layer D domain isolation lint",
+        "1c508fd86 feat(docs): generate partner-surface inventory tables from linking metadata"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "2 ahead / 97 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "fix/lane-status-tdz-20260807",
+      "path": "/Users/nolarose/Projects/.worktrees/lane-status-tdz",
+      "ahead": 1,
+      "behind": 0,
+      "dirty": 0,
+      "commits": [
+        "832c6befe (fix/lane-status-tdz-20260807) fix(tools): resolve lane-status argv TDZ before JSON_MODE"
+      ],
+      "bucket": "promote",
+      "reason": "lane-status TDZ fix committed; ready for PR"
+    },
+    {
+      "branch": "feat/bun-strip-unknown",
+      "path": "/Users/nolarose/Projects/.worktrees/github-global-constants",
+      "ahead": 1,
+      "behind": 42,
+      "dirty": 0,
+      "commits": [
+        "c0792fb3c (origin/feat/bun-strip-unknown, feat/bun-strip-unknown) feat(docs): BUN_STRIP_UNKNOWN toggles + ALLOWED_LONG_REGISTRY"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 42 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "codex/enhanced-ci-ssot-20260806",
+      "path": "/Users/nolarose/Projects/.codex-worktrees/enhanced-ci-ssot",
+      "ahead": 1,
+      "behind": 50,
+      "dirty": 0,
+      "commits": [
+        "91c118456 (codex/enhanced-ci-ssot-20260806) feat(ci): enforce Bun snapshot and flag contracts"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 50 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "codex/fix-capability-table-20260806",
+      "path": "/Users/nolarose/Projects/.codex-worktrees/fix-capability-table",
+      "ahead": 1,
+      "behind": 51,
+      "dirty": 0,
+      "commits": [
+        "c3b5b34dd (codex/fix-capability-table-20260806) fix(docs): restore capability table SSOT"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 51 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/refid-project-coverage",
+      "path": "/Users/nolarose/Projects/.worktrees/refid-contract-help",
+      "ahead": 1,
+      "behind": 59,
+      "dirty": 4,
+      "commits": [
+        "03e58e438 (feat/refid-project-coverage) feat(docs): REF:ID coverage planes + project discovery (portal \u00b7 domain)"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 59 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "codex/bun-release-contracts-enhance-20260806",
+      "path": "/private/tmp/project-r-bun-release-contracts-enhance",
+      "ahead": 1,
+      "behind": 62,
+      "dirty": 11,
+      "commits": [
+        "5478b18b8 (codex/bun-release-contracts-enhance-20260806) feat(bun): harden release contract inventory"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 62 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/bun-docs-parser-options-2",
+      "path": "/Users/nolarose/Projects/.worktrees/bun-docs-parser-options-2",
+      "ahead": 1,
+      "behind": 67,
+      "dirty": 0,
+      "commits": [
+        "3b887768f (origin/feat/bun-docs-parser-options-2, feat/bun-docs-parser-options-2) fix(docs): point parser-options-2 at Bun react heading slug"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 67 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/doc-refid-placement",
+      "path": "/Users/nolarose/Projects/.worktrees/doc-refid-deeper",
+      "ahead": 1,
+      "behind": 71,
+      "dirty": 0,
+      "commits": [
+        "b68ec4ad0 (origin/feat/doc-refid-placement, feat/doc-refid-placement) feat(docs): REF:ID section placement + comment\u2194anchor sync"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 71 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/bun-types-ref-href",
+      "path": "/Users/nolarose/Projects/.worktrees/bun-types-ref-href",
+      "ahead": 1,
+      "behind": 74,
+      "dirty": 0,
+      "commits": [
+        "ff84d218f (origin/feat/bun-types-ref-href, feat/bun-types-ref-href) feat(bun-types): REF:ID matches design-doc \u00a74.1 hrefs"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 74 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/bun-types-status",
+      "path": "/Users/nolarose/Projects/.worktrees/bun-types-status",
+      "ahead": 1,
+      "behind": 78,
+      "dirty": 0,
+      "commits": [
+        "102e1d2d1 (origin/feat/bun-types-status, feat/bun-types-status) feat(bun-types): morning status dashboard composing tip + usage"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 78 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "docs/bun-types-pipeline",
+      "path": "/Users/nolarose/Projects/.worktrees/partner-surface-doc-tables",
+      "ahead": 1,
+      "behind": 80,
+      "dirty": 0,
+      "commits": [
+        "68937a542 (origin/docs/bun-types-pipeline, docs/bun-types-pipeline) docs(design): Bun-types inventory pipeline map (vs partner-surface)"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 80 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/partner-surface-outs",
+      "path": "/Users/nolarose/Projects/.worktrees/partner-surface-outs",
+      "ahead": 1,
+      "behind": 84,
+      "dirty": 0,
+      "commits": [
+        "ffb163a89 (origin/feat/partner-surface-outs, feat/partner-surface-outs) feat(inventory): live-derive OutId rows + mint module evidence"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 84 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/partner-surface-fitness",
+      "path": "/Users/nolarose/Projects/.worktrees/partner-surface-fitness",
+      "ahead": 1,
+      "behind": 87,
+      "dirty": 0,
+      "commits": [
+        "df2fac1ea (origin/feat/partner-surface-fitness, feat/partner-surface-fitness) feat(inventory): brand fitness scores + partner-code aspect rows"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 87 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/partner-domain-lint-precommit",
+      "path": "/Users/nolarose/Projects/.worktrees/partner-domain-lint-precommit",
+      "ahead": 1,
+      "behind": 88,
+      "dirty": 0,
+      "commits": [
+        "528df6cd8 (origin/feat/partner-domain-lint-precommit, feat/partner-domain-lint-precommit) feat(harness): path-gate partner-surface Layer D domain lint in pre-commit"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 88 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/partner-inventory-precommit",
+      "path": "/Users/nolarose/Projects/.worktrees/partner-inventory-precommit",
+      "ahead": 1,
+      "behind": 99,
+      "dirty": 0,
+      "commits": [
+        "76474a83c (origin/feat/partner-inventory-precommit, feat/partner-inventory-precommit) feat(harness): path-gate partner-surface wire lint in pre-commit"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 99 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "feat/partner-inventory-registry-tighten",
+      "path": "/Users/nolarose/Projects/.worktrees/partner-inventory-registry-tighten",
+      "ahead": 1,
+      "behind": 103,
+      "dirty": 0,
+      "commits": [
+        "0b2017909 (origin/feat/partner-inventory-registry-tighten, feat/partner-inventory-registry-tighten) feat(docs): Layer B registry bag checks against baked JSON"
+      ],
+      "bucket": "rebase-then-rejudge",
+      "reason": "1 ahead / 103 behind \u2014 stale vs main"
+    },
+    {
+      "branch": "main",
+      "path": "/Users/nolarose/Projects",
+      "ahead": 0,
+      "behind": 0,
+      "dirty": 20,
+      "commits": [],
+      "bucket": "keep-quarantine",
+      "reason": "primary checkout"
+    },
+    {
+      "branch": "feat/portal-tokens-cli-20260807",
+      "path": "/Users/nolarose/Projects/.worktrees/portal-tokens-cli-20260807",
+      "ahead": 0,
+      "behind": 2,
+      "dirty": 9,
+      "commits": [],
+      "bucket": "keep-quarantine",
+      "reason": "no unique commits; dirty worktree only"
+    },
+    {
+      "branch": "feat/bunfig-junit-reporter",
+      "path": "/Users/nolarose/Projects/.worktrees/bunfig-junit-reporter",
+      "ahead": 0,
+      "behind": 38,
+      "dirty": 12,
+      "commits": [],
+      "bucket": "keep-quarantine",
+      "reason": "no unique commits; dirty worktree only"
+    }
+  ],
+  "stashes": [
+    {
+      "ref": "stash@{0}",
+      "msg": "On agent/partner-dashboard-rebase-20260806: partner out-capabilities WIP after untracked quarantine",
+      "stat": " 2 files changed, 2 insertions(+)",
+      "bucket": "drop/archive",
+      "reason": "barrel exports already present on main (or superseded)",
+      "nfiles": 2
+    },
+    {
+      "ref": "stash@{1}",
+      "msg": "On agent/partner-dashboard-rebase-20260806: partner-dashboard WIP dirty 20260806",
+      "stat": " 10 files changed, 297 insertions(+), 61 deletions(-)",
+      "bucket": "drop/archive",
+      "reason": "partner-dashboard plan markers appear present on main",
+      "nfiles": 10
+    },
+    {
+      "ref": "stash@{2}",
+      "msg": "On docs/wiki-index-coverage: quarantine: docs/wiki-index-coverage before worktree prune 2026-08-06",
+      "stat": " 10 files changed, 221 insertions(+), 148 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "worktree-prune quarantine",
+      "nfiles": 10
+    },
+    {
+      "ref": "stash@{3}",
+      "msg": "On chore/tennis-board-bake-close: quarantine: chore/tennis-board-bake-close before worktree prune 2026-08-06",
+      "stat": "",
+      "bucket": "keep-quarantine",
+      "reason": "worktree-prune quarantine",
+      "nfiles": 0
+    },
+    {
+      "ref": "stash@{4}",
+      "msg": "On feat/partner-profiles-migration: quarantine: feat/partner-profiles-migration before worktree prune 2026-08-06",
+      "stat": " 2 files changed, 223 insertions(+), 5 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "worktree-prune quarantine",
+      "nfiles": 2
+    },
+    {
+      "ref": "stash@{5}",
+      "msg": "On chore/partner-materialize: quarantine: chore/partner-materialize before worktree prune 2026-08-06",
+      "stat": " 2 files changed, 283 insertions(+), 43 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "worktree-prune quarantine",
+      "nfiles": 2
+    },
+    {
+      "ref": "stash@{6}",
+      "msg": "On demo/partner-ledger-demo: quarantine: demo/partner-ledger-demo before worktree prune 2026-08-06",
+      "stat": " 2 files changed, 428 insertions(+), 52 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "worktree-prune quarantine",
+      "nfiles": 2
+    },
+    {
+      "ref": "stash@{7}",
+      "msg": "On (no branch): quarantine: detached main-tip before worktree prune 2026-08-06",
+      "stat": " 1 file changed, 4 insertions(+), 4 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "worktree-prune quarantine",
+      "nfiles": 1
+    },
+    {
+      "ref": "stash@{8}",
+      "msg": "On fix/issue-meta-domain-links: quarantine: fix/issue-meta-domain-links before worktree prune 2026-08-06",
+      "stat": " 30 files changed, 311 insertions(+), 53 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "worktree-prune quarantine",
+      "nfiles": 30
+    },
+    {
+      "ref": "stash@{9}",
+      "msg": "On codex/full-lib-domain-dashboard-review: codex-full-lib-review-rebase",
+      "stat": " 48 files changed, 1103 insertions(+), 1018 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "legacy stash",
+      "nfiles": 48
+    },
+    {
+      "ref": "stash@{10}",
+      "msg": "On chore/tennis-tip-update: foreign portal-ui lane (not tennis tip) 2026-08-05",
+      "stat": " 21 files changed, 4808 insertions(+), 580 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "foreign lane dirt",
+      "nfiles": 21
+    },
+    {
+      "ref": "stash@{11}",
+      "msg": "On main: cleanup-stash-20260805",
+      "stat": " 1 file changed, 14 insertions(+), 2 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "legacy stash",
+      "nfiles": 1
+    },
+    {
+      "ref": "stash@{12}",
+      "msg": "On main: lane-noise-before-bun-pin-main",
+      "stat": " 1 file changed, 68 insertions(+), 53 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "legacy stash",
+      "nfiles": 1
+    },
+    {
+      "ref": "stash@{13}",
+      "msg": "autostash",
+      "stat": " 5 files changed, 292 insertions(+), 107 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "autostash noise",
+      "nfiles": 5
+    },
+    {
+      "ref": "stash@{14}",
+      "msg": "On chore/bookmakers-publish-0.4: dod-go-quarantine-104331",
+      "stat": "",
+      "bucket": "keep-quarantine",
+      "reason": "worktree-prune quarantine",
+      "nfiles": 0
+    },
+    {
+      "ref": "stash@{15}",
+      "msg": "On main: factory-handshake-wip-cont",
+      "stat": " 34 files changed, 1694 insertions(+), 485 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "named WIP without active PR owner",
+      "nfiles": 34
+    },
+    {
+      "ref": "stash@{16}",
+      "msg": "On main: wip quarantine during pr331 review",
+      "stat": " 11 files changed, 430 insertions(+), 196 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "worktree-prune quarantine",
+      "nfiles": 11
+    },
+    {
+      "ref": "stash@{17}",
+      "msg": "autostash",
+      "stat": " 42 files changed, 3084 insertions(+), 572 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "autostash noise",
+      "nfiles": 42
+    },
+    {
+      "ref": "stash@{18}",
+      "msg": "On main: factory-handshake-wip-pre-rebase",
+      "stat": " 42 files changed, 3084 insertions(+), 572 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "named WIP without active PR owner",
+      "nfiles": 42
+    },
+    {
+      "ref": "stash@{19}",
+      "msg": "On (no branch): rebase-unstaged-wip",
+      "stat": " 16 files changed, 645 insertions(+), 222 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "named WIP without active PR owner",
+      "nfiles": 16
+    },
+    {
+      "ref": "stash@{20}",
+      "msg": "On (no branch): rebase-wip",
+      "stat": " 9 files changed, 807 insertions(+), 53 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "named WIP without active PR owner",
+      "nfiles": 9
+    },
+    {
+      "ref": "stash@{21}",
+      "msg": "On codex/full-ui-performance-audit: full-ui-performance-audit rebase 2026-08-05",
+      "stat": " 8 files changed, 47 insertions(+), 21 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "legacy stash",
+      "nfiles": 8
+    },
+    {
+      "ref": "stash@{22}",
+      "msg": "autostash",
+      "stat": " 6 files changed, 347 insertions(+), 10 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "autostash noise",
+      "nfiles": 6
+    },
+    {
+      "ref": "stash@{23}",
+      "msg": "On main: primary-foreign-wip-202608050418",
+      "stat": " 2 files changed, 124 insertions(+), 16 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "foreign lane dirt",
+      "nfiles": 2
+    },
+    {
+      "ref": "stash@{24}",
+      "msg": "autostash",
+      "stat": " 38 files changed, 1435 insertions(+), 489 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "autostash noise",
+      "nfiles": 38
+    },
+    {
+      "ref": "stash@{25}",
+      "msg": "On main: wip: packages-graph-glance lane (pre raise-bar continue)",
+      "stat": " 54 files changed, 4745 insertions(+), 6897 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "named WIP without active PR owner",
+      "nfiles": 54
+    },
+    {
+      "ref": "stash@{26}",
+      "msg": "On main: packages-pm-health-url 2026-08-05 foreign",
+      "stat": " 3 files changed, 52 insertions(+), 13 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "foreign lane dirt",
+      "nfiles": 3
+    },
+    {
+      "ref": "stash@{27}",
+      "msg": "On main: docs-index 2026-08-05",
+      "stat": " 5 files changed, 182 insertions(+), 118 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "legacy stash",
+      "nfiles": 5
+    },
+    {
+      "ref": "stash@{28}",
+      "msg": "On main: primary-quarantine 2026-08-05 ops+tennis-assets+misc",
+      "stat": " 7 files changed, 232 insertions(+), 15 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "worktree-prune quarantine",
+      "nfiles": 7
+    },
+    {
+      "ref": "stash@{29}",
+      "msg": "autostash",
+      "stat": " 19 files changed, 626 insertions(+), 92 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "autostash noise",
+      "nfiles": 19
+    },
+    {
+      "ref": "stash@{30}",
+      "msg": "On main: wip-wrong-branch-before-surface-map",
+      "stat": " 14 files changed, 134 insertions(+), 45 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "named WIP without active PR owner",
+      "nfiles": 14
+    },
+    {
+      "ref": "stash@{31}",
+      "msg": "autostash",
+      "stat": " 3 files changed, 5 insertions(+), 3 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "autostash noise",
+      "nfiles": 3
+    },
+    {
+      "ref": "stash@{32}",
+      "msg": "On (no branch): wip package json scripts",
+      "stat": " 17 files changed, 157 insertions(+), 50 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "named WIP without active PR owner",
+      "nfiles": 17
+    },
+    {
+      "ref": "stash@{33}",
+      "msg": "On main: lane-dirt-before-workflow-polish",
+      "stat": " 1 file changed, 2 insertions(+), 2 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "legacy stash",
+      "nfiles": 1
+    },
+    {
+      "ref": "stash@{34}",
+      "msg": "On chore/deprecate-ui-semantic-hubs: lane-dirt-before-228-merge",
+      "stat": " 4 files changed, 135 insertions(+), 32 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "legacy stash",
+      "nfiles": 4
+    },
+    {
+      "ref": "stash@{35}",
+      "msg": "On main: ops-deploy-clean",
+      "stat": " 2 files changed, 494 insertions(+), 226 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "legacy stash",
+      "nfiles": 2
+    },
+    {
+      "ref": "stash@{36}",
+      "msg": "On main: ops-continue-dirty-aside",
+      "stat": " 2 files changed, 4 insertions(+), 3 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "legacy stash",
+      "nfiles": 2
+    },
+    {
+      "ref": "stash@{37}",
+      "msg": "On main: ops-continue-aside",
+      "stat": " 6 files changed, 84 insertions(+), 38 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "legacy stash",
+      "nfiles": 6
+    },
+    {
+      "ref": "stash@{38}",
+      "msg": "On main: factory-lane-exclude",
+      "stat": " 7 files changed, 62 insertions(+), 10 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "legacy stash",
+      "nfiles": 7
+    },
+    {
+      "ref": "stash@{39}",
+      "msg": "On main: wip: parallel aside for SOCKET vault commit",
+      "stat": " 84 files changed, 4403 insertions(+), 1414 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "named WIP without active PR owner",
+      "nfiles": 84
+    },
+    {
+      "ref": "stash@{40}",
+      "msg": "autostash",
+      "stat": " 47 files changed, 1697 insertions(+), 793 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "autostash noise",
+      "nfiles": 47
+    },
+    {
+      "ref": "stash@{41}",
+      "msg": "autostash",
+      "stat": " 44 files changed, 1488 insertions(+), 772 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "autostash noise",
+      "nfiles": 44
+    },
+    {
+      "ref": "stash@{42}",
+      "msg": "autostash",
+      "stat": " 52 files changed, 1568 insertions(+), 931 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "autostash noise",
+      "nfiles": 52
+    },
+    {
+      "ref": "stash@{43}",
+      "msg": "restored-after-index-shift (lib/core)",
+      "stat": " 32 files changed, 423 insertions(+), 101 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "legacy stash",
+      "nfiles": 32
+    },
+    {
+      "ref": "stash@{44}",
+      "msg": "On main: other-lanes-while-monorepo-commit",
+      "stat": " 57 files changed, 1548 insertions(+), 267 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "legacy stash",
+      "nfiles": 57
+    },
+    {
+      "ref": "stash@{45}",
+      "msg": "On main: wip-parallel",
+      "stat": " 55 files changed, 1235 insertions(+), 321 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "named WIP without active PR owner",
+      "nfiles": 55
+    },
+    {
+      "ref": "stash@{46}",
+      "msg": "On main: telegram-parallel-wip",
+      "stat": " 2 files changed, 857 insertions(+), 4 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "named WIP without active PR owner",
+      "nfiles": 2
+    },
+    {
+      "ref": "stash@{47}",
+      "msg": "On main: telegram-wip-2",
+      "stat": " 7 files changed, 304 insertions(+), 9 deletions(-)",
+      "bucket": "keep-quarantine",
+      "reason": "named WIP without active PR owner",
+      "nfiles": 7
+    }
+  ],
+  "summary": {
+    "worktrees": {
+      "keep-quarantine": 3,
+      "rebase-then-rejudge": 24,
+      "promote": 1
+    },
+    "stashes": {
+      "drop/archive": 2,
+      "keep-quarantine": 46
+    }
+  }
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-// @see https://bun.com/docs/runtime/file-io — Bun.write (createPath defaults true)
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write (createPath defaults true)
 import { BUN_DOCS, TYPED_ARRAY_URLS, RSS_URLS } from '../config/urls.ts';
 
 // Build script that follows Bun's native patterns

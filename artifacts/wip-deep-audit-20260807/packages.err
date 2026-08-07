@@ -1,0 +1,1 @@
+$ bun tools/packages-metafile-audit.ts --json

@@ -1,0 +1,2 @@
+$ bun tools/audit-catalog.ts verify
+✅ audit verify ok — 4 findings, 5 concepts (evidence · graph · relatedDocs · pages · orphans · catalog parity)

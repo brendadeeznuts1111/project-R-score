@@ -1,0 +1,90 @@
+$ bun tools/reference-discovery.ts --check --skip-unused --min-severity error
+reference-discovery · 83 findings
+  errors=0 warnings=2
+  [WARN ] similar-env · Similar env var names: ALERT_WEBHOOK_PORT ↔ ALERT_WEBHOOK_URL
+         repair: Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional
+  [WARN ] similar-env · Similar env var names: BUN_TYPES_CI ↔ BUN_TYPES_TIP
+         repair: Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)
+  [INFO ] naming-cluster · Similar naming cluster: pages-plane
+         canonical: factoryWagerPagesCustomUrl() · ROUTING_PROBE_BASE_URL · score.factory-wager.com
+         repair: Pages public / routing probes — not bun publish --registry
+         @ lib/reference-discovery.ts:84
+  [INFO ] naming-cluster · Similar naming cluster: registry-bucket
+         canonical: factoryRegistryBucketFromEnv() · R2_REGISTRY_BUCKET · factory-wager-registry
+         repair: R2 object store bucket — see config/r2-env.ts
+         @ lib/reference-discovery.ts:96
+  [INFO ] naming-cluster · Similar naming cluster: registry-plane
+         canonical: factoryWagerRegistryUrlFromEnv() · REGISTRY_URL · registry.factory-wager.com
+         repair: npm registry plane only — see docs/registry-client.md
+         @ lib/registry-snapshot.ts:97
+  [INFO ] similar-env · Similar env var names: AGENT_DEMO_PASS ↔ AGENT_DEMO_USER
+         repair: Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)
+  [INFO ] similar-env · Similar env var names: ALERT_WEBHOOK_URL ↔ SLACK_WEBHOOK_URL
+         repair: Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional
+  [INFO ] similar-env · Similar env var names: API_BASE_URL ↔ WIKI_BASE_URL
+         repair: Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional
+  [INFO ] similar-env · Similar env var names: AWS_BUCKET_NAME ↔ R2_BUCKET_NAME
+         repair: Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md
+  [INFO ] similar-env · Similar env var names: AWS_BUCKET_NAME ↔ S3_BUCKET_NAME
+         repair: Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md
+  [INFO ] similar-env · Similar env var names: BASELINE_SCRAPE_ALERT_THRESHOLD ↔ BASELINE_SCRAPE_ALERT_WEBHOOK
+         repair: Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)
+  [INFO ] similar-env · Similar env var names: BASELINE_SCRAPE_CRON ↔ BASELINE_SCRAPE_LIVE
+         repair: Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)
+  [INFO ] similar-env · Similar env var names: BUN_TYPES_CI ↔ BUN_TYPES_DOCS
+         repair: Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)
+  [INFO ] similar-env · Similar env var names: CAESARS_SCRAPE_COOKIE ↔ CAESARS_SCRAPE_LOCATION
+         repair: Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)
+  [INFO ] similar-env · Similar env var names: CLOUDFLARE_ACCESS_API_TOKEN ↔ CLOUDFLARE_API_TOKEN
+         repair: Cloudflare token/account policy is multi-key by design — see docs/registry-client.md §Env naming
+  [INFO ] similar-env · Similar env var names: CLOUDFLARE_ACCESS_API_TOKEN ↔ CLOUDFLARE_DNS_API_TOKEN
+         repair: Cloudflare token/account policy is multi-key by design — see docs/registry-client.md §Env naming
+  [INFO ] similar-env · Similar env var names: COMPLIANCE_MOCK_URL ↔ COMPLIANCE_URL
+         repair: Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_CATEGORY ↔ CONCEPT_AUDIT_FILTER
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_CATEGORY ↔ CONCEPT_AUDIT_SORT
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_DESC ↔ CONCEPT_AUDIT_GROUP
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_DESC ↔ CONCEPT_AUDIT_SORT
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_DESC ↔ CONCEPT_AUDIT_STRICT
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_FILTER ↔ CONCEPT_AUDIT_SORT
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_GROUP ↔ CONCEPT_AUDIT_OUTPUT
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_GROUP ↔ CONCEPT_AUDIT_SORT
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_GROUP ↔ CONCEPT_AUDIT_STRICT
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_OUTPUT ↔ CONCEPT_AUDIT_SORT
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_OUTPUT ↔ CONCEPT_AUDIT_STRICT
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_OUTPUT ↔ CONCEPT_GRAPH_OUTPUT
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_STRICT ↔ CONCEPT_METADATA_STRICT
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_AUDIT_STRICT ↔ DEEP_AUDIT_STRICT
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_DISCOVER_ACTOR ↔ CONCEPT_DISCOVER_AUTO_PROPOSE
+         repair: Confirm intentional concept CLI/graph knobs (distinct flags, not aliases); allowlist in isAllowedSimilarEnvPair if deliberate
+  [INFO ] similar-env · Similar env var names: CONCEPT_REGISTRY_DB ↔ CONCEPT_REGISTRY_PORT
+         repair: Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md
+  [INFO ] similar-env · Similar env var names: DASHBOARD_TEST_PORT ↔ DASHBOARD_TEST_PORT_RANGE
+         repair: Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional
+  [INFO ] similar-env · Similar env var names: DATABASE_PORT ↔ DATABASE_URL
+         repair: Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional
+  [INFO ] similar-env · Similar env var names: DATABASE_URL ↔ OPS_DATABASE_URL
+         repair: Port/URL pairs are often orthogonal bind targets — document or allowlist if intentional
+  [INFO ] similar-env · Similar env var names: DEEP_AUDIT_JSON ↔ DEEP_AUDIT_SEED
+         repair: Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)
+  [INFO ] similar-env · Similar env var names: DOD_DB_PATH ↔ OPS_DB_PATH
+         repair: Review whether names are true aliases (collapse) or deliberate siblings (document + allowlist in isAllowedSimilarEnvPair)
+  [INFO ] similar-env · Similar env var names: DOMAIN_REGISTRY_PATH ↔ STATIC_REGISTRY_PATH
+         repair: Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md
+  [INFO ] similar-env · Similar env var names: FW_INFRA_SECRETS_SERVICE ↔ REGISTRY_SECRETS_SERVICE
+         repair: Consolidate on config/r2-env.ts SSOT helper; document override in docs/registry-client.md
+  … 43 more (--json for full report)

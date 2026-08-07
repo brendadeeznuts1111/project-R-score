@@ -349,6 +349,27 @@ signup → materialized → active → cultivating → graduated
                         frozen / suspended / terminated
 ```
 
+### Partner Telegram Topics
+
+Partner templates declare forum topics under `[telegram]`. Provisioning requires
+both the bot token and the numeric supergroup ID named by the template:
+
+```toml
+[telegram]
+auto_create_groups = true
+admin_bot_token_env = "TELEGRAM_BOT_TOKEN"
+admin_chat_id_env = "TELEGRAM_CHAT_ID"
+```
+
+```bash
+TELEGRAM_BOT_TOKEN=... TELEGRAM_CHAT_ID=-1001234567890 bun run start
+```
+
+`autoCreateTelegramGroups()` returns one explicit `created`, `pending`, or
+`error` result per configured topic. `dispatchBySignalType()` returns `sent`,
+`skipped`, or `error` per delivery target; callers must not infer delivery from
+the absence of an exception.
+
 ## Telegram Bot Workers
 
 ```bash

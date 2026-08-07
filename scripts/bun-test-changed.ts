@@ -4,7 +4,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/test/index#run-tests — bun test
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed / --changed=REF / --watch
-// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
+// @see https://bun.com/docs/test/parallel#isolate — --isolate
+// @see https://bun.com/docs/test/parallel#parallel — --parallel
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**

@@ -1,4 +1,4 @@
-// @see https://bun.com/docs/runtime/utils — Uint8Array.toBase64 / fromBase64 / toHex / fromHex
+// @see https://bun.com/docs/runtime/binary-data — Uint8Array.toBase64 / fromBase64 / toHex / fromHex
 /**
  * Bun-native bytes codec — base64, base64url, and hex.
  *

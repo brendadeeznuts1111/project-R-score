@@ -11,7 +11,9 @@
 // @see https://bun.com/docs/test/configuration#environment-variables — .env.test · NODE_ENV=test
 // @see https://bun.com/docs/test/configuration — bunfig [test] timeout · preload · pathIgnorePatterns
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — bun test --changed
-// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel · BUN_TEST_WORKER_ID
+// @see https://bun.com/docs/test/parallel#isolate — --isolate
+// @see https://bun.com/docs/test/parallel#parallel — --parallel
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — BUN_TEST_WORKER_ID
 /**
  * Staged-scoped changed-test runner for pre-commit.
  *

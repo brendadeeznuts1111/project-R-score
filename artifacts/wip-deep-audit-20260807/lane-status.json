@@ -1,0 +1,212 @@
+{
+  "primary": {
+    "path": "/Users/nolarose/Projects/.worktrees/lane-status-tdz",
+    "branch": "fix/lane-status-tdz-20260807",
+    "head": "832c6befe",
+    "aheadOfOriginMain": 1,
+    "behindOriginMain": 0,
+    "dirtyTotal": 0,
+    "dirtyByArea": {},
+    "stagedFiles": [],
+    "bakeDriftFiles": []
+  },
+  "worktrees": [
+    {
+      "path": "~/Projects/.worktrees/partner-inventory-registry-tighten",
+      "branch": "feat/partner-inventory-registry-tighten",
+      "dirty": 0,
+      "ageHours": 15,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/partner-brand-bag-links",
+      "branch": "feat/partner-surface-inventory-docs",
+      "dirty": 0,
+      "ageHours": 14,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/partner-inventory-precommit",
+      "branch": "feat/partner-inventory-precommit",
+      "dirty": 0,
+      "ageHours": 14,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/partner-inventory-wire-lint",
+      "branch": "feat/partner-inventory-wire-lint",
+      "dirty": 0,
+      "ageHours": 14,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/partner-surface-docs-layer-d",
+      "branch": "feat/partner-surface-docs-layer-d",
+      "dirty": 0,
+      "ageHours": 14,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/partner-wire-lint-generic",
+      "branch": "feat/partner-wire-lint-generic",
+      "dirty": 0,
+      "ageHours": 14,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/bun-types-ref-href",
+      "branch": "feat/bun-types-ref-href",
+      "dirty": 0,
+      "ageHours": 13,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/bun-types-status",
+      "branch": "feat/bun-types-status",
+      "dirty": 0,
+      "ageHours": 13,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/partner-brand-lifecycle",
+      "branch": "feat/partner-brand-lifecycle",
+      "dirty": 0,
+      "ageHours": 13,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/partner-domain-lint-precommit",
+      "branch": "feat/partner-domain-lint-precommit",
+      "dirty": 0,
+      "ageHours": 13,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/partner-surface-deeper",
+      "branch": "feat/partner-surface-deeper",
+      "dirty": 0,
+      "ageHours": 13,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/partner-surface-doc-tables",
+      "branch": "docs/bun-types-pipeline",
+      "dirty": 0,
+      "ageHours": 13,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/partner-surface-fitness",
+      "branch": "feat/partner-surface-fitness",
+      "dirty": 0,
+      "ageHours": 13,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/partner-surface-outs",
+      "branch": "feat/partner-surface-outs",
+      "dirty": 0,
+      "ageHours": 13,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.codex-worktrees/partner-integrations",
+      "branch": "codex/partner-integration-observations-20260806",
+      "dirty": 0,
+      "ageHours": 12,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/bun-docs-parser-options-2",
+      "branch": "feat/bun-docs-parser-options-2",
+      "dirty": 0,
+      "ageHours": 12,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/doc-refid-deeper",
+      "branch": "feat/doc-refid-placement",
+      "dirty": 0,
+      "ageHours": 12,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/refid-contract-help",
+      "branch": "feat/refid-project-coverage",
+      "dirty": 4,
+      "ageHours": 11,
+      "flag": "dirty"
+    },
+    {
+      "path": "/private/tmp/project-r-bun-release-contracts-delivery",
+      "branch": "codex/bun-release-contracts-hardened-20260806",
+      "dirty": 0,
+      "ageHours": 9,
+      "flag": ""
+    },
+    {
+      "path": "/private/tmp/project-r-bun-release-contracts-enhance",
+      "branch": "codex/bun-release-contracts-enhance-20260806",
+      "dirty": 11,
+      "ageHours": 9,
+      "flag": "dirty"
+    },
+    {
+      "path": "~/Projects/.codex-worktrees/partner-cli-snapshots",
+      "branch": "codex/partner-cli-snapshot-ci-20260806",
+      "dirty": 0,
+      "ageHours": 9,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.codex-worktrees/fix-capability-table",
+      "branch": "codex/fix-capability-table-20260806",
+      "dirty": 0,
+      "ageHours": 8,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.codex-worktrees/enhanced-ci-ssot",
+      "branch": "codex/enhanced-ci-ssot-20260806",
+      "dirty": 0,
+      "ageHours": 7,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/bunfig-junit-reporter",
+      "branch": "feat/bunfig-junit-reporter",
+      "dirty": 12,
+      "ageHours": 5,
+      "flag": "dirty"
+    },
+    {
+      "path": "~/Projects/.worktrees/github-global-constants",
+      "branch": "feat/bun-strip-unknown",
+      "dirty": 0,
+      "ageHours": 5,
+      "flag": ""
+    },
+    {
+      "path": "~/Projects/.worktrees/portal-tokens-cli-20260807",
+      "branch": "feat/portal-tokens-cli-20260807",
+      "dirty": 9,
+      "ageHours": 2,
+      "flag": "dirty"
+    },
+    {
+      "path": "~/Projects",
+      "branch": "main",
+      "dirty": 20,
+      "ageHours": 0,
+      "flag": "dirty"
+    },
+    {
+      "path": "~/Projects/.worktrees/lane-status-tdz",
+      "branch": "fix/lane-status-tdz-20260807",
+      "dirty": 0,
+      "ageHours": 0,
+      "flag": ""
+    }
+  ],
+  "mergedBranches": []
+}

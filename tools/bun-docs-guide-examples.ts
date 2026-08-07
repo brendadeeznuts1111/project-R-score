@@ -584,15 +584,21 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'if (Bun.isMainThread) {\n  console.log("I\'m the main thread");\n} else {\n  console.log("I\'m in a worker");\n}',
     },
   ],
-  // Official blog — bun test --isolate / --parallel (v1.3.13)
-  'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel': [
+  // Official docs — bun test --isolate / --parallel
+  'test/parallel#isolate': [
     {
       lang: 'bash',
       body: '# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see pm/filter#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests',
     },
   ],
-  // Official blog — bun test --shard=M/N (v1.3.13)
-  'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs': [
+  'test/parallel#parallel': [
+    {
+      lang: 'bash',
+      body: '# Test-file workers — not bun run --parallel (pm/filter#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests',
+    },
+  ],
+  // Official docs — bun test --shard=M/N
+  'test/parallel#one-timings-file-per-shard': [
     {
       lang: 'bash',
       body: '# CI matrix (1-based). Empty shards exit 0.\nbun test --shard=1/3\nbun test --shard=2/3\nbun test --shard=3/3',
@@ -883,17 +889,17 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'Worker smol': 'runtime/workers#memory-usage-with-smol',
   'memory-usage-with-smol': 'runtime/workers#memory-usage-with-smol',
   'Bun.isMainThread': 'runtime/workers#bun-ismainthread',
-  '--isolate': 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
-  'bun test --isolate': 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
-  '--parallel': 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
-  '--parallel=N': 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
-  'bun test --parallel': 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
-  '--shard': 'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
-  '--shard=M/N': 'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
-  'bun test --shard': 'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
+  '--isolate': 'test/parallel#isolate',
+  'bun test --isolate': 'test/parallel#isolate',
+  '--parallel': 'test/parallel#parallel',
+  '--parallel=N': 'test/parallel#parallel',
+  'bun test --parallel': 'test/parallel#parallel',
+  '--shard': 'test/parallel#one-timings-file-per-shard',
+  '--shard=M/N': 'test/parallel#one-timings-file-per-shard',
+  'bun test --shard': 'test/parallel#one-timings-file-per-shard',
   '--changed': 'blog/bun-v1.3.13#bun-test-changed',
   'bun test --changed': 'blog/bun-v1.3.13#bun-test-changed',
-  'bun test flags': 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  'bun test flags': 'test/parallel#parallel',
   SHA3: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
   'SHA-3': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
   'SHA3-256': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',

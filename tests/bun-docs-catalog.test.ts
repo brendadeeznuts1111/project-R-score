@@ -538,15 +538,15 @@ describe('inspect family catalog relations', () => {
       'https://bun.com/docs/pm/global-store#concurrency'
     );
     expect(byName.get('--isolate')?.docsUrl).toBe(
-      'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel'
+      'https://bun.com/docs/test/parallel#isolate'
     );
     expect(byName.get('--parallel')?.docsUrl).toBe(
-      'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel'
+      'https://bun.com/docs/test/parallel#parallel'
     );
     expect(byName.get('--parallel')?.description).toContain('bun test --parallel');
     expect(byName.get('--parallel')?.description).toContain('bun run --parallel');
     expect(byName.get('--shard')?.docsUrl).toBe(
-      'https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs'
+      'https://bun.com/docs/test/parallel#one-timings-file-per-shard'
     );
     expect(byName.get('--changed')?.docsUrl).toBe(
       'https://bun.com/blog/bun-v1.3.13#bun-test-changed'
@@ -573,7 +573,7 @@ describe('inspect family catalog relations', () => {
       'bun run --parallel build test'
     );
     expect(byName.get('bun test flags')?.docsUrl).toBe(
-      'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel'
+      'https://bun.com/docs/test/parallel#parallel'
     );
     expect(byName.get('bun test flags')?.description).toContain('bun-test-flags-1.3.13.md');
     expect(byName.get('--parallel')?.examples?.[0]?.body).toContain(
