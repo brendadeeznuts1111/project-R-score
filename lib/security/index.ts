@@ -33,6 +33,19 @@ export {
   type AgentRecord,
   type CreateAgentResult,
 } from './ai-agents';
+export {
+  ARGON2ID_OWASP_DEFAULTS,
+  BCRYPT_OWASP_COST,
+  hashPassword,
+  hashPasswordSync,
+  resolvePasswordHashOptions,
+  type PasswordHashOptions,
+} from './password-hash.ts';
+import {
+  hashPassword as hashPasswordWithDefaults,
+  hashPasswordSync as hashPasswordSyncWithDefaults,
+  type PasswordHashOptions,
+} from './password-hash.ts';
 
 /** Security utilities — direct Bun.password / crypto.getRandomValues / Bun.hash */
 export class SecurityUtils {
@@ -62,18 +75,12 @@ export class SecurityUtils {
     return password;
   }
 
-  static async hashPassword(
-    password: string,
-    options?: Parameters<typeof Bun.password.hash>[1]
-  ): Promise<string> {
-    return Bun.password.hash(password, options);
+  static async hashPassword(password: string, options?: PasswordHashOptions): Promise<string> {
+    return hashPasswordWithDefaults(password, options);
   }
 
-  static hashPasswordSync(
-    password: string,
-    options?: Parameters<typeof Bun.password.hashSync>[1]
-  ): string {
-    return Bun.password.hashSync(password, options);
+  static hashPasswordSync(password: string, options?: PasswordHashOptions): string {
+    return hashPasswordSyncWithDefaults(password, options);
   }
 
   static async verifyPassword(password: string, hash: string): Promise<boolean> {
