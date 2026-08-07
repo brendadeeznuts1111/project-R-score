@@ -19,7 +19,7 @@ export const CANONICAL_REPO_DOCS = {
   wikiIndex: 'wiki-index.md',
   /** Registry bake index (portal consumers) */
   registryIndex: 'registry-index.md',
-  /** AI agent entrypoint + grounded capability map SSOT */
+  /** AI agent entrypoint (operating rules; capability matrix → capabilityMap) */
   agents: 'AGENTS.md',
   /** Thin agent routing tables (pointer → root AGENTS.md) */
   agentsFull: 'docs/AGENTS.md',
@@ -183,7 +183,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   readme: 'Human hub + scripts',
   wikiIndex: 'Wiki navigation hub (portal · registry · tenants)',
   registryIndex: 'Registry bake index (portal consumers)',
-  agents: 'AI agent entrypoint + capability map SSOT',
+  agents: 'AI agent entrypoint (capability matrix → docs/harness/capability-map.md)',
   agentsFull: 'Agent routing tables (pointer → root AGENTS)',
   structure: 'Workspace map',
   standards: 'Coding standards (complete)',
