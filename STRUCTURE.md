@@ -252,7 +252,8 @@ Related (not root files): `lib/channels/` → `ops-outbox`;
   `bun run packages:list` · `bun run registry:projects`
 - **Brands:** [`lib/types/branded/README.md`](lib/types/branded/README.md) ·
   `bun run check:brands:all`
-- **Console depth / `bun run -`:** [`lib/console-depth.ts`](lib/console-depth.ts)
+- **Console domain / `bun run -`:** [`lib/console/`](lib/console/README.md)
+  (`cliOut` · `tones` · chrome) · facade [`lib/console-depth.ts`](lib/console-depth.ts)
   · note [`lib/console-depth.md`](lib/console-depth.md) ·
   [AGENTS.md § Console depth](AGENTS.md#console-depth-output-verbosity)
 - **Agent triage:** [`projects/README.md`](projects/README.md)

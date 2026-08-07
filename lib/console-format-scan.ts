@@ -34,23 +34,23 @@ export const CONSOLE_FORMAT_PATTERNS: ConsoleFormatPattern[] = [
   {
     id: 'console-table',
     re: /console\.table\(/,
-    hint: 'use logTable(data, columns) from lib/console-depth.ts',
+    hint: 'use logTable(data, columns) from lib/console (or lib/console-depth.ts)',
   },
   {
     id: 'pretty-json-console',
     re: /console\.(?:log|info)\(\s*JSON\.stringify\([^)]*,\s*null,\s*\d/,
-    hint: 'default human output belongs in logDepth/logTable; machine output goes through jsonOut (or add // console-ok)',
+    hint: 'default human output: logDepth/logTable/cliOut; machine: jsonOut or cliOut({ json: true }) (// console-ok)',
   },
   {
     id: 'direct-inspect-table',
     re: /Bun\.inspect\.table\(/,
-    hint: 'use logTable/inspectTable from lib/console-depth.ts (wrapper adds TTY-aware colors + overload safety)',
+    hint: 'use logTable/inspectTable from lib/console (TTY colors + overload safety)',
     excludeFiles: ['lib/console-depth.ts'],
   },
   {
     id: 'console-dir',
     re: /console\.dir\(/,
-    hint: 'use logDepth from lib/console-depth.ts (project depth + TTY colors)',
+    hint: 'use logDepth / cliOut from lib/console (project depth + TTY colors)',
   },
 ];
 
