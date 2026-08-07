@@ -1,4 +1,4 @@
 interface:
   display_name: "Project R Ops"
-  short_description: "Operate Project R releases, Bun channels, gates, and recovery"
-  default_prompt: "Use $project-r-ops-management to start global-first, claim a Project R lane, monitor Bun runtime and type channels without mutation, clear the smallest owned blocker, and run focused proof before the merge gate."
+  short_description: "Run Project R channels, CI gates, snapshots, and recovery"
+  default_prompt: "Use $project-r-ops-management to inspect global DX and lane state, select the smallest command-map proof, preserve other work, and finish with staged checks plus clean local CI."

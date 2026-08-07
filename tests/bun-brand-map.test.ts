@@ -82,7 +82,8 @@ describe('Bun capability observation', () => {
         path: 'package.json',
         content: JSON.stringify({
           scripts: {
-            test: 'bun test --parallel --isolate --shard=1/2 --changed',
+            'test:parallel': 'bun test --parallel --shard=1/2 --changed',
+            'test:isolate': 'bun test --isolate',
             run: 'bun run --parallel lint test',
           },
         }),

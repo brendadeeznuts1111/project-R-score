@@ -10,7 +10,7 @@
     },
     "ci": {
       "description": "Full CI — parallel workers with per-file isolation + bunfig concurrentTestGlob",
-      "args": ["--parallel", "--isolate"],
+      "args": ["--parallel"],
       "cwd": ".agents/skills/ast-grep",
       "env": { "TZ": "Etc/UTC" }
     },
@@ -29,7 +29,7 @@
     },
     "shapes": {
       "description": "Domain shape assertions — BundleScanReport, DoctorSnapshotV2, discovery index",
-      "args": ["--parallel", "--isolate"],
+      "args": ["--parallel"],
       "cwd": ".agents/skills/ast-grep",
       "filters": ["expect-shapes"],
       "env": { "TZ": "Etc/UTC" }
@@ -54,7 +54,7 @@
     },
     "concurrent": {
       "description": "bunfig.toml concurrentTestGlob — integration tests in-file parallel",
-      "args": ["--parallel", "--isolate"],
+      "args": ["--parallel"],
       "cwd": ".agents/skills/ast-grep"
     },
     "unit": {
@@ -65,35 +65,35 @@
     },
     "integration": {
       "description": "Integration scans — position filter `integration` + parallel",
-      "args": ["--parallel", "--isolate"],
+      "args": ["--parallel"],
       "cwd": ".agents/skills/ast-grep",
       "filters": ["integration"],
       "preflight": "snapshot-validate"
     },
     "network": {
       "description": "Network + endpoint catalog — integration domain preset",
-      "args": ["--parallel", "--isolate"],
+      "args": ["--parallel"],
       "cwd": ".agents/skills/ast-grep",
       "filters": ["integration"],
       "testNamePattern": "PlatformMatcher|NetworkMatcher|EndpointCatalog|platform \\+ network"
     },
     "snapshot": {
       "description": "Snapshot v2 network section — integration domain preset",
-      "args": ["--parallel", "--isolate"],
+      "args": ["--parallel"],
       "cwd": ".agents/skills/ast-grep",
       "filters": ["integration"],
       "testNamePattern": "snapshot network integration"
     },
     "pillars": {
       "description": "Three pillars — remediation, snapshot, policy",
-      "args": ["--parallel", "--isolate"],
+      "args": ["--parallel"],
       "cwd": ".agents/skills/ast-grep",
       "filters": ["integration"],
       "testNamePattern": "three pillars"
     },
     "supply-chain": {
       "description": "Supply-chain transpiler + profiles integration",
-      "args": ["--parallel", "--isolate"],
+      "args": ["--parallel"],
       "cwd": ".agents/skills/ast-grep",
       "filters": ["integration"],
       "testNamePattern": "supply-chain Layer 4\\.5|supply-chain profiles"
@@ -114,11 +114,11 @@
     },
     "fast": {
       "description": "Fixed worker count for constrained runners",
-      "args": ["--parallel=4", "--isolate"]
+      "args": ["--parallel=4"]
     },
     "ci-shard": {
       "description": "Matrix shard — set BUN_TEST_SHARD=M/N or pass --shard",
-      "args": ["--parallel", "--isolate"],
+      "args": ["--parallel"],
       "shard": true
     },
     "changed": {
