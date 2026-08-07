@@ -598,6 +598,23 @@ export const ENV_INVENTORY_ALLOWED_LONG = [
 /** § — check:import-graph (`scripts/check-import-graph.ts`) */
 export const CHECK_IMPORT_GRAPH_ALLOWED_LONG = ['json', 'write-baseline'] as const;
 
+/** § — check:console-format (`scripts/lint-console-format.ts`) */
+export const CHECK_CONSOLE_FORMAT_ALLOWED_LONG = ['staged', 'write-baseline'] as const;
+
+/** § — concept:review (`scripts/concept-review.ts`) */
+export const CONCEPT_REVIEW_ALLOWED_LONG = [
+  'list',
+  'output',
+  'id',
+  'approve',
+  'reject',
+  'reason',
+  'correlation-id',
+] as const;
+
+/** § — concept:deprecate (`scripts/concept-deprecate.ts`) */
+export const CONCEPT_DEPRECATE_ALLOWED_LONG = ['replace-by', 'reason'] as const;
+
 /**
  * § — portal:cli (`tools/portal-cli.ts` + doctor/scanner/secret/snapshot/graph).
  * Leading Bun runtime flags (`--smol`, `--console-depth`, …) are peeled by
@@ -711,7 +728,10 @@ export type AllowedLongCliName =
   | 'portal:cli'
   | 'bun:brand-map'
   | 'env:inventory'
-  | 'check:import-graph';
+  | 'check:import-graph'
+  | 'check:console-format'
+  | 'concept:review'
+  | 'concept:deprecate';
 
 /**
  * Central allowlist registry — code SSOT (not env JSON, not bun-types).
@@ -751,6 +771,9 @@ export const ALLOWED_LONG_REGISTRY = {
   'bun:brand-map': BUN_BRAND_MAP_ALLOWED_LONG,
   'env:inventory': ENV_INVENTORY_ALLOWED_LONG,
   'check:import-graph': CHECK_IMPORT_GRAPH_ALLOWED_LONG,
+  'check:console-format': CHECK_CONSOLE_FORMAT_ALLOWED_LONG,
+  'concept:review': CONCEPT_REVIEW_ALLOWED_LONG,
+  'concept:deprecate': CONCEPT_DEPRECATE_ALLOWED_LONG,
 } as const satisfies Record<AllowedLongCliName, readonly string[]>;
 
 /** Apply guard using `ALLOWED_LONG_REGISTRY[cliName]`. */

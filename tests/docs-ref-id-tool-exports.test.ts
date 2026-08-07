@@ -160,11 +160,14 @@ describe('in-tool flagDocRef re-exports', () => {
       'bun:brand-map',
       'env:inventory',
       'check:import-graph',
+      'check:console-format',
+      'concept:review',
+      'concept:deprecate',
     ] as const;
     for (const key of batch2) {
       expect(ALLOWED_LONG_REGISTRY[key].length).toBeGreaterThan(0);
     }
-    expect(Object.keys(ALLOWED_LONG_REGISTRY).length).toBeGreaterThanOrEqual(33);
+    expect(Object.keys(ALLOWED_LONG_REGISTRY).length).toBeGreaterThanOrEqual(36);
     expect(ALLOWED_LONG_REGISTRY['portal:cli'].length).toBeGreaterThan(40);
     expect(ALLOWED_LONG_REGISTRY['bun:brand-map']).toEqual(['check', 'write-baseline', 'json']);
     expect(ALLOWED_LONG_REGISTRY['env:inventory']).toEqual([
@@ -175,6 +178,17 @@ describe('in-tool flagDocRef re-exports', () => {
       'bake',
     ]);
     expect(ALLOWED_LONG_REGISTRY['check:import-graph']).toEqual(['json', 'write-baseline']);
+    expect(ALLOWED_LONG_REGISTRY['check:console-format']).toEqual(['staged', 'write-baseline']);
+    expect(ALLOWED_LONG_REGISTRY['concept:review']).toEqual([
+      'list',
+      'output',
+      'id',
+      'approve',
+      'reject',
+      'reason',
+      'correlation-id',
+    ]);
+    expect(ALLOWED_LONG_REGISTRY['concept:deprecate']).toEqual(['replace-by', 'reason']);
     // bun:pr:verify must include --diff (behavior-diff vs installed Bun)
     expect([...ALLOWED_LONG_REGISTRY['bun:pr:verify']]).toContain('diff');
   });
