@@ -24,7 +24,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — console depth
 // @see https://bun.com/docs/runtime/toml#bun-toml-stringify — Bun.TOML.stringify
-// @see https://bun.com/docs/runtime/templating/create — bun create
+// @see https://bun.com/docs/runtime/templating/create — bun create (optional scaffold)
+// @see https://bun.com/docs/runtime/templating/init — bun init (empty project)
 /**
  * Factory CLI — publish, list, search, install, snapshot artifacts to/from the
  * R2-backed artifact registry (Bun runtime — not Pages Functions).
@@ -140,23 +141,29 @@ Verify every indexed release against its SHA-256 checksum in R2.
 Writes reports/registry-integrity.json and exits 1 on any failure.`,
   create: `factory create <template> [<destination>] [options]
 
-Scaffold a new project from a template using bun create.
+Scaffold via bun create (optional — Bun needs no project config).
+@see https://bun.com/docs/runtime/templating/create
 
-Delegate to bun create with factory template search path
-(.bun-create/ in project root, or $BUN_CREATE_DIR).
-<TEMPLATE> can be a local template name, an npm package
-(e.g., 'remix'), or a GitHub repo (e.g., 'vercel/next.js').
+Template sources:
+  local   .bun-create/<name> or $BUN_CREATE_DIR / $HOME/.bun-create
+  npm     create-<template> package (bun create remix ≡ bunx create-remix)
+  github  user/repo or github.com/user/repo  (GITHUB_TOKEN · GITHUB_API_DOMAIN)
+  react   ./MyComponent.tsx|jsx → full hot-reload frontend env
 
 Options:
   --publish      Auto-publish the scaffolded project to the registry
-  --force        Overwrite existing files
+  --force        Overwrite existing files (remote templates)
   --no-install   Skip dependency install
   --no-git       Skip git init
+  --open         Start & open in-browser after finish (bun create)
 
 Examples:
   factory create factory-library my-lib
   factory create factory-library my-lib --publish
-  factory create ./MyComponent.tsx              # React component passthrough`,
+  factory create ./MyComponent.tsx              # React component passthrough
+  factory create vercel/next.js my-app --no-git
+
+Note: local templates DELETE an existing destination directory.`,
 };
 
 // ── Utility helpers ───────────────────────────────────────────────────────

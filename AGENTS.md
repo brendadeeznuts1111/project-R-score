@@ -537,6 +537,30 @@ Skill:
   [`lib/security/r2-credentials.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/r2-credentials.ts)
   (soft try\* merge)
 
+## `bun create` (templating / scaffold)
+
+**Optional** — Bun runs without any project config; `bun create` only speeds
+getting started.
+Canonical: [runtime/templating/create](https://bun.com/docs/runtime/templating/create).
+Empty project without a template → [`bun init`](https://bun.com/docs/runtime/templating/init).
+
+| Source | Command | Notes |
+| ------ | ------- | ----- |
+| Local monorepo template | `bun create factory-library my-lib` · `bun run factory:create -- factory-library my-lib` | Templates under [`.bun-create/`](.bun-create/) (repo) or `$HOME/.bun-create` · override global path with `BUN_CREATE_DIR` |
+| React component → full dev env | `bun create ./MyComponent.tsx` | Analyzes graph, may auto-wire Tailwind / shadcn · starts hot reload |
+| npm `create-*` | `bun create remix` ≡ `bunx create-remix` | Passes through to package |
+| GitHub | `bun create user/repo [dest]` · `bun create github.com/user/repo` | Needs rate limit / private access → `GITHUB_TOKEN` (preferred over `GITHUB_ACCESS_TOKEN`) · Enterprise host → `GITHUB_API_DOMAIN` |
+
+Flags: `--force` · `--no-install` · `--no-git` · `--open`.  
+Env key SSOT: [`BUN_GITHUB_ENV`](lib/github-repository-ref.ts) in
+[`lib/github-repository-ref.ts`](lib/github-repository-ref.ts).  
+Factory wrapper (passthrough + optional `--publish` to R2 registry):
+`bun run factory:create` · [`lib/factory/cli.ts`](lib/factory/cli.ts) ·
+[`lib/factory/README.md`](lib/factory/README.md).
+
+**Local-template warning:** destination folder is **deleted** if it already
+exists (unlike remote templates, which refuse overwrite without `--force`).
+
 ## Console depth (output verbosity)
 
 Object-inspection depth has two layers sharing one SSOT
@@ -635,6 +659,7 @@ tables: `bun run packages:docs-index` · CI: `bun run packages:docs-index:check`
 | **Auto-install fallback**         | deps      | Bun ≥1.0                  | `bun --install=fallback`                                                                                                                   | —                                                           | scripts that may reference missing local packages                                                        | Available   | [auto-install](https://bun.com/docs/runtime/auto-install)                                                                                                                                                     | `bun --install=fallback tools/portal-cli.ts --help`                                                                                               |
 | **Console depth flag**            | runtime   | Bun ≥1.0                  | `bun --console-depth=N` (before `run`)                                                                                                     | —                                                           | portal-cli child spawns · `lib/console-depth.ts` · claim `console-depth-boundaries`                      | Implemented | [object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth) · [bun run --console-depth](https://bun.com/docs/runtime#bun-run-console-depth)                                              | `bun --console-depth=4 run tools/portal-cli.ts probe lockfile`                                                                                    |
 | **Stdin code (`bun run -`)**      | runtime   | Bun ≥1.0                  | `bun run -` (TS/JSX from stdin, no temp file)                                                                                              | —                                                           | agent one-shots · pipe snippets · `tests/console-depth.test.ts`                                          | Implemented | [bun run - to pipe code from stdin](https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin) · note [`lib/console-depth.md`](lib/console-depth.md)                                                             | `echo 'console.log({a:{b:1}})' \| bun --console-depth=3 run -`                                                                                    |
+| **`bun create` (templating)**     | runtime   | Bun ≥1.0                  | `bun create <template\|user/repo\|./Component.tsx> [dest]` · optional (Bun needs no config)                                                | —                                                           | scaffold · `factory create` · `.bun-create/factory-library` · `BUN_GITHUB_ENV`                           | Implemented | [templating/create](https://bun.com/docs/runtime/templating/create) · env keys [`lib/github-repository-ref.ts`](lib/github-repository-ref.ts) · factory [`lib/factory/cli.ts`](lib/factory/cli.ts)             | `bun run factory:create -- factory-library my-lib` · `bun create ./My.tsx`                                                                        |
 | **Child PTY (Bun.Terminal)**      | runtime   | Bun ≥1.3.5                | `new Bun.Terminal` · `Bun.spawn({ terminal })`                                                                                             | —                                                           | `lib/terminal.ts` · `tests/terminal.test.ts`                                                             | Implemented | [PTY guide](https://bun.com/docs/runtime/child-process#terminal-pty-support) · [reference](https://bun.com/reference/bun/Terminal) · [bun-types](https://github.com/oven-sh/bun/tree/main/packages/bun-types) | `await using t = new Bun.Terminal({ cols: 80, rows: 24, data: (_t, d) => process.stdout.write(d) }); Bun.spawn(["echo", "ok"], { terminal: t });` |
 | **Image chart generation**        | image     | Bun ≥1.0                  | `new Bun.Image(file).png()`                                                                                                                | —                                                           | report chart rendering (future)                                                                          | Available   | [Bun.Image](https://bun.sh/docs/api/image)                                                                                                                                                                    | `const img = new Bun.Image(await Bun.file("chart.png").arrayBuffer()); img.resize(800,600);`                                                      |
 | **Built‑in test runner**          | test      | Bun ≥1.0                  | `bun:test` – `describe`, `test`, `expect`                                                                                                  | —                                                           | unit tests                                                                                               | Implemented | [Bun test](https://bun.sh/docs/test/writing-tests)                                                                                                                                                            | `import { describe, test, expect } from "bun:test";`                                                                                              |
