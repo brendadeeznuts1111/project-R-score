@@ -583,6 +583,85 @@ export const HARNESS_VIOLATIONS_ALLOWED_LONG = [
   'limit',
 ] as const;
 
+/**
+ * § — portal:cli (`tools/portal-cli.ts` + doctor/scanner/secret/snapshot/graph).
+ * Leading Bun runtime flags (`--smol`, `--console-depth`, …) are peeled by
+ * `parseBunExecutionFlags` before this allowlist runs. Passthrough commands
+ * `pm` / `secret` / `probe` skip the guard (child owns flags).
+ */
+export const PORTAL_CLI_ALLOWED_LONG = [
+  // doctor
+  'check',
+  'env',
+  'failed-only',
+  'format',
+  'full',
+  'group',
+  'json',
+  'layout',
+  'live-access',
+  'no-write',
+  'offline',
+  'verbose',
+  // scanner
+  'bunfig',
+  'depth',
+  'dry-run',
+  'force',
+  'oneshot',
+  'password',
+  'strict',
+  'title',
+  'url',
+  'vault-name',
+  'write',
+  // snapshot / packages graph
+  'base',
+  'debug',
+  'scope',
+  'bake',
+  'color',
+  'export',
+  'no-color',
+  'package',
+  'pkg',
+  'update',
+  'view',
+  // flags catalog
+  'all',
+  // vault / capabilities / badge
+  'update',
+  'update-snapshots',
+  // secret (pass-cli wrapper surface)
+  'env-file',
+  'field',
+  'file-mode',
+  'from-vault-name',
+  'item-id',
+  'item-title',
+  'member-share-id',
+  'no-masking',
+  'out-file',
+  'output',
+  'parallel',
+  'role',
+  'share-id',
+  'to',
+  'to-vault-name',
+  'vault',
+  // dashboard / misc
+  'open',
+  'list',
+  'keep',
+  'grep',
+  'id',
+  'quiet',
+  'destination',
+  'bun-only',
+  'trusted',
+  'no-git-tag-version',
+] as const;
+
 /** CLI names keyed in `ALLOWED_LONG_REGISTRY` (package-script style). */
 export type AllowedLongCliName =
   | 'lint-wires'
@@ -613,7 +692,8 @@ export type AllowedLongCliName =
   | 'concept:discover'
   | 'seat:desk'
   | 'packages:metafile-audit'
-  | 'harness:violations';
+  | 'harness:violations'
+  | 'portal:cli';
 
 /**
  * Central allowlist registry — code SSOT (not env JSON, not bun-types).
@@ -649,6 +729,7 @@ export const ALLOWED_LONG_REGISTRY = {
   'seat:desk': SEAT_DESK_ALLOWED_LONG,
   'packages:metafile-audit': PACKAGES_METAFILE_AUDIT_ALLOWED_LONG,
   'harness:violations': HARNESS_VIOLATIONS_ALLOWED_LONG,
+  'portal:cli': PORTAL_CLI_ALLOWED_LONG,
 } as const satisfies Record<AllowedLongCliName, readonly string[]>;
 
 /** Apply guard using `ALLOWED_LONG_REGISTRY[cliName]`. */
