@@ -1,4 +1,4 @@
-import { PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1 } from '../core/types.ts';
+import { PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2 } from '../core/types.ts';
 
 export type PartnerDashboardRegistryJsonRef = `/registry/${string}.json`;
 export type PartnerDashboardInputRefs = {
@@ -60,7 +60,7 @@ const FETCH_TRANSPORT = Object.freeze({
  * (error-never-fallback). Transition policy and legacy comparison are retired.
  */
 export const PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT = Object.freeze({
-  artifactSchema: PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
+  artifactSchema: PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2,
   entrypointPath: PARTNER_DASHBOARD_ENTRYPOINT,
   /** Historical multi-artifact plane (inventory only). */
   currentCompatibility: Object.freeze({
@@ -124,5 +124,5 @@ export function isLegacyPartnerComparisonRequested(_input: string | URL): boolea
 
 /** True when value matches the active partners-dashboard artifact schema. */
 export function isPartnerDashboardArtifactSchema(value: unknown): boolean {
-  return value === PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1;
+  return value === PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2;
 }

@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   PARTNER_CONNECTOR_SNAPSHOT_KEYS,
   PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS,
-  PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
+  PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2,
   PROFILE_MIGRATION_REQUIRED_REASON,
   assemblePartnerDashboardArtifact,
   evaluateConnectorFreshness,
@@ -157,9 +157,9 @@ function buildInput(options: { profile?: boolean } = {}): PartnerDashboardBuildI
 }
 
 describe('@factorywager/partners dashboard artifact', () => {
-  test('assembles a validated colorless v1 read model from parsed records', () => {
+  test('assembles a validated colorless v2 read model from parsed records', () => {
     const artifact = assemblePartnerDashboardArtifact(buildInput());
-    expect(artifact.schema).toBe(PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1);
+    expect(artifact.schema).toBe(PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2);
     expect(artifact.activeOutIds).toEqual(['out-ASH-1']);
     expect(artifact.summary).toEqual({
       partnerCount: 1,

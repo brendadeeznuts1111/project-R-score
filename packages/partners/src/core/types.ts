@@ -37,7 +37,12 @@ export type JsonPrimitive = string | number | boolean | null;
 export type JsonValue = JsonPrimitive | JsonValue[] | { [key: string]: JsonValue };
 
 export const CANONICAL_PROFILE_SOURCE_SYSTEM_ID = asSourceSystemId('factorywager-partner-profile');
+/** Pre-retirement schema (legacy-ops connector era). */
 export const PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1 = 'factorywager.partners-dashboard.v1';
+/** Active schema after legacy-ops connector retirement. */
+export const PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2 = 'factorywager.partners-dashboard.v2';
+/** Active partners-dashboard schema id. */
+export const PARTNER_DASHBOARD_ARTIFACT_SCHEMA = PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2;
 
 export const PARTNER_LIFECYCLE_STATES = [
   'signup',
@@ -105,7 +110,6 @@ export const PARTNER_CONNECTOR_SNAPSHOT_KEYS = [
   'bookmakers',
   'tennis',
   'sportsTerminal',
-  'legacyOps',
 ] as const;
 export type PartnerConnectorSnapshotKey = (typeof PARTNER_CONNECTOR_SNAPSHOT_KEYS)[number];
 
@@ -250,7 +254,7 @@ export type PartnerSourceConflict = {
 };
 
 export type PartnerDashboardArtifact = {
-  schema: typeof PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1;
+  schema: typeof PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2;
   generatedAt: string;
   connectorSnapshots: Record<PartnerConnectorSnapshotKey, ConnectorSnapshot>;
   activeOutIds: OutId[];

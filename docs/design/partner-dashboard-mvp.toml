@@ -52,7 +52,7 @@ policy = "reference-only-partner-domain-does-not-own-runtime-or-type-channels"
 
 [shapes.dashboard_artifact]
 type = "PartnerDashboardArtifact"
-schema = "factorywager.partners-dashboard.v1"
+schema = "factorywager.partners-dashboard.v2"
 active_legacy_schema = "factorywager.partners-dashboard.v1"
 retired_legacy_schema = "factorywager.partners-dashboard.v2"
 path = "/registry/partners-dashboard.json"
@@ -358,7 +358,7 @@ forbidden_core_aliases = ["currentLimit", "maxBet"]
 partner_identity = "PartnerCode is the only canonical partner join key; external partnerId values stay qualified"
 money_storage = "Financial amounts and balances use integer minor units with explicit currency and scope"
 telegram_boundary = "Telegram owns communication transport and cannot own lifecycle or accounting truth"
-legacy_ops = "legacy-ops is the eighth compatibility adapter and has an explicit retirement condition"
+legacy_ops = "legacy-ops connector retired 2026-08-08; partners-ops remains optional bake visibility for out skeletons only"
 frozen_mapping = "Sports Terminal frozen maps to suspended with mandatory queryable provenance"
 out_constraints = "Max stake, gross payout, net win, and liquidity are distinct checks; missing evidence requires manual review"
 offer_split = "Wager markets and structures are separate from promotional offers"
@@ -368,7 +368,7 @@ telegram_evidence = "Handshake artifacts do not expose membership counts or conf
 limit_change_evidence = "Limit raises are historical events and may trigger attention but never replace a fresh execution ceiling"
 
 [deprecation_calendar.legacy_ops]
-status = "active"
+status = "retired"
 owner = "@factorywager/partners/compatibility"
 announced_at = "2026-08-05"
 cutoff_date = "2026-11-03"
@@ -796,7 +796,6 @@ group_registry = "semantic.group.registry"
 group_operations = "semantic.group.ops"
 group_harness = "semantic.group.harness"
 group_secrets = "semantic.group.secrets"
-group_other = "semantic.group.other"
 
 [theme.components.page]
 canvas = "layers.canvas"
@@ -1278,28 +1277,6 @@ visual_group = "operations"
 provides = ["external-state", "gate-observations", "integration-health"]
 region_ids = ["profile", "integrations", "attention"]
 
-[[connectors]]
-id = "legacy-ops-registry"
-snapshot_key = "legacyOps"
-source_system_id = "factorywager-partners-ops"
-source_owner_domain = "partners"
-adapter_id = "legacy-partners-ops"
-adapter_version = "2"
-target_owner_package = "@factorywager/partners"
-target_adapter_export = "./compatibility/legacy-partners-ops"
-target_adapter_implementation_status = "implemented"
-current_owner_module = "lib/telegram/partner-ops-registry.ts"
-port = "LegacyPartnerProjectionPort"
-implementation_status = "current-compatibility"
-enabled = true
-input_kind = "registry-artifact"
-required = false
-input_ref = "/registry/partners-ops.json"
-authoritative_fact_paths = []
-visual_group = "other"
-provides = ["compatibility-observations"]
-region_ids = ["summary", "roster", "attention"]
-retirement_condition = "all-consumers-on-canonical-profiles-and-dashboard-artifact"
 
 [[surfaces.portal.regions]]
 region_id = "summary"
@@ -1311,7 +1288,7 @@ business_domains = ["partners", "accounting", "telegram", "compliance"]
 theme_role = "panel_default"
 concept_refs = ["section.partnersSummary", "page.partners", "ui.semantic.status", "ui.semantic.source"]
 concept_status = "existing"
-connectors = ["canonical-profile-config", "accounting-ledger", "legacy-ops-registry"]
+connectors = ["canonical-profile-config", "accounting-ledger"]
 
 [[surfaces.portal.regions]]
 region_id = "roster"
@@ -1329,7 +1306,6 @@ connectors = [
   "telegram-handshake",
   "limits-registry",
   "tennis-contract",
-  "legacy-ops-registry",
 ]
 
 [[surfaces.portal.regions]]
@@ -1411,7 +1387,6 @@ connectors = [
   "limits-registry",
   "tennis-contract",
   "sports-terminal",
-  "legacy-ops-registry",
 ]
 
 [[surfaces.portal.regions]]

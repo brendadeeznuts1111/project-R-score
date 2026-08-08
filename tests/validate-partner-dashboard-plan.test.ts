@@ -23,7 +23,7 @@ describe('partner dashboard semantic plan', () => {
     expect(result.summary).toEqual({
       bindings: 33,
       gaps: 0,
-      connectors: 8,
+      connectors: 7,
       regions: 8,
       sectionMounts: 9,
       hashRoutes: 6,
@@ -226,11 +226,11 @@ describe('partner dashboard semantic plan', () => {
     plan.surfaces.portal.regions[1].connectors = plan.surfaces.portal.regions[1].connectors.filter(
       (connectorKey: string) => connectorKey !== 'canonical-profile-config'
     );
-    const legacyConnector = plan.connectors.find(
-      (connector: Record<string, unknown>) => connector.id === 'legacy-ops-registry'
+    const telegramConnector = plan.connectors.find(
+      (connector: Record<string, unknown>) => connector.id === 'telegram-handshake'
     );
-    if (!legacyConnector) throw new Error('legacy connector fixture missing');
-    legacyConnector.target_adapter_implementation_status = 'planned';
+    if (!telegramConnector) throw new Error('telegram connector fixture missing');
+    telegramConnector.target_adapter_implementation_status = 'planned';
     const sportsConnector = plan.connectors.find(
       (connector: Record<string, unknown>) => connector.id === 'sports-terminal'
     );
@@ -246,7 +246,7 @@ describe('partner dashboard semantic plan', () => {
     );
     expect(result.errors.some(error => error.includes('are not reciprocal'))).toBe(true);
     expect(result.errors).toContain(
-      'connector legacy-ops-registry target compatibility adapter must be implemented'
+      'connector telegram-handshake must target its implemented observation adapter'
     );
     expect(result.errors).toContain(
       'sports-terminal blocking reason must name every unresolved boundary'
@@ -486,7 +486,7 @@ describe('partner dashboard semantic plan', () => {
     });
   });
 
-  it('turns the active legacy-ops cutoff into a hard removal gate', async () => {
+  it('does not re-fire cutoff after legacy-ops is already retired', async () => {
     const result = await validatePartnerDashboardPlan(copyPlan(), {
       now: new Date('2026-11-03T00:00:00Z'),
     });
@@ -494,41 +494,54 @@ describe('partner dashboard semantic plan', () => {
       result.errors.some(error =>
         error.includes('legacy-ops cutoff 2026-11-03 has passed')
       )
-    ).toBe(true);
+    ).toBe(false);
+    expect(result.errors).toEqual([]);
   });
 
-  it('rejects retired status while legacy connector and v1 schema remain', async () => {
+  it('rejects reintroducing the legacy connector after retirement', async () => {
     const plan = copyPlan();
-    plan.deprecation_calendar.legacy_ops.status = 'retired';
+    plan.connectors.push({
+      id: 'legacy-ops-registry',
+      snapshot_key: 'legacyOps',
+      source_system_id: 'factorywager-partners-ops',
+      source_owner_domain: 'partners',
+      adapter_id: 'legacy-partners-ops',
+      adapter_version: '2',
+      target_owner_package: '@factorywager/partners',
+      target_adapter_export: './compatibility/legacy-partners-ops',
+      target_adapter_implementation_status: 'implemented',
+      current_owner_module: 'lib/telegram/partner-ops-registry.ts',
+      port: 'LegacyPartnerProjectionPort',
+      implementation_status: 'current-compatibility',
+      enabled: true,
+      input_kind: 'registry-artifact',
+      required: false,
+      input_ref: '/registry/partners-ops.json',
+      authoritative_fact_paths: [],
+      visual_group: 'other',
+      provides: ['compatibility-observations'],
+      region_ids: ['summary'],
+    });
+    plan.theme.roles.group_other = 'semantic.group.other';
 
     const result = await validatePartnerDashboardPlan(plan, {
       now: new Date('2026-11-04T00:00:00Z'),
     });
-    expect(result.errors.some(error => error.includes('schema must be factorywager.partners-dashboard.v2'))).toBe(true);
     expect(result.errors).toContain('retired legacy-ops contract must not retain the connector');
   });
 
-  it('accepts the complete retired-state removal shape', async () => {
-    const plan = copyPlan();
-    plan.deprecation_calendar.legacy_ops.status = 'retired';
-    plan.shapes.dashboard_artifact.schema = 'factorywager.partners-dashboard.v2';
-    plan.connectors = plan.connectors.filter(
-      (connector: Record<string, unknown>) => connector.id !== 'legacy-ops-registry'
-    );
-    for (const region of plan.surfaces.portal.regions) {
-      region.connectors = region.connectors.filter(
-        (connectorKey: string) => connectorKey !== 'legacy-ops-registry'
-      );
-    }
-    plan.reconciliation.capacity_precedence = plan.reconciliation.capacity_precedence.filter(
-      (connectorKey: string) => connectorKey !== 'legacy-ops-registry'
-    );
-    delete plan.theme.roles.group_other;
-
-    const result = await validatePartnerDashboardPlan(plan, {
+  it('accepts the checked-in retired-state plan shape', async () => {
+    const result = await validatePartnerDashboardPlan(copyPlan(), {
       now: new Date('2026-11-04T00:00:00Z'),
     });
     expect(result.errors).toEqual([]);
+    expect(copyPlan().deprecation_calendar.legacy_ops.status).toBe('retired');
+    expect(copyPlan().shapes.dashboard_artifact.schema).toBe(
+      'factorywager.partners-dashboard.v2'
+    );
+    expect(
+      copyPlan().connectors.some((c: { id: string }) => c.id === 'legacy-ops-registry')
+    ).toBe(false);
   });
 
   it('rejects implementation-ready when concept gaps reappear or a shippable connector regresses', async () => {

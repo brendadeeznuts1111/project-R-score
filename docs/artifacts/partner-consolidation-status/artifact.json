@@ -221,7 +221,7 @@
           "profileTarget": 4,
           "implementedComponents": 18,
           "totalComponents": 18,
-          "connectors": 8,
+          "connectors": 7,
           "blockedConnectors": 1,
           "semanticGaps": 0
         }
@@ -256,7 +256,7 @@
           "status": "implemented",
           "required": "yes",
           "port": "PartnerProfileReadPort",
-          "nextAction": "Profiles and lifecycle"
+          "nextAction": "identity"
         },
         {
           "order": 2,
@@ -265,7 +265,7 @@
           "status": "implemented",
           "required": "no",
           "port": "AccountingReadPort",
-          "nextAction": "Scoped integer money"
+          "nextAction": "balance-positions"
         },
         {
           "order": 3,
@@ -274,7 +274,7 @@
           "status": "implemented",
           "required": "no",
           "port": "CommunicationReadPort",
-          "nextAction": "Loader, resilience, and dashboard reconciliation"
+          "nextAction": "handshake-phase"
         },
         {
           "order": 4,
@@ -283,7 +283,7 @@
           "status": "implemented",
           "required": "no",
           "port": "LimitChangeObservationPort",
-          "nextAction": "Change-event attention reconciliation"
+          "nextAction": "limit-change-events"
         },
         {
           "order": 5,
@@ -292,7 +292,7 @@
           "status": "implemented",
           "required": "no",
           "port": "BookmakerCatalogPort",
-          "nextAction": "Loader, resilience, and explicit host aliases"
+          "nextAction": "sportsbook-identity"
         },
         {
           "order": 6,
@@ -301,7 +301,7 @@
           "status": "implemented",
           "required": "no",
           "port": "CapacityReadPort",
-          "nextAction": "Loader, LKG resilience, and execution reconciliation"
+          "nextAction": "active-outs"
         },
         {
           "order": 7,
@@ -310,16 +310,7 @@
           "status": "blocked",
           "required": "no",
           "port": "IntegrationHealthReadPort",
-          "nextAction": "Unmounted route; define auth, IDs, and parsed money-free shape"
-        },
-        {
-          "order": 8,
-          "connector": "legacy-ops-registry",
-          "owner": "partners",
-          "status": "current-compatibility",
-          "required": "no",
-          "port": "LegacyPartnerProjectionPort",
-          "nextAction": "Zero usage and schema v2"
+          "nextAction": "one exact parsed input, explicit external-ID resolution, authenticated route integration, and integer-minor-unit money wire are required"
         }
       ]
     },
