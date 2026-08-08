@@ -24,6 +24,7 @@
     "yellow": "#d29922",
     "orange": "#db6d28",
     "red": "#f85149",
+    "maroon": "#f38ba8",
     "gradientSubtle": "radial-gradient(ellipse at top, #1a2332 0%, var(--bg) 55%)",
     // Neutral greys (Primer-ish) — borders, chips, elevated chrome
     "neutral": {
@@ -50,6 +51,7 @@
     "yellow": "#9a6700",
     "orange": "#bc4c00",
     "red": "#cf222e",
+    "maroon": "#e64553",
     "gradientSubtle": "radial-gradient(ellipse at top, #eef2f7 0%, var(--bg) 55%)",
     "neutral": {
       "50": "#f6f8fa",
@@ -145,6 +147,12 @@
       "retail": "var(--green)",
       "vip": "var(--yellow)",
       "sharp": "var(--red)",
+    },
+    // Bettor-pattern classes (sharp/steam vs public money) — closed palette aliases only
+    "pattern": {
+      "bettor": {
+        "sharp": "var(--maroon)",
+      },
     },
   },
 

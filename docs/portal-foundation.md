@@ -327,6 +327,8 @@ Component readiness (static-fit): `bun run portal:css:score:components`.
 
 **Color kernel planes** — registry bake field `colorKernel` points at [`public/portal/theme.jsonc`](../public/portal/theme.jsonc). Do not invent a parallel `colorkernal` CLI.
 
+**Read-only token printer** — `bun run tokens` (`tools/portal-tokens.ts`) resolves dotted paths on [`theme.jsonc`](../public/portal/theme.jsonc) via [`lib/portal/theme.ts`](../lib/portal/theme.ts) / [`lib/portal/theme-token-resolve.ts`](../lib/portal/theme-token-resolve.ts) and prints [Bun.color](https://bun.com/docs/runtime/color) formats (`hex`, `hsl`, `number`, `[rgba]`, …). It is **not** a second palette or color-kernel CLI — fail-closed on unknown paths (lists nearest). UX alias: `semantic.tiers.*` → `semantic.tier.*` (SSOT key is singular `tier`). Examples: `bun run tokens --token semantic.vertical.sportsbook --format hex` → `#3fb950`; `bun run tokens --token semantic.tier.sharp --format hsl`; `bun run tokens --token dark.green --format '[rgba]'`.
+
 | Plane | Owns | Source | Validation | Example Keys |
 |-------|------|--------|------------|--------------|
 | Portal chrome | Dark/light CSS vars + design-system layers | [`theme.jsonc`](../public/portal/theme.jsonc) → [`lib/portal/theme.ts`](../lib/portal/theme.ts) → `theme-tokens.css` | `bun run portal:theme:check` (CSS stale) · [`tests/portal-theme.test.ts`](../tests/portal-theme.test.ts) · `validate:colors` claim/evidence (theme version + dark key count) | Flat: `accent` · `green` · `yellow` · `orange` · `red` · `textDim` · `bg` · `surface`. Semantic: `--status-fresh/stale/old/critical` · `--group-*`. Scales: `--text-*` · `--space-*` · `--radius-*` · `--duration-*` |
