@@ -188,6 +188,18 @@ export function renderPortalPill(
   return `<span class="${escHtml(cls)}">${escHtml(label)}</span>`;
 }
 
+export type PortalToolbarOpts = {
+  ariaLabel?: string;
+  className?: string;
+};
+
+/** Filter-control grid — `.portal-toolbar`; `controlsHtml` is pre-escaped markup. */
+export function renderPortalToolbar(controlsHtml: string, opts: PortalToolbarOpts = {}): string {
+  const cls = ['portal-toolbar', opts.className ?? ''].filter(Boolean).join(' ');
+  const ariaLabel = opts.ariaLabel ? ` aria-label="${escHtml(opts.ariaLabel)}"` : '';
+  return `<div class="${escHtml(cls)}"${ariaLabel}>${controlsHtml}</div>`;
+}
+
 /** Table row rail class for `renderPortalTableRows` `rowClass`. */
 export function portalRowToneClass(tone: 'ok' | 'warn' | 'bad' | '' | undefined): string {
   if (tone === 'ok') return 'row-ok';
