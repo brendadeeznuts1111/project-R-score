@@ -62,6 +62,7 @@ import { initOddsDriftEngine } from "@services/odds-drift-engine";
 import { loadAliasMap, startAliasHotReload, stopAliasHotReload } from "@services/team-alias-loader";
 import { PipelineWorker } from "@services/pipeline-worker";
 import { imageEvidenceHeaders } from "@utils/image-metadata";
+import { getStaticFileHeaders, getStaticMimeType } from "@utils/static-file-headers";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -469,7 +470,7 @@ async function serveStaticFile(pathname: string): Promise<Response | null> {
     const indexFile = Bun.file("./dist/frontend/index.html");
     if (await indexFile.exists()) {
       return new Response(indexFile, {
-        headers: { "Content-Type": "text/html" },
+        headers: getStaticFileHeaders(pathname, "text/html"),
       });
     }
     return null;
@@ -481,19 +482,9 @@ async function serveStaticFile(pathname: string): Promise<Response | null> {
     const file = Bun.file(filePath);
     if (await file.exists()) {
       const ext = cleanPath.split(".").pop() || "";
-      const mimeTypes: Record<string, string> = {
-        js: "application/javascript",
-        mjs: "application/javascript",
-        css: "text/css",
-        html: "text/html",
-        json: "application/json",
-        png: "image/png",
-        jpg: "image/jpeg",
-        svg: "image/svg+xml",
-        ico: "image/x-icon",
-      };
+      const contentType = getStaticMimeType(ext);
       return new Response(file, {
-        headers: { "Content-Type": mimeTypes[ext] || "application/octet-stream" },
+        headers: getStaticFileHeaders(pathname, contentType),
       });
     }
   } catch {
@@ -510,7 +501,7 @@ async function serveStaticFile(pathname: string): Promise<Response | null> {
     const indexFile = Bun.file("./dist/frontend/index.html");
     if (await indexFile.exists()) {
       return new Response(indexFile, {
-        headers: { "Content-Type": "text/html" },
+        headers: getStaticFileHeaders(pathname, "text/html"),
       });
     }
   }

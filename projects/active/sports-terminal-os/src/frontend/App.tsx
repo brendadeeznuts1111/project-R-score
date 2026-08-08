@@ -122,7 +122,12 @@ export function App(): React.JSX.Element {
   const [state, setState] = useState<AppState>(defaultState);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
-  const ws = useWebSocket();
+  const {
+    connected: wsConnected,
+    subscribe,
+    subscribeChannel,
+    unsubscribeChannel,
+  } = useWebSocket();
 
   // Derive page title from route
   const pageTitle = ROUTE_TITLES[location.pathname] || "Sports Terminal OS";
@@ -131,38 +136,44 @@ export function App(): React.JSX.Element {
   useEffect(() => {
     setState((prev) => ({
       ...prev,
-      wsConnected: ws.connected,
+      wsConnected,
     }));
-  }, [ws.connected]);
+  }, [wsConnected]);
 
   // Subscribe to WebSocket channels for global state
   useEffect(() => {
-    const unsubRisk = ws.subscribe("riskAlert", () => {
+    const unsubRisk = subscribe("riskAlert", () => {
       setState((prev) => ({
         ...prev,
         activeAlerts: (prev.activeAlerts || 0) + 1,
       }));
     });
 
-    const unsubConnected = ws.subscribe("connected", (msg) => {
+    const unsubConnected = subscribe("connected", (msg) => {
       setState((prev) => ({
         ...prev,
         serverTime: new Date((msg.data as Record<string, number>)?.serverTime || Date.now()).toISOString(),
       }));
     });
 
-    // Subscribe to default channels
-    if (ws.connected) {
-      ws.subscribeChannel("wagerTick");
-      ws.subscribeChannel("riskAlert");
-      ws.subscribeChannel("positionUpdate");
-    }
-
     return () => {
       unsubRisk();
       unsubConnected();
     };
-  }, [ws]);
+  }, [subscribe]);
+
+  // Subscribe to channels without local handlers once per connection.
+  // riskAlert is managed by subscribe() above.
+  useEffect(() => {
+    if (!wsConnected) return;
+
+    const channels = ["wagerTick", "positionUpdate"];
+    channels.forEach(subscribeChannel);
+
+    return () => {
+      channels.forEach(unsubscribeChannel);
+    };
+  }, [wsConnected, subscribeChannel, unsubscribeChannel]);
 
   // Server time ticker (local fallback)
   useEffect(() => {
