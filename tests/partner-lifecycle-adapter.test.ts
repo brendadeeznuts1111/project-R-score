@@ -71,6 +71,7 @@ describe('partner lifecycle adapter', () => {
     });
     expect(observations.map(o => o.partnerCode)).toEqual(['ASH', 'BIL', 'NOV', 'SPEN']);
     const ash = observations.find(o => o.partnerCode === 'ASH')!;
+    expect(ash.callSign).toBe('ASH-001');
     expect(ash.lifecycle.state).toBe('active');
     expect(ash.lifecycle.provenance.originalValue).toBe('active');
     expect(ash.lifecycle.provenance.sourceSystemId).toBe('factorywager-partner-profile');
