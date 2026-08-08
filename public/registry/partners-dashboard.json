@@ -1,0 +1,315 @@
+{
+  "schema": "factorywager.partners-dashboard.v1",
+  "generatedAt": "2026-08-08T22:13:04.945Z",
+  "connectorSnapshots": {
+    "profiles": {
+      "dataStatus": "ok",
+      "sourceMode": "current",
+      "reasonCode": "current_fresh",
+      "observedAt": "2026-08-08T22:13:04.945Z",
+      "ageSeconds": 0,
+      "inputRef": "config/partner-profiles/*.toml"
+    },
+    "accounting": {
+      "dataStatus": "ok",
+      "sourceMode": "current",
+      "reasonCode": "current_fresh",
+      "observedAt": "2026-08-08T22:13:04.945Z",
+      "ageSeconds": 0,
+      "inputRef": "partner_ledger"
+    },
+    "telegram": {
+      "dataStatus": "ok",
+      "sourceMode": "current",
+      "reasonCode": "current_fresh",
+      "observedAt": "2026-08-08T22:13:04.945Z",
+      "ageSeconds": 0,
+      "inputRef": "/registry/telegram-handshake.json"
+    },
+    "limits": {
+      "dataStatus": "ok",
+      "sourceMode": "current",
+      "reasonCode": "current_fresh",
+      "observedAt": "2026-08-08T22:13:04.945Z",
+      "ageSeconds": 0,
+      "inputRef": "/registry/limit-raises.json"
+    },
+    "bookmakers": {
+      "dataStatus": "ok",
+      "sourceMode": "current",
+      "reasonCode": "current_fresh",
+      "observedAt": "2026-08-08T22:13:04.945Z",
+      "ageSeconds": 0,
+      "inputRef": "/registry/bookmakers.json"
+    },
+    "tennis": {
+      "dataStatus": "ok",
+      "sourceMode": "current",
+      "reasonCode": "current_fresh",
+      "observedAt": "2026-08-08T22:13:04.945Z",
+      "ageSeconds": 0,
+      "inputRef": "/registry/tennis/partner-contracts.json"
+    },
+    "sportsTerminal": {
+      "dataStatus": "unavailable",
+      "sourceMode": "none",
+      "reasonCode": "optional_source_unavailable",
+      "inputRef": ""
+    },
+    "legacyOps": {
+      "dataStatus": "ok",
+      "sourceMode": "current",
+      "reasonCode": "current_fresh",
+      "observedAt": "2026-08-08T22:13:04.945Z",
+      "ageSeconds": 0,
+      "inputRef": "/registry/partners-ops.json"
+    }
+  },
+  "activeOutIds": [],
+  "summary": {
+    "partnerCount": 4,
+    "canonicalProfileCount": 4,
+    "operatorReadyPartnerCount": 4,
+    "attentionPartnerCount": 0,
+    "registeredOutCount": 10,
+    "activeOutCount": 0,
+    "balancePositions": []
+  },
+  "conflicts": [],
+  "partners": [
+    {
+      "partnerCode": "ASH",
+      "callSign": "ASH-001",
+      "lifecycle": {
+        "state": "active",
+        "effectiveAt": "2026-08-08T22:13:04.945Z",
+        "provenance": {
+          "sourceSystemId": "factorywager-partner-profile",
+          "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
+          "adapterId": "canonical-lifecycle-v1",
+          "adapterVersion": "1",
+          "observedAt": "2026-08-08T22:13:04.945Z",
+          "originalValue": "active",
+          "mappingMethod": "identity",
+          "confidence": "exact"
+        }
+      },
+      "operationalPhase": "operator_ready",
+      "identity": {
+        "profileSourceSystemId": "factorywager-partner-profile",
+        "externalPartnerRefs": []
+      },
+      "outs": [
+        {
+          "outId": "out-ASH-1",
+          "sportsbookId": "hard-rock-florida",
+          "operationalStatus": "ready",
+          "fundingStatus": "unknown",
+          "externalAccountRefs": []
+        },
+        {
+          "outId": "out-ASH-2",
+          "sportsbookId": "hard-rock-florida",
+          "operationalStatus": "deferred",
+          "fundingStatus": "unknown",
+          "externalAccountRefs": []
+        }
+      ],
+      "accounting": {
+        "balancePositions": [],
+        "recentEntries": []
+      },
+      "communication": {
+        "chatLinked": true,
+        "handshakeStatus": "operator_ready",
+        "configuredTopicKeys": []
+      },
+      "limits": {
+        "tracked": 0,
+        "missing": 0,
+        "coverageRatio": 0
+      },
+      "integrations": {},
+      "attention": []
+    },
+    {
+      "partnerCode": "BIL",
+      "callSign": "BIL-001",
+      "lifecycle": {
+        "state": "active",
+        "effectiveAt": "2026-08-08T22:13:04.945Z",
+        "provenance": {
+          "sourceSystemId": "factorywager-partner-profile",
+          "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
+          "adapterId": "canonical-lifecycle-v1",
+          "adapterVersion": "1",
+          "observedAt": "2026-08-08T22:13:04.945Z",
+          "originalValue": "active",
+          "mappingMethod": "identity",
+          "confidence": "exact"
+        }
+      },
+      "operationalPhase": "operator_ready",
+      "identity": {
+        "profileSourceSystemId": "factorywager-partner-profile",
+        "externalPartnerRefs": []
+      },
+      "outs": [
+        {
+          "outId": "out-BIL-1",
+          "sportsbookId": "partner-book-tbd",
+          "operationalStatus": "ready",
+          "fundingStatus": "unknown",
+          "externalAccountRefs": []
+        }
+      ],
+      "accounting": {
+        "balancePositions": [],
+        "recentEntries": []
+      },
+      "communication": {
+        "chatLinked": true,
+        "handshakeStatus": "operator_ready",
+        "configuredTopicKeys": []
+      },
+      "limits": {
+        "tracked": 0,
+        "missing": 0,
+        "coverageRatio": 0
+      },
+      "integrations": {},
+      "attention": []
+    },
+    {
+      "partnerCode": "NOV",
+      "callSign": "NOV-001",
+      "lifecycle": {
+        "state": "active",
+        "effectiveAt": "2026-08-08T22:13:04.945Z",
+        "provenance": {
+          "sourceSystemId": "factorywager-partner-profile",
+          "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
+          "adapterId": "canonical-lifecycle-v1",
+          "adapterVersion": "1",
+          "observedAt": "2026-08-08T22:13:04.945Z",
+          "originalValue": "active",
+          "mappingMethod": "identity",
+          "confidence": "exact"
+        }
+      },
+      "operationalPhase": "operator_ready",
+      "identity": {
+        "profileSourceSystemId": "factorywager-partner-profile",
+        "externalPartnerRefs": []
+      },
+      "outs": [
+        {
+          "outId": "out-NOV-1",
+          "sportsbookId": "hard-rock-florida",
+          "operationalStatus": "ready",
+          "fundingStatus": "unknown",
+          "externalAccountRefs": []
+        },
+        {
+          "outId": "out-NOV-2",
+          "sportsbookId": "southfl-pph-desk",
+          "operationalStatus": "deferred",
+          "fundingStatus": "unknown",
+          "externalAccountRefs": []
+        }
+      ],
+      "accounting": {
+        "balancePositions": [],
+        "recentEntries": []
+      },
+      "communication": {
+        "chatLinked": true,
+        "handshakeStatus": "operator_ready",
+        "configuredTopicKeys": []
+      },
+      "limits": {
+        "tracked": 0,
+        "missing": 0,
+        "coverageRatio": 0
+      },
+      "integrations": {},
+      "attention": []
+    },
+    {
+      "partnerCode": "SPEN",
+      "callSign": "SPEN-001",
+      "lifecycle": {
+        "state": "active",
+        "effectiveAt": "2026-08-08T22:13:04.945Z",
+        "provenance": {
+          "sourceSystemId": "factorywager-partner-profile",
+          "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
+          "adapterId": "canonical-lifecycle-v1",
+          "adapterVersion": "1",
+          "observedAt": "2026-08-08T22:13:04.945Z",
+          "originalValue": "active",
+          "mappingMethod": "identity",
+          "confidence": "exact"
+        }
+      },
+      "operationalPhase": "operator_ready",
+      "identity": {
+        "profileSourceSystemId": "factorywager-partner-profile",
+        "externalPartnerRefs": []
+      },
+      "outs": [
+        {
+          "outId": "out-SPEN-1",
+          "sportsbookId": "parlay21-com",
+          "operationalStatus": "ready",
+          "fundingStatus": "unknown",
+          "externalAccountRefs": []
+        },
+        {
+          "outId": "out-SPEN-2",
+          "sportsbookId": "lonestarwagering-com",
+          "operationalStatus": "ready",
+          "fundingStatus": "unknown",
+          "externalAccountRefs": []
+        },
+        {
+          "outId": "out-SPEN-3",
+          "sportsbookId": "action92-com",
+          "operationalStatus": "ready",
+          "fundingStatus": "unknown",
+          "externalAccountRefs": []
+        },
+        {
+          "outId": "out-SPEN-4",
+          "sportsbookId": "betvegas23-com",
+          "operationalStatus": "ready",
+          "fundingStatus": "unknown",
+          "externalAccountRefs": []
+        },
+        {
+          "outId": "out-SPEN-5",
+          "sportsbookId": "orange777",
+          "operationalStatus": "deferred",
+          "fundingStatus": "unknown",
+          "externalAccountRefs": []
+        }
+      ],
+      "accounting": {
+        "balancePositions": [],
+        "recentEntries": []
+      },
+      "communication": {
+        "chatLinked": true,
+        "handshakeStatus": "operator_ready",
+        "configuredTopicKeys": []
+      },
+      "limits": {
+        "tracked": 0,
+        "missing": 0,
+        "coverageRatio": 0
+      },
+      "integrations": {},
+      "attention": []
+    }
+  ]
+}

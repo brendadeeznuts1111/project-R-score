@@ -552,7 +552,7 @@ export async function validatePartnerDashboardPlan(
     plan.package?.components?.telegram_handshake_adapter !== 'implemented' ||
     plan.package?.components?.limit_change_adapter !== 'implemented' ||
     plan.package?.components?.current_compatibility_fetch_transport !== 'implemented' ||
-    plan.package?.components?.canonical_dashboard_browser_loader !== 'planned' ||
+    plan.package?.components?.canonical_dashboard_browser_loader !== 'implemented' ||
     'browser_loader' in (plan.package?.components ?? {}) ||
     plan.package?.components?.connector_ports !== 'partial' ||
     plan.package?.components?.source_adapters !== 'partial' ||
@@ -820,63 +820,64 @@ export async function validatePartnerDashboardPlan(
     const targetContract = PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.target;
     const currentCompatibilityContract =
       PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.currentCompatibility;
+    const transitionFetchTransport = transitionContract.fetchTransport;
     const currentFetchTransport = portalConsumerContract.current_fetch_transport as
       AnyRecord | undefined;
     const legacyComparison = portalConsumerContract.legacy_comparison as AnyRecord | undefined;
     const legacyComparisonRequired = (legacyComparison?.required_input_refs ?? []).map(String);
     const legacyComparisonOptional = (legacyComparison?.optional_input_refs ?? []).map(String);
     const legacyComparisonInputs = [...legacyComparisonRequired, ...legacyComparisonOptional];
+    const transitionFieldsMatch =
+      portalConsumerContract.transition_implementation_status ===
+        transitionContract.implementationStatus &&
+      portalConsumerContract.transition_input_mode === transitionContract.inputMode &&
+      portalConsumerContract.canonical_input_ref === transitionContract.canonicalInputRef &&
+      portalConsumerContract.canonical_failure_policy ===
+        transitionContract.canonicalFailurePolicy &&
+      portalConsumerContract.automatic_legacy_fallback ===
+        transitionContract.automaticLegacyFallback &&
+      legacyComparison?.implementation_status ===
+        transitionContract.legacyComparison.implementationStatus &&
+      legacyComparison?.activation === transitionContract.legacyComparison.activation &&
+      legacyComparison?.search_param === transitionContract.legacyComparison.searchParam &&
+      legacyComparison?.search_value === transitionContract.legacyComparison.searchValue &&
+      legacyComparison?.load_order === transitionContract.legacyComparison.loadOrder &&
+      legacyComparison?.result_role === transitionContract.legacyComparison.resultRole &&
+      legacyComparison?.failure_policy === transitionContract.legacyComparison.failurePolicy &&
+      sameMembers(
+        legacyComparisonRequired,
+        transitionContract.legacyComparison.requiredInputRefs
+      ) &&
+      sameMembers(
+        legacyComparisonOptional,
+        transitionContract.legacyComparison.optionalInputRefs
+      ) &&
+      unique(legacyComparisonInputs) &&
+      legacyComparisonInputs.every(inputRef => /^\/registry\/[^/].*\.json$/.test(inputRef));
     if (
-      consumerStatus === currentCompatibilityContract.implementationStatus &&
-      (portalConsumerContract.transition_implementation_status !==
-        transitionContract.implementationStatus ||
-        portalConsumerContract.transition_input_mode !== transitionContract.inputMode ||
-        portalConsumerContract.canonical_input_ref !== transitionContract.canonicalInputRef ||
-        portalConsumerContract.canonical_failure_policy !==
-          transitionContract.canonicalFailurePolicy ||
-        portalConsumerContract.automatic_legacy_fallback !==
-          transitionContract.automaticLegacyFallback ||
-        legacyComparison?.implementation_status !==
-          transitionContract.legacyComparison.implementationStatus ||
-        legacyComparison?.activation !== transitionContract.legacyComparison.activation ||
-        legacyComparison?.search_param !== transitionContract.legacyComparison.searchParam ||
-        legacyComparison?.search_value !== transitionContract.legacyComparison.searchValue ||
-        legacyComparison?.load_order !== transitionContract.legacyComparison.loadOrder ||
-        legacyComparison?.result_role !== transitionContract.legacyComparison.resultRole ||
-        legacyComparison?.failure_policy !== transitionContract.legacyComparison.failurePolicy ||
-        !sameMembers(
-          legacyComparisonRequired,
-          transitionContract.legacyComparison.requiredInputRefs
-        ) ||
-        !sameMembers(
-          legacyComparisonOptional,
-          transitionContract.legacyComparison.optionalInputRefs
-        ) ||
-        !unique(legacyComparisonInputs) ||
-        legacyComparisonInputs.some(inputRef => !/^\/registry\/[^/].*\.json$/.test(inputRef)))
+      (consumerStatus === currentCompatibilityContract.implementationStatus ||
+        consumerStatus === transitionContract.implementationStatus) &&
+      !transitionFieldsMatch
     ) {
       errors.push(
         'portal transition contract must require canonical input and explicit query-only legacy comparison'
       );
     }
+    const usesSharedFetchTransport =
+      currentFetchTransport?.module_ref === transitionFetchTransport.moduleRef &&
+      currentFetchTransport?.export_name === transitionFetchTransport.exportName &&
+      currentFetchTransport?.default_timeout_ms === transitionFetchTransport.defaultTimeoutMs &&
+      currentFetchTransport?.content_type_diagnostic_policy ===
+        transitionFetchTransport.contentTypeDiagnosticPolicy &&
+      currentFetchTransport?.required_failure_policy ===
+        transitionFetchTransport.requiredFailurePolicy &&
+      currentFetchTransport?.optional_failure_policy ===
+        transitionFetchTransport.optionalFailurePolicy &&
+      boardHtml.includes(
+        `import { ${transitionFetchTransport.exportName} } from '${transitionFetchTransport.moduleRef}'`
+      );
     if (consumerStatus === currentCompatibilityContract.implementationStatus) {
-      if (
-        currentFetchTransport?.module_ref !==
-          currentCompatibilityContract.fetchTransport.moduleRef ||
-        currentFetchTransport?.export_name !==
-          currentCompatibilityContract.fetchTransport.exportName ||
-        currentFetchTransport?.default_timeout_ms !==
-          currentCompatibilityContract.fetchTransport.defaultTimeoutMs ||
-        currentFetchTransport?.content_type_diagnostic_policy !==
-          currentCompatibilityContract.fetchTransport.contentTypeDiagnosticPolicy ||
-        currentFetchTransport?.required_failure_policy !==
-          currentCompatibilityContract.fetchTransport.requiredFailurePolicy ||
-        currentFetchTransport?.optional_failure_policy !==
-          currentCompatibilityContract.fetchTransport.optionalFailurePolicy ||
-        !boardHtml.includes(
-          `import { ${currentCompatibilityContract.fetchTransport.exportName} } from '${currentCompatibilityContract.fetchTransport.moduleRef}'`
-        )
-      ) {
+      if (!usesSharedFetchTransport) {
         errors.push(
           'current-compatibility portal must use the shared structured JSON fetch transport'
         );
@@ -900,6 +901,41 @@ export async function validatePartnerDashboardPlan(
       }
       if (observedCombined.includes(dashboardArtifactRef)) {
         errors.push('current-compatibility portal consumer must not claim the target artifact');
+      }
+    } else if (consumerStatus === transitionContract.implementationStatus) {
+      if (!usesSharedFetchTransport) {
+        errors.push('transition portal must use the shared structured JSON fetch transport');
+      }
+      if (
+        inputMode !== transitionContract.inputMode ||
+        !sameMembers(requiredInputs, transitionContract.requiredInputRefs) ||
+        !sameMembers(optionalInputs, transitionContract.optionalInputRefs)
+      ) {
+        errors.push(
+          'transition portal consumer must load only the canonical dashboard artifact as primary'
+        );
+      }
+      if (
+        !sameMembers(observedInputs.required, requiredInputs) ||
+        !sameMembers(observedInputs.optional, optionalInputs)
+      ) {
+        errors.push(
+          `portal registry input map does not match HTML (required: ${observedInputs.required.join(', ')}; optional: ${observedInputs.optional.join(', ')})`
+        );
+      }
+      if (!(await Bun.file(dashboardArtifactPath).exists())) {
+        errors.push(
+          'transition portal consumer requires the canonical dashboard artifact to exist'
+        );
+      }
+      if (
+        portalConsumerContract.canonical_failure_policy !==
+          transitionContract.canonicalFailurePolicy ||
+        portalConsumerContract.automatic_legacy_fallback !== false
+      ) {
+        errors.push(
+          'transition portal consumer must use error-never-fallback without automatic legacy fallback'
+        );
       }
     } else if (consumerStatus === 'implemented') {
       if (

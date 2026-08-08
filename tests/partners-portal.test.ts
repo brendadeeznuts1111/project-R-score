@@ -51,15 +51,11 @@ describe('partners portal board', () => {
     expect(html).toContain('onboard:partner');
     expect(html).toContain('/portal/limits/?partner=');
     expect(html).toContain('/portal/partner-history/?partner=');
-    expect(html).toContain('/registry/telegram-handshake.json');
-    expect(html).toContain('/registry/seat-capital-desk.json');
-    expect(html).toContain('/registry/telegram-handshake-catalog.json');
-    expect(html).toContain('/registry/scrape-wire-taxonomy.json');
-    expect(html).toContain('/registry/partners-ops.json');
-    expect(html).toContain('/registry/partner-profiles.json');
+    expect(html).toContain('/registry/partners-dashboard.json');
+    expect(html).toContain("loadJson('/registry/partners-dashboard.json')");
+    expect(html).toContain('projectDashboardToOpsShape');
     expect(html).toContain('partnerProfilesCache?.profiles?.[code]');
     expect(html).toContain('Profile lifecycle');
-    expect(html).toContain('/registry/limit-raises.json');
     expect(html).toContain('depositMethod');
     expect(html).toContain('telegram:package-group:accounting');
     expect(html).toContain('Betting deposits');
@@ -72,10 +68,8 @@ describe('partners portal board', () => {
     expect(html).toContain('soft-weeks-tbody');
     expect(html).toContain('soft-book-types-tbody');
     expect(html).toContain('ops.view.per_book_type');
-    expect(html).toContain('soft-accounting-export.json');
-    expect(html).toMatch(
-      /String\(play\?\.partnerCode \|\| ''\)\s*\.trim\(\)\s*\.toUpperCase\(\)/
-    );
+    // Soft export remains section chrome; primary load no longer multi-fetches it.
+    expect(html).toContain('softWeekRows');
     expect(html).toContain('Partner messages');
     expect(html).toContain('seat:desk:partner-message');
     expect(html).toContain('renderPartnerMessages');
@@ -162,43 +156,28 @@ describe('partners portal board', () => {
   test('baked registry artifacts exist for the board consumers', async () => {
     const html = await Bun.file(BOARD).text();
     expect(html).toContain("import { fetchJsonResult } from '/portal/fetch-json.js'");
+    // Primary load is the single canonical artifact
+    expect(html).toContain(`loadJson('${PARTNER_DASHBOARD_ARTIFACT_REF}')`);
+    expect(await Bun.file(`public${PARTNER_DASHBOARD_ARTIFACT_REF}`).exists()).toBe(true);
+    // Legacy multi-fetch is diagnostic only (?compare=legacy) — not loadJson primary
     for (const ref of [
       ...PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
       ...PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
     ]) {
-      expect(html).toContain(`loadJson('${ref}')`);
+      expect(html).not.toContain(`loadJson('${ref}')`);
       expect(await Bun.file(`public${ref}`).exists()).toBe(true);
     }
-    expect(html).not.toContain(PARTNER_DASHBOARD_ARTIFACT_REF);
     expect(html).not.toContain(PARTNER_PROFILE_COVERAGE_INPUT_REF);
+    const dashboard = await Bun.file(`public${PARTNER_DASHBOARD_ARTIFACT_REF}`).json();
+    expect(dashboard.schema).toBe('factorywager.partners-dashboard.v1');
+    expect(dashboard.summary.partnerCount).toBeGreaterThan(0);
+    expect(Array.isArray(dashboard.partners)).toBe(true);
+    // Legacy bake inputs remain available for bake + diagnostic compare
     expect(await Bun.file('public/registry/telegram-handshake.json').exists()).toBe(true);
-    expect(await Bun.file('public/registry/seat-capital-desk.json').exists()).toBe(true);
-    expect(await Bun.file('public/registry/telegram-handshake-catalog.json').exists()).toBe(true);
     expect(await Bun.file('public/registry/partners-ops.json').exists()).toBe(true);
-    expect(await Bun.file('public/registry/soft-accounting-export.json').exists()).toBe(true);
-    const handshake = await Bun.file('public/registry/telegram-handshake.json').json();
-    const seat = await Bun.file('public/registry/seat-capital-desk.json').json();
-    const catalog = await Bun.file('public/registry/telegram-handshake-catalog.json').json();
     const ops = await Bun.file('public/registry/partners-ops.json').json();
-    expect(Array.isArray(handshake.rows)).toBe(true);
-    expect(handshake.rows.length).toBeGreaterThan(0);
-    expect(Array.isArray(seat.rows)).toBe(true);
-    expect(seat.rows.some((r: { outs?: unknown[] }) => Array.isArray(r.outs) && r.outs.length > 0)).toBe(
-      true
-    );
-    expect(Array.isArray(seat.partnerViews)).toBe(true);
-    expect(seat.partnerViews.length).toBeGreaterThan(0);
-    expect(Array.isArray(seat.partnerMessageTemplates)).toBe(true);
-    expect(seat.commands?.partnerMessage).toContain('partner-message');
-    expect(catalog.colors?.packageTopics?.accounting?.hex).toMatch(/^#/);
-    expect(catalog.glossary?.conceptIds).toContain('telegram.wire');
     expect(ops.schema).toBe('factorywager.partners-ops.v2');
     expect(ops.validation.ok).toBe(true);
-    expect(ops.summary.accounts).toBeGreaterThan(0);
-    expect(ops.summary.trackedLimits).toBeGreaterThan(0);
-    expect(ops.partners.every((partner: { tracking?: unknown }) => partner.tracking)).toBe(true);
-    expect(ops.glossary.conceptIds).toContain('ops.view.per_account');
-    expect(ops.colors?.['ops.view.per_account']?.hex).toMatch(/^#/);
   });
 
   test('URLPattern routes keep partner, out, accounting, and Telegram anchors aligned', () => {
@@ -257,7 +236,7 @@ describe('partners portal board', () => {
     expect(html).toContain('w.net');
   });
 
-  test('partners Soft book-type table wires live soft-ct byBookType into ops.view.per_book_type', async () => {
+  test('partners Soft book-type table keeps ops.view.per_book_type chrome after cutover', async () => {
     const {
       finalizeSoftAccountingExport,
       buildPartnerSoftPlayChrome,
@@ -296,7 +275,7 @@ describe('partners portal board', () => {
 
     const html = await Bun.file('public/portal/partners/index.html').text();
     expect(html).toContain('soft-book-types-tbody');
-    expect(html).toContain('softAccounting?.byBookType');
+    expect(html).toContain('softBookTypeRows');
     expect(html).toContain('ops.view.per_book_type');
   });
 });
