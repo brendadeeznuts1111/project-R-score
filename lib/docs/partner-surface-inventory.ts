@@ -1097,7 +1097,9 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
     owner: 'partner-profile bake',
     notes: 'Compatibility input — not new canonical authority',
     registry: {
-      schemaId: '1',
+      // Artifact carries both `schema` (name) and `schemaVersion` (numeric).
+      // Layer B prefers bag.schemaIdField when set — pin version field + current bake.
+      schemaId: '2',
       schemaIdField: 'schemaVersion',
       artifactPath: 'public/registry/partner-profiles.json',
       omits: ['vaultKey', 'credentials', 'password'],

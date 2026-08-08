@@ -2,7 +2,7 @@
   "kind": "partner-surface-inventory",
   "schemaVersion": 3,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-06T21:49:10.314Z",
+  "bakedAt": "2026-08-08T21:42:22.543Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",
@@ -572,7 +572,7 @@
       "href": "/registry/partner-profiles.json",
       "notes": "Compatibility input — not new canonical authority",
       "registry": {
-        "schemaId": "1",
+        "schemaId": "2",
         "schemaIdField": "schemaVersion",
         "artifactPath": "public/registry/partner-profiles.json",
         "omits": [
@@ -1849,7 +1849,7 @@
       "machine": "nav",
       "typeOrExport": "PortalChromeNavItem",
       "href": "/portal/bookmakers/",
-      "notes": "@factorywager/bookmakers artifact · canonical bookmaker registry",
+      "notes": "@factorywager/bookmakers catalog (Tenant=bookmakers; Domain=partner = desk loop)",
       "chromeNav": {
         "domain": "partner",
         "group": "ops",
@@ -2043,7 +2043,7 @@
       "machine": "nav",
       "typeOrExport": "page.bookmakers",
       "href": "/portal/bookmakers/",
-      "notes": "@factorywager/bookmakers artifact · canonical bookmaker registry",
+      "notes": "@factorywager/bookmakers catalog (Tenant=bookmakers; Domain=partner = desk loop)",
       "chromeNav": {
         "domain": "partner",
         "group": "ops",
