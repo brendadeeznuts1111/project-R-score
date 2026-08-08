@@ -13,6 +13,13 @@ export const PARTNERS_DASHBOARD_ARTIFACT_REF = '/registry/partners-dashboard.jso
 export const PARTNERS_DASHBOARD_SCHEMA_V1 = 'factorywager.partners-dashboard.v1';
 
 /**
+ * Optional ancillary registry refs loaded *after* the canonical dashboard via
+ * fetchJsonResult (never loadJson primary — keeps single-artifact contract).
+ */
+export const PARTNERS_ANCILLARY_SOFT_ACCOUNTING_REF = '/registry/soft-accounting-export.json';
+export const PARTNERS_ANCILLARY_SEAT_CAPITAL_REF = '/registry/seat-capital-desk.json';
+
+/**
  * @param {unknown} value
  * @returns {string}
  */
@@ -747,4 +754,166 @@ export function dashboardProfileCoverage(dashboard) {
   const coveredSet = new Set(covered);
   const missingCodes = partnerCodes.filter(code => !coveredSet.has(code));
   return { partnerCodes, coveredCodes: [...coveredSet].sort(), missingCodes };
+}
+
+// ── Optional Soft / seat ancillary projections (secondary fetch only) ─────
+
+/**
+ * ISO week start (UTC Monday) from a placedAt timestamp.
+ * @param {unknown} placedAt
+ * @returns {string | null}
+ */
+export function softWeekStartIsoFromPlacedAt(placedAt) {
+  const ms = Date.parse(String(placedAt || ''));
+  if (!Number.isFinite(ms)) return null;
+  const d = new Date(ms);
+  const day = d.getUTCDay();
+  const mondayOffset = day === 0 ? -6 : 1 - day;
+  d.setUTCDate(d.getUTCDate() + mondayOffset);
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const dayNum = String(d.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${dayNum}`;
+}
+
+/**
+ * Index Soft plays by partner CODE.
+ * @param {object | null | undefined} softExport
+ * @returns {Map<string, object[]>}
+ */
+export function indexSoftPlaysByPartner(softExport) {
+  const map = new Map();
+  for (const play of softExport?.plays || []) {
+    const code = normalizePartnerCode(play?.partnerCode);
+    if (!code) continue;
+    const bucket = map.get(code);
+    if (bucket) bucket.push(play);
+    else map.set(code, [play]);
+  }
+  return map;
+}
+
+/**
+ * Soft week rollups: prefer export.weeks, else derive from plays.
+ * @param {object | null | undefined} softExport
+ * @returns {object[]}
+ */
+export function softWeekRowsFromExport(softExport) {
+  const weeks = Array.isArray(softExport?.weeks) ? softExport.weeks : [];
+  if (weeks.length) {
+    return weeks
+      .map(w => ({
+        weekStart: w.weekStart || w.week || '—',
+        partnerCode: normalizePartnerCode(w.partnerCode),
+        deposits: Number(w.deposits) || 0,
+        settlements: Number(w.settlements) || 0,
+        net: Number(w.net) || 0,
+      }))
+      .filter(w => w.partnerCode)
+      .sort(
+        (a, b) =>
+          String(b.weekStart).localeCompare(String(a.weekStart)) ||
+          a.partnerCode.localeCompare(b.partnerCode)
+      );
+  }
+  const byKey = new Map();
+  for (const play of softExport?.plays || []) {
+    const partnerCode = normalizePartnerCode(play?.partnerCode);
+    const weekStart = softWeekStartIsoFromPlacedAt(play?.placedAt);
+    if (!partnerCode || !weekStart) continue;
+    const key = `${partnerCode}|${weekStart}`;
+    let row = byKey.get(key);
+    if (!row) {
+      row = { weekStart, partnerCode, deposits: 0, settlements: 0, net: 0 };
+      byKey.set(key, row);
+    }
+    const stake = typeof play.stake === 'number' && Number.isFinite(play.stake) ? play.stake : 0;
+    const pnl = typeof play.pnl === 'number' && Number.isFinite(play.pnl) ? play.pnl : 0;
+    row.deposits += stake;
+    if (play.result !== 'pending') row.settlements += Math.abs(pnl);
+    row.net += pnl;
+  }
+  return [...byKey.values()].sort(
+    (a, b) =>
+      String(b.weekStart).localeCompare(String(a.weekStart)) ||
+      a.partnerCode.localeCompare(b.partnerCode)
+  );
+}
+
+/**
+ * Soft book-type rollups from export.byBookType.
+ * @param {object | null | undefined} softExport
+ * @returns {object[]}
+ */
+export function softBookTypeRowsFromExport(softExport) {
+  const rows = Array.isArray(softExport?.byBookType) ? softExport.byBookType : [];
+  return rows
+    .map(b => ({
+      partnerCode: normalizePartnerCode(b.partnerCode),
+      bookType: String(b.bookType || '—'),
+      deposits: Number(b.deposits) || 0,
+      settlements: Number(b.settlements) || 0,
+      net: Number(b.net) || 0,
+    }))
+    .filter(b => b.partnerCode)
+    .sort(
+      (a, b) =>
+        a.partnerCode.localeCompare(b.partnerCode) || a.bookType.localeCompare(b.bookType)
+    );
+}
+
+/**
+ * Normalize seat-capital-desk artifact for deposits / partner messages.
+ * @param {object | null | undefined} seat
+ */
+export function normalizeSeatCapitalDesk(seat) {
+  if (!seat || typeof seat !== 'object') {
+    return {
+      schema: null,
+      generatedAt: null,
+      rows: [],
+      partnerViews: [],
+      partnerMessageTemplates: [],
+      desks: 0,
+      source: 'missing',
+    };
+  }
+  const rows = Array.isArray(seat.rows) ? seat.rows : [];
+  return {
+    schema: seat.schema || null,
+    generatedAt: seat.generatedAt || null,
+    rows,
+    partnerViews: Array.isArray(seat.partnerViews) ? seat.partnerViews : [],
+    partnerMessageTemplates: Array.isArray(seat.partnerMessageTemplates)
+      ? seat.partnerMessageTemplates
+      : [],
+    desks: Number(seat.desks) || rows.length,
+    source: 'seat-capital-desk',
+  };
+}
+
+/**
+ * Project soft-accounting-export into board caches.
+ * @param {object | null | undefined} softExport
+ */
+export function projectSoftAccountingExport(softExport) {
+  if (!softExport || softExport.available === false) {
+    return {
+      source: softExport?.source || 'unavailable',
+      playsByPartner: new Map(),
+      weekRows: [],
+      bookTypeRows: [],
+      playCount: 0,
+    };
+  }
+  const playsByPartner = indexSoftPlaysByPartner(softExport);
+  let playCount = 0;
+  for (const plays of playsByPartner.values()) playCount += plays.length;
+  return {
+    source: String(softExport.source || softExport.path || 'soft-accounting-export'),
+    playsByPartner,
+    weekRows: softWeekRowsFromExport(softExport),
+    bookTypeRows: softBookTypeRowsFromExport(softExport),
+    playCount,
+  };
 }
