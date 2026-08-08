@@ -27,7 +27,7 @@ package registry.
 bun run factory --version
 bun run factory:list
 bun run factory:snapshot          # → public/registry/registry.json
-bun run factory create factory-library my-lib --publish
+bun run factory:create -- factory-library ./packages/my-lib
 ```
 
 See [proof claim](../../docs/harness/PROOF.md) `factory-registry-cli-v1`.  
@@ -42,7 +42,7 @@ ping).
 
 ## `factory create` → `bun create`
 
-Scaffolding **delegates to Bun** — factory only adds `--publish` (registry) and
+Scaffolding **delegates to Bun** — Factory adds an optional registry marker and
 interactive spawn. Canonical Bun docs:
 [runtime/templating/create](https://bun.com/docs/runtime/templating/create)
 (_optional_ — Bun needs no config; create only speeds setup). Empty project
@@ -74,3 +74,7 @@ harness tenant
 
 ⚠️ Local templates **delete** an existing destination directory; remote
 templates do not overwrite without `--force`.
+
+`--publish` records scaffold metadata only. Create and verify a `bun pm pack`
+archive before using `factory publish` for a distributable release. Treat the
+destination as disposable: local templates may replace it.
