@@ -16,9 +16,22 @@ describe('bake partners-dashboard', () => {
     expect(artifact.generatedAt).toBe('2026-08-08T18:00:00.000Z');
     expect(artifact.summary.partnerCount).toBe(4);
     expect(artifact.summary.canonicalProfileCount).toBe(4);
-    expect(artifact.activeOutIds).toEqual([]);
+    // Tennis live capacity ∩ registered ready outs
+    expect(artifact.activeOutIds).toEqual([
+      'out-ASH-1',
+      'out-BIL-1',
+      'out-NOV-1',
+      'out-SPEN-1',
+      'out-SPEN-2',
+    ]);
+    expect(artifact.summary.activeOutCount).toBe(5);
     expect(artifact.partners.map(p => p.partnerCode)).toEqual(['ASH', 'BIL', 'NOV', 'SPEN']);
     expect(artifact.connectorSnapshots.profiles.dataStatus).toBe('ok');
+    expect(artifact.partners.find(p => p.partnerCode === 'ASH')?.integrations.tennis?.dataStatus).toBe(
+      'ok'
+    );
+    // Optional partner-ledger.json absent → empty accounting until redacted snapshot lands
+    expect(artifact.summary.balancePositions).toEqual([]);
     // Re-parse for structural guarantee
     const reparsed = parsePartnerDashboardArtifact(artifact);
     expect(reparsed.summary.partnerCount).toBe(4);
