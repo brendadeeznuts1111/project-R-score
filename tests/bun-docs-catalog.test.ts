@@ -373,12 +373,26 @@ describe('frozen guide examples', () => {
     expect(guideExamplesForToken('Bun.inspect')[0]?.body).toContain('Bun.inspect(obj)');
     expect(guideExamplesForToken('Bun.inspect()')[0]?.body).toContain('Uint8Array');
     expect(guideExamplesForToken('Bun.inspect.custom')[0]?.body).toContain('[Bun.inspect.custom]');
+    expect(guideExamplesForToken('Bun.markdown.html')[0]?.body).toContain('Bun.markdown.html(');
+    expect(guideExamplesForToken('Bun.markdown.ansi')[0]?.body).toContain('Bun.markdown.ansi(');
+    expect(guideExamplesForToken('Bun.markdown.render')[0]?.body).toContain('Bun.markdown.render(');
     expect(guideExamplesForToken('Bun.markdown.react')[0]?.body).toContain('Bun.markdown.react(text)');
     expect(guideExamplesForToken('component-overrides')[0]?.body).toContain('pre: Code');
     expect(guideExamplesForToken('available-overrides')[0]?.body).toContain('Bun.markdown.react(');
     expect(guideExamplesForToken('options')[0]?.body).toContain('tables: true');
+    expect(guideExamplesForToken('options')[1]?.body).toContain('latexMath: false');
+    expect(guideExamplesForToken('autolinks')[0]?.body).toContain('autolinks: { url: true, www: true }');
+    expect(guideExamplesForToken('heading-ids')[0]?.body).toContain('headings: { ids: true }');
+    expect(guideExamplesForToken('callback-signature')[0]?.body).toContain('null/undefined');
+    expect(guideExamplesForToken('block-callbacks')[0]?.body).toContain('blockquote:');
+    expect(guideExamplesForToken('list-item-meta')[0]?.body).toContain('checked');
+    expect(guideExamplesForToken('inline-callbacks')[0]?.body).toContain('strikethrough:');
+    expect(guideExamplesForToken('nested-list-numbering')[0]?.body).toContain('listItem:');
+    expect(guideExamplesForToken('server-side-rendering')[0]?.body).toContain('renderToString');
     expect(guideExamplesForToken('parser-options')[0]?.body).toContain('autolinks: true');
     expect(guideExamplesForToken('parser-options-2')[0]?.body).toContain('headings: { ids: true }');
+    expect(guideExamplesForToken('react-18-and-older')[0]?.body).toContain('reactVersion: 18');
+    expect(guideExamplesForToken('react-18-and-older')[0]?.body).toContain('transitional');
     expect(guideExamplesForToken('BUN_OPTIONS')[0]?.body).toContain('BUN_OPTIONS="--cpu-prof"');
     expect(guideExamplesForToken('runtime-arguments-via-bun-options')[0]?.body).toContain(
       '--smol --cpu-prof-md'
@@ -483,16 +497,55 @@ describe('inspect family catalog relations', () => {
     expect(byName.get('options')?.docsUrl).toBe(
       'https://bun.com/docs/runtime/markdown#options'
     );
+    expect(byName.get('autolinks')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#autolinks'
+    );
+    expect(byName.get('heading-ids')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#heading-ids'
+    );
     expect(byName.get('parser-options')?.docsUrl).toBe(
       'https://bun.com/docs/runtime/markdown#parser-options'
     );
     expect(byName.get('parser-options-2')?.docsUrl).toBe(
       'https://bun.com/docs/runtime/markdown#parser-options-2'
     );
+    expect(byName.get('react-18-and-older')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#react-18-and-older'
+    );
+    expect(byName.get('callback-signature')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#callback-signature'
+    );
+    expect(byName.get('block-callbacks')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#block-callbacks'
+    );
+    expect(byName.get('list-item-meta')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#list-item-meta'
+    );
+    expect(byName.get('inline-callbacks')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#inline-callbacks'
+    );
+    expect(byName.get('server-side-rendering')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#server-side-rendering'
+    );
+    expect(byName.get('react-18-and-older')?.description).toContain('transitional');
     expect(byName.get('options')?.examples?.[0]?.body).toContain('tables: true');
+    expect(byName.get('options')?.examples?.[1]?.body).toContain('wikiLinks: false');
+    expect(byName.get('autolinks')?.examples?.[0]?.body).toContain('autolinks: true');
+    expect(byName.get('heading-ids')?.examples?.[0]?.body).toContain(
+      'headings: { ids: true }'
+    );
+    expect(byName.get('list-item-meta')?.examples?.[0]?.body).toContain('listItem:');
+    expect(byName.get('inline-callbacks')?.examples?.[0]?.body).toContain('codespan:');
     expect(byName.get('parser-options-2')?.examples?.[0]?.body).toContain(
       'headings: { ids: true }'
     );
+    expect(byName.get('Bun.markdown.ansi')?.examples?.[0]?.body).toContain(
+      'Bun.markdown.ansi('
+    );
+    expect(byName.get('options')?.related).toContain('autolinks');
+    expect(byName.get('options')?.related).toContain('heading-ids');
+    expect(byName.get('Bun.markdown.render')?.related).toContain('list-item-meta');
+    expect(byName.get('Bun.markdown.render')?.related).toContain('inline-callbacks');
     expect(byName.get('BUN_OPTIONS')?.docsUrl).toBe(
       'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options'
     );

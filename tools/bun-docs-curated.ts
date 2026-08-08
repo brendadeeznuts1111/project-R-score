@@ -31,8 +31,17 @@
 // @see https://bun.com/docs/runtime/markdown#component-overrides — component-overrides
 // @see https://bun.com/docs/runtime/markdown#available-overrides — available-overrides
 // @see https://bun.com/docs/runtime/markdown#options — options
+// @see https://bun.com/docs/runtime/markdown#autolinks — autolinks
+// @see https://bun.com/docs/runtime/markdown#heading-ids — heading-ids
+// @see https://bun.com/docs/runtime/markdown#callback-signature — callback-signature
+// @see https://bun.com/docs/runtime/markdown#block-callbacks — block-callbacks
+// @see https://bun.com/docs/runtime/markdown#list-item-meta — list-item-meta
+// @see https://bun.com/docs/runtime/markdown#inline-callbacks — inline-callbacks
+// @see https://bun.com/docs/runtime/markdown#nested-list-numbering — nested-list-numbering
+// @see https://bun.com/docs/runtime/markdown#server-side-rendering — server-side-rendering
 // @see https://bun.com/docs/runtime/markdown#parser-options — parser-options
 // @see https://bun.com/docs/runtime/markdown#parser-options-2 — parser-options-2
+// @see https://bun.com/docs/runtime/markdown#react-18-and-older — reactVersion: 18
 // @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — BUN_OPTIONS
 // @see https://bun.com/docs/bundler/executables#embedding-runtime-arguments — --compile-exec-argv
 // @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — file-uploads
@@ -438,8 +447,19 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#bun-markdown-html',
     description: 'Render Markdown to an HTML string. Pass parser options as the second argument.',
     minVersion: '1.3.0',
-    related: ['runtime/markdown#options'],
-    relatedTokens: ['options', 'Bun.markdown', 'Bun.markdown.render', 'Bun.markdown.react'],
+    related: [
+      'runtime/markdown#options',
+      'runtime/markdown#autolinks',
+      'runtime/markdown#heading-ids',
+    ],
+    relatedTokens: [
+      'options',
+      'autolinks',
+      'heading-ids',
+      'Bun.markdown',
+      'Bun.markdown.render',
+      'Bun.markdown.react',
+    ],
   },
   {
     term: 'Bun.markdown.ansi',
@@ -454,10 +474,23 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     description:
       'Render Markdown via callbacks. Pass parser options as a separate third argument (see parser-options).',
     minVersion: '1.3.0',
-    related: ['runtime/markdown#parser-options', 'runtime/markdown#options'],
+    related: [
+      'runtime/markdown#parser-options',
+      'runtime/markdown#options',
+      'runtime/markdown#callback-signature',
+      'runtime/markdown#block-callbacks',
+      'runtime/markdown#list-item-meta',
+      'runtime/markdown#inline-callbacks',
+    ],
     relatedTokens: [
+      'callback-signature',
+      'block-callbacks',
       'parser-options',
+      'list-item-meta',
+      'inline-callbacks',
       'options',
+      'autolinks',
+      'heading-ids',
       'Bun.markdown',
       'Bun.markdown.html',
       'Bun.markdown.react',
@@ -472,14 +505,18 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     related: [
       'runtime/markdown#component-overrides',
       'runtime/markdown#available-overrides',
+      'runtime/markdown#server-side-rendering',
       'runtime/markdown#parser-options-2',
       'runtime/markdown#options',
+      'runtime/markdown#react-18-and-older',
     ],
     relatedTokens: [
       'component-overrides',
       'available-overrides',
+      'server-side-rendering',
       'parser-options-2',
       'options',
+      'react-18-and-older',
       'Bun.markdown',
       'Bun.markdown.html',
       'Bun.markdown.render',
@@ -508,6 +545,8 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'Pass an options object as the second argument to Bun.markdown.html to configure the parser (tables, autolinks, headings, …).',
     minVersion: '1.3.0',
     relatedTokens: [
+      'autolinks',
+      'heading-ids',
       'parser-options',
       'parser-options-2',
       'Bun.markdown.html',
@@ -516,12 +555,98 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     ],
   },
   {
+    term: 'autolinks',
+    path: 'runtime/markdown#autolinks',
+    description:
+      'Pass true to enable all autolink types (URL, WWW, email), or an object for granular control ({ url, www, email }).',
+    minVersion: '1.3.0',
+    relatedTokens: ['options', 'heading-ids', 'Bun.markdown.html', 'parser-options'],
+  },
+  {
+    term: 'heading-ids',
+    path: 'runtime/markdown#heading-ids',
+    description:
+      'Pass true for heading IDs + autolink headings, or { ids: true } for IDs only (no autolink wrap).',
+    minVersion: '1.3.0',
+    relatedTokens: ['options', 'autolinks', 'Bun.markdown.html', 'parser-options-2'],
+  },
+  {
+    term: 'callback-signature',
+    path: 'runtime/markdown#callback-signature',
+    description:
+      'Bun.markdown.render callbacks receive children (string) and optional meta; return string to replace, null/undefined to omit; unregistered → children pass through.',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'block-callbacks',
+      'list-item-meta',
+      'inline-callbacks',
+      'Bun.markdown.render',
+      'omitting-elements',
+    ],
+  },
+  {
+    term: 'block-callbacks',
+    path: 'runtime/markdown#block-callbacks',
+    description:
+      'Bun.markdown.render block callbacks: heading, paragraph, blockquote, code, list, listItem, hr, table/thead/tbody/tr/th/td, html.',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'callback-signature',
+      'list-item-meta',
+      'inline-callbacks',
+      'Bun.markdown.render',
+    ],
+  },
+  {
+    term: 'list-item-meta',
+    path: 'runtime/markdown#list-item-meta',
+    description:
+      'listItem callback meta: index (0-based), depth, ordered, start? (ordered lists), checked? (task lists).',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'callback-signature',
+      'nested-list-numbering',
+      'inline-callbacks',
+      'Bun.markdown.render',
+      'parser-options',
+    ],
+  },
+  {
+    term: 'inline-callbacks',
+    path: 'runtime/markdown#inline-callbacks',
+    description:
+      'Bun.markdown.render inline callbacks: strong, emphasis, link, image, codespan, strikethrough, text.',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'callback-signature',
+      'list-item-meta',
+      'Bun.markdown.render',
+      'parser-options',
+    ],
+  },
+  {
+    term: 'nested-list-numbering',
+    path: 'runtime/markdown#nested-list-numbering',
+    description:
+      'Render nested ordered lists with listItem meta (index/depth/ordered/start) — no post-processing.',
+    minVersion: '1.3.0',
+    relatedTokens: ['list-item-meta', 'Bun.markdown.render'],
+  },
+  {
+    term: 'omitting-elements',
+    path: 'runtime/markdown#omitting-elements',
+    description:
+      'Return null or undefined from a Bun.markdown.render callback to remove that element from the output.',
+    minVersion: '1.3.0',
+    relatedTokens: ['callback-signature', 'Bun.markdown.render'],
+  },
+  {
     term: 'parser-options',
     path: 'runtime/markdown#parser-options',
     description:
       'Pass parser options as a separate third argument to Bun.markdown.render (same option set as #options).',
     minVersion: '1.3.0',
-    relatedTokens: ['options', 'parser-options-2', 'Bun.markdown.render'],
+    relatedTokens: ['options', 'autolinks', 'parser-options-2', 'Bun.markdown.render'],
   },
   {
     term: 'parser-options-2',
@@ -529,7 +654,23 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     description:
       'Pass any of the parser options (#options) as the third argument to Bun.markdown.react. Live Bun docs slug is #parser-options-2 (duplicate “Parser options” heading under react).',
     minVersion: '1.3.8',
-    relatedTokens: ['options', 'parser-options', 'Bun.markdown.react'],
+    relatedTokens: ['options', 'heading-ids', 'parser-options', 'Bun.markdown.react'],
+  },
+  {
+    term: 'server-side-rendering',
+    path: 'runtime/markdown#server-side-rendering',
+    description:
+      'Bun.markdown.react works with renderToString() and React Server Components. On React 18, pass reactVersion: 18 (see react-18-and-older).',
+    minVersion: '1.3.8',
+    relatedTokens: ['Bun.markdown.react', 'react-18-and-older', 'component-overrides'],
+  },
+  {
+    term: 'react-18-and-older',
+    path: 'runtime/markdown#react-18-and-older',
+    description:
+      'Default Bun.markdown.react uses Symbol.for("react.transitional.element"). Pass reactVersion: 18 as the third argument for React 18/older (Symbol.for("react.element")). Options must be the 3rd arg — not the components slot.',
+    minVersion: '1.3.8',
+    relatedTokens: ['Bun.markdown.react', 'server-side-rendering', 'parser-options-2'],
   },
   {
     term: 'BUN_OPTIONS',

@@ -24,12 +24,23 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/reference/bun/BunInspectOptions — BunInspectOptions
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
+// @see https://bun.com/docs/runtime/markdown#options — options
+// @see https://bun.com/docs/runtime/markdown#autolinks — autolinks
+// @see https://bun.com/docs/runtime/markdown#heading-ids — heading-ids
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
+// @see https://bun.com/docs/runtime/markdown#callback-signature — callback-signature
+// @see https://bun.com/docs/runtime/markdown#block-callbacks — block-callbacks
+// @see https://bun.com/docs/runtime/markdown#list-item-meta — list-item-meta
+// @see https://bun.com/docs/runtime/markdown#inline-callbacks — inline-callbacks
+// @see https://bun.com/docs/runtime/markdown#nested-list-numbering — nested-list-numbering
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-react — Bun.markdown.react
+// @see https://bun.com/docs/runtime/markdown#server-side-rendering — server-side-rendering
 // @see https://bun.com/docs/runtime/markdown#component-overrides — component-overrides
 // @see https://bun.com/docs/runtime/markdown#available-overrides — available-overrides
-// @see https://bun.com/docs/runtime/markdown#options — options
 // @see https://bun.com/docs/runtime/markdown#parser-options — parser-options
 // @see https://bun.com/docs/runtime/markdown#parser-options-2 — parser-options-2
+// @see https://bun.com/docs/runtime/markdown#react-18-and-older — reactVersion: 18
 // @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — BUN_OPTIONS
 // @see https://bun.com/docs/bundler/executables#embedding-runtime-arguments — embedding-runtime-arguments
 // @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — file-uploads
@@ -475,11 +486,140 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'class Foo {\n  [Bun.inspect.custom]() {\n    return "foo";\n  }\n}\n\nconst foo = new Foo();\nconsole.log(foo); // => "foo"',
     },
   ],
+  // Official docs — Bun.markdown.html
+  'runtime/markdown#bun-markdown-html': [
+    {
+      lang: 'ts',
+      body: 'const html = Bun.markdown.html("# Hello **world**");\n// "<h1>Hello <strong>world</strong></h1>\\n"',
+    },
+    {
+      lang: 'ts',
+      body: 'const html = Bun.markdown.html(`\n| Feature      | Status |\n|-------------|--------|\n| Tables       | ~~done~~ |\n| Strikethrough| ~~done~~ |\n| Task lists   | done |\n`);',
+    },
+  ],
+  // Official docs — Bun.markdown.html Options (parser SSOT)
+  'runtime/markdown#options': [
+    {
+      lang: 'ts',
+      body: 'const html = Bun.markdown.html("some markdown", {\n  tables: true, // GFM tables (default: true)\n  strikethrough: true, // GFM strikethrough (default: true)\n  tasklists: true, // GFM task lists (default: true)\n  tagFilter: true, // GFM tag filter for disallowed HTML tags\n  autolinks: true, // Autolink URLs, emails, and www. links\n});',
+    },
+    {
+      lang: 'ts',
+      body: '// All available options (defaults shown)\nconst html = Bun.markdown.html(md, {\n  tables: true,\n  strikethrough: true,\n  tasklists: true,\n  autolinks: false, // see #autolinks\n  headings: false, // see #heading-ids\n  hardSoftBreaks: false,\n  wikiLinks: false,\n  underline: false, // __text__ → <u> instead of <strong>\n  latexMath: false, // $inline$ / $$display$$\n  collapseWhitespace: false,\n  permissiveAtxHeaders: false,\n  noIndentedCodeBlocks: false,\n  noHtmlBlocks: false,\n  noHtmlSpans: false,\n  tagFilter: false,\n});',
+    },
+  ],
+  // Official docs — Autolinks
+  'runtime/markdown#autolinks': [
+    {
+      lang: 'ts',
+      body: '// Enable all autolinks (URL, WWW, email)\nBun.markdown.html("Visit www.example.com", { autolinks: true });\n\n// Enable only specific types\nBun.markdown.html("Visit www.example.com", {\n  autolinks: { url: true, www: true },\n});',
+    },
+  ],
+  // Official docs — Heading IDs
+  'runtime/markdown#heading-ids': [
+    {
+      lang: 'ts',
+      body: '// Enable heading IDs and autolink headings\nBun.markdown.html("## Hello World", { headings: true });\n// \'<h2 id="hello-world"><a href="#hello-world">Hello World</a></h2>\\n\'\n\n// Enable only heading IDs (no autolink)\nBun.markdown.html("## Hello World", { headings: { ids: true } });\n// \'<h2 id="hello-world">Hello World</h2>\\n\'',
+    },
+  ],
+  // Official docs — Bun.markdown.render
+  'runtime/markdown#bun-markdown-render': [
+    {
+      lang: 'ts',
+      body: 'const result = Bun.markdown.render("# Hello **world**", {\n  heading: (children, { level }) => `<h${level} class="title">${children}</h${level}>`,\n  strong: children => `<b>${children}</b>`,\n  paragraph: children => `<p>${children}</p>`,\n});\n// \'<h1 class="title">Hello <b>world</b></h1>\'',
+    },
+  ],
+  // Official docs — Callback signature (children, meta?; string | null | undefined)
+  'runtime/markdown#callback-signature': [
+    {
+      lang: 'ts',
+      body: '// children: accumulated content (string)\n// meta?: element-specific metadata\n// return string → replace; null/undefined → omit; no callback → children pass through\nconst result = Bun.markdown.render("# Title\\n\\nHello **world**\\n\\n![skip](x.png)", {\n  heading: (children, { level }) => `<h${level}>${children}</h${level}>`,\n  strong: children => `<b>${children}</b>`,\n  image: () => null,\n  // paragraph omitted on purpose — children pass through unchanged\n});',
+    },
+  ],
+  // Official docs — Block callbacks (heading/paragraph/code/list/table/…)
+  'runtime/markdown#block-callbacks': [
+    {
+      lang: 'ts',
+      body: 'Bun.markdown.render("# Title\\n\\n> quote\\n\\n```ts\\nconst x = 1;\\n```\\n\\n---\\n\\n1. one", {\n  heading: (children, { level, id }) => `<h${level}${id ? ` id="${id}"` : ""}>${children}</h${level}>`,\n  paragraph: children => `<p>${children}</p>`,\n  blockquote: children => `<blockquote>${children}</blockquote>`,\n  code: (children, { language }) => `<pre data-lang="${language ?? ""}"><code>${children}</code></pre>`,\n  list: (children, { ordered, start, depth }) =>\n    ordered ? `<ol start="${start ?? 1}" data-depth="${depth}">${children}</ol>` : `<ul data-depth="${depth}">${children}</ul>`,\n  listItem: (children, { index, checked }) =>\n    `<li data-index="${index}"${checked === undefined ? "" : ` data-checked="${checked}"`}>${children}</li>`,\n  hr: () => "<hr />",\n});',
+    },
+  ],
+  // Official docs — listItem meta (index, depth, ordered, start, checked)
+  'runtime/markdown#list-item-meta': [
+    {
+      lang: 'ts',
+      body: 'Bun.markdown.render("- [x] done\\n- [ ] todo", {\n  listItem: (children, { index, depth, ordered, start, checked }) => {\n    const n = (start ?? 1) + index;\n    const marker = checked === undefined ? (ordered ? `${n}.` : "-") : checked ? "[x]" : "[ ]";\n    return "  ".repeat(depth) + marker + " " + children.trimEnd() + "\\n";\n  },\n  list: children => children,\n});',
+    },
+  ],
+  // Official docs — Inline callbacks
+  'runtime/markdown#inline-callbacks': [
+    {
+      lang: 'ts',
+      body: 'Bun.markdown.render("**bold** *em* `code` ~~del~~ [a](https://x.test) ![i](img.png)", {\n  strong: children => `<b>${children}</b>`,\n  emphasis: children => `<i>${children}</i>`,\n  codespan: children => `<code>${children}</code>`,\n  strikethrough: children => `<s>${children}</s>`,\n  link: (children, { href, title }) => `<a href="${href}" title="${title ?? ""}">${children}</a>`,\n  image: (_children, { src, title }) => `<img src="${src}" title="${title ?? ""}" />`,\n  text: children => children,\n  paragraph: children => children,\n});',
+    },
+  ],
+  'runtime/markdown#nested-list-numbering': [
+    {
+      lang: 'ts',
+      body: 'const result = Bun.markdown.render("1. first\\n   1. sub-a\\n   2. sub-b\\n2. second", {\n  listItem: (children, { index, depth, ordered, start }) => {\n    const n = (start ?? 1) + index;\n    // 1. 2. 3. at depth 0, a. b. c. at depth 1, i. ii. iii. at depth 2\n    const marker = !ordered\n      ? "-"\n      : depth === 0\n        ? `${n}.`\n        : depth === 1\n          ? `${String.fromCharCode(96 + n)}.`\n          : `${toRoman(n)}.`;\n    return "  ".repeat(depth) + marker + " " + children.trimEnd() + "\\n";\n  },\n  // Prepend a newline so nested lists are separated from their parent item\'s text\n  list: children => "\\n" + children,\n});\n// 1. first\n//   a. sub-a\n//   b. sub-b\n// 2. second',
+    },
+  ],
+  'runtime/markdown#custom-html-with-classes': [
+    {
+      lang: 'ts',
+      body: 'const html = Bun.markdown.render("# Title\\n\\nHello **world**", {\n  heading: (children, { level }) => `<h${level} class="heading heading-${level}">${children}</h${level}>`,\n  paragraph: children => `<p class="body">${children}</p>`,\n  strong: children => `<strong class="bold">${children}</strong>`,\n});',
+    },
+  ],
+  'runtime/markdown#stripping-all-formatting': [
+    {
+      lang: 'ts',
+      body: 'const plaintext = Bun.markdown.render("# Hello **world**", {\n  heading: children => children,\n  paragraph: children => children,\n  strong: children => children,\n  emphasis: children => children,\n  link: children => children,\n  image: () => "",\n  code: children => children,\n  codespan: children => children,\n});\n// "Hello world"',
+    },
+  ],
+  'runtime/markdown#omitting-elements': [
+    {
+      lang: 'ts',
+      body: 'const result = Bun.markdown.render("# Title\\n\\n![logo](img.png)\\n\\nHello", {\n  image: () => null, // Remove all images\n  heading: children => children,\n  paragraph: children => children + "\\n",\n});\n// "Title\\nHello\\n"',
+    },
+  ],
+  // Official docs — render example titled “ANSI terminal output” (not Bun.markdown.ansi)
+  'runtime/markdown#ansi-terminal-output': [
+    {
+      lang: 'ts',
+      body: 'const ansi = Bun.markdown.render("# Hello\\n\\nThis is **bold** and *italic*", {\n  heading: (children, { level }) => `\\x1b[1;4m${children}\\x1b[0m\\n`,\n  paragraph: children => children + "\\n",\n  strong: children => `\\x1b[1m${children}\\x1b[22m`,\n  emphasis: children => `\\x1b[3m${children}\\x1b[23m`,\n});',
+    },
+  ],
+  // Native Bun.markdown.ansi — token-owned so suggest does not fall through to #ansi-terminal-output
+  'runtime/markdown#bun-markdown-ansi': [
+    {
+      lang: 'ts',
+      body: 'const ansi = Bun.markdown.ansi("# Hello **world**");\n// ANSI-styled terminal string',
+    },
+  ],
+  'runtime/markdown#code-block-syntax-highlighting': [
+    {
+      lang: 'ts',
+      body: 'const result = Bun.markdown.render("```js\\nconsole.log(\'hi\')\\n```", {\n  code: (children, meta) => {\n    const lang = meta?.language ?? "";\n    return `<pre><code class="language-${lang}">${children}</code></pre>`;\n  },\n});',
+    },
+  ],
+  // Official docs — Bun.markdown.render Parser options (#parser-options).
+  'runtime/markdown#parser-options': [
+    {
+      lang: 'ts',
+      body: 'const result = Bun.markdown.render(\n  "Visit www.example.com",\n  {\n    link: (children, { href }) => `[${children}](${href})`,\n    paragraph: children => children,\n  },\n  { autolinks: true },\n);',
+    },
+  ],
   // Official docs — Bun.markdown.react
   'runtime/markdown#bun-markdown-react': [
     {
       lang: 'tsx',
       body: 'function Markdown({ text }: { text: string }) {\n  return Bun.markdown.react(text);\n}',
+    },
+  ],
+  // Official docs — Server-side rendering (renderToString / RSC)
+  'runtime/markdown#server-side-rendering': [
+    {
+      lang: 'tsx',
+      body: 'import { renderToString } from "react-dom/server";\n\nconst html = renderToString(Bun.markdown.react("# Hello **world**"));\n// "<h1>Hello <strong>world</strong></h1>"',
     },
   ],
   // Official docs — Component overrides (+ Available overrides table)
@@ -495,26 +635,18 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'const el = Bun.markdown.react(\n  content,\n  {\n    pre: Code,\n    a: Link,\n    h2: Heading,\n  },\n  { headings: { ids: true } },\n);',
     },
   ],
-  // Official docs — Bun.markdown.html Options (parser SSOT)
-  'runtime/markdown#options': [
-    {
-      lang: 'ts',
-      body: 'const html = Bun.markdown.html("some markdown", {\n  tables: true, // GFM tables (default: true)\n  strikethrough: true, // GFM strikethrough (default: true)\n  tasklists: true, // GFM task lists (default: true)\n  tagFilter: true, // GFM tag filter for disallowed HTML tags\n  autolinks: true, // Autolink URLs, emails, and www. links\n});',
-    },
-  ],
-  // Official docs — Bun.markdown.render Parser options (#parser-options).
-  'runtime/markdown#parser-options': [
-    {
-      lang: 'ts',
-      body: 'const result = Bun.markdown.render(\n  "Visit www.example.com",\n  {\n    link: (children, { href }) => `[${children}](${href})`,\n    paragraph: children => children,\n  },\n  { autolinks: true },\n);',
-    },
-  ],
   // Official docs — Bun.markdown.react Parser options (#parser-options-2).
   // Mintlify suffixes the second “Parser options” heading; md scrape only sees one.
   'runtime/markdown#parser-options-2': [
     {
       lang: 'tsx',
       body: 'const el = Bun.markdown.react("## Hello World", undefined, {\n  headings: { ids: true },\n  autolinks: true,\n});',
+    },
+  ],
+  'runtime/markdown#react-18-and-older': [
+    {
+      lang: 'tsx',
+      body: '// Default $$typeof is react.transitional.element (React 19+).\n// React 18/older needs classic react.element via reactVersion: 18 (3rd arg).\nfunction Markdown({ text }: { text: string }) {\n  return Bun.markdown.react(text, undefined, { reactVersion: 18 });\n}',
     },
   ],
   // Official docs — Runtime arguments via BUN_OPTIONS (standalone executables)
@@ -844,6 +976,9 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'Bun.inspect.table(tabularData, properties, options)':
     'runtime/utils#bun-inspect-table-tabulardata-properties-options',
   BunInspectOptions: 'reference/bun/BunInspectOptions',
+  'Bun.markdown.html': 'runtime/markdown#bun-markdown-html',
+  'Bun.markdown.ansi': 'runtime/markdown#bun-markdown-ansi',
+  'Bun.markdown.render': 'runtime/markdown#bun-markdown-render',
   'Bun.markdown.react': 'runtime/markdown#bun-markdown-react',
   'component-overrides': 'runtime/markdown#component-overrides',
   'Bun.markdown.react component overrides': 'runtime/markdown#component-overrides',
@@ -851,12 +986,28 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'Bun.markdown.react available overrides': 'runtime/markdown#available-overrides',
   options: 'runtime/markdown#options',
   'Bun.markdown.html options': 'runtime/markdown#options',
-  'Bun.markdown.html': 'runtime/markdown#bun-markdown-html',
-  'Bun.markdown.render': 'runtime/markdown#bun-markdown-render',
+  autolinks: 'runtime/markdown#autolinks',
+  'Bun.markdown.html autolinks': 'runtime/markdown#autolinks',
+  'heading-ids': 'runtime/markdown#heading-ids',
+  'Bun.markdown.html heading-ids': 'runtime/markdown#heading-ids',
+  'callback-signature': 'runtime/markdown#callback-signature',
+  'Bun.markdown.render callback signature': 'runtime/markdown#callback-signature',
+  'block-callbacks': 'runtime/markdown#block-callbacks',
+  'Bun.markdown.render block callbacks': 'runtime/markdown#block-callbacks',
+  'list-item-meta': 'runtime/markdown#list-item-meta',
+  'Bun.markdown.render listItem': 'runtime/markdown#list-item-meta',
+  'inline-callbacks': 'runtime/markdown#inline-callbacks',
+  'Bun.markdown.render inline callbacks': 'runtime/markdown#inline-callbacks',
+  'nested-list-numbering': 'runtime/markdown#nested-list-numbering',
+  'omitting-elements': 'runtime/markdown#omitting-elements',
+  'server-side-rendering': 'runtime/markdown#server-side-rendering',
+  'Bun.markdown.react SSR': 'runtime/markdown#server-side-rendering',
   'parser-options': 'runtime/markdown#parser-options',
   'Bun.markdown.render parser options': 'runtime/markdown#parser-options',
   'parser-options-2': 'runtime/markdown#parser-options-2',
   'Bun.markdown.react parser options': 'runtime/markdown#parser-options-2',
+  'react-18-and-older': 'runtime/markdown#react-18-and-older',
+  reactVersion: 'runtime/markdown#react-18-and-older',
   BUN_OPTIONS: 'bundler/executables#runtime-arguments-via-bun-options',
   'runtime-arguments-via-bun-options': 'bundler/executables#runtime-arguments-via-bun-options',
   'Runtime arguments via BUN_OPTIONS': 'bundler/executables#runtime-arguments-via-bun-options',
