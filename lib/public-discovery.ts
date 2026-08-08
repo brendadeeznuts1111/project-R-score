@@ -222,6 +222,16 @@ const WEAVE_WIRED_REGISTRY = new Set(
   PORTAL_WEAVE_ARTIFACTS.map(a => a.href.replace(/^\/registry\//, ''))
 );
 
+/**
+ * Intentional bake orphans — no portal board required.
+ * SSOT prose: docs/harness/tenants/public-plane.md (Documented bake orphans).
+ * Keep in lockstep when adding/removing documented orphans.
+ */
+export const DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS = new Set([
+  'partner-profile-coverage.json',
+  'stale-anchors.json',
+]);
+
 async function scanOrphanRegistryArtifacts(files: string[]): Promise<PublicFinding[]> {
   const findings: PublicFinding[] = [];
   const corpus = (
@@ -239,6 +249,9 @@ async function scanOrphanRegistryArtifacts(files: string[]): Promise<PublicFindi
   })) {
     const basename = rel.split('/').pop() ?? rel;
     if (basename.startsWith('verification-') && basename.includes('1.')) continue;
+    if (DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS.has(rel) || DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS.has(basename)) {
+      continue;
+    }
     const needle = `/registry/${rel}`;
     const alt = basename;
     let hits = 0;
@@ -252,7 +265,8 @@ async function scanOrphanRegistryArtifacts(files: string[]): Promise<PublicFindi
         id: `orphan-registry:${rel}`,
         title: `Registry JSON not referenced from public/portal or lander`,
         detail: rel,
-        repair: 'Wire into portal dashboard or document in docs/harness/tenants/public-plane.md',
+        repair:
+          'Wire into portal dashboard, or add to DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS + docs/harness/tenants/public-plane.md',
       });
     }
   }
