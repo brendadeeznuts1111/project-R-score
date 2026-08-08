@@ -16,6 +16,7 @@
   --yellow: #d29922;
   --orange: #db6d28;
   --red: #f85149;
+  --maroon: #f38ba8;
   --gradient-subtle: radial-gradient(ellipse at top, #1a2332 0%, var(--bg) 55%);
   --neutral-50: #f0f6fc;
   --neutral-100: #c9d1d9;
@@ -161,6 +162,7 @@ html[data-theme='light'] {
   --yellow: #9a6700;
   --orange: #bc4c00;
   --red: #cf222e;
+  --maroon: #e64553;
   --gradient-subtle: radial-gradient(ellipse at top, #eef2f7 0%, var(--bg) 55%);
   --neutral-50: #f6f8fa;
   --neutral-100: #eaeef2;

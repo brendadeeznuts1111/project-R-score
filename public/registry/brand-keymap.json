@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-07T07:36:39.281Z",
+  "generatedAt": "2026-08-08T21:07:01.851Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -17,9 +17,9 @@
     "ids": 71,
     "keys": 3,
     "codes": 19,
-    "covered": 70,
+    "covered": 71,
     "referencedUnconstructed": 7,
-    "unused": 16,
+    "unused": 15,
     "cataloguedProjects": 35,
     "trackedProjects": 32,
     "adoptedProjects": 2,
@@ -1635,26 +1635,28 @@
         "constructors": {
           "as": 3,
           "try": 0,
-          "parse": 0
+          "parse": 3
         },
         "guards": 0,
         "files": [
           "lib/docs/bun-brand-usages.ts",
           "lib/dod/evidence.ts",
           "lib/screenshot-remediation.ts",
-          "lib/time.ts"
+          "lib/time.ts",
+          "tools/screenshot-cli.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
             "references": 18,
-            "constructionCalls": 3,
+            "constructionCalls": 6,
             "guardCalls": 0,
             "files": [
               "lib/docs/bun-brand-usages.ts",
               "lib/dod/evidence.ts",
               "lib/screenshot-remediation.ts",
-              "lib/time.ts"
+              "lib/time.ts",
+              "tools/screenshot-cli.ts"
             ]
           },
           "projects": {
@@ -4672,18 +4674,19 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 13,
+        "references": 20,
         "constructors": {
           "as": 1,
           "try": 0,
-          "parse": 2
+          "parse": 5
         },
         "guards": 0,
         "files": [
           "lib/docs/partner-surface-inventory.ts",
           "packages/partners/src/boundary/dashboard-artifact.ts",
           "packages/partners/src/core/identifiers.ts",
-          "packages/partners/src/core/types.ts"
+          "packages/partners/src/core/types.ts",
+          "projects/active/sports-terminal-os/src/zones/partner-profile/telegram-integration.ts"
         ],
         "scopes": {
           "spine": {
@@ -4699,11 +4702,13 @@
             ]
           },
           "projects": {
-            "status": "unused",
-            "references": 0,
-            "constructionCalls": 0,
+            "status": "covered",
+            "references": 7,
+            "constructionCalls": 3,
             "guardCalls": 0,
-            "files": []
+            "files": [
+              "projects/active/sports-terminal-os/src/zones/partner-profile/telegram-integration.ts"
+            ]
           }
         }
       }
@@ -5542,15 +5547,17 @@
       "tone": "ok",
       "glossaryConcepts": [],
       "coverage": {
-        "status": "unused",
-        "references": 0,
+        "status": "covered",
+        "references": 6,
         "constructors": {
           "as": 0,
           "try": 0,
-          "parse": 0
+          "parse": 1
         },
         "guards": 0,
-        "files": [],
+        "files": [
+          "projects/active/sports-terminal-os/src/zones/partner-profile/telegram-integration.ts"
+        ],
         "scopes": {
           "spine": {
             "status": "unused",
@@ -5560,11 +5567,13 @@
             "files": []
           },
           "projects": {
-            "status": "unused",
-            "references": 0,
-            "constructionCalls": 0,
+            "status": "covered",
+            "references": 6,
+            "constructionCalls": 1,
             "guardCalls": 0,
-            "files": []
+            "files": [
+              "projects/active/sports-terminal-os/src/zones/partner-profile/telegram-integration.ts"
+            ]
           }
         }
       }
@@ -6715,12 +6724,14 @@
     {
       "project": "projects/active/sports-terminal-os",
       "sourceFiles": 178,
-      "brandedFiles": 1,
+      "brandedFiles": 2,
       "brands": [
-        "RequestId"
+        "RequestId",
+        "ExternalPartnerId",
+        "TelegramChatId"
       ],
       "localBrandTypes": [],
-      "constructorCalls": 2,
+      "constructorCalls": 6,
       "guardCalls": 0,
       "status": "adopted"
     },

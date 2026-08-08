@@ -37,6 +37,7 @@ export type PortalThemePalette = {
   yellow: string;
   orange: string;
   red: string;
+  maroon: string;
   gradientSubtle: string;
   neutral: PortalThemeNeutral;
 };
@@ -85,6 +86,11 @@ export type PortalThemeSemantic = {
     retail: string;
     vip: string;
     sharp: string;
+  };
+  pattern: {
+    bettor: {
+      sharp: string;
+    };
   };
 };
 
@@ -228,6 +234,7 @@ export const FLAT_PALETTE_TO_CSS: Record<Exclude<keyof PortalThemePalette, 'neut
   yellow: '--yellow',
   orange: '--orange',
   red: '--red',
+  maroon: '--maroon',
   gradientSubtle: '--gradient-subtle',
 };
 
