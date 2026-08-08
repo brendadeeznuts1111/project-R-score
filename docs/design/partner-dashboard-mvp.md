@@ -3,7 +3,7 @@
 <!-- REF:ID 0.1.partner-dashboard-mvp -->
 <a id="0.1.partner-dashboard-mvp"></a>
 
-Status: implementation outline (2026-08-05)
+Status: implementation-ready (2026-08-08)
 
 The dashboard domain contract is supported by the separate
 [Bun channel and type governance contract](./bun-channel-governance.md). The

@@ -152,7 +152,7 @@
           "language": "sql",
           "description": "Materializes reviewed package-component and connector counts from the partner MVP TOML.",
           "executed_at": "2026-08-06T05:20:33Z",
-          "sql": "SELECT 15 AS implementedComponents, 18 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
+          "sql": "SELECT 18 AS implementedComponents, 18 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
         }
       },
       {
@@ -164,7 +164,7 @@
           "language": "sql",
           "description": "Materializes the reviewed semantic-gap count from the passing validator receipt.",
           "executed_at": "2026-08-06T05:20:33Z",
-          "sql": "SELECT 15 AS semanticGaps;"
+          "sql": "SELECT 0 AS semanticGaps;"
         }
       },
       {
@@ -219,11 +219,11 @@
         {
           "canonicalProfiles": 4,
           "profileTarget": 4,
-          "implementedComponents": 15,
+          "implementedComponents": 18,
           "totalComponents": 18,
           "connectors": 8,
           "blockedConnectors": 1,
-          "semanticGaps": 15
+          "semanticGaps": 0
         }
       ],
       "connector_status_summary": [
@@ -253,7 +253,7 @@
           "order": 1,
           "connector": "canonical-profile-config",
           "owner": "partners",
-          "status": "planned",
+          "status": "implemented",
           "required": "yes",
           "port": "PartnerProfileReadPort",
           "nextAction": "Profiles and lifecycle"
@@ -262,7 +262,7 @@
           "order": 2,
           "connector": "accounting-ledger",
           "owner": "accounting",
-          "status": "planned",
+          "status": "implemented",
           "required": "no",
           "port": "AccountingReadPort",
           "nextAction": "Scoped integer money"
@@ -271,7 +271,7 @@
           "order": 3,
           "connector": "telegram-handshake",
           "owner": "telegram",
-          "status": "partial",
+          "status": "implemented",
           "required": "no",
           "port": "CommunicationReadPort",
           "nextAction": "Loader, resilience, and dashboard reconciliation"
@@ -280,7 +280,7 @@
           "order": 4,
           "connector": "limits-registry",
           "owner": "compliance",
-          "status": "partial",
+          "status": "implemented",
           "required": "no",
           "port": "LimitChangeObservationPort",
           "nextAction": "Change-event attention reconciliation"
@@ -289,7 +289,7 @@
           "order": 5,
           "connector": "bookmakers-registry",
           "owner": "trading",
-          "status": "partial",
+          "status": "implemented",
           "required": "no",
           "port": "BookmakerCatalogPort",
           "nextAction": "Loader, resilience, and explicit host aliases"
@@ -298,7 +298,7 @@
           "order": 6,
           "connector": "tennis-contract",
           "owner": "trading",
-          "status": "partial",
+          "status": "implemented",
           "required": "no",
           "port": "CapacityReadPort",
           "nextAction": "Loader, LKG resilience, and execution reconciliation"
@@ -341,7 +341,7 @@
         "language": "sql",
         "description": "Materializes reviewed package-component and connector counts from the partner MVP TOML.",
         "executed_at": "2026-08-06T05:20:33Z",
-        "sql": "SELECT 15 AS implementedComponents, 18 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
+        "sql": "SELECT 18 AS implementedComponents, 18 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
       }
     },
     {
@@ -353,7 +353,7 @@
         "language": "sql",
         "description": "Materializes the reviewed semantic-gap count from the passing validator receipt.",
         "executed_at": "2026-08-06T05:20:33Z",
-        "sql": "SELECT 15 AS semanticGaps;"
+        "sql": "SELECT 0 AS semanticGaps;"
       }
     },
     {

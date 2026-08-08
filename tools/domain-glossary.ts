@@ -32,6 +32,7 @@ import { sportsBettingGlossaryConcepts } from '../lib/operations/sports-betting-
 import { sportsbookOpeningBaselineGlossaryConcepts } from '../lib/operations/sportsbook-opening-baseline.ts';
 import { telegramGlossaryConcepts } from '../lib/telegram/telegram-glossary.ts';
 import { partnerOpsGlossaryConcepts } from '../lib/telegram/partner-ops-glossary.ts';
+import { partnerDashboardGlossaryConcepts } from '../lib/telegram/partner-dashboard-glossary.ts';
 import { opsViewGlossaryConcepts } from '../lib/telegram/ops-view-glossary.ts';
 import { tournamentSeriesGlossaryConcepts } from '../lib/glossary/tournament-series-glossary.ts';
 import {
@@ -196,6 +197,7 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     ...sportsbookOpeningBaselineGlossaryConcepts(),
     ...telegramGlossaryConcepts(),
     ...partnerOpsGlossaryConcepts(),
+    ...partnerDashboardGlossaryConcepts(),
     ...opsViewGlossaryConcepts(),
     ...tournamentSeriesGlossaryConcepts(),
   ].map(concept => ({
@@ -215,9 +217,12 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
     format: 'format' in concept ? (concept.format ?? null) : null,
     registryColumn: null,
     source: concept.source,
+    domain: 'domain' in concept ? (concept.domain ?? null) : null,
     featurePurpose:
       concept.source === 'lib/operations/sports-betting-glossary.ts'
         ? 'Governed sports betting hierarchy, market, and data-product concept.'
+        : concept.source === 'lib/telegram/partner-dashboard-glossary.ts'
+          ? 'Partner dashboard MVP concept leaf (closes plan semantic gaps).'
         : concept.source === 'lib/operations/scrapers/scrape-wire-taxonomy.ts'
           ? 'Tier 4 scrape wire taxonomy — unified state/sport/market normalization.'
           : concept.source === 'lib/operations/sports-competition-catalog.ts'

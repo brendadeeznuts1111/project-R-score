@@ -22,7 +22,7 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors).toEqual([]);
     expect(result.summary).toEqual({
       bindings: 33,
-      gaps: 15,
+      gaps: 0,
       connectors: 8,
       regions: 8,
       sectionMounts: 9,
@@ -34,16 +34,12 @@ describe('partner dashboard semantic plan', () => {
       profileCoverageEntries: 4,
       missingProfileCoverage: 0,
     });
+    expect(copyPlan().plan.status).toBe('implementation-ready');
   });
 
   it('reports the exact package-owned unregistered concept map', () => {
-    expect(listUnregisteredPartnerConcepts(copyPlan())).toEqual(
-      [...PARTNER_DASHBOARD_SEMANTIC_GAPS]
-        .map(gap => ({ ...gap, blocking: false }))
-        .sort((left, right) =>
-          left.candidate_concept_id.localeCompare(right.candidate_concept_id)
-        )
-    );
+    expect(PARTNER_DASHBOARD_SEMANTIC_GAPS).toEqual([]);
+    expect(listUnregisteredPartnerConcepts(copyPlan())).toEqual([]);
   });
 
   it('rejects documentation REF:ID, domain, and portal mapping drift', async () => {
@@ -119,7 +115,17 @@ describe('partner dashboard semantic plan', () => {
     plan.nomenclature.term[0].wire_path = 'partners[].wrong';
     plan.nomenclature.term[1].owner_domain = 'source-adapter';
     plan.concepts.binding[0].concept_id = 'page.doesNotExist';
-    plan.concepts.gap[0].candidate_concept_id = 'page.partners';
+    // reintroduce a stale gap that already exists in the glossary
+    plan.concepts.gap = [
+      {
+        key: 'stale.gap',
+        candidate_concept_id: 'page.partners',
+        business_domain: 'portal',
+        blocking: false,
+        reason: 'test',
+        must_not_alias: [],
+      },
+    ];
     plan.surfaces.portal.regions[0].business_domains.push('not-a-domain');
 
     const result = await validatePartnerDashboardPlan(plan);
@@ -155,7 +161,7 @@ describe('partner dashboard semantic plan', () => {
 
   it('rejects identifier and ingress translation drift from package parsers', async () => {
     const plan = copyPlan();
-    plan.package.components.reconciliation = 'implemented';
+    plan.package.components.reconciliation = 'planned';
     plan.shapes.dashboard_artifact.active_out_identity_field = 'hiddenCountOnly';
     plan.identity.partner_code.pattern = '^wrong$';
     plan.identity.out_id.implementation_status = 'planned';
@@ -166,7 +172,7 @@ describe('partner dashboard semantic plan', () => {
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors).toContain(
-      'package component statuses must distinguish implemented artifact core from planned adapters'
+      'package component statuses must keep artifact core, adapters, ports, and reconciliation implemented'
     );
     expect(result.errors).toContain(
       'dashboard artifact must expose active OutIds and scalar-only conflict evidence'
@@ -201,7 +207,9 @@ describe('partner dashboard semantic plan', () => {
     plan.out_capabilities.limit_kinds = ['max_stake'];
     plan.out_capabilities.promotions_gate_execution = true;
     const result = await validatePartnerDashboardPlan(plan);
-    expect(result.errors).toContain('package component statuses must distinguish implemented artifact core from planned adapters');
+    expect(result.errors).toContain(
+      'package component statuses must keep artifact core, adapters, ports, and reconciliation implemented'
+    );
     expect(result.errors).toContain('out capability snapshot must match the implemented private preflight contract');
     expect(result.errors).toContain('bookmaker account resolver must remain fail-closed and separate from registry I/O');
     expect(result.errors).toContain('bookmaker catalog adapter must preserve public identity and redaction policy');
@@ -523,21 +531,42 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors).toEqual([]);
   });
 
-  it('does not allow a proposal with gaps and planned connectors to claim implementation-ready', async () => {
-    const plan = copyPlan();
-    plan.plan.status = 'implementation-ready';
-
-    const result = await validatePartnerDashboardPlan(plan);
-    expect(result.errors).toContain(
+  it('rejects implementation-ready when concept gaps reappear or a shippable connector regresses', async () => {
+    const withGaps = copyPlan();
+    withGaps.concepts.gap = [
+      {
+        key: 'partner.lifecycle_state',
+        candidate_concept_id: 'partner.lifecycle_state',
+        business_domain: 'partners',
+        blocking: false,
+        reason: 'test regression',
+        must_not_alias: [],
+      },
+    ];
+    const gapResult = await validatePartnerDashboardPlan(withGaps);
+    expect(gapResult.errors).toContain(
       'implementation-ready plans cannot contain unresolved concept gaps'
     );
-    expect(result.errors).toContain(
-      'implementation-ready plans require every connector to be implemented'
+    // stale gap (already in glossary) also fails existence check
+    expect(
+      gapResult.errors.some(error => error.includes('already exists'))
+    ).toBe(true);
+
+    const withPlanned = copyPlan();
+    const accounting = withPlanned.connectors.find(
+      (c: { id: string }) => c.id === 'accounting-ledger'
     );
-    // Portal consumer is implemented; readiness still blocked by gaps + planned connectors
-    expect(result.errors).not.toContain(
-      'implementation-ready plans require the portal consumer to be implemented'
-    );
+    accounting.implementation_status = 'planned';
+    const plannedResult = await validatePartnerDashboardPlan(withPlanned);
+    expect(
+      plannedResult.errors.some(error =>
+        error.includes('connector accounting-ledger to be implemented')
+      )
+    ).toBe(true);
+
+    // Baseline plan is already implementation-ready
+    const baseline = await validatePartnerDashboardPlan(copyPlan());
+    expect(baseline.errors).toEqual([]);
   });
 
   it('rejects private fields at the public profile coverage boundary', async () => {

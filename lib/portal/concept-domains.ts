@@ -136,6 +136,8 @@ export const DOMAIN_BY_PREFIX: ReadonlyArray<readonly [string, ConceptDomain]> =
   ['alert.', 'operations'],
   ['command.', 'operations'],
   ['state.', 'operations'],
+  ['connector.', 'operations'],
+  ['provider.', 'trading'],
   ['sport.', 'trading'],
   ['book.', 'trading'],
   ['region.', 'trading'],

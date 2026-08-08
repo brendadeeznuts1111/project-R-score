@@ -65,86 +65,19 @@ export type PartnerDashboardConnectorId =
 export type PartnerDashboardAuthoritativeFactPath =
   (typeof PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS)[PartnerDashboardConnectorId][number];
 
-export const PARTNER_DASHBOARD_SEMANTIC_GAPS = [
-  {
-    key: 'partner.lifecycle_state',
-    candidate_concept_id: 'partner.lifecycle_state',
-    business_domain: 'partners',
-  },
-  {
-    key: 'out.funding_status',
-    candidate_concept_id: 'accounting.funding_status',
-    business_domain: 'accounting',
-  },
-  {
-    key: 'partner.profile',
-    candidate_concept_id: 'partner.profile',
-    business_domain: 'partners',
-  },
-  {
-    key: 'partner.lifecycle_provenance',
-    candidate_concept_id: 'partner.lifecycle_provenance',
-    business_domain: 'partners',
-  },
-  {
-    key: 'provider.connection_status',
-    candidate_concept_id: 'provider.connection_status',
-    business_domain: 'trading',
-  },
-  {
-    key: 'connector.data_status',
-    candidate_concept_id: 'connector.data_status',
-    business_domain: 'operations',
-  },
-  {
-    key: 'accounting.scoped_balance',
-    candidate_concept_id: 'accounting.scoped_balance',
-    business_domain: 'accounting',
-  },
-  {
-    key: 'partner.source_conflict',
-    candidate_concept_id: 'partner.source_conflict',
-    business_domain: 'partners',
-  },
-  {
-    key: 'partner.attention_item',
-    candidate_concept_id: 'partner.attention_item',
-    business_domain: 'partners',
-  },
-  {
-    key: 'ui.filter.partner_code',
-    candidate_concept_id: 'ui.filter.partnerCode',
-    business_domain: 'portal',
-  },
-  {
-    key: 'section.summary',
-    candidate_concept_id: 'section.partnersSummary',
-    business_domain: 'portal',
-  },
-  {
-    key: 'section.roster',
-    candidate_concept_id: 'section.partnersRoster',
-    business_domain: 'portal',
-  },
-  {
-    key: 'section.profile',
-    candidate_concept_id: 'section.partnersProfile',
-    business_domain: 'portal',
-  },
-  {
-    key: 'section.attention',
-    candidate_concept_id: 'section.partnersAttention',
-    business_domain: 'portal',
-  },
-  {
-    key: 'section.integrations',
-    candidate_concept_id: 'section.partnersIntegrations',
-    business_domain: 'portal',
-  },
-] as const;
+/**
+ * Unregistered concept gaps for the partner dashboard plan.
+ * Empty when every candidate leaf is active in the domain glossary
+ * (`lib/telegram/partner-dashboard-glossary.ts` + `bun run glossary:portal`).
+ */
+export const PARTNER_DASHBOARD_SEMANTIC_GAPS: readonly {
+  readonly key: string;
+  readonly candidate_concept_id: string;
+  readonly business_domain: string;
+}[] = [];
 
 export type PartnerDashboardConceptGap = (typeof PARTNER_DASHBOARD_SEMANTIC_GAPS)[number];
-export type PartnerDashboardConceptGapId = PartnerDashboardConceptGap['candidate_concept_id'];
+export type PartnerDashboardConceptGapId = string;
 
 /** Bun.TOML.parse-compatible top-level shape for the planning artifact. */
 export type PartnerDashboardPlanToml = {

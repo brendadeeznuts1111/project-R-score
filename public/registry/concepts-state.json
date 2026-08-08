@@ -1,7 +1,7 @@
 {
   "kind": "concepts-state",
   "schemaVersion": 1,
-  "bakedAt": "2026-08-06T20:57:34.493Z",
+  "bakedAt": "2026-08-08T23:31:41.844Z",
   "gate": "pass",
   "summary": {
     "totalPortal": 146,
@@ -66,8 +66,8 @@
     },
     {
       "board": "limits",
-      "files": 2,
-      "usages": 101,
+      "files": 3,
+      "usages": 102,
       "allowlist": 21
     },
     {
@@ -459,7 +459,7 @@
       "category": "ops",
       "status": "active",
       "provenance": "legacy",
-      "usage": 5,
+      "usage": 6,
       "kind": "used"
     },
     {
