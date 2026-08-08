@@ -82,12 +82,12 @@ Do not merge them. Bun native docs:
 | Job | Tool | Lane |
 | --- | ---- | ---- |
 | New `/portal/<slug>/` board | Copy [`_page-template.html`](../../public/portal/_page-template.html) · `portal:chrome:apply` · page-concepts · routes | **Portal Design** |
-| New `@factorywager/*` library | `factory create factory-library <dest> [--publish]` → wraps `bun create` over [`.bun-create/factory-library/`](../../.bun-create/factory-library/) ([`lib/factory/cli.ts`](../../lib/factory/cli.ts)) | **Factory / registry** |
+| New `@factorywager/*` library | `factory create factory-library <dest>` → wraps `bun create` over [`.bun-create/factory-library/`](../../.bun-create/factory-library/) ([`lib/factory/cli.ts`](../../lib/factory/cli.ts)); `--publish` registers a scaffold marker only | **Factory / registry** |
 | Empty Bun app | `bun init` (upstream CLI) | Catalog only — no Factory wrapper |
 | Open / update PR | `gh` + [`.github/pull_request_template.md`](../../.github/pull_request_template.md) + `bun scripts/check-pr-claim.ts` | **Not** `bunx-pr` — that name does **not** exist; do not invent it |
 
 **Only portal touchpoint for create:** packages board “Copy create” clipboard →
-`factory create factory-library ${name} --publish`
+`factory create factory-library ${name}`
 ([`public/portal/card.js`](../../public/portal/card.js)). Theme / `ui-html` /
 color kernels stay unrelated.
 

@@ -144,6 +144,17 @@ export function renderPortalPill(label, opts = {}) {
 }
 
 /**
+ * Filter-control grid — `.portal-toolbar`; `controlsHtml` is pre-escaped markup.
+ * @param {string} controlsHtml
+ * @param {{ ariaLabel?: string, className?: string }} [opts]
+ */
+export function renderPortalToolbar(controlsHtml, opts = {}) {
+  const cls = ['portal-toolbar', opts.className || ''].filter(Boolean).join(' ');
+  const ariaLabel = opts.ariaLabel ? ` aria-label="${escHtml(opts.ariaLabel)}"` : '';
+  return `<div class="${escHtml(cls)}"${ariaLabel}>${controlsHtml}</div>`;
+}
+
+/**
  * Table row rail class for `rowClass`.
  * @param {'ok'|'warn'|'bad'|''|undefined} tone
  */

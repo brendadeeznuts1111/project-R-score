@@ -14,6 +14,7 @@ import {
   renderPortalStatGrid,
   renderPortalTable,
   renderPortalTableRows,
+  renderPortalToolbar,
   renderToneChip,
 } from '../lib/portal/ui-html.ts';
 
@@ -152,6 +153,14 @@ describe('lib/portal/ui-html', () => {
     expect(hero).toContain('<h2 class="portal-hero__title">');
 
     expect(renderPortalPill('rest', { kind: 'accent' })).toContain('portal-pill--accent');
+    expect(
+      renderPortalToolbar('<label>Search <input type="search"></label>', {
+        ariaLabel: 'Filter <books>',
+        className: 'bookmakers-toolbar',
+      })
+    ).toBe(
+      '<div class="portal-toolbar bookmakers-toolbar" aria-label="Filter &lt;books&gt;"><label>Search <input type="search"></label></div>'
+    );
     expect(portalRowToneClass('ok')).toBe('row-ok');
     expect(portalRowToneClass('warn')).toBe('row-warn');
     expect(portalRowToneClass('bad')).toBe('row-bad');
@@ -169,6 +178,7 @@ describe('browser portal-ui twin', () => {
       'renderPortalPill',
       'renderPortalBanner',
       'renderPortalHero',
+      'renderPortalToolbar',
       'renderPortalStatGrid',
       'renderPortalTable',
       'renderPortalTableRows',
@@ -218,6 +228,10 @@ describe('browser portal-ui twin', () => {
     expect(browser.renderPortalHero(heroOpts)).toBe(renderPortalHero(heroOpts));
     expect(browser.renderPortalPill('rest', { kind: 'ok' })).toBe(
       renderPortalPill('rest', { kind: 'ok' })
+    );
+    const toolbarOpts = { ariaLabel: 'Filter <books>', className: 'bookmakers-toolbar' };
+    expect(browser.renderPortalToolbar('<label>filters</label>', toolbarOpts)).toBe(
+      renderPortalToolbar('<label>filters</label>', toolbarOpts)
     );
     expect(browser.portalRowToneClass('warn')).toBe(portalRowToneClass('warn'));
     expect(browser.renderPortalError(errorOpts)).toContain('Load &lt;failed&gt;');
@@ -269,6 +283,7 @@ describe('browser portal-ui twin', () => {
     expect(js).toContain('portal-pill');
     expect(js).toContain('renderPortalTableRows');
     expect(js).toContain('renderPortalStatGrid');
+    expect(js).toContain('renderPortalToolbar');
     expect(js).toContain('BOOK_COLS');
     expect(js).not.toContain('fetcher-pill');
   });

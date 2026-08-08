@@ -8,7 +8,12 @@
 
 import { bindCopyButtons } from '../copy-cli.js';
 import { bootGlossaryUx } from '../components/glossary-ux.js';
-import { escHtml, renderPortalStatGrid, renderPortalTableRows } from '../components/portal-ui.js';
+import {
+  escHtml,
+  renderPortalStatGrid,
+  renderPortalTableRows,
+  renderPortalToolbar,
+} from '../components/portal-ui.js';
 
 export const REGISTRY_URL = '/registry/bookmakers.json';
 export const DESK_COVERAGE_URL = '/registry/bookmakers-desk-coverage.json';
@@ -336,7 +341,17 @@ function setGate(el, { ok, label }) {
   el.innerHTML = `<span class="dot" aria-hidden="true"></span>${esc(label)}`;
 }
 
+function mountBookmakersToolbar(root) {
+  const toolbar = root.getElementById('bookmakers-toolbar');
+  if (!toolbar) return;
+  toolbar.outerHTML = renderPortalToolbar(toolbar.innerHTML, {
+    ariaLabel: toolbar.getAttribute('aria-label') || 'Filter books',
+    className: 'bookmakers-toolbar',
+  });
+}
+
 export function initBookmakersBoard(root = document) {
+  mountBookmakersToolbar(root);
   const metaEl = root.getElementById('bookmakers-meta');
   const bodyEl = root.getElementById('bookmakers-body');
   const countEl = root.getElementById('bookmakers-count');

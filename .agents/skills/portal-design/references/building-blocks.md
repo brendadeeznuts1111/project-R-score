@@ -15,6 +15,7 @@ Builders: [`lib/portal/ui-html.ts`](../../../../lib/portal/ui-html.ts) ↔
 | `renderPortalPill` | `.portal-pill` (+ `--*`) | Soft category pill (`uiRole≈badge`) |
 | `renderPortalBanner` | `.portal-banner` | Status strip |
 | `renderPortalHero` | `.portal-hero` / `--card` | Title row / raised hero |
+| `renderPortalToolbar` | `.portal-toolbar` | Filter control grid |
 | `renderPortalStatGrid` | `.portal-stat` (host wraps `.portal-stat-grid`) | Metric cards |
 | `renderPortalTable` / `Rows` | `.portal-table` · `.table-wrap` | Data tables |
 | `portalRowToneClass` | `tr.row-ok\|warn\|bad` | Row rail helper |
@@ -27,7 +28,6 @@ Builders: [`lib/portal/ui-html.ts`](../../../../lib/portal/ui-html.ts) ↔
 
 | Primitive | Suggested builder | Notes |
 | --------- | ----------------- | ----- |
-| `.portal-toolbar` + `.portal-count` + `.portal-clear` | `renderPortalToolbar` | Filter control grid |
 | `.portal-meta-row` / `.portal-dot` | `renderPortalMetaRow` | Mono key/value |
 | `.portal-card` / `--metric|--panel|--stat` | `renderPortalCard` | Only when interaction-bound |
 | `.portal-freshness` / `.portal-baked` / `.portal-source-links` | freshness helpers | Evidence chrome |
