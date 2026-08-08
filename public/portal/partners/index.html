@@ -430,9 +430,10 @@
             title="Bake-manifest freshness"
           ></span>
           <div class="portal-source-links" aria-label="Related artifacts">
-            <a href="/registry/partners-ops.json">partners-ops.json</a>
-            <a href="/registry/telegram-handshake.json">handshake</a>
+            <a href="/registry/partners-dashboard.json">partners-dashboard.json</a>
+            <a href="/registry/partner-ledger.json">partner-ledger</a>
             <a href="/registry/soft-accounting-export.json">soft export</a>
+            <a href="/registry/seat-capital-desk.json">seat capital</a>
             <a href="/registry/bake-manifest.json">bake-manifest</a>
             <a href="/portal/glossary/#glossary:telegram.wire" data-glossary-concept="telegram.wire"
               >telegram.wire</a
@@ -490,8 +491,6 @@
         <p>Loading partners…</p>
       </div>
       <div id="dashboard" class="hidden">
-      <section id="partner-attention" class="partners-section" data-region="partner-attention" hidden aria-hidden="true"><h2 class="sr-only">Attention</h2></section>
-      <section id="partner-integrations" class="partners-section" data-region="partner-integrations" hidden aria-hidden="true"><h2 class="sr-only">Integrations</h2></section>
         <div class="portal-stat-grid" id="partners-stats" aria-label="Partners summary"></div>
         <div
           class="phase-filter-bar"
@@ -564,6 +563,124 @@
           <p class="cli-row">
             bun run telegram:handshake:catalog · telegram:handshake:invite-gap · telegram:ops --
             link-package-group CODE chatId
+          </p>
+        </section>
+
+        <section
+          class="partners-section"
+          id="partner-attention"
+          aria-labelledby="attention-heading"
+          data-glossary-concept="section.partnersAttention"
+          data-region="partner-attention"
+        >
+          <h2 id="attention-heading">
+            <a
+              href="/portal/glossary/#glossary:section.partnersAttention"
+              data-glossary-concept="section.partnersAttention"
+              >Attention</a
+            >
+          </h2>
+          <p class="blurb">
+            Deterministic operator actions from
+            <code>partners[].attention</code> and
+            <a
+              href="/portal/glossary/#glossary:partner.source_conflict"
+              data-glossary-concept="partner.source_conflict"
+              >source conflicts</a
+            >
+            · severity · reason · next command.
+          </p>
+          <div class="partners-panel">
+            <table class="portal-table partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Severity</th>
+                  <th>Reason</th>
+                  <th>Label</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="attention-tbody"></tbody>
+            </table>
+          </div>
+          <div class="partners-panel" style="margin-top: 12px">
+            <h3 class="partners-section" style="margin: 0 0 8px; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-dim)">
+              Source conflicts
+            </h3>
+            <table class="portal-table partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Field</th>
+                  <th>Adapters</th>
+                  <th>Values</th>
+                </tr>
+              </thead>
+              <tbody id="conflicts-tbody"></tbody>
+            </table>
+          </div>
+          <p class="cli-row">
+            bun run partner:dashboard:bake · attention rows are bake-derived (no live mutate)
+          </p>
+        </section>
+
+        <section
+          class="partners-section"
+          id="partner-integrations"
+          aria-labelledby="integrations-heading"
+          data-glossary-concept="section.partnersIntegrations"
+          data-region="partner-integrations"
+        >
+          <h2 id="integrations-heading">
+            <a
+              href="/portal/glossary/#glossary:section.partnersIntegrations"
+              data-glossary-concept="section.partnersIntegrations"
+              >Integrations</a
+            >
+          </h2>
+          <p class="blurb">
+            Connector freshness from
+            <a
+              href="/portal/glossary/#glossary:connector.data_status"
+              data-glossary-concept="connector.data_status"
+              >connector.data_status</a
+            >
+            · per-partner Tennis integration when present.
+          </p>
+          <div class="partners-panel">
+            <table class="portal-table partners-table">
+              <thead>
+                <tr>
+                  <th>Connector</th>
+                  <th>Status</th>
+                  <th>Mode</th>
+                  <th>Observed</th>
+                  <th>Input</th>
+                </tr>
+              </thead>
+              <tbody id="integrations-connectors-tbody"></tbody>
+            </table>
+          </div>
+          <div class="partners-panel" style="margin-top: 12px">
+            <h3 style="margin: 0 0 8px; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-dim)">
+              Partner · Tennis
+            </h3>
+            <table class="portal-table partners-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Call sign</th>
+                  <th>Tennis</th>
+                  <th>Observed</th>
+                </tr>
+              </thead>
+              <tbody id="integrations-partners-tbody"></tbody>
+            </table>
+          </div>
+          <p class="cli-row">
+            connector snapshots · bun run partner:dashboard:bake · tennis:
+            /registry/tennis/partner-contracts.json
           </p>
         </section>
 
@@ -1123,8 +1240,12 @@
         bakeLabel,
         coverageBarStyle,
         dashboardAccountingDealsRows,
+        dashboardAttentionRows,
         dashboardBookCards,
+        dashboardConflictRows,
+        dashboardConnectorRows,
         dashboardLedgerEventRows,
+        dashboardPartnerIntegrationRows,
         dashboardProfileCoverage,
         dashboardRosterRows,
         filterPartnerOuts,
@@ -1212,6 +1333,32 @@
         { key: 'amount', label: 'Amount' },
         { key: 'rail', label: 'Rail / out' },
         { key: 'note', label: 'Note' },
+      ];
+      const ATTENTION_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'severity', label: 'Severity' },
+        { key: 'reason', label: 'Reason' },
+        { key: 'label', label: 'Label' },
+        { key: 'action', label: 'Action' },
+      ];
+      const CONFLICT_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'field', label: 'Field' },
+        { key: 'adapters', label: 'Adapters' },
+        { key: 'values', label: 'Values' },
+      ];
+      const CONNECTOR_COLS = [
+        { key: 'connector', label: 'Connector' },
+        { key: 'status', label: 'Status' },
+        { key: 'mode', label: 'Mode' },
+        { key: 'observed', label: 'Observed' },
+        { key: 'input', label: 'Input' },
+      ];
+      const PARTNER_INTEGRATION_COLS = [
+        { key: 'partner', label: 'Partner' },
+        { key: 'callSign', label: 'Call sign' },
+        { key: 'tennis', label: 'Tennis' },
+        { key: 'observed', label: 'Observed' },
       ];
       const SOFT_PLAYS_COLS = [
         { key: 'partner', label: 'Partner' },
@@ -1570,8 +1717,15 @@
             'Attention',
             desk.attentionPartners,
             desk.attentionPartners > 0 ? 'warn' : 'ok',
-            'section:telegram',
+            'partner-attention',
             'Partners with attention rows',
+          ],
+          [
+            'Integrations',
+            desk.activeOuts,
+            desk.activeOuts > 0 ? 'ok' : 'warn',
+            'partner-integrations',
+            'Connector freshness + tennis capacity',
           ],
         ];
         const readiness = partnerReadinessGate({
@@ -1976,6 +2130,147 @@
       function softPlayCount(partnerCode) {
         const code = String(partnerCode || '').toUpperCase();
         return softPlaysByPartner.get(code)?.length || 0;
+      }
+
+      function severityTone(severity) {
+        const s = String(severity || '').toLowerCase();
+        if (s === 'block') return 'tone-bad';
+        if (s === 'warn') return 'tone-warn';
+        return 'tone-ok';
+      }
+
+      function connectorStatusTone(status) {
+        const s = String(status || '').toLowerCase();
+        if (s === 'ok') return 'tone-ok';
+        if (s === 'stale') return 'tone-warn';
+        return 'tone-bad';
+      }
+
+      function renderAttention(dashboard) {
+        const items = dashboardAttentionRows(dashboard);
+        const body = $('attention-tbody');
+        if (body) {
+          body.innerHTML = renderPortalTableRows(
+            ATTENTION_COLS,
+            items.map(row => {
+              const action = row.actionHref
+                ? `<a href="${esc(row.actionHref)}">${esc(row.actionHref)}</a>`
+                : row.actionCommand
+                  ? `<code>${esc(row.actionCommand)}</code>`
+                  : '—';
+              return [
+                { html: partnerLink(row.partnerCode) },
+                {
+                  html: esc(row.severity),
+                  className: severityTone(row.severity),
+                },
+                {
+                  html: `<a href="${glossaryHref(row.reasonCode)}" data-glossary-concept="${esc(row.reasonCode)}"><code>${esc(row.reasonCode)}</code></a>`,
+                },
+                row.label,
+                { html: action },
+              ];
+            }),
+            {
+              emptyMessage:
+                'No attention rows — partners are clean or bake omitted attention (bun run partner:dashboard:bake)',
+              rowAttrs: i => ({
+                'data-partner-code': String(items[i]?.partnerCode || ''),
+                'data-glossary-concept': 'partner.attention_item',
+              }),
+            }
+          );
+        }
+
+        const conflicts = dashboardConflictRows(dashboard);
+        const conflictsBody = $('conflicts-tbody');
+        if (conflictsBody) {
+          conflictsBody.innerHTML = renderPortalTableRows(
+            CONFLICT_COLS,
+            conflicts.map(row => [
+              { html: partnerLink(row.partnerCode) },
+              { html: `<code>${esc(row.fieldPath)}</code>` },
+              { html: `<code>${esc(row.adapterIds.join(' · ') || '—')}</code>` },
+              {
+                html: esc(
+                  row.values
+                    .map(v => (v === null || v === undefined ? 'null' : String(v)))
+                    .join(' vs ') || '—'
+                ),
+              },
+            ]),
+            {
+              emptyMessage: 'No source conflicts — adapters agree on contested fields',
+              rowAttrs: i => ({
+                'data-partner-code': String(conflicts[i]?.partnerCode || ''),
+                'data-glossary-concept': 'partner.source_conflict',
+              }),
+            }
+          );
+        }
+      }
+
+      function renderIntegrations(dashboard) {
+        const connectors = dashboardConnectorRows(dashboard);
+        const connBody = $('integrations-connectors-tbody');
+        if (connBody) {
+          connBody.innerHTML = renderPortalTableRows(
+            CONNECTOR_COLS,
+            connectors.map(row => [
+              { html: `<code>${esc(row.connector)}</code>` },
+              {
+                html: esc(row.dataStatus),
+                className: connectorStatusTone(row.dataStatus),
+              },
+              row.sourceMode || '—',
+              {
+                html: row.observedAt
+                  ? `<time>${esc(row.observedAt)}</time>`
+                  : '—',
+              },
+              {
+                html: row.inputRef.startsWith('/registry/')
+                  ? `<a href="${esc(row.inputRef)}"><code>${esc(row.inputRef)}</code></a>`
+                  : `<code>${esc(row.inputRef)}</code>`,
+              },
+            ]),
+            {
+              emptyMessage: 'No connector snapshots on dashboard artifact',
+              rowAttrs: i => ({
+                'data-connector': String(connectors[i]?.connector || ''),
+                'data-glossary-concept': 'connector.data_status',
+              }),
+            }
+          );
+        }
+
+        const partners = dashboardPartnerIntegrationRows(dashboard);
+        const partnerBody = $('integrations-partners-tbody');
+        if (partnerBody) {
+          partnerBody.innerHTML = renderPortalTableRows(
+            PARTNER_INTEGRATION_COLS,
+            partners.map(row => [
+              { html: partnerLink(row.partnerCode) },
+              { html: `<code>${esc(row.callSign)}</code>` },
+              {
+                html: esc(row.tennisStatus),
+                className:
+                  row.tennisStatus === 'n/a' ? '' : connectorStatusTone(row.tennisStatus),
+              },
+              {
+                html: row.tennisObservedAt
+                  ? `<time>${esc(row.tennisObservedAt)}</time>`
+                  : '—',
+              },
+            ]),
+            {
+              emptyMessage: 'No partners on dashboard artifact',
+              rowAttrs: i => ({
+                'data-partner-code': String(partners[i]?.partnerCode || ''),
+              }),
+            }
+          );
+        }
       }
 
       function renderAccounting(dashboard) {
@@ -2599,6 +2894,8 @@
           renderPartners(dashboard);
           renderOutsInventory(null);
           renderAccountsLimits(dashboard);
+          renderAttention(dashboard);
+          renderIntegrations(dashboard);
           renderAccounting(dashboard);
           renderDeposits(seat);
           renderBooks(dashboard);
