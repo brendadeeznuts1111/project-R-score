@@ -24,7 +24,7 @@ owns the machine-artifact companion.
 | Plane           | Coverage                                | Authority                                                                                                                              | Drift check                               |
 | --------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | Portal pages    | 36/36                                   | [`lib/portal/page-concepts.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/page-concepts.ts)           | `bun run wiki:coverage:check`             |
-| Harness tenants | 55/55                                   | [`docs/harness/tenants/`](docs/harness/tenants/)                                                                                       | `bun run wiki:coverage:check`             |
+| Harness tenants | 56/56                                   | [`docs/harness/tenants/`](docs/harness/tenants/)                                                                                       | `bun run wiki:coverage:check`             |
 | Registry links  | Curated links present                   | [`public/registry/`](public/registry/)                                                                                                 | paths must exist under `public/registry/` |
 | Wiki links      | Published entrypoints                   | `_config.yml` · [`tools/wiki-link-check.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/wiki-link-check.ts) | `bun run wiki:links:check`                |
 | Public plane    | Portal · registry · monitoring · lander | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                              | `bun run public:discover:check`           |
@@ -57,6 +57,7 @@ authority, and the shortest proof command.
 | Find a domain term or branded value        | [Glossary](https://score.factory-wager.com/portal/glossary/) · [Brands](https://score.factory-wager.com/portal/brands/)                | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) | `bun run glossary:verify`                     |
 | Govern semantic concepts and relationships | [Concepts](https://score.factory-wager.com/portal/concepts/) · [Concept graph](https://score.factory-wager.com/portal/concepts/graph/) | [`docs/CONCEPT_LIFECYCLE.md`](docs/CONCEPT_LIFECYCLE.md) · [`docs/SURFACE_COVERAGE.md`](docs/SURFACE_COVERAGE.md)                                                                                    | `bun run quality:concept`                     |
 | Investigate harness or documentation drift | [`docs/harness/`](docs/harness/) · [Failures](https://score.factory-wager.com/portal/failures/)                                        | [`docs-integrity.md`](docs/harness/tenants/docs-integrity.md) · [`reference-discovery.md`](docs/harness/tenants/reference-discovery.md)                                                              | `bun run discover:compose:check`              |
+| Maintain workspace lanes and daily/weekly pulses | [`maintain-workspace.md`](docs/harness/tenants/maintain-workspace.md) · `bun run lane:status`                                    | [`AUTHORITY.md`](docs/harness/AUTHORITY.md) · [`day-loop.md`](docs/harness/day-loop.md) · [`workspace-lane-cross-map.md`](docs/harness/tenants/workspace-lane-cross-map.md)                         | `bun run harness:status`                      |
 
 ## Live surfaces
 
@@ -215,6 +216,7 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 | Bake resilience         | [`bake-resilience.md`](docs/harness/tenants/bake-resilience.md)                                                      |
 | Full UI performance     | [`full-ui-performance-audit.md`](docs/harness/tenants/full-ui-performance-audit.md)                                  |
 | Remaining work          | [`remaining-work.md`](docs/harness/tenants/remaining-work.md)                                                        |
+| Maintain workspace      | [`maintain-workspace.md`](docs/harness/tenants/maintain-workspace.md) · lane/day/week pulses · Cursor automation prompts |
 
 ### Cloudflare · deploy · vault
 
