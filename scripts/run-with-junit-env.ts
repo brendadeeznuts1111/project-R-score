@@ -25,11 +25,11 @@ if (args.length === 0) {
   process.exit(2);
 }
 
+// Inherit parent env after ensureJunitReporterEnv mutated Bun.env (Bun.env ratchet).
 const child = Bun.spawn(['bun', ...args], {
   stdout: 'inherit',
   stderr: 'inherit',
   stdin: 'inherit',
-  env: process.env,
 });
 
 process.exit(await child.exited);
