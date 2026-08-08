@@ -354,7 +354,7 @@
           <div class="nav-dropdown" role="menu">
           <div class="nav-group" role="group" aria-label="Ops · domain" data-group="ops">
             <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
-            <a href="/portal/partners/" class="nav-link active" aria-current="page" title="package groups · telegram forums · accounting · deposits · seat capital · bun run telegram:handshake:catalog" data-group="ops" data-domain="partner" data-cli="bun run telegram:handshake:catalog" data-registry="/registry/partners-ops.json" role="menuitem">Partners</a>
+            <a href="/portal/partners/" class="nav-link active" aria-current="page" title="package groups · telegram forums · accounting · deposits · seat capital · bun run partner:dashboard:bake" data-group="ops" data-domain="partner" data-cli="bun run partner:dashboard:bake" data-registry="/registry/partners-dashboard.json" role="menuitem">Partners</a>
             <a href="/portal/partner/" class="nav-link" title="partner domain readiness · profile alignment · per-out checks · bun run partner:health:bake" data-group="ops" data-domain="partner" data-cli="bun run partner:health:bake" data-registry="/registry/partner-health.json" role="menuitem">Partner health</a>
             <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed" data-group="ops" data-domain="partner" data-cli="bun run ops:dossier:seed" data-registry="/registry/partners-ops.json" role="menuitem">Account</a>
             <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Partner history</a>
@@ -1120,22 +1120,27 @@
       import {
         bakeLabel,
         coverageBarStyle,
+        dashboardAccountingDealsRows,
+        dashboardBookCards,
+        dashboardLedgerEventRows,
+        dashboardProfileCoverage,
+        dashboardRosterRows,
         filterPartnerOuts,
-        flattenPartnerOuts,
-        indexOpsByPartner,
+        flattenDashboardOuts,
+        formatMoneyAmount,
+        indexDashboardByPartner,
         isLegacyPartnerComparisonRequested,
         isPartnersDashboardSchema,
-        listPartnerPhases,
+        listDashboardPhases,
         normalizePartnerCode,
+        outScopedBalances,
         PARTNERS_DASHBOARD_ARTIFACT_REF,
         PARTNERS_LEGACY_COMPARISON_OPTIONAL_REFS,
         PARTNERS_LEGACY_COMPARISON_REQUIRED_REFS,
-        canonicalProfileCoverage,
         partnerReadinessGate,
-        projectDashboardToHandshakeShape,
-        projectDashboardToOpsShape,
+        partnerScopedBalanceMinor,
         summarizeConnectorSnapshots,
-        summarizePartnerDesk,
+        summarizeDashboardDesk,
       } from '/portal/partners/partners-board.js';
       import { mountFreshnessBadge } from '/portal/data-freshness.js';
       import { fetchJsonResult } from '/portal/fetch-json.js';
@@ -1267,9 +1272,9 @@
       /** @type {Map<string, { hex?: string, conceptId?: string, label?: string }>} */
       let bookIndex = new Map();
       /** @type {Map<string, object>} */
-      let opsByPartner = new Map();
+      let dashboardByPartner = new Map();
       /** @type {object | null} */
-      let opsCache = null;
+      let dashboardCache = null;
       /** @type {string | null} */
       let phaseFilter = null;
       /** @type {object[]} */
@@ -1350,13 +1355,17 @@
           : `$${n.toLocaleString('en-US')}`;
       }
 
-      /** Balance cell: SQLite partner_ledger projection when present. */
-      function balanceCell(ops) {
-        const bal = ops?.accounting?.balance;
-        if (bal == null) return '<span class="tone-muted">—</span>';
-        const cap = ops.accounting.initialCapital;
-        const title = cap != null ? `initial capital ${fmtMoney(cap)}` : 'partner_ledger balance';
-        return `<span title="${esc(title)}">${fmtMoney(bal)}</span>`;
+      /** Balance cell: partner-scoped minor-unit total from dashboard accounting. */
+      function balanceCell(partnerOrMajor) {
+        if (partnerOrMajor != null && typeof partnerOrMajor === 'object') {
+          const minor = partnerScopedBalanceMinor(partnerOrMajor);
+          if (minor == null) return '<span class="tone-muted">—</span>';
+          return `<span title="partner-scoped balance (minor units ${minor})">${fmtMoney(minor / 100)}</span>`;
+        }
+        if (partnerOrMajor == null || Number.isNaN(Number(partnerOrMajor))) {
+          return '<span class="tone-muted">—</span>';
+        }
+        return `<span>${fmtMoney(partnerOrMajor)}</span>`;
       }
 
       function glossaryHref(id) {
@@ -1490,79 +1499,90 @@
           .join('');
       }
 
-      function renderStats(handshake, seat, ops, partnerProfiles) {
-        const desk = summarizePartnerDesk(ops, handshake);
-        const desks = seat?.desks ?? (seat?.rows?.length || 0);
-        const profileCoverage = canonicalProfileCoverage(ops, handshake, partnerProfiles);
+      function renderStats(dashboard) {
+        const desk = summarizeDashboardDesk(dashboard);
+        const profileCoverage = dashboardProfileCoverage(dashboard);
         const canonicalProfiles = profileCoverage.coveredCodes.length;
         const cells = [
-          ['Partners', desk.partners, '', 'section:telegram', 'Package groups in handshake'],
+          ['Partners', desk.partners, '', 'section:telegram', 'Partners on dashboard artifact'],
           [
             'Operator ready',
             desk.operatorReady,
             desk.operatorReady === desk.partners && desk.partners > 0 ? 'ok' : 'warn',
             'section:telegram',
-            'Phase operator_ready',
+            'operationalPhase operator_ready',
           ],
-          ['Accounts', desk.accounts, '', 'section:accounts-limits', 'Outs / accounts tracked'],
+          [
+            'Active outs',
+            `${desk.activeOuts}/${desk.outs}`,
+            desk.activeOuts > 0 ? 'ok' : 'warn',
+            'section:outs',
+            'tennis live activeOutIds ∩ registered ready',
+          ],
           [
             'Outs ready',
             `${desk.readyOuts}/${desk.outs}`,
             desk.readyOuts === desk.outs && desk.outs > 0 ? 'ok' : 'warn',
             'section:outs',
-            'partners-ops out.status.ready',
+            'operationalStatus=ready',
           ],
           [
-            'Limit coverage',
-            `${desk.limitCoveragePct}%`,
-            desk.limitCoveragePct >= 80 ? 'ok' : desk.limitCoveragePct >= 40 ? 'warn' : 'bad',
-            'section:accounts-limits',
-            `${desk.trackedLimits} tracked limits`,
+            'Balances',
+            desk.balancePositionCount,
+            desk.balancePositionCount > 0 ? 'ok' : 'warn',
+            'section:accounting',
+            'Scoped balance positions from partner-ledger',
           ],
           [
             'Telegram ready',
             desk.communicationReady,
             desk.communicationReady === desk.partners && desk.partners > 0 ? 'ok' : 'warn',
             'section:telegram',
-            'Invite + membership ready',
+            'communication.chatLinked',
           ],
-          ['Seat desks', desks, '', 'section:deposits', 'Seat capital desks'],
+          [
+            'Limit coverage',
+            `${desk.limitCoveragePct}%`,
+            desk.limitCoveragePct >= 80 ? 'ok' : desk.limitCoveragePct >= 40 ? 'warn' : 'muted',
+            'section:accounts-limits',
+            `${desk.trackedLimits} tracked limits`,
+          ],
           [
             'Canonical profiles',
-            canonicalProfiles,
+            `${canonicalProfiles}/${desk.partners}`,
             canonicalProfiles >= desk.partners && desk.partners > 0 ? 'ok' : 'warn',
             'partner-profile',
             profileCoverage.missingCodes.length
-              ? `Exact CODE coverage; missing ${profileCoverage.missingCodes.join(', ')}`
-              : 'Exact CODE coverage is complete',
+              ? `Missing ${profileCoverage.missingCodes.join(', ')}`
+              : 'identity.profileSourceSystemId canonical',
           ],
           [
             'Incomplete outs',
             desk.incompleteOuts,
             desk.incompleteOuts > 0 ? 'warn' : 'ok',
             'section:outs',
-            'Needs attention',
+            'unknown/blocked/deferred operational status',
           ],
           [
-            'Invite gaps',
-            desk.inviteGaps,
-            desk.inviteGaps > 0 ? 'warn' : 'ok',
+            'Attention',
+            desk.attentionPartners,
+            desk.attentionPartners > 0 ? 'warn' : 'ok',
             'section:telegram',
-            'Missing Telegram invites',
+            'Partners with attention rows',
           ],
         ];
         const readiness = partnerReadinessGate({
           partnerCount: desk.partners,
           canonicalProfileCount: canonicalProfiles,
           incompleteOuts: desk.incompleteOuts,
-          inviteGaps: desk.inviteGaps,
+          inviteGaps: 0,
         });
         const gate = $('partners-gate');
         if (gate) {
           gate.className = `portal-gate ${readiness.tone}`;
           gate.title = readiness.profilesReady
             ? 'Canonical profile authority is complete'
-            : 'Legacy compatibility view; canonical profile coverage is incomplete';
+            : 'Canonical profile coverage is incomplete';
           gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${esc(readiness.label)}`;
         }
         $('partners-stats').innerHTML = renderPortalStatGrid(
@@ -1594,17 +1614,18 @@
         </div>`;
       }
 
-      function renderPhaseFilter(ops) {
+      function renderPhaseFilter(dashboard) {
         const bar = $('phase-filter-bar');
         if (!bar) return;
-        const phases = listPartnerPhases(ops);
+        const phases = listDashboardPhases(dashboard);
+        const partnerCount = Array.isArray(dashboard?.partners) ? dashboard.partners.length : 0;
         if (!phases.length) {
           bar.innerHTML = '';
           return;
         }
         const chips = [
           `<span class="phase-filter-label">Phase</span>`,
-          `<button type="button" class="phase-filter-chip${!phaseFilter ? ' is-active' : ''}" data-phase="" aria-pressed="${!phaseFilter}">All (${ops?.partners?.length || 0})</button>`,
+          `<button type="button" class="phase-filter-chip${!phaseFilter ? ' is-active' : ''}" data-phase="" aria-pressed="${!phaseFilter}">All (${partnerCount})</button>`,
           ...phases.map(
             p =>
               `<button type="button" class="phase-filter-chip${phaseFilter === p.phase ? ' is-active' : ''}" data-phase="${esc(p.phase)}" aria-pressed="${phaseFilter === p.phase}" title="${esc(p.conceptId)}">${esc(p.phase)} (${p.count})</button>`
@@ -1615,8 +1636,8 @@
           btn.addEventListener('click', () => {
             phaseFilter = btn.getAttribute('data-phase') || null;
             if (phaseFilter === '') phaseFilter = null;
-            renderPhaseFilter(opsCache);
-            renderPartners(handshakeCache);
+            renderPhaseFilter(dashboardCache);
+            renderPartners(dashboardCache);
             applyPartnerRoute(false);
           });
         });
@@ -1671,7 +1692,7 @@
             ];
           }),
           {
-            emptyMessage: 'No outs match filters — check partners-ops bake',
+            emptyMessage: 'No outs match filters — check partners-dashboard bake',
             rowAttrs: i => ({
               'data-partner-code': String(filtered[i]?.partnerCode || ''),
               'data-out-status': String(filtered[i]?.status || ''),
@@ -1689,24 +1710,15 @@
         return `<a href="${partnerHash(code)}"><code>${esc(label)}</code></a>`;
       }
 
-      function renderPartnerRoutes(ops) {
-        const colors = ops?.colors || {};
+      function renderPartnerRoutes(dashboard) {
         const links = [
-          routeChip(
-            '#partners',
-            'All partners',
-            colors['ops.limits.account'],
-            'ops.limits.account'
-          ),
+          routeChip('#partners', 'All partners', '', 'ops.limits.account'),
         ];
-        for (const partner of ops?.partners || []) {
+        for (const partner of dashboard?.partners || []) {
+          const code = normalizePartnerCode(partner.partnerCode);
+          const phase = String(partner.operationalPhase || 'unknown');
           links.push(
-            routeChip(
-              partnerHash(partner.code),
-              partner.code,
-              partner.phaseColor,
-              partner.phaseConceptId
-            )
+            routeChip(partnerHash(code), code, '', `partner.phase.${phase}`)
           );
         }
         links.push(
@@ -1716,9 +1728,10 @@
       }
 
       function phaseChip(code) {
-        const p = opsByPartner.get(String(code || '').toUpperCase());
+        const p = dashboardByPartner.get(String(code || '').toUpperCase());
         if (!p) return '—';
-        return conceptChip(p.phaseConceptId, p.phase, p.phaseColor);
+        const phase = String(p.operationalPhase || '—');
+        return conceptChip(`partner.phase.${phase}`, phase, '');
       }
 
       function botTopicLinks(code, phase) {
@@ -1733,32 +1746,27 @@
         return links.length ? links.join(' · ') : '—';
       }
 
-      function renderPartners(handshake) {
-        const rows = Array.isArray(handshake?.rows) ? handshake.rows : [];
+      function renderPartners(dashboard) {
+        const rows = dashboardRosterRows(dashboard);
         const filtered = phaseFilter
-          ? rows.filter(row => {
-              const ops = opsByPartner.get(normalizePartnerCode(row.partnerCode));
-              return String(ops?.phase || '') === phaseFilter;
-            })
+          ? rows.filter(row => String(row.phase || '') === phaseFilter)
           : rows;
         $('partners-tbody').innerHTML = renderPortalTableRows(
           PARTNER_COLS,
           filtered.map(row => {
-            const invite = row.inviteLink
-              ? `<a href="${esc(row.inviteLink)}" target="_blank" rel="noopener">invite</a>`
-              : '<span class="tone-warn">none</span>';
-            const verify = `${row.verifyPassed ?? '—'}/${row.verifyTotal ?? '—'}`;
-            const ops = opsByPartner.get(normalizePartnerCode(row.partnerCode));
-            const limits = ops?.tracking?.limits || {};
-            const tax = ops
-              ? `${ops.outs?.length || 0} outs · ${limits.coveragePct ?? 0}% limits`
-              : '—';
-            const bot = botTopicLinks(row.partnerCode, ops?.phase);
+            const limits = row.limits || {};
+            const coveragePct = Math.round((Number(limits.coverageRatio) || 0) * 100);
+            const tax = `${row.outsCount || 0} outs · lifecycle ${row.lifecycleState || '—'}`;
+            const bot = botTopicLinks(row.partnerCode, row.phase);
             const taxHtml =
               esc(tax) +
-              (limits.coveragePct != null
-                ? `<div style="margin-top:4px">${coverageBarHtml(limits.coveragePct)}</div>`
+              (limits.coverageRatio != null
+                ? `<div style="margin-top:4px">${coverageBarHtml(coveragePct)}</div>`
                 : '');
+            const next =
+              (row.nextSteps && row.nextSteps[0]) ||
+              (row.attention?.[0]?.label) ||
+              '—';
             return [
               { html: partnerLink(row.partnerCode) },
               { html: phaseChip(row.partnerCode) },
@@ -1767,26 +1775,29 @@
               { html: `<code>${esc(row.callSign || '—')}</code>` },
               row.dmSeatStatus || '—',
               {
-                html: `${row.handshakeOk ? 'ok' : 'fail'} · ${esc(verify)}`,
+                html: `${row.handshakeOk ? 'ok' : 'gap'} · ${esc(row.handshakeStatus || '—')}`,
                 className: toneClass(row.handshakeOk),
               },
-              { html: invite },
+              {
+                html: row.handshakeOk
+                  ? '<span class="tone-ok">linked</span>'
+                  : '<span class="tone-warn">none</span>',
+              },
               { html: bot },
-              (row.nextSteps && row.nextSteps[0]) || '—',
-              { html: balanceCell(ops) },
+              next,
+              { html: balanceCell(row.partner) },
             ];
           }),
           {
             emptyMessage: phaseFilter
               ? `No partners in phase ${phaseFilter}`
-              : 'No partners in telegram-handshake bake',
+              : 'No partners in partners-dashboard bake',
             rowAttrs: i => {
               const row = filtered[i];
-              const ops = opsByPartner.get(normalizePartnerCode(row?.partnerCode));
               return {
                 id: `partner-detail-${row?.partnerCode || ''}`,
                 'data-partner-code': String(row?.partnerCode || ''),
-                'data-phase': String(ops?.phase || ''),
+                'data-phase': String(row?.phase || ''),
               };
             },
           }
@@ -1802,21 +1813,23 @@
           body.innerHTML = '';
           return;
         }
-        const ops = opsByPartner.get(code);
-        const hs = (handshakeCache?.rows || []).find(
-          r => String(r.partnerCode || '').toUpperCase() === code
-        );
-        const desk = (seatCache?.rows || []).find(
-          r => String(r.partnerCode || '').toUpperCase() === code
-        );
-        const unified = partnerProfilesCache?.profiles?.[code] || null;
-        const callSign =
-          unified?.identity?.callSign || hs?.callSign || desk?.callSign || `${code}-001`;
-        const tracking = ops?.tracking || {};
-        const accounts = tracking.accounts || {};
-        const limits = tracking.limits || {};
-        const next = (hs?.nextSteps && hs.nextSteps[0]) || 'Review handshake next steps';
-        const bot = botTopicLinks(code, ops?.phase || 'onboarding');
+        const partner = dashboardByPartner.get(code);
+        if (!partner) {
+          panel.classList.add('hidden');
+          body.innerHTML = '';
+          return;
+        }
+        const callSign = partner.callSign || `${code}-001`;
+        const limits = partner.limits || {};
+        const coveragePct = Math.round((Number(limits.coverageRatio) || 0) * 100);
+        const outs = Array.isArray(partner.outs) ? partner.outs : [];
+        const readyOuts = outs.filter(o => String(o.operationalStatus) === 'ready').length;
+        const next =
+          (partner.attention && partner.attention[0]?.label) || 'No open attention items';
+        const bot = botTopicLinks(code, partner.operationalPhase || 'onboarding');
+        const balMinor = partnerScopedBalanceMinor(partner);
+        const lifecycleState = partner.lifecycle?.state || '—';
+        const handshake = partner.communication || {};
         const cross = [
           `<a class="topic-chip" href="/portal/limits/?partner=${encodeURIComponent(code)}">Limits</a>`,
           `<a class="topic-chip" href="/portal/partner-history/?partner=${encodeURIComponent(code)}">Limit history</a>`,
@@ -1828,37 +1841,40 @@
         body.innerHTML = `<div class="partner-profile-grid">
           <div><div class="k">Code</div><div class="v"><code>${esc(code)}</code> · <code>${esc(callSign)}</code></div></div>
           <div><div class="k">Phase</div><div class="v">${phaseChip(code)}</div></div>
-          <div><div class="k">Profile lifecycle</div><div class="v">${esc(unified?.lifecycle?.status || 'not baked')} · ${esc(unified?.lifecycle?.phase || '—')}</div></div>
-          <div><div class="k">Profile template</div><div class="v">${esc(unified?.meta?.templateId || '—')} · ${esc(unified?.meta?.version || '—')}</div></div>
-          <div><div class="k">Telegram</div><div class="v">${esc(hs?.membershipCell || '—')} · DM ${esc(hs?.dmSeatStatus || (desk?.hasTelegramDesk ? 'pinned' : '—'))}</div></div>
-          <div><div class="k">Accounts</div><div class="v">${esc(String(accounts.ready ?? 0))}/${esc(String(accounts.total ?? 0))} ready · ${esc(String(limits.coveragePct ?? 0))}% limits</div></div>
-          <div><div class="k">Limit coverage</div><div class="v">${coverageBarHtml(limits.coveragePct)}</div></div>
-          <div><div class="k">Fund / outs</div><div class="v ${fundTone(desk?.fundStatus)}">${esc(desk?.fundStatus || 'no intake')} · ${esc(String(desk?.incompleteOuts ?? ops?.outs?.length ?? '—'))} outs</div></div>
-          <div><div class="k">Balance</div><div class="v">${fmtMoney(ops?.accounting?.balance)}</div></div>
-          <div><div class="k">Initial cap</div><div class="v">${fmtMoney(ops?.accounting?.initialCapital)}</div></div>
+          <div><div class="k">Lifecycle</div><div class="v">${esc(lifecycleState)} · ${esc(partner.lifecycle?.provenance?.sourceSystemId || '—')}</div></div>
+          <div><div class="k">Identity</div><div class="v">${esc(partner.identity?.profileSourceSystemId || '—')}</div></div>
+          <div><div class="k">Telegram</div><div class="v">${esc(handshake.handshakeStatus || '—')} · DM ${esc(handshake.chatLinked ? 'linked' : 'none')}</div></div>
+          <div><div class="k">Accounts</div><div class="v">${esc(String(readyOuts))}/${esc(String(outs.length))} ready · ${esc(String(coveragePct))}% limits</div></div>
+          <div><div class="k">Limit coverage</div><div class="v">${coverageBarHtml(coveragePct)}</div></div>
+          <div><div class="k">Fund / outs</div><div class="v">${esc(String(outs.filter(o => o.fundingStatus === 'funded').length))} funded · ${esc(String(outs.length))} outs</div></div>
+          <div><div class="k">Balance</div><div class="v">${balMinor == null ? '—' : fmtMoney(balMinor / 100)}</div></div>
+          <div><div class="k">Integrations</div><div class="v">tennis ${esc(partner.integrations?.tennis?.dataStatus || 'n/a')}</div></div>
           <div><div class="k">Bot topics</div><div class="v">${bot}</div></div>
           <div><div class="k">Next</div><div class="v">${esc(next)}</div></div>
           <div><div class="k">Onboard CLI</div><div class="v"><code>bun run onboard:partner -- ${esc(callSign)} --dry-run</code></div></div>
         </div>
         <div class="partner-profile-links">${cross}</div>
         <div class="partner-profile-outs">
-          <h3>Outs · partners-ops</h3>
+          <h3>Outs · partners-dashboard</h3>
           <div class="tracking-summary">${
-            (ops?.outs || [])
-              .map(out =>
-                routeChip(
-                  partnerOutHash(code, out.id),
-                  `${out.book?.name || out.id}: ${out.status || '—'} · ${out.maxBet || '—'}`,
-                  out.statusColor || out.book?.color,
-                  out.statusConceptId || 'out.status.ready'
-                ).replace('topic-chip', 'book-chip')
-              )
+            outs
+              .map(out => {
+                const maxMinor = out.observedMaxStake?.amount?.minorUnits;
+                const maxLabel =
+                  typeof maxMinor === 'number' ? String(maxMinor / 100) : '—';
+                return routeChip(
+                  partnerOutHash(code, out.outId),
+                  `${out.sportsbookId || out.outId}: ${out.operationalStatus || '—'} · fund ${out.fundingStatus || '—'} · max ${maxLabel}`,
+                  '',
+                  'out.status.ready'
+                ).replace('topic-chip', 'book-chip');
+              })
               .join('') || '<span class="tone-warn">No outs on this partner</span>'
           }</div>
         </div>
         <div class="partners-panel">
-          <h2>Ledger <span class="tone-muted">(partner_ledger)</span></h2>
-          <div class="blurb">Most recent transactions — desk entries, imports, and the weekly commission adjustment (newest first).</div>
+          <h2>Ledger <span class="tone-muted">(dashboard recentEntries)</span></h2>
+          <div class="blurb">Most recent ledger rows from the redacted partner-ledger bake (newest first).</div>
           <table class="portal-table partners-table">
             <thead>
               <tr>
@@ -1875,8 +1891,8 @@
           </table>
         </div>
         <div class="partners-panel">
-          <h2>Per-out balances <span class="tone-muted">(books)</span></h2>
-          <div class="blurb">Ledger sums per book account — which book is profitable vs. losing.</div>
+          <h2>Per-out balances <span class="tone-muted">(scoped positions)</span></h2>
+          <div class="blurb">Out-scoped balance positions from partner-ledger.</div>
           <table class="portal-table partners-table">
             <thead>
               <tr>
@@ -1893,45 +1909,48 @@
         panel.classList.remove('hidden');
         const ledgerBody = $('partner-ledger-tbody');
         if (ledgerBody) {
-          const rows = [...(ops?.accounting?.ledgerRows || [])].reverse();
+          const rows = [...(partner.accounting?.recentEntries || [])];
           ledgerBody.innerHTML = renderPortalTableRows(
             LEDGER_COLS,
             rows.map(r => {
-              const type = String(r.type || 'unknown');
+              const type = String(r.entryType || 'unknown');
               const conceptId = `accounting.${type}`;
+              const amountMajor = formatMoneyAmount(r.amount);
+              const balMajor = formatMoneyAmount(r.balanceAfter);
               return [
-                { html: `<time>${esc(r.createdAt)}</time>` },
-                { html: conceptChip(conceptId, type, ops?.colors?.[conceptId]) },
-                { html: fmtMoney(r.amount) },
-                r.currency,
-                r.reference || '—',
-                r.trackingId || '—',
-                { html: fmtMoney(r.balanceAfter) },
+                { html: `<time>${esc(r.postedAt || '—')}</time>` },
+                { html: conceptChip(conceptId, type, '') },
+                { html: amountMajor == null ? '—' : fmtMoney(amountMajor) },
+                r.amount?.currency || '—',
+                r.proofRef || '—',
+                r.id || '—',
+                { html: balMajor == null ? '—' : fmtMoney(balMajor) },
               ];
             }),
             {
               emptyMessage:
-                'No partner_ledger transactions — post via partner:settlement:post / import, then partners:build',
+                'No recentEntries — ensure public/registry/partner-ledger.json then bun run partner:dashboard:bake',
             }
           );
         }
         const outsBody = $('partner-outs-tbody');
         if (outsBody) {
-          const outs = ops?.accounting?.outs || {};
-          const outIds = Object.keys(outs).sort();
+          const byOut = outScopedBalances(partner);
+          const outIds = [...byOut.keys()].sort();
           outsBody.innerHTML = renderPortalTableRows(
             PROFILE_OUTS_COLS,
-            outIds.map(o => [
-              { html: `<code>${esc(o)}</code>` },
-              { html: fmtMoney(outs[o].balance) },
-              { html: `<time>${esc(outs[o].lastTransactionAt || '—')}</time>` },
-              {
-                html: outs[o].lastAmount != null ? fmtMoney(outs[o].lastAmount) : '—',
-              },
-              outs[o].lastType || '—',
-            ]),
+            outIds.map(o => {
+              const row = byOut.get(o);
+              return [
+                { html: `<code>${esc(o)}</code>` },
+                { html: fmtMoney((row?.minorUnits || 0) / 100) },
+                { html: `<time>${esc(row?.effectiveAt || '—')}</time>` },
+                { html: '—' },
+                row?.currency || '—',
+              ];
+            }),
             {
-              emptyMessage: 'No per-out ledger rows — post with --out <bookKey>',
+              emptyMessage: 'No out-scoped balance positions for this partner',
             }
           );
         }
@@ -1956,65 +1975,49 @@
         return softPlaysByPartner.get(code)?.length || 0;
       }
 
-      function renderAccounting(handshake, seat, ops) {
-        const desks = deskByPartner(seat);
-        const partners = Array.isArray(handshake?.rows) ? handshake.rows : [];
-        const codes = partners.length ? partners.map(p => p.partnerCode) : [...desks.keys()];
+      function renderAccounting(dashboard) {
+        const deals = dashboardAccountingDealsRows(dashboard);
         $('accounting-tbody').innerHTML = renderPortalTableRows(
           ACCOUNTING_DEALS_COLS,
-          codes.map(code => {
-            const desk = desks.get(String(code).toUpperCase());
-            const done = (desk?.checklist || []).filter(c => c.done).length;
-            const total = (desk?.checklist || []).length;
-            const checklist = total ? `${done}/${total}` : '—';
-            const softN = softPlayCount(code);
+          deals.map(row => {
+            const bal =
+              row.balanceMajor == null ? '—' : fmtMoney(row.balanceMajor);
             return [
-              { html: partnerLink(code) },
-              { html: `<code>${esc(desk?.callSign || '—')}</code>` },
+              { html: partnerLink(row.partnerCode) },
+              { html: `<code>${esc(row.callSign || '—')}</code>` },
               {
-                html: esc(desk?.fundStatus || 'no intake'),
-                className: fundTone(desk?.fundStatus),
+                html: esc(row.fundStatus || 'unknown'),
+                className: fundTone(row.fundStatus),
               },
               {
-                html: desk?.hasTelegramDesk ? 'pinned' : 'missing',
-                className: desk?.hasTelegramDesk ? 'tone-ok' : 'tone-warn',
+                html: row.chatLinked ? 'linked' : 'none',
+                className: row.chatLinked ? 'tone-ok' : 'tone-warn',
               },
               {
-                html: esc(desk?.incompleteOuts ?? '—'),
-                className: (desk?.incompleteOuts || 0) > 0 ? 'tone-warn' : '',
+                html: esc(String(row.incompleteOuts ?? '—')),
+                className: (row.incompleteOuts || 0) > 0 ? 'tone-warn' : '',
               },
               {
-                html:
-                  esc(checklist) +
-                  (softN
-                    ? ` · ${conceptChip('ops.view.per_play', `${softN} soft plays`, colorsCache['ops.view.per_play'] || '')}`
-                    : ''),
+                html: `${esc(String(row.entryCount))} entries · bal ${bal}`,
               },
               {
-                html: `<code>telegram:package-group:accounting -- ${esc(code)}</code>`,
+                html: `<code>telegram:package-group:accounting -- ${esc(row.partnerCode)}</code>`,
               },
             ];
           }),
           {
-            emptyMessage: 'No accounting rows',
-            rowAttrs: i => ({ 'data-partner-code': String(codes[i] || '') }),
+            emptyMessage: 'No accounting rows on partners-dashboard',
+            rowAttrs: i => ({ 'data-partner-code': String(deals[i]?.partnerCode || '') }),
           }
         );
 
-        const events = [];
-        for (const partner of ops?.partners || []) {
-          for (const event of partner.accounting?.ledger || []) {
-            events.push({ partnerCode: partner.code, ...event });
-          }
-        }
-        events.sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')));
+        const events = dashboardLedgerEventRows(dashboard, 40);
         const eventsBody = $('accounting-events-tbody');
         if (eventsBody) {
-          const slice = events.slice(0, 40);
           eventsBody.innerHTML = renderPortalTableRows(
             ACCOUNTING_EVENTS_COLS,
-            slice.map(e => {
-              const conceptId = e.conceptId || conceptIdForPartnerOpsEventCode(e.code);
+            events.map(e => {
+              const conceptId = e.conceptId || `accounting.${e.code || 'entry'}`;
               return [
                 { html: partnerLink(e.partnerCode) },
                 { html: `<time>${esc(e.at || '—')}</time>` },
@@ -2022,15 +2025,16 @@
                 {
                   html: `<a href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}">${esc(conceptId)}</a>`,
                 },
-                e.amount != null ? String(e.amount) : '—',
+                e.amountMajor != null ? fmtMoney(e.amountMajor) : '—',
                 [e.rail, e.outId].filter(Boolean).join(' · ') || '—',
                 e.note || '—',
               ];
             }),
             {
-              emptyMessage: 'No ledger events — bun run partners:event … then partners:build',
+              emptyMessage:
+                'No ledger events — bake partner-ledger.json then bun run partner:dashboard:bake',
               rowAttrs: i => ({
-                'data-partner-code': String(slice[i]?.partnerCode || ''),
+                'data-partner-code': String(events[i]?.partnerCode || ''),
               }),
             }
           );
@@ -2150,10 +2154,21 @@
       }
 
       function opsOutFor(partnerCode, outNum) {
-        const p = opsByPartner.get(String(partnerCode || '').toUpperCase());
+        const p = dashboardByPartner.get(String(partnerCode || '').toUpperCase());
         if (!p) return null;
         const id = `out-${String(partnerCode).toUpperCase()}-${outNum}`;
-        return (p.outs || []).find(o => o.id === id) || null;
+        const out = (p.outs || []).find(o => o.outId === id);
+        if (!out) return null;
+        return {
+          id: out.outId,
+          status: out.operationalStatus,
+          book: { name: out.sportsbookId, slug: out.sportsbookId },
+          funding: { method: out.fundingStatus },
+          maxBet:
+            out.observedMaxStake?.amount?.minorUnits != null
+              ? String(out.observedMaxStake.amount.minorUnits / 100)
+              : '—',
+        };
       }
 
       function renderDeposits(seat) {
@@ -2206,69 +2221,78 @@
         );
       }
 
-      function renderAccountsLimits(ops, limitPatterns) {
-        const colors = ops?.colors || {};
-        const profiles = limitPatterns?.accountProfiles?.summary || {};
-        $('account-limit-summary').textContent = profiles.accounts
-          ? ` Global profile control: ${profiles.monitored || 0}/${profiles.accounts} monitored · ${profiles.attention || 0} attention.`
-          : '';
+      function renderAccountsLimits(dashboard) {
+        const colors = colorsCache || {};
+        $('account-limit-summary').textContent =
+          ' Limits from partners-dashboard (tracked/missing ratios); connector joins fill coverage.';
 
-        const rows = ops?.partners || [];
+        const rows = dashboard?.partners || [];
         $('accounts-limits-tbody').innerHTML = renderPortalTableRows(
           ACCOUNTS_LIMITS_COLS,
           rows.map(partner => {
-            const tracking = partner.tracking || {};
-            const accounts = tracking.accounts || {};
-            const limits = tracking.limits || {};
-            const communication = tracking.communication || {};
-            const accounting = tracking.accounting || {};
-            const communicationTone = communication.ready
+            const code = normalizePartnerCode(partner.partnerCode);
+            const limits = partner.limits || {};
+            const coveragePct = Math.round((Number(limits.coverageRatio) || 0) * 100);
+            const communication = partner.communication || {};
+            const readyOuts = (partner.outs || []).filter(
+              o => String(o.operationalStatus) === 'ready'
+            ).length;
+            const communicationTone = communication.chatLinked
               ? colors['out.status.ready']
               : colors['telegram.handshake'];
-            const effectiveLimits = (partner.outs || []).map(out =>
-              routeChip(
-                partnerOutHash(partner.code, out.id),
-                `${out.book?.name || out.id}: ${out.maxBet || '—'}`,
+            const effectiveLimits = (partner.outs || []).map(out => {
+              const maxMinor = out.observedMaxStake?.amount?.minorUnits;
+              const maxLabel =
+                typeof maxMinor === 'number' ? String(maxMinor / 100) : '—';
+              return routeChip(
+                partnerOutHash(code, out.outId),
+                `${out.sportsbookId || out.outId}: ${maxLabel}`,
                 colors['ops.limits.effective_limit'],
                 'ops.limits.effective_limit'
-              ).replace('topic-chip', 'book-chip')
-            );
+              ).replace('topic-chip', 'book-chip');
+            });
+            const entryCount = Array.isArray(partner.accounting?.recentEntries)
+              ? partner.accounting.recentEntries.length
+              : 0;
+            const topicsConfigured = Array.isArray(communication.configuredTopicKeys)
+              ? communication.configuredTopicKeys.length
+              : 0;
             const actions = [
               routeChip(
-                partnerHash(partner.code),
+                partnerHash(code),
                 'Profile',
                 colors['ops.limits.account'],
                 'ops.limits.account'
               ),
               routeChip(
-                partnerAccountingHash(partner.code),
+                partnerAccountingHash(code),
                 'Accounting',
                 colors['ops.view.per_account'] || colors['telegram.topic.accounting'],
                 'ops.view.per_account'
               ),
               routeChip(
-                partnerTelegramHash(partner.code, 'ops'),
+                partnerTelegramHash(code, 'ops'),
                 'Telegram',
                 colors['telegram.topic.ops'],
                 'telegram.handshake'
               ),
-              `<a class="book-chip" href="/portal/limits/?partner=${encodeURIComponent(partner.code)}" data-glossary-concept="ops.limits.effective_limit">Limits</a>`,
-              `<a class="book-chip" href="/portal/partner-history/?partner=${encodeURIComponent(partner.code)}" data-glossary-concept="ops.limits.opening_baseline">History</a>`,
+              `<a class="book-chip" href="/portal/limits/?partner=${encodeURIComponent(code)}" data-glossary-concept="ops.limits.effective_limit">Limits</a>`,
+              `<a class="book-chip" href="/portal/partner-history/?partner=${encodeURIComponent(code)}" data-glossary-concept="ops.limits.opening_baseline">History</a>`,
             ].join(' ');
             return [
               {
-                html: `${partnerLink(partner.code)}<br><code>${esc(partner.callSign)}</code>`,
+                html: `${partnerLink(code)}<br><code>${esc(partner.callSign)}</code>`,
               },
-              { html: phaseChip(partner.code) },
+              { html: phaseChip(code) },
               {
                 html: conceptChip(
                   'ops.limits.account',
-                  `${accounts.ready || 0}/${accounts.total || 0} ready`,
+                  `${readyOuts}/${(partner.outs || []).length} ready`,
                   colors['ops.limits.account']
                 ),
               },
               {
-                html: `${coverageBarHtml(limits.coveragePct)}<div class="tone-muted" style="font-size:11px;margin-top:4px">${esc(String(limits.missing || 0))} missing</div>`,
+                html: `${coverageBarHtml(coveragePct)}<div class="tone-muted" style="font-size:11px;margin-top:4px">${esc(String(limits.missing || 0))} missing</div>`,
               },
               {
                 html: `<span class="tracking-summary">${effectiveLimits.join('') || '—'}</span>`,
@@ -2276,21 +2300,17 @@
               {
                 html: conceptChip(
                   'ops.view.account_freeplay',
-                  `${accounting.freeRollPercent || 0}% · ${accounting.freeRollApplied || 0} applied`,
+                  '— freeplay',
                   colors['ops.view.account_freeplay'] || colors['accounting.free_roll']
                 ),
               },
               {
-                html: `<a href="${partnerAccountingHash(partner.code)}" data-glossary-concept="ops.view.account_summary">${esc(accounting.ledgerEvents || 0)} events</a>${
-                  softPlayCount(partner.code)
-                    ? ` · ${conceptChip('ops.view.per_play', `${softPlayCount(partner.code)} soft`, colors['ops.view.per_play'] || colors['telegram.topic.accounting'])}`
-                    : ''
-                }`,
+                html: `<a href="${partnerAccountingHash(code)}" data-glossary-concept="ops.view.account_summary">${esc(String(entryCount))} entries</a>`,
               },
               {
                 html: routeChip(
-                  partnerTelegramHash(partner.code, 'accounting'),
-                  `${communication.topicsConfigured || 0}/${communication.topicsRequired || 5} topics · ${communication.chatLinked ? 'linked' : 'unlinked'}`,
+                  partnerTelegramHash(code, 'accounting'),
+                  `${topicsConfigured} topics · ${communication.chatLinked ? 'linked' : 'unlinked'}`,
                   communicationTone,
                   'telegram.handshake'
                 ),
@@ -2299,8 +2319,12 @@
             ];
           }),
           {
-            emptyMessage: 'No account tracking in partners-ops bake',
-            rowAttrs: i => ({ 'data-partner-code': String(rows[i]?.code || '') }),
+            emptyMessage: 'No partners on partners-dashboard bake',
+            rowAttrs: i => ({
+              'data-partner-code': String(
+                normalizePartnerCode(rows[i]?.partnerCode) || ''
+              ),
+            }),
           }
         );
       }
@@ -2357,32 +2381,25 @@
         );
       }
 
-      function renderBooks(ops) {
-        const books = Array.isArray(ops?.books) ? ops.books : [];
+      function renderBooks(dashboard) {
+        const books = dashboardBookCards(dashboard);
         const el = $('books-cards');
         if (!el) return;
         el.innerHTML = books.length
           ? books
               .map(book => {
                 const id = String(book.id || '');
-                const wire = book.color && typeof book.color === 'object' ? book.color : {};
                 const concept = book.typeConceptId || 'scrape.book';
-                const colorAttrs = colorWireAttributes(wire);
-                return `<a class="book-card book-chip" id="book-card-${esc(id)}" href="#book/${esc(id)}" data-book-id="${esc(id)}" data-glossary-concept="${esc(concept)}"${colorAttrs}>${esc(book.name || id)}</a>`;
+                return `<a class="book-card book-chip" id="book-card-${esc(id)}" href="#book/${esc(id)}" data-book-id="${esc(id)}" data-glossary-concept="${esc(concept)}">${esc(book.name || id)}</a>`;
               })
               .join('')
-          : '<span class="tone-warn">No books in partners-ops bake</span>';
+          : '<span class="tone-warn">No sportsbookIds on partners-dashboard outs</span>';
       }
 
       function applyPartnerRoute(scroll = false) {
         let route = parsePartnerHash(window.location.hash) || { type: 'partners' };
-        // Unknown CODE still shows profile shell when handshake knows the partner.
-        const codeKnown =
-          'code' in route &&
-          (opsByPartner.has(route.code) ||
-            (handshakeCache?.rows || []).some(
-              r => String(r.partnerCode || '').toUpperCase() === route.code
-            ));
+        // Unknown CODE still shows profile shell when dashboard knows the partner.
+        const codeKnown = 'code' in route && dashboardByPartner.has(route.code);
         if ('code' in route && !codeKnown) route = { type: 'partners' };
         const selectedCode = 'code' in route ? route.code : null;
 
@@ -2491,38 +2508,20 @@
             );
           }
 
-          const ops = projectDashboardToOpsShape(dashboard);
-          const handshake = projectDashboardToHandshakeShape(dashboard);
-          // Ancillary multi-artifact sources are not primary; empty until connectors join the bake.
+          // Dashboard-native caches — no ops/handshake projection on primary path.
           const seat = { rows: [], partnerViews: [], partnerMessageTemplates: [], desks: 0 };
           const catalog = { colors: {}, glossary: { conceptIds: [] } };
           const taxonomy = { bookRegistry: [] };
-          const partnerProfiles = {
-            generatedAt: dashboard.generatedAt,
-            profiles: Object.fromEntries(
-              (dashboard.partners || []).map(p => [
-                normalizePartnerCode(p.partnerCode),
-                {
-                  lifecycle: p.lifecycle,
-                  callSign: p.callSign,
-                  operationalPhase: p.operationalPhase,
-                },
-              ])
-            ),
-            summary: { count: dashboard.summary?.canonicalProfileCount ?? 0 },
-          };
-          const limitPatterns = { byNode: {} };
-          const softAccounting = null;
 
-          installColorTokens(ops.colors);
-          colorsCache = ops.colors || {};
+          installColorTokens({});
+          colorsCache = {};
           bookIndex = indexBooks(taxonomy);
-          handshakeCache = handshake;
+          handshakeCache = null;
           seatCache = seat;
-          partnerProfilesCache = partnerProfiles;
-          opsCache = ops;
-          opsByPartner = indexOpsByPartner(ops);
-          flattenedOuts = flattenPartnerOuts(ops);
+          partnerProfilesCache = { profiles: {}, summary: { count: 0 } };
+          dashboardCache = dashboard;
+          dashboardByPartner = indexDashboardByPartner(dashboard);
+          flattenedOuts = flattenDashboardOuts(dashboard);
           softAccountingSource = 'unavailable';
           softPlaysByPartner = new Map();
           softWeekRows = [];
@@ -2532,7 +2531,7 @@
           const connectorSummary = summarizeConnectorSnapshots(dashboard);
           const baked = $('partners-baked');
           if (baked) {
-            baked.textContent = `dashboard ${dashBake.text} · ${dashboard.summary?.partnerCount ?? 0} partners · schema ${esc(dashboard.schema)}`;
+            baked.textContent = `dashboard ${dashBake.text} · ${dashboard.summary?.partnerCount ?? 0} partners · ${dashboard.summary?.activeOutCount ?? 0} active outs · schema ${esc(dashboard.schema)}`;
           }
           void mountFreshnessBadge($('partners-freshness'), [PARTNERS_DASHBOARD_ARTIFACT_REF], {
             fallbacks: {
@@ -2553,10 +2552,17 @@
               },
             ],
             [
-              'Outs',
+              'Active outs',
               {
-                text: String(dashboard.summary?.registeredOutCount ?? 0),
-                tone: 'ok',
+                text: `${dashboard.summary?.activeOutCount ?? 0}/${dashboard.summary?.registeredOutCount ?? 0}`,
+                tone: (dashboard.summary?.activeOutCount ?? 0) > 0 ? 'ok' : 'warn',
+              },
+            ],
+            [
+              'Balances',
+              {
+                text: String(dashboard.summary?.balancePositions?.length ?? 0),
+                tone: (dashboard.summary?.balancePositions?.length ?? 0) > 0 ? 'ok' : 'warn',
               },
             ],
             [
@@ -2580,17 +2586,17 @@
             )
             .join('');
 
-          renderTopics(catalog, ops);
-          renderTaxonomyChips(ops);
-          renderPartnerRoutes(ops);
-          renderStats(handshake, seat, ops, partnerProfiles);
-          renderPhaseFilter(ops);
-          renderPartners(handshake);
+          renderTopics(catalog, { colors: {} });
+          renderTaxonomyChips({ colors: {} });
+          renderPartnerRoutes(dashboard);
+          renderStats(dashboard);
+          renderPhaseFilter(dashboard);
+          renderPartners(dashboard);
           renderOutsInventory(null);
-          renderAccountsLimits(ops, limitPatterns);
-          renderAccounting(handshake, seat, ops);
+          renderAccountsLimits(dashboard);
+          renderAccounting(dashboard);
           renderDeposits(seat);
-          renderBooks(ops);
+          renderBooks(dashboard);
           renderPartnerMessages(seat);
           $('outs-status-filter')?.addEventListener('change', () => {
             const route = parsePartnerHash(window.location.hash);
