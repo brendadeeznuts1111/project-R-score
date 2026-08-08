@@ -45,15 +45,11 @@ function tryGitHead(): string | undefined {
   return sha || undefined;
 }
 
-function syncProcessEnv(key: string, value: string): void {
-  (process.env as Record<string, string>)[key] = value;
-  if (Bun.env !== process.env) {
-    (Bun.env as Record<string, string | undefined>)[key] = value;
-  }
-}
-
 /**
  * Ensure Bun JUnit provenance env keys are present (fill-missing only).
+ * Writes only through the provided map + `Bun.env` (harness Bun.env ratchet —
+ * no `process.env` literals in lib/).
+ *
  * @param env mutable env map (default `Bun.env`)
  * @param opts.gitSha test seam — `null` skips git; string forces; omit = `git rev-parse HEAD`
  * @param opts.origin remote constants for local defaults (default `GITHUB_ORIGIN`)
@@ -69,7 +65,10 @@ export function ensureJunitReporterEnv(
   const applied: JunitReporterEnvApplied = {};
   const write = (key: string, value: string) => {
     env[key] = value;
-    if (env === Bun.env || env === process.env) syncProcessEnv(key, value);
+    // Keep process-visible env in sync when the caller mutates Bun.env (spawn inherit).
+    if (env === Bun.env) {
+      Bun.env[key] = value;
+    }
   };
 
   const hasCommit =
