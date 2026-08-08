@@ -24,11 +24,12 @@
     "./dashboard-plan": "./src/dashboard-plan.ts",
     "./portal": "./src/portal/index.ts",
     "./package.json": "./package.json",
-    "./core/connector-freshness": "./src/core/connector-freshness.ts"
+    "./core/connector-freshness": "./src/core/connector-freshness.ts",
+    "./adapters/lifecycle": "./src/adapters/lifecycle.ts"
   },
   "module": "./src/index.ts",
   "scripts": {
     "build": "bun run tsc --project ./tsconfig.json",
-    "test": "bun test ../../tests/partners-package.test.ts ../../tests/partner-dashboard-artifact.test.ts ../../tests/partner-connector-freshness.test.ts ../../tests/partner-out-capabilities.test.ts ../../tests/partner-bookmaker-account-adapter.test.ts ../../tests/partner-limit-changes-adapter.test.ts ../../tests/partner-telegram-handshake-adapter.test.ts ../../tests/partner-tennis-capacity-adapter.test.ts ../../tests/partner-integration-artifacts.test.ts ../../tests/partner-legacy-ops-adapter.test.ts ../../tests/partner-consumer-contract.test.ts ../../tests/partner-profile-coverage.test.ts ../../tests/partner-dashboard-proposal.test.ts"
+    "test": "bun test ../../tests/partners-package.test.ts ../../tests/partner-dashboard-artifact.test.ts ../../tests/partner-connector-freshness.test.ts ../../tests/partner-out-capabilities.test.ts ../../tests/partner-bookmaker-account-adapter.test.ts ../../tests/partner-limit-changes-adapter.test.ts ../../tests/partner-telegram-handshake-adapter.test.ts ../../tests/partner-tennis-capacity-adapter.test.ts ../../tests/partner-integration-artifacts.test.ts ../../tests/partner-legacy-ops-adapter.test.ts ../../tests/partner-consumer-contract.test.ts ../../tests/partner-lifecycle-adapter.test.ts ../../tests/partner-profile-coverage.test.ts ../../tests/partner-dashboard-proposal.test.ts"
   }
 }
