@@ -1,0 +1,108 @@
+# Private partner profile — ASH
+# Secrets: vault keys only. Public bake is redacted identity/lifecycle projection.
+# See docs/design/unified-partner-profile.md
+
+[meta]
+templateId = "partner-active"
+name = "Partner ASH"
+version = "1.0.0"
+source = "telegram"
+
+[identity]
+code = "ASH"
+callSign = "ASH-001"
+status = "onboarded"
+
+[lineage]
+parent = ""
+expert = ""
+cutPct = 40
+
+[lifecycle]
+status = "active"
+phase = "operator_ready"
+
+[telegram]
+chatId = "-1003937534779"
+topics.general = 1
+topics.ops = 12
+topics.alerts = 11
+topics.liquidity = 13
+topics.accounting = 14
+
+[jurisdiction]
+type = "pph"
+allowedStates = ["NV", "NJ"]
+allowedCountries = ["US"]
+minimumAge = 21
+kycTier = "basic"
+geoFenceEnabled = true
+
+[rules.sor]
+eligibleTiers = ["T1", "T2"]
+maxExposurePerSignal = 250
+maxDailyExposure = 1000
+maxSingleBet = 500
+signalGates.steam = true
+signalGates.arb = false
+signalGates.clv = true
+signalGates.manual = false
+signalGates.predictive = false
+requireOpsecGreen = true
+opsecScoreMax = 20
+
+[books.hard-rock-florida]
+type = "legal"
+status = "ready"
+withdrawPath = "Venmo → house"
+[books.hard-rock-florida.account]
+username = "ash1.staging"
+vaultKey = "partner:ASH:hard-rock-florida"
+[books.hard-rock-florida.funding]
+method = "deposit.method.venmo"
+rail = "Venmo"
+target = "@ash.hr.fl"
+[books.hard-rock-florida.limits]
+maxBet = 500
+freeRollPct = 25
+
+[cultivation]
+initialDepositTarget = 500
+depositScheduleWeeks = 4
+depositAmounts = [100, 150, 150, 100]
+initialLimit = 200
+limitRaiseTarget = 1000
+raiseRequestWeek = 3
+recreationalMix = 60
+roundStakes = true
+casinoPlayPct = 10
+oddsBoostAcceptance = 50
+maxBetFrequencyDaily = 20
+requiredSportsDiversity = 3
+
+[settlement]
+commissionStructure = "tiered"
+commissionTiers = [0.1, 0.15]
+makeupCarry = false
+makeupCap = 500
+payoutFrequency = "weekly"
+currency = "USD"
+holdTargetPct = 8
+
+[balance]
+initialCapitalRequirement = 1000
+marginCallThreshold = 300
+marginCallAction = "pause"
+autoInject = false
+
+[compliance]
+autoSuspendRules = true
+reviewRequiredFor = ["sports", "stakes"]
+auditRetentionDays = 180
+maxOpsecScore = 20
+require2FA = true
+
+[accounting]
+fundStatus = "ready"
+
+[tracking]

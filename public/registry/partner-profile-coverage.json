@@ -1,5 +1,22 @@
 {
   "schema": "factorywager.partner-profile-coverage.v1",
-  "generatedAt": "2026-08-06T03:23:37.896Z",
-  "evidenceByPartnerCode": {}
+  "generatedAt": "2026-08-08T21:49:35.578Z",
+  "evidenceByPartnerCode": {
+    "ASH": {
+      "callSign": "ASH-001",
+      "profileDocumentVersion": "1.0.0"
+    },
+    "BIL": {
+      "callSign": "BIL-001",
+      "profileDocumentVersion": "1.0.0"
+    },
+    "NOV": {
+      "callSign": "NOV-001",
+      "profileDocumentVersion": "1.0.0"
+    },
+    "SPEN": {
+      "callSign": "SPEN-001",
+      "profileDocumentVersion": "1.0.0"
+    }
+  }
 }
