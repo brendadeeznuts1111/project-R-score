@@ -1,5 +1,6 @@
 /**
- * Partners board pure helpers — canonical dashboard projection + legacy ops helpers (no DOM).
+ * Partners board pure helpers — dashboard-native tables + thin legacy ops helpers (no DOM).
+ * Primary render path uses partners-dashboard.v1 fields directly.
  * @see docs/harness/tenants/partner-domain-map.md
  * @see public/registry/partners-dashboard.json
  * @see public/registry/partners-ops.json
@@ -418,4 +419,354 @@ export function coverageBarStyle(pct) {
   const n = Math.max(0, Math.min(100, Number(pct) || 0));
   const tone = n >= 80 ? 'ok' : n >= 40 ? 'warn' : 'bad';
   return { width: `${n}%`, tone, pct: n };
+}
+
+// ── Dashboard-native helpers (primary board path) ──────────────────────────
+
+/**
+ * Format MoneyAmount { currency, minorUnits } as major units for display.
+ * @param {{ currency?: string, minorUnits?: number } | null | undefined} amount
+ * @returns {string | null} null when absent
+ */
+export function formatMoneyAmount(amount) {
+  if (!amount || typeof amount !== 'object') return null;
+  const minor = amount.minorUnits;
+  if (typeof minor !== 'number' || !Number.isFinite(minor)) return null;
+  return minor / 100;
+}
+
+/**
+ * Sum partner-scoped balance positions (kind=partner) in minor units.
+ * @param {object | null | undefined} partner
+ * @returns {number | null}
+ */
+export function partnerScopedBalanceMinor(partner) {
+  const positions = partner?.accounting?.balancePositions;
+  if (!Array.isArray(positions) || !positions.length) return null;
+  let total = 0;
+  let hit = false;
+  for (const pos of positions) {
+    if (pos?.accountScope?.kind !== 'partner') continue;
+    const m = pos?.amount?.minorUnits;
+    if (typeof m !== 'number' || !Number.isFinite(m)) continue;
+    total += m;
+    hit = true;
+  }
+  return hit ? total : null;
+}
+
+/**
+ * Out-scoped balance map: outId → minorUnits (latest position).
+ * @param {object | null | undefined} partner
+ * @returns {Map<string, { minorUnits: number, currency: string, effectiveAt?: string }>}
+ */
+export function outScopedBalances(partner) {
+  const map = new Map();
+  for (const pos of partner?.accounting?.balancePositions || []) {
+    if (pos?.accountScope?.kind !== 'out') continue;
+    const outId = String(pos.accountScope.outId || '');
+    if (!outId) continue;
+    const m = pos?.amount?.minorUnits;
+    if (typeof m !== 'number' || !Number.isFinite(m)) continue;
+    map.set(outId, {
+      minorUnits: m,
+      currency: String(pos.amount?.currency || 'USD'),
+      effectiveAt: pos.effectiveAt,
+    });
+  }
+  return map;
+}
+
+/**
+ * Index partners-dashboard partners by CODE.
+ * @param {object | null | undefined} dashboard
+ * @returns {Map<string, object>}
+ */
+export function indexDashboardByPartner(dashboard) {
+  const map = new Map();
+  for (const partner of dashboard?.partners || []) {
+    const code = normalizePartnerCode(partner?.partnerCode);
+    if (code) map.set(code, partner);
+  }
+  return map;
+}
+
+/**
+ * Flatten outs from partners-dashboard for inventory tables.
+ * Row shape matches filterPartnerOuts (status, incomplete, partnerCode, …).
+ * @param {object | null | undefined} dashboard
+ * @returns {object[]}
+ */
+export function flattenDashboardOuts(dashboard) {
+  const active = new Set((dashboard?.activeOutIds || []).map(String));
+  const rows = [];
+  for (const partner of dashboard?.partners || []) {
+    const code = normalizePartnerCode(partner?.partnerCode);
+    const phase = String(partner?.operationalPhase || '—');
+    for (const out of partner?.outs || []) {
+      const status = String(out?.operationalStatus || 'unknown');
+      const incomplete = status === 'unknown' || status === 'blocked' || status === 'deferred';
+      const sportsbookId = String(out?.sportsbookId || '');
+      const maxMinor = out?.observedMaxStake?.amount?.minorUnits;
+      const maxBet =
+        typeof maxMinor === 'number' && Number.isFinite(maxMinor) ? String(maxMinor / 100) : '—';
+      rows.push({
+        partnerCode: code,
+        callSign: partner?.callSign || `${code}-001`,
+        phase,
+        phaseConceptId: `partner.phase.${phase}`,
+        out: {
+          id: out?.outId || '',
+          outId: out?.outId || '',
+          status,
+          operationalStatus: status,
+          fundingStatus: out?.fundingStatus || 'unknown',
+          sportsbookId,
+          providerConnectionStatus: out?.providerConnectionStatus,
+          book: { name: sportsbookId || '—', slug: sportsbookId || '—', type: '—' },
+          funding: { method: String(out?.fundingStatus || 'unknown') },
+          credentials: { username: '—' },
+          maxBet,
+          note: active.has(String(out?.outId || '')) ? 'active capacity' : '',
+          active: active.has(String(out?.outId || '')),
+        },
+        status,
+        incomplete,
+        bookName: sportsbookId || '—',
+        bookType: '—',
+        maxBet,
+        method: String(out?.fundingStatus || 'unknown'),
+        username: '—',
+        fundingStatus: out?.fundingStatus || 'unknown',
+        active: active.has(String(out?.outId || '')),
+      });
+    }
+  }
+  return rows;
+}
+
+/**
+ * Aggregate stats from partners-dashboard.v1 only.
+ * @param {object | null | undefined} dashboard
+ */
+export function summarizeDashboardDesk(dashboard) {
+  const summary = dashboard?.summary || {};
+  const partners = Array.isArray(dashboard?.partners) ? dashboard.partners : [];
+  const outs = flattenDashboardOuts(dashboard);
+  const readyOuts = outs.filter(o => String(o.status).toLowerCase() === 'ready').length;
+  const deferredOuts = outs.filter(o => String(o.status).toLowerCase() === 'deferred').length;
+  const incompleteOuts = outs.filter(o => o.incomplete).length;
+  const communicationReady = partners.filter(p => p?.communication?.chatLinked).length;
+  const phases = {};
+  for (const p of partners) {
+    const phase = String(p.operationalPhase || 'unknown');
+    phases[phase] = (phases[phase] || 0) + 1;
+  }
+  const limitTracked = partners.reduce((n, p) => n + (Number(p?.limits?.tracked) || 0), 0);
+  const limitMissing = partners.reduce((n, p) => n + (Number(p?.limits?.missing) || 0), 0);
+  const limitDenom = limitTracked + limitMissing;
+  const limitCoveragePct = limitDenom
+    ? Math.round((limitTracked / limitDenom) * 100)
+    : Math.round(
+        (partners.reduce((n, p) => n + (Number(p?.limits?.coverageRatio) || 0), 0) /
+          Math.max(partners.length, 1)) *
+          100
+      );
+  return {
+    partners: Number(summary.partnerCount) || partners.length,
+    operatorReady: Number(summary.operatorReadyPartnerCount) || 0,
+    accounts: Number(summary.registeredOutCount) || outs.length,
+    outs: outs.length,
+    readyOuts,
+    deferredOuts,
+    activeOuts: Number(summary.activeOutCount) || (dashboard?.activeOutIds || []).length,
+    trackedLimits: limitTracked,
+    communicationReady,
+    incompleteOuts,
+    inviteGaps: 0,
+    attentionPartners: Number(summary.attentionPartnerCount) || 0,
+    canonicalProfiles: Number(summary.canonicalProfileCount) || 0,
+    balancePositionCount: Array.isArray(summary.balancePositions)
+      ? summary.balancePositions.length
+      : 0,
+    phases,
+    limitCoveragePct,
+  };
+}
+
+/**
+ * Unique operational phases from dashboard partners.
+ * @param {object | null | undefined} dashboard
+ */
+export function listDashboardPhases(dashboard) {
+  const seen = new Map();
+  for (const p of dashboard?.partners || []) {
+    const phase = String(p.operationalPhase || '').trim();
+    if (!phase || seen.has(phase)) continue;
+    seen.set(phase, {
+      phase,
+      conceptId: `partner.phase.${phase}`,
+      color: undefined,
+      count: 0,
+    });
+  }
+  for (const p of dashboard?.partners || []) {
+    const phase = String(p.operationalPhase || '').trim();
+    if (seen.has(phase)) seen.get(phase).count += 1;
+  }
+  return [...seen.values()];
+}
+
+/**
+ * Roster rows for the partners table from dashboard (no handshake projection required).
+ * @param {object | null | undefined} dashboard
+ * @returns {object[]}
+ */
+export function dashboardRosterRows(dashboard) {
+  return (dashboard?.partners || []).map(partner => {
+    const code = normalizePartnerCode(partner?.partnerCode);
+    const comm = partner?.communication || {};
+    const phase = String(partner?.operationalPhase || 'unknown');
+    const balMinor = partnerScopedBalanceMinor(partner);
+    return {
+      partnerCode: code,
+      callSign: partner?.callSign || `${code}-001`,
+      phase,
+      phaseConceptId: `partner.phase.${phase}`,
+      lifecycleState: partner?.lifecycle?.state || '—',
+      handshakeOk: Boolean(comm.chatLinked) || String(comm.handshakeStatus) === 'operator_ready',
+      handshakeStatus: String(comm.handshakeStatus || 'unknown'),
+      dmSeatStatus: comm.chatLinked ? 'linked' : 'none',
+      membershipCell: comm.chatLinked ? 'linked' : '—',
+      inviteLink: null,
+      verifyPassed: null,
+      verifyTotal: null,
+      nextSteps: (partner?.attention || []).map(a => a.label).filter(Boolean),
+      balanceMinor: balMinor,
+      balanceMajor: balMinor == null ? null : balMinor / 100,
+      outsCount: Array.isArray(partner?.outs) ? partner.outs.length : 0,
+      limits: partner?.limits || { tracked: 0, missing: 0, coverageRatio: 0 },
+      attention: Array.isArray(partner?.attention) ? partner.attention : [],
+      partner,
+    };
+  });
+}
+
+/**
+ * Recent ledger entries flattened across partners (newest first).
+ * @param {object | null | undefined} dashboard
+ * @param {number} [limit]
+ * @returns {object[]}
+ */
+export function dashboardLedgerEventRows(dashboard, limit = 40) {
+  const events = [];
+  for (const partner of dashboard?.partners || []) {
+    const code = normalizePartnerCode(partner?.partnerCode);
+    for (const entry of partner?.accounting?.recentEntries || []) {
+      const scope = entry?.accountScope || {};
+      const scopeLabel =
+        scope.kind === 'out'
+          ? String(scope.outId || 'out')
+          : scope.kind === 'rail'
+            ? String(scope.railId || 'rail')
+            : scope.kind === 'partner'
+              ? 'partner'
+              : '—';
+      events.push({
+        partnerCode: code,
+        at: entry?.postedAt || '',
+        code: entry?.entryType || '—',
+        conceptId: `accounting.${entry?.entryType || 'entry'}`,
+        amountMajor: formatMoneyAmount(entry?.amount),
+        amount: entry?.amount,
+        balanceAfter: entry?.balanceAfter,
+        rail: scopeLabel,
+        outId: scope.kind === 'out' ? scope.outId : undefined,
+        note: entry?.proofRef || '',
+        id: entry?.id,
+      });
+    }
+  }
+  events.sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')));
+  return events.slice(0, limit);
+}
+
+/**
+ * Accounting deals rollup per partner from dashboard.
+ * @param {object | null | undefined} dashboard
+ * @returns {object[]}
+ */
+export function dashboardAccountingDealsRows(dashboard) {
+  return (dashboard?.partners || []).map(partner => {
+    const code = normalizePartnerCode(partner?.partnerCode);
+    const outs = Array.isArray(partner?.outs) ? partner.outs : [];
+    const incompleteOuts = outs.filter(o => {
+      const s = String(o?.operationalStatus || 'unknown');
+      return s === 'unknown' || s === 'blocked' || s === 'deferred';
+    }).length;
+    const funded = outs.filter(o => String(o?.fundingStatus) === 'funded').length;
+    const balMinor = partnerScopedBalanceMinor(partner);
+    return {
+      partnerCode: code,
+      callSign: partner?.callSign || `${code}-001`,
+      fundStatus: funded > 0 ? 'funded' : outs.length ? 'unfunded' : 'unknown',
+      incompleteOuts,
+      outsCount: outs.length,
+      fundedOuts: funded,
+      balanceMinor: balMinor,
+      balanceMajor: balMinor == null ? null : balMinor / 100,
+      entryCount: Array.isArray(partner?.accounting?.recentEntries)
+        ? partner.accounting.recentEntries.length
+        : 0,
+      chatLinked: Boolean(partner?.communication?.chatLinked),
+      attention: Array.isArray(partner?.attention) ? partner.attention : [],
+    };
+  });
+}
+
+/**
+ * Unique sportsbook ids from dashboard outs (book registry cards).
+ * @param {object | null | undefined} dashboard
+ * @returns {{ id: string, name: string }[]}
+ */
+export function dashboardBookCards(dashboard) {
+  const seen = new Map();
+  for (const partner of dashboard?.partners || []) {
+    for (const out of partner?.outs || []) {
+      const id = String(out?.sportsbookId || '').trim();
+      if (!id || seen.has(id)) continue;
+      seen.set(id, { id, name: id, typeConceptId: 'scrape.book' });
+    }
+  }
+  return [...seen.values()].sort((a, b) => a.id.localeCompare(b.id));
+}
+
+/**
+ * Canonical CODE coverage from dashboard summary + partner list.
+ * @param {object | null | undefined} dashboard
+ */
+export function dashboardProfileCoverage(dashboard) {
+  const partnerCodes = [
+    ...new Set(
+      (dashboard?.partners || [])
+        .map(p => normalizePartnerCode(p?.partnerCode))
+        .filter(code => /^[A-Z]{3,6}$/.test(code))
+    ),
+  ].sort();
+  const canonical = Number(dashboard?.summary?.canonicalProfileCount) || 0;
+  // When identity.profileSourceSystemId is canonical, treat CODE as covered
+  const coveredCodes = partnerCodes.filter(code => {
+    const p = (dashboard?.partners || []).find(
+      row => normalizePartnerCode(row?.partnerCode) === code
+    );
+    return String(p?.identity?.profileSourceSystemId || '') === 'factorywager-partner-profile';
+  });
+  // Prefer identity-based coverage; fall back to summary count if identity missing
+  const covered =
+    coveredCodes.length > 0
+      ? coveredCodes
+      : partnerCodes.slice(0, Math.min(canonical, partnerCodes.length));
+  const coveredSet = new Set(covered);
+  const missingCodes = partnerCodes.filter(code => !coveredSet.has(code));
+  return { partnerCodes, coveredCodes: [...coveredSet].sort(), missingCodes };
 }

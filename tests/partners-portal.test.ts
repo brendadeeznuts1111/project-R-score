@@ -44,7 +44,9 @@ describe('partners portal board', () => {
     expect(html).toContain('renderPartnerProfile');
     expect(html).toContain('renderOutsInventory');
     expect(html).toContain('renderPhaseFilter');
-    expect(html).toContain('summarizePartnerDesk');
+    expect(html).toContain('summarizeDashboardDesk');
+    expect(html).toContain('dashboardRosterRows');
+    expect(html).toContain('flattenDashboardOuts');
     expect(html).toContain('coverageBarHtml');
     expect(html).toContain('/portal/partners/partners-board.js');
     expect(html).toContain('telegramTopicsForPhase');
@@ -53,9 +55,9 @@ describe('partners portal board', () => {
     expect(html).toContain('/portal/partner-history/?partner=');
     expect(html).toContain('/registry/partners-dashboard.json');
     expect(html).toContain("loadJson('/registry/partners-dashboard.json')");
-    expect(html).toContain('projectDashboardToOpsShape');
-    expect(html).toContain('partnerProfilesCache?.profiles?.[code]');
-    expect(html).toContain('Profile lifecycle');
+    expect(html).toContain('indexDashboardByPartner');
+    expect(html).not.toContain('projectDashboardToOpsShape');
+    expect(html).toContain('Lifecycle');
     expect(html).toContain('depositMethod');
     expect(html).toContain('telegram:package-group:accounting');
     expect(html).toContain('Betting deposits');
@@ -83,9 +85,7 @@ describe('partners portal board', () => {
     expect(html).toContain('renderBooks');
     expect(html).toContain('telegramDeepLink');
     expect(html).toContain('accounting-events-tbody');
-    expect(html).toContain('partners:event');
-    expect(html).toContain('/portal/components/partner-ops-event-concepts.js');
-    expect(html).toContain('conceptIdForPartnerOpsEventCode');
+    expect(html).toContain('partner:dashboard:bake');
     expect(html).toContain('data-domain-lanes="partner"');
     expect(html).toContain('partner-profile-outs');
     expect(html).toContain('data-glossary-concept="section.partnersTags"');
@@ -143,14 +143,13 @@ describe('partners portal board', () => {
     expect(renderBooks).not.toContain('conceptChip(');
   });
 
-  test('labels zero-profile data as legacy compatibility instead of canonical readiness', async () => {
+  test('labels incomplete profile coverage via dashboard readiness gate', async () => {
     const html = await Bun.file(BOARD).text();
     expect(html).toContain('partnerReadinessGate');
-    expect(html).toContain('canonicalProfileCoverage');
+    expect(html).toContain('dashboardProfileCoverage');
     expect(html).toContain('Canonical profiles');
-    expect(html).toContain('Exact CODE coverage; missing');
-    expect(html).toContain('Legacy compatibility view; canonical profile coverage is incomplete');
-    expect(html).toContain('renderStats(handshake, seat, ops, partnerProfiles)');
+    expect(html).toContain('Canonical profile coverage is incomplete');
+    expect(html).toContain('renderStats(dashboard)');
   });
 
   test('baked registry artifacts exist for the board consumers', async () => {
@@ -214,17 +213,14 @@ describe('partners portal board', () => {
     expect(html).toContain('renderPartnerProfile');
     expect(html).toContain('partner-ledger-tbody');
     expect(html).toContain('partner-outs-tbody');
-    expect(html).toContain('ops?.accounting?.balance');
-    expect(html).toContain('ops?.accounting?.initialCapital');
-    expect(html).toContain('ops?.accounting?.ledgerRows');
-    expect(html).toContain('ops?.accounting?.outs');
+    expect(html).toContain('partnerScopedBalanceMinor');
+    expect(html).toContain('outScopedBalances');
+    expect(html).toContain('accounting?.recentEntries');
     expect(html).toContain("const conceptId = `accounting.${type}`");
-    expect(html).toContain('conceptChip(conceptId, type, ops?.colors?.[conceptId])');
-    expect(html).toContain('trackingId');
+    expect(html).toContain('conceptChip(conceptId, type,');
     expect(html).toContain('tone-bad');
-    expect(html).toContain('.reverse()');
-    expect(html).toContain('partner:settlement:post');
-    expect(html).toContain('partners:build');
+    expect(html).toContain('partner:dashboard:bake');
+    expect(html).toContain('Outs · partners-dashboard');
   });
 
   test('partners Soft week rollup table wires ops.view.per_week rows from softWeekRows', async () => {

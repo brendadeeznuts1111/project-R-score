@@ -10,11 +10,18 @@ import {
   PARTNERS_LEGACY_COMPARISON_OPTIONAL_REFS,
   PARTNERS_LEGACY_COMPARISON_REQUIRED_REFS,
   bakeLabel,
+  dashboardAccountingDealsRows,
+  dashboardBookCards,
+  dashboardLedgerEventRows,
+  dashboardRosterRows,
+  flattenDashboardOuts,
+  indexDashboardByPartner,
   isLegacyPartnerComparisonRequested,
   isPartnersDashboardSchema,
   projectDashboardToHandshakeShape,
   projectDashboardToOpsShape,
   summarizeConnectorSnapshots,
+  summarizeDashboardDesk,
 } from '../public/portal/partners/partners-board.js';
 
 const BOARD = 'public/portal/partners/index.html';
@@ -77,17 +84,39 @@ const sampleDashboard = {
 };
 
 describe('partners-dashboard board cutover', () => {
-  test('projects dashboard artifact into ops and handshake shapes', () => {
+  test('dashboard-native helpers drive roster, outs, and desk stats', () => {
+    const byCode = indexDashboardByPartner(sampleDashboard);
+    expect([...byCode.keys()]).toEqual(['ASH', 'BIL']);
+
+    const roster = dashboardRosterRows(sampleDashboard);
+    expect(roster.map(r => r.partnerCode)).toEqual(['ASH', 'BIL']);
+    expect(roster[0]?.handshakeOk).toBe(true);
+    expect(roster[0]?.phase).toBe('operator_ready');
+
+    const outs = flattenDashboardOuts(sampleDashboard);
+    expect(outs).toHaveLength(2);
+    expect(outs[0]?.status).toBe('ready');
+    expect(outs[0]?.bookName).toBe('hard-rock-florida');
+    expect(outs[1]?.incomplete).toBe(true);
+
+    const desk = summarizeDashboardDesk(sampleDashboard);
+    expect(desk.partners).toBe(2);
+    expect(desk.readyOuts).toBe(1);
+    expect(desk.operatorReady).toBe(1);
+
+    const deals = dashboardAccountingDealsRows(sampleDashboard);
+    expect(deals).toHaveLength(2);
+    expect(dashboardBookCards(sampleDashboard).map(b => b.id)).toEqual([
+      'caesars',
+      'hard-rock-florida',
+    ]);
+    expect(dashboardLedgerEventRows(sampleDashboard)).toEqual([]);
+
+    // Thin projection helpers retained for diagnostic/legacy tests only
     const ops = projectDashboardToOpsShape(sampleDashboard);
     expect(ops.source).toBe('partners-dashboard');
-    expect(ops.partners.map(p => p.code)).toEqual(['ASH', 'BIL']);
-    expect(ops.partners[0]?.outs[0]?.book.slug).toBe('hard-rock-florida');
-    expect(ops.summary.partners).toBe(2);
-
     const handshake = projectDashboardToHandshakeShape(sampleDashboard);
     expect(handshake.rows).toHaveLength(2);
-    expect(handshake.rows[0]?.handshakeOk).toBe(true);
-    expect(handshake.operatorReady).toBe(1);
 
     const connectors = summarizeConnectorSnapshots(sampleDashboard);
     expect(connectors.total).toBe(8);
@@ -112,16 +141,22 @@ describe('partners-dashboard board cutover', () => {
     ]);
   });
 
-  test('board primary load is partners-dashboard only; legacy multi-fetch is diagnostic', async () => {
+  test('board primary load is partners-dashboard only; native tables, no ops projection', async () => {
     const html = await Bun.file(BOARD).text();
     expect(html).toContain("loadJson('/registry/partners-dashboard.json')");
     expect(html).toContain('isLegacyPartnerComparisonRequested');
     expect(html).toContain('runLegacyComparisonDiagnostic');
-    expect(html).toContain('projectDashboardToOpsShape');
+    expect(html).toContain('flattenDashboardOuts');
+    expect(html).toContain('dashboardRosterRows');
+    expect(html).toContain('summarizeDashboardDesk');
+    expect(html).toContain('indexDashboardByPartner');
+    expect(html).not.toContain('projectDashboardToOpsShape');
+    expect(html).not.toContain('projectDashboardToHandshakeShape');
     expect(html).toContain('error-never-fallback');
     expect(html).toContain('No silent partners-ops fallback');
     expect(html).toContain('bun run partner:dashboard:bake');
     expect(html).toContain('?compare=legacy');
+    expect(html).toContain('data-registry="/registry/partners-dashboard.json"');
     // Primary path must not multi-fetch legacy refs via loadJson
     for (const ref of PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.requiredInputRefs) {
       expect(html).not.toContain(`loadJson('${ref}')`);
