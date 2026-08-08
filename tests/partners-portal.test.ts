@@ -158,7 +158,7 @@ describe('partners portal board', () => {
     // Primary load is the single canonical artifact
     expect(html).toContain(`loadJson('${PARTNER_DASHBOARD_ARTIFACT_REF}')`);
     expect(await Bun.file(`public${PARTNER_DASHBOARD_ARTIFACT_REF}`).exists()).toBe(true);
-    // Legacy multi-fetch is diagnostic only (?compare=legacy) — not loadJson primary
+    // Legacy multi-artifact refs are not primary loadJson (retired compare path)
     for (const ref of [
       ...PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
       ...PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
@@ -166,6 +166,7 @@ describe('partners portal board', () => {
       expect(html).not.toContain(`loadJson('${ref}')`);
       expect(await Bun.file(`public${ref}`).exists()).toBe(true);
     }
+    expect(html).not.toContain('?compare=legacy');
     expect(html).not.toContain(PARTNER_PROFILE_COVERAGE_INPUT_REF);
     const dashboard = await Bun.file(`public${PARTNER_DASHBOARD_ARTIFACT_REF}`).json();
     expect(dashboard.schema).toBe('factorywager.partners-dashboard.v1');

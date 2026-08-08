@@ -142,15 +142,15 @@ target_consumer = "PartnerDashboardArtifact"
 
 [surfaces.portal.consumer_contract]
 entrypoint_path = "public/portal/partners/index.html"
-implementation_status = "transition"
-active_input_mode = "canonical-single-artifact-with-explicit-legacy-comparison"
+implementation_status = "implemented"
+active_input_mode = "canonical-single-artifact"
 required_input_refs = ["/registry/partners-dashboard.json"]
 optional_input_refs = []
 target_shape_ref = "shapes.dashboard_artifact"
 target_input_mode = "canonical-single-artifact"
 retirement_condition = "portal-loads-only-target-artifact"
-transition_implementation_status = "transition"
-transition_input_mode = "canonical-single-artifact-with-explicit-legacy-comparison"
+transition_implementation_status = "retired"
+transition_input_mode = "canonical-single-artifact"
 canonical_input_ref = "/registry/partners-dashboard.json"
 canonical_failure_policy = "error-never-fallback"
 automatic_legacy_fallback = false
@@ -163,24 +163,7 @@ content_type_diagnostic_policy = "advisory-debug-gated"
 required_failure_policy = "throw-path-qualified-error"
 optional_failure_policy = "explicit-catch-to-null"
 
-[surfaces.portal.consumer_contract.legacy_comparison]
-implementation_status = "active"
-activation = "explicit-search-param"
-search_param = "compare"
-search_value = "legacy"
-load_order = "after-canonical-validation"
-result_role = "diagnostic-only"
-failure_policy = "warn-never-fallback"
-required_input_refs = [
-  "/registry/telegram-handshake.json",
-  "/registry/seat-capital-desk.json",
-  "/registry/telegram-handshake-catalog.json",
-  "/registry/scrape-wire-taxonomy.json",
-  "/registry/partners-ops.json",
-  "/registry/partner-profiles.json",
-  "/registry/limit-raises.json",
-]
-optional_input_refs = ["/registry/soft-accounting-export.json"]
+# legacy_comparison removed — ?compare=legacy retired; board loads only partners-dashboard.json
 
 [semantic_model]
 semantic_order = ["business-domain", "concept", "parsed-shape", "consuming-surface"]
