@@ -40,7 +40,7 @@ type EnvMap = { [key: string]: string | undefined };
  *   (also related: process `BUN_CREATE_DIR` for global local-template root —
  *   not a GitHub key; declared on `env.d.ts`)
  * - Actions identity: `GITHUB_REPOSITORY*` · `GITHUB_SERVER_URL`
- * - Bun test CI reporters also read `GITHUB_REPOSITORY` · `GITHUB_SERVER_URL` · `GITHUB_RUN_ID`
+ * - Bun test CI / JUnit reporters: `GITHUB_REPOSITORY` · `GITHUB_SERVER_URL` · `GITHUB_RUN_ID` · `GITHUB_SHA` · `CI_COMMIT_SHA` · `GIT_SHA` · `CI_JOB_URL`
  *
  * @see https://bun.com/docs/runtime/templating/create
  * @see https://bun.com/docs/runtime/templating/create#from-a-local-template
@@ -62,6 +62,14 @@ export const BUN_GITHUB_ENV = {
   RUN_ID: 'GITHUB_RUN_ID',
   /** Actions — `"true"` when running on GitHub Actions */
   ACTIONS: 'GITHUB_ACTIONS',
+  /** Bun JUnit `commit` — Actions SHA */
+  SHA: 'GITHUB_SHA',
+  /** Bun JUnit `commit` — GitLab-style / generic CI */
+  CI_COMMIT_SHA: 'CI_COMMIT_SHA',
+  /** Bun JUnit `commit` — local/operator fill-missing */
+  GIT_SHA: 'GIT_SHA',
+  /** Bun JUnit `ci` when not on Actions (job/commit URL) */
+  CI_JOB_URL: 'CI_JOB_URL',
   /** `gh` CLI token alias */
   GH_TOKEN: 'GH_TOKEN',
 } as const;
