@@ -1132,10 +1132,14 @@
         isPartnersDashboardSchema,
         listDashboardPhases,
         normalizePartnerCode,
+        normalizeSeatCapitalDesk,
         outScopedBalances,
+        PARTNERS_ANCILLARY_SEAT_CAPITAL_REF,
+        PARTNERS_ANCILLARY_SOFT_ACCOUNTING_REF,
         PARTNERS_DASHBOARD_ARTIFACT_REF,
         partnerReadinessGate,
         partnerScopedBalanceMinor,
+        projectSoftAccountingExport,
         summarizeConnectorSnapshots,
         summarizeDashboardDesk,
       } from '/portal/partners/partners-board.js';
@@ -2460,10 +2464,19 @@
             );
           }
 
-          // Dashboard-native caches — no ops/handshake projection on primary path.
-          const seat = { rows: [], partnerViews: [], partnerMessageTemplates: [], desks: 0 };
+          // Dashboard-native caches — primary is partners-dashboard only.
+          // Soft + seat are optional ancillary fetches (fetchJsonResult, never loadJson primary).
           const catalog = { colors: {}, glossary: { conceptIds: [] } };
           const taxonomy = { bookRegistry: [] };
+
+          const [softResult, seatResult] = await Promise.all([
+            fetchJsonResult(PARTNERS_ANCILLARY_SOFT_ACCOUNTING_REF),
+            fetchJsonResult(PARTNERS_ANCILLARY_SEAT_CAPITAL_REF),
+          ]);
+          const softProjected = projectSoftAccountingExport(
+            softResult.ok ? softResult.data : null
+          );
+          const seat = normalizeSeatCapitalDesk(seatResult.ok ? seatResult.data : null);
 
           installColorTokens({});
           colorsCache = {};
@@ -2474,22 +2487,44 @@
           dashboardCache = dashboard;
           dashboardByPartner = indexDashboardByPartner(dashboard);
           flattenedOuts = flattenDashboardOuts(dashboard);
-          softAccountingSource = 'unavailable';
-          softPlaysByPartner = new Map();
-          softWeekRows = [];
-          softBookTypeRows = [];
+          softAccountingSource = softResult.ok
+            ? softProjected.source
+            : `unavailable (${softResult.error || softResult.kind || 'fetch'})`;
+          softPlaysByPartner = softProjected.playsByPartner;
+          softWeekRows = softProjected.weekRows;
+          softBookTypeRows = softProjected.bookTypeRows;
 
           const dashBake = bakeLabel(dashboard.generatedAt);
           const connectorSummary = summarizeConnectorSnapshots(dashboard);
+          const softBake = softResult.ok
+            ? bakeLabel(softResult.data?.generatedAt, softProjected.source)
+            : { text: 'n/a', tone: 'warn' };
+          const seatBake = seatResult.ok
+            ? bakeLabel(seat.generatedAt, 'seat-capital')
+            : { text: 'n/a', tone: 'warn' };
           const baked = $('partners-baked');
           if (baked) {
             baked.textContent = `dashboard ${dashBake.text} · ${dashboard.summary?.partnerCount ?? 0} partners · ${dashboard.summary?.activeOutCount ?? 0} active outs · schema ${esc(dashboard.schema)}`;
           }
-          void mountFreshnessBadge($('partners-freshness'), [PARTNERS_DASHBOARD_ARTIFACT_REF], {
-            fallbacks: {
-              [PARTNERS_DASHBOARD_ARTIFACT_REF]: dashboard.generatedAt || null,
-            },
-          });
+          void mountFreshnessBadge(
+            $('partners-freshness'),
+            [
+              PARTNERS_DASHBOARD_ARTIFACT_REF,
+              PARTNERS_ANCILLARY_SOFT_ACCOUNTING_REF,
+              PARTNERS_ANCILLARY_SEAT_CAPITAL_REF,
+            ],
+            {
+              fallbacks: {
+                [PARTNERS_DASHBOARD_ARTIFACT_REF]: dashboard.generatedAt || null,
+                [PARTNERS_ANCILLARY_SOFT_ACCOUNTING_REF]: softResult.ok
+                  ? softResult.data?.generatedAt || null
+                  : null,
+                [PARTNERS_ANCILLARY_SEAT_CAPITAL_REF]: seatResult.ok
+                  ? seat.generatedAt || null
+                  : null,
+              },
+            }
+          );
           $('partners-meta').innerHTML = [
             ['Dashboard', dashBake],
             [
@@ -2515,6 +2550,22 @@
               {
                 text: String(dashboard.summary?.balancePositions?.length ?? 0),
                 tone: (dashboard.summary?.balancePositions?.length ?? 0) > 0 ? 'ok' : 'warn',
+              },
+            ],
+            [
+              'Soft',
+              {
+                text: softResult.ok
+                  ? `${softProjected.playCount} plays · ${softBake.text}`
+                  : softBake.text,
+                tone: softResult.ok && softProjected.playCount > 0 ? softBake.tone || 'ok' : 'warn',
+              },
+            ],
+            [
+              'Seat',
+              {
+                text: seatResult.ok ? `${seat.rows.length} desks · ${seatBake.text}` : seatBake.text,
+                tone: seatResult.ok && seat.rows.length > 0 ? seatBake.tone || 'ok' : 'warn',
               },
             ],
             [
