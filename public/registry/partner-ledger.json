@@ -1,0 +1,106 @@
+{
+  "schema": "factorywager.partner-ledger.v1",
+  "kind": "partner-ledger-redacted-snapshot",
+  "generatedAt": "2026-08-08T18:00:00.000Z",
+  "source": "root-operations-db-fixture",
+  "currency": "USD",
+  "notes": "Redacted public fixture for dashboard bake. Integer minor units only. No payment rails, chat IDs, or vault material. book scopes use structured outId when possible.",
+  "rows": [
+    {
+      "id": "0198f0b0-0001-7000-8000-000000000001",
+      "partner_code": "ASH",
+      "type": "initial_capital",
+      "amount_minor": 1000000,
+      "currency": "USD",
+      "balance_after_minor": 1000000,
+      "account_scope": "global",
+      "created_at": "2026-08-01T12:00:00.000Z",
+      "proof": "proof:fixture:ASH:initial-capital"
+    },
+    {
+      "id": "0198f0b0-0002-7000-8000-000000000002",
+      "partner_code": "ASH",
+      "type": "deposit",
+      "amount_minor": 50000,
+      "currency": "USD",
+      "balance_after_minor": 1050000,
+      "account_scope": "rail:venmo:ash-desk",
+      "created_at": "2026-08-02T14:00:00.000Z",
+      "proof": "proof:fixture:ASH:deposit-1"
+    },
+    {
+      "id": "0198f0b0-0003-7000-8000-000000000003",
+      "partner_code": "ASH",
+      "type": "settlement",
+      "amount_minor": -25000,
+      "currency": "USD",
+      "balance_after_minor": 200000,
+      "account_scope": { "kind": "out", "outId": "out-ASH-1" },
+      "created_at": "2026-08-03T16:00:00.000Z",
+      "proof": "proof:fixture:ASH:settlement-out-ASH-1"
+    },
+    {
+      "id": "0198f0b0-0004-7000-8000-000000000004",
+      "partnerCode": "BIL",
+      "type": "credit",
+      "amount": { "currency": "USD", "minorUnits": 75000 },
+      "balanceAfter": { "currency": "USD", "minorUnits": 75000 },
+      "accountScope": { "kind": "partner", "partnerCode": "BIL" },
+      "postedAt": "2026-08-05T09:00:00.000Z",
+      "proofRef": "proof:fixture:BIL:credit-1"
+    },
+    {
+      "id": "0198f0b0-0005-7000-8000-000000000005",
+      "partner_code": "NOV",
+      "type": "deposit",
+      "amount_minor": 250000,
+      "currency": "USD",
+      "balance_after_minor": 250000,
+      "account_scope": "global",
+      "created_at": "2026-08-04T11:00:00.000Z",
+      "proof": "proof:fixture:NOV:deposit-1"
+    },
+    {
+      "id": "0198f0b0-0006-7000-8000-000000000006",
+      "partner_code": "NOV",
+      "type": "deposit",
+      "amount_minor": 10000,
+      "currency": "USD",
+      "balance_after_minor": 10000,
+      "account_scope": { "kind": "out", "outId": "out-NOV-2" },
+      "created_at": "2026-08-06T15:30:00.000Z"
+    },
+    {
+      "id": "0198f0b0-0007-7000-8000-000000000007",
+      "partner_code": "SPEN",
+      "type": "initial_capital",
+      "amount_minor": 500000,
+      "currency": "USD",
+      "balance_after_minor": 500000,
+      "account_scope": "global",
+      "created_at": "2026-08-01T10:00:00.000Z",
+      "proof": "proof:fixture:SPEN:initial-capital"
+    },
+    {
+      "id": "0198f0b0-0008-7000-8000-000000000008",
+      "partner_code": "SPEN",
+      "type": "deposit",
+      "amount_minor": 0,
+      "currency": "USD",
+      "balance_after_minor": 0,
+      "account_scope": { "kind": "out", "outId": "out-SPEN-1" },
+      "created_at": "2026-08-04T10:00:00.000Z"
+    },
+    {
+      "id": "0198f0b0-0009-7000-8000-000000000009",
+      "partner_code": "SPEN",
+      "type": "deposit",
+      "amount_minor": 150000,
+      "currency": "USD",
+      "balance_after_minor": 150000,
+      "account_scope": { "kind": "out", "outId": "out-SPEN-2" },
+      "created_at": "2026-08-07T12:00:00.000Z",
+      "proof": "proof:fixture:SPEN:deposit-out-SPEN-2"
+    }
+  ]
+}

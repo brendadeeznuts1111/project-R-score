@@ -229,6 +229,8 @@ const WEAVE_WIRED_REGISTRY = new Set(
  */
 export const DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS = new Set([
   'partner-profile-coverage.json',
+  /** Redacted partner_ledger feed for partners-dashboard bake (no portal board). */
+  'partner-ledger.json',
   'stale-anchors.json',
 ]);
 
@@ -249,7 +251,10 @@ async function scanOrphanRegistryArtifacts(files: string[]): Promise<PublicFindi
   })) {
     const basename = rel.split('/').pop() ?? rel;
     if (basename.startsWith('verification-') && basename.includes('1.')) continue;
-    if (DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS.has(rel) || DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS.has(basename)) {
+    if (
+      DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS.has(rel) ||
+      DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS.has(basename)
+    ) {
       continue;
     }
     const needle = `/registry/${rel}`;

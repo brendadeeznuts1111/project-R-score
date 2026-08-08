@@ -1,12 +1,12 @@
 {
   "schema": "factorywager.partners-dashboard.v1",
-  "generatedAt": "2026-08-08T23:08:33.703Z",
+  "generatedAt": "2026-08-08T23:11:19.784Z",
   "connectorSnapshots": {
     "profiles": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:08:33.703Z",
+      "observedAt": "2026-08-08T23:11:19.784Z",
       "ageSeconds": 0,
       "inputRef": "config/partner-profiles/*.toml"
     },
@@ -14,7 +14,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:08:33.703Z",
+      "observedAt": "2026-08-08T23:11:19.784Z",
       "ageSeconds": 0,
       "inputRef": "partner_ledger"
     },
@@ -22,7 +22,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:08:33.703Z",
+      "observedAt": "2026-08-08T23:11:19.784Z",
       "ageSeconds": 0,
       "inputRef": "/registry/telegram-handshake.json"
     },
@@ -30,7 +30,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:08:33.703Z",
+      "observedAt": "2026-08-08T23:11:19.784Z",
       "ageSeconds": 0,
       "inputRef": "/registry/limit-raises.json"
     },
@@ -38,7 +38,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:08:33.703Z",
+      "observedAt": "2026-08-08T23:11:19.784Z",
       "ageSeconds": 0,
       "inputRef": "/registry/bookmakers.json"
     },
@@ -46,7 +46,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:08:33.703Z",
+      "observedAt": "2026-08-08T23:11:19.784Z",
       "ageSeconds": 0,
       "inputRef": "/registry/tennis/partner-contracts.json"
     },
@@ -60,7 +60,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:08:33.703Z",
+      "observedAt": "2026-08-08T23:11:19.784Z",
       "ageSeconds": 0,
       "inputRef": "/registry/partners-ops.json"
     }
@@ -79,7 +79,107 @@
     "attentionPartnerCount": 0,
     "registeredOutCount": 10,
     "activeOutCount": 5,
-    "balancePositions": []
+    "balancePositions": [
+      {
+        "accountScope": {
+          "kind": "out",
+          "outId": "out-ASH-1"
+        },
+        "amount": {
+          "currency": "USD",
+          "minorUnits": 200000
+        },
+        "effectiveAt": "2026-08-03T16:00:00.000Z"
+      },
+      {
+        "accountScope": {
+          "kind": "partner",
+          "partnerCode": "ASH"
+        },
+        "amount": {
+          "currency": "USD",
+          "minorUnits": 1000000
+        },
+        "effectiveAt": "2026-08-01T12:00:00.000Z"
+      },
+      {
+        "accountScope": {
+          "kind": "rail",
+          "railId": "venmo:ash-desk"
+        },
+        "amount": {
+          "currency": "USD",
+          "minorUnits": 1050000
+        },
+        "effectiveAt": "2026-08-02T14:00:00.000Z"
+      },
+      {
+        "accountScope": {
+          "kind": "partner",
+          "partnerCode": "BIL"
+        },
+        "amount": {
+          "currency": "USD",
+          "minorUnits": 75000
+        },
+        "effectiveAt": "2026-08-05T09:00:00.000Z"
+      },
+      {
+        "accountScope": {
+          "kind": "out",
+          "outId": "out-NOV-2"
+        },
+        "amount": {
+          "currency": "USD",
+          "minorUnits": 10000
+        },
+        "effectiveAt": "2026-08-06T15:30:00.000Z"
+      },
+      {
+        "accountScope": {
+          "kind": "partner",
+          "partnerCode": "NOV"
+        },
+        "amount": {
+          "currency": "USD",
+          "minorUnits": 250000
+        },
+        "effectiveAt": "2026-08-04T11:00:00.000Z"
+      },
+      {
+        "accountScope": {
+          "kind": "out",
+          "outId": "out-SPEN-1"
+        },
+        "amount": {
+          "currency": "USD",
+          "minorUnits": 0
+        },
+        "effectiveAt": "2026-08-04T10:00:00.000Z"
+      },
+      {
+        "accountScope": {
+          "kind": "out",
+          "outId": "out-SPEN-2"
+        },
+        "amount": {
+          "currency": "USD",
+          "minorUnits": 150000
+        },
+        "effectiveAt": "2026-08-07T12:00:00.000Z"
+      },
+      {
+        "accountScope": {
+          "kind": "partner",
+          "partnerCode": "SPEN"
+        },
+        "amount": {
+          "currency": "USD",
+          "minorUnits": 500000
+        },
+        "effectiveAt": "2026-08-01T10:00:00.000Z"
+      }
+    ]
   },
   "conflicts": [],
   "partners": [
@@ -88,13 +188,13 @@
       "callSign": "ASH-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T23:08:33.703Z",
+        "effectiveAt": "2026-08-08T23:11:19.784Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T23:08:33.703Z",
+          "observedAt": "2026-08-08T23:11:19.784Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -110,7 +210,7 @@
           "outId": "out-ASH-1",
           "sportsbookId": "hard-rock-florida",
           "operationalStatus": "ready",
-          "fundingStatus": "unknown",
+          "fundingStatus": "funded",
           "externalAccountRefs": [],
           "observedMaxStake": {
             "amount": {
@@ -139,8 +239,97 @@
         }
       ],
       "accounting": {
-        "balancePositions": [],
-        "recentEntries": []
+        "balancePositions": [
+          {
+            "accountScope": {
+              "kind": "out",
+              "outId": "out-ASH-1"
+            },
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 200000
+            },
+            "effectiveAt": "2026-08-03T16:00:00.000Z"
+          },
+          {
+            "accountScope": {
+              "kind": "partner",
+              "partnerCode": "ASH"
+            },
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 1000000
+            },
+            "effectiveAt": "2026-08-01T12:00:00.000Z"
+          },
+          {
+            "accountScope": {
+              "kind": "rail",
+              "railId": "venmo:ash-desk"
+            },
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 1050000
+            },
+            "effectiveAt": "2026-08-02T14:00:00.000Z"
+          }
+        ],
+        "recentEntries": [
+          {
+            "id": "0198f0b0-0003-7000-8000-000000000003",
+            "entryType": "settlement",
+            "amount": {
+              "currency": "USD",
+              "minorUnits": -25000
+            },
+            "balanceAfter": {
+              "currency": "USD",
+              "minorUnits": 200000
+            },
+            "accountScope": {
+              "kind": "out",
+              "outId": "out-ASH-1"
+            },
+            "postedAt": "2026-08-03T16:00:00.000Z",
+            "proofRef": "proof:fixture:ASH:settlement-out-ASH-1"
+          },
+          {
+            "id": "0198f0b0-0002-7000-8000-000000000002",
+            "entryType": "deposit",
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 50000
+            },
+            "balanceAfter": {
+              "currency": "USD",
+              "minorUnits": 1050000
+            },
+            "accountScope": {
+              "kind": "rail",
+              "railId": "venmo:ash-desk"
+            },
+            "postedAt": "2026-08-02T14:00:00.000Z",
+            "proofRef": "proof:fixture:ASH:deposit-1"
+          },
+          {
+            "id": "0198f0b0-0001-7000-8000-000000000001",
+            "entryType": "initial_capital",
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 1000000
+            },
+            "balanceAfter": {
+              "currency": "USD",
+              "minorUnits": 1000000
+            },
+            "accountScope": {
+              "kind": "partner",
+              "partnerCode": "ASH"
+            },
+            "postedAt": "2026-08-01T12:00:00.000Z",
+            "proofRef": "proof:fixture:ASH:initial-capital"
+          }
+        ]
       },
       "communication": {
         "chatLinked": true,
@@ -165,13 +354,13 @@
       "callSign": "BIL-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T23:08:33.703Z",
+        "effectiveAt": "2026-08-08T23:11:19.784Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T23:08:33.703Z",
+          "observedAt": "2026-08-08T23:11:19.784Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -209,8 +398,39 @@
         }
       ],
       "accounting": {
-        "balancePositions": [],
-        "recentEntries": []
+        "balancePositions": [
+          {
+            "accountScope": {
+              "kind": "partner",
+              "partnerCode": "BIL"
+            },
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 75000
+            },
+            "effectiveAt": "2026-08-05T09:00:00.000Z"
+          }
+        ],
+        "recentEntries": [
+          {
+            "id": "0198f0b0-0004-7000-8000-000000000004",
+            "entryType": "credit",
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 75000
+            },
+            "balanceAfter": {
+              "currency": "USD",
+              "minorUnits": 75000
+            },
+            "accountScope": {
+              "kind": "partner",
+              "partnerCode": "BIL"
+            },
+            "postedAt": "2026-08-05T09:00:00.000Z",
+            "proofRef": "proof:fixture:BIL:credit-1"
+          }
+        ]
       },
       "communication": {
         "chatLinked": true,
@@ -235,13 +455,13 @@
       "callSign": "NOV-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T23:08:33.703Z",
+        "effectiveAt": "2026-08-08T23:11:19.784Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T23:08:33.703Z",
+          "observedAt": "2026-08-08T23:11:19.784Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -281,13 +501,72 @@
           "outId": "out-NOV-2",
           "sportsbookId": "southfl-pph-desk",
           "operationalStatus": "deferred",
-          "fundingStatus": "unknown",
+          "fundingStatus": "funded",
           "externalAccountRefs": []
         }
       ],
       "accounting": {
-        "balancePositions": [],
-        "recentEntries": []
+        "balancePositions": [
+          {
+            "accountScope": {
+              "kind": "out",
+              "outId": "out-NOV-2"
+            },
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 10000
+            },
+            "effectiveAt": "2026-08-06T15:30:00.000Z"
+          },
+          {
+            "accountScope": {
+              "kind": "partner",
+              "partnerCode": "NOV"
+            },
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 250000
+            },
+            "effectiveAt": "2026-08-04T11:00:00.000Z"
+          }
+        ],
+        "recentEntries": [
+          {
+            "id": "0198f0b0-0006-7000-8000-000000000006",
+            "entryType": "deposit",
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 10000
+            },
+            "balanceAfter": {
+              "currency": "USD",
+              "minorUnits": 10000
+            },
+            "accountScope": {
+              "kind": "out",
+              "outId": "out-NOV-2"
+            },
+            "postedAt": "2026-08-06T15:30:00.000Z"
+          },
+          {
+            "id": "0198f0b0-0005-7000-8000-000000000005",
+            "entryType": "deposit",
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 250000
+            },
+            "balanceAfter": {
+              "currency": "USD",
+              "minorUnits": 250000
+            },
+            "accountScope": {
+              "kind": "partner",
+              "partnerCode": "NOV"
+            },
+            "postedAt": "2026-08-04T11:00:00.000Z",
+            "proofRef": "proof:fixture:NOV:deposit-1"
+          }
+        ]
       },
       "communication": {
         "chatLinked": true,
@@ -312,13 +591,13 @@
       "callSign": "SPEN-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T23:08:33.703Z",
+        "effectiveAt": "2026-08-08T23:11:19.784Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T23:08:33.703Z",
+          "observedAt": "2026-08-08T23:11:19.784Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -334,7 +613,7 @@
           "outId": "out-SPEN-1",
           "sportsbookId": "parlay21-com",
           "operationalStatus": "ready",
-          "fundingStatus": "unknown",
+          "fundingStatus": "unfunded",
           "externalAccountRefs": [],
           "observedMaxStake": {
             "amount": {
@@ -358,7 +637,7 @@
           "outId": "out-SPEN-2",
           "sportsbookId": "lonestarwagering-com",
           "operationalStatus": "ready",
-          "fundingStatus": "unknown",
+          "fundingStatus": "funded",
           "externalAccountRefs": [],
           "observedMaxStake": {
             "amount": {
@@ -401,8 +680,96 @@
         }
       ],
       "accounting": {
-        "balancePositions": [],
-        "recentEntries": []
+        "balancePositions": [
+          {
+            "accountScope": {
+              "kind": "out",
+              "outId": "out-SPEN-1"
+            },
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 0
+            },
+            "effectiveAt": "2026-08-04T10:00:00.000Z"
+          },
+          {
+            "accountScope": {
+              "kind": "out",
+              "outId": "out-SPEN-2"
+            },
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 150000
+            },
+            "effectiveAt": "2026-08-07T12:00:00.000Z"
+          },
+          {
+            "accountScope": {
+              "kind": "partner",
+              "partnerCode": "SPEN"
+            },
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 500000
+            },
+            "effectiveAt": "2026-08-01T10:00:00.000Z"
+          }
+        ],
+        "recentEntries": [
+          {
+            "id": "0198f0b0-0009-7000-8000-000000000009",
+            "entryType": "deposit",
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 150000
+            },
+            "balanceAfter": {
+              "currency": "USD",
+              "minorUnits": 150000
+            },
+            "accountScope": {
+              "kind": "out",
+              "outId": "out-SPEN-2"
+            },
+            "postedAt": "2026-08-07T12:00:00.000Z",
+            "proofRef": "proof:fixture:SPEN:deposit-out-SPEN-2"
+          },
+          {
+            "id": "0198f0b0-0008-7000-8000-000000000008",
+            "entryType": "deposit",
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 0
+            },
+            "balanceAfter": {
+              "currency": "USD",
+              "minorUnits": 0
+            },
+            "accountScope": {
+              "kind": "out",
+              "outId": "out-SPEN-1"
+            },
+            "postedAt": "2026-08-04T10:00:00.000Z"
+          },
+          {
+            "id": "0198f0b0-0007-7000-8000-000000000007",
+            "entryType": "initial_capital",
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 500000
+            },
+            "balanceAfter": {
+              "currency": "USD",
+              "minorUnits": 500000
+            },
+            "accountScope": {
+              "kind": "partner",
+              "partnerCode": "SPEN"
+            },
+            "postedAt": "2026-08-01T10:00:00.000Z",
+            "proofRef": "proof:fixture:SPEN:initial-capital"
+          }
+        ]
       },
       "communication": {
         "chatLinked": true,

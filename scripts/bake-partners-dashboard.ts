@@ -10,8 +10,9 @@
  *   2. reconcilePartnerDashboardFacts (tennis-first capacity → activeOutIds)
  *   3. assemblePartnerDashboardArtifact
  *
- * Optional ledger: public/registry/partner-ledger.json (redacted snapshot).
- * Soft plays export is not finance authority and is not consumed here.
+ * Optional ledger: public/registry/partner-ledger.json (redacted public snapshot;
+ * schema factorywager.partner-ledger.v1). Soft plays export is not finance
+ * authority and is not consumed here.
  */
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import {

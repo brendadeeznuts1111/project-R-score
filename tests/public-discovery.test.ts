@@ -23,6 +23,7 @@ describe('public-discovery', () => {
 
   test('documented bake orphans are allowlisted (public-plane SSOT)', () => {
     expect(DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS.has('partner-profile-coverage.json')).toBe(true);
+    expect(DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS.has('partner-ledger.json')).toBe(true);
     expect(DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS.has('stale-anchors.json')).toBe(true);
   });
 
