@@ -1,22 +1,16 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "catalog": "project-r-thread-portfolio",
   "scope": {
     "cwd": "/Users/nolarose/Projects",
-    "reviewedAt": "2026-08-05",
-    "rootThreadCount": 27,
+    "reviewedAt": "2026-08-07",
+    "rootThreadCount": 36,
     "identity": {
       "humanRefPrefix": "RTH",
       "humanRefRule": "Chronological, immutable, zero-padded Project R root-thread reference",
       "providerIdentity": "SessionId backed by the Codex UUIDv7-shaped identifier",
       "rankRule": "Mutable portfolio value order; never an identity",
-      "titleOrder": [
-        "ref",
-        "state",
-        "lane",
-        "purpose",
-        "delivery-reference"
-      ]
+      "titleOrder": ["ref", "state", "lane", "purpose", "delivery-reference"]
     },
     "inclusion": "Root user-owned threads where source is vscode or thread_source is user",
     "exclusion": "Subagent, handoff, and implementation-history sessions map to a root thread and do not receive RTH references",
@@ -26,6 +20,76 @@
       "integration": 20,
       "reusability": 15,
       "closure": 10
+    }
+  },
+  "lanes": {
+    "agent": {
+      "entrypoint": "docs/harness/tenants/codex-thread-portfolio.md",
+      "boundary": "Agent coordination and thread metadata only; implementation belongs to the owning subject lane."
+    },
+    "bun": {
+      "entrypoint": "docs/design/bun-channel-governance.md",
+      "boundary": "Runtime and type-channel observation is read-only; promotion is a separate reviewed policy change."
+    },
+    "ci": {
+      "entrypoint": "docs/harness/tenants/ci-core.md",
+      "boundary": "Local bun:ci is merge authority; hosted workflows are supporting signals and may not replace it."
+    },
+    "cli": {
+      "entrypoint": "docs/harness/cli-constants-flags.md",
+      "boundary": "CLI parsing and flag contracts only; domain behavior remains with the command's owning lane."
+    },
+    "compliance": {
+      "entrypoint": "docs/harness/tenants/compliance-portal.md",
+      "boundary": "Compliance evidence and portal projection only; legal policy and credential custody remain external authorities."
+    },
+    "domain": {
+      "entrypoint": "docs/DOMAIN_CONCEPT_SHAPE.md",
+      "boundary": "Own stable meaning and parsed shape; transport, persistence, and UI projections remain separate consumers."
+    },
+    "dx": {
+      "entrypoint": "AGENTS.md",
+      "boundary": "Repository pointers and project policy only; machine-wide DX defaults remain under ~/.config/dx."
+    },
+    "identity": {
+      "entrypoint": "lib/types/branded/README.md",
+      "boundary": "Branding, parsing, and mint authority only; business semantics remain in the owning domain."
+    },
+    "operations": {
+      "entrypoint": "lib/operations/README.md",
+      "boundary": "Operational state, jobs, and evidence only; product contracts and portal presentation stay in their lanes."
+    },
+    "partner": {
+      "entrypoint": "docs/design/partner-dashboard-mvp.md",
+      "boundary": "Partner contracts and projections only; connector transport, runtime policy, and UI composition stay separate."
+    },
+    "portal": {
+      "entrypoint": "docs/portal-foundation.md",
+      "boundary": "Static operator surfaces and routing only; registries and domain contracts remain upstream authorities."
+    },
+    "project": {
+      "entrypoint": "AGENTS.md",
+      "boundary": "Cross-lane authority, intake, and reconciliation only; implementation is delegated to one named subject lane."
+    },
+    "research": {
+      "entrypoint": "lib/operator-research/README.md",
+      "boundary": "Evidence gathering and falsifiable recommendations only; no automatic product, policy, or baseline mutation."
+    },
+    "security": {
+      "entrypoint": "docs/harness/tenants/proton-integration.md",
+      "boundary": "Security controls and verification only; secrets remain in Proton Pass and are never copied into reports."
+    },
+    "tennis": {
+      "entrypoint": "docs/harness/tenants/tennis-hq-registry.md",
+      "boundary": "Tennis registry and integration contracts only; Project R merge authority and external worker custody remain separate."
+    },
+    "testing": {
+      "entrypoint": "docs/harness/AUTHORITY.md",
+      "boundary": "Focused and merge-proof verification only; snapshot updates and baseline promotions require their owning workflow."
+    },
+    "tooling": {
+      "entrypoint": "tools/README.md",
+      "boundary": "Reusable developer tools only; tools must not silently become domain or release authorities."
     }
   },
   "threads": [
@@ -57,9 +121,7 @@
           "target": "docs/harness/tenants/codex-thread-portfolio.md"
         }
       ],
-      "relatedRefs": [
-        "RTH-026"
-      ],
+      "relatedRefs": ["RTH-026"],
       "closure": "Keep pinned as the canonical Project R thread entrypoint."
     },
     {
@@ -96,9 +158,7 @@
           "target": "https://score.factory-wager.com/portal/"
         }
       ],
-      "relatedRefs": [
-        "RTH-007"
-      ],
+      "relatedRefs": ["RTH-007"],
       "closure": "Closed; preserve as the highest-value performance reference."
     },
     {
@@ -130,10 +190,7 @@
           "target": "0449a99572962adc4085018efe5cd56fff764a69"
         }
       ],
-      "relatedRefs": [
-        "RTH-024",
-        "RTH-009"
-      ],
+      "relatedRefs": ["RTH-024", "RTH-009"],
       "closure": "Closed; preserve as the portal routing and glossary reference."
     },
     {
@@ -165,10 +222,7 @@
           "target": "d70c1149e"
         }
       ],
-      "relatedRefs": [
-        "RTH-020",
-        "RTH-021"
-      ],
+      "relatedRefs": ["RTH-020", "RTH-021"],
       "closure": "Closed; lifecycle storage foundation is on main."
     },
     {
@@ -199,10 +253,7 @@
           "target": "fix/partner-lifecycle-contract"
         }
       ],
-      "relatedRefs": [
-        "RTH-019",
-        "RTH-020"
-      ],
+      "relatedRefs": ["RTH-019", "RTH-020"],
       "closure": "Closed; retain as the PR-level lifecycle handoff."
     },
     {
@@ -234,10 +285,7 @@
           "target": "c2436c6e7"
         }
       ],
-      "relatedRefs": [
-        "RTH-019",
-        "RTH-021"
-      ],
+      "relatedRefs": ["RTH-019", "RTH-021"],
       "closure": "Closed through merged PR #281; retain as implementation proof."
     },
     {
@@ -356,11 +404,7 @@
           "target": "880e264"
         }
       ],
-      "relatedRefs": [
-        "RTH-014",
-        "RTH-015",
-        "RTH-018"
-      ],
+      "relatedRefs": ["RTH-014", "RTH-015", "RTH-018"],
       "closure": "Bring home by publishing the clean lane through a focused PR."
     },
     {
@@ -392,10 +436,7 @@
           "target": "bun run bun:ci"
         }
       ],
-      "relatedRefs": [
-        "RTH-014",
-        "RTH-016"
-      ],
+      "relatedRefs": ["RTH-014", "RTH-016"],
       "closure": "Bring home by pushing and reviewing the clean three-commit lane."
     },
     {
@@ -427,10 +468,7 @@
           "target": "docs/tennis-hq-contract-consumer"
         }
       ],
-      "relatedRefs": [
-        "RTH-016",
-        "RTH-022"
-      ],
+      "relatedRefs": ["RTH-016", "RTH-022"],
       "closure": "Finish canonical package publication and checksum/registry handoff."
     },
     {
@@ -462,10 +500,7 @@
           "target": "https://github.com/brendadeeznuts1111/king-zippy-umbra-acre/pull/10"
         }
       ],
-      "relatedRefs": [
-        "RTH-018",
-        "RTH-023"
-      ],
+      "relatedRefs": ["RTH-018", "RTH-023"],
       "closure": "Requires authorized PARTNER_API_TOKEN creation and Tennis Worker secret write."
     },
     {
@@ -529,10 +564,7 @@
           "target": "docs/harness/tenants/ci-core.md"
         }
       ],
-      "relatedRefs": [
-        "RTH-001",
-        "RTH-002"
-      ],
+      "relatedRefs": ["RTH-001", "RTH-002"],
       "closure": "Confirm the pushed revision is reachable from main; otherwise open a focused PR."
     },
     {
@@ -564,10 +596,7 @@
           "target": "docs/portal-foundation.md"
         }
       ],
-      "relatedRefs": [
-        "RTH-007",
-        "RTH-025"
-      ],
+      "relatedRefs": ["RTH-007", "RTH-025"],
       "closure": "Confirm the pushed revision was merged; open or recover a PR if absent."
     },
     {
@@ -581,11 +610,7 @@
       "state": "pushed",
       "pin": false,
       "summary": "Added lock normalization, OS/CPU filtering, stability, dry-run, and invalid-flag proof.",
-      "evidence": [
-        "22 tests passed",
-        "commit 6f13397b0",
-        "pushed to main"
-      ],
+      "evidence": ["22 tests passed", "commit 6f13397b0", "pushed to main"],
       "references": [
         {
           "kind": "commit",
@@ -598,10 +623,7 @@
           "target": "docs/UNIFIED.md"
         }
       ],
-      "relatedRefs": [
-        "RTH-002",
-        "RTH-011"
-      ],
+      "relatedRefs": ["RTH-002", "RTH-011"],
       "closure": "Closed if commit 6f13397b0 remains reachable from main."
     },
     {
@@ -624,8 +646,8 @@
       "references": [
         {
           "kind": "worktree",
-          "label": "Local implementation lane",
-          "target": ".codex-worktrees/tennis-runtime-secret-contract"
+          "label": "Portal foundation entrypoint",
+          "target": "docs/portal-foundation.md"
         },
         {
           "kind": "command",
@@ -633,10 +655,7 @@
           "target": "bun run build"
         }
       ],
-      "relatedRefs": [
-        "RTH-022",
-        "RTH-025"
-      ],
+      "relatedRefs": ["RTH-022", "RTH-025"],
       "closure": "Split local changes into a focused lane and resolve unrelated full-suite/runtime debt separately."
     },
     {
@@ -667,10 +686,7 @@
           "target": "STRUCTURE.md"
         }
       ],
-      "relatedRefs": [
-        "RTH-018",
-        "RTH-025"
-      ],
+      "relatedRefs": ["RTH-018", "RTH-025"],
       "closure": "Use as historical recovery evidence; current lane status supersedes its counts."
     },
     {
@@ -702,10 +718,7 @@
           "target": "RTH-016"
         }
       ],
-      "relatedRefs": [
-        "RTH-015",
-        "RTH-016"
-      ],
+      "relatedRefs": ["RTH-015", "RTH-016"],
       "closure": "Reference only; rerun for current market state."
     },
     {
@@ -736,9 +749,7 @@
           "target": "RTH-014"
         }
       ],
-      "relatedRefs": [
-        "RTH-014"
-      ],
+      "relatedRefs": ["RTH-014"],
       "closure": "Add surface attribution before using the archive for surface-edge conclusions."
     },
     {
@@ -807,10 +818,7 @@
           "target": "https://github.com/brendadeeznuts1111/project-R-score/issues/241"
         }
       ],
-      "relatedRefs": [
-        "RTH-007",
-        "RTH-025"
-      ],
+      "relatedRefs": ["RTH-007", "RTH-025"],
       "closure": "Verified 2026-08-06: bun run github-issue-taxonomy:check; bun test tests/github-issue-taxonomy*.test.ts (16 pass). Close #237\u2013#241 when ready; do not resume as planned work."
     },
     {
@@ -833,8 +841,8 @@
       "references": [
         {
           "kind": "document",
-          "label": "Harness skill catalog",
-          "target": ".agents/skills/"
+          "label": "Project R skill maintenance",
+          "target": ".agents/skills/project-r-skill-maintenance/SKILL.md"
         },
         {
           "kind": "command",
@@ -842,9 +850,7 @@
           "target": "bun run skills:validate"
         }
       ],
-      "relatedRefs": [
-        "RTH-013"
-      ],
+      "relatedRefs": ["RTH-013"],
       "closure": "Verify the alias archive and parser fix in git before retaining or discarding the lane."
     },
     {
@@ -869,9 +875,7 @@
           "target": "docs/DOMAIN_CONCEPT_SHAPE.md"
         }
       ],
-      "relatedRefs": [
-        "RTH-010"
-      ],
+      "relatedRefs": ["RTH-010"],
       "closure": "Inspect the corresponding worktree before deciding whether any changes remain valuable."
     },
     {
@@ -885,20 +889,15 @@
       "state": "blocked",
       "pin": false,
       "summary": "The TOML enhancement could not proceed because the referenced demo was absent.",
-      "evidence": [
-        "workspace search completed",
-        "missing input reported"
-      ],
+      "evidence": ["workspace search completed", "missing input reported"],
       "references": [
         {
           "kind": "document",
           "label": "Unrelated TOML exporter found",
-          "target": "scripts/export-toml.ts"
+          "target": "Kalshi-bot/scripts/export-toml.ts"
         }
       ],
-      "relatedRefs": [
-        "RTH-002"
-      ],
+      "relatedRefs": ["RTH-002"],
       "closure": "Archive unless the missing demo is supplied."
     },
     {
@@ -912,9 +911,7 @@
       "state": "empty",
       "pin": false,
       "summary": "The visible thread contains no usable request or delivery outcome.",
-      "evidence": [
-        "no assistant outcome"
-      ],
+      "evidence": ["no assistant outcome"],
       "references": [],
       "relatedRefs": [],
       "closure": "Safe archive candidate."
@@ -935,10 +932,292 @@
         "task summary: Resolve the reported issue"
       ],
       "references": [],
-      "relatedRefs": [
-        "RTH-025"
-      ],
+      "relatedRefs": ["RTH-025"],
       "closure": "Clarify the target issue or archive the task if it was created accidentally."
+    },
+    {
+      "ref": "RTH-028",
+      "rank": 27,
+      "sessionId": "019fd2e1-492f-7561-984d-dc077a5ee483",
+      "title": "RTH-028 · SHIPPED · PROJECT · Library Hardening — PR #371",
+      "lane": "project",
+      "score": 98,
+      "quality": "production",
+      "state": "shipped",
+      "pin": false,
+      "summary": "Hardened shared libraries, domain parsing, dashboard contracts, monitoring configuration, and Pages verification before production deployment.",
+      "evidence": [
+        "PR #369 merged",
+        "PR #371 merged",
+        "production deployment verified",
+        "bun:ci and security proof passed"
+      ],
+      "references": [
+        {
+          "kind": "pull-request",
+          "label": "Library hardening",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/369"
+        },
+        {
+          "kind": "pull-request",
+          "label": "Pages edge proof",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/371"
+        }
+      ],
+      "relatedRefs": ["RTH-024", "RTH-026"],
+      "closure": "Closed; retain as the cross-library hardening and production proof reference."
+    },
+    {
+      "ref": "RTH-029",
+      "rank": 28,
+      "sessionId": "019fd3e6-f3ac-71a2-96ab-ae7405538942",
+      "title": "RTH-029 · MERGED · PROJECT · Git Reconciliation — PR #405",
+      "lane": "project",
+      "score": 99,
+      "quality": "production",
+      "state": "merged",
+      "pin": false,
+      "summary": "Reconciled the remote branch portfolio, recovered useful residual work through focused PRs, and returned the open PR queue to zero.",
+      "evidence": [
+        "140 remote branches audited",
+        "PRs #396-#398 merged",
+        "PRs #403/#405 merged",
+        "local merge proofs passed"
+      ],
+      "references": [
+        {
+          "kind": "pull-request",
+          "label": "GitHub issue portal",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/405"
+        },
+        { "kind": "commit", "label": "Reconciled main", "target": "84d7ec934" }
+      ],
+      "relatedRefs": ["RTH-017", "RTH-028"],
+      "closure": "Closed; use as the branch and pull-request reconciliation reference."
+    },
+    {
+      "ref": "RTH-030",
+      "rank": 29,
+      "sessionId": "019fd56a-2dc5-79c3-a30f-ef6003d4f97d",
+      "title": "RTH-030 · LOCAL · PORTAL · Bun System Control Panel",
+      "lane": "portal",
+      "score": 74,
+      "quality": "review-required",
+      "state": "local",
+      "pin": false,
+      "summary": "Started the repository-native Bun system-control surface in the intended dashboard v1.12 lane while preserving local security boundaries.",
+      "evidence": [
+        "runtime-sensitive APIs reviewed",
+        "existing v1.12 lane identified",
+        "no final delivery summary recorded"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Operator research entrypoint",
+          "target": "lib/operator-research/README.md"
+        },
+        {
+          "kind": "document",
+          "label": "Portal foundation",
+          "target": "docs/portal-foundation.md"
+        }
+      ],
+      "relatedRefs": ["RTH-031", "RTH-032"],
+      "closure": "Reconcile the v1.12 system-panel work with the current portal and record focused proof."
+    },
+    {
+      "ref": "RTH-031",
+      "rank": 30,
+      "sessionId": "019fd58a-390d-7a93-b710-32c044c5a009",
+      "title": "RTH-031 · PUSHED · PORTAL · v1.13 Canary — PR #412",
+      "lane": "portal",
+      "score": 92,
+      "quality": "verified",
+      "state": "pushed",
+      "pin": false,
+      "summary": "Delivered a fail-closed v1.13 canary with SSE, bounded CSV backtesting, exact Pages preview verification, and truthful static/API boundaries.",
+      "evidence": [
+        "draft PR #412 opened",
+        "exact Pages preview verified",
+        "100-client SSE probe passed",
+        "focused and staged gates passed"
+      ],
+      "references": [
+        {
+          "kind": "pull-request",
+          "label": "Agent Odds v1.13",
+          "target": "https://github.com/brendadeeznuts1111/project-R-score/pull/412"
+        },
+        { "kind": "commit", "label": "Canary hardening", "target": "c35edca79" }
+      ],
+      "relatedRefs": ["RTH-030", "RTH-032"],
+      "closure": "Complete external Bun-host staging proof before promoting the draft canary."
+    },
+    {
+      "ref": "RTH-032",
+      "rank": 31,
+      "sessionId": "019fdacc-370f-7731-9559-57832d7e4ac1",
+      "title": "RTH-032 · VERIFIED · PORTAL · Error & Debug Boundaries",
+      "lane": "portal",
+      "score": 88,
+      "quality": "verified",
+      "state": "verified",
+      "pin": false,
+      "summary": "Added and proved environment-aware portal errors, development diagnostics, debugger commands, and browser/server fetch boundaries.",
+      "evidence": [
+        "production JSON 500 boundary verified",
+        "development error page verified",
+        "debugger launch exercised",
+        "focused tests passed"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Portal foundation",
+          "target": "docs/portal-foundation.md"
+        },
+        {
+          "kind": "command",
+          "label": "Development portal",
+          "target": "bun run dev:portal"
+        }
+      ],
+      "relatedRefs": ["RTH-030", "RTH-031"],
+      "closure": "Closed as focused verification; integration evidence belongs with the consuming portal release."
+    },
+    {
+      "ref": "RTH-033",
+      "rank": 32,
+      "sessionId": "019fdaff-31e0-7390-b014-07d807dae7b3",
+      "title": "RTH-033 · AUDIT · DX · Portfolio, Skills & Boundaries",
+      "lane": "dx",
+      "score": 78,
+      "quality": "analysis-only",
+      "state": "audit",
+      "pin": false,
+      "summary": "Reviewed recent Codex tasks, repaired thread-state vocabulary, and clarified the Project R catalog intake boundary without inventing evidence for new roots.",
+      "evidence": [
+        "recent task titles reviewed",
+        "skill validation passed",
+        "portfolio drift reported explicitly"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Thread portfolio runbook",
+          "target": "docs/harness/tenants/codex-thread-portfolio.md"
+        },
+        {
+          "kind": "document",
+          "label": "Skill maintenance",
+          "target": ".agents/skills/project-r-skill-maintenance/SKILL.md"
+        }
+      ],
+      "relatedRefs": ["RTH-025", "RTH-035"],
+      "closure": "Superseded by the schema-v3 intake and boundary reconciliation."
+    },
+    {
+      "ref": "RTH-034",
+      "rank": 33,
+      "sessionId": "019fdba8-818d-7750-9ac4-218ec8405aa2",
+      "title": "RTH-034 · LOCAL · PARTNER · Telegram Delivery Hardening",
+      "lane": "partner",
+      "score": 86,
+      "quality": "verified",
+      "state": "local",
+      "pin": false,
+      "summary": "Replaced placeholder partner Telegram delivery with typed, idempotent connector ports and fixed sender retry/deduplication behavior.",
+      "evidence": [
+        "Sports Terminal verification passed",
+        "Telegram handshake suite passed",
+        "partner governance passed",
+        "focused regression tests passed"
+      ],
+      "references": [
+        {
+          "kind": "document",
+          "label": "Sports Terminal contract",
+          "target": "projects/active/sports-terminal-os/README.md"
+        },
+        {
+          "kind": "command",
+          "label": "Partner governance",
+          "target": "bun run partner:governance"
+        }
+      ],
+      "relatedRefs": ["RTH-019", "RTH-035"],
+      "closure": "Brought into the grouped workspace branch; complete through its focused PR."
+    },
+    {
+      "ref": "RTH-035",
+      "rank": 34,
+      "sessionId": "019fdbc7-2d77-7af0-b40c-8a140d93c55f",
+      "title": "RTH-035 · PUSHED · PROJECT · Grouped Workspace Changes",
+      "lane": "project",
+      "score": 90,
+      "quality": "verified",
+      "state": "pushed",
+      "pin": false,
+      "summary": "Grouped partner, documentation, and audit work into three coherent commits and pushed the PR-only delivery branch.",
+      "evidence": [
+        "three scoped commits created",
+        "pre-push checks passed",
+        "branch pushed",
+        "main push correctly blocked by PR-only policy"
+      ],
+      "references": [
+        {
+          "kind": "branch",
+          "label": "Grouped delivery branch",
+          "target": "codex/grouped-uncommitted-20260807"
+        },
+        {
+          "kind": "commit",
+          "label": "Partner hardening",
+          "target": "fba68857c"
+        },
+        {
+          "kind": "commit",
+          "label": "Documentation alignment",
+          "target": "b64e852cc"
+        },
+        { "kind": "commit", "label": "Audit evidence", "target": "97e847437" }
+      ],
+      "relatedRefs": ["RTH-034", "RTH-036"],
+      "closure": "Open and review the focused pull request, then reconcile the branch with main."
+    },
+    {
+      "ref": "RTH-036",
+      "rank": 35,
+      "sessionId": "019fdd09-d9d1-73f2-b830-fad1e49fb2c9",
+      "title": "RTH-036 · OPEN · PROJECT · Merge & Improvement Follow-up",
+      "lane": "project",
+      "score": 50,
+      "quality": "review-required",
+      "state": "open",
+      "pin": false,
+      "summary": "Requested the grouped branch PR/merge and a follow-on improvement pass across skills, wiki, branding, frontend, and APIs; no completion evidence is recorded.",
+      "evidence": [
+        "grouped branch exists",
+        "PR and merge requested",
+        "follow-on improvement agents requested",
+        "no final outcome recorded"
+      ],
+      "references": [
+        {
+          "kind": "branch",
+          "label": "Grouped delivery branch",
+          "target": "codex/grouped-uncommitted-20260807"
+        },
+        {
+          "kind": "document",
+          "label": "Thread portfolio runbook",
+          "target": "docs/harness/tenants/codex-thread-portfolio.md"
+        }
+      ],
+      "relatedRefs": ["RTH-035", "RTH-033"],
+      "closure": "Verify PR/merge state, then split the requested improvements into bounded subject lanes."
     }
   ]
 }

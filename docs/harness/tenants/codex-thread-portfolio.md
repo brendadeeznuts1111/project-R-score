@@ -8,12 +8,13 @@
 
 The machine-readable authority is
 [`tools/codex-thread-portfolio.json`](../../../tools/codex-thread-portfolio.json).
-Schema v2 covers all 27 Project R root user threads present on 2026-08-05:
+Schema v3 covers all 36 Project R root user threads present on 2026-08-07 and
+adds a machine-readable entry point and ownership boundary for every lane:
 
-- 26 visible Codex Desktop threads;
+- 35 visible Codex Desktop threads;
 - one visible user CLI thread.
 
-The same local state contains 74 subagent sessions. They remain implementation
+The same local state contains 80 subagent sessions. They remain implementation
 history under their root threads and do not consume root reference numbers. The
 verification command proves that every subagent parent resolves to a cataloged
 root thread.
@@ -89,6 +90,12 @@ Structured reference kinds are `pull-request`, `issue`, `commit`, `branch`,
 `worktree`, `document`, `command`, `deployment`, and `thread`. Relationships use
 stable `RTH` values rather than rank numbers or raw provider UUIDs.
 
+Every thread inherits its lane contract from the catalog's `lanes` map. An entry
+point is the first local authority an agent reads. A boundary states what that
+lane may decide and what must remain with another owner. Verification fails when
+a lane lacks either field or when a local document/worktree reference no longer
+resolves.
+
 Scores total 100:
 
 - **Delivered value — 30:** material artifact value.
@@ -115,6 +122,17 @@ bun run threads:portfolio:apply
 
 # Require exact title, pin, root-count, chronological-ref, and parent parity
 bun run threads:portfolio:verify
+
+# Show the daily weakest-three research plan without launching agents
+bun run threads:research
+
+# Launch three separate ephemeral, read-only research agents now
+bun run threads:research:run
+
+# Preview/register/remove the reboot-persistent OS schedule
+bun run threads:research:cron:preview
+bun run threads:research:cron:register
+bun run threads:research:cron:remove
 ```
 
 Title changes use Codex's supported `thread/name/set` app-server method. Codex
@@ -130,6 +148,29 @@ local-state lane is therefore limited to pin policy:
 
 The default command is read-only. State changes require explicit `--apply` and
 `--pins` flags, as used by `threads:portfolio:apply`.
+
+## Daily weakest-three research
+
+The OS-level job `project-r-thread-research` runs at `06:15` system local time.
+It selects the three lowest-scoring actionable threads, excluding the index,
+completed states, and empty/unscoped records. Each target receives a separate
+ephemeral Codex invocation with a read-only sandbox; agents may inspect and
+recommend, but may not edit, change git state, mutate thread metadata, access
+secrets, or claim success. The Codex subprocess receives an allowlisted
+environment (`HOME`, optional `CODEX_HOME`, locale, temp, terminal, and a fixed
+executable `PATH`); ambient token, password, and provider variables are not
+forwarded. Executable resolution prefers `THREAD_RESEARCH_CODEX_BIN`, then the
+current desktop-bundled Codex CLI, then `PATH`; this avoids scheduling against a
+stale Homebrew shim when the configured model requires the current client.
+
+The 45% goal means closing 45% of the remaining portfolio-score deficit:
+`target = score + ceil((100 - score) * 0.45)`. This produces meaningful targets
+for weak threads without pretending that a daily report itself improves the
+score. Reports and `latest.json` are written under the gitignored
+`.cache/thread-research/` directory. Portfolio scores change only through a
+separate evidence review. A partial cycle keeps completed same-day briefs,
+records per-thread failures in `latest.json`, skips successful reports on a
+same-day retry, and exits non-zero so launchd logs the incomplete target.
 
 ## Reference map and bring-home queue
 

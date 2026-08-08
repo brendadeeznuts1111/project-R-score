@@ -89,6 +89,11 @@ export type ThreadReferenceKind =
 
 export type ThreadReference = `RTH-${string}`;
 
+export type ThreadLaneDefinition = {
+  entrypoint: string;
+  boundary: string;
+};
+
 export type PortfolioReference = {
   kind: ThreadReferenceKind;
   label: string;
@@ -114,7 +119,7 @@ export type PortfolioThread = {
 };
 
 export type ThreadPortfolio = {
-  schemaVersion: 2;
+  schemaVersion: 3;
   catalog: string;
   scope: {
     cwd: string;
@@ -137,6 +142,7 @@ export type ThreadPortfolio = {
       closure: number;
     };
   };
+  lanes: Record<ThreadLane, ThreadLaneDefinition>;
   threads: PortfolioThread[];
 };
 
@@ -363,8 +369,8 @@ function parsePortfolioThreadWire(value: unknown, index: number): PortfolioThrea
 }
 
 export function parseThreadPortfolioWire(value: unknown): ThreadPortfolio {
-  if (!isRecord(value) || value.schemaVersion !== 2) {
-    throw new Error('thread portfolio must use schemaVersion 2');
+  if (!isRecord(value) || value.schemaVersion !== 3) {
+    throw new Error('thread portfolio must use schemaVersion 3');
   }
   if (
     !isRecord(value.scope) ||
@@ -376,8 +382,26 @@ export function parseThreadPortfolioWire(value: unknown): ThreadPortfolio {
   if (!Array.isArray(value.threads)) {
     throw new Error('thread portfolio threads must be an array');
   }
+  if (!isRecord(value.lanes)) {
+    throw new Error('thread portfolio lanes are required');
+  }
+  const lanes = Object.fromEntries(
+    [...THREAD_LANES].map(lane => {
+      const definition = value.lanes[lane];
+      if (!isRecord(definition)) {
+        throw new Error(`lanes.${lane} must be an object`);
+      }
+      return [
+        lane,
+        {
+          entrypoint: parseString(definition.entrypoint, `lanes.${lane}.entrypoint`),
+          boundary: parseString(definition.boundary, `lanes.${lane}.boundary`),
+        },
+      ];
+    })
+  ) as Record<ThreadLane, ThreadLaneDefinition>;
   const portfolio: ThreadPortfolio = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     catalog: parseString(value.catalog, 'catalog'),
     scope: {
       cwd: parseString(value.scope.cwd, 'scope.cwd'),
@@ -418,6 +442,7 @@ export function parseThreadPortfolioWire(value: unknown): ThreadPortfolio {
         closure: parseNumber(value.scope.scoreWeights.closure, 'scope.scoreWeights.closure'),
       },
     },
+    lanes,
     threads: value.threads.map(parsePortfolioThreadWire),
   };
   validateThreadPortfolio(portfolio);
@@ -450,6 +475,9 @@ export function validateThreadPortfolio(portfolio: ThreadPortfolio): void {
   const ranks = new Set<number>();
   let indexCount = 0;
   for (const thread of portfolio.threads) {
+    if (!portfolio.lanes[thread.lane]) {
+      throw new Error(`${thread.ref} uses lane ${thread.lane} without a lane definition`);
+    }
     if (sessionIds.has(thread.sessionId)) {
       throw new Error(`duplicate Codex SessionId: ${thread.sessionId}`);
     }
@@ -530,6 +558,28 @@ export function validateThreadPortfolio(portfolio: ThreadPortfolio): void {
   }
 }
 
+export function resolveLocalPortfolioReferences(portfolio: ThreadPortfolio): string[] {
+  const targets = [
+    ...Object.values(portfolio.lanes).map(lane => lane.entrypoint),
+    ...portfolio.threads.flatMap(thread =>
+      thread.references
+        .filter(reference => reference.kind === 'document' || reference.kind === 'worktree')
+        .map(reference => reference.target)
+    ),
+  ];
+  return [...new Set(targets)].map(target =>
+    target.startsWith('/') ? target : joinPath(portfolio.scope.cwd, target)
+  );
+}
+
+export async function findMissingLocalPortfolioReferences(
+  portfolio: ThreadPortfolio
+): Promise<string[]> {
+  const targets = resolveLocalPortfolioReferences(portfolio);
+  const exists = await Promise.all(targets.map(target => Bun.file(target).exists()));
+  return targets.filter((_target, index) => !exists[index]);
+}
+
 export function rankedWorkThreads(portfolio: ThreadPortfolio): PortfolioThread[] {
   return portfolio.threads.filter(thread => thread.rank > 0).sort((a, b) => a.rank - b.rank);
 }
@@ -557,7 +607,7 @@ export function formatThreadPortfolioMarkdown(portfolio: ThreadPortfolio): strin
   return lines.join('\n');
 }
 
-async function loadThreadPortfolio(path = DEFAULT_PORTFOLIO_PATH): Promise<ThreadPortfolio> {
+export async function loadThreadPortfolio(path = DEFAULT_PORTFOLIO_PATH): Promise<ThreadPortfolio> {
   const wire = (await Bun.file(path).json()) as unknown;
   return parseThreadPortfolioWire(wire);
 }
@@ -949,6 +999,12 @@ async function main(): Promise<void> {
   }
   printAudit(portfolio, statuses, inventory, args.has('--json'));
   if (args.has('--verify')) {
+    const missingLocalReferences = await findMissingLocalPortfolioReferences(portfolio);
+    if (missingLocalReferences.length > 0) {
+      throw new Error(
+        `thread portfolio has ${missingLocalReferences.length} missing local reference(s): ${missingLocalReferences.join(', ')}`
+      );
+    }
     const failures = [...statuses.values()].filter(
       status => !status.present || !status.titleMatches || !status.pinMatches
     );
