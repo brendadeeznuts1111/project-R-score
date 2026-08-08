@@ -8,13 +8,19 @@
  * External system mappings (e.g. Sports Terminal `frozen` → `suspended`) are
  * explicit declared mappings, never silent renames.
  */
-import { parseAdapterId, parsePartnerCode, parseSourceSystemId } from '../core/identifiers.ts';
+import {
+  parseAdapterId,
+  parsePartnerCallSign,
+  parsePartnerCode,
+  parseSourceSystemId,
+} from '../core/identifiers.ts';
 import {
   CANONICAL_PROFILE_SOURCE_SYSTEM_ID,
   PARTNER_LIFECYCLE_STATES,
   PARTNER_OPERATIONAL_PHASES,
   type FactProvenance,
   type LifecycleStateFact,
+  type PartnerCallSign,
   type PartnerCode,
   type PartnerLifecycleState,
   type PartnerOperationalPhase,
@@ -52,6 +58,8 @@ export const EXTERNAL_LIFECYCLE_MAPPINGS: readonly ExternalLifecycleMapping[] = 
 
 export type PartnerLifecycleObservation = {
   partnerCode: PartnerCode;
+  /** Call sign from the same profile record that authored lifecycle. */
+  callSign: PartnerCallSign;
   lifecycle: LifecycleStateFact;
   /** Derived operator phase — never lifecycle authority. */
   operationalPhase: PartnerOperationalPhase;
@@ -198,6 +206,7 @@ export function adaptLifecycleFromCanonicalProfiles(
     if (identityCode !== partnerCode) {
       throw new TypeError(`${path}.identity.code must match record key`);
     }
+    const callSign = parsePartnerCallSign(identity.callSign, partnerCode);
     const lifecycle = wireRecord(profile.lifecycle, `${path}.lifecycle`);
     const originalStatus = wireText(lifecycle.status, `${path}.lifecycle.status`);
     const state = mapPartnerLifecycleStatusToState(originalStatus);
@@ -233,6 +242,7 @@ export function adaptLifecycleFromCanonicalProfiles(
 
     observations.push({
       partnerCode,
+      callSign,
       lifecycle: fact,
       operationalPhase: deriveOperationalPhase(state, completeness),
     });
