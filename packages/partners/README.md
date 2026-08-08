@@ -1,6 +1,7 @@
 # `@factorywager/partners`
 
 <!-- REF:ID 0.1.partners-package-readme -->
+
 <a id="0.1.partners-package-readme"></a>
 
 Private workspace authority for parsed partner-domain identifiers, ingress
@@ -17,8 +18,15 @@ The redacted `profile-coverage-artifact` adapter and its
 `PartnerProfileCoverageArtifactReader` boundary contract are implemented; its
 connector I/O/resilience wiring, canonical source ports/adapters, and the Sports
 Terminal transport are planned slices. Coverage is an implementation-readiness
-input, not the final `profiles` dashboard snapshot or lifecycle authority. The
-implemented `partners-ops.v2` compatibility projection drops credentials,
+input, not the final `profiles` dashboard snapshot or lifecycle authority.
+
+The pure `canonical-lifecycle-v1` adapter maps private-profile /
+`partner-profiles` bake status onto `PartnerLifecycleState` with required
+`FactProvenance.originalValue`, derives `PartnerOperationalPhase` separately,
+and declares the Sports Terminal `frozen` → `suspended` external mapping. It
+never reads profile-coverage. Full multi-source reconciliation remains planned.
+
+The implemented `partners-ops.v2` compatibility projection drops credentials,
 payment targets, money, Telegram IDs, limits, and presentation fields rather
 than promoting them into partner-domain truth. Its output is a narrow
 observation shape, not `PartnerDashboardRecord[]`.
@@ -101,14 +109,15 @@ Contract authority:
 
 Operator mesh (portal · Telegram · inventory · REF:ID):
 
-| Concern | Path / command |
-| ------- | -------------- |
-| Portal board | [`/portal/partners/`](../../public/portal/partners/) · [`public/portal/partners.md`](../../public/portal/partners.md) |
-| Handshake runbook | [`partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md) · `bun run telegram:handshake:catalog` |
-| Factory Telegram | [`telegram-factory.md`](../../docs/harness/tenants/telegram-factory.md) |
-| Surface inventory | [`partner-surface-inventory.md`](../../docs/design/partner-surface-inventory.md) · `bun run partner-surface-inventory:validate` |
-| Documentation register REF:IDs | `PARTNER_DOCUMENTATION_REFS` · `bun run docs:refid:check` · `docs:refid:audit` |
-| Wiki tenant map | [wiki-index § Operator · portal · Telegram](../../wiki-index.md#operator--portal--telegram) |
+| Concern                        | Path / command                                                                                                                               |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Portal board                   | [`/portal/partners/`](../../public/portal/partners/) · [`public/portal/partners.md`](../../public/portal/partners.md)                        |
+| Handshake runbook              | [`partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md) · `bun run telegram:handshake:catalog` |
+| Factory Telegram               | [`telegram-factory.md`](../../docs/harness/tenants/telegram-factory.md)                                                                      |
+| Surface inventory              | [`partner-surface-inventory.md`](../../docs/design/partner-surface-inventory.md) · `bun run partner-surface-inventory:validate`              |
+| Documentation register REF:IDs | `PARTNER_DOCUMENTATION_REFS` · `bun run docs:refid:check` · `docs:refid:audit`                                                               |
+| Wiki tenant map                | [wiki-index § Operator · portal · Telegram](../../wiki-index.md#operator--portal--telegram)                                                  |
+
 - [`docs/design/partner-code-consolidation.md`](../../docs/design/partner-code-consolidation.md)
 - [`public/registry/partner-profile-coverage.json`](../../public/registry/partner-profile-coverage.json)
 
