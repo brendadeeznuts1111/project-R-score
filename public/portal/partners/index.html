@@ -1118,14 +1118,23 @@
         telegramTopicsForPhase,
       } from '/portal/partners/partner-routes.js';
       import {
+        bakeLabel,
         coverageBarStyle,
         filterPartnerOuts,
         flattenPartnerOuts,
         indexOpsByPartner,
+        isLegacyPartnerComparisonRequested,
+        isPartnersDashboardSchema,
         listPartnerPhases,
         normalizePartnerCode,
+        PARTNERS_DASHBOARD_ARTIFACT_REF,
+        PARTNERS_LEGACY_COMPARISON_OPTIONAL_REFS,
+        PARTNERS_LEGACY_COMPARISON_REQUIRED_REFS,
         canonicalProfileCoverage,
         partnerReadinessGate,
+        projectDashboardToHandshakeShape,
+        projectDashboardToOpsShape,
+        summarizeConnectorSnapshots,
         summarizePartnerDesk,
       } from '/portal/partners/partners-board.js';
       import { mountFreshnessBadge } from '/portal/data-freshness.js';
@@ -1479,31 +1488,6 @@
             return `<li>${conceptChip(id, label, wire)}</li>`;
           })
           .join('');
-      }
-
-      function bakeLabel(iso, source = '') {
-        if (!iso) return { text: '—', tone: '' };
-        const t = Date.parse(iso);
-        if (!Number.isFinite(t) || t <= 0) {
-          return {
-            text: source ? `fixture · ${source}` : 'fixture / unset',
-            tone: 'warn',
-          };
-        }
-        // Treat unix epoch sentinel as fixture marker
-        if (t < Date.parse('1980-01-01T00:00:00.000Z')) {
-          return {
-            text: source ? `fixture · ${source}` : 'fixture (epoch bake)',
-            tone: 'warn',
-          };
-        }
-        return {
-          text: new Date(t)
-            .toISOString()
-            .replace('T', ' ')
-            .replace(/\.\d+Z$/, ' UTC'),
-          tone: 'ok',
-        };
       }
 
       function renderStats(handshake, seat, ops, partnerProfiles) {
@@ -2451,27 +2435,85 @@
 
       window.addEventListener('hashchange', () => applyPartnerRoute(true));
 
+      /**
+       * Diagnostic multi-fetch for ?compare=legacy only.
+       * Uses fetchJsonResult (not loadJson) so plan scanner does not treat these as primary inputs.
+       * Failures warn only — never replace the canonical dashboard render.
+       */
+      async function runLegacyComparisonDiagnostic(dashboard) {
+        const panel = $('partners-meta');
+        if (!panel) return;
+        const results = [];
+        for (const ref of PARTNERS_LEGACY_COMPARISON_REQUIRED_REFS) {
+          const result = await fetchJsonResult(ref);
+          results.push({
+            ref,
+            ok: result.ok,
+            generatedAt: result.ok ? result.data?.generatedAt : null,
+            error: result.ok ? null : result.error || result.kind,
+          });
+        }
+        for (const ref of PARTNERS_LEGACY_COMPARISON_OPTIONAL_REFS) {
+          const result = await fetchJsonResult(ref);
+          results.push({
+            ref,
+            ok: result.ok,
+            optional: true,
+            generatedAt: result.ok ? result.data?.generatedAt : null,
+            error: result.ok ? null : result.error || result.kind,
+          });
+        }
+        const dashPartners = Number(dashboard?.summary?.partnerCount) || 0;
+        const opsHit = results.find(r => r.ref === '/registry/partners-ops.json' && r.ok);
+        const diag = document.createElement('div');
+        diag.className = 'partners-meta-chip warn';
+        diag.setAttribute('data-legacy-compare', 'true');
+        const failed = results.filter(r => !r.ok && !r.optional).length;
+        const optionalFailed = results.filter(r => !r.ok && r.optional).length;
+        diag.innerHTML =
+          `<span class="k">Legacy compare</span>` +
+          `<span class="v">canonical ${esc(String(dashPartners))} partners` +
+          (opsHit ? ` · multi-fetch ok` : '') +
+          (failed ? ` · ${failed} required failed` : '') +
+          (optionalFailed ? ` · ${optionalFailed} optional missing` : '') +
+          ` · diagnostic-only</span>`;
+        panel.appendChild(diag);
+      }
+
       async function load() {
         try {
-          const [
-            handshake,
-            seat,
-            catalog,
-            taxonomy,
-            ops,
-            partnerProfiles,
-            limitPatterns,
-            softAccounting,
-          ] = await Promise.all([
-            loadJson('/registry/telegram-handshake.json'),
-            loadJson('/registry/seat-capital-desk.json'),
-            loadJson('/registry/telegram-handshake-catalog.json'),
-            loadJson('/registry/scrape-wire-taxonomy.json'),
-            loadJson('/registry/partners-ops.json'),
-            loadJson('/registry/partner-profiles.json'),
-            loadJson('/registry/limit-raises.json'),
-            loadJson('/registry/soft-accounting-export.json').catch(() => null),
-          ]);
+          // Primary: single canonical artifact — error-never-fallback.
+          // String literal path is required so plan validation can scan the input map.
+          const dashboard = await loadJson('/registry/partners-dashboard.json');
+          if (!isPartnersDashboardSchema(dashboard?.schema)) {
+            throw new Error(
+              `/registry/partners-dashboard.json unexpected schema ${dashboard?.schema ?? 'missing'}`
+            );
+          }
+
+          const ops = projectDashboardToOpsShape(dashboard);
+          const handshake = projectDashboardToHandshakeShape(dashboard);
+          // Ancillary multi-artifact sources are not primary; empty until connectors join the bake.
+          const seat = { rows: [], partnerViews: [], partnerMessageTemplates: [], desks: 0 };
+          const catalog = { colors: {}, glossary: { conceptIds: [] } };
+          const taxonomy = { bookRegistry: [] };
+          const partnerProfiles = {
+            generatedAt: dashboard.generatedAt,
+            profiles: Object.fromEntries(
+              (dashboard.partners || []).map(p => [
+                normalizePartnerCode(p.partnerCode),
+                {
+                  lifecycle: p.lifecycle,
+                  callSign: p.callSign,
+                  operationalPhase: p.operationalPhase,
+                },
+              ])
+            ),
+            summary: { count: dashboard.summary?.canonicalProfileCount ?? 0 },
+          };
+          const limitPatterns = { byNode: {} };
+          const softAccounting = null;
+
           installColorTokens(ops.colors);
           colorsCache = ops.colors || {};
           bookIndex = indexBooks(taxonomy);
@@ -2481,99 +2523,63 @@
           opsCache = ops;
           opsByPartner = indexOpsByPartner(ops);
           flattenedOuts = flattenPartnerOuts(ops);
-          softAccountingSource = softAccounting?.source || 'unavailable';
+          softAccountingSource = 'unavailable';
           softPlaysByPartner = new Map();
-          for (const play of softAccounting?.plays || []) {
-            const code = String(play?.partnerCode || '')
-              .trim()
-              .toUpperCase();
-            if (!code) continue;
-            const list = softPlaysByPartner.get(code);
-            if (list) list.push(play);
-            else softPlaysByPartner.set(code, [play]);
-          }
-          const exportWeeks = Array.isArray(softAccounting?.weeks) ? softAccounting.weeks : [];
-          softWeekRows =
-            exportWeeks.length > 0
-              ? exportWeeks
-                  .map(w => ({
-                    weekStart: w.weekStart,
-                    partnerCode: String(w.partnerCode || '').toUpperCase(),
-                    deposits: w.deposits,
-                    settlements: w.settlements,
-                    net: w.net,
-                  }))
-                  .filter(w => w.partnerCode)
-                  .sort(
-                    (a, b) =>
-                      String(b.weekStart).localeCompare(String(a.weekStart)) ||
-                      a.partnerCode.localeCompare(b.partnerCode)
-                  )
-              : rollupSoftWeeksFromPlays(softAccounting?.plays || []);
-          const exportBooks = Array.isArray(softAccounting?.byBookType)
-            ? softAccounting.byBookType
-            : [];
-          softBookTypeRows =
-            exportBooks.length > 0
-              ? exportBooks
-                  .map(b => ({
-                    bookType: b.bookType,
-                    partnerCode: String(b.partnerCode || '').toUpperCase(),
-                    deposits: b.deposits,
-                    settlements: b.settlements,
-                    net: b.net,
-                  }))
-                  .filter(b => b.partnerCode && String(b.bookType || '').startsWith('book.type.'))
-                  .sort(
-                    (a, b) =>
-                      a.partnerCode.localeCompare(b.partnerCode) ||
-                      String(a.bookType).localeCompare(String(b.bookType))
-                  )
-              : [];
-          const softBake = bakeLabel(softAccounting?.generatedAt, softAccountingSource);
-          const opsBake = bakeLabel(ops.generatedAt);
-          const hsBake = bakeLabel(handshake.generatedAt);
-          const seatBake = bakeLabel(seat.generatedAt);
-          const profBake = bakeLabel(partnerProfiles.generatedAt);
+          softWeekRows = [];
+          softBookTypeRows = [];
+
+          const dashBake = bakeLabel(dashboard.generatedAt);
+          const connectorSummary = summarizeConnectorSnapshots(dashboard);
           const baked = $('partners-baked');
           if (baked) {
-            baked.textContent = `ops ${opsBake.text} · ${ops?.summary?.partners ?? 0} partners · schema ${esc(ops.schema || ops.version || 'v2')}`;
+            baked.textContent = `dashboard ${dashBake.text} · ${dashboard.summary?.partnerCount ?? 0} partners · schema ${esc(dashboard.schema)}`;
           }
-          void mountFreshnessBadge(
-            $('partners-freshness'),
-            [
-              '/registry/partners-ops.json',
-              '/registry/telegram-handshake.json',
-              '/registry/seat-capital-desk.json',
-              '/registry/soft-accounting-export.json',
-            ],
-            {
-              fallbacks: {
-                '/registry/partners-ops.json': ops?.generatedAt || null,
-                '/registry/telegram-handshake.json': handshake?.generatedAt || null,
-                '/registry/seat-capital-desk.json': seat?.generatedAt || null,
-                '/registry/soft-accounting-export.json': softAccounting?.generatedAt || null,
-              },
-            }
-          );
+          void mountFreshnessBadge($('partners-freshness'), [PARTNERS_DASHBOARD_ARTIFACT_REF], {
+            fallbacks: {
+              [PARTNERS_DASHBOARD_ARTIFACT_REF]: dashboard.generatedAt || null,
+            },
+          });
           $('partners-meta').innerHTML = [
-            ['Handshake', hsBake],
-            ['Seat desk', seatBake],
-            ['Ops', opsBake],
+            ['Dashboard', dashBake],
             [
-              'Profiles',
+              'Canonical',
               {
-                text: `${profBake.text} · ${partnerProfiles.summary?.count ?? 0}`,
-                tone: profBake.tone,
+                text: `${dashboard.summary?.canonicalProfileCount ?? 0}/${dashboard.summary?.partnerCount ?? 0}`,
+                tone:
+                  (dashboard.summary?.canonicalProfileCount ?? 0) >=
+                  (dashboard.summary?.partnerCount ?? 0)
+                    ? 'ok'
+                    : 'warn',
               },
             ],
-            ['Soft', softBake],
+            [
+              'Outs',
+              {
+                text: String(dashboard.summary?.registeredOutCount ?? 0),
+                tone: 'ok',
+              },
+            ],
+            [
+              'Connectors',
+              {
+                text: `${connectorSummary.ok} ok · ${connectorSummary.stale} stale · ${connectorSummary.unavailable} n/a`,
+                tone: connectorSummary.unavailable > 0 ? 'warn' : 'ok',
+              },
+            ],
+            [
+              'Attention',
+              {
+                text: String(dashboard.summary?.attentionPartnerCount ?? 0),
+                tone: (dashboard.summary?.attentionPartnerCount ?? 0) > 0 ? 'warn' : 'ok',
+              },
+            ],
           ]
             .map(
               ([k, b]) =>
                 `<div class="partners-meta-chip ${esc(b.tone)}"><span class="k">${esc(k)}</span><span class="v">${esc(b.text)}</span></div>`
             )
             .join('');
+
           renderTopics(catalog, ops);
           renderTaxonomyChips(ops);
           renderPartnerRoutes(ops);
@@ -2604,6 +2610,11 @@
             scrollSections: true,
           });
           applyPartnerRoute(false);
+
+          // Diagnostic multi-fetch only when ?compare=legacy — never a render fallback.
+          if (isLegacyPartnerComparisonRequested(window.location.href)) {
+            await runLegacyComparisonDiagnostic(dashboard);
+          }
         } catch (err) {
           $('loading').classList.add('hidden');
           const banner = $('error-banner');
@@ -2611,15 +2622,14 @@
           banner.className = 'portal-error';
           const msg = err instanceof Error ? err.message : String(err);
           banner.innerHTML =
-            `<h3>Partners bake unavailable</h3>` +
-            `<p>One or more registry artifacts failed to load.</p>` +
+            `<h3>Partners dashboard unavailable</h3>` +
+            `<p>Canonical artifact failed to load. No silent partners-ops fallback.</p>` +
             `<p><code>${esc(msg)}</code></p>` +
             `<div class="portal-actions">` +
             `<button type="button" class="btn" id="partners-retry">Retry</button>` +
-            `<a class="btn" href="/registry/partners-ops.json">Open partners-ops.json</a>` +
-            `<a class="btn" href="/registry/soft-accounting-export.json">Open soft export</a>` +
+            `<a class="btn" href="${PARTNERS_DASHBOARD_ARTIFACT_REF}">Open partners-dashboard.json</a>` +
             `</div>` +
-            `<p class="dim" style="margin-top:10px">Local: <code>bun run partners:validate</code> · <code>bun run soft:accounting:bake</code></p>`;
+            `<p class="dim" style="margin-top:10px">Local: <code>bun run partner:dashboard:bake</code> · diagnostic: <code>?compare=legacy</code></p>`;
           $('partners-retry')?.addEventListener('click', () => void load());
           const gate = $('partners-gate');
           if (gate) {

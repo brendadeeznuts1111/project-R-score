@@ -1584,6 +1584,8 @@
     "lint:money-sql:staged": "bun scripts/lint-money-sql.ts --staged",
     "partner:money:migrate": "bun scripts/migrate-money-to-integers.ts",
     "partner:dashboard-plan:validate": "bun scripts/validate-partner-dashboard-plan.ts",
+    "partner:dashboard:bake": "bun scripts/bake-partners-dashboard.ts",
+    "partner:dashboard:bake:check": "bun scripts/bake-partners-dashboard.ts --check",
     "bun:runtime:check": "bun tools/bun-runtime-pin.ts",
     "bun:pr:verify": "bun tools/bun-pr-verify.ts",
     "bun:pr:fetch": "bunx bun-pr",

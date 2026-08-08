@@ -6,10 +6,11 @@ import {
   PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN,
   PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT,
   isLegacyPartnerComparisonRequested,
+  isPartnerDashboardArtifactSchema,
 } from '../packages/partners/src/index.ts';
 
 describe('partner dashboard consumer contract', () => {
-  test('owns the current compatibility and future canonical input planes', () => {
+  test('owns transition primary load and legacy diagnostic inventory', () => {
     expect(PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS).toHaveLength(7);
     expect(PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS).toEqual([
       '/registry/soft-accounting-export.json',
@@ -29,12 +30,20 @@ describe('partner dashboard consumer contract', () => {
       optionalInputRefs: PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
     });
     expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.transition).toMatchObject({
-      implementationStatus: 'planned',
+      implementationStatus: 'transition',
       inputMode: 'canonical-single-artifact-with-explicit-legacy-comparison',
       canonicalInputRef: PARTNER_DASHBOARD_ARTIFACT_REF,
       canonicalFailurePolicy: 'error-never-fallback',
       automaticLegacyFallback: false,
+      requiredInputRefs: [PARTNER_DASHBOARD_ARTIFACT_REF],
+      optionalInputRefs: [],
     });
+    expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.transition.legacyComparison).toBe(
+      PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN
+    );
+    expect(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.implementationStatus).toBe('active');
+    expect(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.resultRole).toBe('diagnostic-only');
+    expect(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.failurePolicy).toBe('warn-never-fallback');
     expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.target).toEqual({
       inputMode: 'canonical-single-artifact',
       canonicalInputRef: '/registry/partners-dashboard.json',
@@ -57,6 +66,8 @@ describe('partner dashboard consumer contract', () => {
     );
     expect(Object.isFrozen(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT)).toBe(true);
     expect(Object.isFrozen(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN)).toBe(true);
+    expect(isPartnerDashboardArtifactSchema('factorywager.partners-dashboard.v1')).toBe(true);
+    expect(isPartnerDashboardArtifactSchema('factorywager.partners-ops.v2')).toBe(false);
   });
 
   test('activates legacy comparison only through the exact query opt-in', () => {

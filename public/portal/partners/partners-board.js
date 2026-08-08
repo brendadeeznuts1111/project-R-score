@@ -1,8 +1,30 @@
 /**
- * Partners board pure helpers — partners-ops.v2 domain logic (no DOM).
+ * Partners board pure helpers — canonical dashboard projection + legacy ops helpers (no DOM).
  * @see docs/harness/tenants/partner-domain-map.md
+ * @see public/registry/partners-dashboard.json
  * @see public/registry/partners-ops.json
  */
+
+/** Canonical single-artifact ref (must match package consumer contract). */
+export const PARTNERS_DASHBOARD_ARTIFACT_REF = '/registry/partners-dashboard.json';
+
+/** Active artifact schema for primary board load. */
+export const PARTNERS_DASHBOARD_SCHEMA_V1 = 'factorywager.partners-dashboard.v1';
+
+/** Query-only legacy multi-fetch inventory (diagnostic; never render fallback). */
+export const PARTNERS_LEGACY_COMPARISON_REQUIRED_REFS = Object.freeze([
+  '/registry/telegram-handshake.json',
+  '/registry/seat-capital-desk.json',
+  '/registry/telegram-handshake-catalog.json',
+  '/registry/scrape-wire-taxonomy.json',
+  '/registry/partners-ops.json',
+  '/registry/partner-profiles.json',
+  '/registry/limit-raises.json',
+]);
+
+export const PARTNERS_LEGACY_COMPARISON_OPTIONAL_REFS = Object.freeze([
+  '/registry/soft-accounting-export.json',
+]);
 
 /**
  * @param {unknown} value
@@ -12,6 +34,191 @@ export function normalizePartnerCode(value) {
   return String(value || '')
     .trim()
     .toUpperCase();
+}
+
+/**
+ * Query-only opt-in for legacy multi-fetch diagnostic.
+ * Partner hash routes never activate comparison.
+ * @param {string | URL} input
+ * @returns {boolean}
+ */
+export function isLegacyPartnerComparisonRequested(input) {
+  try {
+    const url = input instanceof URL ? input : new URL(String(input), 'https://partners.invalid');
+    const values = url.searchParams.getAll('compare');
+    return values.length === 1 && values[0] === 'legacy';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * @param {unknown} schema
+ * @returns {boolean}
+ */
+export function isPartnersDashboardSchema(schema) {
+  return schema === PARTNERS_DASHBOARD_SCHEMA_V1;
+}
+
+/**
+ * Project partners-dashboard.v1 → ops-shaped view for existing board renderers.
+ * Thin compatibility projection — not a second source of truth.
+ * @param {object | null | undefined} dashboard
+ */
+export function projectDashboardToOpsShape(dashboard) {
+  const partners = Array.isArray(dashboard?.partners) ? dashboard.partners : [];
+  const summary = dashboard?.summary || {};
+  let incompleteOuts = 0;
+  const projected = partners.map(partner => {
+    const code = normalizePartnerCode(partner?.partnerCode);
+    const outs = Array.isArray(partner?.outs)
+      ? partner.outs.map(out => {
+          const status = String(out?.operationalStatus || 'unknown');
+          const incomplete = status === 'unknown' || status === 'blocked';
+          if (incomplete) incompleteOuts += 1;
+          const sportsbookId = String(out?.sportsbookId || '');
+          const maxBet =
+            out?.observedMaxStake?.amount?.minorUnits != null
+              ? String(Number(out.observedMaxStake.amount.minorUnits) / 100)
+              : '—';
+          return {
+            id: out?.outId || '',
+            status,
+            incomplete,
+            maxBet,
+            book: {
+              name: sportsbookId || '—',
+              slug: sportsbookId || '—',
+              type: '—',
+            },
+            funding: { method: String(out?.fundingStatus || 'unknown') },
+            credentials: { username: '—' },
+          };
+        })
+      : [];
+    return {
+      code,
+      callSign: partner?.callSign || `${code}-001`,
+      phase: partner?.operationalPhase || 'incomplete',
+      phaseConceptId: `partner.phase.${partner?.operationalPhase || 'incomplete'}`,
+      outs,
+      tracking: {},
+      accounting: {
+        balance: null,
+        initialCapital: null,
+        ledgerRows: Array.isArray(partner?.accounting?.recentEntries)
+          ? partner.accounting.recentEntries
+          : [],
+        outs: [],
+      },
+      attention: Array.isArray(partner?.attention) ? partner.attention : [],
+      limits: partner?.limits || { tracked: 0, missing: 0, coverageRatio: 0 },
+      communication: partner?.communication || {},
+    };
+  });
+  return {
+    schema: dashboard?.schema || PARTNERS_DASHBOARD_SCHEMA_V1,
+    generatedAt: dashboard?.generatedAt || null,
+    summary: {
+      partners: Number(summary.partnerCount) || projected.length,
+      accounts: Number(summary.registeredOutCount) || 0,
+      readyAccounts: Number(summary.operatorReadyPartnerCount) || 0,
+      incompleteOuts,
+      trackedLimits: 0,
+      communicationReady: projected.filter(p => p.communication?.chatLinked).length,
+    },
+    partners: projected,
+    validation: { ok: true },
+    colors: {},
+    glossary: { conceptIds: [] },
+    source: 'partners-dashboard',
+  };
+}
+
+/**
+ * Project partners-dashboard.v1 → handshake-shaped rows for board stats/tables.
+ * @param {object | null | undefined} dashboard
+ */
+export function projectDashboardToHandshakeShape(dashboard) {
+  const partners = Array.isArray(dashboard?.partners) ? dashboard.partners : [];
+  const rows = partners.map(partner => {
+    const code = normalizePartnerCode(partner?.partnerCode);
+    const comm = partner?.communication || {};
+    const phase = String(comm.handshakeStatus || partner?.operationalPhase || 'unknown');
+    return {
+      partnerCode: code,
+      callSign: partner?.callSign || `${code}-001`,
+      phase,
+      handshakeOk: Boolean(comm.chatLinked) || phase === 'operator_ready',
+      dmSeatStatus: comm.chatLinked ? 'linked' : 'none',
+      gapCount: 0,
+      topGap: null,
+      nextSteps: [],
+      membership: '—',
+      invite: '—',
+      bot: '—',
+    };
+  });
+  return {
+    schema: 'factorywager.telegram-handshake.projected.v1',
+    generatedAt: dashboard?.generatedAt || null,
+    operatorReady: Number(dashboard?.summary?.operatorReadyPartnerCount) || 0,
+    inviteGaps: 0,
+    partners: rows.length,
+    rows,
+    source: 'partners-dashboard',
+  };
+}
+
+/**
+ * Summarize connector snapshot health for the board meta strip.
+ * @param {object | null | undefined} dashboard
+ */
+export function summarizeConnectorSnapshots(dashboard) {
+  const snaps = dashboard?.connectorSnapshots || {};
+  const keys = Object.keys(snaps);
+  let ok = 0;
+  let stale = 0;
+  let unavailable = 0;
+  for (const key of keys) {
+    const status = String(snaps[key]?.dataStatus || 'unavailable');
+    if (status === 'ok') ok += 1;
+    else if (status === 'stale') stale += 1;
+    else unavailable += 1;
+  }
+  return { total: keys.length, ok, stale, unavailable };
+}
+
+/**
+ * Human bake label for meta chips (extracted from board controller).
+ * @param {string | null | undefined} iso
+ * @param {string} [source]
+ * @returns {{ text: string, tone: string }}
+ */
+export function bakeLabel(iso, source = '') {
+  if (!iso) return { text: '—', tone: '' };
+  const t = Date.parse(iso);
+  if (!Number.isFinite(t) || t <= 0) {
+    return {
+      text: source ? `fixture · ${source}` : 'fixture / unset',
+      tone: 'warn',
+    };
+  }
+  if (t < Date.parse('1980-01-01T00:00:00.000Z')) {
+    return {
+      text: source ? `fixture · ${source}` : 'fixture (epoch bake)',
+      tone: 'warn',
+    };
+  }
+  const ageMs = Date.now() - t;
+  const ageHours = ageMs / 3_600_000;
+  const text = new Date(t)
+    .toISOString()
+    .replace('T', ' ')
+    .replace(/\.\d{3}Z$/, 'Z');
+  if (ageHours > 72) return { text: `${text} · stale`, tone: 'warn' };
+  if (ageHours > 24) return { text, tone: 'warn' };
+  return { text, tone: 'ok' };
 }
 
 /**
