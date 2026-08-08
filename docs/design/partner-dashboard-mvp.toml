@@ -3,8 +3,8 @@
 
 [plan]
 schema = "factorywager.partner-dashboard-plan.v2"
-status = "proposal"
-last_reviewed = "2026-08-06"
+status = "implementation-ready"
+last_reviewed = "2026-08-08"
 owner = "@factorywager/partners"
 
 [domain]
@@ -40,9 +40,9 @@ telegram_handshake_adapter = "implemented"
 limit_change_adapter = "implemented"
 current_compatibility_fetch_transport = "implemented"
 canonical_dashboard_browser_loader = "implemented"
-connector_ports = "partial"
-source_adapters = "partial"
-reconciliation = "planned"
+connector_ports = "implemented"
+source_adapters = "implemented"
+reconciliation = "implemented"
 
 [toolchain]
 authority = "config/bun-channels.toml"
@@ -532,6 +532,8 @@ domain_authority = "lib/portal/concept-domains.ts"
 policy = "reuse-active-concepts-and-record-true-gaps-without-semantic-aliasing"
 proposal_gap_policy = "allowed-only-while-plan-status-is-proposal"
 
+gap = []
+
 [[concepts.binding]]
 key = "surface.page"
 concept_id = "page.partners"
@@ -746,125 +748,8 @@ concept_id = "telegram.topic.accounting"
 business_domain = "telegram"
 relation = "communication-topic"
 
-[[concepts.gap]]
-key = "partner.lifecycle_state"
-candidate_concept_id = "partner.lifecycle_state"
-business_domain = "partners"
-blocking = false
-reason = "no existing concept represents the canonical partner relationship lifecycle"
-must_not_alias = ["ops.limits.lifecycle_state"]
-
-[[concepts.gap]]
-key = "out.funding_status"
-candidate_concept_id = "accounting.funding_status"
-business_domain = "accounting"
-blocking = false
-reason = "partial and funded have legacy out-status concepts but unknown and unfunded lack an exact shared concept"
-must_not_alias = ["out.status.blocked", "ops.limits.monitoring_status"]
-
-[[concepts.gap]]
-key = "partner.profile"
-candidate_concept_id = "partner.profile"
-business_domain = "partners"
-blocking = false
-reason = "ops.limits.profile is an account-limit profile and cannot represent canonical partner identity"
-must_not_alias = ["ops.limits.profile"]
-
-[[concepts.gap]]
-key = "partner.lifecycle_provenance"
-candidate_concept_id = "partner.lifecycle_provenance"
-business_domain = "partners"
-blocking = false
-reason = "queryable lifecycle source and mapping evidence needs a stable partner concept"
-must_not_alias = ["ui.semantic.source"]
-
-[[concepts.gap]]
-key = "provider.connection_status"
-candidate_concept_id = "provider.connection_status"
-business_domain = "trading"
-blocking = false
-reason = "provider connectivity is distinct from out readiness and funding"
-must_not_alias = ["out.status.ready", "ops.limits.monitoring_status"]
-
-[[concepts.gap]]
-key = "connector.data_status"
-candidate_concept_id = "connector.data_status"
-business_domain = "operations"
-blocking = false
-reason = "connector freshness includes stale, which ui.semantic.status does not model"
-must_not_alias = ["ui.semantic.status", "ui.semantic.tone"]
-
-[[concepts.gap]]
-key = "accounting.scoped_balance"
-candidate_concept_id = "accounting.scoped_balance"
-business_domain = "accounting"
-blocking = false
-reason = "a partner balance position requires AccountScope, MoneyAmount, and as-of time"
-must_not_alias = ["balanceCents"]
-
-[[concepts.gap]]
-key = "partner.source_conflict"
-candidate_concept_id = "partner.source_conflict"
-business_domain = "partners"
-blocking = false
-reason = "cross-adapter conflict is forensic partner data rather than generic UI status"
-must_not_alias = ["ui.semantic.status"]
-
-[[concepts.gap]]
-key = "partner.attention_item"
-candidate_concept_id = "partner.attention_item"
-business_domain = "partners"
-blocking = false
-reason = "deterministic operator actions need a stable partner-domain meaning"
-must_not_alias = ["ops.limits.monitoring_status"]
-
-[[concepts.gap]]
-key = "ui.filter.partner_code"
-candidate_concept_id = "ui.filter.partnerCode"
-business_domain = "portal"
-blocking = false
-reason = "existing stable UI concept says partnerId and must migrate without changing core wire nomenclature"
-must_not_alias = []
-
-[[concepts.gap]]
-key = "section.summary"
-candidate_concept_id = "section.partnersSummary"
-business_domain = "portal"
-blocking = false
-reason = "page.partners is a page identity rather than the summary region"
-must_not_alias = []
-
-[[concepts.gap]]
-key = "section.roster"
-candidate_concept_id = "section.partnersRoster"
-business_domain = "portal"
-blocking = false
-reason = "no existing section concept identifies the cross-domain partner roster"
-must_not_alias = ["section.partnersAccountsLimits"]
-
-[[concepts.gap]]
-key = "section.profile"
-candidate_concept_id = "section.partnersProfile"
-business_domain = "portal"
-blocking = false
-reason = "onboarding and account-limit profile concepts are narrower than partner profile and lifecycle"
-must_not_alias = ["section.partnersOnboard", "ops.limits.profile"]
-
-[[concepts.gap]]
-key = "section.attention"
-candidate_concept_id = "section.partnersAttention"
-business_domain = "portal"
-blocking = false
-reason = "attention combines identity, accounting, Telegram, limits, and adapter issues"
-must_not_alias = ["ops.limits.monitoring_status"]
-
-[[concepts.gap]]
-key = "section.integrations"
-candidate_concept_id = "section.partnersIntegrations"
-business_domain = "portal"
-blocking = false
-reason = "connection freshness is broader than the compliance data-connection audit section"
-must_not_alias = ["section.dataConnectionAudit"]
+# concept gaps closed 2026-08-08 — leaves in lib/telegram/partner-dashboard-glossary.ts
+# [[concepts.gap]] intentionally empty (implementation-ready)
 
 [theme]
 source = "public/portal/theme.jsonc"
@@ -1110,21 +995,21 @@ label_required = true
 [[presentation.state]]
 axis = "connectorDataStatus"
 value = "ok"
-proposed_concept_id = "connector.data_status"
+concept_id = "connector.data_status"
 theme_role = "freshness_ok"
 label_required = true
 
 [[presentation.state]]
 axis = "connectorDataStatus"
 value = "stale"
-proposed_concept_id = "connector.data_status"
+concept_id = "connector.data_status"
 theme_role = "freshness_stale"
 label_required = true
 
 [[presentation.state]]
 axis = "connectorDataStatus"
 value = "unavailable"
-proposed_concept_id = "connector.data_status"
+concept_id = "connector.data_status"
 theme_role = "freshness_critical"
 label_required = true
 
@@ -1236,7 +1121,7 @@ adapter_version = "1"
 target_owner_package = "@factorywager/partners"
 target_adapter_export = "./adapters/profile"
 port = "PartnerProfileReadPort"
-implementation_status = "planned"
+implementation_status = "implemented"
 enabled = true
 input_kind = "private-toml-glob"
 required = true
@@ -1263,7 +1148,7 @@ adapter_version = "1"
 target_owner_package = "@factorywager/partners"
 target_adapter_export = "./adapters/accounting"
 port = "AccountingReadPort"
-implementation_status = "planned"
+implementation_status = "implemented"
 enabled = true
 input_kind = "sqlite-table"
 required = false
@@ -1288,7 +1173,7 @@ target_owner_package = "@factorywager/partners"
 target_adapter_export = "./adapters/telegram-handshake"
 target_adapter_implementation_status = "implemented"
 port = "CommunicationReadPort"
-implementation_status = "partial"
+implementation_status = "implemented"
 enabled = true
 input_kind = "registry-artifact"
 required = false
@@ -1310,7 +1195,7 @@ target_owner_package = "@factorywager/partners"
 target_adapter_export = "./adapters/limit-changes"
 target_adapter_implementation_status = "implemented"
 port = "LimitChangeObservationPort"
-implementation_status = "partial"
+implementation_status = "implemented"
 enabled = true
 input_kind = "registry-artifact"
 required = false
@@ -1332,7 +1217,7 @@ target_owner_package = "@factorywager/partners"
 target_adapter_export = "./adapters/bookmakers"
 target_adapter_implementation_status = "implemented"
 port = "BookmakerCatalogPort"
-implementation_status = "partial"
+implementation_status = "implemented"
 enabled = true
 input_kind = "registry-artifact"
 required = false
@@ -1356,7 +1241,7 @@ target_owner_package = "@factorywager/partners"
 target_adapter_export = "./adapters/tennis-capacity"
 target_adapter_implementation_status = "implemented"
 port = "CapacityReadPort"
-implementation_status = "partial"
+implementation_status = "implemented"
 enabled = true
 input_kind = "registry-artifact"
 required = false
@@ -1424,22 +1309,20 @@ label = "Partner summary"
 surface_kind = "composite-region"
 business_domains = ["partners", "accounting", "telegram", "compliance"]
 theme_role = "panel_default"
-concept_refs = ["page.partners", "ui.semantic.status", "ui.semantic.source"]
-proposed_concept_id = "section.partnersSummary"
-concept_status = "proposed"
+concept_refs = ["section.partnersSummary", "page.partners", "ui.semantic.status", "ui.semantic.source"]
+concept_status = "existing"
 connectors = ["canonical-profile-config", "accounting-ledger", "legacy-ops-registry"]
 
 [[surfaces.portal.regions]]
 region_id = "roster"
-dom_id = "partner-roster"
-implementation_status = "planned"
+dom_id = "partner-panel"
+implementation_status = "current"
 label = "Partner roster"
 surface_kind = "composite-region"
 business_domains = ["partners"]
 theme_role = "panel_default"
-concept_refs = ["page.partners", "ui.filter.partnerId", "ui.semantic.status"]
-proposed_concept_id = "section.partnersRoster"
-concept_status = "proposed"
+concept_refs = ["section.partnersRoster", "page.partners", "ui.filter.partnerCode", "ui.semantic.status"]
+concept_status = "existing"
 connectors = [
   "canonical-profile-config",
   "accounting-ledger",
@@ -1457,9 +1340,8 @@ label = "Profile and lifecycle"
 surface_kind = "composite-region"
 business_domains = ["partners"]
 theme_role = "panel_default"
-concept_refs = ["page.partners", "ui.semantic.status", "ui.semantic.source"]
-proposed_concept_id = "section.partnersProfile"
-concept_status = "proposed"
+concept_refs = ["section.partnersProfile", "partner.profile", "page.partners", "ui.semantic.status", "ui.semantic.source"]
+concept_status = "existing"
 connectors = ["canonical-profile-config", "sports-terminal"]
 
 [[surfaces.portal.regions]]
@@ -1515,14 +1397,13 @@ connectors = ["telegram-handshake"]
 [[surfaces.portal.regions]]
 region_id = "attention"
 dom_id = "partner-attention"
-implementation_status = "planned"
+implementation_status = "current"
 label = "Attention queue"
 surface_kind = "composite-region"
 business_domains = ["partners", "accounting", "telegram", "compliance", "trading"]
 theme_role = "panel_elevated"
-concept_refs = ["page.partners", "ui.semantic.status", "ui.semantic.source"]
-proposed_concept_id = "section.partnersAttention"
-concept_status = "proposed"
+concept_refs = ["section.partnersAttention", "partner.attention_item", "page.partners", "ui.semantic.status"]
+concept_status = "existing"
 connectors = [
   "canonical-profile-config",
   "accounting-ledger",
@@ -1536,19 +1417,19 @@ connectors = [
 [[surfaces.portal.regions]]
 region_id = "integrations"
 dom_id = "partner-integrations"
-implementation_status = "planned"
+implementation_status = "current"
 label = "Integration freshness"
 surface_kind = "composite-region"
 business_domains = ["partners", "infrastructure", "trading"]
 theme_role = "panel_default"
 concept_refs = [
+  "section.partnersIntegrations",
+  "connector.data_status",
   "api.partner",
   "ui.semantic.artifact",
   "ui.semantic.source",
-  "ui.semantic.status",
 ]
-proposed_concept_id = "section.partnersIntegrations"
-concept_status = "proposed"
+concept_status = "existing"
 connectors = ["tennis-contract", "sports-terminal"]
 
 [[surfaces.portal.section_mount_compatibility]]

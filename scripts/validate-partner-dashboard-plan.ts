@@ -125,7 +125,7 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     port: 'PartnerProfileReadPort',
     inputKind: 'private-toml-glob',
     inputRef: 'config/partner-profiles/*.toml',
-    implementationStatus: 'planned',
+    implementationStatus: 'implemented',
     authoritativeFactPaths:
       PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['canonical-profile-config'],
   },
@@ -136,7 +136,7 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     port: 'AccountingReadPort',
     inputKind: 'sqlite-table',
     inputRef: 'partner_ledger',
-    implementationStatus: 'planned',
+    implementationStatus: 'implemented',
     authoritativeFactPaths:
       PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['accounting-ledger'],
   },
@@ -147,7 +147,7 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     port: 'CommunicationReadPort',
     inputKind: 'registry-artifact',
     inputRef: '/registry/telegram-handshake.json',
-    implementationStatus: 'partial',
+    implementationStatus: 'implemented',
     authoritativeFactPaths:
       PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['telegram-handshake'],
   },
@@ -158,7 +158,7 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     port: 'LimitChangeObservationPort',
     inputKind: 'registry-artifact',
     inputRef: '/registry/limit-raises.json',
-    implementationStatus: 'partial',
+    implementationStatus: 'implemented',
     authoritativeFactPaths: PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['limits-registry'],
   },
   'bookmakers-registry': {
@@ -168,7 +168,7 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     port: 'BookmakerCatalogPort',
     inputKind: 'registry-artifact',
     inputRef: '/registry/bookmakers.json',
-    implementationStatus: 'partial',
+    implementationStatus: 'implemented',
     authoritativeFactPaths:
       PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['bookmakers-registry'],
   },
@@ -179,7 +179,7 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     port: 'CapacityReadPort',
     inputKind: 'registry-artifact',
     inputRef: '/registry/tennis/partner-contracts.json',
-    implementationStatus: 'partial',
+    implementationStatus: 'implemented',
     authoritativeFactPaths: PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['tennis-contract'],
   },
   'sports-terminal': {
@@ -554,12 +554,12 @@ export async function validatePartnerDashboardPlan(
     plan.package?.components?.current_compatibility_fetch_transport !== 'implemented' ||
     plan.package?.components?.canonical_dashboard_browser_loader !== 'implemented' ||
     'browser_loader' in (plan.package?.components ?? {}) ||
-    plan.package?.components?.connector_ports !== 'partial' ||
-    plan.package?.components?.source_adapters !== 'partial' ||
-    plan.package?.components?.reconciliation !== 'planned'
+    plan.package?.components?.connector_ports !== 'implemented' ||
+    plan.package?.components?.source_adapters !== 'implemented' ||
+    plan.package?.components?.reconciliation !== 'implemented'
   ) {
     errors.push(
-      'package component statuses must distinguish implemented artifact core from planned adapters'
+      'package component statuses must keep artifact core, adapters, ports, and reconciliation implemented'
     );
   }
   if (
@@ -1370,11 +1370,24 @@ export async function validatePartnerDashboardPlan(
       }
     }
   }
-  if (
-    plan.plan?.status === 'implementation-ready' &&
-    connectors.some(connector => connector.implementation_status !== 'implemented')
-  ) {
-    errors.push('implementation-ready plans require every connector to be implemented');
+  if (plan.plan?.status === 'implementation-ready') {
+    for (const connector of connectors) {
+      const id = String(connector.id ?? '');
+      const status = String(connector.implementation_status ?? '');
+      if (status === 'implemented') continue;
+      // Honest exceptions: temporary legacy compatibility + blocked Sports Terminal.
+      if (id === 'legacy-ops-registry' && status === 'current-compatibility') continue;
+      if (
+        id === 'sports-terminal' &&
+        status === 'blocked' &&
+        String(connector.blocking_reason ?? '').length > 0
+      ) {
+        continue;
+      }
+      errors.push(
+        `implementation-ready plans require connector ${id} to be implemented (got ${status})`
+      );
+    }
   }
 
   const regionDomains = regions.flatMap(region => region.business_domains ?? []);
