@@ -893,6 +893,105 @@ export function normalizeSeatCapitalDesk(seat) {
 }
 
 /**
+ * Flatten partners[].attention into table rows (severity order: block > warn > info).
+ * @param {object | null | undefined} dashboard
+ * @returns {object[]}
+ */
+export function dashboardAttentionRows(dashboard) {
+  const rank = { block: 0, warn: 1, info: 2 };
+  const rows = [];
+  for (const partner of dashboard?.partners || []) {
+    const code = normalizePartnerCode(partner?.partnerCode);
+    for (const item of partner?.attention || []) {
+      rows.push({
+        partnerCode: code,
+        callSign: partner?.callSign || `${code}-001`,
+        severity: String(item?.severity || 'info'),
+        reasonCode: String(item?.reasonCode || '—'),
+        label: String(item?.label || '—'),
+        actionCommand: item?.actionCommand || null,
+        actionHref: item?.actionHref || null,
+      });
+    }
+  }
+  return rows.sort((a, b) => {
+    const bySev = (rank[a.severity] ?? 9) - (rank[b.severity] ?? 9);
+    if (bySev !== 0) return bySev;
+    return (
+      a.partnerCode.localeCompare(b.partnerCode) ||
+      a.reasonCode.localeCompare(b.reasonCode) ||
+      a.label.localeCompare(b.label)
+    );
+  });
+}
+
+/**
+ * Flatten artifact conflicts[] for the attention region.
+ * @param {object | null | undefined} dashboard
+ * @returns {object[]}
+ */
+export function dashboardConflictRows(dashboard) {
+  const rows = Array.isArray(dashboard?.conflicts) ? dashboard.conflicts : [];
+  return rows
+    .map(c => ({
+      partnerCode: normalizePartnerCode(c?.partnerCode),
+      fieldPath: String(c?.fieldPath || '—'),
+      adapterIds: Array.isArray(c?.adapterIds) ? c.adapterIds.map(String) : [],
+      values: Array.isArray(c?.values) ? c.values : [],
+    }))
+    .filter(r => r.partnerCode)
+    .sort(
+      (a, b) =>
+        a.partnerCode.localeCompare(b.partnerCode) || a.fieldPath.localeCompare(b.fieldPath)
+    );
+}
+
+/**
+ * Connector snapshot rows for integrations region.
+ * @param {object | null | undefined} dashboard
+ * @returns {object[]}
+ */
+export function dashboardConnectorRows(dashboard) {
+  const snaps = dashboard?.connectorSnapshots || {};
+  return Object.keys(snaps)
+    .sort()
+    .map(key => {
+      const snap = snaps[key] || {};
+      return {
+        connector: key,
+        dataStatus: String(snap.dataStatus || 'unavailable'),
+        sourceMode: String(snap.sourceMode || '—'),
+        observedAt: snap.observedAt || null,
+        inputRef: String(snap.inputRef || '—'),
+        reasonCode: snap.reasonCode || null,
+      };
+    });
+}
+
+/**
+ * Per-partner integration freshness (tennis first).
+ * @param {object | null | undefined} dashboard
+ * @returns {object[]}
+ */
+export function dashboardPartnerIntegrationRows(dashboard) {
+  return (dashboard?.partners || [])
+    .map(partner => {
+      const code = normalizePartnerCode(partner?.partnerCode);
+      const tennis = partner?.integrations?.tennis;
+      return {
+        partnerCode: code,
+        callSign: partner?.callSign || `${code}-001`,
+        tennisStatus: tennis ? String(tennis.dataStatus || 'unavailable') : 'n/a',
+        tennisObservedAt: tennis?.observedAt || null,
+        sportsTerminalStatus: partner?.integrations?.sportsTerminal
+          ? String(partner.integrations.sportsTerminal.dataStatus || 'unavailable')
+          : 'n/a',
+      };
+    })
+    .sort((a, b) => a.partnerCode.localeCompare(b.partnerCode));
+}
+
+/**
  * Project soft-accounting-export into board caches.
  * @param {object | null | undefined} softExport
  */
