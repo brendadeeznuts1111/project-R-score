@@ -37,6 +37,7 @@ import {
   TENNIS_CAPACITY_RUNTIME,
   PARTNER_DASHBOARD_ARTIFACT_REF,
   PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
+  PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2,
   PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
   PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
   PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS,
@@ -191,17 +192,6 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     inputRef: '',
     implementationStatus: 'blocked',
     authoritativeFactPaths: PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['sports-terminal'],
-  },
-  'legacy-ops-registry': {
-    snapshotKey: 'legacyOps',
-    required: false,
-    sourceSystemId: 'factorywager-partners-ops',
-    port: 'LegacyPartnerProjectionPort',
-    inputKind: 'registry-artifact',
-    inputRef: '/registry/partners-ops.json',
-    implementationStatus: 'current-compatibility',
-    authoritativeFactPaths:
-      PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['legacy-ops-registry'],
   },
 };
 
@@ -691,8 +681,9 @@ export async function validatePartnerDashboardPlan(
   if (
     plan.shapes?.dashboard_artifact?.active_out_identity_field !== 'activeOutIds' ||
     plan.shapes?.dashboard_artifact?.conflict_value_policy !== 'redacted-json-scalars-only' ||
-    (legacyStatus !== 'retired' &&
-      plan.shapes?.dashboard_artifact?.schema !== PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1)
+    (legacyStatus === 'retired'
+      ? plan.shapes?.dashboard_artifact?.schema !== PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2
+      : plan.shapes?.dashboard_artifact?.schema !== PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1)
   ) {
     errors.push('dashboard artifact must expose active OutIds and scalar-only conflict evidence');
   }

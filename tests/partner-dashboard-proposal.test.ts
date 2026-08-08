@@ -114,7 +114,8 @@ describe('partner dashboard proposal artifact', () => {
     );
     expect(sportsConnector).toMatchObject({
       status: 'blocked',
-      nextAction: 'Unmounted route; define auth, IDs, and parsed money-free shape',
+      nextAction:
+        'one exact parsed input, explicit external-ID resolution, authenticated route integration, and integer-minor-unit money wire are required',
     });
     expect(auditSql.match(/UNION ALL SELECT/g)).toHaveLength(3);
     expect(auditSql).toContain("'unsafe-input',");

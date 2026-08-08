@@ -1,12 +1,12 @@
 {
-  "schema": "factorywager.partners-dashboard.v1",
-  "generatedAt": "2026-08-08T23:11:19.784Z",
+  "schema": "factorywager.partners-dashboard.v2",
+  "generatedAt": "2026-08-08T23:38:07.859Z",
   "connectorSnapshots": {
     "profiles": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:11:19.784Z",
+      "observedAt": "2026-08-08T23:38:07.859Z",
       "ageSeconds": 0,
       "inputRef": "config/partner-profiles/*.toml"
     },
@@ -14,7 +14,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:11:19.784Z",
+      "observedAt": "2026-08-08T23:38:07.859Z",
       "ageSeconds": 0,
       "inputRef": "partner_ledger"
     },
@@ -22,7 +22,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:11:19.784Z",
+      "observedAt": "2026-08-08T23:38:07.859Z",
       "ageSeconds": 0,
       "inputRef": "/registry/telegram-handshake.json"
     },
@@ -30,7 +30,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:11:19.784Z",
+      "observedAt": "2026-08-08T23:38:07.859Z",
       "ageSeconds": 0,
       "inputRef": "/registry/limit-raises.json"
     },
@@ -38,7 +38,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:11:19.784Z",
+      "observedAt": "2026-08-08T23:38:07.859Z",
       "ageSeconds": 0,
       "inputRef": "/registry/bookmakers.json"
     },
@@ -46,7 +46,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:11:19.784Z",
+      "observedAt": "2026-08-08T23:38:07.859Z",
       "ageSeconds": 0,
       "inputRef": "/registry/tennis/partner-contracts.json"
     },
@@ -55,14 +55,6 @@
       "sourceMode": "none",
       "reasonCode": "optional_source_unavailable",
       "inputRef": ""
-    },
-    "legacyOps": {
-      "dataStatus": "ok",
-      "sourceMode": "current",
-      "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:11:19.784Z",
-      "ageSeconds": 0,
-      "inputRef": "/registry/partners-ops.json"
     }
   },
   "activeOutIds": [
@@ -188,13 +180,13 @@
       "callSign": "ASH-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T23:11:19.784Z",
+        "effectiveAt": "2026-08-08T23:38:07.859Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T23:11:19.784Z",
+          "observedAt": "2026-08-08T23:38:07.859Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -354,13 +346,13 @@
       "callSign": "BIL-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T23:11:19.784Z",
+        "effectiveAt": "2026-08-08T23:38:07.859Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T23:11:19.784Z",
+          "observedAt": "2026-08-08T23:38:07.859Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -455,13 +447,13 @@
       "callSign": "NOV-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T23:11:19.784Z",
+        "effectiveAt": "2026-08-08T23:38:07.859Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T23:11:19.784Z",
+          "observedAt": "2026-08-08T23:38:07.859Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -591,13 +583,13 @@
       "callSign": "SPEN-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T23:11:19.784Z",
+        "effectiveAt": "2026-08-08T23:38:07.859Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T23:11:19.784Z",
+          "observedAt": "2026-08-08T23:38:07.859Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"

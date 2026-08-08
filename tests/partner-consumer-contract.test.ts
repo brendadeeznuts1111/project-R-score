@@ -61,7 +61,7 @@ describe('partner dashboard consumer contract', () => {
     expect(legacyRefs).not.toContain(PARTNER_DASHBOARD_ARTIFACT_REF);
     expect(Object.isFrozen(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT)).toBe(true);
     expect(Object.isFrozen(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN)).toBe(true);
-    expect(isPartnerDashboardArtifactSchema('factorywager.partners-dashboard.v1')).toBe(true);
+    expect(isPartnerDashboardArtifactSchema('factorywager.partners-dashboard.v2')).toBe(true);
     expect(isPartnerDashboardArtifactSchema('factorywager.partners-ops.v2')).toBe(false);
   });
 

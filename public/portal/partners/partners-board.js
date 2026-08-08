@@ -11,6 +11,8 @@ export const PARTNERS_DASHBOARD_ARTIFACT_REF = '/registry/partners-dashboard.jso
 
 /** Active artifact schema for primary board load. */
 export const PARTNERS_DASHBOARD_SCHEMA_V1 = 'factorywager.partners-dashboard.v1';
+/** Active schema after legacy-ops connector retirement. */
+export const PARTNERS_DASHBOARD_SCHEMA_V2 = 'factorywager.partners-dashboard.v2';
 
 /**
  * Optional ancillary registry refs loaded *after* the canonical dashboard via
@@ -43,7 +45,7 @@ export function isLegacyPartnerComparisonRequested(_input) {
  * @returns {boolean}
  */
 export function isPartnersDashboardSchema(schema) {
-  return schema === PARTNERS_DASHBOARD_SCHEMA_V1;
+  return schema === PARTNERS_DASHBOARD_SCHEMA_V2 || schema === PARTNERS_DASHBOARD_SCHEMA_V1;
 }
 
 /**

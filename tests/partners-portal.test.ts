@@ -169,7 +169,7 @@ describe('partners portal board', () => {
     expect(html).not.toContain('?compare=legacy');
     expect(html).not.toContain(PARTNER_PROFILE_COVERAGE_INPUT_REF);
     const dashboard = await Bun.file(`public${PARTNER_DASHBOARD_ARTIFACT_REF}`).json();
-    expect(dashboard.schema).toBe('factorywager.partners-dashboard.v1');
+    expect(dashboard.schema).toBe('factorywager.partners-dashboard.v2');
     expect(dashboard.summary.partnerCount).toBeGreaterThan(0);
     expect(Array.isArray(dashboard.partners)).toBe(true);
     // Legacy bake inputs remain available for bake + diagnostic compare

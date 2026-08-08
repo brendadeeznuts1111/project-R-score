@@ -44,7 +44,6 @@ export const PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS = {
     'partners[].integrations.tennis',
   ],
   'sports-terminal': [],
-  'legacy-ops-registry': [],
 } as const;
 
 export const PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS = {
@@ -55,7 +54,6 @@ export const PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS = {
   bookmakers: '/registry/bookmakers.json',
   tennis: '/registry/tennis/partner-contracts.json',
   sportsTerminal: '',
-  legacyOps: '/registry/partners-ops.json',
 } as const;
 
 export const PARTNER_DASHBOARD_REQUIRED_CONNECTOR_KEYS = ['profiles'] as const;

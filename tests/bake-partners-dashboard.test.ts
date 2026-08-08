@@ -2,7 +2,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   PARTNER_DASHBOARD_ARTIFACT_REF,
-  PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
+  PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2,
   parsePartnerDashboardArtifact,
 } from '../packages/partners/src/index.ts';
 import { buildPartnersDashboardArtifact } from '../scripts/bake-partners-dashboard.ts';
@@ -12,7 +12,7 @@ const ARTIFACT_PATH = `public${PARTNER_DASHBOARD_ARTIFACT_REF}`;
 describe('bake partners-dashboard', () => {
   test('assembles a parseable artifact from public registry inputs', async () => {
     const artifact = await buildPartnersDashboardArtifact('2026-08-08T18:00:00.000Z');
-    expect(artifact.schema).toBe(PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1);
+    expect(artifact.schema).toBe(PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2);
     expect(artifact.generatedAt).toBe('2026-08-08T18:00:00.000Z');
     expect(artifact.summary.partnerCount).toBe(4);
     expect(artifact.summary.canonicalProfileCount).toBe(4);
@@ -50,7 +50,7 @@ describe('bake partners-dashboard', () => {
     expect(exists).toBe(true);
     const raw = await Bun.file(ARTIFACT_PATH).json();
     const artifact = parsePartnerDashboardArtifact(raw);
-    expect(artifact.schema).toBe(PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1);
+    expect(artifact.schema).toBe(PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2);
     expect(artifact.summary.partnerCount).toBeGreaterThanOrEqual(4);
     expect(artifact.summary.canonicalProfileCount).toBeGreaterThanOrEqual(4);
     expect(artifact.summary.balancePositions.length).toBeGreaterThan(0);

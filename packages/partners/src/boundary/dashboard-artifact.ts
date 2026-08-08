@@ -23,7 +23,7 @@ import {
   OUT_FUNDING_STATUSES,
   OUT_OPERATIONAL_STATUSES,
   PARTNER_CONNECTOR_SNAPSHOT_KEYS,
-  PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
+  PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2,
   PARTNER_LIFECYCLE_STATES,
   PARTNER_OPERATIONAL_PHASES,
   PARTNER_SOURCE_CONFLICT_FIELD_PATHS,
@@ -561,8 +561,8 @@ export function parsePartnerDashboardArtifact(value: unknown): PartnerDashboardA
     ],
     'artifact'
   );
-  if (value.schema !== PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1) {
-    throw new TypeError(`artifact.schema must be ${PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1}`);
+  if (value.schema !== PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2) {
+    throw new TypeError(`artifact.schema must be ${PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2}`);
   }
   assertIsoTime(value.generatedAt, 'artifact.generatedAt');
   assertRecord(value.connectorSnapshots, 'artifact.connectorSnapshots');

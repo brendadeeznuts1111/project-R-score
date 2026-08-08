@@ -26,7 +26,7 @@ import {
 const BOARD = 'public/portal/partners/index.html';
 
 const sampleDashboard = {
-  schema: 'factorywager.partners-dashboard.v1',
+  schema: 'factorywager.partners-dashboard.v2',
   generatedAt: '2026-08-08T18:00:00.000Z',
   connectorSnapshots: {
     profiles: { dataStatus: 'ok' },
@@ -36,7 +36,6 @@ const sampleDashboard = {
     bookmakers: { dataStatus: 'unavailable' },
     tennis: { dataStatus: 'unavailable' },
     sportsTerminal: { dataStatus: 'unavailable' },
-    legacyOps: { dataStatus: 'ok' },
   },
   summary: {
     partnerCount: 2,
@@ -118,8 +117,8 @@ describe('partners-dashboard board cutover', () => {
     expect(handshake.rows).toHaveLength(2);
 
     const connectors = summarizeConnectorSnapshots(sampleDashboard);
-    expect(connectors.total).toBe(8);
-    expect(connectors.ok).toBe(3);
+    expect(connectors.total).toBe(7);
+    expect(connectors.ok).toBe(2);
     expect(connectors.stale).toBe(1);
     expect(connectors.unavailable).toBe(4);
 
