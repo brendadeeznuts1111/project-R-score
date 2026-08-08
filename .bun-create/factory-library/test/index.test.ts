@@ -1,7 +1,7 @@
 import { beforeEach, afterEach, describe, expect, test } from "bun:test";
-import { hello, getCallCount, resetCallCount } from "./index";
+import { hello, getCallCount, resetCallCount } from "../src/index";
 
-describe("{{name}}", () => {
+describe("library entry point", () => {
   // ── Lifecycle ─────────────────────────────────────────────────────
 
   beforeEach(() => {

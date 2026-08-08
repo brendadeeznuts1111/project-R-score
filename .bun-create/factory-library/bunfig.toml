@@ -1,4 +1,4 @@
-# {{name}} — project bunfig.toml
+# Project bunfig.toml
 # @see https://bun.sh/docs/runtime/console — console depth
 # @see https://bun.sh/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind — noOrphans
 # @see https://bun.sh/docs/bundler/fullstack#inline-environment-variables — inline env vars
@@ -14,8 +14,8 @@ depth = 4
 
 [serve.static]
 # Inline only PUBLIC_* env vars into frontend bundles at build time.
-# Use this to expose factory registry URLs, API keys (public), etc.
-# without hardcoding them in source.
+# Use this to expose non-secret browser configuration such as a registry URL.
+# Never expose credentials, private tokens, or API keys through PUBLIC_*.
 # @see https://bun.sh/docs/bundler/fullstack#inline-environment-variables
 #
 # For production builds, use the equivalent Bun.build() option:

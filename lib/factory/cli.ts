@@ -58,7 +58,7 @@ Usage:
 Commands:
  *   create <template> [<dest>]  Scaffold a new project from a template (wraps bun create)
   create                       Scaffold a new project
-    --publish                   Auto-publish to registry after scaffold
+    --publish                   Register a scaffold marker in the registry after scaffold
     --force                     Overwrite existing files
     --no-install                Skip dependency install
     --no-git                    Skip git init
@@ -151,7 +151,7 @@ Template sources:
   react   ./MyComponent.tsx|jsx → full hot-reload frontend env
 
 Options:
-  --publish      Auto-publish the scaffolded project to the registry
+  --publish      Register a scaffold marker in the registry (not a packed archive)
   --force        Overwrite existing files (remote templates)
   --no-install   Skip dependency install
   --no-git       Skip git init

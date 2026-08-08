@@ -1,13 +1,11 @@
-/**
- * {{name}} — {{description}}
- */
+/** A minimal Bun-native library entry point. Replace this API with your domain API. */
 
 let callCount = 0;
 
 /** Returns a friendly greeting and increments the internal call counter. */
 export function hello(name?: string): string {
   callCount++;
-  return `Hello, ${name ?? "world"}!`;
+  return `Hello, ${name ?? 'world'}!`;
 }
 
 /** Returns the number of times `hello()` has been called. */

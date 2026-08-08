@@ -1,49 +1,48 @@
-# {{name}}
+# Bun-native library
 
-{{description}}
+This is a small, test-first starting point for a library consumed by Bun.
 
-Factory library scaffold for the FactoryWager monorepo. Use this template to
-mint a small Bun-native package, prove it with tests, and optionally publish to
-the internal R2 artifact registry.
+## First five minutes
 
-## Scaffold
-
-From the monorepo root (template lives in `.bun-create/factory-library`):
+1. Set the package `description` and confirm the generated `name` in `package.json`.
+2. Replace the `hello` example in `src/index.ts` with the public API.
+3. Update the matching tests in `src/index.test.ts`.
+4. Run the local proof:
 
 ```bash
-# Preferred — factory CLI wraps bun create + optional publish
-bun run factory create factory-library {{name}}
-bun run factory create factory-library {{name}} --publish
-
-# Or bun create directly (same template search path)
-bun create factory-library ./packages/{{name}}
+bun test
+bun run build
+bun pm pack --dry-run
 ```
 
-Flags worth knowing:
+`exports`, `module`, and `types` intentionally point at TypeScript source: this is a
+Bun-native template, not a precompiled Node/browser distribution. Keep the public API
+at `src/index.ts` unless you deliberately introduce a build-and-declaration pipeline.
 
-| Flag | Effect |
-|------|--------|
-| `--publish` | After scaffold, publish to the Factory registry |
-| `--force` | Overwrite existing destination files |
-| `--no-install` | Skip `bun install` in the new tree |
-| `--no-git` | Skip `git init` |
+## Scaffold from the monorepo
 
-Env: `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` for live registry access;
-optional `FACTORY_REGISTRY_URL`, `BUN_CREATE_DIR`.
+Run this from the FactoryWager monorepo root, where `.bun-create/factory-library` is
+available. Bun names the new package from the destination directory.
 
-## Usage
+```bash
+# Preferred: the Factory wrapper provides consistent local-template routing.
+bun run factory:create -- factory-library ./packages/my-library
 
-```ts
-import { hello } from "{{name}}";
-
-console.log(hello());
+# Direct Bun route: equivalent when run from the monorepo root.
+bun create factory-library ./packages/my-library
 ```
+
+`bun create` initializes Git and installs dependencies by default. Use Bun's documented
+create flags only when needed; inspect them on the active runtime with `bun create --help`.
+The destination must be disposable: local-template scaffolding may replace it.
 
 ## Development
 
 ```bash
 bun install
+bun dev
 bun test
+bun run test:coverage
 bun run build
 bun run bench          # Bun.nanoseconds throughput JSON
 bun run profile:cpu    # same workload under --cpu-prof → ./profiles/*.cpuprofile
@@ -60,66 +59,33 @@ Harness catalog (monorepo root): `bun run bench:status` ·
 [`docs/harness/tenants/bun-bench-profiling.md`](../../docs/harness/tenants/bun-bench-profiling.md).
 Upstream: [Bun benchmarking](https://bun.com/docs/project/benchmarking).
 
-## Publish
+## Package and publish
 
-Package the library and push to the internal registry (from monorepo tooling):
 
-```bash
-# After build / pack
-bun run factory:publish ./path/to/{{name}}-0.1.0.tgz \
-  --name @factorywager/{{name}} --version 0.1.0 --type library
-
-# Refresh Pages-facing registry snapshot when consumers need the new version
-bun run factory:snapshot   # → public/registry/registry.json
-# or: bun lib/factory/cli.ts snapshot public/registry/registry.json
-```
-
-List / install:
+Package from this library directory, then publish the resulting archive from the
+monorepo root. Publishing is an explicit, separate operation.
 
 ```bash
-bun run factory:list
-bun run factory:install {{name}}
+# In the library directory
+bun pm pack
+
+# In the monorepo root; replace paths and metadata with the actual values.
+bun run factory:publish ./packages/my-library/my-library-0.1.0.tgz \
+  --name my-library --version 0.1.0 --type library
 ```
 
-See [lib/factory/README.md](../../lib/factory/README.md) and proof claim
-`factory-registry-cli-v1` in [docs/harness/PROOF.md](../../docs/harness/PROOF.md).
+If portal consumers need the new registry state, refresh the static snapshot after a
+successful publish:
 
-## PR claim table
-
-Every non-draft PR must fill **Claim → evidence** or CI fails
-(`bun scripts/check-pr-claim.ts`). Start from
-[`.github/pull_request_template.md`](../../.github/pull_request_template.md).
-
-Example for a new factory library:
-
-| Claim (one sentence) | Kind | Evidence |
-|----------------------|------|----------|
-| Scaffold builds and unit tests pass for `{{name}}` | unit | `bun test` in package dir (exit 0) |
-| Package published and listable on Factory registry | deployed | `bun run factory:list` shows `@factorywager/{{name}}@…` |
-
-Also complete **Artifact publish** in the PR template when you publish or rebase
-the registry snapshot. Kinds must be `unit` / `boundary` / `journey` / `deployed`
-(optionally joined with `+`).
-
-## Consumers
-
-If other projects import this library via `@factorywager/{{name}}`, use the
-Bun plugin in `plugin.example.ts` to resolve the import path at build time:
-
-```ts
-import { factoryPlugin } from "../plugin.example";
-await Bun.build({ entrypoints: ["./app.ts"], plugins: [factoryPlugin] });
+```bash
+bun run factory:snapshot
 ```
 
-See [Bun Plugins](https://bun.sh/docs/runtime/plugins#onresolve) for the full API.
+`factory create ... --publish` registers a scaffold marker; it does not replace the
+archive publish step above.
 
 ## Configuration
 
-`bunfig.toml` is pre-configured with:
-
-- **Console depth** — `[console] depth = 4` for `console.log` / `Bun.inspect` output
-- **Inline env vars** — `[serve.static] env = "PUBLIC_*"` exposes `process.env.PUBLIC_*`
-  variables to frontend bundles at build time. Set `PUBLIC_REGISTRY_URL` in `.env` and
-  Bun inlines it — no custom plugin needed.
-
-See [Inline Environment Variables](https://bun.sh/docs/bundler/fullstack#inline-environment-variables).
+`bun dev` watches and executes the source entry point while you work. `bunfig.toml` keeps
+child processes tied to the parent and configures readable console output. `[serve.static]
+env = "PUBLIC_*"` is only for non-secret browser configuration.
