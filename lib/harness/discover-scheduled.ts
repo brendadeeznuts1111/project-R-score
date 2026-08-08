@@ -155,6 +155,26 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     reason: 'OS cron preview for portal-snapshot data-plane (not a spine tenant)',
   },
   {
+    id: 'pkg-threads-research-cron-preview',
+    source: 'package-script',
+    match: 'threads:research:cron:preview',
+    reason:
+      'Read-only schedule preview for Codex weakest-thread research (operator OS cron; not a spine tenant)',
+  },
+  {
+    id: 'pkg-threads-research-cron-register',
+    source: 'package-script',
+    match: 'threads:research:cron:register',
+    reason:
+      'OS cron registration for Codex weakest-thread research (tools/thread-research-cron.ts)',
+  },
+  {
+    id: 'pkg-threads-research-cron-remove',
+    source: 'package-script',
+    match: 'threads:research:cron:remove',
+    reason: 'OS cron removal for Codex weakest-thread research (not a spine tenant)',
+  },
+  {
     id: 'pkg-vault-health-cron-register',
     source: 'package-script',
     match: 'vault:health:cron:register',

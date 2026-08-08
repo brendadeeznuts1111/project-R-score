@@ -152,6 +152,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     gateClass: 'human-only',
     gateRef: 'none',
     evidence: [
+      'bun test tests/bench-status.test.ts && bun run bench:status -- --json',
       'bun run bench:status -- --json',
       'bun test tests/bench-status.test.ts',
       'tools/bench-status.ts',
