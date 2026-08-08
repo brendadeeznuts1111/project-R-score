@@ -82,4 +82,6 @@ The harness catalog and the skill-loop registry are related but not identical
 domains. The catalog contains every repository skill definition; only skills
 with executable loop phases belong in
 `.agents/skills/ast-grep/skill-loop-registry.json`. `bun run skills:validate`
-checks both domains and their metadata alignment before the catalog is merged.
+checks skill definitions, loop registration, and metadata alignment. The focused
+`tests/skills-catalog.test.ts` proof compares the baked harness catalog with the
+live repository skill definitions before the catalog is merged.

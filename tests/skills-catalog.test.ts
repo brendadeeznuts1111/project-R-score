@@ -110,6 +110,21 @@ describe('buildHarnessSkillsCatalog', () => {
     expect(catalog.skills.some((s) => s.name === 'audit-gap-close')).toBe(true);
     expect(catalog.skillLoopRegistry).toContain('skill-loop-registry.json');
   });
+
+  test('keeps the baked harness catalog aligned with live skill definitions', async () => {
+    const root = join(import.meta.dir, '..');
+    const live = await buildHarnessSkillsCatalog(root);
+    const baked = (await Bun.file(
+      join(root, 'public/registry/harness-skills-catalog.json')
+    ).json()) as Awaited<ReturnType<typeof buildHarnessSkillsCatalog>>;
+    const stableCatalog = (catalog: Awaited<ReturnType<typeof buildHarnessSkillsCatalog>>) => ({
+      ...catalog,
+      scannedAt: '<generated>',
+      skills: catalog.skills.map(({ updatedAt: _updatedAt, ...skill }) => skill),
+    });
+
+    expect(stableCatalog(baked)).toEqual(stableCatalog(live));
+  });
 });
 
 describe('packageSkill', () => {
