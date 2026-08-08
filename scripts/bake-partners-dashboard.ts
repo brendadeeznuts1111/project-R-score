@@ -5,16 +5,20 @@
  * Bake /registry/partners-dashboard.json — single canonical partner dashboard
  * read model for /portal/partners/.
  *
- * Joins existing public registry sources via pure package builders:
- *   buildPartnerDashboardRecords + evaluateConnectorFreshness + assemblePartnerDashboardArtifact
+ * Pipeline (pure package, I/O only at edges):
+ *   1. buildPartnerDashboardRecords (profiles · coverage · telegram · legacy · optional ledger)
+ *   2. reconcilePartnerDashboardFacts (tennis-first capacity → activeOutIds)
+ *   3. assemblePartnerDashboardArtifact
  *
- * Empty accounting + empty activeOutIds are intentional until those connectors join.
+ * Optional ledger: public/registry/partner-ledger.json (redacted snapshot).
+ * Soft plays export is not finance authority and is not consumed here.
  */
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import {
   PARTNER_CONNECTOR_SNAPSHOT_KEYS,
   PARTNER_DASHBOARD_ARTIFACT_REF,
   PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS,
+  adaptAccountingFromLedgerSnapshot,
   assemblePartnerDashboardArtifact,
   buildPartnerDashboardRecords,
   evaluateConnectorFreshness,
@@ -22,7 +26,11 @@ import {
   parsePartnerDashboardArtifact,
   parsePartnerProfileCoverageArtifact,
   parseTelegramHandshakeArtifact,
+  parseTennisCapacityArtifact,
+  reconcilePartnerDashboardFacts,
   type ConnectorSnapshot,
+  type PartnerAccountingObservation,
+  type TennisCapacityProjection,
 } from '../packages/partners/src/index.ts';
 
 const argv = import.meta.main
@@ -35,6 +43,9 @@ const PROFILE_PATH = 'public/registry/partner-profiles.json';
 const COVERAGE_PATH = 'public/registry/partner-profile-coverage.json';
 const OPS_PATH = 'public/registry/partners-ops.json';
 const TELEGRAM_PATH = 'public/registry/telegram-handshake.json';
+const TENNIS_PATH = 'public/registry/tennis/partner-contracts.json';
+/** Optional redacted partner_ledger snapshot — never Soft plays export. */
+const LEDGER_PATH = 'public/registry/partner-ledger.json';
 
 function connectorSnapshots(asOf: string): Record<string, ConnectorSnapshot> {
   return Object.fromEntries(
@@ -70,19 +81,49 @@ async function loadJson(path: string): Promise<unknown> {
   return file.json();
 }
 
+async function loadOptionalJson(path: string): Promise<unknown | undefined> {
+  const file = Bun.file(path);
+  if (!(await file.exists())) return undefined;
+  return file.json();
+}
+
+function bookKeyMapFromLegacy(
+  legacy: ReturnType<typeof parseLegacyPartnersOpsProjection>
+): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const partner of legacy.partners) {
+    for (const out of partner.outs) {
+      // bare slug + CODE-qualified for accounting book: scopes
+      map[out.observedBookSlug] = out.outId;
+      map[`${partner.partnerCode}:${out.observedBookSlug}`] = out.outId;
+    }
+  }
+  return map;
+}
+
 export async function buildPartnersDashboardArtifact(
   generatedAt = new Date().toISOString()
 ): Promise<ReturnType<typeof assemblePartnerDashboardArtifact>> {
-  const [profiles, coverageRaw, legacyRaw, telegramRaw] = await Promise.all([
+  const [profiles, coverageRaw, legacyRaw, telegramRaw, tennisRaw, ledgerRaw] = await Promise.all([
     loadJson(PROFILE_PATH),
     loadJson(COVERAGE_PATH),
     loadJson(OPS_PATH),
     loadJson(TELEGRAM_PATH),
+    loadOptionalJson(TENNIS_PATH),
+    loadOptionalJson(LEDGER_PATH),
   ]);
 
   const coverage = parsePartnerProfileCoverageArtifact(coverageRaw);
   const legacyOps = parseLegacyPartnersOpsProjection(legacyRaw);
   const telegram = parseTelegramHandshakeArtifact(telegramRaw);
+
+  let accounting: PartnerAccountingObservation[] | undefined;
+  if (ledgerRaw !== undefined) {
+    accounting = adaptAccountingFromLedgerSnapshot(ledgerRaw, {
+      observedAt: generatedAt,
+      bookKeyToOutId: bookKeyMapFromLegacy(legacyOps),
+    });
+  }
 
   const built = buildPartnerDashboardRecords({
     generatedAt,
@@ -90,14 +131,26 @@ export async function buildPartnersDashboardArtifact(
     profileCoverage: coverage,
     legacyOps,
     telegram,
+    ...(accounting ? { accounting } : {}),
+  });
+
+  let tennis: TennisCapacityProjection | undefined;
+  if (tennisRaw !== undefined) {
+    tennis = parseTennisCapacityArtifact(tennisRaw);
+  }
+
+  const reconciled = reconcilePartnerDashboardFacts({
+    partners: built.partners,
+    ...(tennis ? { tennis } : {}),
   });
 
   return assemblePartnerDashboardArtifact({
     generatedAt,
     connectorSnapshots: connectorSnapshots(generatedAt) as never,
     canonicalProfileCodes: built.canonicalProfileCodes,
-    activeOutIds: built.activeOutIds,
-    partners: built.partners,
+    activeOutIds: reconciled.activeOutIds,
+    partners: reconciled.partners,
+    conflicts: reconciled.conflicts,
   });
 }
 
@@ -122,6 +175,7 @@ async function main(): Promise<void> {
     console.log(
       `partners-dashboard is current (${next.summary.partnerCount} partners · ` +
         `${next.summary.canonicalProfileCount} canonical · ` +
+        `${next.summary.activeOutCount} active outs · ` +
         `${next.summary.registeredOutCount} outs)`
     );
     return;
@@ -135,6 +189,7 @@ async function main(): Promise<void> {
   console.log(
     `wrote ${outputPath} (${artifact.summary.partnerCount} partners · ` +
       `${artifact.summary.canonicalProfileCount} canonical · ` +
+      `${artifact.summary.activeOutCount} active outs · ` +
       `${artifact.summary.registeredOutCount} outs · schema ${artifact.schema})`
   );
 }

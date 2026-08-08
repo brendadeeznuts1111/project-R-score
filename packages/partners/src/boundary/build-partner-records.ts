@@ -7,10 +7,14 @@
  *   - optional telegram-handshake → communication block
  *   - optional legacy partners-ops → out skeleton (visibility only; status is
  *     mapped with heuristic confidence until tennis/bookmakers reconcile)
+ *   - optional accounting-ledger observations → balances, recent entries,
+ *     out-scoped fundingStatus (never OutOperationalStatus)
  *
- * Accounting / limits / integrations remain empty stubs until their adapters join.
+ * Capacity (`activeOutIds`, tennis integrations) is applied *after* this builder
+ * via `reconcilePartnerDashboardFacts`. Limits remain empty until that adapter joins.
  * Callers pass already-parsed adapter outputs — this module does no I/O.
  */
+import type { PartnerAccountingObservation } from '../adapters/accounting-ledger.ts';
 import {
   adaptLifecycleFromCanonicalProfiles,
   type PartnerLifecycleObservation,
@@ -29,6 +33,7 @@ import {
   CANONICAL_PROFILE_SOURCE_SYSTEM_ID,
   PROFILE_MIGRATION_REQUIRED_REASON,
   type OutFundingStatus,
+  type OutId,
   type OutOperationalStatus,
   type PartnerCode,
   type PartnerDashboardOut,
@@ -49,15 +54,22 @@ export type BuildPartnerRecordsInput = {
   legacyOps?: LegacyPartnerProjection;
   /** Optional telegram handshake observations. */
   telegram?: readonly PartnerCommunicationObservation[];
+  /**
+   * Optional accounting-ledger observations (from adaptAccountingFromLedger*).
+   * Partners without a row keep empty accounting; unknown CODEs are ignored.
+   */
+  accounting?: readonly PartnerAccountingObservation[];
 };
 
 export type BuildPartnerRecordsResult = {
   partners: PartnerDashboardRecord[];
   canonicalProfileCodes: PartnerCode[];
-  /** Empty until tennis capacity joins; assemble accepts empty active set. */
+  /** Always empty here — tennis capacity runs in reconcilePartnerDashboardFacts. */
   activeOutIds: [];
   coverageEvidence: PartnerProfileCoverageEvidence[];
   lifecycle: PartnerLifecycleObservation[];
+  /** Accounting observations that were applied (subset of input). */
+  accounting: PartnerAccountingObservation[];
 };
 
 const LEGACY_OUT_STATUS_MAP: Record<
@@ -89,6 +101,32 @@ function emptyLimits(): PartnerDashboardRecord['limits'] {
 
 function emptyIntegrations(): PartnerDashboardRecord['integrations'] {
   return {};
+}
+
+function accountingFor(
+  obs: PartnerAccountingObservation | undefined
+): PartnerDashboardRecord['accounting'] {
+  if (!obs) return emptyAccounting();
+  return {
+    balancePositions: obs.balancePositions.map(position => structuredClone(position)),
+    recentEntries: obs.recentEntries.map(entry => structuredClone(entry)),
+  };
+}
+
+/** Accounting-ledger owns out funding; legacy heuristic remains when no observation. */
+function applyOutFunding(
+  outs: PartnerDashboardOut[],
+  funding: PartnerAccountingObservation['outFunding'] | undefined
+): PartnerDashboardOut[] {
+  if (!funding?.length) return outs;
+  const byOut = new Map<OutId, OutFundingStatus>(
+    funding.map(row => [row.outId, row.fundingStatus])
+  );
+  return outs.map(out => {
+    const next = byOut.get(out.outId);
+    if (next === undefined) return out;
+    return { ...out, fundingStatus: next };
+  });
 }
 
 function telegramCommunication(
@@ -163,6 +201,12 @@ export function buildPartnerDashboardRecords(
     (input.telegram ?? []).map(row => [row.partnerCode, row] as const)
   );
 
+  const accountingByCode = new Map(
+    (input.accounting ?? []).map(row => [row.partnerCode, row] as const)
+  );
+  // Accounting observations never invent partners — only fill partners already in universe.
+  const appliedAccounting: PartnerAccountingObservation[] = [];
+
   // Completeness for operational phase derivation
   const completenessByCode: Record<string, { telegramLinked: boolean; hasBooks: boolean }> = {};
   const codeUniverse = new Set<string>([
@@ -200,6 +244,8 @@ export function buildPartnerDashboardRecords(
     const coverage = coverageByCode.get(partnerCode);
     const telegram = telegramByCode.get(partnerCode);
     const legacy = legacyByCode.get(partnerCode);
+    const accounting = accountingByCode.get(partnerCode);
+    if (accounting) appliedAccounting.push(accounting);
 
     const callSign = coverage?.callSign ?? life.callSign ?? legacy?.baseCallSign;
     if (!callSign) {
@@ -215,6 +261,8 @@ export function buildPartnerDashboardRecords(
       if (gap) attention.push(gap);
     }
 
+    const outs = applyOutFunding(outsFromLegacy(legacy), accounting?.outFunding);
+
     partners.push({
       partnerCode,
       callSign,
@@ -227,8 +275,8 @@ export function buildPartnerDashboardRecords(
           : LEGACY_OPS_SOURCE_SYSTEM_ID,
         externalPartnerRefs: [],
       },
-      outs: outsFromLegacy(legacy),
-      accounting: emptyAccounting(),
+      outs,
+      accounting: accountingFor(accounting),
       communication: telegramCommunication(telegram),
       limits: emptyLimits(),
       integrations: emptyIntegrations(),
@@ -246,5 +294,6 @@ export function buildPartnerDashboardRecords(
     activeOutIds: [],
     coverageEvidence,
     lifecycle,
+    accounting: appliedAccounting.sort((a, b) => a.partnerCode.localeCompare(b.partnerCode)),
   };
 }

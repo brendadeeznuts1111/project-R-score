@@ -1,12 +1,12 @@
 {
   "schema": "factorywager.partners-dashboard.v1",
-  "generatedAt": "2026-08-08T22:13:04.945Z",
+  "generatedAt": "2026-08-08T23:08:33.703Z",
   "connectorSnapshots": {
     "profiles": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T22:13:04.945Z",
+      "observedAt": "2026-08-08T23:08:33.703Z",
       "ageSeconds": 0,
       "inputRef": "config/partner-profiles/*.toml"
     },
@@ -14,7 +14,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T22:13:04.945Z",
+      "observedAt": "2026-08-08T23:08:33.703Z",
       "ageSeconds": 0,
       "inputRef": "partner_ledger"
     },
@@ -22,7 +22,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T22:13:04.945Z",
+      "observedAt": "2026-08-08T23:08:33.703Z",
       "ageSeconds": 0,
       "inputRef": "/registry/telegram-handshake.json"
     },
@@ -30,7 +30,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T22:13:04.945Z",
+      "observedAt": "2026-08-08T23:08:33.703Z",
       "ageSeconds": 0,
       "inputRef": "/registry/limit-raises.json"
     },
@@ -38,7 +38,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T22:13:04.945Z",
+      "observedAt": "2026-08-08T23:08:33.703Z",
       "ageSeconds": 0,
       "inputRef": "/registry/bookmakers.json"
     },
@@ -46,7 +46,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T22:13:04.945Z",
+      "observedAt": "2026-08-08T23:08:33.703Z",
       "ageSeconds": 0,
       "inputRef": "/registry/tennis/partner-contracts.json"
     },
@@ -60,19 +60,25 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T22:13:04.945Z",
+      "observedAt": "2026-08-08T23:08:33.703Z",
       "ageSeconds": 0,
       "inputRef": "/registry/partners-ops.json"
     }
   },
-  "activeOutIds": [],
+  "activeOutIds": [
+    "out-ASH-1",
+    "out-BIL-1",
+    "out-NOV-1",
+    "out-SPEN-1",
+    "out-SPEN-2"
+  ],
   "summary": {
     "partnerCount": 4,
     "canonicalProfileCount": 4,
     "operatorReadyPartnerCount": 4,
     "attentionPartnerCount": 0,
     "registeredOutCount": 10,
-    "activeOutCount": 0,
+    "activeOutCount": 5,
     "balancePositions": []
   },
   "conflicts": [],
@@ -82,13 +88,13 @@
       "callSign": "ASH-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T22:13:04.945Z",
+        "effectiveAt": "2026-08-08T23:08:33.703Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T22:13:04.945Z",
+          "observedAt": "2026-08-08T23:08:33.703Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -105,7 +111,24 @@
           "sportsbookId": "hard-rock-florida",
           "operationalStatus": "ready",
           "fundingStatus": "unknown",
-          "externalAccountRefs": []
+          "externalAccountRefs": [],
+          "observedMaxStake": {
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 50000
+            },
+            "provenance": {
+              "sourceSystemId": "tennis-hq",
+              "sourceRecordRef": "capacity:out-ASH-1",
+              "adapterId": "tennis-capacity-v1",
+              "adapterVersion": "1",
+              "observedAt": "2026-08-05T17:37:45.981Z",
+              "originalValue": "active",
+              "mappingMethod": "identity",
+              "confidence": "exact"
+            }
+          },
+          "providerConnectionStatus": "inactive"
         },
         {
           "outId": "out-ASH-2",
@@ -129,7 +152,12 @@
         "missing": 0,
         "coverageRatio": 0
       },
-      "integrations": {},
+      "integrations": {
+        "tennis": {
+          "dataStatus": "ok",
+          "observedAt": "2026-08-05T17:37:45.981Z"
+        }
+      },
       "attention": []
     },
     {
@@ -137,13 +165,13 @@
       "callSign": "BIL-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T22:13:04.945Z",
+        "effectiveAt": "2026-08-08T23:08:33.703Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T22:13:04.945Z",
+          "observedAt": "2026-08-08T23:08:33.703Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -160,7 +188,24 @@
           "sportsbookId": "partner-book-tbd",
           "operationalStatus": "ready",
           "fundingStatus": "unknown",
-          "externalAccountRefs": []
+          "externalAccountRefs": [],
+          "observedMaxStake": {
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 50000
+            },
+            "provenance": {
+              "sourceSystemId": "tennis-hq",
+              "sourceRecordRef": "capacity:out-BIL-1",
+              "adapterId": "tennis-capacity-v1",
+              "adapterVersion": "1",
+              "observedAt": "2026-08-05T17:37:45.981Z",
+              "originalValue": "active",
+              "mappingMethod": "identity",
+              "confidence": "exact"
+            }
+          },
+          "providerConnectionStatus": "inactive"
         }
       ],
       "accounting": {
@@ -177,7 +222,12 @@
         "missing": 0,
         "coverageRatio": 0
       },
-      "integrations": {},
+      "integrations": {
+        "tennis": {
+          "dataStatus": "ok",
+          "observedAt": "2026-08-05T17:37:45.981Z"
+        }
+      },
       "attention": []
     },
     {
@@ -185,13 +235,13 @@
       "callSign": "NOV-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T22:13:04.945Z",
+        "effectiveAt": "2026-08-08T23:08:33.703Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T22:13:04.945Z",
+          "observedAt": "2026-08-08T23:08:33.703Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -208,7 +258,24 @@
           "sportsbookId": "hard-rock-florida",
           "operationalStatus": "ready",
           "fundingStatus": "unknown",
-          "externalAccountRefs": []
+          "externalAccountRefs": [],
+          "observedMaxStake": {
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 50000
+            },
+            "provenance": {
+              "sourceSystemId": "tennis-hq",
+              "sourceRecordRef": "capacity:out-NOV-1",
+              "adapterId": "tennis-capacity-v1",
+              "adapterVersion": "1",
+              "observedAt": "2026-08-05T17:37:45.981Z",
+              "originalValue": "active",
+              "mappingMethod": "identity",
+              "confidence": "exact"
+            }
+          },
+          "providerConnectionStatus": "inactive"
         },
         {
           "outId": "out-NOV-2",
@@ -232,7 +299,12 @@
         "missing": 0,
         "coverageRatio": 0
       },
-      "integrations": {},
+      "integrations": {
+        "tennis": {
+          "dataStatus": "ok",
+          "observedAt": "2026-08-05T17:37:45.981Z"
+        }
+      },
       "attention": []
     },
     {
@@ -240,13 +312,13 @@
       "callSign": "SPEN-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T22:13:04.945Z",
+        "effectiveAt": "2026-08-08T23:08:33.703Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T22:13:04.945Z",
+          "observedAt": "2026-08-08T23:08:33.703Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -263,14 +335,48 @@
           "sportsbookId": "parlay21-com",
           "operationalStatus": "ready",
           "fundingStatus": "unknown",
-          "externalAccountRefs": []
+          "externalAccountRefs": [],
+          "observedMaxStake": {
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 50000
+            },
+            "provenance": {
+              "sourceSystemId": "tennis-hq",
+              "sourceRecordRef": "capacity:out-SPEN-1",
+              "adapterId": "tennis-capacity-v1",
+              "adapterVersion": "1",
+              "observedAt": "2026-08-05T17:37:45.981Z",
+              "originalValue": "active",
+              "mappingMethod": "identity",
+              "confidence": "exact"
+            }
+          },
+          "providerConnectionStatus": "inactive"
         },
         {
           "outId": "out-SPEN-2",
           "sportsbookId": "lonestarwagering-com",
           "operationalStatus": "ready",
           "fundingStatus": "unknown",
-          "externalAccountRefs": []
+          "externalAccountRefs": [],
+          "observedMaxStake": {
+            "amount": {
+              "currency": "USD",
+              "minorUnits": 50000
+            },
+            "provenance": {
+              "sourceSystemId": "tennis-hq",
+              "sourceRecordRef": "capacity:out-SPEN-2",
+              "adapterId": "tennis-capacity-v1",
+              "adapterVersion": "1",
+              "observedAt": "2026-08-05T17:37:45.981Z",
+              "originalValue": "active",
+              "mappingMethod": "identity",
+              "confidence": "exact"
+            }
+          },
+          "providerConnectionStatus": "inactive"
         },
         {
           "outId": "out-SPEN-3",
@@ -308,7 +414,12 @@
         "missing": 0,
         "coverageRatio": 0
       },
-      "integrations": {},
+      "integrations": {
+        "tennis": {
+          "dataStatus": "ok",
+          "observedAt": "2026-08-05T17:37:45.981Z"
+        }
+      },
       "attention": []
     }
   ]
