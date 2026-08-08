@@ -515,21 +515,37 @@ export async function fetchMarketOdds(provider: PredictionProvider): Promise<Pre
 /**
  * Fetch from all enabled providers.
  */
-export async function fetchAllProviders(): Promise<Record<PredictionProvider, PredictionMarket[]>> {
+export async function fetchProvidersConcurrently(
+  providers: readonly PredictionProvider[],
+  fetchProvider: (provider: PredictionProvider) => Promise<PredictionMarket[]> = fetchMarketOdds,
+): Promise<Record<PredictionProvider, PredictionMarket[]>> {
   const results: Partial<Record<PredictionProvider, PredictionMarket[]>> = {};
 
-  for (const config of Object.values(PROVIDER_CONFIGS)) {
-    if (!config.enabled) continue;
-    try {
-      results[config.id] = await fetchMarketOdds(config.id);
-    } catch (err: unknown) {
+  const settled = await Promise.allSettled(
+    providers.map((provider) => fetchProvider(provider)),
+  );
+
+  settled.forEach((result, index) => {
+    const provider = providers[index];
+    if (result.status === "fulfilled") {
+      results[provider] = result.value;
+    } else {
+      const err = result.reason;
       const msg = err instanceof Error ? err.message : "Unknown error";
-      logger.error(`Failed to fetch from ${config.id}: ${msg}`);
-      results[config.id] = [];
+      logger.error(`Failed to fetch from ${provider}: ${msg}`);
+      results[provider] = [];
     }
-  }
+  });
 
   return results as Record<PredictionProvider, PredictionMarket[]>;
+}
+
+export async function fetchAllProviders(): Promise<Record<PredictionProvider, PredictionMarket[]>> {
+  const enabledProviders = Object.values(PROVIDER_CONFIGS)
+    .filter((config) => config.enabled)
+    .map((config) => config.id);
+
+  return fetchProvidersConcurrently(enabledProviders);
 }
 
 /**
