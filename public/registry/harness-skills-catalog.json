@@ -1,7 +1,7 @@
 {
   "plane": "harness-agents",
   "skillLoopRegistry": ".agents/skills/ast-grep/skill-loop-registry.json",
-  "scannedAt": "2026-07-31T11:03:32.314Z",
+  "scannedAt": "2026-08-07T16:30:26.227Z",
   "skills": [
     {
       "name": "agents-sdk",
@@ -19,9 +19,9 @@
     {
       "name": "ast-grep",
       "description": "AST-aware code outline, structural search, rewrite, and rule scans via ast-grep 0.44+. Use when exploring unfamiliar code, mapping symbols/imports/exports before broad file reads, finding syntax-shaped patterns (calls, classes, JSX), writing codemods, or when rg is too noisy. Primary entry point: scripts/ast_grep_helper.py (outline, search, replace, scan, validate).",
-      "updatedAt": "2026-06-25T04:55:29.593Z",
+      "updatedAt": "2026-08-06T16:45:16.025Z",
       "hasPackage": false,
-      "lineCount": 319,
+      "lineCount": 329,
       "resources": {
         "scripts": 100,
         "references": 4,
@@ -45,24 +45,22 @@
     {
       "name": "branded-ids",
       "description": "",
-      "updatedAt": "2026-07-28T23:34:28.784Z",
+      "updatedAt": "2026-08-06T08:43:00.793Z",
       "hasPackage": false,
-      "lineCount": 145,
+      "lineCount": 149,
       "resources": {
         "scripts": 0,
         "references": 0,
         "assets": 0
       },
-      "validation": [
-        "frontmatter missing description"
-      ]
+      "validation": ["frontmatter missing description"]
     },
     {
       "name": "bun-v139-playground",
       "description": "Bun v1.3.9 feature demos and interactive CLI playground. Covers parallel scripts, process/spawn, HTTP/2, NO_PROXY, profiling, and mock auto-cleanup. Use when: testing Bun v1.3.9+ features, running demos, or benchmarking.",
-      "updatedAt": "2026-07-24T07:07:27.624Z",
+      "updatedAt": "2026-08-04T05:58:02.399Z",
       "hasPackage": false,
-      "lineCount": 56,
+      "lineCount": 55,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -86,9 +84,9 @@
     {
       "name": "cloudflare",
       "description": "Comprehensive Cloudflare platform skill covering Workers, Pages, storage (KV, D1, R2), AI (Workers AI, Vectorize, Agents SDK), feature flags (Flagship), networking (Tunnel, Spectrum), security (WAF, DDoS), and infrastructure-as-code (Terraform, Pulumi). Use for any Cloudflare development task. Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
-      "updatedAt": "2026-07-28T17:01:38.108Z",
+      "updatedAt": "2026-08-04T05:58:02.399Z",
       "hasPackage": false,
-      "lineCount": 249,
+      "lineCount": 243,
       "resources": {
         "scripts": 0,
         "references": 319,
@@ -128,32 +126,6 @@
       "updatedAt": "2026-07-28T17:01:38.902Z",
       "hasPackage": false,
       "lineCount": 111,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
-      "name": "domain-diagnostic-flow",
-      "description": "Comprehensive domain health check with automated remediation",
-      "updatedAt": "2026-07-24T07:07:27.624Z",
-      "hasPackage": false,
-      "lineCount": 95,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
-      "name": "domain-orchestrator",
-      "description": "Bridges Kimi Agent Skills with Dynamic Domain APIs. Parses SKILL.md files, executes flow diagrams, and maps skill instructions to domain methods. Core orchestration layer for domain-aware automation.",
-      "updatedAt": "2026-07-24T07:07:27.624Z",
-      "hasPackage": false,
-      "lineCount": 64,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -214,27 +186,50 @@
       "validation": []
     },
     {
-      "name": "project-r-agent-team",
-      "description": "",
-      "updatedAt": "2026-07-27T08:35:11.355Z",
+      "name": "portal-design",
+      "description": "Unify FactoryWager portal visual identity and grow shared UI building blocks (theme.jsonc, color kernels, ui-html ↔ portal-ui.js, .portal-* primitives). Use when editing portal boards, theme/tokens, private CSS prefixes, dual-plane tennis vs Pages chrome, or design-doc Flags for portal UI tools.",
+      "updatedAt": "2026-08-07T06:43:39.485Z",
       "hasPackage": false,
-      "lineCount": 50,
+      "lineCount": 130,
+      "resources": {
+        "scripts": 0,
+        "references": 1,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "project-r-agent-team",
+      "description": "Operate Project R agent-team access through the correct Proton Pass vault, environment loader, MCP surface, and SSH host. Use for agent credential setup, vault routing, remote access, or team-specific environment diagnostics.",
+      "updatedAt": "2026-08-04T05:58:02.400Z",
+      "hasPackage": false,
+      "lineCount": 55,
       "resources": {
         "scripts": 0,
         "references": 0,
         "assets": 0
       },
-      "validation": [
-        "name \"\" is not hyphen-case (^[a-z0-9-]+$)",
-        "frontmatter missing description"
-      ]
+      "validation": []
+    },
+    {
+      "name": "project-r-ops-management",
+      "description": "Operate Project R runtime channels, CI gates, TypeScript health, security, release hygiene, and recovery. Use for readiness checks, CI failures, Bun drift, branch hygiene, dependency hardening, or emergency recovery.",
+      "updatedAt": "2026-08-07T06:43:39.486Z",
+      "hasPackage": false,
+      "lineCount": 56,
+      "resources": {
+        "scripts": 0,
+        "references": 2,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "project-r-skill-maintenance",
-      "description": "Create, update, and validate Codex skills under /Users/nolarose/.codex/skills and /Users/nolarose/Projects/.agents/skills. Use when maintaining SKILL.md content, aligning agents/openai.yaml metadata, or tightening trigger/workflow quality.",
-      "updatedAt": "2026-06-25T04:55:29.632Z",
+      "description": "Create, tighten, and validate Project R Codex skills. Use for SKILL.md wording, agents/openai.yaml alignment, duplicate installed copies, broken references, or stale Bun guidance.",
+      "updatedAt": "2026-08-07T07:37:33.920Z",
       "hasPackage": false,
-      "lineCount": 43,
+      "lineCount": 76,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -269,19 +264,6 @@
       "validation": []
     },
     {
-      "name": "quantum-domain-ops",
-      "description": "Protocols for operating QuantumDomain instances including state collapse, entanglement management, coherence monitoring, and tunneling analysis. Safety rules and optimization procedures for quantum domains.",
-      "updatedAt": "2026-07-24T07:07:27.624Z",
-      "hasPackage": false,
-      "lineCount": 65,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
       "name": "reference-discovery",
       "description": "Discover unused, stale, and similarly named references in the harness perimeter. Use when cleaning up naming drift (REGISTRY_URL vs ROUTING_PROBE_BASE_URL), orphan CANONICAL_TOOLS paths, legacy domains, broken skill links, or plane mismatches.",
       "updatedAt": "2026-07-26T19:46:39.968Z",
@@ -308,19 +290,6 @@
       "validation": []
     },
     {
-      "name": "self-healing-domain",
-      "description": "Automated diagnostic and healing workflows for SelfHealingDomain instances. Multi-step flows for health checks, diagnosis, treatment, and recovery.",
-      "updatedAt": "2026-07-24T07:07:27.624Z",
-      "hasPackage": false,
-      "lineCount": 61,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
       "name": "source-command-ast-grep",
       "description": "ast-grep structural tools — outline, search, audit, semver gates, skill loop",
       "updatedAt": "2026-06-25T04:55:29.633Z",
@@ -336,7 +305,7 @@
     {
       "name": "source-command-commit",
       "description": "Analyze changes, stage intelligently, commit with a precise message, and verify",
-      "updatedAt": "2026-06-25T04:55:29.633Z",
+      "updatedAt": "2026-08-06T16:45:16.026Z",
       "hasPackage": false,
       "lineCount": 98,
       "resources": {
@@ -348,10 +317,10 @@
     },
     {
       "name": "source-command-precommit",
-      "description": "Run husky pre-commit gates — hygiene, harness lint, ast-grep rules, semver policy",
-      "updatedAt": "2026-06-25T04:55:29.633Z",
+      "description": "Run Husky pre-commit gates for repository hygiene, harness lint, skill structure, ast-grep rules, semver policy, secrets, and staged tests. Use before committing or when diagnosing a local gate failure.",
+      "updatedAt": "2026-08-06T16:45:16.026Z",
       "hasPackage": false,
-      "lineCount": 52,
+      "lineCount": 56,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -401,9 +370,9 @@
     {
       "name": "turnstile-spin",
       "description": "Set up Cloudflare Turnstile end-to-end in a project. Scan the codebase, create the widget via the Cloudflare API, embed it where user requests need bot verification (form submissions, SPA actions, API endpoints, download links, comment or vote submissions, etc.), wire canonical server-side siteverify in the customer's existing backend, validate, and persist the skill. Load this when a user asks to add Turnstile, set up CAPTCHA, protect a form or endpoint from bots, or fix a Turnstile integration. Mirrors developers.cloudflare.com/turnstile/spin.",
-      "updatedAt": "2026-07-28T17:01:39.644Z",
+      "updatedAt": "2026-08-04T05:58:02.404Z",
       "hasPackage": false,
-      "lineCount": 331,
+      "lineCount": 324,
       "resources": {
         "scripts": 4,
         "references": 6,
@@ -412,22 +381,9 @@
       "validation": []
     },
     {
-      "name": "web-perf",
-      "description": "Analyzes web performance using Chrome DevTools MCP. Measures Core Web Vitals (LCP, INP, CLS) and supplementary metrics (FCP, TBT, Speed Index), identifies render-blocking resources, network dependency chains, layout shifts, caching issues, and accessibility gaps. Use when asked to audit, profile, debug, or optimize page load performance, Lighthouse scores, or site speed. Biases towards retrieval from current documentation over pre-trained knowledge.",
-      "updatedAt": "2026-07-28T17:01:39.716Z",
-      "hasPackage": false,
-      "lineCount": 202,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
       "name": "workers-best-practices",
       "description": "Reviews and authors Cloudflare Workers code against production best practices. Load when writing new Workers, reviewing Worker code, configuring wrangler.jsonc, or checking for common Workers anti-patterns (streaming, floating promises, global state, secrets, bindings, observability). Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
-      "updatedAt": "2026-07-28T17:01:39.799Z",
+      "updatedAt": "2026-08-04T06:34:35.924Z",
       "hasPackage": false,
       "lineCount": 128,
       "resources": {
@@ -448,10 +404,8 @@
         "references": 0,
         "assets": 0
       },
-      "validation": [
-        "body too long (919 lines, want ≤500)"
-      ]
+      "validation": ["body too long (919 lines, want ≤500)"]
     }
   ],
-  "count": 34
+  "count": 31
 }
