@@ -6,6 +6,13 @@
     "incremental": true,
     "tsBuildInfoFile": "../../.cache/tsbuildinfo/packages-bun-release-contracts.tsbuildinfo"
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*",
+    "../../lib/console/**/*",
+    "../../lib/docs/ref-id-tool-flags.ts",
+    "../../lib/docs/ref-id.ts",
+    "../../lib/repo-containment.ts",
+    "../../lib/path-bun.ts"
+  ],
   "exclude": ["node_modules", "dist", "build"]
 }
