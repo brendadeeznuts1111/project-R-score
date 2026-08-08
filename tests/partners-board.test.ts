@@ -186,7 +186,7 @@ describe('partners-board domain helpers', () => {
     });
     expect(ops.partners[0]?.code).toBe('ASH');
     expect(flattenPartnerOuts(ops)).toHaveLength(1);
-    expect(isLegacyPartnerComparisonRequested('/portal/partners/?compare=legacy')).toBe(true);
+    expect(isLegacyPartnerComparisonRequested('/portal/partners/?compare=legacy')).toBe(false);
     expect(bakeLabel(null).text).toBe('—');
   });
 });

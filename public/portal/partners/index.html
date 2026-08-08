@@ -1129,14 +1129,11 @@
         flattenDashboardOuts,
         formatMoneyAmount,
         indexDashboardByPartner,
-        isLegacyPartnerComparisonRequested,
         isPartnersDashboardSchema,
         listDashboardPhases,
         normalizePartnerCode,
         outScopedBalances,
         PARTNERS_DASHBOARD_ARTIFACT_REF,
-        PARTNERS_LEGACY_COMPARISON_OPTIONAL_REFS,
-        PARTNERS_LEGACY_COMPARISON_REQUIRED_REFS,
         partnerReadinessGate,
         partnerScopedBalanceMinor,
         summarizeConnectorSnapshots,
@@ -2452,51 +2449,6 @@
 
       window.addEventListener('hashchange', () => applyPartnerRoute(true));
 
-      /**
-       * Diagnostic multi-fetch for ?compare=legacy only.
-       * Uses fetchJsonResult (not loadJson) so plan scanner does not treat these as primary inputs.
-       * Failures warn only — never replace the canonical dashboard render.
-       */
-      async function runLegacyComparisonDiagnostic(dashboard) {
-        const panel = $('partners-meta');
-        if (!panel) return;
-        const results = [];
-        for (const ref of PARTNERS_LEGACY_COMPARISON_REQUIRED_REFS) {
-          const result = await fetchJsonResult(ref);
-          results.push({
-            ref,
-            ok: result.ok,
-            generatedAt: result.ok ? result.data?.generatedAt : null,
-            error: result.ok ? null : result.error || result.kind,
-          });
-        }
-        for (const ref of PARTNERS_LEGACY_COMPARISON_OPTIONAL_REFS) {
-          const result = await fetchJsonResult(ref);
-          results.push({
-            ref,
-            ok: result.ok,
-            optional: true,
-            generatedAt: result.ok ? result.data?.generatedAt : null,
-            error: result.ok ? null : result.error || result.kind,
-          });
-        }
-        const dashPartners = Number(dashboard?.summary?.partnerCount) || 0;
-        const opsHit = results.find(r => r.ref === '/registry/partners-ops.json' && r.ok);
-        const diag = document.createElement('div');
-        diag.className = 'partners-meta-chip warn';
-        diag.setAttribute('data-legacy-compare', 'true');
-        const failed = results.filter(r => !r.ok && !r.optional).length;
-        const optionalFailed = results.filter(r => !r.ok && r.optional).length;
-        diag.innerHTML =
-          `<span class="k">Legacy compare</span>` +
-          `<span class="v">canonical ${esc(String(dashPartners))} partners` +
-          (opsHit ? ` · multi-fetch ok` : '') +
-          (failed ? ` · ${failed} required failed` : '') +
-          (optionalFailed ? ` · ${optionalFailed} optional missing` : '') +
-          ` · diagnostic-only</span>`;
-        panel.appendChild(diag);
-      }
-
       async function load() {
         try {
           // Primary: single canonical artifact — error-never-fallback.
@@ -2616,11 +2568,6 @@
             scrollSections: true,
           });
           applyPartnerRoute(false);
-
-          // Diagnostic multi-fetch only when ?compare=legacy — never a render fallback.
-          if (isLegacyPartnerComparisonRequested(window.location.href)) {
-            await runLegacyComparisonDiagnostic(dashboard);
-          }
         } catch (err) {
           $('loading').classList.add('hidden');
           const banner = $('error-banner');
@@ -2635,7 +2582,7 @@
             `<button type="button" class="btn" id="partners-retry">Retry</button>` +
             `<a class="btn" href="${PARTNERS_DASHBOARD_ARTIFACT_REF}">Open partners-dashboard.json</a>` +
             `</div>` +
-            `<p class="dim" style="margin-top:10px">Local: <code>bun run partner:dashboard:bake</code> · diagnostic: <code>?compare=legacy</code></p>`;
+            `<p class="dim" style="margin-top:10px">Local: <code>bun run partner:dashboard:bake</code></p>`;
           $('partners-retry')?.addEventListener('click', () => void load());
           const gate = $('partners-gate');
           if (gate) {

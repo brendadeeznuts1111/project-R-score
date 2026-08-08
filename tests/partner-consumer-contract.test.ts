@@ -10,7 +10,7 @@ import {
 } from '../packages/partners/src/index.ts';
 
 describe('partner dashboard consumer contract', () => {
-  test('owns transition primary load and legacy diagnostic inventory', () => {
+  test('owns implemented single-artifact load; legacy comparison retired', () => {
     expect(PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS).toHaveLength(7);
     expect(PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS).toEqual([
       '/registry/soft-accounting-export.json',
@@ -29,21 +29,22 @@ describe('partner dashboard consumer contract', () => {
       requiredInputRefs: PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
       optionalInputRefs: PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
     });
-    expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.transition).toMatchObject({
-      implementationStatus: 'transition',
-      inputMode: 'canonical-single-artifact-with-explicit-legacy-comparison',
+    expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.implemented).toMatchObject({
+      implementationStatus: 'implemented',
+      inputMode: 'canonical-single-artifact',
       canonicalInputRef: PARTNER_DASHBOARD_ARTIFACT_REF,
       canonicalFailurePolicy: 'error-never-fallback',
       automaticLegacyFallback: false,
       requiredInputRefs: [PARTNER_DASHBOARD_ARTIFACT_REF],
       optionalInputRefs: [],
     });
-    expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.transition.legacyComparison).toBe(
-      PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN
-    );
-    expect(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.implementationStatus).toBe('active');
-    expect(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.resultRole).toBe('diagnostic-only');
-    expect(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.failurePolicy).toBe('warn-never-fallback');
+    expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.transition).toMatchObject({
+      implementationStatus: 'retired',
+      inputMode: 'canonical-single-artifact',
+      canonicalInputRef: PARTNER_DASHBOARD_ARTIFACT_REF,
+    });
+    expect(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.implementationStatus).toBe('removed');
+    expect(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.activation).toBe('none');
     expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.target).toEqual({
       inputMode: 'canonical-single-artifact',
       canonicalInputRef: '/registry/partners-dashboard.json',
@@ -58,35 +59,21 @@ describe('partner dashboard consumer contract', () => {
     expect(new Set(legacyRefs).size).toBe(8);
     expect(legacyRefs.every(ref => /^\/registry\/[^/].*\.json$/.test(ref))).toBe(true);
     expect(legacyRefs).not.toContain(PARTNER_DASHBOARD_ARTIFACT_REF);
-    expect(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.requiredInputRefs).toBe(
-      PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS
-    );
-    expect(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.optionalInputRefs).toBe(
-      PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS
-    );
     expect(Object.isFrozen(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT)).toBe(true);
     expect(Object.isFrozen(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN)).toBe(true);
     expect(isPartnerDashboardArtifactSchema('factorywager.partners-dashboard.v1')).toBe(true);
     expect(isPartnerDashboardArtifactSchema('factorywager.partners-ops.v2')).toBe(false);
   });
 
-  test('activates legacy comparison only through the exact query opt-in', () => {
-    expect(isLegacyPartnerComparisonRequested('/portal/partners/?compare=legacy')).toBe(true);
+  test('never activates legacy comparison (retired)', () => {
+    expect(isLegacyPartnerComparisonRequested('/portal/partners/?compare=legacy')).toBe(false);
     expect(
       isLegacyPartnerComparisonRequested(
         new URL('https://example.test/portal/partners/?compare=legacy#partner/ASH')
       )
-    ).toBe(true);
+    ).toBe(false);
     expect(isLegacyPartnerComparisonRequested('/portal/partners/#compare=legacy')).toBe(false);
     expect(isLegacyPartnerComparisonRequested('/portal/partners/?compare=true')).toBe(false);
-    expect(isLegacyPartnerComparisonRequested('/portal/partners/?compare=Legacy')).toBe(false);
-    expect(isLegacyPartnerComparisonRequested('/portal/partners/?compare=')).toBe(false);
-    expect(
-      isLegacyPartnerComparisonRequested('/portal/partners/?compare=legacy&compare=other')
-    ).toBe(false);
-    expect(
-      isLegacyPartnerComparisonRequested('/portal/partners/?compare=legacy&compare=legacy')
-    ).toBe(false);
     expect(isLegacyPartnerComparisonRequested('/portal/partners/')).toBe(false);
   });
 });

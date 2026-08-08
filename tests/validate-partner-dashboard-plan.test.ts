@@ -332,7 +332,7 @@ describe('partner dashboard semantic plan', () => {
     ).toBe(true);
   });
 
-  it('keeps the transition HTML registry inputs explicit for the canonical artifact', async () => {
+  it('keeps the implemented HTML registry inputs explicit for the canonical artifact', async () => {
     const plan = copyPlan();
     plan.surfaces.portal.consumer_contract.required_input_refs = [];
     plan.surfaces.portal.consumer_contract.target_shape_ref = 'shapes.wrong';
@@ -340,7 +340,7 @@ describe('partner dashboard semantic plan', () => {
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors.some(error => error.includes('portal registry input map'))).toBe(true);
     expect(result.errors).toContain(
-      'transition portal consumer must load only the canonical dashboard artifact as primary'
+      'implemented portal consumer must load only the canonical dashboard artifact'
     );
     expect(result.errors).toContain('portal consumer target_shape_ref must be shapes.dashboard_artifact');
   });
@@ -357,7 +357,7 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors.some(error => error.includes('portal registry input map'))).toBe(true);
   });
 
-  it('pins the transition portal to the shared structured JSON fetch transport', async () => {
+  it('pins the implemented portal to the shared structured JSON fetch transport', async () => {
     const plan = copyPlan();
     plan.surfaces.portal.consumer_contract.current_fetch_transport.export_name = 'fetchJson';
     const html = await Bun.file('public/portal/partners/index.html').text();
@@ -369,7 +369,7 @@ describe('partner dashboard semantic plan', () => {
     });
 
     expect(result.errors).toContain(
-      'transition portal must use the shared structured JSON fetch transport'
+      'implemented portal must use the shared structured JSON fetch transport'
     );
   });
 
@@ -394,60 +394,56 @@ describe('partner dashboard semantic plan', () => {
       'implemented portal consumer must load only the canonical dashboard artifact'
     );
     expect(result.errors).toContain(
-      'implemented portal consumer must retire transition policy and remove legacy comparison'
+      'implemented portal consumer must use error-never-fallback without automatic legacy fallback'
     );
   });
 
-  it('rejects drift across every planned transition and legacy-comparison field', async () => {
+  it('rejects drift across implemented consumer retirement fields', async () => {
     const mutations: Array<[string, (plan: ReturnType<typeof copyPlan>) => void]> = [
       ['dashboard artifact path must match the package portal contract', plan => {
         plan.shapes.dashboard_artifact.path = '/registry/wrong.json';
       }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.transition_implementation_status = 'planned';
-      }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.transition_input_mode = 'automatic-fallback';
-      }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.canonical_input_ref = '/registry/wrong.json';
-      }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.canonical_failure_policy = 'fallback';
-      }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.automatic_legacy_fallback = true;
-      }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.legacy_comparison.implementation_status =
-          'planned';
-      }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.legacy_comparison.activation = 'hash';
-      }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.legacy_comparison.search_param = 'mode';
-      }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.legacy_comparison.search_value = 'true';
-      }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.legacy_comparison.load_order = 'before-canonical';
-      }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.legacy_comparison.result_role = 'fallback';
-      }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.legacy_comparison.failure_policy = 'fail-primary';
-      }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.legacy_comparison.required_input_refs.pop();
-      }],
-      ['portal transition contract', plan => {
-        plan.surfaces.portal.consumer_contract.legacy_comparison.optional_input_refs.push(
-          '/not-registry/value.txt'
-        );
-      }],
+      [
+        'implemented portal consumer must retire transition policy and remove legacy comparison',
+        plan => {
+          plan.surfaces.portal.consumer_contract.transition_implementation_status = 'transition';
+        },
+      ],
+      [
+        'implemented portal consumer must retire transition policy and remove legacy comparison',
+        plan => {
+          plan.surfaces.portal.consumer_contract.legacy_comparison = {
+            implementation_status: 'active',
+            activation: 'explicit-search-param',
+            search_param: 'compare',
+            search_value: 'legacy',
+            load_order: 'after-canonical-validation',
+            result_role: 'diagnostic-only',
+            failure_policy: 'warn-never-fallback',
+            required_input_refs: ['/registry/partners-ops.json'],
+            optional_input_refs: [],
+          };
+        },
+      ],
+      [
+        'implemented portal consumer must load only the canonical dashboard artifact',
+        plan => {
+          plan.surfaces.portal.consumer_contract.active_input_mode =
+            'canonical-single-artifact-with-explicit-legacy-comparison';
+        },
+      ],
+      [
+        'implemented portal consumer must use error-never-fallback without automatic legacy fallback',
+        plan => {
+          plan.surfaces.portal.consumer_contract.automatic_legacy_fallback = true;
+        },
+      ],
+      [
+        'implemented portal consumer must use error-never-fallback without automatic legacy fallback',
+        plan => {
+          plan.surfaces.portal.consumer_contract.canonical_failure_policy = 'fallback';
+        },
+      ],
     ];
 
     for (const [expectedError, mutate] of mutations) {
@@ -463,23 +459,12 @@ describe('partner dashboard semantic plan', () => {
     expect(invalidResult.errors).toContain('portal consumer contract has invalid implementation_status');
   });
 
-  it('stops comparing the live legacy HTML after the canonical consumer is implemented', async () => {
-    const plan = copyPlan();
-    plan.surfaces.portal.consumer_contract.implementation_status = 'implemented';
-    plan.surfaces.portal.consumer_contract.active_input_mode = 'canonical-single-artifact';
-    plan.surfaces.portal.consumer_contract.required_input_refs = [
-      '/registry/partners-dashboard.json',
-    ];
-    plan.surfaces.portal.consumer_contract.optional_input_refs = [];
-    plan.surfaces.portal.consumer_contract.transition_implementation_status = 'retired';
-    delete plan.surfaces.portal.consumer_contract.legacy_comparison;
-
-    const result = await validatePartnerDashboardPlan(plan);
+  it('accepts the checked-in implemented consumer without legacy comparison', async () => {
+    const result = await validatePartnerDashboardPlan(copyPlan());
     expect(result.errors).not.toContain(
       'portal current input refs must match the package consumer contract'
     );
     expect(result.errors.some(error => error.includes('portal registry input map'))).toBe(false);
-    // Canonical artifact is now baked — implemented consumer must not reintroduce legacy comparison
     expect(result.errors).not.toContain(
       'implemented portal consumer requires the canonical dashboard artifact to exist'
     );
@@ -549,8 +534,8 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors).toContain(
       'implementation-ready plans require every connector to be implemented'
     );
-    // Profile coverage is complete (ASH·BIL·NOV·SPEN); portal consumer is still transition
-    expect(result.errors).toContain(
+    // Portal consumer is implemented; readiness still blocked by gaps + planned connectors
+    expect(result.errors).not.toContain(
       'implementation-ready plans require the portal consumer to be implemented'
     );
   });

@@ -938,12 +938,23 @@ export async function validatePartnerDashboardPlan(
         );
       }
     } else if (consumerStatus === 'implemented') {
+      if (!usesSharedFetchTransport) {
+        errors.push('implemented portal must use the shared structured JSON fetch transport');
+      }
       if (
         inputMode !== 'canonical-single-artifact' ||
         !sameMembers(requiredInputs, [dashboardArtifactRef]) ||
         optionalInputs.length > 0
       ) {
         errors.push('implemented portal consumer must load only the canonical dashboard artifact');
+      }
+      if (
+        !sameMembers(observedInputs.required, requiredInputs) ||
+        !sameMembers(observedInputs.optional, optionalInputs)
+      ) {
+        errors.push(
+          `portal registry input map does not match HTML (required: ${observedInputs.required.join(', ')}; optional: ${observedInputs.optional.join(', ')})`
+        );
       }
       if (!(await Bun.file(dashboardArtifactPath).exists())) {
         errors.push(
@@ -957,6 +968,14 @@ export async function validatePartnerDashboardPlan(
       ) {
         errors.push(
           'implemented portal consumer must retire transition policy and remove legacy comparison'
+        );
+      }
+      if (
+        portalConsumerContract.canonical_failure_policy !== 'error-never-fallback' ||
+        portalConsumerContract.automatic_legacy_fallback !== false
+      ) {
+        errors.push(
+          'implemented portal consumer must use error-never-fallback without automatic legacy fallback'
         );
       }
     } else {

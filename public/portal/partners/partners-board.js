@@ -12,21 +12,6 @@ export const PARTNERS_DASHBOARD_ARTIFACT_REF = '/registry/partners-dashboard.jso
 /** Active artifact schema for primary board load. */
 export const PARTNERS_DASHBOARD_SCHEMA_V1 = 'factorywager.partners-dashboard.v1';
 
-/** Query-only legacy multi-fetch inventory (diagnostic; never render fallback). */
-export const PARTNERS_LEGACY_COMPARISON_REQUIRED_REFS = Object.freeze([
-  '/registry/telegram-handshake.json',
-  '/registry/seat-capital-desk.json',
-  '/registry/telegram-handshake-catalog.json',
-  '/registry/scrape-wire-taxonomy.json',
-  '/registry/partners-ops.json',
-  '/registry/partner-profiles.json',
-  '/registry/limit-raises.json',
-]);
-
-export const PARTNERS_LEGACY_COMPARISON_OPTIONAL_REFS = Object.freeze([
-  '/registry/soft-accounting-export.json',
-]);
-
 /**
  * @param {unknown} value
  * @returns {string}
@@ -38,19 +23,12 @@ export function normalizePartnerCode(value) {
 }
 
 /**
- * Query-only opt-in for legacy multi-fetch diagnostic.
- * Partner hash routes never activate comparison.
- * @param {string | URL} input
+ * Legacy multi-fetch comparison is retired — always false.
+ * @param {string | URL} _input
  * @returns {boolean}
  */
-export function isLegacyPartnerComparisonRequested(input) {
-  try {
-    const url = input instanceof URL ? input : new URL(String(input), 'https://partners.invalid');
-    const values = url.searchParams.getAll('compare');
-    return values.length === 1 && values[0] === 'legacy';
-  } catch {
-    return false;
-  }
+export function isLegacyPartnerComparisonRequested(_input) {
+  return false;
 }
 
 /**

@@ -2,13 +2,12 @@
 import { describe, expect, test } from 'bun:test';
 import {
   PARTNER_DASHBOARD_ARTIFACT_REF,
-  PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN,
+  PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
+  PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
   PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT,
 } from '../packages/partners/src/index.ts';
 import {
   PARTNERS_DASHBOARD_ARTIFACT_REF,
-  PARTNERS_LEGACY_COMPARISON_OPTIONAL_REFS,
-  PARTNERS_LEGACY_COMPARISON_REQUIRED_REFS,
   bakeLabel,
   dashboardAccountingDealsRows,
   dashboardBookCards,
@@ -129,23 +128,26 @@ describe('partners-dashboard board cutover', () => {
     expect(bakeLabel('2026-08-08T18:00:00.000Z').tone).toMatch(/ok|warn/);
   });
 
-  test('legacy comparison is query-only and inventories match the package contract', () => {
-    expect(isLegacyPartnerComparisonRequested('/portal/partners/?compare=legacy')).toBe(true);
-    expect(isLegacyPartnerComparisonRequested('/portal/partners/#compare=legacy')).toBe(false);
+  test('legacy comparison is retired on board and package', () => {
+    expect(isLegacyPartnerComparisonRequested('/portal/partners/?compare=legacy')).toBe(false);
     expect(PARTNERS_DASHBOARD_ARTIFACT_REF).toBe(PARTNER_DASHBOARD_ARTIFACT_REF);
-    expect([...PARTNERS_LEGACY_COMPARISON_REQUIRED_REFS]).toEqual([
-      ...PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.requiredInputRefs,
-    ]);
-    expect([...PARTNERS_LEGACY_COMPARISON_OPTIONAL_REFS]).toEqual([
-      ...PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.optionalInputRefs,
-    ]);
+    expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.implemented.implementationStatus).toBe(
+      'implemented'
+    );
+    expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.transition.implementationStatus).toBe(
+      'retired'
+    );
+    expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.target.legacyComparisonPolicy).toBe(
+      'removed'
+    );
   });
 
-  test('board primary load is partners-dashboard only; native tables, no ops projection', async () => {
+  test('board primary load is partners-dashboard only; native tables, no ops or legacy compare', async () => {
     const html = await Bun.file(BOARD).text();
     expect(html).toContain("loadJson('/registry/partners-dashboard.json')");
-    expect(html).toContain('isLegacyPartnerComparisonRequested');
-    expect(html).toContain('runLegacyComparisonDiagnostic');
+    expect(html).not.toContain('isLegacyPartnerComparisonRequested');
+    expect(html).not.toContain('runLegacyComparisonDiagnostic');
+    expect(html).not.toContain('?compare=legacy');
     expect(html).toContain('flattenDashboardOuts');
     expect(html).toContain('dashboardRosterRows');
     expect(html).toContain('summarizeDashboardDesk');
@@ -155,25 +157,20 @@ describe('partners-dashboard board cutover', () => {
     expect(html).toContain('error-never-fallback');
     expect(html).toContain('No silent partners-ops fallback');
     expect(html).toContain('bun run partner:dashboard:bake');
-    expect(html).toContain('?compare=legacy');
     expect(html).toContain('data-registry="/registry/partners-dashboard.json"');
     // Primary path must not multi-fetch legacy refs via loadJson
-    for (const ref of PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.requiredInputRefs) {
+    for (const ref of PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS) {
       expect(html).not.toContain(`loadJson('${ref}')`);
     }
-    for (const ref of PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.optionalInputRefs) {
+    for (const ref of PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS) {
       expect(html).not.toContain(`loadJson('${ref}')`);
     }
-    // Diagnostic inventory still present (fetchJsonResult path, not loadJson)
-    expect(html).toContain('PARTNERS_LEGACY_COMPARISON_REQUIRED_REFS');
-    expect(html).toContain('PARTNERS_LEGACY_COMPARISON_OPTIONAL_REFS');
+    expect(html).not.toContain('PARTNERS_LEGACY_COMPARISON_REQUIRED_REFS');
+    expect(html).not.toContain('PARTNERS_LEGACY_COMPARISON_OPTIONAL_REFS');
     // Hash route controller preserved
     expect(html).toContain('applyPartnerRoute');
     expect(html).toContain('parsePartnerHash');
     // Extracted bakeLabel helper used from partners-board.js
     expect(html).toMatch(/import\s*\{[^}]*bakeLabel[^}]*\}\s*from\s*'\/portal\/partners\/partners-board\.js'/);
-    expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.transition.implementationStatus).toBe(
-      'transition'
-    );
   });
 });

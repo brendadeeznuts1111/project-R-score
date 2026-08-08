@@ -86,7 +86,8 @@ dashboard artifact, liquidity reservation, accounting posting, and Telegram
 delivery remain outside these pure adapters.
 
 The browser-neutral `./portal` contract now owns the current input inventory,
-the canonical artifact path, and the future query-only `?compare=legacy` policy.
+the canonical artifact path, and the implemented single-artifact board load (legacy
+`?compare=legacy` comparison retired).
 The canonical single-artifact browser loader and generated public modules remain
 planned; canonical load failure must never fall back to legacy rendering. The
 current 7+1 compatibility fetches already use the shared `/portal/fetch-json.js`

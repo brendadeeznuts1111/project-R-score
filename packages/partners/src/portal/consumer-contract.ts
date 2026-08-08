@@ -10,7 +10,10 @@ export const PARTNER_DASHBOARD_ENTRYPOINT = 'public/portal/partners/index.html';
 export const PARTNER_DASHBOARD_ARTIFACT_REF =
   '/registry/partners-dashboard.json' as const satisfies PartnerDashboardRegistryJsonRef;
 
-/** Legacy multi-artifact inventory retained for ?compare=legacy diagnostic only. */
+/**
+ * Historical multi-artifact inventory (pre-cutover).
+ * Retained for bake scripts and documentation — not a board load path.
+ */
 export const PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS = Object.freeze([
   '/registry/telegram-handshake.json',
   '/registry/seat-capital-desk.json',
@@ -26,53 +29,54 @@ export const PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS = Objec
 ] as const satisfies readonly PartnerDashboardRegistryJsonRef[]);
 
 /**
- * Query-only legacy multi-fetch plan.
- * Active during transition: diagnostic only, never a render fallback.
+ * Retired query-only legacy multi-fetch plan.
+ * Board no longer activates `?compare=legacy`; inventory kept for history only.
  */
 export const PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN = Object.freeze({
-  implementationStatus: 'active',
-  activation: 'explicit-search-param',
+  implementationStatus: 'removed' as const,
+  activation: 'none' as const,
   searchParam: 'compare',
   searchValue: 'legacy',
-  loadOrder: 'after-canonical-validation',
-  resultRole: 'diagnostic-only',
-  failurePolicy: 'warn-never-fallback',
+  loadOrder: 'never' as const,
+  resultRole: 'removed' as const,
+  failurePolicy: 'n/a' as const,
   requiredInputRefs: PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
   optionalInputRefs: PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
 });
 
+const FETCH_TRANSPORT = Object.freeze({
+  moduleRef: '/portal/fetch-json.js',
+  exportName: 'fetchJsonResult',
+  defaultTimeoutMs: 5000,
+  contentTypeDiagnosticPolicy: 'advisory-debug-gated',
+  requiredFailurePolicy: 'throw-path-qualified-error',
+  optionalFailurePolicy: 'explicit-catch-to-null',
+});
+
 /**
- * Active portal consumer: single canonical artifact primary load with optional
- * query-gated legacy multi-fetch for diagnostic comparison only.
+ * Portal consumer contract.
  *
- * Failure policy for the canonical artifact is error-never-fallback — the board
- * must not silently fall back to partners-ops or any multi-artifact path.
+ * Active plane: canonical single-artifact load of partners-dashboard.json
+ * (error-never-fallback). Transition policy and legacy comparison are retired.
  */
 export const PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT = Object.freeze({
   artifactSchema: PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V1,
   entrypointPath: PARTNER_DASHBOARD_ENTRYPOINT,
-  /** Historical multi-artifact plane; inventory used by legacy comparison only. */
+  /** Historical multi-artifact plane (inventory only). */
   currentCompatibility: Object.freeze({
     implementationStatus: 'current-compatibility',
     inputMode: 'legacy-multi-artifact',
-    fetchTransport: Object.freeze({
-      moduleRef: '/portal/fetch-json.js',
-      exportName: 'fetchJsonResult',
-      defaultTimeoutMs: 5000,
-      contentTypeDiagnosticPolicy: 'advisory-debug-gated',
-      requiredFailurePolicy: 'throw-path-qualified-error',
-      optionalFailurePolicy: 'explicit-catch-to-null',
-    }),
+    fetchTransport: FETCH_TRANSPORT,
     requiredInputRefs: PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
     optionalInputRefs: PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_OPTIONAL_INPUT_REFS,
   }),
   /**
-   * Active board load plane (cutover).
-   * implementationStatus value is also the TOML portal consumer implementation_status.
+   * Retired cutover plane. TOML `transition_implementation_status` must be `retired`
+   * when `implementation_status = implemented`.
    */
   transition: Object.freeze({
-    implementationStatus: 'transition',
-    inputMode: 'canonical-single-artifact-with-explicit-legacy-comparison',
+    implementationStatus: 'retired',
+    inputMode: 'canonical-single-artifact',
     canonicalInputRef: PARTNER_DASHBOARD_ARTIFACT_REF,
     canonicalFailurePolicy: 'error-never-fallback',
     automaticLegacyFallback: false,
@@ -80,16 +84,11 @@ export const PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT = Object.freeze({
       PARTNER_DASHBOARD_ARTIFACT_REF,
     ]) as readonly PartnerDashboardRegistryJsonRef[],
     optionalInputRefs: Object.freeze([]) as readonly PartnerDashboardRegistryJsonRef[],
-    fetchTransport: Object.freeze({
-      moduleRef: '/portal/fetch-json.js',
-      exportName: 'fetchJsonResult',
-      defaultTimeoutMs: 5000,
-      contentTypeDiagnosticPolicy: 'advisory-debug-gated',
-      requiredFailurePolicy: 'throw-path-qualified-error',
-      optionalFailurePolicy: 'explicit-catch-to-null',
-    }),
+    fetchTransport: FETCH_TRANSPORT,
+    /** Present only as historical inventory; activation is none. */
     legacyComparison: PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN,
   }),
+  /** Active / target plane — single artifact only. */
   target: Object.freeze({
     inputMode: 'canonical-single-artifact',
     canonicalInputRef: PARTNER_DASHBOARD_ARTIFACT_REF,
@@ -97,16 +96,30 @@ export const PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT = Object.freeze({
     transitionPolicyStatus: 'retired',
     legacyComparisonPolicy: 'removed',
   }),
+  /** Explicit active consumer (matches TOML implementation_status = implemented). */
+  implemented: Object.freeze({
+    implementationStatus: 'implemented',
+    inputMode: 'canonical-single-artifact',
+    canonicalInputRef: PARTNER_DASHBOARD_ARTIFACT_REF,
+    canonicalFailurePolicy: 'error-never-fallback',
+    automaticLegacyFallback: false,
+    requiredInputRefs: Object.freeze([
+      PARTNER_DASHBOARD_ARTIFACT_REF,
+    ]) as readonly PartnerDashboardRegistryJsonRef[],
+    optionalInputRefs: Object.freeze([]) as readonly PartnerDashboardRegistryJsonRef[],
+    fetchTransport: FETCH_TRANSPORT,
+  }),
 });
 
 export type PartnerDashboardPortalConsumerContract =
   typeof PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT;
 
-/** Query-only opt-in; partner hash routes never activate legacy comparison. */
-export function isLegacyPartnerComparisonRequested(input: string | URL): boolean {
-  const url = input instanceof URL ? input : new URL(input, 'https://partners.invalid');
-  const values = url.searchParams.getAll(PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.searchParam);
-  return values.length === 1 && values[0] === PARTNER_DASHBOARD_LEGACY_COMPARISON_PLAN.searchValue;
+/**
+ * Legacy comparison is retired — always false.
+ * Hash routes and query params never activate multi-fetch diagnostics.
+ */
+export function isLegacyPartnerComparisonRequested(_input: string | URL): boolean {
+  return false;
 }
 
 /** True when value matches the active partners-dashboard artifact schema. */
