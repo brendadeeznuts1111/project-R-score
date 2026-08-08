@@ -103,4 +103,24 @@ describe('partner-surface-registry-check', () => {
     const issues = checkRegistryArtifact('row.demo', bag, { schema: 'demo' });
     expect(issues.filter(i => i.level === 'error')).toEqual([]);
   });
+
+  test('checkRegistryArtifact prefers bag.schemaIdField when both schema and schemaVersion exist', () => {
+    const issues = checkRegistryArtifact(
+      'registry.dual-identity',
+      {
+        schemaId: '2',
+        schemaIdField: 'schemaVersion',
+        artifactPath: 'public/registry/example.json',
+        omits: [],
+        moneyPolicy: 'unset',
+      },
+      {
+        schema: 'factorywager.example.v2',
+        schemaVersion: 2,
+        profiles: {},
+      }
+    );
+    expect(issues.filter((i) => i.level === 'error')).toEqual([]);
+  });
+
 });

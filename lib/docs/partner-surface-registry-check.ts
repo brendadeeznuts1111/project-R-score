@@ -124,7 +124,22 @@ export function checkRegistryArtifact(
     ];
   }
 
-  const identity = artifactSchemaIdentity(artifact);
+  // Prefer the bag's declared identity field when present (artifacts may carry
+  // both `schema` name and numeric `schemaVersion` — auto-detect would pick the
+  // wrong one and false-fail Layer B).
+  let identity = artifactSchemaIdentity(artifact);
+  if (
+    bag.schemaIdField &&
+    bag.schemaIdField !== 'none' &&
+    isRecord(artifact) &&
+    (typeof artifact[bag.schemaIdField] === 'string' ||
+      typeof artifact[bag.schemaIdField] === 'number')
+  ) {
+    identity = {
+      field: bag.schemaIdField,
+      value: String(artifact[bag.schemaIdField]),
+    };
+  }
   if (bag.schemaIdField === 'none') {
     // documentation-only schemaId
   } else if (identity.field === null) {
