@@ -91,18 +91,21 @@ describe('partner profile coverage boundary', () => {
     ).toThrow('visibleCodes must not contain duplicate PartnerCode values');
   });
 
-  test('accepts the empty public artifact but reports missing production coverage', async () => {
+  test('public artifact covers the four production CODEs from partners-ops', async () => {
     const artifact = parsePartnerProfileCoverageArtifact(
       await Bun.file(
         new URL('../public/registry/partner-profile-coverage.json', import.meta.url)
       ).json()
     );
-    expect(artifact.evidenceByPartnerCode).toEqual({});
-    expect(derivePartnerProfileCoverage(artifact, [parsePartnerCode('ROOT')])).toEqual({
-      presentCodes: [],
-      missingCodes: ['ROOT'],
-      complete: false,
-    });
+    const production = (['ASH', 'BIL', 'NOV', 'SPEN'] as const).map(parsePartnerCode);
+    const coverage = derivePartnerProfileCoverage(artifact, production);
+    expect(coverage.presentCodes).toEqual(production);
+    expect(coverage.missingCodes).toEqual([]);
+    expect(coverage.complete).toBe(true);
+    // Still fail-closed for unknown requested CODEs
+    expect(
+      derivePartnerProfileCoverage(artifact, [parsePartnerCode('ROOT'), ...production]).missingCodes
+    ).toEqual(['ROOT']);
   });
 
   test('rejects loose schemas, mismatched identities, and noncanonical time', async () => {

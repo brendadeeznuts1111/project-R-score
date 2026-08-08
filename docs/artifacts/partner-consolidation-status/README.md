@@ -17,7 +17,8 @@ Terminal row is backed by a four-row API/HTML boundary audit extract.
   upstream TOML or design documents.
 
 The dashboard is **not** another partner-domain SSOT or a production data
-surface. It is intentionally marked partial while profile coverage is empty. Its
+surface. Profile coverage is now materialized for ASH · BIL · NOV · SPEN; the
+snapshot remains partial while other connectors and the one-artifact board cutover remain open. Its
 sources remain:
 
 - `docs/design/partner-dashboard-mvp.toml` for MVP composition and policy;

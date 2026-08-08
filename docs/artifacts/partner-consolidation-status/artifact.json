@@ -96,7 +96,11 @@
             "label": "Connectors"
           },
           "tooltip": [
-            { "field": "meaning", "type": "nominal", "label": "Meaning" }
+            {
+              "field": "meaning",
+              "type": "nominal",
+              "label": "Meaning"
+            }
           ]
         }
       }
@@ -108,14 +112,33 @@
         "subtitle": "Exact ownership, implementation state, and next gate for every dashboard snapshot boundary.",
         "dataset": "connector_inventory",
         "sourceId": "partner_plan",
-        "defaultSort": { "field": "connector", "direction": "asc" },
+        "defaultSort": {
+          "field": "connector",
+          "direction": "asc"
+        },
         "density": "dense",
         "layout": "full",
         "columns": [
-          { "field": "connector", "label": "Connector", "type": "text" },
-          { "field": "owner", "label": "Owner", "type": "text" },
-          { "field": "status", "label": "State", "type": "text" },
-          { "field": "nextAction", "label": "Next gate", "type": "text" }
+          {
+            "field": "connector",
+            "label": "Connector",
+            "type": "text"
+          },
+          {
+            "field": "owner",
+            "label": "Owner",
+            "type": "text"
+          },
+          {
+            "field": "status",
+            "label": "State",
+            "type": "text"
+          },
+          {
+            "field": "nextAction",
+            "label": "Next gate",
+            "type": "text"
+          }
         ]
       }
     ],
@@ -153,7 +176,7 @@
           "language": "sql",
           "description": "Materializes current redacted profile coverage against the four-CODE readiness set.",
           "executed_at": "2026-08-06T05:20:33Z",
-          "sql": "SELECT 0 AS canonicalProfiles, 4 AS profileTarget;"
+          "sql": "SELECT 4 AS canonicalProfiles, 4 AS profileTarget;"
         }
       }
     ],
@@ -161,7 +184,7 @@
       {
         "id": "proposal_context",
         "type": "markdown",
-        "body": "## Proposal snapshot\n\nThis is a read-only design and delivery artifact—not the production partner dashboard. Sports Terminal remains blocked: its UI exists, but its partner API module is unmounted and unsafe as a canonical input."
+        "body": "## Proposal snapshot\n\nThis is a read-only design and delivery artifact\u2014not the production partner dashboard. Sports Terminal remains blocked: its UI exists, but its partner API module is unmounted and unsafe as a canonical input."
       },
       {
         "id": "status_metrics",
@@ -194,7 +217,7 @@
     "datasets": {
       "mvp_overview": [
         {
-          "canonicalProfiles": 0,
+          "canonicalProfiles": 4,
           "profileTarget": 4,
           "implementedComponents": 14,
           "totalComponents": 18,
@@ -342,7 +365,7 @@
         "language": "sql",
         "description": "Materializes current redacted profile coverage against the four-CODE readiness set.",
         "executed_at": "2026-08-06T05:20:33Z",
-        "sql": "SELECT 0 AS canonicalProfiles, 4 AS profileTarget;"
+        "sql": "SELECT 4 AS canonicalProfiles, 4 AS profileTarget;"
       }
     }
   ],

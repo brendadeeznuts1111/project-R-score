@@ -1,11 +1,72 @@
 {
   "schema": "factorywager.partner-profile-public.v2",
   "schemaVersion": 2,
-  "generatedAt": "2026-08-07T06:22:33.108Z",
-  "profiles": {},
+  "generatedAt": "2026-08-08T21:49:35.545Z",
+  "profiles": {
+    "NOV": {
+      "meta": {
+        "templateId": "partner-active",
+        "version": "1.0.0"
+      },
+      "identity": {
+        "code": "NOV",
+        "callSign": "NOV-001"
+      },
+      "lifecycle": {
+        "status": "active",
+        "phase": "operator_ready"
+      }
+    },
+    "SPEN": {
+      "meta": {
+        "templateId": "partner-active",
+        "version": "1.0.0"
+      },
+      "identity": {
+        "code": "SPEN",
+        "callSign": "SPEN-001"
+      },
+      "lifecycle": {
+        "status": "active",
+        "phase": "operator_ready"
+      }
+    },
+    "BIL": {
+      "meta": {
+        "templateId": "partner-active",
+        "version": "1.0.0"
+      },
+      "identity": {
+        "code": "BIL",
+        "callSign": "BIL-001"
+      },
+      "lifecycle": {
+        "status": "active",
+        "phase": "operator_ready"
+      }
+    },
+    "ASH": {
+      "meta": {
+        "templateId": "partner-active",
+        "version": "1.0.0"
+      },
+      "identity": {
+        "code": "ASH",
+        "callSign": "ASH-001"
+      },
+      "lifecycle": {
+        "status": "active",
+        "phase": "operator_ready"
+      }
+    }
+  },
   "summary": {
-    "count": 0,
-    "byLifecycle": {},
-    "byPhase": {}
+    "count": 4,
+    "byLifecycle": {
+      "active": 4
+    },
+    "byPhase": {
+      "operator_ready": 4
+    }
   }
 }

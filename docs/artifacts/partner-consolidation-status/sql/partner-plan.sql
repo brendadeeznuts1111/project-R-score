@@ -3,7 +3,7 @@
 
 CREATE TEMP TABLE mvp_overview AS
 SELECT
-  0 AS canonicalProfiles,
+  4 AS canonicalProfiles,
   4 AS profileTarget,
   14 AS implementedComponents,
   18 AS totalComponents,
