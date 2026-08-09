@@ -62,7 +62,10 @@ describe('account dossier helpers', () => {
     expect(row?.code).toBe('ASH');
     expect(row?.outs[0]?.id).toBe('out-ASH-1');
     expect(row?.outs[0]?.book?.slug).toBe('hard-rock-florida');
+    expect(row?.outs[0]?.book?.name).toBe('Hard Rock Florida');
     expect(row?.outs[0]?.maxBet).toBe('500');
+    expect(row?.outs[0]?.maxBetDisplay).toBe('$500.00');
+    expect(row?.outs[0]?.fundingStatus).toBe('funded');
     expect(row?.accounting?.deposits?.[0]?.amount).toBe(250);
     expect(row?.tracking?.communication?.chatLinked).toBe(true);
   });

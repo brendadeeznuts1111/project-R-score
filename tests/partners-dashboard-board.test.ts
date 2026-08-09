@@ -15,8 +15,12 @@ import {
   dashboardLedgerEventRows,
   dashboardRosterRows,
   flattenDashboardOuts,
+  formatUsdMajor,
+  formatUsdMinor,
+  humanizeBookSlug,
   indexDashboardByPartner,
   isPartnersDashboardSchema,
+  statusToneClass,
   summarizeConnectorSnapshots,
   summarizeDashboardDesk,
 } from '../public/portal/partners/partners-board.js';
@@ -92,8 +96,14 @@ describe('partners-dashboard board cutover', () => {
     const outs = flattenDashboardOuts(sampleDashboard);
     expect(outs).toHaveLength(2);
     expect(outs[0]?.status).toBe('ready');
-    expect(outs[0]?.bookName).toBe('hard-rock-florida');
+    expect(outs[0]?.bookName).toBe('Hard Rock Florida');
+    expect(outs[0]?.bookSlug).toBe('hard-rock-florida');
     expect(outs[1]?.incomplete).toBe(true);
+    expect(humanizeBookSlug('parlay21-com')).toBe('Parlay21');
+    expect(formatUsdMinor(50000)).toBe('$500.00');
+    expect(formatUsdMajor(1200)).toMatch(/\$1,200/);
+    expect(statusToneClass('ready')).toBe('tone-ok');
+    expect(statusToneClass('deferred')).toBe('tone-warn');
     // Sample fixture lacks bake evidence fields — defaults are explicit
     expect(outs[0]?.missingExternalRef).toBe(true);
     expect(outs[0]?.externalRefCount).toBe(0);
