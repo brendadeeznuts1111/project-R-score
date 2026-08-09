@@ -1,69 +1,69 @@
 {
   "schema": "factorywager.partners-dashboard.v2",
-  "generatedAt": "2026-08-09T02:52:18.151Z",
+  "generatedAt": "2026-08-09T02:58:39.936Z",
   "connectorSnapshots": {
     "profiles": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:52:18.151Z",
+      "observedAt": "2026-08-09T02:58:39.936Z",
       "ageSeconds": 0,
       "inputRef": "config/partner-profiles/*.toml",
-      "snapshotRef": "sha256:71b0d42d5a87276e0bc6c39d307ad05b9c87dffba92543ccc552017d02608869"
+      "snapshotRef": "sha256:20fb1f41e3949a1fc9daaa76bf90e59977630ffdfd760a6f63b5cd211de31fb7"
     },
     "accounting": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:52:18.151Z",
+      "observedAt": "2026-08-09T02:58:39.936Z",
       "ageSeconds": 0,
       "inputRef": "partner_ledger",
-      "snapshotRef": "sha256:d95b989efb984d6b2089cbfd49221d8290646def93425785f067933d2fc32c7e"
+      "snapshotRef": "sha256:0482f9b3b9bf6aabfff509d39c2d741bbe60b2284f8ca3dd0c51c3bf1692970c"
     },
     "telegram": {
-      "dataStatus": "stale",
+      "dataStatus": "ok",
       "sourceMode": "current",
-      "reasonCode": "current_stale",
-      "observedAt": "2026-08-09T02:46:20.952Z",
-      "ageSeconds": 358,
+      "reasonCode": "current_fresh",
+      "observedAt": "2026-08-09T02:58:39.936Z",
+      "ageSeconds": 0,
       "inputRef": "/registry/telegram-handshake.json",
-      "snapshotRef": "sha256:99eb38d09825e7609925cbee3d62dbae924cfdf452e797e0bf3b5b11cf401cab"
+      "snapshotRef": "sha256:5cfb07db0903ef21b2893f281ab02ddb2857545714feac9807aaec939b07289a"
     },
     "limits": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:48:50.596Z",
-      "ageSeconds": 208,
+      "observedAt": "2026-08-09T02:58:39.936Z",
+      "ageSeconds": 0,
       "inputRef": "/registry/limit-raises.json",
-      "snapshotRef": "sha256:3680bbbbb7435cfa74cad86e0124af68151f504e00eac01d2dec475a1316337b"
+      "snapshotRef": "sha256:fb0e485018f6812bc5bc134103ed57be2547968f7efa98b77e2138ae06b753f7"
     },
     "bookmakers": {
-      "dataStatus": "stale",
+      "dataStatus": "ok",
       "sourceMode": "current",
-      "reasonCode": "current_stale",
-      "observedAt": "2026-08-09T02:45:56.844Z",
-      "ageSeconds": 382,
+      "reasonCode": "current_fresh",
+      "observedAt": "2026-08-09T02:58:39.936Z",
+      "ageSeconds": 0,
       "inputRef": "/registry/bookmakers.json",
-      "snapshotRef": "sha256:498692b3681f1d5a0a51892d6fb2f0bf37a4287c294acd2bf3f9ad7a9bcdd5f6"
+      "snapshotRef": "sha256:22368e51aa49452ad719073e21d752be075fd10ccbf3d18b2fb6618fbb1d44ba"
     },
     "tennis": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:47:26.609Z",
-      "ageSeconds": 292,
+      "observedAt": "2026-08-09T02:58:39.936Z",
+      "ageSeconds": 0,
       "inputRef": "/registry/tennis/partner-contracts.json",
-      "snapshotRef": "sha256:87e2ba57ef2415bb712fdc7f09190f38d8bc1a5eda16eef5616ca7759e73bfb5"
+      "snapshotRef": "sha256:930a45c3b5a1c920ef3f62445f25e7c0ef6459be3544e3ca5c7d6be41a494307"
     },
     "sportsTerminal": {
-      "dataStatus": "stale",
+      "dataStatus": "ok",
       "sourceMode": "current",
-      "reasonCode": "current_stale",
-      "observedAt": "2026-08-09T02:46:48.323Z",
-      "ageSeconds": 330,
+      "reasonCode": "current_fresh",
+      "observedAt": "2026-08-09T02:58:39.936Z",
+      "ageSeconds": 0,
       "inputRef": "/registry/sports-terminal/partner-integration-health.json",
-      "snapshotRef": "sha256:e3f0c592695d2c7dab584b7846f9a0080cd55b28e6156d82c782d6fe3a19d7e0"
+      "snapshotRef": "sha256:369ea2a93701a7c41a88ee5c7c4e88d8d53b0fc9058171b137bb142755926d1e"
     }
   },
   "activeOutIds": [
@@ -244,13 +244,13 @@
       "callSign": "ASH-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:52:18.151Z",
+        "effectiveAt": "2026-08-09T02:58:39.936Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:52:18.151Z",
+          "observedAt": "2026-08-09T02:58:39.936Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -289,7 +289,7 @@
               "sourceRecordRef": "capacity:out-ASH-1",
               "adapterId": "tennis-capacity-v1",
               "adapterVersion": "1",
-              "observedAt": "2026-08-09T02:47:26.609Z",
+              "observedAt": "2026-08-09T02:58:39.936Z",
               "originalValue": "active",
               "mappingMethod": "identity",
               "confidence": "exact"
@@ -451,7 +451,7 @@
         },
         "tennis": {
           "dataStatus": "ok",
-          "observedAt": "2026-08-09T02:47:26.609Z"
+          "observedAt": "2026-08-09T02:58:39.936Z"
         }
       },
       "attention": [
@@ -473,13 +473,13 @@
       "callSign": "BIL-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:52:18.151Z",
+        "effectiveAt": "2026-08-09T02:58:39.936Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:52:18.151Z",
+          "observedAt": "2026-08-09T02:58:39.936Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -517,14 +517,13 @@
               "sourceRecordRef": "capacity:out-BIL-1",
               "adapterId": "tennis-capacity-v1",
               "adapterVersion": "1",
-              "observedAt": "2026-08-09T02:47:26.609Z",
+              "observedAt": "2026-08-09T02:58:39.936Z",
               "originalValue": "active",
               "mappingMethod": "identity",
               "confidence": "exact"
             }
           },
-          "providerConnectionStatus": "inactive",
-          "limitCoverageRatio": 1
+          "providerConnectionStatus": "inactive"
         }
       ],
       "accounting": {
@@ -597,9 +596,9 @@
         "configuredTopicKeys": []
       },
       "limits": {
-        "tracked": 1,
+        "tracked": 0,
         "missing": 0,
-        "coverageRatio": 1
+        "coverageRatio": 0
       },
       "integrations": {
         "sportsTerminal": {
@@ -608,7 +607,7 @@
         },
         "tennis": {
           "dataStatus": "ok",
-          "observedAt": "2026-08-09T02:47:26.609Z"
+          "observedAt": "2026-08-09T02:58:39.936Z"
         }
       },
       "attention": [
@@ -630,13 +629,13 @@
       "callSign": "NOV-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:52:18.151Z",
+        "effectiveAt": "2026-08-09T02:58:39.936Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:52:18.151Z",
+          "observedAt": "2026-08-09T02:58:39.936Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -674,7 +673,7 @@
               "sourceRecordRef": "capacity:out-NOV-1",
               "adapterId": "tennis-capacity-v1",
               "adapterVersion": "1",
-              "observedAt": "2026-08-09T02:47:26.609Z",
+              "observedAt": "2026-08-09T02:58:39.936Z",
               "originalValue": "active",
               "mappingMethod": "identity",
               "confidence": "exact"
@@ -688,8 +687,7 @@
           "sportsbookId": "southfl-pph-desk",
           "operationalStatus": "deferred",
           "fundingStatus": "funded",
-          "externalAccountRefs": [],
-          "limitCoverageRatio": 0
+          "externalAccountRefs": []
         }
       ],
       "accounting": {
@@ -791,8 +789,8 @@
       },
       "limits": {
         "tracked": 1,
-        "missing": 1,
-        "coverageRatio": 0.5
+        "missing": 0,
+        "coverageRatio": 1
       },
       "integrations": {
         "sportsTerminal": {
@@ -801,7 +799,7 @@
         },
         "tennis": {
           "dataStatus": "ok",
-          "observedAt": "2026-08-09T02:47:26.609Z"
+          "observedAt": "2026-08-09T02:58:39.936Z"
         }
       },
       "attention": [
@@ -810,12 +808,6 @@
           "severity": "info",
           "label": "Desk placeholder sportsbook not in public catalog: southfl-pph-desk",
           "actionHref": "/portal/bookmakers/"
-        },
-        {
-          "reasonCode": "partner.limits.coverage_gap",
-          "severity": "info",
-          "label": "1/2 out(s) lack limit evidence (max stake or raise history)",
-          "actionHref": "/portal/limits/"
         },
         {
           "reasonCode": "partner.telegram.handshake_gap",
@@ -829,13 +821,13 @@
       "callSign": "SPEN-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:52:18.151Z",
+        "effectiveAt": "2026-08-09T02:58:39.936Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:52:18.151Z",
+          "observedAt": "2026-08-09T02:58:39.936Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -874,7 +866,7 @@
               "sourceRecordRef": "capacity:out-SPEN-1",
               "adapterId": "tennis-capacity-v1",
               "adapterVersion": "1",
-              "observedAt": "2026-08-09T02:47:26.609Z",
+              "observedAt": "2026-08-09T02:58:39.936Z",
               "originalValue": "active",
               "mappingMethod": "identity",
               "confidence": "exact"
@@ -904,7 +896,7 @@
               "sourceRecordRef": "capacity:out-SPEN-2",
               "adapterId": "tennis-capacity-v1",
               "adapterVersion": "1",
-              "observedAt": "2026-08-09T02:47:26.609Z",
+              "observedAt": "2026-08-09T02:58:39.936Z",
               "originalValue": "active",
               "mappingMethod": "identity",
               "confidence": "exact"
@@ -944,8 +936,7 @@
           "sportsbookId": "orange777",
           "operationalStatus": "deferred",
           "fundingStatus": "unknown",
-          "externalAccountRefs": [],
-          "limitCoverageRatio": 0
+          "externalAccountRefs": []
         }
       ],
       "accounting": {
@@ -1106,8 +1097,8 @@
       },
       "limits": {
         "tracked": 4,
-        "missing": 1,
-        "coverageRatio": 0.8
+        "missing": 0,
+        "coverageRatio": 1
       },
       "integrations": {
         "sportsTerminal": {
@@ -1116,7 +1107,7 @@
         },
         "tennis": {
           "dataStatus": "ok",
-          "observedAt": "2026-08-09T02:47:26.609Z"
+          "observedAt": "2026-08-09T02:58:39.936Z"
         }
       },
       "attention": [
@@ -1125,12 +1116,6 @@
           "severity": "info",
           "label": "Desk placeholder sportsbook not in public catalog: orange777",
           "actionHref": "/portal/bookmakers/"
-        },
-        {
-          "reasonCode": "partner.limits.coverage_gap",
-          "severity": "info",
-          "label": "1/5 out(s) lack limit evidence (max stake or raise history)",
-          "actionHref": "/portal/limits/"
         },
         {
           "reasonCode": "partner.limits.raise_observed",

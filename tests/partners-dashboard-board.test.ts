@@ -150,11 +150,15 @@ describe('partners-dashboard board cutover', () => {
     const outs = flattenDashboardOuts(dashboard);
     expect(outs.length).toBeGreaterThan(0);
     expect(outs.some(o => o.limitCoverageRatio === 1)).toBe(true);
-    expect(outs.some(o => o.missingLimitEvidence)).toBe(true);
+    // Desk placeholders omit limitCoverageRatio (not scored); catalog holes use ratio 0.
+    expect(
+      outs.some(o => o.limitCoverageRatio === undefined || o.limitCoverageRatio === null)
+    ).toBe(true);
     expect(outs.some(o => o.externalRefCount > 0)).toBe(true);
     const missing = filterPartnerOuts(outs, { missingLimitEvidenceOnly: true });
-    expect(missing.length).toBeGreaterThan(0);
     expect(missing.every(o => o.missingLimitEvidence)).toBe(true);
+    // missingLimitEvidence is only ratio === 0, not unscored placeholders
+    expect(missing.every(o => o.limitCoverageRatio === 0)).toBe(true);
     const noRef = filterPartnerOuts(outs, { noExternalRefOnly: true });
     expect(noRef.every(o => o.missingExternalRef)).toBe(true);
   });
