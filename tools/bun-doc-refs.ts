@@ -903,6 +903,10 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.markdown.render inline callbacks': 'https://bun.com/docs/runtime/markdown#inline-callbacks',
   examples: 'https://bun.com/docs/runtime/markdown#examples',
   'Bun.markdown.render examples': 'https://bun.com/docs/runtime/markdown#examples',
+  'custom-html-with-classes': 'https://bun.com/docs/runtime/markdown#custom-html-with-classes',
+  'stripping-all-formatting': 'https://bun.com/docs/runtime/markdown#stripping-all-formatting',
+  'code-block-syntax-highlighting':
+    'https://bun.com/docs/runtime/markdown#code-block-syntax-highlighting',
   'nested-list-numbering': 'https://bun.com/docs/runtime/markdown#nested-list-numbering',
   'omitting-elements': 'https://bun.com/docs/runtime/markdown#omitting-elements',
   'server-side-rendering': 'https://bun.com/docs/runtime/markdown#server-side-rendering',
