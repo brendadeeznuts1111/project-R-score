@@ -878,6 +878,11 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.markdown.ansi': 'https://bun.com/docs/runtime/markdown#ansi-terminal-output',
   'Bun.markdown.AnsiTheme': 'https://bun.com/docs/runtime/markdown#ansi-terminal-output',
   'Bun.markdown.Options': 'https://bun.com/docs/runtime/markdown#options',
+  'Bun.markdown.ReactOptions': 'https://bun.com/reference/bun/markdown#bun.markdown.ReactOptions',
+  'Bun.markdown.RenderCallbacks':
+    'https://bun.com/reference/bun/markdown#bun.markdown.RenderCallbacks',
+  'Bun.markdown.ComponentOverrides':
+    'https://bun.com/reference/bun/markdown#bun.markdown.ComponentOverrides',
   'Bun.markdown.render': 'https://bun.com/docs/runtime/markdown#bun-markdown-render',
   'Bun.markdown.react': 'https://bun.com/docs/runtime/markdown#bun-markdown-react',
   // bun-api-index showcase labels → generated types reference

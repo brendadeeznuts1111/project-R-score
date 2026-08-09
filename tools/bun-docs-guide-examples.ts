@@ -26,6 +26,9 @@
 // @see https://bun.com/reference/bun/BunInspectOptions — BunInspectOptions
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
 // @see https://bun.com/docs/runtime/markdown#options — options / Bun.markdown.Options
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ReactOptions — Bun.markdown.ReactOptions
+// @see https://bun.com/reference/bun/markdown#bun.markdown.RenderCallbacks — Bun.markdown.RenderCallbacks
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ComponentOverrides — Bun.markdown.ComponentOverrides
 // @see https://bun.com/docs/runtime/markdown#autolinks — autolinks
 // @see https://bun.com/docs/runtime/markdown#heading-ids — heading-ids
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
@@ -607,7 +610,26 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
   'runtime/markdown#bun-markdown-ansi': [
     {
       lang: 'ts',
-      body: 'const ansi = Bun.markdown.ansi("# Hello **world**", {\n  columns: 80,\n  hyperlinks: true,\n});\n// ANSI-styled terminal string (AnsiTheme second arg)',
+      body: 'const ansi = Bun.markdown.ansi("# Hello **world**", {\n  columns: 80,\n  hyperlinks: true,\n  colors: true,\n  kittyGraphics: false,\n  // light: auto from COLORFGBG when omitted\n});\n// ANSI-styled terminal string (AnsiTheme second arg)',
+    },
+  ],
+  // Types reference — ReactOptions / RenderCallbacks / ComponentOverrides
+  'reference/bun/markdown#bun.markdown.ReactOptions': [
+    {
+      lang: 'ts',
+      body: '// ReactOptions = Options + reactVersion?: 18 | 19 (3rd arg; not the components slot)\nconst el = Bun.markdown.react(md, undefined, {\n  reactVersion: 18,\n  headings: { ids: true },\n  autolinks: true,\n});',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.RenderCallbacks': [
+    {
+      lang: 'ts',
+      body: 'const callbacks: Bun.markdown.RenderCallbacks = {\n  heading: (children, { level, id }) =>\n    `<h${level}${id ? ` id="${id}"` : ""}>${children}</h${level}>`,\n  paragraph: children => `<p>${children}</p>`,\n  strong: children => `<b>${children}</b>`,\n  image: () => null, // omit\n};\nconst html = Bun.markdown.render("# Hi **x**", callbacks, { headings: { ids: true } });',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.ComponentOverrides': [
+    {
+      lang: 'tsx',
+      body: 'const components: Bun.markdown.ComponentOverrides = {\n  pre: ({ language, children }) => (\n    <pre data-language={language ?? ""}><code>{children}</code></pre>\n  ),\n  a: ({ href, children }) => (\n    <a href={href} target="_blank" rel="noreferrer">{children}</a>\n  ),\n};\nconst el = Bun.markdown.react(text, components, { reactVersion: 18 });',
     },
   ],
   'runtime/markdown#code-block-syntax-highlighting': [
@@ -995,6 +1017,9 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'Bun.markdown.ansi': 'runtime/markdown#bun-markdown-ansi',
   'Bun.markdown.AnsiTheme': 'runtime/markdown#bun-markdown-ansi',
   'Bun.markdown.Options': 'runtime/markdown#options',
+  'Bun.markdown.ReactOptions': 'reference/bun/markdown#bun.markdown.ReactOptions',
+  'Bun.markdown.RenderCallbacks': 'reference/bun/markdown#bun.markdown.RenderCallbacks',
+  'Bun.markdown.ComponentOverrides': 'reference/bun/markdown#bun.markdown.ComponentOverrides',
   'Bun.markdown.render': 'runtime/markdown#bun-markdown-render',
   'Bun.markdown.react': 'runtime/markdown#bun-markdown-react',
   'component-overrides': 'runtime/markdown#component-overrides',

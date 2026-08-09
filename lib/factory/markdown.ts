@@ -1,8 +1,10 @@
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
 // @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
+// @see https://bun.com/reference/bun/markdown#bun.markdown.AnsiTheme — Bun.markdown.AnsiTheme
 // @see https://bun.com/docs/runtime/markdown#heading-ids — headings / headings.ids
 // @see https://bun.com/docs/runtime/markdown#options — Bun.markdown.Options table
+// @see https://bun.com/reference/bun/markdown#bun.markdown.Options — Bun.markdown.Options types
 /**
  * Factory markdown helpers — Bun runtime only (CLI / local tools).
  *

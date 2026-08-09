@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/markdown#options — Bun.markdown.Options table
+// @see https://bun.com/reference/bun/markdown#bun.markdown.Options — Bun.markdown.Options types
 // @see https://bun.com/docs/runtime/markdown#autolinks — autolinks true | { url, www, email }
 // @see https://bun.com/docs/runtime/markdown#heading-ids — headings true | { ids, autolink }
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html

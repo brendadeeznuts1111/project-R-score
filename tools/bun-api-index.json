@@ -1,7 +1,7 @@
 {
   "schema": "factorywager/bun-api-index/v1",
-  "generated": "2026-07-23T06:04:39.686Z",
-  "bunVersion": "1.4.0",
+  "generated": "2026-08-09T08:48:00.454Z",
+  "bunVersion": "1.3.6",
   "ssot": {
     "llms": "https://bun.com/docs/llms.txt",
     "docsIndex": "tools/bun-docs-index.json",
@@ -23,79 +23,72 @@
     "bun"
   ],
   "coverage": {
-    "generated": "2026-07-23T06:04:39.686Z",
-    "bunVersion": "1.4.0",
+    "generated": "2026-08-09T08:48:00.454Z",
+    "bunVersion": "1.3.6",
     "composite": {
-      "pct": 93
+      "pct": 91
     },
     "groups": {
       "prefer": {
         "canonical": {
-          "hit": 39,
-          "total": 39,
+          "hit": 42,
+          "total": 42,
           "pct": 100
         },
         "apiIndex": {
-          "hit": 39,
-          "total": 39,
+          "hit": 42,
+          "total": 42,
           "pct": 100
         },
         "topics": {
-          "hit": 29,
-          "total": 29,
+          "hit": 30,
+          "total": 30,
           "pct": 100
         }
       },
       "repo": {
         "apis": {
-          "hit": 87,
-          "total": 109,
-          "pct": 80,
+          "hit": 91,
+          "total": 139,
+          "pct": 65,
           "missing": [
-            "Bun.argv",
+            "bun:types-inventory",
+            "bun:types-status",
+            "bun:jsc",
             "Bun.openInEditor",
-            "Bun.RedisClient",
-            "Bun.readableStreamToBytes",
-            "Bun.readableStreamToArray",
-            "Bun.BlobOrStringOrBuffer",
-            "Bun.CronJob",
-            "Bun.utils",
-            "bun:fs",
-            "Bun.S3Client",
-            "Bun.yaml",
+            "bun:brand-map",
             "Bun.stdout",
-            "Bun.readableStreamToJSON",
-            "Bun.exit",
-            "Bun.TerminalOptions",
-            "Bun.xxx",
+            "bun:types-report",
+            "bun:channel",
+            "bun:pr",
+            "bun:release-contracts",
             "Bun.CronController",
+            "bun:ci",
+            "Bun.readableStreamToText",
+            "bun:types-usage",
+            "bun:types-changelog",
+            "bun:types-ci",
+            "Bun.exit",
+            "Bun.Foo",
+            "bun:runtime-pin",
+            "Bun.readableStreamToArray",
+            "Bun.enableANSIColors",
             "bun:check",
-            "Bun.HeadersInit",
-            "Bun.csrf",
-            "Bun.environment",
-            "Bun.readableStreamToText"
+            "bun:utils-proof",
+            "Bun.cwd",
+            "Bun.Name"
           ]
         },
         "links": {
-          "hit": 1055,
-          "total": 1063,
-          "pct": 99,
-          "missing": [
-            "runtime/utils#bun-sliceansi",
-            "runtime/jsonc#bun-jsonc-parse",
-            "runtime/s3#basics",
-            "runtime/semver#bun-semver-satisfies-version-string-range-string--boolean",
-            "runtime/semver#bun-semver-order-versiona-string-versionb-string--0-",
-            "runtime/semver#bun-semver-satisfies-version-string-range-string--boolean",
-            "runtime/semver#bun-semver-order-versiona-string-versionb-string--0-",
-            "guides/process/argv#parse-command-line-arguments"
-          ]
+          "hit": 3937,
+          "total": 3937,
+          "pct": 100
         }
       },
       "dx": {
         "canonical": {
-          "hit": 34,
-          "total": 37,
+          "hit": 35,
+          "total": 38,
           "pct": 92,
           "missing": [
             "file.exists:guides/read-file/exists",
@@ -106,12 +99,13 @@
       },
       "surface": {
         "versioned": {
-          "hit": 87,
-          "total": 109,
-          "pct": 80,
+          "hit": 97,
+          "total": 120,
+          "pct": 81,
           "missing": [
             "Bun.fetch",
             "Bun.Terminal",
+            "Bun.TerminalOptions",
             "Bun.plugin",
             "Bun.s3",
             "bun:sql",
@@ -191,7 +185,8 @@
       ],
       "avoid": [
         "fs.readFile",
-        "fs.writeFile"
+        "fs.writeFile",
+        "fs-extra"
       ],
       "group": "io"
     },
@@ -256,7 +251,8 @@
         "Bun.$"
       ],
       "avoid": [
-        "child_process"
+        "child_process",
+        "execa"
       ],
       "group": "process"
     },
@@ -282,7 +278,8 @@
         "fetch"
       ],
       "avoid": [
-        "axios"
+        "axios",
+        "node-fetch"
       ],
       "group": "process"
     },
@@ -342,7 +339,8 @@
         "Bun.YAML"
       ],
       "avoid": [
-        "@iarna/toml"
+        "@iarna/toml",
+        "toml"
       ],
       "group": "data"
     },
@@ -388,12 +386,15 @@
       "use": [
         "Bun.color",
         "Bun.stripANSI",
-        "Bun.stringWidth"
+        "Bun.stringWidth",
+        "Bun.wrapAnsi"
       ],
       "avoid": [
         "chalk",
+        "kleur",
         "string-width",
-        "strip-ansi"
+        "strip-ansi",
+        "wrap-ansi"
       ],
       "group": "ui"
     },
@@ -412,10 +413,22 @@
     },
     "inspect": {
       "use": [
-        "Bun.inspect"
+        "Bun.inspect",
+        "Bun.inspect.table"
       ],
       "avoid": [
-        "util.inspect"
+        "util.inspect",
+        "cli-table",
+        "cli-table3"
+      ],
+      "group": "ui"
+    },
+    "htmlEscape": {
+      "use": [
+        "Bun.escapeHTML"
+      ],
+      "avoid": [
+        "escape-html"
       ],
       "group": "ui"
     },
@@ -456,7 +469,7 @@
   "apis": [
     {
       "name": "bun:bundle",
-      "docs": "https://bun.com/docs/bundler/esbuild#cli-api"
+      "docs": "https://bun.com/docs/bundler/index#features"
     },
     {
       "name": "bun:error",
@@ -496,11 +509,15 @@
     },
     {
       "name": "Bun.allocUnsafe",
-      "docs": "https://bun.com/docs/runtime/bun-apis"
+      "docs": "https://bun.com/reference/bun/allocUnsafe"
     },
     {
       "name": "Bun.Archive",
       "docs": "https://bun.com/docs/runtime/archive#quickstart"
+    },
+    {
+      "name": "Bun.argv",
+      "docs": "https://bun.com/reference/bun/argv"
     },
     {
       "name": "Bun.ArrayBufferSink",
@@ -511,12 +528,16 @@
       "docs": "https://bun.com/docs/bundler/index#basic-example"
     },
     {
+      "name": "Bun.build css",
+      "docs": "https://bun.com/docs/bundler/css"
+    },
+    {
       "name": "Bun.color",
       "docs": "https://bun.com/docs/runtime/color#flexible-input"
     },
     {
       "name": "Bun.concatArrayBuffers",
-      "docs": "https://bun.com/docs/runtime/bun-apis"
+      "docs": "https://bun.com/reference/bun/concatArrayBuffers"
     },
     {
       "name": "Bun.connect",
@@ -600,7 +621,7 @@
     },
     {
       "name": "Bun.FileSystemRouter",
-      "docs": "https://bun.com/docs/runtime/bun-apis"
+      "docs": "https://bun.com/reference/bun/FileSystemRouter"
     },
     {
       "name": "Bun.fileURLToPath",
@@ -608,11 +629,11 @@
     },
     {
       "name": "Bun.gc",
-      "docs": "https://bun.com/docs/runtime/utils"
+      "docs": "https://bun.com/reference/bun/gc"
     },
     {
       "name": "Bun.generateHeapSnapshot",
-      "docs": "https://bun.com/docs/runtime/utils"
+      "docs": "https://bun.com/reference/bun/generateHeapSnapshot"
     },
     {
       "name": "Bun.Glob",
@@ -643,6 +664,14 @@
       "docs": "https://bun.com/docs/runtime/image#input"
     },
     {
+      "name": "Bun.Image (v1.3.14)",
+      "docs": "https://bun.com/blog/bun-v1.3.14#bun-image"
+    },
+    {
+      "name": "Bun.Image terminal methods",
+      "docs": "https://bun.com/blog/bun-v1.3.14#terminal-methods"
+    },
+    {
       "name": "Bun.inflateSync",
       "docs": "https://bun.com/docs/runtime/utils#bun-inflatesync"
     },
@@ -651,8 +680,16 @@
       "docs": "https://bun.com/docs/runtime/utils#bun-inspect"
     },
     {
+      "name": "Bun.inspect.compact",
+      "docs": "https://bun.com/reference/bun/BunInspectOptions"
+    },
+    {
       "name": "Bun.inspect.custom",
       "docs": "https://bun.com/docs/runtime/utils#bun-inspect-custom"
+    },
+    {
+      "name": "Bun.inspect.sorted",
+      "docs": "https://bun.com/reference/bun/BunInspectOptions"
     },
     {
       "name": "Bun.inspect.table",
@@ -676,15 +713,15 @@
     },
     {
       "name": "Bun.JSON5",
-      "docs": "https://bun.com/docs/runtime/json5"
+      "docs": "https://bun.com/reference/bun/JSON5"
     },
     {
       "name": "Bun.JSONC",
-      "docs": "https://bun.com/docs/runtime/jsonc"
+      "docs": "https://bun.com/reference/bun/JSONC"
     },
     {
       "name": "Bun.JSONL",
-      "docs": "https://bun.com/docs/runtime/jsonl"
+      "docs": "https://bun.com/reference/bun/JSONL"
     },
     {
       "name": "Bun.listen",
@@ -715,8 +752,20 @@
       "docs": "https://bun.com/docs/runtime/markdown#ansi-terminal-output"
     },
     {
+      "name": "Bun.markdown.ComponentOverrides",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.ComponentOverrides"
+    },
+    {
       "name": "Bun.markdown.html",
       "docs": "https://bun.com/docs/runtime/markdown#bun-markdown-html"
+    },
+    {
+      "name": "Bun.markdown.html autolinks",
+      "docs": "https://bun.com/docs/runtime/markdown#autolinks"
+    },
+    {
+      "name": "Bun.markdown.html heading-ids",
+      "docs": "https://bun.com/docs/runtime/markdown#heading-ids"
     },
     {
       "name": "Bun.markdown.html options",
@@ -743,12 +792,44 @@
       "docs": "https://bun.com/docs/runtime/markdown#parser-options-2"
     },
     {
+      "name": "Bun.markdown.react SSR",
+      "docs": "https://bun.com/docs/runtime/markdown#server-side-rendering"
+    },
+    {
+      "name": "Bun.markdown.ReactOptions",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.ReactOptions"
+    },
+    {
       "name": "Bun.markdown.render",
       "docs": "https://bun.com/docs/runtime/markdown#bun-markdown-render"
     },
     {
+      "name": "Bun.markdown.render block callbacks",
+      "docs": "https://bun.com/docs/runtime/markdown#block-callbacks"
+    },
+    {
+      "name": "Bun.markdown.render callback signature",
+      "docs": "https://bun.com/docs/runtime/markdown#callback-signature"
+    },
+    {
+      "name": "Bun.markdown.render examples",
+      "docs": "https://bun.com/docs/runtime/markdown#examples"
+    },
+    {
+      "name": "Bun.markdown.render inline callbacks",
+      "docs": "https://bun.com/docs/runtime/markdown#inline-callbacks"
+    },
+    {
+      "name": "Bun.markdown.render listItem",
+      "docs": "https://bun.com/docs/runtime/markdown#list-item-meta"
+    },
+    {
       "name": "Bun.markdown.render parser options",
       "docs": "https://bun.com/docs/runtime/markdown#parser-options"
+    },
+    {
+      "name": "Bun.markdown.RenderCallbacks",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.RenderCallbacks"
     },
     {
       "name": "Bun.mmap",
@@ -791,8 +872,16 @@
       "docs": "https://bun.com/docs/runtime/utils#bun-readablestreamto"
     },
     {
+      "name": "Bun.readableStreamToBytes",
+      "docs": "https://bun.com/reference/bun/readableStreamToBytes"
+    },
+    {
       "name": "Bun.redis",
       "docs": "https://bun.com/docs/runtime/redis#getting-started"
+    },
+    {
+      "name": "Bun.RedisClient",
+      "docs": "https://bun.com/reference/bun/RedisClient"
     },
     {
       "name": "Bun.resolveSync",
@@ -815,6 +904,14 @@
       "docs": "https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean"
     },
     {
+      "name": "Bun.semver.order",
+      "docs": "https://bun.com/reference/bun/semver/order"
+    },
+    {
+      "name": "Bun.semver.satisfies",
+      "docs": "https://bun.com/reference/bun/semver/satisfies"
+    },
+    {
       "name": "Bun.serve",
       "docs": "https://bun.com/docs/runtime/http/server#basic-setup"
     },
@@ -825,6 +922,10 @@
     {
       "name": "Bun.serve hostname",
       "docs": "https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname"
+    },
+    {
+      "name": "Bun.serve http3",
+      "docs": "https://bun.com/blog/bun-v1.3.14#http3"
     },
     {
       "name": "Bun.serve port",
@@ -876,7 +977,7 @@
     },
     {
       "name": "Bun.SQL",
-      "docs": "https://bun.com/docs/runtime/sql"
+      "docs": "https://bun.com/reference/bun/SQL"
     },
     {
       "name": "Bun.stdin",
@@ -895,20 +996,36 @@
       "docs": "https://bun.com/docs/runtime/child-process#terminal-pty-support"
     },
     {
+      "name": "Bun.Terminal (ConPTY)",
+      "docs": "https://bun.com/blog/bun-v1.3.14#bunterminal-on-windows-via-conpty"
+    },
+    {
+      "name": "Bun.Terminal (reference)",
+      "docs": "https://bun.com/reference/bun/Terminal"
+    },
+    {
+      "name": "Bun.Terminal (v1.3.5 ship)",
+      "docs": "https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support"
+    },
+    {
+      "name": "Bun.TerminalOptions",
+      "docs": "https://bun.com/reference/bun/TerminalOptions"
+    },
+    {
       "name": "Bun.TOML",
       "docs": "https://bun.com/docs/runtime/toml#bun-toml-parse"
     },
     {
       "name": "Bun.TOML.parse",
-      "docs": "https://bun.com/docs/runtime/toml#bun-toml-parse"
+      "docs": "https://bun.com/reference/bun/TOML/parse"
     },
     {
       "name": "Bun.TOML.stringify",
-      "docs": "https://bun.com/docs/runtime/toml#bun-toml-stringify"
+      "docs": "https://bun.com/docs/runtime/toml"
     },
     {
       "name": "Bun.Transpiler",
-      "docs": "https://bun.com/docs/runtime/transpiler"
+      "docs": "https://bun.com/reference/bun/Transpiler"
     },
     {
       "name": "Bun.udpSocket",
@@ -955,5 +1072,5 @@
       "docs": "https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync"
     }
   ],
-  "count": 125
+  "count": 151
 }
