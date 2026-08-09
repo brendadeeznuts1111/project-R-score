@@ -226,14 +226,47 @@ export async function buildPartnersOpsRegistry(root = process.cwd()): Promise<Pa
   });
 }
 
+export type ExportPartnersOpsOptions = {
+  /**
+   * When true (default), refuse to overwrite an existing non-empty partners-ops
+   * bake with a projection that has zero partners (empty seat desk / handshake).
+   * Prevents ops:snapshot from wiping inventory while profiles own outs SSOT.
+   */
+  preserveNonEmpty?: boolean;
+};
+
 export async function exportPartnersOpsRegistry(
   root = process.cwd(),
-  outputRoot = root
+  outputRoot = root,
+  options: ExportPartnersOpsOptions = {}
 ): Promise<PartnersOpsRegistry> {
+  const preserveNonEmpty = options.preserveNonEmpty !== false;
   const registry = await buildPartnersOpsRegistry(root);
   const abs = outputRoot.endsWith('/')
     ? `${outputRoot}${PARTNERS_OPS_REGISTRY_REL}`
     : `${outputRoot}/${PARTNERS_OPS_REGISTRY_REL}`;
+
+  if (preserveNonEmpty && registry.summary.partners === 0) {
+    const existingFile = Bun.file(abs);
+    if (await existingFile.exists()) {
+      try {
+        const existing = (await existingFile.json()) as PartnersOpsRegistry;
+        const existingCount =
+          typeof existing.summary?.partners === 'number'
+            ? existing.summary.partners
+            : Array.isArray(existing.partners)
+              ? existing.partners.length
+              : 0;
+        if (existingCount > 0) {
+          // Keep last non-empty bake (seat desk empty would otherwise wipe inventory).
+          return existing;
+        }
+      } catch {
+        // Unreadable existing bake — fall through and write the new projection.
+      }
+    }
+  }
+
   const dir = abs.slice(0, abs.lastIndexOf('/'));
   if (dir) await Bun.$`mkdir -p ${dir}`.quiet();
   await Bun.write(abs, `${JSON.stringify(registry, null, 2)}\n`);

@@ -4,7 +4,9 @@ import {
   PARTNER_SURFACE_GENERATED_DOC_REL,
   formatPartnerSurfaceGeneratedMarkdown,
   liveOutIdsFromPartnersOps,
+  liveOutIdsFromPrivateProfiles,
   livePartnerCodesFromPartnersOps,
+  livePartnerCodesFromPrivateProfiles,
   partnerDeskHrefs,
 } from '../lib/docs/partner-surface-docs.ts';
 import { main as bakeDocsMain } from '../scripts/bake-partner-surface-docs.ts';
@@ -87,6 +89,37 @@ describe('partner-surface-docs', () => {
     expect(outs).toEqual([
       { outId: 'out-ASH-1', partnerCode: 'ASH', status: 'ready' },
       { outId: 'out-ASH-2', partnerCode: 'ASH' },
+    ]);
+  });
+
+  test('livePartnerCodesFromPrivateProfiles reads lifecycle phase + callSign', () => {
+    const codes = livePartnerCodesFromPrivateProfiles({
+      ash: {
+        identity: { code: 'ASH', callSign: 'ash-001' },
+        lifecycle: { phase: 'operator_ready' },
+      },
+      BIL: { identity: { code: 'BIL' }, lifecycle: {} },
+    });
+    expect(codes).toEqual([
+      { code: 'ASH', phase: 'operator_ready', callSign: 'ASH-001' },
+      { code: 'BIL' },
+    ]);
+  });
+
+  test('liveOutIdsFromPrivateProfiles reads outs.out-CODE-N status', () => {
+    const outs = liveOutIdsFromPrivateProfiles({
+      ASH: {
+        outs: {
+          'out-ASH-1': { book: 'hard-rock-florida', status: 'ready' },
+          'out-ASH-2': { book: 'hard-rock-florida', status: 'deferred' },
+          'bad-key': { book: 'x' },
+        },
+      },
+      BIL: { books: {} },
+    });
+    expect(outs).toEqual([
+      { outId: 'out-ASH-1', partnerCode: 'ASH', status: 'ready' },
+      { outId: 'out-ASH-2', partnerCode: 'ASH', status: 'deferred' },
     ]);
   });
 

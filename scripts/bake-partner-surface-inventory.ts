@@ -10,19 +10,22 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  *   bun run partner-surface-inventory:bake
  *   bun run partner-surface-inventory:check
  *
- * Partner-code and out-id rows are derived from public/registry/partners-ops.json
- * when present.
+ * Partner-code and out-id rows prefer private profile outs (config/partner-profiles),
+ * then fall back to public/registry/partners-ops.json when profiles have no outs.
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import {
   liveOutIdsFromPartnersOps,
+  liveOutIdsFromPrivateProfiles,
   livePartnerCodesFromPartnersOps,
+  livePartnerCodesFromPrivateProfiles,
 } from '../lib/docs/partner-surface-docs.ts';
 import {
   buildPartnerSurfaceInventory,
   type PartnerSurfaceLiveCode,
   type PartnerSurfaceLiveOut,
 } from '../lib/docs/partner-surface-inventory.ts';
+import { loadAllProfiles } from '../lib/partner-profile/bake.ts';
 import { resolvePath } from './lib/fs-bun.ts';
 
 const argv = import.meta.main
@@ -33,28 +36,43 @@ const OUT_PATH = resolvePath(ROOT, 'public/registry/partner-surface-inventory.js
 const PARTNERS_OPS_PATH = resolvePath(ROOT, 'public/registry/partners-ops.json');
 const CHECK = argv.includes('--check');
 
-async function loadLiveFromPartnersOps(): Promise<{
+async function loadLiveInventory(): Promise<{
   livePartnerCodes: readonly PartnerSurfaceLiveCode[];
   liveOutIds: readonly PartnerSurfaceLiveOut[];
+  source: 'private-profiles' | 'partners-ops' | 'none';
 }> {
+  const { profiles, issues } = await loadAllProfiles(resolvePath(ROOT, 'config/partner-profiles'));
+  if (issues.length > 0) {
+    console.warn(
+      `⚠️  private profiles incomplete — ${issues.length} issue(s); trying partners-ops fallback`
+    );
+  } else if (Object.keys(profiles).length > 0) {
+    const livePartnerCodes = livePartnerCodesFromPrivateProfiles(profiles);
+    const liveOutIds = liveOutIdsFromPrivateProfiles(profiles);
+    if (livePartnerCodes.length > 0) {
+      return { livePartnerCodes, liveOutIds, source: 'private-profiles' };
+    }
+  }
+
   const file = Bun.file(PARTNERS_OPS_PATH);
   if (!(await file.exists())) {
-    return { livePartnerCodes: [], liveOutIds: [] };
+    return { livePartnerCodes: [], liveOutIds: [], source: 'none' };
   }
   try {
     const artifact = await file.json();
     return {
       livePartnerCodes: livePartnerCodesFromPartnersOps(artifact),
       liveOutIds: liveOutIdsFromPartnersOps(artifact),
+      source: 'partners-ops',
     };
   } catch {
     console.warn('⚠️  partners-ops.json unreadable — baking without partner-code/out-id rows');
-    return { livePartnerCodes: [], liveOutIds: [] };
+    return { livePartnerCodes: [], liveOutIds: [], source: 'none' };
   }
 }
 
 async function main(): Promise<number> {
-  const { livePartnerCodes, liveOutIds } = await loadLiveFromPartnersOps();
+  const { livePartnerCodes, liveOutIds, source } = await loadLiveInventory();
   const options = { livePartnerCodes, liveOutIds };
 
   if (CHECK) {
@@ -75,7 +93,9 @@ async function main(): Promise<number> {
       );
       return 1;
     }
-    console.info('partner-surface-inventory.json ok (deep-equal ignoring bakedAt)');
+    console.info(
+      `partner-surface-inventory.json ok (deep-equal ignoring bakedAt · source=${source})`
+    );
     return 0;
   }
 
@@ -84,7 +104,7 @@ async function main(): Promise<number> {
   const partnerCodes = map.rows.filter(r => r.aspect === 'partner-code').length;
   const outIds = map.rows.filter(r => r.aspect === 'out-id').length;
   console.info(
-    `partner-surface-inventory.json baked: ${map.rows.length} rows · chrome nav ${listPartnerChromeCount(map)} · partner-codes ${partnerCodes} · out-ids ${outIds}`
+    `partner-surface-inventory.json baked: ${map.rows.length} rows · chrome nav ${listPartnerChromeCount(map)} · partner-codes ${partnerCodes} · out-ids ${outIds} · source=${source}`
   );
   return 0;
 }

@@ -173,4 +173,35 @@ describe('partners-ops registry bake', () => {
     expect(baked.schema).toBe(PARTNERS_OPS_SCHEMA);
     expect(baked.partners.length).toBe(registry.partners.length);
   });
+
+  test('export preserves non-empty bake when projection is empty', async () => {
+    await using workspace = await createTestWorkspace('partner-ops-preserve-');
+    const path = workspace.resolve('public/registry/partners-ops.json');
+    await Bun.$`mkdir -p ${workspace.resolve('public/registry')}`.quiet();
+    const prior = {
+      schema: PARTNERS_OPS_SCHEMA,
+      version: '2',
+      generatedAt: '2026-08-01T00:00:00.000Z',
+      partners: [{ code: 'ASH', outs: [{ id: 'out-ASH-1' }] }],
+      summary: { partners: 1, outs: 1, books: 0, validationErrors: 0, validationWarnings: 0 },
+      validation: { ok: true, issues: [] },
+    };
+    await Bun.write(path, `${JSON.stringify(prior, null, 2)}\n`);
+
+    // Empty seat/handshake sources under workspace root → empty projection.
+    const result = await exportPartnersOpsRegistry(workspace.root, workspace.root);
+    expect(result.summary.partners).toBe(1);
+    expect(result.partners).toHaveLength(1);
+    const disk = await Bun.file(path).json();
+    expect(disk.summary.partners).toBe(1);
+    expect(disk.partners[0]?.code).toBe('ASH');
+
+    // Explicit opt-out may overwrite with empty.
+    const wiped = await exportPartnersOpsRegistry(workspace.root, workspace.root, {
+      preserveNonEmpty: false,
+    });
+    expect(wiped.summary.partners).toBe(0);
+    const diskAfter = await Bun.file(path).json();
+    expect(diskAfter.summary.partners).toBe(0);
+  });
 });

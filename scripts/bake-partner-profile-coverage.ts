@@ -4,8 +4,9 @@
 /**
  * Bake redacted partner-profile-coverage.json from private profile TOMLs.
  *
- * Hardens MVP readiness: coverage must include every PartnerCode currently
- * projected by partners-ops (ASH · BIL · NOV · SPEN).
+ * Completeness gate: every CODE with a private profile TOML must appear in the
+ * coverage artifact (outs inventory SSOT is profile-owned; partners-ops is not
+ * required for this gate).
  */
 import { loadAllProfiles } from '../lib/partner-profile/bake.ts';
 import {
@@ -16,23 +17,11 @@ import {
 } from '../packages/partners/src/adapters/profile-coverage.ts';
 import { parsePartnerCode } from '../packages/partners/src/core/identifiers.ts';
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
-import { parseLegacyPartnersOpsProjection } from '../packages/partners/src/compatibility/legacy-partners-ops.ts';
 
 const argv = import.meta.main
   ? applyUnknownLongOptionGuardFor('partner-profile:coverage:bake', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 const outputPath = `public${PARTNER_PROFILE_COVERAGE_INPUT_REF}`;
-const PARTNERS_OPS_PATH = 'public/registry/partners-ops.json';
-
-async function requiredPartnerCodes(): Promise<ReturnType<typeof parsePartnerCode>[]> {
-  const ops = await Bun.file(PARTNERS_OPS_PATH).json();
-  const projection = parseLegacyPartnersOpsProjection(ops);
-  const codes = projection.partners.map(partner => parsePartnerCode(partner.partnerCode));
-  if (codes.length === 0) {
-    throw new TypeError(`${PARTNERS_OPS_PATH} has no partner CODEs — cannot gate coverage completeness`);
-  }
-  return codes;
-}
 
 const { profiles, issues } = await loadAllProfiles();
 if (issues.length > 0) {
@@ -42,15 +31,23 @@ if (issues.length > 0) {
   );
 }
 
+const required = Object.keys(profiles)
+  .sort()
+  .map(code => parsePartnerCode(code));
+if (required.length === 0) {
+  throw new TypeError(
+    'config/partner-profiles has no valid profile TOMLs — cannot gate coverage completeness'
+  );
+}
+
 const artifact = buildPartnerProfileCoverageArtifact(profiles, new Date().toISOString());
-const required = await requiredPartnerCodes();
 const completeness = derivePartnerProfileCoverage(
   parsePartnerProfileCoverageArtifact(artifact),
   required
 );
 if (!completeness.complete) {
   throw new TypeError(
-    `partner profile coverage incomplete for partners-ops CODEs; missing ${completeness.missingCodes.join(', ')} ` +
+    `partner profile coverage incomplete for private profile CODEs; missing ${completeness.missingCodes.join(', ')} ` +
       `(add config/partner-profiles/<CODE>.toml then re-bake)`
   );
 }
