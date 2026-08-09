@@ -69,6 +69,12 @@ target = "@you.partner"
 maxBet = 500
 freeRollPct = 100
 
+# Out inventory — partner-scoped seats (dashboard SSOT). Key = out-CODE-N.
+# Multiple outs may share one bookKey. books.* holds credentials; outs.* holds seats.
+[outs.out-YOU-1]
+book = "youwager"
+status = "ready"
+
 [cultivation]
 initialDepositTarget = 500
 depositScheduleWeeks = 4

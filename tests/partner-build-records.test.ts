@@ -1,9 +1,11 @@
 import { describe, expect, test } from 'bun:test';
+import { loadAllProfiles } from '../lib/partner-profile/bake.ts';
 import {
   PARTNER_CONNECTOR_SNAPSHOT_KEYS,
   PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS,
   adaptAccountingFromLedgerSnapshot,
   assemblePartnerDashboardArtifact,
+  bookKeyToOutIdMapFromProfiles,
   buildPartnerDashboardRecords,
   evaluateConnectorFreshness,
   parseLegacyPartnersOpsProjection,
@@ -18,6 +20,14 @@ const ROOT = new URL('../', import.meta.url);
 
 async function loadJson(path: string): Promise<unknown> {
   return Bun.file(new URL(path, ROOT)).json();
+}
+
+async function loadPrivateProfiles(): Promise<Record<string, unknown>> {
+  // Absolute dir so package-cwd `bun test` (packages/partners) still finds TOMLs.
+  const profilesDir = new URL('config/partner-profiles/', ROOT).pathname;
+  const { profiles, issues } = await loadAllProfiles(profilesDir);
+  if (issues.length > 0) throw new Error(issues.join('; '));
+  return profiles;
 }
 
 function connectorSnapshots(asOf: string): Record<string, ConnectorSnapshot> {
@@ -39,15 +49,14 @@ function connectorSnapshots(asOf: string): Record<string, ConnectorSnapshot> {
 }
 
 describe('buildPartnerDashboardRecords', () => {
-  test('joins coverage, lifecycle, telegram, and legacy outs into assemblable records', async () => {
-    const [profiles, coverageRaw, legacyRaw, telegramRaw] = await Promise.all([
+  test('joins coverage, lifecycle, telegram, and private profile outs into assemblable records', async () => {
+    const [profiles, coverageRaw, telegramRaw, privateProfiles] = await Promise.all([
       loadJson('public/registry/partner-profiles.json'),
       loadJson('public/registry/partner-profile-coverage.json'),
-      loadJson('public/registry/partners-ops.json'),
       loadJson('public/registry/telegram-handshake.json'),
+      loadPrivateProfiles(),
     ]);
     const coverage = parsePartnerProfileCoverageArtifact(coverageRaw);
-    const legacyOps = parseLegacyPartnersOpsProjection(legacyRaw);
     const telegram = parseTelegramHandshakeArtifact(telegramRaw);
     const generatedAt =
       typeof (profiles as { generatedAt?: string }).generatedAt === 'string'
@@ -58,7 +67,7 @@ describe('buildPartnerDashboardRecords', () => {
       generatedAt,
       partnerProfiles: profiles,
       profileCoverage: coverage,
-      legacyOps,
+      privateProfiles,
       telegram,
     });
 
@@ -74,8 +83,22 @@ describe('buildPartnerDashboardRecords', () => {
     // Handshake phase is fixture-driven (operator_ready when desk clean; blocked after live ops export).
     expect(typeof ash.communication.handshakeStatus).toBe('string');
     expect(ash.communication.handshakeStatus.length).toBeGreaterThan(0);
-    expect(ash.outs.length).toBeGreaterThan(0);
-    expect(ash.outs[0]?.sportsbookId).toBe('hard-rock-florida');
+    // Dual outs on the same bookKey (profile inventory, not partners-ops).
+    expect(ash.outs.map(o => o.outId).sort()).toEqual(['out-ASH-1', 'out-ASH-2']);
+    expect(ash.outs.every(o => o.sportsbookId === 'hard-rock-florida')).toBe(true);
+    expect(ash.outs.find(o => o.outId === 'out-ASH-1')?.operationalStatus).toBe('ready');
+    expect(ash.outs.find(o => o.outId === 'out-ASH-2')?.operationalStatus).toBe('deferred');
+
+    const spen = built.partners.find(p => p.partnerCode === 'SPEN')!;
+    expect(spen.outs).toHaveLength(5);
+    expect(spen.outs.map(o => o.outId).sort()).toEqual([
+      'out-SPEN-1',
+      'out-SPEN-2',
+      'out-SPEN-3',
+      'out-SPEN-4',
+      'out-SPEN-5',
+    ]);
+
     expect(ash.accounting.balancePositions).toEqual([]);
     expect(built.accounting).toEqual([]);
     expect(ash.attention.some(a => a.reasonCode === 'partner.profile.migration_required')).toBe(
@@ -95,15 +118,67 @@ describe('buildPartnerDashboardRecords', () => {
     expect(artifact.partners).toHaveLength(4);
   });
 
-  test('joins accounting-ledger observations into balances and out funding', async () => {
-    const [profiles, coverageRaw, legacyRaw, ledgerSnap] = await Promise.all([
+  test('prefers private profile outs over legacy partners-ops', async () => {
+    const [profiles, coverageRaw, legacyRaw, privateProfiles] = await Promise.all([
       loadJson('public/registry/partner-profiles.json'),
       loadJson('public/registry/partner-profile-coverage.json'),
       loadJson('public/registry/partners-ops.json'),
+      loadPrivateProfiles(),
+    ]);
+    const built = buildPartnerDashboardRecords({
+      generatedAt: '2026-08-08T18:00:00.000Z',
+      partnerProfiles: profiles,
+      profileCoverage: parsePartnerProfileCoverageArtifact(coverageRaw),
+      privateProfiles,
+      legacyOps: parseLegacyPartnersOpsProjection(legacyRaw),
+    });
+    // Profile inventory still wins; count matches seeded TOML (10 outs total).
+    expect(built.partners.flatMap(p => p.outs).map(o => o.outId).sort()).toEqual([
+      'out-ASH-1',
+      'out-ASH-2',
+      'out-BIL-1',
+      'out-NOV-1',
+      'out-NOV-2',
+      'out-SPEN-1',
+      'out-SPEN-2',
+      'out-SPEN-3',
+      'out-SPEN-4',
+      'out-SPEN-5',
+    ]);
+  });
+
+  test('falls back to legacy partners-ops when profile has no outs table', async () => {
+    const [profiles, coverageRaw, legacyRaw] = await Promise.all([
+      loadJson('public/registry/partner-profiles.json'),
+      loadJson('public/registry/partner-profile-coverage.json'),
+      loadJson('public/registry/partners-ops.json'),
+    ]);
+    // Strip outs so builder must use legacy.
+    const privateProfiles = {
+      ASH: { identity: { code: 'ASH' } },
+    };
+    const built = buildPartnerDashboardRecords({
+      generatedAt: '2026-08-08T18:00:00.000Z',
+      partnerProfiles: profiles,
+      profileCoverage: parsePartnerProfileCoverageArtifact(coverageRaw),
+      privateProfiles,
+      legacyOps: parseLegacyPartnersOpsProjection(legacyRaw),
+    });
+    const ash = built.partners.find(p => p.partnerCode === 'ASH')!;
+    expect(ash.outs.map(o => o.outId).sort()).toEqual(['out-ASH-1', 'out-ASH-2']);
+    // SPEN has no private outs → full legacy inventory
+    const spen = built.partners.find(p => p.partnerCode === 'SPEN')!;
+    expect(spen.outs).toHaveLength(5);
+  });
+
+  test('joins accounting-ledger observations into balances and out funding', async () => {
+    const [profiles, coverageRaw, privateProfiles, ledgerSnap] = await Promise.all([
+      loadJson('public/registry/partner-profiles.json'),
+      loadJson('public/registry/partner-profile-coverage.json'),
+      loadPrivateProfiles(),
       loadJson('tests/fixtures/partner-accounting/ledger-rows.json'),
     ]);
     const coverage = parsePartnerProfileCoverageArtifact(coverageRaw);
-    const legacyOps = parseLegacyPartnersOpsProjection(legacyRaw);
     const accounting = adaptAccountingFromLedgerSnapshot(ledgerSnap, {
       observedAt: '2026-08-08T18:00:00.000Z',
       bookKeyToOutId: {
@@ -116,7 +191,7 @@ describe('buildPartnerDashboardRecords', () => {
       generatedAt: '2026-08-08T18:00:00.000Z',
       partnerProfiles: profiles,
       profileCoverage: coverage,
-      legacyOps,
+      privateProfiles,
       accounting,
     });
 
@@ -137,6 +212,10 @@ describe('buildPartnerDashboardRecords', () => {
     const nov = built.partners.find(p => p.partnerCode === 'NOV')!;
     expect(nov.accounting.balancePositions).toEqual([]);
 
+    const map = bookKeyToOutIdMapFromProfiles(privateProfiles);
+    expect(map['ASH:hard-rock-florida']).toBe('out-ASH-2'); // last write for shared book
+    expect(map['SPEN:parlay21-com']).toBe('out-SPEN-1');
+
     const artifact = assemblePartnerDashboardArtifact({
       generatedAt: '2026-08-08T18:00:00.000Z',
       connectorSnapshots: connectorSnapshots('2026-08-08T18:00:00.000Z') as never,
@@ -148,17 +227,17 @@ describe('buildPartnerDashboardRecords', () => {
   });
 
   test('reconcile after build promotes tennis activeOutIds', async () => {
-    const [profiles, coverageRaw, legacyRaw, tennisRaw] = await Promise.all([
+    const [profiles, coverageRaw, privateProfiles, tennisRaw] = await Promise.all([
       loadJson('public/registry/partner-profiles.json'),
       loadJson('public/registry/partner-profile-coverage.json'),
-      loadJson('public/registry/partners-ops.json'),
+      loadPrivateProfiles(),
       loadJson('public/registry/tennis/partner-contracts.json'),
     ]);
     const built = buildPartnerDashboardRecords({
       generatedAt: '2026-08-08T18:00:00.000Z',
       partnerProfiles: profiles,
       profileCoverage: parsePartnerProfileCoverageArtifact(coverageRaw),
-      legacyOps: parseLegacyPartnersOpsProjection(legacyRaw),
+      privateProfiles,
     });
     expect(built.activeOutIds).toEqual([]);
 

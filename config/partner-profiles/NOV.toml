@@ -66,6 +66,29 @@ target = "@nov.newpartner"
 maxBet = 500
 freeRollPct = 25
 
+[books.southfl-pph-desk]
+type = "pph"
+status = "deferred"
+withdrawPath = "Venmo → house"
+[books.southfl-pph-desk.account]
+username = "nov2.staging"
+vaultKey = "partner:NOV:southfl-pph-desk"
+[books.southfl-pph-desk.funding]
+method = "deposit.method.venmo"
+rail = "Venmo"
+target = "@nov.pph"
+[books.southfl-pph-desk.limits]
+maxBet = 500
+freeRollPct = 25
+
+[outs.out-NOV-1]
+book = "hard-rock-florida"
+status = "ready"
+
+[outs.out-NOV-2]
+book = "southfl-pph-desk"
+status = "deferred"
+
 [cultivation]
 initialDepositTarget = 500
 depositScheduleWeeks = 4

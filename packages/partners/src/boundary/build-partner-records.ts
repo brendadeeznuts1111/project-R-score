@@ -5,8 +5,9 @@
  *   - canonical partner-profiles bake → lifecycle + call sign
  *   - partner-profile-coverage → which CODEs are implementation-ready
  *   - optional telegram-handshake → communication block
- *   - optional legacy partners-ops → out skeleton (visibility only; status is
- *     mapped with heuristic confidence until tennis/bookmakers reconcile)
+ *   - private partner-profile outs inventory (preferred out skeleton SSOT)
+ *   - optional legacy partners-ops → out skeleton fallback when profile outs
+ *     are absent for a CODE (visibility only; status heuristic until tennis)
  *   - optional accounting-ledger observations → balances, recent entries,
  *     out-scoped fundingStatus (never OutOperationalStatus)
  *
@@ -27,8 +28,13 @@ import {
 } from '../adapters/profile-coverage.ts';
 import type { PartnerCommunicationObservation } from '../adapters/telegram-handshake.ts';
 import type { LegacyPartnerProjection } from '../compatibility/legacy-partners-ops.ts';
-import { parseAttentionReasonCode, parseSportsbookId } from '../core/identifiers.ts';
-import { parseSourceSystemId } from '../core/identifiers.ts';
+import {
+  parseAttentionReasonCode,
+  parseCanonicalOutId,
+  parseCanonicalOutIdentity,
+  parseSportsbookId,
+  parseSourceSystemId,
+} from '../core/identifiers.ts';
 import {
   CANONICAL_PROFILE_SOURCE_SYSTEM_ID,
   PROFILE_MIGRATION_REQUIRED_REASON,
@@ -50,7 +56,13 @@ export type BuildPartnerRecordsInput = {
   partnerProfiles: unknown;
   /** Redacted coverage artifact (identity readiness). */
   profileCoverage: PartnerProfileCoverageArtifact;
-  /** Optional legacy visibility for out skeletons. */
+  /**
+   * Private partner-profile map (CODE → full private TOML object).
+   * When a CODE has a non-empty `outs` table, that inventory is preferred over
+   * legacy partners-ops for out skeletons.
+   */
+  privateProfiles?: Readonly<Record<string, unknown>>;
+  /** Optional legacy visibility for out skeletons (fallback). */
   legacyOps?: LegacyPartnerProjection;
   /** Optional telegram handshake observations. */
   telegram?: readonly PartnerCommunicationObservation[];
@@ -72,7 +84,7 @@ export type BuildPartnerRecordsResult = {
   accounting: PartnerAccountingObservation[];
 };
 
-const LEGACY_OUT_STATUS_MAP: Record<
+const OUT_STATUS_MAP: Record<
   string,
   { operational: OutOperationalStatus; funding: OutFundingStatus }
 > = {
@@ -84,11 +96,11 @@ const LEGACY_OUT_STATUS_MAP: Record<
   blocked: { operational: 'blocked', funding: 'unknown' },
 };
 
-function mapLegacyOutStatus(status: string): {
+function mapOutStatus(status: string): {
   operational: OutOperationalStatus;
   funding: OutFundingStatus;
 } {
-  return LEGACY_OUT_STATUS_MAP[status] ?? { operational: 'unknown', funding: 'unknown' };
+  return OUT_STATUS_MAP[status] ?? { operational: 'unknown', funding: 'unknown' };
 }
 
 function emptyAccounting(): PartnerDashboardRecord['accounting'] {
@@ -113,7 +125,7 @@ function accountingFor(
   };
 }
 
-/** Accounting-ledger owns out funding; legacy heuristic remains when no observation. */
+/** Accounting-ledger owns out funding; inventory heuristic remains when no observation. */
 function applyOutFunding(
   outs: PartnerDashboardOut[],
   funding: PartnerAccountingObservation['outFunding'] | undefined
@@ -167,12 +179,61 @@ function telegramGapAttention(
   };
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+/**
+ * Out inventory from private profile `outs.out-CODE-N` tables.
+ * Returns null when the profile has no outs table (caller falls back to legacy).
+ * Empty object means author intentionally declared zero outs.
+ */
+function outsFromPrivateProfile(
+  partnerCode: PartnerCode,
+  privateProfile: unknown | undefined
+): PartnerDashboardOut[] | null {
+  if (!isRecord(privateProfile)) return null;
+  if (!Object.prototype.hasOwnProperty.call(privateProfile, 'outs')) return null;
+  const outsRaw = privateProfile.outs;
+  if (!isRecord(outsRaw)) {
+    throw new TypeError(`privateProfiles.${partnerCode}.outs must be an object`);
+  }
+  const rows: PartnerDashboardOut[] = [];
+  for (const outIdKey of Object.keys(outsRaw).sort()) {
+    const identity = parseCanonicalOutIdentity(outIdKey);
+    if (identity.partnerCode !== partnerCode) {
+      throw new TypeError(
+        `privateProfiles.${partnerCode}.outs.${outIdKey} must belong to ${partnerCode}`
+      );
+    }
+    const row = outsRaw[outIdKey];
+    if (!isRecord(row)) {
+      throw new TypeError(`privateProfiles.${partnerCode}.outs.${outIdKey} must be an object`);
+    }
+    if (typeof row.book !== 'string' || row.book.length === 0) {
+      throw new TypeError(
+        `privateProfiles.${partnerCode}.outs.${outIdKey}.book must be a non-empty sportsbook bookKey`
+      );
+    }
+    const status = typeof row.status === 'string' ? row.status : 'unknown';
+    const mapped = mapOutStatus(status);
+    rows.push({
+      outId: parseCanonicalOutId(outIdKey),
+      sportsbookId: parseSportsbookId(row.book),
+      operationalStatus: mapped.operational,
+      fundingStatus: mapped.funding,
+      externalAccountRefs: [],
+    });
+  }
+  return rows;
+}
+
 function outsFromLegacy(
   legacy: LegacyPartnerProjection['partners'][number] | undefined
 ): PartnerDashboardOut[] {
   if (!legacy) return [];
   return legacy.outs.map(out => {
-    const mapped = mapLegacyOutStatus(out.observedStatus);
+    const mapped = mapOutStatus(out.observedStatus);
     return {
       outId: out.outId,
       sportsbookId: parseSportsbookId(out.observedBookSlug),
@@ -181,6 +242,22 @@ function outsFromLegacy(
       externalAccountRefs: [],
     };
   });
+}
+
+/** Prefer private profile outs; fall back to legacy partners-ops visibility. */
+function resolveOuts(
+  partnerCode: PartnerCode,
+  privateProfile: unknown | undefined,
+  legacy: LegacyPartnerProjection['partners'][number] | undefined
+): PartnerDashboardOut[] {
+  const fromProfile = outsFromPrivateProfile(partnerCode, privateProfile);
+  if (fromProfile !== null) return fromProfile;
+  return outsFromLegacy(legacy);
+}
+
+function profileHasOutInventory(privateProfile: unknown | undefined): boolean {
+  if (!isRecord(privateProfile) || !isRecord(privateProfile.outs)) return false;
+  return Object.keys(privateProfile.outs).length > 0;
 }
 
 /**
@@ -196,6 +273,7 @@ export function buildPartnerDashboardRecords(
 
   const legacyPartners = input.legacyOps?.partners ?? [];
   const legacyByCode = new Map(legacyPartners.map(row => [row.partnerCode, row]));
+  const privateByCode = input.privateProfiles ?? {};
 
   const telegramByCode = new Map(
     (input.telegram ?? []).map(row => [row.partnerCode, row] as const)
@@ -212,14 +290,21 @@ export function buildPartnerDashboardRecords(
   const codeUniverse = new Set<string>([
     ...coverageCodes,
     ...legacyPartners.map(p => p.partnerCode),
+    ...Object.keys(privateByCode),
   ]);
 
   for (const code of codeUniverse) {
     const telegram = telegramByCode.get(code as PartnerCode);
     const legacy = legacyByCode.get(code as PartnerCode);
+    const privateProfile = privateByCode[code];
     completenessByCode[code] = {
       telegramLinked: telegram?.dmLinkage === 'linked' || telegram?.handshakeOk === true,
-      hasBooks: (legacy?.outs.length ?? 0) > 0,
+      hasBooks:
+        profileHasOutInventory(privateProfile) ||
+        (legacy?.outs.length ?? 0) > 0 ||
+        (isRecord(privateProfile) &&
+          isRecord(privateProfile.books) &&
+          Object.keys(privateProfile.books).length > 0),
     };
   }
 
@@ -244,6 +329,7 @@ export function buildPartnerDashboardRecords(
     const coverage = coverageByCode.get(partnerCode);
     const telegram = telegramByCode.get(partnerCode);
     const legacy = legacyByCode.get(partnerCode);
+    const privateProfile = privateByCode[partnerCode];
     const accounting = accountingByCode.get(partnerCode);
     if (accounting) appliedAccounting.push(accounting);
 
@@ -261,7 +347,10 @@ export function buildPartnerDashboardRecords(
       if (gap) attention.push(gap);
     }
 
-    const outs = applyOutFunding(outsFromLegacy(legacy), accounting?.outFunding);
+    const outs = applyOutFunding(
+      resolveOuts(partnerCode, privateProfile, legacy),
+      accounting?.outFunding
+    );
 
     partners.push({
       partnerCode,
@@ -296,4 +385,37 @@ export function buildPartnerDashboardRecords(
     lifecycle,
     accounting: appliedAccounting.sort((a, b) => a.partnerCode.localeCompare(b.partnerCode)),
   };
+}
+
+/**
+ * Build accounting bookKey → OutId map from private profile outs (preferred)
+ * with optional legacy partners-ops fallback for CODEs without profile outs.
+ */
+export function bookKeyToOutIdMapFromProfiles(
+  privateProfiles: Readonly<Record<string, unknown>>,
+  legacy?: LegacyPartnerProjection
+): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const [code, profile] of Object.entries(privateProfiles)) {
+    const fromProfile = outsFromPrivateProfile(code as PartnerCode, profile);
+    if (fromProfile === null) continue;
+    for (const out of fromProfile) {
+      const slug = out.sportsbookId;
+      map[slug] = out.outId;
+      map[`${code}:${slug}`] = out.outId;
+    }
+  }
+  if (legacy) {
+    for (const partner of legacy.partners) {
+      // Only fill gaps — profile-authored rows win.
+      for (const out of partner.outs) {
+        const qualified = `${partner.partnerCode}:${out.observedBookSlug}`;
+        if (map[qualified] === undefined) {
+          map[out.observedBookSlug] = out.outId;
+          map[qualified] = out.outId;
+        }
+      }
+    }
+  }
+  return map;
 }

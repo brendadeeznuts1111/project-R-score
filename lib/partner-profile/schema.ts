@@ -8,7 +8,10 @@
 //   1. CODE is the single key (vault · limits · dossier · telegram · boards).
 //   2. books.<bookKey> references the canonical @factorywager/bookmakers
 //      registry entry (many partners per bookmaker, many bookmakers per partner).
-//   3. Credentials are vault-only — the profile carries account.vaultKey, never
+//   3. outs.out-CODE-N inventory rows are partner-scoped seats; multiple outs may
+//      share one bookKey (e.g. ASH-1/ASH-2 on hard-rock-florida). Outs own
+//      dashboard seat inventory; books own credentials/limits per sportsbook.
+//   4. Credentials are vault-only — the profile carries account.vaultKey, never
 //      a plaintext password.
 
 import type { PartnerTemplateId } from '../types/branded';
@@ -17,8 +20,20 @@ import type { TelegramNotificationPreferences } from '../telegram/partner-notifi
 export const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 export const CALL_SIGN_RE = /^[A-Z]{3,6}-\d{3}$/;
 export const BOOK_KEY_RE = /^[a-z][a-z0-9-]*$/;
+/** Canonical OutId key for profile outs inventory (out-CODE-N). */
+export const OUT_ID_RE = /^out-([A-Z]{3,6})-([1-9][0-9]*)$/;
 export const VAULT_KEY_RE = /^[a-z][a-z0-9_.:-]*$/i;
 export const TELEGRAM_CHAT_ID_RE = /^-?\d{5,}$/;
+
+export const OUT_INVENTORY_STATUSES = [
+  'ready',
+  'deferred',
+  'paused',
+  'blocked',
+  'partial',
+  'funded',
+] as const;
+export type OutInventoryStatus = (typeof OUT_INVENTORY_STATUSES)[number];
 
 export const PARTNER_LIFECYCLE_STATUSES = [
   'signup',
@@ -119,6 +134,12 @@ export type PartnerProfile = {
     };
   };
   books?: Record<string, PartnerBookAccount>;
+  /**
+   * Partner-scoped out inventory (SSOT for dashboard seats). Keyed by OutId
+   * (`out-CODE-N`). Each row references a `books.<bookKey>` sportsbook.
+   * Prefer this over legacy partners-ops for out skeleton joins.
+   */
+  outs?: Record<string, PartnerOutInventory>;
   cultivation?: {
     initialDepositTarget?: number;
     depositScheduleWeeks?: number;
@@ -190,8 +211,15 @@ export type PartnerBookAccount = {
     maxBet?: number;
     freeRollPct?: number;
   };
-  status?: 'ready' | 'deferred' | 'paused' | 'blocked' | 'partial' | 'funded';
+  status?: OutInventoryStatus;
   withdrawPath?: string;
+};
+
+/** One partner-scoped seat / out; sportsbook credentials live under books. */
+export type PartnerOutInventory = {
+  /** bookKey matching books.<bookKey> / bookmakers registry slug. */
+  book: string; // brand-ok — sportsbook bookKey (^[a-z][a-z0-9-]*$)
+  status?: OutInventoryStatus;
 };
 
 // ── Validation ─────────────────────────────────────────────────────────────
@@ -212,6 +240,7 @@ const PARTNER_PROFILE_TOP_LEVEL_KEYS = [
   'jurisdiction',
   'rules',
   'books',
+  'outs',
   'cultivation',
   'settlement',
   'balance',
@@ -527,6 +556,38 @@ function validateOptionalProfileSections(value: Record<string, unknown>, issues:
         optionalNumber(limits, 'maxBet', `${path}.limits`, issues, { min: 0, integer: true });
         optionalNumber(limits, 'freeRollPct', `${path}.limits`, issues, { min: 0, max: 100 });
       }
+    }
+  }
+
+  const outs = optionalRecord(value, 'outs', '', issues);
+  if (outs) {
+    const partnerCode =
+      isRecord(value.identity) && typeof value.identity.code === 'string'
+        ? value.identity.code
+        : undefined;
+    const bookKeys = new Set(books ? Object.keys(books) : []);
+    for (const [outId, candidate] of Object.entries(outs)) {
+      const path = `outs.${outId}`;
+      const outMatch = OUT_ID_RE.exec(outId);
+      if (!outMatch) {
+        issues.push(`${path} key must match ${OUT_ID_RE} (out-CODE-N)`);
+        continue;
+      }
+      const outPartnerCode = outMatch[1];
+      if (partnerCode !== undefined && outPartnerCode !== partnerCode) {
+        issues.push(`${path} must belong to partner code ${partnerCode}`);
+      }
+      if (!isRecord(candidate)) {
+        issues.push(`${path} must be an object`);
+        continue;
+      }
+      exactKeys(candidate, ['book', 'status'], path, issues);
+      if (typeof candidate.book !== 'string' || !BOOK_KEY_RE.test(candidate.book)) {
+        issues.push(`${path}.book must match ${BOOK_KEY_RE}`);
+      } else if (!bookKeys.has(candidate.book)) {
+        issues.push(`${path}.book "${candidate.book}" must exist under books`);
+      }
+      optionalEnum(candidate, 'status', OUT_INVENTORY_STATUSES, path, issues);
     }
   }
 

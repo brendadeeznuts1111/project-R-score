@@ -65,6 +65,48 @@ describe('validatePartnerProfile', () => {
     if (!result.valid) expect(result.issues.some((i) => i.includes('vault-only'))).toBe(true);
   });
 
+  test('accepts outs inventory keyed by OutId referencing books', () => {
+    const result = validatePartnerProfile(
+      baseProfile({
+        books: { 'hard-rock-florida': { type: 'legal', status: 'ready' } },
+        outs: {
+          'out-YOU-1': { book: 'hard-rock-florida', status: 'ready' },
+          'out-YOU-2': { book: 'hard-rock-florida', status: 'deferred' },
+        },
+      })
+    );
+    expect(result.valid).toBe(true);
+    if (result.valid) {
+      expect(Object.keys(result.profile.outs ?? {})).toEqual(['out-YOU-1', 'out-YOU-2']);
+    }
+  });
+
+  test('rejects out id that does not belong to partner code', () => {
+    const result = validatePartnerProfile(
+      baseProfile({
+        books: { youwager: { type: 'pph' } },
+        outs: { 'out-ASH-1': { book: 'youwager', status: 'ready' } },
+      })
+    );
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.issues.some(i => i.includes('must belong to partner code YOU'))).toBe(true);
+    }
+  });
+
+  test('rejects out book that is missing from books', () => {
+    const result = validatePartnerProfile(
+      baseProfile({
+        books: { youwager: { type: 'pph' } },
+        outs: { 'out-YOU-1': { book: 'missing-book', status: 'ready' } },
+      })
+    );
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.issues.some(i => i.includes('must exist under books'))).toBe(true);
+    }
+  });
+
   test('rejects nested secret-bearing fields', () => {
     const result = validatePartnerProfile(
       baseProfile({

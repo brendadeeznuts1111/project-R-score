@@ -66,6 +66,10 @@ target = "@bil.newpartner"
 maxBet = 500
 freeRollPct = 25
 
+[outs.out-BIL-1]
+book = "partner-book-tbd"
+status = "ready"
+
 [cultivation]
 initialDepositTarget = 500
 depositScheduleWeeks = 4

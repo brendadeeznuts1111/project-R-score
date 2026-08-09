@@ -66,6 +66,86 @@ target = "@spen.newpartner"
 maxBet = 500
 freeRollPct = 25
 
+[books.lonestarwagering-com]
+type = "offshore"
+status = "ready"
+withdrawPath = "Venmo → house"
+[books.lonestarwagering-com.account]
+username = "spen.lonestar"
+vaultKey = "partner:SPEN:lonestarwagering-com"
+[books.lonestarwagering-com.funding]
+method = "deposit.method.venmo"
+rail = "Venmo"
+target = "@spen.lonestar"
+[books.lonestarwagering-com.limits]
+maxBet = 500
+freeRollPct = 25
+
+[books.action92-com]
+type = "offshore"
+status = "ready"
+withdrawPath = "Venmo → house"
+[books.action92-com.account]
+username = "spen.action92"
+vaultKey = "partner:SPEN:action92-com"
+[books.action92-com.funding]
+method = "deposit.method.venmo"
+rail = "Venmo"
+target = "@spen.action92"
+[books.action92-com.limits]
+maxBet = 500
+freeRollPct = 25
+
+[books.betvegas23-com]
+type = "offshore"
+status = "ready"
+withdrawPath = "Venmo → house"
+[books.betvegas23-com.account]
+username = "spen.betvegas23"
+vaultKey = "partner:SPEN:betvegas23-com"
+[books.betvegas23-com.funding]
+method = "deposit.method.venmo"
+rail = "Venmo"
+target = "@spen.betvegas23"
+[books.betvegas23-com.limits]
+maxBet = 500
+freeRollPct = 25
+
+[books.orange777]
+type = "offshore"
+status = "deferred"
+withdrawPath = "Venmo → house"
+[books.orange777.account]
+username = "spen.orange777"
+vaultKey = "partner:SPEN:orange777"
+[books.orange777.funding]
+method = "deposit.method.venmo"
+rail = "Venmo"
+target = "@spen.orange"
+[books.orange777.limits]
+maxBet = 500
+freeRollPct = 25
+
+[outs.out-SPEN-1]
+book = "parlay21-com"
+status = "ready"
+
+[outs.out-SPEN-2]
+book = "lonestarwagering-com"
+status = "ready"
+
+[outs.out-SPEN-3]
+book = "action92-com"
+status = "ready"
+
+[outs.out-SPEN-4]
+book = "betvegas23-com"
+status = "ready"
+
+[outs.out-SPEN-5]
+book = "orange777"
+status = "deferred"
+
 [cultivation]
 initialDepositTarget = 500
 depositScheduleWeeks = 4
