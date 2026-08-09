@@ -1,7 +1,12 @@
 /**
  * Account dossier join helpers — scope one TreeNodeId + connected partner-tree nodes.
- * Pure functions over baked registries (limit-raises · partners-ops · telegram-handshake ·
- * soft-accounting-export). Soft Balance mutations stay in toc-ops `ct`.
+ * Pure functions over baked registries (limit-raises · partners-dashboard · optional
+ * partners-ops · telegram-handshake · soft-accounting-export). Soft Balance mutations
+ * stay in toc-ops `ct`.
+ *
+ * Partner outs inventory prefers partners-dashboard (profile outs SSOT). Optional
+ * partners-ops still supplies telegram topic thread ids + legacy ledger deposits
+ * when present.
  *
  * Deep-link parity with limits board:
  *   query ?account= (form SSOT) · hash #account:{TreeNodeId} (limits pattern)
@@ -243,7 +248,163 @@ function buildConnectedTree(accountId, partnerNodeId, patterns, profiles) {
 }
 
 /**
- * Per-account accounting view chrome over a partners-ops partner row.
+ * Map partners-dashboard.v2 partner → dossier partner row (ops-shaped for UI tables).
+ * @param {object | null | undefined} partner
+ */
+export function projectDossierPartnerFromDashboard(partner) {
+  if (!partner || typeof partner !== 'object') return null;
+  const code = String(partner.partnerCode || '')
+    .trim()
+    .toUpperCase();
+  if (!code) return null;
+
+  const outs = Array.isArray(partner.outs)
+    ? partner.outs.map(out => {
+        const maxMinor = out?.observedMaxStake?.amount?.minorUnits;
+        return {
+          id: out?.outId ?? null,
+          book: {
+            id: out?.sportsbookId ? `book-${out.sportsbookId}` : null,
+            slug: out?.sportsbookId ?? null,
+            name: out?.sportsbookId ?? null,
+          },
+          status: out?.operationalStatus ?? out?.fundingStatus ?? null,
+          funding: out?.fundingStatus
+            ? { method: String(out.fundingStatus) }
+            : undefined,
+          maxBet:
+            typeof maxMinor === 'number' && Number.isFinite(maxMinor)
+              ? String(maxMinor / 100)
+              : undefined,
+        };
+      })
+    : [];
+
+  const recent = Array.isArray(partner.accounting?.recentEntries)
+    ? partner.accounting.recentEntries
+    : [];
+  const entryTypeToCode = {
+    deposit: 'DEPOSIT_RECEIVED',
+    credit: 'CREDIT_EXTENDED',
+    settlement: 'SETTLEMENT_PROCESSED',
+    free_roll: 'FREE_ROLL_APPLIED',
+    freeroll: 'FREE_ROLL_APPLIED',
+  };
+  const deposits = [];
+  const credits = [];
+  const ledger = [];
+  for (const entry of recent) {
+    const minor = entry?.amount?.minorUnits;
+    const amount =
+      typeof minor === 'number' && Number.isFinite(minor) ? minor / 100 : null;
+    const type = String(entry?.entryType || '').toLowerCase();
+    const codeName = entryTypeToCode[type] || null;
+    if (amount != null && type === 'deposit') {
+      deposits.push({
+        amount,
+        date: entry?.postedAt ?? null,
+        rail: entry?.proofRef ?? 'ledger',
+      });
+    }
+    if (amount != null && (type === 'credit' || type === 'adjustment')) {
+      credits.push({ amount, date: entry?.postedAt ?? null });
+    }
+    if (codeName && amount != null) {
+      ledger.push({
+        code: codeName,
+        amount,
+        at: entry?.postedAt ?? null,
+        note: entry?.proofRef ?? null,
+        conceptId: conceptIdForPartnerOpsEventCode(codeName),
+      });
+    }
+  }
+
+  const topicKeys = Array.isArray(partner.communication?.configuredTopicKeys)
+    ? partner.communication.configuredTopicKeys
+    : [];
+  const topicsConfigured = topicKeys.length;
+  const chatLinked = Boolean(partner.communication?.chatLinked);
+
+  return {
+    code,
+    callSign: partner.callSign ?? null,
+    phase: partner.operationalPhase ?? null,
+    phaseConceptId: null,
+    outs,
+    accounting: {
+      fundStatus: null,
+      incompleteOuts: outs.filter(o => o.status && o.status !== 'ready').length,
+      deposits,
+      credits,
+      freeRoll: null,
+      ledger,
+    },
+    tracking: {
+      communication: {
+        chatLinked,
+        topicsConfigured,
+        topicsRequired: DOSSIER_TOPIC_KEYS.length,
+        ready: chatLinked && topicsConfigured >= DOSSIER_TOPIC_KEYS.length,
+      },
+      accounting: {
+        depositVolume: deposits.reduce((n, r) => n + (Number(r.amount) || 0), 0),
+        creditVolume: credits.reduce((n, r) => n + (Number(r.amount) || 0), 0),
+      },
+    },
+    // Public dashboard redacts chatId / topic thread ids — handshake fills readiness.
+    telegram: null,
+  };
+}
+
+/**
+ * Prefer dashboard outs; keep partners-ops telegram + ledger when still available.
+ * @param {object | null} dashboardRow
+ * @param {object | null} opsRow
+ */
+export function mergeDossierPartnerRows(dashboardRow, opsRow) {
+  if (!dashboardRow && !opsRow) return null;
+  if (!dashboardRow) return opsRow;
+  if (!opsRow) return dashboardRow;
+
+  const opsHasLedger =
+    Array.isArray(opsRow.accounting?.ledger) && opsRow.accounting.ledger.length > 0;
+  const opsHasDeposits =
+    Array.isArray(opsRow.accounting?.deposits) && opsRow.accounting.deposits.length > 0;
+  const opsHasTelegram = Boolean(opsRow.telegram?.chatId || opsRow.telegram?.topicIds);
+
+  return {
+    ...opsRow,
+    code: dashboardRow.code || opsRow.code,
+    callSign: dashboardRow.callSign || opsRow.callSign,
+    phase: dashboardRow.phase || opsRow.phase,
+    phaseConceptId: opsRow.phaseConceptId ?? dashboardRow.phaseConceptId,
+    // Out inventory SSOT is profile → dashboard
+    outs: Array.isArray(dashboardRow.outs) && dashboardRow.outs.length > 0
+      ? dashboardRow.outs
+      : opsRow.outs,
+    accounting:
+      opsHasLedger || opsHasDeposits
+        ? opsRow.accounting
+        : (dashboardRow.accounting ?? opsRow.accounting),
+    telegram: opsHasTelegram ? opsRow.telegram : dashboardRow.telegram,
+    tracking: {
+      ...(opsRow.tracking || {}),
+      ...(dashboardRow.tracking || {}),
+      communication:
+        opsHasTelegram && opsRow.tracking?.communication
+          ? opsRow.tracking.communication
+          : (dashboardRow.tracking?.communication ?? opsRow.tracking?.communication),
+      accounting:
+        opsHasLedger || opsHasDeposits
+          ? opsRow.tracking?.accounting
+          : (dashboardRow.tracking?.accounting ?? opsRow.tracking?.accounting),
+    },
+  };
+}
+
+/**
+ * Per-account accounting view chrome over a dossier partner row (dashboard or ops).
  * Mirrors lib/telegram/ops-accounting-view.ts for the static board (no Soft sync).
  * @param {object | null} partnerRow
  */
@@ -600,6 +761,7 @@ export function buildDossierSoftPlays(softExport, partnerCode, opts = {}) {
  * @param {{
  *   accountId: string;
  *   limitRaises: object;
+ *   partnersDashboard?: object | null;
  *   partnersOps?: object | null;
  *   handshake?: object | null;
  *   softAccounting?: object | null;
@@ -609,6 +771,7 @@ export function buildDossierSoftPlays(softExport, partnerCode, opts = {}) {
 export function buildAccountDossier({
   accountId,
   limitRaises,
+  partnersDashboard = null,
   partnersOps = null,
   handshake = null,
   softAccounting = null,
@@ -636,10 +799,20 @@ export function buildAccountDossier({
 
   const code = resolvePartnerCode(profile, pattern, id, partnerNodeId);
 
-  const partnerRow =
-    code && partnersOps?.partners
+  const dashboardPartner =
+    code && Array.isArray(partnersDashboard?.partners)
+      ? (partnersDashboard.partners.find(
+          row => String(row.partnerCode || '').toUpperCase() === code
+        ) ?? null)
+      : null;
+  const opsPartner =
+    code && Array.isArray(partnersOps?.partners)
       ? (partnersOps.partners.find(row => String(row.code).toUpperCase() === code) ?? null)
       : null;
+  const partnerRow = mergeDossierPartnerRows(
+    projectDossierPartnerFromDashboard(dashboardPartner),
+    opsPartner
+  );
 
   const handshakeRow =
     code && Array.isArray(handshake?.rows)
@@ -687,7 +860,7 @@ export function buildAccountDossier({
     role: pattern?.node_type ?? profile?.accountKind ?? 'node',
     depth: pattern?.downline_depth ?? 0,
     parentNodeId: pattern?.parent_node_id ?? profile?.parentNodeId ?? null,
-    callSign: profile?.callSign ?? telegram.callSign ?? null,
+    callSign: profile?.callSign ?? telegram.callSign ?? partnerRow?.callSign ?? null,
     location: {
       state: pattern?.state_code ?? profile?.jurisdiction?.stateCode ?? null,
       city: pattern?.location ?? profile?.jurisdiction?.location ?? null,
@@ -723,6 +896,7 @@ export function buildAccountDossier({
       betlogCsv: `${betlogBase}&format=csv`,
       betlogJsonl: `${betlogBase}&format=jsonl`,
       registry: '/registry/limit-raises.json',
+      partnersDashboard: '/registry/partners-dashboard.json',
       partnersOps: '/registry/partners-ops.json',
       handshake: '/registry/telegram-handshake.json',
       softAccounting: '/registry/soft-accounting-export.json',

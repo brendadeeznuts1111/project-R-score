@@ -37,10 +37,19 @@ async function dossierCompleteness(
 ) {
   if (!bakePath || !(await Bun.file(bakePath).exists())) return null;
   const limitRaises = await Bun.file(bakePath).json();
+  const partnersDashboard = (await Bun.file('public/registry/partners-dashboard.json').exists())
+    ? await Bun.file('public/registry/partners-dashboard.json').json()
+    : null;
   const partnersOps = (await Bun.file('public/registry/partners-ops.json').exists())
     ? await Bun.file('public/registry/partners-ops.json').json()
     : null;
-  const d = buildAccountDossier({ accountId, limitRaises, partnersOps, hours });
+  const d = buildAccountDossier({
+    accountId,
+    limitRaises,
+    partnersDashboard,
+    partnersOps,
+    hours,
+  });
   const locationOk = Boolean(d.location.state && d.location.city && d.location.zip);
   const licenseOk = Boolean(d.licenseStatus);
   const monitoringOk = d.monitoringStatus != null && d.monitoringStatus !== 'incomplete';

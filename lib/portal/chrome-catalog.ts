@@ -445,7 +445,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     domain: 'partner',
     note: 'single-account dossier · tree · telemetry · betlog · ops.view.per_account',
     cli: 'bun run ops:dossier:seed',
-    registryArtifact: '/registry/partners-ops.json',
+    registryArtifact: '/registry/partners-dashboard.json',
   },
   {
     id: 'partner-history',

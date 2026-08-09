@@ -365,6 +365,7 @@ coverage_universe = "partner-profile coverage completeness gates on private prof
 partners_ops_empty_protect = "exportPartnersOpsRegistry preserveNonEmpty refuses to wipe a non-empty partners-ops bake with an empty seat-desk projection"
 ops_snapshot_partners_ops = "ops:snapshot skips partners-ops export by default; OPS_SNAPSHOT_PARTNERS_OPS=1 or partners:build for optional bake"
 chrome_partners_primary = "portal chrome partners board registryArtifact is partners-dashboard.json"
+account_dossier_primary = "account dossier prefers partners-dashboard for outs; optional partners-ops merge for telegram topic ids + legacy ledger"
 frozen_mapping = "Sports Terminal frozen maps to suspended with mandatory queryable provenance"
 out_constraints = "Max stake, gross payout, net win, and liquidity are distinct checks; missing evidence requires manual review"
 offer_split = "Wager markets and structures are separate from promotional offers"
