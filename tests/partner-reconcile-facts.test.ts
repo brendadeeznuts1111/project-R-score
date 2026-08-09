@@ -222,6 +222,17 @@ describe('reconcilePartnerDashboardFacts', () => {
     const ash1 = ash.outs.find(o => o.outId === 'out-ASH-1')!;
     expect(ash1.observedMaxStake?.amount.minorUnits).toBe(50_000);
     expect(ash1.limitCoverageRatio).toBe(1);
+    // Tennis external book ref projects as ExternalAccountRef (not bare partnerId).
+    expect(ash1.externalAccountRefs.length).toBeGreaterThan(0);
+    expect(ash1.externalAccountRefs[0]).toMatchObject({
+      sourceSystemId: 'tennis-hq',
+    });
+
+    // Partners with incomplete out limit evidence get coverage_gap attention.
+    const nov = reconciled.partners.find(p => p.partnerCode === 'NOV')!;
+    if (nov.limits.missing > 0) {
+      expect(nov.attention.some(a => a.reasonCode === 'partner.limits.coverage_gap')).toBe(true);
+    }
   });
 
   test('joins limit-change attention and bookmaker catalog validation without inventing ceilings', async () => {

@@ -11,7 +11,7 @@
  *     out-scoped fundingStatus (never OutOperationalStatus)
  *
  * Capacity (`activeOutIds`, tennis integrations) is applied *after* this builder
- * via `reconcilePartnerDashboardFacts`. Limits remain empty until that adapter joins.
+ * via `reconcilePartnerDashboardFacts` (tennis, sports-terminal, limits coverage).
  * Callers pass already-parsed adapter outputs — this module does no I/O.
  */
 import type { PartnerAccountingObservation } from '../adapters/accounting-ledger.ts';

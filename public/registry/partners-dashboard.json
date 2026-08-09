@@ -1,12 +1,12 @@
 {
   "schema": "factorywager.partners-dashboard.v2",
-  "generatedAt": "2026-08-09T01:58:12.682Z",
+  "generatedAt": "2026-08-09T02:02:00.141Z",
   "connectorSnapshots": {
     "profiles": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:58:12.682Z",
+      "observedAt": "2026-08-09T02:02:00.141Z",
       "ageSeconds": 0,
       "inputRef": "config/partner-profiles/*.toml"
     },
@@ -14,7 +14,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:58:12.682Z",
+      "observedAt": "2026-08-09T02:02:00.141Z",
       "ageSeconds": 0,
       "inputRef": "partner_ledger"
     },
@@ -22,7 +22,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:58:12.682Z",
+      "observedAt": "2026-08-09T02:02:00.141Z",
       "ageSeconds": 0,
       "inputRef": "/registry/telegram-handshake.json"
     },
@@ -30,7 +30,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:58:12.682Z",
+      "observedAt": "2026-08-09T02:02:00.141Z",
       "ageSeconds": 0,
       "inputRef": "/registry/limit-raises.json"
     },
@@ -38,7 +38,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:58:12.682Z",
+      "observedAt": "2026-08-09T02:02:00.141Z",
       "ageSeconds": 0,
       "inputRef": "/registry/bookmakers.json"
     },
@@ -46,7 +46,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:58:12.682Z",
+      "observedAt": "2026-08-09T02:02:00.141Z",
       "ageSeconds": 0,
       "inputRef": "/registry/tennis/partner-contracts.json"
     },
@@ -54,7 +54,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:58:12.682Z",
+      "observedAt": "2026-08-09T02:02:00.141Z",
       "ageSeconds": 0,
       "inputRef": "/registry/sports-terminal/partner-integration-health.json"
     }
@@ -182,13 +182,13 @@
       "callSign": "ASH-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T01:58:12.682Z",
+        "effectiveAt": "2026-08-09T02:02:00.141Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T01:58:12.682Z",
+          "observedAt": "2026-08-09T02:02:00.141Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -211,7 +211,12 @@
           "sportsbookId": "hard-rock-florida",
           "operationalStatus": "ready",
           "fundingStatus": "funded",
-          "externalAccountRefs": [],
+          "externalAccountRefs": [
+            {
+              "sourceSystemId": "tennis-hq",
+              "externalId": "out-ASH-1:book-hard-rock-florida"
+            }
+          ],
           "observedMaxStake": {
             "amount": {
               "currency": "USD",
@@ -367,13 +372,13 @@
       "callSign": "BIL-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T01:58:12.682Z",
+        "effectiveAt": "2026-08-09T02:02:00.141Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T01:58:12.682Z",
+          "observedAt": "2026-08-09T02:02:00.141Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -395,7 +400,12 @@
           "sportsbookId": "partner-book-tbd",
           "operationalStatus": "ready",
           "fundingStatus": "unknown",
-          "externalAccountRefs": [],
+          "externalAccountRefs": [
+            {
+              "sourceSystemId": "tennis-hq",
+              "externalId": "out-BIL-1:book-partner-book-tbd"
+            }
+          ],
           "observedMaxStake": {
             "amount": {
               "currency": "USD",
@@ -485,13 +495,13 @@
       "callSign": "NOV-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T01:58:12.682Z",
+        "effectiveAt": "2026-08-09T02:02:00.141Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T01:58:12.682Z",
+          "observedAt": "2026-08-09T02:02:00.141Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -513,7 +523,12 @@
           "sportsbookId": "hard-rock-florida",
           "operationalStatus": "ready",
           "fundingStatus": "unknown",
-          "externalAccountRefs": [],
+          "externalAccountRefs": [
+            {
+              "sourceSystemId": "tennis-hq",
+              "externalId": "out-NOV-1:book-hard-rock-florida"
+            }
+          ],
           "observedMaxStake": {
             "amount": {
               "currency": "USD",
@@ -631,6 +646,12 @@
           "severity": "info",
           "label": "Out sportsbook not in public catalog: southfl-pph-desk",
           "actionHref": "/portal/bookmakers/"
+        },
+        {
+          "reasonCode": "partner.limits.coverage_gap",
+          "severity": "info",
+          "label": "1/2 out(s) lack limit evidence (max stake or raise history)",
+          "actionHref": "/portal/limits/"
         }
       ]
     },
@@ -639,13 +660,13 @@
       "callSign": "SPEN-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T01:58:12.682Z",
+        "effectiveAt": "2026-08-09T02:02:00.141Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T01:58:12.682Z",
+          "observedAt": "2026-08-09T02:02:00.141Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -668,7 +689,12 @@
           "sportsbookId": "parlay21-com",
           "operationalStatus": "ready",
           "fundingStatus": "unfunded",
-          "externalAccountRefs": [],
+          "externalAccountRefs": [
+            {
+              "sourceSystemId": "tennis-hq",
+              "externalId": "out-SPEN-1:book-parlay21-com"
+            }
+          ],
           "observedMaxStake": {
             "amount": {
               "currency": "USD",
@@ -693,7 +719,12 @@
           "sportsbookId": "lonestarwagering-com",
           "operationalStatus": "ready",
           "fundingStatus": "funded",
-          "externalAccountRefs": [],
+          "externalAccountRefs": [
+            {
+              "sourceSystemId": "tennis-hq",
+              "externalId": "out-SPEN-2:book-lonestarwagering-com"
+            }
+          ],
           "observedMaxStake": {
             "amount": {
               "currency": "USD",
@@ -856,6 +887,12 @@
           "severity": "info",
           "label": "Out sportsbook not in public catalog: orange777",
           "actionHref": "/portal/bookmakers/"
+        },
+        {
+          "reasonCode": "partner.limits.coverage_gap",
+          "severity": "info",
+          "label": "3/5 out(s) lack limit evidence (max stake or raise history)",
+          "actionHref": "/portal/limits/"
         },
         {
           "reasonCode": "partner.limits.raise_observed",
