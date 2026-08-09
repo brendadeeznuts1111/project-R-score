@@ -163,3 +163,45 @@ export function bookRefMapFromCatalog(catalog: BookmakerCatalogProjection): Reco
 export function registeredSportsbookIdsFromCatalog(catalog: BookmakerCatalogProjection): string[] {
   return Object.keys(catalog.registry).sort();
 }
+
+/**
+ * Operator-declared desk placeholders that are intentionally not in the public
+ * catalog. Never mapped to a real SportsbookId without an explicit catalog row.
+ * Documented so reconcile can label attention without inventing IDs.
+ */
+export const UNREGISTERED_DESK_SPORTSBOOK_PLACEHOLDERS = [
+  'partner-book-tbd',
+  'southfl-pph-desk',
+  'orange777',
+] as const;
+
+/**
+ * Optional explicit legacy slug → catalog SportsbookId.
+ * Empty by default: only populate with operator-approved mappings to real catalog ids.
+ * Do not add placeholders from UNREGISTERED_DESK_SPORTSBOOK_PLACEHOLDERS here.
+ */
+export const LEGACY_SPORTSBOOK_SLUG_ALIASES: Readonly<Record<string, string>> = {
+  // Example (disabled until ops confirms): 'hr-fl': 'hard-rock-florida',
+};
+
+/** Resolve a sportsbook slug through explicit alias table then catalog membership. */
+export function resolveSportsbookSlugAgainstCatalog(
+  slug: string,
+  catalog: BookmakerCatalogProjection,
+  aliases: Readonly<Record<string, string>> = LEGACY_SPORTSBOOK_SLUG_ALIASES
+): {
+  status: 'catalog' | 'aliased' | 'placeholder' | 'unknown';
+  sportsbookId?: SportsbookId;
+} {
+  if (catalog.registry[slug]) {
+    return { status: 'catalog', sportsbookId: parseSportsbookId(slug) };
+  }
+  const aliased = aliases[slug];
+  if (aliased && catalog.registry[aliased]) {
+    return { status: 'aliased', sportsbookId: parseSportsbookId(aliased) };
+  }
+  if ((UNREGISTERED_DESK_SPORTSBOOK_PLACEHOLDERS as readonly string[]).includes(slug)) {
+    return { status: 'placeholder' };
+  }
+  return { status: 'unknown' };
+}
