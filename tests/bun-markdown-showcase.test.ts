@@ -13,6 +13,7 @@ import {
   MARKDOWN_DOC_EXAMPLES,
   buildShowcaseHtml,
   filterExamples,
+  openCmdFor,
   parseShowcaseArgs,
   runAllExamples,
   runExample,
@@ -222,6 +223,14 @@ describe('bun-markdown-showcase catalog', () => {
     });
     expect(parseShowcaseArgs(['--list', '--id', 'html-basic']).list).toBe(true);
     expect(parseShowcaseArgs(['--id', 'html-basic']).ids).toEqual(['html-basic']);
+    expect(() => parseShowcaseArgs(['--htlm-only'])).toThrow(/Unknown argument/);
+    expect(() => parseShowcaseArgs(['--id'])).toThrow(/requires a value/);
+  });
+
+  test('openCmdFor matches platform openers', () => {
+    expect(openCmdFor('/tmp/x.html', 'darwin')).toEqual(['open', '/tmp/x.html']);
+    expect(openCmdFor('/tmp/x.html', 'win32')).toEqual(['cmd', '/c', 'start', '', '/tmp/x.html']);
+    expect(openCmdFor('/tmp/x.html', 'linux')).toEqual(['xdg-open', '/tmp/x.html']);
   });
 
   test('filterExamples selects by id', () => {

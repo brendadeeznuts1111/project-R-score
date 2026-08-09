@@ -1155,12 +1155,27 @@ export async function writeShowcaseHtml(
   return path;
 }
 
+/** Cross-platform open — Windows `start` is a cmd builtin (see gate-report-monorepo). */
+export function openCmdFor(path: string, platform = process.platform): string[] {
+  if (platform === 'darwin') return ['open', path];
+  if (platform === 'win32') return ['cmd', '/c', 'start', '', path];
+  return ['xdg-open', path];
+}
+
 function openPath(path: string): void {
   const abs = `${process.cwd()}/${path}`;
-  const opener =
-    process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
-  Bun.spawn([opener, abs], { stdout: 'ignore', stderr: 'ignore', stdin: 'ignore' });
+  Bun.spawn(openCmdFor(abs), { stdout: 'ignore', stderr: 'ignore', stdin: 'ignore' });
 }
+
+const SHOWCASE_FLAGS = new Set([
+  '--cli-only',
+  '--html-only',
+  '--open',
+  '-o',
+  '--list',
+  '--id',
+  '--only',
+]);
 
 export function parseShowcaseArgs(argv: string[]): {
   cliOnly: boolean;
@@ -1170,15 +1185,37 @@ export function parseShowcaseArgs(argv: string[]): {
   ids: string[];
 } {
   const ids: string[] = [];
-  for (const a of argv) {
-    if (a.startsWith('--id=')) ids.push(a.slice('--id='.length));
-    else if (a.startsWith('--only=')) ids.push(a.slice('--only='.length));
-  }
-  // bare --id foo
+  const unknown: string[] = [];
   for (let i = 0; i < argv.length; i++) {
-    if ((argv[i] === '--id' || argv[i] === '--only') && argv[i + 1]) {
-      ids.push(argv[i + 1]!);
+    const a = argv[i]!;
+    if (a.startsWith('--id=')) {
+      ids.push(a.slice('--id='.length));
+      continue;
     }
+    if (a.startsWith('--only=')) {
+      ids.push(a.slice('--only='.length));
+      continue;
+    }
+    if (a === '--id' || a === '--only') {
+      const next = argv[i + 1];
+      if (!next || next.startsWith('-')) {
+        throw new Error(`${a} requires a value. Example: ${a} html-basic`);
+      }
+      ids.push(next);
+      i++;
+      continue;
+    }
+    if (SHOWCASE_FLAGS.has(a)) continue;
+    if (a.startsWith('-')) {
+      unknown.push(a);
+      continue;
+    }
+    unknown.push(a);
+  }
+  if (unknown.length) {
+    throw new Error(
+      `Unknown argument(s): ${unknown.join(', ')}. Known: --list --cli-only --html-only --open|-o --id=<id>|--only=<id>`
+    );
   }
   return {
     cliOnly: argv.includes('--cli-only'),
