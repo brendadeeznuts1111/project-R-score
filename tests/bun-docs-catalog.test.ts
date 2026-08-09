@@ -38,6 +38,8 @@ import {
   commitUrlFor,
   allChangelogEvents,
 } from '../tools/bun-docs-changelog.ts';
+import { CURATED_ENTRIES } from '../tools/bun-docs-curated.ts';
+import { GUIDE_EXAMPLES, TOKEN_GUIDE_PATH } from '../tools/bun-docs-guide-examples.ts';
 
 describe('bun-docs-catalog helpers', () => {
   test('normalizeName collapses bun. prefix case', () => {
@@ -614,6 +616,10 @@ describe('inspect family catalog relations', () => {
     expect(byName.get('options')?.related).toContain('heading-ids');
     expect(byName.get('Bun.markdown.render')?.related).toContain('list-item-meta');
     expect(byName.get('Bun.markdown.render')?.related).toContain('inline-callbacks');
+    // Cookbook children survive the relatedTokens top-8 cap (not only via examples.*)
+    expect(byName.get('Bun.markdown.render')?.related).toContain('omitting-elements');
+    expect(byName.get('Bun.markdown.render')?.related).toContain('ansi-terminal-output');
+    expect(byName.get('Bun.markdown.render')?.related).toContain('nested-list-numbering');
     expect(byName.get('BUN_OPTIONS')?.docsUrl).toBe(
       'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options'
     );
@@ -829,9 +835,35 @@ describe('inspect family catalog relations', () => {
   });
 });
 
+describe('runtime/markdown index ratchet', () => {
+  test('every docs-index markdown anchor has curated token or guide path', async () => {
+    const idx = (await Bun.file(`${import.meta.dir}/../tools/bun-docs-index.json`).json()) as {
+      entries: Array<{ url?: string; anchors?: string[] }>;
+    };
+    const page = idx.entries.find(e => e.url?.includes('/runtime/markdown'));
+    expect(page?.anchors?.length).toBeGreaterThan(0);
+    const curatedPaths = new Set(
+      CURATED_ENTRIES.filter(c => c.path.startsWith('runtime/markdown')).map(c => c.path)
+    );
+    const missing: string[] = [];
+    for (const anchor of page!.anchors!) {
+      const path = `runtime/markdown#${anchor}`;
+      const hasCurated = curatedPaths.has(path);
+      const hasGuide = Boolean(GUIDE_EXAMPLES[path]?.length);
+      const hasTokenGuide = Object.values(TOKEN_GUIDE_PATH).includes(path);
+      if (!hasCurated && !hasGuide && !hasTokenGuide) missing.push(anchor);
+    }
+    expect(missing).toEqual([]);
+  });
+});
+
 describe('frozen CANONICAL_REFS env / npmrc', () => {
   test('Read/Set environment variables + process.env + .npmrc point at institutional pages', async () => {
     const { CANONICAL_REFS } = await import('../tools/bun-doc-refs.ts');
+    expect(CANONICAL_REFS['Bun.markdown reference']).toBe(
+      'https://bun.com/reference/bun/markdown'
+    );
+    expect(CANONICAL_REFS['Bun.markdown types']).toBe('https://bun.com/reference/bun/markdown');
     expect(CANONICAL_REFS['Read environment variables']).toBe(
       'https://bun.com/docs/guides/runtime/read-env'
     );

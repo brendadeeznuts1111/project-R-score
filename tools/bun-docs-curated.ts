@@ -538,14 +538,19 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'runtime/markdown#inline-callbacks',
       'runtime/markdown#examples',
     ],
+    // applyCuratedRelatedTokens keeps the first 8 that resolve in-catalog —
+    // front cookbook children so nested/omit/ansi are not sliced off.
     relatedTokens: [
       'callback-signature',
-      'block-callbacks',
-      'parser-options',
       'list-item-meta',
       'inline-callbacks',
       'examples',
       'custom-html-with-classes',
+      'omitting-elements',
+      'ansi-terminal-output',
+      'nested-list-numbering',
+      'block-callbacks',
+      'parser-options',
       'stripping-all-formatting',
       'code-block-syntax-highlighting',
       'options',
