@@ -1,12 +1,12 @@
 {
   "schema": "factorywager.partners-dashboard.v2",
-  "generatedAt": "2026-08-09T02:21:46.282Z",
+  "generatedAt": "2026-08-09T02:26:32.947Z",
   "connectorSnapshots": {
     "profiles": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:21:46.282Z",
+      "observedAt": "2026-08-09T02:26:32.947Z",
       "ageSeconds": 0,
       "inputRef": "config/partner-profiles/*.toml"
     },
@@ -14,7 +14,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:21:46.282Z",
+      "observedAt": "2026-08-09T02:26:32.947Z",
       "ageSeconds": 0,
       "inputRef": "partner_ledger"
     },
@@ -22,7 +22,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:21:46.282Z",
+      "observedAt": "2026-08-09T02:26:32.947Z",
       "ageSeconds": 0,
       "inputRef": "/registry/telegram-handshake.json"
     },
@@ -30,7 +30,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:21:46.282Z",
+      "observedAt": "2026-08-09T02:26:32.947Z",
       "ageSeconds": 0,
       "inputRef": "/registry/limit-raises.json"
     },
@@ -38,7 +38,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:21:46.282Z",
+      "observedAt": "2026-08-09T02:26:32.947Z",
       "ageSeconds": 0,
       "inputRef": "/registry/bookmakers.json"
     },
@@ -46,7 +46,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:21:46.282Z",
+      "observedAt": "2026-08-09T02:26:32.947Z",
       "ageSeconds": 0,
       "inputRef": "/registry/tennis/partner-contracts.json"
     },
@@ -54,7 +54,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:21:46.282Z",
+      "observedAt": "2026-08-09T02:26:32.947Z",
       "ageSeconds": 0,
       "inputRef": "/registry/sports-terminal/partner-integration-health.json"
     }
@@ -182,13 +182,13 @@
       "callSign": "ASH-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:21:46.282Z",
+        "effectiveAt": "2026-08-09T02:26:32.947Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:21:46.282Z",
+          "observedAt": "2026-08-09T02:26:32.947Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -241,7 +241,12 @@
           "sportsbookId": "hard-rock-florida",
           "operationalStatus": "deferred",
           "fundingStatus": "unknown",
-          "externalAccountRefs": [],
+          "externalAccountRefs": [
+            {
+              "sourceSystemId": "factorywager-bookmakers",
+              "externalId": "out-ASH-2:catalog:hard-rock-florida"
+            }
+          ],
           "limitCoverageRatio": 1
         }
       ],
@@ -372,13 +377,13 @@
       "callSign": "BIL-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:21:46.282Z",
+        "effectiveAt": "2026-08-09T02:26:32.947Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:21:46.282Z",
+          "observedAt": "2026-08-09T02:26:32.947Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -485,7 +490,7 @@
         {
           "reasonCode": "partner.bookmakers.unregistered_sportsbook",
           "severity": "info",
-          "label": "Out sportsbook not in public catalog: partner-book-tbd",
+          "label": "Desk placeholder sportsbook not in public catalog: partner-book-tbd",
           "actionHref": "/portal/bookmakers/"
         }
       ]
@@ -495,13 +500,13 @@
       "callSign": "NOV-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:21:46.282Z",
+        "effectiveAt": "2026-08-09T02:26:32.947Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:21:46.282Z",
+          "observedAt": "2026-08-09T02:26:32.947Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -644,7 +649,7 @@
         {
           "reasonCode": "partner.bookmakers.unregistered_sportsbook",
           "severity": "info",
-          "label": "Out sportsbook not in public catalog: southfl-pph-desk",
+          "label": "Desk placeholder sportsbook not in public catalog: southfl-pph-desk",
           "actionHref": "/portal/bookmakers/"
         },
         {
@@ -660,13 +665,13 @@
       "callSign": "SPEN-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:21:46.282Z",
+        "effectiveAt": "2026-08-09T02:26:32.947Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:21:46.282Z",
+          "observedAt": "2026-08-09T02:26:32.947Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -749,7 +754,12 @@
           "sportsbookId": "action92-com",
           "operationalStatus": "ready",
           "fundingStatus": "unknown",
-          "externalAccountRefs": [],
+          "externalAccountRefs": [
+            {
+              "sourceSystemId": "factorywager-bookmakers",
+              "externalId": "out-SPEN-3:catalog:action92-com"
+            }
+          ],
           "limitCoverageRatio": 1
         },
         {
@@ -757,7 +767,12 @@
           "sportsbookId": "betvegas23-com",
           "operationalStatus": "ready",
           "fundingStatus": "unknown",
-          "externalAccountRefs": [],
+          "externalAccountRefs": [
+            {
+              "sourceSystemId": "factorywager-bookmakers",
+              "externalId": "out-SPEN-4:catalog:betvegas23-com"
+            }
+          ],
           "limitCoverageRatio": 1
         },
         {
@@ -885,7 +900,7 @@
         {
           "reasonCode": "partner.bookmakers.unregistered_sportsbook",
           "severity": "info",
-          "label": "Out sportsbook not in public catalog: orange777",
+          "label": "Desk placeholder sportsbook not in public catalog: orange777",
           "actionHref": "/portal/bookmakers/"
         },
         {
