@@ -431,6 +431,29 @@ export function applyLimitCoverageMetrics(
   }
 }
 
+/** Attention when an out is operationally ready but funding is unfunded/unknown. */
+function applyReadyUnfundedAttention(partners: PartnerDashboardRecord[]): void {
+  for (const partner of partners) {
+    const readyGaps = partner.outs.filter(
+      out =>
+        out.operationalStatus === 'ready' &&
+        (out.fundingStatus === 'unfunded' || out.fundingStatus === 'unknown')
+    );
+    if (readyGaps.length === 0) continue;
+    const reason = parseAttentionReasonCode('partner.funding.ready_unfunded');
+    if (partner.attention.some(item => item.reasonCode === reason)) continue;
+    partner.attention = [
+      ...partner.attention,
+      {
+        reasonCode: reason,
+        severity: 'warn',
+        label: `${readyGaps.length} ready out(s) with unfunded/unknown funding (${readyGaps.map(o => o.outId).join(', ')})`,
+        actionHref: '/portal/partners/#accounting',
+      } satisfies PartnerAttentionItem,
+    ].sort((a, b) => compareAscii(a.reasonCode, b.reasonCode));
+  }
+}
+
 function applySportsTerminalIntegration(
   partners: PartnerDashboardRecord[],
   sportsTerminal: SportsTerminalIntegrationProjection
@@ -489,6 +512,7 @@ export function reconcilePartnerDashboardFacts(
     }
     // Coverage still runs from raise evidence alone when tennis is offline.
     applyLimitCoverageMetrics(partners, input.limits);
+    applyReadyUnfundedAttention(partners);
     partners.sort((a, b) => compareAscii(a.partnerCode, b.partnerCode));
     for (const partner of partners) {
       partner.outs.sort((a, b) => compareAscii(a.outId, b.outId));
@@ -568,6 +592,7 @@ export function reconcilePartnerDashboardFacts(
 
   // After tennis max-stake upgrades, score limit evidence coverage.
   applyLimitCoverageMetrics(partners, input.limits);
+  applyReadyUnfundedAttention(partners);
 
   // Deduplicate + sort activeOutIds deterministically
   const uniqueActive = [...new Set(activeOutIds.map(String))].sort(compareAscii) as OutId[];
