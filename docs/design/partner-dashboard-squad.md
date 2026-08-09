@@ -133,6 +133,20 @@ partners-* tests only. No package adapter changes.
 3. H (ST) and D1 after 0
 4. Wave 2: risk/SOR · cultivation · commercial · connector LKG resilience
 
+## Residual / hygiene (post wave-1–2)
+
+**Board residual attention (info only):** `limits.raise_observed`,
+`bookmakers.unregistered_sportsbook` (desk placeholders). Handshake re-export
+with Telegram token is required after any fixture clock clustering.
+
+**Bloat decisions**
+
+| Candidate | Decision |
+| --------- | -------- |
+| `limit-demo-*` / `partner-42` in `limit-raises.json` | **Keep** — owned by `/portal/limits/` demos, agent API examples, account-dossier tests. Partner bake already ignores non-CODE callSigns. |
+| Board `projectDashboardToOpsShape` / `projectDashboardToHandshakeShape` / `isLegacyPartnerComparisonRequested` | **Removed** from `partners-board.js` (HTML never called them). Package consumer-contract still documents retired `?compare=legacy`. |
+| `partners-ops` out skeleton | **Keep** until outs are owned by profile books / tennis inventory. |
+
 ## Proof commands (every lane)
 
 ```bash

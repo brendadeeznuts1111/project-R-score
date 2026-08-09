@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/test — bun:test
 import { describe, expect, test } from 'bun:test';
+import * as board from '../public/portal/partners/partners-board.js';
 import {
   bakeLabel,
   canonicalProfileCoverage,
@@ -7,11 +8,9 @@ import {
   filterPartnerOuts,
   flattenPartnerOuts,
   indexOpsByPartner,
-  isLegacyPartnerComparisonRequested,
   listPartnerPhases,
   normalizePartnerCode,
   partnerReadinessGate,
-  projectDashboardToOpsShape,
   summarizePartnerDesk,
 } from '../public/portal/partners/partners-board.js';
 
@@ -163,30 +162,10 @@ describe('partners-board domain helpers', () => {
     expect(partnerReadinessGate({ partnerCount: 0 }).tone).toBe('fail');
   });
 
-  test('dashboard projection and query-only legacy compare helpers', () => {
-    const ops = projectDashboardToOpsShape({
-      schema: 'factorywager.partners-dashboard.v1',
-      summary: { partnerCount: 1, registeredOutCount: 1, operatorReadyPartnerCount: 1 },
-      partners: [
-        {
-          partnerCode: 'ASH',
-          callSign: 'ASH-001',
-          operationalPhase: 'operator_ready',
-          communication: { chatLinked: true },
-          outs: [
-            {
-              outId: 'out-ASH-1',
-              sportsbookId: 'hard-rock-florida',
-              operationalStatus: 'ready',
-              fundingStatus: 'unknown',
-            },
-          ],
-        },
-      ],
-    });
-    expect(ops.partners[0]?.code).toBe('ASH');
-    expect(flattenPartnerOuts(ops)).toHaveLength(1);
-    expect(isLegacyPartnerComparisonRequested('/portal/partners/?compare=legacy')).toBe(false);
+  test('retired legacy projection helpers are not exported from the board module', () => {
+    expect(board.projectDashboardToOpsShape).toBeUndefined();
+    expect(board.projectDashboardToHandshakeShape).toBeUndefined();
+    expect(board.isLegacyPartnerComparisonRequested).toBeUndefined();
     expect(bakeLabel(null).text).toBe('—');
   });
 });

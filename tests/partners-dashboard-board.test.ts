@@ -6,6 +6,7 @@ import {
   PARTNER_DASHBOARD_CURRENT_COMPATIBILITY_REQUIRED_INPUT_REFS,
   PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT,
 } from '../packages/partners/src/index.ts';
+import * as board from '../public/portal/partners/partners-board.js';
 import {
   PARTNERS_DASHBOARD_ARTIFACT_REF,
   bakeLabel,
@@ -15,10 +16,7 @@ import {
   dashboardRosterRows,
   flattenDashboardOuts,
   indexDashboardByPartner,
-  isLegacyPartnerComparisonRequested,
   isPartnersDashboardSchema,
-  projectDashboardToHandshakeShape,
-  projectDashboardToOpsShape,
   summarizeConnectorSnapshots,
   summarizeDashboardDesk,
 } from '../public/portal/partners/partners-board.js';
@@ -113,12 +111,6 @@ describe('partners-dashboard board cutover', () => {
     ]);
     expect(dashboardLedgerEventRows(sampleDashboard)).toEqual([]);
 
-    // Thin projection helpers retained for diagnostic/legacy tests only
-    const ops = projectDashboardToOpsShape(sampleDashboard);
-    expect(ops.source).toBe('partners-dashboard');
-    const handshake = projectDashboardToHandshakeShape(sampleDashboard);
-    expect(handshake.rows).toHaveLength(2);
-
     const connectors = summarizeConnectorSnapshots(sampleDashboard);
     expect(connectors.total).toBe(7);
     expect(connectors.ok).toBe(2);
@@ -130,8 +122,10 @@ describe('partners-dashboard board cutover', () => {
     expect(bakeLabel('2026-08-08T18:00:00.000Z').tone).toMatch(/ok|warn/);
   });
 
-  test('legacy comparison is retired on board and package', () => {
-    expect(isLegacyPartnerComparisonRequested('/portal/partners/?compare=legacy')).toBe(false);
+  test('legacy comparison and ops/handshake projections are removed from board module', () => {
+    expect(board.isLegacyPartnerComparisonRequested).toBeUndefined();
+    expect(board.projectDashboardToOpsShape).toBeUndefined();
+    expect(board.projectDashboardToHandshakeShape).toBeUndefined();
     expect(PARTNERS_DASHBOARD_ARTIFACT_REF).toBe(PARTNER_DASHBOARD_ARTIFACT_REF);
     expect(PARTNER_DASHBOARD_PORTAL_CONSUMER_CONTRACT.implemented.implementationStatus).toBe(
       'implemented'

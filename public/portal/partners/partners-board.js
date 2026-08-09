@@ -1,9 +1,10 @@
 /**
- * Partners board pure helpers — dashboard-native tables + thin legacy ops helpers (no DOM).
- * Primary render path uses partners-dashboard.v1 fields directly.
+ * Partners board pure helpers — dashboard-native tables only (no DOM).
+ * Primary render path uses partners-dashboard.v2 fields directly.
+ * Retired: projectDashboardToOpsShape, projectDashboardToHandshakeShape,
+ * isLegacyPartnerComparisonRequested (?compare=legacy).
  * @see docs/harness/tenants/partner-domain-map.md
  * @see public/registry/partners-dashboard.json
- * @see public/registry/partners-ops.json
  */
 
 /** Canonical single-artifact ref (must match package consumer contract). */
@@ -32,130 +33,11 @@ export function normalizePartnerCode(value) {
 }
 
 /**
- * Legacy multi-fetch comparison is retired — always false.
- * @param {string | URL} _input
- * @returns {boolean}
- */
-export function isLegacyPartnerComparisonRequested(_input) {
-  return false;
-}
-
-/**
  * @param {unknown} schema
  * @returns {boolean}
  */
 export function isPartnersDashboardSchema(schema) {
   return schema === PARTNERS_DASHBOARD_SCHEMA_V2 || schema === PARTNERS_DASHBOARD_SCHEMA_V1;
-}
-
-/**
- * Project partners-dashboard.v1 → ops-shaped view for existing board renderers.
- * Thin compatibility projection — not a second source of truth.
- * @param {object | null | undefined} dashboard
- */
-export function projectDashboardToOpsShape(dashboard) {
-  const partners = Array.isArray(dashboard?.partners) ? dashboard.partners : [];
-  const summary = dashboard?.summary || {};
-  let incompleteOuts = 0;
-  const projected = partners.map(partner => {
-    const code = normalizePartnerCode(partner?.partnerCode);
-    const outs = Array.isArray(partner?.outs)
-      ? partner.outs.map(out => {
-          const status = String(out?.operationalStatus || 'unknown');
-          const incomplete = status === 'unknown' || status === 'blocked';
-          if (incomplete) incompleteOuts += 1;
-          const sportsbookId = String(out?.sportsbookId || '');
-          const maxBet =
-            out?.observedMaxStake?.amount?.minorUnits != null
-              ? String(Number(out.observedMaxStake.amount.minorUnits) / 100)
-              : '—';
-          return {
-            id: out?.outId || '',
-            status,
-            incomplete,
-            maxBet,
-            book: {
-              name: sportsbookId || '—',
-              slug: sportsbookId || '—',
-              type: '—',
-            },
-            funding: { method: String(out?.fundingStatus || 'unknown') },
-            credentials: { username: '—' },
-          };
-        })
-      : [];
-    return {
-      code,
-      callSign: partner?.callSign || `${code}-001`,
-      phase: partner?.operationalPhase || 'incomplete',
-      phaseConceptId: `partner.phase.${partner?.operationalPhase || 'incomplete'}`,
-      outs,
-      tracking: {},
-      accounting: {
-        balance: null,
-        initialCapital: null,
-        ledgerRows: Array.isArray(partner?.accounting?.recentEntries)
-          ? partner.accounting.recentEntries
-          : [],
-        outs: [],
-      },
-      attention: Array.isArray(partner?.attention) ? partner.attention : [],
-      limits: partner?.limits || { tracked: 0, missing: 0, coverageRatio: 0 },
-      communication: partner?.communication || {},
-    };
-  });
-  return {
-    schema: dashboard?.schema || PARTNERS_DASHBOARD_SCHEMA_V1,
-    generatedAt: dashboard?.generatedAt || null,
-    summary: {
-      partners: Number(summary.partnerCount) || projected.length,
-      accounts: Number(summary.registeredOutCount) || 0,
-      readyAccounts: Number(summary.operatorReadyPartnerCount) || 0,
-      incompleteOuts,
-      trackedLimits: 0,
-      communicationReady: projected.filter(p => p.communication?.chatLinked).length,
-    },
-    partners: projected,
-    validation: { ok: true },
-    colors: {},
-    glossary: { conceptIds: [] },
-    source: 'partners-dashboard',
-  };
-}
-
-/**
- * Project partners-dashboard.v1 → handshake-shaped rows for board stats/tables.
- * @param {object | null | undefined} dashboard
- */
-export function projectDashboardToHandshakeShape(dashboard) {
-  const partners = Array.isArray(dashboard?.partners) ? dashboard.partners : [];
-  const rows = partners.map(partner => {
-    const code = normalizePartnerCode(partner?.partnerCode);
-    const comm = partner?.communication || {};
-    const phase = String(comm.handshakeStatus || partner?.operationalPhase || 'unknown');
-    return {
-      partnerCode: code,
-      callSign: partner?.callSign || `${code}-001`,
-      phase,
-      handshakeOk: Boolean(comm.chatLinked) || phase === 'operator_ready',
-      dmSeatStatus: comm.chatLinked ? 'linked' : 'none',
-      gapCount: 0,
-      topGap: null,
-      nextSteps: [],
-      membership: '—',
-      invite: '—',
-      bot: '—',
-    };
-  });
-  return {
-    schema: 'factorywager.telegram-handshake.projected.v1',
-    generatedAt: dashboard?.generatedAt || null,
-    operatorReady: Number(dashboard?.summary?.operatorReadyPartnerCount) || 0,
-    inviteGaps: 0,
-    partners: rows.length,
-    rows,
-    source: 'partners-dashboard',
-  };
 }
 
 /**
