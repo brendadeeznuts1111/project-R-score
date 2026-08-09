@@ -46,7 +46,7 @@ describe('portal-chrome-catalog', () => {
     expect(byId.packages?.cli).toContain('ssot:flow:soft');
     expect(byId['prediction-report']?.href).toBe('/registry/prediction/report/');
     expect(byId.partners?.href).toBe('/portal/partners/');
-    expect(byId.partners?.cli).toContain('telegram:handshake:catalog');
+    expect(byId.partners?.cli).toContain('partner:dashboard:bake');
     expect(byId['partner-history']?.href).toBe('/portal/partner-history/');
     // Product boards that were missing from chrome
     expect(byId.tennis?.href).toBe('/portal/tennis/');
@@ -99,11 +99,13 @@ describe('portal-chrome-catalog', () => {
     expect(c.domainLanes[0]?.boardIds).toContain('partners');
     expect(c.domainLanes[0]?.boardIds).toContain('limits');
     expect(c.summary.domainLanes).toBe(c.domainLanes.length);
+    expect(c.related.partnersDashboard).toBe('/registry/partners-dashboard.json');
     expect(c.related.partnersOps).toBe('/registry/partners-ops.json');
     expect(c.related.limitRaises).toBe('/registry/limit-raises.json');
     const partners = PORTAL_OVERFLOW_NAV.find(n => n.id === 'partners');
     expect(partners?.domain).toBe('partner');
-    expect(partners?.registryArtifact).toBe('/registry/partners-ops.json');
+    expect(partners?.registryArtifact).toBe('/registry/partners-dashboard.json');
+    expect(partners?.cli).toContain('partner:dashboard:bake');
     expect(renderPriorityNavHtml()).toContain('data-domain="partner"');
     expect(renderPriorityNavHtml()).toContain('aria-label="Ops · domain"');
   });
