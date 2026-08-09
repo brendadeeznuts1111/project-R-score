@@ -41,6 +41,7 @@ export const PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS = {
     'activeOutIds',
     'partners[].outs[].maxBet',
     'partners[].outs[].operationalStatus',
+    'partners[].outs[].externalAccountRefs',
     'partners[].integrations.tennis',
   ],
   'sports-terminal': [

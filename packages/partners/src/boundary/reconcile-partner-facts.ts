@@ -28,7 +28,13 @@ import type {
   TennisCapacityProjection,
   TennisOutCapacityObservation,
 } from '../adapters/tennis-capacity.ts';
-import { parseAdapterId, parseAttentionReasonCode, parseTreeNodeId } from '../core/identifiers.ts';
+import {
+  parseAdapterId,
+  parseAttentionReasonCode,
+  parseExternalAccountId,
+  parseSourceSystemId,
+  parseTreeNodeId,
+} from '../core/identifiers.ts';
 import {
   OUT_OPERATIONAL_STATUSES,
   type ConnectorDataStatus,
@@ -42,6 +48,8 @@ import {
   type ProviderConnectionStatus,
   type SportsbookId,
 } from '../core/types.ts';
+
+const TENNIS_SOURCE_SYSTEM_ID = parseSourceSystemId('tennis-hq');
 
 /** Connector adapter id from partner-dashboard plan (capacity_precedence head). */
 export const TENNIS_CONTRACT_ADAPTER_ID = parseAdapterId('tennis-contract');
@@ -204,6 +212,31 @@ function applyTennisObservationToOut(options: {
     }
     out.providerConnectionStatus = nextProvider;
   }
+
+  // Qualified external book account ref from tennis (never bare partnerId).
+  // Scope with OutId so shared books across partners stay globally unique.
+  if (observation.externalBookRef) {
+    const externalId = parseExternalAccountId(
+      `${observation.outId}:${observation.externalBookRef}`
+    );
+    const key = `${TENNIS_SOURCE_SYSTEM_ID}:${externalId}`;
+    const already = out.externalAccountRefs.some(
+      ref => `${ref.sourceSystemId}:${ref.externalId}` === key
+    );
+    if (!already) {
+      out.externalAccountRefs = [
+        ...out.externalAccountRefs,
+        {
+          sourceSystemId: TENNIS_SOURCE_SYSTEM_ID,
+          externalId,
+        },
+      ].sort(
+        (left, right) =>
+          compareAscii(left.sourceSystemId, right.sourceSystemId) ||
+          compareAscii(left.externalId, right.externalId)
+      );
+    }
+  }
 }
 
 /**
@@ -343,6 +376,21 @@ export function applyLimitCoverageMetrics(
       missing,
       coverageRatio: denom === 0 ? 0 : tracked / denom,
     };
+
+    if (missing > 0) {
+      const reason = parseAttentionReasonCode('partner.limits.coverage_gap');
+      if (!partner.attention.some(item => item.reasonCode === reason)) {
+        partner.attention = [
+          ...partner.attention,
+          {
+            reasonCode: reason,
+            severity: missing === partner.outs.length ? 'warn' : 'info',
+            label: `${missing}/${denom} out(s) lack limit evidence (max stake or raise history)`,
+            actionHref: '/portal/limits/',
+          } satisfies PartnerAttentionItem,
+        ].sort((a, b) => compareAscii(a.reasonCode, b.reasonCode));
+      }
+    }
   }
 }
 

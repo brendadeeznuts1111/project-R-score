@@ -4,7 +4,7 @@
 [plan]
 schema = "factorywager.partner-dashboard-plan.v2"
 status = "implementation-ready"
-last_reviewed = "2026-08-08"
+last_reviewed = "2026-08-09"
 owner = "@factorywager/partners"
 
 [domain]
@@ -1077,16 +1077,28 @@ owns = [
   "out-capability-contract",
   "execution-constraint-evaluation",
 ]
-implemented_now = ["partner-code", "dashboard-artifact-boundary", "artifact-assembler", "profile-coverage-adapter", "out-capability-contract", "execution-constraint-evaluation"]
+implemented_now = [
+  "partner-code",
+  "dashboard-artifact-boundary",
+  "artifact-assembler",
+  "profile-coverage-adapter",
+  "canonical-lifecycle-adapter",
+  "out-capability-contract",
+  "execution-constraint-evaluation",
+  "adapter-reconciliation",
+  "limit-evidence-coverage",
+  "sports-terminal-integration-health",
+  "limits-bookmakers-bake-join",
+  "tennis-external-account-refs",
+]
 planned = [
-  "profile",
-  "lifecycle-domain-logic",
-  "phase-derivation",
-  "book-account-reference-adapters",
+  "profile-private-policy-surface",
+  "lifecycle-domain-logic-beyond-public-bake",
+  "phase-derivation-enrichment",
+  "book-account-reference-live-resolver",
   "risk-and-sor-policy",
   "cultivation-policy",
   "commercial-agreement-terms",
-  "adapter-reconciliation",
 ]
 must_not_import = ["telegram-api", "bun:sqlite", "vault-crypto", "portal-dom"]
 
@@ -1257,10 +1269,11 @@ authoritative_fact_paths = [
   "activeOutIds",
   "partners[].outs[].maxBet",
   "partners[].outs[].operationalStatus",
+  "partners[].outs[].externalAccountRefs",
   "partners[].integrations.tennis",
 ]
 visual_group = "operations"
-provides = ["active-outs", "executable-capacity", "freshness"]
+provides = ["active-outs", "executable-capacity", "freshness", "external-account-refs"]
 execution_evidence_policy = "live-source-only"
 region_ids = ["roster", "integrations", "attention"]
 
