@@ -22,6 +22,41 @@ const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 const CALL_SIGN_RE = /^([A-Z]{3,6})-\d{3}(?:-SUB\d{2}){0,2}$/;
 const DOSSIER_TOPIC_KEYS = ['general', 'ops', 'alerts', 'liquidity', 'accounting'];
 
+/** Local humanize for dossier (mirrors partners-board humanizeBookSlug). */
+function humanizeBookSlugLocal(slug) {
+  const raw = String(slug || '').trim();
+  if (!raw) return '—';
+  const base = raw.replace(/\.com$/i, '').replace(/-com$/i, '');
+  return base
+    .split(/[-_./]+/)
+    .filter(Boolean)
+    .map(part => {
+      if (/^\d+$/.test(part)) return part;
+      if (part.length <= 3) return part.toUpperCase();
+      return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+    })
+    .join(' ');
+}
+
+function formatUsdMajorLocal(major) {
+  if (major == null || Number.isNaN(Number(major))) return '—';
+  const n = Number(major);
+  if (!Number.isFinite(n)) return '—';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 2,
+  }).format(n);
+}
+
+function statusToneLocal(status) {
+  const s = String(status || '').toLowerCase();
+  if (s === 'ready' || s === 'funded' || s === 'active' || s === 'operator_ready') return 'tone-ok';
+  if (s === 'deferred' || s === 'partial' || s === 'paused' || s === 'inactive') return 'tone-warn';
+  if (s === 'blocked' || s === 'failed' || s === 'unknown') return 'tone-bad';
+  return 'tone-muted';
+}
+
 const accountHashPattern = new URLPattern({ hash: 'account\\::account' });
 const sectionHashPattern = new URLPattern({ hash: 'section\\::section' });
 
@@ -261,14 +296,21 @@ export function projectDossierPartnerFromDashboard(partner) {
   const outs = Array.isArray(partner.outs)
     ? partner.outs.map(out => {
         const maxMinor = out?.observedMaxStake?.amount?.minorUnits;
+        const slug = out?.sportsbookId ? String(out.sportsbookId) : '';
+        const bookLabel = humanizeBookSlugLocal(slug);
+        const maxDisplay =
+          typeof maxMinor === 'number' && Number.isFinite(maxMinor)
+            ? formatUsdMajorLocal(maxMinor / 100)
+            : '—';
         return {
           id: out?.outId ?? null,
           book: {
-            id: out?.sportsbookId ? `book-${out.sportsbookId}` : null,
-            slug: out?.sportsbookId ?? null,
-            name: out?.sportsbookId ?? null,
+            id: slug ? `book-${slug}` : null,
+            slug: slug || null,
+            name: bookLabel,
           },
-          status: out?.operationalStatus ?? out?.fundingStatus ?? null,
+          status: out?.operationalStatus ?? null,
+          fundingStatus: out?.fundingStatus ?? null,
           funding: out?.fundingStatus
             ? { method: String(out.fundingStatus) }
             : undefined,
@@ -276,6 +318,8 @@ export function projectDossierPartnerFromDashboard(partner) {
             typeof maxMinor === 'number' && Number.isFinite(maxMinor)
               ? String(maxMinor / 100)
               : undefined,
+          maxBetDisplay: maxDisplay,
+          active: Boolean(out?.providerConnectionStatus === 'active'),
         };
       })
     : [];

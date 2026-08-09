@@ -842,20 +842,42 @@
             [
               { key: 'out', label: 'Out' },
               { key: 'book', label: 'Book' },
-              { key: 'type', label: 'Type' },
               { key: 'status', label: 'Status' },
-              { key: 'rail', label: 'Rail' },
-              { key: 'max', label: 'Max' },
+              { key: 'funding', label: 'Funding' },
+              { key: 'max', label: 'Max stake' },
             ],
             dossier.outs.map(o => {
               const book = o.book || {};
+              const bookLabel = book.name || book.slug || '—';
+              const status = o.status || '—';
+              const fund = o.fundingStatus || o.funding?.method || '—';
+              const statusTone =
+                status === 'ready'
+                  ? 'tone-ok'
+                  : status === 'deferred' || status === 'paused'
+                    ? 'tone-warn'
+                    : status === 'blocked' || status === 'unknown'
+                      ? 'tone-bad'
+                      : 'tone-muted';
+              const fundTone =
+                fund === 'funded'
+                  ? 'tone-ok'
+                  : fund === 'partial'
+                    ? 'tone-warn'
+                    : fund === 'unknown' || fund === '—'
+                      ? 'tone-muted'
+                      : 'tone-warn';
+              const maxLabel =
+                o.maxBetDisplay ||
+                (o.maxBet != null && o.maxBet !== ''
+                  ? `$${Number(o.maxBet).toLocaleString('en-US')}`
+                  : '—');
               return [
                 { html: esc(o.id || '—'), className: 'ad-id' },
-                book.name || book.slug || '—',
-                book.type || '—',
-                o.status || '—',
-                o.funding?.method || '—',
-                o.maxBet || '—',
+                bookLabel,
+                { html: esc(status), className: statusTone },
+                { html: esc(fund), className: fundTone },
+                maxLabel,
               ];
             }),
             { className: 'ad-table' }

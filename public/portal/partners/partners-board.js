@@ -152,15 +152,130 @@ export function coverageBarStyle(pct) {
 // ── Dashboard-native helpers (primary board path) ──────────────────────────
 
 /**
- * Format MoneyAmount { currency, minorUnits } as major units for display.
+ * Turn sportsbook slug ids into short titles for tables/chips.
+ * Prefer catalog labels when available (`bookLabelFromCatalog`).
+ * @param {unknown} slug
+ * @returns {string}
+ */
+export function humanizeBookSlug(slug) {
+  const raw = String(slug || '').trim();
+  if (!raw) return '—';
+  // parlay21-com → parlay21; hard-rock-florida → Hard Rock Florida
+  const base = raw.replace(/\.com$/i, '').replace(/-com$/i, '');
+  return base
+    .split(/[-_./]+/)
+    .filter(Boolean)
+    .map(part => {
+      if (/^\d+$/.test(part)) return part;
+      if (part.length <= 3) return part.toUpperCase();
+      return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+    })
+    .join(' ');
+}
+
+/**
+ * Resolve display label for a sportsbook id from bookmakers bake or humanize fallback.
+ * @param {object | null | undefined} catalog bookmakers.json root
+ * @param {unknown} sportsbookId
+ * @returns {string}
+ */
+export function bookLabelFromCatalog(catalog, sportsbookId) {
+  const id = String(sportsbookId || '').trim();
+  if (!id) return '—';
+  const books =
+    catalog && typeof catalog === 'object'
+      ? catalog.bookmakers && typeof catalog.bookmakers === 'object'
+        ? catalog.bookmakers
+        : catalog
+      : null;
+  if (books && typeof books === 'object') {
+    const entry = books[id] || books[`book-${id}`];
+    if (entry && typeof entry === 'object') {
+      const label = entry.label || entry.name || entry.title;
+      if (typeof label === 'string' && label.trim()) return label.trim();
+    }
+  }
+  return humanizeBookSlug(id);
+}
+
+/**
+ * Build sportsbookId → display label map from bookmakers bake.
+ * @param {object | null | undefined} catalog
+ * @returns {Map<string, string>}
+ */
+export function bookLabelMapFromCatalog(catalog) {
+  const map = new Map();
+  const books =
+    catalog?.bookmakers && typeof catalog.bookmakers === 'object'
+      ? catalog.bookmakers
+      : catalog && typeof catalog === 'object'
+        ? catalog
+        : null;
+  if (!books) return map;
+  for (const [key, entry] of Object.entries(books)) {
+    if (!entry || typeof entry !== 'object') continue;
+    const id = String(entry.id || entry.slug || key).trim();
+    if (!id) continue;
+    const label = entry.label || entry.name || entry.title || humanizeBookSlug(id);
+    if (typeof label === 'string' && label.trim()) {
+      map.set(id, label.trim());
+      if (id.startsWith('book-')) map.set(id.slice(5), label.trim());
+    }
+  }
+  return map;
+}
+
+/**
+ * Format major-unit USD for board cells.
+ * @param {unknown} major
+ * @returns {string}
+ */
+export function formatUsdMajor(major) {
+  if (major == null || major === '' || Number.isNaN(Number(major))) return '—';
+  const n = Number(major);
+  if (!Number.isFinite(n)) return '—';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 2,
+  }).format(n);
+}
+
+/**
+ * Format integer minor units as USD.
+ * @param {unknown} minor
+ * @returns {string}
+ */
+export function formatUsdMinor(minor) {
+  if (typeof minor !== 'number' || !Number.isFinite(minor)) return '—';
+  return formatUsdMajor(minor / 100);
+}
+
+/**
+ * Format MoneyAmount { currency, minorUnits } as major units number for math.
+ * Prefer formatUsdMinor / formatUsdMajor for display cells.
  * @param {{ currency?: string, minorUnits?: number } | null | undefined} amount
- * @returns {string | null} null when absent
+ * @returns {number | null} null when absent
  */
 export function formatMoneyAmount(amount) {
   if (!amount || typeof amount !== 'object') return null;
   const minor = amount.minorUnits;
   if (typeof minor !== 'number' || !Number.isFinite(minor)) return null;
   return minor / 100;
+}
+
+/**
+ * Tone class for operational / funding status strings.
+ * @param {unknown} status
+ * @returns {string}
+ */
+export function statusToneClass(status) {
+  const s = String(status || '').toLowerCase();
+  if (s === 'ready' || s === 'funded' || s === 'active' || s === 'operator_ready') return 'tone-ok';
+  if (s === 'deferred' || s === 'partial' || s === 'paused' || s === 'stale' || s === 'inactive')
+    return 'tone-warn';
+  if (s === 'blocked' || s === 'failed' || s === 'unknown') return 'tone-bad';
+  return 'tone-muted';
 }
 
 /**
@@ -223,9 +338,23 @@ export function indexDashboardByPartner(dashboard) {
  * Flatten outs from partners-dashboard for inventory tables.
  * Row shape matches filterPartnerOuts (status, incomplete, partnerCode, …).
  * @param {object | null | undefined} dashboard
+ * @param {{ bookLabelById?: Map<string, string> | Record<string, string> } | Map<string, string>} [opts]
  * @returns {object[]}
  */
-export function flattenDashboardOuts(dashboard) {
+export function flattenDashboardOuts(dashboard, opts = {}) {
+  const labelMap =
+    opts instanceof Map
+      ? opts
+      : opts?.bookLabelById instanceof Map
+        ? opts.bookLabelById
+        : opts?.bookLabelById && typeof opts.bookLabelById === 'object'
+          ? new Map(Object.entries(opts.bookLabelById))
+          : new Map();
+  const resolveBookName = id => {
+    if (!id) return '—';
+    if (labelMap.has(id)) return labelMap.get(id);
+    return humanizeBookSlug(id);
+  };
   const active = new Set((dashboard?.activeOutIds || []).map(String));
   const rows = [];
   for (const partner of dashboard?.partners || []) {
@@ -235,9 +364,13 @@ export function flattenDashboardOuts(dashboard) {
       const status = String(out?.operationalStatus || 'unknown');
       const incomplete = status === 'unknown' || status === 'blocked' || status === 'deferred';
       const sportsbookId = String(out?.sportsbookId || '');
+      const bookName = resolveBookName(sportsbookId);
       const maxMinor = out?.observedMaxStake?.amount?.minorUnits;
-      const maxBet =
-        typeof maxMinor === 'number' && Number.isFinite(maxMinor) ? String(maxMinor / 100) : '—';
+      const maxBetMajor =
+        typeof maxMinor === 'number' && Number.isFinite(maxMinor) ? maxMinor / 100 : null;
+      const maxBet = maxBetMajor == null ? '—' : formatUsdMajor(maxBetMajor);
+      const maxBetRaw = maxBetMajor == null ? '—' : String(maxBetMajor);
+      const fundingStatus = String(out?.fundingStatus || 'unknown');
       const limitCoverageRatio =
         typeof out?.limitCoverageRatio === 'number' && Number.isFinite(out.limitCoverageRatio)
           ? out.limitCoverageRatio
@@ -262,26 +395,29 @@ export function flattenDashboardOuts(dashboard) {
           outId: out?.outId || '',
           status,
           operationalStatus: status,
-          fundingStatus: out?.fundingStatus || 'unknown',
+          fundingStatus,
           sportsbookId,
           providerConnectionStatus: out?.providerConnectionStatus,
           limitCoverageRatio,
           externalAccountRefs: externalRefs,
-          book: { name: sportsbookId || '—', slug: sportsbookId || '—', type: '—' },
-          funding: { method: String(out?.fundingStatus || 'unknown') },
+          book: { name: bookName, slug: sportsbookId || '—', type: '—' },
+          funding: { method: fundingStatus },
           credentials: { username: '—' },
-          maxBet,
+          maxBet: maxBetRaw,
+          maxBetDisplay: maxBet,
           note: noteParts.join(' · ') || '—',
           active: active.has(String(out?.outId || '')),
         },
         status,
         incomplete,
-        bookName: sportsbookId || '—',
+        bookName,
+        bookSlug: sportsbookId || '—',
         bookType: '—',
         maxBet,
-        method: String(out?.fundingStatus || 'unknown'),
+        maxBetRaw,
+        method: fundingStatus,
         username: '—',
-        fundingStatus: out?.fundingStatus || 'unknown',
+        fundingStatus,
         providerConnectionStatus: provider,
         limitCoverageRatio,
         limitCoveragePct:
@@ -297,6 +433,8 @@ export function flattenDashboardOuts(dashboard) {
         missingLimitEvidence,
         missingExternalRef,
         active: active.has(String(out?.outId || '')),
+        statusTone: statusToneClass(status),
+        fundingTone: statusToneClass(fundingStatus),
       });
     }
   }
@@ -487,16 +625,23 @@ export function dashboardAccountingDealsRows(dashboard) {
  * @param {object | null | undefined} dashboard
  * @returns {{ id: string, name: string }[]}
  */
-export function dashboardBookCards(dashboard) {
+export function dashboardBookCards(dashboard, opts = {}) {
+  const labelMap =
+    opts?.bookLabelById instanceof Map
+      ? opts.bookLabelById
+      : opts?.bookLabelById && typeof opts.bookLabelById === 'object'
+        ? new Map(Object.entries(opts.bookLabelById))
+        : new Map();
   const seen = new Map();
   for (const partner of dashboard?.partners || []) {
     for (const out of partner?.outs || []) {
       const id = String(out?.sportsbookId || '').trim();
       if (!id || seen.has(id)) continue;
-      seen.set(id, { id, name: id, typeConceptId: 'scrape.book' });
+      const name = labelMap.get(id) || humanizeBookSlug(id);
+      seen.set(id, { id, name, typeConceptId: 'scrape.book' });
     }
   }
-  return [...seen.values()].sort((a, b) => a.id.localeCompare(b.id));
+  return [...seen.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /**

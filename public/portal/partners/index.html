@@ -754,7 +754,7 @@
                   <th>Funding</th>
                   <th>Provider</th>
                   <th>Limit cov.</th>
-                  <th>Max ¢</th>
+                  <th>Max stake</th>
                   <th>Ext. ref</th>
                   <th>Status</th>
                   <th>Note</th>
@@ -1276,8 +1276,12 @@
         dashboardRosterRows,
         filterAttentionRowsByFamily,
         filterPartnerOuts,
+        bookLabelMapFromCatalog,
         flattenDashboardOuts,
         formatMoneyAmount,
+        formatUsdMajor,
+        formatUsdMinor,
+        humanizeBookSlug,
         indexDashboardByPartner,
         isPartnersDashboardSchema,
         listDashboardPhases,
@@ -1290,6 +1294,7 @@
         partnerReadinessGate,
         partnerScopedBalanceMinor,
         projectSoftAccountingExport,
+        statusToneClass,
         summarizeConnectorSnapshots,
         summarizeDashboardDesk,
       } from '/portal/partners/partners-board.js';
@@ -1327,7 +1332,7 @@
         { key: 'funding', label: 'Funding' },
         { key: 'provider', label: 'Provider' },
         { key: 'limitCov', label: 'Limit cov.' },
-        { key: 'max', label: 'Max ¢' },
+        { key: 'max', label: 'Max stake' },
         { key: 'extRef', label: 'Ext. ref' },
         { key: 'status', label: 'Status' },
         { key: 'note', label: 'Note' },
@@ -1454,6 +1459,8 @@
       let bookIndex = new Map();
       /** @type {Map<string, object>} */
       let dashboardByPartner = new Map();
+      /** @type {Map<string, string>} sportsbookId → display label from bookmakers bake */
+      let bookLabelCache = new Map();
       /** @type {object | null} */
       let dashboardCache = null;
       /** @type {string | null} */
@@ -1874,7 +1881,7 @@
               },
               { html: bookChip(row.bookName, out) },
               {
-                html: esc(fund),
+                html: `<span class="${fundTone}">${esc(fund)}</span>`,
                 className: fundTone,
               },
               {
@@ -1884,7 +1891,7 @@
                     ? 'tone-ok'
                     : row.providerConnectionStatus === 'inactive'
                       ? 'tone-warn'
-                      : '',
+                      : 'tone-muted',
               },
               {
                 html: covPct == null ? '—' : `${covPct}%`,
@@ -1893,8 +1900,8 @@
               {
                 html:
                   row.maxBet === '—'
-                    ? '—'
-                    : `<code title="USD major from minor units">${esc(row.maxBet)}</code>`,
+                    ? '<span class="tone-muted">—</span>'
+                    : `<span title="Observed max stake">${esc(row.maxBet)}</span>`,
               },
               {
                 html:
@@ -1906,9 +1913,13 @@
               {
                 html:
                   statusChip(row.status, out) +
-                  (row.incomplete ? ' · <span class="tone-warn">incomplete</span>' : ''),
+                  (row.active ? ' · <span class="tone-ok">live</span>' : '') +
+                  (row.incomplete ? ' · <span class="tone-warn">gap</span>' : ''),
               },
-              out.note || '—',
+              {
+                html: esc(out.note || '—'),
+                className: out.note && out.note !== '—' ? 'tone-muted' : 'tone-muted',
+              },
             ];
           }),
           {
@@ -2099,10 +2110,12 @@
               .map(out => {
                 const maxMinor = out.observedMaxStake?.amount?.minorUnits;
                 const maxLabel =
-                  typeof maxMinor === 'number' ? String(maxMinor / 100) : '—';
+                  typeof maxMinor === 'number' ? formatUsdMinor(maxMinor) : '—';
+                const book =
+                  bookLabelCache.get(out.sportsbookId) || humanizeBookSlug(out.sportsbookId);
                 return routeChip(
                   partnerOutHash(code, out.outId),
-                  `${out.sportsbookId || out.outId}: ${out.operationalStatus || '—'} · fund ${out.fundingStatus || '—'} · max ${maxLabel}`,
+                  `${book}: ${out.operationalStatus || '—'} · fund ${out.fundingStatus || '—'} · max ${maxLabel}`,
                   '',
                   'out.status.ready'
                 ).replace('topic-chip', 'book-chip');
@@ -2554,20 +2567,23 @@
       }
 
       function bookChip(label, opsOut) {
+        const display =
+          opsOut?.book?.name ||
+          (bookLabelCache?.get?.(opsOut?.sportsbookId || label) ?? null) ||
+          humanizeBookSlug(opsOut?.sportsbookId || label) ||
+          label ||
+          '—';
         if (opsOut?.book) {
           // Prefer partners-ops color wire (token + hex); never invent scrape hex for chips.
           const wire =
             opsOut.book.color && typeof opsOut.book.color === 'object' ? opsOut.book.color : {};
           const conceptId = opsOut.book.typeConceptId || 'scrape.book';
-          return conceptChip(conceptId, opsOut.book.name || label || '—', wire).replace(
-            'topic-chip',
-            'book-chip'
-          );
+          return conceptChip(conceptId, display, wire).replace('topic-chip', 'book-chip');
         }
-        const book = resolveBook(label);
+        const book = resolveBook(opsOut?.sportsbookId || label);
         const conceptId = book?.conceptId || 'scrape.book';
         const wire = book?.hex ? { hex: book.hex, token: '', colorKey: '' } : {};
-        return conceptChip(conceptId, label || '—', wire).replace('topic-chip', 'book-chip');
+        return conceptChip(conceptId, display, wire).replace('topic-chip', 'book-chip');
       }
 
       function railChip(label, opsOut) {
@@ -2585,7 +2601,8 @@
         if (opsOut?.statusConceptId) {
           return conceptChip(opsOut.statusConceptId, opsOut.status || label, opsOut.statusColor);
         }
-        return `<span class="${fundTone(label)}">${esc(label)}</span>`;
+        const text = opsOut?.status || label || '—';
+        return `<span class="${statusToneClass(text)}">${esc(text)}</span>`;
       }
 
       function opsOutFor(partnerCode, outNum) {
@@ -2594,14 +2611,17 @@
         const id = `out-${String(partnerCode).toUpperCase()}-${outNum}`;
         const out = (p.outs || []).find(o => o.outId === id);
         if (!out) return null;
+        const bookName =
+          bookLabelCache?.get?.(out.sportsbookId) || humanizeBookSlug(out.sportsbookId);
         return {
           id: out.outId,
           status: out.operationalStatus,
-          book: { name: out.sportsbookId, slug: out.sportsbookId },
+          sportsbookId: out.sportsbookId,
+          book: { name: bookName, slug: out.sportsbookId },
           funding: { method: out.fundingStatus },
           maxBet:
             out.observedMaxStake?.amount?.minorUnits != null
-              ? String(out.observedMaxStake.amount.minorUnits / 100)
+              ? formatUsdMinor(out.observedMaxStake.amount.minorUnits)
               : '—',
         };
       }
@@ -2678,10 +2698,12 @@
             const effectiveLimits = (partner.outs || []).map(out => {
               const maxMinor = out.observedMaxStake?.amount?.minorUnits;
               const maxLabel =
-                typeof maxMinor === 'number' ? String(maxMinor / 100) : '—';
+                typeof maxMinor === 'number' ? formatUsdMinor(maxMinor) : '—';
+              const book =
+                bookLabelCache.get(out.sportsbookId) || humanizeBookSlug(out.sportsbookId);
               return routeChip(
                 partnerOutHash(code, out.outId),
-                `${out.sportsbookId || out.outId}: ${maxLabel}`,
+                `${book}: ${maxLabel}`,
                 colors['ops.limits.effective_limit'],
                 'ops.limits.effective_limit'
               ).replace('topic-chip', 'book-chip');
@@ -2920,14 +2942,18 @@
           const catalog = { colors: {}, glossary: { conceptIds: [] } };
           const taxonomy = { bookRegistry: [] };
 
-          const [softResult, seatResult] = await Promise.all([
+          const [softResult, seatResult, bookmakersResult] = await Promise.all([
             fetchJsonResult(PARTNERS_ANCILLARY_SOFT_ACCOUNTING_REF),
             fetchJsonResult(PARTNERS_ANCILLARY_SEAT_CAPITAL_REF),
+            fetchJsonResult('/registry/bookmakers.json'),
           ]);
           const softProjected = projectSoftAccountingExport(
             softResult.ok ? softResult.data : null
           );
           const seat = normalizeSeatCapitalDesk(seatResult.ok ? seatResult.data : null);
+          bookLabelCache = bookmakersResult.ok
+            ? bookLabelMapFromCatalog(bookmakersResult.data)
+            : new Map();
 
           installColorTokens({});
           colorsCache = {};
@@ -2937,7 +2963,7 @@
           partnerProfilesCache = { profiles: {}, summary: { count: 0 } };
           dashboardCache = dashboard;
           dashboardByPartner = indexDashboardByPartner(dashboard);
-          flattenedOuts = flattenDashboardOuts(dashboard);
+          flattenedOuts = flattenDashboardOuts(dashboard, { bookLabelById: bookLabelCache });
           softAccountingSource = softResult.ok
             ? softProjected.source
             : `unavailable (${softResult.error || softResult.kind || 'fetch'})`;
