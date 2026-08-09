@@ -145,3 +145,21 @@ export function parseBookmakerCatalogArtifact(value: unknown): BookmakerCatalogP
     registry,
   };
 }
+
+/**
+ * Tennis / ops book refs → SportsbookId map from a parsed public catalog.
+ * Includes bare id and `book-${id}` forms used by tennis contract fixtures.
+ */
+export function bookRefMapFromCatalog(catalog: BookmakerCatalogProjection): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const id of Object.keys(catalog.registry)) {
+    map[id] = id;
+    map[`book-${id}`] = id;
+  }
+  return map;
+}
+
+/** Registered SportsbookId list for limit-change sportsbook join. */
+export function registeredSportsbookIdsFromCatalog(catalog: BookmakerCatalogProjection): string[] {
+  return Object.keys(catalog.registry).sort();
+}

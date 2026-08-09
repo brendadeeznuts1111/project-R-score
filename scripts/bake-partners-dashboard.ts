@@ -7,30 +7,38 @@
  *
  * Pipeline (pure package, I/O only at edges):
  *   1. buildPartnerDashboardRecords (profiles · coverage · telegram · legacy · optional ledger)
- *   2. reconcilePartnerDashboardFacts (tennis-first capacity → activeOutIds)
+ *   2. reconcilePartnerDashboardFacts (tennis · sports-terminal · limits · bookmakers)
  *   3. assemblePartnerDashboardArtifact
  *
  * Optional ledger: public/registry/partner-ledger.json (redacted public snapshot;
  * schema factorywager.partner-ledger.v1). Soft plays export is not finance
- * authority and is not consumed here.
+ * authority and is not consumed here. Limit raises never become max-stake.
  */
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import {
+  LIMIT_RAISE_SPORTSBOOK_ALIASES,
   PARTNER_CONNECTOR_SNAPSHOT_KEYS,
   PARTNER_DASHBOARD_ARTIFACT_REF,
   PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS,
   adaptAccountingFromLedgerSnapshot,
   assemblePartnerDashboardArtifact,
+  bookRefMapFromCatalog,
   buildPartnerDashboardRecords,
   evaluateConnectorFreshness,
+  parseTreeNodePartnerCodesFromLimitRaises,
+  parseBookmakerCatalogArtifact,
   parseLegacyPartnersOpsProjection,
+  parseLimitChangesArtifact,
   parsePartnerDashboardArtifact,
   parsePartnerProfileCoverageArtifact,
   parseSportsTerminalIntegrationHealth,
   parseTelegramHandshakeArtifact,
   parseTennisCapacityArtifact,
   reconcilePartnerDashboardFacts,
+  registeredSportsbookIdsFromCatalog,
+  type BookmakerCatalogProjection,
   type ConnectorSnapshot,
+  type LimitChangeProjection,
   type PartnerAccountingObservation,
   type SportsTerminalIntegrationProjection,
   type TennisCapacityProjection,
@@ -51,6 +59,8 @@ const TENNIS_PATH = 'public/registry/tennis/partner-contracts.json';
 const LEDGER_PATH = 'public/registry/partner-ledger.json';
 /** Optional Sports Terminal integration-health (exact parsed wire). */
 const SPORTS_TERMINAL_PATH = 'public/registry/sports-terminal/partner-integration-health.json';
+const LIMITS_PATH = 'public/registry/limit-raises.json';
+const BOOKMAKERS_PATH = 'public/registry/bookmakers.json';
 
 function connectorSnapshots(asOf: string): Record<string, ConnectorSnapshot> {
   return Object.fromEntries(
@@ -105,20 +115,36 @@ function bookKeyMapFromLegacy(
 export async function buildPartnersDashboardArtifact(
   generatedAt = new Date().toISOString()
 ): Promise<ReturnType<typeof assemblePartnerDashboardArtifact>> {
-  const [profiles, coverageRaw, legacyRaw, telegramRaw, tennisRaw, ledgerRaw, sportsTerminalRaw] =
-    await Promise.all([
-      loadJson(PROFILE_PATH),
-      loadJson(COVERAGE_PATH),
-      loadJson(OPS_PATH),
-      loadJson(TELEGRAM_PATH),
-      loadOptionalJson(TENNIS_PATH),
-      loadOptionalJson(LEDGER_PATH),
-      loadOptionalJson(SPORTS_TERMINAL_PATH),
-    ]);
+  const [
+    profiles,
+    coverageRaw,
+    legacyRaw,
+    telegramRaw,
+    tennisRaw,
+    ledgerRaw,
+    sportsTerminalRaw,
+    limitsRaw,
+    bookmakersRaw,
+  ] = await Promise.all([
+    loadJson(PROFILE_PATH),
+    loadJson(COVERAGE_PATH),
+    loadJson(OPS_PATH),
+    loadJson(TELEGRAM_PATH),
+    loadOptionalJson(TENNIS_PATH),
+    loadOptionalJson(LEDGER_PATH),
+    loadOptionalJson(SPORTS_TERMINAL_PATH),
+    loadOptionalJson(LIMITS_PATH),
+    loadOptionalJson(BOOKMAKERS_PATH),
+  ]);
 
   const coverage = parsePartnerProfileCoverageArtifact(coverageRaw);
   const legacyOps = parseLegacyPartnersOpsProjection(legacyRaw);
   const telegram = parseTelegramHandshakeArtifact(telegramRaw);
+
+  let bookmakers: BookmakerCatalogProjection | undefined;
+  if (bookmakersRaw !== undefined) {
+    bookmakers = parseBookmakerCatalogArtifact(bookmakersRaw);
+  }
 
   let accounting: PartnerAccountingObservation[] | undefined;
   if (ledgerRaw !== undefined) {
@@ -139,7 +165,9 @@ export async function buildPartnersDashboardArtifact(
 
   let tennis: TennisCapacityProjection | undefined;
   if (tennisRaw !== undefined) {
-    tennis = parseTennisCapacityArtifact(tennisRaw);
+    tennis = parseTennisCapacityArtifact(tennisRaw, {
+      ...(bookmakers ? { bookRefMap: bookRefMapFromCatalog(bookmakers) } : {}),
+    });
   }
 
   let sportsTerminal: SportsTerminalIntegrationProjection | undefined;
@@ -147,10 +175,21 @@ export async function buildPartnersDashboardArtifact(
     sportsTerminal = parseSportsTerminalIntegrationHealth(sportsTerminalRaw);
   }
 
+  let limits: LimitChangeProjection | undefined;
+  if (limitsRaw !== undefined && bookmakers) {
+    limits = parseLimitChangesArtifact(limitsRaw, {
+      treeNodePartnerCodes: parseTreeNodePartnerCodesFromLimitRaises(limitsRaw),
+      registeredSportsbookIds: registeredSportsbookIdsFromCatalog(bookmakers),
+      sportsbookAliases: LIMIT_RAISE_SPORTSBOOK_ALIASES,
+    });
+  }
+
   const reconciled = reconcilePartnerDashboardFacts({
     partners: built.partners,
     ...(tennis ? { tennis } : {}),
     ...(sportsTerminal ? { sportsTerminal } : {}),
+    ...(limits ? { limits } : {}),
+    ...(bookmakers ? { bookmakers } : {}),
   });
 
   return assemblePartnerDashboardArtifact({

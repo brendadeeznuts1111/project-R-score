@@ -180,6 +180,49 @@ describe('reconcilePartnerDashboardFacts', () => {
     expect(spen.integrations.sportsTerminal?.dataStatus).toBe('unavailable'); // unknown
   });
 
+  test('joins limit-change attention and bookmaker catalog validation without inventing ceilings', async () => {
+    const { partners, tennis } = await loadBuiltPartners();
+    const [limitsRaw, bookmakersRaw] = await Promise.all([
+      loadJson('public/registry/limit-raises.json'),
+      loadJson('public/registry/bookmakers.json'),
+    ]);
+    const {
+      LIMIT_RAISE_SPORTSBOOK_ALIASES,
+      parseTreeNodePartnerCodesFromLimitRaises,
+      parseBookmakerCatalogArtifact,
+      parseLimitChangesArtifact,
+      registeredSportsbookIdsFromCatalog,
+    } = await import('../packages/partners/src/index.ts');
+    const bookmakers = parseBookmakerCatalogArtifact(bookmakersRaw);
+    const limits = parseLimitChangesArtifact(limitsRaw, {
+      treeNodePartnerCodes: parseTreeNodePartnerCodesFromLimitRaises(limitsRaw),
+      registeredSportsbookIds: registeredSportsbookIdsFromCatalog(bookmakers),
+      sportsbookAliases: LIMIT_RAISE_SPORTSBOOK_ALIASES,
+    });
+    expect(limits.observations.length).toBeGreaterThan(0);
+    expect(limits.observations.every(o => o.currentExecutionCeiling === false)).toBe(true);
+
+    const reconciled = reconcilePartnerDashboardFacts({
+      partners,
+      tennis,
+      limits,
+      bookmakers,
+    });
+    const ash = reconciled.partners.find(p => p.partnerCode === 'ASH')!;
+    expect(ash.attention.some(a => a.reasonCode === 'partner.limits.raise_observed')).toBe(true);
+    expect(ash.identity.treeNodeId).toBeTruthy();
+    // Raise attention must not invent observedMaxStake from limit events.
+    for (const out of ash.outs) {
+      if (out.observedMaxStake) {
+        expect(out.observedMaxStake.provenance.adapterId).not.toBe('limit-changes-v3');
+      }
+    }
+    const bil = reconciled.partners.find(p => p.partnerCode === 'BIL')!;
+    expect(
+      bil.attention.some(a => a.reasonCode === 'partner.bookmakers.unregistered_sportsbook')
+    ).toBe(true);
+  });
+
   test('emits operationalStatus conflict when tennis upgrades a non-ready registered out', async () => {
     const { partners, tennis } = await loadBuiltPartners();
     // Force prior disagreement on a tennis-active registered out

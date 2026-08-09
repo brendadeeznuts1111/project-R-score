@@ -1,12 +1,12 @@
 {
   "schema": "factorywager.partners-dashboard.v2",
-  "generatedAt": "2026-08-09T00:00:07.156Z",
+  "generatedAt": "2026-08-09T01:45:38.325Z",
   "connectorSnapshots": {
     "profiles": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T00:00:07.156Z",
+      "observedAt": "2026-08-09T01:45:38.325Z",
       "ageSeconds": 0,
       "inputRef": "config/partner-profiles/*.toml"
     },
@@ -14,7 +14,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T00:00:07.156Z",
+      "observedAt": "2026-08-09T01:45:38.325Z",
       "ageSeconds": 0,
       "inputRef": "partner_ledger"
     },
@@ -22,7 +22,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T00:00:07.156Z",
+      "observedAt": "2026-08-09T01:45:38.325Z",
       "ageSeconds": 0,
       "inputRef": "/registry/telegram-handshake.json"
     },
@@ -30,7 +30,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T00:00:07.156Z",
+      "observedAt": "2026-08-09T01:45:38.325Z",
       "ageSeconds": 0,
       "inputRef": "/registry/limit-raises.json"
     },
@@ -38,7 +38,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T00:00:07.156Z",
+      "observedAt": "2026-08-09T01:45:38.325Z",
       "ageSeconds": 0,
       "inputRef": "/registry/bookmakers.json"
     },
@@ -46,7 +46,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T00:00:07.156Z",
+      "observedAt": "2026-08-09T01:45:38.325Z",
       "ageSeconds": 0,
       "inputRef": "/registry/tennis/partner-contracts.json"
     },
@@ -54,7 +54,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T00:00:07.156Z",
+      "observedAt": "2026-08-09T01:45:38.325Z",
       "ageSeconds": 0,
       "inputRef": "/registry/sports-terminal/partner-integration-health.json"
     }
@@ -70,7 +70,7 @@
     "partnerCount": 4,
     "canonicalProfileCount": 4,
     "operatorReadyPartnerCount": 4,
-    "attentionPartnerCount": 0,
+    "attentionPartnerCount": 4,
     "registeredOutCount": 10,
     "activeOutCount": 5,
     "balancePositions": [
@@ -182,13 +182,13 @@
       "callSign": "ASH-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T00:00:07.156Z",
+        "effectiveAt": "2026-08-09T01:45:38.325Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T00:00:07.156Z",
+          "observedAt": "2026-08-09T01:45:38.325Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -202,7 +202,8 @@
             "sourceSystemId": "sports-terminal",
             "externalId": "st-partner-ash-001"
           }
-        ]
+        ],
+        "treeNodeId": "019f92bf-40d6-72e3-aa09-f0a9b8a95824"
       },
       "outs": [
         {
@@ -350,20 +351,27 @@
           "observedAt": "2026-08-05T17:37:45.981Z"
         }
       },
-      "attention": []
+      "attention": [
+        {
+          "reasonCode": "partner.limits.raise_observed",
+          "severity": "info",
+          "label": "11 limit-change event(s); latest raise → fanduel @ 120000¢",
+          "actionHref": "/portal/limits/"
+        }
+      ]
     },
     {
       "partnerCode": "BIL",
       "callSign": "BIL-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T00:00:07.156Z",
+        "effectiveAt": "2026-08-09T01:45:38.325Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T00:00:07.156Z",
+          "observedAt": "2026-08-09T01:45:38.325Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -460,20 +468,27 @@
           "observedAt": "2026-08-05T17:37:45.981Z"
         }
       },
-      "attention": []
+      "attention": [
+        {
+          "reasonCode": "partner.bookmakers.unregistered_sportsbook",
+          "severity": "info",
+          "label": "Out sportsbook not in public catalog: partner-book-tbd",
+          "actionHref": "/portal/bookmakers/"
+        }
+      ]
     },
     {
       "partnerCode": "NOV",
       "callSign": "NOV-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T00:00:07.156Z",
+        "effectiveAt": "2026-08-09T01:45:38.325Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T00:00:07.156Z",
+          "observedAt": "2026-08-09T01:45:38.325Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -605,20 +620,27 @@
           "observedAt": "2026-08-05T17:37:45.981Z"
         }
       },
-      "attention": []
+      "attention": [
+        {
+          "reasonCode": "partner.bookmakers.unregistered_sportsbook",
+          "severity": "info",
+          "label": "Out sportsbook not in public catalog: southfl-pph-desk",
+          "actionHref": "/portal/bookmakers/"
+        }
+      ]
     },
     {
       "partnerCode": "SPEN",
       "callSign": "SPEN-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T00:00:07.156Z",
+        "effectiveAt": "2026-08-09T01:45:38.325Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T00:00:07.156Z",
+          "observedAt": "2026-08-09T01:45:38.325Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -632,7 +654,8 @@
             "sourceSystemId": "sports-terminal",
             "externalId": "st-partner-spen-001"
           }
-        ]
+        ],
+        "treeNodeId": "019f92bf-40d6-72e4-bfd9-0c06e5891188"
       },
       "outs": [
         {
@@ -817,7 +840,20 @@
           "observedAt": "2026-08-05T17:37:45.981Z"
         }
       },
-      "attention": []
+      "attention": [
+        {
+          "reasonCode": "partner.bookmakers.unregistered_sportsbook",
+          "severity": "info",
+          "label": "Out sportsbook not in public catalog: orange777",
+          "actionHref": "/portal/bookmakers/"
+        },
+        {
+          "reasonCode": "partner.limits.raise_observed",
+          "severity": "info",
+          "label": "2 limit-change event(s); latest raise → fanduel @ 120000¢",
+          "actionHref": "/portal/limits/"
+        }
+      ]
     }
   ]
 }

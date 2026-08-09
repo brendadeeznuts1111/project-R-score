@@ -4,13 +4,17 @@
  * Runs AFTER `buildPartnerDashboardRecords`. Applies tennis-first capacity
  * precedence to produce `activeOutIds`, optional out status / observed max-stake
  * upgrades, partner-keyed `integrations.tennis`, Sports Terminal
- * `integrations.sportsTerminal` + externalPartnerRefs, and explicit `conflicts[]`.
+ * `integrations.sportsTerminal` + externalPartnerRefs, limit-raise attention,
+ * bookmaker sportsbook validation, and explicit `conflicts[]`.
  *
  * Does not invent lifecycle, funding, accounting money, or unregistered outs.
+ * Limit-change events never become executable max-stake ceilings.
  * Sports Terminal integration-health is optional; when absent, tennis is the
  * sole capacity author (precedence still declares tennis-contract >
  * sports-terminal for future multi-source conflict rows).
  */
+import type { BookmakerCatalogProjection } from '../adapters/bookmakers.ts';
+import type { LimitChangeProjection } from '../adapters/limit-changes.ts';
 import type { SportsTerminalIntegrationProjection } from '../adapters/sports-terminal.ts';
 import {
   SPORTS_TERMINAL_ADAPTER_ID,
@@ -20,17 +24,19 @@ import type {
   TennisCapacityProjection,
   TennisOutCapacityObservation,
 } from '../adapters/tennis-capacity.ts';
-import { parseAdapterId } from '../core/identifiers.ts';
+import { parseAdapterId, parseAttentionReasonCode, parseTreeNodeId } from '../core/identifiers.ts';
 import {
   OUT_OPERATIONAL_STATUSES,
   type ConnectorDataStatus,
   type JsonPrimitive,
   type OutId,
   type OutOperationalStatus,
+  type PartnerAttentionItem,
   type PartnerDashboardOut,
   type PartnerDashboardRecord,
   type PartnerSourceConflict,
   type ProviderConnectionStatus,
+  type SportsbookId,
 } from '../core/types.ts';
 
 /** Connector adapter id from partner-dashboard plan (capacity_precedence head). */
@@ -48,6 +54,13 @@ export type ReconcilePartnerDashboardFactsInput = {
   tennis?: TennisCapacityProjection;
   /** Parsed Sports Terminal integration-health; omit when connector unavailable. */
   sportsTerminal?: SportsTerminalIntegrationProjection;
+  /**
+   * Limit-change observations (raise events only — never current max stake).
+   * Authors attention evidence; does not fill limits.tracked coverage.
+   */
+  limits?: LimitChangeProjection;
+  /** Public bookmaker catalog — validates out sportsbookIds (no invent). */
+  bookmakers?: BookmakerCatalogProjection;
 };
 
 export type ReconcilePartnerDashboardFactsResult = {
@@ -196,6 +209,87 @@ function applyTennisObservationToOut(options: {
  * operationally `ready` after upgrades. Unregistered tennis outs are ignored
  * (never invented). Finance / lifecycle / funding are not authored here.
  */
+function applyLimitChangeAttention(
+  partners: PartnerDashboardRecord[],
+  limits: LimitChangeProjection
+): void {
+  const raiseCount = new Map<string, number>();
+  const latestUp = new Map<
+    string,
+    { at: string; sportsbookId: SportsbookId; minorUnits: number }
+  >();
+  const treeNodes = new Map<string, string>();
+
+  for (const observation of limits.observations) {
+    raiseCount.set(observation.partnerCode, (raiseCount.get(observation.partnerCode) ?? 0) + 1);
+    if (observation.direction === 'up') {
+      const prior = latestUp.get(observation.partnerCode);
+      if (!prior || observation.changedAt >= prior.at) {
+        latestUp.set(observation.partnerCode, {
+          at: observation.changedAt,
+          sportsbookId: observation.sportsbookId,
+          minorUnits: observation.reportedMaxStakeAfterChange.minorUnits,
+        });
+      }
+    }
+    if (!treeNodes.has(observation.partnerCode)) {
+      treeNodes.set(observation.partnerCode, observation.treeNodeId);
+    }
+  }
+
+  for (const partner of partners) {
+    const node = treeNodes.get(partner.partnerCode);
+    if (node && partner.identity.treeNodeId === undefined) {
+      partner.identity.treeNodeId = parseTreeNodeId(node);
+    }
+    const count = raiseCount.get(partner.partnerCode) ?? 0;
+    if (count === 0) continue;
+    const up = latestUp.get(partner.partnerCode);
+    const item: PartnerAttentionItem = {
+      reasonCode: parseAttentionReasonCode('partner.limits.raise_observed'),
+      severity: 'info',
+      label: up
+        ? `${count} limit-change event(s); latest raise → ${up.sportsbookId} @ ${up.minorUnits}¢`
+        : `${count} limit-change event(s) observed (not execution ceiling)`,
+      actionHref: '/portal/limits/',
+    };
+    if (!partner.attention.some(row => row.reasonCode === item.reasonCode)) {
+      partner.attention = [...partner.attention, item].sort((a, b) =>
+        compareAscii(a.reasonCode, b.reasonCode)
+      );
+    }
+  }
+}
+
+/**
+ * Validate out sportsbookIds against the public catalog.
+ * Does not invent IDs; emits sportsbookId conflicts only when a catalog-backed
+ * tennis observation already rewrote the id (handled in tennis path).
+ * Catalog membership alone never mutates outs.
+ */
+function noteUnregisteredSportsbooks(
+  partners: PartnerDashboardRecord[],
+  bookmakers: BookmakerCatalogProjection
+): void {
+  const registered = new Set(Object.keys(bookmakers.registry));
+  for (const partner of partners) {
+    for (const out of partner.outs) {
+      if (registered.has(out.sportsbookId)) continue;
+      // Attention only — legacy/out-of-catalog ids remain visible.
+      const reason = parseAttentionReasonCode('partner.bookmakers.unregistered_sportsbook');
+      if (partner.attention.some(item => item.reasonCode === reason)) continue;
+      partner.attention.push({
+        reasonCode: reason,
+        severity: 'info',
+        label: `Out sportsbook not in public catalog: ${out.sportsbookId}`,
+        actionHref: '/portal/bookmakers/',
+      });
+      partner.attention.sort((a, b) => compareAscii(a.reasonCode, b.reasonCode));
+      break;
+    }
+  }
+}
+
 function applySportsTerminalIntegration(
   partners: PartnerDashboardRecord[],
   sportsTerminal: SportsTerminalIntegrationProjection
@@ -243,6 +337,12 @@ export function reconcilePartnerDashboardFacts(
 
   if (input.sportsTerminal) {
     applySportsTerminalIntegration(partners, input.sportsTerminal);
+  }
+  if (input.limits) {
+    applyLimitChangeAttention(partners, input.limits);
+  }
+  if (input.bookmakers) {
+    noteUnregisteredSportsbooks(partners, input.bookmakers);
   }
 
   if (!input.tennis) {
