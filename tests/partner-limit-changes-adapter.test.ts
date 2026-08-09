@@ -68,4 +68,19 @@ describe('partner limit-change adapter', () => {
       })
     ).toThrow('at most two decimal places');
   });
+
+  test('extracts TreeNode→PartnerCode from accountProfiles.profiles callSigns', async () => {
+    const { parseTreeNodePartnerCodesFromLimitRaises } = await import(
+      '../packages/partners/src/index.ts'
+    );
+    const limits = await Bun.file(
+      new URL('../public/registry/limit-raises.json', import.meta.url)
+    ).json();
+    const map = parseTreeNodePartnerCodesFromLimitRaises(limits);
+    expect(Object.keys(map).length).toBeGreaterThan(0);
+    expect(map[NODE]).toBe('ASH');
+    // CODE-N call signs collapse to PartnerCode
+    const ash001 = Object.entries(map).find(([, code]) => code === 'ASH');
+    expect(ash001).toBeDefined();
+  });
 });
