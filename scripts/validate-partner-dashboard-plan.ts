@@ -70,6 +70,7 @@ const PARTNER_PROFILE_COVERAGE_REGISTRY = resolvePath(
 );
 const PARTNERS_OPS_REGISTRY = resolvePath(REPO_ROOT, 'public/registry/partners-ops.json');
 const PARTNERS_PACKAGE_JSON = resolvePath(REPO_ROOT, 'packages/partners/package.json');
+/** Historical blocker phrases — only enforced while sports-terminal is blocked. */
 const SPORTS_TERMINAL_REQUIRED_BLOCKERS = [
   'exact parsed input',
   'external-ID resolution',
@@ -188,9 +189,9 @@ const CONNECTOR_CONTRACTS: Readonly<Record<string, ConnectorContract>> = {
     required: false,
     sourceSystemId: 'sports-terminal',
     port: 'IntegrationHealthReadPort',
-    inputKind: 'unresolved',
-    inputRef: '',
-    implementationStatus: 'blocked',
+    inputKind: 'registry-artifact',
+    inputRef: '/registry/sports-terminal/partner-integration-health.json',
+    implementationStatus: 'implemented',
     authoritativeFactPaths: PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS['sports-terminal'],
   },
 };
@@ -1318,6 +1319,7 @@ export async function validatePartnerDashboardPlan(
       'telegram-handshake': './adapters/telegram-handshake',
       'limits-registry': './adapters/limit-changes',
       'tennis-contract': './adapters/tennis-capacity',
+      'sports-terminal': './adapters/sports-terminal',
     }[String(connector.id)];
     if (
       observationTarget &&
@@ -1366,15 +1368,8 @@ export async function validatePartnerDashboardPlan(
       const id = String(connector.id ?? '');
       const status = String(connector.implementation_status ?? '');
       if (status === 'implemented') continue;
-      // Honest exceptions: temporary legacy compatibility + blocked Sports Terminal.
+      // Honest exception: temporary legacy compatibility (retired path).
       if (id === 'legacy-ops-registry' && status === 'current-compatibility') continue;
-      if (
-        id === 'sports-terminal' &&
-        status === 'blocked' &&
-        String(connector.blocking_reason ?? '').length > 0
-      ) {
-        continue;
-      }
       errors.push(
         `implementation-ready plans require connector ${id} to be implemented (got ${status})`
       );

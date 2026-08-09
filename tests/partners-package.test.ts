@@ -14,10 +14,11 @@ describe('@factorywager/partners core', () => {
   });
 
   it('exports unique semantic gap keys and candidate concepts', () => {
-    expect(PARTNER_DASHBOARD_SEMANTIC_GAPS).toHaveLength(15);
-    expect(new Set(PARTNER_DASHBOARD_SEMANTIC_GAPS.map(gap => gap.key)).size).toBe(15);
+    // Gaps closed when plan reached implementation-ready (#621).
+    expect(PARTNER_DASHBOARD_SEMANTIC_GAPS).toHaveLength(0);
+    expect(new Set(PARTNER_DASHBOARD_SEMANTIC_GAPS.map(gap => gap.key)).size).toBe(0);
     expect(
       new Set(PARTNER_DASHBOARD_SEMANTIC_GAPS.map(gap => gap.candidate_concept_id)).size
-    ).toBe(15);
+    ).toBe(0);
   });
 });

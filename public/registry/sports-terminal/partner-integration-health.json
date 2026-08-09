@@ -1,0 +1,67 @@
+{
+  "schema": "factorywager.sports-terminal-integration-health.v1",
+  "kind": "sports-terminal-integration-health",
+  "schemaVersion": 1,
+  "path": "/registry/sports-terminal/partner-integration-health.json",
+  "generatedAt": "2026-08-08T18:00:00.000Z",
+  "source": "fixture",
+  "runtimeUrl": "https://sports-terminal.factory-wager.com",
+  "moneyPolicy": "integer-minor-units-only",
+  "contractPaths": {
+    "integrationHealth": "https://sports-terminal.factory-wager.com/api/v1/partners/integration-health"
+  },
+  "notes": "Redacted public fixture for dashboard bake. Integration health only — no contact, Telegram, lifecycle, or floating-point money. externalIdMap is the explicit ExternalPartnerRef resolution table.",
+  "externalIdMap": {
+    "st-partner-ash-001": "ASH",
+    "st-partner-bil-001": "BIL",
+    "st-partner-nov-001": "NOV",
+    "st-partner-spen-001": "SPEN"
+  },
+  "partners": [
+    {
+      "partnerCode": "ASH",
+      "callSign": "ASH-001",
+      "externalPartnerId": "st-partner-ash-001",
+      "overall": "healthy",
+      "sourceCount": 2,
+      "healthyCount": 2,
+      "maxStakeMinorUnits": 50000,
+      "checkedAt": "2026-08-08T18:00:00.000Z"
+    },
+    {
+      "partnerCode": "BIL",
+      "callSign": "BIL-001",
+      "externalPartnerId": "st-partner-bil-001",
+      "overall": "degraded",
+      "sourceCount": 3,
+      "healthyCount": 1,
+      "checkedAt": "2026-08-08T18:00:00.000Z"
+    },
+    {
+      "partnerCode": "NOV",
+      "callSign": "NOV-001",
+      "externalPartnerId": "st-partner-nov-001",
+      "overall": "healthy",
+      "sourceCount": 1,
+      "healthyCount": 1,
+      "maxStakeMinorUnits": 25000,
+      "checkedAt": "2026-08-08T18:00:00.000Z"
+    },
+    {
+      "partnerCode": "SPEN",
+      "callSign": "SPEN-001",
+      "externalPartnerId": "st-partner-spen-001",
+      "overall": "unknown",
+      "sourceCount": 0,
+      "healthyCount": 0,
+      "checkedAt": "2026-08-08T18:00:00.000Z"
+    }
+  ],
+  "summary": {
+    "partnerCount": 4,
+    "healthy": 2,
+    "degraded": 1,
+    "unhealthy": 0,
+    "unknown": 1
+  }
+}

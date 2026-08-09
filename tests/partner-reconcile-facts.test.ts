@@ -7,6 +7,7 @@ import {
   evaluateConnectorFreshness,
   parseLegacyPartnersOpsProjection,
   parsePartnerProfileCoverageArtifact,
+  parseSportsTerminalIntegrationHealth,
   parseTelegramHandshakeArtifact,
   parseTennisCapacityArtifact,
   reconcilePartnerDashboardFacts,
@@ -36,14 +37,10 @@ function connectorSnapshots(asOf: string): Record<string, ConnectorSnapshot> {
         asOf,
         expectedInputRef: PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS[key],
         required: key === 'profiles',
-        ...(key === 'sportsTerminal'
-          ? {}
-          : {
-              current: {
-                observedAt: asOf,
-                inputRef: PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS[key],
-              },
-            }),
+        current: {
+          observedAt: asOf,
+          inputRef: PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS[key],
+        },
       });
       if (decision.disposition === 'fail_bake') throw new Error(decision.reasonCode);
       return [key, decision.snapshot];
@@ -152,7 +149,35 @@ describe('reconcilePartnerDashboardFacts', () => {
     expect(reconciled.conflicts).toEqual([]);
     for (const partner of reconciled.partners) {
       expect(partner.integrations.tennis).toBeUndefined();
+      expect(partner.integrations.sportsTerminal).toBeUndefined();
     }
+  });
+
+  test('applies Sports Terminal integration health and external partner refs', async () => {
+    const { partners, tennis } = await loadBuiltPartners();
+    const stRaw = await loadJson(
+      'public/registry/sports-terminal/partner-integration-health.json'
+    );
+    const sportsTerminal = parseSportsTerminalIntegrationHealth(stRaw);
+    const reconciled = reconcilePartnerDashboardFacts({ partners, tennis, sportsTerminal });
+
+    const ash = reconciled.partners.find(p => p.partnerCode === 'ASH')!;
+    expect(ash.integrations.sportsTerminal).toMatchObject({
+      dataStatus: 'ok',
+      observedAt: '2026-08-08T18:00:00.000Z',
+    });
+    expect(ash.identity.externalPartnerRefs).toEqual([
+      {
+        sourceSystemId: 'sports-terminal',
+        externalId: 'st-partner-ash-001',
+      },
+    ]);
+
+    const bil = reconciled.partners.find(p => p.partnerCode === 'BIL')!;
+    expect(bil.integrations.sportsTerminal?.dataStatus).toBe('stale'); // degraded → stale
+
+    const spen = reconciled.partners.find(p => p.partnerCode === 'SPEN')!;
+    expect(spen.integrations.sportsTerminal?.dataStatus).toBe('unavailable'); // unknown
   });
 
   test('emits operationalStatus conflict when tennis upgrades a non-ready registered out', async () => {

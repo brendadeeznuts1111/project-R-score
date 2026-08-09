@@ -238,32 +238,25 @@ credentials, Telegram tokens, or remote payloads.
 | bookmakers registry               | implemented public catalog parser + pure account resolver; connector loading planned | canonical `SportsbookId`, exact/explicit-alias host resolution, skin and brand metadata                                                   | partner account status, executable limits, credentials, or inferred parent-domain matches |
 | limit-raises v3 artifact          | implemented limit-change observation adapter                                         | historical before/after stake reports with explicit partner/book mappings                                                                 | current executable ceilings, limit coverage, bookmaker identity, or partner identity      |
 | Tennis partner-contracts artifact | implemented capacity observation adapter                                             | live canonical out activity, credential readiness, and integer max-stake evidence after explicit book mapping                             | offline execution authority, gross payout, net win, liquidity reservation, or profile ID  |
-| Sports Terminal                   | planned Sports compatibility adapter                                                 | external state, gate observations, integration health after an authenticated parsed boundary exists                                       | a second profile store, lifecycle enum, contact/Telegram payload, or floating-point money |
+| Sports Terminal                   | implemented IntegrationHealthReadPort adapter                                        | external state + integration health via authenticated `/api/v1/partners/integration-health` and registry fixture                          | a second profile store, lifecycle enum, contact/Telegram payload, or floating-point money |
 | Kalshi partner registry           | execution adapter                                                                    | provider/out/skin capacity and qualified external refs                                                                                    | canonical partner IDs, money ledger truth                                                 |
 
 ### Sports Terminal API and HTML cutover evidence
 
-The existing Sports Terminal surfaces are implementation references, not a
-connector contract. The React `/partners` route is mounted and calls the paths
-below, but `partnerRoutes` is not imported or mounted by the main API router or
-server entrypoint. Its file header describes JWT/admin protection while the
-exported router receives only `Request`, so that claim is not enforced at this
-boundary.
+The React `/partners` route and unmounted `partnerRoutes` remain **reference /
+unsafe** surfaces (float money, bare `partnerId`, contact/Telegram). The
+dashboard connector is **implemented** via a separate authenticated projection:
 
-| Candidate                              | Current evidence                                                                                               | Canonical decision                                                                                          |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| React `/partners`                      | Page-local `PartnerListItem`/request types; calls list, create, transition, deposit, limit, and evaluate paths | Reuse list/detail information architecture only; do not copy the duplicate schema or mutation surface       |
-| `GET /api/partners`                    | Handler exists, returns unqualified `partnerId` list records, but its router is unmounted                      | Keep blocked until mounted behind explicit authentication and a parsed adapter response                     |
-| `GET /api/partners/:id`                | Mixes contact data, Telegram config, lifecycle, limits, and floating-point balance/exposure fields             | Never consume directly; project only qualified external state and integration health                        |
-| `GET /api/partners/:id/sources/health` | Closest match for `IntegrationHealthReadPort`; still unmounted and keyed by an unqualified path ID             | Define `ExternalPartnerRef` resolution, authentication, response parsing, and a money-free projection first |
+| Candidate                                          | Current evidence                                                                                         | Canonical decision                                                                                          |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| React `/partners`                                  | Page-local DTOs; mutation paths                                                                          | Reuse IA only; do not copy schema                                                                           |
+| `GET /api/partners` / `GET /api/partners/:id`      | Unmounted `partnerRoutes`; float money + bare ids                                                        | Never consume; do not mount                                                                                 |
+| `GET /api/v1/partners/integration-health`          | Mounted in main router with `auth: "required"`; ExternalPartnerRef map; integer-minor / money-free rows  | `IntegrationHealthReadPort` live contract                                                                   |
+| `/registry/sports-terminal/partner-integration-health.json` | Public fixture parsed by `parseSportsTerminalIntegrationHealth`                                 | Bake input; authors `integrations.sportsTerminal` + `identity.externalPartnerRefs`                          |
 
-This evidence narrows the unresolved input choice without promoting a dead or
-unsafe route. The `sports-terminal` connector remains `blocked` in the TOML. Its
-package proof is also explicitly incomplete: `bun run type-check:sto` currently
-fails on unresolved `@auth/session` and `@auth/middleware` aliases, follow-on
-implicit-`any` parameters, and one `unknown`-to-`string` router argument. These
-are connector cutover TODOs, not tests to skip or grounds to weaken the root
-TypeScript gate.
+The `sports-terminal` connector is `implemented` in the TOML (`enabled = true`,
+`input_kind = registry-artifact`). Full STO package `type-check:sto` alias debt
+is orthogonal to this pure-adapter + mounted health boundary.
 
 ## MVP changes caused by this map
 

@@ -1265,16 +1265,20 @@ adapter_id = "sports-terminal"
 adapter_version = "2"
 target_owner_package = "@factorywager/partners"
 target_adapter_export = "./adapters/sports-terminal"
+target_adapter_implementation_status = "implemented"
 port = "IntegrationHealthReadPort"
-implementation_status = "blocked"
-enabled = false
-blocking_reason = "one exact parsed input, explicit external-ID resolution, authenticated route integration, and integer-minor-unit money wire are required"
-input_kind = "unresolved"
+implementation_status = "implemented"
+enabled = true
+input_kind = "registry-artifact"
 required = false
-input_ref = ""
-authoritative_fact_paths = []
+input_ref = "/registry/sports-terminal/partner-integration-health.json"
+authoritative_fact_paths = [
+  "partners[].integrations.sportsTerminal",
+  "partners[].identity.externalPartnerRefs",
+]
 visual_group = "operations"
 provides = ["external-state", "gate-observations", "integration-health"]
+execution_evidence_policy = "live-source-only"
 region_ids = ["profile", "integrations", "attention"]
 
 

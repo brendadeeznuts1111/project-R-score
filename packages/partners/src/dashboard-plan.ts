@@ -43,7 +43,10 @@ export const PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS = {
     'partners[].outs[].operationalStatus',
     'partners[].integrations.tennis',
   ],
-  'sports-terminal': [],
+  'sports-terminal': [
+    'partners[].integrations.sportsTerminal',
+    'partners[].identity.externalPartnerRefs',
+  ],
 } as const;
 
 export const PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS = {
@@ -53,7 +56,7 @@ export const PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS = {
   limits: '/registry/limit-raises.json',
   bookmakers: '/registry/bookmakers.json',
   tennis: '/registry/tennis/partner-contracts.json',
-  sportsTerminal: '',
+  sportsTerminal: '/registry/sports-terminal/partner-integration-health.json',
 } as const;
 
 export const PARTNER_DASHBOARD_REQUIRED_CONNECTOR_KEYS = ['profiles'] as const;
