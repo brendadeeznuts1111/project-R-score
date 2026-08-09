@@ -32,8 +32,8 @@ export type ThreadResearchReport = {
 };
 
 export type ThreadResearchFailure = {
-  ref: string;
-  errorCode: 'usage_limit' | 'agent_failed';
+  ref: string; // brand-ok — scheduler sentinel or portfolio RTH reference, not a domain entity ID
+  errorCode: 'usage_limit' | 'agent_failed' | 'backoff_active';
   message: string;
   retryAt?: string;
 };
@@ -54,6 +54,26 @@ export type ThreadResearchAgent = (
   reportPath: string,
   root: string
 ) => Promise<void>;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+export function parseResearchRetryAt(value: unknown): string | undefined {
+  if (!isRecord(value) || !Array.isArray(value.failures)) return undefined;
+  for (const failure of value.failures) {
+    if (
+      !isRecord(failure) ||
+      failure.errorCode !== 'usage_limit' ||
+      typeof failure.retryAt !== 'string'
+    ) {
+      continue;
+    }
+    const retryAt = new Date(failure.retryAt);
+    if (!Number.isNaN(retryAt.getTime())) return retryAt.toISOString();
+  }
+  return undefined;
+}
 
 export function buildResearchAgentEnvironment(
   env: Record<string, string | undefined> = Bun.env
@@ -207,6 +227,31 @@ export async function runThreadResearchCycle(
     if ((await mkdir.exited) !== 0) {
       throw new Error(`Unable to create thread research report directory: ${directory}`);
     }
+    const latestPath = joinPath(directory, 'latest.json');
+    const retryAt = (await Bun.file(latestPath).exists())
+      ? parseResearchRetryAt((await Bun.file(latestPath).json()) as unknown)
+      : undefined;
+    if (retryAt && Date.parse(retryAt) > Date.parse(generatedAt)) {
+      failures.push({
+        ref: 'scheduler', // brand-ok — scheduler sentinel, not a domain entity ID
+        errorCode: 'backoff_active',
+        message: 'Research quota retry is deferred; no agents were launched.',
+        retryAt,
+      });
+      await Bun.write(
+        latestPath,
+        `${JSON.stringify({ cycle, generatedAt, reports, failures }, null, 2)}\n`
+      );
+      return {
+        cycle,
+        generatedAt,
+        count: targets.length,
+        improvementFraction: THREAD_RESEARCH_IMPROVEMENT_FRACTION,
+        targets,
+        reports,
+        failures,
+      };
+    }
     const date = generatedAt.slice(0, 10);
     const agent = options.agent ?? runCodexResearchAgent;
     for (const target of targets) {
@@ -244,7 +289,7 @@ export async function runThreadResearchCycle(
       }
     }
     await Bun.write(
-      joinPath(directory, 'latest.json'),
+      latestPath,
       `${JSON.stringify({ cycle, generatedAt, reports, failures }, null, 2)}\n`
     );
   }

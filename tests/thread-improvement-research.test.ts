@@ -133,4 +133,38 @@ describe('daily weakest-thread research', () => {
       await rm(root, { recursive: true, force: true });
     }
   });
+
+  test('honors an active quota backoff before launching an agent', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'project-r-thread-research-backoff-'));
+    try {
+      const directory = join(root, '.cache/thread-research');
+      await Bun.spawn(['mkdir', '-p', directory]).exited;
+      await Bun.write(
+        join(directory, 'latest.json'),
+        JSON.stringify({
+          failures: [{ errorCode: 'usage_limit', retryAt: '2026-08-08T12:00:00.000Z' }],
+        })
+      );
+      const result = await runThreadResearchCycle({
+        portfolio: await loadPortfolio(),
+        root,
+        executeAgents: true,
+        now: new Date('2026-08-07T13:00:00.000Z'),
+        agent: async () => {
+          throw new Error('agent should not run while backoff is active');
+        },
+      });
+      expect(result.reports).toEqual([]);
+      expect(result.failures).toEqual([
+        {
+          ref: 'scheduler',
+          errorCode: 'backoff_active',
+          message: 'Research quota retry is deferred; no agents were launched.',
+          retryAt: '2026-08-08T12:00:00.000Z',
+        },
+      ]);
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
 });
