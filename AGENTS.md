@@ -413,3 +413,52 @@ Bench / CPU-profile metrics:
 Inspector TestReporter (orthogonal to JUnit):
 [`docs/harness/tenants/bun-test-inspect.md`](docs/harness/tenants/bun-test-inspect.md)
 · `bun run test:inspect`.
+
+## Cursor Cloud specific instructions
+
+Context for cloud agents booting from the prebuilt VM snapshot (the update
+script `bun install --no-frozen-lockfile` has already refreshed dependencies).
+
+- **Runtime:** Bun `1.3.14` (pinned by `.bun-version` / `packageManager` /
+  `engines.bun`). Node is present but this is a Bun-native repo — use `bun` for
+  all install/run/test/lint. Standard commands are already documented above and
+  in `package.json` scripts; prefer those.
+- **Install uses `--no-frozen-lockfile` on purpose.** The vendored
+  `bun-types` `file:` tarball
+  (`tools/vendor/bun-types/bun-types-1.4.0-tip.*.tgz`, pinned in `package.json`
+  + `bun.lock`) fails to extract under `frozenLockfile = true` on a **cold** Bun
+  store (Bun 1.3.14 quirk: `error: failed to download ... ENOENT` even though the
+  tarball exists), which makes plain `bun install` exit 1. Running
+  `bun install --no-frozen-lockfile` extracts it and leaves `bun.lock`
+  byte-identical (no lockfile drift, since `package.json`/`bun.lock` are in
+  sync). Once the store is warm, plain frozen `bun install` also succeeds. Do
+  **not** treat this single package failure as a broken environment.
+- **Portal (flagship product) needs a gitignored runtime config.**
+  `bun run dev:portal` (a.k.a. `serve:public:hot`) statically imports
+  `config/serve-public.toml`, which is gitignored and absent on a fresh
+  checkout — without it the server aborts with
+  `Cannot find module ../../config/serve-public.toml`. Create it with:
+  `[server]` / `port = 3000` / `host = "127.0.0.1"` (documented in
+  `docs/harness/tenants/serve-public-bind.md`). The snapshot already contains
+  this file.
+- **Running the portal:** `bun run dev:portal` serves on
+  `http://127.0.0.1:3000` — portal boards under `/portal/*` plus live `/api/*`
+  endpoints (`/api/operations/summary`, `/api/registry`, `/api/catalog`,
+  `/health`) backed by `bun:sqlite` at `data/operations.db`, with browser
+  HMR live-reload. `/health` reporting `"status":"degraded"` is expected when
+  baked registry artifacts are stale and/or publishing is disabled (no
+  `REGISTRY_SECRET`/`FACTORY_WAGER_TOKEN`); it is **not** a boot failure.
+- **Registry bakes are deploy artifacts.** `bun run ops:snapshot` regenerates
+  many tracked files under `public/registry/**` (and a couple of generated
+  docs). Do not sweep them into an unrelated commit — `git restore public/ ...`
+  before committing, per the bake-hygiene rule above.
+- **Full-suite `bun test` is heavy and not clean on this tree.**
+  `bun run test` (scans all of `tests/`) transitively imports pre-existing
+  broken foreign-lane sources (e.g.
+  `projects/active/development/kal-poly-bot/...`) and can trip a Bun engine
+  segfault on the full scan. For a fast, clean signal use targeted suites
+  (e.g. `bun test tests/branded-catalog.test.ts tests/repository-governance.test.ts`)
+  or the day-loop selectors (`bun run test:changed`).
+- **Private scoped registries** (`@factorywager*`) resolve to
+  `http://localhost:3000/` and need `FACTORY_WAGER_TOKEN`; not required for the
+  portal, tests, or lint to run from the committed lockfile.
