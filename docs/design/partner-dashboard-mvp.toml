@@ -95,7 +95,8 @@ alternate_host_policy = "explicit-host-alias-only"
 unknown_host_policy = "manual-review-no-parent-domain-or-substring-guess"
 manual_resolution_policy = "operator-selected-registered-sportsbook-id"
 registry_input_status = "implemented-public-catalog-parser"
-registry_io_status = "implemented-bookmakers-registry-bake-join"
+# Resolver stays pure / fail-closed: catalog load + bake join own I/O (bookmakers-registry connector).
+registry_io_status = "planned-owned-by-bookmakers-registry-connector"
 
 [adapters.bookmakers_catalog]
 export = "./adapters/bookmakers"
