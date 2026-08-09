@@ -91,7 +91,7 @@ describe('partner profile coverage boundary', () => {
     ).toThrow('visibleCodes must not contain duplicate PartnerCode values');
   });
 
-  test('public artifact covers the four production CODEs from partners-ops', async () => {
+  test('public artifact covers the four production CODEs from private profiles', async () => {
     const artifact = parsePartnerProfileCoverageArtifact(
       await Bun.file(
         new URL('../public/registry/partner-profile-coverage.json', import.meta.url)

@@ -252,6 +252,79 @@ export function formatPartnerSurfaceGeneratedMarkdown(
   return `${lines.join('\n')}`;
 }
 
+/**
+ * Partner CODEs + OutIds from private profile maps (config/partner-profiles).
+ * Preferred when partners-ops is absent or empty after outs ownership migration.
+ */
+export function livePartnerCodesFromPrivateProfiles(
+  // eslint-disable-next-line harness/no-unknown-function-param -- private profile map edge
+  privateProfiles: unknown
+): readonly LivePartnerCodeRow[] {
+  if (typeof privateProfiles !== 'object' || privateProfiles === null) return [];
+  const out: LivePartnerCodeRow[] = [];
+  for (const [code, raw] of Object.entries(privateProfiles as Record<string, unknown>).sort(
+    ([a], [b]) => a.localeCompare(b)
+  )) {
+    if (typeof raw !== 'object' || raw === null) continue;
+    const rec = raw as Record<string, unknown>;
+    const identity =
+      typeof rec.identity === 'object' && rec.identity !== null
+        ? (rec.identity as Record<string, unknown>)
+        : {};
+    const lifecycle =
+      typeof rec.lifecycle === 'object' && rec.lifecycle !== null
+        ? (rec.lifecycle as Record<string, unknown>)
+        : {};
+    const phase = typeof lifecycle.phase === 'string' ? lifecycle.phase : undefined;
+    const callSign =
+      typeof identity.callSign === 'string' && identity.callSign.trim()
+        ? identity.callSign.trim().toUpperCase()
+        : undefined;
+    out.push({
+      code: code.trim().toUpperCase(),
+      ...(phase ? { phase } : {}),
+      ...(callSign ? { callSign } : {}),
+    });
+  }
+  return out;
+}
+
+export function liveOutIdsFromPrivateProfiles(
+  // eslint-disable-next-line harness/no-unknown-function-param -- private profile map edge
+  privateProfiles: unknown
+): readonly LivePartnerOutRow[] {
+  if (typeof privateProfiles !== 'object' || privateProfiles === null) return [];
+  const out: LivePartnerOutRow[] = [];
+  for (const [code, raw] of Object.entries(privateProfiles as Record<string, unknown>)) {
+    if (typeof raw !== 'object' || raw === null) continue;
+    const partnerCode = code.trim().toUpperCase();
+    const rec = raw as Record<string, unknown>;
+    const outs =
+      typeof rec.outs === 'object' && rec.outs !== null && !Array.isArray(rec.outs)
+        ? (rec.outs as Record<string, unknown>)
+        : null;
+    if (!outs) continue;
+    for (const outId of Object.keys(outs).sort()) {
+      if (!PARTNER_SURFACE_OUT_ID_PATTERN.test(outId)) continue;
+      const seat = outs[outId];
+      const status =
+        typeof seat === 'object' &&
+        seat !== null &&
+        typeof (seat as { status?: unknown }).status === 'string'
+          ? (seat as { status: string }).status
+          : undefined;
+      out.push({
+        outId,
+        partnerCode,
+        ...(status ? { status } : {}),
+      });
+    }
+  }
+  return out.sort(
+    (a, b) => a.outId.localeCompare(b.outId) || a.partnerCode.localeCompare(b.partnerCode)
+  );
+}
+
 /** Parse PartnerCode rows from a partners-ops-shaped artifact. */
 export function livePartnerCodesFromPartnersOps(
   // eslint-disable-next-line harness/no-unknown-function-param -- registry JSON edge

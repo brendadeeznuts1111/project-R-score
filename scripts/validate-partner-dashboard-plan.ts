@@ -69,6 +69,7 @@ const PARTNER_PROFILE_COVERAGE_REGISTRY = resolvePath(
   PARTNER_PROFILE_COVERAGE_INPUT_REF.replace(/^\//, '')
 );
 const PARTNERS_OPS_REGISTRY = resolvePath(REPO_ROOT, 'public/registry/partners-ops.json');
+const PARTNER_PROFILES_REGISTRY = resolvePath(REPO_ROOT, 'public/registry/partner-profiles.json');
 const PARTNERS_PACKAGE_JSON = resolvePath(REPO_ROOT, 'packages/partners/package.json');
 /** Historical blocker phrases — only enforced while sports-terminal is blocked. */
 const SPORTS_TERMINAL_REQUIRED_BLOCKERS = [
@@ -82,6 +83,35 @@ const PARTNER_DASHBOARD_DOCUMENTATION_REF = PARTNER_DOCUMENTATION_REFS.find(
 )!;
 
 type AnyRecord = Record<string, any>;
+
+/**
+ * Coverage universe: public partner-profiles bake keys first; optional
+ * partners-ops fallback when profiles are empty (migration / fixture edge).
+ */
+function requiredCodesFromProfilesOrLegacy(
+  partnerProfiles: AnyRecord | null | undefined,
+  partnersOps: AnyRecord | null | undefined
+): ReturnType<typeof parsePartnerCode>[] {
+  const profiles =
+    partnerProfiles &&
+    typeof partnerProfiles === 'object' &&
+    partnerProfiles.profiles &&
+    typeof partnerProfiles.profiles === 'object'
+      ? (partnerProfiles.profiles as Record<string, unknown>)
+      : null;
+  if (profiles) {
+    const keys = Object.keys(profiles).sort();
+    if (keys.length > 0) return keys.map(code => parsePartnerCode(code));
+  }
+  if (partnersOps) {
+    return parseLegacyPartnersOpsProjection(partnersOps).partners.map(
+      partner => partner.partnerCode
+    );
+  }
+  throw new TypeError(
+    'cannot derive required partner CODEs: partner-profiles bake empty and partners-ops absent'
+  );
+}
 
 export type PartnerDashboardPlanValidation = {
   errors: string[];
@@ -419,25 +449,39 @@ export async function validatePartnerDashboardPlan(
     themeCss?: string;
     partnerProfileCoverage?: AnyRecord;
     partnersOps?: AnyRecord;
+    /** Public partner-profiles bake (CODE keys = required coverage universe). */
+    partnerProfiles?: AnyRecord;
     requiredPartnerCodes?: unknown[];
   } = {}
 ): Promise<PartnerDashboardPlanValidation> {
   const errors: string[] = [];
-  const [glossary, boardHtml, themeCss, partnerProfileCoverage, partnersOps, partnersPackage] =
-    await Promise.all([
-      options.glossary
-        ? Promise.resolve(options.glossary)
-        : (Bun.file(DOMAIN_GLOSSARY).json() as Promise<AnyRecord>),
-      options.boardHtml ?? Bun.file(PARTNERS_BOARD_HTML).text(),
-      options.themeCss ?? Bun.file(GENERATED_THEME_CSS).text(),
-      options.partnerProfileCoverage
-        ? Promise.resolve(options.partnerProfileCoverage)
-        : (Bun.file(PARTNER_PROFILE_COVERAGE_REGISTRY).json() as Promise<AnyRecord>),
-      options.partnersOps
-        ? Promise.resolve(options.partnersOps)
-        : (Bun.file(PARTNERS_OPS_REGISTRY).json() as Promise<AnyRecord>),
-      Bun.file(PARTNERS_PACKAGE_JSON).json() as Promise<AnyRecord>,
-    ]);
+  const [
+    glossary,
+    boardHtml,
+    themeCss,
+    partnerProfileCoverage,
+    partnersOps,
+    partnerProfiles,
+    partnersPackage,
+  ] = await Promise.all([
+    options.glossary
+      ? Promise.resolve(options.glossary)
+      : (Bun.file(DOMAIN_GLOSSARY).json() as Promise<AnyRecord>),
+    options.boardHtml ?? Bun.file(PARTNERS_BOARD_HTML).text(),
+    options.themeCss ?? Bun.file(GENERATED_THEME_CSS).text(),
+    options.partnerProfileCoverage
+      ? Promise.resolve(options.partnerProfileCoverage)
+      : (Bun.file(PARTNER_PROFILE_COVERAGE_REGISTRY).json() as Promise<AnyRecord>),
+    options.partnersOps
+      ? Promise.resolve(options.partnersOps)
+      : (Bun.file(PARTNERS_OPS_REGISTRY)
+          .json()
+          .catch(() => null) as Promise<AnyRecord | null>),
+    options.partnerProfiles
+      ? Promise.resolve(options.partnerProfiles)
+      : (Bun.file(PARTNER_PROFILES_REGISTRY).json() as Promise<AnyRecord>),
+    Bun.file(PARTNERS_PACKAGE_JSON).json() as Promise<AnyRecord>,
+  ]);
   const concepts = new Map<string, AnyRecord>(
     (glossary.concepts ?? []).map((concept: AnyRecord) => [String(concept.id), concept])
   );
@@ -1153,9 +1197,11 @@ export async function validatePartnerDashboardPlan(
   try {
     const coverage = parsePartnerProfileCoverageArtifact(partnerProfileCoverage);
     profileCoverageEntries = Object.keys(coverage.evidenceByPartnerCode).length;
+    // Profile bake keys are the coverage universe (outs inventory is profile-owned).
+    // partners-ops remains optional fallback when public profiles are empty.
     const requiredPartnerCodes = options.requiredPartnerCodes
       ? options.requiredPartnerCodes.map(parsePartnerCode)
-      : parseLegacyPartnersOpsProjection(partnersOps).partners.map(partner => partner.partnerCode);
+      : requiredCodesFromProfilesOrLegacy(partnerProfiles, partnersOps);
     const coverageResult = derivePartnerProfileCoverage(coverage, requiredPartnerCodes);
     missingProfileCoverage = coverageResult.missingCodes.length;
     if (plan.plan?.status === 'implementation-ready' && !coverageResult.complete) {

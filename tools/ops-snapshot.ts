@@ -649,6 +649,8 @@ export async function buildRegistrySnapshot(options?: {
 
     try {
       const { exportPartnersOpsRegistry } = await import('../lib/telegram/partner-ops-registry.ts');
+      // preserveNonEmpty (default): never wipe a committed non-empty partners-ops
+      // with an empty seat-desk projection — profile outs are inventory SSOT.
       const partnersOps = await exportPartnersOpsRegistry(root);
       console.log(
         `[ops-snapshot] partners-ops → ${partnersOps.summary.partners} partners · ${partnersOps.summary.outs} outs · validation ${partnersOps.validation.ok ? 'ok' : 'FAIL'}`
