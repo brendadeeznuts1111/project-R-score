@@ -387,6 +387,7 @@ describe('frozen guide examples', () => {
     expect(guideExamplesForToken('block-callbacks')[0]?.body).toContain('blockquote:');
     expect(guideExamplesForToken('list-item-meta')[0]?.body).toContain('checked');
     expect(guideExamplesForToken('inline-callbacks')[0]?.body).toContain('strikethrough:');
+    expect(guideExamplesForToken('examples')[0]?.body).toContain('class="heading heading-');
     expect(guideExamplesForToken('nested-list-numbering')[0]?.body).toContain('listItem:');
     expect(guideExamplesForToken('server-side-rendering')[0]?.body).toContain('renderToString');
     expect(guideExamplesForToken('parser-options')[0]?.body).toContain('autolinks: true');
@@ -524,6 +525,11 @@ describe('inspect family catalog relations', () => {
     expect(byName.get('inline-callbacks')?.docsUrl).toBe(
       'https://bun.com/docs/runtime/markdown#inline-callbacks'
     );
+    expect(byName.get('examples')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#examples'
+    );
+    expect(byName.get('examples')?.examples?.[0]?.body).toContain('class="heading heading-');
+    expect(byName.get('Bun.markdown.render')?.related).toContain('examples');
     expect(byName.get('server-side-rendering')?.docsUrl).toBe(
       'https://bun.com/docs/runtime/markdown#server-side-rendering'
     );

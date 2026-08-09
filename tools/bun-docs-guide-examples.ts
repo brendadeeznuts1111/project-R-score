@@ -33,6 +33,7 @@
 // @see https://bun.com/docs/runtime/markdown#block-callbacks — block-callbacks
 // @see https://bun.com/docs/runtime/markdown#list-item-meta — list-item-meta
 // @see https://bun.com/docs/runtime/markdown#inline-callbacks — inline-callbacks
+// @see https://bun.com/docs/runtime/markdown#examples — examples (render cookbook parent)
 // @see https://bun.com/docs/runtime/markdown#nested-list-numbering — nested-list-numbering
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-react — Bun.markdown.react
 // @see https://bun.com/docs/runtime/markdown#server-side-rendering — server-side-rendering
@@ -557,6 +558,13 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'Bun.markdown.render("**bold** *em* `code` ~~del~~ [a](https://x.test) ![i](img.png)", {\n  strong: children => `<b>${children}</b>`,\n  emphasis: children => `<i>${children}</i>`,\n  codespan: children => `<code>${children}</code>`,\n  strikethrough: children => `<s>${children}</s>`,\n  link: (children, { href, title }) => `<a href="${href}" title="${title ?? ""}">${children}</a>`,\n  image: (_children, { src, title }) => `<img src="${src}" title="${title ?? ""}" />`,\n  text: children => children,\n  paragraph: children => children,\n});',
     },
   ],
+  // Official docs — Examples (parent H3 under Bun.markdown.render; lead fence = Custom HTML with classes)
+  'runtime/markdown#examples': [
+    {
+      lang: 'ts',
+      body: 'const html = Bun.markdown.render("# Title\\n\\nHello **world**", {\n  heading: (children, { level }) => `<h${level} class="heading heading-${level}">${children}</h${level}>`,\n  paragraph: children => `<p class="body">${children}</p>`,\n  strong: children => `<strong class="bold">${children}</strong>`,\n});',
+    },
+  ],
   'runtime/markdown#nested-list-numbering': [
     {
       lang: 'ts',
@@ -998,6 +1006,8 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'Bun.markdown.render listItem': 'runtime/markdown#list-item-meta',
   'inline-callbacks': 'runtime/markdown#inline-callbacks',
   'Bun.markdown.render inline callbacks': 'runtime/markdown#inline-callbacks',
+  examples: 'runtime/markdown#examples',
+  'Bun.markdown.render examples': 'runtime/markdown#examples',
   'nested-list-numbering': 'runtime/markdown#nested-list-numbering',
   'omitting-elements': 'runtime/markdown#omitting-elements',
   'server-side-rendering': 'runtime/markdown#server-side-rendering',

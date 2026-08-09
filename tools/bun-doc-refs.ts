@@ -901,6 +901,8 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.markdown.render listItem': 'https://bun.com/docs/runtime/markdown#list-item-meta',
   'inline-callbacks': 'https://bun.com/docs/runtime/markdown#inline-callbacks',
   'Bun.markdown.render inline callbacks': 'https://bun.com/docs/runtime/markdown#inline-callbacks',
+  examples: 'https://bun.com/docs/runtime/markdown#examples',
+  'Bun.markdown.render examples': 'https://bun.com/docs/runtime/markdown#examples',
   'nested-list-numbering': 'https://bun.com/docs/runtime/markdown#nested-list-numbering',
   'omitting-elements': 'https://bun.com/docs/runtime/markdown#omitting-elements',
   'server-side-rendering': 'https://bun.com/docs/runtime/markdown#server-side-rendering',
