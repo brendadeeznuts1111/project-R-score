@@ -1,7 +1,7 @@
 {
   "schema": "factorywager.partner-ledger.v1",
   "kind": "partner-ledger-redacted-snapshot",
-  "generatedAt": "2026-08-09T02:58:39.936Z",
+  "generatedAt": "2026-08-09T03:02:33.057Z",
   "source": "root-operations-db-fixture",
   "currency": "USD",
   "notes": "Redacted public fixture for dashboard bake. Integer minor units only. No payment rails, chat IDs, or vault material. book scopes use structured outId when possible.",

@@ -1,69 +1,69 @@
 {
   "schema": "factorywager.partners-dashboard.v2",
-  "generatedAt": "2026-08-09T02:58:39.936Z",
+  "generatedAt": "2026-08-09T03:02:33.057Z",
   "connectorSnapshots": {
     "profiles": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:58:39.936Z",
+      "observedAt": "2026-08-09T03:02:33.057Z",
       "ageSeconds": 0,
       "inputRef": "config/partner-profiles/*.toml",
-      "snapshotRef": "sha256:20fb1f41e3949a1fc9daaa76bf90e59977630ffdfd760a6f63b5cd211de31fb7"
+      "snapshotRef": "sha256:b00984cdec8619d096d56359a4afdfecc9fac8310a4dceef9720f466f2cc3d77"
     },
     "accounting": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:58:39.936Z",
+      "observedAt": "2026-08-09T03:02:33.057Z",
       "ageSeconds": 0,
       "inputRef": "partner_ledger",
-      "snapshotRef": "sha256:0482f9b3b9bf6aabfff509d39c2d741bbe60b2284f8ca3dd0c51c3bf1692970c"
+      "snapshotRef": "sha256:0cd270dbae8ba1a4f06f3e4b9a985d6efb4391e6e5cd4c21515913d5d9a0e648"
     },
     "telegram": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:58:39.936Z",
+      "observedAt": "2026-08-09T03:02:33.057Z",
       "ageSeconds": 0,
       "inputRef": "/registry/telegram-handshake.json",
-      "snapshotRef": "sha256:5cfb07db0903ef21b2893f281ab02ddb2857545714feac9807aaec939b07289a"
+      "snapshotRef": "sha256:34e26ce66717f06668d82757d09ae8325e8ff61acf9286b465a2a913a0d345b4"
     },
     "limits": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:58:39.936Z",
+      "observedAt": "2026-08-09T03:02:33.057Z",
       "ageSeconds": 0,
       "inputRef": "/registry/limit-raises.json",
-      "snapshotRef": "sha256:fb0e485018f6812bc5bc134103ed57be2547968f7efa98b77e2138ae06b753f7"
+      "snapshotRef": "sha256:4c7c49ddd61e08a283dcca357168ed3bd7339a163440951ede8804cfb7b89632"
     },
     "bookmakers": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:58:39.936Z",
+      "observedAt": "2026-08-09T03:02:33.057Z",
       "ageSeconds": 0,
       "inputRef": "/registry/bookmakers.json",
-      "snapshotRef": "sha256:22368e51aa49452ad719073e21d752be075fd10ccbf3d18b2fb6618fbb1d44ba"
+      "snapshotRef": "sha256:1c6baac3342ccaf2a358ae935dab016418bcb419c49dc0cfc769c94b16f9ca30"
     },
     "tennis": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:58:39.936Z",
+      "observedAt": "2026-08-09T03:02:33.057Z",
       "ageSeconds": 0,
       "inputRef": "/registry/tennis/partner-contracts.json",
-      "snapshotRef": "sha256:930a45c3b5a1c920ef3f62445f25e7c0ef6459be3544e3ca5c7d6be41a494307"
+      "snapshotRef": "sha256:b03126b9cf54a1dd7c608eadb9177fe1cd653ddfc0fb3d6d5659b5f2fd4e1626"
     },
     "sportsTerminal": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:58:39.936Z",
+      "observedAt": "2026-08-09T03:02:33.057Z",
       "ageSeconds": 0,
       "inputRef": "/registry/sports-terminal/partner-integration-health.json",
-      "snapshotRef": "sha256:369ea2a93701a7c41a88ee5c7c4e88d8d53b0fc9058171b137bb142755926d1e"
+      "snapshotRef": "sha256:f5eec997f0704b59fdd4277839758a79b23c3319abd9167f1dabda29e5fa6ae2"
     }
   },
   "activeOutIds": [
@@ -244,13 +244,13 @@
       "callSign": "ASH-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:58:39.936Z",
+        "effectiveAt": "2026-08-09T03:02:33.057Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:58:39.936Z",
+          "observedAt": "2026-08-09T03:02:33.057Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -289,7 +289,7 @@
               "sourceRecordRef": "capacity:out-ASH-1",
               "adapterId": "tennis-capacity-v1",
               "adapterVersion": "1",
-              "observedAt": "2026-08-09T02:58:39.936Z",
+              "observedAt": "2026-08-09T03:02:33.057Z",
               "originalValue": "active",
               "mappingMethod": "identity",
               "confidence": "exact"
@@ -436,7 +436,7 @@
       },
       "communication": {
         "chatLinked": true,
-        "handshakeStatus": "blocked",
+        "handshakeStatus": "operator_ready",
         "configuredTopicKeys": []
       },
       "limits": {
@@ -451,7 +451,7 @@
         },
         "tennis": {
           "dataStatus": "ok",
-          "observedAt": "2026-08-09T02:58:39.936Z"
+          "observedAt": "2026-08-09T03:02:33.057Z"
         }
       },
       "attention": [
@@ -460,11 +460,6 @@
           "severity": "info",
           "label": "11 limit-change event(s); latest raise → fanduel @ 120000¢",
           "actionHref": "/portal/limits/"
-        },
-        {
-          "reasonCode": "partner.telegram.handshake_gap",
-          "severity": "warn",
-          "label": "forum metadata missing or chat_id mismatch"
         }
       ]
     },
@@ -473,13 +468,13 @@
       "callSign": "BIL-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:58:39.936Z",
+        "effectiveAt": "2026-08-09T03:02:33.057Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:58:39.936Z",
+          "observedAt": "2026-08-09T03:02:33.057Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -517,7 +512,7 @@
               "sourceRecordRef": "capacity:out-BIL-1",
               "adapterId": "tennis-capacity-v1",
               "adapterVersion": "1",
-              "observedAt": "2026-08-09T02:58:39.936Z",
+              "observedAt": "2026-08-09T03:02:33.057Z",
               "originalValue": "active",
               "mappingMethod": "identity",
               "confidence": "exact"
@@ -592,7 +587,7 @@
       },
       "communication": {
         "chatLinked": true,
-        "handshakeStatus": "blocked",
+        "handshakeStatus": "operator_ready",
         "configuredTopicKeys": []
       },
       "limits": {
@@ -607,7 +602,7 @@
         },
         "tennis": {
           "dataStatus": "ok",
-          "observedAt": "2026-08-09T02:58:39.936Z"
+          "observedAt": "2026-08-09T03:02:33.057Z"
         }
       },
       "attention": [
@@ -616,11 +611,6 @@
           "severity": "info",
           "label": "Desk placeholder sportsbook not in public catalog: partner-book-tbd",
           "actionHref": "/portal/bookmakers/"
-        },
-        {
-          "reasonCode": "partner.telegram.handshake_gap",
-          "severity": "warn",
-          "label": "forum metadata missing or chat_id mismatch"
         }
       ]
     },
@@ -629,13 +619,13 @@
       "callSign": "NOV-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:58:39.936Z",
+        "effectiveAt": "2026-08-09T03:02:33.057Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:58:39.936Z",
+          "observedAt": "2026-08-09T03:02:33.057Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -673,7 +663,7 @@
               "sourceRecordRef": "capacity:out-NOV-1",
               "adapterId": "tennis-capacity-v1",
               "adapterVersion": "1",
-              "observedAt": "2026-08-09T02:58:39.936Z",
+              "observedAt": "2026-08-09T03:02:33.057Z",
               "originalValue": "active",
               "mappingMethod": "identity",
               "confidence": "exact"
@@ -784,7 +774,7 @@
       },
       "communication": {
         "chatLinked": true,
-        "handshakeStatus": "blocked",
+        "handshakeStatus": "operator_ready",
         "configuredTopicKeys": []
       },
       "limits": {
@@ -799,7 +789,7 @@
         },
         "tennis": {
           "dataStatus": "ok",
-          "observedAt": "2026-08-09T02:58:39.936Z"
+          "observedAt": "2026-08-09T03:02:33.057Z"
         }
       },
       "attention": [
@@ -808,11 +798,6 @@
           "severity": "info",
           "label": "Desk placeholder sportsbook not in public catalog: southfl-pph-desk",
           "actionHref": "/portal/bookmakers/"
-        },
-        {
-          "reasonCode": "partner.telegram.handshake_gap",
-          "severity": "warn",
-          "label": "forum metadata missing or chat_id mismatch"
         }
       ]
     },
@@ -821,13 +806,13 @@
       "callSign": "SPEN-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:58:39.936Z",
+        "effectiveAt": "2026-08-09T03:02:33.057Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:58:39.936Z",
+          "observedAt": "2026-08-09T03:02:33.057Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -866,7 +851,7 @@
               "sourceRecordRef": "capacity:out-SPEN-1",
               "adapterId": "tennis-capacity-v1",
               "adapterVersion": "1",
-              "observedAt": "2026-08-09T02:58:39.936Z",
+              "observedAt": "2026-08-09T03:02:33.057Z",
               "originalValue": "active",
               "mappingMethod": "identity",
               "confidence": "exact"
@@ -896,7 +881,7 @@
               "sourceRecordRef": "capacity:out-SPEN-2",
               "adapterId": "tennis-capacity-v1",
               "adapterVersion": "1",
-              "observedAt": "2026-08-09T02:58:39.936Z",
+              "observedAt": "2026-08-09T03:02:33.057Z",
               "originalValue": "active",
               "mappingMethod": "identity",
               "confidence": "exact"
@@ -1092,7 +1077,7 @@
       },
       "communication": {
         "chatLinked": true,
-        "handshakeStatus": "blocked",
+        "handshakeStatus": "operator_ready",
         "configuredTopicKeys": []
       },
       "limits": {
@@ -1107,7 +1092,7 @@
         },
         "tennis": {
           "dataStatus": "ok",
-          "observedAt": "2026-08-09T02:58:39.936Z"
+          "observedAt": "2026-08-09T03:02:33.057Z"
         }
       },
       "attention": [
@@ -1122,11 +1107,6 @@
           "severity": "info",
           "label": "4 limit-change event(s); latest raise → betvegas23-com @ 80000¢",
           "actionHref": "/portal/limits/"
-        },
-        {
-          "reasonCode": "partner.telegram.handshake_gap",
-          "severity": "warn",
-          "label": "forum metadata missing or chat_id mismatch"
         }
       ]
     }
