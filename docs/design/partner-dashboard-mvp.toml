@@ -1199,10 +1199,18 @@ enabled = true
 input_kind = "registry-artifact"
 required = false
 input_ref = "/registry/limit-raises.json"
-authoritative_fact_paths = []
+authoritative_fact_paths = [
+  "partners[].limits",
+  "partners[].outs[].limitCoverageRatio",
+]
 visual_group = "operations"
-provides = ["limit-change-events", "raise-patterns", "attention-evidence"]
-does_not_provide = ["current-max-stake", "max-gross-payout", "max-net-win", "limit-coverage"]
+provides = [
+  "limit-change-events",
+  "raise-patterns",
+  "attention-evidence",
+  "limit-evidence-coverage",
+]
+does_not_provide = ["current-max-stake", "max-gross-payout", "max-net-win"]
 region_ids = ["roster", "accounts-limits", "attention"]
 
 [[connectors]]

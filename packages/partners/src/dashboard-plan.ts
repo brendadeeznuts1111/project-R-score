@@ -35,7 +35,7 @@ export const PARTNER_DASHBOARD_CONNECTOR_AUTHORITATIVE_FACT_PATHS = {
     'partners[].outs[].fundingStatus',
   ],
   'telegram-handshake': ['partners[].communication.handshakeStatus'],
-  'limits-registry': [],
+  'limits-registry': ['partners[].limits', 'partners[].outs[].limitCoverageRatio'],
   'bookmakers-registry': ['partners[].outs[].sportsbookId'],
   'tennis-contract': [
     'activeOutIds',
