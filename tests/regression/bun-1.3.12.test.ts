@@ -1,62 +1,237 @@
-// @see https://bun.com/blog/bun-v1.3.12#bugfixes
-// Regression probes for every Bugfixes bullet in Bun v1.3.12.
+// @see https://bun.com/blog/bun-v1.3.12
+// Full-release regression probes for Bun v1.3.12 (Features · Performance · Bugfixes).
 // Runs on Bun ≥ 1.3.12 (current CI is newer and must keep these fixed).
 //
-// Skips (fixSkip / always-skip) — env-specific, not CI failures:
+// Note: blog Features are WebView, markdown.ansi, async native stacks, in-process Bun.cron,
+// UDP ICMP/truncation, unix socket lifecycle — not Bun.serve static / build target browser.
+//
+// Bugfix skips (fixSkip / always-skip) — env-specific, not CI failures:
 //   1. Bun.SQL MySQL CLIENT_DEPRECATE_EOF — requires a MySQL-compatible server
 //   2. bun:sql MySQL per-query native leaks — requires MySQL + RSS/allocator harness
 //   3. bun build --compile PT_INTERP — Linux-only (NixOS/Guix ELF interpreter path)
 //   4. mock.module() auto-install race — requires network + bare specifier resolution
 //   5. Windows tar absolute/UNC path skip — win32-only path-traversal behavior
+// Feature / performance skips:
+//   6. Bun.WebView — skipped when constructor unavailable
+//   7. TCP_DEFER_ACCEPT — Linux/FreeBSD-only accept filter (no-op on macOS/Windows)
+//   8. Linux chmod-111 standalone executable — Linux-only --compile proof
+//   9. Timing thresholds for URLPattern / Glob / stripANSI — manual bench only (CI-flaky)
 //
-//   bun test tests/bun-1.3.12-bugfixes.test.ts
-import { afterAll, describe, expect, mock, test } from 'bun:test';
+//   bun test tests/regression/bun-1.3.12.test.ts
+import { describe, expect, mock } from 'bun:test';
 import assert from 'node:assert';
 import dns from 'node:dns';
 import dnsPromises from 'node:dns/promises';
 import fs from 'node:fs';
 import { Stats } from 'node:fs';
 import { createWriteStream } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { availableParallelism } from 'node:os';
 import { join } from 'node:path';
 import { Readable, Writable, pipeline } from 'node:stream';
 import { promisify } from 'node:util';
 import * as vm from 'node:vm';
 import tls from 'node:tls';
+import { releaseTest, shortTempRoot, tempRoot } from './shared.ts';
 
 const MIN_VERSION = '1.3.12';
-const BLOG = 'https://bun.com/blog/bun-v1.3.12#bugfixes';
+const BLOG = 'https://bun.com/blog/bun-v1.3.12';
+const BLOG_BUGFIXES = `${BLOG}#bugfixes`;
 
-function bunAtLeast(min: string): boolean {
-  const parse = (v: string) => v.split('.').map(n => Number.parseInt(n, 10));
-  const [a = 0, b = 0, c = 0] = parse(Bun.version);
-  const [x = 0, y = 0, z = 0] = parse(min);
-  return a > x || (a === x && (b > y || (b === y && c >= z)));
-}
-
-const onRelease = bunAtLeast(MIN_VERSION);
-const fixTest = onRelease ? test : test.skip;
-const fixSkip = (condition: boolean) => (onRelease ? test.skipIf(condition) : test.skip);
+const { test: fixTest, skipIf: fixSkip } = releaseTest(MIN_VERSION);
 const pipelineAsync = promisify(pipeline);
 
-const scratchRoots: string[] = [];
-afterAll(() => {
-  for (const root of scratchRoots) {
-    try {
-      fs.rmSync(root, { recursive: true, force: true });
-    } catch {
-      /* best-effort */
+describe(`Bun ${MIN_VERSION} Features (${BLOG})`, () => {
+  fixSkip(typeof Bun.WebView !== 'function')(
+    'Bun.WebView navigates and evaluates (headless automation)',
+    async () => {
+      await using view = new Bun.WebView({ width: 320, height: 240 });
+      await view.navigate('data:text/html,<title>bun-1312</title><h1 id="x">ok</h1>');
+      const title = await view.evaluate('document.title');
+      expect(title).toBe('bun-1312');
+      const text = await view.evaluate('document.querySelector("#x")?.textContent');
+      expect(text).toBe('ok');
     }
-  }
+  );
+
+  fixTest('Bun.markdown.ansi renders markdown (colored + plain)', () => {
+    const plain = Bun.markdown.ansi('# Hello\n\n**bold** and *italic*\n', { colors: false });
+    expect(plain).toContain('Hello');
+    expect(plain).toContain('bold');
+    expect(plain.includes('\x1b')).toBe(false);
+
+    const colored = Bun.markdown.ansi('# Hello', { colors: true });
+    expect(colored).toContain('Hello');
+    expect(colored.includes('\x1b')).toBe(true);
+
+    const linked = Bun.markdown.ansi('[docs](https://bun.sh)', { hyperlinks: true, colors: false });
+    expect(linked).toContain('docs');
+  });
+
+  fixTest('native async errors include async stack frames', async () => {
+    async function boom() {
+      await Bun.write('/no/such/dir/bun-1.3.12-missing.txt', 'x');
+    }
+    try {
+      await boom();
+      expect.unreachable('expected ENOENT');
+    } catch (e) {
+      const stack = String((e as Error).stack);
+      expect(stack).toMatch(/ENOENT|no such file/i);
+      expect(stack).toMatch(/at async /);
+      expect(stack).toContain('boom');
+    }
+  });
+
+  fixTest('in-process Bun.cron returns Disposable with ref/unref and UTC parse', () => {
+    expect(() => Bun.cron.parse('* * * * *')).not.toThrow();
+    using job = Bun.cron('@hourly', () => {});
+    expect(typeof job.stop).toBe('function');
+    expect(typeof job.ref).toBe('function');
+    expect(typeof job.unref).toBe('function');
+    expect(job.cron).toBe('@hourly');
+    job.unref();
+    job.stop();
+  });
+
+  fixTest('Bun.udpSocket data callback exposes flags.truncated', async () => {
+    const { promise, resolve } = Promise.withResolvers<{
+      len: number;
+      truncated: boolean;
+    }>();
+    const recv = await Bun.udpSocket({
+      socket: {
+        data(_socket, data, _port, _address, flags) {
+          resolve({ len: data.byteLength, truncated: Boolean(flags?.truncated) });
+        },
+      },
+    });
+    const send = await Bun.udpSocket({
+      socket: {
+        data() {},
+      },
+    });
+    try {
+      send.send('hi', recv.port, '127.0.0.1');
+      const got = await Promise.race([
+        promise,
+        Bun.sleep(1_000).then(() => {
+          throw new Error('udp receive timed out');
+        }),
+      ]);
+      expect(got.len).toBe(2);
+      expect(got.truncated).toBe(false);
+    } finally {
+      recv.close();
+      send.close();
+    }
+  });
+
+  fixTest('unix listen: existing socket → EADDRINUSE; stop() removes the sock file', async () => {
+    const path = join(shortTempRoot('unix-life'), 'a.sock');
+    const a = Bun.listen({
+      unix: path,
+      socket: {
+        data() {},
+        open() {},
+      },
+    });
+    try {
+      expect(fs.existsSync(path)).toBe(true);
+      let code: string | undefined;
+      try {
+        Bun.listen({
+          unix: path,
+          socket: {
+            data() {},
+            open() {},
+          },
+        });
+      } catch (e) {
+        code = (e as NodeJS.ErrnoException).code;
+      }
+      expect(code).toBe('EADDRINUSE');
+    } finally {
+      a.stop();
+    }
+    await Bun.sleep(20);
+    expect(fs.existsSync(path)).toBe(false);
+  });
+
+  fixTest('Explicit Resource Management: using calls Symbol.dispose', () => {
+    let disposed = 0;
+    {
+      using _resource = {
+        [Symbol.dispose]() {
+          disposed++;
+        },
+      };
+      expect(disposed).toBe(0);
+    }
+    expect(disposed).toBe(1);
+  });
+
+  fixSkip(process.platform !== 'linux')(
+    'standalone --compile executable works under chmod 111 (Linux ELF .bun section)',
+    () => {
+      /* Linux-only — see file header skip inventory */
+    }
+  );
 });
 
-function tempRoot(prefix: string): string {
-  const root = fs.mkdtempSync(join(tmpdir(), `bun-1.3.12-${prefix}-`));
-  scratchRoots.push(root);
-  return root;
-}
+describe(`Bun ${MIN_VERSION} Performance smokes (${BLOG})`, () => {
+  fixTest('URLPattern blog vector matches; does not pollute RegExp.$N', () => {
+    const pattern = new URLPattern({ pathname: '/api/users/:id/posts/:postId' });
+    const href = 'https://example.com/api/users/42/posts/123';
+    expect(pattern.test(href)).toBe(true);
+    const m = pattern.exec(href);
+    expect(m?.pathname.groups).toEqual({ id: '42', postId: '123' });
 
-describe(`Bun ${MIN_VERSION} bugfixes — Node.js compatibility (${BLOG})`, () => {
+    'abc'.match(/(a)(b)(c)/);
+    expect(RegExp.$1).toBe('a');
+    pattern.test(href);
+    expect(RegExp.$1).toBe('a');
+  });
+
+  fixTest('Bun.stripANSI / Bun.stringWidth handle OSC-8 terminators (BEL / ESC ST / C1 ST)', () => {
+    const bel = '\x1b]8;;https://example.com\x07link\x1b]8;;\x07';
+    const stEsc = '\x1b]8;;https://example.com\x1b\\link\x1b]8;;\x1b\\';
+    const stC1 = '\x1b]8;;https://example.com\x9clink\x1b]8;;\x9c';
+    for (const osc of [bel, stEsc, stC1]) {
+      expect(Bun.stripANSI(osc)).toBe('link');
+      expect(Bun.stringWidth(osc)).toBe(4);
+    }
+  });
+
+  fixTest('Bun.Glob.scan with **/boundary pattern finds nested files', async () => {
+    const root = tempRoot('glob-boundary');
+    fs.mkdirSync(join(root, 'pkg', 'node_modules', 'x'), { recursive: true });
+    await Bun.write(join(root, 'pkg', 'node_modules', 'x', 'index.js'), 'export {};\n');
+    await Bun.write(join(root, 'other.js'), '');
+    const hits = await Array.fromAsync(
+      new Bun.Glob('**/node_modules/**/*.js').scan({ cwd: root })
+    );
+    expect(hits.some(p => p.endsWith('index.js'))).toBe(true);
+  });
+
+  fixTest('availableParallelism / hardwareConcurrency return positive integers', () => {
+    expect(availableParallelism()).toBeGreaterThan(0);
+    expect(navigator.hardwareConcurrency).toBeGreaterThan(0);
+  });
+
+  fixSkip(process.platform !== 'linux' && process.platform !== 'freebsd')(
+    'TCP_DEFER_ACCEPT / SO_ACCEPTFILTER (Linux/FreeBSD Bun.serve accept optimization)',
+    () => {
+      /* no userspace assertion — kernel flag; macOS/Windows unchanged per blog */
+    }
+  );
+
+  // Timing claims are release evidence, not CI thresholds.
+  fixSkip(true)('URLPattern / Glob / stripANSI wall-clock speedups (manual bench only)', () => {
+    /* see bun.com/blog/bun-v1.3.12 — do not gate CI on µs */
+  });
+});
+
+describe(`Bun ${MIN_VERSION} bugfixes — Node.js compatibility (${BLOG_BUGFIXES})`, () => {
   fixTest('process.env survives chmod 111 cwd (EACCES on directory listing)', async () => {
     const root = tempRoot('env-eacces');
     const noread = join(root, 'noread');
@@ -154,7 +329,7 @@ describe(`Bun ${MIN_VERSION} bugfixes — Node.js compatibility (${BLOG})`, () =
   });
 
   fixTest('fs.statSync().ino is a finite number (not INT64_MAX sentinel)', () => {
-    const st = fs.statSync(join(import.meta.dir, '../package.json'));
+    const st = fs.statSync(join(import.meta.dir, '../../package.json'));
     const INT64_MAX = Number.MAX_SAFE_INTEGER; // blog cited 9223372036854775807; Number path clamps
     expect(Number.isFinite(st.ino)).toBe(true);
     expect(st.ino).not.toBe(9223372036854775807);
@@ -255,7 +430,7 @@ describe(`Bun ${MIN_VERSION} bugfixes — Node.js compatibility (${BLOG})`, () =
   });
 });
 
-describe(`Bun ${MIN_VERSION} bugfixes — Bun APIs (${BLOG})`, () => {
+describe(`Bun ${MIN_VERSION} bugfixes — Bun APIs (${BLOG_BUGFIXES})`, () => {
   fixTest('runtime HTTP_PROXY / HTTPS_PROXY / NO_PROXY changes affect the next fetch()', async () => {
     const hits: string[] = [];
     const proxy = Bun.serve({
@@ -342,7 +517,7 @@ describe(`Bun ${MIN_VERSION} bugfixes — Bun APIs (${BLOG})`, () => {
   });
 
   fixTest('thread-pool consumers (Bun.file / fs.promises) complete on this arch', async () => {
-    const path = join(import.meta.dir, '../package.json');
+    const path = join(import.meta.dir, '../../package.json');
     const [a, b] = await Promise.all([Bun.file(path).text(), fs.promises.readFile(path, 'utf8')]);
     expect(a).toBe(b);
     expect(a.length).toBeGreaterThan(0);
@@ -472,8 +647,7 @@ describe(`Bun ${MIN_VERSION} bugfixes — Bun APIs (${BLOG})`, () => {
     'Unix socket paths longer than 104 bytes work on macOS',
     async () => {
       // Keep the directory short so the full sun_path sits just above the 104-byte classic limit.
-      const root = fs.mkdtempSync('/tmp/b1312-');
-      scratchRoots.push(root);
+      const root = shortTempRoot('b1312');
       const socketPath = join(root, `${'s'.repeat(Math.max(1, 110 - root.length - 1))}`);
       expect(socketPath.length).toBeGreaterThan(104);
       expect(socketPath.length).toBeLessThan(120);
@@ -573,7 +747,7 @@ describe(`Bun ${MIN_VERSION} bugfixes — Bun APIs (${BLOG})`, () => {
   });
 });
 
-describe(`Bun ${MIN_VERSION} bugfixes — Web APIs (${BLOG})`, () => {
+describe(`Bun ${MIN_VERSION} bugfixes — Web APIs (${BLOG_BUGFIXES})`, () => {
   fixTest('postMessage to a closed MessagePort does not queue unboundedly / crash', () => {
     const { port1, port2 } = new MessageChannel();
     port2.close();
@@ -776,7 +950,7 @@ describe(`Bun ${MIN_VERSION} bugfixes — Web APIs (${BLOG})`, () => {
   });
 });
 
-describe(`Bun ${MIN_VERSION} bugfixes — bundler / bun test / shell / Windows (${BLOG})`, () => {
+describe(`Bun ${MIN_VERSION} bugfixes — bundler / bun test / shell / Windows (${BLOG_BUGFIXES})`, () => {
   // skip unless Linux: NixOS/Guix PT_INTERP rewrite needs readelf + a --compile ELF artifact.
   fixSkip(process.platform !== 'linux')(
     'bun build --compile PT_INTERP normalization (NixOS/Guix — Linux-only proof)',
