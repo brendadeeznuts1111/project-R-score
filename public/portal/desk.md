@@ -23,12 +23,13 @@ Ops tooling (filters, advanced inventory, deep links) stays on
 | Limit raises / freezes                  | [`/registry/limit-raises.json`](../registry/limit-raises.json)                         |
 | Partner ledger (money integrity)        | [`/registry/partner-ledger.json`](../registry/partner-ledger.json)                     |
 | Book desk coverage                      | [`/registry/bookmakers-desk-coverage.json`](../registry/bookmakers-desk-coverage.json) |
+| TOC MessageLog (partner chats)          | [`/registry/toc-ops.json`](../registry/toc-ops.json) · `partners[].messageLog`         |
 | Partners ops board                      | [partners.md](./partners.md) · [`/portal/partners/`](./partners/)                      |
 
 ## What you see
 
 1. **Summary chips** — partners · accounts · live · limits Σ · balances · soft
-   24h/7d · freezes · raises · connectors · Telegram
+   24h/7d · freezes · raises · connectors · **msgs 24h** · Telegram
 2. **Bake connectors** — `connectorSnapshots` ok / stale / down
 3. **Accounts table** — login · book · type · skin · live · status · limit ·
    balance · freeplay %
@@ -38,8 +39,8 @@ Ops tooling (filters, advanced inventory, deep links) stays on
    fleet blocked
 6. **Book catalog holes** — unmatched / placeholder seat books
 7. **Rollups** — by type · skin · live
-8. **Telegram** — package chat id · topic count · handshake · gaps · signals
-   (**not** live message bodies)
+8. **Telegram · messages** — package chat · handshake · **MessageLog** rows from
+   toc-ops (`summary` + direction + time); 24h/7d tip windows like soft
 9. **Freezes · freeroll · attention** — deferred/blocked outs · limit-profile
    blocked · freeplay · freeroll applied
 

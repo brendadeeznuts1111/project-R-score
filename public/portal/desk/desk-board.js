@@ -54,6 +54,8 @@ export const DESK_ANCILLARY_REFS = Object.freeze({
   limitRaises: '/registry/limit-raises.json',
   partnerLedger: '/registry/partner-ledger.json',
   bookCoverage: '/registry/bookmakers-desk-coverage.json',
+  /** TOC fixture includes per-partner messageLog (Soft MessageLog stand-in on Pages). */
+  tocOps: '/registry/toc-ops.json',
 });
 
 const MS_HOUR = SOFT_MS_HOUR;
@@ -502,28 +504,161 @@ export function indexOpsPartners(ops) {
 }
 
 /**
- * Telegram signals from handshake + partners-ops chats.
- * No live MessageLog feed — surfaces chat linkage, freeroll, gaps, next steps.
+ * Project TOC/Soft MessageLog rows from toc-ops partners[].messageLog.
+ * Fixture dates use export-tip 24h/7d when wall-clock windows are empty.
+ *
+ * @param {object | null | undefined} tocOps
+ * @param {{ nowMs?: number, limit?: number }} [opts]
+ */
+export function projectTelegramMessageFeed(tocOps, opts = {}) {
+  const nowMs = typeof opts.nowMs === 'number' ? opts.nowMs : Date.now();
+  const limit = typeof opts.limit === 'number' && opts.limit > 0 ? Math.floor(opts.limit) : 40;
+  const empty = {
+    available: false,
+    messageFeedAvailable: false,
+    source: 'missing',
+    windowMode: 'unavailable',
+    windowEndIso: null,
+    tipIso: null,
+    messages: [],
+    messages24h: [],
+    messages7d: [],
+    byPartner: new Map(),
+    counts: {
+      total: 0,
+      in24h: 0,
+      in7d: 0,
+      inbound: 0,
+      outbound: 0,
+      partners: 0,
+      slaBreaches: Number(tocOps?.summary?.messageLogSlaBreaches) || 0,
+    },
+    note: 'toc-ops messageLog unavailable — handshake signals only.',
+  };
+  if (!tocOps || typeof tocOps !== 'object') return empty;
+
+  /** @type {object[]} */
+  const raw = [];
+  let tipMs = null;
+  for (const partner of tocOps.partners || []) {
+    const code = normalizePartnerCode(partner?.partnerCode);
+    for (const msg of partner?.messageLog || []) {
+      const at = asString(msg?.at);
+      const t = Date.parse(at);
+      if (!Number.isFinite(t)) continue;
+      if (tipMs == null || t > tipMs) tipMs = t;
+      const direction = asString(msg?.direction).toLowerCase() || '—';
+      raw.push({
+        id: asString(msg?.id) || `${code}-${at}`,
+        partnerCode: code,
+        callSign: asString(msg?.callSign || partner?.callSign) || (code ? `${code}-001` : '—'),
+        at,
+        atMs: t,
+        channel: asString(msg?.channel) || 'telegram',
+        direction,
+        from: asString(msg?.from) || '—',
+        to: asString(msg?.to) || '—',
+        taskId: asString(msg?.taskId) || null,
+        summary: asString(msg?.summary) || '—',
+        inbound: direction === 'in' || direction === 'inbound',
+        label: `${code || '—'} · ${asString(msg?.summary) || 'message'}`,
+      });
+    }
+  }
+  raw.sort((a, b) => b.atMs - a.atMs);
+
+  if (!raw.length) {
+    return {
+      ...empty,
+      source: asString(tocOps.source) || 'toc-ops',
+      counts: {
+        ...empty.counts,
+        slaBreaches: Number(tocOps?.summary?.messageLogSlaBreaches) || 0,
+      },
+      note: 'toc-ops has no partner messageLog rows.',
+    };
+  }
+
+  let windowEndMs = nowMs;
+  let windowMode = 'wall-clock';
+  const wall24 = raw.filter(m => nowMs - m.atMs <= WINDOW_24H_MS && m.atMs <= nowMs);
+  const wall7 = raw.filter(m => nowMs - m.atMs <= WINDOW_7D_MS && m.atMs <= nowMs);
+  if (wall7.length === 0 && tipMs != null && nowMs - tipMs >= FIXTURE_REBASE_MIN_AGE_MS) {
+    windowEndMs = tipMs;
+    windowMode = 'export-tip';
+  }
+
+  const messages7d = raw.filter(m => windowEndMs - m.atMs <= WINDOW_7D_MS && m.atMs <= windowEndMs);
+  const messages24h = raw.filter(
+    m => windowEndMs - m.atMs <= WINDOW_24H_MS && m.atMs <= windowEndMs
+  );
+  const messages = raw.slice(0, limit);
+
+  /** @type {Map<string, object[]>} */
+  const byPartner = new Map();
+  for (const m of messages7d) {
+    const list = byPartner.get(m.partnerCode) || [];
+    list.push(m);
+    byPartner.set(m.partnerCode, list);
+  }
+
+  const inbound = messages7d.filter(m => m.inbound).length;
+  const outbound = messages7d.length - inbound;
+
+  return {
+    available: true,
+    messageFeedAvailable: true,
+    source: `toc-ops.messageLog · ${asString(tocOps.source) || 'fixture'}`,
+    windowMode,
+    windowEndIso: new Date(windowEndMs).toISOString(),
+    tipIso: tipMs != null ? new Date(tipMs).toISOString() : null,
+    messages,
+    messages24h,
+    messages7d,
+    byPartner,
+    counts: {
+      total: raw.length,
+      in24h: messages24h.length,
+      in7d: messages7d.length,
+      inbound,
+      outbound,
+      partners: byPartner.size,
+      slaBreaches: Number(tocOps?.summary?.messageLogSlaBreaches) || 0,
+    },
+    note:
+      windowMode === 'export-tip'
+        ? `MessageLog windows anchored to latest message tip (${tipMs != null ? new Date(tipMs).toISOString() : '—'}) — wall-clock was empty. Soft live MessageLog still owns mutations in toc-ops ct.`
+        : 'MessageLog rows from toc-ops partners[].messageLog (read-only Pages fixture / Soft export stand-in).',
+  };
+}
+
+/**
+ * Telegram signals from handshake + partners-ops chats + optional MessageLog feed.
  *
  * @param {object | null | undefined} handshake
  * @param {object | null | undefined} dashboard
  * @param {object | null | undefined} [ops]
- * @returns {{
- *   available: boolean,
- *   source: string,
- *   inviteGaps: number,
- *   rows: object[],
- *   needsAttention: object[],
- *   newSignals: object[],
- *   messageFeedAvailable: boolean,
- *   note: string,
- * }}
+ * @param {ReturnType<typeof projectTelegramMessageFeed> | null} [messageFeed]
  */
-export function projectTelegramSignals(handshake, dashboard, ops = null) {
-  const note =
-    'No live Telegram message bodies in the registry yet — showing chat linkage, freeroll, handshake gaps, and next steps. MessageLog / package history is the follow-on bake.';
+export function projectTelegramSignals(handshake, dashboard, ops = null, messageFeed = null) {
+  const feed =
+    messageFeed && messageFeed.available
+      ? messageFeed
+      : {
+          available: false,
+          messageFeedAvailable: false,
+          messages7d: [],
+          messages24h: [],
+          byPartner: new Map(),
+          counts: { in24h: 0, in7d: 0, total: 0 },
+          note: '',
+          windowMode: 'unavailable',
+        };
   const opsByCode = indexOpsPartners(ops);
-  const messageFeedAvailable = false;
+  const messageFeedAvailable = Boolean(feed.messageFeedAvailable);
+  const note = messageFeedAvailable
+    ? feed.note
+    : 'No MessageLog rows loaded — showing chat linkage, freeroll, handshake gaps, and next steps. Fetch /registry/toc-ops.json for partner messageLog.';
 
   const buildRow = (code, extras = {}) => {
     const dash = (dashboard?.partners || []).find(
@@ -552,8 +687,17 @@ export function projectTelegramSignals(handshake, dashboard, ops = null) {
       ? String(hs.dmSeatStatus) === 'linked'
       : Boolean(comm.chatLinked) || Boolean(chatId);
 
-    /** Operator-facing "new" signals (not message bodies). */
+    const partnerMsgs = feed.byPartner?.get?.(code) || [];
+    const newMessages = partnerMsgs.slice(0, 5);
+    const msg24 = (feed.messages24h || []).filter(m => m.partnerCode === code).length;
+
+    /** Operator-facing "new" signals. */
     const signals = [];
+    if (newMessages.length) {
+      signals.push(
+        `${newMessages.length} msg/7d${msg24 ? ` · ${msg24} in 24h` : ''}: ${newMessages[0].summary}`
+      );
+    }
     if (gapCount > 0) signals.push(`${gapCount} handshake gap(s)`);
     if (hs?.needsPartnerInForum) signals.push('partner missing from forum');
     if (freeRollUsed != null && freeRollUsed > 0) {
@@ -586,8 +730,10 @@ export function projectTelegramSignals(handshake, dashboard, ops = null) {
       verifyLabel: hs && hs.verifyTotal != null ? `${hs.verifyPassed ?? 0}/${hs.verifyTotal}` : '—',
       signals,
       hasNewSignal: signals.length > 0,
-      newMessages: null, // brand-ok intentional null — message feed not baked
-      messageFeedAvailable: false,
+      newMessages,
+      messages7dCount: newMessages.length,
+      messages24hCount: msg24,
+      messageFeedAvailable,
       source: hs
         ? 'telegram-handshake+ops'
         : op
@@ -596,11 +742,14 @@ export function projectTelegramSignals(handshake, dashboard, ops = null) {
     };
   };
 
+  const feedCodes = feed.byPartner instanceof Map ? [...feed.byPartner.keys()] : [];
+
   if (!handshake || typeof handshake !== 'object') {
     const rows = [];
     const codes = new Set([
       ...(dashboard?.partners || []).map(p => normalizePartnerCode(p?.partnerCode)),
       ...opsByCode.keys(),
+      ...feedCodes,
     ]);
     for (const code of [...codes].filter(Boolean).sort()) {
       rows.push(buildRow(code));
@@ -614,6 +763,7 @@ export function projectTelegramSignals(handshake, dashboard, ops = null) {
       needsAttention: newSignals,
       newSignals,
       messageFeedAvailable,
+      messageFeed: feed.available ? feed : null,
       note,
     };
   }
@@ -624,6 +774,7 @@ export function projectTelegramSignals(handshake, dashboard, ops = null) {
     ...[...byHs.keys()],
     ...(dashboard?.partners || []).map(p => normalizePartnerCode(p?.partnerCode)),
     ...opsByCode.keys(),
+    ...feedCodes,
   ]);
   for (const code of [...codes].filter(Boolean).sort()) {
     rows.push(buildRow(code, { hs: byHs.get(code) || null }));
@@ -638,6 +789,7 @@ export function projectTelegramSignals(handshake, dashboard, ops = null) {
     needsAttention: newSignals,
     newSignals,
     messageFeedAvailable,
+    messageFeed: feed.available ? feed : null,
     note,
   };
 }
@@ -1114,6 +1266,7 @@ export function projectSoftOrphanPartners(softExport, dashboard) {
  *   limitRaises?: object | null,
  *   partnerLedger?: object | null,
  *   bookCoverage?: object | null,
+ *   tocOps?: object | null,
  *   nowMs?: number,
  * }} input
  */
@@ -1139,7 +1292,8 @@ export function buildMorningDesk(input) {
   const windows = { soft24, soft7d, softAll, ledger24, ledger7d };
   const partners = buildPartnerMoneyRows(dashboard, accounts, windows);
   const alerts = collectDeskAlerts(dashboard, accounts, input.ops);
-  const telegram = projectTelegramSignals(input.handshake, dashboard, input.ops);
+  const messageFeed = projectTelegramMessageFeed(input.tocOps, { nowMs });
+  const telegram = projectTelegramSignals(input.handshake, dashboard, input.ops, messageFeed);
   const connectors = projectConnectorHealth(dashboard);
   const limitPulse = projectLimitRaisePulse(input.limitRaises, dashboard, { nowMs });
   const moneyIntegrity = projectLedgerVsBalance(input.partnerLedger, dashboard);
@@ -1258,6 +1412,10 @@ export function buildMorningDesk(input) {
       telegramNewSignals: telegram.newSignals?.length ?? 0,
       inviteGaps: telegram.inviteGaps,
       messageFeedAvailable: telegram.messageFeedAvailable === true,
+      messages24h: messageFeed.counts.in24h,
+      messages7d: messageFeed.counts.in7d,
+      messagesTotal: messageFeed.counts.total,
+      messageSlaBreaches: messageFeed.counts.slaBreaches,
       connectorsOk: connectors.counts.ok,
       connectorsStale: connectors.counts.stale,
       moneyMismatches: moneyIntegrity.counts.mismatches,
@@ -1276,6 +1434,7 @@ export function buildMorningDesk(input) {
     },
     alerts,
     telegram,
+    messageFeed,
     connectors,
     limitPulse,
     moneyIntegrity,

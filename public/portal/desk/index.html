@@ -785,9 +785,9 @@
         </section>
 
         <section class="desk-section" aria-labelledby="desk-tg-h">
-          <h2 id="desk-tg-h">Telegram</h2>
+          <h2 id="desk-tg-h">Telegram · messages</h2>
           <p class="blurb" id="desk-tg-blurb">
-            Handshake status and next steps (no live message feed in the bake).
+            Handshake + package chats + MessageLog rows from toc-ops (read-only).
           </p>
           <div class="desk-panel">
             <table class="desk-table portal-table">
@@ -797,14 +797,15 @@
                   <th>Chat</th>
                   <th>Topics</th>
                   <th>Handshake</th>
+                  <th>Msgs 7d</th>
                   <th>Gaps</th>
-                  <th>Verify</th>
                   <th>Signals</th>
                 </tr>
               </thead>
               <tbody id="desk-tg-body"></tbody>
             </table>
             <p class="desk-note" id="desk-tg-note"></p>
+            <div id="desk-tg-messages" style="margin-top: 10px"></div>
           </div>
         </section>
 
@@ -930,15 +931,25 @@
             sub: `${s.connectorsStale ?? 0} stale`,
           },
           {
+            k: 'Msgs 24h',
+            v: String(s.messages24h ?? 0),
+            tone: (s.messages24h ?? 0) > 0 ? 'warn' : '',
+            sub: s.messageFeedAvailable ? `${s.messages7d ?? 0} in 7d` : 'no feed',
+          },
+          {
             k: 'Telegram',
             v: String(s.telegramNewSignals ?? s.telegramAttention),
             sub: s.messageFeedAvailable
-              ? 'messages'
+              ? `${s.messagesTotal ?? 0} total · ${s.messageSlaBreaches ?? 0} SLA`
               : s.inviteGaps
                 ? `${s.inviteGaps} invite gaps`
-                : 'signals (no msg feed)',
+                : 'signals only',
             tone:
-              (s.telegramNewSignals ?? s.telegramAttention) > 0 || s.inviteGaps > 0 ? 'warn' : 'ok',
+              (s.messages24h ?? 0) > 0 ||
+              (s.telegramNewSignals ?? s.telegramAttention) > 0 ||
+              s.inviteGaps > 0
+                ? 'warn'
+                : 'ok',
           },
         ];
         $('desk-stats').innerHTML = cells
@@ -1146,40 +1157,74 @@
 
       function renderTelegram(model) {
         const tg = model.telegram;
+        const feed = model.messageFeed;
         const blurb = $('desk-tg-blurb');
         if (blurb) {
           const n = (tg.newSignals || tg.needsAttention || []).length;
+          const msgBit = feed?.available
+            ? ` · ${feed.counts.in24h} msg/24h · ${feed.counts.in7d}/7d (${feed.windowMode})`
+            : ' · no MessageLog';
           blurb.textContent = tg.available
-            ? `Handshake + package chats · ${tg.source} · ${n} signal(s) · message feed ${tg.messageFeedAvailable ? 'on' : 'off'}`
-            : 'Handshake bake missing — ops/dashboard communication only.';
+            ? `Handshake + package chats · ${tg.source} · ${n} signal(s)${msgBit}`
+            : `Handshake bake missing${msgBit}`;
         }
         const note = $('desk-tg-note');
-        if (note) note.textContent = tg.note;
+        if (note) {
+          note.textContent = [tg.note, feed?.available ? feed.note : ''].filter(Boolean).join(' ');
+        }
 
         const body = $('desk-tg-body');
         if (!tg.rows.length) {
           body.innerHTML = `<tr><td colspan="7" class="desk-empty">No partners.</td></tr>`;
-          return;
-        }
-        body.innerHTML = tg.rows
-          .map(r => {
-            const signals =
-              (r.signals || []).join(' · ') ||
-              (r.nextSteps || []).join(' · ') ||
-              (r.topGap ? String(r.topGap) : '—');
-            const hsClass = r.handshakeOk ? 'tone-ok' : 'tone-warn';
-            const chatLabel = r.chatLinked ? (r.chatId ? `linked · ${r.chatId}` : 'linked') : '—';
-            return `<tr>
+        } else {
+          body.innerHTML = tg.rows
+            .map(r => {
+              const signals =
+                (r.signals || []).join(' · ') ||
+                (r.nextSteps || []).join(' · ') ||
+                (r.topGap ? String(r.topGap) : '—');
+              const hsClass = r.handshakeOk ? 'tone-ok' : 'tone-warn';
+              const chatLabel = r.chatLinked ? (r.chatId ? `linked · ${r.chatId}` : 'linked') : '—';
+              const m7 = r.messages7dCount ?? 0;
+              return `<tr>
               <td class="mono">${esc(r.partnerCode)}</td>
               <td class="${r.chatLinked ? 'tone-ok' : 'tone-muted'} mono">${esc(chatLabel)}</td>
               <td class="mono dim">${r.topicCount != null ? r.topicCount : '—'}</td>
               <td class="${hsClass}">${r.handshakeOk ? 'ok' : 'gap'}</td>
+              <td class="mono ${m7 ? 'tone-warn' : 'tone-muted'}">${m7}${r.messages24hCount ? ` · ${r.messages24hCount}d` : ''}</td>
               <td class="mono ${r.gapCount ? 'tone-warn' : 'tone-muted'}">${r.gapCount}</td>
-              <td class="mono dim">${esc(r.verifyLabel || '—')}</td>
               <td class="dim ${r.hasNewSignal ? 'tone-warn' : ''}">${esc(signals)}</td>
             </tr>`;
-          })
-          .join('');
+            })
+            .join('');
+        }
+
+        const list = $('desk-tg-messages');
+        if (list) {
+          const events = (feed?.messages7d || feed?.messages || []).slice(0, 15);
+          if (!feed?.available || !events.length) {
+            list.innerHTML = feed?.available
+              ? '<p class="desk-empty">No messages in window.</p>'
+              : '';
+          } else {
+            list.innerHTML =
+              `<p class="blurb" style="margin:0 0 6px"><strong>Recent messages</strong> (${events.length}${feed.windowMode === 'export-tip' ? ' · tip window' : ''})</p>` +
+              `<ul style="margin:0;padding-left:18px;font-size:12px">` +
+              events
+                .map(
+                  m =>
+                    `<li><span class="mono">${esc(m.partnerCode)}</span> · ` +
+                    `<span class="${m.inbound ? 'tone-warn' : 'tone-muted'}">${esc(m.direction)}</span> · ` +
+                    `${esc(m.summary)} · <span class="dim mono">${esc(
+                      String(m.at)
+                        .replace('T', ' ')
+                        .replace(/\.\d{3}Z$/, 'Z')
+                    )}</span></li>`
+                )
+                .join('') +
+              `</ul>`;
+          }
+        }
       }
 
       function renderAlerts(model) {
@@ -1287,7 +1332,7 @@
             );
           }
 
-          const [softR, seatR, opsR, booksR, hsR, limR, ledR, covR] = await Promise.all([
+          const [softR, seatR, opsR, booksR, hsR, limR, ledR, covR, tocR] = await Promise.all([
             fetchJsonResult(DESK_ANCILLARY_REFS.soft),
             fetchJsonResult(DESK_ANCILLARY_REFS.seat),
             fetchJsonResult(DESK_ANCILLARY_REFS.ops),
@@ -1296,6 +1341,7 @@
             fetchJsonResult(DESK_ANCILLARY_REFS.limitRaises),
             fetchJsonResult(DESK_ANCILLARY_REFS.partnerLedger),
             fetchJsonResult(DESK_ANCILLARY_REFS.bookCoverage),
+            fetchJsonResult(DESK_ANCILLARY_REFS.tocOps),
           ]);
 
           const model = buildMorningDesk({
@@ -1308,6 +1354,7 @@
             limitRaises: limR.ok ? limR.data : null,
             partnerLedger: ledR.ok ? ledR.data : null,
             bookCoverage: covR.ok ? covR.data : null,
+            tocOps: tocR.ok ? tocR.data : null,
           });
 
           $('loading').classList.add('hidden');

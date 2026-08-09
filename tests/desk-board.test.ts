@@ -13,6 +13,7 @@ import {
   projectLedgerVsBalance,
   projectLimitRaisePulse,
   projectSoftOrphanPartners,
+  projectTelegramMessageFeed,
   projectTelegramSignals,
   sumSoftPnlWindow,
   DESK_PRIMARY_ARTIFACT_REF,
@@ -300,12 +301,72 @@ describe('desk-board telegram + full model', () => {
     });
     expect(tg.available).toBe(true);
     expect(tg.messageFeedAvailable).toBe(false);
-    expect(tg.note).toMatch(/no live telegram message/i);
+    expect(tg.note).toMatch(/no messagelog/i);
     expect(tg.rows[0]?.chatLinked).toBe(true);
     expect(tg.rows[0]?.chatId).toBe('-1001');
     expect(tg.rows[0]?.topicCount).toBe(2);
     // ready-for-welcome alone is not a signal
     expect(tg.newSignals).toHaveLength(0);
+  });
+
+  test('projectTelegramMessageFeed reads toc-ops messageLog with export-tip windows', () => {
+    const tocOps = {
+      source: 'fixture',
+      summary: { messageLogSlaBreaches: 2 },
+      partners: [
+        {
+          partnerCode: 'ASH',
+          messageLog: [
+            {
+              id: 'm1',
+              at: '2026-07-23T12:00:00.000Z',
+              channel: 'telegram',
+              direction: 'in',
+              from: 'Partner',
+              to: 'Ops',
+              summary: 'Need higher limit on FanDuel',
+              callSign: 'ASH-001',
+            },
+            {
+              id: 'm0',
+              at: '2026-07-18T12:00:00.000Z',
+              direction: 'out',
+              summary: 'Welcome',
+            },
+          ],
+        },
+        {
+          partnerCode: 'PAT',
+          messageLog: [
+            {
+              id: 'p1',
+              at: '2026-07-23T10:00:00.000Z',
+              direction: 'out',
+              summary: 'PLAY card',
+            },
+          ],
+        },
+      ],
+    };
+    const feed = projectTelegramMessageFeed(tocOps, {
+      nowMs: Date.parse('2026-08-09T12:00:00.000Z'),
+    });
+    expect(feed.available).toBe(true);
+    expect(feed.messageFeedAvailable).toBe(true);
+    expect(feed.windowMode).toBe('export-tip');
+    expect(feed.counts.total).toBe(3);
+    expect(feed.counts.in7d).toBeGreaterThanOrEqual(2);
+    expect(feed.counts.in24h).toBeGreaterThanOrEqual(1);
+    expect(feed.counts.slaBreaches).toBe(2);
+    expect(feed.byPartner.get('ASH')?.length).toBeGreaterThanOrEqual(1);
+
+    const tg = projectTelegramSignals(sampleHandshake, sampleDashboard, null, feed);
+    expect(tg.messageFeedAvailable).toBe(true);
+    const ash = tg.rows.find(r => r.partnerCode === 'ASH');
+    expect(ash?.messages7dCount).toBeGreaterThan(0);
+    expect(ash?.newMessages?.[0]?.summary).toMatch(/limit|Welcome|Need/i);
+    // PAT appears from message feed even if not on dashboard
+    expect(tg.rows.some(r => r.partnerCode === 'PAT')).toBe(true);
   });
 
   test('buildMorningDesk aggregates summary money and freezes with fixture rebase', () => {
@@ -374,6 +435,7 @@ describe('desk-board telegram + full model', () => {
     const ops = await Bun.file('public/registry/partners-ops.json').json();
     const bookmakers = await Bun.file('public/registry/bookmakers.json').json();
     const handshake = await Bun.file('public/registry/telegram-handshake.json').json();
+    const tocOps = await Bun.file('public/registry/toc-ops.json').json();
     const desk = buildMorningDesk({
       dashboard,
       soft,
@@ -381,6 +443,7 @@ describe('desk-board telegram + full model', () => {
       ops,
       bookmakers,
       handshake,
+      tocOps,
       nowMs: Date.now(),
     });
     expect(desk.summary.softAvailable).toBe(true);
@@ -388,8 +451,11 @@ describe('desk-board telegram + full model', () => {
     expect(desk.softWindow.rebased).toBe(true);
     // After rebase, 7d should include fixture activity
     expect(desk.summary.softPlays7d).toBeGreaterThan(0);
-    expect(desk.telegram.rows.every(r => r.messageFeedAvailable === false)).toBe(true);
+    expect(desk.summary.messageFeedAvailable).toBe(true);
+    expect(desk.summary.messages7d).toBeGreaterThan(0);
+    expect(desk.messageFeed.windowMode).toBe('export-tip');
     expect(desk.telegram.rows.some(r => r.chatId)).toBe(true);
+    expect(desk.telegram.rows.some(r => (r.messages7dCount ?? 0) > 0)).toBe(true);
   });
 });
 
@@ -433,6 +499,7 @@ describe('desk portal wiring', () => {
     const limitRaises = await Bun.file('public/registry/limit-raises.json').json();
     const partnerLedger = await Bun.file('public/registry/partner-ledger.json').json();
     const bookCoverage = await Bun.file('public/registry/bookmakers-desk-coverage.json').json();
+    const tocOps = await Bun.file('public/registry/toc-ops.json').json();
     const desk = buildMorningDesk({
       dashboard,
       soft,
@@ -443,6 +510,7 @@ describe('desk portal wiring', () => {
       limitRaises,
       partnerLedger,
       bookCoverage,
+      tocOps,
       nowMs: Date.parse('2026-08-09T12:00:00.000Z'),
     });
     expect(desk.summary.accounts).toBeGreaterThanOrEqual(4);
@@ -459,6 +527,9 @@ describe('desk portal wiring', () => {
     expect(desk.bookCoverage.unmatched + desk.bookCoverage.placeholder).toBeGreaterThan(0);
     expect(desk.softOrphans.rows.some(r => r.partnerCode === 'PAT')).toBe(true);
     expect(desk.summary.fleetBlocked).toBeGreaterThanOrEqual(1);
+    expect(desk.summary.messageFeedAvailable).toBe(true);
+    expect(desk.summary.messages7d).toBeGreaterThan(0);
+    expect(DESK_ANCILLARY_REFS.tocOps).toBe('/registry/toc-ops.json');
   });
 });
 
