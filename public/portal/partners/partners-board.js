@@ -895,6 +895,89 @@ export function normalizeSeatCapitalDesk(seat) {
 }
 
 /**
+ * Known attention reason codes → operator-facing family + short title.
+ * Unknown codes fall back to family "other" with the raw reason as title.
+ * @type {Readonly<Record<string, { family: string, title: string, actionLabel?: string }>>}
+ */
+export const ATTENTION_REASON_CATALOG = Object.freeze({
+  'partner.limits.raise_observed': {
+    family: 'limits',
+    title: 'Limit raise observed',
+    actionLabel: 'Open limits board',
+  },
+  'partner.limits.coverage_gap': {
+    family: 'limits',
+    title: 'Limit evidence gap',
+    actionLabel: 'Open limits board',
+  },
+  'partner.bookmakers.unregistered_sportsbook': {
+    family: 'bookmakers',
+    title: 'Unregistered sportsbook',
+    actionLabel: 'Open bookmakers board',
+  },
+  'partner.telegram.handshake_gap': {
+    family: 'telegram',
+    title: 'Telegram handshake gap',
+    actionLabel: 'Telegram section',
+  },
+  'partner.profile.migration_required': {
+    family: 'profile',
+    title: 'Profile migration required',
+    actionLabel: 'Run coverage bake',
+  },
+});
+
+/**
+ * @param {unknown} reasonCode
+ * @returns {{ family: string, title: string, actionLabel: string | null }}
+ */
+export function attentionReasonMeta(reasonCode) {
+  const code = String(reasonCode || '').trim();
+  const hit = ATTENTION_REASON_CATALOG[code];
+  if (hit) {
+    return {
+      family: hit.family,
+      title: hit.title,
+      actionLabel: hit.actionLabel || null,
+    };
+  }
+  const family = code.startsWith('partner.limits.')
+    ? 'limits'
+    : code.startsWith('partner.bookmakers.')
+      ? 'bookmakers'
+      : code.startsWith('partner.telegram.')
+        ? 'telegram'
+        : code.startsWith('partner.profile.')
+          ? 'profile'
+          : 'other';
+  return { family, title: code || '—', actionLabel: null };
+}
+
+/**
+ * Friendly action control for attention rows.
+ * @param {{ actionHref?: string | null, actionCommand?: string | null, reasonCode?: string }} row
+ * @returns {{ kind: 'href' | 'command' | 'none', href?: string, command?: string, label: string }}
+ */
+export function attentionActionPresentation(row) {
+  const meta = attentionReasonMeta(row?.reasonCode);
+  if (row?.actionHref) {
+    return {
+      kind: 'href',
+      href: String(row.actionHref),
+      label: meta.actionLabel || String(row.actionHref),
+    };
+  }
+  if (row?.actionCommand) {
+    return {
+      kind: 'command',
+      command: String(row.actionCommand),
+      label: meta.actionLabel || String(row.actionCommand),
+    };
+  }
+  return { kind: 'none', label: '—' };
+}
+
+/**
  * Flatten partners[].attention into table rows (severity order: block > warn > info).
  * @param {object | null | undefined} dashboard
  * @returns {object[]}
@@ -905,11 +988,15 @@ export function dashboardAttentionRows(dashboard) {
   for (const partner of dashboard?.partners || []) {
     const code = normalizePartnerCode(partner?.partnerCode);
     for (const item of partner?.attention || []) {
+      const reasonCode = String(item?.reasonCode || '—');
+      const meta = attentionReasonMeta(reasonCode);
       rows.push({
         partnerCode: code,
         callSign: partner?.callSign || `${code}-001`,
         severity: String(item?.severity || 'info'),
-        reasonCode: String(item?.reasonCode || '—'),
+        reasonCode,
+        family: meta.family,
+        title: meta.title,
         label: String(item?.label || '—'),
         actionCommand: item?.actionCommand || null,
         actionHref: item?.actionHref || null,
@@ -921,10 +1008,38 @@ export function dashboardAttentionRows(dashboard) {
     if (bySev !== 0) return bySev;
     return (
       a.partnerCode.localeCompare(b.partnerCode) ||
+      a.family.localeCompare(b.family) ||
       a.reasonCode.localeCompare(b.reasonCode) ||
       a.label.localeCompare(b.label)
     );
   });
+}
+
+/**
+ * Count attention rows by family for filter chips.
+ * @param {object[]} rows
+ * @returns {{ family: string, count: number }[]}
+ */
+export function attentionFamilyCounts(rows) {
+  const counts = new Map();
+  for (const row of rows || []) {
+    const family = String(row?.family || 'other');
+    counts.set(family, (counts.get(family) || 0) + 1);
+  }
+  return [...counts.entries()]
+    .map(([family, count]) => ({ family, count }))
+    .sort((a, b) => a.family.localeCompare(b.family));
+}
+
+/**
+ * @param {object[]} rows
+ * @param {string | null | undefined} family — null/all means no filter
+ * @returns {object[]}
+ */
+export function filterAttentionRowsByFamily(rows, family) {
+  const f = family == null || family === '' || family === 'all' ? null : String(family);
+  if (!f) return Array.isArray(rows) ? [...rows] : [];
+  return (rows || []).filter(row => row.family === f);
 }
 
 /**
@@ -980,14 +1095,14 @@ export function dashboardPartnerIntegrationRows(dashboard) {
     .map(partner => {
       const code = normalizePartnerCode(partner?.partnerCode);
       const tennis = partner?.integrations?.tennis;
+      const st = partner?.integrations?.sportsTerminal;
       return {
         partnerCode: code,
         callSign: partner?.callSign || `${code}-001`,
         tennisStatus: tennis ? String(tennis.dataStatus || 'unavailable') : 'n/a',
         tennisObservedAt: tennis?.observedAt || null,
-        sportsTerminalStatus: partner?.integrations?.sportsTerminal
-          ? String(partner.integrations.sportsTerminal.dataStatus || 'unavailable')
-          : 'n/a',
+        sportsTerminalStatus: st ? String(st.dataStatus || 'unavailable') : 'n/a',
+        sportsTerminalObservedAt: st?.observedAt || null,
       };
     })
     .sort((a, b) => a.partnerCode.localeCompare(b.partnerCode));

@@ -588,16 +588,25 @@
               data-glossary-concept="partner.source_conflict"
               >source conflicts</a
             >
-            · severity · reason · next command.
+            · family · severity · reason · next action. Filter by family (limits ·
+            bookmakers · telegram · profile).
           </p>
+          <div
+            id="attention-family-filters"
+            class="topic-chip-row"
+            role="toolbar"
+            aria-label="Attention family filter"
+            style="margin: 0 0 10px; display: flex; flex-wrap: wrap; gap: 6px"
+          ></div>
           <div class="partners-panel">
             <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
                   <th>Severity</th>
+                  <th>Family</th>
                   <th>Reason</th>
-                  <th>Label</th>
+                  <th>Detail</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -664,7 +673,7 @@
           </div>
           <div class="partners-panel" style="margin-top: 12px">
             <h3 style="margin: 0 0 8px; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-dim)">
-              Partner · Tennis
+              Partner · Tennis · Sports Terminal
             </h3>
             <table class="portal-table partners-table">
               <thead>
@@ -672,7 +681,9 @@
                   <th>Partner</th>
                   <th>Call sign</th>
                   <th>Tennis</th>
-                  <th>Observed</th>
+                  <th>Tennis at</th>
+                  <th>Sports Terminal</th>
+                  <th>ST at</th>
                 </tr>
               </thead>
               <tbody id="integrations-partners-tbody"></tbody>
@@ -680,7 +691,8 @@
           </div>
           <p class="cli-row">
             connector snapshots · bun run partner:dashboard:bake · tennis:
-            /registry/tennis/partner-contracts.json
+            /registry/tennis/partner-contracts.json · sports-terminal:
+            /registry/sports-terminal/partner-integration-health.json
           </p>
         </section>
 
@@ -1239,6 +1251,8 @@
       import {
         bakeLabel,
         coverageBarStyle,
+        attentionActionPresentation,
+        attentionFamilyCounts,
         dashboardAccountingDealsRows,
         dashboardAttentionRows,
         dashboardBookCards,
@@ -1248,6 +1262,7 @@
         dashboardPartnerIntegrationRows,
         dashboardProfileCoverage,
         dashboardRosterRows,
+        filterAttentionRowsByFamily,
         filterPartnerOuts,
         flattenDashboardOuts,
         formatMoneyAmount,
@@ -1337,8 +1352,9 @@
       const ATTENTION_COLS = [
         { key: 'partner', label: 'Partner' },
         { key: 'severity', label: 'Severity' },
+        { key: 'family', label: 'Family' },
         { key: 'reason', label: 'Reason' },
-        { key: 'label', label: 'Label' },
+        { key: 'label', label: 'Detail' },
         { key: 'action', label: 'Action' },
       ];
       const CONFLICT_COLS = [
@@ -1358,7 +1374,9 @@
         { key: 'partner', label: 'Partner' },
         { key: 'callSign', label: 'Call sign' },
         { key: 'tennis', label: 'Tennis' },
-        { key: 'observed', label: 'Observed' },
+        { key: 'tennisAt', label: 'Tennis at' },
+        { key: 'sportsTerminal', label: 'Sports Terminal' },
+        { key: 'stAt', label: 'ST at' },
       ];
       const SOFT_PLAYS_COLS = [
         { key: 'partner', label: 'Partner' },
@@ -2146,18 +2164,56 @@
         return 'tone-bad';
       }
 
+      let attentionFamilyFilter = 'all';
+
+      function renderAttentionFamilyFilters(allItems) {
+        const host = $('attention-family-filters');
+        if (!host) return;
+        const counts = attentionFamilyCounts(allItems);
+        const total = allItems.length;
+        const chips = [
+          { family: 'all', count: total, label: 'All' },
+          ...counts.map(c => ({
+            family: c.family,
+            count: c.count,
+            label: c.family,
+          })),
+        ];
+        host.innerHTML = chips
+          .map(chip => {
+            const active = attentionFamilyFilter === chip.family;
+            return `<button type="button" class="topic-chip${active ? ' is-active' : ''}" data-attention-family="${esc(chip.family)}" aria-pressed="${active ? 'true' : 'false'}">${esc(chip.label)} <span class="chip-count">${chip.count}</span></button>`;
+          })
+          .join('');
+        host.querySelectorAll('[data-attention-family]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            attentionFamilyFilter = btn.getAttribute('data-attention-family') || 'all';
+            renderAttention(window.__partnersDashboard || dashboardFromCache());
+          });
+        });
+      }
+
+      function dashboardFromCache() {
+        return window.__partnersDashboard || null;
+      }
+
       function renderAttention(dashboard) {
-        const items = dashboardAttentionRows(dashboard);
+        if (dashboard) window.__partnersDashboard = dashboard;
+        const allItems = dashboardAttentionRows(dashboard);
+        renderAttentionFamilyFilters(allItems);
+        const items = filterAttentionRowsByFamily(allItems, attentionFamilyFilter);
         const body = $('attention-tbody');
         if (body) {
           body.innerHTML = renderPortalTableRows(
             ATTENTION_COLS,
             items.map(row => {
-              const action = row.actionHref
-                ? `<a href="${esc(row.actionHref)}">${esc(row.actionHref)}</a>`
-                : row.actionCommand
-                  ? `<code>${esc(row.actionCommand)}</code>`
-                  : '—';
+              const action = attentionActionPresentation(row);
+              const actionHtml =
+                action.kind === 'href'
+                  ? `<a href="${esc(action.href)}">${esc(action.label)}</a>`
+                  : action.kind === 'command'
+                    ? `<code title="${esc(action.command)}">${esc(action.label)}</code>`
+                    : '—';
               return [
                 { html: partnerLink(row.partnerCode) },
                 {
@@ -2165,17 +2221,23 @@
                   className: severityTone(row.severity),
                 },
                 {
-                  html: `<a href="${glossaryHref(row.reasonCode)}" data-glossary-concept="${esc(row.reasonCode)}"><code>${esc(row.reasonCode)}</code></a>`,
+                  html: `<span class="topic-chip" data-attention-family="${esc(row.family)}">${esc(row.family)}</span>`,
+                },
+                {
+                  html: `<a href="${glossaryHref(row.reasonCode)}" data-glossary-concept="${esc(row.reasonCode)}" title="${esc(row.reasonCode)}"><strong>${esc(row.title)}</strong><br><code style="font-size:10px">${esc(row.reasonCode)}</code></a>`,
                 },
                 row.label,
-                { html: action },
+                { html: actionHtml },
               ];
             }),
             {
               emptyMessage:
-                'No attention rows — partners are clean or bake omitted attention (bun run partner:dashboard:bake)',
+                allItems.length === 0
+                  ? 'No attention rows — partners are clean or bake omitted attention (bun run partner:dashboard:bake)'
+                  : `No attention rows in family “${attentionFamilyFilter}”`,
               rowAttrs: i => ({
                 'data-partner-code': String(items[i]?.partnerCode || ''),
+                'data-attention-family': String(items[i]?.family || ''),
                 'data-glossary-concept': 'partner.attention_item',
               }),
             }
@@ -2260,6 +2322,18 @@
               {
                 html: row.tennisObservedAt
                   ? `<time>${esc(row.tennisObservedAt)}</time>`
+                  : '—',
+              },
+              {
+                html: esc(row.sportsTerminalStatus),
+                className:
+                  row.sportsTerminalStatus === 'n/a'
+                    ? ''
+                    : connectorStatusTone(row.sportsTerminalStatus),
+              },
+              {
+                html: row.sportsTerminalObservedAt
+                  ? `<time>${esc(row.sportsTerminalObservedAt)}</time>`
                   : '—',
               },
             ]),
