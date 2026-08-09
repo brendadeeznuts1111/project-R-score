@@ -264,6 +264,8 @@ export function filterPartnerOuts(outs, filter = {}) {
     if (code && row.partnerCode !== code) return false;
     if (status && String(row.status || '').toLowerCase() !== status) return false;
     if (filter.incompleteOnly && !row.incomplete) return false;
+    if (filter.missingLimitEvidenceOnly && !row.missingLimitEvidence) return false;
+    if (filter.noExternalRefOnly && !row.missingExternalRef) return false;
     return true;
   });
 }
@@ -497,6 +499,20 @@ export function flattenDashboardOuts(dashboard) {
       const maxMinor = out?.observedMaxStake?.amount?.minorUnits;
       const maxBet =
         typeof maxMinor === 'number' && Number.isFinite(maxMinor) ? String(maxMinor / 100) : '—';
+      const limitCoverageRatio =
+        typeof out?.limitCoverageRatio === 'number' && Number.isFinite(out.limitCoverageRatio)
+          ? out.limitCoverageRatio
+          : null;
+      const externalRefs = Array.isArray(out?.externalAccountRefs) ? out.externalAccountRefs : [];
+      const missingLimitEvidence = limitCoverageRatio === 0;
+      const missingExternalRef = externalRefs.length === 0;
+      const provider = out?.providerConnectionStatus
+        ? String(out.providerConnectionStatus)
+        : '—';
+      const noteParts = [];
+      if (active.has(String(out?.outId || ''))) noteParts.push('active capacity');
+      if (missingLimitEvidence) noteParts.push('no limit evidence');
+      if (missingExternalRef) noteParts.push('no external ref');
       rows.push({
         partnerCode: code,
         callSign: partner?.callSign || `${code}-001`,
@@ -510,11 +526,13 @@ export function flattenDashboardOuts(dashboard) {
           fundingStatus: out?.fundingStatus || 'unknown',
           sportsbookId,
           providerConnectionStatus: out?.providerConnectionStatus,
+          limitCoverageRatio,
+          externalAccountRefs: externalRefs,
           book: { name: sportsbookId || '—', slug: sportsbookId || '—', type: '—' },
           funding: { method: String(out?.fundingStatus || 'unknown') },
           credentials: { username: '—' },
           maxBet,
-          note: active.has(String(out?.outId || '')) ? 'active capacity' : '',
+          note: noteParts.join(' · ') || '—',
           active: active.has(String(out?.outId || '')),
         },
         status,
@@ -525,6 +543,20 @@ export function flattenDashboardOuts(dashboard) {
         method: String(out?.fundingStatus || 'unknown'),
         username: '—',
         fundingStatus: out?.fundingStatus || 'unknown',
+        providerConnectionStatus: provider,
+        limitCoverageRatio,
+        limitCoveragePct:
+          limitCoverageRatio == null ? null : Math.round(limitCoverageRatio * 100),
+        externalRefCount: externalRefs.length,
+        externalRefLabel:
+          externalRefs.length === 0
+            ? '—'
+            : externalRefs
+                .map(r => String(r?.externalId || ''))
+                .filter(Boolean)
+                .join(', ') || `${externalRefs.length}`,
+        missingLimitEvidence,
+        missingExternalRef,
         active: active.has(String(out?.outId || '')),
       });
     }

@@ -733,6 +733,12 @@
             <label class="phase-filter-chip" style="border: none; padding: 0">
               <input type="checkbox" id="outs-incomplete-only" /> incomplete only
             </label>
+            <label class="phase-filter-chip" style="border: none; padding: 0">
+              <input type="checkbox" id="outs-missing-limit-only" /> missing limit evidence
+            </label>
+            <label class="phase-filter-chip" style="border: none; padding: 0">
+              <input type="checkbox" id="outs-no-external-ref-only" /> no external ref
+            </label>
             <span id="outs-filter-count" class="tone-muted" aria-live="polite"></span>
           </div>
           <div class="partners-panel">
@@ -743,10 +749,11 @@
                   <th>Phase</th>
                   <th>Out</th>
                   <th>Book</th>
-                  <th>Type</th>
-                  <th>User</th>
-                  <th>Rail</th>
-                  <th>Max</th>
+                  <th>Funding</th>
+                  <th>Provider</th>
+                  <th>Limit cov.</th>
+                  <th>Max ¢</th>
+                  <th>Ext. ref</th>
                   <th>Status</th>
                   <th>Note</th>
                 </tr>
@@ -754,7 +761,10 @@
               <tbody id="outs-tbody"></tbody>
             </table>
           </div>
-          <p class="cli-row">bun run partners:validate · bun run partners:build</p>
+          <p class="cli-row">
+            bun run partner:dashboard:bake · limit cov. = tennis max stake and/or raise history ·
+            ext. ref from tennis book refs
+          </p>
         </section>
 
         <section
@@ -1312,10 +1322,11 @@
         { key: 'phase', label: 'Phase' },
         { key: 'out', label: 'Out' },
         { key: 'book', label: 'Book' },
-        { key: 'type', label: 'Type' },
-        { key: 'user', label: 'User' },
-        { key: 'rail', label: 'Rail' },
-        { key: 'max', label: 'Max' },
+        { key: 'funding', label: 'Funding' },
+        { key: 'provider', label: 'Provider' },
+        { key: 'limitCov', label: 'Limit cov.' },
+        { key: 'max', label: 'Max ¢' },
+        { key: 'extRef', label: 'Ext. ref' },
         { key: 'status', label: 'Status' },
         { key: 'note', label: 'Note' },
       ];
@@ -1823,12 +1834,18 @@
         if (!tbody) return;
         const statusEl = $('outs-status-filter');
         const incompleteEl = $('outs-incomplete-only');
+        const missingLimitEl = $('outs-missing-limit-only');
+        const noExtEl = $('outs-no-external-ref-only');
         const status = statusEl?.value || '';
         const incompleteOnly = Boolean(incompleteEl?.checked);
+        const missingLimitEvidenceOnly = Boolean(missingLimitEl?.checked);
+        const noExternalRefOnly = Boolean(noExtEl?.checked);
         const filtered = filterPartnerOuts(flattenedOuts, {
           partnerCode: selectedCode,
           status: status || null,
           incompleteOnly,
+          missingLimitEvidenceOnly,
+          noExternalRefOnly,
         });
         const count = $('outs-filter-count');
         if (count) {
@@ -1839,6 +1856,12 @@
           filtered.map(row => {
             const out = row.out || {};
             const outId = out.id || '';
+            const covPct = row.limitCoveragePct;
+            const covTone =
+              covPct == null ? '' : covPct >= 100 ? 'tone-ok' : covPct > 0 ? 'tone-warn' : 'tone-bad';
+            const fund = String(row.fundingStatus || 'unknown');
+            const fundTone =
+              fund === 'funded' ? 'tone-ok' : fund === 'partial' ? 'tone-warn' : 'tone-muted';
             return [
               {
                 html: `${partnerLink(row.partnerCode)}<br><code>${esc(row.callSign)}</code>`,
@@ -1849,15 +1872,35 @@
               },
               { html: bookChip(row.bookName, out) },
               {
-                html: conceptChip(
-                  out.book?.typeConceptId || 'book.type.legal',
-                  row.bookType,
-                  out.book?.color
-                ),
+                html: esc(fund),
+                className: fundTone,
               },
-              { html: `<code>${esc(row.username)}</code>` },
-              { html: railChip(row.method, out) },
-              String(row.maxBet),
+              {
+                html: esc(row.providerConnectionStatus || '—'),
+                className:
+                  row.providerConnectionStatus === 'active'
+                    ? 'tone-ok'
+                    : row.providerConnectionStatus === 'inactive'
+                      ? 'tone-warn'
+                      : '',
+              },
+              {
+                html: covPct == null ? '—' : `${covPct}%`,
+                className: covTone,
+              },
+              {
+                html:
+                  row.maxBet === '—'
+                    ? '—'
+                    : `<code title="USD major from minor units">${esc(row.maxBet)}</code>`,
+              },
+              {
+                html:
+                  row.externalRefCount > 0
+                    ? `<code title="${esc(row.externalRefLabel)}">${row.externalRefCount}</code>`
+                    : '—',
+                className: row.externalRefCount > 0 ? 'tone-ok' : 'tone-muted',
+              },
               {
                 html:
                   statusChip(row.status, out) +
@@ -1871,6 +1914,11 @@
             rowAttrs: i => ({
               'data-partner-code': String(filtered[i]?.partnerCode || ''),
               'data-out-status': String(filtered[i]?.status || ''),
+              'data-limit-coverage':
+                filtered[i]?.limitCoveragePct == null
+                  ? ''
+                  : String(filtered[i].limitCoveragePct),
+              'data-missing-limit-evidence': filtered[i]?.missingLimitEvidence ? '1' : '0',
             }),
           }
         );
@@ -2974,16 +3022,15 @@
           renderDeposits(seat);
           renderBooks(dashboard);
           renderPartnerMessages(seat);
-          $('outs-status-filter')?.addEventListener('change', () => {
+          const rerenderOuts = () => {
             const route = parsePartnerHash(window.location.hash);
             renderOutsInventory(route && 'code' in route ? route.code : null);
             applyPartnerRoute(false);
-          });
-          $('outs-incomplete-only')?.addEventListener('change', () => {
-            const route = parsePartnerHash(window.location.hash);
-            renderOutsInventory(route && 'code' in route ? route.code : null);
-            applyPartnerRoute(false);
-          });
+          };
+          $('outs-status-filter')?.addEventListener('change', rerenderOuts);
+          $('outs-incomplete-only')?.addEventListener('change', rerenderOuts);
+          $('outs-missing-limit-only')?.addEventListener('change', rerenderOuts);
+          $('outs-no-external-ref-only')?.addEventListener('change', rerenderOuts);
           $('loading').classList.add('hidden');
           $('dashboard').classList.remove('hidden');
           bootGlossaryUx({

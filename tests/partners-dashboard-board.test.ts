@@ -96,6 +96,9 @@ describe('partners-dashboard board cutover', () => {
     expect(outs[0]?.status).toBe('ready');
     expect(outs[0]?.bookName).toBe('hard-rock-florida');
     expect(outs[1]?.incomplete).toBe(true);
+    // Sample fixture lacks bake evidence fields — defaults are explicit
+    expect(outs[0]?.missingExternalRef).toBe(true);
+    expect(outs[0]?.externalRefCount).toBe(0);
 
     const desk = summarizeDashboardDesk(sampleDashboard);
     expect(desk.partners).toBe(2);
@@ -141,6 +144,21 @@ describe('partners-dashboard board cutover', () => {
     );
   });
 
+  test('flattenDashboardOuts surfaces limit coverage and external refs from baked artifact', async () => {
+    const dashboard = await Bun.file('public/registry/partners-dashboard.json').json();
+    const { filterPartnerOuts } = await import('../public/portal/partners/partners-board.js');
+    const outs = flattenDashboardOuts(dashboard);
+    expect(outs.length).toBeGreaterThan(0);
+    expect(outs.some(o => o.limitCoverageRatio === 1)).toBe(true);
+    expect(outs.some(o => o.missingLimitEvidence)).toBe(true);
+    expect(outs.some(o => o.externalRefCount > 0)).toBe(true);
+    const missing = filterPartnerOuts(outs, { missingLimitEvidenceOnly: true });
+    expect(missing.length).toBeGreaterThan(0);
+    expect(missing.every(o => o.missingLimitEvidence)).toBe(true);
+    const noRef = filterPartnerOuts(outs, { noExternalRefOnly: true });
+    expect(noRef.every(o => o.missingExternalRef)).toBe(true);
+  });
+
   test('board primary load is partners-dashboard only; native tables, no ops or legacy compare', async () => {
     const html = await Bun.file(BOARD).text();
     expect(html).toContain("loadJson('/registry/partners-dashboard.json')");
@@ -149,6 +167,11 @@ describe('partners-dashboard board cutover', () => {
     expect(html).not.toContain('?compare=legacy');
     expect(html).toContain('flattenDashboardOuts');
     expect(html).toContain('dashboardRosterRows');
+    expect(html).toContain('outs-missing-limit-only');
+    expect(html).toContain('outs-no-external-ref-only');
+    expect(html).toContain('Limit cov.');
+    expect(html).toContain('Ext. ref');
+
     expect(html).toContain('summarizeDashboardDesk');
     expect(html).toContain('indexDashboardByPartner');
     expect(html).not.toContain('projectDashboardToOpsShape');
