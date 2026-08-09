@@ -1036,6 +1036,37 @@ export function dashboardConflictRows(dashboard) {
     );
 }
 
+/** Human labels for partner-dashboard connector snapshot keys. */
+export const CONNECTOR_DISPLAY_LABELS = Object.freeze({
+  profiles: 'Partner profiles',
+  accounting: 'Accounting ledger',
+  telegram: 'Telegram handshake',
+  limits: 'Limit raises',
+  bookmakers: 'Bookmakers catalog',
+  tennis: 'Tennis capacity',
+  sportsTerminal: 'Sports Terminal',
+});
+
+/**
+ * Relative age for connector / integration timestamps.
+ * @param {unknown} iso
+ * @param {number} [nowMs]
+ * @returns {string}
+ */
+export function formatRelativeAge(iso, nowMs = Date.now()) {
+  if (iso == null || iso === '') return '—';
+  const t = Date.parse(String(iso));
+  if (!Number.isFinite(t)) return String(iso);
+  const deltaMs = nowMs - t;
+  const mins = Math.round(deltaMs / 60000);
+  if (Math.abs(mins) < 1) return 'just now';
+  if (Math.abs(mins) < 60) return mins > 0 ? `${mins}m ago` : `in ${-mins}m`;
+  const hrs = Math.round(mins / 60);
+  if (Math.abs(hrs) < 48) return hrs > 0 ? `${hrs}h ago` : `in ${-hrs}h`;
+  const days = Math.round(hrs / 24);
+  return days > 0 ? `${days}d ago` : `in ${-days}d`;
+}
+
 /**
  * Connector snapshot rows for integrations region.
  * @param {object | null | undefined} dashboard
@@ -1047,15 +1078,52 @@ export function dashboardConnectorRows(dashboard) {
     .sort()
     .map(key => {
       const snap = snaps[key] || {};
+      const dataStatus = String(snap.dataStatus || 'unavailable');
       return {
         connector: key,
-        dataStatus: String(snap.dataStatus || 'unavailable'),
+        label: CONNECTOR_DISPLAY_LABELS[key] || humanizeBookSlug(key),
+        dataStatus,
+        statusTone: statusToneClass(
+          dataStatus === 'ok' ? 'ready' : dataStatus === 'stale' ? 'deferred' : 'blocked'
+        ),
         sourceMode: String(snap.sourceMode || '—'),
         observedAt: snap.observedAt || null,
+        observedAge: formatRelativeAge(snap.observedAt),
         inputRef: String(snap.inputRef || '—'),
         reasonCode: snap.reasonCode || null,
       };
     });
+}
+
+/**
+ * Rollup for integrations header strip.
+ * @param {object | null | undefined} dashboard
+ */
+export function summarizeIntegrationsDesk(dashboard) {
+  const connectors = dashboardConnectorRows(dashboard);
+  const partners = dashboardPartnerIntegrationRows(dashboard);
+  const ok = connectors.filter(c => c.dataStatus === 'ok').length;
+  const stale = connectors.filter(c => c.dataStatus === 'stale').length;
+  const unavailable = connectors.filter(
+    c => c.dataStatus === 'unavailable' || c.dataStatus === 'missing'
+  ).length;
+  const tennisOk = partners.filter(p => p.tennisStatus === 'ok').length;
+  const stOk = partners.filter(p => p.sportsTerminalStatus === 'ok').length;
+  return {
+    connectorCount: connectors.length,
+    ok,
+    stale,
+    unavailable,
+    partnerCount: partners.length,
+    tennisOk,
+    sportsTerminalOk: stOk,
+    headline:
+      connectors.length === 0
+        ? 'No connectors on bake'
+        : `${ok}/${connectors.length} connectors ok` +
+          (stale ? ` · ${stale} stale` : '') +
+          (unavailable ? ` · ${unavailable} offline` : ''),
+  };
 }
 
 /**
@@ -1069,16 +1137,46 @@ export function dashboardPartnerIntegrationRows(dashboard) {
       const code = normalizePartnerCode(partner?.partnerCode);
       const tennis = partner?.integrations?.tennis;
       const st = partner?.integrations?.sportsTerminal;
+      const tennisStatus = tennis ? String(tennis.dataStatus || 'unavailable') : 'n/a';
+      const sportsTerminalStatus = st ? String(st.dataStatus || 'unavailable') : 'n/a';
+      const activeOuts = Array.isArray(partner?.outs)
+        ? partner.outs.filter(o => String(o?.operationalStatus) === 'ready').length
+        : 0;
       return {
         partnerCode: code,
         callSign: partner?.callSign || `${code}-001`,
-        tennisStatus: tennis ? String(tennis.dataStatus || 'unavailable') : 'n/a',
+        tennisStatus,
         tennisObservedAt: tennis?.observedAt || null,
-        sportsTerminalStatus: st ? String(st.dataStatus || 'unavailable') : 'n/a',
+        tennisAge: formatRelativeAge(tennis?.observedAt),
+        sportsTerminalStatus,
         sportsTerminalObservedAt: st?.observedAt || null,
+        sportsTerminalAge: formatRelativeAge(st?.observedAt),
+        activeOuts,
+        outsCount: Array.isArray(partner?.outs) ? partner.outs.length : 0,
+        chatLinked: Boolean(partner?.communication?.chatLinked),
       };
     })
     .sort((a, b) => a.partnerCode.localeCompare(b.partnerCode));
+}
+
+/**
+ * Soft-accounting empty-state copy (board tables).
+ * @param {'plays' | 'weeks' | 'books'} kind
+ * @param {string} source softAccountingSource from board load
+ */
+export function softAccountingEmptyMessage(kind, source) {
+  const src = String(source || 'unavailable');
+  const offline = src.startsWith('unavailable') || src.includes('unavailable');
+  if (offline) {
+    return `Soft export offline · run bun run soft:accounting:bake or soft:accounting:from-ct when Soft DB is up · ${src}`;
+  }
+  if (kind === 'plays') {
+    return `No Soft plays in this bake · source ${src}`;
+  }
+  if (kind === 'weeks') {
+    return `No Soft week rollups yet · need plays first · source ${src}`;
+  }
+  return `No Soft book-type rollups · tag plays with bookType · source ${src}`;
 }
 
 /**
