@@ -339,9 +339,8 @@ describe('catalog list table cells', () => {
 
 describe('frozen guide examples', () => {
   test('read-env / set-env / timezone / util guides carry lang+code', async () => {
-    const { GUIDE_EXAMPLES, guideExamplesForPage, guideExamplesForToken } = await import(
-      '../tools/bun-docs-guide-examples.ts'
-    );
+    const { GUIDE_EXAMPLES, TOKEN_GUIDE_PATH, guideExamplesForPage, guideExamplesForToken } =
+      await import('../tools/bun-docs-guide-examples.ts');
     expect(GUIDE_EXAMPLES['guides/runtime/timezone']?.some(e => e.lang === 'ts')).toBe(true);
     expect(guideExamplesForPage('https://bun.com/docs/guides/runtime/set-env').some(e => e.lang === 'ini')).toBe(
       true
@@ -374,6 +373,8 @@ describe('frozen guide examples', () => {
     expect(guideExamplesForToken('Bun.inspect()')[0]?.body).toContain('Uint8Array');
     expect(guideExamplesForToken('Bun.inspect.custom')[0]?.body).toContain('[Bun.inspect.custom]');
     expect(guideExamplesForToken('Bun.markdown.html')[0]?.body).toContain('Bun.markdown.html(');
+    // Intentional ansi split: TOKEN_GUIDE_PATH → #bun-markdown-ansi fence; docsUrl stays #ansi-terminal-output
+    expect(TOKEN_GUIDE_PATH['Bun.markdown.ansi']).toBe('runtime/markdown#bun-markdown-ansi');
     expect(guideExamplesForToken('Bun.markdown.ansi')[0]?.body).toContain('Bun.markdown.ansi(');
     expect(guideExamplesForToken('Bun.markdown.render')[0]?.body).toContain('Bun.markdown.render(');
     expect(guideExamplesForToken('Bun.markdown.react')[0]?.body).toContain('Bun.markdown.react(text)');
@@ -388,6 +389,15 @@ describe('frozen guide examples', () => {
     expect(guideExamplesForToken('list-item-meta')[0]?.body).toContain('checked');
     expect(guideExamplesForToken('inline-callbacks')[0]?.body).toContain('strikethrough:');
     expect(guideExamplesForToken('examples')[0]?.body).toContain('class="heading heading-');
+    expect(guideExamplesForToken('custom-html-with-classes')[0]?.body).toContain(
+      'class="heading heading-'
+    );
+    expect(guideExamplesForToken('stripping-all-formatting')[0]?.body).toContain(
+      'heading: children => children'
+    );
+    expect(guideExamplesForToken('code-block-syntax-highlighting')[0]?.body).toContain(
+      'meta?.language'
+    );
     expect(guideExamplesForToken('nested-list-numbering')[0]?.body).toContain('listItem:');
     expect(guideExamplesForToken('server-side-rendering')[0]?.body).toContain('renderToString');
     expect(guideExamplesForToken('parser-options')[0]?.body).toContain('autolinks: true');
@@ -530,6 +540,28 @@ describe('inspect family catalog relations', () => {
     );
     expect(byName.get('examples')?.examples?.[0]?.body).toContain('class="heading heading-');
     expect(byName.get('Bun.markdown.render')?.related).toContain('examples');
+    expect(byName.get('custom-html-with-classes')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#custom-html-with-classes'
+    );
+    expect(byName.get('stripping-all-formatting')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#stripping-all-formatting'
+    );
+    expect(byName.get('code-block-syntax-highlighting')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#code-block-syntax-highlighting'
+    );
+    expect(byName.get('custom-html-with-classes')?.examples?.[0]?.body).toContain(
+      'class="heading heading-'
+    );
+    expect(byName.get('stripping-all-formatting')?.examples?.[0]?.body).toContain(
+      'heading: children => children'
+    );
+    expect(byName.get('code-block-syntax-highlighting')?.examples?.[0]?.body).toContain(
+      'meta?.language'
+    );
+    expect(byName.get('examples')?.related).toContain('custom-html-with-classes');
+    expect(byName.get('examples')?.related).toContain('stripping-all-formatting');
+    expect(byName.get('examples')?.related).toContain('code-block-syntax-highlighting');
+    expect(byName.get('Bun.markdown.render')?.related).toContain('custom-html-with-classes');
     expect(byName.get('server-side-rendering')?.docsUrl).toBe(
       'https://bun.com/docs/runtime/markdown#server-side-rendering'
     );
@@ -544,6 +576,10 @@ describe('inspect family catalog relations', () => {
     expect(byName.get('inline-callbacks')?.examples?.[0]?.body).toContain('codespan:');
     expect(byName.get('parser-options-2')?.examples?.[0]?.body).toContain(
       'headings: { ids: true }'
+    );
+    // Intentional ansi split: curated docsUrl = official #ansi-terminal-output; examples from #bun-markdown-ansi
+    expect(byName.get('Bun.markdown.ansi')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#ansi-terminal-output'
     );
     expect(byName.get('Bun.markdown.ansi')?.examples?.[0]?.body).toContain(
       'Bun.markdown.ansi('

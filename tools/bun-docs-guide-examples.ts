@@ -34,6 +34,9 @@
 // @see https://bun.com/docs/runtime/markdown#list-item-meta — list-item-meta
 // @see https://bun.com/docs/runtime/markdown#inline-callbacks — inline-callbacks
 // @see https://bun.com/docs/runtime/markdown#examples — examples (render cookbook parent)
+// @see https://bun.com/docs/runtime/markdown#custom-html-with-classes — custom-html-with-classes
+// @see https://bun.com/docs/runtime/markdown#stripping-all-formatting — stripping-all-formatting
+// @see https://bun.com/docs/runtime/markdown#code-block-syntax-highlighting — code-block-syntax-highlighting
 // @see https://bun.com/docs/runtime/markdown#nested-list-numbering — nested-list-numbering
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-react — Bun.markdown.react
 // @see https://bun.com/docs/runtime/markdown#server-side-rendering — server-side-rendering
@@ -1008,6 +1011,9 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'Bun.markdown.render inline callbacks': 'runtime/markdown#inline-callbacks',
   examples: 'runtime/markdown#examples',
   'Bun.markdown.render examples': 'runtime/markdown#examples',
+  'custom-html-with-classes': 'runtime/markdown#custom-html-with-classes',
+  'stripping-all-formatting': 'runtime/markdown#stripping-all-formatting',
+  'code-block-syntax-highlighting': 'runtime/markdown#code-block-syntax-highlighting',
   'nested-list-numbering': 'runtime/markdown#nested-list-numbering',
   'omitting-elements': 'runtime/markdown#omitting-elements',
   'server-side-rendering': 'runtime/markdown#server-side-rendering',

@@ -38,6 +38,9 @@
 // @see https://bun.com/docs/runtime/markdown#list-item-meta — list-item-meta
 // @see https://bun.com/docs/runtime/markdown#inline-callbacks — inline-callbacks
 // @see https://bun.com/docs/runtime/markdown#examples — examples (render cookbook parent)
+// @see https://bun.com/docs/runtime/markdown#custom-html-with-classes — custom-html-with-classes
+// @see https://bun.com/docs/runtime/markdown#stripping-all-formatting — stripping-all-formatting
+// @see https://bun.com/docs/runtime/markdown#code-block-syntax-highlighting — code-block-syntax-highlighting
 // @see https://bun.com/docs/runtime/markdown#nested-list-numbering — nested-list-numbering
 // @see https://bun.com/docs/runtime/markdown#server-side-rendering — server-side-rendering
 // @see https://bun.com/docs/runtime/markdown#parser-options — parser-options
@@ -491,6 +494,9 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'list-item-meta',
       'inline-callbacks',
       'examples',
+      'custom-html-with-classes',
+      'stripping-all-formatting',
+      'code-block-syntax-highlighting',
       'options',
       'autolinks',
       'heading-ids',
@@ -642,10 +648,54 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'runtime/markdown#code-block-syntax-highlighting',
     ],
     relatedTokens: [
+      'custom-html-with-classes',
+      'stripping-all-formatting',
+      'code-block-syntax-highlighting',
       'nested-list-numbering',
       'omitting-elements',
       'Bun.markdown.render',
       'callback-signature',
+    ],
+  },
+  {
+    term: 'custom-html-with-classes',
+    path: 'runtime/markdown#custom-html-with-classes',
+    description:
+      'Bun.markdown.render cookbook: emit HTML with custom class names from heading/paragraph/strong callbacks.',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'examples',
+      'stripping-all-formatting',
+      'code-block-syntax-highlighting',
+      'Bun.markdown.render',
+      'callback-signature',
+    ],
+  },
+  {
+    term: 'stripping-all-formatting',
+    path: 'runtime/markdown#stripping-all-formatting',
+    description:
+      'Bun.markdown.render cookbook: return children unchanged from callbacks to strip markup to plaintext.',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'examples',
+      'custom-html-with-classes',
+      'omitting-elements',
+      'Bun.markdown.render',
+      'callback-signature',
+    ],
+  },
+  {
+    term: 'code-block-syntax-highlighting',
+    path: 'runtime/markdown#code-block-syntax-highlighting',
+    description:
+      'Bun.markdown.render cookbook: use code callback meta.language for language-* class highlighting wrappers.',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'examples',
+      'custom-html-with-classes',
+      'block-callbacks',
+      'Bun.markdown.render',
     ],
   },
   {
