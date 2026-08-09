@@ -37,6 +37,7 @@
 // @see https://bun.com/docs/runtime/markdown#block-callbacks — block-callbacks
 // @see https://bun.com/docs/runtime/markdown#list-item-meta — list-item-meta
 // @see https://bun.com/docs/runtime/markdown#inline-callbacks — inline-callbacks
+// @see https://bun.com/docs/runtime/markdown#examples — examples (render cookbook parent)
 // @see https://bun.com/docs/runtime/markdown#nested-list-numbering — nested-list-numbering
 // @see https://bun.com/docs/runtime/markdown#server-side-rendering — server-side-rendering
 // @see https://bun.com/docs/runtime/markdown#parser-options — parser-options
@@ -481,6 +482,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'runtime/markdown#block-callbacks',
       'runtime/markdown#list-item-meta',
       'runtime/markdown#inline-callbacks',
+      'runtime/markdown#examples',
     ],
     relatedTokens: [
       'callback-signature',
@@ -488,6 +490,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'parser-options',
       'list-item-meta',
       'inline-callbacks',
+      'examples',
       'options',
       'autolinks',
       'heading-ids',
@@ -625,12 +628,33 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     ],
   },
   {
+    term: 'examples',
+    path: 'runtime/markdown#examples',
+    description:
+      'Bun.markdown.render cookbook under #examples: custom HTML classes, strip formatting, omit elements, ANSI via callbacks, nested list numbering, code language meta.',
+    minVersion: '1.3.0',
+    related: [
+      'runtime/markdown#custom-html-with-classes',
+      'runtime/markdown#stripping-all-formatting',
+      'runtime/markdown#omitting-elements',
+      'runtime/markdown#ansi-terminal-output',
+      'runtime/markdown#nested-list-numbering',
+      'runtime/markdown#code-block-syntax-highlighting',
+    ],
+    relatedTokens: [
+      'nested-list-numbering',
+      'omitting-elements',
+      'Bun.markdown.render',
+      'callback-signature',
+    ],
+  },
+  {
     term: 'nested-list-numbering',
     path: 'runtime/markdown#nested-list-numbering',
     description:
       'Render nested ordered lists with listItem meta (index/depth/ordered/start) — no post-processing.',
     minVersion: '1.3.0',
-    relatedTokens: ['list-item-meta', 'Bun.markdown.render'],
+    relatedTokens: ['list-item-meta', 'Bun.markdown.render', 'examples'],
   },
   {
     term: 'omitting-elements',
