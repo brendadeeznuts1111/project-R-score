@@ -32,8 +32,8 @@ describe('daily weakest-thread research', () => {
 
   test('selects the three weakest actionable scoped threads', async () => {
     const targets = selectWeakestActionableThreads(await loadPortfolio());
-    expect(targets.map(target => target.thread.ref)).toEqual(['RTH-005', 'RTH-008', 'RTH-036']);
-    expect(targets.map(target => target.targetScore)).toEqual([59, 67, 73]);
+    expect(targets.map(target => target.thread.ref)).toEqual(['RTH-036', 'RTH-012', 'RTH-030']);
+    expect(targets.map(target => target.targetScore)).toEqual([73, 75, 86]);
     expect(targets.every(target => target.lane.entrypoint.length > 0)).toBe(true);
   });
 
@@ -76,7 +76,7 @@ describe('daily weakest-thread research', () => {
           await Bun.write(reportPath, `# ${target.thread.ref}\n\n${prompt.length}\n`);
         },
       });
-      expect(calls).toEqual(['RTH-005', 'RTH-008', 'RTH-036']);
+      expect(calls).toEqual(['RTH-036', 'RTH-012', 'RTH-030']);
       expect(result.reports).toHaveLength(3);
       expect(result.failures).toEqual([]);
       expect(await Bun.file(join(root, '.cache/thread-research/latest.json')).exists()).toBe(true);
@@ -94,14 +94,41 @@ describe('daily weakest-thread research', () => {
         executeAgents: true,
         now: new Date('2026-08-07T12:00:00.000Z'),
         agent: async (target, _prompt, reportPath) => {
-          if (target.thread.ref === 'RTH-036') throw new Error('usage limit');
+          if (target.thread.ref === 'RTH-030') throw new Error('usage_limit');
           await Bun.write(reportPath, `# ${target.thread.ref}\n`);
         },
       });
-      expect(result.reports.map(report => report.ref)).toEqual(['RTH-005', 'RTH-008']);
-      expect(result.failures).toEqual([{ ref: 'RTH-036', error: 'usage limit' }]);
+      expect(result.reports.map(report => report.ref)).toEqual(['RTH-036', 'RTH-012']);
+      expect(result.failures[0]).toMatchObject({ ref: 'RTH-030', errorCode: 'usage_limit' });
       const manifest = await Bun.file(join(root, '.cache/thread-research/latest.json')).json();
-      expect(manifest.failures).toEqual([{ ref: 'RTH-036', error: 'usage limit' }]);
+      expect(manifest.cycle).toBe('thread-research-20260807T120000000z');
+      expect(manifest.failures[0]).toMatchObject({ ref: 'RTH-030', errorCode: 'usage_limit' });
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+
+  test('stops the cycle and redacts details when research quota is unavailable', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'project-r-thread-research-quota-'));
+    try {
+      const calls: string[] = [];
+      const result = await runThreadResearchCycle({
+        portfolio: await loadPortfolio(),
+        root,
+        executeAgents: true,
+        now: new Date('2026-08-07T12:00:00.000Z'),
+        agent: async target => {
+          calls.push(target.thread.ref);
+          throw new Error('usage_limit');
+        },
+      });
+      expect(calls).toEqual(['RTH-036']);
+      expect(result.failures[0]).toMatchObject({
+        ref: 'RTH-036',
+        errorCode: 'usage_limit',
+        message: 'Research quota is unavailable; no raw agent output was retained.',
+        retryAt: '2026-08-08T12:00:00.000Z',
+      });
     } finally {
       await rm(root, { recursive: true, force: true });
     }

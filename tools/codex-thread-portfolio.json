@@ -3,8 +3,8 @@
   "catalog": "project-r-thread-portfolio",
   "scope": {
     "cwd": "/Users/nolarose/Projects",
-    "reviewedAt": "2026-08-07",
-    "rootThreadCount": 36,
+    "reviewedAt": "2026-08-09",
+    "rootThreadCount": 37,
     "identity": {
       "humanRefPrefix": "RTH",
       "humanRefRule": "Chronological, immutable, zero-padded Project R root-thread reference",
@@ -920,7 +920,7 @@
       "ref": "RTH-027",
       "rank": 26,
       "sessionId": "019fd27f-9d75-7a30-8a70-d940a09fe40f",
-      "title": "RTH-027 \u00b7 INCOMPLETE \u00b7 PROJECT \u00b7 Unscoped Fix Request",
+      "title": "RTH-027 · INCOMPLETE · PROJECT · DOD Ingest Repair",
       "lane": "project",
       "score": 5,
       "quality": "empty",
@@ -1090,11 +1090,11 @@
       "ref": "RTH-033",
       "rank": 32,
       "sessionId": "019fdaff-31e0-7390-b014-07d807dae7b3",
-      "title": "RTH-033 · AUDIT · DX · Portfolio, Skills & Boundaries",
+      "title": "RTH-033 · SUPERSEDED · DX · Portfolio Intake Baseline",
       "lane": "dx",
       "score": 78,
       "quality": "analysis-only",
-      "state": "audit",
+      "state": "superseded",
       "pin": false,
       "summary": "Reviewed recent Codex tasks, repaired thread-state vocabulary, and clarified the Project R catalog intake boundary without inventing evidence for new roots.",
       "evidence": [
@@ -1153,7 +1153,7 @@
       "ref": "RTH-035",
       "rank": 34,
       "sessionId": "019fdbc7-2d77-7af0-b40c-8a140d93c55f",
-      "title": "RTH-035 · PUSHED · PROJECT · Grouped Workspace Changes",
+      "title": "RTH-035 · PUSHED · PROJECT · Workspace Integration Batch",
       "lane": "project",
       "score": 90,
       "quality": "verified",
@@ -1191,7 +1191,7 @@
       "ref": "RTH-036",
       "rank": 35,
       "sessionId": "019fdd09-d9d1-73f2-b830-fad1e49fb2c9",
-      "title": "RTH-036 · OPEN · PROJECT · Merge & Improvement Follow-up",
+      "title": "RTH-036 · OPEN · PROJECT · Integration PR Reconciliation",
       "lane": "project",
       "score": 50,
       "quality": "review-required",
@@ -1218,6 +1218,25 @@
       ],
       "relatedRefs": ["RTH-035", "RTH-033"],
       "closure": "Verify PR/merge state, then split the requested improvements into bounded subject lanes."
+    },
+    {
+      "ref": "RTH-037",
+      "rank": 36,
+      "sessionId": "019fe597-a5b3-75a1-9539-1eef3edc2347",
+      "title": "RTH-037 · AUDIT · DX · Portfolio Operations",
+      "lane": "dx",
+      "score": 76,
+      "quality": "analysis-only",
+      "state": "audit",
+      "pin": false,
+      "summary": "Reviewed recent Project R threads and initiated portfolio intake, scheduler selection, safe retry, and research logging improvements.",
+      "evidence": ["fresh root-thread inventory performed", "title and state drift identified", "daily research quota failure recorded", "portfolio operations improvements implemented"],
+      "references": [
+        {"kind": "document", "label": "Thread portfolio runbook", "target": "docs/harness/tenants/codex-thread-portfolio.md"},
+        {"kind": "command", "label": "Portfolio verification", "target": "bun run threads:portfolio:verify"}
+      ],
+      "relatedRefs": ["RTH-025", "RTH-033", "RTH-036"],
+      "closure": "Apply the catalog title, verify root parity, and deliver the focused portfolio operations lane."
     }
   ]
 }

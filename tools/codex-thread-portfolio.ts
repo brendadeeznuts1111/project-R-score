@@ -47,6 +47,7 @@ export type ThreadState =
   | 'audit'
   | 'snapshot'
   | 'analysis'
+  | 'superseded'
   | 'planned'
   | 'closed-unmerged'
   | 'incomplete'
@@ -116,6 +117,8 @@ export type PortfolioThread = {
   references: PortfolioReference[];
   relatedRefs: ThreadReference[];
   closure: string;
+  /** Blocked threads are excluded from scheduled research unless explicitly opted in. */
+  researchEligible: boolean;
 };
 
 export type ThreadPortfolio = {
@@ -162,6 +165,7 @@ type LocalThreadRow = {
 
 type InventoryThreadRow = {
   opaqueKey: string;
+  title: string;
   createdAt: number;
   source: string;
   threadSource: string | null;
@@ -171,7 +175,8 @@ export type ThreadInventoryStatus = {
   catalogCount: number;
   rootThreadCount: number;
   missingCatalogSessionIds: string[];
-  uncatalogedRootSessionIds: string[];
+  uncatalogedRootSessionIds: SessionId[];
+  uncatalogedRoots: Array<{ sessionId: SessionId; title: string }>;
   chronologicalRefsMatch: boolean;
   subagentCount: number;
   orphanSubagentSessionIds: string[];
@@ -239,6 +244,7 @@ const THREAD_STATES = new Set<ThreadState>([
   'audit',
   'snapshot',
   'analysis',
+  'superseded',
   'planned',
   'closed-unmerged',
   'incomplete',
@@ -365,6 +371,10 @@ function parsePortfolioThreadWire(value: unknown, index: number): PortfolioThrea
         parseThreadReference(ref, `threads[${index}].relatedRefs[${relatedIndex}]`)
     ),
     closure: parseString(value.closure, `threads[${index}].closure`),
+    researchEligible:
+      value.researchEligible === undefined
+        ? false
+        : parseBoolean(value.researchEligible, `threads[${index}].researchEligible`),
   };
 }
 
@@ -676,7 +686,7 @@ export function inspectThreadInventory(
   try {
     const rows = database
       .query<InventoryThreadRow, [string]>(
-        'SELECT id AS opaqueKey, created_at AS createdAt, source, thread_source AS threadSource FROM threads WHERE cwd = ?'
+        'SELECT id AS opaqueKey, title, created_at AS createdAt, source, thread_source AS threadSource FROM threads WHERE cwd = ?'
       )
       .all(portfolio.scope.cwd);
     const rootRows = rows
@@ -690,8 +700,11 @@ export function inspectThreadInventory(
       .map(thread => thread.sessionId as string)
       .filter(sessionId => !rootIds.has(sessionId));
     const uncatalogedRootSessionIds = rootRows
-      .map(row => row.opaqueKey)
+      .map(row => parseSessionId(row.opaqueKey))
       .filter(sessionId => !catalogBySessionId.has(sessionId));
+    const uncatalogedRoots = rootRows
+      .filter(row => !catalogBySessionId.has(row.opaqueKey))
+      .map(row => ({ sessionId: parseSessionId(row.opaqueKey), title: row.title }));
     const chronologicalRefsMatch = rootRows.every((row, index) => {
       const expectedRef = `RTH-${String(index + 1).padStart(3, '0')}`;
       return catalogBySessionId.get(row.opaqueKey)?.ref === expectedRef;
@@ -708,6 +721,7 @@ export function inspectThreadInventory(
       rootThreadCount: rootRows.length,
       missingCatalogSessionIds,
       uncatalogedRootSessionIds,
+      uncatalogedRoots,
       chronologicalRefsMatch,
       subagentCount: subagentRows.length,
       orphanSubagentSessionIds,
@@ -996,6 +1010,9 @@ async function main(): Promise<void> {
     console.info(
       `Inventory: ${inventory.rootThreadCount}/${inventory.catalogCount} root threads · ${inventory.subagentCount} mapped subagents · chronological refs ${inventory.chronologicalRefsMatch ? 'match' : 'DRIFT'}`
     );
+    for (const root of inventory.uncatalogedRoots) {
+      console.info(`Uncataloged root: ${root.sessionId} · ${root.title}`);
+    }
   }
   printAudit(portfolio, statuses, inventory, args.has('--json'));
   if (args.has('--verify')) {
