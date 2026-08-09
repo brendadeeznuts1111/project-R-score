@@ -298,8 +298,9 @@ export const demos: ShowcaseDemo[] = [
     apis: ['Bun.markdown'],
     run() {
       // FIX: Bun.markdown is an object, not a function — use .html / .ansi.
+      // Full docs catalog: bun run showcase:markdown
       console.log(
-        `  html=${Bun.markdown.html('# Hello').trim()} ansi=${JSON.stringify(Bun.markdown.ansi('**w**').trim())}`
+        `  html=${Bun.markdown.html('# Hello').trim()} ansi=${JSON.stringify(Bun.markdown.ansi('**w**').trim())} tip=bun run showcase:markdown`
       );
     },
   },

@@ -94,6 +94,7 @@ export const MARKDOWN_HARNESS_NOTE = [
   'Prefer markdown.render when you need custom element → string mapping.',
   'Prefer markdown.html / markdown.react for web.',
   'After ansi: measure/truncate with Bun.stringWidth / Bun.sliceAnsi / Bun.stripANSI.',
+  'Live catalog: bun run showcase:markdown (also `bun ./file.md` for zero-VM file preview).',
 ].join(' ');
 
 /** Compact table for CLI / status tips. */

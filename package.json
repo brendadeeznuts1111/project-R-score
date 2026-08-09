@@ -1566,6 +1566,7 @@
     "showcase:live": "bun tools/bun-api-showcase/oneliners.ts --live",
     "showcase:coverage": "bun tools/bun-api-showcase/coverage.ts",
     "showcase:ops": "bun tools/bun-api-showcase/ops-oneliners.ts",
+    "showcase:markdown": "bun tools/bun-markdown-showcase.ts",
     "showcase:verify": "bun tools/bun-api-showcase/verify.ts --write",
     "integrity:check": "bun lib/monitoring/integrity.ts",
     "ops:health-tick": "bun tools/ops-health-tick.ts",
