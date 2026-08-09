@@ -2152,6 +2152,7 @@
     "search:policy:check": "bun run scripts/check-search-policy-governance.ts",
     "rules": "bun run scripts/bun-rules.ts",
     "prelint": "bun run ci:bun:check",
+    "regression:new": "bun scripts/new-regression.ts",
     "lane:status": "bun tools/lane-status.ts",
     "velocity:cold-start": "bun tools/velocity-cold-start.ts",
     "sweep:domain": "bun tools/domain-sweep.ts",
