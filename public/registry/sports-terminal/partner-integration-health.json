@@ -3,7 +3,7 @@
   "kind": "sports-terminal-integration-health",
   "schemaVersion": 1,
   "path": "/registry/sports-terminal/partner-integration-health.json",
-  "generatedAt": "2026-08-09T02:58:39.936Z",
+  "generatedAt": "2026-08-09T03:02:33.057Z",
   "source": "fixture",
   "runtimeUrl": "https://sports-terminal.factory-wager.com",
   "moneyPolicy": "integer-minor-units-only",

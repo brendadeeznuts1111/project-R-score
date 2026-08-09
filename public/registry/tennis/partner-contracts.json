@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "tennis-partner-contracts",
   "path": "/registry/tennis/partner-contracts.json",
-  "generatedAt": "2026-08-09T02:58:39.936Z",
+  "generatedAt": "2026-08-09T03:02:33.057Z",
   "source": "live",
   "runtimeUrl": "https://tennis.factory-wager.com",
   "contractPaths": {
