@@ -175,3 +175,113 @@ export function evaluateConnectorFreshness(
     },
   };
 }
+
+/**
+ * Extract the observation clock from a connector artifact payload.
+ * Prefers `generatedAt`, then `observedAt`. Pure — no I/O.
+ */
+export function extractConnectorObservedAt(
+  // eslint-disable-next-line harness/no-unknown-function-param -- wire edge
+  raw: unknown,
+  path = 'connectorArtifact'
+): string {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
+    throw new TypeError(`${path} must be a plain object`);
+  }
+  const record = raw as Record<string, unknown>;
+  const candidate =
+    typeof record.generatedAt === 'string'
+      ? record.generatedAt
+      : typeof record.observedAt === 'string'
+        ? record.observedAt
+        : undefined;
+  if (candidate === undefined) {
+    throw new TypeError(`${path} must carry generatedAt or observedAt`);
+  }
+  canonicalTime(candidate, `${path}.generatedAt|observedAt`);
+  return candidate;
+}
+
+/**
+ * Content-addressed snapshot ref for LKG rows (`sha256:<hex>`).
+ * @see https://bun.com/docs/runtime/hashing#bun-cryptohasher
+ */
+export function connectorSnapshotRefFromPayload(payload: string | Uint8Array): string {
+  const hasher = new Bun.CryptoHasher('sha256');
+  hasher.update(payload);
+  return `sha256:${hasher.digest('hex')}`;
+}
+
+export type ConnectorObservationBundle = {
+  expectedInputRef: string;
+  required: boolean;
+  current?: ConnectorObservation;
+  lastKnownGood?: ConnectorObservation;
+};
+
+/**
+ * Evaluate a full connector snapshot map from per-key observation bundles.
+ * Throws when any required connector returns fail_bake.
+ */
+export function resolveConnectorSnapshotMap(
+  asOf: string,
+  bundles: Readonly<Record<string, ConnectorObservationBundle>>,
+  policy?: ConnectorFreshnessPolicy
+): Record<string, ConnectorSnapshot> {
+  const out: Record<string, ConnectorSnapshot> = {};
+  for (const key of Object.keys(bundles).sort()) {
+    const bundle = bundles[key]!;
+    const decision = evaluateConnectorFreshness({
+      asOf,
+      expectedInputRef: bundle.expectedInputRef,
+      required: bundle.required,
+      ...(bundle.current ? { current: bundle.current } : {}),
+      ...(bundle.lastKnownGood ? { lastKnownGood: bundle.lastKnownGood } : {}),
+      ...(policy ? { policy } : {}),
+    });
+    if (decision.disposition === 'fail_bake') {
+      throw new TypeError(
+        `connector ${key} fail_bake: ${decision.reasonCode} (input ${bundle.expectedInputRef})`
+      );
+    }
+    out[key] = decision.snapshot;
+  }
+  return out;
+}
+
+/**
+ * Pick the bake clock for offline registry composition.
+ * - `now` → wall clock
+ * - ISO timestamp → exact
+ * - `max-input` (default) → max of observation times (honest relative ages without
+ *   failing required sources when committed fixtures predate wall clock)
+ */
+export function resolvePartnerDashboardBakeAsOf(
+  mode: string,
+  observationTimes: readonly string[],
+  wallClock: string = new Date().toISOString()
+): string {
+  if (mode === 'now') {
+    canonicalTime(wallClock, 'wallClock');
+    return wallClock;
+  }
+  if (mode === 'max-input') {
+    if (observationTimes.length === 0) {
+      canonicalTime(wallClock, 'wallClock');
+      return wallClock;
+    }
+    let maxMs = -Infinity;
+    let maxIso = observationTimes[0]!;
+    for (const t of observationTimes) {
+      const ms = canonicalTime(t, 'observationTimes');
+      if (ms >= maxMs) {
+        maxMs = ms;
+        maxIso = t;
+      }
+    }
+    return maxIso;
+  }
+  // Explicit ISO
+  canonicalTime(mode, 'asOf');
+  return mode;
+}

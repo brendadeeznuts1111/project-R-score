@@ -56,18 +56,28 @@ bun run partner:dashboard-plan:validate
 - **`./adapters/lifecycle`** — canonical lifecycle + ST `frozen` → `suspended`
   map.
 
-## Connector freshness
+## Connector freshness + LKG
 
 `evaluateConnectorFreshness` derives snapshot status from bake clock +
-observation. Network timeout, circuit breakers, and last-known-good **file**
-cache remain connector-resilience follow-ons (bake currently stamps current at
-bake time).
+observation age (300s stale · 24h optional LKG · 30s future skew).
+
+Bake (`partner:dashboard:bake`) no longer stamps every connector `ok` at write
+time. Each connector's `observedAt` comes from the input artifact
+`generatedAt`/`observedAt`. Default `--as-of max-input` uses the newest input
+clock so offline fixture composition stays honest without wall-clock false
+failures on required profiles; `--as-of now` is wall-clock production mode.
+
+Optional last-known-good **file** cache lives at
+`.cache/partner-dashboard-lkg/<key>.json` (gitignored): written on successful
+optional loads; read when the registry file is missing.
+
+Network timeout / circuit-breaker **runtime** probes remain out of package scope
+(live connector hosts).
 
 ## Still planned (domain)
 
 See `docs/design/partner-dashboard-mvp.toml` `[core].planned`:
 
-- private profile policy surface
 - lifecycle beyond public bake
 - phase derivation enrichment
 - book-account **live** resolver (URL path / ops tooling; not pure package)

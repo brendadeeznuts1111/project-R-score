@@ -11,9 +11,14 @@ const ARTIFACT_PATH = `public${PARTNER_DASHBOARD_ARTIFACT_REF}`;
 
 describe('bake partners-dashboard', () => {
   test('assembles a parseable artifact from public registry inputs', async () => {
-    const artifact = await buildPartnersDashboardArtifact('2026-08-08T18:00:00.000Z');
+    // max-input bake clock: connector observedAt from each artifact generatedAt
+    // (not a fake "all ok at bake time" stamp).
+    const artifact = await buildPartnersDashboardArtifact({
+      asOfMode: 'max-input',
+      persistLkg: false,
+    });
     expect(artifact.schema).toBe(PARTNER_DASHBOARD_ARTIFACT_SCHEMA_V2);
-    expect(artifact.generatedAt).toBe('2026-08-08T18:00:00.000Z');
+    expect(artifact.generatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     expect(artifact.summary.partnerCount).toBe(4);
     expect(artifact.summary.canonicalProfileCount).toBe(4);
     // Tennis live capacity ∩ registered ready outs
@@ -26,7 +31,23 @@ describe('bake partners-dashboard', () => {
     ]);
     expect(artifact.summary.activeOutCount).toBe(5);
     expect(artifact.partners.map(p => p.partnerCode)).toEqual(['ASH', 'BIL', 'NOV', 'SPEN']);
-    expect(artifact.connectorSnapshots.profiles.dataStatus).toBe('ok');
+    // Required profiles are the freshest input under max-input → ok/current
+    expect(artifact.connectorSnapshots.profiles).toMatchObject({
+      dataStatus: 'ok',
+      sourceMode: 'current',
+      reasonCode: 'current_fresh',
+      ageSeconds: 0,
+    });
+    // Real artifact clocks: accounting/ST within 24h → stale/current (not fake ok)
+    expect(artifact.connectorSnapshots.accounting).toMatchObject({
+      dataStatus: 'stale',
+      sourceMode: 'current',
+      reasonCode: 'current_stale',
+    });
+    expect(artifact.connectorSnapshots.accounting.observedAt).toBe('2026-08-08T18:00:00.000Z');
+    // Older optional fixtures (>24h behind freshest input) surface as unavailable
+    expect(artifact.connectorSnapshots.telegram.dataStatus).toBe('unavailable');
+    expect(artifact.connectorSnapshots.limits.dataStatus).toBe('unavailable');
     expect(artifact.partners.find(p => p.partnerCode === 'ASH')?.integrations.tennis?.dataStatus).toBe(
       'ok'
     );

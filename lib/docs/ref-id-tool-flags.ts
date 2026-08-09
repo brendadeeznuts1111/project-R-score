@@ -857,7 +857,7 @@ export const BOOKMAKERS_PREPARE_PUBLISH_ALLOWED_LONG = ['dry-run', 'exclude'] as
 export const PARTNER_PROFILE_COVERAGE_BAKE_ALLOWED_LONG = ['check'] as const;
 
 /** § — partner:dashboard:bake (`scripts/bake-partners-dashboard.ts`) — Lane C board cutover */
-export const PARTNER_DASHBOARD_BAKE_ALLOWED_LONG = ['check'] as const;
+export const PARTNER_DASHBOARD_BAKE_ALLOWED_LONG = ['check', 'as-of'] as const;
 
 /** § — sports-terminal:health:refresh (`scripts/refresh-sports-terminal-integration-health.ts`) — Lane H */
 export const SPORTS_TERMINAL_HEALTH_REFRESH_ALLOWED_LONG = [
