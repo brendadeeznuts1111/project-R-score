@@ -209,9 +209,11 @@ describe('reconcilePartnerDashboardFacts', () => {
 
     for (const partner of reconciled.partners) {
       const { tracked, missing, coverageRatio } = partner.limits;
-      expect(tracked + missing).toBe(partner.outs.length);
+      // Denominator is catalog-scored outs only (placeholders excluded).
+      expect(tracked + missing).toBeLessThanOrEqual(partner.outs.length);
       expect(coverageRatio).toBe(tracked + missing === 0 ? 0 : tracked / (tracked + missing));
       for (const out of partner.outs) {
+        if (out.limitCoverageRatio === undefined) continue; // unregistered / placeholder
         expect(out.limitCoverageRatio === 0 || out.limitCoverageRatio === 1).toBe(true);
       }
     }
@@ -228,11 +230,23 @@ describe('reconcilePartnerDashboardFacts', () => {
       sourceSystemId: 'tennis-hq',
     });
 
-    // Partners with incomplete out limit evidence get coverage_gap attention.
+    // Desk placeholders (southfl-pph-desk, orange777) do not inflate coverage_gap.
     const nov = reconciled.partners.find(p => p.partnerCode === 'NOV')!;
-    if (nov.limits.missing > 0) {
-      expect(nov.attention.some(a => a.reasonCode === 'partner.limits.coverage_gap')).toBe(true);
-    }
+    const nov2 = nov.outs.find(o => o.outId === 'out-NOV-2')!;
+    expect(nov2.sportsbookId).toBe('southfl-pph-desk');
+    expect(nov2.limitCoverageRatio).toBeUndefined();
+    expect(nov.limits.coverageRatio).toBe(1);
+    expect(nov.attention.some(a => a.reasonCode === 'partner.limits.coverage_gap')).toBe(false);
+    expect(
+      nov.attention.some(a => a.reasonCode === 'partner.bookmakers.unregistered_sportsbook')
+    ).toBe(true);
+
+    const spen = reconciled.partners.find(p => p.partnerCode === 'SPEN')!;
+    const spen5 = spen.outs.find(o => o.outId === 'out-SPEN-5')!;
+    expect(spen5.sportsbookId).toBe('orange777');
+    expect(spen5.limitCoverageRatio).toBeUndefined();
+    expect(spen.limits.coverageRatio).toBe(1);
+    expect(spen.attention.some(a => a.reasonCode === 'partner.limits.coverage_gap')).toBe(false);
   });
 
   test('joins limit-change attention and bookmaker catalog validation without inventing ceilings', async () => {

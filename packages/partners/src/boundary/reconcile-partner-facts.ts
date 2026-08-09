@@ -19,6 +19,7 @@
  */
 import type { BookmakerCatalogProjection } from '../adapters/bookmakers.ts';
 import {
+  registeredSportsbookIdsFromCatalog,
   resolveSportsbookSlugAgainstCatalog,
   UNREGISTERED_DESK_SPORTSBOOK_PLACEHOLDERS,
 } from '../adapters/bookmakers.ts';
@@ -48,6 +49,7 @@ import {
   type OutOperationalStatus,
   type PartnerAttentionItem,
   type PartnerDashboardOut,
+  type SportsbookId,
   type PartnerDashboardRecord,
   type PartnerSourceConflict,
   type ProviderConnectionStatus,
@@ -367,17 +369,26 @@ function applyBookmakerCatalogIdentity(
 /**
  * Per-out + partner limit evidence coverage.
  *
- * tracked = outs with at least one evidence signal:
+ * scored outs = catalog-registered sportsbooks only (desk placeholders and
+ * other unregistered slugs already emit `partner.bookmakers.unregistered_sportsbook`
+ * and cannot receive raise evidence keyed by SportsbookId).
+ *
+ * tracked = scored outs with at least one evidence signal:
  *   - observedMaxStake (tennis live integer minor units), or
  *   - a limit-raise observation keyed by partnerCode + sportsbookId
- * missing = registered outs with neither signal
- * coverageRatio = tracked / (tracked + missing), or 0 when no outs
+ * missing = scored outs with neither signal
+ * coverageRatio = tracked / (tracked + missing), or 0 when no scored outs
  *
+ * Unscored outs omit `limitCoverageRatio` (not 0 — that would double-count).
  * Never invents max stake or treats raises as current execution ceilings.
  */
 export function applyLimitCoverageMetrics(
   partners: PartnerDashboardRecord[],
-  limits?: LimitChangeProjection
+  limits?: LimitChangeProjection,
+  options?: {
+    /** Catalog SportsbookIds; when set, only these outs enter coverage math. */
+    registeredSportsbookIds?: ReadonlySet<string>;
+  }
 ): void {
   const raiseBooks = new Map<string, Set<string>>();
   if (limits) {
@@ -392,11 +403,27 @@ export function applyLimitCoverageMetrics(
     }
   }
 
+  const registered = options?.registeredSportsbookIds;
+  const placeholderSet = new Set<string>(UNREGISTERED_DESK_SPORTSBOOK_PLACEHOLDERS);
+
+  function isScoredOut(sportsbookId: SportsbookId): boolean {
+    const slug = String(sportsbookId);
+    if (placeholderSet.has(slug)) return false;
+    if (registered !== undefined) return registered.has(slug);
+    // No catalog in this reconcile: still exclude known desk placeholders.
+    return true;
+  }
+
   for (const partner of partners) {
     const books = raiseBooks.get(partner.partnerCode);
     let tracked = 0;
     let missing = 0;
     for (const out of partner.outs) {
+      if (!isScoredOut(out.sportsbookId)) {
+        // Drop prior ratio so board/filter does not treat placeholders as coverage holes.
+        delete (out as { limitCoverageRatio?: number }).limitCoverageRatio;
+        continue;
+      }
       const hasExecutionEvidence = out.observedMaxStake !== undefined;
       const hasRaiseEvidence = books?.has(out.sportsbookId) === true;
       if (hasExecutionEvidence || hasRaiseEvidence) {
@@ -421,8 +448,8 @@ export function applyLimitCoverageMetrics(
           ...partner.attention,
           {
             reasonCode: reason,
-            severity: missing === partner.outs.length ? 'warn' : 'info',
-            label: `${missing}/${denom} out(s) lack limit evidence (max stake or raise history)`,
+            severity: missing === denom ? 'warn' : 'info',
+            label: `${missing}/${denom} catalog out(s) lack limit evidence (max stake or raise history)`,
             actionHref: '/portal/limits/',
           } satisfies PartnerAttentionItem,
         ].sort((a, b) => compareAscii(a.reasonCode, b.reasonCode));
@@ -511,7 +538,13 @@ export function reconcilePartnerDashboardFacts(
       applyBookmakerCatalogIdentity(partners, input.bookmakers);
     }
     // Coverage still runs from raise evidence alone when tennis is offline.
-    applyLimitCoverageMetrics(partners, input.limits);
+    applyLimitCoverageMetrics(partners, input.limits, {
+      ...(input.bookmakers
+        ? {
+            registeredSportsbookIds: new Set(registeredSportsbookIdsFromCatalog(input.bookmakers)),
+          }
+        : {}),
+    });
     applyReadyUnfundedAttention(partners);
     partners.sort((a, b) => compareAscii(a.partnerCode, b.partnerCode));
     for (const partner of partners) {
@@ -590,8 +623,14 @@ export function reconcilePartnerDashboardFacts(
     applyBookmakerCatalogIdentity(partners, input.bookmakers);
   }
 
-  // After tennis max-stake upgrades, score limit evidence coverage.
-  applyLimitCoverageMetrics(partners, input.limits);
+  // After tennis max-stake upgrades, score limit evidence coverage (catalog outs only).
+  applyLimitCoverageMetrics(partners, input.limits, {
+    ...(input.bookmakers
+      ? {
+          registeredSportsbookIds: new Set(registeredSportsbookIdsFromCatalog(input.bookmakers)),
+        }
+      : {}),
+  });
   applyReadyUnfundedAttention(partners);
 
   // Deduplicate + sort activeOutIds deterministically
