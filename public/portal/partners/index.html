@@ -7,7 +7,7 @@
     <meta name="portal-poll-ms" content="60000" />
     <meta
       name="description"
-      content="Partner package groups · Telegram forum chats · Accounting topic deals · betting deposit rails from seat capital desk."
+      content="Partner desk — readiness, live seats, attention, and funding."
     />
     <title>Partners · FactoryWager</title>
     <meta name="theme-color" content="#0d1117" />
@@ -83,10 +83,13 @@
         color: var(--accent);
       }
       #partners-stats.portal-stat-grid {
-        margin: 0 0 22px;
+        margin: 0 0 16px;
+        /* Quieter strip: fewer tiles, tighter */
+        grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+        gap: 8px;
       }
       .partners-section {
-        margin: 0 0 26px;
+        margin: 0 0 20px;
       }
       .partners-section h2 {
         margin: 0 0 6px;
@@ -96,11 +99,83 @@
         text-transform: uppercase;
         color: var(--text-dim);
       }
+      /* Default: hide long prose; keep structure for a11y/tests */
       .partners-section .blurb {
-        margin: 0 0 12px;
+        display: none;
+      }
+      .partners-section.partners-section--primary .blurb {
+        display: block;
+        margin: 0 0 10px;
         font-size: 13px;
         color: var(--text-dim);
-        line-height: 1.4;
+        line-height: 1.35;
+        max-width: 52rem;
+      }
+      .cli-row {
+        display: none;
+      }
+      details.partners-advanced {
+        margin: 8px 0 24px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        padding: 0;
+      }
+      details.partners-advanced > summary {
+        cursor: pointer;
+        list-style: none;
+        padding: 10px 14px;
+        font-size: 12px;
+        font-weight: 650;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        user-select: none;
+      }
+      details.partners-advanced > summary::-webkit-details-marker {
+        display: none;
+      }
+      details.partners-advanced > summary::before {
+        content: '▸ ';
+        color: var(--accent, #58a6ff);
+      }
+      details.partners-advanced[open] > summary::before {
+        content: '▾ ';
+      }
+      details.partners-advanced[open] > summary {
+        border-bottom: 1px solid var(--border);
+      }
+      details.partners-advanced .partners-advanced-body {
+        padding: 12px 14px 4px;
+      }
+      details.partners-advanced .partners-section {
+        margin-bottom: 18px;
+      }
+      details.partners-advanced .partners-section .blurb {
+        display: none;
+      }
+      .partners-hero.portal-hero--card {
+        padding-bottom: 12px;
+      }
+      .partners-hero .portal-source-links a:nth-child(n + 2) {
+        /* keep primary artifact link; others still in DOM for tests */
+        opacity: 0.75;
+      }
+      #partners-meta:empty,
+      #partners-meta:not(:has(*)) {
+        display: none;
+      }
+      .partners-meta-grid {
+        display: none; /* provenance is loud; bake time lives in hero */
+      }
+      .tag-filter-bar:not(:has(.topic-chip)) {
+        display: none;
+      }
+      #topic-chips:empty {
+        display: none;
+      }
+      .phase-filter-bar:empty {
+        display: none;
       }
       .partners-panel {
         background: var(--surface);
@@ -283,6 +358,7 @@
         color: var(--text-dim);
       }
       .cli-row {
+        display: none; /* operator commands stay in source; not primary UI chrome */
         font-family: 'JetBrains Mono', monospace;
         font-size: 11px;
         color: var(--text-dim);
@@ -406,7 +482,7 @@
     <main class="partners-page portal-page" id="partner-panel">
       <div data-domain-lanes="partner" hidden></div>
       <header class="partners-hero portal-hero--card" aria-labelledby="partners-hero-title">
-        <p class="portal-eyebrow">Package groups · Telegram · Soft bake mirror</p>
+        <p class="portal-eyebrow">Partner desk</p>
         <h2 class="partners-title portal-hero__title" id="partners-hero-title">
           <a
             class="semantic-label"
@@ -416,8 +492,7 @@
           >
         </h2>
         <p class="partners-lede hero-sub">
-          Forums, Accounting topic deals, and seat-desk deposit rails. Soft ledger mutations stay in
-          <code>ct</code> — this board is the factory bake mirror.
+          Who is ready, which seats are live, and what needs attention.
         </p>
         <div class="portal-hero-meta">
           <span id="partners-gate" class="portal-gate" aria-live="polite">…</span>
@@ -440,10 +515,8 @@
             >
           </div>
         </div>
-        <div class="partners-meta-grid" id="partners-meta" aria-label="Bake provenance">
-          Loading registry…
-        </div>
-        <p class="partners-meta-links">
+        <div class="partners-meta-grid" id="partners-meta" aria-label="Bake provenance" hidden></div>
+        <p class="partners-meta-links" hidden>
           CLI <code>bun run partners:validate</code> ·
           <a
             href="/portal/glossary/#glossary:section.partnersTags"
@@ -462,7 +535,7 @@
           id="tag-filter-bar"
           aria-label="Partner-ops taxonomy filters"
           data-glossary-concept="section.partnersTags"
-          style="margin-top: 14px"
+          style="margin-top: 10px"
         >
           <div id="section:tag-filter-bar" class="sr-only" aria-hidden="true"></div>
           <ul class="topic-chips" id="taxonomy-chips" aria-label="Partner-ops taxonomy"></ul>
@@ -518,7 +591,7 @@
         </section>
 
         <section
-          class="partners-section"
+          class="partners-section partners-section--primary"
           id="section:telegram"
           aria-labelledby="telegram-heading"
           data-glossary-concept="section.partnersTelegram"
@@ -527,12 +600,11 @@
             <a
               href="/portal/glossary/#glossary:section.partnersTelegram"
               data-glossary-concept="section.partnersTelegram"
-              >Telegram package groups</a
+              >Partners</a
             >
           </h2>
           <p class="blurb">
-            One forum per partner CODE · invite + membership tell · topics: General · Ops · Alerts ·
-            Liquidity/Outs · Accounting ·
+            Package group readiness · telegram handshake · seat balance.
             <a
               href="/portal/glossary/#glossary:telegram.handshake"
               data-glossary-concept="telegram.handshake"
@@ -562,7 +634,7 @@
         </section>
 
         <section
-          class="partners-section"
+          class="partners-section partners-section--primary"
           id="partner-attention"
           aria-labelledby="attention-heading"
           data-glossary-concept="section.partnersAttention"
@@ -575,17 +647,7 @@
               >Attention</a
             >
           </h2>
-          <p class="blurb">
-            Deterministic operator actions from
-            <code>partners[].attention</code> and
-            <a
-              href="/portal/glossary/#glossary:partner.source_conflict"
-              data-glossary-concept="partner.source_conflict"
-              >source conflicts</a
-            >
-            · family · severity · reason · next action. Filter by family (limits ·
-            bookmakers · telegram · profile).
-          </p>
+          <p class="blurb">What needs an operator next step.</p>
           <div
             id="attention-family-filters"
             class="topic-chip-row"
@@ -628,6 +690,10 @@
             bun run partner:dashboard:bake · attention rows are bake-derived (no live mutate)
           </p>
         </section>
+
+        <details class="partners-advanced" id="partners-advanced">
+          <summary>More · accounting · connectors · Soft · seat · books</summary>
+          <div class="partners-advanced-body">
 
         <section
           class="partners-section"
@@ -694,7 +760,7 @@
         </section>
 
         <section
-          class="partners-section"
+          class="partners-section partners-section--primary"
           id="section:outs"
           aria-labelledby="outs-heading"
           data-glossary-concept="out.status.ready"
@@ -703,20 +769,12 @@
             <a
               href="/portal/glossary/#glossary:out.status.ready"
               data-glossary-concept="out.status.ready"
-              >Outs inventory</a
+              >Outs</a
             >
           </h2>
           <p class="blurb">
-            Flattened seats from
-            <a href="/registry/partners-dashboard.json"
-              ><code>partners-dashboard.json</code></a
-            >
-            (profile outs inventory) — book, funding status, max stake evidence, and
-            <a
-              href="/portal/glossary/#glossary:out.status.ready"
-              data-glossary-concept="out.status.ready"
-              >out status</a
-            >. Filter by readiness; open a partner profile via CODE.
+            Seats on the desk — book, funding, max stake, status.
+            <span data-glossary-concept="section.partnersOuts"></span>
           </p>
           <div class="partner-outs-toolbar" role="toolbar" aria-label="Outs filters">
             <label>
@@ -1203,6 +1261,9 @@
             [--post]
           </p>
         </section>
+
+          </div>
+        </details>
       </div>
     </main>
 
@@ -1686,65 +1747,22 @@
         const desk = summarizeDashboardDesk(dashboard);
         const profileCoverage = dashboardProfileCoverage(dashboard);
         const canonicalProfiles = profileCoverage.coveredCodes.length;
+        // Quiet strip: five operator questions only.
         const cells = [
-          ['Partners', desk.partners, '', 'section:telegram', 'Partners on dashboard artifact'],
+          ['Partners', desk.partners, '', 'section:telegram', 'Partners on dashboard'],
           [
-            'Operator ready',
+            'Ready',
             desk.operatorReady,
             desk.operatorReady === desk.partners && desk.partners > 0 ? 'ok' : 'warn',
             'section:telegram',
-            'operationalPhase operator_ready',
+            'operator_ready phase',
           ],
           [
-            'Active outs',
+            'Live outs',
             `${desk.activeOuts}/${desk.outs}`,
             desk.activeOuts > 0 ? 'ok' : 'warn',
             'section:outs',
-            'tennis live activeOutIds ∩ registered ready',
-          ],
-          [
-            'Outs ready',
-            `${desk.readyOuts}/${desk.outs}`,
-            desk.readyOuts === desk.outs && desk.outs > 0 ? 'ok' : 'warn',
-            'section:outs',
-            'operationalStatus=ready',
-          ],
-          [
-            'Balances',
-            desk.balancePositionCount,
-            desk.balancePositionCount > 0 ? 'ok' : 'warn',
-            'section:accounting',
-            'Scoped balance positions from partner-ledger',
-          ],
-          [
-            'Telegram ready',
-            desk.communicationReady,
-            desk.communicationReady === desk.partners && desk.partners > 0 ? 'ok' : 'warn',
-            'section:telegram',
-            'communication.chatLinked',
-          ],
-          [
-            'Limit coverage',
-            `${desk.limitCoveragePct}%`,
-            desk.limitCoveragePct >= 80 ? 'ok' : desk.limitCoveragePct >= 40 ? 'warn' : 'muted',
-            'section:accounts-limits',
-            `${desk.trackedLimits} tracked limits`,
-          ],
-          [
-            'Canonical profiles',
-            `${canonicalProfiles}/${desk.partners}`,
-            canonicalProfiles >= desk.partners && desk.partners > 0 ? 'ok' : 'warn',
-            'partner-profile',
-            profileCoverage.missingCodes.length
-              ? `Missing ${profileCoverage.missingCodes.join(', ')}`
-              : 'identity.profileSourceSystemId canonical',
-          ],
-          [
-            'Incomplete outs',
-            desk.incompleteOuts,
-            desk.incompleteOuts > 0 ? 'warn' : 'ok',
-            'section:outs',
-            'unknown/blocked/deferred operational status',
+            'tennis active ∩ registered',
           ],
           [
             'Attention',
@@ -1754,11 +1772,11 @@
             'Partners with attention rows',
           ],
           [
-            'Integrations',
-            desk.activeOuts,
-            desk.activeOuts > 0 ? 'ok' : 'warn',
-            'partner-integrations',
-            'Connector freshness + tennis capacity',
+            'Limits',
+            `${desk.limitCoveragePct}%`,
+            desk.limitCoveragePct >= 80 ? 'ok' : desk.limitCoveragePct >= 40 ? 'warn' : 'muted',
+            'section:accounts-limits',
+            `${desk.trackedLimits} tracked · ${desk.incompleteOuts} incomplete outs · Canonical profiles ${canonicalProfiles}/${desk.partners}`,
           ],
         ];
         const readiness = partnerReadinessGate({
@@ -2346,6 +2364,12 @@
               }),
             }
           );
+        }
+        // Quiet default: hide Attention entirely when clean.
+        const attSec = $('partner-attention');
+        if (attSec) {
+          const allItems = dashboardAttentionRows(dashboard);
+          attSec.hidden = allItems.length === 0 && conflicts.length === 0;
         }
       }
 
@@ -2961,6 +2985,8 @@
             status.textContent = `${selectedCode} · ${route.type}${route.topic ? ` · ${route.topic}` : ''}`;
           else status.textContent = 'All partners';
         }
+        const advanced = $('partners-advanced');
+        if (advanced && target && advanced.contains(target)) advanced.open = true;
         if (scroll && target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
@@ -3042,69 +3068,8 @@
               },
             }
           );
-          $('partners-meta').innerHTML = [
-            ['Dashboard', dashBake],
-            [
-              'Canonical',
-              {
-                text: `${dashboard.summary?.canonicalProfileCount ?? 0}/${dashboard.summary?.partnerCount ?? 0}`,
-                tone:
-                  (dashboard.summary?.canonicalProfileCount ?? 0) >=
-                  (dashboard.summary?.partnerCount ?? 0)
-                    ? 'ok'
-                    : 'warn',
-              },
-            ],
-            [
-              'Active outs',
-              {
-                text: `${dashboard.summary?.activeOutCount ?? 0}/${dashboard.summary?.registeredOutCount ?? 0}`,
-                tone: (dashboard.summary?.activeOutCount ?? 0) > 0 ? 'ok' : 'warn',
-              },
-            ],
-            [
-              'Balances',
-              {
-                text: String(dashboard.summary?.balancePositions?.length ?? 0),
-                tone: (dashboard.summary?.balancePositions?.length ?? 0) > 0 ? 'ok' : 'warn',
-              },
-            ],
-            [
-              'Soft',
-              {
-                text: softResult.ok
-                  ? `${softProjected.playCount} plays · ${softBake.text}`
-                  : softBake.text,
-                tone: softResult.ok && softProjected.playCount > 0 ? softBake.tone || 'ok' : 'warn',
-              },
-            ],
-            [
-              'Seat',
-              {
-                text: seatResult.ok ? `${seat.rows.length} desks · ${seatBake.text}` : seatBake.text,
-                tone: seatResult.ok && seat.rows.length > 0 ? seatBake.tone || 'ok' : 'warn',
-              },
-            ],
-            [
-              'Connectors',
-              {
-                text: `${connectorSummary.ok} ok · ${connectorSummary.stale} stale · ${connectorSummary.unavailable} n/a`,
-                tone: connectorSummary.unavailable > 0 ? 'warn' : 'ok',
-              },
-            ],
-            [
-              'Attention',
-              {
-                text: String(dashboard.summary?.attentionPartnerCount ?? 0),
-                tone: (dashboard.summary?.attentionPartnerCount ?? 0) > 0 ? 'warn' : 'ok',
-              },
-            ],
-          ]
-            .map(
-              ([k, b]) =>
-                `<div class="partners-meta-chip ${esc(b.tone)}"><span class="k">${esc(k)}</span><span class="v">${esc(b.text)}</span></div>`
-            )
-            .join('');
+          // Quiet UI: skip loud provenance chip strip (bake time is in the hero).
+          $('partners-meta').innerHTML = '';
 
           renderTopics(catalog, { colors: {} });
           renderTaxonomyChips({ colors: {} });
