@@ -6,8 +6,12 @@
  * Types: packages/bun-types/bun.d.ts → `namespace markdown` (unstable API).
  *
  * @see https://bun.com/docs/runtime/markdown#bun-markdown-html
+ * @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi / Bun.markdown.AnsiTheme
+ * @see https://bun.com/docs/runtime/markdown#options — Bun.markdown.Options
+ * @see https://bun.com/docs/runtime/markdown#omitting-elements — omitting-elements
  * @see https://bun.com/reference/bun/markdown
  * @see https://github.com/oven-sh/bun/blob/main/packages/bun-types/bun.d.ts
+ * TOKEN_GUIDE_PATH invent: runtime/markdown#bun-markdown-ansi (native ansi example; not a live docs-index anchor)
  */
 import { bunDocs, bunReference } from '../lib/docs/bun-site-url.ts';
 import { formatCliTable, toolTableVersion } from './cli-table.ts';

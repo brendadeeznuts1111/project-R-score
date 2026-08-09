@@ -25,7 +25,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/reference/bun/BunInspectOptions — BunInspectOptions
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
-// @see https://bun.com/docs/runtime/markdown#options — options
+// @see https://bun.com/docs/runtime/markdown#options — options / Bun.markdown.Options
 // @see https://bun.com/docs/runtime/markdown#autolinks — autolinks
 // @see https://bun.com/docs/runtime/markdown#heading-ids — heading-ids
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
@@ -38,6 +38,9 @@
 // @see https://bun.com/docs/runtime/markdown#stripping-all-formatting — stripping-all-formatting
 // @see https://bun.com/docs/runtime/markdown#code-block-syntax-highlighting — code-block-syntax-highlighting
 // @see https://bun.com/docs/runtime/markdown#nested-list-numbering — nested-list-numbering
+// @see https://bun.com/docs/runtime/markdown#omitting-elements — omitting-elements
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — ansi-terminal-output / Bun.markdown.ansi / Bun.markdown.AnsiTheme
+// TOKEN_GUIDE_PATH invent: runtime/markdown#bun-markdown-ansi (not a live docs-index anchor)
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-react — Bun.markdown.react
 // @see https://bun.com/docs/runtime/markdown#server-side-rendering — server-side-rendering
 // @see https://bun.com/docs/runtime/markdown#component-overrides — component-overrides
@@ -600,10 +603,11 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
     },
   ],
   // Native Bun.markdown.ansi — token-owned so suggest does not fall through to #ansi-terminal-output
+  // (not a live docs-index anchor; TOKEN_GUIDE_PATH only for Bun.markdown.ansi / AnsiTheme)
   'runtime/markdown#bun-markdown-ansi': [
     {
       lang: 'ts',
-      body: 'const ansi = Bun.markdown.ansi("# Hello **world**");\n// ANSI-styled terminal string',
+      body: 'const ansi = Bun.markdown.ansi("# Hello **world**", {\n  columns: 80,\n  hyperlinks: true,\n});\n// ANSI-styled terminal string (AnsiTheme second arg)',
     },
   ],
   'runtime/markdown#code-block-syntax-highlighting': [
@@ -989,6 +993,8 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   BunInspectOptions: 'reference/bun/BunInspectOptions',
   'Bun.markdown.html': 'runtime/markdown#bun-markdown-html',
   'Bun.markdown.ansi': 'runtime/markdown#bun-markdown-ansi',
+  'Bun.markdown.AnsiTheme': 'runtime/markdown#bun-markdown-ansi',
+  'Bun.markdown.Options': 'runtime/markdown#options',
   'Bun.markdown.render': 'runtime/markdown#bun-markdown-render',
   'Bun.markdown.react': 'runtime/markdown#bun-markdown-react',
   'component-overrides': 'runtime/markdown#component-overrides',
@@ -997,6 +1003,7 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'Bun.markdown.react available overrides': 'runtime/markdown#available-overrides',
   options: 'runtime/markdown#options',
   'Bun.markdown.html options': 'runtime/markdown#options',
+  'ansi-terminal-output': 'runtime/markdown#ansi-terminal-output',
   autolinks: 'runtime/markdown#autolinks',
   'Bun.markdown.html autolinks': 'runtime/markdown#autolinks',
   'heading-ids': 'runtime/markdown#heading-ids',
