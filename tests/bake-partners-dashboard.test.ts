@@ -63,8 +63,14 @@ describe('bake partners-dashboard', () => {
     // out-scoped funding from ledger (funded when balance_after_minor > 0)
     expect(ash.outs.find(o => o.outId === 'out-ASH-1')?.fundingStatus).toBe('funded');
     const spen = artifact.partners.find(p => p.partnerCode === 'SPEN')!;
-    expect(spen.outs.find(o => o.outId === 'out-SPEN-1')?.fundingStatus).toBe('unfunded');
+    // Ready SPEN outs carry positive ledger balances (fixture); deferred SPEN-5 stays unknown
+    expect(spen.outs.find(o => o.outId === 'out-SPEN-1')?.fundingStatus).toBe('funded');
     expect(spen.outs.find(o => o.outId === 'out-SPEN-2')?.fundingStatus).toBe('funded');
+    expect(spen.outs.find(o => o.outId === 'out-SPEN-3')?.fundingStatus).toBe('funded');
+    expect(spen.outs.find(o => o.outId === 'out-SPEN-5')?.fundingStatus).toBe('unknown');
+    expect(
+      spen.attention.some(a => a.reasonCode === 'partner.funding.ready_unfunded')
+    ).toBe(false);
     // Re-parse for structural guarantee
     const reparsed = parsePartnerDashboardArtifact(artifact);
     expect(reparsed.summary.partnerCount).toBe(4);
