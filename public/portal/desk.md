@@ -65,5 +65,6 @@ separately).
 Import live Soft when available: `bun run soft:accounting:from-ct` (empty Soft
 DB keeps the fixture bake).
 
-Pure join: [`desk-board.js`](./desk/desk-board.js). Bake:
-`bun run partner:dashboard:bake`.
+Pure join: [`desk-board.js`](./desk/desk-board.js). Soft week/window physics
+SSOT: [`shared/soft-windows.js`](./shared/soft-windows.js) (also partners
+board + account dossier). Bake: `bun run partner:dashboard:bake`.

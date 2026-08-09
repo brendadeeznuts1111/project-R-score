@@ -4,6 +4,8 @@
  * partners-ops · telegram-handshake · soft-accounting-export). Soft Balance mutations
  * stay in toc-ops `ct`.
  *
+ * Soft week/window physics: public/portal/shared/soft-windows.js
+ *
  * Partner outs inventory prefers partners-dashboard (profile outs SSOT). Optional
  * partners-ops still supplies telegram topic thread ids + legacy ledger deposits
  * when present.
@@ -16,6 +18,14 @@ import {
   PARTNER_OPS_EVENT_CODE_CONCEPTS,
   conceptIdForPartnerOpsEventCode,
 } from './glossary-map.js';
+import { buildDossierSoftPlays } from '../shared/soft-windows.js';
+
+export {
+  buildDossierSoftPlays,
+  rollupByBookTypeFromPlays,
+  rollupWeeksFromPlays,
+  weekStartIsoFromPlacedAt,
+} from '../shared/soft-windows.js';
 
 const PARTNER_CODE_RE = /^[A-Z]{3,6}$/;
 /** Call-sign only — avoids treating slug ids like LIMIT-DEMO-ATLANTIC as CODE LIMIT. */
@@ -266,9 +276,7 @@ function buildConnectedTree(accountId, partnerNodeId, patterns, profiles) {
         state_code: row.jurisdiction?.stateCode ?? null,
         location: row.jurisdiction?.location ?? null,
         zip_code: row.jurisdiction?.zipCode ?? null,
-        zip_prefix: row.jurisdiction?.zipCode
-          ? String(row.jurisdiction.zipCode).slice(0, 3)
-          : null,
+        zip_prefix: row.jurisdiction?.zipCode ? String(row.jurisdiction.zipCode).slice(0, 3) : null,
         license_status: row.license?.status ?? null,
         changes: row.observations?.raises ?? 0,
         raises: row.observations?.raises ?? 0,
@@ -311,9 +319,7 @@ export function projectDossierPartnerFromDashboard(partner) {
           },
           status: out?.operationalStatus ?? null,
           fundingStatus: out?.fundingStatus ?? null,
-          funding: out?.fundingStatus
-            ? { method: String(out.fundingStatus) }
-            : undefined,
+          funding: out?.fundingStatus ? { method: String(out.fundingStatus) } : undefined,
           maxBet:
             typeof maxMinor === 'number' && Number.isFinite(maxMinor)
               ? String(maxMinor / 100)
@@ -339,8 +345,7 @@ export function projectDossierPartnerFromDashboard(partner) {
   const ledger = [];
   for (const entry of recent) {
     const minor = entry?.amount?.minorUnits;
-    const amount =
-      typeof minor === 'number' && Number.isFinite(minor) ? minor / 100 : null;
+    const amount = typeof minor === 'number' && Number.isFinite(minor) ? minor / 100 : null;
     const type = String(entry?.entryType || '').toLowerCase();
     const codeName = entryTypeToCode[type] || null;
     if (amount != null && type === 'deposit') {
@@ -424,9 +429,10 @@ export function mergeDossierPartnerRows(dashboardRow, opsRow) {
     phase: dashboardRow.phase || opsRow.phase,
     phaseConceptId: opsRow.phaseConceptId ?? dashboardRow.phaseConceptId,
     // Out inventory SSOT is profile → dashboard
-    outs: Array.isArray(dashboardRow.outs) && dashboardRow.outs.length > 0
-      ? dashboardRow.outs
-      : opsRow.outs,
+    outs:
+      Array.isArray(dashboardRow.outs) && dashboardRow.outs.length > 0
+        ? dashboardRow.outs
+        : opsRow.outs,
     accounting:
       opsHasLedger || opsHasDeposits
         ? opsRow.accounting
@@ -549,9 +555,7 @@ export function buildDossierAccountingView(partnerRow) {
 export function buildDossierActivity(partnerRow, handshakeRow = null, telegram = null) {
   /** @type {Array<{ at: string; kind: string; label: string; detail: string; conceptId: string | null }>} */
   const rows = [];
-  const ledger = Array.isArray(partnerRow?.accounting?.ledger)
-    ? partnerRow.accounting.ledger
-    : [];
+  const ledger = Array.isArray(partnerRow?.accounting?.ledger) ? partnerRow.accounting.ledger : [];
   for (const event of ledger.slice(0, 20)) {
     const code = String(event?.code || 'event');
     rows.push({
@@ -561,9 +565,7 @@ export function buildDossierActivity(partnerRow, handshakeRow = null, telegram =
       detail: [event?.note, event?.rail, event?.amount != null ? `$${event.amount}` : null]
         .filter(Boolean)
         .join(' · '),
-      conceptId: event?.conceptId
-        ? String(event.conceptId)
-        : conceptIdForPartnerOpsEventCode(code),
+      conceptId: event?.conceptId ? String(event.conceptId) : conceptIdForPartnerOpsEventCode(code),
     });
   }
 
@@ -659,146 +661,8 @@ export function buildDossierTelegram(partnerRow, handshakeRow = null) {
   };
 }
 
-/** UTC Monday (YYYY-MM-DD) for a placedAt ISO — mirrors weekStartIsoFromPlacedAt. */
-export function weekStartIsoFromPlacedAt(placedAt) {
-  const ms = Date.parse(String(placedAt || ''));
-  if (!Number.isFinite(ms)) return null;
-  const d = new Date(ms);
-  const day = d.getUTCDay();
-  const mondayOffset = day === 0 ? -6 : 1 - day;
-  d.setUTCDate(d.getUTCDate() + mondayOffset);
-  const y = d.getUTCFullYear();
-  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-  const dayNum = String(d.getUTCDate()).padStart(2, '0');
-  return `${y}-${m}-${dayNum}`;
-}
-
-/**
- * Derive per-week Soft rows from plays when export.weeks is empty.
- * mirrors lib/telegram/soft-accounting-export.ts rollupWeeksFromPlays.
- * @param {object[]} plays
- */
-export function rollupWeeksFromPlays(plays) {
-  /** @type {Map<string, { weekStart: string, partnerCode: string, deposits: number, withdrawals: number, settlements: number, fees: number, net: number }>} */
-  const byKey = new Map();
-  for (const play of plays || []) {
-    const partnerCode = String(play?.partnerCode || '')
-      .trim()
-      .toUpperCase();
-    const weekStart = weekStartIsoFromPlacedAt(play?.placedAt);
-    if (!partnerCode || !weekStart) continue;
-    const key = `${partnerCode}|${weekStart}`;
-    let row = byKey.get(key);
-    if (!row) {
-      row = {
-        weekStart,
-        partnerCode,
-        deposits: 0,
-        withdrawals: 0,
-        settlements: 0,
-        fees: 0,
-        net: 0,
-      };
-      byKey.set(key, row);
-    }
-    const stake = typeof play.stake === 'number' && Number.isFinite(play.stake) ? play.stake : 0;
-    const pnl = typeof play.pnl === 'number' && Number.isFinite(play.pnl) ? play.pnl : 0;
-    row.deposits += stake;
-    if (play.result !== 'pending') row.settlements += Math.abs(pnl);
-    row.net += pnl;
-  }
-  return [...byKey.values()].sort(
-    (a, b) =>
-      a.weekStart.localeCompare(b.weekStart) || a.partnerCode.localeCompare(b.partnerCode)
-  );
-}
-
-/**
- * Derive Soft book-type rows from tagged plays (mirrors rollupByBookTypeFromPlays).
- * @param {object[]} plays
- */
-export function rollupByBookTypeFromPlays(plays) {
-  /** @type {Map<string, { bookType: string, partnerCode: string, deposits: number, settlements: number, fees: number, net: number }>} */
-  const byKey = new Map();
-  for (const play of plays || []) {
-    const partnerCode = String(play?.partnerCode || '')
-      .trim()
-      .toUpperCase();
-    const bookType = String(play?.bookType || '').trim();
-    if (!partnerCode || !bookType.startsWith('book.type.')) continue;
-    const key = `${partnerCode}|${bookType}`;
-    let row = byKey.get(key);
-    if (!row) {
-      row = { bookType, partnerCode, deposits: 0, settlements: 0, fees: 0, net: 0 };
-      byKey.set(key, row);
-    }
-    const stake = typeof play.stake === 'number' && Number.isFinite(play.stake) ? play.stake : 0;
-    const pnl = typeof play.pnl === 'number' && Number.isFinite(play.pnl) ? play.pnl : 0;
-    row.deposits += stake;
-    if (play.result !== 'pending') row.settlements += Math.abs(pnl);
-    row.net += pnl;
-  }
-  return [...byKey.values()].sort(
-    (a, b) => a.partnerCode.localeCompare(b.partnerCode) || a.bookType.localeCompare(b.bookType)
-  );
-}
-
-/**
- * Soft play chrome for one partner CODE (mirrors lib/telegram/soft-accounting-export.ts
- * buildPartnerSoftPlayChrome — ops.view.per_play + derived ops.view.per_week; no Soft mutation).
- * @param {object | null} softExport
- * @param {string | null | undefined} partnerCode
- * @param {{ limit?: number }} [opts]
- */
-export function buildDossierSoftPlays(softExport, partnerCode, opts = {}) {
-  const code = String(partnerCode || '')
-    .trim()
-    .toUpperCase();
-  if (!code) return null;
-  const limit =
-    typeof opts.limit === 'number' && opts.limit > 0 ? Math.floor(opts.limit) : 8;
-  const source = softExport?.source || 'unavailable';
-  const path = softExport?.path || '/registry/soft-accounting-export.json';
-  const all = Array.isArray(softExport?.plays)
-    ? softExport.plays.filter(
-        p =>
-          String(p?.partnerCode || '')
-            .trim()
-            .toUpperCase() === code
-      )
-    : [];
-  all.sort((a, b) => String(a.placedAt || '').localeCompare(String(b.placedAt || '')));
-  const plays = all.slice().reverse().slice(0, limit);
-  const exportWeeks = Array.isArray(softExport?.weeks)
-    ? softExport.weeks.filter(w => String(w?.partnerCode || '').toUpperCase() === code)
-    : [];
-  const weeks =
-    exportWeeks.length > 0
-      ? exportWeeks.slice().sort((a, b) => String(b.weekStart || '').localeCompare(String(a.weekStart || '')))
-      : rollupWeeksFromPlays(all)
-          .slice()
-          .sort((a, b) => b.weekStart.localeCompare(a.weekStart));
-  const exportBooks = Array.isArray(softExport?.byBookType)
-    ? softExport.byBookType.filter(b => String(b?.partnerCode || '').toUpperCase() === code)
-    : [];
-  const byBookType =
-    exportBooks.length > 0
-      ? exportBooks.slice().sort((a, b) => String(a.bookType || '').localeCompare(String(b.bookType || '')))
-      : rollupByBookTypeFromPlays(all);
-  return {
-    partnerCode: code,
-    available: all.length > 0,
-    source,
-    path,
-    playCount: all.length,
-    conceptId: 'ops.view.per_play',
-    weekConceptId: 'ops.view.per_week',
-    bookConceptId: 'ops.view.per_book_type',
-    plays,
-    weeks,
-    byBookType,
-  };
-}
+/* weekStartIsoFromPlacedAt · rollupWeeksFromPlays · rollupByBookTypeFromPlays ·
+ * buildDossierSoftPlays — re-exported from ../shared/soft-windows.js */
 
 /**
  * Build a single-account dossier view-model from baked registries.
@@ -934,7 +798,9 @@ export function buildAccountDossier({
     links: {
       history: `/portal/partner-history/?account=${encodeURIComponent(id)}`,
       limits: `/portal/limits/#account:${encodeURIComponent(id)}`,
-      partners: code ? `/portal/partners/#partner/${encodeURIComponent(code)}` : '/portal/partners/',
+      partners: code
+        ? `/portal/partners/#partner/${encodeURIComponent(code)}`
+        : '/portal/partners/',
       partnersTelegram,
       partnersAccounting,
       betlogCsv: `${betlogBase}&format=csv`,

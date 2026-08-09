@@ -4,8 +4,9 @@
  *
  * Primary: partners-dashboard.v2
  * Ancillary: soft-accounting-export · seat-capital-desk · partners-ops ·
- * bookmakers · telegram-handshake
+ * bookmakers · telegram-handshake · limit-raises · partner-ledger · coverage
  *
+ * Soft window physics: public/portal/shared/soft-windows.js
  * @see docs/harness/tenants/partner-domain-map.md
  * @see public/portal/partners/partners-board.js
  */
@@ -19,6 +20,27 @@ import {
   outScopedBalances,
   statusToneClass,
 } from '../partners/partners-board.js';
+import {
+  SOFT_FIXTURE_REBASE_MIN_AGE_MS,
+  SOFT_MS_HOUR,
+  SOFT_WINDOW_24H_MS,
+  SOFT_WINDOW_7D_MS,
+  prepareSoftExportForDeskWindows,
+  softExportTipMs,
+  sumSoftPnlWindow,
+} from '../shared/soft-windows.js';
+
+export {
+  prepareSoftExportForDeskWindows,
+  prepareSoftExportForWindows,
+  softExportTipMs,
+  sumSoftPnlWindow,
+  weekStartIsoFromPlacedAt,
+  softWeekStartIsoFromPlacedAt,
+  indexSoftPlaysByPartner,
+  softWeekRowsFromExport,
+  projectSoftAccountingExport,
+} from '../shared/soft-windows.js';
 
 /** Canonical primary artifact for the morning desk. */
 export const DESK_PRIMARY_ARTIFACT_REF = '/registry/partners-dashboard.json';
@@ -34,11 +56,11 @@ export const DESK_ANCILLARY_REFS = Object.freeze({
   bookCoverage: '/registry/bookmakers-desk-coverage.json',
 });
 
-const MS_HOUR = 3_600_000;
-const WINDOW_24H_MS = 24 * MS_HOUR;
-const WINDOW_7D_MS = 7 * 24 * MS_HOUR;
+const MS_HOUR = SOFT_MS_HOUR;
+const WINDOW_24H_MS = SOFT_WINDOW_24H_MS;
+const WINDOW_7D_MS = SOFT_WINDOW_7D_MS;
 /** When fixture tip is older than this, desk rebases play timestamps onto wall clock. */
-const FIXTURE_REBASE_MIN_AGE_MS = 48 * MS_HOUR;
+const FIXTURE_REBASE_MIN_AGE_MS = SOFT_FIXTURE_REBASE_MIN_AGE_MS;
 
 /**
  * @param {unknown} value
@@ -193,163 +215,8 @@ function matchSeatOut(seatOuts, outId, bookLabel) {
   return null;
 }
 
-/**
- * Latest settledAt/placedAt tip among soft plays (ms), or null.
- * @param {object | null | undefined} softExport
- * @returns {number | null}
- */
-export function softExportTipMs(softExport) {
-  let tip = null;
-  for (const play of softExport?.plays || []) {
-    const ts = asString(play?.settledAt || play?.placedAt);
-    const t = Date.parse(ts);
-    if (!Number.isFinite(t)) continue;
-    if (tip == null || t > tip) tip = t;
-  }
-  return tip;
-}
-
-/**
- * Shift ISO timestamp by deltaMs; empty/invalid stays as-is.
- * @param {unknown} iso
- * @param {number} deltaMs
- * @returns {string}
- */
-function shiftIso(iso, deltaMs) {
-  const raw = asString(iso);
-  if (!raw) return raw;
-  const t = Date.parse(raw);
-  if (!Number.isFinite(t)) return raw;
-  return new Date(t + deltaMs).toISOString();
-}
-
-/**
- * For stale toc-ops-fixture demos only: rebase play timestamps so wall-clock
- * 24h/7d windows show activity. Live soft-ct is never rewritten.
- *
- * @param {object | null | undefined} softExport
- * @param {number} wallNowMs
- * @returns {{
- *   soft: object | null | undefined,
- *   rebased: boolean,
- *   mode: 'wall-clock' | 'fixture-rebase' | 'unavailable',
- *   tipMs: number | null,
- *   tipIso: string | null,
- *   deltaMs: number,
- *   note: string,
- * }}
- */
-export function prepareSoftExportForDeskWindows(softExport, wallNowMs) {
-  const available = Boolean(softExport && softExport.available !== false);
-  const source = asString(softExport?.source);
-  const tipMs = softExportTipMs(softExport);
-  const tipIso = tipMs != null ? new Date(tipMs).toISOString() : null;
-
-  if (!available) {
-    return {
-      soft: softExport,
-      rebased: false,
-      mode: 'unavailable',
-      tipMs,
-      tipIso,
-      deltaMs: 0,
-      note: 'Soft accounting unavailable.',
-    };
-  }
-
-  // Live Soft Balance path — always wall-clock windows.
-  if (source === 'soft-ct') {
-    return {
-      soft: softExport,
-      rebased: false,
-      mode: 'wall-clock',
-      tipMs,
-      tipIso,
-      deltaMs: 0,
-      note: 'Soft windows use wall clock (soft-ct).',
-    };
-  }
-
-  // Fixture demos: if tip is stale, slide the whole series forward onto now.
-  if (source === 'toc-ops-fixture' && tipMs != null) {
-    const age = wallNowMs - tipMs;
-    if (age >= FIXTURE_REBASE_MIN_AGE_MS) {
-      const deltaMs = age;
-      const plays = (softExport.plays || []).map(play => ({
-        ...play,
-        placedAt: shiftIso(play?.placedAt, deltaMs),
-        settledAt: play?.settledAt ? shiftIso(play.settledAt, deltaMs) : play?.settledAt,
-      }));
-      return {
-        soft: { ...softExport, plays },
-        rebased: true,
-        mode: 'fixture-rebase',
-        tipMs,
-        tipIso,
-        deltaMs,
-        note: `Fixture plays rebased to wall clock for desk windows (export tip ${tipIso}). soft-ct is never rewritten.`,
-      };
-    }
-  }
-
-  return {
-    soft: softExport,
-    rebased: false,
-    mode: 'wall-clock',
-    tipMs,
-    tipIso,
-    deltaMs: 0,
-    note: 'Soft windows use wall clock.',
-  };
-}
-
-/**
- * Sum soft-accounting play pnl in a time window (major USD).
- * Uses settledAt, falling back to placedAt.
- *
- * @param {object | null | undefined} softExport
- * @param {{ nowMs?: number, windowMs?: number | null }} [opts]
- *   windowMs null = all plays
- * @returns {{
- *   netMajor: number,
- *   playCount: number,
- *   byPartner: Map<string, { netMajor: number, playCount: number }>,
- *   source: string,
- *   available: boolean,
- * }}
- */
-export function sumSoftPnlWindow(softExport, opts = {}) {
-  const nowMs = typeof opts.nowMs === 'number' ? opts.nowMs : Date.now();
-  const windowMs = opts.windowMs === undefined ? WINDOW_24H_MS : opts.windowMs;
-  const byPartner = new Map();
-  let netMajor = 0;
-  let playCount = 0;
-  const available = Boolean(softExport && softExport.available !== false);
-  const source =
-    asString(softExport?.source) || (available ? 'soft-accounting-export' : 'unavailable');
-  if (!available) {
-    return { netMajor: 0, playCount: 0, byPartner, source, available: false };
-  }
-  const plays = Array.isArray(softExport.plays) ? softExport.plays : [];
-  for (const play of plays) {
-    const code = normalizePartnerCode(play?.partnerCode);
-    const pnl = asFiniteNumber(play?.pnl);
-    if (pnl == null) continue;
-    const ts = asString(play?.settledAt || play?.placedAt);
-    const t = Date.parse(ts);
-    if (!Number.isFinite(t)) continue;
-    if (windowMs != null && nowMs - t > windowMs) continue;
-    if (windowMs != null && t > nowMs) continue;
-    netMajor += pnl;
-    playCount += 1;
-    if (!code) continue;
-    const prev = byPartner.get(code) || { netMajor: 0, playCount: 0 };
-    prev.netMajor += pnl;
-    prev.playCount += 1;
-    byPartner.set(code, prev);
-  }
-  return { netMajor, playCount, byPartner, source, available: true };
-}
+/* softExportTipMs · prepareSoftExportForDeskWindows · sumSoftPnlWindow
+ * — re-exported from ../shared/soft-windows.js */
 
 /**
  * Sum dashboard settlement entries in a window (minor units → major).
