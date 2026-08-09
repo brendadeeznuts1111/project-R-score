@@ -36,6 +36,11 @@ const BLOG_LISTITEM_META =
   'https://bun.com/blog/bun-v1.3.11#bunmarkdownrender-now-passes-richer-metadata-to-listitem-and-list-callbacks';
 export const SHOWCASE_HTML_PATH = 'artifacts/bun-markdown-showcase.html';
 
+/** Escape `|` inside GFM table cells (union types like `number | undefined`). */
+export function gfmCell(s: string): string {
+  return s.replace(/\|/g, '\\|');
+}
+
 /** listItem meta shape (Bun ≥ 1.3.11) — always passed; optional fields stay undefined. */
 export const LIST_ITEM_META_CATALOG = [
   {
@@ -196,7 +201,10 @@ function isReactLike(v: object): v is ReactLike {
 /** Walk Bun.markdown.react trees without requiring react-dom at the root. */
 export function serializeReactLike(node: ReactLikeNode): string {
   if (node == null || node === false) return '';
-  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (typeof node === 'string' || typeof node === 'number') {
+    // Escape text nodes — showcase HTML injects this into md-out.
+    return Bun.escapeHTML(String(node));
+  }
   if (Array.isArray(node)) return node.map(serializeReactLike).join('');
   if (typeof node !== 'object' || !isReactLike(node)) return '';
 
@@ -367,7 +375,8 @@ export const MARKDOWN_DOC_EXAMPLES: readonly MarkdownExample[] = [
     api: 'Bun.markdown.html',
     docsAnchor: 'options',
     md: 'See [[Target]] and $E=mc^2$',
-    callNote: 'Bun.markdown.html(md, { wikiLinks: true, latexMath: true }) — off by default',
+    callNote:
+      'Bun.markdown.html(md, { wikiLinks: true, latexMath: true }) — wiki → <x-wikilink>; latex may stay literal depending on Bun pin',
     run: () =>
       htmlResult(
         Bun.markdown.html('See [[Target]] and $E=mc^2$', {
@@ -557,7 +566,7 @@ export const MARKDOWN_DOC_EXAMPLES: readonly MarkdownExample[] = [
         '| Property | Type | Description |',
         '| --- | --- | --- |',
         ...LIST_ITEM_META_CATALOG.map(
-          r => `| \`${r.property}\` | \`${r.type}\` | ${r.description} |`
+          r => `| \`${gfmCell(r.property)}\` | \`${gfmCell(r.type)}\` | ${gfmCell(r.description)} |`
         ),
         '',
         LIST_ITEM_META_BREAKING,
@@ -935,13 +944,14 @@ export async function runAllExamples(): Promise<
 
 function formatMetaCatalogMd(): string {
   const itemRows = LIST_ITEM_META_CATALOG.map(
-    r => `| \`${r.property}\` | \`${r.type}\` | ${r.description} |`
+    r => `| \`${gfmCell(r.property)}\` | \`${gfmCell(r.type)}\` | ${gfmCell(r.description)} |`
   ).join('\n');
   const listRows = LIST_META_CATALOG.map(
-    r => `| \`${r.property}\` | \`${r.type}\` | ${r.description} |`
+    r => `| \`${gfmCell(r.property)}\` | \`${gfmCell(r.type)}\` | ${gfmCell(r.description)} |`
   ).join('\n');
   const ansiRows = ANSI_THEME_CATALOG.map(
-    r => `| \`${r.property}\` | \`${r.type}\` | ${r.default} | ${r.description} |`
+    r =>
+      `| \`${gfmCell(r.property)}\` | \`${gfmCell(r.type)}\` | ${gfmCell(r.default)} | ${gfmCell(r.description)} |`
   ).join('\n');
   return [
     '### listItem meta (always passed ≥1.3.11)',
@@ -1181,14 +1191,15 @@ export function parseShowcaseArgs(argv: string[]): {
 
 export function filterExamples(ids: string[]): readonly MarkdownExample[] {
   if (!ids.length) return MARKDOWN_DOC_EXAMPLES;
-  const set = new Set(ids);
-  const hit = MARKDOWN_DOC_EXAMPLES.filter(e => set.has(e.id));
-  if (!hit.length) {
+  const byId = new Map(MARKDOWN_DOC_EXAMPLES.map(e => [e.id, e]));
+  const missing = ids.filter(id => !byId.has(id));
+  if (missing.length) {
     throw new Error(
-      `No examples match --id=${ids.join(',')}. Use --list. Known: ${MARKDOWN_DOC_EXAMPLES.map(e => e.id).join(', ')}`
+      `Unknown example id(s): ${missing.join(', ')}. Use --list. Known: ${MARKDOWN_DOC_EXAMPLES.map(e => e.id).join(', ')}`
     );
   }
-  return hit;
+  // Preserve catalog order, not argv order.
+  return MARKDOWN_DOC_EXAMPLES.filter(e => ids.includes(e.id));
 }
 
 async function main(): Promise<void> {

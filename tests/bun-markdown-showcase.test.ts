@@ -175,6 +175,15 @@ describe('bun-markdown-showcase catalog', () => {
     expect(html).toContain('<strong>world</strong>');
   });
 
+  test('serializeReactLike escapes text-node HTML', () => {
+    const html = serializeReactLike({
+      type: 'p',
+      props: { children: '<script>alert(1)</script>' },
+    });
+    expect(html).toContain('&lt;script&gt;');
+    expect(html).not.toContain('<script>');
+  });
+
   test('buildShowcaseHtml includes meta ref and every example id', async () => {
     const rows = await runAllExamples();
     const page = buildShowcaseHtml(rows);
@@ -184,6 +193,16 @@ describe('bun-markdown-showcase catalog', () => {
     for (const { example } of rows) {
       expect(page).toContain(`id="${example.id}"`);
     }
+  });
+
+  test('meta reference table keeps union types in one cell', async () => {
+    const page = buildShowcaseHtml(await runAllExamples());
+    // Pipe in `number | undefined` must not split the GFM/HTML table row.
+    expect(page).toMatch(/<td><code>start<\/code><\/td><td><code>number\s*\|\s*undefined<\/code><\/td>/);
+    expect(page).toMatch(
+      /<td><code>checked<\/code><\/td><td><code>boolean\s*\|\s*undefined<\/code><\/td>/
+    );
+    expect(page).not.toContain('<td>`number</td>');
   });
 
   test('parseShowcaseArgs', () => {
@@ -208,6 +227,8 @@ describe('bun-markdown-showcase catalog', () => {
   test('filterExamples selects by id', () => {
     const hit = filterExamples(['ansi-plain', 'html-basic']);
     expect(hit.map(e => e.id)).toEqual(['html-basic', 'ansi-plain']);
-    expect(() => filterExamples(['nope'])).toThrow(/No examples match/);
+    expect(() => filterExamples(['nope'])).toThrow(/Unknown example id/);
+    expect(() => filterExamples(['html-basic', 'typo'])).toThrow(/Unknown example id/);
+    expect(() => filterExamples(['html-basic', 'typo'])).toThrow(/typo/);
   });
 });
