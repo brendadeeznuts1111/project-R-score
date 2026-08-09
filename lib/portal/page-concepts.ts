@@ -228,6 +228,14 @@ export const PORTAL_PAGE_CONCEPT_DEFINITIONS = [
     synonyms: ['partner health', 'partner status'],
   },
   {
+    path: '/portal/desk/',
+    id: 'page.partnerDesk',
+    label: 'Morning desk',
+    description:
+      'Quiet morning board: accounts by partner/type/skin/live, limit totals, balances, soft net 24h/7d, Telegram handshake signals, freezes.',
+    synonyms: ['morning desk', 'partner desk', 'daily desk', 'login inventory'],
+  },
+  {
     path: '/portal/partners/',
     id: 'page.partners',
     label: 'Partners',

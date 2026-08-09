@@ -310,6 +310,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     cli: 'bun run partner:health:bake',
   },
   {
+    id: 'desk',
+    label: 'Morning desk',
+    href: '/portal/desk/',
+    note: 'logins · limits · balances · soft net · telegram · freezes',
+    group: 'ops',
+    cli: 'bun run partner:dashboard:bake',
+  },
+  {
     id: 'partners',
     label: 'Partners',
     href: '/portal/partners/',

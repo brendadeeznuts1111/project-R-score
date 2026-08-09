@@ -120,6 +120,12 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
   },
   { file: 'limits/index.html', active: 'limits', pageLabel: 'Limits', brandBadge: 'ops' },
   {
+    file: 'desk/index.html',
+    active: 'desk',
+    pageLabel: 'Desk',
+    brandBadge: 'ops',
+  },
+  {
     file: 'partners/index.html',
     active: 'partners',
     pageLabel: 'Partners',

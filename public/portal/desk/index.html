@@ -1,0 +1,1163 @@
+<!doctype html>
+<!-- @see docs/portal-foundation.md · morning operator desk · partners-dashboard primary -->
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="portal-poll-ms" content="60000" />
+    <meta
+      name="description"
+      content="Morning desk — accounts by partner/type/skin/live, limits, balances, net 24h/7d, Telegram signals, freezes."
+    />
+    <title>Desk · FactoryWager</title>
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="application-name" content="FactoryWager" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <style>
+      .desk-page.portal-page {
+        max-width: 1120px;
+      }
+      .desk-page .portal-hero--card {
+        padding-bottom: 10px;
+      }
+      .desk-page .portal-hero__title {
+        margin: 0;
+      }
+      .desk-kicker {
+        margin: 6px 0 0;
+        color: var(--text-dim);
+        font-size: 13px;
+        line-height: 1.4;
+        max-width: 70ch;
+      }
+      .desk-links {
+        margin: 8px 0 0;
+        font-size: 12px;
+        color: var(--text-dim);
+      }
+      .desk-links a {
+        color: var(--accent);
+      }
+      .desk-stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 8px;
+        margin: 0 0 20px;
+      }
+      .desk-stat {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 10px 12px;
+      }
+      .desk-stat .k {
+        display: block;
+        font: 600 10px/1.2 var(--font-mono, ui-monospace, monospace);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        margin-bottom: 4px;
+      }
+      .desk-stat .v {
+        font-family: var(--font-mono, ui-monospace, monospace);
+        font-variant-numeric: tabular-nums;
+        font-size: 1.05rem;
+        font-weight: 650;
+      }
+      .desk-stat .sub {
+        margin-top: 2px;
+        font-size: 11px;
+        color: var(--text-dim);
+      }
+      .desk-stat.warn .v {
+        color: var(--yellow, #d29922);
+      }
+      .desk-stat.ok .v {
+        color: var(--green, #3fb950);
+      }
+      .desk-stat.bad .v {
+        color: var(--red, #f85149);
+      }
+      .desk-section {
+        margin: 0 0 22px;
+      }
+      .desk-section h2 {
+        margin: 0 0 4px;
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+      }
+      .desk-section .blurb {
+        margin: 0 0 10px;
+        font-size: 12px;
+        color: var(--text-dim);
+        line-height: 1.35;
+      }
+      .desk-panel {
+        border: 1px solid var(--border);
+        border-radius: var(--radius, 8px);
+        background: var(--surface);
+        padding: 10px 12px;
+        overflow-x: auto;
+      }
+      .desk-table {
+        width: 100%;
+        min-width: 640px;
+        border-collapse: collapse;
+        font-size: 12.5px;
+      }
+      .desk-table th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--text-dim);
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+      .desk-table td {
+        padding: 7px 8px;
+        border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+        vertical-align: top;
+        font-variant-numeric: tabular-nums;
+      }
+      .desk-table tr:last-child td {
+        border-bottom: none;
+      }
+      .desk-table .mono {
+        font-family: var(--font-mono, ui-monospace, monospace);
+      }
+      .desk-table .dim {
+        color: var(--text-dim);
+      }
+      .tone-ok {
+        color: var(--green, #3fb950);
+      }
+      .tone-warn {
+        color: var(--yellow, #d29922);
+      }
+      .tone-bad {
+        color: var(--red, #f85149);
+      }
+      .tone-muted {
+        color: var(--text-dim);
+      }
+      .desk-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .desk-chip {
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-dim);
+      }
+      .desk-chip strong {
+        color: var(--text);
+        font-weight: 650;
+      }
+      .desk-empty {
+        color: var(--text-dim);
+        font-size: 12px;
+        padding: 6px 0;
+      }
+      .desk-note {
+        margin: 6px 0 0;
+        font-size: 11px;
+        color: var(--text-dim);
+        line-height: 1.35;
+      }
+      .desk-filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 0 0 10px;
+        align-items: center;
+      }
+      .desk-filter-bar label {
+        font-size: 11px;
+        color: var(--text-dim);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .desk-filter-bar select {
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        color: var(--text);
+      }
+      .hidden {
+        display: none !important;
+      }
+      .desk-loading,
+      .desk-error {
+        margin: 24px 0;
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .desk-error {
+        border-color: color-mix(in srgb, var(--red, #f85149) 40%, var(--border));
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon" aria-hidden="true"></span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">Desk</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary">
+          <a
+            href="/"
+            class="nav-link"
+            title="public lander · portal entry"
+            data-group="other"
+            data-domain="platform"
+            >Home</a
+          >
+          <a
+            href="/portal/ops/"
+            class="nav-link"
+            title="ops-summary rollup · C4/C5 loop · partner handshake panel · bun run ops:snapshot"
+            data-group="ops"
+            data-domain="control"
+            data-cli="bun run ops:snapshot"
+            data-registry="/registry/ops-summary.json"
+            >Ops</a
+          >
+          <a
+            href="/portal/"
+            class="nav-link"
+            title="portal hub · board index · weave surfaces"
+            data-group="registry"
+            data-domain="platform"
+            >Registry</a
+          >
+          <a
+            href="/portal/health/"
+            class="nav-link"
+            title="system health · monorepo score · bun run monorepo:health:bake"
+            data-group="harness"
+            data-domain="platform"
+            data-cli="bun run monorepo:health:bake"
+            data-registry="/registry/monorepo-health.json"
+            >Health</a
+          >
+          <a
+            href="/portal/dod/"
+            class="nav-link"
+            title="visual proof review · public-plane gate · bun run public:audit:verify"
+            data-group="plane"
+            data-domain="platform"
+            data-cli="bun run public:audit:verify"
+            >DOD</a
+          >
+          <a
+            href="/portal/compliance/"
+            class="nav-link"
+            title="MA/NJ board · shadow matrix · bun run compliance:bake"
+            data-group="ops"
+            data-domain="control"
+            data-cli="bun run compliance:bake"
+            data-registry="/registry/compliance-board.json"
+            >Compliance</a
+          >
+          <div class="nav-overflow">
+            <button
+              type="button"
+              class="nav-more"
+              aria-label="More navigation"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              ⋯
+            </button>
+            <div class="nav-dropdown" role="menu">
+              <div class="nav-group" role="group" aria-label="Ops · domain" data-group="ops">
+                <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
+                <a
+                  href="/portal/desk/"
+                  class="nav-link active"
+                  aria-current="page"
+                  title="morning board · logins · limits · balances · soft net · telegram · freezes · bun run partner:dashboard:bake"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run partner:dashboard:bake"
+                  data-registry="/registry/partners-dashboard.json"
+                  role="menuitem"
+                  >Desk</a
+                >
+                <a
+                  href="/portal/partners/"
+                  class="nav-link"
+                  title="package groups · telegram forums · accounting · deposits · seat capital · bun run partner:dashboard:bake"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run partner:dashboard:bake"
+                  data-registry="/registry/partners-dashboard.json"
+                  role="menuitem"
+                  >Partners</a
+                >
+                <a
+                  href="/portal/partner/"
+                  class="nav-link"
+                  title="partner domain readiness · profile alignment · per-out checks · bun run partner:health:bake"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run partner:health:bake"
+                  data-registry="/registry/partner-health.json"
+                  role="menuitem"
+                  >Partner health</a
+                >
+                <a
+                  href="/portal/account/"
+                  class="nav-link"
+                  title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run ops:dossier:seed"
+                  data-registry="/registry/partners-dashboard.json"
+                  role="menuitem"
+                  >Account</a
+                >
+                <a
+                  href="/portal/partner-history/"
+                  class="nav-link"
+                  title="per-partner limit history board · bun run ops:limits:demo"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run ops:limits:demo"
+                  data-registry="/registry/limit-raises.json"
+                  role="menuitem"
+                  >Partner history</a
+                >
+                <a
+                  href="/portal/limits/"
+                  class="nav-link"
+                  title="multi-factor partner limit raises · CLV · bun run ops:limits:demo"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run ops:limits:demo"
+                  data-registry="/registry/limit-raises.json"
+                  role="menuitem"
+                  >Limits</a
+                >
+                <a
+                  href="/portal/limits-lab/"
+                  class="nav-link"
+                  title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run ops:limits:predict"
+                  data-registry="/registry/limit-forecast-lab.json"
+                  role="menuitem"
+                  >Limits lab</a
+                >
+                <a
+                  href="/portal/bookmakers/"
+                  class="nav-link"
+                  title="@factorywager/bookmakers catalog (Tenant=bookmakers; Domain=partner = desk loop) · bun run bookmakers:bake"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run bookmakers:bake"
+                  data-registry="/registry/bookmakers.json"
+                  role="menuitem"
+                  >Bookmakers</a
+                >
+                <a
+                  href="/portal/factory/"
+                  class="nav-link"
+                  title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run telegram:verify"
+                  data-registry="/registry/telegram-handshake.json"
+                  role="menuitem"
+                  >Factory</a
+                >
+                <a
+                  href="/portal/tennis/"
+                  class="nav-link"
+                  title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake"
+                  data-group="ops"
+                  data-domain="trading"
+                  data-cli="bun run tennis:board:bake"
+                  data-registry="/registry/tennis/agent-auth.json"
+                  role="menuitem"
+                  >Tennis</a
+                >
+                <a
+                  href="/registry/prediction/report/"
+                  class="nav-link"
+                  title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction"
+                  data-group="ops"
+                  data-domain="trading"
+                  data-cli="bun run portal-cli snapshot last --scope prediction"
+                  role="menuitem"
+                  >Prediction</a
+                >
+                <a
+                  href="/portal/dashboard/"
+                  class="nav-link"
+                  title="KPIs · TOC · compliance plane · proof-index pins"
+                  data-group="ops"
+                  data-domain="control"
+                  role="menuitem"
+                  >Dashboard</a
+                >
+                <a
+                  href="/portal/toc/"
+                  class="nav-link"
+                  title="Drum/Buffer/Rope fixture board · bun run ops:seed:toc"
+                  data-group="ops"
+                  data-domain="control"
+                  data-cli="bun run ops:seed:toc"
+                  data-registry="/registry/toc-ops.json"
+                  role="menuitem"
+                  >TOC</a
+                >
+                <a
+                  href="/monitoring/"
+                  class="nav-link"
+                  title="routing · env · compliance tile · proof status · bun run ops:snapshot --no-seed"
+                  data-group="ops"
+                  data-domain="control"
+                  data-cli="bun run ops:snapshot --no-seed"
+                  data-registry="/registry/monitoring.json"
+                  role="menuitem"
+                  >Monitoring</a
+                >
+                <a
+                  href="/portal/identity/"
+                  class="nav-link"
+                  title="auth board · lockout · anomaly · geo · JIT · bun test tests/identity-*.test.ts"
+                  data-group="ops"
+                  data-domain="identity"
+                  data-cli="bun test tests/identity-*.test.ts"
+                  data-registry="/registry/identity-board.json"
+                  role="menuitem"
+                  >Identity</a
+                >
+              </div>
+              <div class="nav-group" role="group" aria-label="Secrets" data-group="secrets">
+                <div class="nav-group-label" aria-hidden="true">Secrets</div>
+                <a
+                  href="/portal/vault/"
+                  class="nav-link"
+                  title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                  data-group="secrets"
+                  data-domain="identity"
+                  data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                  data-registry="/registry/vault-health.json"
+                  role="menuitem"
+                  >Vault</a
+                >
+                <a
+                  href="/portal/env/"
+                  class="nav-link"
+                  title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed"
+                  data-group="secrets"
+                  data-domain="identity"
+                  data-cli="bun run portal-cli secret map  # no secret values printed"
+                  role="menuitem"
+                  >Env</a
+                >
+              </div>
+              <div class="nav-group" role="group" aria-label="Registry" data-group="registry">
+                <div class="nav-group-label" aria-hidden="true">Registry</div>
+                <a
+                  href="/portal/catalog/"
+                  class="nav-link"
+                  title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run bake:scrape-wire-taxonomy"
+                  role="menuitem"
+                  >Catalog</a
+                >
+                <a
+                  href="/portal/packages/"
+                  class="nav-link"
+                  title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save"
+                  data-group="registry"
+                  data-domain="platform"
+                  data-cli="bun run ssot:flow:soft && bun run verify:pm:save"
+                  data-registry="/registry/packages-graph-map.json"
+                  role="menuitem"
+                  >Packages</a
+                >
+                <a
+                  href="/portal/brands/"
+                  class="nav-link"
+                  title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run brand:keymap"
+                  role="menuitem"
+                  >Brands</a
+                >
+                <a
+                  href="/portal/glossary/"
+                  class="nav-link"
+                  title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run glossary:portal"
+                  data-registry="/registry/domain-glossary.json"
+                  role="menuitem"
+                  >Glossary</a
+                >
+                <a
+                  href="/portal/lanes/"
+                  class="nav-link"
+                  title="session · chrome · concept crosswalk · correlations not containment · bun run workspace-taxonomy:bake"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run workspace-taxonomy:bake"
+                  data-registry="/registry/workspace-lane-map.json"
+                  role="menuitem"
+                  >Lanes</a
+                >
+                <a
+                  href="/portal/issues/"
+                  class="nav-link"
+                  title="repository issue spine · labels · ownership · public drift health · bun run github-issue-taxonomy:check"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run github-issue-taxonomy:check"
+                  data-registry="/registry/github-issue-taxonomy.json"
+                  role="menuitem"
+                  >Issues</a
+                >
+                <a
+                  href="/portal/surfaces/"
+                  class="nav-link"
+                  title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json"
+                  data-registry="/registry/surfaces-state.json"
+                  role="menuitem"
+                  >Surfaces</a
+                >
+                <a
+                  href="/portal/skills/"
+                  class="nav-link"
+                  title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run skills:validate"
+                  data-registry="/registry/harness-skills-catalog.json"
+                  role="menuitem"
+                  >Skills</a
+                >
+                <a
+                  href="/portal/concepts/"
+                  class="nav-link"
+                  title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run concepts:bake  # → /registry/concepts-state.json"
+                  role="menuitem"
+                  >Concepts</a
+                >
+                <a
+                  href="/portal/concepts/graph/"
+                  class="nav-link"
+                  title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json"
+                  role="menuitem"
+                  >Concept graph</a
+                >
+              </div>
+              <div class="nav-group" role="group" aria-label="More" data-group="other">
+                <div class="nav-group-label" aria-hidden="true">More</div>
+                <a
+                  href="https://wiki.factory-wager.com/wiki-index.html"
+                  class="nav-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="GitHub Pages hub · wiki-index"
+                  data-group="other"
+                  data-domain="platform"
+                  role="menuitem"
+                  >Wiki</a
+                >
+              </div>
+            </div>
+          </div>
+        </nav>
+        <div class="topbar-status">
+          <a href="/portal/desk.md" class="nav-link nav-md" title="Markdown view">MD</a>
+          <a href="/registry/partners-dashboard.json" class="nav-link nav-md" title="Primary JSON"
+            >JSON</a
+          >
+          <a href="/portal/health/" class="topbar-health-link" title="System health">
+            <span id="health-dot" class="health-dot unknown"></span>
+            <span id="health-label" class="health-label">…</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="portal-page desk-page">
+      <div id="loading" class="desk-loading" role="status">Loading morning desk…</div>
+      <div id="error-banner" class="desk-error hidden" role="alert"></div>
+
+      <div id="dashboard" class="hidden">
+        <section class="portal-hero portal-hero--card" aria-labelledby="desk-hero-title">
+          <p class="portal-eyebrow">Partner domain · morning board</p>
+          <h2 id="desk-hero-title" class="portal-hero__title">Morning desk</h2>
+          <p class="desk-kicker">
+            Login inventory, limits, balances, soft net (24h / 7d), Telegram handshake signals, and
+            freezes — one quiet view. Ops tools stay on
+            <a href="/portal/partners/">Partners</a>.
+          </p>
+          <p class="desk-links">
+            <span id="desk-baked" class="dim">—</span>
+            ·
+            <a href="/portal/partners/">Partners board</a>
+            ·
+            <a href="/portal/account/">Account dossier</a>
+            ·
+            <a href="/portal/limits/">Limits</a>
+            ·
+            <a href="/portal/factory/">Factory Telegram</a>
+          </p>
+        </section>
+
+        <section class="desk-stat-grid" id="desk-stats" aria-label="Desk summary"></section>
+
+        <section class="desk-section" aria-labelledby="desk-accounts-h">
+          <h2 id="desk-accounts-h">Accounts · logins</h2>
+          <p class="blurb">
+            Every out with login, book type, skin, live capacity, limit, balance, freeplay.
+          </p>
+          <div class="desk-filter-bar">
+            <label>
+              Partner
+              <select id="filter-partner" aria-label="Filter by partner">
+                <option value="">All</option>
+              </select>
+            </label>
+            <label>
+              Type
+              <select id="filter-type" aria-label="Filter by book type">
+                <option value="">All</option>
+              </select>
+            </label>
+            <label>
+              Skin
+              <select id="filter-skin" aria-label="Filter by skin">
+                <option value="">All</option>
+              </select>
+            </label>
+            <label>
+              <input type="checkbox" id="filter-live" />
+              Live only
+            </label>
+          </div>
+          <div class="desk-panel">
+            <table class="desk-table portal-table" id="desk-accounts-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Out</th>
+                  <th>Login</th>
+                  <th>Book</th>
+                  <th>Type</th>
+                  <th>Skin</th>
+                  <th>Live</th>
+                  <th>Status</th>
+                  <th>Limit</th>
+                  <th>Balance</th>
+                  <th>FP%</th>
+                </tr>
+              </thead>
+              <tbody id="desk-accounts-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="desk-section" aria-labelledby="desk-money-h">
+          <h2 id="desk-money-h">Money by partner</h2>
+          <p class="blurb">
+            Partner balance, sum of out limits, soft PnL windows, ledger settlements.
+          </p>
+          <div class="desk-panel">
+            <table class="desk-table portal-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Accts</th>
+                  <th>Live</th>
+                  <th>Balance</th>
+                  <th>Limits Σ</th>
+                  <th>Soft 24h</th>
+                  <th>Soft 7d</th>
+                  <th>Soft all</th>
+                  <th>Ledger 24h</th>
+                </tr>
+              </thead>
+              <tbody id="desk-money-body"></tbody>
+            </table>
+            <p class="desk-note" id="desk-soft-note"></p>
+          </div>
+        </section>
+
+        <section class="desk-section" aria-labelledby="desk-groups-h">
+          <h2 id="desk-groups-h">Rollups</h2>
+          <p class="blurb">Counts and limit totals by type, skin, and live.</p>
+          <div class="desk-panel">
+            <div class="desk-chip-row" id="desk-groups"></div>
+          </div>
+        </section>
+
+        <section class="desk-section" aria-labelledby="desk-tg-h">
+          <h2 id="desk-tg-h">Telegram</h2>
+          <p class="blurb" id="desk-tg-blurb">
+            Handshake status and next steps (no live message feed in the bake).
+          </p>
+          <div class="desk-panel">
+            <table class="desk-table portal-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Chat</th>
+                  <th>Handshake</th>
+                  <th>Gaps</th>
+                  <th>Verify</th>
+                  <th>Next / signals</th>
+                </tr>
+              </thead>
+              <tbody id="desk-tg-body"></tbody>
+            </table>
+            <p class="desk-note" id="desk-tg-note"></p>
+          </div>
+        </section>
+
+        <section class="desk-section" aria-labelledby="desk-alerts-h">
+          <h2 id="desk-alerts-h">Freezes · freeroll · attention</h2>
+          <p class="blurb">Blocked/deferred outs, freeplay seats, and dashboard attention items.</p>
+          <div class="desk-panel">
+            <div id="desk-alerts"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+    <script type="module">
+      import { fetchJsonResult } from '/portal/fetch-json.js';
+      import {
+        DESK_PRIMARY_ARTIFACT_REF,
+        DESK_ANCILLARY_REFS,
+        buildMorningDesk,
+        formatUsdMajor,
+      } from '/portal/desk/desk-board.js';
+      import { isPartnersDashboardSchema, bakeLabel } from '/portal/partners/partners-board.js';
+
+      /** @type {ReturnType<typeof buildMorningDesk> | null} */
+      let deskModel = null;
+
+      const $ = id => document.getElementById(id);
+
+      function esc(s) {
+        return String(s ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function moneyTone(n) {
+        if (n == null || !Number.isFinite(n) || n === 0) return 'tone-muted';
+        return n > 0 ? 'tone-ok' : 'tone-bad';
+      }
+
+      function fmtSigned(n) {
+        if (n == null || !Number.isFinite(n)) return '—';
+        const base = formatUsdMajor(Math.abs(n));
+        if (n > 0) return `+${base}`;
+        if (n < 0) return `−${base.replace('-', '')}`;
+        return base;
+      }
+
+      function fillSelect(sel, values) {
+        if (!sel) return;
+        const cur = sel.value;
+        const opts = ['<option value="">All</option>'];
+        for (const v of values) {
+          opts.push(`<option value="${esc(v)}">${esc(v)}</option>`);
+        }
+        sel.innerHTML = opts.join('');
+        if (values.includes(cur)) sel.value = cur;
+      }
+
+      function renderStats(model) {
+        const s = model.summary;
+        const softEmpty24 = s.softPlays24h === 0;
+        const softEmpty7 = s.softPlays7d === 0;
+        const cells = [
+          { k: 'Partners', v: String(s.partners) },
+          { k: 'Accounts', v: String(s.accounts), sub: `${s.live} live` },
+          { k: 'Limits Σ', v: s.limitTotalDisplay },
+          { k: 'Balances (outs)', v: s.balanceOutDisplay },
+          { k: 'Balances (partner)', v: s.partnerBalanceDisplay },
+          {
+            k: 'Soft 24h',
+            v: fmtSigned(s.softNet24h),
+            sub: softEmpty24 ? 'no settled plays' : `${s.softPlays24h} plays`,
+            tone: softEmpty24
+              ? ''
+              : moneyTone(s.softNet24h) === 'tone-ok'
+                ? 'ok'
+                : moneyTone(s.softNet24h) === 'tone-bad'
+                  ? 'bad'
+                  : '',
+          },
+          {
+            k: 'Soft 7d',
+            v: fmtSigned(s.softNet7d),
+            sub: softEmpty7 ? 'no settled plays' : `${s.softPlays7d} plays`,
+            tone: softEmpty7
+              ? ''
+              : moneyTone(s.softNet7d) === 'tone-ok'
+                ? 'ok'
+                : moneyTone(s.softNet7d) === 'tone-bad'
+                  ? 'bad'
+                  : '',
+          },
+          {
+            k: 'Soft all',
+            v: fmtSigned(s.softNetAll),
+            sub: `${s.softPlaysAll} plays · ${s.softSource}`,
+          },
+          {
+            k: 'Freezes',
+            v: String(s.freezes),
+            tone: s.freezes > 0 ? 'warn' : 'ok',
+            sub: `${s.freerolls} freeroll`,
+          },
+          {
+            k: 'Telegram',
+            v: String(s.telegramAttention),
+            sub: s.inviteGaps ? `${s.inviteGaps} invite gaps` : 'signals',
+            tone: s.telegramAttention > 0 || s.inviteGaps > 0 ? 'warn' : 'ok',
+          },
+        ];
+        $('desk-stats').innerHTML = cells
+          .map(
+            c =>
+              `<div class="desk-stat ${c.tone || ''}"><span class="k">${esc(c.k)}</span><span class="v">${esc(c.v)}</span>${c.sub ? `<div class="sub">${esc(c.sub)}</div>` : ''}</div>`
+          )
+          .join('');
+      }
+
+      function filteredAccounts(model) {
+        const partner = $('filter-partner')?.value || '';
+        const type = $('filter-type')?.value || '';
+        const skin = $('filter-skin')?.value || '';
+        const liveOnly = Boolean($('filter-live')?.checked);
+        return model.accounts.filter(a => {
+          if (partner && a.partnerCode !== partner) return false;
+          if (type && a.bookType !== type) return false;
+          if (skin && a.skin !== skin) return false;
+          if (liveOnly && !a.live) return false;
+          return true;
+        });
+      }
+
+      function renderAccounts(model) {
+        const rows = filteredAccounts(model);
+        const body = $('desk-accounts-body');
+        if (!rows.length) {
+          body.innerHTML = `<tr><td colspan="11" class="desk-empty">No accounts match filters.</td></tr>`;
+          return;
+        }
+        body.innerHTML = rows
+          .map(
+            a => `<tr>
+              <td class="mono">${esc(a.partnerCode)}</td>
+              <td class="mono dim">${esc(a.outId)}</td>
+              <td class="mono">${esc(a.username)}</td>
+              <td>${esc(a.bookLabel)}</td>
+              <td class="dim">${esc(a.bookType)}</td>
+              <td class="dim">${esc(a.skin)}</td>
+              <td class="${a.live ? 'tone-ok' : 'tone-muted'}">${a.live ? 'live' : '—'}</td>
+              <td class="${esc(a.statusTone)}">${esc(a.status)}</td>
+              <td class="mono">${esc(a.maxBetDisplay)}</td>
+              <td class="mono">${esc(a.balanceDisplay)}</td>
+              <td class="mono dim">${esc(a.freeplayDisplay)}</td>
+            </tr>`
+          )
+          .join('');
+      }
+
+      function renderMoney(model) {
+        const body = $('desk-money-body');
+        body.innerHTML = model.partners
+          .map(
+            p => `<tr>
+              <td class="mono">${esc(p.partnerCode)}</td>
+              <td class="mono">${p.accountCount}</td>
+              <td class="mono ${p.liveCount ? 'tone-ok' : 'tone-muted'}">${p.liveCount}</td>
+              <td class="mono">${esc(p.balanceDisplay)}</td>
+              <td class="mono">${esc(p.limitTotalDisplay)}</td>
+              <td class="mono ${moneyTone(p.softNet24h)}">${esc(fmtSigned(p.softNet24h))}</td>
+              <td class="mono ${moneyTone(p.softNet7d)}">${esc(fmtSigned(p.softNet7d))}</td>
+              <td class="mono ${moneyTone(p.softNetAll)}">${esc(fmtSigned(p.softNetAll))}</td>
+              <td class="mono ${moneyTone(p.ledgerNet24h)}">${esc(fmtSigned(p.ledgerNet24h))}</td>
+            </tr>`
+          )
+          .join('');
+
+        const s = model.summary;
+        const note = $('desk-soft-note');
+        if (note) {
+          note.textContent = s.softAvailable
+            ? `Soft source: ${s.softSource}. Windows use settledAt (fallback placedAt). Empty 24h/7d means no fixture plays in that window — Soft all shows full export.`
+            : `Soft accounting unavailable (${s.softSource}). Ledger columns use partners-dashboard settlement entries only.`;
+        }
+      }
+
+      function renderGroups(model) {
+        const chips = [];
+        const add = (label, groups) => {
+          for (const g of groups) {
+            chips.push(
+              `<span class="desk-chip"><strong>${esc(label)} ${esc(g.key)}</strong> · ${g.count} · live ${g.liveCount} · lim ${esc(formatUsdMajor(g.limitTotalMajor))}</span>`
+            );
+          }
+        };
+        add('type', model.groups.byType);
+        add('skin', model.groups.bySkin);
+        add('', model.groups.byLive);
+        $('desk-groups').innerHTML = chips.join('') || '<p class="desk-empty">No groups.</p>';
+      }
+
+      function renderTelegram(model) {
+        const tg = model.telegram;
+        const blurb = $('desk-tg-blurb');
+        if (blurb) {
+          blurb.textContent = tg.available
+            ? `Handshake bake · ${tg.source} · ${tg.needsAttention.length} need a look`
+            : 'Handshake bake missing — communication fields from dashboard only.';
+        }
+        const note = $('desk-tg-note');
+        if (note) note.textContent = tg.note;
+
+        const body = $('desk-tg-body');
+        if (!tg.rows.length) {
+          body.innerHTML = `<tr><td colspan="6" class="desk-empty">No partners.</td></tr>`;
+          return;
+        }
+        body.innerHTML = tg.rows
+          .map(r => {
+            const steps = (r.nextSteps || []).join(' · ') || (r.topGap ? String(r.topGap) : '—');
+            const hsClass = r.handshakeOk ? 'tone-ok' : 'tone-warn';
+            return `<tr>
+              <td class="mono">${esc(r.partnerCode)}</td>
+              <td class="${r.chatLinked ? 'tone-ok' : 'tone-muted'}">${r.chatLinked ? 'linked' : '—'}</td>
+              <td class="${hsClass}">${r.handshakeOk ? 'ok' : 'gap'}</td>
+              <td class="mono ${r.gapCount ? 'tone-warn' : 'tone-muted'}">${r.gapCount}</td>
+              <td class="mono dim">${esc(r.verifyLabel || '—')}</td>
+              <td class="dim">${esc(steps)}</td>
+            </tr>`;
+          })
+          .join('');
+      }
+
+      function renderAlerts(model) {
+        const a = model.alerts;
+        const parts = [];
+        if (a.freezes.length) {
+          parts.push(
+            `<p class="blurb" style="margin:0 0 6px"><strong>Freezes / deferred</strong> (${a.freezes.length})</p><ul style="margin:0 0 12px;padding-left:18px;font-size:12px">` +
+              a.freezes
+                .map(
+                  f => `<li><span class="mono">${esc(f.partnerCode)}</span> · ${esc(f.label)}</li>`
+                )
+                .join('') +
+              `</ul>`
+          );
+        } else {
+          parts.push(`<p class="desk-empty">No blocked or deferred outs.</p>`);
+        }
+        if (a.freerolls.length) {
+          parts.push(
+            `<p class="blurb" style="margin:8px 0 6px"><strong>Freeroll / freeplay</strong> (${a.freerolls.length})</p><ul style="margin:0 0 12px;padding-left:18px;font-size:12px">` +
+              a.freerolls
+                .map(
+                  f => `<li><span class="mono">${esc(f.partnerCode)}</span> · ${esc(f.label)}</li>`
+                )
+                .join('') +
+              `</ul>`
+          );
+        }
+        if (a.attention.length) {
+          parts.push(
+            `<p class="blurb" style="margin:8px 0 6px"><strong>Attention</strong> (${a.attention.length})</p><ul style="margin:0;padding-left:18px;font-size:12px">` +
+              a.attention
+                .map(item => {
+                  const link = item.actionHref
+                    ? ` · <a href="${esc(item.actionHref)}">open</a>`
+                    : '';
+                  return `<li><span class="mono">${esc(item.partnerCode)}</span> · ${esc(item.label)}${link}</li>`;
+                })
+                .join('') +
+              `</ul>`
+          );
+        } else {
+          parts.push(`<p class="desk-empty">No attention items.</p>`);
+        }
+        $('desk-alerts').innerHTML = parts.join('');
+      }
+
+      function bindFilters(model) {
+        const partners = [...new Set(model.accounts.map(a => a.partnerCode))].sort();
+        const types = [
+          ...new Set(model.accounts.map(a => a.bookType).filter(t => t && t !== '—')),
+        ].sort();
+        const skins = [...new Set(model.accounts.map(a => a.skin).filter(Boolean))].sort();
+        fillSelect($('filter-partner'), partners);
+        fillSelect($('filter-type'), types);
+        fillSelect($('filter-skin'), skins);
+        const rerender = () => renderAccounts(model);
+        $('filter-partner')?.addEventListener('change', rerender);
+        $('filter-type')?.addEventListener('change', rerender);
+        $('filter-skin')?.addEventListener('change', rerender);
+        $('filter-live')?.addEventListener('change', rerender);
+      }
+
+      function renderAll(model) {
+        deskModel = model;
+        const bake = bakeLabel(model.generatedAt);
+        const baked = $('desk-baked');
+        if (baked) {
+          baked.textContent = `dashboard ${bake.text} · ${model.summary.partners} partners · ${model.summary.accounts} accounts · ${model.summary.live} live`;
+        }
+        renderStats(model);
+        bindFilters(model);
+        renderAccounts(model);
+        renderMoney(model);
+        renderGroups(model);
+        renderTelegram(model);
+        renderAlerts(model);
+      }
+
+      async function load() {
+        try {
+          const primary = await fetchJsonResult(DESK_PRIMARY_ARTIFACT_REF);
+          if (!primary.ok || !primary.data) {
+            throw new Error(primary.error || `Failed to load ${DESK_PRIMARY_ARTIFACT_REF}`);
+          }
+          const dashboard = primary.data;
+          if (!isPartnersDashboardSchema(dashboard?.schema)) {
+            throw new Error(
+              `${DESK_PRIMARY_ARTIFACT_REF} unexpected schema ${dashboard?.schema ?? 'missing'}`
+            );
+          }
+
+          const [softR, seatR, opsR, booksR, hsR] = await Promise.all([
+            fetchJsonResult(DESK_ANCILLARY_REFS.soft),
+            fetchJsonResult(DESK_ANCILLARY_REFS.seat),
+            fetchJsonResult(DESK_ANCILLARY_REFS.ops),
+            fetchJsonResult(DESK_ANCILLARY_REFS.bookmakers),
+            fetchJsonResult(DESK_ANCILLARY_REFS.handshake),
+          ]);
+
+          const model = buildMorningDesk({
+            dashboard,
+            soft: softR.ok ? softR.data : null,
+            seat: seatR.ok ? seatR.data : null,
+            ops: opsR.ok ? opsR.data : null,
+            bookmakers: booksR.ok ? booksR.data : null,
+            handshake: hsR.ok ? hsR.data : null,
+          });
+
+          $('loading').classList.add('hidden');
+          $('dashboard').classList.remove('hidden');
+          renderAll(model);
+        } catch (err) {
+          $('loading').classList.add('hidden');
+          const banner = $('error-banner');
+          banner.classList.remove('hidden');
+          const msg = err instanceof Error ? err.message : String(err);
+          banner.innerHTML =
+            `<h3>Morning desk unavailable</h3>` +
+            `<p>Primary artifact failed. No silent fallback.</p>` +
+            `<p><code>${esc(msg)}</code></p>` +
+            `<p class="dim">Local: <code>bun run partner:dashboard:bake</code></p>` +
+            `<button type="button" class="btn" id="desk-retry">Retry</button>`;
+          $('desk-retry')?.addEventListener('click', () => void load());
+        }
+      }
+
+      void load();
+    </script>
+    <footer class="footer" data-portal-chrome="footer">
+      <p>
+        <strong>FactoryWager</strong> ·
+        <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a>
+        · <a href="/portal/ops/">Ops</a> · <a href="/portal/toc/">TOC</a> ·
+        <a href="/portal/desk/">Desk</a> · <a href="/portal/partners/">Partners</a> ·
+        <a href="/portal/tennis/">Tennis</a> · <a href="/portal/bookmakers/">Bookmakers</a> ·
+        <a href="/portal/packages/">Packages</a> · <a href="/portal/brands/">Brands</a> ·
+        <a href="/portal/glossary/">Glossary</a> · <a href="/portal/issues/">Issues</a> ·
+        <a href="/portal/surfaces/">Surfaces</a> · <a href="/portal/health/">Health</a> ·
+        <a href="/registry/portal-weave.json">Portal proof</a> ·
+        <a href="/portal/compliance/">Compliance</a> · <a href="/portal/limits/">Limits</a> ·
+        <a href="/portal/dod/">DOD</a> · <a href="/portal/env/">Env</a> ·
+        <a href="/portal/vault/">Vault</a> ·
+        <a
+          href="https://wiki.factory-wager.com/wiki-index.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Wiki</a
+        >
+        · <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+        <a
+          href="https://github.com/brendadeeznuts1111/project-R-score"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
+      </p>
+      <p class="footer-meta">
+        project-R-score · chrome
+        <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a> ·
+        <span data-footer-bun></span> · <span data-footer-ts>…</span>
+      </p>
+    </footer>
+  </body>
+</html>

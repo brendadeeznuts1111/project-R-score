@@ -415,6 +415,17 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
   },
   // ── Ops boards (partner desk first → trading → control loop) ──
   {
+    id: 'desk',
+    label: 'Desk',
+    href: '/portal/desk/',
+    tier: 'overflow',
+    group: 'ops',
+    domain: 'partner',
+    note: 'morning board · logins · limits · balances · soft net · telegram · freezes',
+    cli: 'bun run partner:dashboard:bake',
+    registryArtifact: '/registry/partners-dashboard.json',
+  },
+  {
     id: 'partners',
     label: 'Partners',
     href: '/portal/partners/',
@@ -666,6 +677,7 @@ export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'Dashboard', href: 'https://factory-wager.com', external: true },
   { label: 'Ops', href: '/portal/ops/' },
   { label: 'TOC', href: '/portal/toc/' },
+  { label: 'Desk', href: '/portal/desk/' },
   { label: 'Partners', href: '/portal/partners/' },
   { label: 'Tennis', href: '/portal/tennis/' },
   { label: 'Bookmakers', href: '/portal/bookmakers/' },
