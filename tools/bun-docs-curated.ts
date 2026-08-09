@@ -30,7 +30,7 @@
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-react — Bun.markdown.react
 // @see https://bun.com/docs/runtime/markdown#component-overrides — component-overrides
 // @see https://bun.com/docs/runtime/markdown#available-overrides — available-overrides
-// @see https://bun.com/docs/runtime/markdown#options — options
+// @see https://bun.com/docs/runtime/markdown#options — options / Bun.markdown.Options
 // @see https://bun.com/docs/runtime/markdown#autolinks — autolinks
 // @see https://bun.com/docs/runtime/markdown#heading-ids — heading-ids
 // @see https://bun.com/docs/runtime/markdown#callback-signature — callback-signature
@@ -42,6 +42,8 @@
 // @see https://bun.com/docs/runtime/markdown#stripping-all-formatting — stripping-all-formatting
 // @see https://bun.com/docs/runtime/markdown#code-block-syntax-highlighting — code-block-syntax-highlighting
 // @see https://bun.com/docs/runtime/markdown#nested-list-numbering — nested-list-numbering
+// @see https://bun.com/docs/runtime/markdown#omitting-elements — omitting-elements
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — ansi-terminal-output / Bun.markdown.ansi / Bun.markdown.AnsiTheme
 // @see https://bun.com/docs/runtime/markdown#server-side-rendering — server-side-rendering
 // @see https://bun.com/docs/runtime/markdown#parser-options — parser-options
 // @see https://bun.com/docs/runtime/markdown#parser-options-2 — parser-options-2
@@ -468,9 +470,58 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   {
     term: 'Bun.markdown.ansi',
     path: 'runtime/markdown#ansi-terminal-output',
-    description: 'Markdown → ANSI for the terminal',
+    description:
+      'Markdown → ANSI for the terminal. docsUrl is #ansi-terminal-output (render cookbook); native Bun.markdown.ansi example is token-mapped via #bun-markdown-ansi.',
     minVersion: '1.3.12',
-    relatedTokens: ['Bun.markdown', 'Bun.markdown.render', 'Bun.markdown.react'],
+    relatedTokens: [
+      'Bun.markdown',
+      'Bun.markdown.AnsiTheme',
+      'ansi-terminal-output',
+      'Bun.markdown.render',
+      'Bun.markdown.react',
+    ],
+  },
+  {
+    term: 'Bun.markdown.Options',
+    path: 'runtime/markdown#options',
+    description:
+      'Parser options type for Bun.markdown.html / render / react (tables, autolinks, headings, …). Same locus as bare token options.',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'options',
+      'autolinks',
+      'heading-ids',
+      'Bun.markdown.html',
+      'Bun.markdown.render',
+      'Bun.markdown.react',
+    ],
+  },
+  {
+    term: 'Bun.markdown.AnsiTheme',
+    path: 'runtime/markdown#ansi-terminal-output',
+    description:
+      'Theme / layout options for Bun.markdown.ansi (colors, columns, hyperlinks, …). docsUrl is official #ansi-terminal-output; native call example via #bun-markdown-ansi.',
+    minVersion: '1.3.12',
+    relatedTokens: [
+      'Bun.markdown.ansi',
+      'ansi-terminal-output',
+      'Bun.markdown',
+      'Bun.markdown.render',
+    ],
+  },
+  {
+    term: 'ansi-terminal-output',
+    path: 'runtime/markdown#ansi-terminal-output',
+    description:
+      'Bun.markdown.render cookbook: emit ANSI via heading/paragraph/strong/emphasis callbacks (not Bun.markdown.ansi).',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'Bun.markdown.ansi',
+      'Bun.markdown.AnsiTheme',
+      'examples',
+      'Bun.markdown.render',
+      'callback-signature',
+    ],
   },
   {
     term: 'Bun.markdown.render',
@@ -554,6 +605,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'Pass an options object as the second argument to Bun.markdown.html to configure the parser (tables, autolinks, headings, …).',
     minVersion: '1.3.0',
     relatedTokens: [
+      'Bun.markdown.Options',
       'autolinks',
       'heading-ids',
       'parser-options',
@@ -653,6 +705,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'code-block-syntax-highlighting',
       'nested-list-numbering',
       'omitting-elements',
+      'ansi-terminal-output',
       'Bun.markdown.render',
       'callback-signature',
     ],

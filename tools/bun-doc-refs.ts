@@ -876,6 +876,8 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.markdown': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
   'Bun.markdown.html': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
   'Bun.markdown.ansi': 'https://bun.com/docs/runtime/markdown#ansi-terminal-output',
+  'Bun.markdown.AnsiTheme': 'https://bun.com/docs/runtime/markdown#ansi-terminal-output',
+  'Bun.markdown.Options': 'https://bun.com/docs/runtime/markdown#options',
   'Bun.markdown.render': 'https://bun.com/docs/runtime/markdown#bun-markdown-render',
   'Bun.markdown.react': 'https://bun.com/docs/runtime/markdown#bun-markdown-react',
   // React component overrides — #component-overrides → #available-overrides table
@@ -888,6 +890,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   // Parser options SSOT (#options) + autolinks / heading-ids + render callback loci + react third-arg
   options: 'https://bun.com/docs/runtime/markdown#options',
   'Bun.markdown.html options': 'https://bun.com/docs/runtime/markdown#options',
+  'ansi-terminal-output': 'https://bun.com/docs/runtime/markdown#ansi-terminal-output',
   autolinks: 'https://bun.com/docs/runtime/markdown#autolinks',
   'Bun.markdown.html autolinks': 'https://bun.com/docs/runtime/markdown#autolinks',
   'heading-ids': 'https://bun.com/docs/runtime/markdown#heading-ids',

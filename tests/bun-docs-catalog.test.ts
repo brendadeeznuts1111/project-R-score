@@ -376,6 +376,14 @@ describe('frozen guide examples', () => {
     // Intentional ansi split: TOKEN_GUIDE_PATH → #bun-markdown-ansi fence; docsUrl stays #ansi-terminal-output
     expect(TOKEN_GUIDE_PATH['Bun.markdown.ansi']).toBe('runtime/markdown#bun-markdown-ansi');
     expect(guideExamplesForToken('Bun.markdown.ansi')[0]?.body).toContain('Bun.markdown.ansi(');
+    expect(TOKEN_GUIDE_PATH['Bun.markdown.Options']).toBe('runtime/markdown#options');
+    expect(guideExamplesForToken('Bun.markdown.Options')[0]?.body).toContain('tables: true');
+    expect(TOKEN_GUIDE_PATH['Bun.markdown.AnsiTheme']).toBe('runtime/markdown#bun-markdown-ansi');
+    expect(guideExamplesForToken('Bun.markdown.AnsiTheme')[0]?.body).toContain('Bun.markdown.ansi(');
+    expect(TOKEN_GUIDE_PATH['ansi-terminal-output']).toBe('runtime/markdown#ansi-terminal-output');
+    expect(guideExamplesForToken('ansi-terminal-output')[0]?.body).toContain(
+      'Bun.markdown.render('
+    );
     expect(guideExamplesForToken('Bun.markdown.render')[0]?.body).toContain('Bun.markdown.render(');
     expect(guideExamplesForToken('Bun.markdown.react')[0]?.body).toContain('Bun.markdown.react(text)');
     expect(guideExamplesForToken('component-overrides')[0]?.body).toContain('pre: Code');
@@ -581,8 +589,26 @@ describe('inspect family catalog relations', () => {
     expect(byName.get('Bun.markdown.ansi')?.docsUrl).toBe(
       'https://bun.com/docs/runtime/markdown#ansi-terminal-output'
     );
+    expect(byName.get('Bun.markdown.ansi')?.description).toContain('#bun-markdown-ansi');
     expect(byName.get('Bun.markdown.ansi')?.examples?.[0]?.body).toContain(
       'Bun.markdown.ansi('
+    );
+    expect(byName.get('Bun.markdown.Options')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#options'
+    );
+    expect(byName.get('Bun.markdown.Options')?.examples?.[0]?.body).toContain('tables: true');
+    expect(byName.get('Bun.markdown.Options')?.examples?.[1]?.body).toContain('latexMath: false');
+    expect(byName.get('Bun.markdown.AnsiTheme')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#ansi-terminal-output'
+    );
+    expect(byName.get('Bun.markdown.AnsiTheme')?.examples?.[0]?.body).toContain(
+      'Bun.markdown.ansi('
+    );
+    expect(byName.get('ansi-terminal-output')?.docsUrl).toBe(
+      'https://bun.com/docs/runtime/markdown#ansi-terminal-output'
+    );
+    expect(byName.get('ansi-terminal-output')?.examples?.[0]?.body).toContain(
+      'Bun.markdown.render('
     );
     expect(byName.get('options')?.related).toContain('autolinks');
     expect(byName.get('options')?.related).toContain('heading-ids');
