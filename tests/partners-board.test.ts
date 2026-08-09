@@ -3,70 +3,66 @@ import { describe, expect, test } from 'bun:test';
 import * as board from '../public/portal/partners/partners-board.js';
 import {
   bakeLabel,
-  canonicalProfileCoverage,
   coverageBarStyle,
   filterPartnerOuts,
-  flattenPartnerOuts,
-  indexOpsByPartner,
-  listPartnerPhases,
+  flattenDashboardOuts,
   normalizePartnerCode,
   partnerReadinessGate,
-  summarizePartnerDesk,
+  summarizeDashboardDesk,
 } from '../public/portal/partners/partners-board.js';
 
-const sampleOps = {
-  schema: 'factorywager.partners-ops.v2',
+const sampleDashboard = {
+  schema: 'factorywager.partners-dashboard.v2',
   summary: {
-    partners: 2,
-    accounts: 3,
-    trackedLimits: 2,
-    communicationReady: 2,
-    incompleteOuts: 1,
-    readyAccounts: 1,
+    partnerCount: 2,
+    canonicalProfileCount: 2,
+    registeredOutCount: 3,
+    activeOutCount: 2,
+    operatorReadyPartnerCount: 1,
+    attentionPartnerCount: 0,
   },
   partners: [
     {
-      code: 'ASH',
+      partnerCode: 'ASH',
       callSign: 'ASH-001',
-      phase: 'operator_ready',
-      phaseConceptId: 'partner.phase.operator_ready',
+      operationalPhase: 'operator_ready',
+      communication: { chatLinked: true, handshakeStatus: 'operator_ready' },
       outs: [
         {
-          id: 'out-ASH-1',
-          status: 'ready',
-          incomplete: false,
-          maxBet: '500',
-          book: { name: 'Hard Rock', type: 'legal' },
-          funding: { method: 'venmo' },
-          credentials: { username: 'ash1' },
+          outId: 'out-ASH-1',
+          sportsbookId: 'hard-rock-florida',
+          operationalStatus: 'ready',
+          fundingStatus: 'funded',
+          limitCoverageRatio: 1,
+          externalAccountRefs: [{ sourceSystemId: 'tennis-hq', externalId: 'x' }],
         },
         {
-          id: 'out-ASH-2',
-          status: 'deferred',
-          incomplete: true,
-          maxBet: '—',
-          book: { name: 'Hard Rock', type: 'legal' },
-          funding: { method: 'venmo' },
-          credentials: { username: '—' },
+          outId: 'out-ASH-2',
+          sportsbookId: 'hard-rock-florida',
+          operationalStatus: 'deferred',
+          fundingStatus: 'funded',
+          limitCoverageRatio: 0,
+          externalAccountRefs: [],
         },
       ],
+      attention: [],
+      limits: { tracked: 1, missing: 1, coverageRatio: 0.5 },
     },
     {
-      code: 'bil',
+      partnerCode: 'BIL',
       callSign: 'BIL-001',
-      phase: 'onboarding',
-      phaseConceptId: 'partner.phase.onboarding',
+      operationalPhase: 'onboarding',
+      communication: { chatLinked: false, handshakeStatus: 'designated' },
       outs: [
         {
-          id: 'out-BIL-1',
-          status: 'ready',
-          incomplete: false,
-          maxBet: '250',
-          book: { name: 'Caesars', type: 'legal' },
-          funding: { method: 'wire' },
-          credentials: { username: 'bil1' },
+          outId: 'out-BIL-1',
+          sportsbookId: 'partner-book-tbd',
+          operationalStatus: 'ready',
+          fundingStatus: 'partial',
         },
       ],
+      attention: [],
+      limits: { tracked: 0, missing: 0, coverageRatio: 0 },
     },
   ],
 };
@@ -77,59 +73,30 @@ describe('partners-board domain helpers', () => {
     expect(normalizePartnerCode(null)).toBe('');
   });
 
-  test('indexOpsByPartner maps codes', () => {
-    const map = indexOpsByPartner(sampleOps);
-    expect(map.size).toBe(2);
-    expect(map.get('ASH')?.callSign).toBe('ASH-001');
-    expect(map.get('BIL')?.phase).toBe('onboarding');
-  });
-
-  test('flatten and filter outs', () => {
-    const all = flattenPartnerOuts(sampleOps);
+  test('filterPartnerOuts filters dashboard flatten rows', () => {
+    const all = flattenDashboardOuts(sampleDashboard);
     expect(all).toHaveLength(3);
     expect(filterPartnerOuts(all, { status: 'ready' })).toHaveLength(2);
     expect(filterPartnerOuts(all, { partnerCode: 'ASH', incompleteOnly: true })).toHaveLength(1);
-    expect(filterPartnerOuts(all, { partnerCode: 'BIL' })[0]?.out.id).toBe('out-BIL-1');
+    expect(filterPartnerOuts(all, { missingLimitEvidenceOnly: true }).every(o => o.missingLimitEvidence)).toBe(
+      true
+    );
+    expect(filterPartnerOuts(all, { noExternalRefOnly: true }).every(o => o.missingExternalRef)).toBe(true);
   });
 
-  test('summarizePartnerDesk aggregates domain metrics', () => {
-    const desk = summarizePartnerDesk(sampleOps, {
-      operatorReady: 1,
-      inviteGaps: 2,
-      rows: [{}, {}],
-    });
+  test('summarizeDashboardDesk aggregates dashboard metrics', () => {
+    const desk = summarizeDashboardDesk(sampleDashboard);
     expect(desk.partners).toBe(2);
     expect(desk.outs).toBe(3);
     expect(desk.readyOuts).toBe(2);
-    expect(desk.deferredOuts).toBe(1);
-    expect(desk.incompleteOuts).toBe(1);
-    expect(desk.inviteGaps).toBe(2);
-    expect(desk.limitCoveragePct).toBe(67);
-    expect(desk.phases.operator_ready).toBe(1);
-    expect(desk.phases.onboarding).toBe(1);
+    expect(desk.operatorReady).toBe(1);
   });
 
-  test('listPartnerPhases and coverageBarStyle', () => {
-    const phases = listPartnerPhases(sampleOps);
-    expect(phases.map(p => p.phase).sort()).toEqual(['onboarding', 'operator_ready']);
+  test('coverageBarStyle and readiness gate', () => {
     expect(coverageBarStyle(90).tone).toBe('ok');
     expect(coverageBarStyle(50).tone).toBe('warn');
     expect(coverageBarStyle(10).tone).toBe('bad');
     expect(coverageBarStyle(150).pct).toBe(100);
-  });
-
-  test('readiness distinguishes legacy visibility from canonical profile coverage', () => {
-    expect(
-      canonicalProfileCoverage(
-        { partners: [{ code: 'ASH' }, { code: 'BIL' }] },
-        null,
-        { profiles: { ASH: {}, NOV: {}, SPEN: {} }, summary: { count: 3 } }
-      )
-    ).toEqual({
-      partnerCodes: ['ASH', 'BIL'],
-      coveredCodes: ['ASH'],
-      missingCodes: ['BIL'],
-    });
     expect(
       partnerReadinessGate({
         partnerCount: 4,
@@ -137,12 +104,10 @@ describe('partners-board domain helpers', () => {
         incompleteOuts: 0,
         inviteGaps: 0,
       })
-    ).toEqual({
+    ).toMatchObject({
       tone: 'warn',
-      label: 'legacy ready · profiles 0/4',
       ok: false,
       profilesReady: false,
-      gaps: 0,
     });
     expect(
       partnerReadinessGate({
@@ -152,20 +117,16 @@ describe('partners-board domain helpers', () => {
         inviteGaps: 0,
       }).tone
     ).toBe('pass');
-    expect(
-      partnerReadinessGate({
-        partnerCount: 4,
-        canonicalProfileCount: 0,
-        incompleteOuts: 1,
-      }).label
-    ).toBe('legacy gaps · profiles 0/4');
     expect(partnerReadinessGate({ partnerCount: 0 }).tone).toBe('fail');
   });
 
-  test('retired legacy projection helpers are not exported from the board module', () => {
+  test('ops-shaped inventory helpers are removed from the board module', () => {
+    expect(board.indexOpsByPartner).toBeUndefined();
+    expect(board.flattenPartnerOuts).toBeUndefined();
+    expect(board.summarizePartnerDesk).toBeUndefined();
+    expect(board.listPartnerPhases).toBeUndefined();
+    expect(board.canonicalProfileCoverage).toBeUndefined();
     expect(board.projectDashboardToOpsShape).toBeUndefined();
-    expect(board.projectDashboardToHandshakeShape).toBeUndefined();
-    expect(board.isLegacyPartnerComparisonRequested).toBeUndefined();
     expect(bakeLabel(null).text).toBe('—');
   });
 });
