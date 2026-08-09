@@ -1263,6 +1263,7 @@
         coverageBarStyle,
         attentionActionPresentation,
         attentionFamilyCounts,
+        parseOutsDeepLink,
         dashboardAccountingDealsRows,
         dashboardAttentionRows,
         dashboardBookCards,
@@ -2066,14 +2067,27 @@
           <div><div class="k">Phase</div><div class="v">${phaseChip(code)}</div></div>
           <div><div class="k">Lifecycle</div><div class="v">${esc(lifecycleState)} · ${esc(partner.lifecycle?.provenance?.sourceSystemId || '—')}</div></div>
           <div><div class="k">Identity</div><div class="v">${esc(partner.identity?.profileSourceSystemId || '—')}</div></div>
+          <div><div class="k">Tree node</div><div class="v"><code>${esc(partner.identity?.treeNodeId || '—')}</code></div></div>
+          <div><div class="k">External partner refs</div><div class="v">${
+            Array.isArray(partner.identity?.externalPartnerRefs) &&
+            partner.identity.externalPartnerRefs.length
+              ? partner.identity.externalPartnerRefs
+                  .map(
+                    r =>
+                      `<code title="${esc(r.sourceSystemId)}">${esc(r.externalId)}</code>`
+                  )
+                  .join(' · ')
+              : '—'
+          }</div></div>
           <div><div class="k">Telegram</div><div class="v">${esc(handshake.handshakeStatus || '—')} · DM ${esc(handshake.chatLinked ? 'linked' : 'none')}</div></div>
           <div><div class="k">Accounts</div><div class="v">${esc(String(readyOuts))}/${esc(String(outs.length))} ready · ${esc(String(coveragePct))}% limits</div></div>
-          <div><div class="k">Limit coverage</div><div class="v">${coverageBarHtml(coveragePct)}</div></div>
+          <div><div class="k">Limit coverage</div><div class="v">${coverageBarHtml(coveragePct)} · tracked ${esc(String(limits.tracked ?? 0))} · missing ${esc(String(limits.missing ?? 0))}</div></div>
           <div><div class="k">Fund / outs</div><div class="v">${esc(String(outs.filter(o => o.fundingStatus === 'funded').length))} funded · ${esc(String(outs.length))} outs</div></div>
           <div><div class="k">Balance</div><div class="v">${balMinor == null ? '—' : fmtMoney(balMinor / 100)}</div></div>
-          <div><div class="k">Integrations</div><div class="v">tennis ${esc(partner.integrations?.tennis?.dataStatus || 'n/a')}</div></div>
+          <div><div class="k">Integrations</div><div class="v">tennis ${esc(partner.integrations?.tennis?.dataStatus || 'n/a')} · ST ${esc(partner.integrations?.sportsTerminal?.dataStatus || 'n/a')}</div></div>
           <div><div class="k">Bot topics</div><div class="v">${bot}</div></div>
           <div><div class="k">Next</div><div class="v">${esc(next)}</div></div>
+          <div><div class="k">Outs filters</div><div class="v"><a class="topic-chip" href="#outs?missingLimit=1&amp;partner=${encodeURIComponent(code)}">Missing limit evidence</a> <a class="topic-chip" href="#outs?noExternalRef=1&amp;partner=${encodeURIComponent(code)}">No external ref</a></div></div>
           <div><div class="k">Onboard CLI</div><div class="v"><code>bun run onboard:partner -- ${esc(callSign)} --dry-run</code></div></div>
         </div>
         <div class="partner-profile-links">${cross}</div>
@@ -2817,11 +2831,25 @@
       }
 
       function applyPartnerRoute(scroll = false) {
-        let route = parsePartnerHash(window.location.hash) || { type: 'partners' };
+        const outsDeep = parseOutsDeepLink(window.location.hash);
+        let route = outsDeep
+          ? { type: 'outs' }
+          : parsePartnerHash(window.location.hash) || { type: 'partners' };
         // Unknown CODE still shows profile shell when dashboard knows the partner.
         const codeKnown = 'code' in route && dashboardByPartner.has(route.code);
         if ('code' in route && !codeKnown) route = { type: 'partners' };
-        const selectedCode = 'code' in route ? route.code : null;
+        const selectedCode = outsDeep?.partnerCode
+          ? outsDeep.partnerCode
+          : 'code' in route
+            ? route.code
+            : null;
+
+        if (outsDeep) {
+          const miss = $('outs-missing-limit-only');
+          const noRef = $('outs-no-external-ref-only');
+          if (miss) miss.checked = outsDeep.missingLimit;
+          if (noRef) noRef.checked = outsDeep.noExternalRef;
+        }
 
         for (const row of document.querySelectorAll('[data-partner-code]')) {
           const matches = !selectedCode || row.dataset.partnerCode === selectedCode;
@@ -2835,14 +2863,17 @@
             : linkRoute?.type === 'partners';
           link.setAttribute('aria-current', active ? 'true' : 'false');
         }
-        for (const target of document.querySelectorAll('.route-target')) {
-          target.classList.remove('route-target');
+        for (const el of document.querySelectorAll('.route-target')) {
+          el.classList.remove('route-target');
         }
 
         renderPartnerProfile(selectedCode);
         renderOutsInventory(selectedCode);
 
         let target = null;
+        if (outsDeep || route.type === 'outs') {
+          target = $('section:outs') || document.getElementById('outs-tbody');
+        }
         if (route.type === 'out') {
           target =
             document.getElementById(`out-card-${route.outId}`) ||

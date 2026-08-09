@@ -4,12 +4,14 @@ import {
   ATTENTION_REASON_CATALOG,
   attentionActionPresentation,
   attentionFamilyCounts,
+  attentionOutsDeepLink,
   attentionReasonMeta,
   dashboardAttentionRows,
   dashboardConflictRows,
   dashboardConnectorRows,
   dashboardPartnerIntegrationRows,
   filterAttentionRowsByFamily,
+  parseOutsDeepLink,
 } from '../public/portal/partners/partners-board.js';
 
 const BOARD = 'public/portal/partners/index.html';
@@ -130,6 +132,22 @@ describe('partners attention + integrations regions', () => {
     ]);
     expect(filterAttentionRowsByFamily(rows, 'limits')).toHaveLength(1);
     expect(attentionActionPresentation(rows[0]).kind).toBe('href');
-    expect(attentionActionPresentation(rows[0]).label).toMatch(/limits|bookmakers|Open/i);
+    expect(attentionActionPresentation(rows[0]).label).toMatch(
+      /limits|bookmakers|Open|Filter outs|evidence|external/i
+    );
+    const gap = attentionActionPresentation({
+      partnerCode: 'NOV',
+      reasonCode: 'partner.limits.coverage_gap',
+    });
+    expect(gap.href).toContain('missingLimit=1');
+    expect(attentionOutsDeepLink({ partnerCode: 'ASH', reasonCode: 'partner.bookmakers.unregistered_sportsbook' })).toContain(
+      'noExternalRef=1'
+    );
+    expect(parseOutsDeepLink('#outs?missingLimit=1&partner=SPEN')).toMatchObject({
+      type: 'outs',
+      partnerCode: 'SPEN',
+      missingLimit: true,
+      noExternalRef: false,
+    });
   });
 });

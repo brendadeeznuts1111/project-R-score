@@ -936,26 +936,38 @@ export const ATTENTION_REASON_CATALOG = Object.freeze({
     family: 'limits',
     title: 'Limit raise observed',
     actionLabel: 'Open limits board',
+    /** Prefer board outs filter deep-link when partner is known */
+    outsFilter: null,
   },
   'partner.limits.coverage_gap': {
     family: 'limits',
     title: 'Limit evidence gap',
-    actionLabel: 'Open limits board',
+    actionLabel: 'Filter outs: missing limit evidence',
+    outsFilter: 'missingLimit',
   },
   'partner.bookmakers.unregistered_sportsbook': {
     family: 'bookmakers',
     title: 'Unregistered sportsbook',
-    actionLabel: 'Open bookmakers board',
+    actionLabel: 'Filter outs: no external ref',
+    outsFilter: 'noExternalRef',
   },
   'partner.telegram.handshake_gap': {
     family: 'telegram',
     title: 'Telegram handshake gap',
     actionLabel: 'Telegram section',
+    outsFilter: null,
   },
   'partner.profile.migration_required': {
     family: 'profile',
     title: 'Profile migration required',
     actionLabel: 'Run coverage bake',
+    outsFilter: null,
+  },
+  'partner.funding.ready_unfunded': {
+    family: 'funding',
+    title: 'Ready but unfunded',
+    actionLabel: 'Open accounting',
+    outsFilter: null,
   },
 });
 
@@ -986,12 +998,57 @@ export function attentionReasonMeta(reasonCode) {
 }
 
 /**
+ * Build a partners-board hash that opens outs inventory with optional filters.
+ * @param {{ partnerCode?: string, reasonCode?: string }} row
+ * @returns {string | null}
+ */
+export function attentionOutsDeepLink(row) {
+  const code = String(row?.reasonCode || '').trim();
+  const hit = ATTENTION_REASON_CATALOG[code];
+  const filter = hit?.outsFilter;
+  if (!filter) return null;
+  const partner = normalizePartnerCode(row?.partnerCode);
+  const qs = new URLSearchParams();
+  if (filter === 'missingLimit') qs.set('missingLimit', '1');
+  if (filter === 'noExternalRef') qs.set('noExternalRef', '1');
+  if (partner) qs.set('partner', partner);
+  return `#outs?${qs.toString()}`;
+}
+
+/**
+ * Parse outs deep-link filters from location hash (`#outs?missingLimit=1&partner=ASH`).
+ * @param {string} hash
+ * @returns {{ type: 'outs', partnerCode: string | null, missingLimit: boolean, noExternalRef: boolean } | null}
+ */
+export function parseOutsDeepLink(hash) {
+  const raw = String(hash || '');
+  const m = raw.match(/^#outs(?:\?(.*))?$/i);
+  if (!m) return null;
+  const qs = new URLSearchParams(m[1] || '');
+  return {
+    type: 'outs',
+    partnerCode: qs.get('partner') ? normalizePartnerCode(qs.get('partner')) : null,
+    missingLimit: qs.get('missingLimit') === '1',
+    noExternalRef: qs.get('noExternalRef') === '1',
+  };
+}
+
+/**
  * Friendly action control for attention rows.
- * @param {{ actionHref?: string | null, actionCommand?: string | null, reasonCode?: string }} row
+ * Prefer outs deep-links for coverage/unregistered reasons when partner is set.
+ * @param {{ actionHref?: string | null, actionCommand?: string | null, reasonCode?: string, partnerCode?: string }} row
  * @returns {{ kind: 'href' | 'command' | 'none', href?: string, command?: string, label: string }}
  */
 export function attentionActionPresentation(row) {
   const meta = attentionReasonMeta(row?.reasonCode);
+  const deep = attentionOutsDeepLink(row);
+  if (deep) {
+    return {
+      kind: 'href',
+      href: deep,
+      label: meta.actionLabel || 'Open outs',
+    };
+  }
   if (row?.actionHref) {
     return {
       kind: 'href',
