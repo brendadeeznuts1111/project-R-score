@@ -305,6 +305,124 @@
             "hmacValid": true,
             "valid": true
           }
+        },
+        {
+          "limit_id": 91001,
+          "sportsbook": "action92-com",
+          "sport_id": "nba",
+          "market_id": "spread",
+          "bet_type": "straight",
+          "previous_max": 500,
+          "new_limit": 900,
+          "increased_at": 1785600000,
+          "line_move_5m": null,
+          "top_clv": [],
+          "context": {
+            "id": 58,
+            "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+            "limit_record_id": 91001,
+            "active_players_7d": 42,
+            "new_players_7d": 6,
+            "total_handle_7d": 185000,
+            "avg_clv_7d": 68,
+            "top_tier_player_count": 4,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.97,
+            "market_volatility_index": 0.72,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.41,
+            "partner_profit_30d": 38000,
+            "partner_roi_30d": 0.14,
+            "snapshot_at": 1785247352,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "bd087cd5875d696e1666e99cf641776e4cec8fcffae0672fbeab630506c2544d",
+            "proof_hmac": "d29ede54cf3b406aa3476b18e528cc0d4e88469c1e9a5a452caadcee01af87f0"
+          },
+          "multi_factor_score": 0.5935799999999999,
+          "top_contributing_factors": [
+            "violation_count_30d",
+            "chargeback_count_30d",
+            "kyc_pass_rate"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.074,
+            "avg_clv_7d": 0.042,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.097,
+            "market_volatility_index": 0.06848,
+            "sportsbook_share": 0.0205,
+            "partner_profit_30d": 0.0352,
+            "top_tier_player_count": 0.008,
+            "active_players_7d": 0.0084
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        },
+        {
+          "limit_id": 91002,
+          "sportsbook": "betvegas23-com",
+          "sport_id": "nba",
+          "market_id": "spread",
+          "bet_type": "straight",
+          "previous_max": 400,
+          "new_limit": 800,
+          "increased_at": 1785600000,
+          "line_move_5m": null,
+          "top_clv": [],
+          "context": {
+            "id": 58,
+            "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+            "limit_record_id": 91002,
+            "active_players_7d": 42,
+            "new_players_7d": 6,
+            "total_handle_7d": 185000,
+            "avg_clv_7d": 68,
+            "top_tier_player_count": 4,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.97,
+            "market_volatility_index": 0.72,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.41,
+            "partner_profit_30d": 38000,
+            "partner_roi_30d": 0.14,
+            "snapshot_at": 1785247352,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "bd087cd5875d696e1666e99cf641776e4cec8fcffae0672fbeab630506c2544d",
+            "proof_hmac": "d29ede54cf3b406aa3476b18e528cc0d4e88469c1e9a5a452caadcee01af87f0"
+          },
+          "multi_factor_score": 0.5935799999999999,
+          "top_contributing_factors": [
+            "violation_count_30d",
+            "chargeback_count_30d",
+            "kyc_pass_rate"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.074,
+            "avg_clv_7d": 0.042,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.097,
+            "market_volatility_index": 0.06848,
+            "sportsbook_share": 0.0205,
+            "partner_profit_30d": 0.0352,
+            "top_tier_player_count": 0.008,
+            "active_players_7d": 0.0084
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
         }
       ]
     },
