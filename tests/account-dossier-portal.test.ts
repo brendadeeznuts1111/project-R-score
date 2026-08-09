@@ -8,7 +8,9 @@ import {
   buildDossierActivity,
   buildDossierSoftPlays,
   collectAccountIds,
+  mergeDossierPartnerRows,
   partnerCodeFromRef,
+  projectDossierPartnerFromDashboard,
   resolveAccountId,
   rollupWeeksFromPlays,
   sectionFromLocation,
@@ -31,6 +33,69 @@ const LIMIT_CARD = 'public/portal/components/limit-changes-card.js';
 const HISTORY_HTML = 'public/portal/partner-history/index.html';
 
 describe('account dossier helpers', () => {
+  test('projectDossierPartnerFromDashboard maps outs and deposits', () => {
+    const row = projectDossierPartnerFromDashboard({
+      partnerCode: 'ASH',
+      callSign: 'ASH-001',
+      operationalPhase: 'operator_ready',
+      communication: { chatLinked: true, handshakeStatus: 'operator_ready', configuredTopicKeys: [] },
+      outs: [
+        {
+          outId: 'out-ASH-1',
+          sportsbookId: 'hard-rock-florida',
+          operationalStatus: 'ready',
+          fundingStatus: 'funded',
+          observedMaxStake: { amount: { currency: 'USD', minorUnits: 50000 } },
+        },
+      ],
+      accounting: {
+        recentEntries: [
+          {
+            entryType: 'deposit',
+            amount: { currency: 'USD', minorUnits: 25000 },
+            postedAt: '2026-08-07T13:00:00.000Z',
+            proofRef: 'proof:x',
+          },
+        ],
+      },
+    });
+    expect(row?.code).toBe('ASH');
+    expect(row?.outs[0]?.id).toBe('out-ASH-1');
+    expect(row?.outs[0]?.book?.slug).toBe('hard-rock-florida');
+    expect(row?.outs[0]?.maxBet).toBe('500');
+    expect(row?.accounting?.deposits?.[0]?.amount).toBe(250);
+    expect(row?.tracking?.communication?.chatLinked).toBe(true);
+  });
+
+  test('dashboard-only dossier still surfaces outs without partners-ops', async () => {
+    const limitRaises = await Bun.file('public/registry/limit-raises.json').json();
+    const partnersDashboard = await Bun.file('public/registry/partners-dashboard.json').json();
+    const handshake = await Bun.file('public/registry/telegram-handshake.json').json();
+    const ash = partnersDashboard.partners.find((row: { partnerCode: string }) => row.partnerCode === 'ASH');
+    const seed =
+      ash?.callSign ||
+      limitRaises.accountProfiles?.profiles?.find(
+        (row: { callSign?: string }) => String(row.callSign || '').startsWith('ASH')
+      )?.treeNodeId ||
+      'ASH';
+    const accountId = resolveAccountId(seed, collectAccountIds(limitRaises));
+    const dossier = buildAccountDossier({
+      accountId,
+      limitRaises,
+      partnersDashboard,
+      handshake,
+      hours: 168,
+    });
+    expect(dossier.partnerCode).toBe('ASH');
+    expect(dossier.outs.length).toBeGreaterThan(0);
+    expect(dossier.outs.every((o: { id?: string }) => Boolean(o.id))).toBe(true); // brand-ok — dossier UI out token
+    expect(dossier.telegram.chatLinked).toBe(true);
+    expect(dossier.links.partnersDashboard).toBe('/registry/partners-dashboard.json');
+    expect(mergeDossierPartnerRows(projectDossierPartnerFromDashboard(ash), null)?.outs.length).toBe(
+      ash.outs.length
+    );
+  });
+
   test('aligns query + #account: hash deep-links with limits board pattern', () => {
     expect(accountIdFromLocation('/portal/account/?account=ASH-001')).toBe('ASH-001');
     expect(
@@ -110,12 +175,14 @@ describe('account dossier helpers', () => {
   test('builds dossier from limit-raises bake for a demo node', async () => {
     const limitRaises = await Bun.file('public/registry/limit-raises.json').json();
     const partnersOps = await Bun.file('public/registry/partners-ops.json').json();
+    const partnersDashboard = await Bun.file('public/registry/partners-dashboard.json').json();
     const ids = collectAccountIds(limitRaises);
     expect(ids).toContain('limit-demo-atlantic');
 
     const dossier = buildAccountDossier({
       accountId: 'limit-demo-atlantic',
       limitRaises,
+      partnersDashboard,
       partnersOps,
       hours: 168 * 24 * 30,
     });
@@ -128,10 +195,13 @@ describe('account dossier helpers', () => {
     expect(dossier.links.history).toContain('/portal/partner-history/?account=');
   });
 
-  test('joins partners-ops telegram + handshake for ASH CODE', async () => {
+  test('joins dashboard outs + handshake (optional ops telegram) for ASH CODE', async () => {
     const limitRaises = await Bun.file('public/registry/limit-raises.json').json();
+    const partnersDashboard = await Bun.file('public/registry/partners-dashboard.json').json();
     const partnersOps = await Bun.file('public/registry/partners-ops.json').json();
     const handshake = await Bun.file('public/registry/telegram-handshake.json').json();
+    const ashDash = partnersDashboard.partners.find((row: { partnerCode: string }) => row.partnerCode === 'ASH');
+    expect(ashDash?.outs?.length).toBeGreaterThan(0);
     const ash = partnersOps.partners.find((row: { code: string }) => row.code === 'ASH');
     expect(ash?.telegram?.chatId).toBeTruthy();
 
@@ -145,12 +215,16 @@ describe('account dossier helpers', () => {
     const dossier = buildAccountDossier({
       accountId,
       limitRaises,
+      partnersDashboard,
       partnersOps,
       handshake,
       hours: 168,
     });
     expect(dossier.partnerCode).toBe('ASH');
+    expect(dossier.outs.length).toBeGreaterThan(0);
+    expect(dossier.outs[0]?.id || dossier.outs[0]?.outId).toBeTruthy();
     expect(dossier.telegram.chatLinked).toBe(true);
+    // Topic thread ids still come from optional partners-ops when present.
     expect(dossier.telegram.topicsConfigured).toBeGreaterThanOrEqual(1);
     expect(dossier.telegram.topics.some((t: { key: string }) => t.key === 'accounting')).toBe(
       true
@@ -173,13 +247,14 @@ describe('account dossier helpers', () => {
   });
 
   test('weaves Soft plays from soft-accounting-export onto ASH dossier', async () => {
-    const [limitRaises, partnersOps, handshake, softAccounting] = await Promise.all([
+    const [limitRaises, partnersDashboard, partnersOps, handshake, softAccounting] = await Promise.all([
       Bun.file('public/registry/limit-raises.json').json(),
+      Bun.file('public/registry/partners-dashboard.json').json(),
       Bun.file('public/registry/partners-ops.json').json(),
       Bun.file('public/registry/telegram-handshake.json').json(),
       Bun.file('public/registry/soft-accounting-export.json').json(),
     ]);
-    const ash = partnersOps.partners.find((row: { code: string }) => row.code === 'ASH');
+    const ash = partnersDashboard.partners.find((row: { partnerCode: string }) => row.partnerCode === 'ASH');
     const seed =
       ash?.callSign ||
       limitRaises.accountProfiles?.profiles?.find(
@@ -190,6 +265,7 @@ describe('account dossier helpers', () => {
     const dossier = buildAccountDossier({
       accountId,
       limitRaises,
+      partnersDashboard,
       partnersOps,
       handshake,
       softAccounting,
@@ -219,12 +295,13 @@ describe('account dossier helpers', () => {
   });
 
   test('keeps the dossier available when optional Soft accounting is absent', async () => {
-    const [limitRaises, partnersOps, handshake] = await Promise.all([
+    const [limitRaises, partnersDashboard, partnersOps, handshake] = await Promise.all([
       Bun.file('public/registry/limit-raises.json').json(),
+      Bun.file('public/registry/partners-dashboard.json').json(),
       Bun.file('public/registry/partners-ops.json').json(),
       Bun.file('public/registry/telegram-handshake.json').json(),
     ]);
-    const ash = partnersOps.partners.find((row: { code: string }) => row.code === 'ASH');
+    const ash = partnersDashboard.partners.find((row: { partnerCode: string }) => row.partnerCode === 'ASH');
     const seed =
       ash?.callSign ||
       limitRaises.accountProfiles?.profiles?.find(
@@ -235,6 +312,7 @@ describe('account dossier helpers', () => {
     const dossier = buildAccountDossier({
       accountId,
       limitRaises,
+      partnersDashboard,
       partnersOps,
       handshake,
       softAccounting: null,
@@ -404,10 +482,12 @@ describe('account dossier seed (test db)', () => {
       expect(result.baked?.raises ?? 0).toBeGreaterThan(0);
 
       const limitRaises = await Bun.file('/tmp/account-dossier-limit-raises-test.json').json();
+      const partnersDashboard = await Bun.file('public/registry/partners-dashboard.json').json();
       const partnersOps = await Bun.file('public/registry/partners-ops.json').json();
       const dossier = buildAccountDossier({
         accountId: DOSSIER_ASH_PARTNER_ID,
         limitRaises,
+        partnersDashboard,
         partnersOps,
         hours: 168,
       });
@@ -570,12 +650,13 @@ describe('account dossier portal wiring', () => {
     });
     expect(live.byBookType.some(b => b.bookType === 'book.type.legal')).toBe(true);
 
-    const [limitRaises, partnersOps, handshake] = await Promise.all([
+    const [limitRaises, partnersDashboard, partnersOps, handshake] = await Promise.all([
       Bun.file('public/registry/limit-raises.json').json(),
+      Bun.file('public/registry/partners-dashboard.json').json(),
       Bun.file('public/registry/partners-ops.json').json(),
       Bun.file('public/registry/telegram-handshake.json').json(),
     ]);
-    const ash = partnersOps.partners.find((row: { code: string }) => row.code === 'ASH');
+    const ash = partnersDashboard.partners.find((row: { partnerCode: string }) => row.partnerCode === 'ASH');
     const seed =
       ash?.callSign ||
       limitRaises.accountProfiles?.profiles?.find(
@@ -586,6 +667,7 @@ describe('account dossier portal wiring', () => {
     const dossier = buildAccountDossier({
       accountId,
       limitRaises,
+      partnersDashboard,
       partnersOps,
       handshake,
       softAccounting: live,

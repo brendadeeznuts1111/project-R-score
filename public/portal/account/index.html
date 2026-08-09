@@ -216,9 +216,9 @@
           <div class="nav-dropdown" role="menu">
           <div class="nav-group" role="group" aria-label="Ops · domain" data-group="ops">
             <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
-            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · seat capital · bun run telegram:handshake:catalog" data-group="ops" data-domain="partner" data-cli="bun run telegram:handshake:catalog" data-registry="/registry/partners-ops.json" role="menuitem">Partners</a>
+            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · seat capital · bun run partner:dashboard:bake" data-group="ops" data-domain="partner" data-cli="bun run partner:dashboard:bake" data-registry="/registry/partners-dashboard.json" role="menuitem">Partners</a>
             <a href="/portal/partner/" class="nav-link" title="partner domain readiness · profile alignment · per-out checks · bun run partner:health:bake" data-group="ops" data-domain="partner" data-cli="bun run partner:health:bake" data-registry="/registry/partner-health.json" role="menuitem">Partner health</a>
-            <a href="/portal/account/" class="nav-link active" aria-current="page" title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed" data-group="ops" data-domain="partner" data-cli="bun run ops:dossier:seed" data-registry="/registry/partners-ops.json" role="menuitem">Account</a>
+            <a href="/portal/account/" class="nav-link active" aria-current="page" title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed" data-group="ops" data-domain="partner" data-cli="bun run ops:dossier:seed" data-registry="/registry/partners-dashboard.json" role="menuitem">Account</a>
             <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Partner history</a>
             <a href="/portal/limits/" class="nav-link" title="multi-factor partner limit raises · CLV · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Limits</a>
             <a href="/portal/limits-lab/" class="nav-link" title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:predict" data-registry="/registry/limit-forecast-lab.json" role="menuitem">Limits lab</a>
@@ -531,7 +531,7 @@
             >
           </h2>
           <p class="ad-meta">
-            Handshake next-steps, DM seat, package chat, and partners-ops ledger events —
+            Handshake next-steps, DM seat, package chat, and partner ledger events —
             <a
               href="/portal/glossary/#glossary:telegram.message.alert"
               data-glossary-concept="telegram.message.alert"
@@ -835,7 +835,7 @@
 
         if (!dossier.outs.length) {
           $('ad-outs').innerHTML = dossier.partnerCode
-            ? `<p class="ad-empty">No outs listed for CODE <code>${esc(dossier.partnerCode)}</code> in partners-ops.</p>`
+            ? `<p class="ad-empty">No outs listed for CODE <code>${esc(dossier.partnerCode)}</code> in partners-dashboard.</p>`
             : '<p class="ad-empty">No partner CODE resolved — outs unavailable.</p>';
         } else {
           $('ad-outs').innerHTML = renderPortalTable(
@@ -904,7 +904,7 @@
             <div class="ad-actions">
               <a href="${esc(dossier.links.partnersTelegram)}" data-glossary-concept="${G.telegram}">Open partners Telegram</a>
               <a href="${esc(dossier.links.handshake)}" data-glossary-concept="${G.handshake}">telegram-handshake.json</a>
-              <a href="${esc(dossier.links.partnersOps)}" data-glossary-concept="${G.partners}">partners-ops.json</a>
+              <a href="${esc(dossier.links.partnersDashboard || dossier.links.partnersOps)}" data-glossary-concept="${G.partners}">partners-dashboard.json</a>
             </div>`;
         }
 
@@ -962,7 +962,7 @@
             const bookBlock = bookRows
               ? `<h3 style="margin:16px 0 8px;font-size:0.95rem">
               <a class="semantic-label" href="${accountDossierGlossaryHref(soft.bookConceptId || G.perBookType)}" data-glossary-concept="${soft.bookConceptId || G.perBookType}">Soft book types</a>
-              <span class="ad-meta"> · tagged plays / partners-ops primary out</span>
+              <span class="ad-meta"> · tagged plays / dashboard out inventory</span>
             </h3>
             <table class="portal-table ad-table" data-glossary-concept="${soft.bookConceptId || G.perBookType}"><thead><tr>
               <th>Book type</th><th>Stake Σ</th><th>|P&amp;L| settled</th><th>Net</th>
@@ -993,7 +993,7 @@
         if (!acctView && !acct) {
           $('ad-accounting').innerHTML = `${
             dossier.partnerCode
-              ? `<p class="ad-empty">No accounting slice for CODE <code>${esc(dossier.partnerCode)}</code> in partners-ops.</p>`
+              ? `<p class="ad-empty">No accounting slice for CODE <code>${esc(dossier.partnerCode)}</code> in partners-dashboard.</p>`
               : '<p class="ad-empty">No partner CODE resolved — accounting unavailable.</p>'
           }${softPlayBlock}`;
         } else {
@@ -1069,12 +1069,14 @@
         const hours = Number(url.searchParams.get('hours') || $('ad-hours').value || 168);
         $('ad-hours').value = String([24, 48, 168, 720].includes(hours) ? hours : 168);
 
-        const [limitRaises, partnersOps, handshake, softAccounting] = await Promise.all([
-          loadJson('/registry/limit-raises.json'),
-          loadJson('/registry/partners-ops.json'),
-          loadJson('/registry/telegram-handshake.json'),
-          loadJson('/registry/soft-accounting-export.json').catch(() => null),
-        ]);
+        const [limitRaises, partnersDashboard, partnersOps, handshake, softAccounting] =
+          await Promise.all([
+            loadJson('/registry/limit-raises.json'),
+            loadJson('/registry/partners-dashboard.json').catch(() => null),
+            loadJson('/registry/partners-ops.json').catch(() => null),
+            loadJson('/registry/telegram-handshake.json'),
+            loadJson('/registry/soft-accounting-export.json').catch(() => null),
+          ]);
 
         const ids = collectAccountIds(limitRaises || {});
         const select = $('ad-account-select');
@@ -1101,6 +1103,7 @@
           const dossier = buildAccountDossier({
             accountId: nextId,
             limitRaises: limitRaises || {},
+            partnersDashboard,
             partnersOps,
             handshake,
             softAccounting,
