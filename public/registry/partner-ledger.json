@@ -1,7 +1,7 @@
 {
   "schema": "factorywager.partner-ledger.v1",
   "kind": "partner-ledger-redacted-snapshot",
-  "generatedAt": "2026-08-09T02:47:26.638Z",
+  "generatedAt": "2026-08-09T02:52:18.151Z",
   "source": "root-operations-db-fixture",
   "currency": "USD",
   "notes": "Redacted public fixture for dashboard bake. Integer minor units only. No payment rails, chat IDs, or vault material. book scopes use structured outId when possible.",
@@ -100,14 +100,15 @@
       "id": "0198f0b0-0008-7000-8000-000000000008",
       "partner_code": "SPEN",
       "type": "deposit",
-      "amount_minor": 0,
+      "amount_minor": 75000,
       "currency": "USD",
-      "balance_after_minor": 0,
+      "balance_after_minor": 75000,
       "account_scope": {
         "kind": "out",
         "outId": "out-SPEN-1"
       },
-      "created_at": "2026-08-04T10:00:00.000Z"
+      "created_at": "2026-08-04T10:00:00.000Z",
+      "proof": "proof:fixture:SPEN:deposit-out-SPEN-1"
     },
     {
       "id": "0198f0b0-0009-7000-8000-000000000009",
@@ -169,15 +170,15 @@
       "id": "0198f0b0-000d-7000-8000-00000000000d",
       "partner_code": "SPEN",
       "type": "deposit",
-      "amount_minor": 0,
+      "amount_minor": 40000,
       "currency": "USD",
-      "balance_after_minor": 0,
+      "balance_after_minor": 40000,
       "account_scope": {
         "kind": "out",
         "outId": "out-SPEN-3"
       },
       "created_at": "2026-08-07T16:00:00.000Z",
-      "proof": "proof:fixture:SPEN:deposit-out-SPEN-3-unfunded"
+      "proof": "proof:fixture:SPEN:deposit-out-SPEN-3"
     },
     {
       "id": "0198f0b0-000e-7000-8000-00000000000e",
