@@ -1084,6 +1084,7 @@ implemented_now = [
   "artifact-assembler",
   "profile-coverage-adapter",
   "canonical-lifecycle-adapter",
+  "profile-private-policy-surface",
   "out-capability-contract",
   "execution-constraint-evaluation",
   "adapter-reconciliation",
@@ -1093,7 +1094,6 @@ implemented_now = [
   "tennis-external-account-refs",
 ]
 planned = [
-  "profile-private-policy-surface",
   "lifecycle-domain-logic-beyond-public-bake",
   "phase-derivation-enrichment",
   "book-account-reference-live-resolver",
