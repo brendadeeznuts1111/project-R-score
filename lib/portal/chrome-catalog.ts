@@ -182,6 +182,8 @@ export type PortalChromeCatalog = {
     doctor: '/registry/doctor-state.json';
     bookmakers: '/registry/bookmakers.json';
     vaultHealth: '/registry/vault-health.json';
+    partnersDashboard: '/registry/partners-dashboard.json';
+    /** Optional compatibility bake — not the partners board primary artifact. */
     partnersOps: '/registry/partners-ops.json';
     limitRaises: '/registry/limit-raises.json';
     chrome: typeof PORTAL_CHROME_REGISTRY_PATH;
@@ -420,8 +422,8 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     group: 'ops',
     domain: 'partner',
     note: 'package groups · telegram forums · accounting · deposits · seat capital',
-    cli: 'bun run telegram:handshake:catalog',
-    registryArtifact: '/registry/partners-ops.json',
+    cli: 'bun run partner:dashboard:bake',
+    registryArtifact: '/registry/partners-dashboard.json',
   },
   {
     id: 'partner-health',
@@ -994,6 +996,7 @@ export function buildPortalChromeCatalog(
       doctor: '/registry/doctor-state.json',
       bookmakers: '/registry/bookmakers.json',
       vaultHealth: '/registry/vault-health.json',
+      partnersDashboard: '/registry/partners-dashboard.json',
       partnersOps: '/registry/partners-ops.json',
       limitRaises: '/registry/limit-raises.json',
       chrome: PORTAL_CHROME_REGISTRY_PATH,

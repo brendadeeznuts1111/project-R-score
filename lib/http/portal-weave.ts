@@ -592,11 +592,18 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveArtifact[] = [
     purpose: 'shared',
   },
   {
-    label: 'partners-ops',
-    href: '/registry/partners-ops.json',
-    note: 'v2 taxonomy · phases · book types · rails · events',
+    label: 'partners-dashboard',
+    href: '/registry/partners-dashboard.json',
+    note: 'canonical partner desk read model · profile outs · connectors',
     purpose: 'shared',
   },
+  {
+    label: 'partners-ops',
+    href: '/registry/partners-ops.json',
+    note: 'optional v2 visibility bake · not board primary (profiles own outs)',
+    purpose: 'shared',
+  },
+
   // ── compliance & audit ──
   { label: 'dod-queue', href: '/registry/dod-queue.json', purpose: 'audit' },
   {
@@ -792,7 +799,13 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     group: 'ops',
   },
   {
-    label: 'Partners-ops registry bake',
+    label: 'Partners dashboard bake',
+    cmd: 'bun run partner:dashboard:bake',
+    doc: 'docs/design/partner-dashboard-mvp.md',
+    group: 'ops',
+  },
+  {
+    label: 'Partners-ops registry bake (optional)',
     cmd: 'bun run partners:build',
     doc: 'docs/harness/tenants/seat-capital-desk.md',
     group: 'ops',

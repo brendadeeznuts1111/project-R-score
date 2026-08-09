@@ -19,6 +19,9 @@
  *   bunx --bun ops-snapshot --no-seed          # skip auto demo seed when DB empty
  *   bun run ops:seed && bun run ops:snapshot    # refresh Pages ops panels
  *
+ * partners-ops.json is **not** rewritten by default (profile outs own inventory;
+ * use `bun run partners:build` or OPS_SNAPSHOT_PARTNERS_OPS=1 for the optional bake).
+ *
  * Writes (SSOT paths):
  *   public/registry/ops-summary.json
  *   public/registry/proof-taxonomy-audit.json
@@ -121,6 +124,9 @@ Common options:
   --no-compliance       skip compliance board bake
   --no-monorepo-health  skip monorepo health bake
   --webview             include WebView probes
+
+Env (optional):
+  OPS_SNAPSHOT_PARTNERS_OPS=1  also export partners-ops.json (default off — use partners:build)
 
 Seed block (when DB empty / demo) — REF:ID (${OPS_SNAPSHOT_DOC} §${OPS_SNAPSHOT_SECTION}):
   (default)       empty-gate seed only  (${opsSnapshotFlagDocRef('default').refId})
@@ -647,18 +653,28 @@ export async function buildRegistrySnapshot(options?: {
       );
     }
 
-    try {
-      const { exportPartnersOpsRegistry } = await import('../lib/telegram/partner-ops-registry.ts');
-      // preserveNonEmpty (default): never wipe a committed non-empty partners-ops
-      // with an empty seat-desk projection — profile outs are inventory SSOT.
-      const partnersOps = await exportPartnersOpsRegistry(root);
+    // partners-ops is optional visibility (profile outs own inventory). Default
+    // ops:snapshot does not rewrite it — explicit `bun run partners:build` or
+    // OPS_SNAPSHOT_PARTNERS_OPS=1 for operators who still need the v2 bake.
+    if (Bun.env.OPS_SNAPSHOT_PARTNERS_OPS === '1') {
+      try {
+        const { exportPartnersOpsRegistry } =
+          await import('../lib/telegram/partner-ops-registry.ts');
+        // preserveNonEmpty (default): never wipe a committed non-empty bake with
+        // an empty seat-desk projection.
+        const partnersOps = await exportPartnersOpsRegistry(root);
+        console.log(
+          `[ops-snapshot] partners-ops → ${partnersOps.summary.partners} partners · ${partnersOps.summary.outs} outs · validation ${partnersOps.validation.ok ? 'ok' : 'FAIL'}`
+        );
+      } catch (e) {
+        console.warn(
+          '[ops-snapshot] partners-ops export skipped:',
+          e instanceof Error ? e.message : e
+        );
+      }
+    } else {
       console.log(
-        `[ops-snapshot] partners-ops → ${partnersOps.summary.partners} partners · ${partnersOps.summary.outs} outs · validation ${partnersOps.validation.ok ? 'ok' : 'FAIL'}`
-      );
-    } catch (e) {
-      console.warn(
-        '[ops-snapshot] partners-ops export skipped:',
-        e instanceof Error ? e.message : e
+        '[ops-snapshot] partners-ops export off (default) — bun run partners:build or OPS_SNAPSHOT_PARTNERS_OPS=1'
       );
     }
 

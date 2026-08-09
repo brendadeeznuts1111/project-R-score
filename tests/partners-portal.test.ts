@@ -26,7 +26,7 @@ describe('partners portal board', () => {
     expect(PORTAL_MARKDOWN_SLUGS).toContain('partners');
     const nav = PORTAL_OVERFLOW_NAV.find(n => n.id === 'partners');
     expect(nav?.href).toBe('/portal/partners/');
-    expect(nav?.cli).toContain('telegram:handshake:catalog');
+    expect(nav?.cli).toContain('partner:dashboard:bake');
   });
 
   test('board loads handshake, seat desk, and accounting/deposit sections', async () => {
@@ -118,7 +118,7 @@ describe('partners portal board', () => {
     expect(html).toContain('isChipHex');
     expect(html).toContain('/^#[0-9A-Fa-f]{6}$/');
     expect(html).toContain('Fallback first');
-    expect(html).toContain('partners-ops.json');
+    expect(html).toContain('partners-dashboard.json');
     expect(html).toContain('bookRegistry');
   });
 

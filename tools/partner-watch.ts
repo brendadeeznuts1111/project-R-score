@@ -3,20 +3,20 @@
 // @see https://bun.com/docs/guides/read-file/watch — fs.watch (the documented
 //     Bun watch API — `Bun.watch` is undefined in Bun 1.4.0-canary, verified)
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
-// tools/partner-watch.ts — watch-mode for the accounting bake loop.
+// tools/partner-watch.ts — watch-mode for the partner profile + dashboard bake loop.
 //
 //   bun run partner:watch            # initial bake, then watch + re-bake on change
 //   bun run partner:watch --once     # single bake, exit
 //   bun run partner:watch --debounce-ms 200
 //
-// Watches the accounting SOURCES (config/partner-profiles/*.toml,
-// data/operations.db, public/registry/seat-capital-desk.json) and on change
-// re-runs partner-profile:bake + partners:build + validate:ledger — the loop
-// that materializes profiles → unified registry → partners-ops projection.
-// Output registry files (partner-profiles.json, partners-ops.json,
-// domain-glossary.json …) are ignored so self-writes don't retrigger.
+// Watches accounting SOURCES (config/partner-profiles/*.toml, data/operations.db)
+// and on change re-runs profile bake → coverage → partners-dashboard → ledger
+// validate. Out inventory lives in private profile outs; partners-ops is not
+// part of this loop (optional: bun run partners:build).
+// Output registry files are ignored so self-writes don't retrigger.
 //
 // @see docs/design/settlement-feed.md — materialization loop
+// @see scripts/refresh-partners-dashboard.ts — operator one-shot with handshake
 
 // Bun has no native file-watch API (`Bun.watch` undefined) — fs.watch is the
 // documented Bun-supported surface; disable the no-restricted-imports rule.
@@ -32,19 +32,24 @@ export function shouldRebake(relativePath: string): boolean {
   const p = relativePath.replace(/\\/g, '/');
   if (p.startsWith('config/partner-profiles/') && p.endsWith('.toml')) return true;
   if (p === 'data/operations.db') return true;
+  // Optional seat desk still useful for other surfaces; not required for outs SSOT.
   if (p === 'public/registry/seat-capital-desk.json') return true;
   return false;
 }
 
+/** Ordered bake steps for the profile → dashboard loop (no partners-ops). */
+export const WATCH_BAKE_COMMANDS: readonly (readonly string[])[] = [
+  ['bun', 'run', 'partner-profile:bake'],
+  ['bun', 'run', 'partner-profile:coverage:bake'],
+  ['bun', 'run', 'partner:dashboard:bake'],
+  ['bun', 'run', 'validate:ledger'],
+] as const;
+
 async function runBakes(): Promise<void> {
   const started = new Date().toISOString();
   console.log(`\n[${started}] re-baking …`);
-  for (const cmd of [
-    ['bun', 'run', 'partner-profile:bake'],
-    ['bun', 'run', 'partners:build'],
-    ['bun', 'run', 'validate:ledger'],
-  ]) {
-    const proc = Bun.spawn(cmd, { stdout: 'inherit', stderr: 'inherit', stdin: 'inherit' });
+  for (const cmd of WATCH_BAKE_COMMANDS) {
+    const proc = Bun.spawn([...cmd], { stdout: 'inherit', stderr: 'inherit', stdin: 'inherit' });
     const code = await proc.exited;
     if (code !== 0) {
       console.error(`  ✗ ${cmd.join(' ')} exited ${code}`);
@@ -78,7 +83,6 @@ async function main(): Promise<void> {
       { recursive: true },
       (_event, filename) => {
         if (filename && shouldRebake(joinPath(root, String(filename)))) {
-          console.log(`  · change: ${joinPath(root, String(filename))}`);
           schedule();
         }
       }
@@ -86,17 +90,16 @@ async function main(): Promise<void> {
     watchers.push(watcher);
   }
 
-  console.log(`watching ${WATCH_ROOTS.join(', ')} (debounce ${debounceMs}ms) — Ctrl+C to stop`);
+  console.log(
+    `partner:watch · watching ${WATCH_ROOTS.join(', ')} · debounce ${debounceMs}ms · Ctrl+C to stop`
+  );
+
   process.on('SIGINT', () => {
     for (const w of watchers) w.close();
     process.exit(0);
   });
-  await new Promise(() => {}); // keep alive
 }
 
 if (import.meta.main) {
-  main().catch(e => {
-    console.error(e instanceof Error ? e.message : e);
-    process.exit(1);
-  });
+  await main();
 }
