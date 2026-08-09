@@ -1,107 +1,323 @@
 {
   "schema": "factorywager.telegram-handshake.v1",
-  "generatedAt": "2026-07-28T16:41:44.049Z",
+  "generatedAt": "2026-08-09T02:46:20.952Z",
   "source": "snapshot",
   "partners": 4,
   "inviteGaps": 0,
-  "blocked": 0,
-  "operatorReady": 4,
+  "blocked": 4,
+  "operatorReady": 0,
   "forumReady": 0,
   "designated": 0,
-  "verifyFailPartners": 0,
-  "laneFailPartners": 0,
+  "verifyFailPartners": 4,
+  "laneFailPartners": 4,
   "catalogPath": "/registry/telegram-handshake-catalog.json",
   "rows": [
     {
       "partnerCode": "ASH",
-      "phase": "operator_ready",
+      "phase": "blocked",
       "membershipCell": "2·OK",
-      "handshakeOk": true,
+      "handshakeOk": false,
       "needsPartnerInForum": false,
       "inviteLink": "https://t.me/+iBXudtg48psyMTkx",
       "inviteSentAt": null,
       "dmSeatStatus": "linked",
       "callSign": "ASH-001",
-      "gapCount": 0,
-      "topGap": null,
-      "verifyPassed": 11,
-      "verifyTotal": 11,
-      "verifyFails": [],
-      "lanesOk": 23,
-      "lanesTotal": 23,
+      "gapCount": 5,
+      "topGap": "forum metadata missing or chat_id mismatch",
+      "verifyPassed": 4,
+      "verifyTotal": 8,
+      "verifyFails": [
+        {
+          "id": "create_artifact",
+          "detail": "No create_package_group line for this code"
+        },
+        {
+          "id": "soft_wired",
+          "detail": "No ack_package_group_wired line"
+        },
+        {
+          "id": "registry_title",
+          "detail": "registry title \"TOC Ops · ASH · Cascade Partner\""
+        },
+        {
+          "id": "factory_linked_ack",
+          "detail": "No ack_package_group_linked (run link-package-group or acknowledge-pending)"
+        }
+      ],
+      "lanesOk": 15,
+      "lanesTotal": 22,
       "lanesBlocked": [],
-      "laneFails": [],
+      "laneFails": [
+        {
+          "id": "jsonl_create",
+          "group": "audit",
+          "detail": "missing create_package_group"
+        },
+        {
+          "id": "jsonl_wired",
+          "group": "audit",
+          "detail": "missing ack_package_group_wired"
+        },
+        {
+          "id": "jsonl_linked",
+          "group": "audit",
+          "detail": "missing ack_package_group_linked"
+        },
+        {
+          "id": "forum_metadata",
+          "group": "forum",
+          "detail": "no reports/telegram/forums metadata file"
+        },
+        {
+          "id": "route_alerts",
+          "group": "routing",
+          "detail": "alerts: no forum topics map"
+        },
+        {
+          "id": "route_plays",
+          "group": "routing",
+          "detail": "plays: no forum topics map"
+        },
+        {
+          "id": "route_toc",
+          "group": "routing",
+          "detail": "toc: no forum topics map"
+        }
+      ],
       "nextSteps": [
-        "ready for welcome DM + bot commands"
+        "bun run forum-metadata-sync CODE --apply --ensure-topics (toc-ops)",
+        "bun tools/onboard-partner-package.ts ASH-001 --create-package-group"
       ]
     },
     {
       "partnerCode": "BIL",
-      "phase": "operator_ready",
+      "phase": "blocked",
       "membershipCell": "2·OK",
-      "handshakeOk": true,
+      "handshakeOk": false,
       "needsPartnerInForum": false,
       "inviteLink": "https://t.me/+eMgvmRzz2qpkZDYx",
       "inviteSentAt": null,
       "dmSeatStatus": "linked (shared DM)",
       "callSign": "BIL-001",
-      "gapCount": 0,
-      "topGap": null,
-      "verifyPassed": 11,
-      "verifyTotal": 11,
-      "verifyFails": [],
-      "lanesOk": 23,
-      "lanesTotal": 23,
+      "gapCount": 5,
+      "topGap": "forum metadata missing or chat_id mismatch",
+      "verifyPassed": 4,
+      "verifyTotal": 8,
+      "verifyFails": [
+        {
+          "id": "create_artifact",
+          "detail": "No create_package_group line for this code"
+        },
+        {
+          "id": "soft_wired",
+          "detail": "No ack_package_group_wired line"
+        },
+        {
+          "id": "registry_title",
+          "detail": "registry title \"TOC Ops · BIL · BIL Ops\""
+        },
+        {
+          "id": "factory_linked_ack",
+          "detail": "No ack_package_group_linked (run link-package-group or acknowledge-pending)"
+        }
+      ],
+      "lanesOk": 15,
+      "lanesTotal": 22,
       "lanesBlocked": [],
-      "laneFails": [],
+      "laneFails": [
+        {
+          "id": "jsonl_create",
+          "group": "audit",
+          "detail": "missing create_package_group"
+        },
+        {
+          "id": "jsonl_wired",
+          "group": "audit",
+          "detail": "missing ack_package_group_wired"
+        },
+        {
+          "id": "jsonl_linked",
+          "group": "audit",
+          "detail": "missing ack_package_group_linked"
+        },
+        {
+          "id": "forum_metadata",
+          "group": "forum",
+          "detail": "no reports/telegram/forums metadata file"
+        },
+        {
+          "id": "route_alerts",
+          "group": "routing",
+          "detail": "alerts: no forum topics map"
+        },
+        {
+          "id": "route_plays",
+          "group": "routing",
+          "detail": "plays: no forum topics map"
+        },
+        {
+          "id": "route_toc",
+          "group": "routing",
+          "detail": "toc: no forum topics map"
+        }
+      ],
       "nextSteps": [
-        "ready for welcome DM + bot commands"
+        "bun run forum-metadata-sync CODE --apply --ensure-topics (toc-ops)",
+        "bun tools/onboard-partner-package.ts BIL-001 --create-package-group"
       ]
     },
     {
       "partnerCode": "NOV",
-      "phase": "operator_ready",
+      "phase": "blocked",
       "membershipCell": "2·OK",
-      "handshakeOk": true,
+      "handshakeOk": false,
       "needsPartnerInForum": false,
       "inviteLink": "https://t.me/+0oVv4f5CxzVhNDYx",
       "inviteSentAt": null,
       "dmSeatStatus": "linked (shared DM)",
       "callSign": "NOV-001",
-      "gapCount": 0,
-      "topGap": null,
-      "verifyPassed": 11,
-      "verifyTotal": 11,
-      "verifyFails": [],
-      "lanesOk": 23,
-      "lanesTotal": 23,
+      "gapCount": 5,
+      "topGap": "forum metadata missing or chat_id mismatch",
+      "verifyPassed": 4,
+      "verifyTotal": 8,
+      "verifyFails": [
+        {
+          "id": "create_artifact",
+          "detail": "No create_package_group line for this code"
+        },
+        {
+          "id": "soft_wired",
+          "detail": "No ack_package_group_wired line"
+        },
+        {
+          "id": "registry_title",
+          "detail": "registry title \"TOC Ops · NOV · NOV Onboarding\""
+        },
+        {
+          "id": "factory_linked_ack",
+          "detail": "No ack_package_group_linked (run link-package-group or acknowledge-pending)"
+        }
+      ],
+      "lanesOk": 15,
+      "lanesTotal": 22,
       "lanesBlocked": [],
-      "laneFails": [],
+      "laneFails": [
+        {
+          "id": "jsonl_create",
+          "group": "audit",
+          "detail": "missing create_package_group"
+        },
+        {
+          "id": "jsonl_wired",
+          "group": "audit",
+          "detail": "missing ack_package_group_wired"
+        },
+        {
+          "id": "jsonl_linked",
+          "group": "audit",
+          "detail": "missing ack_package_group_linked"
+        },
+        {
+          "id": "forum_metadata",
+          "group": "forum",
+          "detail": "no reports/telegram/forums metadata file"
+        },
+        {
+          "id": "route_alerts",
+          "group": "routing",
+          "detail": "alerts: no forum topics map"
+        },
+        {
+          "id": "route_plays",
+          "group": "routing",
+          "detail": "plays: no forum topics map"
+        },
+        {
+          "id": "route_toc",
+          "group": "routing",
+          "detail": "toc: no forum topics map"
+        }
+      ],
       "nextSteps": [
-        "ready for welcome DM + bot commands"
+        "bun run forum-metadata-sync CODE --apply --ensure-topics (toc-ops)",
+        "bun tools/onboard-partner-package.ts NOV-001 --create-package-group"
       ]
     },
     {
       "partnerCode": "SPEN",
-      "phase": "operator_ready",
+      "phase": "blocked",
       "membershipCell": "2·OK",
-      "handshakeOk": true,
+      "handshakeOk": false,
       "needsPartnerInForum": false,
       "inviteLink": "https://t.me/+3lqb3fA0yIllM2Yx",
       "inviteSentAt": null,
       "dmSeatStatus": "linked (shared DM)",
       "callSign": "SPEN-001",
-      "gapCount": 0,
-      "topGap": null,
-      "verifyPassed": 11,
-      "verifyTotal": 11,
-      "verifyFails": [],
-      "lanesOk": 23,
-      "lanesTotal": 23,
+      "gapCount": 5,
+      "topGap": "forum metadata missing or chat_id mismatch",
+      "verifyPassed": 4,
+      "verifyTotal": 8,
+      "verifyFails": [
+        {
+          "id": "create_artifact",
+          "detail": "No create_package_group line for this code"
+        },
+        {
+          "id": "soft_wired",
+          "detail": "No ack_package_group_wired line"
+        },
+        {
+          "id": "registry_title",
+          "detail": "registry title \"TOC Ops · SPEN · Factory Rail Co\""
+        },
+        {
+          "id": "factory_linked_ack",
+          "detail": "No ack_package_group_linked (run link-package-group or acknowledge-pending)"
+        }
+      ],
+      "lanesOk": 15,
+      "lanesTotal": 22,
       "lanesBlocked": [],
-      "laneFails": [],
+      "laneFails": [
+        {
+          "id": "jsonl_create",
+          "group": "audit",
+          "detail": "missing create_package_group"
+        },
+        {
+          "id": "jsonl_wired",
+          "group": "audit",
+          "detail": "missing ack_package_group_wired"
+        },
+        {
+          "id": "jsonl_linked",
+          "group": "audit",
+          "detail": "missing ack_package_group_linked"
+        },
+        {
+          "id": "forum_metadata",
+          "group": "forum",
+          "detail": "no reports/telegram/forums metadata file"
+        },
+        {
+          "id": "route_alerts",
+          "group": "routing",
+          "detail": "alerts: no forum topics map"
+        },
+        {
+          "id": "route_plays",
+          "group": "routing",
+          "detail": "plays: no forum topics map"
+        },
+        {
+          "id": "route_toc",
+          "group": "routing",
+          "detail": "toc: no forum topics map"
+        }
+      ],
       "nextSteps": [
-        "ready for welcome DM + bot commands"
+        "bun run forum-metadata-sync CODE --apply --ensure-topics (toc-ops)",
+        "bun tools/onboard-partner-package.ts SPEN-001 --create-package-group"
       ]
     }
   ],
