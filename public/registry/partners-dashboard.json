@@ -1,67 +1,67 @@
 {
   "schema": "factorywager.partners-dashboard.v2",
-  "generatedAt": "2026-08-09T03:02:33.057Z",
+  "generatedAt": "2026-08-09T04:05:09.884Z",
   "connectorSnapshots": {
     "profiles": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T03:02:33.057Z",
+      "observedAt": "2026-08-09T04:05:09.884Z",
       "ageSeconds": 0,
       "inputRef": "config/partner-profiles/*.toml",
-      "snapshotRef": "sha256:b00984cdec8619d096d56359a4afdfecc9fac8310a4dceef9720f466f2cc3d77"
+      "snapshotRef": "sha256:332df02ae1b4c15c8d0694768642f6f7d0f863f4feeaeed66a99ff6d7f1e3eb8"
     },
     "accounting": {
-      "dataStatus": "ok",
+      "dataStatus": "stale",
       "sourceMode": "current",
-      "reasonCode": "current_fresh",
+      "reasonCode": "current_stale",
       "observedAt": "2026-08-09T03:02:33.057Z",
-      "ageSeconds": 0,
+      "ageSeconds": 3757,
       "inputRef": "partner_ledger",
       "snapshotRef": "sha256:0cd270dbae8ba1a4f06f3e4b9a985d6efb4391e6e5cd4c21515913d5d9a0e648"
     },
     "telegram": {
-      "dataStatus": "ok",
+      "dataStatus": "stale",
       "sourceMode": "current",
-      "reasonCode": "current_fresh",
+      "reasonCode": "current_stale",
       "observedAt": "2026-08-09T03:02:33.057Z",
-      "ageSeconds": 0,
+      "ageSeconds": 3757,
       "inputRef": "/registry/telegram-handshake.json",
       "snapshotRef": "sha256:34e26ce66717f06668d82757d09ae8325e8ff61acf9286b465a2a913a0d345b4"
     },
     "limits": {
-      "dataStatus": "ok",
+      "dataStatus": "stale",
       "sourceMode": "current",
-      "reasonCode": "current_fresh",
+      "reasonCode": "current_stale",
       "observedAt": "2026-08-09T03:02:33.057Z",
-      "ageSeconds": 0,
+      "ageSeconds": 3757,
       "inputRef": "/registry/limit-raises.json",
       "snapshotRef": "sha256:4c7c49ddd61e08a283dcca357168ed3bd7339a163440951ede8804cfb7b89632"
     },
     "bookmakers": {
-      "dataStatus": "ok",
+      "dataStatus": "stale",
       "sourceMode": "current",
-      "reasonCode": "current_fresh",
+      "reasonCode": "current_stale",
       "observedAt": "2026-08-09T03:02:33.057Z",
-      "ageSeconds": 0,
+      "ageSeconds": 3757,
       "inputRef": "/registry/bookmakers.json",
       "snapshotRef": "sha256:1c6baac3342ccaf2a358ae935dab016418bcb419c49dc0cfc769c94b16f9ca30"
     },
     "tennis": {
-      "dataStatus": "ok",
+      "dataStatus": "stale",
       "sourceMode": "current",
-      "reasonCode": "current_fresh",
+      "reasonCode": "current_stale",
       "observedAt": "2026-08-09T03:02:33.057Z",
-      "ageSeconds": 0,
+      "ageSeconds": 3757,
       "inputRef": "/registry/tennis/partner-contracts.json",
       "snapshotRef": "sha256:b03126b9cf54a1dd7c608eadb9177fe1cd653ddfc0fb3d6d5659b5f2fd4e1626"
     },
     "sportsTerminal": {
-      "dataStatus": "ok",
+      "dataStatus": "stale",
       "sourceMode": "current",
-      "reasonCode": "current_fresh",
+      "reasonCode": "current_stale",
       "observedAt": "2026-08-09T03:02:33.057Z",
-      "ageSeconds": 0,
+      "ageSeconds": 3757,
       "inputRef": "/registry/sports-terminal/partner-integration-health.json",
       "snapshotRef": "sha256:f5eec997f0704b59fdd4277839758a79b23c3319abd9167f1dabda29e5fa6ae2"
     }
@@ -244,13 +244,13 @@
       "callSign": "ASH-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T03:02:33.057Z",
+        "effectiveAt": "2026-08-09T04:05:09.884Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T03:02:33.057Z",
+          "observedAt": "2026-08-09T04:05:09.884Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -468,13 +468,13 @@
       "callSign": "BIL-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T03:02:33.057Z",
+        "effectiveAt": "2026-08-09T04:05:09.884Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T03:02:33.057Z",
+          "observedAt": "2026-08-09T04:05:09.884Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -619,13 +619,13 @@
       "callSign": "NOV-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T03:02:33.057Z",
+        "effectiveAt": "2026-08-09T04:05:09.884Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T03:02:33.057Z",
+          "observedAt": "2026-08-09T04:05:09.884Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -806,13 +806,13 @@
       "callSign": "SPEN-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T03:02:33.057Z",
+        "effectiveAt": "2026-08-09T04:05:09.884Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T03:02:33.057Z",
+          "observedAt": "2026-08-09T04:05:09.884Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"

@@ -5,7 +5,6 @@ import {
   assemblePartnerDashboardArtifact,
   buildPartnerDashboardRecords,
   evaluateConnectorFreshness,
-  parseLegacyPartnersOpsProjection,
   parsePartnerProfileCoverageArtifact,
   parseSportsTerminalIntegrationHealth,
   parseTelegramHandshakeArtifact,
@@ -54,16 +53,21 @@ async function loadBuiltPartners(): Promise<{
   generatedAt: string;
   tennis: TennisCapacityProjection;
 }> {
-  const [profiles, coverageRaw, legacyRaw, telegramRaw, tennisRaw, bookmakers] = await Promise.all([
-    loadJson('public/registry/partner-profiles.json'),
-    loadJson('public/registry/partner-profile-coverage.json'),
-    loadJson('public/registry/partners-ops.json'),
-    loadJson('public/registry/telegram-handshake.json'),
-    loadJson('public/registry/tennis/partner-contracts.json'),
-    loadJson('public/registry/bookmakers.json'),
-  ]);
+  const { loadAllProfiles } = await import('../lib/partner-profile/bake.ts');
+  // tests/ → repo root config/partner-profiles
+  const profilesDir = new URL('../config/partner-profiles/', import.meta.url).pathname;
+  const [profiles, coverageRaw, privateLoad, telegramRaw, tennisRaw, bookmakers] = await Promise.all(
+    [
+      loadJson('public/registry/partner-profiles.json'),
+      loadJson('public/registry/partner-profile-coverage.json'),
+      loadAllProfiles(profilesDir),
+      loadJson('public/registry/telegram-handshake.json'),
+      loadJson('public/registry/tennis/partner-contracts.json'),
+      loadJson('public/registry/bookmakers.json'),
+    ]
+  );
+  if (privateLoad.issues.length > 0) throw new Error(privateLoad.issues.join('; '));
   const coverage = parsePartnerProfileCoverageArtifact(coverageRaw);
-  const legacyOps = parseLegacyPartnersOpsProjection(legacyRaw);
   const telegram = parseTelegramHandshakeArtifact(telegramRaw);
   const registeredIds = Object.keys(
     (bookmakers as { bookmakers?: Record<string, unknown> }).bookmakers ?? {}
@@ -78,7 +82,7 @@ async function loadBuiltPartners(): Promise<{
     generatedAt,
     partnerProfiles: profiles,
     profileCoverage: coverage,
-    legacyOps,
+    privateProfiles: privateLoad.profiles,
     telegram,
   });
   return {

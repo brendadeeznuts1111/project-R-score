@@ -8,7 +8,8 @@
  * read model for /portal/partners/.
  *
  * Pipeline (pure package, I/O only at edges):
- *   1. buildPartnerDashboardRecords (profiles · coverage · telegram · legacy · optional ledger)
+ *   1. buildPartnerDashboardRecords (profiles · coverage · private outs · optional
+ *      legacy partners-ops · telegram · optional ledger)
  *   2. reconcilePartnerDashboardFacts (tennis · sports-terminal · limits · bookmakers)
  *   3. assemblePartnerDashboardArtifact
  *
@@ -28,6 +29,7 @@
  * authority and is not consumed here. Limit raises never become max-stake.
  */
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+import { loadAllProfiles } from '../lib/partner-profile/bake.ts';
 import {
   LIMIT_RAISE_SPORTSBOOK_ALIASES,
   PARTNER_CONNECTOR_SNAPSHOT_KEYS,
@@ -35,6 +37,7 @@ import {
   PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS,
   adaptAccountingFromLedgerSnapshot,
   assemblePartnerDashboardArtifact,
+  bookKeyToOutIdMapFromProfiles,
   bookRefMapFromCatalog,
   buildPartnerDashboardRecords,
   connectorSnapshotRefFromPayload,
@@ -56,6 +59,7 @@ import {
   type ConnectorObservation,
   type ConnectorObservationBundle,
   type ConnectorSnapshot,
+  type LegacyPartnerProjection,
   type LimitChangeProjection,
   type PartnerAccountingObservation,
   type PartnerConnectorSnapshotKey,
@@ -180,20 +184,6 @@ async function writeLkg(
   );
 }
 
-function bookKeyMapFromLegacy(
-  legacy: ReturnType<typeof parseLegacyPartnersOpsProjection>
-): Record<string, string> {
-  const map: Record<string, string> = {};
-  for (const partner of legacy.partners) {
-    for (const out of partner.outs) {
-      // bare slug + CODE-qualified for accounting book: scopes
-      map[out.observedBookSlug] = out.outId;
-      map[`${partner.partnerCode}:${out.observedBookSlug}`] = out.outId;
-    }
-  }
-  return map;
-}
-
 export type BuildPartnersDashboardOptions = {
   /** Explicit bake clock; when omitted, resolved from --as-of / max-input. */
   generatedAt?: string;
@@ -215,6 +205,7 @@ export async function buildPartnersDashboardArtifact(
     profiles,
     coverageRaw,
     legacyRaw,
+    privateProfilesLoad,
     telegramFile,
     tennisFile,
     ledgerFile,
@@ -224,7 +215,8 @@ export async function buildPartnersDashboardArtifact(
   ] = await Promise.all([
     loadJson(PROFILE_PATH),
     loadJson(COVERAGE_PATH),
-    loadJson(OPS_PATH),
+    loadOptionalJson(OPS_PATH),
+    loadAllProfiles(),
     loadOptionalJson(TELEGRAM_PATH),
     loadOptionalJson(TENNIS_PATH),
     loadOptionalJson(LEDGER_PATH),
@@ -232,6 +224,13 @@ export async function buildPartnersDashboardArtifact(
     loadOptionalJson(LIMITS_PATH),
     loadOptionalJson(BOOKMAKERS_PATH),
   ]);
+
+  if (privateProfilesLoad.issues.length > 0) {
+    throw new TypeError(
+      `private partner profiles invalid: ${privateProfilesLoad.issues.join('; ')}`
+    );
+  }
+  const privateProfiles = privateProfilesLoad.profiles;
 
   // Optional connectors: prefer live file; else LKG payload.
   async function resolveOptional(
@@ -391,7 +390,12 @@ export async function buildPartnersDashboardArtifact(
   }
 
   const coverage = parsePartnerProfileCoverageArtifact(coverageRaw);
-  const legacyOps = parseLegacyPartnersOpsProjection(legacyRaw);
+
+  // partners-ops is optional — private profile outs are preferred out inventory SSOT.
+  let legacyOps: LegacyPartnerProjection | undefined;
+  if (legacyRaw !== undefined) {
+    legacyOps = parseLegacyPartnersOpsProjection(legacyRaw);
+  }
 
   if (telegramResolved.raw === undefined) {
     throw new TypeError(
@@ -405,11 +409,13 @@ export async function buildPartnersDashboardArtifact(
     bookmakers = parseBookmakerCatalogArtifact(bookmakersResolved.raw);
   }
 
+  const bookKeyToOutId = bookKeyToOutIdMapFromProfiles(privateProfiles, legacyOps);
+
   let accounting: PartnerAccountingObservation[] | undefined;
   if (accountingResolved.raw !== undefined) {
     accounting = adaptAccountingFromLedgerSnapshot(accountingResolved.raw, {
       observedAt: generatedAt,
-      bookKeyToOutId: bookKeyMapFromLegacy(legacyOps),
+      bookKeyToOutId,
     });
   }
 
@@ -417,7 +423,8 @@ export async function buildPartnersDashboardArtifact(
     generatedAt,
     partnerProfiles: profiles,
     profileCoverage: coverage,
-    legacyOps,
+    privateProfiles,
+    ...(legacyOps ? { legacyOps } : {}),
     telegram,
     ...(accounting ? { accounting } : {}),
   });

@@ -66,6 +66,15 @@ target = "@ash.hr.fl"
 maxBet = 500
 freeRollPct = 25
 
+# Out inventory (dashboard seats). Multiple outs may share one bookKey.
+[outs.out-ASH-1]
+book = "hard-rock-florida"
+status = "ready"
+
+[outs.out-ASH-2]
+book = "hard-rock-florida"
+status = "deferred"
+
 [cultivation]
 initialDepositTarget = 500
 depositScheduleWeeks = 4

@@ -54,6 +54,7 @@ export const PRIVATE_POLICY_SURFACE_TOP_LEVEL_KEYS = [
   'rules',
   'telegram',
   'books',
+  'outs',
   'cultivation',
   'settlement',
   'balance',
@@ -153,6 +154,7 @@ function isOperationalPhase(value: string): value is PartnerOperationalPhase {
   return (PARTNER_OPERATIONAL_PHASES as readonly string[]).includes(value);
 }
 
+// eslint-disable-next-line harness/no-unknown-function-param -- private profile wire presence probe
 function hasNonEmptyObject(value: unknown): boolean {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
     ? Object.keys(value as Record<string, unknown>).length > 0
@@ -177,7 +179,7 @@ export function detectPrivatePolicySurfacePresence(
   const hasTelegramContact =
     telegram !== undefined &&
     (typeof telegram.chatId === 'string' || hasNonEmptyObject(telegram.topics));
-  const hasBooks = hasNonEmptyObject(root.books);
+  const hasBooks = hasNonEmptyObject(root.books) || hasNonEmptyObject(root.outs);
   const hasCultivation = hasNonEmptyObject(root.cultivation);
   const hasSettlement = hasNonEmptyObject(root.settlement);
   const hasBalance = hasNonEmptyObject(root.balance);
@@ -192,8 +194,14 @@ export function detectPrivatePolicySurfacePresence(
     hasBalance ||
     hasLineage ||
     PRIVATE_POLICY_SURFACE_TOP_LEVEL_KEYS.some(key => {
-      if (key === 'jurisdiction' || key === 'rules' || key === 'telegram' || key === 'books') {
-        return false; // already counted
+      if (
+        key === 'jurisdiction' ||
+        key === 'rules' ||
+        key === 'telegram' ||
+        key === 'books' ||
+        key === 'outs'
+      ) {
+        return false; // already counted via has* flags (outs fold into hasBooks)
       }
       if (key === 'cultivation' || key === 'settlement' || key === 'balance' || key === 'lineage') {
         return false;
@@ -228,7 +236,6 @@ export function detectPrivatePolicySurfacePresence(
  * Returns identity/lifecycle facts plus policy presence flags only.
  */
 export function parsePrivatePartnerProfileSurface(
-  // eslint-disable-next-line harness/no-unknown-function-param -- private profile wire edge
   profile: unknown,
   options?: { recordKey?: string; sourceRecordRef?: string }
 ): PrivatePartnerProfileSurface {
@@ -335,6 +342,7 @@ export function projectPublicPartnerProfile(
   };
 }
 
+// eslint-disable-next-line harness/no-unknown-function-param -- public projection leak walk
 function walkForbiddenKeys(value: unknown, path: string, hits: string[]): void {
   if (Array.isArray(value)) {
     value.forEach((item, index) => walkForbiddenKeys(item, `${path}[${index}]`, hits));
@@ -357,7 +365,6 @@ function walkForbiddenKeys(value: unknown, path: string, hits: string[]): void {
  * Rejects private policy top-level keys and nested secret markers anywhere in the tree.
  */
 export function assertPublicPartnerProfileLeakFree(
-  // eslint-disable-next-line harness/no-unknown-function-param -- public wire edge
   candidate: unknown,
   path = 'publicProfile'
 ): void {
