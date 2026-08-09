@@ -1,31 +1,31 @@
 {
   "schema": "factorywager.partners-dashboard.v2",
-  "generatedAt": "2026-08-09T02:48:50.596Z",
+  "generatedAt": "2026-08-09T02:52:18.151Z",
   "connectorSnapshots": {
     "profiles": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:46:48.349Z",
-      "ageSeconds": 123,
+      "observedAt": "2026-08-09T02:52:18.151Z",
+      "ageSeconds": 0,
       "inputRef": "config/partner-profiles/*.toml",
-      "snapshotRef": "sha256:1126bd64c2646e846b321a544a0e09a51da321920a1cbff9f700777a4bf69a8d"
+      "snapshotRef": "sha256:71b0d42d5a87276e0bc6c39d307ad05b9c87dffba92543ccc552017d02608869"
     },
     "accounting": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:47:26.638Z",
-      "ageSeconds": 84,
+      "observedAt": "2026-08-09T02:52:18.151Z",
+      "ageSeconds": 0,
       "inputRef": "partner_ledger",
-      "snapshotRef": "sha256:611fb0eacde5700fa5f633f0c59dbd8f8b1b3b0664089ce0f57926759435317d"
+      "snapshotRef": "sha256:d95b989efb984d6b2089cbfd49221d8290646def93425785f067933d2fc32c7e"
     },
     "telegram": {
-      "dataStatus": "ok",
+      "dataStatus": "stale",
       "sourceMode": "current",
-      "reasonCode": "current_fresh",
+      "reasonCode": "current_stale",
       "observedAt": "2026-08-09T02:46:20.952Z",
-      "ageSeconds": 150,
+      "ageSeconds": 358,
       "inputRef": "/registry/telegram-handshake.json",
       "snapshotRef": "sha256:99eb38d09825e7609925cbee3d62dbae924cfdf452e797e0bf3b5b11cf401cab"
     },
@@ -34,16 +34,16 @@
       "sourceMode": "current",
       "reasonCode": "current_fresh",
       "observedAt": "2026-08-09T02:48:50.596Z",
-      "ageSeconds": 0,
+      "ageSeconds": 208,
       "inputRef": "/registry/limit-raises.json",
       "snapshotRef": "sha256:3680bbbbb7435cfa74cad86e0124af68151f504e00eac01d2dec475a1316337b"
     },
     "bookmakers": {
-      "dataStatus": "ok",
+      "dataStatus": "stale",
       "sourceMode": "current",
-      "reasonCode": "current_fresh",
+      "reasonCode": "current_stale",
       "observedAt": "2026-08-09T02:45:56.844Z",
-      "ageSeconds": 174,
+      "ageSeconds": 382,
       "inputRef": "/registry/bookmakers.json",
       "snapshotRef": "sha256:498692b3681f1d5a0a51892d6fb2f0bf37a4287c294acd2bf3f9ad7a9bcdd5f6"
     },
@@ -52,16 +52,16 @@
       "sourceMode": "current",
       "reasonCode": "current_fresh",
       "observedAt": "2026-08-09T02:47:26.609Z",
-      "ageSeconds": 84,
+      "ageSeconds": 292,
       "inputRef": "/registry/tennis/partner-contracts.json",
       "snapshotRef": "sha256:87e2ba57ef2415bb712fdc7f09190f38d8bc1a5eda16eef5616ca7759e73bfb5"
     },
     "sportsTerminal": {
-      "dataStatus": "ok",
+      "dataStatus": "stale",
       "sourceMode": "current",
-      "reasonCode": "current_fresh",
+      "reasonCode": "current_stale",
       "observedAt": "2026-08-09T02:46:48.323Z",
-      "ageSeconds": 123,
+      "ageSeconds": 330,
       "inputRef": "/registry/sports-terminal/partner-integration-health.json",
       "snapshotRef": "sha256:e3f0c592695d2c7dab584b7846f9a0080cd55b28e6156d82c782d6fe3a19d7e0"
     }
@@ -187,7 +187,7 @@
         },
         "amount": {
           "currency": "USD",
-          "minorUnits": 0
+          "minorUnits": 75000
         },
         "effectiveAt": "2026-08-04T10:00:00.000Z"
       },
@@ -209,7 +209,7 @@
         },
         "amount": {
           "currency": "USD",
-          "minorUnits": 0
+          "minorUnits": 40000
         },
         "effectiveAt": "2026-08-07T16:00:00.000Z"
       },
@@ -244,13 +244,13 @@
       "callSign": "ASH-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:48:50.596Z",
+        "effectiveAt": "2026-08-09T02:52:18.151Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:48:50.596Z",
+          "observedAt": "2026-08-09T02:52:18.151Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -473,13 +473,13 @@
       "callSign": "BIL-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:48:50.596Z",
+        "effectiveAt": "2026-08-09T02:52:18.151Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:48:50.596Z",
+          "observedAt": "2026-08-09T02:52:18.151Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -630,13 +630,13 @@
       "callSign": "NOV-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:48:50.596Z",
+        "effectiveAt": "2026-08-09T02:52:18.151Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:48:50.596Z",
+          "observedAt": "2026-08-09T02:52:18.151Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -829,13 +829,13 @@
       "callSign": "SPEN-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:48:50.596Z",
+        "effectiveAt": "2026-08-09T02:52:18.151Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:48:50.596Z",
+          "observedAt": "2026-08-09T02:52:18.151Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -857,7 +857,7 @@
           "outId": "out-SPEN-1",
           "sportsbookId": "parlay21-com",
           "operationalStatus": "ready",
-          "fundingStatus": "unfunded",
+          "fundingStatus": "funded",
           "externalAccountRefs": [
             {
               "sourceSystemId": "tennis-hq",
@@ -917,7 +917,7 @@
           "outId": "out-SPEN-3",
           "sportsbookId": "action92-com",
           "operationalStatus": "ready",
-          "fundingStatus": "unfunded",
+          "fundingStatus": "funded",
           "externalAccountRefs": [
             {
               "sourceSystemId": "factorywager-bookmakers",
@@ -957,7 +957,7 @@
             },
             "amount": {
               "currency": "USD",
-              "minorUnits": 0
+              "minorUnits": 75000
             },
             "effectiveAt": "2026-08-04T10:00:00.000Z"
           },
@@ -979,7 +979,7 @@
             },
             "amount": {
               "currency": "USD",
-              "minorUnits": 0
+              "minorUnits": 40000
             },
             "effectiveAt": "2026-08-07T16:00:00.000Z"
           },
@@ -1030,18 +1030,18 @@
             "entryType": "deposit",
             "amount": {
               "currency": "USD",
-              "minorUnits": 0
+              "minorUnits": 40000
             },
             "balanceAfter": {
               "currency": "USD",
-              "minorUnits": 0
+              "minorUnits": 40000
             },
             "accountScope": {
               "kind": "out",
               "outId": "out-SPEN-3"
             },
             "postedAt": "2026-08-07T16:00:00.000Z",
-            "proofRef": "proof:fixture:SPEN:deposit-out-SPEN-3-unfunded"
+            "proofRef": "proof:fixture:SPEN:deposit-out-SPEN-3"
           },
           {
             "id": "0198f0b0-0009-7000-8000-000000000009",
@@ -1066,17 +1066,18 @@
             "entryType": "deposit",
             "amount": {
               "currency": "USD",
-              "minorUnits": 0
+              "minorUnits": 75000
             },
             "balanceAfter": {
               "currency": "USD",
-              "minorUnits": 0
+              "minorUnits": 75000
             },
             "accountScope": {
               "kind": "out",
               "outId": "out-SPEN-1"
             },
-            "postedAt": "2026-08-04T10:00:00.000Z"
+            "postedAt": "2026-08-04T10:00:00.000Z",
+            "proofRef": "proof:fixture:SPEN:deposit-out-SPEN-1"
           },
           {
             "id": "0198f0b0-0007-7000-8000-000000000007",
@@ -1124,12 +1125,6 @@
           "severity": "info",
           "label": "Desk placeholder sportsbook not in public catalog: orange777",
           "actionHref": "/portal/bookmakers/"
-        },
-        {
-          "reasonCode": "partner.funding.ready_unfunded",
-          "severity": "warn",
-          "label": "2 ready out(s) with unfunded/unknown funding (out-SPEN-1, out-SPEN-3)",
-          "actionHref": "/portal/partners/#accounting"
         },
         {
           "reasonCode": "partner.limits.coverage_gap",
