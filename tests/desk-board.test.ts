@@ -4,9 +4,15 @@ import {
   buildDeskAccountRows,
   buildMorningDesk,
   groupDeskAccounts,
+  matchCallSignToDeskCode,
   parseFreeplayPct,
   parseMaxBetMajor,
   prepareSoftExportForDeskWindows,
+  projectBookCoverage,
+  projectConnectorHealth,
+  projectLedgerVsBalance,
+  projectLimitRaisePulse,
+  projectSoftOrphanPartners,
   projectTelegramSignals,
   sumSoftPnlWindow,
   DESK_PRIMARY_ARTIFACT_REF,
@@ -424,6 +430,9 @@ describe('desk portal wiring', () => {
     const ops = await Bun.file('public/registry/partners-ops.json').json();
     const bookmakers = await Bun.file('public/registry/bookmakers.json').json();
     const handshake = await Bun.file('public/registry/telegram-handshake.json').json();
+    const limitRaises = await Bun.file('public/registry/limit-raises.json').json();
+    const partnerLedger = await Bun.file('public/registry/partner-ledger.json').json();
+    const bookCoverage = await Bun.file('public/registry/bookmakers-desk-coverage.json').json();
     const desk = buildMorningDesk({
       dashboard,
       soft,
@@ -431,10 +440,174 @@ describe('desk portal wiring', () => {
       ops,
       bookmakers,
       handshake,
+      limitRaises,
+      partnerLedger,
+      bookCoverage,
       nowMs: Date.parse('2026-08-09T12:00:00.000Z'),
     });
     expect(desk.summary.accounts).toBeGreaterThanOrEqual(4);
     expect(desk.accounts.every(a => a.partnerCode && a.outId)).toBe(true);
     expect(desk.telegram.rows.length).toBeGreaterThanOrEqual(1);
+    expect(desk.connectors.available).toBe(true);
+    expect(desk.connectors.counts.stale).toBeGreaterThan(0);
+    expect(desk.limitPulse.available).toBe(true);
+    expect(desk.limitPulse.counts.deskPartnersMatched).toBeGreaterThanOrEqual(1);
+    expect(desk.limitPulse.counts.raises7d).toBeGreaterThan(0);
+    expect(desk.limitPulse.raiseWindowMode).toBe('export-tip');
+    expect(desk.moneyIntegrity.available).toBe(true);
+    expect(desk.moneyIntegrity.counts.mismatches).toBeGreaterThanOrEqual(1);
+    expect(desk.bookCoverage.unmatched + desk.bookCoverage.placeholder).toBeGreaterThan(0);
+    expect(desk.softOrphans.rows.some(r => r.partnerCode === 'PAT')).toBe(true);
+    expect(desk.summary.fleetBlocked).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe('desk-board refraction joins', () => {
+  test('matchCallSignToDeskCode maps ASH-001 → ASH', () => {
+    const desk = new Set(['ASH', 'SPEN']);
+    expect(matchCallSignToDeskCode('ASH', desk)).toBe('ASH');
+    expect(matchCallSignToDeskCode('ASH-001', desk)).toBe('ASH');
+    expect(matchCallSignToDeskCode('limit-demo-x', desk)).toBeNull();
+  });
+
+  test('projectConnectorHealth counts statuses', () => {
+    const c = projectConnectorHealth({
+      connectorSnapshots: {
+        profiles: { dataStatus: 'ok' },
+        telegram: { dataStatus: 'stale' },
+        limits: { dataStatus: 'unavailable' },
+      },
+    });
+    expect(c.counts).toEqual({ total: 3, ok: 1, stale: 1, unavailable: 1 });
+    expect(c.label).toContain('1 ok');
+  });
+
+  test('projectLedgerVsBalance flags partner vs ledger delta', () => {
+    const dashboard = {
+      partners: [
+        {
+          partnerCode: 'ASH',
+          accounting: {
+            balancePositions: [
+              {
+                accountScope: { kind: 'partner', partnerCode: 'ASH' },
+                amount: { currency: 'USD', minorUnits: 1_000_000 },
+              },
+              {
+                accountScope: { kind: 'rail', railId: 'venmo:x' },
+                amount: { currency: 'USD', minorUnits: 50_000 },
+              },
+            ],
+          },
+        },
+      ],
+    };
+    const ledger = {
+      rows: [
+        {
+          partner_code: 'ASH',
+          type: 'initial_capital',
+          amount_minor: 1_000_000,
+          balance_after_minor: 1_000_000,
+          created_at: '2026-08-01T00:00:00.000Z',
+        },
+        {
+          partner_code: 'ASH',
+          type: 'deposit',
+          amount_minor: 50_000,
+          balance_after_minor: 1_050_000,
+          created_at: '2026-08-02T00:00:00.000Z',
+        },
+      ],
+    };
+    const mi = projectLedgerVsBalance(ledger, dashboard);
+    expect(mi.available).toBe(true);
+    expect(mi.rows[0]?.ledgerNetMinor).toBe(1_050_000);
+    expect(mi.rows[0]?.dashboardPartnerMinor).toBe(1_000_000);
+    expect(mi.rows[0]?.mismatch).toBe(true);
+    expect(mi.railTotalMinor).toBe(50_000);
+  });
+
+  test('projectLimitRaisePulse joins treeNodeId and export-tip raises', () => {
+    const dashboard = {
+      partners: [
+        {
+          partnerCode: 'ASH',
+          identity: { treeNodeId: 'node-ash' },
+        },
+      ],
+    };
+    const limitRaises = {
+      accountProfiles: {
+        summary: { blocked: 1 },
+        profiles: [
+          {
+            callSign: 'ASH',
+            accountKind: 'partner',
+            treeNodeId: 'node-ash',
+            monitoringStatus: 'monitored',
+            tone: 'ok',
+            jurisdiction: { stateCode: 'NJ' },
+            observations: { raises: 2, decreases: 0, lastObservedAt: '2026-07-31T00:00:00.000Z' },
+          },
+          {
+            callSign: 'limit-demo-x',
+            accountKind: 'agent',
+            monitoringStatus: 'blocked',
+            tone: 'bad',
+          },
+        ],
+      },
+      byNode: {
+        'node-ash': {
+          raises: [
+            {
+              sportsbook: 'fanduel',
+              sport_id: 'nba',
+              market_id: 'spread',
+              previous_max: 800,
+              new_limit: 1200,
+              increased_at: 1_785_538_619, // 2026-07-31
+            },
+          ],
+        },
+      },
+    };
+    const pulse = projectLimitRaisePulse(limitRaises, dashboard, {
+      nowMs: Date.parse('2026-08-09T12:00:00.000Z'),
+    });
+    expect(pulse.available).toBe(true);
+    expect(pulse.partnerRows[0]?.matched).toBe(true);
+    expect(pulse.partnerRows[0]?.jurisdiction).toBe('NJ');
+    expect(pulse.raiseWindowMode).toBe('export-tip');
+    expect(pulse.counts.raises7d).toBe(1);
+    expect(pulse.fleetBlocked).toHaveLength(1);
+  });
+
+  test('projectBookCoverage and soft orphans', () => {
+    const bc = projectBookCoverage({
+      matched: 5,
+      unmatched: 1,
+      placeholder: 2,
+      hits: [{ deskBook: 'Orange777', class: 'unmatched' }],
+      registryUnused: ['fanduel'],
+    });
+    expect(bc.unmatchedHits).toHaveLength(1);
+    const orphans = projectSoftOrphanPartners(
+      {
+        plays: [
+          { partnerCode: 'PAT', pnl: 10 },
+          { partnerCode: 'ASH', pnl: 1 },
+        ],
+      },
+      { partners: [{ partnerCode: 'ASH' }] }
+    );
+    expect(orphans.rows).toEqual([{ partnerCode: 'PAT', playCount: 1, netMajor: 10 }]);
+  });
+
+  test('ancillary refs include limit-raises and partner-ledger', () => {
+    expect(DESK_ANCILLARY_REFS.limitRaises).toBe('/registry/limit-raises.json');
+    expect(DESK_ANCILLARY_REFS.partnerLedger).toBe('/registry/partner-ledger.json');
+    expect(DESK_ANCILLARY_REFS.bookCoverage).toBe('/registry/bookmakers-desk-coverage.json');
   });
 });

@@ -6,35 +6,42 @@
 
 Quiet **morning board** for operators: accounts and logins by partner / type /
 skin / live, limit totals, balances, soft net (24h / 7d / all), Telegram
-handshake signals, and freezes.
+handshake signals, freezes, limit raises, money integrity, and bake connectors.
 
 Ops tooling (filters, advanced inventory, deep links) stays on
 [`/portal/partners/`](./partners/).
 
-| Board                                   | Path                                                                               |
-| --------------------------------------- | ---------------------------------------------------------------------------------- |
-| HTML                                    | [`/portal/desk/`](./desk/)                                                         |
-| Primary bake                            | [`/registry/partners-dashboard.json`](../registry/partners-dashboard.json)         |
-| Soft accounting                         | [`/registry/soft-accounting-export.json`](../registry/soft-accounting-export.json) |
-| Seat capital                            | [`/registry/seat-capital-desk.json`](../registry/seat-capital-desk.json)           |
-| Partners-ops (logins · type · freeplay) | [`/registry/partners-ops.json`](../registry/partners-ops.json)                     |
-| Bookmakers (skin)                       | [`/registry/bookmakers.json`](../registry/bookmakers.json)                         |
-| Telegram handshake                      | [`/registry/telegram-handshake.json`](../registry/telegram-handshake.json)         |
-| Partners ops board                      | [partners.md](./partners.md) · [`/portal/partners/`](./partners/)                  |
+| Board                                   | Path                                                                                   |
+| --------------------------------------- | -------------------------------------------------------------------------------------- |
+| HTML                                    | [`/portal/desk/`](./desk/)                                                             |
+| Primary bake                            | [`/registry/partners-dashboard.json`](../registry/partners-dashboard.json)             |
+| Soft accounting                         | [`/registry/soft-accounting-export.json`](../registry/soft-accounting-export.json)     |
+| Seat capital                            | [`/registry/seat-capital-desk.json`](../registry/seat-capital-desk.json)               |
+| Partners-ops (logins · type · freeplay) | [`/registry/partners-ops.json`](../registry/partners-ops.json)                         |
+| Bookmakers (skin)                       | [`/registry/bookmakers.json`](../registry/bookmakers.json)                             |
+| Telegram handshake                      | [`/registry/telegram-handshake.json`](../registry/telegram-handshake.json)             |
+| Limit raises / freezes                  | [`/registry/limit-raises.json`](../registry/limit-raises.json)                         |
+| Partner ledger (money integrity)        | [`/registry/partner-ledger.json`](../registry/partner-ledger.json)                     |
+| Book desk coverage                      | [`/registry/bookmakers-desk-coverage.json`](../registry/bookmakers-desk-coverage.json) |
+| Partners ops board                      | [partners.md](./partners.md) · [`/portal/partners/`](./partners/)                      |
 
 ## What you see
 
 1. **Summary chips** — partners · accounts · live · limits Σ · balances · soft
-   24h/7d · freezes · Telegram signals
-2. **Accounts table** — login · book · type · skin · live · status · limit ·
+   24h/7d · freezes · raises · connectors · Telegram
+2. **Bake connectors** — `connectorSnapshots` ok / stale / down
+3. **Accounts table** — login · book · type · skin · live · status · limit ·
    balance · freeplay %
-3. **Money by partner** — balance · limit sum · soft windows · ledger
-   settlements
-4. **Rollups** — by type · skin · live
-5. **Telegram** — package chat id · topic count · handshake · gaps · signals
-   (**not** live message bodies until MessageLog bake)
-6. **Freezes · freeroll · attention** — deferred/blocked outs · freeplay seats ·
-   freeroll applied · dashboard attention
+4. **Money by partner** — balance · **ledger net** · **Δ integrity** · limits Σ
+   · soft windows
+5. **Limits · freezes · raises** — monitor status · jurisdiction · raises 7d ·
+   fleet blocked
+6. **Book catalog holes** — unmatched / placeholder seat books
+7. **Rollups** — by type · skin · live
+8. **Telegram** — package chat id · topic count · handshake · gaps · signals
+   (**not** live message bodies)
+9. **Freezes · freeroll · attention** — deferred/blocked outs · limit-profile
+   blocked · freeplay · freeroll applied
 
 ### Soft 24h / 7d windows
 
@@ -42,6 +49,18 @@ Ops tooling (filters, advanced inventory, deep links) stays on
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `soft-ct` (live Soft Balance) | Wall clock only                                                                                                                                             |
 | `toc-ops-fixture` (demo)      | If export tip is older than 48h, desk **rebases** play timestamps onto wall clock so morning nets show fixture activity — bake file itself is not rewritten |
+
+### Limit raise windows
+
+Same idea: wall-clock 7d first; if empty and the latest `increased_at` tip is
+stale, anchor the 7d window to that tip (`export-tip` mode). Join keys:
+`treeNodeId` · `callSign` (ASH-001 → ASH).
+
+### Money integrity
+
+`partner-ledger` sum(`amount_minor`) vs dashboard `accountScope.kind=partner`
+balance. Non-zero **Δ** is a mismatch chip (rail balances are tracked
+separately).
 
 Import live Soft when available: `bun run soft:accounting:from-ct` (empty Soft
 DB keeps the fixture bake).
