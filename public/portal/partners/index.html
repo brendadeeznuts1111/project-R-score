@@ -546,14 +546,9 @@
                 <tr>
                   <th>Partner</th>
                   <th>Phase</th>
-                  <th>Taxonomy</th>
-                  <th>Membership</th>
-                  <th>Call sign</th>
-                  <th>DM seat</th>
-                  <th>Handshake</th>
-                  <th>Invite</th>
-                  <th>Bot</th>
-                  <th>Next</th>
+                  <th>Outs</th>
+                  <th>Telegram</th>
+                  <th>Attention</th>
                   <th>Balance</th>
                 </tr>
               </thead>
@@ -561,7 +556,7 @@
             </table>
           </div>
           <p class="cli-row">
-            bun run telegram:handshake:catalog · telegram:handshake:invite-gap · telegram:ops --
+            bun run partner:dashboard:bake · telegram:handshake:catalog · telegram:ops --
             link-package-group CODE chatId
           </p>
         </section>
@@ -940,11 +935,11 @@
                 <tr>
                   <th>Partner</th>
                   <th>Call sign</th>
-                  <th>Fund status</th>
-                  <th>Pinned desk</th>
-                  <th>Incomplete outs</th>
-                  <th>Checklist</th>
-                  <th>CLI</th>
+                  <th>Fund</th>
+                  <th>Telegram</th>
+                  <th>Outs funded</th>
+                  <th>Balance</th>
+                  <th>Entries</th>
                 </tr>
               </thead>
               <tbody id="accounting-tbody"></tbody>
@@ -1296,6 +1291,7 @@
         partnerReadinessGate,
         partnerScopedBalanceMinor,
         projectSoftAccountingExport,
+        formatRelativeAge,
         softAccountingEmptyMessage,
         statusToneClass,
         summarizeConnectorSnapshots,
@@ -1318,14 +1314,9 @@
       const PARTNER_COLS = [
         { key: 'code', label: 'Partner' },
         { key: 'phase', label: 'Phase' },
-        { key: 'tax', label: 'Taxonomy' },
-        { key: 'membership', label: 'Membership' },
-        { key: 'callSign', label: 'Call sign' },
-        { key: 'dm', label: 'DM seat' },
-        { key: 'handshake', label: 'Handshake' },
-        { key: 'invite', label: 'Invite' },
-        { key: 'bot', label: 'Bot' },
-        { key: 'next', label: 'Next' },
+        { key: 'outs', label: 'Outs' },
+        { key: 'telegram', label: 'Telegram' },
+        { key: 'attention', label: 'Attention' },
         { key: 'balance', label: 'Balance' },
       ];
       const OUTS_COLS = [
@@ -1358,14 +1349,14 @@
         { key: 'callSign', label: 'Call sign' },
         { key: 'fund', label: 'Fund' },
         { key: 'tg', label: 'Telegram' },
-        { key: 'incomplete', label: 'Incomplete outs' },
-        { key: 'checklist', label: 'Checklist' },
-        { key: 'cli', label: 'CLI' },
+        { key: 'outs', label: 'Outs funded' },
+        { key: 'balance', label: 'Balance' },
+        { key: 'entries', label: 'Entries' },
       ];
       const ACCOUNTING_EVENTS_COLS = [
         { key: 'partner', label: 'Partner' },
         { key: 'at', label: 'When' },
-        { key: 'code', label: 'Code' },
+        { key: 'code', label: 'Type' },
         { key: 'concept', label: 'Concept' },
         { key: 'amount', label: 'Amount' },
         { key: 'rail', label: 'Rail / out' },
@@ -1996,35 +1987,35 @@
           filtered.map(row => {
             const limits = row.limits || {};
             const coveragePct = Math.round((Number(limits.coverageRatio) || 0) * 100);
-            const tax = `${row.outsCount || 0} outs · lifecycle ${row.lifecycleState || '—'}`;
-            const bot = botTopicLinks(row.partnerCode, row.phase);
-            const taxHtml =
-              esc(tax) +
-              (limits.coverageRatio != null
-                ? `<div style="margin-top:4px">${coverageBarHtml(coveragePct)}</div>`
-                : '');
+            const partner = row.partner || {};
+            const outs = Array.isArray(partner.outs) ? partner.outs : [];
+            const readyOuts = outs.filter(o => String(o.operationalStatus) === 'ready').length;
+            const outsTotal = Number(row.outsCount) || outs.length;
             const next =
               (row.nextSteps && row.nextSteps[0]) ||
               (row.attention?.[0]?.label) ||
-              '—';
+              null;
+            const attnCount = Array.isArray(row.attention) ? row.attention.length : 0;
+            const outsHtml =
+              `<span class="${readyOuts > 0 ? 'tone-ok' : 'tone-warn'}">${readyOuts}/${outsTotal} ready</span>` +
+              (limits.coverageRatio != null
+                ? `<div style="margin-top:4px">${coverageBarHtml(coveragePct)}</div>`
+                : '') +
+              `<div class="tone-muted" style="font-size:11px;margin-top:2px">${esc(row.lifecycleState || '—')}</div>`;
+            const tgHtml = row.handshakeOk
+              ? `<span class="tone-ok">linked</span><div class="tone-muted" style="font-size:11px">${esc(row.handshakeStatus || 'ok')}</div>`
+              : `<span class="tone-warn">gap</span><div class="tone-muted" style="font-size:11px">${esc(row.handshakeStatus || '—')} · DM ${esc(row.dmSeatStatus || 'none')}</div>`;
+            const attnHtml = next
+              ? `<span class="${attnCount > 1 ? 'tone-warn' : 'tone-muted'}" title="${esc(next)}">${esc(next.length > 64 ? `${next.slice(0, 61)}…` : next)}</span>${attnCount > 1 ? `<div class="tone-muted" style="font-size:11px">+${attnCount - 1} more</div>` : ''}`
+              : '<span class="tone-ok">clear</span>';
             return [
-              { html: partnerLink(row.partnerCode) },
+              {
+                html: `${partnerLink(row.partnerCode)}<br><code style="font-size:11px">${esc(row.callSign || '—')}</code>`,
+              },
               { html: phaseChip(row.partnerCode) },
-              { html: taxHtml },
-              { html: `<code>${esc(row.membershipCell || '—')}</code>` },
-              { html: `<code>${esc(row.callSign || '—')}</code>` },
-              row.dmSeatStatus || '—',
-              {
-                html: `${row.handshakeOk ? 'ok' : 'gap'} · ${esc(row.handshakeStatus || '—')}`,
-                className: toneClass(row.handshakeOk),
-              },
-              {
-                html: row.handshakeOk
-                  ? '<span class="tone-ok">linked</span>'
-                  : '<span class="tone-warn">none</span>',
-              },
-              { html: bot },
-              next,
+              { html: outsHtml },
+              { html: tgHtml },
+              { html: attnHtml },
               { html: balanceCell(row.partner) },
             ];
           }),
@@ -2453,6 +2444,8 @@
           deals.map(row => {
             const bal =
               row.balanceMajor == null ? '—' : fmtMoney(row.balanceMajor);
+            const funded = Number(row.fundedOuts) || 0;
+            const total = Number(row.outsCount) || 0;
             return [
               { html: partnerLink(row.partnerCode) },
               { html: `<code>${esc(row.callSign || '—')}</code>` },
@@ -2465,14 +2458,13 @@
                 className: row.chatLinked ? 'tone-ok' : 'tone-warn',
               },
               {
-                html: esc(String(row.incompleteOuts ?? '—')),
-                className: (row.incompleteOuts || 0) > 0 ? 'tone-warn' : '',
+                html: `${funded}/${total}${row.incompleteOuts > 0 ? ` · <span class="tone-warn">${row.incompleteOuts} gap</span>` : ''}`,
+                className: funded > 0 && row.incompleteOuts === 0 ? 'tone-ok' : 'tone-warn',
               },
+              { html: bal },
               {
-                html: `${esc(String(row.entryCount))} entries · bal ${bal}`,
-              },
-              {
-                html: `<code>telegram:package-group:accounting -- ${esc(row.partnerCode)}</code>`,
+                html: esc(String(row.entryCount ?? 0)),
+                className: (row.entryCount || 0) > 0 ? 'tone-ok' : 'tone-muted',
               },
             ];
           }),
@@ -2485,25 +2477,50 @@
         const events = dashboardLedgerEventRows(dashboard, 40);
         const eventsBody = $('accounting-events-tbody');
         if (eventsBody) {
+          const typeLabel = code => {
+            const c = String(code || '').toLowerCase();
+            if (c === 'deposit') return 'Deposit';
+            if (c === 'credit') return 'Credit';
+            if (c === 'settlement') return 'Settlement';
+            if (c === 'withdrawal' || c === 'withdraw') return 'Withdraw';
+            if (c === 'free_roll' || c === 'freeroll') return 'Free roll';
+            return code || '—';
+          };
           eventsBody.innerHTML = renderPortalTableRows(
             ACCOUNTING_EVENTS_COLS,
             events.map(e => {
               const conceptId = e.conceptId || `accounting.${e.code || 'entry'}`;
+              const age =
+                typeof formatRelativeAge === 'function'
+                  ? formatRelativeAge(e.at)
+                  : e.at || '—';
               return [
                 { html: partnerLink(e.partnerCode) },
-                { html: `<time>${esc(e.at || '—')}</time>` },
-                { html: `<code>${esc(e.code || '—')}</code>` },
                 {
-                  html: `<a href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}">${esc(conceptId)}</a>`,
+                  html: e.at
+                    ? `<time datetime="${esc(e.at)}" title="${esc(e.at)}">${esc(age)}</time>`
+                    : '—',
+                },
+                {
+                  html: esc(typeLabel(e.code)),
+                  className: statusToneClass(
+                    String(e.code).toLowerCase() === 'deposit' ? 'funded' : 'ready'
+                  ),
+                },
+                {
+                  html: `<a href="${glossaryHref(conceptId)}" data-glossary-concept="${esc(conceptId)}" title="${esc(conceptId)}">${esc(typeLabel(e.code))}</a>`,
                 },
                 e.amountMajor != null ? fmtMoney(e.amountMajor) : '—',
                 [e.rail, e.outId].filter(Boolean).join(' · ') || '—',
-                e.note || '—',
+                {
+                  html: esc(e.note || '—'),
+                  className: 'tone-muted',
+                },
               ];
             }),
             {
               emptyMessage:
-                'No ledger events — bake partner-ledger.json then bun run partner:dashboard:bake',
+                'No ledger events — bake partner-ledger then partner:dashboard:bake',
               rowAttrs: i => ({
                 'data-partner-code': String(events[i]?.partnerCode || ''),
               }),
