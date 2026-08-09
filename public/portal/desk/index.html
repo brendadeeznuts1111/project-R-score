@@ -751,10 +751,11 @@
                 <tr>
                   <th>Partner</th>
                   <th>Chat</th>
+                  <th>Topics</th>
                   <th>Handshake</th>
                   <th>Gaps</th>
                   <th>Verify</th>
-                  <th>Next / signals</th>
+                  <th>Signals</th>
                 </tr>
               </thead>
               <tbody id="desk-tg-body"></tbody>
@@ -836,7 +837,9 @@
           {
             k: 'Soft 24h',
             v: fmtSigned(s.softNet24h),
-            sub: softEmpty24 ? 'no settled plays' : `${s.softPlays24h} plays`,
+            sub: softEmpty24
+              ? 'no settled plays'
+              : `${s.softPlays24h} plays${s.softRebased ? ' · rebased' : ''}`,
             tone: softEmpty24
               ? ''
               : moneyTone(s.softNet24h) === 'tone-ok'
@@ -848,7 +851,9 @@
           {
             k: 'Soft 7d',
             v: fmtSigned(s.softNet7d),
-            sub: softEmpty7 ? 'no settled plays' : `${s.softPlays7d} plays`,
+            sub: softEmpty7
+              ? 'no settled plays'
+              : `${s.softPlays7d} plays${s.softRebased ? ' · rebased' : ''}`,
             tone: softEmpty7
               ? ''
               : moneyTone(s.softNet7d) === 'tone-ok'
@@ -866,13 +871,18 @@
             k: 'Freezes',
             v: String(s.freezes),
             tone: s.freezes > 0 ? 'warn' : 'ok',
-            sub: `${s.freerolls} freeroll`,
+            sub: `${s.freerolls} freeplay · ${s.freerollApplied || 0} applied`,
           },
           {
             k: 'Telegram',
-            v: String(s.telegramAttention),
-            sub: s.inviteGaps ? `${s.inviteGaps} invite gaps` : 'signals',
-            tone: s.telegramAttention > 0 || s.inviteGaps > 0 ? 'warn' : 'ok',
+            v: String(s.telegramNewSignals ?? s.telegramAttention),
+            sub: s.messageFeedAvailable
+              ? 'messages'
+              : s.inviteGaps
+                ? `${s.inviteGaps} invite gaps`
+                : 'signals (no msg feed)',
+            tone:
+              (s.telegramNewSignals ?? s.telegramAttention) > 0 || s.inviteGaps > 0 ? 'warn' : 'ok',
           },
         ];
         $('desk-stats').innerHTML = cells
@@ -944,9 +954,14 @@
         const s = model.summary;
         const note = $('desk-soft-note');
         if (note) {
-          note.textContent = s.softAvailable
-            ? `Soft source: ${s.softSource}. Windows use settledAt (fallback placedAt). Empty 24h/7d means no fixture plays in that window — Soft all shows full export.`
-            : `Soft accounting unavailable (${s.softSource}). Ledger columns use partners-dashboard settlement entries only.`;
+          const win = model.softWindow;
+          if (!s.softAvailable) {
+            note.textContent = `Soft accounting unavailable (${s.softSource}). Ledger columns use partners-dashboard settlement entries only.`;
+          } else if (win?.rebased) {
+            note.textContent = `Soft source: ${s.softSource}. ${win.note} Soft all is full export net.`;
+          } else {
+            note.textContent = `Soft source: ${s.softSource}. Windows use wall-clock settledAt (fallback placedAt). Soft all is full export.`;
+          }
         }
       }
 
@@ -969,29 +984,35 @@
         const tg = model.telegram;
         const blurb = $('desk-tg-blurb');
         if (blurb) {
+          const n = (tg.newSignals || tg.needsAttention || []).length;
           blurb.textContent = tg.available
-            ? `Handshake bake · ${tg.source} · ${tg.needsAttention.length} need a look`
-            : 'Handshake bake missing — communication fields from dashboard only.';
+            ? `Handshake + package chats · ${tg.source} · ${n} signal(s) · message feed ${tg.messageFeedAvailable ? 'on' : 'off'}`
+            : 'Handshake bake missing — ops/dashboard communication only.';
         }
         const note = $('desk-tg-note');
         if (note) note.textContent = tg.note;
 
         const body = $('desk-tg-body');
         if (!tg.rows.length) {
-          body.innerHTML = `<tr><td colspan="6" class="desk-empty">No partners.</td></tr>`;
+          body.innerHTML = `<tr><td colspan="7" class="desk-empty">No partners.</td></tr>`;
           return;
         }
         body.innerHTML = tg.rows
           .map(r => {
-            const steps = (r.nextSteps || []).join(' · ') || (r.topGap ? String(r.topGap) : '—');
+            const signals =
+              (r.signals || []).join(' · ') ||
+              (r.nextSteps || []).join(' · ') ||
+              (r.topGap ? String(r.topGap) : '—');
             const hsClass = r.handshakeOk ? 'tone-ok' : 'tone-warn';
+            const chatLabel = r.chatLinked ? (r.chatId ? `linked · ${r.chatId}` : 'linked') : '—';
             return `<tr>
               <td class="mono">${esc(r.partnerCode)}</td>
-              <td class="${r.chatLinked ? 'tone-ok' : 'tone-muted'}">${r.chatLinked ? 'linked' : '—'}</td>
+              <td class="${r.chatLinked ? 'tone-ok' : 'tone-muted'} mono">${esc(chatLabel)}</td>
+              <td class="mono dim">${r.topicCount != null ? r.topicCount : '—'}</td>
               <td class="${hsClass}">${r.handshakeOk ? 'ok' : 'gap'}</td>
               <td class="mono ${r.gapCount ? 'tone-warn' : 'tone-muted'}">${r.gapCount}</td>
               <td class="mono dim">${esc(r.verifyLabel || '—')}</td>
-              <td class="dim">${esc(steps)}</td>
+              <td class="dim ${r.hasNewSignal ? 'tone-warn' : ''}">${esc(signals)}</td>
             </tr>`;
           })
           .join('');
@@ -1015,8 +1036,19 @@
         }
         if (a.freerolls.length) {
           parts.push(
-            `<p class="blurb" style="margin:8px 0 6px"><strong>Freeroll / freeplay</strong> (${a.freerolls.length})</p><ul style="margin:0 0 12px;padding-left:18px;font-size:12px">` +
+            `<p class="blurb" style="margin:8px 0 6px"><strong>Freeplay seats</strong> (${a.freerolls.length})</p><ul style="margin:0 0 12px;padding-left:18px;font-size:12px">` +
               a.freerolls
+                .map(
+                  f => `<li><span class="mono">${esc(f.partnerCode)}</span> · ${esc(f.label)}</li>`
+                )
+                .join('') +
+              `</ul>`
+          );
+        }
+        if ((a.freerollApplied || []).length) {
+          parts.push(
+            `<p class="blurb" style="margin:8px 0 6px"><strong>Freeroll applied</strong> (${a.freerollApplied.length})</p><ul style="margin:0 0 12px;padding-left:18px;font-size:12px">` +
+              a.freerollApplied
                 .map(
                   f => `<li><span class="mono">${esc(f.partnerCode)}</span> · ${esc(f.label)}</li>`
                 )
