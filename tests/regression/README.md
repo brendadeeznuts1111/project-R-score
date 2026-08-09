@@ -27,6 +27,7 @@ Helpers: [`shared.ts`](./shared.ts) (`releaseTest`, `tempRoot`,
 | ------- | ---- | ---- |
 
 <!-- regression-release-table -->
+| `1.3.14` | [`bun-1.3.14.test.ts`](./bun-1.3.14.test.ts) | [blog](https://bun.com/blog/bun-v1.3.14) |
 
 | `1.3.12` | [`bun-1.3.12.test.ts`](./bun-1.3.12.test.ts) |
 [blog](https://bun.com/blog/bun-v1.3.12) |
