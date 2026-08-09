@@ -292,3 +292,183 @@ export function parseSportsTerminalIntegrationHealth(
     unresolvedExternalIds: [...unresolved].sort(),
   };
 }
+
+/** Public registry document shape written by the ST health refresh job. */
+export type SportsTerminalIntegrationHealthDocument = {
+  schema: typeof SPORTS_TERMINAL_HEALTH_SCHEMA;
+  kind: typeof SPORTS_TERMINAL_HEALTH_KIND;
+  schemaVersion: typeof SPORTS_TERMINAL_HEALTH_SCHEMA_VERSION;
+  path: typeof SPORTS_TERMINAL_INPUT_REF;
+  generatedAt: string;
+  source: SportsTerminalSourceMode;
+  runtimeUrl: typeof SPORTS_TERMINAL_RUNTIME;
+  moneyPolicy: typeof SPORTS_TERMINAL_MONEY_POLICY;
+  contractPaths: {
+    integrationHealth: typeof SPORTS_TERMINAL_HEALTH_CONTRACT_PATH;
+  };
+  notes?: string;
+  externalIdMap: Record<string, string>;
+  partners: Array<{
+    partnerCode: string;
+    callSign: string;
+    externalPartnerId: string;
+    overall: SportsTerminalOverallStatus;
+    sourceCount: number;
+    healthyCount: number;
+    maxStakeMinorUnits?: number;
+    checkedAt: string;
+  }>;
+  summary: {
+    partnerCount: number;
+    healthy: number;
+    degraded: number;
+    unhealthy: number;
+    unknown: number;
+  };
+};
+
+/**
+ * Normalize a live or fixture integration-health payload into the public
+ * registry write shape. Drops unresolved partner rows (null partnerCode or
+ * missing externalIdMap entry), omits null money fields, and proves the result
+ * with parseSportsTerminalIntegrationHealth.
+ *
+ * Pure — no I/O, no ST producer imports, no partnerRoutes mount.
+ */
+export function normalizeSportsTerminalIntegrationHealthDocument(
+  // eslint-disable-next-line harness/no-unknown-function-param -- wire edge from live GET or fixture file
+  input: unknown,
+  options?: {
+    source?: SportsTerminalSourceMode;
+    notes?: string;
+    generatedAt?: string;
+  }
+): SportsTerminalIntegrationHealthDocument {
+  const root = wireRecord(input, 'sportsTerminalLive');
+  const generatedAt =
+    options?.generatedAt ??
+    (typeof root.generatedAt === 'string'
+      ? wireTimestamp(root.generatedAt, 'sportsTerminalLive.generatedAt')
+      : new Date().toISOString());
+
+  const sourceText =
+    options?.source ?? (typeof root.source === 'string' ? root.source : 'offline-join');
+  if (!isSourceMode(sourceText)) {
+    throw new TypeError('sportsTerminalLive.source must be live|offline-join|fixture|empty');
+  }
+
+  const incomingMap = wireRecord(root.externalIdMap ?? {}, 'sportsTerminalLive.externalIdMap');
+  const partnersRaw = wireArray(root.partners ?? [], 'sportsTerminalLive.partners');
+
+  const externalIdMap: Record<string, string> = {};
+  const partners: SportsTerminalIntegrationHealthDocument['partners'] = [];
+  const dropped: string[] = [];
+
+  for (const [index, raw] of partnersRaw.entries()) {
+    const path = `sportsTerminalLive.partners[${index}]`;
+    const row = wireRecord(raw, path);
+    assertNoFloatMoney(row, path);
+
+    const externalPartnerId = wireText(row.externalPartnerId, `${path}.externalPartnerId`);
+    parseExternalPartnerId(externalPartnerId);
+
+    const mappedFromTable =
+      typeof incomingMap[externalPartnerId] === 'string'
+        ? String(incomingMap[externalPartnerId])
+        : undefined;
+    const rowCode =
+      row.partnerCode === null || row.partnerCode === undefined
+        ? undefined
+        : wireText(row.partnerCode, `${path}.partnerCode`);
+
+    const resolvedCode = mappedFromTable ?? rowCode;
+    if (resolvedCode === undefined) {
+      dropped.push(externalPartnerId);
+      continue;
+    }
+    const partnerCode = parsePartnerCode(resolvedCode);
+    if (mappedFromTable !== undefined && rowCode !== undefined && mappedFromTable !== rowCode) {
+      throw new TypeError(
+        `${path}.partnerCode ${rowCode} does not match externalIdMap[${externalPartnerId}]=${mappedFromTable}`
+      );
+    }
+
+    const callSignRaw =
+      row.callSign === null || row.callSign === undefined
+        ? `${partnerCode}-001`
+        : wireText(row.callSign, `${path}.callSign`);
+    const callSign = parsePartnerCallSign(callSignRaw, partnerCode);
+
+    const overallText = wireText(row.overall, `${path}.overall`);
+    if (!isOverall(overallText)) {
+      throw new TypeError(`${path}.overall must be healthy|degraded|unhealthy|unknown`);
+    }
+    const sourceCount = wireNonnegativeInteger(row.sourceCount, `${path}.sourceCount`);
+    const healthyCount = wireNonnegativeInteger(row.healthyCount, `${path}.healthyCount`);
+    if (healthyCount > sourceCount) {
+      throw new TypeError(`${path}.healthyCount cannot exceed sourceCount`);
+    }
+
+    let maxStakeMinorUnits: number | undefined;
+    if (row.maxStakeMinorUnits !== undefined && row.maxStakeMinorUnits !== null) {
+      maxStakeMinorUnits = wireNonnegativeInteger(
+        row.maxStakeMinorUnits,
+        `${path}.maxStakeMinorUnits`
+      );
+    }
+
+    const checkedAt =
+      row.checkedAt === undefined || row.checkedAt === null
+        ? generatedAt
+        : wireTimestamp(row.checkedAt, `${path}.checkedAt`);
+
+    externalIdMap[externalPartnerId] = partnerCode;
+    partners.push({
+      partnerCode,
+      callSign,
+      externalPartnerId,
+      overall: overallText,
+      sourceCount,
+      healthyCount,
+      ...(maxStakeMinorUnits !== undefined ? { maxStakeMinorUnits } : {}),
+      checkedAt,
+    });
+  }
+
+  partners.sort((a, b) => a.partnerCode.localeCompare(b.partnerCode));
+
+  const summary = {
+    partnerCount: partners.length,
+    healthy: partners.filter(p => p.overall === 'healthy').length,
+    degraded: partners.filter(p => p.overall === 'degraded').length,
+    unhealthy: partners.filter(p => p.overall === 'unhealthy').length,
+    unknown: partners.filter(p => p.overall === 'unknown').length,
+  };
+
+  const defaultNotes =
+    dropped.length > 0
+      ? `Redacted public integration-health. Dropped unresolved external ids: ${dropped.sort().join(', ')}. No contact, Telegram, lifecycle, or floating-point money.`
+      : 'Redacted public integration-health. Integration health only — no contact, Telegram, lifecycle, or floating-point money. externalIdMap is the explicit ExternalPartnerRef resolution table.';
+
+  const document: SportsTerminalIntegrationHealthDocument = {
+    schema: SPORTS_TERMINAL_HEALTH_SCHEMA,
+    kind: SPORTS_TERMINAL_HEALTH_KIND,
+    schemaVersion: SPORTS_TERMINAL_HEALTH_SCHEMA_VERSION,
+    path: SPORTS_TERMINAL_INPUT_REF,
+    generatedAt,
+    source: sourceText,
+    runtimeUrl: SPORTS_TERMINAL_RUNTIME,
+    moneyPolicy: SPORTS_TERMINAL_MONEY_POLICY,
+    contractPaths: {
+      integrationHealth: SPORTS_TERMINAL_HEALTH_CONTRACT_PATH,
+    },
+    notes: options?.notes ?? (typeof root.notes === 'string' ? root.notes : defaultNotes),
+    externalIdMap,
+    partners,
+    summary,
+  };
+
+  // Prove the write shape is parseable before the host commits it.
+  parseSportsTerminalIntegrationHealth(document);
+  return document;
+}
