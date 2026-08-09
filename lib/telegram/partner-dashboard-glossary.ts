@@ -26,13 +26,7 @@ export type PartnerDashboardGlossaryConcept = {
   uiRole: 'badge' | 'chip' | 'code' | 'heading' | 'link' | 'token';
   /** Business domain override when id prefix is ambiguous. */
   domain?:
-    | 'partners'
-    | 'accounting'
-    | 'trading'
-    | 'operations'
-    | 'portal'
-    | 'telegram'
-    | 'compliance';
+    'partners' | 'accounting' | 'trading' | 'operations' | 'portal' | 'telegram' | 'compliance';
 };
 
 function c(
@@ -172,7 +166,57 @@ export function partnerDashboardGlossaryConcepts(): PartnerDashboardGlossaryConc
         category: 'ops',
         semanticType: 'classification',
         uiRole: 'chip',
-        seeAlso: ['section.partnersAttention', 'ops.limits.monitoring_status'],
+        seeAlso: [
+          'section.partnersAttention',
+          'ops.limits.monitoring_status',
+          'partner.limits.raise_observed',
+          'partner.limits.coverage_gap',
+          'partner.bookmakers.unregistered_sportsbook',
+        ],
+      }
+    ),
+    c(
+      'partner.limits.raise_observed',
+      'Limit raise observed',
+      'Bake-derived attention: one or more limit-change events for a partner CODE. Raise history is not an executable max-stake ceiling.',
+      {
+        domain: 'compliance',
+        category: 'ops',
+        semanticType: 'classification',
+        uiRole: 'chip',
+        seeAlso: [
+          'partner.attention_item',
+          'partner.limits.coverage_gap',
+          'section.partnersAttention',
+        ],
+      }
+    ),
+    c(
+      'partner.limits.coverage_gap',
+      'Limit evidence gap',
+      'One or more outs lack limit evidence (tennis integer max stake and/or raise history for that sportsbook).',
+      {
+        domain: 'compliance',
+        category: 'ops',
+        semanticType: 'classification',
+        uiRole: 'chip',
+        seeAlso: [
+          'partner.attention_item',
+          'partner.limits.raise_observed',
+          'section.partnersAccountsLimits',
+        ],
+      }
+    ),
+    c(
+      'partner.bookmakers.unregistered_sportsbook',
+      'Unregistered sportsbook on out',
+      'An out sportsbookId is not present in the public bookmakers catalog — visibility retained, catalog identity missing.',
+      {
+        domain: 'trading',
+        category: 'ops',
+        semanticType: 'classification',
+        uiRole: 'chip',
+        seeAlso: ['partner.attention_item', 'section.partnersAccountsLimits', 'page.partners'],
       }
     ),
     c(
