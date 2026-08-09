@@ -297,6 +297,15 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'partner domain health · profile alignment · per-out checks · /registry/partner-health.json',
   },
   {
+    path: '/portal/desk/',
+    name: 'Morning desk portal',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    critical: true,
+    note: 'morning board · accounts · limits · balances · soft net · telegram · freezes · partners-dashboard',
+  },
+  {
     path: '/portal/partners/',
     name: 'Partners desk portal',
     category: 'portal',

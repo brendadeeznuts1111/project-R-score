@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-08-06T18:32:03.262Z",
+  "generated": "2026-08-09T05:27:17.534Z",
   "path": "/registry/portal-chrome.json",
   "runtime": {
     "bunVersion": "1.3.14",
@@ -9,16 +9,16 @@
   },
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 27,
-    "footerLinks": 21,
+    "overflowNav": 28,
+    "footerLinks": 22,
     "components": 21,
     "scripts": 6,
     "badgeSources": 6,
     "unlistedSurfaces": 8,
-    "boardCoverage": 41,
+    "boardCoverage": 42,
     "domainLanes": 6,
     "groups": {
-      "ops": 16,
+      "ops": 17,
       "harness": 1,
       "registry": 11,
       "secrets": 2,
@@ -35,6 +35,7 @@
     "doctor": "/registry/doctor-state.json",
     "bookmakers": "/registry/bookmakers.json",
     "vaultHealth": "/registry/vault-health.json",
+    "partnersDashboard": "/registry/partners-dashboard.json",
     "partnersOps": "/registry/partners-ops.json",
     "limitRaises": "/registry/limit-raises.json",
     "chrome": "/registry/portal-chrome.json"
@@ -234,6 +235,17 @@
       "cli": "bun run concept:graph:bake  # → /registry/concepts-graph.json"
     },
     {
+      "id": "desk",
+      "label": "Desk",
+      "href": "/portal/desk/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "note": "morning board · logins · limits · balances · soft net · telegram · freezes",
+      "cli": "bun run partner:dashboard:bake",
+      "registryArtifact": "/registry/partners-dashboard.json"
+    },
+    {
       "id": "partners",
       "label": "Partners",
       "href": "/portal/partners/",
@@ -241,8 +253,8 @@
       "group": "ops",
       "domain": "partner",
       "note": "package groups · telegram forums · accounting · deposits · seat capital",
-      "cli": "bun run telegram:handshake:catalog",
-      "registryArtifact": "/registry/partners-ops.json"
+      "cli": "bun run partner:dashboard:bake",
+      "registryArtifact": "/registry/partners-dashboard.json"
     },
     {
       "id": "partner-health",
@@ -264,7 +276,7 @@
       "domain": "partner",
       "note": "single-account dossier · tree · telemetry · betlog · ops.view.per_account",
       "cli": "bun run ops:dossier:seed",
-      "registryArtifact": "/registry/partners-ops.json"
+      "registryArtifact": "/registry/partners-dashboard.json"
     },
     {
       "id": "partner-history",
@@ -306,7 +318,7 @@
       "tier": "overflow",
       "group": "ops",
       "domain": "partner",
-      "note": "@factorywager/bookmakers artifact · canonical bookmaker registry",
+      "note": "@factorywager/bookmakers catalog (Tenant=bookmakers; Domain=partner = desk loop)",
       "cli": "bun run bookmakers:bake",
       "registryArtifact": "/registry/bookmakers.json"
     },
@@ -408,6 +420,10 @@
     {
       "label": "TOC",
       "href": "/portal/toc/"
+    },
+    {
+      "label": "Desk",
+      "href": "/portal/desk/"
     },
     {
       "label": "Partners",
@@ -859,6 +875,14 @@
       "label": "Concept graph"
     },
     {
+      "id": "desk",
+      "href": "/portal/desk/",
+      "tier": "overflow",
+      "group": "ops",
+      "domain": "partner",
+      "label": "Desk"
+    },
+    {
       "id": "partners",
       "href": "/portal/partners/",
       "tier": "overflow",
@@ -1026,6 +1050,7 @@
       "description": "Package groups · account dossier · limit raises · bookmakers · Factory Telegram · seat capital",
       "doc": "docs/harness/tenants/partner-domain-map.md",
       "boardIds": [
+        "desk",
         "partners",
         "partner-health",
         "account",
