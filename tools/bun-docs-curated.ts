@@ -27,10 +27,16 @@
 // @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
 // @see https://bun.com/docs/bundler — Bun.build
 // @see https://bun.com/docs/runtime/markdown — Bun.markdown
+// @see https://bun.com/reference/bun/markdown — Bun.markdown types reference
+// @see https://bun.com/reference/bun/markdown#bun.markdown.Options — Bun.markdown.Options (types)
+// @see https://bun.com/reference/bun/markdown#bun.markdown.AnsiTheme — Bun.markdown.AnsiTheme (types)
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ReactOptions — Bun.markdown.ReactOptions
+// @see https://bun.com/reference/bun/markdown#bun.markdown.RenderCallbacks — Bun.markdown.RenderCallbacks
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ComponentOverrides — Bun.markdown.ComponentOverrides
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-react — Bun.markdown.react
 // @see https://bun.com/docs/runtime/markdown#component-overrides — component-overrides
 // @see https://bun.com/docs/runtime/markdown#available-overrides — available-overrides
-// @see https://bun.com/docs/runtime/markdown#options — options / Bun.markdown.Options
+// @see https://bun.com/docs/runtime/markdown#options — options / Bun.markdown.Options (guide)
 // @see https://bun.com/docs/runtime/markdown#autolinks — autolinks
 // @see https://bun.com/docs/runtime/markdown#heading-ids — heading-ids
 // @see https://bun.com/docs/runtime/markdown#callback-signature — callback-signature
@@ -485,10 +491,12 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'Bun.markdown.Options',
     path: 'runtime/markdown#options',
     description:
-      'Parser options type for Bun.markdown.html / render / react (tables, autolinks, headings, …). Same locus as bare token options.',
+      'Parser options for html/render (and ReactOptions minus reactVersion): tables/strikethrough/tasklists default true; autolinks/headings/wikiLinks/underline/latexMath/collapseWhitespace/permissiveAtxHeaders/noIndentedCodeBlocks/noHtmlBlocks/noHtmlSpans/tagFilter/hardSoftBreaks default false. Guide #options; types → reference/bun/markdown#bun.markdown.Options.',
     minVersion: '1.3.0',
+    related: ['reference/bun/markdown#bun.markdown.Options'],
     relatedTokens: [
       'options',
+      'Bun.markdown.ReactOptions',
       'autolinks',
       'heading-ids',
       'Bun.markdown.html',
@@ -500,13 +508,67 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'Bun.markdown.AnsiTheme',
     path: 'runtime/markdown#ansi-terminal-output',
     description:
-      'Theme / layout options for Bun.markdown.ansi (colors, columns, hyperlinks, …). docsUrl is official #ansi-terminal-output; native call example via #bun-markdown-ansi.',
+      'Theme for Bun.markdown.ansi: colors?: boolean; columns?: number; hyperlinks?: boolean; kittyGraphics?: boolean; light?: boolean. Guide docsUrl #ansi-terminal-output; native example #bun-markdown-ansi; types → reference/bun/markdown#bun.markdown.AnsiTheme.',
     minVersion: '1.3.12',
+    related: ['reference/bun/markdown#bun.markdown.AnsiTheme'],
     relatedTokens: [
       'Bun.markdown.ansi',
       'ansi-terminal-output',
       'Bun.markdown',
       'Bun.markdown.render',
+    ],
+  },
+  {
+    term: 'Bun.markdown.ReactOptions',
+    path: 'reference/bun/markdown#bun.markdown.ReactOptions',
+    description:
+      'Third-arg options for Bun.markdown.react: all Bun.markdown.Options fields plus reactVersion?: 18 | 19 ($$typeof symbol). Types locus; guide narrative at #react-18-and-older / #parser-options-2.',
+    minVersion: '1.3.8',
+    related: [
+      'runtime/markdown#react-18-and-older',
+      'runtime/markdown#parser-options-2',
+      'runtime/markdown#options',
+    ],
+    relatedTokens: [
+      'Bun.markdown.Options',
+      'react-18-and-older',
+      'parser-options-2',
+      'Bun.markdown.react',
+      'Bun.markdown.ComponentOverrides',
+    ],
+  },
+  {
+    term: 'Bun.markdown.RenderCallbacks',
+    path: 'reference/bun/markdown#bun.markdown.RenderCallbacks',
+    description:
+      'Callback map for Bun.markdown.render — block/inline handlers return string | null | undefined; meta types HeadingMeta/ListItemMeta/CodeBlockMeta/LinkMeta/ImageMeta/CellMeta/ListMeta. Types locus; guide at #callback-signature.',
+    minVersion: '1.3.0',
+    related: [
+      'runtime/markdown#callback-signature',
+      'runtime/markdown#block-callbacks',
+      'runtime/markdown#inline-callbacks',
+    ],
+    relatedTokens: [
+      'callback-signature',
+      'block-callbacks',
+      'inline-callbacks',
+      'list-item-meta',
+      'Bun.markdown.render',
+      'Bun.markdown.Options',
+    ],
+  },
+  {
+    term: 'Bun.markdown.ComponentOverrides',
+    path: 'reference/bun/markdown#bun.markdown.ComponentOverrides',
+    description:
+      'Second-arg component map for Bun.markdown.react keyed by HTML tag (h1–h6, p, pre, a, code, …). Types locus; guide narrative at #component-overrides / #available-overrides.',
+    minVersion: '1.3.8',
+    related: ['runtime/markdown#component-overrides', 'runtime/markdown#available-overrides'],
+    relatedTokens: [
+      'component-overrides',
+      'available-overrides',
+      'Bun.markdown.react',
+      'Bun.markdown.ReactOptions',
     ],
   },
   {
@@ -539,16 +601,17 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'runtime/markdown#examples',
     ],
     // applyCuratedRelatedTokens keeps the first 8 that resolve in-catalog —
-    // front cookbook children so nested/omit/ansi are not sliced off.
+    // front cookbook children + RenderCallbacks type so they are not sliced off.
     relatedTokens: [
+      'Bun.markdown.RenderCallbacks',
       'callback-signature',
       'list-item-meta',
       'inline-callbacks',
       'examples',
-      'custom-html-with-classes',
       'omitting-elements',
       'ansi-terminal-output',
       'nested-list-numbering',
+      'custom-html-with-classes',
       'block-callbacks',
       'parser-options',
       'stripping-all-formatting',
@@ -576,14 +639,13 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'runtime/markdown#react-18-and-older',
     ],
     relatedTokens: [
+      'Bun.markdown.ComponentOverrides',
+      'Bun.markdown.ReactOptions',
       'component-overrides',
       'available-overrides',
       'server-side-rendering',
       'parser-options-2',
-      'options',
       'react-18-and-older',
-      'Bun.markdown',
-      'Bun.markdown.html',
       'Bun.markdown.render',
     ],
   },
@@ -593,7 +655,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     description:
       'Replace any HTML element with a custom React component by passing it in the second argument to Bun.markdown.react, keyed by tag name.',
     minVersion: '1.3.8',
-    relatedTokens: ['available-overrides', 'Bun.markdown.react'],
+    relatedTokens: ['Bun.markdown.ComponentOverrides', 'available-overrides', 'Bun.markdown.react'],
   },
   {
     term: 'available-overrides',
@@ -601,7 +663,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     description:
       'Every HTML tag produced by the Bun.markdown.react parser can be overridden (h1–h6, p, pre, a, code, …).',
     minVersion: '1.3.8',
-    relatedTokens: ['component-overrides', 'Bun.markdown.react'],
+    relatedTokens: ['Bun.markdown.ComponentOverrides', 'component-overrides', 'Bun.markdown.react'],
   },
   {
     term: 'options',
@@ -643,6 +705,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'Bun.markdown.render callbacks receive children (string) and optional meta; return string to replace, null/undefined to omit; unregistered → children pass through.',
     minVersion: '1.3.0',
     relatedTokens: [
+      'Bun.markdown.RenderCallbacks',
       'block-callbacks',
       'list-item-meta',
       'inline-callbacks',

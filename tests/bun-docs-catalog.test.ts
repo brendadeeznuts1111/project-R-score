@@ -508,9 +508,10 @@ describe('inspect family catalog relations', () => {
       'https://bun.com/docs/runtime/markdown#bun-markdown-react'
     );
     expect(byName.get('Bun.markdown.react')?.related?.slice(0, 2)).toEqual([
-      'component-overrides',
-      'available-overrides',
+      'Bun.markdown.ComponentOverrides',
+      'Bun.markdown.ReactOptions',
     ]);
+    expect(byName.get('Bun.markdown.react')?.related).toContain('component-overrides');
     expect(byName.get('Bun.markdown.react')?.related).toContain('parser-options-2');
     expect(byName.get('available-overrides')?.description).toContain(
       'Every HTML tag produced'
@@ -571,7 +572,7 @@ describe('inspect family catalog relations', () => {
     expect(byName.get('examples')?.related).toContain('custom-html-with-classes');
     expect(byName.get('examples')?.related).toContain('stripping-all-formatting');
     expect(byName.get('examples')?.related).toContain('code-block-syntax-highlighting');
-    expect(byName.get('Bun.markdown.render')?.related).toContain('custom-html-with-classes');
+    expect(byName.get('Bun.markdown.render')?.related).toContain('Bun.markdown.RenderCallbacks');
     expect(byName.get('server-side-rendering')?.docsUrl).toBe(
       'https://bun.com/docs/runtime/markdown#server-side-rendering'
     );
@@ -598,13 +599,36 @@ describe('inspect family catalog relations', () => {
     expect(byName.get('Bun.markdown.Options')?.docsUrl).toBe(
       'https://bun.com/docs/runtime/markdown#options'
     );
+    expect(byName.get('Bun.markdown.Options')?.description).toContain(
+      'reference/bun/markdown#bun.markdown.Options'
+    );
     expect(byName.get('Bun.markdown.Options')?.examples?.[0]?.body).toContain('tables: true');
     expect(byName.get('Bun.markdown.Options')?.examples?.[1]?.body).toContain('latexMath: false');
+    expect(byName.get('Bun.markdown.Options')?.related).toContain('Bun.markdown.ReactOptions');
     expect(byName.get('Bun.markdown.AnsiTheme')?.docsUrl).toBe(
       'https://bun.com/docs/runtime/markdown#ansi-terminal-output'
     );
+    expect(byName.get('Bun.markdown.AnsiTheme')?.description).toContain('kittyGraphics');
     expect(byName.get('Bun.markdown.AnsiTheme')?.examples?.[0]?.body).toContain(
-      'Bun.markdown.ansi('
+      'kittyGraphics: false'
+    );
+    expect(byName.get('Bun.markdown.ReactOptions')?.docsUrl).toBe(
+      'https://bun.com/reference/bun/markdown#bun.markdown.ReactOptions'
+    );
+    expect(byName.get('Bun.markdown.ReactOptions')?.examples?.[0]?.body).toContain(
+      'reactVersion: 18'
+    );
+    expect(byName.get('Bun.markdown.RenderCallbacks')?.docsUrl).toBe(
+      'https://bun.com/reference/bun/markdown#bun.markdown.RenderCallbacks'
+    );
+    expect(byName.get('Bun.markdown.RenderCallbacks')?.examples?.[0]?.body).toContain(
+      'RenderCallbacks'
+    );
+    expect(byName.get('Bun.markdown.ComponentOverrides')?.docsUrl).toBe(
+      'https://bun.com/reference/bun/markdown#bun.markdown.ComponentOverrides'
+    );
+    expect(byName.get('Bun.markdown.ComponentOverrides')?.examples?.[0]?.body).toContain(
+      'ComponentOverrides'
     );
     expect(byName.get('ansi-terminal-output')?.docsUrl).toBe(
       'https://bun.com/docs/runtime/markdown#ansi-terminal-output'
@@ -852,6 +876,56 @@ describe('runtime/markdown index ratchet', () => {
       const hasGuide = Boolean(GUIDE_EXAMPLES[path]?.length);
       const hasTokenGuide = Object.values(TOKEN_GUIDE_PATH).includes(path);
       if (!hasCurated && !hasGuide && !hasTokenGuide) missing.push(anchor);
+    }
+    expect(missing).toEqual([]);
+  });
+});
+
+describe('Bun.markdown type-surface integrity', () => {
+  /** Core inventory depth≤2 APIs + primary type interfaces (not Meta/Props leaves). */
+  const CORE_MARKDOWN_SURFACE = [
+    'Bun.markdown',
+    'Bun.markdown.html',
+    'Bun.markdown.ansi',
+    'Bun.markdown.render',
+    'Bun.markdown.react',
+    'Bun.markdown.Options',
+    'Bun.markdown.AnsiTheme',
+    'Bun.markdown.ReactOptions',
+    'Bun.markdown.RenderCallbacks',
+    'Bun.markdown.ComponentOverrides',
+  ] as const;
+
+  test('core Bun.markdown* surface has CANONICAL_REFS + curated + guide examples', async () => {
+    const { CANONICAL_REFS } = await import('../tools/bun-doc-refs.ts');
+    const curatedTerms = new Set(CURATED_ENTRIES.map(c => c.term));
+    const missingCanon: string[] = [];
+    const missingCurated: string[] = [];
+    const missingGuide: string[] = [];
+    for (const name of CORE_MARKDOWN_SURFACE) {
+      if (!CANONICAL_REFS[name]) missingCanon.push(name);
+      if (!curatedTerms.has(name)) missingCurated.push(name);
+      const guidePath = TOKEN_GUIDE_PATH[name] ?? CURATED_ENTRIES.find(c => c.term === name)?.path;
+      if (!guidePath || !GUIDE_EXAMPLES[guidePath]?.length) missingGuide.push(name);
+    }
+    expect({ missingCanon, missingCurated, missingGuide }).toEqual({
+      missingCanon: [],
+      missingCurated: [],
+      missingGuide: [],
+    });
+  });
+
+  test('every Bun.markdown* api-index name resolves via CANONICAL_REFS', async () => {
+    const { CANONICAL_REFS } = await import('../tools/bun-doc-refs.ts');
+    const apiIndex = (await Bun.file(
+      `${import.meta.dir}/../tools/bun-api-index.json`
+    ).json()) as { apis: Array<{ name: string; docs: string }> };
+    const markdownApis = apiIndex.apis.filter(a => a.name.startsWith('Bun.markdown'));
+    expect(markdownApis.length).toBeGreaterThan(0);
+    const missing: string[] = [];
+    for (const { name, docs } of markdownApis) {
+      const canon = CANONICAL_REFS[name];
+      if (!canon || canon !== docs) missing.push(`${name} → ${docs} (canon=${canon ?? '∅'})`);
     }
     expect(missing).toEqual([]);
   });
