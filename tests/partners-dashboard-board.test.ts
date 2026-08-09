@@ -14,15 +14,19 @@ import {
   dashboardBookCards,
   dashboardLedgerEventRows,
   dashboardRosterRows,
+  dashboardConnectorRows,
   flattenDashboardOuts,
+  formatRelativeAge,
   formatUsdMajor,
   formatUsdMinor,
   humanizeBookSlug,
   indexDashboardByPartner,
   isPartnersDashboardSchema,
+  softAccountingEmptyMessage,
   statusToneClass,
   summarizeConnectorSnapshots,
   summarizeDashboardDesk,
+  summarizeIntegrationsDesk,
 } from '../public/portal/partners/partners-board.js';
 
 const BOARD = 'public/portal/partners/index.html';
@@ -126,6 +130,16 @@ describe('partners-dashboard board cutover', () => {
     expect(connectors.ok).toBe(2);
     expect(connectors.stale).toBe(1);
     expect(connectors.unavailable).toBe(4);
+
+    const connRows = dashboardConnectorRows(sampleDashboard);
+    expect(connRows.find(r => r.connector === 'profiles')?.label).toBe('Partner profiles');
+    expect(connRows.find(r => r.connector === 'profiles')?.dataStatus).toBe('ok');
+    const integ = summarizeIntegrationsDesk(sampleDashboard);
+    expect(integ.ok).toBe(2);
+    expect(integ.headline).toContain('connectors ok');
+    expect(formatRelativeAge(new Date().toISOString())).toBe('just now');
+    expect(softAccountingEmptyMessage('plays', 'unavailable (404)')).toMatch(/Soft export offline/);
+    expect(softAccountingEmptyMessage('books', 'soft-ct')).toMatch(/bookType/);
 
     expect(isPartnersDashboardSchema('factorywager.partners-dashboard.v1')).toBe(true);
     expect(isPartnersDashboardSchema('factorywager.partners-ops.v2')).toBe(false);

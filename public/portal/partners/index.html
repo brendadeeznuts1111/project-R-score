@@ -356,11 +356,11 @@
             <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
             <a href="/portal/partners/" class="nav-link active" aria-current="page" title="package groups · telegram forums · accounting · deposits · seat capital · bun run partner:dashboard:bake" data-group="ops" data-domain="partner" data-cli="bun run partner:dashboard:bake" data-registry="/registry/partners-dashboard.json" role="menuitem">Partners</a>
             <a href="/portal/partner/" class="nav-link" title="partner domain readiness · profile alignment · per-out checks · bun run partner:health:bake" data-group="ops" data-domain="partner" data-cli="bun run partner:health:bake" data-registry="/registry/partner-health.json" role="menuitem">Partner health</a>
-            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed" data-group="ops" data-domain="partner" data-cli="bun run ops:dossier:seed" data-registry="/registry/partners-ops.json" role="menuitem">Account</a>
+            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed" data-group="ops" data-domain="partner" data-cli="bun run ops:dossier:seed" data-registry="/registry/partners-dashboard.json" role="menuitem">Account</a>
             <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Partner history</a>
             <a href="/portal/limits/" class="nav-link" title="multi-factor partner limit raises · CLV · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Limits</a>
             <a href="/portal/limits-lab/" class="nav-link" title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:predict" data-registry="/registry/limit-forecast-lab.json" role="menuitem">Limits lab</a>
-            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers artifact · canonical bookmaker registry · bun run bookmakers:bake" data-group="ops" data-domain="partner" data-cli="bun run bookmakers:bake" data-registry="/registry/bookmakers.json" role="menuitem">Bookmakers</a>
+            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers catalog (Tenant=bookmakers; Domain=partner = desk loop) · bun run bookmakers:bake" data-group="ops" data-domain="partner" data-cli="bun run bookmakers:bake" data-registry="/registry/bookmakers.json" role="menuitem">Bookmakers</a>
             <a href="/portal/factory/" class="nav-link" title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify" data-group="ops" data-domain="partner" data-cli="bun run telegram:verify" data-registry="/registry/telegram-handshake.json" role="menuitem">Factory</a>
             <a href="/portal/tennis/" class="nav-link" title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake" data-group="ops" data-domain="trading" data-cli="bun run tennis:board:bake" data-registry="/registry/tennis/agent-auth.json" role="menuitem">Tennis</a>
             <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-domain="trading" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
@@ -655,8 +655,10 @@
               data-glossary-concept="connector.data_status"
               >connector.data_status</a
             >
-            · per-partner Tennis integration when present.
+            · per-partner Tennis / Sports Terminal when joined. Summary updates
+            from the latest partners-dashboard bake.
           </p>
+          <p class="blurb" id="integrations-summary" style="margin-top: 0">Loading connectors…</p>
           <div class="partners-panel">
             <table class="portal-table partners-table">
               <thead>
@@ -664,7 +666,7 @@
                   <th>Connector</th>
                   <th>Status</th>
                   <th>Mode</th>
-                  <th>Observed</th>
+                  <th>Age</th>
                   <th>Input</th>
                 </tr>
               </thead>
@@ -673,17 +675,17 @@
           </div>
           <div class="partners-panel" style="margin-top: 12px">
             <h3 style="margin: 0 0 8px; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-dim)">
-              Partner · Tennis · Sports Terminal
+              Per partner
             </h3>
             <table class="portal-table partners-table">
               <thead>
                 <tr>
                   <th>Partner</th>
                   <th>Call sign</th>
+                  <th>Ready outs</th>
+                  <th>Telegram</th>
                   <th>Tennis</th>
-                  <th>Tennis at</th>
                   <th>Sports Terminal</th>
-                  <th>ST at</th>
                 </tr>
               </thead>
               <tbody id="integrations-partners-tbody"></tbody>
@@ -949,9 +951,9 @@
             </table>
             <h3 class="partners-subhead" style="margin-top: 16px">Event log</h3>
             <p class="blurb">
-              Ledger-derived from
-              <code>partners:event</code> / <code>partners:ledger:append</code> →
-              <code>bun run partners:build</code>. Shipped <code>event.*</code> ids only.
+              Recent ledger entries from the partner-ledger bake joined into
+              partners-dashboard ·
+              <code>bun run partner:dashboard:bake</code>.
             </p>
             <table class="portal-table partners-table">
               <thead>
@@ -1294,9 +1296,11 @@
         partnerReadinessGate,
         partnerScopedBalanceMinor,
         projectSoftAccountingExport,
+        softAccountingEmptyMessage,
         statusToneClass,
         summarizeConnectorSnapshots,
         summarizeDashboardDesk,
+        summarizeIntegrationsDesk,
       } from '/portal/partners/partners-board.js';
       import { mountFreshnessBadge } from '/portal/data-freshness.js';
       import { fetchJsonResult } from '/portal/fetch-json.js';
@@ -1385,16 +1389,16 @@
         { key: 'connector', label: 'Connector' },
         { key: 'status', label: 'Status' },
         { key: 'mode', label: 'Mode' },
-        { key: 'observed', label: 'Observed' },
+        { key: 'age', label: 'Age' },
         { key: 'input', label: 'Input' },
       ];
       const PARTNER_INTEGRATION_COLS = [
         { key: 'partner', label: 'Partner' },
         { key: 'callSign', label: 'Call sign' },
+        { key: 'outs', label: 'Ready outs' },
+        { key: 'telegram', label: 'Telegram' },
         { key: 'tennis', label: 'Tennis' },
-        { key: 'tennisAt', label: 'Tennis at' },
         { key: 'sportsTerminal', label: 'Sports Terminal' },
-        { key: 'stAt', label: 'ST at' },
       ];
       const SOFT_PLAYS_COLS = [
         { key: 'partner', label: 'Partner' },
@@ -2096,7 +2100,13 @@
           <div><div class="k">Limit coverage</div><div class="v">${coverageBarHtml(coveragePct)} · tracked ${esc(String(limits.tracked ?? 0))} · missing ${esc(String(limits.missing ?? 0))}</div></div>
           <div><div class="k">Fund / outs</div><div class="v">${esc(String(outs.filter(o => o.fundingStatus === 'funded').length))} funded · ${esc(String(outs.length))} outs</div></div>
           <div><div class="k">Balance</div><div class="v">${balMinor == null ? '—' : fmtMoney(balMinor / 100)}</div></div>
-          <div><div class="k">Integrations</div><div class="v">tennis ${esc(partner.integrations?.tennis?.dataStatus || 'n/a')} · ST ${esc(partner.integrations?.sportsTerminal?.dataStatus || 'n/a')}</div></div>
+          <div><div class="k">Integrations</div><div class="v">${(() => {
+            const t = partner.integrations?.tennis?.dataStatus || 'n/a';
+            const st = partner.integrations?.sportsTerminal?.dataStatus || 'n/a';
+            const tCls = t === 'ok' ? 'tone-ok' : t === 'n/a' ? 'tone-muted' : 'tone-warn';
+            const stCls = st === 'ok' ? 'tone-ok' : st === 'n/a' ? 'tone-muted' : 'tone-warn';
+            return `tennis <span class="${tCls}">${esc(t)}</span> · ST <span class="${stCls}">${esc(st)}</span>`;
+          })()}</div></div>
           <div><div class="k">Bot topics</div><div class="v">${bot}</div></div>
           <div><div class="k">Next</div><div class="v">${esc(next)}</div></div>
           <div><div class="k">Outs filters</div><div class="v"><a class="topic-chip" href="#outs?missingLimit=1&amp;partner=${encodeURIComponent(code)}">Missing limit evidence</a> <a class="topic-chip" href="#outs?noExternalRef=1&amp;partner=${encodeURIComponent(code)}">No external ref</a></div></div>
@@ -2350,12 +2360,21 @@
 
       function renderIntegrations(dashboard) {
         const connectors = dashboardConnectorRows(dashboard);
+        const summary = summarizeIntegrationsDesk(dashboard);
+        const summaryEl = $('integrations-summary');
+        if (summaryEl) {
+          const tone =
+            summary.unavailable > 0 ? 'tone-warn' : summary.stale > 0 ? 'tone-warn' : 'tone-ok';
+          summaryEl.innerHTML = `<span class="${tone}"><strong>${esc(summary.headline)}</strong></span> · tennis ok ${esc(String(summary.tennisOk))}/${esc(String(summary.partnerCount))} · ST ok ${esc(String(summary.sportsTerminalOk))}/${esc(String(summary.partnerCount))}`;
+        }
         const connBody = $('integrations-connectors-tbody');
         if (connBody) {
           connBody.innerHTML = renderPortalTableRows(
             CONNECTOR_COLS,
             connectors.map(row => [
-              { html: `<code>${esc(row.connector)}</code>` },
+              {
+                html: `<strong>${esc(row.label)}</strong><br><code style="font-size:10px">${esc(row.connector)}</code>`,
+              },
               {
                 html: esc(row.dataStatus),
                 className: connectorStatusTone(row.dataStatus),
@@ -2363,17 +2382,17 @@
               row.sourceMode || '—',
               {
                 html: row.observedAt
-                  ? `<time>${esc(row.observedAt)}</time>`
+                  ? `<time datetime="${esc(row.observedAt)}" title="${esc(row.observedAt)}">${esc(row.observedAge)}</time>`
                   : '—',
               },
               {
                 html: row.inputRef.startsWith('/registry/')
-                  ? `<a href="${esc(row.inputRef)}"><code>${esc(row.inputRef)}</code></a>`
+                  ? `<a href="${esc(row.inputRef)}"><code>${esc(row.inputRef.replace('/registry/', ''))}</code></a>`
                   : `<code>${esc(row.inputRef)}</code>`,
               },
             ]),
             {
-              emptyMessage: 'No connector snapshots on dashboard artifact',
+              emptyMessage: 'No connector snapshots on dashboard artifact — re-bake partners-dashboard',
               rowAttrs: i => ({
                 'data-connector': String(connectors[i]?.connector || ''),
                 'data-glossary-concept': 'connector.data_status',
@@ -2391,26 +2410,30 @@
               { html: partnerLink(row.partnerCode) },
               { html: `<code>${esc(row.callSign)}</code>` },
               {
-                html: esc(row.tennisStatus),
+                html: `${esc(String(row.activeOuts))}/${esc(String(row.outsCount))}`,
+                className: row.activeOuts > 0 ? 'tone-ok' : 'tone-warn',
+              },
+              {
+                html: row.chatLinked ? 'linked' : 'none',
+                className: row.chatLinked ? 'tone-ok' : 'tone-muted',
+              },
+              {
+                html:
+                  row.tennisStatus === 'n/a'
+                    ? '—'
+                    : `${esc(row.tennisStatus)}${row.tennisAge && row.tennisAge !== '—' ? ` · ${esc(row.tennisAge)}` : ''}`,
                 className:
-                  row.tennisStatus === 'n/a' ? '' : connectorStatusTone(row.tennisStatus),
+                  row.tennisStatus === 'n/a' ? 'tone-muted' : connectorStatusTone(row.tennisStatus),
               },
               {
-                html: row.tennisObservedAt
-                  ? `<time>${esc(row.tennisObservedAt)}</time>`
-                  : '—',
-              },
-              {
-                html: esc(row.sportsTerminalStatus),
+                html:
+                  row.sportsTerminalStatus === 'n/a'
+                    ? '—'
+                    : `${esc(row.sportsTerminalStatus)}${row.sportsTerminalAge && row.sportsTerminalAge !== '—' ? ` · ${esc(row.sportsTerminalAge)}` : ''}`,
                 className:
                   row.sportsTerminalStatus === 'n/a'
-                    ? ''
+                    ? 'tone-muted'
                     : connectorStatusTone(row.sportsTerminalStatus),
-              },
-              {
-                html: row.sportsTerminalObservedAt
-                  ? `<time>${esc(row.sportsTerminalObservedAt)}</time>`
-                  : '—',
               },
             ]),
             {
@@ -2510,7 +2533,7 @@
               p.pnl ?? '—',
             ]),
             {
-              emptyMessage: `No Soft plays — bun run soft:accounting:bake or soft:accounting:from-ct · source ${softAccountingSource}`,
+              emptyMessage: softAccountingEmptyMessage('plays', softAccountingSource),
               rowAttrs: i => ({
                 'data-partner-code': String(slice[i]?.partnerCode || ''),
                 'data-glossary-concept': 'ops.view.per_play',
@@ -2532,7 +2555,7 @@
               { html: `<strong>${esc(w.net)}</strong>` },
             ]),
             {
-              emptyMessage: `No Soft week rollups — bake Soft plays first · source ${softAccountingSource}`,
+              emptyMessage: softAccountingEmptyMessage('weeks', softAccountingSource),
               rowAttrs: i => ({
                 'data-partner-code': String(slice[i]?.partnerCode || ''),
                 'data-glossary-concept': 'ops.view.per_week',
@@ -2556,7 +2579,7 @@
               { html: `<strong>${esc(b.net)}</strong>` },
             ]),
             {
-              emptyMessage: `No Soft book-type rollups — tag plays with bookType or enrich via partners-ops · source ${softAccountingSource}`,
+              emptyMessage: softAccountingEmptyMessage('books', softAccountingSource),
               rowAttrs: i => ({
                 'data-partner-code': String(slice[i]?.partnerCode || ''),
                 'data-glossary-concept': 'ops.view.per_book_type',
