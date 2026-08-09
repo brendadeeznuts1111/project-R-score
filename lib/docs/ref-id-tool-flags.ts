@@ -859,6 +859,18 @@ export const PARTNER_PROFILE_COVERAGE_BAKE_ALLOWED_LONG = ['check'] as const;
 /** § — partner:dashboard:bake (`scripts/bake-partners-dashboard.ts`) — Lane C board cutover */
 export const PARTNER_DASHBOARD_BAKE_ALLOWED_LONG = ['check', 'as-of'] as const;
 
+/** § — partner:dashboard:refresh (`scripts/refresh-partners-dashboard.ts`) — operator input+bake loop */
+export const PARTNER_DASHBOARD_REFRESH_ALLOWED_LONG = [
+  'align-clocks',
+  'as-of',
+  'check',
+  'dry-run',
+  'json',
+  'skip-dashboard',
+  'skip-handshake',
+  'skip-profiles',
+] as const;
+
 /** § — sports-terminal:health:refresh (`scripts/refresh-sports-terminal-integration-health.ts`) — Lane H */
 export const SPORTS_TERMINAL_HEALTH_REFRESH_ALLOWED_LONG = [
   'check',
@@ -2471,6 +2483,7 @@ export type AllowedLongCliName =
   | 'bookmakers:prepare-publish'
   | 'partner-profile:coverage:bake'
   | 'partner:dashboard:bake'
+  | 'partner:dashboard:refresh'
   | 'sports-terminal:health:refresh'
   | 'concept:registry:serve'
   | 'install:verify'
@@ -2800,6 +2813,7 @@ export const ALLOWED_LONG_REGISTRY = {
   'bookmakers:prepare-publish': BOOKMAKERS_PREPARE_PUBLISH_ALLOWED_LONG,
   'partner-profile:coverage:bake': PARTNER_PROFILE_COVERAGE_BAKE_ALLOWED_LONG,
   'partner:dashboard:bake': PARTNER_DASHBOARD_BAKE_ALLOWED_LONG,
+  'partner:dashboard:refresh': PARTNER_DASHBOARD_REFRESH_ALLOWED_LONG,
   'sports-terminal:health:refresh': SPORTS_TERMINAL_HEALTH_REFRESH_ALLOWED_LONG,
   'concept:registry:serve': CONCEPT_REGISTRY_SERVE_ALLOWED_LONG,
   'install:verify': INSTALL_VERIFY_ALLOWED_LONG,

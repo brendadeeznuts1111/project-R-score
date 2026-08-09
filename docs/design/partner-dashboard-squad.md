@@ -139,6 +139,15 @@ partners-* tests only. No package adapter changes.
 `bookmakers.unregistered_sportsbook` (desk placeholders). Handshake re-export
 with Telegram token is required after any fixture clock clustering.
 
+**Operator refresh (preferred):**
+
+```bash
+bun run partner:dashboard:refresh              # handshake+token → profiles → bake
+bun run partner:dashboard:refresh -- --align-clocks   # offline fixture coherence
+bun run partner:dashboard:refresh -- --skip-handshake # when bot token unavailable
+bun run partner:dashboard:refresh:check        # bake --check only
+```
+
 **Bloat decisions**
 
 | Candidate | Decision |
