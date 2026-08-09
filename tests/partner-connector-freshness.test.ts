@@ -1,7 +1,11 @@
 import { describe, expect, test } from 'bun:test';
 import {
   PARTNER_CONNECTOR_FRESHNESS_POLICY,
+  connectorSnapshotRefFromPayload,
   evaluateConnectorFreshness,
+  extractConnectorObservedAt,
+  resolveConnectorSnapshotMap,
+  resolvePartnerDashboardBakeAsOf,
 } from '../packages/partners/src/index.ts';
 
 const AS_OF = '2026-08-06T12:00:00.000Z';
@@ -144,5 +148,72 @@ describe('partner connector freshness', () => {
     });
     expect(tolerated).toMatchObject({ snapshot: { ageSeconds: 0, dataStatus: 'ok' } });
     expect(PARTNER_CONNECTOR_FRESHNESS_POLICY.maxFutureSkewSeconds).toBe(30);
+  });
+
+  test('extracts observation clock and content-addressed snapshot refs', () => {
+    expect(
+      extractConnectorObservedAt({ generatedAt: '2026-08-06T12:00:00.000Z', rows: [] })
+    ).toBe('2026-08-06T12:00:00.000Z');
+    expect(extractConnectorObservedAt({ observedAt: '2026-08-06T11:00:00.000Z' })).toBe(
+      '2026-08-06T11:00:00.000Z'
+    );
+    expect(() => extractConnectorObservedAt({ schema: 'x' })).toThrow('generatedAt or observedAt');
+    const ref = connectorSnapshotRefFromPayload('{"a":1}');
+    expect(ref.startsWith('sha256:')).toBe(true);
+    expect(ref.length).toBe('sha256:'.length + 64);
+    expect(connectorSnapshotRefFromPayload('{"a":1}')).toBe(ref);
+  });
+
+  test('resolveConnectorSnapshotMap fails required and labels optional LKG', () => {
+    expect(() =>
+      resolveConnectorSnapshotMap(AS_OF, {
+        profiles: {
+          expectedInputRef: 'config/partner-profiles/*.toml',
+          required: true,
+        },
+      })
+    ).toThrow(/fail_bake/);
+
+    const map = resolveConnectorSnapshotMap(AS_OF, {
+      profiles: {
+        expectedInputRef: 'config/partner-profiles/*.toml',
+        required: true,
+        current: {
+          observedAt: '2026-08-06T11:59:00.000Z',
+          inputRef: 'config/partner-profiles/*.toml',
+        },
+      },
+      telegram: {
+        expectedInputRef: '/registry/telegram-handshake.json',
+        required: false,
+        lastKnownGood: {
+          observedAt: '2026-08-06T11:50:00.000Z',
+          inputRef: '/registry/telegram-handshake.json',
+          snapshotRef: 'sha256:fixture',
+        },
+      },
+    });
+    expect(map.profiles.dataStatus).toBe('ok');
+    expect(map.telegram).toMatchObject({
+      dataStatus: 'stale',
+      sourceMode: 'last_known_good',
+      reasonCode: 'last_known_good',
+    });
+  });
+
+  test('resolvePartnerDashboardBakeAsOf picks max-input or wall clock', () => {
+    expect(
+      resolvePartnerDashboardBakeAsOf('max-input', [
+        '2026-08-05T00:00:00.000Z',
+        '2026-08-06T12:00:00.000Z',
+        '2026-08-04T00:00:00.000Z',
+      ])
+    ).toBe('2026-08-06T12:00:00.000Z');
+    expect(
+      resolvePartnerDashboardBakeAsOf('now', [], '2026-08-08T00:00:00.000Z')
+    ).toBe('2026-08-08T00:00:00.000Z');
+    expect(resolvePartnerDashboardBakeAsOf('2026-08-01T00:00:00.000Z', [])).toBe(
+      '2026-08-01T00:00:00.000Z'
+    );
   });
 });
