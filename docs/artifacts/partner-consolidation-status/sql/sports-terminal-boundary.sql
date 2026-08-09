@@ -1,10 +1,13 @@
 -- Reviewed snapshot query for the Sports Terminal partner API/HTML boundary.
 -- Upstream:
 --   projects/active/sports-terminal-os/src/api/partner-routes.ts
+--   projects/active/sports-terminal-os/src/api/partner-integration-health-routes.ts
 --   projects/active/sports-terminal-os/src/api/router.ts
 --   projects/active/sports-terminal-os/src/index.ts
 --   projects/active/sports-terminal-os/src/frontend/App.tsx
 --   projects/active/sports-terminal-os/src/frontend/pages/PartnersPage.tsx
+--   packages/partners/src/adapters/sports-terminal.ts
+--   public/registry/sports-terminal/partner-integration-health.json
 
 CREATE TEMP TABLE sports_terminal_boundary_audit AS
 SELECT
@@ -16,9 +19,9 @@ SELECT
 UNION ALL SELECT
   2,
   'GET /api/partners',
-  'Handler exists in partner-routes.ts but partnerRoutes is not mounted by the main API router',
-  'blocked',
-  'Mount only behind an authenticated, parsed adapter boundary'
+  'Handler exists in partner-routes.ts but full partnerRoutes remains unmounted (float money / bare partnerId)',
+  'unsafe-input',
+  'Do not mount list/detail; dashboard uses IntegrationHealthReadPort only'
 UNION ALL SELECT
   3,
   'GET /api/partners/:id',
@@ -27,10 +30,16 @@ UNION ALL SELECT
   'Do not consume directly; project only qualified external state and health'
 UNION ALL SELECT
   4,
-  'GET /api/partners/:id/sources/health',
-  'Closest IntegrationHealthReadPort candidate, but remains unmounted and accepts an unqualified path ID',
-  'candidate',
-  'Define auth, ExternalPartnerRef resolution, parsed response, and integer-money exclusion';
+  'GET /api/v1/partners/integration-health',
+  'Authenticated IntegrationHealthReadPort: ExternalPartnerRef map, money-free/integer-minor wire, mounted with auth required',
+  'implemented',
+  'Pure adapter parseSportsTerminalIntegrationHealth + registry fixture + bake join'
+UNION ALL SELECT
+  5,
+  'registry sports-terminal/partner-integration-health.json',
+  'Exact public fixture schema factorywager.sports-terminal-integration-health.v1',
+  'implemented',
+  'Connector sports-terminal implemented; authors integrations.sportsTerminal + externalPartnerRefs';
 
 SELECT surface, observed, status, decision
 FROM sports_terminal_boundary_audit

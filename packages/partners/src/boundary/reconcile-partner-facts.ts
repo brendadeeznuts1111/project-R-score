@@ -3,13 +3,19 @@
  *
  * Runs AFTER `buildPartnerDashboardRecords`. Applies tennis-first capacity
  * precedence to produce `activeOutIds`, optional out status / observed max-stake
- * upgrades, partner-keyed `integrations.tennis`, and explicit `conflicts[]`.
+ * upgrades, partner-keyed `integrations.tennis`, Sports Terminal
+ * `integrations.sportsTerminal` + externalPartnerRefs, and explicit `conflicts[]`.
  *
  * Does not invent lifecycle, funding, accounting money, or unregistered outs.
- * Sports Terminal is capacity-secondary and optional; when absent, tennis is the
+ * Sports Terminal integration-health is optional; when absent, tennis is the
  * sole capacity author (precedence still declares tennis-contract >
  * sports-terminal for future multi-source conflict rows).
  */
+import type { SportsTerminalIntegrationProjection } from '../adapters/sports-terminal.ts';
+import {
+  SPORTS_TERMINAL_ADAPTER_ID,
+  sportsTerminalDataStatus,
+} from '../adapters/sports-terminal.ts';
 import type {
   TennisCapacityProjection,
   TennisOutCapacityObservation,
@@ -31,8 +37,8 @@ import {
 export const TENNIS_CONTRACT_ADAPTER_ID = parseAdapterId('tennis-contract');
 /** Prior out status/book observations on built records come from legacy-ops. */
 export const LEGACY_PARTNERS_OPS_ADAPTER_ID = parseAdapterId('legacy-partners-ops');
-/** Capacity secondary — reserved for future Sports Terminal capacity input. */
-export const SPORTS_TERMINAL_ADAPTER_ID = parseAdapterId('sports-terminal');
+/** Re-export for capacity-precedence consumers (canonical definition lives on the adapter). */
+export { SPORTS_TERMINAL_ADAPTER_ID };
 
 export const CAPACITY_PRECEDENCE = ['tennis-contract', 'sports-terminal'] as const;
 
@@ -40,6 +46,8 @@ export type ReconcilePartnerDashboardFactsInput = {
   partners: readonly PartnerDashboardRecord[];
   /** Parsed tennis capacity projection; omit when tennis connector is unavailable. */
   tennis?: TennisCapacityProjection;
+  /** Parsed Sports Terminal integration-health; omit when connector unavailable. */
+  sportsTerminal?: SportsTerminalIntegrationProjection;
 };
 
 export type ReconcilePartnerDashboardFactsResult = {
@@ -188,6 +196,44 @@ function applyTennisObservationToOut(options: {
  * operationally `ready` after upgrades. Unregistered tennis outs are ignored
  * (never invented). Finance / lifecycle / funding are not authored here.
  */
+function applySportsTerminalIntegration(
+  partners: PartnerDashboardRecord[],
+  sportsTerminal: SportsTerminalIntegrationProjection
+): void {
+  const byCode = new Map(partners.map(partner => [partner.partnerCode, partner]));
+  for (const observation of sportsTerminal.observations) {
+    const partner = byCode.get(observation.partnerCode);
+    if (!partner) continue;
+
+    const dataStatus = sportsTerminalDataStatus(observation.overall);
+    partner.integrations = {
+      ...partner.integrations,
+      sportsTerminal: {
+        dataStatus,
+        observedAt: observation.observedAt,
+      },
+    };
+
+    const refKey = `${observation.externalPartnerRef.sourceSystemId}:${observation.externalPartnerRef.externalId}`;
+    const already = partner.identity.externalPartnerRefs.some(
+      ref => `${ref.sourceSystemId}:${ref.externalId}` === refKey
+    );
+    if (!already) {
+      partner.identity.externalPartnerRefs = [
+        ...partner.identity.externalPartnerRefs,
+        {
+          sourceSystemId: observation.externalPartnerRef.sourceSystemId,
+          externalId: observation.externalPartnerRef.externalId,
+        },
+      ].sort(
+        (left, right) =>
+          compareAscii(left.sourceSystemId, right.sourceSystemId) ||
+          compareAscii(left.externalId, right.externalId)
+      );
+    }
+  }
+}
+
 export function reconcilePartnerDashboardFacts(
   input: ReconcilePartnerDashboardFactsInput
 ): ReconcilePartnerDashboardFactsResult {
@@ -195,9 +241,17 @@ export function reconcilePartnerDashboardFacts(
   const conflicts: PartnerSourceConflict[] = [];
   const activeOutIds: OutId[] = [];
 
+  if (input.sportsTerminal) {
+    applySportsTerminalIntegration(partners, input.sportsTerminal);
+  }
+
   if (!input.tennis) {
+    partners.sort((a, b) => compareAscii(a.partnerCode, b.partnerCode));
+    for (const partner of partners) {
+      partner.outs.sort((a, b) => compareAscii(a.outId, b.outId));
+    }
     return {
-      partners: partners.sort((a, b) => compareAscii(a.partnerCode, b.partnerCode)),
+      partners,
       activeOutIds: [],
       conflicts: [],
     };

@@ -79,7 +79,7 @@
       {
         "id": "connector_state_chart",
         "title": "Connector implementation state",
-        "subtitle": "All eight source boundaries are named; four observation/catalog parsers are implemented, Sports Terminal is blocked, and legacy operations is compatibility-only.",
+        "subtitle": "All eight source boundaries are named; four observation/catalog parsers are implemented, Sports Terminal integration-health is implemented; legacy operations connector is retired.",
         "type": "bar",
         "dataset": "connector_status_summary",
         "sourceId": "partner_plan",
@@ -152,7 +152,7 @@
           "language": "sql",
           "description": "Materializes reviewed package-component and connector counts from the partner MVP TOML.",
           "executed_at": "2026-08-06T05:20:33Z",
-          "sql": "SELECT 18 AS implementedComponents, 18 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
+          "sql": "SELECT 18 AS implementedComponents, 18 AS totalComponents, 8 AS connectors, 0 AS blockedConnectors;"
         }
       },
       {
@@ -184,7 +184,7 @@
       {
         "id": "proposal_context",
         "type": "markdown",
-        "body": "## Proposal snapshot\n\nThis is a read-only design and delivery artifact\u2014not the production partner dashboard. Sports Terminal remains blocked: its UI exists, but its partner API module is unmounted and unsafe as a canonical input."
+        "body": "## Proposal snapshot\n\nThis is a read-only design and delivery artifact\u2014not the production partner dashboard. Sports Terminal integration-health is mounted behind auth; unsafe list/detail partner APIs remain unmounted."
       },
       {
         "id": "status_metrics",
@@ -222,7 +222,7 @@
           "implementedComponents": 18,
           "totalComponents": 18,
           "connectors": 7,
-          "blockedConnectors": 1,
+          "blockedConnectors": 0,
           "semanticGaps": 0
         }
       ],
@@ -307,10 +307,10 @@
           "order": 7,
           "connector": "sports-terminal",
           "owner": "trading",
-          "status": "blocked",
+          "status": "implemented",
           "required": "no",
           "port": "IntegrationHealthReadPort",
-          "nextAction": "one exact parsed input, explicit external-ID resolution, authenticated route integration, and integer-minor-unit money wire are required"
+          "nextAction": "integration-health"
         }
       ]
     },
@@ -332,7 +332,7 @@
         "language": "sql",
         "description": "Materializes reviewed package-component and connector counts from the partner MVP TOML.",
         "executed_at": "2026-08-06T05:20:33Z",
-        "sql": "SELECT 18 AS implementedComponents, 18 AS totalComponents, 8 AS connectors, 1 AS blockedConnectors;"
+        "sql": "SELECT 18 AS implementedComponents, 18 AS totalComponents, 8 AS connectors, 0 AS blockedConnectors;"
       }
     },
     {

@@ -1,12 +1,12 @@
 {
   "schema": "factorywager.partners-dashboard.v2",
-  "generatedAt": "2026-08-08T23:38:07.859Z",
+  "generatedAt": "2026-08-09T00:00:07.156Z",
   "connectorSnapshots": {
     "profiles": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:38:07.859Z",
+      "observedAt": "2026-08-09T00:00:07.156Z",
       "ageSeconds": 0,
       "inputRef": "config/partner-profiles/*.toml"
     },
@@ -14,7 +14,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:38:07.859Z",
+      "observedAt": "2026-08-09T00:00:07.156Z",
       "ageSeconds": 0,
       "inputRef": "partner_ledger"
     },
@@ -22,7 +22,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:38:07.859Z",
+      "observedAt": "2026-08-09T00:00:07.156Z",
       "ageSeconds": 0,
       "inputRef": "/registry/telegram-handshake.json"
     },
@@ -30,7 +30,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:38:07.859Z",
+      "observedAt": "2026-08-09T00:00:07.156Z",
       "ageSeconds": 0,
       "inputRef": "/registry/limit-raises.json"
     },
@@ -38,7 +38,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:38:07.859Z",
+      "observedAt": "2026-08-09T00:00:07.156Z",
       "ageSeconds": 0,
       "inputRef": "/registry/bookmakers.json"
     },
@@ -46,15 +46,17 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-08T23:38:07.859Z",
+      "observedAt": "2026-08-09T00:00:07.156Z",
       "ageSeconds": 0,
       "inputRef": "/registry/tennis/partner-contracts.json"
     },
     "sportsTerminal": {
-      "dataStatus": "unavailable",
-      "sourceMode": "none",
-      "reasonCode": "optional_source_unavailable",
-      "inputRef": ""
+      "dataStatus": "ok",
+      "sourceMode": "current",
+      "reasonCode": "current_fresh",
+      "observedAt": "2026-08-09T00:00:07.156Z",
+      "ageSeconds": 0,
+      "inputRef": "/registry/sports-terminal/partner-integration-health.json"
     }
   },
   "activeOutIds": [
@@ -180,13 +182,13 @@
       "callSign": "ASH-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T23:38:07.859Z",
+        "effectiveAt": "2026-08-09T00:00:07.156Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T23:38:07.859Z",
+          "observedAt": "2026-08-09T00:00:07.156Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -195,7 +197,12 @@
       "operationalPhase": "operator_ready",
       "identity": {
         "profileSourceSystemId": "factorywager-partner-profile",
-        "externalPartnerRefs": []
+        "externalPartnerRefs": [
+          {
+            "sourceSystemId": "sports-terminal",
+            "externalId": "st-partner-ash-001"
+          }
+        ]
       },
       "outs": [
         {
@@ -334,6 +341,10 @@
         "coverageRatio": 0
       },
       "integrations": {
+        "sportsTerminal": {
+          "dataStatus": "ok",
+          "observedAt": "2026-08-08T18:00:00.000Z"
+        },
         "tennis": {
           "dataStatus": "ok",
           "observedAt": "2026-08-05T17:37:45.981Z"
@@ -346,13 +357,13 @@
       "callSign": "BIL-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T23:38:07.859Z",
+        "effectiveAt": "2026-08-09T00:00:07.156Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T23:38:07.859Z",
+          "observedAt": "2026-08-09T00:00:07.156Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -361,7 +372,12 @@
       "operationalPhase": "operator_ready",
       "identity": {
         "profileSourceSystemId": "factorywager-partner-profile",
-        "externalPartnerRefs": []
+        "externalPartnerRefs": [
+          {
+            "sourceSystemId": "sports-terminal",
+            "externalId": "st-partner-bil-001"
+          }
+        ]
       },
       "outs": [
         {
@@ -435,6 +451,10 @@
         "coverageRatio": 0
       },
       "integrations": {
+        "sportsTerminal": {
+          "dataStatus": "stale",
+          "observedAt": "2026-08-08T18:00:00.000Z"
+        },
         "tennis": {
           "dataStatus": "ok",
           "observedAt": "2026-08-05T17:37:45.981Z"
@@ -447,13 +467,13 @@
       "callSign": "NOV-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T23:38:07.859Z",
+        "effectiveAt": "2026-08-09T00:00:07.156Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T23:38:07.859Z",
+          "observedAt": "2026-08-09T00:00:07.156Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -462,7 +482,12 @@
       "operationalPhase": "operator_ready",
       "identity": {
         "profileSourceSystemId": "factorywager-partner-profile",
-        "externalPartnerRefs": []
+        "externalPartnerRefs": [
+          {
+            "sourceSystemId": "sports-terminal",
+            "externalId": "st-partner-nov-001"
+          }
+        ]
       },
       "outs": [
         {
@@ -571,6 +596,10 @@
         "coverageRatio": 0
       },
       "integrations": {
+        "sportsTerminal": {
+          "dataStatus": "ok",
+          "observedAt": "2026-08-08T18:00:00.000Z"
+        },
         "tennis": {
           "dataStatus": "ok",
           "observedAt": "2026-08-05T17:37:45.981Z"
@@ -583,13 +612,13 @@
       "callSign": "SPEN-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-08T23:38:07.859Z",
+        "effectiveAt": "2026-08-09T00:00:07.156Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-08T23:38:07.859Z",
+          "observedAt": "2026-08-09T00:00:07.156Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -598,7 +627,12 @@
       "operationalPhase": "operator_ready",
       "identity": {
         "profileSourceSystemId": "factorywager-partner-profile",
-        "externalPartnerRefs": []
+        "externalPartnerRefs": [
+          {
+            "sourceSystemId": "sports-terminal",
+            "externalId": "st-partner-spen-001"
+          }
+        ]
       },
       "outs": [
         {
@@ -774,6 +808,10 @@
         "coverageRatio": 0
       },
       "integrations": {
+        "sportsTerminal": {
+          "dataStatus": "unavailable",
+          "observedAt": "2026-08-08T18:00:00.000Z"
+        },
         "tennis": {
           "dataStatus": "ok",
           "observedAt": "2026-08-05T17:37:45.981Z"

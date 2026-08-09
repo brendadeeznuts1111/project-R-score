@@ -26,11 +26,13 @@ import {
   parseLegacyPartnersOpsProjection,
   parsePartnerDashboardArtifact,
   parsePartnerProfileCoverageArtifact,
+  parseSportsTerminalIntegrationHealth,
   parseTelegramHandshakeArtifact,
   parseTennisCapacityArtifact,
   reconcilePartnerDashboardFacts,
   type ConnectorSnapshot,
   type PartnerAccountingObservation,
+  type SportsTerminalIntegrationProjection,
   type TennisCapacityProjection,
 } from '../packages/partners/src/index.ts';
 
@@ -47,6 +49,8 @@ const TELEGRAM_PATH = 'public/registry/telegram-handshake.json';
 const TENNIS_PATH = 'public/registry/tennis/partner-contracts.json';
 /** Optional redacted partner_ledger snapshot — never Soft plays export. */
 const LEDGER_PATH = 'public/registry/partner-ledger.json';
+/** Optional Sports Terminal integration-health (exact parsed wire). */
+const SPORTS_TERMINAL_PATH = 'public/registry/sports-terminal/partner-integration-health.json';
 
 function connectorSnapshots(asOf: string): Record<string, ConnectorSnapshot> {
   return Object.fromEntries(
@@ -55,14 +59,10 @@ function connectorSnapshots(asOf: string): Record<string, ConnectorSnapshot> {
         asOf,
         expectedInputRef: PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS[key],
         required: key === 'profiles',
-        ...(key === 'sportsTerminal'
-          ? {}
-          : {
-              current: {
-                observedAt: asOf,
-                inputRef: PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS[key],
-              },
-            }),
+        current: {
+          observedAt: asOf,
+          inputRef: PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS[key],
+        },
       });
       if (decision.disposition === 'fail_bake') {
         throw new TypeError(
@@ -105,14 +105,16 @@ function bookKeyMapFromLegacy(
 export async function buildPartnersDashboardArtifact(
   generatedAt = new Date().toISOString()
 ): Promise<ReturnType<typeof assemblePartnerDashboardArtifact>> {
-  const [profiles, coverageRaw, legacyRaw, telegramRaw, tennisRaw, ledgerRaw] = await Promise.all([
-    loadJson(PROFILE_PATH),
-    loadJson(COVERAGE_PATH),
-    loadJson(OPS_PATH),
-    loadJson(TELEGRAM_PATH),
-    loadOptionalJson(TENNIS_PATH),
-    loadOptionalJson(LEDGER_PATH),
-  ]);
+  const [profiles, coverageRaw, legacyRaw, telegramRaw, tennisRaw, ledgerRaw, sportsTerminalRaw] =
+    await Promise.all([
+      loadJson(PROFILE_PATH),
+      loadJson(COVERAGE_PATH),
+      loadJson(OPS_PATH),
+      loadJson(TELEGRAM_PATH),
+      loadOptionalJson(TENNIS_PATH),
+      loadOptionalJson(LEDGER_PATH),
+      loadOptionalJson(SPORTS_TERMINAL_PATH),
+    ]);
 
   const coverage = parsePartnerProfileCoverageArtifact(coverageRaw);
   const legacyOps = parseLegacyPartnersOpsProjection(legacyRaw);
@@ -140,9 +142,15 @@ export async function buildPartnersDashboardArtifact(
     tennis = parseTennisCapacityArtifact(tennisRaw);
   }
 
+  let sportsTerminal: SportsTerminalIntegrationProjection | undefined;
+  if (sportsTerminalRaw !== undefined) {
+    sportsTerminal = parseSportsTerminalIntegrationHealth(sportsTerminalRaw);
+  }
+
   const reconciled = reconcilePartnerDashboardFacts({
     partners: built.partners,
     ...(tennis ? { tennis } : {}),
+    ...(sportsTerminal ? { sportsTerminal } : {}),
   });
 
   return assemblePartnerDashboardArtifact({

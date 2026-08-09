@@ -523,6 +523,19 @@ async function predictionProviderMarketsHandler(req: Request, auth: AuthContext,
 }
 
 // ---------------------------------------------------------------------------
+// Partner integration health (dashboard-safe wire — not the unmounted list/detail router)
+// ---------------------------------------------------------------------------
+
+import { handlePartnerIntegrationHealth } from "./partner-integration-health-routes";
+
+async function partnerIntegrationHealthHandler(
+  req: Request,
+  auth: AuthContext
+): Promise<Response> {
+  return handlePartnerIntegrationHealth(req, auth);
+}
+
+// ---------------------------------------------------------------------------
 // Route registry
 // ---------------------------------------------------------------------------
 
@@ -537,6 +550,16 @@ const routes: Route[] = [
   { method: "GET", pattern: /^\/api\/health\/ready$/, handler: healthReadyHandler, auth: "none", zone: "zone4" },
   { method: "GET", pattern: /^\/api\/health\/live$/, handler: healthLiveHandler, auth: "none", zone: "zone4" },
   { method: "GET", pattern: /^\/api\/health\/detailed$/, handler: healthDetailedHandler, auth: "admin", zone: "zone4" },
+
+  // Partner dashboard IntegrationHealthReadPort — authenticated, money-safe projection.
+  // Unsafe list/detail partner API module remains unmounted (float money / bare ids).
+  {
+    method: "GET",
+    pattern: /^\/api\/v1\/partners\/integration-health$/,
+    handler: partnerIntegrationHealthHandler,
+    auth: "required",
+    zone: "partners",
+  },
 
   // Category A: Authentication
   { method: "POST", pattern: /^\/api\/proxy\/auth$/, handler: proxyAuthHandler, auth: "none", zone: "auth" },

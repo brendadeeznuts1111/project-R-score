@@ -33,14 +33,10 @@ function connectorSnapshots(): PartnerDashboardBuildInput['connectorSnapshots'] 
         asOf: NOW,
         expectedInputRef: PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS[key],
         required: key === 'profiles',
-        ...(key === 'sportsTerminal'
-          ? {}
-          : {
-              current: {
-                observedAt: NOW,
-                inputRef: PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS[key],
-              },
-            }),
+        current: {
+          observedAt: NOW,
+          inputRef: PARTNER_DASHBOARD_CONNECTOR_INPUT_REFS[key],
+        },
       });
       if (decision.disposition === 'fail_bake') throw new Error(decision.reasonCode);
       return [key, decision.snapshot satisfies ConnectorSnapshot];

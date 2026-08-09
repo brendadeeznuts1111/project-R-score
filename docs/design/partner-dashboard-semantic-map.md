@@ -117,7 +117,7 @@ Partner hash routes are a separate compatibility plane: `#partners`,
 | `limits`         | `limits-registry`          | compliance   | `limits-artifact` v1 → `LimitReadPort`                           | effective limits, coverage      |
 | `bookmakers`     | `bookmakers-registry`      | trading      | `bookmakers-registry` v1 → `BookmakerCatalogPort`                | book identity, display metadata |
 | `tennis`         | `tennis-contract`          | trading      | `tennis-contract` v1 → `CapacityReadPort`                        | executable capacity             |
-| `sportsTerminal` | `sports-terminal`          | trading      | blocked until one exact input is selected                        | no current authority            |
+| `sportsTerminal` | `sports-terminal`          | trading      | implemented — registry health fixture + authenticated live path  | IntegrationHealthReadPort       |
 | `legacyOps`      | `legacy-ops-registry`      | partners     | `legacy-partners-ops` v2 → `LegacyPartnerProjectionPort`         | compatibility observations only |
 
 The private `packages/partners` workspace now exports the TOML-facing plan

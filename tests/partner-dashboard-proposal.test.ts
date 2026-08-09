@@ -77,35 +77,62 @@ describe('partner dashboard proposal artifact', () => {
     );
   });
 
-  test('keeps Sports Terminal blocked on exact API and HTML evidence', async () => {
+  test('Sports Terminal integration-health is implemented; unsafe partnerRoutes stay unmounted', async () => {
     const [
       proposal,
       partnerRoutes,
+      healthRoutes,
       apiRouter,
       serverEntry,
       app,
       partnersPage,
       auditSql,
+      adapter,
+      fixture,
     ] = await Promise.all([
-        readJson('docs/artifacts/partner-consolidation-status/artifact.json'),
-        readText('projects/active/sports-terminal-os/src/api/partner-routes.ts'),
-        readText('projects/active/sports-terminal-os/src/api/router.ts'),
-        readText('projects/active/sports-terminal-os/src/index.ts'),
-        readText('projects/active/sports-terminal-os/src/frontend/App.tsx'),
-        readText('projects/active/sports-terminal-os/src/frontend/pages/PartnersPage.tsx'),
-        readText(
-          'docs/artifacts/partner-consolidation-status/sql/sports-terminal-boundary.sql'
-        ),
-      ]);
+      readJson('docs/artifacts/partner-consolidation-status/artifact.json'),
+      readText('projects/active/sports-terminal-os/src/api/partner-routes.ts'),
+      readText(
+        'projects/active/sports-terminal-os/src/api/partner-integration-health-routes.ts'
+      ),
+      readText('projects/active/sports-terminal-os/src/api/router.ts'),
+      readText('projects/active/sports-terminal-os/src/index.ts'),
+      readText('projects/active/sports-terminal-os/src/frontend/App.tsx'),
+      readText('projects/active/sports-terminal-os/src/frontend/pages/PartnersPage.tsx'),
+      readText(
+        'docs/artifacts/partner-consolidation-status/sql/sports-terminal-boundary.sql'
+      ),
+      readText('packages/partners/src/adapters/sports-terminal.ts'),
+      readJson('public/registry/sports-terminal/partner-integration-health.json'),
+    ]);
 
+    // Full list/detail mutation surface remains a reference-only / unsafe boundary.
     expect(partnerRoutes).toContain('export function partnerRoutes(req: Request)');
     expect(partnerRoutes).toContain('url.pathname === "/api/partners"');
-    expect(partnerRoutes).toContain('/api/partners/:id/sources/health');
-    expect(apiRouter).not.toContain('partnerRoutes');
+    // Unsafe list/detail module must stay unimported; only integration-health is mounted.
+    expect(apiRouter).not.toContain('from "./partner-routes"');
+    expect(apiRouter).not.toContain("from './partner-routes'");
+    expect(serverEntry).not.toContain('partner-routes');
     expect(serverEntry).not.toContain('partnerRoutes');
+
     expect(app).toContain('<Route path="/partners" element={<PartnersPage />} />');
     expect(partnersPage).toContain('fetch(`${API_BASE}/partners?${params}`)');
     expect(partnersPage).toContain('fetch(`${API_BASE}/partners/${partnerId}/deposit`');
+
+    // Dashboard-safe IntegrationHealthReadPort is mounted with auth required.
+    expect(healthRoutes).toContain('handlePartnerIntegrationHealth');
+    expect(healthRoutes).toContain('integer-minor-units-only');
+    expect(healthRoutes).toContain('externalPartnerId');
+    expect(apiRouter).toContain('handlePartnerIntegrationHealth');
+    expect(apiRouter).toContain('partner-integration-health-routes');
+    expect(apiRouter).toMatch(/integration-health/);
+    expect(apiRouter).toContain('auth: "required"');
+    expect(apiRouter).toContain('zone: "partners"');
+    expect(adapter).toContain('parseSportsTerminalIntegrationHealth');
+    expect(fixture).toMatchObject({
+      schema: 'factorywager.sports-terminal-integration-health.v1',
+      moneyPolicy: 'integer-minor-units-only',
+    });
 
     const snapshot = record(proposal.snapshot);
     const datasets = record(snapshot.datasets);
@@ -113,12 +140,13 @@ describe('partner dashboard proposal artifact', () => {
       connector => connector.connector === 'sports-terminal'
     );
     expect(sportsConnector).toMatchObject({
-      status: 'blocked',
-      nextAction:
-        'one exact parsed input, explicit external-ID resolution, authenticated route integration, and integer-minor-unit money wire are required',
+      status: 'implemented',
+      nextAction: 'integration-health',
     });
-    expect(auditSql.match(/UNION ALL SELECT/g)).toHaveLength(3);
+    expect(auditSql.match(/UNION ALL SELECT/g)).toHaveLength(4);
     expect(auditSql).toContain("'unsafe-input',");
-    expect(auditSql).toContain("'candidate'");
+    expect(auditSql).toContain("'implemented'");
+    expect(auditSql).toContain('integration-health');
   });
+
 });

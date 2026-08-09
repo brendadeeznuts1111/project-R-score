@@ -235,7 +235,11 @@ describe('partner dashboard semantic plan', () => {
       (connector: Record<string, unknown>) => connector.id === 'sports-terminal'
     );
     if (!sportsConnector) throw new Error('sports connector fixture missing');
+    sportsConnector.implementation_status = 'blocked';
+    sportsConnector.enabled = false;
     sportsConnector.blocking_reason = 'input undecided';
+    sportsConnector.input_kind = 'unresolved';
+    sportsConnector.input_ref = '';
 
     const result = await validatePartnerDashboardPlan(plan);
     expect(result.errors.some(error => error.includes('snapshot_key must be profiles'))).toBe(true);
@@ -251,6 +255,11 @@ describe('partner dashboard semantic plan', () => {
     expect(result.errors).toContain(
       'sports-terminal blocking reason must name every unresolved boundary'
     );
+    expect(
+      result.errors.some(error =>
+        error.includes('sports-terminal') && error.includes('implementation_status must be implemented')
+      )
+    ).toBe(true);
   });
 
   it('keeps profile coverage separate from the planned canonical profile connector', async () => {
