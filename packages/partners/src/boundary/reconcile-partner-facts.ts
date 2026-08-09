@@ -18,6 +18,10 @@
  * sports-terminal for future multi-source conflict rows).
  */
 import type { BookmakerCatalogProjection } from '../adapters/bookmakers.ts';
+import {
+  resolveSportsbookSlugAgainstCatalog,
+  UNREGISTERED_DESK_SPORTSBOOK_PLACEHOLDERS,
+} from '../adapters/bookmakers.ts';
 import type { LimitChangeProjection } from '../adapters/limit-changes.ts';
 import type { SportsTerminalIntegrationProjection } from '../adapters/sports-terminal.ts';
 import {
@@ -33,6 +37,7 @@ import {
   parseAttentionReasonCode,
   parseExternalAccountId,
   parseSourceSystemId,
+  parseSportsbookId,
   parseTreeNodeId,
 } from '../core/identifiers.ts';
 import {
@@ -304,25 +309,57 @@ function applyLimitChangeAttention(
  * tennis observation already rewrote the id (handled in tennis path).
  * Catalog membership alone never mutates outs.
  */
-function noteUnregisteredSportsbooks(
+const BOOKMAKERS_SOURCE_SYSTEM_ID = parseSourceSystemId('factorywager-bookmakers');
+
+/**
+ * Apply explicit legacy slug aliases, attach catalog external account refs when
+ * tennis left them empty, and label unregistered / placeholder books.
+ */
+function applyBookmakerCatalogIdentity(
   partners: PartnerDashboardRecord[],
   bookmakers: BookmakerCatalogProjection
 ): void {
-  const registered = new Set(Object.keys(bookmakers.registry));
   for (const partner of partners) {
     for (const out of partner.outs) {
-      if (registered.has(out.sportsbookId)) continue;
+      const resolved = resolveSportsbookSlugAgainstCatalog(out.sportsbookId, bookmakers);
+      if (resolved.status === 'aliased' && resolved.sportsbookId) {
+        out.sportsbookId = parseSportsbookId(resolved.sportsbookId);
+      }
+
+      const catalogId = bookmakers.registry[out.sportsbookId] ? out.sportsbookId : undefined;
+      if (catalogId) {
+        const externalId = parseExternalAccountId(`${out.outId}:catalog:${catalogId}`);
+        const key = `${BOOKMAKERS_SOURCE_SYSTEM_ID}:${externalId}`;
+        const already = out.externalAccountRefs.some(
+          ref => `${ref.sourceSystemId}:${ref.externalId}` === key
+        );
+        if (!already && out.externalAccountRefs.length === 0) {
+          // Only fill when tennis (or another source) left refs empty.
+          out.externalAccountRefs = [
+            {
+              sourceSystemId: BOOKMAKERS_SOURCE_SYSTEM_ID,
+              externalId,
+            },
+          ];
+        }
+        continue;
+      }
+
       // Attention only — legacy/out-of-catalog ids remain visible.
       const reason = parseAttentionReasonCode('partner.bookmakers.unregistered_sportsbook');
       if (partner.attention.some(item => item.reasonCode === reason)) continue;
+      const placeholder = (UNREGISTERED_DESK_SPORTSBOOK_PLACEHOLDERS as readonly string[]).includes(
+        out.sportsbookId
+      );
       partner.attention.push({
         reasonCode: reason,
         severity: 'info',
-        label: `Out sportsbook not in public catalog: ${out.sportsbookId}`,
+        label: placeholder
+          ? `Desk placeholder sportsbook not in public catalog: ${out.sportsbookId}`
+          : `Out sportsbook not in public catalog: ${out.sportsbookId}`,
         actionHref: '/portal/bookmakers/',
       });
       partner.attention.sort((a, b) => compareAscii(a.reasonCode, b.reasonCode));
-      break;
     }
   }
 }
@@ -445,11 +482,11 @@ export function reconcilePartnerDashboardFacts(
   if (input.limits) {
     applyLimitChangeAttention(partners, input.limits);
   }
-  if (input.bookmakers) {
-    noteUnregisteredSportsbooks(partners, input.bookmakers);
-  }
-
   if (!input.tennis) {
+    // Catalog identity after optional tennis; when tennis is offline, still resolve books.
+    if (input.bookmakers) {
+      applyBookmakerCatalogIdentity(partners, input.bookmakers);
+    }
     // Coverage still runs from raise evidence alone when tennis is offline.
     applyLimitCoverageMetrics(partners, input.limits);
     partners.sort((a, b) => compareAscii(a.partnerCode, b.partnerCode));
@@ -522,6 +559,11 @@ export function reconcilePartnerDashboardFacts(
         ...(observedAt ? { observedAt } : {}),
       },
     };
+  }
+
+  // After tennis external refs + max-stake, fill catalog refs only where still empty.
+  if (input.bookmakers) {
+    applyBookmakerCatalogIdentity(partners, input.bookmakers);
   }
 
   // After tennis max-stake upgrades, score limit evidence coverage.
