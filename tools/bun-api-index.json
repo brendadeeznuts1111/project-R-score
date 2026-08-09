@@ -1,7 +1,7 @@
 {
   "schema": "factorywager/bun-api-index/v1",
-  "generated": "2026-08-09T08:48:00.454Z",
-  "bunVersion": "1.3.6",
+  "generated": "2026-08-09T08:52:53.563Z",
+  "bunVersion": "1.3.14",
   "ssot": {
     "llms": "https://bun.com/docs/llms.txt",
     "docsIndex": "tools/bun-docs-index.json",
@@ -23,8 +23,8 @@
     "bun"
   ],
   "coverage": {
-    "generated": "2026-08-09T08:48:00.454Z",
-    "bunVersion": "1.3.6",
+    "generated": "2026-08-09T08:52:53.563Z",
+    "bunVersion": "1.3.14",
     "composite": {
       "pct": 91
     },
@@ -99,9 +99,9 @@
       },
       "surface": {
         "versioned": {
-          "hit": 97,
-          "total": 120,
-          "pct": 81,
+          "hit": 112,
+          "total": 135,
+          "pct": 83,
           "missing": [
             "Bun.fetch",
             "Bun.Terminal",
@@ -752,8 +752,36 @@
       "docs": "https://bun.com/docs/runtime/markdown#ansi-terminal-output"
     },
     {
+      "name": "Bun.markdown.CellMeta",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.CellMeta"
+    },
+    {
+      "name": "Bun.markdown.CellProps",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.CellProps"
+    },
+    {
+      "name": "Bun.markdown.ChildrenProps",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.ChildrenProps"
+    },
+    {
+      "name": "Bun.markdown.CodeBlockMeta",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.CodeBlockMeta"
+    },
+    {
+      "name": "Bun.markdown.CodeBlockProps",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.CodeBlockProps"
+    },
+    {
       "name": "Bun.markdown.ComponentOverrides",
       "docs": "https://bun.com/reference/bun/markdown#bun.markdown.ComponentOverrides"
+    },
+    {
+      "name": "Bun.markdown.HeadingMeta",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.HeadingMeta"
+    },
+    {
+      "name": "Bun.markdown.HeadingProps",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.HeadingProps"
     },
     {
       "name": "Bun.markdown.html",
@@ -772,8 +800,40 @@
       "docs": "https://bun.com/docs/runtime/markdown#options"
     },
     {
+      "name": "Bun.markdown.ImageMeta",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.ImageMeta"
+    },
+    {
+      "name": "Bun.markdown.ImageProps",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.ImageProps"
+    },
+    {
+      "name": "Bun.markdown.LinkMeta",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.LinkMeta"
+    },
+    {
+      "name": "Bun.markdown.LinkProps",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.LinkProps"
+    },
+    {
+      "name": "Bun.markdown.ListItemMeta",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.ListItemMeta"
+    },
+    {
+      "name": "Bun.markdown.ListItemProps",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.ListItemProps"
+    },
+    {
+      "name": "Bun.markdown.ListMeta",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.ListMeta"
+    },
+    {
       "name": "Bun.markdown.Options",
       "docs": "https://bun.com/docs/runtime/markdown#options"
+    },
+    {
+      "name": "Bun.markdown.OrderedListProps",
+      "docs": "https://bun.com/reference/bun/markdown#bun.markdown.OrderedListProps"
     },
     {
       "name": "Bun.markdown.react",
@@ -1072,5 +1132,5 @@
       "docs": "https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync"
     }
   ],
-  "count": 151
+  "count": 166
 }

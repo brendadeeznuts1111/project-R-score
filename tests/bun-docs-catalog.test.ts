@@ -630,6 +630,33 @@ describe('inspect family catalog relations', () => {
     expect(byName.get('Bun.markdown.ComponentOverrides')?.examples?.[0]?.body).toContain(
       'ComponentOverrides'
     );
+    expect(byName.get('Bun.markdown.HeadingMeta')?.docsUrl).toBe(
+      'https://bun.com/reference/bun/markdown#bun.markdown.HeadingMeta'
+    );
+    expect(byName.get('Bun.markdown.HeadingMeta')?.examples?.[0]?.body).toContain('HeadingMeta');
+    expect(byName.get('Bun.markdown.ListItemMeta')?.docsUrl).toBe(
+      'https://bun.com/reference/bun/markdown#bun.markdown.ListItemMeta'
+    );
+    expect(byName.get('Bun.markdown.CodeBlockMeta')?.examples?.[0]?.body).toContain(
+      'CodeBlockMeta'
+    );
+    expect(byName.get('Bun.markdown.CellMeta')?.description).toContain('TableCellMeta');
+    expect(byName.get('Bun.markdown.HeadingProps')?.docsUrl).toBe(
+      'https://bun.com/reference/bun/markdown#bun.markdown.HeadingProps'
+    );
+    expect(byName.get('Bun.markdown.CodeBlockProps')?.examples?.[0]?.body).toContain(
+      'CodeBlockProps'
+    );
+    expect(byName.get('Bun.markdown.RenderCallbacks')?.related?.slice(0, 3)).toEqual([
+      'Bun.markdown.HeadingMeta',
+      'Bun.markdown.ListItemMeta',
+      'Bun.markdown.CodeBlockMeta',
+    ]);
+    expect(byName.get('Bun.markdown.ComponentOverrides')?.related?.slice(0, 3)).toEqual([
+      'Bun.markdown.HeadingProps',
+      'Bun.markdown.LinkProps',
+      'Bun.markdown.CodeBlockProps',
+    ]);
     expect(byName.get('ansi-terminal-output')?.docsUrl).toBe(
       'https://bun.com/docs/runtime/markdown#ansi-terminal-output'
     );
@@ -882,7 +909,7 @@ describe('runtime/markdown index ratchet', () => {
 });
 
 describe('Bun.markdown type-surface integrity', () => {
-  /** Core inventory depth≤2 APIs + primary type interfaces (not Meta/Props leaves). */
+  /** Core APIs + primary types (#665) + Meta/Props leaves (reference/bun/markdown). */
   const CORE_MARKDOWN_SURFACE = [
     'Bun.markdown',
     'Bun.markdown.html',
@@ -894,6 +921,24 @@ describe('Bun.markdown type-surface integrity', () => {
     'Bun.markdown.ReactOptions',
     'Bun.markdown.RenderCallbacks',
     'Bun.markdown.ComponentOverrides',
+  ] as const;
+
+  const MARKDOWN_META_PROPS_SURFACE = [
+    'Bun.markdown.HeadingMeta',
+    'Bun.markdown.ListMeta',
+    'Bun.markdown.ListItemMeta',
+    'Bun.markdown.CodeBlockMeta',
+    'Bun.markdown.LinkMeta',
+    'Bun.markdown.ImageMeta',
+    'Bun.markdown.CellMeta',
+    'Bun.markdown.HeadingProps',
+    'Bun.markdown.LinkProps',
+    'Bun.markdown.ImageProps',
+    'Bun.markdown.ListItemProps',
+    'Bun.markdown.OrderedListProps',
+    'Bun.markdown.ChildrenProps',
+    'Bun.markdown.CellProps',
+    'Bun.markdown.CodeBlockProps',
   ] as const;
 
   test('core Bun.markdown* surface has CANONICAL_REFS + curated + guide examples', async () => {
@@ -915,6 +960,43 @@ describe('Bun.markdown type-surface integrity', () => {
     });
   });
 
+  test('Meta/Props leaf types have CANONICAL_REFS + curated + guide examples', async () => {
+    const { CANONICAL_REFS, resolveApiAlias } = await import('../tools/bun-doc-refs.ts');
+    const curatedTerms = new Set(CURATED_ENTRIES.map(c => c.term));
+    const missingCanon: string[] = [];
+    const missingCurated: string[] = [];
+    const missingGuide: string[] = [];
+    for (const name of MARKDOWN_META_PROPS_SURFACE) {
+      if (!CANONICAL_REFS[name]) missingCanon.push(name);
+      if (!curatedTerms.has(name)) missingCurated.push(name);
+      const guidePath = TOKEN_GUIDE_PATH[name] ?? CURATED_ENTRIES.find(c => c.term === name)?.path;
+      if (!guidePath || !GUIDE_EXAMPLES[guidePath]?.length) missingGuide.push(name);
+    }
+    expect({ missingCanon, missingCurated, missingGuide }).toEqual({
+      missingCanon: [],
+      missingCurated: [],
+      missingGuide: [],
+    });
+    // Informal names → bun-types interface names
+    expect(resolveApiAlias('Bun.markdown.CodeMeta')).toBe('Bun.markdown.CodeBlockMeta');
+    expect(resolveApiAlias('Bun.markdown.TableCellMeta')).toBe('Bun.markdown.CellMeta');
+  });
+
+  test('inventory Bun.markdown interfaces (depth 1) are covered by CANONICAL_REFS', async () => {
+    const { CANONICAL_REFS } = await import('../tools/bun-doc-refs.ts');
+    const inv = (await Bun.file(
+      `${import.meta.dir}/../tools/bun-types-inventory.json`
+    ).json()) as { members: Array<{ kind: string; parent?: string; setting: string }> };
+    const ifaces = inv.members
+      .filter(m => m.kind === 'interface' && m.parent === 'Bun.markdown')
+      .map(m => m.setting)
+      .sort();
+    expect(ifaces.length).toBeGreaterThan(10);
+    const missing = ifaces.filter(s => !CANONICAL_REFS[s]);
+    // AnsiTheme/Options use guide loci in CANONICAL_REFS (still present as keys)
+    expect(missing).toEqual([]);
+  });
+
   test('every Bun.markdown* api-index name resolves via CANONICAL_REFS', async () => {
     const { CANONICAL_REFS } = await import('../tools/bun-doc-refs.ts');
     const apiIndex = (await Bun.file(
@@ -928,6 +1010,30 @@ describe('Bun.markdown type-surface integrity', () => {
       if (!canon || canon !== docs) missing.push(`${name} → ${docs} (canon=${canon ?? '∅'})`);
     }
     expect(missing).toEqual([]);
+  });
+
+  /**
+   * DEFERRED: bun-docs-index.json is llms.txt-driven (/docs only).
+   * reference/bun/markdown TypeDoc anchors (#bun.markdown.*) are NOT in llms.txt.
+   * Page presence lives in tools/bun-docs-feeds.json (reference) via
+   * `bun tools/bun-docs-reference-index.ts index`.
+   * Next owner (when scraping TypeDoc HTML is wanted):
+   *   bun tools/bun-docs-reference-index.ts index --force
+   *   # then extend tools/bun-docs-reference-index.ts (or a sibling) to harvest
+   *   # heading/id anchors from https://bun.com/reference/bun/markdown into
+   *   # feeds/reference or a dedicated reference-anchors.json — do NOT overload
+   *   # bun-docs-index-gen.ts llms scrape (breaks docs-index schema consumers).
+   */
+  test('docs-index stays docs-plane only (reference markdown page not required)', async () => {
+    const index = (await Bun.file(
+      `${import.meta.dir}/../tools/bun-docs-index.json`
+    ).json()) as { entries: Array<{ url: string }> };
+    const hasReferenceMarkdown = index.entries.some(e =>
+      e.url.includes('/reference/bun/markdown')
+    );
+    expect(hasReferenceMarkdown).toBe(false);
+    const hasGuideMarkdown = index.entries.some(e => e.url.includes('/docs/runtime/markdown'));
+    expect(hasGuideMarkdown).toBe(true);
   });
 });
 

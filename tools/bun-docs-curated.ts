@@ -33,6 +33,21 @@
 // @see https://bun.com/reference/bun/markdown#bun.markdown.ReactOptions — Bun.markdown.ReactOptions
 // @see https://bun.com/reference/bun/markdown#bun.markdown.RenderCallbacks — Bun.markdown.RenderCallbacks
 // @see https://bun.com/reference/bun/markdown#bun.markdown.ComponentOverrides — Bun.markdown.ComponentOverrides
+// @see https://bun.com/reference/bun/markdown#bun.markdown.HeadingMeta — Bun.markdown.HeadingMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ListMeta — Bun.markdown.ListMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ListItemMeta — Bun.markdown.ListItemMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.CodeBlockMeta — Bun.markdown.CodeBlockMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.LinkMeta — Bun.markdown.LinkMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ImageMeta — Bun.markdown.ImageMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.CellMeta — Bun.markdown.CellMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.HeadingProps — Bun.markdown.HeadingProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.LinkProps — Bun.markdown.LinkProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ImageProps — Bun.markdown.ImageProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ListItemProps — Bun.markdown.ListItemProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.OrderedListProps — Bun.markdown.OrderedListProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ChildrenProps — Bun.markdown.ChildrenProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.CellProps — Bun.markdown.CellProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.CodeBlockProps — Bun.markdown.CodeBlockProps
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-react — Bun.markdown.react
 // @see https://bun.com/docs/runtime/markdown#component-overrides — component-overrides
 // @see https://bun.com/docs/runtime/markdown#available-overrides — available-overrides
@@ -549,11 +564,16 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'runtime/markdown#inline-callbacks',
     ],
     relatedTokens: [
+      'Bun.markdown.HeadingMeta',
+      'Bun.markdown.ListItemMeta',
+      'Bun.markdown.CodeBlockMeta',
       'callback-signature',
       'block-callbacks',
+      'Bun.markdown.render',
+      'Bun.markdown.LinkMeta',
+      'Bun.markdown.CellMeta',
       'inline-callbacks',
       'list-item-meta',
-      'Bun.markdown.render',
       'Bun.markdown.Options',
     ],
   },
@@ -561,14 +581,207 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'Bun.markdown.ComponentOverrides',
     path: 'reference/bun/markdown#bun.markdown.ComponentOverrides',
     description:
-      'Second-arg component map for Bun.markdown.react keyed by HTML tag (h1–h6, p, pre, a, code, …). Types locus; guide narrative at #component-overrides / #available-overrides.',
+      'Second-arg component map for Bun.markdown.react keyed by HTML tag (h1–h6, p, pre, a, code, …). Prop leaves HeadingProps/LinkProps/CodeBlockProps/…. Types locus; guide at #component-overrides / #available-overrides.',
     minVersion: '1.3.8',
     related: ['runtime/markdown#component-overrides', 'runtime/markdown#available-overrides'],
     relatedTokens: [
+      'Bun.markdown.HeadingProps',
+      'Bun.markdown.LinkProps',
+      'Bun.markdown.CodeBlockProps',
       'component-overrides',
       'available-overrides',
       'Bun.markdown.react',
       'Bun.markdown.ReactOptions',
+      'Bun.markdown.ChildrenProps',
+    ],
+  },
+  {
+    term: 'Bun.markdown.HeadingMeta',
+    path: 'reference/bun/markdown#bun.markdown.HeadingMeta',
+    description:
+      'Meta for render heading callback: level (1–6); optional id slug when headings: { ids: true }. Types locus; guide #callback-signature / #block-callbacks.',
+    minVersion: '1.3.0',
+    related: ['runtime/markdown#callback-signature', 'runtime/markdown#block-callbacks'],
+    relatedTokens: [
+      'Bun.markdown.RenderCallbacks',
+      'Bun.markdown.render',
+      'block-callbacks',
+      'heading-ids',
+    ],
+  },
+  {
+    term: 'Bun.markdown.ListMeta',
+    path: 'reference/bun/markdown#bun.markdown.ListMeta',
+    description:
+      'Meta for render list callback: depth: number; ordered: boolean; start?: number (ordered lists).',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'Bun.markdown.ListItemMeta',
+      'Bun.markdown.RenderCallbacks',
+      'Bun.markdown.render',
+      'block-callbacks',
+    ],
+  },
+  {
+    term: 'Bun.markdown.ListItemMeta',
+    path: 'reference/bun/markdown#bun.markdown.ListItemMeta',
+    description:
+      'Meta for render listItem: index (0-based), depth, ordered; start? (ordered); checked? (task lists). Types locus; guide narrative also at #list-item-meta.',
+    minVersion: '1.3.0',
+    related: ['runtime/markdown#list-item-meta', 'runtime/markdown#nested-list-numbering'],
+    relatedTokens: [
+      'list-item-meta',
+      'Bun.markdown.ListMeta',
+      'nested-list-numbering',
+      'Bun.markdown.RenderCallbacks',
+      'Bun.markdown.render',
+    ],
+  },
+  {
+    term: 'Bun.markdown.CodeBlockMeta',
+    path: 'reference/bun/markdown#bun.markdown.CodeBlockMeta',
+    description:
+      'Meta for render code callback: language?: string (fenced info-string, e.g. "js"). Alias suggest: Bun.markdown.CodeMeta → this.',
+    minVersion: '1.3.0',
+    related: ['runtime/markdown#code-block-syntax-highlighting'],
+    relatedTokens: [
+      'code-block-syntax-highlighting',
+      'Bun.markdown.RenderCallbacks',
+      'Bun.markdown.render',
+      'block-callbacks',
+    ],
+  },
+  {
+    term: 'Bun.markdown.LinkMeta',
+    path: 'reference/bun/markdown#bun.markdown.LinkMeta',
+    description: 'Meta for render link callback: href: string; title?: string.',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'Bun.markdown.ImageMeta',
+      'inline-callbacks',
+      'Bun.markdown.RenderCallbacks',
+      'Bun.markdown.render',
+    ],
+  },
+  {
+    term: 'Bun.markdown.ImageMeta',
+    path: 'reference/bun/markdown#bun.markdown.ImageMeta',
+    description: 'Meta for render image callback: src: string; title?: string.',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'Bun.markdown.LinkMeta',
+      'inline-callbacks',
+      'Bun.markdown.RenderCallbacks',
+      'Bun.markdown.render',
+    ],
+  },
+  {
+    term: 'Bun.markdown.CellMeta',
+    path: 'reference/bun/markdown#bun.markdown.CellMeta',
+    description:
+      'Meta for render th/td callbacks: align?: "left" | "center" | "right". Alias suggest: Bun.markdown.TableCellMeta → this.',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'Bun.markdown.RenderCallbacks',
+      'block-callbacks',
+      'Bun.markdown.render',
+      'Bun.markdown.CellProps',
+    ],
+  },
+  {
+    term: 'Bun.markdown.HeadingProps',
+    path: 'reference/bun/markdown#bun.markdown.HeadingProps',
+    description:
+      'Props for react h1–h6 overrides: optional id slug (when headings ids enabled) + children via ChildrenProps pattern.',
+    minVersion: '1.3.8',
+    relatedTokens: [
+      'Bun.markdown.ComponentOverrides',
+      'Bun.markdown.ChildrenProps',
+      'Bun.markdown.react',
+      'component-overrides',
+    ],
+  },
+  {
+    term: 'Bun.markdown.LinkProps',
+    path: 'reference/bun/markdown#bun.markdown.LinkProps',
+    description: 'Props for react a override: href: string; title?: string (+ children).',
+    minVersion: '1.3.8',
+    relatedTokens: [
+      'Bun.markdown.ComponentOverrides',
+      'Bun.markdown.ImageProps',
+      'Bun.markdown.react',
+      'available-overrides',
+    ],
+  },
+  {
+    term: 'Bun.markdown.ImageProps',
+    path: 'reference/bun/markdown#bun.markdown.ImageProps',
+    description: 'Props for react img override: src: string; alt?: string; title?: string.',
+    minVersion: '1.3.8',
+    relatedTokens: [
+      'Bun.markdown.ComponentOverrides',
+      'Bun.markdown.LinkProps',
+      'Bun.markdown.react',
+      'available-overrides',
+    ],
+  },
+  {
+    term: 'Bun.markdown.ListItemProps',
+    path: 'reference/bun/markdown#bun.markdown.ListItemProps',
+    description: 'Props for react li override: checked?: boolean (task lists) (+ children).',
+    minVersion: '1.3.8',
+    relatedTokens: [
+      'Bun.markdown.OrderedListProps',
+      'Bun.markdown.ComponentOverrides',
+      'Bun.markdown.react',
+    ],
+  },
+  {
+    term: 'Bun.markdown.OrderedListProps',
+    path: 'reference/bun/markdown#bun.markdown.OrderedListProps',
+    description: 'Props for react ol override: start: number (+ children).',
+    minVersion: '1.3.8',
+    relatedTokens: [
+      'Bun.markdown.ListItemProps',
+      'Bun.markdown.ComponentOverrides',
+      'Bun.markdown.react',
+    ],
+  },
+  {
+    term: 'Bun.markdown.ChildrenProps',
+    path: 'reference/bun/markdown#bun.markdown.ChildrenProps',
+    description:
+      'Shared react override props with children: JSX.Element[] (p, blockquote, strong, em, …).',
+    minVersion: '1.3.8',
+    relatedTokens: [
+      'Bun.markdown.ComponentOverrides',
+      'Bun.markdown.HeadingProps',
+      'Bun.markdown.react',
+    ],
+  },
+  {
+    term: 'Bun.markdown.CellProps',
+    path: 'reference/bun/markdown#bun.markdown.CellProps',
+    description:
+      'Props for react th/td overrides: align?: "left" | "center" | "right" (+ children).',
+    minVersion: '1.3.8',
+    relatedTokens: [
+      'Bun.markdown.CellMeta',
+      'Bun.markdown.ComponentOverrides',
+      'Bun.markdown.react',
+    ],
+  },
+  {
+    term: 'Bun.markdown.CodeBlockProps',
+    path: 'reference/bun/markdown#bun.markdown.CodeBlockProps',
+    description:
+      'Props for react pre override: language?: string (fenced info-string) (+ children).',
+    minVersion: '1.3.8',
+    relatedTokens: [
+      'Bun.markdown.CodeBlockMeta',
+      'Bun.markdown.ComponentOverrides',
+      'Bun.markdown.react',
+      'available-overrides',
     ],
   },
   {

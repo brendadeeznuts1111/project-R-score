@@ -29,6 +29,21 @@
 // @see https://bun.com/reference/bun/markdown#bun.markdown.ReactOptions — Bun.markdown.ReactOptions
 // @see https://bun.com/reference/bun/markdown#bun.markdown.RenderCallbacks — Bun.markdown.RenderCallbacks
 // @see https://bun.com/reference/bun/markdown#bun.markdown.ComponentOverrides — Bun.markdown.ComponentOverrides
+// @see https://bun.com/reference/bun/markdown#bun.markdown.HeadingMeta — Bun.markdown.HeadingMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ListMeta — Bun.markdown.ListMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ListItemMeta — Bun.markdown.ListItemMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.CodeBlockMeta — Bun.markdown.CodeBlockMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.LinkMeta — Bun.markdown.LinkMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ImageMeta — Bun.markdown.ImageMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.CellMeta — Bun.markdown.CellMeta
+// @see https://bun.com/reference/bun/markdown#bun.markdown.HeadingProps — Bun.markdown.HeadingProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.LinkProps — Bun.markdown.LinkProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ImageProps — Bun.markdown.ImageProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ListItemProps — Bun.markdown.ListItemProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.OrderedListProps — Bun.markdown.OrderedListProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.ChildrenProps — Bun.markdown.ChildrenProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.CellProps — Bun.markdown.CellProps
+// @see https://bun.com/reference/bun/markdown#bun.markdown.CodeBlockProps — Bun.markdown.CodeBlockProps
 // @see https://bun.com/docs/runtime/markdown#autolinks — autolinks
 // @see https://bun.com/docs/runtime/markdown#heading-ids — heading-ids
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
@@ -632,6 +647,96 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'const components: Bun.markdown.ComponentOverrides = {\n  pre: ({ language, children }) => (\n    <pre data-language={language ?? ""}><code>{children}</code></pre>\n  ),\n  a: ({ href, children }) => (\n    <a href={href} target="_blank" rel="noreferrer">{children}</a>\n  ),\n};\nconst el = Bun.markdown.react(text, components, { reactVersion: 18 });',
     },
   ],
+  'reference/bun/markdown#bun.markdown.HeadingMeta': [
+    {
+      lang: 'ts',
+      body: 'const html = Bun.markdown.render("## Hello", {\n  heading: (children, meta: Bun.markdown.HeadingMeta) =>\n    `<h${meta.level}${meta.id ? ` id="${meta.id}"` : ""}>${children}</h${meta.level}>`,\n}, { headings: { ids: true } });',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.ListMeta': [
+    {
+      lang: 'ts',
+      body: 'const out = Bun.markdown.render("1. a\\n2. b", {\n  list: (children, meta: Bun.markdown.ListMeta) =>\n    meta.ordered\n      ? `<ol start="${meta.start ?? 1}" data-depth="${meta.depth}">${children}</ol>`\n      : `<ul data-depth="${meta.depth}">${children}</ul>`,\n});',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.ListItemMeta': [
+    {
+      lang: 'ts',
+      body: 'const out = Bun.markdown.render("- [x] done\\n- [ ] todo", {\n  listItem: (children, meta: Bun.markdown.ListItemMeta) => {\n    const n = meta.ordered ? `${(meta.start ?? 1) + meta.index}. ` : "";\n    const box = meta.checked === undefined ? "" : meta.checked ? "[x] " : "[ ] ";\n    return `${"  ".repeat(meta.depth)}${n}${box}${children}\\n`;\n  },\n});',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.CodeBlockMeta': [
+    {
+      lang: 'ts',
+      body: 'const html = Bun.markdown.render("```ts\\nconst x = 1;\\n```", {\n  code: (children, meta?: Bun.markdown.CodeBlockMeta) =>\n    `<pre><code class="language-${meta?.language ?? ""}">${children}</code></pre>`,\n});',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.LinkMeta': [
+    {
+      lang: 'ts',
+      body: 'const html = Bun.markdown.render("[docs](https://bun.com \\"Bun\\")", {\n  link: (children, meta: Bun.markdown.LinkMeta) =>\n    `<a href="${meta.href}"${meta.title ? ` title="${meta.title}"` : ""}>${children}</a>`,\n});',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.ImageMeta': [
+    {
+      lang: 'ts',
+      body: 'const html = Bun.markdown.render("![logo](./logo.png \\"Logo\\")", {\n  image: (_alt, meta: Bun.markdown.ImageMeta) =>\n    `<img src="${meta.src}"${meta.title ? ` title="${meta.title}"` : ""} />`,\n});',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.CellMeta': [
+    {
+      lang: 'ts',
+      body: 'const html = Bun.markdown.render("| a | b |\\n| :-: | --: |\\n| 1 | 2 |", {\n  td: (children, meta?: Bun.markdown.CellMeta) =>\n    `<td align="${meta?.align ?? "left"}">${children}</td>`,\n  th: (children, meta?: Bun.markdown.CellMeta) =>\n    `<th align="${meta?.align ?? "left"}">${children}</th>`,\n});',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.HeadingProps': [
+    {
+      lang: 'tsx',
+      body: 'function H1({ id, children }: Bun.markdown.HeadingProps & { children?: React.ReactNode }) {\n  return <h1 id={id}>{children}</h1>;\n}\nconst el = Bun.markdown.react("# Title", { h1: H1 }, { headings: { ids: true } });',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.LinkProps': [
+    {
+      lang: 'tsx',
+      body: 'function A({ href, title, children }: Bun.markdown.LinkProps & { children?: React.ReactNode }) {\n  return <a href={href} title={title} target="_blank" rel="noreferrer">{children}</a>;\n}\nconst el = Bun.markdown.react("[x](https://bun.com)", { a: A });',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.ImageProps': [
+    {
+      lang: 'tsx',
+      body: 'function Img({ src, alt, title }: Bun.markdown.ImageProps) {\n  return <img src={src} alt={alt ?? ""} title={title} loading="lazy" />;\n}\nconst el = Bun.markdown.react("![logo](./logo.png)", { img: Img });',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.ListItemProps': [
+    {
+      lang: 'tsx',
+      body: 'function Li({ checked, children }: Bun.markdown.ListItemProps & { children?: React.ReactNode }) {\n  return <li data-checked={checked === undefined ? undefined : String(checked)}>{children}</li>;\n}\nconst el = Bun.markdown.react("- [x] done", { li: Li });',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.OrderedListProps': [
+    {
+      lang: 'tsx',
+      body: 'function Ol({ start, children }: Bun.markdown.OrderedListProps & { children?: React.ReactNode }) {\n  return <ol start={start}>{children}</ol>;\n}\nconst el = Bun.markdown.react("1. a\\n2. b", { ol: Ol });',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.ChildrenProps': [
+    {
+      lang: 'tsx',
+      body: 'function P({ children }: Bun.markdown.ChildrenProps) {\n  return <p className="md-p">{children}</p>;\n}\nconst el = Bun.markdown.react("Hello **world**", { p: P });',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.CellProps': [
+    {
+      lang: 'tsx',
+      body: 'function Td({ align, children }: Bun.markdown.CellProps & { children?: React.ReactNode }) {\n  return <td style={{ textAlign: align ?? "left" }}>{children}</td>;\n}\nconst el = Bun.markdown.react("| a |\\n| -: |\\n| 1 |", { td: Td });',
+    },
+  ],
+  'reference/bun/markdown#bun.markdown.CodeBlockProps': [
+    {
+      lang: 'tsx',
+      body: 'function Pre({ language, children }: Bun.markdown.CodeBlockProps & { children?: React.ReactNode }) {\n  return <pre data-language={language ?? ""}><code>{children}</code></pre>;\n}\nconst el = Bun.markdown.react("```js\\n1\\n```", { pre: Pre });',
+    },
+  ],
   'runtime/markdown#code-block-syntax-highlighting': [
     {
       lang: 'ts',
@@ -1020,6 +1125,21 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'Bun.markdown.ReactOptions': 'reference/bun/markdown#bun.markdown.ReactOptions',
   'Bun.markdown.RenderCallbacks': 'reference/bun/markdown#bun.markdown.RenderCallbacks',
   'Bun.markdown.ComponentOverrides': 'reference/bun/markdown#bun.markdown.ComponentOverrides',
+  'Bun.markdown.HeadingMeta': 'reference/bun/markdown#bun.markdown.HeadingMeta',
+  'Bun.markdown.ListMeta': 'reference/bun/markdown#bun.markdown.ListMeta',
+  'Bun.markdown.ListItemMeta': 'reference/bun/markdown#bun.markdown.ListItemMeta',
+  'Bun.markdown.CodeBlockMeta': 'reference/bun/markdown#bun.markdown.CodeBlockMeta',
+  'Bun.markdown.LinkMeta': 'reference/bun/markdown#bun.markdown.LinkMeta',
+  'Bun.markdown.ImageMeta': 'reference/bun/markdown#bun.markdown.ImageMeta',
+  'Bun.markdown.CellMeta': 'reference/bun/markdown#bun.markdown.CellMeta',
+  'Bun.markdown.HeadingProps': 'reference/bun/markdown#bun.markdown.HeadingProps',
+  'Bun.markdown.LinkProps': 'reference/bun/markdown#bun.markdown.LinkProps',
+  'Bun.markdown.ImageProps': 'reference/bun/markdown#bun.markdown.ImageProps',
+  'Bun.markdown.ListItemProps': 'reference/bun/markdown#bun.markdown.ListItemProps',
+  'Bun.markdown.OrderedListProps': 'reference/bun/markdown#bun.markdown.OrderedListProps',
+  'Bun.markdown.ChildrenProps': 'reference/bun/markdown#bun.markdown.ChildrenProps',
+  'Bun.markdown.CellProps': 'reference/bun/markdown#bun.markdown.CellProps',
+  'Bun.markdown.CodeBlockProps': 'reference/bun/markdown#bun.markdown.CodeBlockProps',
   'Bun.markdown.render': 'runtime/markdown#bun-markdown-render',
   'Bun.markdown.react': 'runtime/markdown#bun-markdown-react',
   'component-overrides': 'runtime/markdown#component-overrides',

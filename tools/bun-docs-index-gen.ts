@@ -11,6 +11,14 @@
  * domain, URL, and available #anchors — the data backing canonical reference
  * improvements in bun-doc-refs.ts.
  *
+ * Scope: /docs plane only (llms.txt). API reference pages such as
+ * https://bun.com/reference/bun/markdown are **not** ingested here — they live
+ * in tools/bun-docs-feeds.json via `bun tools/bun-docs-reference-index.ts index`
+ * (page list, no TypeDoc `#bun.markdown.*` anchors yet). Do not bolt reference
+ * HTML scraping onto this generator; that would mix schemas and break
+ * docs-index consumers. Owner follow-up: harvest reference anchors in the
+ * reference-index tool (or a sibling), not llms scrape.
+ *
  * Run: bun tools/bun-docs-index-gen.ts
  * Refs: https://bun.com/docs/llms.txt
  *       https://bun.com/docs/guides/html-rewriter/extract-links#convert-relative-urls-to-absolute

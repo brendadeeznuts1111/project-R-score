@@ -883,6 +883,25 @@ export const CANONICAL_REFS: Record<string, string> = {
     'https://bun.com/reference/bun/markdown#bun.markdown.RenderCallbacks',
   'Bun.markdown.ComponentOverrides':
     'https://bun.com/reference/bun/markdown#bun.markdown.ComponentOverrides',
+  // Render callback meta leaves (reference/bun/markdown — not guide #list-item-meta narrative)
+  'Bun.markdown.HeadingMeta': 'https://bun.com/reference/bun/markdown#bun.markdown.HeadingMeta',
+  'Bun.markdown.ListMeta': 'https://bun.com/reference/bun/markdown#bun.markdown.ListMeta',
+  'Bun.markdown.ListItemMeta': 'https://bun.com/reference/bun/markdown#bun.markdown.ListItemMeta',
+  'Bun.markdown.CodeBlockMeta': 'https://bun.com/reference/bun/markdown#bun.markdown.CodeBlockMeta',
+  'Bun.markdown.LinkMeta': 'https://bun.com/reference/bun/markdown#bun.markdown.LinkMeta',
+  'Bun.markdown.ImageMeta': 'https://bun.com/reference/bun/markdown#bun.markdown.ImageMeta',
+  'Bun.markdown.CellMeta': 'https://bun.com/reference/bun/markdown#bun.markdown.CellMeta',
+  // React component prop leaves
+  'Bun.markdown.HeadingProps': 'https://bun.com/reference/bun/markdown#bun.markdown.HeadingProps',
+  'Bun.markdown.LinkProps': 'https://bun.com/reference/bun/markdown#bun.markdown.LinkProps',
+  'Bun.markdown.ImageProps': 'https://bun.com/reference/bun/markdown#bun.markdown.ImageProps',
+  'Bun.markdown.ListItemProps': 'https://bun.com/reference/bun/markdown#bun.markdown.ListItemProps',
+  'Bun.markdown.OrderedListProps':
+    'https://bun.com/reference/bun/markdown#bun.markdown.OrderedListProps',
+  'Bun.markdown.ChildrenProps': 'https://bun.com/reference/bun/markdown#bun.markdown.ChildrenProps',
+  'Bun.markdown.CellProps': 'https://bun.com/reference/bun/markdown#bun.markdown.CellProps',
+  'Bun.markdown.CodeBlockProps':
+    'https://bun.com/reference/bun/markdown#bun.markdown.CodeBlockProps',
   'Bun.markdown.render': 'https://bun.com/docs/runtime/markdown#bun-markdown-render',
   'Bun.markdown.react': 'https://bun.com/docs/runtime/markdown#bun-markdown-react',
   // bun-api-index showcase labels → generated types reference
@@ -1599,6 +1618,9 @@ export function resolveApiAlias(api: string): string {
     'Bun.CSRF.generate': 'Bun.CSRF',
     CSRF: 'Bun.CSRF',
     'bun.env': 'Bun.env',
+    // Informal names → bun-types / reference/bun/markdown interface names
+    'Bun.markdown.CodeMeta': 'Bun.markdown.CodeBlockMeta',
+    'Bun.markdown.TableCellMeta': 'Bun.markdown.CellMeta',
   };
   return aliases[api] ?? api;
 }
