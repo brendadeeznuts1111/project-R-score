@@ -29,6 +29,9 @@ export const DESK_ANCILLARY_REFS = Object.freeze({
   ops: '/registry/partners-ops.json',
   bookmakers: '/registry/bookmakers.json',
   handshake: '/registry/telegram-handshake.json',
+  limitRaises: '/registry/limit-raises.json',
+  partnerLedger: '/registry/partner-ledger.json',
+  bookCoverage: '/registry/bookmakers-desk-coverage.json',
 });
 
 const MS_HOUR = 3_600_000;
@@ -835,6 +838,403 @@ export function buildPartnerMoneyRows(dashboard, accounts, windows) {
 }
 
 /**
+ * Connector snapshot strip from partners-dashboard.
+ * @param {object | null | undefined} dashboard
+ */
+export function projectConnectorHealth(dashboard) {
+  const snaps = dashboard?.connectorSnapshots || {};
+  const rows = [];
+  let ok = 0;
+  let stale = 0;
+  let unavailable = 0;
+  for (const key of Object.keys(snaps).sort()) {
+    const status = asString(snaps[key]?.dataStatus) || 'unavailable';
+    const observedAt = asString(snaps[key]?.observedAt || snaps[key]?.generatedAt) || null;
+    if (status === 'ok') ok += 1;
+    else if (status === 'stale') stale += 1;
+    else unavailable += 1;
+    rows.push({
+      key,
+      status,
+      observedAt,
+      tone: status === 'ok' ? 'ok' : status === 'stale' ? 'warn' : 'bad',
+    });
+  }
+  return {
+    available: rows.length > 0,
+    rows,
+    counts: { total: rows.length, ok, stale, unavailable },
+    label:
+      rows.length === 0
+        ? 'no connectors'
+        : `${ok} ok · ${stale} stale · ${unavailable} down / ${rows.length}`,
+  };
+}
+
+/**
+ * Normalize limit-raises callSign to a partner CODE when possible.
+ * ASH, ASH-001 → ASH when that CODE is on the dashboard.
+ * @param {unknown} callSign
+ * @param {Set<string>} deskCodes
+ */
+export function matchCallSignToDeskCode(callSign, deskCodes) {
+  const raw = asString(callSign).toUpperCase();
+  if (!raw) return null;
+  if (deskCodes.has(raw)) return raw;
+  const base = raw.replace(/-\d+$/, '');
+  if (base && deskCodes.has(base)) return base;
+  return null;
+}
+
+/**
+ * Limit-raise / account-profile pulse joined onto desk partners.
+ * Also surfaces fleet-wide blocked profiles (limit-demo, etc.).
+ *
+ * @param {object | null | undefined} limitRaises
+ * @param {object | null | undefined} dashboard
+ * @param {{ nowMs?: number }} [opts]
+ */
+export function projectLimitRaisePulse(limitRaises, dashboard, opts = {}) {
+  const nowMs = typeof opts.nowMs === 'number' ? opts.nowMs : Date.now();
+  const empty = {
+    available: false,
+    partnerRows: [],
+    fleetBlocked: [],
+    raiseEvents7d: [],
+    counts: {
+      deskPartnersMatched: 0,
+      blockedOnDesk: 0,
+      incompleteOnDesk: 0,
+      raises7d: 0,
+      fleetBlocked: 0,
+      profileAccounts: 0,
+    },
+    summary: null,
+    note: 'limit-raises unavailable',
+  };
+  if (!limitRaises || typeof limitRaises !== 'object') return empty;
+
+  const deskCodes = new Set(
+    (dashboard?.partners || []).map(p => normalizePartnerCode(p?.partnerCode)).filter(Boolean)
+  );
+  const treeToCode = new Map();
+  for (const p of dashboard?.partners || []) {
+    const code = normalizePartnerCode(p?.partnerCode);
+    const tid = asString(p?.identity?.treeNodeId);
+    if (code && tid) treeToCode.set(tid, code);
+  }
+
+  const profiles = Array.isArray(limitRaises?.accountProfiles?.profiles)
+    ? limitRaises.accountProfiles.profiles
+    : [];
+  const byCode = new Map(); // code → best profile
+
+  for (const profile of profiles) {
+    const tid = asString(profile?.treeNodeId);
+    let code = tid && treeToCode.has(tid) ? treeToCode.get(tid) : null;
+    if (!code) code = matchCallSignToDeskCode(profile?.callSign, deskCodes);
+    if (!code) continue;
+    // Prefer accountKind=partner, else first match
+    const prev = byCode.get(code);
+    if (!prev) {
+      byCode.set(code, profile);
+      continue;
+    }
+    if (profile?.accountKind === 'partner' && prev?.accountKind !== 'partner') {
+      byCode.set(code, profile);
+    }
+  }
+
+  /** Collect raw raise events per desk code first (for tip-relative windows). */
+  const rawByCode = new Map();
+  let tipMs = null;
+  for (const code of deskCodes) {
+    const tid = asString(
+      (dashboard?.partners || []).find(p => normalizePartnerCode(p?.partnerCode) === code)?.identity
+        ?.treeNodeId
+    );
+    const nodeRaises = tid && limitRaises?.byNode?.[tid]?.raises;
+    const raises = Array.isArray(nodeRaises) ? nodeRaises : [];
+    const parsed = [];
+    for (const ev of raises) {
+      const sec = asFiniteNumber(ev?.increased_at);
+      if (sec == null) continue;
+      const t = sec * 1000;
+      if (tipMs == null || t > tipMs) tipMs = t;
+      parsed.push({
+        partnerCode: code,
+        sportsbook: asString(ev?.sportsbook) || '—',
+        sport: asString(ev?.sport_id) || '—',
+        market: asString(ev?.market_id) || '—',
+        previousMax: asFiniteNumber(ev?.previous_max),
+        newLimit: asFiniteNumber(ev?.new_limit),
+        increasedAtMs: t,
+        increasedAt: new Date(t).toISOString(),
+        score: asFiniteNumber(ev?.multi_factor_score),
+        label: `${code} · ${asString(ev?.sportsbook) || '?'} ${asString(ev?.sport_id)}/${asString(ev?.market_id)} ${asFiniteNumber(ev?.previous_max) ?? '?'}→${asFiniteNumber(ev?.new_limit) ?? '?'}`,
+      });
+    }
+    rawByCode.set(code, parsed);
+  }
+
+  // Wall-clock 7d; if empty and tip is stale, use tip as window end (fixture tip mode).
+  let windowEndMs = nowMs;
+  let raiseWindowMode = 'wall-clock';
+  const wallRaises = [...rawByCode.values()]
+    .flat()
+    .filter(ev => nowMs - ev.increasedAtMs <= WINDOW_7D_MS && ev.increasedAtMs <= nowMs);
+  if (wallRaises.length === 0 && tipMs != null && nowMs - tipMs >= FIXTURE_REBASE_MIN_AGE_MS) {
+    windowEndMs = tipMs;
+    raiseWindowMode = 'export-tip';
+  }
+
+  const partnerRows = [];
+  for (const code of [...deskCodes].sort()) {
+    const profile = byCode.get(code) || null;
+    const tid = asString(
+      (dashboard?.partners || []).find(p => normalizePartnerCode(p?.partnerCode) === code)?.identity
+        ?.treeNodeId
+    );
+    const raises7d = (rawByCode.get(code) || []).filter(
+      ev => windowEndMs - ev.increasedAtMs <= WINDOW_7D_MS && ev.increasedAtMs <= windowEndMs
+    );
+    const mon = asString(profile?.monitoringStatus) || '—';
+    const obs = profile?.observations || {};
+    partnerRows.push({
+      partnerCode: code,
+      matched: Boolean(profile),
+      treeNodeId: tid || null,
+      monitoringStatus: mon,
+      lifecycleStatus: asString(profile?.lifecycleStatus) || '—',
+      tone:
+        asString(profile?.tone) ||
+        (mon === 'blocked' ? 'bad' : mon === 'incomplete' ? 'warn' : 'ok'),
+      blocked: mon === 'blocked',
+      incomplete: mon === 'incomplete',
+      jurisdiction: asString(profile?.jurisdiction?.stateCode) || '—',
+      location: asString(profile?.jurisdiction?.location) || '—',
+      raisesObserved: asFiniteNumber(obs?.raises) ?? 0,
+      decreasesObserved: asFiniteNumber(obs?.decreases) ?? 0,
+      lastObservedAt: asString(obs?.lastObservedAt) || null,
+      sportsbooks: Array.isArray(obs?.sportsbooks) ? obs.sportsbooks.map(String) : [],
+      raises7d,
+      raises7dCount: raises7d.length,
+    });
+  }
+
+  const fleetBlocked = profiles
+    .filter(p => asString(p?.monitoringStatus) === 'blocked')
+    .map(p => ({
+      callSign: asString(p?.callSign) || '—',
+      accountKind: asString(p?.accountKind) || '—',
+      treeNodeId: asString(p?.treeNodeId) || null,
+      label: `${asString(p?.callSign) || '?'} · ${asString(p?.accountKind) || 'account'} · blocked`,
+    }));
+
+  const raiseEvents7d = partnerRows.flatMap(r => r.raises7d);
+  raiseEvents7d.sort((a, b) => String(b.increasedAt).localeCompare(String(a.increasedAt)));
+
+  const summary = limitRaises?.accountProfiles?.summary || null;
+
+  return {
+    available: true,
+    partnerRows,
+    fleetBlocked,
+    raiseEvents7d,
+    raiseWindowMode,
+    raiseWindowEndIso: new Date(windowEndMs).toISOString(),
+    tipIso: tipMs != null ? new Date(tipMs).toISOString() : null,
+    counts: {
+      deskPartnersMatched: partnerRows.filter(r => r.matched).length,
+      blockedOnDesk: partnerRows.filter(r => r.blocked).length,
+      incompleteOnDesk: partnerRows.filter(r => r.incomplete).length,
+      raises7d: raiseEvents7d.length,
+      fleetBlocked: fleetBlocked.length,
+      profileAccounts: profiles.length,
+    },
+    summary,
+    note:
+      raiseWindowMode === 'export-tip'
+        ? `Raise 7d window anchored to latest raise tip (${tipMs != null ? new Date(tipMs).toISOString() : '—'}) — wall-clock was empty.`
+        : 'Joined via treeNodeId / callSign. Fleet blocked includes limit-demo nodes not on seat roster.',
+  };
+}
+
+/**
+ * Partner-ledger totals vs dashboard partner-scoped balances.
+ * @param {object | null | undefined} partnerLedger
+ * @param {object | null | undefined} dashboard
+ */
+export function projectLedgerVsBalance(partnerLedger, dashboard) {
+  const empty = {
+    available: false,
+    rows: [],
+    railTotalMinor: null,
+    counts: { partners: 0, mismatches: 0, missingLedger: 0 },
+    note: 'partner-ledger unavailable',
+  };
+  const rowsIn = Array.isArray(partnerLedger?.rows) ? partnerLedger.rows : null;
+  if (!rowsIn) return empty;
+
+  /** @type {Map<string, { netMinor: number, lastBalanceMinor: number | null, lastAt: string, entryCount: number, byType: Record<string, number> }>} */
+  const byCode = new Map();
+  for (const row of rowsIn) {
+    const code = normalizePartnerCode(row?.partner_code || row?.partnerCode);
+    if (!code) continue;
+    const prev = byCode.get(code) || {
+      netMinor: 0,
+      lastBalanceMinor: null,
+      lastAt: '',
+      entryCount: 0,
+      byType: {},
+    };
+    const amount = asFiniteNumber(row?.amount_minor ?? row?.amountMinor) ?? 0;
+    prev.netMinor += amount;
+    prev.entryCount += 1;
+    const typ = asString(row?.type) || 'other';
+    prev.byType[typ] = (prev.byType[typ] || 0) + amount;
+    const at = asString(row?.created_at || row?.createdAt);
+    const bal = asFiniteNumber(row?.balance_after_minor ?? row?.balanceAfterMinor);
+    if (at && (!prev.lastAt || at >= prev.lastAt) && bal != null) {
+      prev.lastAt = at;
+      prev.lastBalanceMinor = bal;
+    }
+    byCode.set(code, prev);
+  }
+
+  let railTotalMinor = 0;
+  let railHit = false;
+  const partnerRows = [];
+  const codes = new Set([
+    ...[...byCode.keys()],
+    ...(dashboard?.partners || []).map(p => normalizePartnerCode(p?.partnerCode)),
+  ]);
+
+  for (const code of [...codes].filter(Boolean).sort()) {
+    const partner = (dashboard?.partners || []).find(
+      p => normalizePartnerCode(p?.partnerCode) === code
+    );
+    const dashBal = partner ? partnerScopedBalanceMinor(partner) : null;
+    let outBal = 0;
+    let outHit = false;
+    let railBal = 0;
+    for (const pos of partner?.accounting?.balancePositions || []) {
+      const m = pos?.amount?.minorUnits;
+      if (typeof m !== 'number' || !Number.isFinite(m)) continue;
+      if (pos?.accountScope?.kind === 'out') {
+        outBal += m;
+        outHit = true;
+      }
+      if (pos?.accountScope?.kind === 'rail') {
+        railBal += m;
+        railTotalMinor += m;
+        railHit = true;
+      }
+    }
+    const led = byCode.get(code);
+    const ledgerNet = led?.netMinor ?? null;
+    const ledgerLast = led?.lastBalanceMinor ?? null;
+    const compareTo = dashBal != null ? dashBal : outHit ? outBal : null;
+    const delta = ledgerNet != null && compareTo != null ? ledgerNet - compareTo : null;
+    const mismatch = delta != null && delta !== 0;
+    partnerRows.push({
+      partnerCode: code,
+      dashboardPartnerMinor: dashBal,
+      dashboardOutMinor: outHit ? outBal : null,
+      dashboardRailMinor: railBal || null,
+      ledgerNetMinor: ledgerNet,
+      ledgerLastBalanceMinor: ledgerLast,
+      ledgerEntryCount: led?.entryCount ?? 0,
+      byType: led?.byType || {},
+      deltaMinor: delta,
+      mismatch,
+      balanceDisplay:
+        dashBal != null ? formatUsdMinor(dashBal) : outHit ? formatUsdMinor(outBal) : '—',
+      ledgerNetDisplay: ledgerNet != null ? formatUsdMinor(ledgerNet) : '—',
+      deltaDisplay: delta == null ? '—' : formatUsdMinor(delta),
+    });
+  }
+
+  return {
+    available: true,
+    rows: partnerRows,
+    railTotalMinor: railHit ? railTotalMinor : null,
+    railTotalDisplay: railHit ? formatUsdMinor(railTotalMinor) : '—',
+    counts: {
+      partners: partnerRows.length,
+      mismatches: partnerRows.filter(r => r.mismatch).length,
+      missingLedger: partnerRows.filter(r => r.ledgerNetMinor == null).length,
+    },
+    note: 'Ledger net = sum(amount_minor). Dashboard partner balance is scope=partner only; delta flags integrity drift.',
+  };
+}
+
+/**
+ * Bookmakers desk-coverage rollup (unmatched / placeholder sportsbooks).
+ * @param {object | null | undefined} coverage
+ */
+export function projectBookCoverage(coverage) {
+  if (!coverage || typeof coverage !== 'object') {
+    return {
+      available: false,
+      matched: 0,
+      unmatched: 0,
+      placeholder: 0,
+      hits: [],
+      unmatchedHits: [],
+      registryUnused: [],
+      note: 'bookmakers-desk-coverage unavailable',
+    };
+  }
+  const hits = Array.isArray(coverage.hits) ? coverage.hits : [];
+  const unmatchedHits = hits.filter(
+    h => asString(h?.class) === 'unmatched' || asString(h?.class) === 'placeholder'
+  );
+  return {
+    available: true,
+    matched: Number(coverage.matched) || 0,
+    unmatched: Number(coverage.unmatched) || 0,
+    placeholder: Number(coverage.placeholder) || 0,
+    deskBooks: Number(coverage.deskBooks) || hits.length,
+    hits,
+    unmatchedHits,
+    registryUnused: Array.isArray(coverage.registryUnused)
+      ? coverage.registryUnused.map(String)
+      : [],
+    note: 'Seat desk books vs public bookmakers catalog.',
+  };
+}
+
+/**
+ * Soft play partner codes not on the dashboard roster.
+ * @param {object | null | undefined} softExport
+ * @param {object | null | undefined} dashboard
+ */
+export function projectSoftOrphanPartners(softExport, dashboard) {
+  const desk = new Set(
+    (dashboard?.partners || []).map(p => normalizePartnerCode(p?.partnerCode)).filter(Boolean)
+  );
+  const orphans = new Map();
+  for (const play of softExport?.plays || []) {
+    const code = normalizePartnerCode(play?.partnerCode);
+    if (!code || desk.has(code)) continue;
+    const prev = orphans.get(code) || { partnerCode: code, playCount: 0, netMajor: 0 };
+    prev.playCount += 1;
+    prev.netMajor += asFiniteNumber(play?.pnl) ?? 0;
+    orphans.set(code, prev);
+  }
+  const rows = [...orphans.values()].sort((a, b) => a.partnerCode.localeCompare(b.partnerCode));
+  return {
+    available: rows.length > 0,
+    rows,
+    note:
+      rows.length > 0
+        ? 'Soft export has partner codes not on partners-dashboard roster.'
+        : 'No soft-only partner codes.',
+  };
+}
+
+/**
  * Full morning desk model from baked registries.
  *
  * @param {{
@@ -844,6 +1244,9 @@ export function buildPartnerMoneyRows(dashboard, accounts, windows) {
  *   ops?: object | null,
  *   bookmakers?: object | null,
  *   handshake?: object | null,
+ *   limitRaises?: object | null,
+ *   partnerLedger?: object | null,
+ *   bookCoverage?: object | null,
  *   nowMs?: number,
  * }} input
  */
@@ -870,6 +1273,41 @@ export function buildMorningDesk(input) {
   const partners = buildPartnerMoneyRows(dashboard, accounts, windows);
   const alerts = collectDeskAlerts(dashboard, accounts, input.ops);
   const telegram = projectTelegramSignals(input.handshake, dashboard, input.ops);
+  const connectors = projectConnectorHealth(dashboard);
+  const limitPulse = projectLimitRaisePulse(input.limitRaises, dashboard, { nowMs });
+  const moneyIntegrity = projectLedgerVsBalance(input.partnerLedger, dashboard);
+  const bookCoverage = projectBookCoverage(input.bookCoverage);
+  const softOrphans = projectSoftOrphanPartners(input.soft, dashboard);
+
+  // Fold limit-pulse freezes into alerts surface
+  for (const row of limitPulse.partnerRows) {
+    if (row.blocked) {
+      alerts.freezes.push({
+        partnerCode: row.partnerCode,
+        outId: '—',
+        bookLabel: 'limit profile',
+        reasons: ['blocked'],
+        status: 'blocked',
+        label: `${row.partnerCode} · limit profile blocked · ${row.jurisdiction}`,
+      });
+    }
+  }
+  const deskCodeSet = new Set(partners.map(p => p.partnerCode));
+  for (const fb of limitPulse.fleetBlocked) {
+    const mapped = matchCallSignToDeskCode(fb.callSign, deskCodeSet);
+    if (mapped) continue; // already on a desk partner row when blocked
+    alerts.freezes.push({
+      partnerCode: asString(fb.callSign),
+      outId: '—',
+      bookLabel: fb.accountKind,
+      reasons: ['blocked'],
+      status: 'blocked',
+      label: fb.label,
+    });
+  }
+  alerts.counts.freezes = alerts.freezes.length;
+  alerts.counts.blocked =
+    accounts.filter(a => a.status === 'blocked').length + limitPulse.counts.blockedOnDesk;
 
   const byPartner = groupDeskAccounts(accounts, 'partnerCode');
   const byType = groupDeskAccounts(accounts, 'bookType');
@@ -898,6 +1336,17 @@ export function buildMorningDesk(input) {
     }
   }
 
+  // Enrich partner money rows with ledger integrity
+  const moneyByCode = new Map(moneyIntegrity.rows.map(r => [r.partnerCode, r]));
+  for (const p of partners) {
+    const m = moneyByCode.get(p.partnerCode);
+    p.ledgerNetMinor = m?.ledgerNetMinor ?? null;
+    p.ledgerNetDisplay = m?.ledgerNetDisplay ?? '—';
+    p.moneyDeltaMinor = m?.deltaMinor ?? null;
+    p.moneyDeltaDisplay = m?.deltaDisplay ?? '—';
+    p.moneyMismatch = Boolean(m?.mismatch);
+  }
+
   return {
     generatedAt: asString(dashboard?.generatedAt) || null,
     schema: asString(dashboard?.schema) || null,
@@ -921,6 +1370,7 @@ export function buildMorningDesk(input) {
       balanceOutDisplay: balanceOutHit ? formatUsdMinor(balanceOutMinor) : '—',
       partnerBalanceMinor: partnerBalanceHit ? partnerBalanceMinor : null,
       partnerBalanceDisplay: partnerBalanceHit ? formatUsdMinor(partnerBalanceMinor) : '—',
+      railBalanceDisplay: moneyIntegrity.railTotalDisplay,
       softNet24h: soft24.netMajor,
       softNet7d: soft7d.netMajor,
       softNetAll: softAll.netMajor,
@@ -941,6 +1391,13 @@ export function buildMorningDesk(input) {
       telegramNewSignals: telegram.newSignals?.length ?? 0,
       inviteGaps: telegram.inviteGaps,
       messageFeedAvailable: telegram.messageFeedAvailable === true,
+      connectorsOk: connectors.counts.ok,
+      connectorsStale: connectors.counts.stale,
+      moneyMismatches: moneyIntegrity.counts.mismatches,
+      limitRaises7d: limitPulse.counts.raises7d,
+      fleetBlocked: limitPulse.counts.fleetBlocked,
+      booksUnmatched: bookCoverage.unmatched + bookCoverage.placeholder,
+      softOrphans: softOrphans.rows.length,
     },
     accounts,
     partners,
@@ -952,6 +1409,11 @@ export function buildMorningDesk(input) {
     },
     alerts,
     telegram,
+    connectors,
+    limitPulse,
+    moneyIntegrity,
+    bookCoverage,
+    softOrphans,
     format: {
       usdMajor: formatUsdMajor,
       usdMinor: formatUsdMinor,

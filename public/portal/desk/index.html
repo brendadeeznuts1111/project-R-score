@@ -655,6 +655,14 @@
 
         <section class="desk-stat-grid" id="desk-stats" aria-label="Desk summary"></section>
 
+        <section class="desk-section" aria-labelledby="desk-connectors-h">
+          <h2 id="desk-connectors-h">Bake connectors</h2>
+          <p class="blurb">partners-dashboard connectorSnapshots — ok / stale / down.</p>
+          <div class="desk-panel">
+            <div class="desk-chip-row" id="desk-connectors"></div>
+          </div>
+        </section>
+
         <section class="desk-section" aria-labelledby="desk-accounts-h">
           <h2 id="desk-accounts-h">Accounts · logins</h2>
           <p class="blurb">
@@ -709,7 +717,7 @@
         <section class="desk-section" aria-labelledby="desk-money-h">
           <h2 id="desk-money-h">Money by partner</h2>
           <p class="blurb">
-            Partner balance, sum of out limits, soft PnL windows, ledger settlements.
+            Partner balance, ledger net, integrity delta, limits Σ, soft PnL windows.
           </p>
           <div class="desk-panel">
             <table class="desk-table portal-table">
@@ -719,16 +727,52 @@
                   <th>Accts</th>
                   <th>Live</th>
                   <th>Balance</th>
+                  <th>Ledger net</th>
+                  <th>Δ</th>
                   <th>Limits Σ</th>
                   <th>Soft 24h</th>
                   <th>Soft 7d</th>
                   <th>Soft all</th>
-                  <th>Ledger 24h</th>
                 </tr>
               </thead>
               <tbody id="desk-money-body"></tbody>
             </table>
             <p class="desk-note" id="desk-soft-note"></p>
+            <p class="desk-note" id="desk-money-note"></p>
+          </div>
+        </section>
+
+        <section class="desk-section" aria-labelledby="desk-limits-h">
+          <h2 id="desk-limits-h">Limits · freezes · raises</h2>
+          <p class="blurb" id="desk-limits-blurb">
+            limit-raises account profiles + byNode raises joined by treeNodeId / callSign.
+          </p>
+          <div class="desk-panel">
+            <table class="desk-table portal-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Monitor</th>
+                  <th>State</th>
+                  <th>Raises 7d</th>
+                  <th>Obs raises</th>
+                  <th>Last obs</th>
+                  <th>Books</th>
+                </tr>
+              </thead>
+              <tbody id="desk-limits-body"></tbody>
+            </table>
+            <p class="desk-note" id="desk-limits-note"></p>
+            <div id="desk-raises-list" style="margin-top: 10px"></div>
+          </div>
+        </section>
+
+        <section class="desk-section" aria-labelledby="desk-books-h">
+          <h2 id="desk-books-h">Book catalog holes</h2>
+          <p class="blurb">Seat desk books vs bookmakers catalog (unmatched / placeholder).</p>
+          <div class="desk-panel">
+            <div class="desk-chip-row" id="desk-books"></div>
+            <p class="desk-note" id="desk-books-note"></p>
           </div>
         </section>
 
@@ -871,7 +915,19 @@
             k: 'Freezes',
             v: String(s.freezes),
             tone: s.freezes > 0 ? 'warn' : 'ok',
-            sub: `${s.freerolls} freeplay · ${s.freerollApplied || 0} applied`,
+            sub: `${s.fleetBlocked || 0} fleet blocked · ${s.freerolls} freeplay`,
+          },
+          {
+            k: 'Raises 7d',
+            v: String(s.limitRaises7d ?? 0),
+            tone: (s.limitRaises7d ?? 0) > 0 ? 'warn' : '',
+            sub: (s.moneyMismatches ?? 0) > 0 ? `${s.moneyMismatches} $ mismatch` : 'limit-raises',
+          },
+          {
+            k: 'Connectors',
+            v: `${s.connectorsOk ?? 0}/${(s.connectorsOk ?? 0) + (s.connectorsStale ?? 0)}`,
+            tone: (s.connectorsStale ?? 0) > 0 ? 'warn' : 'ok',
+            sub: `${s.connectorsStale ?? 0} stale`,
           },
           {
             k: 'Telegram',
@@ -936,19 +992,21 @@
       function renderMoney(model) {
         const body = $('desk-money-body');
         body.innerHTML = model.partners
-          .map(
-            p => `<tr>
+          .map(p => {
+            const deltaTone = p.moneyMismatch ? 'tone-warn' : 'tone-muted';
+            return `<tr>
               <td class="mono">${esc(p.partnerCode)}</td>
               <td class="mono">${p.accountCount}</td>
               <td class="mono ${p.liveCount ? 'tone-ok' : 'tone-muted'}">${p.liveCount}</td>
               <td class="mono">${esc(p.balanceDisplay)}</td>
+              <td class="mono">${esc(p.ledgerNetDisplay || '—')}</td>
+              <td class="mono ${deltaTone}">${esc(p.moneyDeltaDisplay || '—')}</td>
               <td class="mono">${esc(p.limitTotalDisplay)}</td>
               <td class="mono ${moneyTone(p.softNet24h)}">${esc(fmtSigned(p.softNet24h))}</td>
               <td class="mono ${moneyTone(p.softNet7d)}">${esc(fmtSigned(p.softNet7d))}</td>
               <td class="mono ${moneyTone(p.softNetAll)}">${esc(fmtSigned(p.softNetAll))}</td>
-              <td class="mono ${moneyTone(p.ledgerNet24h)}">${esc(fmtSigned(p.ledgerNet24h))}</td>
-            </tr>`
-          )
+            </tr>`;
+          })
           .join('');
 
         const s = model.summary;
@@ -956,12 +1014,118 @@
         if (note) {
           const win = model.softWindow;
           if (!s.softAvailable) {
-            note.textContent = `Soft accounting unavailable (${s.softSource}). Ledger columns use partners-dashboard settlement entries only.`;
+            note.textContent = `Soft accounting unavailable (${s.softSource}).`;
           } else if (win?.rebased) {
             note.textContent = `Soft source: ${s.softSource}. ${win.note} Soft all is full export net.`;
           } else {
             note.textContent = `Soft source: ${s.softSource}. Windows use wall-clock settledAt (fallback placedAt). Soft all is full export.`;
           }
+        }
+        const moneyNote = $('desk-money-note');
+        if (moneyNote && model.moneyIntegrity) {
+          const mi = model.moneyIntegrity;
+          const orphan =
+            model.softOrphans?.available && model.softOrphans.rows.length
+              ? ` Soft-only codes: ${model.softOrphans.rows.map(r => r.partnerCode).join(', ')}.`
+              : '';
+          moneyNote.textContent = mi.available
+            ? `${mi.note} Rails total: ${mi.railTotalDisplay}. Mismatches: ${mi.counts.mismatches}.${orphan}`
+            : mi.note + orphan;
+        }
+      }
+
+      function renderConnectors(model) {
+        const c = model.connectors;
+        const el = $('desk-connectors');
+        if (!el) return;
+        if (!c?.available) {
+          el.innerHTML = '<p class="desk-empty">No connector snapshots.</p>';
+          return;
+        }
+        el.innerHTML = c.rows
+          .map(
+            r =>
+              `<span class="desk-chip"><strong class="tone-${esc(r.tone === 'ok' ? 'ok' : r.tone === 'warn' ? 'warn' : 'bad')}">${esc(r.key)}</strong> · ${esc(r.status)}</span>`
+          )
+          .join('');
+      }
+
+      function renderLimitPulse(model) {
+        const lp = model.limitPulse;
+        const body = $('desk-limits-body');
+        const blurb = $('desk-limits-blurb');
+        const note = $('desk-limits-note');
+        const list = $('desk-raises-list');
+        if (!lp?.available) {
+          if (body)
+            body.innerHTML = `<tr><td colspan="7" class="desk-empty">limit-raises unavailable</td></tr>`;
+          return;
+        }
+        if (blurb) {
+          blurb.textContent = `Profiles matched ${lp.counts.deskPartnersMatched} · incomplete ${lp.counts.incompleteOnDesk} · raises 7d ${lp.counts.raises7d} (${lp.raiseWindowMode}) · fleet blocked ${lp.counts.fleetBlocked}`;
+        }
+        if (note) note.textContent = lp.note;
+        if (body) {
+          body.innerHTML = lp.partnerRows
+            .map(r => {
+              const monTone = r.blocked
+                ? 'tone-bad'
+                : r.incomplete
+                  ? 'tone-warn'
+                  : r.matched
+                    ? 'tone-ok'
+                    : 'tone-muted';
+              return `<tr>
+                <td class="mono">${esc(r.partnerCode)}</td>
+                <td class="${monTone}">${esc(r.monitoringStatus)}</td>
+                <td class="dim">${esc(r.jurisdiction)}</td>
+                <td class="mono ${r.raises7dCount ? 'tone-warn' : 'tone-muted'}">${r.raises7dCount}</td>
+                <td class="mono dim">${r.raisesObserved}</td>
+                <td class="dim mono">${esc((r.lastObservedAt || '—').replace('T', ' ').replace(/\.\d{3}Z$/, 'Z'))}</td>
+                <td class="dim">${esc((r.sportsbooks || []).join(', ') || '—')}</td>
+              </tr>`;
+            })
+            .join('');
+        }
+        if (list) {
+          const events = (lp.raiseEvents7d || []).slice(0, 12);
+          if (!events.length) {
+            list.innerHTML = '<p class="desk-empty">No raises in window.</p>';
+          } else {
+            list.innerHTML =
+              `<p class="blurb" style="margin:0 0 6px"><strong>Raise events</strong> (${events.length})</p><ul style="margin:0;padding-left:18px;font-size:12px">` +
+              events
+                .map(e => `<li class="mono">${esc(e.label)} · ${esc(e.increasedAt)}</li>`)
+                .join('') +
+              `</ul>`;
+          }
+        }
+      }
+
+      function renderBookCoverage(model) {
+        const bc = model.bookCoverage;
+        const el = $('desk-books');
+        const note = $('desk-books-note');
+        if (!el) return;
+        if (!bc?.available) {
+          el.innerHTML = '<p class="desk-empty">Coverage bake missing.</p>';
+          return;
+        }
+        const chips = [
+          `<span class="desk-chip"><strong>matched</strong> · ${bc.matched}</span>`,
+          `<span class="desk-chip"><strong>unmatched</strong> · ${bc.unmatched}</span>`,
+          `<span class="desk-chip"><strong>placeholder</strong> · ${bc.placeholder}</span>`,
+        ];
+        for (const h of bc.unmatchedHits || []) {
+          chips.push(
+            `<span class="desk-chip"><strong>${esc(h.deskBook || h.class)}</strong> · ${esc(h.class)}</span>`
+          );
+        }
+        el.innerHTML = chips.join('');
+        if (note) {
+          note.textContent = (bc.registryUnused || []).length
+            ? `${bc.note} Unused registry books: ${bc.registryUnused.join(', ')}.`
+            : bc.note;
         }
       }
 
@@ -1099,9 +1263,12 @@
           baked.textContent = `dashboard ${bake.text} · ${model.summary.partners} partners · ${model.summary.accounts} accounts · ${model.summary.live} live`;
         }
         renderStats(model);
+        renderConnectors(model);
         bindFilters(model);
         renderAccounts(model);
         renderMoney(model);
+        renderLimitPulse(model);
+        renderBookCoverage(model);
         renderGroups(model);
         renderTelegram(model);
         renderAlerts(model);
@@ -1120,12 +1287,15 @@
             );
           }
 
-          const [softR, seatR, opsR, booksR, hsR] = await Promise.all([
+          const [softR, seatR, opsR, booksR, hsR, limR, ledR, covR] = await Promise.all([
             fetchJsonResult(DESK_ANCILLARY_REFS.soft),
             fetchJsonResult(DESK_ANCILLARY_REFS.seat),
             fetchJsonResult(DESK_ANCILLARY_REFS.ops),
             fetchJsonResult(DESK_ANCILLARY_REFS.bookmakers),
             fetchJsonResult(DESK_ANCILLARY_REFS.handshake),
+            fetchJsonResult(DESK_ANCILLARY_REFS.limitRaises),
+            fetchJsonResult(DESK_ANCILLARY_REFS.partnerLedger),
+            fetchJsonResult(DESK_ANCILLARY_REFS.bookCoverage),
           ]);
 
           const model = buildMorningDesk({
@@ -1135,6 +1305,9 @@
             ops: opsR.ok ? opsR.data : null,
             bookmakers: booksR.ok ? booksR.data : null,
             handshake: hsR.ok ? hsR.data : null,
+            limitRaises: limR.ok ? limR.data : null,
+            partnerLedger: ledR.ok ? ledR.data : null,
+            bookCoverage: covR.ok ? covR.data : null,
           });
 
           $('loading').classList.add('hidden');
