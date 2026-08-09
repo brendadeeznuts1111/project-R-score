@@ -1,6 +1,6 @@
 {
   "schema": "factorywager.telegram-handshake-catalog.v1",
-  "generatedAt": "2026-07-31T14:18:16.173Z",
+  "generatedAt": "2026-08-09T02:46:18.946Z",
   "docs": {
     "runbook": "docs/harness/tenants/partner-package-group-handshake.md",
     "factoryBot": "docs/harness/tenants/telegram-factory.md",
@@ -51,41 +51,25 @@
         "title": "Ops",
         "mapKey": "ops",
         "role": "House ops posts",
-        "botCreated": true,
-        "icon": {
-          "iconColor": 4,
-          "emoji": "📋"
-        }
+        "botCreated": true
       },
       {
         "title": "Alerts",
         "mapKey": "alerts",
         "role": "Outbox alerts routing",
-        "botCreated": true,
-        "icon": {
-          "iconColor": 2,
-          "emoji": "🚨"
-        }
+        "botCreated": true
       },
       {
         "title": "Liquidity/Outs",
         "mapKey": "liquidity/outs",
         "role": "Pinned seat capital desk + rails pipe intake",
-        "botCreated": true,
-        "icon": {
-          "iconColor": 3,
-          "emoji": "💧"
-        }
+        "botCreated": true
       },
       {
         "title": "Accounting",
         "mapKey": "accounting",
         "role": "Deposit/withdraw/bet-slip proof (screenshots)",
-        "botCreated": true,
-        "icon": {
-          "iconColor": 1,
-          "emoji": "📸"
-        }
+        "botCreated": true
       }
     ],
     "threadMapKeys": {
@@ -109,26 +93,7 @@
           "day-ops",
           "aar",
           "identity"
-        ],
-        "groupDescription": "TOC Ops · HQ — Production ops desk — alerts, day-ops, AAR. Humans + pager traffic only.",
-        "topicIcons": {
-          "alerts": {
-            "iconColor": 2,
-            "emoji": "🚨"
-          },
-          "day-ops": {
-            "iconColor": 4,
-            "emoji": "📋"
-          },
-          "aar": {
-            "iconColor": 0,
-            "emoji": "📝"
-          },
-          "identity": {
-            "iconColor": 5,
-            "emoji": "🪪"
-          }
-        }
+        ]
       },
       "ash-staging": {
         "groupTitle": "TOC Ops · ASH · staging",
@@ -137,26 +102,7 @@
           "balances",
           "onboard",
           "alerts"
-        ],
-        "groupDescription": "TOC Ops · ASH · staging — ASH partner desk (staging) — Soft balances, plays, onboard. Not production alerts.",
-        "topicIcons": {
-          "plays": {
-            "iconColor": 3,
-            "emoji": "🎯"
-          },
-          "balances": {
-            "iconColor": 1,
-            "emoji": "💰"
-          },
-          "onboard": {
-            "iconColor": 4,
-            "emoji": "👋"
-          },
-          "alerts": {
-            "iconColor": 2,
-            "emoji": "🚨"
-          }
-        }
+        ]
       },
       "all-accounting": {
         "groupTitle": "TOC Ops · Accounting",
@@ -164,40 +110,14 @@
           "deposits",
           "withdrawals",
           "reconcile"
-        ],
-        "groupDescription": "TOC Ops · Accounting — Cross-partner deposit/withdraw proof rollup — ops mirror; partners post in package forum Accounting topic.",
-        "topicIcons": {
-          "deposits": {
-            "iconColor": 3,
-            "emoji": "⬇️"
-          },
-          "withdrawals": {
-            "iconColor": 2,
-            "emoji": "⬆️"
-          },
-          "reconcile": {
-            "iconColor": 0,
-            "emoji": "✅"
-          }
-        }
+        ]
       },
       "sandbox": {
         "groupTitle": "TOC Ops · sandbox",
         "topicSlugs": [
           "scratch",
           "experiments"
-        ],
-        "groupDescription": "TOC Ops · sandbox — Bot / brand / template experiments. Disposable. Never route partner Soft here.",
-        "topicIcons": {
-          "scratch": {
-            "iconColor": 5,
-            "emoji": "🧪"
-          },
-          "experiments": {
-            "iconColor": 6,
-            "emoji": "🔬"
-          }
-        }
+        ]
       }
     },
     "allAccountingForumTitles": [
@@ -307,10 +227,12 @@
         "builder": "buildSeatDeskAccountingTopicPrompt"
       },
       "partner:liquidity/outs:intake": {
-        "templateId": "topic-intake"
+        "templateId": "topic-intake",
+        "builder": "buildSeatDeskTopicPrompt"
       },
       "partner:liquidity/outs:rails": {
-        "templateId": "topic-rails"
+        "templateId": "topic-rails",
+        "builder": "buildSeatDeskTopicPrompt"
       },
       "house:all-accounting": {
         "templateId": "all-accounting-channel",
@@ -397,6 +319,7 @@
       "telegram.forum.topic",
       "telegram.topic_map",
       "telegram.forum.topic.accounting",
+      "telegram.dod.visual_proof",
       "telegram.forum.topic.liquidity_outs",
       "telegram.surface",
       "telegram.surface.all_accounting",
@@ -404,7 +327,17 @@
       "telegram.deposit_rail",
       "telegram.handshake",
       "telegram.membership",
-      "telegram.topic_plan_row"
+      "telegram.topic_plan_row",
+      "telegram.message.incoming",
+      "telegram.message.outgoing",
+      "telegram.message.alert",
+      "telegram.message.command",
+      "telegram.message.receipt",
+      "telegram.status.delivered",
+      "telegram.status.failed",
+      "telegram.action.reply",
+      "telegram.action.forward",
+      "telegram.action.pin"
     ]
   },
   "jsonlActions": [
@@ -566,7 +499,7 @@
     {
       "id": "bot_commands",
       "group": "operator",
-      "summary": "/status · /seat · play callbacks"
+      "summary": "/status · /dossier · /limits · /seat · play callbacks"
     }
   ],
   "cli": [
