@@ -880,6 +880,9 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.markdown.Options': 'https://bun.com/docs/runtime/markdown#options',
   'Bun.markdown.render': 'https://bun.com/docs/runtime/markdown#bun-markdown-render',
   'Bun.markdown.react': 'https://bun.com/docs/runtime/markdown#bun-markdown-react',
+  // bun-api-index showcase labels → generated types reference
+  'Bun.markdown reference': 'https://bun.com/reference/bun/markdown',
+  'Bun.markdown types': 'https://bun.com/reference/bun/markdown',
   // React component overrides — #component-overrides → #available-overrides table
   'component-overrides': 'https://bun.com/docs/runtime/markdown#component-overrides',
   'Bun.markdown.react component overrides':
