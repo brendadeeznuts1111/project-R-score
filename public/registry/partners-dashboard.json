@@ -1,12 +1,12 @@
 {
   "schema": "factorywager.partners-dashboard.v2",
-  "generatedAt": "2026-08-09T01:45:38.325Z",
+  "generatedAt": "2026-08-09T01:58:12.682Z",
   "connectorSnapshots": {
     "profiles": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:45:38.325Z",
+      "observedAt": "2026-08-09T01:58:12.682Z",
       "ageSeconds": 0,
       "inputRef": "config/partner-profiles/*.toml"
     },
@@ -14,7 +14,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:45:38.325Z",
+      "observedAt": "2026-08-09T01:58:12.682Z",
       "ageSeconds": 0,
       "inputRef": "partner_ledger"
     },
@@ -22,7 +22,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:45:38.325Z",
+      "observedAt": "2026-08-09T01:58:12.682Z",
       "ageSeconds": 0,
       "inputRef": "/registry/telegram-handshake.json"
     },
@@ -30,7 +30,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:45:38.325Z",
+      "observedAt": "2026-08-09T01:58:12.682Z",
       "ageSeconds": 0,
       "inputRef": "/registry/limit-raises.json"
     },
@@ -38,7 +38,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:45:38.325Z",
+      "observedAt": "2026-08-09T01:58:12.682Z",
       "ageSeconds": 0,
       "inputRef": "/registry/bookmakers.json"
     },
@@ -46,7 +46,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:45:38.325Z",
+      "observedAt": "2026-08-09T01:58:12.682Z",
       "ageSeconds": 0,
       "inputRef": "/registry/tennis/partner-contracts.json"
     },
@@ -54,7 +54,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T01:45:38.325Z",
+      "observedAt": "2026-08-09T01:58:12.682Z",
       "ageSeconds": 0,
       "inputRef": "/registry/sports-terminal/partner-integration-health.json"
     }
@@ -182,13 +182,13 @@
       "callSign": "ASH-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T01:45:38.325Z",
+        "effectiveAt": "2026-08-09T01:58:12.682Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T01:45:38.325Z",
+          "observedAt": "2026-08-09T01:58:12.682Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -228,14 +228,16 @@
               "confidence": "exact"
             }
           },
-          "providerConnectionStatus": "inactive"
+          "providerConnectionStatus": "inactive",
+          "limitCoverageRatio": 1
         },
         {
           "outId": "out-ASH-2",
           "sportsbookId": "hard-rock-florida",
           "operationalStatus": "deferred",
           "fundingStatus": "unknown",
-          "externalAccountRefs": []
+          "externalAccountRefs": [],
+          "limitCoverageRatio": 1
         }
       ],
       "accounting": {
@@ -337,9 +339,9 @@
         "configuredTopicKeys": []
       },
       "limits": {
-        "tracked": 0,
+        "tracked": 2,
         "missing": 0,
-        "coverageRatio": 0
+        "coverageRatio": 1
       },
       "integrations": {
         "sportsTerminal": {
@@ -365,13 +367,13 @@
       "callSign": "BIL-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T01:45:38.325Z",
+        "effectiveAt": "2026-08-09T01:58:12.682Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T01:45:38.325Z",
+          "observedAt": "2026-08-09T01:58:12.682Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -410,7 +412,8 @@
               "confidence": "exact"
             }
           },
-          "providerConnectionStatus": "inactive"
+          "providerConnectionStatus": "inactive",
+          "limitCoverageRatio": 1
         }
       ],
       "accounting": {
@@ -454,9 +457,9 @@
         "configuredTopicKeys": []
       },
       "limits": {
-        "tracked": 0,
+        "tracked": 1,
         "missing": 0,
-        "coverageRatio": 0
+        "coverageRatio": 1
       },
       "integrations": {
         "sportsTerminal": {
@@ -482,13 +485,13 @@
       "callSign": "NOV-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T01:45:38.325Z",
+        "effectiveAt": "2026-08-09T01:58:12.682Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T01:45:38.325Z",
+          "observedAt": "2026-08-09T01:58:12.682Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -527,14 +530,16 @@
               "confidence": "exact"
             }
           },
-          "providerConnectionStatus": "inactive"
+          "providerConnectionStatus": "inactive",
+          "limitCoverageRatio": 1
         },
         {
           "outId": "out-NOV-2",
           "sportsbookId": "southfl-pph-desk",
           "operationalStatus": "deferred",
           "fundingStatus": "funded",
-          "externalAccountRefs": []
+          "externalAccountRefs": [],
+          "limitCoverageRatio": 0
         }
       ],
       "accounting": {
@@ -606,9 +611,9 @@
         "configuredTopicKeys": []
       },
       "limits": {
-        "tracked": 0,
-        "missing": 0,
-        "coverageRatio": 0
+        "tracked": 1,
+        "missing": 1,
+        "coverageRatio": 0.5
       },
       "integrations": {
         "sportsTerminal": {
@@ -634,13 +639,13 @@
       "callSign": "SPEN-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T01:45:38.325Z",
+        "effectiveAt": "2026-08-09T01:58:12.682Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T01:45:38.325Z",
+          "observedAt": "2026-08-09T01:58:12.682Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -680,7 +685,8 @@
               "confidence": "exact"
             }
           },
-          "providerConnectionStatus": "inactive"
+          "providerConnectionStatus": "inactive",
+          "limitCoverageRatio": 1
         },
         {
           "outId": "out-SPEN-2",
@@ -704,28 +710,32 @@
               "confidence": "exact"
             }
           },
-          "providerConnectionStatus": "inactive"
+          "providerConnectionStatus": "inactive",
+          "limitCoverageRatio": 1
         },
         {
           "outId": "out-SPEN-3",
           "sportsbookId": "action92-com",
           "operationalStatus": "ready",
           "fundingStatus": "unknown",
-          "externalAccountRefs": []
+          "externalAccountRefs": [],
+          "limitCoverageRatio": 0
         },
         {
           "outId": "out-SPEN-4",
           "sportsbookId": "betvegas23-com",
           "operationalStatus": "ready",
           "fundingStatus": "unknown",
-          "externalAccountRefs": []
+          "externalAccountRefs": [],
+          "limitCoverageRatio": 0
         },
         {
           "outId": "out-SPEN-5",
           "sportsbookId": "orange777",
           "operationalStatus": "deferred",
           "fundingStatus": "unknown",
-          "externalAccountRefs": []
+          "externalAccountRefs": [],
+          "limitCoverageRatio": 0
         }
       ],
       "accounting": {
@@ -826,9 +836,9 @@
         "configuredTopicKeys": []
       },
       "limits": {
-        "tracked": 0,
-        "missing": 0,
-        "coverageRatio": 0
+        "tracked": 2,
+        "missing": 3,
+        "coverageRatio": 0.4
       },
       "integrations": {
         "sportsTerminal": {

@@ -180,6 +180,50 @@ describe('reconcilePartnerDashboardFacts', () => {
     expect(spen.integrations.sportsTerminal?.dataStatus).toBe('unavailable'); // unknown
   });
 
+  test('computes limit evidence coverage from tennis max stake and raise sportsbooks', async () => {
+    const { partners, tennis } = await loadBuiltPartners();
+    const [limitsRaw, bookmakersRaw] = await Promise.all([
+      loadJson('public/registry/limit-raises.json'),
+      loadJson('public/registry/bookmakers.json'),
+    ]);
+    const {
+      LIMIT_RAISE_SPORTSBOOK_ALIASES,
+      parseTreeNodePartnerCodesFromLimitRaises,
+      parseBookmakerCatalogArtifact,
+      parseLimitChangesArtifact,
+      registeredSportsbookIdsFromCatalog,
+    } = await import('../packages/partners/src/index.ts');
+    const bookmakers = parseBookmakerCatalogArtifact(bookmakersRaw);
+    const limits = parseLimitChangesArtifact(limitsRaw, {
+      treeNodePartnerCodes: parseTreeNodePartnerCodesFromLimitRaises(limitsRaw),
+      registeredSportsbookIds: registeredSportsbookIdsFromCatalog(bookmakers),
+      sportsbookAliases: LIMIT_RAISE_SPORTSBOOK_ALIASES,
+    });
+
+    const reconciled = reconcilePartnerDashboardFacts({
+      partners,
+      tennis,
+      limits,
+      bookmakers,
+    });
+
+    for (const partner of reconciled.partners) {
+      const { tracked, missing, coverageRatio } = partner.limits;
+      expect(tracked + missing).toBe(partner.outs.length);
+      expect(coverageRatio).toBe(tracked + missing === 0 ? 0 : tracked / (tracked + missing));
+      for (const out of partner.outs) {
+        expect(out.limitCoverageRatio === 0 || out.limitCoverageRatio === 1).toBe(true);
+      }
+    }
+
+    // ASH has tennis live max stake on out-ASH-1 → at least one tracked out
+    const ash = reconciled.partners.find(p => p.partnerCode === 'ASH')!;
+    expect(ash.limits.tracked).toBeGreaterThan(0);
+    const ash1 = ash.outs.find(o => o.outId === 'out-ASH-1')!;
+    expect(ash1.observedMaxStake?.amount.minorUnits).toBe(50_000);
+    expect(ash1.limitCoverageRatio).toBe(1);
+  });
+
   test('joins limit-change attention and bookmaker catalog validation without inventing ceilings', async () => {
     const { partners, tennis } = await loadBuiltPartners();
     const [limitsRaw, bookmakersRaw] = await Promise.all([

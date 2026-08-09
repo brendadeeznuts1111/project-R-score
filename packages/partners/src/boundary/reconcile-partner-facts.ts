@@ -5,10 +5,14 @@
  * precedence to produce `activeOutIds`, optional out status / observed max-stake
  * upgrades, partner-keyed `integrations.tennis`, Sports Terminal
  * `integrations.sportsTerminal` + externalPartnerRefs, limit-raise attention,
- * bookmaker sportsbook validation, and explicit `conflicts[]`.
+ * bookmaker sportsbook validation, out-level limit-coverage metrics, and
+ * explicit `conflicts[]`.
+ *
+ * Limit coverage is evidence presence only: an out is tracked when it has a
+ * tennis integer observedMaxStake and/or a limit-raise observation for that
+ * sportsbook. Raise events never become executable max-stake ceilings.
  *
  * Does not invent lifecycle, funding, accounting money, or unregistered outs.
- * Limit-change events never become executable max-stake ceilings.
  * Sports Terminal integration-health is optional; when absent, tennis is the
  * sole capacity author (precedence still declares tennis-contract >
  * sports-terminal for future multi-source conflict rows).
@@ -290,6 +294,58 @@ function noteUnregisteredSportsbooks(
   }
 }
 
+/**
+ * Per-out + partner limit evidence coverage.
+ *
+ * tracked = outs with at least one evidence signal:
+ *   - observedMaxStake (tennis live integer minor units), or
+ *   - a limit-raise observation keyed by partnerCode + sportsbookId
+ * missing = registered outs with neither signal
+ * coverageRatio = tracked / (tracked + missing), or 0 when no outs
+ *
+ * Never invents max stake or treats raises as current execution ceilings.
+ */
+export function applyLimitCoverageMetrics(
+  partners: PartnerDashboardRecord[],
+  limits?: LimitChangeProjection
+): void {
+  const raiseBooks = new Map<string, Set<string>>();
+  if (limits) {
+    for (const observation of limits.observations) {
+      const key = observation.partnerCode;
+      let set = raiseBooks.get(key);
+      if (!set) {
+        set = new Set();
+        raiseBooks.set(key, set);
+      }
+      set.add(observation.sportsbookId);
+    }
+  }
+
+  for (const partner of partners) {
+    const books = raiseBooks.get(partner.partnerCode);
+    let tracked = 0;
+    let missing = 0;
+    for (const out of partner.outs) {
+      const hasExecutionEvidence = out.observedMaxStake !== undefined;
+      const hasRaiseEvidence = books?.has(out.sportsbookId) === true;
+      if (hasExecutionEvidence || hasRaiseEvidence) {
+        tracked += 1;
+        out.limitCoverageRatio = 1;
+      } else {
+        missing += 1;
+        out.limitCoverageRatio = 0;
+      }
+    }
+    const denom = tracked + missing;
+    partner.limits = {
+      tracked,
+      missing,
+      coverageRatio: denom === 0 ? 0 : tracked / denom,
+    };
+  }
+}
+
 function applySportsTerminalIntegration(
   partners: PartnerDashboardRecord[],
   sportsTerminal: SportsTerminalIntegrationProjection
@@ -346,6 +402,8 @@ export function reconcilePartnerDashboardFacts(
   }
 
   if (!input.tennis) {
+    // Coverage still runs from raise evidence alone when tennis is offline.
+    applyLimitCoverageMetrics(partners, input.limits);
     partners.sort((a, b) => compareAscii(a.partnerCode, b.partnerCode));
     for (const partner of partners) {
       partner.outs.sort((a, b) => compareAscii(a.outId, b.outId));
@@ -417,6 +475,9 @@ export function reconcilePartnerDashboardFacts(
       },
     };
   }
+
+  // After tennis max-stake upgrades, score limit evidence coverage.
+  applyLimitCoverageMetrics(partners, input.limits);
 
   // Deduplicate + sort activeOutIds deterministically
   const uniqueActive = [...new Set(activeOutIds.map(String))].sort(compareAscii) as OutId[];
