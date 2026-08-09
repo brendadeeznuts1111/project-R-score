@@ -101,6 +101,61 @@
       "account_scope": { "kind": "out", "outId": "out-SPEN-2" },
       "created_at": "2026-08-07T12:00:00.000Z",
       "proof": "proof:fixture:SPEN:deposit-out-SPEN-2"
+    },
+    {
+      "id": "0198f0b0-000a-7000-8000-00000000000a",
+      "partner_code": "ASH",
+      "type": "deposit",
+      "amount_minor": 25000,
+      "currency": "USD",
+      "balance_after_minor": 25000,
+      "account_scope": { "kind": "out", "outId": "out-ASH-2" },
+      "created_at": "2026-08-07T13:00:00.000Z",
+      "proof": "proof:fixture:ASH:deposit-out-ASH-2"
+    },
+    {
+      "id": "0198f0b0-000b-7000-8000-00000000000b",
+      "partner_code": "BIL",
+      "type": "deposit",
+      "amount_minor": 10000,
+      "currency": "USD",
+      "balance_after_minor": 10000,
+      "account_scope": { "kind": "out", "outId": "out-BIL-1" },
+      "created_at": "2026-08-07T14:00:00.000Z",
+      "proof": "proof:fixture:BIL:deposit-out-BIL-1"
+    },
+    {
+      "id": "0198f0b0-000c-7000-8000-00000000000c",
+      "partner_code": "NOV",
+      "type": "deposit",
+      "amount_minor": 50000,
+      "currency": "USD",
+      "balance_after_minor": 50000,
+      "account_scope": { "kind": "out", "outId": "out-NOV-1" },
+      "created_at": "2026-08-07T15:00:00.000Z",
+      "proof": "proof:fixture:NOV:deposit-out-NOV-1"
+    },
+    {
+      "id": "0198f0b0-000d-7000-8000-00000000000d",
+      "partner_code": "SPEN",
+      "type": "deposit",
+      "amount_minor": 0,
+      "currency": "USD",
+      "balance_after_minor": 0,
+      "account_scope": { "kind": "out", "outId": "out-SPEN-3" },
+      "created_at": "2026-08-07T16:00:00.000Z",
+      "proof": "proof:fixture:SPEN:deposit-out-SPEN-3-unfunded"
+    },
+    {
+      "id": "0198f0b0-000e-7000-8000-00000000000e",
+      "partner_code": "SPEN",
+      "type": "deposit",
+      "amount_minor": 5000,
+      "currency": "USD",
+      "balance_after_minor": 5000,
+      "account_scope": { "kind": "out", "outId": "out-SPEN-4" },
+      "created_at": "2026-08-07T17:00:00.000Z",
+      "proof": "proof:fixture:SPEN:deposit-out-SPEN-4"
     }
   ]
 }
