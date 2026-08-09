@@ -1,12 +1,12 @@
 {
   "schema": "factorywager.partners-dashboard.v2",
-  "generatedAt": "2026-08-09T02:02:00.141Z",
+  "generatedAt": "2026-08-09T02:21:46.282Z",
   "connectorSnapshots": {
     "profiles": {
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:02:00.141Z",
+      "observedAt": "2026-08-09T02:21:46.282Z",
       "ageSeconds": 0,
       "inputRef": "config/partner-profiles/*.toml"
     },
@@ -14,7 +14,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:02:00.141Z",
+      "observedAt": "2026-08-09T02:21:46.282Z",
       "ageSeconds": 0,
       "inputRef": "partner_ledger"
     },
@@ -22,7 +22,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:02:00.141Z",
+      "observedAt": "2026-08-09T02:21:46.282Z",
       "ageSeconds": 0,
       "inputRef": "/registry/telegram-handshake.json"
     },
@@ -30,7 +30,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:02:00.141Z",
+      "observedAt": "2026-08-09T02:21:46.282Z",
       "ageSeconds": 0,
       "inputRef": "/registry/limit-raises.json"
     },
@@ -38,7 +38,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:02:00.141Z",
+      "observedAt": "2026-08-09T02:21:46.282Z",
       "ageSeconds": 0,
       "inputRef": "/registry/bookmakers.json"
     },
@@ -46,7 +46,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:02:00.141Z",
+      "observedAt": "2026-08-09T02:21:46.282Z",
       "ageSeconds": 0,
       "inputRef": "/registry/tennis/partner-contracts.json"
     },
@@ -54,7 +54,7 @@
       "dataStatus": "ok",
       "sourceMode": "current",
       "reasonCode": "current_fresh",
-      "observedAt": "2026-08-09T02:02:00.141Z",
+      "observedAt": "2026-08-09T02:21:46.282Z",
       "ageSeconds": 0,
       "inputRef": "/registry/sports-terminal/partner-integration-health.json"
     }
@@ -182,13 +182,13 @@
       "callSign": "ASH-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:02:00.141Z",
+        "effectiveAt": "2026-08-09T02:21:46.282Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/ASH",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:02:00.141Z",
+          "observedAt": "2026-08-09T02:21:46.282Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -372,13 +372,13 @@
       "callSign": "BIL-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:02:00.141Z",
+        "effectiveAt": "2026-08-09T02:21:46.282Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/BIL",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:02:00.141Z",
+          "observedAt": "2026-08-09T02:21:46.282Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -495,13 +495,13 @@
       "callSign": "NOV-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:02:00.141Z",
+        "effectiveAt": "2026-08-09T02:21:46.282Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/NOV",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:02:00.141Z",
+          "observedAt": "2026-08-09T02:21:46.282Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -660,13 +660,13 @@
       "callSign": "SPEN-001",
       "lifecycle": {
         "state": "active",
-        "effectiveAt": "2026-08-09T02:02:00.141Z",
+        "effectiveAt": "2026-08-09T02:21:46.282Z",
         "provenance": {
           "sourceSystemId": "factorywager-partner-profile",
           "sourceRecordRef": "/registry/partner-profiles.json#/profiles/SPEN",
           "adapterId": "canonical-lifecycle-v1",
           "adapterVersion": "1",
-          "observedAt": "2026-08-09T02:02:00.141Z",
+          "observedAt": "2026-08-09T02:21:46.282Z",
           "originalValue": "active",
           "mappingMethod": "identity",
           "confidence": "exact"
@@ -750,7 +750,7 @@
           "operationalStatus": "ready",
           "fundingStatus": "unknown",
           "externalAccountRefs": [],
-          "limitCoverageRatio": 0
+          "limitCoverageRatio": 1
         },
         {
           "outId": "out-SPEN-4",
@@ -758,7 +758,7 @@
           "operationalStatus": "ready",
           "fundingStatus": "unknown",
           "externalAccountRefs": [],
-          "limitCoverageRatio": 0
+          "limitCoverageRatio": 1
         },
         {
           "outId": "out-SPEN-5",
@@ -867,9 +867,9 @@
         "configuredTopicKeys": []
       },
       "limits": {
-        "tracked": 2,
-        "missing": 3,
-        "coverageRatio": 0.4
+        "tracked": 4,
+        "missing": 1,
+        "coverageRatio": 0.8
       },
       "integrations": {
         "sportsTerminal": {
@@ -891,13 +891,13 @@
         {
           "reasonCode": "partner.limits.coverage_gap",
           "severity": "info",
-          "label": "3/5 out(s) lack limit evidence (max stake or raise history)",
+          "label": "1/5 out(s) lack limit evidence (max stake or raise history)",
           "actionHref": "/portal/limits/"
         },
         {
           "reasonCode": "partner.limits.raise_observed",
           "severity": "info",
-          "label": "2 limit-change event(s); latest raise → fanduel @ 120000¢",
+          "label": "4 limit-change event(s); latest raise → betvegas23-com @ 80000¢",
           "actionHref": "/portal/limits/"
         }
       ]
