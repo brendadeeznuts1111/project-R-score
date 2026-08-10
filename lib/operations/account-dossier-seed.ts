@@ -16,7 +16,7 @@ import { ensureAccountLimitsSchema } from '../account-limits-repo.ts';
 import { applyPartnerComplianceOnboard } from './partner-compliance-onboard.ts';
 import { bindPartnerProfile } from './partner-profile-bridge.ts';
 import { seedLimitPatternDemo } from './limit-patterns.ts';
-import { exportLimitRaisesSnapshot } from './partner-analytics-repo.ts';
+import { exportLimitRaisesSnapshot } from './limit-raises-snapshot.ts';
 import { seedTocLimitBridge, type SeedTocLimitBridgeResult } from './toc-limit-bridge-seed.ts';
 import { asTreeNodeId } from '../types/branded.ts';
 

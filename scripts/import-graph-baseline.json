@@ -1,7 +1,7 @@
 {
   "deepRelativeImports": 0,
-  "cycles": 1,
+  "cycles": 0,
   "strongCycles": 0,
-  "weakCycles": 1,
+  "weakCycles": 0,
   "deepImportFiles": {}
 }

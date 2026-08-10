@@ -19,7 +19,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  */
 import { queryRecentLimitChanges } from '../lib/account-limits-repo.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
-import { exportLimitRaisesSnapshot } from '../lib/operations/partner-analytics-repo.ts';
+import { exportLimitRaisesSnapshot } from '../lib/operations/limit-raises-snapshot.ts';
 import {
   seedTocLimitBridge,
   TOC_LIMIT_BRIDGE_DEFAULT_CODES,

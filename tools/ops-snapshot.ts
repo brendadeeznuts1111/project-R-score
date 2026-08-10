@@ -601,7 +601,7 @@ export async function buildRegistrySnapshot(options?: {
     // Multi-factor limit raises: capture missing context + bake Pages/agent snapshot.
     try {
       const { exportLimitRaisesSnapshot } =
-        await import('../lib/operations/partner-analytics-repo.ts');
+        await import('../lib/operations/limit-raises-snapshot.ts');
       const lim = await exportLimitRaisesSnapshot(db, { root, lookbackHours: 48, capture: true });
       console.log(
         `[ops-snapshot] limit-raises → ${lim.raises} raise(s) · ${lim.partners} partner(s) · 48h`
