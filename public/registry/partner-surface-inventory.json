@@ -2,7 +2,7 @@
   "kind": "partner-surface-inventory",
   "schemaVersion": 3,
   "claim": "partner-surface-inventory",
-  "bakedAt": "2026-08-09T04:11:29.934Z",
+  "bakedAt": "2026-08-10T13:45:35.471Z",
   "principle": "map-before-rename",
   "chromeDomain": {
     "id": "partner",
@@ -529,6 +529,43 @@
       }
     },
     {
+      "id": "registry.partners-dashboard",
+      "aspect": "registry",
+      "token": "partners-dashboard",
+      "repo": "project-R-score",
+      "path": "public/registry/partners-dashboard.json",
+      "properties": [
+        "schema factorywager.partners-dashboard.v2",
+        "boards: desk, partners, account"
+      ],
+      "owner": "packages/partners dashboard assembler",
+      "machine": "artifact",
+      "href": "/registry/partners-dashboard.json",
+      "registry": {
+        "schemaId": "factorywager.partners-dashboard.v2",
+        "schemaIdField": "schema",
+        "artifactPath": "public/registry/partners-dashboard.json",
+        "conceptIds": [
+          "partner.phase.*",
+          "out.status.*",
+          "ops.view.per_account"
+        ],
+        "omits": [
+          "vaultKey",
+          "password",
+          "apiKey",
+          "api_key"
+        ],
+        "moneyPolicy": "structuredMinorUnits",
+        "requiredTopKeys": [
+          "schema",
+          "connectorSnapshots",
+          "activeOutIds",
+          "summary"
+        ]
+      }
+    },
+    {
       "id": "registry.partner-health",
       "aspect": "registry",
       "token": "partner-health",
@@ -994,6 +1031,36 @@
         "machineRefs": [
           "docs/design/partner-dashboard-mvp.toml",
           "packages/partners/src/dashboard-plan.ts"
+        ]
+      }
+    },
+    {
+      "id": "doc.partner-dashboard-squad",
+      "aspect": "doc-tenant",
+      "token": "partner-dashboard-squad",
+      "repo": "project-R-score",
+      "path": "docs/design/partner-dashboard-squad.md",
+      "properties": [
+        "parallel lane ownership",
+        "worktree delivery prompts"
+      ],
+      "owner": "@factorywager/partners",
+      "href": "/portal/partners/",
+      "documentation": {
+        "refId": "0.1.partner-dashboard-squad",
+        "conceptDomains": [
+          "partners",
+          "operations",
+          "portal"
+        ],
+        "chromeDomains": [
+          "partner"
+        ],
+        "primaryPortalHref": "/portal/partners/",
+        "authority": "plan",
+        "machineRefs": [
+          "docs/design/partner-dashboard-mvp.toml",
+          "packages/partners/"
         ]
       }
     },
@@ -1677,6 +1744,32 @@
       "notes": "IA reference only — do not copy schema"
     },
     {
+      "id": "chrome-nav.desk",
+      "aspect": "chrome-nav",
+      "token": "desk",
+      "repo": "project-R-score",
+      "path": "lib/portal/chrome-catalog.ts",
+      "properties": [
+        "domain: partner",
+        "group: ops",
+        "tier: overflow",
+        "registry: /registry/partners-dashboard.json",
+        "cli: bun run partner:dashboard:bake"
+      ],
+      "owner": "portal chrome Partner desk",
+      "machine": "nav",
+      "typeOrExport": "PortalChromeNavItem",
+      "href": "/portal/desk/",
+      "notes": "morning board · logins · limits · balances · soft net · telegram · freezes",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "partners-dashboard",
+        "cli": "bun run partner:dashboard:bake"
+      }
+    },
+    {
       "id": "chrome-nav.partners",
       "aspect": "chrome-nav",
       "token": "partners",
@@ -1686,8 +1779,8 @@
         "domain: partner",
         "group: ops",
         "tier: overflow",
-        "registry: /registry/partners-ops.json",
-        "cli: bun run telegram:handshake:catalog"
+        "registry: /registry/partners-dashboard.json",
+        "cli: bun run partner:dashboard:bake"
       ],
       "owner": "portal chrome Partner desk",
       "machine": "nav",
@@ -1698,8 +1791,8 @@
         "domain": "partner",
         "group": "ops",
         "tier": "overflow",
-        "registryArtifact": "partners-ops",
-        "cli": "bun run telegram:handshake:catalog"
+        "registryArtifact": "partners-dashboard",
+        "cli": "bun run partner:dashboard:bake"
       }
     },
     {
@@ -1738,7 +1831,7 @@
         "domain: partner",
         "group: ops",
         "tier: overflow",
-        "registry: /registry/partners-ops.json",
+        "registry: /registry/partners-dashboard.json",
         "cli: bun run ops:dossier:seed"
       ],
       "owner": "portal chrome Partner desk",
@@ -1750,7 +1843,7 @@
         "domain": "partner",
         "group": "ops",
         "tier": "overflow",
-        "registryArtifact": "partners-ops",
+        "registryArtifact": "partners-dashboard",
         "cli": "bun run ops:dossier:seed"
       }
     },
@@ -1885,6 +1978,30 @@
       }
     },
     {
+      "id": "portal-board.desk",
+      "aspect": "portal-board",
+      "token": "desk",
+      "repo": "project-R-score",
+      "path": "public/portal/desk/",
+      "properties": [
+        "chrome-nav: desk",
+        "data-domain: partner",
+        "/registry/partners-dashboard.json"
+      ],
+      "owner": "portal Partner desk boards",
+      "machine": "nav",
+      "typeOrExport": "page.desk",
+      "href": "/portal/desk/",
+      "notes": "morning board · logins · limits · balances · soft net · telegram · freezes",
+      "chromeNav": {
+        "domain": "partner",
+        "group": "ops",
+        "tier": "overflow",
+        "registryArtifact": "partners-dashboard",
+        "cli": "bun run partner:dashboard:bake"
+      }
+    },
+    {
       "id": "portal-board.partners",
       "aspect": "portal-board",
       "token": "partners",
@@ -1893,7 +2010,7 @@
       "properties": [
         "chrome-nav: partners",
         "data-domain: partner",
-        "/registry/partners-ops.json"
+        "/registry/partners-dashboard.json"
       ],
       "owner": "portal Partner desk boards",
       "machine": "nav",
@@ -1904,8 +2021,8 @@
         "domain": "partner",
         "group": "ops",
         "tier": "overflow",
-        "registryArtifact": "partners-ops",
-        "cli": "bun run telegram:handshake:catalog"
+        "registryArtifact": "partners-dashboard",
+        "cli": "bun run partner:dashboard:bake"
       }
     },
     {
@@ -1941,7 +2058,7 @@
       "properties": [
         "chrome-nav: account",
         "data-domain: partner",
-        "/registry/partners-ops.json"
+        "/registry/partners-dashboard.json"
       ],
       "owner": "portal Partner desk boards",
       "machine": "nav",
@@ -1952,7 +2069,7 @@
         "domain": "partner",
         "group": "ops",
         "tier": "overflow",
-        "registryArtifact": "partners-ops",
+        "registryArtifact": "partners-dashboard",
         "cli": "bun run ops:dossier:seed"
       }
     },

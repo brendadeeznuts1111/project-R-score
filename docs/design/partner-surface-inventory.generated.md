@@ -91,10 +91,12 @@
 
 | Aspect | Token | Href | Registry |
 | ------ | ----- | ---- | -------- |
-| `chrome-nav` | `account` | `/portal/account/` | `partners-ops` |
-| `portal-board` | `account` | `/portal/account/` | `partners-ops` |
+| `chrome-nav` | `account` | `/portal/account/` | `partners-dashboard` |
+| `portal-board` | `account` | `/portal/account/` | `partners-dashboard` |
 | `chrome-nav` | `bookmakers` | `/portal/bookmakers/` | `bookmakers` |
 | `portal-board` | `bookmakers` | `/portal/bookmakers/` | `bookmakers` |
+| `chrome-nav` | `desk` | `/portal/desk/` | `partners-dashboard` |
+| `portal-board` | `desk` | `/portal/desk/` | `partners-dashboard` |
 | `chrome-nav` | `factory` | `/portal/factory/` | `telegram-handshake` |
 | `portal-board` | `factory` | `/portal/factory/` | `telegram-handshake` |
 | `portal-board` | `lanes` | `/portal/lanes/` | `workspace-lane-map` |
@@ -106,8 +108,8 @@
 | `portal-board` | `partner-history` | `/portal/partner-history/` | `limit-raises` |
 | `portal-board` | `partner` | `/portal/partner/` | `partner-health` |
 | `chrome-nav` | `partner-health` | `/portal/partner/` | `partner-health` |
-| `chrome-nav` | `partners` | `/portal/partners/` | `partners-ops` |
-| `portal-board` | `partners` | `/portal/partners/` | `partners-ops` |
+| `chrome-nav` | `partners` | `/portal/partners/` | `partners-dashboard` |
+| `portal-board` | `partners` | `/portal/partners/` | `partners-dashboard` |
 
 ## Live PartnerCodes
 
@@ -127,6 +129,7 @@
 | [`docs/design/partner-dashboard-field-lineage.md`](../../docs/design/partner-dashboard-field-lineage.md#0.1.partner-dashboard-field-lineage)<br>`0.1.partner-dashboard-field-lineage` | `partners`, `accounting`, `telegram`, `compliance`, `trading`, `data` | `partner` | `/portal/partners/` | `contract` | `packages/partners/src/boundary/dashboard-artifact.ts`<br>`packages/partners/src/dashboard-plan.ts` |
 | [`docs/design/partner-dashboard-mvp.md`](../../docs/design/partner-dashboard-mvp.md#0.1.partner-dashboard-mvp)<br>`0.1.partner-dashboard-mvp` | `partners`, `accounting`, `telegram`, `compliance`, `trading`, `portal`, `operations` | `partner` | `/portal/partners/` | `contract` | `docs/design/partner-dashboard-mvp.toml`<br>`packages/partners/src/dashboard-plan.ts` |
 | [`docs/design/partner-dashboard-semantic-map.md`](../../docs/design/partner-dashboard-semantic-map.md#0.1.partner-dashboard-semantic-map)<br>`0.1.partner-dashboard-semantic-map` | `partners`, `accounting`, `telegram`, `compliance`, `trading`, `portal` | `partner`, `knowledge` | `/portal/partners/` | `contract` | `docs/design/partner-dashboard-mvp.toml`<br>`lib/portal/concept-domains.ts` |
+| [`docs/design/partner-dashboard-squad.md`](../../docs/design/partner-dashboard-squad.md#0.1.partner-dashboard-squad)<br>`0.1.partner-dashboard-squad` | `partners`, `operations`, `portal` | `partner` | `/portal/partners/` | `plan` | `docs/design/partner-dashboard-mvp.toml`<br>`packages/partners/` |
 | [`docs/design/partner-money-integer-migration.md`](../../docs/design/partner-money-integer-migration.md#0.1.partner-money-integer-migration)<br>`0.1.partner-money-integer-migration` | `accounting`, `partners`, `operations` | `partner` | `/portal/partners/#section:accounting` | `runbook` | `scripts/migrate-money-to-integers.ts`<br>`lib/partner-profile/ledger.ts` |
 | [`docs/design/partner-surface-inventory.md`](../../docs/design/partner-surface-inventory.md#0.1.partner-surface-inventory)<br>`0.1.partner-surface-inventory` | `partners`, `portal`, `registry`, `operations` | `partner`, `knowledge` | `/portal/partners/` | `ssot` | `lib/docs/partner-surface-inventory.ts`<br>`public/registry/partner-surface-inventory.json` |
 | [`docs/design/partner-type-reference-map.md`](../../docs/design/partner-type-reference-map.md#0.1.partner-type-reference-map)<br>`0.1.partner-type-reference-map` | `partners`, `operations` | `knowledge`, `partner` | `/portal/brands/#domain=operations&q=PartnerCode` | `contract` | `lib/types/branded/operations.ts`<br>`packages/partners/src/core/identifiers.ts` |

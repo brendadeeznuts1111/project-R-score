@@ -1,13 +1,13 @@
 {
   "kind": "concepts-state",
   "schemaVersion": 1,
-  "bakedAt": "2026-08-08T23:31:41.844Z",
+  "bakedAt": "2026-08-10T13:40:37.194Z",
   "gate": "pass",
   "summary": {
-    "totalPortal": 146,
-    "withProvenance": 146,
+    "totalPortal": 148,
+    "withProvenance": 148,
     "provenanceCoverage": 1,
-    "usedUi": 84,
+    "usedUi": 85,
     "unusedUi": 9,
     "surfaceOnly": 26,
     "metadataIssues": 0,
@@ -15,15 +15,15 @@
     "inventoryMisses": 0,
     "deprecatedUsed": 0,
     "bakeDrift": 0,
-    "detailRows": 146
+    "detailRows": 148
   },
   "domainSummary": [
     {
       "domain": "portal",
-      "count": 88,
-      "used": 80,
+      "count": 90,
+      "used": 82,
       "unused": 8,
-      "provenance": 88,
+      "provenance": 90,
       "provenancePct": 100
     },
     {
@@ -61,14 +61,14 @@
     {
       "board": "partners",
       "files": 3,
-      "usages": 83,
+      "usages": 90,
       "allowlist": 11
     },
     {
       "board": "limits",
       "files": 3,
-      "usages": 102,
-      "allowlist": 21
+      "usages": 103,
+      "allowlist": 22
     },
     {
       "board": "account",
@@ -1075,6 +1075,18 @@
       "kind": "used"
     },
     {
+      "id": "page.partnerDesk",
+      "label": "Morning desk",
+      "domain": "portal",
+      "namespace": "page",
+      "group": "page.partnerDesk",
+      "category": "page",
+      "status": "active",
+      "provenance": "legacy",
+      "usage": 0,
+      "kind": "used"
+    },
+    {
       "id": "page.partnerHealth",
       "label": "Partner health",
       "domain": "portal",
@@ -1279,6 +1291,18 @@
       "kind": "used"
     },
     {
+      "id": "section.limitWatch",
+      "label": "Cross-market limit watch",
+      "domain": "portal",
+      "namespace": "section",
+      "group": "section.limitWatch",
+      "category": "section",
+      "status": "active",
+      "provenance": "legacy",
+      "usage": 1,
+      "kind": "used"
+    },
+    {
       "id": "section.openingBaseline",
       "label": "Sportsbook opening baseline",
       "domain": "portal",
@@ -1359,7 +1383,7 @@
       "category": "section",
       "status": "active",
       "provenance": "legacy",
-      "usage": 5,
+      "usage": 6,
       "kind": "used"
     },
     {
