@@ -16,9 +16,6 @@
 import { bunDocs, bunReference } from '../lib/docs/bun-site-url.ts';
 import { formatCliTable, toolTableVersion } from './cli-table.ts';
 
-/** Shared input for html | ansi | render | react. */
-export const MARKDOWN_INPUT = 'string | ArrayBufferLike | TypedArray | DataView' as const;
-
 export type MarkdownModeId = 'html' | 'ansi' | 'render' | 'react';
 
 export type MarkdownMode = {

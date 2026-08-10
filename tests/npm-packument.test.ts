@@ -16,7 +16,10 @@ import {
   parseNpmPackageSegment,
   type NpmPackumentPagesContext,
 } from '../functions/@factorywager/[pkg].ts';
-import { isNpmPackageRequestPath } from '../lib/registry/npm-package-path.ts';
+import {
+  isNpmPackageRequestPath,
+  parseNpmPackageRequestPath,
+} from '../lib/registry/npm-package-path.ts';
 
 const PACKUMENT_SHAPE_KEYS = ['name', 'dist-tags', 'versions', 'time'] as const;
 
@@ -35,10 +38,22 @@ describe('serve-public npm package request paths', () => {
     expect(isNpmPackageRequestPath('/@factorywager/pkg/extra')).toBe(false);
   });
 
+  test('decodes valid names and rejects malformed percent escapes without throwing', () => {
+    expect(parseNpmPackageRequestPath('/registry-client')).toBe('registry-client');
+    expect(parseNpmPackageRequestPath('/@factorywager/registry-client')).toBe(
+      '@factorywager/registry-client'
+    );
+    expect(parseNpmPackageRequestPath('/@factorywager%2Fregistry-client')).toBe(
+      '@factorywager/registry-client'
+    );
+    expect(parseNpmPackageRequestPath('/bad%escape')).toBeNull();
+  });
+
   test('serve-public applies the shared predicate to GET metadata and PUT publish', async () => {
     const source = await Bun.file(`${import.meta.dir}/../scripts/serve-public.ts`).text();
-    expect(source).toContain("req.method === 'GET' && isNpmPackageRequestPath(path)");
-    expect(source).toContain("req.method === 'PUT' && isNpmPackageRequestPath(path)");
+    expect(source).toContain('const npmPackageName = parseNpmPackageRequestPath(path)');
+    expect(source).toContain("req.method === 'GET' && npmPackageName");
+    expect(source).toContain("req.method === 'PUT' && npmPackageName");
   });
 });
 

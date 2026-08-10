@@ -12,3 +12,13 @@ export function isNpmPackageRequestPath(path: string): boolean {
     !path.startsWith('/@')
   );
 }
+
+/** Decode a validated request path without allowing malformed escapes to throw in the router. */
+export function parseNpmPackageRequestPath(path: string): string | null {
+  if (!isNpmPackageRequestPath(path)) return null;
+  try {
+    return decodeURIComponent(path.slice(1));
+  } catch {
+    return null;
+  }
+}

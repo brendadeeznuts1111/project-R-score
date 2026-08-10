@@ -33,6 +33,27 @@ afterAll(() => {
 });
 
 describe('lib quality hardening', () => {
+  test('AI predictions reuse the timeframe cache without reusing trace identity', async () => {
+    aiOperations.clearAllCaches();
+
+    const first = await aiOperations.predict('hour');
+    const second = await aiOperations.predict('hour');
+
+    expect(second).toMatchObject({
+      resource: first.resource,
+      performance: first.performance,
+      confidence: first.confidence,
+      model: first.model,
+    });
+    expect(second.correlationId).not.toBe(first.correlationId);
+    expect(aiOperations.getCacheStats().predictions).toMatchObject({
+      hits: 1,
+      misses: 1,
+      totalGets: 2,
+      size: 1,
+    });
+  });
+
   test('LRU cache evicts the least-recently-used data node without sentinel values', () => {
     const cache = new AdvancedLRUCache<number>({
       maxSize: 2,

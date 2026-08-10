@@ -186,14 +186,7 @@ export async function seedBookmakers(db?: Database): Promise<number> {
   return n;
 }
 
-export type SeedReport = {
-  leagues: number;
-  teams: number;
-  marketTypes: number;
-  bookmakers: number;
-};
-
-export async function seedAll(): Promise<SeedReport> {
+export async function seedAll() {
   const db = await openNormalizedDb();
   ensureMatchingSchema(db);
   const leagues = await seedLeagues(db);
