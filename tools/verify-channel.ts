@@ -45,7 +45,8 @@ import { runBundlerLoaderVerification } from '../lib/verification/bundler-loader
 import { runBunRuntimeNitsVerification } from '../lib/verification/bun-runtime-nits-probes.ts';
 import { generateJSONLD } from '../lib/verification/jsonld.ts';
 import { runNetworkingChannelVerification } from '../lib/verification/networking-channel.ts';
-import { diffChannelProofs, formatProofDiffSummary } from '../lib/verification/proof-diff.ts';
+import { formatProofDiffSummary } from '../lib/verification/proof-diff-format.ts';
+import { diffChannelProofs } from '../lib/verification/proof-diff.ts';
 import { withSubsystem } from '../lib/verification/subsystem.ts';
 import type {
   ChannelAwareVerificationReport,

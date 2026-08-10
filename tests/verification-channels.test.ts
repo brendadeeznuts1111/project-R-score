@@ -16,7 +16,8 @@ import {
   verificationSnapshotFilename,
 } from '../lib/verification/channels.ts';
 import { generateJSONLD } from '../lib/verification/jsonld.ts';
-import { diffChannelProofs, formatProofDiffSummary } from '../lib/verification/proof-diff.ts';
+import { formatProofDiffSummary } from '../lib/verification/proof-diff-format.ts';
+import { diffChannelProofs } from '../lib/verification/proof-diff.ts';
 import type {
   ChannelAwareVerificationReport,
   SemanticTags,
