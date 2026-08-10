@@ -88,22 +88,6 @@ export const BUN_TEST_NODE_ENV = 'test' as const;
  */
 export const BUN_PARALLEL_WORKER_ENV_KEYS = ['BUN_TEST_WORKER_ID', 'JEST_WORKER_ID'] as const;
 
-/**
- * Bun runtime knobs from the environment-variables docs that this runner
- * explicitly manages for hermetic hook/scratch test children.
- * @see https://bun.com/docs/runtime/environment-variables#configuring-bun
- */
-export const BUN_TEST_RUNTIME_ENV = {
-  /** Required for intermediate assets; default platform temp when unset. */
-  TMPDIR: 'TMPDIR',
-  /** Prepends CLI args to every Bun invocation — cleared for hermetic tests. */
-  BUN_OPTIONS: 'BUN_OPTIONS',
-  /** Disable bun.report crash uploads from ephemeral hook runs. */
-  DO_NOT_TRACK: 'DO_NOT_TRACK',
-  NO_COLOR: 'NO_COLOR',
-  FORCE_COLOR: 'FORCE_COLOR',
-} as const;
-
 export type StagedTestCommandOptions = {
   /** When set, emit `--changed=<ref>` instead of dirty-tree `--changed`. */
   changedRef?: string;

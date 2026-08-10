@@ -134,28 +134,6 @@ export function formatCliTable<K extends string>(
   return `${lines.join('\n')}\n`;
 }
 
-/** TSV — `# BUN …  COLS …` comment, then header + rows. */
-export function formatCliTsv<K extends string>(
-  rows: ReadonlyArray<Record<K, string | number | boolean | null | undefined>>,
-  columns: readonly CliColumn<K>[],
-  opts?: Pick<CliTableOpts, 'bun' | 'cols'>
-): string {
-  const cols = opts?.cols ?? columns.map(c => c.key);
-  const meta =
-    opts?.bun === false && !cols.length
-      ? ''
-      : `# ${formatCliTableMeta({ bun: opts?.bun, cols }).trim()}\n`;
-  return (
-    meta +
-    formatCliTable(rows, columns, {
-      sep: '\t',
-      rule: false,
-      header: true,
-      meta: 'none',
-    })
-  );
-}
-
 /**
  * Bun.inspect.table dump — `properties` = column order.
  * Meta: BUN + COLS <properties>.
@@ -182,17 +160,4 @@ export function formatInspectTable(
 /** Runtime pin for tool meta lines (not a per-row column). */
 export function toolTableVersion(): string {
   return Bun.version;
-}
-
-/** @deprecated use formatCliTableMeta / bun+cols */
-export function formatCliTableMetaLegacy(opts: {
-  version?: string | false;
-  properties: readonly string[];
-  indent?: string;
-}): string {
-  return formatCliTableMeta({
-    bun: opts.version,
-    cols: opts.properties,
-    indent: opts.indent,
-  });
 }

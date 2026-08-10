@@ -146,6 +146,7 @@ import {
 } from '../lib/http/bun-server.ts';
 import { PORTAL_BOARD_SLUGS } from '../lib/http/portal-board-slugs.ts';
 import { canonicalSlashRedirect } from '../lib/http/canonical-redirect.ts';
+import { isNpmPackageRequestPath } from '../lib/registry/npm-package-path.ts';
 import {
   formatServePublicBindLines,
   writeServePublicBindManifest,
@@ -1723,14 +1724,6 @@ function requireReadAuth(req: Request): Response | null {
   return null;
 }
 
-/** True when path is a single-segment npm package name (not `/`, `/index.html`, etc.). */
-function isNpmPackagePath(path: string): boolean {
-  if (path === '/' || path === '') return false;
-  const seg = path.slice(1);
-  if (!seg || seg.includes('/')) return false;
-  return true;
-}
-
 /**
  * GET|POST /api/doctor/run — loopback-only portal doctor bake.
  * Runs pure doctor (no --full spawn by default) and writes doctor-state.json.
@@ -1976,30 +1969,12 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (staticRes) return staticRes;
 
   // npm-compatible publish: PUT /{name} or /@scope/name (not / or static paths)
-  if (
-    req.method === 'PUT' &&
-    isNpmPackagePath(path) &&
-    (path.match(/^\/@[a-z0-9-]+\/[a-zA-Z0-9._-]+$/) ||
-      path.match(/^\/@[a-z0-9-]+%2[fF][a-zA-Z0-9._-]+$/) ||
-      (path.length > 1 &&
-        path.split('/').length === 2 &&
-        path.startsWith('/') &&
-        !path.startsWith('/@')))
-  ) {
+  if (req.method === 'PUT' && isNpmPackageRequestPath(path)) {
     return npmPublish(req, decodeURIComponent(path.slice(1)));
   }
 
   // npm-compatible metadata: GET /{name} or /@scope/name
-  if (
-    req.method === 'GET' &&
-    isNpmPackagePath(path) &&
-    (path.match(/^\/@[a-z0-9-]+\/[a-zA-Z0-9._-]+$/) ||
-      path.match(/^\/@[a-z0-9-]+%2[fF][a-zA-Z0-9._-]+$/) ||
-      (path.length > 1 &&
-        path.split('/').length === 2 &&
-        path.startsWith('/') &&
-        !path.startsWith('/@')))
-  ) {
+  if (req.method === 'GET' && isNpmPackageRequestPath(path)) {
     return npmPackageMetadata(req);
   }
 
