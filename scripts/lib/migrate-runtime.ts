@@ -9,7 +9,7 @@
  * @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
  * @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
  */
-import { VALIDATE_WHITELIST, type UsageHit } from '../bun-migrate.ts';
+import { VALIDATE_WHITELIST, type UsageHit } from './migrate-phases.ts';
 import { resolvePath } from './fs-bun';
 
 const REPO_ROOT = resolvePath(import.meta.dir, '../..');

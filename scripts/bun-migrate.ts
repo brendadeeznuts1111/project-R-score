@@ -24,31 +24,21 @@
  */
 
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+import { joinPath, relativePath, resolvePath } from '../lib/path-bun.ts';
+import {
+  PHASE_SECTION,
+  VALIDATE_WHITELIST,
+  type MigrateSection,
+  type UsageHit,
+} from './lib/migrate-phases.ts';
 
 const argv = import.meta.main
   ? applyUnknownLongOptionGuardFor('bun-migrate', Bun.argv.slice(2))
   : Bun.argv.slice(2);
-const joinPath = (...parts: string[]) => parts.filter(Boolean).join('/').replace(/\/+/g, '/');
-const REPO_ROOT = joinPath(import.meta.dir, '..');
+const REPO_ROOT = resolvePath(import.meta.dir, '..');
 const DEFAULT_ROOTS = ['lib', 'tools', 'scripts', 'packages'];
 const DEFAULT_OUT = joinPath(REPO_ROOT, 'reports/bun-usage-inventory.json');
 const CATALOG_PATH = joinPath(REPO_ROOT, 'tools/bun-docs-catalog.json');
-
-export type MigrateSection = 'runtime' | 'crypto' | 'fs' | 'shell' | 'test' | 'bundler' | 'http';
-
-export type UsageHit = {
-  file: string;
-  line: number;
-  snippet: string;
-  nodePattern: string;
-  bunToken: string;
-  migrateSection: MigrateSection;
-  catalogSection?: string;
-  locusStatus?: string;
-  docsUrl?: string;
-  /** True when file is in VALIDATE_WHITELIST (catalog / intentional Node). */
-  whitelisted?: boolean;
-};
 
 export type UsageInventoryReport = {
   generatedAt: string;
@@ -248,29 +238,6 @@ const SKIP_PATH_PARTS = [
   'migrate-runtime.ts',
 ];
 
-/** Whitelist for validate:integrity (tools / pattern catalogs). */
-export const VALIDATE_WHITELIST = new Set([
-  'scripts/bun-migrate.ts',
-  'scripts/lib/migrate-crypto.ts',
-  'scripts/lib/migrate-fs.ts',
-  'scripts/lib/migrate-shell.ts',
-  'scripts/lib/migrate-runtime.ts',
-  'scripts/validate-integrity.ts',
-  'tools/bun-docs-changelog.ts',
-  'lib/console-depth.ts',
-  'scripts/dx-mcp.ts',
-  'scripts/lib/fs-bun.ts',
-  'packages/guards/src/bun-first-guard.ts',
-  'lib/docs/constants/utils.ts',
-  'packages/docs-tools/src/builders/url-builder.ts',
-  'scripts/pack-all.ts',
-  'scripts/brand-cpu-profile.ts',
-  'scripts/search-benchmark-dashboard.ts',
-  'lib/docs/ripgrep-spawn.ts',
-  'lib/docs/smart-symbol-index.ts',
-  'tools/overseer-cli.ts',
-]);
-
 function normalizeTokenName(name: string): string {
   return name
     .trim()
@@ -301,13 +268,13 @@ async function collectTsFiles(roots: string[], includeTests: boolean): Promise<s
   const out: string[] = [];
   const glob = new Bun.Glob('**/*.{ts,tsx,mts,cts}');
   for (const root of roots) {
-    const abs = joinPath(REPO_ROOT, root);
+    const abs = resolvePath(REPO_ROOT, root);
     const info = await Bun.file(abs)
       .stat()
       .catch(() => null);
     if (!info?.isDirectory()) continue;
     for await (const f of glob.scan({ cwd: abs, absolute: true })) {
-      const rel = f.slice(REPO_ROOT.length + 1);
+      const rel = relativePath(REPO_ROOT, f);
       if (shouldSkipFile(rel, includeTests)) continue;
       out.push(f);
     }
@@ -365,7 +332,7 @@ export async function scanUsageInventory(opts: {
   const hits: UsageHit[] = [];
 
   for (const file of files) {
-    const rel = file.slice(REPO_ROOT.length + 1);
+    const rel = relativePath(REPO_ROOT, file);
     const text = await Bun.file(file).text();
     const bunSpawnOnly =
       /\bfrom\s+['"]bun['"]|\bimport\s*\(\s*['"]bun['"]\s*\)/.test(text) &&
@@ -601,7 +568,6 @@ async function cmdApply(args: string[]): Promise<number> {
     : DEFAULT_ROOTS;
   const workspace = flagValue(args, '--workspace');
 
-  const { PHASE_SECTION } = await import('./lib/migrate-phases.ts');
   const expectedSection = PHASE_SECTION[phase];
   const section = sectionArg ?? expectedSection;
 

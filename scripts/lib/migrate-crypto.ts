@@ -7,7 +7,7 @@
  * @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
  * @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
  */
-import { VALIDATE_WHITELIST, type UsageHit } from '../bun-migrate.ts';
+import { VALIDATE_WHITELIST, type UsageHit } from './migrate-phases.ts';
 import { resolvePath } from './fs-bun';
 
 const REPO_ROOT = resolvePath(import.meta.dir, '../..');

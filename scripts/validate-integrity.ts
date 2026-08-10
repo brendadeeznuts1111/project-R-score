@@ -10,7 +10,8 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  * @see scripts/bun-migrate.ts
  * @see scripts/BUN_NATIVE.md
  */
-import { scanUsageInventory, VALIDATE_WHITELIST, type MigrateSection } from './bun-migrate.ts';
+import { scanUsageInventory } from './bun-migrate.ts';
+import { VALIDATE_WHITELIST, type MigrateSection } from './lib/migrate-phases.ts';
 
 const DEFAULT_ROOTS = ['lib', 'tools', 'scripts', 'packages'];
 
