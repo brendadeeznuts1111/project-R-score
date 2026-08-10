@@ -30,14 +30,33 @@ export type PhoneSportsbookRow = {
   createdAt: string;
 };
 
+type PhoneSportsbookDbRow = {
+  id: string; // brand-ok — journal row pk
+  phone_id: string; // brand-ok — phones.id
+  sportsbook: string;
+  jurisdiction: string;
+  status: PhoneSportsbookStatus;
+  evidence_note: string | null;
+  observed_at: string;
+  created_at: string;
+};
+
+function toPhoneSportsbookRow(row: PhoneSportsbookDbRow): PhoneSportsbookRow {
+  return {
+    id: row.id,
+    phoneId: row.phone_id,
+    sportsbook: asSportsbookId(row.sportsbook),
+    jurisdiction: asStateCode(row.jurisdiction),
+    status: row.status,
+    evidenceNote: row.evidence_note,
+    observedAt: row.observed_at,
+    createdAt: row.created_at,
+  };
+}
+
 function mintId(prefix: string): string {
   return `${prefix}_${Bun.randomUUIDv7()}`;
 }
-
-export type AddPhoneResult = {
-  phoneId: string; // brand-ok — phones.id (no PhoneId brand yet)
-  created: boolean;
-};
 
 /** Add a phone into inventory (idempotent on id). */
 export function addPhone(
@@ -49,7 +68,7 @@ export function addPhone(
     carrier?: string;
     dataPlan?: string;
   }
-): AddPhoneResult {
+) {
   const phoneId = opts.id?.trim() || mintId('phone');
   const existing = db.query('SELECT id FROM phones WHERE id = $id').get({ $id: phoneId }) as {
     id: string; // brand-ok — phones.id
@@ -139,27 +158,9 @@ export function addPhoneSportsbook(
       $phone: opts.phoneId,
       $book: sportsbook as string,
       $jur: jurisdiction as string,
-    }) as {
-    id: string; // brand-ok — journal row pk
-    phone_id: string; // brand-ok — phones.id
-    sportsbook: string;
-    jurisdiction: string;
-    status: PhoneSportsbookStatus;
-    evidence_note: string | null;
-    observed_at: string;
-    created_at: string;
-  };
+    }) as PhoneSportsbookDbRow;
 
-  return {
-    id: row.id,
-    phoneId: row.phone_id,
-    sportsbook: asSportsbookId(row.sportsbook),
-    jurisdiction: asStateCode(row.jurisdiction),
-    status: row.status,
-    evidenceNote: row.evidence_note,
-    observedAt: row.observed_at,
-    createdAt: row.created_at,
-  };
+  return toPhoneSportsbookRow(row);
 }
 
 /** Active geo sportsbook evidence for a phone (hard-gate input). */
@@ -174,27 +175,9 @@ export function listActivePhoneSportsbooks(
        WHERE phone_id = $phone AND status = 'active'
        ORDER BY observed_at DESC`
     )
-    .all({ $phone: phoneId }) as Array<{
-    id: string; // brand-ok — journal row pk
-    phone_id: string; // brand-ok — phones.id
-    sportsbook: string;
-    jurisdiction: string;
-    status: PhoneSportsbookStatus;
-    evidence_note: string | null;
-    observed_at: string;
-    created_at: string;
-  }>;
+    .all({ $phone: phoneId }) as PhoneSportsbookDbRow[];
 
-  return rows.map(row => ({
-    id: row.id,
-    phoneId: row.phone_id,
-    sportsbook: asSportsbookId(row.sportsbook),
-    jurisdiction: asStateCode(row.jurisdiction),
-    status: row.status,
-    evidenceNote: row.evidence_note,
-    observedAt: row.observed_at,
-    createdAt: row.created_at,
-  }));
+  return rows.map(toPhoneSportsbookRow);
 }
 
 export function phoneHasActiveGeoEvidence(
