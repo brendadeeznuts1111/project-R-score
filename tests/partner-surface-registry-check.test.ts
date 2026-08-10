@@ -90,6 +90,28 @@ describe('partner-surface-registry-check', () => {
     expect(good.filter(i => i.level === 'error')).toEqual([]);
   });
 
+  test('moneyPolicy structuredMinorUnits requires currency and integer minorUnits', () => {
+    const bag: PartnerSurfaceRegistryBag = {
+      schemaId: 'demo',
+      schemaIdField: 'kind',
+      artifactPath: 'x.json',
+      omits: [],
+      moneyPolicy: 'structuredMinorUnits',
+    };
+    expect(
+      checkRegistryArtifact('row.demo', bag, {
+        kind: 'demo',
+        amount: { currency: 'USD', minorUnits: 150 },
+      }).filter(i => i.level === 'error')
+    ).toEqual([]);
+    expect(
+      checkRegistryArtifact('row.demo', bag, {
+        kind: 'demo',
+        amount: { currency: 'USD', minorUnits: 1.5 },
+      }).some(i => i.message.includes('structuredMinorUnits'))
+    ).toBe(true);
+  });
+
   test('conceptIds are not treated as JSON paths', () => {
     const bag: PartnerSurfaceRegistryBag = {
       schemaId: 'demo',

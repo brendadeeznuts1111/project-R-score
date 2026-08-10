@@ -130,7 +130,8 @@ export const PARTNER_SURFACE_OUT_ID_PATTERN = /^out-[A-Z]{3,6}-[1-9][0-9]*$/;
 /** PartnerCallSignCode shape used for partners-ops callSign checks. */
 export const PARTNER_SURFACE_CALL_SIGN_PATTERN = /^[A-Z]{3,6}-[0-9]{3}$/;
 
-export type PartnerSurfaceMoneyPolicy = 'integerMinorUnits' | 'forbidden' | 'unset';
+export type PartnerSurfaceMoneyPolicy =
+  'integerMinorUnits' | 'structuredMinorUnits' | 'forbidden' | 'unset';
 
 /**
  * Layer-3 bag on registry rows — file + schema + omit policy.
@@ -353,6 +354,19 @@ export const PARTNER_DOCUMENTATION_REFS = [
       'docs/design/partner-dashboard-mvp.toml',
       'packages/partners/src/dashboard-plan.ts',
     ],
+  },
+  {
+    id: 'doc.partner-dashboard-squad',
+    token: 'partner-dashboard-squad',
+    path: 'docs/design/partner-dashboard-squad.md',
+    refId: '0.1.partner-dashboard-squad',
+    conceptDomains: ['partners', 'operations', 'portal'],
+    chromeDomains: ['partner'],
+    primaryPortalHref: '/portal/partners/',
+    authority: 'plan',
+    owner: '@factorywager/partners',
+    properties: ['parallel lane ownership', 'worktree delivery prompts'],
+    machineRefs: ['docs/design/partner-dashboard-mvp.toml', 'packages/partners/'],
   },
   {
     id: 'doc.partner-dashboard-semantic-map',
@@ -1064,6 +1078,26 @@ export const PARTNER_SURFACE_STATIC_ROWS: readonly PartnerSurfaceRow[] = [
       omits: ['vaultKey', 'password', 'softBalance', 'apiKey', 'api_key'],
       moneyPolicy: 'integerMinorUnits',
       requiredTopKeys: ['schema', 'partners', 'summary'],
+    },
+  }),
+  row({
+    id: 'registry.partners-dashboard',
+    aspect: 'registry',
+    machine: 'artifact',
+    token: 'partners-dashboard',
+    repo: 'project-R-score',
+    path: 'public/registry/partners-dashboard.json',
+    href: '/registry/partners-dashboard.json',
+    properties: ['schema factorywager.partners-dashboard.v2', 'boards: desk, partners, account'],
+    owner: 'packages/partners dashboard assembler',
+    registry: {
+      schemaId: 'factorywager.partners-dashboard.v2',
+      schemaIdField: 'schema',
+      artifactPath: 'public/registry/partners-dashboard.json',
+      conceptIds: ['partner.phase.*', 'out.status.*', 'ops.view.per_account'],
+      omits: ['vaultKey', 'password', 'apiKey', 'api_key'],
+      moneyPolicy: 'structuredMinorUnits',
+      requiredTopKeys: ['schema', 'connectorSnapshots', 'activeOutIds', 'summary'],
     },
   }),
   row({

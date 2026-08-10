@@ -174,21 +174,14 @@ export const SIMD_ROUTES: PublicRouteDef[] = [
     name: 'Portal index /',
     category: 'portal',
     kind: 'simd-route',
+    critical: true,
     okStatuses: [200],
+    note: 'app.js · static /registry/registry.json fallback',
   },
 ];
 
 /** Portal dashboard HTML surfaces (file/static via fetch or directory index). */
 export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
-  {
-    path: '/portal/',
-    name: 'Registry portal',
-    category: 'portal',
-    kind: 'file-static',
-    critical: true,
-    okStatuses: [200],
-    note: 'app.js · static /registry/registry.json fallback',
-  },
   {
     path: '/portal/ops/',
     name: 'Ops dashboard',
@@ -419,22 +412,6 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     kind: 'simd-route',
     okStatuses: [200, 500, 503],
     note: 'GET accuracy · POST cycle local; Pages stub 503',
-  },
-  {
-    path: '/api/limits/analyze',
-    name: 'Limit granular analysis API',
-    category: 'api',
-    kind: 'simd-route',
-    okStatuses: [200],
-    note: 'public — granular breakdown by book/sport/market + regulatory correlation',
-  },
-  {
-    path: '/api/limits/predictions',
-    name: 'Limit predictions API',
-    category: 'api',
-    kind: 'simd-route',
-    okStatuses: [200],
-    note: 'GET returns accuracy; POST runs prediction cycle',
   },
   {
     path: '/portal/toc/',
@@ -814,21 +791,14 @@ export const HOT_STATIC_ROUTES: PublicRouteDef[] = [
   },
 ];
 
-/** Full catalog (deduped by path, first wins). */
+/** Full route catalog. Source arrays are required to be path-unique. */
 export function publicRouteCatalog(): PublicRouteDef[] {
-  const seen = new Set<string>();
-  const out: PublicRouteDef[] = [];
-  for (const r of [
+  return [
     ...SIMD_ROUTES,
     ...PORTAL_DASHBOARD_ROUTES,
     ...FETCH_HANDLER_ROUTES,
     ...HOT_STATIC_ROUTES,
-  ]) {
-    if (seen.has(r.path)) continue;
-    seen.add(r.path);
-    out.push(r);
-  }
-  return out;
+  ];
 }
 
 /** Group catalog for dashboards / inspect.table sections. */

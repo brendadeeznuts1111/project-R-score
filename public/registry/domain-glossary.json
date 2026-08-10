@@ -263,6 +263,12 @@
           "title": "Sportsbook patterns"
         },
         {
+          "hash": "limit-watch",
+          "domId": "limit-watch",
+          "conceptId": "section.limitWatch",
+          "title": "Cross-market limit watch"
+        },
+        {
           "hash": "geo-patterns-section",
           "domId": "geo-patterns-section",
           "conceptId": "section.stateZipPatterns",
@@ -312,6 +318,11 @@
     {
       "path": "/portal/partner/",
       "concept": "page.partnerHealth",
+      "sections": []
+    },
+    {
+      "path": "/portal/desk/",
+      "concept": "page.partnerDesk",
       "sections": []
     },
     {
@@ -435,13 +446,13 @@
     }
   ],
   "summary": {
-    "concepts": 479,
-    "active": 469,
+    "concepts": 481,
+    "active": 471,
     "deprecated": 10,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 342,
+    "portalSemantics": 344,
     "categories": {
       "market": 33,
       "model": 18,
@@ -450,7 +461,7 @@
       "registry": 1,
       "tournament": 99,
       "trading": 59,
-      "ui": 188,
+      "ui": 190,
       "warehouse": 27
     },
     "kinds": {
@@ -474,13 +485,13 @@
       "registry": 39,
       "sport": 11,
       "tournament": 6,
-      "ui": 262
+      "ui": 264
     },
     "semanticTypes": {
       "classification": 169,
       "location": 4,
       "presentation": 14,
-      "resource": 117,
+      "resource": 119,
       "state": 37,
       "version": 1
     },
@@ -488,7 +499,7 @@
       "badge": 66,
       "chip": 130,
       "code": 37,
-      "heading": 81,
+      "heading": 83,
       "link": 24,
       "token": 4
     }
@@ -4840,6 +4851,41 @@
       "color": "#58a6ff"
     },
     {
+      "id": "page.partnerDesk",
+      "label": "Morning desk",
+      "description": "Quiet morning board: accounts by partner/type/skin/live, limit totals, balances, soft net 24h/7d, Telegram handshake signals, freezes.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "morning desk",
+        "partner desk",
+        "daily desk",
+        "login inventory"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "correlationId": "legacy",
+      "addedAt": "2026-01-01",
+      "domain": "portal",
+      "namespace": "page",
+      "color": "#58a6ff"
+    },
+    {
       "id": "page.partners",
       "label": "Partners",
       "description": "Portal page for partner accounts, limit coverage, package Telegram forums, Accounting topic deals, and seat-desk deposit rails.",
@@ -7080,6 +7126,39 @@
       "uiRole": "heading",
       "correlationId": "legacy",
       "addedAt": "2026-01-01",
+      "domain": "portal",
+      "namespace": "section",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "section.limitWatch",
+      "label": "Cross-market limit watch",
+      "description": "Section comparing market-level limit evidence across sportsbooks, sports, and selection types.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "limit watch",
+        "cross-market limits"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "page.limitPatterns",
+        "section.sportsbookPatterns",
+        "section.recentLimitChanges"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "correlationId": "legacy",
+      "addedAt": "2026-08-10",
       "domain": "portal",
       "namespace": "section",
       "color": "#58a6ff"

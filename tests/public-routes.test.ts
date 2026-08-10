@@ -15,6 +15,7 @@ describe('lib/http/public-routes', () => {
   test('catalog includes portal dashboards + health + critical APIs', () => {
     const cat = publicRouteCatalog();
     const paths = new Set(cat.map(r => r.path));
+    expect(paths.size).toBe(cat.length);
     expect(paths.has('/health')).toBe(true);
     expect(paths.has('/health/pre')).toBe(true);
     expect(paths.has('/portal/ops/')).toBe(true);

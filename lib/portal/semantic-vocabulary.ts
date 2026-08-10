@@ -1065,6 +1065,20 @@ export const PORTAL_SEMANTIC_CONCEPTS = [
     addedAt: '2026-01-01',
   },
   {
+    id: 'section.limitWatch',
+    namespace: 'section',
+    domain: 'portal',
+    label: 'Cross-market limit watch',
+    description:
+      'Section comparing market-level limit evidence across sportsbooks, sports, and selection types.',
+    semanticType: 'resource',
+    uiRole: 'heading',
+    synonyms: ['limit watch', 'cross-market limits'],
+    seeAlso: ['page.limitPatterns', 'section.sportsbookPatterns', 'section.recentLimitChanges'],
+    correlationId: 'legacy',
+    addedAt: '2026-08-10',
+  },
+  {
     id: 'section.stateZipPatterns',
     namespace: 'section',
     domain: 'portal',
@@ -2038,6 +2052,7 @@ export const LIMIT_SURFACE_CONCEPTS = {
   patternSummary: 'section.patternSummary',
   prediction: 'section.limitRaisePrediction',
   sportsbookPatterns: 'section.sportsbookPatterns',
+  limitWatch: 'section.limitWatch',
   stateZipPatterns: 'section.stateZipPatterns',
   downlineContext: 'section.downlineContext',
   dataConnectionAudit: 'section.dataConnectionAudit',

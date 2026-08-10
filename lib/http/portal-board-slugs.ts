@@ -32,6 +32,7 @@ export const PORTAL_BOARD_SLUGS = [
   'packages',
   'account',
   'agent-odds',
+  'desk',
   'partner',
   'partner-history',
   'partners',
@@ -42,10 +43,3 @@ export const PORTAL_BOARD_SLUGS = [
   'tools',
   'vault',
 ] as const;
-
-export type PortalBoardSlug = (typeof PORTAL_BOARD_SLUGS)[number];
-
-/** Exact route paths (no trailing slash + trailing slash) for a board slug. */
-export function portalBoardRoutePaths(slug: PortalBoardSlug | string): [string, string] {
-  return [`/portal/${slug}`, `/portal/${slug}/`];
-}
