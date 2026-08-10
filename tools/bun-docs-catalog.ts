@@ -115,10 +115,6 @@ export const DocRefTypeArray = [
 
 export type DocRefType = (typeof DocRefTypeArray)[number];
 
-export function isDocRefType(value: string): value is DocRefType {
-  return DocRefTypeArray.includes(value as DocRefType);
-}
-
 export type DocStability = 'stable' | 'experimental' | 'deprecated';
 export type DocSection = 'runtime' | 'bundler' | 'test' | 'guides' | 'pm' | 'reference' | 'other';
 

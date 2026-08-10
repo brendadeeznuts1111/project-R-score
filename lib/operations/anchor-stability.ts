@@ -165,22 +165,12 @@ export function listPartnersWithHistory(opts: { path?: string } = {}): string[] 
   return rows.map(r => r.partnerId);
 }
 
-export type StaleAnchorScan = {
-  ok: true;
-  scanned: number;
-  signals: StaleAnchorSignal[];
-  generatedAt: string;
-  opts: AnchorStabilityOpts;
-};
-
 /**
  * DB-backed scan: enumerate every partner with limit history, read each
  * partner's newest-first history, and run stale-anchor detection.
  * Safe with an empty database (returns ok with zero signals).
  */
-export function scanStaleAnchorsFromDb(
-  opts: AnchorStabilityOpts & { path?: string } = {}
-): StaleAnchorScan {
+export function scanStaleAnchorsFromDb(opts: AnchorStabilityOpts & { path?: string } = {}) {
   const { path, ...rest } = opts;
   const partners = listPartnersWithHistory({ path });
   const histories: Record<string, LimitHistoryRow[]> = {};
@@ -192,7 +182,7 @@ export function scanStaleAnchorsFromDb(
   }
   const signals = scanStaleAnchors(histories, rest);
   return {
-    ok: true,
+    ok: true as const,
     scanned: partners.length,
     signals,
     generatedAt: new Date().toISOString(),

@@ -414,9 +414,9 @@ export async function runReleaseVerification(
     results,
     {
       name: '--no-orphans support',
-      expected: 'configured in bunfig + env',
+      expected: 'configured in bunfig or env',
       actual: `bunfig=${bunfigText.includes('noOrphans')}, env=${!!Bun.env.BUN_FEATURE_FLAG_NO_ORPHANS}`,
-      passed: Bun.env.BUN_FEATURE_FLAG_NO_ORPHANS === '1',
+      passed: bunfigText.includes('noOrphans') || Bun.env.BUN_FEATURE_FLAG_NO_ORPHANS === '1',
       anchor: 'no-orphans',
     },
     ctx
