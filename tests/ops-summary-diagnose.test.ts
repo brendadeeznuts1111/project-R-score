@@ -1,14 +1,16 @@
 // @see docs/harness/ops-summary-endpoint.md
 import { describe, expect, test } from 'bun:test';
 import {
-  classifySummaryPayload,
-  detectRoutingDrift,
   embeddedRoutingFailures,
   formatComplianceBoardLine,
   formatSourceLabel,
-  parseSummaryShape,
   severityToExitCode,
   snapshotAgeWarn,
+} from '../lib/operations/ops-summary-diagnose-format.ts';
+import {
+  classifySummaryPayload,
+  detectRoutingDrift,
+  parseSummaryShape,
 } from '../lib/operations/ops-summary-diagnose.ts';
 
 describe('ops-summary-diagnose', () => {
