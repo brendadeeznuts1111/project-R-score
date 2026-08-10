@@ -1,8 +1,8 @@
 {
   "formulaVersion": 1,
-  "minScore": 41,
+  "minScore": 42,
   "maxDeadCodePercent": 6.8,
-  "maxLargeFilePercent": 42.8,
+  "maxLargeFilePercent": 42.7,
   "maxCyclicDependencyCount": 11,
   "maxDuplicateDepCount": 2
 }

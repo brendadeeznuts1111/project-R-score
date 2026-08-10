@@ -15,15 +15,17 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 import { jsonOut } from '../lib/console-depth.ts';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import {
-  CRITICAL_ROUTE_PATHS,
-  classifySummaryPayload,
-  detectRoutingDrift,
   embeddedRoutingFailures,
   formatComplianceBoardLine,
   formatSourceLabel,
-  parseSummaryShape,
   severityToExitCode,
   snapshotAgeWarn,
+} from '../lib/operations/ops-summary-diagnose-format.ts';
+import {
+  CRITICAL_ROUTE_PATHS,
+  classifySummaryPayload,
+  detectRoutingDrift,
+  parseSummaryShape,
   type OpsSummaryDiagnoseShape,
 } from '../lib/operations/ops-summary-diagnose.ts';
 
