@@ -6,7 +6,7 @@
  * @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
  */
 import { resolvePath } from './fs-bun';
-import { VALIDATE_WHITELIST, type UsageHit } from '../bun-migrate.ts';
+import { VALIDATE_WHITELIST, type UsageHit } from './migrate-phases.ts';
 
 const REPO_ROOT = resolvePath(import.meta.dir, '../..');
 
