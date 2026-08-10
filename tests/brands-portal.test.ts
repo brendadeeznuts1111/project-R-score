@@ -5,15 +5,20 @@ import { PORTAL_WEAVE_ARTIFACTS, PORTAL_WEAVE_SURFACES } from '../lib/http/porta
 
 describe('brand keymap portal', () => {
   test('registry artifact exposes glossary, governance, and project adoption', async () => {
-    const payload = await Bun.file('public/registry/brand-keymap.json').json();
+    const [payload, manifest] = await Promise.all([
+      Bun.file('public/registry/brand-keymap.json').json(),
+      Bun.file('lib/types/brand-manifest.json').json(),
+    ]);
 
+    // The keymap bake derives its brand/domain counts from the manifest SSOT;
+    // assert against it instead of a hardcoded count that drifts as brands land.
     expect(payload).toMatchObject({
       schemaVersion: 1,
       kind: 'brand-keymap',
       path: '/registry/brand-keymap.json',
       summary: {
-        brands: 82,
-        domains: 10,
+        brands: manifest.brandCount,
+        domains: manifest.domainCount,
       },
       sources: {
         colorKernel: 'public/portal/theme.jsonc',
@@ -23,7 +28,7 @@ describe('brand keymap portal', () => {
         stagedGate: 'bun tools/branded-id-check.ts --staged --strict',
       },
     });
-    expect(payload.brands).toHaveLength(82);
+    expect(payload.brands).toHaveLength(manifest.brandCount);
     expect(payload.brands.some((b: { name: string }) => b.name === 'OidcClientId')).toBe(true);
     expect(payload.brands.some((b: { name: string }) => b.name === 'DomId')).toBe(true);
     expect(payload.brands.some((b: { name: string }) => b.name === 'HostId')).toBe(true);
