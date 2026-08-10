@@ -83,7 +83,7 @@ function isSourceMode(value: string): value is SportsTerminalSourceMode {
 function dataStatusFromOverall(overall: SportsTerminalOverallStatus): ConnectorDataStatus {
   if (overall === 'healthy') return 'ok';
   if (overall === 'degraded') return 'stale';
-  if (overall === 'unhealthy') return 'error';
+  if (overall === 'unhealthy') return 'unavailable';
   return 'unavailable';
 }
 
@@ -278,7 +278,7 @@ export function parseSportsTerminalIntegrationHealth(
       healthyCount,
       ...(maxStakeMinorUnits !== undefined ? { maxStakeMinorUnits } : {}),
       observedAt: rowObservedAt,
-      provenance: proof(rowObservedAt, String(externalId), overallText),
+      provenance: proof(rowObservedAt, externalId, overallText),
     });
   }
 
@@ -336,7 +336,6 @@ export type SportsTerminalIntegrationHealthDocument = {
  * Pure — no I/O, no ST producer imports, no partnerRoutes mount.
  */
 export function normalizeSportsTerminalIntegrationHealthDocument(
-  // eslint-disable-next-line harness/no-unknown-function-param -- wire edge from live GET or fixture file
   input: unknown,
   options?: {
     source?: SportsTerminalSourceMode;

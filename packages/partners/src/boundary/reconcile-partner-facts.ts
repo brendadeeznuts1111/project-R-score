@@ -53,7 +53,6 @@ import {
   type PartnerDashboardRecord,
   type PartnerSourceConflict,
   type ProviderConnectionStatus,
-  type SportsbookId,
 } from '../core/types.ts';
 
 const TENNIS_SOURCE_SYSTEM_ID = parseSourceSystemId('tennis-hq');

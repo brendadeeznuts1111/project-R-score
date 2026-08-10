@@ -92,13 +92,20 @@ function checkMoneyPolicy(
     return issues;
   }
 
-  // integerMinorUnits — every money-bearing field must be an integer number
+  // Money-bearing values are either integer scalars or { currency, minorUnits } objects.
   for (const { path, key, value } of keys) {
     if (!isMoneyBearingKey(key)) continue;
-    if (typeof value !== 'number' || !Number.isInteger(value)) {
+    const valid =
+      policy === 'integerMinorUnits'
+        ? typeof value === 'number' && Number.isInteger(value)
+        : isRecord(value) &&
+          typeof value.currency === 'string' &&
+          typeof value.minorUnits === 'number' &&
+          Number.isInteger(value.minorUnits);
+    if (!valid) {
       issues.push({
         level: 'error',
-        message: `${rowId}: moneyPolicy=integerMinorUnits but ${path} is ${typeof value === 'number' ? value : typeof value} (want integer)`,
+        message: `${rowId}: moneyPolicy=${policy} but ${path} has the wrong money shape`,
       });
     }
   }

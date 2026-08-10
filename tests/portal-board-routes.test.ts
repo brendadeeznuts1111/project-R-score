@@ -1,8 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import {
-  PORTAL_BOARD_SLUGS,
-  portalBoardRoutePaths,
-} from '../lib/http/portal-board-slugs.ts';
+import { PORTAL_BOARD_SLUGS } from '../lib/http/portal-board-slugs.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
 
 const REPO = resolvePath(import.meta.dir, '..');
@@ -13,10 +10,6 @@ describe('portal board routes SSOT', () => {
       const index = joinPath(REPO, 'public/portal', slug, 'index.html');
       expect(await Bun.file(index).exists()).toBe(true);
     }
-  });
-
-  test('portalBoardRoutePaths pairs slash variants', () => {
-    expect(portalBoardRoutePaths('vault')).toEqual(['/portal/vault', '/portal/vault/']);
   });
 
   test('serve-public imports PORTAL_BOARD_SLUGS and wires portalBoardRoutes', async () => {

@@ -5,7 +5,7 @@ import {
   PORTAL_MARKDOWN_SLUGS,
   PORTAL_TRAILING_SLASH_SOURCES,
 } from '../lib/http/portal-route-manifest.ts';
-import { PORTAL_DASHBOARD_ROUTES, publicRouteCatalog } from '../lib/http/public-routes.ts';
+import { publicRouteCatalog } from '../lib/http/public-routes.ts';
 
 describe('portal route wiring', () => {
   test('_redirects covers all trailing-slash sources', async () => {
@@ -30,7 +30,7 @@ describe('portal route wiring', () => {
   });
 
   test('public-routes catalog includes critical portal surfaces', () => {
-    const paths = new Set(PORTAL_DASHBOARD_ROUTES.map(r => r.path));
+    const paths = new Set(publicRouteCatalog().map(r => r.path));
     expect(paths.has('/portal/')).toBe(true);
     expect(paths.has('/portal/ops/')).toBe(true);
     expect(paths.has('/portal/toc/')).toBe(true);

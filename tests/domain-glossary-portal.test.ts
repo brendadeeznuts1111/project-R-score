@@ -30,6 +30,7 @@ import { sportsBettingGlossaryConcepts } from '../lib/operations/sports-betting-
 import { sportsbookOpeningBaselineGlossaryConcepts } from '../lib/operations/sportsbook-opening-baseline.ts';
 import { telegramGlossaryConcepts } from '../lib/telegram/telegram-glossary.ts';
 import { partnerOpsGlossaryConcepts } from '../lib/telegram/partner-ops-glossary.ts';
+import { partnerDashboardGlossaryConcepts } from '../lib/telegram/partner-dashboard-glossary.ts';
 import { opsViewGlossaryConcepts } from '../lib/telegram/ops-view-glossary.ts';
 import { tournamentSeriesGlossaryConcepts } from '../lib/glossary/tournament-series-glossary.ts';
 
@@ -70,6 +71,7 @@ describe('domain glossary portal', () => {
         sportsbookOpeningBaselineGlossaryConcepts().length +
         telegramGlossaryConcepts().length +
         partnerOpsGlossaryConcepts().length +
+        partnerDashboardGlossaryConcepts().length +
         opsViewGlossaryConcepts().length +
         tournamentSeriesGlossaryConcepts().length
     );
@@ -220,6 +222,12 @@ describe('domain glossary portal', () => {
             domId: 'recent-changes',
             conceptId: 'section.recentLimitChanges',
             title: 'Recent limit changes',
+          },
+          {
+            hash: 'limit-watch',
+            domId: 'limit-watch',
+            conceptId: 'section.limitWatch',
+            title: 'Cross-market limit watch',
           },
         ]),
       })

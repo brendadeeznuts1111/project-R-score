@@ -1,5 +1,9 @@
 # Partner dashboard squad — worktrees, lanes, spawn prompts
 
+<!-- REF:ID 0.1.partner-dashboard-squad -->
+
+<a id="0.1.partner-dashboard-squad"></a>
+
 **Baseline:** after Lane 0 lands on `main` (plan validate green).  
 **Primary checkout:** `~/Projects` tracks `main` only.  
 **Each agent:** dedicated worktree + branch; pathspec commits; squash PR.

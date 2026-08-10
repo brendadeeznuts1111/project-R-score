@@ -50,16 +50,19 @@ async function loadModule<T>(rel: string): Promise<T> {
 
 type ConsoleDepthMod = typeof import('../lib/console-depth.ts');
 type DeepEqualsMod = typeof import('../lib/deep-equals.ts');
-type EscapeHtmlMod = typeof import('../lib/escape-html.ts');
 type ComplianceMod = typeof import('../lib/operations/state-compliance-http.ts');
 
-const { getConsoleDepth, inspect, jsonOut, logDepth, logTable } =
-  await loadModule<ConsoleDepthMod>('lib/console-depth.ts');
-const { deepEqualsStrict, deepEqualsModes, deepEqualsDocsStrictProof } =
-  await loadModule<DeepEqualsMod>('lib/deep-equals.ts');
-const { escapeHtml } = await loadModule<EscapeHtmlMod>('lib/escape-html.ts');
-const { ComplianceClient, createMockComplianceDb, createStateComplianceFetchHandler } =
-  await loadModule<ComplianceMod>('lib/operations/state-compliance-http.ts');
+function loadConsoleDepthModule(): Promise<ConsoleDepthMod> {
+  return loadModule<ConsoleDepthMod>('lib/console-depth.ts');
+}
+
+function loadDeepEqualsModule(): Promise<DeepEqualsMod> {
+  return loadModule<DeepEqualsMod>('lib/deep-equals.ts');
+}
+
+function loadComplianceModule(): Promise<ComplianceMod> {
+  return loadModule<ComplianceMod>('lib/operations/state-compliance-http.ts');
+}
 
 export type EnhancementRow = {
   feature: string;
@@ -88,13 +91,16 @@ function row(
     feature,
     expectedState,
     actualState,
-    match: deepEqualsStrict(expectedState, actualState),
+    match: Bun.deepEquals(expectedState, actualState, true),
     notes,
   };
 }
 
 /** In-process verification rows (no TCP) — safe for CI and `bun run -`. */
 export async function buildEnhancementRows(): Promise<EnhancementRow[]> {
+  const { deepEqualsModes, deepEqualsDocsStrictProof } = await loadDeepEqualsModule();
+  const { createMockComplianceDb, createStateComplianceFetchHandler } =
+    await loadComplianceModule();
   const db = createMockComplianceDb();
   const fetchHandler = createStateComplianceFetchHandler(db);
   const rows: EnhancementRow[] = [];
@@ -257,7 +263,7 @@ export async function buildEnhancementRows(): Promise<EnhancementRow[]> {
     // Bun.escapeHTML — high-throughput entity escape for report HTML
     {
       const raw = `<script>alert("x")</script> & 'MA'`;
-      const escaped = escapeHtml(raw);
+      const escaped = Bun.escapeHTML(raw);
       rows.push(
         row(
           'runtime.escapeHTML',
@@ -299,6 +305,7 @@ export function signReport(payload: Omit<EnhancementReport, 'signature'>): strin
 }
 
 export async function buildEnhancementReport(): Promise<EnhancementReport> {
+  const { getConsoleDepth } = await loadConsoleDepthModule();
   const rows = await buildEnhancementRows();
   const passed = rows.filter(r => r.match).length;
   const base = {
@@ -320,6 +327,8 @@ function parseArg(name: string): string | undefined {
 }
 
 async function printLiveStatus(): Promise<void> {
+  const { ComplianceClient } = await loadComplianceModule();
+  const { getConsoleDepth, logDepth } = await loadConsoleDepthModule();
   const nodeId = parseArg('status') ?? Bun.env.COMPLIANCE_NODE_ID ?? 'demo-ma-licensed';
   const state = parseArg('state') ?? 'MA';
   const baseUrl = parseArg('url') ?? Bun.env.COMPLIANCE_MOCK_URL;
@@ -346,11 +355,11 @@ async function printLiveStatus(): Promise<void> {
 export function reportToHtml(report: EnhancementReport): string {
   const rows = report.rows
     .map(r => {
-      const feature = escapeHtml(r.feature);
+      const feature = Bun.escapeHTML(r.feature);
       const match = r.match ? 'pass' : 'fail';
-      const notes = escapeHtml(r.notes ?? '');
-      const expected = escapeHtml(JSON.stringify(r.expectedState));
-      const actual = escapeHtml(JSON.stringify(r.actualState));
+      const notes = Bun.escapeHTML(r.notes ?? '');
+      const expected = Bun.escapeHTML(JSON.stringify(r.expectedState));
+      const actual = Bun.escapeHTML(JSON.stringify(r.actualState));
       return `<tr class="${match}"><td>${feature}</td><td>${match}</td><td>${notes}</td><td><code>${expected}</code></td><td><code>${actual}</code></td></tr>`;
     })
     .join('\n');
@@ -358,7 +367,7 @@ export function reportToHtml(report: EnhancementReport): string {
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>${escapeHtml(`Enhancement report ${report.passed}/${report.total}`)}</title>
+  <title>${Bun.escapeHTML(`Enhancement report ${report.passed}/${report.total}`)}</title>
   <style>
     body{font:14px/1.4 system-ui,sans-serif;margin:2rem;background:#0b0f14;color:#e6edf3}
     table{border-collapse:collapse;width:100%}
@@ -372,9 +381,9 @@ export function reportToHtml(report: EnhancementReport): string {
 </head>
 <body>
   <h1>Enhancement report</h1>
-  <p class="meta">${escapeHtml(report.generatedAt)} · depth=${escapeHtml(report.consoleDepth)} ·
-    ${escapeHtml(report.passed)}/${escapeHtml(report.total)} pass ·
-    sha256=${escapeHtml(report.signature)}</p>
+  <p class="meta">${Bun.escapeHTML(report.generatedAt)} · depth=${Bun.escapeHTML(report.consoleDepth)} ·
+    ${Bun.escapeHTML(report.passed)}/${Bun.escapeHTML(report.total)} pass ·
+    sha256=${Bun.escapeHTML(report.signature)}</p>
   <table>
     <thead><tr><th>feature</th><th>match</th><th>notes</th><th>expected</th><th>actual</th></tr></thead>
     <tbody>
@@ -387,6 +396,7 @@ ${rows}
 }
 
 async function printReport(): Promise<void> {
+  const { inspect, logDepth, logTable } = await loadConsoleDepthModule();
   const report = await buildEnhancementReport();
   const depth = report.consoleDepth;
 
@@ -440,6 +450,7 @@ async function main(): Promise<void> {
   }
 
   if (Bun.argv.includes('--json')) {
+    const { jsonOut } = await loadConsoleDepthModule();
     const report = await buildEnhancementReport();
     jsonOut(report);
     if (report.passed !== report.total) process.exitCode = 1;

@@ -74,6 +74,7 @@ Routing tables: [`docs/AGENTS.md`](docs/AGENTS.md).
 | Bench / profile metrics | [`docs/harness/tenants/bun-bench-profiling.md`](docs/harness/tenants/bun-bench-profiling.md) · `bench:status` |
 | Authority / merge proof | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · `bun run bun:ci` |
 | Wire / brands / install | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) · branded skill · [`docs/UNIFIED.md`](docs/UNIFIED.md) |
+| Domain → concept → shape → surface | [`docs/DOMAIN_CONCEPT_SHAPE.md`](docs/DOMAIN_CONCEPT_SHAPE.md) |
 | Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
 | Coding standards | [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) |
 

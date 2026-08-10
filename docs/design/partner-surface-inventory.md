@@ -215,7 +215,7 @@ Evidence (Layer A **warn** on drift):
 | `schemaIdField`   | `schema` · `kind` · `schemaVersion` · `none`                          |
 | `artifactPath`    | Path under repo to baked JSON                                         |
 | `omits`           | Object **key names** that must be absent anywhere in the artifact     |
-| `moneyPolicy`     | `integerMinorUnits` · `forbidden` · `unset`                           |
+| `moneyPolicy`     | `integerMinorUnits` · `structuredMinorUnits` · `forbidden` · `unset`  |
 | `requiredTopKeys` | Top-level keys that must exist                                        |
 | `conceptIds`      | Glossary / relatedConcept refs (may include `*`) — **not** JSON paths |
 

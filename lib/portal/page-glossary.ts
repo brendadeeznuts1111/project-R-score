@@ -103,6 +103,7 @@ const PAGE_SECTIONS: Readonly<
       LIMIT_SURFACE_CONCEPTS.sportsbookPatterns,
       'Sportsbook patterns'
     ),
+    bareMount('limit-watch', LIMIT_SURFACE_CONCEPTS.limitWatch, 'Cross-market limit watch'),
     bareMount(
       'geo-patterns-section',
       LIMIT_SURFACE_CONCEPTS.stateZipPatterns,
