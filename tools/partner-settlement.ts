@@ -44,7 +44,6 @@ import {
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
 export const SETTLEMENT_FUND_STATUSES = ['ready', 'deferred', 'paused', 'blocked'] as const;
-export type SettlementFundStatus = (typeof SETTLEMENT_FUND_STATUSES)[number];
 const CURRENCY_RE = /^[A-Z]{3}$/i;
 
 export interface PostSettlementInput {

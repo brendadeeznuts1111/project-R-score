@@ -188,8 +188,6 @@ export class AdvancedLRUCache<T> extends EventEmitter {
   private tail: LRUCacheNode<T> | null = null;
   private cache = new Map<string, LRUCacheNode<T>>();
   private frequencyMap = new Map<string, number>(); // For LFU
-  private statsMutex = new Mutex(); // Thread-safe statistics
-
   // Enhanced statistics
   private hits = 0;
   private misses = 0;
@@ -301,13 +299,12 @@ export class AdvancedLRUCache<T> extends EventEmitter {
       this.newestEntry = Date.now();
     }
 
-    // Update statistics atomically
-    void this.updateStats(() => {
+    if (this.enableStats) {
       this.totalSets++;
       if (startTime > 0) {
         this.totalAccessTime += Bun.nanoseconds() - startTime;
       }
-    });
+    }
 
     // Emit event only if there are listeners
     this.safeEmit('cache:set', {
@@ -324,10 +321,10 @@ export class AdvancedLRUCache<T> extends EventEmitter {
     const node = this.cache.get(key);
 
     if (!node) {
-      void this.updateStats(() => {
+      if (this.enableStats) {
         this.misses++;
         this.totalGets++;
-      });
+      }
 
       this.safeEmit('cache:get', {
         type: 'get',
@@ -346,10 +343,10 @@ export class AdvancedLRUCache<T> extends EventEmitter {
       this.cache.delete(key);
       this.frequencyMap.delete(key);
 
-      void this.updateStats(() => {
+      if (this.enableStats) {
         this.misses++;
         this.totalGets++;
-      });
+      }
 
       // Update memory usage
       if (this.enableMemoryTracking) {
@@ -367,14 +364,13 @@ export class AdvancedLRUCache<T> extends EventEmitter {
       return null;
     }
 
-    // Update statistics and move node
-    void this.updateStats(() => {
+    if (this.enableStats) {
       this.hits++;
       this.totalGets++;
       if (startTime > 0) {
         this.totalAccessTime += Bun.nanoseconds() - startTime;
       }
-    });
+    }
 
     // Update frequency for LFU and move to appropriate position
     if (this.evictionPolicy === 'lfu') {
@@ -496,14 +492,6 @@ export class AdvancedLRUCache<T> extends EventEmitter {
       oldestEntry: this.oldestEntry > 0 ? this.oldestEntry : undefined,
       newestEntry: this.newestEntry > 0 ? this.newestEntry : undefined,
     };
-  }
-
-  // Enhanced utility methods
-  private async updateStats(updateFn: () => void): Promise<void> {
-    if (!this.enableStats) return;
-    await this.statsMutex.withLock(() => {
-      updateFn();
-    });
   }
 
   private safeEmit(event: string, data: CacheEvent): void {
@@ -1269,7 +1257,7 @@ export class AIOperationsManager extends EventEmitter {
    */
   async predict(timeframe: 'hour' | 'day' | 'week'): Promise<SystemPrediction> {
     const correlationId = this.generateCorrelationId();
-    const cacheKey = this.generateSecureCacheKey('predict', { timeframe, correlationId });
+    const cacheKey = this.generateSecureCacheKey('predict', { timeframe });
 
     // Try to get from cache first
     const cached = this.predictionsCache.get(cacheKey);

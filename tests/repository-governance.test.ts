@@ -61,6 +61,10 @@ describe('repository governance', () => {
     );
   });
 
+  test('prepare installs Husky hooks in the active worktree', () => {
+    expect(packageJson.scripts.prepare).toStartWith('bunx husky');
+  });
+
   test('release tags in the v* namespace are immutable', () => {
     expect(tagRuleset.target).toBe('tag');
     expect(tagRuleset.conditions.ref_name.include).toEqual(['refs/tags/v*']);

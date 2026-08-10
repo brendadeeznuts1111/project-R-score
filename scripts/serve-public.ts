@@ -146,7 +146,7 @@ import {
 } from '../lib/http/bun-server.ts';
 import { PORTAL_BOARD_SLUGS } from '../lib/http/portal-board-slugs.ts';
 import { canonicalSlashRedirect } from '../lib/http/canonical-redirect.ts';
-import { isNpmPackageRequestPath } from '../lib/registry/npm-package-path.ts';
+import { parseNpmPackageRequestPath } from '../lib/registry/npm-package-path.ts';
 import {
   formatServePublicBindLines,
   writeServePublicBindManifest,
@@ -559,21 +559,8 @@ async function npmPublish(req: Request, name: string): Promise<Response> {
 
 // ── npm-compatible package metadata (for bun install / bunx) ────────
 
-async function npmPackageMetadata(req: Request): Promise<Response> {
+async function npmPackageMetadata(req: Request, name: string): Promise<Response> {
   const url = new URL(req.url);
-  const rawPath = url.pathname;
-  // Handle URL-encoded scoped names: /@factorywager%2Fregistry-client → @factorywager/registry-client
-  const name = decodeURIComponent(rawPath.startsWith('/@') ? rawPath.slice(1) : rawPath.slice(1));
-  if (!name) {
-    return staticFile('/index.html', req).then(
-      r =>
-        r ??
-        new Response('Not found', {
-          status: 404,
-          headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-        })
-    );
-  }
   const reg = await readRegistry();
   if (!reg) return json({ error: 'No registry' }, 404);
   const pkg = (reg.packages || {})[name];
@@ -1968,14 +1955,16 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   const staticRes = await staticFile(path, req);
   if (staticRes) return staticRes;
 
+  const npmPackageName = parseNpmPackageRequestPath(path);
+
   // npm-compatible publish: PUT /{name} or /@scope/name (not / or static paths)
-  if (req.method === 'PUT' && isNpmPackageRequestPath(path)) {
-    return npmPublish(req, decodeURIComponent(path.slice(1)));
+  if (req.method === 'PUT' && npmPackageName) {
+    return npmPublish(req, npmPackageName);
   }
 
   // npm-compatible metadata: GET /{name} or /@scope/name
-  if (req.method === 'GET' && isNpmPackageRequestPath(path)) {
-    return npmPackageMetadata(req);
+  if (req.method === 'GET' && npmPackageName) {
+    return npmPackageMetadata(req, npmPackageName);
   }
 
   // API paths always JSON 404 so `curl | jq` fails with a clear error object

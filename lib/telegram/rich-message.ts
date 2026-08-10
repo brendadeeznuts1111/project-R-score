@@ -76,12 +76,7 @@ export type RichTextUrl = { type: 'url'; text: RichText; url: string };
  * `rtConcat`); a bare `string` is the `textPlain` equivalent.
  */
 export type RichText =
-  | string
-  | RichText[]
-  | RichTextBold
-  | RichTextItalic
-  | RichTextMarked
-  | RichTextUrl;
+  string | RichText[] | RichTextBold | RichTextItalic | RichTextMarked | RichTextUrl;
 
 // ---------------------------------------------------------------------------
 // InputRichBlock — Bot API 10.1 desk-subset union.
@@ -222,14 +217,6 @@ export function richTableHtml(
   return `<table${attrStr}>${caption}${body}</table>`;
 }
 
-export function richSectionHeading(text: string, level: 1 | 2 | 3 | 4 | 5 | 6 = 2): string {
-  return `<h${level}>${escapeHtml(text)}</h${level}>`;
-}
-
-export function richParagraph(text: string): string {
-  return `<p>${escapeHtml(text)}</p>`;
-}
-
 /** Inline bold span — MTProto `textBold` equivalent. */
 export function richBold(text: string): string {
   return `<b>${escapeHtml(text)}</b>`;
@@ -240,33 +227,13 @@ export function richItalic(text: string): string {
   return `<i>${escapeHtml(text)}</i>`;
 }
 
-/** Muted footer / timestamp line (italic paragraph). */
-export function richMuted(text: string): string {
-  return `<p>${richItalic(text)}</p>`;
-}
-
 /** Collapsible block — `<details>` with optional open. */
 export function richDetails(summary: string, contentHtml: string, open = false): string {
   const openAttr = open ? ' open' : '';
   return `<details${openAttr}><summary>${escapeHtml(summary)}</summary>${contentHtml}</details>`;
 }
 
-/** MTProto `textFixed` equivalent — monospace block. */
-export function richPreformatted(text: string): string {
-  return `<pre>${escapeHtml(text)}</pre>`;
-}
-
 const SAFE_LINK_PROTOCOLS = ['http://', 'https://', 'tg://'];
-
-/**
- * `<a href>` for http(s)/`tg:` URLs — MTProto `textUrl` equivalent.
- * Anything else (e.g. `javascript:`) is dropped to plain escaped text.
- */
-export function richLink(text: string, url: string): string {
-  const isSafe = SAFE_LINK_PROTOCOLS.some(proto => url.toLowerCase().startsWith(proto));
-  if (!isSafe) return escapeHtml(text);
-  return `<a href="${escapeHtml(url)}">${escapeHtml(text)}</a>`;
-}
 
 /** Horizontal rule — MTProto block-level divider equivalent. */
 export function richDivider(): string {

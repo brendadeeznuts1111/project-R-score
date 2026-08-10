@@ -98,8 +98,6 @@ type CanonicalGlossaryDump = {
   };
 };
 
-export type DomainGlossaryPayload = ReturnType<typeof buildDomainGlossary>;
-
 function normalizeColor(input: string): string {
   const normalized = Bun.color(input, 'hex');
   if (typeof normalized !== 'string') {
@@ -223,22 +221,22 @@ export function buildDomainGlossary(source: CanonicalGlossaryDump) {
         ? 'Governed sports betting hierarchy, market, and data-product concept.'
         : concept.source === 'lib/telegram/partner-dashboard-glossary.ts'
           ? 'Partner dashboard MVP concept leaf (closes plan semantic gaps).'
-        : concept.source === 'lib/operations/scrapers/scrape-wire-taxonomy.ts'
-          ? 'Tier 4 scrape wire taxonomy — unified state/sport/market normalization.'
-          : concept.source === 'lib/operations/sports-competition-catalog.ts'
-            ? 'Governed sport, league, competition-tier, and event-host geography concept.'
-            : concept.source === 'lib/operations/sportsbook-opening-baseline.ts' ||
-                concept.source === 'lib/operations/baseline-source-tiers.ts'
-              ? 'Governed sportsbook opening-limit baseline concept.'
-              : concept.source === 'lib/telegram/telegram-glossary.ts'
-                ? 'Governed Telegram package-group, forum topic, seat desk, and handshake concept.'
-                : concept.source === 'lib/telegram/partner-ops-glossary.ts'
-                  ? 'Governed partner-ops phase, book type, funding rail, out status, and accounting concept.'
-                  : concept.source === 'lib/telegram/ops-view-glossary.ts'
-                    ? 'Governed ops reporting-view chrome (per-account / per-play / per-week / per-book-type).'
-                    : concept.source === 'lib/glossary/tournament-series-glossary.ts'
-                      ? 'Governed table-tennis tournament series, league, and snap-facet concepts.'
-                      : 'Governed compliance policy and KPI concept.',
+          : concept.source === 'lib/operations/scrapers/scrape-wire-taxonomy.ts'
+            ? 'Tier 4 scrape wire taxonomy — unified state/sport/market normalization.'
+            : concept.source === 'lib/operations/sports-competition-catalog.ts'
+              ? 'Governed sport, league, competition-tier, and event-host geography concept.'
+              : concept.source === 'lib/operations/sportsbook-opening-baseline.ts' ||
+                  concept.source === 'lib/operations/baseline-source-tiers.ts'
+                ? 'Governed sportsbook opening-limit baseline concept.'
+                : concept.source === 'lib/telegram/telegram-glossary.ts'
+                  ? 'Governed Telegram package-group, forum topic, seat desk, and handshake concept.'
+                  : concept.source === 'lib/telegram/partner-ops-glossary.ts'
+                    ? 'Governed partner-ops phase, book type, funding rail, out status, and accounting concept.'
+                    : concept.source === 'lib/telegram/ops-view-glossary.ts'
+                      ? 'Governed ops reporting-view chrome (per-account / per-play / per-week / per-book-type).'
+                      : concept.source === 'lib/glossary/tournament-series-glossary.ts'
+                        ? 'Governed table-tennis tournament series, league, and snap-facet concepts.'
+                        : 'Governed compliance policy and KPI concept.',
     semanticType: concept.semanticType,
     uiRole: concept.uiRole,
     parentId: 'parentId' in concept ? (concept.parentId ?? null) : null,
