@@ -15,7 +15,7 @@ import {
   queryLimitPatternSnapshot,
   seedLimitPatternDemo,
 } from '../lib/operations/limit-patterns.ts';
-import { exportLimitRaisesSnapshot } from '../lib/operations/partner-analytics-repo.ts';
+import { exportLimitRaisesSnapshot } from '../lib/operations/limit-raises-snapshot.ts';
 
 const argv = import.meta.main
   ? applyUnknownLongOptionGuardFor('ops:limits:seed-patterns', Bun.argv.slice(2))

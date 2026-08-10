@@ -8,9 +8,9 @@ import {
 } from '../lib/account-limits-repo.ts';
 import {
   computeMultiFactorScore,
-  exportLimitRaisesSnapshot,
   PartnerAnalyticsRepository,
 } from '../lib/operations/partner-analytics-repo.ts';
+import { exportLimitRaisesSnapshot } from '../lib/operations/limit-raises-snapshot.ts';
 import { joinPath } from '../lib/path-bun.ts';
 
 describe('multi-factor limit raise context', () => {

@@ -15,7 +15,7 @@
  */
 import { CryptoHasher, revision, version } from 'bun';
 import { resolveBunExecutable } from '../bun-executable.ts';
-import { joinPath } from '../path-bun.ts';
+import { joinPath, resolvePath } from '../path-bun.ts';
 import {
   PUBLISH_SSOT_FLOW_SOFT_CONCEPT_ID,
   publishPlaneColorForConcept,
@@ -126,13 +126,25 @@ export async function resolveTennisHqRoot(factoryRoot: string): Promise<string> 
 
   try {
     const proc = Bun.spawn(
-      ['git', '-C', factoryRoot, 'rev-parse', '--path-format=absolute', '--git-common-dir'],
+      [
+        'git',
+        '-C',
+        factoryRoot,
+        'rev-parse',
+        '--path-format=absolute',
+        '--show-toplevel',
+        '--git-common-dir',
+      ],
       { stdout: 'pipe', stderr: 'pipe', env: { ...Bun.env } }
     );
     const [stdout, exitCode] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
     if (exitCode === 0) {
-      const gitCommon = stdout.trim().replace(/[/\\]+$/, '');
-      if (gitCommon) {
+      const [gitRoot = '', commonDir = ''] = stdout.trim().split(/\r?\n/);
+      const gitCommon = commonDir.replace(/[/\\]+$/, '');
+      // rev-parse searches parent directories. Only use common-dir discovery
+      // when the caller supplied the checkout root itself, not an arbitrary
+      // descendant such as an isolated test fixture.
+      if (gitCommon && resolvePath(gitRoot) === resolvePath(factoryRoot)) {
         // common-dir is usually `<primary>/.git` — strip that leaf for the primary root.
         const primaryRoot = /(?:^|[/\\])\.git$/i.test(gitCommon)
           ? joinPath(gitCommon, '..')

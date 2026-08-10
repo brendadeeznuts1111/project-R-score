@@ -240,11 +240,9 @@ export {
   PartnerAnalyticsRepository,
   captureAllMissingRaiseContexts,
   computeMultiFactorScore,
-  exportLimitRaisesSnapshot,
   formatMultiFactorRaises,
   MULTI_FACTOR_RANGES,
   MULTI_FACTOR_WEIGHTS,
-  type LimitRaisesSnapshot,
   type MultiFactorEnrichedRaise,
   type MultiFactorScore,
   type RaiseContextMetrics,
@@ -252,6 +250,7 @@ export {
   type RaiseContextProofStatus,
   type RaiseContextRow,
 } from './partner-analytics-repo.ts';
+export { exportLimitRaisesSnapshot, type LimitRaisesSnapshot } from './limit-raises-snapshot.ts';
 export {
   handleLimitRaiseAgentRequest,
   handleLimitRecordRequest,
