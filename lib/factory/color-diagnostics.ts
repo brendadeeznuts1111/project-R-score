@@ -202,15 +202,27 @@ export function mixColor(
 
 export function generateColorPalette(
   input: Bun.ColorInput,
-  options: { steps?: number; perceptual?: boolean } = {}
+  options: { steps?: number; perceptual?: boolean; amounts?: readonly number[] } = {}
 ): Array<{ step: number; amount: number; color: string }> | null {
-  const steps = Math.max(3, Math.floor(options.steps ?? 15));
+  const stepCount = Math.max(3, Math.floor(options.steps ?? 15));
+  const amounts = options.amounts
+    ? [...options.amounts]
+    : Array.from({ length: stepCount }, (_, step) =>
+        Number((-0.84 + (1.68 * step) / (stepCount - 1)).toFixed(3))
+      );
   if (parseColor(input).kind !== 'concrete') return null;
 
-  return Array.from({ length: steps }, (_, step) => {
-    const amount = -0.84 + (1.68 * step) / (steps - 1);
+  return amounts.map((amount, step) => {
     const color = mixColor(input, amount, options);
     if (color === null) throw new Error('Concrete color unexpectedly failed to format');
-    return { step: step + 1, amount: Number(amount.toFixed(3)), color };
+    return { step: step + 1, amount, color };
   });
+}
+
+/** Parse a comma-separated tone list. Values are mix positions from -1 to 1. */
+export function parseColorTones(input: string): number[] | null {
+  const parts = input.split(',').map(value => value.trim());
+  if (parts.length === 0 || parts.some(value => value.length === 0)) return null;
+  const tones = parts.map(Number);
+  return tones.every(value => Number.isFinite(value) && value >= -1 && value <= 1) ? tones : null;
 }

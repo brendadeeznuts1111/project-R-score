@@ -1801,6 +1801,7 @@
     "dod:pack": "bun tools/dod-evidence.ts pack",
     "dod:verify": "bun tools/dod-evidence.ts verify",
     "factory": "bun lib/factory/cli.ts",
+    "issue:context": "bun lib/factory/cli.ts colors",
     "factory:publish": "bun lib/factory/cli.ts publish",
     "factory:install": "bun lib/factory/cli.ts install",
     "factory:list": "bun lib/factory/cli.ts list",

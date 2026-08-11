@@ -9,6 +9,7 @@ import {
   diagnoseColorCapabilities,
   generateColorPalette,
   mixColor,
+  parseColorTones,
   parseColor,
 } from '../lib/factory/color-diagnostics.ts';
 
@@ -97,5 +98,18 @@ describe('factory color palette', () => {
     expect(mixColor('rgba(224 108 117 / 0.5)', 0)).toBe('#e06c7580');
     expect(generateColorPalette('currentcolor')).toBeNull();
     expect(generateColorPalette('not-a-color')).toBeNull();
+  });
+
+  test('accepts explicit validated tone positions', () => {
+    expect(parseColorTones('0,0.1,0.3,0.6,1')).toEqual([0, 0.1, 0.3, 0.6, 1]);
+    expect(parseColorTones('0,wat,1')).toBeNull();
+    expect(parseColorTones('-1.1,0,1')).toBeNull();
+    expect(generateColorPalette('#e06c75', { amounts: [0, 0.1, 0.3, 0.6, 1] })).toEqual([
+      { step: 1, amount: 0, color: '#e06c75' },
+      { step: 2, amount: 0.1, color: '#e37b83' },
+      { step: 3, amount: 0.3, color: '#e9989e' },
+      { step: 4, amount: 0.6, color: '#f3c4c8' },
+      { step: 5, amount: 1, color: '#ffffff' },
+    ]);
   });
 });

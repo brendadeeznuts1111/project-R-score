@@ -99,6 +99,7 @@ export {
   displayColorResult,
   generateColorPalette,
   mixColor,
+  parseColorTones,
   parseColor,
   type ColorFormatResult,
   type ParsedColor,

@@ -194,4 +194,18 @@ describe('CLI — colors', () => {
     expect(exitCode).toBe(1);
     expect(stderr).toContain('context-dependent CSS');
   });
+
+  test('supports the issue:context short palette and custom tones contract', async () => {
+    const { stdout, exitCode } = await runCli([
+      'colors',
+      '-p',
+      '#e06c75',
+      '--tones',
+      '0,0.1,0.3,0.6,1',
+      '--json',
+    ]);
+    expect(exitCode).toBe(0);
+    const value = JSON.parse(stdout) as { palette: Array<{ amount: number }> };
+    expect(value.palette.map(row => row.amount)).toEqual([0, 0.1, 0.3, 0.6, 1]);
+  });
 });

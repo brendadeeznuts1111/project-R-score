@@ -48,6 +48,7 @@ import {
   diagnoseColor,
   diagnoseColorCapabilities,
   generateColorPalette,
+  parseColorTones,
 } from './color-diagnostics';
 
 const VERSION = '0.1.0';
@@ -175,7 +176,8 @@ Inspect Bun.color using the runtime's complete output-format surface.
 
 Options:
   --diagnose                   Also run modern CSS, keyword, gamut, and clamp probes
-  --palette <color>            Generate a 15-step palette from a concrete color
+  --palette <color>, -p        Generate a palette from a concrete color
+  --tones <list>               Mix positions from -1 (black) through 0 (base) to 1 (white)
   --perceptual                 Mix palette steps in linear-light RGB
   --json                       Emit structured JSON
 
@@ -183,6 +185,7 @@ Examples:
   factory colors 'rgba(224 108 117 / 0.5)'
   factory colors 'currentcolor' --diagnose
   factory colors --palette '#e06c75' --perceptual
+  bun run issue:context -p '#e06c75' --tones '0,0.1,0.3,0.6,1'
 
 Build-time use needs no custom wrapper:
   import { color } from "bun" with { type: "macro" };`,
@@ -395,7 +398,8 @@ async function cmdColors(args: string[]): Promise<void> {
     args,
     options: {
       diagnose: { type: 'boolean' },
-      palette: { type: 'string' },
+      palette: { type: 'string', short: 'p' },
+      tones: { type: 'string' },
       perceptual: { type: 'boolean' },
       json: { type: 'boolean' },
     },
@@ -408,9 +412,19 @@ async function cmdColors(args: string[]): Promise<void> {
   if (values.perceptual && !values.palette) {
     errorExit('--perceptual requires --palette <color>.');
   }
+  if (values.tones && !values.palette) {
+    errorExit('--tones requires --palette <color>.');
+  }
 
   if (values.palette) {
-    const palette = generateColorPalette(input, { perceptual: values.perceptual });
+    const amounts = values.tones ? parseColorTones(values.tones) : undefined;
+    if (values.tones && amounts === null) {
+      errorExit('--tones must be a comma-separated list of numbers from -1 through 1.');
+    }
+    const palette = generateColorPalette(input, {
+      perceptual: values.perceptual,
+      amounts: amounts ?? undefined,
+    });
     if (palette === null) {
       errorExit(
         `Cannot generate a palette from "${input}": use a concrete color, not invalid or context-dependent CSS.`

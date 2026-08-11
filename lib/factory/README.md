@@ -91,6 +91,7 @@ bun run factory -- colors '#e06c75'
 bun run factory -- colors 'rgba(224 108 117 / 0.5)' --diagnose
 bun run factory -- colors --palette '#e06c75' --perceptual
 bun run factory -- colors --palette '#e06c75' --perceptual --json
+bun run issue:context -p '#e06c75' --tones '0,0.1,0.3,0.6,1'
 ```
 
 The formatter table covers all 16 formats in the current Bun declarations,
@@ -112,6 +113,11 @@ cannot recolor or corrupt their own output.
 mixing gamma-encoded channel values, but it is not an OKLab/Lab uniformity
 claim. The default palette uses encoded sRGB mixing, and both modes preserve the
 base color at the center of 15 steps.
+
+`--tones` replaces the default 15 positions with an explicit comma-separated
+list. Each value is a mix amount from `-1` (black), through `0` (the unmodified
+base), to `1` (white). `issue:context` is the short package-script route to the
+same canonical command; `-p` aliases `--palette`.
 
 The library exports the pure diagnostic, cache, parse, and palette helpers from
 [`index.ts`](./index.ts). For direct build-time conversion, prefer Bun's native
