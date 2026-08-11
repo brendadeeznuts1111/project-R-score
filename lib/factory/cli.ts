@@ -44,6 +44,11 @@ import { runIntegrityCycle } from './monitoring';
 import { registry } from './registry';
 import { type ArtifactType } from './artifact';
 import { readPublishPackageJson, readPublishReadme } from './publish-metadata';
+import {
+  diagnoseColor,
+  diagnoseColorCapabilities,
+  generateColorPalette,
+} from './color-diagnostics';
 
 const VERSION = '0.1.0';
 
@@ -63,7 +68,7 @@ Commands:
     --no-install                Skip dependency install
     --no-git                    Skip git init
   env                          Check R2 credentials and bucket access
-  colors                       Show Bun.color output formats (hex, hsl, ansi, etc.)
+  colors [color]               Diagnose Bun.color formats, CSS syntax, and palettes
   publish <path> [options]     Publish an artifact
     --name <name>               Artifact name (required if no package.json)
     --version <ver>             Version string (required if no package.json)
@@ -164,6 +169,23 @@ Examples:
   factory create vercel/next.js my-app --no-git
 
 Note: local templates DELETE an existing destination directory.`,
+  colors: `factory colors [color] [options]
+
+Inspect Bun.color using the runtime's complete output-format surface.
+
+Options:
+  --diagnose                   Also run modern CSS, keyword, gamut, and clamp probes
+  --palette <color>            Generate a 15-step palette from a concrete color
+  --perceptual                 Mix palette steps in linear-light RGB
+  --json                       Emit structured JSON
+
+Examples:
+  factory colors 'rgba(224 108 117 / 0.5)'
+  factory colors 'currentcolor' --diagnose
+  factory colors --palette '#e06c75' --perceptual
+
+Build-time use needs no custom wrapper:
+  import { color } from "bun" with { type: "macro" };`,
 };
 
 // ── Utility helpers ───────────────────────────────────────────────────────
@@ -368,21 +390,66 @@ async function cmdList(): Promise<void> {
   });
 }
 
-async function cmdColors(): Promise<void> {
-  const testColors = ['red', 'green', 'blue', 'cyan', 'magenta', 'yellow', '#ff6600', '#6e40c9'];
-  const formats = ['hex', 'HEX', 'hsl', 'rgb', 'ansi', 'ansi-16', 'ansi-256'] as const;
-
-  console.log(`\n  ${paint('ts', '── Bun.color formats ──')}\n`);
-
-  const table = testColors.map(color => {
-    const row: Record<string, string> = { color };
-    for (const fmt of formats) {
-      row[fmt] = Bun.color(color, fmt) || '(none)';
-    }
-    return row;
+async function cmdColors(args: string[]): Promise<void> {
+  const { values, positionals } = parseArgs({
+    args,
+    options: {
+      diagnose: { type: 'boolean' },
+      palette: { type: 'string' },
+      perceptual: { type: 'boolean' },
+      json: { type: 'boolean' },
+    },
+    strict: true,
+    allowPositionals: true,
   });
+  if (positionals.length > 1) errorExit('Expected at most one color input.');
 
-  logTable(table, ['color', ...formats], { colors: shouldColor() });
+  const input = (values.palette as string | undefined) ?? positionals[0] ?? '#e06c75';
+  if (values.perceptual && !values.palette) {
+    errorExit('--perceptual requires --palette <color>.');
+  }
+
+  if (values.palette) {
+    const palette = generateColorPalette(input, { perceptual: values.perceptual });
+    if (palette === null) {
+      errorExit(
+        `Cannot generate a palette from "${input}": use a concrete color, not invalid or context-dependent CSS.`
+      );
+    }
+    const result = {
+      input,
+      space: values.perceptual ? 'linear-light-rgb' : 'srgb',
+      palette,
+    };
+    if (values.json) {
+      jsonOut(result);
+      return;
+    }
+    console.log(`\n  ${paint('ts', '── Bun.color palette ──')}  ${input}\n`);
+    logTable(palette, ['step', 'amount', 'color'], { colors: shouldColor() });
+    console.log(`\n  mix space: ${result.space}\n`);
+    return;
+  }
+
+  const diagnosis = diagnoseColor(input);
+  const capabilities = values.diagnose ? diagnoseColorCapabilities() : undefined;
+  if (values.json) {
+    jsonOut({ ...diagnosis, capabilities });
+    return;
+  }
+
+  console.log(`\n  ${paint('ts', '── Bun.color formats ──')}  ${input}\n`);
+  logTable(diagnosis.formats, ['format', 'display', 'status'], { colors: shouldColor() });
+  console.log(`\n  parse: ${diagnosis.parsed.kind} · formats: ${diagnosis.formats.length}`);
+  console.log('  alpha: css/rgba/{rgba}/[rgba] preserve it; rgb/hsl/lab/hex/HEX/number drop it');
+  console.log('  macro: import { color } from "bun" with { type: "macro" }');
+
+  if (capabilities) {
+    console.log(`\n  ${paint('tsx', '── parser capabilities ──')}\n`);
+    logTable(capabilities, ['feature', 'input', 'format', 'result', 'status'], {
+      colors: shouldColor(),
+    });
+  }
   console.log();
 }
 
@@ -811,7 +878,7 @@ async function main(): Promise<void> {
       await cmdIntegrity();
       break;
     case 'colors':
-      await cmdColors();
+      await cmdColors(subargs);
       break;
     case 'status':
       await cmdStatus();

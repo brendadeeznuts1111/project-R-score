@@ -17,6 +17,7 @@ export const COLOR_OUTPUT_FORMATS = {
   RGB: 'rgb' as const,
   RGBA: 'rgba' as const,
   HSL: 'hsl' as const,
+  LAB: 'lab' as const,
   HEX: 'hex' as const,
   HEX_UPPERCASE: 'HEX' as const,
 
@@ -145,7 +146,7 @@ export const COLOR_USE_CASES = {
 // ============================================================================
 
 export class ColorDocumentationURLBuilder {
-  private static readonly BASE_URL = 'https://bun.sh';
+  private static readonly BASE_URL = 'https://bun.com';
 
   /**
    * Build color documentation URL

@@ -89,3 +89,17 @@ export {
 
 export { renderReadmeHTML, renderReadmeAnsi } from './markdown';
 export { withRetry, withCache } from './retry';
+export {
+  COLOR_FORMATS,
+  cachedColor,
+  clearColorCache,
+  colorCacheStats,
+  diagnoseColor,
+  diagnoseColorCapabilities,
+  displayColorResult,
+  generateColorPalette,
+  mixColor,
+  parseColor,
+  type ColorFormatResult,
+  type ParsedColor,
+} from './color-diagnostics';
