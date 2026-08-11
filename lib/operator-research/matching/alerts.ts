@@ -23,6 +23,7 @@ import {
 } from './partner-filters.ts';
 import { ensureAlertsSchema } from './alerts-schema.ts';
 import { detectSmartMoney, type SmartMoneySignal } from './smart-money.ts';
+import { type ModelPatternType } from '../model-contracts.ts';
 
 export { ensureAlertsSchema } from './alerts-schema.ts';
 
@@ -39,7 +40,7 @@ export type AlertType =
 export type AlertChannel = 'ws' | 'email' | 'telegram';
 /** Odds period filter. `prematch` maps to DB session `pregame`. */
 export type AlertPeriod = 'prematch' | 'live' | 'all';
-export type AlertPattern = 'spike' | 'drift' | 'reversal' | 'arbitrage';
+export type AlertPattern = Extract<ModelPatternType, 'spike' | 'drift' | 'reversal' | 'arbitrage'>;
 
 /** Event-monitor trigger kinds (also stored in data/research/alerts.json). */
 export const EVENT_ALERT_TYPES = new Set<AlertType>(['new_event', 'price_change', 'limit_change']);

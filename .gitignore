@@ -286,6 +286,8 @@ config/*
 !config/scraper-targets.ts
 !config/scrape-agents.toml
 !config/onboarding-defaults.toml
+!config/operator-research/
+!config/operator-research/model-harness.toml
 !config/operators/
 !config/operators/**
 !config/partner-templates/

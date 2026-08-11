@@ -29,6 +29,7 @@ export type TestSnapshotSuiteId =
   | 'failure-report'
   | 'identity-board'
   | 'limits-e2e'
+  | 'model-circuit'
   | 'table-format';
 
 export type TestSnapshotSuite = {
@@ -109,6 +110,15 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     testRel: 'tests/limits-e2e.test.ts',
     snapRel: 'tests/__snapshots__/limits-e2e.test.ts.snap',
     purpose: 'limits chart SVG generation contract.',
+  },
+  {
+    id: 'model-circuit',
+    label: 'Model circuit contracts',
+    testRel: 'tests/model-circuit-contracts.test.ts',
+    snapRel: 'tests/__snapshots__/model-circuit-contracts.test.ts.snap',
+    purpose:
+      'Package/group property ownership, pattern types, locked flags, circuit-only weight inputs, and file accountability.',
+    updateScript: 'model:contracts:snapshots:update',
   },
   {
     id: 'table-format',

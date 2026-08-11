@@ -24,7 +24,7 @@ owns the machine-artifact companion.
 | Plane           | Coverage                                | Authority                                                                                                                              | Drift check                               |
 | --------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | Portal pages    | 37/37                                   | [`lib/portal/page-concepts.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/page-concepts.ts)           | `bun run wiki:coverage:check`             |
-| Harness tenants | 56/56                                   | [`docs/harness/tenants/`](docs/harness/tenants/)                                                                                       | `bun run wiki:coverage:check`             |
+| Harness tenants | 57/57                                   | [`docs/harness/tenants/`](docs/harness/tenants/)                                                                                       | `bun run wiki:coverage:check`             |
 | Registry links  | Curated links present                   | [`public/registry/`](public/registry/)                                                                                                 | paths must exist under `public/registry/` |
 | Wiki links      | Published entrypoints                   | `_config.yml` · [`tools/wiki-link-check.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/wiki-link-check.ts) | `bun run wiki:links:check`                |
 | Public plane    | Portal · registry · monitoring · lander | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                              | `bun run public:discover:check`           |
@@ -265,6 +265,7 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 | Grounded capability map    | [`capability-map.md`](docs/harness/capability-map.md) · `bun run bake:capabilities` · `/registry/capability-map-subset.json` |
 | GitHub issue taxonomy      | [`github-issue-taxonomy.md`](docs/harness/tenants/github-issue-taxonomy.md)   |
 | Limits forecast lab        | [`limit-forecast-lab.md`](docs/harness/tenants/limit-forecast-lab.md)         |
+| Model circuit contracts    | [`model-circuit-contracts.md`](docs/harness/tenants/model-circuit-contracts.md) |
 | Partner domain map         | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md)         |
 | Prediction report          | [`prediction-report.md`](docs/harness/tenants/prediction-report.md)           |
 | Tennis HQ registry         | [`tennis-hq-registry.md`](docs/harness/tenants/tennis-hq-registry.md)         |
