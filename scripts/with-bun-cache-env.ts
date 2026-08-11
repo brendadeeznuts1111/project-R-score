@@ -14,27 +14,41 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { applyBunInstallEnv } from './lib/bun-install-env.ts';
 
-const verbose = Bun.argv.includes('--verbose') || Bun.env.BUN_INSTALL_ENV_VERBOSE === '1';
-const args = import.meta.main
-  ? applyUnknownLongOptionGuardFor('install:all', Bun.argv.slice(2)).filter(a => a !== '--verbose')
-  : Bun.argv.slice(2);
-const env = applyBunInstallEnv();
+const ROOT = `${import.meta.dir}/..`;
 
-if (args.length === 0) {
-  console.error('usage: bun scripts/with-bun-cache-env.ts [--verbose] <bun-args...>');
-  process.exit(1);
+export function withExplicitProjectCwd(args: string[], root = ROOT): string[] {
+  const [command, ...rest] = args;
+  if (command !== 'install' && command !== 'ci') return args;
+  if (rest.some(value => value === '--cwd' || value.startsWith('--cwd='))) return args;
+  return [command, '--cwd', root, ...rest];
 }
 
-if (verbose) {
-  console.info(
-    `bun install env: BUN_INSTALL_CACHE_DIR=${env.BUN_INSTALL_CACHE_DIR} BUN_INSTALL_GLOBAL_STORE=${env.BUN_INSTALL_GLOBAL_STORE}`
+export async function main(argv = Bun.argv.slice(2)): Promise<number> {
+  const verbose = argv.includes('--verbose') || Bun.env.BUN_INSTALL_ENV_VERBOSE === '1';
+  const args = applyUnknownLongOptionGuardFor('install:all', argv).filter(
+    value => value !== '--verbose'
   );
+  const env = applyBunInstallEnv();
+
+  if (args.length === 0) {
+    console.error('usage: bun scripts/with-bun-cache-env.ts [--verbose] <bun-args...>');
+    return 1;
+  }
+
+  if (verbose) {
+    console.info(
+      `bun install env: BUN_INSTALL_CACHE_DIR=${env.BUN_INSTALL_CACHE_DIR} BUN_INSTALL_GLOBAL_STORE=${env.BUN_INSTALL_GLOBAL_STORE}`
+    );
+  }
+
+  const proc = Bun.spawn(bunSpawnArgs(withExplicitProjectCwd(args)), {
+    cwd: ROOT,
+    stdin: 'inherit',
+    stdout: 'inherit',
+    stderr: 'inherit',
+    env: { ...Bun.env, ...env } as Record<string, string>,
+  });
+  return await proc.exited;
 }
 
-const proc = Bun.spawn(bunSpawnArgs(args), {
-  stdin: 'inherit',
-  stdout: 'inherit',
-  stderr: 'inherit',
-  env: { ...Bun.env, ...env } as Record<string, string>,
-});
-process.exit(await proc.exited);
+if (import.meta.main) process.exit(await main());

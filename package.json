@@ -2187,7 +2187,7 @@
     "build:defines:compile": "bun scripts/build-with-defines.ts --compile",
     "postbuild": "bun run ci:r2:version:check",
     "clean": "rm -rf dist/ .cache/ coverage/ reports/harness-gate-timing.json reports/ci-harness-timing.json reports/ci-core-timing.json reports/bun-usage-inventory.json",
-    "setup": "bun run install:all && bun run build",
+    "setup": "bun run install:all && bun run install:verify:strict && bun run build",
     "security:audit": "bun audit",
     "security:guard:deps": "bun run scripts/security-dependency-guard.ts",
     "check:bun-deps:tier-a": "bun scripts/check-bun-deps-tier-a.ts",

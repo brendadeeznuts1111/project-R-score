@@ -9,6 +9,7 @@
  * @see scripts/verify-install-cache.ts
  */
 import { describe, expect, test } from 'bun:test';
+import packageJson from '../package.json' with { type: 'json' };
 import {
   FORBIDDEN_INSTALL_ENV_VARS,
   isEphemeralCiInstallEnv,
@@ -16,6 +17,9 @@ import {
   MACHINE_EXPECTED_LINKER,
   MACHINE_BUNFIG_REQUIRED_SNIPPETS,
 } from '../lib/install/machine-bunfig-policy.ts';
+import { checkNodeModulesLayout } from '../scripts/verify-install-cache.ts';
+import { withExplicitProjectCwd } from '../scripts/with-bun-cache-env.ts';
+import { createTestWorkspace } from './harness.ts';
 
 describe('verify-install-cache policy SSOT', () => {
   test('verify re-exports the same array/function references as machine-bunfig-policy', async () => {
@@ -50,5 +54,31 @@ describe('verify-install-cache policy SSOT', () => {
       'BUN_INSTALL_CACHE_DIR',
       'BUN_INSTALL_GLOBAL_STORE',
     ]);
+  });
+
+  test('install wrapper pins install and ci to the current project root', () => {
+    expect(withExplicitProjectCwd(['install'], '/tmp/project-r')).toEqual([
+      'install',
+      '--cwd',
+      '/tmp/project-r',
+    ]);
+    expect(withExplicitProjectCwd(['ci', '--ignore-scripts'], '/tmp/project-r')).toEqual([
+      'ci',
+      '--cwd',
+      '/tmp/project-r',
+      '--ignore-scripts',
+    ]);
+    expect(withExplicitProjectCwd(['install', '--cwd=/tmp/owned'], '/tmp/project-r')).toEqual([
+      'install',
+      '--cwd=/tmp/owned',
+    ]);
+    expect(packageJson.scripts.setup).toContain('bun run install:verify:strict');
+  });
+
+  test('strict verification rejects an ancestor-only install', async () => {
+    await using workspace = await createTestWorkspace('factorywager-install-policy-');
+    const missing = checkNodeModulesLayout(workspace.root, true);
+    expect(missing.ok).toBe(false);
+    expect(missing.detail).toContain('local node_modules missing');
   });
 });
