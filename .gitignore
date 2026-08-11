@@ -438,6 +438,7 @@ examples/mega-liner-v7/
 examples/mega-liner-v8/
 
 # Compiled single-file executables (bun build --compile)
+*.jsc
 tools/bin/bun-doc-refs
 # Bun --compile compare dumps (no extension; pairs from size/perf checks)
 test-binary-*
