@@ -728,7 +728,7 @@ export function inferType(name: string, url: string): DocRefType {
   return 'concept';
 }
 
-function inferStability(
+export function inferStability(
   name: string,
   desc: string,
   curated?: { stability?: string }
@@ -739,8 +739,14 @@ function inferStability(
   const blob = `${name} ${desc}`.toLowerCase();
   if (/\bdeprecated\b/.test(blob)) return 'deprecated';
   if (/\bexperimental\b|\bunstable\b/.test(blob)) return 'experimental';
-  // Known experimental surfaces (runtime-checked family)
-  if (/^Bun\.WebView$/i.test(name) || /^http3$/i.test(name) || /^Bun\.secrets$/i.test(name))
+  // Known experimental surfaces (runtime-checked family). Bun's Markdown
+  // guide labels the entire Bun.markdown namespace as an unstable API.
+  if (
+    /^Bun\.WebView$/i.test(name) ||
+    /^Bun\.markdown(?:\.|$)/i.test(name) ||
+    /^http3$/i.test(name) ||
+    /^Bun\.secrets$/i.test(name)
+  )
     return 'experimental';
   return 'stable';
 }

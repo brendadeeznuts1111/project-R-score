@@ -11,6 +11,7 @@ import {
   pickCanonicalPage,
   sectionFromUrl,
   inferType,
+  inferStability,
   compareSemver,
   releaseUrlFor,
   blogUrlFor,
@@ -940,6 +941,12 @@ describe('Bun.markdown type-surface integrity', () => {
     'Bun.markdown.CellProps',
     'Bun.markdown.CodeBlockProps',
   ] as const;
+
+  test('catalog preserves the docs unstable status for the namespace', () => {
+    for (const name of [...CORE_MARKDOWN_SURFACE, ...MARKDOWN_META_PROPS_SURFACE]) {
+      expect(inferStability(name, '')).toBe('experimental');
+    }
+  });
 
   test('core Bun.markdown* surface has CANONICAL_REFS + curated + guide examples', async () => {
     const { CANONICAL_REFS } = await import('../tools/bun-doc-refs.ts');

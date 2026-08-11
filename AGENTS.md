@@ -65,18 +65,18 @@ Full nav: [`wiki-index.md`](wiki-index.md) · path SSOT:
 [`lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts).
 Routing tables: [`docs/AGENTS.md`](docs/AGENTS.md).
 
-| Role | Doc |
-| ---- | --- |
-| This file (agent entry) | [`AGENTS.md`](AGENTS.md) |
-| Human hub | [`README.md`](/) · [wiki.factory-wager.com](https://wiki.factory-wager.com/) |
-| Harness JIT | [`docs/harness/README.md`](docs/harness/) |
-| Capability matrix | [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · `bake:capabilities` |
-| Bench / profile metrics | [`docs/harness/tenants/bun-bench-profiling.md`](docs/harness/tenants/bun-bench-profiling.md) · `bench:status` |
-| Authority / merge proof | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · `bun run bun:ci` |
-| Wire / brands / install | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) · branded skill · [`docs/UNIFIED.md`](docs/UNIFIED.md) |
-| Domain → concept → shape → surface | [`docs/DOMAIN_CONCEPT_SHAPE.md`](docs/DOMAIN_CONCEPT_SHAPE.md) |
-| Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
-| Coding standards | [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) |
+| Role                               | Doc                                                                                                                  |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| This file (agent entry)            | [`AGENTS.md`](AGENTS.md)                                                                                             |
+| Human hub                          | [`README.md`](/) · [wiki.factory-wager.com](https://wiki.factory-wager.com/)                                         |
+| Harness JIT                        | [`docs/harness/README.md`](docs/harness/)                                                                            |
+| Capability matrix                  | [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · `bake:capabilities`                             |
+| Bench / profile metrics            | [`docs/harness/tenants/bun-bench-profiling.md`](docs/harness/tenants/bun-bench-profiling.md) · `bench:status`        |
+| Authority / merge proof            | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · `bun run bun:ci`                                          |
+| Wire / brands / install            | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) · branded skill · [`docs/UNIFIED.md`](docs/UNIFIED.md)              |
+| Domain → concept → shape → surface | [`docs/DOMAIN_CONCEPT_SHAPE.md`](docs/DOMAIN_CONCEPT_SHAPE.md)                                                       |
+| Workspace map                      | [`STRUCTURE.md`](STRUCTURE.md)                                                                                       |
+| Coding standards                   | [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) |
 
 ## Communication precision
 
@@ -235,8 +235,7 @@ interior, path/name allowlists, suppressions.
   formatted files. Keep Prettier as the formatter; do not hand-normalize around
   it.
 - **PR bodies:** start every pull-request description from
-  [`.github/pull_request_template.md`](.github/pull_request_template.md)
-  (P0:
+  [`.github/pull_request_template.md`](.github/pull_request_template.md) (P0:
   [`.github/pull_request_template_p0.md`](.github/pull_request_template_p0.md)).
   Required: **Summary** · **Claim → evidence** (filled table —
   `bun scripts/check-pr-claim.ts`) · **Test plan** · **Checklist** · **Local
@@ -281,15 +280,19 @@ interior, path/name allowlists, suppressions.
     · [`docs/audit/README.md`](docs/audit/README.md) · claim
     `audit-findings-catalog`
   - Doc map integrity → `bun run docs:map:check` (also pre-commit when SSOT docs
-    staged) · REF:ID v2 → `bun run docs:refid:check` · `docs:refid:check:dry-run` ·
-    `docs:refid:audit` · `docs:refid:suggest` · `docs:refid:list` ·
-    `docs:refid:scaffold` (anchors · href · uniqueness · tool↔table coverage;
-    `--skip-refid-check` fast-pass; audit must show **flags-table-only=0**;
-    library [`lib/docs/ref-id.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/ref-id.ts)
-    · [`ref-id-tool-flags.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/ref-id-tool-flags.ts)
-    (`ALLOWED_LONG_REGISTRY` · **`BUN_STRIP_UNKNOWN`** / `BUN_LOG_UNKNOWN`)
-    · CLI [`tools/docs-refid.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/docs-refid.ts)
-    · [CONTRIBUTING § REF:ID](docs/contributing/CONTRIBUTING.md#refid-validation)
+    staged) · REF:ID v2 → `bun run docs:refid:check` ·
+    `docs:refid:check:dry-run` · `docs:refid:audit` · `docs:refid:suggest` ·
+    `docs:refid:list` · `docs:refid:scaffold` (anchors · href · uniqueness ·
+    tool↔table coverage; `--skip-refid-check` fast-pass; audit must show
+    **flags-table-only=0**; library
+    [`lib/docs/ref-id.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/ref-id.ts)
+    ·
+    [`ref-id-tool-flags.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/ref-id-tool-flags.ts)
+    (`ALLOWED_LONG_REGISTRY` · **`BUN_STRIP_UNKNOWN`** / `BUN_LOG_UNKNOWN`) ·
+    CLI
+    [`tools/docs-refid.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/docs-refid.ts)
+    ·
+    [CONTRIBUTING § REF:ID](docs/contributing/CONTRIBUTING.md#refid-validation)
     · [§ Unknown long options](#unknown-long-options-bun_strip_unknown))
   - Import cycles / deep relative imports → `bun run check:import-graph`
     (`ci:core` merge proof → branch-protected Harness CI; ratchets may only go
@@ -304,8 +307,8 @@ interior, path/name allowlists, suppressions.
     standalone products may retain an explicitly pinned toolchain they own.
   - Console output formatting → domain
     [`lib/console/`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console/README.md)
-    (`logTable` / `logDepth` / `inspectTable` / `jsonOut` / **`cliOut`** dual-mode /
-    `tones` / chrome) · compat facade
+    (`logTable` / `logDepth` / `inspectTable` / `jsonOut` / **`cliOut`**
+    dual-mode / `tones` / chrome) · compat facade
     [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts);
     TTY primitives via `import { stringWidth, stripANSI, … } from 'bun'` · hub
     [`lib/bun-runtime.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/bun-runtime.md)
@@ -355,7 +358,6 @@ interior, path/name allowlists, suppressions.
 **Bun install policy (machine + workspace):**
 [`docs/UNIFIED.md`](docs/UNIFIED.md)
 
-
 ## Machine Bun policy (summary)
 
 Machine SSOT: `~/.bunfig.toml` · project overrides only in `./bunfig.toml`. Full
@@ -369,10 +371,46 @@ table: [`docs/UNIFIED.md`](docs/UNIFIED.md). Verify: `bun run install:verify` ·
 
 ## Bun API references (required for agents)
 
-Before using an unfamiliar `Bun.*` API: `bun tools/bun-doc-refs.ts suggest "<api>"`
-· annotate with `// @see <canonical-url>`. Catalog operate:
+Before using an unfamiliar `Bun.*` API:
+`bun tools/bun-doc-refs.ts suggest "<api>"` · annotate with
+`// @see <canonical-url>`. Catalog operate:
 [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md). Types inventory:
 [`docs/design/bun-types-inventory.md`](docs/design/bun-types-inventory.md).
+
+## Bun and TypeScript 6/7
+
+Canonical Bun guidance: [TypeScript](https://bun.com/docs/typescript) ·
+[TypeScript 6 and 7](https://bun.com/docs/typescript-6). Bun executes TypeScript
+by stripping syntax; repository type safety remains owned by the `tsc` gates.
+TypeScript 6/7 no longer auto-discovers `@types/*`, so monorepo-owned configs
+must resolve an explicit Bun ambient type allowlist through
+`compilerOptions.types`. Project R owns `"types": ["bun"]` in
+[`tsconfig.base.json`](tsconfig.base.json); do not replace its layered config or
+DOM libraries with the generic Bun example. Prove changes with
+`bun run check:tsconfig-types -- --strict` and `bun run type-check:ci`.
+
+## Bun bytecode caching
+
+Canonical: [Bytecode Caching](https://bun.com/docs/bundler/bytecode). Treat
+`--bytecode` as a benchmark-backed production optimization, not a development
+default. It requires `--target=bun`; ESM bytecode requires `--compile`.
+Standalone executables embed bytecode, while non-compiled CommonJS delivery
+requires the matching `.js` and `.jsc` pair. Bytecode is Bun-version-specific,
+increases artifact size, and is not obfuscation: generate it during delivery,
+never commit `.jsc`, and benchmark startup, size, and memory before adoption.
+
+## Markdown guidance rendering
+
+Prettier owns Markdown source layout. Render and structurally check canonical
+guidance with `bun run docs:markdown:check`, using the shared
+[`Bun.markdown.Options`](https://bun.com/docs/runtime/markdown#options) contract
+in
+[`lib/markdown/options.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/markdown/options.ts).
+Keep heading IDs/autolinks, GFM tables/task lists/strikethrough, and `tagFilter`
+explicit; do not duplicate parser-option objects across generators. Bun
+currently marks
+[`Bun.markdown.html()`](https://bun.com/docs/runtime/markdown#bun-markdown-html)
+unstable, so re-run rendering tests on every Bun channel upgrade.
 
 ## Branded ID types (harness)
 
@@ -381,21 +419,31 @@ See [§ Branded IDs are mandatory](#branded-ids-are-mandatory-agents) · skill
 
 ## `bun create` (templating / scaffold)
 
-Optional. Canonical: [templating/create](https://bun.com/docs/runtime/templating/create).
-Repo template: `.bun-create/factory-library` · `bun run factory:create` ·
+Optional. Canonical:
+[templating/create](https://bun.com/docs/runtime/templating/create). Repo
+template: `.bun-create/factory-library` · `bun run factory:create` ·
 [`lib/factory/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/factory/README.md)
 (scaffold `bench` / `profile:cpu`).
 
+For a genuinely empty project, use
+[`bun init`](https://bun.com/docs/runtime/templating/init). `-y`/`--yes` accepts
+defaults, while `-m`/`--minimal` initializes only type definitions. On an
+existing repository, prefer `BUN_AGENT_RULE_DISABLED=1 bun init -y` so detected
+editors do not generate competing agent-policy files.
+
 ## Unknown long options (`BUN_STRIP_UNKNOWN`)
 
-Allowlists in [`lib/docs/ref-id-tool-flags.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/ref-id-tool-flags.ts)
-`ALLOWED_LONG_REGISTRY` only. Default: unknown `--flags` fail. Local prototyping:
-`BUN_STRIP_UNKNOWN=true`. Prove: `bun run cli:flags:check`.
+Allowlists in
+[`lib/docs/ref-id-tool-flags.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/ref-id-tool-flags.ts)
+`ALLOWED_LONG_REGISTRY` only. Default: unknown `--flags` fail. Local
+prototyping: `BUN_STRIP_UNKNOWN=true`. Prove: `bun run cli:flags:check`.
 
 ## Console depth (output verbosity)
 
-SSOT: `bunfig.toml [console] depth = 6` · domain [`lib/console/`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console/README.md)
-· note [`lib/console-depth.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.md).
+SSOT: `bunfig.toml [console] depth = 6` · domain
+[`lib/console/`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console/README.md)
+· note
+[`lib/console-depth.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.md).
 Flags go **before** `run`: `bun --console-depth=N run -`. Bench:
 `bun run bench:console-depth` · claim `console-depth-boundaries`.
 
