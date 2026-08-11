@@ -159,6 +159,7 @@ describe('CLI — colors', () => {
     expect(exitCode).toBe(0);
     expect(stdout).toContain('--diagnose');
     expect(stdout).toContain('--palette <color>');
+    expect(stdout).toContain('--theme <theme>');
     expect(stdout).toContain('type: "macro"');
   });
 
@@ -221,12 +222,27 @@ describe('CLI — colors', () => {
       '--hsl',
       '--format',
       'HEX',
+      '--theme',
+      'dark',
       '-m',
     ]);
     expect(exitCode).toBe(0);
     expect(stdout).toContain('## Color gradient: #e06c75 → #2ecc71');
     expect(stdout).toContain('Space: `hsl-shortest-path`');
+    expect(stdout).toContain('Theme: `dark`');
     expect(stdout).toContain('| 1 | 0 | `#E06C75` |');
     expect(stdout).toContain('| 16 | 1 | `#2ECC71` |');
+  });
+
+  test('rejects unknown themes', async () => {
+    const { stderr, exitCode } = await runCli([
+      'colors',
+      '--palette',
+      '#e06c75',
+      '--theme',
+      'neon',
+    ]);
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain('--theme must be one of: auto, dark, light');
   });
 });

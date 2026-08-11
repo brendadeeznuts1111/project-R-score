@@ -186,6 +186,7 @@ Options:
   --hsl                        Use shortest-path HSL interpolation instead of RGB
   --format <format>            Bun.color output format for gradient values (default: hex)
   --perceptual                 Mix palette steps in linear-light RGB
+  --theme <theme>              Context presentation: auto, dark, or light (default: auto)
   --markdown, -m              Emit a paste-ready Markdown table
   --json                       Emit structured JSON
 
@@ -414,6 +415,7 @@ async function cmdColors(args: string[]): Promise<void> {
       hsl: { type: 'boolean' },
       format: { type: 'string' },
       perceptual: { type: 'boolean' },
+      theme: { type: 'string' },
       markdown: { type: 'boolean', short: 'm' },
       json: { type: 'boolean' },
     },
@@ -423,6 +425,10 @@ async function cmdColors(args: string[]): Promise<void> {
   if (positionals.length > 1) errorExit('Expected at most one color input.');
 
   const input = (values.palette as string | undefined) ?? positionals[0] ?? '#e06c75';
+  const theme = (values.theme as string | undefined) ?? 'auto';
+  if (!['auto', 'dark', 'light'].includes(theme)) {
+    errorExit('--theme must be one of: auto, dark, light.');
+  }
   if (values.perceptual && !values.palette) {
     errorExit('--perceptual requires --palette <color>.');
   }
@@ -468,6 +474,7 @@ async function cmdColors(args: string[]): Promise<void> {
         space: values.hsl ? 'hsl-shortest-path' : 'rgb',
         format,
         steps,
+        theme,
         colors: gradient,
       };
       if (values.json) {
@@ -480,6 +487,7 @@ async function cmdColors(args: string[]): Promise<void> {
             `## Color gradient: ${input} → ${values.gradient}`,
             '',
             `Space: \`${result.space}\` · Format: \`${format}\` · Steps: ${steps}`,
+            `Theme: \`${theme}\``,
             '',
             '| Step | Position | Color |',
             '| ---: | -------: | :---- |',
@@ -492,7 +500,9 @@ async function cmdColors(args: string[]): Promise<void> {
         `\n  ${paint('ts', '── Bun.color gradient ──')}  ${input} → ${values.gradient}\n`
       );
       logTable(gradient, ['step', 'position', 'display'], { colors: shouldColor() });
-      console.log(`\n  space: ${result.space} · format: ${format} · steps: ${steps}\n`);
+      console.log(
+        `\n  space: ${result.space} · format: ${format} · steps: ${steps} · theme: ${theme}\n`
+      );
       return;
     }
 
@@ -512,6 +522,7 @@ async function cmdColors(args: string[]): Promise<void> {
     const result = {
       input,
       space: values.perceptual ? 'linear-light-rgb' : 'srgb',
+      theme,
       palette,
     };
     if (values.json) {
@@ -524,6 +535,7 @@ async function cmdColors(args: string[]): Promise<void> {
           `## Color palette: ${input}`,
           '',
           `Mix space: \`${result.space}\``,
+          `Theme: \`${theme}\``,
           '',
           '| Step | Amount | Color |',
           '| ---: | -----: | :---- |',
@@ -534,7 +546,7 @@ async function cmdColors(args: string[]): Promise<void> {
     }
     console.log(`\n  ${paint('ts', '── Bun.color palette ──')}  ${input}\n`);
     logTable(palette, ['step', 'amount', 'color'], { colors: shouldColor() });
-    console.log(`\n  mix space: ${result.space}\n`);
+    console.log(`\n  mix space: ${result.space} · theme: ${theme}\n`);
     return;
   }
 

@@ -93,6 +93,7 @@ bun run factory -- colors --palette '#e06c75' --perceptual
 bun run factory -- colors --palette '#e06c75' --perceptual --json
 bun run issue:context -p '#e06c75' --tones '0,0.1,0.3,0.6,1'
 bun run issue:context -p '#e06c75' --gradient '#2ecc71' --steps 16 --hsl --format HEX -m
+bun run issue:context -p '#e06c75' --tones '0,0.2,0.5' --theme dark -m
 ```
 
 The formatter table covers all 16 formats in the current Bun declarations,
@@ -125,6 +126,30 @@ by default; `--hsl` selects shortest-path hue interpolation. `--steps` accepts
 `2` through `256`, and `--format` accepts any format from the live Bun color
 surface. `-m` / `--markdown` emits a paste-ready table suitable for issue or PR
 context; `--json` remains the machine-data route.
+
+### Theme and terminal color
+
+`--theme auto|dark|light` labels the intended presentation context in table,
+Markdown, and JSON output. The default is `auto`. Theme selection never mutates
+[`theme.jsonc`](../../public/portal/theme.jsonc), changes interpolation, or
+creates another palette owner; it is context metadata for consumers deciding
+where to place the generated colors.
+
+An additional `--color` depth flag is intentionally unnecessary today:
+
+| Need                             | Supported route                         |
+| -------------------------------- | --------------------------------------- |
+| Disable CLI chrome color         | `NO_COLOR=1 bun run issue:context …`    |
+| Force Bun's detected ANSI output | `FORCE_COLOR=1 bun run issue:context …` |
+| Serialize 16-color codes         | `--format ansi-16`                      |
+| Serialize 256-color codes        | `--format ansi-256`                     |
+| Serialize true-color codes       | `--format ansi-16m`                     |
+
+`--format` controls generated gradient values; it does not override the
+terminal’s capabilities. CLI chrome continues to use Bun’s
+`Bun.enableANSIColors` detection through the shared console layer. Add a
+separate `--color` flag only if a future renderer must override that runtime
+decision independently of output serialization.
 
 The library exports the pure diagnostic, cache, parse, and palette helpers from
 [`index.ts`](./index.ts). For direct build-time conversion, prefer Bun's native
