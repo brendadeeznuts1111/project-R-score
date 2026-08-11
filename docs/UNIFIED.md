@@ -163,10 +163,10 @@ TOML samples under package-manager docs are almost always **`bunfig.toml`**
 `bunfig.toml`.
 
 **Types channels:** `@types/bun` follows its configured stable/latest npm
-channel, while direct `bun-types` deliberately follows its configured canary
-channel. They are independent reviewed pins and are not required to share a
-version. Run `bun run bun:channel:check` plus the TypeScript gates before
-promotion. Pages `BUN_VERSION` is a separate deploy pin.
+channel, while direct `bun-types` deliberately follows a reviewed vendored Bun
+`main` snapshot (`pinned-tip`). They are independent pins and are not required to share a version.
+Run `bun run bun:channel:check` plus the TypeScript gates before promotion.
+Pages `BUN_VERSION` is a separate deploy pin.
 
 **STO TypeScript 6 (resolved):** `sports-terminal-os` uses
 `"typescript": "catalog:"` like other workspace members — see

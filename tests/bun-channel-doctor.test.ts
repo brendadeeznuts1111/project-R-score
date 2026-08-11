@@ -128,7 +128,7 @@ describe('Bun channel doctor', () => {
     await rm(root, { recursive: true, force: true });
   });
 
-  test('loads the strict stable/latest/canary TOML contract', () => {
+  test('loads the strict stable/latest/forward-declarations TOML contract', () => {
     const parsed = parseBunChannelConfig(`
       schema_version = 1
       [policy]
@@ -159,6 +159,74 @@ describe('Bun channel doctor', () => {
     expect(parsed.policy.mutation).toBe('never');
     expect(parsed.types.definitions_channel).toBe('canary');
     expect(parsed.monitor.os_timezone).toBe('system');
+
+    const tip = parseBunChannelConfig(`
+      schema_version = 1
+      [policy]
+      runtime_channel = "stable"
+      mutation = "never"
+      promotion = "reviewed"
+      [types]
+      wrapper_package = "@types/bun"
+      wrapper_channel = "latest"
+      definitions_package = "bun-types"
+      definitions_channel = "pinned-tip"
+      [monitor]
+      os_schedule = "17 6 * * *"
+      os_timezone = "system"
+      in_process_timezone = "UTC"
+      title = "bun-channel-doctor"
+      artifact = "public/registry/bun-channel-status.json"
+      fetch_timeout_ms = 1000
+      [sources]
+      stable_api = "https://fixture.test/stable"
+      stable_api_fallback = "https://fixture.test/fallback"
+      canary_api = "https://fixture.test/canary"
+      tip_api = "https://fixture.test/tip"
+      rss = "https://fixture.test/rss"
+      atom = "https://fixture.test/atom"
+      npm_registry = "https://fixture.test/npm"
+    `);
+    expect(tip.types.definitions_channel).toBe('pinned-tip');
+  });
+
+  test('proves a vendored tip across manifest, lockfile, install, and upstream revision', async () => {
+    const tipConfig: BunChannelConfig = {
+      ...config,
+      types: { ...config.types, definitions_channel: 'pinned-tip' },
+    };
+    const version = '1.4.0-tip.fedcba98';
+    const pin = `file:tools/vendor/bun-types/bun-types-${version}.tgz`;
+    await writeFile(
+      join(root, 'package.json'),
+      JSON.stringify({
+        packageManager: 'bun@1.3.14',
+        engines: { bun: '>=1.3.14' },
+        catalog: { '@types/bun': '1.3.14', 'bun-types': pin },
+      })
+    );
+    await writeFile(
+      join(root, 'bun.lock'),
+      JSON.stringify({
+        catalog: { '@types/bun': '1.3.14', 'bun-types': pin },
+        packages: {
+          '@types/bun': ['@types/bun@1.3.14'],
+          'bun-types': [`bun-types@tools/vendor/bun-types/bun-types-${version}.tgz`],
+        },
+      })
+    );
+    await writeFile(join(root, 'node_modules/bun-types/package.json'), JSON.stringify({ version }));
+
+    const report = await runBunChannelDoctor({
+      root,
+      config: tipConfig,
+      fetchImpl: fixtureFetch(),
+      runtime: { version: '1.3.14', revision: '0d9b296af' },
+    });
+
+    expect(report.summary.status).toBe('healthy');
+    expect(report.drift.filter(item => item.kind === 'actionable')).toEqual([]);
+    expect(report.policy.definitions_channel).toBe('pinned-tip');
   });
 
   test('reports a healthy, read-only intentional type-channel split', async () => {
@@ -319,6 +387,46 @@ describe('Bun channel doctor', () => {
 
     expect(report.summary.status).toBe('healthy');
     expect(report.summary.exitCode).toBe(0);
+    expect(report.drift).toContainEqual(
+      expect.objectContaining({ code: 'tip-unavailable', kind: 'informational' })
+    );
+  });
+
+  test('keeps upstream tip availability informational for a reviewed pinned-tip', async () => {
+    const version = '1.4.0-tip.fedcba98';
+    const pin = `file:tools/vendor/bun-types/bun-types-${version}.tgz`;
+    await writeFile(
+      join(root, 'package.json'),
+      JSON.stringify({
+        packageManager: 'bun@1.3.14',
+        engines: { bun: '>=1.3.14' },
+        catalog: { '@types/bun': '1.3.14', 'bun-types': pin },
+      })
+    );
+    await writeFile(
+      join(root, 'bun.lock'),
+      JSON.stringify({
+        catalog: { '@types/bun': '1.3.14', 'bun-types': pin },
+        packages: {
+          '@types/bun': ['@types/bun@1.3.14'],
+          'bun-types': [`bun-types@tools/vendor/bun-types/bun-types-${version}.tgz`],
+        },
+      })
+    );
+    await writeFile(join(root, 'node_modules/bun-types/package.json'), JSON.stringify({ version }));
+    const report = await runBunChannelDoctor({
+      root,
+      config: {
+        ...config,
+        types: { ...config.types, definitions_channel: 'pinned-tip' },
+      },
+      fetchImpl: fixtureFetch({
+        'https://fixture.test/tip': new Response('unavailable', { status: 503 }),
+      }),
+      runtime: { version: '1.3.14', revision: '0d9b296af' },
+    });
+
+    expect(report.summary.status).toBe('healthy');
     expect(report.drift).toContainEqual(
       expect.objectContaining({ code: 'tip-unavailable', kind: 'informational' })
     );

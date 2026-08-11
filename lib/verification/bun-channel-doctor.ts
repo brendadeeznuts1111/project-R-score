@@ -27,7 +27,7 @@ export type BunChannelConfig = {
     wrapper_package: '@types/bun';
     wrapper_channel: 'latest';
     definitions_package: 'bun-types';
-    definitions_channel: 'canary';
+    definitions_channel: 'canary' | 'pinned-tip';
   };
   monitor: {
     os_schedule: string;
@@ -191,9 +191,11 @@ export function parseBunChannelConfig(text: string): BunChannelConfig {
     raw.types?.wrapper_package !== '@types/bun' ||
     raw.types.wrapper_channel !== 'latest' ||
     raw.types.definitions_package !== 'bun-types' ||
-    raw.types.definitions_channel !== 'canary'
+    !['canary', 'pinned-tip'].includes(raw.types.definitions_channel ?? '')
   ) {
-    throw new Error('bun channel config: expected latest @types/bun plus canary bun-types');
+    throw new Error(
+      'bun channel config: expected latest @types/bun plus canary or pinned-tip bun-types'
+    );
   }
   if (raw.monitor?.os_timezone !== 'system') {
     throw new Error('bun channel config: persistent OS cron timezone must be system');
@@ -386,6 +388,10 @@ function lockResolvedVersion(
 ): string | undefined {
   const locator = lock?.packages?.[packageName]?.[0];
   if (!locator) return undefined;
+  if (packageName === 'bun-types') {
+    const vendored = locator.match(/bun-types-([^/]+)\.tgz$/)?.[1];
+    if (vendored) return vendored;
+  }
   return locator.slice(locator.lastIndexOf('@') + 1) || undefined;
 }
 
@@ -486,7 +492,7 @@ export async function runBunChannelDoctor(
     rss,
     atom,
     npmPackage('@types/bun', 'npm-@types/bun', config.types.wrapper_channel),
-    npmPackage('bun-types', 'npm-bun-types', config.types.definitions_channel),
+    npmPackage('bun-types', 'npm-bun-types', 'canary'),
   ]);
   const observations: BunChannelObservation[] = [
     { source: 'local-manifest', ok: true, observedAt: generatedAt },
@@ -514,16 +520,52 @@ export async function runBunChannelDoctor(
     ...upstream,
   ];
   const bySource = new Map(observations.map(item => [item.source, item]));
+  const tipRevision = bySource.get('github-tip')?.revision;
+  const tipRevisionShort = tipRevision?.slice(0, 8);
+  const pinnedDefinitionsVersion = local.definitionsPin?.match(
+    /^file:tools\/vendor\/bun-types\/bun-types-(\d+\.\d+\.\d+-tip\.[0-9a-f]{7,40})\.tgz$/
+  )?.[1];
+  const expectedDefinitionsVersion =
+    config.types.definitions_channel === 'pinned-tip'
+      ? pinnedDefinitionsVersion
+      : bySource.get('npm-bun-types')?.version;
+  const expectedDefinitionsPin =
+    config.types.definitions_channel === 'pinned-tip' && expectedDefinitionsVersion
+      ? `file:tools/vendor/bun-types/bun-types-${expectedDefinitionsVersion}.tgz`
+      : expectedDefinitionsVersion;
   const drift: BunChannelDrift[] = [
     {
       code: 'intentional-type-channel-split',
       kind: 'intentional',
-      expected: '@types/bun@latest + bun-types@canary',
+      expected: `@types/bun@latest + bun-types@${config.types.definitions_channel}`,
       actual: `${local.wrapperPin ?? 'missing'} + ${local.definitionsPin ?? 'missing'} (wrapper declares ${local.wrapperDeclaredDefinitionsVersion ?? 'unknown'})`,
       message:
-        'The stable wrapper and selected canary declaration package are intentionally independent; the direct declaration package is authoritative.',
+        'The stable wrapper and selected forward declaration package are intentionally independent; the direct declaration package is authoritative.',
     },
   ];
+  if (config.types.definitions_channel === 'pinned-tip' && !pinnedDefinitionsVersion) {
+    drift.push({
+      code: 'definitions-pin-invalid',
+      kind: 'actionable',
+      expected: 'file:tools/vendor/bun-types/bun-types-<version>-tip.<revision>.tgz',
+      actual: local.definitionsPin,
+      message: 'The reviewed tip channel requires an exact vendored declaration artifact.',
+    });
+  }
+  const pinnedRevision = pinnedDefinitionsVersion?.match(/-tip\.([0-9a-f]{7,40})$/)?.[1];
+  if (
+    config.types.definitions_channel === 'pinned-tip' &&
+    tipRevisionShort &&
+    pinnedRevision !== tipRevisionShort
+  ) {
+    drift.push({
+      code: 'pinned-tip-behind-upstream',
+      kind: 'informational',
+      expected: `reviewed pin ${pinnedRevision ?? 'unknown'}`,
+      actual: `upstream tip ${tipRevisionShort}`,
+      message: 'Upstream advanced after the reviewed declaration snapshot; promotion is separate.',
+    });
+  }
   for (const observation of observations) {
     if (!observation.ok) {
       if (observation.source === 'github-tip') {
@@ -593,9 +635,9 @@ export async function runBunChannelDoctor(
   addMismatch(
     drift,
     'definitions-pin-stale',
-    bySource.get('npm-bun-types')?.version,
+    expectedDefinitionsPin,
     local.definitionsPin,
-    'bun-types does not match its configured canary dist-tag.'
+    `bun-types does not match its configured ${config.types.definitions_channel} channel.`
   );
   addMismatch(
     drift,
@@ -621,7 +663,7 @@ export async function runBunChannelDoctor(
   addMismatch(
     drift,
     'lock-definitions-resolution-drift',
-    local.definitionsPin,
+    expectedDefinitionsVersion,
     local.lockDefinitionsResolved,
     'bun.lock resolved bun-types package does not match the selected declaration pin.'
   );
@@ -635,7 +677,7 @@ export async function runBunChannelDoctor(
   addMismatch(
     drift,
     'installed-definitions-resolution-drift',
-    local.definitionsPin,
+    expectedDefinitionsVersion,
     local.resolvedDefinitionsVersion,
     'Installed bun-types does not match the selected declaration pin.'
   );
@@ -643,7 +685,7 @@ export async function runBunChannelDoctor(
     drift.push({
       code: 'wrapper-reference-resolution-drift',
       kind: 'actionable',
-      expected: local.definitionsPin,
+      expected: expectedDefinitionsVersion,
       actual: local.wrapperReferenceResolvedVersion,
       message:
         '@types/bun must resolve its `bun-types` reference to the selected direct declaration package.',

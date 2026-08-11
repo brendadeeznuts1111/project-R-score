@@ -42,13 +42,13 @@ may point to those owners but cannot override them.
 | --- | --- | --- |
 | Production runtime | `stable` | Release and CI behavior must be reproducible. |
 | `@types/bun` wrapper | npm `latest` policy, repository pin | The wrapper remains on the stable public type surface. |
-| direct `bun-types` declarations | npm `canary` policy, repository pin | Project R deliberately exercises the forward declaration surface without moving the runtime. |
+| direct `bun-types` declarations | Reviewed Bun `main` snapshot (`pinned-tip`) | Project R deliberately exercises a forward declaration surface without moving the runtime or floating on every upstream commit. |
 | Promotion | reviewed change | A human-reviewed lane updates pins and lockfile after the report is understood. |
 | Mutation | never in the doctor | Observation, promotion, and installation are separate authorities. |
 | OS schedule | system-local, as Bun 1.3.14 defines it | Persistent `Bun.cron(path, schedule, title)` follows the host scheduler. |
 | In-process schedule | UTC on selected Bun 1.3.14 | Do not expose a timezone option until the selected runtime and declarations both ship one. |
 
-The stable wrapper and canary declaration pins are intentionally different.
+The stable wrapper and pinned-tip declaration versions are intentionally different.
 A same-version lint would erase the experiment boundary and is therefore not a
 valid Project R invariant. The invariant is that each package matches its own
 selected channel and the resulting TypeScript gates pass.
@@ -72,7 +72,8 @@ active agent session.
 ## Source interpretation
 
 - The stable updater API determines the latest stable runtime version.
-- The rolling `canary` release determines the current canary revision/version.
+- The rolling `canary` release remains an observed upstream signal.
+- The Bun `main` commit endpoint reports promotion drift from the reviewed pinned-tip; it does not invalidate that pin.
 - RSS proves that the stable release was announced on Bun's publication feed.
 - GitHub Atom is an independent release-event signal; prerelease/consolidation
   entries are observations, not automatic promotion authority.

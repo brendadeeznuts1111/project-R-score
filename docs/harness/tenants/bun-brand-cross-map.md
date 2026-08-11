@@ -71,7 +71,7 @@ Three version axes are deliberately separate:
    FactoryWager artifact release.
 2. `package.json#catalog` pins the compile-time Bun and TypeScript definitions.
    `@types/bun` follows the configured latest/stable wrapper channel and direct
-   `bun-types` follows the configured canary declaration channel. Their versions
+   `bun-types` follows the configured reviewed `pinned-tip` declaration channel. Their versions
    are intentionally independent; [`config/bun-channels.toml`](../../../config/bun-channels.toml)
    owns the policy and `bun run bun:channel:check` proves each pin.
 3. `DocTokenId` entries in `tools/bun-docs-catalog.json` own each Bun API's

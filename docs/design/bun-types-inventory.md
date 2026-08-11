@@ -73,7 +73,7 @@ usage, and status do.
 | `bun:types-inventory:write`           | `bun tools/bun-types-inventory.ts --write`                  | Refresh committed JSON + MD SSOT                       | `0`                                     |
 | `bun:types-inventory:check`           | `bun tools/bun-types-inventory.ts --check`                  | Fail if committed inventory is stale                   | `0` / `1`                               |
 | `bun:types-inventory:tip-diff`        | `bun tools/bun-types-tip-diff.ts`                           | Pin vs tip (may fetch)                                 | policy-dependent                        |
-| `bun:types-inventory:tip-diff:local`  | `bun tools/bun-types-tip-diff.ts --prefer-local --no-fetch` | Tip from local/`~/bun`                                 | soft `0` unless `--strict`              |
+| `bun:types-inventory:tip-diff:local`  | `bun tools/bun-types-tip-diff.ts --prefer-local --no-fetch` | Tip from repository cache, then local `~/bun`          | soft `0` unless `--strict`              |
 | `bun:types-inventory:tip-diff:strict` | `bun tools/bun-types-tip-diff.ts --strict`                  | Tip-diff hard fail on policy breach                    | `0` / `1`                               |
 | `bun:types-usage`                     | `bun tools/bun-types-usage.ts`                              | Usage scan → `.cache/bun-types-usage/`                 | `0`                                     |
 | `bun:types-usage:unused`              | `bun tools/bun-types-usage.ts --unused`                     | Unused type-likes report                               | `0`                                     |
