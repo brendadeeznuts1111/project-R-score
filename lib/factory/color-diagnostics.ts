@@ -226,3 +226,95 @@ export function parseColorTones(input: string): number[] | null {
   const tones = parts.map(Number);
   return tones.every(value => Number.isFinite(value) && value >= -1 && value <= 1) ? tones : null;
 }
+
+function rgbToHsl({ r, g, b }: ConcreteRgba): [number, number, number] {
+  const red = r / 255;
+  const green = g / 255;
+  const blue = b / 255;
+  const max = Math.max(red, green, blue);
+  const min = Math.min(red, green, blue);
+  const lightness = (max + min) / 2;
+  if (max === min) return [0, 0, lightness];
+
+  const delta = max - min;
+  const saturation = lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+  const hue =
+    max === red
+      ? ((green - blue) / delta + (green < blue ? 6 : 0)) * 60
+      : max === green
+        ? ((blue - red) / delta + 2) * 60
+        : ((red - green) / delta + 4) * 60;
+  return [hue, saturation, lightness];
+}
+
+function hslToRgb(hue: number, saturation: number, lightness: number): [number, number, number] {
+  const chroma = (1 - Math.abs(2 * lightness - 1)) * saturation;
+  const sector = (((hue % 360) + 360) % 360) / 60;
+  const secondary = chroma * (1 - Math.abs((sector % 2) - 1));
+  const [red, green, blue] =
+    sector < 1
+      ? [chroma, secondary, 0]
+      : sector < 2
+        ? [secondary, chroma, 0]
+        : sector < 3
+          ? [0, chroma, secondary]
+          : sector < 4
+            ? [0, secondary, chroma]
+            : sector < 5
+              ? [secondary, 0, chroma]
+              : [chroma, 0, secondary];
+  const match = lightness - chroma / 2;
+  return [red, green, blue].map(channel => Math.round((channel + match) * 255)) as [
+    number,
+    number,
+    number,
+  ];
+}
+
+export function generateColorGradient(
+  start: Bun.ColorInput,
+  end: Bun.ColorInput,
+  options: { steps?: number; hsl?: boolean; format?: ColorOutputFormat } = {}
+): Array<{ step: number; position: number; color: ColorResult; display: string }> | null {
+  const startColor = parseColor(start);
+  const endColor = parseColor(end);
+  if (startColor.kind !== 'concrete' || endColor.kind !== 'concrete') return null;
+
+  const steps = Math.max(2, Math.floor(options.steps ?? 10));
+  const format = options.format ?? 'hex';
+  const startHsl = rgbToHsl(startColor.rgba);
+  const endHsl = rgbToHsl(endColor.rgba);
+  if (startHsl[1] === 0) startHsl[0] = endHsl[0];
+  if (endHsl[1] === 0) endHsl[0] = startHsl[0];
+  const hueDelta = ((endHsl[0] - startHsl[0] + 540) % 360) - 180;
+
+  return Array.from({ length: steps }, (_, index) => {
+    const position = index / (steps - 1);
+    const channels = options.hsl
+      ? hslToRgb(
+          startHsl[0] + hueDelta * position,
+          startHsl[1] + (endHsl[1] - startHsl[1]) * position,
+          startHsl[2] + (endHsl[2] - startHsl[2]) * position
+        )
+      : ([
+          Math.round(startColor.rgba.r + (endColor.rgba.r - startColor.rgba.r) * position),
+          Math.round(startColor.rgba.g + (endColor.rgba.g - startColor.rgba.g) * position),
+          Math.round(startColor.rgba.b + (endColor.rgba.b - startColor.rgba.b) * position),
+        ] as [number, number, number]);
+    const color = cachedColor(
+      {
+        r: channels[0],
+        g: channels[1],
+        b: channels[2],
+        a: startColor.rgba.a + (endColor.rgba.a - startColor.rgba.a) * position,
+      },
+      format
+    );
+    return {
+      step: index + 1,
+      position: Number(position.toFixed(4)),
+      color,
+      display: displayColorResult(color),
+    };
+  });
+}

@@ -208,4 +208,25 @@ describe('CLI — colors', () => {
     const value = JSON.parse(stdout) as { palette: Array<{ amount: number }> };
     expect(value.palette.map(row => row.amount)).toEqual([0, 0.1, 0.3, 0.6, 1]);
   });
+
+  test('emits a formatted HSL gradient as Markdown', async () => {
+    const { stdout, exitCode } = await runCli([
+      'colors',
+      '-p',
+      '#e06c75',
+      '--gradient',
+      '#2ecc71',
+      '--steps',
+      '16',
+      '--hsl',
+      '--format',
+      'HEX',
+      '-m',
+    ]);
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain('## Color gradient: #e06c75 → #2ecc71');
+    expect(stdout).toContain('Space: `hsl-shortest-path`');
+    expect(stdout).toContain('| 1 | 0 | `#E06C75` |');
+    expect(stdout).toContain('| 16 | 1 | `#2ECC71` |');
+  });
 });

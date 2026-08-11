@@ -7,6 +7,7 @@ import {
   colorCacheStats,
   diagnoseColor,
   diagnoseColorCapabilities,
+  generateColorGradient,
   generateColorPalette,
   mixColor,
   parseColorTones,
@@ -111,5 +112,21 @@ describe('factory color palette', () => {
       { step: 4, amount: 0.6, color: '#f3c4c8' },
       { step: 5, amount: 1, color: '#ffffff' },
     ]);
+  });
+
+  test('generates endpoint-stable shortest-path HSL gradients in a selected format', () => {
+    const gradient = generateColorGradient('#e06c75', '#2ecc71', {
+      steps: 16,
+      hsl: true,
+      format: 'HEX',
+    });
+    expect(gradient).toHaveLength(16);
+    expect(gradient?.[0]).toMatchObject({ step: 1, position: 0, display: '#E06C75' });
+    expect(gradient?.[7]).toMatchObject({ step: 8, position: 0.4667, display: '#CCD84D' });
+    expect(gradient?.[15]).toMatchObject({ step: 16, position: 1, display: '#2ECC71' });
+  });
+
+  test('rejects symbolic gradient endpoints', () => {
+    expect(generateColorGradient('#e06c75', 'currentcolor')).toBeNull();
   });
 });

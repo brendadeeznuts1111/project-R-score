@@ -98,6 +98,7 @@ export {
   diagnoseColorCapabilities,
   displayColorResult,
   generateColorPalette,
+  generateColorGradient,
   mixColor,
   parseColorTones,
   parseColor,

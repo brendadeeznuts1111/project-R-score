@@ -92,6 +92,7 @@ bun run factory -- colors 'rgba(224 108 117 / 0.5)' --diagnose
 bun run factory -- colors --palette '#e06c75' --perceptual
 bun run factory -- colors --palette '#e06c75' --perceptual --json
 bun run issue:context -p '#e06c75' --tones '0,0.1,0.3,0.6,1'
+bun run issue:context -p '#e06c75' --gradient '#2ecc71' --steps 16 --hsl --format HEX -m
 ```
 
 The formatter table covers all 16 formats in the current Bun declarations,
@@ -118,6 +119,12 @@ base color at the center of 15 steps.
 list. Each value is a mix amount from `-1` (black), through `0` (the unmodified
 base), to `1` (white). `issue:context` is the short package-script route to the
 same canonical command; `-p` aliases `--palette`.
+
+Gradient mode interpolates between two concrete endpoints. It uses encoded RGB
+by default; `--hsl` selects shortest-path hue interpolation. `--steps` accepts
+`2` through `256`, and `--format` accepts any format from the live Bun color
+surface. `-m` / `--markdown` emits a paste-ready table suitable for issue or PR
+context; `--json` remains the machine-data route.
 
 The library exports the pure diagnostic, cache, parse, and palette helpers from
 [`index.ts`](./index.ts). For direct build-time conversion, prefer Bun's native
