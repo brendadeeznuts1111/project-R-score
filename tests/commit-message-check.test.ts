@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  analyzeCommitMessage,
   CONVENTIONAL_COMMIT_TYPES,
   validateCommitMessage,
 } from '../scripts/check-commit-message.ts';
@@ -20,6 +21,9 @@ describe('conventional commit-message gate', () => {
   test('keeps Git-generated history operations usable', () => {
     expect(validateCommitMessage('Merge branch \'main\' into feature\n')).toEqual([]);
     expect(validateCommitMessage('fixup! feat(factory): add gradient output\n')).toEqual([]);
+    expect(validateCommitMessage('Automatic merge failed; fix conflicts and then commit.\n')).toEqual(
+      []
+    );
   });
 
   test('rejects non-conventional and malformed messages', () => {
@@ -50,6 +54,22 @@ describe('conventional commit-message gate', () => {
       'test',
     ]);
   });
+
+  test('reports parsed scope and breaking-change metadata', () => {
+    expect(analyzeCommitMessage('feat(factory)!: change palette wire\n')).toMatchObject({
+      valid: true,
+      ignored: false,
+      type: 'feat',
+      scope: 'factory',
+      breaking: true,
+      subject: 'change palette wire',
+    });
+    expect(
+      analyzeCommitMessage(
+        'feat(factory): change palette wire\n\nBREAKING CHANGE: consumers must select a format\n'
+      )
+    ).toMatchObject({ valid: true, breaking: true });
+  });
 });
 
 describe('Husky commit-msg wiring', () => {
@@ -59,5 +79,35 @@ describe('Husky commit-msg wiring', () => {
     expect(hook).toContain('bun run commitlint --edit "$1"');
     expect(hook).not.toContain('bun-git-hooks');
     expect(pkg.scripts.commitlint).toBe('bun scripts/check-commit-message.ts');
+  });
+
+  test('CLI exposes config and structured diagnostics', async () => {
+    const script = `${import.meta.dir}/../scripts/check-commit-message.ts`;
+    const config = Bun.spawn(['bun', script, '--print-config'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const configJson = JSON.parse(await new Response(config.stdout).text()) as {
+      hookManager: string;
+      types: string[];
+    };
+    expect(await config.exited).toBe(0);
+    expect(configJson.hookManager).toBe('husky');
+    expect(configJson.types).toContain('feat');
+
+    const path = `${Bun.env.TMPDIR ?? '/tmp'}/commitlint-${Bun.randomUUIDv7()}.txt`;
+    await Bun.write(path, 'not conventional\n');
+    const invalid = Bun.spawn(['bun', script, '--edit', path, '--json'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const report = JSON.parse(await new Response(invalid.stdout).text()) as {
+      valid: boolean;
+      errors: string[];
+    };
+    expect(await invalid.exited).toBe(1);
+    expect(report.valid).toBe(false);
+    expect(report.errors).toHaveLength(1);
+    await Bun.file(path).delete();
   });
 });

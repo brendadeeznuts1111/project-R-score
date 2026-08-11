@@ -131,6 +131,17 @@ The repository intentionally implements this small contract locally instead of
 adding `@commitlint/*` and `bun-git-hooks`: Husky already owns `core.hooksPath`,
 and the staged harness remains the only pre-commit owner.
 
+DX inspection is built in:
+
+```bash
+bun run commitlint --print-config
+bun run commitlint --edit .git/COMMIT_EDITMSG --json
+```
+
+Structured output reports the parsed type, scope, breaking-change state,
+subject, ignore decision, and every validation error. `--edit=<path>` is also
+accepted for compatibility with common commitlint invocations.
+
 ---
 
 ## Concept / vocabulary changes
