@@ -7,11 +7,11 @@ import { loadMergedRegistry } from '../../bookmakers/merge.ts';
 import {
   loadAlertRules,
   type AlertPeriod,
-  type AlertPattern,
   type AlertRule,
   edgeMatches,
   ruleMatchesPeriod,
 } from './alerts.ts';
+import type { AlertPattern, MovementPattern } from '../alert-vocabulary.ts';
 import { detectNotableMovements, type LineMovement } from './line-movement.ts';
 import { resolvePartnerContext, ruleMatchesPartners } from './partner-filters.ts';
 import { ensureMatchingSchema } from './schema.ts';
@@ -33,7 +33,7 @@ export type Signal = {
   payload: unknown;
 };
 
-function classifyMovementPattern(m: LineMovement): AlertPattern {
+function classifyMovementPattern(m: LineMovement): MovementPattern {
   const absPct = Math.abs(m.percentageChange);
   const minutes = m.timeDeltaMs / 60_000;
   // Spike: sharp move in a short window

@@ -41,9 +41,12 @@ without it.
 
 | Module                                                      | Role                                                                                       |
 | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| [`agent-odds-http.ts`](./agent-odds-http.ts)                | Shared HTTP boundary for edges, platform status, and closed simulator alert-rule input     |
 | [`edge-engine.ts`](./edge-engine.ts)                        | Portal agent-odds uncovered edges: arb/value/steam, Kelly, latency (brands)                |
-| [`model-contracts.ts`](./model-contracts.ts)                | Package/group property catalog; circuit-only model features and locked harness flags       |
-| [`files.md`](./files.md)                                    | Reviewed file-accountability boundary for model intake and circuit contracts               |
+| [`alert-vocabulary.ts`](./alert-vocabulary.ts)              | Closed edge, movement, alert, channel, and period vocabularies                             |
+| [`model-contracts.ts`](./model-contracts.ts)                | Property catalog; circuit-only model features and locked harness flags                     |
+| [`model-contract-files.ts`](./model-contract-files.ts)      | Typed file ownership, grouped Markdown projection, and Bun parser/render proof             |
+| [`files.md`](./files.md)                                    | Generated ownership projection, grouped by package and owner module                        |
 | [`odds/`](./odds/)                                          | Live odds pipeline + **depth**: multi-leg arb, value vs sharp, steam velocity, `edge-scan` |
 | [`odds/scheduler.ts`](./odds/scheduler.ts)                  | In-process `Bun.cron` odds monitor (1.3.12+)                                               |
 | [`desk-jobs.ts`](./desk-jobs.ts)                            | `GET /api/system/jobs` snapshot for `agent serve`                                          |
@@ -68,7 +71,17 @@ Event, edge, rule, sportsbook, and host identities use brands from
 Do **not** wrap the odds SQLite singleton (`openOddsDb`) in `using` — it is
 process-lived.
 
+The repository package is `factorywager-enterprise`; names such as
+`operator-research/circuit` are owner modules inside that package, not separate
+Bun packages. Model-contract file ownership and its package/module distinction
+are generated into [`files.md`](./files.md). `Bun.markdown` (lowercase) parses
+and renders that Markdown for structural proof; Bun currently documents the API
+as unstable. See the official
+[Markdown guide](https://bun.com/docs/runtime/markdown) and
+[API reference](https://bun.com/reference/bun/markdown).
+
 ```bash
+bun run docs:markdown:check
 bun test tests/edge-engine.test.ts
 bun test tests/operator-odds-pipeline.test.ts
 bun test tests/operator-research-desk-jobs.test.ts
