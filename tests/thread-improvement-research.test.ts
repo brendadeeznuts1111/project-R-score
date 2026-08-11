@@ -1,9 +1,7 @@
 // @see https://bun.com/docs/test — bun:test
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 import { describe, expect, test } from 'bun:test';
-import { mkdtemp, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { joinPath } from '../lib/path-bun.ts';
 import {
   buildResearchAgentEnvironment,
   buildThreadResearchPrompt,
@@ -15,6 +13,7 @@ import {
   parseThreadPortfolioWire,
   type ThreadPortfolio,
 } from '../tools/codex-thread-portfolio.ts';
+import { createTestWorkspace } from './harness.ts';
 
 const PORTFOLIO_PATH = new URL('../tools/codex-thread-portfolio.json', import.meta.url).pathname;
 
@@ -63,8 +62,8 @@ describe('daily weakest-thread research', () => {
   });
 
   test('runs one isolated agent per target and writes an ignored latest manifest', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'project-r-thread-research-'));
-    try {
+    await using workspace = await createTestWorkspace('project-r-thread-research-');
+    const root = workspace.root;
       const calls: string[] = [];
       const result = await runThreadResearchCycle({
         portfolio: await loadPortfolio(),
@@ -79,15 +78,12 @@ describe('daily weakest-thread research', () => {
       expect(calls).toEqual(['RTH-036', 'RTH-012', 'RTH-030']);
       expect(result.reports).toHaveLength(3);
       expect(result.failures).toEqual([]);
-      expect(await Bun.file(join(root, '.cache/thread-research/latest.json')).exists()).toBe(true);
-    } finally {
-      await rm(root, { recursive: true, force: true });
-    }
+      expect(await Bun.file(joinPath(root, '.cache/thread-research/latest.json')).exists()).toBe(true);
   });
 
   test('preserves successful reports when one agent fails', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'project-r-thread-research-partial-'));
-    try {
+    await using workspace = await createTestWorkspace('project-r-thread-research-partial-');
+    const root = workspace.root;
       const result = await runThreadResearchCycle({
         portfolio: await loadPortfolio(),
         root,
@@ -100,17 +96,14 @@ describe('daily weakest-thread research', () => {
       });
       expect(result.reports.map(report => report.ref)).toEqual(['RTH-036', 'RTH-012']);
       expect(result.failures[0]).toMatchObject({ ref: 'RTH-030', errorCode: 'usage_limit' });
-      const manifest = await Bun.file(join(root, '.cache/thread-research/latest.json')).json();
+      const manifest = await Bun.file(joinPath(root, '.cache/thread-research/latest.json')).json();
       expect(manifest.cycle).toBe('thread-research-20260807T120000000z');
       expect(manifest.failures[0]).toMatchObject({ ref: 'RTH-030', errorCode: 'usage_limit' });
-    } finally {
-      await rm(root, { recursive: true, force: true });
-    }
   });
 
   test('stops the cycle and redacts details when research quota is unavailable', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'project-r-thread-research-quota-'));
-    try {
+    await using workspace = await createTestWorkspace('project-r-thread-research-quota-');
+    const root = workspace.root;
       const calls: string[] = [];
       const result = await runThreadResearchCycle({
         portfolio: await loadPortfolio(),
@@ -129,18 +122,15 @@ describe('daily weakest-thread research', () => {
         message: 'Research quota is unavailable; no raw agent output was retained.',
         retryAt: '2026-08-08T12:00:00.000Z',
       });
-    } finally {
-      await rm(root, { recursive: true, force: true });
-    }
   });
 
   test('honors an active quota backoff before launching an agent', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'project-r-thread-research-backoff-'));
-    try {
-      const directory = join(root, '.cache/thread-research');
+    await using workspace = await createTestWorkspace('project-r-thread-research-backoff-');
+    const root = workspace.root;
+      const directory = joinPath(root, '.cache/thread-research');
       await Bun.spawn(['mkdir', '-p', directory]).exited;
       await Bun.write(
-        join(directory, 'latest.json'),
+        joinPath(directory, 'latest.json'),
         JSON.stringify({
           failures: [{ errorCode: 'usage_limit', retryAt: '2026-08-08T12:00:00.000Z' }],
         })
@@ -163,8 +153,84 @@ describe('daily weakest-thread research', () => {
           retryAt: '2026-08-08T12:00:00.000Z',
         },
       ]);
-    } finally {
-      await rm(root, { recursive: true, force: true });
-    }
+  });
+
+  test('preserves active quota retry across repeated deferred cycles', async () => {
+    await using workspace = await createTestWorkspace('project-r-thread-research-repeat-');
+    const first = await runThreadResearchCycle({
+      portfolio: await loadPortfolio(),
+      root: workspace.root,
+      executeAgents: true,
+      now: new Date('2026-08-07T12:00:00.000Z'),
+      agent: async () => {
+        throw new Error('usage_limit');
+      },
+    });
+    const calls: string[] = [];
+    const second = await runThreadResearchCycle({
+      portfolio: await loadPortfolio(),
+      root: workspace.root,
+      executeAgents: true,
+      now: new Date('2026-08-07T13:00:00.000Z'),
+      agent: async target => {
+        calls.push(target.thread.ref);
+      },
+    });
+    const third = await runThreadResearchCycle({
+      portfolio: await loadPortfolio(),
+      root: workspace.root,
+      executeAgents: true,
+      now: new Date('2026-08-07T14:00:00.000Z'),
+      agent: async target => {
+        calls.push(target.thread.ref);
+      },
+    });
+    expect(first.failures[0]?.retryAt).toBe('2026-08-08T12:00:00.000Z');
+    expect(second.failures[0]?.retryAt).toBe('2026-08-08T12:00:00.000Z');
+    expect(third.failures[0]?.retryAt).toBe('2026-08-08T12:00:00.000Z');
+    expect(calls).toEqual([]);
+  });
+
+  test('fails closed when the persisted research manifest is malformed', async () => {
+    await using workspace = await createTestWorkspace('project-r-thread-research-invalid-');
+    const directory = joinPath(workspace.root, '.cache/thread-research');
+    await Bun.spawn(['mkdir', '-p', directory]).exited;
+    await Bun.write(joinPath(directory, 'latest.json'), '{invalid');
+    const calls: string[] = [];
+    const result = await runThreadResearchCycle({
+      portfolio: await loadPortfolio(),
+      root: workspace.root,
+      executeAgents: true,
+      now: new Date('2026-08-07T12:00:00.000Z'),
+      agent: async target => {
+        calls.push(target.thread.ref);
+      },
+    });
+    expect(calls).toEqual([]);
+    expect(result.failures).toEqual([
+      {
+        ref: 'scheduler',
+        errorCode: 'manifest_invalid',
+        message: 'Research manifest is invalid; no agents were launched.',
+      },
+    ]);
+  });
+
+  test('records a structured non-quota agent exit status', async () => {
+    await using workspace = await createTestWorkspace('project-r-thread-research-exit-');
+    const result = await runThreadResearchCycle({
+      portfolio: await loadPortfolio(),
+      root: workspace.root,
+      executeAgents: true,
+      now: new Date('2026-08-07T12:00:00.000Z'),
+      agent: async () => {
+        throw new Error('agent_failed_exit_17');
+      },
+    });
+    expect(result.failures[0]).toEqual({
+      ref: 'RTH-036',
+      errorCode: 'agent_failed',
+      message: 'Research agent failed with agent_failed_exit_17.',
+    });
   });
 });

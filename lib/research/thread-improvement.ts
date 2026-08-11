@@ -33,13 +33,13 @@ export type ThreadResearchReport = {
 
 export type ThreadResearchFailure = {
   ref: string; // brand-ok — scheduler sentinel or portfolio RTH reference, not a domain entity ID
-  errorCode: 'usage_limit' | 'agent_failed' | 'backoff_active';
+  errorCode: 'usage_limit' | 'agent_failed' | 'backoff_active' | 'manifest_invalid';
   message: string;
   retryAt?: string;
 };
 
 export type ThreadResearchCycleResult = {
-  cycle: string;
+  cycle: string; // brand-ok — deterministic scheduler run label, not a domain entity ID
   generatedAt: string;
   count: number;
   improvementFraction: number;
@@ -64,7 +64,7 @@ export function parseResearchRetryAt(value: unknown): string | undefined {
   for (const failure of value.failures) {
     if (
       !isRecord(failure) ||
-      failure.errorCode !== 'usage_limit' ||
+      (failure.errorCode !== 'usage_limit' && failure.errorCode !== 'backoff_active') ||
       typeof failure.retryAt !== 'string'
     ) {
       continue;
@@ -228,9 +228,32 @@ export async function runThreadResearchCycle(
       throw new Error(`Unable to create thread research report directory: ${directory}`);
     }
     const latestPath = joinPath(directory, 'latest.json');
-    const retryAt = (await Bun.file(latestPath).exists())
-      ? parseResearchRetryAt((await Bun.file(latestPath).json()) as unknown)
-      : undefined;
+    let previousManifest: unknown;
+    if (await Bun.file(latestPath).exists()) {
+      try {
+        previousManifest = (await Bun.file(latestPath).json()) as unknown;
+      } catch {
+        failures.push({
+          ref: 'scheduler', // brand-ok — scheduler sentinel, not a domain entity ID
+          errorCode: 'manifest_invalid',
+          message: 'Research manifest is invalid; no agents were launched.',
+        });
+        await Bun.write(
+          latestPath,
+          `${JSON.stringify({ cycle, generatedAt, reports, failures }, null, 2)}\n`
+        );
+        return {
+          cycle,
+          generatedAt,
+          count: targets.length,
+          improvementFraction: THREAD_RESEARCH_IMPROVEMENT_FRACTION,
+          targets,
+          reports,
+          failures,
+        };
+      }
+    }
+    const retryAt = parseResearchRetryAt(previousManifest);
     if (retryAt && Date.parse(retryAt) > Date.parse(generatedAt)) {
       failures.push({
         ref: 'scheduler', // brand-ok — scheduler sentinel, not a domain entity ID
@@ -270,17 +293,17 @@ export async function runThreadResearchCycle(
         await agent(target, buildThreadResearchPrompt(target), reportPath, root);
         reports.push(report);
       } catch (error) {
-        const code =
-          error instanceof Error && error.message === 'usage_limit'
-            ? 'usage_limit'
-            : 'agent_failed';
+        const failureMessage = error instanceof Error ? error.message : '';
+        const code = failureMessage === 'usage_limit' ? 'usage_limit' : 'agent_failed';
         failures.push({
           ref: target.thread.ref,
           errorCode: code,
           message:
             code === 'usage_limit'
               ? 'Research quota is unavailable; no raw agent output was retained.'
-              : 'Research agent failed; inspect the scheduler log for the exit status.',
+              : /^agent_failed_exit_\d+$/.test(failureMessage)
+                ? `Research agent failed with ${failureMessage}.`
+                : 'Research agent failed without a structured exit status.',
           ...(code === 'usage_limit'
             ? { retryAt: new Date(Date.parse(generatedAt) + USAGE_LIMIT_RETRY_MS).toISOString() }
             : {}),
