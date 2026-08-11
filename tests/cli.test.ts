@@ -152,3 +152,97 @@ describe('CLI — snapshot help', () => {
     expect(stdout).toContain('public/registry/registry.json');
   });
 });
+
+describe('CLI — colors', () => {
+  test('documents diagnosis, palette, and Bun macro usage', async () => {
+    const { stdout, exitCode } = await runCli(['help', 'colors']);
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain('--diagnose');
+    expect(stdout).toContain('--palette <color>');
+    expect(stdout).toContain('--theme <theme>');
+    expect(stdout).toContain('type: "macro"');
+  });
+
+  test('diagnoses all formats and parser capabilities', async () => {
+    const { stdout, exitCode } = await runCli([
+      'colors',
+      'rgba(224 108 117 / 0.5)',
+      '--diagnose',
+    ]);
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain('formats: 16');
+    expect(stdout).toContain('parser capabilities');
+    expect(stdout).toContain('#e06c7580');
+    expect(stdout).toContain('display-p3 preservation');
+  });
+
+  test('generates a structured linear-light palette', async () => {
+    const { stdout, exitCode } = await runCli([
+      'colors',
+      '--palette',
+      '#e06c75',
+      '--perceptual',
+      '--json',
+    ]);
+    expect(exitCode).toBe(0);
+    const value = JSON.parse(stdout) as { space: string; palette: unknown[] };
+    expect(value.space).toBe('linear-light-rgb');
+    expect(value.palette).toHaveLength(15);
+  });
+
+  test('rejects symbolic palette inputs clearly', async () => {
+    const { stderr, exitCode } = await runCli(['colors', '--palette', 'currentcolor']);
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain('context-dependent CSS');
+  });
+
+  test('supports the issue:context short palette and custom tones contract', async () => {
+    const { stdout, exitCode } = await runCli([
+      'colors',
+      '-p',
+      '#e06c75',
+      '--tones',
+      '0,0.1,0.3,0.6,1',
+      '--json',
+    ]);
+    expect(exitCode).toBe(0);
+    const value = JSON.parse(stdout) as { palette: Array<{ amount: number }> };
+    expect(value.palette.map(row => row.amount)).toEqual([0, 0.1, 0.3, 0.6, 1]);
+  });
+
+  test('emits a formatted HSL gradient as Markdown', async () => {
+    const { stdout, exitCode } = await runCli([
+      'colors',
+      '-p',
+      '#e06c75',
+      '--gradient',
+      '#2ecc71',
+      '--steps',
+      '16',
+      '--hsl',
+      '--format',
+      'HEX',
+      '--theme',
+      'dark',
+      '-m',
+    ]);
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain('## Color gradient: #e06c75 → #2ecc71');
+    expect(stdout).toContain('Space: `hsl-shortest-path`');
+    expect(stdout).toContain('Theme: `dark`');
+    expect(stdout).toContain('| 1 | 0 | `#E06C75` |');
+    expect(stdout).toContain('| 16 | 1 | `#2ECC71` |');
+  });
+
+  test('rejects unknown themes', async () => {
+    const { stderr, exitCode } = await runCli([
+      'colors',
+      '--palette',
+      '#e06c75',
+      '--theme',
+      'neon',
+    ]);
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain('--theme must be one of: auto, dark, light');
+  });
+});

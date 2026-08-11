@@ -44,6 +44,15 @@ import { runIntegrityCycle } from './monitoring';
 import { registry } from './registry';
 import { type ArtifactType } from './artifact';
 import { readPublishPackageJson, readPublishReadme } from './publish-metadata';
+import {
+  COLOR_FORMATS,
+  diagnoseColor,
+  diagnoseColorCapabilities,
+  generateColorGradient,
+  generateColorPalette,
+  parseColorTones,
+} from './color-diagnostics';
+import type { ColorOutputFormat } from '../constants/color-constants';
 
 const VERSION = '0.1.0';
 
@@ -63,7 +72,7 @@ Commands:
     --no-install                Skip dependency install
     --no-git                    Skip git init
   env                          Check R2 credentials and bucket access
-  colors                       Show Bun.color output formats (hex, hsl, ansi, etc.)
+  colors [color]               Diagnose Bun.color formats, CSS syntax, and palettes
   publish <path> [options]     Publish an artifact
     --name <name>               Artifact name (required if no package.json)
     --version <ver>             Version string (required if no package.json)
@@ -164,6 +173,32 @@ Examples:
   factory create vercel/next.js my-app --no-git
 
 Note: local templates DELETE an existing destination directory.`,
+  colors: `factory colors [color] [options]
+
+Inspect Bun.color using the runtime's complete output-format surface.
+
+Options:
+  --diagnose                   Also run modern CSS, keyword, gamut, and clamp probes
+  --palette <color>, -p        Generate a palette from a concrete color
+  --tones <list>               Mix positions from -1 (black) through 0 (base) to 1 (white)
+  --gradient <color>           Interpolate from the palette color to this endpoint
+  --steps <count>              Gradient sample count, 2–256 (default: 10)
+  --hsl                        Use shortest-path HSL interpolation instead of RGB
+  --format <format>            Bun.color output format for gradient values (default: hex)
+  --perceptual                 Mix palette steps in linear-light RGB
+  --theme <theme>              Context presentation: auto, dark, or light (default: auto)
+  --markdown, -m              Emit a paste-ready Markdown table
+  --json                       Emit structured JSON
+
+Examples:
+  factory colors 'rgba(224 108 117 / 0.5)'
+  factory colors 'currentcolor' --diagnose
+  factory colors --palette '#e06c75' --perceptual
+  bun run issue:context -p '#e06c75' --tones '0,0.1,0.3,0.6,1'
+  bun run issue:context -p '#e06c75' --gradient '#2ecc71' --steps 16 --hsl --format HEX -m
+
+Build-time use needs no custom wrapper:
+  import { color } from "bun" with { type: "macro" };`,
 };
 
 // ── Utility helpers ───────────────────────────────────────────────────────
@@ -368,21 +403,172 @@ async function cmdList(): Promise<void> {
   });
 }
 
-async function cmdColors(): Promise<void> {
-  const testColors = ['red', 'green', 'blue', 'cyan', 'magenta', 'yellow', '#ff6600', '#6e40c9'];
-  const formats = ['hex', 'HEX', 'hsl', 'rgb', 'ansi', 'ansi-16', 'ansi-256'] as const;
-
-  console.log(`\n  ${paint('ts', '── Bun.color formats ──')}\n`);
-
-  const table = testColors.map(color => {
-    const row: Record<string, string> = { color };
-    for (const fmt of formats) {
-      row[fmt] = Bun.color(color, fmt) || '(none)';
-    }
-    return row;
+async function cmdColors(args: string[]): Promise<void> {
+  const { values, positionals } = parseArgs({
+    args,
+    options: {
+      diagnose: { type: 'boolean' },
+      palette: { type: 'string', short: 'p' },
+      tones: { type: 'string' },
+      gradient: { type: 'string' },
+      steps: { type: 'string' },
+      hsl: { type: 'boolean' },
+      format: { type: 'string' },
+      perceptual: { type: 'boolean' },
+      theme: { type: 'string' },
+      markdown: { type: 'boolean', short: 'm' },
+      json: { type: 'boolean' },
+    },
+    strict: true,
+    allowPositionals: true,
   });
+  if (positionals.length > 1) errorExit('Expected at most one color input.');
 
-  logTable(table, ['color', ...formats], { colors: shouldColor() });
+  const input = (values.palette as string | undefined) ?? positionals[0] ?? '#e06c75';
+  const theme = (values.theme as string | undefined) ?? 'auto';
+  if (!['auto', 'dark', 'light'].includes(theme)) {
+    errorExit('--theme must be one of: auto, dark, light.');
+  }
+  if (values.perceptual && !values.palette) {
+    errorExit('--perceptual requires --palette <color>.');
+  }
+  if (values.tones && !values.palette) {
+    errorExit('--tones requires --palette <color>.');
+  }
+  if (values.gradient && !values.palette) {
+    errorExit('--gradient requires --palette <color>.');
+  }
+  if ((values.hsl || values.steps || values.format) && !values.gradient) {
+    errorExit('--hsl, --steps, and --format require --gradient <color>.');
+  }
+  if (values.gradient && values.tones) {
+    errorExit('--gradient and --tones select different palette modes; use one.');
+  }
+  if (values.gradient && values.perceptual) {
+    errorExit('--perceptual applies to tonal palettes; choose --hsl or RGB for gradients.');
+  }
+
+  if (values.palette) {
+    if (values.gradient) {
+      const stepText = (values.steps as string | undefined) ?? '10';
+      const steps = Number(stepText);
+      if (!Number.isInteger(steps) || steps < 2 || steps > 256) {
+        errorExit('--steps must be an integer from 2 through 256.');
+      }
+      const formatText = (values.format as string | undefined) ?? 'hex';
+      if (!COLOR_FORMATS.includes(formatText as ColorOutputFormat)) {
+        errorExit(`Unknown --format "${formatText}". Use one of: ${COLOR_FORMATS.join(', ')}.`);
+      }
+      const format = formatText as ColorOutputFormat;
+      const gradient = generateColorGradient(input, values.gradient, {
+        steps,
+        hsl: values.hsl,
+        format,
+      });
+      if (gradient === null) {
+        errorExit('Gradient endpoints must both be concrete colors.');
+      }
+      const result = {
+        input,
+        gradient: values.gradient,
+        space: values.hsl ? 'hsl-shortest-path' : 'rgb',
+        format,
+        steps,
+        theme,
+        colors: gradient,
+      };
+      if (values.json) {
+        jsonOut(result);
+        return;
+      }
+      if (values.markdown) {
+        console.info(
+          [
+            `## Color gradient: ${input} → ${values.gradient}`,
+            '',
+            `Space: \`${result.space}\` · Format: \`${format}\` · Steps: ${steps}`,
+            `Theme: \`${theme}\``,
+            '',
+            '| Step | Position | Color |',
+            '| ---: | -------: | :---- |',
+            ...gradient.map(row => `| ${row.step} | ${row.position} | \`${row.display}\` |`),
+          ].join('\n')
+        );
+        return;
+      }
+      console.log(
+        `\n  ${paint('ts', '── Bun.color gradient ──')}  ${input} → ${values.gradient}\n`
+      );
+      logTable(gradient, ['step', 'position', 'display'], { colors: shouldColor() });
+      console.log(
+        `\n  space: ${result.space} · format: ${format} · steps: ${steps} · theme: ${theme}\n`
+      );
+      return;
+    }
+
+    const amounts = values.tones ? parseColorTones(values.tones) : undefined;
+    if (values.tones && amounts === null) {
+      errorExit('--tones must be a comma-separated list of numbers from -1 through 1.');
+    }
+    const palette = generateColorPalette(input, {
+      perceptual: values.perceptual,
+      amounts: amounts ?? undefined,
+    });
+    if (palette === null) {
+      errorExit(
+        `Cannot generate a palette from "${input}": use a concrete color, not invalid or context-dependent CSS.`
+      );
+    }
+    const result = {
+      input,
+      space: values.perceptual ? 'linear-light-rgb' : 'srgb',
+      theme,
+      palette,
+    };
+    if (values.json) {
+      jsonOut(result);
+      return;
+    }
+    if (values.markdown) {
+      console.info(
+        [
+          `## Color palette: ${input}`,
+          '',
+          `Mix space: \`${result.space}\``,
+          `Theme: \`${theme}\``,
+          '',
+          '| Step | Amount | Color |',
+          '| ---: | -----: | :---- |',
+          ...palette.map(row => `| ${row.step} | ${row.amount} | \`${row.color}\` |`),
+        ].join('\n')
+      );
+      return;
+    }
+    console.log(`\n  ${paint('ts', '── Bun.color palette ──')}  ${input}\n`);
+    logTable(palette, ['step', 'amount', 'color'], { colors: shouldColor() });
+    console.log(`\n  mix space: ${result.space} · theme: ${theme}\n`);
+    return;
+  }
+
+  const diagnosis = diagnoseColor(input);
+  const capabilities = values.diagnose ? diagnoseColorCapabilities() : undefined;
+  if (values.json) {
+    jsonOut({ ...diagnosis, capabilities });
+    return;
+  }
+
+  console.log(`\n  ${paint('ts', '── Bun.color formats ──')}  ${input}\n`);
+  logTable(diagnosis.formats, ['format', 'display', 'status'], { colors: shouldColor() });
+  console.log(`\n  parse: ${diagnosis.parsed.kind} · formats: ${diagnosis.formats.length}`);
+  console.log('  alpha: css/rgba/{rgba}/[rgba] preserve it; rgb/hsl/lab/hex/HEX/number drop it');
+  console.log('  macro: import { color } from "bun" with { type: "macro" }');
+
+  if (capabilities) {
+    console.log(`\n  ${paint('tsx', '── parser capabilities ──')}\n`);
+    logTable(capabilities, ['feature', 'input', 'format', 'result', 'status'], {
+      colors: shouldColor(),
+    });
+  }
   console.log();
 }
 
@@ -811,7 +997,7 @@ async function main(): Promise<void> {
       await cmdIntegrity();
       break;
     case 'colors':
-      await cmdColors();
+      await cmdColors(subargs);
       break;
     case 'status':
       await cmdStatus();

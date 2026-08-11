@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+set -e
+
+# Keep hook ownership in Husky; do not introduce a second core.hooksPath manager.
+bun run commitlint --edit "$1"
