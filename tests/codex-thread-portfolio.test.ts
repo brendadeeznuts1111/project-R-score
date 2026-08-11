@@ -15,14 +15,14 @@ async function loadPortfolio(): Promise<ThreadPortfolio> {
 }
 
 describe('Codex thread portfolio', () => {
-  test('keeps one index plus 35 contiguous ranked root threads', async () => {
+  test('keeps one index plus 36 contiguous ranked root threads', async () => {
     const portfolio = await loadPortfolio();
     expect(portfolio.schemaVersion).toBe(3);
-    expect(portfolio.scope.rootThreadCount).toBe(36);
-    expect(portfolio.threads).toHaveLength(36);
+    expect(portfolio.scope.rootThreadCount).toBe(37);
+    expect(portfolio.threads).toHaveLength(37);
     expect(portfolio.threads.filter(thread => thread.rank === 0)).toHaveLength(1);
     expect(rankedWorkThreads(portfolio).map(thread => thread.rank)).toEqual(
-      Array.from({ length: 35 }, (_, index) => index + 1)
+      Array.from({ length: 36 }, (_, index) => index + 1)
     );
   });
 
@@ -42,7 +42,7 @@ describe('Codex thread portfolio', () => {
     const refs = portfolio.threads.map(thread => thread.ref).sort();
     expect(new Set(titles).size).toBe(titles.length);
     expect(refs).toEqual(
-      Array.from({ length: 36 }, (_, index) => `RTH-${String(index + 1).padStart(3, '0')}`)
+      Array.from({ length: 37 }, (_, index) => `RTH-${String(index + 1).padStart(3, '0')}`)
     );
     expect(titles.every(title => title.length <= 60)).toBe(true);
     expect(
@@ -99,7 +99,7 @@ describe('Codex thread portfolio', () => {
     expect(markdown).toContain('RTH-024 · SHIPPED · PORTAL · Performance');
     expect(markdown).toContain('RTH-001 · PUSHED · BUN · Install Platform');
     expect(markdown).toContain('RTH-026 · MERGED · DOMAIN · Authority & Backlog');
-    expect(markdown.match(/^\| (?:INDEX|\d+) \|/gm)).toHaveLength(36);
+    expect(markdown.match(/^\| (?:INDEX|\d+) \|/gm)).toHaveLength(37);
   });
 
   test('rejects duplicate provider SessionIds', async () => {

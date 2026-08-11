@@ -1,7 +1,6 @@
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
-import { mkdir } from 'node:fs/promises';
 import { joinPath } from '../path-bun.ts';
 import {
   loadThreadPortfolio,
@@ -14,7 +13,8 @@ export const THREAD_RESEARCH_COUNT = 3;
 export const THREAD_RESEARCH_IMPROVEMENT_FRACTION = 0.45;
 export const THREAD_RESEARCH_REPORT_DIRECTORY = '.cache/thread-research';
 
-const COMPLETED_STATES = new Set(['index', 'shipped', 'merged', 'verified']);
+const RESEARCHABLE_STATES = new Set(['open', 'ready', 'local', 'pushed', 'incomplete', 'planned']);
+export const USAGE_LIMIT_RETRY_MS = 24 * 60 * 60 * 1000;
 
 export type ThreadImprovementTarget = {
   thread: PortfolioThread;
@@ -32,11 +32,14 @@ export type ThreadResearchReport = {
 };
 
 export type ThreadResearchFailure = {
-  ref: string;
-  error: string;
+  ref: string; // brand-ok — scheduler sentinel or portfolio RTH reference, not a domain entity ID
+  errorCode: 'usage_limit' | 'agent_failed' | 'backoff_active' | 'manifest_invalid';
+  message: string;
+  retryAt?: string;
 };
 
 export type ThreadResearchCycleResult = {
+  cycle: string; // brand-ok — deterministic scheduler run label, not a domain entity ID
   generatedAt: string;
   count: number;
   improvementFraction: number;
@@ -51,6 +54,26 @@ export type ThreadResearchAgent = (
   reportPath: string,
   root: string
 ) => Promise<void>;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+export function parseResearchRetryAt(value: unknown): string | undefined {
+  if (!isRecord(value) || !Array.isArray(value.failures)) return undefined;
+  for (const failure of value.failures) {
+    if (
+      !isRecord(failure) ||
+      (failure.errorCode !== 'usage_limit' && failure.errorCode !== 'backoff_active') ||
+      typeof failure.retryAt !== 'string'
+    ) {
+      continue;
+    }
+    const retryAt = new Date(failure.retryAt);
+    if (!Number.isNaN(retryAt.getTime())) return retryAt.toISOString();
+  }
+  return undefined;
+}
 
 export function buildResearchAgentEnvironment(
   env: Record<string, string | undefined> = Bun.env
@@ -80,7 +103,11 @@ export function selectWeakestActionableThreads(
 ): ThreadImprovementTarget[] {
   return portfolio.threads
     .filter(
-      thread => thread.rank > 0 && thread.quality !== 'empty' && !COMPLETED_STATES.has(thread.state)
+      thread =>
+        thread.rank > 0 &&
+        thread.quality !== 'empty' &&
+        (RESEARCHABLE_STATES.has(thread.state) ||
+          (thread.state === 'blocked' && thread.researchEligible))
     )
     .sort((left, right) => left.score - right.score || right.rank - left.rank)
     .slice(0, count)
@@ -168,9 +195,9 @@ export const runCodexResearchAgent: ThreadResearchAgent = async (
     child.exited,
   ]);
   if (exitCode !== 0) {
-    throw new Error(
-      `Codex research agent failed (exit ${exitCode}): ${stderr.trim() || stdout.trim()}`
-    );
+    const output = `${stderr}\n${stdout}`;
+    if (/usage limit/i.test(output)) throw new Error('usage_limit');
+    throw new Error(`agent_failed_exit_${exitCode}`);
   }
   if (!(await Bun.file(reportPath).exists())) {
     throw new Error(`Codex research agent did not write ${reportPath}`);
@@ -189,13 +216,65 @@ export async function runThreadResearchCycle(
   const portfolio = options.portfolio ?? (await loadThreadPortfolio());
   const root = options.root ?? portfolio.scope.cwd;
   const generatedAt = (options.now ?? new Date()).toISOString();
+  const cycle = `thread-research-${generatedAt.replace(/[-:.]/g, '').replace('Z', 'z')}`;
   const targets = selectWeakestActionableThreads(portfolio);
   const reports: ThreadResearchReport[] = [];
   const failures: ThreadResearchFailure[] = [];
 
   if (options.executeAgents) {
     const directory = joinPath(root, THREAD_RESEARCH_REPORT_DIRECTORY);
-    await mkdir(directory, { recursive: true });
+    const mkdir = Bun.spawn(['mkdir', '-p', directory]);
+    if ((await mkdir.exited) !== 0) {
+      throw new Error(`Unable to create thread research report directory: ${directory}`);
+    }
+    const latestPath = joinPath(directory, 'latest.json');
+    let previousManifest: unknown;
+    if (await Bun.file(latestPath).exists()) {
+      try {
+        previousManifest = (await Bun.file(latestPath).json()) as unknown;
+      } catch {
+        failures.push({
+          ref: 'scheduler', // brand-ok — scheduler sentinel, not a domain entity ID
+          errorCode: 'manifest_invalid',
+          message: 'Research manifest is invalid; no agents were launched.',
+        });
+        await Bun.write(
+          latestPath,
+          `${JSON.stringify({ cycle, generatedAt, reports, failures }, null, 2)}\n`
+        );
+        return {
+          cycle,
+          generatedAt,
+          count: targets.length,
+          improvementFraction: THREAD_RESEARCH_IMPROVEMENT_FRACTION,
+          targets,
+          reports,
+          failures,
+        };
+      }
+    }
+    const retryAt = parseResearchRetryAt(previousManifest);
+    if (retryAt && Date.parse(retryAt) > Date.parse(generatedAt)) {
+      failures.push({
+        ref: 'scheduler', // brand-ok — scheduler sentinel, not a domain entity ID
+        errorCode: 'backoff_active',
+        message: 'Research quota retry is deferred; no agents were launched.',
+        retryAt,
+      });
+      await Bun.write(
+        latestPath,
+        `${JSON.stringify({ cycle, generatedAt, reports, failures }, null, 2)}\n`
+      );
+      return {
+        cycle,
+        generatedAt,
+        count: targets.length,
+        improvementFraction: THREAD_RESEARCH_IMPROVEMENT_FRACTION,
+        targets,
+        reports,
+        failures,
+      };
+    }
     const date = generatedAt.slice(0, 10);
     const agent = options.agent ?? runCodexResearchAgent;
     for (const target of targets) {
@@ -214,19 +293,32 @@ export async function runThreadResearchCycle(
         await agent(target, buildThreadResearchPrompt(target), reportPath, root);
         reports.push(report);
       } catch (error) {
+        const failureMessage = error instanceof Error ? error.message : '';
+        const code = failureMessage === 'usage_limit' ? 'usage_limit' : 'agent_failed';
         failures.push({
           ref: target.thread.ref,
-          error: error instanceof Error ? error.message : String(error),
+          errorCode: code,
+          message:
+            code === 'usage_limit'
+              ? 'Research quota is unavailable; no raw agent output was retained.'
+              : /^agent_failed_exit_\d+$/.test(failureMessage)
+                ? `Research agent failed with ${failureMessage}.`
+                : 'Research agent failed without a structured exit status.',
+          ...(code === 'usage_limit'
+            ? { retryAt: new Date(Date.parse(generatedAt) + USAGE_LIMIT_RETRY_MS).toISOString() }
+            : {}),
         });
+        if (code === 'usage_limit') break;
       }
     }
     await Bun.write(
-      joinPath(directory, 'latest.json'),
-      `${JSON.stringify({ generatedAt, reports, failures }, null, 2)}\n`
+      latestPath,
+      `${JSON.stringify({ cycle, generatedAt, reports, failures }, null, 2)}\n`
     );
   }
 
   return {
+    cycle,
     generatedAt,
     count: targets.length,
     improvementFraction: THREAD_RESEARCH_IMPROVEMENT_FRACTION,

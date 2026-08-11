@@ -152,8 +152,10 @@ The default command is read-only. State changes require explicit `--apply` and
 ## Daily weakest-three research
 
 The OS-level job `project-r-thread-research` runs at `06:15` system local time.
-It selects the three lowest-scoring actionable threads, excluding the index,
-completed states, and empty/unscoped records. Each target receives a separate
+It selects the three lowest-scoring active threads (`open`, `ready`, `local`,
+`pushed`, `incomplete`, or `planned`), excluding historical/completed records,
+empty/unscoped records, and blocked records unless
+their catalog row explicitly sets `researchEligible: true`. Each target receives a separate
 ephemeral Codex invocation with a read-only sandbox; agents may inspect and
 recommend, but may not edit, change git state, mutate thread metadata, access
 secrets, or claim success. The Codex subprocess receives an allowlisted
@@ -169,8 +171,18 @@ for weak threads without pretending that a daily report itself improves the
 score. Reports and `latest.json` are written under the gitignored
 `.cache/thread-research/` directory. Portfolio scores change only through a
 separate evidence review. A partial cycle keeps completed same-day briefs,
-records per-thread failures in `latest.json`, skips successful reports on a
-same-day retry, and exits non-zero so launchd logs the incomplete target.
+records only structured and redacted per-thread failures in `latest.json`, skips
+successful reports on a same-day retry, and exits non-zero so launchd logs the
+incomplete target. A quota failure stops the remaining launches and supplies a
+24-hour `retryAt` backoff instead of retaining raw agent output or repeatedly
+consuming attempts.
+
+Every cataloged thread must use one lifecycle state: active work (`open`,
+`ready`, `local`, `pushed`), completion (`verified`, `shipped`, `merged`),
+research/history (`audit`, `analysis`, `snapshot`, `superseded`), or an explicit
+exception (`blocked`, `incomplete`, `empty`, `closed-unmerged`). An active state
+requires a concrete closure action; a blocked item needs an external dependency
+or should be moved to historical/archival review.
 
 ## Reference map and bring-home queue
 
