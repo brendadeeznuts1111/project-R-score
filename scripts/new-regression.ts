@@ -19,7 +19,7 @@
  * @see tests/regression/README.md
  * @see https://bun.com/blog
  */
-import { join } from 'node:path';
+import { joinPath } from '../lib/path-bun.ts';
 
 type Args = {
   version: string | null;
@@ -43,7 +43,6 @@ Flags:
 
 Example:
   bun scripts/new-regression.ts 1.3.15
-  ./scripts/new-regression.sh 1.3.15 --no-test
 `;
 }
 
@@ -219,10 +218,10 @@ async function main(): Promise<number> {
     return 2;
   }
 
-  const root = join(import.meta.dir, '..');
+  const root = joinPath(import.meta.dir, '..');
   const targetRel = `tests/regression/bun-${version}.test.ts`;
-  const targetAbs = join(root, targetRel);
-  const readmeAbs = join(root, 'tests/regression/README.md');
+  const targetAbs = joinPath(root, targetRel);
+  const readmeAbs = joinPath(root, 'tests/regression/README.md');
   const generatedOn = new Date().toISOString().slice(0, 10);
   const source = scaffoldSource(version, generatedOn, Bun.version);
 
