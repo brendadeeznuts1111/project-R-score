@@ -4,21 +4,17 @@
 /**
  * Model intake and feature accountability for operator research.
  *
- * The circuit package is the only package allowed to provide weight inputs.
+ * The circuit owner module is the only module allowed to provide weight inputs.
  * Transport, environment, identity, presentation, and synthetic provenance are
  * retained as diagnostics but are never model features.
  */
+import { EDGE_TYPES, type EdgeType } from './alert-vocabulary.ts';
+import { MODEL_CONTRACT_PACKAGE } from './model-contract-files.ts';
 
-export const MODEL_PATTERN_TYPES = [
-  'arbitrage',
-  'value',
-  'steam',
-  'spike',
-  'drift',
-  'reversal',
-] as const;
-
-export type ModelPatternType = (typeof MODEL_PATTERN_TYPES)[number];
+/** @deprecated Compatibility alias: model circuit classification is exactly EdgeType. */
+export const MODEL_PATTERN_TYPES = EDGE_TYPES;
+/** @deprecated Use EdgeType from alert-vocabulary.ts. */
+export type ModelPatternType = EdgeType;
 
 export const MODEL_HARNESS_FLAGS = {
   circuitOnlyWeights: true,
@@ -30,12 +26,17 @@ export const MODEL_HARNESS_FLAGS = {
 
 export type ModelHarnessFlag = keyof typeof MODEL_HARNESS_FLAGS;
 
-export type ModelContractPackage =
+export type ModelContractPackage = typeof MODEL_CONTRACT_PACKAGE;
+
+export type ModelOwnerModule =
   | 'operator-research/intake'
   | 'operator-research/circuit'
   | 'operator-research/models'
   | 'operator-research/diagnostics'
   | 'operator-research/controls';
+
+export type ModelAggregate =
+  'edge-opportunity' | 'circuit-input' | 'model-output' | 'diagnostics' | 'harness-control';
 
 export type ModelPropertyGroup =
   | 'identity'
@@ -53,6 +54,8 @@ export type ModelPropertySource = 'circuit' | 'derived' | 'transport' | 'environ
 
 export type ModelPropertyContract = {
   package: ModelContractPackage;
+  ownerModule: ModelOwnerModule;
+  aggregate: ModelAggregate;
   group: ModelPropertyGroup;
   property: string;
   type: string;
@@ -88,15 +91,26 @@ export const EDGE_OPPORTUNITY_TOP_LEVEL_PROPERTIES = [
 ] as const;
 
 const property = (
-  contract: Omit<ModelPropertyContract, 'affectsWeights'>
+  aggregate: ModelAggregate,
+  contract: Omit<ModelPropertyContract, 'package' | 'aggregate' | 'affectsWeights'>
 ): ModelPropertyContract => ({
+  package: MODEL_CONTRACT_PACKAGE,
+  aggregate,
   ...contract,
-  affectsWeights: contract.role === 'feature' && contract.source === 'circuit',
+  affectsWeights:
+    aggregate === 'circuit-input' && contract.role === 'feature' && contract.source === 'circuit',
 });
 
+type PropertyInput = Omit<ModelPropertyContract, 'package' | 'aggregate' | 'affectsWeights'>;
+const edgeProperty = (contract: PropertyInput) => property('edge-opportunity', contract);
+const circuitProperty = (contract: PropertyInput) => property('circuit-input', contract);
+const modelOutputProperty = (contract: PropertyInput) => property('model-output', contract);
+const diagnosticProperty = (contract: PropertyInput) => property('diagnostics', contract);
+const harnessProperty = (contract: PropertyInput) => property('harness-control', contract);
+
 export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
-  property({
-    package: 'operator-research/intake',
+  edgeProperty({
+    ownerModule: 'operator-research/intake',
     group: 'identity',
     property: 'id',
     type: 'EdgeId',
@@ -104,8 +118,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'derived',
     required: true,
   }),
-  property({
-    package: 'operator-research/intake',
+  edgeProperty({
+    ownerModule: 'operator-research/intake',
     group: 'identity',
     property: 'event_id',
     type: 'EventId',
@@ -113,8 +127,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'derived',
     required: true,
   }),
-  property({
-    package: 'operator-research/intake',
+  edgeProperty({
+    ownerModule: 'operator-research/intake',
     group: 'provenance',
     property: 'intake.source',
     type: "'live' | 'fixture' | 'synthetic'",
@@ -122,8 +136,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'derived',
     required: false,
   }),
-  property({
-    package: 'operator-research/intake',
+  edgeProperty({
+    ownerModule: 'operator-research/intake',
     group: 'provenance',
     property: 'intake.circuitVerified',
     type: 'boolean',
@@ -131,8 +145,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'derived',
     required: false,
   }),
-  property({
-    package: 'operator-research/circuit',
+  circuitProperty({
+    ownerModule: 'operator-research/circuit',
     group: 'market',
     property: 'type',
     type: 'EdgeType',
@@ -150,8 +164,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     ['bookmaker_ids', 'SportsbookId[]'],
     ['liquidity_tiers', 'string[]'],
   ].map(([propertyName, type]) =>
-    property({
-      package: 'operator-research/circuit',
+    edgeProperty({
+      ownerModule: 'operator-research/circuit',
       group: 'market',
       property: propertyName!,
       type: type!,
@@ -160,8 +174,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
       required: true,
     })
   ),
-  property({
-    package: 'operator-research/circuit',
+  circuitProperty({
+    ownerModule: 'operator-research/circuit',
     group: 'market',
     property: 'odds.book1',
     type: 'decimal-string',
@@ -169,8 +183,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'circuit',
     required: true,
   }),
-  property({
-    package: 'operator-research/circuit',
+  circuitProperty({
+    ownerModule: 'operator-research/circuit',
     group: 'market',
     property: 'odds.book2',
     type: 'decimal-string',
@@ -178,8 +192,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'circuit',
     required: true,
   }),
-  property({
-    package: 'operator-research/circuit',
+  circuitProperty({
+    ownerModule: 'operator-research/circuit',
     group: 'movement',
     property: 'edge_percent',
     type: 'number',
@@ -187,17 +201,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'circuit',
     required: true,
   }),
-  property({
-    package: 'operator-research/circuit',
-    group: 'movement',
-    property: 'pattern',
-    type: 'ModelPatternType',
-    role: 'feature',
-    source: 'circuit',
-    required: true,
-  }),
-  property({
-    package: 'operator-research/circuit',
+  circuitProperty({
+    ownerModule: 'operator-research/circuit',
     group: 'risk',
     property: 'expected_value',
     type: 'number',
@@ -205,8 +210,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'circuit',
     required: true,
   }),
-  property({
-    package: 'operator-research/circuit',
+  circuitProperty({
+    ownerModule: 'operator-research/circuit',
     group: 'risk',
     property: 'kelly_fraction',
     type: 'number',
@@ -214,8 +219,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'circuit',
     required: true,
   }),
-  property({
-    package: 'operator-research/circuit',
+  edgeProperty({
+    ownerModule: 'operator-research/circuit',
     group: 'risk',
     property: 'stake_suggestion',
     type: 'number',
@@ -223,8 +228,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'derived',
     required: true,
   }),
-  property({
-    package: 'operator-research/models',
+  modelOutputProperty({
+    ownerModule: 'operator-research/models',
     group: 'prediction',
     property: 'ml.predicted_prob',
     type: 'number',
@@ -232,8 +237,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'derived',
     required: false,
   }),
-  property({
-    package: 'operator-research/models',
+  modelOutputProperty({
+    ownerModule: 'operator-research/models',
     group: 'prediction',
     property: 'ml.confidence',
     type: 'number',
@@ -241,8 +246,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'derived',
     required: false,
   }),
-  property({
-    package: 'operator-research/models',
+  modelOutputProperty({
+    ownerModule: 'operator-research/models',
     group: 'prediction',
     property: 'ml.model',
     type: 'MlModelName',
@@ -250,8 +255,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'derived',
     required: false,
   }),
-  property({
-    package: 'operator-research/models',
+  modelOutputProperty({
+    ownerModule: 'operator-research/models',
     group: 'provenance',
     property: 'ml.feature_contract',
     type: "'circuit-v1'",
@@ -259,8 +264,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'derived',
     required: false,
   }),
-  property({
-    package: 'operator-research/models',
+  modelOutputProperty({
+    ownerModule: 'operator-research/models',
     group: 'provenance',
     property: 'ml.weight_eligible',
     type: 'boolean',
@@ -268,8 +273,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'derived',
     required: false,
   }),
-  property({
-    package: 'operator-research/models',
+  modelOutputProperty({
+    ownerModule: 'operator-research/models',
     group: 'provenance',
     property: 'ml.weight_inputs',
     type: 'string[]',
@@ -277,8 +282,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'derived',
     required: false,
   }),
-  property({
-    package: 'operator-research/diagnostics',
+  diagnosticProperty({
+    ownerModule: 'operator-research/diagnostics',
     group: 'transport',
     property: 'latency_ms.book1',
     type: 'number',
@@ -286,8 +291,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'transport',
     required: true,
   }),
-  property({
-    package: 'operator-research/diagnostics',
+  diagnosticProperty({
+    ownerModule: 'operator-research/diagnostics',
     group: 'transport',
     property: 'latency_ms.book2',
     type: 'number',
@@ -295,8 +300,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'transport',
     required: true,
   }),
-  property({
-    package: 'operator-research/diagnostics',
+  diagnosticProperty({
+    ownerModule: 'operator-research/diagnostics',
     group: 'transport',
     property: 'latency_adjusted',
     type: 'boolean',
@@ -304,8 +309,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'transport',
     required: true,
   }),
-  property({
-    package: 'operator-research/diagnostics',
+  diagnosticProperty({
+    ownerModule: 'operator-research/diagnostics',
     group: 'transport',
     property: 'confidence',
     type: 'number',
@@ -313,8 +318,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     source: 'transport',
     required: true,
   }),
-  property({
-    package: 'operator-research/diagnostics',
+  diagnosticProperty({
+    ownerModule: 'operator-research/diagnostics',
     group: 'environment',
     property: 'timestamp',
     type: 'epoch-ms',
@@ -323,8 +328,8 @@ export const MODEL_PROPERTY_CONTRACTS: readonly ModelPropertyContract[] = [
     required: true,
   }),
   ...Object.keys(MODEL_HARNESS_FLAGS).map(flag =>
-    property({
-      package: 'operator-research/controls',
+    harnessProperty({
+      ownerModule: 'operator-research/controls',
       group: 'flags',
       property: `flags.${flag}`,
       type: 'true',
@@ -339,33 +344,13 @@ export const MODEL_WEIGHT_INPUTS = MODEL_PROPERTY_CONTRACTS.filter(p => p.affect
   p => p.property
 );
 
-export const MODEL_CONTRACT_FILES = [
-  '.gitignore',
-  'config/operator-research/model-harness.toml',
-  'docs/harness/tenants/model-circuit-contracts.md',
-  'lib/operator-research/README.md',
-  'lib/operator-research/edge-engine.ts',
-  'lib/operator-research/files.md',
-  'lib/operator-research/matching/alerts.ts',
-  'lib/operator-research/matching/signals.ts',
-  'lib/operator-research/model-contracts.ts',
-  'lib/portal/bun-test-snapshots.ts',
-  'package.json',
-  'tests/edge-engine.test.ts',
-  'tests/model-circuit-contracts.test.ts',
-  'tests/__snapshots__/model-circuit-contracts.test.ts.snap',
-  'tools/model-contracts.ts',
-  'wiki-index.md',
-] as const;
-
 export type ModelIntakeProvenance = {
   source: 'live' | 'fixture' | 'synthetic';
   circuitVerified: boolean;
 };
 
 export type CircuitModelInput = {
-  type: 'arbitrage' | 'value' | 'steam';
-  pattern: Extract<ModelPatternType, 'arbitrage' | 'value' | 'steam'>;
+  type: EdgeType;
   odds: { book1: number; book2: number };
   edgePercent: number;
   expectedValue: number;
@@ -402,32 +387,37 @@ export function parseModelHarnessConfig(text: string): typeof MODEL_HARNESS_FLAG
   return MODEL_HARNESS_FLAGS;
 }
 
-export function groupModelProperties(): Record<
+export type GroupedModelProperties = Record<
   ModelContractPackage,
-  Partial<Record<ModelPropertyGroup, ModelPropertyContract[]>>
-> {
-  const grouped = {} as Record<
-    ModelContractPackage,
-    Partial<Record<ModelPropertyGroup, ModelPropertyContract[]>>
-  >;
+  Partial<
+    Record<
+      ModelOwnerModule,
+      Partial<Record<ModelAggregate, Partial<Record<ModelPropertyGroup, ModelPropertyContract[]>>>>
+    >
+  >
+>;
+
+export function groupModelProperties(): GroupedModelProperties {
+  const grouped = {} as GroupedModelProperties;
   for (const item of MODEL_PROPERTY_CONTRACTS) {
-    const groups = (grouped[item.package] ??= {});
+    const ownerModules = (grouped[item.package] ??= {});
+    const aggregates = (ownerModules[item.ownerModule] ??= {});
+    const groups = (aggregates[item.aggregate] ??= {});
     (groups[item.group] ??= []).push(item);
   }
   return grouped;
 }
 
-export function renderModelContractFilesMarkdown(): string {
-  return [
-    '# Operator research model files',
-    '',
-    'This index is generated from `MODEL_CONTRACT_FILES` and verified by',
-    '`tests/model-circuit-contracts.test.ts`. Every file in the model circuit',
-    'contract must be listed here and exist in the repository.',
-    '',
-    '## Accountability boundary',
-    '',
-    ...MODEL_CONTRACT_FILES.map(file => `- \`${file}\``),
-    '',
-  ].join('\n');
-}
+export {
+  MODEL_CONTRACT_PACKAGE,
+  MODEL_CONTRACT_DISCOVERY_GLOBS,
+  MODEL_CONTRACT_FILES,
+  MODEL_CONTRACT_FILE_REGISTRY,
+  MODEL_CONTRACT_FILES_MARKDOWN_OPTIONS,
+  assertModelContractFilesMarkdown,
+  inspectModelContractFilesMarkdown,
+  renderModelContractFilesMarkdown,
+  type ModelContractFile,
+  type ModelContractFilePath,
+  type ModelContractFilesMarkdownInspection,
+} from './model-contract-files.ts';

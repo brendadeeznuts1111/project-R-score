@@ -28,6 +28,14 @@ import { asRuleId, tryEdgeId, tryEventId, tryRuleId, type RuleId } from '../type
 import { runBacktest } from './backtest.ts';
 import { listMockBets, placeMockBet } from './bet-mock.ts';
 import {
+  isAlertChannel,
+  isAlertPeriod,
+  isSimulatorAlertPattern,
+  type AlertChannel,
+  type AlertPeriod,
+  type SimulatorAlertPattern,
+} from './alert-vocabulary.ts';
+import {
   defaultAlertRules,
   detectEdges,
   edgesSummary,
@@ -126,6 +134,26 @@ let broadcastTimer: ReturnType<typeof setInterval> | null = null;
 let publishServer: {
   publish: (topic: string, data: string | ArrayBuffer | SharedArrayBuffer) => number;
 } | null = null;
+
+function normalizeSimulatorChannels(value: unknown): AlertChannel[] | null {
+  if (value == null) return ['ws'];
+  if (!Array.isArray(value)) return null;
+  const channels: AlertChannel[] = [];
+  for (const channel of value) {
+    if (typeof channel !== 'string' || !isAlertChannel(channel)) return null;
+    channels.push(channel);
+  }
+  return channels;
+}
+
+function normalizeSimulatorPeriod(value: unknown): AlertPeriod | null {
+  if (value == null || value === '') return 'all';
+  return typeof value === 'string' && isAlertPeriod(value) ? value : null;
+}
+
+function normalizeSimulatorPattern(value: unknown): SimulatorAlertPattern | null {
+  return typeof value === 'string' && isSimulatorAlertPattern(value) ? value : null;
+}
 
 function json(data: object, status = 200): Response {
   return new Response(JSON.stringify(data), {
@@ -505,22 +533,35 @@ export async function handleAgentOddsRequest(
     if (req.method === 'GET') return json({ data: ALERT_RULES, total: ALERT_RULES.length });
     if (req.method === 'POST') {
       try {
-        const body = (await req.json()) as Partial<AlertRule>;
-        if (!body?.id || !body?.name)
-          return json({ ok: false, error: 'id and name required' }, 400);
-        const id = tryRuleId(String(body.id));
+        const rawBody: unknown = await req.json();
+        if (!rawBody || typeof rawBody !== 'object' || Array.isArray(rawBody)) {
+          return json({ ok: false, error: 'request body must be an object' }, 400);
+        }
+        const raw = rawBody as Record<string, unknown>;
+        if (!raw.id || !raw.name) return json({ ok: false, error: 'id and name required' }, 400);
+        const id = tryRuleId(String(raw.id));
         if (!id) return json({ ok: false, error: 'invalid rule id' }, 400);
+        const channels = normalizeSimulatorChannels(raw.channels);
+        if (!channels) return json({ ok: false, error: 'invalid alert channels' }, 400);
+        const period = normalizeSimulatorPeriod(raw.period);
+        if (!period) return json({ ok: false, error: 'invalid alert period' }, 400);
+        const pattern = normalizeSimulatorPattern(raw.pattern);
+        if (!pattern) return json({ ok: false, error: 'invalid alert pattern' }, 400);
+
+        // Remaining fields retain the legacy simulator request semantics. The
+        // closed alert vocabularies above are validated before this projection.
+        const body = raw as Partial<AlertRule>;
         const idx = ALERT_RULES.findIndex(r => r.id === id);
         const next: AlertRule = {
           id,
-          name: String(body.name),
+          name: String(raw.name),
           description: body.description,
           active: body.active !== false,
           condition: body.condition || '',
-          channels: Array.isArray(body.channels) ? body.channels.map(String) : ['ws'],
+          channels,
           email_recipients: body.email_recipients,
-          period: body.period || 'all',
-          pattern: body.pattern || '',
+          period,
+          pattern,
           market_type: body.market_type || 'all',
           geo: body.geo || 'all',
           state: body.state || '',

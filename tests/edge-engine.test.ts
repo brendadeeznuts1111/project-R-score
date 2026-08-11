@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   attachMlPredictions,
+  defaultAlertRules,
   detectEdges,
   expectedValuePct,
   filterEdges,
@@ -13,10 +14,30 @@ import {
   type AgentEvent,
   type EdgeOpportunity,
 } from '../lib/operator-research/edge-engine.ts';
+import {
+  ALERT_CHANNELS,
+  ALERT_PERIODS,
+  SIMULATOR_ALERT_PATTERNS,
+  type AlertChannel,
+  type AlertPeriod,
+  type SimulatorAlertPattern,
+} from '../lib/operator-research/alert-vocabulary.ts';
 import type { MergedPartnerHealth } from '../lib/bookmakers/merged-registry.ts';
 import { asEventId, asSportsbookId } from '../lib/types/branded.ts';
 
 describe('edge math', () => {
+  test('simulator alert rules use closed channel, period, and pattern vocabularies', () => {
+    const channels = [...ALERT_CHANNELS] satisfies AlertChannel[];
+    const periods = [...ALERT_PERIODS] satisfies AlertPeriod[];
+    const patterns = [...SIMULATOR_ALERT_PATTERNS] satisfies SimulatorAlertPattern[];
+
+    for (const rule of defaultAlertRules()) {
+      expect(rule.channels.every(channel => channels.includes(channel))).toBe(true);
+      expect(periods).toContain(rule.period);
+      expect(patterns).toContain(rule.pattern);
+    }
+  });
+
   test('impliedProb and twoWayArbProfit', () => {
     expect(impliedProb(2)).toBeCloseTo(0.5, 5);
     // classic arb: 2.10 / 2.10

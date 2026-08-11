@@ -23,7 +23,14 @@ import {
 } from './partner-filters.ts';
 import { ensureAlertsSchema } from './alerts-schema.ts';
 import { detectSmartMoney, type SmartMoneySignal } from './smart-money.ts';
-import { type ModelPatternType } from '../model-contracts.ts';
+import {
+  isAlertChannel,
+  isAlertPattern,
+  isAlertPeriod,
+  type AlertChannel,
+  type AlertPattern,
+  type AlertPeriod,
+} from '../alert-vocabulary.ts';
 
 export { ensureAlertsSchema } from './alerts-schema.ts';
 
@@ -37,10 +44,7 @@ export type AlertType =
   | 'new_event'
   | 'price_change'
   | 'limit_change';
-export type AlertChannel = 'ws' | 'email' | 'telegram';
-/** Odds period filter. `prematch` maps to DB session `pregame`. */
-export type AlertPeriod = 'prematch' | 'live' | 'all';
-export type AlertPattern = Extract<ModelPatternType, 'spike' | 'drift' | 'reversal' | 'arbitrage'>;
+export type { AlertChannel, AlertPattern, AlertPeriod } from '../alert-vocabulary.ts';
 
 /** Event-monitor trigger kinds (also stored in data/research/alerts.json). */
 export const EVENT_ALERT_TYPES = new Set<AlertType>(['new_event', 'price_change', 'limit_change']);
@@ -181,13 +185,10 @@ type RawRule = {
   event_id?: string; // brand-ok — opaque research/wire id
 };
 
-const PERIODS = new Set<AlertPeriod>(['prematch', 'live', 'all']);
-const PATTERNS = new Set<AlertPattern>(['spike', 'drift', 'reversal', 'arbitrage']);
-
 function normalizeChannels(raw: string[] | undefined): AlertChannel[] {
   const out: AlertChannel[] = [];
   for (const c of raw ?? ['ws']) {
-    if (c === 'ws' || c === 'email' || c === 'telegram') out.push(c);
+    if (isAlertChannel(c)) out.push(c);
   }
   return out.length ? out : ['ws'];
 }
@@ -196,14 +197,14 @@ function normalizePeriod(raw: string | undefined): AlertPeriod {
   if (!raw) return 'all';
   const p = raw.toLowerCase().trim();
   if (p === 'pregame') return 'prematch';
-  if (PERIODS.has(p as AlertPeriod)) return p as AlertPeriod;
+  if (isAlertPeriod(p)) return p;
   return 'all';
 }
 
 function normalizePattern(raw: string | undefined): AlertPattern | undefined {
   if (!raw) return undefined;
   const p = raw.toLowerCase().trim();
-  return PATTERNS.has(p as AlertPattern) ? (p as AlertPattern) : undefined;
+  return isAlertPattern(p) ? p : undefined;
 }
 
 function normalizeEdge(raw: RawRule['edge']): AlertEdge | undefined {

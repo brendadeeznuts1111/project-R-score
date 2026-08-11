@@ -15,8 +15,13 @@ import {
   type CircuitModelInput,
   type ModelDiagnostics,
   type ModelIntakeProvenance,
-  type ModelPatternType,
 } from './model-contracts.ts';
+import type {
+  AlertChannel,
+  AlertPeriod,
+  EdgeType,
+  SimulatorAlertPattern,
+} from './alert-vocabulary.ts';
 import {
   asEdgeId,
   asEventId,
@@ -28,7 +33,7 @@ import {
   type SportsbookId,
 } from '../types/branded.ts';
 
-export type EdgeType = 'arbitrage' | 'value' | 'steam';
+export type { EdgeType } from './alert-vocabulary.ts';
 export type EventStatus = 'scheduled' | 'live' | 'finished';
 
 export type BookQuote = {
@@ -116,10 +121,10 @@ export type AlertRule = {
   description?: string;
   active: boolean;
   condition: string;
-  channels: string[];
+  channels: AlertChannel[];
   email_recipients?: string[];
-  period: string;
-  pattern: ModelPatternType;
+  period: AlertPeriod;
+  pattern: SimulatorAlertPattern;
   market_type: string;
   geo: string;
   state: string;
@@ -235,7 +240,6 @@ export function buildCircuitModelInput(edge: EdgeOpportunity): CircuitModelInput
   }
   return {
     type: edge.type,
-    pattern: edge.type,
     odds: {
       book1,
       book2,
