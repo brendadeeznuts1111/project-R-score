@@ -274,10 +274,24 @@ async function checkLockfile(): Promise<Check> {
   };
 }
 
-function checkNodeModulesLayout(): Check {
-  const sample = `${ROOT}/node_modules/typescript/package.json`;
+export function checkNodeModulesLayout(root = ROOT, strictMode = strict): Check {
+  const localNodeModules = `${root}/node_modules`;
+  if (Bun.spawnSync(['test', '-d', localNodeModules]).exitCode !== 0) {
+    return {
+      ok: !strictMode,
+      label: 'node_modules layout',
+      detail:
+        'local node_modules missing — run bun run install:all (ancestor installs are invalid)',
+    };
+  }
+
+  const sample = `${localNodeModules}/typescript/package.json`;
   if (Bun.spawnSync(['test', '-e', sample]).exitCode !== 0) {
-    return { ok: true, label: 'node_modules layout', detail: 'typescript not installed — skipped' };
+    return {
+      ok: !strictMode,
+      label: 'node_modules layout',
+      detail: 'local typescript link missing — run bun run install:all',
+    };
   }
   const real = Bun.spawnSync(['readlink', sample], { stdout: 'pipe' });
   if (real.exitCode === 0) {

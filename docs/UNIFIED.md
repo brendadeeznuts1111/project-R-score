@@ -50,6 +50,13 @@ files materialize once under `~/.bun/install/cache/links/`; each project's
 [global store](https://bun.com/docs/pm/global-store) ·
 [bunfig install.globalStore](https://bun.com/docs/runtime/bunfig#install-globalstore).
 
+**Nested Git worktrees:** Project R worktrees live below the primary checkout's
+`.worktrees/` directory. Use `bun run install:all`, which passes the worktree
+root through Bun's explicit `--cwd` option. A raw `bun install` can otherwise
+select the ancestor checkout and leave the worktree without its own
+`node_modules` link tree. `bun run install:verify:strict` rejects that state;
+ancestor dependency resolution is never valid lane proof.
+
 ## Platform-specific dependencies (`--cpu` / `--os`)
 
 Bun normalizes target `cpu` / `os` in the **shared** `bun.lock` and skips
@@ -164,9 +171,9 @@ TOML samples under package-manager docs are almost always **`bunfig.toml`**
 
 **Types channels:** `@types/bun` follows its configured stable/latest npm
 channel, while direct `bun-types` deliberately follows a reviewed vendored Bun
-`main` snapshot (`pinned-tip`). They are independent pins and are not required to share a version.
-Run `bun run bun:channel:check` plus the TypeScript gates before promotion.
-Pages `BUN_VERSION` is a separate deploy pin.
+`main` snapshot (`pinned-tip`). They are independent pins and are not required
+to share a version. Run `bun run bun:channel:check` plus the TypeScript gates
+before promotion. Pages `BUN_VERSION` is a separate deploy pin.
 
 **STO TypeScript 6 (resolved):** `sports-terminal-os` uses
 `"typescript": "catalog:"` like other workspace members — see
@@ -311,7 +318,8 @@ frozenLockfile = true
 bun run machine:bunfig:ensure   # ~/.bunfig.toml ← config/machine.bunfig.toml.template
 bun run machine:bunfig:check    # SSOT snippets + absolute cache.dir
 bun run audit:bunfig
-bun run install:verify          # · :strict — cache, global store links, configVersion
+bun run install:all             # explicit project --cwd; safe for nested Git worktrees
+bun run install:verify          # · :strict — cache, global store links, configVersion, local links
 bun run portal:doctor --group bunfig   # machine SSOT · project drift · merge · excludes
 CI=true bun run portal:doctor:ci       # ensure + offline doctor (harness-gates)
 bun run bake:doctor             # ensure + doctor-state.json
