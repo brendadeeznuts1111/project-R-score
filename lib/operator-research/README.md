@@ -42,6 +42,8 @@ without it.
 | Module                                                      | Role                                                                                       |
 | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | [`edge-engine.ts`](./edge-engine.ts)                        | Portal agent-odds uncovered edges: arb/value/steam, Kelly, latency (brands)                |
+| [`model-contracts.ts`](./model-contracts.ts)                | Package/group property catalog; circuit-only model features and locked harness flags       |
+| [`files.md`](./files.md)                                    | Reviewed file-accountability boundary for model intake and circuit contracts               |
 | [`odds/`](./odds/)                                          | Live odds pipeline + **depth**: multi-leg arb, value vs sharp, steam velocity, `edge-scan` |
 | [`odds/scheduler.ts`](./odds/scheduler.ts)                  | In-process `Bun.cron` odds monitor (1.3.12+)                                               |
 | [`desk-jobs.ts`](./desk-jobs.ts)                            | `GET /api/system/jobs` snapshot for `agent serve`                                          |

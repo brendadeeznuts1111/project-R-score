@@ -1,0 +1,8 @@
+schema_version = 1
+
+[flags]
+circuitOnlyWeights = true
+latencyDiagnosticsOnly = true
+environmentDiagnosticsOnly = true
+rejectSyntheticWeightUpdates = true
+snapshotContracts = true

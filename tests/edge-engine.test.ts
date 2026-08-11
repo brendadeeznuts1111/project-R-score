@@ -91,7 +91,9 @@ describe('detectEdges', () => {
       id: 'x-steam',
       type: 'steam',
       edge_percent: 8,
+      expected_value: 2.8,
       confidence: 0.7,
+      kelly_fraction: 0.04,
       odds: { book1: '2.0', book2: '2.2' },
     } as unknown as EdgeOpportunity;
     const [out] = attachMlPredictions([bare]);

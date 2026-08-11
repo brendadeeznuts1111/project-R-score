@@ -1,15 +1,22 @@
 /**
  * Uncovered-edges engine for agent-odds dashboard (v1.06).
  *
- * Pure functions: arbitrage, value EV, steam moves, Kelly, latency-adjusted
- * confidence. Events/edges are simulated from partner catalog hosts when no
- * live odds feed is attached.
+ * Pure functions: arbitrage, value EV, steam moves, Kelly, and operational
+ * latency diagnostics. Model inputs are isolated to the price circuit.
  *
  * @see tools/agent-odds-dashboard-serve.ts
  */
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 
 import type { LiquidityTier, MergedPartnerHealth } from '../bookmakers/merged-registry.ts';
+import {
+  MODEL_WEIGHT_INPUTS,
+  isWeightEligible,
+  type CircuitModelInput,
+  type ModelDiagnostics,
+  type ModelIntakeProvenance,
+  type ModelPatternType,
+} from './model-contracts.ts';
 import {
   asEdgeId,
   asEventId,
@@ -62,6 +69,8 @@ export type AgentEvent = {
     }
   >;
   limits: { min: number; max: number };
+  /** Boundary provenance; omitted input is never eligible to affect weights. */
+  intake?: ModelIntakeProvenance;
 };
 
 export type MlModelName = 'XGBoost' | 'LSTM' | 'Ensemble' | 'SharpProxy';
@@ -70,6 +79,9 @@ export type EdgeMlAnnotation = {
   predicted_prob: number;
   confidence: number;
   model: MlModelName;
+  feature_contract: 'circuit-v1';
+  weight_eligible: boolean;
+  weight_inputs: string[];
 };
 
 export type EdgeOpportunity = {
@@ -93,6 +105,7 @@ export type EdgeOpportunity = {
   latency_adjusted: boolean;
   liquidity_tiers: string[];
   timestamp: number;
+  intake?: ModelIntakeProvenance;
   /** Synthetic model annotation — not a live trained model. */
   ml?: EdgeMlAnnotation;
 };
@@ -106,7 +119,7 @@ export type AlertRule = {
   channels: string[];
   email_recipients?: string[];
   period: string;
-  pattern: string;
+  pattern: ModelPatternType;
   market_type: string;
   geo: string;
   state: string;
@@ -201,6 +214,56 @@ export function latencyAdjustedConfidence(
   const lag = Math.max(0, latencyMs - thresholdMs);
   const penalty = Math.min(0.45, lag / 1000);
   return Math.max(0.05, Math.min(0.99, base * (1 - penalty)));
+}
+
+/** Price/movement circuit only. No transport, environment, or identity fields. */
+export function buildCircuitModelInput(edge: EdgeOpportunity): CircuitModelInput {
+  const book1 = Number(edge.odds.book1);
+  const book2 = Number(edge.odds.book2);
+  const numeric = {
+    book1,
+    book2,
+    edgePercent: edge.edge_percent,
+    expectedValue: edge.expected_value,
+    kellyFraction: edge.kelly_fraction,
+  };
+  for (const [name, value] of Object.entries(numeric)) {
+    if (!Number.isFinite(value)) throw new Error(`model circuit: ${name} must be finite`);
+  }
+  if (!(book1 > 1) || !(book2 > 1)) {
+    throw new Error('model circuit: decimal odds must be greater than 1');
+  }
+  return {
+    type: edge.type,
+    pattern: edge.type,
+    odds: {
+      book1,
+      book2,
+    },
+    edgePercent: edge.edge_percent,
+    expectedValue: edge.expected_value,
+    kellyFraction: edge.kelly_fraction,
+  };
+}
+
+/** Observable operational context, deliberately excluded from model features. */
+export function buildModelDiagnostics(edge: EdgeOpportunity): ModelDiagnostics {
+  return {
+    latencyMs: edge.latency_ms,
+    latencyAdjusted: edge.latency_adjusted,
+    operationalConfidence: edge.confidence,
+    timestamp: edge.timestamp,
+  };
+}
+
+function circuitConfidence(input: CircuitModelInput): number {
+  const base =
+    input.type === 'arbitrage'
+      ? 0.92
+      : input.type === 'value'
+        ? 0.55 + Math.min(0.35, Math.max(0, input.expectedValue) / 20)
+        : 0.7;
+  return Math.min(0.99, Math.max(0.1, base * (input.type === 'arbitrage' ? 0.95 : 0.88)));
 }
 
 /** Eligible partners for arb/value (not illiquid / offline / deferred). */
@@ -318,6 +381,7 @@ export function generateEvents(partners: MergedPartnerHealth[], count = 24): Age
         min: 10 + Math.floor(Math.random() * 20),
         max: 100 + Math.floor(Math.random() * 900),
       },
+      intake: { source: 'synthetic', circuitVerified: false },
     });
   }
   return events;
@@ -428,6 +492,7 @@ export function detectEdges(
             latency_adjusted: maxLat > 250,
             liquidity_tiers: [bestHome.tier, bestAway.tier],
             timestamp: now - Math.floor(Math.random() * 180_000),
+            intake: ev.intake,
           });
         }
       }
@@ -479,6 +544,7 @@ export function detectEdges(
           latency_adjusted: b.latency > 250,
           liquidity_tiers: [b.liquidityTier || 'unknown', sharp[1].liquidityTier || 'unknown'],
           timestamp: now - Math.floor(Math.random() * 240_000),
+          intake: ev.intake,
         });
       }
     }
@@ -512,6 +578,7 @@ export function detectEdges(
           latency_adjusted: b.latency > 150,
           liquidity_tiers: [b.liquidityTier || 'unknown'],
           timestamp: now - Math.floor(Math.random() * 90_000),
+          intake: ev.intake,
         });
       }
     }
@@ -522,37 +589,37 @@ export function detectEdges(
 }
 
 /**
- * Annotate edges with mock ML fields (no external model runtime).
- * predicted_prob derived from edge math / implied odds.
+ * Annotate edges with shadow model fields (no external model runtime).
+ * Prediction and confidence consume only the reviewed price circuit. Latency,
+ * timestamps, labels, environment, and intake mode remain diagnostics.
  */
 export function attachMlPredictions(edges: EdgeOpportunity[]): EdgeOpportunity[] {
   return edges.map(e => {
-    if (e.ml) return e;
-    const o1 = Number(e.odds.book1);
+    const input = buildCircuitModelInput(e);
+    const o1 = input.odds.book1;
     const implied = o1 > 1 ? 1 / o1 : 0.5;
     // value: shift implied by edge; arb: near fair 0.5; steam: follow move
     let predicted = implied;
     let model: MlModelName = 'Ensemble';
-    if (e.type === 'value') {
-      predicted = Math.min(0.95, Math.max(0.05, implied * (1 + e.edge_percent / 100)));
+    if (input.type === 'value') {
+      predicted = Math.min(0.95, Math.max(0.05, implied * (1 + input.edgePercent / 100)));
       model = 'Ensemble';
-    } else if (e.type === 'arbitrage') {
+    } else if (input.type === 'arbitrage') {
       predicted = 0.5;
       model = 'SharpProxy';
     } else {
-      predicted = Math.min(0.92, Math.max(0.08, implied + e.edge_percent / 200));
+      predicted = Math.min(0.92, Math.max(0.08, implied + input.edgePercent / 200));
       model = 'LSTM';
     }
-    const mlConf = Math.min(
-      0.99,
-      Math.max(0.1, e.confidence * (e.type === 'arbitrage' ? 0.95 : 0.88)),
-    );
     return {
       ...e,
       ml: {
         predicted_prob: +predicted.toFixed(4),
-        confidence: +mlConf.toFixed(3),
+        confidence: +circuitConfidence(input).toFixed(3),
         model,
+        feature_contract: 'circuit-v1',
+        weight_eligible: isWeightEligible(e.intake),
+        weight_inputs: [...MODEL_WEIGHT_INPUTS],
       },
     };
   });
