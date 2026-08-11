@@ -1,0 +1,120 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`focused coverage contract normalizes exact files, name pattern, reporters, output, and ownership 1`] = `
+{
+  "fileRegistry": [
+    {
+      "file": "lib/harness/focused-coverage.ts",
+      "group": "test-execution",
+      "ownerModule": "harness",
+      "package": "factorywager-enterprise",
+      "role": "contract",
+      "scope": "self",
+    },
+    {
+      "file": "scripts/run-test-coverage.ts",
+      "group": "test-execution",
+      "ownerModule": "harness",
+      "package": "factorywager-enterprise",
+      "role": "cli",
+      "scope": "self",
+    },
+    {
+      "file": "tests/focused-coverage.test.ts",
+      "group": "test-execution",
+      "ownerModule": "harness",
+      "package": "factorywager-enterprise",
+      "role": "proof",
+      "scope": "self",
+    },
+    {
+      "file": "tests/__snapshots__/focused-coverage.test.ts.snap",
+      "group": "test-execution",
+      "ownerModule": "harness",
+      "package": "factorywager-enterprise",
+      "role": "snapshot",
+      "scope": "generated",
+    },
+    {
+      "file": "package.json",
+      "group": "test-execution",
+      "ownerModule": "harness",
+      "package": "factorywager-enterprise",
+      "role": "command-authority",
+      "scope": "shared",
+    },
+    {
+      "file": "lib/portal/bun-test-snapshots.ts",
+      "group": "test-execution",
+      "ownerModule": "harness",
+      "package": "factorywager-enterprise",
+      "role": "snapshot-catalog",
+      "scope": "shared",
+    },
+    {
+      "file": "docs/harness/tenants/bun-test-flags.md",
+      "group": "test-execution",
+      "ownerModule": "harness",
+      "package": "factorywager-enterprise",
+      "role": "operator-runbook",
+      "scope": "shared",
+    },
+    {
+      "file": "docs/harness/code-quality.md",
+      "group": "test-execution",
+      "ownerModule": "harness",
+      "package": "factorywager-enterprise",
+      "role": "ownership-doc",
+      "scope": "shared",
+    },
+    {
+      "file": "lib/harness/README.md",
+      "group": "test-execution",
+      "ownerModule": "harness",
+      "package": "factorywager-enterprise",
+      "role": "area-map",
+      "scope": "shared",
+    },
+    {
+      "file": ".agents/skills/project-r-ops-management/references/command-map.md",
+      "group": "test-execution",
+      "ownerModule": "harness",
+      "package": "factorywager-enterprise",
+      "role": "ops-command-map",
+      "scope": "shared",
+    },
+  ],
+  "plan": {
+    "bunArgs": [
+      "test",
+      "--coverage",
+      "--coverage-reporter=text",
+      "--coverage-reporter=lcov",
+      "--coverage-dir=coverage/focused",
+      "tests/agent-odds-http.test.ts",
+      "--test-name-pattern=API",
+      "--bail=1",
+    ],
+    "coverageDir": "coverage/focused",
+    "files": [
+      "tests/agent-odds-http.test.ts",
+    ],
+    "kind": "focused-coverage",
+    "ownership": {
+      "authority": "package.json#scripts.test:coverage",
+      "group": "test-execution",
+      "ownerModule": "harness",
+      "package": "factorywager-enterprise",
+      "role": "focused-coverage-command",
+    },
+    "reporters": [
+      "text",
+      "lcov",
+    ],
+    "testFlags": [
+      "--test-name-pattern=API",
+      "--bail=1",
+    ],
+  },
+}
+`;

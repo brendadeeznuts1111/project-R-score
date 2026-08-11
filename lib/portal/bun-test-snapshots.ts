@@ -98,6 +98,14 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     purpose: 'test-failures parser report shape.',
   },
   {
+    id: 'focused-coverage',
+    label: 'Focused coverage command',
+    testRel: 'tests/focused-coverage.test.ts',
+    snapRel: 'tests/__snapshots__/focused-coverage.test.ts.snap',
+    purpose:
+      'Root package ownership, exact-file selection, name filtering, diagnostic flags, and deterministic coverage output.',
+  },
+  {
     id: 'identity-board',
     label: 'Identity board',
     testRel: 'tests/identity-board.test.ts',

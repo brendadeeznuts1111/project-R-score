@@ -24,16 +24,17 @@ artifact write. Scheduler registration and removal are manual host mutations.
 
 ## Test and snapshot proof
 
-| Intent | Command | Contract |
-| --- | --- | --- |
-| Changed-file development | `bun run test:watch` | Watch the affected test set. |
-| Focused proof | `bun test <test-file...>` | Name exact files; add `-t <pattern>` only for a narrower behavior. |
-| Changed staged scope | `bun run test:changed` | Project-owned changed-test resolver. |
-| Snapshot catalog check | `bun run check:snapshots` | Validate headers, registrations, and orphan state without running tests. |
-| Snapshot contract proof | `bun run test:snapshots` | Run every registered snapshot suite. |
-| Scoped snapshot update | `bun tools/bun-test-snapshots.ts --update --id <id>` | File-scoped `-u`; review and stage only the owned diff. |
-| Staged gate | `.husky/pre-commit` | Path-gated staged checks. |
-| Merge proof | `bun run bun:ci` | Clean-worktree local authority, including the snapshot catalog. |
+| Intent                   | Command                                                  | Contract                                                                     |
+| ------------------------ | -------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Changed-file development | `bun run test:watch`                                     | Watch the affected test set.                                                 |
+| Focused proof            | `bun test <test-file...>`                                | Name exact files; add `-t <pattern>` only for a narrower behavior.           |
+| Focused coverage         | `bun run test:coverage -- <test-file...> [-t <pattern>]` | Exact files first; wrapper owns text + LCOV output under `coverage/focused`. |
+| Changed staged scope     | `bun run test:changed`                                   | Project-owned changed-test resolver.                                         |
+| Snapshot catalog check   | `bun run check:snapshots`                                | Validate headers, registrations, and orphan state without running tests.     |
+| Snapshot contract proof  | `bun run test:snapshots`                                 | Run every registered snapshot suite.                                         |
+| Scoped snapshot update   | `bun tools/bun-test-snapshots.ts --update --id <id>`     | File-scoped `-u`; review and stage only the owned diff.                      |
+| Staged gate              | `.husky/pre-commit`                                      | Path-gated staged checks.                                                    |
+| Merge proof              | `bun run bun:ci`                                         | Clean-worktree local authority, including the snapshot catalog.              |
 
 Flag boundaries:
 
@@ -57,7 +58,8 @@ bun run check:release-tracker
 bun run type-check:ci
 ```
 
-Before merge, run `.husky/pre-commit` and `bun run bun:ci` from a clean worktree.
+Before merge, run `.husky/pre-commit` and `bun run bun:ci` from a clean
+worktree.
 
 ## Security proof
 
