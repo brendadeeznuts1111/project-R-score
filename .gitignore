@@ -376,6 +376,9 @@ docs/archives/
 
 # Vendored / third-party
 vendor/
+!tools/vendor/
+!tools/vendor/bun-types/
+!tools/vendor/bun-types/*.tgz
 .third_party/
 
 # Independent projects — own git history (under projects/)

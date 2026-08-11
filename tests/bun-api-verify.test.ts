@@ -76,11 +76,11 @@ describe('verifyBunApis (offline)', () => {
     expect(manifest.summary.opsDemos).toBe(9);
     expect(manifest.summary.apiDemos).toBeGreaterThan(0);
     expect(manifest.summary.apisVerified).toBe(manifest.summary.apis);
-    expect(manifest.summary.typesVerified).toBe(manifest.summary.apis - 1);
-    expect(manifest.summary.knownTypeGaps).toBe(1);
+    expect(manifest.summary.typesVerified).toBe(manifest.summary.apis);
+    expect(manifest.summary.knownTypeGaps).toBe(0);
     expect(manifest.apis['Bun.TOML.stringify']).toMatchObject({
-      inTypes: false,
-      knownTypeGap: true,
+      inTypes: true,
+      knownTypeGap: false,
       knownRuntimeGap: !Bun.semver.satisfies(Bun.version, '>=1.4.0'),
       ok: true,
     });

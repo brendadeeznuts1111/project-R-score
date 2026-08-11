@@ -1,13 +1,13 @@
 {
-  "generated": "2026-07-28T19:43:50.717Z",
-  "bunVersion": "1.4.0",
-  "bunTypesDir": "/Users/nolarose/.npm/links/bun-types@1.3.14-08e2499268f905f7/node_modules/bun-types",
-  "bunTypesVersion": "1.3.14",
-  "docsIndexVersion": "1.4.0",
+  "generated": "2026-08-11T00:21:56.443Z",
+  "bunVersion": "1.3.14",
+  "bunTypesDir": "/Users/nolarose/Projects/.worktrees/bun-1.3.14-types-contracts/node_modules/.bun/bun-types@tools+vendor+bun-types+bun-types-1.4.0-tip.23d233b2.tgz/node_modules/bun-types",
+  "bunTypesVersion": "1.4.0-tip.23d233b2",
+  "docsIndexVersion": "1.3.14",
   "sources": {
     "apiReference": "https://bun.com/reference",
     "bunTypes": "https://github.com/oven-sh/bun/tree/main/packages/bun-types",
-    "bunTypesPinned": "https://github.com/oven-sh/bun/tree/bun-v1.3.14/packages/bun-types",
+    "bunTypesPinned": "https://github.com/oven-sh/bun/tree/bun-v1.4.0-tip.23d233b2/packages/bun-types",
     "repository": "https://github.com/oven-sh/bun"
   },
   "summary": {
@@ -15,8 +15,9 @@
     "demosPassed": 46,
     "apis": 73,
     "apisVerified": 73,
-    "typesVerified": 72,
-    "knownTypeGaps": 1,
+    "typesVerified": 73,
+    "knownTypeGaps": 0,
+    "knownRuntimeGaps": 1,
     "opsDemos": 9,
     "apiDemos": 37
   },
@@ -28,10 +29,10 @@
       "apis": [
         "Bun.file"
       ],
-      "runtimeOutput": "93737B name=factorywager-enterprise",
+      "runtimeOutput": "123696B name=factorywager-enterprise",
       "runtimeOk": true,
-      "proofHash": "49d391346b4e954ee2b9081bbe6391123399814c2fd783704bcd85cd7403cb8e",
-      "proofPreview": "49d39134"
+      "proofHash": "6cf81ebcc8bad09ae8084969e3cb12952e9397dc39b5d9e38a8014181d2ca0b9",
+      "proofPreview": "6cf81ebc"
     },
     {
       "id": "file-write-copy",
@@ -41,10 +42,10 @@
         "Bun.write",
         "Bun.file"
       ],
-      "runtimeOutput": "copied 93737B",
+      "runtimeOutput": "copied 123696B",
       "runtimeOk": true,
-      "proofHash": "82b53f3464d7b2635565e2ad0b85466e2994d6d95ce6e06c41ee59a04b9165eb",
-      "proofPreview": "82b53f34"
+      "proofHash": "5df1a2805cd53594b8765dc82cbed4e03e5358a147f40632a48036109b1a832f",
+      "proofPreview": "5df1a280"
     },
     {
       "id": "toml",
@@ -57,8 +58,8 @@
       ],
       "runtimeOutput": "a=1",
       "runtimeOk": true,
-      "proofHash": "248d00717f83930df7ec757d67e9bb1ee1473e0f80aa3249866cbb26a4a06231",
-      "proofPreview": "248d0071"
+      "proofHash": "14b0ac5b8b09f01319aabd286cbede77ba75b5182932c1d6618149ce890e4742",
+      "proofPreview": "14b0ac5b"
     },
     {
       "id": "json-family",
@@ -71,8 +72,8 @@
       ],
       "runtimeOutput": "jsonc=1 json5=world jsonl=2",
       "runtimeOk": true,
-      "proofHash": "cc80f10e842fee349c13ff80f1adb155840980431554852c2f1ae5182377612e",
-      "proofPreview": "cc80f10e"
+      "proofHash": "3bfa320a697c7a924412f887d3f597b0db7fca70d1264151fbd249ecc0cee068",
+      "proofPreview": "3bfa320a"
     },
     {
       "id": "crypto-hasher",
@@ -83,8 +84,8 @@
       ],
       "runtimeOutput": "1b2c16b75bd2a870",
       "runtimeOk": true,
-      "proofHash": "10ec3ca537cac510656a8ac32987303e40c8fa545f4150c89e24809d8c8e100e",
-      "proofPreview": "10ec3ca5"
+      "proofHash": "c29374813f652097aa7f11c98087ce5fdac2fb65f115b2f3cd9fc3e98e2d3d62",
+      "proofPreview": "c2937481"
     },
     {
       "id": "password",
@@ -97,8 +98,8 @@
       ],
       "runtimeOutput": "verify=true",
       "runtimeOk": true,
-      "proofHash": "5d9561a8a3d91b17e5bd99e28062ff7bc0d388a671635ab09de0471a1b40b83c",
-      "proofPreview": "5d9561a8"
+      "proofHash": "be581bf8e423ea06ea4c38839629bf38daf9bc1c4faf8c2504c6a63668407770",
+      "proofPreview": "be581bf8"
     },
     {
       "id": "hash-wyhash-crc32",
@@ -110,8 +111,8 @@
       ],
       "runtimeOutput": "wyhash=1019145960556548909 crc32=907060870",
       "runtimeOk": true,
-      "proofHash": "7ca81309ad3ab76be3137ae3894a4c3e3d7ced9f5165dc490287b78132923d19",
-      "proofPreview": "7ca81309"
+      "proofHash": "254666aaf19ae06641c74c2b70969e9639e12983cd50ffb0276a19d5b1081509",
+      "proofPreview": "254666aa"
     },
     {
       "id": "uuid-v7",
@@ -120,10 +121,10 @@
       "apis": [
         "Bun.randomUUIDv7"
       ],
-      "runtimeOutput": "019faa41-3f12-732f-8032-8016134660d7",
+      "runtimeOutput": "019fee32-85fb-7000-a1ba-fdfc9a2047f5",
       "runtimeOk": true,
-      "proofHash": "685ecdbc4a0abcc3170f764e04d317c4ff7cb7f67771300a797faafad9bf1355",
-      "proofPreview": "685ecdbc"
+      "proofHash": "5088cc6bd71a1fae0b4e0afcc491a4e7dc40c2ef8422023ab907602cf9a1fe5d",
+      "proofPreview": "5088cc6b"
     },
     {
       "id": "compression",
@@ -139,8 +140,8 @@
       ],
       "runtimeOutput": "gz=32 zstd=22 roundtrip=true",
       "runtimeOk": true,
-      "proofHash": "39ed0ff63126f466b999eda2e5c91d43c8aab0a770f3bb44a756fa41d9171951",
-      "proofPreview": "39ed0ff6"
+      "proofHash": "e554e7b13c605d11521730f398a9e4746201a6aca2ad2353466d80be7bea3e27",
+      "proofPreview": "e554e7b1"
     },
     {
       "id": "buffers",
@@ -152,8 +153,8 @@
       ],
       "runtimeOutput": "concat=4 alloc=1024",
       "runtimeOk": true,
-      "proofHash": "133e80e072380a09f9cc7a844d46462dd2ed9ac90ab592a8ae7556024bff8694",
-      "proofPreview": "133e80e0"
+      "proofHash": "f0685e71078da3e3f48c21445538e2182a663bcdca8d5fc521e753241484a2f4",
+      "proofPreview": "f0685e71"
     },
     {
       "id": "string-utils",
@@ -168,8 +169,8 @@
       ],
       "runtimeOutput": "&lt;div&gt; w=2 red long|line|here \u001b[31mre\u001b[39m",
       "runtimeOk": true,
-      "proofHash": "86d3ef0359b0f333b5c0547777cb5d39726250cfc28d1274b3deb2615c8f26cf",
-      "proofPreview": "86d3ef03"
+      "proofHash": "ead22695ca001a8beb670cc5f70378b11d63af91bbb6dbb5e3844309e66a9c8b",
+      "proofPreview": "ead22695"
     },
     {
       "id": "color",
@@ -180,8 +181,8 @@
       ],
       "runtimeOutput": "#ff0000",
       "runtimeOk": true,
-      "proofHash": "68e09640ef2082ccc40d60d053fd74a6e8161503da1ab83756609f28f5f2ab56",
-      "proofPreview": "68e09640"
+      "proofHash": "0247abe99a6c015bbaa6b7708f6e76c96e9c588ba8da642c69901bb8f1b37561",
+      "proofPreview": "0247abe9"
     },
     {
       "id": "inspect-table",
@@ -193,8 +194,8 @@
       ],
       "runtimeOutput": "inspect=true table=true",
       "runtimeOk": true,
-      "proofHash": "4affd7f17ed53071728dc5d1b956020ba13e22bb6669abe9bcc41cd1e1c01bc3",
-      "proofPreview": "4affd7f1"
+      "proofHash": "8860fbb37b72d198f15e6fa46014b06d2d7bf430b16009daa04c97a918824fb0",
+      "proofPreview": "8860fbb3"
     },
     {
       "id": "semver",
@@ -207,8 +208,8 @@
       ],
       "runtimeOutput": "order=-1 ok=true",
       "runtimeOk": true,
-      "proofHash": "e546fc76167e07f32af06425f0744ea700a649c5959e0b3b3ff57ead3bd6c2f4",
-      "proofPreview": "e546fc76"
+      "proofHash": "bcb4481df64e1f8561a3920335f8a3fd80d4494c02fc49e9a9f172f3bbaf0c90",
+      "proofPreview": "bcb4481d"
     },
     {
       "id": "markdown",
@@ -221,8 +222,8 @@
       ],
       "runtimeOutput": "html=true ansi=true",
       "runtimeOk": true,
-      "proofHash": "910415d8dd61d82df7a7c5f7baf555bdda76f884e71795701013796a38953ac6",
-      "proofPreview": "910415d8"
+      "proofHash": "814c04f96aee39882e24f4ee044b8278976618236e23b00caf0764c93c918cd4",
+      "proofPreview": "814c04f9"
     },
     {
       "id": "shell-which",
@@ -234,8 +235,8 @@
       ],
       "runtimeOutput": "hello which=yes",
       "runtimeOk": true,
-      "proofHash": "82e82b31815be5403934afd01130e10d8734ede55b27c4a09cd52bd809ba246d",
-      "proofPreview": "82e82b31"
+      "proofHash": "92c547d3b68fa9944ae836cc8ae8615a2fc6ea0ed60f3c4f79a6f669436fc917",
+      "proofPreview": "92c547d3"
     },
     {
       "id": "spawn",
@@ -245,10 +246,10 @@
         "Bun.spawn",
         "Bun.spawnSync"
       ],
-      "runtimeOutput": "1.4.0",
+      "runtimeOutput": "1.3.14",
       "runtimeOk": true,
-      "proofHash": "ba0d0adc0d2bc08914934575044b4f2c95225eac5ce562593aba008e6a376b1c",
-      "proofPreview": "ba0d0adc"
+      "proofHash": "9e82c5e146bc7781130bca1b4f28108767054027e85169779ebb89a6679929d2",
+      "proofPreview": "9e82c5e1"
     },
     {
       "id": "glob",
@@ -259,8 +260,8 @@
       ],
       "runtimeOutput": "match=true",
       "runtimeOk": true,
-      "proofHash": "726127bc592d2bf82d607cbc89a5c19bac54507d448e01310dfdbdfa7348a818",
-      "proofPreview": "726127bc"
+      "proofHash": "3599d14a0d0efe3f0639b1103f8bd504f7441045de0b016e44295fd7b282675f",
+      "proofPreview": "3599d14a"
     },
     {
       "id": "csrf",
@@ -273,8 +274,8 @@
       ],
       "runtimeOutput": "verify=true",
       "runtimeOk": true,
-      "proofHash": "e8d03212001d7528a216eb9bc28833a4bb1f1e73d706e054d7e1bee2a95f559a",
-      "proofPreview": "e8d03212"
+      "proofHash": "3cf3e78f5db09cda104b176f352390d137346ad73908b4743807d1a550326c04",
+      "proofPreview": "3cf3e78f"
     },
     {
       "id": "cookies",
@@ -286,8 +287,8 @@
       ],
       "runtimeOutput": "session=abc123",
       "runtimeOk": true,
-      "proofHash": "a824dd363235e42486aaff857ee85dcc037941515390c54212bfc6750999ce4d",
-      "proofPreview": "a824dd36"
+      "proofHash": "e93f2f23c1eff741e5c5818b730232380e886f8ff5a0914625d5dc1801299847",
+      "proofPreview": "e93f2f23"
     },
     {
       "id": "sqlite",
@@ -298,8 +299,8 @@
       ],
       "runtimeOutput": "rows=1 name=Alice",
       "runtimeOk": true,
-      "proofHash": "2d382f15bbc6d8aad4a30af5dfe890f11571eb1d411561c554fccc973d0c4495",
-      "proofPreview": "2d382f15"
+      "proofHash": "949d7b90be6fd1625d027aeca46171aa19d993fac5aeaacf44385c7b5da759dc",
+      "proofPreview": "949d7b90"
     },
     {
       "id": "archive",
@@ -310,8 +311,8 @@
       ],
       "runtimeOutput": "bytes=10240",
       "runtimeOk": true,
-      "proofHash": "b1ba09a243f8cbee3f8f9e2288911d1354750c77d7f23ae2249f79a688ac1dff",
-      "proofPreview": "b1ba09a2"
+      "proofHash": "4f44680629834daed7212d7ee4f09a369ca3b34a6ea194a6e6afd2a90d1ee8c7",
+      "proofPreview": "4f446806"
     },
     {
       "id": "transpiler",
@@ -322,8 +323,8 @@
       ],
       "runtimeOutput": "ok",
       "runtimeOk": true,
-      "proofHash": "30bc8d6f3bea33a865d59fcd63b0954914ada775ef34b270b267f68831e97b9b",
-      "proofPreview": "30bc8d6f"
+      "proofHash": "9a77d471753e1162373114461dd7984e59052f7d5bfe08791e71a78d1525fed5",
+      "proofPreview": "9a77d471"
     },
     {
       "id": "resolve",
@@ -332,10 +333,10 @@
       "apis": [
         "Bun.resolveSync"
       ],
-      "runtimeOutput": "/private/tmp/factorywager-bun-types.LCiJEe/package.json",
+      "runtimeOutput": "/Users/nolarose/Projects/.worktrees/bun-1.3.14-types-contracts/package.json",
       "runtimeOk": true,
-      "proofHash": "88e4b70ed0f2c691400a9ef5370888169da706b5f1079f548bf779b4162e46a5",
-      "proofPreview": "88e4b70e"
+      "proofHash": "a3f649a1cc1c7a6d8819909643e0a183542dccbe87363a8296f31820d1b747a8",
+      "proofPreview": "a3f649a1"
     },
     {
       "id": "env-argv-main",
@@ -346,10 +347,10 @@
         "Bun.argv",
         "Bun.main"
       ],
-      "runtimeOutput": "home=true argv=1 main=true",
+      "runtimeOutput": "home=true argv=3 main=true",
       "runtimeOk": true,
-      "proofHash": "2e342c3d30a88f37d9217e3f4fcb3c6ab8bfad693184f2bb75ee2657540cb291",
-      "proofPreview": "2e342c3d"
+      "proofHash": "a8957454fb625d51bc242f08c8d2019e44db5cbd43eee8ee6454d3c4545f8070",
+      "proofPreview": "a8957454"
     },
     {
       "id": "version-revision",
@@ -359,10 +360,10 @@
         "Bun.version",
         "Bun.revision"
       ],
-      "runtimeOutput": "1.4.0 a227ad99",
+      "runtimeOutput": "1.3.14 0d9b296a",
       "runtimeOk": true,
-      "proofHash": "0160a01d15c65b56aa3a2c5f39772eff14d0a4461d06d48f98d1fc37c182ea6c",
-      "proofPreview": "0160a01d"
+      "proofHash": "bf2b1f4fac469b501369f8b23ee9214fcd75dd6d503368cbd2c93440b3c98d9b",
+      "proofPreview": "bf2b1f4f"
     },
     {
       "id": "deep-equals-peek",
@@ -374,8 +375,8 @@
       ],
       "runtimeOutput": "eq=true peek=42",
       "runtimeOk": true,
-      "proofHash": "82548d6a00bd2b09b69d34b18cbf7d632727c6295e31671739511a4c674589ad",
-      "proofPreview": "82548d6a"
+      "proofHash": "0cc805eb43ff1c4e7f3e79981c6b0fb949f3359552a2a46b5e9dd49ae33807d7",
+      "proofPreview": "0cc805eb"
     },
     {
       "id": "serve-stop",
@@ -384,10 +385,10 @@
       "apis": [
         "Bun.serve"
       ],
-      "runtimeOutput": "port=49668 body=ok",
+      "runtimeOutput": "port=65325 body=ok",
       "runtimeOk": true,
-      "proofHash": "01a0bb7640a60ab3d1866d3ed5cbc68878cb6180fb644665409a6663dbca5123",
-      "proofPreview": "01a0bb76"
+      "proofHash": "b1fe2fb3b9b8b786219a2f71d359652021e1f8ea1985dce43dd890f652823124",
+      "proofPreview": "b1fe2fb3"
     },
     {
       "id": "build-inline",
@@ -398,8 +399,8 @@
       ],
       "runtimeOutput": "success=true outputs=1",
       "runtimeOk": true,
-      "proofHash": "c1486f712a0979b64ef0943949c5b6acb599f1dce22f0aaeabc99a6ac3020f50",
-      "proofPreview": "c1486f71"
+      "proofHash": "7d9375cc6a7f71098a3590e242d862b0bae9f23fbeb62eccfa50cc8e8b0ab34d",
+      "proofPreview": "7d9375cc"
     },
     {
       "id": "timers",
@@ -412,8 +413,8 @@
       ],
       "runtimeOutput": "ms=16.4",
       "runtimeOk": true,
-      "proofHash": "287ba5ac46f8369db8c49fd16302ab99ee5fe460d28730234ce1e27acb9cceb7",
-      "proofPreview": "287ba5ac"
+      "proofHash": "7819855dc838892eb9eae4f4fe26e829b0555b6e77c485d552de2d2f2ac73ff5",
+      "proofPreview": "7819855d"
     },
     {
       "id": "streams",
@@ -425,8 +426,8 @@
       ],
       "runtimeOutput": "stream=ab sink=hello",
       "runtimeOk": true,
-      "proofHash": "d8822eb9ac9a6e607e19d6ba2b273774b7d468de48a2c921faea62f9ac5ad56b",
-      "proofPreview": "d8822eb9"
+      "proofHash": "29a8fd9aefd3696fd9632a11e9ecc06337ecff67a39e81b8895198e9eee7fe8a",
+      "proofPreview": "29a8fd9a"
     },
     {
       "id": "gc-heap",
@@ -438,8 +439,8 @@
       ],
       "runtimeOutput": "heapSnapshotFn=function",
       "runtimeOk": true,
-      "proofHash": "433a46d8d64a9f09b00f6770694783100e14fa8c9fef4b1a943035b1d78a69d0",
-      "proofPreview": "433a46d8"
+      "proofHash": "fc4147dc7bfbee073c7edbc1538b8a982f899ae7fbdf347e89c14dbacfffe58f",
+      "proofPreview": "fc4147dc"
     },
     {
       "id": "mmap",
@@ -448,10 +449,10 @@
       "apis": [
         "Bun.mmap"
       ],
-      "runtimeOutput": "ctor=Uint8Array len=93737",
+      "runtimeOutput": "ctor=Uint8Array len=123696",
       "runtimeOk": true,
-      "proofHash": "ad7fff10dbd5a5ab32c07b869ec657166f9a32b2b13cf81a30dbec2453190a32",
-      "proofPreview": "ad7fff10"
+      "proofHash": "997be308ba559565427584668550ab871fd02c11d03d67183cc1293ed31dcc73",
+      "proofPreview": "997be308"
     },
     {
       "id": "path-url",
@@ -463,8 +464,8 @@
       ],
       "runtimeOutput": "/tmp/x",
       "runtimeOk": true,
-      "proofHash": "ebf8292c386ef51285d1b74d3fce507994dc1a010b5ca637a182f3b117ff9b15",
-      "proofPreview": "ebf8292c"
+      "proofHash": "41bb10293067982d433de2f2736f63acd9530d30bd5f602fd17a617c2766ded1",
+      "proofPreview": "41bb1029"
     },
     {
       "id": "cron",
@@ -473,10 +474,10 @@
       "apis": [
         "Bun.cron"
       ],
-      "runtimeOutput": "cronJob=Object",
+      "runtimeOutput": "next=2027-01-01T00:00:00.000Z",
       "runtimeOk": true,
-      "proofHash": "5bac27223a357a5b88810bca1cd24e0f01093859af87f0d4530a3526a2a37793",
-      "proofPreview": "5bac2722"
+      "proofHash": "1ff8982e9bd9a5176ff1c0a82d32db747bd36ec97c529b1f01829a4c539d2d36",
+      "proofPreview": "1ff8982e"
     },
     {
       "id": "fs-router",
@@ -487,8 +488,8 @@
       ],
       "runtimeOutput": "match=true",
       "runtimeOk": true,
-      "proofHash": "fd3a7bde6ad46b81c36b0cecb0babc36fc8e103dc1ec45259e0ad93bce45fe19",
-      "proofPreview": "fd3a7bde"
+      "proofHash": "b9e6fd4c1b3e0eac4a2ea5a6ba9cac7773a07c5d878064533883d0abbb6ac68a",
+      "proofPreview": "b9e6fd4c"
     },
     {
       "id": "html-rewriter",
@@ -499,8 +500,8 @@
       ],
       "runtimeOutput": "ok",
       "runtimeOk": true,
-      "proofHash": "f2a1e51f9fed0f0bd4a0975500d0618a47d2236f49bcadda968eae0e28fec293",
-      "proofPreview": "f2a1e51f"
+      "proofHash": "a6b3c687150e280a7d8601225d14f934f66bfa9ff7ce1f5a014812b68316e486",
+      "proofPreview": "a6b3c687"
     },
     {
       "id": "onboard-partner",
@@ -511,10 +512,10 @@
         "Bun.CryptoHasher",
         "bun:sqlite"
       ],
-      "runtimeOutput": "partner=Partner B proof=8a74f1e8",
+      "runtimeOutput": "partner=Partner B proof=2f498ef7",
       "runtimeOk": true,
-      "proofHash": "5d0b6584e6a43587e03335c526ef77c9b197e4d2338464e9280c31b6bef3f2c9",
-      "proofPreview": "5d0b6584"
+      "proofHash": "538b7ba5c4e8614a25a89458cd0a3827f8b09cb0f7c8bd02e3b02a00b0ecf05e",
+      "proofPreview": "538b7ba5"
     },
     {
       "id": "fund-agent-rail",
@@ -524,10 +525,10 @@
         "bun:sqlite",
         "Bun.CryptoHasher"
       ],
-      "runtimeOutput": "funded=$10000 balance=$15000 proof=5bcdb9ff",
+      "runtimeOutput": "funded=$10000 balance=$15000 proof=f1df69da",
       "runtimeOk": true,
-      "proofHash": "f9213e026828edec83dbb15506abd6759e1fb263b82ac6fc8a5cc68363500b36",
-      "proofPreview": "f9213e02"
+      "proofHash": "b21ad7e20402a16a2710097976d642245ebd5b35d790b2a7964068e8034f86b0",
+      "proofPreview": "b21ad7e2"
     },
     {
       "id": "generate-play",
@@ -538,10 +539,10 @@
         "Bun.randomUUIDv7",
         "bun:sqlite"
       ],
-      "runtimeOutput": "play=019faa41 sig=2032daea",
+      "runtimeOutput": "play=019fee32 sig=2deeb8e8",
       "runtimeOk": true,
-      "proofHash": "1e63cde70429fb89e3630b88f5c8ff46b4c9562af0cfd557e9226d531e013ce4",
-      "proofPreview": "1e63cde7"
+      "proofHash": "c4d9895530c2b3e9412528d552ef58c7cb968ba0d957c7013711bf291f2232bf",
+      "proofPreview": "c4d98955"
     },
     {
       "id": "distribute-play",
@@ -550,10 +551,10 @@
       "apis": [
         "bun:sqlite"
       ],
-      "runtimeOutput": "recipients=2 play=019faa41",
+      "runtimeOutput": "recipients=2 play=019fee32",
       "runtimeOk": true,
-      "proofHash": "c3863f4a1f2c3590c4de7ef0c15b1a231a25dac1b924e465f5a29bde543df7f2",
-      "proofPreview": "c3863f4a"
+      "proofHash": "3c6f78d60f505d24c4befea9a5588fcc0cdb8877546308d3980755d034130f5d",
+      "proofPreview": "3c6f78d6"
     },
     {
       "id": "track-wager",
@@ -564,8 +565,8 @@
       ],
       "runtimeOutput": "pnl=$2000",
       "runtimeOk": true,
-      "proofHash": "88321f81cb0cfa64c99ae22c496ed95f2daf6a4473532073e31970b0df8969c0",
-      "proofPreview": "88321f81"
+      "proofHash": "b2cfd5630dfc3140ae24aa82ac69ad235c648098ecc4bdb555012438a5b4a0c0",
+      "proofPreview": "b2cfd563"
     },
     {
       "id": "reconcile-rails",
@@ -577,8 +578,8 @@
       ],
       "runtimeOutput": "reconciled diff=$-5000",
       "runtimeOk": true,
-      "proofHash": "8104cdca590ab07c6930af8113fe0d2e7b6051d5923f73337201b14c26f73e0e",
-      "proofPreview": "8104cdca"
+      "proofHash": "d96939350fb83529d5177441a7d96bce4f38eb7bc015d0b1ebf9e9b9350e31c3",
+      "proofPreview": "d9693935"
     },
     {
       "id": "phone-inventory",
@@ -588,10 +589,10 @@
         "bun:sqlite",
         "Bun.randomUUIDv7"
       ],
-      "runtimeOutput": "phone=019faa41 agent=019faa41",
+      "runtimeOutput": "phone=019fee32 agent=019fee32",
       "runtimeOk": true,
-      "proofHash": "b5b03b6b7689766f7c2c6e14411330167a9a70c31ef70cf3fefc9136424c2d9e",
-      "proofPreview": "b5b03b6b"
+      "proofHash": "947933a9ecdf52ca2bb4027e0153abb899644ef71c361a94bc6514edb5443150",
+      "proofPreview": "947933a9"
     },
     {
       "id": "daily-pnl-report",
@@ -603,680 +604,753 @@
       ],
       "runtimeOutput": "table=empty",
       "runtimeOk": true,
-      "proofHash": "0bdaa366a8141c0e574fcf16de740d5682aebfc76bf0a9c29b85a5e5e5221989",
-      "proofPreview": "0bdaa366"
+      "proofHash": "a2846d7bf5fa38d9c141b4b7ebb8f2c5f21fe3d37e5593d66c581244fd732e83",
+      "proofPreview": "a2846d7b"
     },
     {
       "id": "auto-fund-cron",
       "kind": "ops",
-      "summary": "Register auto-fund cron (register + stop)",
+      "summary": "Preview auto-fund cron and execute one cycle",
       "apis": [
         "Bun.cron",
         "bun:sqlite"
       ],
-      "runtimeOutput": "cron=Object",
+      "runtimeOutput": "next=2026-08-11T06:00:00.000Z funded=yes",
       "runtimeOk": true,
-      "proofHash": "6dffe6d7a8e7b21a87107770ab8162554044146433b93adf7137c1cbf933a104",
-      "proofPreview": "6dffe6d7"
+      "proofHash": "37942ce7c79c0bf40c63100ecc83f7ae3b52d71d7f89ccf6b27d783b14455cfa",
+      "proofPreview": "37942ce7"
     }
   ],
   "apis": {
     "Bun.$": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/shell#getting-started",
       "runtime": "function",
       "ok": true,
-      "sha256": "4066a2f94cff262a01aed423aa3a6c44f16a36d1e04b45be97b5f0b82a0c522d"
+      "sha256": "1c4f093a4d702a80494e5e0a3a2b3954594eb150780734aebf379b5c0195ec05"
     },
     "Bun.Archive": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/archive#quickstart",
       "runtime": "function",
       "ok": true,
-      "sha256": "6dc363f6044a1c50d600a1be182a87c9d9f65333df3bb1277292e21c764b70dc"
+      "sha256": "bc73e1b25c88808520c45a5ff89c913c5527f27a00248ed39c95a76b512361e6"
     },
     "Bun.ArrayBufferSink": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/streams#bun-arraybuffersink",
       "runtime": "function",
       "ok": true,
-      "sha256": "28143b5d9312bed0ae0a01dff0f5dae5d43ca5f54bf5a988d9c49772413b5160"
+      "sha256": "7b48b069b6e5ba2bafab7c906ef89dda27f2d2dc6af84f7cd2aa93b68aff5ba8"
     },
     "Bun.CSRF": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/csrf#bun-csrf-generate",
       "runtime": "object",
       "ok": true,
-      "sha256": "fe0ca294ad6c0dae2a951a3f9a85ef42ada58666686788e92ecd5f678da9d256"
+      "sha256": "f781cb1b36d4692571acea6d768455c75ce7527c174fe13b2869519671e1fe15"
     },
     "Bun.CSRF.generate": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/csrf#bun-csrf-generate",
       "runtime": "function",
       "ok": true,
-      "sha256": "4d4137a14509fb65df3970a83e5d0354b6cd896e53a3e71a59bc94f5699df834"
+      "sha256": "ccd87634b573465c6d17dc246396cc31f095113dcea6f768bb19b8e9f05427fc"
     },
     "Bun.CSRF.verify": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/csrf#bun-csrf-verify",
       "runtime": "function",
       "ok": true,
-      "sha256": "09d8ef9bf0d5e2f30c89a52adbe6a854223c071fbe4d48d43020aa1ef08673a0"
+      "sha256": "976562da8bf541c0881ea609b8f0b77bdc38e45c6917ca2c7e06f03c7d3871e9"
     },
     "Bun.Cookie": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/cookies#cookie-class",
       "runtime": "function",
       "ok": true,
-      "sha256": "e50a68b19a2a239737e41c54ce694a241f633b217389d0283a369272fe028e36"
+      "sha256": "e5844c1ed22ae53c114ab14e5f651f12b349d0a29c83dd42efc6f9ec5261341a"
     },
     "Bun.CookieMap": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/cookies#cookiemap-class",
       "runtime": "function",
       "ok": true,
-      "sha256": "b4ce34e785d3cb1da553025230f61d9d7ce4813abb40a058a31176adc36010f3"
+      "sha256": "c6f80d6b271e87500d1cee3688e9aa093269d7577934a085f0ad704ba02740b7"
     },
     "Bun.CryptoHasher": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/hashing#bun-cryptohasher",
       "runtime": "function",
       "ok": true,
-      "sha256": "7a026d6089367c221c38a233c20d7062df3cb7004051cb0e6bc28a21a2dede00"
+      "sha256": "7404cea00a4d5f2837f50fc85b315a4337ebece0f8aca3e7ae43a7ec34315be8"
     },
     "Bun.FileSystemRouter": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/FileSystemRouter",
       "runtime": "function",
       "ok": true,
-      "sha256": "458f30699b958afbabb129b3cba17fd4a35c24a5ef48f6a289e86aa7b6ede6be"
+      "sha256": "499cd0645301fbe8a7364ea1336cfe5e2e305a0c218a2cd5d36c13aff3eb261e"
     },
     "Bun.Glob": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/glob#quickstart",
       "runtime": "function",
       "ok": true,
-      "sha256": "bb239d3612ee1f951448893b0b95c7e8fa1aff7a0d954008b653c5658d79b64b"
+      "sha256": "8207eee47b7cd0625f1326f0b7f0d35905738007179b597e908813630dd60aa2"
     },
     "Bun.JSON5": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/JSON5",
       "runtime": "object",
       "ok": true,
-      "sha256": "169ffad8a50578d3c96137eaab9c227dc6d34e94cff321488a06408b0b3bc12f"
+      "sha256": "ed7b572905f81a32bf8c6658ddf3d5abcc6c5f27f0ffd0a69b93025c7104ff79"
     },
     "Bun.JSONC": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/JSONC",
       "runtime": "object",
       "ok": true,
-      "sha256": "aa3a69746a89ff558d8a17fc93c86f9531741c0e9c37dc49e08cc801344fb39d"
+      "sha256": "aaae1be6ea63b0c2ffb68529a633546d5cda7e79798b0233b802adb1fd2082a7"
     },
     "Bun.JSONL": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/JSONL",
       "runtime": "object",
       "ok": true,
-      "sha256": "761489bdec9cd3e81d1902ad0b435cd9e1209ee8a30a3843927845de6302f889"
+      "sha256": "5bf662ccf84cc86004c80273c43f7b22ca0f97f807f098af444ff821aeed1a78"
     },
     "Bun.TOML": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/toml#bun-toml-parse",
       "runtime": "object",
       "ok": true,
-      "sha256": "9c5d311031a039e95f3dcbe4a5336e30fac7fa32d06b2208928eb174f7e426e0"
+      "sha256": "331d53f0c2097db0d1bee482cccaf96462677442e8d2ae55c4360589dcefe7e8"
     },
     "Bun.TOML.parse": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/TOML/parse",
       "runtime": "function",
       "ok": true,
-      "sha256": "bd7fd5a1ac4aff3f0ce9df5d355d77cc7676ac21ee788891e51763d0684fe3b9"
+      "sha256": "e46391c96a6e63263687660cff858142069abf58263196ca45f1b87394f90b81"
     },
     "Bun.TOML.stringify": {
-      "inTypes": false,
-      "knownTypeGap": true,
+      "inTypes": true,
+      "knownTypeGap": false,
+      "knownRuntimeGap": true,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/toml",
-      "runtime": "function",
+      "runtime": "undefined",
       "ok": true,
-      "sha256": "155c58202436d1dab2a854768f3e1b639db400a8c64abb01c398d3eb534111cd"
+      "sha256": "0c302413563068befde067f3955ca16ecc6e9eb932bc43479f16c6aadec51b0a"
     },
     "Bun.Transpiler": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/Transpiler",
       "runtime": "function",
       "ok": true,
-      "sha256": "f082a41071c744479900751db996b3bc30386047733f65c83e77a7b211ea1449"
+      "sha256": "5046b97cf279370c8fcceed36f0bbef72627d543064e3ef54d357c01b6ec442a"
     },
     "Bun.allocUnsafe": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/allocUnsafe",
       "runtime": "function",
       "ok": true,
-      "sha256": "3ad9268ff588ea2d9bc7a181bebfdabadda95fe841858db674d724bab22693b6"
+      "sha256": "8bae827e72e308118828dd36b0a586ae8d77e051bf8817cbba6d630c0102e4f7"
     },
     "Bun.argv": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/argv",
       "runtime": "object",
       "ok": true,
-      "sha256": "665fcbefeaef6973e4285a25dc0ab7184e56facefcf22adb64b90698778cf59b"
+      "sha256": "a09284cabac55850d4f2c007e020cd8441d3ae2a8820fc6bcf71836a960adfdb"
     },
     "Bun.build": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/bundler/index#basic-example",
       "runtime": "function",
       "ok": true,
-      "sha256": "ea9d249edbf2315c814e2af58008bab6d58cb31bbe2cfd4985d097d000513b16"
+      "sha256": "22195dd48535b5a0290bb6ecffbc3dff0f714af17c091eaecf3b0524ac2ee65f"
     },
     "Bun.color": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/color#flexible-input",
       "runtime": "function",
       "ok": true,
-      "sha256": "f45e5f5e72bb468087d936d282919d92c3836ae0ed3e94536cf655dfe8670cc7"
+      "sha256": "9c7b2949562b99fc6404127b104495c96f1db53bef90af664da36d597eca3183"
     },
     "Bun.concatArrayBuffers": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/concatArrayBuffers",
       "runtime": "function",
       "ok": true,
-      "sha256": "f5024b616a0a0829dac34373e6d35fae24b7514338c6a61d437ca923cbef7b10"
+      "sha256": "8d05605b5708614fc1714dd45320aca5667cc5f72b28d047f23d90c81aef53d2"
     },
     "Bun.cron": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process",
       "runtime": "function",
       "ok": true,
-      "sha256": "da78c3afd7078272f90689f66b99804657783a5e6e3c903522e9b266ff162ad6"
+      "sha256": "30b33c90263d79b8b976b3c432d3997b01c65f1af8e5a0d8286983483f94a894"
     },
     "Bun.deepEquals": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-deepequals",
       "runtime": "function",
       "ok": true,
-      "sha256": "ddbe35df3b24d164e0916fe07d527db7e0a1ce28b011041d1ff0cc99c572e1e9"
+      "sha256": "15ff63a5366f6bc41380cf381b4e6bfd5b5514ff650a26373bdcc7e0567e20d4"
     },
     "Bun.deflateSync": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-deflatesync",
       "runtime": "function",
       "ok": true,
-      "sha256": "3501db4cd0ad3e4c37851348265ea09d9c93c39809d79584659891dd592da32a"
+      "sha256": "95ea40250afd2188c98bc658efd688cee451af5b1799e31b586be56a9392c325"
     },
     "Bun.env": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-env",
       "runtime": "object",
       "ok": true,
-      "sha256": "e8da0ec40d9ac9768460317a09c133e7e8a0e05c9fa6c04db250d17ad32e04ca"
+      "sha256": "8e63662eb3601084d4dab117f1b8e63c692a57711cca8c5a43b80f111421af04"
     },
     "Bun.escapeHTML": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-escapehtml",
       "runtime": "function",
       "ok": true,
-      "sha256": "d55014114f3f59c4799ef709bf86dd0078ac4763b5ce8dc0570e3f0b17d58990"
+      "sha256": "7bd2d4e7fbddb693dc356b3faaa0f2de3def37f12e540c2a475101bf1ea71dfb"
     },
     "Bun.file": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
       "runtime": "function",
       "ok": true,
-      "sha256": "97463df06260c2720db5526b0f8064ef6354ac9352a7aadf1ab9dbc4dabeb736"
+      "sha256": "3fa0469bd7bacd5bcc7c4db0572ce5bc70479e4b070d3eca952c9432eb9d6607"
     },
     "Bun.fileURLToPath": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-fileurltopath",
       "runtime": "function",
       "ok": true,
-      "sha256": "f15d84fc7e20baab3533a2a22b192e238ca9b81abf8fbb318ae07fdf69276e4a"
+      "sha256": "22238cc8628da83f3be7f2cfb2beb8c9457807dbc29fbbe1ea750eee7bed9a7f"
     },
     "Bun.gc": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/gc",
       "runtime": "function",
       "ok": true,
-      "sha256": "3bf873fda7c9a93db12f7bfafb7e4f0694b2ae5fc0eeb622bb5a0924ab6a4121"
+      "sha256": "296b4b3acdc31a4feb454b7c355b684b029a74f74aac0e1b000dff9c949ffec2"
     },
     "Bun.generateHeapSnapshot": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/generateHeapSnapshot",
       "runtime": "function",
       "ok": true,
-      "sha256": "6c2cfe8e7452da493cce0b9b1c15351bb1b3688d40997067700d08842ca14e79"
+      "sha256": "748d39842af419e01a17428b5cf352d8c30deaf0afed56830a49ec6226e0b605"
     },
     "Bun.gunzipSync": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-gunzipsync",
       "runtime": "function",
       "ok": true,
-      "sha256": "1308fc97aab5729c8ade0e0ae3ad6dffffabbd957dade40db34d2b4c7c693f91"
+      "sha256": "6f2262580a0786f20e7915635490cb49f91b2d73a85b7dfbef15dbd66dab9e0d"
     },
     "Bun.gzipSync": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-gzipsync",
       "runtime": "function",
       "ok": true,
-      "sha256": "3976246f39a21cf4aa140f265b5b3f9b35a10977ab42a461da934722f54de7b0"
+      "sha256": "43dcdea33962d75d216d0f2b31aec3fe605d331f430f29a3c5c3eb2623a76988"
     },
     "Bun.hash": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/hashing#bun-hash",
       "runtime": "function",
       "ok": true,
-      "sha256": "9f707e95409e2b89d12024c3f9c47fa9b8db0d1850cc7524156330a3c2a4dbf0"
+      "sha256": "912853478a424023726dfafc50c57aa9aa56672d3bf491f791e0972a872d049c"
     },
     "Bun.hash.crc32": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/hashing#bun-hash",
       "runtime": "function",
       "ok": true,
-      "sha256": "8b2b26ff6cd9b0acf11342ace1f2d297e2a1280718d93e47c953a7d62c11deae"
+      "sha256": "045d6b41a3b9f5cfd2b5146c0f222ce569197d28b20c684c1f893109ef88f62b"
     },
     "Bun.inflateSync": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-inflatesync",
       "runtime": "function",
       "ok": true,
-      "sha256": "7ec476c1f556ad7dff671d3498e9d9bda1f93a3b4ea3f33438b6b40e6e8efe0d"
+      "sha256": "d800e21088cd0027b3ba88fb3e11b3456ae502ef6951da647db149a44cb27541"
     },
     "Bun.inspect": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-inspect",
       "runtime": "function",
       "ok": true,
-      "sha256": "d7582c04cbce407b8f0ee6671990116f96e5074f5a14869bde4851db0a9ae7b2"
+      "sha256": "a421c052edf7e1233ad176f531ebc54e4c5ee0f860e8a776ae65109a61b44c83"
     },
     "Bun.inspect.table": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options",
       "runtime": "function",
       "ok": true,
-      "sha256": "dcee4b36b5d3c58c33628182bf2ea8cd993c6d76024c096826f50345235bde64"
+      "sha256": "3282790bbca4032ed1668b9cd9400a8a844a532b059ddcb3b45c43987f98264b"
     },
     "Bun.main": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-main",
       "runtime": "string",
       "ok": true,
-      "sha256": "b320860ff1a7aa5493bc8e76b018154849cf7715421689f76514ed9fa205fd0f"
+      "sha256": "0e6a88b9a9315614882744e5df037246a736ae6a89d523c4a391ef0b34c6968f"
     },
     "Bun.markdown": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/markdown#bun-markdown-html",
       "runtime": "object",
       "ok": true,
-      "sha256": "576ad67ff40b5f02424926a15df241a1ecf6bc5082ac3b6d140d961c4ea8889e"
+      "sha256": "72965dd39cf9e98f37c4167b3c664c2ce86ec3fa5100ed6ae1d2424a5a9cc08f"
     },
     "Bun.markdown.ansi": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/markdown#ansi-terminal-output",
       "runtime": "function",
       "ok": true,
-      "sha256": "038cd159ed70afb40aa1db02aae963f487213786d5d8d4ced3b2eac9b6efd548"
+      "sha256": "786989cc3faf461c7ac6cf6c888af2355394a97da4e5edbf51997d4f4e6ae1d9"
     },
     "Bun.markdown.html": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/markdown#bun-markdown-html",
       "runtime": "function",
       "ok": true,
-      "sha256": "8a1c5faf1cab36f5b089a14eb735024d873a0117e6d778ada67baf0f2fea11f3"
+      "sha256": "10ad3961098533092849ec01e81f1e1f39886e0687e377c625c661e26d552c6e"
     },
     "Bun.mmap": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/bun-apis",
       "runtime": "function",
       "ok": true,
-      "sha256": "ed8a5fcd565e93f3b1f6f0df2d1809acd1ed9f38f8f182dec42d434c0832c967"
+      "sha256": "1bcbe1bb9819d566dbf65adb1b5a0a08dc0159352a5443ee6bc9a6c36955181e"
     },
     "Bun.nanoseconds": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-nanoseconds",
       "runtime": "function",
       "ok": true,
-      "sha256": "60588d9b98e845af4d210897a365360b76e764baf1722c777d2ea6937f1b9914"
+      "sha256": "8846877f46e792150cb925e3dedf724db88e42a54042e52a28cf96e4891bb367"
     },
     "Bun.password": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/hashing#bun-password",
       "runtime": "object",
       "ok": true,
-      "sha256": "826b43db371d54710585b1be33baf42863103c5ff64ded0b0e5732857a1f9d50"
+      "sha256": "a573ee3b1dd699f62bfff25e2a17b2181c5d2ae95d59ee384b4cdff255940f61"
     },
     "Bun.password.hash": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/hashing#bun-password",
       "runtime": "function",
       "ok": true,
-      "sha256": "079e465ec935d00fb866844aefc53412b4f2a00214592f6356a551545026176f"
+      "sha256": "52356d20c19dec6acab7b9d33537d4f2d31f04912597ae711891a1cc0f28be9f"
     },
     "Bun.password.verify": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/hashing#bun-password",
       "runtime": "function",
       "ok": true,
-      "sha256": "28ea536906f373ff737422f48028ef502dfa256cd074df336cd5d943f4e30b9e"
+      "sha256": "c4d5a413d7c300f11bc8e32a7c6a040b6c8b3d02d712c8f291161d22d6bc2c81"
     },
     "Bun.pathToFileURL": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-pathtofileurl",
       "runtime": "function",
       "ok": true,
-      "sha256": "d811a8e0ea1c8e5d7d93ebd6a07649e8b08537bfd57f6d87486f00b37446bd33"
+      "sha256": "c81cbc615403fed5843dc5cf1de7f706dfe85f9b0398c8e1338bc19144ad5d2b"
     },
     "Bun.peek": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-peek",
       "runtime": "function",
       "ok": true,
-      "sha256": "f35b7610b1e80691c2916c653f6ef6409ee0c4afda16888111e31c7d0835685f"
+      "sha256": "bc417c8a8ee7e0c69b8e675d4fd0aa9a1f9b69037ce684b53576b5727415152d"
     },
     "Bun.randomUUIDv7": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
       "runtime": "function",
       "ok": true,
-      "sha256": "b40cf4f5388b7506c02c4f0f0c3bb06d32c0b3180818cd8c0593394925aabdaa"
+      "sha256": "be907d5ef981e49c454cfd665e792c173c3336a1896dc63ff99ee18514ba9d99"
     },
     "Bun.readableStreamToBytes": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/readableStreamToBytes",
       "runtime": "function",
       "ok": true,
-      "sha256": "7f6a8ee61c165388eb761ad76f1c174a07a8d9505c33baf813ed202be5596a59"
+      "sha256": "786df0fe80de34c56d7701ab8bce7544bf1479f781de51887c6d1a464e788e5f"
     },
     "Bun.resolveSync": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-resolvesync",
       "runtime": "function",
       "ok": true,
-      "sha256": "663e083973655095b72f42ea08b3ad445ffbe90cfd37d5ac82bdb5fb904b8001"
+      "sha256": "d894e1e2e08736414a9d9145ed5da4ded4e22f40ac0564ef7c96c9ec39dcddfb"
     },
     "Bun.revision": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-revision",
       "runtime": "string",
       "ok": true,
-      "sha256": "2384022d4b9b58ba9cbf1c33d2e91c97eb05d5fc1d63d806f1141689f6de8af4"
+      "sha256": "cedb9c9a94fea30a65f2eafae1b9dda24a5796c62dab7dc3b31d408939e2773b"
     },
     "Bun.semver": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean",
       "runtime": "object",
       "ok": true,
-      "sha256": "ffff64bf4bbf42c6fe760794cad95640e918b99b7123666ee3bdd16a259ce14d"
+      "sha256": "b490a8a2098210b0232b569a635f11a5c90f570edcdf7c7dccaa0b7178ac3f1a"
     },
     "Bun.semver.order": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/semver/order",
       "runtime": "function",
       "ok": true,
-      "sha256": "b94225f6872ba41807a9860145e12add220daf5b63b4cc359eb958709f7930b3"
+      "sha256": "6cee3e5c721bc0da9562cc1085147d1aa4aad8791ff203b5289468a015672576"
     },
     "Bun.semver.satisfies": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/semver/satisfies",
       "runtime": "function",
       "ok": true,
-      "sha256": "2605e837cf6e0752fe8ce6b7c9d0e88061bf667f80cbf8122faa052465a8d171"
+      "sha256": "4af133436d802e9a9de892c6d44337607a79a032587453da304a5847c618319f"
     },
     "Bun.serve": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/http/server#basic-setup",
       "runtime": "function",
       "ok": true,
-      "sha256": "557259f2c9c74d9b3bd96160383e4e0ba9d4d5e40c2c9bb49f38533c3c9e7259"
+      "sha256": "3611e169d90b72e702ac71a86421213ca22ba28ec6db029946ce7dcf0676fe93"
     },
     "Bun.sleep": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-sleep",
       "runtime": "function",
       "ok": true,
-      "sha256": "64f7b1d6214da6e71c971af37bfd0a1a4b726b99ce564be1bc52df2758ec1c04"
+      "sha256": "822810a678200918a5fdb97c4afcaebf6aa300bfee0e6d390e8c4c5c6e8ab3bb"
     },
     "Bun.sleepSync": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-sleepsync",
       "runtime": "function",
       "ok": true,
-      "sha256": "11b2e57492a8cc3b445e8db429bbf912b33eb487318552ffecc0c21f55294ed0"
+      "sha256": "b8b7ae684504d998472b2359b44b17079a1a6f217311d52ce9fe4b611474b24e"
     },
     "Bun.sliceAnsi": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/reference/bun/sliceAnsi",
       "runtime": "function",
       "ok": true,
-      "sha256": "5efbb99e23382d5285472a5e7782bb965ee20b458c75f749ff4485d2d1801c7f"
+      "sha256": "255ffdf9e813b2c670258fae1fdbbefcceb01735a5c68fb99f0a93abbbaff8c3"
     },
     "Bun.spawn": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn",
       "runtime": "function",
       "ok": true,
-      "sha256": "3209089d32fab1008482f9ea1cc6d4d6845798bba9779fee9b533dee31fb356d"
+      "sha256": "38c2a0c3113b88fb8b85ea95bcbb949ef151736e8def6b5378876a34c80b156f"
     },
     "Bun.spawnSync": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync",
       "runtime": "function",
       "ok": true,
-      "sha256": "59e8077abc539298bf0e6523b25ce023e4a9fd7c5c7cacbc81aa178c73479f3a"
+      "sha256": "3508d8ef8eb6029ef5a90475a2c362c766d008f354e45a5674f2cb0546bbffdf"
     },
     "Bun.stringWidth": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-stringwidth",
       "runtime": "function",
       "ok": true,
-      "sha256": "3267e871d61ac93831fe73217b316557c2364f112aee81f988a1478403cad1aa"
+      "sha256": "1c2fd040e404603e895e90f2950b04819d09e72465e2028da461192e019ce455"
     },
     "Bun.stripANSI": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-stripansi",
       "runtime": "function",
       "ok": true,
-      "sha256": "526ef0bb301ea05742773f21ce337644ca3987b350f8f456d4e9a3cee567a4ac"
+      "sha256": "efd6aba752d794f6dfe613a1adb7634b22063d9d1e2b609deac5503764f60e4d"
     },
     "Bun.version": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-version",
       "runtime": "string",
       "ok": true,
-      "sha256": "04ff5b76368105f7965d321f410910e54b5c28e2b0554820de46283c2b641c00"
+      "sha256": "256e6adf5f90568ae0df9358027501d4416660bb4b9d74bcf9526990ab628bfd"
     },
     "Bun.which": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-which",
       "runtime": "function",
       "ok": true,
-      "sha256": "997fb846654ab2409329c86dd7720bf588939775c922a6e13df7c72edd270d08"
+      "sha256": "b74ecfbedfffa65a1224e6959f5c33b7f3a965b48dbdd3931f1ab7a4b88fa89c"
     },
     "Bun.wrapAnsi": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-wrapansi",
       "runtime": "function",
       "ok": true,
-      "sha256": "e596fc09a5f9c62fa30e23cacdabd7c9197553720ed1117d752bdbd20c5117db"
+      "sha256": "f132ed4f0d95d5870481883111975d18f8197a71280aee6f469c5af151803cad"
     },
     "Bun.write": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
       "runtime": "function",
       "ok": true,
-      "sha256": "f9d33723085d707fd312dbb9627390c83a18286e76d46109d901323b753d0f29"
+      "sha256": "8e2965d7de723aeca66bbd3452e862c3b226990560854f9f0451e4e70aade4d2"
     },
     "Bun.zstdCompressSync": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-zstdcompress-bun-zstdcompresssync",
       "runtime": "function",
       "ok": true,
-      "sha256": "fda6291e50c815f86133ed81ab793f42e40fa96646322f99bac7c3ece878722d"
+      "sha256": "dad0bc0830d0e0439180b4e60cb0dac9895c12309cd36c6377c88d695eba64f9"
     },
     "Bun.zstdDecompressSync": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync",
       "runtime": "function",
       "ok": true,
-      "sha256": "bb502f67032763919091023f18a622898f3441faf3ae165c2721c45acee81578"
+      "sha256": "af8961b71ebe6ff100e5c9297c04f449cb52655896585e4138ee192e13242942"
     },
     "HTMLRewriter": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/html-rewriter",
       "runtime": "function",
       "ok": true,
-      "sha256": "740bc65294933ccf7494112120dccae5cfc73e10449ba3442ff5e6a5f30d4448"
+      "sha256": "8a20315559b235ae31095ed8686cef09a4911d8b577b5c263dc1077737286a43"
     },
     "bun:sqlite": {
       "inTypes": true,
       "knownTypeGap": false,
+      "knownRuntimeGap": false,
       "inDocs": true,
       "docUrl": "https://bun.com/docs/runtime/sqlite#load-via-es-module-import",
       "runtime": "function",
       "ok": true,
-      "sha256": "3cfbd16ed11624a0e3071f6920818bec9d3c8ab3540c5b592ab8292b084aff48"
+      "sha256": "7709efa90b85d7b6ada7bd031a2f6c689de7de680a34276e04309dec83abec6f"
     }
   }
 }

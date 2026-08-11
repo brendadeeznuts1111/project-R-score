@@ -68,7 +68,7 @@ type Report = {
   generated: string;
   runtime: { bunVersion: string; bunRevision: string };
   pin: { package: string; version: string; root: string };
-  tip: { root: string; revision: string | null; source: 'fetch' | 'env' | 'local-clone' };
+  tip: { root: string; revision: string | null; source: 'fetch' | 'env' | 'cache' | 'local-clone' };
   fetch: { performed: boolean; cacheRoot: string };
   diff: TipDiff;
   /** Phase 5 full member changelog (null when --no-changelog) */
@@ -105,7 +105,10 @@ async function gitText(cwd: string, args: string[]): Promise<{ ok: boolean; text
 /** Re-export for callers that imported fetch from tip-diff. */
 export { fetchUpstreamBunTypes } from './bun-types-tip-fetch.ts';
 
-async function resolveTipSource(opts: { noFetch: boolean; preferLocal: boolean }): Promise<{
+export async function resolveTipSource(
+  opts: { noFetch: boolean; preferLocal: boolean },
+  locations: { cacheRoot?: string; home?: string } = {}
+): Promise<{
   root: string;
   revision: string | null;
   source: Report['tip']['source'];
@@ -120,7 +123,14 @@ async function resolveTipSource(opts: { noFetch: boolean; preferLocal: boolean }
     return { root: envTip, revision, source: 'env', fetched: false };
   }
 
-  const home = Bun.env.HOME ?? '';
+  const cacheRoot = locations.cacheRoot ?? CACHE_ROOT;
+  const cachedTip = joinPath(cacheRoot, 'packages', 'bun-types');
+  if (opts.preferLocal && (await pathExists(joinPath(cachedTip, 'bun.d.ts')))) {
+    const rev = await gitText(cacheRoot, ['rev-parse', '--short', 'HEAD']);
+    return { root: cachedTip, revision: rev.ok ? rev.text : null, source: 'cache', fetched: false };
+  }
+
+  const home = locations.home ?? Bun.env.HOME ?? '';
   const localClone = home ? joinPath(home, 'bun', 'packages', 'bun-types') : '';
   if (opts.preferLocal && localClone && (await pathExists(joinPath(localClone, 'bun.d.ts')))) {
     let revision: string | null = null;
@@ -130,6 +140,15 @@ async function resolveTipSource(opts: { noFetch: boolean; preferLocal: boolean }
   }
 
   if (opts.noFetch) {
+    if (await pathExists(joinPath(cachedTip, 'bun.d.ts'))) {
+      const rev = await gitText(cacheRoot, ['rev-parse', '--short', 'HEAD']);
+      return {
+        root: cachedTip,
+        revision: rev.ok ? rev.text : null,
+        source: 'cache',
+        fetched: false,
+      };
+    }
     if (localClone && (await pathExists(joinPath(localClone, 'bun.d.ts')))) {
       let revision: string | null = null;
       const rev = await gitText(joinPath(home, 'bun'), ['rev-parse', '--short', 'HEAD']);
@@ -141,7 +160,7 @@ async function resolveTipSource(opts: { noFetch: boolean; preferLocal: boolean }
     );
   }
 
-  const fetched = await fetchUpstreamBunTypes(CACHE_ROOT);
+  const fetched = await fetchUpstreamBunTypes(cacheRoot);
   return {
     root: fetched.root,
     revision: fetched.revision,
@@ -271,8 +290,8 @@ async function main(): Promise<void> {
   if (args.help) {
     console.log(`bun-types-tip-diff — pin vs upstream bun-types (local CI)
 
-  --prefer-local     Use ~/bun/packages/bun-types if present (no network)
-  --no-fetch         Never clone; require BUN_TYPES_TIP or local clone
+  --prefer-local     Use repository tip cache, then ~/bun (no network)
+  --no-fetch         Never clone; require BUN_TYPES_TIP, cache, or local clone
   --strict           Exit 1 on pin-only (default) or tip-only > --max-tip-only
   --max-tip-only=N   Strict threshold for tip-only count (default 200)
   --allow-pin-only   Do not fail on pin-only in --strict

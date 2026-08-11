@@ -9,7 +9,7 @@ promotion = "reviewed"
 wrapper_package = "@types/bun"
 wrapper_channel = "latest"
 definitions_package = "bun-types"
-definitions_channel = "canary"
+definitions_channel = "pinned-tip"
 
 [monitor]
 os_schedule = "17 6 * * *"
