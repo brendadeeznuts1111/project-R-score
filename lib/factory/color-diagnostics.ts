@@ -31,8 +31,13 @@ const callBunColor = Bun.color as (
 
 function inputKey(input: Bun.ColorInput): string {
   if (typeof input === 'string' || typeof input === 'number') return `${typeof input}:${input}`;
-  if (ArrayBuffer.isView(input))
-    return `${input.constructor.name}:[${Array.from(input).join(',')}]`;
+  if (input instanceof DataView) {
+    const bytes = new Uint8Array(input.buffer, input.byteOffset, input.byteLength);
+    return `DataView:[${Array.from(bytes).join(',')}]`;
+  }
+  if (ArrayBuffer.isView(input)) {
+    return `${input.constructor.name}:[${Array.from(input as ArrayLike<number>).join(',')}]`;
+  }
   if (Array.isArray(input)) return `array:[${input.join(',')}]`;
   if (typeof input === 'object' && input !== null && 'r' in input) {
     const rgba = input as { r: number; g: number; b: number; a?: number };
