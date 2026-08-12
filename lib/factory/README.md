@@ -161,5 +161,19 @@ import { color } from 'bun' with { type: 'macro' };
 const accent = color('#e06c75', 'css');
 ```
 
+The public helper signatures have compile-only contracts using Bun's
+[`expectTypeOf`](https://bun.com/reference/bun/test/expectTypeOf):
+
+```bash
+bun run check:factory-color:types
+```
+
+This command runs TypeScript over
+[`factory-color-types.test-d.ts`](../../tests/factory-color-types.test-d.ts).
+Keep value assertions in `factory-color-diagnostics.test.ts`; use `expectTypeOf`
+here for parameter, return, union, and narrowing contracts that would otherwise
+disappear when Bun strips TypeScript at runtime.
+
 Canonical references: [Bun.color](https://bun.com/docs/runtime/color) ·
-[macros](https://bun.com/docs/bundler/macros).
+[macros](https://bun.com/docs/bundler/macros) ·
+[`expectTypeOf`](https://bun.com/docs/test/writing-tests#expecttypeof).
