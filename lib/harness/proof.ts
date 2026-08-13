@@ -1220,6 +1220,26 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'lib/factory/',
   },
   {
+    id: 'factory-bun-create-template',
+    claim:
+      'Factory bun create routing preserves Bun source selection while the factory-library template keeps its local scaffold contract',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/factory-template.test.ts tests/cli.test.ts',
+      'tests/factory-template.test.ts',
+      'tests/cli.test.ts',
+      '.bun-create/factory-library/',
+      'lib/factory/cli.ts',
+      'docs/design/bun-create-alignment.md',
+      'docs/design/bun-publish-alignment.md',
+    ],
+    freshRerun: 'bun test tests/factory-template.test.ts tests/cli.test.ts',
+    freshRerunKind: 'claim',
+    owner: '.bun-create/factory-library/',
+  },
+  {
     id: 'factory-registry-pages-proxy-v1',
     claim:
       'Pages Function /api/registry serves allowlisted registry objects through a bound R2 bucket with validated keys, fail-closed binding, and origin-restricted CORS (Workers APIs only — no Bun.*)',

@@ -77,7 +77,7 @@
 ### B5. ADR-0002 artifact plane — ✅ ACTIVATED 2026-08-04
 
 - **Owner:** product decision; completed via the direct-to-R2 lane.
-- Published `@tennis-hq/ssot@1.5.0` with `bun run factory publish` to
+- Published `@tennis-hq/ssot@1.5.0` with `bun run factory:publish -- <archive>` to
   `@tennis-hq/ssot/1.5.0.tgz`.
 - Verified R2 download size and SHA-256 through `RegistryClient.install()`, then
   refreshed the committed registry snapshot and Tennis tenant slice.

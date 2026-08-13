@@ -34,6 +34,11 @@ fails closed. Fixtures and synthetic events remain useful for rapid shadow
 development and deterministic tests but cannot become downstream
 weight-eligible.
 
+`AgentEvent.intake` is copied unchanged to every derived edge. The local event
+generator marks its own events `synthetic` and unverified; no caller can obtain
+weight eligibility merely by running generated or fixture data through the edge
+detector.
+
 `weight_eligible` is downstream eligibility evidence, not a weight mutation.
 This artifact has no training or weight-mutation sink; any future sink must
 consume and enforce the circuit contract explicitly.

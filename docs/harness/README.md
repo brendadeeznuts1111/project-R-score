@@ -21,6 +21,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Domain `*Id` / bare string IDs → [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) · skill `.agents/skills/branded-ids/`
 - `unknown` / decode / wire vs interior → [`docs/WIRE_BOUNDARY.md`](../WIRE_BOUNDARY.md)
 - Bun API usage / `@see` refs → `bun tools/bun-doc-refs.ts suggest "<api>"` · [`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md)
+- Factory `bun create` routing / local template contract → [`bun-create-alignment.md`](../design/bun-create-alignment.md) · `bun test tests/factory-template.test.ts tests/cli.test.ts` · claim `factory-bun-create-template`
 - Bun API → wrapper → brand → project/proof relationships → [`tenants/bun-brand-cross-map.md`](tenants/bun-brand-cross-map.md) · `/portal/brands/` · `bun run bun:brand-map:check` · claim `bun-brand-cross-map`
 - Bun microbench / CPU profile metrics (search · brand · limits-lab · console-depth · deep) → [`tenants/bun-bench-profiling.md`](tenants/bun-bench-profiling.md) · `bun run bench:status` · [`docs/performance/README.md`](../performance/README.md) · claim `bun-bench-profiling`
 - Grounded Bun / Proton capability matrix (bake SSOT) → [`capability-map.md`](capability-map.md) · `bun run bake:capabilities` · root [`AGENTS.md`](../../AGENTS.md) keeps a pointer only

@@ -15,6 +15,7 @@
 
 import { r2RequestPayerFromEnv } from '../../config/r2-env';
 import {
+  isArtifactType,
   type ArtifactType,
   type ArtifactRelease,
   type PackageInfo,
@@ -42,6 +43,19 @@ export type RegistryClientOptions = {
   /** Inject a store (tests). Default: SigV4 S3Client against factory registry bucket. */
   store?: RegistryObjectStore;
 };
+
+function requiredOrDefault(value: string | undefined, field: string, fallback: string): string {
+  if (value === undefined) return fallback;
+  const trimmed = value.trim();
+  if (!trimmed) throw new TypeError(`${field} must be a non-empty string when supplied.`);
+  return trimmed;
+}
+
+function requiredText(value: string, field: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) throw new TypeError(`${field} must be a non-empty string.`);
+  return trimmed;
+}
 
 // ── Registry client ──────────────────────────────────────────────────────
 
@@ -136,9 +150,15 @@ export class RegistryClient {
     }
   ): Promise<ArtifactRelease> {
     const artifactName = validateArtifactName(name);
-    const artifactVersion = asArtifactVersion(version);
-    const type = options?.type ?? 'library';
-    const distTag = options?.distTag ?? 'latest';
+    const versionText = requiredText(version, 'version');
+    const artifactVersion = asArtifactVersion(versionText);
+    const suppliedType = options?.type;
+    if (suppliedType !== undefined && !isArtifactType(suppliedType)) {
+      throw new TypeError(`Invalid artifact type: ${String(suppliedType)}.`);
+    }
+    const type = suppliedType ?? 'library';
+    const distTag = requiredOrDefault(options?.distTag, 'distTag', 'latest');
+    const publisher = requiredOrDefault(options?.publisher, 'publisher', 'factory-cli');
 
     const blob = data instanceof Blob ? data : new Blob([data]);
     const bytes = new Uint8Array(await blob.arrayBuffer());
@@ -175,8 +195,8 @@ export class RegistryClient {
 
     const r2Key =
       type === 'library'
-        ? `${name.startsWith('@') ? name : `@factorywager/${name}`}/${version}.tgz`
-        : `projects/${name}/${version}.tgz`;
+        ? `${name.startsWith('@') ? name : `@factorywager/${name}`}/${versionText}.tgz`
+        : `projects/${name}/${versionText}.tgz`;
 
     await this.store.putBytes(r2Key, blob, {
       contentType: 'application/gzip',
@@ -194,7 +214,7 @@ export class RegistryClient {
       dependencies: options?.dependencies,
       readme,
       publishedAt: new Date().toISOString(),
-      publisher: options?.publisher ?? 'factory-cli',
+      publisher,
       storage: {
         r2Key,
         size: blob.size,
@@ -210,12 +230,12 @@ export class RegistryClient {
         releases: {},
       };
 
-      const versions = pkg.versions.some(v => String(v) === version)
+      const versions = pkg.versions.some(v => String(v) === versionText)
         ? pkg.versions
         : sortVersions([...pkg.versions, artifactVersion]);
 
       const distTags = { ...pkg['dist-tags'], [distTag]: artifactVersion };
-      const releases = { ...pkg.releases, [version]: release };
+      const releases = { ...pkg.releases, [versionText]: release };
       const updatedPkg: PackageInfo = { versions, 'dist-tags': distTags, releases };
 
       return {
@@ -282,7 +302,8 @@ export class RegistryClient {
 
   /** Move a dist-tag to an already-published version (etag-guarded index update). */
   async promote(name: string, version: string, distTag = 'latest'): Promise<RegistryIndex> {
-    const artifactVersion = asArtifactVersion(version);
+    const artifactVersion = asArtifactVersion(requiredText(version, 'version'));
+    const normalizedDistTag = requiredOrDefault(distTag, 'distTag', 'latest');
     return this.writeIndex(index => {
       const pkg = index.packages[name];
       if (!pkg) throw new Error(`promote: package not found: ${name}`);
@@ -291,7 +312,7 @@ export class RegistryClient {
       }
       const updatedPkg: PackageInfo = {
         ...pkg,
-        'dist-tags': { ...pkg['dist-tags'], [distTag]: artifactVersion },
+        'dist-tags': { ...pkg['dist-tags'], [normalizedDistTag]: artifactVersion },
       };
       return { ...index, packages: { ...index.packages, [name]: updatedPkg } };
     });

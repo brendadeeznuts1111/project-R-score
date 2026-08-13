@@ -1,0 +1,362 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`factory-library template contract groups package properties, environment, and flags in a stable contract snapshot 1`] = `
+{
+  "environment": {
+    "benchmark": [
+      "BENCH_ITERATIONS",
+    ],
+    "createNpmClient": [
+      "NPM_CLIENT",
+    ],
+    "createRouting": [
+      "BUN_CREATE_DIR",
+    ],
+    "enrichment": [
+      "PROJECT_NAME",
+    ],
+    "junitCi": [
+      "GITHUB_RUN_ID",
+      "GITHUB_SERVER_URL",
+      "GITHUB_REPOSITORY",
+      "CI_JOB_URL",
+    ],
+    "junitCommit": [
+      "GITHUB_SHA",
+      "CI_COMMIT_SHA",
+      "GIT_SHA",
+    ],
+    "publishAuthentication": [
+      "NPM_CONFIG_TOKEN",
+    ],
+  },
+  "flags": {
+    "bunCreate": [
+      "--force",
+      "--no-install",
+      "--no-git",
+      "--open",
+    ],
+    "bunPublish": [
+      "--dry-run",
+      "--access",
+      "--tag",
+      "--registry",
+      "--auth-type",
+      "--otp",
+      "--tolerate-republish",
+      "--ignore-scripts",
+    ],
+    "factoryCreate": [
+      "--publish",
+      "--replace-local",
+    ],
+    "junitEnrichInput": [
+      "[reportPath]",
+    ],
+    "testCoverage": [
+      "--coverage",
+      "--coverage-reporter=text",
+      "--coverage-reporter=lcov",
+      "<test filter>",
+      "--test-name-pattern=<regex>",
+    ],
+    "testJunitPassthrough": [
+      "--bail",
+      "--coverage",
+    ],
+  },
+  "junitProperties": {
+    "enrichment": [
+      {
+        "absence": "fail enrichment: required package metadata",
+        "inputs": [
+          "package.json.name",
+        ],
+        "name": "package",
+      },
+      {
+        "absence": "fail enrichment: required package metadata",
+        "inputs": [
+          "package.json.version",
+        ],
+        "name": "package_version",
+      },
+      {
+        "absence": "package name is required",
+        "inputs": [
+          "PROJECT_NAME",
+          "package.json.name",
+        ],
+        "name": "project",
+      },
+      {
+        "absence": "always records environment or package",
+        "inputs": [
+          "PROJECT_NAME",
+          "package.json.name",
+        ],
+        "name": "project_source",
+      },
+      {
+        "absence": "always records local when CI context is absent",
+        "inputs": [
+          "CI",
+          "GITHUB_RUN_ID",
+          "CI_JOB_URL",
+        ],
+        "name": "report_context",
+      },
+      {
+        "absence": "always records unavailable when absent",
+        "inputs": [
+          "GITHUB_SHA",
+          "CI_COMMIT_SHA",
+          "GIT_SHA",
+          "git HEAD",
+        ],
+        "name": "commit_source",
+      },
+      {
+        "absence": "omitted; branch_source records state",
+        "inputs": [
+          "GITHUB_REF_NAME",
+          "git branch",
+        ],
+        "name": "branch",
+      },
+      {
+        "absence": "environment, git, detached, or unavailable",
+        "inputs": [
+          "GITHUB_REF_NAME",
+          "git branch",
+        ],
+        "name": "branch_source",
+      },
+      {
+        "absence": "omitted; repository_source records state",
+        "inputs": [
+          "GITHUB_REPOSITORY",
+          "git remote.origin.url",
+        ],
+        "name": "repository",
+      },
+      {
+        "absence": "environment, git-remote, or unavailable",
+        "inputs": [
+          "GITHUB_REPOSITORY",
+          "git remote.origin.url",
+        ],
+        "name": "repository_source",
+      },
+      {
+        "absence": "omitted; run_id_source records state",
+        "inputs": [
+          "GITHUB_RUN_ID",
+        ],
+        "name": "run_id",
+      },
+      {
+        "absence": "environment or unavailable",
+        "inputs": [
+          "GITHUB_RUN_ID",
+        ],
+        "name": "run_id_source",
+      },
+      {
+        "absence": "always generated from the reporting run",
+        "inputs": [
+          "run context timestamp",
+        ],
+        "name": "generated_at",
+      },
+    ],
+    "native": [
+      {
+        "absence": "omitted when CI context is absent",
+        "inputs": [
+          "GITHUB_RUN_ID",
+          "GITHUB_SERVER_URL",
+          "GITHUB_REPOSITORY",
+          "CI_JOB_URL",
+        ],
+        "name": "ci",
+      },
+      {
+        "absence": "omitted when no commit is available",
+        "inputs": [
+          "GITHUB_SHA",
+          "CI_COMMIT_SHA",
+          "GIT_SHA",
+          "git HEAD",
+        ],
+        "name": "commit",
+      },
+      {
+        "absence": "Bun runtime owned",
+        "inputs": [
+          "system hostname",
+        ],
+        "name": "hostname",
+      },
+    ],
+  },
+  "mode": "template",
+  "package": {
+    "engines": {
+      "bun": ">=1.3.14",
+    },
+    "exports": {
+      ".": "./src/index.ts",
+    },
+    "files": [
+      "src",
+      "README.md",
+    ],
+    "name": "{{name}}",
+    "publishConfig": {
+      "access": "public",
+      "tag": "latest",
+    },
+    "scripts": {
+      "bench": "bun scripts/bench.ts",
+      "build": "bun build ./src/index.ts --outdir ./dist",
+      "build:metafile": "bun build ./src/index.ts --outdir ./dist --metafile=dist/metafile.json --metafile-md=dist/metafile.md && bun run scripts/build-summary.ts",
+      "check": "bun run generate:files && bun run check:files && bun run typecheck && bun test && bun run build",
+      "check:files": "bun run scripts/validate-files-md.ts",
+      "dev": "bun --watch --no-clear-screen src/index.ts",
+      "generate:files": "bun run scripts/generate-files-md.ts",
+      "junit:enrich": "bun run scripts/junit-enrich.ts",
+      "postpublish": "bun run scripts/postpublish.ts",
+      "prepack": "bun run check",
+      "profile:cpu": "bun --cpu-prof --cpu-prof-dir=./profiles scripts/bench.ts",
+      "publish:dry-run": "bun publish --dry-run",
+      "test": "bun test",
+      "test:ci": "bun run test:junit -- --coverage && bun run junit:enrich",
+      "test:coverage": "bun test --coverage",
+      "test:coverage:lcov": "bun test --coverage --coverage-reporter=text --coverage-reporter=lcov",
+      "test:dots": "bun test --reporter=dots",
+      "test:junit": "bun run scripts/run-test-junit.ts",
+      "test:watch": "bun --watch --no-clear-screen test",
+      "typecheck": "tsc --noEmit",
+    },
+  },
+  "propertyGroups": [
+    {
+      "id": "identity",
+      "owner": "package.json",
+      "properties": [
+        "name",
+        "version",
+        "description",
+        "type",
+        "module",
+        "types",
+        "exports",
+        "engines.bun",
+      ],
+      "rule": "Bun-native source package; only package.json.name uses Bun template substitution.",
+    },
+    {
+      "id": "runtime",
+      "owner": "package.json",
+      "properties": [
+        "scripts.dev",
+        "scripts.test",
+        "scripts.test:watch",
+        "scripts.build",
+      ],
+      "rule": "Development, test, watch, and build commands run with Bun.",
+    },
+    {
+      "id": "quality",
+      "owner": "package.json",
+      "properties": [
+        "scripts.typecheck",
+        "scripts.check",
+        "devDependencies.@types/bun",
+        "devDependencies.typescript",
+      ],
+      "rule": "Checks are explicit and no-emit; a consumer runs them after installation.",
+    },
+    {
+      "id": "reporting",
+      "owner": "package.json",
+      "properties": [
+        "scripts.test:dots",
+        "scripts.test:coverage",
+        "scripts.test:coverage:lcov",
+        "scripts.test:junit",
+        "scripts.test:ci",
+        "scripts.junit:enrich",
+        "scripts.build:metafile",
+      ],
+      "rule": "JUnit and bundle reports are generated artifacts, not package inputs.",
+    },
+    {
+      "id": "publish",
+      "owner": "package.json",
+      "properties": [
+        "files",
+        "publishConfig.access",
+        "publishConfig.tag",
+        "scripts.prepack",
+        "scripts.postpublish",
+        "scripts.publish:dry-run",
+      ],
+      "rule": "Only src and README publish; prepack proves the contract before packing.",
+    },
+    {
+      "id": "lifecycle",
+      "owner": "package.json",
+      "properties": [
+        "bun-create.preinstall",
+        "bun-create.postinstall",
+      ],
+      "rule": "Template-only status messages; Bun removes bun-create metadata in the generated manifest.",
+    },
+    {
+      "id": "files",
+      "owner": "package.json",
+      "properties": [
+        "scripts.generate:files",
+        "scripts.check:files",
+        "files.md",
+      ],
+      "rule": "files.md is a generated, tracked index of every non-generated, non-secret project file and package allowlist proof.",
+    },
+    {
+      "id": "environment",
+      "owner": "CI environment",
+      "properties": [
+        "GITHUB_RUN_ID",
+        "GITHUB_SERVER_URL",
+        "GITHUB_REPOSITORY",
+        "CI_JOB_URL",
+        "GITHUB_SHA",
+        "CI_COMMIT_SHA",
+        "GIT_SHA",
+        "PROJECT_NAME",
+        "BUN_CREATE_DIR",
+        "NPM_CLIENT",
+        "NPM_CONFIG_TOKEN",
+        "BENCH_ITERATIONS",
+      ],
+      "rule": "CI values win. Missing provenance stays absent; explicit source fields describe availability. Tokens never enter package output.",
+    },
+    {
+      "id": "flags",
+      "owner": "Bun",
+      "properties": [
+        "bun create --force",
+        "--no-install",
+        "--no-git",
+        "--open",
+        "bun test passthrough",
+        "bun publish flags",
+      ],
+      "rule": "Factory forwards Bun create flags unchanged except its own --publish and --replace-local safety guards; an explicit marker request fails if it cannot be recorded.",
+    },
+  ],
+}
+`;

@@ -221,6 +221,26 @@ describe('RegistryClient — publish with README', () => {
 });
 
 describe('RegistryClient — publish name validation', () => {
+  test('defaults only omitted metadata and rejects malformed supplied values', async () => {
+    const client = mockClient();
+    const defaulted = await client.publish('metadata-defaults', '1.0.0', new Blob(['data']));
+    expect(defaulted.type).toBe('library');
+    expect(defaulted.publisher).toBe('factory-cli');
+
+    await expect(
+      client.publish('bad-type', '1.0.0', new Blob(['data']), { type: 'model' as never })
+    ).rejects.toThrow('Invalid artifact type');
+    await expect(
+      client.publish('bad-tag', '1.0.0', new Blob(['data']), { distTag: '   ' })
+    ).rejects.toThrow('distTag must be a non-empty string');
+    await expect(
+      client.publish('bad-publisher', '1.0.0', new Blob(['data']), { publisher: '' })
+    ).rejects.toThrow('publisher must be a non-empty string');
+    await expect(
+      client.publish('bad-version', '   ', new Blob(['data']))
+    ).rejects.toThrow('version must be a non-empty string');
+  });
+
   test('rejects names with spaces', async () => {
     const client = mockClient();
     await expect(
@@ -544,6 +564,7 @@ describe('RegistryClient — resolve / listVersions / promote', () => {
     // promote: rejects unpublished versions and unknown packages
     await expect(client.promote('fw-demo', '9.9.9')).rejects.toThrow(/not published/);
     await expect(client.promote('fw-nope', '1.0.0')).rejects.toThrow(/not found/);
+    await expect(client.promote('fw-demo', '1.0.0', '   ')).rejects.toThrow('distTag must be a non-empty string');
   });
 });
 

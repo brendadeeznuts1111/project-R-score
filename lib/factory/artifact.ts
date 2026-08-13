@@ -96,12 +96,13 @@ export const FACTORY_BRAND_SPECS: BrandSpec[] = [
 
 // ── Artifact type discriminator ──────────────────────────────────────────
 
-export type ArtifactType =
-  | 'library' // shared lib (semver)
-  | 'project' // full app/build (timestamp)
-  | 'template' // bun scaffold
-  | 'worker' // cloudflare worker
-  | 'cli-tool'; // standalone binary/script
+export const ARTIFACT_TYPES = ['library', 'project', 'template', 'worker', 'cli-tool'] as const;
+
+export type ArtifactType = (typeof ARTIFACT_TYPES)[number];
+
+export function isArtifactType(value: unknown): value is ArtifactType {
+  return typeof value === 'string' && (ARTIFACT_TYPES as readonly string[]).includes(value);
+}
 
 // ── Storage info ─────────────────────────────────────────────────────────
 

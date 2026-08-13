@@ -1141,6 +1141,24 @@ export const CANONICAL_REFS: Record<string, string> = {
   // ── Testing & snapshots ────────────────────────────────────────────────
   'bun:test': 'https://bun.com/docs/test/index#run-tests',
   'bun test': 'https://bun.com/docs/test/index#run-tests',
+  'test reporters': 'https://bun.com/docs/test/reporters',
+  '--dots': 'https://bun.com/docs/test/reporters#dots-reporter',
+  '--reporter=dots': 'https://bun.com/docs/test/reporters#dots-reporter',
+  'bun test --reporter=junit': 'https://bun.com/docs/test/reporters#using-the-junit-reporter',
+  '--reporter=junit': 'https://bun.com/docs/test/reporters#using-the-junit-reporter',
+  '--reporter-outfile': 'https://bun.com/docs/test/reporters#using-the-junit-reporter',
+  '[test.reporter]': 'https://bun.com/docs/test/reporters#configuring-via-bunfig-toml',
+  '--coverage': 'https://bun.com/docs/test/code-coverage#enabling-coverage',
+  'bun test --coverage': 'https://bun.com/docs/test/code-coverage#enabling-coverage',
+  '--coverage-reporter=lcov': 'https://bun.com/docs/test/code-coverage#lcov-coverage-reporter',
+  coverageReporter: 'https://bun.com/docs/test/code-coverage#coverage-reporters',
+  coverageThreshold: 'https://bun.com/docs/test/code-coverage#coverage-thresholds',
+  coverageSkipTestFiles: 'https://bun.com/docs/test/code-coverage#skip-test-files',
+  coveragePathIgnorePatterns:
+    'https://bun.com/docs/test/code-coverage#ignore-specific-paths-and-patterns',
+  coverageIgnoreSourcemaps: 'https://bun.com/docs/test/code-coverage#sourcemaps',
+  '--test-name-pattern':
+    'https://bun.com/docs/test/code-coverage#coverage-with-specific-test-patterns',
   'bun:test snapshots': 'https://bun.com/docs/test/snapshots#basic-snapshots',
   'snapshot guide': 'https://bun.com/docs/guides/test/snapshot',
   // Release blog deep links (docs index may lag; prefer these for ship notes)
@@ -1524,6 +1542,9 @@ export const CANONICAL_REFS: Record<string, string> = {
     'https://bun.com/docs/project/contributing#viewing-ci-failures-from-the-terminal',
 
   // ── Package manager CLI / config (depth-controlled locus batch) ─────────
+  'bun pm pack': 'https://bun.com/docs/pm/cli/pm#pack',
+  'bun publish': 'https://bun.com/docs/pm/cli/publish',
+  'bun publish --dry-run': 'https://bun.com/docs/pm/cli/publish#dry-run',
   '--filter': 'https://bun.com/docs/pm/filter#package-name-filter-pattern',
   // Bundler watch (url/suggest only — excluded from annotate; ambiguous with bun test --watch)
   '--watch': 'https://bun.com/docs/bundler/index#watch-mode',
@@ -1541,6 +1562,9 @@ export const CANONICAL_REFS: Record<string, string> = {
   'run.shell': 'https://bun.com/docs/runtime/bunfig#run-shell-use-the-system-shell-or-buns-shell',
   'run.noOrphans':
     'https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind',
+  'bun create': 'https://bun.com/docs/runtime/templating/create',
+  'bun init': 'https://bun.com/docs/runtime/templating/init',
+  'bun feedback': 'https://bun.com/docs/feedback',
 
   // ── Meta ───────────────────────────────────────────────────────────────
   'bun-types': BUN_TYPES_MAIN,

@@ -12,26 +12,44 @@
     "src",
     "README.md"
   ],
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  },
   "engines": {
     "bun": ">=1.3.14"
   },
   "scripts": {
-    "dev": "bun --watch src/index.ts",
+    "dev": "bun --watch --no-clear-screen src/index.ts",
     "test": "bun test",
+    "test:dots": "bun test --reporter=dots",
+    "test:watch": "bun --watch --no-clear-screen test",
     "test:coverage": "bun test --coverage",
+    "test:coverage:lcov": "bun test --coverage --coverage-reporter=text --coverage-reporter=lcov",
+    "test:junit": "bun run scripts/run-test-junit.ts",
+    "test:ci": "bun run test:junit -- --coverage && bun run junit:enrich",
+    "junit:enrich": "bun run scripts/junit-enrich.ts",
+    "typecheck": "tsc --noEmit",
     "build": "bun build ./src/index.ts --outdir ./dist",
+    "build:metafile": "bun build ./src/index.ts --outdir ./dist --metafile=dist/metafile.json --metafile-md=dist/metafile.md && bun run scripts/build-summary.ts",
+    "generate:files": "bun run scripts/generate-files-md.ts",
+    "check:files": "bun run scripts/validate-files-md.ts",
+    "check": "bun run generate:files && bun run check:files && bun run typecheck && bun test && bun run build",
+    "prepack": "bun run check",
+    "postpublish": "bun run scripts/postpublish.ts",
+    "publish:dry-run": "bun publish --dry-run",
     "bench": "bun scripts/bench.ts",
     "profile:cpu": "bun --cpu-prof --cpu-prof-dir=./profiles scripts/bench.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "typescript": "latest"
   },
   "bun-create": {
-    "preinstall": "echo '📦 Installing dependencies for {{name}}...'",
+    "preinstall": "echo '📦 Installing library dependencies...'",
     "postinstall": [
-      "echo '✓ {{name}} scaffolded successfully!'",
-      "bun test",
-      "echo 'Next: edit package.json (description) and src/index.ts, then run bun run build.'"
+      "echo '✓ Library scaffolded successfully!'",
+      "echo 'Next: edit package.json and src/index.ts, then run bun run check.'"
     ]
   }
 }

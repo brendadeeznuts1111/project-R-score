@@ -27,6 +27,7 @@ export type TestSnapshotSuiteId =
   | 'vault-health'
   | 'console-depth'
   | 'failure-report'
+  | 'factory-template'
   | 'identity-board'
   | 'limits-e2e'
   | 'model-circuit'
@@ -96,6 +97,14 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     testRel: 'tests/failure-report.test.ts',
     snapRel: 'tests/__snapshots__/failure-report.test.ts.snap',
     purpose: 'test-failures parser report shape.',
+  },
+  {
+    id: 'factory-template',
+    label: 'Factory library template contract',
+    testRel: 'tests/factory-template.test.ts',
+    snapRel: 'tests/__snapshots__/factory-template.test.ts.snap',
+    purpose:
+      'Grouped factory-library package properties, environments, flags, and file-accountability contract.',
   },
   {
     id: 'focused-coverage',

@@ -27,7 +27,7 @@ import {
   respondFile,
   type PreloadedStatic,
 } from '../http/static-response.ts';
-import { type ArtifactType } from './artifact';
+import { isArtifactType, type ArtifactType } from './artifact';
 import { buildRegistryHealthReport, healthHttpStatus, publicRegistryHealthReport } from './health';
 import { parseRegistryObjectKey } from './http-keys';
 import { registerRegistryCrons } from './monitoring';
@@ -51,6 +51,28 @@ export type RegistryGatewayOptions = {
   publishToken?: string;
   maxPublishBytes?: number;
 };
+
+/** Parse an optional positive integer setting without accepting malformed input. */
+export function positiveIntegerSetting(
+  value: string | number | undefined,
+  name: string,
+  fallback: number
+): number {
+  const normalized = typeof value === 'string' ? value.trim() : value;
+  if (normalized === undefined || normalized === '') return fallback;
+  const parsed = Number(normalized);
+  if (!Number.isSafeInteger(parsed) || parsed < 1) {
+    throw new Error(`${name} must be a positive safe integer.`);
+  }
+  return parsed;
+}
+
+/** An absent artifact type is a library; an invalid supplied value is never coerced. */
+// eslint-disable-next-line harness/no-unknown-function-param -- parses multipart metadata at the HTTP boundary
+export function registryArtifactType(value: unknown): ArtifactType | undefined {
+  if (value === undefined) return 'library';
+  return isArtifactType(value) ? value : undefined;
+}
 
 function json(data: object, status = 200): Response {
   return Response.json(data, {
@@ -148,17 +170,20 @@ function optionalString(value: FormDataEntryValue | null): string | undefined {
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 }
 
-function artifactType(value: string | undefined): ArtifactType {
-  switch (value) {
-    case 'library':
-    case 'project':
-    case 'template':
-    case 'worker':
-    case 'cli-tool':
-      return value;
-    default:
-      return 'library';
-  }
+function nonEmptyEnvironment(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed || undefined;
+}
+
+/** Omitted tags select the documented latest tag; supplied malformed tags fail. */
+export function registryPublishTags(value: FormDataEntryValue | null): string[] | undefined {
+  if (value === null) return ['latest'];
+  if (typeof value !== 'string') return undefined;
+  const raw = value.trim();
+  if (!raw) return undefined;
+  const tags = raw.split(',').map(tag => tag.trim());
+  if (tags.some(tag => !tag)) return undefined;
+  return [...new Set(tags)];
 }
 
 async function healthResponse(client: RegistryClient, method: string): Promise<Response> {
@@ -189,7 +214,9 @@ export async function publishRegistryVersion(
   const configuredToken =
     options.publishToken !== undefined
       ? options.publishToken
-      : Bun.env.FACTORY_WAGER_TOKEN || Bun.env.REGISTRY_SECRET || '';
+      : (nonEmptyEnvironment(Bun.env.FACTORY_WAGER_TOKEN) ??
+        nonEmptyEnvironment(Bun.env.REGISTRY_SECRET) ??
+        '');
   const expected = configuredToken.trim();
   if (!expected) {
     return json({ error: 'Registry publishing is not configured' }, 503);
@@ -198,9 +225,29 @@ export async function publishRegistryVersion(
     return json({ error: 'Unauthorized' }, 401);
   }
 
-  const maxBytes =
-    options.maxPublishBytes ??
-    Number(Bun.env.REGISTRY_MAX_PUBLISH_BYTES || DEFAULT_MAX_PUBLISH_BYTES);
+  let maxBytes: number;
+  try {
+    maxBytes =
+      options.maxPublishBytes !== undefined
+        ? positiveIntegerSetting(
+            options.maxPublishBytes,
+            'maxPublishBytes',
+            DEFAULT_MAX_PUBLISH_BYTES
+          )
+        : positiveIntegerSetting(
+            Bun.env.REGISTRY_MAX_PUBLISH_BYTES,
+            'REGISTRY_MAX_PUBLISH_BYTES',
+            DEFAULT_MAX_PUBLISH_BYTES
+          );
+  } catch (cause) {
+    return json(
+      {
+        error:
+          cause instanceof Error ? cause.message : 'Registry publish size configuration is invalid',
+      },
+      503
+    );
+  }
   const contentLength = Number(request.headers.get('Content-Length') || 0);
   if (Number.isFinite(contentLength) && contentLength > maxBytes) {
     return json({ error: 'Artifact exceeds publish size limit' }, 413);
@@ -234,15 +281,15 @@ export async function publishRegistryVersion(
       metadata = parsed as Record<string, unknown>;
     }
 
-    const requestedTags = (optionalString(form.get('tags')) ?? 'latest')
-      .split(',')
-      .map(tag => tag.trim())
-      .filter(Boolean);
-    const tags = requestedTags.length > 0 ? [...new Set(requestedTags)] : ['latest'];
+    const tags = registryPublishTags(form.get('tags'));
+    if (!tags)
+      return json({ error: 'Tags must be a non-empty comma-separated string when supplied' }, 400);
     const description =
       typeof metadata.description === 'string' ? metadata.description.slice(0, 2_000) : undefined;
+    const type = registryArtifactType(metadata.type);
+    if (!type) return json({ error: 'Invalid artifact type' }, 400);
     const release = await client.publish(name, version, file, {
-      type: artifactType(typeof metadata.type === 'string' ? metadata.type : undefined),
+      type,
       description,
       tags,
       distTag: tags[0],
@@ -396,8 +443,21 @@ export function createRegistryServer(
     publishToken: options.publishToken,
     maxPublishBytes: options.maxPublishBytes,
   };
-  const port = options.port ?? Number(Bun.env.REGISTRY_PORT || Bun.env.PORT || 3000);
-  const hostname = options.hostname ?? Bun.env.REGISTRY_HOST ?? '0.0.0.0';
+  // Bun uses an explicit port: 0 request for an ephemeral OS-assigned port;
+  // environment configuration must still be a real positive port.
+  const configuredRegistryPort = nonEmptyEnvironment(Bun.env.REGISTRY_PORT);
+  const configuredPort = configuredRegistryPort ?? nonEmptyEnvironment(Bun.env.PORT);
+  const port =
+    options.port === 0
+      ? 0
+      : options.port !== undefined
+        ? positiveIntegerSetting(options.port, 'port', 3000)
+        : positiveIntegerSetting(
+            configuredPort,
+            configuredRegistryPort ? 'REGISTRY_PORT' : 'PORT',
+            3000
+          );
+  const hostname = options.hostname ?? nonEmptyEnvironment(Bun.env.REGISTRY_HOST) ?? '0.0.0.0';
   return Bun.serve({
     hostname,
     port,
@@ -412,9 +472,8 @@ if (import.meta.main) {
     console.info('  cron: registry-integrity (in-process Bun.cron, 03:00 UTC)');
   }
   if (Bun.env.OPS_SNAPSHOT_CRON === '1') {
-    const { registerOpsSnapshotCron, OPS_SNAPSHOT_SCHEDULE } = await import(
-      '../operations/snapshot-cron.ts'
-    );
+    const { registerOpsSnapshotCron, OPS_SNAPSHOT_SCHEDULE } =
+      await import('../operations/snapshot-cron.ts');
     registerOpsSnapshotCron();
     console.info(
       `  cron: ops-snapshot (in-process Bun.cron @ ${OPS_SNAPSHOT_SCHEDULE} UTC, no-overlap)`

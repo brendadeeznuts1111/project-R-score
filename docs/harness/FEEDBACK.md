@@ -20,6 +20,15 @@ Scaffold: `bun run harness:lesson --title="…"`.
 
 Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affected claim’s `freshRerun` from `lib/harness/proof.ts` and paste the terminal output into the PR.
 
+## Upstream Bun feedback boundary
+
+[`bun feedback`](https://bun.com/docs/feedback) sends an external report to
+Bun. It is an operator action, never an automated harness, template, test, CI,
+or agent action. Before sending one, prepare a minimal reproduction with
+`bun --version`, expected/actual behavior, and reviewed non-secret inputs.
+`bun feedback --email <address>` is optional; the recipient is never inferred
+from repository configuration.
+
 ## Promote
 
 - **`type`** — brand / path-bun / parse*  

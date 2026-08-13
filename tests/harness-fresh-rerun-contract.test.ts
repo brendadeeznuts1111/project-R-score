@@ -482,6 +482,16 @@ describe('fresh-rerun contract', () => {
     expect(p?.kinds).toEqual(expect.arrayContaining(['unit', 'boundary']));
   });
 
+  test('factory-bun-create-template uses the focused template and wrapper proof', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'factory-bun-create-template');
+    expect(p?.freshRerun).toBe('bun test tests/factory-template.test.ts tests/cli.test.ts');
+    expect(p?.gateClass).toBe('human-only');
+    expect(p?.gateRef).toBe('none');
+    expect(p?.owner).toBe('.bun-create/factory-library/');
+    expect(p?.evidence).toContain('docs/design/bun-create-alignment.md');
+    expect(p?.evidence).toContain('.bun-create/factory-library/');
+  });
+
   test('factory-registry-pages-proxy-v1 freshRerun is pages-function suite', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'factory-registry-pages-proxy-v1');
     expect(p?.freshRerun).toBe('bun test tests/registry-pages-function.test.ts');
