@@ -24,6 +24,8 @@ import {
   configKeyPatterns,
   releaseOverlayIndex,
   loadExistingOverlayMap,
+  parseReleaseIndexFile,
+  parseReleaseOverlayFile,
   RELEASE_OVERLAY_PATH,
   type ReleaseOverlayFile,
 } from '../tools/bun-docs-releases.ts';
@@ -56,6 +58,34 @@ describe('bun-docs-release-index', () => {
     expect(entries.length).toBe(2);
     expect(entries[0]!.version).toBe('1.3.0');
     expect(entries[1]!.version).toBe('1.3.14');
+  });
+
+  test('parseReleaseEntries fails closed on a release without a valid date', () => {
+    const malformed = SAMPLE_RSS.replace(
+      'Wed, 13 May 2026 03:19:35 GMT',
+      'not-a-publication-date'
+    );
+    expect(() => parseReleaseEntries(malformed)).toThrow('invalid pubDate');
+  });
+
+  test('parseReleaseIndexFile rejects count and version/URL drift', () => {
+    const entries = parseReleaseEntries(SAMPLE_RSS);
+    const file = {
+      generated: '2026-08-13T00:00:00.000Z',
+      source: 'https://bun.com/rss.xml',
+      count: entries.length,
+      entries,
+    };
+    expect(parseReleaseIndexFile(file).count).toBe(2);
+    expect(() => parseReleaseIndexFile({ ...file, count: 99 })).toThrow(
+      'count does not match entries.length'
+    );
+    expect(() =>
+      parseReleaseIndexFile({
+        ...file,
+        entries: [{ ...entries[0]!, version: '1.3.14' }, entries[1]!],
+      })
+    ).toThrow('title/url version does not match');
   });
 
   test('lookupBlogUrl exact and minor fallback', () => {
@@ -277,6 +307,59 @@ describe('bun-docs-release-scrape', () => {
     const map = releaseOverlayIndex(prior);
     expect(map.size).toBe(1);
     expect(map.get('bun.image')?.releasedIn).toBe('1.3.14');
+  });
+
+  test('parseReleaseOverlayFile rejects undated and version-mismatched evidence', () => {
+    const overlay = {
+      generated: '2026-08-13T00:00:00.000Z',
+      postsProcessed: 1,
+      tokenCount: 1,
+      unmatchedLogged: 0,
+      entries: [
+        {
+          name: 'Bun.color',
+          releasedIn: '1.1.30',
+          hits: [
+            {
+              version: '1.1.30',
+              url: 'https://bun.com/blog/bun-v1.1.30',
+              publishedAt: '2024-11-22T09:20:37.000Z',
+              section: 'Bun.color',
+              evidence: 'Added Bun.color.',
+              kind: 'ship',
+            },
+          ],
+        },
+      ],
+    };
+    expect(parseReleaseOverlayFile(overlay).tokenCount).toBe(1);
+    expect(() =>
+      parseReleaseOverlayFile({
+        ...overlay,
+        entries: [
+          {
+            ...overlay.entries[0]!,
+            hits: [{ ...overlay.entries[0]!.hits[0]!, publishedAt: undefined }],
+          },
+        ],
+      })
+    ).toThrow('publishedAt is not ISO-8601');
+    expect(() =>
+      parseReleaseOverlayFile({
+        ...overlay,
+        entries: [
+          {
+            ...overlay.entries[0]!,
+            hits: [
+              {
+                ...overlay.entries[0]!.hits[0]!,
+                url: 'https://bun.com/blog/bun-v1.1.29',
+              },
+            ],
+          },
+        ],
+      })
+    ).toThrow('url does not match version');
   });
 
   test('matchCatalogTokenWithAliases resolves scrape alias map', () => {

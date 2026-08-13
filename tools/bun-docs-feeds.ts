@@ -22,7 +22,11 @@ import {
   LEGACY_RELEASE_INDEX_ABS,
 } from '../lib/docs/docs-artifact-paths.ts';
 import { resolvePath } from '../lib/path-bun';
-import { refreshReleaseIndex, type ReleaseIndexFile } from './bun-docs-releases.ts';
+import {
+  refreshReleaseIndex,
+  parseReleaseIndexFile,
+  type ReleaseIndexFile,
+} from './bun-docs-releases.ts';
 import { refreshReferenceIndex, type ReferenceIndexFile } from './bun-docs-reference-index.ts';
 
 export type DocsFeedsFile = {
@@ -43,9 +47,9 @@ export async function readLegacyReleaseIndex(): Promise<ReleaseIndexFile | null>
   const file = Bun.file(LEGACY_RELEASE_INDEX_ABS);
   if (!(await file.exists())) return null;
   try {
-    return (await file.json()) as ReleaseIndexFile;
-  } catch {
-    return null;
+    return parseReleaseIndexFile(await file.json(), LEGACY_RELEASE_INDEX_ABS);
+  } catch (error) {
+    throw new Error(`${LEGACY_RELEASE_INDEX_ABS}: unreadable release index`, { cause: error });
   }
 }
 
@@ -81,9 +85,13 @@ export async function loadFeeds(): Promise<DocsFeedsFile> {
   if (await merged.exists()) {
     try {
       const file = (await merged.json()) as DocsFeedsFile;
-      if (file.rss && file.reference) return file;
-    } catch {
-      /* fall through */
+      if (!file.rss || !file.reference) throw new Error('rss/reference sections are required');
+      return {
+        ...file,
+        rss: parseReleaseIndexFile(file.rss, `${DOCS_FEEDS_ABS}#rss`),
+      };
+    } catch (error) {
+      throw new Error(`${DOCS_FEEDS_ABS}: unreadable merged docs feed`, { cause: error });
     }
   }
 

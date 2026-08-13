@@ -60,6 +60,59 @@ export type ReleaseIndexFile = {
   entries: ReleaseEntry[];
 };
 
+function parseReleaseRecord(value: unknown): Record<string, unknown> | null {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function isIsoTimestamp(value: unknown): value is string {
+  if (typeof value !== 'string' || value.length === 0) return false;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) && new Date(timestamp).toISOString() === value;
+}
+
+function isReleaseSemver(value: unknown): value is string {
+  return typeof value === 'string' && /^\d+\.\d+\.\d+$/.test(value);
+}
+
+/** Validate the persisted RSS contract before it can supply release evidence. */
+export function parseReleaseIndexFile(value: unknown, source = 'release index'): ReleaseIndexFile {
+  const file = parseReleaseRecord(value);
+  if (!file) throw new Error(`${source}: expected an object`);
+  if (!isIsoTimestamp(file.generated)) throw new Error(`${source}: generated is not ISO-8601`);
+  if (file.source !== RSS_URL)
+    throw new Error(`${source}: unexpected source ${String(file.source)}`);
+  if (!Array.isArray(file.entries)) throw new Error(`${source}: entries must be an array`);
+  if (!Number.isSafeInteger(file.count) || file.count !== file.entries.length) {
+    throw new Error(`${source}: count does not match entries.length`);
+  }
+
+  const versions = new Set<string>();
+  const guids = new Set<string>();
+  for (const [index, raw] of file.entries.entries()) {
+    const entry = parseReleaseRecord(raw);
+    const label = `${source}: entries[${index}]`;
+    if (!entry) throw new Error(`${label} must be an object`);
+    if (!isReleaseSemver(entry.version)) throw new Error(`${label}.version is not X.Y.Z`);
+    if (typeof entry.title !== 'string' || !entry.title) throw new Error(`${label}.title is empty`);
+    if (typeof entry.url !== 'string' || !entry.url.startsWith('https://bun.com/blog/bun-v')) {
+      throw new Error(`${label}.url is not an official Bun release post`);
+    }
+    if (typeof entry.guid !== 'string' || !entry.guid) throw new Error(`${label}.guid is empty`);
+    if (!isIsoTimestamp(entry.pubDate)) throw new Error(`${label}.pubDate is not ISO-8601`);
+    if (normalizeReleaseVersion(entry.title, entry.url) !== entry.version) {
+      throw new Error(`${label}: title/url version does not match ${entry.version}`);
+    }
+    if (versions.has(entry.version))
+      throw new Error(`${source}: duplicate version ${entry.version}`);
+    if (guids.has(entry.guid)) throw new Error(`${source}: duplicate guid ${entry.guid}`);
+    versions.add(entry.version);
+    guids.add(entry.guid);
+  }
+  return file as ReleaseIndexFile;
+}
+
 type CacheMeta = {
   etag?: string;
   lastModified?: string;
@@ -130,7 +183,10 @@ export function parseReleaseEntries(xml: string): ReleaseEntry[] {
     if (!version) continue;
     if (seen.has(version)) continue; // keep first (newest) occurrence
     seen.add(version);
-    const pubDate = pubRaw ? new Date(pubRaw).toISOString() : '';
+    if (!pubRaw || !Number.isFinite(Date.parse(pubRaw))) {
+      throw new Error(`release ${version} has an invalid pubDate: ${pubRaw || '(missing)'}`);
+    }
+    const pubDate = new Date(pubRaw).toISOString();
     out.push({ version, title, url, guid, pubDate });
   }
 
@@ -321,8 +377,11 @@ export async function loadReleaseIndex(opts?: {
   }
   const { loadFeeds } = await import('./bun-docs-feeds.ts');
   const feeds = await loadFeeds();
-  const file = feeds.rss;
-  const entries = Array.isArray(file.entries) ? file.entries : [];
+  const file = parseReleaseIndexFile(feeds.rss, 'tools/bun-docs-feeds.json#rss');
+  const entries = file.entries;
+  if (entries.length === 0) {
+    throw new Error('tools/bun-docs-feeds.json#rss has no releases; refresh the RSS feed');
+  }
   return { file, map: buildReleaseMap(entries) };
 }
 
@@ -772,9 +831,25 @@ export async function fetchPostHtml(url: string, force?: boolean): Promise<strin
 async function readState(): Promise<ScrapeState> {
   if (!(await Bun.file(STATE_PATH).exists())) return { processedGuids: [] };
   try {
-    return (await Bun.file(STATE_PATH).json()) as ScrapeState;
-  } catch {
-    return { processedGuids: [] };
+    const raw = parseReleaseRecord(await Bun.file(STATE_PATH).json());
+    if (!raw || !Array.isArray(raw.processedGuids)) {
+      throw new Error('processedGuids must be an array');
+    }
+    if (!raw.processedGuids.every(guid => typeof guid === 'string' && guid.length > 0)) {
+      throw new Error('processedGuids must contain non-empty strings');
+    }
+    if (new Set(raw.processedGuids).size !== raw.processedGuids.length) {
+      throw new Error('processedGuids contains duplicates');
+    }
+    if (raw.lastGuid !== undefined && (typeof raw.lastGuid !== 'string' || !raw.lastGuid)) {
+      throw new Error('lastGuid must be a non-empty string');
+    }
+    if (raw.lastPubDate !== undefined && !isIsoTimestamp(raw.lastPubDate)) {
+      throw new Error('lastPubDate is not ISO-8601');
+    }
+    return raw as ScrapeState;
+  } catch (error) {
+    throw new Error(`${STATE_PATH}: unreadable release scrape state`, { cause: error });
   }
 }
 
@@ -799,14 +874,27 @@ function upsertOverlay(
   if (section.kind === 'skip' || section.kind === 'attest') return;
   const kind: 'ship' | 'fix' | 'chg' | 'stabilize' =
     section.kind === 'stabilize' ? 'stabilize' : section.kind;
-  entry.hits.push({
+  const hit: ReleaseOverlayHit = {
     version: release.version,
     url: release.url,
     publishedAt: release.pubDate,
     section: section.heading,
     evidence,
     kind,
-  });
+  };
+  if (
+    !entry.hits.some(
+      current =>
+        current.version === hit.version &&
+        current.url === hit.url &&
+        current.publishedAt === hit.publishedAt &&
+        current.section === hit.section &&
+        current.evidence === hit.evidence &&
+        current.kind === hit.kind
+    )
+  ) {
+    entry.hits.push(hit);
+  }
 
   const v = release.version;
   if (kind === 'ship') {
@@ -844,6 +932,11 @@ export async function scrapeReleaseOverlay(opts?: {
   const state = opts?.force ? { processedGuids: [] } : await readState();
   const processed = new Set(state.processedGuids);
   const overlay = await loadExistingOverlayMap(opts?.force);
+  if (!opts?.force && processed.size > 0 && overlay.size === 0) {
+    throw new Error(
+      'release scrape state records processed posts but its overlay is missing or empty; rerun with --force'
+    );
+  }
   const reviewRows: Array<{ version: string; url: string; section: string; candidate: string }> =
     [];
 
@@ -924,10 +1017,77 @@ async function readOverlayFile(path: string): Promise<ReleaseOverlayFile | null>
   const f = Bun.file(path);
   if (!(await f.exists())) return null;
   try {
-    return (await f.json()) as ReleaseOverlayFile;
-  } catch {
-    return null;
+    return parseReleaseOverlayFile(await f.json(), path);
+  } catch (error) {
+    throw new Error(`${path}: unreadable release overlay`, { cause: error });
   }
+}
+
+/** Validate the incremental overlay before prior evidence is merged into a new scrape. */
+export function parseReleaseOverlayFile(
+  value: unknown,
+  source = 'release overlay'
+): ReleaseOverlayFile {
+  const file = parseReleaseRecord(value);
+  if (!file) throw new Error(`${source}: expected an object`);
+  if (!isIsoTimestamp(file.generated)) throw new Error(`${source}: generated is not ISO-8601`);
+  if (!Array.isArray(file.entries)) throw new Error(`${source}: entries must be an array`);
+  if (!Number.isSafeInteger(file.tokenCount) || file.tokenCount !== file.entries.length) {
+    throw new Error(`${source}: tokenCount does not match entries.length`);
+  }
+  for (const key of ['postsProcessed', 'unmatchedLogged'] as const) {
+    if (!Number.isSafeInteger(file[key]) || (file[key] as number) < 0) {
+      throw new Error(`${source}: ${key} must be a non-negative safe integer`);
+    }
+  }
+
+  const names = new Set<string>();
+  for (const [entryIndex, rawEntry] of file.entries.entries()) {
+    const entry = parseReleaseRecord(rawEntry);
+    const label = `${source}: entries[${entryIndex}]`;
+    if (!entry || typeof entry.name !== 'string' || !entry.name.trim()) {
+      throw new Error(`${label}.name is empty`);
+    }
+    const normalizedName = normalizeTokenKey(entry.name);
+    if (names.has(normalizedName)) throw new Error(`${source}: duplicate token ${entry.name}`);
+    names.add(normalizedName);
+    if (!Array.isArray(entry.hits)) throw new Error(`${label}.hits must be an array`);
+    for (const scalar of ['releasedIn', 'fixedIn', 'changedIn'] as const) {
+      if (entry[scalar] !== undefined && !isReleaseSemver(entry[scalar])) {
+        throw new Error(`${label}.${scalar} is not X.Y.Z`);
+      }
+    }
+    for (const [hitIndex, rawHit] of entry.hits.entries()) {
+      const hit = parseReleaseRecord(rawHit);
+      const hitLabel = `${label}.hits[${hitIndex}]`;
+      if (!hit || !isReleaseSemver(hit.version)) {
+        throw new Error(`${hitLabel}.version is not X.Y.Z`);
+      }
+      if (
+        typeof hit.url !== 'string' ||
+        !hit.url.startsWith('https://bun.com/blog/bun-v') ||
+        normalizeReleaseVersion('', hit.url) !== hit.version
+      ) {
+        throw new Error(`${hitLabel}.url does not match version ${hit.version}`);
+      }
+      if (!isIsoTimestamp(hit.publishedAt)) {
+        throw new Error(`${hitLabel}.publishedAt is not ISO-8601`);
+      }
+      if (typeof hit.section !== 'string' || !hit.section.trim()) {
+        throw new Error(`${hitLabel}.section is empty`);
+      }
+      if (!['ship', 'fix', 'chg', 'stabilize'].includes(String(hit.kind))) {
+        throw new Error(`${hitLabel}.kind is invalid`);
+      }
+      if (
+        hit.evidence !== undefined &&
+        (typeof hit.evidence !== 'string' || !hit.evidence.trim())
+      ) {
+        throw new Error(`${hitLabel}.evidence is empty`);
+      }
+    }
+  }
+  return file as ReleaseOverlayFile;
 }
 
 export function releaseOverlayIndex(file: ReleaseOverlayFile): Map<string, ReleaseOverlayEntry> {

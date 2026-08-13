@@ -397,6 +397,7 @@ void RuntimeGlob; void sqlite;
     expect(await check.exited).toBe(0);
     expect(checkOutput.ok).toBe(true);
     expect(checkOutput.invalid).toEqual([]);
+    expect(checkOutput.officialMismatches).toEqual([]);
     expect(checkOutput.recordedEvents).toBeGreaterThan(80);
   });
 

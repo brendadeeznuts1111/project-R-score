@@ -2332,17 +2332,11 @@ type CatalogEntry = {
   lastUpdated?: string;
 };
 
-function isCatalog(value: unknown): value is { entries: CatalogEntry[] } {
-  const v = value as Record<string, unknown> | undefined;
-  return !!v && Array.isArray(v.entries);
-}
-
 /** Load the generated docs catalog (tools/bun-docs-catalog.json), if present. */
 async function loadDocsCatalog(): Promise<CatalogEntry[] | null> {
-  const path = new URL('./bun-docs-catalog.json', import.meta.url).pathname;
   try {
-    const parsed = (await Bun.file(path).json()) as unknown;
-    return isCatalog(parsed) ? parsed.entries : null;
+    const { loadCatalogFile } = await import('./bun-docs-catalog.ts');
+    return (await loadCatalogFile()).entries as CatalogEntry[];
   } catch {
     return null;
   }
@@ -2529,6 +2523,11 @@ type InvalidProvenanceEvent = {
 async function provenanceCheck(json = false, requireRelease = false): Promise<number> {
   const catalog = await loadDocsCatalog();
   if (!catalog) throw new Error('docs catalog is missing or unreadable');
+  const [{ map: releaseMap }, { catalogReleaseProvenanceFindings }] = await Promise.all([
+    import('./bun-docs-releases.ts').then(module => module.loadReleaseIndex({ refresh: false })),
+    import('./bun-docs-catalog.ts'),
+  ]);
+  const officialMismatches = catalogReleaseProvenanceFindings(catalog, releaseMap);
   const invalid: InvalidProvenanceEvent[] = [];
   let recordedEvents = 0;
   let knownReleases = 0;
@@ -2556,7 +2555,8 @@ async function provenanceCheck(json = false, requireRelease = false): Promise<nu
       }
     }
   }
-  const failures = invalid.length + (requireRelease ? unknownReleases : 0);
+  const failures =
+    invalid.length + officialMismatches.length + (requireRelease ? unknownReleases : 0);
   const result = {
     schemaVersion: 1,
     command: 'provenance-check',
@@ -2566,6 +2566,7 @@ async function provenanceCheck(json = false, requireRelease = false): Promise<nu
     knownReleases,
     unknownReleases,
     invalid,
+    officialMismatches,
     ...(requireRelease ? { unknownApis } : {}),
   };
   if (json) jsonOut(result);
@@ -2578,11 +2579,16 @@ async function provenanceCheck(json = false, requireRelease = false): Promise<nu
         `  ${finding.token}: ${finding.type} v${finding.version} missing ${finding.missing.join(' + ')}`
       );
     }
+    for (const finding of officialMismatches) {
+      console.info(`  ${finding.token}: ${finding.locus} v${finding.version} ${finding.issue}`);
+    }
     if (requireRelease && unknownApis.length) {
       console.info(`  release history unknown: ${unknownApis.join(', ')}`);
     }
     if (failures === 0) {
-      console.info('✅ every recorded release/update has an official date and reference');
+      console.info(
+        '✅ every recorded release/update matches its exact official RSS date and reference'
+      );
     }
   }
   return failures;

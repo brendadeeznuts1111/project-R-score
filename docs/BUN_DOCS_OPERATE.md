@@ -58,7 +58,11 @@ matching entry in [`bun-docs-feeds.json`](../tools/bun-docs-feeds.json). The RSS
 `pubDate` becomes the event date and that version's Bun blog URL becomes the
 primary evidence reference. If a version has no indexed Bun post, the tool can
 retain the version-specific official GitHub release URL, but
-`docs:provenance:check` fails until a publication date is available.
+`docs:provenance:check` fails until a publication date is available. Patch
+evidence is exact: an event for `1.3.99` cannot borrow the date or post for
+`1.3.0`. Both `docs:catalog:verify` and `docs:provenance:check` compare every
+scalar event and every embedded `releaseHits` row with the matching RSS version,
+publication timestamp, and URL.
 
 The scraper reads the merged feed directly; a gitignored legacy
 `release-index.json` is not a clean-worktree prerequisite. It parses nested
@@ -77,6 +81,17 @@ retrospective phrases such as “last month” are rejected. Each scraped
 `section`, official post URL, version, and RSS publication timestamp.
 `history --json` exposes those fields; human output prints the evidence below
 each event.
+
+Persisted feed and overlay data are validated before use: counts must match,
+versions and post URLs must agree, timestamps must be canonical ISO-8601, and
+duplicate versions, GUIDs, or token entries are rejected. Incremental scraping
+also fails closed when its state says posts were processed but the corresponding
+overlay is missing or empty. Recover that state with a deliberate full rebuild:
+`bun tools/bun-docs-releases.ts scrape --force`; do not silently continue from
+an incomplete cache. The committed catalog is equally strict: verification reads
+its stored runtime pin, URLs, count, and entries as-is. It does not manufacture
+absent metadata from the active Bun runtime, and normalized duplicate token
+names fail the gate.
 
 `verifiedOn` and `lastUpdated` answer a different question: which Bun runtime
 and docs snapshot the catalog was checked against. They must never be used as an
