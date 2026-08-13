@@ -60,6 +60,8 @@ import {
 } from '../lib/docs/docs-artifact-paths.ts';
 import { CURATED_ENTRIES } from './bun-docs-curated.ts';
 import { changelogIndex } from './bun-docs-changelog.ts';
+import { catalogReleaseProvenanceFindings, exactReleaseEntry } from './bun-docs-provenance.ts';
+export { catalogReleaseProvenanceFindings } from './bun-docs-provenance.ts';
 import {
   cleanBunVersion,
   loadReleaseIndex,
@@ -1441,16 +1443,6 @@ export function applyReleaseOverlay(
   }
 }
 
-function exactReleaseEntry(
-  version: string,
-  releaseMap: Map<string, ReleaseEntry>
-): ReleaseEntry | undefined {
-  const clean = cleanBunVersion(version);
-  const parts = clean.split('.');
-  const exact = parts.length === 2 ? `${clean}.0` : clean;
-  return releaseMap.get(exact);
-}
-
 function versionEvidence(
   version: string | undefined,
   releaseMap: Map<string, ReleaseEntry>
@@ -1480,93 +1472,6 @@ export function stampVersionProvenance(
     entry.changedAt = changed.date;
     entry.changedUrl = changed.url;
   }
-}
-
-export type CatalogReleaseProvenanceFinding = {
-  token: string;
-  locus: 'released' | 'fixed' | 'changed' | 'hit';
-  version: string;
-  issue: 'invalid-version' | 'release-missing' | 'date-mismatch' | 'url-mismatch';
-  expected?: string;
-  actual?: string;
-};
-
-type CatalogReleaseProvenanceEntry = {
-  name: string;
-  releasedIn?: string;
-  releasedAt?: string;
-  releasedUrl?: string;
-  fixedIn?: string;
-  fixedAt?: string;
-  fixedUrl?: string;
-  changedIn?: string;
-  changedAt?: string;
-  changedUrl?: string;
-  releaseHits?: readonly {
-    version: string;
-    url: string;
-    publishedAt?: string;
-  }[];
-};
-
-/** Compare every dated catalog event with the exact official RSS release row. */
-export function catalogReleaseProvenanceFindings(
-  entries: readonly CatalogReleaseProvenanceEntry[],
-  releaseMap: Map<string, ReleaseEntry>
-): CatalogReleaseProvenanceFinding[] {
-  const findings: CatalogReleaseProvenanceFinding[] = [];
-  const inspect = (
-    token: string,
-    locus: CatalogReleaseProvenanceFinding['locus'],
-    version: string,
-    date: string | undefined,
-    url: string | undefined
-  ): void => {
-    if (!/^\d+\.\d+(?:\.\d+)?$/.test(cleanBunVersion(version))) {
-      findings.push({ token, locus, version, issue: 'invalid-version', actual: version });
-      return;
-    }
-    const release = exactReleaseEntry(version, releaseMap);
-    if (!release) {
-      findings.push({ token, locus, version, issue: 'release-missing' });
-      return;
-    }
-    if (date !== release.pubDate) {
-      findings.push({
-        token,
-        locus,
-        version,
-        issue: 'date-mismatch',
-        expected: release.pubDate,
-        actual: date,
-      });
-    }
-    if (url !== release.url) {
-      findings.push({
-        token,
-        locus,
-        version,
-        issue: 'url-mismatch',
-        expected: release.url,
-        actual: url,
-      });
-    }
-  };
-
-  for (const entry of entries) {
-    const scalars = [
-      ['released', entry.releasedIn, entry.releasedAt, entry.releasedUrl],
-      ['fixed', entry.fixedIn, entry.fixedAt, entry.fixedUrl],
-      ['changed', entry.changedIn, entry.changedAt, entry.changedUrl],
-    ] as const;
-    for (const [locus, version, date, url] of scalars) {
-      if (version) inspect(entry.name, locus, version, date, url);
-    }
-    for (const hit of entry.releaseHits ?? []) {
-      inspect(entry.name, 'hit', hit.version, hit.publishedAt, hit.url);
-    }
-  }
-  return findings;
 }
 
 function dedupeReleaseHits(hits: ReleaseOverlayHit[]): ReleaseOverlayHit[] {
