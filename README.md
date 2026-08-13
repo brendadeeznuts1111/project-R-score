@@ -7,41 +7,54 @@ applications live under `projects/active/`. The static operator plane is shipped
 from `public/` and `functions/`, with machine-readable proofs baked under
 `public/registry/`.
 
-**Wiki navigation:** [full index](wiki-index.md) · [registry index](registry-index.md) ·
-[docs index](docs/) · [harness JIT](docs/harness/)
+**Wiki navigation:** [full index](wiki-index.md) ·
+[registry index](registry-index.md) · [docs index](docs/) ·
+[harness JIT](docs/harness/)
 
-**Quick jump:** [Canonical docs](#canonical-docs) · [At a glance](#platform-at-a-glance) ·
-[Live surfaces](#live-surfaces) · [Portal boards](#portal-boards-operator) ·
+**Quick jump:** [Canonical docs](#canonical-docs) ·
+[At a glance](#platform-at-a-glance) · [Live surfaces](#live-surfaces) ·
+[Portal boards](#portal-boards-operator) ·
 [Registry](#registry-artifacts-baked-json) · [Day loop](#operator-day-loop) ·
-[Tenants](#harness-tenants-jit) · [Quick start](#quick-start) · [Commands](#key-commands)
+[Tenants](#harness-tenants-jit) · [Quick start](#quick-start) ·
+[Commands](#key-commands)
 
 ## Canonical docs
 
-| Role | Doc |
-|------|-----|
-| This hub | [Home](/) · [wiki.factory-wager.com](https://wiki.factory-wager.com/) |
-| AI agents | [`AGENTS.md`](AGENTS.md) (entry) · [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · routing [`docs/AGENTS.md`](docs/AGENTS.md) |
-| Wiki full index | [`wiki-index.md`](wiki-index.md) — portal · registry · tenants · proof loop |
-| Registry index | [`registry-index.md`](registry-index.md) — bake map + portal consumers |
-| Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
-| Coding standards | [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) · [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) |
-| Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
-| Bun native capabilities | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) · [utilities map](docs/BUN_NATIVE_CAPABILITIES.md#utilities-guides-map) |
-| Bun runtime conventions | [`lib/bun-runtime.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/bun-runtime.md) — process, TTY, paths, Markdown, cron, networking |
-| Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
-| Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
-| Portal foundation | [`docs/portal-foundation.md`](docs/portal-foundation.md) |
-| Portal operator command map | [`docs/portal-ops-board-map.md`](docs/portal-ops-board-map.md) — generated from Portal weave v2 |
-| Harness JIT | [`docs/harness/`](docs/harness/) · `bun run harness:status` |
-| Codex thread portfolio | [`docs/harness/tenants/codex-thread-portfolio.md`](docs/harness/tenants/codex-thread-portfolio.md) · `bun run threads:portfolio:verify` · daily weakest-three plan `bun run threads:research` |
-| Local merge + Pages delivery | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · `bun run bun:ci` |
-| Projects triage | [`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md) |
-| Path SSOT (code) | [`lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`) |
-| Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) (domain types; prefer **artifact** over **codebase**) |
+| Role                         | Doc                                                                                                                                                                                           |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| This hub                     | [Home](/) · [wiki.factory-wager.com](https://wiki.factory-wager.com/)                                                                                                                         |
+| AI agents                    | [`AGENTS.md`](AGENTS.md) (entry) · [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · routing [`docs/AGENTS.md`](docs/AGENTS.md)                                            |
+| Wiki full index              | [`wiki-index.md`](wiki-index.md) — portal · registry · tenants · proof loop                                                                                                                   |
+| Registry index               | [`registry-index.md`](registry-index.md) — bake map + portal consumers                                                                                                                        |
+| Workspace map                | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                                                                                |
+| Coding standards             | [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) · [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md)       |
+| Markdown contract            | [`docs/markdown/API_REFERENCE.md`](docs/markdown/API_REFERENCE.md) · [contributor guide](docs/markdown/CONTRIBUTING_MARKDOWN.md) · `bun run check:docs`                                       |
+| Bun install policy           | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                                                          |
+| Bun native capabilities      | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) · [utilities map](docs/BUN_NATIVE_CAPABILITIES.md#utilities-guides-map)                                                  |
+| Bun runtime conventions      | [`lib/bun-runtime.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/bun-runtime.md) — process, TTY, paths, Markdown, cron, networking                                  |
+| Import boundaries            | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md)                                                                                                                                      |
+| Wire boundary (parse once)   | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)                                                                                                                                              |
+| Portal foundation            | [`docs/portal-foundation.md`](docs/portal-foundation.md)                                                                                                                                      |
+| Portal operator command map  | [`docs/portal-ops-board-map.md`](docs/portal-ops-board-map.md) — generated from Portal weave v2                                                                                               |
+| Harness JIT                  | [`docs/harness/`](docs/harness/) · `bun run harness:status`                                                                                                                                   |
+| Codex thread portfolio       | [`docs/harness/tenants/codex-thread-portfolio.md`](docs/harness/tenants/codex-thread-portfolio.md) · `bun run threads:portfolio:verify` · daily weakest-three plan `bun run threads:research` |
+| Local merge + Pages delivery | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · `bun run bun:ci`                                               |
+| Projects triage              | [`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md)                                                                                    |
+| Path SSOT (code)             | [`lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`)                                                      |
+| Harness thesis               | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) (domain types; prefer **artifact** over **codebase**)                                                         |
 
 **Remotes:** `origin` →
 [project-R-score](https://github.com/brendadeeznuts1111/project-R-score).
 `cascade` → `cascade-mover-v3` (private git remote; do not default-push there).
+
+## Documentation standards
+
+All governed Markdown must follow the
+[Markdown API Reference and repository contract](docs/markdown/API_REFERENCE.md)
+and pass `bun run check` (`check:docs` plus the focused Bun runtime contract).
+The repository-wide merge authority remains `bun run bun:ci`. For writing,
+linking, table, rendering, and validation guidance, see the
+[Markdown Contributor Guide](docs/markdown/CONTRIBUTING_MARKDOWN.md).
 
 ## Platform at a glance
 
@@ -55,22 +68,24 @@ from `public/` and `functions/`, with machine-readable proofs baked under
 | Registry / evidence  | `public/registry/`                        | committed JSON bakes consumed by portal boards and verification    |
 
 The portal’s route, chrome, theme, glossary, and command surfaces are governed
-in source: [`portal-route-manifest.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-route-manifest.ts),
+in source:
+[`portal-route-manifest.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-route-manifest.ts),
 [`chrome-catalog.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/chrome-catalog.ts),
-[`theme.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/theme.ts), and
-[`portal-weave.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-weave.ts). Additions must update those
-owners and pass the static portal gates.
+[`theme.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/theme.ts),
+and
+[`portal-weave.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-weave.ts).
+Additions must update those owners and pass the static portal gates.
 
 ## Live surfaces
 
-| Surface              | URL                                                                                      | Role                                                                     |
-| -------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| **Wiki** (this site) | [wiki.factory-wager.com](https://wiki.factory-wager.com/)                                | GitHub Pages · `README.md` · [`docs/`](docs/) · [`AGENTS.md`](AGENTS.md) |
-| **Portal hub**       | [score.factory-wager.com/portal/](https://score.factory-wager.com/portal/)               | Static boards + baked registry embeds (Cloudflare Pages)                 |
-| **Registry bake**    | [score.factory-wager.com/registry/](https://score.factory-wager.com/registry/)           | `ops:snapshot` JSON (`ops-summary`, handshake, compliance, …)            |
-| **Tennis HQ runtime** | [tennis.factory-wager.com](https://tennis.factory-wager.com/)                           | Operator-owned Worker · public identity/glossary · authenticated v1       |
-| **Monitoring**       | [score.factory-wager.com/monitoring/](https://score.factory-wager.com/monitoring/)       | Routing · env · compliance tile · proof status                           |
-| **Portal weave**     | [registry/portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json) | Cross-links + operator scripts (machine SSOT)                            |
+| Surface               | URL                                                                                      | Role                                                                     |
+| --------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **Wiki** (this site)  | [wiki.factory-wager.com](https://wiki.factory-wager.com/)                                | GitHub Pages · `README.md` · [`docs/`](docs/) · [`AGENTS.md`](AGENTS.md) |
+| **Portal hub**        | [score.factory-wager.com/portal/](https://score.factory-wager.com/portal/)               | Static boards + baked registry embeds (Cloudflare Pages)                 |
+| **Registry bake**     | [score.factory-wager.com/registry/](https://score.factory-wager.com/registry/)           | `ops:snapshot` JSON (`ops-summary`, handshake, compliance, …)            |
+| **Tennis HQ runtime** | [tennis.factory-wager.com](https://tennis.factory-wager.com/)                            | Operator-owned Worker · public identity/glossary · authenticated v1      |
+| **Monitoring**        | [score.factory-wager.com/monitoring/](https://score.factory-wager.com/monitoring/)       | Routing · env · compliance tile · proof status                           |
+| **Portal weave**      | [registry/portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json) | Cross-links + operator scripts (machine SSOT)                            |
 
 Routing: [`docs/platform-routing.md`](docs/platform-routing.md) · edge verify:
 `bun run verify:pages-edge` · local hot reload: `bun run serve:public:hot`
@@ -96,7 +111,7 @@ Routing: [`docs/platform-routing.md`](docs/platform-routing.md) · edge verify:
 | DOD queue                 | [`/portal/dod/`](https://score.factory-wager.com/portal/dod/)                                                                                                 | [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md)                                                                       |
 | Skills catalog            | [`/portal/skills/`](https://score.factory-wager.com/portal/skills/)                                                                                           | [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md)                                                                       |
 | Bookmakers                | [`/portal/bookmakers/`](https://score.factory-wager.com/portal/bookmakers/)                                                                                   | [`bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md) · `bookmakers:bake`                                                          |
-| Tennis HQ                 | [`/portal/tennis/`](https://score.factory-wager.com/portal/tennis/)                                                                                           | [`tennis-hq-registry.md`](docs/harness/tenants/tennis-hq-registry.md) · runtime [tennis.factory-wager.com](https://tennis.factory-wager.com/)       |
+| Tennis HQ                 | [`/portal/tennis/`](https://score.factory-wager.com/portal/tennis/)                                                                                           | [`tennis-hq-registry.md`](docs/harness/tenants/tennis-hq-registry.md) · runtime [tennis.factory-wager.com](https://tennis.factory-wager.com/)        |
 
 Full board index: [`wiki-index.md`](wiki-index.md#portal-boards). Local
 launcher: `bun run dev:portal`. Bake: `bun run ops:snapshot` (full) ·
@@ -120,7 +135,8 @@ launcher: `bun run dev:portal`. Bake: `bun run ops:snapshot` (full) ·
 | Proof taxonomy             | [`/registry/proof-taxonomy-audit.json`](https://score.factory-wager.com/registry/proof-taxonomy-audit.json)                                                                                                                                                       | Cross-proof contracts                                             |
 
 Full map: [`registry-index.md`](registry-index.md). Weave source:
-[`lib/http/portal-weave.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-weave.ts) · baked at
+[`lib/http/portal-weave.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-weave.ts)
+· baked at
 [portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json).
 
 ## Operator day loop
@@ -154,24 +170,24 @@ disabled and is never a merge dependency.
 When a decision is unresolved, read **one** owner in
 [`docs/harness/README.md`](docs/harness/) — not the full standards stack.
 
-| Lane                         | Entry                                                                                                                                                                |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lane                         | Entry                                                                                                                                                         |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Identity / auth (Phase 0–2b) | [`lib/identity/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/identity/README.md) · lockout · anomaly · geo · password · JIT |
-| Compliance portal (MA/NJ)    | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md) · `bun run compliance:verify` |
-| Partner limit raises         | [`partner-limits.md`](docs/harness/tenants/partner-limits.md) · `ops:limits:demo` / `predict` |
-| Factory Telegram             | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · `bun run telegram:verify` |
-| Package-group handshake      | [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) · `telegram:handshake:readiness --deep` |
-| Seat capital desk            | [`seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md) · `bun run test:seat-desk` |
-| Tennis HQ registry auth      | [`tennis-hq-registry.md`](docs/harness/tenants/tennis-hq-registry.md) · `/registry/tennis/agent-auth.json` |
-| Bookmaker registry           | [`bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md) · `bun run bookmakers:bake` |
-| Ops snapshot / registry bake | [`ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md) · `bun run ops:snapshot` |
-| Public plane (portal audit)  | [`public-plane.md`](docs/harness/tenants/public-plane.md) · `bun run public:audit:verify` |
-| Proton / vault deploy        | [`proton-integration.md`](docs/harness/tenants/proton-integration.md) · `proton:inject:factorywager:reasonix` |
-| Cloudflare Pages             | [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · `bun run cloudflare:env` |
-| Monorepo health              | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md) · `bun run check:monorepo-health` |
-| Bun test flags × scripts     | [`bun-test-flags.md`](docs/harness/tenants/bun-test-flags.md) · CLI vs bunfig · JUnit vs Inspector |
-| Bun test Inspector           | [`bun-test-inspect.md`](docs/harness/tenants/bun-test-inspect.md) · `bun run test:inspect` |
-| Branded IDs                  | [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) · `bun run check:brands:all` |
+| Compliance portal (MA/NJ)    | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md) · `bun run compliance:verify`                                                             |
+| Partner limit raises         | [`partner-limits.md`](docs/harness/tenants/partner-limits.md) · `ops:limits:demo` / `predict`                                                                 |
+| Factory Telegram             | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · `bun run telegram:verify`                                                                 |
+| Package-group handshake      | [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) · `telegram:handshake:readiness --deep`                       |
+| Seat capital desk            | [`seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md) · `bun run test:seat-desk`                                                                |
+| Tennis HQ registry auth      | [`tennis-hq-registry.md`](docs/harness/tenants/tennis-hq-registry.md) · `/registry/tennis/agent-auth.json`                                                    |
+| Bookmaker registry           | [`bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md) · `bun run bookmakers:bake`                                                           |
+| Ops snapshot / registry bake | [`ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md) · `bun run ops:snapshot`                                                                            |
+| Public plane (portal audit)  | [`public-plane.md`](docs/harness/tenants/public-plane.md) · `bun run public:audit:verify`                                                                     |
+| Proton / vault deploy        | [`proton-integration.md`](docs/harness/tenants/proton-integration.md) · `proton:inject:factorywager:reasonix`                                                 |
+| Cloudflare Pages             | [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · `bun run cloudflare:env`                                                                  |
+| Monorepo health              | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md) · `bun run check:monorepo-health`                                                             |
+| Bun test flags × scripts     | [`bun-test-flags.md`](docs/harness/tenants/bun-test-flags.md) · CLI vs bunfig · JUnit vs Inspector                                                            |
+| Bun test Inspector           | [`bun-test-inspect.md`](docs/harness/tenants/bun-test-inspect.md) · `bun run test:inspect`                                                                    |
+| Branded IDs                  | [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) · `bun run check:brands:all`     |
 
 Agent entry (full table): [`AGENTS.md`](AGENTS.md)
 
@@ -206,7 +222,8 @@ projects/active/*                Independent apps by category — see projects/R
 
 Triage tiers `active/`, `experimental/`, and `archive/` are documented under
 `projects/`. Full map: [`STRUCTURE.md`](STRUCTURE.md). Agent scope (what not to
-load): [`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md).
+load):
+[`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md).
 
 ## Key Commands
 
@@ -272,12 +289,12 @@ See `bun run help --verbose` (regenerate long [`docs/CLI.md`](docs/CLI.md) with
 Antipattern remediation (after major refactors). Conventions:
 [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md).
 
-| Command | Purpose |
-|---------|---------|
-| `bun run fix:console-log` | `console.log` → `console.info` |
-| `bun run fix:scan-any-types` | `: any` / `as any` → `unknown` or real types |
-| `bun run fix:scan-default-exports` | Default export candidates |
-| `bun run fix:scan-non-null-assertions` | `!` assertions → safe access |
+| Command                                | Purpose                                      |
+| -------------------------------------- | -------------------------------------------- |
+| `bun run fix:console-log`              | `console.log` → `console.info`               |
+| `bun run fix:scan-any-types`           | `: any` / `as any` → `unknown` or real types |
+| `bun run fix:scan-default-exports`     | Default export candidates                    |
+| `bun run fix:scan-non-null-assertions` | `!` assertions → safe access                 |
 
 Implementations: [`scripts/fix-*.ts`](scripts/) (e.g.
 [`scripts/fix-console-log.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/scripts/fix-console-log.ts)).
@@ -285,23 +302,46 @@ Implementations: [`scripts/fix-*.ts`](scripts/) (e.g.
 ## Shared Configuration
 
 <!-- markdownlint-disable MD013 -->
-- [`config/ports.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/ports.ts) — Port defaults (DOCS_SERVER=3000, P2P_PROXY=3002, DASHBOARD=3456, …); env-overridable
-- [`config/r2-env.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/r2-env.ts) — Cloudflare/R2/Pages SSOT (`CLOUDFLARE_DEFAULTS`, `requireR2Config`)
-- [`.env.example`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.env.example) — identity + secret placeholders + Pages build pins
-- Status: `bun run cloudflare:env` · secrets via Proton inject (never paste into shell history)
+
+- [`config/ports.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/ports.ts)
+  — Port defaults (DOCS_SERVER=3000, P2P_PROXY=3002, DASHBOARD=3456, …);
+  env-overridable
+- [`config/r2-env.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/r2-env.ts)
+  — Cloudflare/R2/Pages SSOT (`CLOUDFLARE_DEFAULTS`, `requireR2Config`)
+- [`.env.example`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.env.example)
+  — identity + secret placeholders + Pages build pins
+- Status: `bun run cloudflare:env` · secrets via Proton inject (never paste into
+  shell history)
 - CORS: `CORS_ALLOWED_ORIGINS` (comma-separated; empty = allow all)
 - Bind: `SERVER_HOST` (default `localhost`)
+
 <!-- markdownlint-enable MD013 -->
 
 ## Project Policies
 
-- **Standards:** [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) · [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md)
-- **Wire boundary:** [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) — parse once; no interior `unknown` / `decodeUnknown*`
-- **Import boundaries:** [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md)
-- **Layout:** [`STRUCTURE.md`](STRUCTURE.md) · homebase: [`docs/organization/HOMEBASE_DISCOVERY.md`](docs/organization/HOMEBASE_DISCOVERY.md)
-- **Portal:** routes → [`portal-route-manifest.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-route-manifest.ts) · chrome → [`chrome-catalog.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/chrome-catalog.ts) · theme/colors → [`theme.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/theme.ts) + `bun run test:colors`
+- **Standards:**
+  [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) ·
+  [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md)
+- **Wire boundary:** [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) — parse
+  once; no interior `unknown` / `decodeUnknown*`
+- **Import boundaries:**
+  [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md)
+- **Layout:** [`STRUCTURE.md`](STRUCTURE.md) · homebase:
+  [`docs/organization/HOMEBASE_DISCOVERY.md`](docs/organization/HOMEBASE_DISCOVERY.md)
+- **Portal:** routes →
+  [`portal-route-manifest.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-route-manifest.ts)
+  · chrome →
+  [`chrome-catalog.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/chrome-catalog.ts)
+  · theme/colors →
+  [`theme.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/theme.ts) +
+  `bun run test:colors`
 - **Workspace hygiene:** `bun run validate:workspaces`
-- **Harness:** brands → [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) · console depth → [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts)
-- **Merge authority:** local `bun run bun:ci` — never a hosted check as merge dependency
-- **ESLint conventions:** no `console.log`; no `any`; named exports only; no non-null `!`; no empty `catch`; no hardcoded secrets
+- **Harness:** brands →
+  [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md)
+  · console depth →
+  [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts)
+- **Merge authority:** local `bun run bun:ci` — never a hosted check as merge
+  dependency
+- **ESLint conventions:** no `console.log`; no `any`; named exports only; no
+  non-null `!`; no empty `catch`; no hardcoded secrets
 - **Monorepo tooling:** `--filter` patterns · `build:affected` / `test:affected`

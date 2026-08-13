@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 /**
  * Canonical monorepo documentation paths (repo-relative).
  *
@@ -15,6 +16,8 @@ import { CLOUDFLARE_DEFAULTS } from '../../config/r2-env.ts';
 export const CANONICAL_REPO_DOCS = {
   /** Human hub */
   readme: 'README.md',
+  /** GitHub contributor entrypoint */
+  contributing: 'CONTRIBUTING.md',
   /** Wiki full navigation hub (GitHub Pages) */
   wikiIndex: 'wiki-index.md',
   /** Registry bake index (portal consumers) */
@@ -29,6 +32,10 @@ export const CANONICAL_REPO_DOCS = {
   standards: '.custom-instructions.md',
   /** Coding standards (quick reference) */
   standardsQuick: 'docs/DEVELOPMENT-STANDARDS.md',
+  /** Bun.markdown surface + repository validation contract */
+  markdownApiReference: 'docs/markdown/API_REFERENCE.md',
+  /** Contributor day loop for Markdown source */
+  markdownContributorGuide: 'docs/markdown/CONTRIBUTING_MARKDOWN.md',
   /** Machine + workspace Bun install policy */
   unified: 'docs/UNIFIED.md',
   /** Import / package boundary rules (package graph — not wire types) */
@@ -186,6 +193,7 @@ export type CanonicalHarnessKey = keyof typeof CANONICAL_HARNESS;
  */
 export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   readme: 'Human hub + scripts',
+  contributing: 'GitHub contributor entrypoint',
   wikiIndex: 'Wiki navigation hub (portal · registry · tenants)',
   registryIndex: 'Registry bake index (portal consumers)',
   agents: 'AI agent entrypoint (capability matrix → docs/harness/capability-map.md)',
@@ -193,6 +201,8 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   structure: 'Workspace map',
   standards: 'Coding standards (complete)',
   standardsQuick: 'Coding standards (quick)',
+  markdownApiReference: 'Bun.markdown API + repository validation contract',
+  markdownContributorGuide: 'Markdown contributor day loop',
   unified: 'Bun install policy (machine + workspace)',
   importBoundaries: 'Import / package boundaries',
   wireBoundary: 'Wire boundary (parse once / unknown → domain)',

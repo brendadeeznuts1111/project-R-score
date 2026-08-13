@@ -1563,6 +1563,7 @@
   "type": "module",
   "scripts": {
     "prepare": "bunx husky && bun scripts/evict-root-tilde-cache.ts",
+    "check": "bun run check:docs && bun run docs:markdown:check",
     "showcase": "bun tools/bun-api-showcase/oneliners.ts",
     "showcase:live": "bun tools/bun-api-showcase/oneliners.ts --live",
     "showcase:coverage": "bun tools/bun-api-showcase/coverage.ts",
@@ -2036,7 +2037,8 @@
     "check:brands:staged": "bun tools/branded-id-check.ts --staged --strict",
     "brand:baseline": "bun tools/branded-id-check.ts --write-baseline",
     "harness:violations": "bun tools/harness-violations.ts",
-    "docs:markdown:check": "bun test tests/markdown-options.test.ts",
+    "check:docs": "bun scripts/check-docs.ts && bun tools/doc-map-check.ts",
+    "docs:markdown:check": "bun test tests/markdown-options.test.ts tests/markdown-contract.test.ts",
     "docs:native:check": "bun tools/bun-native-capabilities-sync.ts --check",
     "docs:native:sync": "bun tools/bun-native-capabilities-sync.ts --write",
     "docs:native:preview": "bun tools/bun-native-capabilities-sync.ts --preview",

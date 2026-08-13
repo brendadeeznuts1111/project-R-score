@@ -1,0 +1,39 @@
+name: Markdown rendering or validation bug
+description: Report a problem in a Markdown source, renderer, or repository documentation gate
+title: "[P2][MARKDOWN] "
+labels:
+  - bug
+  - p2
+  - bun-native
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for `.md` rendering or validation defects. Remove secrets and reduce the source to the smallest reproducible fragment.
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Markdown issue
+      options:
+        - label: This bug affects rendering or validation of `.md` files.
+          required: true
+        - label: I included the relevant Markdown and expected output below.
+          required: true
+
+  - type: textarea
+    id: markdown
+    attributes:
+      label: Reproduction Markdown
+      description: Paste the smallest source fragment that reproduces the problem.
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual output
+      description: Include the exact command, expected behavior, actual behavior, and Bun version.
+    validations:
+      required: true
