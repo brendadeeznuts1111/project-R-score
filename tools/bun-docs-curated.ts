@@ -18,6 +18,9 @@
 // @see https://bun.com/docs/runtime/cron — Bun.cron
 // @see https://bun.com/docs/runtime/s3 — Bun.s3
 // @see https://bun.com/docs/cli/test — bun:test
+// @see https://bun.com/docs/test/parallel#isolate — --isolate
+// @see https://bun.com/docs/test/parallel#parallel — --parallel / --parallel=N
+// @see https://bun.com/docs/test/parallel#one-timings-file-per-shard — --shard / --shard=M/N
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
@@ -479,7 +482,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'Bun.markdown',
     path: 'runtime/markdown#bun-markdown-html',
     description: 'Native Markdown rendering (html/ansi/render/react)',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'Bun.markdown.html',
       'Bun.markdown.ansi',
@@ -492,7 +495,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'Bun.markdown.html',
     path: 'runtime/markdown#bun-markdown-html',
     description: 'Render Markdown to an HTML string. Pass parser options as the second argument.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     related: [
       'runtime/markdown#options',
       'runtime/markdown#autolinks',
@@ -526,7 +529,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#options',
     description:
       'Parser options for html/render (and ReactOptions minus reactVersion): tables/strikethrough/tasklists default true; autolinks/headings/wikiLinks/underline/latexMath/collapseWhitespace/permissiveAtxHeaders/noIndentedCodeBlocks/noHtmlBlocks/noHtmlSpans/tagFilter/hardSoftBreaks default false. Guide #options; types → reference/bun/markdown#bun.markdown.Options.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     related: ['reference/bun/markdown#bun.markdown.Options'],
     relatedTokens: [
       'options',
@@ -576,7 +579,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'reference/bun/markdown#bun.markdown.RenderCallbacks',
     description:
       'Callback map for Bun.markdown.render — block/inline handlers return string | null | undefined; meta types HeadingMeta/ListItemMeta/CodeBlockMeta/LinkMeta/ImageMeta/CellMeta/ListMeta. Types locus; guide at #callback-signature.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     related: [
       'runtime/markdown#callback-signature',
       'runtime/markdown#block-callbacks',
@@ -619,7 +622,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'reference/bun/markdown#bun.markdown.HeadingMeta',
     description:
       'Meta for render heading callback: level (1–6); optional id slug when headings: { ids: true }. Types locus; guide #callback-signature / #block-callbacks.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     related: ['runtime/markdown#callback-signature', 'runtime/markdown#block-callbacks'],
     relatedTokens: [
       'Bun.markdown.RenderCallbacks',
@@ -633,7 +636,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'reference/bun/markdown#bun.markdown.ListMeta',
     description:
       'Meta for render list callback: depth: number; ordered: boolean; start?: number (ordered lists).',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'Bun.markdown.ListItemMeta',
       'Bun.markdown.RenderCallbacks',
@@ -646,7 +649,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'reference/bun/markdown#bun.markdown.ListItemMeta',
     description:
       'Meta for render listItem: index (0-based), depth, ordered; start? (ordered); checked? (task lists). Types locus; guide narrative also at #list-item-meta.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     related: ['runtime/markdown#list-item-meta', 'runtime/markdown#nested-list-numbering'],
     relatedTokens: [
       'list-item-meta',
@@ -661,7 +664,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'reference/bun/markdown#bun.markdown.CodeBlockMeta',
     description:
       'Meta for render code callback: language?: string (fenced info-string, e.g. "js"). Alias suggest: Bun.markdown.CodeMeta → this.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     related: ['runtime/markdown#code-block-syntax-highlighting'],
     relatedTokens: [
       'code-block-syntax-highlighting',
@@ -674,7 +677,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'Bun.markdown.LinkMeta',
     path: 'reference/bun/markdown#bun.markdown.LinkMeta',
     description: 'Meta for render link callback: href: string; title?: string.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'Bun.markdown.ImageMeta',
       'inline-callbacks',
@@ -686,7 +689,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'Bun.markdown.ImageMeta',
     path: 'reference/bun/markdown#bun.markdown.ImageMeta',
     description: 'Meta for render image callback: src: string; title?: string.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'Bun.markdown.LinkMeta',
       'inline-callbacks',
@@ -699,7 +702,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'reference/bun/markdown#bun.markdown.CellMeta',
     description:
       'Meta for render th/td callbacks: align?: "left" | "center" | "right". Alias suggest: Bun.markdown.TableCellMeta → this.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'Bun.markdown.RenderCallbacks',
       'block-callbacks',
@@ -808,7 +811,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#ansi-terminal-output',
     description:
       'Bun.markdown.render cookbook: emit ANSI via heading/paragraph/strong/emphasis callbacks (not Bun.markdown.ansi).',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'Bun.markdown.ansi',
       'Bun.markdown.AnsiTheme',
@@ -822,7 +825,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#bun-markdown-render',
     description:
       'Render Markdown via callbacks. Pass parser options as a separate third argument (see parser-options).',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     related: [
       'runtime/markdown#parser-options',
       'runtime/markdown#options',
@@ -902,7 +905,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#options',
     description:
       'Pass an options object as the second argument to Bun.markdown.html to configure the parser (tables, autolinks, headings, …).',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'Bun.markdown.Options',
       'autolinks',
@@ -919,7 +922,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#autolinks',
     description:
       'Pass true to enable all autolink types (URL, WWW, email), or an object for granular control ({ url, www, email }).',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: ['options', 'heading-ids', 'Bun.markdown.html', 'parser-options'],
   },
   {
@@ -927,7 +930,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#heading-ids',
     description:
       'Pass true for heading IDs + autolink headings, or { ids: true } for IDs only (no autolink wrap).',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: ['options', 'autolinks', 'Bun.markdown.html', 'parser-options-2'],
   },
   {
@@ -935,7 +938,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#callback-signature',
     description:
       'Bun.markdown.render callbacks receive children (string) and optional meta; return string to replace, null/undefined to omit; unregistered → children pass through.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'Bun.markdown.RenderCallbacks',
       'block-callbacks',
@@ -950,7 +953,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#block-callbacks',
     description:
       'Bun.markdown.render block callbacks: heading, paragraph, blockquote, code, list, listItem, hr, table/thead/tbody/tr/th/td, html.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'callback-signature',
       'list-item-meta',
@@ -963,7 +966,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#list-item-meta',
     description:
       'listItem callback meta: index (0-based), depth, ordered, start? (ordered lists), checked? (task lists).',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'callback-signature',
       'nested-list-numbering',
@@ -977,7 +980,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#inline-callbacks',
     description:
       'Bun.markdown.render inline callbacks: strong, emphasis, link, image, codespan, strikethrough, text.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'callback-signature',
       'list-item-meta',
@@ -990,7 +993,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#examples',
     description:
       'Bun.markdown.render cookbook under #examples: custom HTML classes, strip formatting, omit elements, ANSI via callbacks, nested list numbering, code language meta.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     related: [
       'runtime/markdown#custom-html-with-classes',
       'runtime/markdown#stripping-all-formatting',
@@ -1015,7 +1018,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#custom-html-with-classes',
     description:
       'Bun.markdown.render cookbook: emit HTML with custom class names from heading/paragraph/strong callbacks.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'examples',
       'stripping-all-formatting',
@@ -1029,7 +1032,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#stripping-all-formatting',
     description:
       'Bun.markdown.render cookbook: return children unchanged from callbacks to strip markup to plaintext.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'examples',
       'custom-html-with-classes',
@@ -1043,7 +1046,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#code-block-syntax-highlighting',
     description:
       'Bun.markdown.render cookbook: use code callback meta.language for language-* class highlighting wrappers.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: [
       'examples',
       'custom-html-with-classes',
@@ -1056,7 +1059,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#nested-list-numbering',
     description:
       'Render nested ordered lists with listItem meta (index/depth/ordered/start) — no post-processing.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: ['list-item-meta', 'Bun.markdown.render', 'examples'],
   },
   {
@@ -1064,7 +1067,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#omitting-elements',
     description:
       'Return null or undefined from a Bun.markdown.render callback to remove that element from the output.',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: ['callback-signature', 'Bun.markdown.render'],
   },
   {
@@ -1072,7 +1075,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'runtime/markdown#parser-options',
     description:
       'Pass parser options as a separate third argument to Bun.markdown.render (same option set as #options).',
-    minVersion: '1.3.0',
+    minVersion: '1.3.8',
     relatedTokens: ['options', 'autolinks', 'parser-options-2', 'Bun.markdown.render'],
   },
   {
@@ -1290,7 +1293,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'Bun.udpSocket',
     path: 'runtime/networking/udp',
     description: 'UDP sockets with ICMP/truncation handling',
-    minVersion: '1.0.0',
+    minVersion: '1.1.6',
   },
   {
     term: 'Bun.secrets',

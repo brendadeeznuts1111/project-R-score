@@ -182,6 +182,41 @@ describe('bun-docs-release overlay embed', () => {
     expect(entry.releaseHits?.length).toBe(1);
     expect(entry.releaseHits?.[0]?.kind).toBe('ship');
   });
+
+  test('applyReleaseOverlay treats later recap claims as changes', () => {
+    const entry: DocCatalogEntry = {
+      name: 'Bun.CSRF',
+      type: 'api',
+      stability: 'stable',
+      canonicalPage: 'https://bun.com/docs/runtime/csrf',
+      allPages: ['https://bun.com/docs/runtime/csrf'],
+      section: 'runtime',
+      releasedIn: '1.2.5',
+    };
+    applyReleaseOverlay(
+      entry,
+      new Map([
+        [
+          'bun.csrf',
+          {
+            name: 'Bun.CSRF',
+            releasedIn: '1.3.0',
+            hits: [
+              {
+                version: '1.3.0',
+                url: 'https://bun.com/blog/bun-v1.3',
+                section: 'CSRF Protection',
+                evidence: 'Bun 1.3 adds Bun.CSRF.',
+                kind: 'ship',
+              },
+            ],
+          },
+        ],
+      ])
+    );
+    expect(entry.releasedIn).toBe('1.2.5');
+    expect(entry.releaseHits?.[0]?.kind).toBe('chg');
+  });
 });
 
 describe('release provenance', () => {

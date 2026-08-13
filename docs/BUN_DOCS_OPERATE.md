@@ -60,6 +60,24 @@ primary evidence reference. If a version has no indexed Bun post, the tool can
 retain the version-specific official GitHub release URL, but
 `docs:provenance:check` fails until a publication date is available.
 
+The scraper reads the merged feed directly; a gitignored legacy
+`release-index.json` is not a clean-worktree prerequisite. It parses nested
+`h2`–`h4` context and classifies individual headings, paragraphs, and list
+items. A generic “Bun APIs” or changelog section is attestation context, not
+proof that every mentioned API shipped in that release. Bugfix and change
+context is inherited by nested headings.
+
+An introduction is promoted only when release language binds to the exact
+catalog token. Prefixes do not count (`Bun.markdown.ansi` cannot release
+`Bun.markdown`, and `--compile-exec-argv` cannot release `--compile`), additions
+to methods/options/properties are updates to the parent API, constructor syntax
+such as `new Bun.Terminal()` is not by itself an introduction claim, and
+retrospective phrases such as “last month” are rejected. Each scraped
+`releaseHits` event retains its token-local `evidence` excerpt, parent
+`section`, official post URL, version, and RSS publication timestamp.
+`history --json` exposes those fields; human output prints the evidence below
+each event.
+
 `verifiedOn` and `lastUpdated` answer a different question: which Bun runtime
 and docs snapshot the catalog was checked against. They must never be used as an
 API introduction date. Consequently, an API may be verified and fully documented

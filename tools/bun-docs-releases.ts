@@ -345,6 +345,8 @@ export type ReleaseOverlayHit = {
   /** Official Bun RSS publication timestamp for this release post. */
   publishedAt?: string;
   section: string;
+  /** Token-local excerpt that justified this event classification. */
+  evidence?: string;
   kind: 'ship' | 'fix' | 'chg' | 'stabilize';
 };
 
@@ -372,12 +374,14 @@ type ScrapeState = {
   lastPubDate?: string;
 };
 
-type SectionKind = 'ship' | 'fix' | 'chg' | 'stabilize' | 'skip';
+type SectionKind = 'ship' | 'fix' | 'chg' | 'stabilize' | 'attest' | 'skip';
 
 type ParsedSection = {
   heading: string;
   kind: SectionKind;
   html: string;
+  level?: number;
+  parentHeading?: string;
 };
 
 type CatalogRow = {
@@ -416,9 +420,18 @@ const TOKEN_PATTERNS = [
 /** Headings that qualify as CHG sections (strict — not generic "Performance …" h2s). */
 const CHG_HEADING_RE = /^(improvements?|changes?|breaking changes?|what'?s changed)\b/i;
 
-/** Generic infra/perf h2s — skip rather than SHIP/CHG noise. */
-const SKIP_HEADING_RE =
-  /^(upgraded|updated|performance|memory|faster|reduced|smaller|cross-language|thanks|contributors|installing|release notes)/i;
+/** Generic non-feature headings that should not create API history events. */
+const SKIP_HEADING_RE = /^(upgraded|thanks|contributors|installing|release notes)/i;
+
+const GENERIC_ATTEST_HEADING_RE =
+  /^(?:\(body\)|what'?s new|changelog|full changelog|bun apis?(?:\s*&\s*standards)?|apis?\s*&\s*standards)$/i;
+const EXPLICIT_SHIP_RE =
+  /\b(?:new|add(?:s|ed)|introduc(?:e[ds]?|ing)|built[ -]in|first[ -]class|initial support|api for)\b/i;
+const EXPLICIT_FIX_RE = /\b(?:bug ?fix(?:es)?|fixed|fixes|regression|crash fix)\b/i;
+const EXPLICIT_CHANGE_RE =
+  /\b(?:improv(?:e|ed|ement|ements)|faster|performance|updated?|upgrade[ds]?|changed?|breaking|supports?|options?|case-insensitive|strict|now (?:supports?|uses?|returns?|accepts?|respects?|includes?))\b/i;
+const RETROSPECTIVE_RELEASE_RE =
+  /\b(?:last (?:week|month|release)|recent release|previous release|previously|earlier|already|has existed|have existed)\b/i;
 
 function decodeEntities(s: string): string {
   return s
@@ -439,35 +452,134 @@ function stripTags(html: string): string {
 export function classifySectionHeading(heading: string): SectionKind {
   const t = heading.toLowerCase().trim();
   if (!t) return 'skip';
-  if (/^bug\s*fix|^bugfixes|^fixed\b/.test(t)) return 'fix';
+  if (EXPLICIT_FIX_RE.test(t)) return 'fix';
   if (/stabiliz|graduat/.test(t)) return 'stabilize';
-  if (CHG_HEADING_RE.test(t)) return 'chg';
-  if (/new feature|^added\b/.test(t)) return 'ship';
+  if (GENERIC_ATTEST_HEADING_RE.test(t)) return 'attest';
   if (SKIP_HEADING_RE.test(t)) return 'skip';
-  if (/^bun\.|^--|support in|built-in|\bapi\b|client for/i.test(heading)) return 'ship';
-  return 'ship';
+  if (EXPLICIT_SHIP_RE.test(t)) return 'ship';
+  if (CHG_HEADING_RE.test(t)) return 'chg';
+  if (EXPLICIT_CHANGE_RE.test(t)) return 'chg';
+  if (/^bun\.|^--|^bun:|\bapi\b|client for/i.test(heading)) return 'ship';
+  return 'attest';
 }
 
 export function parseBlogSections(html: string): ParsedSection[] {
   const article = html.match(/<article[\s\S]*?<\/article>/i)?.[0] ?? html;
-  const parts = article.split(/<h2\b[^>]*>/i);
+  const headings = [...article.matchAll(/<h([2-4])\b[^>]*>([\s\S]*?)<\/h\1>/gi)].map(match => ({
+    start: match.index,
+    end: match.index + match[0].length,
+    level: Number(match[1]),
+    heading: stripTags(match[2]!),
+  }));
   const sections: ParsedSection[] = [];
+  const stack: Array<{ level: number; heading: string; kind: SectionKind }> = [];
 
-  for (let i = 1; i < parts.length; i++) {
-    const chunk = parts[i]!;
-    const close = chunk.indexOf('</h2>');
-    if (close < 0) continue;
-    const heading = stripTags(chunk.slice(0, close));
-    const body = chunk.slice(close + 5);
-    const kind = classifySectionHeading(heading);
+  for (let index = 0; index < headings.length; index++) {
+    const current = headings[index]!;
+    while (stack.at(-1) && stack.at(-1)!.level >= current.level) stack.pop();
+    const parent = stack.at(-1);
+    const ownKind = classifySectionHeading(current.heading);
+    const explicitShip = EXPLICIT_SHIP_RE.test(current.heading);
+    const kind =
+      parent?.kind === 'fix' && !explicitShip
+        ? 'fix'
+        : parent?.kind === 'chg' && !explicitShip && ownKind !== 'fix'
+          ? 'chg'
+          : parent?.kind === 'stabilize' && ownKind === 'attest'
+            ? 'stabilize'
+            : parent?.kind === 'ship' && ownKind === 'attest'
+              ? 'ship'
+              : ownKind;
+    const body = article.slice(current.end, headings[index + 1]?.start ?? article.length);
+    stack.push({ level: current.level, heading: current.heading, kind });
     if (kind === 'skip') continue;
-    sections.push({ heading, kind, html: body });
+    sections.push({
+      heading: current.heading,
+      kind,
+      html: body,
+      level: current.level,
+      ...(parent ? { parentHeading: parent.heading } : {}),
+    });
   }
 
   if (sections.length === 0) {
-    sections.push({ heading: '(body)', kind: 'ship', html: article });
+    sections.push({ heading: '(body)', kind: 'attest', html: article });
   }
   return sections;
+}
+
+function classifyEvidenceText(text: string, fallback: SectionKind): SectionKind {
+  if (EXPLICIT_FIX_RE.test(text)) return 'fix';
+  if (/\b(?:stabiliz|graduat)/i.test(text)) return 'stabilize';
+  if (EXPLICIT_SHIP_RE.test(text)) return 'ship';
+  if (EXPLICIT_CHANGE_RE.test(text)) return 'chg';
+  return fallback;
+}
+
+type EvidenceRegion = { text: string; html: string; kind: SectionKind };
+
+/** Split broad release sections into local evidence regions before classifying tokens. */
+export function extractEvidenceRegions(section: ParsedSection): EvidenceRegion[] {
+  const regions: EvidenceRegion[] = [];
+  const seen = new Set<string>();
+  const add = (html: string, classify = true): void => {
+    const text = stripTags(html);
+    if (!text) return;
+    const kind = classify ? classifyEvidenceText(text, section.kind) : section.kind;
+    const key = `${kind}:${text}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    regions.push({ text, html, kind });
+  };
+  add(section.heading, false);
+  for (const match of section.html.matchAll(/<(?:li|p)\b[^>]*>([\s\S]*?)<\/(?:li|p)>/gi)) {
+    add(match[1]!);
+  }
+  if (regions.length === 1) add(section.html);
+  return regions;
+}
+
+function textMentionsToken(text: string, token: string): boolean {
+  return tokenMentionPattern(token).test(text);
+}
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function tokenMentionPattern(token: string): RegExp {
+  return new RegExp(`${escapeRegExp(token)}(?![\\w.-])`, 'i');
+}
+
+function tokenIntroductionPattern(token: string): RegExp {
+  const escaped = escapeRegExp(token);
+  const end = String.raw`(?![\w.-])`;
+  const notChildFeature = String.raw`(?!\s+(?:fields?|flags?|formats?|hooks?|matchers?|methods?|options?|properties)\b)`;
+  return new RegExp(
+    String.raw`(?:\b(?:new|add(?:s|ed)|introduc(?:e[ds]?|ing)|first[ -]class)\s+(?:the\s+)?${escaped}${end}${notChildFeature}(?!\s*\()|\b(?:introduc(?:e[ds]?|ing)|add(?:s|ed))\s+(?:a\s+|the\s+)?(?:built[ -]in\s+)?${escaped}${end}${notChildFeature}|\b(?:now includes|can now\b.{0,48}\busing)\s+(?:a\s+|the\s+)?built[ -]in\s+${escaped}${end}|\b${escaped}${end}\s*(?:\(\))?\s+(?:is|was|are|were)\s+(?:a\s+|the\s+)?(?:new|introduced|first[ -]class)\b)`,
+    'i'
+  );
+}
+
+function rejectedShipKind(sectionKind: SectionKind, evidenceText: string): SectionKind {
+  if (sectionKind === 'fix' || sectionKind === 'chg' || sectionKind === 'stabilize') {
+    return sectionKind;
+  }
+  return /\b(?:new|add(?:s|ed)|introduc(?:e[ds]?|ing))\b/i.test(evidenceText) ? 'chg' : 'attest';
+}
+
+/** Require token-local introduction language before promoting a ship event. */
+export function isShipEvidence(
+  candidate: string,
+  canonicalName: string,
+  evidenceText: string,
+  sectionHeading: string
+): boolean {
+  const tokens = [...new Set([candidate, canonicalName])];
+  if (!tokens.some(token => textMentionsToken(evidenceText, token))) return false;
+  if (RETROSPECTIVE_RELEASE_RE.test(evidenceText)) return false;
+  if (tokens.some(token => tokenIntroductionPattern(token).test(evidenceText))) return true;
+  return tokens.some(token => tokenIntroductionPattern(token).test(sectionHeading));
 }
 
 export function extractTokenCandidates(text: string): string[] {
@@ -481,20 +593,6 @@ export function extractTokenCandidates(text: string): string[] {
     }
   }
   return [...found];
-}
-
-function extractListItemText(section: ParsedSection): string[] {
-  return [...section.html.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi)].map(m => stripTags(m[1]!));
-}
-
-export function extractTokensFromSection(section: ParsedSection): string[] {
-  const fromHeading = extractTokenCandidates(section.heading.split('—')[0]!);
-  const fromCode = [...section.html.matchAll(/<code[^>]*>([^<]+)<\/code>/gi)]
-    .map(m => decodeEntities(m[1]!.trim()))
-    .flatMap(s => extractTokenCandidates(s));
-  const fromLi = extractListItemText(section).flatMap(s => extractTokenCandidates(s));
-  const fromBody = extractTokenCandidates(stripTags(section.html));
-  return [...new Set([...fromHeading, ...fromCode, ...fromLi, ...fromBody])];
 }
 
 /** bunfig path patterns for config-key entries, e.g. install.linker → [install].linker */
@@ -689,7 +787,8 @@ function upsertOverlay(
   map: Map<string, ReleaseOverlayEntry>,
   tokenName: string,
   release: ReleaseEntry,
-  section: ParsedSection
+  section: ParsedSection,
+  evidence: string
 ): void {
   let entry = map.get(normalizeTokenKey(tokenName));
   if (!entry) {
@@ -697,7 +796,7 @@ function upsertOverlay(
     map.set(normalizeTokenKey(tokenName), entry);
   }
 
-  if (section.kind === 'skip') return;
+  if (section.kind === 'skip' || section.kind === 'attest') return;
   const kind: 'ship' | 'fix' | 'chg' | 'stabilize' =
     section.kind === 'stabilize' ? 'stabilize' : section.kind;
   entry.hits.push({
@@ -705,6 +804,7 @@ function upsertOverlay(
     url: release.url,
     publishedAt: release.pubDate,
     section: section.heading,
+    evidence,
     kind,
   });
 
@@ -731,7 +831,7 @@ export async function scrapeReleaseOverlay(opts?: {
   force?: boolean;
   limit?: number;
 }): Promise<ReleaseOverlayFile> {
-  const indexFile = (await Bun.file(RELEASE_INDEX_PATH).json()) as ReleaseIndexFile;
+  const { file: indexFile } = await loadReleaseIndex({ refresh: false });
   const releases = [...indexFile.entries].sort((a, b) =>
     a.pubDate < b.pubDate ? -1 : a.pubDate > b.pubDate ? 1 : 0
   );
@@ -756,31 +856,46 @@ export async function scrapeReleaseOverlay(opts?: {
     if (!html) continue;
     const sections = parseBlogSections(html);
     for (const section of sections) {
-      const sectionText = stripTags(section.html);
-      const candidates = [
-        ...extractTokensFromSection(section),
-        ...extractPathAliasMatches(sectionText, pathRows),
-        ...extractListItemText(section).flatMap(li => extractPathAliasMatches(li, pathRows)),
-      ];
-      const seen = new Set<string>();
-      for (const c of candidates) {
-        if (seen.has(c)) continue;
-        seen.add(c);
-        const name =
-          matchCatalogTokenWithAliases(c, tokenIndex, scrapeAliases) ??
-          (pathRows.some(r => r.name === c) ? c : undefined);
-        if (!name) {
-          if (looksTokenLike(c)) {
-            reviewRows.push({
-              version: release.version,
-              url: release.url,
-              section: section.heading,
-              candidate: c,
-            });
+      for (const region of extractEvidenceRegions(section)) {
+        if (region.kind === 'skip' || region.kind === 'attest') continue;
+        const candidates = [
+          ...extractTokenCandidates(region.text),
+          ...extractPathAliasMatches(region.text, pathRows),
+        ];
+        const seen = new Set<string>();
+        for (const c of candidates) {
+          if (seen.has(c)) continue;
+          seen.add(c);
+          const name =
+            matchCatalogTokenWithAliases(c, tokenIndex, scrapeAliases) ??
+            (pathRows.some(r => r.name === c) ? c : undefined);
+          if (!name) {
+            if (looksTokenLike(c)) {
+              reviewRows.push({
+                version: release.version,
+                url: release.url,
+                section: section.heading,
+                candidate: c,
+              });
+            }
+            continue;
           }
-          continue;
+          const kind =
+            region.kind === 'ship' && !isShipEvidence(c, name, region.text, section.heading)
+              ? rejectedShipKind(section.kind, region.text)
+              : region.kind;
+          upsertOverlay(
+            overlay,
+            name,
+            release,
+            {
+              ...section,
+              kind,
+              html: region.html,
+            },
+            region.text
+          );
         }
-        upsertOverlay(overlay, name, release, section);
       }
     }
     processed.add(release.guid);
