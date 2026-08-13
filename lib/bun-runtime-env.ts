@@ -63,6 +63,27 @@ export const BUN_RUNTIME_ENV_CONTROLS = [
   },
 ] as const;
 
+/**
+ * Repository contract for Bun's process-wide runtime-argument injection.
+ *
+ * Upstream guarantees the prepend behavior and standalone-executable support.
+ * The tokenizer, argv visibility, and repeat-flag precedence are pinned by the
+ * Bun 1.3.14 smoke tests in `tests/bun-options-contract.test.ts`.
+ */
+export const BUN_OPTIONS_CONTRACT = {
+  name: 'BUN_OPTIONS',
+  scope: 'every-bun-execution',
+  injection: 'prepended-runtime-arguments',
+  tokenization: 'quoted-groups-retain-quotes',
+  scriptArgv: 'unchanged',
+  execArgv: 'injected-options-first',
+  repeatFlagPrecedence: 'later-cli-value-wins',
+  configPrecedence: 'bunfig-then-bun-options-then-cli-for-console-depth',
+  standaloneExecutables: 'supported',
+  secretHandling: 'never-emit-value',
+  recommendedUse: 'short-lived-command-or-job-scope',
+} as const;
+
 export type BunRuntimeEnvName = (typeof BUN_RUNTIME_ENV_CONTROLS)[number]['name'];
 
 export const BUN_RUNTIME_ENV_NAMES: readonly BunRuntimeEnvName[] = BUN_RUNTIME_ENV_CONTROLS.map(

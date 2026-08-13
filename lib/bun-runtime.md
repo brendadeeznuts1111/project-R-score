@@ -7,10 +7,11 @@ and declaration type channels are governed independently by
 [`config/bun-channels.toml`](../config/bun-channels.toml).
 
 1. [CLI & execution options](#cli--execution-options)
-2. [Console depth & stdin](#console-depth--stdin)
-3. [Bun API Reference — module map](#bun-api-reference--module-map)
-4. [Master table](#master-table)
-5. [Depth & runtime legends](#depth--runtime-legends)
+2. [`BUN_OPTIONS` environment injection](#bun-options-environment-injection)
+3. [Console depth & stdin](#console-depth--stdin)
+4. [Bun API Reference — module map](#bun-api-reference--module-map)
+5. [Master table](#master-table)
+6. [Depth & runtime legends](#depth--runtime-legends)
 
 | Plane                 | URL                                                                                                                            |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
@@ -86,6 +87,14 @@ bun run dev --watch
 
 Resolution order for `bun run <name>` (docs): scripts → source files → package
 bins → (run only) system commands. Absolute / `./` paths always run as files.
+
+### BUN OPTIONS environment injection
+
+`BUN_OPTIONS` is process-wide runtime argument injection, not application argv.
+Its complete repository contract—tokenization, `process.execArgv`, precedence,
+compiled executables, security, and hermetic-wrapper behavior—is in
+[`docs/guides/bun-options.md`](../docs/guides/bun-options.md). Use
+`--console-depth`; `--inspect-depth` is not a Bun 1.3.14 runtime flag.
 
 ---
 
