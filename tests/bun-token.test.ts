@@ -64,11 +64,13 @@ describe('buildVersionEvents', () => {
       {
         version: '1.0.0',
         type: 'since',
+        date: null,
         evidenceUrl: 'https://bun.com/blog/bun-v1.0',
       },
       {
         version: '1.1.0',
         type: 'changed',
+        date: null,
         note: 'API tweak',
         evidenceUrl: 'https://bun.com/blog/bun-v1.0',
       },

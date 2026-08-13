@@ -1708,9 +1708,30 @@ export type MissingRef = CodeApiUsage & {
   file: string;
   url: string;
   occurrences: number;
+  provenance: ApiReleaseProvenance;
 };
 
-const CHECK_JSON_SCHEMA_VERSION = 1;
+export type ApiHistoryEvent = {
+  type: 'released' | 'fixed' | 'changed' | 'stabilized';
+  version: string;
+  date: string | null;
+  reference: string;
+  note?: string;
+};
+
+export type ApiReleaseProvenance = {
+  status: 'complete' | 'partial' | 'release-unknown';
+  docsReference: string;
+  release: ApiHistoryEvent | null;
+  updates: ApiHistoryEvent[];
+  catalogVerification: {
+    version: string | null;
+    date: string | null;
+    reference: string;
+  };
+};
+
+const CHECK_JSON_SCHEMA_VERSION = 2;
 
 /** True when `api` appears as a token (not a substring of a longer name). */
 function codeUsesApi(code: string, api: string): boolean {
@@ -2095,6 +2116,8 @@ function hasApiReference(text: string, api: string): boolean {
 /** Detect executable Bun API usages lacking their API-specific canonical reference. */
 export async function findMissing(paths: string[]): Promise<MissingRef[]> {
   const missing: MissingRef[] = [];
+  const catalog = await loadDocsCatalog();
+  const catalogByApi = buildCatalogLookup(catalog ?? []);
   for (const file of await sourceFiles(paths)) {
     const text = await Bun.file(file).text();
     const usages = collectCodeApiUsageDetails(text, file);
@@ -2112,6 +2135,7 @@ export async function findMissing(paths: string[]): Promise<MissingRef[]> {
           line: first.line,
           column: first.column,
           occurrences: occurrences.length,
+          provenance: buildApiReleaseProvenance(api, catalogByApi.get(resolveApiAlias(api))),
         });
       }
     }
@@ -2138,6 +2162,7 @@ async function check(paths: string[], json = false): Promise<number> {
       `  ${m.file}:${m.line}:${m.column}: uses ${m.api} without a doc ref (${m.occurrences} occurrence${m.occurrences === 1 ? '' : 's'})`
     );
     console.info(`    add: @see ${m.url}`);
+    printProvenance(m.provenance, '    ');
   }
   if (missing.length === 0) console.info('✅ all Bun API usages have canonical doc refs');
   return missing.length;
@@ -2158,7 +2183,7 @@ async function annotate(paths: string[], write: boolean): Promise<number> {
     let at = 0;
     if (lines[0]?.startsWith('#!')) at = 1;
     while (at < lines.length && lines[at].trim() === '') at++;
-    const header = refs.map(r => `// @see ${r.url} — ${r.api}`);
+    const header = refs.flatMap(annotationLines);
     if (write) {
       lines.splice(at, 0, ...header);
       await Bun.write(file, lines.join('\n'));
@@ -2280,6 +2305,27 @@ type CatalogEntry = {
   canonicalPage: string;
   anchor?: string;
   allPages: string[];
+  aliases?: string[];
+  docsUrl?: string;
+  releasedIn?: string;
+  releasedAt?: string;
+  releasedUrl?: string;
+  fixedIn?: string;
+  fixedAt?: string;
+  fixedUrl?: string;
+  changedIn?: string;
+  changedAt?: string;
+  changedUrl?: string;
+  changeNote?: string;
+  releaseHits?: Array<{
+    version: string;
+    url: string;
+    publishedAt?: string;
+    kind: 'ship' | 'fix' | 'chg' | 'stabilize';
+    note?: string;
+  }>;
+  verifiedOn?: string;
+  lastUpdated?: string;
 };
 
 function isCatalog(value: unknown): value is { entries: CatalogEntry[] } {
@@ -2296,6 +2342,230 @@ async function loadDocsCatalog(): Promise<CatalogEntry[] | null> {
   } catch {
     return null;
   }
+}
+
+function buildCatalogLookup(entries: CatalogEntry[]): Map<string, CatalogEntry> {
+  const lookup = new Map<string, CatalogEntry>();
+  for (const entry of entries) {
+    for (const name of [entry.name, ...(entry.aliases ?? [])]) {
+      lookup.set(resolveApiAlias(name), entry);
+    }
+  }
+  return lookup;
+}
+
+function scalarHistoryEvents(entry: CatalogEntry): ApiHistoryEvent[] {
+  const rows: Array<{
+    type: ApiHistoryEvent['type'];
+    version?: string;
+    date?: string;
+    reference?: string;
+  }> = [
+    {
+      type: 'released',
+      version: entry.releasedIn,
+      date: entry.releasedAt,
+      reference: entry.releasedUrl,
+    },
+    { type: 'fixed', version: entry.fixedIn, date: entry.fixedAt, reference: entry.fixedUrl },
+    {
+      type: 'changed',
+      version: entry.changedIn,
+      date: entry.changedAt,
+      reference: entry.changedUrl,
+    },
+  ];
+  return rows.flatMap(row =>
+    row.version
+      ? [
+          {
+            type: row.type,
+            version: row.version,
+            date: row.date ?? null,
+            reference: row.reference ?? '',
+            ...(entry.changeNote && row.type !== 'released' ? { note: entry.changeNote } : {}),
+          },
+        ]
+      : []
+  );
+}
+
+/** Build release/update evidence without mislabeling a docs verification as a release. */
+export function buildApiReleaseProvenance(api: string, entry?: CatalogEntry): ApiReleaseProvenance {
+  const docsReference =
+    entry?.docsUrl ??
+    CANONICAL_REFS[api] ??
+    CANONICAL_REFS[resolveApiAlias(api)] ??
+    'https://bun.com/docs';
+  const events = new Map<string, ApiHistoryEvent>();
+  for (const hit of entry?.releaseHits ?? []) {
+    const type =
+      hit.kind === 'ship'
+        ? 'released'
+        : hit.kind === 'fix'
+          ? 'fixed'
+          : hit.kind === 'chg'
+            ? 'changed'
+            : 'stabilized';
+    const event: ApiHistoryEvent = {
+      type,
+      version: hit.version,
+      date: hit.publishedAt ?? null,
+      reference: hit.url,
+      ...(hit.note ? { note: hit.note } : {}),
+    };
+    events.set(`${event.type}:${event.version}`, event);
+  }
+  if (entry) {
+    for (const event of scalarHistoryEvents(entry)) {
+      const key = `${event.type}:${event.version}`;
+      if (!events.has(key)) events.set(key, event);
+    }
+  }
+  const timeline = [...events.values()].sort(
+    (a, b) =>
+      a.version.localeCompare(b.version, undefined, { numeric: true }) ||
+      a.type.localeCompare(b.type)
+  );
+  const release = timeline.find(event => event.type === 'released') ?? null;
+  const updates = timeline.filter(event => event.type !== 'released');
+  const complete = [...(release ? [release] : []), ...updates].every(
+    event => event.date !== null && event.reference.length > 0
+  );
+  return {
+    status: release ? (complete ? 'complete' : 'partial') : 'release-unknown',
+    docsReference,
+    release,
+    updates,
+    catalogVerification: {
+      version: entry?.verifiedOn ?? null,
+      date: entry?.lastUpdated ?? null,
+      reference: docsReference,
+    },
+  };
+}
+
+function eventSummary(event: ApiHistoryEvent): string {
+  return `${event.type} v${event.version} · ${event.date?.slice(0, 10) ?? 'date unknown'} · ${event.reference}`;
+}
+
+function printProvenance(provenance: ApiReleaseProvenance, indent = ''): void {
+  if (provenance.release) console.info(`${indent}${eventSummary(provenance.release)}`);
+  else
+    console.info(
+      `${indent}release date/version unknown; docs verification is not release evidence`
+    );
+  for (const update of provenance.updates) console.info(`${indent}${eventSummary(update)}`);
+  if (!provenance.release && provenance.catalogVerification.version) {
+    const verification = provenance.catalogVerification;
+    console.info(
+      `${indent}verified with Bun v${verification.version} · ${verification.date?.slice(0, 10) ?? 'date unknown'} · ${verification.reference}`
+    );
+  }
+}
+
+function annotationLines(ref: MissingRef): string[] {
+  const lines = [`// @see ${ref.url} — ${ref.api}`];
+  if (ref.provenance.release) {
+    lines.push(`// @released ${ref.api} · ${eventSummary(ref.provenance.release)}`);
+  }
+  for (const update of ref.provenance.updates) {
+    lines.push(`// @updated ${ref.api} · ${eventSummary(update)}`);
+  }
+  if (!ref.provenance.release && ref.provenance.catalogVerification.version) {
+    const verification = ref.provenance.catalogVerification;
+    lines.push(
+      `// @verified ${ref.api} · Bun v${verification.version} · ${verification.date?.slice(0, 10) ?? 'date unknown'} · ${verification.reference}`
+    );
+  }
+  return lines;
+}
+
+async function apiHistory(query: string, json = false): Promise<number> {
+  const catalog = await loadDocsCatalog();
+  if (!catalog) throw new Error('docs catalog is missing or unreadable');
+  const lookup = buildCatalogLookup(catalog);
+  const canonical = resolveApiAlias(query.trim());
+  const entry = lookup.get(canonical);
+  if (!entry) throw new Error(`API is not present in the docs catalog: ${query}`);
+  const provenance = buildApiReleaseProvenance(canonical, entry);
+  if (json) {
+    jsonOut({ schemaVersion: 1, command: 'history', api: canonical, ...provenance });
+  } else {
+    console.info(`${canonical} · ${provenance.status}`);
+    console.info(`  docs ${provenance.docsReference}`);
+    printProvenance(provenance, '  ');
+  }
+  return 0;
+}
+
+type InvalidProvenanceEvent = {
+  token: string;
+  type: ApiHistoryEvent['type'];
+  version: string;
+  missing: Array<'date' | 'reference'>;
+};
+
+async function provenanceCheck(json = false, requireRelease = false): Promise<number> {
+  const catalog = await loadDocsCatalog();
+  if (!catalog) throw new Error('docs catalog is missing or unreadable');
+  const invalid: InvalidProvenanceEvent[] = [];
+  let recordedEvents = 0;
+  let knownReleases = 0;
+  let unknownReleases = 0;
+  const unknownApis: string[] = [];
+  for (const entry of catalog) {
+    const provenance = buildApiReleaseProvenance(entry.name, entry);
+    if (entry.type === 'api') {
+      if (provenance.release) knownReleases++;
+      else {
+        unknownReleases++;
+        unknownApis.push(entry.name);
+      }
+    }
+    for (const event of [
+      ...(provenance.release ? [provenance.release] : []),
+      ...provenance.updates,
+    ]) {
+      recordedEvents++;
+      const missing: InvalidProvenanceEvent['missing'] = [];
+      if (!event.date) missing.push('date');
+      if (!event.reference) missing.push('reference');
+      if (missing.length) {
+        invalid.push({ token: entry.name, type: event.type, version: event.version, missing });
+      }
+    }
+  }
+  const failures = invalid.length + (requireRelease ? unknownReleases : 0);
+  const result = {
+    schemaVersion: 1,
+    command: 'provenance-check',
+    ok: failures === 0,
+    requireRelease,
+    recordedEvents,
+    knownReleases,
+    unknownReleases,
+    invalid,
+    ...(requireRelease ? { unknownApis } : {}),
+  };
+  if (json) jsonOut(result);
+  else {
+    console.info(
+      `Bun provenance: ${recordedEvents} recorded catalog events · ${knownReleases} API releases known · ${unknownReleases} API releases unknown`
+    );
+    for (const finding of invalid) {
+      console.info(
+        `  ${finding.token}: ${finding.type} v${finding.version} missing ${finding.missing.join(' + ')}`
+      );
+    }
+    if (requireRelease && unknownApis.length) {
+      console.info(`  release history unknown: ${unknownApis.join(', ')}`);
+    }
+    if (failures === 0) {
+      console.info('✅ every recorded release/update has an official date and reference');
+    }
+  }
+  return failures;
 }
 
 /**
@@ -3773,6 +4043,19 @@ async function mainCli(): Promise<void> {
       process.exit((await check(targets.length ? targets : defaultPaths, json)) > 0 ? 1 : 0);
       break;
     }
+    case 'history': {
+      const json = rest.includes('--json');
+      const query = rest.filter(argument => argument !== '--json').join(' ');
+      if (!query) throw new Error('usage: bun tools/bun-doc-refs.ts history <api> [--json]');
+      process.exit(await apiHistory(query, json));
+      break;
+    }
+    case 'provenance-check': {
+      const json = rest.includes('--json');
+      const requireRelease = rest.includes('--require-release');
+      process.exit(await provenanceCheck(json, requireRelease));
+      break;
+    }
     case 'validate':
       process.exit((await validate(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
       break;
@@ -3784,8 +4067,9 @@ async function mainCli(): Promise<void> {
     default:
       console.error(
         `unknown command: ${cmd}\n` +
-          `commands: url|token|list|catalog|suggest|index-audit|locus|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate|bundler\n` +
+          `commands: url|token|list|catalog|suggest|index-audit|locus|audit|deepcheck|integrity|status|schedule|export|annotate|check|history|provenance-check|validate|bundler\n` +
           `check flags: --json (machine-readable findings with line/column)\n` +
+          `history <api> [--json] · provenance-check [--json] [--require-release]\n` +
           `suggest --audit [--json] <q>  ·  index-audit → bun tools/audit-catalog.ts build\n` +
           `catalog: --build · list --section=… --type=… · get <Name>  (also: bun run docs:catalog:export · docs:refresh)\n` +
           `locus: --depth=N · --all · --tsv · --json · --type=api  (TOKEN/TYPE/STATUS/PAGE/FRAGMENT…)\n` +

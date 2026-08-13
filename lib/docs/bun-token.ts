@@ -21,8 +21,11 @@ export type BunVersionEventType = 'since' | 'fixed' | 'changed' | 'stabilized';
 export type BunVersionEvent = {
   version: string;
   type: BunVersionEventType;
+  /** Official release publication timestamp, or null when upstream history is unavailable. */
+  date: string | null;
   note?: string;
-  evidenceUrl?: string;
+  /** Version-specific Bun blog/GitHub evidence, or the canonical docs fallback. */
+  evidenceUrl: string;
 };
 
 export type BunTokenExample = {
@@ -47,13 +50,7 @@ export type BunToken = {
      * Colors for agents/UI: Bun.color(hsl, "hex") — see tools/_gen-locus-canvas.ts
      */
     status?:
-      | 'fragment'
-      | 'page'
-      | 'inherited'
-      | 'dump'
-      | 'reference'
-      | 'coincidence'
-      | 'unresolved';
+      'fragment' | 'page' | 'inherited' | 'dump' | 'reference' | 'coincidence' | 'unresolved';
   };
   /** First attested Bun version (earliest "since" event). */
   since: string | null;
@@ -73,6 +70,7 @@ export type BunToken = {
 export type VersionHitLike = {
   version: string;
   url: string;
+  publishedAt?: string;
   section: string;
   kind: 'ship' | 'fix' | 'chg' | 'stabilize';
 };
@@ -117,6 +115,8 @@ export function buildVersionEvents(opts: {
   stabilized?: string;
   changeNote?: string;
   evidenceUrl?: string;
+  eventDates?: Partial<Record<BunVersionEventType, string>>;
+  eventUrls?: Partial<Record<BunVersionEventType, string>>;
 }): BunVersionEvent[] {
   const events: BunVersionEvent[] = [];
   const seen = new Set<string>();
@@ -129,6 +129,7 @@ export function buildVersionEvents(opts: {
     events.push({
       version: hit.version,
       type,
+      date: hit.publishedAt ?? opts.eventDates?.[type] ?? null,
       note: hit.section || undefined,
       evidenceUrl: hit.url,
     });
@@ -144,8 +145,9 @@ export function buildVersionEvents(opts: {
     events.push({
       version,
       type,
+      date: opts.eventDates?.[type] ?? null,
       ...(note ? { note } : {}),
-      ...(opts.evidenceUrl ? { evidenceUrl: opts.evidenceUrl } : {}),
+      evidenceUrl: opts.eventUrls?.[type] ?? opts.evidenceUrl ?? 'https://bun.com/docs',
     });
   };
 

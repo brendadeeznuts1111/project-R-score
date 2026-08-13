@@ -17,6 +17,8 @@ Pin ↔ tip **type inventory** (committed `tools/bun-types-inventory.json`,
 | Legacy skip scrape                  | `bun run docs:refresh -- --skip-scrape` — full minus blog scrape                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | Suggest token                       | `bun tools/bun-doc-refs.ts suggest <token>` — frozen `CANONICAL_REFS` wins; prints guide `example[lang]` code                                                                                                                                                                                                                                                                                                                                                                                     |
 | Source `@see` gate                  | `bun tools/bun-doc-refs.ts check <paths...>` · add `--json` for stable file/line/column findings; explicit missing, unsupported, empty, unreadable, or malformed targets fail closed                                                                                                                                                                                                                                                                                                              |
+| API release/update history          | `bun tools/bun-doc-refs.ts history <api> [--json]` — version, official publication date, and version-specific evidence                                                                                                                                                                                                                                                                                                                                                                            |
+| Provenance gate                     | `bun run docs:provenance:check` · add `--json`; `--require-release` additionally fails APIs whose introduction release is not yet attested                                                                                                                                                                                                                                                                                                                                                        |
 | Guide fences                        | Frozen [`bun-docs-guide-examples.ts`](../tools/bun-docs-guide-examples.ts); scrape via `generate-tokens-from-docs` (`guides` domain)                                                                                                                                                                                                                                                                                                                                                              |
 | Blog ingestion                      | `CANONICAL_SOURCES` + [`extract-metadata.ts`](../lib/docs/extract-metadata.ts) · journey `bun test tests/journey/blog-extraction.test.ts`                                                                                                                                                                                                                                                                                                                                                         |
 | Fetch-page SSOT                     | [`fetch-page.ts`](../lib/docs/fetch-page.ts) · locus [`runtime/networking/fetch`](https://bun.com/docs/runtime/networking/fetch) · claim `fetch-page-boundaries` · HTML + RSS (Accept override); conditional GET (304) stays bare `fetch`                                                                                                                                                                                                                                                         |
@@ -44,7 +46,27 @@ first source location plus occurrence count for each missing API-specific
 reference. `check --json` emits a versioned contract with a finding count,
 affected-file count, and structured errors while retaining the nonzero gate
 status. `annotate --write` uses the same scanner, so parser or target errors
-stop before any file is rewritten.
+stop before any file is rewritten. Findings and inserted headers include the
+known release and update timeline. When introduction history is absent, the tool
+emits a separately labeled `@verified` record instead of inventing a release
+version or date.
+
+## Release and update provenance
+
+Every recorded `releasedIn`, `fixedIn`, or `changedIn` value is joined to the
+matching entry in [`bun-docs-feeds.json`](../tools/bun-docs-feeds.json). The RSS
+`pubDate` becomes the event date and that version's Bun blog URL becomes the
+primary evidence reference. If a version has no indexed Bun post, the tool can
+retain the version-specific official GitHub release URL, but
+`docs:provenance:check` fails until a publication date is available.
+
+`verifiedOn` and `lastUpdated` answer a different question: which Bun runtime
+and docs snapshot the catalog was checked against. They must never be used as an
+API introduction date. Consequently, an API may be verified and fully documented
+while its release remains explicitly `release-unknown`. Run
+`provenance-check --require-release` only as a deliberate completeness ratchet;
+the ordinary gate enforces evidence integrity for every history event already
+recorded without fabricating unresearched history.
 
 ## Refresh tiers + commit lanes
 

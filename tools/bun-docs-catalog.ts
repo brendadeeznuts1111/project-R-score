@@ -20,8 +20,8 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  * Each entry:
  *   name, type (api | cli-flag | config | concept),
  *   description?, stability (stable | experimental | deprecated),
- *   releasedIn? (Bun version when the feature shipped),
- *   fixedIn? / changedIn? (from curated changelog overlay),
+ *   releasedIn?/releasedAt?/releasedUrl? (version, official date, evidence),
+ *   fixedIn?/fixedAt?/fixedUrl? and changedIn?/changedAt?/changedUrl? (updates),
  *   changeNote? / changeCommit? / commitUrl? (overlay),
  *   lastUpdated? (ISO date docs/index last refreshed for this entry),
  *   verifiedOn? (catalog pin Bun version at build),
@@ -128,10 +128,22 @@ export type DocCatalogEntry = {
    * data (semver string, e.g. "1.3.14"). Omitted when unknown.
    */
   releasedIn?: string;
+  /** Official release-post publication date for `releasedIn`. */
+  releasedAt?: string;
+  /** Version-specific Bun release post (or GitHub release fallback). */
+  releasedUrl?: string;
   /** Latest curated fix version for this token (changelog overlay). */
   fixedIn?: string;
+  /** Official release-post publication date for `fixedIn`. */
+  fixedAt?: string;
+  /** Version-specific evidence for `fixedIn`. */
+  fixedUrl?: string;
   /** Latest curated change/deprecate version (changelog overlay). */
   changedIn?: string;
+  /** Official release-post publication date for `changedIn`. */
+  changedAt?: string;
+  /** Version-specific evidence for `changedIn`. */
+  changedUrl?: string;
   /** Best human note from the changelog overlay (fix > change > feature). */
   changeNote?: string;
   /** Optional git SHA for the overlaid change (when known). */
@@ -1260,7 +1272,7 @@ export async function buildCatalog(opts?: {
   const releaseOverlay = await loadReleaseOverlay();
   if (releaseOverlay.size > 0) {
     for (const e of entries) {
-      applyReleaseOverlay(e, releaseOverlay);
+      applyReleaseOverlay(e, releaseOverlay, releaseMap);
     }
   }
 
@@ -1307,6 +1319,7 @@ export async function buildCatalog(opts?: {
     e.lastUpdated ??= docsLastUpdated;
     e.verifiedOn = verifiedOn;
     e.docsUrl = docsUrlFor(e.canonicalPage, e.anchor);
+    stampVersionProvenance(e, releaseMap);
     // Prefer release notes for feature ship version; else latest fix; else catalog pin
     const forRelease = e.releasedIn ?? e.fixedIn ?? e.changedIn ?? verifiedOn;
     const releaseVersion = normalizeBunVersion(forRelease);
@@ -1323,7 +1336,8 @@ export async function buildCatalog(opts?: {
 /** Merge scraped release-post overlay (curated changelog wins on notes/SHAs). */
 export function applyReleaseOverlay(
   e: DocCatalogEntry,
-  overlay: Map<string, ReleaseOverlayEntry>
+  overlay: Map<string, ReleaseOverlayEntry>,
+  releaseMap?: Map<string, ReleaseEntry>
 ): void {
   const o =
     overlay.get(normalizeName(e.name)) ??
@@ -1349,7 +1363,47 @@ export function applyReleaseOverlay(
     e.changeNote = o.changeNote;
   }
   if (o.hits?.length) {
-    e.releaseHits = sortReleaseHits(dedupeReleaseHits(o.hits));
+    e.releaseHits = sortReleaseHits(
+      dedupeReleaseHits(
+        o.hits.map(hit => ({
+          ...hit,
+          publishedAt: hit.publishedAt ?? releaseMap?.get(cleanBunVersion(hit.version))?.pubDate,
+        }))
+      )
+    );
+  }
+}
+
+function versionEvidence(
+  version: string | undefined,
+  releaseMap: Map<string, ReleaseEntry>
+): { date?: string; url?: string } {
+  if (!version) return {};
+  const clean = cleanBunVersion(version);
+  const release =
+    releaseMap.get(clean) ?? releaseMap.get(`${clean.split('.').slice(0, 2).join('.')}.0`);
+  return release ? { date: release.pubDate, url: release.url } : { url: releaseUrlFor(version) };
+}
+
+/** Join every recorded API release/update version to dated official evidence. */
+export function stampVersionProvenance(
+  entry: DocCatalogEntry,
+  releaseMap: Map<string, ReleaseEntry>
+): void {
+  const released = versionEvidence(entry.releasedIn, releaseMap);
+  const fixed = versionEvidence(entry.fixedIn, releaseMap);
+  const changed = versionEvidence(entry.changedIn, releaseMap);
+  if (entry.releasedIn) {
+    entry.releasedAt = released.date;
+    entry.releasedUrl = released.url;
+  }
+  if (entry.fixedIn) {
+    entry.fixedAt = fixed.date;
+    entry.fixedUrl = fixed.url;
+  }
+  if (entry.changedIn) {
+    entry.changedAt = changed.date;
+    entry.changedUrl = changed.url;
   }
 }
 
@@ -1636,7 +1690,7 @@ export async function writeCatalog(
     ...(commitHash ? { commitHash } : {}),
     docsRoot: 'https://bun.com/docs',
     versionPinned: opts?.versionPinned ?? false,
-    note: 'docsUrl = unversioned latest docs; blogUrl from tools/bun-docs-feeds.json (RSS); releaseUrl = GitHub tag; fixedIn/changeNote from tools/bun-docs-changelog.ts; releaseHits embedded at build',
+    note: 'docsUrl = unversioned latest docs; each recorded release/fix/change carries its own RSS date and version-specific official reference; verifiedOn/lastUpdated are catalog verification only, never release evidence',
     source: {
       index: 'tools/bun-docs-index.json',
       canonicalRefs: 'tools/bun-doc-refs.ts#CANONICAL_REFS',
@@ -1647,12 +1701,19 @@ export async function writeCatalog(
     schema: {
       name: 'string',
       type: 'api | cli-flag | config | concept',
-      releaseHits: 'ReleaseOverlayHit[]? — full scrape timeline embedded at build',
+      releaseHits:
+        'ReleaseOverlayHit[]? — full scrape timeline with official publication date embedded at build',
       description: 'string?',
       stability: 'stable | experimental | deprecated',
       releasedIn: 'string? — Bun semver when feature shipped (curated)',
+      releasedAt: 'string? — official release-post publication date for releasedIn',
+      releasedUrl: 'string? — version-specific official evidence for releasedIn',
       fixedIn: 'string? — latest curated fix version',
+      fixedAt: 'string? — official release-post publication date for fixedIn',
+      fixedUrl: 'string? — version-specific official evidence for fixedIn',
       changedIn: 'string? — latest curated change/deprecate version',
+      changedAt: 'string? — official release-post publication date for changedIn',
+      changedUrl: 'string? — version-specific official evidence for changedIn',
       changeNote: 'string? — overlay note (fix > change > feature)',
       changeCommit: 'string? — optional git SHA from overlay',
       commitUrl: 'string? — github.com/oven-sh/bun/commit/…',
@@ -1783,10 +1844,18 @@ function printEntry(e: DocCatalogEntry, verbose = true): void {
   if (e.description) console.info(`  ${e.description}`);
   console.info(
     `  releasedIn: ${e.releasedIn ?? 'unknown'}` +
-      (e.fixedIn ? `  fixedIn: ${e.fixedIn}` : '') +
-      (e.changedIn ? `  changedIn: ${e.changedIn}` : '') +
+      (e.releasedAt ? ` (${e.releasedAt.slice(0, 10)})` : '') +
+      (e.fixedIn
+        ? `  fixedIn: ${e.fixedIn}${e.fixedAt ? ` (${e.fixedAt.slice(0, 10)})` : ''}`
+        : '') +
+      (e.changedIn
+        ? `  changedIn: ${e.changedIn}${e.changedAt ? ` (${e.changedAt.slice(0, 10)})` : ''}`
+        : '') +
       `  lastUpdated: ${e.lastUpdated ?? 'unknown'}  verifiedOn: ${e.verifiedOn ?? 'unknown'}`
   );
+  if (e.releasedUrl) console.info(`  releasedUrl: ${e.releasedUrl}`);
+  if (e.fixedUrl) console.info(`  fixedUrl: ${e.fixedUrl}`);
+  if (e.changedUrl) console.info(`  changedUrl: ${e.changedUrl}`);
   if (e.changeNote) console.info(`  changeNote: ${e.changeNote}`);
   if (e.changeCommit) {
     console.info(`  changeCommit: ${e.changeCommit}${e.commitUrl ? `  (${e.commitUrl})` : ''}`);
