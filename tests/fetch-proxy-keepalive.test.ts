@@ -216,6 +216,47 @@ describe('Bun fetch HTTPS proxy CONNECT keep-alive', () => {
   });
 
   test(
+    'HTTPS_PROXY supports lowercase precedence for the next fetch',
+    async () => {
+      await using workspace = await createTestWorkspace('factorywager-https-proxy-env-');
+      const keyPath = workspace.resolve('key.pem');
+      const certificatePath = workspace.resolve('certificate.pem');
+      await generateSelfSignedCertificate(keyPath, certificatePath);
+
+      await using target = createEphemeralServe({
+        tls: { key: Bun.file(keyPath), cert: Bun.file(certificatePath) },
+        fetch: () => new Response('through-https-proxy-env'),
+      });
+      await using uppercaseProxy = startConnectProxy();
+      await using lowercaseProxy = startConnectProxy();
+
+      await withTestEnvironment(
+        {
+          HTTP_PROXY: '',
+          http_proxy: '',
+          HTTPS_PROXY: uppercaseProxy.origin,
+          https_proxy: lowercaseProxy.origin,
+          NO_PROXY: '',
+          no_proxy: '',
+        },
+        async () => {
+          const response = await fetch(
+            `https://factorywager-proxy-target.invalid:${target.port}/env`,
+            { tls: { rejectUnauthorized: false } }
+          );
+          expect(await response.text()).toBe('through-https-proxy-env');
+        }
+      );
+
+      expect(uppercaseProxy.connectRequests).toHaveLength(0);
+      expect(lowercaseProxy.connectRequests).toEqual([
+        `CONNECT factorywager-proxy-target.invalid:${target.port} HTTP/1.1`,
+      ]);
+    },
+    15_000
+  );
+
+  test(
     'reuses equal keys and separates every changed pool-key dimension',
     async () => {
       await using workspace = await createTestWorkspace('factorywager-proxy-keepalive-');

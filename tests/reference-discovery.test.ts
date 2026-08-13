@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   nameSimilarity,
   NAMING_CLUSTERS,
+  isAllowedSimilarEnvPair,
   reportPasses,
   runReferenceDiscovery,
   similarEnvRepair,
@@ -27,7 +28,14 @@ describe('reference-discovery', () => {
     expect(similarEnvRepair('TELEGRAM_BOT_FACTORY', 'TELEGRAM_OPS_CHAT_ID')).toContain(
       'Telegram'
     );
+    expect(similarEnvRepair('HTTP_PROXY', 'HTTPS_PROXY')).toContain('lib/net/proxy.ts');
     expect(similarEnvRepair('FOO_BAR', 'FOO_BAZ')).toContain('isAllowedSimilarEnvPair');
+  });
+
+  test('allows the intentional Bun fetch proxy environment family', () => {
+    expect(isAllowedSimilarEnvPair('HTTP_PROXY', 'HTTPS_PROXY')).toBe(true);
+    expect(isAllowedSimilarEnvPair('HTTP_PROXY', 'NO_PROXY')).toBe(true);
+    expect(isAllowedSimilarEnvPair('HTTPS_PROXY', 'NO_PROXY')).toBe(true);
   });
 
   test(

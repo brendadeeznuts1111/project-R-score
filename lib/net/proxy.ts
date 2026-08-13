@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/runtime/networking/fetch#proxying-requests — fetch proxy option
 // @see https://bun.com/docs/guides/http/proxy — proxy guide (env vars, custom headers)
+// @see https://bun.com/blog/bun-v1.3.12#bun-apis — runtime proxy env mutation
 // @see https://bun.com/blog/bun-v1.3.12#keep-alive-for-https-proxy-connect-tunnels — CONNECT tunnel pooling
 /**
  * Bun fetch `proxy` option — all three documented forms.
@@ -41,6 +42,67 @@ export const BUN_V1_3_12_HTTPS_PROXY_POOL_KEY_DIMENSIONS = [
 
 export type BunV1312HttpsProxyPoolKeyDimension =
   (typeof BUN_V1_3_12_HTTPS_PROXY_POOL_KEY_DIMENSIONS)[number];
+
+export type BunFetchProxyEnvKey =
+  'HTTP_PROXY' | 'http_proxy' | 'HTTPS_PROXY' | 'https_proxy' | 'NO_PROXY' | 'no_proxy';
+
+export type BunFetchProxyEnvRole = 'http-proxy' | 'https-proxy' | 'bypass';
+
+export type BunFetchProxyEnvContract = {
+  /** Canonical spelling used by project documentation and catalog lookup. */
+  readonly key: Extract<BunFetchProxyEnvKey, Uppercase<BunFetchProxyEnvKey>>;
+  /** Bun-compatible lowercase spelling. */
+  readonly alias: Extract<BunFetchProxyEnvKey, Lowercase<BunFetchProxyEnvKey>>;
+  readonly role: BunFetchProxyEnvRole;
+  /** Behavior when neither spelling has a non-empty value. */
+  readonly defaultBehavior: 'no-proxy-from-this-key' | 'no-bypass';
+  /** Runtime-observed conflict rule; contributors should still avoid conflicting values. */
+  readonly conflictPrecedence: 'lowercase-non-empty-wins';
+  /** Bun 1.3.12+ reads mutations before the next fetch. */
+  readonly refresh: 'next-fetch';
+  readonly valueShape: 'absolute-http-or-https-url' | 'host-match-list-or-wildcard';
+  readonly docsUrl: string;
+};
+
+/**
+ * Runtime `fetch()` proxy environment SSOT.
+ *
+ * This registry describes Bun's native behavior; it must not be used to copy
+ * proxy credentials into logs, generated registry artifacts, or diagnostics.
+ * Lowercase precedence is verified by the local Bun 1.3.14 contract test.
+ */
+export const BUN_FETCH_PROXY_ENV_REGISTRY = [
+  {
+    key: 'HTTP_PROXY',
+    alias: 'http_proxy',
+    role: 'http-proxy',
+    defaultBehavior: 'no-proxy-from-this-key',
+    conflictPrecedence: 'lowercase-non-empty-wins',
+    refresh: 'next-fetch',
+    valueShape: 'absolute-http-or-https-url',
+    docsUrl: 'https://bun.com/docs/guides/http/proxy#environment-variables',
+  },
+  {
+    key: 'HTTPS_PROXY',
+    alias: 'https_proxy',
+    role: 'https-proxy',
+    defaultBehavior: 'no-proxy-from-this-key',
+    conflictPrecedence: 'lowercase-non-empty-wins',
+    refresh: 'next-fetch',
+    valueShape: 'absolute-http-or-https-url',
+    docsUrl: 'https://bun.com/docs/guides/http/proxy#environment-variables',
+  },
+  {
+    key: 'NO_PROXY',
+    alias: 'no_proxy',
+    role: 'bypass',
+    defaultBehavior: 'no-bypass',
+    conflictPrecedence: 'lowercase-non-empty-wins',
+    refresh: 'next-fetch',
+    valueShape: 'host-match-list-or-wildcard',
+    docsUrl: 'https://bun.com/blog/bun-v1.3.12#bun-apis',
+  },
+] as const satisfies readonly BunFetchProxyEnvContract[];
 
 /** Type guard for the object form. */
 export function isProxyObjectForm(

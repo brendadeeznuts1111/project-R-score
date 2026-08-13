@@ -274,7 +274,12 @@ async function scanNamingClusters(files: string[]): Promise<ReferenceFinding[]> 
 const ENV_RE = /\b(?:Bun\.env|process\.env)\.([A-Z][A-Z0-9_]{2,})\b/g;
 
 /** Documented intentional pairs — see docs/harness/tenants/reference-discovery.md */
-function isAllowedSimilarEnvPair(a: string, b: string): boolean {
+export function isAllowedSimilarEnvPair(a: string, b: string): boolean {
+  // Bun runtime fetch proxy family. These are distinct routing roles, not
+  // aliases; lowercase spellings are captured by lib/net/proxy.ts.
+  const bunFetchProxyCluster = new Set(['HTTP_PROXY', 'HTTPS_PROXY', 'NO_PROXY']);
+  if (bunFetchProxyCluster.has(a) && bunFetchProxyCluster.has(b)) return true;
+
   const secretsCluster = new Set([
     'FW_INFRA_SECRETS_SERVICE',
     'FW_R2_SECRETS_SERVICE',
@@ -384,6 +389,9 @@ function isAllowedSimilarEnvPair(a: string, b: string): boolean {
 /** Context-aware repair text for similar-env pairs (avoid R2-only boilerplate). */
 export function similarEnvRepair(a: string, b: string): string {
   const pair = `${a}|${b}`;
+  if (pair.includes('HTTP_PROXY') || pair.includes('HTTPS_PROXY') || pair.includes('NO_PROXY')) {
+    return 'Bun fetch proxy family — verify roles and aliases against lib/net/proxy.ts and docs/guides/bun-fetch-proxy-environment.md';
+  }
   if (
     pair.includes('R2_') ||
     pair.includes('S3_') ||
