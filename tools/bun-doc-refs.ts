@@ -33,6 +33,7 @@
  *   bun tools/bun-doc-refs.ts suggest --audit [--json] <q>  # FactoryWager audit SSOT
  *   bun tools/bun-doc-refs.ts index-audit                   # rebuild tools/audit-catalog.json
  *   bun tools/bun-doc-refs.ts check [paths...]   # find Bun API usages lacking a @see link
+ *   bun tools/bun-doc-refs.ts check --json [paths...] # machine-readable findings with locations
  *   bun tools/bun-doc-refs.ts validate [paths..] # HTTP-check all bun.com/github doc links
  *   bun tools/bun-doc-refs.ts integrity          # full stack gate (taxonomy·index·map·links)
  *   bun tools/bun-doc-refs.ts integrity --fix  # auto-heal taxonomy aliases, then re-check
@@ -76,6 +77,7 @@ import {
 } from '../lib/docs/bun-source-links.ts';
 import type { BunTokenKind, BunTokenStability } from '../lib/docs/bun-token.ts';
 import type { VerificationSubsystem } from '../lib/verification/types.ts';
+import { resolvePath } from '../lib/path-bun.ts';
 import ts from 'typescript';
 import { BUN_CONFIG_INSTALL_VARS } from './bun-install-env.ts';
 import { getCuratedEntry } from './bun-docs-curated.ts';
@@ -1658,6 +1660,18 @@ function listRefs(): void {
 
 const SOURCE_FILE_GLOB = '**/*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}';
 const SOURCE_FILE_EXT_RE = /\.(?:[cm]?[jt]sx?)$/i;
+const IGNORED_SOURCE_DIRECTORIES = new Set([
+  '.git',
+  '.worktrees',
+  'build',
+  'coverage',
+  'dist',
+  'node_modules',
+]);
+
+function isIgnoredSourceFile(path: string): boolean {
+  return path.split(/[\\/]/).some(part => IGNORED_SOURCE_DIRECTORIES.has(part));
+}
 
 export async function sourceFiles(paths: string[]): Promise<string[]> {
   const out = new Set<string>();
@@ -1668,9 +1682,15 @@ export async function sourceFiles(paths: string[]): Promise<string[]> {
     if (!info) throw new Error(`scan target does not exist or is unreadable: ${p}`);
     if (info?.isDirectory()) {
       const glob = new Bun.Glob(SOURCE_FILE_GLOB);
-      for await (const f of glob.scan({ cwd: p, absolute: true })) out.add(f);
+      let matched = 0;
+      for await (const f of glob.scan({ cwd: p })) {
+        if (isIgnoredSourceFile(f)) continue;
+        out.add(resolvePath(p, f));
+        matched++;
+      }
+      if (matched === 0) throw new Error(`scan target contains no supported source files: ${p}`);
     } else if (SOURCE_FILE_EXT_RE.test(p)) {
-      out.add(p);
+      out.add(resolvePath(p));
     } else {
       throw new Error(`unsupported scan target (expected TypeScript/JavaScript): ${p}`);
     }
@@ -1678,7 +1698,19 @@ export async function sourceFiles(paths: string[]): Promise<string[]> {
   return [...out].sort();
 }
 
-type MissingRef = { file: string; api: string; url: string };
+export type CodeApiUsage = {
+  api: string;
+  line: number;
+  column: number;
+};
+
+export type MissingRef = CodeApiUsage & {
+  file: string;
+  url: string;
+  occurrences: number;
+};
+
+const CHECK_JSON_SCHEMA_VERSION = 1;
 
 /** True when `api` appears as a token (not a substring of a longer name). */
 function codeUsesApi(code: string, api: string): boolean {
@@ -1689,9 +1721,10 @@ function codeUsesApi(code: string, api: string): boolean {
   //   dns      ≠ kindness / dns-prefetch strings still match "dns" token — keep
   //              short tokens out of isCodeApiKey instead.
   const escaped = api.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  // Allow trailing `.` for Bun.inspect.table when scanning Bun.inspect (optional);
-  // refuse alphanumeric / `:` continuation so bun:sql stops before bun:sqlite's `ite`.
-  return new RegExp(`(?<![A-Za-z0-9_])${escaped}(?![A-Za-z0-9_:])`).test(code);
+  // Refuse token continuation so bun:sql stops before bun:sqlite's `ite`, and
+  // --cpu does not match the longer --cpu-prof / --cpu-prof-md flags.
+  const trailing = api.startsWith('--') ? '[A-Za-z0-9_:-]' : '[A-Za-z0-9_:]';
+  return new RegExp(`(?<![A-Za-z0-9_])${escaped}(?!${trailing})`).test(code);
 }
 
 const API_SET = new Set(APIS);
@@ -1732,9 +1765,31 @@ function expressionChain(node: ts.Expression): string[] | undefined {
   return undefined;
 }
 
+function entityNameChain(node: ts.EntityName): string[] {
+  if (ts.isIdentifier(node)) return [node.text];
+  return [...entityNameChain(node.left), node.right.text];
+}
+
+function rootIdentifier(node: ts.Expression | ts.EntityName): ts.Identifier | undefined {
+  let current: ts.Node = node;
+  while (true) {
+    if (ts.isPropertyAccessExpression(current) || ts.isElementAccessExpression(current)) {
+      current = current.expression;
+      continue;
+    }
+    if (ts.isQualifiedName(current)) {
+      current = current.left;
+      continue;
+    }
+    break;
+  }
+  return ts.isIdentifier(current) ? current : undefined;
+}
+
 function canonicalBunChain(parts: readonly string[]): string | undefined {
   for (let length = parts.length; length >= 2; length--) {
-    const api = canonicalApi([['Bun', ...parts.slice(1, length)].join('.')]);
+    const suffix = parts.slice(1, length).join('.');
+    const api = canonicalApi([`Bun.${suffix}`, suffix]);
     if (api) return api;
   }
   return undefined;
@@ -1764,30 +1819,33 @@ function isDynamicBunImport(node: ts.Expression): boolean {
   );
 }
 
-function addBindingImports(name: ts.BindingName, usages: Set<string>): void {
-  if (!ts.isObjectBindingPattern(name)) return;
-  for (const element of name.elements) {
-    const imported =
-      element.propertyName?.getText().replace(/^['"]|['"]$/g, '') ?? element.name.getText();
-    const api = canonicalBunExport(imported);
-    if (api) usages.add(api);
-  }
+function isRequireCall(node: ts.Expression, moduleName: string): boolean {
+  const value = unwrapExpression(node);
+  return (
+    ts.isCallExpression(value) &&
+    ts.isIdentifier(value.expression) &&
+    value.expression.text === 'require' &&
+    value.arguments.length === 1 &&
+    ts.isStringLiteral(value.arguments[0]!) &&
+    value.arguments[0]!.text === moduleName
+  );
 }
 
-function isIdentifierUsage(node: ts.Identifier): boolean {
-  const parent = node.parent;
-  if (
-    (ts.isPropertyAccessExpression(parent) && parent.name === node) ||
-    (ts.isQualifiedName(parent) && parent.right === node)
-  ) {
-    return false;
-  }
-  if (ts.isShorthandPropertyAssignment(parent)) return true;
-  return (parent as ts.NamedDeclaration).name !== node;
+function moduleNameFromLoad(node: ts.CallExpression): string | undefined {
+  const isImport = node.expression.kind === ts.SyntaxKind.ImportKeyword;
+  const isRequire = ts.isIdentifier(node.expression) && node.expression.text === 'require';
+  if ((!isImport && !isRequire) || node.arguments.length !== 1) return undefined;
+  const argument = node.arguments[0];
+  return argument && ts.isStringLiteral(argument) ? argument.text : undefined;
 }
 
-/** Extract canonical API tokens from executable syntax, imports, and CLI flag literals. */
-export function collectCodeApiUsages(text: string, file = 'source.ts'): Set<string> {
+function createSyntaxContext(
+  text: string,
+  file: string
+): {
+  source: ts.SourceFile;
+  checker: ts.TypeChecker;
+} {
   const source = ts.createSourceFile(
     file,
     text,
@@ -1795,8 +1853,93 @@ export function collectCodeApiUsages(text: string, file = 'source.ts'): Set<stri
     true,
     scriptKindForPath(file)
   );
-  const usages = new Set<string>();
-  const namespaceImports = new Set<string>(['Bun']);
+  const options: ts.CompilerOptions = {
+    allowJs: true,
+    jsx: ts.JsxEmit.Preserve,
+    noLib: true,
+    noResolve: true,
+    target: ts.ScriptTarget.Latest,
+  };
+  const fallback = ts.createCompilerHost(options);
+  const host: ts.CompilerHost = {
+    ...fallback,
+    fileExists: candidate => candidate === file,
+    getSourceFile: candidate => (candidate === file ? source : undefined),
+    readFile: candidate => (candidate === file ? text : undefined),
+    writeFile: () => {},
+  };
+  const program = ts.createProgram([file], options, host);
+  const diagnostics = program.getSyntacticDiagnostics(source);
+  if (diagnostics.length > 0) {
+    const diagnostic = diagnostics[0]!;
+    const start = diagnostic.start ?? 0;
+    const location = source.getLineAndCharacterOfPosition(start);
+    const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
+    throw new Error(
+      `syntax error in ${file}:${location.line + 1}:${location.character + 1}: ${message}`
+    );
+  }
+  return { source, checker: program.getTypeChecker() };
+}
+
+function addBindingImports(name: ts.BindingName, add: (api: string, node: ts.Node) => void): void {
+  if (!ts.isObjectBindingPattern(name)) return;
+  for (const element of name.elements) {
+    const imported =
+      element.propertyName?.getText().replace(/^['"]|['"]$/g, '') ?? element.name.getText();
+    const api = canonicalBunExport(imported);
+    if (api) add(api, element);
+  }
+}
+
+/** Extract canonical API occurrences from executable and type syntax. */
+export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): CodeApiUsage[] {
+  const { source, checker } = createSyntaxContext(text, file);
+  const usages = new Map<string, CodeApiUsage>();
+  const namespaceBindings = new Map<string, ts.Symbol | undefined>();
+  const add = (api: string, node: ts.Node): void => {
+    const start = node.getStart(source);
+    const location = source.getLineAndCharacterOfPosition(start);
+    const key = `${api}:${start}`;
+    usages.set(key, { api, line: location.line + 1, column: location.character + 1 });
+  };
+  const bindNamespace = (identifier: ts.Identifier): void => {
+    namespaceBindings.set(identifier.text, checker.getSymbolAtLocation(identifier));
+  };
+  const isUnshadowedGlobal = (identifier: ts.Identifier): boolean =>
+    !checker
+      .getSymbolAtLocation(identifier)
+      ?.declarations?.some(declaration => declaration.getSourceFile() === source);
+  const isNamespaceIdentifier = (identifier: ts.Identifier): boolean => {
+    const symbol = checker.getSymbolAtLocation(identifier);
+    if (identifier.text === 'Bun') return isUnshadowedGlobal(identifier);
+    return (
+      namespaceBindings.has(identifier.text) && namespaceBindings.get(identifier.text) === symbol
+    );
+  };
+  const normalizedBunChain = (
+    node: ts.Expression | ts.EntityName,
+    chain: readonly string[]
+  ): string[] | undefined => {
+    const root = rootIdentifier(node);
+    if (!root) return undefined;
+    if (isNamespaceIdentifier(root)) return ['Bun', ...chain.slice(1)];
+    if (chain[0] === 'globalThis' && chain[1] === 'Bun' && isUnshadowedGlobal(root)) {
+      return ['Bun', ...chain.slice(2)];
+    }
+    return undefined;
+  };
+  const isBunNamespaceExpression = (node: ts.Expression): boolean => {
+    const value = unwrapExpression(node);
+    if (isDynamicBunImport(value)) return true;
+    if (isRequireCall(value, 'bun')) {
+      const call = unwrapExpression(value) as ts.CallExpression;
+      return ts.isIdentifier(call.expression) && isUnshadowedGlobal(call.expression);
+    }
+    if (ts.isIdentifier(value)) return isNamespaceIdentifier(value);
+    const chain = expressionChain(value);
+    return chain?.length === 2 && normalizedBunChain(value, chain)?.length === 1;
+  };
 
   for (const statement of source.statements) {
     if (
@@ -1805,13 +1948,23 @@ export function collectCodeApiUsages(text: string, file = 'source.ts'): Set<stri
       statement.moduleSpecifier.text === 'bun'
     ) {
       const bindings = statement.importClause?.namedBindings;
-      if (bindings && ts.isNamespaceImport(bindings)) namespaceImports.add(bindings.name.text);
+      if (bindings && ts.isNamespaceImport(bindings)) bindNamespace(bindings.name);
       if (bindings && ts.isNamedImports(bindings)) {
         for (const element of bindings.elements) {
           const imported = element.propertyName?.text ?? element.name.text;
           const api = canonicalBunExport(imported);
-          if (api) usages.add(api);
+          if (api) add(api, element);
         }
+      }
+    } else if (ts.isImportEqualsDeclaration(statement)) {
+      const reference = statement.moduleReference;
+      if (
+        ts.isExternalModuleReference(reference) &&
+        reference.expression &&
+        ts.isStringLiteral(reference.expression) &&
+        reference.expression.text === 'bun'
+      ) {
+        bindNamespace(statement.name);
       }
     }
   }
@@ -1825,17 +1978,28 @@ export function collectCodeApiUsages(text: string, file = 'source.ts'): Set<stri
       )
     ) {
       const chain = expressionChain(node);
-      if (chain && namespaceImports.has(chain[0]!)) {
-        const api = canonicalBunChain(['Bun', ...chain.slice(1)]);
-        if (api) usages.add(api);
+      const normalized = chain && normalizedBunChain(node, chain);
+      if (normalized) {
+        const api = canonicalBunChain(normalized);
+        if (api) add(api, node);
       }
+    }
+
+    if (
+      ts.isQualifiedName(node) &&
+      !(ts.isQualifiedName(node.parent) && node.parent.left === node)
+    ) {
+      const chain = entityNameChain(node);
+      const normalized = normalizedBunChain(node, chain);
+      const api = normalized && canonicalBunChain(normalized);
+      if (api) add(api, node);
     }
 
     if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
       const specifier = node.moduleSpecifier;
       if (specifier && ts.isStringLiteral(specifier)) {
         const moduleApi = canonicalApi([specifier.text]);
-        if (moduleApi) usages.add(moduleApi);
+        if (moduleApi) add(moduleApi, specifier);
       }
       if (
         ts.isExportDeclaration(node) &&
@@ -1848,7 +2012,31 @@ export function collectCodeApiUsages(text: string, file = 'source.ts'): Set<stri
         for (const element of node.exportClause.elements) {
           const imported = element.propertyName?.text ?? element.name.text;
           const api = canonicalBunExport(imported);
-          if (api) usages.add(api);
+          if (api) add(api, element);
+        }
+      }
+    }
+
+    if (ts.isCallExpression(node)) {
+      const moduleName = moduleNameFromLoad(node);
+      const shadowedRequire =
+        ts.isIdentifier(node.expression) &&
+        node.expression.text === 'require' &&
+        !isUnshadowedGlobal(node.expression);
+      if (moduleName && !shadowedRequire) {
+        const moduleApi = canonicalApi([moduleName]);
+        if (moduleApi) add(moduleApi, node);
+      }
+    }
+
+    if (ts.isImportTypeNode(node) && ts.isLiteralTypeNode(node.argument)) {
+      const literal = node.argument.literal;
+      if (ts.isStringLiteral(literal)) {
+        const moduleApi = canonicalApi([literal.text]);
+        if (moduleApi) add(moduleApi, node);
+        if (literal.text === 'bun' && node.qualifier) {
+          const api = canonicalBunChain(['Bun', ...entityNameChain(node.qualifier)]);
+          if (api) add(api, node.qualifier);
         }
       }
     }
@@ -1856,29 +2044,31 @@ export function collectCodeApiUsages(text: string, file = 'source.ts'): Set<stri
     if (
       ts.isVariableDeclaration(node) &&
       node.initializer &&
-      isDynamicBunImport(node.initializer)
+      isBunNamespaceExpression(node.initializer)
     ) {
-      if (ts.isIdentifier(node.name)) namespaceImports.add(node.name.text);
-      else addBindingImports(node.name, usages);
-    }
-
-    if (ts.isIdentifier(node) && isIdentifierUsage(node)) {
-      const api = canonicalApi([node.text]);
-      if (api && /^[A-Z]/.test(node.text)) usages.add(api);
+      if (ts.isIdentifier(node.name)) bindNamespace(node.name);
+      else addBindingImports(node.name, add);
     }
 
     // CLI flags are values by definition. Scan string literals, but deliberately
     // exclude template literals used for generated documentation/examples.
     if (ts.isStringLiteral(node)) {
       for (const flag of FLAG_APIS) {
-        if (codeUsesApi(node.text, flag)) usages.add(flag);
+        if (codeUsesApi(node.text, flag)) add(flag, node);
       }
     }
 
     ts.forEachChild(node, visit);
   };
   visit(source);
-  return usages;
+  return [...usages.values()].sort(
+    (a, b) => a.line - b.line || a.column - b.column || a.api.localeCompare(b.api)
+  );
+}
+
+/** Extract the unique canonical APIs used by a source file. */
+export function collectCodeApiUsages(text: string, file = 'source.ts'): Set<string> {
+  return new Set(collectCodeApiUsageDetails(text, file).map(usage => usage.api));
 }
 
 function approvedReferenceUrls(api: string): Set<string> {
@@ -1907,9 +2097,22 @@ export async function findMissing(paths: string[]): Promise<MissingRef[]> {
   const missing: MissingRef[] = [];
   for (const file of await sourceFiles(paths)) {
     const text = await Bun.file(file).text();
-    for (const api of collectCodeApiUsages(text, file)) {
+    const usages = collectCodeApiUsageDetails(text, file);
+    const byApi = new Map<string, CodeApiUsage[]>();
+    for (const usage of usages) {
+      byApi.set(usage.api, [...(byApi.get(usage.api) ?? []), usage]);
+    }
+    for (const [api, occurrences] of byApi) {
       if (!hasApiReference(text, api)) {
-        missing.push({ file, api, url: CANONICAL_REFS[api] });
+        const first = occurrences[0]!;
+        missing.push({
+          file,
+          api,
+          url: CANONICAL_REFS[api],
+          line: first.line,
+          column: first.column,
+          occurrences: occurrences.length,
+        });
       }
     }
   }
@@ -1917,10 +2120,23 @@ export async function findMissing(paths: string[]): Promise<MissingRef[]> {
 }
 
 /** Find Bun.* usages whose file has no matching @see / doc link. */
-async function check(paths: string[]): Promise<number> {
+async function check(paths: string[], json = false): Promise<number> {
   const missing = await findMissing(paths);
+  if (json) {
+    jsonOut({
+      schemaVersion: CHECK_JSON_SCHEMA_VERSION,
+      command: 'check',
+      ok: missing.length === 0,
+      count: missing.length,
+      filesWithMissingRefs: new Set(missing.map(item => item.file)).size,
+      missing,
+    });
+    return missing.length;
+  }
   for (const m of missing) {
-    console.info(`  ${m.file}: uses ${m.api} without a doc ref`);
+    console.info(
+      `  ${m.file}:${m.line}:${m.column}: uses ${m.api} without a doc ref (${m.occurrences} occurrence${m.occurrences === 1 ? '' : 's'})`
+    );
     console.info(`    add: @see ${m.url}`);
   }
   if (missing.length === 0) console.info('✅ all Bun API usages have canonical doc refs');
@@ -3551,9 +3767,12 @@ async function mainCli(): Promise<void> {
       process.exit(!write && files > 0 ? 1 : 0);
       break;
     }
-    case 'check':
-      process.exit((await check(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
+    case 'check': {
+      const json = rest.includes('--json');
+      const targets = rest.filter(argument => argument !== '--json');
+      process.exit((await check(targets.length ? targets : defaultPaths, json)) > 0 ? 1 : 0);
       break;
+    }
     case 'validate':
       process.exit((await validate(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
       break;
@@ -3566,6 +3785,7 @@ async function mainCli(): Promise<void> {
       console.error(
         `unknown command: ${cmd}\n` +
           `commands: url|token|list|catalog|suggest|index-audit|locus|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate|bundler\n` +
+          `check flags: --json (machine-readable findings with line/column)\n` +
           `suggest --audit [--json] <q>  ·  index-audit → bun tools/audit-catalog.ts build\n` +
           `catalog: --build · list --section=… --type=… · get <Name>  (also: bun run docs:catalog:export · docs:refresh)\n` +
           `locus: --depth=N · --all · --tsv · --json · --type=api  (TOKEN/TYPE/STATUS/PAGE/FRAGMENT…)\n` +
@@ -3582,7 +3802,15 @@ if (import.meta.main) {
   try {
     await mainCli();
   } catch (error) {
-    console.error(`❌ bun-doc-refs: ${error instanceof Error ? error.message : String(error)}`);
+    const message = error instanceof Error ? error.message : String(error);
+    if (process.argv.includes('--json') && process.argv.includes('check')) {
+      jsonOut({
+        schemaVersion: CHECK_JSON_SCHEMA_VERSION,
+        command: 'check',
+        ok: false,
+        error: { message },
+      });
+    } else console.error(`❌ bun-doc-refs: ${message}`);
     process.exit(1);
   }
 }
