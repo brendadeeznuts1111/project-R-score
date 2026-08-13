@@ -13,7 +13,8 @@
   - Prefer short, scannable bullets over essays.
 -->
 
-> **Local authority** · GHA is side-signal only · Squash-merge + delete branch · Prefer claim-scoped commands over full suite when the change is narrow
+> **Local authority** · GHA is side-signal only · Squash-merge + delete branch ·
+> Prefer claim-scoped commands over full suite when the change is narrow
 
 ## Summary
 
@@ -27,12 +28,12 @@ State the user/ops claim this PR closes. Match **kind** to evidence
 ([PROOF.md](../docs/harness/PROOF.md)). **Non-draft PRs fail** when this table
 has no filled row (`bun scripts/check-pr-claim.ts`).
 
-| Kind | Means |
-| ---- | ----- |
-| `unit` | Pure code/type/gate property (tests, checkers, types) |
-| `boundary` | Wire/edge parse or adapter contract |
-| `journey` | Multi-step operator or install path |
-| `deployed` | Live surface / Pages / remote probe |
+| Kind       | Means                                                 |
+| ---------- | ----------------------------------------------------- |
+| `unit`     | Pure code/type/gate property (tests, checkers, types) |
+| `boundary` | Wire/edge parse or adapter contract                   |
+| `journey`  | Multi-step operator or install path                   |
+| `deployed` | Live surface / Pages / remote probe                   |
 
 Kinds may be joined with `+` (e.g. `unit+boundary`).
 
@@ -45,16 +46,16 @@ Kinds may be joined with `+` (e.g. `unit+boundary`).
 | bun-types inventory harvests enum members | unit | `bun test tests/bun-types-inventory.test.ts` · `bun run bun:types-inventory:check` |
 -->
 
-Install/layout owners touched → also `bun run proof:install`.
-If you mention a CRITICAL_PROOF_PATHS id in the body, paste that claim’s
-freshRerun command too ([FRESH-RERUN.md](../docs/harness/FRESH-RERUN.md)).
+Install/layout owners touched → also `bun run proof:install`. If you mention a
+CRITICAL_PROOF_PATHS id in the body, paste that claim’s freshRerun command too
+([FRESH-RERUN.md](../docs/harness/FRESH-RERUN.md)).
 
 ## Lane / routing
 
 Optional human queue fields. GitHub is **not** concept SSOT
-([ISSUE-ROUTING.md](../docs/harness/ISSUE-ROUTING.md)).
-**Domain** = desk / business lane (partner = outs → books → limits → liquidity
-→ offers). Bookmaker ≠ partner entity — use **Tenant** / **Owner** for `BM-*`.
+([ISSUE-ROUTING.md](../docs/harness/ISSUE-ROUTING.md)). **Domain** = desk /
+business lane (partner = outs → books → limits → liquidity → offers). Bookmaker
+≠ partner entity — use **Tenant** / **Owner** for `BM-*`.
 
 | Field       | Value                                                                              |
 | ----------- | ---------------------------------------------------------------------------------- |
@@ -70,36 +71,40 @@ Optional human queue fields. GitHub is **not** concept SSOT
 Fill when this PR touches portal boards, partner glossary, Soft/Factory domain
 map, or partner-surface inventory. Otherwise: **n/a**.
 
-| Surface          | Path / doc                                                             | Touched? |
-| ---------------- | ---------------------------------------------------------------------- | -------- |
-| Board slug       | `/portal/<slug>/` · `PORTAL_BOARD_SLUGS`                               |          |
-| Registry bake    | `/registry/<artifact>.json`                                            |          |
-| Partner domain   | [partner-domain-map.md](../docs/harness/tenants/partner-domain-map.md) |          |
-| Soft handshake   | [soft-handshake.md](../docs/design/soft-handshake.md)                  |          |
-| Partner-surface  | [partner-surface-inventory.md](../docs/design/partner-surface-inventory.md) |          |
+| Surface         | Path / doc                                                                  | Touched? |
+| --------------- | --------------------------------------------------------------------------- | -------- |
+| Board slug      | `/portal/<slug>/` · `PORTAL_BOARD_SLUGS`                                    |          |
+| Registry bake   | `/registry/<artifact>.json`                                                 |          |
+| Partner domain  | [partner-domain-map.md](../docs/harness/tenants/partner-domain-map.md)      |          |
+| Soft handshake  | [soft-handshake.md](../docs/design/soft-handshake.md)                       |          |
+| Partner-surface | [partner-surface-inventory.md](../docs/design/partner-surface-inventory.md) |          |
 
-- [ ] Board · route · chrome · page-concepts stay synced (if board added/removed)
+- [ ] Board · route · chrome · page-concepts stay synced (if board
+      added/removed)
 - [ ] Glossary / partners-ops bake checked when overlay concepts moved
 - [ ] If **Concept** filled: `bun run concept:audit --strict` green
-- [ ] If **Tracker** filled: mark acceptance on the tenant open-issues doc in this PR
+- [ ] If **Tracker** filled: mark acceptance on the tenant open-issues doc in
+      this PR
 
 ## Harness / Bun tooling
 
 Fill when this PR changes brands, wire boundary, console-depth, bun-types
 inventory, doc refs, or pre-commit gates. Otherwise: **n/a**.
 
-| Surface | Doc / command | Touched? |
-| ------- | ------------- | -------- |
-| Branded IDs | [`lib/types/branded/README.md`](../lib/types/branded/README.md) · `bun run check:brands` | |
-| Wire boundary | [`docs/WIRE_BOUNDARY.md`](../docs/WIRE_BOUNDARY.md) · `// brand-ok` / `// wire-ok` | |
-| Console depth | [object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth) · [`lib/console-depth.md`](../lib/console-depth.md) | |
-| Bun-types inventory | [`docs/design/bun-types-inventory.md`](../docs/design/bun-types-inventory.md) · `bun:types-inventory:check` · tip-diff | |
-| Doc refs (`@see`) | `bun tools/bun-doc-refs.ts check` / `annotate --write` | |
-| Console format gate | `lib/console-format-scan.ts` · `// console-ok` | |
+| Surface             | Doc / command                                                                                                                               | Touched? |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| Branded IDs         | [`lib/types/branded/README.md`](../lib/types/branded/README.md) · `bun run check:brands`                                                    |          |
+| Wire boundary       | [`docs/WIRE_BOUNDARY.md`](../docs/WIRE_BOUNDARY.md) · `// brand-ok` / `// wire-ok`                                                          |          |
+| Console depth       | [object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth) · [`lib/console-depth.md`](../lib/console-depth.md) |          |
+| Bun-types inventory | [`docs/design/bun-types-inventory.md`](../docs/design/bun-types-inventory.md) · `bun:types-inventory:check` · tip-diff                      |          |
+| Doc refs (`@see`)   | `bun tools/bun-doc-refs.ts check` / `annotate --write`                                                                                      |          |
+| Console format gate | `lib/console-format-scan.ts` · `// console-ok`                                                                                              |          |
 
 - [ ] Staged brand check green (`--staged --strict`) when `*Id` fields change
-- [ ] Inventory/artifacts regenerated when pin or parser changes (`:write` + `:check`)
-- [ ] Tip-diff local ok when bun-types surface moves (`bun:types-inventory:tip-diff:local`)
+- [ ] Inventory/artifacts regenerated when pin or parser changes (`:write` +
+      `:check`)
+- [ ] Tip-diff local ok when bun-types surface moves
+      (`bun:types-inventory:tip-diff:local`)
 
 ## Artifact publish
 
@@ -113,13 +118,15 @@ ops snapshot). Otherwise: **n/a**.
 | Snapshot / bake   | `factory snapshot` · `bookmakers:bake` · `ops:snapshot` |
 | Pages mirror      | committed under `public/registry/` (ops never on Pages) |
 
-- [ ] Public artifact has no secrets (`restBaseUrl`, `apiKeyEnv`, `envVars`, balance/health)
+- [ ] Public artifact has no secrets (`restBaseUrl`, `apiKeyEnv`, `envVars`,
+      balance/health)
 - [ ] Ops plane (if any) stays under `artifact-registry/…/ops/` only
 
 ## Naming (v0.4 bookmakers / public catalog)
 
 Required when editing bookmaker registry rows or the public catalog shape.
-Tenant: [bookmakers-registry.md](../docs/harness/tenants/bookmakers-registry.md).
+Tenant:
+[bookmakers-registry.md](../docs/harness/tenants/bookmakers-registry.md).
 Otherwise: **n/a**.
 
 | Field         | Rule                                                                |
@@ -131,7 +138,8 @@ Otherwise: **n/a**.
 
 - [ ] Public rows use v0.4 names (`fetcher`, `sports`, `urls.web`)
 - [ ] `id === slug` on every row touched
-- [ ] `bun run bookmakers:bake:check` (or migrate + board tests) when catalog changed
+- [ ] `bun run bookmakers:bake:check` (or migrate + board tests) when catalog
+      changed
 
 ## Concept-lane proof
 
@@ -149,9 +157,11 @@ When vocabulary / boards / limit-row wire change. Map:
 
 ### Concept-lane gates
 
-- [ ] `concept:audit --strict` · `validate:surface-coverage` (allowlist warnings OK)
+- [ ] `concept:audit --strict` · `validate:surface-coverage` (allowlist warnings
+      OK)
 - [ ] Wire field change → `tests/limit-row-wire.test.ts`
-- [ ] Board add/remove → slugs, page-concepts, public-routes, `_redirects`, `public/portal/<slug>/`
+- [ ] Board add/remove → slugs, page-concepts, public-routes, `_redirects`,
+      `public/portal/<slug>/`
 - [ ] Deprecate → `replacedBy` + successor bound in surface maps / HTML
 
 ## Fresh-rerun paste
@@ -171,8 +181,8 @@ Soft tip: if the body mentions a proof id in backticks, include that claim’s
 When touching `theme.jsonc`, kernel palettes, or `claim-reporter` /
 `color-kernel-align`
 ([`color-kernel-paths.ts`](../lib/portal/color-kernel-paths.ts)). CI always runs
-`validate:colors:strict` via `test:colors` (claim id color-kernel-theme-aliases).
-Otherwise: **n/a**.
+`validate:colors:strict` via `test:colors` (claim id
+color-kernel-theme-aliases). Otherwise: **n/a**.
 
 - [ ] `bun run validate:colors` (or `:strict`) exits 0
 - [ ] Extended keys left intentional (not forced onto theme SSOT)
@@ -190,14 +200,14 @@ Only when a commit set `SKIP_*=1`. Policy:
 [DEVELOPMENT-WORKFLOW.md](../docs/DEVELOPMENT-WORKFLOW.md#escape-hatches).
 Otherwise: **n/a**.
 
-| Hatch | Reason + local proof that still passed |
-| ----- | -------------------------------------- |
-| `SKIP_TEST_CHANGED=1` | |
-| `SKIP_QUALITY_CONCEPT=1` | |
-| `SKIP_GITLEAKS=1` | |
-| `SKIP_WIRE_LINT=1` | |
-| `SKIP_DOMAIN_LINT=1` | |
-| `SKIP_BUN_TYPES_CI=1` / `BUN_TYPES_CI=0` | |
+| Hatch                                    | Reason + local proof that still passed |
+| ---------------------------------------- | -------------------------------------- |
+| `SKIP_TEST_CHANGED=1`                    |                                        |
+| `SKIP_QUALITY_CONCEPT=1`                 |                                        |
+| `SKIP_GITLEAKS=1`                        |                                        |
+| `SKIP_WIRE_LINT=1`                       |                                        |
+| `SKIP_DOMAIN_LINT=1`                     |                                        |
+| `SKIP_BUN_TYPES_CI=1` / `BUN_TYPES_CI=0` |                                        |
 
 - [ ] Every `SKIP_*` used is listed with **owner path + green command evidence**
 - [ ] Message does not hide foreign-lane failures as “ours”
@@ -214,11 +224,13 @@ Otherwise: **n/a**.
       `bun run lib:domains:check`
 - [ ] Docs/JIT updated only when an owner moved (`docs/harness/`, `repo-docs`,
       AGENTS)
+- [ ] `bun run check:docs` passed when Markdown changed
 - [ ] Concept lifecycle / agents tenant docs updated when vocabulary or wire
       contract moved
 - [ ] If spine touched: `bun run type-check` (`tsconfig.check.json`)
 - [ ] Any `SKIP_*` escape justified above (or N/A)
-- [ ] **Open issues closed** (optional): linked issues resolved — list `#…` or N/A
+- [ ] **Open issues closed** (optional): linked issues resolved — list `#…` or
+      N/A
 
 ## Local merge proof (required — GHA is not merge authority)
 

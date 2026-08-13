@@ -35,6 +35,7 @@ const REPO = resolvePath(import.meta.dir, '..');
 
 const ROOT_MD = [
   'AGENTS.md',
+  'CONTRIBUTING.md',
   'README.md',
   'wiki-index.md',
   'registry-index.md',
@@ -47,6 +48,8 @@ const ROOT_MD = [
   'docs/BUN_NATIVE_CAPABILITIES.md',
   'docs/BUN_DOCS_OPERATE.md',
   'docs/DEVELOPMENT-STANDARDS.md',
+  'docs/markdown/API_REFERENCE.md',
+  'docs/markdown/CONTRIBUTING_MARKDOWN.md',
   'docs/IMPORT_BOUNDARIES.md',
   'lib/README.md',
   'lib/types/branded/README.md',

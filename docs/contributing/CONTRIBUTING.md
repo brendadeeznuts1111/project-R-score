@@ -19,11 +19,20 @@ bun run harness:status
 `test:changed` stays the day-loop default. CI artifact path is `bun run test:ci`
 (JUnit). Live Inspector TestReporter stream (orthogonal, not a Jest plugin):
 `bun run test:inspect`. Flag × script matrix:
-[`docs/harness/tenants/bun-test-flags.md`](../harness/tenants/bun-test-flags.md) ·
-Inspector tenant:
+[`docs/harness/tenants/bun-test-flags.md`](../harness/tenants/bun-test-flags.md)
+· Inspector tenant:
 [`docs/harness/tenants/bun-test-inspect.md`](../harness/tenants/bun-test-inspect.md).
 
 Full testing / hooks map: [DEVELOPMENT-WORKFLOW.md](../DEVELOPMENT-WORKFLOW.md).
+
+## Markdown
+
+All governed Markdown must pass `bun run check`; use `bun run check:docs` for
+source-only validation and `bun run bun:ci` for the wider repository proof. See
+the [Markdown Contributor Guide](../markdown/CONTRIBUTING_MARKDOWN.md) for the
+day loop and the numbered
+[Bun Markdown API Reference and repository contract](../markdown/API_REFERENCE.md)
+for parser, callback, ANSI, React, validation, and TypeScript behavior.
 
 ## REF:ID Validation
 
@@ -156,19 +165,19 @@ Always exempt: `--help` · `--hlp`.
 CI / production: leave `BUN_STRIP_UNKNOWN` unset. Local prototyping may set
 `BUN_STRIP_UNKNOWN=true`.
 
-| Constant                       | CLI entry / registry key                         | Definition | REF:ID leaves (`*LEAVES`)                                             | Extra meta (allowlist only) | Guard                         | Failure      |
-| ------------------------------ | ------------------------------------------------ | ---------- | --------------------------------------------------------------------- | --------------------------- | ----------------------------- | ------------ |
-| `LINT_WIRES_ALLOWED_LONG`      | `lint-wires` · `scripts/validate-wire-traps.ts`  | SSOT       | §4.1 help · scan · why · document · strict-globs                      | rules · fix                 | after help/why/document/rules | return **2** |
-| `IMAGES_GENERATE_ALLOWED_LONG` | `images:generate` · `scripts/images-generate.ts` | SSOT       | §1.1 source · out · size · … · dry-run                                | template                    | top of `parseArgs`            | **throw**    |
-| `OPS_SNAPSHOT_ALLOWED_LONG`    | `ops:snapshot` · `tools/ops-snapshot.ts`         | SSOT       | §1.1 seed · seed-force · seed-tenants · no-seed                       | bake toggles                | after `--help`                | **exit 2**   |
-| `PARTNER_ONBOARD_ALLOWED_LONG` | `partner:onboard` · SSOT (+ re-export from tool) | SSOT       | §1.1 deal · currency · hold-target · initial-balance · funding-method | identity/book/control flags | start of `main()`             | **throw**    |
-| `TELEGRAM_OPS_ALLOWED_LONG`    | `telegram:ops` · `tools/telegram-ops.ts`         | SSOT       | §1.1 invite · no-dm · no-ack · requested-by                           | send/directory meta         | early `main()`                | **exit 2**   |
-| `BUN_PR_VERIFY_ALLOWED_LONG`   | `bun:pr:verify` · `tools/bun-pr-verify.ts`       | SSOT       | (none — no Flags table)                                               | proof · json                | `parseArgs` via `applyUnknownLongOptionGuardFor` | **throw** → **1** |
-| `BUN_RUNTIME_PIN_ALLOWED_LONG` | `bun:runtime-pin` · `tools/bun-runtime-pin.ts`   | SSOT       | (none)                                                                | json                        | `runBunRuntimePinCli`                            | **throw** → **2** |
-| `GLOSSARY_HEALTH_ALLOWED_LONG` | `glossary:health` · `tools/glossary-health.ts`   | SSOT       | (none)                                                                | json · local                | top-level guard                                  | **exit 2**        |
-| `CLOUDFLARE_ENV_VALIDATE_ALLOWED_LONG` | `cloudflare:env:validate` · `tools/cloudflare-env-validate.ts` | SSOT | (none)                                                     | json · strict               | top-level guard                                  | **exit 2**        |
-| `ROUTING_REGISTRY_PROOF_ALLOWED_LONG` | `routing:registry-proof` · `tools/routing-registry-proof.ts` | SSOT | (none)                                                       | write · publish · json · …  | top-level guard                                  | **exit 2**        |
-| `OPS_SEED_TOC_ALLOWED_LONG` · `DISCOVERY_COMPOSE_*` · `PUBLIC_DISCOVERY_*` · `SCHEMA_AUDIT_*` · `TELEGRAM_HANDSHAKE_CATALOG_*` · `CONCEPT_HEALTH_*` · `OPS_LOOP_GATE_BACKFILL_*` · `OPS_LIMITS_CHECK_*` | see `ALLOWED_LONG_REGISTRY` | SSOT | (none) | see [cli-constants-flags §2.7](../harness/cli-constants-flags.md) | top-level / parseArgs | **exit 2** |
+| Constant                                                                                                                                                                                                | CLI entry / registry key                                       | Definition | REF:ID leaves (`*LEAVES`)                                             | Extra meta (allowlist only)                                       | Guard                                            | Failure           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ---------- | --------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------ | ----------------- |
+| `LINT_WIRES_ALLOWED_LONG`                                                                                                                                                                               | `lint-wires` · `scripts/validate-wire-traps.ts`                | SSOT       | §4.1 help · scan · why · document · strict-globs                      | rules · fix                                                       | after help/why/document/rules                    | return **2**      |
+| `IMAGES_GENERATE_ALLOWED_LONG`                                                                                                                                                                          | `images:generate` · `scripts/images-generate.ts`               | SSOT       | §1.1 source · out · size · … · dry-run                                | template                                                          | top of `parseArgs`                               | **throw**         |
+| `OPS_SNAPSHOT_ALLOWED_LONG`                                                                                                                                                                             | `ops:snapshot` · `tools/ops-snapshot.ts`                       | SSOT       | §1.1 seed · seed-force · seed-tenants · no-seed                       | bake toggles                                                      | after `--help`                                   | **exit 2**        |
+| `PARTNER_ONBOARD_ALLOWED_LONG`                                                                                                                                                                          | `partner:onboard` · SSOT (+ re-export from tool)               | SSOT       | §1.1 deal · currency · hold-target · initial-balance · funding-method | identity/book/control flags                                       | start of `main()`                                | **throw**         |
+| `TELEGRAM_OPS_ALLOWED_LONG`                                                                                                                                                                             | `telegram:ops` · `tools/telegram-ops.ts`                       | SSOT       | §1.1 invite · no-dm · no-ack · requested-by                           | send/directory meta                                               | early `main()`                                   | **exit 2**        |
+| `BUN_PR_VERIFY_ALLOWED_LONG`                                                                                                                                                                            | `bun:pr:verify` · `tools/bun-pr-verify.ts`                     | SSOT       | (none — no Flags table)                                               | proof · json                                                      | `parseArgs` via `applyUnknownLongOptionGuardFor` | **throw** → **1** |
+| `BUN_RUNTIME_PIN_ALLOWED_LONG`                                                                                                                                                                          | `bun:runtime-pin` · `tools/bun-runtime-pin.ts`                 | SSOT       | (none)                                                                | json                                                              | `runBunRuntimePinCli`                            | **throw** → **2** |
+| `GLOSSARY_HEALTH_ALLOWED_LONG`                                                                                                                                                                          | `glossary:health` · `tools/glossary-health.ts`                 | SSOT       | (none)                                                                | json · local                                                      | top-level guard                                  | **exit 2**        |
+| `CLOUDFLARE_ENV_VALIDATE_ALLOWED_LONG`                                                                                                                                                                  | `cloudflare:env:validate` · `tools/cloudflare-env-validate.ts` | SSOT       | (none)                                                                | json · strict                                                     | top-level guard                                  | **exit 2**        |
+| `ROUTING_REGISTRY_PROOF_ALLOWED_LONG`                                                                                                                                                                   | `routing:registry-proof` · `tools/routing-registry-proof.ts`   | SSOT       | (none)                                                                | write · publish · json · …                                        | top-level guard                                  | **exit 2**        |
+| `OPS_SEED_TOC_ALLOWED_LONG` · `DISCOVERY_COMPOSE_*` · `PUBLIC_DISCOVERY_*` · `SCHEMA_AUDIT_*` · `TELEGRAM_HANDSHAKE_CATALOG_*` · `CONCEPT_HEALTH_*` · `OPS_LOOP_GATE_BACKFILL_*` · `OPS_LIMITS_CHECK_*` | see `ALLOWED_LONG_REGISTRY`                                    | SSOT       | (none)                                                                | see [cli-constants-flags §2.7](../harness/cli-constants-flags.md) | top-level / parseArgs                            | **exit 2**        |
 
 Prove CLI guards: `bun test tests/docs-ref-id-tool-exports.test.ts`.
 
@@ -244,13 +253,13 @@ coverage planes + `--registry-only`, `--dry-run`, `audit` /
 
 ## Testing & concept changes
 
-| Change                                           | Gate                                                                       |
-| ------------------------------------------------ | -------------------------------------------------------------------------- |
-| Day-loop / general TS                            | `bun run test:changed` · `bun run test:dev`                                |
-| Monorepo suite (`tests/`)                        | `bun run test` or `bun run test:ci` (JUnit; pathIgnore excludes toc-ops / Kalshi) |
+| Change                                           | Gate                                                                                                           |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| Day-loop / general TS                            | `bun run test:changed` · `bun run test:dev`                                                                    |
+| Monorepo suite (`tests/`)                        | `bun run test` or `bun run test:ci` (JUnit; pathIgnore excludes toc-ops / Kalshi)                              |
 | Inspector live reporters                         | `bun run test:inspect` · [`bun-test-inspect.md`](../harness/tenants/bun-test-inspect.md) (orthogonal to JUnit) |
-| Flag × script matrix                             | [`bun-test-flags.md`](../harness/tenants/bun-test-flags.md)                |
-| Vocabulary, surface maps, surface-coverage tools | `bun run quality:concept`                                                  |
+| Flag × script matrix                             | [`bun-test-flags.md`](../harness/tenants/bun-test-flags.md)                                                    |
+| Vocabulary, surface maps, surface-coverage tools | `bun run quality:concept`                                                                                      |
 
 `quality:concept` runs `concept:audit --strict`, `validate:surface-coverage`,
 and `surface-coverage:map:check`. Pre-commit runs it **only** when concept SSOT

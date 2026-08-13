@@ -19,6 +19,7 @@ Generate deterministic Markdown first, then use `.render` for structural proof
 or `.html` for the HTML projection.
 
 Canonical docs: [Markdown guide](https://bun.com/docs/runtime/markdown) ·
-[API reference](https://bun.com/reference/bun/markdown).
+[upstream API reference](https://bun.com/reference/bun/markdown) · repository
+[API reference and contract](../../docs/markdown/API_REFERENCE.md).
 
 Proof: `bun run docs:markdown:check`.

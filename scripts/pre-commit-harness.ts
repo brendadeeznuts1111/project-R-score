@@ -21,6 +21,7 @@ type GateTiming = { name: string; ms: number; ok: boolean };
 
 const DOC_MAP_SSOT = new Set([
   'AGENTS.md',
+  'CONTRIBUTING.md',
   'README.md',
   'STRUCTURE.md',
   '.custom-instructions.md',
@@ -30,6 +31,8 @@ const DOC_MAP_SSOT = new Set([
   'docs/WIRE_BOUNDARY.md',
   'docs/BUN_NATIVE_CAPABILITIES.md',
   'docs/DEVELOPMENT-STANDARDS.md',
+  'docs/markdown/API_REFERENCE.md',
+  'docs/markdown/CONTRIBUTING_MARKDOWN.md',
   'docs/IMPORT_BOUNDARIES.md',
   'docs/harness/README.md',
   'docs/harness/PROOF.md',
@@ -257,6 +260,7 @@ async function main(): Promise<void> {
   /** Lint scope ∪ tests / *.test.ts — Prettier only (ESLint stays on harnessFiles). */
   const formatFiles = staged.filter(isHarnessFormatPath);
   const docMapFiles = staged.filter(isDocMapPath);
+  const markdownFiles = staged.filter(file => file.toLowerCase().endsWith('.md'));
   const nativeCapabilitiesFiles = staged.filter(isNativeCapabilitiesSyncPath);
   const nativeCapabilitiesTriggered =
     nativeCapabilitiesFiles.length > 0 ||
@@ -285,6 +289,20 @@ async function main(): Promise<void> {
         '❌ Doc map check failed — fix broken links / CANONICAL_* paths\n' +
           '   bun tools/doc-map-check.ts'
       );
+      await writeTimings(timings, full);
+      process.exit(1);
+    }
+  }
+
+  if (markdownFiles.length > 0) {
+    console.info(`📝 Markdown contract (${markdownFiles.length} staged file(s))...`);
+    const code = await runGate(
+      'markdown-contract',
+      ['bun', 'scripts/check-docs.ts', ...markdownFiles],
+      timings
+    );
+    if (code !== 0) {
+      console.error('❌ Markdown contract failed — run bun run check:docs');
       await writeTimings(timings, full);
       process.exit(1);
     }

@@ -49,6 +49,10 @@ const CORE_STEPS: CoreStep[] = [
     cmd: ['bun', 'run', 'docs:native:check'],
   },
   {
+    name: 'markdown-contract',
+    cmd: ['bun', 'run', 'check:docs'],
+  },
+  {
     name: 'wiki-coverage',
     cmd: ['bun', 'run', 'wiki:coverage:check'],
   },
