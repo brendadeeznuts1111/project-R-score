@@ -66,6 +66,10 @@ bun run test:coverage:lcov # keeps text output and writes coverage/lcov.info
 bun run test:junit      # writes reports/junit.xml with Bun's CI/commit properties
 bun run test:ci         # JUnit + coverage, then enriches the report
 bun run junit:enrich    # adds Factory metadata to that report; safe to re-run
+bun run format          # writes Prettier formatting across the project
+bun run format:check    # verifies formatting without changing files
+bun run lint            # runs the pinned ESLint flat config
+bun run lint:fix        # applies safe ESLint fixes, then reports remaining violations
 bun run typecheck
 bun run build
 bun run build:metafile # writes metafiles plus a machine-readable build summary
@@ -77,6 +81,23 @@ bun run publish:dry-run # Bun-native publish simulation; never uploads
 bun run bench          # Bun.nanoseconds throughput JSON
 bun run profile:cpu    # same workload under --cpu-prof → ./profiles/*.cpuprofile
 ```
+
+`bun run check` verifies the generated file index, formatting, lint, types,
+tests, and build in that order. Prettier and ESLint are pinned local development
+dependencies, so these commands do not depend on whatever versions a global tool
+happens to provide.
+
+### Automatic terminal color
+
+The starter API exports `AUTO_TERMINAL_COLOR_FORMAT` as the literal `"ansi"` and
+`formatTerminal(text, color)` as the shared output helper. It calls
+`Bun.color(color, "ansi")`, allowing Bun to select 16-color, 256-color, or true
+color for the active environment. When the output stream does not support ANSI
+or the color cannot be parsed, it returns the original plain text.
+
+Use explicit `"ansi-16"`, `"ansi-256"`, or `"ansi-16m"` only for a serialization
+contract that requires a fixed depth; ordinary terminal output should retain the
+automatic `"ansi"` format.
 
 ### JUnit metadata
 

@@ -48,11 +48,19 @@ export const FACTORY_LIBRARY_CONTRACT_GROUPS: readonly ContractGroup[] = [
     owner: 'package.json',
     properties: [
       'scripts.typecheck',
+      'scripts.format',
+      'scripts.format:check',
+      'scripts.lint',
+      'scripts.lint:fix',
       'scripts.check',
+      'devDependencies.@eslint/js',
       'devDependencies.@types/bun',
+      'devDependencies.eslint',
+      'devDependencies.prettier',
+      'devDependencies.typescript-eslint',
       'devDependencies.typescript',
     ],
-    rule: 'Checks are explicit and no-emit; a consumer runs them after installation.',
+    rule: 'Pinned formatting and linting precede explicit no-emit checks after installation.',
   },
   {
     id: 'reporting',
@@ -342,6 +350,13 @@ export function validateFactoryLibraryManifest(
   );
   pushIf(
     findings,
+    devDependencies?.['@eslint/js'] === '9.39.4',
+    'devDependencies.@eslint/js',
+    '9.39.4',
+    devDependencies?.['@eslint/js']
+  );
+  pushIf(
+    findings,
     devDependencies?.['@types/bun'] === 'latest',
     'devDependencies.@types/bun',
     'latest',
@@ -349,9 +364,30 @@ export function validateFactoryLibraryManifest(
   );
   pushIf(
     findings,
-    devDependencies?.typescript === 'latest',
+    devDependencies?.eslint === '9.39.4',
+    'devDependencies.eslint',
+    '9.39.4',
+    devDependencies?.eslint
+  );
+  pushIf(
+    findings,
+    devDependencies?.prettier === '3.9.6',
+    'devDependencies.prettier',
+    '3.9.6',
+    devDependencies?.prettier
+  );
+  pushIf(
+    findings,
+    devDependencies?.['typescript-eslint'] === '8.65.0',
+    'devDependencies.typescript-eslint',
+    '8.65.0',
+    devDependencies?.['typescript-eslint']
+  );
+  pushIf(
+    findings,
+    devDependencies?.typescript === '6.0.3',
     'devDependencies.typescript',
-    'latest',
+    '6.0.3',
     devDependencies?.typescript
   );
 
@@ -366,13 +402,21 @@ export function validateFactoryLibraryManifest(
     'test:junit': value => typeof value === 'string' && value.includes('run-test-junit'),
     'test:ci': value => typeof value === 'string' && value.includes('junit:enrich'),
     'junit:enrich': value => typeof value === 'string' && value.includes('junit-enrich'),
+    format: value => value === 'bun run prettier --write .',
+    'format:check': value => value === 'bun run prettier --check .',
+    lint: value => value === 'bun run eslint . --max-warnings=0',
+    'lint:fix': value => value === 'bun run eslint . --fix --max-warnings=0',
     typecheck: value => value === 'tsc --noEmit',
     build: value => typeof value === 'string' && value.startsWith('bun build '),
     'build:metafile': value => typeof value === 'string' && value.includes('--metafile-md'),
     'generate:files': value => typeof value === 'string' && value.includes('generate-files-md'),
     'check:files': value => typeof value === 'string' && value.includes('validate-files-md'),
     check: value =>
-      typeof value === 'string' && value.includes('check:files') && value.includes('typecheck'),
+      typeof value === 'string' &&
+      value.includes('check:files') &&
+      value.includes('format:check') &&
+      value.includes('lint') &&
+      value.includes('typecheck'),
     prepack: value => value === 'bun run check',
     postpublish: value => typeof value === 'string' && value.includes('postpublish.ts'),
     'publish:dry-run': value => value === 'bun publish --dry-run',

@@ -9,6 +9,9 @@
 # shared through Bun's cache while this project's node_modules stays isolated.
 linker = "isolated"
 globalStore = true
+# A new scaffold has no lockfile yet. Allow the first install and intentional
+# dependency updates; CI can set this to true after committing bun.lock.
+frozenLockfile = false
 
 [run]
 # Exit when the parent process dies — keeps CI pipelines clean.

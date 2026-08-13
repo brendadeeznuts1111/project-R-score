@@ -11,7 +11,10 @@ tree used by the local proof commands; it is not itself included in the package.
 ## File index
 
 - `.gitignore`
+- `.prettierignore`
+- `.prettierrc`
 - `bunfig.toml`
+- `eslint.config.mjs`
 - `files.md`
 - `package.json`
 - `README.md`
