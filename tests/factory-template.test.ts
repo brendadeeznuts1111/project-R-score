@@ -28,6 +28,7 @@ describe('factory-library template contract', () => {
     const config = Bun.TOML.parse(await Bun.file(`${TEMPLATE_ROOT}/bunfig.toml`).text()) as {
       install?: { linker?: string; globalStore?: boolean };
       run?: { noOrphans?: boolean };
+      console?: { depth?: number };
     };
     expect(config.install).toEqual({
       linker: 'isolated',
@@ -35,6 +36,7 @@ describe('factory-library template contract', () => {
       frozenLockfile: false,
     });
     expect(config.run?.noOrphans).toBe(true);
+    expect(config.console?.depth).toBe(4);
   });
 
   test('normalizes GitHub-style remotes without undefined or lost owner scope', () => {

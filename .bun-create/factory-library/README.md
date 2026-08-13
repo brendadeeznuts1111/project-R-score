@@ -318,7 +318,10 @@ the archive publish step above.
 `bun dev` watches and executes the source entry point while you work;
 `test:watch` does the same for the test suite. Both retain terminal output on
 reload with `--no-clear-screen`. `bunfig.toml` keeps child processes tied to the
-parent and configures readable console output. Installs use Bun's isolated
-linker with the global virtual store, so warm installs can reuse package trees
-across projects without weakening dependency isolation.
+parent and sets `[console] depth = 4` for readable nested `console.log()` output;
+Bun's default is `2`, and `bun --console-depth=N run …` overrides the project
+setting for one invocation. Put the runtime flag before `run`. Raw `Bun.inspect`
+uses its explicit `{ depth }` option instead. Installs use Bun's isolated linker
+with the global virtual store, so warm installs can reuse package trees across
+projects without weakening dependency isolation.
 `[serve.static] env = "PUBLIC_*"` is only for non-secret browser configuration.

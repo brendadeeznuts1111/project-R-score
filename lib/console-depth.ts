@@ -36,6 +36,7 @@ export {
   cliTone,
   // depth
   DEFAULT_DEPTH,
+  MAX_CONSOLE_DEPTH,
   getConsoleDepth,
   type InspectOptions,
   resolveInspectOptions,

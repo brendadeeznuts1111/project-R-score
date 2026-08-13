@@ -24,6 +24,8 @@ import {
   colorize,
   inspect,
   getConsoleDepth,
+  MAX_CONSOLE_DEPTH,
+  resolveInspectOptions,
   inspectCustom,
   shouldColor,
 } from '../lib/console-depth.ts';
@@ -209,10 +211,78 @@ describe('inspect / getConsoleDepth', () => {
       else Bun.env.BUN_CONSOLE_DEPTH = prev;
     }
   });
+  test('BUN_CONSOLE_DEPTH requires a complete native-range integer', () => {
+    const prev = Bun.env.BUN_CONSOLE_DEPTH;
+    try {
+      for (const invalid of ['-1', '1.5', '4junk', ' 4 ', String(MAX_CONSOLE_DEPTH + 1)]) {
+        Bun.env.BUN_CONSOLE_DEPTH = invalid;
+        expect(() => getConsoleDepth()).toThrow(`integer from 0 to ${MAX_CONSOLE_DEPTH}`);
+      }
+      Bun.env.BUN_CONSOLE_DEPTH = '0';
+      expect(getConsoleDepth()).toBe(0);
+      Bun.env.BUN_CONSOLE_DEPTH = String(MAX_CONSOLE_DEPTH);
+      expect(getConsoleDepth()).toBe(MAX_CONSOLE_DEPTH);
+    } finally {
+      if (prev === undefined) delete Bun.env.BUN_CONSOLE_DEPTH;
+      else Bun.env.BUN_CONSOLE_DEPTH = prev;
+    }
+  });
+  test('normalizes valid dynamic inspect depths and rejects fractional values', () => {
+    const [dynamicInteger] = [1, 1.5];
+    expect(resolveInspectOptions({ depth: dynamicInteger }).depth).toBe(1);
+    expect(() => resolveInspectOptions({ depth: 1.5 })).toThrow(
+      `integer from 0 to ${MAX_CONSOLE_DEPTH}`
+    );
+  });
   test('explicit depth option wins', () => {
     const deep = { a: { b: { c: { d: 1 } } } };
     expect(inspect(deep, { depth: 1 })).toContain('[Object ...]');
     expect(inspect(deep, { depth: 4 })).toContain('d: 1');
+  });
+
+  test('wrapper follows last runtime flag and ignores trailing script arguments', () => {
+    const source =
+      'import {getConsoleDepth} from "./lib/console-depth.ts"; console.log(getConsoleDepth())';
+    const run = (args: string[]) => {
+      const result = Bun.spawnSync(['bun', '--no-env-file', ...args], {
+        cwd: `${import.meta.dir}/..`,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+      expect(result.exitCode).toBe(0);
+      return result.stdout.toString().trim();
+    };
+
+    expect(run(['--console-depth=1', '--console-depth=4', '-e', source])).toBe('4');
+    const trailing = Bun.spawnSync(['bun', '--no-env-file', 'run', '-', '--console-depth=1'], {
+      cwd: `${import.meta.dir}/..`,
+      stdin: new TextEncoder().encode(source),
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(trailing.exitCode).toBe(0);
+    expect(trailing.stdout.toString().trim()).toBe('6');
+  });
+
+  test('wrapper honors the active --config bunfig', () => {
+    const source =
+      'import {getConsoleDepth} from "./lib/console-depth.ts"; console.log(getConsoleDepth())';
+    const result = Bun.spawnSync(
+      [
+        'bun',
+        '--no-env-file',
+        '--config=.bun-create/factory-library/bunfig.toml',
+        '-e',
+        source,
+      ],
+      {
+        cwd: `${import.meta.dir}/..`,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      }
+    );
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout.toString().trim()).toBe('4');
   });
 
   /**
