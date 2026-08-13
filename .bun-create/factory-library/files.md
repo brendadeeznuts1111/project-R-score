@@ -20,6 +20,7 @@ tree used by the local proof commands; it is not itself included in the package.
 - `README.md`
 - `scripts/bench.ts`
 - `scripts/build-summary.ts`
+- `scripts/color-test.ts`
 - `scripts/files-index.ts`
 - `scripts/generate-files-md.ts`
 - `scripts/junit-context.ts`
@@ -30,4 +31,5 @@ tree used by the local proof commands; it is not itself included in the package.
 - `scripts/validate-files-md.ts`
 - `src/index.ts`
 - `test/index.test.ts`
+- `test/terminal-types.test-d.ts`
 - `tsconfig.json`
