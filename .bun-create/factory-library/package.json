@@ -29,12 +29,16 @@
     "test:junit": "bun run scripts/run-test-junit.ts",
     "test:ci": "bun run test:junit -- --coverage && bun run junit:enrich",
     "junit:enrich": "bun run scripts/junit-enrich.ts",
+    "format": "bun run prettier --write .",
+    "format:check": "bun run prettier --check .",
+    "lint": "bun run eslint . --max-warnings=0",
+    "lint:fix": "bun run eslint . --fix --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "build": "bun build ./src/index.ts --outdir ./dist",
     "build:metafile": "bun build ./src/index.ts --outdir ./dist --metafile=dist/metafile.json --metafile-md=dist/metafile.md && bun run scripts/build-summary.ts",
     "generate:files": "bun run scripts/generate-files-md.ts",
     "check:files": "bun run scripts/validate-files-md.ts",
-    "check": "bun run generate:files && bun run check:files && bun run typecheck && bun test && bun run build",
+    "check": "bun run generate:files && bun run check:files && bun run format:check && bun run lint && bun run typecheck && bun test && bun run build",
     "prepack": "bun run check",
     "postpublish": "bun run scripts/postpublish.ts",
     "publish:dry-run": "bun publish --dry-run",
@@ -42,8 +46,12 @@
     "profile:cpu": "bun --cpu-prof --cpu-prof-dir=./profiles scripts/bench.ts"
   },
   "devDependencies": {
+    "@eslint/js": "9.39.4",
     "@types/bun": "latest",
-    "typescript": "latest"
+    "eslint": "9.39.4",
+    "prettier": "3.9.6",
+    "typescript-eslint": "8.65.0",
+    "typescript": "6.0.3"
   },
   "bun-create": {
     "preinstall": "echo '📦 Installing library dependencies...'",

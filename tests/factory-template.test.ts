@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { stripANSI } from 'bun';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { makeTempDir, removeTempDir } from '../lib/tmp-probe.ts';
 import {
@@ -17,7 +18,11 @@ describe('factory-library template contract', () => {
       install?: { linker?: string; globalStore?: boolean };
       run?: { noOrphans?: boolean };
     };
-    expect(config.install).toEqual({ linker: 'isolated', globalStore: true });
+    expect(config.install).toEqual({
+      linker: 'isolated',
+      globalStore: true,
+      frozenLockfile: false,
+    });
     expect(config.run?.noOrphans).toBe(true);
   });
 
@@ -114,7 +119,13 @@ describe('factory-library template contract', () => {
     expect(packageJson.scripts['test:junit']).toContain('run-test-junit');
     expect(packageJson.scripts['test:ci']).toContain('junit:enrich');
     expect(packageJson.scripts['junit:enrich']).toContain('junit-enrich');
+    expect(packageJson.scripts.format).toBe('bun run prettier --write .');
+    expect(packageJson.scripts['format:check']).toBe('bun run prettier --check .');
+    expect(packageJson.scripts.lint).toBe('bun run eslint . --max-warnings=0');
+    expect(packageJson.scripts['lint:fix']).toBe('bun run eslint . --fix --max-warnings=0');
     expect(packageJson.scripts.typecheck).toBe('tsc --noEmit');
+    expect(packageJson.scripts.check).toContain('bun run format:check');
+    expect(packageJson.scripts.check).toContain('bun run lint');
     expect(packageJson.scripts.check).toContain('bun run typecheck');
     expect(packageJson.scripts['generate:files']).toContain('generate-files-md');
     expect(packageJson.scripts['check:files']).toContain('validate-files-md');
@@ -123,7 +134,9 @@ describe('factory-library template contract', () => {
     expect(packageJson.scripts.postpublish).toContain('postpublish.ts');
     expect(packageJson.scripts['publish:dry-run']).toBe('bun publish --dry-run');
     expect(packageJson.publishConfig).toEqual({ access: 'public', tag: 'latest' });
-    expect(packageJson.devDependencies.typescript).toBe('latest');
+    expect(packageJson.devDependencies.typescript).toBe('6.0.3');
+    expect(packageJson.devDependencies.prettier).toBe('3.9.6');
+    expect(packageJson.devDependencies.eslint).toBe('9.39.4');
 
     expect(await Bun.file(`${TEMPLATE_ROOT}/plugin.example.ts`).exists()).toBe(false);
     expect(await Bun.file(`${TEMPLATE_ROOT}/.gitignore`).exists()).toBe(true);
@@ -133,6 +146,7 @@ describe('factory-library template contract', () => {
     expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/build-summary.ts`).exists()).toBe(true);
     expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/postpublish.ts`).exists()).toBe(true);
     expect(await Bun.file(`${TEMPLATE_ROOT}/files.md`).exists()).toBe(true);
+    expect(await Bun.file(`${TEMPLATE_ROOT}/eslint.config.mjs`).exists()).toBe(true);
 
     const filesIndex = await Bun.file(`${TEMPLATE_ROOT}/files.md`).text();
     expect(filesIndex).toContain('## Publish allowlist');
@@ -147,6 +161,8 @@ describe('factory-library template contract', () => {
     expect(readme).toContain('stdout`/`stderr');
     expect(readme).toContain('--test-name-pattern="hello"');
     expect(readme).toContain('rather than a glob API');
+    expect(readme).toContain('AUTO_TERMINAL_COLOR_FORMAT');
+    expect(readme).toContain('Bun.color(color, "ansi")');
 
     const bunfig = await Bun.file(`${TEMPLATE_ROOT}/bunfig.toml`).text();
     expect(bunfig).toContain('Keep [test.reporter] unset');
@@ -174,6 +190,29 @@ describe('factory-library template contract', () => {
     expect(tsconfig.compilerOptions.types).toEqual(['bun']);
     expect(tsconfig.compilerOptions.moduleDetection).toBe('force');
     expect(tsconfig.compilerOptions.noUncheckedIndexedAccess).toBe(true);
+  });
+
+  test('defines ansi and lets Bun.color auto-format terminal output', async () => {
+    const proc = Bun.spawn(
+      bunSpawnArgs([
+        '-e',
+        `import { AUTO_TERMINAL_COLOR_FORMAT, formatTerminal } from ${JSON.stringify(`${TEMPLATE_ROOT}/src/index.ts`)}; console.write(AUTO_TERMINAL_COLOR_FORMAT + "\\n" + formatTerminal("ready", "#e06c75"));`,
+      ]),
+      {
+        env: { ...Bun.env, FORCE_COLOR: '3' },
+        stdout: 'pipe',
+        stderr: 'pipe',
+      }
+    );
+    const [exitCode, stdout, stderr] = await Promise.all([
+      proc.exited,
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+    ]);
+    expect(exitCode, stderr).toBe(0);
+    expect(stdout.startsWith('ansi\n\x1b[38;2;224;108;117m')).toBe(true);
+    expect(stdout.endsWith('\x1b[0m')).toBe(true);
+    expect(stripANSI(stdout)).toBe('ansi\nready');
   });
 
   test('groups package properties, environment, and flags in a stable contract snapshot', async () => {
