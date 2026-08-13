@@ -1,10 +1,11 @@
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/networking/fetch — fetch
+// @see https://bun.com/blog/bun-v1.3.14#http2-client — per-request protocol
 
 export const FETCH_MAX_RETRIES = 3;
 export const FETCH_BASE_DELAY_MS = 500;
 
-export type FetchRetryOptions = RequestInit & {
+export type FetchRetryOptions = BunFetchRequestInit & {
   maxRetries?: number;
   baseDelayMs?: number;
   /** Extra statuses to retry beyond 429 + 5xx. */

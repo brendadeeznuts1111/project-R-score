@@ -1,11 +1,22 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/networking/fetch — fetch
+// @see https://bun.com/blog/bun-v1.3.14#http2-client — per-request protocol
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 import { joinPath } from '../../path-bun.ts';
 import { fetchWithRetry as sharedFetchWithRetry } from '../fetch-url.ts';
 import { FIXTURES_DIR } from '../paths.ts';
 import type { OddsEndpoint } from './types.ts';
 import { prewarmBookmaker } from './connection-pool.ts';
+
+export type OddsFetchOptions = {
+  method?: 'GET' | 'POST';
+  headers?: Record<string, string>;
+  body?: unknown;
+  protocol?: NonNullable<BunFetchRequestInit['protocol']>;
+  maxRetries?: number;
+  backoffMs?: number;
+  timeoutMs?: number;
+};
 
 export type FetchOddsResult = {
   ok: boolean;
@@ -40,30 +51,27 @@ async function loadFixtureBody(fixtureId: string): Promise<string | null> {
   return null;
 }
 
-/**
- * Fetch a single odds endpoint with exponential backoff (429 / 5xx / network).
- * Does not force `protocol: "http2"` — Bun multiplexes HTTP/2 when the peer offers it.
- */
-export async function fetchWithRetry(
-  url: string,
-  opts: {
-    method?: 'GET' | 'POST';
-    headers?: Record<string, string>;
-    body?: unknown;
-    maxRetries?: number;
-    backoffMs?: number;
-    timeoutMs?: number;
-  } = {}
-): Promise<Response> {
-  return sharedFetchWithRetry(url, {
+/** Build the shared retry request without inventing a provider protocol. */
+export function buildOddsFetchOptions(opts: OddsFetchOptions = {}) {
+  return {
     method: opts.method ?? 'GET',
     headers: politeHeaders(opts.headers),
     body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
+    ...(opts.protocol ? { protocol: opts.protocol } : {}),
     signal: AbortSignal.timeout(opts.timeoutMs ?? 10_000),
-    redirect: 'follow',
+    redirect: 'follow' as const,
     maxRetries: opts.maxRetries ?? 3,
     baseDelayMs: opts.backoffMs ?? 500,
-  });
+  };
+}
+
+/**
+ * Fetch a single odds endpoint with exponential backoff (429 / 5xx / network).
+ * HTTP/2 is an explicit per-provider opt-in; omission preserves Bun's default
+ * transport and process-level experimental negotiation.
+ */
+export async function fetchWithRetry(url: string, opts: OddsFetchOptions = {}): Promise<Response> {
+  return sharedFetchWithRetry(url, buildOddsFetchOptions(opts));
 }
 
 export async function fetchOddsOne(
@@ -104,6 +112,7 @@ export async function fetchOddsOne(
       method: endpoint.method,
       headers: endpoint.headers,
       body: endpoint.body,
+      ...(endpoint.protocol ? { protocol: endpoint.protocol } : {}),
     });
     const bodyText = await res.text();
     const elapsedMs = (Number(Bun.nanoseconds()) - Number(started)) / 1_000_000;

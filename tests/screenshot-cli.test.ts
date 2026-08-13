@@ -13,6 +13,7 @@ import {
   assertHttpUrl,
   assertRepoPath,
   hasPngMagic,
+  resolveExistingRealPath,
   runScreenshotCli,
 } from '../tools/screenshot-cli.ts';
 
@@ -92,7 +93,7 @@ describe('screenshot CLI helpers', () => {
       force: true,
       label: 'image path',
     });
-    expect(forced).toBe('/tmp/outside-screenshot');
+    expect(forced).toBe(await resolveExistingRealPath('/tmp/outside-screenshot'));
   });
 
   test('hasPngMagic detects PNG signature', () => {

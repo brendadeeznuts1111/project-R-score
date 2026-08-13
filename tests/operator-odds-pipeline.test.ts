@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { join } from 'node:path';
 import { rmSync } from 'node:fs';
 import {
+  buildOddsFetchOptions,
   clearPrewarmState,
   detectArbitrage,
   detectChanges,
@@ -40,6 +41,17 @@ describe('operator odds pipeline', () => {
     const s = prewarmBookmaker('hardrock.bet');
     expect(s.hostKey).toBe('hardrock.bet');
     expect(s.prewarms).toBeGreaterThanOrEqual(1);
+  });
+
+  test('HTTP/2 is explicit and default transport remains unpinned', () => {
+    const automatic = endpointFromHost('auto.example');
+    expect(automatic.protocol).toBeUndefined();
+    expect('protocol' in automatic).toBe(false);
+
+    const h2 = endpointFromHost('h2.example', { protocol: 'http2' });
+    expect(h2.protocol).toBe('http2');
+    expect(buildOddsFetchOptions({ protocol: h2.protocol }).protocol).toBe('http2');
+    expect('protocol' in buildOddsFetchOptions()).toBe(false);
   });
 
   test('parseOddsJson reads fixture shape', async () => {
