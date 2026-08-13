@@ -16,6 +16,7 @@ Pin ↔ tip **type inventory** (committed `tools/bun-types-inventory.json`,
 | Feed indexes only                   | `bun run docs:refresh:feeds` — conditional GET RSS + `bun.com/reference`                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | Legacy skip scrape                  | `bun run docs:refresh -- --skip-scrape` — full minus blog scrape                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | Suggest token                       | `bun tools/bun-doc-refs.ts suggest <token>` — frozen `CANONICAL_REFS` wins; prints guide `example[lang]` code                                                                                                                                                                                                                                                                                                                                                                                     |
+| Source `@see` gate                  | `bun tools/bun-doc-refs.ts check <paths...>` · add `--json` for stable file/line/column findings; explicit missing, unsupported, empty, unreadable, or malformed targets fail closed                                                                                                                                                                                                                                                                                                              |
 | Guide fences                        | Frozen [`bun-docs-guide-examples.ts`](../tools/bun-docs-guide-examples.ts); scrape via `generate-tokens-from-docs` (`guides` domain)                                                                                                                                                                                                                                                                                                                                                              |
 | Blog ingestion                      | `CANONICAL_SOURCES` + [`extract-metadata.ts`](../lib/docs/extract-metadata.ts) · journey `bun test tests/journey/blog-extraction.test.ts`                                                                                                                                                                                                                                                                                                                                                         |
 | Fetch-page SSOT                     | [`fetch-page.ts`](../lib/docs/fetch-page.ts) · locus [`runtime/networking/fetch`](https://bun.com/docs/runtime/networking/fetch) · claim `fetch-page-boundaries` · HTML + RSS (Accept override); conditional GET (304) stays bare `fetch`                                                                                                                                                                                                                                                         |
@@ -34,6 +35,16 @@ Loop: RSS index → reference index → scrape → catalog build → integrity l
 catalog entries moved — avoids overlay churn. `verify-all` runs
 `verify:docs-coverage:save` (reads committed indexes; use `--refresh-rss` /
 `--refresh-reference` for live fetch).
+
+The source gate parses JavaScript and TypeScript syntax rather than searching
+raw text. It resolves global, namespace, named, aliased, dynamic, `require`, and
+type-position Bun references; ignores comments, template examples, shadowed
+locals, dependency trees, and generated output directories; and reports the
+first source location plus occurrence count for each missing API-specific
+reference. `check --json` emits a versioned contract with a finding count,
+affected-file count, and structured errors while retaining the nonzero gate
+status. `annotate --write` uses the same scanner, so parser or target errors
+stop before any file is rewritten.
 
 ## Refresh tiers + commit lanes
 
