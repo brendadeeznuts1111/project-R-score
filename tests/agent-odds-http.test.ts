@@ -65,6 +65,26 @@ describe('agent-odds shared HTTP handlers', () => {
     expect(typeof body.total).toBe('number');
   });
 
+  test('labels dashboard-generated intake as synthetic and never weight-eligible', async () => {
+    const [eventsResponse, edgesResponse] = await Promise.all([
+      handleAgentOddsRequest(new Request('http://127.0.0.1:3000/api/events?refresh=1')),
+      handleAgentOddsRequest(new Request('http://127.0.0.1:3000/api/edges?refresh=1')),
+    ]);
+    expect(eventsResponse?.status).toBe(200);
+    expect(edgesResponse?.status).toBe(200);
+    const events = (await eventsResponse!.json()) as {
+      data: Array<{ intake?: { source?: string; circuitVerified?: boolean } }>;
+    };
+    const edges = (await edgesResponse!.json()) as {
+      data: Array<{ ml?: { weight_eligible?: boolean } }>;
+    };
+    expect(events.data.length).toBeGreaterThan(0);
+    for (const event of events.data) {
+      expect(event.intake).toEqual({ source: 'synthetic', circuitVerified: false });
+    }
+    for (const edge of edges.data) expect(edge.ml?.weight_eligible).toBe(false);
+  });
+
   test('platform advertises serve-public feature', async () => {
     const res = await handleAgentOddsRequest(
       new Request('http://127.0.0.1:3000/api/platform'),
