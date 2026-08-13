@@ -52,6 +52,8 @@ export const CANONICAL_REPO_DOCS = {
   platformRouting: 'docs/platform-routing.md',
   /** Newer Bun runtime APIs (WebView, markdown.ansi, cron, UDP) */
   bunNativeCapabilities: 'docs/BUN_NATIVE_CAPABILITIES.md',
+  /** Bun runtime fetch proxy environment defaults and precedence */
+  bunFetchProxyEnvironment: 'docs/guides/bun-fetch-proxy-environment.md',
   /** Bun token/catalog operate loop (RSS → scrape → catalog → integrity) */
   bunDocsOperate: 'docs/BUN_DOCS_OPERATE.md',
   /** Bun-types pin inventory + tip-diff + usage (not partner-surface) */
@@ -113,6 +115,7 @@ export const CANONICAL_HARNESS = {
   consoleDepth: 'lib/console-depth.ts',
   consoleDepthGuide: 'lib/console-depth.md',
   bunRuntimeGuide: 'lib/bun-runtime.md',
+  bunFetchProxyRegistry: 'lib/net/proxy.ts',
   terminal: 'lib/terminal.ts',
   deepEquals: 'lib/deep-equals.ts',
   peekSettle: 'lib/peek-settle.ts',
@@ -211,6 +214,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   portalDesignAgent: 'Portal Design agent (theme · kernels · UI blocks)',
   platformRouting: 'Local vs Pages routing map',
   bunNativeCapabilities: 'Bun native capabilities note (browser, md, scheduler, datagram)',
+  bunFetchProxyEnvironment: 'Bun fetch proxy env defaults · aliases · precedence',
   bunDocsOperate: 'Bun token/catalog operate (RSS → scrape → catalog)',
   bunTypesInventory: 'Bun-types inventory pipeline (pin SSOT · tip-diff · usage)',
   bunTypesInventoryJson: 'Bun-types inventory JSON SSOT (committed under tools/)',

@@ -138,6 +138,25 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     related: ['runtime/http/server'],
   },
   {
+    term: 'HTTP_PROXY',
+    path: 'guides/http/proxy#environment-variables',
+    description: 'Runtime fetch proxy URL for HTTP requests; lowercase http_proxy is compatible',
+    relatedTokens: ['HTTPS_PROXY', 'NO_PROXY', 'fetch'],
+  },
+  {
+    term: 'HTTPS_PROXY',
+    path: 'guides/http/proxy#environment-variables',
+    description: 'Runtime fetch proxy URL for HTTPS requests; lowercase https_proxy is compatible',
+    relatedTokens: ['HTTP_PROXY', 'NO_PROXY', 'fetch'],
+  },
+  {
+    term: 'NO_PROXY',
+    path: 'blog/bun-v1.3.12#bun-apis',
+    description: 'Runtime fetch proxy bypass list; lowercase no_proxy is compatible',
+    minVersion: '1.3.12',
+    relatedTokens: ['HTTP_PROXY', 'HTTPS_PROXY', 'fetch'],
+  },
+  {
     term: 'globalStore',
     path: 'pm/global-store',
     description: 'Shared global virtual store for isolated installs',
