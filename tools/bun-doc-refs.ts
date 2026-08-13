@@ -81,6 +81,10 @@ import { resolvePath } from '../lib/path-bun.ts';
 import ts from 'typescript';
 import { BUN_CONFIG_INSTALL_VARS } from './bun-install-env.ts';
 import { getCuratedEntry } from './bun-docs-curated.ts';
+import {
+  catalogReleaseProvenanceFindings,
+  type OfficialReleaseEvidence,
+} from './bun-docs-provenance.ts';
 
 /** @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags */
 const INSTALL_CPU_OS_FLAGS = bunDocs('pm/cli/install', 'cpu-and-os-flags');
@@ -2301,7 +2305,7 @@ async function loadTokenCatalogs(): Promise<TokenCatalog[]> {
 
 type CatalogEntry = {
   name: string;
-  type: 'api' | 'cli-flag' | 'config' | 'concept';
+  type: string;
   stability: 'stable' | 'experimental' | 'deprecated';
   description?: string;
   canonicalPage: string;
@@ -2332,17 +2336,53 @@ type CatalogEntry = {
   lastUpdated?: string;
 };
 
-function isCatalog(value: unknown): value is { entries: CatalogEntry[] } {
-  const v = value as Record<string, unknown> | undefined;
-  return !!v && Array.isArray(v.entries);
+function parseRefsCatalog(value: unknown, source: string): CatalogEntry[] {
+  const file = value as Record<string, unknown> | null;
+  if (!file || typeof file !== 'object' || Array.isArray(file)) {
+    throw new Error(`${source}: expected an object`);
+  }
+  const generated = typeof file.generated === 'string' ? Date.parse(file.generated) : NaN;
+  if (!Number.isFinite(generated) || new Date(generated).toISOString() !== file.generated) {
+    throw new Error(`${source}: generated is not ISO-8601`);
+  }
+  if (typeof file.bunVersion !== 'string' || !/^\d+\.\d+\.\d+/.test(file.bunVersion)) {
+    throw new Error(`${source}: bunVersion is missing or invalid`);
+  }
+  if (
+    typeof file.releaseUrl !== 'string' ||
+    typeof file.blogUrl !== 'string' ||
+    file.docsRoot !== 'https://bun.com/docs' ||
+    typeof file.versionPinned !== 'boolean' ||
+    !Array.isArray(file.entries) ||
+    !Number.isSafeInteger(file.count) ||
+    file.count !== file.entries.length
+  ) {
+    throw new Error(`${source}: required catalog metadata is missing or inconsistent`);
+  }
+  const entries = file.entries as CatalogEntry[];
+  const names = new Set<string>();
+  for (const [index, entry] of entries.entries()) {
+    if (
+      !entry ||
+      typeof entry.name !== 'string' ||
+      typeof entry.type !== 'string' ||
+      typeof entry.canonicalPage !== 'string' ||
+      !Array.isArray(entry.allPages)
+    ) {
+      throw new Error(`${source}: entries[${index}] is invalid`);
+    }
+    const name = entry.name.toLowerCase();
+    if (names.has(name)) throw new Error(`${source}: duplicate entry ${entry.name}`);
+    names.add(name);
+  }
+  return entries;
 }
 
 /** Load the generated docs catalog (tools/bun-docs-catalog.json), if present. */
 async function loadDocsCatalog(): Promise<CatalogEntry[] | null> {
   const path = new URL('./bun-docs-catalog.json', import.meta.url).pathname;
   try {
-    const parsed = (await Bun.file(path).json()) as unknown;
-    return isCatalog(parsed) ? parsed.entries : null;
+    return parseRefsCatalog(await Bun.file(path).json(), path);
   } catch {
     return null;
   }
@@ -2529,6 +2569,8 @@ type InvalidProvenanceEvent = {
 async function provenanceCheck(json = false, requireRelease = false): Promise<number> {
   const catalog = await loadDocsCatalog();
   if (!catalog) throw new Error('docs catalog is missing or unreadable');
+  const releaseMap = await loadOfficialReleaseMap();
+  const officialMismatches = catalogReleaseProvenanceFindings(catalog, releaseMap);
   const invalid: InvalidProvenanceEvent[] = [];
   let recordedEvents = 0;
   let knownReleases = 0;
@@ -2556,7 +2598,8 @@ async function provenanceCheck(json = false, requireRelease = false): Promise<nu
       }
     }
   }
-  const failures = invalid.length + (requireRelease ? unknownReleases : 0);
+  const failures =
+    invalid.length + officialMismatches.length + (requireRelease ? unknownReleases : 0);
   const result = {
     schemaVersion: 1,
     command: 'provenance-check',
@@ -2566,6 +2609,7 @@ async function provenanceCheck(json = false, requireRelease = false): Promise<nu
     knownReleases,
     unknownReleases,
     invalid,
+    officialMismatches,
     ...(requireRelease ? { unknownApis } : {}),
   };
   if (json) jsonOut(result);
@@ -2578,14 +2622,49 @@ async function provenanceCheck(json = false, requireRelease = false): Promise<nu
         `  ${finding.token}: ${finding.type} v${finding.version} missing ${finding.missing.join(' + ')}`
       );
     }
+    for (const finding of officialMismatches) {
+      console.info(`  ${finding.token}: ${finding.locus} v${finding.version} ${finding.issue}`);
+    }
     if (requireRelease && unknownApis.length) {
       console.info(`  release history unknown: ${unknownApis.join(', ')}`);
     }
     if (failures === 0) {
-      console.info('✅ every recorded release/update has an official date and reference');
+      console.info(
+        '✅ every recorded release/update matches its exact official RSS date and reference'
+      );
     }
   }
   return failures;
+}
+
+async function loadOfficialReleaseMap(): Promise<Map<string, OfficialReleaseEvidence>> {
+  const path = new URL('./bun-docs-feeds.json', import.meta.url).pathname;
+  const raw = (await Bun.file(path).json()) as {
+    rss?: { count?: number; entries?: unknown[] };
+  };
+  const entries = raw.rss?.entries;
+  if (!Array.isArray(entries) || entries.length === 0 || raw.rss?.count !== entries.length) {
+    throw new Error('tools/bun-docs-feeds.json#rss is missing or has an invalid count');
+  }
+  const map = new Map<string, OfficialReleaseEvidence>();
+  for (const [index, value] of entries.entries()) {
+    const row = value as Partial<OfficialReleaseEvidence>;
+    if (
+      typeof row.version !== 'string' ||
+      !/^\d+\.\d+\.\d+$/.test(row.version) ||
+      typeof row.url !== 'string' ||
+      !row.url.startsWith('https://bun.com/blog/bun-v') ||
+      typeof row.pubDate !== 'string' ||
+      !Number.isFinite(Date.parse(row.pubDate))
+    ) {
+      throw new Error(`tools/bun-docs-feeds.json#rss.entries[${index}] is invalid`);
+    }
+    if (map.has(row.version)) {
+      throw new Error(`tools/bun-docs-feeds.json#rss duplicates version ${row.version}`);
+    }
+    map.set(row.version, row as OfficialReleaseEvidence);
+  }
+  return map;
 }
 
 /**

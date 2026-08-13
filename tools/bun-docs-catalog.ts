@@ -60,14 +60,16 @@ import {
 } from '../lib/docs/docs-artifact-paths.ts';
 import { CURATED_ENTRIES } from './bun-docs-curated.ts';
 import { changelogIndex } from './bun-docs-changelog.ts';
+import { catalogReleaseProvenanceFindings, exactReleaseEntry } from './bun-docs-provenance.ts';
+export { catalogReleaseProvenanceFindings } from './bun-docs-provenance.ts';
 import {
   cleanBunVersion,
   loadReleaseIndex,
   lookupBlogUrl,
   releaseOverlayIndex,
+  parseReleaseOverlayFile,
   type ReleaseEntry,
   type ReleaseOverlayEntry,
-  type ReleaseOverlayFile,
   type ReleaseOverlayHit,
 } from './bun-docs-releases.ts';
 import {
@@ -607,6 +609,67 @@ export type CatalogFileMeta = {
   versionPinned: boolean;
   entries: DocCatalogEntry[];
 };
+
+function parseCatalogRecord(value: unknown): Record<string, unknown> | null {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function catalogIsoTimestamp(value: unknown): value is string {
+  if (typeof value !== 'string' || value.length === 0) return false;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) && new Date(timestamp).toISOString() === value;
+}
+
+/** Validate the committed catalog instead of synthesizing missing gate metadata. */
+export function parseCatalogFileMeta(value: unknown, source = 'docs catalog'): CatalogFileMeta {
+  const file = parseCatalogRecord(value);
+  if (!file) throw new Error(`${source}: expected an object`);
+  if (!catalogIsoTimestamp(file.generated)) {
+    throw new Error(`${source}: generated is not ISO-8601`);
+  }
+  if (typeof file.bunVersion !== 'string' || !/^\d+\.\d+\.\d+/.test(file.bunVersion)) {
+    throw new Error(`${source}: bunVersion is missing or invalid`);
+  }
+  if (typeof file.releaseUrl !== 'string' || !file.releaseUrl) {
+    throw new Error(`${source}: releaseUrl is missing`);
+  }
+  if (typeof file.blogUrl !== 'string') throw new Error(`${source}: blogUrl must be a string`);
+  if (file.docsRoot !== 'https://bun.com/docs') {
+    throw new Error(`${source}: docsRoot must be https://bun.com/docs`);
+  }
+  if (typeof file.versionPinned !== 'boolean') {
+    throw new Error(`${source}: versionPinned must be boolean`);
+  }
+  if (!Array.isArray(file.entries)) throw new Error(`${source}: entries must be an array`);
+  if (!Number.isSafeInteger(file.count) || file.count !== file.entries.length) {
+    throw new Error(`${source}: count does not match entries.length`);
+  }
+
+  const names = new Set<string>();
+  for (const [index, rawEntry] of file.entries.entries()) {
+    const entry = parseCatalogRecord(rawEntry);
+    const label = `${source}: entries[${index}]`;
+    if (!entry || typeof entry.name !== 'string' || !entry.name.trim()) {
+      throw new Error(`${label}.name is empty`);
+    }
+    const normalized = normalizeName(entry.name);
+    if (names.has(normalized)) throw new Error(`${source}: duplicate entry ${entry.name}`);
+    names.add(normalized);
+    if (!DocRefTypeArray.includes(entry.type as DocRefType)) {
+      throw new Error(`${label}.type is invalid`);
+    }
+    if (!['stable', 'experimental', 'deprecated'].includes(String(entry.stability))) {
+      throw new Error(`${label}.stability is invalid`);
+    }
+    if (typeof entry.canonicalPage !== 'string' || !entry.canonicalPage) {
+      throw new Error(`${label}.canonicalPage is empty`);
+    }
+    if (!Array.isArray(entry.allPages)) throw new Error(`${label}.allPages must be an array`);
+  }
+  return file as unknown as CatalogFileMeta;
+}
 
 type IndexEntry = {
   section: string;
@@ -1385,9 +1448,7 @@ function versionEvidence(
   releaseMap: Map<string, ReleaseEntry>
 ): { date?: string; url?: string } {
   if (!version) return {};
-  const clean = cleanBunVersion(version);
-  const release =
-    releaseMap.get(clean) ?? releaseMap.get(`${clean.split('.').slice(0, 2).join('.')}.0`);
+  const release = exactReleaseEntry(version, releaseMap);
   return release ? { date: release.pubDate, url: release.url } : { url: releaseUrlFor(version) };
 }
 
@@ -1434,10 +1495,10 @@ export async function loadReleaseOverlay(): Promise<Map<string, ReleaseOverlayEn
     const f = Bun.file(path);
     if (!(await f.exists())) continue;
     try {
-      const file = (await f.json()) as ReleaseOverlayFile;
+      const file = parseReleaseOverlayFile(await f.json(), path);
       return releaseOverlayIndex(file);
-    } catch {
-      /* try next */
+    } catch (error) {
+      throw new Error(`${path}: unreadable release overlay`, { cause: error });
     }
   }
   return new Map();
@@ -1768,21 +1829,7 @@ export async function loadCatalogFile(): Promise<CatalogFileMeta> {
       versionPinned: bunVersion !== Bun.version,
     });
   }
-  const j = (await Bun.file(OUT_PATH).json()) as Partial<CatalogFileMeta> & {
-    entries?: DocCatalogEntry[];
-  };
-  const entries = Array.isArray(j.entries) ? j.entries : await buildCatalog();
-  const bunVersion = normalizeBunVersion(j.bunVersion ?? Bun.version);
-  return {
-    generated: j.generated ?? new Date().toISOString(),
-    bunVersion,
-    releaseUrl: j.releaseUrl ?? releaseUrlFor(bunVersion),
-    blogUrl: j.blogUrl ?? '',
-    commitHash: j.commitHash,
-    docsRoot: j.docsRoot ?? 'https://bun.com/docs',
-    versionPinned: j.versionPinned ?? false,
-    entries,
-  };
+  return parseCatalogFileMeta(await Bun.file(OUT_PATH).json(), OUT_PATH);
 }
 
 export async function loadCatalog(): Promise<DocCatalogEntry[]> {
@@ -1931,6 +1978,26 @@ export async function verifyCatalog(
   if (missingUrls > 0) {
     // Soft warning — rebuild stamps these; do not fail older catalogs hard if pin matches
     messages.push(`warn: ${missingUrls} entries missing docsUrl/releaseUrl (rebuild to stamp)`);
+  }
+
+  const provenanceFindings = catalogReleaseProvenanceFindings(meta.entries, releaseMap);
+  if (provenanceFindings.length > 0) {
+    ok = false;
+    const first = provenanceFindings[0]!;
+    messages.push(
+      `${provenanceFindings.length} release provenance mismatch(es); first: ${first.token} ${first.locus} v${first.version} ${first.issue}`
+    );
+  } else {
+    const eventCount = meta.entries.reduce(
+      (count, entry) =>
+        count +
+        Number(Boolean(entry.releasedIn)) +
+        Number(Boolean(entry.fixedIn)) +
+        Number(Boolean(entry.changedIn)) +
+        (entry.releaseHits?.length ?? 0),
+      0
+    );
+    messages.push(`ok ${eventCount} release provenance records match exact RSS rows`);
   }
 
   return { ok, messages };

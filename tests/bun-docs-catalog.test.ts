@@ -2,6 +2,11 @@
  * Catalog helpers: dedup scoring + canonical page preference + version pin URLs.
  * Changelog overlay: token → releasedIn / fixedIn / changeNote.
  */
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth
+// @see https://bun.com/docs/bundler/executables#embedding-runtime-arguments — --compile-exec-argv
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
 import { describe, expect, test } from 'bun:test';
 import {
   normalizeName,
@@ -22,6 +27,8 @@ import {
   applyChangelogOverlay,
   applyReleaseOverlay,
   stampVersionProvenance,
+  catalogReleaseProvenanceFindings,
+  parseCatalogFileMeta,
   listCells,
   shortType,
   shortStability,
@@ -44,6 +51,34 @@ import { CURATED_ENTRIES } from '../tools/bun-docs-curated.ts';
 import { GUIDE_EXAMPLES, TOKEN_GUIDE_PATH } from '../tools/bun-docs-guide-examples.ts';
 
 describe('bun-docs-catalog helpers', () => {
+  test('parseCatalogFileMeta rejects synthesized metadata and duplicate entries', () => {
+    const entry = {
+      name: 'Bun.example',
+      type: 'api',
+      stability: 'stable',
+      canonicalPage: 'https://bun.com/reference/bun/example',
+      allPages: ['https://bun.com/reference/bun/example'],
+      section: 'reference',
+    } satisfies DocCatalogEntry;
+    const file = {
+      generated: '2026-08-13T00:00:00.000Z',
+      bunVersion: '1.3.14',
+      releaseUrl: 'https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14',
+      blogUrl: 'https://bun.com/blog/bun-v1.3.14',
+      docsRoot: 'https://bun.com/docs',
+      versionPinned: false,
+      count: 1,
+      entries: [entry],
+    };
+    expect(parseCatalogFileMeta(file).entries).toHaveLength(1);
+    expect(() => parseCatalogFileMeta({ ...file, bunVersion: undefined })).toThrow(
+      'bunVersion is missing or invalid'
+    );
+    expect(() =>
+      parseCatalogFileMeta({ ...file, count: 2, entries: [entry, { ...entry }] })
+    ).toThrow('duplicate entry Bun.example');
+  });
+
   test('normalizeName collapses bun. prefix case', () => {
     expect(normalizeName('Bun.WebView')).toBe('bun.webview');
     expect(normalizeName('bun.webview')).toBe('bun.webview');
@@ -260,6 +295,84 @@ describe('release provenance', () => {
     expect(entry.releasedUrl).toBe('https://bun.com/blog/bun-v1.3.13');
     expect(entry.fixedAt).toBe('2026-05-13T03:19:35.000Z');
     expect(entry.fixedUrl).toBe('https://bun.com/blog/bun-v1.3.14');
+  });
+
+  test('does not borrow a minor release post for an unknown patch release', () => {
+    const entry = {
+      name: 'Bun.future',
+      type: 'api',
+      stability: 'stable',
+      canonicalPage: 'https://bun.com/docs/reference/bun/future',
+      allPages: ['https://bun.com/docs/reference/bun/future'],
+      section: 'reference',
+      releasedIn: '1.3.99',
+    } satisfies DocCatalogEntry;
+    const releases = new Map([
+      [
+        '1.3.0',
+        {
+          version: '1.3.0',
+          title: 'Bun v1.3',
+          url: 'https://bun.com/blog/bun-v1.3',
+          guid: 'https://bun.com/blog/bun-v1.3',
+          pubDate: '2025-11-21T10:11:00.000Z',
+        },
+      ],
+    ]);
+
+    stampVersionProvenance(entry, releases);
+
+    expect(entry.releasedAt).toBeUndefined();
+    expect(entry.releasedUrl).toBe('https://github.com/oven-sh/bun/releases/tag/bun-v1.3.99');
+    expect(catalogReleaseProvenanceFindings([entry], releases)).toEqual([
+      expect.objectContaining({
+        token: 'Bun.future',
+        locus: 'released',
+        version: '1.3.99',
+        issue: 'release-missing',
+      }),
+    ]);
+  });
+
+  test('reports exact official date and URL mismatches for scalar and hit evidence', () => {
+    const releases = new Map([
+      [
+        '1.3.14',
+        {
+          version: '1.3.14',
+          title: 'Bun v1.3.14',
+          url: 'https://bun.com/blog/bun-v1.3.14',
+          guid: 'https://bun.com/blog/bun-v1.3.14',
+          pubDate: '2026-05-13T03:19:35.000Z',
+        },
+      ],
+    ]);
+    const entry = {
+      name: 'Bun.example',
+      type: 'api',
+      stability: 'stable',
+      canonicalPage: 'https://bun.com/reference/bun/example',
+      allPages: ['https://bun.com/reference/bun/example'],
+      section: 'reference',
+      changedIn: '1.3.14',
+      changedAt: '2026-05-12T00:00:00.000Z',
+      changedUrl: 'https://bun.com/blog/bun-v1.3.13',
+      releaseHits: [
+        {
+          version: '1.3.14',
+          url: 'https://bun.com/blog/bun-v1.3.14',
+          publishedAt: '2026-05-12T00:00:00.000Z',
+          section: 'Changes',
+          kind: 'chg',
+        },
+      ],
+    } satisfies DocCatalogEntry;
+
+    expect(catalogReleaseProvenanceFindings([entry], releases).map(row => row.issue)).toEqual([
+      'date-mismatch',
+      'url-mismatch',
+      'date-mismatch',
+    ]);
   });
 });
 
