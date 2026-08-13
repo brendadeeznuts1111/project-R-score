@@ -16,6 +16,7 @@ import {
   CANONICAL_REFS,
   collectCodeApiUsageDetails,
   collectCodeApiUsages,
+  buildApiReleaseProvenance,
   findMissing,
   sourceFiles,
 } from '../tools/bun-doc-refs.ts';
@@ -150,7 +151,7 @@ void RuntimeGlob; void sqlite;
       `// @see ${CANONICAL_REFS['Bun.file']} — Bun.file\nawait Bun.write("out.txt", "ok");\n`
     );
 
-    expect(await findMissing([file])).toEqual([
+    expect(await findMissing([file])).toMatchObject([
       {
         file,
         api: 'Bun.write',
@@ -234,8 +235,8 @@ void RuntimeGlob; void sqlite;
 
     expect(exitCode).toBe(1);
     expect(stderr).toBe('');
-    expect(JSON.parse(stdout)).toEqual({
-      schemaVersion: 1,
+    expect(JSON.parse(stdout)).toMatchObject({
+      schemaVersion: 2,
       command: 'check',
       ok: false,
       count: 1,
@@ -269,7 +270,7 @@ void RuntimeGlob; void sqlite;
     expect(exitCode).toBe(1);
     expect(stderr).toBe('');
     expect(JSON.parse(stdout)).toEqual({
-      schemaVersion: 1,
+      schemaVersion: 2,
       command: 'check',
       ok: false,
       error: { message: `scan target does not exist or is unreadable: ${missing}` },
@@ -286,7 +287,7 @@ void RuntimeGlob; void sqlite;
 
     const javascript = join(directory, 'e.js');
     await Bun.write(javascript, 'await Bun.file("package.json").text();\n');
-    expect(await findMissing([javascript])).toEqual([
+    expect(await findMissing([javascript])).toMatchObject([
       {
         file: javascript,
         api: 'Bun.file',
@@ -311,5 +312,91 @@ void RuntimeGlob; void sqlite;
 
     expect(await sourceFiles([directory])).toEqual([source]);
     expect(await sourceFiles([directory, source])).toEqual([source]);
+  });
+
+  test('keeps release history distinct from catalog verification', () => {
+    const unknown = buildApiReleaseProvenance('Bun.file', {
+      name: 'Bun.file',
+      type: 'api',
+      stability: 'stable',
+      canonicalPage: 'https://bun.com/docs/runtime/file-io',
+      docsUrl: CANONICAL_REFS['Bun.file'],
+      allPages: ['https://bun.com/docs/runtime/file-io'],
+      verifiedOn: '1.3.14',
+      lastUpdated: '2026-08-06T21:05:07.912Z',
+    });
+    expect(unknown.status).toBe('release-unknown');
+    expect(unknown.release).toBeNull();
+    expect(unknown.catalogVerification.version).toBe('1.3.14');
+
+    const dated = buildApiReleaseProvenance('Bun.file', {
+      name: 'Bun.file',
+      type: 'api',
+      stability: 'stable',
+      canonicalPage: 'https://bun.com/docs/runtime/file-io',
+      allPages: ['https://bun.com/docs/runtime/file-io'],
+      releasedIn: '1.3.13',
+      releasedAt: '2026-04-20T07:33:26.000Z',
+      releasedUrl: 'https://bun.com/blog/bun-v1.3.13',
+      changedIn: '1.3.14',
+      changedAt: '2026-05-13T03:19:35.000Z',
+      changedUrl: 'https://bun.com/blog/bun-v1.3.14',
+    });
+    expect(dated.status).toBe('complete');
+    expect(dated.release?.date).toBe('2026-04-20T07:33:26.000Z');
+    expect(dated.updates[0]?.reference).toBe('https://bun.com/blog/bun-v1.3.14');
+  });
+
+  test('history and provenance-check expose dated official evidence', async () => {
+    const history = Bun.spawn(
+      [process.execPath, 'tools/bun-doc-refs.ts', 'history', 'Bun.Terminal', '--json'],
+      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
+    );
+    const historyOutput = JSON.parse(await new Response(history.stdout).text());
+    expect(await history.exited).toBe(0);
+    expect(historyOutput).toMatchObject({
+      command: 'history',
+      api: 'Bun.Terminal',
+      status: 'complete',
+      release: {
+        version: '1.3.5',
+        date: '2025-12-17T10:11:00.000Z',
+        reference: 'https://bun.com/blog/bun-v1.3.5',
+      },
+    });
+
+    const check = Bun.spawn(
+      [process.execPath, 'tools/bun-doc-refs.ts', 'provenance-check', '--json'],
+      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
+    );
+    const checkOutput = JSON.parse(await new Response(check.stdout).text());
+    expect(await check.exited).toBe(0);
+    expect(checkOutput.ok).toBe(true);
+    expect(checkOutput.invalid).toEqual([]);
+    expect(checkOutput.recordedEvents).toBeGreaterThan(80);
+  });
+
+  test('annotate writes release and update evidence beside the canonical reference', async () => {
+    const directory = await temporaryDirectory();
+    const file = join(directory, 'terminal.ts');
+    await Bun.write(file, 'const terminal = new Bun.Terminal({});\n');
+    const proc = Bun.spawn(
+      [process.execPath, 'tools/bun-doc-refs.ts', 'annotate', '--write', file],
+      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
+    );
+    await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+      proc.exited,
+    ]);
+    expect(await proc.exited).toBe(0);
+    const annotated = await Bun.file(file).text();
+    expect(annotated).toContain(`// @see ${CANONICAL_REFS['Bun.Terminal']} — Bun.Terminal`);
+    expect(annotated).toContain(
+      '// @released Bun.Terminal · released v1.3.5 · 2025-12-17 · https://bun.com/blog/bun-v1.3.5'
+    );
+    expect(annotated).toContain(
+      '// @updated Bun.Terminal · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14'
+    );
   });
 });

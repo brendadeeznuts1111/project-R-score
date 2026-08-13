@@ -21,6 +21,7 @@ import {
   normalizeBunVersion,
   applyChangelogOverlay,
   applyReleaseOverlay,
+  stampVersionProvenance,
   listCells,
   shortType,
   shortStability,
@@ -180,6 +181,50 @@ describe('bun-docs-release overlay embed', () => {
     expect(entry.releasedIn).toBe('1.4.0');
     expect(entry.releaseHits?.length).toBe(1);
     expect(entry.releaseHits?.[0]?.kind).toBe('ship');
+  });
+});
+
+describe('release provenance', () => {
+  test('joins recorded versions to official RSS dates and release references', () => {
+    const entry = {
+      name: 'Bun.example',
+      type: 'api',
+      stability: 'stable',
+      canonicalPage: 'https://bun.com/docs/reference/bun/example',
+      allPages: ['https://bun.com/docs/reference/bun/example'],
+      section: 'reference',
+      releasedIn: '1.3.13',
+      fixedIn: '1.3.14',
+    } satisfies DocCatalogEntry;
+    const releases = new Map([
+      [
+        '1.3.13',
+        {
+          version: '1.3.13',
+          title: 'Bun v1.3.13',
+          url: 'https://bun.com/blog/bun-v1.3.13',
+          guid: 'https://bun.com/blog/bun-v1.3.13',
+          pubDate: '2026-04-20T07:33:26.000Z',
+        },
+      ],
+      [
+        '1.3.14',
+        {
+          version: '1.3.14',
+          title: 'Bun v1.3.14',
+          url: 'https://bun.com/blog/bun-v1.3.14',
+          guid: 'https://bun.com/blog/bun-v1.3.14',
+          pubDate: '2026-05-13T03:19:35.000Z',
+        },
+      ],
+    ]);
+
+    stampVersionProvenance(entry, releases);
+
+    expect(entry.releasedAt).toBe('2026-04-20T07:33:26.000Z');
+    expect(entry.releasedUrl).toBe('https://bun.com/blog/bun-v1.3.13');
+    expect(entry.fixedAt).toBe('2026-05-13T03:19:35.000Z');
+    expect(entry.fixedUrl).toBe('https://bun.com/blog/bun-v1.3.14');
   });
 });
 

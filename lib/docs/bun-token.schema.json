@@ -16,13 +16,19 @@
     "examples"
   ],
   "properties": {
-    "name": { "type": "string", "description": "e.g. Bun.cron, --filter, install.linker" },
+    "name": {
+      "type": "string",
+      "description": "e.g. Bun.cron, --filter, install.linker"
+    },
     "kind": {
       "type": "string",
       "enum": ["API", "CLI", "Config", "Env", "PackageJson", "Concept", "Other"]
     },
     "description": { "type": "string" },
-    "stability": { "type": "string", "enum": ["stable", "experimental", "deprecated"] },
+    "stability": {
+      "type": "string",
+      "enum": ["stable", "experimental", "deprecated"]
+    },
     "docsLocus": {
       "type": "object",
       "required": ["page", "anchor"],
@@ -50,10 +56,18 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["version", "type"],
+        "required": ["version", "type", "date", "evidenceUrl"],
         "properties": {
           "version": { "type": "string" },
-          "type": { "type": "string", "enum": ["since", "fixed", "changed", "stabilized"] },
+          "type": {
+            "type": "string",
+            "enum": ["since", "fixed", "changed", "stabilized"]
+          },
+          "date": {
+            "type": ["string", "null"],
+            "format": "date-time",
+            "description": "Official release publication time; null only when upstream history is unavailable"
+          },
           "note": { "type": "string" },
           "evidenceUrl": { "type": "string", "format": "uri" }
         }

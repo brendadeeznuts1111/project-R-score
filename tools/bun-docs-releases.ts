@@ -342,6 +342,8 @@ const STATE_PATH = resolvePath(BLOG_CACHE_DIR, 'state.json');
 export type ReleaseOverlayHit = {
   version: string;
   url: string;
+  /** Official Bun RSS publication timestamp for this release post. */
+  publishedAt?: string;
   section: string;
   kind: 'ship' | 'fix' | 'chg' | 'stabilize';
 };
@@ -701,6 +703,7 @@ function upsertOverlay(
   entry.hits.push({
     version: release.version,
     url: release.url,
+    publishedAt: release.pubDate,
     section: section.heading,
     kind,
   });

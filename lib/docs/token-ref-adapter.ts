@@ -31,8 +31,14 @@ export type CatalogEntryLike = {
   description?: string;
   stability: string;
   releasedIn?: string;
+  releasedAt?: string;
+  releasedUrl?: string;
   fixedIn?: string;
+  fixedAt?: string;
+  fixedUrl?: string;
   changedIn?: string;
+  changedAt?: string;
+  changedUrl?: string;
   changeNote?: string;
   changeCommit?: string;
   commitUrl?: string;
@@ -43,13 +49,7 @@ export type CatalogEntryLike = {
   anchor?: string;
   locusUnresolved?: boolean;
   locusStatus?:
-    | 'fragment'
-    | 'page'
-    | 'inherited'
-    | 'dump'
-    | 'reference'
-    | 'coincidence'
-    | 'unresolved';
+    'fragment' | 'page' | 'inherited' | 'dump' | 'reference' | 'coincidence' | 'unresolved';
   blogUrl?: string;
   releaseUrl?: string;
   allPages: string[];
@@ -124,6 +124,8 @@ export function tokenRefToBunToken(
     lastVerified?: string;
     sourceCommit?: string;
     locusStatus?: CatalogEntryLike['locusStatus'];
+    eventDates?: Partial<Record<'since' | 'fixed' | 'changed' | 'stabilized', string>>;
+    eventUrls?: Partial<Record<'since' | 'fixed' | 'changed' | 'stabilized', string>>;
   }
 ): BunToken {
   const versionEvents = buildVersionEvents({
@@ -134,6 +136,8 @@ export function tokenRefToBunToken(
     stabilized: ref.history.stabilized,
     changeNote: ref.history.changeNote,
     evidenceUrl: ref.history.evidenceUrl,
+    eventDates: opts?.eventDates,
+    eventUrls: opts?.eventUrls,
   });
 
   const related = ref.relations
@@ -192,6 +196,16 @@ export function catalogEntryToBunToken(
     lastVerified: entry.lastUpdated ?? opts?.catalogGenerated,
     sourceCommit: entry.changeCommit ?? opts?.catalogCommitHash,
     locusStatus: entry.locusStatus,
+    eventDates: {
+      ...(entry.releasedAt ? { since: entry.releasedAt } : {}),
+      ...(entry.fixedAt ? { fixed: entry.fixedAt } : {}),
+      ...(entry.changedAt ? { changed: entry.changedAt } : {}),
+    },
+    eventUrls: {
+      ...(entry.releasedUrl ? { since: entry.releasedUrl } : {}),
+      ...(entry.fixedUrl ? { fixed: entry.fixedUrl } : {}),
+      ...(entry.changedUrl ? { changed: entry.changedUrl } : {}),
+    },
   });
 }
 
