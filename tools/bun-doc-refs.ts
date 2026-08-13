@@ -76,6 +76,7 @@ import {
 } from '../lib/docs/bun-source-links.ts';
 import type { BunTokenKind, BunTokenStability } from '../lib/docs/bun-token.ts';
 import type { VerificationSubsystem } from '../lib/verification/types.ts';
+import ts from 'typescript';
 import { BUN_CONFIG_INSTALL_VARS } from './bun-install-env.ts';
 import { getCuratedEntry } from './bun-docs-curated.ts';
 
@@ -1655,25 +1656,31 @@ function listRefs(): void {
   }
 }
 
-async function tsFiles(paths: string[]): Promise<string[]> {
-  const out: string[] = [];
+const SOURCE_FILE_GLOB = '**/*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}';
+const SOURCE_FILE_EXT_RE = /\.(?:[cm]?[jt]sx?)$/i;
+
+export async function sourceFiles(paths: string[]): Promise<string[]> {
+  const out = new Set<string>();
   for (const p of paths) {
     const info = await Bun.file(p)
       .stat()
       .catch(() => null);
+    if (!info) throw new Error(`scan target does not exist or is unreadable: ${p}`);
     if (info?.isDirectory()) {
-      const glob = new Bun.Glob('**/*.ts');
-      for await (const f of glob.scan({ cwd: p, absolute: true })) out.push(f);
-    } else if (p.endsWith('.ts')) {
-      out.push(p);
+      const glob = new Bun.Glob(SOURCE_FILE_GLOB);
+      for await (const f of glob.scan({ cwd: p, absolute: true })) out.add(f);
+    } else if (SOURCE_FILE_EXT_RE.test(p)) {
+      out.add(p);
+    } else {
+      throw new Error(`unsupported scan target (expected TypeScript/JavaScript): ${p}`);
     }
   }
-  return out;
+  return [...out].sort();
 }
 
 type MissingRef = { file: string; api: string; url: string };
 
-/** True when `api` appears as a code identifier (not a substring of a longer name). */
+/** True when `api` appears as a token (not a substring of a longer name). */
 function codeUsesApi(code: string, api: string): boolean {
   // Boundary-aware for all keys so:
   //   bun:sql  ≠ bun:sqlite
@@ -1687,32 +1694,226 @@ function codeUsesApi(code: string, api: string): boolean {
   return new RegExp(`(?<![A-Za-z0-9_])${escaped}(?![A-Za-z0-9_:])`).test(code);
 }
 
-/** Detect Bun API usages lacking a canonical doc ref (code lines only). */
-async function findMissing(paths: string[]): Promise<MissingRef[]> {
-  const missing: MissingRef[] = [];
-  for (const file of await tsFiles(paths)) {
-    const text = await Bun.file(file).text();
-    // Only count usage in actual code lines (comments/doc headers are
-    // reference material, not usage)
-    const code = text
-      .split('\n')
-      .filter(l => {
-        const t = l.trim();
-        return !t.startsWith('//') && !t.startsWith('*') && !t.startsWith('/*');
-      })
-      .join('\n');
-    for (const api of APIS) {
-      if (!codeUsesApi(code, api)) continue;
-      const url = CANONICAL_REFS[api];
-      const [base, anchor] = url.split('#');
-      const referenced =
-        text.includes(url) ||
-        text.includes(base) ||
-        (anchor !== undefined && text.includes('#' + anchor));
-      if (!referenced) missing.push({ file, api, url });
+const API_SET = new Set(APIS);
+const FLAG_APIS = APIS.filter(api => api.startsWith('--'));
+
+function scriptKindForPath(path: string): ts.ScriptKind {
+  if (/\.tsx$/i.test(path)) return ts.ScriptKind.TSX;
+  if (/\.jsx$/i.test(path)) return ts.ScriptKind.JSX;
+  if (/\.[cm]?js$/i.test(path)) return ts.ScriptKind.JS;
+  return ts.ScriptKind.TS;
+}
+
+function canonicalApi(candidates: readonly string[]): string | undefined {
+  for (const candidate of candidates) {
+    if (API_SET.has(candidate)) return candidate;
+    const resolved = resolveApiAlias(candidate);
+    if (API_SET.has(resolved)) return resolved;
+  }
+  return undefined;
+}
+
+function canonicalBunExport(name: string): string | undefined {
+  return canonicalApi([name, `Bun.${name}`]);
+}
+
+function expressionChain(node: ts.Expression): string[] | undefined {
+  if (ts.isIdentifier(node)) return [node.text];
+  if (ts.isPropertyAccessExpression(node)) {
+    const parent = expressionChain(node.expression);
+    return parent ? [...parent, node.name.text] : undefined;
+  }
+  if (ts.isElementAccessExpression(node) && node.argumentExpression) {
+    const parent = expressionChain(node.expression);
+    const arg = node.argumentExpression;
+    if (!parent || (!ts.isStringLiteral(arg) && !ts.isNumericLiteral(arg))) return undefined;
+    return [...parent, arg.text];
+  }
+  return undefined;
+}
+
+function canonicalBunChain(parts: readonly string[]): string | undefined {
+  for (let length = parts.length; length >= 2; length--) {
+    const api = canonicalApi([['Bun', ...parts.slice(1, length)].join('.')]);
+    if (api) return api;
+  }
+  return undefined;
+}
+
+function unwrapExpression(node: ts.Expression): ts.Expression {
+  let current = node;
+  while (
+    ts.isParenthesizedExpression(current) ||
+    ts.isAwaitExpression(current) ||
+    ts.isAsExpression(current) ||
+    ts.isSatisfiesExpression(current)
+  ) {
+    current = current.expression;
+  }
+  return current;
+}
+
+function isDynamicBunImport(node: ts.Expression): boolean {
+  const value = unwrapExpression(node);
+  return (
+    ts.isCallExpression(value) &&
+    value.expression.kind === ts.SyntaxKind.ImportKeyword &&
+    value.arguments.length === 1 &&
+    ts.isStringLiteral(value.arguments[0]!) &&
+    value.arguments[0]!.text === 'bun'
+  );
+}
+
+function addBindingImports(name: ts.BindingName, usages: Set<string>): void {
+  if (!ts.isObjectBindingPattern(name)) return;
+  for (const element of name.elements) {
+    const imported =
+      element.propertyName?.getText().replace(/^['"]|['"]$/g, '') ?? element.name.getText();
+    const api = canonicalBunExport(imported);
+    if (api) usages.add(api);
+  }
+}
+
+function isIdentifierUsage(node: ts.Identifier): boolean {
+  const parent = node.parent;
+  if (
+    (ts.isPropertyAccessExpression(parent) && parent.name === node) ||
+    (ts.isQualifiedName(parent) && parent.right === node)
+  ) {
+    return false;
+  }
+  if (ts.isShorthandPropertyAssignment(parent)) return true;
+  return (parent as ts.NamedDeclaration).name !== node;
+}
+
+/** Extract canonical API tokens from executable syntax, imports, and CLI flag literals. */
+export function collectCodeApiUsages(text: string, file = 'source.ts'): Set<string> {
+  const source = ts.createSourceFile(
+    file,
+    text,
+    ts.ScriptTarget.Latest,
+    true,
+    scriptKindForPath(file)
+  );
+  const usages = new Set<string>();
+  const namespaceImports = new Set<string>(['Bun']);
+
+  for (const statement of source.statements) {
+    if (
+      ts.isImportDeclaration(statement) &&
+      ts.isStringLiteral(statement.moduleSpecifier) &&
+      statement.moduleSpecifier.text === 'bun'
+    ) {
+      const bindings = statement.importClause?.namedBindings;
+      if (bindings && ts.isNamespaceImport(bindings)) namespaceImports.add(bindings.name.text);
+      if (bindings && ts.isNamedImports(bindings)) {
+        for (const element of bindings.elements) {
+          const imported = element.propertyName?.text ?? element.name.text;
+          const api = canonicalBunExport(imported);
+          if (api) usages.add(api);
+        }
+      }
     }
   }
-  return missing;
+
+  const visit = (node: ts.Node): void => {
+    if (
+      (ts.isPropertyAccessExpression(node) || ts.isElementAccessExpression(node)) &&
+      !(
+        (ts.isPropertyAccessExpression(node.parent) || ts.isElementAccessExpression(node.parent)) &&
+        node.parent.expression === node
+      )
+    ) {
+      const chain = expressionChain(node);
+      if (chain && namespaceImports.has(chain[0]!)) {
+        const api = canonicalBunChain(['Bun', ...chain.slice(1)]);
+        if (api) usages.add(api);
+      }
+    }
+
+    if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
+      const specifier = node.moduleSpecifier;
+      if (specifier && ts.isStringLiteral(specifier)) {
+        const moduleApi = canonicalApi([specifier.text]);
+        if (moduleApi) usages.add(moduleApi);
+      }
+      if (
+        ts.isExportDeclaration(node) &&
+        specifier &&
+        ts.isStringLiteral(specifier) &&
+        specifier.text === 'bun' &&
+        node.exportClause &&
+        ts.isNamedExports(node.exportClause)
+      ) {
+        for (const element of node.exportClause.elements) {
+          const imported = element.propertyName?.text ?? element.name.text;
+          const api = canonicalBunExport(imported);
+          if (api) usages.add(api);
+        }
+      }
+    }
+
+    if (
+      ts.isVariableDeclaration(node) &&
+      node.initializer &&
+      isDynamicBunImport(node.initializer)
+    ) {
+      if (ts.isIdentifier(node.name)) namespaceImports.add(node.name.text);
+      else addBindingImports(node.name, usages);
+    }
+
+    if (ts.isIdentifier(node) && isIdentifierUsage(node)) {
+      const api = canonicalApi([node.text]);
+      if (api && /^[A-Z]/.test(node.text)) usages.add(api);
+    }
+
+    // CLI flags are values by definition. Scan string literals, but deliberately
+    // exclude template literals used for generated documentation/examples.
+    if (ts.isStringLiteral(node)) {
+      for (const flag of FLAG_APIS) {
+        if (codeUsesApi(node.text, flag)) usages.add(flag);
+      }
+    }
+
+    ts.forEachChild(node, visit);
+  };
+  visit(source);
+  return usages;
+}
+
+function approvedReferenceUrls(api: string): Set<string> {
+  const resolved = resolveApiAlias(api);
+  const urls = new Set<string>([CANONICAL_REFS[api]]);
+  for (const [candidate, url] of Object.entries(CANONICAL_REFS)) {
+    if (resolveApiAlias(candidate) === resolved) urls.add(url);
+  }
+  return urls;
+}
+
+function hasApiReference(text: string, api: string): boolean {
+  const urls = approvedReferenceUrls(api);
+  if ([...urls].some(url => text.includes(url))) return true;
+
+  // A page-level link is an approved equivalent only when the same @see line
+  // explicitly labels the API. A Bun.file label must not cover Bun.write.
+  return text.split('\n').some(line => {
+    if (!line.includes('@see') || !codeUsesApi(line, api)) return false;
+    return [...urls].some(url => line.includes(url.split('#')[0]!));
+  });
+}
+
+/** Detect executable Bun API usages lacking their API-specific canonical reference. */
+export async function findMissing(paths: string[]): Promise<MissingRef[]> {
+  const missing: MissingRef[] = [];
+  for (const file of await sourceFiles(paths)) {
+    const text = await Bun.file(file).text();
+    for (const api of collectCodeApiUsages(text, file)) {
+      if (!hasApiReference(text, api)) {
+        missing.push({ file, api, url: CANONICAL_REFS[api] });
+      }
+    }
+  }
+  return missing.sort((a, b) => a.file.localeCompare(b.file) || a.api.localeCompare(b.api));
 }
 
 /** Find Bun.* usages whose file has no matching @see / doc link. */
@@ -1764,7 +1965,7 @@ async function validate(paths: string[]): Promise<number> {
   const urlRe =
     /https:\/\/(?:bun\.com|github\.com\/oven-sh|no-color\.org|nodejs\.org)[a-zA-Z0-9\-._~:/?#@!&*+,;=%[\]]*/g;
   const urls = new Set<string>();
-  for (const file of await tsFiles(paths)) {
+  for (const file of await sourceFiles(paths)) {
     const text = await Bun.file(file).text();
     // Skip intentional placeholder URLs: lines/blocks marked @planned are
     // cataloged future links, not live references (e.g. domains.ts catalog)
@@ -2372,7 +2573,7 @@ async function deepcheck(paths: string[]): Promise<number> {
     entries.find(e => e.url === `https://bun.com/docs/${path}/index.md`);
   let checked = 0;
   let bad = 0;
-  for (const file of await tsFiles(paths)) {
+  for (const file of await sourceFiles(paths)) {
     const text = await Bun.file(file).text();
     for (const m of text.matchAll(linkRe)) {
       checked++;
@@ -3378,5 +3579,10 @@ async function mainCli(): Promise<void> {
 }
 
 if (import.meta.main) {
-  await mainCli();
+  try {
+    await mainCli();
+  } catch (error) {
+    console.error(`❌ bun-doc-refs: ${error instanceof Error ? error.message : String(error)}`);
+    process.exit(1);
+  }
 }
