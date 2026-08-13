@@ -54,6 +54,8 @@ export const CANONICAL_REPO_DOCS = {
   bunNativeCapabilities: 'docs/BUN_NATIVE_CAPABILITIES.md',
   /** Bun runtime fetch proxy environment defaults and precedence */
   bunFetchProxyEnvironment: 'docs/guides/bun-fetch-proxy-environment.md',
+  /** Bun process-wide runtime argument injection contract */
+  bunOptions: 'docs/guides/bun-options.md',
   /** Bun token/catalog operate loop (RSS → scrape → catalog → integrity) */
   bunDocsOperate: 'docs/BUN_DOCS_OPERATE.md',
   /** Bun-types pin inventory + tip-diff + usage (not partner-surface) */
@@ -215,6 +217,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   platformRouting: 'Local vs Pages routing map',
   bunNativeCapabilities: 'Bun native capabilities note (browser, md, scheduler, datagram)',
   bunFetchProxyEnvironment: 'Bun fetch proxy env defaults · aliases · precedence',
+  bunOptions: 'BUN_OPTIONS runtime argument injection · argv · precedence',
   bunDocsOperate: 'Bun token/catalog operate (RSS → scrape → catalog)',
   bunTypesInventory: 'Bun-types inventory pipeline (pin SSOT · tip-diff · usage)',
   bunTypesInventoryJson: 'Bun-types inventory JSON SSOT (committed under tools/)',
