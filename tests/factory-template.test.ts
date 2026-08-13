@@ -1,5 +1,16 @@
 import { describe, expect, test } from 'bun:test';
 import { stripANSI } from 'bun';
+import {
+  ANSI_RESET,
+  AUTO_TERMINAL_COLOR_FORMAT,
+  brandHex,
+  brandRgb,
+  colors,
+  formatTerminal,
+  TERMINAL_COLOR_FORMATS,
+  terminalColorFormat,
+  terminalColorOpen,
+} from '../.bun-create/factory-library/src/index.ts';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { makeTempDir, removeTempDir } from '../lib/tmp-probe.ts';
 import {
@@ -82,6 +93,7 @@ describe('factory-library template contract', () => {
       'bunfig.toml',
       'scripts/bench.ts',
       'scripts/build-summary.ts',
+      'scripts/color-test.ts',
       'scripts/files-index.ts',
       'scripts/generate-files-md.ts',
       'scripts/junit-context.ts',
@@ -89,6 +101,7 @@ describe('factory-library template contract', () => {
       'scripts/template-contract.ts',
       'src/index.ts',
       'test/index.test.ts',
+      'test/terminal-types.test-d.ts',
       'scripts/postpublish.ts',
       'scripts/validate-files-md.ts',
     ];
@@ -133,6 +146,7 @@ describe('factory-library template contract', () => {
     expect(packageJson.scripts.prepack).toBe('bun run check');
     expect(packageJson.scripts.postpublish).toContain('postpublish.ts');
     expect(packageJson.scripts['publish:dry-run']).toBe('bun publish --dry-run');
+    expect(packageJson.scripts['color-test']).toBe('bun scripts/color-test.ts');
     expect(packageJson.publishConfig).toEqual({ access: 'public', tag: 'latest' });
     expect(packageJson.devDependencies.typescript).toBe('6.0.3');
     expect(packageJson.devDependencies.prettier).toBe('3.9.6');
@@ -145,6 +159,7 @@ describe('factory-library template contract', () => {
     expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/junit-enrich.ts`).exists()).toBe(true);
     expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/build-summary.ts`).exists()).toBe(true);
     expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/postpublish.ts`).exists()).toBe(true);
+    expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/color-test.ts`).exists()).toBe(true);
     expect(await Bun.file(`${TEMPLATE_ROOT}/files.md`).exists()).toBe(true);
     expect(await Bun.file(`${TEMPLATE_ROOT}/eslint.config.mjs`).exists()).toBe(true);
 
@@ -163,6 +178,9 @@ describe('factory-library template contract', () => {
     expect(readme).toContain('rather than a glob API');
     expect(readme).toContain('AUTO_TERMINAL_COLOR_FORMAT');
     expect(readme).toContain('Bun.color(color, "ansi")');
+    expect(readme).toContain('depth: "16"');
+    expect(readme).toContain('terminalColorOpen()');
+    expect(readme).toContain('bun run color-test');
 
     const bunfig = await Bun.file(`${TEMPLATE_ROOT}/bunfig.toml`).text();
     expect(bunfig).toContain('Keep [test.reporter] unset');
@@ -193,6 +211,17 @@ describe('factory-library template contract', () => {
   });
 
   test('defines ansi and lets Bun.color auto-format terminal output', async () => {
+    expect(AUTO_TERMINAL_COLOR_FORMAT).toBe('ansi');
+    expect(TERMINAL_COLOR_FORMATS.truecolor).toBe('ansi-16m');
+    expect(terminalColorFormat('256')).toBe('ansi-256');
+    expect(terminalColorOpen('#e06c75', 'truecolor')).toBe('\x1b[38;2;224;108;117m');
+    expect(formatTerminal('ready', '#e06c75', 'truecolor')).toBe(
+      `\x1b[38;2;224;108;117mready${ANSI_RESET}`
+    );
+    expect(brandHex).toBe('#7dd3c0');
+    expect(brandRgb).toEqual({ r: 125, g: 211, b: 192 });
+    expect(colors.brand('brand')).toBe(formatTerminal('brand', brandHex));
+
     const proc = Bun.spawn(
       bunSpawnArgs([
         '-e',
@@ -213,6 +242,44 @@ describe('factory-library template contract', () => {
     expect(stdout.startsWith('ansi\n\x1b[38;2;224;108;117m')).toBe(true);
     expect(stdout.endsWith('\x1b[0m')).toBe(true);
     expect(stripANSI(stdout)).toBe('ansi\nready');
+
+    const noColorEnv = { ...Bun.env, NO_COLOR: '1' };
+    delete noColorEnv.FORCE_COLOR;
+    const plainProc = Bun.spawn(
+      bunSpawnArgs([
+        '-e',
+        `import { formatTerminal } from ${JSON.stringify(`${TEMPLATE_ROOT}/src/index.ts`)}; console.write(formatTerminal("ready", "#e06c75"));`,
+      ]),
+      { env: noColorEnv, stdout: 'pipe', stderr: 'pipe' }
+    );
+    const [plainExitCode, plainStdout, plainStderr] = await Promise.all([
+      plainProc.exited,
+      new Response(plainProc.stdout).text(),
+      new Response(plainProc.stderr).text(),
+    ]);
+    expect(plainExitCode, plainStderr).toBe(0);
+    expect(plainStdout).toBe('ready');
+  });
+
+  test('color-test keeps auto output plain while fixed serialization stays explicit', async () => {
+    const env = { ...Bun.env, NO_COLOR: '1' };
+    delete env.FORCE_COLOR;
+    const proc = Bun.spawn(bunSpawnArgs([`${TEMPLATE_ROOT}/scripts/color-test.ts`]), {
+      cwd: TEMPLATE_ROOT,
+      env,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const [exitCode, stdout, stderr] = await Promise.all([
+      proc.exited,
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+    ]);
+    expect(exitCode, stderr).toBe(0);
+    expect(stdout).toContain('Bun.color terminal mode: ansi\n✅ Success\n❌ Failure\n');
+    expect(stdout).toContain('\x1b[38;5;');
+    expect(stripANSI(stdout)).toContain('256-color serialization sample');
+    expect(stdout).toContain('"truecolor": "ansi-16m"');
   });
 
   test('groups package properties, environment, and flags in a stable contract snapshot', async () => {

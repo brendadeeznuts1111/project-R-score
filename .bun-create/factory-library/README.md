@@ -15,6 +15,10 @@ bun run check
 bun pm pack --dry-run
 ```
 
+The starter API includes `formatTerminal(text, color)` and semantic `colors`
+helpers backed by `Bun.color` with auto-detecting ANSI output. Use them in
+scripts for consistent terminal logs; see [Automatic terminal color](#automatic-terminal-color).
+
 `exports`, `module`, and `types` intentionally point at TypeScript source: this
 is a Bun-native template, not a precompiled Node/browser distribution. The
 type-checking baseline follows `bun init`'s modern no-emit, bundler-resolution
@@ -78,6 +82,7 @@ bun run check:files    # validates files.md and package.json.files against the s
 bun run check           # file index + typecheck + test + build
 bun run prepack         # same checks run automatically before Bun packs/publishes this directory
 bun run publish:dry-run # Bun-native publish simulation; never uploads
+bun run color-test     # demos auto/fixed Bun.color terminal output and brand formats
 bun run bench          # Bun.nanoseconds throughput JSON
 bun run profile:cpu    # same workload under --cpu-prof → ./profiles/*.cpuprofile
 ```
@@ -89,15 +94,32 @@ happens to provide.
 
 ### Automatic terminal color
 
-The starter API exports `AUTO_TERMINAL_COLOR_FORMAT` as the literal `"ansi"` and
-`formatTerminal(text, color)` as the shared output helper. It calls
+The starter API exports `formatTerminal(text, color, depth)`, reusable `colors`
+helpers, and a typed terminal-format map. Its default `"auto"` depth calls
 `Bun.color(color, "ansi")`, allowing Bun to select 16-color, 256-color, or true
-color for the active environment. When the output stream does not support ANSI
-or the color cannot be parsed, it returns the original plain text.
+color for the active environment while respecting `NO_COLOR` / `FORCE_COLOR`.
+When the output stream does not support ANSI or the color cannot be parsed, it
+returns the original plain text without a stray reset sequence.
+`AUTO_TERMINAL_COLOR_FORMAT` remains the literal `"ansi"` for code that needs
+to inspect or pass the automatic format directly.
 
-Use explicit `"ansi-16"`, `"ansi-256"`, or `"ansi-16m"` only for a serialization
-contract that requires a fixed depth; ordinary terminal output should retain the
-automatic `"ansi"` format.
+```ts
+import { colors, formatTerminal } from 'my-library';
+
+console.log(formatTerminal('Brand mint', '#7dd3c0'));
+console.log(colors.green('✅ Success'));
+console.log(colors.red('❌ Failure'));
+```
+
+Use `depth: "16"`, `"256"`, or `"truecolor"` only for a serialization contract
+that requires a fixed depth; ordinary terminal output should retain `"auto"`.
+`terminalColorFormat(depth)` maps those values to Bun's `"ansi-16"`,
+`"ansi-256"`, and `"ansi-16m"` formats. `terminalColorOpen()` supports custom
+balanced spans; otherwise prefer `formatTerminal()`, which appends `ANSI_RESET`
+only after a real opener.
+
+Run `bun run color-test` in a terminal to exercise the same Bun.color pipeline
+and print the reusable `brandHex` / `brandRgb` manifest representations.
 
 ### JUnit metadata
 
@@ -210,6 +232,14 @@ build-output view: its Markdown report shows the bundled module graph, while
 `files.md` documents the project contract. The concise `Build summary` reports
 entry-point count, input/output file counts, and total output bytes for
 terminals and CI logs.
+
+### Bun ecosystem integration
+
+The starter deliberately demonstrates Bun-native primitives instead of adding
+wrapper dependencies: `Bun.color` for terminal/CSS color conversion,
+`Bun.file` and `Bun.write` for file I/O, `bun:test` for tests and coverage, and
+`bunfig.toml` for the isolated global-store install policy. Explore `scripts/`
+for executable examples of those APIs.
 
 ### Bun-native publishing
 

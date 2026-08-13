@@ -42,6 +42,7 @@
     "prepack": "bun run check",
     "postpublish": "bun run scripts/postpublish.ts",
     "publish:dry-run": "bun publish --dry-run",
+    "color-test": "bun scripts/color-test.ts",
     "bench": "bun scripts/bench.ts",
     "profile:cpu": "bun --cpu-prof --cpu-prof-dir=./profiles scripts/bench.ts"
   },

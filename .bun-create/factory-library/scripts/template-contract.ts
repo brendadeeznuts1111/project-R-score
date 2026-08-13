@@ -40,8 +40,14 @@ export const FACTORY_LIBRARY_CONTRACT_GROUPS: readonly ContractGroup[] = [
   {
     id: 'runtime',
     owner: 'package.json',
-    properties: ['scripts.dev', 'scripts.test', 'scripts.test:watch', 'scripts.build'],
-    rule: 'Development, test, watch, and build commands run with Bun.',
+    properties: [
+      'scripts.dev',
+      'scripts.test',
+      'scripts.test:watch',
+      'scripts.color-test',
+      'scripts.build',
+    ],
+    rule: 'Development, test, watch, terminal-color demo, and build commands run with Bun.',
   },
   {
     id: 'quality',
@@ -402,6 +408,7 @@ export function validateFactoryLibraryManifest(
     'test:junit': value => typeof value === 'string' && value.includes('run-test-junit'),
     'test:ci': value => typeof value === 'string' && value.includes('junit:enrich'),
     'junit:enrich': value => typeof value === 'string' && value.includes('junit-enrich'),
+    'color-test': value => value === 'bun scripts/color-test.ts',
     format: value => value === 'bun run prettier --write .',
     'format:check': value => value === 'bun run prettier --check .',
     lint: value => value === 'bun run eslint . --max-warnings=0',
