@@ -19,6 +19,18 @@ noOrphans = true
 # Object inspection depth for console.log / Bun.inspect output.
 depth = 4
 
+# Keep [test.reporter] unset: normal `bun test` remains the readable console
+# reporter. `bun run test:junit` opts into JUnit XML for a specific CI/report
+# run, rather than writing a report on every local test command.
+
+[test]
+# Coverage is opt-in through test:coverage / test:coverage:lcov, but its
+# measured denominator should be library source rather than test source.
+coverageSkipTestFiles = true
+# Do not set coverageThreshold, coveragePathIgnorePatterns, coverageDir, or
+# coverageIgnoreSourcemaps without a measured consumer baseline. Bun defaults
+# to text output, coverage/, no extra ignores, and source-map-aware reporting.
+
 [serve.static]
 # Inline only PUBLIC_* env vars into frontend bundles at build time.
 # Use this to expose non-secret browser configuration such as a registry URL.

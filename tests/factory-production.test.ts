@@ -13,6 +13,9 @@ import {
 import {
   createRegistryFetchHandler,
   createRegistryServer,
+  positiveIntegerSetting,
+  registryArtifactType,
+  registryPublishTags,
   RegistryGatewayPatterns,
 } from '../lib/factory/server';
 import { onRequest as registryHealthOnRequest } from '../functions/api/registry/health';
@@ -170,6 +173,20 @@ describe('registry alerts and scheduling', () => {
 });
 
 describe('registry VM server', () => {
+  test('uses defaults only for absent gateway settings and rejects malformed input', () => {
+    expect(positiveIntegerSetting(undefined, 'REGISTRY_PORT', 3000)).toBe(3000);
+    expect(positiveIntegerSetting(' 512 ', 'REGISTRY_MAX_PUBLISH_BYTES', 1)).toBe(512);
+    expect(() => positiveIntegerSetting('0', 'REGISTRY_PORT', 3000)).toThrow('positive safe integer');
+    expect(() => positiveIntegerSetting('NaN', 'REGISTRY_PORT', 3000)).toThrow('positive safe integer');
+    expect(registryArtifactType(undefined)).toBe('library');
+    expect(registryArtifactType('worker')).toBe('worker');
+    expect(registryArtifactType('model')).toBeUndefined();
+    expect(registryPublishTags(null)).toEqual(['latest']);
+    expect(registryPublishTags('latest, stable,latest')).toEqual(['latest', 'stable']);
+    expect(registryPublishTags(' , ')).toBeUndefined();
+    expect(registryPublishTags('latest,,stable')).toBeUndefined();
+  });
+
   test('URLPattern fallback captures encoded and multi-segment package names', () => {
     expect(
       RegistryGatewayPatterns.publish.exec(
@@ -260,6 +277,32 @@ describe('registry VM server', () => {
       })
     );
     expect(response.status).toBe(503);
+  });
+
+  test('rejects malformed publish configuration and supplied artifact types', async () => {
+    const request = (metadata: unknown) => {
+      const form = new FormData();
+      form.set('version', '1.0.0');
+      form.set('metadata', JSON.stringify(metadata));
+      form.set('file', new File([new Uint8Array([1])], 'package.tgz'));
+      return new Request('http://registry.test/api/registry/demo/versions', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer publish-secret' },
+        body: form,
+      });
+    };
+
+    const invalidType = createRegistryFetchHandler(
+      new RegistryClient({ store: createMemoryObjectStore() }),
+      { publishToken: 'publish-secret' },
+    );
+    expect((await invalidType(request({ type: 'model' }))).status).toBe(400);
+
+    const invalidLimit = createRegistryFetchHandler(
+      new RegistryClient({ store: createMemoryObjectStore() }),
+      { publishToken: 'publish-secret', maxPublishBytes: 0 },
+    );
+    expect((await invalidLimit(request({ type: 'library' }))).status).toBe(503);
   });
 });
 

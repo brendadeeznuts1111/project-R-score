@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/reference/bun/JSONC — Bun.JSONC
 // @see https://bun.com/reference/bun/concatArrayBuffers — Bun.concatArrayBuffers
@@ -38,6 +39,7 @@ import { parseArgs } from 'util';
 import { bunSpawnArgs } from '../bun-executable.ts';
 import { stripANSI } from 'bun';
 import { colorize, jsonOut, logTable, shouldColor } from '../console-depth';
+import { basenamePath, dirnamePath, resolvePath } from '../path-bun';
 import { tomlStringify } from '../toml-stringify';
 import { buildRegistryHealthReport } from './health';
 import { runIntegrityCycle } from './monitoring';
@@ -53,6 +55,7 @@ import {
   parseColorTones,
 } from './color-diagnostics';
 import type { ColorOutputFormat } from '../constants/color-constants';
+import { requireScaffoldMarkerIdentity } from './scaffold-marker';
 
 const VERSION = '0.1.0';
 
@@ -68,9 +71,12 @@ Commands:
  *   create <template> [<dest>]  Scaffold a new project from a template (wraps bun create)
   create                       Scaffold a new project
     --publish                   Register a scaffold marker in the registry after scaffold
+    --replace-local             Allow replacement of an existing repo-local destination
     --force                     Overwrite existing files
     --no-install                Skip dependency install
     --no-git                    Skip git init
+    --open                      Start and open supported app scaffolds in a browser
+  templates                    List supported scaffold sources and local templates
   env                          Check R2 credentials and bucket access
   colors [color]               Diagnose Bun.color formats, CSS syntax, and palettes
   publish <path> [options]     Publish an artifact
@@ -154,13 +160,14 @@ Scaffold via bun create (optional — Bun needs no project config).
 @see https://bun.com/docs/runtime/templating/create
 
 Template sources:
-  local   .bun-create/<name> or $BUN_CREATE_DIR / $HOME/.bun-create
+  local   repo .bun-create/<name> (routed automatically) or $BUN_CREATE_DIR / $HOME/.bun-create
   npm     create-<template> package (bun create remix ≡ bunx create-remix)
   github  user/repo or github.com/user/repo  (GITHUB_TOKEN · GITHUB_API_DOMAIN)
   react   ./MyComponent.tsx|jsx → full hot-reload frontend env
 
 Options:
-  --publish      Register a scaffold marker in the registry (not a packed archive)
+  --publish      Register an explicit-destination scaffold marker (not a packed archive)
+  --replace-local Allow replacement of an existing repository-local destination
   --force        Overwrite existing files (remote templates)
   --no-install   Skip dependency install
   --no-git       Skip git init
@@ -172,7 +179,9 @@ Examples:
   factory create ./MyComponent.tsx              # React component passthrough
   factory create vercel/next.js my-app --no-git
 
-Note: local templates DELETE an existing destination directory.`,
+Safety: Factory requires an explicit, non-current-directory destination for
+repository-local templates. It refuses an existing local destination unless
+--replace-local is supplied. Direct bun create keeps its upstream behavior.`,
   colors: `factory colors [color] [options]
 
 Inspect Bun.color using the runtime's complete output-format surface.
@@ -199,6 +208,20 @@ Examples:
 
 Build-time use needs no custom wrapper:
   import { color } from "bun" with { type: "macro" };`,
+  templates: `factory templates
+
+Scaffold sources delegated to bun create:
+  local   Repository .bun-create/<name>; explicit destination required; currently: factory-library
+  npm     npm create-<template> packages, e.g. factory create remix my-app
+  github  owner/repo or github.com/owner/repo, e.g. factory create vercel/next.js my-app
+
+The Factory R2 registry is a separate artifact lane:
+  factory publish <archive>    Publish an explicit .tgz artifact
+  factory install <name>       Install an indexed artifact
+
+Use --publish with factory create only when an explicit destination was supplied;
+it registers metadata, not a distributable archive. Use --replace-local only
+after reviewing an existing repository-local destination.`,
 };
 
 // ── Utility helpers ───────────────────────────────────────────────────────
@@ -833,15 +856,19 @@ function parseCreateFlags(args: string[]): {
   positionalArgs: string[];
   extraArgs: string[];
   publish: boolean;
+  replaceLocal: boolean;
 } {
   const positionalArgs: string[] = [];
   const extraArgs: string[] = [];
   let publish = false;
+  let replaceLocal = false;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]!;
     if (arg === '--publish') {
       publish = true;
+    } else if (arg === '--replace-local') {
+      replaceLocal = true;
     } else if (arg === '--help' || arg === '-h') {
       printHelp('create');
       process.exit(0);
@@ -852,7 +879,73 @@ function parseCreateFlags(args: string[]): {
       positionalArgs.push(arg);
     }
   }
-  return { positionalArgs, extraArgs, publish };
+  return { positionalArgs, extraArgs, publish, replaceLocal };
+}
+
+type CreateSource = 'local' | 'npm' | 'github' | 'react-component';
+
+function classifyCreateSource(template: string): CreateSource {
+  if (/\.(?:jsx|tsx)$/.test(template)) return 'react-component';
+  if (
+    template.startsWith('github.com/') ||
+    (!template.startsWith('@') && /^[^/\s]+\/[^/\s]+$/.test(template))
+  ) {
+    return 'github';
+  }
+  if (template.includes('/') || template.startsWith('.')) return 'npm';
+  return 'npm';
+}
+
+function escapeGlobLiteral(value: string): string {
+  return value.replace(/[\\*?[\]{}!]/g, '\\$&');
+}
+
+/** Bun.file().exists() is file-oriented; use Bun.Glob so empty directories
+ * are protected as destructive local-template targets too. */
+async function pathExists(path: string): Promise<boolean> {
+  const absolute = resolvePath(path);
+  const parent = dirnamePath(absolute);
+  const entry = basenamePath(absolute);
+  for await (const found of new Bun.Glob(escapeGlobLiteral(entry)).scan({
+    cwd: parent,
+    onlyFiles: false,
+  })) {
+    if (found === entry) return true;
+  }
+  return false;
+}
+
+async function resolveCreateSource(
+  template: string,
+  env: Record<string, string | undefined>
+): Promise<{
+  source: CreateSource;
+  localTemplateDir?: string;
+}> {
+  if (!template.includes('/')) {
+    const projectTemplateDir = `${process.cwd()}/.bun-create/${template}`;
+    if (await Bun.file(`${projectTemplateDir}/package.json`).exists()) {
+      return { source: 'local' };
+    }
+
+    const configuredRoot = env.BUN_CREATE_DIR?.trim();
+    if (configuredRoot) {
+      const configuredTemplateDir = `${configuredRoot}/${template}`;
+      if (await Bun.file(`${configuredTemplateDir}/package.json`).exists()) {
+        return { source: 'local' };
+      }
+    }
+
+    const repositoryTemplateDir = `${import.meta.dir}/../../.bun-create/${template}`;
+    if (await Bun.file(`${repositoryTemplateDir}/package.json`).exists()) {
+      return { source: 'local', localTemplateDir: repositoryTemplateDir };
+    }
+  }
+  return { source: classifyCreateSource(template) };
+}
+
+function cmdTemplates(): void {
+  console.log(SUBCOMMAND_HELP.templates);
 }
 
 async function cmdCreate(args: string[]): Promise<void> {
@@ -861,24 +954,62 @@ async function cmdCreate(args: string[]): Promise<void> {
     process.exit(0);
   }
 
-  const { positionalArgs, extraArgs, publish: doPublish } = parseCreateFlags(args);
+  const { positionalArgs, extraArgs, publish: doPublish, replaceLocal } = parseCreateFlags(args);
 
   const template = positionalArgs[0];
   if (!template) errorExit('Missing <template>. Usage: factory create <template> [<destination>]');
+  if (positionalArgs.length > 2) {
+    errorExit(
+      'Expected <template> and at most one <destination>. Put Bun flags before or after the destination.'
+    );
+  }
 
   const destination = positionalArgs[1];
+  if (doPublish && !destination) {
+    errorExit('--publish requires an explicit <destination> so the marker targets the scaffold.');
+  }
 
-  // Build bun create args: template path + destination + passthrough flags
+  const env = { ...Bun.env };
+  const { source, localTemplateDir } = await resolveCreateSource(template, env);
+  if (source === 'local' && !destination) {
+    errorExit(
+      `Local template "${template}" requires an explicit <destination> because Bun may replace an existing local destination. Example: factory create ${template} ./my-project`
+    );
+  }
+  if (replaceLocal && source !== 'local') {
+    errorExit('--replace-local is only valid for a known repository-local template.');
+  }
+  if (source === 'local' && destination) {
+    if (resolvePath(destination) === resolvePath(process.cwd())) {
+      errorExit(
+        'Refusing to use the current working directory as a destructive local-template destination. Choose a child directory.'
+      );
+    }
+    if ((await pathExists(destination)) && !replaceLocal) {
+      errorExit(
+        `Refusing to replace existing local destination "${destination}". Review it, then re-run with --replace-local if replacement is intentional.`
+      );
+    }
+  }
+
+  // Preserve Bun's documented order: template, flags, destination.
   const bunArgs = ['create', template];
-  if (destination) bunArgs.push(destination);
   bunArgs.push(...extraArgs);
+  if (destination) bunArgs.push(destination);
+
+  // Make repository-local templates work even when the wrapper is invoked
+  // outside the repository; an explicit user override remains authoritative.
+  if (source === 'local' && localTemplateDir && !env.BUN_CREATE_DIR) {
+    env.BUN_CREATE_DIR = `${import.meta.dir}/../../.bun-create`;
+  }
+  console.log(`\n  Scaffold source: ${source}${source === 'local' ? ` (${template})` : ''}\n`);
 
   // Delegate to bun create via Bun.spawn with full user interactivity
   const proc = Bun.spawn(bunSpawnArgs(bunArgs), {
     stdout: 'inherit',
     stderr: 'inherit',
     stdin: 'inherit',
-    env: { ...Bun.env },
+    env,
   });
 
   const exitCode = await proc.exited;
@@ -894,19 +1025,11 @@ async function cmdCreate(args: string[]): Promise<void> {
 /** Publish a scaffolded project's metadata to the registry. */
 async function publishScaffolded(projectPath: string): Promise<void> {
   const pkgJson = await tryReadJson(`${projectPath}/package.json`);
-  if (!pkgJson) {
-    console.warn(`Warning: no package.json found at ${projectPath}, skipping --publish`);
-    return;
-  }
-
-  const name = pkgJson.name as string | undefined;
-  const version = pkgJson.version as string | undefined;
-
-  if (!name || !version) {
-    console.warn(
-      `Warning: package.json at ${projectPath} missing name/version, skipping --publish`
-    );
-    return;
+  let identity: ReturnType<typeof requireScaffoldMarkerIdentity>;
+  try {
+    identity = requireScaffoldMarkerIdentity(pkgJson, projectPath);
+  } catch (cause) {
+    errorExit(cause instanceof Error ? cause.message : String(cause));
   }
 
   // Read the README if it exists
@@ -923,15 +1046,17 @@ async function publishScaffolded(projectPath: string): Promise<void> {
   // Publish a minimal marker — registers the package in the index so it
   // appears in factory list and the portal. A full directory tarball
   // can be uploaded later via factory publish.
-  const marker = new Blob([`scaffolded: ${name}@${version}`]);
+  const marker = new Blob([`scaffolded: ${identity.name}@${identity.version}`]);
 
-  const release = await registry.publish(name, version, marker, {
+  const release = await registry.publish(identity.name, identity.version, marker, {
     type: 'library',
-    description: pkgJson.description as string | undefined,
+    description: typeof pkgJson?.description === 'string' ? pkgJson.description : undefined,
     readme,
   });
 
-  console.log(`\n  ✓ Registered ${name}@${version} in registry (scaffold marker)\n`);
+  console.log(
+    `\n  ✓ Registered ${identity.name}@${identity.version} in registry (scaffold marker)\n`
+  );
   console.log(tomlStringify(release));
   console.log(`\n  Run 'factory publish ${projectPath}' to upload the full project.\n`);
 }
@@ -1007,6 +1132,9 @@ async function main(): Promise<void> {
       break;
     case 'create':
       await cmdCreate(subargs);
+      break;
+    case 'templates':
+      cmdTemplates();
       break;
     default:
       console.error(`Unknown command: ${command}`);

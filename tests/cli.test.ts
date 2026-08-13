@@ -8,17 +8,21 @@
 
 import { describe, expect, test } from 'bun:test';
 import { spawn } from 'bun';
+import { requireScaffoldMarkerIdentity } from '../lib/factory/scaffold-marker.ts';
+import { makeTempDir, removeTempDir } from '../lib/tmp-probe.ts';
 
 const CLI_PATH = `${import.meta.dir}/../lib/factory/cli.ts`;
 
 /** Run the CLI with args and return stdout + stderr + exit code. */
 async function runCli(
   args: string[] = [],
-  env?: Record<string, string | undefined>
+  env?: Record<string, string | undefined>,
+  cwd?: string,
 ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
   const proc = spawn(['bun', CLI_PATH, ...args], {
     stdout: 'pipe',
     stderr: 'pipe',
+    cwd,
     env: env
       ? ({ ...Bun.env, ...env } as Record<string, string>)
       : undefined,
@@ -106,6 +110,15 @@ describe('CLI — help and version', () => {
 });
 
 describe('CLI — create subcommand', () => {
+  test('--publish marker identity has no missing-value fallback', () => {
+    expect(requireScaffoldMarkerIdentity({ name: '  example  ', version: ' 1.2.3 ' }, '/tmp/example')).toEqual({
+      name: 'example',
+      version: '1.2.3',
+    });
+    expect(() => requireScaffoldMarkerIdentity(null, '/tmp/example')).toThrow('no registry marker was created');
+    expect(() => requireScaffoldMarkerIdentity({ name: 'example' }, '/tmp/example')).toThrow('non-empty package.json name and version');
+  });
+
   test('create without template prints help', async () => {
     const { stdout, exitCode } = await runCli(['create']);
     expect(exitCode).toBe(0);
@@ -117,19 +130,115 @@ describe('CLI — create subcommand', () => {
     expect(exitCode).toBe(0);
     expect(stdout).toContain('--publish');
     expect(stdout).toContain('--force');
+    expect(stdout).toContain('--open');
+    expect(stdout).toContain('--replace-local');
+    expect(stdout).toContain('npm');
+    expect(stdout).toContain('github');
   });
 
-  test('create with unknown flags passes them through', async () => {
-    // Dest under tmp so bun create never dumps nested .git at repo root.
-    const dest = `${Bun.env.TMPDIR || '/tmp'}/fw-factory-create-${Bun.randomUUIDv7()}`;
-    const { stderr, exitCode } = await runCli([
+  test('templates documents local, npm, GitHub, and registry lanes', async () => {
+    const { stdout, exitCode } = await runCli(['templates']);
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain('local');
+    expect(stdout).toContain('npm');
+    expect(stdout).toContain('github');
+    expect(stdout).toContain('Factory R2 registry');
+  });
+
+  test('create --publish requires an explicit destination', async () => {
+    const { stderr, exitCode } = await runCli(['create', 'factory-library', '--publish']);
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain('--publish requires an explicit <destination>');
+  });
+
+  test('create requires an explicit destination for destructive repository-local templates', async () => {
+    const { stderr, exitCode } = await runCli(['create', 'factory-library', '--no-install', '--no-git']);
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain('Local template "factory-library" requires an explicit <destination>');
+    expect(stderr).toContain('may replace an existing local destination');
+  });
+
+  test('create recognizes an explicit BUN_CREATE_DIR template before applying local safety rules', async () => {
+    const templateRoot = await makeTempDir('factory-configured-template');
+    try {
+      await Bun.write(`${templateRoot}/configured/package.json`, '{"name":"configured"}\n');
+      const { stderr, exitCode } = await runCli(['create', 'configured', '--no-install', '--no-git'], {
+        BUN_CREATE_DIR: templateRoot,
+      });
+      expect(exitCode).toBe(1);
+      expect(stderr).toContain('Local template "configured" requires an explicit <destination>');
+    } finally {
+      await removeTempDir(templateRoot);
+    }
+  });
+
+  test('create recognizes a working-project local template before applying local safety rules', async () => {
+    const projectRoot = await makeTempDir('factory-working-project-template');
+    try {
+      await Bun.write(`${projectRoot}/.bun-create/project-local/package.json`, '{"name":"project-local"}\n');
+      const { stderr, exitCode } = await runCli(
+        ['create', 'project-local', '--no-install', '--no-git'],
+        undefined,
+        projectRoot,
+      );
+      expect(exitCode).toBe(1);
+      expect(stderr).toContain('Local template "project-local" requires an explicit <destination>');
+    } finally {
+      await removeTempDir(projectRoot);
+    }
+  });
+
+  test('create rejects extra positionals and current-directory local destinations', async () => {
+    const extra = await runCli(['create', 'factory-library', 'one', 'two', '--no-install', '--no-git']);
+    expect(extra.exitCode).toBe(1);
+    expect(extra.stderr).toContain('at most one <destination>');
+
+    const current = await runCli(['create', 'factory-library', '.', '--no-install', '--no-git']);
+    expect(current.exitCode).toBe(1);
+    expect(current.stderr).toContain('current working directory');
+  });
+
+  test('create refuses replacement until --replace-local makes it explicit', async () => {
+    const dest = `${Bun.env.TMPDIR || '/tmp'}/fw-factory-replace-${Bun.randomUUIDv7()}`;
+    await Bun.write(`${dest}/stale.txt`, 'preserve unless replacement is explicit');
+    const refused = await runCli(['create', 'factory-library', dest, '--no-install', '--no-git']);
+    expect(refused.exitCode).toBe(1);
+    expect(refused.stderr).toContain('--replace-local');
+    expect(await Bun.file(`${dest}/stale.txt`).exists()).toBe(true);
+
+    const replaced = await runCli([
       'create',
       'factory-library',
       dest,
-      '--unknown-flag',
+      '--replace-local',
+      '--no-install',
+      '--no-git',
     ]);
-    expect(stderr).not.toContain('Unknown flag');
-    expect(typeof exitCode).toBe('number');
+    expect(replaced.exitCode).toBe(0);
+    expect(await Bun.file(`${dest}/stale.txt`).exists()).toBe(false);
+    await Bun.$`rm -rf ${dest}`.nothrow().quiet();
+  });
+
+  test('create rejects --replace-local outside the repository-local route', async () => {
+    const { stderr, exitCode } = await runCli(['create', 'remix', 'my-app', '--replace-local']);
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain('--replace-local is only valid for a known repository-local template');
+  });
+
+  test('create preserves safe Bun flags and their destination semantics', async () => {
+    // Dest under tmp so bun create never writes a nested .git at repo root.
+    const dest = `${Bun.env.TMPDIR || '/tmp'}/fw-factory-create-${Bun.randomUUIDv7()}`;
+    const { exitCode } = await runCli([
+      'create',
+      'factory-library',
+      '--no-install',
+      '--no-git',
+      dest,
+    ]);
+    expect(exitCode).toBe(0);
+    expect(await Bun.file(`${dest}/package.json`).exists()).toBe(true);
+    expect(await Bun.file(`${dest}/.git`).exists()).toBe(false);
+    expect(await Bun.file(`${dest}/node_modules`).exists()).toBe(false);
     await Bun.$`rm -rf ${dest}`.nothrow().quiet();
   });
 });

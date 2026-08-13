@@ -29,6 +29,7 @@ bun run factory --version
 bun run factory:list
 bun run factory:snapshot          # → public/registry/registry.json
 bun run factory:create -- factory-library ./packages/my-lib
+bun run factory:templates         # local, npm, GitHub, and artifact-registry lanes
 bun run factory -- colors 'rgba(224 108 117 / 0.5)' --diagnose
 ```
 
@@ -49,14 +50,22 @@ interactive spawn. Canonical Bun docs:
 [runtime/templating/create](https://bun.com/docs/runtime/templating/create)
 (_optional_ — Bun needs no config; create only speeds setup). Empty project
 without a template: [bun init](https://bun.com/docs/runtime/templating/init).
+The complete upstream-to-Factory map is in
+[`bun-create-alignment.md`](../../docs/design/bun-create-alignment.md). The
+corresponding native registry and Factory-artifact publication map is in
+[`bun-publish-alignment.md`](../../docs/design/bun-publish-alignment.md).
 
-| Mode                  | Example                                                                |
-| --------------------- | ---------------------------------------------------------------------- |
-| Local template (repo) | `bun run factory:create -- factory-library my-lib`                     |
-| Same, publish to R2   | `bun run factory:create -- factory-library my-lib --publish`           |
-| React component env   | `bun create ./MyComponent.tsx` (or `factory create ./MyComponent.tsx`) |
-| GitHub                | `bun create user/repo dest`                                            |
-| npm create-*          | `bun create remix` ≡ `bunx create-remix`                               |
+| Source                                                | Example                                                               |
+| ----------------------------------------------------- | --------------------------------------------------------------------- |
+| Local repository template                             | `bun run factory:create -- factory-library my-lib`                    |
+| npm `create-*` package                                | `bun run factory:create -- remix my-app` ≡ `bunx create-remix my-app` |
+| GitHub                                                | `bun run factory:create -- vercel/next.js my-app`                     |
+| Factory R2 registry (artifact, not a scaffold source) | `bun run factory:install <name>`                                      |
+
+List the routing guide with `bun run factory:templates`. The `factory:create`
+script is intentionally create-only; use `factory` or `factory:templates` for
+non-create subcommands. That guide also identifies the Factory-only local
+replacement guard; it never applies to npm, GitHub, or component routes.
 
 **Template search path:** project [`.bun-create/<name>`](../../.bun-create/) ·
 `$HOME/.bun-create/<name>` · global override `BUN_CREATE_DIR`.  
@@ -68,14 +77,24 @@ Scaffold metrics: `bun run bench` (`Bun.nanoseconds` → JSON) ·
 harness tenant
 [`bun-bench-profiling.md`](../../docs/harness/tenants/bun-bench-profiling.md).
 
-**Flags** (passed through): `--force` · `--no-install` · `--no-git` ·
-`--open`.  
-**Env** (GitHub / Enterprise): `GITHUB_TOKEN` (preferred) ·
-`GITHUB_ACCESS_TOKEN` · `GITHUB_API_DOMAIN` — key names in
+**Bun flags** (passed through): `--force` · `--no-install` · `--no-git` ·
+`--open`. **Factory-only safety flags:** `--publish` and `--replace-local`.
+Verify the active Bun runtime with `bun create --help` before depending on a
+flag. **Env** (GitHub / Enterprise): `GITHUB_TOKEN` (preferred) ·
+`GITHUB_ACCESS_TOKEN` · `GITHUB_API_DOMAIN`; npm templates can also receive
+`NPM_CLIENT` (absolute executable path) — key names in
 [`BUN_GITHUB_ENV`](../github-repository-ref.ts).
 
-⚠️ Local templates **delete** an existing destination directory; remote
-templates do not overwrite without `--force`.
+`--force` is Bun's remote-template overwrite override. Local templates replace
+their destination by design whether or not that flag is present.
+
+For that reason, the Factory wrapper requires an explicit destination for its
+repository-local templates:
+`bun run factory:create -- factory-library ./my-lib`. It also refuses an
+existing local destination until `--replace-local` states that replacement is
+intentional; it always refuses the current working directory. Direct
+`bun create factory-library` retains Bun's upstream optional-destination
+behavior; use it only when its implicit destination is intentional.
 
 `--publish` records scaffold metadata only. Create and verify a `bun pm pack`
 archive before using `factory publish` for a distributable release. Treat the
@@ -177,3 +196,25 @@ disappear when Bun strips TypeScript at runtime.
 Canonical references: [Bun.color](https://bun.com/docs/runtime/color) ·
 [macros](https://bun.com/docs/bundler/macros) ·
 [`expectTypeOf`](https://bun.com/docs/test/writing-tests#expecttypeof).
+
+## Registry defaults and malformed input
+
+Defaults apply only when an input is absent. Supplied blank or invalid values
+are rejected rather than silently changed, except that blank environment values
+in an ordered fallback chain are treated as absent so the next configured source
+can be used.
+
+| Input                        | Absent                         | Supplied malformed                                                                                     |
+| ---------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| Artifact `type`              | `library`                      | Reject publish                                                                                         |
+| Dist-tag                     | `latest`                       | Reject publish                                                                                         |
+| Publisher                    | `factory-cli`                  | Reject publish                                                                                         |
+| HTTP multipart `tags`        | `latest`                       | HTTP 400                                                                                               |
+| `REGISTRY_MAX_PUBLISH_BYTES` | 50 MiB                         | HTTP 503; publish is unavailable                                                                       |
+| `REGISTRY_PORT` / `PORT`     | `3000`                         | Server startup fails clearly                                                                           |
+| Programmatic `port: 0`       | n/a                            | Explicit Bun ephemeral-port request; allowed only when passed as an option                             |
+| Publish token                | Publishing disabled (HTTP 503) | Blank preferred token falls through to `REGISTRY_SECRET`; an explicit blank option disables publishing |
+
+`REGISTRY_PORT` takes precedence over `PORT` when non-empty. `REGISTRY_HOST`
+defaults to `0.0.0.0` only when absent; production operators should set it (or
+place a reverse proxy in front) intentionally.

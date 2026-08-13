@@ -44,6 +44,20 @@ describe('lib/docs/bun-release-tracker', () => {
     }
   });
 
+  test('keeps template commands, operator feedback, and the documentation index canonical', () => {
+    expect(CANONICAL_REFS['llms.txt index']).toBe('https://bun.com/docs/llms.txt');
+    expect(CANONICAL_REFS['bun create']).toBe('https://bun.com/docs/runtime/templating/create');
+    expect(CANONICAL_REFS['bun init']).toBe('https://bun.com/docs/runtime/templating/init');
+    expect(CANONICAL_REFS['test reporters']).toBe('https://bun.com/docs/test/reporters');
+    expect(CANONICAL_REFS['--reporter-outfile']).toContain('test/reporters#using-the-junit-reporter');
+    expect(CANONICAL_REFS['[test.reporter]']).toContain('test/reporters#configuring-via-bunfig-toml');
+    expect(CANONICAL_REFS['bun test --coverage']).toContain('docs/test/code-coverage');
+    expect(CANONICAL_REFS['coveragePathIgnorePatterns']).toContain('ignore-specific-paths');
+    expect(CANONICAL_REFS['bun pm pack']).toBe('https://bun.com/docs/pm/cli/pm#pack');
+    expect(CANONICAL_REFS['bun publish']).toBe('https://bun.com/docs/pm/cli/publish');
+    expect(CANONICAL_REFS['bun feedback']).toBe('https://bun.com/docs/feedback');
+  });
+
   test('BUN_V1314_ANCHORS covers all user-listed blog sections', () => {
     const expected = [
       'bun-image',

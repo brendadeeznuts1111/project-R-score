@@ -14,6 +14,9 @@
 import { hello, resetCallCount } from '../src/index.ts';
 
 const ITERATIONS = Number(Bun.env.BENCH_ITERATIONS ?? 50_000);
+if (!Number.isSafeInteger(ITERATIONS) || ITERATIONS < 1) {
+  throw new Error('BENCH_ITERATIONS must be a positive integer.');
+}
 
 resetCallCount();
 hello('warmup');
@@ -27,7 +30,7 @@ const meanNs = totalNs / ITERATIONS;
 const opsPerSec = Math.round(1e9 / meanNs);
 
 const report = {
-  suite: '{{name}}',
+  suite: 'library-entry-point',
   metric: 'helloThroughput',
   iterations: ITERATIONS,
   totalNs,
