@@ -1,7 +1,14 @@
 # Project bunfig.toml
-# @see https://bun.sh/docs/runtime/console — console depth
-# @see https://bun.sh/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind — noOrphans
-# @see https://bun.sh/docs/bundler/fullstack#inline-environment-variables — inline env vars
+# @see https://bun.com/docs/runtime/console — console depth
+# @see https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind — noOrphans
+# @see https://bun.com/docs/pm/global-store — isolated global virtual store
+# @see https://bun.com/docs/bundler/fullstack#inline-environment-variables — inline env vars
+
+[install]
+# The global store is effective only with the isolated linker. Packages are
+# shared through Bun's cache while this project's node_modules stays isolated.
+linker = "isolated"
+globalStore = true
 
 [run]
 # Exit when the parent process dies — keeps CI pipelines clean.
@@ -16,9 +23,9 @@ depth = 4
 # Inline only PUBLIC_* env vars into frontend bundles at build time.
 # Use this to expose non-secret browser configuration such as a registry URL.
 # Never expose credentials, private tokens, or API keys through PUBLIC_*.
-# @see https://bun.sh/docs/bundler/fullstack#inline-environment-variables
+# @see https://bun.com/docs/bundler/fullstack#inline-environment-variables
 #
 # For production builds, use the equivalent Bun.build() option:
 #   await Bun.build({ env: "PUBLIC_*", ... })
-# @see https://bun.sh/docs/bundler#env-%E2%80%9Cdisable%E2%80%9D
+# @see https://bun.com/docs/bundler#env-%E2%80%9Cdisable%E2%80%9D
 env = "PUBLIC_*"

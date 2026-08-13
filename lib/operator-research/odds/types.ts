@@ -2,6 +2,7 @@
  * Live odds monitoring domain types.
  *
  * Interior shapes after the wire boundary — parsers produce these from JSON/HTML/TOML.
+ * @see https://bun.com/blog/bun-v1.3.14#http2-client
  */
 
 import type { HostId } from '../../types/branded.ts';
@@ -92,6 +93,11 @@ export type OddsEndpoint = {
   host: HostId;
   sportsbookId?: SportsbookId | null;
   url: string;
+  /**
+   * Pin a protocol only after the provider has been probed. Omit to preserve
+   * Bun's default transport and any process-level experimental negotiation.
+   */
+  protocol?: NonNullable<BunFetchRequestInit['protocol']>;
   method?: 'GET' | 'POST';
   headers?: Record<string, string>;
   body?: unknown;

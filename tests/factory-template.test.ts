@@ -3,6 +3,15 @@ import { describe, expect, test } from 'bun:test';
 const TEMPLATE_ROOT = `${import.meta.dir}/../.bun-create/factory-library`;
 
 describe('factory-library template contract', () => {
+  test('uses the isolated global store and parent-death protection', async () => {
+    const config = Bun.TOML.parse(await Bun.file(`${TEMPLATE_ROOT}/bunfig.toml`).text()) as {
+      install?: { linker?: string; globalStore?: boolean };
+      run?: { noOrphans?: boolean };
+    };
+    expect(config.install).toEqual({ linker: 'isolated', globalStore: true });
+    expect(config.run?.noOrphans).toBe(true);
+  });
+
   test('keeps mustache placeholders only where Bun resolves the package name', async () => {
     const files = ['README.md', 'bunfig.toml', 'src/index.ts', 'test/index.test.ts'];
     for (const file of files) {

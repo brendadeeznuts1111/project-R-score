@@ -222,7 +222,12 @@ export async function runMonitorTick(opts: RunMonitorOptions): Promise<MonitorTi
 
 export function endpointFromHost(
   host: string,
-  opts: { url?: string; fixtureId?: string; sportsbookId?: string } = {} // brand-ok — opaque research/wire id
+  opts: {
+    url?: string;
+    fixtureId?: string; // brand-ok — opaque research/wire id
+    sportsbookId?: string; // brand-ok — boundary input is parsed below
+    protocol?: NonNullable<BunFetchRequestInit['protocol']>;
+  } = {}
 ): OddsEndpoint {
   const h = tryHostId(host) ?? asHostId(host);
   const base = opts.url ?? `https://${String(h)}/api/odds`;
@@ -233,6 +238,7 @@ export function endpointFromHost(
       ? trySportsbookId(opts.sportsbookId)
       : trySportsbookId(host.split('.')[0] ?? ''),
     fixtureId: opts.fixtureId ?? host.split('.')[0],
+    ...(opts.protocol ? { protocol: opts.protocol } : {}),
   };
 }
 
