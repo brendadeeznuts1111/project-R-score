@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 import { describe, expect, test } from 'bun:test';
 import {
   DOCS_FEEDS_ABS,
@@ -9,6 +12,7 @@ import {
   migrateLegacyFeeds,
   type DocsFeedsFile,
 } from '../tools/bun-docs-feeds.ts';
+import { loadReleaseIndex } from '../tools/bun-docs-releases.ts';
 
 describe('bun-docs-feeds', () => {
   test('loadFeeds returns rss and reference sections', async () => {
@@ -17,6 +21,13 @@ describe('bun-docs-feeds', () => {
     expect(feeds.reference).toBeDefined();
     expect(Array.isArray(feeds.rss.entries)).toBe(true);
     expect(Array.isArray(feeds.reference.pages)).toBe(true);
+  });
+
+  test('release scraper loads the merged feed without a legacy index', async () => {
+    const { file, map } = await loadReleaseIndex({ refresh: false });
+    expect(file.entries.length).toBeGreaterThan(0);
+    expect(map.size).toBeGreaterThanOrEqual(file.entries.length);
+    expect(file.entries.every(entry => entry.url.startsWith('https://bun.com/blog/'))).toBe(true);
   });
 
   test('migrateLegacyFeeds writes merged file when legacy indexes exist', async () => {

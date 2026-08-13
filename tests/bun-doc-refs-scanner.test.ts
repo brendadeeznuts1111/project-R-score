@@ -365,6 +365,30 @@ void RuntimeGlob; void sqlite;
       },
     });
 
+    const markdownHistory = Bun.spawn(
+      [process.execPath, 'tools/bun-doc-refs.ts', 'history', 'Bun.markdown', '--json'],
+      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
+    );
+    const markdownOutput = JSON.parse(await new Response(markdownHistory.stdout).text());
+    expect(await markdownHistory.exited).toBe(0);
+    expect(markdownOutput.release).toMatchObject({
+      version: '1.3.8',
+      section: 'Bun.markdown — Built-in Markdown Parser',
+    });
+    expect(markdownOutput.release.evidence).toContain('new Bun.markdown API');
+
+    const csrfHistory = Bun.spawn(
+      [process.execPath, 'tools/bun-doc-refs.ts', 'history', 'Bun.CSRF', '--json'],
+      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
+    );
+    const csrfOutput = JSON.parse(await new Response(csrfHistory.stdout).text());
+    expect(await csrfHistory.exited).toBe(0);
+    expect(csrfOutput.api).toBe('Bun.CSRF');
+    expect(csrfOutput.release.version).toBe('1.2.5');
+    expect(csrfOutput.updates).toEqual([
+      expect.objectContaining({ type: 'changed', version: '1.3.0' }),
+    ]);
+
     const check = Bun.spawn(
       [process.execPath, 'tools/bun-doc-refs.ts', 'provenance-check', '--json'],
       { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }

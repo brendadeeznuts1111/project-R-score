@@ -1717,6 +1717,8 @@ export type ApiHistoryEvent = {
   date: string | null;
   reference: string;
   note?: string;
+  section?: string;
+  evidence?: string;
 };
 
 export type ApiReleaseProvenance = {
@@ -2135,7 +2137,7 @@ export async function findMissing(paths: string[]): Promise<MissingRef[]> {
           line: first.line,
           column: first.column,
           occurrences: occurrences.length,
-          provenance: buildApiReleaseProvenance(api, catalogByApi.get(resolveApiAlias(api))),
+          provenance: buildApiReleaseProvenance(api, catalogEntryFor(catalogByApi, api)),
         });
       }
     }
@@ -2323,6 +2325,8 @@ type CatalogEntry = {
     publishedAt?: string;
     kind: 'ship' | 'fix' | 'chg' | 'stabilize';
     note?: string;
+    section?: string;
+    evidence?: string;
   }>;
   verifiedOn?: string;
   lastUpdated?: string;
@@ -2348,10 +2352,19 @@ function buildCatalogLookup(entries: CatalogEntry[]): Map<string, CatalogEntry> 
   const lookup = new Map<string, CatalogEntry>();
   for (const entry of entries) {
     for (const name of [entry.name, ...(entry.aliases ?? [])]) {
-      lookup.set(resolveApiAlias(name), entry);
+      lookup.set(name, entry);
+      const resolved = resolveApiAlias(name);
+      if (!lookup.has(resolved)) lookup.set(resolved, entry);
     }
   }
   return lookup;
+}
+
+function catalogEntryFor(
+  lookup: Map<string, CatalogEntry>,
+  name: string
+): CatalogEntry | undefined {
+  return lookup.get(name) ?? lookup.get(resolveApiAlias(name));
 }
 
 function scalarHistoryEvents(entry: CatalogEntry): ApiHistoryEvent[] {
@@ -2413,6 +2426,8 @@ export function buildApiReleaseProvenance(api: string, entry?: CatalogEntry): Ap
       date: hit.publishedAt ?? null,
       reference: hit.url,
       ...(hit.note ? { note: hit.note } : {}),
+      ...(hit.section ? { section: hit.section } : {}),
+      ...(hit.evidence ? { evidence: hit.evidence } : {}),
     };
     events.set(`${event.type}:${event.version}`, event);
   }
@@ -2450,12 +2465,16 @@ function eventSummary(event: ApiHistoryEvent): string {
 }
 
 function printProvenance(provenance: ApiReleaseProvenance, indent = ''): void {
-  if (provenance.release) console.info(`${indent}${eventSummary(provenance.release)}`);
+  const printEvent = (event: ApiHistoryEvent): void => {
+    console.info(`${indent}${eventSummary(event)}`);
+    if (event.evidence) console.info(`${indent}  evidence: ${event.evidence}`);
+  };
+  if (provenance.release) printEvent(provenance.release);
   else
     console.info(
       `${indent}release date/version unknown; docs verification is not release evidence`
     );
-  for (const update of provenance.updates) console.info(`${indent}${eventSummary(update)}`);
+  for (const update of provenance.updates) printEvent(update);
   if (!provenance.release && provenance.catalogVerification.version) {
     const verification = provenance.catalogVerification;
     console.info(
@@ -2485,9 +2504,10 @@ async function apiHistory(query: string, json = false): Promise<number> {
   const catalog = await loadDocsCatalog();
   if (!catalog) throw new Error('docs catalog is missing or unreadable');
   const lookup = buildCatalogLookup(catalog);
-  const canonical = resolveApiAlias(query.trim());
-  const entry = lookup.get(canonical);
+  const requested = query.trim();
+  const entry = catalogEntryFor(lookup, requested);
   if (!entry) throw new Error(`API is not present in the docs catalog: ${query}`);
+  const canonical = entry.name;
   const provenance = buildApiReleaseProvenance(canonical, entry);
   if (json) {
     jsonOut({ schemaVersion: 1, command: 'history', api: canonical, ...provenance });

@@ -9,6 +9,8 @@
 // @see https://bun.com/docs/runtime/http/server — Bun.serve / http3
 // @see https://bun.com/docs/runtime/secrets — Bun.secrets
 // @see https://bun.com/docs/runtime/networking/udp — Bun.udpSocket
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+// @see https://bun.com/docs/runtime/csrf#bun-csrf-generate — Bun.CSRF / Bun.CSRF.generate / Bun.CSRF.verify
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
 // @see https://bun.com/docs/runtime/nodejs-compat#fetch — fetch
@@ -114,8 +116,21 @@ export const CHANGELOG_EVENTS: ChangelogEvent[] = [
   {
     name: 'Bun.markdown',
     kind: 'feature',
-    version: '1.3.0',
+    version: '1.3.8',
     note: 'Native Markdown rendering (html/ansi/render/react)',
+  },
+  {
+    name: 'Bun.color',
+    kind: 'feature',
+    version: '1.1.30',
+    note: 'Native CSS/ANSI color parsing and conversion',
+  },
+  {
+    name: 'Bun.CSRF',
+    kind: 'feature',
+    version: '1.2.5',
+    note: 'Built-in CSRF token generation and verification',
+    aliases: ['Bun.CSRF.generate', 'Bun.CSRF.verify'],
   },
   {
     name: 'Bun.secrets',
@@ -126,7 +141,7 @@ export const CHANGELOG_EVENTS: ChangelogEvent[] = [
   {
     name: 'Bun.udpSocket',
     kind: 'feature',
-    version: '1.0.0',
+    version: '1.1.6',
     note: 'UDP sockets with ICMP/truncation handling',
   },
   // https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support

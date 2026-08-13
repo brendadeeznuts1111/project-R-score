@@ -1363,10 +1363,16 @@ export function applyReleaseOverlay(
     e.changeNote = o.changeNote;
   }
   if (o.hits?.length) {
+    const authoritativeRelease = e.releasedIn;
     e.releaseHits = sortReleaseHits(
       dedupeReleaseHits(
         o.hits.map(hit => ({
           ...hit,
+          ...(hit.kind === 'ship' &&
+          authoritativeRelease &&
+          compareSemver(hit.version, authoritativeRelease) > 0
+            ? { kind: 'chg' as const }
+            : {}),
           publishedAt: hit.publishedAt ?? releaseMap?.get(cleanBunVersion(hit.version))?.pubDate,
         }))
       )
@@ -1411,7 +1417,7 @@ function dedupeReleaseHits(hits: ReleaseOverlayHit[]): ReleaseOverlayHit[] {
   const seen = new Set<string>();
   const out: ReleaseOverlayHit[] = [];
   for (const h of hits) {
-    const key = `${h.version}|${h.kind}|${h.url}|${h.section}`;
+    const key = `${h.version}|${h.kind}|${h.url}|${h.section}|${h.evidence ?? ''}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(h);
@@ -1702,7 +1708,7 @@ export async function writeCatalog(
       name: 'string',
       type: 'api | cli-flag | config | concept',
       releaseHits:
-        'ReleaseOverlayHit[]? — full scrape timeline with official publication date embedded at build',
+        'ReleaseOverlayHit[]? — full scrape timeline with token-local evidence, parent section, official URL, and publication date embedded at build',
       description: 'string?',
       stability: 'stable | experimental | deprecated',
       releasedIn: 'string? — Bun semver when feature shipped (curated)',
