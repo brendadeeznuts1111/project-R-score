@@ -19,7 +19,7 @@ frozenLockfile = false
 noOrphans = true
 
 [console]
-# Object inspection depth for console.log / Bun.inspect output.
+# Object inspection depth for console.log. Pass { depth } explicitly to Bun.inspect.
 depth = 4
 
 # Keep [test.reporter] unset: normal `bun test` remains the readable console

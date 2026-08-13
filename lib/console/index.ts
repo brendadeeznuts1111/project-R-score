@@ -26,6 +26,7 @@
 export { shouldColor, colorize, tones, cliTone } from './color.ts';
 export {
   DEFAULT_DEPTH,
+  MAX_CONSOLE_DEPTH,
   getConsoleDepth,
   type InspectOptions,
   resolveInspectOptions,

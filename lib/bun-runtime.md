@@ -127,7 +127,7 @@ until promotion. Curated harvest for portal-cli:
 | `-b` / `--bun`                  | boolean                                                           | Force Bun for Node shebangs (symlink `node` → Bun)         |
 | `--no-orphans`                  | boolean                                                           | Exit when parent dies; SIGKILL descendants (Linux/macOS)   |
 | `--shell=<bun\|system>`         | `bun` \| `system`                                                 | Shell for `package.json` scripts                           |
-| `--interactive`                 | boolean                                                           | See note below (docs ↔ help gap)                          |
+| `--interactive`                 | boolean                                                           | See note below (docs ↔ help gap)                           |
 | `--smol`                        | boolean                                                           | Lower memory; GC more often                                |
 | `--expose-gc`                   | boolean                                                           | Expose `gc()` on global (no effect on `Bun.gc()`)          |
 | `--no-deprecation`              | boolean                                                           | Suppress custom deprecation reporting                      |
@@ -321,10 +321,12 @@ Shebang: `#!/usr/bin/env bun`. Persistent knobs: `bunfig.toml`.
 ## Console depth & stdin
 
 Canonical Bun docs:
-[Object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth) ·
-[`bun run -` stdin](https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin) ·
-[`--console-depth` with run](https://bun.com/docs/runtime#bun-run-console-depth) ·
-module note [`console-depth.md`](./console-depth.md) · policy
+[Object inspection depth](https://bun.com/docs/runtime/console#object-inspection-depth)
+·
+[`bun run -` stdin](https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin)
+·
+[`--console-depth` with run](https://bun.com/docs/runtime#bun-run-console-depth)
+· module note [`console-depth.md`](./console-depth.md) · policy
 [`console-depth.ts`](./console-depth.ts).
 
 ### Object inspection depth (`console.log()`)
@@ -382,6 +384,12 @@ This repo pins bunfig `[console] depth = 6` for plain `console.log`. Explicit
 `BUN_CONSOLE_DEPTH` is **wrapper-only** — the runtime does not read it. Prefer
 helpers (`inspect`, `logDepth`, `logTable`, `jsonOut`) over raw
 `console.log(obj)` / `console.table` for harness output.
+
+The override is unset by default so native and wrapper output share the repo's
+depth `6`. Wrapper input accepts only whole integers from `0` through `65535`.
+Repeated runtime flags and alternate `--config` / `-c` bunfig selection follow
+Bun's last-option-wins behavior; a trailing script argument named
+`--console-depth` does not change wrapper formatting.
 
 ```ts
 import { inspect, getConsoleDepth } from './console-depth.ts';
@@ -546,8 +554,8 @@ Path pattern: `https://bun.com/reference/bun/<Name>` (generated from bun-types).
 | Stdin             | `Bun.stdin.stream()`                                               | `() => ReadableStream` (chunks `Uint8Array` when iterated)                                                                                                                        | Async (per chunk)         | N/A                           | [§ Console depth](#console-depth--stdin)                     | Raw byte chunks — not line-split.                                                       |
 | Color             | `Bun.color(input, outputFormat?)`                                  | Overloads → `string \| number \| tuple \| object \| null` per format (`"ansi"`, `"number"`, `"[rgb]"`, …)                                                                         | Sync                      | N/A                           | `colorize`                                                   | CSS → ANSI/hex/number; `"ansi"` auto-detect. Macro-capable.                             |
 | Markdown          | `Bun.markdown.ansi(md, options?)`                                  | `(md: string \| TypedArray \| …, options?: AnsiTheme) => string`                                                                                                                  | Sync                      | N/A                           | call directly                                                | Markdown → ANSI terminal.                                                               |
-| Markdown          | `Bun.markdown.html(md, options?)`                                  | `(md: string, options?: Bun.markdown.Options) => string`                                                                                                                          | Sync                      | N/A                           | [`lib/markdown/options.ts`](./markdown/options.ts) presets   | HTML; options table: headings · autolinks · wikiLinks · tagFilter · …                 |
-| Markdown          | `Bun.markdown.render(md, callbacks?, options?)`                    | `(md: string, callbacks?, options?) => string`                                                                                                                                  | Sync                      | N/A                           | —                                                            | Low-level renderer with callbacks.                                                      |
+| Markdown          | `Bun.markdown.html(md, options?)`                                  | `(md: string, options?: Bun.markdown.Options) => string`                                                                                                                          | Sync                      | N/A                           | [`lib/markdown/options.ts`](./markdown/options.ts) presets   | HTML; options table: headings · autolinks · wikiLinks · tagFilter · …                   |
+| Markdown          | `Bun.markdown.render(md, callbacks?, options?)`                    | `(md: string, callbacks?, options?) => string`                                                                                                                                    | Sync                      | N/A                           | —                                                            | Low-level renderer with callbacks.                                                      |
 | Shell             | `Bun.$` (tagged template)                                          | `` `cmd` `` → `ShellPromise`                                                                                                                                                      | Async when awaited        | N/A                           | claim `bun-shell-boundaries`                                 | Shell with pipes, redirection, globs.                                                   |
 | Shell             | `ShellPromise.text()`                                              | `() => Promise<string>`                                                                                                                                                           | Async                     | N/A                           | —                                                            | stdout as string.                                                                       |
 | Shell             | `ShellPromise.json()`                                              | `() => Promise<any>`                                                                                                                                                              | Async                     | N/A                           | —                                                            | stdout as JSON.                                                                         |
