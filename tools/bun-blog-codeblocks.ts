@@ -47,6 +47,8 @@ import { bunBlog, BunBlogPattern, guideKeyFromUrl } from '../lib/docs/bun-site-u
 import {
   MARKDOWN_PRESET_NAMES,
   markdownHtml,
+  mergeMarkdownOptions,
+  parseMarkdownOptionOverrides,
   resolveMarkdownPreset,
   type MarkdownPresetName,
 } from '../lib/markdown/options.ts';
@@ -121,6 +123,7 @@ export type MarkdownOutputPlan = {
   html: boolean;
   ansi: boolean;
   preset: MarkdownPresetName;
+  parserOverrides: Bun.markdown.Options;
   parserOptions: Bun.markdown.Options;
   ansiTheme: Bun.markdown.AnsiTheme;
 };
@@ -173,9 +176,13 @@ export function resolveCodeBlockMode(options: {
 export function resolveMarkdownOutputPlan(options: {
   format?: string;
   preset?: string;
+  parserOptions?: string;
   columns?: string;
   hyperlinks?: boolean;
   noColors?: boolean;
+  light?: boolean;
+  dark?: boolean;
+  kittyGraphics?: boolean;
 }): MarkdownOutputPlan {
   const requestedFormat = options.format?.trim() || 'markdown';
   if (!MARKDOWN_OUTPUT_FORMATS.some(format => format === requestedFormat)) {
@@ -187,36 +194,50 @@ export function resolveMarkdownOutputPlan(options: {
   const html = format === 'html' || format === 'all';
   const ansi = format === 'ansi' || format === 'all';
 
-  if (options.preset != null && !html) {
-    throw new Error('--markdown-preset requires --markdown-format=html|all');
+  if ((options.preset != null || options.parserOptions != null) && !html) {
+    throw new Error('--markdown-preset/--markdown-options require --markdown-format=html|all');
   }
   if (
-    (options.columns != null || options.hyperlinks === true || options.noColors === true) &&
+    (options.columns != null ||
+      options.hyperlinks === true ||
+      options.noColors === true ||
+      options.light === true ||
+      options.dark === true ||
+      options.kittyGraphics === true) &&
     !ansi
   ) {
-    throw new Error(
-      '--markdown-columns/--markdown-hyperlinks/--markdown-no-colors require --markdown-format=ansi|all'
-    );
+    throw new Error('ANSI theme flags require --markdown-format=ansi|all');
+  }
+  if (options.light === true && options.dark === true) {
+    throw new Error('Do not combine --markdown-light with --markdown-dark');
+  }
+  if (options.noColors === true && (options.light === true || options.dark === true)) {
+    throw new Error('--markdown-light/--markdown-dark have no effect with --markdown-no-colors');
   }
 
   const resolvedPreset = resolveMarkdownPreset(options.preset?.trim() || 'readme');
+  const parserOverrides = parseMarkdownOptionOverrides(options.parserOptions);
   const ansiTheme: Bun.markdown.AnsiTheme = {};
   if (options.columns != null) {
     const columns = Number(options.columns);
-    if (!Number.isSafeInteger(columns) || columns < 1) {
-      throw new Error('--markdown-columns must be a positive safe integer');
+    if (!Number.isSafeInteger(columns) || columns < 0) {
+      throw new Error('--markdown-columns must be a non-negative safe integer');
     }
     ansiTheme.columns = columns;
   }
   if (options.hyperlinks === true) ansiTheme.hyperlinks = true;
   if (options.noColors === true) ansiTheme.colors = false;
+  if (options.light === true) ansiTheme.light = true;
+  if (options.dark === true) ansiTheme.light = false;
+  if (options.kittyGraphics === true) ansiTheme.kittyGraphics = true;
 
   return {
     format,
     html,
     ansi,
     preset: resolvedPreset.name,
-    parserOptions: resolvedPreset.options,
+    parserOverrides,
+    parserOptions: mergeMarkdownOptions(resolvedPreset.options, parserOverrides),
     ansiTheme,
   };
 }
@@ -540,9 +561,13 @@ Extract div.CodeBlock samples from a Bun blog HTML post.
   --derived-table     Compatibility alias for --mode=derived
   --markdown-format   markdown | html | ansi | all (default markdown)
   --markdown-preset   ${MARKDOWN_PRESET_NAMES.join(' | ')} (HTML parser options)
-  --markdown-columns  Positive terminal width for ANSI projection
+  --markdown-options  Exact comma-separated Bun parser overrides (name=value)
+  --markdown-columns  Terminal width; 0 disables ANSI wrapping
   --markdown-hyperlinks  Enable OSC 8 links in ANSI projection
   --markdown-no-colors   Disable colors in ANSI projection
+  --markdown-light    Select the ANSI palette for a light terminal background
+  --markdown-dark     Select the ANSI palette for a dark terminal background
+  --markdown-kitty-graphics  Render local images with Kitty graphics when supported
   --offline           Never fetch; require the saved HTML input
   -r, --rss           Opt-in live RSS enrich when release-index misses
   -h, --help          Show help
@@ -567,9 +592,13 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
       'derived-table': { type: 'boolean', default: false },
       'markdown-format': { type: 'string' },
       'markdown-preset': { type: 'string' },
+      'markdown-options': { type: 'string' },
       'markdown-columns': { type: 'string' },
       'markdown-hyperlinks': { type: 'boolean', default: false },
       'markdown-no-colors': { type: 'boolean', default: false },
+      'markdown-light': { type: 'boolean', default: false },
+      'markdown-dark': { type: 'boolean', default: false },
+      'markdown-kitty-graphics': { type: 'boolean', default: false },
       offline: { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
@@ -593,9 +622,13 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
     markdownPlan = resolveMarkdownOutputPlan({
       format: values['markdown-format'],
       preset: values['markdown-preset'],
+      parserOptions: values['markdown-options'],
       columns: values['markdown-columns'],
       hyperlinks: values['markdown-hyperlinks'],
       noColors: values['markdown-no-colors'],
+      light: values['markdown-light'],
+      dark: values['markdown-dark'],
+      kittyGraphics: values['markdown-kitty-graphics'],
     });
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
@@ -669,6 +702,7 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
     markdown: {
       format: markdownPlan.format,
       preset: markdownPlan.html ? markdownPlan.preset : null,
+      parserOverrides: markdownPlan.html ? markdownPlan.parserOverrides : null,
       parserOptions: markdownPlan.html ? markdownPlan.parserOptions : null,
       ansiTheme: markdownPlan.ansi ? markdownPlan.ansiTheme : null,
     },

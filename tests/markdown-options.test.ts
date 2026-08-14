@@ -7,6 +7,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   MARKDOWN_OPTION_CATALOG,
   MARKDOWN_OPTIONS_DEFAULTS,
+  MARKDOWN_BOOLEAN_OPTION_NAMES,
   MARKDOWN_PRESET_NAMES,
   MARKDOWN_PRESET_DESIGN,
   MARKDOWN_PRESET_PORTAL,
@@ -14,6 +15,7 @@ import {
   MARKDOWN_PRESET_SECURE,
   markdownHtml,
   mergeMarkdownOptions,
+  parseMarkdownOptionOverrides,
   resolveMarkdownPreset,
 } from '../lib/markdown/options.ts';
 import { PORTAL_MARKDOWN_PARSER } from '../lib/http/portal-skill-detail.ts';
@@ -117,6 +119,40 @@ describe('Bun.markdown.Options live contract (docs table)', () => {
 });
 
 describe('presets', () => {
+  test('closed CLI override grammar covers every documented parser option', () => {
+    expect(MARKDOWN_BOOLEAN_OPTION_NAMES).toHaveLength(13);
+    expect([...MARKDOWN_BOOLEAN_OPTION_NAMES, 'autolinks', 'headings'].sort()).toEqual(
+      MARKDOWN_OPTION_CATALOG.map(entry => entry.option).sort()
+    );
+    expect(
+      parseMarkdownOptionOverrides(
+        'tables=false,wikiLinks=true,headings=ids,autolinks=url+email'
+      )
+    ).toEqual({
+      tables: false,
+      wikiLinks: true,
+      headings: { ids: true },
+      autolinks: { url: true, email: true },
+    });
+    expect(parseMarkdownOptionOverrides('headings=linked,autolinks=all')).toEqual({
+      headings: true,
+      autolinks: true,
+    });
+    expect(parseMarkdownOptionOverrides('headings=none,autolinks=none')).toEqual({
+      headings: false,
+      autolinks: false,
+    });
+  });
+
+  test('CLI override grammar rejects unknown, duplicate, and malformed values', () => {
+    expect(() => parseMarkdownOptionOverrides('headingIds=true')).toThrow(/Unknown/);
+    expect(() => parseMarkdownOptionOverrides('tables=true,tables=false')).toThrow(/Duplicate/);
+    expect(() => parseMarkdownOptionOverrides('tables=yes')).toThrow(/true\|false/);
+    expect(() => parseMarkdownOptionOverrides('autolinks=url+url')).toThrow(/Invalid/);
+    expect(() => parseMarkdownOptionOverrides('headings=slug')).toThrow(/Invalid/);
+    expect(() => parseMarkdownOptionOverrides('wikiLinks')).toThrow(/name=value/);
+  });
+
   test('named preset resolver exposes the supported CLI/configuration boundary', () => {
     expect(MARKDOWN_PRESET_NAMES).toEqual(['readme', 'portal', 'secure', 'design']);
     expect(resolveMarkdownPreset('secure')).toEqual({

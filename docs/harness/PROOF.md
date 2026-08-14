@@ -269,8 +269,9 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   labels parsed/skipped/scoped status in JSON, Markdown, and explicit
   `Bun.inspect.table` properties, reads saved HTML through a typed `BunFile`,
   combines index/token-join/derived behavior behind `--mode` flags, and projects
-  the generated source through named `Bun.markdown.Options` HTML policies or a
-  scoped ANSI theme when requested (`boundary`) _Ratchet_ →
+  the generated source through named plus exact `Bun.markdown.Options` HTML
+  policies or the complete scoped `Bun.markdown.AnsiTheme` when requested
+  (`boundary`) _Ratchet_ →
   `bun test tests/bun-blog-codeblocks.test.ts`
 - **`blog-codeblocks-journey`** — Live Bun blog HTML traverses `fetchPostHtml` →
   `extractCodeBlocks` with the expected code-block inventory (`journey`)

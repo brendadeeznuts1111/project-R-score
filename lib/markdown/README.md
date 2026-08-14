@@ -25,14 +25,19 @@ The Bun blog code-block tool consumes these policies directly:
 bun tools/bun-blog-codeblocks.ts saved.html \
   --markdown-format=all \
   --markdown-preset=secure \
-  --markdown-columns=100 \
+  --markdown-options=wikiLinks=true,headings=ids,autolinks=url+email \
+  --markdown-columns=0 \
   --markdown-no-colors
 ```
 
 `markdown` remains the default source artifact. `html` applies the selected
-`Bun.markdown.Options` preset; `ansi` accepts only terminal theme flags. Scoped
-flags fail when their projection is not selected, so a parser option cannot
-silently do nothing.
+`Bun.markdown.Options` preset and exact `--markdown-options` overrides; `ansi`
+accepts only terminal theme flags. Columns `0` is Bun's native no-wrapping mode.
+Light/dark palettes are mutually exclusive, and Kitty graphics remain opt-in.
+Palette flags also fail with `--markdown-no-colors`, where they have no effect.
+Boolean parser fields use `true|false`; headings use `ids|linked|none`, while
+autolinks accept combinations such as `url+www+email`. Unknown, duplicate, and
+projection-incompatible options fail closed instead of silently doing nothing.
 
 Canonical docs: [Markdown guide](https://bun.com/docs/runtime/markdown) ·
 [upstream API reference](https://bun.com/reference/bun/markdown) · repository

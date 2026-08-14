@@ -261,33 +261,62 @@ describe('bun-blog-codeblocks CLI', () => {
       html: false,
       ansi: false,
       preset: 'readme',
+      parserOverrides: {},
     });
     expect(
       resolveMarkdownOutputPlan({
         format: 'all',
         preset: 'secure',
-        columns: '72',
+        parserOptions: 'wikiLinks=true,headings=linked,autolinks=url+email',
+        columns: '0',
         hyperlinks: true,
-        noColors: true,
+        dark: true,
+        kittyGraphics: true,
       })
     ).toEqual({
       format: 'all',
       html: true,
       ansi: true,
       preset: 'secure',
+      parserOverrides: {
+        wikiLinks: true,
+        headings: true,
+        autolinks: { url: true, email: true },
+      },
       parserOptions: expect.objectContaining({
-        headings: { ids: true },
+        headings: true,
+        autolinks: { url: true, email: true },
+        wikiLinks: true,
         noHtmlBlocks: true,
         noHtmlSpans: true,
         tagFilter: true,
       }),
-      ansiTheme: { columns: 72, hyperlinks: true, colors: false },
+      ansiTheme: {
+        columns: 0,
+        hyperlinks: true,
+        light: false,
+        kittyGraphics: true,
+      },
     });
     expect(() => resolveMarkdownOutputPlan({ format: 'pdf' })).toThrow(
       /markdown\|html\|ansi\|all/
     );
-    expect(() => resolveMarkdownOutputPlan({ preset: 'secure' })).toThrow(/requires/);
-    expect(() => resolveMarkdownOutputPlan({ format: 'ansi', columns: '0' })).toThrow(/positive/);
+    expect(() => resolveMarkdownOutputPlan({ preset: 'secure' })).toThrow(/require/);
+    expect(resolveMarkdownOutputPlan({ format: 'ansi', columns: '0' }).ansiTheme).toEqual({
+      columns: 0,
+    });
+    expect(() => resolveMarkdownOutputPlan({ format: 'ansi', columns: '-1' })).toThrow(
+      /non-negative/
+    );
+    expect(() => resolveMarkdownOutputPlan({ format: 'ansi', light: true, dark: true })).toThrow(
+      /Do not combine/
+    );
+    expect(() =>
+      resolveMarkdownOutputPlan({ format: 'ansi', light: true, noColors: true })
+    ).toThrow(/no effect/);
+    expect(() =>
+      resolveMarkdownOutputPlan({ format: 'html', parserOptions: 'legacy=true' })
+    ).toThrow(/Unknown/);
   });
 
   test('runCli on fixture prints index and writes artifacts', async () => {
@@ -346,7 +375,8 @@ describe('bun-blog-codeblocks CLI', () => {
       outDir,
       '--markdown-format=all',
       '--markdown-preset=secure',
-      '--markdown-columns=72',
+      '--markdown-options=wikiLinks=true,headings=linked,autolinks=url+email',
+      '--markdown-columns=0',
       '--markdown-no-colors',
     ]);
     expect(code).toBe(0);
@@ -356,16 +386,24 @@ describe('bun-blog-codeblocks CLI', () => {
     expect(inventory.markdown).toEqual({
       format: 'all',
       preset: 'secure',
+      parserOverrides: {
+        wikiLinks: true,
+        headings: true,
+        autolinks: { url: true, email: true },
+      },
       parserOptions: expect.objectContaining({
-        headings: { ids: true },
+        headings: true,
+        autolinks: { url: true, email: true },
+        wikiLinks: true,
         noHtmlBlocks: true,
         noHtmlSpans: true,
       }),
-      ansiTheme: { columns: 72, colors: false },
+      ansiTheme: { columns: 0, colors: false },
     });
 
     const renderedHtml = await Bun.file(`${stem}.html`).text();
     expect(renderedHtml).toContain('<h1 id="bun-v999-html-codeblock-extractions">');
+    expect(renderedHtml).toContain('href="#bun-v999-html-codeblock-extractions"');
     expect(renderedHtml).toContain('<table>');
     const renderedAnsi = await Bun.file(`${stem}.ansi.txt`).text();
     expect(renderedAnsi).toContain('Bun v9.9.9');
