@@ -1,12 +1,17 @@
 // @see https://bun.com/docs/test/index#run-tests
 // @see https://bun.com/docs/runtime/networking/fetch#fetching-a-url-with-a-timeout — AbortSignal.timeout
 import { describe, expect, test } from "bun:test";
-import { buildGuidesProof, runGuideChecks } from "../tools/verify-guides.ts";
+import { CANONICAL_GUIDES_TOKENS } from '../tools/bun-doc-refs.ts';
+import {
+  buildGuidesProof,
+  runGuideChecks,
+  validateGuideResponse,
+} from '../tools/verify-guides.ts';
 
 /** Live bun.com probes only — skip when offline (install dry-runs still run). */
 async function bunGuidesReachable(): Promise<boolean> {
   try {
-    const r = await fetch("https://bun.com/guides", {
+    const r = await fetch('https://bun.com/docs/guides.md', {
       signal: AbortSignal.timeout(1500),
     });
     return r.status > 0;
@@ -17,13 +22,39 @@ async function bunGuidesReachable(): Promise<boolean> {
 
 const online = await bunGuidesReachable();
 
-describe("official guides verification", () => {
+describe('official guides verification', () => {
+  test('guides.md is a landing source and llms.txt is the complete discovery authority', () => {
+    expect(CANONICAL_GUIDES_TOKENS['Bun Guides']?.url).toBe('https://bun.com/docs/guides');
+    expect(CANONICAL_GUIDES_TOKENS['Bun Guides Markdown']?.discoveryRole).toBe('landing');
+    expect(CANONICAL_GUIDES_TOKENS['Bun Docs Index']?.discoveryRole).toBe('complete-index');
+    expect(CANONICAL_GUIDES_TOKENS['Bun Install Guide']?.url).toBe(
+      'https://bun.com/docs/guides/install/from-npm-install-to-bun-install'
+    );
+  });
+
+  test('markdown discovery validation fails closed on missing llms.txt routing', () => {
+    const meta = CANONICAL_GUIDES_TOKENS['Bun Guides Markdown']!;
+    expect(
+      validateGuideResponse(meta, {
+        status: 200,
+        finalUrl: meta.url,
+        contentType: 'text/markdown; charset=utf-8',
+        body: '# Guides\n',
+      })
+    ).toEqual(
+      expect.objectContaining({
+        passed: false,
+        actual: expect.stringContaining('https://bun.com/docs/llms.txt'),
+      })
+    );
+  });
+
   test.skipIf(!online)(
     "guides index, install guide, and /get all return 200",
     async () => {
       const results = await runGuideChecks();
       const urls = results.filter(r => !r.name.startsWith("install guide:"));
-      expect(urls).toHaveLength(3);
+      expect(urls).toHaveLength(5);
       for (const r of urls) {
         expect(r.passed).toBe(true);
         expect(r.actual).toContain("200");

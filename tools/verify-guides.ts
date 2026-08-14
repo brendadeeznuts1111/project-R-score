@@ -8,7 +8,8 @@
 // @see https://bun.com/docs/bundler/fullstack#production-mode — --production
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
-// @see https://bun.com/guides — official guides index
+// @see https://bun.com/docs/guides.md — agent-readable guides landing page
+// @see https://bun.com/docs/llms.txt — complete documentation discovery index
 // @see https://bun.com/docs/runtime/networking/fetch#fetching-a-url-with-a-timeout — AbortSignal.timeout
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
@@ -22,7 +23,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { logTable } from '../lib/console-depth.ts';
-import { CANONICAL_GUIDES_TOKENS } from './bun-doc-refs.ts';
+import { CANONICAL_GUIDES_TOKENS, type CanonicalGuidesToken } from './bun-doc-refs.ts';
 
 export type GuideCheck = {
   name: string;
@@ -36,11 +37,47 @@ const argv = import.meta.main
   : Bun.argv.slice(2);
 const TIMEOUT_MS = 10_000;
 
-async function head(url: string): Promise<{ status: number; finalUrl: string }> {
+type GuideResponse = {
+  status: number;
+  finalUrl: string;
+  contentType: string;
+  body: string;
+};
+
+async function fetchGuide(url: string): Promise<GuideResponse> {
   const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS) });
-  // Drain a small part of the body so the connection completes cleanly
-  await res.text().catch(() => '');
-  return { status: res.status, finalUrl: res.url };
+  return {
+    status: res.status,
+    finalUrl: res.url,
+    contentType: res.headers.get('content-type') ?? '',
+    body: await res.text(),
+  };
+}
+
+export function validateGuideResponse(
+  meta: CanonicalGuidesToken,
+  response: GuideResponse
+): { passed: boolean; expected: string; actual: string } {
+  const required = meta.requiredText ?? [];
+  const missing = required.filter(marker => !response.body.includes(marker));
+  const canonical = response.finalUrl === meta.url;
+  const mediaType = response.contentType.toLowerCase().includes(meta.mediaType);
+  const passed = response.status === 200 && canonical && mediaType && missing.length === 0;
+  const expected = [
+    `200 ${meta.mediaType}`,
+    'canonical URL',
+    required.length > 0 ? `${required.length} discovery marker(s)` : '',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  const actual = [
+    `${response.status} ${response.contentType || '(no content-type)'}`,
+    canonical ? '' : `redirected → ${response.finalUrl}`,
+    missing.length > 0 ? `missing: ${missing.join(', ')}` : '',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  return { passed, expected, actual };
 }
 
 export async function runGuideChecks(): Promise<GuideCheck[]> {
@@ -48,12 +85,12 @@ export async function runGuideChecks(): Promise<GuideCheck[]> {
 
   for (const [name, meta] of Object.entries(CANONICAL_GUIDES_TOKENS)) {
     try {
-      const { status, finalUrl } = await head(meta.url);
+      const validation = validateGuideResponse(meta, await fetchGuide(meta.url));
       results.push({
         name,
-        expected: '200 OK',
-        actual: `${status}${finalUrl !== meta.url ? ` → ${finalUrl}` : ''}`,
-        passed: status === 200,
+        expected: validation.expected,
+        actual: validation.actual,
+        passed: validation.passed,
         canonical: meta.url,
       });
     } catch (err) {

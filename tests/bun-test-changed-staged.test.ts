@@ -13,6 +13,7 @@ import {
   runStagedBunTestWithRetries,
   SCRATCH_LINK_DIRS,
   SCRATCH_PATHSPEC,
+  nearestNodeModulesDir,
   shouldSkipStagedTestRun,
   stagedDeletions,
   testRunEnv,
@@ -220,6 +221,14 @@ describe('test-changed-staged helpers', () => {
     expect(SCRATCH_PATHSPEC).toContain(':(exclude)Kalshi-bot');
     // Kalshi-bot / Tennis HQ are optional — linker skips when the checkout is
     // absent (dangling symlink → ENOENT in consumers). See buildScratchRepo · #236.
+  });
+
+  test('scratch dependency link follows Bun resolution through worktree ancestors', () => {
+    const installed = new Set(['/repo/node_modules']);
+    expect(nearestNodeModulesDir('/repo/.worktrees/docs', path => installed.has(path))).toBe(
+      '/repo/node_modules'
+    );
+    expect(nearestNodeModulesDir('/isolated/worktree', () => false)).toBeNull();
   });
 
   test('scratch git add -A never leaks the node_modules symlink into an inherited index', async () => {
