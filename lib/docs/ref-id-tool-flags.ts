@@ -456,15 +456,13 @@ export const IDENTITY_ADMIN_ALLOWED_LONG = ['as', 'db', 'json', 'limit', 'passwo
 /** § — provision:queue (`tools/provision-queue.ts`) */
 export const PROVISION_QUEUE_ALLOWED_LONG = [
   'dry-run',
-  'email',
   'id',
+  'max-retries',
   'mode',
   'partner',
-  'pass',
   'platform',
   'step',
   'to',
-  'user',
 ] as const;
 
 /** § — monorepo:health (`tools/monorepo-health.ts`) */

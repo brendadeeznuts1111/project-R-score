@@ -4,13 +4,16 @@
  * Unified provisioning queue — manual ops + automated_test sandbox path.
  */
 import type { Database } from 'bun:sqlite';
+import { asOperationId, type OperationId } from '../types/branded.ts';
 import { ensureProvisioningSchema } from './schema.ts';
 
 export type ProvisionMode = 'manual' | 'automated_test';
 export type ProvisionStep = 'pending' | 'in_progress' | 'completed' | 'failed';
 
+export const DEFAULT_MAX_PROVISION_RETRIES = 3;
+
 export type ProvisioningTask = {
-  id: string; // brand-ok — UUIDv7
+  id: OperationId;
   platform_id: string; // brand-ok — platforms.id
   partner_id: string; // brand-ok — tree_nodes.id
   mode: ProvisionMode;
@@ -39,7 +42,7 @@ export type EnqueueOpts = {
 
 export function enqueueTask(db: Database, opts: EnqueueOpts): ProvisioningTask {
   ensureProvisioningSchema(db);
-  const id = Bun.randomUUIDv7();
+  const id = asOperationId(Bun.randomUUIDv7());
   const now = new Date().toISOString();
   db.run(
     `INSERT INTO provisioning_tasks
@@ -59,8 +62,7 @@ export function enqueueTask(db: Database, opts: EnqueueOpts): ProvisioningTask {
   return getTask(db, id)!;
 }
 
-export function getTask(db: Database, taskId: string): ProvisioningTask | null {
-  // brand-ok — task PK
+export function getTask(db: Database, taskId: OperationId): ProvisioningTask | null {
   ensureProvisioningSchema(db);
   return db
     .query(`SELECT * FROM provisioning_tasks WHERE id = $id`)
@@ -90,7 +92,7 @@ export function claimNextTask(
              ORDER BY created_at ASC LIMIT 1`
           )
           .get()
-  ) as { id: string } | null; // brand-ok — opaque DB primary key
+  ) as { id: OperationId } | null;
   if (!row) return null;
 
   const now = new Date().toISOString();
@@ -104,28 +106,28 @@ export function claimNextTask(
   return getTask(db, row.id);
 }
 
-export function claimTask(
-  db: Database,
-  taskId: string, // brand-ok
-  assignedTo: string
-): ProvisioningTask {
+export function claimTask(db: Database, taskId: OperationId, assignedTo: string): ProvisioningTask {
   ensureProvisioningSchema(db);
   const task = getTask(db, taskId);
   if (!task) throw new Error(`Task not found: ${taskId}`);
   if (task.step !== 'pending') throw new Error(`Task ${taskId} is ${task.step}, expected pending`);
   const now = new Date().toISOString();
-  db.run(
+  const updated = db.run(
     `UPDATE provisioning_tasks
      SET step = 'in_progress', assigned_to = $who, opened_at = COALESCE(opened_at, $now)
-     WHERE id = $id`,
+     WHERE id = $id AND step = 'pending'`,
     { $who: assignedTo, $now: now, $id: taskId }
   );
+  if (updated.changes !== 1) {
+    const current = getTask(db, taskId);
+    throw new Error(`Task ${taskId} is ${current?.step ?? 'missing'}, expected pending`);
+  }
   return getTask(db, taskId)!;
 }
 
 export function completeTask(
   db: Database,
-  taskId: string, // brand-ok
+  taskId: OperationId,
   opts?: { credentialsEncrypted?: string; kycDodId?: string; notes?: string } // brand-ok — DOD ID in provisioning context
 ): ProvisioningTask {
   ensureProvisioningSchema(db);
@@ -135,7 +137,7 @@ export function completeTask(
     throw new Error(`Task ${taskId} cannot complete from ${task.step}`);
   }
   const now = new Date().toISOString();
-  db.run(
+  const updated = db.run(
     `UPDATE provisioning_tasks SET
        step = 'completed',
        completed_at = $now,
@@ -143,7 +145,7 @@ export function completeTask(
        kyc_dod_id = COALESCE($kyc, kyc_dod_id),
        notes = COALESCE($notes, notes),
        last_error = NULL
-     WHERE id = $id`,
+     WHERE id = $id AND step IN ('pending', 'in_progress')`,
     {
       $now: now,
       $cred: opts?.credentialsEncrypted ?? null,
@@ -152,26 +154,74 @@ export function completeTask(
       $id: taskId,
     }
   );
+  if (updated.changes !== 1) {
+    const current = getTask(db, taskId);
+    throw new Error(`Task ${taskId} cannot complete from ${current?.step ?? 'missing'}`);
+  }
   return getTask(db, taskId)!;
 }
 
-export function failTask(
-  db: Database,
-  taskId: string, // brand-ok
-  error: string
-): ProvisioningTask {
+export function failTask(db: Database, taskId: OperationId, error: string): ProvisioningTask {
   ensureProvisioningSchema(db);
   const task = getTask(db, taskId);
   if (!task) throw new Error(`Task not found: ${taskId}`);
-  db.run(
+  if (task.step !== 'in_progress') {
+    throw new Error(`Task ${taskId} cannot fail from ${task.step}`);
+  }
+  const updated = db.run(
     `UPDATE provisioning_tasks SET
        step = 'failed',
        last_error = $err,
        retry_count = retry_count + 1,
        completed_at = $now
-     WHERE id = $id`,
+     WHERE id = $id AND step = 'in_progress'`,
     { $err: error, $now: new Date().toISOString(), $id: taskId }
   );
+  if (updated.changes !== 1) {
+    const current = getTask(db, taskId);
+    throw new Error(`Task ${taskId} cannot fail from ${current?.step ?? 'missing'}`);
+  }
+  return getTask(db, taskId)!;
+}
+
+/**
+ * Explicitly return a failed task to the pending queue.
+ *
+ * Provisioning can submit a remote signup form, so retries are never automatic:
+ * an operator must confirm that another attempt is safe. `retry_count` records
+ * failed attempts and is retained with `last_error` for inspection.
+ */
+export function requeueFailedTask(
+  db: Database,
+  taskId: OperationId,
+  maxRetries = DEFAULT_MAX_PROVISION_RETRIES
+): ProvisioningTask {
+  ensureProvisioningSchema(db);
+  if (!Number.isSafeInteger(maxRetries) || maxRetries < 1) {
+    throw new Error('maxRetries must be a positive safe integer');
+  }
+
+  const task = getTask(db, taskId);
+  if (!task) throw new Error(`Task not found: ${taskId}`);
+  if (task.step !== 'failed') {
+    throw new Error(`Task ${taskId} cannot requeue from ${task.step}`);
+  }
+  if (task.retry_count >= maxRetries) {
+    throw new Error(`Task ${taskId} reached the retry limit (${task.retry_count}/${maxRetries})`);
+  }
+
+  const updated = db.run(
+    `UPDATE provisioning_tasks SET
+       step = 'pending',
+       assigned_to = NULL,
+       completed_at = NULL
+     WHERE id = $id AND step = 'failed'`,
+    { $id: taskId }
+  );
+  if (updated.changes !== 1) {
+    const current = getTask(db, taskId);
+    throw new Error(`Task ${taskId} cannot requeue from ${current?.step ?? 'missing'}`);
+  }
   return getTask(db, taskId)!;
 }
 
