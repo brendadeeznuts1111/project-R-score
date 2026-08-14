@@ -9,6 +9,8 @@ import {
   isPartnerWireLintPath,
   isSkillValidationPath,
   isTestSourcePath,
+  partnerDomainLintCommand,
+  partnerWireLintCommand,
   readPrecommitEnvironment,
 } from '../scripts/pre-commit.ts';
 import { STAGED_TEST_PARALLELISM } from '../scripts/bun-test-changed-staged.ts';
@@ -62,6 +64,7 @@ describe('pre-commit path gates', () => {
     expect(isPartnerWireLintPath('docs/design/partner-surface-inventory.md')).toBe(true);
     expect(isPartnerWireLintPath('docs/README.md')).toBe(false);
     expect(isPartnerWireInventorySsotPath('lib/docs/partner-surface-inventory.ts')).toBe(true);
+    expect(isPartnerWireInventorySsotPath('lib/docs/partner-surface-wire-lint.ts')).toBe(false);
     expect(isPartnerWireInventorySsotPath('lib/foo.ts')).toBe(false);
   });
 
@@ -74,11 +77,48 @@ describe('pre-commit path gates', () => {
       true
     );
     expect(isPartnerDomainLintPath('docs/README.md')).toBe(false);
-    expect(isPartnerDomainInventorySsotPath('lib/docs/partner-surface-domain-lint.ts')).toBe(true);
+    expect(isPartnerDomainInventorySsotPath('lib/docs/partner-surface-domain-lint.ts')).toBe(false);
     expect(isPartnerDomainInventorySsotPath('scripts/validate-partner-domain-isolation.ts')).toBe(
-      true
+      false
     );
     expect(isPartnerDomainInventorySsotPath('lib/foo.ts')).toBe(false);
+  });
+
+  it('scopes ordinary partner gates to staged files and keeps SSOT proofs full', () => {
+    expect(partnerWireLintCommand(['lib/foo.ts'])).toEqual([
+      'bun',
+      'scripts/validate-wire-traps.ts',
+      '--scan',
+      '--staged',
+    ]);
+    expect(partnerWireLintCommand(['lib/docs/partner-surface-inventory.ts'])).toEqual([
+      'bun',
+      'scripts/validate-wire-traps.ts',
+      '--scan',
+      '--strict-globs',
+    ]);
+    expect(partnerWireLintCommand(['lib/docs/partner-surface-wire-lint.ts'])).toEqual([
+      'bun',
+      'scripts/validate-wire-traps.ts',
+      '--scan',
+    ]);
+    expect(partnerDomainLintCommand(['lib/foo.ts'])).toEqual([
+      'bun',
+      'scripts/validate-partner-domain-isolation.ts',
+      '--scan',
+      '--staged',
+    ]);
+    expect(partnerDomainLintCommand(['lib/docs/partner-surface-inventory.ts'])).toEqual([
+      'bun',
+      'scripts/validate-partner-domain-isolation.ts',
+      '--scan',
+      '--strict',
+    ]);
+    expect(partnerDomainLintCommand(['lib/docs/partner-surface-domain-lint.ts'])).toEqual([
+      'bun',
+      'scripts/validate-partner-domain-isolation.ts',
+      '--scan',
+    ]);
   });
 
   it('selects partner dashboard semantic plan paths', () => {

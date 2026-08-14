@@ -1,3 +1,24 @@
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @updated Bun.write · fixed v0.4.0 · 2022-12-23 · https://bun.com/blog/bun-v0.4.0
+// @updated Bun.write · fixed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
+// @updated Bun.write · fixed v0.7.2 · 2023-08-03 · https://bun.com/blog/bun-v0.7.2
+// @updated Bun.write · fixed v1.0.7 · 2023-10-20 · https://bun.com/blog/bun-v1.0.7
+// @updated Bun.write · changed v1.0.16 · 2023-12-10 · https://bun.com/blog/bun-v1.0.16
+// @updated Bun.write · fixed v1.0.21 · 2024-01-02 · https://bun.com/blog/bun-v1.0.21
+// @updated Bun.write · fixed v1.0.23 · 2024-01-16 · https://bun.com/blog/bun-v1.0.23
+// @updated Bun.write · fixed v1.0.24 · 2024-01-20 · https://bun.com/blog/bun-v1.0.24
+// @updated Bun.write · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.write · fixed v1.1.6 · 2024-04-28 · https://bun.com/blog/bun-v1.1.6
+// @updated Bun.write · fixed v1.1.21 · 2024-07-27 · https://bun.com/blog/bun-v1.1.21
+// @updated Bun.write · changed v1.1.37 · 2024-11-26 · https://bun.com/blog/bun-v1.1.37
+// @updated Bun.write · changed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.write · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.write · fixed v1.2.20 · 2025-08-10 · https://bun.com/blog/bun-v1.2.20
+// @updated Bun.write · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.write · fixed v1.3.5 · 2025-12-17 · https://bun.com/blog/bun-v1.3.5
+// @updated Bun.write · fixed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.write · fixed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @verified Bun.write · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/file-io#writing-files-bun-write
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 /**
  * partner-surface-wire-lint.ts — Layer C: inventory-driven naked brand traps.
@@ -544,30 +565,47 @@ export async function scanWireTraps(options: {
   readonly rows: readonly PartnerSurfaceRow[];
   readonly globPattern?: string;
   readonly strictGlobs?: boolean;
+  /** Explicit repository-relative files to scan (for staged/diff gates). */
+  readonly files?: readonly string[];
+  /** Validate inventory glob coverage. Defaults to true for full scans. */
+  readonly validateGlobs?: boolean;
 }): Promise<ScanWireTrapsResult> {
   const rules = buildWireLintRules(options.rows);
   const allowEntries = collectWireAllowEntries(options.rows);
   const allowGlobs = collectWireAllowPathGlobs(options.rows);
   const trapTokens = collectTrapRowTokens(options.rows);
-  const issues: WireTrapIssue[] = [
-    ...warnMissingWireBoundaryGlobs(options.rows),
-    ...(await validateWireGlobCoverage({
-      root: options.root,
-      rows: options.rows,
-      strictGlobs: options.strictGlobs,
-    })),
-  ];
+  const validateGlobs = options.validateGlobs ?? options.files === undefined;
+  const issues: WireTrapIssue[] = validateGlobs
+    ? [
+        ...warnMissingWireBoundaryGlobs(options.rows),
+        ...(await validateWireGlobCoverage({
+          root: options.root,
+          rows: options.rows,
+          strictGlobs: options.strictGlobs,
+        })),
+      ]
+    : [];
   const hits: WireTrapHit[] = [];
   const fixable: WireTrapHit[] = [];
   let scannedFiles = 0;
 
-  const pattern = options.globPattern ?? '**/*.{ts,tsx}';
-  const glob = new Bun.Glob(pattern);
-  for await (const file of glob.scan({
-    cwd: options.root,
-    onlyFiles: true,
-    followSymlinks: false,
-  })) {
+  const explicitFiles = options.files
+    ? [...new Set(options.files.map(file => file.replace(/\\/g, '/').replace(/^\.\//, '')))]
+    : undefined;
+  const discoveredFiles = explicitFiles ?? [];
+  if (!explicitFiles) {
+    const pattern = options.globPattern ?? '**/*.{ts,tsx}';
+    const glob = new Bun.Glob(pattern);
+    for await (const file of glob.scan({
+      cwd: options.root,
+      onlyFiles: true,
+      followSymlinks: false,
+    })) {
+      discoveredFiles.push(file);
+    }
+  }
+
+  for (const file of discoveredFiles) {
     const rel = file.replace(/\\/g, '/');
     if (!shouldScanPath(rel)) continue;
 

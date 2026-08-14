@@ -272,6 +272,15 @@ void RuntimeGlob; void sqlite;
     );
   });
 
+  test('does not attribute external process flags to the Bun CLI', () => {
+    const usages = collectCodeApiUsages(
+      `Bun.spawn(["git", "rev-parse", "--verify"]); Bun.spawn(["bun", "--cpu-prof"]);`,
+      'fixture.ts'
+    );
+    expect(usages).not.toContain('--verify');
+    expect(usages).toContain('--cpu-prof');
+  });
+
   test('does not let a Bun.file anchor cover Bun.write', async () => {
     const directory = await temporaryDirectory();
     const file = join(directory, 'specific.ts');

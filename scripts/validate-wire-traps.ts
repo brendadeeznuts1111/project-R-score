@@ -1,4 +1,14 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @updated Bun.inspect.table · changed v1.1.31 · 2024-10-18 · https://bun.com/blog/bun-v1.1.31
+// @updated Bun.inspect.table · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
+// @verified Bun.inspect.table · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
@@ -15,6 +25,7 @@
  *   bun scripts/validate-wire-traps.ts --document
  *   bun scripts/validate-wire-traps.ts --rules
  *   bun scripts/validate-wire-traps.ts --scan
+ *   bun scripts/validate-wire-traps.ts --scan --staged
  *   bun scripts/validate-wire-traps.ts --scan --strict-globs
  *   bun scripts/validate-wire-traps.ts --scan --fix
  *
@@ -42,6 +53,7 @@ import {
   lintWiresToolFlags,
 } from '../lib/docs/ref-id-tool-flags.ts';
 import { resolvePath } from './lib/fs-bun.ts';
+import { listStagedFiles } from './lib/git-changed.ts';
 
 /** Re-export REF:ID SSOT for registry / tests (`flagDocRef` alias matches bun-types-status). */
 export {
@@ -72,6 +84,8 @@ Flags:
   --document          Inventory + wire-lint.md excerpts
   --rules             Dump built rules (brandedType · patterns · globs)
   --scan              Run the wire-trap scan
+  --staged            With --scan: inspect existing staged TS/TSX files only;
+                      skip repository-wide inventory glob coverage
   --strict-globs      With --scan (or alone): fail when an allowlist glob
                       matches 0 files (also WIRE_TRAP_STRICT_GLOBS=1)
   --fix               With --scan: append // wire-ok on non-strict
@@ -362,6 +376,8 @@ async function main(argv: readonly string[] = Bun.argv): Promise<number> {
     root: ROOT,
     rows: inv.rows,
     strictGlobs: wantsStrictGlobs(longArgs),
+    files: hasFlag(longArgs, '--staged') ? await listStagedFiles() : undefined,
+    validateGlobs: !hasFlag(longArgs, '--staged'),
   });
 
   if (hasFlag(longArgs, '--fix') && result.fixable.length > 0) {

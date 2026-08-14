@@ -193,7 +193,14 @@ export function applyUnknownLongOptionGuard(
 /** §4.1 — lint-wires (`scripts/validate-wire-traps.ts`) */
 export const LINT_WIRES_DOC = 'docs/design/partner-surface-inventory.md' as const;
 export const LINT_WIRES_SECTION = '4.1' as const;
-export const LINT_WIRES_LEAVES = ['help', 'scan', 'why', 'document', 'strict-globs'] as const;
+export const LINT_WIRES_LEAVES = [
+  'help',
+  'scan',
+  'staged',
+  'why',
+  'document',
+  'strict-globs',
+] as const;
 /** Full long-option allowlist (REF:ID leaves + teaching/meta flags not in Flags table). */
 export const LINT_WIRES_ALLOWED_LONG = [...LINT_WIRES_LEAVES, 'rules', 'fix'] as const;
 export function lintWiresFlagDocRef(leaf: (typeof LINT_WIRES_LEAVES)[number] | string) {
@@ -755,6 +762,7 @@ export const CLI_FLAGS_CHECK_ALLOWED_LONG = [
 export const PARTNER_SURFACE_INVENTORY_LINT_DOMAINS_ALLOWED_LONG = [
   'rules',
   'scan',
+  'staged',
   'strict',
 ] as const;
 

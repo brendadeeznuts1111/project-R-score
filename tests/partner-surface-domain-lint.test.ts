@@ -5,6 +5,7 @@ import {
   buildBrandHomeRules,
   findBrandTypeHits,
   homeGlobsForBrandBag,
+  scanDomainIsolation,
 } from '../lib/docs/partner-surface-domain-lint.ts';
 import { BRAND_LINK_CROSS_DOMAIN } from '../lib/docs/partner-surface-brand-check.ts';
 import { main as lintDomainsMain } from '../scripts/validate-partner-domain-isolation.ts';
@@ -42,6 +43,20 @@ describe('partner-surface-domain-lint', () => {
     const hits = findBrandTypeHits('demo.ts', src, rule);
     expect(hits.length).toBe(1);
     expect(hits[0]?.line).toBe(3);
+  });
+
+  test('explicit-file mode scans only the requested TypeScript files', async () => {
+    const rows = allPartnerSurfaceRows();
+    const none = await scanDomainIsolation({ root: process.cwd(), rows, files: [] });
+    expect(none.scannedFiles).toBe(0);
+
+    const selected = await scanDomainIsolation({
+      root: process.cwd(),
+      rows,
+      files: ['tests/partner-surface-domain-lint.test.ts'],
+    });
+    expect(selected.scannedFiles).toBe(1);
+    expect(selected.issues).toEqual([]);
   });
 
   test('CLI --hlp / --rules / --scan exit 0', async () => {

@@ -1,6 +1,7 @@
 # Partner surface inventory
 
 <!-- REF:ID 0.1.partner-surface-inventory -->
+
 <a id="0.1.partner-surface-inventory"></a>
 
 **Claim** `partner-surface-inventory`
@@ -82,10 +83,10 @@ serialised `partner-surface-inventory.json` bake itself — that is
 
 Pre-commit (`scripts/pre-commit.ts`):
 
-| Gate                                                           | When                                      | Escape                                  |
-| -------------------------------------------------------------- | ----------------------------------------- | --------------------------------------- |
-| Layer C `--scan` (+ `--strict-globs` if inventory SSOT staged) | staged `.ts`/`.tsx` or inventory bake/doc | `SKIP_WIRE_LINT=1` (reason in commit)   |
-| Layer D `--scan` (+ `--strict` if domain-lint SSOT staged)     | staged `.ts`/`.tsx` or inventory bake/doc | `SKIP_DOMAIN_LINT=1` (reason in commit) |
+| Gate                                                                             | When                                      | Escape                                  |
+| -------------------------------------------------------------------------------- | ----------------------------------------- | --------------------------------------- |
+| Layer C staged scan; full engine proof; full `--strict-globs` for inventory SSOT | staged `.ts`/`.tsx` or inventory bake/doc | `SKIP_WIRE_LINT=1` (reason in commit)   |
+| Layer D staged scan; full engine proof; full `--strict` for inventory SSOT       | staged `.ts`/`.tsx` or inventory bake/doc | `SKIP_DOMAIN_LINT=1` (reason in commit) |
 
 Inactive / deprecated brands still referenced by wire-field, portal-board /
 chrome-nav, or registry consumers emit **warn**. Generated docs include **Brand
@@ -94,23 +95,32 @@ status**, **Brand health**, **Partner codes**, and **OutIds**.
 ### `lint-wires` flags
 
 <!-- REF:ID 4.1.help -->
+
 <a id="4.1.help"></a>
 <!-- REF:ID 4.1.scan -->
+
 <a id="4.1.scan"></a>
+<!-- REF:ID 4.1.staged -->
+
+<a id="4.1.staged"></a>
 <!-- REF:ID 4.1.why -->
+
 <a id="4.1.why"></a>
 <!-- REF:ID 4.1.document -->
+
 <a id="4.1.document"></a>
 <!-- REF:ID 4.1.strict-globs -->
+
 <a id="4.1.strict-globs"></a>
 
-| Script | REF:ID | href | --flag | Meaning |
-| --- | --- | --- | --- | --- |
-| `lint-wires` | `4.1.help` | [`#4.1.help`](#4.1.help) | `-h` | Usage (teaching default; no scan) |
-| `lint-wires` | `4.1.scan` | [`#4.1.scan`](#4.1.scan) | `--scan` | Run the wire-trap scan (`package.json` passes this) |
-| `lint-wires` | `4.1.why` | [`#4.1.why`](#4.1.why) | `--why` | Claim / allowlist rationale |
-| `lint-wires` | `4.1.document` | [`#4.1.document`](#4.1.document) | `--document` | Path + wire-bag excerpt from this design doc |
-| `lint-wires` | `4.1.strict-globs` | [`#4.1.strict-globs`](#4.1.strict-globs) | `--strict-globs` | Fail when an allowlist glob matches 0 files (`WIRE_TRAP_STRICT_GLOBS=1`) |
+| Script       | REF:ID             | href                                     | --flag           | Meaning                                                                    |
+| ------------ | ------------------ | ---------------------------------------- | ---------------- | -------------------------------------------------------------------------- |
+| `lint-wires` | `4.1.help`         | [`#4.1.help`](#4.1.help)                 | `-h`             | Usage (teaching default; no scan)                                          |
+| `lint-wires` | `4.1.scan`         | [`#4.1.scan`](#4.1.scan)                 | `--scan`         | Run the wire-trap scan (`package.json` passes this)                        |
+| `lint-wires` | `4.1.staged`       | [`#4.1.staged`](#4.1.staged)             | `--staged`       | Scan existing staged TS/TSX files only; skip repository-wide glob coverage |
+| `lint-wires` | `4.1.why`          | [`#4.1.why`](#4.1.why)                   | `--why`          | Claim / allowlist rationale                                                |
+| `lint-wires` | `4.1.document`     | [`#4.1.document`](#4.1.document)         | `--document`     | Path + wire-bag excerpt from this design doc                               |
+| `lint-wires` | `4.1.strict-globs` | [`#4.1.strict-globs`](#4.1.strict-globs) | `--strict-globs` | Fail when an allowlist glob matches 0 files (`WIRE_TRAP_STRICT_GLOBS=1`)   |
 
 ## Row + bag schema
 
@@ -135,20 +145,20 @@ bag.
 
 ### Aspects
 
-| `aspect`       | Role                            | Bag           |
-| -------------- | ------------------------------- | ------------- |
-| `taxonomy`     | Homonym / machine map           | `taxonomy`    |
-| `chrome-nav`   | Partner desk chrome item        | `chromeNav`   |
-| `portal-board` | Board under `/portal/`          | `chromeNav`   |
-| `registry`     | Baked JSON artifact contract    | `registry`    |
-| `brand`        | Branded identity / profile type | `brand`       |
-| `partner-code` | Live desk PartnerCode instance  | `partnerCode` |
-| `out-id`       | Live OutId seat                 | `outId`       |
-| `package`      | npm / workspace package         | —             |
-| `lib-module`   | High-signal lib path            | —             |
-| `wire-field`   | Naked wire trap / allowlist     | `wireField`   |
+| `aspect`       | Role                            | Bag             |
+| -------------- | ------------------------------- | --------------- |
+| `taxonomy`     | Homonym / machine map           | `taxonomy`      |
+| `chrome-nav`   | Partner desk chrome item        | `chromeNav`     |
+| `portal-board` | Board under `/portal/`          | `chromeNav`     |
+| `registry`     | Baked JSON artifact contract    | `registry`      |
+| `brand`        | Branded identity / profile type | `brand`         |
+| `partner-code` | Live desk PartnerCode instance  | `partnerCode`   |
+| `out-id`       | Live OutId seat                 | `outId`         |
+| `package`      | npm / workspace package         | —               |
+| `lib-module`   | High-signal lib path            | —               |
+| `wire-field`   | Naked wire trap / allowlist     | `wireField`     |
 | `doc-tenant`   | Design / tenant doc pointer     | `documentation` |
-| `cross-repo`   | External repo surface           | —             |
+| `cross-repo`   | External repo surface           | —               |
 
 ### Machines
 
@@ -365,6 +375,7 @@ bun scripts/validate-wire-traps.ts --hlp
 bun scripts/validate-wire-traps.ts --why
 bun scripts/validate-wire-traps.ts --document
 bun scripts/validate-wire-traps.ts --scan
+bun scripts/validate-wire-traps.ts --scan --staged
 ```
 
 ### Lint domains (Layer D)
@@ -372,6 +383,7 @@ bun scripts/validate-wire-traps.ts --scan
 ```bash
 bun run partner-surface-inventory:lint-domains
 bun scripts/validate-partner-domain-isolation.ts --rules
+bun scripts/validate-partner-domain-isolation.ts --scan --staged
 bun scripts/validate-partner-domain-isolation.ts --scan --strict
 ```
 

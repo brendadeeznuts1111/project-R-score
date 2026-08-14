@@ -36,6 +36,7 @@ describe('ref-id-tool-flags SSOT', () => {
     expect(lintWiresToolFlags().map(r => r.refId)).toEqual([
       '4.1.help',
       '4.1.scan',
+      '4.1.staged',
       '4.1.why',
       '4.1.document',
       '4.1.strict-globs',

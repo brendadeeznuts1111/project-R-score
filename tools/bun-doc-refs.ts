@@ -2221,6 +2221,19 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
     const normalized = normalizedBunChain(node.typeName, chain);
     return normalized ? canonicalBunChain(normalized) === 'Bun.Image' : false;
   };
+  const isClearlyExternalSpawnArgument = (node: ts.StringLiteral): boolean => {
+    const array = node.parent;
+    if (!ts.isArrayLiteralExpression(array) || !ts.isCallExpression(array.parent)) return false;
+    const call = array.parent;
+    if (!call.arguments.includes(array)) return false;
+    const chain = expressionChain(call.expression);
+    const normalized = chain && normalizedBunChain(call.expression, chain);
+    const api = normalized && canonicalBunChain(normalized);
+    if (api !== 'Bun.spawn' && api !== 'Bun.spawnSync') return false;
+    const executable = array.elements[0];
+    if (!executable || !ts.isStringLiteral(executable)) return false;
+    return executable.text !== 'bun' && executable.text !== 'bunx';
+  };
 
   for (const statement of source.statements) {
     if (
@@ -2414,7 +2427,7 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
 
     // CLI flags are values by definition. Scan string literals, but deliberately
     // exclude template literals used for generated documentation/examples.
-    if (ts.isStringLiteral(node)) {
+    if (ts.isStringLiteral(node) && !isClearlyExternalSpawnArgument(node)) {
       for (const flag of FLAG_APIS) {
         if (codeUsesApi(node.text, flag)) add(flag, node);
       }

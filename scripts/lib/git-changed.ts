@@ -10,12 +10,25 @@ async function gitLines(args: string[]): Promise<string[]> {
     stdout: 'pipe',
     stderr: 'pipe',
   });
-  const out = await new Response(proc.stdout).text();
-  await proc.exited;
+  const [out, err, exitCode] = await Promise.all([
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+    proc.exited,
+  ]);
+  if (exitCode !== 0) {
+    throw new Error(
+      `git ${args.join(' ')} failed with exit code ${exitCode}${err.trim() ? `: ${err.trim()}` : ''}`
+    );
+  }
   return out
     .split('\n')
     .map(l => l.trim())
     .filter(Boolean);
+}
+
+/** Existing staged paths, including rename destinations; deletions are excluded. */
+export function listStagedFiles(): Promise<string[]> {
+  return gitLines(['diff', '--cached', '--name-only', '--diff-filter=ACMR']);
 }
 
 /** Prefer origin/main → main → origin/master → master → HEAD~1. */
