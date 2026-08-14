@@ -1,6 +1,6 @@
 ---
 name: cascade-mover-v3
-description:
+description: >
   Cascade Mover v3 — sports intelligence, confidence engine, multi-market
   cascading. Use cascade-mover MCP tools. Bun-native, zero npm deps.
 ---

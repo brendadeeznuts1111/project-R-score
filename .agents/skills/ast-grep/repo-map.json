@@ -44,7 +44,6 @@
       "agents-partner-profile",
       "agents-cascade-mover",
       "agents-bun-playground",
-      "agents-source-command-commit",
       "agents-project-r-skill-maintenance"
     ]
   },
@@ -340,15 +339,6 @@
       "view": "digest",
       "tags": ["skill", "bun", "playground"],
       "description": "Bun v1.3.9 interactive playground demos"
-    },
-    {
-      "id": "agents-source-command-commit",
-      "zone": "agents",
-      "name": "source-command-commit skill",
-      "path": ".agents/skills/source-command-commit",
-      "view": "digest",
-      "tags": ["skill", "git", "commit"],
-      "description": "Disciplined commit agent workflow"
     },
     {
       "id": "agents-project-r-skill-maintenance",

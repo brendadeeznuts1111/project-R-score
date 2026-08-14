@@ -1,6 +1,6 @@
 ---
 name: project-r-skill-maintenance
-description:
+description: >
   Create, tighten, and validate Project R Codex skills. Use for SKILL.md
   wording, agents/openai.yaml alignment, duplicate installed copies, broken
   references, or stale Bun guidance.
