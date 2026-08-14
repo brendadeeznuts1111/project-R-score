@@ -225,6 +225,10 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   `bun tools/bun-docs-catalog.ts verify` ·
   `bun run docs:provenance:check` · malformed persisted evidence fails closed;
   unknown history remains explicitly unknown
+- **`project-r-dx-agent-alignment`** — Project R declares the installed skill
+  packages and global authority pointers that DX must verify (`unit` +
+  `boundary`) _Ratchet_ → `bun run dx:contract:check` in `ci:core` · machine
+  parity → read-only `dx setup`
 - **`audit-findings-catalog`** — FactoryWager audit findings+concepts verify
   (evidence · graph · relatedDocs · catalog/page parity; sha3-256 primary)
   (`unit` + `boundary`) _Ratchet_ → `bun run audit:verify` · pre-commit (audit
@@ -410,6 +414,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `blog-extraction-journey`          | human-only | `bun test tests/journey/blog-extraction.test.ts`                                                                                                                     |
 | `bun-http-server-docs`             | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-docs-catalog.test.ts`                                                                                           |
 | `bun-api-release-provenance`       | continuous | `ci:core` · `bun tools/bun-docs-catalog.ts verify && bun run docs:provenance:check`                                                                                   |
+| `project-r-dx-agent-alignment`     | continuous | `ci:core` · `bun run dx:contract:check` · machine `dx setup`                                                                                                         |
 | `path-bun`                         | continuous | pre-commit (lib\|tools staged) · `ci:harness`                                                                                                                        |
 | `bun-env`                          | continuous | pre-commit (lib\|scripts staged) · `ci:harness` · eslint `prefer-bun-env`                                                                                            |
 | `invisible-chars`                  | continuous | pre-commit (spine/test .ts staged) · `ci:harness`                                                                                                                    |
@@ -441,7 +446,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 
 Counts (must match `gateClass` tallies):
 
-continuous 34 · workflow 9 · human-only 35.
+continuous 35 · workflow 9 · human-only 35.
 
 Discover (display only, not gates): `bun run harness:status` ·
 `bun run docs:fresh-rerun`.

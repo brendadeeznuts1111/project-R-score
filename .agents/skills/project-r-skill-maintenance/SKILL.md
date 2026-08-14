@@ -66,6 +66,7 @@ Run:
 
 ```bash
 bun run skills:validate
+bun run dx:contract:check
 ```
 
 When validation or hook behavior changes, also run:
@@ -79,7 +80,10 @@ proof, and whether an installed copy was synchronized.
 
 After repository proof passes, synchronize the complete changed skill package
 (body, metadata, references, and scripts) to the installed copy, compare it
-byte-for-byte, then update global DX routing if the machine policy is stale.
+byte-for-byte, then run `dx setup`. That machine doctor must prove the installed
+packages and global authority pointers declared in
+`config/project-r-dx-contract.json`; update global DX routing only when that
+read-only check identifies stale machine policy.
 
 ## Guardrails
 

@@ -900,6 +900,18 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'tools/bun-docs-provenance.ts · tools/bun-doc-refs.ts',
   },
   {
+    id: 'project-r-dx-agent-alignment',
+    claim:
+      'Project R declares a validated portable contract for installed skill parity and global DX authority pointers',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:core',
+    evidence: ['bun run dx:contract:check', 'config/project-r-dx-contract.json'],
+    freshRerun: 'bun run dx:contract:check',
+    freshRerunKind: 'claim',
+    owner: 'config/project-r-dx-contract.json · scripts/check-project-r-dx-contract.ts',
+  },
+  {
     id: 'audit-findings-catalog',
     claim:
       'FactoryWager audit findings+concepts verify (evidence · graph · relatedDocs · catalog/page parity; sha3-256 primary; sibling SSOT, not BunToken)',

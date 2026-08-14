@@ -9,6 +9,7 @@ import {
   resolveAgentSkillsRoot,
 } from '../lib/agent-skills-paths.ts';
 import { validateAgentSkills } from '../scripts/validate-agent-skills.ts';
+import { parseProjectRDxContract } from '../scripts/check-project-r-dx-contract.ts';
 
 const roots: string[] = [];
 
@@ -149,5 +150,34 @@ describe('validateAgentSkills', () => {
   it('keeps the repository skill plane valid', async () => {
     const result = await validateAgentSkills(join(import.meta.dir, '..'));
     expect(result.issues.filter(item => item.level === 'error')).toEqual([]);
+  });
+});
+
+describe('Project R DX contract', () => {
+  it('keeps installed skills and global pointers repository-owned', async () => {
+    const root = join(import.meta.dir, '..');
+    const result = await parseProjectRDxContract(root);
+    expect(result.ok).toBe(true);
+    expect(result.issues).toEqual([]);
+    expect(result.contract?.installedSkills).toEqual([
+      'project-r-ops-management',
+      'project-r-skill-maintenance',
+    ]);
+    expect(result.contract?.globalAuthorityPointers).toContain('docs/BUN_DOCS_OPERATE.md');
+  });
+
+  it('fails closed on unsafe paths, duplicate skills, and missing authority files', async () => {
+    const root = await fixtureRoot();
+    const result = await parseProjectRDxContract(root, {
+      schemaVersion: 1,
+      projectKey: 'project-r',
+      agentContext: '../AGENTS.md',
+      skillAuthority: '.agents/skills',
+      installedSkills: ['demo-skill', 'demo-skill'],
+      globalAuthorityPointers: ['docs/missing.md'],
+    });
+    expect(result.ok).toBe(false);
+    expect(result.issues).toContain('agentContext must be a safe relative path');
+    expect(result.issues).toContain('installedSkills must be unique');
   });
 });

@@ -32,6 +32,8 @@ describe('pre-commit path gates', () => {
     expect(isSkillValidationPath('.agents/skills/demo/SKILL.md')).toBe(true);
     expect(isSkillValidationPath('lib/agent-skills-paths.ts')).toBe(true);
     expect(isSkillValidationPath('scripts/validate-agent-skills.ts')).toBe(true);
+    expect(isSkillValidationPath('scripts/check-project-r-dx-contract.ts')).toBe(true);
+    expect(isSkillValidationPath('config/project-r-dx-contract.json')).toBe(true);
     expect(isSkillValidationPath('tests/agent-skills-validation.test.ts')).toBe(true);
     expect(isSkillValidationPath('docs/README.md')).toBe(false);
   });
