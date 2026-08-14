@@ -1,7 +1,9 @@
 // @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
 // @see https://bun.com/docs/test/index#run-tests
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, expectTypeOf, test } from 'bun:test';
 import {
+  BUN_IMAGE_ERROR_CODES,
+  BUN_IMAGE_FORMATS,
   BUN_IMAGE_DOCS,
   BUN_IMAGE_METADATA_DOCS,
   DEFAULT_THUMB_MAX_HEIGHT,
@@ -9,10 +11,15 @@ import {
   extractImageEvidenceMeta,
   imageEvidenceHeaders,
   imageMetaChecksPassed,
+  isBunImageError,
+  isBunImageFormat,
   isImageEvidenceMeta,
   parseImageEvidenceMeta,
   resizeScreenshotPng,
   verifyImageEvidenceMeta,
+  type BunImageByteInput,
+  type ImageEvidenceMeta,
+  type ResizeScreenshotOptions,
 } from '../lib/image-metadata.ts';
 import {
   TEST_003,
@@ -34,6 +41,23 @@ const PNG_10 = Buffer.from(
 );
 
 describe('lib/image-metadata', () => {
+  test('public contracts derive from Bun.Image namespace types', () => {
+    expectTypeOf<ImageEvidenceMeta['format']>().toEqualTypeOf<Bun.Image.Format>();
+    expectTypeOf<ResizeScreenshotOptions>().toMatchTypeOf<Bun.Image.ResizeOptions>();
+    expectTypeOf<Parameters<typeof extractImageEvidenceMeta>[0]>().toEqualTypeOf<BunImageByteInput>();
+    expect(Object.keys(BUN_IMAGE_FORMATS)).toEqual([
+      'jpeg',
+      'png',
+      'webp',
+      'heic',
+      'avif',
+      'bmp',
+      'tiff',
+      'gif',
+    ]);
+    expect(Object.keys(BUN_IMAGE_ERROR_CODES)).toHaveLength(6);
+  });
+
   test('canonical docs URLs point at Bun.Image anchors', () => {
     expect(BUN_IMAGE_DOCS).toBe('https://bun.com/docs/runtime/image#input');
     expect(BUN_IMAGE_METADATA_DOCS).toBe('https://bun.com/docs/runtime/image#metadata');
@@ -60,7 +84,13 @@ describe('lib/image-metadata', () => {
   });
 
   test('resizeScreenshotPng keeps inside default thumb bounds', async () => {
-    const { bytes, meta } = await resizeScreenshotPng(PNG_10);
+    const { bytes, meta } = await resizeScreenshotPng(PNG_10, {
+      fit: 'inside',
+      filter: 'nearest',
+      withoutEnlargement: true,
+      image: { autoOrient: false, maxPixels: 100 },
+      png: { compressionLevel: 6 },
+    });
     expect(meta.format).toBe('png');
     expect(meta.width).toBeLessThanOrEqual(DEFAULT_THUMB_MAX_WIDTH);
     expect(meta.height).toBeLessThanOrEqual(DEFAULT_THUMB_MAX_HEIGHT);
@@ -88,7 +118,17 @@ describe('lib/image-metadata', () => {
     expect(isImageEvidenceMeta(meta)).toBe(true);
     expect(parseImageEvidenceMeta(meta)).toEqual(meta);
     expect(isImageEvidenceMeta({ width: 0, height: 10 })).toBe(false);
+    expect(isImageEvidenceMeta({ ...meta, format: 'jpg' })).toBe(false);
     expect(() => parseImageEvidenceMeta({ width: 10 })).toThrow(/Invalid ImageEvidenceMeta/);
+  });
+
+  test('Bun Image format and terminal-error guards stay closed', () => {
+    expect(isBunImageFormat('gif')).toBe(true);
+    expect(isBunImageFormat('jpg')).toBe(false);
+    expect(
+      isBunImageError(Object.assign(new Error('decode failed'), { code: 'ERR_IMAGE_DECODE_FAILED' }))
+    ).toBe(true);
+    expect(isBunImageError(Object.assign(new Error('missing'), { code: 'ENOENT' }))).toBe(false);
   });
 
   test('parseImageEvidenceMeta rejects bad algorithm, short digest, non-object', () => {

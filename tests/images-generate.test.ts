@@ -6,7 +6,7 @@
 // @verified Bun.file · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/file-io
 // @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
 // @released Bun.Image.metadata · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
-import { describe, expect, test, beforeAll, afterAll } from 'bun:test';
+import { describe, expect, expectTypeOf, test, beforeAll, afterAll } from 'bun:test';
 import { join } from 'node:path';
 import { rmSync, mkdirSync } from 'node:fs';
 import {
@@ -14,6 +14,9 @@ import {
   processOne,
   templateDims,
   listImages,
+  isOutputFormat,
+  parseArgs,
+  type OutFormat,
 } from '../scripts/images-generate.ts';
 
 const FIX = join(import.meta.dir, 'fixtures/images/sample.png');
@@ -34,6 +37,13 @@ describe('images-generate (Bun.Image)', () => {
   test('parseSize', () => {
     expect(parseSize('128x128')).toEqual({ w: 128, h: 128 });
     expect(() => parseSize('nope')).toThrow();
+  });
+
+  test('output formats are an encoder-only subset of Bun.Image.Format', () => {
+    expectTypeOf<OutFormat>().toMatchTypeOf<Bun.Image.Format>();
+    expect(isOutputFormat('avif')).toBe(true);
+    expect(isOutputFormat('gif')).toBe(false);
+    expect(() => parseArgs(['--format=gif'])).toThrow(/Invalid --format/);
   });
 
   test('templateDims', () => {

@@ -13,6 +13,8 @@
 // @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/reference/bun/Image/ErrorCode — Bun.Image.ErrorCode
 // @released Bun.Image.ErrorCode · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/Format — Bun.Image.Format
+// @released Bun.Image.Format · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/image#terminals — Bun.Image.write
 // @released Bun.Image.write · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
@@ -48,6 +50,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 import { $, Glob } from 'bun';
 import { colorize, jsonOut, padEndWidth } from '../lib/console-depth.ts';
 import { deepEquals } from '../lib/deep-equals.ts';
+import { isBunImageError } from '../lib/image-metadata.ts';
 import { PORTAL_KERNEL_PALETTE } from '../lib/portal/portal-kernel-palette.ts';
 import { isCloudflareAccessEnforced } from '../lib/verification/cloudflare-access-live.ts';
 import {
@@ -216,7 +219,7 @@ export type ImageMetaResult =
       path: string;
       width: number;
       height: number;
-      format: string;
+      format: Bun.Image.Format;
       thumbPath?: string;
       healthy: boolean;
       healthEvidence: string;
@@ -224,22 +227,12 @@ export type ImageMetaResult =
   | { ok: false; path: string; error: string; code: string };
 
 export type ImageHealthExpectations = {
-  formats?: readonly string[];
+  formats?: readonly Bun.Image.Format[];
   minWidth?: number;
   minHeight?: number;
   /** Accept the known-good 1×1 PNG used by the metadata probe. */
   allowTiny?: boolean;
 };
-
-/** Stable Bun.Image error codes we branch on (see docs/IMAGES.md · v1.3.14). */
-const IMAGE_ERROR_CODES = {
-  ERR_IMAGE_FORMAT_UNSUPPORTED: true,
-  ERR_IMAGE_TOO_MANY_PIXELS: true,
-  ERR_IMAGE_DECODE_FAILED: true,
-  ERR_IMAGE_ENCODE_FAILED: true,
-  ERR_IMAGE_UNKNOWN_FORMAT: true,
-  ERR_INVALID_STATE: true,
-} as const satisfies Record<Bun.Image.ErrorCode, true>;
 
 const PNG_1x1_BYTES = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmLIQAAAABJRU5ErkJggg==',
@@ -248,10 +241,10 @@ const PNG_1x1_BYTES = Buffer.from(
 
 /** Format/dimension health check after Bun.Image.metadata(). */
 export function validateImageHealth(
-  meta: { width: number; height: number; format: string },
+  meta: Bun.Image.Metadata,
   expectations: ImageHealthExpectations = {}
 ): { ok: boolean; evidence: string } {
-  const formats = expectations.formats ?? ['png', 'webp', 'jpeg', 'jpg'];
+  const formats = expectations.formats ?? ['png', 'webp', 'jpeg'];
   const format = meta.format.toLowerCase();
   const formatOk = formats.includes(format);
   const tiny = meta.width <= 1 && meta.height <= 1;
@@ -295,23 +288,21 @@ export async function getImageMetadata(
       // fit:"inside" keeps aspect; terminal methods run off the main thread.
       await file.image().resize(max, max, { fit: 'inside' }).webp({ quality: 80 }).write(thumbPath);
     }
-    const health = validateImageHealth(
-      { width: meta.width, height: meta.height, format: String(meta.format) },
-      options.health ?? { allowTiny: true }
-    );
+    const health = validateImageHealth(meta, options.health ?? { allowTiny: true });
     return {
       ok: true,
       path,
       width: meta.width,
       height: meta.height,
-      format: String(meta.format),
+      format: meta.format,
       thumbPath,
       healthy: health.ok,
       healthEvidence: health.evidence,
     };
-  } catch (e) {
-    const err = e as Error & { code?: string };
-    const code = err.code && err.code in IMAGE_ERROR_CODES ? err.code : (err.code ?? 'ERR_IMAGE');
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error('image metadata failed');
+    const syscallCode = 'code' in err && typeof err.code === 'string' ? err.code : undefined;
+    const code = isBunImageError(err) ? err.code : (syscallCode ?? 'ERR_IMAGE');
     return {
       ok: false,
       path,

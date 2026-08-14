@@ -35,6 +35,27 @@ typed-array input while a terminal is pending.
 | Backend     | System geometry on macOS/Windows; set `Bun.Image.backend = "bun"` for portable golden tests                     | [Platform backends](https://bun.com/docs/runtime/image#platform-backends)                                                                |
 | Errors      | Branch on stable `Bun.Image.ErrorCode` values rather than parsing messages                                      | [`ErrorCode`](https://bun.com/reference/bun/Image/ErrorCode) · [Platform backends](https://bun.com/docs/runtime/image#platform-backends) |
 
+## Project type contract
+
+[`lib/image-metadata.ts`](../lib/image-metadata.ts) is the existing typed
+boundary for image evidence and shared Image guards. Its public contracts derive
+from the installed Bun declarations instead of reproducing them:
+
+| Project contract           | Bun authority                                       |
+| -------------------------- | --------------------------------------------------- |
+| `BunImageInput`            | `ConstructorParameters<typeof Bun.Image>[0]`        |
+| `BunImageByteInput`        | Byte-backed members of `BunImageInput`              |
+| `ImageEvidenceMeta.format` | `Bun.Image.Format`                                  |
+| `ResizeScreenshotOptions`  | `Bun.Image.ResizeOptions` plus PNG/evidence options |
+| `BUN_IMAGE_FORMATS`        | Exhaustive `Record<Bun.Image.Format, true>`         |
+| `BUN_IMAGE_ERROR_CODES`    | Exhaustive `Record<Bun.Image.ErrorCode, true>`      |
+| `isBunImageError()`        | Narrows terminal failures to stable Image codes     |
+
+The exhaustive records intentionally fail type-checking when Bun adds a format
+or stable error code, forcing the project boundary and tests to review that new
+runtime behavior. Wire parsers still accept `unknown`, then narrow once at the
+edge with `isBunImageFormat()` or `isImageEvidenceMeta()`.
+
 ## CLI
 
 ```bash

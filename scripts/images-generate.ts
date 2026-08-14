@@ -9,6 +9,10 @@
 // @released Bun.Image.png · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/image#resize — Bun.Image.resize
 // @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/ErrorCode — Bun.Image.ErrorCode
+// @released Bun.Image.ErrorCode · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/Format — Bun.Image.Format
+// @released Bun.Image.Format · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/image#terminals — Bun.Image.write
 // @released Bun.Image.write · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --format
@@ -32,6 +36,7 @@
  */
 import { joinPath, basenamePath, extnamePath, dirnamePath } from '../lib/path-bun.ts';
 import { jsonOut } from '../lib/console-depth.ts';
+import { isBunImageError, isBunImageFormat } from '../lib/image-metadata.ts';
 import {
   IMAGES_GENERATE_ALLOWED_LONG,
   IMAGES_GENERATE_DOC,
@@ -54,7 +59,16 @@ export {
 };
 
 type Template = 'avatar' | 'hero' | 'match' | 'convert' | 'placeholder';
-type OutFormat = 'webp' | 'jpeg' | 'png' | 'avif';
+const ENCODE_FORMATS = [
+  'webp',
+  'jpeg',
+  'png',
+  'avif',
+] as const satisfies readonly Bun.Image.Format[];
+const ENCODE_FORMAT_SET: ReadonlySet<Bun.Image.Format> = new Set(ENCODE_FORMATS);
+export type OutFormat = (typeof ENCODE_FORMATS)[number];
+type ImageFit = NonNullable<Bun.Image.ResizeOptions['fit']>;
+type ImageQuality = NonNullable<NonNullable<Parameters<Bun.Image['webp']>[0]>['quality']>;
 
 type CliOpts = {
   template: Template;
@@ -62,9 +76,9 @@ type CliOpts = {
   out: string;
   size: string;
   format: OutFormat;
-  quality: number;
-  fit: 'fill' | 'inside';
-  maxPixels: number;
+  quality: ImageQuality;
+  fit: ImageFit;
+  maxPixels: NonNullable<Bun.Image.ConstructorOptions['maxPixels']>;
   json: boolean;
   dryRun: boolean;
 };
@@ -81,6 +95,10 @@ const IMAGE_EXTS = new Set([
   '.heic',
   '.avif',
 ]);
+
+export function isOutputFormat(value: unknown): value is OutFormat {
+  return isBunImageFormat(value) && ENCODE_FORMAT_SET.has(value);
+}
 
 const DEFAULTS: CliOpts = {
   template: 'avatar',
@@ -125,7 +143,7 @@ async function loadTomlDefaults(): Promise<Partial<CliOpts>> {
     return {
       size: img.avatar_size,
       quality: img.hero_quality,
-      format: (img.avatar_format as OutFormat) || undefined,
+      format: isOutputFormat(img.avatar_format) ? img.avatar_format : undefined,
       out: img.cache_dir,
       source: img.source_dir,
       maxPixels: img.max_pixels,
@@ -151,7 +169,13 @@ function parseArgs(rawArgv: string[]): CliOpts {
     } else if (a === '--size' || a.startsWith('--size=')) {
       opts.size = a.includes('=') ? a.split('=')[1]! : next();
     } else if (a === '--format' || a.startsWith('--format=')) {
-      opts.format = (a.includes('=') ? a.split('=')[1]! : next()) as OutFormat;
+      const format = a.includes('=') ? a.split('=')[1]! : next();
+      if (!isOutputFormat(format)) {
+        throw new Error(
+          `Invalid --format ${JSON.stringify(format)}; expected ${ENCODE_FORMATS.join('|')}`
+        );
+      }
+      opts.format = format;
     } else if (a === '--quality' || a.startsWith('--quality=')) {
       opts.quality = Number(a.includes('=') ? a.split('=')[1]! : next());
     } else if (a === '--fit' || a.startsWith('--fit=')) {
@@ -270,9 +294,9 @@ async function isDirectory(path: string): Promise<boolean> {
   }
 }
 
-type EncodePipe = ReturnType<Bun.Image['resize']> | Bun.Image;
+type EncodePipe = Bun.Image;
 
-function applyFormat(pipe: EncodePipe, format: OutFormat, quality: number): EncodePipe {
+function applyFormat(pipe: EncodePipe, format: OutFormat, quality: ImageQuality): EncodePipe {
   switch (format) {
     case 'jpeg':
       return pipe.jpeg({ quality });
@@ -292,10 +316,10 @@ async function processOne(
   opts: {
     w: number;
     h: number;
-    fit: 'fill' | 'inside';
+    fit: ImageFit;
     format: OutFormat;
-    quality: number;
-    maxPixels: number;
+    quality: ImageQuality;
+    maxPixels: NonNullable<Bun.Image.ConstructorOptions['maxPixels']>;
     dryRun: boolean;
     template: Template;
   }
@@ -321,9 +345,13 @@ async function processOne(
     pipe = applyFormat(pipe, opts.format, opts.quality);
     const written = await pipe.write(dest);
     return { src, dest, bytes: Number(written) || (await Bun.file(dest).size), ok: true };
-  } catch (e) {
-    const err = e as Error & { code?: string };
-    if (err.code === 'ERR_IMAGE_FORMAT_UNSUPPORTED' && opts.format !== 'png') {
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    if (
+      isBunImageError(err) &&
+      err.code === 'ERR_IMAGE_FORMAT_UNSUPPORTED' &&
+      opts.format !== 'png'
+    ) {
       // fall back to png
       try {
         const fallback = dest.replace(/\.[^.]+$/, '.png');

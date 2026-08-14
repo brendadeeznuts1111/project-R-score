@@ -4,6 +4,10 @@
 // @released Bun.Image.png · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/image#resize — Bun.Image.resize
 // @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/ErrorCode — Bun.Image.ErrorCode
+// @released Bun.Image.ErrorCode · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/Format — Bun.Image.Format
+// @released Bun.Image.Format · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 /**
  * Bun.Image metadata helpers for screenshot / evidence pipelines.
  *
@@ -34,11 +38,36 @@ export type ImageDigestAlgorithm = 'sha256' | 'sha3-256';
 
 export const DEFAULT_IMAGE_DIGEST_ALGORITHM: ImageDigestAlgorithm = 'sha256';
 
+/** Decode formats reported by `Bun.Image.metadata()`. */
+export const BUN_IMAGE_FORMATS = {
+  jpeg: true,
+  png: true,
+  webp: true,
+  heic: true,
+  avif: true,
+  bmp: true,
+  tiff: true,
+  gif: true,
+} as const satisfies Record<Bun.Image.Format, true>;
+
+/** Stable terminal error codes from the installed Bun Image type surface. */
+export const BUN_IMAGE_ERROR_CODES = {
+  ERR_IMAGE_FORMAT_UNSUPPORTED: true,
+  ERR_IMAGE_TOO_MANY_PIXELS: true,
+  ERR_IMAGE_DECODE_FAILED: true,
+  ERR_IMAGE_ENCODE_FAILED: true,
+  ERR_IMAGE_UNKNOWN_FORMAT: true,
+  ERR_INVALID_STATE: true,
+} as const satisfies Record<Bun.Image.ErrorCode, true>;
+
+/** Exact byte-backed constructor inputs accepted by `new Bun.Image()`. */
+export type BunImageInput = ConstructorParameters<typeof Bun.Image>[0];
+export type BunImageByteInput = Extract<BunImageInput, ArrayBuffer | NodeJS.TypedArray>;
+
+type BunPngOptions = NonNullable<Parameters<Bun.Image['png']>[0]>;
+
 /** Wire shape for image evidence (dimensions, format, byte length, digest). */
-export type ImageEvidenceMeta = {
-  width: number;
-  height: number;
-  format: string;
+export type ImageEvidenceMeta = Bun.Image.Metadata & {
   /** Encoded byte length of the image payload. */
   size: number;
   algorithm: ImageDigestAlgorithm;
@@ -48,11 +77,13 @@ export type ImageEvidenceMeta = {
 export type ExtractImageMetaOptions = {
   /** Content digest algorithm (default sha256; use sha3-256 for audit SSOT parity). */
   algorithm?: ImageDigestAlgorithm;
+  /** Native decode safeguards and EXIF orientation behavior. */
+  image?: Bun.Image.ConstructorOptions;
 };
 
 export type ImageMetaExpectations = {
-  /** Allowed formats (lowercase), e.g. `["jpeg", "jpg", "png"]`. */
-  formats?: readonly string[];
+  /** Allowed formats reported by Bun, e.g. `["jpeg", "png"]`. */
+  formats?: readonly Bun.Image.Format[];
   /** Max width after resize (inclusive). */
   maxWidth?: number;
   /** Max height after resize (inclusive). */
@@ -74,20 +105,36 @@ export type ImageMetaCheck = {
   message: string;
 };
 
-export type ResizeScreenshotOptions = {
-  width?: number;
-  height?: number;
-  algorithm?: ImageDigestAlgorithm;
-};
+export type ResizeScreenshotOptions = Bun.Image.ResizeOptions &
+  ExtractImageMetaOptions & {
+    width?: number;
+    height?: number;
+    /** Native PNG encoder options. */
+    png?: BunPngOptions;
+  };
 
 const DIGEST_ALGORITHMS = new Set<ImageDigestAlgorithm>(['sha256', 'sha3-256']);
+const IMAGE_FORMATS = new Set<Bun.Image.Format>(
+  Object.keys(BUN_IMAGE_FORMATS) as Bun.Image.Format[]
+);
 
-function toUint8(bytes: Uint8Array | ArrayBuffer): Uint8Array {
-  return bytes instanceof ArrayBuffer ? new Uint8Array(bytes) : bytes;
+function toUint8(bytes: BunImageByteInput): Uint8Array {
+  return bytes instanceof ArrayBuffer
+    ? new Uint8Array(bytes)
+    : new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength);
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+export function isBunImageFormat(value: unknown): value is Bun.Image.Format {
+  return typeof value === 'string' && IMAGE_FORMATS.has(value as Bun.Image.Format);
+}
+
+export function isBunImageError(value: unknown): value is Error & { code: Bun.Image.ErrorCode } {
+  if (!(value instanceof Error) || !('code' in value)) return false;
+  return typeof value.code === 'string' && value.code in BUN_IMAGE_ERROR_CODES;
 }
 
 /** Type guard for {@link ImageEvidenceMeta} wire payloads. */
@@ -95,7 +142,7 @@ export function isImageEvidenceMeta(value: unknown): value is ImageEvidenceMeta 
   if (!isRecord(value)) return false;
   if (typeof value.width !== 'number' || !(value.width > 0)) return false;
   if (typeof value.height !== 'number' || !(value.height > 0)) return false;
-  if (typeof value.format !== 'string' || !value.format) return false;
+  if (!isBunImageFormat(value.format)) return false;
   if (typeof value.size !== 'number' || !(value.size > 0)) return false;
   if (typeof value.digest !== 'string' || value.digest.length < 32) return false;
   if (
@@ -119,7 +166,7 @@ export function parseImageEvidenceMeta(value: unknown): ImageEvidenceMeta {
  * Read Bun.Image metadata for `bytes` and attach size + content digest.
  */
 export async function extractImageEvidenceMeta(
-  bytes: Uint8Array | ArrayBuffer,
+  bytes: BunImageByteInput,
   options: ExtractImageMetaOptions = {}
 ): Promise<ImageEvidenceMeta> {
   const buf = toUint8(bytes);
@@ -128,7 +175,7 @@ export async function extractImageEvidenceMeta(
   }
 
   const algorithm = options.algorithm ?? DEFAULT_IMAGE_DIGEST_ALGORITHM;
-  const img = new Bun.Image(buf);
+  const img = new Bun.Image(buf, options.image);
   const meta = await awaitSettled(img.metadata());
   if (!(meta.width > 0) || !(meta.height > 0)) {
     throw new Error(
@@ -141,7 +188,7 @@ export async function extractImageEvidenceMeta(
   return {
     width: meta.width,
     height: meta.height,
-    format: String(meta.format),
+    format: meta.format,
     size: buf.byteLength,
     algorithm,
     digest: hasher.digest('hex') as string,
@@ -153,18 +200,25 @@ export async function extractImageEvidenceMeta(
  * Matches `new Bun.Image(screenshot).resize(400, 300).png()`.
  */
 export async function resizeScreenshotPng(
-  screenshot: Uint8Array,
+  screenshot: BunImageByteInput,
   opts: ResizeScreenshotOptions = {}
 ): Promise<{ bytes: Uint8Array; meta: ImageEvidenceMeta }> {
   const width = opts.width ?? DEFAULT_THUMB_MAX_WIDTH;
   const height = opts.height ?? DEFAULT_THUMB_MAX_HEIGHT;
   const bytes = await awaitSettled(
-    new Bun.Image(screenshot)
-      .resize(width, height, { fit: 'inside', filter: 'mitchell', withoutEnlargement: true })
-      .png()
+    new Bun.Image(screenshot, opts.image)
+      .resize(width, height, {
+        fit: opts.fit ?? 'inside',
+        filter: opts.filter ?? 'mitchell',
+        withoutEnlargement: opts.withoutEnlargement ?? true,
+      })
+      .png(opts.png)
       .bytes()
   );
-  const meta = await extractImageEvidenceMeta(bytes, { algorithm: opts.algorithm });
+  const meta = await extractImageEvidenceMeta(bytes, {
+    algorithm: opts.algorithm,
+    image: opts.image,
+  });
   return { bytes, meta };
 }
 

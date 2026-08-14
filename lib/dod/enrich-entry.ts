@@ -1,4 +1,6 @@
 // @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata()
+// @see https://bun.com/reference/bun/Image/Format — Bun.Image.Format
+// @released Bun.Image.Format · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://core.telegram.org/api/links — t.me/c private message links
 /**
  * Portal / bake enrichment for DOD queue rows:
@@ -6,6 +8,7 @@
  */
 
 import { expectedAmountFromRow, reconcileDodAmounts } from './reconcile.ts';
+import { isBunImageFormat } from '../image-metadata.ts';
 
 /** First plausible dollar amount in OCR text, e.g. "$12,345.67" → 12345.67. */
 export function extractAccountingAmount(text: string | undefined): number | undefined {
@@ -20,7 +23,7 @@ export function extractAccountingAmount(text: string | undefined): number | unde
 export type DodImageMetaStrip = {
   width: number | null;
   height: number | null;
-  format: string | null;
+  format: Bun.Image.Format | null;
   /** Encoded byte length when known (storage / evidence). */
   size?: number | null;
   exif: {
@@ -67,7 +70,8 @@ export function parseBunImageMetaStrip(meta: unknown): DodImageMetaStrip | null 
   if (!isRecord(meta)) return null;
   const width = parseFiniteNumber(meta.width);
   const height = parseFiniteNumber(meta.height);
-  const format = parseNonEmptyString(meta.format);
+  const rawFormat = parseNonEmptyString(meta.format)?.toLowerCase();
+  const format = isBunImageFormat(rawFormat) ? rawFormat : null;
   const size = parseFiniteNumber(meta.size);
 
   const exifRaw = isRecord(meta.exif) ? meta.exif : null;
