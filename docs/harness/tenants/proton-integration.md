@@ -21,6 +21,8 @@ Canonical docs: **[protonpass.github.io/pass-cli](https://protonpass.github.io/p
 
 This monorepo prefers **`inject`** → project `.env` (see below). Sibling Kalshi-bot prefers **`run`** + `.env.protonpass` — see [`Kalshi-bot/docs/PROTONPASS.md`](../../../Kalshi-bot/docs/PROTONPASS.md).
 
+**Portable package (v0.1):** [`packages/proton-pass`](../../../packages/proton-pass/) — `@factorywager/proton-pass` — shared session/resolve/cache/logging for insert-anywhere hosts. Plan: migrate Kalshi `src/protonpass` + monorepo `pass-session` consumers onto this package in follow-up PRs.
+
 ## Vault Layout
 
 | Vault | Purpose | Items | Agent PAT (`.env.pass-tokens`) |
