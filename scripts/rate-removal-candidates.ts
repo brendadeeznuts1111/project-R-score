@@ -435,14 +435,18 @@ async function main(): Promise<void> {
       reportOnly: true,
       count: shown.length,
       total: rows.length,
+      legend: TABLE_LEGEND,
       candidates: shown.map(r => ({
         name: r.name,
         version: r.version,
         section: r.section,
+        sectionLabel: sectionLabel(r.section),
         protocol: r.protocol,
+        protocolLabel: protocolLabel(r.protocol),
         declaredIn: r.declaredIn,
         score: r.score,
         grade: r.grade,
+        action: actionLabel(r.grade),
         importHits: r.signals.importHits,
         tierA: r.signals.tierA,
         reasons: r.reasons,
@@ -452,33 +456,136 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
-  console.info('Direct-dep removal candidates (higher score = safer to remove)');
-  console.info('Advisory only — not a CI gate. Confirm with bun why + tests before remove:safe.\n');
+  printTableLegend();
+  console.info(
+    `Showing ${shown.length} of ${rows.length} direct deps` +
+      (limit > 0 ? ` (limit ${limit})` : '') +
+      (minScore > 0 ? ` · min-score ${minScore}` : '') +
+      '\n'
+  );
 
+  // Column titles are self-describing; see legend above for score/action meaning.
   const table = shown.map(r => ({
-    Score: r.score,
-    Grade: r.grade,
+    'Score 0–100': r.score,
+    Action: actionLabel(r.grade),
     Package: r.name,
-    Hits: r.signals.importHits,
-    Protocol: r.protocol,
-    Section: r.section.replace('Dependencies', ''),
-    Where: r.declaredIn.length > 40 ? `${r.declaredIn.slice(0, 37)}…` : r.declaredIn,
-    Why: r.reasons[0] ?? '',
+    'Import hits': r.signals.importHits,
+    Spec: protocolLabel(r.protocol),
+    'Declared as': sectionLabel(r.section),
+    'Declared in': shortenPath(r.declaredIn, 36),
+    Signal: r.reasons.slice(0, 2).join(' · '),
   }));
 
   logTable(table);
 
+  const counts = {
+    remove: rows.filter(r => r.grade === 'remove').length,
+    review: rows.filter(r => r.grade === 'review').length,
+    keep: rows.filter(r => r.grade === 'keep').length,
+    protected: rows.filter(r => r.grade === 'protected').length,
+  };
+  console.info(
+    `\nCounts (full set): REMOVE=${counts.remove} · REVIEW=${counts.review} · KEEP=${counts.keep} · LOCKED=${counts.protected}`
+  );
+
   const removeable = shown.filter(r => r.grade === 'remove');
   if (removeable.length) {
-    console.info('\n## Top remove:safe hints');
+    console.info('\nSuggested next step for REMOVE rows (still verify first):');
     for (const r of removeable.slice(0, 15)) {
       console.info(`  ${r.removeHint}`);
-      console.info(`    # ${r.reasons.join('; ')}`);
+      console.info(`    # score=${r.score} · ${r.reasons.join('; ')}`);
     }
   }
 
-  console.info('\nNext: bun why <pkg> · bun run remove:safe -- <pkg> · bun run install:verify');
+  console.info(
+    '\nBefore removing: bun why <pkg>  →  bun run remove:safe -- <pkg>  →  bun run install:verify'
+  );
   process.exit(0);
+}
+
+/** Human-readable action for table (maps internal grade). */
+export function actionLabel(grade: RemovalCandidate['grade']): string {
+  switch (grade) {
+    case 'remove':
+      return 'REMOVE';
+    case 'review':
+      return 'REVIEW';
+    case 'keep':
+      return 'KEEP';
+    case 'protected':
+      return 'LOCKED';
+  }
+}
+
+export function sectionLabel(section: Section): string {
+  switch (section) {
+    case 'dependencies':
+      return 'prod';
+    case 'devDependencies':
+      return 'dev';
+    case 'optionalDependencies':
+      return 'optional';
+    case 'peerDependencies':
+      return 'peer';
+  }
+}
+
+export function protocolLabel(protocol: DepProtocol): string {
+  switch (protocol) {
+    case 'npm':
+      return 'npm registry';
+    case 'catalog':
+      return 'catalog:';
+    case 'workspace':
+      return 'workspace:*';
+    case 'file':
+      return 'file:';
+    case 'link':
+      return 'link:';
+    case 'git':
+      return 'git';
+    case 'other':
+      return 'other';
+  }
+}
+
+function shortenPath(path: string, max: number): string {
+  if (path.length <= max) return path;
+  return `${path.slice(0, max - 1)}…`;
+}
+
+/** Printed above the table so columns are unambiguous. */
+export const TABLE_LEGEND = {
+  score: '0–100; higher = safer to remove (heuristic, not proof of unused)',
+  action: {
+    REMOVE: 'score ≥70 — strong unused / Tier-A signal; still run bun why',
+    REVIEW: 'score 36–69 — mixed signals; inspect before remove',
+    KEEP: 'score ≤35 — import hits suggest active use',
+    LOCKED: 'workspace/file/link or protected toolchain — do not remove:safe',
+  },
+  importHits: 'count of from/require/import() matches in lib/scripts/tools/tests/packages/STO',
+  spec: 'how package.json records the dep (npm / catalog: / workspace:*)',
+  declaredAs: 'prod | dev | optional | peer',
+  declaredIn: 'which package.json file(s) list the dep',
+  signal: 'top scoring reasons',
+} as const;
+
+function printTableLegend(): void {
+  console.info('Direct dependency removal rater (advisory — not a CI gate)\n');
+  console.info('Columns:');
+  console.info(`  Score 0–100   ${TABLE_LEGEND.score}`);
+  console.info(`  Action        REMOVE | REVIEW | KEEP | LOCKED`);
+  console.info(`                  REMOVE  ${TABLE_LEGEND.action.REMOVE}`);
+  console.info(`                  REVIEW  ${TABLE_LEGEND.action.REVIEW}`);
+  console.info(`                  KEEP    ${TABLE_LEGEND.action.KEEP}`);
+  console.info(`                  LOCKED  ${TABLE_LEGEND.action.LOCKED}`);
+  console.info(`  Package       npm package name`);
+  console.info(`  Import hits   ${TABLE_LEGEND.importHits}`);
+  console.info(`  Spec          ${TABLE_LEGEND.spec}`);
+  console.info(`  Declared as   ${TABLE_LEGEND.declaredAs}`);
+  console.info(`  Declared in   ${TABLE_LEGEND.declaredIn}`);
+  console.info(`  Signal        ${TABLE_LEGEND.signal}`);
+  console.info('');
 }
 
 if (import.meta.main) {
