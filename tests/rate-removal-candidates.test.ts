@@ -1,8 +1,11 @@
 // @see https://bun.com/docs/test
 import { describe, expect, test } from 'bun:test';
 import {
+  actionLabel,
   detectProtocol,
+  protocolLabel,
   scoreRemoval,
+  sectionLabel,
   type RemovalSignals,
 } from '../scripts/rate-removal-candidates.ts';
 
@@ -56,5 +59,13 @@ describe('rate-removal-candidates scoring', () => {
     const r = scoreRemoval(base({ catalog: true, importHits: 0 }), 'zod');
     // catalog penalty + unused — may still be high; protected zod tested separately
     expect(r.reasons.some(x => x.includes('catalog'))).toBe(true);
+  });
+
+  test('table labels are human-readable', () => {
+    expect(actionLabel('remove')).toBe('REMOVE');
+    expect(actionLabel('protected')).toBe('LOCKED');
+    expect(sectionLabel('devDependencies')).toBe('dev');
+    expect(protocolLabel('workspace')).toBe('workspace:*');
+    expect(protocolLabel('npm')).toBe('npm registry');
   });
 });
