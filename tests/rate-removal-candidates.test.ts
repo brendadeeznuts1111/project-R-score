@@ -52,7 +52,7 @@ describe('rate-removal-candidates scoring', () => {
   });
 
   test('heavy imports keep package', () => {
-    const r = scoreRemoval(base({ importHits: 50, rootOnly: false }), 'plaid');
+    const r = scoreRemoval(base({ importHits: 50, rootOnly: false }), 'yaml');
     expect(r.grade).toBe('keep');
     expect(r.score).toBeLessThanOrEqual(35);
   });
@@ -80,7 +80,7 @@ describe('rate-removal-candidates scoring', () => {
   });
 
   test('STO-only unused is down-scored vs root unused', () => {
-    const root = scoreRemoval(base({ importHits: 0, rootOnly: true, stoOnly: false }), 'plaid');
+    const root = scoreRemoval(base({ importHits: 0, rootOnly: true, stoOnly: false }), 'left-pad');
     const sto = scoreRemoval(
       base({ importHits: 0, rootOnly: false, stoOnly: true, declarationCount: 1 }),
       'clsx'

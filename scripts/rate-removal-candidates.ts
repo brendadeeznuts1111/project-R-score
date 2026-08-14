@@ -316,16 +316,21 @@ export function aggregateByName(deps: DirectDep[]): Map<
 }
 
 /**
- * Count source references to a package name (imports / requires / bare strings).
+ * Count source references to a package name (imports / requires / CSS / scripts).
  * Scans common code roots; skips node_modules and lockfiles.
+ * package.json dependency keys are not usage; scripts that invoke the CLI are.
  */
 export async function countImportHits(repoRoot: string, packageName: string): Promise<number> {
   const escaped = packageName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  // from 'pkg' | from "pkg" | from 'pkg/...' | require('pkg')
+  // from 'pkg' | require('pkg') | import('pkg') | @import "pkg/..." (CSS / postcss)
   const re = new RegExp(
-    `(?:from\\s+['"]${escaped}(?:/[^'"]*)?['"]|require\\(\\s*['"]${escaped}(?:/[^'"]*)?['"]\\s*\\)|import\\(\\s*['"]${escaped}(?:/[^'"]*)?['"]\\s*\\))`,
+    `(?:from\\s+['"]${escaped}(?:/[^'"]*)?['"]|require\\(\\s*['"]${escaped}(?:/[^'"]*)?['"]\\s*\\)|import\\(\\s*['"]${escaped}(?:/[^'"]*)?['"]\\s*\\)|@import\\s+(?:url\\(\\s*)?['"]${escaped}(?:/[^'"]*)?['"])`,
     'g'
   );
+  // Config / CSS bare: "pkg" or "pkg/subpath" (fontsource, shadcn/tailwind.css)
+  const bareOrSub = new RegExp(`['"]${escaped}(?:/[^'"]*)?['"]`, 'g');
+  // CLI token in package.json scripts: bunx shadcn, shadcn@latest, npx shadcn
+  const scriptCli = new RegExp(`(?:^|[\\s"'=\`@/])${escaped}(?:@latest|@\\d|\\s|"|'|$)`, 'g');
 
   const roots = [
     'lib',
@@ -338,7 +343,6 @@ export async function countImportHits(repoRoot: string, packageName: string): Pr
     'projects/active/sports-terminal-os',
   ];
   let hits = 0;
-  // Include css (fontsource) and config files that name packages
   const fileGlob = new Bun.Glob('**/*.{ts,tsx,js,jsx,mjs,cjs,css,json}');
 
   for (const root of roots) {
@@ -346,19 +350,34 @@ export async function countImportHits(repoRoot: string, packageName: string): Pr
     try {
       for await (const rel of fileGlob.scan({ cwd: absRoot, onlyFiles: true })) {
         if (rel.includes('node_modules/') || rel.endsWith('package-lock.json')) continue;
-        if (rel.endsWith('package.json')) continue; // declare is not usage
+        const isPkgJson = rel === 'package.json' || rel.endsWith('/package.json');
         try {
           const text = await Bun.file(joinPath(absRoot, rel)).text();
+          if (isPkgJson) {
+            // Scripts / config keys that invoke the package as a CLI (not dep keys alone)
+            try {
+              const pj = JSON.parse(text) as {
+                scripts?: Record<string, string>;
+                bin?: string | Record<string, string>;
+              };
+              for (const body of Object.values(pj.scripts ?? {})) {
+                const m = body.match(scriptCli);
+                if (m) hits += m.length;
+              }
+            } catch {
+              /* invalid json */
+            }
+            continue;
+          }
           const m = text.match(re);
           if (m) hits += m.length;
-          // Config-style bare string: "vite" | 'tailwindcss' as sole dependency string
-          if (hits === 0 || !m) {
-            const bare = new RegExp(`['"]${escaped}['"]`, 'g');
-            const b = text.match(bare);
-            // Only count bare strings in config-like files (avoid package.json already skipped)
-            if (b && (/\.(config|rc)\.|vite|tailwind|postcss/i.test(rel) || rel.endsWith('.css'))) {
-              hits += b.length;
-            }
+          // Config-style package path strings (vite config plugins, CSS imports already via @import)
+          if (
+            /\.(config|rc)\.|vite|tailwind|postcss|components\.json/i.test(rel) ||
+            rel.endsWith('.css')
+          ) {
+            const b = text.match(bareOrSub);
+            if (b) hits += b.length;
           }
         } catch {
           /* skip unreadable */
@@ -679,7 +698,7 @@ Options:
 Examples:
   bun run deps:rate-removal -- --only-remove --hide-locked
   bun run deps:rate-removal -- --scope root --min-score 70 --why
-  bun run deps:rate-removal -- --package plaid --json
+  bun run deps:rate-removal -- --package yaml --json
 `);
 }
 
