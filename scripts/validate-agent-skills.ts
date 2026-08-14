@@ -14,6 +14,7 @@ import {
   resolveAgentSkillsRoot,
 } from '../lib/agent-skills-paths.ts';
 import { jsonOut } from '../lib/console-depth.ts';
+import { parseSkillFrontmatter } from '../lib/http/skills-catalog.ts';
 const argv = import.meta.main
   ? applyUnknownLongOptionGuardFor('skills:validate', Bun.argv.slice(2))
   : Bun.argv.slice(2);
@@ -519,6 +520,16 @@ export async function validateAgentSkills(
     const parsed = parseFrontmatter(text, displayPath, issues);
     if (parsed) {
       validateFrontmatter(parsed.frontmatter, parsed.body, folderName, displayPath, issues);
+      const catalogFrontmatter = parseSkillFrontmatter(text);
+      if (catalogFrontmatter.name.trim() === '' || catalogFrontmatter.description.trim() === '') {
+        issue(
+          issues,
+          'error',
+          'skill-catalog-frontmatter',
+          displayPath,
+          'name and description must be readable by the harness skills catalog parser; use an inline scalar or an explicit > / | block'
+        );
+      }
     }
     await validateLocalLinks(text, skillPath, displayPath, repoRoot, issues);
     validateCanonicalSkillPaths(text, folderName, discoveredSkillNames, displayPath, issues);

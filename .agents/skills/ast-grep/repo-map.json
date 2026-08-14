@@ -43,7 +43,6 @@
       "agents-sports-terminal-skill",
       "agents-partner-profile",
       "agents-cascade-mover",
-      "agents-bun-playground",
       "agents-project-r-skill-maintenance"
     ]
   },
@@ -330,15 +329,6 @@
       "view": "digest",
       "tags": ["skill", "cascade", "mcp"],
       "description": "Sports intelligence and multi-market cascading (MCP-first)"
-    },
-    {
-      "id": "agents-bun-playground",
-      "zone": "agents",
-      "name": "bun-v139-playground skill",
-      "path": ".agents/skills/bun-v139-playground",
-      "view": "digest",
-      "tags": ["skill", "bun", "playground"],
-      "description": "Bun v1.3.9 interactive playground demos"
     },
     {
       "id": "agents-project-r-skill-maintenance",

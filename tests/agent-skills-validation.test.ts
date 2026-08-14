@@ -108,6 +108,28 @@ describe('validateAgentSkills', () => {
     expect(result.issues.map(item => item.code)).toContain('skill-entry-broken');
   });
 
+  it('rejects frontmatter that the harness catalog cannot read', async () => {
+    const root = await fixtureRoot();
+    await writeSkill(root, 'demo-skill');
+    await writeFile(
+      resolveAgentSkillsPath(root, 'demo-skill', AGENT_SKILLS_PATHS.skillFile),
+      [
+        '---',
+        'name: demo-skill',
+        'description:',
+        '  Valid YAML without an explicit block scalar is outside the catalog subset.',
+        '---',
+        '',
+        '# Demo',
+      ].join('\n')
+    );
+    await writeRegistry(root, ['demo-skill']);
+
+    const result = await validateAgentSkills(root);
+    expect(result.ok).toBe(false);
+    expect(result.issues.map(item => item.code)).toContain('skill-catalog-frontmatter');
+  });
+
   it('ignores empty skill directories left without SKILL.md', async () => {
     const root = await fixtureRoot();
     await writeSkill(root, 'demo-skill');

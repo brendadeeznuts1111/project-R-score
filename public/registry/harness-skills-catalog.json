@@ -1,7 +1,7 @@
 {
   "plane": "harness-agents",
   "skillLoopRegistry": ".agents/skills/ast-grep/skill-loop-registry.json",
-  "scannedAt": "2026-08-14T02:45:07.343Z",
+  "scannedAt": "2026-08-14T03:01:02.296Z",
   "skills": [
     {
       "name": "agents-sdk",
@@ -44,25 +44,10 @@
     },
     {
       "name": "branded-ids",
-      "description": "",
-      "updatedAt": "2026-08-06T08:43:00.793Z",
+      "description": "Discover, add, and apply FactoryWager branded domain values (IDs, keys, and validated codes). Use for any domain *Id, constructor-tier or guard choice, brand coverage, catalog or manifest maintenance, and branded-ID gate failures.",
+      "updatedAt": "2026-08-14T03:00:56.540Z",
       "hasPackage": false,
       "lineCount": 149,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": [
-        "frontmatter missing description"
-      ]
-    },
-    {
-      "name": "bun-v139-playground",
-      "description": "Bun v1.3.9 feature demos and interactive CLI playground. Covers parallel scripts, process/spawn, HTTP/2, NO_PROXY, profiling, and mock auto-cleanup. Use when: testing Bun v1.3.9+ features, running demos, or benchmarking.",
-      "updatedAt": "2026-08-04T05:58:02.399Z",
-      "hasPackage": false,
-      "lineCount": 51,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -346,5 +331,5 @@
       ]
     }
   ],
-  "count": 26
+  "count": 25
 }
