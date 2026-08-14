@@ -9,7 +9,7 @@ Zero-npm image decode, transform, and encode using
 | ------------------------ | --------------------------------------------------------------------------------------------------------- |
 | Runtime documentation    | [Bun.Image](https://bun.com/docs/runtime/image)                                                           |
 | Upstream Markdown source | [`docs/runtime/image.mdx`](https://raw.githubusercontent.com/oven-sh/bun/main/docs/runtime/image.mdx)     |
-| Initial release          | [Bun 1.3.14 · 2026-05-13](https://bun.com/blog/bun-v1.3.14#bun-image)                                     |
+| Initial release          | [Bun 1.3.14 · 2026-05-13](https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing)           |
 | Last source audit        | [2026-07-07 · `7be1d459`](https://github.com/oven-sh/bun/commit/7be1d459f28566735bd602ce009e24cba0548e1e) |
 
 Pipelines are lazy. Chain transformations, choose an output format, and await
@@ -29,6 +29,7 @@ typed-array input while a terminal is pending.
 | Modulation  | Brightness and saturation                                                                                       | [Modulate](https://bun.com/docs/runtime/image#modulate)                                                                                  |
 | Encoding    | JPEG, PNG, WebP everywhere; HEIC/AVIF are platform-dependent                                                    | [Output formats](https://bun.com/docs/runtime/image#output-formats)                                                                      |
 | Output      | Awaited terminal executes the pipeline; `toBuffer()` is the typed Sharp-compatible alias for `buffer()`         | [Terminals](https://bun.com/docs/runtime/image#terminals) · [`toBuffer`](https://bun.com/reference/bun/Image/toBuffer)                   |
+| HTTP body   | Direct request/response bodies receive the selected image content type when Bun serializes them on the wire     | [Body integration](https://bun.com/blog/bun-v1.3.14#body-integration)                                                                    |
 | Placeholder | ThumbHash-rendered data URL, normally 400–700 bytes                                                             | [Placeholders](https://bun.com/docs/runtime/image#placeholders)                                                                          |
 | Clipboard   | macOS/Windows only; Linux returns `null`                                                                        | [Clipboard](https://bun.com/docs/runtime/image#clipboard)                                                                                |
 | Backend     | System geometry on macOS/Windows; set `Bun.Image.backend = "bun"` for portable golden tests                     | [Platform backends](https://bun.com/docs/runtime/image#platform-backends)                                                                |
@@ -150,6 +151,9 @@ bun run images:generate --template=hero --source=... --out=./artifacts/phase2-$(
 - SVG is not a `Bun.Image` input format. Keep generated charts as SVG or use a
   renderer such as `Bun.WebView` when a real raster artifact is required.
 - No disposal contract exists; chain and await a terminal.
+- Automatic image `Content-Type` is a Bun server serialization behavior. A
+  locally constructed `Response` may not expose that header until it is served;
+  validate the received response when testing this contract.
 - HEIC/AVIF may throw `ERR_IMAGE_FORMAT_UNSUPPORTED`; `images:generate` retries
   as PNG and reports the changed destination.
 - Other stable terminal codes are `ERR_IMAGE_TOO_MANY_PIXELS`,

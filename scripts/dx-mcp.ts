@@ -1,5 +1,18 @@
 #!/usr/bin/env bun
-// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
+// @released Bun.markdown.ansi · released v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @updated Bun.markdown.ansi · changed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @updated Bun.markdown.ansi · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-version
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
 // @see https://bun.com/docs/runtime/workers#creating-a-worker — Worker
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
 // @see https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster — URLPattern

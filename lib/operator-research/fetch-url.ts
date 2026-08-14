@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/networking/fetch — fetch
-// @see https://bun.com/blog/bun-v1.3.14#http2-client — per-request protocol
+// @see https://bun.com/blog/bun-v1.3.14#experimental-http-2-client-for-fetch — per-request protocol
 
 export const FETCH_MAX_RETRIES = 3;
 export const FETCH_BASE_DELAY_MS = 500;

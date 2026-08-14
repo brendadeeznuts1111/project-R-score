@@ -24,7 +24,7 @@
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
-// @see https://bun.com/blog/bun-v1.3.14#bun-image — Bun.Image (v1.3.14)
+// @see https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing — Bun.Image (v1.3.14)
 // @see https://bun.com/blog/bun-v1.3.14#terminal-methods — Bun.Image terminal methods
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/runtime/color — Bun.color (via colorize)

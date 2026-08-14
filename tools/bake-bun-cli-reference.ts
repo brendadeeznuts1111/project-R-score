@@ -5,7 +5,7 @@
 // @see https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup — --fetch-preconnect
 // @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags — --cpu
 // @see https://bun.com/reference/bun/argv — Bun.argv
-// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/environment-variables#disabling-automatic-env-loading — --no-env-file

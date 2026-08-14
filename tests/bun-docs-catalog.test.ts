@@ -6,7 +6,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth
 // @see https://bun.com/docs/bundler/executables#embedding-runtime-arguments — --compile-exec-argv
-// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
 import { describe, expect, test } from 'bun:test';
 import {
   normalizeName,

@@ -195,7 +195,7 @@ const CANONICAL_INSTALL_ENV_URLS = Object.fromEntries(
 /** Release-note blog anchors — versioned ship notes (runtime / pm by topic). */
 export const CANONICAL_RELEASE_TOKENS: Record<string, CanonicalVerificationToken> = {
   'bun-image': {
-    url: 'https://bun.com/blog/bun-v1.3.14#bun-image',
+    url: 'https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing',
     kind: 'API',
     stability: 'stable',
     subsystem: 'runtime',
@@ -1074,16 +1074,34 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.semver.satisfies': 'https://bun.com/reference/bun/semver/satisfies',
   'Bun.Transpiler': 'https://bun.com/reference/bun/Transpiler',
   ...CANONICAL_IMAGE_REFS,
-  'Bun.Image (v1.3.14)': 'https://bun.com/blog/bun-v1.3.14#bun-image',
+  'Bun.Image (v1.3.14)': 'https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing',
+  'release:image input sources': 'https://bun.com/blog/bun-v1.3.14#input-sources',
+  'release:image chainable transforms': 'https://bun.com/blog/bun-v1.3.14#chainable-transforms',
+  'release:image resize filters': 'https://bun.com/blog/bun-v1.3.14#resize-filters',
   'Bun.Image terminal methods': 'https://bun.com/blog/bun-v1.3.14#terminal-methods',
-  '--no-orphans': 'https://bun.com/blog/bun-v1.3.14#no-orphans',
-  BUN_FEATURE_FLAG_NO_ORPHANS: 'https://bun.com/blog/bun-v1.3.14#no-orphans',
+  'release:image body integration': 'https://bun.com/blog/bun-v1.3.14#body-integration',
+  'release:image platform formats': 'https://bun.com/blog/bun-v1.3.14#platform-specific-formats',
+  'release:image performance': 'https://bun.com/blog/bun-v1.3.14#performance-vs-sharp-0-34-5',
+  'Bun v1.3.14 built-in GC':
+    'https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects',
+  'Bun v1.3.14 cross-language LTO':
+    'https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux',
+  'Bun v1.3.14 ESM loading': 'https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading',
+  'Bun v1.3.14 WebSocket cleanup':
+    'https://bun.com/blog/bun-v1.3.14#websocket-permessagedeflate-false-now-respected-in-upgrade-requests',
+  'Bun v1.3.14 JavaScriptCore': 'https://bun.com/blog/bun-v1.3.14#upgraded-javascriptcore-engine',
+  'Bun.Archive release verification': 'https://bun.com/docs/runtime/archive',
+  'Bun.stringWidth v1.3.5 accuracy':
+    'https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy',
+  '--no-orphans': 'https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies',
+  BUN_FEATURE_FLAG_NO_ORPHANS:
+    'https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies',
   'using / await using':
     'https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun',
-  'Bun.Terminal (ConPTY)': 'https://bun.com/blog/bun-v1.3.14#bunterminal-on-windows-via-conpty',
+  'Bun.Terminal (ConPTY)': 'https://bun.com/blog/bun-v1.3.14#bun-terminal-on-windows-via-conpty',
   'process.execve': 'https://bun.com/blog/bun-v1.3.14#process-execve-support',
-  'Bun.serve http3': 'https://bun.com/blog/bun-v1.3.14#http3',
-  'fetch protocol http2': 'https://bun.com/blog/bun-v1.3.14#http2-client',
+  'Bun.serve http3': 'https://bun.com/blog/bun-v1.3.14#http-3-quic-support-in-bun-serve',
+  'fetch protocol http2': 'https://bun.com/blog/bun-v1.3.14#experimental-http-2-client-for-fetch',
   'install.globalStore': 'https://bun.com/blog/bun-v1.3.14#global-virtual-store',
   'Bun.CookieMap': 'https://bun.com/docs/runtime/cookies#cookiemap-class',
 

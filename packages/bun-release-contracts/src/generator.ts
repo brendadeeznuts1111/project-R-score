@@ -4,7 +4,7 @@
 // @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
-// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 

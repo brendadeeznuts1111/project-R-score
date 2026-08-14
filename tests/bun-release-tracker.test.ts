@@ -5,6 +5,7 @@ import ts from 'typescript';
 import {
   BUN_RELEASE_NOTE_ROWS,
   BUN_V1314_ANCHORS,
+  BUN_V1314_IMAGE_ANCHOR_KEYS,
   BUN_V1314_BLOG,
   BUN_V135_BLOG,
   BUN_V135_ANCHORS,
@@ -60,19 +61,22 @@ describe('lib/docs/bun-release-tracker', () => {
     expect(CANONICAL_REFS['bun feedback']).toBe('https://bun.com/docs/feedback');
   });
 
-  test('BUN_V1314_ANCHORS covers all user-listed blog sections', () => {
-    const expected = [
-      'bun-image',
-      'terminal-methods',
-      'global-virtual-store',
-      'http3',
-      'http2-client',
-      'event-loop-refactor',
-      'web-apis',
-      'tls-getcacertificates-system-now-works-without-use-system-ca',
-    ] as const;
-    for (const key of expected) {
-      expect(BUN_V1314_ANCHORS[key]).toBe(`${BUN_V1314_BLOG}#${key}`);
+  test('BUN_V1314_ANCHORS uses the exact official heading ids', () => {
+    const expected = {
+      'bun-image': 'bun-image-built-in-image-processing',
+      'terminal-methods': 'terminal-methods',
+      'global-virtual-store': 'global-virtual-store',
+      http3: 'http-3-quic-support-in-bun-serve',
+      'http2-client': 'experimental-http-2-client-for-fetch',
+      'event-loop-refactor': 'event-loop-refactor',
+      'web-apis': 'web-apis',
+      'tls-getcacertificates-system-now-works-without-use-system-ca':
+        'tls-getcacertificates-system-now-works-without-use-system-ca',
+    } as const;
+    for (const [key, anchor] of Object.entries(expected)) {
+      expect(BUN_V1314_ANCHORS[key as keyof typeof expected]).toBe(
+        `${BUN_V1314_BLOG}#${anchor}`
+      );
     }
     expect(Object.keys(BUN_V1314_ANCHORS).length).toBeGreaterThanOrEqual(24);
   });
@@ -172,6 +176,29 @@ describe('lib/docs/bun-release-tracker', () => {
     expect(CANONICAL_REFS['fetch protocol support']).toContain('#protocol-support');
     expect(CANONICAL_REFS['s3://']).toContain('#s3-urls-s3');
     expect(CANONICAL_REFS['data:']).toContain('#data-urls-data');
+  });
+
+  test('Bun.Image release evidence covers every exact v1.3.14 blog subsection', () => {
+    expect(BUN_V1314_IMAGE_ANCHOR_KEYS).toEqual([
+      'bun-image',
+      'image-input-sources',
+      'image-chainable-transforms',
+      'image-resize-filters',
+      'terminal-methods',
+      'image-body-integration',
+      'image-platform-specific-formats',
+      'image-performance-vs-sharp',
+    ]);
+    expect(BUN_V1314_IMAGE_ANCHOR_KEYS.map(key => BUN_V1314_ANCHORS[key])).toEqual([
+      `${BUN_V1314_BLOG}#bun-image-built-in-image-processing`,
+      `${BUN_V1314_BLOG}#input-sources`,
+      `${BUN_V1314_BLOG}#chainable-transforms`,
+      `${BUN_V1314_BLOG}#resize-filters`,
+      `${BUN_V1314_BLOG}#terminal-methods`,
+      `${BUN_V1314_BLOG}#body-integration`,
+      `${BUN_V1314_BLOG}#platform-specific-formats`,
+      `${BUN_V1314_BLOG}#performance-vs-sharp-0-34-5`,
+    ]);
   });
 
   test('Bun.Image members resolve to exact sections with release and source provenance', () => {

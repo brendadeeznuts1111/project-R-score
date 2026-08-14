@@ -2,7 +2,7 @@
 // @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
 // @see https://bun.com/reference/bun/SQL — Bun.SQL
 // @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
-// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
 // @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 // @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --compile
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth

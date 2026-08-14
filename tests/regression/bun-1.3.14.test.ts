@@ -1,4 +1,4 @@
-// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
 // @released --no-orphans · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/image#input — Blob.image
 // @verified Blob.image · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/image#input

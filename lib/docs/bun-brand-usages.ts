@@ -1,3 +1,14 @@
+// @see https://bun.com/docs/test/parallel#isolate — --isolate
+// @released --isolate · released v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --isolate · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/test/parallel#parallel — --parallel
+// @released --parallel · released v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --parallel · changed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --parallel · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @updated --parallel · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/test/parallel#one-timings-file-per-shard — --shard
+// @released --shard · released v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --shard · changed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
 // @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 // @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
@@ -5,8 +16,8 @@
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
-// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
-// @see https://bun.com/blog/bun-v1.3.14#http3 — Bun.serve http3
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
+// @see https://bun.com/blog/bun-v1.3.14#http-3-quic-support-in-bun-serve — Bun.serve http3
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
