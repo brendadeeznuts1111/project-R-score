@@ -1302,9 +1302,16 @@ export const CLOUDFLARE_TOKEN_PROBE_ALLOWED_LONG = ['json', 'help'] as const;
 /** § — deps:rate-removal (`scripts/rate-removal-candidates.ts`) */
 export const DEPS_RATE_REMOVAL_ALLOWED_LONG = [
   'json',
+  'md',
   'min-score',
   'limit',
   'package',
+  'scope',
+  'action',
+  'only-remove',
+  'hide-locked',
+  'no-locked',
+  'why',
   'help',
 ] as const;
 /** § — ops:limits:lab:profile (`scripts/limit-forecast-lab-profile.ts`) — auto team plan */
