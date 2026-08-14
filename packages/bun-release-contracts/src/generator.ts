@@ -97,6 +97,12 @@ function normalizeText(value: string): string {
   return decodeHtmlEntities(value).replace(/\s+/g, ' ').trim();
 }
 
+function normalizeHeading(value: string): string {
+  // Bun's blog appends a visible permalink anchor (`<a class="anchor">#</a>`)
+  // inside headings. It is navigation chrome, not part of the release section.
+  return normalizeText(value).replace(/\s*#$/, '').trim();
+}
+
 function slugify(value: string): string {
   return (
     normalizeText(value)
@@ -143,7 +149,7 @@ export async function extractReleaseItems(input: Response | string): Promise<Rel
         const capture: Capture = { parts: [] };
         headings.push(capture);
         element.onEndTag(() => {
-          const heading = normalizeText(capture.parts.join(''));
+          const heading = normalizeHeading(capture.parts.join(''));
           const index = headings.lastIndexOf(capture);
           if (index >= 0) headings.splice(index, 1);
           if (!heading) return;

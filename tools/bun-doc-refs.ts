@@ -442,7 +442,7 @@ export type CanonicalGuidesToken = CanonicalVerificationToken & {
 
 export const CANONICAL_GUIDES_TOKENS: Record<string, CanonicalGuidesToken> = {
   'Bun Guides': {
-    url: bunDocs('guides'),
+    url: 'https://bun.com/guides',
     kind: 'Documentation',
     stability: 'stable',
     description: 'Human-facing landing page for official guides and Bun task walkthroughs',
@@ -452,18 +452,18 @@ export const CANONICAL_GUIDES_TOKENS: Record<string, CanonicalGuidesToken> = {
     discoveryRole: 'landing',
   },
   'Bun Guides Markdown': {
-    url: 'https://bun.com/docs/guides.md',
+    url: 'https://bun.com/guides.md',
     kind: 'Documentation',
     stability: 'stable',
-    description: 'Agent-readable guides landing page; delegates complete discovery to llms.txt',
+    description: 'Agent-readable guides landing page; use llms.txt for complete discovery',
     subsystem: 'other',
     introducedIn: 'all',
     mediaType: 'text/markdown',
     discoveryRole: 'landing',
-    requiredText: ['# Guides', 'https://bun.com/docs/llms.txt'],
+    requiredText: ['# Guides'],
   },
   'Bun Docs Index': {
-    url: bunDocs('llms.txt'),
+    url: 'https://bun.com/llms.txt',
     kind: 'Documentation',
     stability: 'stable',
     description: 'Complete agent-readable Bun documentation index and discovery authority',
@@ -474,7 +474,7 @@ export const CANONICAL_GUIDES_TOKENS: Record<string, CanonicalGuidesToken> = {
     requiredText: ['[Guides](https://bun.com/docs/guides/index.md)'],
   },
   'Bun Install Guide': {
-    url: bunDocs('guides/install/from-npm-install-to-bun-install'),
+    url: 'https://bun.com/guides/install/from-npm-install-to-bun-install',
     kind: 'Documentation',
     stability: 'stable',
     description: 'Step-by-step migration from npm install to bun install',
@@ -1673,7 +1673,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'bun-types': BUN_TYPES_MAIN,
   'bun-types pinned': BUN_TYPES_PINNED,
   'Bun repository': BUN_REPOSITORY,
-  'llms.txt index': 'https://bun.com/docs/llms.txt',
+  'llms.txt index': 'https://bun.com/llms.txt',
   'markdown docs': 'https://bun.com/docs/runtime/markdown.md',
   // Operational endpoints (verified live; bun.com has no subdomains —
   // everything is path-based under the apex + www)
@@ -3419,7 +3419,7 @@ async function suggest(query: string): Promise<void> {
     }
     return;
   }
-  const llms = CANONICAL_REFS['llms.txt index'] ?? 'https://bun.com/docs/llms.txt';
+  const llms = CANONICAL_REFS['llms.txt index'] ?? 'https://bun.com/llms.txt';
   console.info(
     `❌ no docs page found for "${query}" — browse frozen key "llms.txt index" → ${llms}`
   );

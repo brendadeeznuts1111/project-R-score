@@ -48,7 +48,7 @@ describe('lib/docs/bun-release-tracker', () => {
   });
 
   test('keeps template commands, operator feedback, and the documentation index canonical', () => {
-    expect(CANONICAL_REFS['llms.txt index']).toBe('https://bun.com/docs/llms.txt');
+    expect(CANONICAL_REFS['llms.txt index']).toBe('https://bun.com/llms.txt');
     expect(CANONICAL_REFS['bun create']).toBe('https://bun.com/docs/runtime/templating/create');
     expect(CANONICAL_REFS['bun init']).toBe('https://bun.com/docs/runtime/templating/init');
     expect(CANONICAL_REFS['test reporters']).toBe('https://bun.com/docs/test/reporters');
