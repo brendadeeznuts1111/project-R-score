@@ -39,6 +39,7 @@
 import { hasCodeLikeChange } from './lib/git-changed.ts';
 import { isDirectorySync } from './lib/fs-bun.ts';
 import { removeIndexTreeSync } from './lib/index-tree.ts';
+import { dirnamePath } from '../lib/path-bun.ts';
 
 const ROOT = process.cwd();
 /**
@@ -63,6 +64,26 @@ export const SCRATCH_LINK_DIRS = [
   // Tennis HQ is gitignored; link when present so ssot-flow-soft resolves in scratch (#236).
   'king-zippy-umbra-acre',
 ] as const;
+
+/**
+ * Resolve dependencies the same way Bun does for a nested git worktree: walk
+ * ancestors until the first installed node_modules directory. A worktree under
+ * the primary checkout can intentionally reuse the primary install, so
+ * `${ROOT}/node_modules` is not guaranteed to exist after `bun install`.
+ */
+export function nearestNodeModulesDir(
+  start: string,
+  isDirectory: (path: string) => boolean = isDirectorySync
+): string | null {
+  let current = start.replace(/\/+$/, '') || '/';
+  while (true) {
+    const candidate = `${current === '/' ? '' : current}/node_modules` || '/node_modules';
+    if (isDirectory(candidate)) return candidate;
+    const parent = dirnamePath(current);
+    if (parent === current || current === '/') return null;
+    current = parent;
+  }
+}
 /** Bound worker-process pressure for Argon2/SQLite-heavy changed suites. */
 export const STAGED_TEST_PARALLELISM = 6;
 /**
@@ -424,8 +445,8 @@ async function buildScratchRepo(tmp: string): Promise<ScratchBuildResult> {
   // Skip absent optional checkouts (e.g. uninitialized Kalshi-bot submodule) —
   // a dangling symlink makes Bun.file look present then fail with ENOENT.
   for (const d of SCRATCH_LINK_DIRS) {
-    const source = `${ROOT}/${d}`;
-    if (!isDirectorySync(source)) {
+    const source = d === 'node_modules' ? nearestNodeModulesDir(ROOT) : `${ROOT}/${d}`;
+    if (!source || !isDirectorySync(source)) {
       continue;
     }
     const ln = Bun.spawnSync({

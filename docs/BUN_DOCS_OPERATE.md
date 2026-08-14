@@ -38,6 +38,22 @@ catalog entries moved — avoids overlay churn. `verify-all` runs
 `verify:docs-coverage:save` (reads committed indexes; use `--refresh-rss` /
 `--refresh-reference` for live fetch).
 
+### Official discovery hierarchy
+
+Use Bun's documentation surfaces according to their contract:
+
+| Surface                                             | Role                                                 | May satisfy an API-specific `@see` check?                     |
+| --------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------- |
+| [`/docs/llms.txt`](https://bun.com/docs/llms.txt)   | Complete page discovery index                        | No — resolve the specific page or reference entry first       |
+| [`/docs/guides.md`](https://bun.com/docs/guides.md) | Agent-readable guides landing page and task examples | No — it explicitly delegates complete discovery to `llms.txt` |
+| [`/docs/guides`](https://bun.com/docs/guides)       | Human-facing guides landing page                     | No                                                            |
+| Exact `/docs/...#anchor` or `/reference/...` URL    | Behavior or API contract                             | Yes, for the matching API only                                |
+
+`bun run verify:guides` fails closed when the Markdown landing page stops
+pointing to `llms.txt`, the complete index loses its Guides entry, a canonical
+URL redirects, or a response has the wrong media type. Page-level guide links
+remain discovery/example evidence and never mask a missing API-specific anchor.
+
 The source gate parses JavaScript and TypeScript syntax rather than searching
 raw text. It resolves global, namespace, named, aliased, dynamic, `require`, and
 type-position Bun references; ignores comments, template examples, shadowed

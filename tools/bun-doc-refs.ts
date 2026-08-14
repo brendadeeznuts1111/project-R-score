@@ -435,24 +435,53 @@ export type CanonicalGuidesToken = CanonicalVerificationToken & {
   kind: 'Documentation' | 'Tooling';
   stability: 'stable';
   description: string;
+  mediaType: 'text/html' | 'text/markdown' | 'text/plain';
+  discoveryRole: 'landing' | 'complete-index' | 'task-guide' | 'installer';
+  requiredText?: readonly string[];
 };
 
 export const CANONICAL_GUIDES_TOKENS: Record<string, CanonicalGuidesToken> = {
   'Bun Guides': {
-    url: 'https://bun.com/guides',
+    url: bunDocs('guides'),
     kind: 'Documentation',
     stability: 'stable',
-    description: 'Index of all official guides (installation, migration, deployment)',
+    description: 'Human-facing landing page for official guides and Bun task walkthroughs',
     subsystem: 'other',
     introducedIn: 'all',
+    mediaType: 'text/html',
+    discoveryRole: 'landing',
+  },
+  'Bun Guides Markdown': {
+    url: 'https://bun.com/docs/guides.md',
+    kind: 'Documentation',
+    stability: 'stable',
+    description: 'Agent-readable guides landing page; delegates complete discovery to llms.txt',
+    subsystem: 'other',
+    introducedIn: 'all',
+    mediaType: 'text/markdown',
+    discoveryRole: 'landing',
+    requiredText: ['# Guides', 'https://bun.com/docs/llms.txt'],
+  },
+  'Bun Docs Index': {
+    url: bunDocs('llms.txt'),
+    kind: 'Documentation',
+    stability: 'stable',
+    description: 'Complete agent-readable Bun documentation index and discovery authority',
+    subsystem: 'other',
+    introducedIn: 'all',
+    mediaType: 'text/plain',
+    discoveryRole: 'complete-index',
+    requiredText: ['[Guides](https://bun.com/docs/guides/index.md)'],
   },
   'Bun Install Guide': {
-    url: 'https://bun.com/guides/install/from-npm-install-to-bun-install',
+    url: bunDocs('guides/install/from-npm-install-to-bun-install'),
     kind: 'Documentation',
     stability: 'stable',
     description: 'Step-by-step migration from npm install to bun install',
     subsystem: 'package-manager',
     introducedIn: 'all',
+    mediaType: 'text/html',
+    discoveryRole: 'task-guide',
   },
   'Bun Get': {
     url: 'https://bun.com/get',
@@ -461,6 +490,8 @@ export const CANONICAL_GUIDES_TOKENS: Record<string, CanonicalGuidesToken> = {
     description: 'Install landing page (serves 200 directly, no redirect on 2026-07)',
     subsystem: 'other',
     introducedIn: 'all',
+    mediaType: 'text/html',
+    discoveryRole: 'installer',
   },
 };
 
