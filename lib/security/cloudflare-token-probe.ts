@@ -88,7 +88,7 @@ export async function probeCloudflareTokenValue(
 ): Promise<TokenProbe & { kindDetail: CloudflareTokenKind; verifyUrl?: string; note?: string }> {
   const checkedAt = new Date().toISOString();
   const resolved = cloudflareTokenVerifyUrl(input.token, input.accountId);
-  if (!resolved.url) {
+  if (resolved.url === null) {
     return {
       envKey: input.envKey,
       kind: 'cloudflare',

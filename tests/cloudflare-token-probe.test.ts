@@ -59,6 +59,18 @@ describe('cloudflare-token-probe', () => {
     expect(hit).not.toContain('/user/tokens/verify');
   });
 
+  test('probeCloudflareTokenValue reports the missing account-id reason without fetching', async () => {
+    const r = await probeCloudflareTokenValue({
+      envKey: 'CLOUDFLARE_API_TOKEN',
+      token: 'cfat_test_token',
+      fetchImpl: (() => {
+        throw new Error('fetch must not run');
+      }) as typeof fetch,
+    });
+    expect(r.status).toBe('unreachable');
+    expect(r.note).toContain('CLOUDFLARE_ACCOUNT_ID');
+  });
+
   test('probeCloudflareTokenValue user token hits user path', async () => {
     let hit = '';
     const fetchImpl = (async (input: RequestInfo | URL) => {
