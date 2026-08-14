@@ -19,7 +19,7 @@ Not wire/brands — see [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md).
 | --------------------------------------------------- | ---------------------------------------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | `linker` / `globalStore`                            | isolated / true                                            | strip if identical         | machine owns; [global store](https://bun.com/docs/pm/global-store) requires [isolated linker](https://bun.com/docs/pm/isolated-installs) |
 | `[install.cache].dir`                               | **absolute**                                               | never `~`                  | avoids `./~` ([bun#6237](https://github.com/oven-sh/bun/issues/6237)); store lives under `<cache>/links/`                                |
-| `frozenLockfile`                                    | true                                                       | root **`true`** (hardened) | intentional dep edits: temporarily set `false`, then restore; nested workspaces may override                                             |
+| `frozenLockfile`                                    | true (template)                                            | root **`true`** (hardened) | both layers set true; intentional dep edits: flip **root** to `false`, then restore; nested workspaces may override                      |
 | `minimumReleaseAge`                                 | 259200                                                     | prefer inherit             | supply-chain floor                                                                                                                       |
 | `minimumReleaseAgeExcludes`                         | `["bun-types", "@types/bun", "@types/node", "typescript"]` | prefer inherit             | type-only packages move faster than the age gate; list **replaces** Bun's default `["@types/node", "typescript"]` — keep it a superset   |
 | scopes / `[test]` / `[console]` / `[run].noOrphans` | —                                                          | project                    | keep local; orphans → [bunfig run.noOrphans](https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind)       |
@@ -185,10 +185,10 @@ before promotion. Pages `BUN_VERSION` is a separate deploy pin.
   itself recommends migrating `.npmrc` → bunfig —
   [pm/npmrc](https://bun.com/docs/pm/npmrc)). `.npmrc` registry/auth lines
   remain only for non-Bun tooling (vite/npm clients). Both scope spellings exist
-  (`@factorywager` ×42, `@factory-wager` ×1). **Registry URL variants:** root
-  `bunfig.toml` scopes use `http://localhost:3000/` for local `serve-public`;
-  production/apex is `https://registry.factory-wager.com/` — do not assume one
-  URL in docs or scripts without naming which lane.
+  (`@factorywager` and `@factory-wager`); bunfig maps both. **Registry URL
+  variants:** root `bunfig.toml` scopes use `http://localhost:3000/` for local
+  `serve-public`; production/apex is `https://registry.factory-wager.com/` — do
+  not assume one URL in docs or scripts without naming which lane.
 - **`bunfig.toml` does not inherit upward.** A nested workspace root (e.g.
   `projects/active/factorywager/registry/`) reads only its own `./bunfig.toml` +
   `~/.bunfig.toml` — it needs its own `frozenLockfile = false` dev override.
@@ -198,13 +198,17 @@ before promotion. Pages `BUN_VERSION` is a separate deploy pin.
   `bun add`/`bun update`, commit lockfile, restore `true`. Nested workspace
   roots may keep a local `false` override — bunfig does not inherit upward.
   Details: `kimi-toolchain/docs/references/bun-install-config.md`.
-  - **Helper:** `bun run add:safe -- <pkg> [--dev]`
-    ([`scripts/bun-add-safe.ts`](../scripts/bun-add-safe.ts)) toggles root
-    `frozenLockfile`, runs `bun add`, always restores `true`, then
-    `install:verify` + Tier-A (`scripts/check-bun-deps-tier-a.ts` — scans
-    workspace **`package.json` keys**, not `node_modules`). Prefer Bun natives
-    over Tier-A wrappers (`tools/bun-prefer-matrix.ts` `tierAAvoidPackages()`).
-    Report-only transitive scan: `bun run inventory:wrappers`
+  - **Helpers:** `bun run add:safe -- <pkg> [--dev]` ·
+    `bun run remove:safe -- <pkg>` · same freeze dance for `bun update` (unlock
+    → update → restore `true` → commit lockfile).
+    [`scripts/bun-add-safe.ts`](../scripts/bun-add-safe.ts) /
+    [`scripts/bun-remove-safe.ts`](../scripts/bun-remove-safe.ts) toggle root
+    `frozenLockfile`, run the PM command, always restore `true`, then
+    `install:verify` (+ Tier-A on add: `scripts/check-bun-deps-tier-a.ts` —
+    scans workspace **`package.json` keys**, not `node_modules`). Prefer Bun
+    natives over Tier-A wrappers (`tools/bun-prefer-matrix.ts`
+    `tierAAvoidPackages()`). Report-only transitive scan:
+    `bun run inventory:wrappers`
     ([`scripts/inventory-wrappers.ts`](../scripts/inventory-wrappers.ts)) —
     always exit 0; not a CI gate.
   - **`--exact` / `-E` default** (belt-and-suspenders with
@@ -316,8 +320,28 @@ frozenLockfile = true
 
 Operator PM surface (core / analysis / workspaces / advanced):  
 [monorepo-workspaces § Bun PM surface](./harness/tenants/monorepo-workspaces.md#bun-pm-surface-operator-cookbook).  
-Vault plane (secrets): [proton-integration](./harness/tenants/proton-integration.md) ·
-`@factorywager/proton-pass` (`workspace:*` · `bunx --bun proton-pass`).
+Install **guides** map (Bun docs ↔ Factory owners):
+[BUN_NATIVE_CAPABILITIES § Package manager guides](./BUN_NATIVE_CAPABILITIES.md#package-manager-guides-map)
+· gap scan `bun run docs:guides:gap -- --cluster install`.  
+Vault plane (secrets):
+[proton-integration](./harness/tenants/proton-integration.md) ·
+`@factorywager/proton-pass` (root `workspace:*` · `bunx --bun proton-pass` —
+space-separated flags).
+
+### Security scanner (install-time)
+
+Bun [Security Scanner API](https://bun.com/docs/pm/security-scanner-api) is
+**OFF by default** on this monorepo (~750 lockfile packages; Socket free quota).
+Package `@socketsecurity/bun-security-scanner` stays a devDependency.
+
+| Mode                    | Command / config                                                                                                       |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| On-demand (recommended) | `bun run portal-cli scanner scan --oneshot --force`                                                                    |
+| Install-time ON         | `portal-cli scanner configure @socketsecurity/bun-security-scanner --write` (uncomment `[install.security]` in bunfig) |
+| Clear                   | `portal-cli scanner clear --write`                                                                                     |
+
+Scanner is **not** a substitute for `minimumReleaseAge`, `bun audit`, or frozen
+lockfile discipline. Never commit raw Socket API keys — vault → inject.
 
 ```bash
 bun run machine:bunfig:ensure   # ~/.bunfig.toml ← config/machine.bunfig.toml.template
@@ -334,6 +358,8 @@ bun run install:cache:lifecycle
 bun scripts/with-bun-cache-env.ts ci   # GHA / ephemeral
 bun run add:safe -- <pkg>       # unlock → bun add --exact → restore freeze
 bun run remove:safe -- <pkg>    # unlock → bun remove → restore freeze
+# bun update: same freeze dance (unlock → update → restore true → commit bun.lock)
+bunx --bun <bin> …              # workspace bins (e.g. proton-pass); flags space-separated
 bun pm ls · bun pm why <pkg> · bun audit · bun outdated --filter './'
 ```
 
@@ -369,7 +395,8 @@ bun run check:release-tracker                # tests + release verify
 | `machine-global-store`         | isolated + global store          | effective `globalStore = true`                                 |
 
 `install:verify` (cache dir, tilde drift, global store links, node_modules
-layout) complements the seven aspects above — run both for full install health.
+layout) complements the **eleven** aspects above — run both for full install
+health.
 
 **Portal doctor bunfig group** (`tools/lib/portal-cli-doctor-bunfig.ts`) is the
 control-plane gate for the same machine/project split:
@@ -463,7 +490,7 @@ parity · `download` SHA-256 · `publish` auth gate). Requires `serve-public` on
 **Bun runtime nits (Phase 1)** — canonical:
 [`docs/bun-runtime-nits.md`](bun-runtime-nits.md). SSOT:
 `lib/verification/bun-runtime-nits-probes.ts` ·
-`tools/verify-bun-runtime-nits.ts` · **16 probe rows** in
+`tools/verify-bun-runtime-nits.ts` · **18 probe rows** in
 `public/registry/bun-runtime-nits-proof.json` (inspect truth table · streams
 gzip · URL · Bun.file vs fs). **In `verify-all`** (step 8) and
 `check:release-tracker`.
@@ -483,13 +510,19 @@ CI: `setup-factory-bun` + `ci:core`. Docs:
 
 ## References and further reading
 
-- Bun package manager: [`bun install`](https://bun.com/docs/cli/install) ·
+- Bun package manager: [`bun install`](https://bun.com/docs/pm/cli/install) ·
   [`bunfig.toml`](https://bun.com/docs/runtime/bunfig) ·
   [isolated installs](https://bun.com/docs/pm/isolated-installs) ·
   [global store](https://bun.com/docs/pm/global-store) ·
   [global cache](https://bun.com/docs/pm/global-cache) ·
-  [trusted dependencies](https://bun.com/docs/install/lifecycle#trusted-dependencies)
-  · [security scanner](https://bun.com/docs/pm/security-scanner-api).
+  [trusted dependencies](https://bun.com/docs/pm/lifecycle#trusteddependencies)
+  · [security scanner](https://bun.com/docs/pm/security-scanner-api) ·
+  [workspaces](https://bun.com/docs/pm/workspaces) ·
+  [catalogs](https://bun.com/docs/pm/catalogs) ·
+  [filter](https://bun.com/docs/pm/filter).
+- Install guides (walkthroughs):
+  [guides/install](https://bun.com/docs/guides/install/add) · monorepo gap scan
+  `bun run docs:guides:gap -- --cluster install`.
 - Supply-chain hardening: [SLSA levels](https://slsa.dev/spec/v1.0/levels) ·
   [npm "scripts build scripts" supply-chain guidance](https://docs.npmjs.com/cli/v10/using-npm/scripts#best-practices)
   ·
@@ -499,5 +532,6 @@ CI: `setup-factory-bun` + `ci:core`. Docs:
   `bun tools/bun-doc-refs.ts suggest "<api>"` · `bun run docs:refresh` ·
   `bun run verify-all`.
 
-_Runtime/type policy reconciled 2026-08-05; release probes verified on Bun
-1.3.14 and the installed 1.4.0 canary._
+_Runtime/type policy reconciled 2026-08-14 (UNIFIED audit: aspect count, nits
+probe count, scanner policy, PM helpers); release probes verified on Bun 1.3.14
+and the installed 1.4.0 canary._
