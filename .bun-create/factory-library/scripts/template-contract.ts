@@ -29,6 +29,7 @@ export const FACTORY_LIBRARY_CONTRACT_GROUPS: readonly ContractGroup[] = [
       'name',
       'version',
       'description',
+      'packageManager',
       'type',
       'module',
       'types',
@@ -66,7 +67,7 @@ export const FACTORY_LIBRARY_CONTRACT_GROUPS: readonly ContractGroup[] = [
       'devDependencies.typescript-eslint',
       'devDependencies.typescript',
     ],
-    rule: 'Pinned formatting and linting precede explicit no-emit checks after installation.',
+    rule: 'Pinned Bun types, TypeScript, formatting, and linting precede explicit no-emit checks after installation.',
   },
   {
     id: 'reporting',
@@ -342,6 +343,13 @@ export function validateFactoryLibraryManifest(
   pushIf(findings, engines?.bun === '>=1.3.14', 'engines.bun', '>=1.3.14', engines?.bun);
   pushIf(
     findings,
+    pkg.packageManager === 'bun@1.3.14',
+    'packageManager',
+    'bun@1.3.14',
+    pkg.packageManager
+  );
+  pushIf(
+    findings,
     publishConfig?.access === 'public',
     'publishConfig.access',
     'public',
@@ -363,9 +371,9 @@ export function validateFactoryLibraryManifest(
   );
   pushIf(
     findings,
-    devDependencies?.['@types/bun'] === 'latest',
+    devDependencies?.['@types/bun'] === '1.3.14',
     'devDependencies.@types/bun',
-    'latest',
+    '1.3.14',
     devDependencies?.['@types/bun']
   );
   pushIf(
@@ -413,9 +421,13 @@ export function validateFactoryLibraryManifest(
     'format:check': value => value === 'bun run prettier --check .',
     lint: value => value === 'bun run eslint . --max-warnings=0',
     'lint:fix': value => value === 'bun run eslint . --fix --max-warnings=0',
-    typecheck: value => value === 'tsc --noEmit',
-    build: value => typeof value === 'string' && value.startsWith('bun build '),
-    'build:metafile': value => typeof value === 'string' && value.includes('--metafile-md'),
+    typecheck: value => value === 'bun run tsc --noEmit',
+    build: value =>
+      typeof value === 'string' && value.startsWith('bun build ') && value.includes('--target bun'),
+    'build:metafile': value =>
+      typeof value === 'string' &&
+      value.includes('--target bun') &&
+      value.includes('--metafile-md'),
     'generate:files': value => typeof value === 'string' && value.includes('generate-files-md'),
     'check:files': value => typeof value === 'string' && value.includes('validate-files-md'),
     check: value =>
@@ -423,7 +435,8 @@ export function validateFactoryLibraryManifest(
       value.includes('check:files') &&
       value.includes('format:check') &&
       value.includes('lint') &&
-      value.includes('typecheck'),
+      value.includes('typecheck') &&
+      !value.includes('generate:files'),
     prepack: value => value === 'bun run check',
     postpublish: value => typeof value === 'string' && value.includes('postpublish.ts'),
     'publish:dry-run': value => value === 'bun publish --dry-run',
@@ -477,6 +490,7 @@ export function factoryLibraryContractSnapshot(manifest: unknown, mode: Template
     flags: FACTORY_LIBRARY_FLAGS,
     package: {
       name: pkg.name,
+      packageManager: pkg.packageManager,
       exports: nested(pkg, 'exports'),
       files: pkg.files,
       publishConfig: nested(pkg, 'publishConfig'),

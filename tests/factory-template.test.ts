@@ -29,12 +29,13 @@ describe('factory-library template contract', () => {
       install?: { linker?: string; globalStore?: boolean };
       run?: { noOrphans?: boolean };
       console?: { depth?: number };
+      serve?: unknown;
     };
     expect(config.install).toEqual({
       linker: 'isolated',
       globalStore: true,
-      frozenLockfile: false,
     });
+    expect(config.serve).toBeUndefined();
     expect(config.run?.noOrphans).toBe(true);
     expect(config.console?.depth).toBe(4);
   });
@@ -122,7 +123,9 @@ describe('factory-library template contract', () => {
     expect(packageJson.exports['.']).toBe('./src/index.ts');
     expect(packageJson.types).toBe('./src/index.ts');
     expect(packageJson.files).toEqual(['src', 'README.md']);
+    expect(packageJson.packageManager).toBe('bun@1.3.14');
     expect(packageJson.scripts.build).toContain('bun build');
+    expect(packageJson.scripts.build).toContain('--target bun');
     expect(packageJson.scripts['test:dots']).toBe('bun test --reporter=dots');
     expect(packageJson.scripts['test:coverage']).toBe('bun test --coverage');
     expect(packageJson.scripts['test:coverage:lcov']).toBe(
@@ -138,24 +141,28 @@ describe('factory-library template contract', () => {
     expect(packageJson.scripts['format:check']).toBe('bun run prettier --check .');
     expect(packageJson.scripts.lint).toBe('bun run eslint . --max-warnings=0');
     expect(packageJson.scripts['lint:fix']).toBe('bun run eslint . --fix --max-warnings=0');
-    expect(packageJson.scripts.typecheck).toBe('tsc --noEmit');
+    expect(packageJson.scripts.typecheck).toBe('bun run tsc --noEmit');
     expect(packageJson.scripts.check).toContain('bun run format:check');
     expect(packageJson.scripts.check).toContain('bun run lint');
     expect(packageJson.scripts.check).toContain('bun run typecheck');
+    expect(packageJson.scripts.check).not.toContain('generate:files');
     expect(packageJson.scripts['generate:files']).toContain('generate-files-md');
     expect(packageJson.scripts['check:files']).toContain('validate-files-md');
     expect(packageJson.scripts['build:metafile']).toContain('--metafile-md');
+    expect(packageJson.scripts['build:metafile']).toContain('--target bun');
     expect(packageJson.scripts.prepack).toBe('bun run check');
     expect(packageJson.scripts.postpublish).toContain('postpublish.ts');
     expect(packageJson.scripts['publish:dry-run']).toBe('bun publish --dry-run');
     expect(packageJson.scripts['color-test']).toBe('bun scripts/color-test.ts');
     expect(packageJson.publishConfig).toEqual({ access: 'public', tag: 'latest' });
+    expect(packageJson.devDependencies['@types/bun']).toBe('1.3.14');
     expect(packageJson.devDependencies.typescript).toBe('6.0.3');
     expect(packageJson.devDependencies.prettier).toBe('3.9.6');
     expect(packageJson.devDependencies.eslint).toBe('9.39.4');
 
     expect(await Bun.file(`${TEMPLATE_ROOT}/plugin.example.ts`).exists()).toBe(false);
     expect(await Bun.file(`${TEMPLATE_ROOT}/.gitignore`).exists()).toBe(true);
+    expect(await Bun.file(`${TEMPLATE_ROOT}/.prettierignore`).exists()).toBe(false);
     expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/run-test-junit.ts`).exists()).toBe(true);
     expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/junit-context.ts`).exists()).toBe(true);
     expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/junit-enrich.ts`).exists()).toBe(true);

@@ -72,9 +72,11 @@ replacement guard; it never applies to npm, GitHub, or component routes.
 Ship template:
 [`.bun-create/factory-library`](../../.bun-create/factory-library/)
 (`package.json` `"bun-create": { preinstall, postinstall }`).  
-Scaffold metrics: `bun run bench` (`Bun.nanoseconds` → JSON) ·
-`bun run profile:cpu` (`--cpu-prof` → `./profiles/`) — see template README and
-harness tenant
+The generated manifest pins its Bun package-manager and type baseline, builds
+for `--target bun`, and keeps `check` read-only; update `files.md` explicitly
+with `bun run generate:files` after changing the generated tree. Scaffold
+metrics: `bun run bench` (`Bun.nanoseconds` → JSON) · `bun run profile:cpu`
+(`--cpu-prof` → `./profiles/`) — see template README and harness tenant
 [`bun-bench-profiling.md`](../../docs/harness/tenants/bun-bench-profiling.md).
 
 **Bun flags** (passed through): `--force` · `--no-install` · `--no-git` ·

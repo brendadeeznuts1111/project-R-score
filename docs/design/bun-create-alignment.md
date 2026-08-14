@@ -131,10 +131,11 @@ replacement behavior.
 | Contract                               | Template location                    | Proof                                                       |
 | -------------------------------------- | ------------------------------------ | ----------------------------------------------------------- |
 | Bun-init-aligned no-emit type checking | `tsconfig.json`                      | `bun run typecheck`                                         |
-| Source-first package exports           | `package.json`                       | `bun run check`                                             |
+| Pinned Bun runtime and type baseline   | `packageManager` + `@types/bun`      | Template contract + generated install                       |
+| Source-first, Bun-targeted package     | `exports` + `build --target bun`     | Non-mutating `bun run check`                                |
 | Watch workflows                        | `dev` / `test:watch` scripts         | Manual local development                                    |
 | Publishable file allowlist             | `package.json.files`                 | `bun pm pack --dry-run`                                     |
-| Benchmark/profile artifacts stay local | `.gitignore`, `bench`, `profile:cpu` | Generated project check                                     |
+| Generated artifacts stay local         | `.gitignore` (also read by Prettier) | Generated project check                                     |
 | Local template, flag, and marker guard | Factory CLI + tests                  | `bun test tests/factory-template.test.ts tests/cli.test.ts` |
 
 ## Verified baseline

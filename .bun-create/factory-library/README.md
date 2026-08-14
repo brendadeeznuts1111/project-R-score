@@ -22,7 +22,8 @@ scripts for consistent terminal logs; see [Automatic terminal color](#automatic-
 `exports`, `module`, and `types` intentionally point at TypeScript source: this
 is a Bun-native template, not a precompiled Node/browser distribution. The
 type-checking baseline follows `bun init`'s modern no-emit, bundler-resolution
-defaults. Keep the public API at `src/index.ts` unless you deliberately
+defaults, and the build proof explicitly targets Bun rather than the bundler's
+browser default. Keep the public API at `src/index.ts` unless you deliberately
 introduce a build-and-declaration pipeline. `typecheck` covers `src/`, `test/`,
 and template scripts; the package allowlist still publishes only the source
 entry point and README.
@@ -77,9 +78,9 @@ bun run lint:fix        # applies safe ESLint fixes, then reports remaining viol
 bun run typecheck
 bun run build
 bun run build:metafile # writes metafiles plus a machine-readable build summary
-bun run generate:files # refreshes the tracked project file index
+bun run generate:files # intentionally refreshes the tracked project file index
 bun run check:files    # validates files.md and package.json.files against the source tree
-bun run check           # file index + typecheck + test + build
+bun run check           # non-mutating file index + format + lint + types + test + build proof
 bun run prepack         # same checks run automatically before Bun packs/publishes this directory
 bun run publish:dry-run # Bun-native publish simulation; never uploads
 bun run color-test     # demos auto/fixed Bun.color terminal output and brand formats
@@ -88,9 +89,13 @@ bun run profile:cpu    # same workload under --cpu-prof → ./profiles/*.cpuprof
 ```
 
 `bun run check` verifies the generated file index, formatting, lint, types,
-tests, and build in that order. Prettier and ESLint are pinned local development
-dependencies, so these commands do not depend on whatever versions a global tool
-happens to provide.
+tests, and Bun-targeted build in that order. It never rewrites tracked files;
+after intentionally adding or removing one, run `bun run generate:files`, review
+the diff, and rerun the proof. Prettier, ESLint, TypeScript, and Bun's type
+definitions are pinned local development dependencies. `packageManager` pins
+the scaffold runtime used to establish the baseline, while `engines.bun`
+expresses the compatible runtime floor. Review those two values and
+`@types/bun` together during a Bun upgrade.
 
 ### Automatic terminal color
 
@@ -224,10 +229,12 @@ workflow or coverage-service token to this general-purpose library template.
 
 [`files.md`](./files.md) is a tracked, human-readable index of every
 non-generated, non-secret project file: source, tests, scripts, docs, and
-configuration. `bun run check` refreshes it and then proves it matches the tree
-and the `package.json.files` publish allowlist. It deliberately excludes VCS
-data, dependencies, build/test reports, profiles, tarballs, and real `.env*`
-files while retaining `.env.example`. `build:metafile` is an optional
+configuration. `bun run generate:files` is its only write path; `bun run check`
+fails closed when the index or the `package.json.files` publish allowlist is
+stale. It deliberately excludes VCS data, dependencies, build/test reports,
+profiles, tarballs, and real `.env*` files while retaining `.env.example`.
+Prettier reads the same `.gitignore`, avoiding a second generated-artifact
+ignore list. `build:metafile` is an optional
 build-output view: its Markdown report shows the bundled module graph, while
 `files.md` documents the project contract. The concise `Build summary` reports
 entry-point count, input/output file counts, and total output bytes for
@@ -323,5 +330,6 @@ Bun's default is `2`, and `bun --console-depth=N run …` overrides the project
 setting for one invocation. Put the runtime flag before `run`. Raw `Bun.inspect`
 uses its explicit `{ depth }` option instead. Installs use Bun's isolated linker
 with the global virtual store, so warm installs can reuse package trees across
-projects without weakening dependency isolation.
-`[serve.static] env = "PUBLIC_*"` is only for non-secret browser configuration.
+projects without weakening dependency isolation. This source-library template
+does not configure `[serve.static]`; add browser environment inlining only when
+the project actually introduces a browser surface.
