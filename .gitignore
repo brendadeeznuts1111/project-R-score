@@ -21,8 +21,9 @@ projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/dashboa
 
 # Dependencies
 node_modules/
+# Bun's text lockfile is source-controlled at every package boundary. Only the
+# retired binary format stays ignored so an old client cannot add it back.
 bun.lockb
-bun.lock
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
@@ -30,7 +31,6 @@ yarn.lock
 .bun/install/cache/
 .pnpm-store/
 .yarn/
-.yarn/cache/
 # Runtime pin SSOT (mise/asdf/volta + engines.bun) — never ignore
 !.bun-version
 
@@ -51,6 +51,13 @@ out/
 .vite/
 .output/
 .turbo/
+.svelte-kit/
+.astro/
+.parcel-cache/
+.angular/
+.vercel/
+.netlify/
+.wrangler/
 .cache/
 .cheatsheet-cache/
 *.js
@@ -72,6 +79,7 @@ out/
 .idea/
 *.swp
 *.swo
+*~
 
 # Cursor — root MCP config only
 .cursor/
@@ -122,7 +130,13 @@ out/
 
 # OS
 .DS_Store
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100/
+.Trashes/
 Thumbs.db
+Desktop.ini
 
 # Logs
 *.log
@@ -131,34 +145,32 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Bun reference profile (may contain enterprise secrets — not auto-loaded)
-.bunfig.toml
+# Root Bun reference profile (may contain enterprise secrets — not auto-loaded).
+# Nested projects own and commit their own .bunfig.toml when needed.
+/.bunfig.toml
 
 # Environment variables
 .env
-.env.local
-.env.secret.local
-.env.*.local
 .env.*
 !/.env.example
 !/.env.registry.example
 !/.env.test.example
-.env.development
-.env.production
-.env.staging
-.env.test
-.env.secret
-.env.enc
+.dev.vars
+.dev.vars.*
 
 # Test coverage
 coverage/
 .nyc_output/
 test-results/
+playwright-report/
+blob-report/
 
 # Temporary files
 tmp/
 temp/
 .tmp/
+.eslintcache
+.stylelintcache
 /tests/.tmp-bind-test.*
 /tests/.tmp-verify-bind.*
 
@@ -218,14 +230,8 @@ test*-*
 *.bun-build
 *.tar.gz
 *.tgz
-!tools/vendor/bun-types/*.tgz
 *.tar
 *.zip
-
-# Development artifacts
-*.local.*
-*.dev.*
-*.debug.*
 
 # Native addons
 *.node
@@ -250,8 +256,13 @@ public/uploads/
 *.token
 *.key
 *.pem
+*.p8
 *.p12
 *.pfx
+*.jks
+*.keystore
+id_rsa
+id_ed25519
 auth/
 credentials/
 .tokens/
@@ -310,8 +321,6 @@ deployment.log
 dump.rdb
 metrics/
 plugins/
-wrangler.toml
-!wrangler.toml
 
 # Clawdbot - temporarily ignored
 clawdbot/
@@ -335,7 +344,10 @@ projects/active/development/geelark/dev/.vscode/.vscode/
 # Secrets and credentials (should never be committed)
 bun.secrets
 .fw-config.json
+# Known local configuration only. Broad *.local.* / *.dev.* rules hide
+# legitimate source such as foo.dev.ts and are intentionally forbidden.
 *.local.json
+.bunfig.local.toml
 
 # SQLite artifacts (development databases)
 *.db-shm
@@ -349,7 +361,7 @@ bun.secrets
 # Heap snapshots and memory dumps
 *.heapsnapshot
 Heap-*
-*.heapsnapshot
+*.heapprofile
 
 # Compiled binaries and object files
 *.bin
@@ -394,8 +406,8 @@ projects/archive/lazycodex/
 # Local workspace clutter — worktrees, session artifacts
 .kimi/
 # Grok / agent git worktrees nested under the primary checkout (lane hygiene)
-.worktrees/
 /.worktrees/
+/.codex-worktrees/
 herdr-worktrees/
 /~/
 /index.html
@@ -450,7 +462,6 @@ test-binary-*
 /mega-liner
 # Bun compile scratch + common drop-in binaries
 **/.*.bun-build
-*.bun-build
 **/bin/compiled/
 **/hyperbun-core
 **/test-embedded
@@ -464,7 +475,6 @@ docs/*.zip
 # Bun heap profiles (bun --heap-prof-md) — never commit
 lib/profile.md
 **/*heap-prof*.md
-**/*.heapprofile
 
 # Bun utils proof version stamps (keep latest.json)
 public/registry/@factorywager/bun-utils-test/v*.json
