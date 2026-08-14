@@ -656,7 +656,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'blog-codeblocks-boundaries',
     claim:
-      'Blog div.CodeBlock tool: Shiki strip, class status, BunFile input, property-filtered table, consolidated modes, all Bun.markdown parser overrides, and the complete ANSI theme',
+      'Blog div.CodeBlock tool: Shiki strip, class status, BunFile input, property-filtered tables, consolidated modes, all Bun.markdown parser overrides, the complete ANSI theme, and exact guide/member/release cross-references',
     kinds: ['boundary'],
     gateClass: 'continuous',
     gateRef: 'ci:harness',

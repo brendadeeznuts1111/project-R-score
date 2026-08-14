@@ -30,6 +30,17 @@ bun tools/bun-blog-codeblocks.ts saved.html \
   --markdown-no-colors
 ```
 
+Print its consolidated upstream map without reading or fetching an input file:
+
+```bash
+bun tools/bun-blog-codeblocks.ts --references
+```
+
+The table pairs every Markdown surface and supporting pipeline API with its
+runtime guide, exact member reference, and officially evidenced introduction
+version. Bun's canonical task-guide landing is <https://bun.com/guides>; the old
+`/docs/guides.md` path is obsolete.
+
 `markdown` remains the default source artifact. `html` applies the selected
 `Bun.markdown.Options` preset and exact `--markdown-options` overrides; `ansi`
 accepts only terminal theme flags. Columns `0` is Bun's native no-wrapping mode.

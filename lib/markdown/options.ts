@@ -18,6 +18,149 @@
 /** Re-export for consumers that want the type without importing from `bun`. */
 export type MarkdownHtmlOptions = Bun.markdown.Options;
 
+export type BunMarkdownCrossReference = {
+  surface: string;
+  role: string;
+  guide: `https://bun.com/${string}`;
+  reference: `https://bun.com/reference/${string}`;
+  released: `v1.${number}.${number} · ${number}-${number}-${number}` | 'release-unknown';
+  releaseRef: `https://bun.com/blog/${string}` | 'release-unknown';
+  latestUpdate:
+    | `${'changed' | 'fixed'} v1.${number}.${number} · ${number}-${number}-${number}`
+    | 'none-recorded';
+  updateRef: `https://bun.com/blog/${string}` | 'none-recorded';
+};
+
+/**
+ * Exact upstream links for the Markdown pipeline and the Bun APIs supporting it.
+ * Introduction versions remain unknown unless backed by an official dated post.
+ */
+export const BUN_MARKDOWN_CROSS_REFERENCES = [
+  {
+    surface: 'Bun.markdown.html',
+    role: 'HTML projection',
+    guide: 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
+    reference: 'https://bun.com/reference/bun/markdown/html',
+    released: 'v1.3.8 · 2026-01-29',
+    releaseRef: 'https://bun.com/blog/bun-v1.3.8',
+    latestUpdate: 'none-recorded',
+    updateRef: 'none-recorded',
+  },
+  {
+    surface: 'Bun.markdown.render',
+    role: 'callback projection',
+    guide: 'https://bun.com/docs/runtime/markdown#bun-markdown-render',
+    reference: 'https://bun.com/reference/bun/markdown/render',
+    released: 'v1.3.8 · 2026-01-29',
+    releaseRef: 'https://bun.com/blog/bun-v1.3.8',
+    latestUpdate: 'changed v1.3.11 · 2026-03-18',
+    updateRef: 'https://bun.com/blog/bun-v1.3.11',
+  },
+  {
+    surface: 'Bun.markdown.react',
+    role: 'React projection',
+    guide: 'https://bun.com/docs/runtime/markdown#bun-markdown-react',
+    reference: 'https://bun.com/reference/bun/markdown/react',
+    released: 'v1.3.8 · 2026-01-29',
+    releaseRef: 'https://bun.com/blog/bun-v1.3.8',
+    latestUpdate: 'changed v1.3.9 · 2026-02-08',
+    updateRef: 'https://bun.com/blog/bun-v1.3.9',
+  },
+  {
+    surface: 'Bun.markdown.ansi',
+    role: 'terminal projection',
+    guide: 'https://bun.com/docs/runtime/markdown#ansi-terminal-output',
+    reference: 'https://bun.com/reference/bun/markdown/ansi',
+    released: 'v1.3.12 · 2026-04-09',
+    releaseRef: 'https://bun.com/blog/bun-v1.3.12',
+    latestUpdate: 'fixed v1.3.14 · 2026-05-13',
+    updateRef: 'https://bun.com/blog/bun-v1.3.14',
+  },
+  {
+    surface: 'Bun.markdown.Options',
+    role: 'parser configuration',
+    guide: 'https://bun.com/docs/runtime/markdown#options',
+    reference: 'https://bun.com/reference/bun/markdown/Options',
+    released: 'v1.3.8 · 2026-01-29',
+    releaseRef: 'https://bun.com/blog/bun-v1.3.8',
+    latestUpdate: 'none-recorded',
+    updateRef: 'none-recorded',
+  },
+  {
+    surface: 'Bun.markdown.AnsiTheme',
+    role: 'terminal configuration',
+    guide: 'https://bun.com/docs/runtime/markdown#ansi-terminal-output',
+    reference: 'https://bun.com/reference/bun/markdown/AnsiTheme',
+    released: 'v1.3.12 · 2026-04-09',
+    releaseRef: 'https://bun.com/blog/bun-v1.3.12',
+    latestUpdate: 'none-recorded',
+    updateRef: 'none-recorded',
+  },
+  {
+    surface: 'Bun.Glob.match',
+    role: 'CodeBlock class matching',
+    guide: 'https://bun.com/docs/runtime/glob#quickstart',
+    reference: 'https://bun.com/reference/bun/Glob/match',
+    released: 'release-unknown',
+    releaseRef: 'release-unknown',
+    latestUpdate: 'fixed v1.3.14 · 2026-05-13',
+    updateRef: 'https://bun.com/blog/bun-v1.3.14',
+  },
+  {
+    surface: 'Bun.file',
+    role: 'lazy saved-HTML input',
+    guide: 'https://bun.com/docs/runtime/file-io#reading-files-bun-file',
+    reference: 'https://bun.com/reference/bun/file',
+    released: 'release-unknown',
+    releaseRef: 'release-unknown',
+    latestUpdate: 'fixed v1.3.14 · 2026-05-13',
+    updateRef: 'https://bun.com/blog/bun-v1.3.14',
+  },
+  {
+    surface: 'Bun.write',
+    role: 'artifact output',
+    guide: 'https://bun.com/docs/runtime/file-io#writing-files-bun-write',
+    reference: 'https://bun.com/reference/bun/write',
+    released: 'release-unknown',
+    releaseRef: 'release-unknown',
+    latestUpdate: 'fixed v1.3.12 · 2026-04-09',
+    updateRef: 'https://bun.com/blog/bun-v1.3.12',
+  },
+  {
+    surface: 'Bun.inspect.table',
+    role: 'property-scoped status tables',
+    guide: 'https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options',
+    reference: 'https://bun.com/reference/bun/inspect/table',
+    released: 'release-unknown',
+    releaseRef: 'release-unknown',
+    latestUpdate: 'changed v1.2.0 · 2025-01-22',
+    updateRef: 'https://bun.com/blog/bun-v1.2',
+  },
+  {
+    surface: 'Bun.stringWidth',
+    role: 'terminal-safe preview width',
+    guide: 'https://bun.com/docs/runtime/utils#bun-stringwidth',
+    reference: 'https://bun.com/reference/bun/stringWidth',
+    released: 'release-unknown',
+    releaseRef: 'release-unknown',
+    latestUpdate: 'changed v1.3.12 · 2026-04-09',
+    updateRef: 'https://bun.com/blog/bun-v1.3.12',
+  },
+  {
+    surface: 'Bun.color',
+    role: 'related ANSI color-depth selection',
+    guide: 'https://bun.com/docs/runtime/color',
+    reference: 'https://bun.com/reference/bun/color',
+    released: 'v1.1.30 · 2024-10-08',
+    releaseRef: 'https://bun.com/blog/bun-v1.1.30',
+    latestUpdate: 'changed v1.2.0 · 2025-01-22',
+    updateRef: 'https://bun.com/blog/bun-v1.2',
+  },
+] as const satisfies readonly BunMarkdownCrossReference[];
+
+/** Canonical task-oriented Bun guide landing; `/docs/guides.md` is obsolete. */
+export const BUN_GUIDES_INDEX = 'https://bun.com/guides' as const;
+
 /**
  * Documented defaults from https://bun.com/docs/runtime/markdown#options.
  * GFM triad on; security / heading / wiki / math off.

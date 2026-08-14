@@ -1,13 +1,22 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
-// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
-// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
-// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
-// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table guide
+// @see https://bun.com/reference/bun/inspect/table — Bun.inspect.table reference
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth guide
+// @see https://bun.com/reference/bun/stringWidth — Bun.stringWidth reference
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file guide
+// @see https://bun.com/reference/bun/file — Bun.file reference
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write guide
+// @see https://bun.com/reference/bun/write — Bun.write reference
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob.match guide
+// @see https://bun.com/reference/bun/Glob/match — Bun.Glob.match reference
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
+// @see https://bun.com/reference/bun/markdown/html — Bun.markdown.html reference
 // @see https://bun.com/docs/runtime/markdown#options — Bun.markdown.Options
+// @see https://bun.com/reference/bun/markdown/Options — Bun.markdown.Options reference
 // @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
-// @see https://bun.com/reference/bun/markdown#bun.markdown.AnsiTheme — Bun.markdown.AnsiTheme
+// @see https://bun.com/reference/bun/markdown/ansi — Bun.markdown.ansi reference
+// @see https://bun.com/reference/bun/markdown/AnsiTheme — Bun.markdown.AnsiTheme reference
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
 // @see https://bun.com/rss.xml — Bun blog RSS
@@ -45,6 +54,8 @@ import {
 } from '../lib/docs/blog-codeblocks.ts';
 import { bunBlog, BunBlogPattern, guideKeyFromUrl } from '../lib/docs/bun-site-url.ts';
 import {
+  BUN_GUIDES_INDEX,
+  BUN_MARKDOWN_CROSS_REFERENCES,
   MARKDOWN_PRESET_NAMES,
   markdownHtml,
   mergeMarkdownOptions,
@@ -141,6 +152,16 @@ export const CODE_BLOCK_TABLE_PROPERTIES = [
 ] as const;
 
 export const CODE_BLOCK_CLASS_TABLE_PROPERTIES = ['class', 'status', 'count'] as const;
+export const MARKDOWN_REFERENCE_TABLE_PROPERTIES = [
+  'surface',
+  'role',
+  'guide',
+  'reference',
+  'released',
+  'releaseRef',
+  'latestUpdate',
+  'updateRef',
+] as const;
 
 export function resolveCodeBlockMode(options: {
   mode?: string;
@@ -568,6 +589,7 @@ Extract div.CodeBlock samples from a Bun blog HTML post.
   --markdown-light    Select the ANSI palette for a light terminal background
   --markdown-dark     Select the ANSI palette for a dark terminal background
   --markdown-kitty-graphics  Render local images with Kitty graphics when supported
+  --references        Print exact Bun guide/API cross-references and exit
   --offline           Never fetch; require the saved HTML input
   -r, --rss           Opt-in live RSS enrich when release-index misses
   -h, --help          Show help
@@ -599,6 +621,7 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
       'markdown-light': { type: 'boolean', default: false },
       'markdown-dark': { type: 'boolean', default: false },
       'markdown-kitty-graphics': { type: 'boolean', default: false },
+      references: { type: 'boolean', default: false },
       offline: { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
@@ -608,6 +631,12 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
 
   if (values.help) {
     printHelp();
+    return 0;
+  }
+
+  if (values.references) {
+    console.log(`Bun guides  ${BUN_GUIDES_INDEX}`);
+    logTable([...BUN_MARKDOWN_CROSS_REFERENCES], [...MARKDOWN_REFERENCE_TABLE_PROPERTIES]);
     return 0;
   }
 

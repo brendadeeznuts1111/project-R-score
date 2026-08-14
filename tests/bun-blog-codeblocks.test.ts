@@ -108,6 +108,7 @@ import {
   buildDerivedApiRows,
   CODE_BLOCK_CLASS_TABLE_PROPERTIES,
   CODE_BLOCK_TABLE_PROPERTIES,
+  MARKDOWN_REFERENCE_TABLE_PROPERTIES,
   codeBlockClassRows,
   extractCodeBlocks,
   extractCodeBlocksFromFile,
@@ -238,6 +239,35 @@ describe('bun-blog-codeblocks extract', () => {
 });
 
 describe('bun-blog-codeblocks CLI', () => {
+  test('--references prints the exact guide/API catalog without requiring input', () => {
+    expect(MARKDOWN_REFERENCE_TABLE_PROPERTIES).toEqual([
+      'surface',
+      'role',
+      'guide',
+      'reference',
+      'released',
+      'releaseRef',
+      'latestUpdate',
+      'updateRef',
+    ]);
+    const result = Bun.spawnSync({
+      cmd: ['bun', TOOL, '--references'],
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: { ...Bun.env, NO_COLOR: '1' },
+    });
+    expect(result.exitCode).toBe(0);
+    const stdout = result.stdout.toString();
+    expect(stdout).toContain('https://bun.com/guides');
+    expect(stdout).toContain('Bun.markdown.Options');
+    expect(stdout).toContain('https://bun.com/reference/bun/markdown/Options');
+    expect(stdout).toContain('Bun.Glob.match');
+    expect(stdout).toContain('https://bun.com/reference/bun/Glob/match');
+    expect(stdout).toContain('fixed v1.3.14 · 2026-05-13');
+    expect(stdout).not.toContain('\x1b[');
+    expect(result.stderr.toString()).toBe('');
+  });
+
   test('resolves one typed mode from the new flag and compatibility aliases', () => {
     expect(resolveCodeBlockMode({})).toEqual({ mode: 'index', join: false, derived: false });
     expect(resolveCodeBlockMode({ mode: 'all' })).toEqual({

@@ -5,6 +5,8 @@
 // @see https://bun.com/docs/runtime/markdown#autolinks
 import { describe, expect, test } from 'bun:test';
 import {
+  BUN_GUIDES_INDEX,
+  BUN_MARKDOWN_CROSS_REFERENCES,
   MARKDOWN_OPTION_CATALOG,
   MARKDOWN_OPTIONS_DEFAULTS,
   MARKDOWN_BOOLEAN_OPTION_NAMES,
@@ -54,6 +56,55 @@ describe('MARKDOWN_OPTION_CATALOG', () => {
     expect(MARKDOWN_OPTIONS_DEFAULTS.latexMath).toBe(false);
     expect(MARKDOWN_OPTIONS_DEFAULTS.headings).toBe(false);
     expect(MARKDOWN_OPTIONS_DEFAULTS.autolinks).toBe(false);
+  });
+});
+
+describe('Bun Markdown upstream cross-references', () => {
+  test('uses the live Bun guides landing and exact member references', () => {
+    expect(BUN_GUIDES_INDEX).toBe('https://bun.com/guides');
+    expect(BUN_GUIDES_INDEX).not.toContain('/docs/guides.md');
+    expect(BUN_MARKDOWN_CROSS_REFERENCES).toHaveLength(12);
+
+    const surfaces = BUN_MARKDOWN_CROSS_REFERENCES.map(row => row.surface);
+    const references = BUN_MARKDOWN_CROSS_REFERENCES.map(row => row.reference);
+    expect(new Set(surfaces).size).toBe(surfaces.length);
+    expect(new Set(references).size).toBe(references.length);
+    expect(surfaces).toEqual([
+      'Bun.markdown.html',
+      'Bun.markdown.render',
+      'Bun.markdown.react',
+      'Bun.markdown.ansi',
+      'Bun.markdown.Options',
+      'Bun.markdown.AnsiTheme',
+      'Bun.Glob.match',
+      'Bun.file',
+      'Bun.write',
+      'Bun.inspect.table',
+      'Bun.stringWidth',
+      'Bun.color',
+    ]);
+    expect(references.every(url => url.startsWith('https://bun.com/reference/'))).toBe(true);
+  });
+
+  test('records only officially dated releases and updates', () => {
+    const provenance = Object.fromEntries(
+      BUN_MARKDOWN_CROSS_REFERENCES.map(row => [row.surface, row])
+    );
+    expect(provenance['Bun.markdown.html']?.released).toBe('v1.3.8 · 2026-01-29');
+    expect(provenance['Bun.markdown.render']?.latestUpdate).toBe(
+      'changed v1.3.11 · 2026-03-18'
+    );
+    expect(provenance['Bun.markdown.ansi']?.latestUpdate).toBe(
+      'fixed v1.3.14 · 2026-05-13'
+    );
+    expect(provenance['Bun.Glob.match']?.released).toBe('release-unknown');
+    expect(provenance['Bun.Glob.match']?.latestUpdate).toBe(
+      'fixed v1.3.14 · 2026-05-13'
+    );
+    expect(provenance['Bun.color']?.released).toBe('v1.1.30 · 2024-10-08');
+    expect(provenance['Bun.color']?.releaseRef).toBe(
+      'https://bun.com/blog/bun-v1.1.30'
+    );
   });
 });
 
