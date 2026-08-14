@@ -44,7 +44,7 @@ bun run cli:docs
 
 Harness JIT: [`docs/harness/README.md`](../harness/README.md). Baseline: [`docs/organization/VELOCITY_BASELINE.md`](VELOCITY_BASELINE.md).
 
-Protocol: `bun run dashboard:protocol:check`. Node leftovers inventory: `bun run migrate:status`.
+Node leftovers inventory: `bun run migrate:status`.
 
 ## Out of scope (still later)
 
