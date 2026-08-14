@@ -5,9 +5,7 @@ Surfaces in this directory:
 | Surface | Entry |
 |---------|--------|
 | MCP CLI status | `bun run dashboard` → `dashboard/mcp-overview.ts status` |
-| Protocol check | `bun run dashboard:protocol:check` |
 
 ```bash
 bun run dashboard
-bun run dashboard:protocol:check
 ```

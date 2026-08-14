@@ -240,7 +240,6 @@ load):
 | `bun run format:harness`                   | Prettier harness format (`format:core` is an alias)                   |
 | `bun run check:brands:all`                 | Branded ID gates (manifest + smart + types)                           |
 | `bun run fix:console-log`                  | Bulk replace console.log → console.info                               |
-| `bun run fix:scan-any-types`               | Scan for `any` types                                                  |
 | `bun run dev`                              | Start platform server                                                 |
 | `bun run deployment:readiness`             | Deployment readiness matrix                                           |
 | `bun run dev:portal`                       | Hot local static portal with exact board routes                       |
@@ -284,20 +283,16 @@ index/worktree at pre-merge content). They match `HEAD`; clear per file with
 See `bun run help --verbose` (regenerate long [`docs/CLI.md`](docs/CLI.md) with
 `bun run cli:docs` only when needed).
 
-## Code Quality & Fix Tools
+## Code Quality Tools
 
 Antipattern remediation (after major refactors). Conventions:
 [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md).
 
-| Command                                | Purpose                                      |
-| -------------------------------------- | -------------------------------------------- |
-| `bun run fix:console-log`              | `console.log` → `console.info`               |
-| `bun run fix:scan-any-types`           | `: any` / `as any` → `unknown` or real types |
-| `bun run fix:scan-default-exports`     | Default export candidates                    |
-| `bun run fix:scan-non-null-assertions` | `!` assertions → safe access                 |
-
-Implementations: [`scripts/fix-*.ts`](scripts/) (e.g.
-[`scripts/fix-console-log.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/scripts/fix-console-log.ts)).
+| Command                    | Purpose                                      |
+| -------------------------- | -------------------------------------------- |
+| `bun run lint:harness`     | Enforce TypeScript and repository rules      |
+| `bun run fix:console-log`  | `console.log` → `console.info`               |
+| ast-grep `scan --path lib` | Structural `as any` and related syntax rules |
 
 ## Shared Configuration
 

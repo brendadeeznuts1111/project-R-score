@@ -1,3 +1,8 @@
+// @see https://bun.com/docs/runtime#transpilation-language-features — --define
+// @updated --define · fixed v1.1.5 · 2024-04-26 · https://bun.com/blog/bun-v1.1.5
+// @updated --define · fixed v1.1.6 · 2024-04-28 · https://bun.com/blog/bun-v1.1.6
+// @updated --define · changed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @verified --define · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime#transpilation-language-features
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
@@ -175,9 +180,6 @@ export const CLI_CORE_CMDS = new Set([
   'help',
   'packages:list',
   'fix:console-log',
-  'fix:scan-any-types',
-  'fix:scan-default-exports',
-  'fix:scan-non-null-assertions',
   'fix:as-any',
   'fix:empty-catches',
   'fix:pin-versions',

@@ -364,7 +364,7 @@ class MCPSystemDashboard {
       { command: 'bun run lib/security/master-token.ts create cli:user', description: 'Create new CLI token' },
       { command: 'bun test tests/r2-integration.test.ts', description: 'Test R2 connection' },
       { command: 'bun run demo:r2', description: 'Run R2 integration demo' },
-      { command: 'bun run setup:mcp', description: 'Run MCP setup' },
+      { command: 'dx mcp-doctor', description: 'Validate MCP configuration' },
       { command: 'bun run docs:search "Bun.API"', description: 'Test documentation search' },
       { command: 'bun run interactive-docs diagnose "error" context', description: 'Test error diagnosis' }
     ];

@@ -156,7 +156,7 @@ bun run quality:concept   # audit --strict + surface-coverage + SURFACE_COVERAGE
 | Command                          | Role                                                         |
 | -------------------------------- | ------------------------------------------------------------ |
 | `bun run surface-coverage:map`   | Regenerate [`docs/SURFACE_COVERAGE.md`](SURFACE_COVERAGE.md) |
-| `bun run surface-coverage:check` | Fail if the map doc is stale (ignores Generated timestamp)   |
+| `bun run surface-coverage:map:check` | Fail if the map doc is stale (ignores Generated timestamp) |
 | `bun run quality:concept`        | Full concept-lane quality gate                               |
 
 See also portal semantic contract in
