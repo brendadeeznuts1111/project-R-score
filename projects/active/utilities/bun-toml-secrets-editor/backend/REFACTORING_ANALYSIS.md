@@ -274,12 +274,11 @@ class StringOptimizer {
 ### Medium Priority:
 5. `src/services/complianceService.js` - Array optimization
 6. `src/services/equifaxService.js` - Buffer optimization
-7. `src/services/plaidService.js` - Buffer optimization
-8. `src/routes/analytics.js` - Array optimization
+7. `src/routes/analytics.js` - Array optimization
 
 ### Low Priority:
-9. All other services with minor optimizations
-10. CLI and utility files
+8. All other services with minor optimizations
+9. CLI and utility files
 
 ---
 

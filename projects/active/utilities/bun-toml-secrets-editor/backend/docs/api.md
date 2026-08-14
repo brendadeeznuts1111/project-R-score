@@ -152,37 +152,6 @@ Content-Type: application/json
 }
 ```
 
-### Plaid Integration
-
-#### Create Link Token
-```bash
-POST /plaid/link-token/create
-Content-Type: application/json
-
-{
-  "user": {
-    "client_user_id": "user-id"
-  },
-  "products": ["auth", "transactions"],
-  "country_codes": ["US"],
-  "language": "en"
-}
-```
-
-#### Start Identity Verification
-```bash
-POST /plaid/identity-verification
-Content-Type: application/json
-
-{
-  "templateId": "template_xxx",
-  "user": {
-    "legalName": "John Doe",
-    "emailAddress": "john@example.com"
-  }
-}
-```
-
 ### Blockchain
 
 #### Log Decision to Blockchain
@@ -291,19 +260,6 @@ Content-Type: application/json
 }
 ```
 
-### Plaid Webhooks
-```bash
-POST /webhooks/plaid
-Plaid-Verification: <signature>
-Content-Type: application/json
-
-{
-  "webhook_type": "ITEM",
-  "webhook_code": "LOGIN_REQUIRED",
-  "item_id": "item_xxx"
-}
-```
-
 ## SDKs and Libraries
 
 ### Node.js
@@ -369,7 +325,7 @@ Download our Postman collection for easy API testing:
 - Initial API release
 - Core underwriting endpoints
 - Device management
-- Stripe and Plaid integration
+- Stripe integration
 - Blockchain audit trail
 
 ### v1.1.0 (2024-02-01)
