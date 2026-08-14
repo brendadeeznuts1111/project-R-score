@@ -158,6 +158,115 @@ async function validateLocalLinks(
   }
 }
 
+function validateCanonicalSkillPaths(
+  text: string,
+  folderName: string,
+  skillNames: ReadonlySet<string>,
+  displayPath: string,
+  issues: AgentSkillIssue[]
+): void {
+  for (const match of text.matchAll(/`([^`\n]+)`/g)) {
+    const token = match[1]!
+      .trim()
+      .split(/\s+/, 1)[0]!
+      .replace(/[),;:]$/, '');
+    const [firstSegment] = token.split('/', 1);
+    if (
+      firstSegment &&
+      token.includes('/') &&
+      firstSegment !== folderName &&
+      skillNames.has(firstSegment) &&
+      !token.startsWith(AGENT_SKILLS_PATHS.root)
+    ) {
+      issue(
+        issues,
+        'error',
+        'skill-path-noncanonical',
+        displayPath,
+        `cross-skill path must start with ${AGENT_SKILLS_PATHS.root}/: ${token}`
+      );
+    }
+  }
+}
+
+async function packageScripts(cwd: string): Promise<Set<string> | null> {
+  const packagePath = resolvePath(cwd, 'package.json');
+  if (!(await pathExists(packagePath))) return null;
+  try {
+    const parsed: unknown = await Bun.file(packagePath).json();
+    if (!isRecord(parsed) || !isRecord(parsed.scripts)) return new Set();
+    return new Set(Object.keys(parsed.scripts));
+  } catch {
+    return new Set();
+  }
+}
+
+async function validateRunnableExamples(
+  text: string,
+  skillRoot: string,
+  displayPath: string,
+  repoRoot: string,
+  issues: AgentSkillIssue[]
+): Promise<void> {
+  const shellBlockPattern = /```(?:bash|sh|zsh|shell)\r?\n([\s\S]*?)```/g;
+  for (const block of text.matchAll(shellBlockPattern)) {
+    let cwd = repoRoot;
+    for (const rawLine of block[1]!.split(/\r?\n/)) {
+      let line = rawLine.trim();
+      if (line === '' || line.startsWith('#')) continue;
+
+      const cdMatch = line.match(/^cd\s+([^\s;&|]+)(?:\s*&&\s*(.*))?$/);
+      if (cdMatch) {
+        cwd = resolvePath(cwd, cdMatch[1]!.replace(/^['"]|['"]$/g, ''));
+        if (!(await pathExists(cwd))) {
+          issue(
+            issues,
+            'error',
+            'skill-command-cwd-missing',
+            displayPath,
+            `shell example changes to a missing directory: ${cdMatch[1]}`
+          );
+          break;
+        }
+        line = cdMatch[2]?.trim() ?? '';
+        if (line === '') continue;
+      }
+
+      const runMatch = line.match(/^(?:[A-Z_][A-Z0-9_]*=[^\s]+\s+)*bun\s+run\s+([^\s#]+)/);
+      if (!runMatch) continue;
+      const target = runMatch[1]!;
+      if (target.startsWith('-')) continue;
+
+      if (target.includes('/') || /\.[cm]?[jt]sx?$/.test(target)) {
+        if (!(await pathExists(resolvePath(cwd, target)))) {
+          issue(
+            issues,
+            'error',
+            'skill-command-target-missing',
+            displayPath,
+            `bun run target does not exist from the documented cwd: ${target}`
+          );
+        }
+        continue;
+      }
+
+      const [scripts, owningSkillScripts] = await Promise.all([
+        packageScripts(cwd),
+        packageScripts(skillRoot),
+      ]);
+      if (!scripts?.has(target) && !owningSkillScripts?.has(target)) {
+        issue(
+          issues,
+          'error',
+          'skill-command-missing',
+          displayPath,
+          `bun run script does not exist from the documented cwd: ${target}`
+        );
+      }
+    }
+  }
+}
+
 async function validateMetadata(
   metadataPath: string,
   displayPath: string,
@@ -401,6 +510,7 @@ export async function validateAgentSkills(
     }
   }
 
+  const discoveredSkillNames = new Set(skillEntries);
   for (const folderName of skillEntries.sort()) {
     const skillPath = resolveAgentSkillsPath(repoRoot, folderName, AGENT_SKILLS_PATHS.skillFile);
     const displayPath = agentSkillsDisplayPath(folderName, AGENT_SKILLS_PATHS.skillFile);
@@ -411,6 +521,10 @@ export async function validateAgentSkills(
       validateFrontmatter(parsed.frontmatter, parsed.body, folderName, displayPath, issues);
     }
     await validateLocalLinks(text, skillPath, displayPath, repoRoot, issues);
+    validateCanonicalSkillPaths(text, folderName, discoveredSkillNames, displayPath, issues);
+    if (folderName in registrySkills) {
+      await validateRunnableExamples(text, dirnamePath(skillPath), displayPath, repoRoot, issues);
+    }
     await validateMetadata(
       resolveAgentSkillsPath(repoRoot, folderName, AGENT_SKILLS_PATHS.metadataFile),
       agentSkillsDisplayPath(folderName, AGENT_SKILLS_PATHS.metadataFile),

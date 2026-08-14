@@ -1,46 +1,26 @@
 {
   "version": 2,
   "description": "Per-skill loop capabilities \u2014 test, bench, network, snapshot, rate phases",
-  "defaultPhases": [
-    "test",
-    "bench",
-    "rate"
-  ],
+  "defaultPhases": ["test", "bench", "rate"],
   "presets": {
     "quick": {
       "description": "Matrix doctor+rate across all registry skills",
       "matrix": true,
-      "phases": [
-        "doctor",
-        "rate"
-      ],
+      "phases": ["doctor", "rate"],
       "parallel": true
     },
     "standard": {
       "description": "ast-grep test+bench+rate (skip snapshot preflight)",
       "skill": "ast-grep",
-      "phases": [
-        "test",
-        "bench",
-        "rate"
-      ],
+      "phases": ["test", "bench", "rate"],
       "skipPreflight": true
     },
     "full": {
       "description": "Matrix quick scan + ast-grep deep loop + baseline capture",
       "matrix": true,
-      "matrixPhases": [
-        "doctor",
-        "rate"
-      ],
+      "matrixPhases": ["doctor", "rate"],
       "skill": "ast-grep",
-      "phases": [
-        "doctor",
-        "test",
-        "bench",
-        "snapshot",
-        "rate"
-      ],
+      "phases": ["doctor", "test", "bench", "snapshot", "rate"],
       "skipPreflight": true,
       "baselineWrite": true,
       "parallel": true
@@ -48,24 +28,14 @@
     "ci": {
       "description": "ast-grep CI gate with snapshot preflight",
       "skill": "ast-grep",
-      "phases": [
-        "doctor",
-        "test",
-        "bench",
-        "snapshot",
-        "rate"
-      ],
+      "phases": ["doctor", "test", "bench", "snapshot", "rate"],
       "failOnRating": 70,
       "skipPreflight": false
     },
     "precommit": {
       "description": "Husky-aligned gates: doctor + precommit + rate across registry",
       "matrix": true,
-      "matrixPhases": [
-        "doctor",
-        "precommit",
-        "rate"
-      ],
+      "matrixPhases": ["doctor", "precommit", "rate"],
       "parallel": true
     },
     "close-loop": {
@@ -461,7 +431,7 @@
       "phases": {
         "doctor": {
           "enabled": true,
-          "note": "bun run precommit:ast-grep:staged"
+          "note": "bun scripts/pre-commit-ast-grep.ts --staged"
         },
         "rate": {
           "enabled": true,

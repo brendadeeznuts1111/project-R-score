@@ -7,6 +7,6 @@ REPO_ROOT="$(cd "$SKILL_ROOT/../../.." && pwd)"
 cd "$REPO_ROOT"
 
 echo "Hydrating @projects/ast-grep-skill from $REPO_ROOT/bun.lock ..."
-bun install --frozen-lockfile --ignore-scripts
+bun install --frozen-lockfile --ignore-scripts --filter @projects/ast-grep-skill
 chmod +x "$SKILL_ROOT/scripts/sg.sh" "$SKILL_ROOT/scripts/doctor.sh"
 "$SKILL_ROOT/scripts/doctor.sh"

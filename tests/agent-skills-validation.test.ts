@@ -147,9 +147,59 @@ describe('validateAgentSkills', () => {
     expect(result.issues.map(item => item.code)).not.toContain('skill-entry-broken');
   });
 
+  it('rejects phantom bun scripts and noncanonical cross-skill paths', async () => {
+    const root = await fixtureRoot();
+    await writeSkill(root, 'other-skill');
+    await writeSkill(root, 'demo-skill', {
+      body: [
+        '# Demo',
+        '',
+        'Do not use `other-skill/SKILL.md` as a repository path.',
+        '',
+        '```bash',
+        'bun run missing:proof',
+        '```',
+      ].join('\n'),
+    });
+    await writeRegistry(root, ['demo-skill']);
+
+    const result = await validateAgentSkills(root);
+    expect(result.ok).toBe(false);
+    expect(result.issues.map(item => item.code)).toContain('skill-path-noncanonical');
+    expect(result.issues.map(item => item.code)).toContain('skill-command-missing');
+  });
+
+  it('accepts a skill-local bun script after an explicit cd', async () => {
+    const root = await fixtureRoot();
+    await writeSkill(root, 'demo-skill', {
+      body: '# Demo\n\n```bash\ncd .agents/skills/demo-skill\nbun run doctor\n```',
+    });
+    await writeFile(
+      resolveAgentSkillsPath(root, 'demo-skill', 'package.json'),
+      JSON.stringify({ scripts: { doctor: 'bun --version' } })
+    );
+    await writeRegistry(root, ['demo-skill']);
+
+    const result = await validateAgentSkills(root);
+    expect(result.ok).toBe(true);
+    expect(result.issues).toEqual([]);
+  });
+
   it('keeps the repository skill plane valid', async () => {
     const result = await validateAgentSkills(join(import.meta.dir, '..'));
     expect(result.issues.filter(item => item.level === 'error')).toEqual([]);
+  });
+
+  it('hydrates the ast-grep doctor pin through the isolated workspace filter', async () => {
+    const install = await Bun.file(
+      resolveAgentSkillsPath(
+        join(import.meta.dir, '..'),
+        'ast-grep',
+        'scripts',
+        'install.sh'
+      )
+    ).text();
+    expect(install).toContain('--filter @projects/ast-grep-skill');
   });
 });
 

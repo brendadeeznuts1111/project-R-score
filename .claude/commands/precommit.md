@@ -1,5 +1,7 @@
 ---
-description: Run husky pre-commit gates — hygiene, harness lint, ast-grep rules, semver policy
+description:
+  Run husky pre-commit gates — hygiene, harness lint, ast-grep rules, semver
+  policy
 user_invocable: true
 ---
 
@@ -23,8 +25,8 @@ Or run the hook directly:
 
 ```bash
 bun run precommit:ast-grep              # full: doctor + rules + semver + packages
-bun run precommit:ast-grep:changed      # when ast-grep paths changed vs HEAD
-bun run precommit:ast-grep:staged       # husky-equivalent (staged paths only)
+bun scripts/pre-commit-ast-grep.ts --changed  # changed ast-grep paths vs HEAD
+bun scripts/pre-commit-ast-grep.ts --staged   # husky-equivalent staged mode
 cd .agents/skills/ast-grep && bun run precommit
 cd .agents/skills/ast-grep && bun run precommit:rules
 cd .agents/skills/ast-grep && bun run precommit:semver
@@ -33,11 +35,13 @@ cd .agents/skills/ast-grep && bun run precommit:packages
 
 ## MCP
 
-If `ast-grep` MCP is available, call `ast_grep_precommit` with `staged: true` (default) or `full: true` to force all gates.
+If `ast-grep` MCP is available, call `ast_grep_precommit` with `staged: true`
+(default) or `full: true` to force all gates.
 
 ## On failure
 
-1. Read which step failed (hygiene · harness · ast-grep rules · semver · supply-chain packages).
+1. Read which step failed (hygiene · harness · ast-grep rules · semver ·
+   supply-chain packages).
 2. Fix the issue in source.
 3. Re-run the failing gate until green.
 4. Re-stage affected files before commit.

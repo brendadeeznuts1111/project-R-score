@@ -14,20 +14,16 @@ description: |
 ```bash
 # Canonical tracked demos (agent-facing)
 bun run examples/bun-v139-features/runner.ts
-
-# Optional CLI playground (scratch allowlist)
-bun run scratch/bun-v1.3.9-examples/playground/playground.ts
-bun run scratch/bun-v1.3.9-examples/playground/playground.ts all
 ```
 
 ## Locations
 
-| Path | Role |
-|------|------|
+| Path                          | Role                           |
+| ----------------------------- | ------------------------------ |
 | `examples/bun-v139-features/` | Tracked feature demos + runner |
-| `scratch/bun-v1.3.9-examples/playground/` | Interactive CLI menu |
 
-`playground-web/` is retired (not in git). Do not start a web server from scratch for demos.
+Retired scratch playgrounds are not part of this skill contract. Do not recreate
+an untracked web server or document an optional path as a runnable proof.
 
 ## Bun Native
 
@@ -42,10 +38,10 @@ Intentional Node surfaces for API demos: `node:net`, `node:http2`.
 
 ## Agent tooling
 
-| Tool | Use when |
-|------|----------|
-| `ast_grep_bun` | Inventory Bun.spawn/signal patterns vs demos |
-| `/precommit` | Before committing playground or example changes |
+| Tool           | Use when                                        |
+| -------------- | ----------------------------------------------- |
+| `ast_grep_bun` | Inventory Bun.spawn/signal patterns vs demos    |
+| `/precommit`   | Before committing playground or example changes |
 
 ```bash
 cd .agents/skills/ast-grep && bun run skill-loop:matrix -- --phases doctor,rate --only bun-v139

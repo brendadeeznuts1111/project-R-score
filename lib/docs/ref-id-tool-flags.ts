@@ -1158,6 +1158,7 @@ export const PRECOMMIT_AST_GREP_ALLOWED_LONG = [
   'changed',
   'domain',
   'fail-on',
+  'full',
   'profile',
   'skip-preflight',
   'staged',
