@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @verified Bun.$ · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/shell
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
 // @see https://bun.com/reference/bun/argv — Bun.argv
@@ -21,7 +23,7 @@ export { checkBunPin, type BunPinCheck } from '../lib/verification/bun-runtime-p
 
 const REPO_ROOT = resolvePath(import.meta.dir, '..');
 const SKILL_VALIDATION_PATH_RE =
-  /^(\.agents\/skills\/|lib\/agent-skills-paths\.ts$|scripts\/validate-agent-skills\.ts$|tests\/agent-skills-validation\.test\.ts$)/;
+  /^(\.agents\/skills\/|config\/project-r-dx-contract\.json$|lib\/agent-skills-paths\.ts$|scripts\/(check-project-r-dx-contract|validate-agent-skills)\.ts$|tests\/agent-skills-validation\.test\.ts$)/;
 const TEST_SOURCE_PATH_RE = /\.(ts|tsx|js|jsx|mts|cts)$/;
 const CONCEPT_SSOT_PATH_RE =
   /^(lib\/portal\/semantic-vocabulary\.ts|lib\/portal\/concept-|lib\/portal\/page-concepts\.ts|scripts\/validate-surface-coverage\.ts|scripts\/concept-audit\.ts|tools\/generate-surface-coverage-map\.ts|docs\/SURFACE_COVERAGE\.md|docs\/DOMAIN_CONCEPT_SHAPE\.md|public\/portal\/concepts\/index\.html|public\/registry\/domain-glossary\.json|public\/registry\/concepts-state\.json)/;
@@ -241,15 +243,21 @@ export async function runPrecommit(
   if (stagedFiles.some(isSkillValidationPath)) {
     if (dryRun) {
       console.info('  [dry-run] bun run skills:validate');
+      console.info('  [dry-run] bun run dx:contract:check');
     } else {
       const code = await requireCommand(
         ['bun', 'run', 'skills:validate'],
         '❌ agent skills validation failed'
       );
       if (code !== 0) return code;
+      const dxContractCode = await requireCommand(
+        ['bun', 'run', 'dx:contract:check'],
+        '❌ Project R DX contract validation failed'
+      );
+      if (dxContractCode !== 0) return dxContractCode;
     }
   } else {
-    console.info('  ⏭️  no agent skill paths staged — skip skills:validate');
+    console.info('  ⏭️  no agent skill paths staged — skip skills:validate + dx:contract:check');
   }
 
   section('ast-grep + semver');

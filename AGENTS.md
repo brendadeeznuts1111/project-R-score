@@ -2,6 +2,11 @@
 
 AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 
+Project R's portable machine-alignment contract is
+[`config/project-r-dx-contract.json`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/project-r-dx-contract.json):
+`bun run dx:contract:check` validates it in CI, while `dx setup` consumes it to
+detect stale installed skills and missing global authority pointers.
+
 **Git remotes:** `origin` →
 [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) (this
 monorepo). `cascade` → private nested product `cascade-mover-v3` (git remote
