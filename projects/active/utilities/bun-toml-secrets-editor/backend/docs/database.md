@@ -16,7 +16,6 @@ CREATE TABLE applications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL,
     stripe_account_id VARCHAR(255),
-    plaid_verification_id VARCHAR(255),
     duoplus_device_id VARCHAR(255),
     blockchain_tx_hash VARCHAR(255),
     

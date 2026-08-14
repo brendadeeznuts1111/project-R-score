@@ -6,7 +6,7 @@ Enterprise-grade auto-underwriting platform with AI-powered risk assessment, rea
 
 - **AI-Powered Risk Engine**: XGBoost models with SHAP explainability
 - **Real-Time Processing**: Sub-850ms decision latency
-- **Multi-Service Integration**: Stripe, Plaid, Equifax, DuoPlus
+- **Multi-Service Integration**: Stripe, Equifax, DuoPlus
 - **Blockchain Audit Trail**: Immutable decision logging on Polygon
 - **Advanced Security**: AES-256 encryption, JWT auth, rate limiting
 - **Real-Time Dashboard**: WebSocket-powered live updates
@@ -86,10 +86,6 @@ JWT_EXPIRES_IN=24h
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 
-# Plaid
-PLAID_CLIENT_ID=your-plaid-client-id
-PLAID_SECRET=your-plaid-secret
-
 # Equifax
 EQUIFAX_CLIENT_ID=your-equifax-client-id
 EQUIFAX_CLIENT_SECRET=your-equifax-secret
@@ -135,11 +131,6 @@ Authorization: Bearer <your-jwt-token>
 - `POST /account-links` - Generate onboarding link
 - `POST /transfers` - Create transfer
 - `GET /balance/:accountId` - Get account balance
-
-#### Plaid Integration
-- `POST /link-token/create` - Create Plaid Link token
-- `POST /identity-verification` - Start ID verification
-- `GET /verification-sessions/:id` - Get verification status
 
 #### Blockchain
 - `POST /log-decision` - Log decision to blockchain

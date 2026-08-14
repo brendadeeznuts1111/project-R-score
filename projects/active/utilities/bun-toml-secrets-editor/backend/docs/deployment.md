@@ -85,7 +85,6 @@ REDIS_URL=redis://staging-redis:6379
 
 # External APIs (staging)
 STRIPE_SECRET_KEY=sk_test_...
-PLAID_ENV=sandbox
 EQUIFAX_ENV=test
 ```
 
