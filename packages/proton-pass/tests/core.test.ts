@@ -341,4 +341,10 @@ describe("proton-pass package extras", () => {
     expect(r.ok).toBe(false);
     expect(r.detail.length).toBeGreaterThan(0);
   });
+
+  test("templateToRunEnv is used for inject-style files before run", () => {
+    // Materialization contract: braces stripped so pass-cli run sees bare pass://
+    const bare = templateToRunEnv("K={{ pass://factorywager/X/password }}\n");
+    expect(bare).toBe("K=pass://factorywager/X/password\n");
+  });
 });

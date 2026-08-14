@@ -111,7 +111,35 @@ if ! command -v pass-cli >/dev/null 2>&1; then
   unset _pass_project
   return 0
 fi
-PROTON_PASS_PERSONAL_ACCESS_TOKEN="$TOKEN" pass-cli login 2>/dev/null || true
+
+# Prefer package session ensure (force-reset corrupt DB + PAT login).
+# PASS_USE_PACKAGE_SESSION=0 falls back to bare pass-cli login.
+_repo_root="$(cd "$SCRIPT_DIR/.." && pwd)"
+if [ "${PASS_USE_PACKAGE_SESSION:-1}" = "1" ] && command -v bun >/dev/null 2>&1 \
+  && [ -f "$_repo_root/packages/proton-pass/package.json" ]; then
+  # Map agent-env project labels → package agent names
+  _pkg_agent="$_pass_project"
+  case "$_pass_project" in
+    cascade) _pkg_agent="cascade" ;;
+    kalshi-bot) _pkg_agent="kalshi-bot" ;;
+  esac
+  if (
+    cd "$_repo_root" &&
+      PROTON_PASS_PERSONAL_ACCESS_TOKEN="$TOKEN" \
+        PROTON_PASS_SESSION_DIR="$PROTON_PASS_SESSION_DIR" \
+        PROTON_PASS_KEY_PROVIDER="$PROTON_PASS_KEY_PROVIDER" \
+        bunx --bun proton-pass session ensure --agent "$_pkg_agent" >/dev/null
+  ); then
+    :
+  else
+    # Soft fallback — bare login still helps interactive hosts
+    PROTON_PASS_PERSONAL_ACCESS_TOKEN="$TOKEN" pass-cli login 2>/dev/null || true
+  fi
+  unset _pkg_agent
+else
+  PROTON_PASS_PERSONAL_ACCESS_TOKEN="$TOKEN" pass-cli login 2>/dev/null || true
+fi
+unset _repo_root
 
 echo "✅ Proton Pass agent token loaded for: $1"
 echo "   Session: $PROTON_PASS_SESSION_DIR"
@@ -133,7 +161,8 @@ if ! pass-cli --version >/dev/null 2>&1; then
 fi
 
 echo "❌ Session not ready (pass-cli info --output json missing personal_access_token_name)"
-echo "   Recovery: pass-cli logout --force; rm -rf \"\$PROTON_PASS_SESSION_DIR\"; re-source this script"
+echo "   Recovery: bunx --bun proton-pass session ensure --agent factorywager"
+echo "   Or: pass-cli logout --force; rm -rf \"\$PROTON_PASS_SESSION_DIR\"; re-source this script"
 echo "   Docs: https://protonpass.github.io/pass-cli/help/troubleshoot/"
 echo "   Note: pass-cli test alone is connectivity — not session proof"
 unset _pass_project

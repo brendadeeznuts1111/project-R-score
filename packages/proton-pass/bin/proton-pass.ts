@@ -222,6 +222,8 @@ async function main(): Promise<void> {
       agent: agentCfg,
       envFile,
       command: tail,
+      materializeTemplates: true,
+      noMasking: hasFlag(head, 'no-masking'),
       reason: argValue(head, 'reason') ?? `proton-pass run ${tail[0] ?? ''}`,
     });
     if (!result.ok && result.code === 2) {

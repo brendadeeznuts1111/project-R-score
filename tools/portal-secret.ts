@@ -44,8 +44,8 @@ import {
   formatVaultStatusLine,
   type VaultMapBundle,
 } from '../lib/security/vault-map.ts';
-import { probePassSession, writeRunEnvTemp, findPassCli } from '../lib/security/pass-session.ts';
-import { injectEnvFile, agentConfigFor } from '@factorywager/proton-pass';
+import { probePassSession, findPassCli } from '../lib/security/pass-session.ts';
+import { injectEnvFile, runWithEnvFile, agentConfigFor } from '@factorywager/proton-pass';
 
 const PASS_CLI = 'pass-cli';
 
@@ -743,50 +743,47 @@ async function cmdReady(rest: string[]): Promise<void> {
 async function cmdRun(rest: string[]): Promise<void> {
   const { before, after } = takeAfterDashDash(rest);
   if (after.length === 0) {
-    cliError('Usage: portal secret run [--env-file <path>] [--no-masking] -- <command>…');
-  }
-
-  // Materialize inject-style templates so official run sees bare pass:// URIs.
-  const envIdx = before.findIndex(a => a === '--env-file' || a === '-e');
-  let cleanup: string | null = null;
-  const runBefore = [...before];
-  // Bun's process.exit skips `finally` — always unlink before exit.
-  // @see https://bun.com/docs/guides/write-file/unlink — Bun.file().unlink()
-  const removeCleanup = async (): Promise<void> => {
-    if (!cleanup) return;
-    const path = cleanup;
-    cleanup = null;
-    try {
-      await Bun.file(path).unlink();
-    } catch {
-      /* ignore */
-    }
-  };
-
-  if (envIdx >= 0 && before[envIdx + 1]) {
-    const src = before[envIdx + 1]!;
-    const file = Bun.file(src);
-    if (await file.exists()) {
-      const text = await file.text();
-      if (text.includes('{{') && text.includes('pass://')) {
-        const tmp = await writeRunEnvTemp(text);
-        runBefore[envIdx + 1] = tmp;
-        cleanup = tmp;
-      }
-    }
-  }
-
-  const ready = await probePassSession();
-  if (!ready.ready) {
-    await removeCleanup();
     cliError(
-      'Pass session not ready — source scripts/agent-env.sh factorywager (info --output json)'
+      'Usage: portal secret run [--env-file <path>] [--agent <name>] [--no-masking] -- <command>…'
     );
   }
 
-  const code = await runPassCli(['run', ...runBefore, '--', ...after], 'run');
-  await removeCleanup();
-  process.exit(code);
+  const envIdx = before.findIndex(a => a === '--env-file' || a === '-e');
+  const agentIdx = before.findIndex(a => a === '--agent');
+  const noMasking = before.includes('--no-masking');
+  const envFile =
+    envIdx >= 0 && before[envIdx + 1]
+      ? before[envIdx + 1]!
+      : (Bun.env.PROTONPASS_ENV_FILE ?? 'env.template');
+  const agentName = agentIdx >= 0 && before[agentIdx + 1] ? before[agentIdx + 1]! : 'factorywager';
+
+  let agentCfg;
+  try {
+    agentCfg = agentConfigFor(agentName);
+  } catch (e) {
+    cliError(e instanceof Error ? e.message : String(e));
+  }
+
+  const passCli = await resolvePassCli();
+  // Package path: ensure session + materialize {{ pass:// }} + official run
+  const result = await runWithEnvFile({
+    passCli,
+    agent: agentCfg,
+    envFile,
+    command: after,
+    noMasking,
+    materializeTemplates: true,
+    reason: 'portal secret run',
+  });
+
+  if (!result.ok && result.code === 1 && !result.agent.ok) {
+    cliError(
+      `Pass session not ready — ${result.detail}\n` +
+        `   bunx --bun proton-pass session ensure --agent ${agentName}\n` +
+        '   or: source scripts/agent-env.sh factorywager'
+    );
+  }
+  process.exit(result.code ?? (result.ok ? 0 : 1));
 }
 
 async function cmdInject(rest: string[]): Promise<void> {

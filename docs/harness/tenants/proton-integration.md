@@ -46,17 +46,20 @@ helpers from this package and keeps the FactoryWager `PASS_PAT_VAULT_MATRIX` hos
 | Project SSOT | `lib/security/proton-projects.ts` · `bun run proton:inject:list` |
 | Typed inject | `bun run proton:inject -- factorywager` · `--reasonix` |
 | Package CLI | `bunx --bun proton-pass inject --in-file … --out-file … --agent factorywager` |
-| Session | `bunx --bun proton-pass session ensure --agent factorywager` · `session ready` |
-| Portal | `portal secret inject -i env.template -o .env -f` (uses package when -i/-o set) |
-| Shell | `bash scripts/proton-inject.sh factorywager` → typed path first |
+| Session | `session ensure` · `session ready` · `eval "$(bun run proton:session:env -- factorywager)"` |
+| Portal | `secret inject` / `secret run` → package inject + runWithEnvFile (template materialize) |
+| Shell agent-env | `source scripts/agent-env.sh factorywager` → package `session ensure` by default |
 
 ```bash
 bun run proton:inject:factorywager:reasonix
 bunx --bun proton-pass session ensure --agent factorywager --json
-bunx --bun proton-pass run --env-file .env.protonpass --agent kalshi -- bun run serve
+eval "$(bun run proton:session:env -- factorywager)"   # exports SESSION_DIR only
+bunx --bun proton-pass run --env-file env.template --agent factorywager -- bun run cloudflare:env:validate
+portal-cli secret run --env-file env.template --agent factorywager -- bun run cloudflare:env:validate
 ```
 
-`ensureAgentSession` force-resets corrupt local session DBs once (login retry).
+`ensureAgentSession` force-resets corrupt local session DBs once (login retry).  
+`runWithEnvFile` strips `{{ pass:// }}` inject braces into a temp bare env before `pass-cli run`.
 
 ## Vault Layout
 

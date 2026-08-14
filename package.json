@@ -2489,6 +2489,8 @@
     "proton:inject:cascade": "bun scripts/proton-inject.ts cascade-mover",
     "proton:inject:scanner": "bun scripts/proton-inject.ts scanner",
     "proton:session:ensure": "bunx --bun proton-pass session ensure --agent factorywager",
+    "proton:session:env": "bun scripts/proton-session-env.ts",
+
 
     "proton:check": "bash scripts/proton-vault-check.sh",
     "proton:check:list": "bash scripts/proton-vault-check.sh --list-only",
