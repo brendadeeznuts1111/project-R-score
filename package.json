@@ -2069,6 +2069,9 @@
     "docs:refresh:feeds": "bun tools/bun-docs-refresh.ts --feeds",
     "docs:catalog:build": "bun tools/bun-docs-catalog.ts build",
     "docs:catalog": "bun tools/bun-docs-catalog.ts list",
+    "docs:guides:gap": "bun tools/bun-guides-gap.ts",
+    "docs:guides:gap:spine": "bun tools/bun-guides-gap.ts --spine",
+
     "docs:catalog:export": "bun tools/bun-docs-catalog.ts export --compact",
     "docs:provenance:check": "bun tools/bun-doc-refs.ts provenance-check",
     "docs:api-index": "bun tools/export-bun-api-index.ts",
