@@ -1,5 +1,53 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @updated Bun.spawn · changed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @updated Bun.spawn · changed v0.3.0 · 2022-12-07 · https://bun.com/blog/bun-v0.3.0
+// @updated Bun.spawn · fixed v0.6.0 · 2023-05-16 · https://bun.com/blog/bun-v0.6.0
+// @updated Bun.spawn · fixed v0.6.6 · 2023-05-31 · https://bun.com/blog/bun-v0.6.6
+// @updated Bun.spawn · fixed v0.7.2 · 2023-08-03 · https://bun.com/blog/bun-v0.7.2
+// @updated Bun.spawn · fixed v1.0.8 · 2023-11-02 · https://bun.com/blog/bun-v1.0.8
+// @updated Bun.spawn · fixed v1.0.9 · 2023-11-05 · https://bun.com/blog/bun-v1.0.9
+// @updated Bun.spawn · fixed v1.0.23 · 2024-01-16 · https://bun.com/blog/bun-v1.0.23
+// @updated Bun.spawn · fixed v1.0.26 · 2024-02-03 · https://bun.com/blog/bun-v1.0.26
+// @updated Bun.spawn · fixed v1.0.31 · 2024-03-14 · https://bun.com/blog/bun-v1.0.31
+// @updated Bun.spawn · fixed v1.0.32 · 2024-03-17 · https://bun.com/blog/bun-v1.0.32
+// @updated Bun.spawn · fixed v1.0.36 · 2024-03-29 · https://bun.com/blog/bun-v1.0.36
+// @updated Bun.spawn · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.spawn · fixed v1.1.5 · 2024-04-26 · https://bun.com/blog/bun-v1.1.5
+// @updated Bun.spawn · changed v1.1.8 · 2024-05-10 · https://bun.com/blog/bun-v1.1.8
+// @updated Bun.spawn · fixed v1.1.8 · 2024-05-10 · https://bun.com/blog/bun-v1.1.8
+// @updated Bun.spawn · fixed v1.1.30 · 2024-10-08 · https://bun.com/blog/bun-v1.1.30
+// @updated Bun.spawn · changed v1.1.39 · 2024-12-17 · https://bun.com/blog/bun-v1.1.39
+// @updated Bun.spawn · fixed v1.1.39 · 2024-12-17 · https://bun.com/blog/bun-v1.1.39
+// @updated Bun.spawn · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
+// @updated Bun.spawn · fixed v1.2.1 · 2025-01-27 · https://bun.com/blog/bun-v1.2.1
+// @updated Bun.spawn · changed v1.2.6 · 2025-03-25 · https://bun.com/blog/bun-v1.2.6
+// @updated Bun.spawn · fixed v1.2.6 · 2025-03-25 · https://bun.com/blog/bun-v1.2.6
+// @updated Bun.spawn · changed v1.2.9 · 2025-04-09 · https://bun.com/blog/bun-v1.2.9
+// @updated Bun.spawn · fixed v1.2.16 · 2025-06-11 · https://bun.com/blog/bun-v1.2.16
+// @updated Bun.spawn · fixed v1.2.17 · 2025-06-21 · https://bun.com/blog/bun-v1.2.17
+// @updated Bun.spawn · changed v1.2.18 · 2025-07-03 · https://bun.com/blog/bun-v1.2.18
+// @updated Bun.spawn · fixed v1.2.18 · 2025-07-03 · https://bun.com/blog/bun-v1.2.18
+// @updated Bun.spawn · changed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.spawn · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.spawn · fixed v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2
+// @updated Bun.spawn · changed v1.3.3 · 2025-11-21 · https://bun.com/blog/bun-v1.3.3
+// @updated Bun.spawn · fixed v1.3.3 · 2025-11-21 · https://bun.com/blog/bun-v1.3.3
+// @updated Bun.spawn · changed v1.3.5 · 2025-12-17 · https://bun.com/blog/bun-v1.3.5
+// @updated Bun.spawn · changed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.spawn · fixed v1.3.10 · 2026-02-26 · https://bun.com/blog/bun-v1.3.10
+// @updated Bun.spawn · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @verified Bun.spawn · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/child-process
 /**
- * Proton Pass CLI session helpers (TypeScript).
+ * Proton Pass CLI session helpers (monorepo host).
+ *
+ * Shared pure probe / parse / template helpers live in `@factorywager/proton-pass`.
+ * This module owns FactoryWager vault matrix + monorepo temp-run paths.
  *
  * Grounded in official docs:
  *   https://protonpass.github.io/pass-cli/get-started/configuration/
@@ -8,10 +56,41 @@
  *   https://protonpass.github.io/pass-cli/commands/contents/inject/
  *
  * Shell twin: scripts/lib/pass-session.sh
+ * Package: packages/proton-pass (workspace:*)
  */
-// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
-// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+
+import {
+  templateToRunEnv,
+  isPassSessionReady,
+  parsePassInfoJson,
+  vaultNamesFromListJson,
+  probePassSession,
+  findPassCli,
+  ensureAgentSession,
+  loadPatToken,
+  FACTORYWAGER_AGENT_SESSION,
+  type PassInfoJson,
+  type PassSessionProbe,
+  type AgentSessionConfig,
+  type AgentSessionResult,
+} from '@factorywager/proton-pass';
+
+export {
+  templateToRunEnv,
+  isPassSessionReady,
+  parsePassInfoJson,
+  vaultNamesFromListJson,
+  probePassSession,
+  findPassCli,
+  ensureAgentSession,
+  loadPatToken,
+  FACTORYWAGER_AGENT_SESSION,
+  type PassInfoJson,
+  type PassSessionProbe,
+  type AgentSessionConfig,
+  type AgentSessionResult,
+};
 
 /** Agent project → vaults that PAT is expected to open (viewer+). */
 export const PASS_PAT_VAULT_MATRIX = {
@@ -56,117 +135,6 @@ export const PASS_PAT_VAULT_MATRIX = {
 } as const;
 
 export type PassAgentProject = keyof typeof PASS_PAT_VAULT_MATRIX;
-
-export type PassInfoJson = {
-  release_track?: string;
-  id?: string; // brand-ok — opaque Pass CLI session/device id from info JSON wire
-  personal_access_token_name?: string | null;
-  session_has_lock?: boolean;
-};
-
-/** Strip `{{ pass://… }}` → bare `pass://…` for official `pass-cli run --env-file`. */
-export function templateToRunEnv(text: string): string {
-  return text.replace(/\{\{\s*(pass:\/\/[^}]+?)\s*\}\}/g, '$1');
-}
-
-export function isPassSessionReady(info: PassInfoJson | null | undefined): boolean {
-  const name = info?.personal_access_token_name;
-  return typeof name === 'string' && name.length > 0 && name !== 'N/A';
-}
-
-/** Parse `pass-cli info --output json` (no secrets). */
-export function parsePassInfoJson(raw: string): PassInfoJson | null {
-  try {
-    const v = JSON.parse(raw) as unknown;
-    if (!v || typeof v !== 'object') return null;
-    return v as PassInfoJson;
-  } catch {
-    return null;
-  }
-}
-
-/** Extract vault names from `pass-cli vault list --output json`. */
-export function vaultNamesFromListJson(raw: string): string[] {
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(raw);
-  } catch {
-    return [];
-  }
-  const arr: unknown[] = Array.isArray(parsed)
-    ? parsed
-    : parsed && typeof parsed === 'object' && Array.isArray((parsed as { vaults?: unknown }).vaults)
-      ? ((parsed as { vaults: unknown[] }).vaults ?? [])
-      : [];
-  const names: string[] = [];
-  for (const row of arr) {
-    if (!row || typeof row !== 'object') continue;
-    const r = row as { name?: unknown; title?: unknown };
-    const n = typeof r.name === 'string' ? r.name : typeof r.title === 'string' ? r.title : null;
-    if (n) names.push(n);
-  }
-  return names.sort((a, b) => a.localeCompare(b));
-}
-
-export type PassSessionProbe = {
-  passCliPath: string | null;
-  ready: boolean;
-  patName: string | null;
-  sessionHasLock: boolean | null;
-  vaults: string[];
-  infoError?: string;
-};
-
-/** Live probe via pass-cli (requires agent session in env). */
-export async function probePassSession(opts?: { listVaults?: boolean }): Promise<PassSessionProbe> {
-  const passCliPath = Bun.which('pass-cli');
-  if (!passCliPath) {
-    return {
-      passCliPath: null,
-      ready: false,
-      patName: null,
-      sessionHasLock: null,
-      vaults: [],
-      infoError: 'pass-cli not on PATH',
-    };
-  }
-
-  const infoProc = Bun.spawn([passCliPath, 'info', '--output', 'json'], {
-    stdout: 'pipe',
-    stderr: 'pipe',
-    env: Bun.env,
-  });
-  const infoOut = await Bun.readableStreamToText(infoProc.stdout);
-  const infoCode = (await infoProc.exited) ?? 1;
-  if (infoCode !== 0) {
-    return {
-      passCliPath,
-      ready: false,
-      patName: null,
-      sessionHasLock: null,
-      vaults: [],
-      infoError: `pass-cli info exit ${infoCode}`,
-    };
-  }
-  const info = parsePassInfoJson(infoOut);
-  const ready = isPassSessionReady(info);
-  const patName = ready ? (info!.personal_access_token_name as string) : null;
-  const sessionHasLock = typeof info?.session_has_lock === 'boolean' ? info.session_has_lock : null;
-
-  let vaults: string[] = [];
-  if (opts?.listVaults && ready) {
-    const vProc = Bun.spawn([passCliPath, 'vault', 'list', '--output', 'json'], {
-      stdout: 'pipe',
-      stderr: 'pipe',
-      env: Bun.env,
-    });
-    const vOut = await Bun.readableStreamToText(vProc.stdout);
-    const vCode = (await vProc.exited) ?? 1;
-    if (vCode === 0) vaults = vaultNamesFromListJson(vOut);
-  }
-
-  return { passCliPath, ready, patName, sessionHasLock, vaults };
-}
 
 /**
  * Default SSH vault for a PAT session.

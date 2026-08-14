@@ -21,6 +21,26 @@ Canonical docs: **[protonpass.github.io/pass-cli](https://protonpass.github.io/p
 
 This monorepo prefers **`inject`** → project `.env` (see below). Sibling Kalshi-bot prefers **`run`** + `.env.protonpass` — see [`Kalshi-bot/docs/PROTONPASS.md`](../../../Kalshi-bot/docs/PROTONPASS.md).
 
+**Portable package (v0.1):** [`packages/proton-pass`](../../../packages/proton-pass/) — `@factorywager/proton-pass` — root **`workspace:*`** dep; shared session/resolve/cache/logging for insert-anywhere hosts.
+
+```bash
+bunx --bun proton-pass version
+bunx --bun proton-pass check --agent factorywager --json
+bun run --filter @factorywager/proton-pass test
+import { findPassCli, ensureAgentSession } from '@factorywager/proton-pass';
+```
+
+**Planes:** Bun PM (`install` / `pm` / `audit` / catalogs) ≠ vault (`pass-cli` / this package / `proton:inject:*`).  
+Cookbook: [monorepo-workspaces § Bun PM surface](./monorepo-workspaces.md#bun-pm-surface-operator-cookbook).  
+**Monorepo consumer (landed):** `lib/security/pass-session.ts` re-exports probe/parse/template
+helpers from this package and keeps the FactoryWager `PASS_PAT_VAULT_MATRIX` host-side.
+
+**Kalshi-bot consumer (landed, sibling repo):** `"@factorywager/proton-pass": "file:../packages/proton-pass"`
+— `src/protonpass/*` re-exports the package; host keeps `DEFAULT_GATE_CHECKS` +
+`ensureKalshiAgentSession` force-reset. Commit `e529124` on Kalshi-bot `main`.
+
+Still follow-up: migrate shell `proton-inject.sh` / portal-cli inject path onto the package CLI.
+
 ## Vault Layout
 
 | Vault | Purpose | Items | Agent PAT (`.env.pass-tokens`) |
