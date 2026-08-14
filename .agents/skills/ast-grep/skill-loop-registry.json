@@ -185,23 +185,6 @@
         }
       }
     },
-    "source-command-commit": {
-      "path": ".agents/skills/source-command-commit",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "run bun run precommit:ast-grep from repo root before commit"
-        }
-      }
-    },
     "project-r-skill-maintenance": {
       "path": ".agents/skills/project-r-skill-maintenance",
       "zone": "agents",
@@ -403,80 +386,6 @@
         "precommit": {
           "enabled": false,
           "note": "delegates to ast-grep staged gate"
-        }
-      }
-    },
-    "source-command-ast-grep": {
-      "path": ".agents/skills/source-command-ast-grep",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "cd .agents/skills/ast-grep && bun run doctor"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": true,
-          "script": "precommit",
-          "note": "bun run precommit:ast-grep from repo root"
-        }
-      }
-    },
-    "source-command-precommit": {
-      "path": ".agents/skills/source-command-precommit",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "bun scripts/pre-commit-ast-grep.ts --staged"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": true,
-          "script": "precommit",
-          "note": ".husky/pre-commit hook chain"
-        }
-      }
-    },
-    "source-command-reference-discovery": {
-      "path": ".agents/skills/source-command-reference-discovery",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "bun run reference:discover:check && bun run discover:compose:check"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "delegates to reference-discovery doctor"
-        }
-      }
-    },
-    "source-command-workflow": {
-      "path": ".agents/skills/source-command-workflow",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "cd .agents/skills/ast-grep && bun run workflow:plan"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "delegates to ast-grep workflow loop"
         }
       }
     }

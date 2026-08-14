@@ -1,7 +1,7 @@
 {
   "plane": "harness-agents",
   "skillLoopRegistry": ".agents/skills/ast-grep/skill-loop-registry.json",
-  "scannedAt": "2026-08-07T16:30:26.227Z",
+  "scannedAt": "2026-08-14T02:45:07.343Z",
   "skills": [
     {
       "name": "agents-sdk",
@@ -21,7 +21,7 @@
       "description": "AST-aware code outline, structural search, rewrite, and rule scans via ast-grep 0.44+. Use when exploring unfamiliar code, mapping symbols/imports/exports before broad file reads, finding syntax-shaped patterns (calls, classes, JSX), writing codemods, or when rg is too noisy. Primary entry point: scripts/ast_grep_helper.py (outline, search, replace, scan, validate).",
       "updatedAt": "2026-08-06T16:45:16.025Z",
       "hasPackage": false,
-      "lineCount": 329,
+      "lineCount": 348,
       "resources": {
         "scripts": 100,
         "references": 4,
@@ -34,7 +34,7 @@
       "description": "Close harness and tenant gaps with audit evidence — compose reference-discovery, audit catalog verify, tenant gap maps, and fresh-rerun gates. Use when a gap map row needs proof (bake/test/proof), audit catalog is stale, or discovery findings need an execute owner after triage.",
       "updatedAt": "2026-07-26T20:49:05.898Z",
       "hasPackage": false,
-      "lineCount": 86,
+      "lineCount": 95,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -53,14 +53,16 @@
         "references": 0,
         "assets": 0
       },
-      "validation": ["frontmatter missing description"]
+      "validation": [
+        "frontmatter missing description"
+      ]
     },
     {
       "name": "bun-v139-playground",
       "description": "Bun v1.3.9 feature demos and interactive CLI playground. Covers parallel scripts, process/spawn, HTTP/2, NO_PROXY, profiling, and mock auto-cleanup. Use when: testing Bun v1.3.9+ features, running demos, or benchmarking.",
       "updatedAt": "2026-08-04T05:58:02.399Z",
       "hasPackage": false,
-      "lineCount": 55,
+      "lineCount": 51,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -71,9 +73,9 @@
     {
       "name": "cascade-mover-v3",
       "description": "Cascade Mover v3 — sports intelligence, confidence engine, multi-market cascading. Use cascade-mover MCP tools. Bun-native, zero npm deps.",
-      "updatedAt": "2026-07-24T04:50:59.589Z",
+      "updatedAt": "2026-08-14T02:45:00.929Z",
       "hasPackage": false,
-      "lineCount": 35,
+      "lineCount": 44,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -201,9 +203,9 @@
     {
       "name": "project-r-agent-team",
       "description": "Operate Project R agent-team access through the correct Proton Pass vault, environment loader, MCP surface, and SSH host. Use for agent credential setup, vault routing, remote access, or team-specific environment diagnostics.",
-      "updatedAt": "2026-08-04T05:58:02.400Z",
+      "updatedAt": "2026-08-14T02:45:00.929Z",
       "hasPackage": false,
-      "lineCount": 55,
+      "lineCount": 71,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -216,7 +218,7 @@
       "description": "Operate Project R runtime channels, CI gates, TypeScript health, security, release hygiene, and recovery. Use for readiness checks, CI failures, Bun drift, branch hygiene, dependency hardening, or emergency recovery.",
       "updatedAt": "2026-08-07T06:43:39.486Z",
       "hasPackage": false,
-      "lineCount": 56,
+      "lineCount": 67,
       "resources": {
         "scripts": 0,
         "references": 2,
@@ -227,9 +229,9 @@
     {
       "name": "project-r-skill-maintenance",
       "description": "Create, tighten, and validate Project R Codex skills. Use for SKILL.md wording, agents/openai.yaml alignment, duplicate installed copies, broken references, or stale Bun guidance.",
-      "updatedAt": "2026-08-07T07:37:33.920Z",
+      "updatedAt": "2026-08-14T02:45:00.929Z",
       "hasPackage": false,
-      "lineCount": 76,
+      "lineCount": 102,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -290,71 +292,6 @@
       "validation": []
     },
     {
-      "name": "source-command-ast-grep",
-      "description": "ast-grep structural tools — outline, search, audit, semver gates, skill loop",
-      "updatedAt": "2026-06-25T04:55:29.633Z",
-      "hasPackage": false,
-      "lineCount": 46,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
-      "name": "source-command-commit",
-      "description": "Analyze changes, stage intelligently, commit with a precise message, and verify",
-      "updatedAt": "2026-08-06T16:45:16.026Z",
-      "hasPackage": false,
-      "lineCount": 98,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
-      "name": "source-command-precommit",
-      "description": "Run Husky pre-commit gates for repository hygiene, harness lint, skill structure, ast-grep rules, semver policy, secrets, and staged tests. Use before committing or when diagnosing a local gate failure.",
-      "updatedAt": "2026-08-06T16:45:16.026Z",
-      "hasPackage": false,
-      "lineCount": 56,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
-      "name": "source-command-reference-discovery",
-      "description": "Reference discovery — unused paths, plane mismatches, similar naming clusters",
-      "updatedAt": "2026-07-26T20:49:08.204Z",
-      "hasPackage": false,
-      "lineCount": 28,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
-      "name": "source-command-workflow",
-      "description": "Run ast-grep workflow loop with semver/network scanners and effect plugins",
-      "updatedAt": "2026-06-25T04:55:29.634Z",
-      "hasPackage": false,
-      "lineCount": 56,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
       "name": "sports-terminal-os",
       "description": "Sports Terminal OS v5.2 — sports betting trading terminal with 93 proxy endpoints, WebSocket/SSE, Partner Profile OS, Telegram hub. Bun-native monorepo workspace at projects/active/sports-terminal-os/.",
       "updatedAt": "2026-07-24T07:07:27.625Z",
@@ -404,8 +341,10 @@
         "references": 0,
         "assets": 0
       },
-      "validation": ["body too long (919 lines, want ≤500)"]
+      "validation": [
+        "body too long (919 lines, want ≤500)"
+      ]
     }
   ],
-  "count": 31
+  "count": 26
 }
