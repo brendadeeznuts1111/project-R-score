@@ -1,16 +1,20 @@
 #!/usr/bin/env bash
 # Resolve env.template → .env via Proton Pass (vault SSOT).
+#
+# Preferred path: bun scripts/proton-inject.ts (project map SSOT + package inject).
+# This shell entry keeps package.json / operator muscle-memory working.
+#
 # Usage:
 #   bash scripts/proton-inject.sh factorywager
 #   bash scripts/proton-inject.sh bet-ticker
 #   bash scripts/proton-inject.sh cascade-mover
 #   bash scripts/proton-inject.sh scanner
 #   bash scripts/proton-inject.sh kalshi-bot
-#   bash scripts/proton-inject.sh factorywager --reasonix   # also refresh ~/.reasonix/.env keys
+#   bash scripts/proton-inject.sh factorywager --reasonix
 #
-# Never paste API tokens into shell history. Mint once in the dashboard,
-# store in Proton Pass (pass://factorywager/Cloudflare API Token/password),
-# then inject.
+# @see lib/security/proton-projects.ts
+# @see packages/proton-pass
+# @see https://protonpass.github.io/pass-cli/commands/contents/inject/
 
 set -euo pipefail
 
@@ -36,9 +40,24 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+REASONIX_ARGS=()
+if [ "$SYNC_REASONIX" -eq 1 ]; then
+  REASONIX_ARGS=(--reasonix)
+fi
+
+# Primary: typed inject (SSOT map + force-reset session + reasonix)
+if (
+  cd "$ROOT" &&
+    bun scripts/proton-inject.ts "$PROJECT" "${REASONIX_ARGS[@]}"
+); then
+  exit 0
+fi
+
+echo "⚠️  bun scripts/proton-inject.ts failed — falling back to package CLI" >&2
+
+# Fallback map (keep in sync with lib/security/proton-projects.ts)
 case "$PROJECT" in
   factorywager|cloudflare)
-    # cloudflare agent is CF-scoped; monorepo template is factorywager vault
     AGENT="factorywager"
     TEMPLATE="$ROOT/env.template"
     OUT="$ROOT/.env"
@@ -65,7 +84,6 @@ case "$PROJECT" in
     ;;
   *)
     echo "Unknown project: $PROJECT" >&2
-    echo "Projects: factorywager, cloudflare, bet-ticker, cascade-mover, scanner, kalshi-bot" >&2
     exit 1
     ;;
 esac
@@ -75,9 +93,6 @@ if [ ! -f "$TEMPLATE" ]; then
   exit 1
 fi
 
-# Prefer workspace package CLI (session + inject). Falls back to shell agent-env + pass-cli.
-# @see packages/proton-pass · https://protonpass.github.io/pass-cli/commands/contents/inject/
-echo "🔐 Injecting $TEMPLATE → $OUT (vault SSOT via @factorywager/proton-pass)"
 if (
   cd "$ROOT" &&
     bunx --bun proton-pass inject \
@@ -86,83 +101,25 @@ if (
       --agent "$AGENT" \
       --reason "Inject env secrets for $PROJECT"
 ); then
-  :
-else
-  echo "⚠️  package inject failed — falling back to agent-env + pass-cli" >&2
-  # shellcheck source=agent-env.sh
-  source "$SCRIPT_DIR/agent-env.sh" "$AGENT"
-  # shellcheck source=lib/pass-session.sh
-  . "$SCRIPT_DIR/lib/pass-session.sh"
-  if ! pass_session_ready; then
-    echo "❌ Pass session not ready (need info.personal_access_token_name)" >&2
-    echo "   Recovery: pass-cli logout --force; rm -rf \"\$PROTON_PASS_SESSION_DIR\"; source scripts/agent-env.sh $AGENT" >&2
-    echo "   Docs: https://protonpass.github.io/pass-cli/help/troubleshoot/" >&2
-    exit 1
+  chmod 600 "$OUT" 2>/dev/null || true
+  echo "✅ Wrote $OUT"
+  if [ "$SYNC_REASONIX" -eq 1 ]; then
+    echo "⚠️  --reasonix only fully supported on typed path (bun scripts/proton-inject.ts)" >&2
   fi
-  PROTON_PASS_AGENT_REASON="Inject env secrets for $PROJECT" \
-    pass-cli inject --in-file "$TEMPLATE" --out-file "$OUT" --force --file-mode 0600
+  exit 0
 fi
+
+echo "⚠️  package inject failed — falling back to agent-env + pass-cli" >&2
+# shellcheck source=agent-env.sh
+source "$SCRIPT_DIR/agent-env.sh" "$AGENT"
+# shellcheck source=lib/pass-session.sh
+. "$SCRIPT_DIR/lib/pass-session.sh"
+if ! pass_session_ready; then
+  echo "❌ Pass session not ready (need info.personal_access_token_name)" >&2
+  echo "   Recovery: pass-cli logout --force; rm -rf \"\$PROTON_PASS_SESSION_DIR\"; source scripts/agent-env.sh $AGENT" >&2
+  exit 1
+fi
+PROTON_PASS_AGENT_REASON="Inject env secrets for $PROJECT" \
+  pass-cli inject --in-file "$TEMPLATE" --out-file "$OUT" --force --file-mode 0600
 chmod 600 "$OUT" 2>/dev/null || true
-echo "✅ Wrote $OUT (mode $(stat -f '%Lp' "$OUT" 2>/dev/null || stat -c '%a' "$OUT" 2>/dev/null || echo '?'))"
-
-if [ "$SYNC_REASONIX" -eq 1 ]; then
-  if [ "$PROJECT" != "factorywager" ] && [ "$PROJECT" != "cloudflare" ]; then
-    echo "⚠️  --reasonix only applies to factorywager/cloudflare inject (CF + Telegram keys)" >&2
-  else
-    REASONIX_ENV="${REASONIX_ENV:-$HOME/.reasonix/.env}"
-    mkdir -p "$(dirname "$REASONIX_ENV")"
-    touch "$REASONIX_ENV"
-    chmod 600 "$REASONIX_ENV" 2>/dev/null || true
-
-    # Pull only keys MCP / Reasonix need (derived cache, not SSOT)
-    python3 - "$OUT" "$REASONIX_ENV" <<'PY'
-import sys
-from pathlib import Path
-
-src, dst = Path(sys.argv[1]), Path(sys.argv[2])
-KEYS = (
-    "CLOUDFLARE_API_TOKEN",
-    "CLOUDFLARE_ACCOUNT_ID",
-    "CLOUDFLARE_DNS_API_TOKEN",
-    "CLOUDFLARE_ACCESS_API_TOKEN",
-    "TELEGRAM_BOT_FACTORY",
-    "TELEGRAM_WEBHOOK_SECRET",
-)
-
-got = {}
-for line in src.read_text().splitlines():
-    if not line or line.lstrip().startswith("#") or "=" not in line:
-        continue
-    k, v = line.split("=", 1)
-    if k in KEYS:
-        got[k] = v
-
-if not got:
-    print("⚠️  No reasonix keys found in injected .env", file=sys.stderr)
-    sys.exit(0)
-
-text = dst.read_text() if dst.exists() else ""
-lines = text.splitlines()
-kept = []
-for line in lines:
-    if not line or line.lstrip().startswith("#") or "=" not in line:
-        kept.append(line)
-        continue
-    k = line.split("=", 1)[0]
-    if k in KEYS:
-        continue  # drop stale copies (including duplicate CF token lines)
-    kept.append(line)
-
-while kept and kept[-1] == "":
-    kept.pop()
-
-block = ["", "# --- proton-inject (derived from vault; re-run to refresh) ---"]
-for k in KEYS:
-    if k in got:
-        block.append(f"{k}={got[k]}")
-
-dst.write_text("\n".join(kept + block) + "\n")
-print(f"✅ Synced {len(got)} key(s) into {dst} (duplicates stripped)")
-PY
-  fi
-fi
+echo "✅ Wrote $OUT"

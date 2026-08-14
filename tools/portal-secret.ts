@@ -1,4 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/executables — --force
+// @updated --force · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
+// @updated --force · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @verified --force · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/bundler/executables
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/test/parallel#parallel — --parallel
@@ -40,7 +44,8 @@ import {
   formatVaultStatusLine,
   type VaultMapBundle,
 } from '../lib/security/vault-map.ts';
-import { probePassSession, writeRunEnvTemp } from '../lib/security/pass-session.ts';
+import { probePassSession, writeRunEnvTemp, findPassCli } from '../lib/security/pass-session.ts';
+import { injectEnvFile, agentConfigFor } from '@factorywager/proton-pass';
 
 const PASS_CLI = 'pass-cli';
 
@@ -121,15 +126,16 @@ function cliError(msg: string): never {
   process.exit(1);
 }
 
-/** Resolve pass-cli binary or fail with install hint. */
-export function resolvePassCli(): string {
-  const path = Bun.which(PASS_CLI);
+/** Resolve pass-cli binary or fail with install hint (async for findPassCli depth). */
+export async function resolvePassCli(): Promise<string> {
+  const path = (await findPassCli()) ?? Bun.which(PASS_CLI);
   if (!path) {
     cliError(
       [
         'pass-cli not found on PATH.',
         'Install: https://protonpass.github.io/pass-cli/',
         'Then: source scripts/agent-env.sh factorywager',
+        'Or: bunx --bun proton-pass inject --agent factorywager --in-file env.template --out-file .env',
       ].join('\n')
     );
   }
@@ -359,7 +365,7 @@ function passEnv(reason?: string): NodeJS.ProcessEnv {
 
 /** Inherit all stdio — interactive / operator-facing pass-cli. */
 export async function runPassCli(args: string[], reason?: string): Promise<number> {
-  const bin = resolvePassCli();
+  const bin = await resolvePassCli();
   const proc = Bun.spawn([bin, ...args], {
     stdout: 'inherit',
     stderr: 'inherit',
@@ -378,7 +384,7 @@ export async function capturePassCli(
   code: number;
   stdout: string;
 }> {
-  const bin = resolvePassCli();
+  const bin = await resolvePassCli();
   const proc = Bun.spawn([bin, ...args], {
     stdout: 'pipe',
     stderr: 'inherit',
@@ -484,7 +490,7 @@ function hasFlag(args: string[], name: string): boolean {
 }
 
 async function cmdWhich(): Promise<void> {
-  const path = Bun.which(PASS_CLI);
+  const path = await findPassCli();
   if (!path) {
     console.error('pass-cli: not found');
     process.exit(1);
@@ -784,6 +790,35 @@ async function cmdRun(rest: string[]): Promise<void> {
 }
 
 async function cmdInject(rest: string[]): Promise<void> {
+  // Prefer package inject when -i/-o (or long forms) are present + optional --agent.
+  const inIdx = rest.findIndex(a => a === '-i' || a === '--in-file');
+  const outIdx = rest.findIndex(a => a === '-o' || a === '--out-file');
+  const agentIdx = rest.findIndex(a => a === '--agent');
+  if (inIdx >= 0 && outIdx >= 0 && rest[inIdx + 1] && rest[outIdx + 1]) {
+    const passCli = await resolvePassCli();
+    const agentName = agentIdx >= 0 && rest[agentIdx + 1] ? rest[agentIdx + 1]! : 'factorywager';
+    let agentCfg;
+    try {
+      agentCfg = agentConfigFor(agentName);
+    } catch (e) {
+      cliError(e instanceof Error ? e.message : String(e));
+    }
+    const result = await injectEnvFile({
+      passCli,
+      agent: agentCfg,
+      inFile: rest[inIdx + 1]!,
+      outFile: rest[outIdx + 1]!,
+      force: rest.includes('-f') || rest.includes('--force') || !rest.includes('--no-force'),
+      reason: 'portal secret inject',
+    });
+    if (!result.ok) {
+      console.error(`❌ inject: ${result.detail}`);
+      process.exit(result.code ?? 1);
+    }
+    console.log(`✅ inject → ${result.outFile} (${result.agent.mode})`);
+    process.exit(0);
+  }
+
   // Forward real inject flags; default --file-mode 0600 when writing a file.
   const hasOut = rest.some(a => a === '-o' || a === '--out-file');
   const hasMode = rest.includes('--file-mode');
