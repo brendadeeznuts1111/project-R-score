@@ -9,6 +9,7 @@ import {
   BUN_MARKDOWN_CROSS_REFERENCES,
   MARKDOWN_OPTION_CATALOG,
   MARKDOWN_OPTIONS_DEFAULTS,
+  MARKDOWN_NESTED_LIST_TABLE_PROPERTIES,
   MARKDOWN_BOOLEAN_OPTION_NAMES,
   MARKDOWN_PRESET_NAMES,
   MARKDOWN_PRESET_DESIGN,
@@ -17,6 +18,7 @@ import {
   MARKDOWN_PRESET_SECURE,
   markdownHtml,
   markdownNestedList,
+  markdownNestedListRows,
   mergeMarkdownOptions,
   parseMarkdownOptionOverrides,
   resolveMarkdownPreset,
@@ -129,13 +131,43 @@ describe('markdownNestedList', () => {
     expect(result.flat.map(item => item.meta.index)).toEqual([0, 0, 1, 0, 1, 1]);
     expect(result.flat[4]).toMatchObject({
       path: '1.2.2',
+      key: 'r1:o1.o2.o2',
+      rootIndex: 0,
       marker: '1.2.2',
       text: 'grand-two',
       listMeta: { ordered: true, start: 1, depth: 2 },
       meta: { ordered: true, start: 1, depth: 2, index: 1 },
     });
     expect(result.items[0]?.children[1]?.children[1]?.path).toBe('1.2.2');
+    expect(result.flat[4]?.lineage.map(segment => segment.number)).toEqual([1, 2, 2]);
     expect(result.text).toContain('    1.2.2 grand-two');
+  });
+
+  test('honors ordered starts and does not fabricate a decimal path across an unordered ancestor', () => {
+    // CommonMark requires a blank line before a nested ordered list starting above 1.
+    const started = markdownNestedList('3. root\n\n   5. child');
+    expect(started.flat.map(item => item.path)).toEqual(['3', '3.5']);
+    expect(started.flat[1]?.meta.start).toBe(5);
+
+    const mixed = markdownNestedList('1. root\n   - bullet\n     1. nested');
+    expect(mixed.flat.map(item => item.path)).toEqual(['1', null, null]);
+    expect(mixed.flat[2]).toMatchObject({
+      key: 'r1:o1.u1.o1',
+      marker: '1',
+      lineage: [
+        { kind: 'ordered', index: 0, number: 1, depth: 0, start: 1 },
+        { kind: 'unordered', index: 0, number: null, depth: 1 },
+        { kind: 'ordered', index: 0, number: 1, depth: 2, start: 1 },
+      ],
+    });
+  });
+
+  test('root-qualified keys distinguish independently restarted lists', () => {
+    const result = markdownNestedList('1. first\n\nbetween\n\n1. second');
+    expect(result.flat.map(item => ({ path: item.path, key: item.key }))).toEqual([
+      { path: '1', key: 'r1:o1' },
+      { path: '1', key: 'r2:o1' },
+    ]);
   });
 
   test('preserves unordered task metadata without inventing a decimal path', () => {
@@ -156,6 +188,33 @@ describe('markdownNestedList', () => {
 
   test('fails closed on reserved internal projection tokens', () => {
     expect(() => markdownNestedList('@@FW_MARKDOWN_LIST_0@@')).toThrow(/reserved/);
+  });
+
+  test('emits property-scoped flat rows for Bun.inspect.table consumers', () => {
+    expect(MARKDOWN_NESTED_LIST_TABLE_PROPERTIES).toEqual([
+      'path',
+      'key',
+      'marker',
+      'text',
+      'depth',
+      'index',
+      'ordered',
+      'start',
+      'checked',
+    ]);
+    expect(markdownNestedListRows('2. two')).toEqual([
+      {
+        path: '2',
+        key: 'r1:o2',
+        marker: '2',
+        text: 'two',
+        depth: 0,
+        index: 0,
+        ordered: true,
+        start: 2,
+        checked: null,
+      },
+    ]);
   });
 });
 

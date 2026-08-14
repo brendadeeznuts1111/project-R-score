@@ -334,6 +334,13 @@ const outline = markdownNestedList(`1. top
 outline.flat[4];
 // {
 //   path: "1.2.2",
+//   key: "r1:o1.o2.o2",
+//   rootIndex: 0,
+//   lineage: [
+//     { kind: "ordered", index: 0, number: 1, depth: 0, start: 1 },
+//     { kind: "ordered", index: 1, number: 2, depth: 1, start: 1 },
+//     { kind: "ordered", index: 1, number: 2, depth: 2, start: 1 },
+//   ],
 //   marker: "1.2.2",
 //   text: "grand-two",
 //   listMeta: { ordered: true, start: 1, depth: 2 },
@@ -343,8 +350,35 @@ outline.flat[4];
 ```
 
 The projection returns nested `items`, parent-first `flat` rows, and formatted
-`text`. Unordered and task items retain `path: null`; their `marker` is `-`,
-`[x]`, or `[ ]`, so the helper never fabricates numeric ancestry.
+`text`. `key` remains unique across independently restarted root lists and mixed
+list kinds (`r1:o1.u1.o2`), while `lineage` makes each flat row self-contained.
+`path` is present only when the complete lineage is ordered. Unordered, task,
+and ordered-below-unordered items therefore retain `path: null`; their marker is
+`-`, `[x]`, `[ ]`, or the local ordered number instead of fabricated ancestry.
+
+Non-1 ordered starts are preserved from Bun metadata. Under CommonMark parsing,
+a nested ordered list beginning above `1` needs a blank line before it:
+
+```md
+3. parent
+
+   5. nested child
+```
+
+For a property-scoped terminal table, use the flat row adapter and its closed
+column list:
+
+```ts
+import { inspectTable } from '../../lib/console/table.ts';
+import {
+  MARKDOWN_NESTED_LIST_TABLE_PROPERTIES,
+  markdownNestedListRows,
+} from '../../lib/markdown/options.ts';
+
+const table = inspectTable(markdownNestedListRows(markdown), [
+  ...MARKDOWN_NESTED_LIST_TABLE_PROPERTIES,
+]);
+```
 
 ### 2.5 React component overrides
 

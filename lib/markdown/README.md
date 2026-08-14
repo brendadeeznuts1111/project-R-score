@@ -4,17 +4,17 @@
 Workers/Pages edge. Bun currently marks this API unstable, so every adopted
 behavior must remain behind a focused runtime contract test.
 
-| Export                                       | Role                                    |
-| -------------------------------------------- | --------------------------------------- |
-| `MARKDOWN_OPTION_CATALOG`                    | Docs table of all 15 options + defaults |
-| `MARKDOWN_OPTIONS_DEFAULTS`                  | Typed defaults (GFM triad on)           |
-| `MARKDOWN_PRESET_PORTAL`                     | Portal / skill HTML                     |
-| `MARKDOWN_PRESET_README`                     | README / registry desk                  |
-| `MARKDOWN_PRESET_SECURE`                     | Untrusted notes (no HTML blocks/spans)  |
-| `MARKDOWN_PRESET_DESIGN`                     | Wiki + math + heading ids               |
-| `MARKDOWN_PRESETS` / `resolveMarkdownPreset` | Named CLI/configuration boundary        |
-| `markdownHtml` / `mergeMarkdownOptions`      | Render helpers                          |
-| `markdownNestedList`                         | Nested tree + flat `1.2.2` paths + meta |
+| Export                                          | Role                                    |
+| ----------------------------------------------- | --------------------------------------- |
+| `MARKDOWN_OPTION_CATALOG`                       | Docs table of all 15 options + defaults |
+| `MARKDOWN_OPTIONS_DEFAULTS`                     | Typed defaults (GFM triad on)           |
+| `MARKDOWN_PRESET_PORTAL`                        | Portal / skill HTML                     |
+| `MARKDOWN_PRESET_README`                        | README / registry desk                  |
+| `MARKDOWN_PRESET_SECURE`                        | Untrusted notes (no HTML blocks/spans)  |
+| `MARKDOWN_PRESET_DESIGN`                        | Wiki + math + heading ids               |
+| `MARKDOWN_PRESETS` / `resolveMarkdownPreset`    | Named CLI/configuration boundary        |
+| `markdownHtml` / `mergeMarkdownOptions`         | Render helpers                          |
+| `markdownNestedList` / `markdownNestedListRows` | Nested tree, lineage, table rows + meta |
 
 `Bun.markdown` parses and renders Markdown; it does not format source text.
 Generate deterministic Markdown first, then use `.render` for structural proof
@@ -23,8 +23,12 @@ or `.html` for the HTML projection.
 For list-aware consumers, `markdownNestedList(source)` retains both
 `Bun.markdown.ListMeta` and `ListItemMeta`, returning a nested tree,
 parent-first flat rows, and outline text. Ordered descendants receive stable
-hierarchical paths such as `1.2.2`; task and unordered items keep their native
-metadata without inventing a decimal path.
+hierarchical paths such as `1.2.2`, plus root-qualified keys and self-contained
+lineage. Task, unordered, and ordered-below-unordered items keep their native
+metadata without inventing a decimal ancestry. `markdownNestedListRows()`
+flattens the projection into the explicit
+`MARKDOWN_NESTED_LIST_TABLE_PROPERTIES` boundary for `inspectTable` / `logTable`
+consumers.
 
 The Bun blog code-block tool consumes these policies directly:
 

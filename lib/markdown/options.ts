@@ -472,9 +472,23 @@ export function markdownHtml(
   return Bun.markdown.html(markdown, options);
 }
 
+export type MarkdownListLineageSegment = {
+  kind: 'ordered' | 'unordered';
+  index: number;
+  number: number | null;
+  depth: number;
+  start?: number;
+  checked?: boolean;
+};
+
 export type MarkdownNestedListItem = {
   /** Hierarchical decimal path for ordered items, for example `1.2.2`. */
   path: string | null;
+  /** Root-qualified identity that remains unambiguous across mixed list kinds. */
+  key: string;
+  rootIndex: number;
+  /** Self-contained ancestry for flat consumers. */
+  lineage: readonly MarkdownListLineageSegment[];
   /** Display marker: hierarchical path, task state, or `-`. */
   marker: string;
   text: string;
@@ -489,6 +503,30 @@ export type MarkdownNestedListProjection = {
   text: string;
   items: readonly MarkdownNestedListItem[];
   flat: readonly MarkdownNestedListItem[];
+};
+
+export const MARKDOWN_NESTED_LIST_TABLE_PROPERTIES = [
+  'path',
+  'key',
+  'marker',
+  'text',
+  'depth',
+  'index',
+  'ordered',
+  'start',
+  'checked',
+] as const;
+
+export type MarkdownNestedListRow = {
+  path: string | null;
+  key: string;
+  marker: string;
+  text: string;
+  depth: number;
+  index: number;
+  ordered: boolean;
+  start: number | null;
+  checked: boolean | null;
 };
 
 type CapturedList = {
@@ -552,7 +590,11 @@ export function markdownNestedList(
   const flat: MarkdownNestedListItem[] = [];
   const lines: string[] = [];
 
-  function projectList(listId: number, parentPath: readonly number[]): MarkdownNestedListItem[] {
+  function projectList(
+    listId: number,
+    parentLineage: readonly MarkdownListLineageSegment[],
+    rootIndex: number
+  ): MarkdownNestedListItem[] {
     const list = lists[listId];
     if (!list) throw new Error(`Missing captured Markdown list ${listId}`);
 
@@ -560,13 +602,34 @@ export function markdownNestedList(
       const item = items[itemId];
       if (!item) throw new Error(`Missing captured Markdown list item ${itemId}`);
       const number = (item.meta.start ?? 1) + item.meta.index;
-      const pathParts = item.meta.ordered ? [...parentPath, number] : [...parentPath];
-      const path = item.meta.ordered ? pathParts.join('.') : null;
+      const segment: MarkdownListLineageSegment = {
+        kind: item.meta.ordered ? 'ordered' : 'unordered',
+        index: item.meta.index,
+        number: item.meta.ordered ? number : null,
+        depth: item.meta.depth,
+        ...(item.meta.start === undefined ? {} : { start: item.meta.start }),
+        ...(item.meta.checked === undefined ? {} : { checked: item.meta.checked }),
+      };
+      const lineage = [...parentLineage, segment];
+      const allOrdered = lineage.every(entry => entry.kind === 'ordered');
+      const path = allOrdered ? lineage.map(entry => entry.number).join('.') : null;
+      const key = `r${rootIndex + 1}:${lineage
+        .map(entry => (entry.kind === 'ordered' ? `o${entry.number}` : `u${entry.index + 1}`))
+        .join('.')}`;
       const marker =
-        item.meta.checked === undefined ? (path ?? '-') : item.meta.checked ? '[x]' : '[ ]';
+        item.meta.checked === undefined
+          ? item.meta.ordered
+            ? (path ?? String(number))
+            : '-'
+          : item.meta.checked
+            ? '[x]'
+            : '[ ]';
       const children: MarkdownNestedListItem[] = [];
       const projected: MarkdownNestedListItem = {
         path,
+        key,
+        rootIndex,
+        lineage,
         marker,
         text: item.text,
         listMeta: list.meta,
@@ -575,17 +638,36 @@ export function markdownNestedList(
       };
       flat.push(projected);
       lines.push(`${'  '.repeat(item.meta.depth)}${marker} ${item.text}`.trimEnd());
-      children.push(...item.listIds.flatMap(childId => projectList(childId, pathParts)));
+      children.push(...item.listIds.flatMap(childId => projectList(childId, lineage, rootIndex)));
       return projected;
     });
   }
 
   const rootIds = tokenIds(rendered, LIST_TOKEN);
-  const projectedItems = rootIds.flatMap(listId => projectList(listId, []));
+  const projectedItems = rootIds.flatMap((listId, rootIndex) => projectList(listId, [], rootIndex));
 
   return {
     text: lines.join('\n'),
     items: projectedItems,
     flat,
   };
+}
+
+/** Property-scoped flat rows suitable for the shared Bun.inspect.table facade. */
+export function markdownNestedListRows(
+  source: string | MarkdownNestedListProjection,
+  options: Bun.markdown.Options = MARKDOWN_OPTIONS_DEFAULTS
+): readonly MarkdownNestedListRow[] {
+  const projection = typeof source === 'string' ? markdownNestedList(source, options) : source;
+  return projection.flat.map(item => ({
+    path: item.path,
+    key: item.key,
+    marker: item.marker,
+    text: item.text,
+    depth: item.meta.depth,
+    index: item.meta.index,
+    ordered: item.meta.ordered,
+    start: item.meta.start ?? null,
+    checked: item.meta.checked ?? null,
+  }));
 }
