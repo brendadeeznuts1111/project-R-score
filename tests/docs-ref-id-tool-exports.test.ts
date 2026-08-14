@@ -187,6 +187,7 @@ describe('in-tool flagDocRef re-exports', () => {
     ]);
     expect(ALLOWED_LONG_REGISTRY['check:import-graph']).toEqual(['json', 'write-baseline']);
     expect(ALLOWED_LONG_REGISTRY['check:console-format']).toEqual(['staged', 'write-baseline']);
+    expect(ALLOWED_LONG_REGISTRY['precommit:ast-grep']).toContain('full');
     expect(ALLOWED_LONG_REGISTRY['concept:review']).toEqual([
       'list',
       'output',

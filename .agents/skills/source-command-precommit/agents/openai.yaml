@@ -7,7 +7,7 @@ default_prompt: |
   - bun run precommit
   - runner: scripts/pre-commit.ts (Bun Shell + Bun.env)
 
-  Or: bun run precommit:ast-grep:staged
+  Or: bun scripts/pre-commit-ast-grep.ts --staged
 
   On failure: read which gate failed, fix source, re-run gate, re-stage. Never --no-verify.
   Lane rule: stage only claimed files; never git add -A.

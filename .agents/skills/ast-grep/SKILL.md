@@ -17,10 +17,13 @@ Syntax-aware layer between `rg` and a full LSP. **No index to maintain.**
 
 ```bash
 bun install --frozen-lockfile
+.agents/skills/ast-grep/scripts/install.sh
 ```
 
-The private `@projects/ast-grep-skill` workspace is part of the root lockfile, so
-the normal root install hydrates the CLI and Effect dependencies used by pre-commit.
+The private `@projects/ast-grep-skill` workspace is part of the root lockfile,
+so the normal root install owns dependency resolution. The skill installer runs
+from its own directory to create the local `.bin` required by the doctor without
+pruning root workspace links under the isolated linker.
 
 **Portable global fallback:**
 
@@ -45,7 +48,8 @@ python3 scripts/ast_grep_helper.py doctor --fix       # install skill pin if mis
 
 ## Bun native (preferred entry)
 
-Use `bun scripts/bun-cli.ts` or `bun run` from the skill directory — same subcommands, spawned via `Bun.spawn`:
+Use `bun scripts/bun-cli.ts` or `bun run` from the skill directory — same
+subcommands, spawned via `Bun.spawn`:
 
 ```bash
 cd .agents/skills/ast-grep
@@ -57,11 +61,13 @@ bun scripts/bun-cli.ts outline projects/active/sports-terminal-os/src/index.ts -
 bun scripts/bun-cli.ts audit --profile bun --only sports-terminal
 ```
 
-`--bun-rules` loads `outline-rules/bun-monorepo.yml` — extractors for `Bun.serve`, `Bun.file`, `Bun.spawn`, `bun:sqlite`, route handlers, MCP tools.
+`--bun-rules` loads `outline-rules/bun-monorepo.yml` — extractors for
+`Bun.serve`, `Bun.file`, `Bun.spawn`, `bun:sqlite`, route handlers, MCP tools.
 
 ## Primary entry: `ast_grep_helper.py`
 
-Agent default — validates patterns, truncates huge output, two-pass replace, **outline**:
+Agent default — validates patterns, truncates huge output, two-pass replace,
+**outline**:
 
 ```bash
 AG=.agents/skills/ast-grep/scripts/ast_grep_helper.py
@@ -220,104 +226,117 @@ python3 $AG test
 ./scripts/ci.sh                      # test + profile audit --fail-on
 ```
 
-Low-level escape hatch: `scripts/sg.sh` (raw ast-grep argv, outline-aware binary pick).
+Low-level escape hatch: `scripts/sg.sh` (raw ast-grep argv, outline-aware binary
+pick).
 
-Deep workspace guide: [references/monorepo.md](references/monorepo.md) · patterns: [references/recipes.md](references/recipes.md)
+Deep workspace guide: [references/monorepo.md](references/monorepo.md) ·
+patterns: [references/recipes.md](references/recipes.md)
 
 ## MCP (Cursor)
 
-Registered in `.cursor/mcp.json` as **`ast-grep`** — pi-ast-grep tool parity:
+Registered in the workspace authority `.mcp.json` as **`ast-grep`**;
+`.cursor/mcp.json` is a generated client link. Tool parity:
 
-| MCP tool | CLI equivalent |
-|---|---|
-| `ast_grep_outline` | `outline` (+ `bunRules: true` for Bun extractors) |
-| `ast_grep_search` | `search` |
-| `ast_grep_files` | `files` |
-| `ast_grep_map` | `map` (`heatmap: true` for symbol density) |
-| `ast_grep_zones` | `zones` (`stats: true` for symbol totals) |
-| `ast_grep_index` | `index` (cross-target symbol lookup) |
-| `ast_grep_nav` | `nav` (guided zone read order) |
-| `ast_grep_anchors` | `anchors` (validate repo-map anchor symbols) |
-| `ast_grep_exports` | `exports` (export surface per target) |
-| `ast_grep_collisions` | `collisions` (duplicate symbol names) |
-| `ast_grep_graph` | `graph` (import/depends_on edges) |
-| `ast_grep_jump` | `jump` (symbol → file:line) |
-| `ast_grep_bun` | `bun patterns/inventory/search` (Bun native APIs); `supply-chain-layers/rules/scan` for Layer 4.5 |
-| `ast_grep_scan` | `scan` (`fix: true` alias for `apply`) |
-| `ast_grep_fix` | `fix` (all autofix rules) |
-| `ast_grep_replace` | `replace` (`fix: true` to apply) |
-| `ast_grep_validate` | `validate` |
-| `ast_grep_rules` | `rules` |
-| `ast_grep_audit` | `audit` (`profile`, `verbose`, `format`) |
-| `ast_grep_codemods` | `codemods` |
-| `ast_grep_codemod` | `codemod` |
-| `ast_grep_test` | `test` |
-| `ast_grep_doctor` | `doctor` (`fix: true` installs skill pin) |
-| `ast_grep_network` | `supply-chain network` (`pointers`, `dryRun`, `validateGroundTruth`, `seed`, `loop`) |
+| MCP tool              | CLI equivalent                                                                                                 |
+| --------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `ast_grep_outline`    | `outline` (+ `bunRules: true` for Bun extractors)                                                              |
+| `ast_grep_search`     | `search`                                                                                                       |
+| `ast_grep_files`      | `files`                                                                                                        |
+| `ast_grep_map`        | `map` (`heatmap: true` for symbol density)                                                                     |
+| `ast_grep_zones`      | `zones` (`stats: true` for symbol totals)                                                                      |
+| `ast_grep_index`      | `index` (cross-target symbol lookup)                                                                           |
+| `ast_grep_nav`        | `nav` (guided zone read order)                                                                                 |
+| `ast_grep_anchors`    | `anchors` (validate repo-map anchor symbols)                                                                   |
+| `ast_grep_exports`    | `exports` (export surface per target)                                                                          |
+| `ast_grep_collisions` | `collisions` (duplicate symbol names)                                                                          |
+| `ast_grep_graph`      | `graph` (import/depends_on edges)                                                                              |
+| `ast_grep_jump`       | `jump` (symbol → file:line)                                                                                    |
+| `ast_grep_bun`        | `bun patterns/inventory/search` (Bun native APIs); `supply-chain-layers/rules/scan` for Layer 4.5              |
+| `ast_grep_scan`       | `scan` (`fix: true` alias for `apply`)                                                                         |
+| `ast_grep_fix`        | `fix` (all autofix rules)                                                                                      |
+| `ast_grep_replace`    | `replace` (`fix: true` to apply)                                                                               |
+| `ast_grep_validate`   | `validate`                                                                                                     |
+| `ast_grep_rules`      | `rules`                                                                                                        |
+| `ast_grep_audit`      | `audit` (`profile`, `verbose`, `format`)                                                                       |
+| `ast_grep_codemods`   | `codemods`                                                                                                     |
+| `ast_grep_codemod`    | `codemod`                                                                                                      |
+| `ast_grep_test`       | `test`                                                                                                         |
+| `ast_grep_doctor`     | `doctor` (`fix: true` installs skill pin)                                                                      |
+| `ast_grep_network`    | `supply-chain network` (`pointers`, `dryRun`, `validateGroundTruth`, `seed`, `loop`)                           |
 | `ast_grep_skill_loop` | `skill loop` (`action`: list, run, matrix, bench, bench-snapshot, close-loop, full, plan, workflow, precommit) |
-| `ast_grep_precommit` | Husky gates: hygiene, harness, rule tests, semver, supply-chain packages |
-| `ast_grep_workflow` | Workflow loop with effect plugins (log, alert, fix, report, custom) |
+| `ast_grep_precommit`  | Husky gates: hygiene, harness, rule tests, semver, supply-chain packages                                       |
+| `ast_grep_workflow`   | Workflow loop with effect plugins (log, alert, fix, report, custom)                                            |
 
 Reload MCP after install. Test: `./scripts/verify-mcp.sh`
 
 ## Pre-commit + semver gates
 
-Husky hook (repo root): `.husky/pre-commit` → `bun run precommit:ast-grep` when skill paths staged.
+Husky hook (repo root): `.husky/pre-commit` → `bun run precommit:ast-grep` when
+skill paths staged.
 
 ```bash
 bun run precommit:ast-grep              # full: doctor + rules + semver + packages
-bun run precommit:ast-grep:changed      # when ast-grep paths differ from HEAD
+bun scripts/pre-commit-ast-grep.ts --changed  # changed ast-grep paths vs HEAD
 bun run precommit                       # full husky chain
 bun run precommit:rules
 bun run precommit:semver
 bun run precommit:packages
 ```
 
-Slash commands: `/precommit` · `/workflow` · `/ast-grep` · shared reference: [references/agent-tooling.md](../references/agent-tooling.md)
+Slash commands: `/precommit` · `/workflow` · `/ast-grep` · shared reference:
+[references/agent-tooling.md](../references/agent-tooling.md)
 
 ## Workflow checklist
 
-1. **Orient** — `nav --zone <zone>` or `map --heatmap` for unfamiliar monorepo areas
+1. **Orient** — `nav --zone <zone>` or `map --heatmap` for unfamiliar monorepo
+   areas
 2. **Explore** — `outline --view names` or `digest` on target path
 3. **Narrow** — `files` for path list only; then `search` for line matches
-4. **Lint** — `scan` with bundled rules before broad edits; `fix` for autofix rules
-5. **Rewrite** — preview `replace`, then `--fix` / `--apply` (prints `git diff` when in repo)
+4. **Lint** — `scan` with bundled rules before broad edits; `fix` for autofix
+   rules
+5. **Rewrite** — preview `replace`, then `--fix` / `--apply` (prints `git diff`
+   when in repo)
 6. **Verify** — project tests
 
 ## Outline views
 
-| View | Use when |
-|---|---|
-| `names` | Symbol inventory, exports map |
-| `digest` | Quick skeleton with key lines |
+| View         | Use when                      |
+| ------------ | ----------------------------- |
+| `names`      | Symbol inventory, exports map |
+| `digest`     | Quick skeleton with key lines |
 | `signatures` | Types + params without bodies |
-| `expanded` | Members and nested detail |
+| `expanded`   | Members and nested detail     |
 
 ## When to use what
 
-| Question | Tool |
-|---|---|
-| What symbols/exports exist? | `outline --view names` |
-| Quick file skeleton | `outline --view digest` |
-| Find every `fetch()` call | `search` |
-| Codemod across files | `replace` then `--apply` |
-| Project lint rules | `scan` |
-| String in comments/filenames | `rg` (not ast-grep) |
+| Question                     | Tool                     |
+| ---------------------------- | ------------------------ |
+| What symbols/exports exist?  | `outline --view names`   |
+| Quick file skeleton          | `outline --view digest`  |
+| Find every `fetch()` call    | `search`                 |
+| Codemod across files         | `replace` then `--apply` |
+| Project lint rules           | `scan`                   |
+| String in comments/filenames | `rg` (not ast-grep)      |
 
 ## Pattern rules (critical)
 
 - `$VAR` = one AST node, `$$$` = zero or more nodes — **not regex**
 - Patterns must be **valid parseable code** for the target language
-- `--json` and `--update-all` are mutually exclusive — helper runs two passes on `--apply`
+- `--json` and `--update-all` are mutually exclusive — helper runs two passes on
+  `--apply`
 
-See [references/patterns.md](references/patterns.md) and [references/pitfalls.md](references/pitfalls.md).
+See [references/patterns.md](references/patterns.md) and
+[references/pitfalls.md](references/pitfalls.md).
 
 ## Agent guidelines
 
 - Run `outline` before reading files >200 lines or unfamiliar directories.
-- Call `validate` when a pattern looks like regex or returns zero matches unexpectedly.
-- Preview broad rewrites; apply only when paths/globs/patterns are narrow and intentional.
-- Output auto-truncates at 2,000 lines / 50 KiB — narrow scope instead of widening.
+- Call `validate` when a pattern looks like regex or returns zero matches
+  unexpectedly.
+- Preview broad rewrites; apply only when paths/globs/patterns are narrow and
+  intentional.
+- Output auto-truncates at 2,000 lines / 50 KiB — narrow scope instead of
+  widening.
 
 ## Pi install (separate harness)
 
