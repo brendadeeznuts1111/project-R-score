@@ -1610,6 +1610,7 @@
     "install:all": "bun scripts/with-bun-cache-env.ts install",
     "install:verify": "bun scripts/verify-install-cache.ts",
     "add:safe": "bun scripts/bun-add-safe.ts",
+    "remove:safe": "bun scripts/bun-remove-safe.ts",
     "install:verify:strict": "bun scripts/verify-install-cache.ts --strict",
     "install:machine:health": "bun scripts/machine-bun-health.ts",
     "install:cache:lifecycle": "bun scripts/bun-cache-lifecycle.ts --dry-run",

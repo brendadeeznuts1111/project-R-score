@@ -333,6 +333,7 @@ bun run install:machine:health
 bun run install:cache:lifecycle
 bun scripts/with-bun-cache-env.ts ci   # GHA / ephemeral
 bun run add:safe -- <pkg>       # unlock → bun add --exact → restore freeze
+bun run remove:safe -- <pkg>    # unlock → bun remove → restore freeze
 bun pm ls · bun pm why <pkg> · bun audit · bun outdated --filter './'
 ```
 

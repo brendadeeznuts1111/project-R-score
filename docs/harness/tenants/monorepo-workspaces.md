@@ -233,7 +233,7 @@ Never substitute `pass-cli` / inject for `bun install` / `bun pm` / `bun audit`.
 | ------- | ------ | ----- |
 | `bun install` | Frozen OK for day loop. Worktrees: `bun run install:all` (explicit `--cwd`). | `bun run install:verify` · `:strict` |
 | `bun add` | Prefer `bun run add:safe -- <pkg> [--dev]` (unlock → `--exact` → restore freeze). | `install:verify` + Tier-A |
-| `bun remove` | Unlock root `frozenLockfile` → `bun remove <pkg>` → restore `true` → commit lockfile. | `install:verify` |
+| `bun remove` | Prefer `bun run remove:safe -- <pkg>` (unlock → remove → restore freeze). | `install:verify` |
 | `bun update` | Unlock → update → restore. Bump shared pins in root **`catalog`**, not N copies. | `bun outdated --filter './'` |
 | `bunx` | **`bunx --bun <bin> …`** (space-separated flags). Workspace bins after `workspace:*` link. | `bunx --bun proton-pass version` |
 
