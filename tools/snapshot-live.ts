@@ -23,7 +23,7 @@
 // @verified Bun.version · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch
-// @see https://bun.com/docs/runtime/child-process#timeouts — Bun.spawn timeout
+// @see https://bun.com/docs/runtime/child-process#using-timeout-and-killsignal — Bun.spawn timeout
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
 // @see https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing — Bun.Image (v1.3.14)
