@@ -104,6 +104,37 @@ interface Violation {
   action: string;
 }
 
+interface GitIgnoreMatch {
+  source: string;
+  line: number;
+  pattern: string;
+  path: string;
+  ignored: boolean;
+}
+
+interface GitIgnoreExpectation {
+  path: string;
+  ignored: boolean;
+}
+
+const ROOT_GITIGNORE_EXPECTATIONS: readonly GitIgnoreExpectation[] = [
+  { path: 'bun.lock', ignored: false },
+  { path: 'packages/example/bun.lock', ignored: false },
+  { path: 'packages/example/.bunfig.toml', ignored: false },
+  { path: 'src/example.dev.ts', ignored: false },
+  { path: 'src/example.local.ts', ignored: false },
+  { path: 'src/example.debug.ts', ignored: false },
+  { path: 'wrangler.toml', ignored: false },
+  { path: '.bun-version', ignored: false },
+  { path: 'tools/vendor/bun-types/package.tgz', ignored: false },
+  { path: '.bunfig.toml', ignored: true },
+  { path: 'packages/example/.dev.vars', ignored: true },
+  { path: '.wrangler/state.json', ignored: true },
+  { path: '.codex-worktrees/example/HEAD', ignored: true },
+  { path: 'coverage/lcov.info', ignored: true },
+  { path: 'profiles/command.cpuprofile', ignored: true },
+] as const;
+
 const DEFAULT_ROUTE: RootOutputRoute = {
   owner: 'repository',
   target: 'an allowlisted owner directory',
@@ -120,21 +151,112 @@ function violation(file: string, rule: string): Violation {
   };
 }
 
-/** Resolve all ignored candidates with one git process instead of one per entry. */
+function nulInput(values: string[]): Uint8Array {
+  return new TextEncoder().encode(`${values.join('\0')}\0`);
+}
+
+/** Resolve all ignored candidates with one path-safe Git process instead of one per entry. */
 function findGitignored(relPaths: string[], cwd = ROOT): Set<string> {
   if (relPaths.length === 0) return new Set();
-  const probe = Bun.spawnSync(['git', 'check-ignore', '--', ...relPaths], {
+  const probe = Bun.spawnSync(['git', 'check-ignore', '-z', '--stdin'], {
     cwd,
+    stdin: nulInput(relPaths),
     stdout: 'pipe',
     stderr: 'pipe',
   });
-  return new Set(
-    probe.stdout
-      .toString()
-      .split('\n')
-      .map(path => path.trim())
-      .filter(Boolean)
+  if (probe.exitCode > 1) {
+    throw new Error(`git check-ignore failed: ${probe.stderr.toString().trim()}`);
+  }
+  return new Set(probe.stdout.toString().split('\0').filter(Boolean));
+}
+
+/** Inspect the owning ignore rule for each matched path in one NUL-delimited query. */
+function inspectGitignored(relPaths: string[], cwd = ROOT): Map<string, GitIgnoreMatch> {
+  if (relPaths.length === 0) return new Map();
+  const probe = Bun.spawnSync(['git', 'check-ignore', '--no-index', '-v', '-z', '--stdin'], {
+    cwd,
+    stdin: nulInput(relPaths),
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  if (probe.exitCode > 1) {
+    throw new Error(`git check-ignore --verbose failed: ${probe.stderr.toString().trim()}`);
+  }
+
+  const fields = probe.stdout.toString().split('\0').filter(Boolean);
+  if (fields.length % 4 !== 0) {
+    throw new Error(`git check-ignore returned ${fields.length} fields; expected groups of four`);
+  }
+
+  const matches = new Map<string, GitIgnoreMatch>();
+  for (let index = 0; index < fields.length; index += 4) {
+    const [source, line, pattern, path] = fields.slice(index, index + 4);
+    if (!source || !line || !pattern || !path) continue;
+    matches.set(path, {
+      source,
+      line: Number.parseInt(line, 10),
+      pattern,
+      path,
+      ignored: !pattern.startsWith('!'),
+    });
+  }
+  return matches;
+}
+
+function rootGitignoreRules(source: string): Array<{ line: number; pattern: string }> {
+  return source
+    .split(/\r?\n/)
+    .map((pattern, index) => ({ line: index + 1, pattern: pattern.trim() }))
+    .filter(({ pattern }) => pattern.length > 0 && !pattern.startsWith('#'));
+}
+
+async function checkRootGitignoreContract(cwd = ROOT): Promise<Violation[]> {
+  const ignorePath = joinPath(cwd, '.gitignore');
+  const source = await Bun.file(ignorePath).text();
+  const rules = rootGitignoreRules(source);
+  const linesByPattern = new Map<string, number[]>();
+  for (const { line, pattern } of rules) {
+    const lines = linesByPattern.get(pattern) ?? [];
+    lines.push(line);
+    linesByPattern.set(pattern, lines);
+  }
+
+  const violations: Violation[] = [];
+  for (const [pattern, lines] of linesByPattern) {
+    if (lines.length < 2) continue;
+    violations.push({
+      file: '.gitignore',
+      rule: 'duplicate-gitignore-rule',
+      owner: 'repository',
+      action: `keep one ${JSON.stringify(pattern)} rule; duplicates at lines ${lines.join(', ')}`,
+    });
+  }
+
+  const matches = inspectGitignored(
+    ROOT_GITIGNORE_EXPECTATIONS.map(expectation => expectation.path),
+    cwd
   );
+  for (const expectation of ROOT_GITIGNORE_EXPECTATIONS) {
+    const match = matches.get(expectation.path);
+    if (expectation.ignored && (!match?.ignored || match.source !== '.gitignore')) {
+      violations.push({
+        file: expectation.path,
+        rule: 'gitignore-undermatch',
+        owner: 'repository',
+        action: match
+          ? `own this local-only path in .gitignore; currently matched by ${match.source}:${match.line}`
+          : 'add a scoped .gitignore rule for this local-only path',
+      });
+    } else if (!expectation.ignored && match?.ignored) {
+      violations.push({
+        file: expectation.path,
+        rule: 'gitignore-overmatch',
+        owner: 'repository',
+        action: `narrow ${match.source}:${match.line} ${JSON.stringify(match.pattern)} so this source artifact stays visible`,
+      });
+    }
+  }
+  return violations;
 }
 
 function dedupeViolations(violations: Violation[]): Violation[] {
@@ -315,6 +437,8 @@ async function main() {
     throw new Error('--staged and --tracked are mutually exclusive');
   }
 
+  findings.push(...(await checkRootGitignoreContract()));
+
   if (trackedOnly) {
     findings.push(...(await findTrackedViolations()));
   } else if (stagedOnly) {
@@ -363,8 +487,12 @@ export {
   ALLOWED_ROOT_DIRS,
   FORBIDDEN_ROOT_DIRS,
   ALLOWED_STAGED_ENTRYPOINTS,
+  ROOT_GITIGNORE_EXPECTATIONS,
   dedupeViolations,
   findGitignored,
+  inspectGitignored,
+  rootGitignoreRules,
+  checkRootGitignoreContract,
   findRootClutter,
   findStrayFiles,
   findTrackedViolations,
