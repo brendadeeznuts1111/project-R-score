@@ -202,14 +202,16 @@ the runtime guide for behavior and examples, and the exact member reference for
 the callable or type contract. The obsolete `/docs/guides.md` route is not an
 authority URL.
 
-| Surface                  | Runtime guide                                                            | Exact API reference                                           | Official release                                        | Latest recorded update                                          |
-| ------------------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------- |
-| `Bun.markdown.html`      | [HTML](https://bun.com/docs/runtime/markdown#bun-markdown-html)          | [html](https://bun.com/reference/bun/markdown/html)           | [1.3.8 · 2026-01-29](https://bun.com/blog/bun-v1.3.8)   | none                                                            |
-| `Bun.markdown.render`    | [render](https://bun.com/docs/runtime/markdown#bun-markdown-render)      | [render](https://bun.com/reference/bun/markdown/render)       | [1.3.8 · 2026-01-29](https://bun.com/blog/bun-v1.3.8)   | [changed 1.3.11 · 2026-03-18](https://bun.com/blog/bun-v1.3.11) |
-| `Bun.markdown.react`     | [React](https://bun.com/docs/runtime/markdown#bun-markdown-react)        | [react](https://bun.com/reference/bun/markdown/react)         | [1.3.8 · 2026-01-29](https://bun.com/blog/bun-v1.3.8)   | [changed 1.3.9 · 2026-02-08](https://bun.com/blog/bun-v1.3.9)   |
-| `Bun.markdown.ansi`      | [ANSI](https://bun.com/docs/runtime/markdown#ansi-terminal-output)       | [ansi](https://bun.com/reference/bun/markdown/ansi)           | [1.3.12 · 2026-04-09](https://bun.com/blog/bun-v1.3.12) | [fixed 1.3.14 · 2026-05-13](https://bun.com/blog/bun-v1.3.14)   |
-| `Bun.markdown.Options`   | [options](https://bun.com/docs/runtime/markdown#options)                 | [Options](https://bun.com/reference/bun/markdown/Options)     | [1.3.8 · 2026-01-29](https://bun.com/blog/bun-v1.3.8)   | none                                                            |
-| `Bun.markdown.AnsiTheme` | [ANSI theme](https://bun.com/docs/runtime/markdown#ansi-terminal-output) | [AnsiTheme](https://bun.com/reference/bun/markdown/AnsiTheme) | [1.3.12 · 2026-04-09](https://bun.com/blog/bun-v1.3.12) | none                                                            |
+| Surface                     | Runtime guide                                                               | Exact API reference                                                 | Official release                                        | Latest recorded update                                          |
+| --------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------- |
+| `Bun.markdown.html`         | [HTML](https://bun.com/docs/runtime/markdown#bun-markdown-html)             | [html](https://bun.com/reference/bun/markdown/html)                 | [1.3.8 · 2026-01-29](https://bun.com/blog/bun-v1.3.8)   | none                                                            |
+| `Bun.markdown.render`       | [render](https://bun.com/docs/runtime/markdown#bun-markdown-render)         | [render](https://bun.com/reference/bun/markdown/render)             | [1.3.8 · 2026-01-29](https://bun.com/blog/bun-v1.3.8)   | [changed 1.3.11 · 2026-03-18](https://bun.com/blog/bun-v1.3.11) |
+| `Bun.markdown.react`        | [React](https://bun.com/docs/runtime/markdown#bun-markdown-react)           | [react](https://bun.com/reference/bun/markdown/react)               | [1.3.8 · 2026-01-29](https://bun.com/blog/bun-v1.3.8)   | [changed 1.3.9 · 2026-02-08](https://bun.com/blog/bun-v1.3.9)   |
+| `Bun.markdown.ansi`         | [ANSI](https://bun.com/docs/runtime/markdown#ansi-terminal-output)          | [ansi](https://bun.com/reference/bun/markdown/ansi)                 | [1.3.12 · 2026-04-09](https://bun.com/blog/bun-v1.3.12) | [fixed 1.3.14 · 2026-05-13](https://bun.com/blog/bun-v1.3.14)   |
+| `Bun.markdown.Options`      | [options](https://bun.com/docs/runtime/markdown#options)                    | [Options](https://bun.com/reference/bun/markdown/Options)           | [1.3.8 · 2026-01-29](https://bun.com/blog/bun-v1.3.8)   | none                                                            |
+| `Bun.markdown.ListMeta`     | [nested lists](https://bun.com/docs/runtime/markdown#nested-list-numbering) | [ListMeta](https://bun.com/reference/bun/markdown/ListMeta)         | [1.3.8 · 2026-01-29](https://bun.com/blog/bun-v1.3.8)   | none                                                            |
+| `Bun.markdown.ListItemMeta` | [item meta](https://bun.com/docs/runtime/markdown#list-item-meta)           | [ListItemMeta](https://bun.com/reference/bun/markdown/ListItemMeta) | [1.3.8 · 2026-01-29](https://bun.com/blog/bun-v1.3.8)   | none                                                            |
+| `Bun.markdown.AnsiTheme`    | [ANSI theme](https://bun.com/docs/runtime/markdown#ansi-terminal-output)    | [AnsiTheme](https://bun.com/reference/bun/markdown/AnsiTheme)       | [1.3.12 · 2026-04-09](https://bun.com/blog/bun-v1.3.12) | none                                                            |
 
 Supporting pipeline APIs are related, not aliases for Markdown behavior:
 
@@ -312,6 +314,37 @@ interface ImageMeta {
   title?: string;
 }
 ```
+
+#### 2.4.1 Hierarchical nested-list paths
+
+Bun provides local list metadata: `index`, `depth`, `ordered`, optional `start`,
+and optional task `checked` state. It does not provide an ancestor path such as
+`1.2.2` directly. The repository helper retains Bun's exact container and item
+metadata while deriving that path from the callback tree:
+
+```ts
+import { markdownNestedList } from '../../lib/markdown/options.ts';
+
+const outline = markdownNestedList(`1. top
+   1. child-one
+   2. child-two
+      1. grand-one
+      2. grand-two`);
+
+outline.flat[4];
+// {
+//   path: "1.2.2",
+//   marker: "1.2.2",
+//   text: "grand-two",
+//   listMeta: { ordered: true, start: 1, depth: 2 },
+//   meta: { index: 1, depth: 2, ordered: true, start: 1 },
+//   children: [],
+// }
+```
+
+The projection returns nested `items`, parent-first `flat` rows, and formatted
+`text`. Unordered and task items retain `path: null`; their `marker` is `-`,
+`[x]`, or `[ ]`, so the helper never fabricates numeric ancestry.
 
 ### 2.5 React component overrides
 

@@ -269,10 +269,11 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   `Bun.inspect.table` properties, reads saved HTML through a typed `BunFile`,
   combines index/token-join/derived behavior behind `--mode` flags, and projects
   the generated source through named plus exact `Bun.markdown.Options` HTML
-  policies or the complete scoped `Bun.markdown.AnsiTheme` when requested while
-  `--references` prints the consolidated Bun guide, exact member, and officially
-  evidenced release map without fetching input (`boundary`) _Ratchet_ →
-  `bun test tests/bun-blog-codeblocks.test.ts`
+  policies or the complete scoped `Bun.markdown.AnsiTheme` when requested,
+  preserves nested `ListMeta` / `ListItemMeta` with hierarchical paths such as
+  `1.2.2`, and lets `--references` print the consolidated Bun guide, exact
+  member, and officially evidenced release map without fetching input
+  (`boundary`) _Ratchet_ → `bun test tests/bun-blog-codeblocks.test.ts`
 - **`blog-codeblocks-journey`** — Live Bun blog HTML traverses `fetchPostHtml` →
   `extractCodeBlocks` with the expected code-block inventory (`journey`)
   _Ratchet_ → `bun test tests/journey/blog-codeblocks-journey.test.ts`

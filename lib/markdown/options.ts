@@ -3,6 +3,10 @@
 // @see https://bun.com/docs/runtime/markdown#autolinks — autolinks true | { url, www, email }
 // @see https://bun.com/docs/runtime/markdown#heading-ids — headings true | { ids, autolink }
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
+// @see https://bun.com/docs/runtime/markdown#nested-list-numbering — nested list numbering
+// @see https://bun.com/docs/runtime/markdown#list-item-meta — listItem metadata
+// @see https://bun.com/reference/bun/markdown/ListMeta — Bun.markdown.ListMeta
+// @see https://bun.com/reference/bun/markdown/ListItemMeta — Bun.markdown.ListItemMeta
 // @see https://bun.com/blog/bun-v1.3.8#bun-markdown-built-in-markdown-parser — ship note (flat headingIds obsolete)
 /**
  * Bun.markdown.Options SSOT — defaults + named presets for HTML rendering.
@@ -81,6 +85,26 @@ export const BUN_MARKDOWN_CROSS_REFERENCES = [
     role: 'parser configuration',
     guide: 'https://bun.com/docs/runtime/markdown#options',
     reference: 'https://bun.com/reference/bun/markdown/Options',
+    released: 'v1.3.8 · 2026-01-29',
+    releaseRef: 'https://bun.com/blog/bun-v1.3.8',
+    latestUpdate: 'none-recorded',
+    updateRef: 'none-recorded',
+  },
+  {
+    surface: 'Bun.markdown.ListMeta',
+    role: 'nested list container metadata',
+    guide: 'https://bun.com/docs/runtime/markdown#nested-list-numbering',
+    reference: 'https://bun.com/reference/bun/markdown/ListMeta',
+    released: 'v1.3.8 · 2026-01-29',
+    releaseRef: 'https://bun.com/blog/bun-v1.3.8',
+    latestUpdate: 'none-recorded',
+    updateRef: 'none-recorded',
+  },
+  {
+    surface: 'Bun.markdown.ListItemMeta',
+    role: 'nested item index/depth/start/task metadata',
+    guide: 'https://bun.com/docs/runtime/markdown#list-item-meta',
+    reference: 'https://bun.com/reference/bun/markdown/ListItemMeta',
     released: 'v1.3.8 · 2026-01-29',
     releaseRef: 'https://bun.com/blog/bun-v1.3.8',
     latestUpdate: 'none-recorded',
@@ -446,4 +470,122 @@ export function markdownHtml(
   options: Bun.markdown.Options = MARKDOWN_PRESET_README
 ): string {
   return Bun.markdown.html(markdown, options);
+}
+
+export type MarkdownNestedListItem = {
+  /** Hierarchical decimal path for ordered items, for example `1.2.2`. */
+  path: string | null;
+  /** Display marker: hierarchical path, task state, or `-`. */
+  marker: string;
+  text: string;
+  /** Exact metadata supplied by Bun's containing list callback. */
+  listMeta: Readonly<Bun.markdown.ListMeta>;
+  /** Exact metadata supplied by Bun's listItem callback. */
+  meta: Readonly<Bun.markdown.ListItemMeta>;
+  children: readonly MarkdownNestedListItem[];
+};
+
+export type MarkdownNestedListProjection = {
+  text: string;
+  items: readonly MarkdownNestedListItem[];
+  flat: readonly MarkdownNestedListItem[];
+};
+
+type CapturedList = {
+  meta: Readonly<Bun.markdown.ListMeta>;
+  itemIds: number[];
+};
+
+type CapturedListItem = {
+  meta: Readonly<Bun.markdown.ListItemMeta>;
+  text: string;
+  listIds: number[];
+};
+
+const LIST_TOKEN_PREFIX = '@@FW_MARKDOWN_LIST_';
+const LIST_TOKEN = /@@FW_MARKDOWN_LIST_(\d+)@@/g;
+const ITEM_TOKEN = /@@FW_MARKDOWN_ITEM_(\d+)@@/g;
+
+function tokenIds(text: string, pattern: RegExp): number[] {
+  pattern.lastIndex = 0;
+  return [...text.matchAll(pattern)].map(match => Number(match[1]));
+}
+
+/**
+ * Project nested Markdown lists into hierarchical paths and exact Bun metadata.
+ *
+ * Bun invokes nested callbacks inside-out. Internal tokens retain that tree
+ * boundary until the root callback completes, then this function emits a
+ * stable parent-first tree, flat rows, and outline text.
+ */
+export function markdownNestedList(
+  markdown: string,
+  options: Bun.markdown.Options = MARKDOWN_OPTIONS_DEFAULTS
+): MarkdownNestedListProjection {
+  if (markdown.includes(LIST_TOKEN_PREFIX) || markdown.includes('@@FW_MARKDOWN_ITEM_')) {
+    throw new Error('Markdown input contains a reserved nested-list projection token');
+  }
+
+  const lists: CapturedList[] = [];
+  const items: CapturedListItem[] = [];
+  const rendered = Bun.markdown.render(
+    markdown,
+    {
+      list(children, meta) {
+        const id = lists.length;
+        lists.push({ meta: { ...meta }, itemIds: tokenIds(children, ITEM_TOKEN) });
+        return `${LIST_TOKEN_PREFIX}${id}@@`;
+      },
+      listItem(children, meta) {
+        const id = items.length;
+        items.push({
+          meta: { ...meta },
+          text: children.replaceAll(LIST_TOKEN, '').trim(),
+          listIds: tokenIds(children, LIST_TOKEN),
+        });
+        return `@@FW_MARKDOWN_ITEM_${id}@@`;
+      },
+    },
+    options
+  );
+
+  const flat: MarkdownNestedListItem[] = [];
+  const lines: string[] = [];
+
+  function projectList(listId: number, parentPath: readonly number[]): MarkdownNestedListItem[] {
+    const list = lists[listId];
+    if (!list) throw new Error(`Missing captured Markdown list ${listId}`);
+
+    return list.itemIds.map(itemId => {
+      const item = items[itemId];
+      if (!item) throw new Error(`Missing captured Markdown list item ${itemId}`);
+      const number = (item.meta.start ?? 1) + item.meta.index;
+      const pathParts = item.meta.ordered ? [...parentPath, number] : [...parentPath];
+      const path = item.meta.ordered ? pathParts.join('.') : null;
+      const marker =
+        item.meta.checked === undefined ? (path ?? '-') : item.meta.checked ? '[x]' : '[ ]';
+      const children: MarkdownNestedListItem[] = [];
+      const projected: MarkdownNestedListItem = {
+        path,
+        marker,
+        text: item.text,
+        listMeta: list.meta,
+        meta: item.meta,
+        children,
+      };
+      flat.push(projected);
+      lines.push(`${'  '.repeat(item.meta.depth)}${marker} ${item.text}`.trimEnd());
+      children.push(...item.listIds.flatMap(childId => projectList(childId, pathParts)));
+      return projected;
+    });
+  }
+
+  const rootIds = tokenIds(rendered, LIST_TOKEN);
+  const projectedItems = rootIds.flatMap(listId => projectList(listId, []));
+
+  return {
+    text: lines.join('\n'),
+    items: projectedItems,
+    flat,
+  };
 }

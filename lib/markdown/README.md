@@ -14,10 +14,17 @@ behavior must remain behind a focused runtime contract test.
 | `MARKDOWN_PRESET_DESIGN`                     | Wiki + math + heading ids               |
 | `MARKDOWN_PRESETS` / `resolveMarkdownPreset` | Named CLI/configuration boundary        |
 | `markdownHtml` / `mergeMarkdownOptions`      | Render helpers                          |
+| `markdownNestedList`                         | Nested tree + flat `1.2.2` paths + meta |
 
 `Bun.markdown` parses and renders Markdown; it does not format source text.
 Generate deterministic Markdown first, then use `.render` for structural proof
 or `.html` for the HTML projection.
+
+For list-aware consumers, `markdownNestedList(source)` retains both
+`Bun.markdown.ListMeta` and `ListItemMeta`, returning a nested tree,
+parent-first flat rows, and outline text. Ordered descendants receive stable
+hierarchical paths such as `1.2.2`; task and unordered items keep their native
+metadata without inventing a decimal path.
 
 The Bun blog code-block tool consumes these policies directly:
 

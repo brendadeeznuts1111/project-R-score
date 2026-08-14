@@ -16,6 +16,7 @@ import {
   MARKDOWN_PRESET_README,
   MARKDOWN_PRESET_SECURE,
   markdownHtml,
+  markdownNestedList,
   mergeMarkdownOptions,
   parseMarkdownOptionOverrides,
   resolveMarkdownPreset,
@@ -63,7 +64,7 @@ describe('Bun Markdown upstream cross-references', () => {
   test('uses the live Bun guides landing and exact member references', () => {
     expect(BUN_GUIDES_INDEX).toBe('https://bun.com/guides');
     expect(BUN_GUIDES_INDEX).not.toContain('/docs/guides.md');
-    expect(BUN_MARKDOWN_CROSS_REFERENCES).toHaveLength(12);
+    expect(BUN_MARKDOWN_CROSS_REFERENCES).toHaveLength(14);
 
     const surfaces = BUN_MARKDOWN_CROSS_REFERENCES.map(row => row.surface);
     const references = BUN_MARKDOWN_CROSS_REFERENCES.map(row => row.reference);
@@ -75,6 +76,8 @@ describe('Bun Markdown upstream cross-references', () => {
       'Bun.markdown.react',
       'Bun.markdown.ansi',
       'Bun.markdown.Options',
+      'Bun.markdown.ListMeta',
+      'Bun.markdown.ListItemMeta',
       'Bun.markdown.AnsiTheme',
       'Bun.Glob.match',
       'Bun.file',
@@ -105,6 +108,54 @@ describe('Bun Markdown upstream cross-references', () => {
     expect(provenance['Bun.color']?.releaseRef).toBe(
       'https://bun.com/blog/bun-v1.1.30'
     );
+  });
+});
+
+describe('markdownNestedList', () => {
+  test('projects a nested ordered item as hierarchical path 1.2.2 with exact meta', () => {
+    const result = markdownNestedList(
+      '1. top\n   1. child-one\n   2. child-two\n      1. grand-one\n      2. grand-two\n2. second'
+    );
+
+    expect(result.flat.map(item => item.path)).toEqual([
+      '1',
+      '1.1',
+      '1.2',
+      '1.2.1',
+      '1.2.2',
+      '2',
+    ]);
+    expect(result.flat.map(item => item.meta.depth)).toEqual([0, 1, 1, 2, 2, 0]);
+    expect(result.flat.map(item => item.meta.index)).toEqual([0, 0, 1, 0, 1, 1]);
+    expect(result.flat[4]).toMatchObject({
+      path: '1.2.2',
+      marker: '1.2.2',
+      text: 'grand-two',
+      listMeta: { ordered: true, start: 1, depth: 2 },
+      meta: { ordered: true, start: 1, depth: 2, index: 1 },
+    });
+    expect(result.items[0]?.children[1]?.children[1]?.path).toBe('1.2.2');
+    expect(result.text).toContain('    1.2.2 grand-two');
+  });
+
+  test('preserves unordered task metadata without inventing a decimal path', () => {
+    const result = markdownNestedList('- [x] done\n- [ ] todo');
+    expect(result.flat.map(item => ({ path: item.path, marker: item.marker, meta: item.meta }))).toEqual([
+      {
+        path: null,
+        marker: '[x]',
+        meta: { index: 0, depth: 0, ordered: false, checked: true },
+      },
+      {
+        path: null,
+        marker: '[ ]',
+        meta: { index: 1, depth: 0, ordered: false, checked: false },
+      },
+    ]);
+  });
+
+  test('fails closed on reserved internal projection tokens', () => {
+    expect(() => markdownNestedList('@@FW_MARKDOWN_LIST_0@@')).toThrow(/reserved/);
   });
 });
 
