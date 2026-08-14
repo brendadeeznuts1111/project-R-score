@@ -100,6 +100,51 @@ void uuid; void stringWidth; void shell; void NativeGlob;
     ]);
   });
 
+  test('tracks Bun.Image properties and explicitly typed bindings', () => {
+    const usages = collectCodeApiUsages(
+      `
+let image: Bun.Image;
+image = new Bun.Image(bytes);
+await image.toBuffer();
+void image.width;
+void image["height"];
+
+class Holder {
+  image!: Bun.Image;
+  dimensions() {
+    return [this.image.width, this.image.height];
+  }
+}
+`,
+      'fixture.ts'
+    );
+
+    expect(usages).toEqual(
+      new Set([
+        'Bun.Image',
+        'Bun.Image.toBuffer',
+        'Bun.Image.width',
+        'Bun.Image.height',
+      ])
+    );
+  });
+
+  test('does not rebind terminal results as Bun.Image pipelines', () => {
+    const usages = collectCodeApiUsages(
+      `
+const metadata = await new Bun.Image(bytes).metadata();
+void metadata.width;
+const encoded = await new Bun.Image(bytes).webp().bytes();
+void encoded.length;
+`,
+      'fixture.ts'
+    );
+
+    expect(usages).toEqual(
+      new Set(['Bun.Image', 'Bun.Image.metadata', 'Bun.Image.webp', 'Bun.Image.bytes'])
+    );
+  });
+
   test('does not treat declarations or object property names as API usage', () => {
     const usages = collectCodeApiUsages(
       'type Server = { TLSOptions: string }; const refs = { SocialMetadata: "docs" };',

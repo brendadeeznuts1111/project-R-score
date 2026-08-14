@@ -1,6 +1,6 @@
 {
   "schema": "factorywager/bun-api-index/v1",
-  "generated": "2026-08-14T04:58:19.868Z",
+  "generated": "2026-08-14T05:15:11.208Z",
   "bunVersion": "1.3.14",
   "ssot": {
     "llms": "https://bun.com/docs/llms.txt",
@@ -23,7 +23,7 @@
     "bun"
   ],
   "coverage": {
-    "generated": "2026-08-14T04:58:19.868Z",
+    "generated": "2026-08-14T05:15:11.208Z",
     "bunVersion": "1.3.14",
     "composite": {
       "pct": 92
@@ -99,8 +99,8 @@
       },
       "surface": {
         "versioned": {
-          "hit": 138,
-          "total": 161,
+          "hit": 144,
+          "total": 167,
           "pct": 86,
           "missing": [
             "Bun.fetch",
@@ -712,12 +712,24 @@
       "docs": "https://bun.com/docs/runtime/image#terminals"
     },
     {
+      "name": "Bun.Image.ErrorCode",
+      "docs": "https://bun.com/reference/bun/Image/ErrorCode"
+    },
+    {
+      "name": "Bun.Image.Filter",
+      "docs": "https://bun.com/reference/bun/Image/Filter"
+    },
+    {
       "name": "Bun.Image.flip",
       "docs": "https://bun.com/docs/runtime/image#rotate-flip"
     },
     {
       "name": "Bun.Image.flop",
       "docs": "https://bun.com/docs/runtime/image#rotate-flip"
+    },
+    {
+      "name": "Bun.Image.Format",
+      "docs": "https://bun.com/reference/bun/Image/Format"
     },
     {
       "name": "Bun.Image.fromClipboard",
@@ -730,6 +742,10 @@
     {
       "name": "Bun.Image.heic",
       "docs": "https://bun.com/docs/runtime/image#output-formats"
+    },
+    {
+      "name": "Bun.Image.height",
+      "docs": "https://bun.com/reference/bun/Image/height"
     },
     {
       "name": "Bun.Image.jpeg",
@@ -776,8 +792,16 @@
       "docs": "https://bun.com/docs/runtime/image#terminals"
     },
     {
+      "name": "Bun.Image.toBuffer",
+      "docs": "https://bun.com/reference/bun/Image/toBuffer"
+    },
+    {
       "name": "Bun.Image.webp",
       "docs": "https://bun.com/docs/runtime/image#output-formats"
+    },
+    {
+      "name": "Bun.Image.width",
+      "docs": "https://bun.com/reference/bun/Image/width"
     },
     {
       "name": "Bun.Image.write",
@@ -1244,5 +1268,5 @@
       "docs": "https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync"
     }
   ],
-  "count": 194
+  "count": 200
 }

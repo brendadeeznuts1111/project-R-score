@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/test/index#run-tests
 // @see https://bun.com/reference/node/tls/getCACertificates
 import { describe, expect, test } from 'bun:test';
+import ts from 'typescript';
 import {
   BUN_RELEASE_NOTE_ROWS,
   BUN_V1314_ANCHORS,
@@ -189,10 +190,13 @@ describe('lib/docs/bun-release-tracker', () => {
     const memberEntries = Object.entries(CANONICAL_IMAGE_REFS).filter(([name]) =>
       name.startsWith('Bun.Image.')
     );
-    expect(memberEntries.length).toBe(26);
+    expect(memberEntries.length).toBe(32);
     for (const [name, url] of memberEntries) {
-      expect(url.startsWith('https://bun.com/docs/runtime/image#')).toBe(true);
-      expect(expectedAnchors.has(new URL(url).hash.slice(1))).toBe(true);
+      const parsed = new URL(url);
+      const isRuntimeSection = parsed.pathname === '/docs/runtime/image';
+      const isGeneratedMember = parsed.pathname.startsWith('/reference/bun/Image/');
+      expect(isRuntimeSection || isGeneratedMember).toBe(true);
+      if (isRuntimeSection) expect(expectedAnchors.has(parsed.hash.slice(1))).toBe(true);
       expect(CANONICAL_REFS[name]).toBe(url);
     }
 
@@ -206,6 +210,64 @@ describe('lib/docs/bun-release-tracker', () => {
     const curated = CURATED_ENTRIES.filter(entry => entry.term.startsWith('Bun.Image.'));
     expect(curated.length).toBe(memberEntries.length);
     expect(curated.every(entry => entry.minVersion === '1.3.14')).toBe(true);
+  });
+
+  test('Bun.Image canonical references cover the installed bun-types surface', async () => {
+    const declarationPath = 'node_modules/bun-types/bun.d.ts';
+    const source = ts.createSourceFile(
+      declarationPath,
+      await Bun.file(declarationPath).text(),
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TS
+    );
+    const typeSurface = new Set<string>();
+
+    const memberName = (member: ts.ClassElement): string | undefined => {
+      if (!member.name) return undefined;
+      if (ts.isIdentifier(member.name) || ts.isStringLiteral(member.name)) return member.name.text;
+      return undefined;
+    };
+    const visit = (node: ts.Node, insideBun = false): void => {
+      const isBunNamespace =
+        ts.isModuleDeclaration(node) &&
+        ((ts.isIdentifier(node.name) && node.name.text === 'Bun') ||
+          (ts.isStringLiteral(node.name) && node.name.text === 'bun'));
+      const inBun = insideBun || isBunNamespace;
+
+      if (
+        inBun &&
+        ts.isModuleDeclaration(node) &&
+        ts.isIdentifier(node.name) &&
+        node.name.text === 'Image' &&
+        node.body &&
+        ts.isModuleBlock(node.body)
+      ) {
+        for (const statement of node.body.statements) {
+          if (
+            (ts.isInterfaceDeclaration(statement) || ts.isTypeAliasDeclaration(statement)) &&
+            statement.name
+          ) {
+            typeSurface.add(`Bun.Image.${statement.name.text}`);
+          }
+        }
+      }
+
+      if (inBun && ts.isClassDeclaration(node) && node.name?.text === 'Image') {
+        for (const member of node.members) {
+          const name = memberName(member);
+          if (name) typeSurface.add(`Bun.Image.${name}`);
+        }
+      }
+
+      ts.forEachChild(node, child => visit(child, inBun));
+    };
+    visit(source);
+
+    const canonicalSurface = new Set(
+      Object.keys(CANONICAL_IMAGE_REFS).filter(name => name.startsWith('Bun.Image.'))
+    );
+    expect([...canonicalSurface].sort()).toEqual([...typeSurface].sort());
   });
 
   test('FETCH_PROTOCOL_COVERAGE maps probes to canonical anchors', () => {

@@ -7,6 +7,8 @@
 // @verified Bun.Glob · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/glob#quickstart
 // @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.png
 // @released Bun.Image.png · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/ErrorCode — Bun.Image.ErrorCode
+// @released Bun.Image.ErrorCode · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/image#terminals — Bun.Image.write
 // @released Bun.Image.write · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
@@ -50,7 +52,6 @@ import {
   runSnapshot,
   type SnapshotManifest,
 } from './snapshot-core.ts';
-import { writeChartArtifacts } from './limit-chart.ts';
 
 export type VerdictStatus = 'LIVE' | 'STALE' | 'ACCESS_FAIL' | 'ACCESS_SKIP' | 'SKIP';
 
@@ -222,17 +223,19 @@ export type ImageHealthExpectations = {
   formats?: readonly string[];
   minWidth?: number;
   minHeight?: number;
-  /** Accept 1×1 probe PNGs used when chart rasterization is unsupported. */
+  /** Accept the known-good 1×1 PNG used by the metadata probe. */
   allowTiny?: boolean;
 };
 
 /** Stable Bun.Image error codes we branch on (see docs/IMAGES.md · v1.3.14). */
-const IMAGE_ERROR_CODES = new Set([
-  'ERR_IMAGE_FORMAT_UNSUPPORTED',
-  'ERR_IMAGE_UNKNOWN_FORMAT',
-  'ERR_IMAGE_TOO_MANY_PIXELS',
-  'ERR_IMAGE',
-]);
+const IMAGE_ERROR_CODES = {
+  ERR_IMAGE_FORMAT_UNSUPPORTED: true,
+  ERR_IMAGE_TOO_MANY_PIXELS: true,
+  ERR_IMAGE_DECODE_FAILED: true,
+  ERR_IMAGE_ENCODE_FAILED: true,
+  ERR_IMAGE_UNKNOWN_FORMAT: true,
+  ERR_INVALID_STATE: true,
+} as const satisfies Record<Bun.Image.ErrorCode, true>;
 
 const PNG_1x1_BYTES = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmLIQAAAABJRU5ErkJggg==',
@@ -304,7 +307,7 @@ export async function getImageMetadata(
     };
   } catch (e) {
     const err = e as Error & { code?: string };
-    const code = err.code && IMAGE_ERROR_CODES.has(err.code) ? err.code : (err.code ?? 'ERR_IMAGE');
+    const code = err.code && err.code in IMAGE_ERROR_CODES ? err.code : (err.code ?? 'ERR_IMAGE');
     return {
       ok: false,
       path,
@@ -312,16 +315,6 @@ export async function getImageMetadata(
       code,
     };
   }
-}
-
-/** Newest matching path under dir (lexicographic last = usually newest id). */
-export async function newestGlobMatch(dir: string, pattern: string): Promise<string | undefined> {
-  const glob = new Glob(pattern);
-  let last: string | undefined;
-  for await (const rel of glob.scan(dir)) {
-    last = `${dir}/${rel}`;
-  }
-  return last;
 }
 
 /** Prefer real chart PNGs over unit fixtures / thumbs (largest non-fixture wins). */
@@ -746,41 +739,8 @@ async function ensureProbePng(snapDir: string): Promise<string | undefined> {
   const existing = await pickProbePng(snapDir);
   if (existing) return existing;
 
-  const svgPath = await newestGlobMatch(snapDir, '**/chart.svg');
-  const anySvg = svgPath ?? (await newestGlobMatch(snapDir, '**/*.svg'));
-  if (anySvg) {
-    try {
-      // SVG may throw ERR_IMAGE_FORMAT_UNSUPPORTED — fall through to synthetic chart.
-      const out = anySvg.replace(/\.svg$/i, '.png');
-      await Bun.file(anySvg).image().png().write(out);
-      if (await Bun.file(out).exists()) return out;
-    } catch (e) {
-      const code = (e as Error & { code?: string }).code;
-      if (code !== 'ERR_IMAGE_FORMAT_UNSUPPORTED') {
-        /* keep trying synthetic */
-      }
-    }
-  }
-
-  try {
-    const chartBase = `${snapDir}/live-probe-chart`;
-    const { pngPath: written } = await writeChartArtifacts(
-      {
-        raises: 1,
-        decreases: 0,
-        netDelta: 0,
-        avgScore: null,
-        books: 1,
-        partners: 1,
-      },
-      chartBase
-    );
-    if (written) return written;
-  } catch {
-    /* ignore */
-  }
-
-  // Last resort: known-good 1×1 PNG so metadata() is always exercised.
+  // Bun.Image does not decode SVG. Use a known-good PNG so metadata() is
+  // exercised without a silent, guaranteed-to-fail rasterization attempt.
   const fallback = `${snapDir}/live-probe-1x1.png`;
   await Bun.write(fallback, PNG_1x1_BYTES);
   return fallback;

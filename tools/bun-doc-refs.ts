@@ -666,10 +666,15 @@ export const CANONICAL_IMAGE_REFS = {
   'Bun.Image': bunDocs('runtime/image', 'input'),
   'Blob.image': bunDocs('runtime/image', 'input'),
   'Bun.Image.ConstructorOptions': bunDocs('runtime/image', 'input'),
+  'Bun.Image.ErrorCode': bunReference('bun/Image/ErrorCode'),
+  'Bun.Image.Format': bunReference('bun/Image/Format'),
   'Bun.Image.metadata': bunDocs('runtime/image', 'metadata'),
   'Bun.Image.Metadata': bunDocs('runtime/image', 'metadata'),
+  'Bun.Image.width': bunReference('bun/Image/width'),
+  'Bun.Image.height': bunReference('bun/Image/height'),
   'Bun.Image.resize': bunDocs('runtime/image', 'resize'),
   'Bun.Image.ResizeOptions': bunDocs('runtime/image', 'resize'),
+  'Bun.Image.Filter': bunReference('bun/Image/Filter'),
   'Bun.Image.rotate': bunDocs('runtime/image', 'rotate-flip'),
   'Bun.Image.flip': bunDocs('runtime/image', 'rotate-flip'),
   'Bun.Image.flop': bunDocs('runtime/image', 'rotate-flip'),
@@ -682,6 +687,7 @@ export const CANONICAL_IMAGE_REFS = {
   'Bun.Image.avif': bunDocs('runtime/image', 'output-formats'),
   'Bun.Image.bytes': bunDocs('runtime/image', 'terminals'),
   'Bun.Image.buffer': bunDocs('runtime/image', 'terminals'),
+  'Bun.Image.toBuffer': bunReference('bun/Image/toBuffer'),
   'Bun.Image.blob': bunDocs('runtime/image', 'terminals'),
   'Bun.Image.toBase64': bunDocs('runtime/image', 'terminals'),
   'Bun.Image.dataurl': bunDocs('runtime/image', 'terminals'),
@@ -2001,6 +2007,18 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
   const usages = new Map<string, CodeApiUsage>();
   const namespaceBindings = new Map<string, ts.Symbol | undefined>();
   const imagePipelineBindings = new Set<ts.Symbol>();
+  const imageChainableMethods = new Set([
+    'resize',
+    'rotate',
+    'flip',
+    'flop',
+    'modulate',
+    'jpeg',
+    'png',
+    'webp',
+    'heic',
+    'avif',
+  ]);
   const add = (api: string, node: ts.Node): void => {
     const start = node.getStart(source);
     const location = source.getLineAndCharacterOfPosition(start);
@@ -2052,6 +2070,10 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
     const symbol = checker.getSymbolAtLocation(identifier);
     return symbol !== undefined && imagePipelineBindings.has(symbol);
   };
+  const isBoundImagePipelineAccess = (node: ts.PropertyAccessExpression): boolean => {
+    const symbol = checker.getSymbolAtLocation(node.name);
+    return symbol !== undefined && imagePipelineBindings.has(symbol);
+  };
   const isDirectImageConstructor = (node: ts.Expression): boolean => {
     const value = unwrapExpression(node);
     if (!ts.isNewExpression(value)) return false;
@@ -2072,11 +2094,13 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
   const isImagePipelineExpression = (node: ts.Expression): boolean => {
     const value = unwrapExpression(node);
     if (ts.isIdentifier(value)) return isBoundImagePipeline(value);
+    if (ts.isPropertyAccessExpression(value) && isBoundImagePipelineAccess(value)) return true;
     if (isDirectImageConstructor(value)) return true;
     if (!ts.isCallExpression(value)) return false;
     if (isBlobImageStart(value)) return true;
     return (
       ts.isPropertyAccessExpression(value.expression) &&
+      imageChainableMethods.has(value.expression.name.text) &&
       isImagePipelineExpression(value.expression.expression)
     );
   };
@@ -2084,6 +2108,17 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
     if (!ts.isPropertyAccessExpression(node.expression)) return undefined;
     if (!isImagePipelineExpression(node.expression.expression)) return undefined;
     return canonicalApi([`Bun.Image.${node.expression.name.text}`]);
+  };
+  const imageMemberForAccess = (
+    node: ts.PropertyAccessExpression | ts.ElementAccessExpression
+  ): string | undefined => {
+    if (!isImagePipelineExpression(node.expression)) return undefined;
+    const member = ts.isPropertyAccessExpression(node)
+      ? node.name.text
+      : node.argumentExpression && ts.isStringLiteral(node.argumentExpression)
+        ? node.argumentExpression.text
+        : undefined;
+    return member ? canonicalApi([`Bun.Image.${member}`]) : undefined;
   };
   const typeIsBunImage = (node: ts.TypeNode | undefined): boolean => {
     if (!node || !ts.isTypeReferenceNode(node)) return false;
@@ -2124,9 +2159,13 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
     if (
       ts.isVariableDeclaration(node) &&
       ts.isIdentifier(node.name) &&
-      node.initializer &&
-      isImagePipelineExpression(node.initializer)
+      ((node.initializer && isImagePipelineExpression(node.initializer)) ||
+        typeIsBunImage(node.type))
     ) {
+      bindImagePipeline(node.name);
+    }
+
+    if (ts.isPropertyDeclaration(node) && ts.isIdentifier(node.name) && typeIsBunImage(node.type)) {
       bindImagePipeline(node.name);
     }
 
@@ -2156,6 +2195,8 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
         const api = canonicalBunChain(normalized);
         if (api) add(api, node);
       }
+      const imageMember = imageMemberForAccess(node);
+      if (imageMember) add(imageMember, node);
     }
 
     if (

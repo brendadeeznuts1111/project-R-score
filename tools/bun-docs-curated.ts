@@ -113,10 +113,15 @@ export type CuratedEntry = {
 
 const CURATED_IMAGE_MEMBERS = [
   ['Bun.Image.ConstructorOptions', 'input', 'Input safety, EXIF orientation, and pixel limits'],
+  ['Bun.Image.ErrorCode', 'reference/bun/Image/ErrorCode', 'Stable terminal rejection codes'],
+  ['Bun.Image.Format', 'reference/bun/Image/Format', 'Decoded and encoded image formats'],
   ['Bun.Image.metadata', 'metadata', 'Read dimensions and format without decoding pixels'],
   ['Bun.Image.Metadata', 'metadata', 'Image metadata result shape'],
+  ['Bun.Image.width', 'reference/bun/Image/width', 'Output width after the first terminal'],
+  ['Bun.Image.height', 'reference/bun/Image/height', 'Output height after the first terminal'],
   ['Bun.Image.resize', 'resize', 'Resize with fit, enlargement, and resampling controls'],
   ['Bun.Image.ResizeOptions', 'resize', 'Resize fit, filter, and enlargement options'],
+  ['Bun.Image.Filter', 'reference/bun/Image/Filter', 'Resize resampling filter names'],
   ['Bun.Image.rotate', 'rotate-flip', 'Rotate clockwise in 90-degree increments'],
   ['Bun.Image.flip', 'rotate-flip', 'Mirror vertically about the x-axis'],
   ['Bun.Image.flop', 'rotate-flip', 'Mirror horizontally about the y-axis'],
@@ -129,6 +134,7 @@ const CURATED_IMAGE_MEMBERS = [
   ['Bun.Image.avif', 'output-formats', 'Select platform-dependent AVIF encoding'],
   ['Bun.Image.bytes', 'terminals', 'Execute the pipeline and return Uint8Array bytes'],
   ['Bun.Image.buffer', 'terminals', 'Execute the pipeline and return a Buffer'],
+  ['Bun.Image.toBuffer', 'reference/bun/Image/toBuffer', 'Sharp-compatible Buffer terminal alias'],
   ['Bun.Image.blob', 'terminals', 'Execute the pipeline and return a typed Blob'],
   ['Bun.Image.toBase64', 'terminals', 'Execute the pipeline and return base64 text'],
   ['Bun.Image.dataurl', 'terminals', 'Execute the pipeline and return an image data URL'],
@@ -150,7 +156,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   ...CURATED_IMAGE_MEMBERS.map(([term, anchor, description]) => ({
     term,
-    path: `runtime/image#${anchor}`,
+    path: anchor.startsWith('reference/') ? anchor : `runtime/image#${anchor}`,
     description,
     minVersion: '1.3.14',
     relatedTokens: ['Bun.Image'],
