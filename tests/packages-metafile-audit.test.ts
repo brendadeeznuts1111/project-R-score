@@ -29,8 +29,14 @@ describe('packages-metafile-audit', () => {
     expect(deep.map.quarantine).toBeDefined();
     expect(deep.map.summary?.quarantineCount).toBe(deep.map.quarantine!.length);
     expect(deep.map.packages.includes('package')).toBe(false);
+    expect({
+      buildSuccess: deep.buildSuccess,
+      logCount: deep.logCount,
+      notes: deep.notes,
+    }).toMatchObject({ buildSuccess: true, logCount: 0 });
     expect(deep.score).toBeGreaterThanOrEqual(90);
     expect(deep.grade).toBe('healthy');
+    expect(deep.orphans).not.toContain('packages/proton-pass/src/circuit.ts');
     expect(deep.map.packages.length).toBeGreaterThan(0);
     expect(deep.totals.mapLayers).toBe(deep.map.layers.length);
     expect(deep.totals.crossPackageEdges).toBe(deep.map.packageEdges.length);

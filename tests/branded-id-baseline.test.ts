@@ -65,8 +65,8 @@ describe('branded ID workflow UX', () => {
     });
 
     expect(result.exitCode).toBe(2);
-    expect(result.stderr.toString()).toContain('Unknown option(s): --smrat');
-    expect(result.stdout.toString()).toContain('Usage:');
+    expect(result.stderr.toString()).toContain('Unknown long option(s) in brand:baseline: --smrat');
+    expect(result.stderr.toString()).toContain('Allowed:');
   });
 
   test('--strict uses smart classification instead of the raw legacy rollup', () => {

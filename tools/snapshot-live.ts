@@ -23,7 +23,7 @@
 // @verified Bun.version · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch
-// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/child-process#timeouts — Bun.spawn timeout
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
 // @see https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing — Bun.Image (v1.3.14)
@@ -37,7 +37,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 /**
  * Live enhancement probe — score.factory-wager.com vs origin/main.
  *
- * Bun-native: fetch · Bun.$ (git) · Bun.CryptoHasher · Bun.Image · HTMLRewriter
+ * Bun-native: fetch · Bun.spawn (git) · Bun.CryptoHasher · Bun.Image · HTMLRewriter
  * · Bun.color (status via portal kernel palette) · import runSnapshot · logTable.
  *
  * Prefer this over ad-hoc `bun -e` one-liners — same checks, Access-aware,
@@ -47,7 +47,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  *   bun run snapshot:live:quick          # public plane only (Access 302 expected)
  *   bun --env-file ~/.reasonix/.env run snapshot:live -- --thumb
  */
-import { $, Glob } from 'bun';
+import { Glob } from 'bun';
 import { colorize, jsonOut, padEndWidth } from '../lib/console-depth.ts';
 import { deepEquals } from '../lib/deep-equals.ts';
 import { isBunImageError } from '../lib/image-metadata.ts';
@@ -393,14 +393,28 @@ export function accessHeadersFromEnv(
   });
 }
 
-/** Read a blob from git via Bun.$ (concise vs Bun.spawn). */
+/** Read a blob from git with bounded execution and output. */
 export async function gitShowText(refPath: string): Promise<string> {
-  const result = await $`git show ${refPath}`.quiet().nothrow();
-  if (result.exitCode !== 0) {
-    const err = result.stderr.toString().trim() || result.stdout.toString().slice(0, 200);
-    throw new Error(`git show ${refPath} failed (${result.exitCode}): ${err}`);
+  if (!/^[A-Za-z0-9_./-]+:[A-Za-z0-9_./-]+$/.test(refPath)) {
+    throw new Error(`Invalid git object path: ${refPath}`);
   }
-  return result.stdout.toString();
+  const proc = Bun.spawn(['git', 'show', refPath], {
+    stdout: 'pipe',
+    stderr: 'pipe',
+    timeout: 10_000,
+    maxBuffer: 8 * 1024 * 1024,
+  });
+  const [exitCode, stdout, stderr] = await Promise.all([
+    proc.exited,
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+  ]);
+  if (exitCode !== 0) {
+    const err = stderr.trim() || stdout.slice(0, 200);
+    const reason = proc.killed ? 'timed out or exceeded output limit' : `exit ${exitCode}`;
+    throw new Error(`git show ${refPath} failed (${reason}): ${err}`);
+  }
+  return stdout;
 }
 
 type GlossarySurface = {

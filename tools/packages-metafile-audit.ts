@@ -2,8 +2,11 @@
 // @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/bundler/index#metafile — Bun.build metafile
 // @see https://bun.com/docs/bundler/index#target — target bun
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -727,7 +730,17 @@ export async function runPackagesMetafileAudit(opts?: {
     }
   }
 
+  // Bun's metafile can retain a relative public re-export as an external import
+  // instead of adding the target as an input (notably for sideEffects:false
+  // workspace packages). It is still a reachable source edge and must not be
+  // reported as an orphan.
+  const scannedSet = new Set(scannedRel);
   const inGraph = new Set(inputs.keys());
+  for (const meta of inputs.values()) {
+    for (const imported of meta.imports) {
+      if (scannedSet.has(imported)) inGraph.add(imported);
+    }
+  }
   const orphans = scannedRel.filter(f => !inGraph.has(f));
   const leaves = [...inputs.entries()]
     .filter(([, m]) => m.imports.length === 0)

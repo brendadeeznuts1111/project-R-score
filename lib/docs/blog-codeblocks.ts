@@ -50,11 +50,13 @@ function nearestHeading(before: string): string {
 
 /** Parse `div.CodeBlock` (not `CodeBlockTab`) from Bun blog HTML. */
 export function extractCodeBlocks(html: string): ExtractResult {
-  const classHits = [...html.matchAll(/class="(CodeBlock(?:Tab)?)\s*"/g)];
-  const codeBlockTabCount = classHits.filter(m => m[1] === 'CodeBlockTab').length;
+  const classLists = [...html.matchAll(/<div\b[^>]*\bclass="([^"]*)"[^>]*>/g)].map(match =>
+    match[1]!.split(/\s+/)
+  );
+  const codeBlockTabCount = classLists.filter(classes => classes.includes('CodeBlockTab')).length;
 
   const blocks: CodeBlock[] = [];
-  const openRe = /<div class="CodeBlock\s*">/g;
+  const openRe = /<div\b[^>]*\bclass="[^"]*\bCodeBlock\b[^"]*"[^>]*>/g;
   let m: RegExpExecArray | null;
   while ((m = openRe.exec(html))) {
     const start = m.index;

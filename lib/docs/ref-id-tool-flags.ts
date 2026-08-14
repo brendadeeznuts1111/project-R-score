@@ -2274,7 +2274,7 @@ export const OPS_LIMITS_SEED_PATTERNS_ALLOWED_LONG = ['bake', 'force'] as const;
 export const OPS_HEALTH_TICK_ALLOWED_LONG = ['db'] as const;
 
 /** § — portal:optimize (`tools/optimize-portal-assets.ts`) — auto team plan */
-export const PORTAL_OPTIMIZE_ALLOWED_LONG = ['no-report'] as const;
+export const PORTAL_OPTIMIZE_ALLOWED_LONG = ['no-report', 'outdir', 'report'] as const;
 
 /** § — vault:health:bake (`tools/vault-health-bake.ts`) — auto team plan */
 export const VAULT_HEALTH_BAKE_ALLOWED_LONG = ['no-fail', 'output'] as const;

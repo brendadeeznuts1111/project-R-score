@@ -11,6 +11,7 @@ import {
   auditTsconfigTypes,
   isIntentionalEmptyTypes,
   isMonorepoOwnedTsconfig,
+  listTsconfigPaths,
   resolveTypes,
   stripJsonc,
 } from '../tools/tsconfig-types-audit';
@@ -102,6 +103,12 @@ describe('tsconfig-types-audit helpers', () => {
     expect(isMonorepoOwnedTsconfig('packages/registry-client/tsconfig.json')).toBe(true);
     expect(isMonorepoOwnedTsconfig('tests/tsconfig.branded.json')).toBe(true);
     expect(isMonorepoOwnedTsconfig('projects/active/foo/tsconfig.json')).toBe(false);
+  });
+
+  test('source-tree inventory excludes ignored transient configs', () => {
+    const paths = listTsconfigPaths(ROOT);
+    expect(paths).toContain('tsconfig.base.json');
+    expect(paths.some(path => path.startsWith('tmp/'))).toBe(false);
   });
 
   test('resolveTypes walks extends for packages that omit local types', async () => {

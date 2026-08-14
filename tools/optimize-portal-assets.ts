@@ -73,6 +73,17 @@ function isRunnableInlineScript(attributes: string): boolean {
   );
 }
 
+export function measureInlineAssetBytes(html: string): number {
+  const scriptBytes = [...html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/gi)]
+    .filter(match => isRunnableInlineScript(match[1] ?? ''))
+    .reduce((total, match) => total + (match[2]?.length ?? 0), 0);
+  const styleBytes = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].reduce(
+    (total, match) => total + (match[1]?.length ?? 0),
+    0
+  );
+  return scriptBytes + styleBytes;
+}
+
 /** Conservative CSS whitespace minifier used only if Bun's CSS bundler rejects a file. */
 export function minifyCssFallback(source: string): string {
   let output = '';
@@ -295,15 +306,7 @@ async function measurePortal(root: string): Promise<PageBundleRow[]> {
       (total, path) => total + Bun.file(path).size,
       0
     );
-    const inlineBytes =
-      [...html.matchAll(/<script(?![^>]*src)[^>]*>([\s\S]*?)<\/script>/gi)].reduce(
-        (total, match) => total + (match[1]?.length ?? 0),
-        0
-      ) +
-      [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].reduce(
-        (total, match) => total + (match[1]?.length ?? 0),
-        0
-      );
+    const inlineBytes = measureInlineAssetBytes(html);
     rows.push({
       page: `/${relativePath.replace(/index\.html$/, '')}`,
       javascriptBytes,
@@ -335,9 +338,9 @@ export async function optimizePortalAssets(
     measurePortal(PUBLIC_ROOT),
     measurePortal(outdir),
   ]);
-  if (optimized.length !== baseline.pageCount) {
+  if (optimized.length !== source.length) {
     throw new Error(
-      `Portal page inventory drifted: baseline has ${baseline.pageCount}, output has ${optimized.length}`
+      `Portal page copy is incomplete: source has ${source.length}, output has ${optimized.length}`
     );
   }
   const sourceBytes = source.reduce((total, row) => total + row.totalBytes, 0);

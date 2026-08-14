@@ -28,6 +28,17 @@ describe('bun-blog-codeblocks extract', () => {
     expect(result.blocks[1]?.code).toContain('requestPayer: true');
   });
 
+  test('accepts CodeBlock as one token in Bun blog class lists', () => {
+    const html = `<h2>Current Bun markup</h2>
+      <div class="CodeBlock group/code"><div class="relative CodeBlockShell">
+        <pre><code><span class="line"><span>const value = 1;</span></span></code></pre>
+      </div></div>`;
+    const result = extractCodeBlocks(html);
+    expect(result.codeBlockCount).toBe(1);
+    expect(result.blocks[0]?.section).toBe('Current Bun markup');
+    expect(result.blocks[0]?.code).toBe('const value = 1;');
+  });
+
   test('previewLine prefers first non-comment line', () => {
     const preview = previewLine('// comment\nimport { s3 } from "bun";\ns3.file("x");');
     expect(preview).toBe('import { s3 } from "bun";');
