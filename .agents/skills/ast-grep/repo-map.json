@@ -300,7 +300,7 @@
       "items": "structure",
       "globs": ["!**/node_modules/**", "!**/__snapshots__/**"],
       "tags": ["skill", "ast-grep"],
-      "anchors": ["cmd_outline", "cmd_map", "cmd_discover", "ast_grep_helper"],
+      "anchors": ["cmd_outline", "cmd_map", "cmd_discover", "build_parser"],
       "description": "This skill — helper, rules, MCP, repo-map"
     },
     {
