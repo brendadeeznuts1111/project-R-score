@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-10T14:27:51.345Z",
+  "generatedAt": "2026-08-14T18:38:11.904Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -21,7 +21,7 @@
     "referencedUnconstructed": 7,
     "unused": 15,
     "cataloguedProjects": 35,
-    "trackedProjects": 32,
+    "trackedProjects": 31,
     "adoptedProjects": 2,
     "canonicalProjects": 1,
     "localPatternProjects": 1,
@@ -168,11 +168,11 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 27,
+        "references": 29,
         "constructors": {
           "as": 8,
           "try": 0,
-          "parse": 1
+          "parse": 3
         },
         "guards": 0,
         "files": [
@@ -188,8 +188,8 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 25,
-            "constructionCalls": 9,
+            "references": 27,
+            "constructionCalls": 11,
             "guardCalls": 0,
             "files": [
               "lib/core/fw-types.ts",
@@ -2686,26 +2686,32 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 6,
+        "references": 17,
         "constructors": {
-          "as": 4,
+          "as": 5,
           "try": 0,
-          "parse": 0
+          "parse": 2
         },
         "guards": 0,
         "files": [
           "lib/core/concurrent-operations.ts",
-          "lib/core/core-types.ts"
+          "lib/core/core-types.ts",
+          "lib/provisioning/queue.ts",
+          "lib/provisioning/run-automated.ts",
+          "tools/provision-queue.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 6,
-            "constructionCalls": 4,
+            "references": 17,
+            "constructionCalls": 7,
             "guardCalls": 0,
             "files": [
               "lib/core/concurrent-operations.ts",
-              "lib/core/core-types.ts"
+              "lib/core/core-types.ts",
+              "lib/provisioning/queue.ts",
+              "lib/provisioning/run-automated.ts",
+              "tools/provision-queue.ts"
             ]
           },
           "projects": {
@@ -5036,7 +5042,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 6,
+        "references": 7,
         "constructors": {
           "as": 1,
           "try": 2,
@@ -5046,18 +5052,20 @@
         "files": [
           "lib/operator-research/agent-odds-http.ts",
           "lib/operator-research/bet-mock.ts",
-          "lib/operator-research/edge-engine.ts"
+          "lib/operator-research/edge-engine.ts",
+          "lib/operator-research/model-contracts.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 6,
+            "references": 7,
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
               "lib/operator-research/agent-odds-http.ts",
               "lib/operator-research/bet-mock.ts",
-              "lib/operator-research/edge-engine.ts"
+              "lib/operator-research/edge-engine.ts",
+              "lib/operator-research/model-contracts.ts"
             ]
           },
           "projects": {
@@ -5103,7 +5111,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 5,
+        "references": 6,
         "constructors": {
           "as": 3,
           "try": 1,
@@ -5113,18 +5121,20 @@
         "files": [
           "lib/operator-research/agent-odds-http.ts",
           "lib/operator-research/bet-mock.ts",
-          "lib/operator-research/edge-engine.ts"
+          "lib/operator-research/edge-engine.ts",
+          "lib/operator-research/model-contracts.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 5,
+            "references": 6,
             "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
               "lib/operator-research/agent-odds-http.ts",
               "lib/operator-research/bet-mock.ts",
-              "lib/operator-research/edge-engine.ts"
+              "lib/operator-research/edge-engine.ts",
+              "lib/operator-research/model-contracts.ts"
             ]
           },
           "projects": {
@@ -5173,9 +5183,9 @@
       ],
       "coverage": {
         "status": "covered",
-        "references": 94,
+        "references": 95,
         "constructors": {
-          "as": 44,
+          "as": 43,
           "try": 8,
           "parse": 34
         },
@@ -5197,8 +5207,8 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 94,
-            "constructionCalls": 86,
+            "references": 95,
+            "constructionCalls": 85,
             "guardCalls": 0,
             "files": [
               "lib/bookmakers/desk-coverage.ts",
@@ -5263,7 +5273,7 @@
         "status": "covered",
         "references": 69,
         "constructors": {
-          "as": 61,
+          "as": 60,
           "try": 10,
           "parse": 0
         },
@@ -5286,7 +5296,7 @@
           "spine": {
             "status": "covered",
             "references": 69,
-            "constructionCalls": 71,
+            "constructionCalls": 70,
             "guardCalls": 0,
             "files": [
               "lib/operations/account-limit-profiles.ts",
@@ -6566,13 +6576,13 @@
     },
     {
       "project": "projects/active/automation/enhancements-1.0.01",
-      "sourceFiles": 2,
+      "sourceFiles": 0,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
       "constructorCalls": 0,
       "guardCalls": 0,
-      "status": "governed-no-usage"
+      "status": "external-or-untracked"
     },
     {
       "project": "projects/experimental/keyboard-shortcuts-lite",
