@@ -87,33 +87,6 @@ describe('repository governance', () => {
     expect(ignore).toContain('/artifacts/deeplink-automation/');
   });
 
-  test('root ignore contract is deduplicated and keeps Bun project metadata visible', async () => {
-    const root = `${import.meta.dir}/..`;
-    const ignore = await Bun.file(`${root}/.gitignore`).text();
-    const rules = ignore
-      .split(/\r?\n/)
-      .map(line => line.trim())
-      .filter(line => line.length > 0 && !line.startsWith('#'));
-
-    expect(new Set(rules).size).toBe(rules.length);
-
-    const ignored = (path: string) =>
-      Bun.spawnSync(['git', 'check-ignore', '--no-index', '-q', '--', path], {
-        cwd: root,
-        stdout: 'ignore',
-        stderr: 'ignore',
-      }).exitCode === 0;
-
-    expect(ignored('packages/example/bun.lock')).toBe(false);
-    expect(ignored('packages/example/.bunfig.toml')).toBe(false);
-    expect(ignored('src/example.dev.ts')).toBe(false);
-    expect(ignored('src/example.local.ts')).toBe(false);
-    expect(ignored('.bunfig.toml')).toBe(true);
-    expect(ignored('packages/example/.dev.vars')).toBe(true);
-    expect(ignored('.wrangler/state.json')).toBe(true);
-    expect(ignored('.codex-worktrees/example/HEAD')).toBe(true);
-  });
-
   test('root examples and skill guidance stay Bun-native and Oxlint-free', async () => {
     expect(packageJson.cheatsheets.code.typescript.examples['Nullish Coalescing']).toContain(
       'Bun.env.PORT'

@@ -1,4 +1,7 @@
 // @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 import { describe, expect, test } from 'bun:test';
 import {
   ALLOWED_ROOT_DIRS,
@@ -8,12 +11,16 @@ import {
 } from '../config/repo-root-policy.ts';
 import {
   ALLOWED_STAGED_ENTRYPOINTS,
+  ROOT_GITIGNORE_EXPECTATIONS,
+  checkRootGitignoreContract,
   dedupeViolations,
   findGitignored,
   findStrayFiles,
   findTrackedViolations,
+  inspectGitignored,
   type Violation,
 } from '../scripts/repo-hygiene.ts';
+import { createTestWorkspace } from './harness.ts';
 
 describe('repository root policy', () => {
   test('framework and operator roots have explicit integration owners', () => {
@@ -74,8 +81,51 @@ describe('repo hygiene mechanics', () => {
   });
 
   test('checks ignored candidates in one batch', () => {
-    const ignored = findGitignored(['temp-perf.db', 'test-metafile.json']);
-    expect(ignored).toEqual(new Set(['temp-perf.db', 'test-metafile.json']));
+    const ignored = findGitignored([
+      'temp-perf.db',
+      'reports/path with spaces.json',
+      'packages/example/bun.lock',
+    ]);
+    expect(ignored).toEqual(new Set(['temp-perf.db', 'reports/path with spaces.json']));
+  });
+
+  test('Bun-native root ignore contract owns positive and negative probes', async () => {
+    expect(ROOT_GITIGNORE_EXPECTATIONS.length).toBeGreaterThanOrEqual(12);
+    expect(await checkRootGitignoreContract()).toEqual([]);
+
+    expect(inspectGitignored(['.bun-version']).get('.bun-version')).toMatchObject({
+      source: '.gitignore',
+      pattern: '!.bun-version',
+      ignored: false,
+    });
+  });
+
+  test('root ignore contract fails closed on duplicate, broad, and missing rules', async () => {
+    await using workspace = await createTestWorkspace('factorywager-gitignore-');
+    const source = await Bun.file(`${import.meta.dir}/../.gitignore`).text();
+    const init = Bun.spawnSync(['git', 'init', '-q'], { cwd: workspace.root });
+    expect(init.exitCode).toBe(0);
+
+    await Bun.write(workspace.resolve('.gitignore'), `${source}\ncoverage/\n`);
+    expect(await checkRootGitignoreContract(workspace.root)).toContainEqual(
+      expect.objectContaining({ rule: 'duplicate-gitignore-rule' })
+    );
+
+    await Bun.write(workspace.resolve('.gitignore'), `${source}\nbun.lock\n`);
+    expect(await checkRootGitignoreContract(workspace.root)).toContainEqual(
+      expect.objectContaining({ file: 'bun.lock', rule: 'gitignore-overmatch' })
+    );
+
+    await Bun.write(
+      workspace.resolve('.gitignore'),
+      source.replace(/^\.wrangler\/$/m, '')
+    );
+    expect(await checkRootGitignoreContract(workspace.root)).toContainEqual(
+      expect.objectContaining({
+        file: '.wrangler/state.json',
+        rule: 'gitignore-undermatch',
+      })
+    );
   });
 
   test('deduplicates identical file/rule findings', () => {
