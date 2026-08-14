@@ -1,6 +1,6 @@
 {
   "schema": "factorywager/bun-api-index/v1",
-  "generated": "2026-08-09T08:52:53.563Z",
+  "generated": "2026-08-14T04:58:19.868Z",
   "bunVersion": "1.3.14",
   "ssot": {
     "llms": "https://bun.com/docs/llms.txt",
@@ -23,10 +23,10 @@
     "bun"
   ],
   "coverage": {
-    "generated": "2026-08-09T08:52:53.563Z",
+    "generated": "2026-08-14T04:58:19.868Z",
     "bunVersion": "1.3.14",
     "composite": {
-      "pct": 91
+      "pct": 92
     },
     "groups": {
       "prefer": {
@@ -49,7 +49,7 @@
       "repo": {
         "apis": {
           "hit": 91,
-          "total": 139,
+          "total": 140,
           "pct": 65,
           "missing": [
             "bun:types-inventory",
@@ -59,12 +59,13 @@
             "bun:brand-map",
             "Bun.stdout",
             "bun:types-report",
+            "Bun.readableStreamToText",
             "bun:channel",
             "bun:pr",
             "bun:release-contracts",
+            "Bun.ColorInput",
             "Bun.CronController",
             "bun:ci",
-            "Bun.readableStreamToText",
             "bun:types-usage",
             "bun:types-changelog",
             "bun:types-ci",
@@ -75,13 +76,12 @@
             "Bun.enableANSIColors",
             "bun:check",
             "bun:utils-proof",
-            "Bun.cwd",
-            "Bun.Name"
+            "Bun.cwd"
           ]
         },
         "links": {
-          "hit": 3937,
-          "total": 3937,
+          "hit": 4203,
+          "total": 4203,
           "pct": 100
         }
       },
@@ -99,9 +99,9 @@
       },
       "surface": {
         "versioned": {
-          "hit": 112,
-          "total": 135,
-          "pct": 83,
+          "hit": 138,
+          "total": 161,
+          "pct": 86,
           "missing": [
             "Bun.fetch",
             "Bun.Terminal",
@@ -668,8 +668,120 @@
       "docs": "https://bun.com/blog/bun-v1.3.14#bun-image"
     },
     {
+      "name": "Bun.Image source",
+      "docs": "https://raw.githubusercontent.com/oven-sh/bun/main/docs/runtime/image.mdx"
+    },
+    {
+      "name": "Bun.Image source audit (2026-07-07)",
+      "docs": "https://github.com/oven-sh/bun/commit/7be1d459f28566735bd602ce009e24cba0548e1e"
+    },
+    {
       "name": "Bun.Image terminal methods",
       "docs": "https://bun.com/blog/bun-v1.3.14#terminal-methods"
+    },
+    {
+      "name": "Bun.Image.avif",
+      "docs": "https://bun.com/docs/runtime/image#output-formats"
+    },
+    {
+      "name": "Bun.Image.backend",
+      "docs": "https://bun.com/docs/runtime/image#platform-backends"
+    },
+    {
+      "name": "Bun.Image.blob",
+      "docs": "https://bun.com/docs/runtime/image#terminals"
+    },
+    {
+      "name": "Bun.Image.buffer",
+      "docs": "https://bun.com/docs/runtime/image#terminals"
+    },
+    {
+      "name": "Bun.Image.bytes",
+      "docs": "https://bun.com/docs/runtime/image#terminals"
+    },
+    {
+      "name": "Bun.Image.clipboardChangeCount",
+      "docs": "https://bun.com/docs/runtime/image#clipboard"
+    },
+    {
+      "name": "Bun.Image.ConstructorOptions",
+      "docs": "https://bun.com/docs/runtime/image#input"
+    },
+    {
+      "name": "Bun.Image.dataurl",
+      "docs": "https://bun.com/docs/runtime/image#terminals"
+    },
+    {
+      "name": "Bun.Image.flip",
+      "docs": "https://bun.com/docs/runtime/image#rotate-flip"
+    },
+    {
+      "name": "Bun.Image.flop",
+      "docs": "https://bun.com/docs/runtime/image#rotate-flip"
+    },
+    {
+      "name": "Bun.Image.fromClipboard",
+      "docs": "https://bun.com/docs/runtime/image#clipboard"
+    },
+    {
+      "name": "Bun.Image.hasClipboardImage",
+      "docs": "https://bun.com/docs/runtime/image#clipboard"
+    },
+    {
+      "name": "Bun.Image.heic",
+      "docs": "https://bun.com/docs/runtime/image#output-formats"
+    },
+    {
+      "name": "Bun.Image.jpeg",
+      "docs": "https://bun.com/docs/runtime/image#output-formats"
+    },
+    {
+      "name": "Bun.Image.metadata",
+      "docs": "https://bun.com/docs/runtime/image#metadata"
+    },
+    {
+      "name": "Bun.Image.Metadata",
+      "docs": "https://bun.com/docs/runtime/image#metadata"
+    },
+    {
+      "name": "Bun.Image.modulate",
+      "docs": "https://bun.com/docs/runtime/image#modulate"
+    },
+    {
+      "name": "Bun.Image.ModulateOptions",
+      "docs": "https://bun.com/docs/runtime/image#modulate"
+    },
+    {
+      "name": "Bun.Image.placeholder",
+      "docs": "https://bun.com/docs/runtime/image#placeholders"
+    },
+    {
+      "name": "Bun.Image.png",
+      "docs": "https://bun.com/docs/runtime/image#output-formats"
+    },
+    {
+      "name": "Bun.Image.resize",
+      "docs": "https://bun.com/docs/runtime/image#resize"
+    },
+    {
+      "name": "Bun.Image.ResizeOptions",
+      "docs": "https://bun.com/docs/runtime/image#resize"
+    },
+    {
+      "name": "Bun.Image.rotate",
+      "docs": "https://bun.com/docs/runtime/image#rotate-flip"
+    },
+    {
+      "name": "Bun.Image.toBase64",
+      "docs": "https://bun.com/docs/runtime/image#terminals"
+    },
+    {
+      "name": "Bun.Image.webp",
+      "docs": "https://bun.com/docs/runtime/image#output-formats"
+    },
+    {
+      "name": "Bun.Image.write",
+      "docs": "https://bun.com/docs/runtime/image#terminals"
     },
     {
       "name": "Bun.inflateSync",
@@ -1132,5 +1244,5 @@
       "docs": "https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync"
     }
   ],
-  "count": 166
+  "count": 194
 }

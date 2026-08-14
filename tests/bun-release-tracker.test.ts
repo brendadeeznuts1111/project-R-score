@@ -30,7 +30,8 @@ import {
   smokeFetchProtocolSupport,
 } from '../lib/docs/bun-release-tracker.ts';
 import type { VerificationResult } from '../lib/verification/types.ts';
-import { CANONICAL_REFS } from '../tools/bun-doc-refs.ts';
+import { CANONICAL_IMAGE_REFS, CANONICAL_REFS } from '../tools/bun-doc-refs.ts';
+import { CURATED_ENTRIES } from '../tools/bun-docs-curated.ts';
 import { runReleaseVerification } from '../tools/verify-bun-release.ts';
 
 describe('lib/docs/bun-release-tracker', () => {
@@ -161,7 +162,7 @@ describe('lib/docs/bun-release-tracker', () => {
     expect(results[0]?._links?.report).toBe('/registry/release-features.json');
   });
 
-  test('CANONICAL_REFS includes tls.getCACertificates and Bun.Image blog anchors', () => {
+  test('CANONICAL_REFS includes tls.getCACertificates and Bun.Image release evidence', () => {
     expect(CANONICAL_REFS['tls.getCACertificates']).toContain(
       'bun.com/reference/node/tls/getCACertificates'
     );
@@ -170,6 +171,41 @@ describe('lib/docs/bun-release-tracker', () => {
     expect(CANONICAL_REFS['fetch protocol support']).toContain('#protocol-support');
     expect(CANONICAL_REFS['s3://']).toContain('#s3-urls-s3');
     expect(CANONICAL_REFS['data:']).toContain('#data-urls-data');
+  });
+
+  test('Bun.Image members resolve to exact sections with release and source provenance', () => {
+    const expectedAnchors = new Set([
+      'input',
+      'metadata',
+      'resize',
+      'rotate-flip',
+      'modulate',
+      'output-formats',
+      'terminals',
+      'placeholders',
+      'clipboard',
+      'platform-backends',
+    ]);
+    const memberEntries = Object.entries(CANONICAL_IMAGE_REFS).filter(([name]) =>
+      name.startsWith('Bun.Image.')
+    );
+    expect(memberEntries.length).toBe(26);
+    for (const [name, url] of memberEntries) {
+      expect(url.startsWith('https://bun.com/docs/runtime/image#')).toBe(true);
+      expect(expectedAnchors.has(new URL(url).hash.slice(1))).toBe(true);
+      expect(CANONICAL_REFS[name]).toBe(url);
+    }
+
+    expect(CANONICAL_IMAGE_REFS['Bun.Image source']).toBe(
+      'https://raw.githubusercontent.com/oven-sh/bun/main/docs/runtime/image.mdx'
+    );
+    expect(CANONICAL_IMAGE_REFS['Bun.Image source audit (2026-07-07)']).toContain(
+      '7be1d459f28566735bd602ce009e24cba0548e1e'
+    );
+
+    const curated = CURATED_ENTRIES.filter(entry => entry.term.startsWith('Bun.Image.'));
+    expect(curated.length).toBe(memberEntries.length);
+    expect(curated.every(entry => entry.minVersion === '1.3.14')).toBe(true);
   });
 
   test('FETCH_PROTOCOL_COVERAGE maps probes to canonical anchors', () => {

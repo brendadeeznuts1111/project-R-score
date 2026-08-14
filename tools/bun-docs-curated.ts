@@ -111,6 +111,35 @@ export type CuratedEntry = {
   auditRefs?: string[];
 };
 
+const CURATED_IMAGE_MEMBERS = [
+  ['Bun.Image.ConstructorOptions', 'input', 'Input safety, EXIF orientation, and pixel limits'],
+  ['Bun.Image.metadata', 'metadata', 'Read dimensions and format without decoding pixels'],
+  ['Bun.Image.Metadata', 'metadata', 'Image metadata result shape'],
+  ['Bun.Image.resize', 'resize', 'Resize with fit, enlargement, and resampling controls'],
+  ['Bun.Image.ResizeOptions', 'resize', 'Resize fit, filter, and enlargement options'],
+  ['Bun.Image.rotate', 'rotate-flip', 'Rotate clockwise in 90-degree increments'],
+  ['Bun.Image.flip', 'rotate-flip', 'Mirror vertically about the x-axis'],
+  ['Bun.Image.flop', 'rotate-flip', 'Mirror horizontally about the y-axis'],
+  ['Bun.Image.modulate', 'modulate', 'Adjust brightness and saturation'],
+  ['Bun.Image.ModulateOptions', 'modulate', 'Brightness and saturation options'],
+  ['Bun.Image.jpeg', 'output-formats', 'Select JPEG encoding'],
+  ['Bun.Image.png', 'output-formats', 'Select truecolor or indexed PNG encoding'],
+  ['Bun.Image.webp', 'output-formats', 'Select lossy or lossless WebP encoding'],
+  ['Bun.Image.heic', 'output-formats', 'Select platform-dependent HEIC encoding'],
+  ['Bun.Image.avif', 'output-formats', 'Select platform-dependent AVIF encoding'],
+  ['Bun.Image.bytes', 'terminals', 'Execute the pipeline and return Uint8Array bytes'],
+  ['Bun.Image.buffer', 'terminals', 'Execute the pipeline and return a Buffer'],
+  ['Bun.Image.blob', 'terminals', 'Execute the pipeline and return a typed Blob'],
+  ['Bun.Image.toBase64', 'terminals', 'Execute the pipeline and return base64 text'],
+  ['Bun.Image.dataurl', 'terminals', 'Execute the pipeline and return an image data URL'],
+  ['Bun.Image.write', 'terminals', 'Execute the pipeline and write to a Bun destination'],
+  ['Bun.Image.placeholder', 'placeholders', 'Generate a compact ThumbHash placeholder'],
+  ['Bun.Image.fromClipboard', 'clipboard', 'Read an image from the system clipboard'],
+  ['Bun.Image.hasClipboardImage', 'clipboard', 'Probe for a clipboard image'],
+  ['Bun.Image.clipboardChangeCount', 'clipboard', 'Read the clipboard change counter'],
+  ['Bun.Image.backend', 'platform-backends', 'Select system or portable geometry backend'],
+] as const;
+
 export const CURATED_ENTRIES: CuratedEntry[] = [
   {
     term: 'Bun.Image',
@@ -119,6 +148,13 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     minVersion: '1.3.14',
     related: ['runtime/file-io', 'runtime/s3'],
   },
+  ...CURATED_IMAGE_MEMBERS.map(([term, anchor, description]) => ({
+    term,
+    path: `runtime/image#${anchor}`,
+    description,
+    minVersion: '1.3.14',
+    relatedTokens: ['Bun.Image'],
+  })),
   {
     term: 'Bun.serve',
     path: 'runtime/http/server',

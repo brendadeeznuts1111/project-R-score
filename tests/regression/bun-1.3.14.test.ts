@@ -1,3 +1,38 @@
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
+// @released --no-orphans · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#input — Blob.image
+// @verified Blob.image · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/image#input
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @updated bun:sqlite · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @verified bun:sqlite · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/sqlite
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @verified bun:test · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/test/index#run-tests
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @verified Bun.file · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/file-io
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
+// @released Bun.Image · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.bytes
+// @released Bun.Image.bytes · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
+// @released Bun.Image.metadata · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.png
+// @released Bun.Image.png · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#resize — Bun.Image.resize
+// @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @verified Bun.inspect · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-inspect
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
+// @released Bun.markdown.ansi · released v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @see https://bun.com/docs/runtime/utils#bun-pathtofileurl — Bun.pathToFileURL
+// @verified Bun.pathToFileURL · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
+// @verified Bun.serve · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/http/server
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @verified Bun.sleep · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-sleep
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @verified Bun.spawn · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/child-process
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @verified Bun.write · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/file-io#writing-files-bun-write
 // @see https://bun.com/blog/bun-v1.3.14
 // Full-release regression probes for Bun v1.3.14 (Features · Performance · Bugfixes).
 // Runs on Bun ≥ 1.3.14 (newer runtimes must keep these fixed).

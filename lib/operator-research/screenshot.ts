@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/runtime/image#resize — Bun.Image.resize
+// @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.webp
+// @released Bun.Image.webp · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds

@@ -1,3 +1,17 @@
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @verified Bun.$ · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/shell
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
+// @released Bun.Image · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.bytes
+// @released Bun.Image.bytes · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.png
+// @released Bun.Image.png · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#resize — Bun.Image.resize
+// @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
+// @verified Bun.randomUUIDv7 · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-randomuuidv7
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
 import { openOperationsDb } from '../lib/operations/db.ts';

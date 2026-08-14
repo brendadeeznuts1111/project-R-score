@@ -1,3 +1,13 @@
+// @see https://bun.com/docs/runtime/image#input — Blob.image
+// @verified Blob.image · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/image#input
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.blob
+// @released Bun.Image.blob · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#resize — Bun.Image.resize
+// @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.webp
+// @released Bun.Image.webp · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.write
+// @released Bun.Image.write · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // @see https://bun.com/docs/runtime/image
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file

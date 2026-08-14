@@ -26,6 +26,7 @@ import {
   normalizeBunVersion,
   applyChangelogOverlay,
   applyReleaseOverlay,
+  preserveReleaseProvenance,
   stampVersionProvenance,
   catalogReleaseProvenanceFindings,
   parseCatalogFileMeta,
@@ -51,6 +52,41 @@ import { CURATED_ENTRIES } from '../tools/bun-docs-curated.ts';
 import { GUIDE_EXAMPLES, TOKEN_GUIDE_PATH } from '../tools/bun-docs-guide-examples.ts';
 
 describe('bun-docs-catalog helpers', () => {
+  test('catalog rebuild preserves committed release provenance when scrape cache is absent', () => {
+    const current = {
+      name: 'Bun.Image.resize',
+      type: 'api',
+      stability: 'stable',
+      canonicalPage: 'https://bun.com/docs/runtime/image',
+      allPages: ['https://bun.com/docs/runtime/image'],
+      section: 'runtime',
+    } satisfies DocCatalogEntry;
+    const previous = {
+      ...current,
+      releasedIn: '1.3.14',
+      releasedAt: '2026-05-13T03:19:35.000Z',
+      releasedUrl: 'https://bun.com/blog/bun-v1.3.14',
+      releaseHits: [
+        {
+          version: '1.3.14',
+          url: 'https://bun.com/blog/bun-v1.3.14',
+          publishedAt: '2026-05-13T03:19:35.000Z',
+          section: 'Bun.Image',
+          evidence: 'Built-in image processing',
+          kind: 'ship',
+        },
+      ],
+    } satisfies DocCatalogEntry;
+
+    preserveReleaseProvenance([current], [previous]);
+    expect(current).toMatchObject({
+      releasedIn: '1.3.14',
+      releasedAt: '2026-05-13T03:19:35.000Z',
+      releasedUrl: 'https://bun.com/blog/bun-v1.3.14',
+      releaseHits: [{ section: 'Bun.Image', kind: 'ship' }],
+    });
+  });
+
   test('parseCatalogFileMeta rejects synthesized metadata and duplicate entries', () => {
     const entry = {
       name: 'Bun.example',
@@ -82,6 +118,8 @@ describe('bun-docs-catalog helpers', () => {
   test('normalizeName collapses bun. prefix case', () => {
     expect(normalizeName('Bun.WebView')).toBe('bun.webview');
     expect(normalizeName('bun.webview')).toBe('bun.webview');
+    expect(normalizeName('Bun.Image.metadata')).toBe('bun.image.metadata');
+    expect(normalizeName('Bun.Image.Metadata')).toBe('bun.image.Metadata');
   });
 
   test('pageBase strips md and fragment', () => {

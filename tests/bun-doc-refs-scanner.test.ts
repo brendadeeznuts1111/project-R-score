@@ -76,6 +76,30 @@ void uuid; void stringWidth; void shell; void NativeGlob;
     expect(usages).toEqual(new Set(['Bun.inspect.table']));
   });
 
+  test('uses the exact Bun.Image operation instead of the page-level constructor', async () => {
+    const usages = collectCodeApiUsages(
+      'await new Bun.Image(bytes).resize(32, 32).webp().bytes();',
+      'fixture.ts'
+    );
+    expect(usages).toEqual(
+      new Set(['Bun.Image', 'Bun.Image.resize', 'Bun.Image.webp', 'Bun.Image.bytes'])
+    );
+
+    const directory = await temporaryDirectory();
+    const file = join(directory, 'image.ts');
+    await Bun.write(
+      file,
+      `// @see ${CANONICAL_REFS['Bun.Image']} — Bun.Image\nawait new Bun.Image(bytes).resize(32, 32);\n`
+    );
+    expect(await findMissing([file])).toMatchObject([
+      {
+        api: 'Bun.Image.resize',
+        url: CANONICAL_REFS['Bun.Image.resize'],
+        line: 2,
+      },
+    ]);
+  });
+
   test('does not treat declarations or object property names as API usage', () => {
     const usages = collectCodeApiUsages(
       'type Server = { TLSOptions: string }; const refs = { SocialMetadata: "docs" };',
@@ -304,10 +328,12 @@ void RuntimeGlob; void sqlite;
     const source = join(directory, 'src', 'index.ts');
     const dependency = join(directory, 'node_modules', 'pkg', 'index.ts');
     const generated = join(directory, 'dist', 'index.js');
+    const bundled = join(directory, 'tools', 'generated.bundle.js');
     await Promise.all([
       Bun.write(source, 'export {};\n'),
       Bun.write(dependency, 'Bun.file("dependency");\n'),
       Bun.write(generated, 'Bun.write("generated", "output");\n'),
+      Bun.write(bundled, 'Bun.write("bundled", "output");\n'),
     ]);
 
     expect(await sourceFiles([directory])).toEqual([source]);

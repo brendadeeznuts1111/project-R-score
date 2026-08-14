@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.bytes
+// @released Bun.Image.bytes · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.jpeg
+// @released Bun.Image.jpeg · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
 /**
  * Partner package-group forum icon — factory Bot API lane (no MTProto).

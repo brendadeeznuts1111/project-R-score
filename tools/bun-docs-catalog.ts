@@ -197,6 +197,40 @@ export type DocCatalogEntry = {
   aliases?: string[];
 };
 
+/**
+ * Keep previously verified release evidence when a local build has no scraped
+ * release overlay. The committed catalog is durable provenance; rebuilding it
+ * from an unprimed cache must not silently erase dates, references, or event
+ * sections for unrelated APIs.
+ */
+export function preserveReleaseProvenance(
+  entries: DocCatalogEntry[],
+  previousEntries: readonly DocCatalogEntry[]
+): void {
+  const previousByName = new Map(previousEntries.map(entry => [normalizeName(entry.name), entry]));
+  for (const entry of entries) {
+    const previous = previousByName.get(normalizeName(entry.name));
+    if (!previous) continue;
+    entry.releasedIn ??= previous.releasedIn;
+    entry.releasedAt ??= previous.releasedAt;
+    entry.releasedUrl ??= previous.releasedUrl;
+    entry.fixedIn ??= previous.fixedIn;
+    entry.fixedAt ??= previous.fixedAt;
+    entry.fixedUrl ??= previous.fixedUrl;
+    entry.changedIn ??= previous.changedIn;
+    entry.changedAt ??= previous.changedAt;
+    entry.changedUrl ??= previous.changedUrl;
+    entry.changeNote ??= previous.changeNote;
+    entry.changeCommit ??= previous.changeCommit;
+    entry.commitUrl ??= previous.commitUrl;
+    entry.releaseUrl ??= previous.releaseUrl;
+    entry.blogUrl ??= previous.blogUrl;
+    if (!entry.releaseHits?.length && previous.releaseHits?.length) {
+      entry.releaseHits = previous.releaseHits.map(hit => ({ ...hit }));
+    }
+  }
+}
+
 /** OSC 8 terminal hyperlink. In terminals without support the visible text is still shown. */
 function terminalLink(url: string, text: string): string {
   return `\x1b]8;;${url}\x1b\\${text}\x1b]8;;\x1b\\`;
@@ -690,11 +724,17 @@ type IndexFile = {
 // ── Normalization & page scoring ──────────────────────────────────────────
 
 export function normalizeName(name: string): string {
-  return name
+  const normalized = name
     .trim()
     .replace(/^bun\./i, 'Bun.')
-    .replace(/^--/, '--')
-    .toLowerCase();
+    .replace(/^--/, '--');
+  if (!normalized.startsWith('Bun.')) return normalized.toLowerCase();
+  const segments = normalized.split('.');
+  return [
+    'bun',
+    (segments[1] ?? '').toLowerCase(),
+    ...segments.slice(2).map(segment => (/^[A-Z]/.test(segment) ? segment : segment.toLowerCase())),
+  ].join('.');
 }
 
 /** Strip #fragment then trailing .md → bare page URL */
@@ -1107,6 +1147,10 @@ export async function buildCatalog(opts?: {
   refreshRss?: boolean;
 }): Promise<DocCatalogEntry[]> {
   const index = await loadIndex();
+  const previousEntries = await Bun.file(OUT_PATH)
+    .json()
+    .then(value => parseCatalogFileMeta(value, OUT_PATH).entries)
+    .catch(() => [] as DocCatalogEntry[]);
   const map = new Map<string, DocCatalogEntry>();
   const docsLastUpdated = index.generated;
   const verifiedOn = opts?.bunVersion ?? Bun.version;
@@ -1338,6 +1382,7 @@ export async function buildCatalog(opts?: {
       applyReleaseOverlay(e, releaseOverlay, releaseMap);
     }
   }
+  preserveReleaseProvenance(entries, previousEntries);
 
   // 7) Phase 1 NOTE — fill empty descriptions from live doc HTML (cached).
   if (!opts?.skipNotes) {
