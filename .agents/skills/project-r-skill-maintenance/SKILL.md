@@ -28,6 +28,9 @@ description: >
 6. Register a new skill in `.agents/skills/ast-grep/skill-loop-registry.json`
    with enabled `doctor` and `rate` phases. Add `precommit` only when the skill
    owns that command.
+7. Run installed parity only on the operator machine. The repository contract
+   remains portable; `--installed` compares every package file and rejects
+   missing, changed, or stale files under `~/.codex/skills`.
 
 ## Thread-portfolio boundary
 
@@ -71,6 +74,7 @@ Run:
 ```bash
 bun run skills:validate
 bun run dx:contract:check
+bun run dx:contract:check -- --installed
 ```
 
 When validation or hook behavior changes, also run:
@@ -83,13 +87,13 @@ Report the authoritative files changed, wording or behavior removed, focused
 proof, and whether an installed copy was synchronized.
 
 After repository proof passes, synchronize the complete changed skill package
-(body, metadata, references, and scripts) to the installed copy, compare it
-byte-for-byte, then run `dx setup`. A DX build with Project R parity support
-must report the `project-r-agent-alignment` check. If the active DX build does
-not emit that check, do not claim live machine parity: report the pending DX
-installation boundary and retain `bun run dx:contract:check` plus the explicit
-byte comparison as repository-side evidence. Update global DX routing only when
-the read-only checks identify stale machine policy.
+(body, metadata, references, and scripts), run the installed contract check,
+then run `dx setup`. A DX build with Project R parity support must report the
+`project-r-agent-alignment` check. If the active DX build does not emit that
+check, do not claim DX-native parity: report the pending DX installation
+boundary. The explicit `--installed` result remains valid machine-side evidence
+because it compares the complete packages byte-for-byte. Update global DX
+routing only when the read-only checks identify stale machine policy.
 
 ## Guardrails
 

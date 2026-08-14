@@ -1,6 +1,9 @@
 ---
 name: project-r-ops-management
-description: Operate Project R runtime channels, CI gates, TypeScript health, security, release hygiene, and recovery. Use for readiness checks, CI failures, Bun drift, branch hygiene, dependency hardening, or emergency recovery.
+description: >
+  Operate Project R runtime channels, CI gates, TypeScript health, security,
+  release hygiene, and recovery. Use for readiness checks, CI failures, Bun
+  drift, branch hygiene, dependency hardening, or emergency recovery.
 ---
 
 # Project R Ops Management
@@ -8,10 +11,14 @@ description: Operate Project R runtime channels, CI gates, TypeScript health, se
 ## Start
 
 1. Run `dx context`, `dx version`, and `dx package`.
-2. Run `bun run lane:status` and preserve every other worktree and index.
-3. Select the smallest owned proof in the [command map](references/command-map.md).
-4. Fix the first owned failure; never weaken a gate to make it green.
-5. Finish with the staged hook and clean local merge proof.
+2. Run `bun run dx:contract:check -- --installed`. Treat a missing
+   `project-r-agent-alignment` row in `dx setup` as DX-version drift, not proof
+   that installed skills align.
+3. Run `bun run lane:status` and preserve every other worktree and index.
+4. Select the smallest owned proof in the
+   [command map](references/command-map.md).
+5. Fix the first owned failure; never weaken a gate to make it green.
+6. Finish with the staged hook and clean local merge proof.
 
 ## Ownership boundaries
 
@@ -27,9 +34,11 @@ description: Operate Project R runtime channels, CI gates, TypeScript health, se
   version, publication timestamp, and URL, proved by the provenance commands in
   the command map.
 - Domain and UI work: follow
-  [`DOMAIN_CONCEPT_SHAPE.md`](../../../docs/DOMAIN_CONCEPT_SHAPE.md). For partners,
-  use [`partner-dashboard-mvp.toml`](../../../docs/design/partner-dashboard-mvp.toml)
-  and keep contracts, connectors, projections, surfaces, and runtime policy separate.
+  [`DOMAIN_CONCEPT_SHAPE.md`](../../../docs/DOMAIN_CONCEPT_SHAPE.md). For
+  partners, use
+  [`partner-dashboard-mvp.toml`](../../../docs/design/partner-dashboard-mvp.toml)
+  and keep contracts, connectors, projections, surfaces, and runtime policy
+  separate.
 - Search recovery: use the command map and
   [`incident-template.md`](references/incident-template.md). Baseline promotion
   requires explicit approval and policy-changelog evidence.
@@ -40,16 +49,17 @@ description: Operate Project R runtime channels, CI gates, TypeScript health, se
 
 - Repository scripts own runnable commands; `dx test` reports active Bun
   capabilities but does not replace Project R gates.
-- Use focused file tests while editing, `bun run test:watch` for the changed-file
-  loop, `.husky/pre-commit` for staged proof, and `bun run bun:ci` on a clean
-  worktree before merge.
-- When Bun docs, API history, feed, overlay, scrape-state, or catalog files move,
-  run the exact provenance proof. Repair malformed persisted artifacts or use
-  the documented `scrape --force` rebuild; do not weaken fail-closed parsing or
-  manufacture missing release history.
+- Use focused file tests while editing, `bun run test:watch` for the
+  changed-file loop, `.husky/pre-commit` for staged proof, and `bun run bun:ci`
+  on a clean worktree before merge.
+- When Bun docs, API history, feed, overlay, scrape-state, or catalog files
+  move, run the exact provenance proof. Repair malformed persisted artifacts or
+  use the documented `scrape --force` rebuild; do not weaken fail-closed parsing
+  or manufacture missing release history.
 - Use `bun run test:snapshots` to verify the full registered snapshot catalog.
-  Update one owned suite with `bun tools/bun-test-snapshots.ts --update --id <id>`
-  and review the snapshot diff before staging.
+  Update one owned suite with
+  `bun tools/bun-test-snapshots.ts --update --id <id>` and review the snapshot
+  diff before staging.
 - `--parallel[=N]` already implies file isolation. Use `--concurrent` only for
   in-file concurrency and `--shard=M/N` only for deliberate CI fan-out.
 - Do not translate `--runInBand`, `t.workerId`, or `NODE_TEST_WORKER_ID` into
@@ -62,5 +72,5 @@ description: Operate Project R runtime channels, CI gates, TypeScript health, se
 - Run the smallest type, security, channel, or search proof after every patch.
 - Hosted checks are supporting signals. The clean local `bun run bun:ci` result
   is merge authority.
-- If a command in the command map is absent from `package.json`, repair the SSOT;
-  do not invent a substitute.
+- If a command in the command map is absent from `package.json`, repair the
+  SSOT; do not invent a substitute.

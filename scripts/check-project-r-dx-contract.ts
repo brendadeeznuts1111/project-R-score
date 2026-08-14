@@ -1,8 +1,12 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
-/** Validate Project R's portable contract consumed by the global DX setup doctor. */
+// @see https://bun.com/docs/runtime/glob — Bun.Glob
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+/** Validate Project R's portable contract and optional installed skill parity. */
 
-import { resolvePath } from '../lib/path-bun.ts';
+import { joinPath, resolvePath } from '../lib/path-bun.ts';
+import { jsonOut } from '../lib/console-depth.ts';
 
 export const PROJECT_R_DX_CONTRACT_PATH = 'config/project-r-dx-contract.json';
 
@@ -18,6 +22,14 @@ export type ProjectRDxContract = {
 export type ProjectRDxContractCheck = {
   ok: boolean;
   contract: ProjectRDxContract | null;
+  issues: string[];
+};
+
+export type InstalledSkillAlignmentCheck = {
+  ok: boolean;
+  installedRoot: string;
+  skillCount: number;
+  filesCompared: number;
   issues: string[];
 };
 
@@ -53,6 +65,84 @@ async function pathExists(path: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+async function listPackageFiles(root: string): Promise<string[]> {
+  const files: string[] = [];
+  try {
+    for await (const path of new Bun.Glob('**/*').scan({ cwd: root, onlyFiles: true })) {
+      files.push(path);
+    }
+  } catch {
+    return [];
+  }
+  return files.sort();
+}
+
+async function filesEqual(left: string, right: string): Promise<boolean> {
+  try {
+    const [leftBytes, rightBytes] = await Promise.all([
+      Bun.file(left).bytes(),
+      Bun.file(right).bytes(),
+    ]);
+    if (leftBytes.byteLength !== rightBytes.byteLength) return false;
+    return leftBytes.every((byte, index) => byte === rightBytes[index]);
+  } catch {
+    return false;
+  }
+}
+
+/** Compare complete repository-owned skill packages with an installed Codex skill root. */
+export async function checkInstalledSkillAlignment(
+  repoRoot: string,
+  contract: ProjectRDxContract,
+  installedRoot: string
+): Promise<InstalledSkillAlignmentCheck> {
+  const issues: string[] = [];
+  let filesCompared = 0;
+
+  for (const name of contract.installedSkills) {
+    const authorityRoot = resolvePath(repoRoot, contract.skillAuthority, name);
+    const targetRoot = resolvePath(installedRoot, name);
+    const [authorityFiles, targetFiles] = await Promise.all([
+      listPackageFiles(authorityRoot),
+      listPackageFiles(targetRoot),
+    ]);
+
+    if (authorityFiles.length === 0) {
+      issues.push(`${name}: repository skill package is missing or empty`);
+      continue;
+    }
+    if (targetFiles.length === 0) {
+      issues.push(`${name}: installed skill package is missing or empty`);
+      continue;
+    }
+
+    const authoritySet = new Set(authorityFiles);
+    const targetSet = new Set(targetFiles);
+    for (const path of authorityFiles) {
+      if (!targetSet.has(path)) {
+        issues.push(`${name}: installed package is missing ${path}`);
+        continue;
+      }
+      filesCompared++;
+      if (!(await filesEqual(joinPath(authorityRoot, path), joinPath(targetRoot, path)))) {
+        issues.push(`${name}: installed file differs: ${path}`);
+      }
+    }
+    for (const path of targetFiles) {
+      if (!authoritySet.has(path))
+        issues.push(`${name}: installed package has stale file: ${path}`);
+    }
+  }
+
+  return {
+    ok: issues.length === 0,
+    installedRoot,
+    skillCount: contract.installedSkills.length,
+    filesCompared,
+    issues,
+  };
 }
 
 export async function parseProjectRDxContract(
@@ -126,13 +216,47 @@ export async function parseProjectRDxContract(
 
 if (import.meta.main) {
   const repoRoot = resolvePath(import.meta.dir, '..');
+  const args = Bun.argv.slice(2);
+  const installed = args.includes('--installed');
+  const json = args.includes('--json');
+  const unknown = args.filter(arg => arg !== '--installed' && arg !== '--json');
+  if (unknown.length > 0) {
+    console.error(`❌ unknown option: ${unknown[0]}`);
+    process.exit(2);
+  }
   const result = await parseProjectRDxContract(repoRoot);
-  if (result.ok) {
+  let alignment: InstalledSkillAlignmentCheck | null = null;
+  if (result.ok && installed) {
+    const userHome = Bun.env.HOME;
+    if (!userHome) {
+      result.issues.push('HOME is required for installed skill alignment');
+      result.ok = false;
+    } else {
+      alignment = await checkInstalledSkillAlignment(
+        repoRoot,
+        result.contract!,
+        resolvePath(userHome, '.codex/skills')
+      );
+      if (!alignment.ok) {
+        result.issues.push(...alignment.issues);
+        result.ok = false;
+      }
+    }
+  }
+
+  if (json) {
+    jsonOut({ ...result, alignment });
+  } else if (result.ok) {
     console.info(
-      `✅ Project R DX contract: ${result.contract!.installedSkills.length} installed skills · ${result.contract!.globalAuthorityPointers.length} global pointers`
+      `✅ Project R DX contract: ${result.contract!.installedSkills.length} repository skill packages · ${result.contract!.globalAuthorityPointers.length} global pointers`
     );
+    if (alignment) {
+      console.info(
+        `✅ project-r-agent-alignment: ${alignment.skillCount} packages · ${alignment.filesCompared} files exact`
+      );
+    }
   } else {
     for (const item of result.issues) console.error(`❌ ${item}`);
-    process.exit(1);
   }
+  process.exit(result.ok ? 0 : 1);
 }
