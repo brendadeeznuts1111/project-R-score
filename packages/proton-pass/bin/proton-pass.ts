@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
+// @updated --env-file · changed v1.0.12 · 2023-11-16 · https://bun.com/blog/bun-v1.0.12
+// @verified --env-file · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @updated Bun.argv · changed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
 // @verified Bun.argv · Bun v1.3.14 · 2026-08-06 · https://bun.com/reference/bun/argv
@@ -55,22 +58,21 @@
 // @updated Bun.file · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @verified Bun.file · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/file-io
 /**
- * @factorywager/proton-pass CLI — check | health | version
- * Full run/inject spawn lands in PR2; check/health usable now.
+ * @factorywager/proton-pass CLI — check | health | inject | run | version
  */
 import {
   findPassCli,
   checkEnvFile,
   ensureAgentSession,
-  KALSHI_AGENT_SESSION,
-  FACTORYWAGER_AGENT_SESSION,
   fetchSecretsParallel,
   SecretCacheManager,
   auditSecretHealth,
   printHealthTable,
   createLogger,
   envPrefixPresence,
-  type AgentSessionConfig,
+  agentConfigFor,
+  injectEnvFile,
+  runWithEnvFile,
 } from '../src/index.ts';
 import { argValue, hasFlag } from '../src/argv.ts';
 
@@ -81,16 +83,29 @@ const log = createLogger({
 
 function usage(): never {
   console.log(`Usage:
-  proton-pass check [--env-file <path>] [--agent kalshi|factorywager] [--json]
+  proton-pass check [--env-file <path>] [--agent <name>] [--json]
   proton-pass health [--env-file <path>]
+  proton-pass inject --in-file <template> --out-file <.env> [--agent <name>]
+  proton-pass run [--env-file <path>] [--agent <name>] -- <command…>
   proton-pass version
+
+Agents: factorywager | kalshi | bet-ticker | cascade | partners | cloudflare
 
 Flags are separate tokens (preferred):
   --env-file .env.protonpass
+  --in-file env.template
+  --out-file .env
   --agent factorywager
   --json
 `);
   process.exit(2);
+}
+
+/** Split argv at first bare `--` into [before, after]. */
+function splitDashDash(argv: string[]): { head: string[]; tail: string[] } {
+  const i = argv.indexOf('--');
+  if (i < 0) return { head: argv, tail: [] };
+  return { head: argv.slice(0, i), tail: argv.slice(i + 1) };
 }
 
 async function main(): Promise<void> {
@@ -104,11 +119,17 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
-  const envFile = argValue(argv, 'env-file') ?? Bun.env.PROTONPASS_ENV_FILE ?? '.env.protonpass';
-  const agentName = argValue(argv, 'agent') ?? 'kalshi';
-  const agentCfg: AgentSessionConfig =
-    agentName === 'factorywager' ? FACTORYWAGER_AGENT_SESSION : KALSHI_AGENT_SESSION;
-  const json = hasFlag(argv, 'json');
+  const { head, tail } = splitDashDash(argv);
+  const envFile = argValue(head, 'env-file') ?? Bun.env.PROTONPASS_ENV_FILE ?? '.env.protonpass';
+  const agentName = argValue(head, 'agent') ?? 'kalshi';
+  let agentCfg;
+  try {
+    agentCfg = agentConfigFor(agentName);
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : e);
+    process.exit(2);
+  }
+  const json = hasFlag(head, 'json');
 
   const passCli = await findPassCli();
   if (!passCli) {
@@ -117,6 +138,65 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   log.info('pass_cli_located', { path: passCli });
+
+  if (cmd === 'inject') {
+    const inFile = argValue(head, 'in-file');
+    const outFile = argValue(head, 'out-file');
+    if (!inFile || !outFile) {
+      console.error('inject requires --in-file <template> and --out-file <.env>');
+      process.exit(2);
+    }
+    const result = await injectEnvFile({
+      passCli,
+      agent: agentCfg,
+      inFile,
+      outFile,
+      force: !hasFlag(head, 'no-force'),
+      reason: argValue(head, 'reason') ?? `proton-pass inject ${inFile}`,
+    });
+    if (json) {
+      console.log(
+        JSON.stringify(
+          {
+            ok: result.ok,
+            outFile: result.outFile,
+            agent: {
+              ok: result.agent.ok,
+              mode: result.agent.mode,
+              sessionDir: result.agent.sessionDir,
+            },
+            detail: result.detail,
+          },
+          null,
+          2
+        )
+      );
+    } else if (result.ok) {
+      console.log(`✅ inject → ${result.outFile} (${result.agent.mode})`);
+    } else {
+      console.error(`❌ inject failed: ${result.detail}`);
+    }
+    process.exit(result.ok ? 0 : 1);
+  }
+
+  if (cmd === 'run') {
+    const result = await runWithEnvFile({
+      passCli,
+      agent: agentCfg,
+      envFile,
+      command: tail,
+      reason: argValue(head, 'reason') ?? `proton-pass run ${tail[0] ?? ''}`,
+    });
+    if (!result.ok && result.code === 2) {
+      console.error('run requires: proton-pass run [--env-file path] [--agent name] -- <command…>');
+    } else if (!result.ok && result.detail !== 'ok' && result.code !== 0) {
+      // Child already inherited stdio for real exits; only print agent failures
+      if (result.agent && !result.agent.ok) {
+        console.error(`❌ agent: ${result.detail}`);
+      }
+    }
+    process.exit(result.code ?? (result.ok ? 0 : 1));
+  }
 
   if (cmd === 'check') {
     const agent = await ensureAgentSession(passCli, agentCfg);
@@ -172,7 +252,7 @@ async function main(): Promise<void> {
         ok: desk.ok,
         present: desk.present,
         missing: desk.missing,
-        note: 'keys only — run under proton-pass/run host to populate',
+        note: 'keys only — run under proton-pass run to populate',
       },
     };
 

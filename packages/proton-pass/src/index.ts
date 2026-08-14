@@ -65,3 +65,12 @@ export {
   type PassSessionProbe,
   type PassInfoJson,
 } from './session.ts';
+export { agentConfigFor, type NamedAgent } from './agents.ts';
+export {
+  injectEnvFile,
+  runWithEnvFile,
+  type InjectOptions,
+  type InjectResult,
+  type RunOptions,
+  type RunResult,
+} from './inject.ts';

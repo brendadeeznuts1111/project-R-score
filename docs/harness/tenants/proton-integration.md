@@ -39,7 +39,15 @@ helpers from this package and keeps the FactoryWager `PASS_PAT_VAULT_MATRIX` hos
 — `src/protonpass/*` re-exports the package; host keeps `DEFAULT_GATE_CHECKS` +
 `ensureKalshiAgentSession` force-reset. Commit `e529124` on Kalshi-bot `main`.
 
-Still follow-up: migrate shell `proton-inject.sh` / portal-cli inject path onto the package CLI.
+**Inject / run (package CLI):**
+
+```bash
+bunx --bun proton-pass inject --in-file env.template --out-file .env --agent factorywager
+bunx --bun proton-pass run --env-file .env.protonpass --agent kalshi -- bun run serve
+bun run proton:inject:factorywager   # shell maps project → paths, delegates to package CLI
+```
+
+Portal-cli `secret inject` remains an alternate path for interactive/operator boards.
 
 ## Vault Layout
 

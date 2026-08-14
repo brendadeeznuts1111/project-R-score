@@ -273,6 +273,9 @@ import { envPrefixPresence } from "../src/gate.ts";
 import { findPassCli } from "../src/cli-locate.ts";
 
 import { argValue, hasFlag } from "../src/argv.ts";
+import { agentConfigFor } from "../src/agents.ts";
+import { injectEnvFile } from "../src/inject.ts";
+import { KALSHI_AGENT_SESSION } from "../src/session.ts";
 
 describe("proton-pass package extras", () => {
   test("argValue prefers --flag value (space-separated)", () => {
@@ -318,5 +321,24 @@ describe("proton-pass package extras", () => {
   test("checkEnvFile missing path", async () => {
     const r = await checkEnvFile("/tmp/does-not-exist-proton-pass-xyz.env");
     expect(r.ok).toBe(false);
+  });
+
+  test("agentConfigFor maps named agents", () => {
+    expect(agentConfigFor("factorywager").patEnv).toBe("PROTON_PASS_FACTORYWAGER_TOKEN");
+    expect(agentConfigFor("kalshi").patEnv).toBe("PROTON_PASS_KALSHI_BOT_TOKEN");
+    expect(agentConfigFor("bet-ticker").sessionDir).toContain("bet-ticker");
+    expect(() => agentConfigFor("nope")).toThrow(/Unknown agent/);
+  });
+
+  test("injectEnvFile fails closed when template missing", async () => {
+    const r = await injectEnvFile({
+      passCli: "pass-cli",
+      agent: KALSHI_AGENT_SESSION,
+      inFile: "/tmp/proton-pass-missing-template-xyz.env",
+      outFile: "/tmp/proton-pass-out-xyz.env",
+    });
+    // Either agent missing-token / login-failed (no session) or template not found
+    expect(r.ok).toBe(false);
+    expect(r.detail.length).toBeGreaterThan(0);
   });
 });

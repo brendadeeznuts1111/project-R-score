@@ -75,23 +75,33 @@ if [ ! -f "$TEMPLATE" ]; then
   exit 1
 fi
 
-# shellcheck source=agent-env.sh
-source "$SCRIPT_DIR/agent-env.sh" "$AGENT"
-# shellcheck source=lib/pass-session.sh
-. "$SCRIPT_DIR/lib/pass-session.sh"
-
-if ! pass_session_ready; then
-  echo "❌ Pass session not ready (need info.personal_access_token_name)" >&2
-  echo "   Recovery: pass-cli logout --force; rm -rf \"\$PROTON_PASS_SESSION_DIR\"; source scripts/agent-env.sh $AGENT" >&2
-  echo "   Docs: https://protonpass.github.io/pass-cli/help/troubleshoot/" >&2
-  exit 1
+# Prefer workspace package CLI (session + inject). Falls back to shell agent-env + pass-cli.
+# @see packages/proton-pass · https://protonpass.github.io/pass-cli/commands/contents/inject/
+echo "🔐 Injecting $TEMPLATE → $OUT (vault SSOT via @factorywager/proton-pass)"
+if (
+  cd "$ROOT" &&
+    bunx --bun proton-pass inject \
+      --in-file "$TEMPLATE" \
+      --out-file "$OUT" \
+      --agent "$AGENT" \
+      --reason "Inject env secrets for $PROJECT"
+); then
+  :
+else
+  echo "⚠️  package inject failed — falling back to agent-env + pass-cli" >&2
+  # shellcheck source=agent-env.sh
+  source "$SCRIPT_DIR/agent-env.sh" "$AGENT"
+  # shellcheck source=lib/pass-session.sh
+  . "$SCRIPT_DIR/lib/pass-session.sh"
+  if ! pass_session_ready; then
+    echo "❌ Pass session not ready (need info.personal_access_token_name)" >&2
+    echo "   Recovery: pass-cli logout --force; rm -rf \"\$PROTON_PASS_SESSION_DIR\"; source scripts/agent-env.sh $AGENT" >&2
+    echo "   Docs: https://protonpass.github.io/pass-cli/help/troubleshoot/" >&2
+    exit 1
+  fi
+  PROTON_PASS_AGENT_REASON="Inject env secrets for $PROJECT" \
+    pass-cli inject --in-file "$TEMPLATE" --out-file "$OUT" --force --file-mode 0600
 fi
-
-echo "🔐 Injecting $TEMPLATE → $OUT (vault SSOT via pass-cli inject)"
-# Official: --file-mode default 0600 — set explicitly for audit clarity.
-# @see https://protonpass.github.io/pass-cli/commands/contents/inject/
-PROTON_PASS_AGENT_REASON="Inject env secrets for $PROJECT" \
-  pass-cli inject --in-file "$TEMPLATE" --out-file "$OUT" --force --file-mode 0600
 chmod 600 "$OUT" 2>/dev/null || true
 echo "✅ Wrote $OUT (mode $(stat -f '%Lp' "$OUT" 2>/dev/null || stat -c '%a' "$OUT" 2>/dev/null || echo '?'))"
 
