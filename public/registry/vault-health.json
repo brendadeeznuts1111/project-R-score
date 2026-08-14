@@ -1,10 +1,10 @@
 {
   "kind": "vault-health",
-  "generatedAt": "2026-08-05T07:14:17.992Z",
+  "generatedAt": "2026-08-14T02:48:57.880Z",
   "vaults": [
     {
       "name": "factorywager",
-      "active": 31,
+      "active": 32,
       "trashed": 0,
       "trashedTitles": []
     }
@@ -50,6 +50,12 @@
       "envKey": "GITHUB_TOKEN",
       "vault": "factorywager",
       "item": "GitHub PAT",
+      "status": "ok"
+    },
+    {
+      "envKey": "PARTNER_API_TOKEN",
+      "vault": "factorywager",
+      "item": "Tennis HQ Partner API Token",
       "status": "ok"
     },
     {
@@ -113,13 +119,39 @@
       "status": "ok"
     }
   ],
+  "tokenProbes": [
+    {
+      "envKey": "CLOUDFLARE_ACCESS_API_TOKEN",
+      "kind": "cloudflare",
+      "status": "invalid",
+      "statusCode": 401,
+      "checkedAt": "2026-08-14T02:48:57.448Z"
+    },
+    {
+      "envKey": "CLOUDFLARE_API_TOKEN",
+      "kind": "cloudflare",
+      "status": "invalid",
+      "statusCode": 401,
+      "checkedAt": "2026-08-14T02:48:56.381Z"
+    },
+    {
+      "envKey": "CLOUDFLARE_DNS_API_TOKEN",
+      "kind": "cloudflare",
+      "status": "invalid",
+      "statusCode": 401,
+      "checkedAt": "2026-08-14T02:48:56.925Z"
+    }
+  ],
   "summary": {
     "vaultCount": 1,
-    "activeItems": 31,
+    "activeItems": 32,
     "trashedItems": 0,
-    "referencedOk": 17,
+    "referencedOk": 18,
     "referencedTrashed": 0,
     "referencedMissing": 0,
-    "healthy": true
+    "tokensOk": 0,
+    "tokensInvalid": 3,
+    "tokensUnreachable": 0,
+    "healthy": false
   }
 }
