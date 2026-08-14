@@ -2,6 +2,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   actionLabel,
+  confidenceFor,
   detectProtocol,
   protocolLabel,
   scoreRemoval,
@@ -19,6 +20,7 @@ function base(over: Partial<RemovalSignals> = {}): RemovalSignals {
     weakSection: false,
     rootOnly: true,
     declarationCount: 1,
+    stoOnly: false,
     ...over,
   };
 }
@@ -67,5 +69,22 @@ describe('rate-removal-candidates scoring', () => {
     expect(sectionLabel('devDependencies')).toBe('dev');
     expect(protocolLabel('workspace')).toBe('workspace:*');
     expect(protocolLabel('npm')).toBe('npm registry');
+  });
+
+  test('confidence: root unused is high; STO-only zero hits is low', () => {
+    expect(confidenceFor(base({ importHits: 0, rootOnly: true }), 'remove')).toBe('high');
+    expect(confidenceFor(base({ importHits: 0, rootOnly: false, stoOnly: true }), 'remove')).toBe(
+      'low'
+    );
+    expect(confidenceFor(base({ importHits: 50 }), 'keep')).toBe('high');
+  });
+
+  test('STO-only unused is down-scored vs root unused', () => {
+    const root = scoreRemoval(base({ importHits: 0, rootOnly: true, stoOnly: false }), 'plaid');
+    const sto = scoreRemoval(
+      base({ importHits: 0, rootOnly: false, stoOnly: true, declarationCount: 1 }),
+      'clsx'
+    );
+    expect(root.score).toBeGreaterThan(sto.score);
   });
 });
