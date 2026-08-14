@@ -5,6 +5,10 @@
 **Proof** `docs-integrity` (claim in `lib/harness/proof.ts`)  
 **Catalog** `lib/harness/maintenance.ts` · `MAINTENANCE_RUNBOOKS`
 
+The scheduled tenant checks links and taxonomy. Exact release provenance is a
+separate continuous claim: `bun-api-release-provenance` runs
+`bun tools/bun-docs-catalog.ts verify` and `bun run docs:provenance:check`.
+
 ## Signal (failure)
 
 `bun run spine:schedule:once -- --tenant=docs-integrity` exits non-zero.  
@@ -15,6 +19,7 @@ Also: integrity summary `FAIL` / non-zero failure count in `reports/doc-integrit
 1. Re-run integrity: `bun tools/bun-doc-refs.ts schedule --once`
 2. If taxonomy/map drift: `bun tools/bun-doc-refs.ts integrity --fix` (or operate loop in [`../../BUN_DOCS_OPERATE.md`](../../BUN_DOCS_OPERATE.md))
 3. Re-run the tenant: `bun run spine:schedule:once -- --tenant=docs-integrity`
+4. When release/feed/catalog history moved, run `bun tools/bun-docs-catalog.ts verify` and `bun run docs:provenance:check`. Persisted inputs fail closed; repair the artifact or deliberately rebuild scrape state with `bun tools/bun-docs-releases.ts scrape --force`.
 
 Do **not** delete the tenant to green the daemon.
 

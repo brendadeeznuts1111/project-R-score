@@ -1,4 +1,4 @@
 interface:
   display_name: "Skill Maintenance"
-  short_description: "Tighten Project R skills and remove stale guidance"
-  default_prompt: "Use $project-r-skill-maintenance to update the repository authority, simplify wording, align metadata and references, validate the skill plane, then synchronize any installed copy."
+  short_description: "Keep Project R skills and DX guidance current"
+  default_prompt: "Use $project-r-skill-maintenance to update repository authority, preserve exact Bun provenance and fail-closed contracts, align metadata and references, validate the skill plane, then byte-compare installed copies and update global DX routing."

@@ -378,6 +378,13 @@ Before using an unfamiliar `Bun.*` API:
 `// @see <canonical-url>`. Catalog operate:
 [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md). Types inventory:
 [`docs/design/bun-types-inventory.md`](docs/design/bun-types-inventory.md).
+For release or update claims, use
+`bun tools/bun-doc-refs.ts history <api> --json` and
+`bun run docs:provenance:check`: every recorded event must match the exact
+official version, canonical publication timestamp, and Bun post URL. Never use
+the active runtime, a nearby minor release, `verifiedOn`, or `lastUpdated` as an
+API introduction date. Preserve `release-unknown` when official dated evidence
+is absent; malformed persisted provenance fails closed.
 
 ## Branded ID types (harness)
 

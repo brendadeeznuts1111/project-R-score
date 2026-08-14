@@ -22,6 +22,23 @@ bun run type-check:ci
 `bun:channel:check` is read-only. `bun:channel:report` is the explicit derived
 artifact write. Scheduler registration and removal are manual host mutations.
 
+## Bun API documentation provenance
+
+```bash
+bun test tests/bun-doc-refs-scanner.test.ts tests/bun-docs-catalog.test.ts tests/bun-docs-release.test.ts
+bun tools/bun-docs-catalog.ts verify
+bun run docs:provenance:check
+```
+
+The ordinary provenance gate requires every recorded introduction, fix, change,
+and `releaseHits` event to match the exact official RSS version, canonical
+publication timestamp, and Bun post URL. It permits explicitly unknown release
+history rather than inventing a date. Use
+`bun run docs:provenance:check -- --require-release` only as a deliberate
+completeness ratchet. Persisted feed, overlay, scrape-state, and catalog inputs
+fail closed; recover incomplete scrape state with
+`bun tools/bun-docs-releases.ts scrape --force` after reviewing the artifact.
+
 ## Test and snapshot proof
 
 | Intent                   | Command                                                  | Contract                                                                     |
