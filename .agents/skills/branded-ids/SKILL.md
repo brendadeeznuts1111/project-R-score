@@ -1,6 +1,6 @@
 ---
 name: branded-ids
-description:
+description: >
   Discover, add, and apply FactoryWager branded domain values (IDs, keys, and
   validated codes). Use for any domain *Id, constructor-tier or guard choice,
   brand coverage, catalog or manifest maintenance, and branded-ID gate failures.

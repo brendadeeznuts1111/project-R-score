@@ -168,23 +168,6 @@
         }
       }
     },
-    "bun-v139-playground": {
-      "path": ".agents/skills/bun-v139-playground",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "delegates to ast-grep staged gate"
-        }
-      }
-    },
     "project-r-skill-maintenance": {
       "path": ".agents/skills/project-r-skill-maintenance",
       "zone": "agents",
