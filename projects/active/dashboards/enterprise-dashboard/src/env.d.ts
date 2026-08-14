@@ -31,7 +31,6 @@ declare module "bun:bundle" {
       | "BETA_EXTRA_COLUMNS"
       | "BETA_ADVANCED_VIRTUALIZATION"
       | "MOCK_CASH_APP"
-      | "MOCK_PLAID"
       | "MOCK_ANALYTICS"
       | "MOCK_NETWORK_PROBE";
   }
