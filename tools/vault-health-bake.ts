@@ -50,67 +50,18 @@ const NO_FAIL = argv.includes('--no-fail');
 
 export type VaultListResult = { ok: true; items: VaultLiveItem[] } | { ok: false; code: number };
 
-/** Cloudflare token-bearing env keys probed via /user/tokens/verify (401 = expired). */
-const CLOUDFLARE_TOKEN_KEYS = [
-  'CLOUDFLARE_API_TOKEN',
-  'CLOUDFLARE_DNS_API_TOKEN',
-  'CLOUDFLARE_ACCESS_API_TOKEN',
-] as const;
-type CloudflareTokenEnvKey = (typeof CLOUDFLARE_TOKEN_KEYS)[number];
+/**
+ * Cloudflare token probes — account tokens (`cfat_`) must use
+ * /accounts/{id}/tokens/verify, not /user/tokens/verify (false 401).
+ *
+ * @see lib/security/cloudflare-token-probe.ts
+ */
+export {
+  classifyCloudflareTokenVerify,
+  type CloudflareTokenVerifyPayload,
+} from '../lib/security/cloudflare-token-probe.ts';
 
-export type CloudflareTokenVerifyPayload = {
-  success?: boolean;
-  result?: { status?: string };
-};
-
-/** Interpret both HTTP transport and Cloudflare's token lifecycle response. */
-export function classifyCloudflareTokenVerify(
-  statusCode: number,
-  payload: CloudflareTokenVerifyPayload | null
-): TokenProbe['status'] {
-  if (statusCode === 408 || statusCode === 425 || statusCode === 429 || statusCode >= 500) {
-    return 'unreachable';
-  }
-  if (statusCode >= 400) return 'invalid';
-  if (payload?.result?.status === 'disabled' || payload?.result?.status === 'expired') {
-    return 'invalid';
-  }
-  if (payload?.success === true && payload.result?.status === 'active') return 'ok';
-  return 'unreachable';
-}
-
-/** Probe a Cloudflare token value against the tokens/verify endpoint. */
-async function probeCloudflareToken(envKey: CloudflareTokenEnvKey): Promise<TokenProbe> {
-  const token = Bun.env[envKey];
-  const checkedAt = new Date().toISOString();
-  if (!token) {
-    return { envKey, kind: 'cloudflare', status: 'unreachable', statusCode: null, checkedAt };
-  }
-  try {
-    const res = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const payload = (await res.json().catch(() => null)) as CloudflareTokenVerifyPayload | null;
-    return {
-      envKey,
-      kind: 'cloudflare',
-      status: classifyCloudflareTokenVerify(res.status, payload),
-      statusCode: res.status,
-      checkedAt,
-    };
-  } catch {
-    return { envKey, kind: 'cloudflare', status: 'unreachable', statusCode: null, checkedAt };
-  }
-}
-
-/** Probe all configured Cloudflare tokens (catches expired 401 before deploys fail). */
-async function probeCloudflareTokens(): Promise<TokenProbe[]> {
-  const probes: TokenProbe[] = [];
-  for (const key of CLOUDFLARE_TOKEN_KEYS) {
-    if (Bun.env[key]) probes.push(await probeCloudflareToken(key));
-  }
-  return probes;
-}
+import { probeCloudflareTokensFromEnv } from '../lib/security/cloudflare-token-probe.ts';
 
 /** Live `item list` for one vault — fail closed on non-zero exit (do not invent empty). */
 export async function fetchVaultItems(vault: string): Promise<VaultListResult> {
@@ -346,7 +297,17 @@ async function main(): Promise<void> {
   const failedVaults = new Set(listFailures);
   // Score refs only for vaults we successfully listed; list failures fail the bake below.
   const scoredRefs = refs.filter(r => r.vault && !failedVaults.has(r.vault));
-  const tokenProbes = await probeCloudflareTokens();
+  // Full probe rows (kindDetail/note for operator log); report stores TokenProbe only.
+  const tokenProbeRows = await probeCloudflareTokensFromEnv(Bun.env);
+  const tokenProbes: TokenProbe[] = tokenProbeRows.map(
+    ({ envKey, kind, status, statusCode, checkedAt }) => ({
+      envKey,
+      kind,
+      status,
+      statusCode,
+      checkedAt,
+    })
+  );
   const report = computeVaultHealth(scoredRefs, liveByVault, undefined, { tokenProbes });
   if (listFailures.length > 0) {
     report.summary.healthy = false;
@@ -365,9 +326,11 @@ async function main(): Promise<void> {
   for (const r of report.referenced.filter(r => r.status !== 'ok')) {
     console.error(`  ⚠️  ${r.envKey} → ${r.vault}/${r.item} — ${r.status.toUpperCase()}`);
   }
-  for (const p of report.tokenProbes.filter(p => p.status !== 'ok')) {
+  for (const p of tokenProbeRows.filter(p => p.status !== 'ok')) {
+    const kind = p.kindDetail ? ` · ${p.kindDetail}` : '';
+    const note = p.note ? ` — ${p.note}` : '';
     console.error(
-      `  ⚠️  ${p.envKey} — token ${p.status.toUpperCase()}${p.statusCode ? ` (HTTP ${p.statusCode})` : ''}`
+      `  ⚠️  ${p.envKey} — token ${p.status.toUpperCase()}${p.statusCode ? ` (HTTP ${p.statusCode})` : ''}${kind}${note}`
     );
   }
   console.log(`baked: ${OUT_JSON}`);
