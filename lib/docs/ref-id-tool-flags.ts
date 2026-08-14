@@ -1299,9 +1299,6 @@ export const PROTON_SESSION_ENV_ALLOWED_LONG = ['json', 'help'] as const;
 /** § — cloudflare-token-probe (`tools/cloudflare-token-probe-cli.ts`) */
 export const CLOUDFLARE_TOKEN_PROBE_ALLOWED_LONG = ['json', 'help'] as const;
 
-/** § — bun-guides-gap (`tools/bun-guides-gap.ts`) */
-export const BUN_GUIDES_GAP_ALLOWED_LONG = ['json', 'spine', 'cluster', 'help'] as const;
-
 /** § — deps:rate-removal (`scripts/rate-removal-candidates.ts`) */
 export const DEPS_RATE_REMOVAL_ALLOWED_LONG = [
   'json',
@@ -1310,7 +1307,6 @@ export const DEPS_RATE_REMOVAL_ALLOWED_LONG = [
   'package',
   'help',
 ] as const;
-
 /** § — ops:limits:lab:profile (`scripts/limit-forecast-lab-profile.ts`) — auto team plan */
 export const OPS_LIMITS_LAB_PROFILE_ALLOWED_LONG = [
   'cpu-prof',
@@ -2572,7 +2568,6 @@ export type AllowedLongCliName =
   | 'proton-inject'
   | 'proton-session-env'
   | 'cloudflare-token-probe'
-  | 'bun-guides-gap'
   | 'deps:rate-removal'
   | 'ops:limits:lab:profile'
   | 'concepts:bake'
@@ -2907,7 +2902,6 @@ export const ALLOWED_LONG_REGISTRY = {
   'proton-inject': PROTON_INJECT_ALLOWED_LONG,
   'proton-session-env': PROTON_SESSION_ENV_ALLOWED_LONG,
   'cloudflare-token-probe': CLOUDFLARE_TOKEN_PROBE_ALLOWED_LONG,
-  'bun-guides-gap': BUN_GUIDES_GAP_ALLOWED_LONG,
   'deps:rate-removal': DEPS_RATE_REMOVAL_ALLOWED_LONG,
   'ops:limits:lab:profile': OPS_LIMITS_LAB_PROFILE_ALLOWED_LONG,
   'concepts:bake': CONCEPTS_BAKE_ALLOWED_LONG,

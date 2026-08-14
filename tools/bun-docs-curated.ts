@@ -320,7 +320,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: '--parallel',
     path: 'test/parallel#parallel',
     description:
-      'bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers auto --isolate; console buffered per file. ≠ bun run --parallel (Foreman scripts — pm/filter#parallel-and-sequential-mode). FactoryWager NOTE: docs/guides/bun-test-flags-1.3.13.md',
+      'bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers auto --isolate; console buffered per file. ≠ bun run --parallel (Foreman scripts — pm/filter#parallel-and-sequential-mode). FactoryWager matrix: docs/harness/tenants/bun-test-flags.md',
     minVersion: '1.3.13',
     relatedTokens: [
       '--isolate',
@@ -353,7 +353,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'bun test flags',
     path: 'test/parallel#parallel',
     description:
-      'v1.3.13 NOTE family: --isolate, --parallel, --shard, --changed. Scannable TOC + fences: docs/guides/bun-test-flags-1.3.13.md. Day-loop wrappers: docs/harness/day-loop.md.',
+      'v1.3.13 family: --isolate, --parallel, --shard, --changed. FactoryWager matrix: docs/harness/tenants/bun-test-flags.md. Day-loop wrappers: docs/harness/day-loop.md.',
     minVersion: '1.3.13',
     relatedTokens: ['--isolate', '--parallel', '--shard', '--changed', 'bun run --parallel'],
     auditRefs: ['harness-day-loop'],

@@ -6,7 +6,6 @@
 | [REGISTRY_STACK_BASELINE.md](./REGISTRY_STACK_BASELINE.md)             | Registry doctor / topology                                                                           |
 | [REGISTRY_PRODUCTION_READINESS.md](./REGISTRY_PRODUCTION_READINESS.md) | Production readiness checklist · registry client                                                     |
 | [SEARCH_DOMAIN_FUSION_RUNBOOK.md](./SEARCH_DOMAIN_FUSION_RUNBOOK.md)   | search-smart + domain fusion                                                                         |
-| [bun-test-flags-1.3.13.md](./bun-test-flags-1.3.13.md)                 | Curated NOTE TOC for Bun v1.3.13 `--isolate` / `--parallel` / `--shard` / `--changed`                |
 | [bun-fetch-proxy-environment.md](./bun-fetch-proxy-environment.md)     | Bun runtime `fetch()` proxy environment defaults, aliases, precedence, bypass, and registry contract |
 | [bun-options.md](./bun-options.md)                                     | `BUN_OPTIONS` injection, argv visibility, precedence, standalone binaries, and security               |
 

@@ -320,9 +320,8 @@ frozenLockfile = true
 
 Operator PM surface (core / analysis / workspaces / advanced):  
 [monorepo-workspaces § Bun PM surface](./harness/tenants/monorepo-workspaces.md#bun-pm-surface-operator-cookbook).  
-Install **guides** map (Bun docs ↔ Factory owners):
-[BUN_NATIVE_CAPABILITIES § Package manager guides](./BUN_NATIVE_CAPABILITIES.md#package-manager-guides-map)
-· gap scan `bun run docs:guides:gap -- --cluster install`.  
+Install guidance: [Bun install](https://bun.com/docs/pm/cli/install) · catalog
+discovery and refresh: [BUN_DOCS_OPERATE](./BUN_DOCS_OPERATE.md).  
 Vault plane (secrets):
 [proton-integration](./harness/tenants/proton-integration.md) ·
 `@factorywager/proton-pass` (root `workspace:*` · `bunx --bun proton-pass` —
@@ -521,9 +520,8 @@ CI: `setup-factory-bun` + `ci:core`. Docs:
   [workspaces](https://bun.com/docs/pm/workspaces) ·
   [catalogs](https://bun.com/docs/pm/catalogs) ·
   [filter](https://bun.com/docs/pm/filter).
-- Install guides (walkthroughs):
-  [guides/install](https://bun.com/docs/guides/install/add) · monorepo gap scan
-  `bun run docs:guides:gap -- --cluster install`.
+- Install walkthroughs: [Bun install guides](https://bun.com/docs/guides/install/add)
+  · repository discovery: `bun tools/bun-doc-refs.ts suggest "install"`.
 - Supply-chain hardening: [SLSA levels](https://slsa.dev/spec/v1.0/levels) ·
   [npm "scripts build scripts" supply-chain guidance](https://docs.npmjs.com/cli/v10/using-npm/scripts#best-practices)
   ·
