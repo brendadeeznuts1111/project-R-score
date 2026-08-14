@@ -190,7 +190,7 @@ describe('validateAgentSkills', () => {
     expect(result.issues.filter(item => item.level === 'error')).toEqual([]);
   });
 
-  it('hydrates the ast-grep doctor pin through the isolated workspace filter', async () => {
+  it('hydrates the ast-grep doctor pin without filtering the root workspace', async () => {
     const install = await Bun.file(
       resolveAgentSkillsPath(
         join(import.meta.dir, '..'),
@@ -199,7 +199,8 @@ describe('validateAgentSkills', () => {
         'install.sh'
       )
     ).text();
-    expect(install).toContain('--filter @projects/ast-grep-skill');
+    expect(install).toContain('cd "$SKILL_ROOT"');
+    expect(install).not.toContain('--filter');
   });
 });
 

@@ -17,12 +17,13 @@ Syntax-aware layer between `rg` and a full LSP. **No index to maintain.**
 
 ```bash
 bun install --frozen-lockfile
-bun install --frozen-lockfile --ignore-scripts --filter @projects/ast-grep-skill
+.agents/skills/ast-grep/scripts/install.sh
 ```
 
 The private `@projects/ast-grep-skill` workspace is part of the root lockfile,
-so the normal root install owns dependency resolution. The filtered install also
-creates the skill-local `.bin` required by the doctor under the isolated linker.
+so the normal root install owns dependency resolution. The skill installer runs
+from its own directory to create the local `.bin` required by the doctor without
+pruning root workspace links under the isolated linker.
 
 **Portable global fallback:**
 
