@@ -7,6 +7,7 @@
       "dependencies": {
         "@factorywager/docs-tools": "workspace:*",
         "@factorywager/guards": "workspace:*",
+        "@factorywager/proton-pass": "workspace:*",
         "@factorywager/registry-client": "workspace:*",
         "@factorywager/rip": "workspace:*",
         "@modelcontextprotocol/sdk": "1.30.0",
@@ -68,6 +69,19 @@
     "packages/partners": {
       "name": "@factorywager/partners",
       "version": "0.1.0",
+    },
+    "packages/proton-pass": {
+      "name": "@factorywager/proton-pass",
+      "version": "0.1.0",
+      "bin": {
+        "proton-pass": "./bin/proton-pass.ts",
+      },
+      "peerDependencies": {
+        "bun-types": ">=1.3.0",
+      },
+      "optionalPeers": [
+        "bun-types",
+      ],
     },
     "packages/registry-client": {
       "name": "@factorywager/registry-client",
@@ -303,6 +317,8 @@
     "@factorywager/p2p": ["@factorywager/p2p@workspace:packages/p2p"],
 
     "@factorywager/partners": ["@factorywager/partners@workspace:packages/partners"],
+
+    "@factorywager/proton-pass": ["@factorywager/proton-pass@workspace:packages/proton-pass"],
 
     "@factorywager/registry-client": ["@factorywager/registry-client@workspace:packages/registry-client"],
 

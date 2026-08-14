@@ -220,7 +220,67 @@ bun test tests/tsconfig-bun-types.test.ts
 
 @see https://bun.com/docs/typescript-6 · tool [`tools/tsconfig-types-audit.ts`](../../../tools/tsconfig-types-audit.ts)
 
-## Commands cheatsheet
+## Bun PM surface (operator cookbook)
+
+**Install policy SSOT:** [`docs/UNIFIED.md`](../../UNIFIED.md).  
+**Dual plane:** Bun PM owns the install graph / lockfile; Proton vault owns secrets
+([`proton-integration.md`](./proton-integration.md) · `@factorywager/proton-pass`).
+Never substitute `pass-cli` / inject for `bun install` / `bun pm` / `bun audit`.
+
+### Core commands
+
+| Command | Recipe | Proof |
+| ------- | ------ | ----- |
+| `bun install` | Frozen OK for day loop. Worktrees: `bun run install:all` (explicit `--cwd`). | `bun run install:verify` · `:strict` |
+| `bun add` | Prefer `bun run add:safe -- <pkg> [--dev]` (unlock → `--exact` → restore freeze). | `install:verify` + Tier-A |
+| `bun remove` | Unlock root `frozenLockfile` → `bun remove <pkg>` → restore `true` → commit lockfile. | `install:verify` |
+| `bun update` | Unlock → update → restore. Bump shared pins in root **`catalog`**, not N copies. | `bun outdated --filter './'` |
+| `bunx` | **`bunx --bun <bin> …`** (space-separated flags). Workspace bins after `workspace:*` link. | `bunx --bun proton-pass version` |
+
+### Publishing & analysis
+
+| Command | Recipe | Notes |
+| ------- | ------ | ----- |
+| `bun publish` | Only intentional public packages. Factory path often `bun pm pack` → `factory:publish`. | `proton-pass` stays **`private: true`**. |
+| `bun outdated` | `bun outdated --filter '@factorywager/*'` · `--filter './packages/*'` · `--filter './'` | Catalog-aware. |
+| `bun why` / `bun pm why` | `bun pm why <pkg>` — who requires a dep. | e.g. `bun pm why @factorywager/proton-pass` |
+| `bun audit` | Supply-chain report; complements Socket scanner. | Install-time scanner **OFF** by default (quota). |
+| `bun info` | Registry metadata before add. | Scoped registry needs token + bunfig scopes. |
+
+### Workspace management
+
+| Surface | Recipe |
+| ------- | ------ |
+| Workspaces | Only root `workspaces.packages` globs. Nested `projects/**` / Kalshi = separate roots. |
+| Catalogs | Root `catalog` SSOT; members use `catalog:`. No empty named catalogs. |
+| `workspace:*` | Link when root/another package **imports** the member. Membership alone enables `--filter`. |
+| `bun link` | Prefer `workspace:*` inside monorepo. Link only for out-of-tree hosts (e.g. interim Kalshi). |
+| `bun pm` | Daily: `ls` · `why` · `untrusted` · `pkg get/set`. Trust: `bun pm trust` + UNIFIED justification. |
+
+### Advanced configuration
+
+| Surface | Policy |
+| ------- | ------ |
+| Isolated installs | Root monorepo default (`configVersion: 1`). Machine `linker = "isolated"`. |
+| Global virtual store | Machine `globalStore = true` (requires isolated). |
+| Global cache | Machine absolute `[install.cache].dir` — never `~` or shell `BUN_INSTALL_*`. |
+| Lockfile | Text `bun.lock`; freeze at root; platform-agnostic (cross `--cpu`/`--os` use `--dry-run`). |
+| Lifecycle | `trustedDependencies: []` intentional; dep scripts off unless allow-listed. |
+| Scopes / registries | bunfig `[install.scopes]` SSOT. `.npmrc` residual for non-Bun only. |
+| Overrides | Root-only for CVE/metadeps. |
+| `bun patch` | Only via CLI → `patches/` + `patchedDependencies` (may be global-store ineligible). |
+| `--filter` | Name or `./path`; never Mintlify `type:toml`. Root scripts **without** filter. |
+| Security Scanner API | Package present; install-time **OFF**. On-demand: `portal-cli scanner scan --oneshot`. |
+| `.npmrc` | No cache/store keys; scope lines for vite/npm clients only. |
+
+```bash
+# Proton package (vault plane — not PM)
+bun run --filter @factorywager/proton-pass test
+bunx --bun proton-pass check --env-file .env.protonpass --agent factorywager --json
+bunx --bun proton-pass health --env-file env.template
+```
+
+### Commands cheatsheet
 
 ```bash
 # Integrity
@@ -233,8 +293,15 @@ bun run check:tsconfig-types -- --strict   # TS6 types: monorepo_risk=0
 # Package scripts — full filter semantics: § bun --filter above
 bun run --parallel --filter '*' --if-present test
 bun run --filter @factorywager/registry-client build
+bun run --filter @factorywager/proton-pass test
 bun run --filter sports-terminal-os typecheck
 bun run --sequential --workspaces --if-present typecheck
+
+# Analysis
+bun outdated --filter '@factorywager/*'
+bun pm why @factorywager/proton-pass
+bun audit
+bun pm untrusted
 
 # Root product / ops (never --filter these names)
 bun run ops:limits:check
@@ -242,9 +309,8 @@ bun run portal:snapshot:once
 bun test tests/limits-e2e.test.ts
 
 # Dep edits (UNIFIED)
-# 1) frozenLockfile=false temporarily
-# 2) bun add / bun update / catalog edit
-# 3) frozenLockfile=true + commit bun.lock
+# Prefer: bun run add:safe -- <pkg> [--dev]
+# Manual: frozenLockfile=false → bun add/remove/update → true + commit bun.lock
 ```
 
 ## Portal snapshot cron (workspace-adjacent)

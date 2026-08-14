@@ -74,6 +74,7 @@ bun run packages:docs-index --bump-verified=2026-07-20:registry-md,pm-filter
 | `@factorywager/guards` | Bun-first compliance | active | Root `workspace:*` · eslint harness |
 | `@factorywager/rip` | Analysis tooling | active | Root `workspace:*` · `scripts/bun-rules.ts` |
 | `@factorywager/docs-tools` | Doc validators (coupled to `lib/docs`) | active | Root `workspace:*` |
+| `@factorywager/proton-pass` | Portable Proton Pass session / resolve / CLI | active | Root `workspace:*` · **private** · vault plane (not PM) · `bunx --bun proton-pass` |
 | `@factorywager/shared` | Entry-guard / URL helpers under `lib/shared` | active | Workspace via `lib/*` glob |
 | `sports-terminal-os` | App workspace member | active | Path: `projects/active/sports-terminal-os` |
 | `@projects/ast-grep-skill` | Private pre-commit/semver tooling | active | Workspace so root install + lockfile hydrate hook dependencies |
@@ -115,13 +116,22 @@ bun pm ls
 # Package scripts (workspace members only — always --if-present on fan-out)
 bun run --parallel --filter '*' --if-present test
 bun run --filter @factorywager/registry-client build
+bun run --filter @factorywager/proton-pass test
 bun run --filter './packages/*' --if-present test
 bun run --filter sports-terminal-os typecheck
+
+# Workspace bin (after root workspace:* link)
+bunx --bun proton-pass version
+bunx --bun proton-pass check --agent factorywager --json
 
 # Outdated (workspace packages only — not test files)
 bun outdated --filter '@factorywager/*'
 bun outdated --filter './packages/*'
 bun outdated --filter './'                       # root package.json only
+
+# Why / audit (PM analysis)
+bun pm why @factorywager/proton-pass
+bun audit
 bun outdated --filter sports-terminal-os
 bun outdated --filter '!./' --filter './packages/*'
 

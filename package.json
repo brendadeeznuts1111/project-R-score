@@ -28,6 +28,7 @@
   "dependencies": {
     "@factorywager/docs-tools": "workspace:*",
     "@factorywager/guards": "workspace:*",
+    "@factorywager/proton-pass": "workspace:*",
     "@factorywager/registry-client": "workspace:*",
     "@factorywager/rip": "workspace:*",
     "@modelcontextprotocol/sdk": "1.30.0",
@@ -2486,6 +2487,9 @@
     "proton:inject:scanner": "bash scripts/proton-inject.sh scanner",
     "proton:check": "bash scripts/proton-vault-check.sh",
     "proton:check:list": "bash scripts/proton-vault-check.sh --list-only",
+    "proton-pass:test": "bun run --filter @factorywager/proton-pass test",
+    "proton-pass:version": "bunx --bun proton-pass version",
+    "proton-pass:check": "bunx --bun proton-pass check --agent factorywager --json",
     "proton:verify": "bun tools/proton-verify.ts",
     "proton:ssh": "bash scripts/ssh-vault.sh",
     "proton:ssh:load": "bash scripts/ssh-vault.sh load",

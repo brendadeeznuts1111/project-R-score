@@ -314,6 +314,11 @@ frozenLockfile = true
 
 ## Tooling
 
+Operator PM surface (core / analysis / workspaces / advanced):  
+[monorepo-workspaces § Bun PM surface](./harness/tenants/monorepo-workspaces.md#bun-pm-surface-operator-cookbook).  
+Vault plane (secrets): [proton-integration](./harness/tenants/proton-integration.md) ·
+`@factorywager/proton-pass` (`workspace:*` · `bunx --bun proton-pass`).
+
 ```bash
 bun run machine:bunfig:ensure   # ~/.bunfig.toml ← config/machine.bunfig.toml.template
 bun run machine:bunfig:check    # SSOT snippets + absolute cache.dir
@@ -327,6 +332,8 @@ bun run bake:doctor:check       # ensure + sha256 fingerprint gate
 bun run install:machine:health
 bun run install:cache:lifecycle
 bun scripts/with-bun-cache-env.ts ci   # GHA / ephemeral
+bun run add:safe -- <pkg>       # unlock → bun add --exact → restore freeze
+bun pm ls · bun pm why <pkg> · bun audit · bun outdated --filter './'
 ```
 
 **CI runners:** `setup-factory-bun` writes `~/.bunfig.toml` via

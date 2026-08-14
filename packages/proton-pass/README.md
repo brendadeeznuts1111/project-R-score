@@ -13,15 +13,43 @@ Portable **Proton Pass CLI** integration for Bun hosts (Kalshi-bot, FactoryWager
 
 Official CLI: [protonpass.github.io/pass-cli](https://protonpass.github.io/pass-cli/).
 
-## Install (workspace / sibling)
+## Install
+
+### Inside FactoryWager monorepo (preferred)
+
+Root already links the package:
 
 ```json
 {
   "dependencies": {
-    "@factorywager/proton-pass": "file:../packages/proton-pass"
+    "@factorywager/proton-pass": "workspace:*"
   }
 }
 ```
+
+```bash
+bun run add:safe -- @factorywager/proton-pass@workspace:*   # once, if not linked
+bun pm ls | rg proton-pass
+bun pm why @factorywager/proton-pass
+bun run --filter @factorywager/proton-pass test
+bunx --bun proton-pass version
+```
+
+PM surface cookbook: [`docs/harness/tenants/monorepo-workspaces.md`](../../docs/harness/tenants/monorepo-workspaces.md#bun-pm-surface-operator-cookbook).
+
+### Sibling / out-of-tree host (e.g. Kalshi-bot)
+
+```json
+{
+  "dependencies": {
+    "@factorywager/proton-pass": "file:../Projects/packages/proton-pass"
+  }
+}
+```
+
+Or interim: `bun link` from `packages/proton-pass`, then `bun link @factorywager/proton-pass` in the host. Prefer path/`workspace:*` over global link for reproducible installs.
+
+**Do not** add Kalshi-bot to root `workspaces.packages` just for this package.
 
 ## API
 
