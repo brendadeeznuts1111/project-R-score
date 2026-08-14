@@ -2398,7 +2398,7 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
       isBunNamespaceExpression(node.initializer)
     ) {
       if (ts.isIdentifier(node.name)) bindNamespace(node.name);
-      else {
+      else if (ts.isObjectBindingPattern(node.name)) {
         addBindingImports(node.name, add);
         for (const element of node.name.elements) {
           if (!ts.isIdentifier(element.name)) continue;

@@ -71,6 +71,12 @@ void uuid; void stringWidth; void shell; void NativeGlob;
     );
   });
 
+  test('ignores array-binding holes when a Bun namespace expression is destructured', () => {
+    expect(collectCodeApiUsages('const [, second] = Bun; void second;', 'fixture.ts')).toEqual(
+      new Set()
+    );
+  });
+
   test('uses the most-specific canonical member in a nested Bun chain', () => {
     const usages = collectCodeApiUsages('Bun.inspect.table([{ ok: true }]);', 'fixture.ts');
     expect(usages).toEqual(new Set(['Bun.inspect.table']));
