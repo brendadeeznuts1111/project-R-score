@@ -28,52 +28,6 @@ export function createMockCashAppIntegration() {
 }
 
 /**
- * Mock Plaid Integration
- * Mock responses for Plaid banking in development/CI
- */
-export function createMockPlaidIntegration() {
-  const accounts = [
-    {
-      id: "acc_checking",
-      name: "Business Checking",
-      type: "depository" as const,
-      subtype: "checking",
-      mask: "1234",
-      balance: 15432.5,
-    },
-    {
-      id: "acc_savings",
-      name: "Business Savings",
-      type: "depository" as const,
-      subtype: "savings",
-      mask: "5678",
-      balance: 52340.0,
-    },
-  ];
-
-  return {
-    accounts,
-    async getAccounts() {
-      await Bun.sleep(10);
-      return this.accounts;
-    },
-    async getTransactions(accountId: string) {
-      await Bun.sleep(10);
-      return [
-        {
-          id: "txn_001",
-          accountId,
-          amount: -49.99,
-          date: "2026-01-20",
-          name: "Stripe Payment",
-          category: ["Payment", "Credit Card"] as [string, string],
-        },
-      ];
-    },
-  };
-}
-
-/**
  * Mock Analytics Data
  * Generate realistic mock analytics for development
  */
