@@ -1290,6 +1290,9 @@ export const SEARCH_COVERAGE_LOC_ALLOWED_LONG = ['files', 'glob', 'overlap', 'pa
 /** § — add:safe (`scripts/bun-add-safe.ts`) — auto team plan */
 export const ADD_SAFE_ALLOWED_LONG = ['exact', 'global'] as const;
 
+/** § — proton-inject (`scripts/proton-inject.ts`) */
+export const PROTON_INJECT_ALLOWED_LONG = ['list', 'reasonix', 'help'] as const;
+
 /** § — ops:limits:lab:profile (`scripts/limit-forecast-lab-profile.ts`) — auto team plan */
 export const OPS_LIMITS_LAB_PROFILE_ALLOWED_LONG = [
   'cpu-prof',
@@ -2548,6 +2551,7 @@ export type AllowedLongCliName =
   | 'mcp:sync'
   | 'search:coverage:loc'
   | 'add:safe'
+  | 'proton-inject'
   | 'ops:limits:lab:profile'
   | 'concepts:bake'
   | 'bake:install-hygiene'
@@ -2878,6 +2882,7 @@ export const ALLOWED_LONG_REGISTRY = {
   'mcp:sync': MCP_SYNC_ALLOWED_LONG,
   'search:coverage:loc': SEARCH_COVERAGE_LOC_ALLOWED_LONG,
   'add:safe': ADD_SAFE_ALLOWED_LONG,
+  'proton-inject': PROTON_INJECT_ALLOWED_LONG,
   'ops:limits:lab:profile': OPS_LIMITS_LAB_PROFILE_ALLOWED_LONG,
   'concepts:bake': CONCEPTS_BAKE_ALLOWED_LONG,
   'bake:install-hygiene': BAKE_INSTALL_HYGIENE_ALLOWED_LONG,

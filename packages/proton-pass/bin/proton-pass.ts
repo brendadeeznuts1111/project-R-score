@@ -64,6 +64,7 @@ import {
   findPassCli,
   checkEnvFile,
   ensureAgentSession,
+  probePassSession,
   fetchSecretsParallel,
   SecretCacheManager,
   auditSecretHealth,
@@ -87,6 +88,8 @@ function usage(): never {
   proton-pass health [--env-file <path>]
   proton-pass inject --in-file <template> --out-file <.env> [--agent <name>]
   proton-pass run [--env-file <path>] [--agent <name>] -- <command…>
+  proton-pass session ensure [--agent <name>] [--json]
+  proton-pass session ready [--agent <name>] [--json]
   proton-pass version
 
 Agents: factorywager | kalshi | bet-ticker | cascade | partners | cloudflare
@@ -138,6 +141,40 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   log.info('pass_cli_located', { path: passCli });
+
+  if (cmd === 'session') {
+    const sub = head[3] ?? 'ready';
+    if (sub === 'ensure') {
+      const agent = await ensureAgentSession(passCli, agentCfg);
+      if (json) {
+        console.log(JSON.stringify({ ok: agent.ok, ...agent }, null, 2));
+      } else {
+        console.log(
+          `${agent.ok ? '✅' : '❌'} session ${agent.mode} · ${agent.sessionDir} — ${agent.detail}`
+        );
+      }
+      process.exit(agent.ok ? 0 : 1);
+    }
+    if (sub === 'ready') {
+      // Align session dir env before probe
+      Bun.env.PROTON_PASS_SESSION_DIR = agentCfg.sessionDir;
+      Bun.env.PROTON_PASS_KEY_PROVIDER = 'fs';
+      const probe = await probePassSession({ listVaults: true });
+      if (json) {
+        console.log(JSON.stringify(probe, null, 2));
+      } else if (!probe.ready) {
+        console.error(`❌ session not ready${probe.infoError ? ` (${probe.infoError})` : ''}`);
+        console.error(`   bunx --bun proton-pass session ensure --agent ${agentName}`);
+        process.exit(1);
+      } else {
+        console.log(`✅ session ready · PAT=${probe.patName}`);
+        if (probe.vaults.length) console.log(`   vaults=${probe.vaults.join(',')}`);
+      }
+      process.exit(0);
+    }
+    console.error('session subcommands: ensure | ready');
+    process.exit(2);
+  }
 
   if (cmd === 'inject') {
     const inFile = argValue(head, 'in-file');

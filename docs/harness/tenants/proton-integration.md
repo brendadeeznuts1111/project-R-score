@@ -39,15 +39,24 @@ helpers from this package and keeps the FactoryWager `PASS_PAT_VAULT_MATRIX` hos
 — `src/protonpass/*` re-exports the package; host keeps `DEFAULT_GATE_CHECKS` +
 `ensureKalshiAgentSession` force-reset. Commit `e529124` on Kalshi-bot `main`.
 
-**Inject / run (package CLI):**
+**Inject / run (deep path):**
+
+| Layer | Command |
+| ----- | ------- |
+| Project SSOT | `lib/security/proton-projects.ts` · `bun run proton:inject:list` |
+| Typed inject | `bun run proton:inject -- factorywager` · `--reasonix` |
+| Package CLI | `bunx --bun proton-pass inject --in-file … --out-file … --agent factorywager` |
+| Session | `bunx --bun proton-pass session ensure --agent factorywager` · `session ready` |
+| Portal | `portal secret inject -i env.template -o .env -f` (uses package when -i/-o set) |
+| Shell | `bash scripts/proton-inject.sh factorywager` → typed path first |
 
 ```bash
-bunx --bun proton-pass inject --in-file env.template --out-file .env --agent factorywager
+bun run proton:inject:factorywager:reasonix
+bunx --bun proton-pass session ensure --agent factorywager --json
 bunx --bun proton-pass run --env-file .env.protonpass --agent kalshi -- bun run serve
-bun run proton:inject:factorywager   # shell maps project → paths, delegates to package CLI
 ```
 
-Portal-cli `secret inject` remains an alternate path for interactive/operator boards.
+`ensureAgentSession` force-resets corrupt local session DBs once (login retry).
 
 ## Vault Layout
 

@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
@@ -27,7 +30,11 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  */
 import { semver } from 'bun';
 import { buildVaultMapBundle, colorize, type VaultMapEntry } from '../lib/security/vault-map.ts';
+import { injectProtonProject } from '../lib/security/proton-projects.ts';
+import { joinPath } from '../lib/path-bun.ts';
 import { runPassCli } from './portal-secret.ts';
+
+const REPO_ROOT = joinPath(import.meta.dir, '..');
 
 const argv = import.meta.main
   ? applyUnknownLongOptionGuardFor('vault:resolve', Bun.argv.slice(2))
@@ -144,25 +151,17 @@ async function main(): Promise<void> {
   console.log(`\n  T = in env.template · · = display-only (vault-map.toml)\n`);
 
   if (inject) {
-    if (ps !== 'ok') {
-      console.error(`  ❌ --inject requires pass-cli session (got: ${ps})`);
-      console.error('     source scripts/agent-env.sh factorywager');
-      process.exit(1);
+    console.log('  📝 injectProtonProject(factorywager) via @factorywager/proton-pass …');
+    const result = await injectProtonProject('factorywager', REPO_ROOT, {
+      reason: 'vault:resolve --inject',
+    });
+    if (!result.ok) {
+      console.error(`  ❌ Inject failed: ${result.detail}`);
+      console.error('     bun scripts/proton-inject.ts factorywager');
+      console.error('     or: source scripts/agent-env.sh factorywager');
+      process.exit(result.code ?? 1);
     }
-    console.log('  📝 pass-cli inject -i env.template -o .env -f …');
-    const code = await runPassCli([
-      'inject',
-      '--in-file',
-      'env.template',
-      '--out-file',
-      '.env',
-      '--force',
-    ]);
-    if (code !== 0) {
-      console.error('  ❌ Inject failed');
-      process.exit(code);
-    }
-    console.log('  ✅ .env written from vault (no values printed)');
+    console.log(`  ✅ .env written from vault (${result.agent.mode}; no values printed)`);
   }
 
   if (ssh) {

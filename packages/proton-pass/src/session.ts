@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/bundler/executables — --force
+// @updated --force · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
+// @updated --force · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @verified --force · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/bundler/executables
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
 // @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
@@ -291,9 +295,64 @@ async function passInfoOk(passCli: string): Promise<boolean> {
   );
 }
 
+async function forceResetSessionDir(passCli: string, sessionDir: string): Promise<void> {
+  await spawnWithTimeout(passCli, ['logout', '--force'], { timeoutMs: 8_000 });
+  try {
+    const { rm } = await import('node:fs/promises');
+    await rm(sessionDir, { recursive: true, force: true });
+  } catch {
+    /* best effort */
+  }
+  try {
+    const { mkdir } = await import('node:fs/promises');
+    await mkdir(sessionDir, { recursive: true });
+  } catch {
+    /* best effort */
+  }
+}
+
+function loginLooksCorrupt(login: { stderr: string; stdout: string }): boolean {
+  const blob = `${login.stderr}\n${login.stdout}`;
+  return blob.includes('not a database') || blob.includes('encryption key');
+}
+
+async function loginWithToken(
+  passCli: string,
+  sessionDir: string,
+  token: string
+): Promise<{
+  ok: boolean;
+  timedOut: boolean;
+  code: number | null;
+  stderr: string;
+  stdout: string;
+}> {
+  applySessionEnv(sessionDir, token);
+  try {
+    const { mkdir } = await import('node:fs/promises');
+    await mkdir(sessionDir, { recursive: true });
+  } catch {
+    /* best effort */
+  }
+  const login = await spawnWithTimeout(passCli, ['login', '--method', 'token'], {
+    timeoutMs: 20_000,
+  });
+  const ready = !login.timedOut && login.code === 0 && (await passInfoOk(passCli));
+  return {
+    ok:
+      ready ||
+      (!login.timedOut && login.code === 0 && login.stdout.includes('Successfully logged in')),
+    timedOut: login.timedOut,
+    code: login.code,
+    stderr: login.stderr,
+    stdout: login.stdout,
+  };
+}
+
 /**
  * Ensure agent PAT session for a host config (generic).
  * Falls back to existing interactive session when no PAT registered.
+ * Retries once after force-reset when the local session DB is corrupt.
  */
 export async function ensureAgentSession(
   passCli: string,
@@ -321,21 +380,17 @@ export async function ensureAgentSession(
     };
   }
 
-  applySessionEnv(config.sessionDir, token);
-  try {
-    const { mkdir } = await import('node:fs/promises');
-    await mkdir(config.sessionDir, { recursive: true });
-  } catch {
-    /* best effort */
+  let attempt = await loginWithToken(passCli, config.sessionDir, token);
+  if (!attempt.ok && loginLooksCorrupt(attempt)) {
+    log.warn('Session DB corrupt — force logout + retry', { sessionDir: config.sessionDir });
+    await forceResetSessionDir(passCli, config.sessionDir);
+    attempt = await loginWithToken(passCli, config.sessionDir, token);
   }
 
-  const login = await spawnWithTimeout(passCli, ['login', '--method', 'token'], {
-    timeoutMs: 20_000,
-  });
-  if (login.timedOut || login.code !== 0) {
+  if (!attempt.ok) {
     log.error('PAT login failed', {
-      code: login.code,
-      timedOut: login.timedOut,
+      code: attempt.code,
+      timedOut: attempt.timedOut,
     });
     return {
       ok: false,
