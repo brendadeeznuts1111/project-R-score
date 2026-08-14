@@ -1,3 +1,16 @@
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @updated Bun.Glob · fixed v1.0.27 · 2024-02-17 · https://bun.com/blog/bun-v1.0.27
+// @updated Bun.Glob · fixed v1.0.28 · 2024-02-19 · https://bun.com/blog/bun-v1.0.28
+// @updated Bun.Glob · fixed v1.0.29 · 2024-02-23 · https://bun.com/blog/bun-v1.0.29
+// @updated Bun.Glob · fixed v1.0.30 · 2024-03-04 · https://bun.com/blog/bun-v1.0.30
+// @updated Bun.Glob · fixed v1.1.5 · 2024-04-26 · https://bun.com/blog/bun-v1.1.5
+// @updated Bun.Glob · changed v1.2.3 · 2025-02-22 · https://bun.com/blog/bun-v1.2.3
+// @updated Bun.Glob · fixed v1.2.3 · 2025-02-22 · https://bun.com/blog/bun-v1.2.3
+// @updated Bun.Glob · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.Glob · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
+// @updated Bun.Glob · changed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @updated Bun.Glob · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @verified Bun.Glob · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/glob#quickstart
 /**
  * Parse `div.CodeBlock` regions from Bun blog HTML (L0 harvest core).
  *
@@ -11,14 +24,71 @@ export type CodeBlock = {
   code: string;
   htmlOffset: number;
   className: 'CodeBlock';
+  classNames: string[];
+  status: 'parsed';
+  statusLabel: 'parsed';
+};
+
+export type CodeBlockClassStatus = 'parsed' | 'skipped' | 'scoped';
+
+export type CodeBlockClassSummary = {
+  className: string;
+  status: CodeBlockClassStatus;
+  statusLabel: string;
+  count: number;
 };
 
 export type ExtractResult = {
   blocks: CodeBlock[];
   codeBlockCount: number;
   codeBlockTabCount: number;
+  classPattern: typeof CODE_BLOCK_CLASS_PATTERN;
+  classStatuses: CodeBlockClassSummary[];
   bySection: Record<string, number>;
 };
+
+/** Bun.Glob matches the complete CodeBlock CSS-class family, not substrings. */
+export const CODE_BLOCK_CLASS_PATTERN = 'CodeBlock*' as const;
+const CODE_BLOCK_CLASS_GLOB = new Bun.Glob(CODE_BLOCK_CLASS_PATTERN);
+
+function classStatus(className: string): Omit<CodeBlockClassSummary, 'className' | 'count'> {
+  if (className === 'CodeBlock') return { status: 'parsed', statusLabel: 'parsed' };
+  if (className === 'CodeBlockTab') {
+    return { status: 'skipped', statusLabel: 'skipped · tab container' };
+  }
+  return { status: 'scoped', statusLabel: 'scoped · supporting class' };
+}
+
+function divClassLists(html: string): Array<{
+  htmlOffset: number;
+  classNames: string[];
+}> {
+  const matches: Array<{ htmlOffset: number; classNames: string[] }> = [];
+  const divClass = /<div\b[^>]*\bclass=(['"])(.*?)\1[^>]*>/g;
+  let match: RegExpExecArray | null;
+  while ((match = divClass.exec(html))) {
+    matches.push({
+      htmlOffset: match.index,
+      classNames: match[2]!.trim().split(/\s+/).filter(Boolean),
+    });
+  }
+  return matches;
+}
+
+export function summarizeCodeBlockClasses(
+  classLists: readonly string[][]
+): CodeBlockClassSummary[] {
+  const counts = new Map<string, number>();
+  for (const classNames of classLists) {
+    for (const className of classNames) {
+      if (!CODE_BLOCK_CLASS_GLOB.match(className)) continue;
+      counts.set(className, (counts.get(className) ?? 0) + 1);
+    }
+  }
+  return [...counts]
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([className, count]) => ({ className, count, ...classStatus(className) }));
+}
 
 export function decodeHtmlEntities(s: string): string {
   return s
@@ -50,16 +120,15 @@ function nearestHeading(before: string): string {
 
 /** Parse `div.CodeBlock` (not `CodeBlockTab`) from Bun blog HTML. */
 export function extractCodeBlocks(html: string): ExtractResult {
-  const classLists = [...html.matchAll(/<div\b[^>]*\bclass="([^"]*)"[^>]*>/g)].map(match =>
-    match[1]!.split(/\s+/)
-  );
-  const codeBlockTabCount = classLists.filter(classes => classes.includes('CodeBlockTab')).length;
+  const divs = divClassLists(html);
+  const classStatuses = summarizeCodeBlockClasses(divs.map(div => div.classNames));
+  const codeBlockTabCount =
+    classStatuses.find(summary => summary.className === 'CodeBlockTab')?.count ?? 0;
 
   const blocks: CodeBlock[] = [];
-  const openRe = /<div\b[^>]*\bclass="[^"]*\bCodeBlock\b[^"]*"[^>]*>/g;
-  let m: RegExpExecArray | null;
-  while ((m = openRe.exec(html))) {
-    const start = m.index;
+  for (const div of divs) {
+    if (!div.classNames.includes('CodeBlock')) continue;
+    const start = div.htmlOffset;
     const after = html.slice(start);
     const preMatch = /<pre[^>]*>([\s\S]*?)<\/pre>/.exec(after);
     if (!preMatch) continue;
@@ -71,6 +140,9 @@ export function extractCodeBlocks(html: string): ExtractResult {
       code,
       htmlOffset: start,
       className: 'CodeBlock',
+      classNames: div.classNames,
+      status: 'parsed',
+      statusLabel: 'parsed',
     });
   }
 
@@ -81,6 +153,13 @@ export function extractCodeBlocks(html: string): ExtractResult {
     blocks,
     codeBlockCount: blocks.length,
     codeBlockTabCount,
+    classPattern: CODE_BLOCK_CLASS_PATTERN,
+    classStatuses,
     bySection,
   };
+}
+
+/** Typed BunFile boundary for saved Bun blog HTML. */
+export async function extractCodeBlocksFromFile(file: Bun.BunFile): Promise<ExtractResult> {
+  return extractCodeBlocks(await file.text());
 }

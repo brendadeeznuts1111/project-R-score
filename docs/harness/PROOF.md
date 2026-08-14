@@ -265,7 +265,10 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   `bun test tests/factory-production.test.ts` ·
   [`tenants/registry-integrity.md`](tenants/registry-integrity.md)
 - **`blog-codeblocks-boundaries`** — Blog `div.CodeBlock` extraction strips
-  Shiki markup, skips tabs, and preserves token joins (`boundary`) _Ratchet_ →
+  Shiki markup, classifies each `CodeBlock*` CSS class through `Bun.Glob`,
+  labels parsed/skipped/scoped status in JSON, Markdown, and explicit
+  `Bun.inspect.table` properties, reads saved HTML through a typed `BunFile`,
+  and preserves token joins (`boundary`) _Ratchet_ →
   `bun test tests/bun-blog-codeblocks.test.ts tests/blog-codeblock-join.test.ts`
 - **`blog-codeblocks-journey`** — Live Bun blog HTML traverses `fetchPostHtml` →
   `extractCodeBlocks` with the expected code-block inventory (`journey`)

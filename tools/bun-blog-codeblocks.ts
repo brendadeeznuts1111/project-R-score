@@ -27,8 +27,10 @@ import { buildDerivedApiRows, matchBlocksToTokens } from '../lib/docs/blog-codeb
 import {
   decodeHtmlEntities,
   extractCodeBlocks,
+  extractCodeBlocksFromFile,
   stripShikiPre,
   type CodeBlock,
+  type CodeBlockClassSummary,
   type ExtractResult,
 } from '../lib/docs/blog-codeblocks.ts';
 import { bunBlog, BunBlogPattern, guideKeyFromUrl } from '../lib/docs/bun-site-url.ts';
@@ -52,6 +54,7 @@ export type { CodeBlock, ExtractResult } from '../lib/docs/blog-codeblocks.ts';
 export {
   decodeHtmlEntities,
   extractCodeBlocks,
+  extractCodeBlocksFromFile,
   stripShikiPre,
 } from '../lib/docs/blog-codeblocks.ts';
 
@@ -61,6 +64,17 @@ export type CodeBlockWithTokens = CodeBlock & {
 
 const DEFAULT_VERSION = '1.3.6';
 const REPO_ROOT = resolvePath(import.meta.dir, '..');
+
+export const CODE_BLOCK_TABLE_PROPERTIES = [
+  '#',
+  'status',
+  'class',
+  'section',
+  'lines',
+  'preview',
+] as const;
+
+export const CODE_BLOCK_CLASS_TABLE_PROPERTIES = ['class', 'status', 'count'] as const;
 
 export function previewLine(code: string, maxWidth = 60): string {
   const line =
@@ -229,28 +243,36 @@ async function lookupReleaseEntry(
 }
 
 async function ensureHtml(opts: {
-  htmlPath: string;
+  file: Bun.BunFile;
   sourceUrl: string;
   forceFetch?: boolean;
-}): Promise<string> {
-  const file = Bun.file(opts.htmlPath);
-  if (!opts.forceFetch && (await file.exists())) return file.text();
+}): Promise<Bun.BunFile> {
+  const file = opts.file;
+  if (!opts.forceFetch && (await file.exists())) return file;
 
   try {
     assertBlogPostUrl(opts.sourceUrl);
     const html = await fetchPostHtml(opts.sourceUrl, opts.forceFetch);
     if (!html) throw new Error('empty HTML from cache/fetch');
     if (!(await file.exists())) {
-      await Bun.write(opts.htmlPath, html);
+      await Bun.write(file, html);
     }
-    return html;
+    return file;
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
-    console.error(`Missing HTML: ${opts.htmlPath}`);
+    console.error(`Missing HTML: ${file.name ?? '(unnamed BunFile)'}`);
     console.error(`Fetch failed (${detail}). Download with:`);
-    console.error(`  curl -fsSL '${opts.sourceUrl}' -o '${opts.htmlPath}'`);
+    console.error(`  curl -fsSL '${opts.sourceUrl}' -o '${file.name ?? 'bun-blog.html'}'`);
     process.exit(1);
   }
+}
+
+export function codeBlockClassRows(classStatuses: readonly CodeBlockClassSummary[]) {
+  return classStatuses.map(summary => ({
+    class: summary.className,
+    status: summary.statusLabel,
+    count: summary.count,
+  }));
 }
 
 function printHelp(): void {
@@ -318,8 +340,9 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
       : `/tmp/bun-v${version}.html`;
   const outDir = resolvePath(REPO_ROOT, values['out-dir'] || '.tmp');
 
-  const html = await ensureHtml({ htmlPath, sourceUrl: source });
-  const extracted = extractCodeBlocks(html);
+  const htmlFile = Bun.file(htmlPath);
+  const ensuredHtmlFile = await ensureHtml({ file: htmlFile, sourceUrl: source });
+  const extracted = await extractCodeBlocksFromFile(ensuredHtmlFile);
 
   if (extracted.codeBlockCount === 0) {
     console.error('No div.CodeBlock regions found. HTML shape may have changed; check selector.');
@@ -345,6 +368,8 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
     rss: BUN_RSS_URL,
     count: extracted.codeBlockCount,
     codeBlockTabCount: extracted.codeBlockTabCount,
+    classPattern: extracted.classPattern,
+    classStatuses: extracted.classStatuses,
     bySection: extracted.bySection,
     blocks: blocksForJson,
   };
@@ -367,8 +392,14 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
 
   let md = `# Bun v${version} — HTML \`.CodeBlock\` extractions\n\n`;
   md += `Source: ${source}\n\nCount: **${extracted.codeBlockCount}**\n\n`;
+  md += `Class pattern: \`${extracted.classPattern}\` via \`Bun.Glob.match()\`\n\n`;
+  md += '| Class | Status | Count |\n| --- | --- | ---: |\n';
+  for (const row of codeBlockClassRows(extracted.classStatuses)) {
+    md += `| \`${row.class}\` | ${row.status} | ${row.count} |\n`;
+  }
+  md += '\n';
   for (const b of extracted.blocks) {
-    md += `### ${b.index}. ${b.section}\n\n\`\`\`\n${b.code}\n\`\`\`\n\n`;
+    md += `### ${b.index}. ${b.section}\n\nStatus: **${b.statusLabel}** · Class: \`${b.classNames.join(' ')}\`\n\n\`\`\`\n${b.code}\n\`\`\`\n\n`;
   }
   await Bun.write(mdPath, md);
 
@@ -390,11 +421,18 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
 
   const rows = extracted.blocks.map(b => ({
     '#': b.index,
+    status: b.statusLabel,
+    class: b.classNames.join(' '),
     section: b.section,
     lines: b.code.split('\n').length,
     preview: previewLine(b.code),
   }));
-  logTable(rows, ['#', 'section', 'lines', 'preview'], { colors: true });
+  logTable(rows, [...CODE_BLOCK_TABLE_PROPERTIES], { colors: true });
+  console.log('');
+  console.log('CodeBlock class status · Bun.Glob("CodeBlock*")');
+  logTable(codeBlockClassRows(extracted.classStatuses), [...CODE_BLOCK_CLASS_TABLE_PROPERTIES], {
+    colors: true,
+  });
 
   const sectionNum =
     values.section != null && values.section !== ''
