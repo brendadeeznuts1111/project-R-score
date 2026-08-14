@@ -70,8 +70,7 @@ SHARD=1/3 bun run test:shard
 
 ## Upstream Bun flags
 
-Curated NOTE (TOC + fences): [`docs/guides/bun-test-flags-1.3.13.md`](../guides/bun-test-flags-1.3.13.md)  
-Ship: [v1.3.13](https://bun.com/blog/bun-v1.3.13) · Platform: [`BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md)
+Ship: [v1.3.13](https://bun.com/blog/bun-v1.3.13) · flags matrix: [`tenants/bun-test-flags.md`](tenants/bun-test-flags.md) · Platform: [`BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md)
 
 FactoryWager script × flag matrix (CLI vs bunfig; JUnit vs Inspector):
 [`tenants/bun-test-flags.md`](tenants/bun-test-flags.md). Live Inspector stream:

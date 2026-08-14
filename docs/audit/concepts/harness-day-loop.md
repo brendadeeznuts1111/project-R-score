@@ -12,12 +12,12 @@
 
 ## Description
 
-FactoryWager local day-loop: type-check, affected build/test, bun test --changed / --isolate / --parallel / --shard wrappers, and ci:harness:fast before push. Not Bun upstream CI. Docs: docs/harness/day-loop.md · curated NOTE: docs/guides/bun-test-flags-1.3.13.md.
+FactoryWager local day-loop: type-check, affected build/test, bun test --changed / --isolate / --parallel / --shard wrappers, and ci:harness:fast before push. Not Bun upstream CI. Docs: docs/harness/day-loop.md · flags matrix: docs/harness/tenants/bun-test-flags.md.
 
 ## References
 
 - docs/harness/day-loop.md
-- docs/guides/bun-test-flags-1.3.13.md
+- docs/harness/tenants/bun-test-flags.md
 - docs/BUN_NATIVE_CAPABILITIES.md — Day-loop tests row
 - https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel
 

@@ -2072,9 +2072,6 @@
     "docs:refresh:feeds": "bun tools/bun-docs-refresh.ts --feeds",
     "docs:catalog:build": "bun tools/bun-docs-catalog.ts build",
     "docs:catalog": "bun tools/bun-docs-catalog.ts list",
-    "docs:guides:gap": "bun tools/bun-guides-gap.ts",
-    "docs:guides:gap:spine": "bun tools/bun-guides-gap.ts --spine",
-
     "docs:catalog:export": "bun tools/bun-docs-catalog.ts export --compact",
     "docs:provenance:check": "bun tools/bun-doc-refs.ts provenance-check",
     "docs:api-index": "bun tools/export-bun-api-index.ts",
@@ -2424,7 +2421,6 @@
     "cloudflare:env:assert-live": "bun config/r2-env.ts --assert-live",
     "cloudflare:env:validate": "bun tools/cloudflare-env-validate.ts",
     "cloudflare:token:probe": "bun tools/cloudflare-token-probe-cli.ts",
-
     "cloudflare:dns:sync": "bash scripts/cloudflare-dns-sync.sh",
     "cloudflare:dns:sync:apply": "bash scripts/cloudflare-dns-sync.sh --apply",
     "cloudflare:dns:verify": "bash scripts/cloudflare-dns-sync.sh --verify",
@@ -2498,8 +2494,6 @@
     "proton:inject:scanner": "bun scripts/proton-inject.ts scanner",
     "proton:session:ensure": "bunx --bun proton-pass session ensure --agent factorywager",
     "proton:session:env": "bun scripts/proton-session-env.ts",
-
-
     "proton:check": "bash scripts/proton-vault-check.sh",
     "proton:check:list": "bash scripts/proton-vault-check.sh --list-only",
     "proton-pass:test": "bun run --filter @factorywager/proton-pass test",

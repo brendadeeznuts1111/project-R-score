@@ -947,7 +947,7 @@ describe('inspect family catalog relations', () => {
     expect(byName.get('bun test flags')?.docsUrl).toBe(
       'https://bun.com/docs/test/parallel#parallel'
     );
-    expect(byName.get('bun test flags')?.description).toContain('bun-test-flags-1.3.13.md');
+    expect(byName.get('bun test flags')?.description).toContain('bun-test-flags.md');
     expect(byName.get('--parallel')?.examples?.[0]?.body).toContain(
       'pm/filter#parallel-and-sequential-mode'
     );
