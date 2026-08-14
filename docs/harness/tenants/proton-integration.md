@@ -34,7 +34,12 @@ import { findPassCli, ensureAgentSession } from '@factorywager/proton-pass';
 Cookbook: [monorepo-workspaces § Bun PM surface](./monorepo-workspaces.md#bun-pm-surface-operator-cookbook).  
 **Monorepo consumer (landed):** `lib/security/pass-session.ts` re-exports probe/parse/template
 helpers from this package and keeps the FactoryWager `PASS_PAT_VAULT_MATRIX` host-side.
-Still follow-up: migrate shell `proton-inject.sh` and Kalshi `src/protonpass` onto the package.
+
+**Kalshi-bot consumer (landed, sibling repo):** `"@factorywager/proton-pass": "file:../packages/proton-pass"`
+— `src/protonpass/*` re-exports the package; host keeps `DEFAULT_GATE_CHECKS` +
+`ensureKalshiAgentSession` force-reset. Commit `e529124` on Kalshi-bot `main`.
+
+Still follow-up: migrate shell `proton-inject.sh` / portal-cli inject path onto the package CLI.
 
 ## Vault Layout
 
