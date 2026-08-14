@@ -226,6 +226,51 @@ live in [Utilities guides map](#utilities-guides-map); programmatic
 Smoke: `bun test tests/bun-path-url.test.ts tests/bun-executable.test.ts` ·
 `bun run check:import-graph`.
 
+## Guides hub + gap scan
+
+Official index: [bun.com/docs/guides](https://bun.com/docs/guides/index) ·
+`guides.md` inventory. Monorepo inventory + scanner:
+
+```bash
+bun tools/bun-guides-gap.ts              # full
+bun tools/bun-guides-gap.ts --spine      # spine must be linked in docs
+bun tools/bun-guides-gap.ts --cluster install
+bun tools/bun-guides-gap.ts --json
+```
+
+SSOT list:
+[`lib/docs/bun-guides-inventory.ts`](../lib/docs/bun-guides-inventory.ts).  
+Deploy guides (Vercel/Railway/Render) are **out-of-scope** — Cloudflare Pages is
+delivery SSOT
+([cloudflare-pages tenant](./harness/tenants/cloudflare-pages.md)).
+
+## Package manager guides map
+
+Canonical PM API docs: [pm/cli/install](https://bun.com/docs/pm/cli/install) ·
+Factory policy [UNIFIED.md](./UNIFIED.md) ·
+[monorepo-workspaces § Bun PM surface](./harness/tenants/monorepo-workspaces.md#bun-pm-surface-operator-cookbook).
+
+| Guide                                                                                                          | Behavior                | Factory                                                                        |
+| -------------------------------------------------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------ |
+| [install/add](https://bun.com/docs/guides/install/add)                                                         | `bun add`               | `bun run add:safe -- <pkg>` (freeze unlock + `--exact`)                        |
+| [install/add-dev](https://bun.com/docs/guides/install/add-dev)                                                 | `bun add -d`            | `bun run add:safe -- --dev <pkg>`                                              |
+| [install/trusted](https://bun.com/docs/guides/install/trusted)                                                 | lifecycle allow-list    | root `trustedDependencies: []` intentional — [UNIFIED § trusted](./UNIFIED.md) |
+| [install/workspaces](https://bun.com/docs/guides/install/workspaces)                                           | monorepo packages       | root `workspaces.packages` · `workspace:*` · catalogs · `validate:workspaces`  |
+| [install/registry-scope](https://bun.com/docs/guides/install/registry-scope)                                   | scoped private registry | bunfig `[install.scopes]` · `@factorywager`                                    |
+| [install/cicd](https://bun.com/docs/guides/install/cicd)                                                       | CI install              | local authority `bun run bun:ci` · `install:all` (GHA not merge gate)          |
+| [install/from-npm-install-to-bun-install](https://bun.com/docs/guides/install/from-npm-install-to-bun-install) | migrate from npm        | policy: Bun-only; no npm install in production paths                           |
+
+## Process guides map
+
+| Guide                                                                    | Behavior          | Factory                                                                                          |
+| ------------------------------------------------------------------------ | ----------------- | ------------------------------------------------------------------------------------------------ |
+| [process/spawn](https://bun.com/docs/guides/process/spawn)               | `Bun.spawn`       | `spawnWithTimeout` · `@factorywager/proton-pass` · never bare `"bun"` — `resolveBunExecutable()` |
+| [process/argv](https://bun.com/docs/guides/process/argv)                 | `Bun.argv`        | space-separated CLI flags · `argValue` / `hasFlag` · `BUN_STRIP_UNKNOWN`                         |
+| [process/spawn-stdout](https://bun.com/docs/guides/process/spawn-stdout) | read child stdout | pass-cli capture · portal-secret · vault bake                                                    |
+| [process/spawn-stderr](https://bun.com/docs/guides/process/spawn-stderr) | read child stderr | same; never log secret values                                                                    |
+| [process/stdin](https://bun.com/docs/guides/process/stdin)               | stdin             | interactive pass-cli login · operator CLIs                                                       |
+| [process/os-signals](https://bun.com/docs/guides/process/os-signals)     | signals           | serve-public / watch loops · orphan policy `run.noOrphans`                                       |
+
 ## Runtime env guides
 
 Sidebar under
@@ -236,7 +281,41 @@ Infra only — **no glossary**.
 | --------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [read-env](https://bun.com/docs/guides/runtime/read-env)                    | Auto `.env` / `.env.$NODE_ENV` / `.env.local`; read via `Bun.env`          | Prefer `Bun.env`; vault → `.env` via `proton:inject` / `portal secret run` — **no** harness `dotenv`                                                       |
 | [set-env](https://bun.com/docs/guides/runtime/set-env)                      | CLI / `process.env.FOO = …`                                                | Nested spawn `{ ...Bun.env }` (shallow copy); never mutate parent                                                                                          |
+| [import-toml](https://bun.com/docs/guides/runtime/import-toml)              | `import x from './f.toml'`                                                 | `config/vault-map.toml` · bunfig · partners.toml                                                                                                           |
+| [typescript](https://bun.com/docs/guides/runtime/typescript)                | `@types/bun` / `bun-types`                                                 | root catalog pins · `bun run bun:channel:check` · [UNIFIED types channels](./UNIFIED.md)                                                                   |
 | [environment-variables](https://bun.com/docs/runtime/environment-variables) | `--env-file` · `--no-env-file` · bunfig `env = false` · expansion / quotes | `config/runtime-flags.json` · [`lib/bun-runtime-env.ts`](../lib/bun-runtime-env.ts) · [`lib/env-check.ts`](../lib/env-check.ts) · doctor `--group runtime` |
+
+## File I/O guides map
+
+| Guide                                                              | Behavior              | Factory                                               |
+| ------------------------------------------------------------------ | --------------------- | ----------------------------------------------------- |
+| [write-file/basic](https://bun.com/docs/guides/write-file/basic)   | `Bun.write` string    | registry bakes · inject `.env` · temp run-env         |
+| [write-file/unlink](https://bun.com/docs/guides/write-file/unlink) | delete file           | `runWithEnvFile` temp cleanup · `Bun.file().unlink()` |
+| [read-file/string](https://bun.com/docs/guides/read-file/string)   | `Bun.file().text()`   | templates · vault map                                 |
+| [read-file/json](https://bun.com/docs/guides/read-file/json)       | JSON file             | registry JSON · bake artifacts                        |
+| [read-file/exists](https://bun.com/docs/guides/read-file/exists)   | `Bun.file().exists()` | inject gates · session tokens file                    |
+| [read-file/watch](https://bun.com/docs/guides/read-file/watch)     | directory watch       | inventory watch · test:watch                          |
+
+## Test runner guides map
+
+| Guide                                                                              | Behavior         | Factory                                |
+| ---------------------------------------------------------------------------------- | ---------------- | -------------------------------------- |
+| [test/run-tests](https://bun.com/docs/guides/test/run-tests)                       | `bun test`       | root `tests/` · pathIgnorePatterns     |
+| [test/watch-mode](https://bun.com/docs/guides/test/watch-mode)                     | `--watch`        | `bun run test:watch` / `test:dev`      |
+| [test/bail](https://bun.com/docs/guides/test/bail)                                 | bail early       | pre-commit `test:changed` bail         |
+| [test/concurrent-test-glob](https://bun.com/docs/guides/test/concurrent-test-glob) | concurrent globs | bunfig `concurrentTestGlob` (ast-grep) |
+| [test/coverage](https://bun.com/docs/guides/test/coverage)                         | coverage         | bunfig `coverageThreshold` · CI report |
+
+Tenant flag matrix: [bun-test-flags](./harness/tenants/bun-test-flags.md).
+
+## HTTP guides map (spine)
+
+| Guide                                                            | Behavior             | Factory                                                                |
+| ---------------------------------------------------------------- | -------------------- | ---------------------------------------------------------------------- |
+| [http/fetch](https://bun.com/docs/guides/http/fetch)             | `fetch`              | CF token probes · registry · live health                               |
+| [http/proxy](https://bun.com/docs/guides/http/proxy)             | proxy env            | [bun-fetch-proxy-environment](./guides/bun-fetch-proxy-environment.md) |
+| [http/stream-file](https://bun.com/docs/guides/http/stream-file) | stream file Response | serve-public static                                                    |
+| [http/sse](https://bun.com/docs/guides/http/sse)                 | Server-Sent Events   | ops live panels (where applicable)                                     |
 
 ## Utilities guides map
 
