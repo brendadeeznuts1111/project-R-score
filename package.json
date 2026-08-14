@@ -32,9 +32,7 @@
     "@factorywager/registry-client": "workspace:*",
     "@factorywager/rip": "workspace:*",
     "@modelcontextprotocol/sdk": "1.30.0",
-    "@pinecone-database/pinecone": "7.2.0",
     "@simplewebauthn/server": "13.3.2",
-    "plaid": "42.2.0",
     "yaml": "2.9.0",
     "zod": "catalog:"
   },
@@ -51,8 +49,7 @@
     "husky": "9.1.7",
     "prettier": "3.9.6",
     "typescript": "catalog:",
-    "typescript-eslint": "8.65.0",
-    "undici-types": "8.8.0"
+    "typescript-eslint": "8.65.0"
   },
   "bin": {
     "dx-mcp": "./scripts/dx-mcp.ts",
@@ -1613,7 +1610,6 @@
     "remove:safe": "bun scripts/bun-remove-safe.ts",
     "deps:rate-removal": "bun scripts/rate-removal-candidates.ts",
     "deps:rate-removal:json": "bun scripts/rate-removal-candidates.ts --json",
-
     "install:verify:strict": "bun scripts/verify-install-cache.ts --strict",
     "install:machine:health": "bun scripts/machine-bun-health.ts",
     "install:cache:lifecycle": "bun scripts/bun-cache-lifecycle.ts --dry-run",
