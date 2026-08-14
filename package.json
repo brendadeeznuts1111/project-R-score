@@ -2417,6 +2417,8 @@
     "cloudflare:env:assert-apex": "bun config/r2-env.ts --assert-apex",
     "cloudflare:env:assert-live": "bun config/r2-env.ts --assert-live",
     "cloudflare:env:validate": "bun tools/cloudflare-env-validate.ts",
+    "cloudflare:token:probe": "bun tools/cloudflare-token-probe-cli.ts",
+
     "cloudflare:dns:sync": "bash scripts/cloudflare-dns-sync.sh",
     "cloudflare:dns:sync:apply": "bash scripts/cloudflare-dns-sync.sh --apply",
     "cloudflare:dns:verify": "bash scripts/cloudflare-dns-sync.sh --verify",

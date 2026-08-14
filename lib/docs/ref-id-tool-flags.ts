@@ -1296,6 +1296,9 @@ export const PROTON_INJECT_ALLOWED_LONG = ['list', 'reasonix', 'help'] as const;
 /** § — proton-session-env (`scripts/proton-session-env.ts`) */
 export const PROTON_SESSION_ENV_ALLOWED_LONG = ['json', 'help'] as const;
 
+/** § — cloudflare-token-probe (`tools/cloudflare-token-probe-cli.ts`) */
+export const CLOUDFLARE_TOKEN_PROBE_ALLOWED_LONG = ['json', 'help'] as const;
+
 /** § — ops:limits:lab:profile (`scripts/limit-forecast-lab-profile.ts`) — auto team plan */
 export const OPS_LIMITS_LAB_PROFILE_ALLOWED_LONG = [
   'cpu-prof',
@@ -2556,6 +2559,7 @@ export type AllowedLongCliName =
   | 'add:safe'
   | 'proton-inject'
   | 'proton-session-env'
+  | 'cloudflare-token-probe'
   | 'ops:limits:lab:profile'
   | 'concepts:bake'
   | 'bake:install-hygiene'
@@ -2888,6 +2892,7 @@ export const ALLOWED_LONG_REGISTRY = {
   'add:safe': ADD_SAFE_ALLOWED_LONG,
   'proton-inject': PROTON_INJECT_ALLOWED_LONG,
   'proton-session-env': PROTON_SESSION_ENV_ALLOWED_LONG,
+  'cloudflare-token-probe': CLOUDFLARE_TOKEN_PROBE_ALLOWED_LONG,
   'ops:limits:lab:profile': OPS_LIMITS_LAB_PROFILE_ALLOWED_LONG,
   'concepts:bake': CONCEPTS_BAKE_ALLOWED_LONG,
   'bake:install-hygiene': BAKE_INSTALL_HYGIENE_ALLOWED_LONG,

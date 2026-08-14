@@ -22,7 +22,7 @@ import {
   liveItemsFromListJson,
   type VaultLiveItem,
 } from '../lib/security/vault-health.ts';
-import { classifyCloudflareTokenVerify } from '../tools/vault-health-bake.ts';
+import { classifyCloudflareTokenVerify } from '../lib/security/cloudflare-token-probe.ts';
 
 describe('vault-health', () => {
   test('liveItemsFromListJson parses items shape with states', () => {

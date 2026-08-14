@@ -1,6 +1,6 @@
 {
   "kind": "vault-health",
-  "generatedAt": "2026-08-14T02:48:57.880Z",
+  "generatedAt": "2026-08-14T03:10:22.060Z",
   "vaults": [
     {
       "name": "factorywager",
@@ -123,23 +123,23 @@
     {
       "envKey": "CLOUDFLARE_ACCESS_API_TOKEN",
       "kind": "cloudflare",
-      "status": "invalid",
-      "statusCode": 401,
-      "checkedAt": "2026-08-14T02:48:57.448Z"
+      "status": "ok",
+      "statusCode": 200,
+      "checkedAt": "2026-08-14T03:10:21.929Z"
     },
     {
       "envKey": "CLOUDFLARE_API_TOKEN",
       "kind": "cloudflare",
-      "status": "invalid",
-      "statusCode": 401,
-      "checkedAt": "2026-08-14T02:48:56.381Z"
+      "status": "ok",
+      "statusCode": 200,
+      "checkedAt": "2026-08-14T03:10:21.611Z"
     },
     {
       "envKey": "CLOUDFLARE_DNS_API_TOKEN",
       "kind": "cloudflare",
-      "status": "invalid",
-      "statusCode": 401,
-      "checkedAt": "2026-08-14T02:48:56.925Z"
+      "status": "ok",
+      "statusCode": 200,
+      "checkedAt": "2026-08-14T03:10:21.804Z"
     }
   ],
   "summary": {
@@ -149,9 +149,9 @@
     "referencedOk": 18,
     "referencedTrashed": 0,
     "referencedMissing": 0,
-    "tokensOk": 0,
-    "tokensInvalid": 3,
+    "tokensOk": 3,
+    "tokensInvalid": 0,
     "tokensUnreachable": 0,
-    "healthy": false
+    "healthy": true
   }
 }
