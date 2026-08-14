@@ -78,9 +78,18 @@ import {
 Prefer **space-separated** flags (command, then flags, then values):
 
 ```bash
-bun packages/proton-pass/bin/proton-pass.ts check --env-file .env.protonpass --agent kalshi --json
-bun packages/proton-pass/bin/proton-pass.ts health --env-file .env.protonpass
+bunx --bun proton-pass check --env-file .env.protonpass --agent kalshi --json
+bunx --bun proton-pass health --env-file .env.protonpass
+bunx --bun proton-pass inject --in-file env.template --out-file .env --agent factorywager
+bunx --bun proton-pass run --env-file .env.protonpass --agent kalshi -- bun run serve
 bun run --filter @factorywager/proton-pass test
+```
+
+Monorepo wrapper still maps project → template path:
+
+```bash
+bun run proton:inject:factorywager
+# → bunx --bun proton-pass inject --in-file env.template --out-file .env --agent factorywager
 ```
 
 Avoid glued forms like `--env-file=path` in docs (still accepted for compatibility).
