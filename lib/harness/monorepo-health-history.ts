@@ -23,8 +23,8 @@ export type HealthHistoryRow = {
   duplicateDepCount: number;
   deadCodePercent: number;
   largeFilePercent: number;
-  testFailureRate: number;
-  testCoveragePercent: number;
+  testFailureRate: number | null;
+  testCoveragePercent: number | null;
   testsRun: number;
   buildRun: number;
 };
@@ -104,8 +104,8 @@ export function recordHealthRun(db: Database, report: MonorepoHealthReport): num
       report.metrics.duplicateDepCount,
       report.metrics.deadCodePercent,
       report.metrics.largeFilePercent,
-      report.metrics.testFailureRate,
-      report.metrics.testCoveragePercent,
+      report.metrics.testFailureRate ?? -1,
+      report.metrics.testCoveragePercent ?? -1,
       report.testsRun ? 1 : 0,
       report.buildRun ? 1 : 0
     );
@@ -128,8 +128,9 @@ function mapRow(r: Record<string, unknown>): HealthHistoryRow {
     duplicateDepCount: Number(r.duplicate_dep_count),
     deadCodePercent: Number(r.dead_code_percent),
     largeFilePercent: Number(r.large_file_percent),
-    testFailureRate: Number(r.test_failure_rate),
-    testCoveragePercent: Number(r.test_coverage_percent),
+    testFailureRate: Number(r.test_failure_rate) < 0 ? null : Number(r.test_failure_rate),
+    testCoveragePercent:
+      Number(r.test_coverage_percent) < 0 ? null : Number(r.test_coverage_percent),
     testsRun: Number(r.tests_run),
     buildRun: Number(r.build_run),
   };

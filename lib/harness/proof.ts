@@ -441,7 +441,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'monorepo-health-score',
     claim:
-      'Monorepo health score collects via Bun.Transpiler/Glob, schema-validates, and ratchets floors (minScore / max dead·large·cycles) in ci:core; pre-commit runs unit tests when health sources staged; import-graph shares scanSourceImports SSOT',
+      'Monorepo structural health v2 collects via Bun.Transpiler/Glob, keeps optional test evidence out of the score, schema-validates, and ratchets the observed floor separately from the target in ci:core; pre-commit runs unit tests when health sources staged; import-graph shares the cycle classifier and scanSourceImports SSOT',
     kinds: ['unit', 'boundary', 'journey'],
     gateClass: 'continuous',
     gateRef: 'ci:core',

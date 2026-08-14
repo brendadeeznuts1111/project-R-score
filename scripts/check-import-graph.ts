@@ -1,4 +1,25 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @updated Bun.write · fixed v0.4.0 · 2022-12-23 · https://bun.com/blog/bun-v0.4.0
+// @updated Bun.write · fixed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
+// @updated Bun.write · fixed v0.7.2 · 2023-08-03 · https://bun.com/blog/bun-v0.7.2
+// @updated Bun.write · fixed v1.0.7 · 2023-10-20 · https://bun.com/blog/bun-v1.0.7
+// @updated Bun.write · changed v1.0.16 · 2023-12-10 · https://bun.com/blog/bun-v1.0.16
+// @updated Bun.write · fixed v1.0.21 · 2024-01-02 · https://bun.com/blog/bun-v1.0.21
+// @updated Bun.write · fixed v1.0.23 · 2024-01-16 · https://bun.com/blog/bun-v1.0.23
+// @updated Bun.write · fixed v1.0.24 · 2024-01-20 · https://bun.com/blog/bun-v1.0.24
+// @updated Bun.write · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.write · fixed v1.1.6 · 2024-04-28 · https://bun.com/blog/bun-v1.1.6
+// @updated Bun.write · fixed v1.1.21 · 2024-07-27 · https://bun.com/blog/bun-v1.1.21
+// @updated Bun.write · changed v1.1.37 · 2024-11-26 · https://bun.com/blog/bun-v1.1.37
+// @updated Bun.write · changed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.write · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.write · fixed v1.2.20 · 2025-08-10 · https://bun.com/blog/bun-v1.2.20
+// @updated Bun.write · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.write · fixed v1.3.5 · 2025-12-17 · https://bun.com/blog/bun-v1.3.5
+// @updated Bun.write · fixed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.write · fixed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @verified Bun.write · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/file-io#writing-files-bun-write
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
@@ -27,7 +48,11 @@
  * type-only ignored) — same SSOT as monorepo-health.
  */
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
-import { loaderForPath, scanSourceImports } from '../lib/harness/monorepo-health.ts';
+import {
+  findImportCycles,
+  loaderForPath,
+  scanSourceImports,
+} from '../lib/harness/monorepo-health.ts';
 import { materializeIndexTree, removeIndexTreeSync } from './lib/index-tree.ts';
 
 export {};
@@ -125,43 +150,13 @@ for (const dir of ['lib', 'scripts'] as const) {
   }
 }
 
-// ── Cycle detection (DFS over relative-import graph) ─────────────────────
-const visited = new Set<string>();
-const rawCycles: string[][] = [];
-function dfs(node: string, path: string[]): void {
-  const idx = path.indexOf(node);
-  if (idx !== -1) {
-    rawCycles.push([...path.slice(idx), node]);
-    return;
-  }
-  if (visited.has(node)) return;
-  visited.add(node);
-  const rec = files.get(node);
-  if (!rec) return;
-  for (const e of rec.relImports) dfs(e.target, [...path, node]);
-}
-for (const key of files.keys()) dfs(key, []);
-const seen = new Set<string>();
-const cycles: string[][] = [];
-for (const c of rawCycles) {
-  const sig = c.slice(0, -1).sort().join('|');
-  if (!seen.has(sig)) {
-    seen.add(sig);
-    cycles.push(c);
-  }
-}
-
-/** A cycle is 'weak' when at least one edge is a lazy dynamic import(). */
-function isWeakCycle(cycle: string[]): boolean {
-  for (let i = 0; i < cycle.length - 1; i++) {
-    const from = files.get(cycle[i]);
-    const edge = from?.relImports.find(e => e.target === cycle[i + 1]);
-    if (edge?.lazy) return true;
-  }
-  return false;
-}
-const strongCycles = cycles.filter(c => !isWeakCycle(c));
-const weakCycles = cycles.filter(c => isWeakCycle(c));
+// ── Cycle detection (shared with monorepo-health score) ──────────────────
+const cycleInventory = findImportCycles(
+  new Map([...files.entries()].map(([file, rec]) => [file, rec.relImports]))
+);
+const cycles = cycleInventory.map(item => item.cycle);
+const strongCycles = cycleInventory.filter(item => !item.weak).map(item => item.cycle);
+const weakCycles = cycleInventory.filter(item => item.weak).map(item => item.cycle);
 
 // ── Break hints: cheapest edge = the one whose target has fewest inbound importers ──
 const inboundCount = new Map<string, number>();

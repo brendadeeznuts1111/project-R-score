@@ -41,7 +41,7 @@ describe('monorepo-health-slice', () => {
       notes: ['n'],
     };
     const bake = reportToRegistryBake(report);
-    expect(bake.schemaVersion).toBe(1);
+    expect(bake.schemaVersion).toBe(2);
     expect(bake.kind).toBe('monorepo-health');
     expect(bake.score).toBe(scored.score);
     const slice = projectMonorepoHealthBake(bake);

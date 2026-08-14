@@ -1,3 +1,12 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
@@ -161,12 +170,16 @@ export function parseHealthReportSchemaIssues(value: unknown): string[] {
       'duplicateDepCount',
       'deadCodePercent',
       'largeFilePercent',
-      'testFailureRate',
       'cyclicDependencyCount',
-      'testCoveragePercent',
     ]) {
       if (typeof (metrics as Record<string, unknown>)[k] !== 'number') {
         errs.push(`metrics.${k} must be a number`);
+      }
+    }
+    for (const k of ['testFailureRate', 'testCoveragePercent']) {
+      const metric = (metrics as Record<string, unknown>)[k];
+      if (metric !== null && typeof metric !== 'number') {
+        errs.push(`metrics.${k} must be a number or null`);
       }
     }
   }
@@ -208,8 +221,11 @@ export function metricTableRows(
     },
     {
       Metric: 'testFailureRate',
-      Value: Number(report.metrics.testFailureRate.toFixed(2)),
-      Delta: -Number(report.breakdown.testFailurePenalty.toFixed(2)),
+      Value:
+        report.metrics.testFailureRate == null
+          ? 'not measured'
+          : Number(report.metrics.testFailureRate.toFixed(2)),
+      Delta: 'evidence',
     },
     {
       Metric: 'cyclicDependencyCount',
@@ -218,8 +234,11 @@ export function metricTableRows(
     },
     {
       Metric: 'testCoveragePercent',
-      Value: Number(report.metrics.testCoveragePercent.toFixed(2)),
-      Delta: `+${report.breakdown.coverageBonus.toFixed(2)}`,
+      Value:
+        report.metrics.testCoveragePercent == null
+          ? 'not measured'
+          : Number(report.metrics.testCoveragePercent.toFixed(2)),
+      Delta: 'evidence',
     },
   ] as Array<Record<string, string | number>>;
 
