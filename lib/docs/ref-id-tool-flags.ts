@@ -814,9 +814,6 @@ export const SEARCH_POLICY_CHECK_ALLOWED_LONG = ['verify'] as const;
 /** § — bunfig:bake (`scripts/bake-bunfig.ts`) — auto team plan */
 export const BUNFIG_BAKE_ALLOWED_LONG = ['check', 'gate', 'strict'] as const;
 
-/** § — ${key} (`scripts/cli-allowlist-wire-batch.ts`) — auto team plan */
-export const KEY_ALLOWED_LONG = ['batch', 'flag', 'write'] as const;
-
 /** § — concept:propose (`scripts/concept-propose.ts`) — auto team plan */
 export const CONCEPT_PROPOSE_ALLOWED_LONG = [
   'body',
@@ -907,6 +904,10 @@ export const BRAND_BENCH_PROFILE_ALLOWED_LONG = [
   'cpu-prof-dir',
   'cpu-prof-interval',
   'cpu-prof-name',
+  'profiles-dir',
+  'run-id',
+  'seed',
+  'target',
 ] as const;
 
 /** § — fix:empty-catches (`scripts/fix-empty-catches.ts`) — auto team plan */
@@ -1573,7 +1574,7 @@ export const PARTNER_SETTLEMENT_IMPORT_ALLOWED_LONG = ['cron', 'dry-run', 'stdin
 export const JURISDICTIONS_DOCS_ALLOWED_LONG = ['check'] as const;
 
 /** § — ratchet (`tools/ratchet.ts`) — auto team plan */
-export const RATCHET_ALLOWED_LONG = ['force'] as const;
+export const RATCHET_ALLOWED_LONG = ['channel', 'force'] as const;
 
 /** § — failures:bake (`tools/failures-bake.ts`) — auto team plan */
 export const FAILURES_BAKE_ALLOWED_LONG = ['all', 'from', 'no-fail'] as const;
@@ -1769,7 +1770,10 @@ export const TELEGRAM_ALL_ACCOUNTING_CREATE_ALLOWED_LONG = [
 /** § — ops:dossier:seed (`tools/seed-account-dossier.ts`) — auto team plan */
 export const OPS_DOSSIER_SEED_ALLOWED_LONG = [
   'bake',
+  'bake-path',
+  'db',
   'force',
+  'hours',
   'include-limit-demo',
   'no-bake',
   'ops-summary',
@@ -2152,7 +2156,15 @@ export const MCP_CLOUDFLARE_PROBE_ALLOWED_LONG = ['json'] as const;
 export const BRAND_KEYMAP_ALLOWED_LONG = ['check'] as const;
 
 /** § — snapshot:data-plane (`tools/snapshot-data-plane.ts`) — auto team plan */
-export const SNAPSHOT_DATA_PLANE_ALLOWED_LONG = ['grep', 'last', 'list'] as const;
+export const SNAPSHOT_DATA_PLANE_ALLOWED_LONG = [
+  'base',
+  'debug',
+  'dry-run',
+  'grep',
+  'last',
+  'list',
+  'scope',
+] as const;
 
 /** § — brand:baseline (`tools/branded-id-check.ts`) — auto team plan */
 export const BRAND_BASELINE_ALLOWED_LONG = [
@@ -2330,6 +2342,7 @@ export const AGENT_ALLOWED_LONG = [
   'json',
   'league',
   'limit',
+  'list',
   'live',
   'market',
   'minedgepct',
@@ -2447,7 +2460,7 @@ export const OPS_SEED_PREDICTION_ALLOWED_LONG = ['force'] as const;
 
 /** CLI names keyed in `ALLOWED_LONG_REGISTRY` (package-script style). */
 /** § — cli:allowlist:coverage (auto) */
-export const CLI_ALLOWLIST_COVERAGE_ALLOWED_LONG = ['json'] as const;
+export const CLI_ALLOWLIST_COVERAGE_ALLOWED_LONG = ['json', 'write'] as const;
 
 export type AllowedLongCliName =
   | 'lint-wires'
@@ -2505,7 +2518,6 @@ export type AllowedLongCliName =
   | 'install:cache:lifecycle'
   | 'search:policy:check'
   | 'bunfig:bake'
-  | '${key}'
   | 'concept:propose'
   | 'ci:harness'
   | 'bookmakers:prepare-publish'
@@ -2840,7 +2852,6 @@ export const ALLOWED_LONG_REGISTRY = {
   'install:cache:lifecycle': INSTALL_CACHE_LIFECYCLE_ALLOWED_LONG,
   'search:policy:check': SEARCH_POLICY_CHECK_ALLOWED_LONG,
   'bunfig:bake': BUNFIG_BAKE_ALLOWED_LONG,
-  '${key}': KEY_ALLOWED_LONG,
   'concept:propose': CONCEPT_PROPOSE_ALLOWED_LONG,
   'ci:harness': CI_HARNESS_ALLOWED_LONG,
   'bookmakers:prepare-publish': BOOKMAKERS_PREPARE_PUBLISH_ALLOWED_LONG,
