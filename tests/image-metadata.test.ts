@@ -1,3 +1,25 @@
+// @see https://bun.com/docs/runtime/image#platform-backends — Bun.Image.backend
+// @released Bun.Image.backend · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.bytes
+// @released Bun.Image.bytes · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/Format — Bun.Image.Format
+// @released Bun.Image.Format · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/height — Bun.Image.height
+// @released Bun.Image.height · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.png
+// @released Bun.Image.png · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#resize — Bun.Image.resize
+// @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#resize — Bun.Image.ResizeOptions
+// @released Bun.Image.ResizeOptions · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/width — Bun.Image.width
+// @released Bun.Image.width · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
+// @updated Bun.revision · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.revision · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-revision
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, expectTypeOf, test } from 'bun:test';
@@ -18,6 +40,10 @@ import {
   resizeScreenshotPng,
   verifyImageEvidenceMeta,
   type BunImageByteInput,
+  type BunImageBackend,
+  type BunImageJpegOptions,
+  type BunImagePngOptions,
+  type BunImageWebpOptions,
   type ImageEvidenceMeta,
   type ResizeScreenshotOptions,
 } from '../lib/image-metadata.ts';
@@ -45,6 +71,16 @@ describe('lib/image-metadata', () => {
     expectTypeOf<ImageEvidenceMeta['format']>().toEqualTypeOf<Bun.Image.Format>();
     expectTypeOf<ResizeScreenshotOptions>().toMatchTypeOf<Bun.Image.ResizeOptions>();
     expectTypeOf<Parameters<typeof extractImageEvidenceMeta>[0]>().toEqualTypeOf<BunImageByteInput>();
+    expectTypeOf<BunImageBackend>().toEqualTypeOf<typeof Bun.Image.backend>();
+    expectTypeOf<BunImageJpegOptions>().toEqualTypeOf<
+      NonNullable<Parameters<Bun.Image['jpeg']>[0]>
+    >();
+    expectTypeOf<BunImagePngOptions>().toEqualTypeOf<
+      NonNullable<Parameters<Bun.Image['png']>[0]>
+    >();
+    expectTypeOf<BunImageWebpOptions>().toEqualTypeOf<
+      NonNullable<Parameters<Bun.Image['webp']>[0]>
+    >();
     expect(Object.keys(BUN_IMAGE_FORMATS)).toEqual([
       'jpeg',
       'png',
@@ -71,6 +107,13 @@ describe('lib/image-metadata', () => {
     expect(meta.size).toBe(PNG_10.byteLength);
     expect(meta.algorithm).toBe('sha256');
     expect(meta.digest).toHaveLength(64);
+  });
+
+  test('pipeline dimensions move from pending sentinel to output geometry', async () => {
+    const image = new Bun.Image(PNG_10).resize(4, 3).png();
+    expect([image.width, image.height]).toEqual([-1, -1]);
+    await image.bytes();
+    expect([image.width, image.height]).toEqual([4, 3]);
   });
 
   test('extractImageEvidenceMeta supports sha3-256', async () => {

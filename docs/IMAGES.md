@@ -11,6 +11,7 @@ Zero-npm image decode, transform, and encode using
 | Upstream Markdown source | [`docs/runtime/image.mdx`](https://raw.githubusercontent.com/oven-sh/bun/main/docs/runtime/image.mdx)     |
 | Initial release          | [Bun 1.3.14 · 2026-05-13](https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing)           |
 | Last source audit        | [2026-07-07 · `7be1d459`](https://github.com/oven-sh/bun/commit/7be1d459f28566735bd602ce009e24cba0548e1e) |
+| Project verification     | Pinned Bun 1.3.14 + current `bun-types` tip, rechecked 2026-08-14                                         |
 
 Pipelines are lazy. Chain transformations, choose an output format, and await
 exactly one terminal operation (`bytes`, `buffer`/`toBuffer`, `blob`,
@@ -27,7 +28,7 @@ typed-array input while a terminal is pending.
 | Metadata    | Reads width, height, and format without decoding pixels; instance dimensions are `-1` until a terminal resolves | [Metadata](https://bun.com/docs/runtime/image#metadata) · [`width`](https://bun.com/reference/bun/Image/width)                           |
 | Geometry    | `resize`, `rotate`, `flip`, and `flop`                                                                          | [Resize](https://bun.com/docs/runtime/image#resize) · [rotate/flip](https://bun.com/docs/runtime/image#rotate-flip)                      |
 | Modulation  | Brightness and saturation                                                                                       | [Modulate](https://bun.com/docs/runtime/image#modulate)                                                                                  |
-| Encoding    | JPEG, PNG, WebP everywhere; HEIC/AVIF are platform-dependent                                                    | [Output formats](https://bun.com/docs/runtime/image#output-formats)                                                                      |
+| Encoding    | Progressive JPEG; truecolor or indexed/dithered PNG; WebP everywhere; HEIC/AVIF are platform-dependent          | [Output formats](https://bun.com/docs/runtime/image#output-formats)                                                                      |
 | Output      | Awaited terminal executes the pipeline; `toBuffer()` is the typed Sharp-compatible alias for `buffer()`         | [Terminals](https://bun.com/docs/runtime/image#terminals) · [`toBuffer`](https://bun.com/reference/bun/Image/toBuffer)                   |
 | HTTP body   | Direct request/response bodies receive the selected image content type when Bun serializes them on the wire     | [Body integration](https://bun.com/blog/bun-v1.3.14#body-integration)                                                                    |
 | Placeholder | ThumbHash-rendered data URL, normally 400–700 bytes                                                             | [Placeholders](https://bun.com/docs/runtime/image#placeholders)                                                                          |
@@ -45,6 +46,10 @@ from the installed Bun declarations instead of reproducing them:
 | -------------------------- | --------------------------------------------------- |
 | `BunImageInput`            | `ConstructorParameters<typeof Bun.Image>[0]`        |
 | `BunImageByteInput`        | Byte-backed members of `BunImageInput`              |
+| `BunImageBackend`          | `typeof Bun.Image.backend`                          |
+| `BunImageJpegOptions`      | Native progressive/quality encoder options          |
+| `BunImagePngOptions`       | Native palette/colors/dither/compression options    |
+| `BunImageWebpOptions`      | Native quality/lossless encoder options             |
 | `ImageEvidenceMeta.format` | `Bun.Image.Format`                                  |
 | `ResizeScreenshotOptions`  | `Bun.Image.ResizeOptions` plus PNG/evidence options |
 | `BUN_IMAGE_FORMATS`        | Exhaustive `Record<Bun.Image.Format, true>`         |
@@ -93,6 +98,21 @@ bun run images:generate --template=<avatar|hero|match|convert|placeholder> [opti
 <!-- REF:ID 1.1.max-pixels -->
 
 <a id="1.1.max-pixels"></a>
+<!-- REF:ID 1.1.progressive -->
+
+<a id="1.1.progressive"></a>
+<!-- REF:ID 1.1.palette -->
+
+<a id="1.1.palette"></a>
+<!-- REF:ID 1.1.dither -->
+
+<a id="1.1.dither"></a>
+<!-- REF:ID 1.1.without-enlargement -->
+
+<a id="1.1.without-enlargement"></a>
+<!-- REF:ID 1.1.backend -->
+
+<a id="1.1.backend"></a>
 <!-- REF:ID 1.1.json -->
 
 <a id="1.1.json"></a>
@@ -100,17 +120,22 @@ bun run images:generate --template=<avatar|hero|match|convert|placeholder> [opti
 
 <a id="1.1.dry-run"></a>
 
-| Script            | REF:ID           | href                                 | --flag         | Description                                                                    |
-| ----------------- | ---------------- | ------------------------------------ | -------------- | ------------------------------------------------------------------------------ |
-| `images:generate` | `1.1.source`     | [`#1.1.source`](#1.1.source)         | `--source`     | File or directory                                                              |
-| `images:generate` | `1.1.out`        | [`#1.1.out`](#1.1.out)               | `--out`        | File or directory                                                              |
-| `images:generate` | `1.1.size`       | [`#1.1.size`](#1.1.size)             | `--size WxH`   | e.g. `64x64`                                                                   |
-| `images:generate` | `1.1.format`     | [`#1.1.format`](#1.1.format)         | `--format`     | `webp` · `jpeg` · `png` · `avif`                                               |
-| `images:generate` | `1.1.quality`    | [`#1.1.quality`](#1.1.quality)       | `--quality`    | 1–100 (hero defaults 85)                                                       |
-| `images:generate` | `1.1.fit`        | [`#1.1.fit`](#1.1.fit)               | `--fit`        | `fill` (default) or `inside` — Bun has no `cover`; `cover` is mapped to `fill` |
-| `images:generate` | `1.1.max-pixels` | [`#1.1.max-pixels`](#1.1.max-pixels) | `--max-pixels` | Decompression guard (default ~16M)                                             |
-| `images:generate` | `1.1.json`       | [`#1.1.json`](#1.1.json)             | `--json`       | Machine summary                                                                |
-| `images:generate` | `1.1.dry-run`    | [`#1.1.dry-run`](#1.1.dry-run)       | `--dry-run`    | Plan only                                                                      |
+| Script            | REF:ID                    | href                                                   | --flag                  | Description                                                                    |
+| ----------------- | ------------------------- | ------------------------------------------------------ | ----------------------- | ------------------------------------------------------------------------------ |
+| `images:generate` | `1.1.source`              | [`#1.1.source`](#1.1.source)                           | `--source`              | File or directory                                                              |
+| `images:generate` | `1.1.out`                 | [`#1.1.out`](#1.1.out)                                 | `--out`                 | File or directory                                                              |
+| `images:generate` | `1.1.size`                | [`#1.1.size`](#1.1.size)                               | `--size WxH`            | e.g. `64x64`                                                                   |
+| `images:generate` | `1.1.format`              | [`#1.1.format`](#1.1.format)                           | `--format`              | `webp` · `jpeg` · `png` · `avif`                                               |
+| `images:generate` | `1.1.quality`             | [`#1.1.quality`](#1.1.quality)                         | `--quality`             | 1–100 (hero defaults 85)                                                       |
+| `images:generate` | `1.1.fit`                 | [`#1.1.fit`](#1.1.fit)                                 | `--fit`                 | `fill` (default) or `inside` — Bun has no `cover`; `cover` is mapped to `fill` |
+| `images:generate` | `1.1.max-pixels`          | [`#1.1.max-pixels`](#1.1.max-pixels)                   | `--max-pixels`          | Decompression guard (default ~16M)                                             |
+| `images:generate` | `1.1.progressive`         | [`#1.1.progressive`](#1.1.progressive)                 | `--progressive`         | Emit a progressive JPEG; valid only with `--format=jpeg`                       |
+| `images:generate` | `1.1.palette`             | [`#1.1.palette`](#1.1.palette)                         | `--palette[=N]`         | Emit indexed PNG with 2–256 colors; valid only with `--format=png`             |
+| `images:generate` | `1.1.dither`              | [`#1.1.dither`](#1.1.dither)                           | `--dither`              | Floyd–Steinberg palette dithering; requires `--palette`                        |
+| `images:generate` | `1.1.without-enlargement` | [`#1.1.without-enlargement`](#1.1.without-enlargement) | `--without-enlargement` | Preserve small sources instead of upscaling them                               |
+| `images:generate` | `1.1.backend`             | [`#1.1.backend`](#1.1.backend)                         | `--backend`             | `system` or portable `bun`; use `bun` for reproducible golden geometry         |
+| `images:generate` | `1.1.json`                | [`#1.1.json`](#1.1.json)                               | `--json`                | Machine summary                                                                |
+| `images:generate` | `1.1.dry-run`             | [`#1.1.dry-run`](#1.1.dry-run)                         | `--dry-run`             | Plan only                                                                      |
 
 ### Examples
 
@@ -127,6 +152,12 @@ bun run images:generate --template=hero \
 # Bulk convert
 bun run images:generate --template=convert \
   --source=./warehouse/avatars --out=./public/avatars --format=webp --quality=80
+
+# Progressive JPEG and indexed PNG variants
+bun run images:generate --template=convert --source=./hero.png \
+  --out=./hero.jpg --format=jpeg --progressive --quality=85
+bun run images:generate --template=convert --source=./dashboard.png \
+  --out=./dashboard.png --format=png --palette=128 --dither --backend=bun
 
 # LQIP
 bun run images:generate --template=placeholder \

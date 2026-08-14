@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/image#platform-backends — Bun.Image.backend
+// @released Bun.Image.backend · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/image#terminals — Bun.Image.bytes
 // @released Bun.Image.bytes · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.png
@@ -63,8 +65,10 @@ export const BUN_IMAGE_ERROR_CODES = {
 /** Exact byte-backed constructor inputs accepted by `new Bun.Image()`. */
 export type BunImageInput = ConstructorParameters<typeof Bun.Image>[0];
 export type BunImageByteInput = Extract<BunImageInput, ArrayBuffer | NodeJS.TypedArray>;
-
-type BunPngOptions = NonNullable<Parameters<Bun.Image['png']>[0]>;
+export type BunImageBackend = typeof Bun.Image.backend;
+export type BunImageJpegOptions = NonNullable<Parameters<Bun.Image['jpeg']>[0]>;
+export type BunImagePngOptions = NonNullable<Parameters<Bun.Image['png']>[0]>;
+export type BunImageWebpOptions = NonNullable<Parameters<Bun.Image['webp']>[0]>;
 
 /** Wire shape for image evidence (dimensions, format, byte length, digest). */
 export type ImageEvidenceMeta = Bun.Image.Metadata & {
@@ -110,7 +114,7 @@ export type ResizeScreenshotOptions = Bun.Image.ResizeOptions &
     width?: number;
     height?: number;
     /** Native PNG encoder options. */
-    png?: BunPngOptions;
+    png?: BunImagePngOptions;
   };
 
 const DIGEST_ALGORITHMS = new Set<ImageDigestAlgorithm>(['sha256', 'sha3-256']);

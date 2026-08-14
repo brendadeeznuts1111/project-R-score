@@ -11,3 +11,9 @@ cache_dir = "./public/avatars"
 source_dir = "./warehouse/avatars"
 fallback_avatar = "./public/icons/tennis/mark.png"
 max_pixels = 16777216
+# Optional current Bun.Image controls:
+# progressive_jpeg = true
+# png_palette_colors = 128
+# png_dither = true
+# without_enlargement = true
+# backend = "bun" # portable geometry for reproducible golden assets

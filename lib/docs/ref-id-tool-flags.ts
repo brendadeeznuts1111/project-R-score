@@ -258,6 +258,11 @@ export const IMAGES_GENERATE_LEAVES = [
   'quality',
   'fit',
   'max-pixels',
+  'progressive',
+  'palette',
+  'dither',
+  'without-enlargement',
+  'backend',
   'json',
   'dry-run',
 ] as const;
