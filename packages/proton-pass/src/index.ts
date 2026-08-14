@@ -6,6 +6,7 @@
  */
 
 export { PassError, PASS_ERROR_CODES, redactErrorMessage, type PassErrorCode } from './errors.ts';
+export { argValue, hasFlag } from './argv.ts';
 export {
   createLogger,
   defaultLogger,

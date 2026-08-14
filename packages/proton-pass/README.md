@@ -45,10 +45,24 @@ import {
 | **run** | Bare `pass://` in `.env.protonpass` + spawn child with resolved env (Kalshi default) |
 | **inject** | `{{ pass:// }}` templates → write `.env` (FactoryWager default) — host scripts still wrap CLI for now |
 
+## CLI
+
+Prefer **space-separated** flags (command, then flags, then values):
+
+```bash
+bun packages/proton-pass/bin/proton-pass.ts check --env-file .env.protonpass --agent kalshi --json
+bun packages/proton-pass/bin/proton-pass.ts health --env-file .env.protonpass
+bun run --filter @factorywager/proton-pass test
+```
+
+Avoid glued forms like `--env-file=path` in docs (still accepted for compatibility).
+
 ## Tests
 
 ```bash
-cd packages/proton-pass && bun test
+bun test packages/proton-pass
+# or
+bun run --filter @factorywager/proton-pass test
 ```
 
 ## Spec

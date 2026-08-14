@@ -272,7 +272,20 @@ import { checkEnvFile, templateToRunEnv } from "../src/env-file.ts";
 import { envPrefixPresence } from "../src/gate.ts";
 import { findPassCli } from "../src/cli-locate.ts";
 
+import { argValue, hasFlag } from "../src/argv.ts";
+
 describe("proton-pass package extras", () => {
+  test("argValue prefers --flag value (space-separated)", () => {
+    const argv = ["bun", "cli", "check", "--env-file", ".env.protonpass", "--json"];
+    expect(argValue(argv, "env-file")).toBe(".env.protonpass");
+    expect(hasFlag(argv, "json")).toBe(true);
+    expect(argValue(argv, "agent")).toBeUndefined();
+  });
+
+  test("argValue also accepts --flag=value for compatibility", () => {
+    expect(argValue(["--agent=factorywager"], "agent")).toBe("factorywager");
+  });
+
   test("templateToRunEnv strips inject braces", () => {
     expect(templateToRunEnv("FOO={{ pass://v/i/f }}\n")).toContain("pass://v/i/f");
     expect(templateToRunEnv("FOO={{ pass://v/i/f }}\n")).not.toContain("{{");

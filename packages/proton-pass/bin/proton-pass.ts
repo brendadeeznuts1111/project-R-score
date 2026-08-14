@@ -72,6 +72,7 @@ import {
   envPrefixPresence,
   type AgentSessionConfig,
 } from '../src/index.ts';
+import { argValue, hasFlag } from '../src/argv.ts';
 
 const log = createLogger({
   prefix: 'proton-pass',
@@ -80,27 +81,21 @@ const log = createLogger({
 
 function usage(): never {
   console.log(`Usage:
-  proton-pass check [--env-file=.env.protonpass] [--agent=kalshi|factorywager] [--json]
-  proton-pass health [--env-file=.env.protonpass]
+  proton-pass check [--env-file <path>] [--agent kalshi|factorywager] [--json]
+  proton-pass health [--env-file <path>]
   proton-pass version
+
+Flags are separate tokens (preferred):
+  --env-file .env.protonpass
+  --agent factorywager
+  --json
 `);
   process.exit(2);
 }
 
-function argValue(name: string): string | undefined {
-  const pref = `--${name}=`;
-  for (const a of Bun.argv) {
-    if (a.startsWith(pref)) return a.slice(pref.length);
-  }
-  return undefined;
-}
-
-function hasFlag(name: string): boolean {
-  return Bun.argv.includes(`--${name}`);
-}
-
 async function main(): Promise<void> {
-  const cmd = Bun.argv[2] ?? 'help';
+  const argv = Bun.argv;
+  const cmd = argv[2] ?? 'help';
   if (cmd === 'help' || cmd === '-h' || cmd === '--help') usage();
 
   if (cmd === 'version') {
@@ -109,11 +104,11 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
-  const envFile = argValue('env-file') ?? Bun.env.PROTONPASS_ENV_FILE ?? '.env.protonpass';
-  const agentName = argValue('agent') ?? 'kalshi';
+  const envFile = argValue(argv, 'env-file') ?? Bun.env.PROTONPASS_ENV_FILE ?? '.env.protonpass';
+  const agentName = argValue(argv, 'agent') ?? 'kalshi';
   const agentCfg: AgentSessionConfig =
     agentName === 'factorywager' ? FACTORYWAGER_AGENT_SESSION : KALSHI_AGENT_SESSION;
-  const json = hasFlag('json');
+  const json = hasFlag(argv, 'json');
 
   const passCli = await findPassCli();
   if (!passCli) {
