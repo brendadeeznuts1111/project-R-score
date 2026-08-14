@@ -2006,7 +2006,9 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
   const { source, checker } = createSyntaxContext(text, file);
   const usages = new Map<string, CodeApiUsage>();
   const namespaceBindings = new Map<string, ts.Symbol | undefined>();
+  const imageConstructorBindings = new Set<ts.Symbol>();
   const imagePipelineBindings = new Set<ts.Symbol>();
+  const blobLikeBindings = new Set<ts.Symbol>();
   const imageChainableMethods = new Set([
     'resize',
     'rotate',
@@ -2066,6 +2068,21 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
     const symbol = checker.getSymbolAtLocation(identifier);
     if (symbol) imagePipelineBindings.add(symbol);
   };
+  const bindSymbol = (bindings: Set<ts.Symbol>, identifier: ts.Identifier): void => {
+    const symbol = checker.getSymbolAtLocation(identifier);
+    if (symbol) bindings.add(symbol);
+  };
+  const bindAccessSymbol = (
+    bindings: Set<ts.Symbol>,
+    node: ts.Identifier | ts.PropertyAccessExpression
+  ): void => {
+    const symbol = checker.getSymbolAtLocation(ts.isIdentifier(node) ? node : node.name);
+    if (symbol) bindings.add(symbol);
+  };
+  const hasBoundSymbol = (bindings: Set<ts.Symbol>, identifier: ts.Identifier): boolean => {
+    const symbol = checker.getSymbolAtLocation(identifier);
+    return symbol !== undefined && bindings.has(symbol);
+  };
   const isBoundImagePipeline = (identifier: ts.Identifier): boolean => {
     const symbol = checker.getSymbolAtLocation(identifier);
     return symbol !== undefined && imagePipelineBindings.has(symbol);
@@ -2077,14 +2094,65 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
   const isDirectImageConstructor = (node: ts.Expression): boolean => {
     const value = unwrapExpression(node);
     if (!ts.isNewExpression(value)) return false;
+    if (
+      ts.isIdentifier(value.expression) &&
+      hasBoundSymbol(imageConstructorBindings, value.expression)
+    ) {
+      return true;
+    }
     const chain = expressionChain(value.expression);
     const normalized = chain && normalizedBunChain(value.expression, chain);
     return normalized ? canonicalBunChain(normalized) === 'Bun.Image' : false;
   };
+  const memberNameForAccess = (
+    node: ts.PropertyAccessExpression | ts.ElementAccessExpression
+  ): string | undefined =>
+    ts.isPropertyAccessExpression(node)
+      ? node.name.text
+      : node.argumentExpression && ts.isStringLiteral(node.argumentExpression)
+        ? node.argumentExpression.text
+        : undefined;
+  const typeIsBlobLike = (node: ts.TypeNode | undefined): boolean => {
+    if (!node || !ts.isTypeReferenceNode(node)) return false;
+    const root = rootIdentifier(node.typeName);
+    if (!root) return false;
+    if (hasBoundSymbol(blobLikeBindings, root)) return true;
+    return (
+      ['Blob', 'BunFile', 'S3File'].includes(root.text) &&
+      !checker
+        .getSymbolAtLocation(root)
+        ?.declarations?.some(declaration => declaration.getSourceFile() === source)
+    );
+  };
+  const isDirectBlobFactoryCall = (node: ts.Expression): boolean => {
+    const value = unwrapExpression(node);
+    if (!ts.isCallExpression(value)) return false;
+    const chain = expressionChain(value.expression);
+    const normalized = chain && normalizedBunChain(value.expression, chain);
+    const api = normalized && canonicalBunChain(normalized);
+    return api === 'Bun.file' || api === 'Bun.s3' || api === 'S3Client';
+  };
+  const isBlobLikeExpression = (node: ts.Expression): boolean => {
+    const value = unwrapExpression(node);
+    if (ts.isIdentifier(value)) return hasBoundSymbol(blobLikeBindings, value);
+    if (ts.isPropertyAccessExpression(value)) {
+      const symbol = checker.getSymbolAtLocation(value.name);
+      if (symbol && blobLikeBindings.has(symbol)) return true;
+    }
+    if (ts.isNewExpression(value) && ts.isIdentifier(value.expression)) {
+      return value.expression.text === 'Blob' && isUnshadowedGlobal(value.expression);
+    }
+    return isDirectBlobFactoryCall(value);
+  };
   const isBlobImageStart = (node: ts.CallExpression): boolean => {
-    if (!ts.isPropertyAccessExpression(node.expression) || node.expression.name.text !== 'image')
+    if (
+      (!ts.isPropertyAccessExpression(node.expression) &&
+        !ts.isElementAccessExpression(node.expression)) ||
+      memberNameForAccess(node.expression) !== 'image'
+    )
       return false;
     const receiver = unwrapExpression(node.expression.expression);
+    if (isBlobLikeExpression(receiver)) return true;
     if (!ts.isCallExpression(receiver)) return false;
     const chain = expressionChain(receiver.expression);
     const normalized = chain && normalizedBunChain(receiver.expression, chain);
@@ -2098,30 +2166,39 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
     if (isDirectImageConstructor(value)) return true;
     if (!ts.isCallExpression(value)) return false;
     if (isBlobImageStart(value)) return true;
-    return (
-      ts.isPropertyAccessExpression(value.expression) &&
-      imageChainableMethods.has(value.expression.name.text) &&
+    if (
+      !ts.isPropertyAccessExpression(value.expression) &&
+      !ts.isElementAccessExpression(value.expression)
+    )
+      return false;
+    const member = memberNameForAccess(value.expression);
+    return Boolean(
+      member &&
+      imageChainableMethods.has(member) &&
       isImagePipelineExpression(value.expression.expression)
     );
   };
   const imageMemberForCall = (node: ts.CallExpression): string | undefined => {
-    if (!ts.isPropertyAccessExpression(node.expression)) return undefined;
+    if (
+      !ts.isPropertyAccessExpression(node.expression) &&
+      !ts.isElementAccessExpression(node.expression)
+    )
+      return undefined;
     if (!isImagePipelineExpression(node.expression.expression)) return undefined;
-    return canonicalApi([`Bun.Image.${node.expression.name.text}`]);
+    const member = memberNameForAccess(node.expression);
+    return member ? canonicalApi([`Bun.Image.${member}`]) : undefined;
   };
   const imageMemberForAccess = (
     node: ts.PropertyAccessExpression | ts.ElementAccessExpression
   ): string | undefined => {
     if (!isImagePipelineExpression(node.expression)) return undefined;
-    const member = ts.isPropertyAccessExpression(node)
-      ? node.name.text
-      : node.argumentExpression && ts.isStringLiteral(node.argumentExpression)
-        ? node.argumentExpression.text
-        : undefined;
+    const member = memberNameForAccess(node);
     return member ? canonicalApi([`Bun.Image.${member}`]) : undefined;
   };
   const typeIsBunImage = (node: ts.TypeNode | undefined): boolean => {
     if (!node || !ts.isTypeReferenceNode(node)) return false;
+    const root = rootIdentifier(node.typeName);
+    if (root && hasBoundSymbol(imageConstructorBindings, root)) return true;
     const chain = entityNameChain(node.typeName);
     const normalized = normalizedBunChain(node.typeName, chain);
     return normalized ? canonicalBunChain(normalized) === 'Bun.Image' : false;
@@ -2140,6 +2217,10 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
           const imported = element.propertyName?.text ?? element.name.text;
           const api = canonicalBunExport(imported);
           if (api) add(api, element);
+          if (imported === 'Image') bindSymbol(imageConstructorBindings, element.name);
+          if (imported === 'BunFile' || imported === 'S3File') {
+            bindSymbol(blobLikeBindings, element.name);
+          }
         }
       }
     } else if (ts.isImportEqualsDeclaration(statement)) {
@@ -2165,21 +2246,55 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
       bindImagePipeline(node.name);
     }
 
-    if (ts.isPropertyDeclaration(node) && ts.isIdentifier(node.name) && typeIsBunImage(node.type)) {
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      ((node.initializer && isBlobLikeExpression(node.initializer)) || typeIsBlobLike(node.type))
+    ) {
+      bindSymbol(blobLikeBindings, node.name);
+    }
+
+    if (
+      ts.isPropertyDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      (typeIsBunImage(node.type) ||
+        (node.initializer && isImagePipelineExpression(node.initializer)))
+    ) {
       bindImagePipeline(node.name);
+    }
+
+    if (
+      ts.isPropertyDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      (typeIsBlobLike(node.type) || (node.initializer && isBlobLikeExpression(node.initializer)))
+    ) {
+      bindSymbol(blobLikeBindings, node.name);
     }
 
     if (ts.isParameter(node) && ts.isIdentifier(node.name) && typeIsBunImage(node.type)) {
       bindImagePipeline(node.name);
     }
 
+    if (ts.isParameter(node) && ts.isIdentifier(node.name) && typeIsBlobLike(node.type)) {
+      bindSymbol(blobLikeBindings, node.name);
+    }
+
     if (
       ts.isBinaryExpression(node) &&
       node.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
-      ts.isIdentifier(node.left) &&
+      (ts.isIdentifier(node.left) || ts.isPropertyAccessExpression(node.left)) &&
       isImagePipelineExpression(node.right)
     ) {
-      bindImagePipeline(node.left);
+      bindAccessSymbol(imagePipelineBindings, node.left);
+    }
+
+    if (
+      ts.isBinaryExpression(node) &&
+      node.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+      (ts.isIdentifier(node.left) || ts.isPropertyAccessExpression(node.left)) &&
+      isBlobLikeExpression(node.right)
+    ) {
+      bindAccessSymbol(blobLikeBindings, node.left);
     }
 
     if (
@@ -2265,7 +2380,18 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
       isBunNamespaceExpression(node.initializer)
     ) {
       if (ts.isIdentifier(node.name)) bindNamespace(node.name);
-      else addBindingImports(node.name, add);
+      else {
+        addBindingImports(node.name, add);
+        for (const element of node.name.elements) {
+          if (!ts.isIdentifier(element.name)) continue;
+          const imported =
+            element.propertyName?.getText().replace(/^['"]|['"]$/g, '') ?? element.name.text;
+          if (imported === 'Image') bindSymbol(imageConstructorBindings, element.name);
+          if (imported === 'BunFile' || imported === 'S3File') {
+            bindSymbol(blobLikeBindings, element.name);
+          }
+        }
+      }
     }
 
     // CLI flags are values by definition. Scan string literals, but deliberately

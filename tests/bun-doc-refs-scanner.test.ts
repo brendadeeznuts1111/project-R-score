@@ -145,6 +145,60 @@ void encoded.length;
     );
   });
 
+  test('tracks Image aliases, Blob.image starts, and computed image members', () => {
+    const usages = collectCodeApiUsages(
+      `
+import { Image as Picture } from "bun";
+import type { BunFile as NativeFile } from "bun";
+const aliased = new Picture(bytes).resize(1).png();
+const { Image: Other } = Bun;
+const destructured = new Other(bytes)["resize"](2)["webp"]();
+const blob: Blob = new Blob([bytes]);
+const fromBinding = blob.image().resize(3).bytes();
+const fromConstructor = new Blob([bytes]).image()["resize"](4)["png"]().bytes();
+function fromTypedFile(file: NativeFile) { return file.image()["metadata"](); }
+class Holder {
+  file = Bun.file("fixture.png");
+  image = new Picture(bytes);
+  read() { return [this.file.image().metadata(), this.image.width]; }
+}
+let assignedFile;
+assignedFile = Bun.file("fixture.png");
+assignedFile.image().metadata();
+void aliased; void destructured; void fromBinding; void fromConstructor; void fromTypedFile; void Holder;
+`,
+      'fixture.ts'
+    );
+
+    expect(usages).toEqual(
+      new Set([
+        'Bun.Image',
+        'Bun.Image.resize',
+        'Bun.Image.png',
+        'Bun.Image.webp',
+        'Bun.Image.bytes',
+        'Bun.Image.metadata',
+        'Bun.Image.width',
+        'Blob.image',
+        'Bun.file',
+      ])
+    );
+  });
+
+  test('rejects shadowed Blob constructors and unrelated image methods', () => {
+    const usages = collectCodeApiUsages(
+      `
+class Blob { image() { return { resize() {} }; } }
+new Blob().image().resize();
+const canvas = { image() { return { png() {} }; } };
+canvas.image().png();
+`,
+      'fixture.ts'
+    );
+
+    expect(usages).toEqual(new Set());
+  });
+
   test('does not treat declarations or object property names as API usage', () => {
     const usages = collectCodeApiUsages(
       'type Server = { TLSOptions: string }; const refs = { SocialMetadata: "docs" };',
