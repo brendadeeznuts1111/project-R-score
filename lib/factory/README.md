@@ -69,9 +69,9 @@ replacement guard; it never applies to npm, GitHub, or component routes.
 
 **Template search path:** project [`.bun-create/<name>`](../../.bun-create/) ·
 `$HOME/.bun-create/<name>` · global override `BUN_CREATE_DIR`.  
-Ship template:
-[`.bun-create/factory-library`](../../.bun-create/factory-library/)
-(`package.json` `"bun-create": { preinstall, postinstall }`).  
+Ship template: [`factory-library`](../../.bun-create/factory-library/). It
+deliberately omits `bun-create` lifecycle hooks: Bun owns install/Git behavior
+and the generated project owns its explicit proof.
 The generated manifest pins its Bun package-manager and type baseline, builds
 for `--target bun`, and keeps `check` read-only; update `files.md` explicitly
 with `bun run generate:files` after changing the generated tree. Scaffold

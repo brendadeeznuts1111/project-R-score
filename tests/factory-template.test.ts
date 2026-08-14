@@ -18,7 +18,11 @@ import {
   factoryLibraryContractSnapshot,
   validateFactoryLibraryManifest,
 } from '../.bun-create/factory-library/scripts/template-contract.ts';
-import { junitContextPath, readJunitContext, repositoryFromRemote } from '../.bun-create/factory-library/scripts/junit-context.ts';
+import {
+  junitContextPath,
+  readJunitContext,
+  repositoryFromRemote,
+} from '../.bun-create/factory-library/scripts/junit-context.ts';
 import { projectFiles } from '../.bun-create/factory-library/scripts/files-index.ts';
 
 const TEMPLATE_ROOT = `${import.meta.dir}/../.bun-create/factory-library`;
@@ -41,8 +45,12 @@ describe('factory-library template contract', () => {
   });
 
   test('normalizes GitHub-style remotes without undefined or lost owner scope', () => {
-    expect(repositoryFromRemote('https://github.com/factory-wager/library.git')).toBe('factory-wager/library');
-    expect(repositoryFromRemote('git@github.com:factory-wager/library.git')).toBe('factory-wager/library');
+    expect(repositoryFromRemote('https://github.com/factory-wager/library.git')).toBe(
+      'factory-wager/library'
+    );
+    expect(repositoryFromRemote('git@github.com:factory-wager/library.git')).toBe(
+      'factory-wager/library'
+    );
     expect(repositoryFromRemote('not-a-repository')).toBeUndefined();
   });
 
@@ -50,15 +58,18 @@ describe('factory-library template contract', () => {
     const directory = await makeTempDir('junit-context-contract');
     const reportPath = `${directory}/junit.xml`;
     try {
-      await Bun.write(junitContextPath(reportPath), JSON.stringify({
-        schemaVersion: 2,
-        generatedAt: new Date().toISOString(),
-        reportContext: 'local',
-        commitSource: 'git',
-        runIdSource: 'unavailable',
-        repositorySource: 'unavailable',
-        branchSource: 'unavailable',
-      }));
+      await Bun.write(
+        junitContextPath(reportPath),
+        JSON.stringify({
+          schemaVersion: 2,
+          generatedAt: new Date().toISOString(),
+          reportContext: 'local',
+          commitSource: 'git',
+          runIdSource: 'unavailable',
+          repositorySource: 'unavailable',
+          branchSource: 'unavailable',
+        })
+      );
       expect(await readJunitContext(reportPath)).toBeUndefined();
     } finally {
       await removeTempDir(directory);
@@ -74,6 +85,8 @@ describe('factory-library template contract', () => {
         Bun.write(`${directory}/docs/decision.md`, '# Decision\n'),
         Bun.write(`${directory}/.env.example`, 'PUBLIC_FLAG=1\n'),
         Bun.write(`${directory}/.env.local`, 'SECRET=not-indexed\n'),
+        Bun.write(`${directory}/.DS_Store`, 'macOS metadata\n'),
+        Bun.write(`${directory}/docs/.DS_Store`, 'nested macOS metadata\n'),
         Bun.write(`${directory}/dist/index.js`, 'generated\n'),
         Bun.write(`${directory}/reports/junit.xml`, 'generated\n'),
         Bun.write(`${directory}/artifact.tgz`, 'generated\n'),
@@ -105,7 +118,6 @@ describe('factory-library template contract', () => {
       'src/index.ts',
       'test/index.test.ts',
       'test/terminal-types.test-d.ts',
-      'scripts/postpublish.ts',
       'scripts/validate-files-md.ts',
     ];
     for (const file of files) {
@@ -115,50 +127,17 @@ describe('factory-library template contract', () => {
 
     const packageJson = await Bun.file(`${TEMPLATE_ROOT}/package.json`).json();
     expect(packageJson.name).toBe('{{name}}');
-    expect(JSON.stringify(packageJson['bun-create'])).not.toContain('{{');
   });
 
-  test('publishes a Bun-native source entry point without template-only files', async () => {
+  test('publishes only the Bun-native source entry without template lifecycle hooks', async () => {
     const packageJson = await Bun.file(`${TEMPLATE_ROOT}/package.json`).json();
     expect(packageJson.exports['.']).toBe('./src/index.ts');
     expect(packageJson.types).toBe('./src/index.ts');
     expect(packageJson.files).toEqual(['src', 'README.md']);
     expect(packageJson.packageManager).toBe('bun@1.3.14');
-    expect(packageJson.scripts.build).toContain('bun build');
-    expect(packageJson.scripts.build).toContain('--target bun');
-    expect(packageJson.scripts['test:dots']).toBe('bun test --reporter=dots');
-    expect(packageJson.scripts['test:coverage']).toBe('bun test --coverage');
-    expect(packageJson.scripts['test:coverage:lcov']).toBe(
-      'bun test --coverage --coverage-reporter=text --coverage-reporter=lcov'
-    );
-    expect(packageJson.scripts.dev).toContain('--watch');
-    expect(packageJson.scripts.dev).toContain('--no-clear-screen');
-    expect(packageJson.scripts['test:watch']).toContain('bun --watch');
-    expect(packageJson.scripts['test:junit']).toContain('run-test-junit');
-    expect(packageJson.scripts['test:ci']).toContain('junit:enrich');
-    expect(packageJson.scripts['junit:enrich']).toContain('junit-enrich');
-    expect(packageJson.scripts.format).toBe('bun run prettier --write .');
-    expect(packageJson.scripts['format:check']).toBe('bun run prettier --check .');
-    expect(packageJson.scripts.lint).toBe('bun run eslint . --max-warnings=0');
-    expect(packageJson.scripts['lint:fix']).toBe('bun run eslint . --fix --max-warnings=0');
-    expect(packageJson.scripts.typecheck).toBe('bun run tsc --noEmit');
-    expect(packageJson.scripts.check).toContain('bun run format:check');
-    expect(packageJson.scripts.check).toContain('bun run lint');
-    expect(packageJson.scripts.check).toContain('bun run typecheck');
-    expect(packageJson.scripts.check).not.toContain('generate:files');
-    expect(packageJson.scripts['generate:files']).toContain('generate-files-md');
-    expect(packageJson.scripts['check:files']).toContain('validate-files-md');
-    expect(packageJson.scripts['build:metafile']).toContain('--metafile-md');
-    expect(packageJson.scripts['build:metafile']).toContain('--target bun');
-    expect(packageJson.scripts.prepack).toBe('bun run check');
-    expect(packageJson.scripts.postpublish).toContain('postpublish.ts');
-    expect(packageJson.scripts['publish:dry-run']).toBe('bun publish --dry-run');
-    expect(packageJson.scripts['color-test']).toBe('bun scripts/color-test.ts');
+    expect(packageJson['bun-create']).toBeUndefined();
+    expect(packageJson.scripts.postpublish).toBeUndefined();
     expect(packageJson.publishConfig).toEqual({ access: 'public', tag: 'latest' });
-    expect(packageJson.devDependencies['@types/bun']).toBe('1.3.14');
-    expect(packageJson.devDependencies.typescript).toBe('6.0.3');
-    expect(packageJson.devDependencies.prettier).toBe('3.9.6');
-    expect(packageJson.devDependencies.eslint).toBe('9.39.4');
 
     expect(await Bun.file(`${TEMPLATE_ROOT}/plugin.example.ts`).exists()).toBe(false);
     expect(await Bun.file(`${TEMPLATE_ROOT}/.gitignore`).exists()).toBe(true);
@@ -167,7 +146,7 @@ describe('factory-library template contract', () => {
     expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/junit-context.ts`).exists()).toBe(true);
     expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/junit-enrich.ts`).exists()).toBe(true);
     expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/build-summary.ts`).exists()).toBe(true);
-    expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/postpublish.ts`).exists()).toBe(true);
+    expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/postpublish.ts`).exists()).toBe(false);
     expect(await Bun.file(`${TEMPLATE_ROOT}/scripts/color-test.ts`).exists()).toBe(true);
     expect(await Bun.file(`${TEMPLATE_ROOT}/files.md`).exists()).toBe(true);
     expect(await Bun.file(`${TEMPLATE_ROOT}/eslint.config.mjs`).exists()).toBe(true);
@@ -178,7 +157,8 @@ describe('factory-library template contract', () => {
 
     const readme = await Bun.file(`${TEMPLATE_ROOT}/README.md`).text();
     expect(readme).toContain('NPM_CONFIG_TOKEN');
-    expect(readme).toContain('NPM_CLIENT');
+    expect(readme).toContain('GITHUB_REF_NAME');
+    expect(readme).toContain('JUnit context classification');
     expect(readme).toContain('--ignore-scripts');
     expect(readme).toContain('CI_JOB_URL');
     expect(readme).toContain('CI_COMMIT_SHA');
@@ -211,12 +191,20 @@ describe('factory-library template contract', () => {
     const gitignore = await Bun.file(`${TEMPLATE_ROOT}/.gitignore`).text();
     expect(gitignore).toContain('coverage/');
     expect(gitignore).toContain('profiles/');
+    expect(gitignore).toContain('.DS_Store');
 
     const tsconfig = await Bun.file(`${TEMPLATE_ROOT}/tsconfig.json`).json();
     expect(tsconfig.compilerOptions.noEmit).toBe(true);
     expect(tsconfig.compilerOptions.types).toEqual(['bun']);
     expect(tsconfig.compilerOptions.moduleDetection).toBe('force');
     expect(tsconfig.compilerOptions.noUncheckedIndexedAccess).toBe(true);
+
+    const prettierConfig = await Bun.file(`${TEMPLATE_ROOT}/.prettierrc`).json();
+    expect(prettierConfig).toEqual({
+      singleQuote: true,
+      printWidth: 100,
+      arrowParens: 'avoid',
+    });
   });
 
   test('defines ansi and lets Bun.color auto-format terminal output', async () => {
@@ -293,19 +281,18 @@ describe('factory-library template contract', () => {
 
   test('groups package properties, environment, and flags in a stable contract snapshot', async () => {
     const packageJson = await Bun.file(`${TEMPLATE_ROOT}/package.json`).json();
-    expect(validateFactoryLibraryManifest(packageJson, 'template')).toEqual([]);
+    expect(validateFactoryLibraryManifest(packageJson)).toEqual([]);
     expect(FACTORY_LIBRARY_CONTRACT_GROUPS.map(group => group.id)).toEqual([
       'identity',
       'runtime',
       'quality',
       'reporting',
       'publish',
-      'lifecycle',
       'files',
       'environment',
       'flags',
     ]);
-    expect(factoryLibraryContractSnapshot(packageJson, 'template')).toMatchSnapshot();
+    expect(factoryLibraryContractSnapshot(packageJson)).toMatchSnapshot();
   });
 
   test('Factory materializes the local template without install or Git', async () => {
@@ -338,10 +325,6 @@ describe('factory-library template contract', () => {
 
       expect(exitCode, `${stdout}\n${stderr}`).toBe(0);
       expect(stdout).toContain('Scaffold source: local (factory-library)');
-      // Active Bun 1.3.14 suppresses preinstall when --no-install is present,
-      // while preserving the postinstall next-step message.
-      expect(stdout).not.toContain('Installing library dependencies');
-      expect(stdout).toContain('Library scaffolded successfully');
       expect(await Bun.file(`${destination}/stale.txt`).exists()).toBe(false);
       expect(await Bun.file(`${destination}/node_modules`).exists()).toBe(false);
       expect(await Bun.file(`${destination}/.git`).exists()).toBe(false);
@@ -351,16 +334,43 @@ describe('factory-library template contract', () => {
         unknown
       >;
       expect(manifest.name).toBe(destination.slice(destination.lastIndexOf('/') + 1));
-      expect(manifest['bun-create']).toBeUndefined();
       expect(manifest.exports).toEqual({ '.': './src/index.ts' });
-      expect(validateFactoryLibraryManifest(manifest, 'scaffold')).toEqual([]);
+      expect(validateFactoryLibraryManifest(manifest)).toEqual([]);
       expect(await Bun.file(`${destination}/src/index.ts`).exists()).toBe(true);
       expect(await Bun.file(`${destination}/test/index.test.ts`).exists()).toBe(true);
 
-      const coverage = Bun.spawn(
-        bunSpawnArgs(['test', '--coverage', './test/index.test.ts']),
-        { cwd: destination, env: { ...Bun.env }, stdout: 'pipe', stderr: 'pipe' }
-      );
+      const build = Bun.spawn(bunSpawnArgs(['run', 'build:metafile']), {
+        cwd: destination,
+        env: { ...Bun.env },
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+      const [buildCode, buildOut, buildErr] = await Promise.all([
+        build.exited,
+        new Response(build.stdout).text(),
+        new Response(build.stderr).text(),
+      ]);
+      expect(buildCode, `${buildOut}\n${buildErr}`).toBe(0);
+      const summaryLine = buildOut
+        .split('\n')
+        .find(line => line.startsWith('{"kind":"build-summary"'));
+      expect(summaryLine).toBeString();
+      expect(JSON.parse(summaryLine!)).toEqual({
+        kind: 'build-summary',
+        entry_points: 1,
+        input_files: 1,
+        output_files: 1,
+        output_bytes: expect.any(Number),
+      });
+      expect(await Bun.file(`${destination}/dist/metafile.json`).exists()).toBe(true);
+      expect(await Bun.file(`${destination}/dist/metafile.md`).exists()).toBe(true);
+
+      const coverage = Bun.spawn(bunSpawnArgs(['test', '--coverage', './test/index.test.ts']), {
+        cwd: destination,
+        env: { ...Bun.env },
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
       const [coverageCode, coverageOut, coverageErr] = await Promise.all([
         coverage.exited,
         new Response(coverage.stdout).text(),
@@ -405,7 +415,9 @@ describe('factory-library template contract', () => {
         'GITHUB_REPOSITORY',
         'GITHUB_REF_NAME',
         'PROJECT_NAME',
-      ]) delete localEnvironment[key];
+      ]) {
+        delete localEnvironment[key];
+      }
 
       const ci = Bun.spawn(bunSpawnArgs(['run', 'test:ci']), {
         cwd: destination,
@@ -445,7 +457,9 @@ describe('factory-library template contract', () => {
       expect(junit).not.toContain('name="branch"');
       expect(junit).not.toContain('name="repository"');
       expect(junit).not.toContain('name="run_id"');
-      const context = await Bun.file(`${destination}/reports/junit-context.json`).json() as Record<string, unknown>;
+      const context = (await Bun.file(
+        `${destination}/reports/junit-context.json`
+      ).json()) as Record<string, unknown>;
       expect(context.schemaVersion).toBe(2);
       expect(context.reportContext).toBe('local');
       expect(context.commitSource).toBe('unavailable');

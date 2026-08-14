@@ -45,7 +45,7 @@ export function terminalColorFormat(depth: TerminalColorDepth = 'auto'): Termina
 /** Return only the Bun.color opener, or an empty string when parsing/output is unavailable. */
 export function terminalColorOpen(
   color: Bun.ColorInput,
-  depth: TerminalColorDepth = 'auto'
+  depth: TerminalColorDepth = 'auto',
 ): string {
   return Bun.color(color, terminalColorFormat(depth)) ?? '';
 }
@@ -57,7 +57,7 @@ export function terminalColorOpen(
 export function formatTerminal(
   text: string,
   color: Bun.ColorInput,
-  depth: TerminalColorDepth = 'auto'
+  depth: TerminalColorDepth = 'auto',
 ): string {
   const open = terminalColorOpen(color, depth);
   return open ? `${open}${text}${ANSI_RESET}` : text;

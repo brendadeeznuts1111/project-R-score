@@ -31,9 +31,7 @@ async function temporaryDirectory(): Promise<string> {
 
 afterEach(async () => {
   await Promise.all(
-    temporaryDirectories.splice(0).map(directory =>
-      rm(directory, { recursive: true, force: true })
-    )
+    temporaryDirectories.splice(0).map(directory => rm(directory, { recursive: true, force: true }))
   );
 });
 
@@ -143,6 +141,12 @@ void RuntimeGlob; void sqlite;
     );
   });
 
+  test('prefers a command-specific reference over an ambiguous generic flag', () => {
+    expect(collectCodeApiUsages('const command = "bun publish --dry-run";', 'fixture.ts')).toEqual(
+      new Set(['bun publish --dry-run'])
+    );
+  });
+
   test('does not let a Bun.file anchor cover Bun.write', async () => {
     const directory = await temporaryDirectory();
     const file = join(directory, 'specific.ts');
@@ -204,10 +208,11 @@ void RuntimeGlob; void sqlite;
   test('CLI exits nonzero with a bounded error for a missing explicit target', async () => {
     const directory = await temporaryDirectory();
     const missing = join(directory, 'missing.ts');
-    const proc = Bun.spawn(
-      [process.execPath, 'tools/bun-doc-refs.ts', 'check', missing],
-      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
-    );
+    const proc = Bun.spawn([process.execPath, 'tools/bun-doc-refs.ts', 'check', missing], {
+      cwd: import.meta.dir + '/..',
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
     const [stdout, stderr, exitCode] = await Promise.all([
       new Response(proc.stdout).text(),
       new Response(proc.stderr).text(),
@@ -223,10 +228,11 @@ void RuntimeGlob; void sqlite;
     const directory = await temporaryDirectory();
     const file = join(directory, 'missing-ref.ts');
     await Bun.write(file, 'Bun.file("a");\nBun.file("b");\n');
-    const proc = Bun.spawn(
-      [process.execPath, 'tools/bun-doc-refs.ts', 'check', '--json', file],
-      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
-    );
+    const proc = Bun.spawn([process.execPath, 'tools/bun-doc-refs.ts', 'check', '--json', file], {
+      cwd: import.meta.dir + '/..',
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
     const [stdout, stderr, exitCode] = await Promise.all([
       new Response(proc.stdout).text(),
       new Response(proc.stderr).text(),

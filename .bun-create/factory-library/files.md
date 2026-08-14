@@ -24,7 +24,6 @@ tree used by the local proof commands; it is not itself included in the package.
 - `scripts/generate-files-md.ts`
 - `scripts/junit-context.ts`
 - `scripts/junit-enrich.ts`
-- `scripts/postpublish.ts`
 - `scripts/run-test-junit.ts`
 - `scripts/template-contract.ts`
 - `scripts/validate-files-md.ts`

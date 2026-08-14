@@ -15,5 +15,5 @@ console.log(colors.yellow('⚠️ Warning'));
 console.log(colors.brand('◆ Brand'));
 console.log(formatTerminal('256-color serialization sample', brandHex, '256'));
 console.log(
-  JSON.stringify({ brandHex, brandRgb, terminalFormats: TERMINAL_COLOR_FORMATS }, null, 2)
+  JSON.stringify({ brandHex, brandRgb, terminalFormats: TERMINAL_COLOR_FORMATS }, null, 2),
 );

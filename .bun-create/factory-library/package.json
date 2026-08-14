@@ -39,9 +39,8 @@
     "build:metafile": "bun build ./src/index.ts --target bun --outdir ./dist --metafile=dist/metafile.json --metafile-md=dist/metafile.md && bun run scripts/build-summary.ts",
     "generate:files": "bun run scripts/generate-files-md.ts",
     "check:files": "bun run scripts/validate-files-md.ts",
-    "check": "bun run check:files && bun run format:check && bun run lint && bun run typecheck && bun test && bun run build",
+    "check": "bun run check:files && bun run format:check && bun run lint && bun run typecheck && bun run test && bun run build",
     "prepack": "bun run check",
-    "postpublish": "bun run scripts/postpublish.ts",
     "publish:dry-run": "bun publish --dry-run",
     "color-test": "bun scripts/color-test.ts",
     "bench": "bun scripts/bench.ts",
@@ -54,12 +53,5 @@
     "prettier": "3.9.6",
     "typescript-eslint": "8.65.0",
     "typescript": "6.0.3"
-  },
-  "bun-create": {
-    "preinstall": "echo '📦 Installing library dependencies...'",
-    "postinstall": [
-      "echo '✓ Library scaffolded successfully!'",
-      "echo 'Next: edit package.json and src/index.ts, then run bun run check.'"
-    ]
   }
 }

@@ -4,6 +4,7 @@ coverage/
 profiles/
 reports/
 *.tgz
+.DS_Store
 .env
 .env.*
 !.env.example

@@ -1,20 +1,26 @@
+// @see https://bun.com/docs/test/code-coverage#enabling-coverage
+// @see https://bun.com/docs/test/code-coverage#lcov-coverage-reporter
+// @see https://bun.com/docs/test/code-coverage#coverage-with-specific-test-patterns
+// @see https://bun.com/docs/test/reporters#dots-reporter
+// @see https://bun.com/docs/pm/cli/publish#dry-run
 export type ContractGroupId =
-  | 'identity'
-  | 'runtime'
-  | 'quality'
-  | 'reporting'
-  | 'publish'
-  | 'lifecycle'
-  | 'files'
-  | 'environment'
-  | 'flags';
+  'identity' | 'runtime' | 'quality' | 'reporting' | 'publish' | 'files' | 'environment' | 'flags';
 
 export type ContractGroup = {
   id: ContractGroupId;
-  owner: 'package.json' | 'Bun' | 'Factory wrapper' | 'CI environment';
+  owner: 'package.json' | 'Bun' | 'CI environment';
   properties: readonly string[];
   rule: string;
 };
+
+const REQUIRED_DEV_DEPENDENCIES = {
+  '@eslint/js': '9.39.4',
+  '@types/bun': '1.3.14',
+  eslint: '9.39.4',
+  prettier: '3.9.6',
+  'typescript-eslint': '8.65.0',
+  typescript: '6.0.3',
+} as const;
 
 /**
  * The library template's public configuration surface. Keep this small and
@@ -60,12 +66,7 @@ export const FACTORY_LIBRARY_CONTRACT_GROUPS: readonly ContractGroup[] = [
       'scripts.lint',
       'scripts.lint:fix',
       'scripts.check',
-      'devDependencies.@eslint/js',
-      'devDependencies.@types/bun',
-      'devDependencies.eslint',
-      'devDependencies.prettier',
-      'devDependencies.typescript-eslint',
-      'devDependencies.typescript',
+      ...Object.keys(REQUIRED_DEV_DEPENDENCIES).map(name => `devDependencies.${name}`),
     ],
     rule: 'Pinned Bun types, TypeScript, formatting, and linting precede explicit no-emit checks after installation.',
   },
@@ -91,16 +92,9 @@ export const FACTORY_LIBRARY_CONTRACT_GROUPS: readonly ContractGroup[] = [
       'publishConfig.access',
       'publishConfig.tag',
       'scripts.prepack',
-      'scripts.postpublish',
       'scripts.publish:dry-run',
     ],
     rule: 'Only src and README publish; prepack proves the contract before packing.',
-  },
-  {
-    id: 'lifecycle',
-    owner: 'package.json',
-    properties: ['bun-create.preinstall', 'bun-create.postinstall'],
-    rule: 'Template-only status messages; Bun removes bun-create metadata in the generated manifest.',
   },
   {
     id: 'files',
@@ -112,16 +106,16 @@ export const FACTORY_LIBRARY_CONTRACT_GROUPS: readonly ContractGroup[] = [
     id: 'environment',
     owner: 'CI environment',
     properties: [
+      'CI',
       'GITHUB_RUN_ID',
       'GITHUB_SERVER_URL',
       'GITHUB_REPOSITORY',
+      'GITHUB_REF_NAME',
       'CI_JOB_URL',
       'GITHUB_SHA',
       'CI_COMMIT_SHA',
       'GIT_SHA',
       'PROJECT_NAME',
-      'BUN_CREATE_DIR',
-      'NPM_CLIENT',
       'NPM_CONFIG_TOKEN',
       'BENCH_ITERATIONS',
     ],
@@ -130,24 +124,16 @@ export const FACTORY_LIBRARY_CONTRACT_GROUPS: readonly ContractGroup[] = [
   {
     id: 'flags',
     owner: 'Bun',
-    properties: [
-      'bun create --force',
-      '--no-install',
-      '--no-git',
-      '--open',
-      'bun test passthrough',
-      'bun publish flags',
-    ],
-    rule: 'Factory forwards Bun create flags unchanged except its own --publish and --replace-local safety guards; an explicit marker request fails if it cannot be recorded.',
+    properties: ['bun test passthrough', 'bun publish flags'],
+    rule: 'Only flags consumed by the generated library belong in this contract; Factory create routing stays with the wrapper.',
   },
 ] as const;
 
 export const FACTORY_LIBRARY_ENVIRONMENT = {
-  junitCi: ['GITHUB_RUN_ID', 'GITHUB_SERVER_URL', 'GITHUB_REPOSITORY', 'CI_JOB_URL'],
+  junitCi: ['CI', 'GITHUB_RUN_ID', 'GITHUB_SERVER_URL', 'GITHUB_REPOSITORY', 'CI_JOB_URL'],
   junitCommit: ['GITHUB_SHA', 'CI_COMMIT_SHA', 'GIT_SHA'],
+  junitBranch: ['GITHUB_REF_NAME'],
   enrichment: ['PROJECT_NAME'],
-  createRouting: ['BUN_CREATE_DIR'],
-  createNpmClient: ['NPM_CLIENT'],
   publishAuthentication: ['NPM_CONFIG_TOKEN'],
   benchmark: ['BENCH_ITERATIONS'],
 } as const;
@@ -159,12 +145,12 @@ export const FACTORY_LIBRARY_JUNIT_PROPERTIES = {
   native: [
     {
       name: 'ci',
-      inputs: ['GITHUB_RUN_ID', 'GITHUB_SERVER_URL', 'GITHUB_REPOSITORY', 'CI_JOB_URL'],
+      inputs: FACTORY_LIBRARY_ENVIRONMENT.junitCi,
       absence: 'omitted when CI context is absent',
     },
     {
       name: 'commit',
-      inputs: ['GITHUB_SHA', 'CI_COMMIT_SHA', 'GIT_SHA', 'git HEAD'],
+      inputs: [...FACTORY_LIBRARY_ENVIRONMENT.junitCommit, 'git HEAD'],
       absence: 'omitted when no commit is available',
     },
     { name: 'hostname', inputs: ['system hostname'], absence: 'Bun runtime owned' },
@@ -182,32 +168,32 @@ export const FACTORY_LIBRARY_JUNIT_PROPERTIES = {
     },
     {
       name: 'project',
-      inputs: ['PROJECT_NAME', 'package.json.name'],
+      inputs: [...FACTORY_LIBRARY_ENVIRONMENT.enrichment, 'package.json.name'],
       absence: 'package name is required',
     },
     {
       name: 'project_source',
-      inputs: ['PROJECT_NAME', 'package.json.name'],
+      inputs: [...FACTORY_LIBRARY_ENVIRONMENT.enrichment, 'package.json.name'],
       absence: 'always records environment or package',
     },
     {
       name: 'report_context',
-      inputs: ['CI', 'GITHUB_RUN_ID', 'CI_JOB_URL'],
+      inputs: FACTORY_LIBRARY_ENVIRONMENT.junitCi,
       absence: 'always records local when CI context is absent',
     },
     {
       name: 'commit_source',
-      inputs: ['GITHUB_SHA', 'CI_COMMIT_SHA', 'GIT_SHA', 'git HEAD'],
+      inputs: [...FACTORY_LIBRARY_ENVIRONMENT.junitCommit, 'git HEAD'],
       absence: 'always records unavailable when absent',
     },
     {
       name: 'branch',
-      inputs: ['GITHUB_REF_NAME', 'git branch'],
+      inputs: [...FACTORY_LIBRARY_ENVIRONMENT.junitBranch, 'git branch'],
       absence: 'omitted; branch_source records state',
     },
     {
       name: 'branch_source',
-      inputs: ['GITHUB_REF_NAME', 'git branch'],
+      inputs: [...FACTORY_LIBRARY_ENVIRONMENT.junitBranch, 'git branch'],
       absence: 'environment, git, detached, or unavailable',
     },
     {
@@ -231,8 +217,6 @@ export const FACTORY_LIBRARY_JUNIT_PROPERTIES = {
 } as const;
 
 export const FACTORY_LIBRARY_FLAGS = {
-  factoryCreate: ['--publish', '--replace-local'],
-  bunCreate: ['--force', '--no-install', '--no-git', '--open'],
   testJunitPassthrough: ['--bail', '--coverage'],
   testCoverage: [
     '--coverage',
@@ -243,7 +227,7 @@ export const FACTORY_LIBRARY_FLAGS = {
   ],
   junitEnrichInput: ['[reportPath]'],
   bunPublish: [
-    '--dry-run',
+    'bun publish --dry-run',
     '--access',
     '--tag',
     '--registry',
@@ -255,7 +239,6 @@ export const FACTORY_LIBRARY_FLAGS = {
 } as const;
 
 type JsonRecord = Record<string, unknown>;
-export type TemplateContractMode = 'template' | 'scaffold';
 export type TemplateContractFinding = { property: string; expected: string; actual: unknown };
 const TEMPLATE_NAME = ['{', '{', 'name', '}', '}'].join('');
 const TEMPLATE_OPEN = ['{', '{'].join('');
@@ -275,15 +258,12 @@ function pushIf(
   valid: boolean,
   property: string,
   expected: string,
-  actual: unknown
+  actual: unknown,
 ): void {
   if (!valid) findings.push({ property, expected, actual });
 }
 
-export function validateFactoryLibraryManifest(
-  manifest: unknown,
-  mode: TemplateContractMode
-): TemplateContractFinding[] {
+export function validateFactoryLibraryManifest(manifest: unknown): TemplateContractFinding[] {
   const findings: TemplateContractFinding[] = [];
   const pkg = record(manifest);
   if (!pkg) return [{ property: 'package.json', expected: 'object', actual: manifest }];
@@ -293,19 +273,14 @@ export function validateFactoryLibraryManifest(
   const publishConfig = nested(pkg, 'publishConfig');
   const engines = nested(pkg, 'engines');
   const devDependencies = nested(pkg, 'devDependencies');
-  const bunCreate = nested(pkg, 'bun-create');
 
   pushIf(
     findings,
     typeof pkg.name === 'string' &&
-      (mode === 'template'
-        ? pkg.name === TEMPLATE_NAME
-        : pkg.name.length > 0 && !pkg.name.includes(TEMPLATE_OPEN)),
+      (pkg.name === TEMPLATE_NAME || (pkg.name.length > 0 && !pkg.name.includes(TEMPLATE_OPEN))),
     'name',
-    mode === 'template'
-      ? 'the Bun template name placeholder'
-      : 'a non-empty generated package name without template syntax',
-    pkg.name
+    'the exact Bun template name placeholder or a non-empty generated package name without template syntax',
+    pkg.name,
   );
   for (const [property, expected] of [
     ['version', 'string'],
@@ -320,7 +295,7 @@ export function validateFactoryLibraryManifest(
       expected === 'string' ? typeof actual === 'string' : actual === expected,
       property,
       expected,
-      actual
+      actual,
     );
   }
   pushIf(
@@ -328,7 +303,7 @@ export function validateFactoryLibraryManifest(
     exports?.['.'] === './src/index.ts',
     'exports[.]',
     './src/index.ts',
-    exports?.['.']
+    exports?.['.'],
   );
   pushIf(
     findings,
@@ -338,7 +313,7 @@ export function validateFactoryLibraryManifest(
       pkg.files[1] === 'README.md',
     'files',
     '["src", "README.md"]',
-    pkg.files
+    pkg.files,
   );
   pushIf(findings, engines?.bun === '>=1.3.14', 'engines.bun', '>=1.3.14', engines?.bun);
   pushIf(
@@ -346,64 +321,31 @@ export function validateFactoryLibraryManifest(
     pkg.packageManager === 'bun@1.3.14',
     'packageManager',
     'bun@1.3.14',
-    pkg.packageManager
+    pkg.packageManager,
   );
   pushIf(
     findings,
     publishConfig?.access === 'public',
     'publishConfig.access',
     'public',
-    publishConfig?.access
+    publishConfig?.access,
   );
   pushIf(
     findings,
     publishConfig?.tag === 'latest',
     'publishConfig.tag',
     'latest',
-    publishConfig?.tag
+    publishConfig?.tag,
   );
-  pushIf(
-    findings,
-    devDependencies?.['@eslint/js'] === '9.39.4',
-    'devDependencies.@eslint/js',
-    '9.39.4',
-    devDependencies?.['@eslint/js']
-  );
-  pushIf(
-    findings,
-    devDependencies?.['@types/bun'] === '1.3.14',
-    'devDependencies.@types/bun',
-    '1.3.14',
-    devDependencies?.['@types/bun']
-  );
-  pushIf(
-    findings,
-    devDependencies?.eslint === '9.39.4',
-    'devDependencies.eslint',
-    '9.39.4',
-    devDependencies?.eslint
-  );
-  pushIf(
-    findings,
-    devDependencies?.prettier === '3.9.6',
-    'devDependencies.prettier',
-    '3.9.6',
-    devDependencies?.prettier
-  );
-  pushIf(
-    findings,
-    devDependencies?.['typescript-eslint'] === '8.65.0',
-    'devDependencies.typescript-eslint',
-    '8.65.0',
-    devDependencies?.['typescript-eslint']
-  );
-  pushIf(
-    findings,
-    devDependencies?.typescript === '6.0.3',
-    'devDependencies.typescript',
-    '6.0.3',
-    devDependencies?.typescript
-  );
+  for (const [name, expected] of Object.entries(REQUIRED_DEV_DEPENDENCIES)) {
+    pushIf(
+      findings,
+      devDependencies?.[name] === expected,
+      `devDependencies.${name}`,
+      expected,
+      devDependencies?.[name],
+    );
+  }
 
   const requiredScripts: Readonly<Record<string, (value: unknown) => boolean>> = {
     dev: value => typeof value === 'string' && value.includes('bun --watch'),
@@ -436,9 +378,9 @@ export function validateFactoryLibraryManifest(
       value.includes('format:check') &&
       value.includes('lint') &&
       value.includes('typecheck') &&
+      value.includes('bun run test') &&
       !value.includes('generate:files'),
     prepack: value => value === 'bun run check',
-    postpublish: value => typeof value === 'string' && value.includes('postpublish.ts'),
     'publish:dry-run': value => value === 'bun publish --dry-run',
   };
   for (const [name, valid] of Object.entries(requiredScripts)) {
@@ -447,43 +389,17 @@ export function validateFactoryLibraryManifest(
       valid(scripts?.[name]),
       `scripts.${name}`,
       'documented Bun-native command pattern',
-      scripts?.[name]
-    );
-  }
-
-  if (mode === 'template') {
-    pushIf(
-      findings,
-      typeof bunCreate?.preinstall === 'string',
-      'bun-create.preinstall',
-      'string status command',
-      bunCreate?.preinstall
-    );
-    pushIf(
-      findings,
-      Array.isArray(bunCreate?.postinstall),
-      'bun-create.postinstall',
-      'array of status commands',
-      bunCreate?.postinstall
-    );
-  } else {
-    pushIf(
-      findings,
-      bunCreate === null,
-      'bun-create',
-      'removed by bun create materialization',
-      pkg['bun-create']
+      scripts?.[name],
     );
   }
   return findings;
 }
 
 /** Stable, secret-free contract used by the repository snapshot test. */
-export function factoryLibraryContractSnapshot(manifest: unknown, mode: TemplateContractMode) {
+export function factoryLibraryContractSnapshot(manifest: unknown) {
   const pkg = record(manifest) ?? {};
   const scripts = nested(pkg, 'scripts') ?? {};
   return {
-    mode,
     propertyGroups: FACTORY_LIBRARY_CONTRACT_GROUPS,
     environment: FACTORY_LIBRARY_ENVIRONMENT,
     junitProperties: FACTORY_LIBRARY_JUNIT_PROPERTIES,
@@ -495,10 +411,11 @@ export function factoryLibraryContractSnapshot(manifest: unknown, mode: Template
       files: pkg.files,
       publishConfig: nested(pkg, 'publishConfig'),
       engines: nested(pkg, 'engines'),
+      devDependencies: nested(pkg, 'devDependencies'),
       scripts: Object.fromEntries(
         Object.keys(scripts)
           .sort((left, right) => left.localeCompare(right))
-          .map(name => [name, scripts[name]])
+          .map(name => [name, scripts[name]]),
       ),
     },
   };

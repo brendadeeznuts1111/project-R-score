@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write
 import { projectFiles, renderFilesIndex } from './files-index.ts';
 
 const packageJson = (await Bun.file('package.json').json()) as { files?: unknown };

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/glob#quickstart
 /** File accountability is allow-by-default: every project file belongs in the
  * index unless it is generated, dependency output, VCS data, or a secret env
  * file. Keep this list aligned with .gitignore rather than adding source paths
@@ -14,6 +15,7 @@ export const INDEX_EXCLUDED_PREFIXES = [
 
 export function isIndexedProjectFile(path: string): boolean {
   if (INDEX_EXCLUDED_PREFIXES.some(prefix => path.startsWith(prefix))) return false;
+  if (path === '.DS_Store' || path.endsWith('/.DS_Store')) return false;
   if (path === '.env' || (path.startsWith('.env.') && path !== '.env.example')) return false;
   return !path.endsWith('.tgz');
 }
@@ -31,7 +33,7 @@ export async function projectFiles(cwd = process.cwd()): Promise<string[]> {
 export function renderFilesIndex(files: string[], packageFiles: string[]): string {
   if (packageFiles.length === 0) {
     throw new Error(
-      'package.json files must declare a non-empty publish allowlist before generating files.md.'
+      'package.json files must declare a non-empty publish allowlist before generating files.md.',
     );
   }
   const published = packageFiles.map(path => `- \`${path}\``).join('\n');

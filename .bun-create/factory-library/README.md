@@ -45,8 +45,8 @@ bun create factory-library ./packages/my-library
 `bun create` initializes Git and installs dependencies by default. Use Bun's
 documented create flags only when needed; inspect them on the active runtime
 with `bun create --help`. `--no-install` leaves out `node_modules`, `bun.lock`,
-and the Git repository when paired with `--no-git`; the local-template hook only
-prints next steps, so this remains a dependency-free scaffold path. The
+and the Git repository when paired with `--no-git`; because the template
+declares no lifecycle hooks, this remains a side-effect-free scaffold path. The
 destination must be disposable: local templates replace it whether or not
 `--force` is present; `--force` is Bun's remote-template overwrite override. The
 Factory wrapper requires an explicit destination for this repository-local
@@ -54,9 +54,9 @@ template, so it never delegates to Bun's implicit local destination. It also
 refuses an existing target until `--replace-local` makes the destructive action
 explicit, and never accepts the current directory as that target.
 
-On Bun 1.3.14, `--no-install` skips this template's `preinstall` status message
-but still runs its dependency-free `postinstall` next steps. Do not put required
-setup in either hook; use `bun run check` after installation instead.
+The template declares no `bun-create` lifecycle hooks. Installation and Git
+initialization remain Bun-owned, while project proof stays explicit through
+`bun run check` after dependencies are available.
 
 ## Development
 
@@ -155,19 +155,19 @@ metadata is reported with its real source.
 
 ### Environment variables (optional)
 
-| Variable                   | Used by                                                  | Missing-value behavior                                                                        |
-| -------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `GITHUB_SHA`               | Bun JUnit `commit` property                              | A real Git `HEAD` is passed as `GIT_SHA`; otherwise the native property is omitted.           |
-| `GITHUB_RUN_ID`            | Bun JUnit `ci` property and enrichment `run_id`          | Omitted; `run_id_source=unavailable` records the absence.                                     |
-| `GITHUB_SERVER_URL`        | Bun JUnit `ci` property                                  | Omitted; no local server URL is invented.                                                     |
-| `GITHUB_REPOSITORY`        | Bun JUnit `ci` property and enrichment `repository`      | A recognized Git remote may enrich `repository`; the native CI property is never synthesized. |
-| `CI_JOB_URL`               | Bun JUnit `ci` property                                  | passed through when supplied by a non-GitHub CI system                                        |
-| `CI_COMMIT_SHA`, `GIT_SHA` | Bun JUnit `commit` property                              | passed through when supplied by CI; Git `HEAD` is used only when all commit inputs are absent |
-| `PROJECT_NAME`             | Enrichment `project` property                            | generated package name                                                                        |
-| `BUN_CREATE_DIR`           | Bun/Factory local-template discovery, before scaffolding | Bun's global `.bun-create` path; not read by the generated library                            |
-| `NPM_CLIENT`               | Bun npm-template route, before scaffolding               | Optional absolute path to the npm client executable; not read by the generated library        |
-| `NPM_CONFIG_TOKEN`         | Bun registry authentication during `bun publish`         | none; required only for a non-interactive registry publish                                    |
-| `BENCH_ITERATIONS`         | `bun run bench` workload size                            | `50000`; must be a positive safe integer                                                      |
+| Variable                   | Used by                                             | Missing-value behavior                                                                        |
+| -------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `CI`                       | JUnit context classification                        | Local unless another real CI input is present.                                                |
+| `GITHUB_SHA`               | Bun JUnit `commit` property                         | A real Git `HEAD` is passed as `GIT_SHA`; otherwise the native property is omitted.           |
+| `GITHUB_RUN_ID`            | Bun JUnit `ci` property and enrichment `run_id`     | Omitted; `run_id_source=unavailable` records the absence.                                     |
+| `GITHUB_SERVER_URL`        | Bun JUnit `ci` property                             | Omitted; no local server URL is invented.                                                     |
+| `GITHUB_REPOSITORY`        | Bun JUnit `ci` property and enrichment `repository` | A recognized Git remote may enrich `repository`; the native CI property is never synthesized. |
+| `GITHUB_REF_NAME`          | JUnit enrichment `branch`                           | A real Git branch may be used; detached or absent state is recorded without a fake branch.    |
+| `CI_JOB_URL`               | Bun JUnit `ci` property                             | passed through when supplied by a non-GitHub CI system                                        |
+| `CI_COMMIT_SHA`, `GIT_SHA` | Bun JUnit `commit` property                         | passed through when supplied by CI; Git `HEAD` is used only when all commit inputs are absent |
+| `PROJECT_NAME`             | Enrichment `project` property                       | generated package name                                                                        |
+| `NPM_CONFIG_TOKEN`         | Bun registry authentication during `bun publish`    | none; required only for a non-interactive registry publish                                    |
+| `BENCH_ITERATIONS`         | `bun run bench` workload size                       | `50000`; must be a positive safe integer                                                      |
 
 The scripts preserve CI-provided values. Missing provenance remains absent and
 is made inspectable through the source-state properties; do not use variables to
@@ -185,12 +185,12 @@ The full code-example mapping is maintained in the monorepo at
 
 ### Contract groups
 
-`scripts/template-contract.ts` is the typed, executable contract for this
-template. It groups package properties by identity, runtime, quality, reporting,
-publishing, lifecycle, and file accountability; environment inputs and flags are
-separate groups. Its JUnit property map names every native and enriched
-property, input, and absence rule. `bun run check:files` validates the generated
-package form (where Bun has already removed `bun-create`) as well as `files.md`.
+`scripts/template-contract.ts` is the typed, executable contract for the
+generated library. It groups package properties by identity, runtime, quality,
+reporting, publishing, and file accountability; environment inputs and flags
+remain separate groups. Its JUnit property map names every native and enriched
+property, input, and absence rule. `bun run check:files` validates the package
+contract as well as `files.md`.
 When you intentionally add a property, environment input, or flag, add it to the
 corresponding contract group and document its owner and safety rule before
 relying on it.
@@ -262,11 +262,11 @@ bun run publish:dry-run
 bun publish
 ```
 
-`prepack` runs the proof contract before Bun packs this directory. `postpublish`
-then prints the published package/version/tag for an operator to verify. Neither
-hook runs when a prebuilt `.tgz` is supplied to `bun publish`, so archive-based
-Factory publishing remains an explicit separate operation. For Bun's native
-release reference, see
+`prepack` runs the proof contract before Bun packs this directory. The template
+adds no `postpublish` wrapper; Bun owns the publication result and registry
+response. Package lifecycle hooks do not run when a prebuilt `.tgz` is supplied
+to `bun publish`, so archive-based Factory publishing remains an explicit
+separate operation. For Bun's native release reference, see
 [Bun `publish` documentation](https://bun.com/docs/pm/cli/publish).
 
 | Bun publish option                        | Use                                                                           |

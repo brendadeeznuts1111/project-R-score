@@ -1641,7 +1641,13 @@ function isCodeApiKey(k: string): boolean {
   // Bundler CLI flags that collide with unrelated tool surfaces. Keep them in the
   // URL/catalog map, but do not auto-annotate every external CLI invocation.
   if (k === '--env' || k === '--version' || k === '--console' || k === '--format') return false;
-  if (k.startsWith('Bun.') || k.startsWith('bun:') || k.startsWith('--')) return true;
+  if (
+    k.startsWith('Bun.') ||
+    k.startsWith('bun:') ||
+    k.startsWith('--') ||
+    /^bun\s+.+\s+--/.test(k)
+  )
+    return true;
   // PascalCase Bun package exports / types
   if (/^[A-Z][A-Za-z0-9]+$/.test(k)) return true;
   return false;
@@ -1786,7 +1792,7 @@ function codeUsesApi(code: string, api: string): boolean {
 }
 
 const API_SET = new Set(APIS);
-const FLAG_APIS = APIS.filter(api => api.startsWith('--'));
+const CLI_VALUE_APIS = APIS.filter(api => api.startsWith('--') || /^bun\s+.+\s+--/.test(api));
 
 function scriptKindForPath(path: string): ts.ScriptKind {
   if (/\.tsx$/i.test(path)) return ts.ScriptKind.TSX;
@@ -2108,11 +2114,16 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
       else addBindingImports(node.name, add);
     }
 
-    // CLI flags are values by definition. Scan string literals, but deliberately
-    // exclude template literals used for generated documentation/examples.
+    // CLI flags and flag-bearing commands are values by definition. Scan string
+    // literals, but deliberately exclude generated template-literal examples.
     if (ts.isStringLiteral(node)) {
-      for (const flag of FLAG_APIS) {
-        if (codeUsesApi(node.text, flag)) add(flag, node);
+      const matches = CLI_VALUE_APIS.filter(flag => codeUsesApi(node.text, flag));
+      for (const flag of matches) {
+        const hasMoreSpecificMatch = matches.some(
+          candidate =>
+            candidate !== flag && candidate.length > flag.length && candidate.includes(flag)
+        );
+        if (!hasMoreSpecificMatch) add(flag, node);
       }
     }
 

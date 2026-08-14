@@ -1,3 +1,7 @@
+// @see https://bun.com/reference/bun/argv
+// @see https://bun.com/docs/runtime/utils#bun-env
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write
 import { readJunitContext, resolveJunitContext } from './junit-context.ts';
 
 const reportPath = Bun.argv[2] ?? 'reports/junit.xml';
@@ -33,7 +37,7 @@ function escapeXmlAttribute(value: string): string {
         '>': '&gt;',
         "'": '&apos;',
         '"': '&quot;',
-      })[character]!
+      })[character]!,
   );
 }
 
@@ -52,7 +56,7 @@ function upsertProperties(xml: string, values: Record<string, string>): string {
   const properties = /<properties\b[^>]*>([\s\S]*?)<\/properties>/i.exec(afterSuite);
   const newProperties = Object.entries(values).map(
     ([name, value]) =>
-      `<property name="${escapeXmlAttribute(name)}" value="${escapeXmlAttribute(value)}"/>`
+      `<property name="${escapeXmlAttribute(name)}" value="${escapeXmlAttribute(value)}"/>`,
   );
 
   if (!properties || properties.index === undefined) {
@@ -64,7 +68,7 @@ function upsertProperties(xml: string, values: Record<string, string>): string {
     const property = `<property name="${escapeXmlAttribute(name)}" value="${escapeXmlAttribute(value)}"/>`;
     const existing = new RegExp(
       `<property\\b(?=[^>]*\\bname=(["'])${escapeRegExp(name)}\\1)[^>]*\\/?\\s*>`,
-      'gi'
+      'gi',
     );
     content = existing.test(content)
       ? content.replace(existing, property)

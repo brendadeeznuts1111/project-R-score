@@ -8,6 +8,8 @@
  * Profile: bun run profile:cpu  (writes .cpuprofile under ./profiles/)
  *
  * @see https://bun.com/docs/runtime/utils#bun-nanoseconds
+ * @see https://bun.com/docs/runtime/utils#bun-env
+ * @see https://bun.com/docs/runtime/utils#bun-version
  * @see https://bun.com/docs/project/benchmarking
  * @see https://bun.com/docs/project/benchmarking#cpu-profiling
  */

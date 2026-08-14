@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/runtime/shell#getting-started
+// @see https://bun.com/docs/runtime/utils#bun-env
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write
 import { $ } from 'bun';
 
 export type JunitContext = {
@@ -45,7 +49,7 @@ export function repositoryFromRemote(remote: string): string | undefined {
 
 export async function resolveJunitContext(
   env: Environment = Bun.env,
-  now = new Date()
+  now = new Date(),
 ): Promise<JunitContext> {
   const [gitCommit, remote, gitBranch] = await Promise.all([
     gitText('commit'),
@@ -128,7 +132,7 @@ function isJunitContext(value: unknown): value is JunitContext {
   const sourceMatches = (
     source: unknown,
     field: string | undefined,
-    valueSources: readonly string[]
+    valueSources: readonly string[],
   ): boolean =>
     source === 'unavailable'
       ? field === undefined
@@ -156,7 +160,7 @@ function isJunitContext(value: unknown): value is JunitContext {
 
 export async function writeJunitContext(
   reportPath: string,
-  context: JunitContext
+  context: JunitContext,
 ): Promise<string> {
   const path = junitContextPath(reportPath);
   await Bun.write(path, `${JSON.stringify(context, null, 2)}\n`);
