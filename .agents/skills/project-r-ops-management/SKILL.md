@@ -19,6 +19,13 @@ description: Operate Project R runtime channels, CI gates, TypeScript health, se
   [`config/bun-channels.toml`](../../../config/bun-channels.toml) and
   [`bun-channel-governance.md`](../../../docs/design/bun-channel-governance.md).
   Monitoring is read-only; promotion is a separate reviewed change.
+- Bun API documentation and release history: read
+  [`BUN_DOCS_OPERATE.md`](../../../docs/BUN_DOCS_OPERATE.md). Resolve unfamiliar
+  APIs with `bun tools/bun-doc-refs.ts suggest "<api>"`; never infer an API date
+  from the active runtime, a nearby minor release, `verifiedOn`, or
+  `lastUpdated`. Recorded release and update events require the exact official
+  version, publication timestamp, and URL, proved by the provenance commands in
+  the command map.
 - Domain and UI work: follow
   [`DOMAIN_CONCEPT_SHAPE.md`](../../../docs/DOMAIN_CONCEPT_SHAPE.md). For partners,
   use [`partner-dashboard-mvp.toml`](../../../docs/design/partner-dashboard-mvp.toml)
@@ -36,6 +43,10 @@ description: Operate Project R runtime channels, CI gates, TypeScript health, se
 - Use focused file tests while editing, `bun run test:watch` for the changed-file
   loop, `.husky/pre-commit` for staged proof, and `bun run bun:ci` on a clean
   worktree before merge.
+- When Bun docs, API history, feed, overlay, scrape-state, or catalog files move,
+  run the exact provenance proof. Repair malformed persisted artifacts or use
+  the documented `scrape --force` rebuild; do not weaken fail-closed parsing or
+  manufacture missing release history.
 - Use `bun run test:snapshots` to verify the full registered snapshot catalog.
   Update one owned suite with `bun tools/bun-test-snapshots.ts --update --id <id>`
   and review the snapshot diff before staging.

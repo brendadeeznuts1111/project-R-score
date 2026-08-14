@@ -882,6 +882,24 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'tools/bun-doc-refs.ts · spine tenant docs-integrity',
   },
   {
+    id: 'bun-api-release-provenance',
+    claim:
+      'Recorded Bun API release and update events match exact official RSS versions, publication timestamps, and Bun post URLs',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:core',
+    evidence: [
+      'bun tools/bun-docs-catalog.ts verify && bun run docs:provenance:check',
+      'bun tools/bun-docs-catalog.ts verify',
+      'bun run docs:provenance:check',
+      'tests/bun-docs-release.test.ts',
+      'tests/bun-docs-catalog.test.ts',
+    ],
+    freshRerun: 'bun tools/bun-docs-catalog.ts verify && bun run docs:provenance:check',
+    freshRerunKind: 'claim',
+    owner: 'tools/bun-docs-provenance.ts · tools/bun-doc-refs.ts',
+  },
+  {
     id: 'audit-findings-catalog',
     claim:
       'FactoryWager audit findings+concepts verify (evidence · graph · relatedDocs · catalog/page parity; sha3-256 primary; sibling SSOT, not BunToken)',

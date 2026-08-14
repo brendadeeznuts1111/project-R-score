@@ -219,6 +219,12 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
 - **`docs-integrity`** — Bun docs stack integrity pass (`journey` + `boundary`)
   _Ratchet_ → `bun tools/bun-doc-refs.ts schedule --once` ·
   [`tenants/docs-integrity.md`](tenants/docs-integrity.md)
+- **`bun-api-release-provenance`** — recorded Bun API introductions, fixes,
+  changes, and release hits match exact official RSS versions, canonical
+  publication timestamps, and Bun post URLs (`unit` + `boundary`) _Ratchet_ →
+  `bun tools/bun-docs-catalog.ts verify` ·
+  `bun run docs:provenance:check` · malformed persisted evidence fails closed;
+  unknown history remains explicitly unknown
 - **`audit-findings-catalog`** — FactoryWager audit findings+concepts verify
   (evidence · graph · relatedDocs · catalog/page parity; sha3-256 primary)
   (`unit` + `boundary`) _Ratchet_ → `bun run audit:verify` · pre-commit (audit
@@ -403,6 +409,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `channel-meta-verification-v1`     | continuous | `ci:harness` channel-meta step · also `check:release-tracker`                                                                                                        |
 | `blog-extraction-journey`          | human-only | `bun test tests/journey/blog-extraction.test.ts`                                                                                                                     |
 | `bun-http-server-docs`             | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-docs-catalog.test.ts`                                                                                           |
+| `bun-api-release-provenance`       | continuous | `ci:core` · `bun tools/bun-docs-catalog.ts verify && bun run docs:provenance:check`                                                                                   |
 | `path-bun`                         | continuous | pre-commit (lib\|tools staged) · `ci:harness`                                                                                                                        |
 | `bun-env`                          | continuous | pre-commit (lib\|scripts staged) · `ci:harness` · eslint `prefer-bun-env`                                                                                            |
 | `invisible-chars`                  | continuous | pre-commit (spine/test .ts staged) · `ci:harness`                                                                                                                    |
@@ -434,7 +441,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 
 Counts (must match `gateClass` tallies):
 
-continuous 33 · workflow 9 · human-only 35.
+continuous 34 · workflow 9 · human-only 35.
 
 Discover (display only, not gates): `bun run harness:status` ·
 `bun run docs:fresh-rerun`.
