@@ -23,8 +23,13 @@ describe('bun:release-contracts CLI', () => {
     await expect(assertOutputDirInRepo('/tmp/outside-contracts')).rejects.toThrow(
       /repository root/
     );
+    // macOS maps /tmp → /private/tmp via realpath; assertPathInRepo returns the resolved path.
     const forced = await assertOutputDirInRepo('/tmp/outside-contracts', { force: true });
-    expect(forced).toBe('/tmp/outside-contracts');
+    expect(forced.endsWith('/outside-contracts')).toBe(true);
+    expect(forced.includes('..')).toBe(false);
+    // Same path whether caller used /tmp or the platform realpath form.
+    const again = await assertOutputDirInRepo(forced, { force: true });
+    expect(again).toBe(forced);
   });
 
   test('check --json returns a dual-mode summary for a committed inventory', async () => {
