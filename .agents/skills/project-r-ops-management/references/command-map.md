@@ -2,21 +2,20 @@
 
 Run from the claimed Project R worktree.
 
-## Global and lane preflight
+## Runtime, agent, and lane preflight
 
 ```bash
-dx context
-dx version
-dx package
-bun run dx:contract:check -- --installed
+bun --version
+bun --revision
+bun run bun:channel:check
+bun run agents:contract:check -- --installed
 bun run lane:status
 ```
 
 The installed contract check is the current fail-closed Project R parity proof:
 it compares each complete repository-owned package with `~/.codex/skills` and
-rejects changed, missing, or stale files. `dx setup` should expose the same
-result as `project-r-agent-alignment`; absence means the active DX build has not
-adopted the contract and must not be reported as DX-native parity.
+rejects changed, missing, or stale files. It is repository-owned and does not
+depend on a machine-wide developer-experience wrapper.
 
 ## Bun channel proof
 
@@ -76,7 +75,8 @@ Flag boundaries:
 ## Release proof
 
 ```bash
-dx version
+bun --version
+bun --revision
 bun run bun:channel:check
 bun run check:release-tracker
 bun run type-check:ci

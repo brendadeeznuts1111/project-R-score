@@ -10,10 +10,9 @@ description: >
 
 ## Start
 
-1. Run `dx context`, `dx version`, and `dx package`.
-2. Run `bun run dx:contract:check -- --installed`. Treat a missing
-   `project-r-agent-alignment` row in `dx setup` as DX-version drift, not proof
-   that installed skills align.
+1. Run `bun --version`, `bun --revision`, and `bun run bun:channel:check`.
+2. Run `bun run agents:contract:check -- --installed` to prove the installed
+   Project R skill packages match repository authority.
 3. Run `bun run lane:status` and preserve every other worktree and index.
 4. Select the smallest owned proof in the
    [command map](references/command-map.md).
@@ -47,8 +46,8 @@ description: >
 
 ## Test and CI rules
 
-- Repository scripts own runnable commands; `dx test` reports active Bun
-  capabilities but does not replace Project R gates.
+- Repository scripts own runnable commands; machine-wide doctors do not replace
+  Project R gates.
 - Use focused file tests while editing, `bun run test:watch` for the
   changed-file loop, `.husky/pre-commit` for staged proof, and `bun run bun:ci`
   on a clean worktree before merge.

@@ -14,9 +14,8 @@ description: >
    skill only when no current owner fits.
 2. Treat `/Users/nolarose/Projects/.agents/skills` as Project R authority.
    Compare any `/Users/nolarose/.codex/skills` copy, but synchronize it only
-   after the repository version validates. Treat
-   `/Users/nolarose/.config/dx/AGENTS.md` as machine DX policy, not the Project
-   R SSOT: it may route into repository commands but must not copy generated
+   after the repository version validates. Treat `~/.codex/AGENTS.md` as
+   optional machine routing, not the Project R SSOT: it must not copy generated
    release data or override repository policy.
 3. Keep frontmatter to supported keys and make `description` state capability
    plus trigger. Put runnable detail in the body or a focused reference.
@@ -34,20 +33,21 @@ description: >
 
 ## Thread-portfolio boundary
 
-When a skill or DX review also covers Codex task history, keep the two concerns
-separate: task titles are navigation metadata, while the Project R portfolio is
-the durable root-thread record. First inspect current tasks with the Codex task
-list, then run `bun run threads:portfolio` to expose catalog drift. Rename
-recent tasks from their evidenced purpose; do not infer delivery state from a
-title. Add Project R root tasks to `tools/codex-thread-portfolio.json`
-chronologically before claiming portfolio verification is clean. Tasks outside
-the Project R workspace may be renamed for clarity but must not be added to that
-catalog.
+When a skill or machine-alignment review also covers Codex task history, keep
+the two concerns separate: task titles are navigation metadata, while the
+Project R portfolio is the durable root-thread record. First inspect current
+tasks with the Codex task list, then run `bun run threads:portfolio` to expose
+catalog drift. Rename recent tasks from their evidenced purpose; do not infer
+delivery state from a title. Add Project R root tasks to
+`tools/codex-thread-portfolio.json` chronologically before claiming portfolio
+verification is clean. Tasks outside the Project R workspace may be renamed for
+clarity but must not be added to that catalog.
 
 ## Grounding rules
 
-- For Bun behavior, check `dx version`, the active command's `--help`, and the
-  current official docs. The installed CLI is the executable contract.
+- For Bun behavior, check `bun --version`, `bun --revision`, the active
+  command's `--help`, and the current official docs. The installed Bun CLI is
+  the executable contract.
 - For Bun API history, run `bun tools/bun-doc-refs.ts history <api> --json` and
   `bun run docs:provenance:check`. Require the exact official release version,
   canonical publication timestamp, and URL for every recorded event. Never use a
@@ -73,8 +73,8 @@ Run:
 
 ```bash
 bun run skills:validate
-bun run dx:contract:check
-bun run dx:contract:check -- --installed
+bun run agents:contract:check
+bun run agents:contract:check -- --installed
 ```
 
 When validation or hook behavior changes, also run:
@@ -87,13 +87,10 @@ Report the authoritative files changed, wording or behavior removed, focused
 proof, and whether an installed copy was synchronized.
 
 After repository proof passes, synchronize the complete changed skill package
-(body, metadata, references, and scripts), run the installed contract check,
-then run `dx setup`. A DX build with Project R parity support must report the
-`project-r-agent-alignment` check. If the active DX build does not emit that
-check, do not claim DX-native parity: report the pending DX installation
-boundary. The explicit `--installed` result remains valid machine-side evidence
-because it compares the complete packages byte-for-byte. Update global DX
-routing only when the read-only checks identify stale machine policy.
+(body, metadata, references, and scripts), run the installed contract check, and
+report its exact package/file count. This is the machine-side alignment evidence
+because it compares complete packages byte-for-byte. Update global routing only
+when it conflicts with repository authority.
 
 ## Guardrails
 

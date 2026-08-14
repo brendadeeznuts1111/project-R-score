@@ -1,4 +1,4 @@
 interface:
   display_name: "Project R Agent Team"
   short_description: "Route Project R vault, MCP, Reasonix, and Pages access"
-  default_prompt: "Use $project-r-agent-team to inspect DX, MCP, and Reasonix authority first; load only the required Proton project identity; keep token scopes separate; and use repository runbooks for any authorized remote or Pages mutation."
+  default_prompt: "Use $project-r-agent-team to inspect repository MCP and Reasonix authority first; load only the required Proton project identity; keep token scopes separate; and use repository runbooks for any authorized remote or Pages mutation."

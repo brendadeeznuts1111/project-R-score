@@ -8,10 +8,11 @@
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 
-export const PROJECT_R_DX_CONTRACT_PATH = 'config/project-r-dx-contract.json';
+export const PROJECT_R_AGENT_CONTRACT_PATH = 'config/project-r-agent-contract.json';
 
-export type ProjectRDxContract = {
+export type ProjectRAgentContract = {
   schemaVersion: 1;
+  contractKind: 'agent-alignment';
   projectKey: 'project-r';
   agentContext: string;
   skillAuthority: string;
@@ -19,9 +20,9 @@ export type ProjectRDxContract = {
   globalAuthorityPointers: string[];
 };
 
-export type ProjectRDxContractCheck = {
+export type ProjectRAgentContractCheck = {
   ok: boolean;
-  contract: ProjectRDxContract | null;
+  contract: ProjectRAgentContract | null;
   issues: string[];
 };
 
@@ -95,7 +96,7 @@ async function filesEqual(left: string, right: string): Promise<boolean> {
 /** Compare complete repository-owned skill packages with an installed Codex skill root. */
 export async function checkInstalledSkillAlignment(
   repoRoot: string,
-  contract: ProjectRDxContract,
+  contract: ProjectRAgentContract,
   installedRoot: string
 ): Promise<InstalledSkillAlignmentCheck> {
   const issues: string[] = [];
@@ -145,15 +146,15 @@ export async function checkInstalledSkillAlignment(
   };
 }
 
-export async function parseProjectRDxContract(
+export async function parseProjectRAgentContract(
   repoRoot: string,
   rawContract?: unknown
-): Promise<ProjectRDxContractCheck> {
+): Promise<ProjectRAgentContractCheck> {
   const issues: string[] = [];
   let raw = rawContract;
   if (raw === undefined) {
     try {
-      raw = await Bun.file(resolvePath(repoRoot, PROJECT_R_DX_CONTRACT_PATH)).json();
+      raw = await Bun.file(resolvePath(repoRoot, PROJECT_R_AGENT_CONTRACT_PATH)).json();
     } catch (error) {
       return {
         ok: false,
@@ -168,6 +169,7 @@ export async function parseProjectRDxContract(
   }
 
   if (raw.schemaVersion !== 1) issues.push('schemaVersion must be 1');
+  if (raw.contractKind !== 'agent-alignment') issues.push('contractKind must be agent-alignment');
   if (raw.projectKey !== 'project-r') issues.push('projectKey must be project-r');
   if (!isSafeRelativePath(raw.agentContext))
     issues.push('agentContext must be a safe relative path');
@@ -198,7 +200,7 @@ export async function parseProjectRDxContract(
     return { ok: false, contract: null, issues };
   }
 
-  const contract = raw as ProjectRDxContract;
+  const contract = raw as ProjectRAgentContract;
   const requiredPaths = [
     contract.agentContext,
     contract.skillAuthority,
@@ -224,7 +226,7 @@ if (import.meta.main) {
     console.error(`❌ unknown option: ${unknown[0]}`);
     process.exit(2);
   }
-  const result = await parseProjectRDxContract(repoRoot);
+  const result = await parseProjectRAgentContract(repoRoot);
   let alignment: InstalledSkillAlignmentCheck | null = null;
   if (result.ok && installed) {
     const userHome = Bun.env.HOME;
@@ -248,7 +250,7 @@ if (import.meta.main) {
     jsonOut({ ...result, alignment });
   } else if (result.ok) {
     console.info(
-      `✅ Project R DX contract: ${result.contract!.installedSkills.length} repository skill packages · ${result.contract!.globalAuthorityPointers.length} global pointers`
+      `✅ Project R agent contract: ${result.contract!.installedSkills.length} repository skill packages · ${result.contract!.globalAuthorityPointers.length} global pointers`
     );
     if (alignment) {
       console.info(
