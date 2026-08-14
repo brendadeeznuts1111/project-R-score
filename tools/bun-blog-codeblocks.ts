@@ -4,6 +4,10 @@
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
+// @see https://bun.com/docs/runtime/markdown#options — Bun.markdown.Options
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
+// @see https://bun.com/reference/bun/markdown#bun.markdown.AnsiTheme — Bun.markdown.AnsiTheme
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
 // @see https://bun.com/rss.xml — Bun blog RSS
@@ -19,6 +23,7 @@
  *   bun tools/bun-blog-codeblocks.ts -g 'requestPayer|files'
  *   bun tools/bun-blog-codeblocks.ts --mode join
  *   bun tools/bun-blog-codeblocks.ts --mode all
+ *   bun tools/bun-blog-codeblocks.ts --markdown-format all --markdown-preset secure
  *   bun tools/bun-blog-codeblocks.ts --offline /path/to/saved.html
  *   bun tools/bun-blog-codeblocks.ts --rss
  */
@@ -39,6 +44,12 @@ import {
   type ExtractResult,
 } from '../lib/docs/blog-codeblocks.ts';
 import { bunBlog, BunBlogPattern, guideKeyFromUrl } from '../lib/docs/bun-site-url.ts';
+import {
+  MARKDOWN_PRESET_NAMES,
+  markdownHtml,
+  resolveMarkdownPreset,
+  type MarkdownPresetName,
+} from '../lib/markdown/options.ts';
 import { resolvePath } from '../lib/path-bun';
 import { BUN_RSS_URL } from '../lib/shared/tools/bun-urls';
 import {
@@ -102,6 +113,18 @@ export type CodeBlockModePlan = {
   derived: boolean;
 };
 
+export const MARKDOWN_OUTPUT_FORMATS = ['markdown', 'html', 'ansi', 'all'] as const;
+export type MarkdownOutputFormat = (typeof MARKDOWN_OUTPUT_FORMATS)[number];
+
+export type MarkdownOutputPlan = {
+  format: MarkdownOutputFormat;
+  html: boolean;
+  ansi: boolean;
+  preset: MarkdownPresetName;
+  parserOptions: Bun.markdown.Options;
+  ansiTheme: Bun.markdown.AnsiTheme;
+};
+
 const DEFAULT_VERSION = '1.3.6';
 const REPO_ROOT = resolvePath(import.meta.dir, '..');
 
@@ -144,6 +167,57 @@ export function resolveCodeBlockMode(options: {
     mode,
     join: mode === 'join' || mode === 'all',
     derived: mode === 'derived' || mode === 'all',
+  };
+}
+
+export function resolveMarkdownOutputPlan(options: {
+  format?: string;
+  preset?: string;
+  columns?: string;
+  hyperlinks?: boolean;
+  noColors?: boolean;
+}): MarkdownOutputPlan {
+  const requestedFormat = options.format?.trim() || 'markdown';
+  if (!MARKDOWN_OUTPUT_FORMATS.some(format => format === requestedFormat)) {
+    throw new Error(
+      `Invalid --markdown-format ${JSON.stringify(requestedFormat)}; expected ${MARKDOWN_OUTPUT_FORMATS.join('|')}`
+    );
+  }
+  const format = requestedFormat as MarkdownOutputFormat;
+  const html = format === 'html' || format === 'all';
+  const ansi = format === 'ansi' || format === 'all';
+
+  if (options.preset != null && !html) {
+    throw new Error('--markdown-preset requires --markdown-format=html|all');
+  }
+  if (
+    (options.columns != null || options.hyperlinks === true || options.noColors === true) &&
+    !ansi
+  ) {
+    throw new Error(
+      '--markdown-columns/--markdown-hyperlinks/--markdown-no-colors require --markdown-format=ansi|all'
+    );
+  }
+
+  const resolvedPreset = resolveMarkdownPreset(options.preset?.trim() || 'readme');
+  const ansiTheme: Bun.markdown.AnsiTheme = {};
+  if (options.columns != null) {
+    const columns = Number(options.columns);
+    if (!Number.isSafeInteger(columns) || columns < 1) {
+      throw new Error('--markdown-columns must be a positive safe integer');
+    }
+    ansiTheme.columns = columns;
+  }
+  if (options.hyperlinks === true) ansiTheme.hyperlinks = true;
+  if (options.noColors === true) ansiTheme.colors = false;
+
+  return {
+    format,
+    html,
+    ansi,
+    preset: resolvedPreset.name,
+    parserOptions: resolvedPreset.options,
+    ansiTheme,
   };
 }
 
@@ -464,12 +538,17 @@ Extract div.CodeBlock samples from a Bun blog HTML post.
   --mode <mode>       index | join | derived | all (default index)
   --join              Compatibility alias for --mode=join
   --derived-table     Compatibility alias for --mode=derived
+  --markdown-format   markdown | html | ansi | all (default markdown)
+  --markdown-preset   ${MARKDOWN_PRESET_NAMES.join(' | ')} (HTML parser options)
+  --markdown-columns  Positive terminal width for ANSI projection
+  --markdown-hyperlinks  Enable OSC 8 links in ANSI projection
+  --markdown-no-colors   Disable colors in ANSI projection
   --offline           Never fetch; require the saved HTML input
   -r, --rss           Opt-in live RSS enrich when release-index misses
   -h, --help          Show help
 
 Default stdout: banner + Bun.inspect.table index (no bodies).
-Always writes .json + .md under --out-dir.
+Always writes .json + .md under --out-dir; HTML/ANSI are opt-in projections.
 `);
 }
 
@@ -486,6 +565,11 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
       mode: { type: 'string' },
       join: { type: 'boolean', default: false },
       'derived-table': { type: 'boolean', default: false },
+      'markdown-format': { type: 'string' },
+      'markdown-preset': { type: 'string' },
+      'markdown-columns': { type: 'string' },
+      'markdown-hyperlinks': { type: 'boolean', default: false },
+      'markdown-no-colors': { type: 'boolean', default: false },
       offline: { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
@@ -499,11 +583,19 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
   }
 
   let modePlan: CodeBlockModePlan;
+  let markdownPlan: MarkdownOutputPlan;
   try {
     modePlan = resolveCodeBlockMode({
       mode: values.mode,
       join: values.join,
       derivedTable: values['derived-table'],
+    });
+    markdownPlan = resolveMarkdownOutputPlan({
+      format: values['markdown-format'],
+      preset: values['markdown-preset'],
+      columns: values['markdown-columns'],
+      hyperlinks: values['markdown-hyperlinks'],
+      noColors: values['markdown-no-colors'],
     });
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
@@ -553,6 +645,8 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
   const stem = `bun-v${version}-CodeBlock`;
   const jsonPath = resolvePath(outDir, `${stem}.json`);
   const mdPath = resolvePath(outDir, `${stem}.md`);
+  const renderedHtmlPath = resolvePath(outDir, `${stem}.html`);
+  const renderedAnsiPath = resolvePath(outDir, `${stem}.ansi.txt`);
   const derivedPath = resolvePath(outDir, `${stem}-DerivedApi.json`);
   const guideKey = guideKeyFromUrl(source, { keepHash: true });
 
@@ -572,6 +666,12 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
     codeBlockTabCount: extracted.codeBlockTabCount,
     classPattern: extracted.classPattern,
     classStatuses: extracted.classStatuses,
+    markdown: {
+      format: markdownPlan.format,
+      preset: markdownPlan.html ? markdownPlan.preset : null,
+      parserOptions: markdownPlan.html ? markdownPlan.parserOptions : null,
+      ansiTheme: markdownPlan.ansi ? markdownPlan.ansiTheme : null,
+    },
     bySection: extracted.bySection,
     blocks: blocksForJson,
   };
@@ -604,6 +704,14 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
     md += `### ${b.index}. ${b.section}\n\nStatus: **${b.statusLabel}** · Class: \`${b.classNames.join(' ')}\`\n\n\`\`\`\n${b.code}\n\`\`\`\n\n`;
   }
   await Bun.write(mdPath, md);
+  if (markdownPlan.html) {
+    await Bun.write(renderedHtmlPath, markdownHtml(md, markdownPlan.parserOptions));
+    wrote.push(renderedHtmlPath);
+  }
+  if (markdownPlan.ansi) {
+    await Bun.write(renderedAnsiPath, Bun.markdown.ansi(md, markdownPlan.ansiTheme));
+    wrote.push(renderedAnsiPath);
+  }
 
   const { entry: blog, rssNote } = await lookupReleaseEntry(version, { rss: values.rss });
 

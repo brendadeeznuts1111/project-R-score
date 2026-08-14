@@ -1,16 +1,20 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
 // @see https://bun.com/docs/runtime/markdown#options
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
 // @see https://bun.com/docs/runtime/markdown#heading-ids
 // @see https://bun.com/docs/runtime/markdown#autolinks
 import { describe, expect, test } from 'bun:test';
 import {
   MARKDOWN_OPTION_CATALOG,
   MARKDOWN_OPTIONS_DEFAULTS,
+  MARKDOWN_PRESET_NAMES,
   MARKDOWN_PRESET_DESIGN,
   MARKDOWN_PRESET_PORTAL,
   MARKDOWN_PRESET_README,
   MARKDOWN_PRESET_SECURE,
   markdownHtml,
   mergeMarkdownOptions,
+  resolveMarkdownPreset,
 } from '../lib/markdown/options.ts';
 import { PORTAL_MARKDOWN_PARSER } from '../lib/http/portal-skill-detail.ts';
 import { renderReadmeHTML } from '../lib/factory/markdown.ts';
@@ -113,6 +117,15 @@ describe('Bun.markdown.Options live contract (docs table)', () => {
 });
 
 describe('presets', () => {
+  test('named preset resolver exposes the supported CLI/configuration boundary', () => {
+    expect(MARKDOWN_PRESET_NAMES).toEqual(['readme', 'portal', 'secure', 'design']);
+    expect(resolveMarkdownPreset('secure')).toEqual({
+      name: 'secure',
+      options: MARKDOWN_PRESET_SECURE,
+    });
+    expect(() => resolveMarkdownPreset('legacy')).toThrow(/readme\|portal\|secure\|design/);
+  });
+
   test('PORTAL_MARKDOWN_PARSER is MARKDOWN_PRESET_PORTAL', () => {
     expect(PORTAL_MARKDOWN_PARSER).toEqual(MARKDOWN_PRESET_PORTAL);
   });

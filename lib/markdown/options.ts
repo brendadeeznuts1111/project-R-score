@@ -157,6 +157,34 @@ export const MARKDOWN_PRESET_DESIGN = {
   tagFilter: true,
 } as const satisfies Bun.markdown.Options;
 
+/** Named parser policies for CLIs and other configuration boundaries. */
+export const MARKDOWN_PRESETS = {
+  readme: MARKDOWN_PRESET_README,
+  portal: MARKDOWN_PRESET_PORTAL,
+  secure: MARKDOWN_PRESET_SECURE,
+  design: MARKDOWN_PRESET_DESIGN,
+} as const satisfies Record<string, Bun.markdown.Options>;
+
+export type MarkdownPresetName = keyof typeof MARKDOWN_PRESETS;
+
+export const MARKDOWN_PRESET_NAMES = Object.freeze(
+  Object.keys(MARKDOWN_PRESETS) as MarkdownPresetName[]
+);
+
+/** Parse a named preset at a CLI/configuration boundary. */
+export function resolveMarkdownPreset(name = 'readme'): {
+  name: MarkdownPresetName;
+  options: Bun.markdown.Options;
+} {
+  if (!MARKDOWN_PRESET_NAMES.some(candidate => candidate === name)) {
+    throw new Error(
+      `Invalid Markdown preset ${JSON.stringify(name)}; expected ${MARKDOWN_PRESET_NAMES.join('|')}`
+    );
+  }
+  const presetName = name as MarkdownPresetName;
+  return { name: presetName, options: { ...MARKDOWN_PRESETS[presetName] } };
+}
+
 /** Merge overrides onto a base preset (shallow). */
 export function mergeMarkdownOptions(
   base: Bun.markdown.Options,

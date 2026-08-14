@@ -116,6 +116,7 @@ import {
   parseBlogVersion,
   previewLine,
   resolveCodeBlockMode,
+  resolveMarkdownOutputPlan,
   runCli,
 } from '../tools/bun-blog-codeblocks.ts';
 import { bunBlog, BunBlogPattern } from '../lib/docs/bun-site-url.ts';
@@ -254,6 +255,41 @@ describe('bun-blog-codeblocks CLI', () => {
     expect(() => resolveCodeBlockMode({ mode: 'index', join: true })).toThrow(/Do not combine/);
   });
 
+  test('resolves scoped Bun.markdown projections, parser presets, and ANSI theme', () => {
+    expect(resolveMarkdownOutputPlan({})).toMatchObject({
+      format: 'markdown',
+      html: false,
+      ansi: false,
+      preset: 'readme',
+    });
+    expect(
+      resolveMarkdownOutputPlan({
+        format: 'all',
+        preset: 'secure',
+        columns: '72',
+        hyperlinks: true,
+        noColors: true,
+      })
+    ).toEqual({
+      format: 'all',
+      html: true,
+      ansi: true,
+      preset: 'secure',
+      parserOptions: expect.objectContaining({
+        headings: { ids: true },
+        noHtmlBlocks: true,
+        noHtmlSpans: true,
+        tagFilter: true,
+      }),
+      ansiTheme: { columns: 72, hyperlinks: true, colors: false },
+    });
+    expect(() => resolveMarkdownOutputPlan({ format: 'pdf' })).toThrow(
+      /markdown\|html\|ansi\|all/
+    );
+    expect(() => resolveMarkdownOutputPlan({ preset: 'secure' })).toThrow(/requires/);
+    expect(() => resolveMarkdownOutputPlan({ format: 'ansi', columns: '0' })).toThrow(/positive/);
+  });
+
   test('runCli on fixture prints index and writes artifacts', async () => {
     const outDir = resolvePath(Bun.env.TMPDIR ?? '/tmp', `fw-blog-cb-${Bun.randomUUIDv7()}`);
     const code = await runCli([
@@ -298,6 +334,42 @@ describe('bun-blog-codeblocks CLI', () => {
     expect(
       await Bun.file(resolvePath(outDir, 'bun-v9.9.9-CodeBlock-DerivedApi.json')).exists()
     ).toBe(true);
+  });
+
+  test('runCli projects source Markdown through Bun.markdown options and ANSI theme', async () => {
+    const outDir = resolvePath(Bun.env.TMPDIR ?? '/tmp', `fw-blog-md-${Bun.randomUUIDv7()}`);
+    const code = await runCli([
+      FIXTURE,
+      '--url',
+      'https://bun.com/blog/bun-v9.9.9',
+      '--out-dir',
+      outDir,
+      '--markdown-format=all',
+      '--markdown-preset=secure',
+      '--markdown-columns=72',
+      '--markdown-no-colors',
+    ]);
+    expect(code).toBe(0);
+
+    const stem = resolvePath(outDir, 'bun-v9.9.9-CodeBlock');
+    const inventory = await Bun.file(`${stem}.json`).json();
+    expect(inventory.markdown).toEqual({
+      format: 'all',
+      preset: 'secure',
+      parserOptions: expect.objectContaining({
+        headings: { ids: true },
+        noHtmlBlocks: true,
+        noHtmlSpans: true,
+      }),
+      ansiTheme: { columns: 72, colors: false },
+    });
+
+    const renderedHtml = await Bun.file(`${stem}.html`).text();
+    expect(renderedHtml).toContain('<h1 id="bun-v999-html-codeblock-extractions">');
+    expect(renderedHtml).toContain('<table>');
+    const renderedAnsi = await Bun.file(`${stem}.ansi.txt`).text();
+    expect(renderedAnsi).toContain('Bun v9.9.9');
+    expect(renderedAnsi).not.toContain('\x1b[');
   });
 
   test('missing HTML exits non-zero with curl hint', () => {
