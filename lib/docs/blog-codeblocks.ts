@@ -15,7 +15,7 @@
  * Parse `div.CodeBlock` regions from Bun blog HTML (L0 harvest core).
  *
  * @see ../../tools/bun-blog-codeblocks.ts — CLI runner
- * @see ./blog-codeblock-join.ts — L2 token join
+ * @see ../../tools/bun-blog-codeblocks.ts --mode=join — L2 token join
  */
 
 export type CodeBlock = {

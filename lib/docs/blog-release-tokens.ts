@@ -2,7 +2,7 @@
  * Blog release token matching — shared by release scrape and codeblock join.
  *
  * @see ../../tools/bun-docs-releases.ts — scrape orchestration
- * @see ./blog-codeblock-join.ts — CodeBlock → catalog examples
+ * @see ../../tools/bun-blog-codeblocks.ts --mode=join — CodeBlock → catalog examples
  */
 
 export type SectionKind = 'ship' | 'fix' | 'chg' | 'stabilize' | 'skip';

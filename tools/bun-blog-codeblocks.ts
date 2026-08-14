@@ -17,13 +17,18 @@
  *   bun tools/bun-blog-codeblocks.ts --url https://bun.com/blog/bun-v1.3.6
  *   bun tools/bun-blog-codeblocks.ts -s 14
  *   bun tools/bun-blog-codeblocks.ts -g 'requestPayer|files'
- *   bun tools/bun-blog-codeblocks.ts --join
- *   bun tools/bun-blog-codeblocks.ts --derived-table
+ *   bun tools/bun-blog-codeblocks.ts --mode join
+ *   bun tools/bun-blog-codeblocks.ts --mode all
+ *   bun tools/bun-blog-codeblocks.ts --offline /path/to/saved.html
  *   bun tools/bun-blog-codeblocks.ts --rss
  */
 import { parseArgs } from 'util';
 import { logTable } from '../lib/console-depth.ts';
-import { buildDerivedApiRows, matchBlocksToTokens } from '../lib/docs/blog-codeblock-join.ts';
+import {
+  classifySectionHeading,
+  type SectionKind,
+  type TokenIndex,
+} from '../lib/docs/blog-release-tokens.ts';
 import {
   decodeHtmlEntities,
   extractCodeBlocks,
@@ -62,6 +67,41 @@ export type CodeBlockWithTokens = CodeBlock & {
   matchedTokens: string[];
 };
 
+export type BlogExampleHit = {
+  lang: string;
+  body: string;
+  version: string;
+  url: string;
+  guideKey: string;
+  section: string;
+  blockIndex: number;
+  kind: SectionKind;
+};
+
+export type BlogExamplesEntry = {
+  name: string;
+  examples: BlogExampleHit[];
+};
+
+export type DerivedApiRow = {
+  label: string;
+  catalogToken: string | null;
+  since: string;
+  blockIndex: number;
+  lineRange: [number, number];
+  preview: string;
+  source: 'blog-codeblock';
+};
+
+export const CODE_BLOCK_MODES = ['index', 'join', 'derived', 'all'] as const;
+export type CodeBlockMode = (typeof CODE_BLOCK_MODES)[number];
+
+export type CodeBlockModePlan = {
+  mode: CodeBlockMode;
+  join: boolean;
+  derived: boolean;
+};
+
 const DEFAULT_VERSION = '1.3.6';
 const REPO_ROOT = resolvePath(import.meta.dir, '..');
 
@@ -75,6 +115,37 @@ export const CODE_BLOCK_TABLE_PROPERTIES = [
 ] as const;
 
 export const CODE_BLOCK_CLASS_TABLE_PROPERTIES = ['class', 'status', 'count'] as const;
+
+export function resolveCodeBlockMode(options: {
+  mode?: string;
+  join?: boolean;
+  derivedTable?: boolean;
+}): CodeBlockModePlan {
+  const explicit = options.mode?.trim();
+  if (explicit && !CODE_BLOCK_MODES.some(mode => mode === explicit)) {
+    throw new Error(
+      `Invalid --mode ${JSON.stringify(explicit)}; expected ${CODE_BLOCK_MODES.join('|')}`
+    );
+  }
+  const compatibilityJoin = options.join === true;
+  const compatibilityDerived = options.derivedTable === true;
+  if (explicit && (compatibilityJoin || compatibilityDerived)) {
+    throw new Error('Do not combine --mode with compatibility flags --join/--derived-table');
+  }
+  const mode = (explicit ??
+    (compatibilityJoin && compatibilityDerived
+      ? 'all'
+      : compatibilityJoin
+        ? 'join'
+        : compatibilityDerived
+          ? 'derived'
+          : 'index')) as CodeBlockMode;
+  return {
+    mode,
+    join: mode === 'join' || mode === 'all',
+    derived: mode === 'derived' || mode === 'all',
+  };
+}
 
 export function previewLine(code: string, maxWidth = 60): string {
   const line =
@@ -114,6 +185,107 @@ export function assertBlogPostUrl(url: string): void {
   if (!BunBlogPattern.test(url)) {
     throw new Error(`Not a Bun blog post URL (BunBlogPattern): ${url}`);
   }
+}
+
+function inferBlockLang(): string {
+  return 'ts';
+}
+
+export function matchBlocksToTokens(
+  blocks: CodeBlock[],
+  opts: {
+    version: string;
+    postUrl: string;
+    tokenIndex: TokenIndex;
+    scrapeAliases: Record<string, string>;
+  }
+): BlogExamplesEntry[] {
+  const byName = new Map<string, BlogExamplesEntry>();
+  const seen = new Set<string>();
+  const guideKey = guideKeyFromUrl(opts.postUrl, { keepHash: true });
+
+  for (const block of blocks) {
+    const kind = classifySectionHeading(block.section);
+    if (kind === 'skip') continue;
+    const matched = new Set<string>();
+    for (const candidate of extractTokenCandidates(`${block.section}\n${block.code}`)) {
+      const name =
+        matchCatalogTokenWithAliases(candidate, opts.tokenIndex, opts.scrapeAliases) ?? null;
+      if (!name || matched.has(name)) continue;
+      matched.add(name);
+      const dedupeKey = `${name}\0${block.index}`;
+      if (seen.has(dedupeKey)) continue;
+      seen.add(dedupeKey);
+      const entry = byName.get(name) ?? { name, examples: [] };
+      entry.examples.push({
+        lang: inferBlockLang(),
+        body: block.code,
+        version: opts.version,
+        url: opts.postUrl,
+        guideKey: guideKey || bunBlog(`bun-v${opts.version}`),
+        section: block.section,
+        blockIndex: block.index,
+        kind,
+      });
+      byName.set(name, entry);
+    }
+  }
+  return [...byName.values()].sort((left, right) => left.name.localeCompare(right.name));
+}
+
+export function buildDerivedApiRows(
+  blocks: CodeBlock[],
+  opts: {
+    version: string;
+    tokenIndex: TokenIndex;
+    scrapeAliases: Record<string, string>;
+  }
+): DerivedApiRow[] {
+  const rows: DerivedApiRow[] = [];
+  for (const block of blocks) {
+    const lines = block.code.split('\n');
+    let chunkStart = 0;
+    let chunkLines: string[] = [];
+    const flush = (endLine: number) => {
+      if (chunkLines.length === 0) return;
+      const body = chunkLines.join('\n').trim();
+      if (!body) return;
+      let catalogToken: string | null = null;
+      for (const candidate of extractTokenCandidates(`${block.section}\n${body}`)) {
+        const name = matchCatalogTokenWithAliases(candidate, opts.tokenIndex, opts.scrapeAliases);
+        if (name) {
+          catalogToken = name;
+          break;
+        }
+      }
+      const preview =
+        chunkLines.map(line => line.trim()).find(line => line && !line.startsWith('//')) ?? body;
+      rows.push({
+        label: preview.slice(0, 80),
+        catalogToken,
+        since: opts.version,
+        blockIndex: block.index,
+        lineRange: [chunkStart + 1, endLine],
+        preview: preview.slice(0, 60),
+        source: 'blog-codeblock',
+      });
+    };
+
+    for (let index = 0; index < lines.length; index++) {
+      const line = lines[index]!;
+      const boundary =
+        line.trim() === '' ||
+        (line.trim().startsWith('//') && chunkLines.length > 0 && index > chunkStart);
+      if (boundary && chunkLines.length > 0) {
+        flush(index);
+        chunkLines = [];
+        chunkStart = index + 1;
+      }
+      if (line.trim()) chunkLines.push(line);
+    }
+    if (chunkLines.length > 0) flush(lines.length);
+  }
+  return rows;
 }
 
 export async function enrichBlocksWithTokens(
@@ -246,25 +418,28 @@ async function ensureHtml(opts: {
   file: Bun.BunFile;
   sourceUrl: string;
   forceFetch?: boolean;
+  offline?: boolean;
 }): Promise<Bun.BunFile> {
   const file = opts.file;
   if (!opts.forceFetch && (await file.exists())) return file;
 
-  try {
-    assertBlogPostUrl(opts.sourceUrl);
-    const html = await fetchPostHtml(opts.sourceUrl, opts.forceFetch);
-    if (!html) throw new Error('empty HTML from cache/fetch');
-    if (!(await file.exists())) {
-      await Bun.write(file, html);
-    }
-    return file;
-  } catch (err) {
-    const detail = err instanceof Error ? err.message : String(err);
-    console.error(`Missing HTML: ${file.name ?? '(unnamed BunFile)'}`);
-    console.error(`Fetch failed (${detail}). Download with:`);
-    console.error(`  curl -fsSL '${opts.sourceUrl}' -o '${file.name ?? 'bun-blog.html'}'`);
-    process.exit(1);
+  if (opts.offline) {
+    throw new Error('offline mode does not fetch missing HTML');
   }
+
+  assertBlogPostUrl(opts.sourceUrl);
+  const html = await fetchPostHtml(opts.sourceUrl, opts.forceFetch);
+  if (!html) throw new Error('empty HTML from cache/fetch');
+  if (!(await file.exists())) {
+    await Bun.write(file, html);
+  }
+  return file;
+}
+
+function reportMissingHtml(file: Bun.BunFile, sourceUrl: string, error: Error): void {
+  console.error(`Missing HTML: ${file.name ?? '(unnamed BunFile)'}`);
+  console.error(`Fetch unavailable (${error.message}). Download with:`);
+  console.error(`  curl -fsSL '${sourceUrl}' -o '${file.name ?? 'bun-blog.html'}'`);
 }
 
 export function codeBlockClassRows(classStatuses: readonly CodeBlockClassSummary[]) {
@@ -286,8 +461,10 @@ Extract div.CodeBlock samples from a Bun blog HTML post.
   -a, --all           Print all block bodies
   -s, --section <n>   Print one block by index
   -g, --grep <str>    Print bodies matching section/preview/code (regex)
-  --join              Add matchedTokens[] per block in JSON inventory
-  --derived-table     Write *-DerivedApi.json sidecar (non-SSOT API rows)
+  --mode <mode>       index | join | derived | all (default index)
+  --join              Compatibility alias for --mode=join
+  --derived-table     Compatibility alias for --mode=derived
+  --offline           Never fetch; require the saved HTML input
   -r, --rss           Opt-in live RSS enrich when release-index misses
   -h, --help          Show help
 
@@ -306,8 +483,10 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
       rss: { type: 'boolean', short: 'r', default: false },
       url: { type: 'string' },
       'out-dir': { type: 'string', default: '.tmp' },
+      mode: { type: 'string' },
       join: { type: 'boolean', default: false },
       'derived-table': { type: 'boolean', default: false },
+      offline: { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
     allowPositionals: true,
@@ -317,6 +496,18 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
   if (values.help) {
     printHelp();
     return 0;
+  }
+
+  let modePlan: CodeBlockModePlan;
+  try {
+    modePlan = resolveCodeBlockMode({
+      mode: values.mode,
+      join: values.join,
+      derivedTable: values['derived-table'],
+    });
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    return 1;
   }
 
   const urlOpt = values.url?.trim();
@@ -341,7 +532,17 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
   const outDir = resolvePath(REPO_ROOT, values['out-dir'] || '.tmp');
 
   const htmlFile = Bun.file(htmlPath);
-  const ensuredHtmlFile = await ensureHtml({ file: htmlFile, sourceUrl: source });
+  let ensuredHtmlFile: Bun.BunFile;
+  try {
+    ensuredHtmlFile = await ensureHtml({
+      file: htmlFile,
+      sourceUrl: source,
+      offline: values.offline,
+    });
+  } catch (error) {
+    reportMissingHtml(htmlFile, source, error instanceof Error ? error : new Error(String(error)));
+    return 1;
+  }
   const extracted = await extractCodeBlocksFromFile(ensuredHtmlFile);
 
   if (extracted.codeBlockCount === 0) {
@@ -355,7 +556,7 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
   const derivedPath = resolvePath(outDir, `${stem}-DerivedApi.json`);
   const guideKey = guideKeyFromUrl(source, { keepHash: true });
 
-  const blocksForJson = values.join
+  const blocksForJson = modePlan.join
     ? await enrichBlocksWithTokens(extracted.blocks, { version, postUrl: source })
     : extracted.blocks;
 
@@ -363,6 +564,7 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
     source,
     guideKey,
     selector: 'div.CodeBlock',
+    mode: modePlan.mode,
     version,
     runtime: { version: Bun.version, revision: Bun.revision },
     rss: BUN_RSS_URL,
@@ -376,7 +578,7 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
   const wrote: string[] = [jsonPath, mdPath];
   await Bun.write(jsonPath, `${JSON.stringify(inventory, null, 2)}\n`);
 
-  if (values['derived-table']) {
+  if (modePlan.derived) {
     const [tokenIndex, scrapeAliases] = await Promise.all([buildTokenIndex(), loadScrapeAliases()]);
     const derived = buildDerivedApiRows(extracted.blocks, {
       version,

@@ -268,8 +268,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   Shiki markup, classifies each `CodeBlock*` CSS class through `Bun.Glob`,
   labels parsed/skipped/scoped status in JSON, Markdown, and explicit
   `Bun.inspect.table` properties, reads saved HTML through a typed `BunFile`,
-  and preserves token joins (`boundary`) _Ratchet_ →
-  `bun test tests/bun-blog-codeblocks.test.ts tests/blog-codeblock-join.test.ts`
+  and combines index/token-join/derived behavior behind `--mode` flags
+  (`boundary`) _Ratchet_ → `bun test tests/bun-blog-codeblocks.test.ts`
 - **`blog-codeblocks-journey`** — Live Bun blog HTML traverses `fetchPostHtml` →
   `extractCodeBlocks` with the expected code-block inventory (`journey`)
   _Ratchet_ → `bun test tests/journey/blog-codeblocks-journey.test.ts`
@@ -403,7 +403,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `factory-bun-create-template`      | human-only | `bun test tests/factory-template.test.ts tests/cli.test.ts`                                                                                                         |
 | `factory-registry-pages-proxy-v1`  | human-only | `bun test tests/registry-pages-function.test.ts`                                                                                                                     |
 | `factory-registry-integrity-v1`    | human-only | `bun test tests/factory-production.test.ts`                                                                                                                          |
-| `blog-codeblocks-boundaries`       | continuous | `ci:harness` · `bun test tests/bun-blog-codeblocks.test.ts tests/blog-codeblock-join.test.ts`                                                                        |
+| `blog-codeblocks-boundaries`       | continuous | `ci:harness` · `bun test tests/bun-blog-codeblocks.test.ts`                                                                                                          |
 | `blog-codeblocks-journey`          | human-only | `bun test tests/journey/blog-codeblocks-journey.test.ts`                                                                                                             |
 | `multi-tenant-portal-v1`           | human-only | `bun test tests/registry-pages-function.test.ts`                                                                                                                     |
 | `accounts-r2-v1`                   | human-only | `bun test tests/accounts-r2.test.ts`                                                                                                                                 |

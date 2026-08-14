@@ -105,19 +105,27 @@ import { describe, expect, expectTypeOf, test } from 'bun:test';
 import { resolvePath } from '../lib/path-bun';
 import {
   blogUrlForVersion,
+  buildDerivedApiRows,
   CODE_BLOCK_CLASS_TABLE_PROPERTIES,
   CODE_BLOCK_TABLE_PROPERTIES,
   codeBlockClassRows,
   extractCodeBlocks,
   extractCodeBlocksFromFile,
   filterBlocks,
+  matchBlocksToTokens,
   parseBlogVersion,
   previewLine,
+  resolveCodeBlockMode,
   runCli,
 } from '../tools/bun-blog-codeblocks.ts';
 import { bunBlog, BunBlogPattern } from '../lib/docs/bun-site-url.ts';
+import { buildTokenIndex, loadScrapeAliases } from '../tools/bun-docs-releases.ts';
 
 const FIXTURE = resolvePath(import.meta.dir, 'fixtures/bun-blog-codeblocks/sample.html');
+const ARCHIVE_FIXTURE = resolvePath(
+  import.meta.dir,
+  'fixtures/bun-blog-codeblocks/bun-v1.3.6-archive.html'
+);
 const TOOL = resolvePath(import.meta.dir, '../tools/bun-blog-codeblocks.ts');
 
 describe('bun-blog-codeblocks extract', () => {
@@ -229,6 +237,23 @@ describe('bun-blog-codeblocks extract', () => {
 });
 
 describe('bun-blog-codeblocks CLI', () => {
+  test('resolves one typed mode from the new flag and compatibility aliases', () => {
+    expect(resolveCodeBlockMode({})).toEqual({ mode: 'index', join: false, derived: false });
+    expect(resolveCodeBlockMode({ mode: 'all' })).toEqual({
+      mode: 'all',
+      join: true,
+      derived: true,
+    });
+    expect(resolveCodeBlockMode({ join: true })).toEqual({
+      mode: 'join',
+      join: true,
+      derived: false,
+    });
+    expect(resolveCodeBlockMode({ join: true, derivedTable: true }).mode).toBe('all');
+    expect(() => resolveCodeBlockMode({ mode: 'legacy' })).toThrow(/index\|join\|derived\|all/);
+    expect(() => resolveCodeBlockMode({ mode: 'index', join: true })).toThrow(/Do not combine/);
+  });
+
   test('runCli on fixture prints index and writes artifacts', async () => {
     const outDir = resolvePath(Bun.env.TMPDIR ?? '/tmp', `fw-blog-cb-${Bun.randomUUIDv7()}`);
     const code = await runCli([
@@ -256,7 +281,7 @@ describe('bun-blog-codeblocks CLI', () => {
     expect(markdown).toContain('Status: **parsed** · Class: `CodeBlock`');
   });
 
-  test('runCli --join adds matchedTokens to blocks', async () => {
+  test('runCli --mode=all combines token join and derived sidecar', async () => {
     const outDir = resolvePath(Bun.env.TMPDIR ?? '/tmp', `fw-blog-cb-join-${Bun.randomUUIDv7()}`);
     const code = await runCli([
       FIXTURE,
@@ -264,11 +289,15 @@ describe('bun-blog-codeblocks CLI', () => {
       'https://bun.com/blog/bun-v9.9.9',
       '--out-dir',
       outDir,
-      '--join',
+      '--mode=all',
     ]);
     expect(code).toBe(0);
     const inv = await Bun.file(resolvePath(outDir, 'bun-v9.9.9-CodeBlock.json')).json();
+    expect(inv.mode).toBe('all');
     expect(inv.blocks[0]?.matchedTokens).toContain('Bun.build');
+    expect(
+      await Bun.file(resolvePath(outDir, 'bun-v9.9.9-CodeBlock-DerivedApi.json')).exists()
+    ).toBe(true);
   });
 
   test('missing HTML exits non-zero with curl hint', () => {
@@ -283,6 +312,7 @@ describe('bun-blog-codeblocks CLI', () => {
         missing,
         '--url',
         'https://bun.com/blog/bun-v0.0.0',
+        '--offline',
       ],
       stdout: 'pipe',
       stderr: 'pipe',
@@ -291,5 +321,62 @@ describe('bun-blog-codeblocks CLI', () => {
     const err = result.stderr.toString();
     expect(err).toContain('curl -fsSL');
     expect(err).toContain(missing);
+  });
+});
+
+describe('bun-blog-codeblocks join and derived modes', () => {
+  test('maps Bun.build and S3 blocks to catalog names', async () => {
+    const html = await Bun.file(FIXTURE).text();
+    const { blocks } = extractCodeBlocks(html);
+    const joined = matchBlocksToTokens(blocks, {
+      version: '9.9.9',
+      postUrl: bunBlog('bun-v9.9.9'),
+      tokenIndex: new Map([
+        ['bun.build', 'Bun.build'],
+        ['bun.file', 'Bun.file'],
+      ]),
+      scrapeAliases: {},
+    });
+    const build = joined.find(entry => entry.name === 'Bun.build');
+    expect(build?.examples[0]?.blockIndex).toBe(1);
+    expect(build?.examples[0]?.guideKey).toBe('blog/bun-v9.9.9');
+  });
+
+  test('archive fixture joins Bun.Archive, Bun.file, and Bun.write', async () => {
+    const html = await Bun.file(ARCHIVE_FIXTURE).text();
+    const [tokenIndex, scrapeAliases] = await Promise.all([
+      buildTokenIndex(),
+      loadScrapeAliases(),
+    ]);
+    const joined = matchBlocksToTokens(extractCodeBlocks(html).blocks, {
+      version: '1.3.6',
+      postUrl: bunBlog('bun-v1.3.6'),
+      tokenIndex,
+      scrapeAliases,
+    });
+    const names = joined.map(entry => entry.name);
+    expect(names).toContain('Bun.Archive');
+    expect(names).toContain('Bun.write');
+    const archive = joined.find(entry => entry.name === 'Bun.Archive');
+    expect(archive?.examples).toHaveLength(3);
+    expect(archive?.examples[0]?.kind).toBe('ship');
+  });
+
+  test('derived mode splits multi-concern blocks into non-SSOT rows', async () => {
+    const html = await Bun.file(ARCHIVE_FIXTURE).text();
+    const main = extractCodeBlocks(html).blocks[0]!;
+    const [tokenIndex, scrapeAliases] = await Promise.all([
+      buildTokenIndex(),
+      loadScrapeAliases(),
+    ]);
+    const rows = buildDerivedApiRows([main], {
+      version: '1.3.6',
+      tokenIndex,
+      scrapeAliases,
+    });
+    expect(rows.length).toBeGreaterThanOrEqual(5);
+    expect(rows.every(row => row.catalogToken === 'Bun.Archive')).toBe(true);
+    expect(rows.some(row => row.preview.includes('archive.blob'))).toBe(true);
+    expect(rows.every(row => row.source === 'blog-codeblock')).toBe(true);
   });
 });

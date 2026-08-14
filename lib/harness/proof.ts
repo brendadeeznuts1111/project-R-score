@@ -656,18 +656,16 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'blog-codeblocks-boundaries',
     claim:
-      'Blog div.CodeBlock extraction: Shiki strip, CodeBlockTab skip, bunBlog URL round-trip, token join fixture',
+      'Blog div.CodeBlock tool: Shiki strip, class status, BunFile input, property-filtered table, and index/join/derived/all modes',
     kinds: ['boundary'],
     gateClass: 'continuous',
     gateRef: 'ci:harness',
     evidence: [
-      'bun test tests/bun-blog-codeblocks.test.ts tests/blog-codeblock-join.test.ts',
       'bun test tests/bun-blog-codeblocks.test.ts',
-      'bun test tests/blog-codeblock-join.test.ts',
       'tools/bun-blog-codeblocks.ts',
-      'lib/docs/blog-codeblock-join.ts',
+      'lib/docs/blog-codeblocks.ts',
     ],
-    freshRerun: 'bun test tests/bun-blog-codeblocks.test.ts tests/blog-codeblock-join.test.ts',
+    freshRerun: 'bun test tests/bun-blog-codeblocks.test.ts',
     freshRerunKind: 'claim',
     owner: 'tools/bun-blog-codeblocks.ts',
   },
