@@ -62,8 +62,10 @@ import {
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import {
   readEffectiveGlobalBunfig,
+  readGlobalBunfigLayers,
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
+  type MachineBunfigSnapshot,
 } from '../../scripts/lib/machine-bunfig.ts';
 import { shouldColor, termWidth } from '../../lib/console-depth.ts';
 import { cliTone, displayWidth, frameBlock, padDisplay } from '../../lib/portal/cli-chrome.ts';
@@ -365,11 +367,13 @@ export async function checkLinkerConfigVersion(cwd: string): Promise<PortalDocto
   );
 }
 
-export async function checkMachineIsolatedLinker(cwd: string): Promise<PortalDoctorCheck> {
-  const eff = resolveEffectiveInstallPolicy(
-    await readProjectBunfig(cwd),
-    await readEffectiveGlobalBunfig()
-  );
+export async function checkMachineIsolatedLinker(
+  cwd: string,
+  loaded?: { project: MachineBunfigSnapshot; effective: MachineBunfigSnapshot }
+): Promise<PortalDoctorCheck> {
+  const project = loaded?.project ?? (await readProjectBunfig(cwd));
+  const effective = loaded?.effective ?? (await readEffectiveGlobalBunfig());
+  const eff = resolveEffectiveInstallPolicy(project, effective);
   const ok = eff.linker === 'isolated';
   return withMeta(
     {
@@ -464,9 +468,20 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   const nowMs = opts.nowMs ?? Date.now();
   const checks: PortalDoctorCheck[] = [];
 
+  const machineEnv = opts.machineEnv ?? (Bun.env as Record<string, string | undefined>);
+  const [projectBunfig, bunfigLayers] = await Promise.all([
+    readProjectBunfig(cwd),
+    readGlobalBunfigLayers(machineEnv),
+  ]);
+
   // 1) Linker policy (mandatory, pure)
   checks.push(await checkLinkerConfigVersion(cwd));
-  checks.push(await checkMachineIsolatedLinker(cwd));
+  checks.push(
+    await checkMachineIsolatedLinker(cwd, {
+      project: projectBunfig,
+      effective: bunfigLayers.effective,
+    })
+  );
 
   // 2) Offline artifact presence (vault / capabilities / bunfig bake)
   const vaultHealth = joinPath(cwd, 'public/registry/vault-health.json');
@@ -610,7 +625,9 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   checks.push(...catalogResult.checks);
 
   // 3b) Bunfig machine/project SSOT
-  checks.push(...(await runBunfigChecks(cwd, opts.machineEnv)));
+  checks.push(
+    ...(await runBunfigChecks(cwd, machineEnv, { layers: bunfigLayers, project: projectBunfig }))
+  );
 
   // 3c) Bun runtime environment controls (pure; raw values never reported)
   checks.push(...runRuntimeEnvChecks(opts.machineEnv ?? Bun.env));

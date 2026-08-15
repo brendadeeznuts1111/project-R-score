@@ -26,6 +26,8 @@ import {
   readGlobalBunfigLayers,
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
+  type GlobalBunfigLayers,
+  type MachineBunfigSnapshot,
 } from '../../scripts/lib/machine-bunfig.ts';
 import type { PortalDoctorCheck } from './portal-cli-doctor.ts';
 
@@ -74,18 +76,23 @@ function asStringArray(v: InstallToml[keyof InstallToml]): string[] {
   return out;
 }
 
+export type BunfigCheckLoad = {
+  layers: GlobalBunfigLayers;
+  project: MachineBunfigSnapshot;
+};
+
 /**
  * Run pure bunfig SSOT checks (no network, no spawn).
  * @param env process-like env for HOME / BUN_INSTALL_* (tests inject; default Bun.env)
+ * @param loaded reuse layers/project already read by portal doctor
  */
 export async function runBunfigChecks(
   cwd: string,
-  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>,
+  loaded?: BunfigCheckLoad
 ): Promise<PortalDoctorCheck[]> {
-  const [layers, project] = await Promise.all([
-    readGlobalBunfigLayers(env),
-    readProjectBunfig(cwd),
-  ]);
+  const layers = loaded?.layers ?? (await readGlobalBunfigLayers(env));
+  const project = loaded?.project ?? (await readProjectBunfig(cwd));
   const machine = layers.machine;
   const globalLayer = layers.effective;
   const machineInstall = installTomlFromSnapshot(machine);

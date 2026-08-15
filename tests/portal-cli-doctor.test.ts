@@ -304,6 +304,23 @@ describe('portal-cli doctor pure', () => {
     await Bun.$`rm -rf ${tmp}`.quiet();
   });
 
+  test('machine-isolated-linker uses machineEnv, not process HOME', async () => {
+    const tmp = `${ROOT}/tmp/doctor-isolated-env`;
+    await Bun.$`rm -rf ${tmp}`.quiet();
+    await Bun.$`mkdir -p ${tmp}/home`.quiet();
+    await Bun.write(`${tmp}/home/.bunfig.toml`, '[install]\nlinker = "hoisted"\n');
+    const r = await runPortalDoctor({
+      cwd: ROOT,
+      group: 'linker',
+      skipLiveAccess: true,
+      machineEnv: { HOME: `${tmp}/home` },
+    });
+    const linker = r.checks.find(c => c.id === 'machine-isolated-linker');
+    expect(linker?.ok).toBe(false);
+    expect(linker?.message).toContain('hoisted');
+    await Bun.$`rm -rf ${tmp}`.quiet();
+  });
+
   test('bunfig-machine-ssot names a dangling home link, not missing', async () => {
     const tmp = `${ROOT}/tmp/doctor-dangling-home`;
     await Bun.$`rm -rf ${tmp}`.quiet();
