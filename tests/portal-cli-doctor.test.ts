@@ -282,6 +282,7 @@ describe('portal-cli doctor pure', () => {
     expect(r.group).toBe('bunfig');
     expect(r.checks).toHaveLength(7);
     expect(r.checks.every(c => c.group === 'bunfig')).toBe(true);
+    expect(r.checks.some(c => c.group === 'catalog' || c.group === 'infra')).toBe(false);
     expect(r.ok).toBe(true);
   });
 
@@ -312,7 +313,9 @@ describe('portal-cli doctor pure', () => {
     });
     expect(r.checks.some(c => c.group === 'catalog')).toBe(true);
     expect(r.checks.some(c => c.id === 'machine-isolated-linker')).toBe(false);
+    expect(r.checks.some(c => c.id === 'linker-config-version')).toBe(false);
     expect(r.checks.some(c => c.group === 'bunfig')).toBe(false);
+    expect(r.checks.some(c => c.group === 'infra')).toBe(false);
   });
 
   test('machine-isolated-linker uses machineEnv, not process HOME', async () => {
