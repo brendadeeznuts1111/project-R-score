@@ -380,7 +380,8 @@ Always inspect `bun why` before `remove:safe`.
 `machine:bunfig:ensure --overwrite` so doctor/fingerprint gates are portable.
 `--overwrite` refuses a symlink (dotfiles SSOT); `--overwrite-link` is the
 explicit flatten. Template is the CI/bootstrap seed; `--check` reads through
-the link. `~/.bun/install/global/bunfig.toml` is not a Bun config path.
+the link and fails if `$XDG_CONFIG_HOME/.bunfig.toml` exists (Bun prefers it).
+`~/.bun/install/global/bunfig.toml` is not a Bun config path.
 
 ```bash
 # Project-scoped install verification (11 aspects — toolchain + config + platform + linker)

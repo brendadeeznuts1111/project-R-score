@@ -10,7 +10,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  *   bun run machine:bunfig:ensure
  *   bun run machine:bunfig:ensure --overwrite        # replace a regular host file
  *   bun run machine:bunfig:ensure --overwrite-link   # replace a symlink (explicit)
- *   bun run machine:bunfig:ensure --check            # exit 1 if missing / drift from template keys
+ *   bun run machine:bunfig:ensure --check            # exit 1 if missing / drift / XDG shadow
  *
  * CI: setup-factory-bun writes a regular file so portal:doctor + bake:doctor:check are portable.
  * Local: no-op if ~/.bunfig.toml already present. --overwrite will not flatten a symlink.
@@ -65,6 +65,25 @@ export function bunfigPathIsSymlink(path: string): boolean {
   }
 }
 
+/** True when path is a directory (does not follow a symlink). */
+export function bunfigPathIsDirectory(path: string): boolean {
+  try {
+    return lstatSync(path).isDirectory();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Bun 1.3.14 loads `$XDG_CONFIG_HOME/.bunfig.toml` ahead of `$HOME/.bunfig.toml`.
+ * @returns that path when XDG is set, otherwise null
+ */
+export function xdgShadowBunfigPath(env: Record<string, string | undefined>): string | null {
+  const xdg = env.XDG_CONFIG_HOME;
+  if (!xdg) return null;
+  return joinPath(xdg, '.bunfig.toml');
+}
+
 function resolveHome(env: Record<string, string | undefined>, explicit?: string): string | null {
   if (explicit) return explicit;
   return env.HOME ?? env.USERPROFILE ?? null;
@@ -114,9 +133,29 @@ export async function ensureMachineBunfig(
   const rendered = renderMachineBunfigTemplate(template, cacheDir);
   const existing = Bun.file(path);
   const linked = bunfigPathIsSymlink(path);
+  const isDir = bunfigPathIsDirectory(path);
   const targetExists = await existing.exists();
+  const xdgShadow = xdgShadowBunfigPath(env);
 
   if (opts.checkOnly) {
+    if (xdgShadow && (await Bun.file(xdgShadow).exists())) {
+      return {
+        ok: false,
+        action: 'check-fail',
+        path,
+        cacheDir,
+        reason: `$XDG_CONFIG_HOME/.bunfig.toml shadows ~/.bunfig.toml (${xdgShadow})`,
+      };
+    }
+    if (isDir) {
+      return {
+        ok: false,
+        action: 'check-fail',
+        path,
+        cacheDir,
+        reason: '~/.bunfig.toml is a directory',
+      };
+    }
     if (linked && !targetExists) {
       return {
         ok: false,
@@ -157,6 +196,16 @@ export async function ensureMachineBunfig(
       };
     }
     return { ok: true, action: 'check-ok', path, cacheDir };
+  }
+
+  if (isDir) {
+    return {
+      ok: false,
+      action: 'refused',
+      path,
+      cacheDir,
+      reason: '~/.bunfig.toml is a directory',
+    };
   }
 
   if (linked && !opts.overwriteLink) {
