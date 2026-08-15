@@ -2,7 +2,7 @@
 
 ## Setup
 
-- **Bun** 1.4.0 (`packageManager` in root `package.json`)
+- **Bun** version pinned by root `.bun-version` and `packageManager`
 - Clone [project-R-score](https://github.com/brendadeeznuts1111/project-R-score)
 - `bun install` · `bun run install:verify` · `bun run help`
 
@@ -24,6 +24,24 @@ bun run harness:status
 [`docs/harness/tenants/bun-test-inspect.md`](../harness/tenants/bun-test-inspect.md).
 
 Full testing / hooks map: [DEVELOPMENT-WORKFLOW.md](../DEVELOPMENT-WORKFLOW.md).
+
+## Agent and skill changes
+
+The repository owns agent policy, skills, runtime commands, and validation. Read
+root [`AGENTS.md`](../../AGENTS.md) first; do not use a global DX preflight as
+project evidence.
+
+```bash
+bun run skills:validate
+bun run agents:contract:check
+# Operator machine only: compare complete packages under ~/.codex/skills.
+bun run agents:contract:check -- --installed
+```
+
+Update an existing skill owner instead of adding a duplicate. Repository skill
+packages live under `.agents/skills/`; validate them before synchronizing an
+installed copy. The portable contract must remain usable without machine-local
+state.
 
 ## Markdown
 
@@ -304,16 +322,17 @@ Prefer branded IDs and wire-boundary parse-once — see root
 
 ## Docs
 
-| Need                 | Read                                                                               |
-| -------------------- | ---------------------------------------------------------------------------------- |
-| Index                | [docs/README.md](../README.md)                                                     |
-| Dev / test workflow  | [DEVELOPMENT-WORKFLOW.md](../DEVELOPMENT-WORKFLOW.md)                              |
-| REF:ID validation    | [§ REF:ID Validation](#refid-validation) · `bun run docs:refid:check`              |
-| Concept lifecycle    | [CONCEPT_LIFECYCLE.md](../CONCEPT_LIFECYCLE.md)                                    |
-| Surface coverage map | [SURFACE_COVERAGE.md](../SURFACE_COVERAGE.md) · `bun run surface-coverage:map`     |
-| Install / bunfig     | [UNIFIED.md](../UNIFIED.md)                                                        |
-| Wire / brands        | [WIRE_BOUNDARY.md](../WIRE_BOUNDARY.md) · branded-ids skill                        |
-| Bun APIs             | [BUN_NATIVE_CAPABILITIES.md](../BUN_NATIVE_CAPABILITIES.md) · `bun run dx:catalog` |
+| Need                 | Read                                                                                                                   |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Index                | [docs/README.md](../README.md)                                                                                         |
+| Dev / test workflow  | [DEVELOPMENT-WORKFLOW.md](../DEVELOPMENT-WORKFLOW.md)                                                                  |
+| REF:ID validation    | [§ REF:ID Validation](#refid-validation) · `bun run docs:refid:check`                                                  |
+| Concept lifecycle    | [CONCEPT_LIFECYCLE.md](../CONCEPT_LIFECYCLE.md)                                                                        |
+| Surface coverage map | [SURFACE_COVERAGE.md](../SURFACE_COVERAGE.md) · `bun run surface-coverage:map`                                         |
+| Install / bunfig     | [UNIFIED.md](../UNIFIED.md)                                                                                            |
+| Wire / brands        | [WIRE_BOUNDARY.md](../WIRE_BOUNDARY.md) · branded-ids skill                                                            |
+| Agent alignment      | [`config/project-r-agent-contract.json`](../../config/project-r-agent-contract.json) · `bun run agents:contract:check` |
+| Bun APIs             | [BUN_NATIVE_CAPABILITIES.md](../BUN_NATIVE_CAPABILITIES.md) · `bun run dx:catalog`                                     |
 
 Issues:
 [project-R-score issues](https://github.com/brendadeeznuts1111/project-R-score/issues).

@@ -10,3 +10,9 @@
 /.github/workflows/ @brendadeeznuts1111
 /.github/rulesets/ @brendadeeznuts1111
 /scripts/release.ts @brendadeeznuts1111
+
+# Repository-owned agent policy, skills, and portable alignment proof.
+/AGENTS.md @brendadeeznuts1111
+/.agents/skills/ @brendadeeznuts1111
+/config/project-r-agent-contract.json @brendadeeznuts1111
+/scripts/check-project-r-agent-contract.ts @brendadeeznuts1111

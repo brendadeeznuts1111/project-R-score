@@ -86,6 +86,19 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: agent_contract
+    attributes:
+      label: Agent contract impact
+      description: Select the repository-owned agent or skill surface affected by this issue.
+      options:
+        - not-applicable
+        - guidance-only
+        - skill-package
+        - contract-or-validation
+    validations:
+      required: true
+
   - type: textarea
     id: issue_spine
     attributes:
