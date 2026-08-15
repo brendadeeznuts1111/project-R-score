@@ -285,7 +285,7 @@ imports fail (desired). Opt out per project: `globalStore = false`. See
 
 | Layer   | Path                                                                                   |
 | ------- | -------------------------------------------------------------------------------------- |
-| bunfig  | `~/.bunfig.toml`                                                                       |
+| bunfig  | `~/.bunfig.toml` (live SSOT may be a symlink to `~/dotfiles/bun/bunfig.toml`)          |
 | env     | `~/.config/shell/bun.sh` — **no** `BUN_INSTALL_CACHE_DIR` / `BUN_INSTALL_GLOBAL_STORE` |
 | PATH    | `~/.config/shell/path.sh`                                                              |
 | aliases | `ba` → `audit:bunfig` · `bhealth` / `bmachine`                                         |
@@ -376,8 +376,11 @@ ownership blocker; alias-heavy STO-only declarations and executable usage lower
 the grade. `LOCKED` covers workspace protocols and protected toolchain pins.
 Always inspect `bun why` before `remove:safe`.
 
-**CI runners:** `setup-factory-bun` writes `~/.bunfig.toml` via
+**CI runners:** `setup-factory-bun` writes a regular `~/.bunfig.toml` via
 `machine:bunfig:ensure --overwrite` so doctor/fingerprint gates are portable.
+`--overwrite` refuses a symlink (dotfiles SSOT); `--overwrite-link` is the
+explicit flatten. Template is the CI/bootstrap seed; `--check` reads through
+the link. `~/.bun/install/global/bunfig.toml` is not a Bun config path.
 
 ```bash
 # Project-scoped install verification (11 aspects — toolchain + config + platform + linker)

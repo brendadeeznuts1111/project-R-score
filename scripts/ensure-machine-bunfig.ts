@@ -8,11 +8,12 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  * Ensure ~/.bunfig.toml exists from config/machine.bunfig.toml.template.
  *
  *   bun run machine:bunfig:ensure
- *   bun run machine:bunfig:ensure --overwrite   # replace existing host file
- *   bun run machine:bunfig:ensure --check       # exit 1 if missing / drift from template keys
+ *   bun run machine:bunfig:ensure --overwrite        # replace a regular host file
+ *   bun run machine:bunfig:ensure --overwrite-link   # replace a symlink (explicit)
+ *   bun run machine:bunfig:ensure --check            # exit 1 if missing / drift from template keys
  *
- * CI: setup-factory-bun runs this so portal:doctor + bake:doctor:check are portable.
- * Local: no-op if ~/.bunfig.toml already present (unless --overwrite).
+ * CI: setup-factory-bun writes a regular file so portal:doctor + bake:doctor:check are portable.
+ * Local: no-op if ~/.bunfig.toml already present. --overwrite will not flatten a symlink.
  *
  * Policy table SSOT: lib/install/machine-bunfig-policy.ts
  * @see docs/UNIFIED.md
@@ -23,6 +24,8 @@ import {
   MACHINE_BUNFIG_TEMPLATE_REL,
   machineBunfigMissingSnippets,
 } from '../lib/install/machine-bunfig-policy.ts';
+// eslint-disable-next-line no-restricted-imports -- Bun.file follows symlinks; lstat is required to refuse flattening
+import { lstatSync, unlinkSync } from 'node:fs';
 import { joinPath } from './lib/fs-bun.ts';
 
 const argv = import.meta.main
@@ -39,17 +42,28 @@ export type EnsureMachineBunfigOpts = {
   cwd?: string;
   home?: string;
   overwrite?: boolean;
+  /** Replace a symlink at ~/.bunfig.toml. Required in addition to flattening. */
+  overwriteLink?: boolean;
   checkOnly?: boolean;
   env?: Record<string, string | undefined>;
 };
 
 export type EnsureMachineBunfigResult = {
   ok: boolean;
-  action: 'wrote' | 'exists' | 'missing' | 'would-write' | 'check-ok' | 'check-fail';
+  action: 'wrote' | 'exists' | 'missing' | 'would-write' | 'check-ok' | 'check-fail' | 'refused';
   path: string;
   cacheDir: string;
   reason?: string;
 };
+
+/** True when path exists as a symlink (does not follow the target). */
+export function bunfigPathIsSymlink(path: string): boolean {
+  try {
+    return lstatSync(path).isSymbolicLink();
+  } catch {
+    return false;
+  }
+}
 
 function resolveHome(env: Record<string, string | undefined>, explicit?: string): string | null {
   if (explicit) return explicit;
@@ -135,14 +149,29 @@ export async function ensureMachineBunfig(
     return { ok: true, action: 'check-ok', path, cacheDir };
   }
 
-  if (exists && !opts.overwrite) {
+  const linked = exists && bunfigPathIsSymlink(path);
+  if (exists && !opts.overwrite && !opts.overwriteLink) {
     return { ok: true, action: 'exists', path, cacheDir };
+  }
+
+  if (linked && !opts.overwriteLink) {
+    return {
+      ok: false,
+      action: 'refused',
+      path,
+      cacheDir,
+      reason: 'refusing to replace symlink ~/.bunfig.toml; pass --overwrite-link',
+    };
+  }
+
+  if (linked) {
+    unlinkSync(path);
   }
 
   await Bun.write(path, rendered.endsWith('\n') ? rendered : `${rendered}\n`);
   return {
     ok: true,
-    action: exists ? 'wrote' : 'wrote',
+    action: 'wrote',
     path,
     cacheDir,
   };
@@ -150,8 +179,9 @@ export async function ensureMachineBunfig(
 
 if (import.meta.main) {
   const overwrite = argv.includes('--overwrite');
+  const overwriteLink = argv.includes('--overwrite-link');
   const checkOnly = argv.includes('--check');
-  const result = await ensureMachineBunfig({ overwrite, checkOnly });
+  const result = await ensureMachineBunfig({ overwrite, overwriteLink, checkOnly });
   if (!result.ok) {
     console.error(
       [
