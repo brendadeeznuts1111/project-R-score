@@ -357,11 +357,20 @@ bun run install:cache:lifecycle
 bun scripts/with-bun-cache-env.ts ci   # GHA / ephemeral
 bun run add:safe -- <pkg>       # unlock → bun add --exact → restore freeze
 bun run remove:safe -- <pkg>    # unlock → bun remove → restore freeze
-bun run deps:rate-removal       # score direct-dep removal candidates (advisory)
+bun run deps:rate-removal       # typed direct-dep evidence: CANDIDATE / REVIEW / RETAIN / LOCKED
+bun run deps:rate-removal -- --only-candidates --why  # verify candidates with bun why; still advisory
 # bun update: same freeze dance (unlock → update → restore true → commit bun.lock)
 bunx --bun <bin> …              # workspace bins (e.g. proton-pass); flags space-separated
 bun pm ls · bun pm why <pkg> · bun audit · bun outdated --filter './'
 ```
+
+The removal score is evidence, never deletion authority. It is built from one
+repository scan: Bun's transpiler import graph, package-script invocations, and
+CSS/config references. `CANDIDATE` requires a score of at least 75, non-low
+confidence, and no peer/catalog ownership blocker; alias-heavy STO-only
+declarations and executable usage lower the grade. `LOCKED` covers workspace
+protocols and protected toolchain pins. Always inspect `bun why` before
+`remove:safe`.
 
 **CI runners:** `setup-factory-bun` writes `~/.bunfig.toml` via
 `machine:bunfig:ensure --overwrite` so doctor/fingerprint gates are portable.
@@ -520,8 +529,9 @@ CI: `setup-factory-bun` + `ci:core`. Docs:
   [workspaces](https://bun.com/docs/pm/workspaces) ·
   [catalogs](https://bun.com/docs/pm/catalogs) ·
   [filter](https://bun.com/docs/pm/filter).
-- Install walkthroughs: [Bun install guides](https://bun.com/docs/guides/install/add)
-  · repository discovery: `bun tools/bun-doc-refs.ts suggest "install"`.
+- Install walkthroughs:
+  [Bun install guides](https://bun.com/docs/guides/install/add) · repository
+  discovery: `bun tools/bun-doc-refs.ts suggest "install"`.
 - Supply-chain hardening: [SLSA levels](https://slsa.dev/spec/v1.0/levels) ·
   [npm "scripts build scripts" supply-chain guidance](https://docs.npmjs.com/cli/v10/using-npm/scripts#best-practices)
   ·
