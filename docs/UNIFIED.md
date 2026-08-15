@@ -343,7 +343,7 @@ Scanner is **not** a substitute for `minimumReleaseAge`, `bun audit`, or frozen
 lockfile discipline. Never commit raw Socket API keys — vault → inject.
 
 ```bash
-bun run machine:bunfig:ensure   # ~/.bunfig.toml ← config/machine.bunfig.toml.template
+bun run machine:bunfig:ensure   # seed if missing; no-op on a live symlink
 bun run machine:bunfig:check    # SSOT snippets + absolute cache.dir
 bun run audit:bunfig
 bun run install:all             # explicit project --cwd; safe for nested Git worktrees

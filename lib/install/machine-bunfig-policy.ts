@@ -17,7 +17,7 @@
  * Do not duplicate these lists in doctor / ensure / audit / verify without importing here.
  */
 
-/** Repo-relative path of the machine bunfig template (written to ~/.bunfig.toml). */
+/** Repo-relative path of the machine bunfig template (CI/bootstrap seed). */
 export const MACHINE_BUNFIG_TEMPLATE_REL = 'config/machine.bunfig.toml.template';
 
 /** Placeholder in the template replaced with an absolute cache path. */
