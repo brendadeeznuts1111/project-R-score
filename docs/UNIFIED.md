@@ -352,7 +352,7 @@ bun run portal:doctor --group bunfig   # machine SSOT · project drift · merge 
 CI=true bun run portal:doctor:ci       # ensure + offline doctor (harness-gates)
 bun run bake:doctor             # ensure + doctor-state.json
 bun run bake:doctor:check       # ensure + sha256 fingerprint gate
-dx setup                         # global machine Bun/DX/MCP readiness
+# Optional, explicit machine-wide audit only: dx setup
 bun run install:cache:lifecycle
 bun scripts/with-bun-cache-env.ts ci   # GHA / ephemeral
 bun run add:safe -- <pkg>       # unlock → bun add --exact → restore freeze

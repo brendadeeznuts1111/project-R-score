@@ -899,16 +899,16 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'tools/bun-docs-provenance.ts · tools/bun-doc-refs.ts',
   },
   {
-    id: 'project-r-dx-agent-alignment',
+    id: 'project-r-agent-alignment',
     claim:
-      'Project R declares a validated portable contract for installed skill parity and global DX authority pointers',
+      'Project R declares a validated portable contract for repository-owned agent skills and authority pointers',
     kinds: ['unit', 'boundary'],
     gateClass: 'continuous',
     gateRef: 'ci:core',
-    evidence: ['bun run dx:contract:check', 'config/project-r-dx-contract.json'],
-    freshRerun: 'bun run dx:contract:check',
+    evidence: ['bun run agents:contract:check', 'config/project-r-agent-contract.json'],
+    freshRerun: 'bun run agents:contract:check',
     freshRerunKind: 'claim',
-    owner: 'config/project-r-dx-contract.json · scripts/check-project-r-dx-contract.ts',
+    owner: 'config/project-r-agent-contract.json · scripts/check-project-r-agent-contract.ts',
   },
   {
     id: 'audit-findings-catalog',
