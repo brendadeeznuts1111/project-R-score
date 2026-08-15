@@ -90,6 +90,8 @@ export type RemovalSignals = {
   optionalOnly: boolean;
   /** Declared in peerDependencies: a compatibility contract, not weak usage. */
   peerOnly: boolean;
+  /** Ambient declaration package consumed by the compiler without source imports. */
+  typeContract: boolean;
   /** Declared only in root package.json */
   rootOnly: boolean;
   /** How many workspace package.json files declare it */
@@ -120,6 +122,7 @@ export type RemovalReasonCode =
   | 'catalog-contract'
   | 'optional-only'
   | 'peer-contract'
+  | 'type-contract'
   | 'root-unused'
   | 'multi-declared'
   | 'sto-scan-risk'
@@ -215,7 +218,7 @@ export function scoreRemoval(signals: RemovalSignals): {
   if (signals.usage.total === 0) {
     add('no-usage', 40, 'no executable usage found');
   } else if (signals.usage.total <= 2) {
-    add('low-usage', 10, `low executable usage (${signals.usage.total})`);
+    add('low-usage', -10, `executable usage found (${signals.usage.total})`);
   } else if (signals.usage.total <= 10) {
     add('moderate-usage', -10, `moderate executable usage (${signals.usage.total})`);
   } else {
@@ -234,6 +237,10 @@ export function scoreRemoval(signals: RemovalSignals): {
     add('peer-contract', -20, 'peer dependency compatibility contract');
   }
 
+  if (signals.typeContract) {
+    add('type-contract', -35, 'ambient @types package — compiler contract, not executable usage');
+  }
+
   if (signals.rootOnly && signals.usage.total === 0) {
     add('root-unused', 10, 'root-only declaration + no executable usage');
   }
@@ -242,14 +249,15 @@ export function scoreRemoval(signals: RemovalSignals): {
     add('multi-declared', -10, `declared in ${signals.declarationCount} package.json files`);
   }
 
-  if (signals.stoOnly && signals.usage.total === 0 && !signals.tierA) {
+  if (signals.stoOnly && signals.usage.total === 0 && !signals.tierA && !signals.typeContract) {
     add('sto-scan-risk', -25, 'STO-only declaration — alias scan may miss usage');
   }
 
   score = Math.max(0, Math.min(100, score));
 
   const confidence = confidenceFor(signals, 'review');
-  const candidateBlocked = confidence === 'low' || signals.catalog || signals.peerOnly;
+  const candidateBlocked =
+    confidence === 'low' || signals.catalog || signals.peerOnly || signals.typeContract;
   let grade: RemovalGrade = 'review';
   if (score >= REMOVAL_SCORE.candidateMin && !candidateBlocked) grade = 'candidate';
   else if (score <= REMOVAL_SCORE.retainMax) grade = 'retain';
@@ -261,7 +269,9 @@ export function scoreRemoval(signals: RemovalSignals): {
  * Pure — unit tested.
  */
 export function confidenceFor(signals: RemovalSignals, grade: RemovalGrade): Confidence {
-  if (grade === 'locked' || signals.internalProtocol || signals.protected) return 'high';
+  if (grade === 'locked' || signals.internalProtocol || signals.protected || signals.typeContract) {
+    return 'high';
+  }
   if (signals.usage.total >= 10) return 'high';
   if (signals.usage.total === 0 && signals.rootOnly && !signals.stoOnly) return 'high';
   if (signals.usage.total === 0 && signals.stoOnly) return 'low';
@@ -588,6 +598,7 @@ export async function rateCandidates(repoRoot: string, opts?: RateOptions): Prom
       catalog: protocol === 'catalog' || agg.versions.some(v => v.startsWith('catalog:')),
       optionalOnly: agg.sections.every(s => s === 'optionalDependencies'),
       peerOnly: agg.sections.every(s => s === 'peerDependencies'),
+      typeContract: name.startsWith('@types/'),
       rootOnly: declaredIn.length === 1 && declaredIn[0] === 'package.json',
       declarationCount: declaredIn.length,
       stoOnly,

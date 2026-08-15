@@ -372,9 +372,12 @@ and shell sources, so a package invoked only through a differently named binary
 is not misgraded as unused. Workspace declarations come from the monorepo
 workspace-discovery SSOT rather than a second list of package globs. `CANDIDATE`
 requires a score of at least 75, non-low confidence, and no peer/catalog
-ownership blocker; alias-heavy STO-only declarations and executable usage lower
-the grade. `LOCKED` covers workspace protocols and protected toolchain pins.
-Always inspect `bun why` before `remove:safe`.
+ownership blocker. Any executable reference lowers an ordinary package to
+`RETAIN`; a low-use Tier-A package remains `REVIEW` because replacing it with a
+Bun-native API requires an explicit refactor. Ambient `@types/*` packages are
+compiler contracts and grade as `RETAIN` even when they have no executable
+import. `LOCKED` covers workspace protocols and protected toolchain pins. Always
+inspect `bun why` before `remove:safe`.
 
 **CI runners:** `setup-factory-bun` writes `~/.bunfig.toml` via
 `machine:bunfig:ensure --overwrite` so doctor/fingerprint gates are portable.

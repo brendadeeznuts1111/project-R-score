@@ -34,6 +34,7 @@ function base(over: Partial<RemovalSignals> = {}): RemovalSignals {
     catalog: false,
     optionalOnly: false,
     peerOnly: false,
+    typeContract: false,
     rootOnly: true,
     declarationCount: 1,
     stoOnly: false,
@@ -92,6 +93,13 @@ describe('rate-removal-candidates scoring', () => {
     expect(r.score).toBeLessThanOrEqual(30);
   });
 
+  test('one executable reference retains an ordinary dependency', () => {
+    const r = scoreRemoval(base({ usage: usage(1) }));
+    expect(r.grade).toBe('retain');
+    expect(r.score).toBeLessThanOrEqual(30);
+    expect(r.reasons.some(reason => reason.code === 'low-usage')).toBe(true);
+  });
+
   test('catalog unused is review not automatic remove', () => {
     const r = scoreRemoval(base({ catalog: true, usage: usage() }));
     expect(r.grade).toBe('review');
@@ -102,6 +110,14 @@ describe('rate-removal-candidates scoring', () => {
     const r = scoreRemoval(base({ peerOnly: true, rootOnly: false }));
     expect(r.grade).toBe('review');
     expect(r.reasons.some(reason => reason.code === 'peer-contract')).toBe(true);
+  });
+
+  test('ambient type packages retain without executable import evidence', () => {
+    const r = scoreRemoval(base({ typeContract: true, catalog: true, rootOnly: false }));
+    expect(r.grade).toBe('retain');
+    expect(r.score).toBeLessThanOrEqual(30);
+    expect(r.reasons.some(reason => reason.code === 'type-contract')).toBe(true);
+    expect(confidenceFor(base({ typeContract: true }), r.grade)).toBe('high');
   });
 
   test('table labels are human-readable', () => {
