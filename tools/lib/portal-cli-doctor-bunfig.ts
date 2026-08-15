@@ -25,6 +25,7 @@ import {
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import {
   isAbsoluteCachePath,
+  readEffectiveGlobalBunfig,
   readMachineBunfig,
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
@@ -92,7 +93,8 @@ export async function runBunfigChecks(
   const project = await readProjectBunfig(cwd);
   const machineInstall = await readInstallSection(machine.bunfigPath);
   const projectInstall = await readInstallSection(project.bunfigPath);
-  const effective = resolveEffectiveInstallPolicy(project, machine);
+  const globalLayer = await readEffectiveGlobalBunfig(env);
+  const effective = resolveEffectiveInstallPolicy(project, globalLayer);
   const checks: PortalDoctorCheck[] = [];
 
   // 1) Machine ~/.bunfig.toml SSOT keys
@@ -257,8 +259,8 @@ export async function runBunfigChecks(
         group: 'bunfig',
         ok: mergeOk,
         message: mergeOk
-          ? `effective linker=isolated · globalStore=true · cache=${effective.source.cacheDir}`
-          : `effective policy mismatch: ${mergeParts.join('; ')}`,
+          ? `effective linker=isolated · globalStore=true · cache=${effective.source.cacheDir} · global=${globalLayer.bunfigPath}`
+          : `effective policy mismatch: ${mergeParts.join('; ')} (global=${globalLayer.bunfigPath ?? 'none'})`,
         source: BUNFIG_ISOLATED,
       },
       {

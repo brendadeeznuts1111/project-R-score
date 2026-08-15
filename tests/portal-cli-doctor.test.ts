@@ -298,6 +298,9 @@ describe('portal-cli doctor pure', () => {
     expect(shadow?.ok).toBe(false);
     expect(shadow?.level).toBe('fatal');
     expect(shadow?.message).toContain('shadows');
+    const merge = checks.find(c => c.id === 'bunfig-merge-consistency');
+    expect(merge?.ok).toBe(false);
+    expect(merge?.message).toContain('hoisted');
     await Bun.$`rm -rf ${tmp}`.quiet();
   });
 

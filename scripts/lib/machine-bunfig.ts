@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { TOML } from 'bun';
+import { xdgShadowBunfigPath } from '../../lib/install/machine-bunfig-policy.ts';
 import { joinPath } from './fs-bun';
 
 export type BunfigInstall = {
@@ -69,6 +70,22 @@ export async function readMachineBunfig(
     install,
     cacheDir,
   };
+}
+
+/**
+ * Global bunfig Bun's package manager actually loads: `$XDG_CONFIG_HOME/.bunfig.toml`
+ * if present, otherwise `$HOME/.bunfig.toml`.
+ * @see https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml
+ */
+export async function readEffectiveGlobalBunfig(
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
+): Promise<MachineBunfigSnapshot> {
+  const xdg = xdgShadowBunfigPath(env);
+  if (xdg && (await Bun.file(xdg).exists())) {
+    const { install, cacheDir } = await readBunfigInstall(xdg);
+    return { bunfigPath: xdg, install, cacheDir };
+  }
+  return readMachineBunfig(env);
 }
 
 export async function readProjectBunfig(projectRoot: string): Promise<MachineBunfigSnapshot> {
