@@ -1,28 +1,19 @@
 {
   "schemaVersion": 5,
   "kind": "env-inventory",
-  "generatedAt": "2026-08-05T09:08:32.211Z",
-  "scannedRoots": [
-    "lib",
-    "config",
-    "scripts",
-    "tools",
-    "packages"
-  ],
-  "usageCount": 564,
-  "uniqueVars": 229,
+  "generatedAt": "2026-08-15T01:04:58.136Z",
+  "scannedRoots": ["lib", "config", "scripts", "tools", "packages"],
+  "usageCount": 680,
+  "uniqueVars": 270,
   "byKind": {
-    "ambient": 19,
-    "secret": 19,
-    "config": 191
+    "ambient": 20,
+    "secret": 33,
+    "config": 217
   },
   "vault": {
-    "templateKeyCount": 25,
+    "templateKeyCount": 24,
     "vaultRefCount": 16,
-    "actionableVaultGaps": [
-      "OPENAI_API_KEY",
-      "SLACK_WEBHOOK_URL"
-    ],
+    "actionableVaultGaps": ["OPENAI_API_KEY", "SLACK_WEBHOOK_URL"],
     "secretsUsedAndVaulted": [
       "CLOUDFLARE_ACCESS_API_TOKEN",
       "CLOUDFLARE_API_TOKEN",
@@ -35,14 +26,28 @@
       "REGISTRY_SECRET"
     ],
     "secretsUsedButNotInTemplate": [
+      "AGENT_DEMO_PASS",
+      "ALERT_EMAIL_WEBHOOK",
+      "ALERT_WEBHOOK_URL",
       "API_KEY",
       "API_TOKEN",
       "BASELINE_SCRAPE_ALERT_WEBHOOK",
       "CAESARS_WAF_TOKEN",
+      "CSRF_SECRET",
+      "EVENT_ALERT_WEBHOOK",
+      "FACTORYWAGER_API_KEY",
+      "FONBET_API_KEY",
       "OPENAI_API_KEY",
+      "OPERATOR_API_TOKEN",
+      "OPERATOR_RESEARCH_API_KEY",
+      "OPERATOR_RESEARCH_CSRF_SECRET",
+      "PARTNER_API_TOKEN",
       "PARTNER_LIMITS_API_TOKEN",
+      "PROTON_PASS_PERSONAL_ACCESS_TOKEN",
+      "PROVISION_PASSWORD",
       "REGISTRY_API_KEY",
       "SLACK_WEBHOOK_URL",
+      "SPORTS_TERMINAL_TOKEN",
       "TELEGRAM_BOT_TOKEN",
       "TELEGRAM_CATALOG_RESEARCH_LLM_KEY"
     ],
@@ -53,7 +58,7 @@
   "topConfig": [
     {
       "var": "OPS_DB_PATH",
-      "count": 48,
+      "count": 49,
       "samples": [
         "lib/registry-snapshot.ts:135",
         "lib/monitoring/integrity.ts:37",
@@ -65,10 +70,20 @@
       "var": "REDIS_URL",
       "count": 10,
       "samples": [
-        "config/ports.ts:27",
-        "tools/bun-api-showcase.ts:301",
-        "tools/bun-api-showcase.ts:658",
-        "tools/bun-api-showcase.ts:662"
+        "config/ports.ts:28",
+        "tools/bun-api-showcase.ts:309",
+        "tools/bun-api-showcase.ts:666",
+        "tools/bun-api-showcase.ts:670"
+      ]
+    },
+    {
+      "var": "CLOUDFLARE_ACCOUNT_ID",
+      "count": 6,
+      "samples": [
+        "lib/dod/verifier.ts:132",
+        "lib/verification/cloudflare-access-token.ts:152",
+        "tools/cloudflare-token-probe-cli.ts:37",
+        "tools/cloudflare-token-probe-cli.ts:52"
       ]
     },
     {
@@ -76,9 +91,9 @@
       "count": 5,
       "samples": [
         "lib/verification/networking-channel.ts:155",
-        "tools/verify-etag.ts:89",
-        "tools/ops-snapshot.ts:616",
-        "tools/verify-formdata.ts:18"
+        "tools/verify-etag.ts:93",
+        "tools/ops-snapshot.ts:691",
+        "tools/verify-formdata.ts:23"
       ]
     },
     {
@@ -86,9 +101,9 @@
       "count": 5,
       "samples": [
         "tools/snapshot-core.ts:774",
-        "tools/portal-probe.ts:205",
-        "tools/portal-probe.ts:209",
-        "tools/portal-probe.ts:329"
+        "tools/portal-probe.ts:208",
+        "tools/portal-probe.ts:212",
+        "tools/portal-probe.ts:332"
       ]
     },
     {
@@ -98,7 +113,7 @@
         "tools/snapshot-core.ts:782",
         "tools/portal-snapshot-cron-constants.ts:64",
         "tools/snapshot-scopes.ts:22",
-        "tools/portal-cli.ts:1415"
+        "tools/portal-cli.ts:1433"
       ]
     },
     {
@@ -106,19 +121,9 @@
       "count": 4,
       "samples": [
         "lib/verification/networking-channel.ts:155",
-        "tools/verify-etag.ts:89",
-        "tools/ops-snapshot.ts:616",
+        "tools/verify-etag.ts:93",
+        "tools/ops-snapshot.ts:691",
         "tools/verify-networking.ts:130"
-      ]
-    },
-    {
-      "var": "CLOUDFLARE_ACCOUNT_ID",
-      "count": 4,
-      "samples": [
-        "lib/dod/verifier.ts:120",
-        "lib/verification/cloudflare-access-token.ts:152",
-        "tools/cloudflare-pages-deploy.ts:36",
-        "tools/verify-pages-edge.ts:149"
       ]
     },
     {
@@ -128,7 +133,17 @@
         "lib/operations/state-compliance-http.ts:517",
         "tools/bake-compliance-portal.ts:49",
         "tools/live-enhancement-report.ts:6",
-        "tools/enhanced-compliance-report.ts:262"
+        "tools/enhanced-compliance-report.ts:268"
+      ]
+    },
+    {
+      "var": "CONCEPT_REGISTRY_DB",
+      "count": 4,
+      "samples": [
+        "lib/concept-registry/schema.ts:121",
+        "scripts/concept-registry-serve.ts:27",
+        "scripts/concept-registry-sync.ts:38",
+        "scripts/concept-registry-migrate.ts:15"
       ]
     },
     {
@@ -136,18 +151,18 @@
       "count": 4,
       "samples": [
         "lib/operations/postgres-bridge.ts:39",
-        "tools/bun-api-showcase.ts:599",
-        "tools/bun-api-oneliners.ts:592",
-        "tools/bun-api-showcase/oneliners.ts:506"
+        "tools/bun-api-showcase.ts:607",
+        "tools/bun-api-oneliners.ts:591",
+        "tools/bun-api-showcase/oneliners.ts:515"
       ]
     },
     {
       "var": "DOMAIN_REGISTRY_PATH",
       "count": 4,
       "samples": [
-        "scripts/domain-registry-status.ts:33",
-        "scripts/search-benchmark-dashboard.ts:8623",
-        "scripts/search-unified-status.ts:136",
+        "scripts/domain-registry-status.ts:34",
+        "scripts/search-benchmark-dashboard.ts:8634",
+        "scripts/search-unified-status.ts:137",
         "scripts/lib/domain-registry.ts:75"
       ]
     },
@@ -157,8 +172,8 @@
       "samples": [
         "scripts/ci-r2-version-check.ts:23",
         "scripts/ci-r2-version-check.ts:55",
-        "scripts/bun-ci.ts:17",
-        "scripts/bun-ci.ts:28"
+        "scripts/bun-ci.ts:25",
+        "scripts/bun-ci.ts:51"
       ]
     },
     {
@@ -166,29 +181,28 @@
       "count": 4,
       "samples": [
         "lib/registry-snapshot.ts:97",
-        "lib/verification/install-env-probes.ts:35",
-        "tools/ops-snapshot.ts:114",
-        "tools/verify-package-info.ts:20"
+        "lib/verification/install-env-probes.ts:33",
+        "tools/ops-snapshot.ts:184",
+        "tools/verify-package-info.ts:25"
       ]
     },
     {
       "var": "SEARCH_BENCH_DOMAIN",
       "count": 4,
       "samples": [
-        "scripts/project-online-readiness.ts:18",
-        "scripts/search-benchmark-dashboard.ts:157",
-        "scripts/search-unified-status.ts:41",
+        "scripts/project-online-readiness.ts:19",
+        "scripts/search-benchmark-dashboard.ts:159",
+        "scripts/search-unified-status.ts:42",
         "scripts/lib/domain-health-read.ts:383"
       ]
     },
     {
-      "var": "USERPROFILE",
-      "count": 4,
+      "var": "BUN_TYPES_TIP",
+      "count": 3,
       "samples": [
-        "lib/monitoring/install-cache-slice.ts:28",
-        "lib/docs/cache-manager.ts:54",
-        "lib/security/mintable-secret.ts:51",
-        "scripts/machine-bun-health.ts:24"
+        "tools/bun-types-changelog.ts:280",
+        "tools/bun-types-inventory.ts:1097",
+        "tools/bun-types-tip-diff.ts:117"
       ]
     },
     {
@@ -196,8 +210,8 @@
       "count": 3,
       "samples": [
         "lib/operations/scrapers/books/caesars.ts:62",
-        "tools/baseline-caesars-probe.ts:80",
-        "tools/baseline-caesars-probe.ts:171"
+        "tools/baseline-caesars-probe.ts:83",
+        "tools/baseline-caesars-probe.ts:174"
       ]
     },
     {
@@ -205,17 +219,17 @@
       "count": 3,
       "samples": [
         "lib/registry-snapshot.ts:97",
-        "lib/verification/install-env-probes.ts:35",
-        "tools/ops-snapshot.ts:114"
+        "lib/verification/install-env-probes.ts:33",
+        "tools/ops-snapshot.ts:184"
       ]
     },
     {
       "var": "PROTON_PASS_AGENT_REASON",
       "count": 3,
       "samples": [
-        "scripts/vault-gap-close.ts:72",
+        "scripts/vault-gap-close.ts:75",
         "scripts/lib/vault-gap-status.ts:200",
-        "tools/portal-secret.ts:354"
+        "tools/portal-secret.ts:362"
       ]
     },
     {
@@ -223,8 +237,17 @@
       "count": 3,
       "samples": [
         "lib/core/url-handler.ts:347",
-        "config/ports.ts:28",
+        "config/ports.ts:29",
         "scripts/lib/dashboard-env.ts:28"
+      ]
+    },
+    {
+      "var": "USERPROFILE",
+      "count": 3,
+      "samples": [
+        "lib/monitoring/install-cache-slice.ts:28",
+        "lib/docs/cache-manager.ts:54",
+        "lib/security/mintable-secret.ts:54"
       ]
     },
     {
@@ -232,8 +255,8 @@
       "count": 3,
       "samples": [
         "lib/routing-proof.ts:737",
-        "tools/routing-registry-proof.ts:44",
-        "tools/bun-utils-registry-proof.ts:37"
+        "tools/routing-registry-proof.ts:52",
+        "tools/bun-utils-registry-proof.ts:40"
       ]
     },
     {
@@ -267,60 +290,93 @@
         "tools/bun-serve-defaults-table.ts:201",
         "tools/bun-serve-defaults-table.ts:206"
       ]
-    },
-    {
-      "var": "CAESARS_SCRAPE_LOCATION",
-      "count": 2,
-      "samples": [
-        "lib/operations/scrapers/books/caesars.ts:52",
-        "tools/baseline-caesars-probe.ts:36"
-      ]
-    },
-    {
-      "var": "CI_RUN_ID",
-      "count": 2,
-      "samples": [
-        "lib/verification/ratchet.ts:141",
-        "lib/verification/channels.ts:511"
-      ]
     }
   ],
   "owners": [
+    {
+      "envKey": "PROTON_PASS_PERSONAL_ACCESS_TOKEN",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 1,
+      "planes": ["packages"],
+      "packages": ["proton-pass"],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": ["packages/proton-pass/src/session.ts:164"]
+    },
+    {
+      "envKey": "TMPDIR",
+      "kind": "ambient",
+      "disposition": "ambient",
+      "count": 10,
+      "planes": ["lib", "packages", "scripts", "tools"],
+      "packages": ["proton-pass"],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": true,
+      "samples": [
+        "lib/tmp-probe.ts:15",
+        "lib/harness/focused-coverage.ts:224",
+        "lib/security/pass-session.ts:217",
+        "scripts/bun-test-changed-staged.ts:222"
+      ]
+    },
     {
       "envKey": "REDIS_URL",
       "kind": "config",
       "disposition": "config",
       "count": 10,
-      "planes": [
-        "config",
-        "packages",
-        "tools"
-      ],
-      "packages": [
-        "business",
-        "p2p"
-      ],
+      "planes": ["config", "packages", "tools"],
+      "packages": ["business", "p2p"],
       "inRootTemplate": true,
       "inAnyTemplate": true,
       "passRef": null,
       "runtimePresent": false,
       "samples": [
-        "config/ports.ts:27",
-        "tools/bun-api-showcase.ts:301",
-        "tools/bun-api-showcase.ts:658",
-        "tools/bun-api-showcase.ts:662"
+        "config/ports.ts:28",
+        "tools/bun-api-showcase.ts:309",
+        "tools/bun-api-showcase.ts:666",
+        "tools/bun-api-showcase.ts:670"
       ]
+    },
+    {
+      "envKey": "PROTONPASS_ENV_FILE",
+      "kind": "config",
+      "disposition": "config",
+      "count": 2,
+      "planes": ["packages", "tools"],
+      "packages": ["proton-pass"],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "tools/portal-secret.ts:757",
+        "packages/proton-pass/bin/proton-pass.ts:126"
+      ]
+    },
+    {
+      "envKey": "PROTONPASS_CACHE_PATH",
+      "kind": "config",
+      "disposition": "config",
+      "count": 1,
+      "planes": ["packages"],
+      "packages": ["proton-pass"],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": ["packages/proton-pass/bin/proton-pass.ts:244"]
     },
     {
       "envKey": "API_KEY",
       "kind": "secret",
       "disposition": "alias",
-      "count": 6,
-      "planes": [
-        "config",
-        "lib",
-        "tools"
-      ],
+      "count": 7,
+      "planes": ["config", "lib", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -328,31 +384,27 @@
       "runtimePresent": false,
       "samples": [
         "lib/registry-snapshot.ts:98",
+        "lib/operator-research/platform.ts:58",
         "lib/docs/constants/utils.ts:848",
-        "config/bun-remediation-catalog.ts:363",
-        "tools/routing-registry-proof.ts:42"
+        "config/bun-remediation-catalog.ts:363"
       ]
     },
     {
       "envKey": "FACTORY_WAGER_TOKEN",
       "kind": "secret",
       "disposition": "vaulted",
-      "count": 5,
-      "planes": [
-        "lib",
-        "scripts",
-        "tools"
-      ],
+      "count": 6,
+      "planes": ["lib", "scripts", "tools"],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
       "passRef": "pass://factorywager/FactoryWager Registry Token/password",
       "runtimePresent": false,
       "samples": [
-        "lib/factory/server.ts:192",
-        "lib/verification/install-env-probes.ts:196",
-        "scripts/lib/domain-registry.ts:141",
-        "tools/ops-snapshot.ts:117"
+        "lib/factory/server.ts:217",
+        "lib/verification/install-env-probes.ts:194",
+        "scripts/refresh-sports-terminal-integration-health.ts:70",
+        "scripts/lib/domain-registry.ts:141"
       ]
     },
     {
@@ -360,21 +412,17 @@
       "kind": "secret",
       "disposition": "vaulted",
       "count": 4,
-      "planes": [
-        "lib",
-        "scripts",
-        "tools"
-      ],
+      "planes": ["lib", "scripts", "tools"],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
       "passRef": "pass://factorywager/Registry Dev Secret/password",
       "runtimePresent": false,
       "samples": [
-        "lib/factory/server.ts:192",
-        "scripts/serve-public.ts:1582",
-        "tools/ops-snapshot.ts:116",
-        "tools/verify-formdata.ts:21"
+        "lib/factory/server.ts:218",
+        "scripts/serve-public.ts:1700",
+        "tools/ops-snapshot.ts:186",
+        "tools/verify-formdata.ts:26"
       ]
     },
     {
@@ -382,20 +430,35 @@
       "kind": "secret",
       "disposition": "vaulted",
       "count": 9,
-      "planes": [
-        "scripts",
-        "tools"
-      ],
+      "planes": ["scripts", "tools"],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
       "passRef": "pass://factorywager/Cloudflare API Token/password",
+      "runtimePresent": true,
+      "samples": [
+        "scripts/bake-surfaces.ts:281",
+        "tools/routing-registry-proof.ts:50",
+        "tools/bun-utils-registry-proof.ts:37",
+        "tools/cloudflare-pages-deploy.ts:27"
+      ]
+    },
+    {
+      "envKey": "PARTNER_API_TOKEN",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 6,
+      "planes": ["lib", "tools"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
       "runtimePresent": false,
       "samples": [
-        "scripts/bake-surfaces.ts:267",
-        "tools/routing-registry-proof.ts:42",
-        "tools/bun-utils-registry-proof.ts:34",
-        "tools/cloudflare-pages-deploy.ts:23"
+        "lib/operator-research/platform.ts:45",
+        "lib/operator-research/platform.ts:54",
+        "lib/operator-research/auth/partner-request.ts:20",
+        "lib/operator-research/auth/api-key.ts:14"
       ]
     },
     {
@@ -403,10 +466,7 @@
       "kind": "secret",
       "disposition": "vaulted",
       "count": 5,
-      "planes": [
-        "lib",
-        "tools"
-      ],
+      "planes": ["lib", "tools"],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
@@ -414,9 +474,9 @@
       "runtimePresent": false,
       "samples": [
         "lib/factory/object-store.ts:129",
-        "lib/factory/registry.ts:381",
-        "lib/dod/verifier.ts:121",
-        "tools/verify-bun-release.ts:601"
+        "lib/factory/registry.ts:413",
+        "lib/dod/verifier.ts:133",
+        "tools/verify-bun-release.ts:692"
       ]
     },
     {
@@ -424,10 +484,7 @@
       "kind": "secret",
       "disposition": "vaulted",
       "count": 5,
-      "planes": [
-        "lib",
-        "tools"
-      ],
+      "planes": ["lib", "tools"],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
@@ -435,9 +492,9 @@
       "runtimePresent": false,
       "samples": [
         "lib/factory/object-store.ts:130",
-        "lib/factory/registry.ts:382",
-        "lib/dod/verifier.ts:122",
-        "tools/verify-bun-release.ts:601"
+        "lib/factory/registry.ts:414",
+        "lib/dod/verifier.ts:134",
+        "tools/verify-bun-release.ts:692"
       ]
     },
     {
@@ -445,10 +502,7 @@
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 3,
-      "planes": [
-        "lib",
-        "tools"
-      ],
+      "planes": ["lib", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -456,8 +510,8 @@
       "runtimePresent": false,
       "samples": [
         "lib/operations/scrapers/books/caesars.ts:64",
-        "tools/baseline-caesars-probe.ts:82",
-        "tools/baseline-caesars-probe.ts:172"
+        "tools/baseline-caesars-probe.ts:85",
+        "tools/baseline-caesars-probe.ts:175"
       ]
     },
     {
@@ -465,10 +519,7 @@
       "kind": "secret",
       "disposition": "vaulted",
       "count": 3,
-      "planes": [
-        "scripts",
-        "tools"
-      ],
+      "planes": ["scripts", "tools"],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
@@ -476,8 +527,8 @@
       "runtimePresent": false,
       "samples": [
         "scripts/cloudflare-dns-sync.ts:93",
-        "scripts/bake-surfaces.ts:267",
-        "tools/brand-status.ts:509"
+        "scripts/bake-surfaces.ts:281",
+        "tools/brand-status.ts:515"
       ]
     },
     {
@@ -485,10 +536,7 @@
       "kind": "secret",
       "disposition": "alias",
       "count": 3,
-      "planes": [
-        "lib",
-        "tools"
-      ],
+      "planes": ["lib", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -496,8 +544,62 @@
       "runtimePresent": false,
       "samples": [
         "lib/registry-snapshot.ts:98",
-        "tools/routing-registry-proof.ts:42",
-        "tools/bun-utils-registry-proof.ts:34"
+        "tools/routing-registry-proof.ts:50",
+        "tools/bun-utils-registry-proof.ts:37"
+      ]
+    },
+    {
+      "envKey": "OPERATOR_RESEARCH_API_KEY",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 6,
+      "planes": ["lib"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/operator-research/platform.ts:47",
+        "lib/operator-research/platform.ts:56",
+        "lib/operator-research/auth/partner-request.ts:22",
+        "lib/operator-research/auth/csrf.ts:21"
+      ]
+    },
+    {
+      "envKey": "FACTORYWAGER_API_KEY",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 4,
+      "planes": ["lib"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/operator-research/platform.ts:48",
+        "lib/operator-research/platform.ts:57",
+        "lib/operator-research/auth/partner-request.ts:23",
+        "lib/operator-research/auth/api-key.ts:17"
+      ]
+    },
+    {
+      "envKey": "OPERATOR_API_TOKEN",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 4,
+      "planes": ["lib"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/operator-research/platform.ts:46",
+        "lib/operator-research/platform.ts:55",
+        "lib/operator-research/auth/partner-request.ts:21",
+        "lib/operator-research/auth/api-key.ts:15"
       ]
     },
     {
@@ -505,9 +607,7 @@
       "kind": "secret",
       "disposition": "vault-required",
       "count": 3,
-      "planes": [
-        "lib"
-      ],
+      "planes": ["lib"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -524,9 +624,7 @@
       "kind": "secret",
       "disposition": "vault-required",
       "count": 3,
-      "planes": [
-        "lib"
-      ],
+      "planes": ["lib"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -534,8 +632,24 @@
       "runtimePresent": false,
       "samples": [
         "lib/channels/outbox.ts:438",
-        "lib/factory/alerts.ts:31",
+        "lib/factory/alerts.ts:32",
         "lib/operations/scrapers/scrape-alert.ts:68"
+      ]
+    },
+    {
+      "envKey": "ALERT_EMAIL_WEBHOOK",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 2,
+      "planes": ["lib"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/operator-research/matching/alerts.ts:590",
+        "lib/research/event-alert-engine.ts:201"
       ]
     },
     {
@@ -543,17 +657,15 @@
       "kind": "secret",
       "disposition": "demo",
       "count": 2,
-      "planes": [
-        "tools"
-      ],
+      "planes": ["tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
       "samples": [
-        "tools/bun-docs-guide-examples.ts:320",
-        "tools/bun-docs-guide-examples.ts:326"
+        "tools/bun-docs-guide-examples.ts:356",
+        "tools/bun-docs-guide-examples.ts:362"
       ]
     },
     {
@@ -561,9 +673,7 @@
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 2,
-      "planes": [
-        "lib"
-      ],
+      "planes": ["lib"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -575,118 +685,193 @@
       ]
     },
     {
+      "envKey": "AGENT_DEMO_PASS",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 1,
+      "planes": ["lib"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": ["lib/operator-research/agent-odds-http.ts:113"]
+    },
+    {
+      "envKey": "ALERT_WEBHOOK_URL",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 1,
+      "planes": ["lib"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": ["lib/research/event-alert-engine.ts:200"]
+    },
+    {
       "envKey": "CLOUDFLARE_ACCESS_API_TOKEN",
       "kind": "secret",
       "disposition": "vaulted",
       "count": 1,
-      "planes": [
-        "lib"
-      ],
+      "planes": ["lib"],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
       "passRef": "pass://factorywager/Cloudflare Access API Token/password",
       "runtimePresent": false,
-      "samples": [
-        "lib/verification/cloudflare-access-token.ts:144"
-      ]
+      "samples": ["lib/verification/cloudflare-access-token.ts:144"]
+    },
+    {
+      "envKey": "CSRF_SECRET",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 1,
+      "planes": ["lib"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": ["lib/operator-research/auth/csrf.ts:19"]
     },
     {
       "envKey": "DOD_PROOF_SECRET",
       "kind": "secret",
       "disposition": "vaulted",
       "count": 1,
-      "planes": [
-        "lib"
-      ],
+      "planes": ["lib"],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
       "passRef": "pass://factorywager/DOD Proof Secret/password",
       "runtimePresent": false,
-      "samples": [
-        "lib/dod/evidence.ts:231"
-      ]
+      "samples": ["lib/dod/evidence.ts:242"]
+    },
+    {
+      "envKey": "EVENT_ALERT_WEBHOOK",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 1,
+      "planes": ["lib"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": ["lib/research/event-alert-engine.ts:199"]
+    },
+    {
+      "envKey": "FONBET_API_KEY",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 1,
+      "planes": ["lib"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": ["lib/research/fetchers/fonbet.ts:146"]
+    },
+    {
+      "envKey": "OPERATOR_RESEARCH_CSRF_SECRET",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 1,
+      "planes": ["lib"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": ["lib/operator-research/auth/csrf.ts:20"]
     },
     {
       "envKey": "PARTNER_LIMITS_API_TOKEN",
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 1,
-      "planes": [
-        "lib"
-      ],
+      "planes": ["lib"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": [
-        "lib/operations/baseline-partner-api.ts:33"
-      ]
+      "samples": ["lib/operations/baseline-partner-api.ts:33"]
     },
     {
       "envKey": "PROVISION_ENCRYPTION_KEY",
       "kind": "secret",
       "disposition": "vaulted",
       "count": 1,
-      "planes": [
-        "tools"
-      ],
+      "planes": ["tools"],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
       "passRef": "pass://factorywager/Provision Encryption Key/password",
       "runtimePresent": false,
-      "samples": [
-        "tools/provision-queue.ts:103"
-      ]
+      "samples": ["tools/provision-queue.ts:130"]
+    },
+    {
+      "envKey": "PROVISION_PASSWORD",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 1,
+      "planes": ["tools"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": ["tools/provision-queue.ts:125"]
+    },
+    {
+      "envKey": "SPORTS_TERMINAL_TOKEN",
+      "kind": "secret",
+      "disposition": "unknown-secret",
+      "count": 1,
+      "planes": ["scripts"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": ["scripts/refresh-sports-terminal-integration-health.ts:70"]
     },
     {
       "envKey": "TELEGRAM_BOT_TOKEN",
       "kind": "secret",
       "disposition": "alias",
       "count": 1,
-      "planes": [
-        "lib"
-      ],
+      "planes": ["lib"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": [
-        "lib/operations/account-service.ts:425"
-      ]
+      "samples": ["lib/operations/account-service.ts:426"]
     },
     {
       "envKey": "TELEGRAM_CATALOG_RESEARCH_LLM_KEY",
       "kind": "secret",
       "disposition": "alias",
       "count": 1,
-      "planes": [
-        "lib"
-      ],
+      "planes": ["lib"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": [
-        "lib/telegram/catalog-research/llm-pass.ts:68"
-      ]
+      "samples": ["lib/telegram/catalog-research/llm-pass.ts:68"]
     },
     {
       "envKey": "HOME",
       "kind": "ambient",
       "disposition": "ambient",
-      "count": 23,
-      "planes": [
-        "config",
-        "lib",
-        "scripts",
-        "tools"
-      ],
+      "count": 28,
+      "planes": ["config", "lib", "scripts", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -694,7 +879,7 @@
       "runtimePresent": true,
       "samples": [
         "lib/gate-map.ts:80",
-        "lib/package/package-manager.ts:42",
+        "lib/package/package-manager.ts:77",
         "lib/monitoring/install-cache-slice.ts:28",
         "lib/telegram/telegram-env-bind.ts:136"
       ]
@@ -703,12 +888,8 @@
       "envKey": "OPS_DB_PATH",
       "kind": "config",
       "disposition": "config",
-      "count": 48,
-      "planes": [
-        "lib",
-        "scripts",
-        "tools"
-      ],
+      "count": 49,
+      "planes": ["lib", "scripts", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -722,44 +903,36 @@
       ]
     },
     {
-      "envKey": "TMPDIR",
+      "envKey": "TMP",
       "kind": "ambient",
       "disposition": "ambient",
-      "count": 6,
-      "planes": [
-        "lib",
-        "scripts",
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": true,
-      "samples": [
-        "lib/security/pass-session.ts:249",
-        "scripts/bun-test-changed-staged.ts:82",
-        "scripts/lib/index-tree.ts:27",
-        "tools/bun-api-showcase.ts:124"
-      ]
-    },
-    {
-      "envKey": "PORT",
-      "kind": "ambient",
-      "disposition": "ambient",
-      "count": 4,
-      "planes": [
-        "lib",
-        "scripts",
-        "tools"
-      ],
+      "count": 8,
+      "planes": ["lib", "scripts", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
       "samples": [
-        "lib/factory/server.ts:399",
+        "lib/tmp-probe.ts:15",
+        "lib/harness/focused-coverage.ts:224",
+        "scripts/bun-test-changed-staged.ts:222",
+        "scripts/bun-test-changed-staged.ts:233"
+      ]
+    },
+    {
+      "envKey": "PORT",
+      "kind": "ambient",
+      "disposition": "ambient",
+      "count": 5,
+      "planes": ["lib", "scripts", "tools"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/factory/server.ts:449",
         "scripts/lib/dashboard-env.ts:36",
         "tools/bun-serve-defaults-table.ts:202",
         "tools/bun-serve-defaults-table.ts:206"
@@ -770,20 +943,16 @@
       "kind": "ambient",
       "disposition": "ambient",
       "count": 3,
-      "planes": [
-        "lib",
-        "scripts",
-        "tools"
-      ],
+      "planes": ["lib", "scripts", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": true,
       "samples": [
-        "lib/package/package-manager.ts:40",
-        "scripts/serve-public.ts:1694",
-        "tools/cli/integrated-cli.ts:83"
+        "lib/package/package-manager.ts:75",
+        "scripts/serve-public.ts:1850",
+        "tools/cli/integrated-cli.ts:85"
       ]
     },
     {
@@ -791,11 +960,7 @@
       "kind": "config",
       "disposition": "config",
       "count": 3,
-      "planes": [
-        "config",
-        "lib",
-        "scripts"
-      ],
+      "planes": ["config", "lib", "scripts"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -803,166 +968,34 @@
       "runtimePresent": false,
       "samples": [
         "lib/core/url-handler.ts:347",
-        "config/ports.ts:28",
+        "config/ports.ts:29",
         "scripts/lib/dashboard-env.ts:28"
-      ]
-    },
-    {
-      "envKey": "HEALTH_URL",
-      "kind": "config",
-      "disposition": "config",
-      "count": 5,
-      "planes": [
-        "lib",
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/verification/networking-channel.ts:155",
-        "tools/verify-etag.ts:89",
-        "tools/ops-snapshot.ts:616",
-        "tools/verify-formdata.ts:18"
-      ]
-    },
-    {
-      "envKey": "TMP",
-      "kind": "ambient",
-      "disposition": "ambient",
-      "count": 5,
-      "planes": [
-        "scripts",
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "scripts/bun-test-changed-staged.ts:82",
-        "scripts/lib/index-tree.ts:27",
-        "tools/bun-api-showcase.ts:124",
-        "tools/run-verified.ts:43"
-      ]
-    },
-    {
-      "envKey": "BASE_URL",
-      "kind": "config",
-      "disposition": "config",
-      "count": 4,
-      "planes": [
-        "lib",
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/verification/networking-channel.ts:155",
-        "tools/verify-etag.ts:89",
-        "tools/ops-snapshot.ts:616",
-        "tools/verify-networking.ts:130"
       ]
     },
     {
       "envKey": "CLOUDFLARE_ACCOUNT_ID",
       "kind": "config",
       "disposition": "config",
-      "count": 4,
-      "planes": [
-        "lib",
-        "tools"
-      ],
+      "count": 6,
+      "planes": ["lib", "tools"],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
       "passRef": null,
       "runtimePresent": false,
       "samples": [
-        "lib/dod/verifier.ts:120",
+        "lib/dod/verifier.ts:132",
         "lib/verification/cloudflare-access-token.ts:152",
-        "tools/cloudflare-pages-deploy.ts:36",
-        "tools/verify-pages-edge.ts:149"
-      ]
-    },
-    {
-      "envKey": "COMPLIANCE_URL",
-      "kind": "config",
-      "disposition": "config",
-      "count": 4,
-      "planes": [
-        "lib",
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/operations/state-compliance-http.ts:517",
-        "tools/bake-compliance-portal.ts:49",
-        "tools/live-enhancement-report.ts:6",
-        "tools/enhanced-compliance-report.ts:262"
-      ]
-    },
-    {
-      "envKey": "DATABASE_URL",
-      "kind": "config",
-      "disposition": "config",
-      "count": 4,
-      "planes": [
-        "lib",
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/operations/postgres-bridge.ts:39",
-        "tools/bun-api-showcase.ts:599",
-        "tools/bun-api-oneliners.ts:592",
-        "tools/bun-api-showcase/oneliners.ts:506"
-      ]
-    },
-    {
-      "envKey": "GITHUB_STEP_SUMMARY",
-      "kind": "ambient",
-      "disposition": "ambient",
-      "count": 4,
-      "planes": [
-        "scripts",
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "scripts/doctor-ci-report.ts:215",
-        "scripts/gate-report-monorepo.ts:135",
-        "tools/bake-doctor.ts:634",
-        "tools/bake-doctor.ts:654"
+        "tools/cloudflare-token-probe-cli.ts:37",
+        "tools/cloudflare-token-probe-cli.ts:52"
       ]
     },
     {
       "envKey": "PATH",
       "kind": "ambient",
       "disposition": "ambient",
-      "count": 4,
-      "planes": [
-        "lib",
-        "tools"
-      ],
+      "count": 6,
+      "planes": ["lib", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -972,7 +1005,115 @@
         "lib/bun-executable.ts:43",
         "lib/verification/resolve-bun-binary.ts:98",
         "tools/overseer-cli.ts:44",
-        "tools/bun-api-showcase.ts:649"
+        "tools/bun-pr-verify.ts:102"
+      ]
+    },
+    {
+      "envKey": "HEALTH_URL",
+      "kind": "config",
+      "disposition": "config",
+      "count": 5,
+      "planes": ["lib", "tools"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/verification/networking-channel.ts:155",
+        "tools/verify-etag.ts:93",
+        "tools/ops-snapshot.ts:691",
+        "tools/verify-formdata.ts:23"
+      ]
+    },
+    {
+      "envKey": "BASE_URL",
+      "kind": "config",
+      "disposition": "config",
+      "count": 4,
+      "planes": ["lib", "tools"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/verification/networking-channel.ts:155",
+        "tools/verify-etag.ts:93",
+        "tools/ops-snapshot.ts:691",
+        "tools/verify-networking.ts:130"
+      ]
+    },
+    {
+      "envKey": "COMPLIANCE_URL",
+      "kind": "config",
+      "disposition": "config",
+      "count": 4,
+      "planes": ["lib", "tools"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/operations/state-compliance-http.ts:517",
+        "tools/bake-compliance-portal.ts:49",
+        "tools/live-enhancement-report.ts:6",
+        "tools/enhanced-compliance-report.ts:268"
+      ]
+    },
+    {
+      "envKey": "CONCEPT_REGISTRY_DB",
+      "kind": "config",
+      "disposition": "config",
+      "count": 4,
+      "planes": ["lib", "scripts"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/concept-registry/schema.ts:121",
+        "scripts/concept-registry-serve.ts:27",
+        "scripts/concept-registry-sync.ts:38",
+        "scripts/concept-registry-migrate.ts:15"
+      ]
+    },
+    {
+      "envKey": "DATABASE_URL",
+      "kind": "config",
+      "disposition": "config",
+      "count": 4,
+      "planes": ["lib", "tools"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/operations/postgres-bridge.ts:39",
+        "tools/bun-api-showcase.ts:607",
+        "tools/bun-api-oneliners.ts:591",
+        "tools/bun-api-showcase/oneliners.ts:515"
+      ]
+    },
+    {
+      "envKey": "GITHUB_STEP_SUMMARY",
+      "kind": "ambient",
+      "disposition": "ambient",
+      "count": 4,
+      "planes": ["scripts", "tools"],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "scripts/doctor-ci-report.ts:216",
+        "scripts/gate-report-monorepo.ts:138",
+        "tools/bake-doctor.ts:639",
+        "tools/bake-doctor.ts:659"
       ]
     },
     {
@@ -980,10 +1121,7 @@
       "kind": "config",
       "disposition": "config",
       "count": 4,
-      "planes": [
-        "lib",
-        "tools"
-      ],
+      "planes": ["lib", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -991,30 +1129,9 @@
       "runtimePresent": false,
       "samples": [
         "lib/registry-snapshot.ts:97",
-        "lib/verification/install-env-probes.ts:35",
-        "tools/ops-snapshot.ts:114",
-        "tools/verify-package-info.ts:20"
-      ]
-    },
-    {
-      "envKey": "USERPROFILE",
-      "kind": "config",
-      "disposition": "config",
-      "count": 4,
-      "planes": [
-        "lib",
-        "scripts"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/monitoring/install-cache-slice.ts:28",
-        "lib/docs/cache-manager.ts:54",
-        "lib/security/mintable-secret.ts:51",
-        "scripts/machine-bun-health.ts:24"
+        "lib/verification/install-env-probes.ts:33",
+        "tools/ops-snapshot.ts:184",
+        "tools/verify-package-info.ts:25"
       ]
     },
     {
@@ -1022,10 +1139,7 @@
       "kind": "config",
       "disposition": "config",
       "count": 3,
-      "planes": [
-        "lib",
-        "tools"
-      ],
+      "planes": ["lib", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1033,8 +1147,8 @@
       "runtimePresent": false,
       "samples": [
         "lib/operations/scrapers/books/caesars.ts:62",
-        "tools/baseline-caesars-probe.ts:80",
-        "tools/baseline-caesars-probe.ts:171"
+        "tools/baseline-caesars-probe.ts:83",
+        "tools/baseline-caesars-probe.ts:174"
       ]
     },
     {
@@ -1042,10 +1156,7 @@
       "kind": "config",
       "disposition": "config",
       "count": 3,
-      "planes": [
-        "lib",
-        "tools"
-      ],
+      "planes": ["lib", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1053,8 +1164,8 @@
       "runtimePresent": false,
       "samples": [
         "lib/registry-snapshot.ts:97",
-        "lib/verification/install-env-probes.ts:35",
-        "tools/ops-snapshot.ts:114"
+        "lib/verification/install-env-probes.ts:33",
+        "tools/ops-snapshot.ts:184"
       ]
     },
     {
@@ -1062,19 +1173,16 @@
       "kind": "config",
       "disposition": "config",
       "count": 3,
-      "planes": [
-        "scripts",
-        "tools"
-      ],
+      "planes": ["scripts", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
       "samples": [
-        "scripts/vault-gap-close.ts:72",
+        "scripts/vault-gap-close.ts:75",
         "scripts/lib/vault-gap-status.ts:200",
-        "tools/portal-secret.ts:354"
+        "tools/portal-secret.ts:362"
       ]
     },
     {
@@ -1082,10 +1190,7 @@
       "kind": "config",
       "disposition": "config",
       "count": 3,
-      "planes": [
-        "lib",
-        "tools"
-      ],
+      "planes": ["lib", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1093,8 +1198,8 @@
       "runtimePresent": false,
       "samples": [
         "lib/routing-proof.ts:737",
-        "tools/routing-registry-proof.ts:44",
-        "tools/bun-utils-registry-proof.ts:37"
+        "tools/routing-registry-proof.ts:52",
+        "tools/bun-utils-registry-proof.ts:40"
       ]
     },
     {
@@ -1102,10 +1207,7 @@
       "kind": "config",
       "disposition": "config",
       "count": 2,
-      "planes": [
-        "lib",
-        "scripts"
-      ],
+      "planes": ["lib", "scripts"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1121,10 +1223,7 @@
       "kind": "config",
       "disposition": "config",
       "count": 2,
-      "planes": [
-        "lib",
-        "scripts"
-      ],
+      "planes": ["lib", "scripts"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1140,10 +1239,7 @@
       "kind": "config",
       "disposition": "config",
       "count": 2,
-      "planes": [
-        "lib",
-        "tools"
-      ],
+      "planes": ["lib", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1151,7 +1247,7 @@
       "runtimePresent": false,
       "samples": [
         "lib/operations/scrapers/books/caesars.ts:52",
-        "tools/baseline-caesars-probe.ts:36"
+        "tools/baseline-caesars-probe.ts:39"
       ]
     },
     {
@@ -1159,10 +1255,7 @@
       "kind": "config",
       "disposition": "config",
       "count": 2,
-      "planes": [
-        "lib",
-        "tools"
-      ],
+      "planes": ["lib", "tools"],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1170,307 +1263,7 @@
       "runtimePresent": false,
       "samples": [
         "lib/operations/state-compliance-http.ts:518",
-        "tools/show-enhancements.ts:325"
-      ]
-    },
-    {
-      "envKey": "MONITORING_SNAPSHOT_PATH",
-      "kind": "config",
-      "disposition": "config",
-      "count": 2,
-      "planes": [
-        "lib",
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/registry-snapshot.ts:138",
-        "tools/ops-snapshot.ts:99"
-      ]
-    },
-    {
-      "envKey": "OPS_SNAPSHOT_PATH",
-      "kind": "config",
-      "disposition": "config",
-      "count": 2,
-      "planes": [
-        "lib",
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/registry-snapshot.ts:136",
-        "tools/ops-snapshot.ts:81"
-      ]
-    },
-    {
-      "envKey": "PORTAL_SCOPE",
-      "kind": "config",
-      "disposition": "config",
-      "count": 5,
-      "planes": [
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "tools/snapshot-core.ts:774",
-        "tools/portal-probe.ts:205",
-        "tools/portal-probe.ts:209",
-        "tools/portal-probe.ts:329"
-      ]
-    },
-    {
-      "envKey": "SNAPSHOT_BASE_URL",
-      "kind": "config",
-      "disposition": "config",
-      "count": 5,
-      "planes": [
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "tools/snapshot-core.ts:782",
-        "tools/portal-snapshot-cron-constants.ts:64",
-        "tools/snapshot-scopes.ts:22",
-        "tools/portal-cli.ts:1415"
-      ]
-    },
-    {
-      "envKey": "DOMAIN_REGISTRY_PATH",
-      "kind": "config",
-      "disposition": "config",
-      "count": 4,
-      "planes": [
-        "scripts"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "scripts/domain-registry-status.ts:33",
-        "scripts/search-benchmark-dashboard.ts:8623",
-        "scripts/search-unified-status.ts:136",
-        "scripts/lib/domain-registry.ts:75"
-      ]
-    },
-    {
-      "envKey": "R2_BUCKET_NAME",
-      "kind": "config",
-      "disposition": "config",
-      "count": 4,
-      "planes": [
-        "scripts"
-      ],
-      "packages": [],
-      "inRootTemplate": true,
-      "inAnyTemplate": true,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "scripts/ci-r2-version-check.ts:23",
-        "scripts/ci-r2-version-check.ts:55",
-        "scripts/bun-ci.ts:17",
-        "scripts/bun-ci.ts:28"
-      ]
-    },
-    {
-      "envKey": "SEARCH_BENCH_DOMAIN",
-      "kind": "config",
-      "disposition": "config",
-      "count": 4,
-      "planes": [
-        "scripts"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "scripts/project-online-readiness.ts:18",
-        "scripts/search-benchmark-dashboard.ts:157",
-        "scripts/search-unified-status.ts:41",
-        "scripts/lib/domain-health-read.ts:383"
-      ]
-    },
-    {
-      "envKey": "AWS_BUCKET_NAME",
-      "kind": "config",
-      "disposition": "config",
-      "count": 2,
-      "planes": [
-        "scripts"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "scripts/ci-r2-version-check.ts:25",
-        "scripts/ci-r2-version-check.ts:57"
-      ]
-    },
-    {
-      "envKey": "BUN_CONFIG_MAX_HTTP_REQUESTS",
-      "kind": "ambient",
-      "disposition": "ambient",
-      "count": 2,
-      "planes": [
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "tools/verify-networking.ts:602",
-        "tools/verify-networking.ts:653"
-      ]
-    },
-    {
-      "envKey": "BUN_PORT",
-      "kind": "config",
-      "disposition": "config",
-      "count": 2,
-      "planes": [
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "tools/bun-serve-defaults-table.ts:201",
-        "tools/bun-serve-defaults-table.ts:206"
-      ]
-    },
-    {
-      "envKey": "CI_RUN_ID",
-      "kind": "config",
-      "disposition": "config",
-      "count": 2,
-      "planes": [
-        "lib"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/verification/ratchet.ts:141",
-        "lib/verification/channels.ts:511"
-      ]
-    },
-    {
-      "envKey": "CONCEPT_OUTPUT",
-      "kind": "config",
-      "disposition": "config",
-      "count": 2,
-      "planes": [
-        "scripts"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "scripts/concept-review.ts:43",
-        "scripts/concept-history.ts:37"
-      ]
-    },
-    {
-      "envKey": "CONCEPT_REVIEWER",
-      "kind": "config",
-      "disposition": "config",
-      "count": 2,
-      "planes": [
-        "scripts"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "scripts/concept-propose.ts:75",
-        "scripts/concept-review.ts:94"
-      ]
-    },
-    {
-      "envKey": "GITHUB_BASE_REF",
-      "kind": "config",
-      "disposition": "config",
-      "count": 2,
-      "planes": [
-        "scripts"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "scripts/check-pr-claim.ts:263",
-        "scripts/check-search-policy-governance.ts:36"
-      ]
-    },
-    {
-      "envKey": "GITHUB_ENTERPRISE_URL",
-      "kind": "config",
-      "disposition": "config",
-      "count": 2,
-      "planes": [
-        "lib"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/docs/constants/domains.ts:197",
-        "lib/docs/constants/domains.ts:198"
-      ]
-    },
-    {
-      "envKey": "KIMI_TOOLCHAIN_ROOT",
-      "kind": "config",
-      "disposition": "config",
-      "count": 2,
-      "planes": [
-        "scripts"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": true,
-      "samples": [
-        "scripts/machine-bun-health.ts:20",
-        "scripts/machine-bun-health.ts:21"
+        "tools/show-enhancements.ts:334"
       ]
     }
   ],
@@ -1482,7 +1275,7 @@
       {
         "envVar": "REDIS_URL",
         "file": "tools/bun-api-showcase.ts",
-        "line": 662
+        "line": 670
       },
       {
         "envVar": "PORTAL_SNAPSHOT_CRON_MARKER",
@@ -1492,7 +1285,7 @@
     ]
   },
   "packagesPlane": {
-    "generatedAt": "2026-08-05T09:08:32.194Z",
+    "generatedAt": "2026-08-15T01:04:58.130Z",
     "templateKeys": [
       "R2_ACCOUNT_ID",
       "R2_ACCESS_KEY_ID",
@@ -1515,8 +1308,7 @@
       "SOCKET_API_KEY",
       "REDIS_URL",
       "NODE_ENV",
-      "MCP_LOG_LEVEL",
-      "BUN_CONSOLE_DEPTH"
+      "MCP_LOG_LEVEL"
     ],
     "vaultRefs": [
       {
@@ -1649,9 +1441,7 @@
         "inTemplate": true,
         "runtimePresent": false,
         "passRef": null,
-        "samples": [
-          "packages/business/src/habits-classifier.ts:33"
-        ]
+        "samples": ["packages/business/src/habits-classifier.ts:33"]
       },
       {
         "package": "p2p",
@@ -1666,29 +1456,59 @@
           "packages/p2p/src/business-continuity.ts:8",
           "packages/p2p/src/migration-workflow.ts:10"
         ]
+      },
+      {
+        "package": "proton-pass",
+        "envKey": "PROTON_PASS_PERSONAL_ACCESS_TOKEN",
+        "kind": "secret",
+        "disposition": "unknown-secret",
+        "inTemplate": false,
+        "runtimePresent": false,
+        "passRef": null,
+        "samples": ["packages/proton-pass/src/session.ts:164"]
+      },
+      {
+        "package": "proton-pass",
+        "envKey": "TMPDIR",
+        "kind": "ambient",
+        "disposition": "ambient",
+        "inTemplate": false,
+        "runtimePresent": true,
+        "passRef": null,
+        "samples": ["packages/proton-pass/src/inject.ts:198"]
       }
     ],
     "byPackage": [
       {
         "package": "business",
-        "envKeys": [
-          "REDIS_URL"
-        ],
+        "envKeys": ["REDIS_URL"],
         "secretKeys": [],
         "vaultedKeys": [],
         "missingTemplateKeys": []
       },
       {
         "package": "p2p",
-        "envKeys": [
-          "REDIS_URL"
-        ],
+        "envKeys": ["REDIS_URL"],
         "secretKeys": [],
         "vaultedKeys": [],
         "missingTemplateKeys": []
+      },
+      {
+        "package": "proton-pass",
+        "envKeys": ["PROTON_PASS_PERSONAL_ACCESS_TOKEN", "TMPDIR"],
+        "secretKeys": ["PROTON_PASS_PERSONAL_ACCESS_TOKEN"],
+        "vaultedKeys": [],
+        "missingTemplateKeys": ["PROTON_PASS_PERSONAL_ACCESS_TOKEN"]
       }
     ],
-    "actions": [],
+    "actions": [
+      {
+        "package": "proton-pass",
+        "envKey": "PROTON_PASS_PERSONAL_ACCESS_TOKEN",
+        "action": "wire-env-template",
+        "reason": "PROTON_PASS_PERSONAL_ACCESS_TOKEN used in packages/proton-pass but missing from env.template"
+      }
+    ],
     "displayMap": [
       {
         "envKey": "CLOUDFLARE_ACCESS_API_TOKEN",
@@ -1716,7 +1536,7 @@
         "glyph": "🔑",
         "type": "token",
         "inTemplate": true,
-        "runtimePresent": false
+        "runtimePresent": true
       },
       {
         "envKey": "CLOUDFLARE_DNS_API_TOKEN",
@@ -1944,25 +1764,23 @@
       }
     ],
     "summary": {
-      "packagesWithEnv": 2,
-      "envKeyCount": 1,
+      "packagesWithEnv": 3,
+      "envKeyCount": 3,
       "vaultedHits": 0,
-      "missingTemplate": 0,
-      "openVaultActions": 0,
+      "missingTemplate": 1,
+      "openVaultActions": 1,
       "inTemplateHits": 2,
-      "runtimePresentHits": 0,
+      "runtimePresentHits": 1,
       "displayMapped": 18
     }
   },
   "runtime": {
     "root": {
-      "templateKeysPresent": 0,
-      "templateKeysMissing": 23,
+      "templateKeysPresent": 1,
+      "templateKeysMissing": 21,
       "missingKeys": [
-        "BUN_CONSOLE_DEPTH",
         "CLOUDFLARE_ACCESS_API_TOKEN",
         "CLOUDFLARE_ACCOUNT_ID",
-        "CLOUDFLARE_API_TOKEN",
         "CLOUDFLARE_DNS_API_TOKEN",
         "DOD_ID_ENCRYPTION_KEY",
         "DOD_PROOF_SECRET",
@@ -1985,7 +1803,6 @@
       ],
       "missingNeedsInject": [
         "CLOUDFLARE_ACCESS_API_TOKEN",
-        "CLOUDFLARE_API_TOKEN",
         "CLOUDFLARE_DNS_API_TOKEN",
         "DOD_ID_ENCRYPTION_KEY",
         "DOD_PROOF_SECRET",
@@ -2001,7 +1818,6 @@
         "TELEGRAM_WEBHOOK_SECRET"
       ],
       "coveredByTemplateDefault": [
-        "BUN_CONSOLE_DEPTH",
         "CLOUDFLARE_ACCOUNT_ID",
         "MCP_LOG_LEVEL",
         "NODE_ENV",
@@ -2012,26 +1828,17 @@
       ]
     },
     "products": {
-      "templateKeysPresent": 0,
-      "templateKeysMissing": 2,
-      "missingKeys": [
-        "CLOUDFLARE_API_TOKEN",
-        "SCANNER_PORT"
-      ],
-      "missingNeedsInject": [
-        "CLOUDFLARE_API_TOKEN"
-      ],
-      "coveredByTemplateDefault": [
-        "SCANNER_PORT"
-      ]
+      "templateKeysPresent": 1,
+      "templateKeysMissing": 1,
+      "missingKeys": ["SCANNER_PORT"],
+      "missingNeedsInject": [],
+      "coveredByTemplateDefault": ["SCANNER_PORT"]
     },
-    "templateKeysPresent": 0,
-    "templateKeysMissing": 24,
+    "templateKeysPresent": 1,
+    "templateKeysMissing": 22,
     "missingKeys": [
-      "BUN_CONSOLE_DEPTH",
       "CLOUDFLARE_ACCESS_API_TOKEN",
       "CLOUDFLARE_ACCOUNT_ID",
-      "CLOUDFLARE_API_TOKEN",
       "CLOUDFLARE_DNS_API_TOKEN",
       "DOD_ID_ENCRYPTION_KEY",
       "DOD_PROOF_SECRET",
@@ -2055,7 +1862,6 @@
     ],
     "missingNeedsInject": [
       "CLOUDFLARE_ACCESS_API_TOKEN",
-      "CLOUDFLARE_API_TOKEN",
       "CLOUDFLARE_DNS_API_TOKEN",
       "DOD_ID_ENCRYPTION_KEY",
       "DOD_PROOF_SECRET",
@@ -2071,7 +1877,6 @@
       "TELEGRAM_WEBHOOK_SECRET"
     ],
     "coveredByTemplateDefault": [
-      "BUN_CONSOLE_DEPTH",
       "CLOUDFLARE_ACCOUNT_ID",
       "MCP_LOG_LEVEL",
       "NODE_ENV",
@@ -2083,8 +1888,8 @@
     ]
   },
   "toml": {
-    "totalFiles": 10,
-    "totalKeys": 326,
+    "totalFiles": 44,
+    "totalKeys": 1006,
     "files": [
       {
         "path": "bunfig.toml",
@@ -2113,11 +1918,41 @@
         ],
         "importers": [
           "lib/gate-map.ts:188",
-          "lib/console-depth.ts:28",
-          "lib/verification/install-env-probes.ts:198",
-          "scripts/bake-bunfig.ts:30",
-          "scripts/bake-bunfig.ts:162",
-          "scripts/dx-mcp.ts:817"
+          "lib/console/depth.ts:12",
+          "lib/verification/install-env-probes.ts:196",
+          "scripts/bun-remove-safe.ts:26",
+          "scripts/bake-bunfig.ts:34",
+          "scripts/bake-bunfig.ts:166"
+        ]
+      },
+      {
+        "path": "config/bun-channels.toml",
+        "keyCount": 21,
+        "sampleKeys": [
+          "schema_version",
+          "policy.runtime_channel",
+          "policy.mutation",
+          "policy.promotion",
+          "types.wrapper_package",
+          "types.wrapper_channel",
+          "types.definitions_package",
+          "types.definitions_channel",
+          "monitor.os_schedule",
+          "monitor.os_timezone",
+          "monitor.in_process_timezone",
+          "monitor.title",
+          "monitor.artifact",
+          "monitor.fetch_timeout_ms",
+          "sources.stable_api",
+          "sources.stable_api_fallback",
+          "sources.canary_api",
+          "sources.tip_api",
+          "sources.rss",
+          "sources.atom"
+        ],
+        "importers": [
+          "lib/verification/bun-channel-doctor.ts:231",
+          "packages/bun-release-contracts/src/feed.ts:120"
         ]
       },
       {
@@ -2134,9 +1969,7 @@
           "images.fallback_avatar",
           "images.max_pixels"
         ],
-        "importers": [
-          "scripts/images-generate.ts:68"
-        ]
+        "importers": ["scripts/images-generate.ts:141"]
       },
       {
         "path": "config/onboarding-defaults.toml",
@@ -2149,9 +1982,595 @@
           "default_template_by_source.telegram",
           "default_template_by_source.promoted"
         ],
+        "importers": ["lib/operations/onboarding-config.ts:14"]
+      },
+      {
+        "path": "config/operator-research/alerts.toml",
+        "keyCount": 5,
+        "sampleKeys": [
+          "defaults.enabled",
+          "defaults.min_arb_edge_pct",
+          "defaults.min_move_pct",
+          "defaults.min_delay_ms",
+          "rules"
+        ],
         "importers": [
-          "lib/operations/onboarding-config.ts:14"
+          "lib/operator-research/matching/alerts.ts:37",
+          "lib/operator-research/matching/alerts.ts:385"
         ]
+      },
+      {
+        "path": "config/operator-research/leagues.toml",
+        "keyCount": 1,
+        "sampleKeys": ["leagues"],
+        "importers": ["lib/operator-research/normalization/seed.ts:53"]
+      },
+      {
+        "path": "config/operator-research/market-types.toml",
+        "keyCount": 1,
+        "sampleKeys": ["market_types"],
+        "importers": ["lib/operator-research/normalization/seed.ts:120"]
+      },
+      {
+        "path": "config/operator-research/model-harness.toml",
+        "keyCount": 6,
+        "sampleKeys": [
+          "schema_version",
+          "flags.circuitOnlyWeights",
+          "flags.latencyDiagnosticsOnly",
+          "flags.environmentDiagnosticsOnly",
+          "flags.rejectSyntheticWeightUpdates",
+          "flags.snapshotContracts"
+        ],
+        "importers": [
+          "lib/operator-research/model-contract-files.ts:83",
+          "lib/operator-research/model-contract-files.ts:365"
+        ]
+      },
+      {
+        "path": "config/operator-research/teams.toml",
+        "keyCount": 1,
+        "sampleKeys": ["teams"],
+        "importers": ["lib/operator-research/normalization/seed.ts:80"]
+      },
+      {
+        "path": "config/operator-research/tier-weights.toml",
+        "keyCount": 6,
+        "sampleKeys": [
+          "weights.1",
+          "weights.2",
+          "weights.3",
+          "smart_money.min_tier1_move_pct",
+          "smart_money.min_lag_ms",
+          "smart_money.score_threshold"
+        ],
+        "importers": ["lib/operator-research/matching/smart-money.ts:25"]
+      },
+      {
+        "path": "config/operators/bet365.toml",
+        "keyCount": 14,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths",
+          "scrape.agent_id",
+          "scrape.live_url",
+          "scrape.html",
+          "scrape.jurisdiction"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/betfair.toml",
+        "keyCount": 10,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/betmgm.toml",
+        "keyCount": 14,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths",
+          "scrape.agent_id",
+          "scrape.live_url",
+          "scrape.html",
+          "scrape.jurisdiction"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/betonline.toml",
+        "keyCount": 10,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/betrivers.toml",
+        "keyCount": 14,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths",
+          "scrape.agent_id",
+          "scrape.live_url",
+          "scrape.html",
+          "scrape.jurisdiction"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/betway.toml",
+        "keyCount": 10,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/bovada.toml",
+        "keyCount": 10,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/caesars.toml",
+        "keyCount": 14,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths",
+          "scrape.agent_id",
+          "scrape.live_url",
+          "scrape.html",
+          "scrape.jurisdiction"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/circa.toml",
+        "keyCount": 14,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths",
+          "scrape.agent_id",
+          "scrape.live_url",
+          "scrape.html",
+          "scrape.jurisdiction"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/cloudbet.toml",
+        "keyCount": 10,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/draftkings.toml",
+        "keyCount": 16,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths",
+          "scrape.agent_id",
+          "scrape.live_url",
+          "scrape.html",
+          "scrape.html_url",
+          "scrape.html_fixture",
+          "scrape.jurisdiction"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/espnbet.toml",
+        "keyCount": 14,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths",
+          "scrape.agent_id",
+          "scrape.live_url",
+          "scrape.html",
+          "scrape.jurisdiction"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/fanatics.toml",
+        "keyCount": 14,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths",
+          "scrape.agent_id",
+          "scrape.live_url",
+          "scrape.html",
+          "scrape.jurisdiction"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/fanduel.toml",
+        "keyCount": 16,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths",
+          "scrape.agent_id",
+          "scrape.live_url",
+          "scrape.html",
+          "scrape.html_url",
+          "scrape.html_fixture",
+          "scrape.jurisdiction"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/hardrock.toml",
+        "keyCount": 14,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths",
+          "scrape.agent_id",
+          "scrape.live_url",
+          "scrape.html",
+          "scrape.jurisdiction"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/pinnacle.toml",
+        "keyCount": 10,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/pointsbet.toml",
+        "keyCount": 10,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/prizepicks.toml",
+        "keyCount": 10,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/smarkets.toml",
+        "keyCount": 10,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/stake.toml",
+        "keyCount": 10,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/thunderpick.toml",
+        "keyCount": 10,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/operators/underdog.toml",
+        "keyCount": 10,
+        "sampleKeys": [
+          "operator.id",
+          "operator.name",
+          "operator.host",
+          "operator.url",
+          "operator.identity",
+          "operator.geo",
+          "operator.markets",
+          "operator.lifecycle",
+          "operator.expected_stack",
+          "operator.probe_paths"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/partner-profiles/ASH.toml",
+        "keyCount": 78,
+        "sampleKeys": [
+          "meta.templateId",
+          "meta.name",
+          "meta.version",
+          "meta.source",
+          "identity.code",
+          "identity.callSign",
+          "identity.status",
+          "lineage.parent",
+          "lineage.expert",
+          "lineage.cutPct",
+          "lifecycle.status",
+          "lifecycle.phase",
+          "telegram.chatId",
+          "telegram.topics.general",
+          "telegram.topics.ops",
+          "telegram.topics.alerts",
+          "telegram.topics.liquidity",
+          "telegram.topics.accounting",
+          "jurisdiction.type",
+          "jurisdiction.allowedStates"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/partner-profiles/BIL.toml",
+        "keyCount": 76,
+        "sampleKeys": [
+          "meta.templateId",
+          "meta.name",
+          "meta.version",
+          "meta.source",
+          "identity.code",
+          "identity.callSign",
+          "identity.status",
+          "lineage.parent",
+          "lineage.expert",
+          "lineage.cutPct",
+          "lifecycle.status",
+          "lifecycle.phase",
+          "telegram.chatId",
+          "telegram.topics.general",
+          "telegram.topics.ops",
+          "telegram.topics.alerts",
+          "telegram.topics.liquidity",
+          "telegram.topics.accounting",
+          "jurisdiction.type",
+          "jurisdiction.allowedStates"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/partner-profiles/NOV.toml",
+        "keyCount": 88,
+        "sampleKeys": [
+          "meta.templateId",
+          "meta.name",
+          "meta.version",
+          "meta.source",
+          "identity.code",
+          "identity.callSign",
+          "identity.status",
+          "lineage.parent",
+          "lineage.expert",
+          "lineage.cutPct",
+          "lifecycle.status",
+          "lifecycle.phase",
+          "telegram.chatId",
+          "telegram.topics.general",
+          "telegram.topics.ops",
+          "telegram.topics.alerts",
+          "telegram.topics.liquidity",
+          "telegram.topics.accounting",
+          "jurisdiction.type",
+          "jurisdiction.allowedStates"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/partner-profiles/SPEN.toml",
+        "keyCount": 124,
+        "sampleKeys": [
+          "meta.templateId",
+          "meta.name",
+          "meta.version",
+          "meta.source",
+          "identity.code",
+          "identity.callSign",
+          "identity.status",
+          "lineage.parent",
+          "lineage.expert",
+          "lineage.cutPct",
+          "lifecycle.status",
+          "lifecycle.phase",
+          "telegram.chatId",
+          "telegram.topics.general",
+          "telegram.topics.ops",
+          "telegram.topics.alerts",
+          "telegram.topics.liquidity",
+          "telegram.topics.accounting",
+          "jurisdiction.type",
+          "jurisdiction.allowedStates"
+        ],
+        "importers": []
       },
       {
         "path": "config/partner-templates/default-prospect.toml",
@@ -2204,8 +2623,29 @@
         ],
         "importers": [
           "lib/operations/onboarding-config.ts:38",
-          "lib/partner-profile/register.ts:132",
-          "tools/migrate-seat-partners-to-profiles.ts:116"
+          "lib/partner-profile/register.ts:134",
+          "tools/migrate-seat-partners-to-profiles.ts:124"
+        ]
+      },
+      {
+        "path": "config/scrape-agents.toml",
+        "keyCount": 9,
+        "sampleKeys": [
+          "defaults.jurisdiction",
+          "defaults.json_timeout_ms",
+          "defaults.html_timeout_ms",
+          "webview.timeout_ms",
+          "webview.settle_ms",
+          "webview.width",
+          "webview.height",
+          "cron.schedule",
+          "cron.title"
+        ],
+        "importers": [
+          "lib/operations/scrapers/webview-html.ts:8",
+          "lib/operations/scrapers/scrape-agents-config.ts:10",
+          "lib/operations/scrapers/scrape-agents-config.ts:36",
+          "lib/operations/scrapers/scrape-cron.ts:33"
         ]
       },
       {
@@ -2234,9 +2674,9 @@
           "surfaces.score.access"
         ],
         "importers": [
-          "scripts/bake-surfaces.ts:50",
-          "tools/domain-sweep.ts:56",
-          "tools/brand-status.ts:77"
+          "scripts/bake-surfaces.ts:54",
+          "tools/domain-sweep.ts:201",
+          "tools/brand-status.ts:83"
         ]
       },
       {
@@ -2267,9 +2707,9 @@
         "importers": [
           "lib/security/vault-map.ts:95",
           "lib/security/vault-map.ts:343",
-          "tools/bake-tennis-agent-auth.ts:13",
+          "tools/bake-tennis-agent-auth.ts:17",
           "tools/lib/portal-cli-scanner.ts:57",
-          "lib/http/portal-weave.ts:526",
+          "lib/http/portal-weave.ts:572",
           "lib/security/vault-map.ts:53"
         ]
       },
@@ -2287,19 +2727,17 @@
         ],
         "importers": [
           "lib/gate-map.ts:188",
-          "lib/verification/install-env-probes.ts:198",
-          "scripts/bake-bunfig.ts:30",
-          "scripts/bake-bunfig.ts:162",
-          "scripts/dx-mcp.ts:817",
-          "scripts/pre-commit-harness.ts:113"
+          "lib/verification/install-env-probes.ts:196",
+          "scripts/bun-remove-safe.ts:26",
+          "scripts/bake-bunfig.ts:34",
+          "scripts/bake-bunfig.ts:166",
+          "scripts/pre-commit-harness.ts:116"
         ]
       },
       {
         "path": "reasonix.toml",
         "keyCount": 1,
-        "sampleKeys": [
-          "permissions.allow"
-        ],
+        "sampleKeys": ["config_version"],
         "importers": []
       },
       {
@@ -2312,21 +2750,44 @@
           "r2_buckets"
         ],
         "importers": [
-          "scripts/dx-mcp.ts:146",
-          "scripts/dx-mcp.ts:147",
-          "scripts/dx-mcp.ts:442",
-          "scripts/dx-mcp.ts:817",
-          "scripts/bake-surfaces.ts:191"
+          "scripts/bake-surfaces.ts:205",
+          "scripts/repo-hygiene.ts:127"
         ]
       }
     ],
     "orphanFiles": [
+      "config/operators/bet365.toml",
+      "config/operators/betfair.toml",
+      "config/operators/betmgm.toml",
+      "config/operators/betonline.toml",
+      "config/operators/betrivers.toml",
+      "config/operators/betway.toml",
+      "config/operators/bovada.toml",
+      "config/operators/caesars.toml",
+      "config/operators/circa.toml",
+      "config/operators/cloudbet.toml",
+      "config/operators/draftkings.toml",
+      "config/operators/espnbet.toml",
+      "config/operators/fanatics.toml",
+      "config/operators/fanduel.toml",
+      "config/operators/hardrock.toml",
+      "config/operators/pinnacle.toml",
+      "config/operators/pointsbet.toml",
+      "config/operators/prizepicks.toml",
+      "config/operators/smarkets.toml",
+      "config/operators/stake.toml",
+      "config/operators/thunderpick.toml",
+      "config/operators/underdog.toml",
+      "config/partner-profiles/ASH.toml",
+      "config/partner-profiles/BIL.toml",
+      "config/partner-profiles/NOV.toml",
+      "config/partner-profiles/SPEN.toml",
       "reasonix.toml"
     ],
     "parseErrors": []
   },
   "partnersAccountsPlane": {
-    "generatedAt": "2026-08-05T09:08:32.211Z",
+    "generatedAt": "2026-08-15T01:04:58.136Z",
     "sources": {
       "partnersOps": "/registry/partners-ops.json",
       "handshake": "/registry/telegram-handshake.json",
@@ -2336,10 +2797,7 @@
       {
         "envKey": "PARTNER_API_TOKEN",
         "role": "partner-api",
-        "consumers": [
-          "tennis-hq",
-          "partners-board"
-        ],
+        "consumers": ["tennis-hq", "partners-board"],
         "passRef": "pass://factorywager/Tennis HQ Partner API Token/password",
         "inVaultMap": true,
         "inTemplate": false,
@@ -2348,11 +2806,7 @@
       {
         "envKey": "TELEGRAM_BOT_FACTORY",
         "role": "telegram-bot",
-        "consumers": [
-          "partners-board",
-          "factory-bot",
-          "seat-desk"
-        ],
+        "consumers": ["partners-board", "factory-bot", "seat-desk"],
         "passRef": "pass://factorywager/Telegram: factorywager_bot/password",
         "inVaultMap": true,
         "inTemplate": true,
@@ -2361,10 +2815,7 @@
       {
         "envKey": "TELEGRAM_WEBHOOK_SECRET",
         "role": "webhook",
-        "consumers": [
-          "factory-bot",
-          "partners-board"
-        ],
+        "consumers": ["factory-bot", "partners-board"],
         "passRef": "pass://factorywager/Telegram Webhook Secret/password",
         "inVaultMap": true,
         "inTemplate": true,
@@ -2373,9 +2824,7 @@
       {
         "envKey": "TELEGRAM_BOT_TOKEN",
         "role": "telegram-bot",
-        "consumers": [
-          "factory-bot"
-        ],
+        "consumers": ["factory-bot"],
         "passRef": null,
         "inVaultMap": false,
         "inTemplate": false,
@@ -2384,10 +2833,7 @@
       {
         "envKey": "FACTORY_WAGER_TOKEN",
         "role": "signing",
-        "consumers": [
-          "tennis-hq",
-          "partners-board"
-        ],
+        "consumers": ["tennis-hq", "partners-board"],
         "passRef": "pass://factorywager/FactoryWager Registry Token/password",
         "inVaultMap": true,
         "inTemplate": true,
@@ -2557,11 +3003,11 @@
   },
   "summary": {
     "ownerCount": 60,
-    "packageTouchedKeys": 1,
+    "packageTouchedKeys": 5,
     "multiPlaneKeys": 36,
-    "rootRuntimeMissing": 23,
-    "rootRuntimeNeedsInject": 15,
-    "rootCoveredByDefault": 8,
+    "rootRuntimeMissing": 21,
+    "rootRuntimeNeedsInject": 14,
+    "rootCoveredByDefault": 7,
     "defaultsIssueCount": 2,
     "partnerCount": 4,
     "partnerAccountsReady": 7,
