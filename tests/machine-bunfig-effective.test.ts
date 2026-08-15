@@ -3,9 +3,14 @@
 import { describe, expect, test } from 'bun:test';
 import { joinPath, resolvePath } from '../scripts/lib/fs-bun.ts';
 import {
+  formatGlobalBunfigRef,
+  formatPolicySource,
+  readBunfigInstall,
   readEffectiveGlobalBunfig,
   readMachineBunfig,
   resolveEffectiveInstallPolicy,
+  resolveGlobalBunfigPaths,
+  resolveHomeBunfigPath,
 } from '../scripts/lib/machine-bunfig.ts';
 
 const ROOT = resolvePath(import.meta.dir, '..');
@@ -45,6 +50,53 @@ describe('readEffectiveGlobalBunfig', () => {
     const policy = resolveEffectiveInstallPolicy(project, effective);
     expect(policy.linker).toBe('hoisted');
     expect(policy.source.linker).toBe('machine');
+    expect(policy.globalBunfigPath).toBe(joinPath(xdg, '.bunfig.toml'));
+    expect(formatPolicySource('linker', policy, env)).toBe(
+      'inherited from $XDG_CONFIG_HOME/.bunfig.toml'
+    );
+    expect(formatGlobalBunfigRef(policy.globalBunfigPath, env)).toBe(
+      '$XDG_CONFIG_HOME/.bunfig.toml'
+    );
+    await Bun.$`rm -rf ${home}`.quiet();
+  });
+
+  test('formatPolicySource labels home SSOT as ~/.bunfig.toml', async () => {
+    const home = joinPath(ROOT, 'tmp/effective-label-home');
+    await Bun.$`rm -rf ${home}`.quiet();
+    await Bun.$`mkdir -p ${home}`.quiet();
+    await Bun.write(joinPath(home, '.bunfig.toml'), '[install]\nlinker = "isolated"\n');
+    const env = { HOME: home };
+    const policy = resolveEffectiveInstallPolicy(
+      { bunfigPath: null, install: null, cacheDir: null },
+      await readEffectiveGlobalBunfig(env)
+    );
+    expect(formatPolicySource('linker', policy, env)).toBe('inherited from ~/.bunfig.toml');
+    expect(formatGlobalBunfigRef(resolveHomeBunfigPath(env), env)).toBe('~/.bunfig.toml');
+    await Bun.$`rm -rf ${home}`.quiet();
+  });
+
+  test('readBunfigInstall expands ~ against the injected HOME', async () => {
+    const home = joinPath(ROOT, 'tmp/tilde-expand-home');
+    await Bun.$`rm -rf ${home}`.quiet();
+    await Bun.$`mkdir -p ${home}`.quiet();
+    const bunfigPath = joinPath(home, '.bunfig.toml');
+    await Bun.write(bunfigPath, '[install.cache]\ndir = "~/.bun/install/cache"\n');
+    const { cacheDir } = await readBunfigInstall(bunfigPath, { HOME: home });
+    expect(cacheDir).toBe(joinPath(home, '.bun/install/cache'));
+    await Bun.$`rm -rf ${home}`.quiet();
+  });
+
+  test('bake paths: XDG file is effectiveGlobal; home remains machine SSOT', async () => {
+    const home = joinPath(ROOT, 'tmp/bake-paths-xdg');
+    const xdg = joinPath(home, 'xdg');
+    await Bun.$`rm -rf ${home}`.quiet();
+    await Bun.$`mkdir -p ${xdg}`.quiet();
+    await Bun.write(joinPath(home, '.bunfig.toml'), '[install]\nlinker = "isolated"\n');
+    await Bun.write(joinPath(xdg, '.bunfig.toml'), '[install]\nlinker = "hoisted"\n');
+    const env = { HOME: home, XDG_CONFIG_HOME: xdg };
+    const paths = await resolveGlobalBunfigPaths(env);
+    expect(paths.machine).toBe(joinPath(home, '.bunfig.toml'));
+    expect(paths.effectiveGlobal).toBe(joinPath(xdg, '.bunfig.toml'));
     await Bun.$`rm -rf ${home}`.quiet();
   });
 });

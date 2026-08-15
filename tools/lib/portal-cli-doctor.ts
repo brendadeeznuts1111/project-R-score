@@ -61,7 +61,7 @@ import {
 } from '../../lib/security/pass-session.ts';
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import {
-  readMachineBunfig,
+  readEffectiveGlobalBunfig,
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
 } from '../../scripts/lib/machine-bunfig.ts';
@@ -368,7 +368,7 @@ export async function checkLinkerConfigVersion(cwd: string): Promise<PortalDocto
 export async function checkMachineIsolatedLinker(cwd: string): Promise<PortalDoctorCheck> {
   const eff = resolveEffectiveInstallPolicy(
     await readProjectBunfig(cwd),
-    await readMachineBunfig()
+    await readEffectiveGlobalBunfig()
   );
   const ok = eff.linker === 'isolated';
   return withMeta(

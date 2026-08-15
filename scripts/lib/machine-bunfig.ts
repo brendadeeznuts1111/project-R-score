@@ -21,6 +21,8 @@ export type EffectiveInstallPolicy = {
   linker: string | null;
   globalStore: boolean | null;
   cacheDir: string | null;
+  /** Global bunfig that supplied inherited keys (XDG if present, else home). */
+  globalBunfigPath: string | null;
   source: {
     linker: 'project' | 'machine' | 'unset';
     globalStore: 'project' | 'machine' | 'unset';
@@ -41,14 +43,15 @@ function expandTilde(value: string, home: string): string {
 }
 
 export async function readBunfigInstall(
-  bunfigPath: string
+  bunfigPath: string,
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
 ): Promise<{ install: BunfigInstall | null; cacheDir: string | null }> {
   try {
     const exists = await Bun.file(bunfigPath).exists();
     if (!exists) return { install: null, cacheDir: null };
     const parsed = TOML.parse(await Bun.file(bunfigPath).text()) as { install?: BunfigInstall };
     const install = parsed.install ?? null;
-    const home = resolveHome();
+    const home = resolveHome(env);
     const rawDir = install?.cache?.dir ?? null;
     const cacheDir = rawDir && home ? expandTilde(rawDir, home) : rawDir ? rawDir : null;
     return { install, cacheDir };
@@ -57,13 +60,19 @@ export async function readBunfigInstall(
   }
 }
 
+export function resolveHomeBunfigPath(
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
+): string | null {
+  const home = resolveHome(env);
+  return home ? joinPath(home, '.bunfig.toml') : null;
+}
+
 export async function readMachineBunfig(
   env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
 ): Promise<MachineBunfigSnapshot> {
-  const home = resolveHome(env);
-  if (!home) return { bunfigPath: null, install: null, cacheDir: null };
-  const bunfigPath = joinPath(home, '.bunfig.toml');
-  const { install, cacheDir } = await readBunfigInstall(bunfigPath);
+  const bunfigPath = resolveHomeBunfigPath(env);
+  if (!bunfigPath) return { bunfigPath: null, install: null, cacheDir: null };
+  const { install, cacheDir } = await readBunfigInstall(bunfigPath, env);
   const exists = await Bun.file(bunfigPath).exists();
   return {
     bunfigPath: exists ? bunfigPath : null,
@@ -82,10 +91,19 @@ export async function readEffectiveGlobalBunfig(
 ): Promise<MachineBunfigSnapshot> {
   const xdg = xdgShadowBunfigPath(env);
   if (xdg && (await Bun.file(xdg).exists())) {
-    const { install, cacheDir } = await readBunfigInstall(xdg);
+    const { install, cacheDir } = await readBunfigInstall(xdg, env);
     return { bunfigPath: xdg, install, cacheDir };
   }
   return readMachineBunfig(env);
+}
+
+/** SSOT home path vs the global file Bun loads. */
+export async function resolveGlobalBunfigPaths(
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
+): Promise<{ machine: string | null; effectiveGlobal: string | null }> {
+  const machine = resolveHomeBunfigPath(env);
+  const effective = await readEffectiveGlobalBunfig(env);
+  return { machine, effectiveGlobal: effective.bunfigPath ?? machine };
 }
 
 export async function readProjectBunfig(projectRoot: string): Promise<MachineBunfigSnapshot> {
@@ -111,6 +129,7 @@ export function resolveEffectiveInstallPolicy(
     linker,
     globalStore,
     cacheDir,
+    globalBunfigPath: machine.bunfigPath,
     source: {
       linker:
         project.install?.linker != null
@@ -135,12 +154,28 @@ export function isAbsoluteCachePath(cacheDir: string | null): boolean {
   return !cacheDir.startsWith('~/') && cacheDir !== '~' && !cacheDir.includes('/~/');
 }
 
+/** Operator label for the global bunfig Bun actually loaded. */
+export function formatGlobalBunfigRef(
+  bunfigPath: string | null,
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
+): string {
+  if (!bunfigPath) return 'global bunfig';
+  const home = resolveHome(env);
+  if (home && bunfigPath === joinPath(home, '.bunfig.toml')) return '~/.bunfig.toml';
+  const xdg = xdgShadowBunfigPath(env);
+  if (xdg && bunfigPath === xdg) return '$XDG_CONFIG_HOME/.bunfig.toml';
+  return bunfigPath;
+}
+
 export function formatPolicySource(
   key: keyof EffectiveInstallPolicy['source'],
-  policy: EffectiveInstallPolicy
+  policy: EffectiveInstallPolicy,
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
 ): string {
   const src = policy.source[key];
-  if (src === 'machine') return 'inherited from ~/.bunfig.toml';
+  if (src === 'machine') {
+    return `inherited from ${formatGlobalBunfigRef(policy.globalBunfigPath, env)}`;
+  }
   if (src === 'project') return 'set in project bunfig.toml';
   return 'unset';
 }

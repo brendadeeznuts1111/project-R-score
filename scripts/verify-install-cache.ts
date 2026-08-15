@@ -36,6 +36,7 @@ import {
 import {
   formatPolicySource,
   isAbsoluteCachePath,
+  readEffectiveGlobalBunfig,
   readMachineBunfig,
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
@@ -79,8 +80,12 @@ async function checkBunfig(): Promise<Check> {
     };
   }
 
-  const [project, machine] = await Promise.all([readProjectBunfig(ROOT), readMachineBunfig()]);
-  const policy = resolveEffectiveInstallPolicy(project, machine);
+  const [project, machine, globalLayer] = await Promise.all([
+    readProjectBunfig(ROOT),
+    readMachineBunfig(),
+    readEffectiveGlobalBunfig(),
+  ]);
+  const policy = resolveEffectiveInstallPolicy(project, globalLayer);
   const env = applyBunInstallEnv();
 
   const linkerOk = policy.linker === MACHINE_EXPECTED_LINKER;

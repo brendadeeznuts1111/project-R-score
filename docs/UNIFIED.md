@@ -385,7 +385,7 @@ pins. Always inspect `bun why` before `remove:safe`.
 `--overwrite` refuses a symlink (dotfiles SSOT); `--overwrite-link` is the
 explicit flatten. Template is the CI/bootstrap seed; `--check` reads through the
 link and fails if `$XDG_CONFIG_HOME/.bunfig.toml` exists (Bun prefers it).
-Effective install merge uses that XDG file when present, otherwise `~/.bunfig.toml`.
+Effective install merge, policy labels, and `bunfig:bake` use that XDG file when present, otherwise `~/.bunfig.toml`.
 `~/.bun/install/global/bunfig.toml` is not a Bun config path.
 
 ```bash

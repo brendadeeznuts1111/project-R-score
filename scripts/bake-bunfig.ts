@@ -10,8 +10,9 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 /**
  * bake-bunfig.ts — bake bunfig configuration reality → public/registry/bunfig-state.json
  *
- * Reads machine ~/.bunfig.toml + project ./bunfig.toml, computes the effective
- * merge (Bun precedence: project overlays machine), records per-key provenance,
+ * Reads the global bunfig Bun loads (`$XDG_CONFIG_HOME/.bunfig.toml` if present,
+ * else `$HOME/.bunfig.toml`) + project ./bunfig.toml, computes the effective
+ * merge (project overlays that global layer), records per-key provenance,
  * and captures the two enforcement gates:
  *   kimi-doctor --gate bunfig-policy   (machine SSOT values)
  *   bash scripts/audit-bunfig.sh --strict   (no workspace duplication)
@@ -22,15 +23,14 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  * Values only — no tokens; scope entries record url + token-env NAME, never values.
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
-import { homedir } from 'node:os';
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 import { resolvePath } from './lib/fs-bun';
+import { resolveGlobalBunfigPaths } from './lib/machine-bunfig.ts';
 
 const argv = import.meta.main
   ? applyUnknownLongOptionGuardFor('bunfig:bake', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 const ROOT = resolvePath(import.meta.dir, '..');
-const MACHINE_PATH = `${homedir()}/.bunfig.toml`;
 const PROJECT_PATH = resolvePath(ROOT, 'bunfig.toml');
 const OUT_PATH = resolvePath(ROOT, 'public/registry/bunfig-state.json');
 const CHECK = argv.includes('--check');
@@ -113,9 +113,11 @@ function provenance(
 }
 
 async function main(): Promise<void> {
-  const machine = await readToml(MACHINE_PATH);
+  const paths = await resolveGlobalBunfigPaths();
+  const globalPath = paths.effectiveGlobal;
+  const machine = globalPath ? await readToml(globalPath) : null;
   const project = await readToml(PROJECT_PATH);
-  if (!machine) console.error(`⚠ machine bunfig unreadable: ${MACHINE_PATH}`);
+  if (!machine) console.error(`⚠ global bunfig unreadable: ${globalPath ?? '(unset HOME)'}`);
   if (!project) console.error(`⚠ project bunfig unreadable: ${PROJECT_PATH}`);
 
   const keys = provenance(machine, project);
@@ -163,7 +165,11 @@ async function main(): Promise<void> {
     schemaVersion: 2,
     kind: 'bunfig-state',
     generatedAt: new Date().toISOString(),
-    paths: { machine: MACHINE_PATH, project: 'bunfig.toml' },
+    paths: {
+      machine: paths.machine,
+      effectiveGlobal: paths.effectiveGlobal,
+      project: 'bunfig.toml',
+    },
     cacheDir:
       ((machine?.install as TomlTable | undefined)?.cache as TomlTable | undefined)?.dir ?? null,
     /** Production registry host (SSOT: config/r2-env.ts) — dev scopes point at loopback. */

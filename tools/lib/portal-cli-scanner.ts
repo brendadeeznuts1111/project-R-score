@@ -1174,13 +1174,12 @@ export async function dispatchScanner(
     );
     const lastScan = await readScannerLastRun(`${cwd}/${SCANNER_LAST_REL}`);
     const { readLockfileInstallMeta } = await import('../../lib/docs/bun-install-linker-docs.ts');
-    const { readMachineBunfig, readProjectBunfig, resolveEffectiveInstallPolicy } = await import(
-      '../../scripts/lib/machine-bunfig.ts'
-    );
+    const { readEffectiveGlobalBunfig, readProjectBunfig, resolveEffectiveInstallPolicy } =
+      await import('../../scripts/lib/machine-bunfig.ts');
     const lockMeta = await readLockfileInstallMeta(cwd);
     const eff = resolveEffectiveInstallPolicy(
       await readProjectBunfig(cwd),
-      await readMachineBunfig()
+      await readEffectiveGlobalBunfig()
     );
     const policy = buildPackageMgmtPolicy(status, {
       packageCountEstimate,
