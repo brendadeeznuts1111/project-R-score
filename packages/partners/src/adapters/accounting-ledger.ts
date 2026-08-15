@@ -99,7 +99,7 @@ export type AdaptAccountingFromLedgerRowsOptions = {
   sourceRecordRefPrefix?: string;
 };
 
-function wireSafeInteger(value: unknown, path: string): number {
+function parseWireSafeInteger(value: unknown, path: string): number {
   if (typeof value !== 'number' || !Number.isSafeInteger(value)) {
     throw new TypeError(`${path} must be a safe integer`);
   }
@@ -130,7 +130,7 @@ export function parseMoneyAmount(value: unknown, path: string): MoneyAmount {
   }
   return {
     currency: parseCurrencyCode(record.currency),
-    minorUnits: wireSafeInteger(record.minorUnits, `${path}.minorUnits`),
+    minorUnits: parseWireSafeInteger(record.minorUnits, `${path}.minorUnits`),
   };
 }
 
@@ -239,14 +239,14 @@ function scopeSortKey(scope: AccountScope): string {
   return `rail:${scope.railId}`;
 }
 
-function moneyFromMinorFields(
+function parseMoneyFromMinorFields(
   amountMinor: unknown,
   currencyRaw: unknown,
   path: string
 ): MoneyAmount {
   return {
     currency: parseCurrencyCode(currencyRaw),
-    minorUnits: wireSafeInteger(amountMinor, path),
+    minorUnits: parseWireSafeInteger(amountMinor, path),
   };
 }
 
@@ -281,7 +281,7 @@ export function parsePartnerLedgerRow(
         `${path} requires amount_minor/amountMinor or amount:{currency,minorUnits}`
       );
     }
-    amount = moneyFromMinorFields(amountMinor, currency, `${path}.amount_minor`);
+    amount = parseMoneyFromMinorFields(amountMinor, currency, `${path}.amount_minor`);
   }
 
   const balanceField = pickField(row, 'balanceAfter', 'balance_after');
@@ -295,7 +295,7 @@ export function parsePartnerLedgerRow(
         `${path} requires balance_after_minor/balanceAfterMinor or balanceAfter:{currency,minorUnits}`
       );
     }
-    balanceAfter = moneyFromMinorFields(
+    balanceAfter = parseMoneyFromMinorFields(
       balanceMinor,
       currency ?? amount.currency,
       `${path}.balance_after_minor`

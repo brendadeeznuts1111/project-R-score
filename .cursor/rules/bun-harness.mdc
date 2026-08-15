@@ -1,5 +1,5 @@
 ---
-description: Global Bun harness — use Bun-native APIs in root paths; consult dx catalog for one-liners
+description: Global Bun harness — use Bun-native APIs in root paths; consult the remediation catalog
 globs: lib/**/*.ts,scripts/**/*.ts,packages/**/*.ts,server/**/*.ts,config/**/*.ts,tools/**/*.ts
 alwaysApply: false
 ---
@@ -31,5 +31,5 @@ Root TypeScript in harness paths must prefer Bun-native APIs over Node.js equiva
 ## Verify
 
 ```bash
-bun run check:harness
+bun run lint
 ```

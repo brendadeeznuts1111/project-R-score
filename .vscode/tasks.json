@@ -5,7 +5,7 @@
       "label": "FW: Format Core",
       "type": "shell",
       "command": "bun",
-      "args": ["run", "format:core"],
+      "args": ["run", "format"],
       "group": "build",
       "presentation": { "reveal": "silent", "panel": "shared" },
       "problemMatcher": []
@@ -74,15 +74,6 @@
       "args": ["run", "build"],
       "group": "build",
       "presentation": { "reveal": "always", "panel": "shared" },
-      "problemMatcher": []
-    },
-    {
-      "label": "FW: DX MCP (stdio)",
-      "type": "shell",
-      "command": "bun",
-      "args": ["run", "${workspaceFolder}/scripts/dx-mcp.ts"],
-      "isBackground": true,
-      "presentation": { "reveal": "never", "panel": "dedicated" },
       "problemMatcher": []
     }
   ]

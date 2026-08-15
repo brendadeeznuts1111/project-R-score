@@ -28,7 +28,7 @@ function isCatalogOrSampleLine(line: string): boolean {
   if (/\bexampleCode\b|\bnode:\s*\[/.test(line)) return true;
   if (/script:\s*\|/.test(line)) return true;
   if (/github-script/.test(line)) return true;
-  if (/import fs from 'node:fs'/.test(line) && /dx-mcp|template/.test(line)) return true;
+  if (/import fs from 'node:fs'/.test(line) && /template/.test(line)) return true;
   return false;
 }
 

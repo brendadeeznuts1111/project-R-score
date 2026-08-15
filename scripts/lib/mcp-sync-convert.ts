@@ -58,7 +58,7 @@ export function toWorkspaceRelative(root: string, value: string): string {
   if (value.startsWith(`${root}/`)) {
     return `${WORKSPACE_TOKEN}${value.slice(root.length)}`;
   }
-  // Single repo-relative path/file — never rewrite comma-lists (e.g. DX_SCAN_ROOTS)
+  // Single repo-relative path/file — never rewrite comma-separated values.
   // or bare commands ("bun").
   if (
     value.length > 0 &&

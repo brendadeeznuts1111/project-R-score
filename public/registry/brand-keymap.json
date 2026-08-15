@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-14T18:38:11.904Z",
+  "generatedAt": "2026-08-15T01:12:41.544Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -1052,7 +1052,7 @@
         "status": "covered",
         "references": 4,
         "constructors": {
-          "as": 41,
+          "as": 37,
           "try": 0,
           "parse": 0
         },
@@ -1067,7 +1067,7 @@
           "spine": {
             "status": "covered",
             "references": 4,
-            "constructionCalls": 41,
+            "constructionCalls": 37,
             "guardCalls": 0,
             "files": [
               "lib/docs/bun-brand-contract.ts",

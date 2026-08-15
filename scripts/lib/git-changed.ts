@@ -72,7 +72,7 @@ export async function listChangedFiles(opts: {
   return [...new Set(sets.flat())];
 }
 
-/** Paths covered by lint:bun-native:rollout (excludes tests / projects/). */
+/** Paths covered by the full harness lint scope (excludes tests / projects/). */
 export function isHarnessLintPath(file: string): boolean {
   const normalized = file.replace(/^\.\//, '');
   if (normalized.startsWith('projects/')) return false;

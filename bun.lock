@@ -6,7 +6,6 @@
       "name": "factorywager-enterprise",
       "dependencies": {
         "@factorywager/docs-tools": "workspace:*",
-        "@factorywager/guards": "workspace:*",
         "@factorywager/proton-pass": "workspace:*",
         "@factorywager/registry-client": "workspace:*",
         "@factorywager/rip": "workspace:*",
@@ -53,10 +52,6 @@
     },
     "packages/docs-tools": {
       "name": "@factorywager/docs-tools",
-      "version": "0.1.0",
-    },
-    "packages/guards": {
-      "name": "@factorywager/guards",
       "version": "0.1.0",
     },
     "packages/p2p": {
@@ -308,8 +303,6 @@
     "@factorywager/business": ["@factorywager/business@workspace:packages/business"],
 
     "@factorywager/docs-tools": ["@factorywager/docs-tools@workspace:packages/docs-tools"],
-
-    "@factorywager/guards": ["@factorywager/guards@workspace:packages/guards"],
 
     "@factorywager/p2p": ["@factorywager/p2p@workspace:packages/p2p"],
 

@@ -18,17 +18,6 @@
         "BUN_DOCS_ROOT": "${workspaceFolder}"
       }
     },
-    "dx": {
-      "type": "stdio",
-      "command": "bun",
-      "args": [
-        "${workspaceFolder}/scripts/dx-mcp.ts"
-      ],
-      "env": {
-        "DX_SCAN_ROOTS": "projects/active,projects/experimental,projects/archive,projects/active/enterprise/cascade-mover-v3,projects/active/enterprise/bet-ticker-worker-v1.1,packages,lib,tools"
-      },
-      "envFile": "${workspaceFolder}/.env"
-    },
     "cascade-mover": {
       "type": "http",
       "url": "http://100.64.250.26:8787/mcp"

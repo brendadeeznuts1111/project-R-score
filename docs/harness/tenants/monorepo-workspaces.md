@@ -69,7 +69,7 @@ Filters **respect root `workspaces`**: only listed members match. Nested monorep
 | Kind | Pattern | Selects |
 |------|---------|---------|
 | Package **name** | `--filter '@factorywager/*'` · `--filter sports-terminal-os` · `--filter '*'` | `package.json` `"name"` (glob) |
-| Package **path** | `--filter './packages/*'` · `--filter './packages/guards'` | Dirs under workspace root; **must** start with `./` |
+| Package **path** | `--filter './packages/*'` · `--filter './packages/docs-tools'` | Dirs under workspace root; **must** start with `./` |
 | Negation | `--filter '!pkg-c'` · `--filter '!./'` | Exclude name or path (e.g. exclude root package) |
 | Root only | `--filter './'` | Root `package.json` only (useful for `outdated`) |
 

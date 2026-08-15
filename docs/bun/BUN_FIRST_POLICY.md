@@ -4,8 +4,8 @@
 
 Prefer Bun native APIs over Node compat when an equivalent exists. Enforce via:
 
-- `bun run lint:bun-native:changed` / `lint:bun-native:rollout`
-- `bun run guard:bun-first:harness` · `bun run migrate:status`
+- `bun run lint` / `bun run lint:all`
+- `bun run migrate:status`
 - [BUN_FIRST_GUARDS.md](../BUN_FIRST_GUARDS.md) ·
   [BUN_NATIVE_CAPABILITIES.md](../BUN_NATIVE_CAPABILITIES.md)
 - `bun run bun:remediation` · `bun tools/bun-doc-refs.ts suggest "<api>"`
@@ -27,7 +27,7 @@ Prefer Bun native APIs over Node compat when an equivalent exists. Enforce via:
 ```bash
 bun run check:path-bun
 bun run check:bun-env
-bun run lint:bun-native:changed
+bun run lint
 bun run harness:status
 ```
 

@@ -21,7 +21,6 @@ function parseArgs(args: string[]): {
   mdOut?: string;
   top: number;
   easyOnly: boolean;
-  promoteOnly: boolean;
   quiet: boolean;
 } {
   let top = 20;
@@ -32,7 +31,6 @@ function parseArgs(args: string[]): {
     const arg = args[i]!;
     if (arg === '--json') continue;
     if (arg === '--easy-only') continue;
-    if (arg === '--promote') continue;
     if (arg === '--quiet') continue;
     if (arg === '--json-out' && args[i + 1]) {
       jsonOut = args[++i];
@@ -65,7 +63,6 @@ function parseArgs(args: string[]): {
     mdOut,
     top,
     easyOnly: args.includes('--easy-only'),
-    promoteOnly: args.includes('--promote'),
     quiet: args.includes('--quiet'),
   };
 }
@@ -84,7 +81,7 @@ async function buildCombinedHarnessJson(repoRoot: string): Promise<string> {
 }
 
 async function main(): Promise<void> {
-  const opts = parseArgs(applyUnknownLongOptionGuardFor('harness:promote', Bun.argv.slice(2)));
+  const opts = parseArgs(applyUnknownLongOptionGuardFor('harness:report', Bun.argv.slice(2)));
   const report = await buildHarnessReport(repoRoot);
 
   if (opts.jsonOut) {
@@ -99,19 +96,6 @@ async function main(): Promise<void> {
 
   if (opts.json) {
     console.info(await buildCombinedHarnessJson(repoRoot));
-    return;
-  }
-
-  if (opts.promoteOnly) {
-    console.info('Strict inventory:');
-    for (const f of report.strictInventory) console.info(`  ✓ ${f}`);
-    console.info(`\nPromotion candidates (${report.promotionCandidates.length}):`);
-    if (report.promotionCandidates.length === 0) {
-      console.info('  (none)');
-    } else {
-      for (const f of report.promotionCandidates) console.info(`  → ${f}`);
-      console.info('\nAdd to STRICT_INVENTORY in config/eslint/harness/rollout.ts');
-    }
     return;
   }
 

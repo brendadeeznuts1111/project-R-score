@@ -4,39 +4,22 @@
     "updated": "2026-08-06",
     "syncWith": ".cursor/mcp.json (symlink to this file)",
     "docs": "https://cursor.com/docs/context/mcp",
-    "notes": "SSOT for workspace MCP servers. Paths use ${workspaceFolder} (portable). Bun-native launch: command bun + script path (no run). Essential: dx + bun-docs + cloudflare-docs. Cursor Cloudflare HTTP MCPs: Authorization Bearer ${CLOUDFLARE_API_TOKEN} + envFile (.env). VS Code: bun run mcp:sync → .vscode/mcp.json with ${input:cloudflare-api-token} (HTTP has no envFile). Pre-commit regenerates .vscode/mcp.json when this file is staged. Cloudflare agent skills: bunx skills add https://github.com/cloudflare/skills → .agents/skills/cloudflare*",
+    "notes": "SSOT for workspace MCP servers. Paths use ${workspaceFolder} (portable). Bun-native launch: command bun + script path (no run). Essential: bun-docs + cloudflare-docs. Cursor Cloudflare HTTP MCPs: Authorization Bearer ${CLOUDFLARE_API_TOKEN} + envFile (.env). VS Code: bun run mcp:sync → .vscode/mcp.json with ${input:cloudflare-api-token} (HTTP has no envFile). Pre-commit regenerates .vscode/mcp.json when this file is staged. Cloudflare agent skills: bunx skills add https://github.com/cloudflare/skills → .agents/skills/cloudflare*",
     "serverCatalog": {
-      "essential": [
-        "dx",
-        "bun-docs",
-        "cloudflare-docs"
-      ],
+      "essential": ["bun-docs", "cloudflare-docs"],
       "domain": [
         "cascade-mover",
         "cloudflare",
         "cloudflare-bindings",
         "cloudflare-observability"
       ],
-      "optional": [
-        "ast-grep",
-        "github"
-      ],
+      "optional": ["ast-grep", "github"],
       "requiresEnv": {
-        "cascade-mover": [
-          "projects/active/enterprise/cascade-mover-v3/.env"
-        ],
-        "cloudflare": [
-          ".env (CLOUDFLARE_API_TOKEN)"
-        ],
-        "cloudflare-docs": [
-          ".env (CLOUDFLARE_API_TOKEN)"
-        ],
-        "cloudflare-bindings": [
-          ".env (CLOUDFLARE_API_TOKEN)"
-        ],
-        "cloudflare-observability": [
-          ".env (CLOUDFLARE_API_TOKEN)"
-        ]
+        "cascade-mover": ["projects/active/enterprise/cascade-mover-v3/.env"],
+        "cloudflare": [".env (CLOUDFLARE_API_TOKEN)"],
+        "cloudflare-docs": [".env (CLOUDFLARE_API_TOKEN)"],
+        "cloudflare-bindings": [".env (CLOUDFLARE_API_TOKEN)"],
+        "cloudflare-observability": [".env (CLOUDFLARE_API_TOKEN)"]
       }
     },
     "cloudflareSkills": {
@@ -60,24 +43,10 @@
       "type": "stdio",
       "description": "Bun docs MCP v1.3 — lazy index, compact output, blog/RSS, rg query (zero npm deps)",
       "command": "bun",
-      "args": [
-        "${workspaceFolder}/tools/bun-docs-mcp.ts"
-      ],
+      "args": ["${workspaceFolder}/tools/bun-docs-mcp.ts"],
       "env": {
         "BUN_DOCS_ROOT": "${workspaceFolder}"
       }
-    },
-    "dx": {
-      "type": "stdio",
-      "description": "Developer Experience — project scan, health, README, Bun probes, mcp_status",
-      "command": "bun",
-      "args": [
-        "${workspaceFolder}/scripts/dx-mcp.ts"
-      ],
-      "env": {
-        "DX_SCAN_ROOTS": "projects/active,projects/experimental,projects/archive,projects/active/enterprise/cascade-mover-v3,projects/active/enterprise/bet-ticker-worker-v1.1,packages,lib,tools"
-      },
-      "envFile": "${workspaceFolder}/.env"
     },
     "cascade-mover": {
       "type": "http",

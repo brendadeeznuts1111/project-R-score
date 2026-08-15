@@ -24,9 +24,9 @@ type ClientFraming = 'content-length' | 'ndjson';
 /** Framing detected from the client's input; responses mirror it. Default: Content-Length. */
 let clientFraming: ClientFraming = 'content-length';
 
-/** Current negotiated framing (env `DX_MCP_NDJSON=1` forces ndjson). */
+/** Current negotiated framing (env `MCP_NDJSON=1` forces ndjson). */
 export function stdioFraming(): ClientFraming {
-  return Bun.env.DX_MCP_NDJSON === '1' ? 'ndjson' : clientFraming;
+  return Bun.env.MCP_NDJSON === '1' ? 'ndjson' : clientFraming;
 }
 
 export function toolJson(data: JsonValue, pretty = true): ToolCallResult {

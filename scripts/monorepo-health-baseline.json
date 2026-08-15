@@ -3,7 +3,7 @@
   "targetScore": 90,
   "minScore": 63,
   "maxDeadCodePercent": 6.2,
-  "maxLargeFilePercent": 41.2,
+  "maxLargeFileCount": 575,
   "maxCyclicDependencyCount": 0,
   "maxDuplicateDepCount": 0
 }

@@ -27,7 +27,7 @@ describe('VS Code Bun-first workspace config', () => {
     const labels = doc.tasks.map(t => t.label);
     expect(labels).toContain('FW: Test');
     expect(labels).toContain('FW: Type Check');
-    expect(labels).toContain('FW: DX MCP (stdio)');
+    expect(labels).not.toContain('FW: DX MCP (stdio)');
     expect(doc.tasks.every(t => t.type === 'shell' && t.command === 'bun')).toBe(true);
     // Keep the palette small — do not mirror hundreds of package.json scripts.
     expect(doc.tasks.length).toBeGreaterThanOrEqual(6);

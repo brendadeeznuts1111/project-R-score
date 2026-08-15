@@ -567,7 +567,7 @@ export function defaultEntrypoints(root: string): string[] {
     joinPath(root, 'lib/operations/index.ts'),
     joinPath(root, 'lib/monitoring/index.ts'),
     joinPath(root, 'lib/harness/proof.ts'),
-    joinPath(root, 'packages/guards/src/bun-first-guard.ts'),
+    joinPath(root, 'packages/docs-tools/src/index.ts'),
     joinPath(root, 'packages/registry-client/src/index.ts'),
   ];
 }

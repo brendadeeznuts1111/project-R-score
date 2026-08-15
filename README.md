@@ -242,9 +242,9 @@ load):
 | `bun run build:affected` / `test:affected` | Changed packages only ([`--filter`](https://bun.com/docs/pm/filter))  |
 | `bun run packages:list`                    | List packages (scaffolds hidden; `--include-scaffolds` / `--paths`)   |
 | `bun run validate:workspaces`              | Validate workspace coverage                                           |
-| `bun run lint`                             | ESLint on `lib/`                                                      |
-| `bun run lint:harness`                     | Harness ESLint config (lib, scripts, packages, server, config, tools) |
-| `bun run format:harness`                   | Prettier harness format (`format:core` is an alias)                   |
+| `bun run lint`                             | ESLint on changed harness TypeScript                                  |
+| `bun run lint:all`                         | ESLint on the complete root harness scope                             |
+| `bun run format`                           | Prettier across root harness TypeScript and tests                     |
 | `bun run check:brands:all`                 | Branded ID gates (manifest + smart + types)                           |
 | `bun run fix:console-log`                  | Bulk replace console.log → console.info                               |
 | `bun run dev`                              | Start platform server                                                 |
@@ -297,7 +297,8 @@ Antipattern remediation (after major refactors). Conventions:
 
 | Command                    | Purpose                                      |
 | -------------------------- | -------------------------------------------- |
-| `bun run lint:harness`     | Enforce TypeScript and repository rules      |
+| `bun run lint`             | Enforce rules on changed harness TypeScript  |
+| `bun run lint:all`         | Audit the complete root harness scope        |
 | `bun run fix:console-log`  | `console.log` → `console.info`               |
 | ast-grep `scan --path lib` | Structural `as any` and related syntax rules |
 

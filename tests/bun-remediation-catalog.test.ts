@@ -3,8 +3,6 @@ import {
   BUN_REMEDIATION_CATALOG,
   formatBunMessage,
   getBunRemediationEntry,
-  getGuardApiPatterns,
-  getGuardModuleViolations,
   getRemediationByModule,
   getRemediationByPattern,
   mapRuleToRemediation,
@@ -12,7 +10,6 @@ import {
   searchBunRemediations,
   type BunRemediationEntry,
 } from '../config/bun-remediation-catalog.ts';
-import { checkBunFirstCompliance } from '../packages/guards/src/bun-first-guard.ts';
 import { computeBunDocsCoverage } from '../tools/bun-docs-coverage.ts';
 
 describe('Bun remediation catalog contract', () => {
@@ -43,21 +40,6 @@ describe('Bun remediation catalog contract', () => {
     expect(BUN_REMEDIATION_CATALOG).toContain(randomBunRemediation());
   });
 
-  test('guard projections preserve catalog IDs, replacements, and documentation', () => {
-    const modules = getGuardModuleViolations();
-    expect(modules['node:fs']?.catalogId).toBe('file.read');
-    expect(modules.chalk?.catalogId).toBe('tty.color');
-
-    const writePattern = getGuardApiPatterns().find(item => item.catalogId === 'file.write');
-    expect(writePattern?.replacement).toContain('Bun.write');
-    expect(writePattern?.docs).toBe(getBunRemediationEntry('file.write')?.docs);
-
-    const result = checkBunFirstCompliance('import { readFileSync } from "node:fs";');
-    expect(result.valid).toBe(false);
-    expect(result.violations.some(item => item.catalogId === 'file.read')).toBe(true);
-    expect(result.violations.every(item => item.docs?.startsWith('https://bun.com/'))).toBe(true);
-  });
-
   test('formatted advice and docs coverage stay canonical', async () => {
     const message = formatBunMessage('tty.color');
     expect(message).toContain('Bun.color');
@@ -73,19 +55,15 @@ describe('Bun remediation catalog contract', () => {
 });
 
 describe('bun:remediation CLI', () => {
-  test('is wired through package scripts and the shared MCP catalog tool', async () => {
+  test('is wired through the package scripts without a duplicate MCP surface', async () => {
     const root = new URL('..', import.meta.url);
     const packageJson = (await Bun.file(new URL('package.json', root)).json()) as {
       scripts?: Record<string, string>;
     };
-    const mcpSource = await Bun.file(new URL('scripts/dx-mcp.ts', root)).text();
-
     expect(packageJson.scripts?.['bun:remediation']).toBe(
       'bun run scripts/bun-remediation-cli.ts'
     );
-    expect(mcpSource).toContain("name: 'bun_remediation'");
-    expect(mcpSource).toContain("case 'bun_remediation'");
-    expect(mcpSource).not.toContain('dx_catalog');
+    expect(await Bun.file(new URL('scripts/dx-mcp.ts', root)).exists()).toBe(false);
   });
 
   test('publishes the catalog as machine-readable JSON', () => {

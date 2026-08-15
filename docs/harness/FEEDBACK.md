@@ -60,7 +60,7 @@ from repository configuration.
 - **Annotate thrash / dirty tree** (`script-gate`)  
   *Ratchet* → `assertStagedMatchesWorktree`
 - **Full-tree ESLint every PR** (`script-gate`)  
-  *Ratchet* → `lint:bun-native:changed` · `HARNESS_FULL_LINT`
+  *Ratchet* → `lint` · `lint:all` · `HARNESS_FULL_LINT`
 - **CI install × N jobs** (`CI`)  
   *Ratchet* → `ci:core` · `setup-factory-bun` · path filters
 - **Docs dump attention tax** (`doc-map`)  

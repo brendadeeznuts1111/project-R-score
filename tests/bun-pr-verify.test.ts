@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { resolveBunExecutable } from '../lib/bun-executable.ts';
-import { diffProofArtifact } from '../tools/bun-pr-verify.ts';
+import { parseProofArtifactDiff } from '../tools/bun-pr-verify.ts';
 
 // The script is entrypoint-guarded; test the reachable pure behaviors via
 // spawning it: missing-arg usage and missing-PR-build error both exit non-zero
@@ -82,7 +82,7 @@ describe('bun-pr-verify CLI', () => {
   });
 });
 
-describe('diffProofArtifact', () => {
+describe('parseProofArtifactDiff', () => {
   const base = {
     apis: [{ name: 'Bun.file', stable: true }],
     demos: [{ id: 'd1', ok: true }],
@@ -91,7 +91,7 @@ describe('diffProofArtifact', () => {
   };
 
   test('identical artifacts → no diffs (volatile keys ignored)', () => {
-    const diffs = diffProofArtifact('api', base, { ...base, timestamp: '2026-02-02T00:00:00.000Z' });
+    const diffs = parseProofArtifactDiff('api', base, { ...base, timestamp: '2026-02-02T00:00:00.000Z' });
     expect(diffs).toEqual([]);
   });
 
@@ -100,7 +100,7 @@ describe('diffProofArtifact', () => {
       ...base,
       apis: [{ name: 'Bun.file', stable: false }], // behavior flipped
     };
-    const diffs = diffProofArtifact('api', base, changed);
+    const diffs = parseProofArtifactDiff('api', base, changed);
     expect(diffs.length).toBeGreaterThan(0);
     expect(diffs[0]!.path).toContain('apis');
     expect(diffs[0]!.installed).toEqual(true);
@@ -108,6 +108,6 @@ describe('diffProofArtifact', () => {
   });
 
   test('missing artifact (null) → no crash, treated as no diff', () => {
-    expect(diffProofArtifact('runtime', null, null)).toEqual([]);
+    expect(parseProofArtifactDiff('runtime', null, null)).toEqual([]);
   });
 });
