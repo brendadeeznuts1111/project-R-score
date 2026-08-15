@@ -1,6 +1,8 @@
 // @see https://bun.com/docs/test
 import { describe, expect, test } from 'bun:test';
 import {
+  LOCKED_TOOLING_PACKAGES,
+  binaryAliasesFromLockfile,
   collectUsageEvidence,
   confidenceFor,
   detectProtocol,
@@ -8,12 +10,19 @@ import {
   protocolLabel,
   scoreRemoval,
   sectionLabel,
+  workspacePackageJsonPaths,
   type RemovalSignals,
 } from '../scripts/rate-removal-candidates.ts';
 import { createTestWorkspace } from './harness.ts';
 
 function usage(total = 0): RemovalSignals['usage'] {
-  return { sourceImports: total, configReferences: 0, scriptInvocations: 0, total };
+  return {
+    sourceImports: total,
+    configReferences: 0,
+    scriptInvocations: 0,
+    binaryInvocations: 0,
+    total,
+  };
 }
 
 function base(over: Partial<RemovalSignals> = {}): RemovalSignals {
@@ -33,6 +42,25 @@ function base(over: Partial<RemovalSignals> = {}): RemovalSignals {
 }
 
 describe('rate-removal-candidates scoring', () => {
+  test('workspace paths come from every root workspace plane', async () => {
+    const paths = await workspacePackageJsonPaths(import.meta.dir + '/..');
+    expect(paths.some(path => path.endsWith('/.agents/skills/ast-grep/package.json'))).toBe(true);
+    expect(paths.some(path => path.endsWith('/lib/shared/package.json'))).toBe(true);
+    expect(paths.some(path => path.endsWith('/packages/shade-pipeline/package.json'))).toBe(true);
+    expect(
+      paths.some(path => path.endsWith('/projects/active/sports-terminal-os/package.json'))
+    ).toBe(true);
+  });
+
+  test('locks only executable tooling owners, not application or redundant plugin packages', () => {
+    expect(LOCKED_TOOLING_PACKAGES.has('typescript-eslint')).toBe(true);
+    expect(LOCKED_TOOLING_PACKAGES.has('prettier')).toBe(true);
+    expect(LOCKED_TOOLING_PACKAGES.has('react')).toBe(false);
+    expect(LOCKED_TOOLING_PACKAGES.has('zod')).toBe(false);
+    expect(LOCKED_TOOLING_PACKAGES.has('@typescript-eslint/parser')).toBe(false);
+    expect(LOCKED_TOOLING_PACKAGES.has('eslint-plugin-import')).toBe(false);
+  });
+
   test('detectProtocol', () => {
     expect(detectProtocol('workspace:*')).toBe('workspace');
     expect(detectProtocol('catalog:')).toBe('catalog');
@@ -103,6 +131,7 @@ describe('rate-removal-candidates scoring', () => {
 
   test('single-pass usage evidence separates imports, scripts, and config references', async () => {
     await using workspace = await createTestWorkspace('removal-grading-');
+    await Bun.write(workspace.resolve('bun.lock'), JSON.stringify({ packages: {} }));
     await Bun.write(
       workspace.resolve('source.ts'),
       `import { x } from "alpha/subpath";\nconst lazy = import("beta");\n`
@@ -118,10 +147,46 @@ describe('rate-removal-candidates scoring', () => {
       sourceImports: 1,
       configReferences: 0,
       scriptInvocations: 1,
+      binaryInvocations: 0,
       total: 2,
     });
     expect(evidence.get('beta')?.sourceImports).toBe(1);
     expect(evidence.get('gamma')?.configReferences).toBe(1);
+  });
+
+  test('lockfile bin ownership maps aliased commands back to their package', async () => {
+    await using workspace = await createTestWorkspace('removal-bin-evidence-');
+    await Bun.write(
+      workspace.resolve('bun.lock'),
+      JSON.stringify({
+        lockfileVersion: 1,
+        packages: {
+          '@ast-grep/cli': [
+            '@ast-grep/cli@0.44.0',
+            '',
+            { bin: { sg: 'sg', 'ast-grep': 'ast-grep' } },
+          ],
+        },
+      })
+    );
+    await Bun.write(
+      workspace.resolve('runner.ts'),
+      `const executable = "node_modules/.bin/ast-grep";\nBun.spawn(["sg", "scan"]);\n`
+    );
+
+    const aliases = await binaryAliasesFromLockfile(workspace.root, ['@ast-grep/cli']);
+    expect(aliases.get('@ast-grep/cli')).toEqual(['ast-grep', 'sg']);
+
+    const evidence = await collectUsageEvidence(workspace.root, ['@ast-grep/cli']);
+    expect(evidence.get('@ast-grep/cli')?.binaryInvocations).toBe(2);
+    expect(evidence.get('@ast-grep/cli')?.total).toBe(2);
+  });
+
+  test('missing lockfile fails closed instead of claiming zero binary usage', async () => {
+    await using workspace = await createTestWorkspace('removal-missing-lock-');
+    expect(binaryAliasesFromLockfile(workspace.root, ['example'])).rejects.toThrow(
+      'cannot grade binary usage without readable'
+    );
   });
 
   test('filtered JSON distinguishes displayed, matched, and evaluated totals', async () => {

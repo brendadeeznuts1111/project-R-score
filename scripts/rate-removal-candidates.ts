@@ -30,11 +30,13 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/reference/bun/JSONC — Bun.JSONC
 // @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler · Bun.Loader
 // @updated Bun.Transpiler · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { jsonOut, logTable } from '../lib/console-depth.ts';
+import { discoverWorkspaceMembers } from '../lib/harness/monorepo-surfaces.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { tierAAvoidPackages } from '../tools/bun-prefer-matrix.ts';
 
@@ -49,26 +51,17 @@ const SECTIONS = [
 
 type Section = (typeof SECTIONS)[number];
 
-/** Toolchain / platform pins — never high-score removals. */
-export const PROTECTED_PACKAGES = new Set([
+/** Executable quality/type owners whose removal would disable a repository gate. */
+export const LOCKED_TOOLING_PACKAGES = new Set([
   'typescript',
   '@types/bun',
   'bun-types',
   '@types/node',
-  'zod',
   'husky',
   'prettier',
   'eslint',
   'typescript-eslint',
-  '@typescript-eslint/eslint-plugin',
-  '@typescript-eslint/parser',
-  'eslint-plugin-import',
-  'eslint-plugin-security',
   '@socketsecurity/bun-security-scanner',
-  'react',
-  'react-dom',
-  '@types/react',
-  '@types/react-dom',
 ]);
 
 export type DepProtocol = 'npm' | 'catalog' | 'workspace' | 'file' | 'link' | 'git' | 'other';
@@ -114,6 +107,7 @@ export type UsageEvidence = {
   sourceImports: number;
   configReferences: number;
   scriptInvocations: number;
+  binaryInvocations: number;
   total: number;
 };
 
@@ -283,18 +277,10 @@ type PackageJson = {
   peerDependencies?: Record<string, string>;
 };
 
-async function workspacePackageJsonPaths(repoRoot: string): Promise<string[]> {
+export async function workspacePackageJsonPaths(repoRoot: string): Promise<string[]> {
   const out = new Set<string>([joinPath(repoRoot, 'package.json')]);
-  const globs = [
-    'packages/*/package.json',
-    'lib/*/package.json',
-    'projects/active/sports-terminal-os/package.json',
-    '.agents/skills/ast-grep/package.json',
-  ];
-  for (const pattern of globs) {
-    for await (const rel of new Bun.Glob(pattern).scan({ cwd: repoRoot })) {
-      out.add(joinPath(repoRoot, rel));
-    }
+  for (const workspace of await discoverWorkspaceMembers(repoRoot)) {
+    out.add(joinPath(repoRoot, workspace.path, 'package.json'));
   }
   return [...out].sort();
 }
@@ -367,19 +353,75 @@ function dependencyNameForSpecifier(specifier: string, names: Set<string>): stri
 }
 
 function emptyUsage(): UsageEvidence {
-  return { sourceImports: 0, configReferences: 0, scriptInvocations: 0, total: 0 };
+  return {
+    sourceImports: 0,
+    configReferences: 0,
+    scriptInvocations: 0,
+    binaryInvocations: 0,
+    total: 0,
+  };
 }
 
 function incrementUsage(
   usage: Map<string, UsageEvidence>,
   name: string,
-  field: 'sourceImports' | 'configReferences' | 'scriptInvocations',
+  field: 'sourceImports' | 'configReferences' | 'scriptInvocations' | 'binaryInvocations',
   amount = 1
 ): void {
   const row = usage.get(name) ?? emptyUsage();
   row[field] += amount;
   row.total += amount;
   usage.set(name, row);
+}
+
+type BunLockPackageMetadata = {
+  bin?: Record<string, string>;
+};
+
+/** Read exact package-to-binary ownership from Bun's text lockfile. */
+export async function binaryAliasesFromLockfile(
+  repoRoot: string,
+  packageNames: Iterable<string>
+): Promise<Map<string, string[]>> {
+  const wanted = new Set(packageNames);
+  const aliases = new Map([...wanted].map(name => [name, [] as string[]]));
+  const lockPath = joinPath(repoRoot, 'bun.lock');
+  try {
+    if (!(await Bun.file(lockPath).exists())) throw new Error('file does not exist');
+    const lock = Bun.JSONC.parse(await Bun.file(lockPath).text()) as {
+      packages?: Record<string, unknown>;
+    };
+    if (!lock || typeof lock !== 'object' || !lock.packages) {
+      throw new Error('packages map is absent');
+    }
+    for (const [name, entry] of Object.entries(lock.packages ?? {})) {
+      if (!wanted.has(name) || !Array.isArray(entry)) continue;
+      const metadata = entry[2];
+      if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) continue;
+      const bin = (metadata as BunLockPackageMetadata).bin;
+      if (!bin || typeof bin !== 'object' || Array.isArray(bin)) continue;
+      aliases.set(name, Object.keys(bin).sort());
+    }
+  } catch (cause) {
+    const detail = cause instanceof Error ? cause.message : String(cause);
+    throw new Error(`cannot grade binary usage without readable ${lockPath}: ${detail}`);
+  }
+  return aliases;
+}
+
+function countBinaryInvocations(text: string, alias: string, shellLike: boolean): number {
+  const escaped = alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const explicitBin = new RegExp(
+    `(?:^|[/\\\\])(?:node_modules[/\\\\])?\\.bin[/\\\\]${escaped}(?=$|[\\s"'\\x60])`,
+    'gm'
+  );
+  const quotedCommand = new RegExp(`["'\\x60]${escaped}["'\\x60](?=\\s*[,\\]])`, 'g');
+  const shellCommand = shellLike ? new RegExp(`(?:^|[;&|\\n]\\s*)${escaped}(?=$|\\s)`, 'gm') : null;
+  return (
+    (text.match(explicitBin)?.length ?? 0) +
+    (text.match(quotedCommand)?.length ?? 0) +
+    (shellCommand ? (text.match(shellCommand)?.length ?? 0) : 0)
+  );
 }
 
 function isScannablePath(rel: string): boolean {
@@ -398,8 +440,9 @@ export async function collectUsageEvidence(
 ): Promise<Map<string, UsageEvidence>> {
   const names = new Set(packageNames);
   const usage = new Map([...names].map(name => [name, emptyUsage()]));
+  const binaryAliases = await binaryAliasesFromLockfile(repoRoot, names);
   const transpilers = new Map<string, Bun.Transpiler>();
-  const glob = new Bun.Glob('**/*.{ts,tsx,js,jsx,mjs,cjs,css,json}');
+  const glob = new Bun.Glob('**/*.{ts,tsx,js,jsx,mjs,cjs,css,json,py,sh,bash,zsh}');
 
   for await (const rel of glob.scan({
     cwd: repoRoot,
@@ -410,6 +453,20 @@ export async function collectUsageEvidence(
     if (!isScannablePath(rel)) continue;
     const extension = rel.slice(rel.lastIndexOf('.') + 1);
     const text = await Bun.file(joinPath(repoRoot, rel)).text();
+
+    if (SOURCE_EXTENSIONS.has(extension) || ['py', 'sh', 'bash', 'zsh'].includes(extension)) {
+      const shellLike = ['py', 'sh', 'bash', 'zsh'].includes(extension);
+      for (const [name, aliases] of binaryAliases) {
+        for (const alias of aliases) {
+          incrementUsage(
+            usage,
+            name,
+            'binaryInvocations',
+            countBinaryInvocations(text, alias, shellLike)
+          );
+        }
+      }
+    }
 
     if (SOURCE_EXTENSIONS.has(extension)) {
       const loader = extension === 'mjs' || extension === 'cjs' ? 'js' : extension;
@@ -437,6 +494,16 @@ export async function collectUsageEvidence(
             const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const cli = new RegExp(`(?:^|[\\s"'=])${escaped}(?:@[^\\s"']+)?(?=$|[\\s"'])`, 'g');
             incrementUsage(usage, name, 'scriptInvocations', body.match(cli)?.length ?? 0);
+          }
+          for (const [name, aliases] of binaryAliases) {
+            for (const alias of aliases) {
+              incrementUsage(
+                usage,
+                name,
+                'binaryInvocations',
+                countBinaryInvocations(body, alias, true)
+              );
+            }
           }
         }
       } catch {
@@ -516,7 +583,7 @@ export async function rateCandidates(repoRoot: string, opts?: RateOptions): Prom
     const signals: RemovalSignals = {
       usage,
       tierA: banned.has(name),
-      protected: PROTECTED_PACKAGES.has(name),
+      protected: LOCKED_TOOLING_PACKAGES.has(name),
       internalProtocol: protocol === 'workspace' || protocol === 'file' || protocol === 'link',
       catalog: protocol === 'catalog' || agg.versions.some(v => v.startsWith('catalog:')),
       optionalOnly: agg.sections.every(s => s === 'optionalDependencies'),
@@ -885,7 +952,8 @@ export const TABLE_LEGEND = {
     medium: 'some scan uncertainty',
     low: 'STO-only / alias-heavy — zero hits may be false',
   },
-  usage: 'Bun.Transpiler imports + package scripts + CSS/config references from one scan',
+  usage:
+    'Bun.Transpiler imports + lockfile-owned binary calls + package scripts + CSS/config references from one scan',
   spec: 'how package.json records the dep (npm / catalog: / workspace:*)',
   declaredAs: 'prod | dev | optional | peer',
   declaredIn: 'which package.json file(s) list the dep',
