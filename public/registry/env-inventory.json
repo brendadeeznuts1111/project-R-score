@@ -329,7 +329,7 @@
       "samples": [
         "lib/registry-snapshot.ts:98",
         "lib/docs/constants/utils.ts:848",
-        "config/bun-dx-catalog.ts:363",
+        "config/bun-remediation-catalog.ts:363",
         "tools/routing-registry-proof.ts:42"
       ]
     },
