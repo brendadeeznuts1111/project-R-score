@@ -304,6 +304,17 @@ describe('portal-cli doctor pure', () => {
     await Bun.$`rm -rf ${tmp}`.quiet();
   });
 
+  test('--group catalog does not emit bunfig or isolated-linker checks', async () => {
+    const r = await runPortalDoctor({
+      cwd: ROOT,
+      group: 'catalog',
+      skipLiveAccess: true,
+    });
+    expect(r.checks.some(c => c.group === 'catalog')).toBe(true);
+    expect(r.checks.some(c => c.id === 'machine-isolated-linker')).toBe(false);
+    expect(r.checks.some(c => c.group === 'bunfig')).toBe(false);
+  });
+
   test('machine-isolated-linker uses machineEnv, not process HOME', async () => {
     const tmp = `${ROOT}/tmp/doctor-isolated-env`;
     await Bun.$`rm -rf ${tmp}`.quiet();

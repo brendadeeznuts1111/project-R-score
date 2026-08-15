@@ -469,19 +469,25 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   const checks: PortalDoctorCheck[] = [];
 
   const machineEnv = opts.machineEnv ?? (Bun.env as Record<string, string | undefined>);
-  const [projectBunfig, bunfigLayers] = await Promise.all([
-    readProjectBunfig(cwd),
-    readGlobalBunfigLayers(machineEnv),
-  ]);
+  const wantLinker = !groups?.length || groups.includes('linker');
+  const wantBunfig = !groups?.length || groups.includes('bunfig');
+  const needBunfigLoad = wantLinker || wantBunfig;
+  const bunfigLoad = needBunfigLoad
+    ? await Promise.all([readProjectBunfig(cwd), readGlobalBunfigLayers(machineEnv)])
+    : null;
+  const projectBunfig = bunfigLoad?.[0];
+  const bunfigLayers = bunfigLoad?.[1];
 
   // 1) Linker policy (mandatory, pure)
   checks.push(await checkLinkerConfigVersion(cwd));
-  checks.push(
-    await checkMachineIsolatedLinker(cwd, {
-      project: projectBunfig,
-      effective: bunfigLayers.effective,
-    })
-  );
+  if (wantLinker && projectBunfig && bunfigLayers) {
+    checks.push(
+      await checkMachineIsolatedLinker(cwd, {
+        project: projectBunfig,
+        effective: bunfigLayers.effective,
+      })
+    );
+  }
 
   // 2) Offline artifact presence (vault / capabilities / bunfig bake)
   const vaultHealth = joinPath(cwd, 'public/registry/vault-health.json');
@@ -625,9 +631,11 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   checks.push(...catalogResult.checks);
 
   // 3b) Bunfig machine/project SSOT
-  checks.push(
-    ...(await runBunfigChecks(cwd, machineEnv, { layers: bunfigLayers, project: projectBunfig }))
-  );
+  if (wantBunfig && projectBunfig && bunfigLayers) {
+    checks.push(
+      ...(await runBunfigChecks(cwd, machineEnv, { layers: bunfigLayers, project: projectBunfig }))
+    );
+  }
 
   // 3c) Bun runtime environment controls (pure; raw values never reported)
   checks.push(...runRuntimeEnvChecks(opts.machineEnv ?? Bun.env));
