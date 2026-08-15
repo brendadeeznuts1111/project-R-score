@@ -1,8 +1,8 @@
 # [P0] Pull Request
 
 For non-P0 work use the default template:
-[`.github/pull_request_template.md`](./pull_request_template.md)
-(includes **Claim → evidence** — required by `bun scripts/check-pr-claim.ts`).
+[`.github/pull_request_template.md`](./pull_request_template.md) (includes
+**Claim → evidence** — required by `bun scripts/check-pr-claim.ts`).
 
 > **P0 = production blocker.** Prefer smallest reversible fix. Local merge proof
 > (`bun run bun:ci`) is authority — hosted GHA is not.
@@ -31,9 +31,10 @@ State the user/ops claim this PR closes. Match kind to evidence
 
 ## Routing (optional)
 
-GitHub is not concept SSOT ([ISSUE-ROUTING.md](../docs/harness/ISSUE-ROUTING.md)).
-**Domain** = desk lane (partner loop includes books); **Tenant** / **Owner** for
-`BM-*`. Bookmaker ≠ partner entity.
+GitHub is not concept SSOT
+([ISSUE-ROUTING.md](../docs/harness/ISSUE-ROUTING.md)). **Domain** = desk lane
+(partner loop includes books); **Tenant** / **Owner** for `BM-*`. Bookmaker ≠
+partner entity.
 
 | Field       | Value                                                                              |
 | ----------- | ---------------------------------------------------------------------------------- |
@@ -72,11 +73,11 @@ GitHub is not concept SSOT ([ISSUE-ROUTING.md](../docs/harness/ISSUE-ROUTING.md)
 
 ## Impact assessment
 
-| Field | Value |
-| ----- | ----- |
-| **Risk** | Critical / High / Medium / Low |
-| **Affected systems** | |
-| **Rollback** | |
+| Field                | Value                          |
+| -------------------- | ------------------------------ |
+| **Risk**             | Critical / High / Medium / Low |
+| **Affected systems** |                                |
+| **Rollback**         |                                |
 
 ## Related PRs
 
@@ -88,14 +89,15 @@ GitHub is not concept SSOT ([ISSUE-ROUTING.md](../docs/harness/ISSUE-ROUTING.md)
 
 ## Escape hatches (if any)
 
-| Hatch | Reason + green proof still held |
-| ----- | ------------------------------- |
-| `SKIP_*=1` | |
+| Hatch      | Reason + green proof still held |
+| ---------- | ------------------------------- |
+| `SKIP_*=1` |                                 |
 
 ## Local merge proof (required)
 
 - [ ] Claim → evidence exited 0
 - [ ] `bun run bun:ci` on clean tree (or scoped proof listed above with owner)
+- [ ] Agent policy/skill changes pass `bun run agents:contract:check`
 - [ ] No foreign-lane files in the squash
 
 ## Reviewer checklist

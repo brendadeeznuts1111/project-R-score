@@ -20,28 +20,29 @@ from `public/` and `functions/`, with machine-readable proofs baked under
 
 ## Canonical docs
 
-| Role                         | Doc                                                                                                                                                                                           |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| This hub                     | [Home](/) · [wiki.factory-wager.com](https://wiki.factory-wager.com/)                                                                                                                         |
-| AI agents                    | [`AGENTS.md`](AGENTS.md) (entry) · [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · routing [`docs/AGENTS.md`](docs/AGENTS.md)                                            |
-| Wiki full index              | [`wiki-index.md`](wiki-index.md) — portal · registry · tenants · proof loop                                                                                                                   |
-| Registry index               | [`registry-index.md`](registry-index.md) — bake map + portal consumers                                                                                                                        |
-| Workspace map                | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                                                                                |
-| Coding standards             | [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) · [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md)       |
-| Markdown contract            | [`docs/markdown/API_REFERENCE.md`](docs/markdown/API_REFERENCE.md) · [contributor guide](docs/markdown/CONTRIBUTING_MARKDOWN.md) · `bun run check:docs`                                       |
-| Bun install policy           | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                                                          |
-| Bun native capabilities      | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) · [utilities map](docs/BUN_NATIVE_CAPABILITIES.md#utilities-guides-map)                                                  |
-| Bun runtime conventions      | [`lib/bun-runtime.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/bun-runtime.md) — process, TTY, paths, Markdown, cron, networking                                  |
-| Import boundaries            | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md)                                                                                                                                      |
-| Wire boundary (parse once)   | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)                                                                                                                                              |
-| Portal foundation            | [`docs/portal-foundation.md`](docs/portal-foundation.md)                                                                                                                                      |
-| Portal operator command map  | [`docs/portal-ops-board-map.md`](docs/portal-ops-board-map.md) — generated from Portal weave v2                                                                                               |
-| Harness JIT                  | [`docs/harness/`](docs/harness/) · `bun run harness:status`                                                                                                                                   |
-| Codex thread portfolio       | [`docs/harness/tenants/codex-thread-portfolio.md`](docs/harness/tenants/codex-thread-portfolio.md) · `bun run threads:portfolio:verify` · daily weakest-three plan `bun run threads:research` |
-| Local merge + Pages delivery | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · `bun run bun:ci`                                               |
-| Projects triage              | [`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md)                                                                                    |
-| Path SSOT (code)             | [`lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`)                                                      |
-| Harness thesis               | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) (domain types; prefer **artifact** over **codebase**)                                                         |
+| Role                         | Doc                                                                                                                                                                                                                                               |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| This hub                     | [Home](/) · [wiki.factory-wager.com](https://wiki.factory-wager.com/)                                                                                                                                                                             |
+| AI agents                    | [`AGENTS.md`](AGENTS.md) (entry) · [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · routing [`docs/AGENTS.md`](docs/AGENTS.md)                                                                                                |
+| Agent alignment              | [`config/project-r-agent-contract.json`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/project-r-agent-contract.json) · `bun run agents:contract:check` · operator parity `bun run agents:contract:check -- --installed` |
+| Wiki full index              | [`wiki-index.md`](wiki-index.md) — portal · registry · tenants · proof loop                                                                                                                                                                       |
+| Registry index               | [`registry-index.md`](registry-index.md) — bake map + portal consumers                                                                                                                                                                            |
+| Workspace map                | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                                                                                                                                    |
+| Coding standards             | [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) · [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md)                                                           |
+| Markdown contract            | [`docs/markdown/API_REFERENCE.md`](docs/markdown/API_REFERENCE.md) · [contributor guide](docs/markdown/CONTRIBUTING_MARKDOWN.md) · `bun run check:docs`                                                                                           |
+| Bun install policy           | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                                                                                                              |
+| Bun native capabilities      | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) · [utilities map](docs/BUN_NATIVE_CAPABILITIES.md#utilities-guides-map)                                                                                                      |
+| Bun runtime conventions      | [`lib/bun-runtime.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/bun-runtime.md) — process, TTY, paths, Markdown, cron, networking                                                                                      |
+| Import boundaries            | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md)                                                                                                                                                                                          |
+| Wire boundary (parse once)   | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)                                                                                                                                                                                                  |
+| Portal foundation            | [`docs/portal-foundation.md`](docs/portal-foundation.md)                                                                                                                                                                                          |
+| Portal operator command map  | [`docs/portal-ops-board-map.md`](docs/portal-ops-board-map.md) — generated from Portal weave v2                                                                                                                                                   |
+| Harness JIT                  | [`docs/harness/`](docs/harness/) · `bun run harness:status`                                                                                                                                                                                       |
+| Codex thread portfolio       | [`docs/harness/tenants/codex-thread-portfolio.md`](docs/harness/tenants/codex-thread-portfolio.md) · `bun run threads:portfolio:verify` · daily weakest-three plan `bun run threads:research`                                                     |
+| Local merge + Pages delivery | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · `bun run bun:ci`                                                                                                   |
+| Projects triage              | [`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md)                                                                                                                                        |
+| Path SSOT (code)             | [`lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`)                                                                                                          |
+| Harness thesis               | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) (domain types; prefer **artifact** over **codebase**)                                                                                                             |
 
 **Remotes:** `origin` →
 [project-R-score](https://github.com/brendadeeznuts1111/project-R-score).
@@ -55,6 +56,12 @@ and pass `bun run check` (`check:docs` plus the focused Bun runtime contract).
 The repository-wide merge authority remains `bun run bun:ci`. For writing,
 linking, table, rendering, and validation guidance, see the
 [Markdown Contributor Guide](docs/markdown/CONTRIBUTING_MARKDOWN.md).
+
+Project policy and skills are repository-owned. Start with
+[`AGENTS.md`](AGENTS.md), validate portable alignment with
+`bun run agents:contract:check`, and use `-- --installed` only on an operator
+machine to compare complete installed skill packages. Global tooling does not
+replace repository proof.
 
 ## Platform at a glance
 

@@ -6,20 +6,21 @@ here.
 
 ## Start here
 
-| Role                           | Path                                                                                                                                                                                   |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Human hub                      | [Home](/)                                                                                                                                                                              |
-| Wiki full index                | [wiki index](../wiki-index.md)                                                                                                                                                         |
-| Registry index (wiki)          | [registry index](../registry-index.md)                                                                                                                                                 |
-| Agent entry                    | [AGENTS.md](../AGENTS.md)                                                                                                                                                              |
-| Agent full guide               | [AGENTS.md](./AGENTS.md)                                                                                                                                                               |
-| Workspace map                  | [STRUCTURE.md](../STRUCTURE.md)                                                                                                                                                        |
-| Coding standards               | [DEVELOPMENT-STANDARDS.md](./DEVELOPMENT-STANDARDS.md) · full [custom-instructions.md](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) (repo) |
-| Dev / test workflow            | [DEVELOPMENT-WORKFLOW.md](./DEVELOPMENT-WORKFLOW.md)                                                                                                                                   |
-| Markdown contract              | [API reference](./markdown/API_REFERENCE.md) · [contributor guide](./markdown/CONTRIBUTING_MARKDOWN.md) · `bun run check:docs`                                                         |
-| Surface coverage map           | [SURFACE_COVERAGE.md](./SURFACE_COVERAGE.md) · `bun run surface-coverage:map`                                                                                                          |
-| Harness JIT                    | [harness index](./harness/) · `bun run harness:status`                                                                                                                                 |
-| Live surfaces (wiki vs portal) | [Live surfaces](/#live-surfaces) · [platform-routing.md](./platform-routing.md)                                                                                                        |
+| Role                           | Path                                                                                                                                                                                                                |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Human hub                      | [Home](/)                                                                                                                                                                                                           |
+| Wiki full index                | [wiki index](../wiki-index.md)                                                                                                                                                                                      |
+| Registry index (wiki)          | [registry index](../registry-index.md)                                                                                                                                                                              |
+| Agent entry                    | [AGENTS.md](../AGENTS.md)                                                                                                                                                                                           |
+| Agent full guide               | [AGENTS.md](./AGENTS.md)                                                                                                                                                                                            |
+| Agent alignment contract       | [`config/project-r-agent-contract.json`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/project-r-agent-contract.json) · `bun run agents:contract:check` · operator parity `-- --installed` |
+| Workspace map                  | [STRUCTURE.md](../STRUCTURE.md)                                                                                                                                                                                     |
+| Coding standards               | [DEVELOPMENT-STANDARDS.md](./DEVELOPMENT-STANDARDS.md) · full [custom-instructions.md](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) (repo)                              |
+| Dev / test workflow            | [DEVELOPMENT-WORKFLOW.md](./DEVELOPMENT-WORKFLOW.md)                                                                                                                                                                |
+| Markdown contract              | [API reference](./markdown/API_REFERENCE.md) · [contributor guide](./markdown/CONTRIBUTING_MARKDOWN.md) · `bun run check:docs`                                                                                      |
+| Surface coverage map           | [SURFACE_COVERAGE.md](./SURFACE_COVERAGE.md) · `bun run surface-coverage:map`                                                                                                                                       |
+| Harness JIT                    | [harness index](./harness/) · `bun run harness:status`                                                                                                                                                              |
+| Live surfaces (wiki vs portal) | [Live surfaces](/#live-surfaces) · [platform-routing.md](./platform-routing.md)                                                                                                                                     |
 
 ## Live surfaces
 

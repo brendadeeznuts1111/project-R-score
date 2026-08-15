@@ -247,6 +247,37 @@ describe('Project R agent contract', () => {
     expect(result.contract?.globalAuthorityPointers).toContain('docs/BUN_DOCS_OPERATE.md');
   });
 
+  it('publishes the repository-owned contract across contributor and GitHub metadata', async () => {
+    const root = join(import.meta.dir, '..');
+    const commandSurfaces = [
+      'README.md',
+      'CONTRIBUTING.md',
+      'docs/README.md',
+      'docs/contributing/CONTRIBUTING.md',
+      '.github/pull_request_template.md',
+      '.github/pull_request_template_p0.md',
+    ];
+    const texts = await Promise.all(
+      commandSurfaces.map(path => Bun.file(join(root, path)).text())
+    );
+    for (const text of texts) expect(text).toContain('agents:contract:check');
+
+    const harnessIssue = await Bun.file(
+      join(root, '.github/ISSUE_TEMPLATE/harness.yml')
+    ).text();
+    const issueConfig = await Bun.file(
+      join(root, '.github/ISSUE_TEMPLATE/config.yml')
+    ).text();
+    const codeowners = await Bun.file(join(root, '.github/CODEOWNERS')).text();
+
+    expect(harnessIssue).toContain('id: agent_contract');
+    expect(issueConfig).toContain('config/project-r-agent-contract.json');
+    expect(codeowners).toContain('/config/project-r-agent-contract.json');
+    expect([...texts, harnessIssue, issueConfig, codeowners].join('\n')).not.toMatch(
+      /dx:contract:check|project-r-dx-contract|project-r-dx-agent-alignment/
+    );
+  });
+
   it('fails closed on unsafe paths, duplicate skills, and missing authority files', async () => {
     const root = await fixtureRoot();
     const result = await parseProjectRAgentContract(root, {
