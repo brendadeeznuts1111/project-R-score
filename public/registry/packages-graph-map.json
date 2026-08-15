@@ -112,7 +112,7 @@
         "targetPrefix": "config",
         "weight": 1,
         "samples": [
-          "packages/guards/src/bun-first-guard.ts → config/bun-dx-catalog.ts"
+          "packages/guards/src/bun-first-guard.ts → config/bun-remediation-catalog.ts"
         ]
       }
     ],

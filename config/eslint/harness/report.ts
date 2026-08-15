@@ -5,7 +5,11 @@
 /**
  * Harness report engine — collect, aggregate, and render grouped lint/guard findings.
  */
-import { getBunDxEntry, mapRuleToCatalog, type FixTier } from '../../bun-dx-catalog.ts';
+import {
+  getBunRemediationEntry,
+  mapRuleToRemediation,
+  type FixTier,
+} from '../../bun-remediation-catalog.ts';
 import { checkBunFirstCompliance } from '@factorywager/guards';
 import { buildHarnessEslintArgs, HARNESS_ESLINT_CONFIG } from './command.ts';
 import { HARNESS_IGNORES, HARNESS_PATHS, STRICT_INVENTORY } from './rollout.ts';
@@ -124,11 +128,11 @@ function toRepoRelative(filePath: string, repoRoot: string): string {
 }
 
 const GUARD_SKIP_FILE_RE =
-  /(?:^lib\/validation\/bun-first-|^docs\/BUN_MIGRATION|^config\/bun-dx-catalog\.ts$)/;
+  /(?:^lib\/validation\/bun-first-|^docs\/BUN_MIGRATION|^config\/bun-remediation-catalog\.ts$)/;
 
 function enrichIssue(partial: Omit<HarnessIssue, 'oneLiner' | 'docs' | 'fixTier'>): HarnessIssue {
-  const catalogId = partial.catalogId ?? mapRuleToCatalog(partial.ruleId, partial.message);
-  const entry = catalogId ? getBunDxEntry(catalogId) : undefined;
+  const catalogId = partial.catalogId ?? mapRuleToRemediation(partial.ruleId, partial.message);
+  const entry = catalogId ? getBunRemediationEntry(catalogId) : undefined;
   return {
     ...partial,
     catalogId,
@@ -307,7 +311,7 @@ export function groupByCatalog(issues: HarnessIssue[], maxSamples = 3): CatalogG
     const catalogId = issue.catalogId ?? 'unknown';
     let row = map.get(catalogId);
     if (!row) {
-      const entry = catalogId !== 'unknown' ? getBunDxEntry(catalogId) : undefined;
+      const entry = catalogId !== 'unknown' ? getBunRemediationEntry(catalogId) : undefined;
       row = {
         catalogId,
         summary: entry?.summary ?? issue.ruleId,
@@ -426,7 +430,7 @@ export function renderTerminalReport(report: HarnessReport, topN = 20): string {
     for (const c of report.standardCatches) {
       lines.push(`  ${String(c.count).padStart(4)}  ${c.catalogId}  ${c.summary}`);
       if (c.oneLiner) lines.push(`         → ${c.oneLiner}`);
-      lines.push(`         bun run dx:catalog ${c.catalogId}`);
+      lines.push(`         bun run bun:remediation ${c.catalogId}`);
     }
   }
   lines.push('');
@@ -452,7 +456,7 @@ export function renderTerminalReport(report: HarnessReport, topN = 20): string {
   lines.push('Next actions');
   if (report.standardCatches[0]) {
     const top = report.standardCatches[0]!;
-    lines.push(`  bun run dx:catalog ${top.catalogId}`);
+    lines.push(`  bun run bun:remediation ${top.catalogId}`);
     lines.push(`  rg '${top.summary}' lib/ scripts/ --type ts | head`);
   }
   lines.push('  bun run harness:promote');

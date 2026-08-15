@@ -6,7 +6,7 @@
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 /**
- * Bun-native ESLint rules — restricted imports and syntax from DX catalog.
+ * Bun-native ESLint rules — restricted imports and syntax from the remediation catalog.
  *
  * Allowlisted exceptions (eslint-disable + lib/README Bun-native exceptions):
  * mintable-secret, verification/docs probes — not a free pass for node:url.

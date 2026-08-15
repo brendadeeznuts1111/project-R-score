@@ -69,7 +69,7 @@ export function isHarnessFormatPath(file: string): boolean {
 export const STRICT_INVENTORY = [
   'lib/projects-scan.ts',
   'scripts/dx-mcp.ts',
-  'scripts/dx-catalog-cli.ts',
+  'scripts/bun-remediation-cli.ts',
   'scripts/harness-guard.ts',
   'scripts/pre-commit-harness.ts',
 ] as const;

@@ -10,8 +10,8 @@ Root TypeScript in harness paths must prefer Bun-native APIs over Node.js equiva
 
 ## Before writing code
 
-- Run `bun run dx:catalog tip` or `bun run dx:catalog search <topic>` for one-liners + doc links
-- Source of truth: [`config/bun-dx-catalog.ts`](config/bun-dx-catalog.ts)
+- Run `bun run bun:remediation tip` or `bun run bun:remediation search <topic>` for one-liners + doc links
+- Source of truth: [`config/bun-remediation-catalog.ts`](config/bun-remediation-catalog.ts)
 
 ## Prefer
 

@@ -2,7 +2,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/test/index#run-tests — bun:test
 import type { ESLint, Linter, Rule } from 'eslint';
-import { formatBunMessage } from '../../bun-dx-catalog.ts';
+import { formatBunMessage } from '../../bun-remediation-catalog.ts';
 
 const preferImportMetaMain: Rule.RuleModule = {
   meta: {

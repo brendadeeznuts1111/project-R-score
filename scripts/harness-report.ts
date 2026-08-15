@@ -120,7 +120,7 @@ async function main(): Promise<void> {
     for (const c of report.standardCatches) {
       console.info(`  ${String(c.count).padStart(4)}  ${c.catalogId}  ${c.summary}`);
       if (c.oneLiner) console.info(`         → ${c.oneLiner}`);
-      console.info(`         bun run dx:catalog ${c.catalogId}`);
+      console.info(`         bun run bun:remediation ${c.catalogId}`);
     }
     return;
   }

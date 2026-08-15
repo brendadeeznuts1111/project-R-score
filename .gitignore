@@ -310,7 +310,7 @@ config/partner-profiles/*
 !config/tenants.ts
 !config/github-issue-taxonomy.ts
 # Homebase harness SSOT (must clone into worktrees; not machine secrets)
-!config/bun-dx-catalog.ts
+!config/bun-remediation-catalog.ts
 !config/repo-root-policy.ts
 !config/eslint/
 !config/eslint/**

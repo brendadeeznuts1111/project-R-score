@@ -4,14 +4,14 @@
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 /**
- * Bun docs coverage formula — grouped layers over prefer × CANONICAL × repo × DX × surface.
+ * Bun docs coverage formula — grouped layers over prefer × CANONICAL × repo × remediation × surface.
  * Surface = version-aware CANONICAL APIs exercised by tools/bun-api-oneliners.ts.
  * Derived measurement (not a second scrape). Prefer matrix lives in bun-prefer-matrix.ts.
  *
  * @see https://bun.com/docs/llms.txt
  * @see https://bun.com/docs/runtime/semver
  */
-import { BUN_DX_CATALOG } from '../config/bun-dx-catalog.ts';
+import { BUN_REMEDIATION_CATALOG } from '../config/bun-remediation-catalog.ts';
 import { availableAt, onelinerCoveredApis } from './bun-api-oneliners.ts';
 import { CANONICAL_REFS, resolveApiAlias } from './bun-doc-refs.ts';
 import { formatCliTable, toolTableVersion } from './cli-table.ts';
@@ -33,7 +33,7 @@ export type CoverageLayer = {
   missing?: string[];
 };
 
-/** Grouped coverage — prefer / repo / dx / surface (version-aware demos). */
+/** Grouped coverage — prefer / repo / remediation / surface (version-aware demos). */
 export type BunDocsCoverage = {
   generated: string;
   bunVersion: string;
@@ -48,7 +48,7 @@ export type BunDocsCoverage = {
       apis: CoverageLayer;
       links: CoverageLayer;
     };
-    dx: {
+    remediation: {
       canonical: CoverageLayer;
     };
     /** Version-aware: CANONICAL APIs with since ≤ Bun.version exercised by oneliners. */
@@ -98,13 +98,20 @@ function inApiIndex(api: string, indexed: Set<string>): boolean {
   return false;
 }
 
-function canonicalDocsPaths(): Set<string> {
-  const paths = new Set<string>();
-  for (const url of Object.values(CANONICAL_REFS)) {
-    const m = url.match(/^https:\/\/bun\.com\/docs\/([^#]+)/);
-    if (m?.[1]) paths.add(m[1].replace(/\.md$/, '').replace(/\/$/, ''));
+async function knownBunDocumentationUrls(): Promise<Set<string>> {
+  const urls = new Set(Object.values(CANONICAL_REFS).map(url => url.replace(/\.md(?=#|$)/, '')));
+  const index = (await Bun.file(DOCS_INDEX_PATH).json()) as {
+    entries?: Array<{ url?: string; anchors?: string[] }>;
+  };
+
+  for (const page of index.entries ?? []) {
+    if (!page.url) continue;
+    const base = page.url.replace(/\.md$/, '');
+    urls.add(base);
+    for (const anchor of page.anchors ?? []) urls.add(`${base}#${anchor}`);
   }
-  return paths;
+
+  return urls;
 }
 
 export type DeadAnchorCount = {
@@ -206,14 +213,14 @@ export type ComputeCoverageOpts = {
 };
 
 function allLayerPcts(c: BunDocsCoverage): number[] {
-  const { prefer, repo, dx, surface } = c.groups;
+  const { prefer, repo, remediation, surface } = c.groups;
   return [
     prefer.canonical.pct,
     prefer.apiIndex.pct,
     prefer.topics.pct,
     repo.apis.pct,
     repo.links.pct,
-    dx.canonical.pct,
+    remediation.canonical.pct,
     surface.versioned.pct,
   ];
 }
@@ -317,18 +324,13 @@ export async function computeBunDocsCoverage(
     );
   }
 
-  const canonPaths = canonicalDocsPaths();
-  const dxMissing: string[] = [];
-  let dxHit = 0;
-  for (const entry of BUN_DX_CATALOG) {
-    const m = entry.docs.match(/^https:\/\/bun\.com\/docs\/([^#]+)/);
-    if (!m?.[1]) {
-      dxMissing.push(entry.id);
-      continue;
-    }
-    const path = m[1].replace(/\.md$/, '').replace(/\/$/, '');
-    if (canonPaths.has(path)) dxHit++;
-    else dxMissing.push(`${entry.id}:${path}`);
+  const canonicalUrls = await knownBunDocumentationUrls();
+  const remediationMissing: string[] = [];
+  let remediationHit = 0;
+  for (const entry of BUN_REMEDIATION_CATALOG) {
+    const normalizedUrl = entry.docs.replace(/\.md(?=#|$)/, '');
+    if (canonicalUrls.has(normalizedUrl)) remediationHit++;
+    else remediationMissing.push(`${entry.id}:${normalizedUrl}`);
   }
 
   const surfaceVersioned = await computeSurfaceLayer(Bun.version);
@@ -355,8 +357,8 @@ export async function computeBunDocsCoverage(
         apis: repoApis,
         links: repoLinks,
       },
-      dx: {
-        canonical: layer(dxHit, BUN_DX_CATALOG.length, dxMissing),
+      remediation: {
+        canonical: layer(remediationHit, BUN_REMEDIATION_CATALOG.length, remediationMissing),
       },
       surface: {
         versioned: surfaceVersioned,
@@ -373,7 +375,7 @@ export async function computeBunDocsCoverage(
 export function formatCoverageBlock(result: BunDocsCoverage, opts?: { json?: boolean }): string {
   if (opts?.json) return `${JSON.stringify(result, null, 2)}\n`;
 
-  const { prefer, repo, dx, surface } = result.groups;
+  const { prefer, repo, remediation, surface } = result.groups;
   const bun = result.bunVersion || toolTableVersion();
   const layerAttrs = (L: CoverageLayer) =>
     L.missing?.length ? `missing:${L.missing.length}` : 'ok';
@@ -419,12 +421,12 @@ export function formatCoverageBlock(result: BunDocsCoverage, opts?: { json?: boo
       pct: repo.links.pct,
     },
     {
-      group: 'dx',
+      group: 'remediation',
       layer: 'CANONICAL',
-      attrs: layerAttrs(dx.canonical),
-      hit: dx.canonical.hit,
-      total: dx.canonical.total,
-      pct: dx.canonical.pct,
+      attrs: layerAttrs(remediation.canonical),
+      hit: remediation.canonical.hit,
+      total: remediation.canonical.total,
+      pct: remediation.canonical.pct,
     },
     {
       group: 'surface',

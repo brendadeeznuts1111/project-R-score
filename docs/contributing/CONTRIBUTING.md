@@ -332,7 +332,7 @@ Prefer branded IDs and wire-boundary parse-once — see root
 | Install / bunfig     | [UNIFIED.md](../UNIFIED.md)                                                                                            |
 | Wire / brands        | [WIRE_BOUNDARY.md](../WIRE_BOUNDARY.md) · branded-ids skill                                                            |
 | Agent alignment      | [`config/project-r-agent-contract.json`](../../config/project-r-agent-contract.json) · `bun run agents:contract:check` |
-| Bun APIs             | [BUN_NATIVE_CAPABILITIES.md](../BUN_NATIVE_CAPABILITIES.md) · `bun run dx:catalog`                                     |
+| Bun APIs             | [BUN_NATIVE_CAPABILITIES.md](../BUN_NATIVE_CAPABILITIES.md) · `bun run bun:remediation`                                |
 
 Issues:
 [project-R-score issues](https://github.com/brendadeeznuts1111/project-R-score/issues).

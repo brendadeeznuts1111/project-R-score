@@ -55,7 +55,10 @@ import {
   writeJsonRpc,
   type ToolCallResult,
 } from '../lib/mcp/stdio-jsonrpc.ts';
-import { BUN_DX_CATALOG, searchCatalog } from '../config/bun-dx-catalog.ts';
+import {
+  BUN_REMEDIATION_CATALOG,
+  searchBunRemediations,
+} from '../config/bun-remediation-catalog.ts';
 import { assertBunStablePin } from '../lib/verification/bun-runtime-pin.ts';
 import {
   baseName,
@@ -679,9 +682,9 @@ function toolsList() {
         },
       },
       {
-        name: 'dx_catalog',
+        name: 'bun_remediation',
         description:
-          'Search the Bun DX catalog (anti-patterns → Bun-native fixes). Pass query or entry id; omit for list.',
+          'Search the Bun remediation catalog (anti-patterns → Bun-native fixes). Pass query or entry id; omit for list.',
         inputSchema: {
           type: 'object' as const,
           properties: {
@@ -1467,13 +1470,13 @@ async function dispatch(
       return { topic, description: R[topic].description, code: R[topic].code };
     }
 
-    case 'dx_catalog': {
+    case 'bun_remediation': {
       const query = (params?.query as string | undefined)?.trim();
       const limit = Math.min(Number(params?.limit ?? 5) || 5, 20);
       if (!query) {
         return {
-          total: BUN_DX_CATALOG.length,
-          entries: BUN_DX_CATALOG.map(e => ({
+          total: BUN_REMEDIATION_CATALOG.length,
+          entries: BUN_REMEDIATION_CATALOG.map(e => ({
             id: e.id,
             summary: e.summary,
             severity: e.severity,
@@ -1481,11 +1484,11 @@ async function dispatch(
           })),
         };
       }
-      const exact = BUN_DX_CATALOG.find(e => e.id === query);
+      const exact = BUN_REMEDIATION_CATALOG.find(e => e.id === query);
       if (exact) {
         return { match: 'id', entry: exact };
       }
-      const results = searchCatalog(query).slice(0, limit);
+      const results = searchBunRemediations(query).slice(0, limit);
       return { match: 'search', query, count: results.length, entries: results };
     }
 
