@@ -245,6 +245,7 @@ describe('portal-cli doctor pure', () => {
     const ids = r.checks.filter(c => c.group === 'bunfig').map(c => c.id);
     expect(ids).toEqual([
       'bunfig-machine-ssot',
+      'bunfig-xdg-shadow',
       'bunfig-machine-frozen-lockfile',
       'bunfig-project-no-machine-keys',
       'bunfig-merge-consistency',
@@ -260,9 +261,25 @@ describe('portal-cli doctor pure', () => {
   test('--group bunfig scopes to bunfig checks only', async () => {
     const r = await runPortalDoctor({ cwd: ROOT, full: false, group: 'bunfig', skipLiveAccess: true });
     expect(r.group).toBe('bunfig');
-    expect(r.checks).toHaveLength(6);
+    expect(r.checks).toHaveLength(7);
     expect(r.checks.every(c => c.group === 'bunfig')).toBe(true);
     expect(r.ok).toBe(true);
+  });
+
+  test('bunfig-xdg-shadow fails when $XDG_CONFIG_HOME/.bunfig.toml exists', async () => {
+    const tmp = `${ROOT}/tmp/doctor-xdg-shadow`;
+    await Bun.$`rm -rf ${tmp}`.quiet();
+    await Bun.$`mkdir -p ${tmp}/xdg ${tmp}/home`.quiet();
+    await Bun.write(`${tmp}/xdg/.bunfig.toml`, '[install]\nlinker = "hoisted"\n');
+    const checks = await runBunfigChecks(ROOT, {
+      HOME: `${tmp}/home`,
+      XDG_CONFIG_HOME: `${tmp}/xdg`,
+    });
+    const shadow = checks.find(c => c.id === 'bunfig-xdg-shadow');
+    expect(shadow?.ok).toBe(false);
+    expect(shadow?.level).toBe('fatal');
+    expect(shadow?.message).toContain('shadows');
+    await Bun.$`rm -rf ${tmp}`.quiet();
   });
 
   test('runtime group reports effective state without exposing BUN_OPTIONS', async () => {
@@ -351,7 +368,7 @@ describe('portal-cli doctor pure', () => {
       'typescript',
     ]);
     const checks = await runBunfigChecks(ROOT);
-    expect(checks).toHaveLength(6);
+    expect(checks).toHaveLength(7);
     expect(checks.every(c => c.group === 'bunfig')).toBe(true);
   });
 

@@ -7,6 +7,7 @@ import {
   CACHE_DIR_PLACEHOLDER,
   cacheDirUsesUnexpandedTilde,
   EPHEMERAL_CI_INSTALL_ENV_ALLOWLIST,
+  xdgShadowBunfigPath,
   FORBIDDEN_INSTALL_ENV_VARS,
   isEphemeralCiInstallEnv,
   MACHINE_BUNFIG_REQUIRED_SNIPPETS,
@@ -109,5 +110,13 @@ describe('machine-bunfig-policy SSOT', () => {
     expect(ensure.MACHINE_BUNFIG_TEMPLATE_REL).toBe(MACHINE_BUNFIG_TEMPLATE_REL);
     expect(ensure.CACHE_DIR_PLACEHOLDER).toBe(CACHE_DIR_PLACEHOLDER);
     expect(ensure.MACHINE_BUNFIG_REQUIRED_SNIPPETS).toBe(MACHINE_BUNFIG_REQUIRED_SNIPPETS);
+    expect(ensure.xdgShadowBunfigPath).toBe(xdgShadowBunfigPath);
+  });
+
+  test('xdgShadowBunfigPath is $XDG_CONFIG_HOME/.bunfig.toml only', () => {
+    expect(xdgShadowBunfigPath({})).toBeNull();
+    expect(xdgShadowBunfigPath({ XDG_CONFIG_HOME: '' })).toBeNull();
+    expect(xdgShadowBunfigPath({ XDG_CONFIG_HOME: '/tmp/xdg' })).toBe('/tmp/xdg/.bunfig.toml');
+    expect(xdgShadowBunfigPath({ XDG_CONFIG_HOME: '/tmp/xdg/' })).toBe('/tmp/xdg/.bunfig.toml');
   });
 });

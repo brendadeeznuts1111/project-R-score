@@ -118,3 +118,13 @@ export function cacheDirUsesUnexpandedTilde(text: string): boolean {
 export function machineBunfigMissingSnippets(text: string): string[] {
   return MACHINE_BUNFIG_REQUIRED_SNIPPETS.filter(s => !text.includes(s));
 }
+
+/**
+ * Bun 1.3.14 loads `$XDG_CONFIG_HOME/.bunfig.toml` ahead of `$HOME/.bunfig.toml`.
+ * @returns that path when XDG is set, otherwise null
+ */
+export function xdgShadowBunfigPath(env: Record<string, string | undefined>): string | null {
+  const xdg = env.XDG_CONFIG_HOME;
+  if (!xdg || xdg.trim().length === 0) return null;
+  return `${xdg.replace(/\/+$/, '')}/.bunfig.toml`;
+}
