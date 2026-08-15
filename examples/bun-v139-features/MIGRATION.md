@@ -9,6 +9,9 @@ bun run all        # package-local
 bun test
 ```
 
-Prefer homebase maps: [BUN_NATIVE_CAPABILITIES](../../docs/BUN_NATIVE_CAPABILITIES.md) · `bun run dx:catalog` · `bun upgrade`.
+Prefer homebase maps:
+[BUN_NATIVE_CAPABILITIES](../../docs/BUN_NATIVE_CAPABILITIES.md) ·
+`bun run bun:remediation` · `bun upgrade`.
 
-Full historical migration checklist: `git log -- examples/bun-v139-features/MIGRATION.md`.
+Full historical migration checklist:
+`git log -- examples/bun-v139-features/MIGRATION.md`.

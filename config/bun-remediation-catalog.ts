@@ -17,20 +17,20 @@
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 /**
- * Bun DX catalog — single source for lint messages, guards, and cheatsheets.
+ * Bun remediation catalog — single source for lint messages, guards, and operator guidance.
  * Each entry links an anti-pattern to an elite one-liner and official docs.
  */
 
-export type BunDxSeverity = 'error' | 'warn' | 'info';
+export type BunRemediationSeverity = 'error' | 'warn' | 'info';
 export type FixTier = 'easy' | 'medium' | 'hard';
 
-export type BunDxEntry = {
+export type BunRemediationEntry = {
   id: string;
   summary: string;
   bad?: string;
   good: string;
   docs: string;
-  severity: BunDxSeverity;
+  severity: BunRemediationSeverity;
   fixTier?: FixTier;
   eslintRule?: string;
   eslintRules?: string[];
@@ -38,7 +38,7 @@ export type BunDxEntry = {
   patterns?: RegExp[];
 };
 
-export const BUN_DX_CATALOG: BunDxEntry[] = [
+export const BUN_REMEDIATION_CATALOG: BunRemediationEntry[] = [
   {
     id: 'file.read',
     summary: 'Read file contents',
@@ -315,7 +315,7 @@ export const BUN_DX_CATALOG: BunDxEntry[] = [
     summary: 'Route match with URLPattern (fast; no RegExp.$N leak)',
     bad: 'const m = req.url.match(/^\\/api\\/users\\/([^/]+)\\/posts\\/([^/]+)/)',
     good: 'const p = new URLPattern({ pathname: "/api/users/:id/posts/:postId" }); p.exec(url)?.pathname.groups',
-    docs: 'https://developer.mozilla.org/en-US/docs/Web/API/URLPattern',
+    docs: 'https://bun.com/blog/bun-v1.3.4#urlpattern-api',
     severity: 'info',
     fixTier: 'medium',
     eslintRules: [],
@@ -339,7 +339,7 @@ export const BUN_DX_CATALOG: BunDxEntry[] = [
     summary: 'HTTP client',
     bad: 'axios.get(url) / import fetch from "node-fetch"',
     good: 'const data = await fetch(url).then(r => r.json());',
-    docs: 'https://bun.com/docs/runtime/nodejs-compat',
+    docs: 'https://bun.com/docs/runtime/networking/fetch#sending-an-http-request',
     severity: 'error',
     fixTier: 'medium',
     eslintRules: ['no-restricted-imports'],
@@ -428,7 +428,7 @@ export const BUN_DX_CATALOG: BunDxEntry[] = [
     summary: 'GC control during hot paths',
     bad: 'rely on implicit GC pauses',
     good: 'Bun.gc(false); /* work */ Bun.gc(true);',
-    docs: 'https://bun.com/docs/runtime/utils#bun-gc',
+    docs: 'https://bun.com/reference/bun/gc',
     severity: 'warn',
     fixTier: 'hard',
   },
@@ -470,10 +470,10 @@ export const BUN_DX_CATALOG: BunDxEntry[] = [
   },
 ];
 
-const catalogById = new Map(BUN_DX_CATALOG.map(entry => [entry.id, entry]));
+const catalogById = new Map(BUN_REMEDIATION_CATALOG.map(entry => [entry.id, entry]));
 
 const ruleToCatalogIds = new Map<string, string[]>();
-for (const entry of BUN_DX_CATALOG) {
+for (const entry of BUN_REMEDIATION_CATALOG) {
   const rules = entry.eslintRules ?? (entry.eslintRule ? [entry.eslintRule] : []);
   for (const rule of rules) {
     const list = ruleToCatalogIds.get(rule) ?? [];
@@ -485,7 +485,7 @@ for (const entry of BUN_DX_CATALOG) {
 const MODULE_IMPORT_RE =
   /(?:Avoid|Use|Prefer)[^\n]*?["']((?:node:)?(?:fs(?:\/promises)?|child_process|crypto|zlib|axios|http|https|node:test|better-sqlite3))["']|import[^\n]*["']((?:node:)?(?:fs(?:\/promises)?|child_process|crypto|zlib|axios|http|https|node:test|better-sqlite3))["']/i;
 
-export function getBunDxEntry(id: string): BunDxEntry | undefined {
+export function getBunRemediationEntry(id: string): BunRemediationEntry | undefined {
   return catalogById.get(id);
 }
 
@@ -497,21 +497,21 @@ export function formatBunMessage(id: string, prefix?: string): string {
   return lines.join('\n');
 }
 
-export function getCatalogByModule(moduleName: string): BunDxEntry | undefined {
-  return BUN_DX_CATALOG.find(entry => entry.modules?.includes(moduleName));
+export function getRemediationByModule(moduleName: string): BunRemediationEntry | undefined {
+  return BUN_REMEDIATION_CATALOG.find(entry => entry.modules?.includes(moduleName));
 }
 
-export function getCatalogByPattern(line: string): BunDxEntry | undefined {
-  return BUN_DX_CATALOG.find(entry => entry.patterns?.some(pattern => pattern.test(line)));
+export function getRemediationByPattern(line: string): BunRemediationEntry | undefined {
+  return BUN_REMEDIATION_CATALOG.find(entry => entry.patterns?.some(pattern => pattern.test(line)));
 }
 
-export function mapRuleToCatalog(ruleId: string, message: string): string | undefined {
+export function mapRuleToRemediation(ruleId: string, message: string): string | undefined {
   if (ruleId === 'no-restricted-imports' || ruleId === 'no-restricted-syntax') {
     const modMatch = message.match(MODULE_IMPORT_RE);
     if (modMatch) {
       const mod = modMatch[1] ?? modMatch[2];
       if (mod) {
-        const byMod = getCatalogByModule(mod);
+        const byMod = getRemediationByModule(mod);
         if (byMod) return byMod.id;
       }
     }
@@ -527,7 +527,7 @@ export function mapRuleToCatalog(ruleId: string, message: string): string | unde
     if (/createServer/.test(message)) return 'http.serve';
   }
 
-  const direct = BUN_DX_CATALOG.find(entry => {
+  const direct = BUN_REMEDIATION_CATALOG.find(entry => {
     const rules = entry.eslintRules ?? (entry.eslintRule ? [entry.eslintRule] : []);
     return rules.includes(ruleId);
   });
@@ -536,26 +536,26 @@ export function mapRuleToCatalog(ruleId: string, message: string): string | unde
   const candidates = ruleToCatalogIds.get(ruleId);
   if (candidates?.length === 1) return candidates[0];
 
-  const byPattern = getCatalogByPattern(message);
+  const byPattern = getRemediationByPattern(message);
   if (byPattern) return byPattern.id;
 
   return undefined;
 }
 
-export function getStandardCatches(tier?: FixTier): BunDxEntry[] {
-  return BUN_DX_CATALOG.filter(entry => !tier || entry.fixTier === tier);
+export function getStandardRemediations(tier?: FixTier): BunRemediationEntry[] {
+  return BUN_REMEDIATION_CATALOG.filter(entry => !tier || entry.fixTier === tier);
 }
 
 export function getGuardModuleViolations(): Record<
   string,
-  { replacement: string; severity: BunDxSeverity; catalogId: string }
+  { replacement: string; severity: BunRemediationSeverity; catalogId: string }
 > {
   const result: Record<
     string,
-    { replacement: string; severity: BunDxSeverity; catalogId: string }
+    { replacement: string; severity: BunRemediationSeverity; catalogId: string }
   > = {};
 
-  for (const entry of BUN_DX_CATALOG) {
+  for (const entry of BUN_REMEDIATION_CATALOG) {
     if (!entry.modules) continue;
     for (const mod of entry.modules) {
       if (!result[mod]) {
@@ -575,11 +575,11 @@ export function getGuardApiPatterns(): Array<{
   pattern: RegExp;
   message: string;
   replacement: string;
-  severity: BunDxSeverity;
+  severity: BunRemediationSeverity;
   catalogId: string;
   docs: string;
 }> {
-  return BUN_DX_CATALOG.flatMap(entry => {
+  return BUN_REMEDIATION_CATALOG.flatMap(entry => {
     if (!entry.patterns?.length) return [];
     return entry.patterns.map(pattern => ({
       pattern,
@@ -592,9 +592,9 @@ export function getGuardApiPatterns(): Array<{
   });
 }
 
-export function searchCatalog(query: string): BunDxEntry[] {
+export function searchBunRemediations(query: string): BunRemediationEntry[] {
   const q = query.toLowerCase();
-  return BUN_DX_CATALOG.filter(
+  return BUN_REMEDIATION_CATALOG.filter(
     entry =>
       entry.id.includes(q) ||
       entry.summary.toLowerCase().includes(q) ||
@@ -603,6 +603,6 @@ export function searchCatalog(query: string): BunDxEntry[] {
   );
 }
 
-export function randomCatalogEntry(): BunDxEntry {
-  return BUN_DX_CATALOG[Math.floor(Math.random() * BUN_DX_CATALOG.length)]!;
+export function randomBunRemediation(): BunRemediationEntry {
+  return BUN_REMEDIATION_CATALOG[Math.floor(Math.random() * BUN_REMEDIATION_CATALOG.length)]!;
 }

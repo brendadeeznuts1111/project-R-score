@@ -3,17 +3,17 @@
 
 import {
   formatBunMessage,
-  getCatalogByModule,
+  getRemediationByModule,
   getGuardApiPatterns,
   getGuardModuleViolations,
-  type BunDxSeverity,
-} from '../../../config/bun-dx-catalog.ts';
+  type BunRemediationSeverity,
+} from '../../../config/bun-remediation-catalog.ts';
 
 export type GuardViolation = {
   line: number;
   message: string;
   replacement: string;
-  severity: BunDxSeverity;
+  severity: BunRemediationSeverity;
   docs?: string;
   catalogId?: string;
 };
@@ -26,7 +26,7 @@ const API_PATTERNS = getGuardApiPatterns();
 /** @deprecated Use catalog-driven MODULE_VIOLATIONS */
 export const BUN_FIRST_VIOLATIONS: Record<
   string,
-  { replacement: string; severity: BunDxSeverity }
+  { replacement: string; severity: BunRemediationSeverity }
 > = Object.fromEntries(
   Object.entries(MODULE_VIOLATIONS).map(([mod, v]) => [
     mod,
@@ -76,7 +76,7 @@ export function checkBunFirstCompliance(
           ),
           severity: violation.severity,
           catalogId: violation.catalogId,
-          docs: getCatalogByModule(moduleName)?.docs,
+          docs: getRemediationByModule(moduleName)?.docs,
         });
       }
     }
@@ -133,7 +133,7 @@ async function main(): Promise<void> {
     console.info('Usage: bun run packages/guards/src/bun-first-guard.ts <file1.ts> ...');
     console.info('');
     console.info('Checks TypeScript files for Bun-first compliance violations.');
-    console.info('Catalog: bun run dx:catalog');
+    console.info('Catalog: bun run bun:remediation');
     process.exit(0);
   }
 

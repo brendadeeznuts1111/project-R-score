@@ -2157,7 +2157,7 @@
     "lint:harness": "bun scripts/lint-harness.ts --cache-location=.cache/eslint-harness",
     "check:harness": "bun run lint:bun-native:rollout && bun run format:check:harness && bun run guard:bun-first:harness && echo '' && echo 'Tip: bun run harness:report for grouped offenders + easy fixes'",
     "guard:bun-first:harness": "bun run scripts/harness-guard.ts",
-    "dx:catalog": "bun run scripts/dx-catalog-cli.ts",
+    "bun:remediation": "bun run scripts/bun-remediation-cli.ts",
     "harness:report": "bun run scripts/harness-report.ts",
     "harness:promote": "bun run scripts/harness-report.ts --promote",
     "format:harness": "bun x prettier --write 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts' 'tests/**/*.ts'",

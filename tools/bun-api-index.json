@@ -26,7 +26,7 @@
     "generated": "2026-08-14T05:52:28.678Z",
     "bunVersion": "1.3.14",
     "composite": {
-      "pct": 92
+      "pct": 93
     },
     "groups": {
       "prefer": {
@@ -85,16 +85,11 @@
           "pct": 100
         }
       },
-      "dx": {
+      "remediation": {
         "canonical": {
-          "hit": 35,
+          "hit": 38,
           "total": 38,
-          "pct": 92,
-          "missing": [
-            "file.exists:guides/read-file/exists",
-            "url.urlpattern",
-            "cli.main:guides/util/main"
-          ]
+          "pct": 100
         }
       },
       "surface": {

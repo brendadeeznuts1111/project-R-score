@@ -1,4 +1,4 @@
-/** Catalog-driven Bun-first guard SSOT (see config/bun-dx-catalog.ts). */
+/** Catalog-driven Bun-first guard SSOT (see config/bun-remediation-catalog.ts). */
 export {
   checkBunFirstCompliance,
   guardBunFirst,

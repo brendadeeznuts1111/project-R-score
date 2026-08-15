@@ -1113,8 +1113,8 @@ export const PROMOTE_ALLOWED_LONG = [
 /** § — serve:public (`scripts/serve-public.ts`) — auto team plan */
 export const SERVE_PUBLIC_ALLOWED_LONG = ['bake'] as const;
 
-/** § — dx:catalog (`scripts/dx-catalog-cli.ts`) — auto team plan */
-export const DX_CATALOG_ALLOWED_LONG = ['json', 'list', 'random'] as const;
+/** § — bun:remediation (`scripts/bun-remediation-cli.ts`) — auto team plan */
+export const BUN_REMEDIATION_ALLOWED_LONG = ['json', 'list', 'random'] as const;
 
 /** § — registry:doctor (`scripts/registry-stack-doctor.ts`) — auto team plan */
 export const REGISTRY_DOCTOR_ALLOWED_LONG = [
@@ -2567,7 +2567,7 @@ export type AllowedLongCliName =
   | 'gate-report:monorepo'
   | 'promote'
   | 'serve:public'
-  | 'dx:catalog'
+  | 'bun:remediation'
   | 'registry:doctor'
   | 'packages:docs-index'
   | 'partner:dashboard-plan:validate'
@@ -2901,7 +2901,7 @@ export const ALLOWED_LONG_REGISTRY = {
   'gate-report:monorepo': GATE_REPORT_MONOREPO_ALLOWED_LONG,
   promote: PROMOTE_ALLOWED_LONG,
   'serve:public': SERVE_PUBLIC_ALLOWED_LONG,
-  'dx:catalog': DX_CATALOG_ALLOWED_LONG,
+  'bun:remediation': BUN_REMEDIATION_ALLOWED_LONG,
   'registry:doctor': REGISTRY_DOCTOR_ALLOWED_LONG,
   'packages:docs-index': PACKAGES_DOCS_INDEX_ALLOWED_LONG,
   'partner:dashboard-plan:validate': PARTNER_DASHBOARD_PLAN_VALIDATE_ALLOWED_LONG,
