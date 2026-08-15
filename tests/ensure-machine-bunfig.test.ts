@@ -170,6 +170,10 @@ describe('ensure-machine-bunfig', () => {
     expect(chk.ok).toBe(false);
     expect(chk.action).toBe('check-fail');
     expect(chk.reason).toContain('shadows');
+    const wrote = await ensureMachineBunfig({ cwd: ROOT, home, overwrite: true, env });
+    expect(wrote.ok).toBe(false);
+    expect(wrote.action).toBe('refused');
+    expect(wrote.reason).toContain('shadows');
     await Bun.$`rm -rf ${home}`.quiet();
   });
 

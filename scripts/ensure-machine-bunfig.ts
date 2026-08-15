@@ -128,17 +128,17 @@ export async function ensureMachineBunfig(
   const isDir = bunfigPathIsDirectory(path);
   const targetExists = await existing.exists();
   const xdgShadow = xdgShadowBunfigPath(env);
+  if (xdgShadow && (await Bun.file(xdgShadow).exists())) {
+    return {
+      ok: false,
+      action: opts.checkOnly ? 'check-fail' : 'refused',
+      path,
+      cacheDir,
+      reason: `$XDG_CONFIG_HOME/.bunfig.toml shadows ~/.bunfig.toml (${xdgShadow})`,
+    };
+  }
 
   if (opts.checkOnly) {
-    if (xdgShadow && (await Bun.file(xdgShadow).exists())) {
-      return {
-        ok: false,
-        action: 'check-fail',
-        path,
-        cacheDir,
-        reason: `$XDG_CONFIG_HOME/.bunfig.toml shadows ~/.bunfig.toml (${xdgShadow})`,
-      };
-    }
     if (isDir) {
       return {
         ok: false,
