@@ -13,20 +13,17 @@
  *
  * Fix: bun run audit:bunfig · bun run install:verify · docs/UNIFIED.md
  */
-import { TOML } from 'bun';
 import {
   FORBIDDEN_INSTALL_ENV_VARS,
   isEphemeralCiInstallEnv,
   MACHINE_OWNED_CACHE_DIR_LABEL,
   MACHINE_OWNED_INSTALL_KEYS,
   REQUIRED_RELEASE_AGE_EXCLUDES,
-  xdgShadowBunfigPath,
 } from '../../lib/install/machine-bunfig-policy.ts';
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import {
   isAbsoluteCachePath,
-  readEffectiveGlobalBunfig,
-  readMachineBunfig,
+  readGlobalBunfigLayers,
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
 } from '../../scripts/lib/machine-bunfig.ts';
@@ -60,15 +57,11 @@ function withMeta(
   return { ...base, ...meta };
 }
 
-async function readInstallSection(path: string | null): Promise<InstallToml | null> {
-  if (!path) return null;
-  try {
-    if (!(await Bun.file(path).exists())) return null;
-    const parsed = TOML.parse(await Bun.file(path).text()) as { install?: InstallToml };
-    return parsed.install ?? {};
-  } catch {
-    return null;
-  }
+function installTomlFromSnapshot(
+  snap: Awaited<ReturnType<typeof readProjectBunfig>>
+): InstallToml | null {
+  if (!snap.bunfigPath) return null;
+  return (snap.install ?? {}) as InstallToml;
 }
 
 /** Coerce TOML install array fields (typed as optional unknown on InstallToml). */
@@ -89,11 +82,14 @@ export async function runBunfigChecks(
   cwd: string,
   env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
 ): Promise<PortalDoctorCheck[]> {
-  const machine = await readMachineBunfig(env);
-  const project = await readProjectBunfig(cwd);
-  const machineInstall = await readInstallSection(machine.bunfigPath);
-  const projectInstall = await readInstallSection(project.bunfigPath);
-  const globalLayer = await readEffectiveGlobalBunfig(env);
+  const [layers, project] = await Promise.all([
+    readGlobalBunfigLayers(env),
+    readProjectBunfig(cwd),
+  ]);
+  const machine = layers.machine;
+  const globalLayer = layers.effective;
+  const machineInstall = installTomlFromSnapshot(machine);
+  const projectInstall = installTomlFromSnapshot(project);
   const effective = resolveEffectiveInstallPolicy(project, globalLayer);
   const checks: PortalDoctorCheck[] = [];
 
@@ -149,8 +145,8 @@ export async function runBunfigChecks(
   );
 
   // 1a) $XDG_CONFIG_HOME/.bunfig.toml wins over $HOME/.bunfig.toml (Bun 1.3.14).
-  const xdgShadow = xdgShadowBunfigPath(env);
-  const xdgShadowExists = xdgShadow != null && (await Bun.file(xdgShadow).exists());
+  const xdgShadow = layers.xdgPath;
+  const xdgShadowExists = layers.xdgLoaded;
   checks.push(
     withMeta(
       {

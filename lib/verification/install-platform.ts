@@ -22,8 +22,7 @@ import {
 import { joinPath } from '../path-bun.ts';
 import {
   formatPolicySource,
-  readEffectiveGlobalBunfig,
-  readMachineBunfig,
+  readGlobalBunfigLayers,
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
 } from '../../scripts/lib/machine-bunfig.ts';
@@ -299,12 +298,12 @@ function skippedRow(aspect: InstallPlatformAspectId, note: string): InstallPlatf
 async function probeMachineInstallPolicy(
   rootDir: string
 ): Promise<{ linkerOk: boolean; storeOk: boolean; note: string }> {
-  const [project, machine, globalLayer] = await Promise.all([
+  const [project, layers] = await Promise.all([
     readProjectBunfig(rootDir),
-    readMachineBunfig(),
-    readEffectiveGlobalBunfig(),
+    readGlobalBunfigLayers(),
   ]);
-  const policy = resolveEffectiveInstallPolicy(project, globalLayer);
+  const machine = layers.machine;
+  const policy = resolveEffectiveInstallPolicy(project, layers.effective);
   const linkerOk = policy.linker === 'isolated';
   const storeOk = policy.globalStore === true;
   const parts = [

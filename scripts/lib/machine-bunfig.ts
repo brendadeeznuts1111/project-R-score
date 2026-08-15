@@ -3,12 +3,19 @@
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { TOML } from 'bun';
 import { xdgShadowBunfigPath } from '../../lib/install/machine-bunfig-policy.ts';
-import { inspectBunfigInode, type BunfigInode } from './bunfig-inode.ts';
+import {
+  bunfigInodeIsReadable,
+  inspectBunfigInode,
+  type BunfigInode,
+} from './bunfig-inode.ts';
 import { joinPath } from './fs-bun';
 
 export type BunfigInstall = {
   linker?: string;
   globalStore?: boolean;
+  frozenLockfile?: boolean;
+  minimumReleaseAge?: number;
+  minimumReleaseAgeExcludes?: unknown;
   cache?: { dir?: string };
 };
 
@@ -45,22 +52,33 @@ function expandTilde(value: string, home: string): string {
   return value;
 }
 
-export async function readBunfigInstall(
+/** One lstat + at most one read. `inode` decides whether the path is readable. */
+export async function readBunfigSnapshot(
   bunfigPath: string,
   env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
-): Promise<{ install: BunfigInstall | null; cacheDir: string | null }> {
+): Promise<MachineBunfigSnapshot> {
+  const inode = inspectBunfigInode(bunfigPath);
+  if (!bunfigInodeIsReadable(inode)) {
+    return { bunfigPath: null, install: null, cacheDir: null, inode };
+  }
   try {
-    const exists = await Bun.file(bunfigPath).exists();
-    if (!exists) return { install: null, cacheDir: null };
     const parsed = TOML.parse(await Bun.file(bunfigPath).text()) as { install?: BunfigInstall };
     const install = parsed.install ?? null;
     const home = resolveHome(env);
     const rawDir = install?.cache?.dir ?? null;
     const cacheDir = rawDir && home ? expandTilde(rawDir, home) : rawDir ? rawDir : null;
-    return { install, cacheDir };
+    return { bunfigPath, install, cacheDir, inode };
   } catch {
-    return { install: null, cacheDir: null };
+    return { bunfigPath: null, install: null, cacheDir: null, inode };
   }
+}
+
+export async function readBunfigInstall(
+  bunfigPath: string,
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
+): Promise<{ install: BunfigInstall | null; cacheDir: string | null }> {
+  const snap = await readBunfigSnapshot(bunfigPath, env);
+  return { install: snap.install, cacheDir: snap.cacheDir };
 }
 
 export function resolveHomeBunfigPath(
@@ -77,15 +95,7 @@ export async function readMachineBunfig(
   if (!bunfigPath) {
     return { bunfigPath: null, install: null, cacheDir: null, inode: 'missing' };
   }
-  const inode = inspectBunfigInode(bunfigPath);
-  const { install, cacheDir } = await readBunfigInstall(bunfigPath, env);
-  const exists = await Bun.file(bunfigPath).exists();
-  return {
-    bunfigPath: exists ? bunfigPath : null,
-    install,
-    cacheDir,
-    inode,
-  };
+  return readBunfigSnapshot(bunfigPath, env);
 }
 
 /**
@@ -93,15 +103,34 @@ export async function readMachineBunfig(
  * if present, otherwise `$HOME/.bunfig.toml`.
  * @see https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml
  */
+export type GlobalBunfigLayers = {
+  machine: MachineBunfigSnapshot;
+  effective: MachineBunfigSnapshot;
+  xdgPath: string | null;
+  xdgLoaded: boolean;
+};
+
+/**
+ * One home read. XDG is inspected only when `XDG_CONFIG_HOME` is set.
+ * Call this instead of `readMachineBunfig` + `readEffectiveGlobalBunfig`.
+ */
+export async function readGlobalBunfigLayers(
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
+): Promise<GlobalBunfigLayers> {
+  const machine = await readMachineBunfig(env);
+  const xdgPath = xdgShadowBunfigPath(env);
+  if (!xdgPath) {
+    return { machine, effective: machine, xdgPath: null, xdgLoaded: false };
+  }
+  const xdg = await readBunfigSnapshot(xdgPath, env);
+  const xdgLoaded = bunfigInodeIsReadable(xdg.inode);
+  return { machine, effective: xdgLoaded ? xdg : machine, xdgPath, xdgLoaded };
+}
+
 export async function readEffectiveGlobalBunfig(
   env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
 ): Promise<MachineBunfigSnapshot> {
-  const xdg = xdgShadowBunfigPath(env);
-  if (xdg && (await Bun.file(xdg).exists())) {
-    const { install, cacheDir } = await readBunfigInstall(xdg, env);
-    return { bunfigPath: xdg, install, cacheDir, inode: inspectBunfigInode(xdg) };
-  }
-  return readMachineBunfig(env);
+  return (await readGlobalBunfigLayers(env)).effective;
 }
 
 /** SSOT home path vs the global file Bun loads. */
@@ -109,20 +138,12 @@ export async function resolveGlobalBunfigPaths(
   env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
 ): Promise<{ machine: string | null; effectiveGlobal: string | null }> {
   const machine = resolveHomeBunfigPath(env);
-  const effective = await readEffectiveGlobalBunfig(env);
-  return { machine, effectiveGlobal: effective.bunfigPath ?? machine };
+  const layers = await readGlobalBunfigLayers(env);
+  return { machine, effectiveGlobal: layers.effective.bunfigPath ?? machine };
 }
 
 export async function readProjectBunfig(projectRoot: string): Promise<MachineBunfigSnapshot> {
-  const bunfigPath = joinPath(projectRoot, 'bunfig.toml');
-  const exists = await Bun.file(bunfigPath).exists();
-  const { install, cacheDir } = await readBunfigInstall(bunfigPath);
-  return {
-    bunfigPath: exists ? bunfigPath : null,
-    install,
-    cacheDir,
-    inode: inspectBunfigInode(bunfigPath),
-  };
+  return readBunfigSnapshot(joinPath(projectRoot, 'bunfig.toml'));
 }
 
 export function resolveEffectiveInstallPolicy(

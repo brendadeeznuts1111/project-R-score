@@ -30,3 +30,8 @@ export function inspectBunfigInode(path: string): BunfigInode {
 export function bunfigInodeIsLink(inode: BunfigInode): boolean {
   return inode === 'symlink' || inode === 'dangling-symlink';
 }
+
+/** Bun can load this path (`Bun.file().exists()` is true and it is not a directory). */
+export function bunfigInodeIsReadable(inode: BunfigInode): boolean {
+  return inode === 'file' || inode === 'symlink';
+}

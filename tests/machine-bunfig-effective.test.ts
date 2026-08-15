@@ -8,6 +8,7 @@ import {
   formatPolicySource,
   readBunfigInstall,
   readEffectiveGlobalBunfig,
+  readGlobalBunfigLayers,
   readMachineBunfig,
   resolveEffectiveInstallPolicy,
   resolveGlobalBunfigPaths,
@@ -98,6 +99,18 @@ describe('readEffectiveGlobalBunfig', () => {
     const paths = await resolveGlobalBunfigPaths(env);
     expect(paths.machine).toBe(joinPath(home, '.bunfig.toml'));
     expect(paths.effectiveGlobal).toBe(joinPath(xdg, '.bunfig.toml'));
+    await Bun.$`rm -rf ${home}`.quiet();
+  });
+
+  test('readGlobalBunfigLayers reuses the home snapshot when XDG is absent', async () => {
+    const home = joinPath(ROOT, 'tmp/layers-home-only');
+    await Bun.$`rm -rf ${home}`.quiet();
+    await Bun.$`mkdir -p ${home}`.quiet();
+    await Bun.write(joinPath(home, '.bunfig.toml'), '[install]\nlinker = "isolated"\n');
+    const layers = await readGlobalBunfigLayers({ HOME: home });
+    expect(layers.xdgLoaded).toBe(false);
+    expect(layers.effective).toBe(layers.machine);
+    expect(layers.machine.install?.linker).toBe('isolated');
     await Bun.$`rm -rf ${home}`.quiet();
   });
 

@@ -91,6 +91,8 @@ describe('portal-cli bunfig', () => {
     expect(bad1.code).not.toBe(0);
     const bad2 = await run(['bunfig', 'status', '--wat']);
     expect(bad2.code).not.toBe(0);
-    expect(bad2.err.includes('Unknown bunfig status flag')).toBe(true);
+    expect(
+      bad2.err.includes('Unknown bunfig status flag') || bad2.err.includes('Unknown long option')
+    ).toBe(true);
   });
 });

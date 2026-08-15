@@ -29,7 +29,11 @@ import {
 } from '../lib/install/machine-bunfig-policy.ts';
 // eslint-disable-next-line no-restricted-imports -- Bun has no symlink; node:fs is the documented fallback
 import { symlinkSync } from 'node:fs';
-import { bunfigInodeIsLink, inspectBunfigInode } from './lib/bunfig-inode.ts';
+import {
+  bunfigInodeIsLink,
+  bunfigInodeIsReadable,
+  inspectBunfigInode,
+} from './lib/bunfig-inode.ts';
 import { joinPath } from './lib/fs-bun.ts';
 
 const argv = import.meta.main
@@ -113,28 +117,8 @@ export async function ensureMachineBunfig(
   }
   const path = joinPath(home, '.bunfig.toml');
   const cacheDir = joinPath(home, '.bun', 'install', 'cache');
-  const templatePath = joinPath(cwd, MACHINE_BUNFIG_TEMPLATE_REL);
-  const templateFile = Bun.file(templatePath);
-  if (!(await templateFile.exists())) {
-    return {
-      ok: false,
-      action: 'missing',
-      path,
-      cacheDir,
-      reason: `missing template ${MACHINE_BUNFIG_TEMPLATE_REL}`,
-    };
-  }
-  const template = await templateFile.text();
-  const rendered = renderMachineBunfigTemplate(template, cacheDir);
-  const existing = Bun.file(path);
-  const inode = inspectBunfigInode(path);
-  const linked = bunfigInodeIsLink(inode);
-  const isDir = inode === 'directory';
-  const targetExists = await existing.exists();
-  const dotfilesSsot = machineBunfigDotfilesPath(home);
-  const dotfilesExists = await Bun.file(dotfilesSsot).exists();
   const xdgShadow = xdgShadowBunfigPath(env);
-  if (xdgShadow && (await Bun.file(xdgShadow).exists())) {
+  if (xdgShadow && bunfigInodeIsReadable(inspectBunfigInode(xdgShadow))) {
     return {
       ok: false,
       action: opts.checkOnly ? 'check-fail' : 'refused',
@@ -143,6 +127,13 @@ export async function ensureMachineBunfig(
       reason: `$XDG_CONFIG_HOME/.bunfig.toml shadows ~/.bunfig.toml (${xdgShadow})`,
     };
   }
+
+  const inode = inspectBunfigInode(path);
+  const linked = bunfigInodeIsLink(inode);
+  const readable = bunfigInodeIsReadable(inode);
+  const isDir = inode === 'directory';
+  const existing = Bun.file(path);
+  const dotfilesSsot = machineBunfigDotfilesPath(home);
 
   if (opts.checkOnly) {
     if (isDir) {
@@ -154,7 +145,7 @@ export async function ensureMachineBunfig(
         reason: '~/.bunfig.toml is a directory',
       };
     }
-    if (linked && !targetExists) {
+    if (inode === 'dangling-symlink') {
       return {
         ok: false,
         action: 'check-fail',
@@ -163,7 +154,8 @@ export async function ensureMachineBunfig(
         reason: 'dangling symlink ~/.bunfig.toml',
       };
     }
-    if (!targetExists) {
+    if (!readable) {
+      const dotfilesExists = bunfigInodeIsReadable(inspectBunfigInode(dotfilesSsot));
       return {
         ok: false,
         action: 'check-fail',
@@ -185,7 +177,6 @@ export async function ensureMachineBunfig(
         reason: `machine bunfig missing SSOT snippets: ${missing.join(', ')}`,
       };
     }
-    // cache.dir should be absolute (not bare ~) — SSOT: cacheDirUsesUnexpandedTilde
     if (cacheDirUsesUnexpandedTilde(text)) {
       return {
         ok: false,
@@ -209,7 +200,7 @@ export async function ensureMachineBunfig(
   }
 
   if (linked && !opts.overwriteLink) {
-    if (!targetExists) {
+    if (inode === 'dangling-symlink') {
       return {
         ok: false,
         action: 'refused',
@@ -230,20 +221,36 @@ export async function ensureMachineBunfig(
     };
   }
 
-  if (targetExists && !linked && !opts.overwrite && !opts.overwriteLink) {
+  if (readable && !linked && !opts.overwrite && !opts.overwriteLink) {
     return { ok: true, action: 'exists', path, cacheDir };
   }
 
-  if (inode === 'missing' && !opts.overwrite && !opts.overwriteLink && dotfilesExists) {
-    symlinkSync(dotfilesSsot, path);
+  if (inode === 'missing' && !opts.overwrite && !opts.overwriteLink) {
+    if (bunfigInodeIsReadable(inspectBunfigInode(dotfilesSsot))) {
+      symlinkSync(dotfilesSsot, path);
+      return {
+        ok: true,
+        action: 'linked',
+        path,
+        cacheDir,
+        reason: `restored symlink → ${dotfilesSsot}`,
+      };
+    }
+  }
+
+  const templatePath = joinPath(cwd, MACHINE_BUNFIG_TEMPLATE_REL);
+  const templateFile = Bun.file(templatePath);
+  if (!(await templateFile.exists())) {
     return {
-      ok: true,
-      action: 'linked',
+      ok: false,
+      action: 'missing',
       path,
       cacheDir,
-      reason: `restored symlink → ${dotfilesSsot}`,
+      reason: `missing template ${MACHINE_BUNFIG_TEMPLATE_REL}`,
     };
   }
+  const template = await templateFile.text();
+  const rendered = renderMachineBunfigTemplate(template, cacheDir);
 
   if (linked) {
     // Unlinks the symlink inode; does not delete the target (proven vs Bun.file).
