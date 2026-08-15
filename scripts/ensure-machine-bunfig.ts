@@ -25,8 +25,8 @@ import {
   machineBunfigMissingSnippets,
   xdgShadowBunfigPath,
 } from '../lib/install/machine-bunfig-policy.ts';
-// eslint-disable-next-line no-restricted-imports -- Bun.file follows symlinks; lstat is required to refuse flattening
-import { lstatSync, unlinkSync } from 'node:fs';
+// eslint-disable-next-line no-restricted-imports -- Bun.file has no lstat; node:fs is the documented fallback
+import { lstatSync } from 'node:fs';
 import { joinPath } from './lib/fs-bun.ts';
 
 const argv = import.meta.main
@@ -227,7 +227,9 @@ export async function ensureMachineBunfig(
   }
 
   if (linked) {
-    unlinkSync(path);
+    // Unlinks the symlink inode; does not delete the target (proven vs Bun.file).
+    // https://bun.com/docs/runtime/file-io#deleting-files-file-delete
+    await Bun.file(path).delete();
   }
 
   await Bun.write(path, rendered.endsWith('\n') ? rendered : `${rendered}\n`);
