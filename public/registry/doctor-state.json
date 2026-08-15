@@ -1,17 +1,17 @@
 {
   "kind": "portal-doctor-state",
   "schemaVersion": 1,
-  "generatedAt": "2026-07-31T11:04:12.236Z",
+  "generatedAt": "2026-08-15T21:14:04.601Z",
   "ok": true,
   "tone": "green",
   "full": false,
   "summary": {
-    "checkCount": 23,
-    "passed": 23,
+    "checkCount": 26,
+    "passed": 26,
     "failed": 0,
-    "fatal": 11,
-    "warn": 9,
-    "info": 3,
+    "fatal": 12,
+    "warn": 10,
+    "info": 4,
     "failedFatal": 0,
     "failedWarn": 0,
     "autoFixableFailed": 0,
@@ -24,7 +24,7 @@
       "fatalFailed": 0
     },
     "bakes": {
-      "total": 3,
+      "total": 5,
       "failed": 0,
       "fatalFailed": 0
     },
@@ -34,7 +34,7 @@
       "fatalFailed": 0
     },
     "bunfig": {
-      "total": 6,
+      "total": 7,
       "failed": 0,
       "fatalFailed": 0
     },
@@ -71,15 +71,31 @@
       "group": "bakes",
       "level": "warn",
       "ok": true,
-      "message": "public/registry/vault-health.json present · 2d ago",
+      "message": "public/registry/vault-health.json present · 42h ago",
       "autoFixable": true
+    },
+    {
+      "id": "pass-cli-on-path",
+      "group": "bakes",
+      "level": "warn",
+      "ok": true,
+      "message": "pass-cli on PATH · /Users/nolarose/.local/bin/pass-cli",
+      "autoFixable": false
+    },
+    {
+      "id": "pass-session-dir-stable",
+      "group": "bakes",
+      "level": "info",
+      "ok": true,
+      "message": "Pass session root not created yet (ok until first agent-env)",
+      "autoFixable": false
     },
     {
       "id": "capability-map-subset",
       "group": "bakes",
       "level": "warn",
       "ok": true,
-      "message": "public/registry/capability-map-subset.json present · 4m ago",
+      "message": "public/registry/capability-map-subset.json present · 40h ago",
       "autoFixable": true
     },
     {
@@ -87,7 +103,7 @@
       "group": "bakes",
       "level": "info",
       "ok": true,
-      "message": "public/registry/bunfig-state.json present · 2d ago",
+      "message": "public/registry/bunfig-state.json present · 18d ago",
       "autoFixable": true
     },
     {
@@ -111,7 +127,7 @@
       "group": "catalog",
       "level": "fatal",
       "ok": true,
-      "message": "all runtime catalog tokens present in bun --help",
+      "message": "all runtime catalog tokens present in bun run --help",
       "autoFixable": false
     },
     {
@@ -136,6 +152,14 @@
       "level": "fatal",
       "ok": true,
       "message": "machine /Users/nolarose/.bunfig.toml has linker/globalStore/age/excludes/cache.dir",
+      "autoFixable": false
+    },
+    {
+      "id": "bunfig-xdg-shadow",
+      "group": "bunfig",
+      "level": "fatal",
+      "ok": true,
+      "message": "no $XDG_CONFIG_HOME/.bunfig.toml shadow",
       "autoFixable": false
     },
     {
@@ -199,7 +223,7 @@
       "group": "runtime",
       "level": "info",
       "ok": true,
-      "message": "configured=2/10 · tls=enabled · http=256 · fetch=off · cache=platform · tmp=custom · color=disabled · reload=default · crash-reports=default · bun-options=unset",
+      "message": "configured=5/10 · tls=enabled · http=256 · fetch=off · cache=platform · tmp=custom · color=disabled · reload=preserved · crash-reports=disabled · bun-options=unset",
       "autoFixable": false
     },
     {
@@ -215,7 +239,7 @@
       "group": "infra",
       "level": "warn",
       "ok": true,
-      "message": "surfaces-state v2 · total=13 · apexes=2 · accessDomains=3 · crossCheck ok",
+      "message": "surfaces-state v2 · total=14 · apexes=2 · accessDomains=3 · crossCheck ok",
       "autoFixable": false
     },
     {
@@ -239,5 +263,5 @@
   "board": "/portal/doctor/",
   "href": "/registry/doctor-state.json",
   "fingerprintPortable": true,
-  "fingerprint": "5efcb0f274e01cf8eb1c7e75d1aa82cd2c9b2c153c5a1642141ac6f964dd31c0"
+  "fingerprint": "5d8d19aa6e7d7a3b65d4c6b72ca5132176a665c83a6ade4c01812ba6619805db"
 }

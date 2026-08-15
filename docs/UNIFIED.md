@@ -425,6 +425,7 @@ control-plane gate for the same machine/project split:
 | Check id                          | Level | Proves                                                                                                                                                   |
 | --------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `bunfig-machine-ssot`             | fatal | `~/.bunfig.toml` has linker/globalStore/age/excludes/cache.dir                                                                                           |
+| `bunfig-xdg-shadow`               | fatal | no `$XDG_CONFIG_HOME/.bunfig.toml` (Bun loads it ahead of `$HOME/.bunfig.toml`)                                                                          |
 | `bunfig-machine-frozen-lockfile`  | warn  | machine declares `frozenLockfile`                                                                                                                        |
 | `bunfig-project-no-machine-keys`  | fatal | `./bunfig.toml` does not set machine-owned install keys                                                                                                  |
 | `bunfig-merge-consistency`        | fatal | effective policy is isolated + globalStore + absolute cache                                                                                              |

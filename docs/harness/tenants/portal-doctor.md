@@ -27,6 +27,7 @@ Unified offline health gate for the portal control plane. Pure checks by default
 | id | level | Proves |
 |----|-------|--------|
 | `bunfig-machine-ssot` | fatal | `~/.bunfig.toml` linker/globalStore/age/excludes/cache.dir |
+| `bunfig-xdg-shadow` | fatal | no `$XDG_CONFIG_HOME/.bunfig.toml` (Bun prefers it) |
 | `bunfig-machine-frozen-lockfile` | warn | machine declares `frozenLockfile` |
 | `bunfig-project-no-machine-keys` | fatal | project does not set machine-owned install keys |
 | `bunfig-merge-consistency` | fatal | effective isolated + globalStore + absolute cache |

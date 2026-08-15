@@ -23,6 +23,7 @@ import {
   cacheDirUsesUnexpandedTilde,
   MACHINE_BUNFIG_TEMPLATE_REL,
   machineBunfigMissingSnippets,
+  xdgShadowBunfigPath,
 } from '../lib/install/machine-bunfig-policy.ts';
 // eslint-disable-next-line no-restricted-imports -- Bun.file follows symlinks; lstat is required to refuse flattening
 import { lstatSync, unlinkSync } from 'node:fs';
@@ -36,6 +37,7 @@ export {
   CACHE_DIR_PLACEHOLDER,
   MACHINE_BUNFIG_REQUIRED_SNIPPETS,
   MACHINE_BUNFIG_TEMPLATE_REL,
+  xdgShadowBunfigPath,
 } from '../lib/install/machine-bunfig-policy.ts';
 
 export type EnsureMachineBunfigOpts = {
@@ -72,16 +74,6 @@ export function bunfigPathIsDirectory(path: string): boolean {
   } catch {
     return false;
   }
-}
-
-/**
- * Bun 1.3.14 loads `$XDG_CONFIG_HOME/.bunfig.toml` ahead of `$HOME/.bunfig.toml`.
- * @returns that path when XDG is set, otherwise null
- */
-export function xdgShadowBunfigPath(env: Record<string, string | undefined>): string | null {
-  const xdg = env.XDG_CONFIG_HOME;
-  if (!xdg) return null;
-  return joinPath(xdg, '.bunfig.toml');
 }
 
 function resolveHome(env: Record<string, string | undefined>, explicit?: string): string | null {

@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML
+// @verified Bun.TOML · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/toml#bun-toml-parse
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env (HOME)
 // @see https://bun.com/docs/pm/isolated-installs — linker / machine policy
@@ -18,6 +20,7 @@ import {
   MACHINE_OWNED_CACHE_DIR_LABEL,
   MACHINE_OWNED_INSTALL_KEYS,
   REQUIRED_RELEASE_AGE_EXCLUDES,
+  xdgShadowBunfigPath,
 } from '../../lib/install/machine-bunfig-policy.ts';
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import {
@@ -136,6 +139,33 @@ export async function runBunfigChecks(
           'Machine install policy (isolated linker, global store, release age) is the monorepo SSOT',
         autoFixable: false,
         timeToFix: machineOk ? undefined : '5–15 min',
+        envScope: 'all',
+      }
+    )
+  );
+
+  // 1a) $XDG_CONFIG_HOME/.bunfig.toml wins over $HOME/.bunfig.toml (Bun 1.3.14).
+  const xdgShadow = xdgShadowBunfigPath(env);
+  const xdgShadowExists = xdgShadow != null && (await Bun.file(xdgShadow).exists());
+  checks.push(
+    withMeta(
+      {
+        id: 'bunfig-xdg-shadow',
+        level: 'fatal',
+        group: 'bunfig',
+        ok: !xdgShadowExists,
+        message: xdgShadowExists
+          ? `$XDG_CONFIG_HOME/.bunfig.toml shadows ~/.bunfig.toml (${xdgShadow})`
+          : xdgShadow
+            ? 'no $XDG_CONFIG_HOME/.bunfig.toml shadow'
+            : 'XDG_CONFIG_HOME unset — ~/.bunfig.toml is the only global path',
+        source: UNIFIED,
+      },
+      {
+        fixCommand: xdgShadowExists ? `rm ${xdgShadow}` : undefined,
+        impact: 'Bun loads the XDG global bunfig ahead of $HOME/.bunfig.toml',
+        autoFixable: false,
+        timeToFix: xdgShadowExists ? '1–2 min' : undefined,
         envScope: 'all',
       }
     )
