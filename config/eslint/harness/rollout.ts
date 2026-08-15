@@ -62,18 +62,6 @@ export function isHarnessFormatPath(file: string): boolean {
   return false;
 }
 
-/**
- * Files already migrated — strict error tier for bun-first guard.
- * Paths must exist on main; drop retired scripts rather than leave ENOENT noise.
- */
-export const STRICT_INVENTORY = [
-  'lib/projects-scan.ts',
-  'scripts/dx-mcp.ts',
-  'scripts/bun-remediation-cli.ts',
-  'scripts/harness-guard.ts',
-  'scripts/pre-commit-harness.ts',
-] as const;
-
 export const HARNESS_BUN_GLOBALS: Record<string, 'readonly'> = {
   Bun: 'readonly',
   console: 'readonly',

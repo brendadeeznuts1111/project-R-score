@@ -171,7 +171,7 @@ describe('pm-registry-probes spawn seams', () => {
 
     const badProtocol = await packDryRun(
       () => ({ exitCode: 0, stdout: dryRunOut, stderr: '' }),
-      async () => ({ dependencies: { '@factorywager/guards': 'workspace:*' } }),
+      async () => ({ dependencies: { '@factorywager/internal-only': 'workspace:*' } }),
       async () => true
     );
     expect(badProtocol.ok).toBe(false);
@@ -327,9 +327,9 @@ describe('pm-registry-probes readme metadata (Bun 1.3.14+)', () => {
 describe('verify-pages-edge --pm wiring', () => {
   test('tool dispatches --pm and --strict-pm', async () => {
     const text = await Bun.file('tools/verify-pages-edge.ts').text();
-    expect(text).toContain("Bun.argv.includes('--pm')");
-    expect(text).toContain("Bun.argv.includes('--strict-pm')");
-    expect(text).toContain("Bun.argv.includes('--save')");
+    expect(text).toContain("argv.includes('--pm')");
+    expect(text).toContain("argv.includes('--strict-pm')");
+    expect(text).toContain("argv.includes('--save')");
     expect(text).toContain('runPmProbes');
     expect(text).toContain('buildPmProofReport');
     expect(text).toContain('pmMain');

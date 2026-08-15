@@ -734,7 +734,9 @@ export const PARTNER_SURFACE_INVENTORY_DOCS_ALLOWED_LONG = ['check'] as const;
 /** § — lint (`scripts/lint-harness.ts`) — auto team plan */
 export const LINT_ALLOWED_LONG = [
   'cache-location',
+  'changed',
   'fix',
+  'full',
   'max-warnings',
   'quiet',
   'scope',
@@ -1176,13 +1178,12 @@ export const PRECOMMIT_AST_GREP_ALLOWED_LONG = [
   'staged',
 ] as const;
 
-/** § — harness:promote (`scripts/harness-report.ts`) — auto team plan */
-export const HARNESS_PROMOTE_ALLOWED_LONG = [
+/** § — harness:report (`scripts/harness-report.ts`) — grouped ESLint findings */
+export const HARNESS_REPORT_ALLOWED_LONG = [
   'easy-only',
   'json',
   'json-out',
   'md-out',
-  'promote',
   'quiet',
   'top',
 ] as const;
@@ -2577,7 +2578,7 @@ export type AllowedLongCliName =
   | 'bookmakers:bake'
   | 'brand:bench:run'
   | 'precommit:ast-grep'
-  | 'harness:promote'
+  | 'harness:report'
   | 'concept:history'
   | 'check:monorepo-health'
   | 'partner-surface-inventory:bake'
@@ -2911,7 +2912,7 @@ export const ALLOWED_LONG_REGISTRY = {
   'bookmakers:bake': BOOKMAKERS_BAKE_ALLOWED_LONG,
   'brand:bench:run': BRAND_BENCH_RUN_ALLOWED_LONG,
   'precommit:ast-grep': PRECOMMIT_AST_GREP_ALLOWED_LONG,
-  'harness:promote': HARNESS_PROMOTE_ALLOWED_LONG,
+  'harness:report': HARNESS_REPORT_ALLOWED_LONG,
   'concept:history': CONCEPT_HISTORY_ALLOWED_LONG,
   'check:monorepo-health': CHECK_MONOREPO_HEALTH_ALLOWED_LONG,
   'partner-surface-inventory:bake': PARTNER_SURFACE_INVENTORY_BAKE_ALLOWED_LONG,

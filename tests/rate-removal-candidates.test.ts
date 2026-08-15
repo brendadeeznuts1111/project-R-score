@@ -41,7 +41,7 @@ describe('rate-removal-candidates scoring', () => {
   });
 
   test('workspace protocol is protected', () => {
-    const r = scoreRemoval(base({ internalProtocol: true }), '@factorywager/guards');
+    const r = scoreRemoval(base({ internalProtocol: true }), '@factorywager/internal-only');
     expect(r.grade).toBe('protected');
   });
 

@@ -359,7 +359,14 @@ export async function discoverWorkspaceMembers(root: string): Promise<WorkspaceM
     const base = pattern.endsWith('/') ? pattern.slice(0, -1) : pattern;
     const globPat = base + '/package.json';
     const g = new Glob(globPat);
-    for await (const match of g.scan({ cwd: root, onlyFiles: true, absolute: false })) {
+    const dot = base.split('/').some(segment => segment.startsWith('.'));
+    for await (const match of g.scan({
+      cwd: root,
+      onlyFiles: true,
+      absolute: false,
+      dot,
+      followSymlinks: true,
+    })) {
       const dir = match.replace(RE_PKG_JSON_SUFFIX, '').replace(RE_BACKSLASH, '/');
       if (seen.has(dir)) continue;
       seen.add(dir);
@@ -723,6 +730,7 @@ export async function discoverStoNested(root: string): Promise<{
   for await (const m of new Glob(stoRoot + '/**/package.json').scan({
     cwd: root,
     onlyFiles: true,
+    followSymlinks: true,
   })) {
     const rel = m.replace(RE_BACKSLASH, '/');
     if (rel === stoRoot + '/package.json') continue;

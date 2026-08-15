@@ -126,7 +126,7 @@ bun run install:verify
 bun run type-check
 bun run test:changed          # Bun-native --changed (+ parallel)
 bun run test:dev              # watch monorepo tests/
-bun run lint:harness
+bun run lint:all
 bun run harness:status
 bun tools/bun-doc-refs.ts suggest "Bun.secrets"
 ```

@@ -113,12 +113,11 @@ describe('tsconfig-types-audit helpers', () => {
 
   test('resolveTypes walks extends for packages that omit local types', async () => {
     // packages that only extend base should resolve ["bun"] via extends
-    const hit = await resolveTypes(resolvePath(ROOT, 'packages/guards/tsconfig.json'));
-    // guards may or may not exist with that shape — fall back to base itself
+    const hit = await resolveTypes(resolvePath(ROOT, 'packages/docs-tools/tsconfig.json'));
     const base = await resolveTypes(resolvePath(ROOT, 'tsconfig.base.json'));
     expect(base.types).toContain('bun');
     expect(base.source).toBe('local');
-    if (await Bun.file(resolvePath(ROOT, 'packages/guards/tsconfig.json')).exists()) {
+    if (await Bun.file(resolvePath(ROOT, 'packages/docs-tools/tsconfig.json')).exists()) {
       expect(hit.types === null || hit.types.includes('bun') || hit.types.length === 0).toBe(true);
     }
   });

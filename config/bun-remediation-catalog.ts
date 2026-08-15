@@ -546,52 +546,6 @@ export function getStandardRemediations(tier?: FixTier): BunRemediationEntry[] {
   return BUN_REMEDIATION_CATALOG.filter(entry => !tier || entry.fixTier === tier);
 }
 
-export function getGuardModuleViolations(): Record<
-  string,
-  { replacement: string; severity: BunRemediationSeverity; catalogId: string }
-> {
-  const result: Record<
-    string,
-    { replacement: string; severity: BunRemediationSeverity; catalogId: string }
-  > = {};
-
-  for (const entry of BUN_REMEDIATION_CATALOG) {
-    if (!entry.modules) continue;
-    for (const mod of entry.modules) {
-      if (!result[mod]) {
-        result[mod] = {
-          replacement: entry.good,
-          severity: entry.severity,
-          catalogId: entry.id,
-        };
-      }
-    }
-  }
-
-  return result;
-}
-
-export function getGuardApiPatterns(): Array<{
-  pattern: RegExp;
-  message: string;
-  replacement: string;
-  severity: BunRemediationSeverity;
-  catalogId: string;
-  docs: string;
-}> {
-  return BUN_REMEDIATION_CATALOG.flatMap(entry => {
-    if (!entry.patterns?.length) return [];
-    return entry.patterns.map(pattern => ({
-      pattern,
-      message: `${entry.summary} detected`,
-      replacement: entry.good,
-      severity: entry.severity,
-      catalogId: entry.id,
-      docs: entry.docs,
-    }));
-  });
-}
-
 export function searchBunRemediations(query: string): BunRemediationEntry[] {
   const q = query.toLowerCase();
   return BUN_REMEDIATION_CATALOG.filter(

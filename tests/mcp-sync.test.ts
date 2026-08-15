@@ -20,16 +20,13 @@ describe('toWorkspaceRelative', () => {
   });
 
   test('keeps already-portable workspaceFolder paths', () => {
-    expect(toWorkspaceRelative(ROOT, '${workspaceFolder}/scripts/dx-mcp.ts')).toBe(
-      '${workspaceFolder}/scripts/dx-mcp.ts'
+    expect(toWorkspaceRelative(ROOT, '${workspaceFolder}/tools/bun-docs-mcp.ts')).toBe(
+      '${workspaceFolder}/tools/bun-docs-mcp.ts'
     );
     expect(toWorkspaceRelative(ROOT, '${workspaceFolder}')).toBe('${workspaceFolder}');
   });
 
   test('prefixes repo-relative script paths', () => {
-    expect(toWorkspaceRelative(ROOT, 'scripts/dx-mcp.ts')).toBe(
-      '${workspaceFolder}/scripts/dx-mcp.ts'
-    );
     expect(toWorkspaceRelative(ROOT, 'tools/bun-docs-mcp.ts')).toBe(
       '${workspaceFolder}/tools/bun-docs-mcp.ts'
     );
@@ -119,7 +116,7 @@ describe('convertServer stdio', () => {
     const ssot: McpServer = {
       type: 'stdio',
       command: 'bun',
-      args: [`${ROOT}/scripts/dx-mcp.ts`],
+      args: [`${ROOT}/tools/bun-docs-mcp.ts`],
       envFile: `${ROOT}/.env`,
       env: { BUN_DOCS_ROOT: ROOT },
     };
@@ -128,7 +125,7 @@ describe('convertServer stdio', () => {
     expect(server).toEqual({
       type: 'stdio',
       command: 'bun',
-      args: ['${workspaceFolder}/scripts/dx-mcp.ts'],
+      args: ['${workspaceFolder}/tools/bun-docs-mcp.ts'],
       env: { BUN_DOCS_ROOT: '${workspaceFolder}' },
       envFile: '${workspaceFolder}/.env',
     });
@@ -147,10 +144,10 @@ describe('buildVsCodeMcp', () => {
             headers: { Authorization: 'Bearer ${CLOUDFLARE_API_TOKEN}' },
             envFile: '${workspaceFolder}/.env',
           },
-          dx: {
+          'bun-docs': {
             type: 'stdio',
             command: 'bun',
-            args: ['${workspaceFolder}/scripts/dx-mcp.ts'],
+            args: ['${workspaceFolder}/tools/bun-docs-mcp.ts'],
             envFile: '${workspaceFolder}/.env',
           },
         },
@@ -162,7 +159,7 @@ describe('buildVsCodeMcp', () => {
       Authorization: `Bearer \${input:${CLOUDFLARE_TOKEN_INPUT_ID}}`,
     });
     expect(doc.servers.cloudflare.envFile).toBeUndefined();
-    expect(doc.servers.dx.envFile).toBe('${workspaceFolder}/.env');
+    expect(doc.servers['bun-docs'].envFile).toBe('${workspaceFolder}/.env');
     expect(doc.servers['cascade-mover']).toEqual({
       type: 'http',
       url: 'http://100.64.250.26:8787/mcp',

@@ -37,7 +37,7 @@ wire / CLI / env / JSON / HTTP
 | `branded-id-check --staged --strict` | **error** on new bare `*Id` / opaque `id` without `// brand-ok` |
 
 ```bash
-bun run lint:harness
+bun run lint:all
 bun tools/branded-id-check.ts --staged --strict
 bun tools/harness-violations.ts --path lib --rule unknown
 ```

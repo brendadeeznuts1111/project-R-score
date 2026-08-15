@@ -3,19 +3,18 @@
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 /**
- * Harness report engine — collect, aggregate, and render grouped lint/guard findings.
+ * Harness report engine — collect, aggregate, and render grouped ESLint findings.
  */
 import {
   getBunRemediationEntry,
   mapRuleToRemediation,
   type FixTier,
 } from '../../bun-remediation-catalog.ts';
-import { checkBunFirstCompliance } from '@factorywager/guards';
 import { buildHarnessEslintArgs, HARNESS_ESLINT_CONFIG } from './command.ts';
-import { HARNESS_IGNORES, HARNESS_PATHS, STRICT_INVENTORY } from './rollout.ts';
+import { HARNESS_IGNORES, HARNESS_PATHS } from './rollout.ts';
 
 export type HarnessIssue = {
-  source: 'eslint' | 'guard';
+  source: 'eslint';
   file: string;
   line: number;
   column?: number;
@@ -63,14 +62,11 @@ export type HarnessReport = {
     warnings: number;
     filesWithIssues: number;
     totalHarnessFiles: number;
-    strictInventoryCount: number;
   };
   worstOffenders: FileOffender[];
   byDirectory: DirectoryGroup[];
   byCatalog: CatalogGroup[];
   standardCatches: CatalogGroup[];
-  promotionCandidates: string[];
-  strictInventory: string[];
   issues: HarnessIssue[];
 };
 
@@ -127,9 +123,6 @@ function toRepoRelative(filePath: string, repoRoot: string): string {
   return fileParts.slice(i).join('/').replace(/^\.\//, '');
 }
 
-const GUARD_SKIP_FILE_RE =
-  /(?:^lib\/validation\/bun-first-|^docs\/BUN_MIGRATION|^config\/bun-remediation-catalog\.ts$)/;
-
 function enrichIssue(partial: Omit<HarnessIssue, 'oneLiner' | 'docs' | 'fixTier'>): HarnessIssue {
   const catalogId = partial.catalogId ?? mapRuleToRemediation(partial.ruleId, partial.message);
   const entry = catalogId ? getBunRemediationEntry(catalogId) : undefined;
@@ -140,10 +133,6 @@ function enrichIssue(partial: Omit<HarnessIssue, 'oneLiner' | 'docs' | 'fixTier'
     oneLiner: entry?.good,
     docs: entry?.docs,
   };
-}
-
-function issueKey(issue: HarnessIssue): string {
-  return `${issue.file}:${issue.line}:${issue.catalogId ?? issue.ruleId}:${issue.source}`;
 }
 
 export async function collectEslintIssues(
@@ -200,44 +189,6 @@ export async function collectEslintIssues(
   }
 
   return issues;
-}
-
-export async function collectGuardIssues(
-  repoRoot: string,
-  files: string[],
-  existing: HarnessIssue[]
-): Promise<HarnessIssue[]> {
-  const seen = new Set(existing.map(issueKey));
-  const guardIssues: HarnessIssue[] = [];
-
-  for (const file of files) {
-    if (GUARD_SKIP_FILE_RE.test(file)) continue;
-    const abs = `${repoRoot}/${file}`;
-    const exists = await Bun.file(abs).exists();
-    if (!exists) continue;
-
-    const content = await Bun.file(abs).text();
-    const result = checkBunFirstCompliance(content, file);
-
-    for (const v of result.violations) {
-      const partial: Omit<HarnessIssue, 'oneLiner' | 'docs' | 'fixTier'> = {
-        source: 'guard',
-        file,
-        line: v.line,
-        severity: v.severity,
-        ruleId: `guard/${v.catalogId ?? 'unknown'}`,
-        catalogId: v.catalogId,
-        message: v.message,
-      };
-      const issue = enrichIssue(partial);
-      const key = issueKey(issue);
-      if (seen.has(key)) continue;
-      seen.add(key);
-      guardIssues.push(issue);
-    }
-  }
-
-  return guardIssues;
 }
 
 export function groupByFile(issues: HarnessIssue[]): FileOffender[] {
@@ -342,22 +293,9 @@ export function groupByFixTier(issues: HarnessIssue[], tier: FixTier): CatalogGr
   return groupByCatalog(issues.filter(i => i.fixTier === tier));
 }
 
-export function promotionCandidates(
-  allFiles: string[],
-  issues: HarnessIssue[],
-  strictSet: ReadonlySet<string>
-): string[] {
-  const dirty = new Set(issues.map(i => i.file));
-  return allFiles.filter(f => !strictSet.has(f) && !dirty.has(f)).sort();
-}
-
 export async function buildHarnessReport(repoRoot: string): Promise<HarnessReport> {
   const allFiles = await findHarnessFiles(repoRoot);
-  const strictSet = new Set<string>(STRICT_INVENTORY);
-
-  const eslintIssues = await collectEslintIssues(repoRoot);
-  const guardIssues = await collectGuardIssues(repoRoot, allFiles, eslintIssues);
-  const issues = [...eslintIssues, ...guardIssues].map(issue => ({
+  const issues = (await collectEslintIssues(repoRoot)).map(issue => ({
     ...issue,
     file: toRepoRelative(issue.file, repoRoot),
   }));
@@ -376,14 +314,11 @@ export async function buildHarnessReport(repoRoot: string): Promise<HarnessRepor
       warnings,
       filesWithIssues,
       totalHarnessFiles: allFiles.length,
-      strictInventoryCount: STRICT_INVENTORY.length,
     },
     worstOffenders: groupByFile(issues),
     byDirectory: groupByDirectory(issues),
     byCatalog,
     standardCatches,
-    promotionCandidates: promotionCandidates(allFiles, issues, strictSet),
-    strictInventory: [...STRICT_INVENTORY],
     issues,
   };
 }
@@ -395,9 +330,7 @@ export function renderTerminalReport(report: HarnessReport, topN = 20): string {
   lines.push(
     `Harness Report — ${summary.warnings} warnings, ${summary.errors} errors, ${summary.filesWithIssues} files with issues`
   );
-  lines.push(
-    `Harness files: ${summary.totalHarnessFiles} | Strict inventory: ${summary.strictInventoryCount}`
-  );
+  lines.push(`Harness files: ${summary.totalHarnessFiles}`);
   lines.push('');
 
   lines.push('Worst offenders');
@@ -445,21 +378,12 @@ export function renderTerminalReport(report: HarnessReport, topN = 20): string {
   }
   lines.push('');
 
-  lines.push(`Promotion candidates: ${report.promotionCandidates.length}`);
-  for (const f of report.promotionCandidates.slice(0, 15)) {
-    lines.push(`  → ${f}`);
-  }
-  if (report.promotionCandidates.length > 15) {
-    lines.push(`  ... +${report.promotionCandidates.length - 15} more`);
-  }
-  lines.push('');
   lines.push('Next actions');
   if (report.standardCatches[0]) {
     const top = report.standardCatches[0]!;
     lines.push(`  bun run bun:remediation ${top.catalogId}`);
     lines.push(`  rg '${top.summary}' lib/ scripts/ --type ts | head`);
   }
-  lines.push('  bun run harness:promote');
   lines.push('  bun run harness:report --json-out reports/harness/latest.json');
 
   return lines.join('\n');
@@ -481,7 +405,6 @@ export function renderMarkdownReport(report: HarnessReport, topN = 20): string {
   lines.push(`| Errors | ${summary.errors} |`);
   lines.push(`| Files with issues | ${summary.filesWithIssues} |`);
   lines.push(`| Total harness files | ${summary.totalHarnessFiles} |`);
-  lines.push(`| Strict inventory | ${summary.strictInventoryCount} |`);
   lines.push('');
 
   lines.push('## Worst offenders');
@@ -514,12 +437,6 @@ export function renderMarkdownReport(report: HarnessReport, topN = 20): string {
     }
   }
   lines.push('');
-
-  lines.push('## Promotion candidates');
-  lines.push('');
-  for (const f of report.promotionCandidates.slice(0, 30)) {
-    lines.push(`- \`${f}\``);
-  }
 
   return lines.join('\n');
 }

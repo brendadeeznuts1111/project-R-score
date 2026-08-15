@@ -15,7 +15,7 @@ On every changed library TypeScript file (portal work included; also when touchi
 ```bash
 bun x prettier --write <file>…
 # or broader harness write (includes tests/**/*.ts):
-bun run format:harness
+bun run format
 ```
 
 Then re-stage. Prefer check before push:
@@ -24,7 +24,7 @@ Then re-stage. Prefer check before push:
 bun x prettier --check <file>…
 ```
 
-`format` / `format:harness` / `format:check*` are the same Prettier — different globs only.
+`format` writes the canonical root scope; `format:check` verifies that same scope.
 
 **Pre-commit (already):** `scripts/pre-commit-harness.ts` runs Prettier `--write` on staged `isHarnessFormatPath` files (lint scope ∪ `tests/**` ∪ `*.test.ts` under harness roots). ESLint stays lint-scope only — do **not** add lint-staged.
 

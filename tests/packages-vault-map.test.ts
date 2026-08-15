@@ -7,7 +7,7 @@ describe('packages-vault-map', () => {
     const map = await buildPackageVaultMap(process.cwd(), [
       'p2p',
       'business',
-      'guards',
+      'docs-tools',
       'rip',
     ]);
     expect(map.summary.packagesWithEnv).toBeGreaterThan(0);

@@ -218,7 +218,7 @@ Otherwise: **n/a**.
 - [ ] Did **not** sweep a parallel lane (foreign dirty trees left out of commit)
 - [ ] Explicit pathspec commit when index is multi-lane
 - [ ] Prettier on every touched `lib/**/*.ts`
-      (`bun x prettier --write <file...>` or `format:harness`)
+      (`bun x prettier --write <file...>` or `bun run format`)
 - [ ] Brands / wire: no new bare `*Id: string` or interior `unknown` params
 - [ ] If adding/removing a first-level `lib/*/` **domain**: update
       [`lib/README.md`](../lib/README.md) Domains table + lifecycle ·
@@ -244,8 +244,7 @@ authority**). Hosted checks (Pages, Socket, bot review) are side signals — nev
 a substitute.
 
 - [ ] Claim → evidence commands exited 0 (prefer over full suite when scoped)
-- [ ] `bun run lint:bun-native:changed` (or `check:harness` when rolling out
-      harness paths)
+- [ ] `bun run lint` (`bun run lint:all` for a complete root harness audit)
 - [ ] If merge-blocking confidence needed: `bun run bun:ci` on a **clean** tree
 - [ ] Soft bun-types step ok or skipped with reason (`bun:types-ci` ·
       `BUN_TYPES_CI=0`)

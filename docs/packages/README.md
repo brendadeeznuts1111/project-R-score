@@ -71,7 +71,6 @@ bun run packages:docs-index --bump-verified=2026-07-20:registry-md,pm-filter
 | Package / tool | Role | Status | Notes |
 |----------------|------|--------|--------|
 | `@factorywager/registry-client` | Publishable SDK · build/test | active | Root `workspace:*` dep · real exports |
-| `@factorywager/guards` | Bun-first compliance | active | Root `workspace:*` · eslint harness |
 | `@factorywager/rip` | Analysis tooling | active | Root `workspace:*` · `scripts/bun-rules.ts` |
 | `@factorywager/docs-tools` | Doc validators (coupled to `lib/docs`) | active | Root `workspace:*` |
 | `@factorywager/proton-pass` | Portable Proton Pass session / resolve / CLI | active | Root `workspace:*` · **private** · vault plane (not PM) · `bunx --bun proton-pass` |

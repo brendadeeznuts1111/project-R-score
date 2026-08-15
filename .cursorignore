@@ -4,7 +4,6 @@ docs/archives/**
 docs/sports-terminal/mermaid-atlas.pdf
 projects/active/analysis/matrix-analysis/.claude/.agents/skills/tier1380-commit-flow/**
 projects/active/analysis/matrix-analysis/.claude/AGENTS.md
-scripts/bench-dx-mcp.ts
 scripts/advanced-forwarding.ts
 scripts/wiki-matrix-cli-standalone.ts
 scripts/wiki-matrix-cli-improved.ts

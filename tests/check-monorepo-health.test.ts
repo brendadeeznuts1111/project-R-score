@@ -11,7 +11,7 @@ const base: MonorepoHealthBaseline = {
   targetScore: 90,
   minScore: 30,
   maxDeadCodePercent: 15,
-  maxLargeFilePercent: 45,
+  maxLargeFileCount: 575,
   maxCyclicDependencyCount: 20,
   maxDuplicateDepCount: 5,
 };
@@ -23,6 +23,7 @@ describe('check-monorepo-health ratchet', () => {
         {
           score: 34,
           formulaVersion: 1,
+          largeFileCount: 574,
           metrics: {
             deadCodePercent: 8,
             largeFilePercent: 40,
@@ -38,8 +39,9 @@ describe('check-monorepo-health ratchet', () => {
   test('fails on score regression and cycle growth', () => {
     const v = ratchetViolations(
       {
-        score: 20,
-        formulaVersion: 1,
+      score: 20,
+      formulaVersion: 1,
+      largeFileCount: 574,
         metrics: {
           deadCodePercent: 8,
           largeFilePercent: 40,
@@ -57,6 +59,7 @@ describe('check-monorepo-health ratchet', () => {
     const b = baselineFromReport({
       score: 34.1,
       formulaVersion: 1,
+      largeFileCount: 574,
       metrics: {
         deadCodePercent: 8.6,
         largeFilePercent: 40.5,
@@ -68,6 +71,7 @@ describe('check-monorepo-health ratchet', () => {
     expect(b.targetScore).toBe(90);
     expect(b.maxCyclicDependencyCount).toBe(14);
     expect(b.maxDuplicateDepCount).toBe(0);
+    expect(b.maxLargeFileCount).toBe(574);
     expect(b.maxDeadCodePercent).toBe(8.6);
   });
 });

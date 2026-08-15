@@ -1,4 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/test/parallel#parallel — --parallel
+// @released --parallel · released v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --parallel · changed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --parallel · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @updated --parallel · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -7,7 +12,7 @@
  * CI / agent harness envelope — quiet success; noise only on failure.
  *
  * Cheap ratchets run in parallel (path-bun · bun-env · invisible-chars · brands ·
- * projects-roots · lib-domains · audit-verify). ESLint defaults to changed-files (`lint:bun-native:changed`);
+ * projects-roots · lib-domains · audit-verify). ESLint defaults to changed files (`lint`);
  * full tree only with --full-lint / HARNESS_FULL_LINT=1 (main push).
  *
  *   bun run ci:harness
@@ -122,11 +127,9 @@ const CHEAP: Step[] = [
 function eslintStep(fullLint: boolean): Step {
   return {
     name: fullLint ? 'eslint-full' : 'eslint-changed',
-    cmd: fullLint
-      ? ['bun', 'run', 'lint:bun-native:rollout']
-      : ['bun', 'run', 'lint:bun-native:changed'],
-    owner: 'eslint.harness.config.ts · scripts/lint-bun-native-changed.ts',
-    repair: fullLint ? 'bun run lint:bun-native:rollout' : 'bun run lint:bun-native:changed',
+    cmd: ['bun', 'run', fullLint ? 'lint:all' : 'lint'],
+    owner: 'eslint.harness.config.ts · scripts/lint-harness.ts',
+    repair: `bun run ${fullLint ? 'lint:all' : 'lint'}`,
   };
 }
 

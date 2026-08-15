@@ -139,22 +139,6 @@
       ]
     },
     {
-      "id": "packages-guards",
-      "zone": "packages",
-      "name": "@factorywager/guards",
-      "path": "packages/guards",
-      "enabled": true,
-      "description": "Shared guards package — smoke import gate until test script exists",
-      "gates": [
-        {
-          "id": "smoke-import",
-          "label": "Smoke import",
-          "description": "Package entry module resolves",
-          "cmd": ["bun", "-e", "await import('./src/index.ts'); console.log('ok')"]
-        }
-      ]
-    },
-    {
       "id": "kimi-toolchain",
       "zone": "toolchain",
       "name": "Kimi Toolchain",

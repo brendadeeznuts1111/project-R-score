@@ -106,5 +106,11 @@ describe('harness ESLint command', () => {
     expect(() => parseHarnessLintArgs(['--max-warnings=-1'])).toThrow(
       'Invalid --max-warnings value: -1'
     );
+    expect(() => parseHarnessLintArgs(['--changed', '--full'])).toThrow(
+      '--changed and --full are mutually exclusive'
+    );
+    expect(() => parseHarnessLintArgs(['--changed', '--scope=lib'])).toThrow(
+      '--changed cannot be combined with --scope'
+    );
   });
 });

@@ -678,40 +678,6 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     ],
   },
   {
-    key: 'process-execve-capability-probe',
-    token: asDocTokenId('process.execve'),
-    variant: 'capability-probe',
-    scope: 'tooling',
-    policy: 'optional',
-    ownerLane: 'runtime-tooling',
-    implementations: [{ path: 'scripts/dx-mcp.ts', symbol: 'toolsCall' }],
-    consumers: [{ path: 'scripts/dx-mcp.ts', symbol: 'dispatch' }],
-    relationships: none(
-      'The probe reports process replacement availability without transporting a domain identity.'
-    ),
-    proofs: [],
-  },
-  {
-    key: 'no-orphans-capability-probe',
-    token: asDocTokenId('--no-orphans'),
-    variant: 'runtime-cli',
-    scope: 'tooling',
-    policy: 'optional',
-    ownerLane: 'runtime-tooling',
-    implementations: [{ path: 'scripts/dx-mcp.ts', symbol: 'toolsCall' }],
-    consumers: [{ path: 'scripts/dx-mcp.ts', symbol: 'dispatch' }],
-    relationships: none(
-      'Parent-lifetime supervision is process policy and has no domain-valued payload.'
-    ),
-    proofs: [
-      {
-        source: 'public/registry/release-features.json',
-        key: 'result:no-orphans',
-        maxAgeDays: 45,
-      },
-    ],
-  },
-  {
     key: 'bun-test-parallel',
     token: asDocTokenId('--parallel'),
     variant: 'bun-test',
@@ -806,34 +772,6 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     ],
     relationships: none(
       'The negotiated transport protocol changes network behavior without changing request identity.'
-    ),
-    proofs: [],
-  },
-  {
-    key: 'fetch-http3-client-probe',
-    token: asDocTokenId('http3'),
-    variant: 'fetch-client',
-    scope: 'tooling',
-    policy: 'lab-only',
-    ownerLane: 'runtime-tooling',
-    implementations: [{ path: 'scripts/dx-mcp.ts', symbol: 'toolsCall' }],
-    consumers: [{ path: 'scripts/dx-mcp.ts', symbol: 'dispatch' }],
-    relationships: none(
-      'The experimental transport probe reports connectivity and carries no domain identity.'
-    ),
-    proofs: [],
-  },
-  {
-    key: 'bun-serve-http3-probe',
-    token: asDocTokenId('Bun.serve http3'),
-    variant: 'quic-server',
-    scope: 'tooling',
-    policy: 'lab-only',
-    ownerLane: 'runtime-tooling',
-    implementations: [{ path: 'scripts/dx-mcp.ts', symbol: 'toolsCall' }],
-    consumers: [{ path: 'scripts/dx-mcp.ts', symbol: 'dispatch' }],
-    relationships: none(
-      'The QUIC server probe validates runtime support without transporting a domain identity.'
     ),
     proofs: [],
   },

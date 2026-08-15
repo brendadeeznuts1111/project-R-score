@@ -66,7 +66,8 @@ export type MonorepoHealthBaseline = {
   targetScore: number;
   minScore: number;
   maxDeadCodePercent: number;
-  maxLargeFilePercent: number;
+  /** Absolute count avoids treating source deletion as a percentage regression. */
+  maxLargeFileCount: number;
   maxCyclicDependencyCount: number;
   maxDuplicateDepCount: number;
 };
@@ -80,6 +81,7 @@ export function ratchetViolations(
   report: {
     score: number;
     formulaVersion: number;
+    largeFileCount: number;
     metrics: {
       deadCodePercent: number;
       largeFilePercent: number;
@@ -103,10 +105,8 @@ export function ratchetViolations(
       `deadCodePercent ${report.metrics.deadCodePercent.toFixed(2)} > max ${baseline.maxDeadCodePercent}`
     );
   }
-  if (report.metrics.largeFilePercent > baseline.maxLargeFilePercent) {
-    v.push(
-      `largeFilePercent ${report.metrics.largeFilePercent.toFixed(2)} > max ${baseline.maxLargeFilePercent}`
-    );
+  if (report.largeFileCount > baseline.maxLargeFileCount) {
+    v.push(`largeFileCount ${report.largeFileCount} > max ${baseline.maxLargeFileCount}`);
   }
   if (report.metrics.cyclicDependencyCount > baseline.maxCyclicDependencyCount) {
     v.push(
@@ -124,6 +124,7 @@ export function ratchetViolations(
 export function baselineFromReport(report: {
   score: number;
   formulaVersion: number;
+  largeFileCount: number;
   metrics: {
     deadCodePercent: number;
     largeFilePercent: number;
@@ -132,13 +133,13 @@ export function baselineFromReport(report: {
   };
 }): MonorepoHealthBaseline {
   // Pin the observed state. Percentage ceilings retain only 0.1 point of
-  // rounding tolerance; cycle and dependency counts receive no free headroom.
+  // rounding tolerance; absolute counts receive no free headroom.
   return {
     formulaVersion: report.formulaVersion,
     targetScore: 90,
     minScore: Math.floor(report.score * 10) / 10,
     maxDeadCodePercent: Math.ceil(report.metrics.deadCodePercent * 10) / 10,
-    maxLargeFilePercent: Math.ceil(report.metrics.largeFilePercent * 10) / 10,
+    maxLargeFileCount: report.largeFileCount,
     maxCyclicDependencyCount: report.metrics.cyclicDependencyCount,
     maxDuplicateDepCount: report.metrics.duplicateDepCount,
   };
@@ -232,10 +233,10 @@ async function main(): Promise<void> {
       `monorepo-health gate: score ${report.score}/100 (${report.grade}) · formula v${report.formulaVersion}`
     );
     console.info(
-      `  dead ${report.metrics.deadCodePercent.toFixed(1)}% · large ${report.metrics.largeFilePercent.toFixed(1)}% · cycles ${report.metrics.cyclicDependencyCount} · dupDeps ${report.metrics.duplicateDepCount}`
+      `  dead ${report.metrics.deadCodePercent.toFixed(1)}% · large ${report.largeFileCount} files (${report.metrics.largeFilePercent.toFixed(1)}%) · cycles ${report.metrics.cyclicDependencyCount} · dupDeps ${report.metrics.duplicateDepCount}`
     );
     console.info(
-      `  ratchet minScore≥${baseline.minScore} · maxDead≤${baseline.maxDeadCodePercent} · maxLarge≤${baseline.maxLargeFilePercent} · maxCycles≤${baseline.maxCyclicDependencyCount}`
+      `  ratchet minScore≥${baseline.minScore} · maxDead≤${baseline.maxDeadCodePercent} · maxLargeFiles≤${baseline.maxLargeFileCount} · maxCycles≤${baseline.maxCyclicDependencyCount}`
     );
     console.info(
       `  target score≥${baseline.targetScore}: ${meetsTarget ? 'met' : `gap ${(baseline.targetScore - report.score).toFixed(1)}`}`

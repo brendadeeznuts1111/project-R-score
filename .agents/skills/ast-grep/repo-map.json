@@ -212,16 +212,6 @@
       "description": "MCP tools + WS subscription handlers"
     },
     {
-      "id": "packages-guards",
-      "zone": "packages",
-      "name": "@factorywager/guards",
-      "path": "packages/guards",
-      "view": "names",
-      "items": "exports",
-      "tags": ["package", "guards"],
-      "description": "Shared guard utilities"
-    },
-    {
       "id": "packages-versioning",
       "zone": "packages",
       "name": "@factorywager/versioning",

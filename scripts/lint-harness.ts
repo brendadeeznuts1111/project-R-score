@@ -1,4 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
+// @released --changed · released v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --changed · changed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --changed · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -6,8 +10,8 @@
  * Canonical harness ESLint runner.
  *
  * Examples:
- *   bun scripts/lint-harness.ts --scope=lib --max-warnings=0
- *   bun scripts/lint-harness.ts --quiet --cache-location=.cache/eslint-bun-native
+ *   bun scripts/lint-harness.ts --changed --quiet --max-warnings=0
+ *   bun scripts/lint-harness.ts --full --cache-location=.cache/eslint
  */
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
@@ -16,6 +20,8 @@ import {
   type HarnessEslintOptions,
 } from '../config/eslint/harness/command.ts';
 import { HARNESS_ROOTS } from '../config/eslint/harness/rollout.ts';
+import { hasCodeLikeChange, listChangedFiles, resolveMainHead } from './lib/git-changed';
+import { isHarnessLintPath } from '../config/eslint/harness/rollout.ts';
 
 const repoRoot = `${import.meta.dir}/..`;
 
@@ -28,14 +34,27 @@ function readOption(args: string[], index: number, name: string): [string, numbe
   throw new Error(`Expected a value for --${name}`);
 }
 
-export function parseHarnessLintArgs(args: string[]): HarnessEslintOptions {
-  const options: HarnessEslintOptions = {};
+export type HarnessLintOptions = HarnessEslintOptions & {
+  changed?: boolean;
+  full?: boolean;
+};
+
+export function parseHarnessLintArgs(args: string[]): HarnessLintOptions {
+  const options: HarnessLintOptions = {};
   let scope: (typeof HARNESS_ROOTS)[number] | undefined;
 
   for (let index = 0; index < args.length; index++) {
     const arg = args[index]!;
     if (arg === '--fix') {
       options.fix = true;
+      continue;
+    }
+    if (arg === '--changed') {
+      options.changed = true;
+      continue;
+    }
+    if (arg === '--full') {
+      options.full = true;
       continue;
     }
     if (arg === '--quiet') {
@@ -73,12 +92,40 @@ export function parseHarnessLintArgs(args: string[]): HarnessEslintOptions {
   if (scope) {
     options.files = [`${scope}/**/*.{ts,tsx}`];
   }
+  if (options.changed && options.full) {
+    throw new Error('--changed and --full are mutually exclusive');
+  }
+  if (options.changed && scope) {
+    throw new Error('--changed cannot be combined with --scope');
+  }
   return options;
+}
+
+export async function resolveHarnessLintOptions(
+  options: HarnessLintOptions
+): Promise<HarnessEslintOptions | null> {
+  const { changed, full: _full, ...eslintOptions } = options;
+  const forceFull = Bun.env.HARNESS_FULL_LINT === '1' || Bun.env.HARNESS_FULL_LINT === 'true';
+  if (!changed || forceFull) return eslintOptions;
+
+  const since = await resolveMainHead();
+  const changedFiles = await listChangedFiles({ since, dirty: true });
+  const targets = changedFiles.filter(isHarnessLintPath);
+  if (targets.length === 0) {
+    const reason = hasCodeLikeChange(changedFiles)
+      ? '0 harness lint paths'
+      : 'no harness TypeScript';
+    console.info(`✓ eslint — skip (${reason} since ${since})`);
+    return null;
+  }
+  console.info(`eslint ${targets.length} file(s) since ${since}`);
+  return { ...eslintOptions, files: targets };
 }
 
 async function main(): Promise<void> {
   const argv = applyUnknownLongOptionGuardFor('lint', Bun.argv.slice(2));
-  const options = parseHarnessLintArgs(argv);
+  const options = await resolveHarnessLintOptions(parseHarnessLintArgs(argv));
+  if (!options) return;
   const proc = Bun.spawn(bunSpawnArgs(buildHarnessEslintArgs(options)), {
     cwd: repoRoot,
     stdin: 'inherit',

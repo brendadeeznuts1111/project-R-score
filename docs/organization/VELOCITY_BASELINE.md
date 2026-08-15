@@ -12,7 +12,7 @@ Measured 2026-07-21 during harness-engineering velocity transform. Thesis:
 | Typical staged `scripts/*.ts` (post-transform)        |           **~2.1–2.7s** gate sum (`reports/harness-gate-timing.json`) | annotate-on-write; brands staged‖smart; brand-types deferred; path-bun / bun-env parallel when lib\|scripts staged |
 
 Dominant cost was full-tree ESLint. Default `ci:harness` now uses
-`lint:bun-native:changed` (~0.5s on dirty harness files); full rollout only with
+`lint` (~0.5s on dirty harness files); full rollout only with `lint:all` or
 `HARNESS_FULL_LINT=1` (main push). Cache: `.cache/eslint-bun-native`
 (GHA-restored). Warm full rollout ~0.5–3.5s vs cold ~7s.
 
@@ -99,7 +99,7 @@ Bun test (1.3.13+ / live on 1.4.0): day-loop adds `test:changed` (import graph),
 
 | Lever                                                | Change                                                                                                    |
 | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `config/eslint/harness/bun-native.ts`                | Rollout `no-restricted-imports` / `no-restricted-syntax` → **error** (same as STRICT_INVENTORY)           |
+| `config/eslint/harness/bun-native.ts`                | Root `no-restricted-imports` / `no-restricted-syntax` rules at **error**                                    |
 | `scripts/pre-commit-harness.ts`                      | `--max-warnings` **500 → 0** on staged harness files                                                      |
 | Burn slice                                           | Removed remaining restricted import/syntax sites under harness paths (fs/crypto → Bun)                    |
 | `bun/prefer-bun-env` + `bun/prefer-import-meta-main` | Burned under harness paths → **error** in `config/eslint/plugin-bun`                                      |

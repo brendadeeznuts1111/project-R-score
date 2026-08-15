@@ -12,7 +12,7 @@
  * mintable-secret, verification/docs probes — not a free pass for node:url.
  */
 import type { Linter } from 'eslint';
-import { HARNESS_IGNORES, HARNESS_PATHS, STRICT_INVENTORY } from './rollout.ts';
+import { HARNESS_IGNORES, HARNESS_PATHS } from './rollout.ts';
 import { importPathMessage, lintMessage, syntaxMessage } from './messages.ts';
 
 /** Prefer lib/bun-path-url over node:url / url. */
@@ -135,4 +135,4 @@ export function bunNativeRolloutConfig(
 
 export const bunNativeLintRollout = bunNativeRolloutConfig(HARNESS_PATHS, HARNESS_IGNORES);
 
-export { HARNESS_IGNORES, HARNESS_PATHS, STRICT_INVENTORY };
+export { HARNESS_IGNORES, HARNESS_PATHS };

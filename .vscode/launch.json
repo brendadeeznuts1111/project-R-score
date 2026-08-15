@@ -28,13 +28,6 @@
     {
       "type": "bun",
       "request": "launch",
-      "name": "Bun: Debug dx-mcp",
-      "program": "${workspaceFolder}/scripts/dx-mcp.ts",
-      "cwd": "${workspaceFolder}"
-    },
-    {
-      "type": "bun",
-      "request": "launch",
       "name": "Bun: Debug bun-docs-mcp",
       "program": "${workspaceFolder}/tools/bun-docs-mcp.ts",
       "cwd": "${workspaceFolder}",
@@ -55,11 +48,7 @@
       "id": "bunScript",
       "type": "pickString",
       "description": "Script to debug",
-      "options": [
-        "scripts/dx-mcp.ts",
-        "tools/bun-docs-mcp.ts",
-        "scripts/build.ts"
-      ]
+      "options": ["tools/bun-docs-mcp.ts", "scripts/build.ts"]
     }
   ]
 }
