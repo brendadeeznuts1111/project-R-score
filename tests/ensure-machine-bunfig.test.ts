@@ -3,10 +3,12 @@ import { describe, expect, test } from 'bun:test';
 import { lstatSync, symlinkSync } from 'node:fs';
 import { joinPath, resolvePath } from '../scripts/lib/fs-bun';
 import {
+  bunfigPathIsDirectory,
   bunfigPathIsSymlink,
   ensureMachineBunfig,
   machineBunfigHasRequiredSnippets,
   renderMachineBunfigTemplate,
+  xdgShadowBunfigPath,
   MACHINE_BUNFIG_TEMPLATE_REL,
   CACHE_DIR_PLACEHOLDER,
 } from '../scripts/ensure-machine-bunfig.ts';
@@ -150,6 +152,39 @@ describe('ensure-machine-bunfig', () => {
     expect(flat.action).toBe('wrote');
     expect(lstatSync(live).isSymbolicLink()).toBe(false);
     expect(await Bun.file(live).text()).toContain('linker = "isolated"');
+    await Bun.$`rm -rf ${home}`.quiet();
+  });
+
+  test('check fails when $XDG_CONFIG_HOME/.bunfig.toml exists', async () => {
+    const home = joinPath(ROOT, 'tmp/ensure-machine-bunfig-xdg-home');
+    await Bun.$`rm -rf ${home}`.quiet();
+    await Bun.$`mkdir -p ${home}`.quiet();
+    const seed = await ensureMachineBunfig({ cwd: ROOT, home, overwrite: true });
+    expect(seed.ok).toBe(true);
+    const xdg = joinPath(home, 'xdg');
+    await Bun.$`mkdir -p ${xdg}`.quiet();
+    await Bun.write(joinPath(xdg, '.bunfig.toml'), '[install]\nlinker = "hoisted"\n');
+    const env = { HOME: home, XDG_CONFIG_HOME: xdg };
+    expect(xdgShadowBunfigPath(env)).toBe(joinPath(xdg, '.bunfig.toml'));
+    const chk = await ensureMachineBunfig({ cwd: ROOT, home, checkOnly: true, env });
+    expect(chk.ok).toBe(false);
+    expect(chk.action).toBe('check-fail');
+    expect(chk.reason).toContain('shadows');
+    await Bun.$`rm -rf ${home}`.quiet();
+  });
+
+  test('directory at ~/.bunfig.toml is not a regular file', async () => {
+    const home = joinPath(ROOT, 'tmp/ensure-machine-bunfig-dir-home');
+    await Bun.$`rm -rf ${home}`.quiet();
+    await Bun.$`mkdir -p ${joinPath(home, '.bunfig.toml')}`.quiet();
+    expect(bunfigPathIsDirectory(joinPath(home, '.bunfig.toml'))).toBe(true);
+    const chk = await ensureMachineBunfig({ cwd: ROOT, home, checkOnly: true });
+    expect(chk.ok).toBe(false);
+    expect(chk.reason).toContain('directory');
+    const wrote = await ensureMachineBunfig({ cwd: ROOT, home, overwrite: true });
+    expect(wrote.ok).toBe(false);
+    expect(wrote.action).toBe('refused');
+    expect(bunfigPathIsDirectory(joinPath(home, '.bunfig.toml'))).toBe(true);
     await Bun.$`rm -rf ${home}`.quiet();
   });
 });
