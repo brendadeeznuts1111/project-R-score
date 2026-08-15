@@ -304,6 +304,20 @@ describe('portal-cli doctor pure', () => {
     await Bun.$`rm -rf ${tmp}`.quiet();
   });
 
+  test('bunfig-machine-ssot names a dangling home link, not missing', async () => {
+    const tmp = `${ROOT}/tmp/doctor-dangling-home`;
+    await Bun.$`rm -rf ${tmp}`.quiet();
+    await Bun.$`mkdir -p ${tmp}/home`.quiet();
+    const { symlinkSync } = await import('node:fs');
+    symlinkSync(`${tmp}/home/missing-target.toml`, `${tmp}/home/.bunfig.toml`);
+    const checks = await runBunfigChecks(ROOT, { HOME: `${tmp}/home` });
+    const ssot = checks.find(c => c.id === 'bunfig-machine-ssot');
+    expect(ssot?.ok).toBe(false);
+    expect(ssot?.message).toContain('dangling symlink');
+    expect(ssot?.message).not.toContain('file missing');
+    await Bun.$`rm -rf ${tmp}`.quiet();
+  });
+
   test('runtime group reports effective state without exposing BUN_OPTIONS', async () => {
     const secretishOptions = '--preload=pass://vault/private-item/password';
     const checks = runRuntimeEnvChecks({

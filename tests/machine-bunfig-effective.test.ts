@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/pm/cli/install#configuring-bun-install-with-bunfig-toml
 import { describe, expect, test } from 'bun:test';
 import { joinPath, resolvePath } from '../scripts/lib/fs-bun.ts';
+import { inspectBunfigInode } from '../scripts/lib/bunfig-inode.ts';
 import {
   formatGlobalBunfigRef,
   formatPolicySource,
@@ -46,7 +47,7 @@ describe('readEffectiveGlobalBunfig', () => {
     const effective = await readEffectiveGlobalBunfig(env);
     expect(effective.bunfigPath).toBe(joinPath(xdg, '.bunfig.toml'));
     expect(effective.install?.linker).toBe('hoisted');
-    const project = { bunfigPath: null, install: null, cacheDir: null };
+    const project = { bunfigPath: null, install: null, cacheDir: null, inode: 'missing' as const };
     const policy = resolveEffectiveInstallPolicy(project, effective);
     expect(policy.linker).toBe('hoisted');
     expect(policy.source.linker).toBe('machine');
@@ -67,7 +68,7 @@ describe('readEffectiveGlobalBunfig', () => {
     await Bun.write(joinPath(home, '.bunfig.toml'), '[install]\nlinker = "isolated"\n');
     const env = { HOME: home };
     const policy = resolveEffectiveInstallPolicy(
-      { bunfigPath: null, install: null, cacheDir: null },
+      { bunfigPath: null, install: null, cacheDir: null, inode: 'missing' },
       await readEffectiveGlobalBunfig(env)
     );
     expect(formatPolicySource('linker', policy, env)).toBe('inherited from ~/.bunfig.toml');
@@ -98,5 +99,26 @@ describe('readEffectiveGlobalBunfig', () => {
     expect(paths.machine).toBe(joinPath(home, '.bunfig.toml'));
     expect(paths.effectiveGlobal).toBe(joinPath(xdg, '.bunfig.toml'));
     await Bun.$`rm -rf ${home}`.quiet();
+  });
+
+  test('dangling home bunfig is not missing', async () => {
+    const home = joinPath(ROOT, 'tmp/dangling-home-inode');
+    await Bun.$`rm -rf ${home}`.quiet();
+    await Bun.$`mkdir -p ${home}`.quiet();
+    const live = joinPath(home, '.bunfig.toml');
+    const { symlinkSync } = await import('node:fs');
+    symlinkSync(joinPath(home, 'missing-target.toml'), live);
+    expect(inspectBunfigInode(live)).toBe('dangling-symlink');
+    const snap = await readMachineBunfig({ HOME: home });
+    expect(snap.inode).toBe('dangling-symlink');
+    expect(snap.bunfigPath).toBeNull();
+    expect(snap.install).toBeNull();
+    const missingHome = joinPath(ROOT, 'tmp/missing-home-inode');
+    await Bun.$`rm -rf ${missingHome}`.quiet();
+    await Bun.$`mkdir -p ${missingHome}`.quiet();
+    const gone = await readMachineBunfig({ HOME: missingHome });
+    expect(gone.inode).toBe('missing');
+    expect(gone.bunfigPath).toBeNull();
+    await Bun.$`rm -rf ${home} ${missingHome}`.quiet();
   });
 });

@@ -99,7 +99,9 @@ export async function runBunfigChecks(
 
   // 1) Machine ~/.bunfig.toml SSOT keys
   const missing: string[] = [];
-  if (!machine.bunfigPath) {
+  if (machine.inode === 'dangling-symlink') {
+    missing.push('dangling symlink (~/.bunfig.toml)');
+  } else if (!machine.bunfigPath) {
     missing.push('file missing (~/.bunfig.toml)');
   } else {
     if (machineInstall?.linker !== 'isolated') missing.push('linker="isolated"');

@@ -13,7 +13,8 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  *   bun run machine:bunfig:ensure --check            # exit 1 if missing / drift / XDG shadow
  *
  * CI: setup-factory-bun writes a regular file so portal:doctor + bake:doctor:check are portable.
- * Local: no-op if ~/.bunfig.toml already present. --overwrite will not flatten a symlink.
+ * Local: no-op if ~/.bunfig.toml already present. Missing + `~/dotfiles/bun/bunfig.toml`
+ * restores that symlink. --overwrite will not flatten a symlink.
  *
  * Policy table SSOT: lib/install/machine-bunfig-policy.ts
  * @see docs/UNIFIED.md
@@ -22,11 +23,13 @@ import {
   CACHE_DIR_PLACEHOLDER,
   cacheDirUsesUnexpandedTilde,
   MACHINE_BUNFIG_TEMPLATE_REL,
+  machineBunfigDotfilesPath,
   machineBunfigMissingSnippets,
   xdgShadowBunfigPath,
 } from '../lib/install/machine-bunfig-policy.ts';
-// eslint-disable-next-line no-restricted-imports -- Bun.file has no lstat; node:fs is the documented fallback
-import { lstatSync } from 'node:fs';
+// eslint-disable-next-line no-restricted-imports -- Bun has no symlink; node:fs is the documented fallback
+import { symlinkSync } from 'node:fs';
+import { bunfigInodeIsLink, inspectBunfigInode } from './lib/bunfig-inode.ts';
 import { joinPath } from './lib/fs-bun.ts';
 
 const argv = import.meta.main
@@ -52,7 +55,15 @@ export type EnsureMachineBunfigOpts = {
 
 export type EnsureMachineBunfigResult = {
   ok: boolean;
-  action: 'wrote' | 'exists' | 'missing' | 'would-write' | 'check-ok' | 'check-fail' | 'refused';
+  action:
+    | 'wrote'
+    | 'linked'
+    | 'exists'
+    | 'missing'
+    | 'would-write'
+    | 'check-ok'
+    | 'check-fail'
+    | 'refused';
   path: string;
   cacheDir: string;
   reason?: string;
@@ -60,20 +71,12 @@ export type EnsureMachineBunfigResult = {
 
 /** True when path exists as a symlink (does not follow the target). */
 export function bunfigPathIsSymlink(path: string): boolean {
-  try {
-    return lstatSync(path).isSymbolicLink();
-  } catch {
-    return false;
-  }
+  return bunfigInodeIsLink(inspectBunfigInode(path));
 }
 
 /** True when path is a directory (does not follow a symlink). */
 export function bunfigPathIsDirectory(path: string): boolean {
-  try {
-    return lstatSync(path).isDirectory();
-  } catch {
-    return false;
-  }
+  return inspectBunfigInode(path) === 'directory';
 }
 
 function resolveHome(env: Record<string, string | undefined>, explicit?: string): string | null {
@@ -124,9 +127,12 @@ export async function ensureMachineBunfig(
   const template = await templateFile.text();
   const rendered = renderMachineBunfigTemplate(template, cacheDir);
   const existing = Bun.file(path);
-  const linked = bunfigPathIsSymlink(path);
-  const isDir = bunfigPathIsDirectory(path);
+  const inode = inspectBunfigInode(path);
+  const linked = bunfigInodeIsLink(inode);
+  const isDir = inode === 'directory';
   const targetExists = await existing.exists();
+  const dotfilesSsot = machineBunfigDotfilesPath(home);
+  const dotfilesExists = await Bun.file(dotfilesSsot).exists();
   const xdgShadow = xdgShadowBunfigPath(env);
   if (xdgShadow && (await Bun.file(xdgShadow).exists())) {
     return {
@@ -163,7 +169,9 @@ export async function ensureMachineBunfig(
         action: 'check-fail',
         path,
         cacheDir,
-        reason: 'missing ~/.bunfig.toml — run: bun run machine:bunfig:ensure',
+        reason: dotfilesExists
+          ? `missing ~/.bunfig.toml — restore symlink to ${dotfilesSsot} or run: bun run machine:bunfig:ensure`
+          : 'missing ~/.bunfig.toml — run: bun run machine:bunfig:ensure',
       };
     }
     const text = await existing.text();
@@ -224,6 +232,17 @@ export async function ensureMachineBunfig(
 
   if (targetExists && !linked && !opts.overwrite && !opts.overwriteLink) {
     return { ok: true, action: 'exists', path, cacheDir };
+  }
+
+  if (inode === 'missing' && !opts.overwrite && !opts.overwriteLink && dotfilesExists) {
+    symlinkSync(dotfilesSsot, path);
+    return {
+      ok: true,
+      action: 'linked',
+      path,
+      cacheDir,
+      reason: `restored symlink → ${dotfilesSsot}`,
+    };
   }
 
   if (linked) {

@@ -92,8 +92,9 @@ async function checkBunfig(): Promise<Check> {
   const storeOk = policy.globalStore === MACHINE_EXPECTED_GLOBAL_STORE;
   const policyOk = linkerOk && storeOk;
   const envPolicyOk = envInstallPolicyOk(env);
-  const envFallback = !machine.bunfigPath && envPolicyOk;
-  const ok = policyOk || envFallback;
+  const danglingHome = machine.inode === 'dangling-symlink';
+  const envFallback = !machine.bunfigPath && !danglingHome && envPolicyOk;
+  const ok = !danglingHome && (policyOk || envFallback);
 
   const parts: string[] = [];
   parts.push(`linker=${policy.linker ?? 'unset'} (${formatPolicySource('linker', policy)})`);
@@ -112,6 +113,14 @@ async function checkBunfig(): Promise<Check> {
         ? `policy via ${FORBIDDEN_INSTALL_ENV_LABEL} (ephemeral CI)`
         : `policy via ${FORBIDDEN_INSTALL_ENV_LABEL} env`
     );
+  }
+
+  if (danglingHome) {
+    return {
+      ok: false,
+      label: 'install policy',
+      detail: 'dangling symlink ~/.bunfig.toml',
+    };
   }
 
   if (!machine.bunfigPath && !envPolicyOk) {

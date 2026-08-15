@@ -2,6 +2,7 @@
 import { describe, expect, test } from 'bun:test';
 import { lstatSync, symlinkSync } from 'node:fs';
 import { joinPath, resolvePath } from '../scripts/lib/fs-bun';
+import { machineBunfigDotfilesPath } from '../lib/install/machine-bunfig-policy.ts';
 import {
   bunfigPathIsDirectory,
   bunfigPathIsSymlink,
@@ -174,6 +175,25 @@ describe('ensure-machine-bunfig', () => {
     expect(wrote.ok).toBe(false);
     expect(wrote.action).toBe('refused');
     expect(wrote.reason).toContain('shadows');
+    await Bun.$`rm -rf ${home}`.quiet();
+  });
+
+  test('missing home path restores the dotfiles symlink when that target exists', async () => {
+    const home = joinPath(ROOT, 'tmp/ensure-machine-bunfig-relink-home');
+    await Bun.$`rm -rf ${home}`.quiet();
+    await Bun.$`mkdir -p ${joinPath(home, 'dotfiles', 'bun')}`.quiet();
+    const target = machineBunfigDotfilesPath(home);
+    await Bun.write(target, '[install]\nlinker = "isolated"\nglobalStore = true\n');
+    const r = await ensureMachineBunfig({ cwd: ROOT, home, overwrite: false });
+    expect(r.ok).toBe(true);
+    expect(r.action).toBe('linked');
+    expect(bunfigPathIsSymlink(r.path)).toBe(true);
+    expect(lstatSync(r.path).isSymbolicLink()).toBe(true);
+    expect(await Bun.file(r.path).text()).toContain('linker = "isolated"');
+    const over = await ensureMachineBunfig({ cwd: ROOT, home, overwrite: true, overwriteLink: true });
+    expect(over.ok).toBe(true);
+    expect(over.action).toBe('wrote');
+    expect(lstatSync(r.path).isSymbolicLink()).toBe(false);
     await Bun.$`rm -rf ${home}`.quiet();
   });
 

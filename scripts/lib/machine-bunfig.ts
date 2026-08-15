@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { TOML } from 'bun';
 import { xdgShadowBunfigPath } from '../../lib/install/machine-bunfig-policy.ts';
+import { inspectBunfigInode, type BunfigInode } from './bunfig-inode.ts';
 import { joinPath } from './fs-bun';
 
 export type BunfigInstall = {
@@ -15,6 +16,8 @@ export type MachineBunfigSnapshot = {
   bunfigPath: string | null;
   install: BunfigInstall | null;
   cacheDir: string | null;
+  /** lstat kind. Dangling is not missing — `Bun.file().exists()` cannot tell. */
+  inode: BunfigInode;
 };
 
 export type EffectiveInstallPolicy = {
@@ -71,13 +74,17 @@ export async function readMachineBunfig(
   env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
 ): Promise<MachineBunfigSnapshot> {
   const bunfigPath = resolveHomeBunfigPath(env);
-  if (!bunfigPath) return { bunfigPath: null, install: null, cacheDir: null };
+  if (!bunfigPath) {
+    return { bunfigPath: null, install: null, cacheDir: null, inode: 'missing' };
+  }
+  const inode = inspectBunfigInode(bunfigPath);
   const { install, cacheDir } = await readBunfigInstall(bunfigPath, env);
   const exists = await Bun.file(bunfigPath).exists();
   return {
     bunfigPath: exists ? bunfigPath : null,
     install,
     cacheDir,
+    inode,
   };
 }
 
@@ -92,7 +99,7 @@ export async function readEffectiveGlobalBunfig(
   const xdg = xdgShadowBunfigPath(env);
   if (xdg && (await Bun.file(xdg).exists())) {
     const { install, cacheDir } = await readBunfigInstall(xdg, env);
-    return { bunfigPath: xdg, install, cacheDir };
+    return { bunfigPath: xdg, install, cacheDir, inode: inspectBunfigInode(xdg) };
   }
   return readMachineBunfig(env);
 }
@@ -114,6 +121,7 @@ export async function readProjectBunfig(projectRoot: string): Promise<MachineBun
     bunfigPath: exists ? bunfigPath : null,
     install,
     cacheDir,
+    inode: inspectBunfigInode(bunfigPath),
   };
 }
 

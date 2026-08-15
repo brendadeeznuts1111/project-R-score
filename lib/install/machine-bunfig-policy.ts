@@ -20,6 +20,18 @@
 /** Repo-relative path of the machine bunfig template (CI/bootstrap seed). */
 export const MACHINE_BUNFIG_TEMPLATE_REL = 'config/machine.bunfig.toml.template';
 
+/**
+ * Home-relative live SSOT target. Local `~/.bunfig.toml` is a symlink here.
+ * Default ensure restores that link when the target exists; `--overwrite` still
+ * writes a regular file (CI).
+ */
+export const MACHINE_BUNFIG_DOTFILES_REL = 'dotfiles/bun/bunfig.toml' as const;
+
+/** Absolute `~/dotfiles/bun/bunfig.toml` for a given HOME. */
+export function machineBunfigDotfilesPath(home: string): string {
+  return `${home.replace(/\/+$/, '')}/${MACHINE_BUNFIG_DOTFILES_REL}`;
+}
+
 /** Placeholder in the template replaced with an absolute cache path. */
 export const CACHE_DIR_PLACEHOLDER = '{{CACHE_DIR}}';
 

@@ -311,7 +311,9 @@ async function probeMachineInstallPolicy(
     `linker=${policy.linker ?? 'unset'} (${formatPolicySource('linker', policy)})`,
     `globalStore=${String(policy.globalStore)} (${formatPolicySource('globalStore', policy)})`,
   ];
-  if (!machine.bunfigPath) {
+  if (machine.inode === 'dangling-symlink') {
+    parts.push('dangling symlink ~/.bunfig.toml');
+  } else if (!machine.bunfigPath) {
     parts.push('missing ~/.bunfig.toml');
   }
   return { linkerOk, storeOk, note: parts.join('; ') };

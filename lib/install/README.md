@@ -10,7 +10,7 @@ Install / bunfig machine policy (code SSOT).
 
 **Human map:** [`docs/UNIFIED.md`](../../docs/UNIFIED.md) · template `config/machine.bunfig.toml.template`
 
-Live `~/.bunfig.toml` may be a symlink to `~/dotfiles/bun/bunfig.toml`. `ensure --check` reads through it; `--overwrite` will not flatten it.
+Live `~/.bunfig.toml` may be a symlink to `~/dotfiles/bun/bunfig.toml`. `ensure --check` reads through it; `--overwrite` will not flatten it. Default ensure restores that symlink when the target exists and the home path is missing.
 
 ```bash
 bun test tests/machine-bunfig-policy.test.ts tests/ensure-machine-bunfig.test.ts
