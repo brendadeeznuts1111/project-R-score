@@ -16,6 +16,7 @@ import {
   MACHINE_EXPECTED_GLOBAL_STORE,
   MACHINE_EXPECTED_LINKER,
   MACHINE_BUNFIG_REQUIRED_SNIPPETS,
+  xdgShadowBunfigPath,
 } from '../lib/install/machine-bunfig-policy.ts';
 import { checkNodeModulesLayout } from '../scripts/verify-install-cache.ts';
 import { withExplicitProjectCwd } from '../scripts/with-bun-cache-env.ts';
@@ -28,6 +29,7 @@ describe('verify-install-cache policy SSOT', () => {
     expect(verify.isEphemeralCiInstallEnv).toBe(isEphemeralCiInstallEnv);
     expect(verify.MACHINE_EXPECTED_LINKER).toBe(MACHINE_EXPECTED_LINKER);
     expect(verify.MACHINE_EXPECTED_GLOBAL_STORE).toBe(MACHINE_EXPECTED_GLOBAL_STORE);
+    expect(verify.xdgShadowBunfigPath).toBe(xdgShadowBunfigPath);
   });
 
   test('verify, doctor, and audit share FORBIDDEN_INSTALL_ENV_VARS reference', async () => {
