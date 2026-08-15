@@ -2455,7 +2455,7 @@ export const VERIFY_INSTALL_ENV_ALLOWED_LONG = ['json', 'save'] as const;
 export const VERIFY_BUN_RUNTIME_NITS_ALLOWED_LONG = ['save'] as const;
 
 /** § — machine:bunfig:ensure (`scripts/ensure-machine-bunfig.ts`) — audit split */
-export const MACHINE_BUNFIG_ENSURE_ALLOWED_LONG = ['check', 'overwrite'] as const;
+export const MACHINE_BUNFIG_ENSURE_ALLOWED_LONG = ['check', 'overwrite', 'overwrite-link'] as const;
 
 /** § — ops:seed:partners (`tools/ops-seed-partners.ts`) — audit split */
 export const OPS_SEED_PARTNERS_ALLOWED_LONG = ['force'] as const;

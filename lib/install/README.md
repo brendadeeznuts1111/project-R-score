@@ -10,8 +10,10 @@ Install / bunfig machine policy (code SSOT).
 
 **Human map:** [`docs/UNIFIED.md`](../../docs/UNIFIED.md) · template `config/machine.bunfig.toml.template`
 
+Live `~/.bunfig.toml` may be a symlink to `~/dotfiles/bun/bunfig.toml`. `ensure --check` reads through it; `--overwrite` will not flatten it.
+
 ```bash
-bun test tests/machine-bunfig-policy.test.ts
+bun test tests/machine-bunfig-policy.test.ts tests/ensure-machine-bunfig.test.ts
 bun run machine:bunfig:ensure
 bun run portal:doctor --group bunfig
 ```

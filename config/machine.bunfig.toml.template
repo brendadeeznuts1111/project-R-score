@@ -1,6 +1,7 @@
 # Machine Bun install SSOT — FactoryWager
 # @see docs/UNIFIED.md · https://bun.com/docs/pm/isolated-installs
-# Installed to ~/.bunfig.toml by: bun run machine:bunfig:ensure
+# Seeded to ~/.bunfig.toml by: bun run machine:bunfig:ensure
+# A symlink at ~/.bunfig.toml is the machine SSOT — ensure will not replace it.
 # Project ./bunfig.toml must NOT duplicate linker / globalStore / cache.dir / age keys.
 #
 # {{CACHE_DIR}} is replaced with an absolute path (e.g. $HOME/.bun/install/cache).

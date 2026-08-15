@@ -1,7 +1,9 @@
 // @see https://bun.com/docs/test
 import { describe, expect, test } from 'bun:test';
+import { lstatSync, symlinkSync } from 'node:fs';
 import { joinPath, resolvePath } from '../scripts/lib/fs-bun';
 import {
+  bunfigPathIsSymlink,
   ensureMachineBunfig,
   machineBunfigHasRequiredSnippets,
   renderMachineBunfigTemplate,
@@ -71,6 +73,46 @@ describe('ensure-machine-bunfig', () => {
     expect(r.checks.find(c => c.id === 'bunfig-merge-consistency')?.ok).toBe(true);
     expect(r.summary.failedFatal).toBe(0);
     expect(r.ok).toBe(true);
+    await Bun.$`rm -rf ${home}`.quiet();
+  });
+
+  test('check follows a symlink; overwrite refuses; overwrite-link flattens', async () => {
+    const home = joinPath(ROOT, 'tmp/ensure-machine-bunfig-symlink-home');
+    await Bun.$`rm -rf ${home}`.quiet();
+    await Bun.$`mkdir -p ${home}`.quiet();
+    const seed = await ensureMachineBunfig({ cwd: ROOT, home, overwrite: true });
+    expect(seed.ok).toBe(true);
+    const target = joinPath(home, 'dotfiles-bunfig.toml');
+    await Bun.write(target, await Bun.file(seed.path).text());
+    await Bun.$`rm -f ${seed.path}`.quiet();
+    symlinkSync(target, seed.path);
+    expect(bunfigPathIsSymlink(seed.path)).toBe(true);
+
+    const chk = await ensureMachineBunfig({ cwd: ROOT, home, checkOnly: true });
+    expect(chk.ok).toBe(true);
+    expect(chk.action).toBe('check-ok');
+
+    const noop = await ensureMachineBunfig({ cwd: ROOT, home, overwrite: false });
+    expect(noop.ok).toBe(true);
+    expect(noop.action).toBe('exists');
+    expect(lstatSync(seed.path).isSymbolicLink()).toBe(true);
+
+    const refused = await ensureMachineBunfig({ cwd: ROOT, home, overwrite: true });
+    expect(refused.ok).toBe(false);
+    expect(refused.action).toBe('refused');
+    expect(refused.reason).toContain('--overwrite-link');
+    expect(lstatSync(seed.path).isSymbolicLink()).toBe(true);
+
+    const flat = await ensureMachineBunfig({
+      cwd: ROOT,
+      home,
+      overwrite: true,
+      overwriteLink: true,
+    });
+    expect(flat.ok).toBe(true);
+    expect(flat.action).toBe('wrote');
+    expect(lstatSync(seed.path).isSymbolicLink()).toBe(false);
+    expect(await Bun.file(seed.path).text()).toContain('linker = "isolated"');
     await Bun.$`rm -rf ${home}`.quiet();
   });
 });
