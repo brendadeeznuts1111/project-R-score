@@ -1,11 +1,10 @@
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
-// @see https://bun.com/docs/runtime/image — Bun.Image
 /**
  * Generate SVG charts for limit detection data.
  * Used by snapshot tool to produce visual artifacts.
  */
-import { write, file } from 'bun';
+import { write } from 'bun';
 
 // ── Colors ────────────────────────────────────────────────────────────────
 const CHART_COLORS = {
@@ -155,24 +154,13 @@ export function generateLimitChartSvg(data: {
   return svg;
 }
 
-// ── Write chart as SVG and optionally rasterize via Bun.Image ──────────────
+// ── Write chart as SVG ────────────────────────────────────────────────────
 export async function writeChartArtifacts(
   data: Parameters<typeof generateLimitChartSvg>[0],
   basePath: string
-): Promise<{ svgPath: string; pngPath?: string }> {
+): Promise<{ svgPath: string }> {
   const svg = generateLimitChartSvg(data);
   const svgPath = `${basePath}.svg`;
   await write(svgPath, svg);
-
-  let pngPath: string | undefined;
-  try {
-    const img = new Bun.Image(file(svgPath));
-    const buf = img.toBuffer();
-    if (buf) {
-      pngPath = `${basePath}.png`;
-      await write(pngPath, buf);
-    }
-  } catch {}
-
-  return { svgPath, pngPath };
+  return { svgPath };
 }

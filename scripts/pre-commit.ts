@@ -23,12 +23,20 @@ export { checkBunPin, type BunPinCheck } from '../lib/verification/bun-runtime-p
 
 const REPO_ROOT = resolvePath(import.meta.dir, '..');
 const SKILL_VALIDATION_PATH_RE =
-  /^(\.agents\/skills\/|config\/project-r-dx-contract\.json$|lib\/agent-skills-paths\.ts$|scripts\/(check-project-r-dx-contract|validate-agent-skills)\.ts$|tests\/agent-skills-validation\.test\.ts$)/;
+  /^(\.agents\/skills\/|config\/project-r-agent-contract\.json$|lib\/agent-skills-paths\.ts$|scripts\/(check-project-r-agent-contract|validate-agent-skills)\.ts$|tests\/agent-skills-validation\.test\.ts$)/;
 const TEST_SOURCE_PATH_RE = /\.(ts|tsx|js|jsx|mts|cts)$/;
 const CONCEPT_SSOT_PATH_RE =
   /^(lib\/portal\/semantic-vocabulary\.ts|lib\/portal\/concept-|lib\/portal\/page-concepts\.ts|scripts\/validate-surface-coverage\.ts|scripts\/concept-audit\.ts|tools\/generate-surface-coverage-map\.ts|docs\/SURFACE_COVERAGE\.md|docs\/DOMAIN_CONCEPT_SHAPE\.md|public\/portal\/concepts\/index\.html|public\/registry\/domain-glossary\.json|public\/registry\/concepts-state\.json)/;
 const PARTNER_DASHBOARD_PLAN_PATH_RE =
   /^(docs\/design\/partner-dashboard-(mvp\.(toml|md)|semantic-map\.md)|lib\/partner-profile\/schema\.ts|lib\/portal\/(concept-domains|partner-routes|semantic-vocabulary|theme|url-planes)\.ts|lib\/telegram\/partner-ops-color-kernel\.ts|packages\/partners\/|public\/portal\/theme\.jsonc|public\/portal\/theme-tokens\.css|public\/portal\/partners\/|public\/registry\/(domain-glossary|partner-profiles)\.json|scripts\/validate-partner-dashboard-plan\.ts|tests\/(partners-package|validate-partner-dashboard-plan)\.test\.ts)/;
+const PARTNER_WIRE_LINT_IMPLEMENTATION_PATHS = new Set([
+  'lib/docs/partner-surface-wire-lint.ts',
+  'scripts/validate-wire-traps.ts',
+]);
+const PARTNER_DOMAIN_LINT_IMPLEMENTATION_PATHS = new Set([
+  'lib/docs/partner-surface-domain-lint.ts',
+  'scripts/validate-partner-domain-isolation.ts',
+]);
 
 type Environment = Record<string, string | undefined>;
 
@@ -77,16 +85,25 @@ export function isPartnerWireLintPath(path: string): boolean {
 
 /**
  * Inventory / lint SSOT paths — when staged, also pass --strict-globs so allowlist
- * rot fails the commit. Ordinary .ts commits use --scan only (empty nested
- * checkouts like Kalshi-bot/ in worktrees warn, not error).
+ * rot fails the commit. Ordinary .ts commits scan only existing staged files.
  */
 export function isPartnerWireInventorySsotPath(path: string): boolean {
   return (
     path === 'lib/docs/partner-surface-inventory.ts' ||
-    path === 'lib/docs/partner-surface-wire-lint.ts' ||
-    path === 'scripts/validate-wire-traps.ts' ||
     path === 'public/registry/partner-surface-inventory.json'
   );
+}
+
+/** Ordinary code changes scan their staged diff; inventory changes prove the full contract. */
+export function partnerWireLintCommand(stagedFiles: readonly string[]): string[] {
+  const strict = stagedFiles.some(isPartnerWireInventorySsotPath);
+  const full = strict || stagedFiles.some(path => PARTNER_WIRE_LINT_IMPLEMENTATION_PATHS.has(path));
+  return [
+    'bun',
+    'scripts/validate-wire-traps.ts',
+    '--scan',
+    ...(strict ? ['--strict-globs'] : full ? [] : ['--staged']),
+  ];
 }
 
 /** Staged paths that should trigger partner-surface domain isolation lint (Layer D). */
@@ -101,15 +118,26 @@ export function isPartnerDomainLintPath(path: string): boolean {
 
 /**
  * Domain-lint SSOT paths — when staged, also pass --strict so out-of-home brand
- * type uses fail the commit. Ordinary .ts commits use --scan only (warn default).
+ * type uses fail the commit. Ordinary .ts commits scan only existing staged files.
  */
 export function isPartnerDomainInventorySsotPath(path: string): boolean {
   return (
     path === 'lib/docs/partner-surface-inventory.ts' ||
-    path === 'lib/docs/partner-surface-domain-lint.ts' ||
-    path === 'scripts/validate-partner-domain-isolation.ts' ||
     path === 'public/registry/partner-surface-inventory.json'
   );
+}
+
+/** Ordinary code changes scan their staged diff; inventory changes prove all brand homes. */
+export function partnerDomainLintCommand(stagedFiles: readonly string[]): string[] {
+  const strict = stagedFiles.some(isPartnerDomainInventorySsotPath);
+  const full =
+    strict || stagedFiles.some(path => PARTNER_DOMAIN_LINT_IMPLEMENTATION_PATHS.has(path));
+  return [
+    'bun',
+    'scripts/validate-partner-domain-isolation.ts',
+    '--scan',
+    ...(strict ? ['--strict'] : full ? [] : ['--staged']),
+  ];
 }
 
 function section(label: string, first = false): void {
@@ -172,17 +200,23 @@ export async function runPrecommit(
   console.info(`✅ ${pin.message}`);
 
   section('hygiene ‖ harness');
-  const [hygiene, harness] = await Promise.all([
-    runCommand(['bun', 'scripts/repo-hygiene.ts', '--staged']),
-    runCommand(['bun', 'scripts/pre-commit-harness.ts']),
-  ]);
-  if (hygiene.exitCode !== 0) {
-    console.error('❌ repo hygiene failed');
-    return hygiene.exitCode;
-  }
-  if (harness.exitCode !== 0) {
-    console.error('❌ harness pre-commit failed');
-    return harness.exitCode;
+  if (dryRun) {
+    console.info(
+      '  [dry-run] bun scripts/repo-hygiene.ts --staged ‖ bun scripts/pre-commit-harness.ts'
+    );
+  } else {
+    const [hygiene, harness] = await Promise.all([
+      runCommand(['bun', 'scripts/repo-hygiene.ts', '--staged']),
+      runCommand(['bun', 'scripts/pre-commit-harness.ts']),
+    ]);
+    if (hygiene.exitCode !== 0) {
+      console.error('❌ repo hygiene failed');
+      return hygiene.exitCode;
+    }
+    if (harness.exitCode !== 0) {
+      console.error('❌ harness pre-commit failed');
+      return harness.exitCode;
+    }
   }
 
   section('package.json scripts guard');
@@ -243,21 +277,23 @@ export async function runPrecommit(
   if (stagedFiles.some(isSkillValidationPath)) {
     if (dryRun) {
       console.info('  [dry-run] bun run skills:validate');
-      console.info('  [dry-run] bun run dx:contract:check');
+      console.info('  [dry-run] bun run agents:contract:check');
     } else {
       const code = await requireCommand(
         ['bun', 'run', 'skills:validate'],
         '❌ agent skills validation failed'
       );
       if (code !== 0) return code;
-      const dxContractCode = await requireCommand(
-        ['bun', 'run', 'dx:contract:check'],
-        '❌ Project R DX contract validation failed'
+      const agentContractCode = await requireCommand(
+        ['bun', 'run', 'agents:contract:check'],
+        '❌ Project R agent contract validation failed'
       );
-      if (dxContractCode !== 0) return dxContractCode;
+      if (agentContractCode !== 0) return agentContractCode;
     }
   } else {
-    console.info('  ⏭️  no agent skill paths staged — skip skills:validate + dx:contract:check');
+    console.info(
+      '  ⏭️  no agent skill paths staged — skip skills:validate + agents:contract:check'
+    );
   }
 
   section('ast-grep + semver');
@@ -335,13 +371,7 @@ export async function runPrecommit(
   if (environment.skipWireLint) {
     console.info('  ⏭️  SKIP_WIRE_LINT=1');
   } else if (stagedFiles.some(isPartnerWireLintPath)) {
-    const strictGlobs = stagedFiles.some(isPartnerWireInventorySsotPath);
-    const wireCmd = [
-      'bun',
-      'scripts/validate-wire-traps.ts',
-      '--scan',
-      ...(strictGlobs ? (['--strict-globs'] as const) : []),
-    ];
+    const wireCmd = partnerWireLintCommand(stagedFiles);
     if (dryRun) {
       console.info(`  [dry-run] ${wireCmd.join(' ')}`);
     } else {
@@ -360,13 +390,7 @@ export async function runPrecommit(
   if (environment.skipDomainLint) {
     console.info('  ⏭️  SKIP_DOMAIN_LINT=1');
   } else if (stagedFiles.some(isPartnerDomainLintPath)) {
-    const strict = stagedFiles.some(isPartnerDomainInventorySsotPath);
-    const domainCmd = [
-      'bun',
-      'scripts/validate-partner-domain-isolation.ts',
-      '--scan',
-      ...(strict ? (['--strict'] as const) : []),
-    ];
+    const domainCmd = partnerDomainLintCommand(stagedFiles);
     if (dryRun) {
       console.info(`  [dry-run] ${domainCmd.join(' ')}`);
     } else {

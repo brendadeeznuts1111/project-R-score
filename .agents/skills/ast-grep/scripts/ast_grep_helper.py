@@ -104,6 +104,7 @@ from pathlib import Path
 from typing import Optional
 
 VERSION = "0.44.0"
+CACHE_VERSION = 2
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -859,7 +860,13 @@ def _run_outline(
     target: Optional[dict] = None,
 ) -> tuple[int, str]:
     proc = run_sg(binary, _build_outline_sg_args(args, paths, target))
-    return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
+    # Outline JSON is written to stdout. Runtime-resolution warnings use
+    # stderr; concatenating them makes valid JSON unparsable and silently
+    # collapses the symbol index to zero entries.
+    output = proc.stdout or ""
+    if proc.returncode != 0:
+        output += proc.stderr or ""
+    return proc.returncode, output
 
 
 def _outline_index_cache_path() -> Path:
@@ -873,7 +880,12 @@ def _path_mtime(path: Path) -> float:
         return path.stat().st_mtime
     latest = path.stat().st_mtime
     for child in path.rglob("*"):
-        if child.is_file():
+        if (
+            child.is_file()
+            and child.name != ".outline-index.json"
+            and "node_modules" not in child.parts
+            and "__snapshots__" not in child.parts
+        ):
             latest = max(latest, child.stat().st_mtime)
     return latest
 
@@ -1052,6 +1064,7 @@ def _collect_symbol_index(
         "items": getattr(args, "items", None) or "all",
     })
     report: dict = {
+        "cache_version": CACHE_VERSION,
         "version": data.get("version"),
         "repo": str(root),
         "repo_map": str(skill_root() / "repo-map.json"),
@@ -1093,10 +1106,18 @@ def _collect_symbol_index(
 
 def _load_symbol_index(args: argparse.Namespace, root: Path, binary: Path) -> dict:
     cache = _outline_index_cache_path()
+    requested_targets = _resolve_repo_targets(args)
+    requested_ids = {target.get("id") for target in requested_targets if target.get("id")}
     if not getattr(args, "refresh", False) and cache.is_file():
         try:
             cached = json.loads(cache.read_text(encoding="utf-8"))
-            if cached.get("repo") == str(root):
+            cached_ids = {target.get("target") for target in cached.get("targets", [])}
+            if (
+                cached.get("cache_version") == CACHE_VERSION
+                and cached.get("repo") == str(root)
+                and requested_ids.issubset(cached_ids)
+                and not _index_stale_targets(cached, root, requested_targets)
+            ):
                 return cached
         except (OSError, json.JSONDecodeError):
             pass

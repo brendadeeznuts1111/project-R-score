@@ -1,4 +1,46 @@
 #!/usr/bin/env bun
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
+// @released --no-orphans · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @verified Bun.$ · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/shell
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @verified Bun.CryptoHasher · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/hashing#bun-cryptohasher
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.blob
+// @released Bun.Image.blob · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.buffer
+// @released Bun.Image.buffer · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.bytes
+// @released Bun.Image.bytes · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.dataurl
+// @released Bun.Image.dataurl · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.jpeg
+// @released Bun.Image.jpeg · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
+// @released Bun.Image.metadata · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#placeholders — Bun.Image.placeholder
+// @released Bun.Image.placeholder · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#resize — Bun.Image.resize
+// @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.toBase64
+// @released Bun.Image.toBase64 · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/toBuffer — Bun.Image.toBuffer
+// @released Bun.Image.toBuffer · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.webp
+// @released Bun.Image.webp · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.write
+// @released Bun.Image.write · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @verified Bun.inspect · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-inspect
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @verified Bun.nanoseconds · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
+// @verified Bun.revision · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-revision
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @verified Bun.sleep · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-sleep
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @verified Bun.version · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/reference/bun/gc — Bun.gc
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -9,6 +51,9 @@
 // @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
+// @see https://bun.com/docs/runtime/image#input — Blob.image
+// @released Blob.image · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/bundler/index#features — bun:bundle
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
@@ -434,6 +479,8 @@ export async function runReleaseVerification(
     const blob = await resized.webp({ quality: 80 }).blob();
     const b64 = await resized.webp({ quality: 80 }).toBase64();
     const dataurl = await resized.webp({ quality: 80 }).dataurl();
+    const toBuffer = await img.toBuffer();
+    const blobMeta = await new Blob([bytes]).image().metadata();
     const placeholder = await img.placeholder();
     const tmpPath = `/tmp/bun-image-test-${process.pid}.webp`;
     await resized.webp({ quality: 80 }).write(tmpPath);
@@ -444,9 +491,11 @@ export async function runReleaseVerification(
       {
         name: 'Bun.Image (all terminal methods: bytes, buffer, blob, toBase64, dataurl, placeholder, metadata, write)',
         expected: 'all terminal methods produce correct output',
-        actual: `fmt=${meta.format} ${meta.width}x${meta.height} webp=${(webp.length / 1024).toFixed(1)}KB buf=${(buf.byteLength / 1024).toFixed(1)}KB blob=${(blob.size / 1024).toFixed(1)}KB b64=${b64.length}B dataurl=${dataurl.length}B placeholder=${placeholder.length}B write=${written}`,
+        actual: `fmt=${meta.format} ${meta.width}x${meta.height} blob-input=${blobMeta.format} toBuffer=${toBuffer.byteLength}B webp=${(webp.length / 1024).toFixed(1)}KB buf=${(buf.byteLength / 1024).toFixed(1)}KB blob=${(blob.size / 1024).toFixed(1)}KB b64=${b64.length}B dataurl=${dataurl.length}B placeholder=${placeholder.length}B write=${written}`,
         passed:
           meta.format === 'png' &&
+          blobMeta.format === 'png' &&
+          toBuffer.byteLength > 0 &&
           webp.length > 0 &&
           buf.byteLength > 0 &&
           blob.size > 0 &&
@@ -455,6 +504,35 @@ export async function runReleaseVerification(
           placeholder.startsWith('data:image/png;base64,') &&
           written,
         anchor: 'terminal-methods',
+      },
+      ctx
+    );
+
+    let bodyActual = 'not run';
+    let bodyPassed = false;
+    const server = Bun.serve({
+      port: 0,
+      fetch: () => new Response(new Bun.Image(bytes).resize(2).jpeg()),
+    });
+    try {
+      const response = await fetch(server.url);
+      const responseBytes = await response.arrayBuffer();
+      const contentType = response.headers.get('content-type');
+      bodyActual = `status=${response.status} content-type=${contentType ?? 'missing'} bytes=${responseBytes.byteLength}`;
+      bodyPassed = response.ok && contentType === 'image/jpeg' && responseBytes.byteLength > 0;
+    } catch (error: unknown) {
+      bodyActual = `error: ${error instanceof Error ? error.message : String(error)}`;
+    } finally {
+      await server.stop(true);
+    }
+    pushReleaseResult(
+      results,
+      {
+        name: 'Bun.Image direct Response body integration',
+        expected: 'served response has image/jpeg Content-Type and encoded bytes',
+        actual: bodyActual,
+        passed: bodyPassed,
+        anchor: 'image-body-integration',
       },
       ctx
     );

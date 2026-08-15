@@ -9,7 +9,7 @@
 ## Pre-state
 
 Record the exact failing command and output. For runtime/type incidents include
-`bun --version`, `bun --revision`, `dx version`, and `bun run bun:channel:check`.
+`bun --version`, `bun --revision`, and `bun run bun:channel:check`.
 
 ## Actions
 

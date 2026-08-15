@@ -11,17 +11,21 @@
  *   bun tools/provision-queue.ts enqueue --platform=sandbox-book --partner=<id> --mode=automated_test
  *   bun tools/provision-queue.ts list [--step=pending]
  *   bun tools/provision-queue.ts claim --to=ops
- *   bun tools/provision-queue.ts run-automated --id=<task> --user=u --pass=p --email=e@x.com [--dry-run]
+ *   bun tools/provision-queue.ts retry --id=<task> [--max-retries=3]
+ *   PROVISION_PASSWORD=... bun tools/provision-queue.ts run-automated --id=<task> [--dry-run]
  */
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import {
   claimNextTask,
+  DEFAULT_MAX_PROVISION_RETRIES,
   enqueueTask,
   listTasks,
+  requeueFailedTask,
   type ProvisionMode,
   type ProvisionStep,
 } from '../lib/provisioning/queue.ts';
 import { runAutomatedTestTask } from '../lib/provisioning/run-automated.ts';
+import { parseOperationId } from '../lib/types/branded.ts';
 import { logDepth, logTable } from '../lib/console/index.ts';
 import {
   applyUnknownLongOptionGuardFor,
@@ -94,18 +98,32 @@ try {
       }
       break;
     }
+    case 'retry': {
+      const id = flag('id');
+      if (!id) {
+        console.error('Usage: retry --id=<task> [--max-retries=3]');
+        process.exit(1);
+      }
+      const rawMaxRetries = flag('max-retries');
+      const maxRetries = rawMaxRetries ? Number(rawMaxRetries) : DEFAULT_MAX_PROVISION_RETRIES;
+      const task = requeueFailedTask(db, parseOperationId(id), maxRetries);
+      logDepth(task);
+      break;
+    }
     case 'run-automated': {
       const id = flag('id');
       if (!id) {
-        console.error('Usage: run-automated --id=<task> --user= --pass= --email= [--dry-run]');
+        console.error(
+          'Usage: run-automated --id=<task> [--dry-run] (credentials via PROVISION_* env)'
+        );
         process.exit(1);
       }
       const result = await runAutomatedTestTask(db, {
-        taskId: id,
+        taskId: parseOperationId(id),
         credentials: {
-          username: flag('user') ?? `test_${Date.now().toString(36)}`,
-          password: flag('pass') ?? `Test${Math.random().toString(36).slice(2, 10)}!`,
-          email: flag('email') ?? `test_${Date.now().toString(36)}@test.factorywager.com`,
+          username: Bun.env.PROVISION_USERNAME ?? `test_${Date.now().toString(36)}`,
+          password: Bun.env.PROVISION_PASSWORD || `Test${Math.random().toString(36).slice(2, 10)}!`,
+          email: Bun.env.PROVISION_EMAIL ?? `test_${Date.now().toString(36)}@test.factorywager.com`,
         },
         dryRun: has('dry-run'),
         dbPath,
@@ -120,7 +138,12 @@ try {
   enqueue --platform=<id> --partner=<id> [--mode=manual|automated_test]
   list [--step=pending] [--mode=automated_test]
   claim [--to=ops] [--mode=automated_test]
-  run-automated --id=<task> [--user=] [--pass=] [--email=] [--dry-run]
+  retry --id=<task> [--max-retries=3]
+  run-automated --id=<task> [--dry-run]
+
+Set PROVISION_USERNAME, PROVISION_PASSWORD, and PROVISION_EMAIL through a secure
+environment injector to keep the sandbox credentials out of process arguments.
+When omitted, run-automated generates test-only values.
 `);
   }
 } finally {

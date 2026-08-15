@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/typescript-6 — types allowlist audit for TS6/7
@@ -16,7 +17,6 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  *
  * @see https://bun.com/docs/typescript-6
  */
-import { Glob } from 'bun';
 import { logTable } from '../lib/console-depth';
 import { dirnamePath, resolvePath } from '../lib/path-bun';
 
@@ -151,13 +151,28 @@ export function isIntentionalEmptyTypes(rel: string): boolean {
   return rel === 'packages/registry-client/tsconfig.json';
 }
 
-function isGitIgnored(rel: string, root: string): boolean {
-  const proc = Bun.spawnSync(['git', 'check-ignore', '-q', '--', rel], {
-    cwd: root,
-    stdout: 'ignore',
-    stderr: 'ignore',
-  });
-  return proc.exitCode === 0;
+/** Stable source-tree inventory: tracked + non-ignored untracked tsconfigs. */
+export function listTsconfigPaths(root: string): string[] {
+  const proc = Bun.spawnSync(
+    [
+      'git',
+      'ls-files',
+      '-z',
+      '--cached',
+      '--others',
+      '--exclude-standard',
+      '--',
+      ':(glob)tsconfig*.json',
+      ':(glob)**/tsconfig*.json',
+    ],
+    { cwd: root, stdout: 'pipe', stderr: 'pipe' }
+  );
+  if (proc.exitCode !== 0) {
+    throw new Error(`git ls-files failed: ${proc.stderr.toString().trim()}`);
+  }
+  return [...new Set(proc.stdout.toString().split('\0').filter(Boolean))].sort((left, right) =>
+    left.localeCompare(right)
+  );
 }
 
 export async function auditTsconfigTypes(root = resolvePath(import.meta.dir, '..')): Promise<{
@@ -176,11 +191,9 @@ export async function auditTsconfigTypes(root = resolvePath(import.meta.dir, '..
 }> {
   cache.clear();
   const rows: Row[] = [];
-  const glob = new Glob('**/tsconfig*.json');
 
-  for await (const rel of glob.scan({ cwd: root, onlyFiles: true })) {
+  for (const rel of listTsconfigPaths(root)) {
     if (rel.includes('node_modules') || rel.includes('.git/') || rel.startsWith('.tmp/')) continue;
-    if (isGitIgnored(rel, root)) continue;
     const abs = resolvePath(root, rel);
     try {
       const cfg = await loadConfig(abs);

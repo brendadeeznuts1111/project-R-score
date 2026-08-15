@@ -31,9 +31,9 @@
       "id": "bun-image",
       "title": "Bun.Image — built-in image processing",
       "verify": "automated",
-      "canonical": "https://bun.com/blog/bun-v1.3.14#bun-image",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing",
       "refs": [
-        "https://bun.com/blog/bun-v1.3.14#bun-image",
+        "https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing",
         "https://bun.com/blog/bun-v1.3.14#terminal-methods"
       ]
     },
@@ -91,9 +91,9 @@
       "id": "no-orphans",
       "title": "--no-orphans — exit when parent process dies",
       "verify": "smoke",
-      "canonical": "https://bun.com/blog/bun-v1.3.14#no-orphans",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies",
       "refs": [
-        "https://bun.com/blog/bun-v1.3.14#no-orphans"
+        "https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies"
       ]
     },
     {
@@ -509,13 +509,13 @@
       "actual": "bunfig=true, env=true",
       "passed": true,
       "canonicalKey": "no-orphans",
-      "canonical": "https://bun.com/blog/bun-v1.3.14#no-orphans",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies",
       "canonicalKind": "ShipNote",
       "canonicalStability": "stable",
       "subsystem": "package-manager",
       "introducedIn": "1.3.14",
       "_links": {
-        "docs": "https://bun.com/blog/bun-v1.3.14#no-orphans",
+        "docs": "https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
         "report": "/registry/release-features.json"
       },
@@ -1864,7 +1864,7 @@
       }
     }
   },
-  "proofHash": "8dd55949efa0901a0accb4c075a601700b69962501bc4f30f2371a88b35528bb",
+  "proofHash": "b1575b39e576c2890386d77fb455b17e23d6dd93fff3d2ce4c5d693b68f93822",
   "jsonLd": {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",

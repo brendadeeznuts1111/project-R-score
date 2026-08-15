@@ -10,8 +10,8 @@ description: >
 
 ## Start
 
-1. Run `dx context`, `dx mcp-status`, and `bun run remote:list` before changing
-   any machine configuration.
+1. Run `bun run mcp:sync:check` and `bun run remote:list` before changing any
+   machine configuration.
 2. Choose the project identity accepted by `scripts/agent-env.sh`:
    `factorywager`, `cloudflare`, `bet-ticker`, `cascade-mover`, `partners`, or
    `kalshi-bot`.
@@ -47,8 +47,6 @@ bun run proton:session:ready
 ## Read-only diagnostics
 
 ```bash
-dx context
-dx mcp-status
 bun run mcp:sync:check
 bun run remote:list
 bun run proton:verify

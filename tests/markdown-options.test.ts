@@ -1,16 +1,27 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
 // @see https://bun.com/docs/runtime/markdown#options
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
 // @see https://bun.com/docs/runtime/markdown#heading-ids
 // @see https://bun.com/docs/runtime/markdown#autolinks
 import { describe, expect, test } from 'bun:test';
 import {
+  BUN_GUIDES_INDEX,
+  BUN_MARKDOWN_CROSS_REFERENCES,
   MARKDOWN_OPTION_CATALOG,
   MARKDOWN_OPTIONS_DEFAULTS,
+  MARKDOWN_NESTED_LIST_TABLE_PROPERTIES,
+  MARKDOWN_BOOLEAN_OPTION_NAMES,
+  MARKDOWN_PRESET_NAMES,
   MARKDOWN_PRESET_DESIGN,
   MARKDOWN_PRESET_PORTAL,
   MARKDOWN_PRESET_README,
   MARKDOWN_PRESET_SECURE,
   markdownHtml,
+  markdownNestedList,
+  markdownNestedListRows,
   mergeMarkdownOptions,
+  parseMarkdownOptionOverrides,
+  resolveMarkdownPreset,
 } from '../lib/markdown/options.ts';
 import { PORTAL_MARKDOWN_PARSER } from '../lib/http/portal-skill-detail.ts';
 import { renderReadmeHTML } from '../lib/factory/markdown.ts';
@@ -48,6 +59,162 @@ describe('MARKDOWN_OPTION_CATALOG', () => {
     expect(MARKDOWN_OPTIONS_DEFAULTS.latexMath).toBe(false);
     expect(MARKDOWN_OPTIONS_DEFAULTS.headings).toBe(false);
     expect(MARKDOWN_OPTIONS_DEFAULTS.autolinks).toBe(false);
+  });
+});
+
+describe('Bun Markdown upstream cross-references', () => {
+  test('uses the live Bun guides landing and exact member references', () => {
+    expect(BUN_GUIDES_INDEX).toBe('https://bun.com/guides');
+    expect(BUN_GUIDES_INDEX).not.toContain('/docs/guides.md');
+    expect(BUN_MARKDOWN_CROSS_REFERENCES).toHaveLength(14);
+
+    const surfaces = BUN_MARKDOWN_CROSS_REFERENCES.map(row => row.surface);
+    const references = BUN_MARKDOWN_CROSS_REFERENCES.map(row => row.reference);
+    expect(new Set(surfaces).size).toBe(surfaces.length);
+    expect(new Set(references).size).toBe(references.length);
+    expect(surfaces).toEqual([
+      'Bun.markdown.html',
+      'Bun.markdown.render',
+      'Bun.markdown.react',
+      'Bun.markdown.ansi',
+      'Bun.markdown.Options',
+      'Bun.markdown.ListMeta',
+      'Bun.markdown.ListItemMeta',
+      'Bun.markdown.AnsiTheme',
+      'Bun.Glob.match',
+      'Bun.file',
+      'Bun.write',
+      'Bun.inspect.table',
+      'Bun.stringWidth',
+      'Bun.color',
+    ]);
+    expect(references.every(url => url.startsWith('https://bun.com/reference/'))).toBe(true);
+  });
+
+  test('records only officially dated releases and updates', () => {
+    const provenance = Object.fromEntries(
+      BUN_MARKDOWN_CROSS_REFERENCES.map(row => [row.surface, row])
+    );
+    expect(provenance['Bun.markdown.html']?.released).toBe('v1.3.8 · 2026-01-29');
+    expect(provenance['Bun.markdown.render']?.latestUpdate).toBe(
+      'changed v1.3.11 · 2026-03-18'
+    );
+    expect(provenance['Bun.markdown.ansi']?.latestUpdate).toBe(
+      'fixed v1.3.14 · 2026-05-13'
+    );
+    expect(provenance['Bun.Glob.match']?.released).toBe('release-unknown');
+    expect(provenance['Bun.Glob.match']?.latestUpdate).toBe(
+      'fixed v1.3.14 · 2026-05-13'
+    );
+    expect(provenance['Bun.color']?.released).toBe('v1.1.30 · 2024-10-08');
+    expect(provenance['Bun.color']?.releaseRef).toBe(
+      'https://bun.com/blog/bun-v1.1.30'
+    );
+  });
+});
+
+describe('markdownNestedList', () => {
+  test('projects a nested ordered item as hierarchical path 1.2.2 with exact meta', () => {
+    const result = markdownNestedList(
+      '1. top\n   1. child-one\n   2. child-two\n      1. grand-one\n      2. grand-two\n2. second'
+    );
+
+    expect(result.flat.map(item => item.path)).toEqual([
+      '1',
+      '1.1',
+      '1.2',
+      '1.2.1',
+      '1.2.2',
+      '2',
+    ]);
+    expect(result.flat.map(item => item.meta.depth)).toEqual([0, 1, 1, 2, 2, 0]);
+    expect(result.flat.map(item => item.meta.index)).toEqual([0, 0, 1, 0, 1, 1]);
+    expect(result.flat[4]).toMatchObject({
+      path: '1.2.2',
+      key: 'r1:o1.o2.o2',
+      rootIndex: 0,
+      marker: '1.2.2',
+      text: 'grand-two',
+      listMeta: { ordered: true, start: 1, depth: 2 },
+      meta: { ordered: true, start: 1, depth: 2, index: 1 },
+    });
+    expect(result.items[0]?.children[1]?.children[1]?.path).toBe('1.2.2');
+    expect(result.flat[4]?.lineage.map(segment => segment.number)).toEqual([1, 2, 2]);
+    expect(result.text).toContain('    1.2.2 grand-two');
+  });
+
+  test('honors ordered starts and does not fabricate a decimal path across an unordered ancestor', () => {
+    // CommonMark requires a blank line before a nested ordered list starting above 1.
+    const started = markdownNestedList('3. root\n\n   5. child');
+    expect(started.flat.map(item => item.path)).toEqual(['3', '3.5']);
+    expect(started.flat[1]?.meta.start).toBe(5);
+
+    const mixed = markdownNestedList('1. root\n   - bullet\n     1. nested');
+    expect(mixed.flat.map(item => item.path)).toEqual(['1', null, null]);
+    expect(mixed.flat[2]).toMatchObject({
+      key: 'r1:o1.u1.o1',
+      marker: '1',
+      lineage: [
+        { kind: 'ordered', index: 0, number: 1, depth: 0, start: 1 },
+        { kind: 'unordered', index: 0, number: null, depth: 1 },
+        { kind: 'ordered', index: 0, number: 1, depth: 2, start: 1 },
+      ],
+    });
+  });
+
+  test('root-qualified keys distinguish independently restarted lists', () => {
+    const result = markdownNestedList('1. first\n\nbetween\n\n1. second');
+    expect(result.flat.map(item => ({ path: item.path, key: item.key }))).toEqual([
+      { path: '1', key: 'r1:o1' },
+      { path: '1', key: 'r2:o1' },
+    ]);
+  });
+
+  test('preserves unordered task metadata without inventing a decimal path', () => {
+    const result = markdownNestedList('- [x] done\n- [ ] todo');
+    expect(result.flat.map(item => ({ path: item.path, marker: item.marker, meta: item.meta }))).toEqual([
+      {
+        path: null,
+        marker: '[x]',
+        meta: { index: 0, depth: 0, ordered: false, checked: true },
+      },
+      {
+        path: null,
+        marker: '[ ]',
+        meta: { index: 1, depth: 0, ordered: false, checked: false },
+      },
+    ]);
+  });
+
+  test('fails closed on reserved internal projection tokens', () => {
+    expect(() => markdownNestedList('@@FW_MARKDOWN_LIST_0@@')).toThrow(/reserved/);
+  });
+
+  test('emits property-scoped flat rows for Bun.inspect.table consumers', () => {
+    expect(MARKDOWN_NESTED_LIST_TABLE_PROPERTIES).toEqual([
+      'path',
+      'key',
+      'marker',
+      'text',
+      'depth',
+      'index',
+      'ordered',
+      'start',
+      'checked',
+    ]);
+    expect(markdownNestedListRows('2. two')).toEqual([
+      {
+        path: '2',
+        key: 'r1:o2',
+        marker: '2',
+        text: 'two',
+        depth: 0,
+        index: 0,
+        ordered: true,
+        start: 2,
+        checked: null,
+      },
+    ]);
   });
 });
 
@@ -113,6 +280,49 @@ describe('Bun.markdown.Options live contract (docs table)', () => {
 });
 
 describe('presets', () => {
+  test('closed CLI override grammar covers every documented parser option', () => {
+    expect(MARKDOWN_BOOLEAN_OPTION_NAMES).toHaveLength(13);
+    expect([...MARKDOWN_BOOLEAN_OPTION_NAMES, 'autolinks', 'headings'].sort()).toEqual(
+      MARKDOWN_OPTION_CATALOG.map(entry => entry.option).sort()
+    );
+    expect(
+      parseMarkdownOptionOverrides(
+        'tables=false,wikiLinks=true,headings=ids,autolinks=url+email'
+      )
+    ).toEqual({
+      tables: false,
+      wikiLinks: true,
+      headings: { ids: true },
+      autolinks: { url: true, email: true },
+    });
+    expect(parseMarkdownOptionOverrides('headings=linked,autolinks=all')).toEqual({
+      headings: true,
+      autolinks: true,
+    });
+    expect(parseMarkdownOptionOverrides('headings=none,autolinks=none')).toEqual({
+      headings: false,
+      autolinks: false,
+    });
+  });
+
+  test('CLI override grammar rejects unknown, duplicate, and malformed values', () => {
+    expect(() => parseMarkdownOptionOverrides('headingIds=true')).toThrow(/Unknown/);
+    expect(() => parseMarkdownOptionOverrides('tables=true,tables=false')).toThrow(/Duplicate/);
+    expect(() => parseMarkdownOptionOverrides('tables=yes')).toThrow(/true\|false/);
+    expect(() => parseMarkdownOptionOverrides('autolinks=url+url')).toThrow(/Invalid/);
+    expect(() => parseMarkdownOptionOverrides('headings=slug')).toThrow(/Invalid/);
+    expect(() => parseMarkdownOptionOverrides('wikiLinks')).toThrow(/name=value/);
+  });
+
+  test('named preset resolver exposes the supported CLI/configuration boundary', () => {
+    expect(MARKDOWN_PRESET_NAMES).toEqual(['readme', 'portal', 'secure', 'design']);
+    expect(resolveMarkdownPreset('secure')).toEqual({
+      name: 'secure',
+      options: MARKDOWN_PRESET_SECURE,
+    });
+    expect(() => resolveMarkdownPreset('legacy')).toThrow(/readme\|portal\|secure\|design/);
+  });
+
   test('PORTAL_MARKDOWN_PARSER is MARKDOWN_PRESET_PORTAL', () => {
     expect(PORTAL_MARKDOWN_PARSER).toEqual(MARKDOWN_PRESET_PORTAL);
   });

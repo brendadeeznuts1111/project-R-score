@@ -87,8 +87,8 @@ function printHelp(): void {
 
   --json              print report JSON only (no spinner / tables)
   --no-build          skip Bun.build metafile (dead code / cycles)
-  --with-tests        focused bun test sample for failure rate
-  --with-coverage     tests + bun --coverage; parse All-files line %
+  --with-tests        collect focused test evidence (not scored)
+  --with-coverage     collect test + All-files coverage evidence (not scored)
   --archive           tar report via Bun.Archive when available
   --watch             re-run every --interval seconds (TTY clear)
   --interval=N        watch interval seconds (default 30, min 5)
@@ -104,7 +104,7 @@ I/O model:
   · Bun.Terminal             — PTY for child processes only (lib/terminal.ts)
   · bun:sqlite               — reports/monorepo-health-history.sqlite trends
 
-Health = 100 − 2·dupDeps − 0.5·dead% − 1·large% − 5·testFail% − 1.5·cycles + 0.2·coverage%
+Structural health = 100 − min(20, 5·dupDeps) − min(25, dead%) − min(35, 0.75·large%) − min(20, 5·cycles)
 Target ≥ 90 (healthy). Critical grade exits 1.
 `);
 }

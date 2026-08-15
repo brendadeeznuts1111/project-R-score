@@ -1,10 +1,32 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @verified Bun.file · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/file-io
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @verified Bun.Glob · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/glob#quickstart
+// @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.png
+// @released Bun.Image.png · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
+// @released Bun.Image.metadata · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#resize — Bun.Image.resize
+// @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/ErrorCode — Bun.Image.ErrorCode
+// @released Bun.Image.ErrorCode · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/Format — Bun.Image.Format
+// @released Bun.Image.Format · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.write
+// @released Bun.Image.write · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
+// @verified Bun.revision · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-revision
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @verified Bun.version · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch
-// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/child-process#using-timeout-and-killsignal — Bun.spawn timeout
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
-// @see https://bun.com/blog/bun-v1.3.14#bun-image — Bun.Image (v1.3.14)
+// @see https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing — Bun.Image (v1.3.14)
 // @see https://bun.com/blog/bun-v1.3.14#terminal-methods — Bun.Image terminal methods
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/runtime/color — Bun.color (via colorize)
@@ -15,7 +37,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 /**
  * Live enhancement probe — score.factory-wager.com vs origin/main.
  *
- * Bun-native: fetch · Bun.$ (git) · Bun.CryptoHasher · Bun.Image · HTMLRewriter
+ * Bun-native: fetch · Bun.spawn (git) · Bun.CryptoHasher · Bun.Image · HTMLRewriter
  * · Bun.color (status via portal kernel palette) · import runSnapshot · logTable.
  *
  * Prefer this over ad-hoc `bun -e` one-liners — same checks, Access-aware,
@@ -25,9 +47,10 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  *   bun run snapshot:live:quick          # public plane only (Access 302 expected)
  *   bun --env-file ~/.reasonix/.env run snapshot:live -- --thumb
  */
-import { $, Glob } from 'bun';
+import { Glob } from 'bun';
 import { colorize, jsonOut, padEndWidth } from '../lib/console-depth.ts';
 import { deepEquals } from '../lib/deep-equals.ts';
+import { isBunImageError } from '../lib/image-metadata.ts';
 import { PORTAL_KERNEL_PALETTE } from '../lib/portal/portal-kernel-palette.ts';
 import { isCloudflareAccessEnforced } from '../lib/verification/cloudflare-access-live.ts';
 import {
@@ -36,7 +59,6 @@ import {
   runSnapshot,
   type SnapshotManifest,
 } from './snapshot-core.ts';
-import { writeChartArtifacts } from './limit-chart.ts';
 
 export type VerdictStatus = 'LIVE' | 'STALE' | 'ACCESS_FAIL' | 'ACCESS_SKIP' | 'SKIP';
 
@@ -197,7 +219,7 @@ export type ImageMetaResult =
       path: string;
       width: number;
       height: number;
-      format: string;
+      format: Bun.Image.Format;
       thumbPath?: string;
       healthy: boolean;
       healthEvidence: string;
@@ -205,20 +227,12 @@ export type ImageMetaResult =
   | { ok: false; path: string; error: string; code: string };
 
 export type ImageHealthExpectations = {
-  formats?: readonly string[];
+  formats?: readonly Bun.Image.Format[];
   minWidth?: number;
   minHeight?: number;
-  /** Accept 1×1 probe PNGs used when chart rasterization is unsupported. */
+  /** Accept the known-good 1×1 PNG used by the metadata probe. */
   allowTiny?: boolean;
 };
-
-/** Stable Bun.Image error codes we branch on (see docs/IMAGES.md · v1.3.14). */
-const IMAGE_ERROR_CODES = new Set([
-  'ERR_IMAGE_FORMAT_UNSUPPORTED',
-  'ERR_IMAGE_UNKNOWN_FORMAT',
-  'ERR_IMAGE_TOO_MANY_PIXELS',
-  'ERR_IMAGE',
-]);
 
 const PNG_1x1_BYTES = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmLIQAAAABJRU5ErkJggg==',
@@ -227,10 +241,10 @@ const PNG_1x1_BYTES = Buffer.from(
 
 /** Format/dimension health check after Bun.Image.metadata(). */
 export function validateImageHealth(
-  meta: { width: number; height: number; format: string },
+  meta: Bun.Image.Metadata,
   expectations: ImageHealthExpectations = {}
 ): { ok: boolean; evidence: string } {
-  const formats = expectations.formats ?? ['png', 'webp', 'jpeg', 'jpg'];
+  const formats = expectations.formats ?? ['png', 'webp', 'jpeg'];
   const format = meta.format.toLowerCase();
   const formatOk = formats.includes(format);
   const tiny = meta.width <= 1 && meta.height <= 1;
@@ -274,23 +288,21 @@ export async function getImageMetadata(
       // fit:"inside" keeps aspect; terminal methods run off the main thread.
       await file.image().resize(max, max, { fit: 'inside' }).webp({ quality: 80 }).write(thumbPath);
     }
-    const health = validateImageHealth(
-      { width: meta.width, height: meta.height, format: String(meta.format) },
-      options.health ?? { allowTiny: true }
-    );
+    const health = validateImageHealth(meta, options.health ?? { allowTiny: true });
     return {
       ok: true,
       path,
       width: meta.width,
       height: meta.height,
-      format: String(meta.format),
+      format: meta.format,
       thumbPath,
       healthy: health.ok,
       healthEvidence: health.evidence,
     };
-  } catch (e) {
-    const err = e as Error & { code?: string };
-    const code = err.code && IMAGE_ERROR_CODES.has(err.code) ? err.code : (err.code ?? 'ERR_IMAGE');
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error('image metadata failed');
+    const syscallCode = 'code' in err && typeof err.code === 'string' ? err.code : undefined;
+    const code = isBunImageError(err) ? err.code : (syscallCode ?? 'ERR_IMAGE');
     return {
       ok: false,
       path,
@@ -298,16 +310,6 @@ export async function getImageMetadata(
       code,
     };
   }
-}
-
-/** Newest matching path under dir (lexicographic last = usually newest id). */
-export async function newestGlobMatch(dir: string, pattern: string): Promise<string | undefined> {
-  const glob = new Glob(pattern);
-  let last: string | undefined;
-  for await (const rel of glob.scan(dir)) {
-    last = `${dir}/${rel}`;
-  }
-  return last;
 }
 
 /** Prefer real chart PNGs over unit fixtures / thumbs (largest non-fixture wins). */
@@ -391,14 +393,28 @@ export function accessHeadersFromEnv(
   });
 }
 
-/** Read a blob from git via Bun.$ (concise vs Bun.spawn). */
+/** Read a blob from git with bounded execution and output. */
 export async function gitShowText(refPath: string): Promise<string> {
-  const result = await $`git show ${refPath}`.quiet().nothrow();
-  if (result.exitCode !== 0) {
-    const err = result.stderr.toString().trim() || result.stdout.toString().slice(0, 200);
-    throw new Error(`git show ${refPath} failed (${result.exitCode}): ${err}`);
+  if (!/^[A-Za-z0-9_./-]+:[A-Za-z0-9_./-]+$/.test(refPath)) {
+    throw new Error(`Invalid git object path: ${refPath}`);
   }
-  return result.stdout.toString();
+  const proc = Bun.spawn(['git', 'show', refPath], {
+    stdout: 'pipe',
+    stderr: 'pipe',
+    timeout: 10_000,
+    maxBuffer: 8 * 1024 * 1024,
+  });
+  const [exitCode, stdout, stderr] = await Promise.all([
+    proc.exited,
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+  ]);
+  if (exitCode !== 0) {
+    const err = stderr.trim() || stdout.slice(0, 200);
+    const reason = proc.killed ? 'timed out or exceeded output limit' : `exit ${exitCode}`;
+    throw new Error(`git show ${refPath} failed (${reason}): ${err}`);
+  }
+  return stdout;
 }
 
 type GlossarySurface = {
@@ -732,41 +748,8 @@ async function ensureProbePng(snapDir: string): Promise<string | undefined> {
   const existing = await pickProbePng(snapDir);
   if (existing) return existing;
 
-  const svgPath = await newestGlobMatch(snapDir, '**/chart.svg');
-  const anySvg = svgPath ?? (await newestGlobMatch(snapDir, '**/*.svg'));
-  if (anySvg) {
-    try {
-      // SVG may throw ERR_IMAGE_FORMAT_UNSUPPORTED — fall through to synthetic chart.
-      const out = anySvg.replace(/\.svg$/i, '.png');
-      await Bun.file(anySvg).image().png().write(out);
-      if (await Bun.file(out).exists()) return out;
-    } catch (e) {
-      const code = (e as Error & { code?: string }).code;
-      if (code !== 'ERR_IMAGE_FORMAT_UNSUPPORTED') {
-        /* keep trying synthetic */
-      }
-    }
-  }
-
-  try {
-    const chartBase = `${snapDir}/live-probe-chart`;
-    const { pngPath: written } = await writeChartArtifacts(
-      {
-        raises: 1,
-        decreases: 0,
-        netDelta: 0,
-        avgScore: null,
-        books: 1,
-        partners: 1,
-      },
-      chartBase
-    );
-    if (written) return written;
-  } catch {
-    /* ignore */
-  }
-
-  // Last resort: known-good 1×1 PNG so metadata() is always exercised.
+  // Bun.Image does not decode SVG. Use a known-good PNG so metadata() is
+  // exercised without a silent, guaranteed-to-fail rasterization attempt.
   const fallback = `${snapDir}/live-probe-1x1.png`;
   await Bun.write(fallback, PNG_1x1_BYTES);
   return fallback;

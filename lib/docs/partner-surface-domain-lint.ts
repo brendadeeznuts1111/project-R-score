@@ -178,18 +178,30 @@ export async function scanDomainIsolation(options: {
   readonly rows: readonly PartnerSurfaceRow[];
   /** Promote out-of-home hits to error. Default: warn. */
   readonly strict?: boolean;
+  /** Explicit repository-relative files to scan (for staged/diff gates). */
+  readonly files?: readonly string[];
 }): Promise<ScanDomainIsolationResult> {
   const rules = buildBrandHomeRules(options.rows);
   const issues: DomainLintIssue[] = [];
   const root = options.root.replace(/\/$/, '');
   const level: DomainLintLevel = options.strict ? 'error' : 'warn';
 
+  const explicitFiles = options.files
+    ? [...new Set(options.files.map(file => file.replace(/\\/g, '/').replace(/^\.\//, '')))]
+    : undefined;
+  const discoveredFiles = explicitFiles ?? [];
+  if (!explicitFiles) {
+    for await (const file of new Bun.Glob('**/*.{ts,tsx}').scan({
+      cwd: root,
+      onlyFiles: true,
+      dot: false,
+    })) {
+      discoveredFiles.push(file);
+    }
+  }
+
   let scannedFiles = 0;
-  for await (const rel of new Bun.Glob('**/*.{ts,tsx}').scan({
-    cwd: root,
-    onlyFiles: true,
-    dot: false,
-  })) {
+  for (const rel of discoveredFiles) {
     if (!shouldScanPath(rel)) continue;
     // Skip nested product trees + foreign lanes for Layer D v1.
     if (rel.startsWith('projects/') || rel.startsWith('Kalshi-bot/')) continue;

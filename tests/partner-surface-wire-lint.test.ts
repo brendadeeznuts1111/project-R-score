@@ -11,6 +11,7 @@ import {
   isSimpleIdent,
   maskNonCodeSpans,
   pathMatchesAnyGlob,
+  scanWireTraps,
   validateWireGlobCoverage,
   warnMissingWireBoundaryGlobs,
 } from '../lib/docs/partner-surface-wire-lint.ts';
@@ -163,6 +164,21 @@ describe('partner-surface-wire-lint', () => {
     if (issues.length > 0) {
       expect(issues[0]?.level).toBe('warn');
     }
+  });
+
+  test('explicit-file mode bounds the scan and skips global glob validation', async () => {
+    const rows = allPartnerSurfaceRows();
+    const none = await scanWireTraps({ root: process.cwd(), rows, files: [] });
+    expect(none.scannedFiles).toBe(0);
+    expect(none.issues).toEqual([]);
+
+    const selected = await scanWireTraps({
+      root: process.cwd(),
+      rows,
+      files: ['tests/partner-surface-wire-lint.test.ts'],
+    });
+    expect(selected.scannedFiles).toBe(1);
+    expect(selected.issues.filter(issue => !issue.file)).toEqual([]);
   });
 
   test('CLI --hlp / --why / --document / --rules exit 0', async () => {

@@ -1,4 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
 // @see https://bun.com/docs/test/parallel#isolate — --isolate
 // @see https://bun.com/docs/test/parallel#parallel — --parallel
 // @see https://bun.com/docs/test/parallel#one-timings-file-per-shard — --shard
@@ -9,8 +15,8 @@
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
-// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
-// @see https://bun.com/blog/bun-v1.3.14#http3 — Bun.serve http3
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
+// @see https://bun.com/blog/bun-v1.3.14#http-3-quic-support-in-bun-serve — Bun.serve http3
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel

@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 import { afterEach, describe, expect, it } from 'bun:test';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -9,7 +13,11 @@ import {
   resolveAgentSkillsRoot,
 } from '../lib/agent-skills-paths.ts';
 import { validateAgentSkills } from '../scripts/validate-agent-skills.ts';
-import { parseProjectRDxContract } from '../scripts/check-project-r-dx-contract.ts';
+import {
+  checkInstalledSkillAlignment,
+  parseProjectRAgentContract,
+  type ProjectRAgentContract,
+} from '../scripts/check-project-r-agent-contract.ts';
 
 const roots: string[] = [];
 
@@ -226,10 +234,10 @@ describe('validateAgentSkills', () => {
   });
 });
 
-describe('Project R DX contract', () => {
+describe('Project R agent contract', () => {
   it('keeps installed skills and global pointers repository-owned', async () => {
     const root = join(import.meta.dir, '..');
-    const result = await parseProjectRDxContract(root);
+    const result = await parseProjectRAgentContract(root);
     expect(result.ok).toBe(true);
     expect(result.issues).toEqual([]);
     expect(result.contract?.installedSkills).toEqual([
@@ -241,8 +249,9 @@ describe('Project R DX contract', () => {
 
   it('fails closed on unsafe paths, duplicate skills, and missing authority files', async () => {
     const root = await fixtureRoot();
-    const result = await parseProjectRDxContract(root, {
+    const result = await parseProjectRAgentContract(root, {
       schemaVersion: 1,
+      contractKind: 'dx-alignment',
       projectKey: 'project-r',
       agentContext: '../AGENTS.md',
       skillAuthority: '.agents/skills',
@@ -250,7 +259,70 @@ describe('Project R DX contract', () => {
       globalAuthorityPointers: ['docs/missing.md'],
     });
     expect(result.ok).toBe(false);
+    expect(result.issues).toContain('contractKind must be agent-alignment');
     expect(result.issues).toContain('agentContext must be a safe relative path');
     expect(result.issues).toContain('installedSkills must be unique');
+  });
+
+  it('compares complete installed skill packages byte-for-byte', async () => {
+    const root = await fixtureRoot();
+    await writeSkill(root, 'demo-skill');
+    const installedRoot = join(root, 'installed');
+    const installedSkill = join(installedRoot, 'demo-skill');
+    await mkdir(join(installedSkill, 'agents'), { recursive: true });
+    await Bun.write(
+      join(installedSkill, 'SKILL.md'),
+      Bun.file(resolveAgentSkillsPath(root, 'demo-skill', 'SKILL.md'))
+    );
+    await Bun.write(
+      join(installedSkill, 'agents/openai.yaml'),
+      Bun.file(resolveAgentSkillsPath(root, 'demo-skill', 'agents/openai.yaml'))
+    );
+    const contract: ProjectRAgentContract = {
+      schemaVersion: 1,
+      contractKind: 'agent-alignment',
+      projectKey: 'project-r',
+      agentContext: 'AGENTS.md',
+      skillAuthority: '.agents/skills',
+      installedSkills: ['demo-skill'],
+      globalAuthorityPointers: ['AGENTS.md'],
+    };
+
+    const result = await checkInstalledSkillAlignment(root, contract, installedRoot);
+    expect(result.ok).toBe(true);
+    expect(result.filesCompared).toBe(2);
+    expect(result.issues).toEqual([]);
+  });
+
+  it('fails installed alignment on changed, missing, and stale package files', async () => {
+    const root = await fixtureRoot();
+    await writeSkill(root, 'demo-skill');
+    await writeFile(resolveAgentSkillsPath(root, 'demo-skill', 'references.md'), 'authority');
+    const installedRoot = join(root, 'installed');
+    const installedSkill = join(installedRoot, 'demo-skill');
+    await mkdir(join(installedSkill, 'agents'), { recursive: true });
+    await writeFile(join(installedSkill, 'SKILL.md'), 'drifted');
+    await Bun.write(
+      join(installedSkill, 'agents/openai.yaml'),
+      Bun.file(resolveAgentSkillsPath(root, 'demo-skill', 'agents/openai.yaml'))
+    );
+    await writeFile(join(installedSkill, 'stale.md'), 'stale');
+    const contract: ProjectRAgentContract = {
+      schemaVersion: 1,
+      contractKind: 'agent-alignment',
+      projectKey: 'project-r',
+      agentContext: 'AGENTS.md',
+      skillAuthority: '.agents/skills',
+      installedSkills: ['demo-skill'],
+      globalAuthorityPointers: ['AGENTS.md'],
+    };
+
+    const result = await checkInstalledSkillAlignment(root, contract, installedRoot);
+    expect(result.ok).toBe(false);
+    expect(result.issues).toEqual([
+      'demo-skill: installed file differs: SKILL.md',
+      'demo-skill: installed package is missing references.md',
+      'demo-skill: installed package has stale file: stale.md',
+    ]);
   });
 });

@@ -441,7 +441,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'monorepo-health-score',
     claim:
-      'Monorepo health score collects via Bun.Transpiler/Glob, schema-validates, and ratchets floors (minScore / max dead·large·cycles) in ci:core; pre-commit runs unit tests when health sources staged; import-graph shares scanSourceImports SSOT',
+      'Monorepo structural health v2 collects via Bun.Transpiler/Glob, keeps optional test evidence out of the score, schema-validates, and ratchets the observed floor separately from the target in ci:core; pre-commit runs unit tests when health sources staged; import-graph shares the cycle classifier and scanSourceImports SSOT',
     kinds: ['unit', 'boundary', 'journey'],
     gateClass: 'continuous',
     gateRef: 'ci:core',
@@ -656,18 +656,17 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'blog-codeblocks-boundaries',
     claim:
-      'Blog div.CodeBlock extraction: Shiki strip, CodeBlockTab skip, bunBlog URL round-trip, token join fixture',
+      'Blog div.CodeBlock tool: Shiki strip, class status, BunFile input, property-filtered tables, consolidated modes, all Bun.markdown parser overrides, the complete ANSI theme, hierarchical nested-list metadata, and exact guide/member/release cross-references',
     kinds: ['boundary'],
     gateClass: 'continuous',
     gateRef: 'ci:harness',
     evidence: [
-      'bun test tests/bun-blog-codeblocks.test.ts tests/blog-codeblock-join.test.ts',
       'bun test tests/bun-blog-codeblocks.test.ts',
-      'bun test tests/blog-codeblock-join.test.ts',
       'tools/bun-blog-codeblocks.ts',
-      'lib/docs/blog-codeblock-join.ts',
+      'lib/docs/blog-codeblocks.ts',
+      'lib/markdown/options.ts',
     ],
-    freshRerun: 'bun test tests/bun-blog-codeblocks.test.ts tests/blog-codeblock-join.test.ts',
+    freshRerun: 'bun test tests/bun-blog-codeblocks.test.ts',
     freshRerunKind: 'claim',
     owner: 'tools/bun-blog-codeblocks.ts',
   },

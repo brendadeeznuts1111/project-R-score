@@ -1,3 +1,53 @@
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
+// @released --no-orphans · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @updated Bun.spawn · changed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @updated Bun.spawn · changed v0.3.0 · 2022-12-07 · https://bun.com/blog/bun-v0.3.0
+// @updated Bun.spawn · fixed v0.6.0 · 2023-05-16 · https://bun.com/blog/bun-v0.6.0
+// @updated Bun.spawn · fixed v0.6.6 · 2023-05-31 · https://bun.com/blog/bun-v0.6.6
+// @updated Bun.spawn · fixed v0.7.2 · 2023-08-03 · https://bun.com/blog/bun-v0.7.2
+// @updated Bun.spawn · fixed v1.0.8 · 2023-11-02 · https://bun.com/blog/bun-v1.0.8
+// @updated Bun.spawn · fixed v1.0.9 · 2023-11-05 · https://bun.com/blog/bun-v1.0.9
+// @updated Bun.spawn · fixed v1.0.23 · 2024-01-16 · https://bun.com/blog/bun-v1.0.23
+// @updated Bun.spawn · fixed v1.0.26 · 2024-02-03 · https://bun.com/blog/bun-v1.0.26
+// @updated Bun.spawn · fixed v1.0.31 · 2024-03-14 · https://bun.com/blog/bun-v1.0.31
+// @updated Bun.spawn · fixed v1.0.32 · 2024-03-17 · https://bun.com/blog/bun-v1.0.32
+// @updated Bun.spawn · fixed v1.0.36 · 2024-03-29 · https://bun.com/blog/bun-v1.0.36
+// @updated Bun.spawn · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.spawn · fixed v1.1.5 · 2024-04-26 · https://bun.com/blog/bun-v1.1.5
+// @updated Bun.spawn · changed v1.1.8 · 2024-05-10 · https://bun.com/blog/bun-v1.1.8
+// @updated Bun.spawn · fixed v1.1.8 · 2024-05-10 · https://bun.com/blog/bun-v1.1.8
+// @updated Bun.spawn · fixed v1.1.30 · 2024-10-08 · https://bun.com/blog/bun-v1.1.30
+// @updated Bun.spawn · changed v1.1.39 · 2024-12-17 · https://bun.com/blog/bun-v1.1.39
+// @updated Bun.spawn · fixed v1.1.39 · 2024-12-17 · https://bun.com/blog/bun-v1.1.39
+// @updated Bun.spawn · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
+// @updated Bun.spawn · fixed v1.2.1 · 2025-01-27 · https://bun.com/blog/bun-v1.2.1
+// @updated Bun.spawn · changed v1.2.6 · 2025-03-25 · https://bun.com/blog/bun-v1.2.6
+// @updated Bun.spawn · fixed v1.2.6 · 2025-03-25 · https://bun.com/blog/bun-v1.2.6
+// @updated Bun.spawn · changed v1.2.9 · 2025-04-09 · https://bun.com/blog/bun-v1.2.9
+// @updated Bun.spawn · fixed v1.2.16 · 2025-06-11 · https://bun.com/blog/bun-v1.2.16
+// @updated Bun.spawn · fixed v1.2.17 · 2025-06-21 · https://bun.com/blog/bun-v1.2.17
+// @updated Bun.spawn · changed v1.2.18 · 2025-07-03 · https://bun.com/blog/bun-v1.2.18
+// @updated Bun.spawn · fixed v1.2.18 · 2025-07-03 · https://bun.com/blog/bun-v1.2.18
+// @updated Bun.spawn · changed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.spawn · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.spawn · fixed v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2
+// @updated Bun.spawn · changed v1.3.3 · 2025-11-21 · https://bun.com/blog/bun-v1.3.3
+// @updated Bun.spawn · fixed v1.3.3 · 2025-11-21 · https://bun.com/blog/bun-v1.3.3
+// @updated Bun.spawn · changed v1.3.5 · 2025-12-17 · https://bun.com/blog/bun-v1.3.5
+// @updated Bun.spawn · changed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.spawn · fixed v1.3.10 · 2026-02-26 · https://bun.com/blog/bun-v1.3.10
+// @updated Bun.spawn · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @verified Bun.spawn · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/child-process
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @updated Bun.spawnSync · changed v0.3.0 · 2022-12-07 · https://bun.com/blog/bun-v0.3.0
+// @updated Bun.spawnSync · changed v1.0.19 · 2023-12-22 · https://bun.com/blog/bun-v1.0.19
+// @updated Bun.spawnSync · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.spawnSync · changed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.spawnSync · fixed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.spawnSync · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
+// @updated Bun.spawnSync · fixed v1.3.10 · 2026-02-26 · https://bun.com/blog/bun-v1.3.10
+// @verified Bun.spawnSync · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync
 // @see https://bun.com/reference/bun/gc — Bun.gc
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -37,15 +87,21 @@ export const BUN_V1314_BLOG = 'https://bun.com/blog/bun-v1.3.14' as const;
 
 /** Permanent canonical anchors from the v1.3.14 blog post. */
 export const BUN_V1314_ANCHORS = {
-  'bun-image': `${BUN_V1314_BLOG}#bun-image`,
+  'bun-image': `${BUN_V1314_BLOG}#bun-image-built-in-image-processing`,
+  'image-input-sources': `${BUN_V1314_BLOG}#input-sources`,
+  'image-chainable-transforms': `${BUN_V1314_BLOG}#chainable-transforms`,
+  'image-resize-filters': `${BUN_V1314_BLOG}#resize-filters`,
   'terminal-methods': `${BUN_V1314_BLOG}#terminal-methods`,
+  'image-body-integration': `${BUN_V1314_BLOG}#body-integration`,
+  'image-platform-specific-formats': `${BUN_V1314_BLOG}#platform-specific-formats`,
+  'image-performance-vs-sharp': `${BUN_V1314_BLOG}#performance-vs-sharp-0-34-5`,
   'global-virtual-store': `${BUN_V1314_BLOG}#global-virtual-store`,
-  http3: `${BUN_V1314_BLOG}#http3`,
-  'http2-client': `${BUN_V1314_BLOG}#http2-client`,
-  'rewritten-fswatch-backend': `${BUN_V1314_BLOG}#rewritten-fswatch-backend`,
-  'no-orphans': `${BUN_V1314_BLOG}#no-orphans`,
+  http3: `${BUN_V1314_BLOG}#http-3-quic-support-in-bun-serve`,
+  'http2-client': `${BUN_V1314_BLOG}#experimental-http-2-client-for-fetch`,
+  'rewritten-fswatch-backend': `${BUN_V1314_BLOG}#rewritten-fs-watch-backend-on-linux-macos-and-freebsd`,
+  'no-orphans': `${BUN_V1314_BLOG}#no-orphans-exit-when-the-parent-process-dies`,
   'process-execve-support': `${BUN_V1314_BLOG}#process-execve-support`,
-  'bunterminal-on-windows-via-conpty': `${BUN_V1314_BLOG}#bunterminal-on-windows-via-conpty`,
+  'bunterminal-on-windows-via-conpty': `${BUN_V1314_BLOG}#bun-terminal-on-windows-via-conpty`,
   'using-await-using-no-longer-lowered-when-targeting-bun': `${BUN_V1314_BLOG}#using-await-using-no-longer-lowered-when-targeting-bun`,
   'sighup-and-sigbreak-signal-handling-on-windows': `${BUN_V1314_BLOG}#sighup-and-sigbreak-signal-handling-on-windows`,
   'websocket-permessagedeflate-false-now-respected-in-upgrade-requests': `${BUN_V1314_BLOG}#websocket-permessagedeflate-false-now-respected-in-upgrade-requests`,
@@ -53,7 +109,7 @@ export const BUN_V1314_ANCHORS = {
   'reduced-memory-usage-for-mongodb-mongoose': `${BUN_V1314_BLOG}#reduced-memory-usage-for-mongodb-mongoose`,
   'upgraded-javascriptcore-engine': `${BUN_V1314_BLOG}#upgraded-javascriptcore-engine`,
   'bun-publish-now-sends-readme-metadata-to-the-registry': `${BUN_V1314_BLOG}#bun-publish-now-sends-readme-metadata-to-the-registry`,
-  'updated-sqlite-to-3530': `${BUN_V1314_BLOG}#updated-sqlite-to-3530`,
+  'updated-sqlite-to-3530': `${BUN_V1314_BLOG}#updated-sqlite-to-3-53-0`,
   'cross-language-lto-for-zig-c-on-linux': `${BUN_V1314_BLOG}#cross-language-lto-for-zig-c-on-linux`,
   'faster-esm-module-loading': `${BUN_V1314_BLOG}#faster-esm-module-loading`,
   'reduced-gc-overhead-for-built-in-objects': `${BUN_V1314_BLOG}#reduced-gc-overhead-for-built-in-objects`,
@@ -85,6 +141,18 @@ export function bunV135Url(anchor: BunV135AnchorKey): string {
 }
 
 export type BunV1314AnchorKey = keyof typeof BUN_V1314_ANCHORS;
+
+/** Every Image subsection shipped in the official v1.3.14 release post. */
+export const BUN_V1314_IMAGE_ANCHOR_KEYS = [
+  'bun-image',
+  'image-input-sources',
+  'image-chainable-transforms',
+  'image-resize-filters',
+  'terminal-methods',
+  'image-body-integration',
+  'image-platform-specific-formats',
+  'image-performance-vs-sharp',
+] as const satisfies readonly BunV1314AnchorKey[];
 
 /** Full canonical URL for a v1.3.14 blog section anchor. */
 export function bunV1314Url(anchor: BunV1314AnchorKey): string {
@@ -127,7 +195,7 @@ export const BUN_RELEASE_NOTE_ROWS: readonly BunReleaseNoteRow[] = [
       'JPEG/PNG/WebP/GIF/BMP plus HEIC/AVIF/TIFF on macOS/Windows; chainable pipeline with terminal output methods.',
     canonical: BUN_V1314_ANCHORS['bun-image'],
     verify: 'automated',
-    refs: [BUN_V1314_ANCHORS['bun-image'], BUN_V1314_ANCHORS['terminal-methods']],
+    refs: BUN_V1314_IMAGE_ANCHOR_KEYS.map(key => BUN_V1314_ANCHORS[key]),
   },
   {
     id: 'tls-system-ca-no-flag',

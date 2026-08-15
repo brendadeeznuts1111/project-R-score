@@ -1,7 +1,6 @@
 {
   "description": "Pre-contract Markdown findings. New findings fail; fixed rows must be removed.",
   "issues": [
-    "AGENTS.md:missing-anchor:#unknown-long-options-bun_strip_unknown targets absent #unknown-long-options-bun_strip_unknown in AGENTS.md",
     "docs/AGENTS.md:missing-anchor:../AGENTS.md#bun-create-templating--scaffold targets absent #bun-create-templating--scaffold in AGENTS.md",
     "docs/AGENTS.md:missing-anchor:../AGENTS.md#unknown-long-options-bun_strip_unknown targets absent #unknown-long-options-bun_strip_unknown in AGENTS.md",
     "docs/BUN_NATIVE_CAPABILITIES.md:missing-anchor:../AGENTS.md#bun-create-templating--scaffold targets absent #bun-create-templating--scaffold in AGENTS.md",

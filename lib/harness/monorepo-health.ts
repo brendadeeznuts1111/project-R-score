@@ -1,3 +1,34 @@
+// @see https://bun.com/docs/test/code-coverage#enabling-coverage — --coverage
+// @updated --coverage · fixed v1.1.21 · 2024-07-27 · https://bun.com/blog/bun-v1.1.21
+// @updated --coverage · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
+// @verified --coverage · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/test/code-coverage#enabling-coverage
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @updated Bun.write · fixed v0.4.0 · 2022-12-23 · https://bun.com/blog/bun-v0.4.0
+// @updated Bun.write · fixed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
+// @updated Bun.write · fixed v0.7.2 · 2023-08-03 · https://bun.com/blog/bun-v0.7.2
+// @updated Bun.write · fixed v1.0.7 · 2023-10-20 · https://bun.com/blog/bun-v1.0.7
+// @updated Bun.write · changed v1.0.16 · 2023-12-10 · https://bun.com/blog/bun-v1.0.16
+// @updated Bun.write · fixed v1.0.21 · 2024-01-02 · https://bun.com/blog/bun-v1.0.21
+// @updated Bun.write · fixed v1.0.23 · 2024-01-16 · https://bun.com/blog/bun-v1.0.23
+// @updated Bun.write · fixed v1.0.24 · 2024-01-20 · https://bun.com/blog/bun-v1.0.24
+// @updated Bun.write · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.write · fixed v1.1.6 · 2024-04-28 · https://bun.com/blog/bun-v1.1.6
+// @updated Bun.write · fixed v1.1.21 · 2024-07-27 · https://bun.com/blog/bun-v1.1.21
+// @updated Bun.write · changed v1.1.37 · 2024-11-26 · https://bun.com/blog/bun-v1.1.37
+// @updated Bun.write · changed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.write · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.write · fixed v1.2.20 · 2025-08-10 · https://bun.com/blog/bun-v1.2.20
+// @updated Bun.write · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.write · fixed v1.3.5 · 2025-12-17 · https://bun.com/blog/bun-v1.3.5
+// @updated Bun.write · fixed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.write · fixed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @verified Bun.write · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/file-io#writing-files-bun-write
 // @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
@@ -10,13 +41,15 @@
 /**
  * Monorepo health score (0–100) — Bun-native metrics for FactoryWager.
  *
- * Health = 100
- *   − (duplicateDepCount × 2)
- *   − (deadCodePercent × 0.5)
- *   − (largeFilePercent × 1)
- *   − (testFailureRate × 5)
- *   − (cyclicDependencyCount × 1.5)
- *   + (testCoveragePercent × 0.2)
+ * Structural health = 100
+ *   − min(20, duplicateDepCount × 5)
+ *   − min(25, deadCodePercent × 1)
+ *   − min(35, largeFilePercent × 0.75)
+ *   − min(20, cyclicDependencyCount × 5)
+ *
+ * Optional test and coverage observations are evidence, not score inputs. This
+ * keeps the score comparable between the fast CI ratchet and an operator's
+ * slower `--with-coverage` run.
  *
  * Import graph: Bun.Transpiler.scan / scanImports (not regex).
  * Target: score ≥ 90. CLI: `bun tools/monorepo-health.ts`
@@ -24,7 +57,7 @@
 import { bunSpawnArgs } from '../bun-executable.ts';
 import { joinPath } from '../path-bun.ts';
 
-export const MONOREPO_HEALTH_FORMULA_VERSION = 1 as const;
+export const MONOREPO_HEALTH_FORMULA_VERSION = 2 as const;
 
 /** Default scan roots relative to monorepo root (FactoryWager layout). */
 export const DEFAULT_SOURCE_GLOBS = [
@@ -41,11 +74,11 @@ export type MonorepoHealthMetrics = {
   duplicateDepCount: number;
   deadCodePercent: number;
   largeFilePercent: number;
-  /** 0–100; 0 when tests not run. */
-  testFailureRate: number;
+  /** 0–100 when tests ran and emitted a summary; null when not measured. */
+  testFailureRate: number | null;
   cyclicDependencyCount: number;
-  /** 0–100; 0 when coverage not available. */
-  testCoveragePercent: number;
+  /** 0–100 when coverage was parsed; null when not measured or unavailable. */
+  testCoveragePercent: number | null;
 };
 
 export type MonorepoHealthBreakdown = {
@@ -53,9 +86,7 @@ export type MonorepoHealthBreakdown = {
   duplicateDepPenalty: number;
   deadCodePenalty: number;
   largeFilePenalty: number;
-  testFailurePenalty: number;
   cyclePenalty: number;
-  coverageBonus: number;
 };
 
 export type MonorepoHealthScore = {
@@ -99,19 +130,19 @@ export function computeMonorepoHealth(metrics: MonorepoHealthMetrics): MonorepoH
     duplicateDepCount: Math.max(0, metrics.duplicateDepCount),
     deadCodePercent: clamp(metrics.deadCodePercent, 0, 100),
     largeFilePercent: clamp(metrics.largeFilePercent, 0, 100),
-    testFailureRate: clamp(metrics.testFailureRate, 0, 100),
+    testFailureRate:
+      metrics.testFailureRate == null ? null : clamp(metrics.testFailureRate, 0, 100),
     cyclicDependencyCount: Math.max(0, metrics.cyclicDependencyCount),
-    testCoveragePercent: clamp(metrics.testCoveragePercent, 0, 100),
+    testCoveragePercent:
+      metrics.testCoveragePercent == null ? null : clamp(metrics.testCoveragePercent, 0, 100),
   };
 
   const breakdown: MonorepoHealthBreakdown = {
     base: 100,
-    duplicateDepPenalty: m.duplicateDepCount * 2,
-    deadCodePenalty: m.deadCodePercent * 0.5,
-    largeFilePenalty: m.largeFilePercent * 1,
-    testFailurePenalty: m.testFailureRate * 5,
-    cyclePenalty: m.cyclicDependencyCount * 1.5,
-    coverageBonus: m.testCoveragePercent * 0.2,
+    duplicateDepPenalty: Math.min(20, m.duplicateDepCount * 5),
+    deadCodePenalty: Math.min(25, m.deadCodePercent),
+    largeFilePenalty: Math.min(35, m.largeFilePercent * 0.75),
+    cyclePenalty: Math.min(20, m.cyclicDependencyCount * 5),
   };
 
   const raw =
@@ -119,9 +150,7 @@ export function computeMonorepoHealth(metrics: MonorepoHealthMetrics): MonorepoH
     breakdown.duplicateDepPenalty -
     breakdown.deadCodePenalty -
     breakdown.largeFilePenalty -
-    breakdown.testFailurePenalty -
-    breakdown.cyclePenalty +
-    breakdown.coverageBonus;
+    breakdown.cyclePenalty;
 
   const score = Math.round(clamp(raw, 0, 100) * 10) / 10;
 
@@ -279,6 +308,56 @@ export type ScannedImport = {
   kind: string;
 };
 
+export type ImportGraphEdge = {
+  target: string;
+  lazy: boolean;
+};
+
+export type ImportCycle = {
+  cycle: string[];
+  weak: boolean;
+};
+
+/**
+ * Canonical cycle inventory shared by the advisory health score and the hard
+ * import-graph ratchet. A sorted node signature deduplicates DFS discoveries.
+ */
+export function findImportCycles(graph: Map<string, ImportGraphEdge[]>): ImportCycle[] {
+  const visited = new Set<string>();
+  const raw: string[][] = [];
+
+  const visit = (node: string, path: string[]): void => {
+    const cycleStart = path.indexOf(node);
+    if (cycleStart !== -1) {
+      raw.push([...path.slice(cycleStart), node]);
+      return;
+    }
+    if (visited.has(node)) return;
+    visited.add(node);
+    for (const edge of graph.get(node) ?? []) visit(edge.target, [...path, node]);
+  };
+
+  for (const node of graph.keys()) visit(node, []);
+
+  const seen = new Set<string>();
+  const cycles: ImportCycle[] = [];
+  for (const cycle of raw) {
+    const signature = cycle.slice(0, -1).sort().join('|');
+    if (seen.has(signature)) continue;
+    seen.add(signature);
+    let weak = false;
+    for (let i = 0; i < cycle.length - 1; i++) {
+      const edge = graph.get(cycle[i]!)?.find(candidate => candidate.target === cycle[i + 1]);
+      if (edge?.lazy) {
+        weak = true;
+        break;
+      }
+    }
+    cycles.push({ cycle, weak });
+  }
+  return cycles;
+}
+
 /**
  * Bun.Transpiler import inventory (type-only imports ignored by Bun).
  *
@@ -363,7 +442,7 @@ export async function analyzeImportGraph(
     };
   }
 
-  const adjacency = new Map<string, string[]>();
+  const adjacency = new Map<string, ImportGraphEdge[]>();
   let packageImportEdges = 0;
   let scanErrors = 0;
 
@@ -385,7 +464,7 @@ export async function analyzeImportGraph(
       continue;
     }
 
-    const deps: string[] = [];
+    const deps: ImportGraphEdge[] = [];
     for (const imp of imports) {
       const spec = imp.path;
       if (!spec.startsWith('.')) {
@@ -393,14 +472,16 @@ export async function analyzeImportGraph(
         continue;
       }
       const resolved = await resolveRelativeImport(file, spec);
-      if (resolved && fileSet.has(resolved)) deps.push(resolved);
+      if (resolved && fileSet.has(resolved)) {
+        deps.push({ target: resolved, lazy: imp.kind === 'dynamic-import' });
+      }
     }
     adjacency.set(file, deps);
   }
 
   const imported = new Set<string>();
   for (const deps of adjacency.values()) {
-    for (const d of deps) imported.add(d);
+    for (const d of deps) imported.add(d.target);
   }
   const entrySet = new Set(existing);
   const scoped = allFiles.filter(f => f.includes('/lib/') || f.includes('/packages/'));
@@ -411,10 +492,22 @@ export async function analyzeImportGraph(
   }
   const deadCodePercent = scoped.length ? (deadFileCount / scoped.length) * 100 : 0;
 
-  const rawCycles = countCycles(adjacency);
-  const cyclicDependencyCount = Math.min(rawCycles, Math.max(5, Math.floor(allFiles.length / 50)));
+  // The blocking import gate owns lib/ + scripts/. Use that same perimeter for
+  // the score so the two surfaces cannot disagree about the cycle population.
+  const cycleGraph = new Map(
+    [...adjacency.entries()]
+      .filter(([file]) => file.includes('/lib/') || file.includes('/scripts/'))
+      .map(([file, edges]) => [
+        file,
+        edges.filter(edge => edge.target.includes('/lib/') || edge.target.includes('/scripts/')),
+      ])
+  );
+  const cycles = findImportCycles(cycleGraph);
+  const cyclicDependencyCount = cycles.length;
+  const strongCycles = cycles.filter(cycle => !cycle.weak).length;
+  const weakCycles = cycles.length - strongCycles;
   notes.push(
-    `import graph via Bun.Transpiler.scanImports; dead=orphan; package edges=${packageImportEdges}; cycles raw=${rawCycles} capped=${cyclicDependencyCount}`
+    `import graph via Bun.Transpiler.scanImports; dead=orphan; package edges=${packageImportEdges}; cycles=${strongCycles} strong + ${weakCycles} weak (lib/scripts perimeter)`
   );
   if (scanErrors > 0) notes.push(`transpiler scan errors on ${scanErrors} file(s)`);
 
@@ -432,7 +525,7 @@ export async function analyzeImportGraph(
 export function parseTestSummary(stdout: string): {
   pass: number;
   fail: number;
-  testFailureRate: number;
+  testFailureRate: number | null;
 } {
   // "  27 pass\n  0 fail" or "27 pass, 0 fail"
   let pass = 0;
@@ -442,15 +535,15 @@ export function parseTestSummary(stdout: string): {
   if (m1) pass = Number(m1[1]);
   if (m2) fail = Number(m2[1]);
   const total = pass + fail;
-  const testFailureRate = total > 0 ? (fail / total) * 100 : 0;
+  const testFailureRate = total > 0 ? (fail / total) * 100 : null;
   return { pass, fail, testFailureRate };
 }
 
 /**
  * Parse Bun's table coverage footer (`All files | % Funcs | % Lines | …`).
- * Prefer line coverage; fall back to function coverage. Returns 0–100 or 0 if absent.
+ * Prefer line coverage; fall back to function coverage. Returns null if absent.
  */
-export function parseCoveragePercent(stdout: string): number {
+export function parseCoveragePercent(stdout: string): number | null {
   // All files                       |   27.78 |   19.58 |
   const m = stdout.match(/All files\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)\s*\|/i);
   if (m) {
@@ -465,7 +558,7 @@ export function parseCoveragePercent(stdout: string): number {
     const n = Number(m2[1]);
     if (Number.isFinite(n)) return Math.max(0, Math.min(100, n));
   }
-  return 0;
+  return null;
 }
 
 /** Default entrypoints for this monorepo (exist-checked at collect time). */
@@ -534,8 +627,8 @@ export async function collectMonorepoHealth(
     notes.push('import-graph analysis skipped (--no-build)');
   }
 
-  let testFailureRate = 0;
-  let testCoveragePercent = 0;
+  let testFailureRate: number | null = null;
+  let testCoveragePercent: number | null = null;
   let testsRun = false;
 
   if (withTests) {
@@ -557,7 +650,7 @@ export async function collectMonorepoHealth(
     testFailureRate = summary.testFailureRate;
     if (withCoverage) {
       testCoveragePercent = parseCoveragePercent(combined);
-      if (testCoveragePercent > 0) {
+      if (testCoveragePercent != null) {
         notes.push(`coverage (line %) from bun test --coverage: ${testCoveragePercent.toFixed(2)}`);
       } else {
         notes.push('coverage requested but All-files line % not found in test output');

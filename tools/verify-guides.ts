@@ -8,8 +8,8 @@
 // @see https://bun.com/docs/bundler/fullstack#production-mode — --production
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
-// @see https://bun.com/docs/guides.md — agent-readable guides landing page
-// @see https://bun.com/docs/llms.txt — complete documentation discovery index
+// @see https://bun.com/guides.md — agent-readable guides landing page
+// @see https://bun.com/llms.txt — complete documentation discovery index
 // @see https://bun.com/docs/runtime/networking/fetch#fetching-a-url-with-a-timeout — AbortSignal.timeout
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**

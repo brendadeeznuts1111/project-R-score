@@ -29,7 +29,7 @@ const FIXTURE = `<!doctype html>
 <html><body>
   <nav><ul><li>Navigation item must be ignored</li></ul></nav>
   <article>
-    <h2>Bun.Image — Built-in <code>Image</code> Processing</h2>
+    <h2>Bun.Image — Built-in <code>Image</code> Processing<a class="anchor">#</a></h2>
     <p>Processes images without a native package dependency.</p>
     <ul><li>Accepts <code>Blob</code> and typed array inputs.</li></ul>
     <h2>Bugfixes</h2>

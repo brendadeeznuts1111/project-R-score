@@ -1,3 +1,13 @@
+// @see https://bun.com/docs/runtime/image#input — Blob.image
+// @verified Blob.image · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/image#input
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.blob
+// @released Bun.Image.blob · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#resize — Bun.Image.resize
+// @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.webp
+// @released Bun.Image.webp · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.write
+// @released Bun.Image.write · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // @see https://bun.com/docs/runtime/image
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file
@@ -9,6 +19,7 @@
  * @see docs/IMAGES.md
  */
 import { joinPath } from '../path-bun.ts';
+import { isBunImageError } from '../image-metadata.ts';
 
 const ROOT = joinPath(import.meta.dir, '../..');
 const SOURCE_DIR = joinPath(ROOT, 'warehouse/avatars');
@@ -18,13 +29,16 @@ const FALLBACK = joinPath(ROOT, 'public/icons/tennis/mark.png');
 const SAFE_SLUG = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$/;
 const SOURCE_EXTS = ['.png', '.jpg', '.jpeg', '.webp'] as const;
 
-export type AvatarOptions = {
-  size?: number;
-  quality?: number;
-  /** Write generated WebP under public/avatars/ (default true). */
-  cache?: boolean;
-  maxPixels?: number;
-};
+type BunWebpOptions = NonNullable<Parameters<Bun.Image['webp']>[0]>;
+
+export type AvatarOptions = Bun.Image.ConstructorOptions &
+  Bun.Image.ResizeOptions & {
+    size?: number;
+    quality?: BunWebpOptions['quality'];
+    lossless?: BunWebpOptions['lossless'];
+    /** Write generated WebP under public/avatars/ (default true). */
+    cache?: boolean;
+  };
 
 export function isSafeAvatarId(avatarKey: string): boolean {
   return SAFE_SLUG.test(avatarKey);
@@ -78,9 +92,13 @@ export async function avatarWebpResponse(
   try {
     const t0 = Bun.nanoseconds();
     const pipe = Bun.file(src)
-      .image({ maxPixels })
-      .resize(size, size, { fit: 'fill' })
-      .webp({ quality });
+      .image({ maxPixels, autoOrient: options.autoOrient })
+      .resize(size, size, {
+        fit: options.fit ?? 'fill',
+        filter: options.filter,
+        withoutEnlargement: options.withoutEnlargement,
+      })
+      .webp({ quality, lossless: options.lossless });
 
     if (useCache) {
       await pipe.write(cachePath);
@@ -106,12 +124,12 @@ export async function avatarWebpResponse(
         'X-Avatar-Ms': ms.toFixed(1),
       },
     });
-  } catch (e) {
-    const err = e as Error & { code?: string };
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error('image encode failed');
     return new Response(
       JSON.stringify({
         error: err.message || 'image encode failed',
-        code: err.code ?? 'ERR_IMAGE',
+        code: isBunImageError(err) ? err.code : 'ERR_IMAGE',
       }),
       {
         status: 500,

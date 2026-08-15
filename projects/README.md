@@ -47,8 +47,8 @@ Status: `workspace` = root workspace member · `own remote` = gitignored nested 
 |------|---------|--------|
 | [`active/sports-terminal-os/`](active/sports-terminal-os/) | Sports Terminal OS v5.2 — proxy, WS/SSE, partner profiles | workspace |
 | [`active/factorywager/`](active/factorywager/) | Private NPM registry umbrella → `registry/` | local (nested monorepo; own install) |
-| [`active/kimiremote/`](active/kimiremote/) | Sports terminal proxy / remote ops | own remote |
-| [`active/f402-openapi/`](active/f402-openapi/) | Fantasy402 OpenAPI + Workers | own remote |
+| `active/kimiremote/` | Sports terminal proxy / remote ops | own remote; optional checkout |
+| `active/f402-openapi/` | Fantasy402 OpenAPI + Workers | own remote; optional checkout |
 | [`active/playwriter-skill/`](active/playwriter-skill/) | Playwright skill package (Chrome + CLI + R2) | local |
 
 ### [`analysis/`](active/analysis/)
@@ -63,7 +63,7 @@ Status: `workspace` = root workspace member · `own remote` = gitignored nested 
 
 | Path | Purpose | Status |
 |------|---------|--------|
-| [`enhancements-1.0.01/`](active/automation/enhancements-1.0.01/) | Enhancement proposals for app v1.0.01 | local |
+| [`enterprise-enhancement-plan.md`](active/automation/enterprise-enhancement-plan.md) | Cross-product execution plan; implementation remains in canonical root owners | plan |
 
 ### [`dashboards/`](active/dashboards/)
 
@@ -84,8 +84,8 @@ Status: `workspace` = root workspace member · `own remote` = gitignored nested 
 
 | Path | Purpose | Status |
 |------|---------|--------|
-| [`bet-ticker-worker-v1.1/`](active/enterprise/bet-ticker-worker-v1.1/) | Live wager broadcast Worker + DO | own remote |
-| [`cascade-mover-v3/`](active/enterprise/cascade-mover-v3/) | Sports intelligence / liquidity terminal | own remote |
+| `active/enterprise/bet-ticker-worker-v1.1/` | Live wager broadcast Worker + DO | own remote; optional checkout |
+| `active/enterprise/cascade-mover-v3/` | Sports intelligence / liquidity terminal | own remote; optional checkout |
 | [`fantasy42-fire22-registry/`](active/enterprise/fantasy42-fire22-registry/) | Fire22 / Fantasy42 registry platform | local |
 | [`foxy-proxy/`](active/enterprise/foxy-proxy/) | Proxy toolkit | local |
 | [`full-stack-bun.io/`](active/enterprise/full-stack-bun.io/) | Full-stack SPA → binary lab demo | local |

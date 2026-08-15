@@ -1,9 +1,11 @@
 // @see https://bun.com/docs/test/index#run-tests
 // @see https://bun.com/reference/node/tls/getCACertificates
 import { describe, expect, test } from 'bun:test';
+import ts from 'typescript';
 import {
   BUN_RELEASE_NOTE_ROWS,
   BUN_V1314_ANCHORS,
+  BUN_V1314_IMAGE_ANCHOR_KEYS,
   BUN_V1314_BLOG,
   BUN_V135_BLOG,
   BUN_V135_ANCHORS,
@@ -30,7 +32,8 @@ import {
   smokeFetchProtocolSupport,
 } from '../lib/docs/bun-release-tracker.ts';
 import type { VerificationResult } from '../lib/verification/types.ts';
-import { CANONICAL_REFS } from '../tools/bun-doc-refs.ts';
+import { CANONICAL_IMAGE_REFS, CANONICAL_REFS } from '../tools/bun-doc-refs.ts';
+import { CURATED_ENTRIES } from '../tools/bun-docs-curated.ts';
 import { runReleaseVerification } from '../tools/verify-bun-release.ts';
 
 describe('lib/docs/bun-release-tracker', () => {
@@ -45,7 +48,7 @@ describe('lib/docs/bun-release-tracker', () => {
   });
 
   test('keeps template commands, operator feedback, and the documentation index canonical', () => {
-    expect(CANONICAL_REFS['llms.txt index']).toBe('https://bun.com/docs/llms.txt');
+    expect(CANONICAL_REFS['llms.txt index']).toBe('https://bun.com/llms.txt');
     expect(CANONICAL_REFS['bun create']).toBe('https://bun.com/docs/runtime/templating/create');
     expect(CANONICAL_REFS['bun init']).toBe('https://bun.com/docs/runtime/templating/init');
     expect(CANONICAL_REFS['test reporters']).toBe('https://bun.com/docs/test/reporters');
@@ -58,19 +61,22 @@ describe('lib/docs/bun-release-tracker', () => {
     expect(CANONICAL_REFS['bun feedback']).toBe('https://bun.com/docs/feedback');
   });
 
-  test('BUN_V1314_ANCHORS covers all user-listed blog sections', () => {
-    const expected = [
-      'bun-image',
-      'terminal-methods',
-      'global-virtual-store',
-      'http3',
-      'http2-client',
-      'event-loop-refactor',
-      'web-apis',
-      'tls-getcacertificates-system-now-works-without-use-system-ca',
-    ] as const;
-    for (const key of expected) {
-      expect(BUN_V1314_ANCHORS[key]).toBe(`${BUN_V1314_BLOG}#${key}`);
+  test('BUN_V1314_ANCHORS uses the exact official heading ids', () => {
+    const expected = {
+      'bun-image': 'bun-image-built-in-image-processing',
+      'terminal-methods': 'terminal-methods',
+      'global-virtual-store': 'global-virtual-store',
+      http3: 'http-3-quic-support-in-bun-serve',
+      'http2-client': 'experimental-http-2-client-for-fetch',
+      'event-loop-refactor': 'event-loop-refactor',
+      'web-apis': 'web-apis',
+      'tls-getcacertificates-system-now-works-without-use-system-ca':
+        'tls-getcacertificates-system-now-works-without-use-system-ca',
+    } as const;
+    for (const [key, anchor] of Object.entries(expected)) {
+      expect(BUN_V1314_ANCHORS[key as keyof typeof expected]).toBe(
+        `${BUN_V1314_BLOG}#${anchor}`
+      );
     }
     expect(Object.keys(BUN_V1314_ANCHORS).length).toBeGreaterThanOrEqual(24);
   });
@@ -161,7 +167,7 @@ describe('lib/docs/bun-release-tracker', () => {
     expect(results[0]?._links?.report).toBe('/registry/release-features.json');
   });
 
-  test('CANONICAL_REFS includes tls.getCACertificates and Bun.Image blog anchors', () => {
+  test('CANONICAL_REFS includes tls.getCACertificates and Bun.Image release evidence', () => {
     expect(CANONICAL_REFS['tls.getCACertificates']).toContain(
       'bun.com/reference/node/tls/getCACertificates'
     );
@@ -170,6 +176,125 @@ describe('lib/docs/bun-release-tracker', () => {
     expect(CANONICAL_REFS['fetch protocol support']).toContain('#protocol-support');
     expect(CANONICAL_REFS['s3://']).toContain('#s3-urls-s3');
     expect(CANONICAL_REFS['data:']).toContain('#data-urls-data');
+  });
+
+  test('Bun.Image release evidence covers every exact v1.3.14 blog subsection', () => {
+    expect(BUN_V1314_IMAGE_ANCHOR_KEYS).toEqual([
+      'bun-image',
+      'image-input-sources',
+      'image-chainable-transforms',
+      'image-resize-filters',
+      'terminal-methods',
+      'image-body-integration',
+      'image-platform-specific-formats',
+      'image-performance-vs-sharp',
+    ]);
+    expect(BUN_V1314_IMAGE_ANCHOR_KEYS.map(key => BUN_V1314_ANCHORS[key])).toEqual([
+      `${BUN_V1314_BLOG}#bun-image-built-in-image-processing`,
+      `${BUN_V1314_BLOG}#input-sources`,
+      `${BUN_V1314_BLOG}#chainable-transforms`,
+      `${BUN_V1314_BLOG}#resize-filters`,
+      `${BUN_V1314_BLOG}#terminal-methods`,
+      `${BUN_V1314_BLOG}#body-integration`,
+      `${BUN_V1314_BLOG}#platform-specific-formats`,
+      `${BUN_V1314_BLOG}#performance-vs-sharp-0-34-5`,
+    ]);
+  });
+
+  test('Bun.Image members resolve to exact sections with release and source provenance', () => {
+    const expectedAnchors = new Set([
+      'input',
+      'metadata',
+      'resize',
+      'rotate-flip',
+      'modulate',
+      'output-formats',
+      'terminals',
+      'placeholders',
+      'clipboard',
+      'platform-backends',
+    ]);
+    const memberEntries = Object.entries(CANONICAL_IMAGE_REFS).filter(([name]) =>
+      name.startsWith('Bun.Image.')
+    );
+    expect(memberEntries.length).toBe(32);
+    for (const [name, url] of memberEntries) {
+      const parsed = new URL(url);
+      const isRuntimeSection = parsed.pathname === '/docs/runtime/image';
+      const isGeneratedMember = parsed.pathname.startsWith('/reference/bun/Image/');
+      expect(isRuntimeSection || isGeneratedMember).toBe(true);
+      if (isRuntimeSection) expect(expectedAnchors.has(parsed.hash.slice(1))).toBe(true);
+      expect(CANONICAL_REFS[name]).toBe(url);
+    }
+
+    expect(CANONICAL_IMAGE_REFS['Bun.Image source']).toBe(
+      'https://raw.githubusercontent.com/oven-sh/bun/main/docs/runtime/image.mdx'
+    );
+    expect(CANONICAL_IMAGE_REFS['Bun.Image source audit (2026-07-07)']).toContain(
+      '7be1d459f28566735bd602ce009e24cba0548e1e'
+    );
+
+    const curated = CURATED_ENTRIES.filter(entry => entry.term.startsWith('Bun.Image.'));
+    expect(curated.length).toBe(memberEntries.length);
+    expect(curated.every(entry => entry.minVersion === '1.3.14')).toBe(true);
+  });
+
+  test('Bun.Image canonical references cover the installed bun-types surface', async () => {
+    const declarationPath = 'node_modules/bun-types/bun.d.ts';
+    const source = ts.createSourceFile(
+      declarationPath,
+      await Bun.file(declarationPath).text(),
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TS
+    );
+    const typeSurface = new Set<string>();
+
+    const memberName = (member: ts.ClassElement): string | undefined => {
+      if (!member.name) return undefined;
+      if (ts.isIdentifier(member.name) || ts.isStringLiteral(member.name)) return member.name.text;
+      return undefined;
+    };
+    const visit = (node: ts.Node, insideBun = false): void => {
+      const isBunNamespace =
+        ts.isModuleDeclaration(node) &&
+        ((ts.isIdentifier(node.name) && node.name.text === 'Bun') ||
+          (ts.isStringLiteral(node.name) && node.name.text === 'bun'));
+      const inBun = insideBun || isBunNamespace;
+
+      if (
+        inBun &&
+        ts.isModuleDeclaration(node) &&
+        ts.isIdentifier(node.name) &&
+        node.name.text === 'Image' &&
+        node.body &&
+        ts.isModuleBlock(node.body)
+      ) {
+        for (const statement of node.body.statements) {
+          if (
+            (ts.isInterfaceDeclaration(statement) || ts.isTypeAliasDeclaration(statement)) &&
+            statement.name
+          ) {
+            typeSurface.add(`Bun.Image.${statement.name.text}`);
+          }
+        }
+      }
+
+      if (inBun && ts.isClassDeclaration(node) && node.name?.text === 'Image') {
+        for (const member of node.members) {
+          const name = memberName(member);
+          if (name) typeSurface.add(`Bun.Image.${name}`);
+        }
+      }
+
+      ts.forEachChild(node, child => visit(child, inBun));
+    };
+    visit(source);
+
+    const canonicalSurface = new Set(
+      Object.keys(CANONICAL_IMAGE_REFS).filter(name => name.startsWith('Bun.Image.'))
+    );
+    expect([...canonicalSurface].sort()).toEqual([...typeSurface].sort());
   });
 
   test('FETCH_PROTOCOL_COVERAGE maps probes to canonical anchors', () => {

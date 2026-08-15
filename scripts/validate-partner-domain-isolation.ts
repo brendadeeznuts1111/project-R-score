@@ -6,6 +6,7 @@
  *
  *   bun run partner-surface-inventory:lint-domains
  *   bun scripts/validate-partner-domain-isolation.ts --scan
+ *   bun scripts/validate-partner-domain-isolation.ts --scan --staged
  *   bun scripts/validate-partner-domain-isolation.ts --scan --strict
  *   bun scripts/validate-partner-domain-isolation.ts --rules
  */
@@ -18,6 +19,7 @@ import {
   scanDomainIsolation,
 } from '../lib/docs/partner-surface-domain-lint.ts';
 import { resolvePath } from './lib/fs-bun.ts';
+import { listStagedFiles } from './lib/git-changed.ts';
 
 const ROOT = resolvePath(import.meta.dir, '..');
 
@@ -31,6 +33,7 @@ Flags:
   -h, --help, --hlp   Show this help
   --rules             Dump brand → domain → home globs
   --scan              Scan TypeScript for out-of-home brand type uses
+  --staged            With --scan: inspect existing staged TS/TSX files only
   --strict            With --scan: out-of-home hits are errors (default warn)
 
 Homes come from brand.module + category defaults (operations → lib/operations,
@@ -71,7 +74,7 @@ async function main(argv: readonly string[] = Bun.argv): Promise<number> {
     return 0;
   }
 
-  const known = new Set(['--scan', '--strict', '--rules']);
+  const known = new Set(['--scan', '--staged', '--strict', '--rules']);
   const unknown = args.filter(a => a.startsWith('-') && !known.has(a));
   if (unknown.length > 0) {
     console.error(`Unknown option(s): ${unknown.join(', ')}\n`);
@@ -88,6 +91,7 @@ async function main(argv: readonly string[] = Bun.argv): Promise<number> {
     root: ROOT,
     rows: inv.rows,
     strict: hasFlag(args, '--strict'),
+    files: hasFlag(args, '--staged') ? await listStagedFiles() : undefined,
   });
 
   const errors = result.issues.filter(i => i.level === 'error');

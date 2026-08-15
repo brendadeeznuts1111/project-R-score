@@ -1599,7 +1599,7 @@
     "bun:channel:cron:register": "bun tools/bun-channel-doctor-cron.ts register",
     "bun:channel:cron:remove": "bun tools/bun-channel-doctor-cron.ts remove",
     "skills:validate": "bun scripts/validate-agent-skills.ts",
-    "dx:contract:check": "bun scripts/check-project-r-dx-contract.ts",
+    "agents:contract:check": "bun scripts/check-project-r-agent-contract.ts",
     "gate-map:validate": "bun scripts/gate-map-validate.ts",
     "gate-report:monorepo": "bun scripts/gate-report-monorepo.ts",
     "install:all": "bun scripts/with-bun-cache-env.ts install",

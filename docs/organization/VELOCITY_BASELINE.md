@@ -1,52 +1,71 @@
 # Velocity baseline (discovery)
 
-Measured 2026-07-21 during harness-engineering velocity transform. Thesis: [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering).
+Measured 2026-07-21 during harness-engineering velocity transform. Thesis:
+[lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering).
 
 ## Commit-loop tax
 
-| Condition | Wall time | Notes |
-|-----------|----------:|-------|
-| No staged harness files | **~0.04s** | Fast path exit |
-| Typical staged `scripts/*.ts` (pre-transform, serial) | estimated multi-second serial eslint → prettier → doc-refs → brands×3 | brands types always ran |
-| Typical staged `scripts/*.ts` (post-transform) | **~2.1–2.7s** gate sum (`reports/harness-gate-timing.json`) | annotate-on-write; brands staged‖smart; brand-types deferred; path-bun / bun-env parallel when lib\|scripts staged |
+| Condition                                             |                                                             Wall time | Notes                                                                                                              |
+| ----------------------------------------------------- | --------------------------------------------------------------------: | ------------------------------------------------------------------------------------------------------------------ |
+| No staged harness files                               |                                                            **~0.04s** | Fast path exit                                                                                                     |
+| Typical staged `scripts/*.ts` (pre-transform, serial) | estimated multi-second serial eslint → prettier → doc-refs → brands×3 | brands types always ran                                                                                            |
+| Typical staged `scripts/*.ts` (post-transform)        |           **~2.1–2.7s** gate sum (`reports/harness-gate-timing.json`) | annotate-on-write; brands staged‖smart; brand-types deferred; path-bun / bun-env parallel when lib\|scripts staged |
 
-Dominant cost was full-tree ESLint. Default `ci:harness` now uses `lint:bun-native:changed` (~0.5s on dirty harness files); full rollout only with `HARNESS_FULL_LINT=1` (main push). Cache: `.cache/eslint-bun-native` (GHA-restored). Warm full rollout ~0.5–3.5s vs cold ~7s.
+Dominant cost was full-tree ESLint. Default `ci:harness` now uses
+`lint:bun-native:changed` (~0.5s on dirty harness files); full rollout only with
+`HARNESS_FULL_LINT=1` (main push). Cache: `.cache/eslint-bun-native`
+(GHA-restored). Warm full rollout ~0.5–3.5s vs cold ~7s.
 
 ## Day-loop fiction (evidence) → fixed
 
 ### `type-check` (`tsconfig.check.json`)
 
-Pre-transform `include` covered only a thin slice. Day-loop now covers spine agent surfaces: `lib/types/**`, `lib/path-bun`, `lib/harness/**`, `lib/docs/**`, `lib/utils/**`, `lib/core/**`, `lib/security/**`, `spine/**`, key `scripts/*` / `scripts/lib/*`. Ghost includes removed. Remaining type debt: other uncovered `lib/*` islands. `projects/**` stays product-owned (`typecheck` / `projects:roots:check`).
+Pre-transform `include` covered only a thin slice. Day-loop now covers spine
+agent surfaces: `lib/types/**`, `lib/path-bun`, `lib/harness/**`, `lib/docs/**`,
+`lib/utils/**`, `lib/core/**`, `lib/security/**`, `spine/**`, key `scripts/*` /
+`scripts/lib/*`. Ghost includes removed. Remaining type debt: other uncovered
+`lib/*` islands. `projects/**` stays product-owned (`typecheck` /
+`projects:roots:check`).
 
 ### `build:affected` / `test:affected`
 
-Were `bun run --filter '...' build|test` — Bun dependents filter, **not** git-changed packages.
+Were `bun run --filter '...' build|test` — Bun dependents filter, **not**
+git-changed packages.
 
 ```text
 $ bun run build:affected
 error: No packages matched the filter
 ```
 
-Replaced by [`scripts/affected-workspaces.ts`](../../scripts/affected-workspaces.ts) (git → workspace filter).
+Replaced by
+[`scripts/affected-workspaces.ts`](../../scripts/affected-workspaces.ts) (git →
+workspace filter).
 
 ## Context fan-out (cold start)
 
-Measured **2026-08-07** with Bun 1.3.14 via
-`bun run velocity:cold-start -- --json`
-(`Bun.file().text()` + `Bun.nanoseconds()`; lines = split on newlines).
-Do not hand-edit without re-running that tool.
+Re-measured **2026-08-14** with Bun 1.3.14 via
+`bun run velocity:cold-start -- --json` (`Bun.file().text()` +
+`Bun.nanoseconds()`; lines = split on newlines). Do not hand-edit without
+re-running that tool.
 
 Historical: 2026-07-21 → AGENTS 173 / total 522; 2026-07-29 `wc -l` → AGENTS
-~300 / total 677; pre-Wave-2 2026-08-07 → AGENTS **753** / total **1142**.
-Wave 2 JIT extract moved the capability matrix out of root AGENTS.
+~300 / total 677; pre-Wave-2 2026-08-07 → AGENTS **753** / total **1142**. Wave
+2 moved the capability matrix out of root AGENTS. The 2026-08-14 pass removed
+duplicated task routes and coding guidance, leaving policy in root, task
+ownership in `docs/AGENTS.md`, and source conventions in
+`.custom-instructions.md`.
 
-| File | Lines | Bytes | Read ns (sample) |
-|------|------:|------:|-----------------:|
-| AGENTS.md | 409 (entry + operating rules) | 25593 | ~0.3 ms |
-| docs/AGENTS.md | 62 (routing pointer → root) | 16278 | ~0.3 ms |
-| .custom-instructions.md | 272 | 15457 | ~0.06 ms |
-| docs/WIRE_BOUNDARY.md | 57 | 2593 | ~0.03 ms |
-| **Total** | **800** | **59921** | **~0.9 ms** |
+| File                    |   Lines |     Bytes | Read ns (sample) |
+| ----------------------- | ------: | --------: | ---------------: |
+| AGENTS.md               |     174 |     10176 |         ~0.34 ms |
+| docs/AGENTS.md          |      92 |      4222 |         ~1.01 ms |
+| .custom-instructions.md |     155 |      6872 |         ~0.45 ms |
+| docs/WIRE_BOUNDARY.md   |      57 |      2783 |         ~0.35 ms |
+| **Total**               | **478** | **24053** |     **~2.14 ms** |
+
+Compared with the prior four-file measurement, this removes 322 lines and 35,868
+bytes (59.9%) from cold-start context. Read timing is a single filesystem
+sample; bytes and ownership fan-out are the durable measures.
 
 Capability matrix lives at
 [`docs/harness/capability-map.md`](../harness/capability-map.md) (not counted in
@@ -57,68 +76,83 @@ matrix SSOT = [`docs/harness/capability-map.md`](../harness/capability-map.md);
 `docs/AGENTS.md` = thin routing tables only.
 
 Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md) ·
-capability map extract (Wave 2). Re-measure:
+capability map extract · compact agent and coding routers. Re-measure:
 `bun run velocity:cold-start -- --json`.
 
 ## Competing precedents (Phase D)
 
-| Era | Spine status |
-|-----|----------------|
+| Era                                       | Spine status                                                                                                                 |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | `path` / `node:path` in `lib/` + `tools/` | **Done** — [`lib/path-bun.ts`](../../lib/path-bun.ts) + `bun run check:path-bun` (pre-commit when `lib/` or `tools/` staged) |
-| `Bun.env` vs `process.env` | **Done** — spine clean + `bun run check:bun-env` (pre-commit when lib\|scripts staged; migrator/catalog allowlist) |
-| Bun pin / dead workspace glob | **Done** — `packageManager` `bun@1.4.0`; removed `kimiremote` workspace glob ([HOMEBASE_DISCOVERY](HOMEBASE_DISCOVERY.md)) |
+| `Bun.env` vs `process.env`                | **Done** — spine clean + `bun run check:bun-env` (pre-commit when lib\|scripts staged; migrator/catalog allowlist)           |
+| Bun pin / dead workspace glob             | **Done** — `packageManager` `bun@1.4.0`; removed `kimiremote` workspace glob ([HOMEBASE_DISCOVERY](HOMEBASE_DISCOVERY.md))   |
 
-Day-loop `type-check` includes full `lib/docs/**`, `lib/utils/**`, `lib/core/**`, and `lib/security/**` (claims `lib-docs-typecheck`, `lib-utils-typecheck`, `lib-core-typecheck`, `lib-security-typecheck`).
+Day-loop `type-check` includes full `lib/docs/**`, `lib/utils/**`,
+`lib/core/**`, and `lib/security/**` (claims `lib-docs-typecheck`,
+`lib-utils-typecheck`, `lib-core-typecheck`, `lib-security-typecheck`).
 
-Bun test (1.3.13+ / live on 1.4.0): day-loop adds `test:changed` (import graph), `test:parallel` / `test:isolate`, `test:shard` (`SHARD=M/N`). Distinct from `test:affected` (workspace package scripts).
+Bun test (1.3.13+ / live on 1.4.0): day-loop adds `test:changed` (import graph),
+`test:parallel` / `test:isolate`, `test:shard` (`SHARD=M/N`). Distinct from
+`test:affected` (workspace package scripts).
 
 ## Import / Bun-native ratchet (done)
 
-| Lever | Change |
-|-------|--------|
-| `config/eslint/harness/bun-native.ts` | Rollout `no-restricted-imports` / `no-restricted-syntax` → **error** (same as STRICT_INVENTORY) |
-| `scripts/pre-commit-harness.ts` | `--max-warnings` **500 → 0** on staged harness files |
-| Burn slice | Removed remaining restricted import/syntax sites under harness paths (fs/crypto → Bun) |
-| `bun/prefer-bun-env` + `bun/prefer-import-meta-main` | Burned under harness paths → **error** in `config/eslint/plugin-bun` |
-| `harness/no-unknown-function-param` | Burned under harness paths → **error** in `config/eslint/plugin-harness` (parse*/\*FromUnknown allowlist) |
+| Lever                                                | Change                                                                                                    |
+| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `config/eslint/harness/bun-native.ts`                | Rollout `no-restricted-imports` / `no-restricted-syntax` → **error** (same as STRICT_INVENTORY)           |
+| `scripts/pre-commit-harness.ts`                      | `--max-warnings` **500 → 0** on staged harness files                                                      |
+| Burn slice                                           | Removed remaining restricted import/syntax sites under harness paths (fs/crypto → Bun)                    |
+| `bun/prefer-bun-env` + `bun/prefer-import-meta-main` | Burned under harness paths → **error** in `config/eslint/plugin-bun`                                      |
+| `harness/no-unknown-function-param`                  | Burned under harness paths → **error** in `config/eslint/plugin-harness` (parse*/\*FromUnknown allowlist) |
 
 ## Timing artifact
 
-Gate timings append to [`reports/harness-gate-timing.json`](../../reports/harness-gate-timing.json) · [`reports/ci-harness-timing.json`](../../reports/ci-harness-timing.json) · [`reports/ci-core-timing.json`](../../reports/ci-core-timing.json). Discover: `bun run harness:status`.
+Gate timings append to
+[`reports/harness-gate-timing.json`](../../reports/harness-gate-timing.json) ·
+[`reports/ci-harness-timing.json`](../../reports/ci-harness-timing.json) ·
+[`reports/ci-core-timing.json`](../../reports/ci-core-timing.json). Discover:
+`bun run harness:status`.
 
 ## CI install tax (2026-07-21 deepen)
 
-| Era | Installs per PR (root) |
-|-----|------------------------:|
-| Pre | harness-gates + repo-hygiene + pr-claim + typescript matrix×2 + search/brand/demo/url/har on every PR |
+| Era  |                                                                                                                                                                                                                                                  Installs per PR (root) |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| Pre  |                                                                                                                                                                   harness-gates + repo-hygiene + pr-claim + typescript matrix×2 + search/brand/demo/url/har on every PR |
 | Post | **Always on PR:** harness-gates (`ci:core`) · typescript (one job). **Path-filtered:** search-governance · brand-bench. **Off PR:** url-validation · har-performance (schedule/main). Shared [`setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml). |
 
-Local parity: `bun run ci:core` · `bun run ci:harness:fast`. Required check: Harness Gates only ([AUTHORITY.md](../harness/AUTHORITY.md)).
+Local parity: `bun run ci:core` · `bun run ci:harness:fast`. Required check:
+Harness Gates only ([AUTHORITY.md](../harness/AUTHORITY.md)).
 
 ## Polish (harness-engineering mapping)
 
-2026-07-21 follow-on: map all twelve upstream theses → local owners in [`docs/harness/README.md`](../harness/README.md); add [`AUTHORITY.md`](../harness/AUTHORITY.md); expand proof paths; retain velocity lessons in FEEDBACK.md; tool-legibility via `harness:status`.
+2026-07-21 follow-on: map all twelve upstream theses → local owners in
+[`docs/harness/README.md`](../harness/README.md); add
+[`AUTHORITY.md`](../harness/AUTHORITY.md); expand proof paths; retain velocity
+lessons in FEEDBACK.md; tool-legibility via `harness:status`.
 
 ## Ops loop throughput (2026-07-24)
 
-Post-audit hardening closes dispatch → settle → durable delivery with automated callers (`ops:settle`, `runOpsSyncCycle`, `runOpsSettleCycle` in snapshot-cron).
+Post-audit hardening closes dispatch → settle → durable delivery with automated
+callers (`ops:settle`, `runOpsSyncCycle`, `runOpsSettleCycle` in snapshot-cron).
 
-| Artifact | Path |
-|----------|------|
-| Baseline (live) | [`reports/ops-loop-baseline.json`](../../reports/ops-loop-baseline.json) |
-| Post (fixture) | [`reports/ops-loop-post.json`](../../reports/ops-loop-post.json) |
-| Post (live) | [`reports/ops-loop-post-live.json`](../../reports/ops-loop-post-live.json) |
-| Tenant runbook | [`docs/harness/tenants/ops-loop-throughput.md`](../harness/tenants/ops-loop-throughput.md) |
-| Live proof | `bun tools/ops-loop-live-proof.ts` |
-| Capture | `bun run ops:loop:baseline` · `bun run ops:loop:post` |
-| Proof test | `bun test tests/ops-loop-hardening.test.ts` |
+| Artifact        | Path                                                                                       |
+| --------------- | ------------------------------------------------------------------------------------------ |
+| Baseline (live) | [`reports/ops-loop-baseline.json`](../../reports/ops-loop-baseline.json)                   |
+| Post (fixture)  | [`reports/ops-loop-post.json`](../../reports/ops-loop-post.json)                           |
+| Post (live)     | [`reports/ops-loop-post-live.json`](../../reports/ops-loop-post-live.json)                 |
+| Tenant runbook  | [`docs/harness/tenants/ops-loop-throughput.md`](../harness/tenants/ops-loop-throughput.md) |
+| Live proof      | `bun tools/ops-loop-live-proof.ts`                                                         |
+| Capture         | `bun run ops:loop:baseline` · `bun run ops:loop:post`                                      |
+| Proof test      | `bun test tests/ops-loop-hardening.test.ts`                                                |
 
 North-star metric: **`loopCompletionRate`** = `settledViaFullLoop / dispatched`.
 
-| Slice | `loopCompletionRate` | `settledViaFullLoop` | `manualStepsPerCycle` | ≥60% claim |
-|-------|---------------------:|---------------------:|----------------------:|------------|
-| Live baseline (`reports/ops-loop-baseline.json`) | **24%** | **6 / 25** | **64** | — |
-| Live post (row-aligned + backfill + outbox drain) | **100%** | **29 / 29** | **0** | **Yes** |
-| Fixture post | ≥60% | 1 / 1 | 0 | **Yes** |
+| Slice                                             | `loopCompletionRate` | `settledViaFullLoop` | `manualStepsPerCycle` | ≥60% claim |
+| ------------------------------------------------- | -------------------: | -------------------: | --------------------: | ---------- |
+| Live baseline (`reports/ops-loop-baseline.json`)  |              **24%** |           **6 / 25** |                **64** | —          |
+| Live post (row-aligned + backfill + outbox drain) |             **100%** |          **29 / 29** |                 **0** | **Yes**    |
+| Fixture post                                      |                 ≥60% |                1 / 1 |                     0 | **Yes**    |
 
-Live bake also surfaces `projectorBackend: r2` / `projectorDurable: true` on the ops-summary loop slice. Manual steps can rise again when TOC `r2` projectors fail (e.g. missing bucket) — attribution complete ≠ every outbox topic healthy.
+Live bake also surfaces `projectorBackend: r2` / `projectorDurable: true` on the
+ops-summary loop slice. Manual steps can rise again when TOC `r2` projectors
+fail (e.g. missing bucket) — attribution complete ≠ every outbox topic healthy.

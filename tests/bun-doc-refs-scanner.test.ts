@@ -71,9 +71,138 @@ void uuid; void stringWidth; void shell; void NativeGlob;
     );
   });
 
+  test('ignores array-binding holes when a Bun namespace expression is destructured', () => {
+    expect(collectCodeApiUsages('const [, second] = Bun; void second;', 'fixture.ts')).toEqual(
+      new Set()
+    );
+  });
+
   test('uses the most-specific canonical member in a nested Bun chain', () => {
     const usages = collectCodeApiUsages('Bun.inspect.table([{ ok: true }]);', 'fixture.ts');
     expect(usages).toEqual(new Set(['Bun.inspect.table']));
+  });
+
+  test('uses the exact Bun.Image operation instead of the page-level constructor', async () => {
+    const usages = collectCodeApiUsages(
+      'await new Bun.Image(bytes).resize(32, 32).webp().bytes();',
+      'fixture.ts'
+    );
+    expect(usages).toEqual(
+      new Set(['Bun.Image', 'Bun.Image.resize', 'Bun.Image.webp', 'Bun.Image.bytes'])
+    );
+
+    const directory = await temporaryDirectory();
+    const file = join(directory, 'image.ts');
+    await Bun.write(
+      file,
+      `// @see ${CANONICAL_REFS['Bun.Image']} — Bun.Image\nawait new Bun.Image(bytes).resize(32, 32);\n`
+    );
+    expect(await findMissing([file])).toMatchObject([
+      {
+        api: 'Bun.Image.resize',
+        url: CANONICAL_REFS['Bun.Image.resize'],
+        line: 2,
+      },
+    ]);
+  });
+
+  test('tracks Bun.Image properties and explicitly typed bindings', () => {
+    const usages = collectCodeApiUsages(
+      `
+let image: Bun.Image;
+image = new Bun.Image(bytes);
+await image.toBuffer();
+void image.width;
+void image["height"];
+
+class Holder {
+  image!: Bun.Image;
+  dimensions() {
+    return [this.image.width, this.image.height];
+  }
+}
+`,
+      'fixture.ts'
+    );
+
+    expect(usages).toEqual(
+      new Set([
+        'Bun.Image',
+        'Bun.Image.toBuffer',
+        'Bun.Image.width',
+        'Bun.Image.height',
+      ])
+    );
+  });
+
+  test('does not rebind terminal results as Bun.Image pipelines', () => {
+    const usages = collectCodeApiUsages(
+      `
+const metadata = await new Bun.Image(bytes).metadata();
+void metadata.width;
+const encoded = await new Bun.Image(bytes).webp().bytes();
+void encoded.length;
+`,
+      'fixture.ts'
+    );
+
+    expect(usages).toEqual(
+      new Set(['Bun.Image', 'Bun.Image.metadata', 'Bun.Image.webp', 'Bun.Image.bytes'])
+    );
+  });
+
+  test('tracks Image aliases, Blob.image starts, and computed image members', () => {
+    const usages = collectCodeApiUsages(
+      `
+import { Image as Picture } from "bun";
+import type { BunFile as NativeFile } from "bun";
+const aliased = new Picture(bytes).resize(1).png();
+const { Image: Other } = Bun;
+const destructured = new Other(bytes)["resize"](2)["webp"]();
+const blob: Blob = new Blob([bytes]);
+const fromBinding = blob.image().resize(3).bytes();
+const fromConstructor = new Blob([bytes]).image()["resize"](4)["png"]().bytes();
+function fromTypedFile(file: NativeFile) { return file.image()["metadata"](); }
+class Holder {
+  file = Bun.file("fixture.png");
+  image = new Picture(bytes);
+  read() { return [this.file.image().metadata(), this.image.width]; }
+}
+let assignedFile;
+assignedFile = Bun.file("fixture.png");
+assignedFile.image().metadata();
+void aliased; void destructured; void fromBinding; void fromConstructor; void fromTypedFile; void Holder;
+`,
+      'fixture.ts'
+    );
+
+    expect(usages).toEqual(
+      new Set([
+        'Bun.Image',
+        'Bun.Image.resize',
+        'Bun.Image.png',
+        'Bun.Image.webp',
+        'Bun.Image.bytes',
+        'Bun.Image.metadata',
+        'Bun.Image.width',
+        'Blob.image',
+        'Bun.file',
+      ])
+    );
+  });
+
+  test('rejects shadowed Blob constructors and unrelated image methods', () => {
+    const usages = collectCodeApiUsages(
+      `
+class Blob { image() { return { resize() {} }; } }
+new Blob().image().resize();
+const canvas = { image() { return { png() {} }; } };
+canvas.image().png();
+`,
+      'fixture.ts'
+    );
+
+    expect(usages).toEqual(new Set());
   });
 
   test('does not treat declarations or object property names as API usage', () => {
@@ -141,6 +270,15 @@ void RuntimeGlob; void sqlite;
     expect(collectCodeApiUsages('const flag = "--cpu-prof-md";', 'fixture.ts')).toEqual(
       new Set(['--cpu-prof-md'])
     );
+  });
+
+  test('does not attribute external process flags to the Bun CLI', () => {
+    const usages = collectCodeApiUsages(
+      `Bun.spawn(["git", "rev-parse", "--verify"]); Bun.spawn(["bun", "--cpu-prof"]);`,
+      'fixture.ts'
+    );
+    expect(usages).not.toContain('--verify');
+    expect(usages).toContain('--cpu-prof');
   });
 
   test('does not let a Bun.file anchor cover Bun.write', async () => {
@@ -304,10 +442,12 @@ void RuntimeGlob; void sqlite;
     const source = join(directory, 'src', 'index.ts');
     const dependency = join(directory, 'node_modules', 'pkg', 'index.ts');
     const generated = join(directory, 'dist', 'index.js');
+    const bundled = join(directory, 'tools', 'generated.bundle.js');
     await Promise.all([
       Bun.write(source, 'export {};\n'),
       Bun.write(dependency, 'Bun.file("dependency");\n'),
       Bun.write(generated, 'Bun.write("generated", "output");\n'),
+      Bun.write(bundled, 'Bun.write("bundled", "output");\n'),
     ]);
 
     expect(await sourceFiles([directory])).toEqual([source]);

@@ -32,7 +32,7 @@ describe('lib/verification/subsystem', () => {
 
   test('blog ship notes: default runtime; pm/bundler by anchor topic', () => {
     expect(
-      subsystemFromCanonicalUrl('https://bun.com/blog/bun-v1.3.14#bun-image')
+      subsystemFromCanonicalUrl('https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing')
     ).toBe('runtime');
     expect(
       subsystemFromCanonicalUrl(
@@ -48,7 +48,7 @@ describe('lib/verification/subsystem', () => {
 
   test('canonicalSource distinguishes docs vs blog', () => {
     expect(canonicalSourceFromUrl('https://bun.com/docs/bundler/loaders')).toBe('docs');
-    expect(canonicalSourceFromUrl('https://bun.com/blog/bun-v1.3.14#http3')).toBe('blog');
+    expect(canonicalSourceFromUrl('https://bun.com/blog/bun-v1.3.14#http-3-quic-support-in-bun-serve')).toBe('blog');
   });
 
   test('probe name heuristics', () => {

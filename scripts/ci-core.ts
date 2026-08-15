@@ -45,8 +45,8 @@ const CORE_STEPS: CoreStep[] = [
     cmd: ['bun', 'run', 'skills:validate'],
   },
   {
-    name: 'dx-contract',
-    cmd: ['bun', 'run', 'dx:contract:check'],
+    name: 'agent-contract',
+    cmd: ['bun', 'run', 'agents:contract:check'],
   },
   {
     name: 'native-docs',

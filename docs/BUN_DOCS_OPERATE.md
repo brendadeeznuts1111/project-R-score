@@ -47,13 +47,17 @@ raw text. It resolves global, namespace, named, aliased, dynamic, `require`, and
 type-position Bun references; ignores comments, template examples, shadowed
 locals, dependency trees, and generated output directories; and reports the
 first source location plus occurrence count for each missing API-specific
-reference. `check --json` emits a versioned contract with a finding count,
-affected-file count, and structured errors while retaining the nonzero gate
-status. `annotate --write` uses the same scanner, so parser or target errors
-stop before any file is rewritten. Findings and inserted headers include the
-known release and update timeline. When introduction history is absent, the tool
-emits a separately labeled `@verified` record instead of inventing a release
-version or date.
+reference. `Bun.Image` is enforced at member granularity across namespace,
+named-import, and destructured constructor aliases; typed or assigned image
+bindings; `Blob`/`BunFile`/`S3File.image()` starts; and dot or computed fluent
+chains. Symbol checks keep shadowed `Blob` constructors and unrelated `.image()`
+methods out of the results. `check --json` emits a versioned contract with a
+finding count, affected-file count, and structured errors while retaining the
+nonzero gate status. `annotate --write` uses the same scanner, so parser or
+target errors stop before any file is rewritten. Findings and inserted headers
+include the known release and update timeline. When introduction history is
+absent, the tool emits a separately labeled `@verified` record instead of
+inventing a release version or date.
 
 ## Release and update provenance
 

@@ -72,13 +72,13 @@ cases only**. Every skip must be accompanied by a clear reason and local proof
 in the **commit message**. Without that, post-merge review should flag the
 commit.
 
-| Env                      | When to use                                                                                                                                                                                                             | Requirements                                                                                                                                 |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SKIP_TEST_CHANGED=1`    | Staged-temp / foreign-gate noise only — when `bun test --changed` false-fails (runner symlink / HEAD∪staged scratch limits, or another lane’s dirty suite).                                                             | Local proof the change is safe (e.g. `bun test tests/<affected>.test.ts` green) plus why the gate is not yours.                              |
-| `SKIP_QUALITY_CONCEPT=1` | Concept SSOT is staged but the gate fails for a **documented** exception (foreign-lane surface drift, temporary env mismatch, known allowlist work in flight).                                                          | Reference issue/PR or owner lane; prefer fixing or narrowing the gate over skipping.                                                         |
-| `SKIP_GITLEAKS=1`        | Rare — false positive credential scan (e.g. test fixture with a clearly fake secret).                                                                                                                                   | Explain why the match is not a real secret.                                                                                                  |
-| `SKIP_WIRE_LINT=1`       | Partner-surface wire lint (`lint-wires`) false-fails — e.g. empty nested checkout while proving unrelated `.ts`, or inventory globs in flight. Prefer `// wire-ok: <reason>` or `boundaryPathGlobs`.                    | Local `bun scripts/validate-wire-traps.ts --scan` (and `--strict-globs` when inventory SSOT staged) plus why the hit is not yours.           |
-| `SKIP_DOMAIN_LINT=1`     | Partner-surface domain isolation lint (`lint-domains`) false-fails — e.g. temporary out-of-home brand use while expanding home globs, or SSOT `--strict` noise from another lane. Prefer fixing homes on the brand bag. | Local `bun scripts/validate-partner-domain-isolation.ts --scan` (and `--strict` when domain-lint SSOT staged) plus why the hit is not yours. |
+| Env                      | When to use                                                                                                                                                    | Requirements                                                                                                                               |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `SKIP_TEST_CHANGED=1`    | Staged-temp / foreign-gate noise only — when `bun test --changed` false-fails (runner symlink / HEAD∪staged scratch limits, or another lane’s dirty suite).    | Local proof the change is safe (e.g. `bun test tests/<affected>.test.ts` green) plus why the gate is not yours.                            |
+| `SKIP_QUALITY_CONCEPT=1` | Concept SSOT is staged but the gate fails for a **documented** exception (foreign-lane surface drift, temporary env mismatch, known allowlist work in flight). | Reference issue/PR or owner lane; prefer fixing or narrowing the gate over skipping.                                                       |
+| `SKIP_GITLEAKS=1`        | Rare — false positive credential scan (e.g. test fixture with a clearly fake secret).                                                                          | Explain why the match is not a real secret.                                                                                                |
+| `SKIP_WIRE_LINT=1`       | Partner-surface wire lint (`lint-wires`) false-fails while an inventory/glob change is in flight. Prefer `// wire-ok: <reason>` or `boundaryPathGlobs`.        | Local `bun scripts/validate-wire-traps.ts --scan --staged`; use the full `--scan --strict-globs` proof when inventory SSOT is staged.      |
+| `SKIP_DOMAIN_LINT=1`     | Partner-surface domain isolation lint (`lint-domains`) false-fails while home globs are changing. Prefer fixing homes on the brand bag.                        | Local `bun scripts/validate-partner-domain-isolation.ts --scan --staged`; use the full `--scan --strict` proof when domain SSOT is staged. |
 
 **Usage example:**
 
@@ -153,11 +153,11 @@ bun run test:concept
 bun run quality:concept   # audit --strict + surface-coverage + SURFACE_COVERAGE.md --check
 ```
 
-| Command                          | Role                                                         |
-| -------------------------------- | ------------------------------------------------------------ |
-| `bun run surface-coverage:map`   | Regenerate [`docs/SURFACE_COVERAGE.md`](SURFACE_COVERAGE.md) |
-| `bun run surface-coverage:map:check` | Fail if the map doc is stale (ignores Generated timestamp) |
-| `bun run quality:concept`        | Full concept-lane quality gate                               |
+| Command                              | Role                                                         |
+| ------------------------------------ | ------------------------------------------------------------ |
+| `bun run surface-coverage:map`       | Regenerate [`docs/SURFACE_COVERAGE.md`](SURFACE_COVERAGE.md) |
+| `bun run surface-coverage:map:check` | Fail if the map doc is stale (ignores Generated timestamp)   |
+| `bun run quality:concept`            | Full concept-lane quality gate                               |
 
 See also portal semantic contract in
 [`portal-foundation.md`](portal-foundation.md) and the lifecycle map in

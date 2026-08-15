@@ -1,4 +1,4 @@
 interface:
   display_name: "Project R Ops"
   short_description: "Run Project R channels, provenance, CI, and recovery"
-  default_prompt: "Use $project-r-ops-management to inspect global DX and lane state, select the smallest command-map proof, preserve exact Bun release provenance and other lanes, then finish with staged checks plus clean local CI."
+  default_prompt: "Use $project-r-ops-management to inspect the pinned Bun runtime, prove installed Project R skill parity, preserve lane state and exact provenance, then run the smallest owned proof plus clean local CI."

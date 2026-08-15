@@ -1,3 +1,24 @@
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @updated Bun.write · fixed v0.4.0 · 2022-12-23 · https://bun.com/blog/bun-v0.4.0
+// @updated Bun.write · fixed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
+// @updated Bun.write · fixed v0.7.2 · 2023-08-03 · https://bun.com/blog/bun-v0.7.2
+// @updated Bun.write · fixed v1.0.7 · 2023-10-20 · https://bun.com/blog/bun-v1.0.7
+// @updated Bun.write · changed v1.0.16 · 2023-12-10 · https://bun.com/blog/bun-v1.0.16
+// @updated Bun.write · fixed v1.0.21 · 2024-01-02 · https://bun.com/blog/bun-v1.0.21
+// @updated Bun.write · fixed v1.0.23 · 2024-01-16 · https://bun.com/blog/bun-v1.0.23
+// @updated Bun.write · fixed v1.0.24 · 2024-01-20 · https://bun.com/blog/bun-v1.0.24
+// @updated Bun.write · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.write · fixed v1.1.6 · 2024-04-28 · https://bun.com/blog/bun-v1.1.6
+// @updated Bun.write · fixed v1.1.21 · 2024-07-27 · https://bun.com/blog/bun-v1.1.21
+// @updated Bun.write · changed v1.1.37 · 2024-11-26 · https://bun.com/blog/bun-v1.1.37
+// @updated Bun.write · changed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.write · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.write · fixed v1.2.20 · 2025-08-10 · https://bun.com/blog/bun-v1.2.20
+// @updated Bun.write · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.write · fixed v1.3.5 · 2025-12-17 · https://bun.com/blog/bun-v1.3.5
+// @updated Bun.write · fixed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.write · fixed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @verified Bun.write · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/file-io#writing-files-bun-write
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/bun-apis — Bun.mmap
 /**
@@ -42,7 +63,7 @@ export type MonorepoHealthSummarySlice = {
 
 /** Public registry bake (Pages-safe; no absolute root paths). */
 export type MonorepoHealthRegistryBake = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   kind: 'monorepo-health';
   claim: typeof MONOREPO_HEALTH_CLAIM;
   gate: 'check:monorepo-health';
@@ -152,9 +173,9 @@ function formatMetrics(m: MonorepoHealthReport['metrics']): MonorepoHealthReport
     duplicateDepCount: m.duplicateDepCount,
     deadCodePercent: round1(m.deadCodePercent),
     largeFilePercent: round1(m.largeFilePercent),
-    testFailureRate: round1(m.testFailureRate),
+    testFailureRate: m.testFailureRate == null ? null : round1(m.testFailureRate),
     cyclicDependencyCount: m.cyclicDependencyCount,
-    testCoveragePercent: round1(m.testCoveragePercent),
+    testCoveragePercent: m.testCoveragePercent == null ? null : round1(m.testCoveragePercent),
   };
 }
 
@@ -164,9 +185,7 @@ function formatBreakdown(b: MonorepoHealthReport['breakdown']): MonorepoHealthRe
     duplicateDepPenalty: round1(b.duplicateDepPenalty),
     deadCodePenalty: round1(b.deadCodePenalty),
     largeFilePenalty: round1(b.largeFilePenalty),
-    testFailurePenalty: round1(b.testFailurePenalty),
     cyclePenalty: round1(b.cyclePenalty),
-    coverageBonus: round1(b.coverageBonus),
   };
 }
 
@@ -174,7 +193,7 @@ export function reportToRegistryBake(report: MonorepoHealthReport): MonorepoHeal
   const metrics = formatMetrics(report.metrics);
   const breakdown = formatBreakdown(report.breakdown);
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     kind: 'monorepo-health',
     claim: MONOREPO_HEALTH_CLAIM,
     gate: 'check:monorepo-health',
@@ -232,9 +251,8 @@ export async function bakeMonorepoHealthRegistry(opts?: {
   log?: boolean;
 }): Promise<MonorepoHealthRegistryBake> {
   const root = opts?.root ?? process.cwd();
-  const { collectMonorepoHealth, writeMonorepoHealthArtifacts } = await import(
-    '../harness/monorepo-health.ts'
-  );
+  const { collectMonorepoHealth, writeMonorepoHealthArtifacts } =
+    await import('../harness/monorepo-health.ts');
   const report = await collectMonorepoHealth({
     root,
     withBuild: opts?.withBuild !== false,

@@ -1,4 +1,22 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/image#platform-backends — Bun.Image.backend
+// @released Bun.Image.backend · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#input — Blob.image
+// @verified Blob.image · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/image#input
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
+// @released Bun.Image · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#placeholders — Bun.Image.placeholder
+// @released Bun.Image.placeholder · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.png
+// @released Bun.Image.png · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#resize — Bun.Image.resize
+// @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/ErrorCode — Bun.Image.ErrorCode
+// @released Bun.Image.ErrorCode · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/Format — Bun.Image.Format
+// @released Bun.Image.Format · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.write
+// @released Bun.Image.write · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --format
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/image
@@ -21,6 +39,13 @@
 import { joinPath, basenamePath, extnamePath, dirnamePath } from '../lib/path-bun.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import {
+  isBunImageError,
+  isBunImageFormat,
+  type BunImageBackend,
+  type BunImageJpegOptions,
+  type BunImagePngOptions,
+} from '../lib/image-metadata.ts';
+import {
   IMAGES_GENERATE_ALLOWED_LONG,
   IMAGES_GENERATE_DOC,
   IMAGES_GENERATE_LEAVES,
@@ -41,18 +66,34 @@ export {
   imagesGenerateToolFlags,
 };
 
-type Template = 'avatar' | 'hero' | 'match' | 'convert' | 'placeholder';
-type OutFormat = 'webp' | 'jpeg' | 'png' | 'avif';
+const TEMPLATES = ['avatar', 'hero', 'match', 'convert', 'placeholder'] as const;
+export type Template = (typeof TEMPLATES)[number];
+const ENCODE_FORMATS = [
+  'webp',
+  'jpeg',
+  'png',
+  'avif',
+] as const satisfies readonly Bun.Image.Format[];
+const ENCODE_FORMAT_SET: ReadonlySet<Bun.Image.Format> = new Set(ENCODE_FORMATS);
+export type OutFormat = (typeof ENCODE_FORMATS)[number];
+type ImageFit = NonNullable<Bun.Image.ResizeOptions['fit']>;
+type ImageQuality = NonNullable<NonNullable<Parameters<Bun.Image['webp']>[0]>['quality']>;
+type PngPaletteColors = NonNullable<BunImagePngOptions['colors']>;
 
-type CliOpts = {
+export type CliOpts = {
   template: Template;
   source: string;
   out: string;
   size: string;
   format: OutFormat;
-  quality: number;
-  fit: 'fill' | 'inside';
-  maxPixels: number;
+  quality: ImageQuality;
+  fit: ImageFit;
+  maxPixels: NonNullable<Bun.Image.ConstructorOptions['maxPixels']>;
+  progressive: boolean;
+  paletteColors?: PngPaletteColors;
+  dither: boolean;
+  withoutEnlargement: boolean;
+  backend?: BunImageBackend;
   json: boolean;
   dryRun: boolean;
 };
@@ -70,6 +111,14 @@ const IMAGE_EXTS = new Set([
   '.avif',
 ]);
 
+export function isOutputFormat(value: unknown): value is OutFormat {
+  return isBunImageFormat(value) && ENCODE_FORMAT_SET.has(value);
+}
+
+function isTemplate(value: unknown): value is Template {
+  return typeof value === 'string' && TEMPLATES.some(template => template === value);
+}
+
 const DEFAULTS: CliOpts = {
   template: 'avatar',
   source: './warehouse/avatars',
@@ -79,6 +128,9 @@ const DEFAULTS: CliOpts = {
   quality: 80,
   fit: 'fill',
   maxPixels: 4096 * 4096,
+  progressive: false,
+  dither: false,
+  withoutEnlargement: false,
   json: false,
   dryRun: false,
 };
@@ -97,6 +149,11 @@ async function loadTomlDefaults(): Promise<Partial<CliOpts>> {
           cache_dir?: string;
           source_dir?: string;
           max_pixels?: number;
+          progressive_jpeg?: boolean;
+          png_palette_colors?: number;
+          png_dither?: boolean;
+          without_enlargement?: boolean;
+          backend?: BunImageBackend;
         };
       };
       images?: {
@@ -106,6 +163,11 @@ async function loadTomlDefaults(): Promise<Partial<CliOpts>> {
         cache_dir?: string;
         source_dir?: string;
         max_pixels?: number;
+        progressive_jpeg?: boolean;
+        png_palette_colors?: number;
+        png_dither?: boolean;
+        without_enlargement?: boolean;
+        backend?: BunImageBackend;
       };
     };
     const img = raw.default?.images ?? raw.images;
@@ -113,19 +175,62 @@ async function loadTomlDefaults(): Promise<Partial<CliOpts>> {
     return {
       size: img.avatar_size,
       quality: img.hero_quality,
-      format: (img.avatar_format as OutFormat) || undefined,
+      format: isOutputFormat(img.avatar_format) ? img.avatar_format : undefined,
       out: img.cache_dir,
       source: img.source_dir,
       maxPixels: img.max_pixels,
+      progressive: img.progressive_jpeg,
+      paletteColors: img.png_palette_colors,
+      dither: img.png_dither,
+      withoutEnlargement: img.without_enlargement,
+      backend: img.backend,
     };
   } catch {
     return {};
   }
 }
 
-function parseArgs(rawArgv: string[]): CliOpts {
+function boundedInteger(name: string, value: string | number, min: number, max: number): number {
+  const parsed = typeof value === 'number' ? value : Number(value);
+  if (!Number.isSafeInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`Invalid ${name} ${JSON.stringify(value)}; expected integer ${min}-${max}`);
+  }
+  return parsed;
+}
+
+export function validateImageOptions(opts: CliOpts): void {
+  if (!isTemplate(opts.template)) {
+    throw new Error(
+      `Invalid --template ${JSON.stringify(opts.template)}; expected ${TEMPLATES.join('|')}`
+    );
+  }
+  if (!isOutputFormat(opts.format)) {
+    throw new Error(
+      `Invalid --format ${JSON.stringify(opts.format)}; expected ${ENCODE_FORMATS.join('|')}`
+    );
+  }
+  if (opts.fit !== 'fill' && opts.fit !== 'inside') {
+    throw new Error(`Invalid --fit ${JSON.stringify(opts.fit)}; expected fill|inside|cover`);
+  }
+  if (opts.backend !== undefined && opts.backend !== 'bun' && opts.backend !== 'system') {
+    throw new Error(`Invalid --backend ${JSON.stringify(opts.backend)}; expected bun|system`);
+  }
+  boundedInteger('--quality', opts.quality, 1, 100);
+  boundedInteger('--max-pixels', opts.maxPixels, 1, Number.MAX_SAFE_INTEGER);
+  if (opts.paletteColors !== undefined) {
+    boundedInteger('--palette', opts.paletteColors, 2, 256);
+    if (opts.format !== 'png') throw new Error('--palette requires --format=png');
+  }
+  if (opts.dither && opts.paletteColors === undefined)
+    throw new Error('--dither requires --palette');
+  if (opts.progressive && opts.format !== 'jpeg') {
+    throw new Error('--progressive requires --format=jpeg');
+  }
+}
+
+function parseArgs(rawArgv: string[], base: Partial<CliOpts> = {}): CliOpts {
   const argv = applyUnknownLongOptionGuardFor('images:generate', rawArgv, { onFail: 'throw' });
-  const opts = { ...DEFAULTS };
+  const opts: CliOpts = { ...DEFAULTS, ...base };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
     const next = () => argv[++i] ?? '';
@@ -139,15 +244,51 @@ function parseArgs(rawArgv: string[]): CliOpts {
     } else if (a === '--size' || a.startsWith('--size=')) {
       opts.size = a.includes('=') ? a.split('=')[1]! : next();
     } else if (a === '--format' || a.startsWith('--format=')) {
-      opts.format = (a.includes('=') ? a.split('=')[1]! : next()) as OutFormat;
+      const format = a.includes('=') ? a.split('=')[1]! : next();
+      if (!isOutputFormat(format)) {
+        throw new Error(
+          `Invalid --format ${JSON.stringify(format)}; expected ${ENCODE_FORMATS.join('|')}`
+        );
+      }
+      opts.format = format;
     } else if (a === '--quality' || a.startsWith('--quality=')) {
-      opts.quality = Number(a.includes('=') ? a.split('=')[1]! : next());
+      opts.quality = boundedInteger(
+        '--quality',
+        a.includes('=') ? a.split('=')[1]! : next(),
+        1,
+        100
+      );
     } else if (a === '--fit' || a.startsWith('--fit=')) {
       const f = a.includes('=') ? a.split('=')[1]! : next();
       // Bun.Image only supports fill | inside (no cover) — map cover→fill
+      if (f !== 'fill' && f !== 'inside' && f !== 'cover') {
+        throw new Error(`Invalid --fit ${JSON.stringify(f)}; expected fill|inside|cover`);
+      }
       opts.fit = f === 'inside' ? 'inside' : 'fill';
     } else if (a === '--max-pixels' || a.startsWith('--max-pixels=')) {
-      opts.maxPixels = Number(a.includes('=') ? a.split('=')[1]! : next());
+      opts.maxPixels = boundedInteger(
+        '--max-pixels',
+        a.includes('=') ? a.split('=')[1]! : next(),
+        1,
+        Number.MAX_SAFE_INTEGER
+      );
+    } else if (a === '--progressive') {
+      opts.progressive = true;
+    } else if (a === '--palette' || a.startsWith('--palette=')) {
+      const inline = a.includes('=') ? a.split('=')[1]! : undefined;
+      const following = argv[i + 1];
+      const value = inline ?? (following && !following.startsWith('-') ? next() : '256');
+      opts.paletteColors = boundedInteger('--palette', value, 2, 256);
+    } else if (a === '--dither') {
+      opts.dither = true;
+    } else if (a === '--without-enlargement') {
+      opts.withoutEnlargement = true;
+    } else if (a === '--backend' || a.startsWith('--backend=')) {
+      const backend = a.includes('=') ? a.split('=')[1]! : next();
+      if (backend !== 'bun' && backend !== 'system') {
+        throw new Error(`Invalid --backend ${JSON.stringify(backend)}; expected bun|system`);
+      }
+      opts.backend = backend;
     } else if (a === '--json') opts.json = true;
     else if (a === '--dry-run') opts.dryRun = true;
     else if (a === '--help' || a === '-h') {
@@ -155,6 +296,7 @@ function parseArgs(rawArgv: string[]): CliOpts {
       process.exit(0);
     }
   }
+  validateImageOptions(opts);
   return opts;
 }
 
@@ -179,6 +321,11 @@ Options:
   --quality <1-100>   Encode quality (default 80; hero 85)  (${imagesGenerateFlagDocRef('quality').refId})
   --fit <fill|inside> Resize fit (cover is accepted as fill)  (${imagesGenerateFlagDocRef('fit').refId})
   --max-pixels <n>    Decompression bomb guard  (${imagesGenerateFlagDocRef('max-pixels').refId})
+  --progressive       Progressive JPEG output; requires --format=jpeg  (${imagesGenerateFlagDocRef('progressive').refId})
+  --palette[=<2-256>] Indexed PNG palette (default 256); requires --format=png  (${imagesGenerateFlagDocRef('palette').refId})
+  --dither            Floyd–Steinberg palette dither; requires --palette  (${imagesGenerateFlagDocRef('dither').refId})
+  --without-enlargement Never upscale during resize  (${imagesGenerateFlagDocRef('without-enlargement').refId})
+  --backend <mode>    system | bun (portable geometry for golden assets)  (${imagesGenerateFlagDocRef('backend').refId})
   --json              Machine summary via jsonOut  (${imagesGenerateFlagDocRef('json').refId})
   --dry-run           Plan only  (${imagesGenerateFlagDocRef('dry-run').refId})
 
@@ -258,14 +405,32 @@ async function isDirectory(path: string): Promise<boolean> {
   }
 }
 
-type EncodePipe = ReturnType<Bun.Image['resize']> | Bun.Image;
+type EncodePipe = Bun.Image;
 
-function applyFormat(pipe: EncodePipe, format: OutFormat, quality: number): EncodePipe {
+function applyFormat(
+  pipe: EncodePipe,
+  options: {
+    format: OutFormat;
+    quality: ImageQuality;
+    progressive?: boolean;
+    paletteColors?: PngPaletteColors;
+    dither?: boolean;
+  }
+): EncodePipe {
+  const { format, quality } = options;
   switch (format) {
     case 'jpeg':
-      return pipe.jpeg({ quality });
+      return pipe.jpeg({ quality, progressive: options.progressive } satisfies BunImageJpegOptions);
     case 'png':
-      return pipe.png();
+      return pipe.png(
+        options.paletteColors === undefined
+          ? undefined
+          : ({
+              palette: true,
+              colors: options.paletteColors,
+              dither: options.dither,
+            } satisfies BunImagePngOptions)
+      );
     case 'avif':
       return pipe.avif({ quality });
     case 'webp':
@@ -280,10 +445,14 @@ async function processOne(
   opts: {
     w: number;
     h: number;
-    fit: 'fill' | 'inside';
+    fit: ImageFit;
     format: OutFormat;
-    quality: number;
-    maxPixels: number;
+    quality: ImageQuality;
+    maxPixels: NonNullable<Bun.Image.ConstructorOptions['maxPixels']>;
+    progressive?: boolean;
+    paletteColors?: PngPaletteColors;
+    dither?: boolean;
+    withoutEnlargement?: boolean;
     dryRun: boolean;
     template: Template;
   }
@@ -304,19 +473,31 @@ async function processOne(
       return { src, dest: textPath, bytes: String(lqip).length, ok: true };
     }
     if (opts.w > 0 && opts.h > 0) {
-      pipe = pipe.resize(opts.w, opts.h, { fit: opts.fit });
+      pipe = pipe.resize(opts.w, opts.h, {
+        fit: opts.fit,
+        withoutEnlargement: opts.withoutEnlargement,
+      });
     }
-    pipe = applyFormat(pipe, opts.format, opts.quality);
+    pipe = applyFormat(pipe, opts);
     const written = await pipe.write(dest);
     return { src, dest, bytes: Number(written) || (await Bun.file(dest).size), ok: true };
-  } catch (e) {
-    const err = e as Error & { code?: string };
-    if (err.code === 'ERR_IMAGE_FORMAT_UNSUPPORTED' && opts.format !== 'png') {
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    if (
+      isBunImageError(err) &&
+      err.code === 'ERR_IMAGE_FORMAT_UNSUPPORTED' &&
+      opts.format !== 'png'
+    ) {
       // fall back to png
       try {
         const fallback = dest.replace(/\.[^.]+$/, '.png');
         let pipe: EncodePipe = Bun.file(src).image({ maxPixels: opts.maxPixels });
-        if (opts.w > 0 && opts.h > 0) pipe = pipe.resize(opts.w, opts.h, { fit: opts.fit });
+        if (opts.w > 0 && opts.h > 0) {
+          pipe = pipe.resize(opts.w, opts.h, {
+            fit: opts.fit,
+            withoutEnlargement: opts.withoutEnlargement,
+          });
+        }
         await pipe.png().write(fallback);
         return {
           src,
@@ -343,6 +524,7 @@ function templateDims(template: Template, size: string): { w: number; h: number 
 }
 
 async function runTemplate(opts: CliOpts) {
+  if (opts.backend) Bun.Image.backend = opts.backend;
   const dims = templateDims(opts.template, opts.size);
   let quality = opts.quality;
   if (opts.template === 'hero' && quality === DEFAULTS.quality) quality = 85;
@@ -372,6 +554,10 @@ async function runTemplate(opts: CliOpts) {
       format: opts.format,
       quality,
       maxPixels: opts.maxPixels,
+      progressive: opts.progressive,
+      paletteColors: opts.paletteColors,
+      dither: opts.dither,
+      withoutEnlargement: opts.withoutEnlargement,
       dryRun: opts.dryRun,
       template: opts.template,
     });
@@ -393,6 +579,13 @@ async function runTemplate(opts: CliOpts) {
     failed: results.filter(r => !r.ok).length,
     total: results.length,
     dryRun: opts.dryRun,
+    backend: opts.backend ?? Bun.Image.backend,
+    encoding: {
+      progressive: opts.progressive,
+      paletteColors: opts.paletteColors,
+      dither: opts.dither,
+      withoutEnlargement: opts.withoutEnlargement,
+    },
     results,
   };
 
@@ -407,20 +600,14 @@ async function runTemplate(opts: CliOpts) {
 
 async function main(): Promise<void> {
   const fileDefaults = await loadTomlDefaults();
-  const cli = parseArgs(Bun.argv.slice(2));
-  // precedence: DEFAULTS < toml < CLI
-  const opts: CliOpts = {
-    ...DEFAULTS,
-    ...Object.fromEntries(Object.entries(fileDefaults).filter(([, v]) => v !== undefined)),
-    ...cli,
-  } as CliOpts;
+  // precedence: DEFAULTS < TOML < explicit CLI flags.
+  const opts = parseArgs(
+    Bun.argv.slice(2),
+    Object.fromEntries(Object.entries(fileDefaults).filter(([, value]) => value !== undefined))
+  );
   if (Bun.argv.slice(2).length === 0) {
     printHelp();
     process.exit(0);
-  }
-  const allowed: Template[] = ['avatar', 'hero', 'match', 'convert', 'placeholder'];
-  if (!allowed.includes(opts.template)) {
-    throw new Error(`Unknown template "${opts.template}" (want ${allowed.join('|')})`);
   }
   const summary = await runTemplate(opts);
   if (summary.failed > 0 && summary.processed === 0) process.exit(1);

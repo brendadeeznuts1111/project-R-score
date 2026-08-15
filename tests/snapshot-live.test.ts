@@ -118,11 +118,16 @@ describe('snapshot-live helpers', () => {
     expect(bad.missing).toContain('id:missing-mount');
   });
 
-  test('gitShowText reads origin/main glossary via Bun.$', async () => {
-    const text = await gitShowText('origin/main:public/registry/domain-glossary.json');
-    const json = JSON.parse(text) as { schemaVersion?: number };
-    expect(json.schemaVersion).toBe(3);
-  });
+  test(
+    'gitShowText reads origin/main glossary through a bounded subprocess',
+    async () => {
+      const text = await gitShowText('origin/main:public/registry/domain-glossary.json');
+      const json = JSON.parse(text) as { schemaVersion?: number };
+      expect(json.schemaVersion).toBe(3);
+      await expect(gitShowText('--help')).rejects.toThrow('Invalid git object path');
+    },
+    15_000
+  );
 
   test('verdict colors come from portal kernel palette', () => {
     expect(VERDICT_STATUS_PALETTE.LIVE).toBe(PORTAL_KERNEL_PALETTE.green);
@@ -166,12 +171,13 @@ describe('snapshot-live helpers', () => {
     ).toBe('schema=3 surfaces=30 shape=ok');
   });
 
-  test('tool ships Bun.Image · HTMLRewriter · Bun.$ · compact verdict', async () => {
+  test('tool ships Bun.Image · HTMLRewriter · bounded Bun.spawn · compact verdict', async () => {
     const src = await Bun.file('tools/snapshot-live.ts').text();
     expect(src).toContain('file.image()');
     expect(src).toContain('.metadata()');
     expect(src).toContain('HTMLRewriter');
-    expect(src).toContain("import { $, Glob } from 'bun'");
+    expect(src).toContain("Bun.spawn(['git', 'show', refPath]");
+    expect(src).toContain('timeout: 10_000');
     expect(src).toContain('PORTAL_KERNEL_PALETTE');
     expect(src).toContain('colorize');
     expect(src).toContain('printVerdictTable');

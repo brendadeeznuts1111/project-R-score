@@ -8,6 +8,7 @@ import {
 
 const base: MonorepoHealthBaseline = {
   formulaVersion: 1,
+  targetScore: 90,
   minScore: 30,
   maxDeadCodePercent: 15,
   maxLargeFilePercent: 45,
@@ -52,7 +53,7 @@ describe('check-monorepo-health ratchet', () => {
     expect(v.some(x => x.includes('cyclicDependencyCount'))).toBe(true);
   });
 
-  test('baselineFromReport widens caps slightly', () => {
+  test('baselineFromReport pins counts and allows only percentage rounding', () => {
     const b = baselineFromReport({
       score: 34.1,
       formulaVersion: 1,
@@ -63,8 +64,10 @@ describe('check-monorepo-health ratchet', () => {
         duplicateDepCount: 0,
       },
     });
-    expect(b.minScore).toBe(34);
-    expect(b.maxCyclicDependencyCount).toBe(16);
-    expect(b.maxDuplicateDepCount).toBe(2);
+    expect(b.minScore).toBe(34.1);
+    expect(b.targetScore).toBe(90);
+    expect(b.maxCyclicDependencyCount).toBe(14);
+    expect(b.maxDuplicateDepCount).toBe(0);
+    expect(b.maxDeadCodePercent).toBe(8.6);
   });
 });

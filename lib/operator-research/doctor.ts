@@ -1,3 +1,21 @@
+// @see https://bun.com/docs/runtime/networking/dns#dns-caching-in-bun — Bun.dns.lookup
+// @verified Bun.dns.lookup · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/networking/dns#dns-caching-in-bun
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.bytes
+// @released Bun.Image.bytes · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.jpeg
+// @released Bun.Image.jpeg · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
+// @released Bun.Image.metadata · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#resize — Bun.Image.resize
+// @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @verified Bun.nanoseconds · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
+// @verified Bun.peek · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-peek
+// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
+// @verified Bun.TOML.parse · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/toml#bun-toml-parse
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @verified Bun.version · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — Bun.dns
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron

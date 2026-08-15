@@ -1,4 +1,4 @@
-// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
 // @see https://bun.com/docs/bundler/index#features — bun:bundle
 // @see https://bun.com/docs/runtime/s3 — Bun.s3
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version

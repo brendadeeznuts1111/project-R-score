@@ -195,7 +195,7 @@ const CANONICAL_INSTALL_ENV_URLS = Object.fromEntries(
 /** Release-note blog anchors — versioned ship notes (runtime / pm by topic). */
 export const CANONICAL_RELEASE_TOKENS: Record<string, CanonicalVerificationToken> = {
   'bun-image': {
-    url: 'https://bun.com/blog/bun-v1.3.14#bun-image',
+    url: 'https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing',
     kind: 'API',
     stability: 'stable',
     subsystem: 'runtime',
@@ -442,7 +442,7 @@ export type CanonicalGuidesToken = CanonicalVerificationToken & {
 
 export const CANONICAL_GUIDES_TOKENS: Record<string, CanonicalGuidesToken> = {
   'Bun Guides': {
-    url: bunDocs('guides'),
+    url: 'https://bun.com/guides',
     kind: 'Documentation',
     stability: 'stable',
     description: 'Human-facing landing page for official guides and Bun task walkthroughs',
@@ -452,18 +452,18 @@ export const CANONICAL_GUIDES_TOKENS: Record<string, CanonicalGuidesToken> = {
     discoveryRole: 'landing',
   },
   'Bun Guides Markdown': {
-    url: 'https://bun.com/docs/guides.md',
+    url: 'https://bun.com/guides.md',
     kind: 'Documentation',
     stability: 'stable',
-    description: 'Agent-readable guides landing page; delegates complete discovery to llms.txt',
+    description: 'Agent-readable guides landing page; use llms.txt for complete discovery',
     subsystem: 'other',
     introducedIn: 'all',
     mediaType: 'text/markdown',
     discoveryRole: 'landing',
-    requiredText: ['# Guides', 'https://bun.com/docs/llms.txt'],
+    requiredText: ['# Guides'],
   },
   'Bun Docs Index': {
-    url: bunDocs('llms.txt'),
+    url: 'https://bun.com/llms.txt',
     kind: 'Documentation',
     stability: 'stable',
     description: 'Complete agent-readable Bun documentation index and discovery authority',
@@ -474,7 +474,7 @@ export const CANONICAL_GUIDES_TOKENS: Record<string, CanonicalGuidesToken> = {
     requiredText: ['[Guides](https://bun.com/docs/guides/index.md)'],
   },
   'Bun Install Guide': {
-    url: bunDocs('guides/install/from-npm-install-to-bun-install'),
+    url: 'https://bun.com/guides/install/from-npm-install-to-bun-install',
     kind: 'Documentation',
     stability: 'stable',
     description: 'Step-by-step migration from npm install to bun install',
@@ -654,6 +654,53 @@ const CANONICAL_BUNDLER_URLS = Object.fromEntries(
 export const BUN_TYPES_PINNED = bunTypesVersionSourceUrl('1.3.14');
 export const BUN_TYPES_MAIN = BUN_TYPES_SOURCE_URL;
 export const BUN_REPOSITORY = BUN_REPOSITORY_URL;
+
+/**
+ * Bun.Image member-level documentation map.
+ *
+ * Upstream source last audited 2026-07-07 at 7be1d459; the API shipped in
+ * Bun 1.3.14 on 2026-05-13. Keep member anchors here instead of letting the
+ * page-level `Bun.Image` reference mask a more specific contract.
+ */
+export const CANONICAL_IMAGE_REFS = {
+  'Bun.Image': bunDocs('runtime/image', 'input'),
+  'Blob.image': bunDocs('runtime/image', 'input'),
+  'Bun.Image.ConstructorOptions': bunDocs('runtime/image', 'input'),
+  'Bun.Image.ErrorCode': bunReference('bun/Image/ErrorCode'),
+  'Bun.Image.Format': bunReference('bun/Image/Format'),
+  'Bun.Image.metadata': bunDocs('runtime/image', 'metadata'),
+  'Bun.Image.Metadata': bunDocs('runtime/image', 'metadata'),
+  'Bun.Image.width': bunReference('bun/Image/width'),
+  'Bun.Image.height': bunReference('bun/Image/height'),
+  'Bun.Image.resize': bunDocs('runtime/image', 'resize'),
+  'Bun.Image.ResizeOptions': bunDocs('runtime/image', 'resize'),
+  'Bun.Image.Filter': bunReference('bun/Image/Filter'),
+  'Bun.Image.rotate': bunDocs('runtime/image', 'rotate-flip'),
+  'Bun.Image.flip': bunDocs('runtime/image', 'rotate-flip'),
+  'Bun.Image.flop': bunDocs('runtime/image', 'rotate-flip'),
+  'Bun.Image.modulate': bunDocs('runtime/image', 'modulate'),
+  'Bun.Image.ModulateOptions': bunDocs('runtime/image', 'modulate'),
+  'Bun.Image.jpeg': bunDocs('runtime/image', 'output-formats'),
+  'Bun.Image.png': bunDocs('runtime/image', 'output-formats'),
+  'Bun.Image.webp': bunDocs('runtime/image', 'output-formats'),
+  'Bun.Image.heic': bunDocs('runtime/image', 'output-formats'),
+  'Bun.Image.avif': bunDocs('runtime/image', 'output-formats'),
+  'Bun.Image.bytes': bunDocs('runtime/image', 'terminals'),
+  'Bun.Image.buffer': bunDocs('runtime/image', 'terminals'),
+  'Bun.Image.toBuffer': bunReference('bun/Image/toBuffer'),
+  'Bun.Image.blob': bunDocs('runtime/image', 'terminals'),
+  'Bun.Image.toBase64': bunDocs('runtime/image', 'terminals'),
+  'Bun.Image.dataurl': bunDocs('runtime/image', 'terminals'),
+  'Bun.Image.write': bunDocs('runtime/image', 'terminals'),
+  'Bun.Image.placeholder': bunDocs('runtime/image', 'placeholders'),
+  'Bun.Image.fromClipboard': bunDocs('runtime/image', 'clipboard'),
+  'Bun.Image.hasClipboardImage': bunDocs('runtime/image', 'clipboard'),
+  'Bun.Image.clipboardChangeCount': bunDocs('runtime/image', 'clipboard'),
+  'Bun.Image.backend': bunDocs('runtime/image', 'platform-backends'),
+  'Bun.Image source': 'https://raw.githubusercontent.com/oven-sh/bun/main/docs/runtime/image.mdx',
+  'Bun.Image source audit (2026-07-07)':
+    'https://github.com/oven-sh/bun/commit/7be1d459f28566735bd602ce009e24cba0548e1e',
+} as const satisfies Record<string, string>;
 
 export const CANONICAL_REFS: Record<string, string> = {
   // ── Terminal width & ANSI (replaces string-width / strip-ansi / wrap-ansi /
@@ -1026,17 +1073,35 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.semver.order': 'https://bun.com/reference/bun/semver/order',
   'Bun.semver.satisfies': 'https://bun.com/reference/bun/semver/satisfies',
   'Bun.Transpiler': 'https://bun.com/reference/bun/Transpiler',
-  'Bun.Image': 'https://bun.com/docs/runtime/image#input',
-  'Bun.Image (v1.3.14)': 'https://bun.com/blog/bun-v1.3.14#bun-image',
+  ...CANONICAL_IMAGE_REFS,
+  'Bun.Image (v1.3.14)': 'https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing',
+  'release:image input sources': 'https://bun.com/blog/bun-v1.3.14#input-sources',
+  'release:image chainable transforms': 'https://bun.com/blog/bun-v1.3.14#chainable-transforms',
+  'release:image resize filters': 'https://bun.com/blog/bun-v1.3.14#resize-filters',
   'Bun.Image terminal methods': 'https://bun.com/blog/bun-v1.3.14#terminal-methods',
-  '--no-orphans': 'https://bun.com/blog/bun-v1.3.14#no-orphans',
-  BUN_FEATURE_FLAG_NO_ORPHANS: 'https://bun.com/blog/bun-v1.3.14#no-orphans',
+  'release:image body integration': 'https://bun.com/blog/bun-v1.3.14#body-integration',
+  'release:image platform formats': 'https://bun.com/blog/bun-v1.3.14#platform-specific-formats',
+  'release:image performance': 'https://bun.com/blog/bun-v1.3.14#performance-vs-sharp-0-34-5',
+  'Bun v1.3.14 built-in GC':
+    'https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects',
+  'Bun v1.3.14 cross-language LTO':
+    'https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux',
+  'Bun v1.3.14 ESM loading': 'https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading',
+  'Bun v1.3.14 WebSocket cleanup':
+    'https://bun.com/blog/bun-v1.3.14#websocket-permessagedeflate-false-now-respected-in-upgrade-requests',
+  'Bun v1.3.14 JavaScriptCore': 'https://bun.com/blog/bun-v1.3.14#upgraded-javascriptcore-engine',
+  'Bun.Archive release verification': 'https://bun.com/docs/runtime/archive',
+  'Bun.stringWidth v1.3.5 accuracy':
+    'https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy',
+  '--no-orphans': 'https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies',
+  BUN_FEATURE_FLAG_NO_ORPHANS:
+    'https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies',
   'using / await using':
     'https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun',
-  'Bun.Terminal (ConPTY)': 'https://bun.com/blog/bun-v1.3.14#bunterminal-on-windows-via-conpty',
+  'Bun.Terminal (ConPTY)': 'https://bun.com/blog/bun-v1.3.14#bun-terminal-on-windows-via-conpty',
   'process.execve': 'https://bun.com/blog/bun-v1.3.14#process-execve-support',
-  'Bun.serve http3': 'https://bun.com/blog/bun-v1.3.14#http3',
-  'fetch protocol http2': 'https://bun.com/blog/bun-v1.3.14#http2-client',
+  'Bun.serve http3': 'https://bun.com/blog/bun-v1.3.14#http-3-quic-support-in-bun-serve',
+  'fetch protocol http2': 'https://bun.com/blog/bun-v1.3.14#experimental-http-2-client-for-fetch',
   'install.globalStore': 'https://bun.com/blog/bun-v1.3.14#global-virtual-store',
   'Bun.CookieMap': 'https://bun.com/docs/runtime/cookies#cookiemap-class',
 
@@ -1608,7 +1673,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'bun-types': BUN_TYPES_MAIN,
   'bun-types pinned': BUN_TYPES_PINNED,
   'Bun repository': BUN_REPOSITORY,
-  'llms.txt index': 'https://bun.com/docs/llms.txt',
+  'llms.txt index': 'https://bun.com/llms.txt',
   'markdown docs': 'https://bun.com/docs/runtime/markdown.md',
   // Operational endpoints (verified live; bun.com has no subdomains —
   // everything is path-based under the apex + www)
@@ -1641,7 +1706,8 @@ function isCodeApiKey(k: string): boolean {
   // Bundler CLI flags that collide with unrelated tool surfaces. Keep them in the
   // URL/catalog map, but do not auto-annotate every external CLI invocation.
   if (k === '--env' || k === '--version' || k === '--console' || k === '--format') return false;
-  if (k.startsWith('Bun.') || k.startsWith('bun:') || k.startsWith('--')) return true;
+  if (k === 'Blob.image' || k.startsWith('Bun.') || k.startsWith('bun:') || k.startsWith('--'))
+    return true;
   // PascalCase Bun package exports / types
   if (/^[A-Z][A-Za-z0-9]+$/.test(k)) return true;
   return false;
@@ -1705,7 +1771,10 @@ const IGNORED_SOURCE_DIRECTORIES = new Set([
 ]);
 
 function isIgnoredSourceFile(path: string): boolean {
-  return path.split(/[\\/]/).some(part => IGNORED_SOURCE_DIRECTORIES.has(part));
+  return (
+    path.split(/[\\/]/).some(part => IGNORED_SOURCE_DIRECTORIES.has(part)) ||
+    /\.bundle\.[cm]?js$/i.test(path)
+  );
 }
 
 export async function sourceFiles(paths: string[]): Promise<string[]> {
@@ -1955,6 +2024,21 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
   const { source, checker } = createSyntaxContext(text, file);
   const usages = new Map<string, CodeApiUsage>();
   const namespaceBindings = new Map<string, ts.Symbol | undefined>();
+  const imageConstructorBindings = new Set<ts.Symbol>();
+  const imagePipelineBindings = new Set<ts.Symbol>();
+  const blobLikeBindings = new Set<ts.Symbol>();
+  const imageChainableMethods = new Set([
+    'resize',
+    'rotate',
+    'flip',
+    'flop',
+    'modulate',
+    'jpeg',
+    'png',
+    'webp',
+    'heic',
+    'avif',
+  ]);
   const add = (api: string, node: ts.Node): void => {
     const start = node.getStart(source);
     const location = source.getLineAndCharacterOfPosition(start);
@@ -1998,6 +2082,158 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
     const chain = expressionChain(value);
     return chain?.length === 2 && normalizedBunChain(value, chain)?.length === 1;
   };
+  const bindImagePipeline = (identifier: ts.Identifier): void => {
+    const symbol = checker.getSymbolAtLocation(identifier);
+    if (symbol) imagePipelineBindings.add(symbol);
+  };
+  const bindSymbol = (bindings: Set<ts.Symbol>, identifier: ts.Identifier): void => {
+    const symbol = checker.getSymbolAtLocation(identifier);
+    if (symbol) bindings.add(symbol);
+  };
+  const bindAccessSymbol = (
+    bindings: Set<ts.Symbol>,
+    node: ts.Identifier | ts.PropertyAccessExpression
+  ): void => {
+    const symbol = checker.getSymbolAtLocation(ts.isIdentifier(node) ? node : node.name);
+    if (symbol) bindings.add(symbol);
+  };
+  const hasBoundSymbol = (bindings: Set<ts.Symbol>, identifier: ts.Identifier): boolean => {
+    const symbol = checker.getSymbolAtLocation(identifier);
+    return symbol !== undefined && bindings.has(symbol);
+  };
+  const isBoundImagePipeline = (identifier: ts.Identifier): boolean => {
+    const symbol = checker.getSymbolAtLocation(identifier);
+    return symbol !== undefined && imagePipelineBindings.has(symbol);
+  };
+  const isBoundImagePipelineAccess = (node: ts.PropertyAccessExpression): boolean => {
+    const symbol = checker.getSymbolAtLocation(node.name);
+    return symbol !== undefined && imagePipelineBindings.has(symbol);
+  };
+  const isDirectImageConstructor = (node: ts.Expression): boolean => {
+    const value = unwrapExpression(node);
+    if (!ts.isNewExpression(value)) return false;
+    if (
+      ts.isIdentifier(value.expression) &&
+      hasBoundSymbol(imageConstructorBindings, value.expression)
+    ) {
+      return true;
+    }
+    const chain = expressionChain(value.expression);
+    const normalized = chain && normalizedBunChain(value.expression, chain);
+    return normalized ? canonicalBunChain(normalized) === 'Bun.Image' : false;
+  };
+  const memberNameForAccess = (
+    node: ts.PropertyAccessExpression | ts.ElementAccessExpression
+  ): string | undefined =>
+    ts.isPropertyAccessExpression(node)
+      ? node.name.text
+      : node.argumentExpression && ts.isStringLiteral(node.argumentExpression)
+        ? node.argumentExpression.text
+        : undefined;
+  const typeIsBlobLike = (node: ts.TypeNode | undefined): boolean => {
+    if (!node || !ts.isTypeReferenceNode(node)) return false;
+    const root = rootIdentifier(node.typeName);
+    if (!root) return false;
+    if (hasBoundSymbol(blobLikeBindings, root)) return true;
+    return (
+      ['Blob', 'BunFile', 'S3File'].includes(root.text) &&
+      !checker
+        .getSymbolAtLocation(root)
+        ?.declarations?.some(declaration => declaration.getSourceFile() === source)
+    );
+  };
+  const isDirectBlobFactoryCall = (node: ts.Expression): boolean => {
+    const value = unwrapExpression(node);
+    if (!ts.isCallExpression(value)) return false;
+    const chain = expressionChain(value.expression);
+    const normalized = chain && normalizedBunChain(value.expression, chain);
+    const api = normalized && canonicalBunChain(normalized);
+    return api === 'Bun.file' || api === 'Bun.s3' || api === 'S3Client';
+  };
+  const isBlobLikeExpression = (node: ts.Expression): boolean => {
+    const value = unwrapExpression(node);
+    if (ts.isIdentifier(value)) return hasBoundSymbol(blobLikeBindings, value);
+    if (ts.isPropertyAccessExpression(value)) {
+      const symbol = checker.getSymbolAtLocation(value.name);
+      if (symbol && blobLikeBindings.has(symbol)) return true;
+    }
+    if (ts.isNewExpression(value) && ts.isIdentifier(value.expression)) {
+      return value.expression.text === 'Blob' && isUnshadowedGlobal(value.expression);
+    }
+    return isDirectBlobFactoryCall(value);
+  };
+  const isBlobImageStart = (node: ts.CallExpression): boolean => {
+    if (
+      (!ts.isPropertyAccessExpression(node.expression) &&
+        !ts.isElementAccessExpression(node.expression)) ||
+      memberNameForAccess(node.expression) !== 'image'
+    )
+      return false;
+    const receiver = unwrapExpression(node.expression.expression);
+    if (isBlobLikeExpression(receiver)) return true;
+    if (!ts.isCallExpression(receiver)) return false;
+    const chain = expressionChain(receiver.expression);
+    const normalized = chain && normalizedBunChain(receiver.expression, chain);
+    const rootApi = normalized && canonicalBunChain(normalized);
+    return rootApi === 'Bun.file' || rootApi === 'Bun.s3' || rootApi === 'S3Client';
+  };
+  const isImagePipelineExpression = (node: ts.Expression): boolean => {
+    const value = unwrapExpression(node);
+    if (ts.isIdentifier(value)) return isBoundImagePipeline(value);
+    if (ts.isPropertyAccessExpression(value) && isBoundImagePipelineAccess(value)) return true;
+    if (isDirectImageConstructor(value)) return true;
+    if (!ts.isCallExpression(value)) return false;
+    if (isBlobImageStart(value)) return true;
+    if (
+      !ts.isPropertyAccessExpression(value.expression) &&
+      !ts.isElementAccessExpression(value.expression)
+    )
+      return false;
+    const member = memberNameForAccess(value.expression);
+    return Boolean(
+      member &&
+      imageChainableMethods.has(member) &&
+      isImagePipelineExpression(value.expression.expression)
+    );
+  };
+  const imageMemberForCall = (node: ts.CallExpression): string | undefined => {
+    if (
+      !ts.isPropertyAccessExpression(node.expression) &&
+      !ts.isElementAccessExpression(node.expression)
+    )
+      return undefined;
+    if (!isImagePipelineExpression(node.expression.expression)) return undefined;
+    const member = memberNameForAccess(node.expression);
+    return member ? canonicalApi([`Bun.Image.${member}`]) : undefined;
+  };
+  const imageMemberForAccess = (
+    node: ts.PropertyAccessExpression | ts.ElementAccessExpression
+  ): string | undefined => {
+    if (!isImagePipelineExpression(node.expression)) return undefined;
+    const member = memberNameForAccess(node);
+    return member ? canonicalApi([`Bun.Image.${member}`]) : undefined;
+  };
+  const typeIsBunImage = (node: ts.TypeNode | undefined): boolean => {
+    if (!node || !ts.isTypeReferenceNode(node)) return false;
+    const root = rootIdentifier(node.typeName);
+    if (root && hasBoundSymbol(imageConstructorBindings, root)) return true;
+    const chain = entityNameChain(node.typeName);
+    const normalized = normalizedBunChain(node.typeName, chain);
+    return normalized ? canonicalBunChain(normalized) === 'Bun.Image' : false;
+  };
+  const isClearlyExternalSpawnArgument = (node: ts.StringLiteral): boolean => {
+    const array = node.parent;
+    if (!ts.isArrayLiteralExpression(array) || !ts.isCallExpression(array.parent)) return false;
+    const call = array.parent;
+    if (!call.arguments.includes(array)) return false;
+    const chain = expressionChain(call.expression);
+    const normalized = chain && normalizedBunChain(call.expression, chain);
+    const api = normalized && canonicalBunChain(normalized);
+    if (api !== 'Bun.spawn' && api !== 'Bun.spawnSync') return false;
+    const executable = array.elements[0];
+    if (!executable || !ts.isStringLiteral(executable)) return false;
+    return executable.text !== 'bun' && executable.text !== 'bunx';
+  };
 
   for (const statement of source.statements) {
     if (
@@ -2012,6 +2248,10 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
           const imported = element.propertyName?.text ?? element.name.text;
           const api = canonicalBunExport(imported);
           if (api) add(api, element);
+          if (imported === 'Image') bindSymbol(imageConstructorBindings, element.name);
+          if (imported === 'BunFile' || imported === 'S3File') {
+            bindSymbol(blobLikeBindings, element.name);
+          }
         }
       }
     } else if (ts.isImportEqualsDeclaration(statement)) {
@@ -2029,6 +2269,66 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
 
   const visit = (node: ts.Node): void => {
     if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      ((node.initializer && isImagePipelineExpression(node.initializer)) ||
+        typeIsBunImage(node.type))
+    ) {
+      bindImagePipeline(node.name);
+    }
+
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      ((node.initializer && isBlobLikeExpression(node.initializer)) || typeIsBlobLike(node.type))
+    ) {
+      bindSymbol(blobLikeBindings, node.name);
+    }
+
+    if (
+      ts.isPropertyDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      (typeIsBunImage(node.type) ||
+        (node.initializer && isImagePipelineExpression(node.initializer)))
+    ) {
+      bindImagePipeline(node.name);
+    }
+
+    if (
+      ts.isPropertyDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      (typeIsBlobLike(node.type) || (node.initializer && isBlobLikeExpression(node.initializer)))
+    ) {
+      bindSymbol(blobLikeBindings, node.name);
+    }
+
+    if (ts.isParameter(node) && ts.isIdentifier(node.name) && typeIsBunImage(node.type)) {
+      bindImagePipeline(node.name);
+    }
+
+    if (ts.isParameter(node) && ts.isIdentifier(node.name) && typeIsBlobLike(node.type)) {
+      bindSymbol(blobLikeBindings, node.name);
+    }
+
+    if (
+      ts.isBinaryExpression(node) &&
+      node.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+      (ts.isIdentifier(node.left) || ts.isPropertyAccessExpression(node.left)) &&
+      isImagePipelineExpression(node.right)
+    ) {
+      bindAccessSymbol(imagePipelineBindings, node.left);
+    }
+
+    if (
+      ts.isBinaryExpression(node) &&
+      node.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+      (ts.isIdentifier(node.left) || ts.isPropertyAccessExpression(node.left)) &&
+      isBlobLikeExpression(node.right)
+    ) {
+      bindAccessSymbol(blobLikeBindings, node.left);
+    }
+
+    if (
       (ts.isPropertyAccessExpression(node) || ts.isElementAccessExpression(node)) &&
       !(
         (ts.isPropertyAccessExpression(node.parent) || ts.isElementAccessExpression(node.parent)) &&
@@ -2041,6 +2341,8 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
         const api = canonicalBunChain(normalized);
         if (api) add(api, node);
       }
+      const imageMember = imageMemberForAccess(node);
+      if (imageMember) add(imageMember, node);
     }
 
     if (
@@ -2076,6 +2378,10 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
     }
 
     if (ts.isCallExpression(node)) {
+      if (isBlobImageStart(node)) add('Blob.image', node.expression);
+      const imageMember = imageMemberForCall(node);
+      if (imageMember) add(imageMember, node.expression);
+
       const moduleName = moduleNameFromLoad(node);
       const shadowedRequire =
         ts.isIdentifier(node.expression) &&
@@ -2105,12 +2411,23 @@ export function collectCodeApiUsageDetails(text: string, file = 'source.ts'): Co
       isBunNamespaceExpression(node.initializer)
     ) {
       if (ts.isIdentifier(node.name)) bindNamespace(node.name);
-      else addBindingImports(node.name, add);
+      else if (ts.isObjectBindingPattern(node.name)) {
+        addBindingImports(node.name, add);
+        for (const element of node.name.elements) {
+          if (!ts.isIdentifier(element.name)) continue;
+          const imported =
+            element.propertyName?.getText().replace(/^['"]|['"]$/g, '') ?? element.name.text;
+          if (imported === 'Image') bindSymbol(imageConstructorBindings, element.name);
+          if (imported === 'BunFile' || imported === 'S3File') {
+            bindSymbol(blobLikeBindings, element.name);
+          }
+        }
+      }
     }
 
     // CLI flags are values by definition. Scan string literals, but deliberately
     // exclude template literals used for generated documentation/examples.
-    if (ts.isStringLiteral(node)) {
+    if (ts.isStringLiteral(node) && !isClearlyExternalSpawnArgument(node)) {
       for (const flag of FLAG_APIS) {
         if (codeUsesApi(node.text, flag)) add(flag, node);
       }
@@ -2402,7 +2719,11 @@ function parseRefsCatalog(value: unknown, source: string): CatalogEntry[] {
     ) {
       throw new Error(`${source}: entries[${index}] is invalid`);
     }
-    const name = entry.name.toLowerCase();
+    // Bun member names are case-sensitive: `Bun.Image.Metadata` is a type and
+    // `Bun.Image.metadata` is a method. The catalog builder already normalizes
+    // roots while preserving nested type casing, so reject exact duplicates
+    // here without collapsing those distinct public symbols.
+    const name = entry.name;
     if (names.has(name)) throw new Error(`${source}: duplicate entry ${entry.name}`);
     names.add(name);
   }
@@ -3111,7 +3432,7 @@ async function suggest(query: string): Promise<void> {
     }
     return;
   }
-  const llms = CANONICAL_REFS['llms.txt index'] ?? 'https://bun.com/docs/llms.txt';
+  const llms = CANONICAL_REFS['llms.txt index'] ?? 'https://bun.com/llms.txt';
   console.info(
     `❌ no docs page found for "${query}" — browse frozen key "llms.txt index" → ${llms}`
   );

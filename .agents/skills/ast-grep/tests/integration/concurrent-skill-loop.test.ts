@@ -10,6 +10,41 @@ const SKILL_ROOT = resolve(import.meta.dir, "../..");
 const REPO_ROOT = resolve(SKILL_ROOT, "../../..");
 
 describe("skill-loop integration", () => {
+  test("repo-map anchors resolve from a warning-safe symbol index", async () => {
+    const runAnchors = async () => {
+      const proc = Bun.spawn(
+        [
+          "python3",
+          resolve(SKILL_ROOT, "scripts/ast_grep_helper.py"),
+          "anchors",
+          "--zone",
+          "agents",
+          "--fail-on",
+        ],
+        {
+          cwd: REPO_ROOT,
+          stdout: "pipe",
+          stderr: "pipe",
+        },
+      );
+      const [stdout, stderr, code] = await Promise.all([
+        new Response(proc.stdout).text(),
+        new Response(proc.stderr).text(),
+        proc.exited,
+      ]);
+      return { stdout, stderr, code };
+    };
+
+    const first = await runAnchors();
+    expect(first.code, first.stderr).toBe(0);
+    expect(first.stdout).toContain("anchors: 4 checked, 0 missing");
+
+    const cached = await runAnchors();
+    expect(cached.code, cached.stderr).toBe(0);
+    expect(cached.stdout).toContain("anchors: 4 checked, 0 missing");
+    expect(cached.stderr).not.toContain("[ast-grep-helper] exec:");
+  });
+
   test("matrix doctor+rate across registry skills", async () => {
     const registry = await loadSkillLoopRegistry(SKILL_ROOT);
     const ids = Object.keys(registry.skills).slice(0, 4);

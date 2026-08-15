@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import {
   minifyCssFallback,
+  measureInlineAssetBytes,
   optimizeHtml,
   optimizePortalAssets,
 } from '../tools/optimize-portal-assets.ts';
@@ -39,6 +40,12 @@ describe('portal deployment optimizer', () => {
     expect(minifyCssFallback('.x { content: "a  b"; margin: 0  1px; }')).toBe(
       '.x{content:"a  b";margin:0 1px;}'
     );
+  });
+
+  test('bundle metric counts executable inline assets, not embedded JSON', () => {
+    const html = `<script type="application/json">${'x'.repeat(100)}</script>
+      <script type="module">const x = 1;</script><style>.x { color: red; }</style>`;
+    expect(measureInlineAssetBytes(html)).toBe('const x = 1;'.length + '.x { color: red; }'.length);
   });
 
   test(

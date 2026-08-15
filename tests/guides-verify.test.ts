@@ -11,7 +11,7 @@ import {
 /** Live bun.com probes only — skip when offline (install dry-runs still run). */
 async function bunGuidesReachable(): Promise<boolean> {
   try {
-    const r = await fetch('https://bun.com/docs/guides.md', {
+    const r = await fetch('https://bun.com/guides.md', {
       signal: AbortSignal.timeout(1500),
     });
     return r.status > 0;
@@ -24,27 +24,27 @@ const online = await bunGuidesReachable();
 
 describe('official guides verification', () => {
   test('guides.md is a landing source and llms.txt is the complete discovery authority', () => {
-    expect(CANONICAL_GUIDES_TOKENS['Bun Guides']?.url).toBe('https://bun.com/docs/guides');
+    expect(CANONICAL_GUIDES_TOKENS['Bun Guides']?.url).toBe('https://bun.com/guides');
     expect(CANONICAL_GUIDES_TOKENS['Bun Guides Markdown']?.discoveryRole).toBe('landing');
     expect(CANONICAL_GUIDES_TOKENS['Bun Docs Index']?.discoveryRole).toBe('complete-index');
     expect(CANONICAL_GUIDES_TOKENS['Bun Install Guide']?.url).toBe(
-      'https://bun.com/docs/guides/install/from-npm-install-to-bun-install'
+      'https://bun.com/guides/install/from-npm-install-to-bun-install'
     );
   });
 
-  test('markdown discovery validation fails closed on missing llms.txt routing', () => {
+  test('markdown landing validation fails closed on a missing Guides heading', () => {
     const meta = CANONICAL_GUIDES_TOKENS['Bun Guides Markdown']!;
     expect(
       validateGuideResponse(meta, {
         status: 200,
         finalUrl: meta.url,
         contentType: 'text/markdown; charset=utf-8',
-        body: '# Guides\n',
+        body: '# Walkthroughs\n',
       })
     ).toEqual(
       expect.objectContaining({
         passed: false,
-        actual: expect.stringContaining('https://bun.com/docs/llms.txt'),
+        actual: expect.stringContaining('# Guides'),
       })
     );
   });

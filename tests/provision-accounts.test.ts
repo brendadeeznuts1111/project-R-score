@@ -7,7 +7,10 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { Database } from 'bun:sqlite';
 import { encryptAesGcm, decryptAesGcm } from '../lib/dod/verifier.ts';
-import { isSandboxPlatform } from '../lib/automation/provision-accounts.ts';
+import {
+  buildCredentialFillExpression,
+  isSandboxPlatform,
+} from '../lib/automation/provision-accounts.ts';
 
 let SCRATCH = `.tmp/provision-test-${Bun.randomUUIDv7().slice(0, 8)}`;
 let db: Database;
@@ -69,6 +72,21 @@ describe('provision-accounts — sandbox gate', () => {
     expect(results).toHaveLength(1);
     expect(results[0]!.success).toBe(false);
     expect(results[0]!.error).toMatch(/sandbox\/test\/demo/i);
+  });
+});
+
+describe('provision-accounts — page expression boundary', () => {
+  test('serializes credentials as data without changing whitespace or allowing code injection', () => {
+    const credentials = {
+      username: 'agent "quoted"',
+      password: 'line one  line two\n</script>${globalThis.pwned = true}',
+      email: 'agent+test@example.com',
+    };
+    const expression = buildCredentialFillExpression(credentials);
+
+    expect(expression).toContain(JSON.stringify(credentials).replaceAll('<', '\\u003c'));
+    expect(expression).not.toContain('</script>');
+    expect(expression).not.toContain('const values = [object Object]');
   });
 });
 

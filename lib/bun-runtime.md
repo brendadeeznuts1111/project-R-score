@@ -18,7 +18,7 @@ and declaration type channels are governed independently by
 | API Reference (types) | [bun.com/reference](https://bun.com/reference) → [Bun module](https://bun.com/reference/bun)                                   |
 | Runtime / CLI flags   | [bun.com/docs/runtime](https://bun.com/docs/runtime#general-execution-options) · [`bun run` CLI](https://bun.com/docs/cli/run) |
 | Console guide         | [bun.com/docs/runtime/console](https://bun.com/docs/runtime/console)                                                           |
-| Docs index            | [bun.com/docs/llms.txt](https://bun.com/docs/llms.txt)                                                                         |
+| Docs index            | [bun.com/llms.txt](https://bun.com/llms.txt)                                                                                   |
 | Local lookup          | `bun tools/bun-doc-refs.ts suggest "<api>"`                                                                                    |
 | Curated flags         | [`../config/runtime-flags.json`](../config/runtime-flags.json) · `bun run portal:flags`                                        |
 | Module SSOT           | [`console-depth.ts`](./console-depth.ts) · note [`console-depth.md`](./console-depth.md)                                       |

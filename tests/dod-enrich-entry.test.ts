@@ -51,6 +51,7 @@ describe('dod enrich-entry', () => {
     expect(strip?.exif.software).toBe('Screenshot');
     expect(strip?.missingExif).toBe(false);
     expect(JSON.stringify(strip)).not.toContain('MakerNote');
+    expect(parseBunImageMetaStrip({ width: 10, height: 10, format: 'jpg' })?.format).toBeNull();
   });
 
   test('enrichDodEntry fills accounting + deep link + image_meta', () => {

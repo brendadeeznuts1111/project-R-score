@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "contractKind": "agent-alignment",
   "projectKey": "project-r",
   "agentContext": "AGENTS.md",
   "skillAuthority": ".agents/skills",

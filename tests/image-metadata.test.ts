@@ -1,7 +1,31 @@
+// @see https://bun.com/docs/runtime/image#platform-backends — Bun.Image.backend
+// @released Bun.Image.backend · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#terminals — Bun.Image.bytes
+// @released Bun.Image.bytes · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/Format — Bun.Image.Format
+// @released Bun.Image.Format · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/height — Bun.Image.height
+// @released Bun.Image.height · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#output-formats — Bun.Image.png
+// @released Bun.Image.png · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#resize — Bun.Image.resize
+// @released Bun.Image.resize · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/image#resize — Bun.Image.ResizeOptions
+// @released Bun.Image.ResizeOptions · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/reference/bun/Image/width — Bun.Image.width
+// @released Bun.Image.width · released v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
+// @updated Bun.revision · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.revision · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-revision
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
 // @see https://bun.com/docs/test/index#run-tests
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, expectTypeOf, test } from 'bun:test';
 import {
+  BUN_IMAGE_ERROR_CODES,
+  BUN_IMAGE_FORMATS,
   BUN_IMAGE_DOCS,
   BUN_IMAGE_METADATA_DOCS,
   DEFAULT_THUMB_MAX_HEIGHT,
@@ -9,10 +33,19 @@ import {
   extractImageEvidenceMeta,
   imageEvidenceHeaders,
   imageMetaChecksPassed,
+  isBunImageError,
+  isBunImageFormat,
   isImageEvidenceMeta,
   parseImageEvidenceMeta,
   resizeScreenshotPng,
   verifyImageEvidenceMeta,
+  type BunImageByteInput,
+  type BunImageBackend,
+  type BunImageJpegOptions,
+  type BunImagePngOptions,
+  type BunImageWebpOptions,
+  type ImageEvidenceMeta,
+  type ResizeScreenshotOptions,
 } from '../lib/image-metadata.ts';
 import {
   TEST_003,
@@ -34,6 +67,33 @@ const PNG_10 = Buffer.from(
 );
 
 describe('lib/image-metadata', () => {
+  test('public contracts derive from Bun.Image namespace types', () => {
+    expectTypeOf<ImageEvidenceMeta['format']>().toEqualTypeOf<Bun.Image.Format>();
+    expectTypeOf<ResizeScreenshotOptions>().toMatchTypeOf<Bun.Image.ResizeOptions>();
+    expectTypeOf<Parameters<typeof extractImageEvidenceMeta>[0]>().toEqualTypeOf<BunImageByteInput>();
+    expectTypeOf<BunImageBackend>().toEqualTypeOf<typeof Bun.Image.backend>();
+    expectTypeOf<BunImageJpegOptions>().toEqualTypeOf<
+      NonNullable<Parameters<Bun.Image['jpeg']>[0]>
+    >();
+    expectTypeOf<BunImagePngOptions>().toEqualTypeOf<
+      NonNullable<Parameters<Bun.Image['png']>[0]>
+    >();
+    expectTypeOf<BunImageWebpOptions>().toEqualTypeOf<
+      NonNullable<Parameters<Bun.Image['webp']>[0]>
+    >();
+    expect(Object.keys(BUN_IMAGE_FORMATS)).toEqual([
+      'jpeg',
+      'png',
+      'webp',
+      'heic',
+      'avif',
+      'bmp',
+      'tiff',
+      'gif',
+    ]);
+    expect(Object.keys(BUN_IMAGE_ERROR_CODES)).toHaveLength(6);
+  });
+
   test('canonical docs URLs point at Bun.Image anchors', () => {
     expect(BUN_IMAGE_DOCS).toBe('https://bun.com/docs/runtime/image#input');
     expect(BUN_IMAGE_METADATA_DOCS).toBe('https://bun.com/docs/runtime/image#metadata');
@@ -49,6 +109,13 @@ describe('lib/image-metadata', () => {
     expect(meta.digest).toHaveLength(64);
   });
 
+  test('pipeline dimensions move from pending sentinel to output geometry', async () => {
+    const image = new Bun.Image(PNG_10).resize(4, 3).png();
+    expect([image.width, image.height]).toEqual([-1, -1]);
+    await image.bytes();
+    expect([image.width, image.height]).toEqual([4, 3]);
+  });
+
   test('extractImageEvidenceMeta supports sha3-256', async () => {
     const meta = await extractImageEvidenceMeta(PNG_10, { algorithm: 'sha3-256' });
     expect(meta.algorithm).toBe('sha3-256');
@@ -60,7 +127,13 @@ describe('lib/image-metadata', () => {
   });
 
   test('resizeScreenshotPng keeps inside default thumb bounds', async () => {
-    const { bytes, meta } = await resizeScreenshotPng(PNG_10);
+    const { bytes, meta } = await resizeScreenshotPng(PNG_10, {
+      fit: 'inside',
+      filter: 'nearest',
+      withoutEnlargement: true,
+      image: { autoOrient: false, maxPixels: 100 },
+      png: { compressionLevel: 6 },
+    });
     expect(meta.format).toBe('png');
     expect(meta.width).toBeLessThanOrEqual(DEFAULT_THUMB_MAX_WIDTH);
     expect(meta.height).toBeLessThanOrEqual(DEFAULT_THUMB_MAX_HEIGHT);
@@ -88,7 +161,17 @@ describe('lib/image-metadata', () => {
     expect(isImageEvidenceMeta(meta)).toBe(true);
     expect(parseImageEvidenceMeta(meta)).toEqual(meta);
     expect(isImageEvidenceMeta({ width: 0, height: 10 })).toBe(false);
+    expect(isImageEvidenceMeta({ ...meta, format: 'jpg' })).toBe(false);
     expect(() => parseImageEvidenceMeta({ width: 10 })).toThrow(/Invalid ImageEvidenceMeta/);
+  });
+
+  test('Bun Image format and terminal-error guards stay closed', () => {
+    expect(isBunImageFormat('gif')).toBe(true);
+    expect(isBunImageFormat('jpg')).toBe(false);
+    expect(
+      isBunImageError(Object.assign(new Error('decode failed'), { code: 'ERR_IMAGE_DECODE_FAILED' }))
+    ).toBe(true);
+    expect(isBunImageError(Object.assign(new Error('missing'), { code: 'ENOENT' }))).toBe(false);
   });
 
   test('parseImageEvidenceMeta rejects bad algorithm, short digest, non-object', () => {

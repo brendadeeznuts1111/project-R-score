@@ -1,6 +1,8 @@
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @verified Bun.nanoseconds · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-nanoseconds
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/networking/fetch — fetch
-// @see https://bun.com/blog/bun-v1.3.14#http2-client — per-request protocol
+// @see https://bun.com/blog/bun-v1.3.14#experimental-http-2-client-for-fetch — per-request protocol
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 import { joinPath } from '../../path-bun.ts';
 import { fetchWithRetry as sharedFetchWithRetry } from '../fetch-url.ts';

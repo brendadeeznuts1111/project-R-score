@@ -18,7 +18,16 @@ describe('avatarWebpResponse (Bun.Image)', () => {
   });
 
   test('200 webp for demo-player (warehouse or fallback mark)', async () => {
-    const res = await avatarWebpResponse('demo-player', { size: 64, quality: 80 });
+    const res = await avatarWebpResponse('demo-player', {
+      size: 64,
+      quality: 80,
+      autoOrient: false,
+      filter: 'mitchell',
+      fit: 'inside',
+      withoutEnlargement: true,
+      lossless: true,
+      cache: false,
+    });
     expect(res.status).toBe(200);
     expect(res.headers.get('Content-Type')).toBe('image/webp');
     const buf = new Uint8Array(await res.arrayBuffer());

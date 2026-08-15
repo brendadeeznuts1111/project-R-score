@@ -10,7 +10,7 @@
  */
 import { describe, test, expect, beforeAll, afterAll } from 'bun:test';
 import { Database } from 'bun:sqlite';
-import { createTestDb, seedTestData } from './harness.ts';
+import { createTestDb, createTestWorkspace, seedTestData } from './harness.ts';
 
 // ── Pipeline stages ───────────────────────────────────────────────────────
 describe('limit detection pipeline (E2E)', () => {
@@ -210,6 +210,29 @@ describe('limit detection pipeline (E2E)', () => {
     expect(svg).toContain('Prediction Accuracy');
     expect(svg).toContain('MAE: 0.123');
     expect(svg).toMatchSnapshot();
+  });
+
+  test('Stage 13: chart writer does not pretend Bun.Image rasterizes SVG', async () => {
+    const { writeChartArtifacts } = require('../tools/limit-chart.ts');
+    await using workspace = await createTestWorkspace('limit-chart-');
+    const basePath = workspace.resolve('chart');
+    const result = await writeChartArtifacts(
+      {
+        raises: 1,
+        decreases: 0,
+        netDelta: 100,
+        avgScore: null,
+        books: 1,
+        partners: 1,
+        generatedAt: '2026-08-14T00:00:00',
+        bunVersion: 'test-runtime',
+      },
+      basePath
+    );
+
+    expect(result).toEqual({ svgPath: `${basePath}.svg` });
+    expect(await Bun.file(result.svgPath).exists()).toBe(true);
+    expect(await Bun.file(`${basePath}.png`).exists()).toBe(false);
   });
 
   // Cleanup

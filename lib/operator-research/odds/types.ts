@@ -2,7 +2,7 @@
  * Live odds monitoring domain types.
  *
  * Interior shapes after the wire boundary — parsers produce these from JSON/HTML/TOML.
- * @see https://bun.com/blog/bun-v1.3.14#http2-client
+ * @see https://bun.com/blog/bun-v1.3.14#experimental-http-2-client-for-fetch
  */
 
 import type { HostId } from '../../types/branded.ts';

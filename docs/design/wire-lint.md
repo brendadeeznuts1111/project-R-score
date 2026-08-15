@@ -9,9 +9,8 @@ Inventory-driven ban on naked branded annotations (`outId: string`,
 ## Purpose
 
 Prevent bare wire / identity fields from leaking past the parse boundary.
-Interior code should use brands (`OutId`, `PartnerCode`, `ExternalPartnerId`,
-…) or an explicit `ExternalPartnerRef` quarantine — not unqualified
-`*: string`.
+Interior code should use brands (`OutId`, `PartnerCode`, `ExternalPartnerId`, …)
+or an explicit `ExternalPartnerRef` quarantine — not unqualified `*: string`.
 
 ## How it works
 
@@ -31,7 +30,8 @@ unregistered adapters and shape the fix text.
 
 ## Adding a new rule
 
-In [`lib/docs/partner-surface-inventory.ts`](../../lib/docs/partner-surface-inventory.ts):
+In
+[`lib/docs/partner-surface-inventory.ts`](../../lib/docs/partner-surface-inventory.ts):
 
 ```ts
 row({
@@ -81,20 +81,24 @@ bun scripts/validate-wire-traps.ts --scan --fix     # non-strict allowlist only
 allowlisted naked hits. It never rewrites trap-row or outside-allowlist errors
 (those need a brand, a new glob, or a hand-written suppression).
 
-Pre-commit path-gates `--scan` (and `--strict-globs` when inventory SSOT is
-staged). Escape: `SKIP_WIRE_LINT=1`.
+Pre-commit uses `--scan --staged` for ordinary TypeScript changes, a full
+non-strict scan for lint-engine changes, and a full `--strict-globs` scan when
+the inventory SSOT changes. Optional checkout absence therefore cannot block an
+engine fix, while allowlist drift still fails closed at its owning boundary.
+Escape: `SKIP_WIRE_LINT=1`.
 
 Inventory validate also checks wire bags (`pattern` / `patterns` / `nakedType` /
 `resolvesTo`) so bad rows fail at Layer A/B before Layer C.
 
 ## Deferred
 
-| Topic | Why |
-| ----- | --- |
+| Topic                   | Why                                                                                                                                        |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | `money: number` → brand | No `MoneyAmount` brand yet; ledger uses `_minor` integers — see [partner-money-integer-migration.md](./partner-money-integer-migration.md) |
 
 ## Related
 
 - [partner-surface-inventory.md](./partner-surface-inventory.md)
 - [partner-type-reference-map.md](./partner-type-reference-map.md)
-- Engine: [`lib/docs/partner-surface-wire-lint.ts`](../../lib/docs/partner-surface-wire-lint.ts)
+- Engine:
+  [`lib/docs/partner-surface-wire-lint.ts`](../../lib/docs/partner-surface-wire-lint.ts)

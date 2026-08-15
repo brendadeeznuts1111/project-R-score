@@ -193,7 +193,14 @@ export function applyUnknownLongOptionGuard(
 /** §4.1 — lint-wires (`scripts/validate-wire-traps.ts`) */
 export const LINT_WIRES_DOC = 'docs/design/partner-surface-inventory.md' as const;
 export const LINT_WIRES_SECTION = '4.1' as const;
-export const LINT_WIRES_LEAVES = ['help', 'scan', 'why', 'document', 'strict-globs'] as const;
+export const LINT_WIRES_LEAVES = [
+  'help',
+  'scan',
+  'staged',
+  'why',
+  'document',
+  'strict-globs',
+] as const;
 /** Full long-option allowlist (REF:ID leaves + teaching/meta flags not in Flags table). */
 export const LINT_WIRES_ALLOWED_LONG = [...LINT_WIRES_LEAVES, 'rules', 'fix'] as const;
 export function lintWiresFlagDocRef(leaf: (typeof LINT_WIRES_LEAVES)[number] | string) {
@@ -251,6 +258,11 @@ export const IMAGES_GENERATE_LEAVES = [
   'quality',
   'fit',
   'max-pixels',
+  'progressive',
+  'palette',
+  'dither',
+  'without-enlargement',
+  'backend',
   'json',
   'dry-run',
 ] as const;
@@ -456,15 +468,13 @@ export const IDENTITY_ADMIN_ALLOWED_LONG = ['as', 'db', 'json', 'limit', 'passwo
 /** § — provision:queue (`tools/provision-queue.ts`) */
 export const PROVISION_QUEUE_ALLOWED_LONG = [
   'dry-run',
-  'email',
   'id',
+  'max-retries',
   'mode',
   'partner',
-  'pass',
   'platform',
   'step',
   'to',
-  'user',
 ] as const;
 
 /** § — monorepo:health (`tools/monorepo-health.ts`) */
@@ -757,6 +767,7 @@ export const CLI_FLAGS_CHECK_ALLOWED_LONG = [
 export const PARTNER_SURFACE_INVENTORY_LINT_DOMAINS_ALLOWED_LONG = [
   'rules',
   'scan',
+  'staged',
   'strict',
 ] as const;
 
@@ -2276,7 +2287,7 @@ export const OPS_LIMITS_SEED_PATTERNS_ALLOWED_LONG = ['bake', 'force'] as const;
 export const OPS_HEALTH_TICK_ALLOWED_LONG = ['db'] as const;
 
 /** § — portal:optimize (`tools/optimize-portal-assets.ts`) — auto team plan */
-export const PORTAL_OPTIMIZE_ALLOWED_LONG = ['no-report'] as const;
+export const PORTAL_OPTIMIZE_ALLOWED_LONG = ['no-report', 'outdir', 'report'] as const;
 
 /** § — vault:health:bake (`tools/vault-health-bake.ts`) — auto team plan */
 export const VAULT_HEALTH_BAKE_ALLOWED_LONG = ['no-fail', 'output'] as const;

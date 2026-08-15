@@ -4,7 +4,7 @@
 // @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
-// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 
@@ -97,6 +97,12 @@ function normalizeText(value: string): string {
   return decodeHtmlEntities(value).replace(/\s+/g, ' ').trim();
 }
 
+function normalizeHeading(value: string): string {
+  // Bun's blog appends a visible permalink anchor (`<a class="anchor">#</a>`)
+  // inside headings. It is navigation chrome, not part of the release section.
+  return normalizeText(value).replace(/\s*#$/, '').trim();
+}
+
 function slugify(value: string): string {
   return (
     normalizeText(value)
@@ -143,7 +149,7 @@ export async function extractReleaseItems(input: Response | string): Promise<Rel
         const capture: Capture = { parts: [] };
         headings.push(capture);
         element.onEndTag(() => {
-          const heading = normalizeText(capture.parts.join(''));
+          const heading = normalizeHeading(capture.parts.join(''));
           const index = headings.lastIndexOf(capture);
           if (index >= 0) headings.splice(index, 1);
           if (!heading) return;

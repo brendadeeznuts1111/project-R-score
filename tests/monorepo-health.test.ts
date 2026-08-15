@@ -4,6 +4,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   computeMonorepoHealth,
   countCycles,
+  findImportCycles,
   gradeMonorepoHealth,
   loaderForPath,
   parseCoveragePercent,
@@ -13,9 +14,8 @@ import {
 } from '../lib/harness/monorepo-health.ts';
 
 describe('monorepo-health formula', () => {
-  test('example calculation lands near 74', () => {
-    // User doc example: 5 dups, 15% dead, 10% large, 2% fail, 3 cycles, 80% cov
-    // 100 -10 -7.5 -10 -10 -4.5 +16 = 74
+  test('v2 structural formula uses bounded penalties', () => {
+    // 100 - min(20, 5×5) - 15 - 10×0.75 - 3×5 = 42.5
     const r = computeMonorepoHealth({
       duplicateDepCount: 5,
       deadCodePercent: 15,
@@ -24,10 +24,10 @@ describe('monorepo-health formula', () => {
       cyclicDependencyCount: 3,
       testCoveragePercent: 80,
     });
-    expect(r.score).toBe(74);
-    expect(r.grade).toBe('needs-improvement');
-    expect(r.breakdown.duplicateDepPenalty).toBe(10);
-    expect(r.breakdown.coverageBonus).toBe(16);
+    expect(r.score).toBe(42.5);
+    expect(r.grade).toBe('critical');
+    expect(r.breakdown.duplicateDepPenalty).toBe(20);
+    expect(r.breakdown.largeFilePenalty).toBe(7.5);
   });
 
   test('perfect metrics score 100 healthy', () => {
@@ -35,9 +35,9 @@ describe('monorepo-health formula', () => {
       duplicateDepCount: 0,
       deadCodePercent: 0,
       largeFilePercent: 0,
-      testFailureRate: 0,
+      testFailureRate: null,
       cyclicDependencyCount: 0,
-      testCoveragePercent: 0,
+      testCoveragePercent: null,
     });
     expect(r.score).toBe(100);
     expect(r.grade).toBe('healthy');
@@ -56,20 +56,40 @@ describe('monorepo-health formula', () => {
       duplicateDepCount: 100,
       deadCodePercent: 100,
       largeFilePercent: 100,
-      testFailureRate: 100,
+      testFailureRate: null,
       cyclicDependencyCount: 100,
-      testCoveragePercent: 0,
+      testCoveragePercent: null,
     });
     expect(low.score).toBe(0);
     const high = computeMonorepoHealth({
       duplicateDepCount: 0,
       deadCodePercent: 0,
       largeFilePercent: 0,
-      testFailureRate: 0,
+      testFailureRate: null,
       cyclicDependencyCount: 0,
-      testCoveragePercent: 100,
+      testCoveragePercent: null,
     });
     expect(high.score).toBe(100);
+  });
+
+  test('optional test evidence does not change the structural score', () => {
+    const base = {
+      duplicateDepCount: 0,
+      deadCodePercent: 10,
+      largeFilePercent: 20,
+      cyclicDependencyCount: 0,
+    };
+    const unmeasured = computeMonorepoHealth({
+      ...base,
+      testFailureRate: null,
+      testCoveragePercent: null,
+    });
+    const measured = computeMonorepoHealth({
+      ...base,
+      testFailureRate: 25,
+      testCoveragePercent: 80,
+    });
+    expect(measured.score).toBe(unmeasured.score);
   });
 });
 
@@ -83,6 +103,18 @@ describe('monorepo-health helpers', () => {
     expect(countCycles(adj)).toBeGreaterThanOrEqual(1);
   });
 
+  test('findImportCycles classifies static and lazy cycles once', () => {
+    const graph = new Map([
+      ['a', [{ target: 'b', lazy: false }]],
+      ['b', [{ target: 'a', lazy: false }]],
+      ['c', [{ target: 'd', lazy: true }]],
+      ['d', [{ target: 'c', lazy: false }]],
+    ]);
+    const cycles = findImportCycles(graph);
+    expect(cycles).toHaveLength(2);
+    expect(cycles.filter(cycle => cycle.weak)).toHaveLength(1);
+  });
+
   test('parseCoveragePercent reads All-files table and Lines: summary', () => {
     const table = `
 --------------------------------|---------|---------|-------------------
@@ -94,7 +126,7 @@ All files                       |   27.78 |   19.58 |
 `;
     expect(parseCoveragePercent(table)).toBe(19.58);
     expect(parseCoveragePercent('Lines        : 42.5% ( 10/24 )')).toBe(42.5);
-    expect(parseCoveragePercent('no coverage here')).toBe(0);
+    expect(parseCoveragePercent('no coverage here')).toBeNull();
   });
 
   test('parseTestSummary reads pass/fail lines', () => {
