@@ -42,7 +42,7 @@ export type EnsureMachineBunfigOpts = {
   cwd?: string;
   home?: string;
   overwrite?: boolean;
-  /** Replace a symlink at ~/.bunfig.toml. Required in addition to flattening. */
+  /** Replace a symlink at ~/.bunfig.toml (including a dangling one). */
   overwriteLink?: boolean;
   checkOnly?: boolean;
   env?: Record<string, string | undefined>;
@@ -113,10 +113,20 @@ export async function ensureMachineBunfig(
   const template = await templateFile.text();
   const rendered = renderMachineBunfigTemplate(template, cacheDir);
   const existing = Bun.file(path);
-  const exists = await existing.exists();
+  const linked = bunfigPathIsSymlink(path);
+  const targetExists = await existing.exists();
 
   if (opts.checkOnly) {
-    if (!exists) {
+    if (linked && !targetExists) {
+      return {
+        ok: false,
+        action: 'check-fail',
+        path,
+        cacheDir,
+        reason: 'dangling symlink ~/.bunfig.toml',
+      };
+    }
+    if (!targetExists) {
       return {
         ok: false,
         action: 'check-fail',
@@ -149,12 +159,19 @@ export async function ensureMachineBunfig(
     return { ok: true, action: 'check-ok', path, cacheDir };
   }
 
-  const linked = exists && bunfigPathIsSymlink(path);
-  if (exists && !opts.overwrite && !opts.overwriteLink) {
-    return { ok: true, action: 'exists', path, cacheDir };
-  }
-
   if (linked && !opts.overwriteLink) {
+    if (!targetExists) {
+      return {
+        ok: false,
+        action: 'refused',
+        path,
+        cacheDir,
+        reason: 'dangling symlink ~/.bunfig.toml — restore the target or pass --overwrite-link',
+      };
+    }
+    if (!opts.overwrite) {
+      return { ok: true, action: 'exists', path, cacheDir };
+    }
     return {
       ok: false,
       action: 'refused',
@@ -162,6 +179,10 @@ export async function ensureMachineBunfig(
       cacheDir,
       reason: 'refusing to replace symlink ~/.bunfig.toml; pass --overwrite-link',
     };
+  }
+
+  if (targetExists && !linked && !opts.overwrite && !opts.overwriteLink) {
+    return { ok: true, action: 'exists', path, cacheDir };
   }
 
   if (linked) {

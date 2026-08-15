@@ -115,4 +115,41 @@ describe('ensure-machine-bunfig', () => {
     expect(await Bun.file(seed.path).text()).toContain('linker = "isolated"');
     await Bun.$`rm -rf ${home}`.quiet();
   });
+
+  test('dangling symlink is not missing: check fails, ensure does not write through', async () => {
+    const home = joinPath(ROOT, 'tmp/ensure-machine-bunfig-dangling-home');
+    await Bun.$`rm -rf ${home}`.quiet();
+    await Bun.$`mkdir -p ${home}`.quiet();
+    const live = joinPath(home, '.bunfig.toml');
+    const target = joinPath(home, 'missing-dotfiles-bunfig.toml');
+    symlinkSync(target, live);
+    expect(bunfigPathIsSymlink(live)).toBe(true);
+
+    const chk = await ensureMachineBunfig({ cwd: ROOT, home, checkOnly: true });
+    expect(chk.ok).toBe(false);
+    expect(chk.action).toBe('check-fail');
+    expect(chk.reason).toContain('dangling symlink');
+
+    const def = await ensureMachineBunfig({ cwd: ROOT, home, overwrite: false });
+    expect(def.ok).toBe(false);
+    expect(def.action).toBe('refused');
+    expect(lstatSync(live).isSymbolicLink()).toBe(true);
+    expect(await Bun.file(target).exists()).toBe(false);
+
+    const over = await ensureMachineBunfig({ cwd: ROOT, home, overwrite: true });
+    expect(over.ok).toBe(false);
+    expect(over.action).toBe('refused');
+    expect(await Bun.file(target).exists()).toBe(false);
+
+    const flat = await ensureMachineBunfig({
+      cwd: ROOT,
+      home,
+      overwriteLink: true,
+    });
+    expect(flat.ok).toBe(true);
+    expect(flat.action).toBe('wrote');
+    expect(lstatSync(live).isSymbolicLink()).toBe(false);
+    expect(await Bun.file(live).text()).toContain('linker = "isolated"');
+    await Bun.$`rm -rf ${home}`.quiet();
+  });
 });
