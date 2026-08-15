@@ -113,7 +113,7 @@ function provenance(
 }
 
 async function main(): Promise<void> {
-  const paths = await resolveGlobalBunfigPaths();
+  const paths = resolveGlobalBunfigPaths();
   const globalPath = paths.effectiveGlobal;
   const machine = globalPath ? await readToml(globalPath) : null;
   const project = await readToml(PROJECT_PATH);

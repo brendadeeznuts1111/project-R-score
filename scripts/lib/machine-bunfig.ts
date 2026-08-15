@@ -133,13 +133,16 @@ export async function readEffectiveGlobalBunfig(
   return (await readGlobalBunfigLayers(env)).effective;
 }
 
-/** SSOT home path vs the global file Bun loads. */
-export async function resolveGlobalBunfigPaths(
+/** SSOT home path vs the global file Bun loads. lstat only — no TOML parse. */
+export function resolveGlobalBunfigPaths(
   env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
-): Promise<{ machine: string | null; effectiveGlobal: string | null }> {
+): { machine: string | null; effectiveGlobal: string | null } {
   const machine = resolveHomeBunfigPath(env);
-  const layers = await readGlobalBunfigLayers(env);
-  return { machine, effectiveGlobal: layers.effective.bunfigPath ?? machine };
+  const xdgPath = xdgShadowBunfigPath(env);
+  if (xdgPath && bunfigInodeIsReadable(inspectBunfigInode(xdgPath))) {
+    return { machine, effectiveGlobal: xdgPath };
+  }
+  return { machine, effectiveGlobal: machine };
 }
 
 export async function readProjectBunfig(projectRoot: string): Promise<MachineBunfigSnapshot> {

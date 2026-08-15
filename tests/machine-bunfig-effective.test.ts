@@ -96,7 +96,7 @@ describe('readEffectiveGlobalBunfig', () => {
     await Bun.write(joinPath(home, '.bunfig.toml'), '[install]\nlinker = "isolated"\n');
     await Bun.write(joinPath(xdg, '.bunfig.toml'), '[install]\nlinker = "hoisted"\n');
     const env = { HOME: home, XDG_CONFIG_HOME: xdg };
-    const paths = await resolveGlobalBunfigPaths(env);
+    const paths = resolveGlobalBunfigPaths(env);
     expect(paths.machine).toBe(joinPath(home, '.bunfig.toml'));
     expect(paths.effectiveGlobal).toBe(joinPath(xdg, '.bunfig.toml'));
     await Bun.$`rm -rf ${home}`.quiet();
