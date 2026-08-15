@@ -1323,10 +1323,9 @@ export const DEPS_RATE_REMOVAL_ALLOWED_LONG = [
   'limit',
   'package',
   'scope',
-  'action',
-  'only-remove',
+  'grade',
+  'only-candidates',
   'hide-locked',
-  'no-locked',
   'why',
   'help',
 ] as const;

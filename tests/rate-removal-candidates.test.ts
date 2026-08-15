@@ -1,23 +1,30 @@
 // @see https://bun.com/docs/test
 import { describe, expect, test } from 'bun:test';
 import {
-  actionLabel,
+  collectUsageEvidence,
   confidenceFor,
   detectProtocol,
+  gradeLabel,
   protocolLabel,
   scoreRemoval,
   sectionLabel,
   type RemovalSignals,
 } from '../scripts/rate-removal-candidates.ts';
+import { createTestWorkspace } from './harness.ts';
+
+function usage(total = 0): RemovalSignals['usage'] {
+  return { sourceImports: total, configReferences: 0, scriptInvocations: 0, total };
+}
 
 function base(over: Partial<RemovalSignals> = {}): RemovalSignals {
   return {
-    importHits: 0,
+    usage: usage(),
     tierA: false,
     protected: false,
     internalProtocol: false,
     catalog: false,
-    weakSection: false,
+    optionalOnly: false,
+    peerOnly: false,
     rootOnly: true,
     declarationCount: 1,
     stoOnly: false,
@@ -35,56 +42,109 @@ describe('rate-removal-candidates scoring', () => {
   });
 
   test('protected packages score 0', () => {
-    const r = scoreRemoval(base({ protected: true }), 'typescript');
+    const r = scoreRemoval(base({ protected: true }));
     expect(r.score).toBe(0);
-    expect(r.grade).toBe('protected');
+    expect(r.grade).toBe('locked');
   });
 
   test('workspace protocol is protected', () => {
-    const r = scoreRemoval(base({ internalProtocol: true }), '@factorywager/internal-only');
-    expect(r.grade).toBe('protected');
+    const r = scoreRemoval(base({ internalProtocol: true }));
+    expect(r.grade).toBe('locked');
   });
 
-  test('unused tier-A is a strong remove candidate', () => {
-    const r = scoreRemoval(base({ tierA: true, importHits: 0 }), 'chalk');
-    expect(r.score).toBeGreaterThanOrEqual(70);
-    expect(r.grade).toBe('remove');
+  test('unused Tier-A dependency is a candidate', () => {
+    const r = scoreRemoval(base({ tierA: true, usage: usage() }));
+    expect(r.score).toBeGreaterThanOrEqual(75);
+    expect(r.grade).toBe('candidate');
   });
 
-  test('heavy imports keep package', () => {
-    const r = scoreRemoval(base({ importHits: 50, rootOnly: false }), 'yaml');
-    expect(r.grade).toBe('keep');
-    expect(r.score).toBeLessThanOrEqual(35);
+  test('heavy executable usage retains package', () => {
+    const r = scoreRemoval(base({ usage: usage(50), rootOnly: false }));
+    expect(r.grade).toBe('retain');
+    expect(r.score).toBeLessThanOrEqual(30);
   });
 
   test('catalog unused is review not automatic remove', () => {
-    const r = scoreRemoval(base({ catalog: true, importHits: 0 }), 'zod');
-    // catalog penalty + unused — may still be high; protected zod tested separately
-    expect(r.reasons.some(x => x.includes('catalog'))).toBe(true);
+    const r = scoreRemoval(base({ catalog: true, usage: usage() }));
+    expect(r.grade).toBe('review');
+    expect(r.reasons.some(reason => reason.code === 'catalog-contract')).toBe(true);
+  });
+
+  test('peer-only contracts are not treated as weak removable dependencies', () => {
+    const r = scoreRemoval(base({ peerOnly: true, rootOnly: false }));
+    expect(r.grade).toBe('review');
+    expect(r.reasons.some(reason => reason.code === 'peer-contract')).toBe(true);
   });
 
   test('table labels are human-readable', () => {
-    expect(actionLabel('remove')).toBe('REMOVE');
-    expect(actionLabel('protected')).toBe('LOCKED');
+    expect(gradeLabel('candidate')).toBe('CANDIDATE');
+    expect(gradeLabel('locked')).toBe('LOCKED');
     expect(sectionLabel('devDependencies')).toBe('dev');
     expect(protocolLabel('workspace')).toBe('workspace:*');
     expect(protocolLabel('npm')).toBe('npm registry');
   });
 
   test('confidence: root unused is high; STO-only zero hits is low', () => {
-    expect(confidenceFor(base({ importHits: 0, rootOnly: true }), 'remove')).toBe('high');
-    expect(confidenceFor(base({ importHits: 0, rootOnly: false, stoOnly: true }), 'remove')).toBe(
+    expect(confidenceFor(base({ usage: usage(), rootOnly: true }), 'candidate')).toBe('high');
+    expect(confidenceFor(base({ usage: usage(), rootOnly: false, stoOnly: true }), 'review')).toBe(
       'low'
     );
-    expect(confidenceFor(base({ importHits: 50 }), 'keep')).toBe('high');
+    expect(confidenceFor(base({ usage: usage(50) }), 'retain')).toBe('high');
   });
 
   test('STO-only unused is down-scored vs root unused', () => {
-    const root = scoreRemoval(base({ importHits: 0, rootOnly: true, stoOnly: false }), 'left-pad');
+    const root = scoreRemoval(base({ usage: usage(), rootOnly: true, stoOnly: false }));
     const sto = scoreRemoval(
-      base({ importHits: 0, rootOnly: false, stoOnly: true, declarationCount: 1 }),
-      'clsx'
+      base({ usage: usage(), rootOnly: false, stoOnly: true, declarationCount: 1 })
     );
     expect(root.score).toBeGreaterThan(sto.score);
+    expect(sto.grade).toBe('review');
+  });
+
+  test('single-pass usage evidence separates imports, scripts, and config references', async () => {
+    await using workspace = await createTestWorkspace('removal-grading-');
+    await Bun.write(
+      workspace.resolve('source.ts'),
+      `import { x } from "alpha/subpath";\nconst lazy = import("beta");\n`
+    );
+    await Bun.write(
+      workspace.resolve('package.json'),
+      JSON.stringify({ scripts: { alpha: 'bunx alpha --check' } })
+    );
+    await Bun.write(workspace.resolve('theme.css'), `@import "gamma/theme.css";`);
+
+    const evidence = await collectUsageEvidence(workspace.root, ['alpha', 'beta', 'gamma']);
+    expect(evidence.get('alpha')).toEqual({
+      sourceImports: 1,
+      configReferences: 0,
+      scriptInvocations: 1,
+      total: 2,
+    });
+    expect(evidence.get('beta')?.sourceImports).toBe(1);
+    expect(evidence.get('gamma')?.configReferences).toBe(1);
+  });
+
+  test('filtered JSON distinguishes displayed, matched, and evaluated totals', async () => {
+    const proc = Bun.spawn(
+      ['bun', 'scripts/rate-removal-candidates.ts', '--only-candidates', '--limit', '1', '--json'],
+      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
+    );
+    const [stdout, stderr, exitCode] = await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+      proc.exited,
+    ]);
+    expect(exitCode).toBe(0);
+    expect(stderr).toBe('');
+    const report = JSON.parse(stdout) as {
+      count: number;
+      matched: number;
+      total: number;
+      candidates: Array<{ grade: string }>;
+    };
+    expect(report.total).toBeGreaterThan(0);
+    expect(report.total).toBeGreaterThanOrEqual(report.matched);
+    expect(report.matched).toBeGreaterThanOrEqual(report.count);
+    expect(report.candidates.every(candidate => candidate.grade === 'candidate')).toBe(true);
   });
 });

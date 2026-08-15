@@ -6,7 +6,7 @@
 // @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
 // @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
 /**
- * Rate direct dependency **removal candidates** (higher score = safer to remove).
+ * Grade direct dependency removal evidence (higher score = stronger candidacy).
  *
  * Scans workspace package.json deps, estimates source import usage, flags
  * Tier-A avoid packages, and protects toolchain / workspace protocols.
@@ -30,6 +30,8 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler · Bun.Loader
+// @updated Bun.Transpiler · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { jsonOut, logTable } from '../lib/console-depth.ts';
@@ -81,8 +83,8 @@ export type DirectDep = {
 };
 
 export type RemovalSignals = {
-  /** Import / require / from "name" hits in source scan */
-  importHits: number;
+  /** Executable references found in one repository scan. */
+  usage: UsageEvidence;
   /** Name appears as Tier-A avoid package */
   tierA: boolean;
   /** Protected toolchain pin */
@@ -91,8 +93,10 @@ export type RemovalSignals = {
   internalProtocol: boolean;
   /** Spec is catalog: */
   catalog: boolean;
-  /** Only declared as optional or peer */
-  weakSection: boolean;
+  /** Declared only as optionalDependencies. */
+  optionalOnly: boolean;
+  /** Declared in peerDependencies: a compatibility contract, not weak usage. */
+  peerOnly: boolean;
   /** Declared only in root package.json */
   rootOnly: boolean;
   /** How many workspace package.json files declare it */
@@ -104,16 +108,61 @@ export type RemovalSignals = {
 /** Confidence that the score reflects reality (scan limits). */
 export type Confidence = 'high' | 'medium' | 'low';
 
-export type RemovalCandidate = DirectDep & {
+export type RemovalGrade = 'candidate' | 'review' | 'retain' | 'locked';
+
+export type UsageEvidence = {
+  sourceImports: number;
+  configReferences: number;
+  scriptInvocations: number;
+  total: number;
+};
+
+export type RemovalReasonCode =
+  | 'tier-a-native'
+  | 'no-usage'
+  | 'low-usage'
+  | 'moderate-usage'
+  | 'heavy-usage'
+  | 'catalog-contract'
+  | 'optional-only'
+  | 'peer-contract'
+  | 'root-unused'
+  | 'multi-declared'
+  | 'sto-scan-risk'
+  | 'protected-policy'
+  | 'internal-protocol';
+
+export type RemovalReason = {
+  code: RemovalReasonCode;
+  weight: number;
+  message: string;
+};
+
+export type DependencyAggregate = {
+  name: string;
+  versions: string[];
+  sections: Section[];
+  declarations: DirectDep[];
+  protocols: DepProtocol[];
+};
+
+export type RemovalCandidate = DependencyAggregate & {
   score: number;
-  grade: 'remove' | 'review' | 'keep' | 'protected';
+  grade: RemovalGrade;
   confidence: Confidence;
   signals: RemovalSignals;
-  reasons: string[];
-  removeHint: string;
-  /** Optional `bun why` first parent (when --why) */
+  reasons: RemovalReason[];
+  verifyCommand: string;
+  removeCommand?: string;
+  /** Optional `bun why` first parent (when --why). */
   whyParent?: string;
 };
+
+export const REMOVAL_SCORE = {
+  baseline: 35,
+  candidateMin: 75,
+  retainMax: 30,
+} as const;
 
 export function detectProtocol(spec: string): DepProtocol {
   if (spec.startsWith('workspace:')) return 'workspace';
@@ -127,84 +176,89 @@ export function detectProtocol(spec: string): DepProtocol {
 }
 
 /**
- * Score 0–100: higher = better removal candidate.
+ * Score 0–100: higher = stronger removal-candidacy evidence.
  * Pure function for unit tests.
  */
-export function scoreRemoval(
-  signals: RemovalSignals,
-  name: string
-): {
+export function scoreRemoval(signals: RemovalSignals): {
   score: number;
-  grade: RemovalCandidate['grade'];
-  reasons: string[];
+  grade: RemovalGrade;
+  reasons: RemovalReason[];
 } {
-  const reasons: string[] = [];
-  let score = 40; // baseline "unknown usage"
+  const reasons: RemovalReason[] = [];
+  let score = REMOVAL_SCORE.baseline;
+
+  const add = (code: RemovalReasonCode, weight: number, message: string): void => {
+    score += weight;
+    reasons.push({ code, weight, message });
+  };
 
   if (signals.protected || signals.internalProtocol) {
     return {
       score: 0,
-      grade: 'protected',
-      reasons: [
-        signals.internalProtocol
-          ? 'workspace/file/link protocol — not an npm removal target'
-          : 'protected toolchain / platform pin',
-      ],
+      grade: 'locked',
+      reasons: signals.internalProtocol
+        ? [
+            {
+              code: 'internal-protocol',
+              weight: -REMOVAL_SCORE.baseline,
+              message: 'workspace/file/link protocol — not an npm removal target',
+            },
+          ]
+        : [
+            {
+              code: 'protected-policy',
+              weight: -REMOVAL_SCORE.baseline,
+              message: 'protected toolchain / platform pin',
+            },
+          ],
     };
   }
 
   if (signals.tierA) {
-    score += 35;
-    reasons.push('Tier-A avoid package (prefer Bun native)');
+    add('tier-a-native', 20, 'Tier-A avoid package (prefer Bun native)');
   }
 
-  if (signals.importHits === 0) {
-    score += 40;
-    reasons.push('no import hits in source scan');
-  } else if (signals.importHits <= 2) {
-    score += 15;
-    reasons.push(`low import hits (${signals.importHits})`);
-  } else if (signals.importHits <= 10) {
-    score -= 10;
-    reasons.push(`moderate import hits (${signals.importHits})`);
+  if (signals.usage.total === 0) {
+    add('no-usage', 40, 'no executable usage found');
+  } else if (signals.usage.total <= 2) {
+    add('low-usage', 10, `low executable usage (${signals.usage.total})`);
+  } else if (signals.usage.total <= 10) {
+    add('moderate-usage', -10, `moderate executable usage (${signals.usage.total})`);
   } else {
-    score -= 35;
-    reasons.push(`heavy import hits (${signals.importHits})`);
+    add('heavy-usage', -30, `heavy executable usage (${signals.usage.total})`);
   }
 
   if (signals.catalog) {
-    score -= 15;
-    reasons.push('catalog: pin — shared SSOT; remove only after catalog review');
+    add('catalog-contract', -10, 'catalog: pin — shared SSOT; review catalog ownership');
   }
 
-  if (signals.weakSection) {
-    score += 10;
-    reasons.push('optional/peer only');
+  if (signals.optionalOnly) {
+    add('optional-only', 5, 'optional dependency only');
   }
 
-  if (signals.rootOnly && signals.importHits === 0) {
-    score += 10;
-    reasons.push('root-only declare + unused in scan');
+  if (signals.peerOnly) {
+    add('peer-contract', -20, 'peer dependency compatibility contract');
+  }
+
+  if (signals.rootOnly && signals.usage.total === 0) {
+    add('root-unused', 10, 'root-only declaration + no executable usage');
   }
 
   if (signals.declarationCount > 3) {
-    score -= 10;
-    reasons.push(`declared in ${signals.declarationCount} package.json files`);
+    add('multi-declared', -10, `declared in ${signals.declarationCount} package.json files`);
   }
 
-  // STO / alias-heavy apps: zero hits is less trustworthy
-  if (signals.stoOnly && signals.importHits === 0 && !signals.tierA) {
-    score -= 20;
-    reasons.push('STO-only declare — import scan may miss path aliases');
+  if (signals.stoOnly && signals.usage.total === 0 && !signals.tierA) {
+    add('sto-scan-risk', -25, 'STO-only declaration — alias scan may miss usage');
   }
 
   score = Math.max(0, Math.min(100, score));
 
-  let grade: RemovalCandidate['grade'] = 'review';
-  if (score >= 70) grade = 'remove';
-  else if (score <= 35) grade = 'keep';
-
-  if (reasons.length === 0) reasons.push('default score');
+  const confidence = confidenceFor(signals, 'review');
+  const candidateBlocked = confidence === 'low' || signals.catalog || signals.peerOnly;
+  let grade: RemovalGrade = 'review';
+  if (score >= REMOVAL_SCORE.candidateMin && !candidateBlocked) grade = 'candidate';
+  else if (score <= REMOVAL_SCORE.retainMax) grade = 'retain';
   return { score, grade, reasons };
 }
 
@@ -212,16 +266,12 @@ export function scoreRemoval(
  * How much to trust the score given scan limits.
  * Pure — unit tested.
  */
-export function confidenceFor(
-  signals: RemovalSignals,
-  grade: RemovalCandidate['grade']
-): Confidence {
-  if (grade === 'protected' || signals.internalProtocol || signals.protected) return 'high';
-  if (signals.importHits >= 10) return 'high';
-  if (signals.importHits === 0 && signals.rootOnly && !signals.stoOnly) return 'high';
-  if (signals.importHits === 0 && signals.stoOnly) return 'low';
-  if (signals.importHits === 0) return 'medium';
-  if (signals.importHits <= 2) return 'medium';
+export function confidenceFor(signals: RemovalSignals, grade: RemovalGrade): Confidence {
+  if (grade === 'locked' || signals.internalProtocol || signals.protected) return 'high';
+  if (signals.usage.total >= 10) return 'high';
+  if (signals.usage.total === 0 && signals.rootOnly && !signals.stoOnly) return 'high';
+  if (signals.usage.total === 0 && signals.stoOnly) return 'low';
+  if (signals.usage.total <= 2) return 'medium';
   return 'high';
 }
 
@@ -275,26 +325,8 @@ export async function collectDirectDeps(repoRoot: string): Promise<DirectDep[]> 
 }
 
 /** Collapse multi-declare rows into one name-level aggregate for scoring. */
-export function aggregateByName(deps: DirectDep[]): Map<
-  string,
-  {
-    name: string;
-    versions: string[];
-    sections: Section[];
-    declaredIn: string[];
-    protocols: DepProtocol[];
-  }
-> {
-  const map = new Map<
-    string,
-    {
-      name: string;
-      versions: string[];
-      sections: Section[];
-      declaredIn: string[];
-      protocols: DepProtocol[];
-    }
-  >();
+export function aggregateByName(deps: DirectDep[]): Map<string, DependencyAggregate> {
+  const map = new Map<string, DependencyAggregate>();
   for (const d of deps) {
     let row = map.get(d.name);
     if (!row) {
@@ -302,92 +334,127 @@ export function aggregateByName(deps: DirectDep[]): Map<
         name: d.name,
         versions: [],
         sections: [],
-        declaredIn: [],
+        declarations: [],
         protocols: [],
       };
       map.set(d.name, row);
     }
     if (!row.versions.includes(d.version)) row.versions.push(d.version);
     if (!row.sections.includes(d.section)) row.sections.push(d.section);
-    if (!row.declaredIn.includes(d.declaredIn)) row.declaredIn.push(d.declaredIn);
+    row.declarations.push(d);
     if (!row.protocols.includes(d.protocol)) row.protocols.push(d.protocol);
   }
   return map;
 }
 
-/**
- * Count source references to a package name (imports / requires / CSS / scripts).
- * Scans common code roots; skips node_modules and lockfiles.
- * package.json dependency keys are not usage; scripts that invoke the CLI are.
- */
-export async function countImportHits(repoRoot: string, packageName: string): Promise<number> {
-  const escaped = packageName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  // from 'pkg' | require('pkg') | import('pkg') | @import "pkg/..." (CSS / postcss)
-  const re = new RegExp(
-    `(?:from\\s+['"]${escaped}(?:/[^'"]*)?['"]|require\\(\\s*['"]${escaped}(?:/[^'"]*)?['"]\\s*\\)|import\\(\\s*['"]${escaped}(?:/[^'"]*)?['"]\\s*\\)|@import\\s+(?:url\\(\\s*)?['"]${escaped}(?:/[^'"]*)?['"])`,
-    'g'
-  );
-  // Config / CSS bare: "pkg" or "pkg/subpath" (fontsource, shadcn/tailwind.css)
-  const bareOrSub = new RegExp(`['"]${escaped}(?:/[^'"]*)?['"]`, 'g');
-  // CLI token in package.json scripts: bunx shadcn, shadcn@latest, npx shadcn
-  const scriptCli = new RegExp(`(?:^|[\\s"'=\`@/])${escaped}(?:@latest|@\\d|\\s|"|'|$)`, 'g');
+const SOURCE_EXTENSIONS = new Set(['ts', 'tsx', 'js', 'jsx', 'mjs', 'cjs']);
+const SCAN_SKIP_PREFIXES = [
+  '.bun-create/',
+  '.cache/',
+  '.git/',
+  'artifacts/',
+  'docs/',
+  'node_modules/',
+  'public/',
+  'scratch/',
+];
 
-  const roots = [
-    'lib',
-    'scripts',
-    'tools',
-    'tests',
-    'packages',
-    'server',
-    'config',
-    'projects/active/sports-terminal-os',
-  ];
-  let hits = 0;
-  const fileGlob = new Bun.Glob('**/*.{ts,tsx,js,jsx,mjs,cjs,css,json}');
+function dependencyNameForSpecifier(specifier: string, names: Set<string>): string | null {
+  for (const name of names) {
+    if (specifier === name || specifier.startsWith(`${name}/`)) return name;
+  }
+  return null;
+}
 
-  for (const root of roots) {
-    const absRoot = joinPath(repoRoot, root);
-    try {
-      for await (const rel of fileGlob.scan({ cwd: absRoot, onlyFiles: true })) {
-        if (rel.includes('node_modules/') || rel.endsWith('package-lock.json')) continue;
-        const isPkgJson = rel === 'package.json' || rel.endsWith('/package.json');
-        try {
-          const text = await Bun.file(joinPath(absRoot, rel)).text();
-          if (isPkgJson) {
-            // Scripts / config keys that invoke the package as a CLI (not dep keys alone)
-            try {
-              const pj = JSON.parse(text) as {
-                scripts?: Record<string, string>;
-                bin?: string | Record<string, string>;
-              };
-              for (const body of Object.values(pj.scripts ?? {})) {
-                const m = body.match(scriptCli);
-                if (m) hits += m.length;
-              }
-            } catch {
-              /* invalid json */
-            }
-            continue;
-          }
-          const m = text.match(re);
-          if (m) hits += m.length;
-          // Config-style package path strings (vite config plugins, CSS imports already via @import)
-          if (
-            /\.(config|rc)\.|vite|tailwind|postcss|components\.json/i.test(rel) ||
-            rel.endsWith('.css')
-          ) {
-            const b = text.match(bareOrSub);
-            if (b) hits += b.length;
-          }
-        } catch {
-          /* skip unreadable */
+function emptyUsage(): UsageEvidence {
+  return { sourceImports: 0, configReferences: 0, scriptInvocations: 0, total: 0 };
+}
+
+function incrementUsage(
+  usage: Map<string, UsageEvidence>,
+  name: string,
+  field: 'sourceImports' | 'configReferences' | 'scriptInvocations',
+  amount = 1
+): void {
+  const row = usage.get(name) ?? emptyUsage();
+  row[field] += amount;
+  row.total += amount;
+  usage.set(name, row);
+}
+
+function isScannablePath(rel: string): boolean {
+  if (SCAN_SKIP_PREFIXES.some(prefix => rel.startsWith(prefix))) return false;
+  if (rel.includes('/node_modules/')) return false;
+  if (rel.startsWith('projects/') && !rel.startsWith('projects/active/sports-terminal-os/')) {
+    return false;
+  }
+  return true;
+}
+
+/** Build executable usage evidence in one filesystem pass for every direct dependency. */
+export async function collectUsageEvidence(
+  repoRoot: string,
+  packageNames: Iterable<string>
+): Promise<Map<string, UsageEvidence>> {
+  const names = new Set(packageNames);
+  const usage = new Map([...names].map(name => [name, emptyUsage()]));
+  const transpilers = new Map<string, Bun.Transpiler>();
+  const glob = new Bun.Glob('**/*.{ts,tsx,js,jsx,mjs,cjs,css,json}');
+
+  for await (const rel of glob.scan({
+    cwd: repoRoot,
+    onlyFiles: true,
+    dot: true,
+    followSymlinks: false,
+  })) {
+    if (!isScannablePath(rel)) continue;
+    const extension = rel.slice(rel.lastIndexOf('.') + 1);
+    const text = await Bun.file(joinPath(repoRoot, rel)).text();
+
+    if (SOURCE_EXTENSIONS.has(extension)) {
+      const loader = extension === 'mjs' || extension === 'cjs' ? 'js' : extension;
+      const transpiler =
+        transpilers.get(loader) ?? new Bun.Transpiler({ loader: loader as Bun.Loader });
+      transpilers.set(loader, transpiler);
+      try {
+        const seen = new Map<string, number>();
+        for (const imported of transpiler.scan(text).imports) {
+          const name = dependencyNameForSpecifier(imported.path, names);
+          if (name) seen.set(name, (seen.get(name) ?? 0) + 1);
         }
+        for (const [name, hits] of seen) incrementUsage(usage, name, 'sourceImports', hits);
+      } catch {
+        // A source file that cannot be parsed provides no safe removal evidence.
       }
-    } catch {
-      /* root missing */
+      continue;
+    }
+
+    if (rel.endsWith('package.json')) {
+      try {
+        const pkg = JSON.parse(text) as { scripts?: Record<string, string> };
+        for (const body of Object.values(pkg.scripts ?? {})) {
+          for (const name of names) {
+            const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const cli = new RegExp(`(?:^|[\\s"'=])${escaped}(?:@[^\\s"']+)?(?=$|[\\s"'])`, 'g');
+            incrementUsage(usage, name, 'scriptInvocations', body.match(cli)?.length ?? 0);
+          }
+        }
+      } catch {
+        // Invalid package JSON is owned by workspace validation.
+      }
+      continue;
+    }
+
+    if (extension === 'css' || /(?:components|import-map|tsconfig).*\.json$/i.test(rel)) {
+      for (const name of names) {
+        const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const reference = new RegExp(`['"]${escaped}(?:/[^'"]*)?['"]`, 'g');
+        incrementUsage(usage, name, 'configReferences', text.match(reference)?.length ?? 0);
+      }
     }
   }
-  return hits;
+
+  return usage;
 }
 
 export type RateOptions = {
@@ -395,27 +462,42 @@ export type RateOptions = {
   minScore?: number;
   /** root = only deps declared in root package.json */
   scope?: 'all' | 'root';
-  /** e.g. ['remove','review'] — empty = all grades */
-  actions?: Array<RemovalCandidate['grade']>;
+  /** e.g. ['candidate','review'] — empty = all grades. */
+  grades?: RemovalGrade[];
   /** Drop LOCKED rows from output */
   hideLocked?: boolean;
-  /** Attach bun why first parent for REMOVE rows (slower) */
+  /** Attach bun why first parent for CANDIDATE rows (slower). */
   withWhy?: boolean;
 };
 
-export async function rateCandidates(
-  repoRoot: string,
-  opts?: RateOptions
-): Promise<RemovalCandidate[]> {
+export type RemovalReport = {
+  totalEvaluated: number;
+  matched: number;
+  counts: Record<RemovalGrade, number>;
+  candidates: RemovalCandidate[];
+};
+
+function countGrades(rows: RemovalCandidate[]): Record<RemovalGrade, number> {
+  return {
+    candidate: rows.filter(row => row.grade === 'candidate').length,
+    review: rows.filter(row => row.grade === 'review').length,
+    retain: rows.filter(row => row.grade === 'retain').length,
+    locked: rows.filter(row => row.grade === 'locked').length,
+  };
+}
+
+export async function rateCandidates(repoRoot: string, opts?: RateOptions): Promise<RemovalReport> {
   const banned = new Set(tierAAvoidPackages());
   let direct = await collectDirectDeps(repoRoot);
   if (opts?.scope === 'root') {
     direct = direct.filter(d => d.declaredIn === 'package.json');
   }
   const byName = aggregateByName(direct);
+  const nameFilter = opts?.nameFilter;
   const names = [...byName.keys()]
-    .filter(n => !opts?.nameFilter || n === opts.nameFilter || n.includes(opts.nameFilter!))
+    .filter(name => !nameFilter || name === nameFilter || name.includes(nameFilter))
     .sort();
+  const usageByName = await collectUsageEvidence(repoRoot, names);
 
   const out: RemovalCandidate[] = [];
 
@@ -425,56 +507,37 @@ export async function rateCandidates(
       agg.protocols.find(p => p === 'workspace' || p === 'file' || p === 'link') ??
       agg.protocols[0] ??
       'npm';
-    const section =
-      agg.sections.find(s => s === 'dependencies') ??
-      agg.sections.find(s => s === 'devDependencies') ??
-      agg.sections[0]!;
-
-    const importHits =
-      protocol === 'workspace' || protocol === 'file' || protocol === 'link'
-        ? 0
-        : await countImportHits(repoRoot, name);
+    const usage = usageByName.get(name) ?? emptyUsage();
+    const declaredIn = [...new Set(agg.declarations.map(d => d.declaredIn))];
 
     const stoOnly =
-      agg.declaredIn.length > 0 && agg.declaredIn.every(p => p.includes('sports-terminal-os'));
+      declaredIn.length > 0 && declaredIn.every(p => p.includes('sports-terminal-os'));
 
     const signals: RemovalSignals = {
-      importHits,
+      usage,
       tierA: banned.has(name),
       protected: PROTECTED_PACKAGES.has(name),
       internalProtocol: protocol === 'workspace' || protocol === 'file' || protocol === 'link',
       catalog: protocol === 'catalog' || agg.versions.some(v => v.startsWith('catalog:')),
-      weakSection: agg.sections.every(
-        s => s === 'optionalDependencies' || s === 'peerDependencies'
-      ),
-      rootOnly: agg.declaredIn.length === 1 && agg.declaredIn[0] === 'package.json',
-      declarationCount: agg.declaredIn.length,
+      optionalOnly: agg.sections.every(s => s === 'optionalDependencies'),
+      peerOnly: agg.sections.every(s => s === 'peerDependencies'),
+      rootOnly: declaredIn.length === 1 && declaredIn[0] === 'package.json',
+      declarationCount: declaredIn.length,
       stoOnly,
     };
 
-    const { score, grade, reasons } = scoreRemoval(signals, name);
+    const { score, grade, reasons } = scoreRemoval(signals);
     const confidence = confidenceFor(signals, grade);
 
-    const version = agg.versions.join(' | ');
-    const removeHint =
-      grade === 'protected' || signals.internalProtocol
-        ? '(do not remove via remove:safe — internal/protected)'
-        : `bun run remove:safe -- ${name}`;
-
     out.push({
-      name,
-      version,
-      section,
-      declaredIn: agg.declaredIn.join(', '),
-      declaredPkgName:
-        agg.declaredIn.length === 1 ? agg.declaredIn[0]! : `${agg.declaredIn.length} pkgs`,
-      protocol,
+      ...agg,
       score,
       grade,
       confidence,
       signals,
       reasons,
-      removeHint,
+      verifyCommand: `bun why ${name}`,
+      removeCommand: grade === 'candidate' ? `bun run remove:safe -- ${name}` : undefined,
     });
   }
 
@@ -485,15 +548,15 @@ export async function rateCandidates(
     filtered = filtered.filter(r => r.score >= opts.minScore!);
   }
   if (opts?.hideLocked) {
-    filtered = filtered.filter(r => r.grade !== 'protected');
+    filtered = filtered.filter(r => r.grade !== 'locked');
   }
-  if (opts?.actions && opts.actions.length > 0) {
-    const allow = new Set(opts.actions);
+  if (opts?.grades && opts.grades.length > 0) {
+    const allow = new Set(opts.grades);
     filtered = filtered.filter(r => allow.has(r.grade));
   }
 
   if (opts?.withWhy) {
-    const targets = filtered.filter(r => r.grade === 'remove').slice(0, 20);
+    const targets = filtered.filter(r => r.grade === 'candidate').slice(0, 20);
     await Promise.all(
       targets.map(async r => {
         r.whyParent = await summarizeBunWhy(repoRoot, r.name);
@@ -501,7 +564,12 @@ export async function rateCandidates(
     );
   }
 
-  return filtered;
+  return {
+    totalEvaluated: out.length,
+    matched: filtered.length,
+    counts: countGrades(out),
+    candidates: filtered,
+  };
 }
 
 /** Best-effort first parent from `bun why` (same idea as inventory-wrappers). */
@@ -536,6 +604,28 @@ function argValue(argv: readonly string[], flag: string): string | undefined {
   return eq ? eq.slice(flag.length + 3) : undefined;
 }
 
+function nonNegativeNumber(argv: readonly string[], flag: string): number {
+  const raw = argValue(argv, flag);
+  if (raw === undefined) return 0;
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value < 0) {
+    throw new TypeError(`--${flag} must be a non-negative number, got ${JSON.stringify(raw)}`);
+  }
+  return value;
+}
+
+function parseGrades(raw: string | undefined, onlyCandidates: boolean): RemovalGrade[] | undefined {
+  if (onlyCandidates) return ['candidate'];
+  if (!raw) return undefined;
+  return raw.split(',').map(value => {
+    const grade = value.trim().toLowerCase();
+    if (grade === 'candidate' || grade === 'review' || grade === 'retain' || grade === 'locked') {
+      return grade;
+    }
+    throw new Error(`Unknown --grade ${value} (use candidate,review,retain,locked)`);
+  });
+}
+
 async function main(): Promise<void> {
   const argv = applyUnknownLongOptionGuardFor('deps:rate-removal', Bun.argv.slice(2));
   if (argv.includes('-h') || argv.includes('--help')) {
@@ -545,35 +635,27 @@ async function main(): Promise<void> {
 
   const asJson = argv.includes('--json');
   const asMd = argv.includes('--md');
-  const minScore = Number(argValue(argv, 'min-score') ?? '0');
-  const limit = Number(argValue(argv, 'limit') ?? '0');
+  const minScore = nonNegativeNumber(argv, 'min-score');
+  const limit = nonNegativeNumber(argv, 'limit');
   const nameFilter = argValue(argv, 'package');
   const scopeRaw = argValue(argv, 'scope') ?? 'all';
-  const scope = scopeRaw === 'root' ? 'root' : 'all';
-  const hideLocked = argv.includes('--hide-locked') || argv.includes('--no-locked');
-  const withWhy = argv.includes('--why');
-  const onlyRemove = argv.includes('--only-remove');
-  const actionRaw = argValue(argv, 'action');
-  let actions: RateOptions['actions'];
-  if (onlyRemove) actions = ['remove'];
-  else if (actionRaw) {
-    actions = actionRaw.split(',').map(s => {
-      const t = s.trim().toLowerCase();
-      if (t === 'remove' || t === 'review' || t === 'keep' || t === 'protected' || t === 'locked') {
-        return t === 'locked' ? 'protected' : (t as RemovalCandidate['grade']);
-      }
-      throw new Error(`Unknown --action ${s} (use remove,review,keep,locked)`);
-    });
+  if (scopeRaw !== 'all' && scopeRaw !== 'root') {
+    throw new Error(`Unknown --scope ${scopeRaw} (use all or root)`);
   }
+  const scope: NonNullable<RateOptions['scope']> = scopeRaw;
+  const hideLocked = argv.includes('--hide-locked');
+  const withWhy = argv.includes('--why');
+  const grades = parseGrades(argValue(argv, 'grade'), argv.includes('--only-candidates'));
 
-  const rows = await rateCandidates(REPO_ROOT, {
+  const report = await rateCandidates(REPO_ROOT, {
     nameFilter,
-    minScore: Number.isFinite(minScore) ? minScore : 0,
+    minScore,
     scope,
     hideLocked,
-    actions,
+    grades,
     withWhy,
   });
+  const rows = report.candidates;
 
   let shown = rows;
   if (limit > 0) shown = rows.slice(0, limit);
@@ -583,26 +665,29 @@ async function main(): Promise<void> {
       kind: 'deps-removal-candidates',
       reportOnly: true,
       count: shown.length,
-      total: rows.length,
-      filters: { minScore, scope, hideLocked, actions: actions ?? null, withWhy },
+      matched: report.matched,
+      total: report.totalEvaluated,
+      counts: report.counts,
+      filters: { minScore, scope, hideLocked, grades: grades ?? null, withWhy },
       legend: TABLE_LEGEND,
       candidates: shown.map(r => ({
         name: r.name,
-        version: r.version,
-        section: r.section,
-        sectionLabel: sectionLabel(r.section),
-        protocol: r.protocol,
-        protocolLabel: protocolLabel(r.protocol),
-        declaredIn: r.declaredIn,
+        versions: r.versions,
+        sections: r.sections,
+        sectionLabels: r.sections.map(sectionLabel),
+        protocols: r.protocols,
+        protocolLabels: r.protocols.map(protocolLabel),
+        declarations: r.declarations,
         score: r.score,
         grade: r.grade,
-        action: actionLabel(r.grade),
+        gradeLabel: gradeLabel(r.grade),
         confidence: r.confidence,
-        importHits: r.signals.importHits,
+        usage: r.signals.usage,
         tierA: r.signals.tierA,
         stoOnly: r.signals.stoOnly,
         reasons: r.reasons,
-        removeHint: r.removeHint,
+        verifyCommand: r.verifyCommand,
+        removeCommand: r.removeCommand ?? null,
         whyParent: r.whyParent ?? null,
       })),
     });
@@ -610,13 +695,13 @@ async function main(): Promise<void> {
   }
 
   if (asMd) {
-    printMarkdown(shown, rows.length, { minScore, limit, scope, hideLocked });
+    printMarkdown(shown, report, { minScore, limit, scope, hideLocked });
     process.exit(0);
   }
 
   printTableLegend();
   console.info(
-    `Showing ${shown.length} of ${rows.length} direct deps` +
+    `Showing ${shown.length} of ${report.matched} matched · ${report.totalEvaluated} evaluated` +
       (limit > 0 ? ` · limit ${limit}` : '') +
       (minScore > 0 ? ` · min-score ${minScore}` : '') +
       (scope === 'root' ? ' · scope=root' : '') +
@@ -626,17 +711,21 @@ async function main(): Promise<void> {
   );
 
   const table = shown.map(r => {
+    const declaredIn = [...new Set(r.declarations.map(d => d.declaredIn))].join(', ');
     const row: Record<string, string | number> = {
       'Score 0–100': r.score,
-      Action: actionLabel(r.grade),
+      Grade: gradeLabel(r.grade),
       Conf: r.confidence,
       Package: r.name,
-      Version: shortenPath(r.version, 16),
-      'Import hits': r.signals.importHits,
-      Spec: protocolLabel(r.protocol),
-      'Declared as': sectionLabel(r.section),
-      'Declared in': shortenPath(r.declaredIn, 28),
-      Signal: r.reasons.slice(0, 2).join(' · '),
+      Version: shortenPath(r.versions.join(' | '), 16),
+      Usage: r.signals.usage.total,
+      Spec: r.protocols.map(protocolLabel).join(' | '),
+      'Declared as': r.sections.map(sectionLabel).join(' | '),
+      'Declared in': shortenPath(declaredIn, 28),
+      Signal: r.reasons
+        .slice(0, 2)
+        .map(reason => reason.message)
+        .join(' · '),
     };
     if (withWhy && r.whyParent) row['bun why'] = r.whyParent;
     if (r.signals.tierA) row.Package = `${r.name} [Tier-A]`;
@@ -645,26 +734,22 @@ async function main(): Promise<void> {
 
   logTable(table);
 
-  const counts = {
-    remove: rows.filter(r => r.grade === 'remove').length,
-    review: rows.filter(r => r.grade === 'review').length,
-    keep: rows.filter(r => r.grade === 'keep').length,
-    protected: rows.filter(r => r.grade === 'protected').length,
-  };
+  const counts = countGrades(rows);
   console.info(
-    `\nCounts (this filter set): REMOVE=${counts.remove} · REVIEW=${counts.review} · KEEP=${counts.keep} · LOCKED=${counts.protected}`
+    `\nCounts (this filter set): CANDIDATE=${counts.candidate} · REVIEW=${counts.review} · RETAIN=${counts.retain} · LOCKED=${counts.locked}`
   );
 
-  const removeable = shown.filter(r => r.grade === 'remove');
-  if (removeable.length) {
-    console.info('\nSuggested next step for REMOVE rows (still verify first):');
-    for (const r of removeable.slice(0, 15)) {
-      console.info(`  ${r.removeHint}`);
+  const candidates = shown.filter(r => r.grade === 'candidate');
+  if (candidates.length) {
+    console.info('\nVerification path for CANDIDATE rows:');
+    for (const r of candidates.slice(0, 15)) {
+      console.info(`  ${r.verifyCommand}`);
       console.info(
         `    # score=${r.score} conf=${r.confidence}` +
           (r.whyParent ? ` why←${r.whyParent}` : '') +
-          ` · ${r.reasons.join('; ')}`
+          ` · ${r.reasons.map(reason => reason.message).join('; ')}`
       );
+      if (r.removeCommand) console.info(`  ${r.removeCommand}`);
     }
   }
 
@@ -672,7 +757,7 @@ async function main(): Promise<void> {
     '\nBefore removing: bun why <pkg>  →  bun run remove:safe -- <pkg>  →  bun run install:verify'
   );
   console.info(
-    'Tips: --only-remove · --hide-locked · --scope root · --why · --md · --min-score 70'
+    'Tips: --only-candidates · --hide-locked · --scope root · --why · --md · --min-score 75'
   );
   process.exit(0);
 }
@@ -680,7 +765,7 @@ async function main(): Promise<void> {
 function printHelp(): void {
   console.info(`Usage: bun run deps:rate-removal -- [options]
 
-Rate direct workspace dependencies for removal (higher score = safer).
+Grade direct workspace dependencies by removal evidence (advisory).
 
 Options:
   --json              Machine-readable output (+ legend)
@@ -689,57 +774,62 @@ Options:
   --min-score N       Only rows with score ≥ N
   --package NAME      Filter to one package (substring ok)
   --scope root|all    Root package.json only, or all workspaces (default all)
-  --action LIST       Comma grades: remove,review,keep,locked
-  --only-remove       Shorthand for --action remove
+  --grade LIST        Comma grades: candidate,review,retain,locked
+  --only-candidates   Shorthand for --grade candidate
   --hide-locked       Hide LOCKED (workspace/toolchain) rows
-  --why               Run bun why on top REMOVE rows (slower)
+  --why               Run bun why on top CANDIDATE rows (slower)
   --help              This help
 
 Examples:
-  bun run deps:rate-removal -- --only-remove --hide-locked
-  bun run deps:rate-removal -- --scope root --min-score 70 --why
+  bun run deps:rate-removal -- --only-candidates --hide-locked
+  bun run deps:rate-removal -- --scope root --min-score 75 --why
   bun run deps:rate-removal -- --package yaml --json
 `);
 }
 
 function printMarkdown(
   shown: RemovalCandidate[],
-  total: number,
+  report: RemovalReport,
   filters: { minScore: number; limit: number; scope: string; hideLocked: boolean }
 ): void {
   console.info('# Dependency removal candidates\n');
   console.info(
-    `Showing **${shown.length}** of **${total}**` +
+    `Showing **${shown.length}** of **${report.matched}** matched; **${report.totalEvaluated}** evaluated` +
       (filters.limit ? ` (limit ${filters.limit})` : '') +
       (filters.minScore ? ` · min-score ${filters.minScore}` : '') +
       (filters.scope === 'root' ? ' · scope=root' : '') +
       (filters.hideLocked ? ' · hide-locked' : '') +
       '\n'
   );
-  console.info('| Score | Action | Conf | Package | Hits | Spec | As | In | Signal |');
+  console.info('| Score | Grade | Conf | Package | Usage | Spec | As | In | Signal |');
   console.info('| ---: | --- | --- | --- | ---: | --- | --- | --- | --- |');
   for (const r of shown) {
     const pkg = r.signals.tierA ? `${r.name} (Tier-A)` : r.name;
-    const signal = r.reasons.slice(0, 2).join('; ').replace(/\|/g, '/');
+    const signal = r.reasons
+      .slice(0, 2)
+      .map(reason => reason.message)
+      .join('; ')
+      .replace(/\|/g, '/');
+    const declaredIn = [...new Set(r.declarations.map(d => d.declaredIn))].join(', ');
     console.info(
-      `| ${r.score} | ${actionLabel(r.grade)} | ${r.confidence} | \`${pkg}\` | ${r.signals.importHits} | ${protocolLabel(r.protocol)} | ${sectionLabel(r.section)} | ${shortenPath(r.declaredIn, 24)} | ${signal} |`
+      `| ${r.score} | ${gradeLabel(r.grade)} | ${r.confidence} | \`${pkg}\` | ${r.signals.usage.total} | ${r.protocols.map(protocolLabel).join(' / ')} | ${r.sections.map(sectionLabel).join(' / ')} | ${shortenPath(declaredIn, 24)} | ${signal} |`
     );
   }
   console.info(
-    '\n> Higher score = safer to remove. Confirm with `bun why` before `remove:safe`.\n'
+    '\n> A higher score means stronger candidacy evidence, not permission to remove. Confirm with `bun why`.\n'
   );
 }
 
-/** Human-readable action for table (maps internal grade). */
-export function actionLabel(grade: RemovalCandidate['grade']): string {
+/** Human-readable grade for terminal and Markdown output. */
+export function gradeLabel(grade: RemovalGrade): string {
   switch (grade) {
-    case 'remove':
-      return 'REMOVE';
+    case 'candidate':
+      return 'CANDIDATE';
     case 'review':
       return 'REVIEW';
-    case 'keep':
-      return 'KEEP';
-    case 'protected':
+    case 'retain':
+      return 'RETAIN';
+    case 'locked':
       return 'LOCKED';
   }
 }
@@ -783,11 +873,11 @@ function shortenPath(path: string, max: number): string {
 
 /** Printed above the table so columns are unambiguous. */
 export const TABLE_LEGEND = {
-  score: '0–100; higher = safer to remove (heuristic, not proof of unused)',
-  action: {
-    REMOVE: 'score ≥70 — strong unused / Tier-A signal; still run bun why',
-    REVIEW: 'score 36–69 — mixed signals; inspect before remove',
-    KEEP: 'score ≤35 — import hits suggest active use',
+  score: '0–100; higher = stronger candidacy evidence (never removal proof)',
+  grades: {
+    CANDIDATE: 'score ≥75, non-low confidence, no peer/catalog blocker — verify with bun why',
+    REVIEW: 'score 31–74 or low confidence — evidence needs inspection',
+    RETAIN: 'score ≤30 — executable usage or contracts favor retention',
     LOCKED: 'workspace/file/link or protected toolchain — do not remove:safe',
   },
   confidence: {
@@ -795,7 +885,7 @@ export const TABLE_LEGEND = {
     medium: 'some scan uncertainty',
     low: 'STO-only / alias-heavy — zero hits may be false',
   },
-  importHits: 'count of from/require/import() matches in lib/scripts/tools/tests/packages/STO',
+  usage: 'Bun.Transpiler imports + package scripts + CSS/config references from one scan',
   spec: 'how package.json records the dep (npm / catalog: / workspace:*)',
   declaredAs: 'prod | dev | optional | peer',
   declaredIn: 'which package.json file(s) list the dep',
@@ -806,18 +896,18 @@ function printTableLegend(): void {
   console.info('Direct dependency removal rater (advisory — not a CI gate)\n');
   console.info('Columns:');
   console.info(`  Score 0–100   ${TABLE_LEGEND.score}`);
-  console.info(`  Action        REMOVE | REVIEW | KEEP | LOCKED`);
-  console.info(`                  REMOVE  ${TABLE_LEGEND.action.REMOVE}`);
-  console.info(`                  REVIEW  ${TABLE_LEGEND.action.REVIEW}`);
-  console.info(`                  KEEP    ${TABLE_LEGEND.action.KEEP}`);
-  console.info(`                  LOCKED  ${TABLE_LEGEND.action.LOCKED}`);
+  console.info(`  Grade         CANDIDATE | REVIEW | RETAIN | LOCKED`);
+  console.info(`                  CANDIDATE  ${TABLE_LEGEND.grades.CANDIDATE}`);
+  console.info(`                  REVIEW  ${TABLE_LEGEND.grades.REVIEW}`);
+  console.info(`                  RETAIN  ${TABLE_LEGEND.grades.RETAIN}`);
+  console.info(`                  LOCKED  ${TABLE_LEGEND.grades.LOCKED}`);
   console.info(`  Conf          high | medium | low — trust in the score`);
   console.info(`                  high    ${TABLE_LEGEND.confidence.high}`);
   console.info(`                  medium  ${TABLE_LEGEND.confidence.medium}`);
   console.info(`                  low     ${TABLE_LEGEND.confidence.low}`);
   console.info(`  Package       npm package name ([Tier-A] = prefer Bun native)`);
   console.info(`  Version       declared range / pin (truncated)`);
-  console.info(`  Import hits   ${TABLE_LEGEND.importHits}`);
+  console.info(`  Usage         ${TABLE_LEGEND.usage}`);
   console.info(`  Spec          ${TABLE_LEGEND.spec}`);
   console.info(`  Declared as   ${TABLE_LEGEND.declaredAs}`);
   console.info(`  Declared in   ${TABLE_LEGEND.declaredIn}`);
