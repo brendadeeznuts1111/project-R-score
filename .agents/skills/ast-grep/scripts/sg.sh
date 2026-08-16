@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Resolve ast-grep 0.44+ (outline support) from PATH or skill node_modules.
+# Resolve the repository-pinned ast-grep 0.44+ binary.
 set -euo pipefail
 
 SKILL_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -12,13 +12,9 @@ outline_supported() {
 
 resolve_binary() {
   local candidates=(
-    "$(command -v ast-grep 2>/dev/null || true)"
-    "$(command -v sg 2>/dev/null || true)"
     "$SKILL_ROOT/node_modules/.bin/ast-grep"
     "$SKILL_ROOT/node_modules/.bin/sg"
     "${AST_GREP_BIN:-}"
-    /opt/homebrew/bin/ast-grep
-    /usr/local/bin/ast-grep
   )
   for bin in "${candidates[@]}"; do
     outline_supported "$bin" || continue
@@ -30,8 +26,7 @@ resolve_binary() {
 
 if ! BIN="$(resolve_binary)"; then
   echo "ast-grep 0.44+ not found (outline required)." >&2
-  echo "Global: npm install -g @ast-grep/cli@0.44.0" >&2
-  echo "Workspace: $SKILL_ROOT/scripts/install.sh" >&2
+  echo "Hydrate the repository pin: $SKILL_ROOT/scripts/install.sh" >&2
   exit 3
 fi
 

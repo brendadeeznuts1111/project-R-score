@@ -38,7 +38,7 @@ type Gate = {
 };
 
 function printHelp(): void {
-  console.info(`pre-commit-ast-grep — ast-grep rule tests, semver policy, supply-chain packages
+  console.info(`pre-commit-ast-grep — skill references, ast-grep rules, semver policy, supply-chain packages
 
 Usage:
   bun scripts/pre-commit-ast-grep.ts [mode]
@@ -111,12 +111,20 @@ function buildGates(includePackages: boolean, includeDoctor: boolean): Gate[] {
   const gates: Gate[] = [];
 
   if (includeDoctor) {
-    gates.push({
-      id: 'doctor',
-      label: 'ast-grep doctor',
-      cmd: ['bun', `${skillRoot}/scripts/bun-cli.ts`, 'doctor'],
-      cwd: repoRoot,
-    });
+    gates.push(
+      {
+        id: 'doctor',
+        label: 'ast-grep doctor',
+        cmd: ['bun', `${skillRoot}/scripts/bun-cli.ts`, 'doctor'],
+        cwd: repoRoot,
+      },
+      {
+        id: 'references',
+        label: 'ast-grep reference contract',
+        cmd: ['bun', 'run', 'precommit:references'],
+        cwd: skillRoot,
+      }
+    );
   }
 
   gates.push(
@@ -228,7 +236,9 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  console.info(`✅ ast-grep + semver passed — ${results.length} gate(s), ${totalMs}ms [${mode}]`);
+  console.info(
+    `✅ ast-grep references + rules + semver passed — ${results.length} gate(s), ${totalMs}ms [${mode}]`
+  );
 }
 
 if (import.meta.main) {

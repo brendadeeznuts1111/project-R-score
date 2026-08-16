@@ -4,7 +4,8 @@
   "private": true,
   "description": "Pinned ast-grep CLI for agent outline/search workflows (0.44.0+ for outline).",
   "scripts": {
-    "precommit": "bun run precommit:rules && bun run precommit:semver",
+    "precommit": "bun run precommit:references && bun run precommit:rules && bun run precommit:semver",
+    "precommit:references": "bun test ./tests/unit/reference-contract.test.ts",
     "precommit:rules": "python3 scripts/ast_grep_helper.py -q test",
     "precommit:semver": "python3 scripts/ast_grep_helper.py -q bun test-ci --profile semver --skip-preflight",
     "precommit:packages": "bun scripts/bun-cli.ts bun supply-chain packages --domain agents-ast-grep --fail-on",
