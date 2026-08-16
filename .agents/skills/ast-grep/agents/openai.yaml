@@ -1,4 +1,4 @@
 interface:
   display_name: "ast-grep"
-  short_description: "AST map/search/scan for monorepo — Bun-native CLI, map, outline, bun inventory"
-  default_prompt: "Start with nav/map --heatmap for unfamiliar zones. Use index/jump for symbol lookup, graph for target deps, anchors to verify repo-map. Outline before large reads; audit for violations; fix for autofix rules. Run test after editing YAML rules. See references/monorepo.md."
+  short_description: "Syntax-aware code outline, search, scan, and rewrite"
+  default_prompt: "Outline unfamiliar code, validate the syntax pattern, narrow with files/search, preview rewrites, and prove changes with the owning project tests."
