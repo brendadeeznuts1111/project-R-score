@@ -224,10 +224,9 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   `bun tools/bun-docs-catalog.ts verify` · `bun run docs:provenance:check` ·
   malformed persisted evidence fails closed; unknown history remains explicitly
   unknown
-- **`project-r-agent-alignment`** — Project R declares its portable agent-skill
-  packages and repository authority pointers (`unit` + `boundary`) _Ratchet_ →
-  `bun run agents:contract:check` in `ci:core` · operator-machine parity →
-  `bun run agents:contract:check -- --installed`
+- **`agent-skills-validation`** — repository-owned skill packages, examples,
+  links, metadata, and loop registration validate (`unit` + `boundary`)
+  _Ratchet_ → `bun run skills:validate` in `ci:core`
 - **`audit-findings-catalog`** — FactoryWager audit findings+concepts verify
   (evidence · graph · relatedDocs · catalog/page parity; sha3-256 primary)
   (`unit` + `boundary`) _Ratchet_ → `bun run audit:verify` · pre-commit (audit
@@ -421,7 +420,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `blog-extraction-journey`          | human-only | `bun test tests/journey/blog-extraction.test.ts`                                                                                                                     |
 | `bun-http-server-docs`             | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-docs-catalog.test.ts`                                                                                           |
 | `bun-api-release-provenance`       | continuous | `ci:core` · `bun tools/bun-docs-catalog.ts verify && bun run docs:provenance:check`                                                                                  |
-| `project-r-agent-alignment`        | continuous | `ci:core` · `bun run agents:contract:check` · operator machine `bun run agents:contract:check -- --installed`                                                        |
+| `agent-skills-validation`          | continuous | `ci:core` · `bun run skills:validate`                                                                                                                              |
 | `path-bun`                         | continuous | pre-commit (lib\|tools staged) · `ci:harness`                                                                                                                        |
 | `bun-env`                          | continuous | pre-commit (lib\|scripts staged) · `ci:harness` · eslint `prefer-bun-env`                                                                                            |
 | `invisible-chars`                  | continuous | pre-commit (spine/test .ts staged) · `ci:harness`                                                                                                                    |

@@ -1,4 +1,4 @@
 interface:
   display_name: "Skill Maintenance"
   short_description: "Keep Project R skills and machine guidance current"
-  default_prompt: "Use $project-r-skill-maintenance to update repository authority, validate complete skill packages, prove installed parity with the Project R agent contract, and keep optional global routing subordinate to the project."
+  default_prompt: "Use $project-r-skill-maintenance to update the owning repository skill, remove duplicated guidance, and validate its package and loop registration."

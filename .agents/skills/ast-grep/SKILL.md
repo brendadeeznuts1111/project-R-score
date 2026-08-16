@@ -127,7 +127,6 @@ For guidance or metadata changes:
 
 ```bash
 bun run skills:validate
-bun run agents:contract:check
 ```
 
 For rules, helper code, package scripts, or MCP changes:
