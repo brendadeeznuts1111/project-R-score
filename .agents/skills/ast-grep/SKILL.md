@@ -18,16 +18,14 @@ Run from the Project R repository root:
 
 ```bash
 bun install
+.agents/skills/ast-grep/scripts/install.sh
 python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py doctor
 python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py outline scripts/rate-removal-candidates.ts --view digest
 ```
 
-The repository workspace owns `@ast-grep/cli`; do not install a global npm copy.
-If the skill-local binary link is missing, run:
-
-```bash
-.agents/skills/ast-grep/scripts/install.sh
-```
+The root install wires repository hooks and the skill installer hydrates the
+pinned local binary without writing a nested lockfile. Do not install or prefer
+a global npm copy.
 
 ## Ownership boundary
 
@@ -148,6 +146,4 @@ not duplicate them here.
 ## References
 
 - [Monorepo targets and navigation](references/monorepo.md)
-- [Pattern language](references/patterns.md)
-- [Recipes](references/recipes.md)
-- [Failure modes and diagnostics](references/pitfalls.md)
+- [Pattern language, diagnostics, and safe recipes](references/patterns.md)

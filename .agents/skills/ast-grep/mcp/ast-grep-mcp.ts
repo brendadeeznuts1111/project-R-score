@@ -16,7 +16,7 @@ import {
 import { assertBunStablePin } from '../../../../lib/verification/bun-runtime-pin.ts';
 
 const SERVER_NAME = 'ast-grep';
-const SERVER_VERSION = '0.23.0';
+const SERVER_VERSION = '0.23.1';
 const SKILL_ROOT = resolve(import.meta.dir, '..');
 const MAX_LINES = 2_000;
 const MAX_BYTES = 50 * 1024;
@@ -52,7 +52,6 @@ const TOOLS = [
       type: 'object' as const,
       properties: {
         fix: { type: 'boolean', description: 'Install skill pin if binary/outline missing.' },
-        globalFix: { type: 'boolean', description: 'Hint npm global install when fix is set.' },
       },
     },
   },
@@ -622,7 +621,6 @@ async function runBunScript(
 async function cmdDoctor(args: Record<string, unknown>): Promise<ToolCallResult> {
   const extra: string[] = [];
   if (args.fix === true) extra.push('--fix');
-  if (args.globalFix === true) extra.push('--global-fix');
   const { stdout, stderr, code } = await runHelper('doctor', extra);
   const body = (stdout || stderr).trim();
   return toolText(body || '(no doctor output)', code !== 0);
