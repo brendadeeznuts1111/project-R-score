@@ -2,20 +2,14 @@
 
 Run from the claimed Project R worktree.
 
-## Runtime, agent, and lane preflight
+## Runtime and lane preflight
 
 ```bash
 bun --version
 bun --revision
 bun run bun:channel:check
-bun run agents:contract:check -- --installed
 bun run lane:status
 ```
-
-The installed contract check is the current fail-closed Project R parity proof:
-it compares each complete repository-owned package with `~/.codex/skills` and
-rejects changed, missing, or stale files. It is repository-owned and does not
-depend on a machine-wide developer-experience wrapper.
 
 ## Bun channel proof
 

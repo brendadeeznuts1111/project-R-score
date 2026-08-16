@@ -97,7 +97,7 @@ partner entity.
 
 - [ ] Claim → evidence exited 0
 - [ ] `bun run bun:ci` on clean tree (or scoped proof listed above with owner)
-- [ ] Agent policy/skill changes pass `bun run agents:contract:check`
+- [ ] Agent policy/skill changes pass `bun run skills:validate`
 - [ ] No foreign-lane files in the squash
 
 ## Reviewer checklist

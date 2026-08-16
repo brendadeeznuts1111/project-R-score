@@ -99,7 +99,7 @@ inventory, doc refs, or pre-commit gates. Otherwise: **n/a**.
 | Bun-types inventory | [`docs/design/bun-types-inventory.md`](../docs/design/bun-types-inventory.md) · `bun:types-inventory:check` · tip-diff                      |          |
 | Doc refs (`@see`)   | `bun tools/bun-doc-refs.ts check` / `annotate --write`                                                                                      |          |
 | Console format gate | `lib/console-format-scan.ts` · `// console-ok`                                                                                              |          |
-| Agent contract      | `config/project-r-agent-contract.json` · `bun run agents:contract:check` · operator parity `-- --installed`                                 |          |
+| Agent skills        | `.agents/skills/` · `bun run skills:validate`                                                                                               |          |
 
 - [ ] Staged brand check green (`--staged --strict`) when `*Id` fields change
 - [ ] Inventory/artifacts regenerated when pin or parser changes (`:write` +
@@ -225,9 +225,7 @@ Otherwise: **n/a**.
       `bun run lib:domains:check`
 - [ ] Docs/JIT updated only when an owner moved (`docs/harness/`, `repo-docs`,
       AGENTS)
-- [ ] Agent policy/skill changes pass `bun run skills:validate` and
-      `bun run agents:contract:check` (`-- --installed` only on an operator
-      machine)
+- [ ] Agent policy/skill changes pass `bun run skills:validate`
 - [ ] `bun run check:docs` passed when Markdown changed
 - [ ] Concept lifecycle / agents tenant docs updated when vocabulary or wire
       contract moved

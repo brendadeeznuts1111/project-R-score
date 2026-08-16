@@ -11,13 +11,11 @@ description: >
 ## Start
 
 1. Run `bun --version`, `bun --revision`, and `bun run bun:channel:check`.
-2. Run `bun run agents:contract:check -- --installed` to prove the installed
-   Project R skill packages match repository authority.
-3. Run `bun run lane:status` and preserve every other worktree and index.
-4. Select the smallest owned proof in the
+2. Run `bun run lane:status` and preserve every other worktree and index.
+3. Select the smallest owned proof in the
    [command map](references/command-map.md).
-5. Fix the first owned failure; never weaken a gate to make it green.
-6. Finish with the staged hook and clean local merge proof.
+4. Fix the first owned failure; never weaken a gate to make it green.
+5. Finish with the staged hook and clean local merge proof.
 
 ## Ownership boundaries
 

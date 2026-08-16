@@ -9,6 +9,6 @@ contact_links:
   - name: Bookmakers open issues (BM-*)
     url: https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/harness/tenants/bookmakers-open-issues.md
     about: Tenant=bookmakers catalog (BM-*). Domain=partner = desk loop; bookmaker ≠ partner CODE.
-  - name: Agent and skill contract
-    url: https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/project-r-agent-contract.json
-    about: Repository-owned agent alignment; validate with bun run agents:contract:check.
+  - name: Agent skills
+    url: https://github.com/brendadeeznuts1111/project-R-score/tree/main/.agents/skills
+    about: Repository-owned skill packages; validate with bun run skills:validate.

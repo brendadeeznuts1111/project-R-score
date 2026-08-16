@@ -24,7 +24,6 @@ from `public/` and `functions/`, with machine-readable proofs baked under
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | This hub                     | [Home](/) · [wiki.factory-wager.com](https://wiki.factory-wager.com/)                                                                                                                                                                             |
 | AI agents                    | [`AGENTS.md`](AGENTS.md) (entry) · [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · routing [`docs/AGENTS.md`](docs/AGENTS.md)                                                                                                |
-| Agent alignment              | [`config/project-r-agent-contract.json`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/project-r-agent-contract.json) · `bun run agents:contract:check` · operator parity `bun run agents:contract:check -- --installed` |
 | Wiki full index              | [`wiki-index.md`](wiki-index.md) — portal · registry · tenants · proof loop                                                                                                                                                                       |
 | Registry index               | [`registry-index.md`](registry-index.md) — bake map + portal consumers                                                                                                                                                                            |
 | Workspace map                | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                                                                                                                                    |
@@ -58,10 +57,8 @@ linking, table, rendering, and validation guidance, see the
 [Markdown Contributor Guide](docs/markdown/CONTRIBUTING_MARKDOWN.md).
 
 Project policy and skills are repository-owned. Start with
-[`AGENTS.md`](AGENTS.md), validate portable alignment with
-`bun run agents:contract:check`, and use `-- --installed` only on an operator
-machine to compare complete installed skill packages. Global tooling does not
-replace repository proof.
+[`AGENTS.md`](AGENTS.md) and validate `.agents/skills` with
+`bun run skills:validate`.
 
 ## Platform at a glance
 

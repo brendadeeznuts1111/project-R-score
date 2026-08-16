@@ -2,8 +2,8 @@
 name: project-r-skill-maintenance
 description: >
   Create, tighten, and validate Project R Codex skills. Use for SKILL.md
-  wording, agents/openai.yaml alignment, duplicate installed copies, broken
-  references, or stale Bun guidance.
+  wording, agents/openai.yaml alignment, duplicated guidance, broken references,
+  or stale Bun guidance.
 ---
 
 # Project R Skill Maintenance
@@ -12,11 +12,9 @@ description: >
 
 1. Update an existing repository skill when it owns the request; create a new
    skill only when no current owner fits.
-2. Treat `/Users/nolarose/Projects/.agents/skills` as Project R authority.
-   Compare any `/Users/nolarose/.codex/skills` copy, but synchronize it only
-   after the repository version validates. Treat `~/.codex/AGENTS.md` as
-   optional machine routing, not the Project R SSOT: it must not copy generated
-   release data or override repository policy.
+2. Treat `.agents/skills` in the owning Project R checkout as the only Project R
+   skill authority. Do not create installed copies under `~/.codex/skills`;
+   workspace discovery loads the repository packages directly.
 3. Keep frontmatter to supported keys and make `description` state capability
    plus trigger. Put runnable detail in the body or a focused reference.
 4. Keep the body operational: start condition, ownership boundary, ordered
@@ -27,9 +25,6 @@ description: >
 6. Register a new skill in `.agents/skills/ast-grep/skill-loop-registry.json`
    with enabled `doctor` and `rate` phases. Add `precommit` only when the skill
    owns that command.
-7. Run installed parity only on the operator machine. The repository contract
-   remains portable; `--installed` compares every package file and rejects
-   missing, changed, or stale files under `~/.codex/skills`.
 
 ## Thread-portfolio boundary
 
@@ -73,8 +68,6 @@ Run:
 
 ```bash
 bun run skills:validate
-bun run agents:contract:check
-bun run agents:contract:check -- --installed
 ```
 
 When validation or hook behavior changes, also run:
@@ -83,14 +76,8 @@ When validation or hook behavior changes, also run:
 bun test tests/agent-skills-validation.test.ts tests/pre-commit-runner.test.ts
 ```
 
-Report the authoritative files changed, wording or behavior removed, focused
-proof, and whether an installed copy was synchronized.
-
-After repository proof passes, synchronize the complete changed skill package
-(body, metadata, references, and scripts), run the installed contract check, and
-report its exact package/file count. This is the machine-side alignment evidence
-because it compares complete packages byte-for-byte. Update global routing only
-when it conflicts with repository authority.
+Report the authoritative files changed, wording or behavior removed, and focused
+proof. Do not synchronize repository skills into a global skill directory.
 
 ## Guardrails
 

@@ -4,10 +4,8 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`). Keep this file
 to always-loaded policy. Load domain detail just in time from
 [`docs/AGENTS.md`](docs/AGENTS.md), the repository routing table.
 
-Project R's portable agent-alignment contract is
-`config/project-r-agent-contract.json`. `bun run agents:contract:check`
-validates the repository declaration; add `-- --installed` on an operator
-machine to compare complete packages under `~/.codex/skills`.
+Project R skills live only in `.agents/skills`; `bun run skills:validate`
+validates their structure, links, examples, metadata, and loop registration.
 
 ## Authority and repository boundaries
 

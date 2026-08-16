@@ -33,15 +33,11 @@ project evidence.
 
 ```bash
 bun run skills:validate
-bun run agents:contract:check
-# Operator machine only: compare complete packages under ~/.codex/skills.
-bun run agents:contract:check -- --installed
 ```
 
 Update an existing skill owner instead of adding a duplicate. Repository skill
-packages live under `.agents/skills/`; validate them before synchronizing an
-installed copy. The portable contract must remain usable without machine-local
-state.
+packages live under `.agents/skills/`; do not copy them into a global skill
+directory.
 
 ## Markdown
 
@@ -331,7 +327,7 @@ Prefer branded IDs and wire-boundary parse-once — see root
 | Surface coverage map | [SURFACE_COVERAGE.md](../SURFACE_COVERAGE.md) · `bun run surface-coverage:map`                                         |
 | Install / bunfig     | [UNIFIED.md](../UNIFIED.md)                                                                                            |
 | Wire / brands        | [WIRE_BOUNDARY.md](../WIRE_BOUNDARY.md) · branded-ids skill                                                            |
-| Agent alignment      | [`config/project-r-agent-contract.json`](../../config/project-r-agent-contract.json) · `bun run agents:contract:check` |
+| Agent skills         | [`.agents/skills`](../../.agents/skills/) · `bun run skills:validate`                                                    |
 | Bun APIs             | [BUN_NATIVE_CAPABILITIES.md](../BUN_NATIVE_CAPABILITIES.md) · `bun run bun:remediation`                                |
 
 Issues:

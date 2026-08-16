@@ -899,16 +899,16 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'tools/bun-docs-provenance.ts · tools/bun-doc-refs.ts',
   },
   {
-    id: 'project-r-agent-alignment',
+    id: 'agent-skills-validation',
     claim:
-      'Project R declares a validated portable contract for repository-owned agent skills and authority pointers',
+      'Repository-owned agent skills have valid packages, examples, links, metadata, and loop registration',
     kinds: ['unit', 'boundary'],
     gateClass: 'continuous',
     gateRef: 'ci:core',
-    evidence: ['bun run agents:contract:check', 'config/project-r-agent-contract.json'],
-    freshRerun: 'bun run agents:contract:check',
+    evidence: ['bun run skills:validate', 'tests/agent-skills-validation.test.ts'],
+    freshRerun: 'bun run skills:validate',
     freshRerunKind: 'claim',
-    owner: 'config/project-r-agent-contract.json · scripts/check-project-r-agent-contract.ts',
+    owner: 'scripts/validate-agent-skills.ts · lib/agent-skills-paths.ts',
   },
   {
     id: 'audit-findings-catalog',
