@@ -336,13 +336,8 @@ def require_binary(*, require_outline: bool = False) -> Path:
         return p
     err("ast-grep binary not found." if not require_outline else "ast-grep 0.44+ with outline not found.")
     err("")
-    err("Install via one of:")
-    err(f"  bash {skill_root()}/scripts/install.sh    # skill pin (0.44)")
-    err("  npm install -g @ast-grep/cli@0.44.0         # global")
-    err("")
-    err("Or manually:")
-    err("  brew install ast-grep                      # may be <0.44 (no outline)")
-    err("  cargo install ast-grep --locked            # any OS with Rust")
+    err("Hydrate the repository-owned skill pin:")
+    err(f"  bash {skill_root()}/scripts/install.sh")
     sys.exit(3)
 
 
@@ -4148,6 +4143,30 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 
     if outline_bin:
         print(f"outline: supported ({outline_bin})")
+        outline_rules = skill_root() / "outline-rules" / "bun-monorepo.yml"
+        outline_sample = skill_root() / "scripts" / "bun-cli.ts"
+        if outline_rules.is_file() and outline_sample.is_file():
+            proc = run_sg(
+                outline_bin,
+                [
+                    "outline",
+                    "--view",
+                    "names",
+                    "--outline-rules",
+                    str(outline_rules),
+                    str(outline_sample),
+                ],
+                timeout=10,
+            )
+            if proc.returncode == 0:
+                print("outline-rules: valid")
+            else:
+                detail = (proc.stderr or proc.stdout).strip().splitlines()
+                print(f"outline-rules: INVALID ({detail[-1] if detail else 'parse failed'})")
+                issues.append("outline-rules")
+        else:
+            print("outline-rules: missing")
+            issues.append("outline-rules")
     else:
         print("outline: MISSING (need @ast-grep/cli@0.44.0+)")
         issues.append("outline")
@@ -4231,7 +4250,6 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     else:
         print("bun runtime: not on PATH")
     print(f"bun-cli.ts: {'ok' if artifacts['bun_cli'] else 'missing'}")
-    print(f"outline-rules: {'ok' if artifacts['outline_rules'] else 'missing'}")
     print(f"mcp server: {'ok' if artifacts['mcp'] else 'missing'}")
     print(f"scan rules: {len(artifacts['rules'])} ({', '.join(artifacts['rules']) or 'none'})")
     fix_rules = artifacts["fix_rules"]

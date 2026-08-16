@@ -10,6 +10,21 @@ const SKILL_ROOT = resolve(import.meta.dir, "../..");
 const REPO_ROOT = resolve(SKILL_ROOT, "../../..");
 
 describe("skill-loop integration", () => {
+  test("doctor executes and validates Bun outline rules", async () => {
+    const proc = Bun.spawn(
+      ["bun", resolve(SKILL_ROOT, "scripts/bun-cli.ts"), "doctor"],
+      { cwd: REPO_ROOT, stdout: "pipe", stderr: "pipe" },
+    );
+    const [stdout, stderr, code] = await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+      proc.exited,
+    ]);
+    expect(code, stderr).toBe(0);
+    expect(stdout).toContain("outline-rules: valid");
+    expect(stdout).not.toContain("outline-rules: INVALID");
+  });
+
   test("repo-map anchors resolve from a warning-safe symbol index", async () => {
     const runAnchors = async () => {
       const proc = Bun.spawn(

@@ -22,7 +22,7 @@ isExported: false
 id: bun-file-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.file($$$PATH)
 name: Bun.file
@@ -31,7 +31,7 @@ isExported: false
 id: bun-file-call-tsx
 language: Tsx
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.file($$$PATH)
 name: Bun.file
@@ -40,7 +40,7 @@ isExported: false
 id: bun-write-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.write($$$ARGS)
 name: Bun.write
@@ -49,7 +49,7 @@ isExported: false
 id: bun-spawn-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.spawn($$$ARGS)
 name: Bun.spawn
@@ -58,7 +58,7 @@ isExported: false
 id: bun-sleep-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.sleep($$$MS)
 name: Bun.sleep
@@ -67,7 +67,7 @@ isExported: false
 id: bun-hash-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.hash($$$DATA)
 name: Bun.hash
@@ -141,7 +141,7 @@ isExported: false
 id: outbound-fetch
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: fetch($$$ARGS)
 name: fetch
@@ -150,7 +150,7 @@ isExported: false
 id: websocket-client
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: new WebSocket($$$URL)
 name: WebSocket
@@ -172,7 +172,7 @@ isExported: false
 id: bun-glob-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: new Bun.Glob($$$PAT)
 name: Bun.Glob
@@ -181,7 +181,7 @@ isExported: false
 id: bun-nanoseconds-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.nanoseconds($$$)
 name: Bun.nanoseconds
@@ -190,7 +190,7 @@ isExported: false
 id: bun-password-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.password.$METHOD($$$)
 name: Bun.password
@@ -199,7 +199,7 @@ isExported: false
 id: bun-markdown-ansi
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.markdown.ansi($$$)
 name: Bun.markdown.ansi
@@ -208,7 +208,7 @@ isExported: false
 id: bun-inspect-table-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.inspect.table($$$)
 name: Bun.inspect.table
@@ -217,7 +217,7 @@ isExported: false
 id: bun-which-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.which($$$)
 name: Bun.which
@@ -226,7 +226,7 @@ isExported: false
 id: bun-remove-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.remove($$$)
 name: Bun.remove
@@ -244,7 +244,7 @@ isExported: false
 id: bun-build-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.build($$$OPTS)
 name: Bun.build
@@ -253,7 +253,7 @@ isExported: false
 id: bun-spawn-sync-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.spawnSync($$$ARGS)
 name: Bun.spawnSync
@@ -262,7 +262,7 @@ isExported: false
 id: bun-listen-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.listen($$$OPTS)
 name: Bun.listen
@@ -271,7 +271,7 @@ isExported: false
 id: bun-connect-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.connect($$$OPTS)
 name: Bun.connect
@@ -280,7 +280,7 @@ isExported: false
 id: bun-sql-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.SQL($$$OPTS)
 name: Bun.SQL
@@ -298,7 +298,7 @@ isExported: false
 id: worker-spawn
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: new Worker($$$URL)
 name: Worker
@@ -307,7 +307,7 @@ isExported: false
 id: bun-plugin-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.plugin($$$OPTS)
 name: Bun.plugin
@@ -316,7 +316,7 @@ isExported: false
 id: html-rewriter-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: new HTMLRewriter($$$)
 name: HTMLRewriter
@@ -325,7 +325,7 @@ isExported: false
 id: bun-toml-parse
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.TOML.parse($$$SRC)
 name: Bun.TOML.parse
@@ -334,7 +334,7 @@ isExported: false
 id: bun-semver-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.semver.$METHOD($$$ARGS)
 name: Bun.semver
@@ -343,7 +343,7 @@ isExported: false
 id: bun-dns-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.dns.$METHOD($$$ARGS)
 name: Bun.dns
@@ -352,7 +352,7 @@ isExported: false
 id: bun-csrf-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.CSRF.$METHOD($$$ARGS)
 name: Bun.CSRF
@@ -361,7 +361,7 @@ isExported: false
 id: bun-transpiler-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: new Bun.Transpiler($$$OPTS)
 name: Bun.Transpiler
@@ -370,7 +370,7 @@ isExported: false
 id: bun-webview-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: new Bun.WebView($$$OPTS)
 name: Bun.WebView
@@ -379,7 +379,7 @@ isExported: false
 id: bun-udp-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.udpSocket($$$OPTS)
 name: Bun.udpSocket
@@ -388,7 +388,7 @@ isExported: false
 id: bun-redis-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.RedisClient($$$OPTS)
 name: Bun.RedisClient
@@ -406,7 +406,7 @@ isExported: false
 id: bun-serve-file-response
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: new Response(Bun.file($$$PATH))
 name: Response(Bun.file)
@@ -415,7 +415,7 @@ isExported: false
 id: websocket-unix-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: new WebSocket("ws+unix://$$$PATH")
 name: WebSocket(ws+unix)
@@ -424,7 +424,7 @@ isExported: false
 id: crypto-sha3-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: crypto.createHash("sha3-$ALG")
 name: crypto SHA3
@@ -433,16 +433,17 @@ isExported: false
 id: subtle-x25519-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
-  pattern: crypto.subtle.deriveBits({ name: "X25519", $$$OPTS }, $$$KEY, $$$LEN)
+  pattern: |
+    crypto.subtle.deriveBits({ name: "X25519", $$$OPTS }, $$$KEY, $$$LEN)
 name: X25519 deriveBits
 isExported: false
 ---
 id: bun-strip-ansi-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.stripANSI($$$TEXT)
 name: Bun.stripANSI
@@ -451,7 +452,7 @@ isExported: false
 id: bun-wrap-ansi-call
 language: TypeScript
 role: item
-symbolType: call
+symbolType: function
 rule:
   pattern: Bun.wrapAnsi($$$TEXT)
 name: Bun.wrapAnsi
