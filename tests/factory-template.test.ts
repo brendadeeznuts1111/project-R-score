@@ -43,8 +43,6 @@ describe('factory-library template contract', () => {
       serve?: unknown;
     };
     expect(config.install).toEqual({
-      linker: 'isolated',
-      globalStore: true,
       frozenLockfile: false,
     });
     expect(config.run?.noOrphans).toBe(true);
