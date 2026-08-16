@@ -8,6 +8,7 @@ import {
   detectProtocol,
   gradeLabel,
   protocolLabel,
+  scanSourceAstEvidence,
   scoreRemoval,
   sectionLabel,
   workspacePackageJsonPaths,
@@ -187,7 +188,7 @@ describe('rate-removal-candidates scoring', () => {
     );
     await Bun.write(
       workspace.resolve('runner.ts'),
-      `const executable = "node_modules/.bin/ast-grep";\nBun.spawn(["sg", "scan"]);\n`
+      `const executable = join(root, "node_modules/.bin/ast-grep");\nBun.spawn(["sg", "scan"]);\n`
     );
 
     const aliases = await binaryAliasesFromLockfile(workspace.root, ['@ast-grep/cli']);
@@ -196,6 +197,54 @@ describe('rate-removal-candidates scoring', () => {
     const evidence = await collectUsageEvidence(workspace.root, ['@ast-grep/cli']);
     expect(evidence.get('@ast-grep/cli')?.binaryInvocations).toBe(2);
     expect(evidence.get('@ast-grep/cli')?.total).toBe(2);
+  });
+
+  test('source AST ignores executable names inside documentation strings and arbitrary arrays', () => {
+    const aliases = new Map([['@ast-grep/cli', ['ast-grep', 'sg']]]);
+    const evidence = scanSourceAstEvidence(
+      [
+        'import { spawn as run, $ as shell } from "bun";',
+        'const docs = `Bun.spawn(["sg", "scan"]);`;',
+        'const prose = "Bun.spawn([\\"ast-grep\\", \\"scan\\"])";',
+        'const pathDocs = "node_modules/.bin/ast-grep";',
+        'const example = ["ast-grep", "scan"];',
+        'const executable = join(root, "node_modules/.bin/ast-grep");',
+        'run(["sg", "scan"]);',
+        'Bun.spawn({ cmd: ["ast-grep", "run"] });',
+        'shell`sg scan --rule rule.yml`;',
+      ].join('\n'),
+      'fixture.ts',
+      new Set(['@ast-grep/cli']),
+      aliases
+    );
+
+    expect(evidence.imports.get('@ast-grep/cli')).toBeUndefined();
+    expect(evidence.binaries.get('@ast-grep/cli')).toBe(4);
+  });
+
+  test('source AST covers static, dynamic, require, and re-export package edges', () => {
+    const evidence = scanSourceAstEvidence(
+      [
+        'import "alpha/register";',
+        'export { value } from "beta/subpath";',
+        'const lazy = import("gamma");',
+        'const legacy = require("delta/runtime");',
+        'import epsilon = require("epsilon/compat");',
+        'const templateImport = import(`zeta/static`);',
+      ].join('\n'),
+      'fixture.ts',
+      new Set(['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta']),
+      new Map()
+    );
+
+    expect(Object.fromEntries(evidence.imports)).toEqual({
+      alpha: 1,
+      beta: 1,
+      gamma: 1,
+      delta: 1,
+      epsilon: 1,
+      zeta: 1,
+    });
   });
 
   test('missing lockfile fails closed instead of claiming zero binary usage', async () => {

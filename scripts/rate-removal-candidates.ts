@@ -31,9 +31,8 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/reference/bun/JSONC — Bun.JSONC
-// @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler · Bun.Loader
-// @updated Bun.Transpiler · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+import ts from 'typescript';
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { jsonOut, logTable } from '../lib/console-depth.ts';
 import { discoverWorkspaceMembers } from '../lib/harness/monorepo-surfaces.ts';
@@ -355,7 +354,7 @@ const SCAN_SKIP_PREFIXES = [
   'scratch/',
 ];
 
-function dependencyNameForSpecifier(specifier: string, names: Set<string>): string | null {
+function dependencyNameForSpecifier(specifier: string, names: ReadonlySet<string>): string | null {
   for (const name of names) {
     if (specifier === name || specifier.startsWith(`${name}/`)) return name;
   }
@@ -419,7 +418,7 @@ export async function binaryAliasesFromLockfile(
   return aliases;
 }
 
-function countBinaryInvocations(text: string, alias: string, shellLike: boolean): number {
+function countTextBinaryInvocations(text: string, alias: string, shellLike: boolean): number {
   const escaped = alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const explicitBin = new RegExp(
     `(?:^|[/\\\\])(?:node_modules[/\\\\])?\\.bin[/\\\\]${escaped}(?=$|[\\s"'\\x60])`,
@@ -432,6 +431,186 @@ function countBinaryInvocations(text: string, alias: string, shellLike: boolean)
     (text.match(quotedCommand)?.length ?? 0) +
     (shellCommand ? (text.match(shellCommand)?.length ?? 0) : 0)
   );
+}
+
+export type SourceAstEvidence = {
+  imports: Map<string, number>;
+  binaries: Map<string, number>;
+};
+
+const EXECUTABLE_CALLS = new Set([
+  'spawn',
+  'spawnSync',
+  'execFile',
+  'execFileSync',
+  'which',
+  'whichSync',
+]);
+const EXECUTABLE_MODULES = new Set(['bun', 'node:child_process', 'child_process']);
+
+function sourceScriptKind(fileName: string): ts.ScriptKind {
+  if (fileName.endsWith('.tsx')) return ts.ScriptKind.TSX;
+  if (fileName.endsWith('.jsx')) return ts.ScriptKind.JSX;
+  if (fileName.endsWith('.js') || fileName.endsWith('.mjs') || fileName.endsWith('.cjs')) {
+    return ts.ScriptKind.JS;
+  }
+  return ts.ScriptKind.TS;
+}
+
+function incrementMap(target: Map<string, number>, key: string): void {
+  target.set(key, (target.get(key) ?? 0) + 1);
+}
+
+function staticLiteralText(expression: ts.Expression | undefined): string | null {
+  return expression && ts.isStringLiteralLike(expression) ? expression.text : null;
+}
+
+function commandText(expression: ts.Expression | undefined): string | null {
+  if (!expression) return null;
+  const literal = staticLiteralText(expression);
+  if (literal !== null) return literal;
+  if (ts.isArrayLiteralExpression(expression)) return commandText(expression.elements[0]);
+  if (ts.isObjectLiteralExpression(expression)) {
+    for (const property of expression.properties) {
+      if (!ts.isPropertyAssignment(property)) continue;
+      const key = property.name.getText().replaceAll(/["']/g, '');
+      if (key === 'cmd' || key === 'command') return commandText(property.initializer);
+    }
+  }
+  return null;
+}
+
+function staticTemplateCommand(node: ts.TaggedTemplateExpression): string | null {
+  const raw = ts.isNoSubstitutionTemplateLiteral(node.template)
+    ? node.template.text
+    : node.template.head.text;
+  return raw.trim().split(/\s+/, 1)[0] || null;
+}
+
+/** Syntax-aware import and executable evidence for one JS/TS source file. */
+export function scanSourceAstEvidence(
+  text: string,
+  fileName: string,
+  packageNames: ReadonlySet<string>,
+  binaryAliases: ReadonlyMap<string, readonly string[]>
+): SourceAstEvidence {
+  const source = ts.createSourceFile(
+    fileName,
+    text,
+    ts.ScriptTarget.Latest,
+    true,
+    sourceScriptKind(fileName)
+  );
+  const imports = new Map<string, number>();
+  const binaries = new Map<string, number>();
+  const aliasOwners = new Map<string, string[]>();
+  const executableBindings = new Set<string>();
+  const executableNamespaces = new Set<string>();
+  const shellTags = new Set<string>();
+  const countedBinaryPositions = new Map<string, Set<number>>();
+
+  for (const [packageName, aliases] of binaryAliases) {
+    for (const alias of aliases) {
+      const owners = aliasOwners.get(alias) ?? [];
+      owners.push(packageName);
+      aliasOwners.set(alias, owners);
+    }
+  }
+
+  const recordImport = (specifier: string): void => {
+    const packageName = dependencyNameForSpecifier(specifier, packageNames);
+    if (packageName) incrementMap(imports, packageName);
+  };
+
+  const recordCommand = (raw: string | null, position: number): void => {
+    if (!raw) return;
+    const normalized = raw.replaceAll('\\', '/');
+    const command = normalized.split('/').at(-1) ?? normalized;
+    for (const packageName of aliasOwners.get(command) ?? []) {
+      const positions = countedBinaryPositions.get(packageName) ?? new Set<number>();
+      if (positions.has(position)) continue;
+      positions.add(position);
+      countedBinaryPositions.set(packageName, positions);
+      incrementMap(binaries, packageName);
+    }
+  };
+
+  for (const statement of source.statements) {
+    if (!ts.isImportDeclaration(statement) || !ts.isStringLiteral(statement.moduleSpecifier)) {
+      continue;
+    }
+    const moduleName = statement.moduleSpecifier.text;
+    recordImport(moduleName);
+    if (!EXECUTABLE_MODULES.has(moduleName)) continue;
+    const bindings = statement.importClause?.namedBindings;
+    if (bindings && ts.isNamespaceImport(bindings)) executableNamespaces.add(bindings.name.text);
+    if (!bindings || !ts.isNamedImports(bindings)) continue;
+    for (const element of bindings.elements) {
+      const imported = element.propertyName?.text ?? element.name.text;
+      if (EXECUTABLE_CALLS.has(imported)) executableBindings.add(element.name.text);
+      if (moduleName === 'bun' && imported === '$') shellTags.add(element.name.text);
+    }
+  }
+
+  const visit = (node: ts.Node): void => {
+    if (
+      (ts.isExportDeclaration(node) || ts.isImportDeclaration(node)) &&
+      node.moduleSpecifier &&
+      ts.isStringLiteral(node.moduleSpecifier)
+    ) {
+      if (!ts.isImportDeclaration(node)) recordImport(node.moduleSpecifier.text);
+    } else if (
+      ts.isImportEqualsDeclaration(node) &&
+      ts.isExternalModuleReference(node.moduleReference) &&
+      node.moduleReference.expression &&
+      ts.isStringLiteral(node.moduleReference.expression)
+    ) {
+      recordImport(node.moduleReference.expression.text);
+    } else if (ts.isCallExpression(node)) {
+      if (
+        node.expression.kind === ts.SyntaxKind.ImportKeyword ||
+        (ts.isIdentifier(node.expression) && node.expression.text === 'require')
+      ) {
+        const specifier = node.arguments[0];
+        const imported = staticLiteralText(specifier);
+        if (imported !== null) recordImport(imported);
+      }
+
+      let executable = false;
+      if (ts.isIdentifier(node.expression)) {
+        executable = executableBindings.has(node.expression.text);
+      } else if (ts.isPropertyAccessExpression(node.expression)) {
+        const owner = node.expression.expression;
+        executable =
+          EXECUTABLE_CALLS.has(node.expression.name.text) &&
+          ((ts.isIdentifier(owner) && owner.text === 'Bun') ||
+            (ts.isIdentifier(owner) && executableNamespaces.has(owner.text)));
+      }
+      if (executable) recordCommand(commandText(node.arguments[0]), node.pos);
+
+      const pathJoin =
+        (ts.isIdentifier(node.expression) && node.expression.text === 'join') ||
+        (ts.isPropertyAccessExpression(node.expression) && node.expression.name.text === 'join');
+      if (pathJoin) {
+        for (const argument of node.arguments) {
+          if (
+            ts.isStringLiteral(argument) &&
+            argument.text.replaceAll('\\', '/').includes('/.bin/')
+          ) {
+            recordCommand(argument.text, argument.pos);
+          }
+        }
+      }
+    } else if (ts.isTaggedTemplateExpression(node)) {
+      if (ts.isIdentifier(node.tag) && shellTags.has(node.tag.text)) {
+        recordCommand(staticTemplateCommand(node), node.pos);
+      }
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(source);
+
+  return { imports, binaries };
 }
 
 function isScannablePath(rel: string): boolean {
@@ -451,7 +630,10 @@ export async function collectUsageEvidence(
   const names = new Set(packageNames);
   const usage = new Map([...names].map(name => [name, emptyUsage()]));
   const binaryAliases = await binaryAliasesFromLockfile(repoRoot, names);
-  const transpilers = new Map<string, Bun.Transpiler>();
+  const sourceEvidenceTokens = [
+    ...names,
+    ...new Set([...binaryAliases.values()].flatMap(aliases => aliases)),
+  ];
   const glob = new Bun.Glob('**/*.{ts,tsx,js,jsx,mjs,cjs,css,json,py,sh,bash,zsh}');
 
   for await (const rel of glob.scan({
@@ -464,34 +646,27 @@ export async function collectUsageEvidence(
     const extension = rel.slice(rel.lastIndexOf('.') + 1);
     const text = await Bun.file(joinPath(repoRoot, rel)).text();
 
-    if (SOURCE_EXTENSIONS.has(extension) || ['py', 'sh', 'bash', 'zsh'].includes(extension)) {
-      const shellLike = ['py', 'sh', 'bash', 'zsh'].includes(extension);
+    if (['py', 'sh', 'bash', 'zsh'].includes(extension)) {
       for (const [name, aliases] of binaryAliases) {
         for (const alias of aliases) {
           incrementUsage(
             usage,
             name,
             'binaryInvocations',
-            countBinaryInvocations(text, alias, shellLike)
+            countTextBinaryInvocations(text, alias, true)
           );
         }
       }
     }
 
     if (SOURCE_EXTENSIONS.has(extension)) {
-      const loader = extension === 'mjs' || extension === 'cjs' ? 'js' : extension;
-      const transpiler =
-        transpilers.get(loader) ?? new Bun.Transpiler({ loader: loader as Bun.Loader });
-      transpilers.set(loader, transpiler);
-      try {
-        const seen = new Map<string, number>();
-        for (const imported of transpiler.scan(text).imports) {
-          const name = dependencyNameForSpecifier(imported.path, names);
-          if (name) seen.set(name, (seen.get(name) ?? 0) + 1);
-        }
-        for (const [name, hits] of seen) incrementUsage(usage, name, 'sourceImports', hits);
-      } catch {
-        // A source file that cannot be parsed provides no safe removal evidence.
+      if (!sourceEvidenceTokens.some(token => text.includes(token))) continue;
+      const evidence = scanSourceAstEvidence(text, rel, names, binaryAliases);
+      for (const [name, hits] of evidence.imports) {
+        incrementUsage(usage, name, 'sourceImports', hits);
+      }
+      for (const [name, hits] of evidence.binaries) {
+        incrementUsage(usage, name, 'binaryInvocations', hits);
       }
       continue;
     }
@@ -511,7 +686,7 @@ export async function collectUsageEvidence(
                 usage,
                 name,
                 'binaryInvocations',
-                countBinaryInvocations(body, alias, true)
+                countTextBinaryInvocations(body, alias, true)
               );
             }
           }
@@ -964,7 +1139,7 @@ export const TABLE_LEGEND = {
     low: 'STO-only / alias-heavy — zero hits may be false',
   },
   usage:
-    'Bun.Transpiler imports + lockfile-owned binary calls + package scripts + CSS/config references from one scan',
+    'TypeScript AST imports/executable calls + lockfile-owned shell calls + package scripts + CSS/config references',
   spec: 'how package.json records the dep (npm / catalog: / workspace:*)',
   declaredAs: 'prod | dev | optional | peer',
   declaredIn: 'which package.json file(s) list the dep',
