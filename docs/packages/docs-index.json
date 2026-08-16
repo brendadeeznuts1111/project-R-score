@@ -1,7 +1,6 @@
 {
   "$schema_note": "Machine-readable documentation index for docs/packages/README.md. Edit this file, then: bun run packages:docs-index. CI: bun run packages:docs-index:check. Optional: --bump-verified or --bump-verified=id1,id2.",
   "lastUpdated": "2026-07-28",
-  "capabilityMap": "AGENTS.md#grounded-capability-map",
   "legends": {
     "type": {
       "canonical": "bun.com official docs",

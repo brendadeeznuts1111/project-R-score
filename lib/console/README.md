@@ -21,7 +21,7 @@ depth, color gates, padding, or dual-mode `--json` branches.
 - Raw `console.table` / `console.dir` / pretty `JSON.stringify` dumps (format gate)
 - `s.length` for column math — use `displayWidth` / `Bun.stringWidth`
 - Parallel TTY gates (`process.stdout.isTTY && !NO_COLOR`) — use `shouldColor()`
-- Bun flags after `run -` — see root AGENTS.md § Console depth
+- Bun flags after `run -` — see [`../bun-runtime.md`](../bun-runtime.md)
 
 ## Modules
 

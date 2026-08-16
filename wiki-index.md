@@ -38,7 +38,7 @@ owns the machine-artifact companion.
 | Agent entry        | [`AGENTS.md`](AGENTS.md) (entry) · [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · routing [`docs/AGENTS.md`](docs/AGENTS.md) |
 | Workspace map      | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                   |
 | Harness JIT        | [`docs/harness/`](docs/harness/) · `bun run harness:status`                                                                      |
-| Coding standards   | [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)                                                                 |
+| Coding standards   | [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md)              |
 | Brand / domain map | [`docs/brand-alignment.md`](docs/brand-alignment.md) · tunnels [`tunnel-inventory.md`](docs/harness/tenants/tunnel-inventory.md) |
 
 ## Common journeys

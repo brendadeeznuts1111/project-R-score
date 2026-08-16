@@ -47,7 +47,6 @@ const ROOT_MD = [
   'docs/WIRE_BOUNDARY.md',
   'docs/BUN_NATIVE_CAPABILITIES.md',
   'docs/BUN_DOCS_OPERATE.md',
-  'docs/DEVELOPMENT-STANDARDS.md',
   'docs/markdown/API_REFERENCE.md',
   'docs/markdown/CONTRIBUTING_MARKDOWN.md',
   'docs/IMPORT_BOUNDARIES.md',

@@ -7,8 +7,8 @@ grounded API matrix. Load only the matching route and its owner.
 
 ## Platform
 
-- Coding standards: `.custom-instructions.md` ·
-  [`DEVELOPMENT-STANDARDS.md`](DEVELOPMENT-STANDARDS.md)
+- Coding standards:
+  [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md)
 - Install and bunfig: [`UNIFIED.md`](UNIFIED.md)
 - Wire boundary: [`WIRE_BOUNDARY.md`](WIRE_BOUNDARY.md)
 - Domain → concept → shape → surface:
@@ -17,20 +17,15 @@ grounded API matrix. Load only the matching route and its owner.
   [`BUN_DOCS_OPERATE.md`](BUN_DOCS_OPERATE.md) · `bun run docs:refresh`
 - Native fetch protocols: `lib/docs/fetch-protocol-docs.ts` ·
   `bun test tests/bun-release-tracker.test.ts`
-- Console output:
-  [root console policy](../AGENTS.md#console-depth-output-verbosity) ·
-  `lib/console/` · `lib/bun-runtime.md`
-- `bun create`:
-  [root scaffold policy](../AGENTS.md#bun-create-templating--scaffold) ·
-  [`design/bun-create-alignment.md`](design/bun-create-alignment.md) ·
-  `lib/factory/`
+- Console output: `lib/console/` · `lib/bun-runtime.md` ·
+  `bun run check:console-format`
+- `bun create`: [`design/bun-create-alignment.md`](design/bun-create-alignment.md)
+  · `lib/factory/` · `bun run factory:templates`
 - Package release:
   [`design/bun-publish-alignment.md`](design/bun-publish-alignment.md) ·
   `bun publish --dry-run` · `bun pm pack`
-- CLI flags:
-  [root unknown-option policy](../AGENTS.md#unknown-long-options-bun_strip_unknown)
-  · [`harness/cli-constants-flags.md`](harness/cli-constants-flags.md) ·
-  `bun run cli:flags:check`
+- CLI flags: [`harness/cli-constants-flags.md`](harness/cli-constants-flags.md)
+  · `lib/docs/ref-id-tool-flags.ts` · `bun run cli:flags:check`
 - Bun upstream PR proof:
   [`harness/tenants/bun-upstream-contributing.md`](harness/tenants/bun-upstream-contributing.md)
   · `bun run bun:pr:verify -- <pr> [--proof=all] [--json]`

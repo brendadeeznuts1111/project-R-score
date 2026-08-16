@@ -22,16 +22,14 @@ export const CANONICAL_REPO_DOCS = {
   wikiIndex: 'wiki-index.md',
   /** Registry bake index (portal consumers) */
   registryIndex: 'registry-index.md',
-  /** AI agent entrypoint (operating rules; capability matrix → capabilityMap) */
+  /** Always-loaded AI agent policy */
   agents: 'AGENTS.md',
-  /** Thin agent routing tables (pointer → root AGENTS.md) */
+  /** Just-in-time agent task router */
   agentsFull: 'docs/AGENTS.md',
   /** Workspace map */
   structure: 'STRUCTURE.md',
   /** Coding standards (complete) */
   standards: '.custom-instructions.md',
-  /** Coding standards (quick reference) */
-  standardsQuick: 'docs/DEVELOPMENT-STANDARDS.md',
   /** Bun.markdown surface + repository validation contract */
   markdownApiReference: 'docs/markdown/API_REFERENCE.md',
   /** Contributor day loop for Markdown source */
@@ -103,8 +101,6 @@ export const CANONICAL_REPO_DOCS = {
   harnessReview: 'docs/harness/REVIEW.md',
   /** Projects triage + agent scope */
   projectsTriage: 'projects/README.md',
-  /** Coding standards quick reference (archives removed from tree) */
-  standardsImplementation: 'docs/DEVELOPMENT-STANDARDS.md',
 } as const;
 
 /** Harness modules agents hit most often. */
@@ -134,7 +130,6 @@ export const CANONICAL_HARNESS = {
   harnessMaintenance: 'lib/harness/maintenance.ts',
   projectsScan: 'lib/projects-scan.ts',
   r2Credentials: 'lib/security/r2-credentials.ts',
-  standardsIntegration: 'docs/DEVELOPMENT-STANDARDS.md',
   /** AST rules: decodeUnknown* + unknown params */
   boundaryEslint: 'config/eslint/plugin-harness/boundary.ts',
   boundaryEslintPlugin: 'config/eslint/plugin-harness/index.ts',
@@ -201,11 +196,10 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   contributing: 'GitHub contributor entrypoint',
   wikiIndex: 'Wiki navigation hub (portal · registry · tenants)',
   registryIndex: 'Registry bake index (portal consumers)',
-  agents: 'AI agent entrypoint (capability matrix → docs/harness/capability-map.md)',
-  agentsFull: 'Agent routing tables (pointer → root AGENTS)',
+  agents: 'Always-loaded AI agent policy',
+  agentsFull: 'Just-in-time agent task router',
   structure: 'Workspace map',
   standards: 'Coding standards (complete)',
-  standardsQuick: 'Coding standards (quick)',
   markdownApiReference: 'Bun.markdown API + repository validation contract',
   markdownContributorGuide: 'Markdown contributor day loop',
   unified: 'Bun install policy (machine + workspace)',
@@ -244,7 +238,6 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   harnessAuthority: 'Authority / lanes / consequential grants',
   harnessReview: 'Repository review questions → owners',
   projectsTriage: 'Projects triage + agent scope',
-  standardsImplementation: 'Coding standards (quick reference)',
 } as const;
 
 /** Build remote SSOT entry — parts first; `url` derived (link edge only). */

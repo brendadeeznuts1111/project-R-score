@@ -1,22 +1,16 @@
 {
   "description": "Pre-contract Markdown findings. New findings fail; fixed rows must be removed.",
   "issues": [
-    "docs/AGENTS.md:missing-anchor:../AGENTS.md#bun-create-templating--scaffold targets absent #bun-create-templating--scaffold in AGENTS.md",
-    "docs/AGENTS.md:missing-anchor:../AGENTS.md#unknown-long-options-bun_strip_unknown targets absent #unknown-long-options-bun_strip_unknown in AGENTS.md",
-    "docs/BUN_NATIVE_CAPABILITIES.md:missing-anchor:../AGENTS.md#bun-create-templating--scaffold targets absent #bun-create-templating--scaffold in AGENTS.md",
-    "docs/contributing/CONTRIBUTING.md:missing-anchor:../DEVELOPMENT-STANDARDS.md#refid-design-doc-flags--toc targets absent #refid-design-doc-flags--toc in docs/DEVELOPMENT-STANDARDS.md",
     "docs/design/partner-surface-inventory.md:missing-anchor:#row--bag-schema targets absent #row--bag-schema in docs/design/partner-surface-inventory.md",
     "docs/design/portal-design-agent.md:missing-anchor:#scaffold-planes-bun-init--bun-create--bunx-pr targets absent #scaffold-planes-bun-init--bun-create--bunx-pr in docs/design/portal-design-agent.md",
     "docs/design/portal-design-agent.md:missing-anchor:#doctor--proof targets absent #doctor--proof in docs/design/portal-design-agent.md",
     "docs/design/portal-design-agent.md:missing-anchor:#41-flags--settings targets absent #41-flags--settings in docs/design/portal-design-agent.md",
-    "docs/DEVELOPMENT-STANDARDS.md:missing-anchor:../AGENTS.md#unknown-long-options-bun_strip_unknown targets absent #unknown-long-options-bun_strip_unknown in AGENTS.md",
     "docs/harness/AUTHORITY.md:missing-anchor:PROOF.md#lib-surface--docs-vs-bun-vs-other-external targets absent #lib-surface--docs-vs-bun-vs-other-external in docs/harness/PROOF.md",
     "docs/harness/capability-map.md:missing-file:docs/packages/README.md resolves to missing docs/harness/docs/packages/README.md",
     "docs/harness/capability-map.md:missing-file:docs/packages/docs-index.json resolves to missing docs/harness/docs/packages/docs-index.json",
     "docs/harness/capability-map.md:malformed-table:delimiter row does not match the header column count",
     "docs/harness/capability-map.md:missing-file:.cloudflare-access.yml resolves to missing docs/harness/.cloudflare-access.yml",
     "docs/harness/capability-map.md:missing-file:docs/UNIFIED.md resolves to missing docs/harness/docs/UNIFIED.md",
-    "docs/harness/cli-constants-flags.md:missing-anchor:../../AGENTS.md#unknown-long-options-bun_strip_unknown targets absent #unknown-long-options-bun_strip_unknown in AGENTS.md",
     "docs/harness/day-loop.md:missing-anchor:#artifacts--logs targets absent #artifacts--logs in docs/harness/day-loop.md",
     "docs/harness/README.md:missing-anchor:PROOF.md#lib-surface--docs-vs-bun-vs-other-external targets absent #lib-surface--docs-vs-bun-vs-other-external in docs/harness/PROOF.md",
     "docs/harness/tenants/monorepo-workspaces.md:missing-anchor:#bun---filter-canonical targets absent #bun---filter-canonical in docs/harness/tenants/monorepo-workspaces.md",
@@ -28,7 +22,6 @@
     "docs/harness/tenants/seat-capital-desk.md:missing-file:../../../Kalshi-bot/src/institutions/glossary.ts resolves to missing Kalshi-bot/src/institutions/glossary.ts",
     "docs/harness/tenants/serve-public-bind.md:missing-file:../../../config/serve-public.toml resolves to missing config/serve-public.toml",
     "docs/harness/tenants/telegram-factory.md:missing-file:../../../toc-ops-repo/src/central-tool/telegram-surfaces.ts resolves to missing toc-ops-repo/src/central-tool/telegram-surfaces.ts",
-    "docs/organization/session-organization.md:malformed-table:delimiter row does not match the header column count",
     "docs/organization/session-organization.md:malformed-table:delimiter row does not match the header column count",
     "docs/packages/README.md:missing-anchor:../harness/tenants/monorepo-workspaces.md#bun---filter-canonical targets absent #bun---filter-canonical in docs/harness/tenants/monorepo-workspaces.md",
     "docs/packages/README.md:missing-anchor:../UNIFIED.md#scripts-vs---filter targets absent #scripts-vs---filter in docs/UNIFIED.md",
@@ -68,16 +61,12 @@
     "docs/portal-ops-board-map.md:missing-file:/registry/prediction/report/ resolves to missing registry/prediction/report",
     "docs/portal-ops-board-map.md:missing-file:/portal/tennis/ resolves to missing portal/tennis",
     "docs/portal-ops-board-map.md:missing-file:/portal/dod/ resolves to missing portal/dod",
-    "docs/README.md:missing-anchor:./UNIFIED.md#table-of-contents targets absent #table-of-contents in docs/UNIFIED.md",
-    "docs/README.md:missing-anchor:./DEVELOPMENT-STANDARDS.md#refid-design-doc-flags--toc targets absent #refid-design-doc-flags--toc in docs/DEVELOPMENT-STANDARDS.md",
-    "docs/README.md:missing-anchor:./BUN_NATIVE_CAPABILITIES.md#table-of-contents targets absent #table-of-contents in docs/BUN_NATIVE_CAPABILITIES.md",
     "docs/UNIFIED.md:missing-anchor:./harness/tenants/monorepo-workspaces.md#bun---filter-canonical targets absent #bun---filter-canonical in docs/harness/tenants/monorepo-workspaces.md",
     "docs/UNIFIED.md:missing-anchor:./packages/README.md#outdated--filter-canonical-patterns targets absent #outdated--filter-canonical-patterns in docs/packages/README.md",
     "lib/bun-runtime.md:missing-anchor:#cli--execution-options targets absent #cli--execution-options in lib/bun-runtime.md",
     "lib/bun-runtime.md:missing-anchor:#console-depth--stdin targets absent #console-depth--stdin in lib/bun-runtime.md",
     "lib/bun-runtime.md:missing-anchor:#bun-api-reference--module-map targets absent #bun-api-reference--module-map in lib/bun-runtime.md",
     "lib/bun-runtime.md:missing-anchor:#depth--runtime-legends targets absent #depth--runtime-legends in lib/bun-runtime.md",
-    "lib/macros/README.md:missing-anchor:../../docs/harness/PROOF.md#lib-surface--docs-vs-bun-vs-other-external targets absent #lib-surface--docs-vs-bun-vs-other-external in docs/harness/PROOF.md",
-    "STRUCTURE.md:missing-anchor:AGENTS.md#bun-create-templating--scaffold targets absent #bun-create-templating--scaffold in AGENTS.md"
+    "lib/macros/README.md:missing-anchor:../../docs/harness/PROOF.md#lib-surface--docs-vs-bun-vs-other-external targets absent #lib-surface--docs-vs-bun-vs-other-external in docs/harness/PROOF.md"
   ]
 }

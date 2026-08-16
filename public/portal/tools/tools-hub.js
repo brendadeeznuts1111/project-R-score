@@ -390,7 +390,7 @@ async function fillSnapshotWidget() {
 /**
  * Capability subset SSOT: /registry/capability-map-subset.json
  * Fallback rows only if bake missing (keep in sync with registry file).
- * Full matrix: AGENTS.md#grounded-capability-map
+ * Full matrix: docs/harness/capability-map.md#grounded-capability-map
  */
 /**
  * Fallback when bake missing:

@@ -14,7 +14,7 @@ High-level map of the FactoryWager Enterprise Platform monorepo
 | This map                      | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                                                          |
 | Human hub                     | [`README.md`](README.md)                                                                                                                                                |
 | AI agents                     | [`AGENTS.md`](AGENTS.md) (entry) · map [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · routing [`docs/AGENTS.md`](docs/AGENTS.md)                    |
-| Coding standards              | [`.custom-instructions.md`](.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)                                                 |
+| Coding standards              | [`.custom-instructions.md`](.custom-instructions.md)                                                                                                                   |
 | Bun install policy            | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                                    |
 | Bun channel / type governance | [`config/bun-channels.toml`](config/bun-channels.toml) · [`docs/design/bun-channel-governance.md`](docs/design/bun-channel-governance.md) · `bun run bun:channel:check` |
 | Bun token/catalog operate     | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) (`bun run docs:refresh`)                                                                                         |
@@ -32,8 +32,8 @@ Projects/
 ├── .claude/                 # Claude commands / agents
 ├── .github/                 # Workflows, templates
 ├── _includes/               # Jekyll includes for wiki.factory-wager.com
-├── AGENTS.md                # Agent entry (capability matrix → docs/harness/capability-map.md)
-├── .custom-instructions.md  # Coding standards SSOT → docs/DEVELOPMENT-STANDARDS.md
+├── AGENTS.md                # Always-loaded agent policy → docs/AGENTS.md router
+├── .custom-instructions.md  # Coding standards SSOT
 ├── README.md                # Human hub
 ├── STRUCTURE.md             # This file
 ├── wiki-index.md            # Wiki full navigation (portal · registry · tenants)
@@ -50,7 +50,7 @@ Projects/
 │   ├── README.md            # Docs index (SSOT navigation)
 │   ├── AGENTS.md            # Pointer → root AGENTS.md (routing tables)
 │   ├── harness/capability-map.md  # Grounded Bun/Proton capability matrix (bake:capabilities)
-│   ├── UNIFIED.md · WIRE_BOUNDARY.md · DEVELOPMENT-STANDARDS.md
+│   ├── UNIFIED.md · WIRE_BOUNDARY.md · DEVELOPMENT-WORKFLOW.md
 │   ├── BUN_DOCS_OPERATE.md  # Token/catalog operate (RSS → scrape → catalog)
 │   ├── organization/        # Root cleanup history
 │   ├── performance/         # Search pin + pointer to bun-bench-profiling tenant
@@ -247,8 +247,7 @@ Related (not root files): `lib/channels/` → `ops-outbox`;
 - **CLI:** [`tools/cli/`](tools/cli/) · `bun run help`
 - **Demos:** [`examples/`](examples/INDEX.md) (optional for product work)
 - **Bun install policy:** [`docs/UNIFIED.md`](docs/UNIFIED.md)
-- **Coding standards:** [`.custom-instructions.md`](.custom-instructions.md) ·
-  [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)
+- **Coding standards:** [`.custom-instructions.md`](.custom-instructions.md)
 - **Wire boundary:** [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) · ESLint
   `BOUNDARY_POLICY`
 - **Project inventory:** [`lib/projects-scan.ts`](lib/projects-scan.ts) ·
@@ -257,11 +256,11 @@ Related (not root files): `lib/channels/` → `ops-outbox`;
   `bun run check:brands:all`
 - **Console domain / `bun run -`:** [`lib/console/`](lib/console/README.md)
   (`cliOut` · `tones` · chrome) · facade [`lib/console-depth.ts`](lib/console-depth.ts)
-  · note [`lib/console-depth.md`](lib/console-depth.md) ·
-  [AGENTS.md § Console depth](AGENTS.md#console-depth-output-verbosity)
-- **`bun create` / factory scaffold:** [AGENTS.md § bun create](AGENTS.md#bun-create-templating--scaffold)
-  · [`.bun-create/`](.bun-create/) · [`lib/factory/`](lib/factory/README.md)
-  · `bun run factory:create`
+  · note [`lib/console-depth.md`](lib/console-depth.md)
+- **`bun create` / factory scaffold:**
+  [`docs/design/bun-create-alignment.md`](docs/design/bun-create-alignment.md) ·
+  [`.bun-create/`](.bun-create/) · [`lib/factory/`](lib/factory/README.md) ·
+  `bun run factory:create`
 - **Agent triage:** [`projects/README.md`](projects/README.md)
 - **Codex threads:** stable `RTH-###` identity, ranking, references, and
   bring-home parity →
