@@ -158,7 +158,6 @@ EXAMPLES
 SEE ALSO
   lib/docs/ref-id.ts · lib/docs/ref-id-audit.ts · lib/docs/ref-id-tool-flags.ts
   docs/DOMAIN_CONCEPT_SHAPE.md · docs/portal-foundation.md
-  docs/DEVELOPMENT-STANDARDS.md § REF:ID
   docs/contributing/CONTRIBUTING.md § REF:ID Validation
   bun run docs:map:check          # includes REF:ID unless --skip-refid-check
 `);

@@ -68,8 +68,6 @@ sync.
 | Tooling   | Code flag rows must match anchors (`requireToolCoverage`)               |
 | Placement | Section id (e.g. `4.1`) on the line immediately above the Flags heading |
 
-Style summary also lives in
-[DEVELOPMENT-STANDARDS.md — REF:ID](../DEVELOPMENT-STANDARDS.md#refid-design-doc-flags--toc).
 Library: [`lib/docs/ref-id.ts`](../../lib/docs/ref-id.ts).
 
 ### Commands

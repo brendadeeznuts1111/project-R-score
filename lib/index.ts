@@ -4,7 +4,7 @@
  * Shared harness: constants, types, utilities, theming, docs, security.
  *
  * Canonical monorepo docs (repo-relative):
- *   - Standards: `.custom-instructions.md` · quick: `docs/DEVELOPMENT-STANDARDS.md`
+ *   - Standards: `.custom-instructions.md`
  *   - Agents: `AGENTS.md` · full: `docs/AGENTS.md` · install: `docs/UNIFIED.md`
  *   - Map: `STRUCTURE.md` · hub: `README.md`
  *   - Paths SSOT: `lib/docs/repo-docs.ts` (`CANONICAL_REPO_DOCS`)
@@ -231,8 +231,6 @@ export const LIB_INFO = {
   external: CANONICAL_EXTERNAL,
   /** @deprecated use `docs.standards` */
   developmentStandards: CANONICAL_REPO_DOCS.standards,
-  /** @deprecated use `docs.standardsQuick` */
-  quickReference: CANONICAL_REPO_DOCS.standardsQuick,
 } as const;
 
 /**

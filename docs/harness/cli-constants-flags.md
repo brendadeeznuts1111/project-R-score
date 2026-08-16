@@ -11,7 +11,7 @@ Code SSOT (do **not** invent a parallel allowlist module):
 | Env toggles only                  | `BUN_STRIP_UNKNOWN` · `BUN_LOG_UNKNOWN` (`BUN_UNKNOWN_FLAG_ENV`) — **harness**, not bun-types                                                                           |
 | REF:ID prove                      | `bun run docs:refid:check` · `bun test tests/docs-ref-id-tool-exports.test.ts`                                                                                          |
 | Agent one-shot                    | `bun run cli:flags:check`                                                                                                                                               |
-| Bun create / init / runtime knobs | [`AUTHORITY.md`](AUTHORITY.md) · [`lib/env-check.ts`](../../lib/env-check.ts) · [AGENTS § Unknown long options](../../AGENTS.md#unknown-long-options-bun_strip_unknown) |
+| Bun create / init / runtime knobs | [`AUTHORITY.md`](AUTHORITY.md) · [`lib/env-check.ts`](../../lib/env-check.ts) · [`../../lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts) |
 
 > **Accuracy note:** Leaves in the registry are **unprefixed** (`chat`, not
 > `--chat`). `--help` / `--hlp` are always exempt. `lint-wires` is registered.

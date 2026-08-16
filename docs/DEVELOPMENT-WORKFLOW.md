@@ -6,7 +6,7 @@ keeping the FactoryWager **husky** harness (not a second hooks stack).
 
 | Related                       | Path                                                        |
 | ----------------------------- | ----------------------------------------------------------- |
-| Coding standards              | [`docs/DEVELOPMENT-STANDARDS.md`](DEVELOPMENT-STANDARDS.md) |
+| Coding standards              | [`.custom-instructions.md`](../.custom-instructions.md)     |
 | Portal foundation / semantics | [`docs/portal-foundation.md`](portal-foundation.md)         |
 | Wire boundary                 | [`docs/WIRE_BOUNDARY.md`](WIRE_BOUNDARY.md)                 |
 | Bunfig / install              | [`docs/UNIFIED.md`](UNIFIED.md)                             |

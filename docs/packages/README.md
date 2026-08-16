@@ -1,7 +1,7 @@
 # Packages registry docs
 
 Traceability map: internal docs · Bun canonical pages · generated artifacts · root tooling.  
-**Capability map (grounded APIs):** [AGENTS.md § Grounded capability map](../../AGENTS.md#grounded-capability-map) · install/filter policy: [UNIFIED § catalogs](../UNIFIED.md#catalogs-and-workspace-protocols).
+**Capability map (grounded APIs):** [harness capability map](../harness/capability-map.md#grounded-capability-map) · install/filter policy: [UNIFIED § catalogs](../UNIFIED.md#catalogs-and-workspace-protocols).
 
 Decision tables below are **generated** from [`docs-index.json`](./docs-index.json) — edit the JSON, then `bun run packages:docs-index`. Do not hand-edit rows inside the HTML comment markers.
 
@@ -102,9 +102,9 @@ portal-cli is **not** `@factorywager/portal-cli` and is **not** listed under roo
 
 ## Day-to-day commands
 
-**Capability map:** Commands below use APIs and CLIs from the [Grounded capability map](../../AGENTS.md#grounded-capability-map) where applicable (`Bun.spawn`, `Bun.write`, `Bun.file`, `Bun.Glob` / glob scan, `Bun.color`, `Bun.main` for CLI entry, pass-cli for secrets) plus workspace **`--filter`** as documented in [pm/filter](https://bun.com/docs/pm/filter).
+**Capability map:** Commands below use APIs and CLIs from the [grounded capability map](../harness/capability-map.md#grounded-capability-map) where applicable (`Bun.spawn`, `Bun.write`, `Bun.file`, `Bun.Glob` / glob scan, `Bun.color`, `Bun.main` for CLI entry, pass-cli for secrets) plus workspace **`--filter`** as documented in [pm/filter](https://bun.com/docs/pm/filter).
 
-**PM surface:** `bun run portal-cli pm …` (pack · ls · version · pkg · trust · cache · hash) — rows in the [Grounded capability map](../../AGENTS.md#grounded-capability-map); do not invent flags beyond [bun.com/docs/pm/cli/pm](https://bun.com/docs/pm/cli/pm).
+**PM surface:** `bun run portal-cli pm …` (pack · ls · version · pkg · trust · cache · hash) — rows in the [grounded capability map](../harness/capability-map.md#grounded-capability-map); do not invent flags beyond [bun.com/docs/pm/cli/pm](https://bun.com/docs/pm/cli/pm).
 
 ```bash
 # Workspace integrity
@@ -213,7 +213,7 @@ bun run packages:list --write    # rewrite docs/packages/REGISTRY.md
 | Read manifests | `Bun.file` / readJson | File existence & read |
 | Write table | `Bun.write` | Streaming file write |
 
-Both `Bun.write` and glob/file I/O are on the [Grounded capability map](../../AGENTS.md#grounded-capability-map). Optional triage flags: `--filter=core|active|…`, `--include-scaffolds`, `--paths`.
+Both `Bun.write` and glob/file I/O are on the [grounded capability map](../harness/capability-map.md#grounded-capability-map). Optional triage flags: `--filter=core|active|…`, `--include-scaffolds`, `--paths`.
 
 ---
 
@@ -221,7 +221,7 @@ Both `Bun.write` and glob/file I/O are on the [Grounded capability map](../../AG
 
 | Link | Why |
 |------|-----|
-| [AGENTS.md § Grounded capability map](../../AGENTS.md#grounded-capability-map) | Verifiable Bun / pass-cli surface |
+| [Harness grounded capability map](../harness/capability-map.md#grounded-capability-map) | Verifiable Bun / pass-cli surface |
 | [STRUCTURE.md § Root workspaces](../../STRUCTURE.md#root-workspaces-authoritative) | Workspace globs SSOT |
 | `bun run validate:workspaces` | Homebase membership gate |
 | Tag `v5.2.2-monorepo-workspaces-catalog` | Monorepo hybrid milestone |
