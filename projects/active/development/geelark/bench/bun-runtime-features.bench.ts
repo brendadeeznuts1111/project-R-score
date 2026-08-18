@@ -7,11 +7,13 @@
  * Reference: docs/BUN_RUNTIME_FEATURES.md
  */
 
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+
 import { bench, describe, it, expect, beforeEach, afterEach } from "bun:test";
-import { spawn, file, write, watch } from "bun";
-import { writeFileSync, unlinkSync, existsSync, mkdirSync, rmdirSync } from "node:fs";
+import { spawn, file, write } from "bun";
+import { writeFileSync, unlinkSync, existsSync, mkdirSync, rmdirSync, watch } from "node:fs";
 import { join } from "node:path";
-import { crypto } from "node:crypto";
+import { createHash } from "node:crypto";
 import { measureNanoseconds } from "./utils";
 
 describe("Bun Runtime Features Performance", () => {
@@ -205,9 +207,9 @@ describe("Bun Runtime Features Performance", () => {
       }
     });
 
-    bench("Bun.glob() - find files", async () => {
+    bench("Bun.Glob - find files", async () => {
       const files: string[] = [];
-      for await (const file of Bun.glob("*.ts", { cwd: testDir })) {
+      for await (const file of new Bun.Glob("*.ts").scan({ cwd: testDir })) {
         files.push(file);
       }
       return files.length;
@@ -238,7 +240,7 @@ describe("Bun Runtime Features Performance", () => {
 
   describe("13. Hash/Crypto Performance", () => {
     bench("crypto.createHash() - SHA256", () => {
-      const hash = crypto.createHash("sha256");
+      const hash = createHash("sha256");
       hash.update("test data");
       return hash.digest("hex");
     }, {
@@ -246,7 +248,7 @@ describe("Bun Runtime Features Performance", () => {
     });
 
     bench("crypto.createHash() - MD5", () => {
-      const hash = crypto.createHash("md5");
+      const hash = createHash("md5");
       hash.update("test data");
       return hash.digest("hex");
     }, {
@@ -317,7 +319,7 @@ describe("Bun Runtime Features Performance", () => {
 
     it("should measure hash creation with nanosecond precision", () => {
       const { duration } = measureNanoseconds(() => {
-        const hash = crypto.createHash("sha256");
+        const hash = createHash("sha256");
         hash.update("test");
         hash.digest("hex");
       });
@@ -326,4 +328,3 @@ describe("Bun Runtime Features Performance", () => {
     });
   });
 });
-

@@ -1,6 +1,8 @@
 import { AuditEntry, QuantumAuditError, WorkerPoolStats } from './types.js';
 import { hashWithQuantumEntropy, bufferToHex } from './integrity-utils.js';
 
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+
 export class QuantumResistantSecureDataRepository {
   private readonly CHUNK_SIZE = 1024 * 1024; // 1MB chunks
   private readonly HASH_ALGORITHM = 'SHA-512';
@@ -277,7 +279,9 @@ export class QuantumResistantSecureDataRepository {
     const auditDir = `${process.env.HOME}/.bun-integrity-audit`;
     
     try {
-      const files = await Array.fromAsync(Bun.glob(`${auditDir}/*.bin`));
+      const files = await Array.fromAsync(
+        new Bun.Glob('*.bin').scan({ cwd: auditDir, absolute: true })
+      );
       const entries: AuditEntry[] = [];
       
       for (const file of files) {

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/bundler/index#features — bun:bundle
 // Multi-tier configuration matrix with compile-time feature elimination
 import { feature } from "bun:bundle";
 

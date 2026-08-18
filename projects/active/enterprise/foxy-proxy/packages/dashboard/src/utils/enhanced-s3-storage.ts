@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/bundler/index#features — bun:bundle
 // Enhanced S3 storage with proper content disposition support
 import {
   S3Client,

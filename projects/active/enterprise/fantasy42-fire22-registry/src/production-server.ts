@@ -9,6 +9,7 @@
  * - Production database optimizations
  * - Real-time monitoring
  */
+// @see https://bun.com/reference/node/process — process.platform
 
 import { UltraFastRegistryServer, UltraFastDatabase } from './ultra-fast-registry';
 import { APPLICATION_CONSTANTS } from './constants';
@@ -58,7 +59,7 @@ class ProductionOptimizations {
       `🚀 Ultra-Fast Package Registry - ${isProduction ? 'Production' : 'Development'} Mode`
     );
     console.info(`📊 Bun Version: ${Bun.version}`);
-    console.info(`🏗️ Platform: ${Bun.platform || 'unknown'}`);
+    console.info(`🏗️ Platform: ${process.platform}`);
     console.info(`💾 Architecture: ${process.arch}`);
     console.info(`🎯 Node Environment: ${nodeEnv}`);
     console.info(
@@ -352,7 +353,7 @@ class ProductionServer {
           status: 'healthy',
           timestamp: new Date().toISOString(),
           version: Bun.version,
-          platform: Bun.platform,
+          platform: process.platform,
           uptime: process.uptime(),
           production: true,
         }),
@@ -367,7 +368,7 @@ class ProductionServer {
         JSON.stringify({
           server: {
             version: Bun.version,
-            platform: Bun.platform,
+            platform: process.platform,
             uptime: process.uptime(),
             production: true,
           },

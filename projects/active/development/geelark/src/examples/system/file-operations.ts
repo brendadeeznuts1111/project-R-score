@@ -6,8 +6,10 @@ export {}; // Make this file a module to enable top-level await
  * File Operations Examples
  *
  * This example demonstrates file system operations in Bun using
- * Bun.write() and Bun.read() along with other file operations.
+ * Bun.write() and Bun.file() along with other file operations.
  */
+
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 
 console.info("📁 File Operations Examples\n");
 
@@ -26,9 +28,9 @@ console.info("  Created /tmp/bun-example.json with JSON data");
 console.info("");
 
 // Example 2: Reading from a file
-console.info("2. Reading from a file using Bun.read():");
-const fileContent = await Bun.read("/tmp/bun-example.json");
-const parsedData = JSON.parse(fileContent.toString());
+console.info("2. Reading from a file using Bun.file():");
+const fileContent = await Bun.file("/tmp/bun-example.json").text();
+const parsedData = JSON.parse(fileContent);
 
 console.info("  Read and parsed file contents:");
 console.info(`    Name: ${parsedData.name}`);
@@ -50,7 +52,7 @@ console.info("");
 
 // Example 4: Reading text files
 console.info("4. Reading text files:");
-const textFileContent = await Bun.read("/tmp/bun-text-example.txt");
+const textFileContent = await Bun.file("/tmp/bun-text-example.txt").text();
 console.info("  Text file contents:");
 console.info(`"${textFileContent.toString().trim()}"`);
 console.info("");
@@ -87,14 +89,14 @@ const binaryData = new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108
 await Bun.write("/tmp/binary-example.bin", binaryData);
 console.info("  Wrote binary data to file");
 
-const readBinary = await Bun.read("/tmp/binary-example.bin");
+const readBinary = await Bun.file("/tmp/binary-example.bin").bytes();
 console.info(`  Read binary data: [${Array.from(readBinary).join(', ')}]`);
 console.info("");
 
 // Example 7: Error handling
 console.info("7. Error handling with file operations:");
 try {
-  await Bun.read("/tmp/nonexistent-file-12345.txt");
+  await Bun.file("/tmp/nonexistent-file-12345.txt").text();
 } catch (error) {
   console.info(`  Expected error reading nonexistent file: ${error.message}`);
 }

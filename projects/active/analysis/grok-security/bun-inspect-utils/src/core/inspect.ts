@@ -2,6 +2,7 @@
  * [INSPECT][CORE][UTILITY]{BUN-API}
  * Bun.inspect() wrapper and utilities
  */
+// @see https://bun.com/docs/runtime/nodejs-compat#nodetty — process.stdout.isTTY
 
 import type { InspectOptions, InspectResult } from "../types";
 
@@ -12,13 +13,13 @@ import type { InspectOptions, InspectResult } from "../types";
 const INSPECT_PRESETS = {
   log: {
     depth: 4,
-    colors: Bun.isTTY,
+    colors: process.stdout.isTTY === true,
     maxArrayLength: 20,
     maxStringLength: 500,
   },
   repl: {
     depth: 10,
-    colors: Bun.isTTY,
+    colors: process.stdout.isTTY === true,
     sorted: true,
   },
   compact: {
@@ -36,7 +37,7 @@ const INSPECT_PRESETS = {
 export function inspect(value: unknown, options: InspectOptions = {}): string {
   const mergedOptions = {
     depth: options.depth ?? 5,
-    colors: options.colors ?? Bun.isTTY,
+    colors: options.colors ?? process.stdout.isTTY === true,
     sorted: options.sorted ?? false,
     maxArrayLength: options.maxArrayLength ?? 100,
     maxStringLength: options.maxStringLength ?? 10000,
@@ -67,7 +68,7 @@ export function inspectWithMetrics(
   return {
     value: result,
     depth: options.depth ?? 5,
-    colored: options.colors ?? Bun.isTTY,
+    colored: options.colors ?? process.stdout.isTTY === true,
     duration,
   };
 }

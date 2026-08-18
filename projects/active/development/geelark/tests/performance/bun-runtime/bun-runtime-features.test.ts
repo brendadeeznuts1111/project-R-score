@@ -7,11 +7,14 @@
  * Reference: docs/BUN_RUNTIME_FEATURES.md
  */
 
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+
 // @ts-ignore - Bun types are available at runtime
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 // @ts-ignore - Bun types are available at runtime
-import { spawn, watch } from "bun";
-import { existsSync, mkdirSync, rmdirSync, unlinkSync, writeFileSync } from "node:fs";
+import { spawn } from "bun";
+import { existsSync, mkdirSync, rmdirSync, unlinkSync, watch, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { join } from "node:path";
 
 describe("Bun Runtime Features", () => {
@@ -170,7 +173,7 @@ describe("Bun Runtime Features", () => {
   });
 
   describe("4. File Watching", () => {
-    it("should watch file changes with Bun.watch()", async () => {
+    it("should watch file changes with node:fs", async () => {
       const testFile = join(testDir, "watch-test.txt");
       writeFileSync(testFile, "Initial content");
 
@@ -280,15 +283,14 @@ describe("Bun Runtime Features", () => {
   });
 
   describe("8. Glob Patterns", () => {
-    it("should find files with Bun.glob()", async () => {
+    it("should find files with Bun.Glob", async () => {
       // Create test files
       writeFileSync(join(testDir, "file1.ts"), "// File 1");
       writeFileSync(join(testDir, "file2.ts"), "// File 2");
       writeFileSync(join(testDir, "file3.js"), "// File 3");
 
       const tsFiles = [];
-      // @ts-ignore - Bun.glob is available at runtime
-      for await (const file of Bun.glob("*.ts", { cwd: testDir })) {
+      for await (const file of new Bun.Glob("*.ts").scan({ cwd: testDir })) {
         tsFiles.push(file);
       }
 
@@ -368,7 +370,6 @@ describe("Bun Runtime Features", () => {
 
   describe("13. Hash/Crypto", () => {
     it("should create hash with crypto", () => {
-      // @ts-ignore - createHash is available at runtime
       const hash = createHash("sha256");
       hash.update("test data");
       const digest = hash.digest("hex");
@@ -384,7 +385,6 @@ describe("Bun Runtime Features", () => {
 
       // @ts-ignore - Bun.file is available at runtime
       const content = await Bun.file(testFile).text();
-      // @ts-ignore - createHash is available at runtime
       const hash = createHash("sha256");
       hash.update(content);
       const digest = hash.digest("hex");

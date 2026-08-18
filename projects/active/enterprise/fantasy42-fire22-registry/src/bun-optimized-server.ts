@@ -7,6 +7,7 @@
  * - Automatic connection pooling
  * - WebSocket support built-in
  */
+// @see https://bun.com/reference/node/process — process.platform
 
 import { packageCache, queryCache } from './cache';
 import { validatePackageMetadata } from './validation';
@@ -216,7 +217,7 @@ export class BunOptimizedServer {
     const stats = {
       server: {
         version: Bun.version,
-        platform: Bun.platform,
+        platform: process.platform,
         uptime: process.uptime(),
       },
       performance: this.stats,
@@ -554,7 +555,7 @@ export class BunOptimizedMonitor {
   } {
     return {
       version: Bun.version,
-      platform: Bun.platform,
+      platform: process.platform,
       arch: process.arch,
       uptime: process.uptime(),
       memory: this.getMemoryUsage(),

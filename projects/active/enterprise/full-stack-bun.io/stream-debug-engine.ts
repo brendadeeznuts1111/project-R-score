@@ -5,12 +5,13 @@
  */
 
 import { Database } from 'bun:sqlite';
+import { mkdirSync } from 'node:fs';
 import { MLGSGraph } from './src/graph/MLGSGraph';
 
 // Database setup
 const dataDir = './data';
 try {
-	Bun.mkdir(dataDir, { recursive: true });
+	mkdirSync(dataDir, { recursive: true });
 } catch {
     console.error('Unhandled error:', error);
   }
@@ -270,4 +271,3 @@ console.info('%j', {
 	inspect: 'Uint8Array perfect',
 	stripANSI: 'SIEM clean'
 });
-

@@ -2,6 +2,7 @@
  * [INSPECT][CUSTOM][UTILITY]{BUN-API}
  * [Bun.inspect.custom] symbol helpers and patterns
  */
+// @see https://bun.com/docs/runtime/nodejs-compat#nodetty — process.stdout.isTTY
 
 import type { CustomInspectable } from "../types";
 
@@ -42,7 +43,7 @@ export function formatDarkMode(
   text: string,
   color: keyof typeof COLORS = "cyan"
 ): string {
-  if (!Bun.isTTY) return text;
+  if (process.stdout.isTTY !== true) return text;
   return `${COLORS[color]}${text}${COLORS.reset}`;
 }
 
@@ -54,7 +55,7 @@ export function formatConditional(
   text: string,
   coloredVersion: string
 ): string {
-  return Bun.isTTY ? coloredVersion : text;
+  return process.stdout.isTTY === true ? coloredVersion : text;
 }
 
 /**

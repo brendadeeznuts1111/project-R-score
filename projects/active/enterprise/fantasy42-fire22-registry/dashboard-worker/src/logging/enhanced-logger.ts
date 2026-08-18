@@ -14,6 +14,7 @@
  */
 
 import { getEffectiveConfig, BuildTimeConfig } from '../config/build-time-config';
+import { mkdirSync } from 'node:fs';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
@@ -197,7 +198,7 @@ export class EnhancedLogger {
       const logFile = `${logDir}/${entry.environment}-${new Date().toISOString().split('T')[0]}.log`;
 
       // Ensure log directory exists
-      Bun.mkdir(logDir, { recursive: true });
+      mkdirSync(logDir, { recursive: true });
 
       const logLine = JSON.stringify(entry) + '\n';
       Bun.write(logFile, logLine, { append: true });

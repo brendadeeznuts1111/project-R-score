@@ -13,8 +13,11 @@
  * - Error handling
  */
 
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+
 import { createCookieClient } from "../src/api/authenticated-client";
 import { log } from "../src/utils/logger";
+import { existsSync, mkdirSync } from "node:fs";
 
 // Environment configuration
 const UPLOAD_DIR = "./uploads";
@@ -22,8 +25,8 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/gif", "application/pdf"];
 
 // Ensure upload directory exists
-if (!Bun.exists(UPLOAD_DIR)) {
-  Bun.mkdir(UPLOAD_DIR, { recursive: true });
+if (!existsSync(UPLOAD_DIR)) {
+  mkdirSync(UPLOAD_DIR, { recursive: true });
   log.info(`Created upload directory: ${UPLOAD_DIR}`);
 }
 
@@ -419,15 +422,14 @@ const server = Bun.serve({
     // List uploaded files
     if (pathname === "/files" && req.method === "GET") {
       try {
-        const files = await Array.fromAsync(Bun.glob(`${UPLOAD_DIR}/*`));
-        
-        const fileList = files
-          .filter(file => file.isFile)
-          .map(file => ({
-            name: file.filename,
-            size: (await file.stat()).size,
-            type: getMimeType(file.filename),
-          }));
+        const filenames = await Array.fromAsync(
+          new Bun.Glob("*").scan({ cwd: UPLOAD_DIR, onlyFiles: true })
+        );
+        const fileList = filenames.map((filename) => ({
+          name: filename,
+          size: Bun.file(`${UPLOAD_DIR}/${filename}`).size,
+          type: getMimeType(filename),
+        }));
 
         return new Response(JSON.stringify(fileList), {
           headers: { "Content-Type": "application/json" },
@@ -444,8 +446,8 @@ const server = Bun.serve({
       const filename = pathname.replace("/uploads/", "");
       const filepath = `${UPLOAD_DIR}/${filename}`;
 
-      if (Bun.exists(filepath)) {
-        const file = Bun.file(filepath);
+      const file = Bun.file(filepath);
+      if (await file.exists()) {
         return new Response(file, {
           headers: { "Content-Type": getMimeType(filename) },
         });

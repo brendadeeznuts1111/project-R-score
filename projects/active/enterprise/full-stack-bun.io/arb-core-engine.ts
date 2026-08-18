@@ -11,6 +11,7 @@
  */
 
 import { Database } from 'bun:sqlite';
+import { mkdirSync } from 'node:fs';
 import { MLGSGraph } from './src/graph/MLGSGraph';
 import { chunkedGuard } from './src/security/chunked-encoding-guard';
 
@@ -20,7 +21,7 @@ const mlgsPath = process.env.MLGS_PATH || './data/mlgs-core.db';
 
 // Ensure data directory exists
 try {
-	Bun.mkdir('./data', { recursive: true });
+	mkdirSync('./data', { recursive: true });
 } catch {
 	// Directory may already exist
 }
@@ -282,6 +283,5 @@ process.on('SIGTERM', () => {
 	db.close();
 	process.exit(0);
 });
-
 
 

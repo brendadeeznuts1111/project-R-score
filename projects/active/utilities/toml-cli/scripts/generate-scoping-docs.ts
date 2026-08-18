@@ -7,6 +7,7 @@
  * Run: bun scripts/generate-scoping-docs.ts
  * Output: docs/SCOPING_MATRIX.md (auto-generated, DO NOT EDIT)
  */
+// @see https://bun.com/reference/node/process — process.exit
 
 import { DUOPLUS_SCOPING_MATRIX, ScopingMatrixRow } from '../data/scopingMatrixEnhanced';
 import { writeFileSync } from 'fs';
@@ -297,7 +298,7 @@ async function main() {
     console.info(`📝 ${(markdown.split('\n').length)} lines total`);
   } catch (err) {
     console.error('❌ Failed to generate documentation:', err);
-    Bun.exit(1);
+    process.exit(1);
   }
 }
 

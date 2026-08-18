@@ -2,6 +2,7 @@
 // [1.0.0.0] Versioned Build Script - Bun Native
 // Builds with version management, metadata, and archiving
 // Usage: bun run scripts/build-versioned.ts [--archive] [--metadata=value]
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 
 import { mkdir, writeFile } from "fs/promises";
 import { join } from "path";
@@ -109,7 +110,7 @@ async function createArchive(
   console.info(`\n📦 Creating archive: ${archivePath}`);
 
   // Copy dist files to archive
-  const distFiles = await Bun.glob("**/*", { cwd: outdir });
+  const distFiles = await Array.fromAsync(new Bun.Glob("**/*").scan({ cwd: outdir }));
   for (const file of distFiles) {
     const src = join(outdir, file);
     const dst = join(archivePath, file);
@@ -168,4 +169,3 @@ async function main(): Promise<void> {
 }
 
 main();
-

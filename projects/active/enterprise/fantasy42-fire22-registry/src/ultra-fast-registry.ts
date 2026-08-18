@@ -11,6 +11,7 @@
  * - Hardware-accelerated compression
  * - Native cryptographic operations
  */
+// @see https://bun.com/reference/node/process — process.platform
 
 import { Database } from 'bun:sqlite';
 import { packageCache, queryCache } from './cache';
@@ -393,7 +394,7 @@ class UltraFastRegistryServer {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       version: Bun.version,
-      platform: Bun.platform,
+      platform: process.platform,
       uptime: process.uptime(),
       memory: process.memoryUsage(),
       stats: this.stats,
@@ -495,7 +496,7 @@ class UltraFastRegistryServer {
     const systemStats = {
       server: {
         version: Bun.version,
-        platform: Bun.platform,
+        platform: process.platform,
         uptime: process.uptime(),
         memory: process.memoryUsage(),
       },

@@ -11,6 +11,7 @@
  * Run: bun scripts/generate-env-dts.ts
  * Or add to package.json: "generate:types": "bun scripts/generate-env-dts.ts"
  */
+// @see https://bun.com/reference/node/process — process.exit
 
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 
@@ -148,10 +149,10 @@ function main() {
       console.info(`  bunx tsc --noEmit`);
     }
 
-    process.exit?.(0) ?? Bun.exit(0);
+    process.exit(0);
   } catch (err) {
     console.error('❌ Failed to generate env.d.ts:', err);
-    process.exit?.(1) ?? Bun.exit(1);
+    process.exit(1);
   }
 }
 

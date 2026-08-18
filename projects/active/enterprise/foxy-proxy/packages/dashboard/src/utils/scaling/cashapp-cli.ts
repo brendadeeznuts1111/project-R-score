@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // CashApp Scaling Pipeline CLI
 // Command-line interface for CashApp account management and scaling
 

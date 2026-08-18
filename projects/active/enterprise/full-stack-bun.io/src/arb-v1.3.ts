@@ -10,13 +10,14 @@
  */
 
 import { Database } from "bun:sqlite";
+import { mkdirSync } from "node:fs";
 
 // ==================== STANDALONE DB ====================
 const dbPath = process.env.DB_PATH || './data/arb-v1.3.db';
 
 // Ensure data directory exists
 try {
-	Bun.mkdir('./data', { recursive: true });
+	mkdirSync('./data', { recursive: true });
 } catch {
 	// Directory may already exist
 }
@@ -149,4 +150,3 @@ async function main() {
 if (import.meta.main) {
 	main().catch(console.error);
 }
-

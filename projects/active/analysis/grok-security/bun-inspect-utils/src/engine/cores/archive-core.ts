@@ -2,6 +2,7 @@
 // Zero-npm, Bun v1.3.6+ native log archiving with compression
 // Enterprise-grade storage with KV/S3/filesystem adapters
 // Supports direct S3 upload: Bun.write("s3://bucket/archive.tar.gz", blob)
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 
 import type {
   ArchiveMetadata,
@@ -76,25 +77,28 @@ export class ArchiveCore implements CoreModule {
   private async collectLogFiles(
     directory: string
   ): Promise<{ entries: LogFileEntry[]; totalSize: number }> {
-    const files = await Bun.glob(directory + "/*.log").array();
+    const files = await Array.fromAsync(
+      new Bun.Glob("*.log").scan({ cwd: directory, absolute: true })
+    );
     const logEntries: LogFileEntry[] = [];
     let totalSize = 0;
 
     for (const file of files) {
-      const bunFile = Bun.file(file.path);
+      const name = file.split("/").pop() ?? file;
+      const bunFile = Bun.file(file);
       const content = await bunFile.text();
       const stat = await bunFile.stat();
 
       logEntries.push({
-        path: file.path,
-        name: file.name,
+        path: file,
+        name,
         size: content.length,
         modified: stat?.mtime?.getTime() ?? Date.now(),
         content,
       });
 
       totalSize += content.length;
-      this.archiveMap[file.name] = content;
+      this.archiveMap[name] = content;
     }
 
     return { entries: logEntries, totalSize };

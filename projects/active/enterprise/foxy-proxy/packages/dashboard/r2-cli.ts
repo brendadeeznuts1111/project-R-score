@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
 /**
  * R2 Environment Manager CLI
  * Quickly see and read assets across your triple-environment setup.

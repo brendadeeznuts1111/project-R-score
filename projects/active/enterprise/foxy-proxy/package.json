@@ -43,7 +43,7 @@
     "build:prod": "cd packages/dashboard && NODE_ENV=production bun build",
     "build:analyze": "cd packages/dashboard && bun build",
     "build:staging": "cd packages/dashboard && NODE_ENV=staging bun build",
-    "test": "cd packages/dashboard && bun test",
+    "test": "cd packages/dashboard && bun run test -- --run",
     "test:watch": "cd packages/dashboard && bun test --watch",
     "test:coverage": "cd packages/dashboard && bun test --coverage",
     "typecheck": "cd packages/dashboard && bun typecheck",
