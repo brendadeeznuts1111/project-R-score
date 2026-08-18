@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+
 import { $ } from 'bun';
 import {
   junitContextPath,

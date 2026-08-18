@@ -27,6 +27,7 @@ Unified offline health gate for the portal control plane. Pure checks by default
 | id | level | Proves |
 |----|-------|--------|
 | `bunfig-machine-ssot` | fatal | `~/.bunfig.toml` linker/globalStore/age/excludes/cache.dir |
+| `bunfig-xdg-shadow` | fatal | no `$XDG_CONFIG_HOME/.bunfig.toml` (Bun prefers it) |
 | `bunfig-machine-frozen-lockfile` | warn | machine declares `frozenLockfile` |
 | `bunfig-project-no-machine-keys` | fatal | project does not set machine-owned install keys |
 | `bunfig-merge-consistency` | fatal | effective isolated + globalStore + absolute cache |
@@ -44,7 +45,7 @@ Operator map for harness-gates + local reproduce. Tables over narrative.
 | Command | Role |
 |---------|------|
 | `bun run machine:bunfig:ensure` | Write `~/.bunfig.toml` from `config/machine.bunfig.toml.template` (absolute `cache.dir`) |
-| `bun run machine:bunfig:ensure -- --overwrite` | Replace host file (CI / setup-factory-bun) |
+| `bun run machine:bunfig:ensure -- --overwrite` | Replace a regular host file (CI / setup-factory-bun). Refuses a symlink. |
 | `bun run machine:bunfig:check` | Snippets + absolute cache.dir (exit 1 on drift) |
 | `bun run portal:doctor:ci` | ensure + doctor `--env ci --no-write` (plain offline) |
 | `bun run portal:doctor:ci:json` | same as ci, JSON on stdout only |

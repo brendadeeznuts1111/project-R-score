@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+
 /** File accountability is allow-by-default: every project file belongs in the
  * index unless it is generated, dependency output, VCS data, or a secret env
  * file. Keep this list aligned with .gitignore rather than adding source paths

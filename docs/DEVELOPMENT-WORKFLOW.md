@@ -41,8 +41,12 @@ pathIgnorePatterns = [
 ]
 ```
 
-@see https://bun.com/docs/test/configuration#pathignorepatterns  
-@see https://bun.com/blog/bun-v1.3.13#bun-test-changed
+References:
+[test configuration](https://bun.com/docs/test/configuration#pathignorepatterns)
+·
+[path-ignore-patterns release](https://bun.com/blog/bun-v1.3.11#path-ignore-patterns-for-bun-test)
+·
+[`bun test --changed` release](https://bun.com/blog/bun-v1.3.13#bun-test-changed).
 
 ---
 

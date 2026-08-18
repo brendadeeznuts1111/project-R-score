@@ -5,12 +5,16 @@ This is a small, test-first starting point for a library consumed by Bun.
 ## First five minutes
 
 1. Set the package `description` and confirm the generated `name` in
-   `package.json`.
+   `package.json`. Keep `private: true` while developing.
 2. Replace the `hello` example in `src/index.ts` with the public API.
 3. Update the matching tests in `test/index.test.ts`.
-4. Run the local proof:
+4. Review `harness.toml`. The base check intentionally requires no secrets.
+   Release readiness additionally requires a chosen SPDX `license`, an explicit
+   `repository`, a customized description, and `private: false`.
+5. Run the local proof:
 
 ```bash
+bun run requirements
 bun run check
 bun pm pack --dry-run
 ```
@@ -53,6 +57,13 @@ template, so it never delegates to Bun's implicit local destination. It also
 refuses an existing target until `--replace-local` makes the destructive action
 explicit, and never accepts the current directory as that target.
 
+For a template that declares `harness.toml`, the wrapper proves the source
+requirements and manifest before Bun can replace the destination. After Bun
+materializes the package name and removes `bun-create`, the wrapper reruns the
+requirements, regenerates `files.md`, and validates the generated manifest
+before reporting success or registering a Factory marker. A failed generated
+scaffold is retained for diagnosis and is never registered.
+
 On Bun 1.3.14, `--no-install` skips this template's `preinstall` status message
 but still runs its dependency-free `postinstall` next steps. Do not put required
 setup in either hook; use `bun run check` after installation instead.
@@ -77,20 +88,106 @@ bun run lint:fix        # applies safe ESLint fixes, then reports remaining viol
 bun run typecheck
 bun run build
 bun run build:metafile # writes metafiles plus a machine-readable build summary
+bun run requirements  # validates runtime + package identity; requires no secrets
+bun run requirements:release # proves explicit release identity; still secret-free
+bun run requirements:publish # adds only the automated-publish token requirement
+bun run lockfile:check # native frozen dry run; proves package.json ↔ bun.lock coherence
 bun run generate:files # refreshes the tracked project file index
 bun run check:files    # validates files.md and package.json.files against the source tree
-bun run check           # file index + typecheck + test + build
+bun run check           # read-only file-index proof + typecheck + test + build
 bun run prepack         # same checks run automatically before Bun packs/publishes this directory
-bun run publish:dry-run # Bun-native publish simulation; never uploads
+bun run release:dry-run # release requirements + secret-free Bun package inspection
+bun run publish:ci      # fail-fast requirements, then authenticated npm publish
+bun run cron:preview -- "0 * * * *" "2026-01-01T00:30:00Z" # next UTC match; no job registration
 bun run color-test     # demos auto/fixed Bun.color terminal output and brand formats
 bun run bench          # Bun.nanoseconds throughput JSON
 bun run profile:cpu    # same workload under --cpu-prof → ./profiles/*.cpuprofile
 ```
 
-`bun run check` verifies the generated file index, formatting, lint, types,
-tests, and build in that order. Prettier and ESLint are pinned local development
-dependencies, so these commands do not depend on whatever versions a global tool
-happens to provide.
+## Bun cron
+
+Use `bun run cron:preview -- "<schedule>" "<relative-date>"` before installing a
+schedule. The command calls `Bun.cron.parse` directly and prints one JSON line.
+It has no dependencies, loads no secrets, and never registers an in-process or
+OS-level job. Omit the schedule to use `CRON_SCHEDULE`, then the preview-only
+`@hourly` default. Omit the relative date to start from the current time.
+
+The Bun 1.3.14 baseline accepts standard five-field expressions and nicknames
+such as `@hourly`. Seconds are not supported. For example, `*/30 * * * *` means
+every 30 minutes; `*/30 * * * * *` is invalid. On this baseline,
+`Bun.cron.parse` and in-process scheduling interpret schedules in UTC. OS-level
+jobs use the host's local timezone. If you raise `engines.bun`, verify these
+semantics against Bun's current cron documentation and runtime rather than
+inferring them from a newer `@types/bun` package.
+
+The package script pins `TZ=UTC`. If you call `scripts/cron-preview.ts`
+directly, set `TZ=UTC` yourself. `CRON_TZ`, when present, must also be `UTC`;
+Bun 1.3.14 does not implement the timezone option shown in forward Bun docs.
+Pass relative time as Unix milliseconds or an ISO timestamp ending in `Z` or a
+numeric offset such as `-06:00`. The command rejects timezone-naive timestamps
+because `Date` would interpret them through the process timezone before cron
+parsing begins.
+
+If the work belongs to the current process and must share its pools or caches,
+use `Bun.cron(schedule, handler)`. The next occurrence is scheduled only after
+the handler settles, so invocations do not overlap. Keep the returned
+`CronJob`, then call `stop()`, `unref()`, or `ref()` explicitly as lifecycle
+ownership changes. A thrown error or rejected promise follows Bun's normal
+uncaught-error behavior; the job can continue only while the process survives.
+
+If the work must survive process restarts, register it explicitly from an
+operator or provisioning command:
+
+```ts
+await Bun.cron('./worker.ts', '30 2 * * 1', 'weekly-report');
+await Bun.cron.remove('weekly-report');
+```
+
+The target script exports a default object with `scheduled(controller)`. Bun
+owns the platform integration through crontab, launchd, or Task Scheduler. Do
+not run registration from package import, `bun create`, lifecycle hooks, tests,
+or `bun run check`; those paths must remain deterministic and side-effect free.
+Registration does not portably capture `TZ`, secrets, `NODE_ENV`, or
+`CRON_SCHEDULE`. A persistent worker must retrieve runtime credentials through
+its deployment owner, and schedule changes require explicit re-registration.
+
+[Read Bun's cron documentation](https://bun.com/docs/runtime/cron) before
+shipping a schedule or changing the runtime floor.
+
+`bun run check` first validates `harness.toml`, the active Bun version, and
+concrete package identity. The harness also locks the critical `bunfig.toml`
+values for isolated installs, first-lock bootstrap, parent-death behavior,
+console depth, and coverage accounting. It requires non-empty `README.md`,
+`src/index.ts`, and `test/index.test.ts`, then verifies the generated file index,
+formatting, lint, types, tests, and build in that order. Prettier and ESLint are
+pinned local development dependencies, so these commands do not depend on
+whatever versions a global tool happens to provide.
+
+The harness separates development, release readiness, and authenticated
+publication. `check` has an empty `requiredEnv` list and must stay secret-free.
+`release` also requires no credentials, but rejects the starter description,
+`UNLICENSED`, a missing repository URL, or `private: true`. The generated
+package deliberately starts private, so Bun itself rejects an accidental direct
+publish. Release and publish modes additionally require a Bun text lockfile
+declaring `lockfileVersion: 1` and `configVersion: 1`. Their command routes then
+run `bun install --frozen-lockfile --dry-run --ignore-scripts`, so a merely
+present or hand-written lockfile cannot pass when it disagrees with
+`package.json`. `publish` applies the same release policy and adds a non-empty
+`NPM_CONFIG_TOKEN` before invoking `bun publish`. The validator reports variable
+names only and never prints values. Interactive or custom-registry publication
+may still use Bun's native configuration directly after the package has been
+deliberately armed; `publish:ci` is the deterministic non-interactive route.
+
+Prepare a release deliberately:
+
+1. Replace the starter description.
+2. Replace `UNLICENSED` with the chosen SPDX license expression.
+3. Add an explicit HTTPS or Git `repository` URL.
+4. Change `private` from `true` to `false`.
+5. Commit the generated `bun.lock` after dependency review.
+6. Run `bun run lockfile:check`; resolve package/lock drift deliberately.
+7. Run `bun run release:dry-run` without credentials.
+8. Supply `NPM_CONFIG_TOKEN` only to `bun run publish:ci`.
 
 ### Automatic terminal color
 
@@ -161,7 +258,7 @@ metadata is reported with its real source.
 | `PROJECT_NAME`             | Enrichment `project` property                            | generated package name                                                                        |
 | `BUN_CREATE_DIR`           | Bun/Factory local-template discovery, before scaffolding | Bun's global `.bun-create` path; not read by the generated library                            |
 | `NPM_CLIENT`               | Bun npm-template route, before scaffolding               | Optional absolute path to the npm client executable; not read by the generated library        |
-| `NPM_CONFIG_TOKEN`         | Bun registry authentication during `bun publish`         | none; required only for a non-interactive registry publish                                    |
+| `NPM_CONFIG_TOKEN`         | Automated registry authentication via `publish:ci`       | `release:dry-run` remains secret-free; `requirements:publish` exits before registry upload    |
 | `BENCH_ITERATIONS`         | `bun run bench` workload size                            | `50000`; must be a positive safe integer                                                      |
 
 The scripts preserve CI-provided values. Missing provenance remains absent and
@@ -182,10 +279,12 @@ The full code-example mapping is maintained in the monorepo at
 
 `scripts/template-contract.ts` is the typed, executable contract for this
 template. It groups package properties by identity, runtime, quality, reporting,
-publishing, lifecycle, and file accountability; environment inputs and flags are
-separate groups. Its JUnit property map names every native and enriched
+publishing, lifecycle, release requirements, and file accountability;
+environment inputs and flags are separate groups. Its JUnit property map names every native and enriched
 property, input, and absence rule. `bun run check:files` validates the generated
 package form (where Bun has already removed `bun-create`) as well as `files.md`.
+`bun run check` never regenerates that index. If the tree drifts, the check fails
+until you explicitly run `bun run generate:files` and review the diff.
 When you intentionally add a property, environment input, or flag, add it to the
 corresponding contract group and document its owner and safety rule before
 relying on it.
@@ -245,21 +344,25 @@ for executable examples of those APIs.
 
 The template declares `publishConfig.access: "public"` and
 `publishConfig.tag: "latest"`, matching its unscoped public-library default.
-Before publishing a scoped/private package, deliberately change `access` to
+Before publishing a scoped restricted package, deliberately change `access` to
 `restricted` or pass Bun's `--access` and `--tag` flags for that release. Keep
 registry URLs and credentials out of the template; configure them in
 `bunfig.toml`, `.npmrc`, or with Bun's `--registry` flag. Start with:
 
 ```bash
-bun run publish:dry-run
-bun publish
+bun run release:dry-run
+bun run publish:ci
 ```
 
-`prepack` runs the proof contract before Bun packs this directory. `postpublish`
-then prints the published package/version/tag for an operator to verify. Neither
-hook runs when a prebuilt `.tgz` is supplied to `bun publish`, so archive-based
-Factory publishing remains an explicit separate operation. For Bun's native
-release reference, see
+`release:dry-run` first runs the frozen lockfile check, then uses
+`bun pm pack --dry-run`, which inspects the exact package surface without
+requesting registry authentication. Bun 1.3.14's
+`bun publish --dry-run` still reaches its authentication boundary, so it is not
+the secret-free proof route. `prepack` runs the proof contract before Bun packs
+this directory. `postpublish` then prints the published package/version/tag for
+an operator to verify. Neither hook runs when a prebuilt `.tgz` is supplied to
+`bun publish`, so archive-based Factory publishing remains an explicit separate
+operation. For Bun's native release reference, see
 [Bun `publish` documentation](https://bun.com/docs/pm/cli/publish).
 
 | Bun publish option                        | Use                                                                           |
@@ -318,10 +421,12 @@ the archive publish step above.
 `bun dev` watches and executes the source entry point while you work;
 `test:watch` does the same for the test suite. Both retain terminal output on
 reload with `--no-clear-screen`. `bunfig.toml` keeps child processes tied to the
-parent and sets `[console] depth = 4` for readable nested `console.log()` output;
+parent and sets `[console] depth = 6` for readable nested `console.log()` output;
 Bun's default is `2`, and `bun --console-depth=N run …` overrides the project
 setting for one invocation. Put the runtime flag before `run`. Raw `Bun.inspect`
 uses its explicit `{ depth }` option instead. Installs use Bun's isolated linker
 with the global virtual store, so warm installs can reuse package trees across
-projects without weakening dependency isolation.
-`[serve.static] env = "PUBLIC_*"` is only for non-secret browser configuration.
+projects without weakening dependency isolation. The project keeps
+`frozenLockfile = false` only so a brand-new scaffold can create its first lock
+and developers can make intentional dependency changes; release and publish
+always override it with the native frozen dry-run proof.

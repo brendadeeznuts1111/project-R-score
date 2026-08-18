@@ -16,6 +16,7 @@ bun --filter @factorywager/bun-release-contracts generate v1.3.14
 bun --filter @factorywager/bun-release-contracts generate:latest
 bun --filter @factorywager/bun-release-contracts generate:all --since v1.3.0 --limit 10
 bun --filter @factorywager/bun-release-contracts check v1.3.14
+bun --filter @factorywager/bun-release-contracts check:offline
 bun --filter @factorywager/bun-release-contracts test
 ```
 
@@ -58,3 +59,66 @@ insertion does not renumber every contract.
 The executable release gate remains the root `test:bun:release-contracts`
 script. Inventory counts and executable test counts must always be reported
 separately.
+
+`bun run bun:release-contracts:check` is the deterministic CI gate. It does not
+fetch release pages. It validates covered test paths, canonical inventory bytes,
+and the aggregate `contracts/index.json` before the release-knowledge gate runs.
+
+## Release example knowledge
+
+The package also turns the official `text/markdown` release representation into
+a strict, searchable example artifact. The committed Bun v1.3.14 artifact is
+[`knowledge/bun-v1.3.14.json`](knowledge/bun-v1.3.14.json). Each example keeps a
+stable content ID, section slot, source line, exact code, catalog APIs, official
+docs links, RSS publication timestamp, dependencies, stability, and explicit
+setup requirements.
+
+Harvesting and normalization are deliberately separate. Download the official
+Markdown, then build against the repository's committed docs catalog and RSS
+feed:
+
+```bash
+curl -fsSL https://bun.com/blog/bun-v1.3.14.md -o /tmp/bun-v1.3.14.md
+bun run bun:release-knowledge -- build /tmp/bun-v1.3.14.md --version 1.3.14
+bun run bun:release-knowledge -- build /tmp/bun-v1.3.14.md --version 1.3.14 --check
+```
+
+The offline gate validates the full recursive shape, deterministic IDs,
+canonical source identity, exact committed RSS publication provenance, semantic
+metadata, sorted/unique arrays, source ordering, setup/runnable consistency,
+duplicate IDs and slots, and derived counts without network access:
+
+```bash
+bun run bun:release-knowledge:check
+```
+
+For extracted-versus-normalized proof, provide the official Markdown used by the
+build. Validation rebuilds the expected artifact with the committed catalog and
+reports every field that drifted. Reports support human tables, JSON, and JUnit
+XML:
+
+```bash
+bun run bun:release-knowledge -- validate packages/bun-release-contracts/knowledge/bun-v1.3.14.json --source /tmp/bun-v1.3.14.md
+bun run bun:release-knowledge -- validate --version 1.3.14 --report=json
+bun run bun:release-knowledge -- validate-all --report=json
+bun run bun:release-knowledge -- validate-all --report=junit > reports/bun-release-knowledge.xml
+```
+
+`BUN_RELEASE_KNOWLEDGE_STRICT=true` treats warnings as failures.
+`BUN_RELEASE_KNOWLEDGE_MAX_WARNINGS=<n>` sets the non-strict warning budget
+(default `10`); the equivalent CLI controls are `--strict` and `--max-warnings`.
+The build path runs the same semantic validator before it can write a normalized
+artifact, and `bun:ci` runs `validate-all`.
+
+Query, adoption, and release-diff surfaces read the same artifact:
+
+```bash
+bun run bun:release-knowledge -- query packages/bun-release-contracts/knowledge/bun-v1.3.14.json "resize image"
+bun run bun:release-knowledge -- matrix packages/bun-release-contracts/knowledge/bun-v1.3.14.json
+bun run bun:release-knowledge -- diff previous.json current.json --json
+```
+
+`runnable: true` means static normalization found no setup requirement. It is
+not executable coverage. Harvested snippets are never wrapped in generated tests
+or run automatically; adoption becomes executable only through the existing
+release inventory's `covered` test-path contract.

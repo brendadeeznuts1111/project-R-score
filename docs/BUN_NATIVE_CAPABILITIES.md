@@ -7,6 +7,7 @@
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | **Verified runtime**      | Installed Bun **1.4.0-canary.1** (`3f93daaf0`) plus isolated Bun **1.3.14** release probes; production pin remains 1.3.14 |
 | **Canonical refs**        | `bun tools/bun-doc-refs.ts suggest "…"` · operate [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md)                            |
+| **Release adoption**      | [Bun 1.3.10–1.3.13](./bun-v1.3.10-v1.3.13-catalog.md) · [Bun 1.3.14](./bun-v1.3.14-catalog.md)                            |
 | **Not product desk SSOT** | Partner UI / Telegram / balance-sheet flows unless a package owns them                                                    |
 
 ## API map (homebase)
@@ -115,13 +116,14 @@ status). Harness smoke accepts both.
 passed to `Bun.serve` determines which HTTP behavior Bun can preserve; a stream
 created from a file is not equivalent to the file object.
 
-| Route/body shape                                    | Delivery                    | Automatic file MIME | Conditional metadata                                              | Byte Range                                                  | Cache policy                         |
-| --------------------------------------------------- | --------------------------- | ------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------ |
-| direct route `Bun.file(pathOrFileURL)`              | lazy file stream            | yes                 | `Last-Modified` + `If-Modified-Since` → 304                       | 206                                                         | application must set `Cache-Control` |
-| `new Response(Bun.file(pathOrFileURL))`             | lazy file stream            | yes                 | same file behavior                                                | 206                                                         | application must set `Cache-Control` |
-| `new Response(Uint8Array \| ArrayBuffer \| Buffer)` | buffered bytes              | no; set explicitly  | a static route Response gets Bun's ETag, not file `Last-Modified` | no native file Range; Range request returns full 200        | application must set `Cache-Control` |
-| `new Response(Bun.file(path).stream())`             | web `ReadableStream`        | no; set explicitly  | no inherited file validator                                       | versioned: full 200 on 1.3.14; 206 observed on 1.4.0 canary | application must set `Cache-Control` |
-| imported HTML route                                 | Bun fullstack/HTML pipeline | bundle-managed      | pipeline-managed                                                  | asset-dependent                                             | pipeline-managed                     |
+| Route/body shape                                        | Delivery                    | Automatic file MIME | Conditional metadata                                              | Byte Range                                                  | Cache policy                         |
+| ------------------------------------------------------- | --------------------------- | ------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------ |
+| direct route `Bun.file(pathOrFileURL)`                  | lazy file stream            | yes                 | `Last-Modified` + `If-Modified-Since` → 304                       | 206                                                         | application must set `Cache-Control` |
+| static route `new Response(Bun.file(pathOrFileURL))`    | lazy file stream            | yes                 | same file behavior                                                | 206                                                         | application must set `Cache-Control` |
+| dynamic handler `new Response(Bun.file(pathOrFileURL))` | lazy file stream            | yes                 | no `Last-Modified` observed on 1.3.14                             | 206                                                         | application must set `Cache-Control` |
+| `new Response(Uint8Array \| ArrayBuffer \| Buffer)`     | buffered bytes              | no; set explicitly  | a static route Response gets Bun's ETag, not file `Last-Modified` | no native file Range; Range request returns full 200        | application must set `Cache-Control` |
+| `new Response(Bun.file(path).stream())`                 | web `ReadableStream`        | no; set explicitly  | no inherited file validator                                       | versioned: full 200 on 1.3.14; 206 observed on 1.4.0 canary | application must set `Cache-Control` |
+| imported HTML route                                     | Bun fullstack/HTML pipeline | bundle-managed      | pipeline-managed                                                  | asset-dependent                                             | pipeline-managed                     |
 
 **Harness rules**
 
@@ -143,7 +145,9 @@ created from a file is not equivalent to the file object.
    and
    [`bun-1.4.0-web-api-contract.test.ts`](../tests/bun-1.4.0-web-api-contract.test.ts).
    Evergreen application policy stays in
-   [`bun-fetch-init.test.ts`](../tests/bun-fetch-init.test.ts).
+   [`bun-fetch-init.test.ts`](../tests/bun-fetch-init.test.ts). The complete
+   v1.3.14 adoption and deferral record is
+   [`bun-v1.3.14-catalog.md`](./bun-v1.3.14-catalog.md).
 
 Grounding:
 [HTTP routing—file vs static responses](https://bun.com/docs/runtime/http/routing#file-responses-vs-static-responses)
@@ -311,8 +315,8 @@ This bounded block is generated from the shared ast-grep Bun pattern catalog. So
 <!-- bun-native-markdown-sync:start -->
 | Primitive | State | Structural owners | Pattern authority |
 |-----------|-------|-------------------|-------------------|
-| [`Bun.markdown.html`](https://bun.com/docs/runtime/markdown) | Adopted | [`lib/markdown/options.ts`](../lib/markdown/options.ts)<br>[`scripts/check-docs.ts`](../scripts/check-docs.ts)<br>[`tools/bun-api-oneliners.ts`](../tools/bun-api-oneliners.ts)<br>[`tools/bun-api-showcase/oneliners.ts`](../tools/bun-api-showcase/oneliners.ts) | [`bun-markdown-html`](../.agents/skills/ast-grep/bun-patterns.json) |
-| [`Bun.markdown.ansi`](https://bun.com/docs/runtime/markdown) | Adopted | [`lib/factory/markdown.ts`](../lib/factory/markdown.ts)<br>[`scripts/docs-ci-deploy.ts`](../scripts/docs-ci-deploy.ts)<br>[`scripts/docs-code-quality.ts`](../scripts/docs-code-quality.ts)<br>[`scripts/docs-fresh-rerun.ts`](../scripts/docs-fresh-rerun.ts)<br>[`scripts/docs-spine-tenants.ts`](../scripts/docs-spine-tenants.ts)<br>[`scripts/harness-status.ts`](../scripts/harness-status.ts)<br>[`scripts/validate-wire-traps.ts`](../scripts/validate-wire-traps.ts)<br>[`tools/brand-status.ts`](../tools/brand-status.ts)<br>[`tools/bun-api-oneliners.ts`](../tools/bun-api-oneliners.ts)<br>[`tools/bun-api-showcase.ts`](../tools/bun-api-showcase.ts)<br>[`tools/bun-api-showcase/oneliners.ts`](../tools/bun-api-showcase/oneliners.ts)<br>[`tools/bun-blog-codeblocks.ts`](../tools/bun-blog-codeblocks.ts)<br>[`tools/bun-native-capabilities-sync.ts`](../tools/bun-native-capabilities-sync.ts)<br>[`tools/glossary-health.ts`](../tools/glossary-health.ts)<br>[`tools/glossary-verify.ts`](../tools/glossary-verify.ts)<br>[`tools/workspace-taxonomy.ts`](../tools/workspace-taxonomy.ts) | [`bun-markdown-ansi`](../.agents/skills/ast-grep/bun-patterns.json) |
+| [`Bun.markdown.html`](https://bun.com/docs/runtime/markdown) | Adopted | [`lib/markdown/options.ts`](../lib/markdown/options.ts)<br>[`scripts/check-docs.ts`](../scripts/check-docs.ts)<br>[`tools/bun-api-oneliners.ts`](../tools/bun-api-oneliners.ts) | [`bun-markdown-html`](../.agents/skills/ast-grep/bun-patterns.json) |
+| [`Bun.markdown.ansi`](https://bun.com/docs/runtime/markdown) | Adopted | [`lib/factory/markdown.ts`](../lib/factory/markdown.ts)<br>[`scripts/docs-ci-deploy.ts`](../scripts/docs-ci-deploy.ts)<br>[`scripts/docs-code-quality.ts`](../scripts/docs-code-quality.ts)<br>[`scripts/docs-fresh-rerun.ts`](../scripts/docs-fresh-rerun.ts)<br>[`scripts/docs-spine-tenants.ts`](../scripts/docs-spine-tenants.ts)<br>[`scripts/harness-status.ts`](../scripts/harness-status.ts)<br>[`scripts/validate-wire-traps.ts`](../scripts/validate-wire-traps.ts)<br>[`tools/brand-status.ts`](../tools/brand-status.ts)<br>[`tools/bun-api-oneliners.ts`](../tools/bun-api-oneliners.ts)<br>[`tools/bun-api-showcase.ts`](../tools/bun-api-showcase.ts)<br>[`tools/bun-blog-codeblocks.ts`](../tools/bun-blog-codeblocks.ts)<br>[`tools/bun-native-capabilities-sync.ts`](../tools/bun-native-capabilities-sync.ts)<br>[`tools/glossary-health.ts`](../tools/glossary-health.ts)<br>[`tools/glossary-verify.ts`](../tools/glossary-verify.ts)<br>[`tools/workspace-taxonomy.ts`](../tools/workspace-taxonomy.ts) | [`bun-markdown-ansi`](../.agents/skills/ast-grep/bun-patterns.json) |
 | [`Bun.markdown.render`](https://bun.com/docs/runtime/markdown) | Adopted | [`lib/docs/bun-native-capabilities-sync.ts`](../lib/docs/bun-native-capabilities-sync.ts)<br>[`lib/factory/cli.ts`](../lib/factory/cli.ts)<br>[`lib/markdown/options.ts`](../lib/markdown/options.ts)<br>[`lib/operator-research/model-contract-files.ts`](../lib/operator-research/model-contract-files.ts)<br>[`scripts/brand-bench-runner.ts`](../scripts/brand-bench-runner.ts)<br>[`scripts/check-docs.ts`](../scripts/check-docs.ts) | [`bun-markdown-render`](../.agents/skills/ast-grep/bun-patterns.json) |
 | [`Bun.markdown.react`](https://bun.com/docs/runtime/markdown) | Adopted | [`scripts/brand-bench-runner.ts`](../scripts/brand-bench-runner.ts) | [`bun-markdown-react`](../.agents/skills/ast-grep/bun-patterns.json) |
 <!-- bun-native-markdown-sync:end -->

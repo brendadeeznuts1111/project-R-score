@@ -25,6 +25,7 @@ import {
   isEphemeralCiInstallEnv,
   MACHINE_EXPECTED_GLOBAL_STORE,
   MACHINE_EXPECTED_LINKER,
+  xdgShadowBunfigPath,
 } from '../lib/install/machine-bunfig-policy.ts';
 import {
   applyBunInstallEnv,
@@ -46,6 +47,7 @@ export {
   isEphemeralCiInstallEnv,
   MACHINE_EXPECTED_GLOBAL_STORE,
   MACHINE_EXPECTED_LINKER,
+  xdgShadowBunfigPath,
 } from '../lib/install/machine-bunfig-policy.ts';
 
 const ROOT = `${import.meta.dir}/..`;
@@ -66,6 +68,16 @@ function envInstallPolicyOk(env: ReturnType<typeof applyBunInstallEnv>): boolean
 }
 
 async function checkBunfig(): Promise<Check> {
+  const processEnv = Bun.env as Record<string, string | undefined>;
+  const xdgShadow = xdgShadowBunfigPath(processEnv);
+  if (xdgShadow && (await Bun.file(xdgShadow).exists())) {
+    return {
+      ok: false,
+      label: 'install policy',
+      detail: `$XDG_CONFIG_HOME/.bunfig.toml shadows ~/.bunfig.toml (${xdgShadow})`,
+    };
+  }
+
   const [project, machine] = await Promise.all([readProjectBunfig(ROOT), readMachineBunfig()]);
   const policy = resolveEffectiveInstallPolicy(project, machine);
   const env = applyBunInstallEnv();

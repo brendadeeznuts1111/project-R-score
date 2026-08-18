@@ -70,6 +70,12 @@ const cases: Case[] = [
     stdoutOrStderrIncludes: ['❌ Unknown long option(s) in bun:release-contracts: --typo'],
   },
   {
+    name: 'bun:release-knowledge unknown',
+    cmd: ['bun', 'tools/bun-release-knowledge.ts', '--typo'],
+    expectExit: [1],
+    stdoutOrStderrIncludes: ['❌ Unknown long option(s) in bun:release-knowledge: --typo'],
+  },
+  {
     name: 'screenshot unknown',
     cmd: ['bun', 'tools/screenshot-cli.ts', '--typo'],
     expectExit: [1],

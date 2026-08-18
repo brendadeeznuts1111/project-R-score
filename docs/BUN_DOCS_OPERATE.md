@@ -29,6 +29,7 @@ Pin ↔ tip **type inventory** (committed `tools/bun-types-inventory.json`,
 | Catalog export                      | `bun run docs:catalog:export`                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | Locus                               | `bun tools/bun-doc-refs.ts locus --depth=20`                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | Feed indexes                        | `bun run docs:feeds:refresh` — conditional GET RSS + `bun.com/reference` → `tools/bun-docs-feeds.json`                                                                                                                                                                                                                                                                                                                                                                                            |
+| Curated demo verification           | `bun run docs:api-verify:check` — runnable oneliner population only; exact installed `bun-types` revision + official `llms.txt`, reference, release-feed, source-repository, and runtime-revision evidence                                                                                                                                                                                                                                                                                        |
 | Docs coverage verify                | `bun run verify:docs-coverage:save` — strict gate on tracked catalog/overlay/review tokens → `public/registry/docs-coverage-proof.json`                                                                                                                                                                                                                                                                                                                                                           |
 | Verify against an unreleased Bun PR | `bunx bun-pr <pr>` (downloads PR release build as `bun-<pr>` on PATH) → `bun run bun:pr:verify <pr>` — runs `bun-api-verify` · `verify-bun-runtime-nits` · `verify-bun-release` against the PR build · `--diff` deep-compares proof artifacts vs installed Bun · `--proof api\|runtime\|release\|all` · `--json` · [`bun-pr-verify.ts`](../tools/bun-pr-verify.ts) · [Bun contributing § download PR builds](https://bun.com/docs/project/contributing#download-release-build-from-pull-requests) |
 
@@ -41,6 +42,35 @@ pipeline: `llms.txt` is the complete page index, `guides.md` is only a
 landing/example surface, and `verify:guides` checks that relationship. Neither
 index satisfies an API `@see`; resolve the exact `/docs/...#anchor` or
 `/reference/...` entry through `bun-doc-refs.ts`.
+
+### Authority versus materialization
+
+Bun's official surfaces are the authority: `bun.com/docs/llms.txt` for docs
+discovery, `bun.com/reference` for generated API reference, `oven-sh/bun` for
+source and `packages/bun-types`, and `bun.com/rss.xml` for dated release
+history. Repository JSON is never an authority. It is a checked-in,
+deterministic materialization fetched by the refresh commands above so CI can
+verify the same bytes offline instead of changing with the network mid-run. The
+proof records SHA-256 digests of those exact materialized bytes.
+
+`lib/docs/bun-official-sources.ts` is the path-free authority validator. It
+rejects materializations whose embedded source identity is not the matching
+official Bun surface. `lib/docs/bun-source-snapshots.ts` is the replaceable
+repository adapter; all materialization locations come from
+`lib/docs/docs-artifact-paths.ts`. Verification logic must not embed those
+locations. Refresh commands perform live official-source ingestion; proof
+commands consume the deterministic result.
+
+`docs:api-verify:check` does not claim full Bun API coverage. Its population is
+the unique token set named by runnable entries in `bun-api-oneliners.ts` and
+`bun-ops-oneliners.ts`. `CANONICAL_REFS` supplies a candidate URL, then the
+verifier independently requires that URL to resolve through the official docs or
+reference index. Declaration evidence is the SHA-256 of the exact installed
+official `bun-types` `.d.ts` bundle and links to that package's exact release
+tag or tip revision. The running Bun binary is linked to its exact upstream
+commit. RSS is recorded as the release-history provenance plane; it does not by
+itself prove that an API exists. The deep pin/tip shape inventory remains the
+separate `bun:types-inventory:*` pipeline.
 
 The source gate parses JavaScript and TypeScript syntax rather than searching
 raw text. It resolves global, namespace, named, aliased, dynamic, `require`, and

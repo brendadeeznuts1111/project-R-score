@@ -30,6 +30,11 @@ description: >
   `lastUpdated`. Recorded release and update events require the exact official
   version, publication timestamp, and URL, proved by the provenance commands in
   the command map.
+- Bun-native scaffold and config work: read
+  [`bun-create-alignment.md`](../../../docs/design/bun-create-alignment.md) and
+  [`UNIFIED.md`](../../../docs/UNIFIED.md). Bun owns `bun create`, `bun init`,
+  `bunfig.toml`, and `bun.lock` behavior; `harness.toml` is a Factory-owned
+  closed contract that must not be presented as a Bun schema.
 - Domain and UI work: follow
   [`DOMAIN_CONCEPT_SHAPE.md`](../../../docs/DOMAIN_CONCEPT_SHAPE.md). For
   partners, use
@@ -46,6 +51,15 @@ description: >
 
 - Repository scripts own runnable commands; machine-wide doctors do not replace
   Project R gates.
+- For Factory templates, prove source preflight, materialized output, a fresh
+  install, and the release route. Require `bun.lock` existence and schema before
+  using `bun install --frozen-lockfile --dry-run --ignore-scripts` as the
+  package-to-lock coherence authority; the native dry run alone does not prove
+  that a lock artifact exists.
+- Keep the standalone template's initial `frozenLockfile = false` bootstrap
+  separate from Project R's hardened root setting. Release and publish must
+  override the bootstrap through the owned lockfile check. Do not add app-only
+  bunfig sections to a library template without an exercised consumer.
 - Use focused file tests while editing, `bun run test:watch` for the
   changed-file loop, `.husky/pre-commit` for staged proof, and `bun run bun:ci`
   on a clean worktree before merge.
@@ -69,5 +83,9 @@ description: >
 - Run the smallest type, security, channel, or search proof after every patch.
 - Hosted checks are supporting signals. The clean local `bun run bun:ci` result
   is merge authority.
+- When full CI fails only on stale external bakes or a concurrency flake, rerun
+  the exact failing test, record the owning artifact and repair command, and
+  keep the unrelated failure visible. Do not rebake a credential-backed
+  artifact or weaken freshness without its owning authority.
 - If a command in the command map is absent from `package.json`, repair the
   SSOT; do not invent a substitute.

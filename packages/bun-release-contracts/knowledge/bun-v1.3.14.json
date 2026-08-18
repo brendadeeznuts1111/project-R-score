@@ -1,0 +1,741 @@
+{
+  "schemaVersion": 1,
+  "runtime": "bun",
+  "releaseVersion": "1.3.14",
+  "sourceUrl": "https://bun.com/blog/bun-v1.3.14",
+  "sourceMarkdownUrl": "https://bun.com/blog/bun-v1.3.14.md",
+  "publishedAt": "2026-05-13T03:19:35.000Z",
+  "counts": {
+    "examples": 32,
+    "runnable": 3,
+    "documented": 22
+  },
+  "examples": [
+    {
+      "id": "bun-1.3.14-to-install-bun-3e7bae01",
+      "slot": "to-install-bun-to-install-bun-1",
+      "feature": "To install Bun",
+      "section": "To install Bun",
+      "purpose": "To install Bun",
+      "language": "sh",
+      "code": "$ curl -fsSL https://bun.sh/install | bash",
+      "stability": "unknown",
+      "api": [],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "non-javascript-runtime"
+      ],
+      "docsLinks": [],
+      "sourceLine": 13
+    },
+    {
+      "id": "bun-1.3.14-to-install-bun-7b58dfa8",
+      "slot": "to-install-bun-to-install-bun-2",
+      "feature": "To install Bun",
+      "section": "To install Bun",
+      "purpose": "To install Bun",
+      "language": "sh",
+      "code": "$ npm install -g bun",
+      "stability": "unknown",
+      "api": [],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "non-javascript-runtime"
+      ],
+      "docsLinks": [],
+      "sourceLine": 17
+    },
+    {
+      "id": "bun-1.3.14-to-install-bun-125e48ae",
+      "slot": "to-install-bun-to-install-bun-3",
+      "feature": "To install Bun",
+      "section": "To install Bun",
+      "purpose": "To install Bun",
+      "language": "sh",
+      "code": "$ powershell -c \"irm bun.sh/install.ps1|iex\"",
+      "stability": "unknown",
+      "api": [],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "non-javascript-runtime"
+      ],
+      "docsLinks": [],
+      "sourceLine": 21
+    },
+    {
+      "id": "bun-1.3.14-to-install-bun-aead9fb2",
+      "slot": "to-install-bun-to-install-bun-4",
+      "feature": "To install Bun",
+      "section": "To install Bun",
+      "purpose": "To install Bun",
+      "language": "sh",
+      "code": "$ scoop install bun",
+      "stability": "unknown",
+      "api": [],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "non-javascript-runtime"
+      ],
+      "docsLinks": [],
+      "sourceLine": 25
+    },
+    {
+      "id": "bun-1.3.14-to-install-bun-718fbe99",
+      "slot": "to-install-bun-to-install-bun-5",
+      "feature": "To install Bun",
+      "section": "To install Bun",
+      "purpose": "To install Bun",
+      "language": "sh",
+      "code": "$ brew tap oven-sh/bun\n$ brew install bun",
+      "stability": "unknown",
+      "api": [],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "non-javascript-runtime"
+      ],
+      "docsLinks": [],
+      "sourceLine": 29
+    },
+    {
+      "id": "bun-1.3.14-to-install-bun-9eaabf14",
+      "slot": "to-install-bun-to-install-bun-6",
+      "feature": "To install Bun",
+      "section": "To install Bun",
+      "purpose": "To install Bun",
+      "language": "sh",
+      "code": "$ docker pull oven/bun\n$ docker run --rm --init --ulimit memlock=-1:-1 oven/bun",
+      "stability": "unknown",
+      "api": [],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "non-javascript-runtime"
+      ],
+      "docsLinks": [],
+      "sourceLine": 34
+    },
+    {
+      "id": "bun-1.3.14-to-upgrade-bun-4d4db5d5",
+      "slot": "to-upgrade-bun-to-upgrade-bun-1",
+      "feature": "To upgrade Bun",
+      "section": "To upgrade Bun",
+      "purpose": "To upgrade Bun",
+      "language": "sh",
+      "code": "$ bun upgrade",
+      "stability": "stable",
+      "api": [
+        "bun upgrade"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "non-javascript-runtime"
+      ],
+      "docsLinks": [
+        "https://bun.com/blog/bun-v1.3.12#to-upgrade-bun"
+      ],
+      "sourceLine": 43
+    },
+    {
+      "id": "bun-1.3.14-bun-image-166877b2",
+      "slot": "bun-image-built-in-image-processing-bun-image-built-in-image-processing-1",
+      "feature": "Bun.Image",
+      "section": "Bun.Image — Built-in Image Processing",
+      "purpose": "Bun now ships a built-in image processing API that handles JPEG, PNG, WebP, GIF, and BMP — plus HEIC, AVIF, and TIFF on macOS and Windows — with zero native module installs. Bun.Image provides a chainable pipeline for decoding, transforming",
+      "language": "js",
+      "code": "// Resize and convert a photo to WebP\nawait Bun.file(\"photo.jpg\")\n  .image()\n  .resize(1024, 1024, { fit: \"inside\" })\n  .rotate(90)\n  .webp({ quality: 85 })\n  .write(\"thumb.webp\");\n\n// Generate a thumbnail from an upload in a single expression\nreturn new Response(new Bun.Image(upload).resize(200).jpeg());",
+      "stability": "stable",
+      "api": [
+        "Bun.file",
+        "Bun.Image",
+        "Bun.Image.jpeg",
+        "Bun.Image.resize",
+        "Bun.Image.rotate",
+        "Bun.Image.webp",
+        "Bun.Image.write"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "embedding-context",
+        "external-bindings",
+        "filesystem-fixtures"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/file-io",
+        "https://bun.com/docs/runtime/image",
+        "https://bun.com/docs/runtime/image#output-formats",
+        "https://bun.com/docs/runtime/image#resize",
+        "https://bun.com/docs/runtime/image#rotate-flip",
+        "https://bun.com/docs/runtime/image#terminals"
+      ],
+      "sourceLine": 53
+    },
+    {
+      "id": "bun-1.3.14-bun-image-8f540781",
+      "slot": "bun-image-built-in-image-processing-terminal-methods-1",
+      "feature": "Bun.Image",
+      "section": "Terminal methods",
+      "purpose": "All processing runs off the main thread (except metadata()). Output via .bytes(), .buffer(), .blob(), .toBase64(), .dataurl(), .placeholder() (thumbhash), .metadata(), or .write(dest).",
+      "language": "js",
+      "code": "const meta = await new Bun.Image(buf).metadata();\n// { width: 1920, height: 1080, format: \"jpeg\", ... }\n\nconst placeholder = await Bun.file(\"hero.jpg\").image().placeholder(); // thumbhash data URL for blur-up",
+      "stability": "stable",
+      "api": [
+        "Bun.file",
+        "Bun.Image",
+        "Bun.Image.metadata",
+        "Bun.Image.placeholder"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "external-bindings",
+        "filesystem-fixtures",
+        "placeholders"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/file-io",
+        "https://bun.com/docs/runtime/image",
+        "https://bun.com/docs/runtime/image#metadata",
+        "https://bun.com/docs/runtime/image#placeholders"
+      ],
+      "sourceLine": 82
+    },
+    {
+      "id": "bun-1.3.14-bun-image-fe8aee0b",
+      "slot": "bun-image-built-in-image-processing-body-integration-1",
+      "feature": "Bun.Image",
+      "section": "Body integration",
+      "purpose": "Bun.Image instances work directly as response/request bodies with automatic Content-Type:",
+      "language": "js",
+      "code": "return new Response(new Bun.Image(upload).resize(200).jpeg());",
+      "stability": "stable",
+      "api": [
+        "Bun.Image",
+        "Bun.Image.jpeg",
+        "Bun.Image.resize"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "embedding-context",
+        "external-bindings"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/image",
+        "https://bun.com/docs/runtime/image#output-formats",
+        "https://bun.com/docs/runtime/image#resize"
+      ],
+      "sourceLine": 93
+    },
+    {
+      "id": "bun-1.3.14-global-virtual-store-97b8cadb",
+      "slot": "global-virtual-store-global-virtual-store-1",
+      "feature": "Global Virtual Store",
+      "section": "Global Virtual Store",
+      "purpose": "This is still experimental, so the global store is off by default with the isolated linker. Benchmarks — warm install of a 1,400-package fixture on Apple Silicon macOS (hyperfine --warmup 3 --runs 10): This is still experimental, so the glo",
+      "language": "toml",
+      "code": "# bunfig.toml\n[install]\nglobalStore = true",
+      "stability": "experimental",
+      "api": [
+        "bunfig.toml",
+        "globalStore"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "non-javascript-runtime"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "sourceLine": 145
+    },
+    {
+      "id": "bun-1.3.14-global-virtual-store-f10298ba",
+      "slot": "global-virtual-store-global-virtual-store-2",
+      "feature": "Global Virtual Store",
+      "section": "Global Virtual Store",
+      "purpose": "This is still experimental, so the global store is off by default with the isolated linker. This is still experimental, so the global store is off by default with the isolated linker. To enable: Or via environment variable:",
+      "language": "bash",
+      "code": "BUN_INSTALL_GLOBAL_STORE=1 bun install",
+      "stability": "experimental",
+      "api": [
+        "bun install"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "non-javascript-runtime"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/pm/cli/install"
+      ],
+      "sourceLine": 153
+    },
+    {
+      "id": "bun-1.3.14-bun-serve-ff771341",
+      "slot": "http-3-quic-support-in-bun-serve-http-3-quic-support-in-bun-serve-1",
+      "feature": "Bun.serve",
+      "section": "HTTP/3 (QUIC) support in Bun.serve",
+      "purpose": "⚠️ Highly experimental. HTTP/3 support is new and likely has bugs. Do not deploy http3: true to production yet. ⚠️ Highly experimental. HTTP/3 support is new and likely has bugs. Do not deploy http3: true to production yet. Bun.serve now su",
+      "language": "ts",
+      "code": "Bun.serve({\n  port: 443,\n  tls: { cert, key },\n  http3: true, // also listen on UDP/443 for HTTP/3\n  fetch(req) {\n    return new Response(\"hi\");\n  },\n});",
+      "stability": "highly-experimental",
+      "api": [
+        "Bun.serve",
+        "http3",
+        "UDP"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "embedding-context",
+        "long-running-server",
+        "network-access"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/http/server",
+        "https://bun.com/docs/runtime/networking/udp"
+      ],
+      "sourceLine": 169
+    },
+    {
+      "id": "bun-1.3.14-bun-serve-d2d8652a",
+      "slot": "http-3-quic-support-in-bun-serve-http-3-quic-support-in-bun-serve-2",
+      "feature": "Bun.serve",
+      "section": "HTTP/3 (QUIC) support in Bun.serve",
+      "purpose": "⚠️ Highly experimental. HTTP/3 support is new and likely has bugs. Do not deploy http3: true to production yet. Bun.serve now supports HTTP/3 over QUIC. Enable it with a single flag: When http3: true is set alongside tls, Bun binds TCP for ",
+      "language": "ts",
+      "code": "Bun.serve({\n  port: 443,\n  tls: { cert, key },\n  http3: true,\n  http1: false, // disable HTTP/1.1\n  fetch(req) {\n    return new Response(\"h3 only\");\n  },\n});",
+      "stability": "highly-experimental",
+      "api": [
+        "Bun.serve",
+        "http1: false",
+        "http3"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "embedding-context",
+        "long-running-server",
+        "network-access"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/http/server",
+        "https://bun.com/docs/runtime/http/server#http-3-quic"
+      ],
+      "sourceLine": 184
+    },
+    {
+      "id": "bun-1.3.14-experimental-http-2-client-for-fetch-33635c50",
+      "slot": "experimental-http-2-client-for-fetch-experimental-http-2-client-for-fetc-1",
+      "feature": "Experimental HTTP/2 Client for fetch()",
+      "section": "Experimental HTTP/2 Client for fetch()",
+      "purpose": "fetch() now supports HTTP/2 as an experimental feature. When enabled, Bun negotiates h2 via TLS ALPN — multiple concurrent fetches to the same origin share a single multiplexed TCP+TLS connection instead of opening separate HTTP/1.1 connect",
+      "language": "js",
+      "code": "// Opt in globally:\n//   BUN_FEATURE_FLAG_EXPERIMENTAL_HTTP2_CLIENT=1 bun run app.js\n//   bun run --experimental-http2-fetch app.js\n\n// Or per-request (works without the env flag):\nconst res = await fetch(\"https://example.com\", { protocol: \"http2\" });",
+      "stability": "experimental",
+      "api": [
+        "bun run -",
+        "env"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "network-access"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin",
+        "https://bun.com/docs/runtime/bunfig#env"
+      ],
+      "sourceLine": 224
+    },
+    {
+      "id": "bun-1.3.14-experimental-http-2-client-for-fetch-2e205af6",
+      "slot": "experimental-http-2-client-for-fetch-per-request-protocol-control-1",
+      "feature": "Experimental HTTP/2 Client for fetch()",
+      "section": "Per-request protocol control",
+      "purpose": "fetch() now supports HTTP/2 as an experimental feature. When enabled, Bun negotiates h2 via TLS ALPN — multiple concurrent fetches to the same origin share a single multiplexed TCP+TLS connection instead of opening separate HTTP/1.1 connect",
+      "language": "js",
+      "code": "// Force HTTP/2 — fails with HTTP2Unsupported if the server doesn't support it\nawait fetch(\"https://example.com\", { protocol: \"http2\" });\n\n// Force HTTP/1.1 — ignores the experimental flag\nawait fetch(\"https://example.com\", { protocol: \"http1.1\" });",
+      "stability": "experimental",
+      "api": [],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "network-access"
+      ],
+      "docsLinks": [],
+      "sourceLine": 241
+    },
+    {
+      "id": "bun-1.3.14-experimental-http-3-client-for-fetch-31f114a5",
+      "slot": "experimental-http-3-client-for-fetch-experimental-http-3-client-for-fetc-1",
+      "feature": "Experimental HTTP/3 Client for fetch()",
+      "section": "Experimental HTTP/3 Client for fetch()",
+      "purpose": "fetch() now supports an experimental HTTP/3 client using the protocol option. This uses an lsquic-backed QUIC transport that runs alongside the existing HTTP/1.1 and HTTP/2 paths. ⚠️ Highly experimental. This is an early preview — the API m",
+      "language": "js",
+      "code": "const res = await fetch(\"https://example.com/\", { protocol: \"http3\" });\nconsole.log(await res.text());",
+      "stability": "highly-experimental",
+      "api": [
+        "http3"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "network-access"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/http/server"
+      ],
+      "sourceLine": 282
+    },
+    {
+      "id": "bun-1.3.14-experimental-http-3-client-for-fetch-f76be40a",
+      "slot": "experimental-http-3-client-for-fetch-alt-svc-http-3-upgrades-1",
+      "feature": "Experimental HTTP/3 Client for fetch()",
+      "section": "Alt-Svc HTTP/3 upgrades",
+      "purpose": "fetch() now supports an experimental HTTP/3 client using the protocol option. This uses an lsquic-backed QUIC transport that runs alongside the existing HTTP/1.1 and HTTP/2 paths. ⚠️ Highly experimental. This is an early preview — the API m",
+      "language": "sh",
+      "code": "# CLI flag\nbun --experimental-http3-fetch app.ts\n\n# Environment variable\nBUN_FEATURE_FLAG_EXPERIMENTAL_HTTP3_CLIENT=1 bun app.ts",
+      "stability": "highly-experimental",
+      "api": [
+        "http3"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "non-javascript-runtime"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/http/server"
+      ],
+      "sourceLine": 308
+    },
+    {
+      "id": "bun-1.3.14-experimental-http-3-client-for-fetch-2cb45ac6",
+      "slot": "experimental-http-3-client-for-fetch-alt-svc-http-3-upgrades-2",
+      "feature": "Experimental HTTP/3 Client for fetch()",
+      "section": "Alt-Svc HTTP/3 upgrades",
+      "purpose": "fetch() now supports an experimental HTTP/3 client using the protocol option. This uses an lsquic-backed QUIC transport that runs alongside the existing HTTP/1.1 and HTTP/2 paths. ⚠️ Highly experimental. This is an early preview — the API m",
+      "language": "js",
+      "code": "// First request goes over TCP/TLS as usual\nconst res1 = await fetch(\"https://example.com/api\");\n// If the response includes `Alt-Svc: h3=\":443\"`,\n// the next request to the same origin uses QUIC/HTTP-3\nconst res2 = await fetch(\"https://example.com/api\");",
+      "stability": "highly-experimental",
+      "api": [
+        "TCP",
+        "TLS"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "network-access"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/http/tls",
+        "https://bun.com/docs/runtime/networking/tcp"
+      ],
+      "sourceLine": 316
+    },
+    {
+      "id": "bun-1.3.14-fs-watch-8c4f84ce",
+      "slot": "rewritten-fs-watch-backend-on-linux-macos-and-freebsd-recursive-watching-1",
+      "feature": "fs.watch",
+      "section": "Recursive watching now tracks new directories (Linux)",
+      "purpose": "Previously, fs.watch(\"dir\", { recursive: true }) only registered the directory tree that existed at the time watch() was called. Directories created after the watch started were never tracked, so files inside them were invisible to the watc",
+      "language": "js",
+      "code": "import fs from \"node:fs\";\n\n// Now correctly detects changes inside directories created after watch() starts\nfs.watch(\"./src\", { recursive: true }, (event, filename) => {\n  console.log(event, filename);\n});\n\n// mkdir src/newDir && touch src/newDir/file.txt\n// Previously: only \"rename newDir\" — file.txt was missed\n// Now: \"rename newDir\", \"rename newDir/file.txt\", \"change newDir/file.txt\"",
+      "stability": "stable",
+      "api": [
+        "fs.watch"
+      ],
+      "dependencies": [
+        "node:fs"
+      ],
+      "runnable": false,
+      "requiresSetup": [
+        "long-running-watcher"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/file-io"
+      ],
+      "sourceLine": 334
+    },
+    {
+      "id": "bun-1.3.14-no-orphans-036776ba",
+      "slot": "no-orphans-exit-when-the-parent-process-dies-no-orphans-exit-when-the-pa-1",
+      "feature": "--no-orphans",
+      "section": "--no-orphans — exit when the parent process dies",
+      "purpose": "Bun now supports an opt-in mode that automatically exits when its parent process dies — even if the parent was SIGKILLed and never had a chance to forward a signal. On exit, Bun also recursively SIGKILLs every descendant process it spawned.",
+      "language": "sh",
+      "code": "# CLI flag (new)\nbun --no-orphans run my-script\n\n# bunfig.toml\n[run]\nnoOrphans = true\n\n# Environment variable\nBUN_FEATURE_FLAG_NO_ORPHANS=1 bun run my-script",
+      "stability": "stable",
+      "api": [
+        "--no-orphans",
+        "BUN_FEATURE_FLAG_NO_ORPHANS",
+        "bunfig.toml",
+        "noOrphans"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "non-javascript-runtime"
+      ],
+      "docsLinks": [
+        "https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies",
+        "https://bun.com/docs/runtime/bunfig"
+      ],
+      "sourceLine": 363
+    },
+    {
+      "id": "bun-1.3.14-process-execve-84629903",
+      "slot": "process-execve-support-process-execve-support-1",
+      "feature": "process.execve",
+      "section": "process.execve() support",
+      "purpose": "Bun now implements process.execve(execPath, args, env), matching the API added in Node.js v24. This POSIX syscall replaces the current process image in-place — it never returns on success.",
+      "language": "js",
+      "code": "// Replace the current process with a new one\nprocess.execve(\"/usr/bin/echo\", [\"echo\", \"hello from execve\"], {\n  PATH: process.env.PATH,\n});\n\n// ^ If successful, this line is never reached",
+      "stability": "stable",
+      "api": [
+        "process.env",
+        "process.execve"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "process-replacement"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/node-api",
+        "https://bun.com/docs/runtime/utils"
+      ],
+      "sourceLine": 398
+    },
+    {
+      "id": "bun-1.3.14-bun-terminal-0ce56889",
+      "slot": "bun-terminal-on-windows-via-conpty-bun-terminal-on-windows-via-conpty-1",
+      "feature": "Bun.Terminal",
+      "section": "Bun.Terminal on Windows via ConPTY",
+      "purpose": "Bun.Terminal and Bun.spawn({ terminal }) now work on Windows, powered by the Windows ConPTY API (CreatePseudoConsole). Previously, Bun.Terminal was only available on macOS and Linux.",
+      "language": "js",
+      "code": "const terminal = new Bun.Terminal({\n  cols: 80,\n  rows: 24,\n  onData(data) {\n    process.stdout.write(data);\n  },\n});\n\nconst proc = Bun.spawn({\n  cmd: [\"cmd.exe\", \"/c\", \"echo\", \"hello from ConPTY\"],\n  terminal,\n});\n\nawait proc.exited;\nterminal.close();",
+      "stability": "stable",
+      "api": [
+        "Bun.spawn",
+        "Bun.Terminal"
+      ],
+      "dependencies": [],
+      "runnable": true,
+      "requiresSetup": [],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/child-process",
+        "https://bun.com/docs/runtime/child-process#terminal-pty-support"
+      ],
+      "sourceLine": 420
+    },
+    {
+      "id": "bun-1.3.14-using-await-using-no-longer-lowered-when-targeting-bun-3f0dda94",
+      "slot": "using-await-using-no-longer-lowered-when-targeting-bun-using-await-using-1",
+      "feature": "using / await using no longer lowered when targeting Bun",
+      "section": "using / await using no longer lowered when targeting Bun",
+      "purpose": "- bun build --target=bun (including --compile and --bytecode) Other targets (browser, node) continue to lower using as before. Before:",
+      "language": "js",
+      "code": "// bun build --target=bun entry.js\nvar __using = (stack, value, async) => {\n  /* ... */\n};\nvar __callDispose = (stack, error, hasError) => {\n  /* ... */\n};\n{\n  let __stack = [];\n  try {\n    const x = __using(\n      __stack,\n      {\n        [Symbol.dispose]() {\n          /* ... */\n        },\n      },\n      0,\n    );\n    console.log(\"hi\");\n  } catch (_catch) {\n    var _err = _catch,\n      _hasErr = 1;\n  } finally {\n    __callDispose(__stack, _err, _hasErr);\n  }\n}",
+      "stability": "stable",
+      "api": [
+        "bun build",
+        "using / await using"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "placeholders"
+      ],
+      "docsLinks": [
+        "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun",
+        "https://bun.com/docs/bundler/index#basic-example"
+      ],
+      "sourceLine": 462
+    },
+    {
+      "id": "bun-1.3.14-using-await-using-no-longer-lowered-when-targeting-bun-f6dc19a5",
+      "slot": "using-await-using-no-longer-lowered-when-targeting-bun-using-await-using-2",
+      "feature": "using / await using no longer lowered when targeting Bun",
+      "section": "using / await using no longer lowered when targeting Bun",
+      "purpose": "Other targets (browser, node) continue to lower using as before. Before: After:",
+      "language": "js",
+      "code": "// bun build --target=bun entry.js\n{\n  using x = {\n    [Symbol.dispose]() {\n      /* ... */\n    },\n  };\n  console.log(\"hi\");\n}",
+      "stability": "stable",
+      "api": [
+        "bun build",
+        "using / await using"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "placeholders"
+      ],
+      "docsLinks": [
+        "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun",
+        "https://bun.com/docs/bundler/index#basic-example"
+      ],
+      "sourceLine": 494
+    },
+    {
+      "id": "bun-1.3.14-sighup-and-sigbreak-signal-handling-on-windows-e760789e",
+      "slot": "sighup-and-sigbreak-signal-handling-on-windows-sighup-and-sigbreak-signa-1",
+      "feature": "SIGHUP and SIGBREAK signal handling on Windows",
+      "section": "SIGHUP and SIGBREAK signal handling on Windows",
+      "purpose": "process.on('SIGHUP', …) and process.on('SIGBREAK', …) now correctly receive Windows console-control events, matching Node.js behavior: Previously, these signal names were missing from Bun's Windows signal map, so registering a listener was ",
+      "language": "js",
+      "code": "// Gracefully handle console window close on Windows\nprocess.on(\"SIGHUP\", () => {\n  cleanup();\n  process.exit();\n});\n\n// Handle Ctrl+Break\nprocess.on(\"SIGBREAK\", () => {\n  console.log(\"Ctrl+Break received\");\n  process.exit();\n});",
+      "stability": "unknown",
+      "api": [],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "external-bindings"
+      ],
+      "docsLinks": [],
+      "sourceLine": 519
+    },
+    {
+      "id": "bun-1.3.14-websocket-permessagedeflate-false-now-respected-in-upgrade-requests-697f50da",
+      "slot": "websocket-permessagedeflate-false-now-respected-in-upgrade-requests-webs-1",
+      "feature": "WebSocket perMessageDeflate: false now respected in upgrade requests",
+      "section": "WebSocket perMessageDeflate: false now respected in upgrade requests",
+      "purpose": "Previously, setting perMessageDeflate: false when creating a WebSocket connection was silently ignored — Bun always sent the Sec-WebSocket-Extensions: permessage-deflate; clientmaxwindowbits header in the upgrade request. This broke deploym",
+      "language": "js",
+      "code": "const WebSocket = require(\"ws\");\n\n// Extension header is now correctly omitted\nconst ws = new WebSocket(\"ws://localhost:3000\", {\n  perMessageDeflate: false,\n});\n\n// Also works with globalThis.WebSocket\nconst ws2 = new WebSocket(\"ws://localhost:3000\", {\n  perMessageDeflate: false,\n});",
+      "stability": "stable",
+      "api": [
+        "WebSocket"
+      ],
+      "dependencies": [
+        "ws"
+      ],
+      "runnable": true,
+      "requiresSetup": [],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/http/websockets"
+      ],
+      "sourceLine": 541
+    },
+    {
+      "id": "bun-1.3.14-bun-connect-2d48cb8c",
+      "slot": "reduced-memory-usage-for-mongodb-mongoose-reduced-memory-usage-for-mongo-1",
+      "feature": "Bun.connect",
+      "section": "Reduced memory usage for MongoDB & Mongoose",
+      "purpose": "All TLS-using APIs in Bun — Bun.connect, Bun.SQL (Postgres & MySQL), Valkey, upgradeTLS, new WebSocket(), and node:tls — now share a single native SSLCTX cache per VM. Connections with identical TLS configurations reuse the same SSLCTX inst",
+      "language": "js",
+      "code": "import { SQL } from \"bun\";\n\n// All connections in this pool now share a single SSL_CTX\nconst db = new SQL(\"postgres://user:pass@host/db?sslmode=require\");\n\n// These also share the same cached SSL_CTX since the config is identical\nconst conn1 = await Bun.connect({\n  hostname: \"example.com\",\n  port: 443,\n  tls: true,\n  socket: {\n    /* ... */\n  },\n});\nconst conn2 = await Bun.connect({\n  hostname: \"example.com\",\n  port: 443,\n  tls: true,\n  socket: {\n    /* ... */\n  },\n});",
+      "stability": "stable",
+      "api": [
+        "Bun.connect",
+        "SQL"
+      ],
+      "dependencies": [
+        "bun"
+      ],
+      "runnable": false,
+      "requiresSetup": [
+        "network-access",
+        "placeholders"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect",
+        "https://bun.com/docs/runtime/sql"
+      ],
+      "sourceLine": 567
+    },
+    {
+      "id": "bun-1.3.14-reduced-memory-usage-for-mongodb-mongoose-d25f83b3",
+      "slot": "reduced-memory-usage-for-mongodb-mongoose-reduced-memory-usage-for-mongo-2",
+      "feature": "Reduced memory usage for MongoDB & Mongoose",
+      "section": "Reduced memory usage for MongoDB & Mongoose",
+      "purpose": "This is especially impactful for database connection pools: a Postgres or MySQL pool with sslmode=require and N connections previously created N separate SSLCTX objects. Now it creates one. The cache is keyed by a SHA-256 digest of the TLS ",
+      "language": "js",
+      "code": "// Before: each iteration allocated a fresh SSL_CTX (~50 KB+)\nfor (let i = 0; i < 1000; i++) {\n  const sock = tls.connect({\n    host: \"localhost\",\n    port: 5432,\n    rejectUnauthorized: false,\n  });\n  sock.on(\"secureConnect\", () => sock.destroy());\n}\n// RSS after: ~1 GB\n\n// After: one shared SSL_CTX, RSS stays flat\n// RSS after: ~168 MB",
+      "stability": "unknown",
+      "api": [],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "network-access"
+      ],
+      "docsLinks": [],
+      "sourceLine": 596
+    },
+    {
+      "id": "bun-1.3.14-bun-publish-now-sends-readme-metadata-to-the-registry-4ffc0329",
+      "slot": "bun-publish-now-sends-readme-metadata-to-the-registry-bun-publish-now-se-1",
+      "feature": "bun publish now sends README metadata to the registry",
+      "section": "bun publish now sends README metadata to the registry",
+      "purpose": "Previously, bun publish included README.md in the published tarball but didn't populate the readme or readmeFilename fields in the JSON body sent to the npm registry. This meant packages published with Bun showed an empty README when querie",
+      "language": "sh",
+      "code": "# Before: registry API returned empty readme\nnpm view @my-scope/my-package readme  # \"\"\n\n# After: readme contents are properly sent\nnpm view @my-scope/my-package readme  # \"# my-package\\n\\nA great package...\"",
+      "stability": "stable",
+      "api": [
+        "bun publish"
+      ],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "non-javascript-runtime",
+        "placeholders"
+      ],
+      "docsLinks": [
+        "https://bun.com/docs/pm/cli/publish"
+      ],
+      "sourceLine": 653
+    },
+    {
+      "id": "bun-1.3.14-tls-getcacertificates-system-now-works-without-use-system-ca-37fe7b4f",
+      "slot": "tls-getcacertificates-system-now-works-without-use-system-ca-tls-getcace-1",
+      "feature": "tls.getCACertificates('system') now works without --use-system-ca",
+      "section": "tls.getCACertificates('system') now works without --use-system-ca",
+      "purpose": "Previously, tls.getCACertificates('system') returned an empty array [] unless --use-system-ca or NODEUSESYSTEMCA=1 was explicitly set. Node.js returns the OS trust store unconditionally for 'system' — the flag only affects 'default'. Bun no",
+      "language": "js",
+      "code": "import tls from \"node:tls\";\n\n// Previously returned [] without --use-system-ca, now returns system CA certs\nconst systemCerts = tls.getCACertificates(\"system\");\nconsole.log(systemCerts.length); // > 0 on Linux/Windows",
+      "stability": "stable",
+      "api": [
+        "node:tls",
+        "tls.getCACertificates",
+        "tls.getCACertificates('system')"
+      ],
+      "dependencies": [
+        "node:tls"
+      ],
+      "runnable": true,
+      "requiresSetup": [],
+      "docsLinks": [
+        "https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca",
+        "https://bun.com/reference/node/tls/getCACertificates"
+      ],
+      "sourceLine": 732
+    },
+    {
+      "id": "bun-1.3.14-bugfixes-71ef5c96",
+      "slot": "bugfixes-pipeline-producer-exit-no-longer-clobbers-downstream-pager-s-te-1",
+      "feature": "Bugfixes",
+      "section": "Pipeline producer exit no longer clobbers downstream pager's terminal state",
+      "purpose": "When piping Bun's output to tools like less, fzf, or fx (e.g. bun script.js | less), Bun would unconditionally restore its startup terminal (termios) snapshot at exit. Because termios state belongs to the underlying /dev/pts/ device — not t",
+      "language": "bash",
+      "code": "# Before: 'q' does nothing in less — terminal is stuck in cooked/line-buffered mode\nbun app.js | less\n\n# After: less, fzf, fx, and other pagers work correctly\nbun app.js | less",
+      "stability": "unknown",
+      "api": [],
+      "dependencies": [],
+      "runnable": false,
+      "requiresSetup": [
+        "non-javascript-runtime"
+      ],
+      "docsLinks": [],
+      "sourceLine": 1045
+    }
+  ]
+}

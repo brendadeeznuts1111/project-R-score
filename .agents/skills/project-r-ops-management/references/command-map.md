@@ -11,6 +11,34 @@ bun run bun:channel:check
 bun run lane:status
 ```
 
+## Bun scaffold, config, and lockfile proof
+
+```bash
+bun run factory:templates
+bun test tests/factory-template.test.ts tests/cli.test.ts tests/console-depth.test.ts
+bun run portal:doctor -- --group bunfig
+bun run install:verify
+bun tools/bun-doc-refs.ts check .bun-create/factory-library/scripts lib/factory/cli.ts
+```
+
+For an installed-artifact journey, create a disposable destination with
+`bun run factory:create -- factory-library <destination> --no-git`, then run
+`bun run check`, `bun run lockfile:check`, and the secret-free
+`bun run release:dry-run` after deliberately arming fixture package metadata.
+The Factory lockfile gate must first require and parse `bun.lock`; Bun 1.3.14's
+frozen dry run can succeed without creating a missing lockfile. The subsequent
+`bun install --frozen-lockfile --dry-run --ignore-scripts` is the native
+package-to-lock coherence proof.
+
+Keep ownership explicit:
+
+- `harness.toml` is the Factory closed schema and config mirror.
+- `bun.lock`, `bunfig.toml`, CLI flags, and `Bun.*` APIs are Bun-owned.
+- The standalone library template carries isolated/global-store settings for
+  portability and keeps only its first-lock development bootstrap unfrozen.
+- Project R root install policy remains machine-owned and hardened; prove it
+  with the bunfig doctor and install verifier above.
+
 ## Bun channel proof
 
 ```bash
@@ -84,7 +112,6 @@ worktree.
 ```bash
 bun run security:guard:deps
 bun run security:audit
-bun run security:ci
 ```
 
 ## Search governance proof
@@ -97,11 +124,3 @@ bun run search:bench:gate --json
 
 Refresh owned artifacts only when strict status reports drift. Baseline
 promotion requires explicit approval and `.search/POLICY_CHANGELOG.md` evidence.
-
-## Emergency bundle
-
-```bash
-bun run search:preflight:emergency
-```
-
-This legacy search bundle does not replace `bun run bun:ci`.

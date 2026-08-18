@@ -1,3 +1,19 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @updated Bun.which · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @updated Bun.which · fixed v0.3.0 · 2022-12-07 · https://bun.com/blog/bun-v0.3.0
+// @updated Bun.which · fixed v0.5.0 · 2023-01-18 · https://bun.com/blog/bun-v0.5.0
+// @updated Bun.which · changed v1.1.4 · 2024-04-16 · https://bun.com/blog/bun-v1.1.4
+// @updated Bun.which · fixed v1.1.9 · 2024-05-22 · https://bun.com/blog/bun-v1.1.9
+// @updated Bun.which · fixed v1.2.19 · 2025-07-19 · https://bun.com/blog/bun-v1.2.19
+// @updated Bun.which · fixed v1.2.20 · 2025-08-10 · https://bun.com/blog/bun-v1.2.20
+// @updated Bun.which · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.which · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils
 // @see https://bun.com/docs/pm/isolated-installs — configVersion + linker defaults
 // @see https://bun.com/docs/pm/cli/install#default-strategy — lockfile configVersion
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -156,6 +172,8 @@ export type PortalDoctorOpts = {
   skipLiveAccess?: boolean;
   /** Force plain or pretty output (overrides env auto-detect). */
   format?: 'plain' | 'pretty';
+  /** Inject the observation time for deterministic freshness tests. */
+  nowMs?: number;
   /**
    * Process-like env for machine bunfig, BUN_INSTALL_*, and runtime controls
    * (default Bun.env).
@@ -443,6 +461,7 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   const group = groups?.length === 1 ? groups[0] : opts.group;
   const env = opts.env;
   const spawn = opts.spawn ?? defaultSpawn;
+  const nowMs = opts.nowMs ?? Date.now();
   const checks: PortalDoctorCheck[] = [];
 
   // 1) Linker policy (mandatory, pure)
@@ -453,7 +472,7 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   const vaultHealth = joinPath(cwd, 'public/registry/vault-health.json');
   const vaultOk = await fileExists(vaultHealth);
   const vaultAt = vaultOk ? await readBakeGeneratedAt(vaultHealth) : undefined;
-  const vaultStale = vaultOk && isBakeStale(vaultAt);
+  const vaultStale = vaultOk && isBakeStale(vaultAt, VAULT_HEALTH_STALE_MS, nowMs);
   const vaultCheckOk = vaultOk && !vaultStale;
   checks.push(
     withMeta(
@@ -465,9 +484,9 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
         message: !vaultOk
           ? 'vault-health bake missing — bun run vault:health:bake (needs pass session)'
           : vaultStale
-            ? `public/registry/vault-health.json stale${vaultAt ? ` · ${formatAgeFromIso(vaultAt)}` : ''} (>48h) — re-bake`
-            : `public/registry/vault-health.json present${vaultAt ? ` · ${formatAgeFromIso(vaultAt)}` : ''}`,
-        freshness: vaultAt ? formatAgeFromIso(vaultAt) : undefined,
+            ? `public/registry/vault-health.json stale${vaultAt ? ` · ${formatAgeFromIso(vaultAt, nowMs)}` : ''} (>48h) — re-bake`
+            : `public/registry/vault-health.json present${vaultAt ? ` · ${formatAgeFromIso(vaultAt, nowMs)}` : ''}`,
+        freshness: vaultAt ? formatAgeFromIso(vaultAt, nowMs) : undefined,
       },
       {
         fixCommand: vaultCheckOk ? undefined : 'bun run vault:health:bake',
@@ -546,9 +565,9 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
         group: 'bakes',
         ok: capOk,
         message: capOk
-          ? `public/registry/capability-map-subset.json present${capAt ? ` · ${formatAgeFromIso(capAt)}` : ''}`
+          ? `public/registry/capability-map-subset.json present${capAt ? ` · ${formatAgeFromIso(capAt, nowMs)}` : ''}`
           : 'capability-map-subset missing — bun run bake:capabilities',
-        freshness: capAt ? formatAgeFromIso(capAt) : undefined,
+        freshness: capAt ? formatAgeFromIso(capAt, nowMs) : undefined,
       },
       {
         fixCommand: capOk ? undefined : 'bun run bake:capabilities',
@@ -571,9 +590,9 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
         group: 'bakes',
         ok: bunfigOk,
         message: bunfigOk
-          ? `public/registry/bunfig-state.json present${bunfigAt ? ` · ${formatAgeFromIso(bunfigAt)}` : ''}`
+          ? `public/registry/bunfig-state.json present${bunfigAt ? ` · ${formatAgeFromIso(bunfigAt, nowMs)}` : ''}`
           : 'bunfig-state bake missing — bun run bunfig:bake (optional)',
-        freshness: bunfigAt ? formatAgeFromIso(bunfigAt) : undefined,
+        freshness: bunfigAt ? formatAgeFromIso(bunfigAt, nowMs) : undefined,
       },
       {
         fixCommand: bunfigOk ? undefined : 'bun run bunfig:bake',
@@ -807,7 +826,7 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
     env,
     format: opts.format,
     liveAccess: !skipLive,
-    generatedAt: new Date().toISOString(),
+    generatedAt: new Date(nowMs).toISOString(),
     checks: scoped,
     summary,
     docs: {

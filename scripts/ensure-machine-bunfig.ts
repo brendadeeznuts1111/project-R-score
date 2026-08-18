@@ -8,11 +8,12 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  * Ensure ~/.bunfig.toml exists from config/machine.bunfig.toml.template.
  *
  *   bun run machine:bunfig:ensure
- *   bun run machine:bunfig:ensure --overwrite   # replace existing host file
- *   bun run machine:bunfig:ensure --check       # exit 1 if missing / drift from template keys
+ *   bun run machine:bunfig:ensure --overwrite        # replace a regular host file
+ *   bun run machine:bunfig:ensure --overwrite-link   # replace a symlink (explicit)
+ *   bun run machine:bunfig:ensure --check            # exit 1 if missing / drift / XDG shadow
  *
- * CI: setup-factory-bun runs this so portal:doctor + bake:doctor:check are portable.
- * Local: no-op if ~/.bunfig.toml already present (unless --overwrite).
+ * CI: setup-factory-bun writes a regular file so portal:doctor + bake:doctor:check are portable.
+ * Local: no-op if ~/.bunfig.toml already present. --overwrite will not flatten a symlink.
  *
  * Policy table SSOT: lib/install/machine-bunfig-policy.ts
  * @see docs/UNIFIED.md
@@ -22,7 +23,10 @@ import {
   cacheDirUsesUnexpandedTilde,
   MACHINE_BUNFIG_TEMPLATE_REL,
   machineBunfigMissingSnippets,
+  xdgShadowBunfigPath,
 } from '../lib/install/machine-bunfig-policy.ts';
+// eslint-disable-next-line no-restricted-imports -- Bun.file has no lstat; node:fs is the documented fallback
+import { lstatSync } from 'node:fs';
 import { joinPath } from './lib/fs-bun.ts';
 
 const argv = import.meta.main
@@ -33,23 +37,44 @@ export {
   CACHE_DIR_PLACEHOLDER,
   MACHINE_BUNFIG_REQUIRED_SNIPPETS,
   MACHINE_BUNFIG_TEMPLATE_REL,
+  xdgShadowBunfigPath,
 } from '../lib/install/machine-bunfig-policy.ts';
 
 export type EnsureMachineBunfigOpts = {
   cwd?: string;
   home?: string;
   overwrite?: boolean;
+  /** Replace a symlink at ~/.bunfig.toml (including a dangling one). */
+  overwriteLink?: boolean;
   checkOnly?: boolean;
   env?: Record<string, string | undefined>;
 };
 
 export type EnsureMachineBunfigResult = {
   ok: boolean;
-  action: 'wrote' | 'exists' | 'missing' | 'would-write' | 'check-ok' | 'check-fail';
+  action: 'wrote' | 'exists' | 'missing' | 'would-write' | 'check-ok' | 'check-fail' | 'refused';
   path: string;
   cacheDir: string;
   reason?: string;
 };
+
+/** True when path exists as a symlink (does not follow the target). */
+export function bunfigPathIsSymlink(path: string): boolean {
+  try {
+    return lstatSync(path).isSymbolicLink();
+  } catch {
+    return false;
+  }
+}
+
+/** True when path is a directory (does not follow a symlink). */
+export function bunfigPathIsDirectory(path: string): boolean {
+  try {
+    return lstatSync(path).isDirectory();
+  } catch {
+    return false;
+  }
+}
 
 function resolveHome(env: Record<string, string | undefined>, explicit?: string): string | null {
   if (explicit) return explicit;
@@ -99,10 +124,40 @@ export async function ensureMachineBunfig(
   const template = await templateFile.text();
   const rendered = renderMachineBunfigTemplate(template, cacheDir);
   const existing = Bun.file(path);
-  const exists = await existing.exists();
+  const linked = bunfigPathIsSymlink(path);
+  const isDir = bunfigPathIsDirectory(path);
+  const targetExists = await existing.exists();
+  const xdgShadow = xdgShadowBunfigPath(env);
+  if (xdgShadow && (await Bun.file(xdgShadow).exists())) {
+    return {
+      ok: false,
+      action: opts.checkOnly ? 'check-fail' : 'refused',
+      path,
+      cacheDir,
+      reason: `$XDG_CONFIG_HOME/.bunfig.toml shadows ~/.bunfig.toml (${xdgShadow})`,
+    };
+  }
 
   if (opts.checkOnly) {
-    if (!exists) {
+    if (isDir) {
+      return {
+        ok: false,
+        action: 'check-fail',
+        path,
+        cacheDir,
+        reason: '~/.bunfig.toml is a directory',
+      };
+    }
+    if (linked && !targetExists) {
+      return {
+        ok: false,
+        action: 'check-fail',
+        path,
+        cacheDir,
+        reason: 'dangling symlink ~/.bunfig.toml',
+      };
+    }
+    if (!targetExists) {
       return {
         ok: false,
         action: 'check-fail',
@@ -135,14 +190,52 @@ export async function ensureMachineBunfig(
     return { ok: true, action: 'check-ok', path, cacheDir };
   }
 
-  if (exists && !opts.overwrite) {
+  if (isDir) {
+    return {
+      ok: false,
+      action: 'refused',
+      path,
+      cacheDir,
+      reason: '~/.bunfig.toml is a directory',
+    };
+  }
+
+  if (linked && !opts.overwriteLink) {
+    if (!targetExists) {
+      return {
+        ok: false,
+        action: 'refused',
+        path,
+        cacheDir,
+        reason: 'dangling symlink ~/.bunfig.toml — restore the target or pass --overwrite-link',
+      };
+    }
+    if (!opts.overwrite) {
+      return { ok: true, action: 'exists', path, cacheDir };
+    }
+    return {
+      ok: false,
+      action: 'refused',
+      path,
+      cacheDir,
+      reason: 'refusing to replace symlink ~/.bunfig.toml; pass --overwrite-link',
+    };
+  }
+
+  if (targetExists && !linked && !opts.overwrite && !opts.overwriteLink) {
     return { ok: true, action: 'exists', path, cacheDir };
+  }
+
+  if (linked) {
+    // Unlinks the symlink inode; does not delete the target (proven vs Bun.file).
+    // https://bun.com/docs/runtime/file-io#deleting-files-file-delete
+    await Bun.file(path).delete();
   }
 
   await Bun.write(path, rendered.endsWith('\n') ? rendered : `${rendered}\n`);
   return {
     ok: true,
-    action: exists ? 'wrote' : 'wrote',
+    action: 'wrote',
     path,
     cacheDir,
   };
@@ -150,8 +243,9 @@ export async function ensureMachineBunfig(
 
 if (import.meta.main) {
   const overwrite = argv.includes('--overwrite');
+  const overwriteLink = argv.includes('--overwrite-link');
   const checkOnly = argv.includes('--check');
-  const result = await ensureMachineBunfig({ overwrite, checkOnly });
+  const result = await ensureMachineBunfig({ overwrite, overwriteLink, checkOnly });
   if (!result.ok) {
     console.error(
       [

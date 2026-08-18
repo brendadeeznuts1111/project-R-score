@@ -1131,8 +1131,16 @@ async function trackedFiles(root: string): Promise<{ paths: string[]; files: Sou
       paths.push(...(await Bun.file(exportedProjects).text()).split('\0').filter(Boolean));
     }
   }
-  paths.sort((left, right) => left.localeCompare(right));
-  const scanPaths = paths.filter(isBunBrandScanPath);
+  const existing = (
+    await mapWithConcurrency(paths, TRACKED_FILE_READ_CONCURRENCY, async path => ({
+      path,
+      exists: await Bun.file(`${root}/${path}`).exists(),
+    }))
+  )
+    .filter(entry => entry.exists)
+    .map(entry => entry.path)
+    .sort((left, right) => left.localeCompare(right));
+  const scanPaths = existing.filter(isBunBrandScanPath);
   const files = await mapWithConcurrency(scanPaths, TRACKED_FILE_READ_CONCURRENCY, async path => {
     try {
       return { path, content: await Bun.file(`${root}/${path}`).text() };
@@ -1142,7 +1150,7 @@ async function trackedFiles(root: string): Promise<{ paths: string[]; files: Sou
       );
     }
   });
-  return { paths, files };
+  return { paths: existing, files };
 }
 
 async function readJsonSource(root: string, path: string): Promise<unknown> {

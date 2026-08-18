@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+
 import { parseFilesIndex, projectFiles } from './files-index.ts';
 import { validateFactoryLibraryManifest } from './template-contract.ts';
 

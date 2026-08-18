@@ -22,6 +22,7 @@ export type ProofInput = {
   docsUrl?: string | null;
   docsUrls?: readonly string[];
   bunTypesSource?: string;
+  declarationSha256?: string;
   runtimeOutput?: string;
   bunVersion?: string;
 };
@@ -32,6 +33,7 @@ export function proofHash(input: ProofInput): string {
   if (input.docsUrl) h.update(input.docsUrl);
   for (const docsUrl of input.docsUrls ?? []) h.update(docsUrl);
   if (input.bunTypesSource) h.update(input.bunTypesSource);
+  if (input.declarationSha256) h.update(input.declarationSha256);
   if (input.runtimeOutput) h.update(input.runtimeOutput);
   h.update(input.bunVersion ?? Bun.version);
   return h.digest('hex');
@@ -81,11 +83,20 @@ export async function readBunTypesPackageMetadata(): Promise<BunTypesPackageMeta
 export async function readBunTypesText(): Promise<string> {
   const dir = resolveBunTypesDir();
   const glob = new Bun.Glob('**/*.d.ts');
-  let text = '';
-  for await (const f of glob.scan(dir)) {
-    text += await Bun.file(`${dir}/${f}`).text();
+  const files: string[] = [];
+  for await (const file of glob.scan(dir)) files.push(file);
+  files.sort();
+  const parts: string[] = [];
+  for (const file of files) {
+    parts.push(`// source: ${file}\n`, await Bun.file(`${dir}/${file}`).text(), '\n');
   }
-  return text;
+  return parts.join('');
+}
+
+export function declarationBundleHash(dts: string): string {
+  const hasher = new Bun.CryptoHasher('sha256');
+  hasher.update(dts);
+  return hasher.digest('hex');
 }
 
 /** Resolve a dotted API name against the live runtime. */

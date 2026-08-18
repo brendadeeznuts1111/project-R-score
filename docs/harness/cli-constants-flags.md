@@ -171,7 +171,7 @@ bun run docs:refid:check
 | _(team bulk)_                                             | package.json entrypoints with `--*`                                                                                                                                                                                                                       | `ALLOWED_LONG_REGISTRY` (~300 keys) · coverage: `bun scripts/cli-allowlist-coverage.ts` · plan/wire: `cli-allowlist-team-plan` / `wire-batch` / `apply-registry` |
 | `verify:portal` … `verify:*`                              | per-tool leaves (split from shared `verify-all`)                                                                                                                                                                                                          | `tools/verify-*.ts` — never share one key across verify tools                                                                                                    |
 | `bake:doctor`                                             | `check` · `full` · `no-portable` · `report`                                                                                                                                                                                                               | [`tools/bake-doctor.ts`](../../tools/bake-doctor.ts)                                                                                                             |
-| `machine:bunfig:ensure`                                   | `check` · `overwrite`                                                                                                                                                                                                                                     | [`scripts/ensure-machine-bunfig.ts`](../../scripts/ensure-machine-bunfig.ts)                                                                                     |
+| `machine:bunfig:ensure`                                   | `check` · `overwrite` · `overwrite-link`                                                                                                                                                                                                                  | [`scripts/ensure-machine-bunfig.ts`](../../scripts/ensure-machine-bunfig.ts)                                                                                     |
 | `ops:seed:partners` / `:tenants` / `:dod` / `:prediction` | `force` each                                                                                                                                                                                                                                              | split from shared `ops:seed:all`                                                                                                                                 |
 
 ### 2.8 Coverage goal (agent team)
@@ -232,6 +232,27 @@ Forgetting step 1 → fail/throw in strict mode.
 | `--help`        | boolean | Usage                                                              |
 
 Entry: [`tools/bun-release-contracts.ts`](../../tools/bun-release-contracts.ts)
+· package
+[`packages/bun-release-contracts`](../../packages/bun-release-contracts).
+
+### 2.6.1.1 `bun:release-knowledge` (`BUN_RELEASE_KNOWLEDGE_ALLOWED_LONG`)
+
+| Flag             | Type    | Description                                               |
+| ---------------- | ------- | --------------------------------------------------------- |
+| `--version`      | version | Release version used by `build`                           |
+| `--output`       | path    | Normalized artifact destination                           |
+| `--catalog`      | path    | Committed Bun docs catalog                                |
+| `--feeds`        | path    | Committed RSS provenance artifact                         |
+| `--limit`        | int     | Maximum query results                                     |
+| `--check`        | boolean | Drift-check build output without writing                  |
+| `--json`         | boolean | Machine output for query, diff, matrix, build, and verify |
+| `--source`       | path    | Official Markdown source to cross-check with `validate`   |
+| `--report`       | enum    | Validation report format: `console`, `json`, or `junit`   |
+| `--strict`       | boolean | Treat validation warnings as failures                     |
+| `--max-warnings` | int     | Maximum warnings permitted outside strict mode            |
+| `--help`         | boolean | Usage                                                     |
+
+Entry: [`tools/bun-release-knowledge.ts`](../../tools/bun-release-knowledge.ts)
 · package
 [`packages/bun-release-contracts`](../../packages/bun-release-contracts).
 

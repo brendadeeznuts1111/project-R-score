@@ -4,8 +4,14 @@
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7
+// @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
 /**
- * Operations one-liners — sports betting platform demos wired to lib/operations SSOT.
+ * Curated operations demos wired to the lib/operations domain implementation.
+ * Their `apis` metadata identifies the Bun symbols exercised; it is not a Bun
+ * API coverage inventory or documentation authority.
  *
  * CLI: bun tools/bun-doc-refs.ts ops-oneliners [--json] [--run <id>] [--live]
  */
@@ -19,7 +25,9 @@ import { formatCliTable, toolTableVersion } from './cli-table.ts';
 export type OpsOneliner = {
   id: string; // brand-ok — demo oneliner id
   summary: string;
+  /** Bun token names exercised by this demo; resolved externally against official sources. */
   apis: readonly string[];
+  /** Display link for this example; not documentation proof authority. */
   docs?: string;
   live?: boolean;
   run?: () => Promise<string> | string;
@@ -96,7 +104,7 @@ export const OPS_ONELINERS: readonly OpsOneliner[] = [
       const row = db.query('SELECT name FROM tree_nodes WHERE id = $id').get({ $id: id }) as {
         name: string;
       };
-      const hash = proofHash({ signature: `partner:${id}`, runtimeOutput: row.name });
+      const hash = proofHash({ signature: 'partner-created', runtimeOutput: row.name });
       db.close();
       return `partner=${row.name} proof=${proofPreview(hash)}`;
     },
@@ -127,7 +135,7 @@ export const OPS_ONELINERS: readonly OpsOneliner[] = [
       const bal = db
         .query(`SELECT balance FROM sb_accounts WHERE agent_id = $aid`)
         .get({ $aid: agent.id }) as { balance: number };
-      const hash = proofHash({ signature: `fund:${txId}`, runtimeOutput: String(bal.balance) });
+      const hash = proofHash({ signature: 'agent-funded', runtimeOutput: String(bal.balance) });
       db.close();
       return `funded=$${amount} balance=$${bal.balance} proof=${proofPreview(hash)}`;
     },
@@ -155,7 +163,7 @@ export const OPS_ONELINERS: readonly OpsOneliner[] = [
         db
       );
       db.close();
-      return `play=${play.id.slice(0, 8)} sig=${proofPreview(play.signedHash)}`;
+      return `play=stored sig=${/^[a-f0-9]{64}$/.test(play.signedHash)}`;
     },
   },
   {
@@ -183,7 +191,7 @@ export const OPS_ONELINERS: readonly OpsOneliner[] = [
         .query(`SELECT COUNT(*) as n FROM play_distribution WHERE play_id = $pid`)
         .get({ $pid: play.id }) as { n: number };
       db.close();
-      return `recipients=${count.n} play=${play.id.slice(0, 8)}`;
+      return `recipients=${count.n} play=stored`;
     },
   },
   {
@@ -274,7 +282,7 @@ export const OPS_ONELINERS: readonly OpsOneliner[] = [
         .query(`SELECT assigned_to FROM phones WHERE id = $id`)
         .get({ $id: phoneId }) as { assigned_to: string };
       db.close();
-      return `phone=${phoneId.slice(0, 8)} agent=${row.assigned_to.slice(0, 8)}`;
+      return `phone=issued assigned=${row.assigned_to === agent.id}`;
     },
   },
   {
@@ -328,7 +336,7 @@ export const OPS_ONELINERS: readonly OpsOneliner[] = [
         });
       db.close();
       if (!next) throw new Error('auto-fund cron has no future occurrence');
-      return `next=${next.toISOString()} funded=${low ? 'yes' : 'no'}`;
+      return `scheduled=${next.getTime() > Date.now()} funded=${low ? 'yes' : 'no'}`;
     },
   },
 ];
@@ -373,7 +381,7 @@ export function formatOpsOnelinersBlock(opts?: { id?: string }): string {
   if (!rows.length) return `unknown ops oneliner id: ${opts?.id}\n`;
 
   const lines = [
-    'Operations one-liners (lib/operations SSOT)',
+    'Operations one-liners (curated domain demos)',
     '',
     formatCliTable(
       rows,
@@ -403,7 +411,7 @@ export function opsOnelinersSnapshot() {
     count: OPS_ONELINERS.length,
     offline: OPS_ONELINERS.filter(d => !d.live).length,
     live: OPS_ONELINERS.filter(d => d.live).length,
-    coveredApis: [...opsOnelinerCoveredApis()].sort(),
+    demoApis: [...opsOnelinerCoveredApis()].sort(),
     demos: OPS_ONELINERS.map(d => ({
       id: d.id,
       apis: d.apis,

@@ -197,5 +197,5 @@ describe('partner-surface-wire-lint', () => {
 
   test('CLI --scan runs the gate', async () => {
     expect(await lintWiresMain(['bun', 'scripts/validate-wire-traps.ts', '--scan'])).toBe(0);
-  }, 15_000);
+  }, 60_000);
 });

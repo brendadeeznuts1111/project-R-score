@@ -1,3 +1,11 @@
+// @see https://bun.com/docs/runtime/templating/create — bun create flags
+// @see https://bun.com/docs/bundler/executables — --force canonical flag reference
+// @see https://bun.com/docs/test/code-coverage#enabling-coverage — --coverage
+// @see https://bun.com/docs/test/code-coverage#lcov-coverage-reporter — --coverage-reporter=lcov
+// @see https://bun.com/docs/test/code-coverage#coverage-with-specific-test-patterns — --test-name-pattern
+// @see https://bun.com/docs/test/reporters#dots-reporter — --reporter=dots
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
+
 export type ContractGroupId =
   | 'identity'
   | 'runtime'
@@ -6,12 +14,13 @@ export type ContractGroupId =
   | 'publish'
   | 'lifecycle'
   | 'files'
+  | 'requirements'
   | 'environment'
   | 'flags';
 
 export type ContractGroup = {
   id: ContractGroupId;
-  owner: 'package.json' | 'Bun' | 'Factory wrapper' | 'CI environment';
+  owner: 'package.json' | 'harness.toml' | 'Bun' | 'Factory wrapper' | 'CI environment';
   properties: readonly string[];
   rule: string;
 };
@@ -29,6 +38,9 @@ export const FACTORY_LIBRARY_CONTRACT_GROUPS: readonly ContractGroup[] = [
       'name',
       'version',
       'description',
+      'private',
+      'license',
+      'repository',
       'type',
       'module',
       'types',
@@ -44,10 +56,11 @@ export const FACTORY_LIBRARY_CONTRACT_GROUPS: readonly ContractGroup[] = [
       'scripts.dev',
       'scripts.test',
       'scripts.test:watch',
+      'scripts.cron:preview',
       'scripts.color-test',
       'scripts.build',
     ],
-    rule: 'Development, test, watch, terminal-color demo, and build commands run with Bun.',
+    rule: 'Development, test, watch, cron preview, terminal-color demo, and build commands run with Bun.',
   },
   {
     id: 'quality',
@@ -91,9 +104,11 @@ export const FACTORY_LIBRARY_CONTRACT_GROUPS: readonly ContractGroup[] = [
       'publishConfig.tag',
       'scripts.prepack',
       'scripts.postpublish',
-      'scripts.publish:dry-run',
+      'scripts.lockfile:check',
+      'scripts.release:dry-run',
+      'scripts.publish:ci',
     ],
-    rule: 'Only src and README publish; prepack proves the contract before packing.',
+    rule: 'Only src and README publish; prepack proves the contract, while automated publication requires its explicit environment gate.',
   },
   {
     id: 'lifecycle',
@@ -104,8 +119,54 @@ export const FACTORY_LIBRARY_CONTRACT_GROUPS: readonly ContractGroup[] = [
   {
     id: 'files',
     owner: 'package.json',
-    properties: ['scripts.generate:files', 'scripts.check:files', 'files.md'],
+    properties: [
+      'scripts.generate:files',
+      'scripts.check:files',
+      'files.md',
+      'harness.toml',
+      '.env.example',
+    ],
     rule: 'files.md is a generated, tracked index of every non-generated, non-secret project file and package allowlist proof.',
+  },
+  {
+    id: 'requirements',
+    owner: 'harness.toml',
+    properties: [
+      'runtime.minimumVersion',
+      'lockfile.path',
+      'lockfile.lockfileVersion',
+      'lockfile.configVersion',
+      'lockfile.verification',
+      'config.install',
+      'config.run',
+      'config.console',
+      'config.test',
+      'package.sourceEntrypoint',
+      'package.publishFiles',
+      'requirements.check.requiredEnv',
+      'requirements.check.requiredFiles',
+      'requirements.lockfile.requiredEnv',
+      'requirements.lockfile.requiredFiles',
+      'requirements.lockfile.requireLockfileCoherence',
+      'requirements.release.requiredEnv',
+      'requirements.release.requiredFiles',
+      'requirements.release.requireCustomizedDescription',
+      'requirements.release.requireLicense',
+      'requirements.release.requireRepository',
+      'requirements.release.requirePublishArmed',
+      'requirements.release.requireLockfileCoherence',
+      'requirements.publish.requiredEnv',
+      'requirements.publish.requiredFiles',
+      'requirements.publish.requireCustomizedDescription',
+      'requirements.publish.requireLicense',
+      'requirements.publish.requireRepository',
+      'requirements.publish.requirePublishArmed',
+      'requirements.publish.requireLockfileCoherence',
+      'scripts.requirements',
+      'scripts.requirements:release',
+      'scripts.requirements:publish',
+    ],
+    rule: 'Base checks stay secret-free; release proof requires deliberate identity, an armed package, and Bun-native frozen lockfile coherence, while automated publication adds only its exact credential input.',
   },
   {
     id: 'environment',
@@ -251,6 +312,14 @@ export const FACTORY_LIBRARY_FLAGS = {
     '--tolerate-republish',
     '--ignore-scripts',
   ],
+  bunPack: [
+    '--dry-run',
+    '--destination',
+    '--filename',
+    '--ignore-scripts',
+    '--gzip-level',
+    '--quiet',
+  ],
 } as const;
 
 type JsonRecord = Record<string, unknown>;
@@ -322,6 +391,26 @@ export function validateFactoryLibraryManifest(
       actual
     );
   }
+  pushIf(
+    findings,
+    mode === 'template' ? pkg.private === true : typeof pkg.private === 'boolean',
+    'private',
+    mode === 'template'
+      ? 'true so a fresh scaffold cannot publish accidentally'
+      : 'an explicit boolean release-arming switch',
+    pkg.private
+  );
+  pushIf(
+    findings,
+    mode === 'template'
+      ? pkg.license === 'UNLICENSED'
+      : typeof pkg.license === 'string' && pkg.license.length > 0,
+    'license',
+    mode === 'template'
+      ? 'UNLICENSED until the package owner chooses a license'
+      : 'a non-empty license string',
+    pkg.license
+  );
   pushIf(
     findings,
     exports?.['.'] === './src/index.ts',
@@ -401,32 +490,43 @@ export function validateFactoryLibraryManifest(
     dev: value => typeof value === 'string' && value.includes('bun --watch'),
     test: value => value === 'bun test',
     'test:dots': value => value === 'bun test --reporter=dots',
-    'test:watch': value => typeof value === 'string' && value.includes('bun --watch'),
+    'test:watch': value => value === 'bun test --watch --no-clear-screen',
     'test:coverage': value => value === 'bun test --coverage',
     'test:coverage:lcov': value =>
       value === 'bun test --coverage --coverage-reporter=text --coverage-reporter=lcov',
     'test:junit': value => typeof value === 'string' && value.includes('run-test-junit'),
     'test:ci': value => typeof value === 'string' && value.includes('junit:enrich'),
     'junit:enrich': value => typeof value === 'string' && value.includes('junit-enrich'),
+    'cron:preview': value => value === 'TZ=UTC bun scripts/cron-preview.ts',
     'color-test': value => value === 'bun scripts/color-test.ts',
     format: value => value === 'bun run prettier --write .',
     'format:check': value => value === 'bun run prettier --check .',
     lint: value => value === 'bun run eslint . --max-warnings=0',
     'lint:fix': value => value === 'bun run eslint . --fix --max-warnings=0',
-    typecheck: value => value === 'tsc --noEmit',
+    typecheck: value => value === 'bun run tsc --noEmit',
     build: value => typeof value === 'string' && value.startsWith('bun build '),
     'build:metafile': value => typeof value === 'string' && value.includes('--metafile-md'),
     'generate:files': value => typeof value === 'string' && value.includes('generate-files-md'),
     'check:files': value => typeof value === 'string' && value.includes('validate-files-md'),
+    requirements: value => value === 'bun scripts/requirements.ts check',
+    'requirements:release': value => value === 'bun scripts/requirements.ts release',
+    'requirements:publish': value => value === 'bun scripts/requirements.ts publish',
+    'lockfile:check': value =>
+      value ===
+      'bun scripts/requirements.ts lockfile && bun install --frozen-lockfile --dry-run --ignore-scripts',
     check: value =>
       typeof value === 'string' &&
+      value.includes('bun run requirements') &&
       value.includes('check:files') &&
       value.includes('format:check') &&
       value.includes('lint') &&
       value.includes('typecheck'),
     prepack: value => value === 'bun run check',
     postpublish: value => typeof value === 'string' && value.includes('postpublish.ts'),
-    'publish:dry-run': value => value === 'bun publish --dry-run',
+    'release:dry-run': value =>
+      value === 'bun run requirements:release && bun run lockfile:check && bun pm pack --dry-run',
+    'publish:ci': value =>
+      value === 'bun run requirements:publish && bun run lockfile:check && bun publish',
   };
   for (const [name, valid] of Object.entries(requiredScripts)) {
     pushIf(
@@ -477,6 +577,9 @@ export function factoryLibraryContractSnapshot(manifest: unknown, mode: Template
     flags: FACTORY_LIBRARY_FLAGS,
     package: {
       name: pkg.name,
+      private: pkg.private,
+      license: pkg.license,
+      repository: pkg.repository,
       exports: nested(pkg, 'exports'),
       files: pkg.files,
       publishConfig: nested(pkg, 'publishConfig'),

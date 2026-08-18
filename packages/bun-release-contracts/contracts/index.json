@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "runtime": "bun",
   "counts": {
-    "releases": 1,
-    "planned": 377,
-    "executable": 3
+    "releases": 5,
+    "planned": 949,
+    "executable": 14
   },
   "releases": [
     {
@@ -13,6 +13,42 @@
       "file": "bun-v1.3.14.json",
       "counts": {
         "planned": 377,
+        "executable": 3
+      }
+    },
+    {
+      "releaseVersion": "1.3.13",
+      "sourceUrl": "https://bun.com/blog/bun-v1.3.13",
+      "file": "bun-v1.3.13.json",
+      "counts": {
+        "planned": 175,
+        "executable": 2
+      }
+    },
+    {
+      "releaseVersion": "1.3.12",
+      "sourceUrl": "https://bun.com/blog/bun-v1.3.12",
+      "file": "bun-v1.3.12.json",
+      "counts": {
+        "planned": 137,
+        "executable": 3
+      }
+    },
+    {
+      "releaseVersion": "1.3.11",
+      "sourceUrl": "https://bun.com/blog/bun-v1.3.11",
+      "file": "bun-v1.3.11.json",
+      "counts": {
+        "planned": 117,
+        "executable": 3
+      }
+    },
+    {
+      "releaseVersion": "1.3.10",
+      "sourceUrl": "https://bun.com/blog/bun-v1.3.10",
+      "file": "bun-v1.3.10.json",
+      "counts": {
+        "planned": 143,
         "executable": 3
       }
     }

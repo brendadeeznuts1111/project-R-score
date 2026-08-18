@@ -405,7 +405,9 @@ export async function loadBrandConsumerFiles(root: string): Promise<BrandCoverag
   for (const path of paths) {
     if (!CONSUMER_ROOTS.some(consumerRoot => path.startsWith(`${consumerRoot}/`))) continue;
     if (!SOURCE_FILE.test(path) || EXCLUDED.some(pattern => pattern.test(path))) continue;
-    const text = await Bun.file(`${root}/${path}`).text();
+    const file = Bun.file(`${root}/${path}`);
+    if (!(await file.exists())) continue;
+    const text = await file.text();
     files.push({
       path,
       text,

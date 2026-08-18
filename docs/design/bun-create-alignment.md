@@ -13,12 +13,27 @@ For the generated library's test-output mapping, see
 
 ## Ownership boundaries
 
-| Plane                              | Owns                                                                                                                            | Does not own                                                        |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Bun `create`                       | Route recognition, download/copy behavior, destination semantics, manifest materialization, lifecycle order, Git initialization | Factory registry publishing and repository-specific template policy |
-| Factory wrapper (`factory create`) | Local-repository template routing, `--publish` marker guard, `--replace-local` safety guard, source-status output               | npm/GitHub template internals and Bun flag semantics                |
-| `factory-library` template         | Library files, source-first package contract, local hook messages, developer proof commands                                     | React/Tailwind/shadcn app generation or remote-template behavior    |
-| Factory R2 registry                | Explicit artifact publish/install                                                                                               | `bun create` template discovery                                     |
+| Plane                              | Owns                                                                                                                                                                  | Does not own                                                        |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Bun `create`                       | Route recognition, download/copy behavior, destination semantics, manifest materialization, lifecycle order, Git initialization                                       | Factory registry publishing and repository-specific template policy |
+| Factory wrapper (`factory create`) | Local-repository template routing, `--publish` marker guard, `--replace-local` safety guard, source-status output                                                     | npm/GitHub template internals and Bun flag semantics                |
+| `factory-library` template         | Library files, source-first package contract, private-by-default release arming, machine-readable harness requirements, local hook messages, developer proof commands | React/Tailwind/shadcn app generation or remote-template behavior    |
+| Factory R2 registry                | Explicit artifact publish/install                                                                                                                                     | `bun create` template discovery                                     |
+
+## `bun init` versus the Factory template
+
+| Command                                              | Intended result                                                                                                           | Configuration owner                   | Factory policy                                                      |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------- |
+| `bun init <folder>`                                  | Blank Bun project with an entry point, package manifest, editor TypeScript configuration, README, and installed Bun types | Bun                                   | Use directly. Do not route through the Factory CLI.                 |
+| `bun init --minimal <folder>`                        | Type definitions and minimal package metadata without an application scaffold                                             | Bun                                   | Use directly for an existing source tree that only needs Bun types. |
+| `bun run factory:create -- factory-library <folder>` | Source-first library with tests, release requirements, publishing guardrails, and a tracked file contract                 | Repository template + Factory wrapper | Use only when those opinions are required.                          |
+
+The repository-pinned Bun 1.3.14 probe matches the upstream distinction: the
+blank route creates the starter source and documentation, while `--minimal` does
+not. Exact generated files remain Bun-owned and may vary by detected tools. The
+Factory template therefore inherits Bun's modern TypeScript baseline but does
+not snapshot or reimplement `bun init`. `factory:templates` prints this boundary
+so operators choose the smaller native route when no harness is needed.
 
 ## Route matrix
 
@@ -57,6 +72,7 @@ workflow, or package script is needed.
 | GitHub forms with/without destination           | Wrapper accepts both forms.                                                                                                                                                                                                                           | `--publish` requires an explicit destination to prevent an ambiguous marker path.                                                                                  | CLI regression test              |
 | Local template folder and minimal manifest      | Repository expands the manifest with library exports, scripts, tests, type checks, and package allowlist. Local manifest names may be scoped (the upstream example uses an `@bun-examples/*` name).                                                   | Keep `{{name}}` only in template `package.json.name`; Bun replaces it.                                                                                             | Fresh local scaffold             |
 | `bun-create` manifest examples                  | Bun removes the field from generated `package.json`. The upstream example includes `preinstall`, `postinstall`, and `start`; its lifecycle table/order explicitly documents pre/post execution.                                                       | Hooks are concise messages only; `bun run check` is explicit proof. The library does not rely on a `start` field.                                                  | Fresh local scaffold             |
+| Bun-native cron                                 | The generated project exposes a dependency-free `cron:preview` command backed directly by `Bun.cron.parse`.                                                                                                                                           | Previewing is safe during development. Job registration remains an explicit operator action and never runs from create hooks, imports, or checks.                  | Source and materialized tests    |
 
 ## High-level flow
 
@@ -73,16 +89,46 @@ input
 
 Factory only adds local repository routing plus explicit-destination and
 `--replace-local` guards for its destructive local-template path, as well as the
-marker guard. It does not alter Bun’s branch selection or lifecycle order. Bun
-notes that local copying uses platform-specific fast paths (`fcopyfile` on macOS
-and `copy_file_range` on Linux); when dependencies exist, install and Git work
-can overlap. Its documented libgit2 experiment was slower, so neither its
-presence nor the timing of those phases is a supported automation contract.
+marker guard. Before Bun can create or replace the destination, the wrapper runs
+the requirements and manifest/file proof for a local template that declares
+`harness.toml`. A marker request then validates the R2 credential and account
+requirements, so a broken template or missing publish environment cannot leave a
+partially successful scaffold. It does not alter Bun’s branch selection or
+lifecycle order. Bun notes that local copying uses platform-specific fast paths
+(`fcopyfile` on macOS and `copy_file_range` on Linux); when dependencies exist,
+install and Git work can overlap. Its documented libgit2 experiment was slower,
+so neither its presence nor the timing of those phases is a supported automation
+contract.
+
+After Bun returns success, Factory treats the materialized scaffold as a second
+handoff: it reruns requirements, regenerates `files.md` to account for an
+installed `bun.lock`, and validates the generated manifest before reporting
+success or writing a marker. A failing output is retained for diagnosis but is
+not registered.
 
 For the npm branch, Bun’s implementation reference describes registry metadata
 and tarball retrieval for its upstream example-template path. Individual
 `create-*` packages still own their prompts, dependency choices, and any
 runtime-specific installation behavior.
+
+`factory-library` starts with `private: true` and `license: UNLICENSED`.
+Development checks accept those safe defaults. The secret-free release gate
+requires a customized description, explicit repository URL, chosen SPDX license
+expression, `private: false`, and a schema-1 Bun text lockfile coherent with
+`package.json` under `bun install --frozen-lockfile --dry-run --ignore-scripts`;
+the publication gate adds only `NPM_CONFIG_TOKEN`. This preserves Proton Pass as
+credential authority while making publication an explicit package-owner
+decision.
+
+The generated library is a standalone repository artifact, so its project
+`bunfig.toml` deliberately carries `linker = "isolated"` and
+`globalStore = true` instead of depending on a Project R operator's machine
+profile. It keeps `frozenLockfile = false` for the initial lockfile bootstrap
+and intentional dependency edits; release and publish always override that
+development setting with the frozen dry-run command above. `harness.toml`
+mirrors those critical config values plus `run.noOrphans`, console depth, and
+coverage accounting so Factory preflight and materialized-output validation
+reject config drift at the handoff.
 
 ## Execution-order matrix
 
@@ -136,6 +182,10 @@ replacement behavior.
 | Publishable file allowlist             | `package.json.files`                 | `bun pm pack --dry-run`                                     |
 | Benchmark/profile artifacts stay local | `.gitignore`, `bench`, `profile:cpu` | Generated project check                                     |
 | Local template, flag, and marker guard | Factory CLI + tests                  | `bun test tests/factory-template.test.ts tests/cli.test.ts` |
+
+`bun run check` is read-only. File-accountability drift fails at `check:files`;
+only the explicit `bun run generate:files` maintenance command rewrites
+`files.md`.
 
 ## Verified baseline
 

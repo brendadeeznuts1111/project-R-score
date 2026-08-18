@@ -22,11 +22,36 @@
 // @see https://bun.com/docs/runtime/networking/tcp#start-a-server-bun-listen — Bun.listen
 // @see https://bun.com/docs/bundler/index#basic-example — Bun.build
 // @see https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket — Bun.udpSocket
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+// @see https://bun.com/docs/runtime/cookies#cookie-class — Bun.Cookie
+// @see https://bun.com/docs/runtime/cookies#cookiemap-class — Bun.CookieMap
+// @see https://bun.com/docs/runtime/csrf#bun-csrf-verify — Bun.CSRF.verify
+// @see https://bun.com/docs/runtime/utils#bun-deflatesync — Bun.deflateSync
+// @see https://bun.com/docs/runtime/networking/dns#dns-getcachestats — Bun.dns.getCacheStats
+// @see https://bun.com/docs/runtime/networking/dns#dns-caching-in-bun — Bun.dns.lookup
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
+// @see https://bun.com/docs/runtime/utils#bun-fileurltopath — Bun.fileURLToPath
+// @see https://bun.com/docs/runtime/utils#bun-gunzipsync — Bun.gunzipSync
+// @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
+// @see https://bun.com/docs/runtime/utils#bun-inflatesync — Bun.inflateSync
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
+// @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @see https://bun.com/docs/runtime/utils#bun-sleepsync — Bun.sleepSync
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
+// @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi
+// @see https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync — Bun.zstdDecompressSync
 /**
- * Verified Bun API one-liner demos (SSOT) — offline-safe by default; live opt-in.
- * Coverage surface layer measures which CANONICAL APIs these demos exercise.
+ * Curated Bun API one-liner demos — offline-safe by default; live opt-in.
  *
- * Host: bun.com (never bun.sh). Signatures proved on Bun 1.4+.
+ * These examples define an executable sample population, not Bun API coverage.
+ * tools/bun-api-verify.ts resolves their token names against official Bun
+ * declarations and documentation indexes.
  *
  * CLI: bun tools/bun-doc-refs.ts oneliners [--json] [--id=…] [--run <id>] [--live]
  *
@@ -41,10 +66,11 @@ import { tomlStringify } from '../lib/toml-stringify.ts';
 export type ApiOneliner = {
   id: string; // brand-ok — demo oneliner id
   summary: string;
-  /** CANONICAL / catalog token names this demo exercises. */
+  /** Bun token names exercised by this demo; resolved externally against official sources. */
   apis: readonly string[];
   /** Display snippet (polished; may differ slightly from run()). */
   snippet: string;
+  /** Display link for this example; not documentation proof authority. */
   docs?: string;
   /** Needs network, DB, Redis, WebView, etc. — not run unless --live. */
   live?: boolean;
@@ -79,7 +105,7 @@ console.log(st.size, pkg.name);`,
       if (!(await f.exists())) throw new Error('package.json missing');
       const st = await f.stat();
       const pkg = (await f.json()) as { name?: string };
-      return `${st.size}B name=${pkg.name ?? '?'}`;
+      return `nonempty=${st.size > 0} name=${pkg.name ?? '?'}`;
     },
   },
   {
@@ -92,9 +118,10 @@ console.log(st.size, pkg.name);`,
       const dir = await mkdtempSafe('oneliner-copy-');
       const dest = `${dir}/copy.json`;
       await Bun.write(dest, Bun.file('package.json'));
-      const size = (await Bun.file(dest).stat()).size;
+      const copied = await Bun.file(dest).text();
+      const source = await Bun.file('package.json').text();
       await rmSafe(dir);
-      return `copied ${size}B`;
+      return `copied=${copied === source}`;
     },
   },
   {
@@ -166,7 +193,10 @@ await Bun.password.verify("secret", hash);`,
     apis: ['Bun.randomUUIDv7'],
     docs: 'https://bun.com/docs/runtime/utils#bun-randomuuidv7',
     snippet: `console.log(Bun.randomUUIDv7());`,
-    run: () => Bun.randomUUIDv7(),
+    run: () => {
+      const uuid = Bun.randomUUIDv7();
+      return `uuid-v7=${/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(uuid)}`;
+    },
   },
   {
     id: 'compression',
@@ -382,7 +412,8 @@ await archive.bytes();`,
     apis: ['Bun.resolveSync'],
     docs: 'https://bun.com/docs/runtime/utils#bun-resolvesync',
     snippet: `Bun.resolveSync("./package.json", import.meta.dir);`,
-    run: () => Bun.resolveSync('./package.json', process.cwd()),
+    run: () =>
+      `package=${Bun.resolveSync('./package.json', process.cwd()).endsWith('/package.json')}`,
   },
   {
     id: 'env-argv-main',
@@ -390,7 +421,8 @@ await archive.bytes();`,
     apis: ['Bun.env', 'Bun.argv', 'Bun.main'],
     docs: 'https://bun.com/docs/runtime/utils#bun-main',
     snippet: `Bun.env.HOME; Bun.argv; Bun.main;`,
-    run: () => `home=${Boolean(Bun.env.HOME)} argv=${Bun.argv.length} main=${Boolean(Bun.main)}`,
+    run: () =>
+      `home=${Boolean(Bun.env.HOME)} argv=${Array.isArray(Bun.argv)} main=${Boolean(Bun.main)}`,
   },
   {
     id: 'version-revision',
@@ -428,7 +460,7 @@ s.stop(true);`,
       const res = await fetch(`http://127.0.0.1:${port}/`);
       const text = await res.text();
       s.stop(true);
-      return `port=${port} body=${text}`;
+      return `listening=${port > 0} body=${text}`;
     },
   },
   {
@@ -461,7 +493,8 @@ Bun.sleepSync(5);`,
       const t0 = Bun.nanoseconds();
       await Bun.sleep(10);
       Bun.sleepSync(5);
-      return `ms=${((Bun.nanoseconds() - t0) / 1e6).toFixed(1)}`;
+      const elapsedMs = (Bun.nanoseconds() - t0) / 1e6;
+      return `slept=${elapsedMs >= 10} clock=${Number.isFinite(elapsedMs)}`;
     },
   },
   {
@@ -505,7 +538,7 @@ new Bun.ArrayBufferSink();`,
     snippet: `const buf = Bun.mmap("package.json"); // Uint8Array`,
     run: () => {
       const buf = Bun.mmap('package.json');
-      return `ctor=${buf.constructor.name} len=${buf.byteLength}`;
+      return `ctor=${buf.constructor.name} nonempty=${buf.byteLength > 0}`;
     },
   },
   {
@@ -727,7 +760,7 @@ export function formatOnelinersBlock(opts?: { id?: string }): string {
   if (!rows.length) return `unknown oneliner id: ${opts?.id}\n`;
 
   const lines = [
-    'Bun API one-liners (verified SSOT — prefer over ad-hoc bun -e)',
+    'Bun API one-liners (curated runnable examples)',
     '',
     formatCliTable(
       rows,
@@ -767,7 +800,7 @@ export function onelinersSnapshot() {
     count: BUN_API_ONELINERS.length,
     offline: BUN_API_ONELINERS.filter(d => !d.live).length,
     live: BUN_API_ONELINERS.filter(d => d.live).length,
-    coveredApis: [...onelinerCoveredApis()].sort(),
+    demoApis: [...onelinerCoveredApis()].sort(),
     demos: BUN_API_ONELINERS.map(d => ({
       id: d.id,
       apis: d.apis,

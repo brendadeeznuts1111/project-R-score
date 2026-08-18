@@ -131,7 +131,13 @@ export function renderMonitoringHtml(data: MonitoringPayload): string {
       Metric: 'Status',
       Value: `${data.bunApiProof?.demosPassed ?? '?'}/${data.bunApiProof?.demosTotal ?? '?'} demos`,
     },
-    { Metric: 'APIs verified', Value: String(data.bunApiProof?.apisVerified ?? '?') },
+    {
+      Metric: 'Demo APIs verified',
+      Value:
+        data.bunApiProof?.demoApisVerified == null
+          ? '?'
+          : `${data.bunApiProof.demoApisVerified}/${data.bunApiProof.demoApisTotal ?? '?'}`,
+    },
     { Metric: 'Pass rate', Value: data.bunApiProof?.demoPassRate ?? '?' },
     { Metric: 'Generated', Value: data.bunApiProof?.generated ?? 'never' },
   ])}

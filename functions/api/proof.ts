@@ -11,10 +11,7 @@ export type ProofEnv = {
   ASSETS?: { fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> };
 };
 
-export async function onRequest(context: {
-  request: Request;
-  env: ProofEnv;
-}): Promise<Response> {
+export async function onRequest(context: { request: Request; env: ProofEnv }): Promise<Response> {
   const url = new URL(context.request.url);
 
   if (context.request.method === 'OPTIONS') {
@@ -30,7 +27,9 @@ export async function onRequest(context: {
     },
     // 2. GitHub raw as fallback
     async () => {
-      return fetch('https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/bun-api-coverage-proof.json');
+      return fetch(
+        'https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/bun-api-coverage-proof.json'
+      );
     },
   ];
 
@@ -39,12 +38,15 @@ export async function onRequest(context: {
     try {
       const res = await source();
       if (!res.ok) continue;
-      const proof = await res.json() as Record<string, unknown>;
+      const proof = (await res.json()) as Record<string, unknown>;
       const summary = proof.summary as Record<string, number> | undefined;
       return Response.json(
         {
           generated: proof.generated ?? null,
-          bunVersion: proof.bunVersion ?? null,
+          bunVersion:
+            (proof.runtime as Record<string, unknown> | undefined)?.bunVersion ??
+            proof.bunVersion ??
+            null,
           summary: proof.summary ?? null,
           demoPassRate: summary?.demos
             ? `${Math.round((summary.demosPassed! / summary.demos) * 100)}%`

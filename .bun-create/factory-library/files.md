@@ -10,22 +10,26 @@ tree used by the local proof commands; it is not itself included in the package.
 
 ## File index
 
+- `.env.example`
 - `.gitignore`
 - `.prettierignore`
 - `.prettierrc`
 - `bunfig.toml`
 - `eslint.config.mjs`
 - `files.md`
+- `harness.toml`
 - `package.json`
 - `README.md`
 - `scripts/bench.ts`
 - `scripts/build-summary.ts`
 - `scripts/color-test.ts`
+- `scripts/cron-preview.ts`
 - `scripts/files-index.ts`
 - `scripts/generate-files-md.ts`
 - `scripts/junit-context.ts`
 - `scripts/junit-enrich.ts`
 - `scripts/postpublish.ts`
+- `scripts/requirements.ts`
 - `scripts/run-test-junit.ts`
 - `scripts/template-contract.ts`
 - `scripts/validate-files-md.ts`

@@ -16,6 +16,9 @@ export const DOCS_CATALOG = 'tools/bun-docs-catalog.json';
 /** Committed feed lane (RSS + API reference) */
 export const DOCS_FEEDS = 'tools/bun-docs-feeds.json';
 
+/** Committed proof derived from the official Bun source planes. */
+export const BUN_API_COVERAGE_PROOF = 'tools/bun-api-coverage-proof.json';
+
 /** Build-only caches (gitignored) */
 export const RELEASE_OVERLAY_CACHE = 'tools/.cache/bun-release-overlay.json';
 export const TOKEN_SUPPLEMENT_CACHE = 'tools/.cache/bun-token-supplement.json';
@@ -62,6 +65,7 @@ export function resolveDocsArtifactPath(repoRelative: string): string {
 export const DOCS_INDEX_ABS = resolveDocsArtifactPath(DOCS_INDEX);
 export const DOCS_CATALOG_ABS = resolveDocsArtifactPath(DOCS_CATALOG);
 export const DOCS_FEEDS_ABS = resolveDocsArtifactPath(DOCS_FEEDS);
+export const BUN_API_COVERAGE_PROOF_ABS = resolveDocsArtifactPath(BUN_API_COVERAGE_PROOF);
 export const RELEASE_OVERLAY_CACHE_ABS = resolveDocsArtifactPath(RELEASE_OVERLAY_CACHE);
 export const TOKEN_SUPPLEMENT_CACHE_ABS = resolveDocsArtifactPath(TOKEN_SUPPLEMENT_CACHE);
 export const LEGACY_RELEASE_INDEX_ABS = resolveDocsArtifactPath(LEGACY_RELEASE_INDEX);

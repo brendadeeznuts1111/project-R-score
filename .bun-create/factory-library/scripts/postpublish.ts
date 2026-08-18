@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+
 const pkg = (await Bun.file(new URL('../package.json', import.meta.url)).json()) as {
   name?: string;
   version?: string;

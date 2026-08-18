@@ -1,0 +1,69 @@
+schemaVersion = 1
+template = "factory-library"
+
+[runtime]
+engine = "bun"
+minimumVersion = "1.3.14"
+
+[lockfile]
+path = "bun.lock"
+lockfileVersion = 1
+configVersion = 1
+verification = "frozen-dry-run"
+
+[config.install]
+linker = "isolated"
+globalStore = true
+frozenLockfile = false
+
+[config.run]
+noOrphans = true
+
+[config.console]
+depth = 6
+
+[config.test]
+coverageSkipTestFiles = true
+
+[package]
+type = "module"
+sourceEntrypoint = "./src/index.ts"
+publishFiles = ["src", "README.md"]
+publishAccess = "public"
+publishTag = "latest"
+
+[requirements.check]
+requiredEnv = []
+requiredFiles = ["README.md", "src/index.ts", "test/index.test.ts"]
+requireCustomizedDescription = false
+requireLicense = false
+requireRepository = false
+requirePublishArmed = false
+requireLockfileCoherence = false
+
+[requirements.lockfile]
+requiredEnv = []
+requiredFiles = ["bun.lock"]
+requireCustomizedDescription = false
+requireLicense = false
+requireRepository = false
+requirePublishArmed = false
+requireLockfileCoherence = true
+
+[requirements.release]
+requiredEnv = []
+requiredFiles = ["README.md", "src/index.ts", "bun.lock"]
+requireCustomizedDescription = true
+requireLicense = true
+requireRepository = true
+requirePublishArmed = true
+requireLockfileCoherence = true
+
+[requirements.publish]
+requiredEnv = ["NPM_CONFIG_TOKEN"]
+requiredFiles = ["README.md", "src/index.ts", "bun.lock"]
+requireCustomizedDescription = true
+requireLicense = true
+requireRepository = true
+requirePublishArmed = true
+requireLockfileCoherence = true

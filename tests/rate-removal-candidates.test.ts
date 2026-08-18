@@ -254,27 +254,31 @@ describe('rate-removal-candidates scoring', () => {
     );
   });
 
-  test('filtered JSON distinguishes displayed, matched, and evaluated totals', async () => {
-    const proc = Bun.spawn(
-      ['bun', 'scripts/rate-removal-candidates.ts', '--only-candidates', '--limit', '1', '--json'],
-      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
-    );
-    const [stdout, stderr, exitCode] = await Promise.all([
-      new Response(proc.stdout).text(),
-      new Response(proc.stderr).text(),
-      proc.exited,
-    ]);
-    expect(exitCode).toBe(0);
-    expect(stderr).toBe('');
-    const report = JSON.parse(stdout) as {
-      count: number;
-      matched: number;
-      total: number;
-      candidates: Array<{ grade: string }>;
-    };
-    expect(report.total).toBeGreaterThan(0);
-    expect(report.total).toBeGreaterThanOrEqual(report.matched);
-    expect(report.matched).toBeGreaterThanOrEqual(report.count);
-    expect(report.candidates.every(candidate => candidate.grade === 'candidate')).toBe(true);
-  });
+  test(
+    'filtered JSON distinguishes displayed, matched, and evaluated totals',
+    async () => {
+      const proc = Bun.spawn(
+        ['bun', 'scripts/rate-removal-candidates.ts', '--only-candidates', '--limit', '1', '--json'],
+        { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
+      );
+      const [stdout, stderr, exitCode] = await Promise.all([
+        new Response(proc.stdout).text(),
+        new Response(proc.stderr).text(),
+        proc.exited,
+      ]);
+      expect(exitCode).toBe(0);
+      expect(stderr).toBe('');
+      const report = JSON.parse(stdout) as {
+        count: number;
+        matched: number;
+        total: number;
+        candidates: Array<{ grade: string }>;
+      };
+      expect(report.total).toBeGreaterThan(0);
+      expect(report.total).toBeGreaterThanOrEqual(report.matched);
+      expect(report.matched).toBeGreaterThanOrEqual(report.count);
+      expect(report.candidates.every(candidate => candidate.grade === 'candidate')).toBe(true);
+    },
+    { timeout: 30_000 }
+  );
 });

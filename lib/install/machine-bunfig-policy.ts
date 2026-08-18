@@ -17,7 +17,7 @@
  * Do not duplicate these lists in doctor / ensure / audit / verify without importing here.
  */
 
-/** Repo-relative path of the machine bunfig template (written to ~/.bunfig.toml). */
+/** Repo-relative path of the machine bunfig template (CI/bootstrap seed). */
 export const MACHINE_BUNFIG_TEMPLATE_REL = 'config/machine.bunfig.toml.template';
 
 /** Placeholder in the template replaced with an absolute cache path. */
@@ -117,4 +117,14 @@ export function cacheDirUsesUnexpandedTilde(text: string): boolean {
 /** Snippets present in text that are required by machine SSOT; returns missing ones. */
 export function machineBunfigMissingSnippets(text: string): string[] {
   return MACHINE_BUNFIG_REQUIRED_SNIPPETS.filter(s => !text.includes(s));
+}
+
+/**
+ * Bun 1.3.14 loads `$XDG_CONFIG_HOME/.bunfig.toml` ahead of `$HOME/.bunfig.toml`.
+ * @returns that path when XDG is set, otherwise null
+ */
+export function xdgShadowBunfigPath(env: Record<string, string | undefined>): string | null {
+  const xdg = env.XDG_CONFIG_HOME;
+  if (!xdg || xdg.trim().length === 0) return null;
+  return `${xdg.replace(/\/+$/, '')}/.bunfig.toml`;
 }

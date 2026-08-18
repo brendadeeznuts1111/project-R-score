@@ -33,6 +33,20 @@ import { PORTAL_CLI_COMMANDS } from '../tools/lib/portal-cli-bun-flags.ts';
 const ROOT = resolvePath(import.meta.dir, '..');
 const CLI = resolvePath(ROOT, 'tools/portal-cli.ts');
 
+async function freshRootDoctorTime(): Promise<number> {
+  const bake = (await Bun.file(`${ROOT}/public/registry/vault-health.json`).json()) as {
+    generatedAt?: unknown;
+  };
+  if (typeof bake.generatedAt !== 'string') {
+    throw new Error('vault-health fixture must declare generatedAt');
+  }
+  const generatedAtMs = Date.parse(bake.generatedAt);
+  if (!Number.isFinite(generatedAtMs)) {
+    throw new Error('vault-health fixture generatedAt must be a valid ISO timestamp');
+  }
+  return generatedAtMs + 60 * 60 * 1000;
+}
+
 describe('portal-cli doctor pure', () => {
   test('isBakeStale flags vault-health older than 48h', () => {
     const now = Date.parse('2026-08-05T12:00:00.000Z');
@@ -158,7 +172,12 @@ describe('portal-cli doctor pure', () => {
   });
 
   test('runPortalDoctor is OK on monorepo root (default)', async () => {
-    const r = await runPortalDoctor({ cwd: ROOT, full: false, skipLiveAccess: true });
+    const r = await runPortalDoctor({
+      cwd: ROOT,
+      full: false,
+      skipLiveAccess: true,
+      nowMs: await freshRootDoctorTime(),
+    });
     expect(r.kind).toBe('portal-cli-doctor');
     expect(r.schemaVersion).toBe(4);
     expect(r.ok).toBe(true);
@@ -245,6 +264,7 @@ describe('portal-cli doctor pure', () => {
     const ids = r.checks.filter(c => c.group === 'bunfig').map(c => c.id);
     expect(ids).toEqual([
       'bunfig-machine-ssot',
+      'bunfig-xdg-shadow',
       'bunfig-machine-frozen-lockfile',
       'bunfig-project-no-machine-keys',
       'bunfig-merge-consistency',
@@ -260,9 +280,25 @@ describe('portal-cli doctor pure', () => {
   test('--group bunfig scopes to bunfig checks only', async () => {
     const r = await runPortalDoctor({ cwd: ROOT, full: false, group: 'bunfig', skipLiveAccess: true });
     expect(r.group).toBe('bunfig');
-    expect(r.checks).toHaveLength(6);
+    expect(r.checks).toHaveLength(7);
     expect(r.checks.every(c => c.group === 'bunfig')).toBe(true);
     expect(r.ok).toBe(true);
+  });
+
+  test('bunfig-xdg-shadow fails when $XDG_CONFIG_HOME/.bunfig.toml exists', async () => {
+    const tmp = `${ROOT}/tmp/doctor-xdg-shadow`;
+    await Bun.$`rm -rf ${tmp}`.quiet();
+    await Bun.$`mkdir -p ${tmp}/xdg ${tmp}/home`.quiet();
+    await Bun.write(`${tmp}/xdg/.bunfig.toml`, '[install]\nlinker = "hoisted"\n');
+    const checks = await runBunfigChecks(ROOT, {
+      HOME: `${tmp}/home`,
+      XDG_CONFIG_HOME: `${tmp}/xdg`,
+    });
+    const shadow = checks.find(c => c.id === 'bunfig-xdg-shadow');
+    expect(shadow?.ok).toBe(false);
+    expect(shadow?.level).toBe('fatal');
+    expect(shadow?.message).toContain('shadows');
+    await Bun.$`rm -rf ${tmp}`.quiet();
   });
 
   test('runtime group reports effective state without exposing BUN_OPTIONS', async () => {
@@ -351,7 +387,7 @@ describe('portal-cli doctor pure', () => {
       'typescript',
     ]);
     const checks = await runBunfigChecks(ROOT);
-    expect(checks).toHaveLength(6);
+    expect(checks).toHaveLength(7);
     expect(checks.every(c => c.group === 'bunfig')).toBe(true);
   });
 
@@ -578,7 +614,12 @@ describe('portal-cli doctor pure', () => {
   test('pretty format keeps full messages (no mid-line …) and wraps in frame', async () => {
     const longMsg =
       'lockfile configVersion is isolated-compatible and this sentence is deliberately long so same-line layout cannot fit inside a narrow frame without wrapping or ellipsis';
-    const base = await runPortalDoctor({ cwd: ROOT, full: false, skipLiveAccess: true });
+    const base = await runPortalDoctor({
+      cwd: ROOT,
+      full: false,
+      skipLiveAccess: true,
+      nowMs: await freshRootDoctorTime(),
+    });
     const checks = base.checks.map((c, i) => (i === 0 ? { ...c, message: longMsg } : c));
     const r: PortalDoctorReport = {
       ...base,

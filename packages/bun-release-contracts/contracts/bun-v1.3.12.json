@@ -1,0 +1,1132 @@
+{
+  "schemaVersion": 2,
+  "runtime": "bun",
+  "releaseVersion": "1.3.12",
+  "sourceUrl": "https://bun.com/blog/bun-v1.3.12",
+  "counts": {
+    "planned": 137,
+    "executable": 3
+  },
+  "items": [
+    {
+      "key": "bun-webview-headless-browser-automation-197f1d8d",
+      "category": "bun-webview-headless-browser-automation",
+      "section": "Bun.WebView — Headless Browser Automation",
+      "announcement": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-webview-headless-browser-automation-c4d7d942",
+      "category": "bun-webview-headless-browser-automation",
+      "section": "Bun.WebView — Headless Browser Automation",
+      "announcement": "WebKit (macOS default) — uses the system WKWebView. Zero external dependencies.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-webview-headless-browser-automation-146f1ea0",
+      "category": "bun-webview-headless-browser-automation",
+      "section": "Bun.WebView — Headless Browser Automation",
+      "announcement": "Chrome (cross-platform) — Chrome/Chromium via DevTools Protocol. Auto-detects installed browsers or accepts a custom path.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-webview-headless-browser-automation-0acb1036",
+      "category": "bun-webview-headless-browser-automation",
+      "section": "Bun.WebView — Headless Browser Automation",
+      "announcement": "In the next version of BunBun.WebView programmatically controls a headless web browser in Bun pic.twitter.com/Yp8UiNoeoy",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-webview-headless-browser-automation-4ea59953",
+      "category": "bun-webview-headless-browser-automation",
+      "section": "Bun.WebView — Headless Browser Automation",
+      "announcement": "All input is dispatched as OS-level events — sites can't distinguish view.click() from a real mouse click (isTrusted: true). Selector-based methods auto-wait for actionability, Playwright-style: the element must be attached, visible, stable, and unobscured before the action fires.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-webview-headless-browser-automation-72dcf657",
+      "category": "bun-webview-headless-browser-automation",
+      "section": "Bun.WebView — Headless Browser Automation",
+      "announcement": "All methods work across both backends:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-webview-headless-browser-automation-cbb45372",
+      "category": "bun-webview-headless-browser-automation",
+      "section": "Bun.WebView — Headless Browser Automation",
+      "announcement": "Bun.WebView extends EventTarget — on the Chrome backend, CDP events are dispatched as MessageEvents with the params on event.data. Constructor options include backend (\"webkit\", \"chrome\", or { type: \"chrome\", path, argv }), console to capture page logs, and dataStore for persistent profiles. One browser subprocess is shared per Bun process; additional new Bun.WebView() calls open tabs in the same instance.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "render-markdown-in-the-terminal-with-bun-file-md-df24ad9d",
+      "category": "render-markdown-in-the-terminal-with-bun-file-md",
+      "section": "Render Markdown in the Terminal with bun ./file.md",
+      "announcement": "You can now render Markdown files directly in your terminal. When you run bun ./file.md, Bun reads the file, renders it as beautifully formatted ANSI output, and prints it to stdout with no JavaScript VM startup overhead.",
+      "status": "covered",
+      "testPath": "tests/regression/bun-1.3.12.test.ts"
+    },
+    {
+      "key": "render-markdown-in-the-terminal-with-bun-file-md-5ce59497",
+      "category": "render-markdown-in-the-terminal-with-bun-file-md",
+      "section": "Render Markdown in the Terminal with bun ./file.md",
+      "announcement": "In the next version of Bunbun ./hello.md & Bun.markdown.ansi(string) pretty-prints markdown to terminal-friendly ansi text pic.twitter.com/yp7jYKZL8k",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "render-markdown-in-the-terminal-with-bun-file-md-f02952df",
+      "category": "render-markdown-in-the-terminal-with-bun-file-md",
+      "section": "Render Markdown in the Terminal with bun ./file.md",
+      "announcement": "You can also use the new Bun.markdown.ansi() API programmatically:",
+      "status": "covered",
+      "testPath": "tests/regression/bun-1.3.12.test.ts"
+    },
+    {
+      "key": "async-stack-traces-for-native-errors-939cca04",
+      "category": "async-stack-traces-for-native-errors",
+      "section": "Async stack traces for native errors",
+      "announcement": "In the next version of BunAsync stacktraces are supported on native APIs like node:fs, Bun.write, node:http, node:dns & more. This makes debugging easier pic.twitter.com/PHospWtxtg",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "in-process-bun-cron-scheduler-a3cee2c8",
+      "category": "in-process-bun-cron-scheduler",
+      "section": "In-process Bun.cron() scheduler",
+      "announcement": "Bun.cron now supports an in-process callback overload that runs a function on a cron schedule. This is ideal for long-running servers and containers where you want scheduled work that shares state with the rest of your application.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "in-process-bun-cron-scheduler-5a835f49",
+      "category": "in-process-bun-cron-scheduler",
+      "section": "In-process Bun.cron() scheduler",
+      "announcement": "In the next version of BunBun.cron() accepts a callback for recurring in-process tasks pic.twitter.com/HQ3s3rxGEO",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "in-process-bun-cron-scheduler-c7ef2964",
+      "category": "in-process-bun-cron-scheduler",
+      "section": "In-process Bun.cron() scheduler",
+      "announcement": "This complements the existing OS-level Bun.cron(path, schedule, title) which registers persistent crontab/launchd/Task Scheduler entries. The in-process variant is lighter, works identically across platforms, and lets your handler access database pools, caches, and module-level state directly.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "in-process-bun-cron-scheduler-033a0c88",
+      "category": "in-process-bun-cron-scheduler",
+      "section": "In-process Bun.cron() scheduler",
+      "announcement": "Key behaviors:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "in-process-bun-cron-scheduler-52d29cf9",
+      "category": "in-process-bun-cron-scheduler",
+      "section": "In-process Bun.cron() scheduler",
+      "announcement": "No overlap — the next fire is scheduled only after the handler (and any returned Promise) settles. Slow async work won't pile up concurrent runs.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "in-process-bun-cron-scheduler-8fa69a4c",
+      "category": "in-process-bun-cron-scheduler",
+      "section": "In-process Bun.cron() scheduler",
+      "announcement": "Scheduled in UTC — 0 9 * * * means 9:00 UTC, regardless of the system time zone. (The OS-level Bun.cron(path, schedule, title) variant uses system local time, since that's how crontab/launchd/Task Scheduler work.)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "in-process-bun-cron-scheduler-0ec374cd",
+      "category": "in-process-bun-cron-scheduler",
+      "section": "In-process Bun.cron() scheduler",
+      "announcement": "Error handling matches setTimeout — synchronous throws emit uncaughtException, rejected promises emit unhandledRejection. Without a listener the process exits with code 1; with one, the job reschedules itself.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "in-process-bun-cron-scheduler-f5806231",
+      "category": "in-process-bun-cron-scheduler",
+      "section": "In-process Bun.cron() scheduler",
+      "announcement": "--hot safe — all in-process cron jobs are cleared before the module graph re-evaluates, so editing the schedule, handler, or removing the call entirely all take effect on save without leaking timers.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "in-process-bun-cron-scheduler-fbf3bed4",
+      "category": "in-process-bun-cron-scheduler",
+      "section": "In-process Bun.cron() scheduler",
+      "announcement": "Disposable — using job = Bun.cron(...) auto-stops at scope exit.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "in-process-bun-cron-scheduler-1c77cfc0",
+      "category": "in-process-bun-cron-scheduler",
+      "section": "In-process Bun.cron() scheduler",
+      "announcement": "ref/unref — .ref() (default) keeps the process alive; .unref() lets it exit naturally.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "in-process-bun-cron-scheduler-7e2e83c0",
+      "category": "in-process-bun-cron-scheduler",
+      "section": "In-process Bun.cron() scheduler",
+      "announcement": "Thanks to @alii for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "udp-socket-icmp-error-handling-and-truncation-detection-c8b38ebf",
+      "category": "udp-socket-icmp-error-handling-and-truncation-detection",
+      "section": "UDP Socket: ICMP Error Handling and Truncation Detection",
+      "announcement": "Two improvements to Bun.udpSocket() that bring it closer to libuv/Node.js behavior:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "udp-socket-icmp-error-handling-and-truncation-detection-02ba6207",
+      "category": "udp-socket-icmp-error-handling-and-truncation-detection",
+      "section": "UDP Socket: ICMP Error Handling and Truncation Detection",
+      "announcement": "ICMP errors no longer silently close the socket. On Linux, sending a UDP packet to an unreachable port previously caused the socket to silently close, breaking all other sends on the same socket. Now, ICMP errors (port unreachable, host unreachable, TTL exceeded, etc.) are surfaced through the error handler, and the socket stays open:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "udp-socket-icmp-error-handling-and-truncation-detection-8e615cdc",
+      "category": "udp-socket-icmp-error-handling-and-truncation-detection",
+      "section": "UDP Socket: ICMP Error Handling and Truncation Detection",
+      "announcement": "Truncated datagrams are now detectable. When a received datagram is larger than the receive buffer, the kernel silently truncates it. The data callback now receives a fifth flags argument so you can tell truncated payloads from complete ones:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "unix-domain-socket-lifecycle-now-matches-node-js-55f799d0",
+      "category": "unix-domain-socket-lifecycle-now-matches-node-js",
+      "section": "Unix Domain Socket Lifecycle Now Matches Node.js",
+      "announcement": "Bun's unix domain socket behavior was inverted from Node.js/libuv in two important ways:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "unix-domain-socket-lifecycle-now-matches-node-js-103877d7",
+      "category": "unix-domain-socket-lifecycle-now-matches-node-js",
+      "section": "Unix Domain Socket Lifecycle Now Matches Node.js",
+      "announcement": "This meant Bun could silently steal a live socket from another process on listen(), and leaked .sock files on stop()/close().",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "unix-domain-socket-lifecycle-now-matches-node-js-95ae87cc",
+      "category": "unix-domain-socket-lifecycle-now-matches-node-js",
+      "section": "Unix Domain Socket Lifecycle Now Matches Node.js",
+      "announcement": "Now Bun matches Node.js semantics: binding to an existing socket file correctly returns EADDRINUSE, and closing a listener automatically cleans up the socket file. This applies to Bun.listen, Bun.serve, and net.Server with unix sockets.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "upgraded-javascriptcore-engine-a5bfc27b",
+      "category": "upgraded-javascriptcore-engine",
+      "section": "Upgraded JavaScriptCore Engine",
+      "announcement": "Bun's underlying JavaScript engine (WebKit's JavaScriptCore) has been upgraded with over 1,650 upstream commits, bringing significant performance improvements, new language features, and bug fixes.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "explicit-resource-management-using-and-await-using-2db0c164",
+      "category": "explicit-resource-management-using-and-await-using",
+      "section": "Explicit Resource Management (using and await using)",
+      "announcement": "The using and await using declarations from the TC39 Explicit Resource Management proposal are now supported natively in JavaScriptCore:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "jit-compiler-improvements-16df5e16",
+      "category": "jit-compiler-improvements",
+      "section": "JIT Compiler Improvements",
+      "announcement": "Quick tier-up — Functions that are proven stable now tier up to optimized DFG/FTL compilation faster, improving steady-state performance.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "jit-compiler-improvements-f1799987",
+      "category": "jit-compiler-improvements",
+      "section": "JIT Compiler Improvements",
+      "announcement": "Array.isArray intrinsic — Array.isArray() is now a JIT intrinsic, making it significantly faster in hot paths.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "jit-compiler-improvements-7954fbdf",
+      "category": "jit-compiler-improvements",
+      "section": "JIT Compiler Improvements",
+      "announcement": "Faster String#includes — Uses an optimized single-character search fast path.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "jit-compiler-improvements-476878a4",
+      "category": "jit-compiler-improvements",
+      "section": "JIT Compiler Improvements",
+      "announcement": "Improved BigInt performance — Smaller memory footprint and faster arithmetic operations.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "jit-compiler-improvements-25390aab",
+      "category": "jit-compiler-improvements",
+      "section": "JIT Compiler Improvements",
+      "announcement": "Better register allocation — Rewritten greedy register allocator coalescing for improved generated code.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "jit-compiler-improvements-b9663fd7",
+      "category": "jit-compiler-improvements",
+      "section": "JIT Compiler Improvements",
+      "announcement": "Faster promise resolution — Micro-optimized promise reaction triggering and microtask queue draining, with a new PerformPromiseThen DFG/FTL optimization node.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "webassembly-improvements-fc3c5028",
+      "category": "webassembly-improvements",
+      "section": "WebAssembly Improvements",
+      "announcement": "SIMD shuffle optimizations and additional ARM64/x64 SIMD instruction support.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "webassembly-improvements-008db38f",
+      "category": "webassembly-improvements",
+      "section": "WebAssembly Improvements",
+      "announcement": "Memory64 bounds checking fixes.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "webassembly-improvements-c7356378",
+      "category": "webassembly-improvements",
+      "section": "WebAssembly Improvements",
+      "announcement": "Improved BBQ and OMG compiler codegen (conditional selects, better write barriers, tail-call fixes).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-spec-conformance-fixes-269d725c",
+      "category": "javascript-spec-conformance-fixes",
+      "section": "JavaScript Spec Conformance Fixes",
+      "announcement": "TypedArray#sort when the comparator accesses .buffer",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-spec-conformance-fixes-e2384d68",
+      "category": "javascript-spec-conformance-fixes",
+      "section": "JavaScript Spec Conformance Fixes",
+      "announcement": "Array#includes(undefined, fromIndex) hole handling",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-spec-conformance-fixes-3f63e093",
+      "category": "javascript-spec-conformance-fixes",
+      "section": "JavaScript Spec Conformance Fixes",
+      "announcement": "Array#flat with depth 0 and derived array bailout",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-spec-conformance-fixes-cba8e1cd",
+      "category": "javascript-spec-conformance-fixes",
+      "section": "JavaScript Spec Conformance Fixes",
+      "announcement": "Array.prototype.concat now checks all indexed accessors",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-spec-conformance-fixes-63f258da",
+      "category": "javascript-spec-conformance-fixes",
+      "section": "JavaScript Spec Conformance Fixes",
+      "announcement": "Array.prototype.copyWithin return value",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-spec-conformance-fixes-87643d32",
+      "category": "javascript-spec-conformance-fixes",
+      "section": "JavaScript Spec Conformance Fixes",
+      "announcement": "Set methods properly throw on non-object iterator next() result",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-spec-conformance-fixes-4a7f6aa8",
+      "category": "javascript-spec-conformance-fixes",
+      "section": "JavaScript Spec Conformance Fixes",
+      "announcement": "RegExp#@@matchAll lastIndex clamping",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-spec-conformance-fixes-cfca3a52",
+      "category": "javascript-spec-conformance-fixes",
+      "section": "JavaScript Spec Conformance Fixes",
+      "announcement": "String#replace surrogate-advancement fix for non-unicode regexps",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-spec-conformance-fixes-d684d5b1",
+      "category": "javascript-spec-conformance-fixes",
+      "section": "JavaScript Spec Conformance Fixes",
+      "announcement": "Named vs numbered backreference handling in RegExp",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-spec-conformance-fixes-5b7d797f",
+      "category": "javascript-spec-conformance-fixes",
+      "section": "JavaScript Spec Conformance Fixes",
+      "announcement": "Private fields no longer have attributes set when sealing/freezing objects",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "memory-allocator-libpas-improvements-ec42950c",
+      "category": "memory-allocator-libpas-improvements",
+      "section": "Memory Allocator (libpas) Improvements",
+      "announcement": "Retag-on-scavenge for improved memory safety",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "memory-allocator-libpas-improvements-67afe3a3",
+      "category": "memory-allocator-libpas-improvements",
+      "section": "Memory Allocator (libpas) Improvements",
+      "announcement": "Page-based zeroing threshold reduced from 64MB to 1MB for faster large allocations",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "memory-allocator-libpas-improvements-570a4438",
+      "category": "memory-allocator-libpas-improvements",
+      "section": "Memory Allocator (libpas) Improvements",
+      "announcement": "Faster bitfit heap utilization",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "memory-allocator-libpas-improvements-8221aa87",
+      "category": "memory-allocator-libpas-improvements",
+      "section": "Memory Allocator (libpas) Improvements",
+      "announcement": "Thanks to @sosukesuzuki for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "improved-standalone-executables-on-linux-af87ddcd",
+      "category": "improved-standalone-executables-on-linux",
+      "section": "Improved standalone executables on Linux",
+      "announcement": "Standalone executables created with bun build --compile on Linux now use a proper ELF section (.bun) to embed the module graph, matching the existing approach on macOS and Windows. Previously, the embedded data was read from /proc/self/exe at startup, which failed when the binary had execute-only permissions (chmod 111).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "improved-standalone-executables-on-linux-3bbf267c",
+      "category": "improved-standalone-executables-on-linux",
+      "section": "Improved standalone executables on Linux",
+      "announcement": "With this change, the kernel maps the data via PT_LOAD during execve — meaning zero file I/O at startup and no read permission required on the binary.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "improved-standalone-executables-on-linux-0b101747",
+      "category": "improved-standalone-executables-on-linux",
+      "section": "Improved standalone executables on Linux",
+      "announcement": "Thanks to @dylan-conway for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "urlpattern-is-up-to-2-3x-faster-abda990d",
+      "category": "urlpattern-is-up-to-2-3x-faster",
+      "section": "URLPattern is up to 2.3x faster",
+      "announcement": "URLPattern.test() and URLPattern.exec() are now significantly faster. The internal regex matching now calls the compiled regex engine directly instead of allocating temporary JavaScript objects for each URL component, eliminating up to 24 GC allocations per call.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "urlpattern-is-up-to-2-3x-faster-804c38fc",
+      "category": "urlpattern-is-up-to-2-3x-faster",
+      "section": "URLPattern is up to 2.3x faster",
+      "announcement": "As a side effect, URLPattern internals no longer pollute RegExp.lastMatch / RegExp.$N — previously, calling pattern.test(url) would leak internal regex state into these legacy static properties.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "urlpattern-is-up-to-2-3x-faster-1d2db297",
+      "category": "urlpattern-is-up-to-2-3x-faster",
+      "section": "URLPattern is up to 2.3x faster",
+      "announcement": "Thanks to @sosukesuzuki for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-stripansi-and-bun-stringwidth-052b9372",
+      "category": "faster-bun-stripansi-and-bun-stringwidth",
+      "section": "Faster Bun.stripANSI and Bun.stringWidth",
+      "announcement": "SIMD optimizations across Bun.stripANSI, Bun.stringWidth, and the shared ANSI parsing helpers used by Bun.sliceAnsi, Bun.wrapAnsi, and Node's readline.getStringWidth.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-stripansi-and-bun-stringwidth-7901105e",
+      "category": "faster-bun-stripansi-and-bun-stringwidth",
+      "section": "Faster Bun.stripANSI and Bun.stringWidth",
+      "announcement": "Key improvements:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-stripansi-and-bun-stringwidth-b6f3fb11",
+      "category": "faster-bun-stripansi-and-bun-stringwidth",
+      "section": "Faster Bun.stripANSI and Bun.stringWidth",
+      "announcement": "4×-unrolled SIMD prologue for escape character scanning — processes 64 bytes at a time instead of 16, reducing the cost of the NEON→GPR transfer that gates the loop branch.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-stripansi-and-bun-stringwidth-854981f9",
+      "category": "faster-bun-stripansi-and-bun-stringwidth",
+      "section": "Faster Bun.stripANSI and Bun.stringWidth",
+      "announcement": "SIMD terminator scans inside ANSI escape parsing — CSI and OSC payloads (like hyperlink URLs) are now skipped in bulk instead of byte-by-byte.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-stripansi-and-bun-stringwidth-3a0d2f82",
+      "category": "faster-bun-stripansi-and-bun-stringwidth",
+      "section": "Faster Bun.stripANSI and Bun.stringWidth",
+      "announcement": "Lazy flat buffer allocation in stripANSI — replaces StringBuilder with a raw Vector<Char> + memcpy, eliminating per-append bookkeeping and the final shrink-copy.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-stripansi-and-bun-stringwidth-0a4aa5a0",
+      "category": "faster-bun-stripansi-and-bun-stringwidth",
+      "section": "Faster Bun.stripANSI and Bun.stringWidth",
+      "announcement": "UTF-16 stringWidth escape state machine refactor — long OSC payloads in UTF-16 strings (hyperlinks with emoji) now use bulk SIMD scans instead of per-codepoint stepping.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-stripansi-and-bun-stringwidth-ae70883a",
+      "category": "faster-bun-stripansi-and-bun-stringwidth",
+      "section": "Faster Bun.stripANSI and Bun.stringWidth",
+      "announcement": "C1 ST (0x9C) recognized as OSC terminator in the Zig stringWidth path, conforming to ECMA-48 and matching the C++ consumeANSI behavior.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "stringwidth-benchmarks-9d158283",
+      "category": "stringwidth-benchmarks",
+      "section": "stringWidth benchmarks",
+      "announcement": "Compared to npm string-width, Bun is 4–822× faster depending on input size and content, and correctly handles all three OSC terminator variants (BEL, ESC \\, and C1 ST) where the npm package only recognizes BEL.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-build-on-low-core-machines-abac3934",
+      "category": "faster-bun-build-on-low-core-machines",
+      "section": "Faster bun build on low-core machines",
+      "announcement": "Fixed a thread-pool bug that left the bundler running with one fewer worker thread than intended. Most impactful on low-core machines where one thread is a larger share of the pool:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-build-on-low-core-machines-5083995c",
+      "category": "faster-bun-build-on-low-core-machines",
+      "section": "Faster bun build on low-core machines",
+      "announcement": "Benchmark: bun build on an 11,669-module project (three.js + @mui/material + @mui/icons-material, 10.45 MB output).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-glob-scan-92bf4017",
+      "category": "faster-bun-glob-scan",
+      "section": "Faster Bun.Glob.scan()",
+      "announcement": "Bun.Glob.scan() no longer opens and reads the same directory twice for patterns with a **/X/... boundary (e.g. **/node_modules/**/*.js). Gains scale with how much of the tree sits under the boundary — up to 2x on deeply nested trees. Patterns without a boundary (e.g. **/*.ts) are unchanged.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-glob-scan-23d369ca",
+      "category": "faster-bun-glob-scan",
+      "section": "Faster Bun.Glob.scan()",
+      "announcement": "Additionally, Bun.Glob on Windows now pushes wildcard filters down to the kernel via NtQueryDirectoryFile, so non-matching entries are discarded before reaching userspace — up to 2.4× faster for simple patterns like *.js or pkg-*/lib/*.js in directories with a low match ratio. Patterns using **, ?, [...], or {...} bypass the filter and behave as before.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "cgroup-aware-availableparallelism-hardwareconcurrency-on-linux-df2e87af",
+      "category": "cgroup-aware-availableparallelism-hardwareconcurrency-on-linux",
+      "section": "Cgroup-aware availableParallelism / hardwareConcurrency on Linux",
+      "announcement": "In the next version of Bun Threadpool & JIT threads now respect cgroup CPU limits instead of physical cores. This improves resource utilization in Docker & k8shttps://t.co/HCPy7jRCyG",
+      "status": "covered",
+      "testPath": "tests/regression/bun-1.3.12.test.ts"
+    },
+    {
+      "key": "keep-alive-for-https-proxy-connect-tunnels-cba6ed85",
+      "category": "keep-alive-for-https-proxy-connect-tunnels",
+      "section": "Keep-Alive for HTTPS Proxy CONNECT Tunnels",
+      "announcement": "Bun now reuses CONNECT tunnels for HTTPS-through-proxy requests. Previously, every proxied HTTPS request performed a fresh CONNECT handshake and TLS negotiation. Now, the tunnel and inner TLS session are pooled and reused across sequential requests to the same target through the same proxy with the same credentials — matching the behavior of Node.js + undici.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "keep-alive-for-https-proxy-connect-tunnels-ccdddcf8",
+      "category": "keep-alive-for-https-proxy-connect-tunnels",
+      "section": "Keep-Alive for HTTPS Proxy CONNECT Tunnels",
+      "announcement": "This dramatically reduces latency and connection overhead when making multiple HTTPS requests through a proxy:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "keep-alive-for-https-proxy-connect-tunnels-85c137fb",
+      "category": "keep-alive-for-https-proxy-connect-tunnels",
+      "section": "Keep-Alive for HTTPS Proxy CONNECT Tunnels",
+      "announcement": "Tunnels are keyed by proxy host/port, proxy credentials, target host/port, and TLS configuration — so different targets or different credentials correctly use separate tunnels.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "keep-alive-for-https-proxy-connect-tunnels-3b03ee33",
+      "category": "keep-alive-for-https-proxy-connect-tunnels",
+      "section": "Keep-Alive for HTTPS Proxy CONNECT Tunnels",
+      "announcement": "This also fixes intermittent Malformed_HTTP_Response errors that some users encountered when using fetch with HTTPS proxies.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "keep-alive-for-https-proxy-connect-tunnels-bcc8870b",
+      "category": "keep-alive-for-https-proxy-connect-tunnels",
+      "section": "Keep-Alive for HTTPS Proxy CONNECT Tunnels",
+      "announcement": "Thanks to @cirospaciari for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tcp-defer-accept-for-bun-serve-on-linux-4491ade8",
+      "category": "tcp-defer-accept-for-bun-serve-on-linux",
+      "section": "TCP_DEFER_ACCEPT for Bun.serve() on Linux",
+      "announcement": "Bun.serve() now sets TCP_DEFER_ACCEPT on Linux (and SO_ACCEPTFILTER \"dataready\" on FreeBSD), the same optimization nginx uses to reduce latency for incoming HTTP connections.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tcp-defer-accept-for-bun-serve-on-linux-a5b562d0",
+      "category": "tcp-defer-accept-for-bun-serve-on-linux",
+      "section": "TCP_DEFER_ACCEPT for Bun.serve() on Linux",
+      "announcement": "Previously, accepting a new connection required two event loop wake-ups — one for the accept and another to discover the socket was readable. With TCP_DEFER_ACCEPT, the kernel defers the accept until the client has actually sent data (the HTTP request or TLS ClientHello), collapsing the two wake-ups into one:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tcp-defer-accept-for-bun-serve-on-linux-00322f88",
+      "category": "tcp-defer-accept-for-bun-serve-on-linux",
+      "section": "TCP_DEFER_ACCEPT for Bun.serve() on Linux",
+      "announcement": "Before:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tcp-defer-accept-for-bun-serve-on-linux-336edfc3",
+      "category": "tcp-defer-accept-for-bun-serve-on-linux",
+      "section": "TCP_DEFER_ACCEPT for Bun.serve() on Linux",
+      "announcement": "epoll wake → accept new socket",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tcp-defer-accept-for-bun-serve-on-linux-84c16fba",
+      "category": "tcp-defer-accept-for-bun-serve-on-linux",
+      "section": "TCP_DEFER_ACCEPT for Bun.serve() on Linux",
+      "announcement": "Return to epoll",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tcp-defer-accept-for-bun-serve-on-linux-51b1016e",
+      "category": "tcp-defer-accept-for-bun-serve-on-linux",
+      "section": "TCP_DEFER_ACCEPT for Bun.serve() on Linux",
+      "announcement": "epoll wake → socket readable → recv() → process → respond",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tcp-defer-accept-for-bun-serve-on-linux-f022a6c5",
+      "category": "tcp-defer-accept-for-bun-serve-on-linux",
+      "section": "TCP_DEFER_ACCEPT for Bun.serve() on Linux",
+      "announcement": "After:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tcp-defer-accept-for-bun-serve-on-linux-a6988679",
+      "category": "tcp-defer-accept-for-bun-serve-on-linux",
+      "section": "TCP_DEFER_ACCEPT for Bun.serve() on Linux",
+      "announcement": "epoll wake → accept new socket (data already buffered) → recv() → process → respond",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "tcp-defer-accept-for-bun-serve-on-linux-9a9efed0",
+      "category": "tcp-defer-accept-for-bun-serve-on-linux",
+      "section": "TCP_DEFER_ACCEPT for Bun.serve() on Linux",
+      "announcement": "This is especially impactful for short-lived connections (e.g. HTTP/1.1 with Connection: close). Bun.listen() and net.createServer() are unchanged, since they may serve protocols where the server sends first. No effect on macOS or Windows.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-c221763b",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: process.env being completely empty when the current working directory is inside a directory without read permission (e.g., chmod 111). Previously, OS-inherited environment variables passed via execve were lost because the env loader returned early on EACCES before reading process environment variables. (@alii)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-da3bffae",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: Memory leak where every vm.Script, vm.SourceTextModule, and vm.compileFunction call leaked the resulting object due to a reference cycle in the internal NodeVMScriptFetcher (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-c1e7fc8a",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: pipeline(Readable.fromWeb(res.body), createWriteStream(...)) permanently stalling (and eventually spinning at 100% CPU) when piping fetch() response bodies under concurrency, caused by a race between the HTTP thread's body callback and JS accessing res.body (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-73996628",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: Readable.prototype.pipe crashing the process when piping an object-mode Readable into a byte-mode Transform/Writable. The ERR_INVALID_ARG_TYPE error is now properly emitted on the destination stream's error event instead of being thrown as an uncatchable exception, matching Node.js behavior.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-dca10d55",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: node:dns/promises.getDefaultResultOrder being undefined and dns.getDefaultResultOrder() returning the function object instead of a string (\"ipv4first\" / \"ipv6first\" / \"verbatim\"). Also added the missing getServers export to dns.promises. This broke Vite 8 builds under Bun. (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-e00471a0",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: fs.realpathSync(\"/\") throwing ENOENT when running Bun under FreeBSD's Linuxulator compatibility layer or in minimal containers without /proc mounted (@ant-kurt)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-a33cce8d",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: fs.statSync().ino returning INT64_MAX (9223372036854775807) for files with inodes ≥ 2⁶³, causing all files on NFS mounts with high 64-bit inodes to report the same inode number. dev and rdev were also affected. All stat fields now match Node.js behavior for both Stats (Number) and BigIntStats (BigInt) paths. (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-9502bd63",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: process.stdout.end(callback) firing the callback before all data was flushed, causing output truncation at power-of-2 boundaries (64KB, 128KB, etc.) when the callback called process.exit(0)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-3f403594",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: Error.captureStackTrace now includes async stack frames (e.g. at async <fn>) matching the behavior of new Error().stack (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-8669ed0e",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: a rare crash in Error.captureStackTrace on error objects whose .stack had already been accessed (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-f07444c9",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: assert.partialDeepStrictEqual crashing when comparing arrays",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-f7f3b5f2",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: fs.stat, fs.lstat, and fs.fstat throwing EPERM on Linux when running under seccomp filters that block the statx syscall (e.g., older Docker versions < 18.04, libseccomp < 2.3.3, and various CI sandboxes). Bun now matches libuv's fallback behavior by also handling EPERM, EINVAL, and abnormal positive return codes from statx.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-1d2513a8",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: fs.Stats(...) called without new scrambled property values — 8 of 10 integer fields (e.g. ino, size, mode) were assigned to the wrong property names due to a slot-order mismatch in the internal constructor path. (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-4eb8a1f4",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: statSync(path) instanceof Stats incorrectly returned false because stat instances used a different prototype object than Stats.prototype. Methods like .isFile() still worked, but identity checks and instanceof did not match Node.js behavior. (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-9386337f",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Updated built-in root TLS certificates to NSS 3.121, the version shipping in Firefox 149. Adds e-Szigno TLS Root CA 2023 and corrects the label for OISTE Server Root RSA G1. (@cirospaciari)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-ad50ff51",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: setting process.env.HTTP_PROXY, HTTPS_PROXY, or NO_PROXY (and lowercase variants) at runtime had no effect on subsequent fetch() calls because proxy config was only read once at startup. Changes now take effect on the next fetch(). (@cirospaciari)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-3f4750df",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: the event loop processing at most 1,024 ready I/O events per tick when more were pending, adding latency on servers handling thousands of concurrent connections. Bun now drains the full backlog in a single tick, matching libuv's uv__io_poll. (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-a709d93d",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: a Bun.serve() performance cliff where concurrent async handlers that resumed after an await couldn't batch their writes (cork buffer contention), dropping throughput from ~190k req/s to ~22k req/s. Also fixes a potential use-after-free where closed sockets could remain referenced in the drain loop. (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-b9064f4c",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: a lost-wakeup race in Bun's internal thread pool that could cause fs.promises, Bun.file().text(), Bun.write(), crypto.subtle, and the package manager to hang indefinitely on aarch64 (Apple Silicon, ARM Linux). x86_64 was not affected. (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-229dd314",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Memory leak in Bun.serve() when a Promise<Response> from the fetch handler never settles after the client disconnects (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-d98dcda3",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.SQL MySQL adapter returning empty results for SELECT queries against MySQL-compatible databases (StarRocks, TiDB, SingleStore, etc.) that don't support the CLIENT_DEPRECATE_EOF capability. Bun now properly negotiates capabilities with the server per the MySQL protocol spec and correctly handles legacy EOF packets.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-d6bfc974",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: per-query memory leaks in the bun:sql MySQL adapter that caused RSS to grow unboundedly until OOM on Linux. Three native allocation leaks were fixed: column name allocations not freed on cleanup or when overwritten during prepared statement reuse, and parameter slice allocations not freed after query execution.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-8e55b01b",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: memory leak in Bun.TOML.parse where the logger's internal message list was not freed on error paths",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-d10f9eb0",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.listen() and Bun.connect() could crash with certain invalid hostname or unix values. Now throws a TypeError instead.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-aa110ecf",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: a crash accessing server.url with an invalid unix socket path",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-1a54804c",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: DNS cache entries that were stale but still referenced by in-flight connections would never expire, causing stale DNS results to persist indefinitely (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-8c787c54",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: potential crash in Bun.dns.setServers with certain invalid inputs",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-bceb4566",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.dns.lookup() could crash with certain invalid inputs",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-2d938ca9",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Glob scanner crashing or looping infinitely when scanning deeply nested directory trees or self-referential symlinks where the accumulated path exceeds the OS path length limit. Now properly returns an ENAMETOOLONG error instead. (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-92e03ce1",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Unix socket paths longer than 104 bytes (the sun_path limit) now work correctly on macOS. Previously, Bun.serve({ unix }) and fetch({ unix }) would fail with ENAMETOOLONG when the socket path exceeded this limit. (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-5af44a11",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: a crash when reading .fd on a TLS listener created with Bun.listen({ tls })",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-f84e4ed2",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: crashes in Bun.FFI.linkSymbols() and Bun.FFI.viewSource with invalid symbol descriptors — now throw a TypeError instead",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-5899bb43",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: edge case crash when passing an out-of-range value as a file descriptor to APIs like S3Client.write",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-4f5f14b5",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: unbounded memory growth from messages sent to a closed MessagePort being queued indefinitely and never delivered. 5000 × 64KB postMessage calls to a closed port dropped RSS from 332MB to 1.5MB. (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-f403c212",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: AbortController.signal.reason silently becoming undefined after garbage collection when only the controller was retained. (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-1406f96d",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: use-after-free race in BroadcastChannel when a worker-owned channel was destroyed while another thread looked it up. (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-f1dd82b6",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: CookieMap.toJSON() could crash with numeric cookie names",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-fde27ce0",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: String.raw corrupting null bytes (U+0000) in tagged template literals, emitting the 6-character string \\uFFFD instead of preserving the original byte. This affected libraries like wasm-audio-decoders that embed WASM binaries as yEncoded strings in template literals.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-7469b416",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: AbortSignal memory leak when ReadableStream.prototype.pipeTo is called with a signal option and the pipe never completes. A reference cycle between AbortSignal and its abort algorithm callbacks prevented garbage collection even after all user-side references were dropped. (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-ff6c20c8",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: crash when calling bytes() or arrayBuffer() on a Response whose body was created from an async iterable (Symbol.asyncIterator)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-23157d09",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: crash when calling ReadableStream.blob() after the Response body was already consumed, now properly rejects with ERR_BODY_ALREADY_USED",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-3af8b111",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: a crash in Request.formData() / Response.formData() / Blob.formData() when the Content-Type header contained a malformed boundary value (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-d3622a92",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: HTTP server now correctly rejects requests with conflicting duplicate Content-Length headers per RFC 9112, preventing potential request smuggling attacks (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-506bb39c",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: WebSocket connections crashing when headers, URLs, or proxy config contained non-ASCII characters. The upgrade request now correctly decodes all inputs as UTF-8. (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-a2db7e98",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: edge case crash formatting error messages when Symbol.toPrimitive throws",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-de0b97ae",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: a crash that could occur when a stack overflow happened during error message formatting",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-90187012",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: bun build --compile on NixOS and Guix producing executables that only ran on the exact same Nix generation, because the compiled binary inherited a /nix/store/... ELF interpreter path. PT_INTERP is now normalized back to the standard FHS path so compiled binaries are portable across Linux systems. (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-58df5fcf",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed a crash in bun build --compile when CSS files are passed as entry points alongside JS/TS entry points",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-4ef3da32",
+      "category": "bun-test",
+      "section": "bun test",
+      "announcement": "Fixed: mock.module() could crash when the first argument is not a string",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-d03ce1ce",
+      "category": "bun-test",
+      "section": "bun test",
+      "announcement": "Fixed: a crash that could occur when mock.module() triggered auto-install during module resolution",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-20fe5eae",
+      "category": "bun-test",
+      "section": "bun test",
+      "announcement": "Fixed: potential crash in expect.extend with certain invalid inputs",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-a8f14647",
+      "category": "bun-test",
+      "section": "bun test",
+      "announcement": "Fixed: --elide-lines flag no longer exits with an error in non-terminal environments (e.g., CI, Git hooks). The flag is now silently ignored when stdout is not a TTY, allowing the same command to work in both interactive and non-interactive contexts. (@alii)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-shell-8686cb15",
+      "category": "bun-shell",
+      "section": "Bun Shell",
+      "announcement": "Fixed: Bun.$.braces() could crash when called with an empty string",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "windows-0099c0a7",
+      "category": "windows",
+      "section": "Windows",
+      "announcement": "Fixed: tar archive extraction on Windows could write files outside the extraction directory when an entry contained an absolute path (e.g. C:\\... or UNC paths) — these entries are now skipped (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    }
+  ]
+}

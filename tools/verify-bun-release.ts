@@ -153,11 +153,10 @@ export async function runReleaseVerification(
   );
 
   const sample = "<div>Hello & 'world'</div>";
-  const iterations = 10_000;
-  // Warm the implementation, then retain the best repeated sample. A single
-  // wall-clock sample can include an unrelated scheduler pause when this probe
-  // runs inside the parallel staged-test harness.
-  for (let i = 0; i < iterations; i++) Bun.escapeHTML(sample);
+  const iterations = 1_000_000;
+  // Use a long sample and retain the best repeated run. Short wall-clock
+  // samples turn scheduler pauses into false performance regressions.
+  for (let i = 0; i < 50_000; i++) Bun.escapeHTML(sample);
   let avgNs = Number.POSITIVE_INFINITY;
   for (let run = 0; run < 5; run++) {
     const t0 = Bun.nanoseconds();

@@ -263,18 +263,18 @@ before promotion. Pages `BUN_VERSION` is a separate deploy pin.
 
 ## Legitimate variants (not wrong)
 
-| Variant                                                          | Where                                                             | Notes                                                                                    |
-| ---------------------------------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `frozenLockfile = false`                                         | nested workspace roots (dev)                                      | root is `true`; nested may override                                                      |
-| `linker = "hoisted"`                                             | e.g. `projects/experimental/keyboard-shortcuts-lite/bunfig.toml`  | legacy/tooling compatibility; audit before expanding                                     |
-| `frozenLockfile = true`                                          | e.g. `projects/experimental/codepoint/template/...`               | template/CI-simulation nested roots                                                      |
-| Registry `localhost:3000` vs apex                                | root bunfig vs production deploy                                  | same token env; different host                                                           |
-| `--cpu` / `--os` CLI **or** `BUN_INSTALL_CPU` / `BUN_INSTALL_OS` | cross profiles · `bun-install-profiles.json`                      | same mechanism; profiles document both                                                   |
-| `install.exact = true`                                           | root `bunfig.toml`                                                | semver-exact saves; separate from linker policy                                          |
-| Global store **ineligible** entries                              | patches, `trustedDependencies`, `workspace:`/`file:`/`link:` deps | fall back to project-local `.bun/` — not a policy violation                              |
-| `verify:install-platform:dry-run`                                | fast gate                                                         | profile SSOT + lockfile/linker reads; skips spawn-heavy aspects                          |
-| `verify:install-env`                                             | runtime probes                                                    | six `BUN_CONFIG_*` + `install.scopes` + `registry-read-plane`                            |
-| Hoisted / CI profiles                                            | `bun-install-profiles.json`                                       | `hoisted`, `ci`, `ci-isolated`, `secure-isolated`, etc. — use intentionally, not at root |
+| Variant                                                          | Where                                                                 | Notes                                                                                    |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `frozenLockfile = false`                                         | nested workspace roots (dev); `.bun-create/factory-library` bootstrap | root is `true`; Factory release/publish overrides with a frozen dry run                  |
+| `linker = "hoisted"`                                             | e.g. `projects/experimental/keyboard-shortcuts-lite/bunfig.toml`      | legacy/tooling compatibility; audit before expanding                                     |
+| `frozenLockfile = true`                                          | e.g. `projects/experimental/codepoint/template/...`                   | template/CI-simulation nested roots                                                      |
+| Registry `localhost:3000` vs apex                                | root bunfig vs production deploy                                      | same token env; different host                                                           |
+| `--cpu` / `--os` CLI **or** `BUN_INSTALL_CPU` / `BUN_INSTALL_OS` | cross profiles · `bun-install-profiles.json`                          | same mechanism; profiles document both                                                   |
+| `install.exact = true`                                           | root `bunfig.toml`                                                    | semver-exact saves; separate from linker policy                                          |
+| Global store **ineligible** entries                              | patches, `trustedDependencies`, `workspace:`/`file:`/`link:` deps     | fall back to project-local `.bun/` — not a policy violation                              |
+| `verify:install-platform:dry-run`                                | fast gate                                                             | profile SSOT + lockfile/linker reads; skips spawn-heavy aspects                          |
+| `verify:install-env`                                             | runtime probes                                                        | six `BUN_CONFIG_*` + `install.scopes` + `registry-read-plane`                            |
+| Hoisted / CI profiles                                            | `bun-install-profiles.json`                                           | `hoisted`, `ci`, `ci-isolated`, `secure-isolated`, etc. — use intentionally, not at root |
 
 **Global store tradeoffs** (when eligible): phantom-dep resolution no longer
 walks project `.bun/node_modules` from inside global entries — undeclared
@@ -285,7 +285,7 @@ imports fail (desired). Opt out per project: `globalStore = false`. See
 
 | Layer   | Path                                                                                   |
 | ------- | -------------------------------------------------------------------------------------- |
-| bunfig  | `~/.bunfig.toml`                                                                       |
+| bunfig  | `~/.bunfig.toml` (live SSOT may be a symlink to `~/dotfiles/bun/bunfig.toml`)          |
 | env     | `~/.config/shell/bun.sh` — **no** `BUN_INSTALL_CACHE_DIR` / `BUN_INSTALL_GLOBAL_STORE` |
 | PATH    | `~/.config/shell/path.sh`                                                              |
 | aliases | `ba` → `audit:bunfig` · `bhealth` / `bmachine`                                         |
@@ -343,7 +343,7 @@ Scanner is **not** a substitute for `minimumReleaseAge`, `bun audit`, or frozen
 lockfile discipline. Never commit raw Socket API keys — vault → inject.
 
 ```bash
-bun run machine:bunfig:ensure   # ~/.bunfig.toml ← config/machine.bunfig.toml.template
+bun run machine:bunfig:ensure   # seed if missing; no-op on a live symlink
 bun run machine:bunfig:check    # SSOT snippets + absolute cache.dir
 bun run audit:bunfig
 bun run install:all             # explicit project --cwd; safe for nested Git worktrees
@@ -380,8 +380,12 @@ packages are compiler contracts and grade as `RETAIN` even when they have no
 executable import. `LOCKED` covers workspace protocols and protected toolchain
 pins. Always inspect `bun why` before `remove:safe`.
 
-**CI runners:** `setup-factory-bun` writes `~/.bunfig.toml` via
+**CI runners:** `setup-factory-bun` writes a regular `~/.bunfig.toml` via
 `machine:bunfig:ensure --overwrite` so doctor/fingerprint gates are portable.
+`--overwrite` refuses a symlink (dotfiles SSOT); `--overwrite-link` is the
+explicit flatten. Template is the CI/bootstrap seed; `--check` reads through the
+link and fails if `$XDG_CONFIG_HOME/.bunfig.toml` exists (Bun prefers it).
+`~/.bun/install/global/bunfig.toml` is not a Bun config path.
 
 ```bash
 # Project-scoped install verification (11 aspects — toolchain + config + platform + linker)
@@ -421,6 +425,7 @@ control-plane gate for the same machine/project split:
 | Check id                          | Level | Proves                                                                                                                                                   |
 | --------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `bunfig-machine-ssot`             | fatal | `~/.bunfig.toml` has linker/globalStore/age/excludes/cache.dir                                                                                           |
+| `bunfig-xdg-shadow`               | fatal | no `$XDG_CONFIG_HOME/.bunfig.toml` (Bun loads it ahead of `$HOME/.bunfig.toml`)                                                                          |
 | `bunfig-machine-frozen-lockfile`  | warn  | machine declares `frozenLockfile`                                                                                                                        |
 | `bunfig-project-no-machine-keys`  | fatal | `./bunfig.toml` does not set machine-owned install keys                                                                                                  |
 | `bunfig-merge-consistency`        | fatal | effective policy is isolated + globalStore + absolute cache                                                                                              |
