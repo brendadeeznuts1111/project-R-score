@@ -21,6 +21,7 @@
 
 import { readFileSync, writeFileSync, existsSync, statSync, readdirSync, mkdirSync } from 'fs';
 import { join, basename, dirname, extname } from 'path';
+import os from 'node:os';
 import { AdvancedProcessManager } from './advanced-process-manager.ts';
 import { Logger, PerformanceTimer, formatBytes, formatDuration } from './shared-utilities.ts';
 
@@ -345,7 +346,7 @@ export class SmolBuildOptimizer {
         sizeReporting: true,
       },
       performance: {
-        maxWorkers: Math.max(1, Math.floor(require('os').cpus().length / 2)),
+        maxWorkers: Math.max(1, Math.floor(os.cpus().length / 2)),
         memoryLimit: 2048, // 2GB
         cacheEnabled: true,
       },

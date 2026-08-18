@@ -16,6 +16,7 @@
 import { $ } from 'bun';
 import { existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
+import packageJsonData from '../package.json' with { type: 'json' };
 import { Cookie, CookieMap } from 'bun';
 
 interface BuildConfig {
@@ -52,7 +53,7 @@ interface WindowsMetadata {
 export class UserAgentBuildSystem {
   private readonly srcDir = join(process.cwd(), 'src');
   private readonly distDir = join(process.cwd(), 'dist');
-  private readonly packageJson = require(join(process.cwd(), 'package.json'));
+  private readonly packageJson = packageJsonData;
 
   /**
    * Get default cookie configuration based on environment

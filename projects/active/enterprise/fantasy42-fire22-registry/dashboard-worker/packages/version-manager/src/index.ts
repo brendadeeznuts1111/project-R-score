@@ -1,7 +1,7 @@
 /**
  * @fire22/version-manager
  *
- * Production-ready version management using Bun.semver for Fire22 Dashboard Worker
+ * Strict version parsing with Bun.semver comparison and range checks.
  *
  * @version 3.1.0
  * @author Fire22 Development Team
@@ -9,14 +9,15 @@
 
 // Export main classes
 export { BunVersionManager, WorkspaceVersionManager } from '../../../src/utils/version-manager';
+import { formatSemver, isValidSemver, makeSemver, parseSemver } from '../../../src/utils/semver';
 
 // Export types
 export interface VersionConfig {
   current: string;
   minimum: string;
   maximum?: string;
-  prerelease?: string;
-  metadata?: Record<string, any>;
+  databasePath?: string;
+  packageJsonPath?: string;
 }
 
 export interface VersionHistory {
@@ -28,7 +29,6 @@ export interface VersionHistory {
 }
 
 export interface ReleaseConfig {
-  version: string;
   type: 'major' | 'minor' | 'patch' | 'prerelease';
   tag?: string;
   branch?: string;
@@ -48,10 +48,10 @@ export interface VersionMetrics {
 // Export utilities
 export const VersionUtils = {
   /**
-   * Parse version using Bun.semver
+   * Parse a strict semantic version.
    */
   parse(version: string) {
-    const parsed = Bun.semver(version);
+    const parsed = parseSemver(version);
     if (!parsed) {
       throw new Error(`Invalid semver version: ${version}`);
     }
@@ -61,7 +61,7 @@ export const VersionUtils = {
       patch: parsed.patch,
       prerelease: parsed.prerelease,
       build: parsed.build,
-      format: () => parsed.format(),
+      format: () => formatSemver(parsed),
     };
   },
 
@@ -69,33 +69,33 @@ export const VersionUtils = {
    * Compare two versions using Bun.semver
    */
   compare(v1: string, v2: string): number {
-    const version1 = Bun.semver(v1);
-    const version2 = Bun.semver(v2);
+    const version1 = parseSemver(v1);
+    const version2 = parseSemver(v2);
 
     if (!version1 || !version2) {
       throw new Error('Invalid version format for comparison');
     }
 
-    return Bun.semver.order(version1, version2);
+    return Bun.semver.order(v1, v2);
   },
 
   /**
    * Check if version satisfies range using Bun.semver
    */
   satisfies(version: string, range: string): boolean {
-    const v = Bun.semver(version);
+    const v = parseSemver(version);
     if (!v) {
       throw new Error(`Invalid version: ${version}`);
     }
 
-    return Bun.semver.satisfies(v, range);
+    return Bun.semver.satisfies(version, range);
   },
 
   /**
    * Validate version format
    */
   isValid(version: string): boolean {
-    return Bun.semver(version) !== null;
+    return isValidSemver(version);
   },
 
   /**
@@ -111,51 +111,63 @@ export const VersionUtils = {
       rc: string;
     };
   } {
-    const current = Bun.semver(currentVersion);
+    const current = parseSemver(currentVersion);
     if (!current) {
       throw new Error(`Invalid current version: ${currentVersion}`);
     }
 
     return {
-      patch: Bun.semver({
-        major: current.major,
-        minor: current.minor,
-        patch: current.patch + 1,
-      }).format(),
+      patch: formatSemver(
+        makeSemver({
+          major: current.major,
+          minor: current.minor,
+          patch: current.patch + 1,
+        })
+      ),
 
-      minor: Bun.semver({
-        major: current.major,
-        minor: current.minor + 1,
-        patch: 0,
-      }).format(),
+      minor: formatSemver(
+        makeSemver({
+          major: current.major,
+          minor: current.minor + 1,
+          patch: 0,
+        })
+      ),
 
-      major: Bun.semver({
-        major: current.major + 1,
-        minor: 0,
-        patch: 0,
-      }).format(),
+      major: formatSemver(
+        makeSemver({
+          major: current.major + 1,
+          minor: 0,
+          patch: 0,
+        })
+      ),
 
       prerelease: {
-        alpha: Bun.semver({
-          major: current.major,
-          minor: current.minor,
-          patch: current.patch,
-          prerelease: ['alpha', 0],
-        }).format(),
+        alpha: formatSemver(
+          makeSemver({
+            major: current.major,
+            minor: current.minor,
+            patch: current.patch,
+            prerelease: ['alpha', 0],
+          })
+        ),
 
-        beta: Bun.semver({
-          major: current.major,
-          minor: current.minor,
-          patch: current.patch,
-          prerelease: ['beta', 0],
-        }).format(),
+        beta: formatSemver(
+          makeSemver({
+            major: current.major,
+            minor: current.minor,
+            patch: current.patch,
+            prerelease: ['beta', 0],
+          })
+        ),
 
-        rc: Bun.semver({
-          major: current.major,
-          minor: current.minor,
-          patch: current.patch,
-          prerelease: ['rc', 0],
-        }).format(),
+        rc: formatSemver(
+          makeSemver({
+            major: current.major,
+            minor: current.minor,
+            patch: current.patch,
+            prerelease: ['rc', 0],
+          })
+        ),
       },
     };
   },
@@ -165,11 +177,11 @@ export const VersionUtils = {
    */
   sort(versions: string[], descending: boolean = false): string[] {
     const parsed = versions
-      .map(v => ({ version: v, parsed: Bun.semver(v) }))
+      .map(v => ({ version: v, parsed: parseSemver(v) }))
       .filter(v => v.parsed !== null);
 
     parsed.sort((a, b) => {
-      const order = Bun.semver.order(a.parsed!, b.parsed!);
+      const order = Bun.semver.order(a.version, b.version);
       return descending ? -order : order;
     });
 
@@ -204,23 +216,11 @@ export const PRERELEASE_TYPES = {
   RC: 'rc' as const,
 };
 
-// Export default instances
-export const versionManager = new (
-  await import('../../../src/utils/version-manager')
-).BunVersionManager({
-  current: '3.1.0',
-  minimum: '1.0.0',
-});
-
-export const workspaceManager = new (
-  await import('../../../src/utils/version-manager')
-).WorkspaceVersionManager('3.1.0');
-
 // Package metadata
 export const PACKAGE_INFO = {
   name: '@fire22/version-manager',
   version: '3.1.0',
-  description: 'Production-ready version management using Bun.semver for Fire22 Dashboard Worker',
+  description: 'Strict version management with Bun-native comparison and range checks',
   features: [
     'Native Bun.semver integration',
     'Version parsing and validation',

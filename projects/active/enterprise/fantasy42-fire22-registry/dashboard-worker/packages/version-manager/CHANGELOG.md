@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) using **Bun.semver**.
 
+## Unreleased
+
+### Corrected
+
+- Replaced unsupported callable `Bun.semver(...)` usage with a strict local
+  parser. The official Bun API only exposes `Bun.semver.order()` and
+  `Bun.semver.satisfies()`.
+- Made SQLite persistence and `package.json` mutation explicit configuration.
+- Made history ordering deterministic and workspace synchronization exact.
+- Removed eager singleton managers so importing the package has no persistent
+  side effects.
+
 ## [3.1.0] - 2024-01-15
 
 ### 🎉 Initial Release - Native Bun.semver Integration

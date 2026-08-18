@@ -6,7 +6,7 @@
  */
 
 import { spawn } from 'bun';
-import { existsSync, writeFileSync, mkdirSync, rmSync } from 'fs';
+import { existsSync, writeFileSync, mkdirSync, rmSync, chmodSync } from 'fs';
 import { join } from 'path';
 
 export interface EdgeCaseResult {
@@ -376,7 +376,7 @@ export const EdgeCaseHelpers = {
             writeFileSync(filePath, '{"test": "data"}');
             if (process.platform !== 'win32') {
               try {
-                require('fs').chmodSync(filePath, 0o000);
+                chmodSync(filePath, 0o000);
               } catch (e) {
                 // Fallback for systems where chmod fails
               }

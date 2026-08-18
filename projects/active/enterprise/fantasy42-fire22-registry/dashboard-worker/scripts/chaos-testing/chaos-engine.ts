@@ -5,7 +5,7 @@
  * Tests error handling, recovery, alerting, and documentation systems
  */
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { color } from 'bun' with { type: 'macro' };
 import { hubConnection } from '../../src/config/hub-connection';
@@ -861,7 +861,7 @@ class ChaosTestEngine {
 
       // Ensure reports directory exists
       if (!existsSync(this.reportsPath)) {
-        require('fs').mkdirSync(this.reportsPath, { recursive: true });
+        mkdirSync(this.reportsPath, { recursive: true });
       }
 
       writeFileSync(reportPath, JSON.stringify(report, null, 2), 'utf-8');

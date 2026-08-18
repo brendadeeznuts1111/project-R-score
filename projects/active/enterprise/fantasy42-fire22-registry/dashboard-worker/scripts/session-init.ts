@@ -7,7 +7,7 @@
  */
 
 import { secrets } from 'bun';
-import { readFileSync, existsSync, writeFileSync } from 'fs';
+import { readFileSync, existsSync, writeFileSync, unlinkSync } from 'fs';
 import { spawn } from 'child_process';
 
 const SERVICE_NAME = 'fire22-dashboard-worker';
@@ -235,7 +235,7 @@ switch (command) {
 
   case 'reset':
     if (existsSync(SESSION_MARKER)) {
-      require('fs').unlinkSync(SESSION_MARKER);
+      unlinkSync(SESSION_MARKER);
       console.info(colors.green + '✓' + colors.reset + ' Session reset');
     }
     await initializeSession();
@@ -243,7 +243,7 @@ switch (command) {
 
   case 'clear':
     if (existsSync(SESSION_MARKER)) {
-      require('fs').unlinkSync(SESSION_MARKER);
+      unlinkSync(SESSION_MARKER);
     }
     await secrets
       .delete({
