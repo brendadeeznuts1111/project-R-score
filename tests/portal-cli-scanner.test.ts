@@ -435,38 +435,29 @@ describe('portal-cli scanner CLI', () => {
     expect(out).toContain('warn');
   });
 
-  test('scanner scan --oneshot --force free mode exits 0 (quota path)', async () => {
-    const proc = Bun.spawn(['bun', CLI, 'scanner', 'scan', '--oneshot', '--force'], {
-      cwd: ROOT,
-      stdout: 'pipe',
-      stderr: 'pipe',
-    });
-    const code = await proc.exited;
-    const out = (await new Response(proc.stdout).text()) + (await new Response(proc.stderr).text());
-    // Socket free/auth API may 429 under quota; oneshot must still restore bunfig
-    // and surface a coherent scan path message.
-    const quotaOrOk =
-      code === 0 ||
-      out.includes('429') ||
-      out.includes('ScannerFailed') ||
-      out.includes('quota') ||
-      /rate.?limit/i.test(out);
-    expect(quotaOrOk).toBe(true);
-    expect(
-      out.includes('No advisories') ||
-        out.includes('free mode') ||
-        out.includes('Scanning') ||
-        out.includes('oneshot') ||
-        out.includes('pm scan') ||
-        out.includes('Security scanner failed')
-    ).toBe(true);
-    // bunfig should not retain a live install-time scanner line after oneshot
-    const bunfig = await Bun.file(`${ROOT}/bunfig.toml`).text();
-    expect(/^scanner\s*=\s*"@socketsecurity\/bun-security-scanner"/m.test(bunfig)).toBe(
-      false
-    );
-    expect(/^\[install\.security\]\s*$/m.test(bunfig)).toBe(false);
-  }, 20_000);
+  test('scanner scan --oneshot --force treats quota exhaustion as non-fatal', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'portal-scanner-quota-'));
+    try {
+      const bunfig = join(dir, 'bunfig.toml');
+      await Bun.write(bunfig, SAMPLE_BUNFIG);
+      let seen: string[] | undefined;
+
+      const code = await dispatchScanner('scan', ['--oneshot', '--force'], {
+        bunfigPath: bunfig,
+        cwd: dir,
+        spawnBunCapture: async args => {
+          seen = args;
+          return { code: 1, output: 'HTTP 429: Socket free-tier quota exhausted' };
+        },
+      });
+
+      expect(code).toBe(0);
+      expect(seen).toEqual(['pm', 'scan']);
+      expect(await Bun.file(bunfig).text()).toBe(SAMPLE_BUNFIG);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
 
   test('root help lists scanner command', async () => {
     const proc = Bun.spawn(['bun', CLI, 'help'], {
