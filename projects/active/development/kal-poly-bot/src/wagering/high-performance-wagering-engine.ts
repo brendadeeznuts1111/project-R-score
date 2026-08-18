@@ -15,9 +15,11 @@
  * - Age verification and identity confirmation
  */
 
-import { heapStats } from 'bun:jsc'
-import { availableParallelism } from 'node:os'
-import { HighFreqSilo, SiloErrorHandler, SiloMetrics, SILO_CONFIG, stripAnsi } from './silo'
+import { redis } from 'bun';
+import { heapStats } from 'bun:jsc';
+// @see https://bun.com/docs/runtime/redis
+import { availableParallelism } from 'node:os';
+import { HighFreqSilo, SiloErrorHandler, SiloMetrics, SILO_CONFIG, stripAnsi } from './silo';
 
 // -------------------------------------------------------------------
 // COMPLIANCE INFRASTRUCTURE (MANDATORY FOR ALL WAGERING SYSTEMS)
@@ -28,8 +30,8 @@ import { HighFreqSilo, SiloErrorHandler, SiloMetrics, SILO_CONFIG, stripAnsi } f
  * Memory #26 Integration: Self-exclusion & Player Protection
  */
 export class ResponsibleGamblingEngine {
-  private static readonly SELF_EXCLUSION_DB = 'self_exclusion_registry'
-  private static readonly SESSION_CACHE = new Map<string, RGStatus>()
+  private static readonly SELF_EXCLUSION_DB = 'self_exclusion_registry';
+  private static readonly SESSION_CACHE = new Map<string, RGStatus>();
 
   /**
    * Check user against all required protection measures
@@ -40,7 +42,7 @@ export class ResponsibleGamblingEngine {
     action: 'deposit' | 'wager' | 'cashout',
     amount: number
   ): Promise<RGResult> {
-    const startTime = Bun.nanoseconds()
+    const startTime = Bun.nanoseconds();
 
     // Parallel compliance checks
     const checks = await Promise.all([
@@ -48,22 +50,22 @@ export class ResponsibleGamblingEngine {
       this.checkDepositLimits(userId, amount),
       this.checkCoolOffPeriod(userId),
       this.checkLossPatterns(userId),
-      this.checkGeographicCompliance(userId)
-    ])
+      this.checkGeographicCompliance(userId),
+    ]);
 
-    const anyViolation = checks.some(check => !check.allowed)
+    const anyViolation = checks.some(check => !check.allowed);
 
     // Audit log - quantum resistant
-    await this.auditCheck(userId, action, amount, checks, !anyViolation ? 'ALLOW' : 'BLOCK')
+    await this.auditCheck(userId, action, amount, checks, !anyViolation ? 'ALLOW' : 'BLOCK');
 
-    const duration = Number(Bun.nanoseconds() - startTime) / 1_000_000
+    const duration = Number(Bun.nanoseconds() - startTime) / 1_000_000;
 
     return {
       allowed: !anyViolation,
       restrictions: checks.filter(c => !c.allowed),
       checkDurationMs: duration,
-      requiredIntervention: anyViolation ? 'AUTOMATIC_BLOCK' : 'NONE'
-    }
+      requiredIntervention: anyViolation ? 'AUTOMATIC_BLOCK' : 'NONE',
+    };
   }
 
   /**
@@ -77,19 +79,19 @@ export class ResponsibleGamblingEngine {
         `https://self-exclusion-registry.example.com/v1/check/${userId}`,
         {
           headers: {
-            'Authorization': `Bearer ${process.env.SELF_EXCLUSION_API_KEY}`,
-            'X-License-Number': process.env.OPERATOR_LICENSE
-          }
+            Authorization: `Bearer ${process.env.SELF_EXCLUSION_API_KEY}`,
+            'X-License-Number': process.env.OPERATOR_LICENSE,
+          },
         }
-      )
+      );
 
       if (!response.ok) {
         // Fail-open for system reliability, but log extensively
-        console.error('Self-exclusion check failed', { userId, status: response.status })
-        return { allowed: true, reason: 'SYSTEM_UNAVAILABLE' }
+        console.error('Self-exclusion check failed', { userId, status: response.status });
+        return { allowed: true, reason: 'SYSTEM_UNAVAILABLE' };
       }
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (data.excluded) {
         return {
@@ -98,15 +100,15 @@ export class ResponsibleGamblingEngine {
           duration: data.duration,
           registry: data.registryName,
           // REQUIRED: Clear account balance immediately
-          requiredAction: 'REFUND_AND_LOCK_ACCOUNT'
-        }
+          requiredAction: 'REFUND_AND_LOCK_ACCOUNT',
+        };
       }
 
-      return { allowed: true }
+      return { allowed: true };
     } catch (error) {
       // Critical: System must remain operational even if registry is down
-      console.error('Self-exclusion registry error:', error)
-      return { allowed: true, reason: 'REGISTRY_UNAVAILABLE' }
+      console.error('Self-exclusion registry error:', error);
+      return { allowed: true, reason: 'REGISTRY_UNAVAILABLE' };
     }
   }
 
@@ -116,35 +118,35 @@ export class ResponsibleGamblingEngine {
    */
   private static async checkLossPatterns(userId: string): Promise<RGCheck> {
     // Load pre-trained model for loss pattern detection
-    const model = await this.getBehavioralModel()
+    const model = await this.getBehavioralModel();
 
     // Get recent activity (last 24h)
-    const recentActivity = await this.getUserActivity(userId, 24 * 60 * 60 * 1000)
+    const recentActivity = await this.getUserActivity(userId, 24 * 60 * 60 * 1000);
 
     if (recentActivity.length < 5) {
-      return { allowed: true } // Insufficient data
+      return { allowed: true }; // Insufficient data
     }
 
     // Extract features for ML model
-    const features = this.extractBehavioralFeatures(recentActivity)
+    const features = this.extractBehavioralFeatures(recentActivity);
 
     // Run inference (optimized with Bun's native performance)
-    const startInference = Bun.nanoseconds()
-    const riskScore = model.predict(features)
-    const inferenceTime = Number(Bun.nanoseconds() - startInference) / 1_000_000
+    const startInference = Bun.nanoseconds();
+    const riskScore = model.predict(features);
+    const inferenceTime = Number(Bun.nanoseconds() - startInference) / 1_000_000;
 
-    console.debug(`ML inference: ${inferenceTime.toFixed(2)}ms, score: ${riskScore}`)
+    console.debug(`ML inference: ${inferenceTime.toFixed(2)}ms, score: ${riskScore}`);
 
     if (riskScore > 0.85) {
       return {
         allowed: false,
         reason: 'HIGH_RISK_BEHAVIOR_DETECTED',
         riskScore,
-        requiredAction: 'MANDATORY_COOL_OFF_24H'
-      }
+        requiredAction: 'MANDATORY_COOL_OFF_24H',
+      };
     }
 
-    return { allowed: true, riskScore }
+    return { allowed: true, riskScore };
   }
 
   /**
@@ -152,32 +154,33 @@ export class ResponsibleGamblingEngine {
    * Validates user location against allowed jurisdictions
    */
   private static async checkGeographicCompliance(userId: string): Promise<RGCheck> {
-    const userLocation = await this.getUserLocation(userId)
-    const operatorLicenses = process.env.LICENSED_JURISDICTIONS?.split(',') || []
+    const userLocation = await this.getUserLocation(userId);
+    const operatorLicenses = process.env.LICENSED_JURISDICTIONS?.split(',') || [];
 
     if (!operatorLicenses.includes(userLocation.countryCode)) {
       return {
         allowed: false,
         reason: 'JURISDICTION_NOT_LICENSED',
         userLocation,
-        requiredAction: 'REFUND_AND_BLOCK_REGION'
-      }
+        requiredAction: 'REFUND_AND_BLOCK_REGION',
+      };
     }
 
     // State/province level checks for federal systems
     if (userLocation.region && process.env[`LICENSE_${userLocation.countryCode}_REGIONS`]) {
-      const licensedRegions = process.env[`LICENSE_${userLocation.countryCode}_REGIONS`]?.split(',') || []
+      const licensedRegions =
+        process.env[`LICENSE_${userLocation.countryCode}_REGIONS`]?.split(',') || [];
       if (!licensedRegions.includes(userLocation.region)) {
         return {
           allowed: false,
           reason: 'REGION_NOT_LICENSED',
           userLocation,
-          requiredAction: 'BLOCK_REGION'
-        }
+          requiredAction: 'BLOCK_REGION',
+        };
       }
     }
 
-    return { allowed: true }
+    return { allowed: true };
   }
 
   /**
@@ -185,11 +188,11 @@ export class ResponsibleGamblingEngine {
    */
   private static async checkDepositLimits(userId: string, amount: number): Promise<RGCheck> {
     // Mock implementation - in real system would check database
-    const dailyLimit = 1000
-    const monthlyLimit = 5000
+    const dailyLimit = 1000;
+    const monthlyLimit = 5000;
 
     // For demo, always allow
-    return { allowed: true }
+    return { allowed: true };
   }
 
   /**
@@ -197,15 +200,17 @@ export class ResponsibleGamblingEngine {
    */
   private static async checkCoolOffPeriod(userId: string): Promise<RGCheck> {
     // Mock implementation
-    return { allowed: true }
+    return { allowed: true };
   }
 
   /**
    * Get user location (mock implementation)
    */
-  private static async getUserLocation(userId: string): Promise<{ countryCode: string; region?: string }> {
+  private static async getUserLocation(
+    userId: string
+  ): Promise<{ countryCode: string; region?: string }> {
     // Mock - would normally get from user profile or geolocation
-    return { countryCode: 'US', region: 'CA' }
+    return { countryCode: 'US', region: 'CA' };
   }
 
   /**
@@ -213,7 +218,7 @@ export class ResponsibleGamblingEngine {
    */
   private static async getUserActivity(userId: string, timeRange: number): Promise<any[]> {
     // Mock - would normally query database
-    return []
+    return [];
   }
 
   /**
@@ -221,7 +226,7 @@ export class ResponsibleGamblingEngine {
    */
   private static extractBehavioralFeatures(activity: any[]): number[] {
     // Mock feature extraction
-    return [0.1, 0.2, 0.3, 0.4]
+    return [0.1, 0.2, 0.3, 0.4];
   }
 
   /**
@@ -229,8 +234,8 @@ export class ResponsibleGamblingEngine {
    */
   private static async getBehavioralModel(): Promise<{ predict: (features: number[]) => number }> {
     return {
-      predict: (features: number[]) => 0.1 // Low risk score
-    }
+      predict: (features: number[]) => 0.1, // Low risk score
+    };
   }
 
   /**
@@ -244,7 +249,7 @@ export class ResponsibleGamblingEngine {
     decision: 'ALLOW' | 'BLOCK'
   ): Promise<void> {
     // Mock audit logging
-    console.debug('RG Audit:', { userId, action, amount, decision })
+    console.debug('RG Audit:', { userId, action, amount, decision });
   }
 }
 
@@ -257,8 +262,8 @@ export class ResponsibleGamblingEngine {
  * Achieves <25ms P99 latency with full compliance checks
  */
 export class WageringEngine {
-  private static readonly REDIS_URL = process.env.REDIS_URL
-  private static readonly REDIS_POOL = new Map() // Connection pooling
+  private static readonly REDIS_URL = process.env.REDIS_URL;
+  private static readonly REDIS_POOL = new Map(); // Connection pooling
 
   /**
    * Place wager with all compliance checks
@@ -268,16 +273,16 @@ export class WageringEngine {
    * Rule: Silo Logic - TIER=prod auto-enables high-freq logic
    */
   static async placeWager(params: WagerParams): Promise<WagerResult> {
-    const startTime = Bun.nanoseconds()
+    const startTime = Bun.nanoseconds();
 
     // Native-First: Use Bun.hash.rapidhash for instant event fingerprinting (<30ms)
     const eventFingerprint = Bun.hash.rapidhash(
       `${params.userId}:${params.marketId}:${params.stake}:${params.odds}:${Date.now()}`
-    )
+    );
 
     // Error Resilience: AbortSignal.timeout(45) - Pattern #62 requires <45ms; fails fast if stale
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), SILO_CONFIG.latencyTarget)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), SILO_CONFIG.latencyTarget);
 
     try {
       // Silo Logic: High-frequency operations only in prod tier
@@ -286,8 +291,8 @@ export class WageringEngine {
         const [rgCheck, geoCheck, limitCheck] = await Promise.all([
           ResponsibleGamblingEngine.checkUser(params.userId, 'wager', params.stake),
           this.checkGeographicRestrictions(params.userId),
-          this.checkWagerLimits(params.userId, params.stake)
-        ])
+          this.checkWagerLimits(params.userId, params.stake),
+        ]);
 
         // Immediate rejection if any check fails
         if (!rgCheck.allowed || !geoCheck.allowed || !limitCheck.allowed) {
@@ -295,66 +300,68 @@ export class WageringEngine {
             success: false,
             wagerId: null,
             rejectionReason: [rgCheck, geoCheck, limitCheck].find(c => !c.allowed)?.reason,
-            processingTimeMs: Number(Bun.nanoseconds() - startTime) / 1_000_000
-          }
+            processingTimeMs: Number(Bun.nanoseconds() - startTime) / 1_000_000,
+          };
         }
 
         // Phase 2: Market validation (atomic)
-        const marketValid = await this.validateMarket(params.marketId, params.odds)
+        const marketValid = await this.validateMarket(params.marketId, params.odds);
         if (!marketValid) {
           return {
             success: false,
             wagerId: null,
             rejectionReason: 'MARKET_INVALID',
-            processingTimeMs: Number(Bun.nanoseconds() - startTime) / 1_000_000
-          }
+            processingTimeMs: Number(Bun.nanoseconds() - startTime) / 1_000_000,
+          };
         }
 
         // Phase 3: Atomic wager placement (Redis Lua script)
-        const wagerResult = await this.executeAtomicWager(params)
+        const wagerResult = await this.executeAtomicWager(params);
 
         // Phase 4: Real-time liability calculation
-        await this.updateLiability(params.userId, wagerResult.wagerId, params.stake)
+        await this.updateLiability(params.userId, wagerResult.wagerId, params.stake);
 
-        const totalTime = Number(Bun.nanoseconds() - startTime) / 1_000_000
+        const totalTime = Number(Bun.nanoseconds() - startTime) / 1_000_000;
 
         // Record metrics in silo-aware manner
-        SiloMetrics.record('wager_placement', totalTime)
+        SiloMetrics.record('wager_placement', totalTime);
 
-        console.debug(`Wager placed in ${totalTime.toFixed(2)}ms (fingerprint: ${eventFingerprint})`, {
-          wagerId: wagerResult.wagerId,
-          userId: params.userId,
-          stake: params.stake,
-          tier: SILO_CONFIG.tier
-        })
+        console.debug(
+          `Wager placed in ${totalTime.toFixed(2)}ms (fingerprint: ${eventFingerprint})`,
+          {
+            wagerId: wagerResult.wagerId,
+            userId: params.userId,
+            stake: params.stake,
+            tier: SILO_CONFIG.tier,
+          }
+        );
 
         return {
           success: true,
           wagerId: wagerResult.wagerId,
           processingTimeMs: totalTime,
           placedAt: new Date().toISOString(),
-          fingerprint: eventFingerprint.toString(16)
-        }
-      })
+          fingerprint: eventFingerprint.toString(16),
+        };
+      });
 
-      clearTimeout(timeoutId)
-      return HighFreqSilo.optimizeForHighFreq(result)
-
+      clearTimeout(timeoutId);
+      return HighFreqSilo.optimizeForHighFreq(result);
     } catch (error) {
-      clearTimeout(timeoutId)
+      clearTimeout(timeoutId);
 
       if (error.name === 'AbortError') {
-        SiloErrorHandler.handle(error, 'Wager placement timeout violation')
+        SiloErrorHandler.handle(error, 'Wager placement timeout violation');
         return {
           success: false,
           wagerId: null,
           rejectionReason: 'TIMEOUT_VIOLATION',
-          processingTimeMs: Number(Bun.nanoseconds() - startTime) / 1_000_000
-        }
+          processingTimeMs: Number(Bun.nanoseconds() - startTime) / 1_000_000,
+        };
       }
 
-      SiloErrorHandler.handle(error, 'Wager placement error')
-      throw error
+      SiloErrorHandler.handle(error, 'Wager placement error');
+      throw error;
     }
   }
 
@@ -363,7 +370,7 @@ export class WageringEngine {
    */
   private static async validateMarket(marketId: string, odds: number): Promise<boolean> {
     // Mock validation - would check market status, odds validity, etc.
-    return true
+    return true;
   }
 
   /**
@@ -371,42 +378,47 @@ export class WageringEngine {
    */
   private static async checkGeographicRestrictions(userId: string): Promise<{ allowed: boolean }> {
     // Mock - would check user's location against licensed jurisdictions
-    return { allowed: true }
+    return { allowed: true };
   }
 
   /**
    * Check wager limits
    */
-  private static async checkWagerLimits(userId: string, stake: number): Promise<{ allowed: boolean }> {
+  private static async checkWagerLimits(
+    userId: string,
+    stake: number
+  ): Promise<{ allowed: boolean }> {
     // Mock - would check user's wager limits
-    return { allowed: true }
+    return { allowed: true };
   }
 
   /**
    * Update liability tracking
    */
-  private static async updateLiability(userId: string, wagerId: string, stake: number): Promise<void> {
+  private static async updateLiability(
+    userId: string,
+    wagerId: string,
+    stake: number
+  ): Promise<void> {
     // Mock - would update liability calculations
   }
 
   /**
-   * Get Redis connection (mock)
+   * Get Bun's native Redis client through the raw EVAL command surface.
    */
-  private static async getRedisConnection(): Promise<any> {
-    // Mock Redis client
+  private static async getRedisConnection(): Promise<{
+    eval: (script: string, keys: number, ...args: string[]) => Promise<unknown>;
+  }> {
     return {
-      eval: async (script: string, keys: number, ...args: any[]) => {
-        // Mock Lua script execution
-        return { wagerId: 'w_' + Math.random().toString(36).substr(2, 9) }
-      }
-    }
+      eval: (script, keys, ...args) => redis.send('EVAL', [script, String(keys), ...args]),
+    };
   }
 
   /**
    * Execute atomic wager placement (mock)
    */
   private static async executeAtomicWager(params: WagerParams): Promise<{ wagerId: string }> {
-    return { wagerId: 'w_' + Math.random().toString(36).substr(2, 9) }
+    return { wagerId: 'w_' + Math.random().toString(36).substr(2, 9) };
   }
 
   /**
@@ -455,9 +467,9 @@ export class WageringEngine {
       local result = redis.call('EXEC')
 
       return {wagerId = wagerId}
-    `
+    `;
 
-    const redis = await this.getRedisConnection()
+    const redis = await this.getRedisConnection();
 
     try {
       // Execute Lua script atomically
@@ -471,16 +483,16 @@ export class WageringEngine {
         params.marketId,
         params.odds.toString(),
         Date.now().toString()
-      )
+      );
 
       if (result?.err) {
-        throw new Error(result.err)
+        throw new Error(result.err);
       }
 
-      return { wagerId: result.wagerId }
+      return { wagerId: result.wagerId };
     } catch (error) {
-      console.error('Atomic wager failed:', error)
-      throw new Error('WAGER_EXECUTION_FAILED')
+      console.error('Atomic wager failed:', error);
+      throw new Error('WAGER_EXECUTION_FAILED');
     }
   }
 }
@@ -493,32 +505,32 @@ export class WageringEngine {
  * Real-time performance monitoring with Bun native APIs
  */
 export class WageringMonitor {
-  private static metrics: Map<string, number[]> = new Map()
+  private static metrics: Map<string, number[]> = new Map();
   private static memorySnapshots: Array<{
-    timestamp: number
-    heapMB: number
-    externalMB: number
-  }> = []
+    timestamp: number;
+    heapMB: number;
+    externalMB: number;
+  }> = [];
 
   /**
    * Record operation latency
    */
   static recordOperation(operation: string, durationMs: number) {
     if (!this.metrics.has(operation)) {
-      this.metrics.set(operation, [])
+      this.metrics.set(operation, []);
     }
 
-    const ops = this.metrics.get(operation)!
-    ops.push(durationMs)
+    const ops = this.metrics.get(operation)!;
+    ops.push(durationMs);
 
     // Keep only last 1000 measurements
     if (ops.length > 1000) {
-      ops.shift()
+      ops.shift();
     }
 
     // Periodic memory snapshot
     if (ops.length % 100 === 0) {
-      this.takeMemorySnapshot()
+      this.takeMemorySnapshot();
     }
   }
 
@@ -526,12 +538,12 @@ export class WageringMonitor {
    * Get performance statistics
    */
   static getStats(operation: string): OperationStats | null {
-    const measurements = this.metrics.get(operation)
+    const measurements = this.metrics.get(operation);
     if (!measurements || measurements.length === 0) {
-      return null
+      return null;
     }
 
-    const sorted = [...measurements].sort((a, b) => a - b)
+    const sorted = [...measurements].sort((a, b) => a - b);
 
     return {
       count: measurements.length,
@@ -541,46 +553,47 @@ export class WageringMonitor {
       p99: this.percentile(sorted, 0.99),
       avg: measurements.reduce((a, b) => a + b, 0) / measurements.length,
       min: Math.min(...measurements),
-      max: Math.max(...measurements)
-    }
+      max: Math.max(...measurements),
+    };
   }
 
   /**
    * Calculate percentile from sorted array
    */
   private static percentile(sortedArray: number[], percentile: number): number {
-    const index = (percentile * (sortedArray.length - 1))
-    const lower = Math.floor(index)
-    const upper = Math.ceil(index)
-    const weight = index % 1
+    const index = percentile * (sortedArray.length - 1);
+    const lower = Math.floor(index);
+    const upper = Math.ceil(index);
+    const weight = index % 1;
 
-    if (upper >= sortedArray.length) return sortedArray[sortedArray.length - 1]
-    return sortedArray[lower] * (1 - weight) + sortedArray[upper] * weight
+    if (upper >= sortedArray.length) return sortedArray[sortedArray.length - 1];
+    return sortedArray[lower] * (1 - weight) + sortedArray[upper] * weight;
   }
 
   /**
    * Memory monitoring using bun:jsc
    */
   private static takeMemorySnapshot() {
-    const stats = heapStats()
+    const stats = heapStats();
 
     this.memorySnapshots.push({
       timestamp: Date.now(),
       heapMB: stats.heapSize / 1024 / 1024,
-      externalMB: stats.externalMemorySize / 1024 / 1024
-    })
+      externalMB: stats.externalMemorySize / 1024 / 1024,
+    });
 
     // Keep last hour of snapshots
-    const oneHourAgo = Date.now() - 60 * 60 * 1000
+    const oneHourAgo = Date.now() - 60 * 60 * 1000;
     while (this.memorySnapshots.length > 0 && this.memorySnapshots[0].timestamp < oneHourAgo) {
-      this.memorySnapshots.shift()
+      this.memorySnapshots.shift();
     }
 
     // Alert if memory exceeds threshold
-    const currentHeapMB = stats.heapSize / 1024 / 1024
-    if (currentHeapMB > 400) { // 400MB threshold
-      console.warn(`High memory usage: ${currentHeapMB.toFixed(2)}MB`)
-      this.triggerMemoryCleanup()
+    const currentHeapMB = stats.heapSize / 1024 / 1024;
+    if (currentHeapMB > 400) {
+      // 400MB threshold
+      console.warn(`High memory usage: ${currentHeapMB.toFixed(2)}MB`);
+      this.triggerMemoryCleanup();
     }
   }
 
@@ -589,8 +602,8 @@ export class WageringMonitor {
    */
   private static triggerMemoryCleanup() {
     if (typeof Bun.gc === 'function') {
-      console.info('Triggering garbage collection')
-      Bun.gc(true)
+      console.info('Triggering garbage collection');
+      Bun.gc(true);
     }
   }
 }
@@ -608,23 +621,19 @@ export class OddsEngine {
    * Kelly Criterion for optimal stake sizing
    * Half-Kelly with 5% cap for risk management
    */
-  static calculateKellyStake(
-    bankroll: number,
-    odds: number,
-    estimatedProbability: number
-  ): number {
+  static calculateKellyStake(bankroll: number, odds: number, estimatedProbability: number): number {
     // Kelly formula: f* = (bp - q) / b
     // where b = odds - 1, p = probability, q = 1 - p
-    const b = odds - 1
-    const p = estimatedProbability
-    const q = 1 - p
+    const b = odds - 1;
+    const p = estimatedProbability;
+    const q = 1 - p;
 
-    const kellyFraction = (b * p - q) / b
+    const kellyFraction = (b * p - q) / b;
 
     // Conservative: Half-Kelly with 5% maximum
-    const conservativeFraction = Math.min(kellyFraction * 0.5, 0.05)
+    const conservativeFraction = Math.min(kellyFraction * 0.5, 0.05);
 
-    return bankroll * Math.max(conservativeFraction, 0)
+    return bankroll * Math.max(conservativeFraction, 0);
   }
 
   /**
@@ -635,43 +644,43 @@ export class OddsEngine {
     lambda: number, // Expected goals/points
     threshold: number // Over/under line
   ): { over: number; under: number; exact: number[] } {
-    const probabilities: number[] = []
+    const probabilities: number[] = [];
 
     // Calculate probabilities for 0-10 occurrences
     for (let k = 0; k <= 10; k++) {
-      const prob = (Math.pow(lambda, k) * Math.exp(-lambda)) / this.factorial(k)
-      probabilities.push(prob)
+      const prob = (Math.pow(lambda, k) * Math.exp(-lambda)) / this.factorial(k);
+      probabilities.push(prob);
     }
 
     // Over probability: 1 - CDF(threshold)
-    let overProb = 0
+    let overProb = 0;
     for (let k = Math.ceil(threshold); k < probabilities.length; k++) {
-      overProb += probabilities[k]
+      overProb += probabilities[k];
     }
 
     // Under probability: CDF(threshold - 1)
-    let underProb = 0
+    let underProb = 0;
     for (let k = 0; k < Math.floor(threshold); k++) {
-      underProb += probabilities[k]
+      underProb += probabilities[k];
     }
 
     return {
       over: overProb,
       under: underProb,
-      exact: probabilities
-    }
+      exact: probabilities,
+    };
   }
 
   /**
    * Factorial calculation for Poisson distribution
    */
   private static factorial(n: number): number {
-    if (n <= 1) return 1
-    let result = 1
+    if (n <= 1) return 1;
+    let result = 1;
     for (let i = 2; i <= n; i++) {
-      result *= i
+      result *= i;
     }
-    return result
+    return result;
   }
 
   /**
@@ -683,46 +692,46 @@ export class OddsEngine {
     model: SimulationModel
   ): Promise<SimulationResult> {
     // Use Worker threads for parallel simulation
-    const workerCount = Math.min(availableParallelism(), 8)
-    const iterationsPerWorker = Math.ceil(iterations / workerCount)
+    const workerCount = Math.min(availableParallelism(), 8);
+    const iterationsPerWorker = Math.ceil(iterations / workerCount);
 
     const workers = Array.from({ length: workerCount }, () => {
       return new Worker(new URL('./simulation.worker.ts', import.meta.url).href, {
-        type: 'module'
-      })
-    })
+        type: 'module',
+      });
+    });
 
-    const startTime = Bun.nanoseconds()
+    const startTime = Bun.nanoseconds();
 
     // Distribute work
     const promises = workers.map((worker, index) => {
       return new Promise<WorkerResult>((resolve, reject) => {
-        worker.onmessage = (event) => resolve(event.data)
-        worker.onerror = reject
+        worker.onmessage = event => resolve(event.data);
+        worker.onerror = reject;
 
         worker.postMessage({
           model,
           iterations: iterationsPerWorker,
-          seed: Date.now() + index
-        })
-      })
-    })
+          seed: Date.now() + index,
+        });
+      });
+    });
 
     // Collect results
-    const results = await Promise.all(promises)
+    const results = await Promise.all(promises);
 
     // Aggregate results
-    const aggregated = this.aggregateResults(results)
+    const aggregated = this.aggregateResults(results);
 
-    const duration = Number(Bun.nanoseconds() - startTime) / 1_000_000
+    const duration = Number(Bun.nanoseconds() - startTime) / 1_000_000;
 
-    console.debug(`Monte Carlo: ${iterations} iterations in ${duration.toFixed(2)}ms`)
+    console.debug(`Monte Carlo: ${iterations} iterations in ${duration.toFixed(2)}ms`);
 
     return {
       ...aggregated,
       simulationTimeMs: duration,
-      iterationsPerSecond: iterations / (duration / 1000)
-    }
+      iterationsPerSecond: iterations / (duration / 1000),
+    };
   }
 
   /**
@@ -733,8 +742,8 @@ export class OddsEngine {
     return {
       mean: 2.1,
       stdDev: 0.15,
-      confidence95: [1.95, 2.25]
-    }
+      confidence95: [1.95, 2.25],
+    };
   }
 }
 
@@ -747,30 +756,39 @@ export class OddsEngine {
  * Each endpoint includes mandatory RG verification
  */
 export class WageringRouter {
-  private static patterns = new Map<string, URLPattern>()
+  private static patterns = new Map<string, URLPattern>();
 
   static initialize() {
     // Pattern 1: Micro-market wager
-    this.patterns.set('micro-wager', new URLPattern({
-      pathname: '/wager/micro/:sport/:eventId/:prop/:outcome'
-    }))
+    this.patterns.set(
+      'micro-wager',
+      new URLPattern({
+        pathname: '/wager/micro/:sport/:eventId/:prop/:outcome',
+      })
+    );
 
     // Pattern 2: Cash out quote
-    this.patterns.set('cashout', new URLPattern({
-      pathname: '/cashout/:betId/:userHash/quote'
-    }))
+    this.patterns.set(
+      'cashout',
+      new URLPattern({
+        pathname: '/cashout/:betId/:userHash/quote',
+      })
+    );
 
     // Pattern 12: Market maker odds
-    this.patterns.set('market-maker', new URLPattern({
-      pathname: '/marketmaker/:sport/:eventId/odds/:side/:price'
-    }))
+    this.patterns.set(
+      'market-maker',
+      new URLPattern({
+        pathname: '/marketmaker/:sport/:eventId/odds/:side/:price',
+      })
+    );
   }
 
   /**
    * Route handler with embedded compliance
    */
   static async handleRequest(request: Request): Promise<Response> {
-    const url = new URL(request.url)
+    const url = new URL(request.url);
 
     // Handle CORS preflight requests
     if (request.method === 'OPTIONS') {
@@ -779,114 +797,122 @@ export class WageringRouter {
           'Access-Control-Allow-Origin': 'https://licensed-operator.example.com',
           'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-User-Hash',
-          'Access-Control-Max-Age': '86400'
-        }
-      })
+          'Access-Control-Max-Age': '86400',
+        },
+      });
     }
 
     // Check for self-exclusion first (memory #26)
-    const userHash = this.extractUserHash(request)
+    const userHash = this.extractUserHash(request);
     if (userHash) {
       const rgCheck = await ResponsibleGamblingEngine.checkUser(
         userHash,
         'wager',
         0 // Amount unknown at this point
-      )
+      );
 
       if (!rgCheck.allowed) {
-        return new Response(JSON.stringify({
-          error: 'ACCOUNT_RESTRICTED',
-          reason: rgCheck.restrictions?.[0]?.reason,
-          requiredAction: rgCheck.restrictions?.[0]?.requiredAction
-        }), {
-          status: 423, // Locked
-          headers: { 'Content-Type': 'application/json' }
-        })
+        return new Response(
+          JSON.stringify({
+            error: 'ACCOUNT_RESTRICTED',
+            reason: rgCheck.restrictions?.[0]?.reason,
+            requiredAction: rgCheck.restrictions?.[0]?.requiredAction,
+          }),
+          {
+            status: 423, // Locked
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
       }
     }
 
     // Route to appropriate handler
     for (const [name, pattern] of this.patterns) {
-      const match = pattern.exec(url)
+      const match = pattern.exec(url);
       if (match) {
-        return await this.handlers[name](request, match)
+        return await this.handlers[name](request, match);
       }
     }
 
-    return new Response('Not found', { status: 404 })
+    return new Response('Not found', { status: 404 });
   }
 
   /**
    * Extract user hash from request
    */
   private static extractUserHash(request: Request): string | null {
-    const authHeader = request.headers.get('authorization')
-    const userHashHeader = request.headers.get('x-user-hash')
+    const authHeader = request.headers.get('authorization');
+    const userHashHeader = request.headers.get('x-user-hash');
 
-    if (userHashHeader) return userHashHeader
-    if (authHeader?.startsWith('Bearer ')) return authHeader.slice(7)
+    if (userHashHeader) return userHashHeader;
+    if (authHeader?.startsWith('Bearer ')) return authHeader.slice(7);
 
     // Extract from URL params as fallback
-    const url = new URL(request.url)
-    return url.searchParams.get('userHash')
+    const url = new URL(request.url);
+    return url.searchParams.get('userHash');
   }
 
   /**
    * Reject wager helper
    */
   private static rejectWager(rgCheck: RGResult): Response {
-    return new Response(JSON.stringify({
-      error: 'WAGER_REJECTED',
-      reason: rgCheck.restrictions?.[0]?.reason,
-      requiredAction: rgCheck.restrictions?.[0]?.requiredAction
-    }), { status: 403 })
+    return new Response(
+      JSON.stringify({
+        error: 'WAGER_REJECTED',
+        reason: rgCheck.restrictions?.[0]?.reason,
+        requiredAction: rgCheck.restrictions?.[0]?.requiredAction,
+      }),
+      { status: 403 }
+    );
   }
 
   /**
    * Route handlers
    */
-  private static get handlers(): Record<string, (request: Request, match: any) => Promise<Response>> {
+  private static get handlers(): Record<
+    string,
+    (request: Request, match: any) => Promise<Response>
+  > {
     return {
       'micro-wager': this.handleMicroWager.bind(this),
-      'cashout': this.handleCashout.bind(this),
-      'market-maker': this.handleMarketMaker.bind(this)
-    }
+      cashout: this.handleCashout.bind(this),
+      'market-maker': this.handleMarketMaker.bind(this),
+    };
   }
 
   /**
    * Handle cashout requests
    */
   private static async handleCashout(request: Request, match: any): Promise<Response> {
-    return new Response(JSON.stringify({ success: true, cashout: 75.50 }), { status: 200 })
+    return new Response(JSON.stringify({ success: true, cashout: 75.5 }), { status: 200 });
   }
 
   /**
    * Handle market maker requests
    */
   private static async handleMarketMaker(request: Request, match: any): Promise<Response> {
-    return new Response(JSON.stringify({ success: true, odds: 2.10 }), { status: 200 })
+    return new Response(JSON.stringify({ success: true, odds: 2.1 }), { status: 200 });
   }
 
   /**
    * Micro-market wager handler
    * Target: <25ms P99 latency
    */
-  private static async handleMicroWager(request: Request, match: URLPatternResult): Promise<Response> {
-    const startTime = Bun.nanoseconds()
+  private static async handleMicroWager(
+    request: Request,
+    match: URLPatternResult
+  ): Promise<Response> {
+    const startTime = Bun.nanoseconds();
 
     try {
-      const data = await request.json()
-      const userHash = this.extractUserHash(request)
+      const data = await request.json();
+      const userHash = this.extractUserHash(request);
 
       // Real-time compliance check
-      const rgCheck = await ResponsibleGamblingEngine.checkUser(
-        userHash,
-        'wager',
-        data.stake
-      )
+      const rgCheck = await ResponsibleGamblingEngine.checkUser(userHash, 'wager', data.stake);
 
       if (!rgCheck.allowed) {
-        return this.rejectWager(rgCheck)
+        return this.rejectWager(rgCheck);
       }
 
       // Place wager
@@ -898,36 +924,44 @@ export class WageringRouter {
         metadata: {
           prop: match.pathname.groups.prop,
           outcome: match.pathname.groups.outcome,
-          requestId: crypto.randomUUID()
-        }
-      })
+          requestId: crypto.randomUUID(),
+        },
+      });
 
-      const duration = Number(Bun.nanoseconds() - startTime) / 1_000_000
+      const duration = Number(Bun.nanoseconds() - startTime) / 1_000_000;
 
       // Record performance
-      WageringMonitor.recordOperation('micro_wager', duration)
+      WageringMonitor.recordOperation('micro_wager', duration);
 
       if (!result.success) {
-        return new Response(JSON.stringify({
-          error: 'WAGER_REJECTED',
-          reason: result.rejectionReason
-        }), { status: 400 })
+        return new Response(
+          JSON.stringify({
+            error: 'WAGER_REJECTED',
+            reason: result.rejectionReason,
+          }),
+          { status: 400 }
+        );
       }
 
-      return new Response(JSON.stringify({
-        success: true,
-        wagerId: result.wagerId,
-        processingTimeMs: duration
-      }), {
-        status: 201,
-        headers: { 'Content-Type': 'application/json' }
-      })
-
+      return new Response(
+        JSON.stringify({
+          success: true,
+          wagerId: result.wagerId,
+          processingTimeMs: duration,
+        }),
+        {
+          status: 201,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     } catch (error) {
-      console.error('Micro-wager error:', error)
-      return new Response(JSON.stringify({
-        error: 'PROCESSING_ERROR'
-      }), { status: 500 })
+      console.error('Micro-wager error:', error);
+      return new Response(
+        JSON.stringify({
+          error: 'PROCESSING_ERROR',
+        }),
+        { status: 500 }
+      );
     }
   }
 }
@@ -941,36 +975,36 @@ export class WageringRouter {
  * Validates all SLAs are met with tier-aware execution
  */
 export async function runWageringBenchmarks() {
-  console.info(`=== WAGERING ENGINE BENCHMARK [${SILO_CONFIG.tier.toUpperCase()} SILO] ===\n`)
+  console.info(`=== WAGERING ENGINE BENCHMARK [${SILO_CONFIG.tier.toUpperCase()} SILO] ===\n`);
 
   // Zero-Dep: Virtual bunx bun:strip-ansi keeps production artifact slim (<1KB entries)
-  const formatOutput = (text: string) => SILO_CONFIG.tier === 'prod' ? stripAnsi(text) : text
+  const formatOutput = (text: string) => (SILO_CONFIG.tier === 'prod' ? stripAnsi(text) : text);
 
   // Test 1: Basic wager placement with silo logic
-  console.info(formatOutput('Test 1: Single wager placement'))
-  const singleStart = Bun.nanoseconds()
+  console.info(formatOutput('Test 1: Single wager placement'));
+  const singleStart = Bun.nanoseconds();
 
   const wagerPromises = Array.from({ length: 100 }, (_, i) => ({
     userId: `test_user_${i}`,
     marketId: 'soccer:match_123',
     stake: 10,
     odds: 2.0,
-    metadata: { test: true }
-  }))
+    metadata: { test: true },
+  }));
 
   // Use silo-aware concurrent execution
   await HighFreqSilo.concurrentExecute(
     wagerPromises.map(params => () => WageringEngine.placeWager(params)),
     { maxConcurrent: SILO_CONFIG.concurrentLimit }
-  )
+  );
 
-  const singleTime = Number(Bun.nanoseconds() - singleStart) / 1_000_000
-  console.info(formatOutput(`100 wagers: ${singleTime.toFixed(2)}ms`))
-  console.info(formatOutput(`Average: ${(singleTime / 100).toFixed(2)}ms\n`))
+  const singleTime = Number(Bun.nanoseconds() - singleStart) / 1_000_000;
+  console.info(formatOutput(`100 wagers: ${singleTime.toFixed(2)}ms`));
+  console.info(formatOutput(`Average: ${(singleTime / 100).toFixed(2)}ms\n`));
 
   // Test 2: Concurrent wagers with error resilience
-  console.info(formatOutput('Test 2: Concurrent wagers (10 parallel)'))
-  const concurrentStart = Bun.nanoseconds()
+  console.info(formatOutput('Test 2: Concurrent wagers (10 parallel)'));
+  const concurrentStart = Bun.nanoseconds();
 
   const concurrentPromises = Array.from({ length: 10 }, (_, i) => {
     return WageringEngine.placeWager({
@@ -978,50 +1012,58 @@ export async function runWageringBenchmarks() {
       marketId: 'soccer:match_123',
       stake: 10,
       odds: 2.0,
-      metadata: { test: true, concurrent: true }
-    })
-  })
+      metadata: { test: true, concurrent: true },
+    });
+  });
 
-  await Promise.all(concurrentPromises)
-  const concurrentTime = Number(Bun.nanoseconds() - concurrentStart) / 1_000_000
-  console.info(formatOutput(`10 concurrent: ${concurrentTime.toFixed(2)}ms\n`))
+  await Promise.all(concurrentPromises);
+  const concurrentTime = Number(Bun.nanoseconds() - concurrentStart) / 1_000_000;
+  console.info(formatOutput(`10 concurrent: ${concurrentTime.toFixed(2)}ms\n`));
 
   // Test 3: Memory usage with silo optimization
-  console.info(formatOutput('Test 3: Memory usage'))
-  const stats = heapStats()
-  console.info(formatOutput(`Heap size: ${(stats.heapSize / 1024 / 1024).toFixed(2)}MB`))
-  console.info(formatOutput(`Heap used: ${(stats.heapUsed / 1024 / 1024).toFixed(2)}MB`))
-  console.info(formatOutput(`External: ${(stats.externalMemorySize / 1024 / 1024).toFixed(2)}MB`))
-  console.info(formatOutput(`Silo limit: ${(SILO_CONFIG.memoryLimit / 1024 / 1024).toFixed(2)}MB\n`))
+  console.info(formatOutput('Test 3: Memory usage'));
+  const stats = heapStats();
+  console.info(formatOutput(`Heap size: ${(stats.heapSize / 1024 / 1024).toFixed(2)}MB`));
+  console.info(formatOutput(`Heap used: ${(stats.heapUsed / 1024 / 1024).toFixed(2)}MB`));
+  console.info(formatOutput(`External: ${(stats.externalMemorySize / 1024 / 1024).toFixed(2)}MB`));
+  console.info(
+    formatOutput(`Silo limit: ${(SILO_CONFIG.memoryLimit / 1024 / 1024).toFixed(2)}MB\n`)
+  );
 
   // Test 4: RG check performance with native hashing
-  console.info(formatOutput('Test 4: Responsible gambling checks'))
-  const rgStart = Bun.nanoseconds()
+  console.info(formatOutput('Test 4: Responsible gambling checks'));
+  const rgStart = Bun.nanoseconds();
 
   const rgPromises = Array.from({ length: 50 }, (_, i) => ({
     userId: `test_user_${i}`,
     action: 'wager' as const,
-    amount: 50
-  }))
+    amount: 50,
+  }));
 
   await HighFreqSilo.concurrentExecute(
-    rgPromises.map(({ userId, action, amount }) =>
-      () => ResponsibleGamblingEngine.checkUser(userId, action, amount)
+    rgPromises.map(
+      ({ userId, action, amount }) =>
+        () =>
+          ResponsibleGamblingEngine.checkUser(userId, action, amount)
     )
-  )
+  );
 
-  const rgTime = Number(Bun.nanoseconds() - rgStart) / 1_000_000
-  console.info(formatOutput(`50 RG checks: ${rgTime.toFixed(2)}ms`))
-  console.info(formatOutput(`Average: ${(rgTime / 50).toFixed(2)}ms\n`))
+  const rgTime = Number(Bun.nanoseconds() - rgStart) / 1_000_000;
+  console.info(formatOutput(`50 RG checks: ${rgTime.toFixed(2)}ms`));
+  console.info(formatOutput(`Average: ${(rgTime / 50).toFixed(2)}ms\n`));
 
   // Test 5: Silo metrics reporting
-  console.info(formatOutput('Test 5: Silo metrics'))
-  const wagerStats = SiloMetrics.getStats('wager_placement')
+  console.info(formatOutput('Test 5: Silo metrics'));
+  const wagerStats = SiloMetrics.getStats('wager_placement');
   if (wagerStats) {
-    console.info(formatOutput(`Wager placement - Avg: ${wagerStats.avg.toFixed(2)}ms, P95: ${wagerStats.p95.toFixed(2)}ms, Count: ${wagerStats.count}`))
+    console.info(
+      formatOutput(
+        `Wager placement - Avg: ${wagerStats.avg.toFixed(2)}ms, P95: ${wagerStats.p95.toFixed(2)}ms, Count: ${wagerStats.count}`
+      )
+    );
   }
 
-  console.info(formatOutput('\n=== BENCHMARK COMPLETE ==='))
+  console.info(formatOutput('\n=== BENCHMARK COMPLETE ==='));
 }
 
 // -------------------------------------------------------------------
@@ -1033,7 +1075,7 @@ export async function runWageringBenchmarks() {
  */
 export async function createWageringServer() {
   // Initialize all systems
-  WageringRouter.initialize()
+  WageringRouter.initialize();
 
   // Create Bun server
   const server = Bun.serve({
@@ -1046,51 +1088,57 @@ export async function createWageringServer() {
             'Access-Control-Allow-Origin': 'https://licensed-operator.example.com',
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-User-Hash',
-            'Access-Control-Max-Age': '86400'
-          }
-        })
+            'Access-Control-Max-Age': '86400',
+          },
+        });
       }
 
       // Route to wagering router
-      const response = await WageringRouter.handleRequest(request)
+      const response = await WageringRouter.handleRequest(request);
 
       // Add security headers
-      const headers = new Headers(response.headers)
-      headers.set('X-Content-Type-Options', 'nosniff')
-      headers.set('X-Frame-Options', 'DENY')
-      headers.set('X-XSS-Protection', '1; mode=block')
-      headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
+      const headers = new Headers(response.headers);
+      headers.set('X-Content-Type-Options', 'nosniff');
+      headers.set('X-Frame-Options', 'DENY');
+      headers.set('X-XSS-Protection', '1; mode=block');
+      headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 
       // Add CORS for actual responses
-      headers.set('Access-Control-Allow-Origin', 'https://licensed-operator.example.com')
+      headers.set('Access-Control-Allow-Origin', 'https://licensed-operator.example.com');
 
       return new Response(response.body, {
         status: response.status,
-        headers
-      })
+        headers,
+      });
     },
 
     // Error handling
     error(error) {
-      console.error('Server error:', error)
-      return new Response(JSON.stringify({
-        error: 'INTERNAL_SERVER_ERROR',
-        message: 'An unexpected error occurred'
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      })
-    }
-  })
+      console.error('Server error:', error);
+      return new Response(
+        JSON.stringify({
+          error: 'INTERNAL_SERVER_ERROR',
+          message: 'An unexpected error occurred',
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    },
+  });
 
-  console.info(`Wagering server running on ${server.url}`)
+  console.info(`Wagering server running on ${server.url}`);
 
   // Periodic compliance audit
-  setInterval(async () => {
-    await runComplianceAudit()
-  }, 60 * 60 * 1000).unref() // Hourly
+  setInterval(
+    async () => {
+      await runComplianceAudit();
+    },
+    60 * 60 * 1000
+  ).unref(); // Hourly
 
-  return server
+  return server;
 }
 
 // -------------------------------------------------------------------
@@ -1098,47 +1146,47 @@ export async function createWageringServer() {
 // -------------------------------------------------------------------
 
 interface WagerParams {
-  userId: string
-  marketId: string
-  stake: number
-  odds: number
-  metadata?: Record<string, any>
+  userId: string;
+  marketId: string;
+  stake: number;
+  odds: number;
+  metadata?: Record<string, any>;
 }
 
 interface WagerResult {
-  success: boolean
-  wagerId: string | null
-  rejectionReason?: string
-  processingTimeMs: number
-  placedAt?: string
+  success: boolean;
+  wagerId: string | null;
+  rejectionReason?: string;
+  processingTimeMs: number;
+  placedAt?: string;
 }
 
 interface RGResult {
-  allowed: boolean
-  restrictions?: RGCheck[]
-  checkDurationMs: number
-  requiredIntervention: 'NONE' | 'AUTOMATIC_BLOCK' | 'MANDATORY_COOL_OFF'
+  allowed: boolean;
+  restrictions?: RGCheck[];
+  checkDurationMs: number;
+  requiredIntervention: 'NONE' | 'AUTOMATIC_BLOCK' | 'MANDATORY_COOL_OFF';
 }
 
 interface RGCheck {
-  allowed: boolean
-  reason?: string
-  duration?: number
-  registry?: string
-  requiredAction?: string
-  riskScore?: number
-  userLocation?: any
+  allowed: boolean;
+  reason?: string;
+  duration?: number;
+  registry?: string;
+  requiredAction?: string;
+  riskScore?: number;
+  userLocation?: any;
 }
 
 interface OperationStats {
-  count: number
-  p50: number
-  p90: number
-  p95: number
-  p99: number
-  avg: number
-  min: number
-  max: number
+  count: number;
+  p50: number;
+  p90: number;
+  p95: number;
+  p99: number;
+  avg: number;
+  min: number;
+  max: number;
 }
 
 // -------------------------------------------------------------------
@@ -1156,24 +1204,24 @@ export async function logComplianceEvent(event: ComplianceEvent) {
     serverId: process.env.SERVER_ID,
     licenseNumber: process.env.OPERATOR_LICENSE,
     // Quantum-resistant signature
-    signature: await generateQuantumSignature(JSON.stringify(event))
-  }
+    signature: await generateQuantumSignature(JSON.stringify(event)),
+  };
 
   // Write to secure audit log
   await Bun.write(
     `./audit-logs/${Date.now()}-${crypto.randomUUID()}.json`,
     JSON.stringify(logEntry, null, 2)
-  )
+  );
 
   // Also send to centralized compliance system
   await fetch('https://compliance-registry.example.com/v1/audit', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-License-Number': process.env.OPERATOR_LICENSE!
+      'X-License-Number': process.env.OPERATOR_LICENSE!,
     },
-    body: JSON.stringify(logEntry)
-  })
+    body: JSON.stringify(logEntry),
+  });
 }
 
 // -------------------------------------------------------------------
@@ -1189,22 +1237,22 @@ export async function logComplianceEvent(event: ComplianceEvent) {
     timestamp: new Date().toISOString(),
     serverId: process.env.SERVER_ID,
     licenseNumber: process.env.OPERATOR_LICENSE,
-    signature: await generateQuantumSignature(JSON.stringify(event))
-  }
+    signature: await generateQuantumSignature(JSON.stringify(event)),
+  };
 
   await Bun.write(
     `./audit-logs/${Date.now()}-${crypto.randomUUID()}.json`,
     JSON.stringify(logEntry, null, 2)
-  )
+  );
 
   await fetch('https://compliance-registry.example.com/v1/audit', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-License-Number': process.env.OPERATOR_LICENSE!
+      'X-License-Number': process.env.OPERATOR_LICENSE!,
     },
-    body: JSON.stringify(logEntry)
-  })
+    body: JSON.stringify(logEntry),
+  });
 }
 
 /**
@@ -1212,15 +1260,15 @@ export async function logComplianceEvent(event: ComplianceEvent) {
  */
 async function generateQuantumSignature(data: string): Promise<string> {
   // Mock quantum-resistant signature
-  const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data))
-  return btoa(String.fromCharCode(...new Uint8Array(hash)))
+  const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
+  return btoa(String.fromCharCode(...new Uint8Array(hash)));
 }
 
 /**
  * Run compliance audit
  */
 async function runComplianceAudit() {
-  console.info('Running compliance audit...')
+  console.info('Running compliance audit...');
   // Mock audit
 }
 
@@ -1229,28 +1277,28 @@ async function runComplianceAudit() {
 // -------------------------------------------------------------------
 
 interface ComplianceEvent {
-  type: string
-  userId: string
-  action: string
-  details: any
+  type: string;
+  userId: string;
+  action: string;
+  details: any;
 }
 
 interface SimulationModel {
-  [key: string]: any
+  [key: string]: any;
 }
 
 interface SimulationResult {
-  mean: number
-  stdDev: number
-  confidence95: [number, number]
-  simulationTimeMs: number
-  iterationsPerSecond: number
+  mean: number;
+  stdDev: number;
+  confidence95: [number, number];
+  simulationTimeMs: number;
+  iterationsPerSecond: number;
 }
 
 interface WorkerResult {
-  [key: string]: any
+  [key: string]: any;
 }
 
 interface RGStatus {
-  [key: string]: any
+  [key: string]: any;
 }

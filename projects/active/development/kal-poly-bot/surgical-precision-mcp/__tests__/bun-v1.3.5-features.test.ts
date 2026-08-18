@@ -1,7 +1,7 @@
 /**
  * Comprehensive Test Suite for Bun v1.3.5+ Features
  * Reference: https://bun.com/blog/bun-v1.3.5
- * 
+ *
  * Tests cover:
  * - Standard JavaScript type guards
  * - Bun.stringWidth accuracy
@@ -12,16 +12,13 @@
  * - HTMLRewriter streaming parser
  */
 
-import { describe, test, expect, beforeAll } from 'bun:test';
+import { describe, test, expect, beforeAll, afterAll } from 'bun:test';
+import { RedisClient, redis } from 'bun';
 import * as path from 'path';
 import { BunTypes, HTMLRewriterUtils, PrecisionUtils } from '../precision-utils';
 import { SurgicalTarget } from '../surgical-target';
 import Decimal from 'decimal.js';
-import { 
-  createSemaphore, 
-  createRWLock, 
-  BunConcurrency 
-} from '../concurrency-primitives';
+import { createSemaphore, createRWLock, BunConcurrency } from '../concurrency-primitives';
 
 // ============================================================================
 // TEST GROUP: Node.js Compatibility Fixes (bun-v1.3.5)
@@ -60,7 +57,9 @@ describe('Bun APIs & Glob Fixes', () => {
     // @ts-ignore
     const server = Bun.serve({
       port: 0,
-      fetch() { return new Response(); }
+      fetch() {
+        return new Response();
+      },
     });
     // @ts-ignore
     expect(server.protocol).toBeDefined();
@@ -86,7 +85,26 @@ describe('Bun APIs & Glob Fixes', () => {
 // Reference: https://bun.com/blog/bun-v1.3#built-in-redis-client
 // ============================================================================
 describe('Built-in Redis Client', () => {
-  const { redis, RedisClient } = require('bun');
+  const redisUrl = process.env.REDIS_URL ?? process.env.VALKEY_URL ?? 'redis://localhost:6379';
+  const integrationClient = new RedisClient(redisUrl, {
+    connectionTimeout: 250,
+    maxRetries: 0,
+    enableOfflineQueue: false,
+  });
+  let redisAvailable = false;
+
+  beforeAll(async () => {
+    try {
+      await integrationClient.connect();
+      redisAvailable = true;
+    } catch {
+      console.warn(`Redis unavailable at ${redisUrl}; integration checks skipped`);
+    }
+  });
+
+  afterAll(() => {
+    integrationClient.close();
+  });
 
   test('Redis client is available', () => {
     expect(redis).toBeDefined();
@@ -95,18 +113,20 @@ describe('Built-in Redis Client', () => {
 
   test('Basic SET/GET operations', async () => {
     try {
-      await redis.set('surgical-test-key', 'bun-is-fast');
-      const value = await redis.get('surgical-test-key');
+      if (!redisAvailable) return;
+      await integrationClient.set('surgical-test-key', 'bun-is-fast');
+      const value = await integrationClient.get('surgical-test-key');
       expect(value).toBe('bun-is-fast');
-      await redis.del('surgical-test-key');
+      await integrationClient.del('surgical-test-key');
     } catch (e) {
       console.warn('Redis connection failed - skipping integration check');
     }
   });
 
   test('Pub/Sub functionality', async () => {
+    if (!redisAvailable) return;
     try {
-      const subClient = new RedisClient();
+      const subClient = new RedisClient(redisUrl, { connectionTimeout: 250, maxRetries: 0 });
       const pubClient = await subClient.duplicate();
       let receivedMessage = '';
 
@@ -115,12 +135,12 @@ describe('Built-in Redis Client', () => {
       });
 
       await pubClient.publish('surgical-notifications', 'ping');
-      
+
       // Wait for propagation
       await new Promise(r => setTimeout(r, 50));
-      
+
       expect(receivedMessage).toBe('ping');
-      
+
       // Cleanup
       await subClient.unsubscribe('surgical-notifications');
       subClient.close();
@@ -156,24 +176,24 @@ describe('WebSocket Improvements', () => {
       websocket: {
         message(ws: any, msg: any) {
           ws.send(msg); // Echo
-        }
-      }
+        },
+      },
     });
 
     // @ts-ignore
     const ws = new WebSocket(`ws://127.0.0.1:${server.port}`);
-    
+
     const protocolPromise = new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         ws.close();
         reject(new Error('WS Echo Timeout'));
       }, 2000);
-      ws.onmessage = (event) => {
+      ws.onmessage = event => {
         clearTimeout(timeout);
         resolve(event.data);
       };
       ws.onopen = () => ws.send('echo-test');
-      ws.onerror = (e) => reject(e);
+      ws.onerror = e => reject(e);
     });
 
     const result = await protocolPromise;
@@ -190,8 +210,8 @@ describe('WebSocket Improvements', () => {
       const ws = new WebSocket('ws://localhost:9999', {
         headers: {
           'X-Custom-Header': 'value',
-          'Authorization': 'Bearer token'
-        }
+          Authorization: 'Bearer token',
+        },
       });
       ws.close();
     } catch (e) {
@@ -234,11 +254,11 @@ describe('Bun.SQL', () => {
 
   test('dynamic column operations', async () => {
     // Test helper for dynamic queries
-    const user = { name: "Alice", email: "alice@example.com", age: 30 };
+    const user = { name: 'Alice', email: 'alice@example.com', age: 30 };
     // sql(user, "name", "email") picks only specified keys
-    const fragment = sql(user, "name", "email");
+    const fragment = sql(user, 'name', 'email');
     expect(fragment).toBeDefined();
-    
+
     // WHERE IN with arrays helper
     const inFragment = sql([1, 2, 3]);
     expect(inFragment).toBeDefined();
@@ -251,8 +271,8 @@ describe('Bun.SQL', () => {
       connection: {
         search_path: 'information_schema',
         statement_timeout: '30s',
-        application_name: 'surgical-mcp'
-      }
+        application_name: 'surgical-mcp',
+      },
     };
     expect(options.connection.search_path).toBe('information_schema');
 
@@ -260,7 +280,7 @@ describe('Bun.SQL', () => {
     const sqlClient = new SQL('sqlite://:memory:');
     expect(sqlClient[Symbol.asyncDispose] || typeof sqlClient.close === 'function').toBeDefined();
     sqlClient.close();
-    
+
     console.info('✅ Bun.SQL PostgreSQL config & Disposable interface verified');
   });
 });
@@ -274,17 +294,17 @@ describe('SQLite Enhancements', () => {
 
   test('type introspection (declaredTypes/columnTypes)', () => {
     const db = new Database(':memory:');
-    db.run("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)");
+    db.run('CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)');
     db.run("INSERT INTO users VALUES (1, 'Alice')");
 
-    const stmt = db.query("SELECT * FROM users");
-    
+    const stmt = db.query('SELECT * FROM users');
+
     // Trigger execution to populate types
     stmt.get();
-    
-    expect(stmt.declaredTypes).toEqual(["INTEGER", "TEXT"]);
-    expect(stmt.columnTypes).toEqual(["INTEGER", "TEXT"]);
-    
+
+    expect(stmt.declaredTypes).toEqual(['INTEGER', 'TEXT']);
+    expect(stmt.columnTypes).toEqual(['INTEGER', 'TEXT']);
+
     db.close();
     console.info('✅ SQLite type introspection verified');
   });
@@ -293,10 +313,10 @@ describe('SQLite Enhancements', () => {
     expect(typeof Database.deserialize).toBe('function');
     const db = new Database(':memory:');
     const serialized = db.serialize();
-    
+
     const deserialized = Database.deserialize(serialized, {
       readonly: false,
-      strict: true
+      strict: true,
     });
     expect(deserialized).toBeDefined();
     deserialized.close();
@@ -329,7 +349,7 @@ describe('S3 Client Improvements', () => {
       bucket: 'test-bucket',
       region: 'us-east-1',
       accessKeyId: 'key',
-      secretAccessKey: 'secret'
+      secretAccessKey: 'secret',
     });
     expect(client).toBeDefined();
   });
@@ -375,15 +395,15 @@ describe('Bun.serve() Routes', () => {
     const server = Bun.serve({
       port: 0,
       routes: {
-        "/api/test": {
+        '/api/test': {
           GET: () => Response.json({ method: 'GET' }),
           POST: () => Response.json({ method: 'POST' }),
         },
-        "/users/:id": (req: any) => {
+        '/users/:id': (req: any) => {
           return Response.json({ id: req.params.id });
         },
-        "/health": Response.json({ status: 'ok' })
-      }
+        '/health': Response.json({ status: 'ok' }),
+      },
     });
 
     const baseUrl = `http://127.0.0.1:${server.port}`;
@@ -458,23 +478,23 @@ describe('Bun built-in Cookie API', () => {
 
   test('Bun.Cookie serialization', () => {
     // @ts-ignore
-    const cookie = new Bun.Cookie("sessionId", "123");
-    cookie.value = "456";
-    expect(cookie.value).toBe("456");
-    expect(cookie.serialize()).toContain("sessionId=456");
+    const cookie = new Bun.Cookie('sessionId', '123');
+    cookie.value = '456';
+    expect(cookie.value).toBe('456');
+    expect(cookie.serialize()).toContain('sessionId=456');
     console.info('✅ Bun.Cookie serialization verified');
   });
 
   test('Bun.CookieMap parsing and headers', () => {
     // @ts-ignore
-    const cookieMap = new Bun.CookieMap("sessionId=321; token=aaaa");
-    expect(cookieMap.get("sessionId")).toBe("321");
-    expect(cookieMap.get("token")).toBe("aaaa");
-    
-    cookieMap.set("user1", "hello");
+    const cookieMap = new Bun.CookieMap('sessionId=321; token=aaaa');
+    expect(cookieMap.get('sessionId')).toBe('321');
+    expect(cookieMap.get('token')).toBe('aaaa');
+
+    cookieMap.set('user1', 'hello');
     const headers = cookieMap.toSetCookieHeaders();
     expect(Array.isArray(headers)).toBe(true);
-    expect(headers.some((h: string) => h.includes("user1=hello"))).toBe(true);
+    expect(headers.some((h: string) => h.includes('user1=hello'))).toBe(true);
     console.info('✅ Bun.CookieMap verified');
   });
 });
@@ -487,19 +507,19 @@ describe('ReadableStream Convenience Methods', () => {
   test('ReadableStream supports .text()', async () => {
     const stream = new ReadableStream({
       start(controller) {
-        controller.enqueue(new TextEncoder().encode("Hello Streams"));
+        controller.enqueue(new TextEncoder().encode('Hello Streams'));
         controller.close();
       },
     });
 
     // @ts-ignore
     const text = await stream.text();
-    expect(text).toBe("Hello Streams");
+    expect(text).toBe('Hello Streams');
     console.info('✅ ReadableStream.text() convenience method verified');
   });
 
   test('ReadableStream supports .json()', async () => {
-    const data = { status: "ok" };
+    const data = { status: 'ok' };
     const stream = new ReadableStream({
       start(controller) {
         controller.enqueue(new TextEncoder().encode(JSON.stringify(data)));
@@ -521,8 +541,8 @@ describe('ReadableStream Convenience Methods', () => {
 describe('Zstandard (zstd) Compression', () => {
   test('synchronous zstd APIs (node:zlib)', () => {
     const { zstdCompressSync, zstdDecompressSync } = require('node:zlib');
-    const input = "Surgical Precision zstd Test";
-    
+    const input = 'Surgical Precision zstd Test';
+
     // @ts-ignore
     const compressed = zstdCompressSync(input);
     // @ts-ignore
@@ -533,8 +553,8 @@ describe('Zstandard (zstd) Compression', () => {
 
   test('asynchronous zstd APIs (bun)', async () => {
     const { zstdCompress, zstdDecompress } = require('bun');
-    const input = "Surgical Precision Async zstd Test";
-    
+    const input = 'Surgical Precision Async zstd Test';
+
     // @ts-ignore
     const compressed = await zstdCompress(input);
     // @ts-ignore
@@ -553,24 +573,24 @@ describe('Bun Configuration (bunfig.toml)', () => {
     // Mapping documented options to a verifiable structure
     const config = {
       install: {
-        lockfile: { save: true, print: "yarn" },
-        registry: "https://registry.npmjs.org",
-        cache: { dir: "~/.bun/install/cache" }
-      }
+        lockfile: { save: true, print: 'yarn' },
+        registry: 'https://registry.npmjs.org',
+        cache: { dir: '~/.bun/install/cache' },
+      },
     };
     expect(config.install.lockfile.save).toBe(true);
-    expect(config.install.lockfile.print).toBe("yarn");
+    expect(config.install.lockfile.print).toBe('yarn');
     console.info('✅ bunfig [install] schema verified');
   });
 
   test('Test Runner configuration availability', () => {
     const config = {
       test: {
-        root: "./__tests__",
+        root: './__tests__',
         timeout: 5000,
         coverage: true,
-        randomize: true
-      }
+        randomize: true,
+      },
     };
     expect(config.test.timeout).toBe(5000);
     expect(config.test.randomize).toBe(true);
@@ -581,11 +601,11 @@ describe('Bun Configuration (bunfig.toml)', () => {
     const config = {
       run: {
         autoAlias: { nodeToBun: true },
-        preload: ["./setup.ts"]
+        preload: ['./setup.ts'],
       },
       runtime: {
-        experimental: true
-      }
+        experimental: true,
+      },
     };
     expect(config.run.autoAlias.nodeToBun).toBe(true);
     expect(config.runtime.experimental).toBe(true);
@@ -614,9 +634,9 @@ describe('LSP Integration & Secure Discovery', () => {
       primary: Bun.which('bunx'),
       // @ts-ignore
       secondary: Bun.which('typescript-language-server'),
-      fallback: 'proxy-mode'
+      fallback: 'proxy-mode',
     };
-    
+
     if (discovery.primary) {
       expect(discovery.primary).toContain('bun');
     } else if (discovery.secondary) {
@@ -634,9 +654,9 @@ describe('LSP Integration & Secure Discovery', () => {
       port: 0,
       fetch(req: Request) {
         return new Response('SurgicalLSP Ready');
-      }
+      },
     });
-    
+
     const res = await fetch(`http://127.0.0.1:${server.port}`);
     expect(await res.text()).toBe('SurgicalLSP Ready');
     server.stop();
@@ -672,7 +692,11 @@ describe('IDE Tooling & AST Awareness', () => {
 describe('Syndicate Detection & High-Frequency Resolution', () => {
   test('High-frequency parallel ingestion (Bun.spawn)', async () => {
     // Simulating parallel ingestion resolution strategy for betting_frequency (P1)
-    const commands = [['sleep', '0.01'], ['sleep', '0.01'], ['sleep', '0.01']];
+    const commands = [
+      ['sleep', '0.01'],
+      ['sleep', '0.01'],
+      ['sleep', '0.01'],
+    ];
     // @ts-ignore
     const procs = commands.map(cmd => Bun.spawn(cmd));
     const results = await Promise.all(procs.map(p => p.exited));
@@ -683,7 +707,7 @@ describe('Syndicate Detection & High-Frequency Resolution', () => {
   test('URLPattern-based routing for Alerts (Bun.serve)', async () => {
     // Simulating resolution strategy for game_selection and team_loyalty alerts
     const pattern = new URLPattern({ pathname: '/alerts/:type' });
-    
+
     // @ts-ignore
     const server = Bun.serve({
       port: 0,
@@ -694,12 +718,12 @@ describe('Syndicate Detection & High-Frequency Resolution', () => {
           return Response.json({ status: 'alerted', type: match.pathname.groups.type });
         }
         return new Response('no-match', { status: 404 });
-      }
+      },
     });
 
     const res = await fetch(`http://127.0.0.1:${server.port}/alerts/whale-activity`);
     expect(await res.json()).toEqual({ status: 'alerted', type: 'whale-activity' });
-    
+
     server.stop();
     console.info('✅ URLPattern + Bun.serve routing verified for surgical alerts');
   });
@@ -894,19 +918,23 @@ describe('http.Agent Connection Pooling', () => {
     };
 
     // First request
-    await new Promise((resolve) => {
-      http.request(options, (res: any) => {
-        res.on('data', () => {});
-        res.on('end', resolve);
-      }).end();
+    await new Promise(resolve => {
+      http
+        .request(options, (res: any) => {
+          res.on('data', () => {});
+          res.on('end', resolve);
+        })
+        .end();
     });
 
     // Second request should reuse connection
-    await new Promise((resolve) => {
-      http.request(options, (res: any) => {
-        res.on('data', () => {});
-        res.on('end', resolve);
-      }).end();
+    await new Promise(resolve => {
+      http
+        .request(options, (res: any) => {
+          res.on('data', () => {});
+          res.on('end', resolve);
+        })
+        .end();
     });
 
     server.stop();
@@ -925,15 +953,15 @@ describe('console.log %j Support', () => {
   test('%j formats object as JSON', () => {
     const spy = jest.spyOn(console, 'info').mockImplementation(() => {});
     const data = { foo: 'bar' };
-    
+
     console.info('%j', data);
-    
-    expect(spy).toHaveBeenCalledWith('%j', data); 
-    // Note: In Bun's actual output it will format, 
+
+    expect(spy).toHaveBeenCalledWith('%j', data);
+    // Note: In Bun's actual output it will format,
     // but the call arguments in the spy match what was passed.
-    // The verification here is that %j is now a recognized specifier 
+    // The verification here is that %j is now a recognized specifier
     // and doesn't cause issues.
-    
+
     spy.mockRestore();
     console.info('✅ console.log supports %j format specifier');
   });
@@ -949,11 +977,11 @@ describe('SQLite 3.51.1', () => {
     const db = new Database(':memory:');
     const query = db.query('SELECT sqlite_version() as version');
     const result = query.get() as { version: string };
-    
+
     expect(result.version).toBeDefined();
     console.info(`SQLite Version: ${result.version}`);
-    
-    // Check if it's at least 3.45.0 (which Bun 1.1 had) 
+
+    // Check if it's at least 3.45.0 (which Bun 1.1 had)
     // The release notes say 3.51.1
     const [major, minor] = result.version.split('.').map(Number);
     expect(major).toBeGreaterThanOrEqual(3);
@@ -1093,7 +1121,7 @@ describe('Local Semaphore', () => {
     };
 
     await Promise.all([worker(), worker(), worker(), worker()]);
-    
+
     expect(maxActive).toBe(2); // Never more than 2 concurrent
     console.info('✅ Local Semaphore: concurrent access limited to 2');
   });
@@ -1126,19 +1154,19 @@ describe('Local RWLock', () => {
     };
 
     await Promise.all([reader(), reader(), reader()]);
-    
+
     expect(maxReaders).toBe(3); // All readers ran concurrently
     console.info('✅ Local RWLock: 3 concurrent readers');
   });
 
   test('local RWLock provides exclusive writes', async () => {
     const lock = createRWLock();
-    
+
     await lock.acquireWrite();
     expect(lock.isWriteLocked()).toBe(true);
     expect(lock.tryAcquireRead()).toBe(false);
     lock.releaseWrite();
-    
+
     expect(lock.tryAcquireRead()).toBe(true);
     lock.releaseRead();
     console.info('✅ Local RWLock: exclusive write verified');
@@ -1161,7 +1189,7 @@ describe('Bun.Terminal (PTY)', () => {
     // Test that spawning with terminal option works
     // This is the new PTY feature in Bun v1.3.5
     let outputCollected = '';
-    
+
     // @ts-ignore
     const proc = Bun.spawn(['echo', 'Hello from PTY test!'], {
       stdout: 'pipe',
@@ -1184,12 +1212,12 @@ describe('Bun.Terminal (PTY)', () => {
     const proc = Bun.spawn(['echo', 'test'], {
       stdout: 'pipe',
     });
-    
+
     // Check process properties
     expect(proc.pid).toBeGreaterThan(0);
     expect(typeof proc.exited).toBe('object'); // Promise
     expect(proc.stdout).toBeDefined();
-    
+
     proc.kill();
   });
 
@@ -1229,7 +1257,7 @@ describe('Reusable Terminals (bun-v1.3.5)', () => {
 
   test('Terminal can be created with options', () => {
     if (!hasTerminal) return;
-    
+
     let dataReceived = false;
     const terminal = new (Bun as any).Terminal({
       cols: 80,
@@ -1243,7 +1271,7 @@ describe('Reusable Terminals (bun-v1.3.5)', () => {
     expect(typeof terminal.write).toBe('function');
     expect(typeof terminal.resize).toBe('function');
     expect(typeof terminal.close).toBe('function');
-    
+
     terminal.close();
   });
 
@@ -1258,10 +1286,10 @@ describe('Reusable Terminals (bun-v1.3.5)', () => {
 
     // Resize to new dimensions
     terminal.resize(120, 40);
-    
+
     // Resize again (demonstrates dynamic resizing)
     terminal.resize(100, 30);
-    
+
     terminal.close();
     expect(true).toBe(true); // If we get here, resizing worked
   });
@@ -1294,7 +1322,7 @@ describe('Reusable Terminals (bun-v1.3.5)', () => {
     });
     await proc2.exited;
 
-    // Third spawn - reuse same terminal  
+    // Third spawn - reuse same terminal
     // @ts-ignore
     const proc3 = Bun.spawn(['echo', 'Third command'], {
       terminal,
@@ -1432,7 +1460,7 @@ describe('HTMLRewriter Streaming Parser', () => {
 
   test('categorizes links correctly', async () => {
     const result = await HTMLRewriterUtils.extractLinks(testHtml, 'https://test.com');
-    
+
     // Should have external link
     const external = result.links.filter(l => l.category === 'external');
     expect(external.length).toBeGreaterThan(0);
@@ -1448,7 +1476,7 @@ describe('HTMLRewriter Streaming Parser', () => {
 
   test('converts relative URLs to absolute', async () => {
     const result = await HTMLRewriterUtils.extractLinks(testHtml, 'https://test.com');
-    
+
     // All absolute URLs should start with http/https
     const absoluteUrls = result.links.filter(l => l.absoluteUrl.startsWith('http'));
     expect(absoluteUrls.length).toBeGreaterThan(0);
@@ -1481,7 +1509,7 @@ describe('File I/O', () => {
     // @ts-ignore
     const content = await Bun.file(pkgPath).text();
     expect(content.length).toBeGreaterThan(0);
-    
+
     const parsed = JSON.parse(content);
     expect(parsed.name).toBeDefined();
   });
@@ -1507,8 +1535,8 @@ describe('Surgical Precision Core', () => {
       'TEST_TARGET_001',
       new Decimal('40.712776'),
       new Decimal('-74.005974'),
-      new Decimal('0.995000123456'),  // 6+ decimal places required
-      new Decimal('1.005000123456'),  // 6+ decimal places required
+      new Decimal('0.995000123456'), // 6+ decimal places required
+      new Decimal('1.005000123456'), // 6+ decimal places required
       new Decimal('0.999500')
     );
 
@@ -1553,30 +1581,30 @@ describe('.npmrc Environment Variable Expansion', () => {
     // Simulate the behavior of the ? modifier
     // Without ? - undefined vars are left as-is: ${VAR} → ${VAR}
     // With ? - undefined vars expand to empty: ${VAR?} → (empty)
-    
+
     const withOptionalModifier = (envVar: string | undefined): string => {
       return envVar ?? '';
     };
 
     // When env var is set
     expect(withOptionalModifier('my-token-value')).toBe('my-token-value');
-    
+
     // When env var is undefined, ? modifier returns empty string
     expect(withOptionalModifier(undefined)).toBe('');
-    
+
     console.info('✅ ? modifier correctly handles undefined → empty string');
   });
 
   test('All three syntax patterns are equivalent in Bun v1.3.5', () => {
     // Document that these all work the same now:
     // token = ${NPM_TOKEN}
-    // token = "${NPM_TOKEN}"  
+    // token = "${NPM_TOKEN}"
     // token = '${NPM_TOKEN}'
-    
+
     const syntaxPatterns = [
-      '${VAR}',           // Unquoted
-      '"${VAR}"',         // Double-quoted
-      "'${VAR}'",         // Single-quoted
+      '${VAR}', // Unquoted
+      '"${VAR}"', // Double-quoted
+      "'${VAR}'", // Single-quoted
     ];
 
     // All patterns should contain the ${} syntax
@@ -1591,13 +1619,13 @@ describe('.npmrc Environment Variable Expansion', () => {
   test('.npmrc auth token config follows security best practices', async () => {
     // @ts-ignore
     const content = await Bun.file(npmrcPath).text();
-    
+
     // Should NOT contain hardcoded tokens
     expect(content).not.toMatch(/authToken=[\w-]{20,}/);
-    
+
     // Should use environment variable reference
     expect(content).toContain('_authToken=${');
-    
+
     console.info('✅ .npmrc uses env var for auth token (no hardcoded secrets)');
   });
 });
@@ -1670,7 +1698,7 @@ describe('Test Suite Summary', () => {
       'File I/O',
       'Surgical Precision Core',
       '.npmrc Environment Variable Expansion',
-      'Compile-Time Feature Flags'
+      'Compile-Time Feature Flags',
     ];
 
     // This test documents the coverage
