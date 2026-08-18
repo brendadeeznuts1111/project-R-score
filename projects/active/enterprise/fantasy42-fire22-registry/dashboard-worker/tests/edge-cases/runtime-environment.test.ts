@@ -54,7 +54,7 @@ describe('🛡️ Runtime Environment Edge Cases', () => {
       // Test features that might not be available in older versions
       const features = {
         nanoseconds: typeof Bun.nanoseconds === 'function',
-        inspect: typeof Bun.inspect === 'object',
+        inspect: typeof Bun.inspect === 'function',
         file: typeof Bun.file === 'function',
         spawn: typeof Bun.spawn === 'function',
       };
@@ -130,38 +130,36 @@ describe('🛡️ Runtime Environment Edge Cases', () => {
     });
 
     it('🧪 should detect memory leaks', async () => {
-      const initialMemory = process.memoryUsage().heapUsed;
-      const leakyOperations: any[] = [];
+      Bun.gc(true);
+      const initialMemory = process.memoryUsage();
+      const memoryOperations: Array<ReturnType<typeof EdgeCaseHelpers.createMemoryPressure>> = [];
 
       // Simulate potentially leaky operations
       for (let i = 0; i < 10; i++) {
         const memoryHog = EdgeCaseHelpers.createMemoryPressure(10); // 10MB each
         await memoryHog.execute();
-        leakyOperations.push(memoryHog);
+        memoryOperations.push(memoryHog);
       }
 
       // Check memory growth
-      const midMemory = process.memoryUsage().heapUsed;
-      const growth = midMemory - initialMemory;
+      const midMemory = process.memoryUsage();
 
       // Cleanup
-      leakyOperations.forEach(op => op.cleanup());
+      memoryOperations.forEach(operation => operation.cleanup());
+      memoryOperations.length = 0;
 
-      // Force garbage collection if available
-      if (global.gc) {
-        global.gc();
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
+      Bun.gc(true);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      Bun.gc(true);
 
-      const finalMemory = process.memoryUsage().heapUsed;
-      const netGrowth = finalMemory - initialMemory;
+      const finalMemory = process.memoryUsage();
+      const retainedArrayBuffers = finalMemory.arrayBuffers - initialMemory.arrayBuffers;
 
       console.info(
-        `📊 Memory usage: initial=${(initialMemory / 1024 / 1024).toFixed(1)}MB, peak=${(midMemory / 1024 / 1024).toFixed(1)}MB, final=${(finalMemory / 1024 / 1024).toFixed(1)}MB`
+        `📊 ArrayBuffer usage: initial=${(initialMemory.arrayBuffers / 1024 / 1024).toFixed(1)}MB, peak=${(midMemory.arrayBuffers / 1024 / 1024).toFixed(1)}MB, final=${(finalMemory.arrayBuffers / 1024 / 1024).toFixed(1)}MB`
       );
 
-      // Should not have significant permanent memory growth
-      expect(netGrowth).toBeLessThan(50 * 1024 * 1024); // < 50MB net growth
+      expect(retainedArrayBuffers).toBeLessThan(5 * 1024 * 1024);
     });
   });
 
@@ -182,7 +180,7 @@ describe('🛡️ Runtime Environment Edge Cases', () => {
 
           await new Promise(resolve => setTimeout(resolve, 10 + Math.random() * 90));
 
-          const content = JSON.parse(Bun.file(testFile).text());
+          const content = JSON.parse(await Bun.file(testFile).text());
 
           return {
             success: true,
@@ -424,7 +422,9 @@ describe('🛡️ Runtime Environment Edge Cases', () => {
         processStarted = true;
 
         try {
-          const result = await proc.text();
+          const result = await new Response(proc.stdout).text();
+          const exitCode = await proc.exited;
+          expect(exitCode).toBe(0);
           return result.trim();
         } finally {
           processCleaned = true;

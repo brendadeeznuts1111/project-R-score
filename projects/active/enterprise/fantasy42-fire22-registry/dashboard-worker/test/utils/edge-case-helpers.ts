@@ -5,7 +5,6 @@
  * Comprehensive helpers for testing edge cases and failure scenarios
  */
 
-import { spawn } from 'bun';
 import { existsSync, writeFileSync, mkdirSync, rmSync, chmodSync } from 'fs';
 import { join } from 'path';
 
@@ -458,27 +457,18 @@ export const EdgeCaseHelpers = {
    * ⚡ Test Bun version compatibility
    */
   testBunVersionCompatibility: async () => {
-    try {
-      const proc = spawn(['bun', '--version'], { stdout: 'pipe' });
-      const version = (await proc.text()).trim();
+    const version = Bun.version || process.versions.bun || 'unknown';
 
-      return {
-        version,
-        compatible: true,
-        features: {
-          test: typeof Bun?.test !== 'undefined',
-          spawn: typeof Bun?.spawn !== 'undefined',
-          file: typeof Bun?.file !== 'undefined',
-          inspect: typeof Bun?.inspect !== 'undefined',
-        },
-      };
-    } catch (error) {
-      return {
-        version: 'unknown',
-        compatible: false,
-        error: error.message,
-      };
-    }
+    return {
+      version,
+      compatible: version !== 'unknown',
+      features: {
+        test: typeof process.versions.bun === 'string',
+        spawn: typeof Bun.spawn === 'function',
+        file: typeof Bun.file === 'function',
+        inspect: typeof Bun.inspect === 'function',
+      },
+    };
   },
 
   /**
