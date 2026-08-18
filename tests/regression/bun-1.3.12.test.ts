@@ -511,39 +511,33 @@ describe(`Bun ${MIN_VERSION} bugfixes — Bun APIs (${BLOG_BUGFIXES})`, () => {
       },
     });
 
-    // Do not delete HTTP_PROXY (or lowercase siblings) before reassignment — that breaks
-    // Bun's CustomAccessor so later assigns are invisible to native fetch.
-    // See https://github.com/oven-sh/bun/pull/35003
-    // Assign over previous values instead of `delete process.env.HTTP_PROXY`.
-    const prevHttp = process.env.HTTP_PROXY ?? '';
-    const prevHttps = process.env.HTTPS_PROXY ?? '';
-    const prevNo = process.env.NO_PROXY ?? '';
-    const prevHttpLc = process.env.http_proxy ?? '';
-    const prevHttpsLc = process.env.https_proxy ?? '';
-    const prevNoLc = process.env.no_proxy ?? '';
     try {
-      process.env.http_proxy = '';
-      process.env.https_proxy = '';
-      process.env.no_proxy = '';
-      process.env.HTTPS_PROXY = '';
-      process.env.NO_PROXY = '';
-      process.env.HTTP_PROXY = proxy.url.origin;
-
-      const res = await fetch('http://example.com/runtime-proxy-probe');
-      expect(await res.text()).toBe('via-proxy');
+      const probe = Bun.spawn(
+        [
+          process.execPath,
+          '-e',
+          `process.env.http_proxy = '';
+process.env.https_proxy = '';
+process.env.no_proxy = '';
+process.env.HTTPS_PROXY = '';
+process.env.NO_PROXY = '';
+process.env.HTTP_PROXY = ${JSON.stringify(proxy.url.origin)};
+const response = await fetch('http://example.com/runtime-proxy-probe');
+if (await response.text() !== 'via-proxy') process.exit(2);
+process.env.NO_PROXY = '*';
+await fetch('http://127.0.0.1:9/no-proxy-probe').catch(() => undefined);`,
+        ],
+        { stdout: 'pipe', stderr: 'pipe' }
+      );
+      const [exitCode, stderr] = await Promise.all([
+        probe.exited,
+        new Response(probe.stderr).text(),
+      ]);
+      expect(stderr).toBe('');
+      expect(exitCode).toBe(0);
       expect(hits.some(line => line.includes('example.com/runtime-proxy-probe'))).toBe(true);
-
-      process.env.NO_PROXY = '*';
-      const before = hits.length;
-      await fetch('http://example.com/no-proxy-probe').catch(() => undefined);
-      expect(hits.length).toBe(before);
+      expect(hits.some(line => line.includes('no-proxy-probe'))).toBe(false);
     } finally {
-      process.env.HTTP_PROXY = prevHttp;
-      process.env.HTTPS_PROXY = prevHttps;
-      process.env.NO_PROXY = prevNo;
-      process.env.http_proxy = prevHttpLc;
-      process.env.https_proxy = prevHttpsLc;
-      process.env.no_proxy = prevNoLc;
       proxy.stop(true);
     }
   });

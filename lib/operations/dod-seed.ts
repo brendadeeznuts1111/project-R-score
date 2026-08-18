@@ -208,8 +208,13 @@ export async function seedDodDemo(opts: SeedDodDemoOpts = {}): Promise<SeedDodDe
     const byStatus: Record<string, number> = {};
     let inserted = 0;
     const now = Date.now();
-    // Unique (chat_id, message_id) — salt so --force batches never collide.
-    const msgSalt = Number(Bun.hash.crc32(`${now}:${inserted}`).toString()) % 1_000_000_000;
+    const { maxMessageId } = db
+      .query<{ maxMessageId: number }, []>(
+        'SELECT COALESCE(MAX(telegram_message_id), 0) AS maxMessageId FROM dod_submissions'
+      )
+      .get()!;
+    // Keep every forced batch above the persisted range; wall-clock salts can collide.
+    const msgSalt = maxMessageId + 1;
 
     for (let i = 0; i < DEMO_ROWS.length; i++) {
       const row = DEMO_ROWS[i]!;
