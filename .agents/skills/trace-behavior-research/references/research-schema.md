@@ -58,3 +58,7 @@ ignored. Reprocessing is idempotent by skill and session ID.
 Metrics are observational. A favorable delta does not promote a draft, and an
 unfavorable delta does not delete an active skill. Both decisions require human
 review and repository validation.
+
+Use `bun scripts/record-telemetry.ts --help` through the package entrypoint
+`bun run trace:telemetry` to emit validated events. The writer rejects raw
+content, non-opaque identifiers, invalid timestamps, and negative counts.
