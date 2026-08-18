@@ -40,6 +40,9 @@ modifying skills or exporting trace contents.
 10. Use `bun scripts/archive-report.ts --report-dir <report-dir>` to create a
     gzip report snapshot. Use `bun scripts/sidecar.ts --root <report-dir>` to
     stream report changes over a local WebSocket.
+11. Record runtime evidence with `bun scripts/record-telemetry.ts`. Emit one
+    `skill-triggered` event when a skill is selected and one `session-summary`
+    event when the session ends. Keep IDs opaque and counts aggregate.
 
 ## Guardrails
 

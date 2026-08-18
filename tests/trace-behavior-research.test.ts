@@ -10,7 +10,7 @@ import { join } from 'node:path';
 
 type Report = {
   source: { cacheHits: number; files: number; rescannedFiles: number };
-  clusters: Array<{ label: string; samples: string[] }>;
+  clusters: Array<{ count: number; label: string; samples: string[] }>;
   rankedSkills: Array<{ name: string }>;
   skillImpact: Array<{
     baselineTurnsDelta: number | null;
@@ -68,6 +68,7 @@ describe('trace behavior research', () => {
     await Bun.write(
       join(sessions, 'rollout-2026-08-18-b.jsonl'),
       'not-json\n' +
+        message('<skills_instructions> commit and push every change') +
         message('Use a focused test proof before the pull request commit') +
         `${JSON.stringify({ type: 'session_summary', timestamp: '2026-08-18T00:20:00.000Z', payload: { error_count: 0, interruption_count: 0, session_id: 'session-b', skills: [], turns_to_resolution: 10 } })}\n`
     );
@@ -98,6 +99,7 @@ describe('trace behavior research', () => {
       })
     );
     expect(first.rankedSkills.map(skill => skill.name)).toContain('ci-and-proof-loop');
+    expect(first.clusters.find(cluster => cluster.label === 'git-delivery-loop')?.count).toBe(2);
 
     await runMiner(sessions, output, drafts);
     const second = (await Bun.file(join(output, 'behavior-research.json')).json()) as Report;

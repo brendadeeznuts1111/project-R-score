@@ -1601,6 +1601,7 @@
     "trace:validate": "bun .agents/skills/trace-behavior-research/scripts/validate-drafts.ts",
     "trace:archive": "bun .agents/skills/trace-behavior-research/scripts/archive-report.ts",
     "trace:sidecar": "bun .agents/skills/trace-behavior-research/scripts/sidecar.ts",
+    "trace:telemetry": "bun .agents/skills/trace-behavior-research/scripts/record-telemetry.ts",
     "gate-map:validate": "bun scripts/gate-map-validate.ts",
     "gate-report:monorepo": "bun scripts/gate-report-monorepo.ts",
     "install:all": "bun scripts/with-bun-cache-env.ts install",
