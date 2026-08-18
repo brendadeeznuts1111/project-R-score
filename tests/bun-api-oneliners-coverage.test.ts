@@ -68,7 +68,7 @@ describe('oneliners inventory', () => {
 
   test('run offline file-meta + mmap', async () => {
     const a = await runOneliner('file-meta');
-    expect(a.result).toContain('B');
+    expect(a.result).toMatch(/^nonempty=true name=\S+$/);
     const b = await runOneliner('mmap');
     expect(b.result).toContain('Uint8Array');
   });
