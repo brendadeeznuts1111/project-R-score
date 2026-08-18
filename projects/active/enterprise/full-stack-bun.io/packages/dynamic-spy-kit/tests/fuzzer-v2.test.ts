@@ -9,19 +9,6 @@ import { SecretsManager } from "../src/secrets-manager";
 import { MMapCache } from "../src/mmap-cache";
 
 describe('Fuzzer v2.0 - AsyncLocalStorage + mmap + Redis', () => {
-	test('Bun.secrets in AsyncLocalStorage - FIXED', async () => {
-		const result = await SecretsManager.withSecrets({ test: '123' }, async () => {
-			// ✅ No crash if Bun.secrets is not available or key doesn't exist
-			try {
-				return (Bun.secrets as any)?.test_key || 'fallback';
-			} catch {
-				return 'fallback';
-			}
-		});
-
-		expect(result).toBe('fallback');
-	});
-
 	test('Bun.mmap non-numeric validation - FIXED', () => {
 		const buffer = new Uint8Array(10).buffer;
 
@@ -209,6 +196,5 @@ describe('Fuzzer v2.0 - AsyncLocalStorage + mmap + Redis', () => {
 		}).not.toThrow();
 	});
 });
-
 
 

@@ -102,7 +102,7 @@ token = '${NPM_TOKEN}'    # Single-quoted
 
 - **Published**: Available at https://npm.pkg.github.com/@brendadeeznuts1111/surgical-precision-mcp
 - **Version**: 1.2.0
-- **Bun Compatibility**: ✅ Bun v1.3.5+ (Semaphore, RWLock support available)
+- **Bun Compatibility**: ✅ Bun v1.3.5+ with package-owned Semaphore and RWLock implementations
 - **Build Status**: ✅ Compiled and optimized with Bun
 - **TypeScript**: ✅ Fully typed with strict mode
 - **OS Encrypted Storage**: ✅ Supported on macOS, Linux, Windows
@@ -677,31 +677,32 @@ interface HistoryStats {
 - **Collateral Tolerance**: Exactly 0.000000
 - **Precision Violation**: Strictly forbidden
 
-### Bun v1.3.5+ Features Status
+### Runtime feature status
 
 #### ✅ Available Now:
 - Terminal PTY API (`Bun.Terminal`)
 - Enhanced stringWidth (`Bun.stringWidth`)
-- V8 Type Checking APIs (`Bun.isTypedArray`, etc.)
+- Standard JavaScript type guards (`ArrayBuffer.isView`, `instanceof`)
+- Local semaphore and read-write lock implementations
 
 #### ⏭️ Planned for Future Bun Versions:
 - Compile-time feature flags (`bun:bundle` module)
-- Semaphore concurrency (`Bun.Semaphore`)
-- Read-write locks (`Bun.RWLock`)
 
-The following Bun v1.3.5 features are available for enhanced operations:
+The package uses these documented runtime APIs and local primitives:
 
 | Feature | Purpose | Surgical Precision Use Case |
 |---------|---------|------------------------------|
-| `Bun.Semaphore` | Limit concurrent operations | Rate-limit target validations |
-| `Bun.RWLock` | Read-write synchronization | Protect compliance state during reads/writes |
+| `createSemaphore()` | Limit concurrent operations | Rate-limit target validations |
+| `createRWLock()` | Read-write synchronization | Protect compliance state during reads/writes |
 | `Bun.Terminal` | Pseudo-terminal (PTY) support | Interactive CLI sessions & surgical command execution |
 
 #### Synchronization Primitives
 
 ```typescript
-// Example: Rate-limited target validation (Bun v1.3.5+)
-const validationSemaphore = new Bun.Semaphore(10); // Max 10 concurrent validations
+import { createRWLock, createSemaphore } from "./concurrency-primitives";
+
+// Example: Rate-limited target validation
+const validationSemaphore = createSemaphore(10); // Max 10 concurrent validations
 
 async function validateTargetWithRateLimit(target: SurgicalTarget) {
   await validationSemaphore.acquire();
@@ -712,8 +713,8 @@ async function validateTargetWithRateLimit(target: SurgicalTarget) {
   }
 }
 
-// Example: Protected compliance state (Bun v1.3.5+)
-const complianceLock = new Bun.RWLock();
+// Example: Protected compliance state
+const complianceLock = createRWLock();
 
 async function readComplianceState() {
   await complianceLock.acquireRead();

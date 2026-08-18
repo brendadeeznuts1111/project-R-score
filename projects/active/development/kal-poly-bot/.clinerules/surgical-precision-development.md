@@ -38,7 +38,7 @@
 - Avoid silent error swallowing
 
 ### Bun-Specific Patterns
-- Use Bun native APIs: `Bun.stringWidth()`, `Bun.Terminal`, `Bun.Semaphore`
+- Use documented Bun APIs such as `Bun.stringWidth()` and `Bun.Terminal`; use the package's local concurrency factories.
 - Leverage `Bun.test` for testing with jest-compatible syntax
 - Use environment variables via `Bun.env`
 

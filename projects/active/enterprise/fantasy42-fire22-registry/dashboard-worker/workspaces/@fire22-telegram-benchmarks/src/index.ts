@@ -6,8 +6,6 @@
  * Comprehensive performance testing for all Telegram integration components
  */
 
-import { Bun } from 'bun';
-
 // !==!==!==!==!==!==!==!==!==!==!==!==!==!====
 // 📊 BENCHMARK RUNNER
 // !==!==!==!==!==!==!==!==!==!==!==!==!==!====

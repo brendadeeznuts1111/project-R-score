@@ -5,7 +5,6 @@
  * Combines real-time monitoring with bundle bucket visualization
  */
 
-import { Bun } from "bun";
 import { join } from "path";
 
 interface DashboardConfig {

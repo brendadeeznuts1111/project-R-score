@@ -403,12 +403,11 @@ export class EnhancedBunConfig {
   private config: BunConfig;
 
   constructor() {
-    // Initialize with default values if Bun.config is not available
+    // This service owns its runtime configuration in memory.
     this.config = this.getDefaultConfig();
   }
 
   public getDefaultConfig(): BunConfig {
-    // Fallback configuration when Bun.config is not available
     return {
       install: {
         cache: { dir: "~/.bun/install/cache" },
@@ -435,6 +434,33 @@ export class EnhancedBunConfig {
         version: "1.3.6",
         logLevel: "info",
       },
+    };
+  }
+
+  public getConfigSection(section: string): Record<string, unknown> {
+    switch (section) {
+      case "install":
+        return { ...this.config.install };
+      case "run":
+        return { ...this.config.run };
+      case "test":
+        return { ...this.config.test };
+      case "serve":
+        return { ...this.config.serve };
+      case "bun":
+        return { ...this.config.bun };
+      default:
+        return {};
+    }
+  }
+
+  public getConfigSnapshot(): Record<string, unknown> {
+    return {
+      install: this.getConfigSection("install"),
+      run: this.getConfigSection("run"),
+      test: this.getConfigSection("test"),
+      serve: this.getConfigSection("serve"),
+      bun: this.getConfigSection("bun"),
     };
   }
 
@@ -959,9 +985,7 @@ export function startConfigServer() {
         await enhancedConfigManager.auditConfigChange(
           section,
           {},
-          (typeof Bun !== "undefined" && "config" in Bun
-            ? (Bun as any).config[section]
-            : {}) as Record<string, unknown>,
+          enhancedBunConfig.getConfigSection(section),
           userId || "anonymous",
           clientIP
         );
@@ -971,11 +995,7 @@ export function startConfigServer() {
 
       // Enhanced security route with real-time threat analysis
       if (securityRoutes.test(req.url)) {
-        const config = (
-          typeof Bun !== "undefined" && "config" in Bun
-            ? (Bun as any).config
-            : enhancedBunConfig.getDefaultConfig()
-        ) as Record<string, unknown>;
+        const config = enhancedBunConfig.getConfigSnapshot();
         const securityAnalysis = await enhancedConfigManager.calculateRiskScore(
           config,
           userId || "anonymous",

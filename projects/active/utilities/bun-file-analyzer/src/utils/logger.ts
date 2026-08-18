@@ -1,5 +1,3 @@
-import { Bun } from "bun";
-
 // Runtime ANSI color definitions for server-side logging
 const LOG_COLORS = {
   // Standard log levels

@@ -1,8 +1,3 @@
-import { Bun } from "bun";
-
-// Type guard for Bun availability
-declare const Bun: any | undefined;
-
 // Enhanced cookie interface with partitioned support
 interface EnhancedCookieInit extends Bun.CookieInit {
   partitioned?: boolean; // CHIPS privacy support

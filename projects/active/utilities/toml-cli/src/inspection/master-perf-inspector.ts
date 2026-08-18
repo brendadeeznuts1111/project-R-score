@@ -2,8 +2,8 @@
  * MASTER_PERF Inspector with Bun Native APIs
  * Enhanced performance metric formatting using Bun.color() and Bun.stripANSI()
  */
+// @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
 
-import { custom as inspectCustom, inspect } from "bun";
 import { PerfMetric } from "../../types/perf.types";
 
 /**
@@ -173,7 +173,7 @@ export class FormattedPerfMetric {
   /**
    * Custom inspector for debugging
    */
-  [inspectCustom](depth: number, options: any): string {
+  [Bun.inspect.custom](depth: number, options: any): string {
     return `PerfMetric(${this.metric.category})`;
   }
 

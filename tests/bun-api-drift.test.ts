@@ -36,11 +36,17 @@ await Bun.mkdir("output");
     );
 
     expect(occurrences).toEqual([
-      { member: 'mkdir', file: expect.stringContaining('fixture.ts'), line: 3, column: 11 },
+      {
+        surface: 'namespace',
+        member: 'mkdir',
+        file: 'fixture.ts',
+        line: 3,
+        column: 11,
+      },
     ]);
   });
 
-  test('ignores comments, strings, type positions, shadowed Bun, and bun module APIs', () => {
+  test('ignores comments, strings, type positions, shadowed Bun, and bun submodules', () => {
     const occurrences = collectBunApiDriftOccurrences(
       `
 // Bun.mkdir("comment");
@@ -56,6 +62,53 @@ new Database();
     expect(occurrences).toEqual([]);
   });
 
+  test('checks named bun value imports against runtime exports', () => {
+    const occurrences = collectBunApiDriftOccurrences(
+      `
+import { file, missing as unavailable, type Server } from "bun";
+import { BunFile as LegacyBunFile } from "bun";
+import type { BunFile } from "bun";
+type LegacyTypeImport = LegacyBunFile | BunFile;
+await file("fixture.txt").text();
+unavailable();
+`,
+      'fixture.ts',
+      {},
+      { file: () => undefined }
+    );
+
+    expect(occurrences).toEqual([
+      {
+        surface: 'module-export',
+        member: 'missing',
+        file: 'fixture.ts',
+        line: 2,
+        column: 16,
+      },
+    ]);
+  });
+
+  test('uses the installed bun module export shape by default', () => {
+    const occurrences = collectBunApiDriftOccurrences(
+      `
+import { file, watch } from "bun";
+await file("fixture.txt").text();
+watch("fixture.txt", () => {});
+`,
+      'fixture.ts'
+    );
+
+    expect(occurrences).toEqual([
+      {
+        surface: 'module-export',
+        member: 'watch',
+        file: 'fixture.ts',
+        line: 2,
+        column: 16,
+      },
+    ]);
+  });
+
   test('checks nested static namespace shapes against the running runtime', () => {
     const occurrences = collectBunApiDriftOccurrences(
       `
@@ -69,16 +122,67 @@ globalThis.Bun.stable["alsoMissing"]();
 
     expect(occurrences).toEqual([
       {
+        surface: 'namespace',
         member: 'stable.missing',
         file: expect.stringContaining('fixture.ts'),
         line: 3,
         column: 12,
       },
       {
+        surface: 'namespace',
         member: 'stable.alsoMissing',
         file: expect.stringContaining('fixture.ts'),
         line: 4,
         column: 23,
+      },
+    ]);
+  });
+
+  test('does not let type assertions hide runtime namespace drift', () => {
+    const occurrences = collectBunApiDriftOccurrences(
+      `
+(Bun as any).missing();
+((globalThis.Bun as unknown) as { absent(): void }).absent();
+`,
+      'fixture.ts',
+      {}
+    );
+
+    expect(occurrences).toEqual([
+      {
+        surface: 'namespace',
+        member: 'missing',
+        file: 'fixture.ts',
+        line: 2,
+        column: 14,
+      },
+      {
+        surface: 'namespace',
+        member: 'absent',
+        file: 'fixture.ts',
+        line: 3,
+        column: 53,
+      },
+    ]);
+  });
+
+  test('does not let ambient declarations hide the global runtime', () => {
+    const occurrences = collectBunApiDriftOccurrences(
+      `
+declare const Bun: { missing(): void };
+Bun.missing();
+`,
+      'fixture.ts',
+      {}
+    );
+
+    expect(occurrences).toEqual([
+      {
+        surface: 'namespace',
+        member: 'missing',
+        file: 'fixture.ts',
+        line: 3,
+        column: 5,
       },
     ]);
   });

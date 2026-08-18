@@ -2,7 +2,7 @@
 /**
  * Component #121: FFI-Bridge
  * Primary API: bun:ffi
- * Secondary API: Bun.dlopen()
+ * Loader API: dlopen() from bun:ffi
  * Performance SLA: <0.1ms (native call)
  * Parity Lock: 1i2j...3k4l
  * Status: VERIFIED

@@ -647,7 +647,7 @@ export class KalmanSystemV2_4_2 {
     // Initialize all patterns with combined infrastructure
     this.initializePatterns();
 
-    // Component #57: CPU profiling for hot paths
+    // Component #57: hot-path timing; process profiling uses bun --cpu-prof.
     if (KALMAN_FEATURES.CPU_PROFILING) {
       this.setupCPUProfiling();
     }
@@ -693,7 +693,7 @@ export class KalmanSystemV2_4_2 {
   async processTick(tick: MarketTick, reference?: MarketTick): Promise<Trigger[]> {
     const triggers: Trigger[] = [];
 
-    // Component #57: Profile tick processing
+    // Component #57: measure tick processing.
     let profiler: any;
     if (KALMAN_FEATURES.CPU_PROFILING) {
       profiler = KalmanStabilityIntegration.profilePattern(0);
@@ -779,8 +779,8 @@ export class KalmanSystemV2_4_2 {
 
     } finally {
       if (KALMAN_FEATURES.CPU_PROFILING && profiler) {
-        const profilePath = profiler.stop();
-        console.info(`[PROFILE] Tick processing profile: ${profilePath}`);
+        const measurement = profiler.stop();
+        console.info(`[HOT-PATH] Tick processing measurement: ${measurement}`);
       }
     }
   }
@@ -802,7 +802,7 @@ export class KalmanSystemV2_4_2 {
   }
 
   private setupCPUProfiling(): void {
-    console.info('[CPU] Continuous profiling enabled for hot path analysis');
+    console.info('[HOT-PATH] Timing enabled; start Bun with --cpu-prof for CPU samples');
   }
 
   private setupWebSocketMonitoring(): void {

@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 
 import { describe, expect, test } from "bun:test";
+import { chmod } from "node:fs/promises";
 
 describe("🎯 Specific CLI Flag Combination Test", () => {
   test("✅ bun --watch --no-clear-screen run test --verbose --debug", async () => {
@@ -26,7 +27,7 @@ echo "Test completed successfully"
 `;
 
     await Bun.write("/tmp/test-runner.sh", testScript);
-    await Bun.chmod("/tmp/test-runner.sh", 0o755);
+    await chmod("/tmp/test-runner.sh", 0o755);
 
     // Update package.json to use the test script
     const updatedPackageJson = {

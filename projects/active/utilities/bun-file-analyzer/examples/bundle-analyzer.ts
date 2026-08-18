@@ -7,7 +7,6 @@
 
 import { readFileSync, existsSync, statSync, writeFileSync, readdirSync } from "fs";
 import { join } from "path";
-import { Bun } from "bun";
 
 interface BundleAnalysis {
   totalSize: number;

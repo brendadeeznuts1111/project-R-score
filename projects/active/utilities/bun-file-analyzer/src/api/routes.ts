@@ -1,6 +1,6 @@
-import { Bun } from "bun";
 import { CookieManager } from "./cookie-manager";
 import { Palette } from "../utils/colors";
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 
 // Cookie-aware URL patterns
 const patterns = {
@@ -159,7 +159,7 @@ async function handleAnalyzeById(
   const analysis = {
     id,
     size: file.size,
-    sha256: Bun.hash.sha256(bytes).toString(),
+    sha256: Bun.CryptoHasher.hash("sha256", bytes, "hex"),
     format: detectFormat(bytes),
     views: cookies.getAnalytics(),
   };

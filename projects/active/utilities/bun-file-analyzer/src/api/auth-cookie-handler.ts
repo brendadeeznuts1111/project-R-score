@@ -1,5 +1,3 @@
-import { Bun } from "bun";
-
 let cookieJar: Bun.CookieMap;
 
 if (import.meta.hot) {

@@ -8,7 +8,6 @@ declare global {
   interface Bun {
     hash?: {
       crc32?: (input: string | ArrayBufferView | Blob) => number;
-      sha256?: (input: string | ArrayBufferView | Blob) => Promise<Uint8Array>;
       wyhash?: (input: string | ArrayBufferView) => bigint;
     };
     stringWidth?: (str: string) => number;
@@ -53,7 +52,7 @@ function detectCapabilities() {
   return {
     color: typeof (Bun as any).color === 'function',
     crypto: typeof globalThis.crypto !== 'undefined' && typeof globalThis.crypto.subtle !== 'undefined',
-    sha256: typeof (Bun as any).hash?.sha256 === 'function',
+    sha256: typeof Bun.CryptoHasher === 'function',
     crc32: typeof (Bun as any).hash?.crc32 === 'function',
     stringWidth: typeof (Bun as any).stringWidth === 'function',
   } as const;

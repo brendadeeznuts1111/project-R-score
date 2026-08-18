@@ -8,7 +8,10 @@
  * 4. Balance trend analysis and reporting
  */
 
-import { Bun } from 'bun';
+import { Database } from 'bun:sqlite';
+import { DATABASE } from './constants';
+
+const balanceDatabase = new Database(DATABASE.CONNECTION.DEFAULT_PATH);
 
 // !== TYPES & INTERFACES !==
 
@@ -183,7 +186,7 @@ export class BalanceAuditTrail {
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
-      await Bun.sqlite
+      await balanceDatabase
         .query(auditQuery)
         .run(
           event.id,
@@ -218,7 +221,7 @@ export class BalanceAuditTrail {
         LIMIT ? OFFSET ?
       `;
 
-      const result = await Bun.sqlite.query(query).all(customerId, limit, offset);
+      const result = await balanceDatabase.query(query).all(customerId, limit, offset);
 
       return result.map(row => ({
         id: row.id,
@@ -259,7 +262,7 @@ export class BalanceAuditTrail {
 
       query += ' ORDER BY timestamp DESC';
 
-      const result = await Bun.sqlite.query(query).all(...params);
+      const result = await balanceDatabase.query(query).all(...params);
 
       return result.map(row => ({
         id: row.id,
@@ -298,7 +301,7 @@ export class BalanceNotificationService {
     // Check warning threshold
     if (currentBalance < rules.warningThreshold && currentBalance >= rules.criticalThreshold) {
       alerts.push({
-        id: Bun.crypto.randomUUID(),
+        id: crypto.randomUUID(),
         customerId,
         alertType: 'warning',
         threshold: rules.warningThreshold,
@@ -312,7 +315,7 @@ export class BalanceNotificationService {
     // Check critical threshold
     if (currentBalance < rules.criticalThreshold) {
       alerts.push({
-        id: Bun.crypto.randomUUID(),
+        id: crypto.randomUUID(),
         customerId,
         alertType: 'critical',
         threshold: rules.criticalThreshold,
@@ -327,7 +330,7 @@ export class BalanceNotificationService {
     const dropPercentage = ((previousBalance - currentBalance) / previousBalance) * 100;
     if (dropPercentage > 50 && currentBalance < 1000) {
       alerts.push({
-        id: Bun.crypto.randomUUID(),
+        id: crypto.randomUUID(),
         customerId,
         alertType: 'warning',
         threshold: 1000,
@@ -355,7 +358,7 @@ export class BalanceNotificationService {
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
-      await Bun.sqlite
+      await balanceDatabase
         .query(query)
         .run(
           alert.id,
@@ -393,7 +396,7 @@ export class BalanceNotificationService {
 
       query += ' ORDER BY timestamp DESC';
 
-      const result = await Bun.sqlite.query(query).all(...params);
+      const result = await balanceDatabase.query(query).all(...params);
 
       return result.map(row => ({
         id: row.id,
@@ -421,7 +424,7 @@ export class BalanceNotificationService {
         WHERE id = ?
       `;
 
-      await Bun.sqlite.query(query).run(acknowledgedBy, new Date().toISOString(), alertId);
+      await balanceDatabase.query(query).run(acknowledgedBy, new Date().toISOString(), alertId);
     } catch (error) {
       console.error('❌ Failed to acknowledge alert:', error);
       throw error;
@@ -646,7 +649,7 @@ export class BalanceManager {
 
       // Create balance change event
       const event: BalanceChangeEvent = {
-        id: Bun.crypto.randomUUID(),
+        id: crypto.randomUUID(),
         customerId,
         agentId,
         timestamp: new Date().toISOString(),
@@ -759,7 +762,7 @@ export class BalanceManager {
 export async function initializeBalanceTables(): Promise<void> {
   try {
     // Create balance audit trail table
-    await Bun.sqlite
+    await balanceDatabase
       .query(
         `
       CREATE TABLE IF NOT EXISTS balance_audit_trail (
@@ -782,7 +785,7 @@ export async function initializeBalanceTables(): Promise<void> {
       .run();
 
     // Create balance threshold alerts table
-    await Bun.sqlite
+    await balanceDatabase
       .query(
         `
       CREATE TABLE IF NOT EXISTS balance_threshold_alerts (
@@ -803,7 +806,7 @@ export async function initializeBalanceTables(): Promise<void> {
       .run();
 
     // Create indexes for performance
-    await Bun.sqlite
+    await balanceDatabase
       .query(
         `
       CREATE INDEX IF NOT EXISTS idx_balance_audit_customer 
@@ -812,7 +815,7 @@ export async function initializeBalanceTables(): Promise<void> {
       )
       .run();
 
-    await Bun.sqlite
+    await balanceDatabase
       .query(
         `
       CREATE INDEX IF NOT EXISTS idx_balance_alerts_customer 
@@ -825,13 +828,3 @@ export async function initializeBalanceTables(): Promise<void> {
     throw error;
   }
 }
-
-// Export all classes and functions
-export {
-  BalanceValidator,
-  BalanceAuditTrail,
-  BalanceNotificationService,
-  BalanceAnalyticsService,
-  BalanceManager,
-  initializeBalanceTables,
-};

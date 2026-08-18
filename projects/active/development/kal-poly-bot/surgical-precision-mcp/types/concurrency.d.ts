@@ -1,8 +1,6 @@
 /**
- * Type Definitions for Bun Concurrency Primitives
- * Polyfill types matching expected Bun.Semaphore and Bun.RWLock APIs
- * 
- * Reference: Planned for future Bun version
+ * Type definitions for the package's local concurrency primitives.
+ *
  * Implementation: surgical-precision-mcp/concurrency-primitives.ts
  */
 
@@ -15,8 +13,7 @@ export interface SemaphoreOptions {
 }
 
 /**
- * Semaphore interface for limiting concurrent access to resources
- * Matches expected Bun.Semaphore API pattern
+ * Semaphore interface for limiting concurrent access to resources.
  */
 export interface Semaphore {
   /**
@@ -60,8 +57,7 @@ export interface RWLockOptions {
 }
 
 /**
- * Read-Write Lock interface for concurrent read access with exclusive write access
- * Matches expected Bun.RWLock API pattern
+ * Read-Write Lock interface for concurrent read access with exclusive write access.
  */
 export interface RWLock {
   /**
@@ -116,20 +112,6 @@ export interface RWLock {
    * @returns Number of waiting acquirers
    */
   getQueueLength(): number;
-}
-
-/**
- * Augment global Bun namespace for future compatibility
- * When native Bun.Semaphore/RWLock become available, these types will match
- */
-declare global {
-  namespace Bun {
-    // Semaphore constructor (planned for future Bun version)
-    const Semaphore: new (permits?: number, options?: SemaphoreOptions) => Semaphore | undefined;
-
-    // RWLock constructor (planned for future Bun version)
-    const RWLock: new (options?: RWLockOptions) => RWLock | undefined;
-  }
 }
 
 export {};

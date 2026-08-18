@@ -14,7 +14,7 @@ import { parseArgs } from "util";
 import { join, relative, resolve } from "path";
 import { spawn } from "bun";
 import { openInChrome } from "./browser-utils";
-import { writeFile } from "fs/promises";
+import { readdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "os";
 import { generateHTMLHead, generateHeader, generateFooter, generateSkipLink } from "./html-headers";
 
@@ -197,7 +197,7 @@ async function findTypeScriptFiles(root: string, ignore: string[] = []): Promise
 
   async function walk(dir: string) {
     try {
-      const entries = await Bun.readdir(dir);
+      const entries = await readdir(dir, { withFileTypes: true });
       for (const entry of entries) {
         const fullPath = join(dir, entry.name);
         const relPath = relative(rootPath, fullPath);

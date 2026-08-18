@@ -1,4 +1,3 @@
-import { Bun } from "bun";
 import { Palette } from "../src/utils/colors";
 
 const sessions = new Map<string, { userId: string; created: number }>();

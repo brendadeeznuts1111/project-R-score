@@ -1,278 +1,79 @@
 #!/usr/bin/env bun
 
-// @ts-ignore - Bun types are available at runtime
-import { describe, expect, test } from "bun:test";
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/reference/node/fs/watch — node:fs watch
+// @see https://bun.com/docs/test/index#run-tests — bun:test
 
-describe("👁️ Bun.watch API - File System Monitoring", () => {
-  const tempDir = "/tmp/bun-watch-test";
+import { afterEach, describe, expect, test } from "bun:test";
+import { watch } from "node:fs";
+import { mkdtemp, rm, unlink } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
-  test("✅ Basic file watching with recursive: true", async () => {
-    // Create test directory structure
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/watch-test.txt`, "Initial content");
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/subdir/nested.txt`, "Nested content");
+const temporaryDirectories: string[] = [];
 
-    let changeCount = 0;
-    const changes: Array<{ event: string; filename: string }> = [];
+async function temporaryDirectory(): Promise<string> {
+  const directory = await mkdtemp(join(tmpdir(), "geelark-watch-"));
+  temporaryDirectories.push(directory);
+  return directory;
+}
 
-    // Start watching
-    // @ts-ignore - Bun.watch is available at runtime
-    const watcher = Bun.watch(process.cwd(), { recursive: true });
+async function waitFor(predicate: () => boolean, timeoutMs = 1_000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  while (!predicate()) {
+    if (Date.now() >= deadline) throw new Error("timed out waiting for file-system event");
+    await new Promise(resolve => setTimeout(resolve, 10));
+  }
+}
 
-    watcher.on("change", (event, filename) => {
-      changeCount++;
-      changes.push({ event, filename: filename || "unknown" });
-      console.info(`👁️ File change: ${event} - ${filename}`);
+afterEach(async () => {
+  await Promise.all(
+    temporaryDirectories.splice(0).map(directory => rm(directory, { recursive: true, force: true }))
+  );
+});
+
+describe("node:fs watch compatibility in Bun", () => {
+  test("observes writes in a watched directory", async () => {
+    const directory = await temporaryDirectory();
+    const events: Array<{ eventType: string; filename: string }> = [];
+    const watcher = watch(directory, (eventType, filename) => {
+      events.push({ eventType, filename: filename?.toString() ?? "" });
     });
 
-    // Wait a moment for watcher to initialize
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    try {
+      await Bun.write(join(directory, "watched.txt"), "initial");
+      await waitFor(() => events.some(event => event.filename === "watched.txt"));
 
-    // Make some changes
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/watch-test.txt`, "Updated content");
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/new-file.txt`, "New file content");
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/subdir/nested.txt`, "Updated nested");
-
-    // Wait for changes to be detected
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // Verify changes were detected
-    expect(changeCount).toBeGreaterThan(0);
-    expect(changes.length).toBeGreaterThan(0);
-
-    // Cleanup
-    // @ts-ignore - Bun.watch is available at runtime
-    watcher.close();
-    console.info(`✅ Detected ${changeCount} file changes`);
-  });
-
-  test("✅ Watch specific directory", async () => {
-    // Create test files
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/specific.txt`, "Specific directory test");
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/outside.txt`, "Outside watch directory");
-
-    let specificChanges = 0;
-    // @ts-ignore - Bun.watch is available at runtime
-    const watcher = Bun.watch(tempDir, { recursive: true });
-
-    watcher.on("change", (event, filename) => {
-      specificChanges++;
-      console.info(`📁 Specific dir change: ${event} - ${filename}`);
-    });
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    // Change file inside watched directory
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/specific.txt`, "Updated specific");
-
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    expect(specificChanges).toBeGreaterThan(0);
-
-    // @ts-ignore - Bun.watch is available at runtime
-    watcher.close();
-  });
-
-  test("✅ Multiple event types", async () => {
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/multi-test.txt`, "Multi event test");
-
-    const events: Array<{ type: string; event: string; filename: string }> = [];
-    // @ts-ignore - Bun.watch is available at runtime
-    const watcher = Bun.watch(tempDir, { recursive: true });
-
-    watcher.on("change", (event, filename) => {
-      events.push({ type: "change", event, filename: filename || "unknown" });
-    });
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    // Test different operations
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/multi-test.txt`, "Updated");
-    await new Promise((resolve) => setTimeout(resolve, 50));
-
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/new-multi.txt`, "New file");
-    await new Promise((resolve) => setTimeout(resolve, 50));
-
-    // @ts-ignore - Bun.remove is available at runtime
-    await Bun.remove(`${tempDir}/new-multi.txt`);
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    expect(events.length).toBeGreaterThan(0);
-
-    // @ts-ignore - Bun.watch is available at runtime
-    watcher.close();
-    console.info(`✅ Captured ${events.length} file system events`);
-  });
-
-  test("✅ Watch with file patterns", async () => {
-    // Create different file types
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/test.js`, "console.info('test');");
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/style.css`, "body { color: red; }");
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/data.json`, '{"test": true}');
-
-    const jsChanges: string[] = [];
-    // @ts-ignore - Bun.watch is available at runtime
-    const watcher = Bun.watch(tempDir, { recursive: true });
-
-    watcher.on("change", (event, filename) => {
-      if (filename?.endsWith(".js")) {
-        jsChanges.push(filename);
-        console.info(`📜 JS file changed: ${filename}`);
-      }
-    });
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    // Update JavaScript file
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/test.js`, "console.info('updated');");
-
-    // Update CSS file (should be ignored)
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/style.css`, "body { color: blue; }");
-
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    expect(jsChanges.length).toBeGreaterThan(0);
-    expect(jsChanges.some((file) => file.includes("test.js"))).toBe(true);
-
-    // @ts-ignore - Bun.watch is available at runtime
-    watcher.close();
-  });
-
-  test("✅ Error handling and cleanup", async () => {
-    // @ts-ignore - Bun.watch is available at runtime
-    const watcher = Bun.watch(tempDir, { recursive: true });
-
-    let errorCount = 0;
-    watcher.on("error", (error) => {
-      errorCount++;
-      console.info(`❌ Watcher error: ${error}`);
-    });
-
-    // Test normal operation
-    // @ts-ignore - Bun.write is available at runtime
-    await Bun.write(`${tempDir}/error-test.txt`, "Test content");
-    await new Promise((resolve) => setTimeout(resolve, 200));
-
-    // Close watcher
-    // @ts-ignore - Bun.watch is available at runtime
-    watcher.close();
-
-    // Try to use closed watcher (should handle gracefully)
-    expect(() => // @ts-ignore - Bun.watch is available at runtime
-    watcher.close()).not.toThrow();
-
-    console.info(`✅ Error handling test completed with ${errorCount} errors`);
-  });
-
-  test("✅ Performance with many files", async () => {
-    // Create multiple files
-    const fileCount = 10;
-    const files: string[] = [];
-
-    for (let i = 0; i < fileCount; i++) {
-      const filename = `${tempDir}/perf-${i}.txt`;
-      // @ts-ignore - Bun.write is available at runtime
-      await Bun.write(filename, `Content ${i}`);
-      files.push(filename);
+      expect(events.some(event => event.filename === "watched.txt")).toBe(true);
+      expect(events.every(event => ["change", "rename"].includes(event.eventType))).toBe(true);
+    } finally {
+      watcher.close();
     }
-
-    let changeCount = 0;
-    const startTime = Date.now();
-
-    // @ts-ignore - Bun.watch is available at runtime
-    const watcher = Bun.watch(tempDir, { recursive: true });
-    watcher.on("change", () => changeCount++);
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    // Update all files rapidly
-    const updatePromises = files.map((file, i) =>
-      // @ts-ignore - Bun.write is available at runtime
-      Bun.write(file, `Updated content ${i}`)
-    );
-
-    await Promise.all(updatePromises);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    const duration = Date.now() - startTime;
-
-    expect(changeCount).toBeGreaterThan(0);
-    expect(duration).toBeLessThan(2000); // Should complete within 2 seconds
-
-    watcher.close();
-
-    console.info(
-      `✅ Performance test: ${fileCount} files, ${changeCount} changes in ${duration}ms`
-    );
   });
 
-  test("✅ Integration with Dev HQ automation", async () => {
-    // Create a Dev HQ configuration file
-    const config = {
-      name: "test-project",
-      scripts: {
-        build: "echo 'Building...'",
-        test: "bun test",
-      },
-    };
-
-    await Bun.write(`${tempDir}/package.json`, JSON.stringify(config, null, 2));
-
-    let configChanges = 0;
-    let testChanges = 0;
-
-    const watcher = Bun.watch(tempDir, { recursive: true });
-
-    watcher.on("change", (event, filename) => {
-      if (filename?.includes("package.json")) {
-        configChanges++;
-        console.info(`📦 Config changed: ${event} - ${filename}`);
-      }
-      if (filename?.includes(".test.")) {
-        testChanges++;
-        console.info(`🧪 Test file changed: ${event} - ${filename}`);
-      }
+  test("observes create, update, and removal operations", async () => {
+    const directory = await temporaryDirectory();
+    const target = join(directory, "lifecycle.txt");
+    const events: string[] = [];
+    const watcher = watch(directory, (eventType, filename) => {
+      if (filename?.toString() === "lifecycle.txt") events.push(eventType);
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    try {
+      await Bun.write(target, "created");
+      await waitFor(() => events.length > 0);
+      const afterCreate = events.length;
 
-    // Update configuration
-    config.version = "1.0.1";
-    await Bun.write(`${tempDir}/package.json`, JSON.stringify(config, null, 2));
+      await Bun.write(target, "updated");
+      await waitFor(() => events.length > afterCreate);
+      const afterUpdate = events.length;
 
-    // Create a test file
-    await Bun.write(
-      `${tempDir}/integration.test.ts`,
-      `
-import { test, expect } from 'bun:test';
-test('integration', () => expect(true).toBe(true));
-    `
-    );
+      await unlink(target);
+      await waitFor(() => events.length > afterUpdate);
 
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    expect(configChanges).toBeGreaterThan(0);
-    expect(testChanges).toBeGreaterThan(0);
-
-    watcher.close();
-
-    console.info(
-      `✅ Dev HQ integration: ${configChanges} config changes, ${testChanges} test changes`
-    );
+      expect(events.length).toBeGreaterThanOrEqual(3);
+    } finally {
+      watcher.close();
+    }
   });
 });

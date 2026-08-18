@@ -1,4 +1,4 @@
-import { parentPort, workerData } from "bun";
+import { parentPort } from "node:worker_threads";
 
 parentPort?.on("message", (file: File) => {
   const signatures: Record<string, string> = {

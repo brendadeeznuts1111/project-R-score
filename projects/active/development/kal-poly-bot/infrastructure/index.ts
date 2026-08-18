@@ -160,11 +160,8 @@ export const FEATURE_REGISTRY = {
     "YML_DOC_END_FIX",               // Component #75
     "BUNX_UTF8_FIX",                 // Component #76
     "MYSQL_PARAM_GUARD",             // Component #77
-    "MYSQL_TLS_FIX",                 // Component #78
-    "MYSQL_IDLE_FIX",                // Component #79
     "REDIS_URL_VALIDATE",            // Component #80
     "S3_ETAG_FIX",                   // Component #81
-    "FFI_ERROR_SURFACE",             // Component #82
     "WS_COOKIE_FIX",                 // Component #83
     "NODEJS_COMPAT_PATCH",           // Component #84
     "CLOUDFLARE_SEC_PATCH",          // Component #85

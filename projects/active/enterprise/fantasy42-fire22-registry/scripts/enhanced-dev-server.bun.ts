@@ -8,7 +8,7 @@
 
 import { existsSync, readFileSync, writeFileSync, watch } from 'fs';
 import { join, extname, dirname } from 'path';
-import { serve, file, Response } from 'bun';
+import { serve, file } from 'bun';
 
 interface DevConfig {
   port: number;

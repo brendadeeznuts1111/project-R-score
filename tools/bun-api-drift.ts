@@ -6,6 +6,7 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 
 import * as ts from 'typescript';
+import * as bunRuntimeModule from 'bun';
 import { relativePath, resolvePath } from '../lib/path-bun.ts';
 
 const SOURCE_GLOB = '**/*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}';
@@ -21,6 +22,7 @@ const IGNORED_DIRECTORIES = new Set([
 ]);
 
 export type BunApiDriftOccurrence = {
+  surface: 'namespace' | 'module-export';
   member: string;
   file: string;
   line: number;
@@ -32,7 +34,7 @@ export type BunApiDriftFinding = BunApiDriftOccurrence & {
 };
 
 export type BunApiDriftReport = {
-  version: 1;
+  version: 2;
   runtime: {
     bunVersion: string;
     bunRevision: string;
@@ -147,7 +149,9 @@ function declaredInSource(
   return Boolean(
     checker
       .getSymbolAtLocation(identifier)
-      ?.declarations?.some(declaration => declaration.getSourceFile() === source)
+      ?.declarations?.some(
+        declaration => declaration.getSourceFile() === source && !hasDeclareAncestor(declaration)
+      )
   );
 }
 
@@ -188,6 +192,16 @@ function staticBunPath(
   checker: ts.TypeChecker,
   source: ts.SourceFile
 ): string[] | undefined {
+  while (
+    ts.isParenthesizedExpression(expression) ||
+    ts.isAsExpression(expression) ||
+    ts.isTypeAssertionExpression(expression) ||
+    ts.isNonNullExpression(expression) ||
+    ts.isSatisfiesExpression(expression) ||
+    ts.isPartiallyEmittedExpression(expression)
+  ) {
+    expression = expression.expression;
+  }
   if (ts.isIdentifier(expression)) {
     return expression.text === 'Bun' && !declaredInSource(checker, source, expression)
       ? []
@@ -230,14 +244,74 @@ function runtimeHasPath(runtime: RuntimeNamespace, path: readonly string[]): boo
   return true;
 }
 
-/** Collect executable static paths that are absent from the running Bun namespace shape. */
+function collectUnsupportedBunModuleExports(
+  source: ts.SourceFile,
+  checker: ts.TypeChecker,
+  moduleRuntime: RuntimeNamespace
+): BunApiDriftOccurrence[] {
+  const occurrences: BunApiDriftOccurrence[] = [];
+  for (const statement of source.statements) {
+    if (
+      !ts.isImportDeclaration(statement) ||
+      !ts.isStringLiteral(statement.moduleSpecifier) ||
+      statement.moduleSpecifier.text !== 'bun'
+    ) {
+      continue;
+    }
+
+    const clause = statement.importClause;
+    if (!clause || clause.isTypeOnly) continue;
+    const bindings = clause.namedBindings;
+    if (!bindings || !ts.isNamedImports(bindings)) continue;
+
+    for (const specifier of bindings.elements) {
+      if (specifier.isTypeOnly) continue;
+      const symbol = checker.getSymbolAtLocation(specifier.name);
+      const kind = scriptKind(source.fileName);
+      let usedAsValue = kind === ts.ScriptKind.JS || kind === ts.ScriptKind.JSX;
+      if (!usedAsValue && symbol) {
+        const findValueUse = (node: ts.Node): void => {
+          if (usedAsValue) return;
+          if (
+            node !== specifier.name &&
+            ts.isIdentifier(node) &&
+            checker.getSymbolAtLocation(node) === symbol &&
+            !isTypeOnlyPosition(node) &&
+            !hasDeclareAncestor(node)
+          ) {
+            usedAsValue = true;
+            return;
+          }
+          ts.forEachChild(node, findValueUse);
+        };
+        findValueUse(source);
+      }
+      if (!usedAsValue) continue;
+      const imported = specifier.propertyName?.text ?? specifier.name.text;
+      if (Object.prototype.hasOwnProperty.call(moduleRuntime, imported)) continue;
+      const importedName = specifier.propertyName ?? specifier.name;
+      const location = source.getLineAndCharacterOfPosition(importedName.getStart(source));
+      occurrences.push({
+        surface: 'module-export',
+        member: imported,
+        file: displayPath(source.fileName),
+        line: location.line + 1,
+        column: location.character + 1,
+      });
+    }
+  }
+  return occurrences;
+}
+
+/** Collect executable paths and value imports absent from the installed Bun runtime. */
 export function collectBunApiDriftOccurrences(
   text: string,
   file = 'source.ts',
-  runtime: RuntimeNamespace = Bun as RuntimeNamespace
+  runtime: RuntimeNamespace = Bun as RuntimeNamespace,
+  moduleRuntime: RuntimeNamespace = bunRuntimeModule as RuntimeNamespace
 ): BunApiDriftOccurrence[] {
   const { source, checker } = createSyntaxContext(text, file);
-  const occurrences: BunApiDriftOccurrence[] = [];
+  const occurrences = collectUnsupportedBunModuleExports(source, checker, moduleRuntime);
 
   const visit = (node: ts.Node): void => {
     if (
@@ -253,6 +327,7 @@ export function collectBunApiDriftOccurrences(
           : (node.argumentExpression?.getStart(source) ?? node.getStart(source));
         const location = source.getLineAndCharacterOfPosition(memberStart);
         occurrences.push({
+          surface: 'namespace',
           member: path.join('.'),
           file: displayPath(file),
           line: location.line + 1,
@@ -276,7 +351,7 @@ export function collectBunApiDriftOccurrences(
 function groupOccurrences(occurrences: readonly BunApiDriftOccurrence[]): BunApiDriftFinding[] {
   const findings = new Map<string, BunApiDriftFinding>();
   for (const occurrence of occurrences) {
-    const key = `${occurrence.file}\0${occurrence.member}`;
+    const key = `${occurrence.file}\0${occurrence.surface}\0${occurrence.member}`;
     const existing = findings.get(key);
     if (existing) {
       existing.occurrences++;
@@ -295,16 +370,19 @@ function groupOccurrences(occurrences: readonly BunApiDriftOccurrence[]): BunApi
 
 export async function scanBunApiDrift(
   targets: readonly string[],
-  runtime: RuntimeNamespace = Bun as RuntimeNamespace
+  runtime: RuntimeNamespace = Bun as RuntimeNamespace,
+  moduleRuntime: RuntimeNamespace = bunRuntimeModule as RuntimeNamespace
 ): Promise<BunApiDriftReport> {
   const files = await resolveBunApiDriftTargets(targets);
   const occurrences: BunApiDriftOccurrence[] = [];
   for (const file of files) {
-    occurrences.push(...collectBunApiDriftOccurrences(await Bun.file(file).text(), file, runtime));
+    occurrences.push(
+      ...collectBunApiDriftOccurrences(await Bun.file(file).text(), file, runtime, moduleRuntime)
+    );
   }
   const findings = groupOccurrences(occurrences);
   return {
-    version: 1,
+    version: 2,
     runtime: { bunVersion: Bun.version, bunRevision: Bun.revision },
     targets: [...targets].map(target => displayPath(target)).sort(),
     scannedFileCount: files.length,
@@ -323,8 +401,9 @@ function parseMax(raw: string): number {
 function humanReport(report: BunApiDriftReport, max: number): string {
   const lines = report.findings.map(
     finding =>
-      `${finding.file}:${finding.line}:${finding.column} Bun.${finding.member} unavailable` +
-      (finding.occurrences > 1 ? ` (${finding.occurrences} occurrences)` : '')
+      `${finding.file}:${finding.line}:${finding.column} ${
+        finding.surface === 'namespace' ? `Bun.${finding.member}` : `bun export "${finding.member}"`
+      } unavailable` + (finding.occurrences > 1 ? ` (${finding.occurrences} occurrences)` : '')
   );
   lines.push(
     `Bun API drift: ${report.occurrenceCount} occurrence(s) in ${report.affectedFileCount}/${report.scannedFileCount} file(s); max ${max}; Bun ${report.runtime.bunVersion}`

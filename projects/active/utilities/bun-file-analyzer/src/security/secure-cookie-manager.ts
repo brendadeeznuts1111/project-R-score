@@ -3,8 +3,6 @@
  * Implements best practices for cookie security and privacy compliance
  */
 
-import { Bun } from "bun";
-
 interface SecurityError extends Error {
   code: 'COOKIE_TAMPERED' | 'INVALID_SIGNATURE' | 'SECURITY_VIOLATION';
 }

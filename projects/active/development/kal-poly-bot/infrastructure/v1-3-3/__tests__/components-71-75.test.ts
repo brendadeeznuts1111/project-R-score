@@ -233,6 +233,14 @@ describe("Component #74: Worker-Thread-Safety-Engine", () => {
 });
 
 describe("Component #75: YAML-Doc-End-Fix", () => {
+  beforeEach(() => {
+    process.env.FEATURE_YAML_DOC_END_FIX = "1";
+  });
+
+  afterEach(() => {
+    delete process.env.FEATURE_YAML_DOC_END_FIX;
+  });
+
   it("should parse YAML with ... in quotes", () => {
     const yaml = 'key: "value with ... dots"';
     const result = YAMLDocEndFix.parseYAML(yaml);

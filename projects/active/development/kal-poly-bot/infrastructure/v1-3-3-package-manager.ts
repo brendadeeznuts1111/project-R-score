@@ -7,6 +7,9 @@
  */
 
 import { feature } from "bun:bundle";
+import { mkdtemp, rm, stat } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { basename, dirname, join, resolve } from "node:path";
 
 // Component #65: No-PeerDeps Optimizer
 // Removes phantom sleep() in peer dependency resolution
@@ -378,8 +381,8 @@ export class BundlerDeterminismPatch {
   private static async isCrossVolume(source: string, target: string): Promise<boolean> {
     if (process.platform !== "darwin") return false;
 
-    const sourceStat = await Bun.stat(source);
-    const targetStat = await Bun.stat(Bun.dirname(target));
+    const sourceStat = await stat(source);
+    const targetStat = await stat(dirname(target));
 
     return sourceStat.dev !== targetStat.dev;
   }
@@ -437,135 +440,30 @@ export class BunPackEnforcer {
     packageJsonPath: string,
     options: { includeBin?: boolean } = {}
   ): Promise<Uint8Array> {
-    if (!feature("PACK_ENFORCER")) {
-      return this.legacyPack(packageJsonPath);
+    if (options.includeBin === false) {
+      throw new TypeError(
+        "bun pm pack always applies package.json bin inclusion rules"
+      );
     }
 
-    const packageJson = await Bun.file(packageJsonPath).json();
-    const pkgDir = packageJsonPath.replace("/package.json", "");
-
-    const files = await this.getFilesToPack(packageJson, pkgDir);
-
-    if (options.includeBin !== false) {
-      await this.includeBinDirectories(files, packageJson, pkgDir);
+    const manifestPath = resolve(packageJsonPath);
+    if (basename(manifestPath) !== "package.json") {
+      throw new TypeError("pack expects a path to package.json");
     }
 
-    const tarball = await this.createTarball(files, pkgDir);
+    const destination = await mkdtemp(join(tmpdir(), "kal-bun-pack-"));
 
-    this.logPackEnforcement(packageJson.name, files.size);
-
-    return tarball;
-  }
-
-  private static async getFilesToPack(
-    packageJson: any,
-    pkgDir: string
-  ): Promise<Set<string>> {
-    const files = new Set<string>();
-
-    if (packageJson.files) {
-      for (const pattern of packageJson.files) {
-        const matched = await this.glob(pattern, pkgDir);
-        matched.forEach(f => files.add(f));
-      }
-    } else {
-      const allFiles = await this.getAllFiles(pkgDir);
-      allFiles.forEach(f => files.add(f));
+    try {
+      const output = await Bun.$`bun pm pack --destination ${destination} --ignore-scripts --quiet`
+        .cwd(dirname(manifestPath))
+        .text();
+      const filename = basename(output.trim());
+      return new Uint8Array(
+        await Bun.file(join(destination, filename)).arrayBuffer()
+      );
+    } finally {
+      await rm(destination, { recursive: true, force: true });
     }
-
-    return files;
-  }
-
-  private static async includeBinDirectories(
-    files: Set<string>,
-    packageJson: any,
-    pkgDir: string
-  ): Promise<void> {
-    const bins: string[] = [];
-
-    if (packageJson.bin) {
-      if (typeof packageJson.bin === 'string') {
-        bins.push(packageJson.bin);
-      } else {
-        bins.push(...Object.values(packageJson.bin));
-      }
-    }
-
-    if (packageJson.directories?.bin) {
-      const binFiles = await this.glob(`${packageJson.directories.bin}/*`, pkgDir);
-      bins.push(...binFiles);
-    }
-
-    for (const bin of bins) {
-      files.add(bin);
-      const dir = bin.substring(0, bin.lastIndexOf('/'));
-      if (dir) {
-        files.add(dir);
-      }
-    }
-  }
-
-  private static async createTarball(files: Set<string>, baseDir: string): Promise<Uint8Array> {
-    const { Tar } = await import("tar");
-    const tar = new Tar();
-
-    for (const file of files) {
-      const fullPath = `${baseDir}/${file}`;
-      const content = await Bun.file(fullPath).arrayBuffer();
-      await tar.append({
-        name: file,
-        size: content.byteLength
-      }, new Uint8Array(content));
-    }
-
-    return tar.out;
-  }
-
-  private static async glob(pattern: string, dir: string): Promise<string[]> {
-    const matches: string[] = [];
-    const files = await Bun.$`find ${dir} -type f`.text();
-
-    for (const file of files.split('\n')) {
-      if (file && this.matchesPattern(file.replace(`${dir}/`, ''), pattern)) {
-        matches.push(file.replace(`${dir}/`, ''));
-      }
-    }
-
-    return matches;
-  }
-
-  private static matchesPattern(file: string, pattern: string): boolean {
-    const regex = new RegExp(
-      pattern.replace(/\*/g, '.*').replace(/\?/g, '.')
-    );
-    return regex.test(file);
-  }
-
-  private static async getAllFiles(dir: string): Promise<string[]> {
-    const output = await Bun.$`find ${dir} -type f -not -path "*/node_modules/*"`.text();
-    return output.split('\n')
-      .map(f => f.replace(`${dir}/`, ''))
-      .filter(f => f);
-  }
-
-  private static async legacyPack(packageJsonPath: string): Promise<Uint8Array> {
-    return Bun.pack(packageJsonPath);
-  }
-
-  private static logPackEnforcement(packageName: string, fileCount: number): void {
-    if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
-
-    fetch("https://api.buncatalog.com/v1/audit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        component: 70,
-        package: packageName,
-        files: fileCount,
-        binIncluded: true,
-        timestamp: Date.now()
-      })
-    }).catch(() => {});
   }
 }
 
@@ -645,7 +543,7 @@ export const {
 export const {
   pack
 } = feature("PACK_ENFORCER") ? BunPackEnforcer : {
-  pack: (path: string) => Bun.pack(path)
+  pack: (path: string) => BunPackEnforcer.pack(path)
 };
 
 export const {
@@ -653,5 +551,5 @@ export const {
   pack: packWithEnforcer
 } = feature("BUN_PM_OPTIMIZATIONS") ? PackageManagerV133 : {
   install: async () => Bun.$`bun install`,
-  pack: (path: string) => Bun.pack(path)
+  pack: (path: string) => BunPackEnforcer.pack(path)
 };

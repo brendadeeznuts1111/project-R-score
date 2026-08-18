@@ -1,4 +1,4 @@
-import { Bun } from "bun";
+// @see https://bun.com/docs/runtime/cookies#cookiemap-class — Bun.CookieMap
 
 // Cookie options interfaces
 export interface SessionCookie extends Bun.CookieInit {
@@ -28,22 +28,7 @@ export class CookieManager {
   private readonly ANALYTICS_KEY = "fileViews";
   
   constructor(initialCookies?: string[]) {
-    // Initialize with optional initial cookies (for SSR/server-side)
-    // Handle test environment where Bun.CookieMap might not be available
-    if (typeof Bun !== 'undefined' && Bun.CookieMap) {
-      this.jar = new Bun.CookieMap(initialCookies);
-    } else {
-      // Fallback for testing - create a mock Map
-      this.jar = new Map() as any;
-      if (initialCookies) {
-        for (const cookie of initialCookies) {
-          const [name, value] = cookie.split('=');
-          if (name && value) {
-            this.jar.set(name, value);
-          }
-        }
-      }
-    }
+    this.jar = new Bun.CookieMap(initialCookies?.join("; "));
     
     // HMR restoration
     if (import.meta.hot?.data?.cookieManager) {
@@ -77,14 +62,10 @@ export class CookieManager {
     this.jar.set(name, value, options);
   }
 
-  /** Delete cookie by name */
-  delete(name: string): void {
-    this.jar.delete(name);
-  }
-
-  /** Delete cookie with options */
-  delete(name: string, options: Bun.CookieInit): void {
-    this.jar.delete(name, options);
+  /** Delete a cookie, optionally scoped by domain and path. */
+  delete(name: string, options?: Omit<Bun.CookieStoreDeleteOptions, "name">): void {
+    if (options) this.jar.delete(name, options);
+    else this.jar.delete(name);
   }
 
   /** Get number of cookies */

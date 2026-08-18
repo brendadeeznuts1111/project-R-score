@@ -115,11 +115,11 @@ export class YAML12StrictParser {
 
   static parseConfig(yamlContent: string): Record<string, unknown> {
     if (!feature("YAML12_STRICT")) {
-      // Use native Bun.parseYAML (YAML 1.1 compatible)
-      if (typeof Bun !== "undefined" && (Bun as any).parseYAML) {
-        return (Bun as any).parseYAML(yamlContent);
+      const parsed = Bun.YAML.parse(yamlContent);
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        return Object.fromEntries(Object.entries(parsed));
       }
-      return this.parseBasicYAML(yamlContent);
+      throw new TypeError("YAML configuration must contain a mapping");
     }
 
     // Custom YAML 1.2 parser for bunfig.toml
@@ -214,7 +214,7 @@ export class YAML12StrictParser {
   }
 
   static parseBasicYAML(yamlContent: string): Record<string, unknown> {
-    // Basic YAML parser for environments without Bun.parseYAML
+  // Basic parser retained for the strict migration helpers below.
     const config: Record<string, any> = {};
     const lines = yamlContent.split("\n");
 

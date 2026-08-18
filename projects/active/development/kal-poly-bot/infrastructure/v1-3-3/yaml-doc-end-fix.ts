@@ -84,24 +84,15 @@ export class YAMLDocEndFix {
   private static readonly DOC_END_MARKER = /^\s*\.{3}\s*$/;
   private static readonly QUOTED_STRING_PATTERN = /(["'])(?:(?=(\\?))\2.)*?\1/;
 
-  // Bun YAML parser wrapper (Bun.parseYAML may not exist in all versions)
+  // Bun 1.3.14 YAML parser wrapper.
   public static parseYAMLNative(content: string): unknown {
     try {
-      if (
-        typeof Bun !== "undefined" &&
-        (Bun as unknown as { parseYAML: (content: string) => unknown })
-          .parseYAML
-      ) {
-        return (
-          Bun as unknown as { parseYAML: (content: string) => unknown }
-        ).parseYAML(content);
-      }
-      // Fallback to JSON.parse for simple cases
-      try {
-        return JSON.parse(content);
-      } catch {
-        return { raw: content };
-      }
+      const lastLine = content.split("\n").at(-1) ?? "";
+      const normalized =
+        this.DOC_END_MARKER.test(lastLine) && !content.endsWith("\n")
+          ? `${content}\n`
+          : content;
+      return Bun.YAML.parse(normalized);
     } catch (error: unknown) {
       throw new Error(`YAML parse failed: ${String(error)}`);
     }
@@ -112,27 +103,7 @@ export class YAMLDocEndFix {
     options?: YAMLStringifyOptions
   ): string {
     try {
-      if (
-        typeof Bun !== "undefined" &&
-        (
-          Bun as unknown as {
-            YAML: { stringify: (obj: unknown, options?: unknown) => string };
-          }
-        ).YAML &&
-        (
-          Bun as unknown as {
-            YAML: { stringify: (obj: unknown, options?: unknown) => string };
-          }
-        ).YAML.stringify
-      ) {
-        return (
-          Bun as unknown as {
-            YAML: { stringify: (obj: unknown, options?: unknown) => string };
-          }
-        ).YAML.stringify(obj, options ? options : null);
-      }
-      // Fallback to JSON.stringify
-      return JSON.stringify(obj, null, options?.indent || 2);
+      return Bun.YAML.stringify(obj, null, options?.indent ?? 2);
     } catch (error: unknown) {
       throw new Error(`YAML stringify failed: ${String(error)}`);
     }

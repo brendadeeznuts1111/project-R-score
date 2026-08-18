@@ -3,32 +3,21 @@ import { Decimal } from 'decimal.js';
 // Configure precision to exceed 6-decimal minimum by 22 places (28 total)
 Decimal.set({ precision: 28 });
 
-/**
- * Bun v1.3.5+ V8 Type Checking APIs
- * Enhanced type validation with native performance
- * Reference: https://bun.com/blog/bun-v1.3.5
- */
+/** Standard JavaScript type guards used by the precision layer. */
 const BunTypes = {
   /**
    * Check if value is a TypedArray (Int8Array, Uint8Array, Float64Array, etc.)
-   * Uses native V8 type checking for maximum performance
+   * Excludes DataView, which is an ArrayBuffer view but not a TypedArray.
    */
   isTypedArray: (value: unknown): value is ArrayBufferView => {
-    if (typeof globalThis.Bun !== 'undefined' && 'isTypedArray' in globalThis.Bun) {
-      return (globalThis.Bun as any).isTypedArray(value);
-    }
-    // Fallback for non-Bun environments
     return ArrayBuffer.isView(value) && !(value instanceof DataView);
   },
 
   /**
    * Check if value is a Date object
-   * Uses native V8 type checking - faster than instanceof
+   * Invalid Date instances are rejected.
    */
   isDate: (value: unknown): value is Date => {
-    if (typeof globalThis.Bun !== 'undefined' && 'isDate' in globalThis.Bun) {
-      return (globalThis.Bun as any).isDate(value);
-    }
     return value instanceof Date && !isNaN(value.getTime());
   },
 
@@ -36,9 +25,6 @@ const BunTypes = {
    * Check if value is a Map
    */
   isMap: (value: unknown): value is Map<unknown, unknown> => {
-    if (typeof globalThis.Bun !== 'undefined' && 'isMap' in globalThis.Bun) {
-      return (globalThis.Bun as any).isMap(value);
-    }
     return value instanceof Map;
   },
 
@@ -46,9 +32,6 @@ const BunTypes = {
    * Check if value is a Set
    */
   isSet: (value: unknown): value is Set<unknown> => {
-    if (typeof globalThis.Bun !== 'undefined' && 'isSet' in globalThis.Bun) {
-      return (globalThis.Bun as any).isSet(value);
-    }
     return value instanceof Set;
   },
 
@@ -56,9 +39,6 @@ const BunTypes = {
    * Check if value is a Promise
    */
   isPromise: (value: unknown): value is Promise<unknown> => {
-    if (typeof globalThis.Bun !== 'undefined' && 'isPromise' in globalThis.Bun) {
-      return (globalThis.Bun as any).isPromise(value);
-    }
     return value instanceof Promise;
   },
 
@@ -66,9 +46,6 @@ const BunTypes = {
    * Check if value is an ArrayBuffer
    */
   isArrayBuffer: (value: unknown): value is ArrayBuffer => {
-    if (typeof globalThis.Bun !== 'undefined' && 'isArrayBuffer' in globalThis.Bun) {
-      return (globalThis.Bun as any).isArrayBuffer(value);
-    }
     return value instanceof ArrayBuffer;
   },
 
@@ -76,9 +53,6 @@ const BunTypes = {
    * Check if value is a SharedArrayBuffer
    */
   isSharedArrayBuffer: (value: unknown): value is SharedArrayBuffer => {
-    if (typeof globalThis.Bun !== 'undefined' && 'isSharedArrayBuffer' in globalThis.Bun) {
-      return (globalThis.Bun as any).isSharedArrayBuffer(value);
-    }
     return typeof SharedArrayBuffer !== 'undefined' && value instanceof SharedArrayBuffer;
   },
 
@@ -86,9 +60,6 @@ const BunTypes = {
    * Check if value is a RegExp
    */
   isRegExp: (value: unknown): value is RegExp => {
-    if (typeof globalThis.Bun !== 'undefined' && 'isRegExp' in globalThis.Bun) {
-      return (globalThis.Bun as any).isRegExp(value);
-    }
     return value instanceof RegExp;
   },
 
@@ -96,14 +67,11 @@ const BunTypes = {
    * Check if value is an Error
    */
   isError: (value: unknown): value is Error => {
-    if (typeof globalThis.Bun !== 'undefined' && 'isError' in globalThis.Bun) {
-      return (globalThis.Bun as any).isError(value);
-    }
     return value instanceof Error;
   }
 };
 
-// Export V8 type checking utilities
+// Keep the exported name for package compatibility.
 export { BunTypes };
 
 /**
@@ -682,7 +650,7 @@ export const TableUtils = {
    */
   getWidth(str: string): number {
     if (typeof Bun !== 'undefined' && 'stringWidth' in Bun) {
-      return (Bun as any).stringWidth(str);
+      return Bun.stringWidth(str);
     }
     // Fallback: strip ANSI codes and estimate width
     const stripped = str.replace(/\u001b\[[0-9;]*[a-zA-Z]/g, '');

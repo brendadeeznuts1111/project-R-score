@@ -587,10 +587,6 @@ describe("Component #141: Parser-Formatters", () => {
     expect(typeof parserFormatters.parseTOML).toBe("function");
   });
 
-  test("has stringifyTOML method", () => {
-    expect(typeof parserFormatters.stringifyTOML).toBe("function");
-  });
-
   test("compares semver correctly", () => {
     expect(parserFormatters.semverCompare("1.0.0", "2.0.0")).toBeLessThan(0);
     expect(parserFormatters.semverCompare("2.0.0", "1.0.0")).toBeGreaterThan(0);
@@ -602,13 +598,6 @@ describe("Component #142: Low-Level-Internals", () => {
     expect(typeof lowLevelInternals.mmap).toBe("function");
   });
 
-  test("has jscEvaluate method", () => {
-    expect(typeof lowLevelInternals.jscEvaluate).toBe("function");
-  });
-
-  test("has jscCallFunction method", () => {
-    expect(typeof lowLevelInternals.jscCallFunction).toBe("function");
-  });
 });
 
 describe("Performance SLA Validation", () => {

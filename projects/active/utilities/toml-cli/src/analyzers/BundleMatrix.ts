@@ -4,7 +4,6 @@
  */
 
 import { $ } from "bun";
-import { Bun } from "bun";
 
 export interface BundleAnalysisOptions {
   outdir?: string;

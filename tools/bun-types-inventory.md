@@ -5,7 +5,7 @@ Generated from pinned **bun-types** — top-level + nested namespace/class/**int
 | Field | Value |
 | --- | --- |
 | Schema | `factorywager/bun-types-inventory/v3` |
-| Generated | 2026-08-18T04:33:18.093Z |
+| Generated | 2026-08-18T06:58:23.298Z |
 | Runtime | Bun 1.3.14 (`0d9b296a`) |
 | bun-types | bun-types@1.4.0-tip.23d233b2 |
 | Types root | `/Users/nolarose/Projects/.worktrees/codex-legacy-bun-template-compliance/node_modules/bun-types` |
@@ -55,7 +55,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | interface | `Bun.BuildConfig` | `Bun.BuildConfig` | — | — | 0 | 1 | — | `bun.d.ts:2791` |
 | 0 | interface | `Bun.BuildMetafile` | `Bun.BuildMetafile` | — | — | 0 | 1 | Build metadata: every input and output file, its size, and the imports | `bun.d.ts:3874` |
 | 0 | interface | `Bun.BuildOutput` | `Bun.BuildOutput` | — | — | 0 | 1 | The output of a build | `bun.d.ts:3821` |
-| 0 | interface | `Bun.BunFile` | `Bun.BunFile` | — | — | 9 | 1 | [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) powered by the fastest system calls available for operating on files. | `bun.d.ts:2286` |
+| 0 | interface | `Bun.BunFile` | `Bun.BunFile` | — | — | 11 | 1 | [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) powered by the fastest system calls available for operating on files. | `bun.d.ts:2286` |
 | 0 | interface | `Bun.BunInspectOptions` | `Bun.BunInspectOptions` | — | — | 1 | 1 | Options for `Bun.inspect` | `bun.d.ts:4374` |
 | 0 | type | `Bun.BunLockFile` | `Bun.BunLockFile` | — | — | 0 | 1 | The structure of Bun's lockfile, `bun.lock` | `bun.d.ts:9675` |
 | 0 | type | `Bun.BunLockFileBasePackageInfo` | `Bun.BunLockFileBasePackageInfo` | — | — | 0 | 1 | — | `bun.d.ts:9721` |
@@ -126,7 +126,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | var | `Bun.fetch` | `Bun.fetch: typeof globalThis.fetch;` | — | — | 9 | 1 | — | `bun.d.ts:5052` |
 | 0 | interface | `Bun.FetchEvent` | `Bun.FetchEvent` | — | — | 0 | 1 | — | `bun.d.ts:175` |
 | 0 | type | `Bun.FFIFunctionCallable` | `Bun.FFIFunctionCallable` | — | — | 0 | 1 | — | `bun.d.ts:5720` |
-| 0 | function | `Bun.file` | `Bun.file(path: string \| URL, options?: BlobPropertyBag): BunFile;` | — | yes | 2716 | 3 | [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) powered by the fastest system calls available for operating on files. | `bun.d.ts:4305` |
+| 0 | function | `Bun.file` | `Bun.file(path: string \| URL, options?: BlobPropertyBag): BunFile;` | — | yes | 2718 | 3 | [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) powered by the fastest system calls available for operating on files. | `bun.d.ts:4305` |
 | 0 | interface | `Bun.FileBlob` | `Bun.FileBlob` | — | — | 0 | 1 | — | `bun.d.ts:2260` |
 | 0 | interface | `Bun.FileSink` | `Bun.FileSink` | — | — | 0 | 1 | Fast incremental writer for files and pipes. | `s3.d.ts:7` |
 | 0 | class | `Bun.FileSystemRouter` | `new Bun.FileSystemRouter(…)` | — | — | 6 | 1 | Resolve routes against a directory of files using Next.js-style (`pages` | `bun.d.ts:8222` |

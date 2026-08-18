@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 
 // dev-hq/api-server.ts - Bun 1.2.3 API Fixes
+// @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options — Bun.secrets.get
 import { Glob } from "bun";
 import { AsyncLocalStorage } from "node:async_hooks";
 
@@ -13,7 +14,9 @@ const server = Bun.serve({
     // Async context + secrets ✅
     "/secrets": async () => {
       return store.run({ userId: "123" }, async () => {
-        const secret = (Bun.secrets as any).SECRET_KEY; // Type assertion for dynamic property
+        const secret = await Bun.secrets
+          .get({ service: "dev-hq", name: "SECRET_KEY" })
+          .catch(() => null);
         const context = store.getStore();
         return Response.json({
           secret: !!secret,

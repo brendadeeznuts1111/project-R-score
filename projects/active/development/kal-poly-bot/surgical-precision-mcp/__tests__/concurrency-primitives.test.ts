@@ -1,6 +1,6 @@
 /**
  * Comprehensive Test Suite for Concurrency Primitives
- * Tests Semaphore and RWLock polyfill implementations
+ * Tests the package-owned Semaphore and RWLock implementations.
  * 
  * Standards: Surgical Precision Development
  * - 98.5%+ success rate target
@@ -14,8 +14,6 @@ import {
   RWLockPolyfill,
   createSemaphore,
   createRWLock,
-  hasNativeSemaphore,
-  hasNativeRWLock,
   BunConcurrency,
 } from '../concurrency-primitives';
 
@@ -431,21 +429,9 @@ describe('Zero-Collateral Verification', () => {
 });
 
 // ============================================================================
-// TEST GROUP: Factory Functions & Native Detection
+// TEST GROUP: Factory Functions
 // ============================================================================
-describe('Factory Functions & Native Detection', () => {
-  test('hasNativeSemaphore returns boolean', () => {
-    const result = hasNativeSemaphore();
-    expect(typeof result).toBe('boolean');
-    expect(result).toBe(false); // Not available in Bun v1.3.5
-  });
-
-  test('hasNativeRWLock returns boolean', () => {
-    const result = hasNativeRWLock();
-    expect(typeof result).toBe('boolean');
-    expect(result).toBe(false); // Not available in Bun v1.3.5
-  });
-
+describe('Factory Functions', () => {
   test('createSemaphore returns working instance', async () => {
     const sem = createSemaphore(2);
     
@@ -469,8 +455,6 @@ describe('Factory Functions & Native Detection', () => {
   });
 
   test('BunConcurrency namespace exports', () => {
-    expect(BunConcurrency.hasNativeSemaphore).toBe(hasNativeSemaphore);
-    expect(BunConcurrency.hasNativeRWLock).toBe(hasNativeRWLock);
     expect(BunConcurrency.Semaphore).toBe(createSemaphore);
     expect(BunConcurrency.RWLock).toBe(createRWLock);
     expect(BunConcurrency.SemaphorePolyfill).toBe(SemaphorePolyfill);
@@ -496,6 +480,6 @@ describe('Test Suite Summary', () => {
     
     expect(groups.length).toBe(8);
     console.info(`\n✅ Concurrency primitives: ${groups.length} test groups complete`);
-    console.info('📋 Polyfill ready for Bun v1.3.5+');
+    console.info('📋 Local concurrency primitives verified');
   });
 });

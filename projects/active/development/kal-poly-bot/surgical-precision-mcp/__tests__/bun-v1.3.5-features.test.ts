@@ -3,10 +3,10 @@
  * Reference: https://bun.com/blog/bun-v1.3.5
  * 
  * Tests cover:
- * - V8 Type Checking APIs
+ * - Standard JavaScript type guards
  * - Bun.stringWidth accuracy
- * - Bun.Semaphore concurrency primitives
- * - Bun.RWLock read-write locks
+ * - Local semaphore concurrency primitives
+ * - Local read-write locks
  * - Bun.Terminal (PTY) availability
  * - Compression APIs (gzip/gunzip)
  * - HTMLRewriter streaming parser
@@ -20,8 +20,6 @@ import Decimal from 'decimal.js';
 import { 
   createSemaphore, 
   createRWLock, 
-  hasNativeSemaphore, 
-  hasNativeRWLock,
   BunConcurrency 
 } from '../concurrency-primitives';
 
@@ -964,9 +962,9 @@ describe('SQLite 3.51.1', () => {
 });
 
 // ============================================================================
-// TEST GROUP: V8 Type Checking APIs (bun-v1.3.5)
+// TEST GROUP: Standard JavaScript Type Guards
 // ============================================================================
-describe('V8 Type Checking APIs', () => {
+describe('Standard JavaScript Type Guards', () => {
   test('BunTypes.isTypedArray correctly identifies TypedArrays', () => {
     expect(BunTypes.isTypedArray(new Uint8Array(10))).toBe(true);
     expect(BunTypes.isTypedArray(new Int32Array(5))).toBe(true);
@@ -978,6 +976,7 @@ describe('V8 Type Checking APIs', () => {
 
   test('BunTypes.isDate correctly identifies Date objects', () => {
     expect(BunTypes.isDate(new Date())).toBe(true);
+    expect(BunTypes.isDate(new Date('invalid'))).toBe(false);
     expect(BunTypes.isDate(Date.now())).toBe(false);
     expect(BunTypes.isDate('2025-01-01')).toBe(false);
     expect(BunTypes.isDate({})).toBe(false);
@@ -1008,6 +1007,13 @@ describe('V8 Type Checking APIs', () => {
     expect(BunTypes.isArrayBuffer(new ArrayBuffer(10))).toBe(true);
     expect(BunTypes.isArrayBuffer(new Uint8Array(10).buffer)).toBe(true);
     expect(BunTypes.isArrayBuffer(new Uint8Array(10))).toBe(false);
+  });
+
+  test('BunTypes.isSharedArrayBuffer correctly identifies SharedArrayBuffers', () => {
+    const shared = new SharedArrayBuffer(10);
+    expect(BunTypes.isSharedArrayBuffer(shared)).toBe(true);
+    expect(BunTypes.isSharedArrayBuffer(new ArrayBuffer(10))).toBe(false);
+    expect(BunTypes.isSharedArrayBuffer(new Uint8Array(shared))).toBe(false);
   });
 
   test('BunTypes.isRegExp correctly identifies RegExp objects', () => {
@@ -1069,17 +1075,10 @@ describe('Bun.stringWidth', () => {
 });
 
 // ============================================================================
-// TEST GROUP: Bun.Semaphore (POLYFILL AVAILABLE)
+// TEST GROUP: Local Semaphore
 // ============================================================================
-describe('Bun.Semaphore', () => {
-  const hasNative = hasNativeSemaphore();
-
-  test('Semaphore native availability check', () => {
-    expect(typeof hasNative).toBe('boolean');
-    expect(hasNative).toBe(false); // Not in Bun v1.3.5, using polyfill
-  });
-
-  test('Semaphore polyfill limits concurrent access', async () => {
+describe('Local Semaphore', () => {
+  test('local Semaphore limits concurrent access', async () => {
     const sem = createSemaphore(2); // 2 concurrent permits
     let active = 0;
     let maxActive = 0;
@@ -1096,7 +1095,7 @@ describe('Bun.Semaphore', () => {
     await Promise.all([worker(), worker(), worker(), worker()]);
     
     expect(maxActive).toBe(2); // Never more than 2 concurrent
-    console.info('✅ Semaphore polyfill: concurrent access limited to 2');
+    console.info('✅ Local Semaphore: concurrent access limited to 2');
   });
 
   test('Semaphore tryAcquire non-blocking', () => {
@@ -1109,17 +1108,10 @@ describe('Bun.Semaphore', () => {
 });
 
 // ============================================================================
-// TEST GROUP: Bun.RWLock (POLYFILL AVAILABLE)
+// TEST GROUP: Local RWLock
 // ============================================================================
-describe('Bun.RWLock', () => {
-  const hasNative = hasNativeRWLock();
-
-  test('RWLock native availability check', () => {
-    expect(typeof hasNative).toBe('boolean');
-    expect(hasNative).toBe(false); // Not in Bun v1.3.5, using polyfill
-  });
-
-  test('RWLock polyfill allows concurrent reads', async () => {
+describe('Local RWLock', () => {
+  test('local RWLock allows concurrent reads', async () => {
     const lock = createRWLock();
     let maxReaders = 0;
     let currentReaders = 0;
@@ -1136,10 +1128,10 @@ describe('Bun.RWLock', () => {
     await Promise.all([reader(), reader(), reader()]);
     
     expect(maxReaders).toBe(3); // All readers ran concurrently
-    console.info('✅ RWLock polyfill: 3 concurrent readers');
+    console.info('✅ Local RWLock: 3 concurrent readers');
   });
 
-  test('RWLock polyfill exclusive writes', async () => {
+  test('local RWLock provides exclusive writes', async () => {
     const lock = createRWLock();
     
     await lock.acquireWrite();
@@ -1149,7 +1141,7 @@ describe('Bun.RWLock', () => {
     
     expect(lock.tryAcquireRead()).toBe(true);
     lock.releaseRead();
-    console.info('✅ RWLock polyfill: exclusive write verified');
+    console.info('✅ Local RWLock: exclusive write verified');
   });
 });
 
@@ -1667,10 +1659,10 @@ describe('Test Suite Summary', () => {
       'IDE Tooling & AST Awareness',
       'Syndicate Detection Support',
       'SQLite 3.51.1',
-      'V8 Type Checking APIs',
+      'Standard JavaScript Type Guards',
       'Bun.stringWidth',
-      'Bun.Semaphore (polyfill)',
-      'Bun.RWLock (polyfill)',
+      'Local Semaphore',
+      'Local RWLock',
       'Bun.Terminal (PTY)',
       'Reusable Terminals',
       'Compression APIs',

@@ -4,7 +4,7 @@
 
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import * as os from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { spawn } from "bun";
 
 class SmartProfiler {
@@ -122,22 +122,16 @@ class SmartProfiler {
 		return baseConfig;
 	}
 
-	async createProfileDirectory() {
-		// Use Bun shell with the fixed CWD handling
-		const shell = Bun.shell();
-		shell.cwd("."); // Now safely uses current directory thanks to Bun fix
+  async createProfileDirectory() {
+    const profileDirectory = resolve(this.config.outputDir);
 
-		if (!existsSync(this.config.outputDir)) {
-			mkdirSync(this.config.outputDir, { recursive: true });
-			console.info(
-				`📁 Created profile directory: ${shell.cwd(this.config.outputDir)}`,
-			);
-		} else {
-			console.info(
-				`📁 Using existing profile directory: ${shell.cwd(this.config.outputDir)}`,
-			);
-		}
-	}
+    if (!existsSync(profileDirectory)) {
+      mkdirSync(profileDirectory, { recursive: true });
+      console.info(`📁 Created profile directory: ${profileDirectory}`);
+    } else {
+      console.info(`📁 Using existing profile directory: ${profileDirectory}`);
+    }
+  }
 
 	generateProfileName(type) {
 		const timestamp = new Date().toISOString().replace(/[:.]/g, "-");

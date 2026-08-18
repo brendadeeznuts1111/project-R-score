@@ -2,7 +2,6 @@
 /**
  * Component #142: Low-Level-Internals
  * Primary API: Bun.mmap
- * Secondary API: Bun.jsc
  * Performance SLA: Hardware-speed
  * Parity Lock: 5o6p...7q8r
  * Status: ISOLATED
@@ -29,30 +28,12 @@ export class LowLevelInternals {
 
     return Bun.mmap(path);
   }
-
-  jscEvaluate(code: string): any {
-    if (!feature("LOW_LEVEL_INTERNALS")) {
-      return null;
-    }
-
-    return Bun.jsc.evaluate(code);
-  }
-
-  jscCallFunction(fn: Function, args: any[]): any {
-    if (!feature("LOW_LEVEL_INTERNALS")) {
-      return null;
-    }
-
-    return Bun.jsc.callFunction(fn, args);
-  }
 }
 
 export const lowLevelInternals = feature("LOW_LEVEL_INTERNALS")
   ? LowLevelInternals.getInstance()
   : {
       mmap: () => new Uint8Array(),
-      jscEvaluate: () => null,
-      jscCallFunction: () => null,
     };
 
 export default lowLevelInternals;

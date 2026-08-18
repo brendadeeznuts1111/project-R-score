@@ -16,6 +16,7 @@
  */
 
 import { heapStats } from 'bun:jsc'
+import { availableParallelism } from 'node:os'
 import { HighFreqSilo, SiloErrorHandler, SiloMetrics, SILO_CONFIG, stripAnsi } from './silo'
 
 // -------------------------------------------------------------------
@@ -682,7 +683,7 @@ export class OddsEngine {
     model: SimulationModel
   ): Promise<SimulationResult> {
     // Use Worker threads for parallel simulation
-    const workerCount = Math.min(Bun.availableParallelism(), 8)
+    const workerCount = Math.min(availableParallelism(), 8)
     const iterationsPerWorker = Math.ceil(iterations / workerCount)
 
     const workers = Array.from({ length: workerCount }, () => {

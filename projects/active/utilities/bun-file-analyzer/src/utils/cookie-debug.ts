@@ -1,5 +1,3 @@
-import { Bun } from "bun";
-
 export function debugCookies(cookies: Bun.CookieMap) {
   console.info(
     `%c🍪 Cookie Map (${cookies.size} cookies)`,

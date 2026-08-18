@@ -5,7 +5,6 @@
  * Creates a fully functional monitoring system with live build data
  */
 
-import { Bun } from "bun";
 import { readFileSync, existsSync, statSync, writeFileSync, unlinkSync, mkdirSync } from "fs";
 import { join } from "path";
 import { watch } from "fs";

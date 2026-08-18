@@ -7,8 +7,10 @@
  * - Connection inspection with Bun.inspect.table()
  * - Bun utilities integration (inspect.custom, deepEquals, escapeHTML, stringWidth)
  */
+// @see https://bun.com/reference/node/fs/watch — node:fs watch
 
 import { Server, WebSocket } from "bun";
+import { watch } from "node:fs";
 
 // ============================================================================
 // Types & Interfaces
@@ -254,16 +256,9 @@ function setupHotReload(server: Server) {
 
   console.info("🔥 Hot reload enabled");
 
-  // Use Bun's built-in --watch flag would be simpler,
-  // but here's a manual implementation for demonstration
-  const watcher = new Bun.FileSystemWatcher({
-    paths: CONFIG.hotReload.watchPaths,
-    ignore: CONFIG.hotReload.ignorePatterns
-  });
-
   let debounceTimer: Timer | null = null;
-
-  watcher.on("change", (filePath) => {
+  const onChange = (filePath: string): void => {
+    if (CONFIG.hotReload.ignorePatterns.some(pattern => pattern.test(filePath))) return;
     console.info(`\n📝 File changed: ${filePath}`);
 
     // Debounce rapid changes
@@ -292,7 +287,18 @@ function setupHotReload(server: Server) {
       }));
 
     }, 300); // 300ms debounce
-  });
+  };
+
+  for (const watchPath of CONFIG.hotReload.watchPaths) {
+    try {
+      const watcher = watch(watchPath, { recursive: true }, (_eventType, filePath) => {
+        onChange(filePath?.toString() ?? watchPath);
+      });
+      watcher.on("error", error => console.error(`❌ Watch error for ${watchPath}:`, error));
+    } catch (error) {
+      console.warn(`⚠️  Cannot watch ${watchPath}:`, error);
+    }
+  }
 
   console.info(`👀 Watching: ${CONFIG.hotReload.watchPaths.join(", ")}`);
 }

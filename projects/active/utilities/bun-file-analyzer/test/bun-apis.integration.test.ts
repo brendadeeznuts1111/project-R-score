@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeAll, afterAll } from "bun:test";
-import { Bun } from "bun";
 
 describe("Bun v1.3.6+ API Integration Tests", () => {
   let server: any;
