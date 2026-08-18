@@ -34,6 +34,8 @@
  *   bun tools/bun-doc-refs.ts index-audit                   # rebuild tools/audit-catalog.json
  *   bun tools/bun-doc-refs.ts check [paths...]   # find Bun API usages lacking a @see link
  *   bun tools/bun-doc-refs.ts check --json [paths...] # machine-readable findings with locations
+ *   bun tools/bun-doc-refs.ts backlog --json [paths...] # classify/group missing references
+ *   bun tools/bun-doc-refs.ts backlog --limit=25 [paths...] # deterministic dry-run batch
  *   bun tools/bun-doc-refs.ts syntax [paths...]  # syntax-check every supported source file
  *   bun tools/bun-doc-refs.ts validate [paths..] # HTTP-check all bun.com/github doc links
  *   bun tools/bun-doc-refs.ts integrity          # full stack gate (taxonomy·index·map·links)
@@ -1817,6 +1819,29 @@ export type MissingRef = CodeApiUsage & {
   provenance: ApiReleaseProvenance;
 };
 
+export type ReferenceBacklogDisposition = 'safe-exact-official' | 'manual';
+
+export type ReferenceBacklogReason =
+  | 'exact-official-canonical-reference'
+  | 'missing-canonical-reference'
+  | 'canonical-reference-mismatch'
+  | 'canonical-reference-is-not-official-bun'
+  | 'ambiguous-cli-flag-requires-context';
+
+export type ReferenceBacklogItem = MissingRef & {
+  project: string;
+  disposition: ReferenceBacklogDisposition;
+  reason: ReferenceBacklogReason;
+};
+
+export type ReferenceBacklogGroup = {
+  key: string;
+  total: number;
+  safe: number;
+  manual: number;
+  occurrences: number;
+};
+
 export type SourceSyntaxFinding = {
   file: string;
   line: number;
@@ -1853,6 +1878,8 @@ export type ApiReleaseProvenance = {
 };
 
 const CHECK_JSON_SCHEMA_VERSION = 2;
+const BACKLOG_JSON_SCHEMA_VERSION = 1;
+const MAX_REFERENCE_WRITE_BATCH = 100;
 
 /** True when `api` appears as a token (not a substring of a longer name). */
 function codeUsesApi(code: string, api: string): boolean {
@@ -2528,6 +2555,196 @@ export async function findMissing(paths: string[]): Promise<MissingRef[]> {
     }
   }
   return missing.sort((a, b) => a.file.localeCompare(b.file) || a.api.localeCompare(b.api));
+}
+
+function isOfficialBunReference(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:') return false;
+    if (parsed.hostname === 'bun.com') return true;
+    if (parsed.hostname === 'github.com') return /^\/oven-sh\/bun(?:\/|$)/.test(parsed.pathname);
+    return (
+      parsed.hostname === 'raw.githubusercontent.com' &&
+      /^\/oven-sh\/bun(?:\/|$)/.test(parsed.pathname)
+    );
+  } catch {
+    return false;
+  }
+}
+
+function backlogProject(file: string): string {
+  const parts = file.replaceAll('\\', '/').split('/').filter(Boolean);
+  const projects = parts.findIndex(
+    (part, index) => part === 'projects' && parts[index + 1] === 'active'
+  );
+  if (projects >= 0) {
+    const category = parts[projects + 2];
+    const project = parts[projects + 3];
+    if (category && project) return `${category}/${project}`;
+  }
+  return 'unscoped';
+}
+
+function backlogGroups(
+  items: ReferenceBacklogItem[],
+  keyFor: (item: ReferenceBacklogItem) => string
+): ReferenceBacklogGroup[] {
+  const groups = new Map<string, ReferenceBacklogGroup>();
+  for (const item of items) {
+    const key = keyFor(item);
+    const group = groups.get(key) ?? {
+      key,
+      total: 0,
+      safe: 0,
+      manual: 0,
+      occurrences: 0,
+    };
+    group.total++;
+    group[item.disposition === 'safe-exact-official' ? 'safe' : 'manual']++;
+    group.occurrences += item.occurrences;
+    groups.set(key, group);
+  }
+  return [...groups.values()].sort((a, b) => a.key.localeCompare(b.key));
+}
+
+/** Classify missing references without consulting mutable network state. */
+export function classifyReferenceBacklog(missing: MissingRef[]): ReferenceBacklogItem[] {
+  return missing
+    .map(item => {
+      const canonical = CANONICAL_REFS[item.api];
+      let disposition: ReferenceBacklogDisposition = 'manual';
+      let reason: ReferenceBacklogReason = 'missing-canonical-reference';
+      if (canonical && item.url !== canonical) reason = 'canonical-reference-mismatch';
+      else if (canonical && item.api.startsWith('--')) {
+        reason = 'ambiguous-cli-flag-requires-context';
+      } else if (canonical && !isOfficialBunReference(canonical)) {
+        reason = 'canonical-reference-is-not-official-bun';
+      } else if (canonical) {
+        disposition = 'safe-exact-official';
+        reason = 'exact-official-canonical-reference';
+      }
+      return { ...item, project: backlogProject(item.file), disposition, reason };
+    })
+    .sort(
+      (a, b) =>
+        a.project.localeCompare(b.project) ||
+        a.api.localeCompare(b.api) ||
+        a.file.localeCompare(b.file)
+    );
+}
+
+async function writeReferenceBatch(items: ReferenceBacklogItem[]): Promise<number> {
+  const byFile = new Map<string, ReferenceBacklogItem[]>();
+  for (const item of items) byFile.set(item.file, [...(byFile.get(item.file) ?? []), item]);
+  for (const [file, refs] of byFile) {
+    const text = await Bun.file(file).text();
+    const lines = text.split('\n');
+    let at = 0;
+    if (lines[0]?.startsWith('#!')) at = 1;
+    while (at < lines.length && lines[at].trim() === '') at++;
+    lines.splice(at, 0, ...refs.map(ref => `// @see ${ref.url} — ${ref.api}`));
+    await Bun.write(file, lines.join('\n'));
+  }
+  return byFile.size;
+}
+
+type ReferenceBacklogOptions = {
+  json: boolean;
+  write: boolean;
+  limit: number | null;
+  max: number | null;
+};
+
+function parseBacklogInteger(flag: string, value: string | undefined): number {
+  if (!value || !/^\d+$/.test(value)) throw new Error(`${flag} requires a non-negative integer`);
+  const parsed = Number(value);
+  if (!Number.isSafeInteger(parsed)) throw new Error(`${flag} exceeds the safe integer range`);
+  return parsed;
+}
+
+function parseReferenceBacklogArgs(args: string[]): {
+  options: ReferenceBacklogOptions;
+  targets: string[];
+} {
+  const options: ReferenceBacklogOptions = { json: false, write: false, limit: null, max: null };
+  const targets: string[] = [];
+  for (let index = 0; index < args.length; index++) {
+    const argument = args[index]!;
+    if (argument === '--json') options.json = true;
+    else if (argument === '--write') options.write = true;
+    else if (argument === '--limit' || argument === '--max') {
+      const value = args[++index];
+      options[argument === '--limit' ? 'limit' : 'max'] = parseBacklogInteger(argument, value);
+    } else if (argument.startsWith('--limit=')) {
+      options.limit = parseBacklogInteger('--limit', argument.slice('--limit='.length));
+    } else if (argument.startsWith('--max=')) {
+      options.max = parseBacklogInteger('--max', argument.slice('--max='.length));
+    } else if (argument.startsWith('--')) throw new Error(`unknown backlog flag: ${argument}`);
+    else targets.push(argument);
+  }
+  if (options.write && targets.length === 0) {
+    throw new Error('backlog --write requires at least one explicit scan target');
+  }
+  if (options.write && (options.limit === null || options.limit < 1)) {
+    throw new Error('backlog --write requires --limit=N with N greater than zero');
+  }
+  if (options.write && options.limit > MAX_REFERENCE_WRITE_BATCH) {
+    throw new Error(`backlog --write limits batches to ${MAX_REFERENCE_WRITE_BATCH} references`);
+  }
+  return { options, targets };
+}
+
+/** Classify, group, ratchet, and optionally apply one bounded safe batch. */
+async function referenceBacklog(args: string[]): Promise<number> {
+  const { options, targets } = parseReferenceBacklogArgs(args);
+  const paths = targets.length > 0 ? targets : defaultPaths;
+  const items = classifyReferenceBacklog(await findMissing(paths));
+  const safe = items.filter(item => item.disposition === 'safe-exact-official');
+  const manual = items.filter(item => item.disposition === 'manual');
+  const selected = safe.slice(0, options.limit ?? safe.length);
+  const filesChanged = options.write ? await writeReferenceBatch(selected) : 0;
+  const remaining = items.length - (options.write ? selected.length : 0);
+  const ratchetOk = options.max === null || remaining <= options.max;
+  const report = {
+    schemaVersion: BACKLOG_JSON_SCHEMA_VERSION,
+    command: 'backlog',
+    ok: ratchetOk,
+    dryRun: !options.write,
+    summary: {
+      total: items.length,
+      safe: safe.length,
+      manual: manual.length,
+      files: new Set(items.map(item => item.file)).size,
+      projects: new Set(items.map(item => item.project)).size,
+      apis: new Set(items.map(item => item.api)).size,
+      selected: selected.length,
+      filesChanged,
+      remaining,
+    },
+    ratchet: options.max === null ? null : { max: options.max, actual: remaining, ok: ratchetOk },
+    groups: {
+      byProject: backlogGroups(items, item => item.project),
+      byApi: backlogGroups(items, item => item.api),
+    },
+    selected,
+    manual,
+  };
+  if (options.json) jsonOut(report);
+  else {
+    console.info(
+      `${options.write ? '✅' : '🔍'} backlog ${items.length} refs: ${safe.length} safe, ${manual.length} manual`
+    );
+    console.info(
+      `   selected ${selected.length}${options.write ? ` across ${filesChanged} files` : ' (dry-run)'}; remaining ${remaining}`
+    );
+    for (const group of report.groups.byProject) {
+      console.info(`   ${group.key}: ${group.total} (${group.safe} safe, ${group.manual} manual)`);
+    }
+    if (options.max !== null) {
+      console.info(`   ratchet ${remaining}/${options.max} ${ratchetOk ? '✅' : '❌'}`);
+    }
+  }
+  return ratchetOk ? 0 : 1;
 }
 
 /** Find Bun.* usages whose file has no matching @see / doc link. */
@@ -4541,6 +4758,9 @@ async function mainCli(): Promise<void> {
       process.exit(!write && files > 0 ? 1 : 0);
       break;
     }
+    case 'backlog':
+      process.exit(await referenceBacklog(rest));
+      break;
     case 'check': {
       const json = rest.includes('--json');
       const targets = rest.filter(argument => argument !== '--json');
@@ -4577,8 +4797,9 @@ async function mainCli(): Promise<void> {
     default:
       console.error(
         `unknown command: ${cmd}\n` +
-          `commands: url|token|list|catalog|suggest|index-audit|locus|audit|deepcheck|integrity|status|schedule|export|annotate|check|syntax|history|provenance-check|validate|bundler\n` +
+          `commands: url|token|list|catalog|suggest|index-audit|locus|audit|deepcheck|integrity|status|schedule|export|annotate|backlog|check|syntax|history|provenance-check|validate|bundler\n` +
           `check flags: --json (machine-readable findings with line/column)\n` +
+          `backlog flags: --json · --limit=N · --max=N · --write (explicit targets; max batch 100)\n` +
           `syntax flags: --json (machine-readable aggregate syntax findings)\n` +
           `history <api> [--json] · provenance-check [--json] [--require-release]\n` +
           `suggest --audit [--json] <q>  ·  index-audit → bun tools/audit-catalog.ts build\n` +
@@ -4600,11 +4821,18 @@ if (import.meta.main) {
     const message = error instanceof Error ? error.message : String(error);
     if (
       process.argv.includes('--json') &&
-      (process.argv.includes('check') || process.argv.includes('syntax'))
+      (process.argv.includes('backlog') ||
+        process.argv.includes('check') ||
+        process.argv.includes('syntax'))
     ) {
-      const command = process.argv.includes('syntax') ? 'syntax' : 'check';
+      const command = process.argv.includes('backlog')
+        ? 'backlog'
+        : process.argv.includes('syntax')
+          ? 'syntax'
+          : 'check';
       jsonOut({
-        schemaVersion: CHECK_JSON_SCHEMA_VERSION,
+        schemaVersion:
+          command === 'backlog' ? BACKLOG_JSON_SCHEMA_VERSION : CHECK_JSON_SCHEMA_VERSION,
         command,
         ok: false,
         error: { message },

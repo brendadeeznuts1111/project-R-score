@@ -1588,6 +1588,7 @@
     "bun:release-knowledge:validate:all": "bun tools/bun-release-knowledge.ts validate-all packages/bun-release-contracts/knowledge",
     "screenshot": "bun tools/screenshot-cli.ts",
     "bun:channel:check": "bun tools/bun-channel-doctor.ts --check",
+    "bun:api-drift:check": "bun tools/bun-api-drift.ts --max=114 projects/active",
     "bun:channel:report": "bun tools/bun-channel-doctor.ts --save",
     "bun:channel:cron:preview": "bun tools/bun-channel-doctor-cron.ts preview",
     "bun:channel:cron:register": "bun tools/bun-channel-doctor-cron.ts register",

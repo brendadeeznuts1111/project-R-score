@@ -41,7 +41,7 @@ type Entry = {
 
 import { slugify } from '../lib/text';
 
-function extractAnchors(markdown: string): string[] {
+export function extractAnchors(markdown: string): string[] {
   const anchors: string[] = [];
   let inCode = false;
   for (const line of markdown.split('\n')) {
@@ -49,11 +49,33 @@ function extractAnchors(markdown: string): string[] {
     if (inCode) continue;
     const m = line.match(/^#{2,4} (.+)$/);
     if (m) {
-      const slug = slugify(m[1]);
+      const slug = slugify(m[1].replaceAll('&amp;', '&'));
       if (slug && !anchors.includes(slug)) anchors.push(slug);
     }
   }
   return anchors;
+}
+
+/**
+ * Bun's llms.txt currently lists section landing pages as `/index.md`, while
+ * the Markdown content endpoint is flattened to `.md`. Keep the llms.txt URL
+ * as provenance and use the flattened URL only as a fetch fallback.
+ */
+export function markdownFetchCandidates(url: string): string[] {
+  const flattened = url.replace(/\/index\.md$/, '.md');
+  return flattened === url ? [url] : [url, flattened];
+}
+
+async function fetchMarkdown(url: string): Promise<string | null> {
+  for (const candidate of markdownFetchCandidates(url)) {
+    try {
+      const response = await fetch(candidate);
+      if (response.ok) return response.text();
+    } catch {
+      // Try the next official candidate before recording a fetch failure.
+    }
+  }
+  return null;
 }
 
 async function main(): Promise<void> {
@@ -84,17 +106,18 @@ async function main(): Promise<void> {
   // Fetch each page's .md and extract anchors (bounded concurrency)
   let done = 0;
   let failed = 0;
+  const failedUrls: string[] = [];
   const queue = [...entries];
   await Promise.all(
     Array.from({ length: CONCURRENCY }, async () => {
       for (let e = queue.shift(); e; e = queue.shift()) {
         if (e.url.endsWith('.md')) {
-          try {
-            const res = await fetch(e.url);
-            if (res.ok) e.anchors = extractAnchors(await res.text());
-            else failed++;
-          } catch {
+          const markdown = await fetchMarkdown(e.url);
+          if (markdown === null) {
             failed++;
+            failedUrls.push(e.url);
+          } else {
+            e.anchors = extractAnchors(markdown);
           }
         }
         if (++done % 50 === 0) console.info(`  ${done}/${entries.length} pages…`);
@@ -191,6 +214,7 @@ async function main(): Promise<void> {
   console.info(
     `✅ ${entries.length} pages, ${totalAnchors} anchors (${failed} fetch failures), ${tagged} taxonomy-tagged → ${OUT}`
   );
+  for (const failedUrl of failedUrls) console.warn(`  fetch failed: ${failedUrl}`);
 }
 
 if (import.meta.main) {

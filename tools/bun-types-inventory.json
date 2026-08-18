@@ -1,6 +1,6 @@
 {
   "schema": "factorywager/bun-types-inventory/v3",
-  "generated": "2026-08-18T03:21:56.227Z",
+  "generated": "2026-08-18T04:33:18.093Z",
   "runtime": {
     "bunVersion": "1.3.14",
     "bunRevision": "0d9b296af33f2b851fcbf4df3e9ec89751734ba4"
@@ -79,8 +79,8 @@
       "3": 29
     },
     "agentsMapHits": 70,
-    "withCallSites": 208,
-    "zeroCallSites": 2201,
+    "withCallSites": 209,
+    "zeroCallSites": 2200,
     "maxDepth": 3
   },
   "tipDiff": null,
@@ -287,7 +287,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 453
+      "callSites": 454
     },
     {
       "kind": "class",
@@ -1409,7 +1409,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 855
+      "callSites": 856
     },
     {
       "kind": "function",
@@ -1426,7 +1426,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 855
+      "callSites": 856
     },
     {
       "kind": "interface",
@@ -1783,7 +1783,7 @@
       "deprecated": false,
       "overloads": 3,
       "agentsMap": true,
-      "callSites": 2636
+      "callSites": 2716
     },
     {
       "kind": "interface",
@@ -1936,7 +1936,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 349
+      "callSites": 353
     },
     {
       "kind": "interface",
@@ -3568,7 +3568,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 115
+      "callSites": 117
     },
     {
       "kind": "var",
@@ -4299,7 +4299,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": true,
-      "callSites": 781
+      "callSites": 786
     },
     {
       "kind": "namespace",
@@ -5370,7 +5370,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 345
+      "callSites": 347
     },
     {
       "kind": "const",
@@ -5812,7 +5812,7 @@
       "deprecated": false,
       "overloads": 5,
       "agentsMap": true,
-      "callSites": 1254
+      "callSites": 1272
     },
     {
       "kind": "namespace",
@@ -25702,7 +25702,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 4
     },
     {
       "kind": "property",
@@ -34593,7 +34593,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 355
+      "callSites": 357
     },
     {
       "kind": "interface",
@@ -36582,7 +36582,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 120
+      "callSites": 122
     },
     {
       "kind": "type",
@@ -36735,7 +36735,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 1358
+      "callSites": 1362
     },
     {
       "kind": "interface",
@@ -36803,7 +36803,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 1380
+      "callSites": 1384
     },
     {
       "kind": "interface",
@@ -37177,7 +37177,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 1367
+      "callSites": 1371
     },
     {
       "kind": "interface",

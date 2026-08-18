@@ -5,7 +5,7 @@ Generated from pinned **bun-types** — top-level + nested namespace/class/**int
 | Field | Value |
 | --- | --- |
 | Schema | `factorywager/bun-types-inventory/v3` |
-| Generated | 2026-08-18T03:21:56.227Z |
+| Generated | 2026-08-18T04:33:18.093Z |
 | Runtime | Bun 1.3.14 (`0d9b296a`) |
 | bun-types | bun-types@1.4.0-tip.23d233b2 |
 | Types root | `/Users/nolarose/Projects/.worktrees/codex-legacy-bun-template-compliance/node_modules/bun-types` |
@@ -17,7 +17,7 @@ Generated from pinned **bun-types** — top-level + nested namespace/class/**int
 | By kind | class 32 · const 107 · enum 1 · enum-member 32 · function 161 · interface 230 · method 584 · namespace 30 · property 1044 · type 185 · var 3 |
 | By module | `bun` 1898 · `bun:test` 265 · `bun:sqlite` 117 · `bun:ffi` 79 · `bun:jsc` 48 · `bun:bundle` 2 |
 | AGENTS map hits | 70 / 2409 |
-| Call sites > 0 | 208 · zero 2201 |
+| Call sites > 0 | 209 · zero 2200 |
 
 Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inventory:check` · flags: `--shallow` · `--no-interfaces` · `--no-type-aliases` · `--no-props` · `--no-enums` · `--no-nested-objects` · `--tip-diff`
 
@@ -38,7 +38,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | interface | `Bun.ArchiveExtractOptions` | `Bun.ArchiveExtractOptions` | — | — | 0 | 1 | Options for extracting archive contents. | `bun.d.ts:9276` |
 | 0 | type | `Bun.ArchiveInput` | `Bun.ArchiveInput` | — | — | 0 | 1 | Input data for creating an archive. Can be: | `bun.d.ts:9230` |
 | 0 | interface | `Bun.ArchiveOptions` | `Bun.ArchiveOptions` | — | — | 0 | 1 | Options for creating an Archive instance. | `bun.d.ts:9255` |
-| 0 | const | `Bun.argv` | `Bun.argv: string[];` | — | — | 453 | 1 | The raw arguments passed to the process, including flags passed to Bun. | `bun.d.ts:518` |
+| 0 | const | `Bun.argv` | `Bun.argv: string[];` | — | — | 454 | 1 | The raw arguments passed to the process, including flags passed to Bun. | `bun.d.ts:518` |
 | 0 | class | `Bun.ArrayBufferSink` | `new Bun.ArrayBufferSink(…)` | — | — | 8 | 1 | Fast incremental writer that becomes an {@link ArrayBuffer} on end(). | `bun.d.ts:2077` |
 | 0 | type | `Bun.ArrayBufferView` | `Bun.ArrayBufferView` | — | — | 0 | 1 | — | `bun.d.ts:18` |
 | 0 | type | `Bun.ArrayType` | `Bun.ArrayType` | — | — | 0 | 1 | — | `sql.d.ts:15` |
@@ -104,8 +104,8 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | const | `Bun.embeddedFiles` | `Bun.embeddedFiles: ReadonlyArray<Blob>;` | — | — | 2 | 1 | A list of files embedded into the standalone executable, lexicographically sorted by name. | `bun.d.ts:4312` |
 | 0 | const | `Bun.enableANSIColors` | `Bun.enableANSIColors: boolean;` | — | — | 12 | 1 | Whether ANSI colors are enabled for stdin and stdout | `bun.d.ts:4953` |
 | 0 | type | `Bun.Encoding` | `Bun.Encoding` | — | — | 0 | 1 | — | `bun.d.ts:31` |
-| 0 | const | `Bun.env` | `Bun.env: Env & NodeJS.ProcessEnv & ImportMetaEnv;` | — | yes | 855 | 1 | The environment variables of the process | `bun.d.ts:512` |
-| 0 | function | `Bun.env` | `Bun.env(newEnv?: Record<string, string \| undefined> \| NodeJS.Dict<string> \| undefined): $;` | process.env | yes | 855 | 1 | Change the default environment variables for shells created by this instance. | `shell.d.ts:60` |
+| 0 | const | `Bun.env` | `Bun.env: Env & NodeJS.ProcessEnv & ImportMetaEnv;` | — | yes | 856 | 1 | The environment variables of the process | `bun.d.ts:512` |
+| 0 | function | `Bun.env` | `Bun.env(newEnv?: Record<string, string \| undefined> \| NodeJS.Dict<string> \| undefined): $;` | process.env | yes | 856 | 1 | Change the default environment variables for shells created by this instance. | `shell.d.ts:60` |
 | 0 | interface | `Bun.Env` | `Bun.Env` | — | — | 0 | 1 | — | `bun.d.ts:497` |
 | 0 | const | `Bun.Err` | `Bun.Err` | — | — | 0 | 4 | — | `bun.d.ts:7582` |
 | 0 | interface | `Bun.ErrorEventInit` | `Bun.ErrorEventInit` | — | — | 0 | 1 | — | `bun.d.ts:96` |
@@ -126,7 +126,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | var | `Bun.fetch` | `Bun.fetch: typeof globalThis.fetch;` | — | — | 9 | 1 | — | `bun.d.ts:5052` |
 | 0 | interface | `Bun.FetchEvent` | `Bun.FetchEvent` | — | — | 0 | 1 | — | `bun.d.ts:175` |
 | 0 | type | `Bun.FFIFunctionCallable` | `Bun.FFIFunctionCallable` | — | — | 0 | 1 | — | `bun.d.ts:5720` |
-| 0 | function | `Bun.file` | `Bun.file(path: string \| URL, options?: BlobPropertyBag): BunFile;` | — | yes | 2636 | 3 | [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) powered by the fastest system calls available for operating on files. | `bun.d.ts:4305` |
+| 0 | function | `Bun.file` | `Bun.file(path: string \| URL, options?: BlobPropertyBag): BunFile;` | — | yes | 2716 | 3 | [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) powered by the fastest system calls available for operating on files. | `bun.d.ts:4305` |
 | 0 | interface | `Bun.FileBlob` | `Bun.FileBlob` | — | — | 0 | 1 | — | `bun.d.ts:2260` |
 | 0 | interface | `Bun.FileSink` | `Bun.FileSink` | — | — | 0 | 1 | Fast incremental writer for files and pipes. | `s3.d.ts:7` |
 | 0 | class | `Bun.FileSystemRouter` | `new Bun.FileSystemRouter(…)` | — | — | 6 | 1 | Resolve routes against a directory of files using Next.js-style (`pages` | `bun.d.ts:8222` |
@@ -135,7 +135,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | function | `Bun.gc` | `Bun.gc(force?: boolean): void;` | — | — | 23 | 1 | Manually trigger the garbage collector | `bun.d.ts:4971` |
 | 0 | function | `Bun.generateHeapSnapshot` | `Bun.generateHeapSnapshot(format?: "jsc"): HeapSnapshot;` | — | — | 6 | 3 | Generates a heap snapshot in JavaScriptCore's format. View it with `bun --inspect` or | `bun.d.ts:5009` |
 | 0 | interface | `Bun.GenericTransformStream` | `Bun.GenericTransformStream` | — | — | 0 | 1 | — | `bun.d.ts:324` |
-| 0 | class | `Bun.Glob` | `new Bun.Glob(…)` | — | — | 349 | 1 | Match files using [glob patterns](https://en.wikipedia.org/wiki/Glob_(programming)). | `bun.d.ts:8394` |
+| 0 | class | `Bun.Glob` | `new Bun.Glob(…)` | — | — | 353 | 1 | Match files using [glob patterns](https://en.wikipedia.org/wiki/Glob_(programming)). | `bun.d.ts:8394` |
 | 0 | interface | `Bun.GlobScanOptions` | `Bun.GlobScanOptions` | — | — | 0 | 1 | — | `bun.d.ts:8318` |
 | 0 | function | `Bun.gunzipSync` | `Bun.gunzipSync( data: Uint8Array<ArrayBuffer> \| string \| ArrayBuffer, options?: ZlibCompressionOptions \| LibdeflateCompressionOptions, ): Uint8Array<ArrayBuffer` | — | yes | 10 | 1 | Decompresses a chunk of data with the `zlib` GUNZIP algorithm. | `bun.d.ts:5494` |
 | 0 | function | `Bun.gzipSync` | `Bun.gzipSync( data: Uint8Array<ArrayBuffer> \| string \| ArrayBuffer, options?: ZlibCompressionOptions \| LibdeflateCompressionOptions, ): Uint8Array<ArrayBuffer>;` | — | yes | 21 | 1 | Compresses a chunk of data with the `zlib` GZIP algorithm. | `bun.d.ts:5476` |
@@ -231,7 +231,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | function | `Bun.resolve` | `Bun.resolve(moduleId: string, parent: string): Promise<string>;` | — | yes | 0 | 1 | Resolve a `moduleId` as though it were imported from `parent` | `bun.d.ts:1742` |
 | 0 | function | `Bun.resolveSync` | `Bun.resolveSync(moduleId: string, parent: string): string;` | — | yes | 22 | 1 | Synchronously resolve a `moduleId` as though it were imported from `parent` | `bun.d.ts:1733` |
 | 0 | interface | `Bun.ResourceUsage` | `Bun.ResourceUsage` | — | — | 0 | 1 | — | `bun.d.ts:7321` |
-| 0 | const | `Bun.revision` | `Bun.revision: string;` | — | yes | 115 | 1 | The git sha at the time the currently-running version of Bun was compiled | `bun.d.ts:8309` |
+| 0 | const | `Bun.revision` | `Bun.revision: string;` | — | yes | 117 | 1 | The git sha at the time the currently-running version of Bun was compiled | `bun.d.ts:8309` |
 | 0 | var | `Bun.s3` | `Bun.s3: S3Client;` | — | — | 13 | 1 | A default instance of S3Client | `s3.d.ts:1487` |
 | 0 | class | `Bun.S3Client` | `new Bun.S3Client(…)` | — | — | 14 | 1 | A configured S3 bucket instance for managing files. It creates {@link S3File} | `s3.d.ts:940` |
 | 0 | interface | `Bun.S3File` | `Bun.S3File` | — | — | 0 | 1 | Represents a file in an S3-compatible storage service. | `s3.d.ts:478` |
@@ -274,7 +274,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | interface | `Bun.SocketHandler` | `Bun.SocketHandler` | — | — | 0 | 1 | — | `bun.d.ts:6511` |
 | 0 | interface | `Bun.SocketListener` | `Bun.SocketListener` | — | — | 0 | 1 | — | `bun.d.ts:6484` |
 | 0 | interface | `Bun.SocketOptions` | `Bun.SocketOptions` | — | — | 0 | 1 | — | `bun.d.ts:6566` |
-| 0 | function | `Bun.spawn` | `Bun.spawn()` | — | yes | 781 | 2 | Spawn a new process | `bun.d.ts:7579` |
+| 0 | function | `Bun.spawn` | `Bun.spawn()` | — | yes | 786 | 2 | Spawn a new process | `bun.d.ts:7579` |
 | 0 | namespace | `Bun.Spawn` | `Bun.Spawn.*` | — | — | 0 | 1 | — | `bun.d.ts:6890` |
 | 0 | function | `Bun.spawnSync` | `Bun.spawnSync()` | — | — | 259 | 2 | Synchronously spawn a new process | `bun.d.ts:7651` |
 | 0 | const | `Bun.sql` | `Bun.sql: SQL;` | — | — | 6 | 1 | The default SQL client, configured from environment variables such as | `sql.d.ts:939` |
@@ -337,7 +337,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | interface | `Bun.UnixSocketListener` | `Bun.UnixSocketListener` | — | — | 0 | 1 | — | `bun.d.ts:6495` |
 | 0 | interface | `Bun.UnixSocketOptions` | `Bun.UnixSocketOptions` | — | — | 0 | 1 | — | `bun.d.ts:6665` |
 | 0 | namespace | `Bun.unsafe` | `Bun.unsafe.*` | — | — | 0 | 1 | — | `bun.d.ts:4889` |
-| 0 | const | `Bun.version` | `Bun.version: string;` | — | yes | 345 | 1 | The current version of Bun | `bun.d.ts:8296` |
+| 0 | const | `Bun.version` | `Bun.version: string;` | — | yes | 347 | 1 | The current version of Bun | `bun.d.ts:8296` |
 | 0 | const | `Bun.version_with_sha` | `Bun.version_with_sha: string;` | — | — | 0 | 1 | The current version of Bun with the shortened commit sha of the build | `bun.d.ts:8302` |
 | 0 | type | `Bun.WarningListener` | `Bun.WarningListener` | — | — | 0 | 1 | — | `bun.d.ts:39` |
 | 0 | namespace | `Bun.WebAssembly` | `Bun.WebAssembly.*` | — | — | 0 | 1 | — | `wasm.d.ts:2` |
@@ -363,7 +363,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | function | `Bun.wrapAnsi` | `Bun.wrapAnsi( /** * The string to wrap */ input: string, /** * The maximum column width */ columns: number, /** * Wrapping options */ options?: WrapAnsiOptions,` | — | yes | 28 | 1 | Wrap a string to fit within the specified column width, preserving ANSI escape codes. | `bun.d.ts:773` |
 | 0 | interface | `Bun.WrapAnsiOptions` | `Bun.WrapAnsiOptions` | — | — | 0 | 1 | — | `bun.d.ts:696` |
 | 0 | type | `Bun.WritableSubprocess` | `Bun.WritableSubprocess` | — | — | 0 | 1 | Utility type for any process from {@link Bun.spawn()} with stdin set to `"pipe"` | `bun.d.ts:8022` |
-| 0 | function | `Bun.write` | `Bun.write( destination: BunFile \| S3File \| PathLike, input: Blob \| NodeJS.TypedArray \| ArrayBufferLike \| string \| BlobPart[] \| Archive, options?: {` | — | yes | 1254 | 5 | Use the fastest syscalls available to copy from `input` into `destination`. | `bun.d.ts:1757` |
+| 0 | function | `Bun.write` | `Bun.write( destination: BunFile \| S3File \| PathLike, input: Blob \| NodeJS.TypedArray \| ArrayBufferLike \| string \| BlobPart[] \| Archive, options?: {` | — | yes | 1272 | 5 | Use the fastest syscalls available to copy from `input` into `destination`. | `bun.d.ts:1757` |
 | 0 | namespace | `Bun.XML` | `Bun.XML.*` | — | — | 0 | 1 | XML related APIs | `bun.d.ts:839` |
 | 0 | type | `Bun.XMLHttpRequestBodyInit` | `Bun.XMLHttpRequestBodyInit` | — | — | 0 | 1 | — | `bun.d.ts:23` |
 | 0 | namespace | `Bun.YAML` | `Bun.YAML.*` | — | — | 12 | 1 | YAML related APIs | `bun.d.ts:1101` |
@@ -1538,7 +1538,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 1 | interface | `Bun.XML.ParseOptions` | `Bun.XML.ParseOptions` | — | — | 0 | 1 | — | `bun.d.ts:864` |
 | 1 | function | `Bun.XML.stringify` | `Bun.XML.stringify(value: unknown, replacer?: undefined \| null, space?: string \| number): string \| undefined;` | — | — | 0 | 1 | Serialize a value to an XML document (without an XML declaration). | `bun.d.ts:971` |
 | 1 | function | `Bun.YAML.parse` | `Bun.YAML.parse(input: string): unknown;` | — | — | 3 | 1 | Parse a YAML string into a JavaScript value. Every alias (`*name`) of an anchored collection yields the | `bun.d.ts:1123` |
-| 1 | function | `Bun.YAML.stringify` | `Bun.YAML.stringify(input: unknown, replacer?: undefined \| null, space?: string \| number): string;` | — | — | 0 | 1 | Convert a JavaScript value into a YAML string. Strings are double quoted if they contain keywords, non-printable or | `bun.d.ts:1164` |
+| 1 | function | `Bun.YAML.stringify` | `Bun.YAML.stringify(input: unknown, replacer?: undefined \| null, space?: string \| number): string;` | — | — | 4 | 1 | Convert a JavaScript value into a YAML string. Strings are double quoted if they contain keywords, non-printable or | `bun.d.ts:1164` |
 | 1 | property | `Bun.ZlibCompressionOptions.level` | `Bun.ZlibCompressionOptions.level?: -1 \| 0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6 \| 7 \| 8 \| 9;` | — | — | 0 | 1 | The compression level to use. Must be between `-1` and `9`. | `bun.d.ts:5392` |
 | 1 | property | `Bun.ZlibCompressionOptions.library` | `Bun.ZlibCompressionOptions.library?: "zlib";` | — | — | 0 | 1 | — | `bun.d.ts:5452` |
 | 1 | property | `Bun.ZlibCompressionOptions.memLevel` | `Bun.ZlibCompressionOptions.memLevel?: 1 \| 2 \| 3 \| 4 \| 5 \| 6 \| 7 \| 8 \| 9;` | — | — | 0 | 1 | How much memory to allocate for the internal compression state. | `bun.d.ts:5400` |
@@ -2099,7 +2099,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | ---: | --- | --- | --- | --- | --- | ---: | ---: | --- | --- |
 | 0 | interface | `bun:sqlite.Changes` | `bun:sqlite.Changes` | — | — | 0 | 1 | An object representing the changes made to the database since the last `run` or `exec` call. | `sqlite.d.ts:1311` |
 | 0 | namespace | `bun:sqlite.constants` | `bun:sqlite.constants.*` | — | — | 0 | 1 | Constants from `sqlite3.h` | `sqlite.d.ts:958` |
-| 0 | class | `bun:sqlite.Database` | `new bun:sqlite.Database(…)` | — | — | 355 | 1 | A SQLite3 database | `sqlite.d.ts:117` |
+| 0 | class | `bun:sqlite.Database` | `new bun:sqlite.Database(…)` | — | — | 357 | 1 | A SQLite3 database | `sqlite.d.ts:117` |
 | 0 | interface | `bun:sqlite.DatabaseOptions` | `bun:sqlite.DatabaseOptions` | — | — | 0 | 1 | Options for {@link Database} | `sqlite.d.ts:30` |
 | 0 | var | `bun:sqlite.native` | `bun:sqlite.native: any;` | — | — | 0 | 1 | The native module implementing the sqlite3 C bindings | `sqlite.d.ts:1256` |
 | 0 | class | `bun:sqlite.SQLiteError` | `new bun:sqlite.SQLiteError(…)` | — | — | 0 | 1 | An error from SQLite. The `name` is `"SQLiteError"`. | `sqlite.d.ts:1272` |
@@ -2228,7 +2228,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | ---: | --- | --- | --- | --- | --- | ---: | ---: | --- | --- |
 | 0 | namespace | `bun:test.__internal` | `bun:test.__internal.*` | — | — | 0 | 1 | — | `test.d.ts:435` |
 | 0 | function | `bun:test.afterAll` | `bun:test.afterAll( fn: (() => void \| Promise<unknown>) \| ((done: (err?: unknown) => void) => void), options?: HookOptions, ): void;` | — | — | 62 | 1 | Runs a function, once, after all the tests. | `test.d.ts:365` |
-| 0 | function | `bun:test.afterEach` | `bun:test.afterEach( fn: (() => void \| Promise<unknown>) \| ((done: (err?: unknown) => void) => void), options?: HookOptions, ): void;` | — | — | 120 | 1 | Runs a function after each test. | `test.d.ts:377` |
+| 0 | function | `bun:test.afterEach` | `bun:test.afterEach( fn: (() => void \| Promise<unknown>) \| ((done: (err?: unknown) => void) => void), options?: HookOptions, ): void;` | — | — | 122 | 1 | Runs a function after each test. | `test.d.ts:377` |
 | 0 | type | `bun:test.AsymmetricMatcher` | `bun:test.AsymmetricMatcher` | — | — | 0 | 1 | — | `test.d.ts:1904` |
 | 0 | interface | `bun:test.AsymmetricMatchers` | `bun:test.AsymmetricMatchers` | — | — | 0 | 1 | Extend this interface with declaration merging to add type support for custom asymmetric matchers. | `test.d.ts:776` |
 | 0 | interface | `bun:test.AsymmetricMatchersBuiltin` | `bun:test.AsymmetricMatchersBuiltin` | — | — | 0 | 1 | — | `test.d.ts:778` |
@@ -2237,11 +2237,11 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | function | `bun:test.beforeEach` | `bun:test.beforeEach( fn: (() => void \| Promise<unknown>) \| ((done: (err?: unknown) => void) => void), options?: HookOptions, ): void;` | — | — | 116 | 1 | Runs a function before each test. | `test.d.ts:343` |
 | 0 | type | `bun:test.CustomMatcher` | `bun:test.CustomMatcher` | — | — | 0 | 1 | — | `test.d.ts:1911` |
 | 0 | type | `bun:test.CustomMatchersDetected` | `bun:test.CustomMatchersDetected` | — | — | 0 | 1 | All non-builtin matchers and asymmetric matchers that have been type-registered through declaration merging | `test.d.ts:1918` |
-| 0 | const | `bun:test.describe` | `bun:test.describe: Describe<[]>;` | — | — | 1358 | 1 | Describes a group of related tests. | `test.d.ts:299` |
+| 0 | const | `bun:test.describe` | `bun:test.describe: Describe<[]>;` | — | — | 1362 | 1 | Describes a group of related tests. | `test.d.ts:299` |
 | 0 | interface | `bun:test.Describe` | `bun:test.Describe` | — | — | 0 | 1 | Describes a group of related tests. | `test.d.ts:227` |
 | 0 | type | `bun:test.DescribeLabel` | `bun:test.DescribeLabel` | — | — | 0 | 1 | — | `test.d.ts:205` |
 | 0 | type | `bun:test.EqualsFunction` | `bun:test.EqualsFunction` | — | — | 0 | 1 | — | `test.d.ts:1934` |
-| 0 | const | `bun:test.expect` | `bun:test.expect: Expect;` | — | — | 1380 | 1 | Asserts that a value matches some criteria. | `test.d.ts:621` |
+| 0 | const | `bun:test.expect` | `bun:test.expect: Expect;` | — | — | 1384 | 1 | Asserts that a value matches some criteria. | `test.d.ts:621` |
 | 0 | interface | `bun:test.Expect` | `bun:test.Expect` | — | — | 0 | 1 | — | `test.d.ts:625` |
 | 0 | type | `bun:test.ExpectExtendMatchers` | `bun:test.ExpectExtendMatchers` | — | — | 0 | 1 | If a matcher's type has been defined through declaration merging, enforces it. | `test.d.ts:1925` |
 | 0 | type | `bun:test.ExpectNot` | `bun:test.ExpectNot` | — | — | 0 | 1 | — | `test.d.ts:623` |
@@ -2263,7 +2263,7 @@ Regenerate: `bun run bun:types-inventory:write` · check: `bun run bun:types-inv
 | 0 | function | `bun:test.setDefaultTimeout` | `bun:test.setDefaultTimeout(milliseconds: number): void;` | — | — | 0 | 1 | Sets the default timeout for all tests in the current file. A timeout set on an | `test.d.ts:408` |
 | 0 | function | `bun:test.setSystemTime` | `bun:test.setSystemTime(now?: Date \| number): ThisType<void>;` | — | — | 4 | 1 | Control the system time used by: | `test.d.ts:88` |
 | 0 | function | `bun:test.spyOn` | `bun:test.spyOn( obj: T, methodOrPropertyValue: K, ): Mock<Extract<T[K], (...args: any[]) => any>>;` | — | — | 8 | 1 | Create a spy on an object property or method | `test.d.ts:160` |
-| 0 | const | `bun:test.test` | `bun:test.test: Test<[]>;` | — | — | 1367 | 1 | Runs a test. | `test.d.ts:595` |
+| 0 | const | `bun:test.test` | `bun:test.test: Test<[]>;` | — | — | 1371 | 1 | Runs a test. | `test.d.ts:595` |
 | 0 | interface | `bun:test.Test` | `bun:test.Test` | — | — | 0 | 1 | Runs a test. | `test.d.ts:475` |
 | 0 | type | `bun:test.Tester` | `bun:test.Tester` | — | — | 0 | 1 | Custom equality tester | `test.d.ts:1932` |
 | 0 | interface | `bun:test.TesterContext` | `bun:test.TesterContext` | — | — | 0 | 1 | — | `test.d.ts:1941` |

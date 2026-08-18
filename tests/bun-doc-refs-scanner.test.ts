@@ -14,12 +14,14 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
   CANONICAL_REFS,
+  classifyReferenceBacklog,
   collectCodeApiUsageDetails,
   collectCodeApiUsages,
   buildApiReleaseProvenance,
   findSyntaxErrors,
   findMissing,
   sourceFiles,
+  type MissingRef,
 } from '../tools/bun-doc-refs.ts';
 
 const temporaryDirectories: string[] = [];
@@ -433,6 +435,209 @@ void RuntimeGlob; void sqlite;
       command: 'check',
       ok: false,
       error: { message: `scan target does not exist or is unreadable: ${missing}` },
+    });
+  });
+
+  test('classifies only exact official Bun canonical references as safe', () => {
+    const provenance: MissingRef['provenance'] = {
+      status: 'release-unknown',
+      docsReference: CANONICAL_REFS['Bun.file'],
+      release: null,
+      updates: [],
+      catalogVerification: { version: null, date: null, reference: CANONICAL_REFS['Bun.file'] },
+    };
+    const findings: MissingRef[] = [
+      {
+        file: '/repo/projects/active/development/geelark/src/cli.ts',
+        api: '--parallel',
+        url: CANONICAL_REFS['--parallel'],
+        line: 1,
+        column: 1,
+        occurrences: 1,
+        provenance,
+      },
+      {
+        file: '/repo/projects/active/development/geelark/src/file.ts',
+        api: 'Bun.file',
+        url: CANONICAL_REFS['Bun.file'],
+        line: 1,
+        column: 1,
+        occurrences: 2,
+        provenance,
+      },
+      {
+        file: '/repo/projects/active/development/geelark/src/url-pattern.ts',
+        api: 'URLPattern MDN',
+        url: CANONICAL_REFS['URLPattern MDN'],
+        line: 1,
+        column: 1,
+        occurrences: 1,
+        provenance,
+      },
+    ];
+
+    expect(classifyReferenceBacklog(findings)).toMatchObject([
+      {
+        api: '--parallel',
+        project: 'development/geelark',
+        disposition: 'manual',
+        reason: 'ambiguous-cli-flag-requires-context',
+      },
+      {
+        api: 'Bun.file',
+        project: 'development/geelark',
+        disposition: 'safe-exact-official',
+        reason: 'exact-official-canonical-reference',
+      },
+      {
+        api: 'URLPattern MDN',
+        project: 'development/geelark',
+        disposition: 'manual',
+        reason: 'canonical-reference-is-not-official-bun',
+      },
+    ]);
+  });
+
+  test('backlog JSON is a deterministic dry-run with grouped bounded selection', async () => {
+    const directory = await temporaryDirectory();
+    const fileUse = join(directory, 'file.ts');
+    const flagUse = join(directory, 'flag.ts');
+    const writeUse = join(directory, 'write.ts');
+    await Bun.write(fileUse, 'await Bun.file("package.json").text();\n');
+    await Bun.write(flagUse, 'const option = "--parallel";\n');
+    await Bun.write(writeUse, 'await Bun.write("out.txt", "ok");\n');
+    const before = await Promise.all([
+      Bun.file(fileUse).text(),
+      Bun.file(flagUse).text(),
+      Bun.file(writeUse).text(),
+    ]);
+    const proc = Bun.spawn(
+      [process.execPath, 'tools/bun-doc-refs.ts', 'backlog', '--json', '--limit=1', directory],
+      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
+    );
+    const [stdout, stderr, exitCode] = await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+      proc.exited,
+    ]);
+
+    expect(exitCode).toBe(0);
+    expect(stderr).toBe('');
+    expect(JSON.parse(stdout)).toMatchObject({
+      schemaVersion: 1,
+      command: 'backlog',
+      ok: true,
+      dryRun: true,
+      summary: { total: 3, safe: 2, manual: 1, selected: 1, filesChanged: 0, remaining: 3 },
+      groups: {
+        byProject: [{ key: 'unscoped', total: 3, safe: 2, manual: 1 }],
+        byApi: [
+          { key: '--parallel', total: 1, safe: 0, manual: 1 },
+          { key: 'Bun.file', total: 1, safe: 1, manual: 0 },
+          { key: 'Bun.write', total: 1, safe: 1, manual: 0 },
+        ],
+      },
+      selected: [{ api: 'Bun.file', file: fileUse }],
+      manual: [{ api: '--parallel', file: flagUse }],
+    });
+    expect(
+      await Promise.all([
+        Bun.file(fileUse).text(),
+        Bun.file(flagUse).text(),
+        Bun.file(writeUse).text(),
+      ])
+    ).toEqual(before);
+  });
+
+  test('backlog write requires an explicit bounded target and writes only that batch', async () => {
+    const directory = await temporaryDirectory();
+    const fileUse = join(directory, 'file.ts');
+    const flagUse = join(directory, 'flag.ts');
+    const writeUse = join(directory, 'write.ts');
+    await Bun.write(fileUse, 'await Bun.file("package.json").text();\n');
+    await Bun.write(flagUse, 'const option = "--parallel";\n');
+    await Bun.write(writeUse, 'await Bun.write("out.txt", "ok");\n');
+
+    const rejected = Bun.spawn(
+      [process.execPath, 'tools/bun-doc-refs.ts', 'backlog', '--json', '--write', directory],
+      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
+    );
+    const rejectedOutput = JSON.parse(await new Response(rejected.stdout).text());
+    expect(await rejected.exited).toBe(1);
+    expect(rejectedOutput).toMatchObject({
+      schemaVersion: 1,
+      command: 'backlog',
+      ok: false,
+      error: { message: 'backlog --write requires --limit=N with N greater than zero' },
+    });
+
+    const oversized = Bun.spawn(
+      [
+        process.execPath,
+        'tools/bun-doc-refs.ts',
+        'backlog',
+        '--json',
+        '--write',
+        '--limit=101',
+        directory,
+      ],
+      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
+    );
+    const oversizedOutput = JSON.parse(await new Response(oversized.stdout).text());
+    expect(await oversized.exited).toBe(1);
+    expect(oversizedOutput.error.message).toBe(
+      'backlog --write limits batches to 100 references'
+    );
+
+    const applied = Bun.spawn(
+      [
+        process.execPath,
+        'tools/bun-doc-refs.ts',
+        'backlog',
+        '--json',
+        '--write',
+        '--limit=1',
+        directory,
+      ],
+      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
+    );
+    const appliedOutput = JSON.parse(await new Response(applied.stdout).text());
+    expect(await applied.exited).toBe(0);
+    expect(appliedOutput).toMatchObject({
+      dryRun: false,
+      summary: { total: 3, safe: 2, manual: 1, selected: 1, filesChanged: 1, remaining: 2 },
+      manual: [
+        {
+          api: '--parallel',
+          file: flagUse,
+          reason: 'ambiguous-cli-flag-requires-context',
+        },
+      ],
+    });
+    const written = await Bun.file(fileUse).text();
+    expect(written).toStartWith(`// @see ${CANONICAL_REFS['Bun.file']} — Bun.file\n`);
+    expect(written).not.toContain('// @released');
+    expect(written).not.toContain('// @updated');
+    expect(written).not.toContain('// @verified');
+    expect(await Bun.file(flagUse).text()).toBe('const option = "--parallel";\n');
+    expect(await Bun.file(writeUse).text()).toBe('await Bun.write("out.txt", "ok");\n');
+  });
+
+  test('backlog max is a non-mutating ratchet gate', async () => {
+    const directory = await temporaryDirectory();
+    await Bun.write(join(directory, 'file.ts'), 'Bun.file("package.json");\n');
+    const proc = Bun.spawn(
+      [process.execPath, 'tools/bun-doc-refs.ts', 'backlog', '--json', '--max=0', directory],
+      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
+    );
+    const output = JSON.parse(await new Response(proc.stdout).text());
+
+    expect(await proc.exited).toBe(1);
+    expect(output).toMatchObject({
+      ok: false,
+      dryRun: true,
+      summary: { total: 1, remaining: 1 },
+      ratchet: { max: 0, actual: 1, ok: false },
     });
   });
 
