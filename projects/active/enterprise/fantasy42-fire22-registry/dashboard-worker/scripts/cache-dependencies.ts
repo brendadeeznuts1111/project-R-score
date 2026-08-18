@@ -39,7 +39,6 @@ class DependencyCacheManager {
 
     // Prefetch heavy packages
     const heavyPackages = [
-      'sharp',
       'esbuild',
       '@swc/core',
       '@docusaurus/core',
@@ -91,8 +90,6 @@ class DependencyCacheManager {
     // Create .npmrc with mirror configurations for CI/CD
     const npmrcContent = `
 # CDN Mirrors for heavy packages
-sharp_binary_host=https://cdn.jsdelivr.net/npm/sharp
-sharp_libvips_binary_host=https://cdn.jsdelivr.net/npm/@img/sharp-libvips
 fse_binary_host_mirror=https://cdn.jsdelivr.net/npm/fsevents
 swc_binary_host=https://cdn.jsdelivr.net/npm/@swc/core
 esbuild_binary_host=https://cdn.jsdelivr.net/npm/esbuild

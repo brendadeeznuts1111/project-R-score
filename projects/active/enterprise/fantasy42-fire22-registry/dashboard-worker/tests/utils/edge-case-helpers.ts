@@ -5,8 +5,7 @@
  * Comprehensive helpers for testing edge cases and failure scenarios
  */
 
-import { spawn } from 'bun';
-import { existsSync, writeFileSync, mkdirSync, rmSync } from 'fs';
+import { existsSync, writeFileSync, mkdirSync, rmSync, chmodSync } from 'fs';
 import { join } from 'path';
 
 export interface EdgeCaseResult {
@@ -376,7 +375,7 @@ export const EdgeCaseHelpers = {
             writeFileSync(filePath, '{"test": "data"}');
             if (process.platform !== 'win32') {
               try {
-                require('fs').chmodSync(filePath, 0o000);
+                chmodSync(filePath, 0o000);
               } catch (e) {
                 // Fallback for systems where chmod fails
               }
@@ -458,28 +457,18 @@ export const EdgeCaseHelpers = {
    * ⚡ Test Bun version compatibility
    */
   testBunVersionCompatibility: async () => {
-    try {
-      const proc = spawn(['/opt/homebrew/bin/bun', '--version'], { stdout: 'pipe' });
-      const versionText = (await proc.text()).trim();
-      const version = versionText || Bun.version || 'unknown';
+    const version = Bun.version || process.versions.bun || 'unknown';
 
-      return {
-        version,
-        compatible: version !== 'unknown',
-        features: {
-          test: typeof Bun?.test !== 'undefined',
-          spawn: typeof Bun?.spawn !== 'undefined',
-          file: typeof Bun?.file !== 'undefined',
-          inspect: typeof Bun?.inspect !== 'undefined',
-        },
-      };
-    } catch (error) {
-      return {
-        version: 'unknown',
-        compatible: false,
-        error: error.message,
-      };
-    }
+    return {
+      version,
+      compatible: version !== 'unknown',
+      features: {
+        test: typeof process.versions.bun === 'string',
+        spawn: typeof Bun.spawn === 'function',
+        file: typeof Bun.file === 'function',
+        inspect: typeof Bun.inspect === 'function',
+      },
+    };
   },
 
   /**

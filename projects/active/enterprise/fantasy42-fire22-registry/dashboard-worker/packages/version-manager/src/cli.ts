@@ -193,7 +193,7 @@ EXAMPLES:
   bunx -p @fire22/version-manager fire22-version-cli compare 1.0.0 2.0.0
   bunx -p @fire22/version-manager fire22-version-cli validate 1.0.0-alpha.1
 
-🚀 Powered by native Bun.semver - Zero dependencies, maximum performance!
+🚀 Strict parsing with Bun-native comparison and range checks.
   `);
 }
 

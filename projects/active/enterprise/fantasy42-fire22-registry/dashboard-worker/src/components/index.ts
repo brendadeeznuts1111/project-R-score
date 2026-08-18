@@ -3,8 +3,19 @@
  * Comprehensive KPI component system for the Fire22 Dashboard Worker
  */
 
+import {
+  KPIComponent,
+  type KPIConfig,
+  createKPICard,
+  createPendingAmountKPI,
+  createTotalAgentsKPI,
+  createActiveAgentsKPI,
+  createPendingWagersKPI,
+  KPIStyles,
+} from './kpi-component.ts';
+
 // Core KPI Component
-export { KPIComponent, type KPIConfig } from './kpi-component.ts';
+export { KPIComponent, type KPIConfig };
 
 // Pre-built KPI Components
 export {
@@ -13,10 +24,10 @@ export {
   createTotalAgentsKPI,
   createActiveAgentsKPI,
   createPendingWagersKPI,
-} from './kpi-component.ts';
+};
 
 // Styles
-export { KPIStyles } from './kpi-component.ts';
+export { KPIStyles };
 
 // Integration Tools
 export {
@@ -35,7 +46,6 @@ export const quickStartExamples = {
    * 🎯 Create a simple KPI
    */
   simpleKPI: () => {
-    const { createKPICard } = require('./kpi-component.ts');
     return createKPICard({
       label: 'Quick Start',
       value: 100,
@@ -48,13 +58,6 @@ export const quickStartExamples = {
    * 📊 Create a dashboard with multiple KPIs
    */
   dashboardKPIs: () => {
-    const {
-      createPendingAmountKPI,
-      createTotalAgentsKPI,
-      createActiveAgentsKPI,
-      createPendingWagersKPI,
-    } = require('./kpi-component.ts');
-
     const container = document.createElement('div');
     container.style.cssText = `
             display: grid;
@@ -75,8 +78,6 @@ export const quickStartExamples = {
    * 🔄 Create an interactive KPI
    */
   interactiveKPI: () => {
-    const { KPIComponent } = require('./kpi-component.ts');
-
     return new KPIComponent({
       label: 'Click Me!',
       value: 'Interactive',

@@ -8,11 +8,17 @@ export { LogLevel } from './types';
 export type { LogContext } from './types';
 export { LKeyAuditLogger } from './l-key-audit-logger';
 export { AggregatedLogger } from './aggregated-logger';
-export { AdvancedAnalyticsLogger } from './advanced-analytics-logger';
-export { PerformanceOptimizer } from './performance-optimizer';
-export { CacheMonitor } from './cache-monitor';
-export { RealTimeAlertingSystem } from './real-time-alerting';
-export { CloudflareAnalyticsIntegration } from './cloudflare-analytics-integration';
+import { AdvancedAnalyticsLogger } from './advanced-analytics-logger';
+import { PerformanceOptimizer } from './performance-optimizer';
+import { CacheMonitor } from './cache-monitor';
+import { RealTimeAlertingSystem } from './real-time-alerting';
+import { CloudflareAnalyticsIntegration } from './cloudflare-analytics-integration';
+
+export { AdvancedAnalyticsLogger };
+export { PerformanceOptimizer };
+export { CacheMonitor };
+export { RealTimeAlertingSystem };
+export { CloudflareAnalyticsIntegration };
 
 export type {
   LogEntry,
@@ -51,11 +57,6 @@ export function createFire22Logger(config?: Partial<LoggerConfig>) {
 
 // Enhanced analytics factory
 export function createEnhancedAnalyticsSystem(config?: any) {
-  const { AdvancedAnalyticsLogger } = require('./advanced-analytics-logger');
-  const { PerformanceOptimizer } = require('./performance-optimizer');
-  const { CacheMonitor } = require('./cache-monitor');
-  const { RealTimeAlertingSystem } = require('./real-time-alerting');
-
   const analyticsLogger = new AdvancedAnalyticsLogger(config);
   const performanceOptimizer = new PerformanceOptimizer(analyticsLogger);
   const cacheMonitor = new CacheMonitor(analyticsLogger);
@@ -78,7 +79,6 @@ export function createCloudflareAnalyticsSystem(cloudflareConfig: any, baseConfi
   const { analyticsLogger, performanceOptimizer, cacheMonitor, alertingSystem } =
     createEnhancedAnalyticsSystem(baseConfig);
 
-  const { CloudflareAnalyticsIntegration } = require('./cloudflare-analytics-integration');
   const cloudflareAnalytics = new CloudflareAnalyticsIntegration(
     cacheMonitor,
     analyticsLogger,

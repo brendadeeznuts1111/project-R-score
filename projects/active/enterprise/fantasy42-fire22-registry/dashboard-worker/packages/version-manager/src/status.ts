@@ -43,7 +43,7 @@ async function main() {
 
     // Performance metrics
     console.info('\n⚡ Performance Metrics:');
-    console.info(`🏃‍♂️ Parse Time: ${parseTime.toFixed(3)}ms (native Bun.semver)`);
+    console.info(`🏃‍♂️ Parse Time: ${parseTime.toFixed(3)}ms (strict local parser)`);
     console.info(`🎯 Target: <1ms (${parseTime < 1 ? '✅ PASSED' : '❌ FAILED'})`);
 
     // Version history

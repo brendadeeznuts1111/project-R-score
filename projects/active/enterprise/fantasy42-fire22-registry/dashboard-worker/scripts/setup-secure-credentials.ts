@@ -6,6 +6,7 @@
  */
 
 import { secrets } from 'bun';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { prompt } from './utils/prompt';
 
 const SERVICE_NAME = 'fire22-dashboard';
@@ -249,12 +250,12 @@ async function createPromptUtil() {
   const utilsDir = './utils';
   const promptFile = `${utilsDir}/prompt.ts`;
 
-  if (!require('fs').existsSync(utilsDir)) {
-    require('fs').mkdirSync(utilsDir, { recursive: true });
+  if (!existsSync(utilsDir)) {
+    mkdirSync(utilsDir, { recursive: true });
   }
 
-  if (!require('fs').existsSync(promptFile)) {
-    require('fs').writeFileSync(
+  if (!existsSync(promptFile)) {
+    writeFileSync(
       promptFile,
       `
 export async function prompt(message: string, sensitive = false): Promise<string> {

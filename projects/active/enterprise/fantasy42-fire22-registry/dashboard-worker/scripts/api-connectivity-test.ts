@@ -7,6 +7,7 @@
  */
 
 import { $ } from 'bun';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 
 interface EndpointTest {
   name: string;
@@ -217,12 +218,11 @@ class APIConnectivityTester {
     };
 
     // Ensure reports directory exists
-    const fs = require('fs');
-    if (!fs.existsSync('reports')) {
-      fs.mkdirSync('reports');
+    if (!existsSync('reports')) {
+      mkdirSync('reports');
     }
 
-    fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
+    writeFileSync(reportPath, JSON.stringify(report, null, 2));
     console.info(`\n📄 Report saved: ${reportPath}`);
 
     // Display recommendations

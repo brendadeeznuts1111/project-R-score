@@ -22,7 +22,7 @@ describe('VersionUtils with Bun.semver', () => {
       '1.0.0-alpha.1',
       '1.0.0-alpha0.valid',
       '1.0.0-alpha.0valid',
-      '1.0.0-alpha-a.b-c-somethinglong+metadata+meta',
+      '1.0.0-alpha-a.b-c-somethinglong+metadata.meta',
       '1.0.0-rc.1+meta',
     ];
 
@@ -154,17 +154,29 @@ describe('BunVersionManager', () => {
   });
 
   afterEach(() => {
-    // Clean up any test databases
-    try {
-      const { unlinkSync } = require('fs');
-      unlinkSync('version-history.db');
-    } catch {
-      // Database might not exist
-    }
+    manager.close();
   });
 
   test('should initialize with current version', () => {
     expect(manager.getCurrentVersion()).toBe('1.0.0');
+  });
+
+  test('should enforce configured version bounds', async () => {
+    expect(
+      () =>
+        new BunVersionManager({
+          current: '0.9.0',
+          minimum: '1.0.0',
+        })
+    ).toThrow('below minimum');
+
+    using bounded = new BunVersionManager({
+      current: '1.5.0',
+      minimum: '1.0.0',
+      maximum: '2.0.0',
+    });
+
+    await expect(bounded.setVersion('2.1.0')).rejects.toThrow('exceeds maximum');
   });
 
   test('should increment version correctly', () => {
@@ -260,6 +272,10 @@ describe('WorkspaceVersionManager', () => {
 
   beforeEach(() => {
     workspace = new WorkspaceVersionManager('2.0.0');
+  });
+
+  afterEach(() => {
+    workspace.close();
   });
 
   test('should initialize with root version', () => {

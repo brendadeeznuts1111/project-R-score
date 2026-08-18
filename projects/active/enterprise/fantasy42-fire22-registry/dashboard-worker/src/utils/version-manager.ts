@@ -1,18 +1,19 @@
 /**
- * Version Manager using Bun.semver
+ * Version manager with strict parsing and Bun.semver comparison/range checks.
  *
  * Native Bun semver implementation for version management,
  * comparison, and automated version bumping
  */
 
 import { Database } from 'bun:sqlite';
+import { formatSemver, makeSemver, parseSemver, type ParsedSemver } from './semver';
 
-interface VersionConfig {
+export interface VersionConfig {
   current: string;
   minimum: string;
   maximum?: string;
-  prerelease?: string;
-  metadata?: Record<string, any>;
+  databasePath?: string;
+  packageJsonPath?: string;
 }
 
 interface VersionHistory {
@@ -23,8 +24,20 @@ interface VersionHistory {
   breaking: boolean;
 }
 
-interface ReleaseConfig {
+interface VersionHistoryRow {
+  id: number;
   version: string;
+  timestamp: number;
+  author: string;
+  changes: string;
+  breaking: number;
+}
+
+interface VersionRow {
+  version: string;
+}
+
+export interface ReleaseConfig {
   type: 'major' | 'minor' | 'patch' | 'prerelease';
   tag?: string;
   branch?: string;
@@ -34,8 +47,8 @@ interface ReleaseConfig {
 
 export class BunVersionManager {
   private currentVersion: string;
-  private versionDB: Database;
-  private config: VersionConfig;
+  private readonly versionDB: Database;
+  private readonly config: VersionConfig;
 
   constructor(config?: Partial<VersionConfig>) {
     this.config = {
@@ -45,10 +58,10 @@ export class BunVersionManager {
     };
 
     // Parse and validate current version
-    this.currentVersion = this.parseVersion(this.config.current);
+    this.currentVersion = this.validateVersionBounds(this.config.current);
 
     // Initialize version history database
-    this.versionDB = new Database('version-history.db');
+    this.versionDB = new Database(this.config.databasePath ?? ':memory:');
     this.initializeDatabase();
   }
 
@@ -85,14 +98,32 @@ export class BunVersionManager {
   }
 
   /**
-   * Parse version string using Bun.semver
+   * Parse and normalize a strict semantic version.
    */
   parseVersion(version: string): string {
-    const parsed = Bun.semver(version);
+    const parsed = parseSemver(version);
     if (!parsed) {
       throw new Error(`Invalid semver version: ${version}`);
     }
-    return parsed.format();
+    return formatSemver(parsed);
+  }
+
+  private validateVersionBounds(version: string): string {
+    const normalizedVersion = this.parseVersion(version);
+    const minimumVersion = this.parseVersion(this.config.minimum);
+
+    if (Bun.semver.order(normalizedVersion, minimumVersion) < 0) {
+      throw new RangeError(`Version ${normalizedVersion} is below minimum ${minimumVersion}`);
+    }
+
+    if (this.config.maximum) {
+      const maximumVersion = this.parseVersion(this.config.maximum);
+      if (Bun.semver.order(normalizedVersion, maximumVersion) > 0) {
+        throw new RangeError(`Version ${normalizedVersion} exceeds maximum ${maximumVersion}`);
+      }
+    }
+
+    return normalizedVersion;
   }
 
   /**
@@ -106,45 +137,45 @@ export class BunVersionManager {
    * Compare two versions using Bun.semver
    */
   compare(version1: string, version2: string): number {
-    const v1 = Bun.semver(version1);
-    const v2 = Bun.semver(version2);
+    const v1 = parseSemver(version1);
+    const v2 = parseSemver(version2);
 
     if (!v1 || !v2) {
       throw new Error('Invalid version format');
     }
 
-    return Bun.semver.order(v1, v2);
+    return Bun.semver.order(version1, version2);
   }
 
   /**
    * Check if version satisfies a range using Bun.semver
    */
   satisfies(version: string, range: string): boolean {
-    const v = Bun.semver(version);
+    const v = parseSemver(version);
     if (!v) {
       throw new Error(`Invalid version: ${version}`);
     }
 
-    return Bun.semver.satisfies(v, range);
+    return Bun.semver.satisfies(version, range);
   }
 
   /**
-   * Increment version using Bun.semver
+   * Increment a parsed semantic version.
    */
   increment(
     type: 'major' | 'minor' | 'patch' | 'prerelease' = 'patch',
     prereleaseId?: string
   ): string {
-    const current = Bun.semver(this.currentVersion);
+    const current = parseSemver(this.currentVersion);
     if (!current) {
       throw new Error('Invalid current version');
     }
 
-    let newVersion: any;
+    let newVersion: ParsedSemver;
 
     switch (type) {
       case 'major':
-        newVersion = Bun.semver({
+        newVersion = makeSemver({
           major: current.major + 1,
           minor: 0,
           patch: 0,
@@ -153,7 +184,7 @@ export class BunVersionManager {
         break;
 
       case 'minor':
-        newVersion = Bun.semver({
+        newVersion = makeSemver({
           major: current.major,
           minor: current.minor + 1,
           patch: 0,
@@ -162,7 +193,7 @@ export class BunVersionManager {
         break;
 
       case 'patch':
-        newVersion = Bun.semver({
+        newVersion = makeSemver({
           major: current.major,
           minor: current.minor,
           patch: current.patch + 1,
@@ -171,18 +202,18 @@ export class BunVersionManager {
         break;
 
       case 'prerelease':
-        if (current.prerelease && current.prerelease.length > 0) {
+        if (current.prerelease.length > 0) {
           const prereleaseVersion =
             typeof current.prerelease[1] === 'number' ? current.prerelease[1] + 1 : 1;
 
-          newVersion = Bun.semver({
+          newVersion = makeSemver({
             major: current.major,
             minor: current.minor,
             patch: current.patch,
             prerelease: [prereleaseId || current.prerelease[0], prereleaseVersion],
           });
         } else {
-          newVersion = Bun.semver({
+          newVersion = makeSemver({
             major: current.major,
             minor: current.minor,
             patch: current.patch,
@@ -192,7 +223,7 @@ export class BunVersionManager {
         break;
     }
 
-    return newVersion.format();
+    return formatSemver(newVersion);
   }
 
   /**
@@ -214,20 +245,37 @@ export class BunVersionManager {
       return newVersion;
     }
 
-    // Record in history
-    this.recordVersion(newVersion, {
+    return this.setVersion(newVersion, {
       author: options.author || 'unknown',
       changes: options.changes || [`Bump ${type} version`],
       breaking: options.breaking || type === 'major',
     });
+  }
 
-    // Update current version
-    this.currentVersion = newVersion;
+  async setVersion(
+    version: string,
+    metadata: {
+      author?: string;
+      changes?: string[];
+      breaking?: boolean;
+      dryRun?: boolean;
+    } = {}
+  ): Promise<string> {
+    const normalizedVersion = this.validateVersionBounds(version);
+    if (metadata.dryRun) return normalizedVersion;
 
-    // Update package.json if exists
-    await this.updatePackageJson(newVersion);
+    this.recordVersion(normalizedVersion, {
+      author: metadata.author ?? 'unknown',
+      changes: metadata.changes ?? [`Set version to ${normalizedVersion}`],
+      breaking: metadata.breaking ?? false,
+    });
+    this.currentVersion = normalizedVersion;
 
-    return newVersion;
+    if (this.config.packageJsonPath) {
+      await this.updatePackageJson(this.config.packageJsonPath, normalizedVersion);
+    }
+
+    return normalizedVersion;
   }
 
   /**
@@ -243,7 +291,7 @@ export class BunVersionManager {
       gitCommit?: string;
     }
   ) {
-    const v = Bun.semver(version);
+    const v = parseSemver(version);
     if (!v) return;
 
     const insert = this.versionDB.query(`
@@ -259,7 +307,7 @@ export class BunVersionManager {
       v.minor,
       v.patch,
       v.prerelease ? JSON.stringify(v.prerelease) : null,
-      v.build ? JSON.stringify(v.build) : null,
+      v.build.length > 0 ? JSON.stringify(v.build) : null,
       Date.now(),
       metadata.author,
       JSON.stringify(metadata.changes),
@@ -273,9 +321,9 @@ export class BunVersionManager {
    * Get version history
    */
   getHistory(limit: number = 10): VersionHistory[] {
-    const query = this.versionDB.query(`
+    const query = this.versionDB.query<VersionHistoryRow, [number]>(`
       SELECT * FROM version_history 
-      ORDER BY timestamp DESC 
+      ORDER BY timestamp DESC, id DESC
       LIMIT ?
     `);
 
@@ -294,8 +342,8 @@ export class BunVersionManager {
    * Get versions in range using Bun.semver
    */
   getVersionsInRange(range: string): string[] {
-    const query = this.versionDB.query(
-      'SELECT version FROM version_history ORDER BY timestamp DESC'
+    const query = this.versionDB.query<VersionRow, []>(
+      'SELECT version FROM version_history ORDER BY timestamp DESC, id DESC'
     );
     const allVersions = query.all().map(row => row.version);
 
@@ -337,19 +385,11 @@ export class BunVersionManager {
   /**
    * Update package.json with new version
    */
-  private async updatePackageJson(newVersion: string): Promise<void> {
-    const packageJsonPath = './package.json';
-
-    try {
-      const file = Bun.file(packageJsonPath);
-      const packageJson = await file.json();
-
-      packageJson.version = newVersion;
-
-      await Bun.write(packageJsonPath, JSON.stringify(packageJson, null, 2));
-    } catch (error) {
-      console.warn('Could not update package.json:', error);
-    }
+  private async updatePackageJson(packageJsonPath: string, newVersion: string): Promise<void> {
+    const file = Bun.file(packageJsonPath);
+    const packageJson: Record<string, unknown> = await file.json();
+    packageJson.version = newVersion;
+    await Bun.write(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
   }
 
   /**
@@ -416,7 +456,7 @@ export class BunVersionManager {
         version: this.currentVersion,
         tag: '',
         success: false,
-        message: `Release failed: ${error.message}`,
+        message: `Release failed: ${error instanceof Error ? error.message : String(error)}`,
       };
     }
   }
@@ -466,7 +506,9 @@ export class BunVersionManager {
     averageReleaseInterval: number;
     lastRelease: Date | null;
   } {
-    const query = this.versionDB.query('SELECT * FROM version_history ORDER BY timestamp DESC');
+    const query = this.versionDB.query<VersionHistoryRow, []>(
+      'SELECT * FROM version_history ORDER BY timestamp ASC, id ASC'
+    );
     const history = query.all();
 
     const metrics = {
@@ -483,15 +525,15 @@ export class BunVersionManager {
     }
 
     // Count release types
-    let prevVersion = null;
-    let intervals: number[] = [];
-    let lastTimestamp = null;
+    let prevVersion: string | null = null;
+    const intervals: number[] = [];
+    let lastTimestamp: number | null = null;
 
     for (const row of history) {
-      const v = Bun.semver(row.version);
+      const v = parseSemver(row.version)!;
 
       if (prevVersion) {
-        const prev = Bun.semver(prevVersion);
+        const prev = parseSemver(prevVersion)!;
 
         if (v.major > prev.major) {
           metrics.majorReleases++;
@@ -501,8 +543,8 @@ export class BunVersionManager {
           metrics.patchReleases++;
         }
 
-        if (lastTimestamp) {
-          intervals.push(lastTimestamp - row.timestamp);
+        if (lastTimestamp !== null) {
+          intervals.push(row.timestamp - lastTimestamp);
         }
       }
 
@@ -518,10 +560,18 @@ export class BunVersionManager {
 
     // Get last release date
     if (history.length > 0) {
-      metrics.lastRelease = new Date(history[0].timestamp);
+      metrics.lastRelease = new Date(history.at(-1)!.timestamp);
     }
 
     return metrics;
+  }
+
+  close(): void {
+    this.versionDB.close();
+  }
+
+  [Symbol.dispose](): void {
+    this.close();
   }
 }
 
@@ -540,6 +590,7 @@ export class WorkspaceVersionManager {
    * Add workspace package
    */
   addWorkspace(name: string, version: string): void {
+    this.managers.get(name)?.close();
     this.managers.set(name, new BunVersionManager({ current: version }));
   }
 
@@ -549,8 +600,13 @@ export class WorkspaceVersionManager {
   async syncVersions(targetVersion?: string): Promise<void> {
     const version = targetVersion || this.rootManager.getCurrentVersion();
 
-    for (const [name, manager] of this.managers) {
-      await manager.bumpVersion('patch', {
+    await this.rootManager.setVersion(version, {
+      author: 'sync',
+      changes: [`Sync root version to ${version}`],
+    });
+
+    for (const manager of this.managers.values()) {
+      await manager.setVersion(version, {
         author: 'sync',
         changes: [`Sync version to ${version}`],
       });
@@ -606,12 +662,13 @@ export class WorkspaceVersionManager {
       inconsistencies,
     };
   }
+
+  close(): void {
+    this.rootManager.close();
+    for (const manager of this.managers.values()) manager.close();
+  }
+
+  [Symbol.dispose](): void {
+    this.close();
+  }
 }
-
-// Export singleton instances
-export const versionManager = new BunVersionManager({
-  current: '2.0.0',
-  minimum: '1.0.0',
-});
-
-export const workspaceVersionManager = new WorkspaceVersionManager('2.0.0');

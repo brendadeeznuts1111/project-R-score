@@ -4,7 +4,7 @@
  * Centralized error occurrence tracking and statistics
  */
 
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
 interface ErrorOccurrence {
@@ -75,7 +75,7 @@ class ErrorTracker {
     try {
       const dataDir = join(process.cwd(), 'data');
       if (!existsSync(dataDir)) {
-        require('fs').mkdirSync(dataDir, { recursive: true });
+        mkdirSync(dataDir, { recursive: true });
       }
 
       const data = {

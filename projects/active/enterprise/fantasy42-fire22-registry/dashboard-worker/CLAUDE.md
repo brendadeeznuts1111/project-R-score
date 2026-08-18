@@ -403,7 +403,6 @@ bun run production:setup       # Clean + production install + build
   "trustedDependencies": [
     "@docusaurus/core", // Documentation generation
     "@docusaurus/preset-classic",
-    "sharp", // Image optimization
     "esbuild", // Fast bundling
     "@swc/core" // TypeScript compilation
   ]
