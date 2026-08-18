@@ -136,13 +136,14 @@ function eslintStep(fullLint: boolean): Step {
 function testStep(mainHead: boolean): Step {
   return {
     name: 'test-changed',
-    // bun-test-changed defaults to --parallel (implies --isolate)
+    // Main-head can select hundreds of files that contend on shared repository
+    // resources. Keep dirty-tree development parallel and merge proof serial.
     cmd: mainHead
-      ? ['bun', 'run', 'test:changed', '--', '--main-head']
+      ? ['bun', 'run', 'test:changed', '--', '--main-head', '--serial']
       : ['bun', 'run', 'test:changed'],
-    owner: 'scripts/bun-test-changed.ts · --changed --parallel · --main-head',
+    owner: 'scripts/bun-test-changed.ts · --changed · --parallel/--serial · --main-head',
     repair: mainHead
-      ? 'bun run test:changed:main'
+      ? 'bun run test:changed:main -- --serial'
       : 'bun run test:changed  # or --serial / BUN_TEST_SERIAL=1',
   };
 }
