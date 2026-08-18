@@ -1589,6 +1589,7 @@
     "screenshot": "bun tools/screenshot-cli.ts",
     "bun:channel:check": "bun tools/bun-channel-doctor.ts --check",
     "bun:api-drift:check": "bun tools/bun-api-drift.ts --max=0 projects/active",
+    "bun:api-remediation:plan": "bun tools/bun-api-remediation-plan.ts",
     "bun:channel:report": "bun tools/bun-channel-doctor.ts --save",
     "bun:channel:cron:preview": "bun tools/bun-channel-doctor-cron.ts preview",
     "bun:channel:cron:register": "bun tools/bun-channel-doctor-cron.ts register",
