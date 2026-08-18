@@ -5,6 +5,7 @@
 
 // import { createFire22TelegramBot, Fire22TelegramBot } from '../telegram-bot'; // Disabled for Cloudflare Workers compatibility
 import { Env } from '../env';
+import { createUnifiedAPIHandler } from '../api/unified-endpoints';
 
 export interface SystemConfig {
   enableTelegram: boolean;
@@ -161,7 +162,6 @@ export class Fire22SystemController {
     if (!this.telegramBot) return;
 
     // Set API handler for the bot
-    const { createUnifiedAPIHandler } = require('../api/unified-endpoints');
     const apiHandler = createUnifiedAPIHandler(this.env);
     this.telegramBot.setAPIHandler(apiHandler, this.env);
 

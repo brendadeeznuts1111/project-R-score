@@ -6,6 +6,7 @@
 
 import { describe, expect, test, beforeEach, afterEach } from 'bun:test';
 import { VersionUtils, BunVersionManager, WorkspaceVersionManager } from './index';
+import { unlinkSync } from 'node:fs';
 
 describe('VersionUtils with Bun.semver', () => {
   test('should parse valid semver versions', () => {
@@ -156,7 +157,6 @@ describe('BunVersionManager', () => {
   afterEach(() => {
     // Clean up any test databases
     try {
-      const { unlinkSync } = require('fs');
       unlinkSync('version-history.db');
     } catch {
       // Database might not exist
