@@ -1,0 +1,4 @@
+interface:
+  display_name: "Trace behavior research"
+  short_description: "Mine traces into safe skill proposals"
+  default_prompt: "Use $trace-behavior-research to mine repeated session behaviors into validated skill proposals."
