@@ -1581,6 +1581,7 @@
     "bun:pr:verify": "bun tools/bun-pr-verify.ts",
     "bun:pr:fetch": "bunx bun-pr",
     "bun:release-contracts": "bun tools/bun-release-contracts.ts",
+    "bun:release-contracts:check": "bun --filter @factorywager/bun-release-contracts check:offline",
     "bun:release-knowledge": "bun tools/bun-release-knowledge.ts",
     "bun:release-knowledge:check": "bun tools/bun-release-knowledge.ts validate-all packages/bun-release-contracts/knowledge",
     "bun:release-knowledge:validate": "bun tools/bun-release-knowledge.ts validate",

@@ -7,6 +7,10 @@ import bunTestProfiles from '../.agents/skills/ast-grep/bun-test-profiles.json' 
   type: 'json',
 };
 import packageJson from '../package.json' with { type: 'json' };
+import {
+  CI_CORE_ALLOWED_LONG,
+  CI_HARNESS_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags';
 import { getReleaseSteps, RELEASE_COMMIT_PATHS } from '../scripts/release.ts';
 
 function ruleTypes(ruleset: { rules: Array<{ type: string }> }): Set<string> {
@@ -22,6 +26,13 @@ describe('repository governance', () => {
         `${name} must not combine --parallel with redundant --isolate`
       ).toBe(false);
     }
+  });
+
+  test('ci:core and ci:harness share one forwarded option contract', () => {
+    expect(CI_CORE_ALLOWED_LONG).toBe(CI_HARNESS_ALLOWED_LONG);
+    expect(CI_CORE_ALLOWED_LONG).toContain('fast');
+    expect(CI_CORE_ALLOWED_LONG).toContain('full-lint');
+    expect(CI_CORE_ALLOWED_LONG).toContain('fail-json');
   });
 
   test('main is PR-only, linear, locally gated, and non-destructive', async () => {
@@ -53,6 +64,12 @@ describe('repository governance', () => {
     expect(localCi).toContain("Bun.env.R2_BUCKET_NAME");
     expect(localCi).toContain('factory-wager-wiki');
     expect(localCi).toContain('Bun.spawn([bunExecutable');
+    const ciCore = await Bun.file(`${import.meta.dir}/../scripts/ci-core.ts`).text();
+    expect(ciCore).toContain("name: 'bun-release-contracts'");
+    expect(ciCore).toContain("['bun', 'run', 'bun:release-contracts:check']");
+    expect(ciCore.indexOf("name: 'bun-release-contracts'")).toBeLessThan(
+      ciCore.indexOf("name: 'bun-release-knowledge'")
+    );
     expect(packageJson.scripts['test:partner-cli:snapshots']).toBe(
       'bun test tests/partner-cli-snapshots.test.ts'
     );

@@ -164,7 +164,8 @@ do not treat hosted green as proof those bans still hold.
 ### Local operate loop
 
 - `bun:ci` = complete merge proof; run before every merge.
-- `ci:core` = install verify · hygiene · `ci:harness`.
+- `ci:core` = install verify · hygiene · native-doc proof · offline Bun release
+  inventory/knowledge proof · `ci:harness`.
 - `snapshot-api` = partner CLI stdout/stderr contract captured with
   `toMatchSnapshot()` from argv-safe `Bun.spawn` subprocesses.
 - `ci:types` = config/import verification plus CI and full type scopes.

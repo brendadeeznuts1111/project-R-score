@@ -6,6 +6,7 @@ import {
   blogUrlForVersion,
   normalizeVersion,
   parseReleaseInventory,
+  renderReleaseInventory,
   validateReleaseInventoryCoverage,
   validateReleaseInventoryItemKeys,
   type ReleaseInventory,
@@ -33,6 +34,10 @@ export type PreparedReleaseInventoryIndex = {
   content: string;
   existingContent: string | null;
   releaseCount: number;
+};
+
+export type ReleaseInventoryDirectoryValidation = ReleaseInventoryCounts & {
+  releases: number;
 };
 
 function validateInventoryIdentity(
@@ -147,6 +152,48 @@ export function renderReleaseInventoryIndex(inventories: ReleaseInventory[]): st
     releases,
   };
   return `${JSON.stringify(index, null, 2)}\n`;
+}
+
+/**
+ * Validate committed release contracts without fetching upstream release pages.
+ *
+ * This is the CI boundary: every covered test path must resolve inside the
+ * repository, every inventory must be canonical byte-for-byte, and index.json
+ * must be the exact aggregate derived from those inventories.
+ */
+export async function validateReleaseInventoryDirectory(options: {
+  outputDir: string;
+  repoRoot?: string;
+}): Promise<ReleaseInventoryDirectoryValidation> {
+  const outputDir = resolve(options.outputDir);
+  const inventories = await readReleaseInventories(outputDir);
+  if (inventories.length === 0) {
+    throw new Error(`No Bun release inventories found in ${outputDir}`);
+  }
+
+  for (const inventory of inventories) {
+    await validateReleaseInventoryCoverage(inventory, options.repoRoot);
+    const inventoryPath = join(outputDir, `bun-v${inventory.releaseVersion}.json`);
+    const expected = renderReleaseInventory(inventory.releaseVersion, inventory.items, inventory);
+    if ((await Bun.file(inventoryPath).text()) !== expected) {
+      throw new Error(`Release inventory is not canonical: ${inventoryPath}`);
+    }
+  }
+
+  const indexPath = join(outputDir, 'index.json');
+  const expectedIndex = renderReleaseInventoryIndex(inventories);
+  if (
+    !(await Bun.file(indexPath).exists()) ||
+    (await Bun.file(indexPath).text()) !== expectedIndex
+  ) {
+    throw new Error(`Release inventory index is missing or stale: ${indexPath}`);
+  }
+
+  return {
+    releases: inventories.length,
+    planned: inventories.reduce((sum, inventory) => sum + inventory.counts.planned, 0),
+    executable: inventories.reduce((sum, inventory) => sum + inventory.counts.executable, 0),
+  };
 }
 
 export async function prepareReleaseInventoryIndex(options: {

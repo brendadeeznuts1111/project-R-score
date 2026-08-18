@@ -16,6 +16,7 @@ bun --filter @factorywager/bun-release-contracts generate v1.3.14
 bun --filter @factorywager/bun-release-contracts generate:latest
 bun --filter @factorywager/bun-release-contracts generate:all --since v1.3.0 --limit 10
 bun --filter @factorywager/bun-release-contracts check v1.3.14
+bun --filter @factorywager/bun-release-contracts check:offline
 bun --filter @factorywager/bun-release-contracts test
 ```
 
@@ -58,6 +59,10 @@ insertion does not renumber every contract.
 The executable release gate remains the root `test:bun:release-contracts`
 script. Inventory counts and executable test counts must always be reported
 separately.
+
+`bun run bun:release-contracts:check` is the deterministic CI gate. It does not
+fetch release pages. It validates covered test paths, canonical inventory bytes,
+and the aggregate `contracts/index.json` before the release-knowledge gate runs.
 
 ## Release example knowledge
 

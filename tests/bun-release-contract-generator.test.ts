@@ -19,6 +19,7 @@ import {
 import {
   readReleaseInventories,
   renderReleaseInventoryIndex,
+  validateReleaseInventoryDirectory,
 } from '../packages/bun-release-contracts/src/catalog';
 import {
   generateReleaseInventoryBatch,
@@ -326,20 +327,10 @@ describe('Bun release inventory generator', () => {
   test('validates committed inventories and index offline byte-for-byte', async () => {
     const repoRoot = join(import.meta.dir, '..');
     const outputDir = join(repoRoot, 'packages', 'bun-release-contracts', 'contracts');
-    const inventories = await readReleaseInventories(outputDir);
-    expect(inventories.length).toBeGreaterThan(0);
+    const result = await validateReleaseInventoryDirectory({ outputDir, repoRoot });
 
-    for (const inventory of inventories) {
-      await expect(validateReleaseInventoryCoverage(inventory, repoRoot)).resolves.toBeUndefined();
-      const inventoryPath = join(outputDir, `bun-v${inventory.releaseVersion}.json`);
-      expect(await Bun.file(inventoryPath).text()).toBe(
-        renderReleaseInventory(inventory.releaseVersion, inventory.items, inventory)
-      );
-    }
-
-    expect(await Bun.file(join(outputDir, 'index.json')).text()).toBe(
-      renderReleaseInventoryIndex(inventories)
-    );
+    expect(result.releases).toBeGreaterThan(0);
+    expect(result.executable + result.planned).toBeGreaterThan(0);
   });
 
   test('rejects a scanned inventory whose filename does not match its internal version', async () => {
