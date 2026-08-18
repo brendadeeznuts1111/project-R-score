@@ -20,6 +20,21 @@ For the generated library's test-output mapping, see
 | `factory-library` template         | Library files, source-first package contract, private-by-default release arming, machine-readable harness requirements, local hook messages, developer proof commands | React/Tailwind/shadcn app generation or remote-template behavior    |
 | Factory R2 registry                | Explicit artifact publish/install                                                                                                                                     | `bun create` template discovery                                     |
 
+## `bun init` versus the Factory template
+
+| Command                                              | Intended result                                                                                                           | Configuration owner                   | Factory policy                                                      |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------- |
+| `bun init <folder>`                                  | Blank Bun project with an entry point, package manifest, editor TypeScript configuration, README, and installed Bun types | Bun                                   | Use directly. Do not route through the Factory CLI.                 |
+| `bun init --minimal <folder>`                        | Type definitions and minimal package metadata without an application scaffold                                             | Bun                                   | Use directly for an existing source tree that only needs Bun types. |
+| `bun run factory:create -- factory-library <folder>` | Source-first library with tests, release requirements, publishing guardrails, and a tracked file contract                 | Repository template + Factory wrapper | Use only when those opinions are required.                          |
+
+The repository-pinned Bun 1.3.14 probe matches the upstream distinction: the
+blank route creates the starter source and documentation, while `--minimal` does
+not. Exact generated files remain Bun-owned and may vary by detected tools. The
+Factory template therefore inherits Bun's modern TypeScript baseline but does
+not snapshot or reimplement `bun init`. `factory:templates` prints this boundary
+so operators choose the smaller native route when no harness is needed.
+
 ## Route matrix
 
 | Route                        | Bun input form                                                               | Upstream result                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Factory wrapper action                                                                                                                                                                                 | Configuration / credentials                                                                                        | Destination safety                                                           | Alignment                        |
@@ -167,6 +182,10 @@ replacement behavior.
 | Publishable file allowlist             | `package.json.files`                 | `bun pm pack --dry-run`                                     |
 | Benchmark/profile artifacts stay local | `.gitignore`, `bench`, `profile:cpu` | Generated project check                                     |
 | Local template, flag, and marker guard | Factory CLI + tests                  | `bun test tests/factory-template.test.ts tests/cli.test.ts` |
+
+`bun run check` is read-only. File-accountability drift fails at `check:files`;
+only the explicit `bun run generate:files` maintenance command rewrites
+`files.md`.
 
 ## Verified baseline
 

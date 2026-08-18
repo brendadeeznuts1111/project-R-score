@@ -479,7 +479,7 @@ describe('factory-library template contract', () => {
     );
     expect(packageJson.scripts.dev).toContain('--watch');
     expect(packageJson.scripts.dev).toContain('--no-clear-screen');
-    expect(packageJson.scripts['test:watch']).toContain('bun --watch');
+    expect(packageJson.scripts['test:watch']).toBe('bun test --watch --no-clear-screen');
     expect(packageJson.scripts['test:junit']).toContain('run-test-junit');
     expect(packageJson.scripts['test:ci']).toContain('junit:enrich');
     expect(packageJson.scripts['junit:enrich']).toContain('junit-enrich');
@@ -487,10 +487,12 @@ describe('factory-library template contract', () => {
     expect(packageJson.scripts['format:check']).toBe('bun run prettier --check .');
     expect(packageJson.scripts.lint).toBe('bun run eslint . --max-warnings=0');
     expect(packageJson.scripts['lint:fix']).toBe('bun run eslint . --fix --max-warnings=0');
-    expect(packageJson.scripts.typecheck).toBe('tsc --noEmit');
+    expect(packageJson.scripts.typecheck).toBe('bun run tsc --noEmit');
     expect(packageJson.scripts.check).toContain('bun run format:check');
     expect(packageJson.scripts.check).toContain('bun run lint');
     expect(packageJson.scripts.check).toContain('bun run typecheck');
+    expect(packageJson.scripts.check).toContain('bun run check:files');
+    expect(packageJson.scripts.check).not.toContain('bun run generate:files');
     expect(packageJson.scripts['generate:files']).toContain('generate-files-md');
     expect(packageJson.scripts['check:files']).toContain('validate-files-md');
     expect(packageJson.scripts['build:metafile']).toContain('--metafile-md');

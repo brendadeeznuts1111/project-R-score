@@ -94,7 +94,7 @@ bun run requirements:publish # adds only the automated-publish token requirement
 bun run lockfile:check # native frozen dry run; proves package.json ↔ bun.lock coherence
 bun run generate:files # refreshes the tracked project file index
 bun run check:files    # validates files.md and package.json.files against the source tree
-bun run check           # file index + typecheck + test + build
+bun run check           # read-only file-index proof + typecheck + test + build
 bun run prepack         # same checks run automatically before Bun packs/publishes this directory
 bun run release:dry-run # release requirements + secret-free Bun package inspection
 bun run publish:ci      # fail-fast requirements, then authenticated npm publish
@@ -283,6 +283,8 @@ publishing, lifecycle, release requirements, and file accountability;
 environment inputs and flags are separate groups. Its JUnit property map names every native and enriched
 property, input, and absence rule. `bun run check:files` validates the generated
 package form (where Bun has already removed `bun-create`) as well as `files.md`.
+`bun run check` never regenerates that index. If the tree drifts, the check fails
+until you explicitly run `bun run generate:files` and review the diff.
 When you intentionally add a property, environment input, or flag, add it to the
 corresponding contract group and document its owner and safety rule before
 relying on it.

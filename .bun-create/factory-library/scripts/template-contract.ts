@@ -490,7 +490,7 @@ export function validateFactoryLibraryManifest(
     dev: value => typeof value === 'string' && value.includes('bun --watch'),
     test: value => value === 'bun test',
     'test:dots': value => value === 'bun test --reporter=dots',
-    'test:watch': value => typeof value === 'string' && value.includes('bun --watch'),
+    'test:watch': value => value === 'bun test --watch --no-clear-screen',
     'test:coverage': value => value === 'bun test --coverage',
     'test:coverage:lcov': value =>
       value === 'bun test --coverage --coverage-reporter=text --coverage-reporter=lcov',
@@ -503,7 +503,7 @@ export function validateFactoryLibraryManifest(
     'format:check': value => value === 'bun run prettier --check .',
     lint: value => value === 'bun run eslint . --max-warnings=0',
     'lint:fix': value => value === 'bun run eslint . --fix --max-warnings=0',
-    typecheck: value => value === 'tsc --noEmit',
+    typecheck: value => value === 'bun run tsc --noEmit',
     build: value => typeof value === 'string' && value.startsWith('bun build '),
     'build:metafile': value => typeof value === 'string' && value.includes('--metafile-md'),
     'generate:files': value => typeof value === 'string' && value.includes('generate-files-md'),

@@ -143,6 +143,9 @@ describe('CLI — create subcommand', () => {
     expect(stdout).toContain('npm');
     expect(stdout).toContain('github');
     expect(stdout).toContain('Factory R2 registry');
+    expect(stdout).toContain('bun init <folder>');
+    expect(stdout).toContain('bun init --minimal <folder>');
+    expect(stdout).toContain('Factory does not wrap');
   });
 
   test('create --publish requires an explicit destination', async () => {

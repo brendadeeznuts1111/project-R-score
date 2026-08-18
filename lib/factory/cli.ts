@@ -213,6 +213,10 @@ Build-time use needs no custom wrapper:
   import { color } from "bun" with { type: "macro" };`,
   templates: `factory templates
 
+Empty-project routes owned directly by Bun:
+  bun init <folder>             Blank project with entry point and editor config
+  bun init --minimal <folder>   Type definitions only; no app scaffold
+
 Scaffold sources delegated to bun create:
   local   Repository .bun-create/<name>; explicit destination required; currently: factory-library
   npm     npm create-<template> packages, e.g. factory create remix my-app
@@ -224,7 +228,8 @@ The Factory R2 registry is a separate artifact lane:
 
 Use --publish with factory create only when an explicit destination was supplied;
 it registers metadata, not a distributable archive. Use --replace-local only
-after reviewing an existing repository-local destination.`,
+after reviewing an existing repository-local destination. Factory does not wrap
+bun init because an empty project has no Factory template contract.`,
 };
 
 // ── Utility helpers ───────────────────────────────────────────────────────
