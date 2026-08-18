@@ -32,6 +32,84 @@ interface ReleaseConfig {
   autoPush: boolean;
 }
 
+interface ParsedSemver {
+  major: number;
+  minor: number;
+  patch: number;
+  prerelease: (string | number)[];
+  build?: string;
+}
+
+const SEMVER_REGEX =
+  /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+([0-9A-Za-z.+-]+))?$/;
+
+function parseSemver(version: string): ParsedSemver | null {
+  const match = version.match(SEMVER_REGEX);
+  if (!match) return null;
+
+  const [, majorStr, minorStr, patchStr, pre, build] = match;
+  const prerelease: (string | number)[] = [];
+
+  if (pre) {
+    const parts = pre.split('.');
+    for (const part of parts) {
+      if (part === '') return null;
+      if (/^\d+$/.test(part)) {
+        if (part.length > 1 && part[0] === '0') return null;
+        prerelease.push(parseInt(part, 10));
+      } else {
+        prerelease.push(part);
+      }
+    }
+  }
+
+  if (build) {
+    const buildParts = build.split('.');
+    for (const part of buildParts) {
+      if (part === '') return null;
+    }
+  }
+
+  return {
+    major: parseInt(majorStr, 10),
+    minor: parseInt(minorStr, 10),
+    patch: parseInt(patchStr, 10),
+    prerelease,
+    build,
+  };
+}
+
+function formatSemver(parsed: ParsedSemver): string {
+  let version = `${parsed.major}.${parsed.minor}.${parsed.patch}`;
+  if (parsed.prerelease.length > 0) {
+    version += `-${parsed.prerelease.join('.')}`;
+  }
+  if (parsed.build) {
+    version += `+${parsed.build}`;
+  }
+  return version;
+}
+
+function makeSemver(fields: {
+  major: number;
+  minor: number;
+  patch: number;
+  prerelease?: (string | number)[];
+  build?: string;
+}): ParsedSemver {
+  return {
+    major: fields.major,
+    minor: fields.minor,
+    patch: fields.patch,
+    prerelease: fields.prerelease ?? [],
+    build: fields.build,
+  };
+}
+
+function validSemver(version: string): boolean {
+  return parseSemver(version) !== null;
+}
+
 export class BunVersionManager {
   private currentVersion: string;
   private versionDB: Database;
@@ -88,11 +166,11 @@ export class BunVersionManager {
    * Parse version string using Bun.semver
    */
   parseVersion(version: string): string {
-    const parsed = Bun.semver(version);
+    const parsed = parseSemver(version);
     if (!parsed) {
       throw new Error(`Invalid semver version: ${version}`);
     }
-    return parsed.format();
+    return formatSemver(parsed);
   }
 
   /**
@@ -106,26 +184,26 @@ export class BunVersionManager {
    * Compare two versions using Bun.semver
    */
   compare(version1: string, version2: string): number {
-    const v1 = Bun.semver(version1);
-    const v2 = Bun.semver(version2);
+    const v1 = parseSemver(version1);
+    const v2 = parseSemver(version2);
 
     if (!v1 || !v2) {
       throw new Error('Invalid version format');
     }
 
-    return Bun.semver.order(v1, v2);
+    return Bun.semver.order(version1, version2);
   }
 
   /**
    * Check if version satisfies a range using Bun.semver
    */
   satisfies(version: string, range: string): boolean {
-    const v = Bun.semver(version);
+    const v = parseSemver(version);
     if (!v) {
       throw new Error(`Invalid version: ${version}`);
     }
 
-    return Bun.semver.satisfies(v, range);
+    return Bun.semver.satisfies(version, range);
   }
 
   /**
@@ -135,16 +213,16 @@ export class BunVersionManager {
     type: 'major' | 'minor' | 'patch' | 'prerelease' = 'patch',
     prereleaseId?: string
   ): string {
-    const current = Bun.semver(this.currentVersion);
+    const current = parseSemver(this.currentVersion);
     if (!current) {
       throw new Error('Invalid current version');
     }
 
-    let newVersion: any;
+    let newVersion: ParsedSemver;
 
     switch (type) {
       case 'major':
-        newVersion = Bun.semver({
+        newVersion = makeSemver({
           major: current.major + 1,
           minor: 0,
           patch: 0,
@@ -153,7 +231,7 @@ export class BunVersionManager {
         break;
 
       case 'minor':
-        newVersion = Bun.semver({
+        newVersion = makeSemver({
           major: current.major,
           minor: current.minor + 1,
           patch: 0,
@@ -162,7 +240,7 @@ export class BunVersionManager {
         break;
 
       case 'patch':
-        newVersion = Bun.semver({
+        newVersion = makeSemver({
           major: current.major,
           minor: current.minor,
           patch: current.patch + 1,
@@ -171,18 +249,18 @@ export class BunVersionManager {
         break;
 
       case 'prerelease':
-        if (current.prerelease && current.prerelease.length > 0) {
+        if (current.prerelease.length > 0) {
           const prereleaseVersion =
             typeof current.prerelease[1] === 'number' ? current.prerelease[1] + 1 : 1;
 
-          newVersion = Bun.semver({
+          newVersion = makeSemver({
             major: current.major,
             minor: current.minor,
             patch: current.patch,
             prerelease: [prereleaseId || current.prerelease[0], prereleaseVersion],
           });
         } else {
-          newVersion = Bun.semver({
+          newVersion = makeSemver({
             major: current.major,
             minor: current.minor,
             patch: current.patch,
@@ -192,7 +270,7 @@ export class BunVersionManager {
         break;
     }
 
-    return newVersion.format();
+    return formatSemver(newVersion);
   }
 
   /**
@@ -243,7 +321,7 @@ export class BunVersionManager {
       gitCommit?: string;
     }
   ) {
-    const v = Bun.semver(version);
+    const v = parseSemver(version);
     if (!v) return;
 
     const insert = this.versionDB.query(`
@@ -488,10 +566,10 @@ export class BunVersionManager {
     let lastTimestamp = null;
 
     for (const row of history) {
-      const v = Bun.semver(row.version);
+      const v = parseSemver(row.version)!;
 
       if (prevVersion) {
-        const prev = Bun.semver(prevVersion);
+        const prev = parseSemver(prevVersion)!;
 
         if (v.major > prev.major) {
           metrics.majorReleases++;

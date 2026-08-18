@@ -45,13 +45,91 @@ export interface VersionMetrics {
   lastRelease: Date | null;
 }
 
+interface ParsedSemver {
+  major: number;
+  minor: number;
+  patch: number;
+  prerelease: (string | number)[];
+  build?: string;
+}
+
+const SEMVER_REGEX =
+  /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+([0-9A-Za-z.+-]+))?$/;
+
+function parseSemver(version: string): ParsedSemver | null {
+  const match = version.match(SEMVER_REGEX);
+  if (!match) return null;
+
+  const [, majorStr, minorStr, patchStr, pre, build] = match;
+  const prerelease: (string | number)[] = [];
+
+  if (pre) {
+    const parts = pre.split('.');
+    for (const part of parts) {
+      if (part === '') return null;
+      if (/^\d+$/.test(part)) {
+        if (part.length > 1 && part[0] === '0') return null;
+        prerelease.push(parseInt(part, 10));
+      } else {
+        prerelease.push(part);
+      }
+    }
+  }
+
+  if (build) {
+    const buildParts = build.split('.');
+    for (const part of buildParts) {
+      if (part === '') return null;
+    }
+  }
+
+  return {
+    major: parseInt(majorStr, 10),
+    minor: parseInt(minorStr, 10),
+    patch: parseInt(patchStr, 10),
+    prerelease,
+    build,
+  };
+}
+
+function formatSemver(parsed: ParsedSemver): string {
+  let version = `${parsed.major}.${parsed.minor}.${parsed.patch}`;
+  if (parsed.prerelease.length > 0) {
+    version += `-${parsed.prerelease.join('.')}`;
+  }
+  if (parsed.build) {
+    version += `+${parsed.build}`;
+  }
+  return version;
+}
+
+function makeSemver(fields: {
+  major: number;
+  minor: number;
+  patch: number;
+  prerelease?: (string | number)[];
+  build?: string;
+}): ParsedSemver {
+  return {
+    major: fields.major,
+    minor: fields.minor,
+    patch: fields.patch,
+    prerelease: fields.prerelease ?? [],
+    build: fields.build,
+  };
+}
+
+function validSemver(version: string): boolean {
+  return parseSemver(version) !== null;
+}
+
 // Export utilities
 export const VersionUtils = {
   /**
    * Parse version using Bun.semver
    */
   parse(version: string) {
-    const parsed = Bun.semver(version);
+    const parsed = parseSemver(version);
     if (!parsed) {
       throw new Error(`Invalid semver version: ${version}`);
     }
@@ -61,7 +139,7 @@ export const VersionUtils = {
       patch: parsed.patch,
       prerelease: parsed.prerelease,
       build: parsed.build,
-      format: () => parsed.format(),
+      format: () => formatSemver(parsed),
     };
   },
 
@@ -69,33 +147,33 @@ export const VersionUtils = {
    * Compare two versions using Bun.semver
    */
   compare(v1: string, v2: string): number {
-    const version1 = Bun.semver(v1);
-    const version2 = Bun.semver(v2);
+    const version1 = parseSemver(v1);
+    const version2 = parseSemver(v2);
 
     if (!version1 || !version2) {
       throw new Error('Invalid version format for comparison');
     }
 
-    return Bun.semver.order(version1, version2);
+    return Bun.semver.order(v1, v2);
   },
 
   /**
    * Check if version satisfies range using Bun.semver
    */
   satisfies(version: string, range: string): boolean {
-    const v = Bun.semver(version);
+    const v = parseSemver(version);
     if (!v) {
       throw new Error(`Invalid version: ${version}`);
     }
 
-    return Bun.semver.satisfies(v, range);
+    return Bun.semver.satisfies(version, range);
   },
 
   /**
    * Validate version format
    */
   isValid(version: string): boolean {
-    return Bun.semver(version) !== null;
+    return validSemver(version);
   },
 
   /**
@@ -111,51 +189,63 @@ export const VersionUtils = {
       rc: string;
     };
   } {
-    const current = Bun.semver(currentVersion);
+    const current = parseSemver(currentVersion);
     if (!current) {
       throw new Error(`Invalid current version: ${currentVersion}`);
     }
 
     return {
-      patch: Bun.semver({
-        major: current.major,
-        minor: current.minor,
-        patch: current.patch + 1,
-      }).format(),
+      patch: formatSemver(
+        makeSemver({
+          major: current.major,
+          minor: current.minor,
+          patch: current.patch + 1,
+        })
+      ),
 
-      minor: Bun.semver({
-        major: current.major,
-        minor: current.minor + 1,
-        patch: 0,
-      }).format(),
+      minor: formatSemver(
+        makeSemver({
+          major: current.major,
+          minor: current.minor + 1,
+          patch: 0,
+        })
+      ),
 
-      major: Bun.semver({
-        major: current.major + 1,
-        minor: 0,
-        patch: 0,
-      }).format(),
+      major: formatSemver(
+        makeSemver({
+          major: current.major + 1,
+          minor: 0,
+          patch: 0,
+        })
+      ),
 
       prerelease: {
-        alpha: Bun.semver({
-          major: current.major,
-          minor: current.minor,
-          patch: current.patch,
-          prerelease: ['alpha', 0],
-        }).format(),
+        alpha: formatSemver(
+          makeSemver({
+            major: current.major,
+            minor: current.minor,
+            patch: current.patch,
+            prerelease: ['alpha', 0],
+          })
+        ),
 
-        beta: Bun.semver({
-          major: current.major,
-          minor: current.minor,
-          patch: current.patch,
-          prerelease: ['beta', 0],
-        }).format(),
+        beta: formatSemver(
+          makeSemver({
+            major: current.major,
+            minor: current.minor,
+            patch: current.patch,
+            prerelease: ['beta', 0],
+          })
+        ),
 
-        rc: Bun.semver({
-          major: current.major,
-          minor: current.minor,
-          patch: current.patch,
-          prerelease: ['rc', 0],
-        }).format(),
+        rc: formatSemver(
+          makeSemver({
+            major: current.major,
+            minor: current.minor,
+            patch: current.patch,
+            prerelease: ['rc', 0],
+          })
+        ),
       },
     };
   },
@@ -165,11 +255,11 @@ export const VersionUtils = {
    */
   sort(versions: string[], descending: boolean = false): string[] {
     const parsed = versions
-      .map(v => ({ version: v, parsed: Bun.semver(v) }))
+      .map(v => ({ version: v, parsed: parseSemver(v) }))
       .filter(v => v.parsed !== null);
 
     parsed.sort((a, b) => {
-      const order = Bun.semver.order(a.parsed!, b.parsed!);
+      const order = Bun.semver.order(a.version, b.version);
       return descending ? -order : order;
     });
 
