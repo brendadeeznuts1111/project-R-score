@@ -17,13 +17,17 @@ modifying skills or exporting trace contents.
    user authorizes local session research.
 2. Run
    `bun .agents/skills/trace-behavior-research/scripts/mine-traces.ts --root <trace-root> --out <report-dir>`.
-3. Review `behavior-research.json` and `behavior-research.md`. Reports contain
-   counts, hashes, and labels; they do not copy raw messages.
+   Add `--since <date>` for a bounded window. The per-file cache skips unchanged
+   traces on later runs.
+3. Review the JSON, Markdown, HTML, or summary artifact selected with `--format`
+   or `--out <format>`. Reports contain redacted samples and evidence hashes;
+   they never contain unredacted messages.
 4. Promote a behavior only when it appears in at least three independent
    sessions, has a clear trigger and ordered action, and has a repository-owned
    proof command.
-5. Draft or update one focused skill. Never auto-write `SKILL.md` from trace
-   content.
+5. Use `--draft-skills` only when review-only stubs are useful. Drafts use the
+   `.draft.md` suffix, default below the report directory, and never overwrite
+   or activate a `SKILL.md` package.
 6. Run `bun run skills:validate` and the owning skill's proof before committing.
 
 ## Guardrails
@@ -36,11 +40,14 @@ modifying skills or exporting trace contents.
   only for a distinct repeated workflow.
 - Keep proposals reversible: report first, human review second, skill edit
   third.
+- Do not add auto-approval. Promotion always uses skill-creator and repository
+  validation.
 
 ## Output contract
 
-The miner emits JSON with `schemaVersion`, trace counts, redacted behavior
-clusters, and promotion criteria. It exits nonzero only for invalid input or an
-unwritable output directory.
+The miner emits versioned reports with trace counts, incremental cache metrics,
+redacted evidence, confidence, promotion criteria, and trend deltas. It stores
+history below the selected output directory unless `--history-dir` overrides
+that location.
 
 See [research-schema.md](references/research-schema.md) for the report shape.

@@ -1596,6 +1596,7 @@
     "bun:channel:cron:register": "bun tools/bun-channel-doctor-cron.ts register",
     "bun:channel:cron:remove": "bun tools/bun-channel-doctor-cron.ts remove",
     "skills:validate": "bun scripts/validate-agent-skills.ts",
+    "trace:mine": "bun .agents/skills/trace-behavior-research/scripts/mine-traces.ts",
     "gate-map:validate": "bun scripts/gate-map-validate.ts",
     "gate-report:monorepo": "bun scripts/gate-report-monorepo.ts",
     "install:all": "bun scripts/with-bun-cache-env.ts install",
