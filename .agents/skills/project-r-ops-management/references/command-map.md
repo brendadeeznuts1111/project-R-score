@@ -112,7 +112,6 @@ worktree.
 ```bash
 bun run security:guard:deps
 bun run security:audit
-bun run security:ci
 ```
 
 ## Search governance proof
@@ -125,11 +124,3 @@ bun run search:bench:gate --json
 
 Refresh owned artifacts only when strict status reports drift. Baseline
 promotion requires explicit approval and `.search/POLICY_CHANGELOG.md` evidence.
-
-## Emergency bundle
-
-```bash
-bun run search:preflight:emergency
-```
-
-This legacy search bundle does not replace `bun run bun:ci`.
