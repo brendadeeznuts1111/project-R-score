@@ -1,0 +1,1428 @@
+{
+  "schemaVersion": 2,
+  "runtime": "bun",
+  "releaseVersion": "1.3.13",
+  "sourceUrl": "https://bun.com/blog/bun-v1.3.13",
+  "counts": {
+    "planned": 175,
+    "executable": 2
+  },
+  "items": [
+    {
+      "key": "bun-test-isolate-and-bun-test-parallel-e5c1084b",
+      "category": "bun-test-isolate-and-bun-test-parallel",
+      "section": "bun test --isolate and bun test --parallel",
+      "announcement": "— Bun (@bunjavascript) April 16, 2026",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-isolate-and-bun-test-parallel-5aa56c24",
+      "category": "bun-test-isolate-and-bun-test-parallel",
+      "section": "bun test --isolate and bun test --parallel",
+      "announcement": "In the next version of Bunbun test gets experimental support for per-file test isolation, and we made it fast. pic.twitter.com/va8GKDh3fy",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-isolate-and-bun-test-parallel-474fd557",
+      "category": "bun-test-isolate-and-bun-test-parallel",
+      "section": "bun test --isolate and bun test --parallel",
+      "announcement": "Two new flags for bun test that dramatically speed up large test suites:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-isolate-and-bun-test-parallel-4fea4bf0",
+      "category": "bun-test-isolate-and-bun-test-parallel",
+      "section": "bun test --isolate and bun test --parallel",
+      "announcement": "--isolate runs each test file in a fresh global environment within the same process. Between files, Bun drains microtasks, closes all sockets, cancels timers, kills subprocesses, and creates a clean global object. A VM-level transpilation cache means shared dependencies are only parsed once — subsequent files reuse the cached source, skipping redundant transpilation entirely.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-isolate-and-bun-test-parallel-3cb2bbf3",
+      "category": "bun-test-isolate-and-bun-test-parallel",
+      "section": "bun test --isolate and bun test --parallel",
+      "announcement": "--parallel[=N] distributes test files across up to N worker processes (defaults to CPU count). Files are partitioned for cache locality, and idle workers steal work from the busiest remaining queue. Workers automatically run with --isolate between files. Output remains identical to serial execution — per-test console.log/console.error output is buffered and flushed atomically, so files never interleave.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-isolate-and-bun-test-parallel-04637e18",
+      "category": "bun-test-isolate-and-bun-test-parallel",
+      "section": "bun test --isolate and bun test --parallel",
+      "announcement": "Both flags work with existing options including --bail, --randomize, --dots, JUnit reporting, LCOV coverage, and snapshots. All transpiler/resolver flags (--define, --loader, --tsconfig-override, --conditions, etc.) are forwarded to workers. JEST_WORKER_ID and BUN_TEST_WORKER_ID in bun test --parallel are also set as environment variables.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs-0ab0898e",
+      "category": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
+      "section": "bun test --shard=M/N for splitting tests across CI jobs",
+      "announcement": "Split test files across multiple CI runners with the new --shard flag, matching the syntax used by Jest, Vitest, and Playwright.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs-94cdd03a",
+      "category": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
+      "section": "bun test --shard=M/N for splitting tests across CI jobs",
+      "announcement": "Test files are sorted by path for determinism and distributed round-robin across shards, keeping each shard balanced to within one file of each other. The shard index is 1-based (1 <= index <= count).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs-ee9c9a42",
+      "category": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
+      "section": "bun test --shard=M/N for splitting tests across CI jobs",
+      "announcement": "Composes naturally with other flags:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs-730de953",
+      "category": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
+      "section": "bun test --shard=M/N for splitting tests across CI jobs",
+      "announcement": "--changed — sharding is applied after the changed-files filter",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs-4c681754",
+      "category": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
+      "section": "bun test --shard=M/N for splitting tests across CI jobs",
+      "announcement": "--randomize — shuffle happens after shard selection, within the shard",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs-6c582e7e",
+      "category": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
+      "section": "bun test --shard=M/N for splitting tests across CI jobs",
+      "announcement": "If a shard ends up with zero files (e.g. 2 test files with --shard=5/5), it exits 0 gracefully rather than erroring with \"No tests found!\". Invalid inputs like 0/3, 4/3, or 1/0 produce a clear error message and exit non-zero.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-changed-7eaef644",
+      "category": "bun-test-changed",
+      "section": "bun test --changed",
+      "announcement": "bun test now supports a --changed flag that only runs test files affected by your git changes. This works by building the full import graph of your test files and filtering down to only those that transitively depend on a file that git reports as changed.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-changed-7ccdb017",
+      "category": "bun-test-changed",
+      "section": "bun test --changed",
+      "announcement": "When combined with --watch, editing any local source file — even one not currently imported by the selected tests — triggers a re-run. Each restart re-queries git, so the filtered set always tracks the working tree.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-changed-2dbf112c",
+      "category": "bun-test-changed",
+      "section": "bun test --changed",
+      "announcement": "The graph analysis scans imports without entering node_modules and without linking or emitting code, so the overhead is minimal. If no changed files are found, --watch keeps the process alive while bun test --changed without --watch exits cleanly.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-streams-tarballs-to-disk-1148c2e6",
+      "category": "bun-install-streams-tarballs-to-disk",
+      "section": "bun install streams tarballs to disk",
+      "announcement": "— Jarred Sumner (@jarredsumner) April 18, 2026",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-streams-tarballs-to-disk-15ea867a",
+      "category": "bun-install-streams-tarballs-to-disk",
+      "section": "bun install streams tarballs to disk",
+      "announcement": "In the next version of Bunbun install streams tarballs to diskIn a large repo, this reduced memory by 17x pic.twitter.com/3WYMLJ5RoJ",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-streams-tarballs-to-disk-b7046131",
+      "category": "bun-install-streams-tarballs-to-disk",
+      "section": "bun install streams tarballs to disk",
+      "announcement": "bun install now extracts package tarballs while they are still downloading, instead of buffering the entire .tgz and decompressed .tar in memory before extraction. Only the in-flight HTTP chunks plus libarchive's fixed per-archive buffers are needed — the full archive is never materialized in memory.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-streams-tarballs-to-disk-a44ee4cd",
+      "category": "bun-install-streams-tarballs-to-disk",
+      "section": "bun install streams tarballs to disk",
+      "announcement": "Integrity hashing runs incrementally over the compressed bytes and is verified before the extracted tree is promoted into the cache. Error handling and retries remain unchanged.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-streams-tarballs-to-disk-3895b482",
+      "category": "bun-install-streams-tarballs-to-disk",
+      "section": "bun install streams tarballs to disk",
+      "announcement": "Streaming extraction is enabled by default. If you encounter issues, it can be disabled by setting BUN_FEATURE_FLAG_DISABLE_STREAMING_INSTALL=1.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-install-with-isolated-linker-30fe0f24",
+      "category": "faster-bun-install-with-isolated-linker",
+      "section": "Faster bun install with isolated linker",
+      "announcement": "In a peer-heavy monorepo, bun install --linker=isolated;",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-install-with-isolated-linker-d08efbd5",
+      "category": "faster-bun-install-with-isolated-linker",
+      "section": "Faster bun install with isolated linker",
+      "announcement": "The final .bun/ store layout is byte-identical to previous versions. Previously hanging installs now complete in seconds.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-bun-install-with-isolated-linker-cd6a2da7",
+      "category": "faster-bun-install-with-isolated-linker",
+      "section": "Faster bun install with isolated linker",
+      "announcement": "Thanks to @robobun for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "source-maps-use-up-to-8x-less-memory-87626e2f",
+      "category": "source-maps-use-up-to-8x-less-memory",
+      "section": "Source maps use up to 8x less memory",
+      "announcement": "Bun's internal source map representation has been rearchitected. Instead of decoding VLQ mappings into a full in-memory list on first access, Bun now writes a compact bit-packed binary format directly during transpilation and reads it in place — no whole-file decode step, no VLQ round-trip.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "source-maps-use-up-to-8x-less-memory-e02f0b4b",
+      "category": "source-maps-use-up-to-8x-less-memory",
+      "section": "Source maps use up to 8x less memory",
+      "announcement": "The new format exploits the structure of transpiler output (most mappings share the same source index, and generated/original columns frequently match) to store mappings at ~2.4 bytes per mapping, down from 20 bytes previously.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "source-maps-use-up-to-8x-less-memory-7d502a33",
+      "category": "source-maps-use-up-to-8x-less-memory",
+      "section": "Source maps use up to 8x less memory",
+      "announcement": "Memory usage (TypeScript compiler, _tsc.js, 563k mappings):",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "source-maps-use-up-to-8x-less-memory-a8cbe1fe",
+      "category": "source-maps-use-up-to-8x-less-memory",
+      "section": "Source maps use up to 8x less memory",
+      "announcement": "Decoding now costs close to 0. Lookups cost about 6% more. Encoding gets faster.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "source-maps-use-up-to-8x-less-memory-de39a203",
+      "category": "source-maps-use-up-to-8x-less-memory",
+      "section": "Source maps use up to 8x less memory",
+      "announcement": "The main tradeoff is that after compression the new format is ~20% larger than the VLQ-encoded compressed equivalent — but compressing sourcemaps is unnecessary for server-side JavaScript.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "source-maps-use-up-to-8x-less-memory-d8bacb60",
+      "category": "source-maps-use-up-to-8x-less-memory",
+      "section": "Source maps use up to 8x less memory",
+      "announcement": "bun build --compile binaries also benefit: the blob is embedded directly and loaded as a zero-copy view at runtime, shrinking compiled binaries by ~1.8 MB for large source maps.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "buns-runtime-uses-5-less-memory-6deb2356",
+      "category": "buns-runtime-uses-5-less-memory",
+      "section": "Bun's runtime uses 5% less memory",
+      "announcement": "— Bun (@bunjavascript) April 14, 2026",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "buns-runtime-uses-5-less-memory-f7828a3f",
+      "category": "buns-runtime-uses-5-less-memory",
+      "section": "Bun's runtime uses 5% less memory",
+      "announcement": "In the next version of BunBun's JavaScript runtime uses 5% less memory pic.twitter.com/kXp6zFC6Yi",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "buns-runtime-uses-5-less-memory-5b12d19e",
+      "category": "buns-runtime-uses-5-less-memory",
+      "section": "Bun's runtime uses 5% less memory",
+      "announcement": "Bun's memory allocators have been upgraded:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "buns-runtime-uses-5-less-memory-edd9c6d9",
+      "category": "buns-runtime-uses-5-less-memory",
+      "section": "Bun's runtime uses 5% less memory",
+      "announcement": "mimalloc moves from v2 to v3 (along with several bugfixes in our internal fork)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "buns-runtime-uses-5-less-memory-bc3d58c6",
+      "category": "buns-runtime-uses-5-less-memory",
+      "section": "Bun's runtime uses 5% less memory",
+      "announcement": "We implemented libpas scavenger support for both Windows & Linux, reclaiming memory faster",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "buns-runtime-uses-5-less-memory-665c362a",
+      "category": "buns-runtime-uses-5-less-memory",
+      "section": "Bun's runtime uses 5% less memory",
+      "announcement": "Together these reduce baseline memory usage and fix a class of hangs and crashes in long-running processes across macOS, Linux, and Windows.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "upgraded-javascriptcore-engine-9c5d39ea",
+      "category": "upgraded-javascriptcore-engine",
+      "section": "Upgraded JavaScriptCore engine",
+      "announcement": "Bun's underlying JavaScript engine (WebKit's JavaScriptCore) has been upgraded, merging 1,316 upstream commits. This brings a wide range of performance improvements and bug fixes.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-improvements-from-upstream-54de04e4",
+      "category": "performance-improvements-from-upstream",
+      "section": "Performance improvements from upstream",
+      "announcement": "Inline cache for array.length = N — setting array length is now IC-cached",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-improvements-from-upstream-b9f56aae",
+      "category": "performance-improvements-from-upstream",
+      "section": "Performance improvements from upstream",
+      "announcement": "Inline cache for undefined, true, false, null as property keys",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-improvements-from-upstream-31430935",
+      "category": "performance-improvements-from-upstream",
+      "section": "Performance improvements from upstream",
+      "announcement": "String length folding in DFG/FTL — the compiler can now constant-fold .length on known strings",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-improvements-from-upstream-e7bbe55d",
+      "category": "performance-improvements-from-upstream",
+      "section": "Performance improvements from upstream",
+      "announcement": "toUpperCase intrinsic — toUpperCase() is now JIT-intrinsified",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-improvements-from-upstream-d1f7e707",
+      "category": "performance-improvements-from-upstream",
+      "section": "Performance improvements from upstream",
+      "announcement": "String#indexOf single-character fast path in DFG/FTL",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-improvements-from-upstream-2cde0229",
+      "category": "performance-improvements-from-upstream",
+      "section": "Performance improvements from upstream",
+      "announcement": "Redundant mov removed from await/yield bytecode",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-improvements-from-upstream-bb7a97e0",
+      "category": "performance-improvements-from-upstream",
+      "section": "Performance improvements from upstream",
+      "announcement": "Cached default date formatters — Date.toLocaleString() and friends are faster on repeat calls",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-improvements-from-upstream-f39829d6",
+      "category": "performance-improvements-from-upstream",
+      "section": "Performance improvements from upstream",
+      "announcement": "Wider bulk copy in GC-safe memcpy/memmove — faster garbage collector memory operations",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-improvements-from-upstream-365461cc",
+      "category": "performance-improvements-from-upstream",
+      "section": "Performance improvements from upstream",
+      "announcement": "SIMD-accelerated equalIgnoringASCIICase — faster case-insensitive string comparisons",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-improvements-from-upstream-603b14bd",
+      "category": "performance-improvements-from-upstream",
+      "section": "Performance improvements from upstream",
+      "announcement": "SIMD fast path for identifier parsing",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-improvements-from-upstream-13b09aab",
+      "category": "performance-improvements-from-upstream",
+      "section": "Performance improvements from upstream",
+      "announcement": "Thanks to @sosukesuzuki for doing the upgrade!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-addeventlistener-dispatchevent-and-dom-events-af6d2f74",
+      "category": "faster-addeventlistener-dispatchevent-and-dom-events",
+      "section": "Faster addEventListener, dispatchEvent, and DOM events",
+      "announcement": "Cherry-picked ~270 audited upstream WebKit commits into Bun's forked WebCore bindings layer, bringing performance wins to Bun's event system and promise internals.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "file-streaming-improvements-1243f809",
+      "category": "file-streaming-improvements",
+      "section": "File streaming improvements",
+      "announcement": "When using new Response(Bun.file(path)) or routes: { \"/route\": new Response(Bun.file(path)) } in Bun.serve(), file responses on SSL and Windows now stream incrementally instead of buffering the entire file into memory. Previously, this was only supported when using HTTP and only for static routes.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "file-streaming-improvements-aed921d5",
+      "category": "file-streaming-improvements",
+      "section": "File streaming improvements",
+      "announcement": "This significantly reduces memory usage for large file responses in those environments. Previously, this was only supported for static routes.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "range-request-support-in-bun-serve-00eff057",
+      "category": "range-request-support-in-bun-serve",
+      "section": "Range Request Support in Bun.serve()",
+      "announcement": "Bun.serve() now supports Range requests for file-backed responses, both in static routes: entries and in fetch & dynamic handler responses. Incoming Range: bytes=... headers on whole-file 200 responses are automatically handled, returning 206 Partial Content with the appropriate Content-Range header, or 416 Range Not Satisfiable when the range is invalid.",
+      "status": "covered",
+      "testPath": "tests/bun-file-response-contract.test.ts"
+    },
+    {
+      "key": "range-request-support-in-bun-serve-b18dcfc9",
+      "category": "range-request-support-in-bun-serve",
+      "section": "Range Request Support in Bun.serve()",
+      "announcement": "Suffix ranges (bytes=-500), open-ended ranges (bytes=1024-), and all standard forms from RFC 9110 are supported. Multi-range requests fall through to a full-body response.",
+      "status": "covered",
+      "testPath": "tests/bun-file-response-contract.test.ts"
+    },
+    {
+      "key": "up-to-5-5x-faster-gzip-compression-with-zlib-ng-3aa87c80",
+      "category": "up-to-5-5x-faster-gzip-compression-with-zlib-ng",
+      "section": "Up to 5.5x faster gzip compression with zlib-ng",
+      "announcement": "Bun's zlib dependency has been upgraded from the Cloudflare zlib fork (last updated Oct 2023) to zlib-ng 2.3.3 — the same library used by Node.js 24+ and Chromium. zlib-ng is actively maintained and provides runtime-dispatched SIMD acceleration across AVX-512, AVX2, SSE2, NEON, SVE, and RISC-V vector extensions for CRC32, Adler32, longest-match, and chunk-copy operations.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "up-to-5-5x-faster-gzip-compression-with-zlib-ng-8064a448",
+      "category": "up-to-5-5x-faster-gzip-compression-with-zlib-ng",
+      "section": "Up to 5.5x faster gzip compression with zlib-ng",
+      "announcement": "This is a drop-in improvement — no API changes, no code changes required.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "up-to-5-5x-faster-gzip-compression-with-zlib-ng-b89bafa5",
+      "category": "up-to-5-5x-faster-gzip-compression-with-zlib-ng",
+      "section": "Up to 5.5x faster gzip compression with zlib-ng",
+      "announcement": "Compression is significantly faster across the board, with decompression seeing modest gains. The only trade-off is ~2µs higher per-stream initialization cost from larger internal state structs, which is amortized away on payloads ≥4KB.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-array-iteration-in-buns-internals-7e54a6ab",
+      "category": "faster-array-iteration-in-buns-internals",
+      "section": "Faster array iteration in Bun's internals",
+      "announcement": "Array iteration in Bun's internal C++/Zig code is now up to 1.43× faster for common cases. When iterating over a JavaScript array that uses simple Int32 or Contiguous storage (the common case), Bun now reads elements directly from JSC's butterfly memory instead of calling getIndex() per element.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-array-iteration-in-buns-internals-78751f9d",
+      "category": "faster-array-iteration-in-buns-internals",
+      "section": "Faster array iteration in Bun's internals",
+      "announcement": "This optimization is applied inside JSArrayIterator.next(), so every internal call site benefits automatically — including expect().toContain(), expect().toBeOneOf(), new Blob([...]), and more.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-array-iteration-in-buns-internals-09533a0b",
+      "category": "faster-array-iteration-in-buns-internals",
+      "section": "Faster array iteration in Bun's internals",
+      "announcement": "The fast path safely revalidates the butterfly pointer before each read, falling back to the generic path if the array is mutated during iteration (e.g. by a getter or toString side effect).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "faster-array-iteration-in-buns-internals-51497438",
+      "category": "faster-array-iteration-in-buns-internals",
+      "section": "Faster array iteration in Bun's internals",
+      "announcement": "Thanks to @sosukesuzuki for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "sha3-support-in-webcrypto-and-node-crypto-9ab34e4d",
+      "category": "sha3-support-in-webcrypto-and-node-crypto",
+      "section": "SHA3 support in WebCrypto and node:crypto",
+      "announcement": "Bun now supports SHA3-224, SHA3-256, SHA3-384, and SHA3-512 hash algorithms across both the Web Crypto API and node:crypto.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "sha3-support-in-webcrypto-and-node-crypto-5f2bbbd1",
+      "category": "sha3-support-in-webcrypto-and-node-crypto",
+      "section": "SHA3 support in WebCrypto and node:crypto",
+      "announcement": "This works with crypto.createHash, crypto.createHmac, crypto.getHashes, crypto.subtle.digest, and crypto.subtle.sign/verify with HMAC.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "sha3-support-in-webcrypto-and-node-crypto-3b3ded22",
+      "category": "sha3-support-in-webcrypto-and-node-crypto",
+      "section": "SHA3 support in WebCrypto and node:crypto",
+      "announcement": "This also includes an update to BoringSSL, which brings ML-KEM and ML-DSA (NIST FIPS 203/204) post-quantum algorithms into the underlying library for future support.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "x25519-derivebits-support-in-subtlecrypto-1586166d",
+      "category": "x25519-derivebits-support-in-subtlecrypto",
+      "section": "X25519 deriveBits support in SubtleCrypto",
+      "announcement": "SubtleCrypto.deriveBits() now works with the X25519 algorithm, completing support for X25519-based key agreement in Bun's Web Crypto API.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "x25519-derivebits-support-in-subtlecrypto-828065fa",
+      "category": "x25519-derivebits-support-in-subtlecrypto",
+      "section": "X25519 deriveBits support in SubtleCrypto",
+      "announcement": "Previously, calling crypto.subtle.deriveBits() with X25519 keys threw a NotSupportedError. This is now fully implemented per the spec, including proper rejection of small-order public keys per RFC 7748 §6.1.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "x25519-derivebits-support-in-subtlecrypto-3569fd56",
+      "category": "x25519-derivebits-support-in-subtlecrypto",
+      "section": "X25519 deriveBits support in SubtleCrypto",
+      "announcement": "Passing null or 0 as the length returns the full 32-byte output:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "x25519-derivebits-support-in-subtlecrypto-c4f3bd24",
+      "category": "x25519-derivebits-support-in-subtlecrypto",
+      "section": "X25519 deriveBits support in SubtleCrypto",
+      "announcement": "Thanks to @panva for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "websocket-client-support-ws-unix-and-wss-unix-02837879",
+      "category": "websocket-client-support-ws-unix-and-wss-unix",
+      "section": "WebSocket client: support ws+unix:// and wss+unix://",
+      "announcement": "The WebSocket client now supports connecting over Unix domain sockets via the ws+unix:// and wss+unix:// URL schemes, matching the convention used by the popular npm ws package.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "websocket-client-support-ws-unix-and-wss-unix-5304c7a0",
+      "category": "websocket-client-support-ws-unix-and-wss-unix",
+      "section": "WebSocket client: support ws+unix:// and wss+unix://",
+      "announcement": "The Host header defaults to localhost, matching Node's http.request({ socketPath }) and the ws package.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "websocket-client-support-ws-unix-and-wss-unix-8e097c0b",
+      "category": "websocket-client-support-ws-unix-and-wss-unix",
+      "section": "WebSocket client: support ws+unix:// and wss+unix://",
+      "announcement": "Proxies are automatically skipped for Unix socket URLs.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "websocket-client-support-ws-unix-and-wss-unix-1c9ca6b2",
+      "category": "websocket-client-support-ws-unix-and-wss-unix",
+      "section": "WebSocket client: support ws+unix:// and wss+unix://",
+      "announcement": "wss+unix:// runs a full TLS handshake over the domain socket.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "standalone-html-now-inlines-file-loader-assets-imported-from-js-d659265c",
+      "category": "standalone-html-now-inlines-file-loader-assets-imported-from-js",
+      "section": "Standalone HTML now inlines file-loader assets imported from JS",
+      "announcement": "When using bun build --compile --target browser on an HTML entry point, assets imported from JavaScript via the file loader (e.g. import logo from \"./logo.svg\") are now correctly inlined as data: URIs in the standalone HTML output.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "standalone-html-now-inlines-file-loader-assets-imported-from-js-d7e94974",
+      "category": "standalone-html-now-inlines-file-loader-assets-imported-from-js",
+      "section": "Standalone HTML now inlines file-loader assets imported from JS",
+      "announcement": "Previously, only assets referenced directly in HTML (like <link rel=\"icon\" href=\"./logo.svg\">) were inlined. JS-imported assets were emitted as relative file paths (e.g. ./logo-kygw735p.svg), but no sidecar file was ever written — resulting in broken images and missing resources.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "standalone-html-now-inlines-file-loader-assets-imported-from-js-5357a534",
+      "category": "standalone-html-now-inlines-file-loader-assets-imported-from-js",
+      "section": "Standalone HTML now inlines file-loader assets imported from JS",
+      "announcement": "Now, all file-loader assets are inlined regardless of whether they're referenced from HTML or JS:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bunx-claude-and-bunx-anthropic-ai-claude-code-fix-fb9ea331",
+      "category": "bunx-claude-and-bunx-anthropic-ai-claude-code-fix",
+      "section": "bunx claude and bunx @anthropic-ai/claude-code fix",
+      "announcement": "bunx claude now works as a shorthand for bunx @anthropic-ai/claude-code, matching the existing bunx tsc → typescript alias.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-3e17106a",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: Worker lifecycle crashes — calling worker.terminate(), sending messages to a worker, or letting a worker exit naturally could crash",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-d789bff2",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: tls.connect({ host, port }) matches Node.js behavior when servername is not explicitly passed",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-19bb6a8f",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: rare crash involving the passphrase option in TLS configuration",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-a15245a6",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: process.ppid was cached at startup and never updated. It now calls getppid() on every access, matching Node.js behavior, so orphan-detection patterns (if (process.ppid === 1)) work correctly. (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-c0aff3a3",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: --cpu-prof output now matches the .cpuprofile format used by Node.js and Chrome DevTools — lineNumber/columnNumber reflect the function definition site and per-line samples are reported via positionTicks, so profiles load correctly in Chrome DevTools, VS Code, and speedscope. (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-85708b49",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: socket.setTimeout() in node:net incorrectly firing the timeout event even while the socket was actively receiving data. The inactivity timer was only being reset on writes, not reads, which caused spurious timeouts for sockets consuming HTTP response bodies, database query results, or long-lived pipes. This also fixes mongoose timeout errors that occurred with Bun but not Node.js.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-2eadccab",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: node:http2.createServer (h2c) compatibility with strict HTTP/2 peers (curl, Node.js http2.connect, Envoy proxy) — the server was advertising an invalid ENABLE_PUSH setting and emitting a malformed end-of-stream sequence that nghttp2-based clients reject. This also likely fixes @grpc/grpc-js servers running on Bun behind Envoy. Thanks to @robobun for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-7112f84c",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: rare crash in StringDecoder.prototype.write()",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-e1632c13",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: crash during process exit when native N-API modules (sqlite3, duckdb, kuzu, node-llama-cpp) wrap parent objects before children — finalizers now run in LIFO order matching Node.js (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-6c0b14c8",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: node:dgram addSourceSpecificMembership and dropSourceSpecificMembership socket options were inverted for both IPv4 and IPv6",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-e12192e0",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: os.freemem() on Linux returning significantly lower values than Node.js by reading MemAvailable from /proc/meminfo instead of using sysinfo.freeram, which excludes reclaimable page cache",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-15347eb0",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: Rare fs.watch() deadlock",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-45a3a054",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: Rare path.win32.resolve crash",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-fee74f26",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: Rare fs.writeSync crash on Windows",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-2068bf50",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: a race condition in root certificate initialization involving workers",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-7d0d775e",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: stat/lstat/fstat/fstatat/statfs syscalls on macOS could surface spurious EINTR errors to JavaScript (e.g. when accessing iCloud/FileProvider directories or autofs mounts) instead of automatically retrying (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-ca4fe604",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: export { \"a b c\" } from './b.mjs' re-export clauses with string-literal names (containing spaces or other non-identifier characters) produced invalid output during single-file transpilation, causing a SyntaxError at runtime",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-9ba8893f",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: Error.captureStackTrace() crashing when Error.stackTraceLimit is set to a non-numeric value (e.g. \"foo\") or deleted",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-f0a47224",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: preventDefault() not working on a non-passive event listener that follows a passive listener on the same event (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-da5e8748",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: [Clamp] integer conversion in WebIDL bindings now rounds half-to-even per spec (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-f8076e57",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: Data races in BroadcastChannel when using workers that could cause crashes during channel registration/unregistration and worker termination.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-f7bf61b3",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.inspect() and console.log() showing [class Function] instead of the real class name for DOM and node:stream/web constructors like ReadableStreamBYOBReader, URL, Request, Response, Blob, and Event. (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-c61f0238",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: server.stop() hanging indefinitely in certain cases",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-6f1779b6",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: File descriptor leaks in static file routes in certain cases",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-17e0c708",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Error handler returning a file-backed Response being silently dropped",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-5f59b469",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Duplicate Content-Length headers on file responses in certain cases",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-7a35f2e8",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.SQL MySQL adapter hanging indefinitely on multi-statement queries against ManticoreSearch's MySQL interface, a regression introduced in Bun v1.2.12.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-be8e9e20",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: crash in Bun.YAML.parse in rare cases",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-f81cc2ef",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: crash when reading sliced non-regular file blobs",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-f83fc848",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: panic when fstat reports an extremely large file size during Bun.file() reads, and improved error propagation for out-of-memory conditions in the same code path",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-77c28bab",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: hypothetical crash in Bun.RedisClient when the client was garbage collected after a command threw during argument validation",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-b9afb7ea",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.pathToFileURL crash on Windows in rare cases",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-25fab230",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: MKADDRESSBOOK CardDAV HTTP method being silently dropped by Bun.serve and rewritten to GET by fetch(). The method is now recognized across all HTTP handling paths.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-6806b7bd",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: AbortSignal memory leak in WebSocket upgrade request when using the Bun.serve({ fetch, websocket }) catch-all path",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-fd7e1faf",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: ~1 KB memory leak per --hot reload cycle",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-49621ba2",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: memory leak in Glob.scan() and Glob.scanSync()",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-f6b2057a",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: calling controller.abort() on a fetch() queued behind the maximum simultaneous requests limit left the promise pending forever. Aborted queued requests now reject immediately with AbortError without consuming a connection slot. (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-0234cc7f",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: memory leak in AbortSignal.timeout() in certain cases",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-daea47dd",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: fetch() hanging forever when using tls: { checkServerIdentity } in certain error cases",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-53de2c1c",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: Rare crash when aborting a fetch() request",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-4ee7c905",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: fetch() with HTTP_PROXY incorrectly injected :80 or :443 into the proxy request URI for URLs without an explicit port, breaking strict proxies like Charles, mitmproxy, and corporate middleboxes. Now matches curl and Node.js behavior per RFC 7230 §5.3.2.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-fc77985b",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: Rare crash when calling ws.close() on a wss:// WebSocket connecting through an HTTP CONNECT proxy during the TLS handshake (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-836372c1",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: Tiny memory leak affecting WebSocket client send buffers and other internal queues that fully drain between writes",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-79d5aa22",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: Hypothetical crash when resolving a promise",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-fdd50fe8",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: Hypothetical crash when converting records with numeric-index string keys, and resizable/growable-shared ArrayBuffer or TypedArray in certain web apis",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-48b493ae",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bunx @anthropic-ai/claude-code failing with \"could not determine executable to run\"",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-d514be36",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: bun build --compile producing broken binaries in certain cases on macOS ARM64 since Bun v1.3.12",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-0d59efb8",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: HTML import etag not updating when referenced JS/CSS chunks changed, causing browsers to 304-cache stale HTML that pointed at old chunk filenames — resulting in blank pages until hard refresh (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-72c95ffc",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: bun build --compile producing broken executables on NixOS/Guix hosts — the interpreter path rewrite is now skipped when running on a Nix/Guix-managed host.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-3f99be90",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: Crash in Bun.build when a bundler plugin's onResolve handler races with a failed sibling import in the same file. Now Bun.build correctly throws with the resolve errors.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-970d70ad",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: a crash caused by the resolver attempting to auto-install invalid npm package names (e.g. strings containing spaces, newlines, or braces) passed to mock.module(), Bun.resolveSync(), import(), or require.resolve()",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "css-parser-1d51e3c9",
+      "category": "css-parser",
+      "section": "CSS Parser",
+      "announcement": "Fixed: CSS bundler incorrectly stripping top-level @layer ordering declarations (e.g. @layer theme, base, components, utilities;) when bundling, which broke Tailwind CSS and other cascade layer-dependent stylesheets. This was a regression from v1.3.0.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-a0a31372",
+      "category": "bun-test",
+      "section": "bun test",
+      "announcement": "Fixed: toMatchSnapshot() failing with --rerun-each, retry, or repeats because the snapshot counter was not reset between iterations, causing subsequent runs to look for non-existent snapshot keys (e.g. \"test name 2\" instead of \"test name 1\") and erroring with \"Snapshot creation is disabled\" in CI (@chrislloyd)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "windows-55c40a9e",
+      "category": "windows",
+      "section": "Windows",
+      "announcement": "Fixed: a race condition in the runtime transpiler that could cause a crash on Windows when multiple threads were transpiling concurrently (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "windows-f7b9fcf6",
+      "category": "windows",
+      "section": "Windows",
+      "announcement": "Fixed: crash on Windows caused by NaN/+inf values reaching the internal timer when the GC scheduler computed degenerate delay values (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "windows-ce4ce654",
+      "category": "windows",
+      "section": "Windows",
+      "announcement": "Fixed: Rare crash in readFile crash on Windows when reading files larger than 2GB",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "windows-a98e9b03",
+      "category": "windows",
+      "section": "Windows",
+      "announcement": "Fixed: Rare crash in fs.readdir on Windows when a third-party filesystem or filter driver (e.g. network redirector, virtual FS, or AV minifilter) returned a malformed directory entry.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "windows-bfcadbb6",
+      "category": "windows",
+      "section": "Windows",
+      "announcement": "Fixed: resource exhaustion in libpas that could cause crashes in long-running processes on Windows, pthread_once implementation issues, and a missing mprotect gate in memory decommit. (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-engine-b36c0946",
+      "category": "javascript-engine",
+      "section": "JavaScript engine",
+      "announcement": "Fixed: a RegExp correctness issue where exec/test didn't reload the internal RegExp after ToLength(lastIndex) coercion (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-engine-27e3da53",
+      "category": "javascript-engine",
+      "section": "JavaScript engine",
+      "announcement": "Fixed: import { \"*\" as x } not being treated as a namespace import (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-engine-10db9c26",
+      "category": "javascript-engine",
+      "section": "JavaScript engine",
+      "announcement": "Fixed: TypedArray iterator .next() behavior with detached buffers (test262 compliance) (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-engine-87beccd9",
+      "category": "javascript-engine",
+      "section": "JavaScript engine",
+      "announcement": "Fixed: Date.toLocaleString() crash when called from a Worker (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-engine-38918eae",
+      "category": "javascript-engine",
+      "section": "JavaScript engine",
+      "announcement": "Fixed: multiple YARR (RegExp engine) backtracking and capture bugs (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-engine-9e2deb8d",
+      "category": "javascript-engine",
+      "section": "JavaScript engine",
+      "announcement": "Fixed: class instance field eval context not propagating through arrow functions and nested scopes (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-engine-f3536f75",
+      "category": "javascript-engine",
+      "section": "JavaScript engine",
+      "announcement": "Fixed: DFG constant folding crash and isWithinPowerOfTwo producing unsound results for BitAnd with negative masks (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-2eb85c18",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Fixed: pausing at a breakpoint or debugger; statement pegged one CPU core at 100% for the entire pause. The paused thread now sleeps until the debugger sends a message. Closing the debugger's WebSocket while paused also now correctly resumes the program.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-4f98b0e2",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Fixed: a deadlock between the memory allocator and Bun's thread pool that could permanently freeze long-running compiled executables on macOS arm64 after sustained async I/O. (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-3d9f56d2",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Fixed: 8 memory-accounting bugs in libpas",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-f0a0cc34",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Fixed: several potential crashes where early-exit control flow could leave internal state partially initialized — affecting HTTP decompression, Request/Response body handling, Bun.build plugin errors, and named pipe listeners on Windows.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-b6a04662",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Fixed: a potential crash in the socket layer where dereferencing a context's loop pointer after unlinking could fail if the context was freed during the unlink (@cirospaciari)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-a6583e71",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Fixed: Hypothetical crash involving the event loop timer sweep iterator",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-7526766e",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Improved: HTTP chunked encoding parser hardening",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-d1f225bc",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "On this page",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-b8f08b3b",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "bun test --isolate and bun test --parallel",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-af8b5f28",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "bun test --shard=M/N for splitting tests across CI jobs",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-b384bbea",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "bun test --changed",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-d65682fa",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "bun install streams tarballs to disk",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-0ba0c9b3",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Faster bun install with isolated linker",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-d3285d98",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Source maps use up to 8x less memory",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-302f7029",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Bun's runtime uses 5% less memory",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-6666212b",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Upgraded JavaScriptCore engine",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-246c058d",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Performance improvements from upstream",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-b0ca0dd2",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Faster addEventListener, dispatchEvent, and DOM events",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-77c6ff4f",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "File streaming improvements",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-15039e81",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Range Request Support in Bun.serve()",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-d077c422",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Up to 5.5x faster gzip compression with zlib-ng",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-3520628d",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Faster array iteration in Bun's internals",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-ca9ba902",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "SHA3 support in WebCrypto and node:crypto",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-b2d0a9a7",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "X25519 deriveBits support in SubtleCrypto",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-d158270a",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "WebSocket client: support ws+unix:// and wss+unix://",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-6a022168",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Standalone HTML now inlines file-loader assets imported from JS",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-28078af7",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "bunx claude and bunx @anthropic-ai/claude-code fix",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-0dd9f9f7",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Bugfixes",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-bc56615d",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Node.js compatibility improvements",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-978cfef1",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Bun APIs",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-b3cb9d0b",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Web APIs",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-d3d76dfa",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "bun install",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-7dc68906",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "JavaScript bundler",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-c3faec75",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "CSS Parser",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-3062f895",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "bun test",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-2ad3b780",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Windows",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-83aeefab",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "JavaScript engine",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "internal-runtime-bd202b25",
+      "category": "internal-runtime",
+      "section": "Internal / Runtime",
+      "announcement": "Internal / Runtime",
+      "status": "planned",
+      "testPath": null
+    }
+  ]
+}

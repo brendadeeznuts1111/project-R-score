@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
+// @see https://bun.com/docs/runtime/http/server#reference — Server
 // @see https://bun.com/docs/runtime/http/routing#file-responses-vs-static-responses
 // @see https://bun.com/docs/guides/http/stream-file
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file
@@ -32,7 +35,12 @@ beforeAll(async () => {
           headers: { 'Content-Type': 'application/json; charset=utf-8' },
         }),
     },
-    fetch: () => new Response('fallback', { status: 404 }),
+    fetch(req) {
+      if (new URL(req.url).pathname === '/dynamic-file') {
+        return new Response(Bun.file(fixtureUrl));
+      }
+      return new Response('fallback', { status: 404 });
+    },
   });
 });
 
@@ -66,6 +74,35 @@ describe('Bun file/response runtime contract', () => {
       expect(notModified.status).toBe(304);
     });
   }
+
+  test('file-backed responses handle suffix, open-ended, invalid, and multi-ranges', async () => {
+    const suffix = await fetch(endpoint('/dynamic-file'), {
+      headers: { Range: 'bytes=-10' },
+    });
+    expect(suffix.status).toBe(206);
+    expect(suffix.headers.get('Content-Range')).toBe(
+      `bytes ${fixtureBytes.byteLength - 10}-${fixtureBytes.byteLength - 1}/${fixtureBytes.byteLength}`
+    );
+    expect((await suffix.bytes()).byteLength).toBe(10);
+
+    const openEnded = await fetch(endpoint('/dynamic-file'), {
+      headers: { Range: 'bytes=10-' },
+    });
+    expect(openEnded.status).toBe(206);
+    expect((await openEnded.bytes()).byteLength).toBe(fixtureBytes.byteLength - 10);
+
+    const invalid = await fetch(endpoint('/dynamic-file'), {
+      headers: { Range: `bytes=${fixtureBytes.byteLength}-` },
+    });
+    expect(invalid.status).toBe(416);
+    expect(invalid.headers.get('Content-Range')).toBe(`bytes */${fixtureBytes.byteLength}`);
+
+    const multiple = await fetch(endpoint('/dynamic-file'), {
+      headers: { Range: 'bytes=0-1,4-5' },
+    });
+    expect(multiple.status).toBe(200);
+    expect((await multiple.bytes()).byteLength).toBe(fixtureBytes.byteLength);
+  });
 
   for (const route of ['/uint8array', '/array-buffer', '/buffer']) {
     test(`${route} is buffered rather than file-aware`, async () => {

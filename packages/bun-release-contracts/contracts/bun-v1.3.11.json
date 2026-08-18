@@ -1,0 +1,972 @@
+{
+  "schemaVersion": 2,
+  "runtime": "bun",
+  "releaseVersion": "1.3.11",
+  "sourceUrl": "https://bun.com/blog/bun-v1.3.11",
+  "counts": {
+    "planned": 117,
+    "executable": 3
+  },
+  "items": [
+    {
+      "key": "4-mb-smaller-on-linux-x64-86aef11a",
+      "category": "4-mb-smaller-on-linux-x64",
+      "section": "4 MB smaller on Linux x64",
+      "announcement": "In the next version of BunBun gets 4 MB smaller on Linux x64 because we deleted CMake pic.twitter.com/HQPacwNO3O",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-cron-os-level-cron-jobs-and-expression-parsing-3da9edcf",
+      "category": "bun-cron-os-level-cron-jobs-and-expression-parsing",
+      "section": "Bun.cron — OS-level Cron Jobs and Expression Parsing",
+      "announcement": "Bun now includes a built-in Bun.cron API for registering OS-level cron jobs, parsing cron expressions, and removing scheduled jobs — all cross-platform.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "register-a-cron-job-7f96fd52",
+      "category": "register-a-cron-job",
+      "section": "Register a cron job",
+      "announcement": "When the OS scheduler fires, Bun imports the script and calls default.scheduled(), following the Cloudflare Workers Cron Triggers API:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "register-a-cron-job-0a334868",
+      "category": "register-a-cron-job",
+      "section": "Register a cron job",
+      "announcement": "worker.ts",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "parse-cron-expressions-35307b80",
+      "category": "parse-cron-expressions",
+      "section": "Parse cron expressions",
+      "announcement": "Returns a Date or null if no match exists within ~4 years (e.g. February 30th).",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "cron-expression-features-6109dab3",
+      "category": "cron-expression-features",
+      "section": "Cron expression features",
+      "announcement": "Standard 5-field format with *, ,, -, / operators",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "cron-expression-features-33c32333",
+      "category": "cron-expression-features",
+      "section": "Cron expression features",
+      "announcement": "Named days and months: MON–SUN, JAN–DEC (case-insensitive, full names supported)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "cron-expression-features-e70c892a",
+      "category": "cron-expression-features",
+      "section": "Cron expression features",
+      "announcement": "Nicknames: @yearly, @monthly, @weekly, @daily, @hourly",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "cron-expression-features-2c42e4dd",
+      "category": "cron-expression-features",
+      "section": "Cron expression features",
+      "announcement": "POSIX OR logic: when both day-of-month and day-of-week are restricted, either matching fires the job",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "cron-expression-features-299907e5",
+      "category": "cron-expression-features",
+      "section": "Cron expression features",
+      "announcement": "Sunday as 7: weekday field accepts both 0 and 7",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "platform-backends-0f78215c",
+      "category": "platform-backends",
+      "section": "Platform backends",
+      "announcement": "Re-registering with the same title overwrites the existing job in-place.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sliceansi-ansi-grapheme-aware-string-slicing-1879b366",
+      "category": "bun-sliceansi-ansi-grapheme-aware-string-slicing",
+      "section": "Bun.sliceAnsi — ANSI & grapheme-aware string slicing",
+      "announcement": "A new built-in that replaces both the slice-ansi and cli-truncate npm packages. Bun.sliceAnsi slices strings by terminal column width while preserving ANSI escape codes (SGR colors, OSC 8 hyperlinks) and respecting grapheme cluster boundaries (emoji, combining marks, flags).",
+      "status": "covered",
+      "testPath": "tests/regression/bun-1.3.11.test.ts"
+    },
+    {
+      "key": "bun-sliceansi-ansi-grapheme-aware-string-slicing-961ab869",
+      "category": "bun-sliceansi-ansi-grapheme-aware-string-slicing",
+      "section": "Bun.sliceAnsi — ANSI & grapheme-aware string slicing",
+      "announcement": "The ellipsis is emitted inside active SGR styles (inherits color/bold) so truncated text stays visually consistent, but outside hyperlinks to avoid broken links. Negative indices are supported for slicing from the end.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-sliceansi-ansi-grapheme-aware-string-slicing-c74c510b",
+      "category": "bun-sliceansi-ansi-grapheme-aware-string-slicing",
+      "section": "Bun.sliceAnsi — ANSI & grapheme-aware string slicing",
+      "announcement": "An optional { ambiguousIsNarrow } option is available for controlling East Asian ambiguous width behavior, matching Bun.stringWidth and Bun.wrapAnsi.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-3d6f2a60",
+      "category": "performance",
+      "section": "Performance",
+      "announcement": "Uses a three-tier dispatch strategy:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-5c5da8d9",
+      "category": "performance",
+      "section": "Performance",
+      "announcement": "SIMD ASCII fast path — pure ASCII input is handled with a single SIMD scan and zero-copy when nothing is cut",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-4ca17546",
+      "category": "performance",
+      "section": "Performance",
+      "announcement": "Single-pass streaming — non-negative indices (the common case) walk the input once with stack-only allocation",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "performance-4e34a3ae",
+      "category": "performance",
+      "section": "Performance",
+      "announcement": "Two-pass for negative indices — computes total width first, then emits",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-markdown-render-now-passes-richer-metadata-to-listitem-and-l-753ea618",
+      "category": "bun-markdown-render-now-passes-richer-metadata-to-listitem-and-l",
+      "section": "Bun.markdown.render() now passes richer metadata to listItem and list callbacks",
+      "announcement": "The listItem callback in Bun.markdown.render() now receives index, depth, ordered, and start in its metadata object, and the list callback now includes depth. Previously, listItem only received checked (and only for task list items), making it impossible to know an item's position, nesting level, or parent list type without workarounds.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-markdown-render-now-passes-richer-metadata-to-listitem-and-l-a0ad56cf",
+      "category": "bun-markdown-render-now-passes-richer-metadata-to-listitem-and-l",
+      "section": "Bun.markdown.render() now passes richer metadata to listItem and list callbacks",
+      "announcement": "This makes it straightforward to implement custom list markers like nested numbering schemes (1. / a. / i.) without regex post-processing:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-markdown-render-now-passes-richer-metadata-to-listitem-and-l-5dc016f1",
+      "category": "bun-markdown-render-now-passes-richer-metadata-to-listitem-and-l",
+      "section": "Bun.markdown.render() now passes richer metadata to listItem and list callbacks",
+      "announcement": "The full listItem meta shape is now:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-markdown-render-now-passes-richer-metadata-to-listitem-and-l-fcb9afd0",
+      "category": "bun-markdown-render-now-passes-richer-metadata-to-listitem-and-l",
+      "section": "Bun.markdown.render() now passes richer metadata to listItem and list callbacks",
+      "announcement": "Breaking change: The listItem callback now always receives the meta object (previously it was only passed for task list items). start and checked are undefined when not applicable, keeping the object shape fixed for monomorphic inline caches.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-markdown-render-now-passes-richer-metadata-to-listitem-and-l-85394900",
+      "category": "bun-markdown-render-now-passes-richer-metadata-to-listitem-and-l",
+      "section": "Bun.markdown.render() now passes richer metadata to listItem and list callbacks",
+      "announcement": "Meta objects use cached JSC structures internally, adding ~0.7ns per object overhead — effectively free.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "path-ignore-patterns-for-bun-test-817d7c7c",
+      "category": "path-ignore-patterns-for-bun-test",
+      "section": "--path-ignore-patterns for bun test",
+      "announcement": "You can now exclude files and directories from test discovery using glob patterns with the new --path-ignore-patterns flag or test.pathIgnorePatterns in bunfig.toml.",
+      "status": "covered",
+      "testPath": "tests/regression/bun-1.3.11.test.ts"
+    },
+    {
+      "key": "path-ignore-patterns-for-bun-test-2ee7d77e",
+      "category": "path-ignore-patterns-for-bun-test",
+      "section": "--path-ignore-patterns for bun test",
+      "announcement": "This is useful when your project contains submodules, vendored code, or other directories with *.test.ts files that you don't want bun test to pick up. Matched directories are pruned during scanning, so their contents are never traversed — ignoring a large directory tree is efficient.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "path-ignore-patterns-for-bun-test-cb8fa7eb",
+      "category": "path-ignore-patterns-for-bun-test",
+      "section": "--path-ignore-patterns for bun test",
+      "announcement": "Or via the command line:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "path-ignore-patterns-for-bun-test-1929fab6",
+      "category": "path-ignore-patterns-for-bun-test",
+      "section": "--path-ignore-patterns for bun test",
+      "announcement": "Command-line --path-ignore-patterns flags override the bunfig.toml value entirely — the two are not merged.",
+      "status": "covered",
+      "testPath": "tests/regression/bun-1.3.11.test.ts"
+    },
+    {
+      "key": "path-ignore-patterns-for-bun-test-7e6a12ca",
+      "category": "path-ignore-patterns-for-bun-test",
+      "section": "--path-ignore-patterns for bun test",
+      "announcement": "Thanks to @ctjlewis and @alii for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "fixed-dgram-udp-socket-bugs-on-macos-3371f87a",
+      "category": "fixed-dgram-udp-socket-bugs-on-macos",
+      "section": "Fixed dgram UDP socket bugs on macOS",
+      "announcement": "Fixed three bugs in UDP socket creation that caused dgram sockets to silently fail on macOS:",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "fixed-dgram-udp-socket-bugs-on-macos-351da467",
+      "category": "fixed-dgram-udp-socket-bugs-on-macos",
+      "section": "Fixed dgram UDP socket bugs on macOS",
+      "announcement": "reusePort now works on macOS: The reusePort: true option was previously gated to Linux only. It now works on any platform that supports SO_REUSEPORT.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "fixed-dgram-udp-socket-bugs-on-macos-4b0ce484",
+      "category": "fixed-dgram-udp-socket-bugs-on-macos",
+      "section": "Fixed dgram UDP socket bugs on macOS",
+      "announcement": "Implicit bind-on-send works on macOS: Calling send() on an unbound UDP socket should implicitly bind to 0.0.0.0 on a random port (matching Node.js behavior). Hardcoded Linux errno values (92 instead of the ENOPROTOOPT macro) prevented IPv4 fallback paths from being taken on macOS, where ENOPROTOOPT is 42.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "fixed-dgram-udp-socket-bugs-on-macos-7194b5fc",
+      "category": "fixed-dgram-udp-socket-bugs-on-macos",
+      "section": "Fixed dgram UDP socket bugs on macOS",
+      "announcement": "Socket fd leak on failure: When setsockopt for reuse failed, the socket file descriptor was leaked and no diagnostic errno was propagated, producing generic \"Failed to bind socket\" errors.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "fixed-dgram-udp-socket-bugs-on-macos-b3b9d8e1",
+      "category": "fixed-dgram-udp-socket-bugs-on-macos",
+      "section": "Fixed dgram UDP socket bugs on macOS",
+      "announcement": "This affected real-world libraries like k-rpc (used by bittorrent-dht) that rely on implicit binding behavior.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "native-arm64-shim-for-windows-node-modules-bin-binaries-fa8850e8",
+      "category": "native-arm64-shim-for-windows-node-modules-bin-binaries",
+      "section": "Native ARM64 shim for Windows node_modules/.bin binaries",
+      "announcement": "The bun_shim_impl.exe used for node_modules/.bin/* on Windows was previously hardcoded to x86_64, meaning every package binary invocation on Windows ARM64 ran under x64 emulation. The shim is now compiled natively for aarch64 when building Bun for Windows ARM64, removing the emulation overhead.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "native-arm64-shim-for-windows-node-modules-bin-binaries-ecfcc118",
+      "category": "native-arm64-shim-for-windows-node-modules-bin-binaries",
+      "section": "Native ARM64 shim for Windows node_modules/.bin binaries",
+      "announcement": "Thanks to @dylan-conway for the contribution!",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-a81e0e4d",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: An operator precedence bug in native readable streams caused 0 < MIN_BUFFER_SIZE to be evaluated before the ?? operator, resulting in excessive memory allocation when processing stream chunks",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-7888dc17",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: Custom lookup function in Node.js http/https client (e.g. via axios) breaking TLS certificate verification with ERR_TLS_CERT_ALTNAME_INVALID or unknown certificate verification error. When a custom DNS lookup resolved a hostname to an IP address, the original hostname was lost, causing TLS SNI and certificate verification to fail.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-366090f9",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: fs.openSync and fs.promises.open throwing EINVAL on Windows when passed numeric flags from fs.constants (e.g. O_CREAT | O_TRUNC | O_WRONLY). The fs.constants values on Windows use native MSVC values which differ from Bun's internal representation, causing flags like O_CREAT to be silently dropped. This also fixes UV_FS_O_FILEMAP support, which unbreaks packages like tar@7 (used by npm, giget, and others) that silently failed to extract files on Windows. (@Hona)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-6512811c",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: fs.stat truncating sub-millisecond precision from mtimeMs, atimeMs, ctimeMs, and birthtimeMs properties, now returning fractional milliseconds matching Node.js behavior",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-4255cb3a",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: fs.watch() crash on Windows when a failed watch is retried on the same path",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-4d29f717",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: a crash in fs.watchFile",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-eb036fff",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: node:fs functions crashing with certain inputs",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-8b24889e",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: crash (cast causes pointer to be null) on Windows when fs.realpathSync or fs.readlink encountered certain edge-case filesystem configurations like ramdisk volumes, substituted drives, or standalone executables in unusual locations",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-268a1f0e",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: console.Console returning undefined permanently after being accessed during a near-stack-overflow condition (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-89dab04a",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: Buffer.compare not properly validating targetEnd and sourceEnd offset bounds, where certain combinations of start/end values could bypass range checks instead of throwing ERR_OUT_OF_RANGE as Node.js does",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-86b87756",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: rare crash in Buffer.indexOf, Buffer.lastIndexOf, and Buffer.includes",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-83deaf1b",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: buffer overflow in path-handling code",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-dfee9a96",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: process.off(\"SIGxxx\", handler) removing one of multiple signal listeners would incorrectly uninstall the OS signal handler, causing remaining listeners to stop receiving signals",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-644365f0",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: execFileSync and execSync errors containing a self-referencing cycle (err.error === err) that caused JSON.stringify(err) to throw",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-0b47af0f",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: spawnSync could accidentally drain the global microtask queue, executing user JavaScript during what should be a synchronous, blocking call.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-9380146a",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: missing BoringSSL error clearing in crypto.createPrivateKey()",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-3eb6ead4",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: Crash in crypto.Hash update()/digest() caused by missing this validation, a GC hazard on input strings during encoding conversion, and reading from detached buffers. Now properly throws ERR_INVALID_THIS and ERR_INVALID_STATE instead of crashing.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-c9af42ec",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: crashs when calling native crypto/stream prototype methods (like Hmac.digest(), DiffieHellmanGroup.verifyError) with an invalid this value — now correctly throws ERR_INVALID_THIS instead of crashing",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-00dae19d",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: X509Certificate.prototype was undefined, which prevented subclassing with class Foo extends X509Certificate {} (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-0e21f5c4",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: getPeerCertificate() returning undefined instead of {} when no peer certificate is available, which caused checkServerIdentity() to crash with TypeError: Cannot destructure property 'subject' from null or undefined value during TLS handshakes — most notably when connecting to MongoDB Atlas clusters",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-90dd4004",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: hypothetical out of bounds read/write in native zlib write()/writeSync() where user-controlled offset and length parameters were not properly validated in production builds. These now correctly throw ERR_OUT_OF_RANGE, ERR_INVALID_ARG_TYPE, and other appropriate errors.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-0d7a0c4a",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: dgram.createSocket() incorrectly set SO_REUSEADDR on all UDP sockets, allowing multiple processes to silently bind to the same port without throwing EADDRINUSE — diverging from Node.js behavior. SO_REUSEADDR is now only applied when reuseAddr: true is explicitly passed.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-c8049d3d",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: a latent GC safety issue in node:vm modules where a garbage collection cycle during object construction could lead to a crash (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-29660c2c",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: structuredClone() throwing DataCloneError on objects created via napi_create_object, matching Node.js behavior (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-c1645e0c",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: node:http2 client streams stalling after receiving 65,535 bytes when using setLocalWindowSize() — the method updated the internal connection window size but never sent a WINDOW_UPDATE frame to the peer, causing the server to stop sending data once the default window was exhausted",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-eec3ddda",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: node:http2 getPackedSettings, getUnpackedSettings, and getDefaultSettings now match Node.js behavior, including support for enableConnectProtocol, customSettings, correct enablePush default, and proper ERR_HTTP2_INVALID_SETTING_VALUE error codes (@cirospaciari)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-8c399198",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: crash that could occur on exit when using NAPI native addon modules (such as skia-canvas) on Windows",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "node-js-compatibility-improvements-b789b4a6",
+      "category": "node-js-compatibility-improvements",
+      "section": "Node.js compatibility improvements",
+      "announcement": "Fixed: bug in libuv on Windows that could cause pipe data loss when reading from subprocess pipes",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-8acfa28c",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed PgBouncer incompatibility with sql.prepare(false) queries",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-10dcfa02",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.file().text() and similar async read methods not keeping event loop alive when an error errors",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-c3491d61",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Incorrect Bun.file() async read error paths on Windows",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-a03752ba",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.file().stat() and Bun.file().delete() corrupting file paths containing non-ASCII UTF-8 characters (e.g., German umlauts, Japanese characters, emoji), causing ENOENT errors due to double-encoding",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-882e6d24",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.stdin.stream() and Bun.stdin.text() returning empty on Linux after calling Bun.stdin.exists() or accessing Bun.stdin.size",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-aa40790e",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.JSONL.parseChunk(input, start, end) now honors start/end offsets when input is a string.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-066791ed",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: S3File.slice(0, N).stream() ignoring the slice range and downloading the entire file instead of only the requested byte range",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-deff1a08",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: bun:sql panicking with \"integer does not fit in destination type\" when a PostgreSQL query exceeded the 65,535 parameter limit (e.g. batch inserting 7,000 rows × 10 columns). Now throws a descriptive PostgresError with code ERR_POSTGRES_TOO_MANY_PARAMETERS and a hint to reduce batch size",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-54407a0b",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Valkey RESP protocol parser no longer crashes with a stack overflow on deeply nested server responses by enforcing a maximum nesting depth of 128 for aggregate types (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-ef441800",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.Transpiler ignoring experimentalDecorators: true and emitDecoratorMetadata: true from tsconfig, always emitting TC39-style decorators instead of legacy TypeScript decorators. This broke frameworks like Angular that rely on legacy decorator calling conventions in JIT mode.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-4b58483f",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.Transpiler.scanImports() and Bun.Transpiler.scan() ignoring the trimUnusedImports option — unused imports were only being trimmed by transformSync()",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-01402e06",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: memory leak in Bun.Transpiler when using a custom tsconfig with async transform() calls. After the first await transpiler.transform(), subsequent calls could read freed memory or double-free the tsconfig pointer, potentially causing crashes.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-59d8072f",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: emitDecoratorMetadata: true in tsconfig.json without experimentalDecorators: true incorrectly used TC39 standard decorators instead of legacy decorator semantics, causing NestJS, TypeORM, Angular, and other legacy-decorator frameworks to crash with descriptor.value undefined",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-6f0da435",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Breakpoints landing at wrong line numbers when debugging files over 50KB in VSCode's debug terminal (BUN_INSPECT env var). The runtime transpiler cache was not being disabled when the debugger was activated via the BUN_INSPECT environment variable (as opposed to --inspect CLI flags), causing cached output without inline source maps to be used. (@alii)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-7bbfab59",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: HTML-referenced assets (favicons, images, etc.) returning 404 when served with Bun.serve() because they were missing from the bundle manifest's files array despite being correctly emitted to disk",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-55d6c86d",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed ReadableStream with type: \"direct\" incorrectly calling the user's cancel callback on normal stream completion",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-222570e8",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Empty string arguments in Bun shell",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-2edcda17",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: DoS in Bun.stringWidth",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-apis-9a046071",
+      "category": "bun-apis",
+      "section": "Bun APIs",
+      "announcement": "Fixed: Bun.stringWidth grapheme bug: ANSI escape bytes were incorrectly included in grapheme break tracking",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-90d63d9e",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: incorrect value in WebSocket.prototype.protocol in certain cases",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-265599c0",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: ws.ping() and ws.pong() called without arguments incorrectly sent non-empty payloads instead of empty control frames, causing disconnections with strict WebSocket servers (e.g. Binance) that validate pong payloads match ping payloads (@gaowhen)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-b30cdc69",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: WebSocket client now validates the Sec-WebSocket-Accept header value during the upgrade handshake per RFC 6455 §4.2.2, rejecting connections where the server returns a stale or mismatched response",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-886f6065",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: Request.formData() truncating small binary files with null bytes",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-fcc8d9f7",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: a crash when calling fetch() using a very large number of headers",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-34ad42fb",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: crash in fetch with TLS proxies in certain cases",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-1d27749e",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: Edgecase with pipelined HTTP requests with no headers",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-a2674bee",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: HTTP header value incorrect stripping for certain cases",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-7279639c",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Hardened Bun's HTTP server against malformed chunked transfer requests. Thanks to @sim1222 for reporting issues.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-db1971b2",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: CRLF injection vulnerability in ServerResponse.prototype.writeEarlyHints where header names and values were written to the socket without validation, allowing HTTP response splitting attacks",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "web-apis-d455915d",
+      "category": "web-apis",
+      "section": "Web APIs",
+      "announcement": "Fixed: WebSocket connections dropping over proxy tunnels with bidirectional traffic",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-7563b10a",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bun install hanging indefinitely or silently skipping processing when a security scanner is enabled and the project has more than ~790 packages. The package list is now sent to the scanner subprocess via an IPC pipe instead of command-line arguments, avoiding OS argument length limits",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-9c19d978",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bun install hanging indefinitely (~300 seconds per dependency) when using an HTTP proxy (http_proxy/https_proxy) with cached packages that return 304 Not Modified through a CONNECT tunnel (@WhiteMinds)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-64a648a2",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: Non-deterministic bun install bug where transitive peer dependencies were left unresolved when all manifest loads were synchronous (e.g., warm cache with valid Cache-Control: max-age), causing missing peer dependency symlinks with --linker=isolated (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-bfb62d80",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: .npmrc auth token matching only comparing hostnames",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-61ff04c6",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bun install silently exiting with code 1 when the security scanner encounters an error, making failures impossible to debug (especially in CI). All error paths now print descriptive messages to stderr.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-33b32ce9",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bun install now shows an accurate error message when a file: dependency path is missing (e.g., due to a stale lockfile), instead of the misleading \"Bun could not find a package.json file to install from\" message. The new error clearly identifies the dependency and the exact path that was not found.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-2c8ed370",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bun update -i select all ('A' key) now correctly updates packages instead of showing \"No packages selected for update\"",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-20ee65b6",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bun pack and bun publish using stale version and name from package.json when lifecycle scripts (prepublishOnly, prepack, prepare) modify them during execution. Previously, the tarball filename and publish registry metadata would use the original values captured before scripts ran. (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-install-cad662a5",
+      "category": "bun-install",
+      "section": "bun install",
+      "announcement": "Fixed: bun bun.lockb | head no longer prints an internal BrokenPipe error message instead of exiting silently",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-a6e7be07",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: bun build --compile --bytecode --format=esm crashing at runtime with \"Cannot find module\" errors when barrel-optimized packages (those with \"sideEffects\": false) had unused re-exports recorded as external dependencies in bytecode ModuleInfo (@Jarred-Sumner)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-bfcdc3d0",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: import Bun from 'bun' returning undefined when bundled with --bytecode flag. The CJS lowering pass was incorrectly generating globalThis.Bun.default instead of globalThis.Bun for default imports.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-193d9d04",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: Bundler dropping exports when barrel files with sideEffects: false re-export namespace imports (import * as X from './mod'; export { X }), causing ReferenceError for the re-exported bindings at runtime",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-1f1db16f",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: Bundler barrel optimization incorrectly dropped exports needed by dynamic import() when the same barrel was also referenced by a static named import, producing invalid JS with undeclared export bindings (SyntaxError at runtime). This commonly affected AWS SDK builds using @smithy/credential-provider-imds. (@dylan-conway)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-d2a7f32a",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: dynamic import() with import attributes (e.g. { with: { type: 'text' } }) not applying the correct loader during bundling, which caused --compile builds to fail with require_* is not defined for .html files imported as text",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-b549a349",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: bun build --compile with HTML routes producing relative asset URLs (./chunk-abc.js) that broke when served from nested routes like /foo/ — assets now use absolute root-relative URLs (/chunk-abc.js)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-35467557",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: Crash when resolving very long import paths (e.g. through tsconfig baseUrl, paths wildcards, or node_modules lookups)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "javascript-bundler-ef3dd46a",
+      "category": "javascript-bundler",
+      "section": "JavaScript bundler",
+      "announcement": "Fixed: Dev server barrel optimizer incorrectly deferring export * target submodules, causing classes like QueryClient to become undefined and throwing TypeError: Right-hand side of 'instanceof' is not an object — affected packages like @refinedev/core with @tanstack/react-query",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "css-parser-4c9f5b21",
+      "category": "css-parser",
+      "section": "CSS Parser",
+      "announcement": "Fixed: CSS bundler incorrectly mapping logical border-radius properties (border-start-start-radius, border-start-end-radius, border-end-start-radius, border-end-end-radius) to only border-top-left-radius/border-top-right-radius when values contain var() references. All four logical properties now correctly resolve to their distinct physical counterparts.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "css-parser-f1b63b25",
+      "category": "css-parser",
+      "section": "CSS Parser",
+      "announcement": "Fixed: CSS mask shorthand parsing incorrectly dropping geometry-box values like padding-box and content-box, which could also cause rules with different geometry boxes to be incorrectly merged (@anthonybaldwin)",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "css-parser-0a0bc91a",
+      "category": "css-parser",
+      "section": "CSS Parser",
+      "announcement": "Fixed: unicode-range values in @font-face rules being mangled by the CSS processor (e.g., U+0000-00FF became U0-0FF), which caused browsers to silently ignore the entire @font-face rule and fonts to not load",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-test-0495cec9",
+      "category": "bun-test",
+      "section": "bun test",
+      "announcement": "Fixed: bun test object diffs and console.log silently dropping properties with empty string keys (\"\")",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-shell-ab5c6e9e",
+      "category": "bun-shell",
+      "section": "Bun Shell",
+      "announcement": "Fixed: shell interpolation could crash given invalid input",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "bun-shell-1eb80325",
+      "category": "bun-shell",
+      "section": "Bun Shell",
+      "announcement": "Fixed: Bun's builtin rm in the shell returning exit code 0 instead of the correct non-zero exit code when a file doesn't exist and .quiet() or .text() is used. This also caused errors to never be thrown in those code paths.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "typescript-types-4bcbf890",
+      "category": "typescript-types",
+      "section": "TypeScript types",
+      "announcement": "Fixed: Missing contentEncoding property in the S3Options TypeScript type definition, which caused TypeScript errors and missing IDE autocompletion when using the contentEncoding option added in Bun v1.3.7",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "runtime-and-cli-9b7cde51",
+      "category": "runtime-and-cli",
+      "section": "Runtime and CLI",
+      "announcement": "Fixed: bun run --filter and bun run --workspaces failing when the NODE environment variable points to a non-existent file. Bun now validates that the path is an executable before using it, and falls back to searching PATH or creating its own node symlink.",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "runtime-and-cli-4e40eae4",
+      "category": "runtime-and-cli",
+      "section": "Runtime and CLI",
+      "announcement": "Fixed: 100% CPU spin on Linux caused by the inotify file watcher re-parsing stale events in an infinite loop when a single read() returned more than 128 events",
+      "status": "planned",
+      "testPath": null
+    },
+    {
+      "key": "runtime-and-cli-54e2553a",
+      "category": "runtime-and-cli",
+      "section": "Runtime and CLI",
+      "announcement": "Fixed crashes when passing Proxy-wrapped arrays to built-in APIs (@sosukesuzuki)",
+      "status": "planned",
+      "testPath": null
+    }
+  ]
+}

@@ -7,6 +7,7 @@
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | **Verified runtime**      | Installed Bun **1.4.0-canary.1** (`3f93daaf0`) plus isolated Bun **1.3.14** release probes; production pin remains 1.3.14 |
 | **Canonical refs**        | `bun tools/bun-doc-refs.ts suggest "…"` · operate [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md)                            |
+| **Release adoption**      | [Bun 1.3.10–1.3.13](./bun-v1.3.10-v1.3.13-catalog.md) · [Bun 1.3.14](./bun-v1.3.14-catalog.md)                            |
 | **Not product desk SSOT** | Partner UI / Telegram / balance-sheet flows unless a package owns them                                                    |
 
 ## API map (homebase)
@@ -115,13 +116,14 @@ status). Harness smoke accepts both.
 passed to `Bun.serve` determines which HTTP behavior Bun can preserve; a stream
 created from a file is not equivalent to the file object.
 
-| Route/body shape                                    | Delivery                    | Automatic file MIME | Conditional metadata                                              | Byte Range                                                  | Cache policy                         |
-| --------------------------------------------------- | --------------------------- | ------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------ |
-| direct route `Bun.file(pathOrFileURL)`              | lazy file stream            | yes                 | `Last-Modified` + `If-Modified-Since` → 304                       | 206                                                         | application must set `Cache-Control` |
-| `new Response(Bun.file(pathOrFileURL))`             | lazy file stream            | yes                 | same file behavior                                                | 206                                                         | application must set `Cache-Control` |
-| `new Response(Uint8Array \| ArrayBuffer \| Buffer)` | buffered bytes              | no; set explicitly  | a static route Response gets Bun's ETag, not file `Last-Modified` | no native file Range; Range request returns full 200        | application must set `Cache-Control` |
-| `new Response(Bun.file(path).stream())`             | web `ReadableStream`        | no; set explicitly  | no inherited file validator                                       | versioned: full 200 on 1.3.14; 206 observed on 1.4.0 canary | application must set `Cache-Control` |
-| imported HTML route                                 | Bun fullstack/HTML pipeline | bundle-managed      | pipeline-managed                                                  | asset-dependent                                             | pipeline-managed                     |
+| Route/body shape                                        | Delivery                    | Automatic file MIME | Conditional metadata                                              | Byte Range                                                  | Cache policy                         |
+| ------------------------------------------------------- | --------------------------- | ------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------ |
+| direct route `Bun.file(pathOrFileURL)`                  | lazy file stream            | yes                 | `Last-Modified` + `If-Modified-Since` → 304                       | 206                                                         | application must set `Cache-Control` |
+| static route `new Response(Bun.file(pathOrFileURL))`    | lazy file stream            | yes                 | same file behavior                                                | 206                                                         | application must set `Cache-Control` |
+| dynamic handler `new Response(Bun.file(pathOrFileURL))` | lazy file stream            | yes                 | no `Last-Modified` observed on 1.3.14                             | 206                                                         | application must set `Cache-Control` |
+| `new Response(Uint8Array \| ArrayBuffer \| Buffer)`     | buffered bytes              | no; set explicitly  | a static route Response gets Bun's ETag, not file `Last-Modified` | no native file Range; Range request returns full 200        | application must set `Cache-Control` |
+| `new Response(Bun.file(path).stream())`                 | web `ReadableStream`        | no; set explicitly  | no inherited file validator                                       | versioned: full 200 on 1.3.14; 206 observed on 1.4.0 canary | application must set `Cache-Control` |
+| imported HTML route                                     | Bun fullstack/HTML pipeline | bundle-managed      | pipeline-managed                                                  | asset-dependent                                             | pipeline-managed                     |
 
 **Harness rules**
 

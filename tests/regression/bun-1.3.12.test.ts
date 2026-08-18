@@ -1,3 +1,29 @@
+// @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --compile
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect — Bun.connect
+// @see https://bun.com/docs/runtime/cookies#cookiemap-class — Bun.CookieMap
+// @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
+// @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — Bun.dns
+// @see https://bun.com/docs/runtime/networking/dns#dns-caching-in-bun — Bun.dns.lookup
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/reference/bun/gc — Bun.gc
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/networking/tcp#start-a-server-bun-listen — Bun.listen
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
+// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
+// @see https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket — Bun.udpSocket
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/blog/bun-v1.3.12
 // Full-release regression probes for Bun v1.3.12 (Features · Performance · Bugfixes).
 // Runs on Bun ≥ 1.3.12 (current CI is newer and must keep these fixed).
@@ -40,6 +66,24 @@ const BLOG_BUGFIXES = `${BLOG}#bugfixes`;
 const { test: fixTest, skipIf: fixSkip } = releaseTest(MIN_VERSION);
 const pipelineAsync = promisify(pipeline);
 
+function cgroupV2CpuLimit(): number | null {
+  if (process.platform !== 'linux') return null;
+  try {
+    const [quotaText, periodText] = fs
+      .readFileSync('/sys/fs/cgroup/cpu.max', 'utf8')
+      .trim()
+      .split(/\s+/);
+    if (quotaText === 'max') return null;
+    const quota = Number(quotaText);
+    const period = Number(periodText);
+    return quota > 0 && period > 0 ? Math.max(1, Math.ceil(quota / period)) : null;
+  } catch {
+    return null;
+  }
+}
+
+const cgroupCpuLimit = cgroupV2CpuLimit();
+
 describe(`Bun ${MIN_VERSION} Features (${BLOG})`, () => {
   fixSkip(typeof Bun.WebView !== 'function')(
     'Bun.WebView navigates and evaluates (headless automation)',
@@ -65,6 +109,23 @@ describe(`Bun ${MIN_VERSION} Features (${BLOG})`, () => {
 
     const linked = Bun.markdown.ansi('[docs](https://bun.sh)', { hyperlinks: true, colors: false });
     expect(linked).toContain('docs');
+  });
+
+  fixTest('bun ./file.md renders Markdown directly to terminal output', async () => {
+    const root = tempRoot('markdown-cli');
+    const markdownPath = join(root, 'release.md');
+    await Bun.write(markdownPath, '# Release probe\n\n**native terminal markdown**\n');
+    const result = Bun.spawnSync([process.execPath, markdownPath], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: { ...Bun.env, NO_COLOR: '1' },
+    });
+    const output = Bun.stripANSI(result.stdout.toString());
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stderr.toString()).toBe('');
+    expect(output).toContain('Release probe');
+    expect(output).toContain('native terminal markdown');
   });
 
   fixTest('native async errors include async stack frames', async () => {
@@ -217,6 +278,14 @@ describe(`Bun ${MIN_VERSION} Performance smokes (${BLOG})`, () => {
     expect(availableParallelism()).toBeGreaterThan(0);
     expect(navigator.hardwareConcurrency).toBeGreaterThan(0);
   });
+
+  fixSkip(cgroupCpuLimit === null)(
+    'finite cgroup v2 CPU quota caps availableParallelism / hardwareConcurrency',
+    () => {
+      expect(availableParallelism()).toBeLessThanOrEqual(cgroupCpuLimit!);
+      expect(navigator.hardwareConcurrency).toBeLessThanOrEqual(cgroupCpuLimit!);
+    }
+  );
 
   fixSkip(process.platform !== 'linux' && process.platform !== 'freebsd')(
     'TCP_DEFER_ACCEPT / SO_ACCEPTFILTER (Linux/FreeBSD Bun.serve accept optimization)',
