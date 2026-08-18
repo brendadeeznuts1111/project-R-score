@@ -56,6 +56,7 @@ import type {
   PortalTenantId,
   ProjectId,
   RequestId,
+  ReleaseKnowledgeExampleId,
   ResourceId,
   SessionId,
   SnapshotId,
@@ -131,6 +132,7 @@ import {
   asPortalTenantId,
   asProjectId,
   asRequestId,
+  asReleaseKnowledgeExampleId,
   asResourceId,
   asRunId,
   asSessionId,
@@ -300,6 +302,9 @@ const crossIssueLabelAsArtifact: GithubIssueArtifactId = githubIssueLabelKey;
 const sameSession: SessionId = sessionId;
 const sameUser: UserId = userId;
 const sameJob: JobId = asJobId('job-1');
+const releaseKnowledgeExampleId: ReleaseKnowledgeExampleId = asReleaseKnowledgeExampleId(
+  'bun-1.3.14-bun-image-deadbeef'
+);
 
 // ─── 3. Branded value IS assignable to plain string ─────────────────────────
 
@@ -413,6 +418,7 @@ const everyId: readonly AnyId[] = [
   externalAccountId,
   githubIssueArtifactId,
   githubIssueConceptId,
+  releaseKnowledgeExampleId,
 ];
 
 const everyBrandedValue: readonly AnyBrandedValue[] = [

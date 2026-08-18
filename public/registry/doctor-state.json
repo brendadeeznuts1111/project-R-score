@@ -1,21 +1,23 @@
 {
   "kind": "portal-doctor-state",
   "schemaVersion": 1,
-  "generatedAt": "2026-08-15T21:14:04.601Z",
+  "generatedAt": "2026-08-18T00:24:59.328Z",
   "ok": true,
-  "tone": "green",
+  "tone": "yellow",
   "full": false,
   "summary": {
     "checkCount": 26,
-    "passed": 26,
-    "failed": 0,
+    "passed": 25,
+    "failed": 1,
     "fatal": 12,
     "warn": 10,
     "info": 4,
     "failedFatal": 0,
-    "failedWarn": 0,
-    "autoFixableFailed": 0,
-    "suggested": []
+    "failedWarn": 1,
+    "autoFixableFailed": 1,
+    "suggested": [
+      "bun run vault:health:bake"
+    ]
   },
   "byGroup": {
     "linker": {
@@ -25,7 +27,7 @@
     },
     "bakes": {
       "total": 5,
-      "failed": 0,
+      "failed": 1,
       "fatalFailed": 0
     },
     "catalog": {
@@ -70,8 +72,9 @@
       "id": "vault-health-bake",
       "group": "bakes",
       "level": "warn",
-      "ok": true,
-      "message": "public/registry/vault-health.json present · 42h ago",
+      "ok": false,
+      "message": "public/registry/vault-health.json stale · 3d ago (>48h) — re-bake",
+      "fixCommand": "bun run vault:health:bake",
       "autoFixable": true
     },
     {
@@ -95,7 +98,7 @@
       "group": "bakes",
       "level": "warn",
       "ok": true,
-      "message": "public/registry/capability-map-subset.json present · 40h ago",
+      "message": "public/registry/capability-map-subset.json present · 3d ago",
       "autoFixable": true
     },
     {
@@ -103,7 +106,7 @@
       "group": "bakes",
       "level": "info",
       "ok": true,
-      "message": "public/registry/bunfig-state.json present · 18d ago",
+      "message": "public/registry/bunfig-state.json present · 20d ago",
       "autoFixable": true
     },
     {
@@ -223,7 +226,7 @@
       "group": "runtime",
       "level": "info",
       "ok": true,
-      "message": "configured=5/10 · tls=enabled · http=256 · fetch=off · cache=platform · tmp=custom · color=disabled · reload=preserved · crash-reports=disabled · bun-options=unset",
+      "message": "configured=2/10 · tls=enabled · http=256 · fetch=off · cache=platform · tmp=custom · color=disabled · reload=default · crash-reports=default · bun-options=unset",
       "autoFixable": false
     },
     {
@@ -263,5 +266,5 @@
   "board": "/portal/doctor/",
   "href": "/registry/doctor-state.json",
   "fingerprintPortable": true,
-  "fingerprint": "5d8d19aa6e7d7a3b65d4c6b72ca5132176a665c83a6ade4c01812ba6619805db"
+  "fingerprint": "70d7b84a4210ab64d860774350cf77f1ff7c53fb2baa5b5841bfe307ec866d48"
 }

@@ -1179,7 +1179,11 @@ function renderCards(d) {
         : '—',
       sub: [
         proof.bunVersion ? `Bun ${proof.bunVersion}` : null,
-        proofSum.apisVerified != null ? `${proofSum.apisVerified}/${proofSum.apis} APIs` : null,
+        proofSum.demoApisVerified != null
+          ? `${proofSum.demoApisVerified}/${proofSum.uniqueDemoApis} demo APIs`
+          : proofSum.apisVerified != null
+            ? `${proofSum.apisVerified}/${proofSum.apis} demo APIs`
+            : null,
         proof.generated ? String(proof.generated).slice(0, 10) : null,
       ]
         .filter(Boolean)

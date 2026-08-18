@@ -1,3 +1,8 @@
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+
 import { readJunitContext, resolveJunitContext } from './junit-context.ts';
 
 const reportPath = Bun.argv[2] ?? 'reports/junit.xml';

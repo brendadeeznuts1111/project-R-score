@@ -49,6 +49,10 @@ const CORE_STEPS: CoreStep[] = [
     cmd: ['bun', 'run', 'docs:native:check'],
   },
   {
+    name: 'bun-release-knowledge',
+    cmd: ['bun', 'run', 'bun:release-knowledge:validate:all'],
+  },
+  {
     name: 'markdown-contract',
     cmd: ['bun', 'run', 'check:docs'],
   },

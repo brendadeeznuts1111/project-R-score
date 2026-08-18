@@ -80,7 +80,6 @@ export function enrichMonitoringForSnapshot(
               ? `${((100 * bun.passed) / bun.total).toFixed(1)}%`
               : undefined,
           generated: bun.timestamp,
-          apisVerified: bun.passed,
         }
       : base.bunApiProof,
     networkingProof:

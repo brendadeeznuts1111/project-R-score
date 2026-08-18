@@ -27,6 +27,8 @@
 // @see https://bun.com/docs/runtime/toml#bun-toml-stringify — Bun.TOML.stringify
 // @see https://bun.com/docs/runtime/templating/create — bun create (optional scaffold)
 // @see https://bun.com/docs/runtime/templating/init — bun init (empty project)
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 /**
  * Factory CLI — publish, list, search, install, snapshot artifacts to/from the
  * R2-backed artifact registry (Bun runtime — not Pages Functions).
@@ -44,6 +46,7 @@ import { tomlStringify } from '../toml-stringify';
 import { buildRegistryHealthReport } from './health';
 import { runIntegrityCycle } from './monitoring';
 import { registry } from './registry';
+import { requireFactoryRegistryS3Config } from './object-store';
 import { type ArtifactType } from './artifact';
 import { readPublishPackageJson, readPublishReadme } from './publish-metadata';
 import {
@@ -925,14 +928,14 @@ async function resolveCreateSource(
   if (!template.includes('/')) {
     const projectTemplateDir = `${process.cwd()}/.bun-create/${template}`;
     if (await Bun.file(`${projectTemplateDir}/package.json`).exists()) {
-      return { source: 'local' };
+      return { source: 'local', localTemplateDir: projectTemplateDir };
     }
 
     const configuredRoot = env.BUN_CREATE_DIR?.trim();
     if (configuredRoot) {
       const configuredTemplateDir = `${configuredRoot}/${template}`;
       if (await Bun.file(`${configuredTemplateDir}/package.json`).exists()) {
-        return { source: 'local' };
+        return { source: 'local', localTemplateDir: configuredTemplateDir };
       }
     }
 
@@ -942,6 +945,89 @@ async function resolveCreateSource(
     }
   }
   return { source: classifyCreateSource(template) };
+}
+
+/** Fail before Bun can replace a destination when a repository-owned local
+ * template declares the standard executable harness contract. */
+async function preflightHarnessTemplate(
+  templateDir: string,
+  env: Record<string, string | undefined>
+): Promise<boolean> {
+  if (!(await Bun.file(`${templateDir}/harness.toml`).exists())) return false;
+
+  const scripts = [
+    'scripts/requirements.ts',
+    'scripts/generate-files-md.ts',
+    'scripts/validate-files-md.ts',
+  ] as const;
+  for (const script of scripts) {
+    if (!(await Bun.file(`${templateDir}/${script}`).exists())) {
+      errorExit(`Local template harness is incomplete before scaffold: missing ${script}`);
+    }
+  }
+  for (const script of ['scripts/requirements.ts', 'scripts/validate-files-md.ts'] as const) {
+    const proc = Bun.spawn(
+      bunSpawnArgs([script, ...(script.endsWith('requirements.ts') ? ['check'] : [])]),
+      {
+        cwd: templateDir,
+        env,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      }
+    );
+    const [exitCode, stdout, stderr] = await Promise.all([
+      proc.exited,
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+    ]);
+    if (exitCode !== 0) {
+      const detail = `${stdout}\n${stderr}`.trim();
+      errorExit(
+        `Local template harness failed before scaffold (${script})${detail ? `:\n${detail}` : ''}`
+      );
+    }
+  }
+  console.log('  Template preflight: requirements, files, and manifest passed');
+  return true;
+}
+
+/** Prove Bun's materialized output before a Factory marker or success handoff.
+ * A failed scaffold is retained so the operator can inspect Bun's output. */
+async function validateMaterializedHarnessScaffold(
+  destination: string,
+  env: Record<string, string | undefined>
+): Promise<void> {
+  const commands = [
+    ['scripts/requirements.ts', 'check'],
+    ['scripts/generate-files-md.ts'],
+    ['scripts/validate-files-md.ts'],
+  ] as const;
+  for (const args of commands) {
+    const script = args[0];
+    if (!(await Bun.file(`${destination}/${script}`).exists())) {
+      errorExit(
+        `Generated scaffold harness failed after Bun materialization; destination retained: missing ${script}`
+      );
+    }
+    const proc = Bun.spawn(bunSpawnArgs([...args]), {
+      cwd: destination,
+      env,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const [exitCode, stdout, stderr] = await Promise.all([
+      proc.exited,
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+    ]);
+    if (exitCode !== 0) {
+      const detail = `${stdout}\n${stderr}`.trim();
+      errorExit(
+        `Generated scaffold harness failed after Bun materialization; destination retained (${script})${detail ? `:\n${detail}` : ''}`
+      );
+    }
+  }
+  console.log('  Scaffold materialization: requirements, files, and manifest passed');
 }
 
 function cmdTemplates(): void {
@@ -991,6 +1077,19 @@ async function cmdCreate(args: string[]): Promise<void> {
       );
     }
   }
+  const harnessBacked =
+    source === 'local' && localTemplateDir
+      ? await preflightHarnessTemplate(localTemplateDir, env)
+      : false;
+  if (doPublish) {
+    try {
+      requireFactoryRegistryS3Config();
+    } catch (cause) {
+      errorExit(
+        `--publish requirements failed before scaffold: ${cause instanceof Error ? cause.message : String(cause)}`
+      );
+    }
+  }
 
   // Preserve Bun's documented order: template, flags, destination.
   const bunArgs = ['create', template];
@@ -1000,7 +1099,7 @@ async function cmdCreate(args: string[]): Promise<void> {
   // Make repository-local templates work even when the wrapper is invoked
   // outside the repository; an explicit user override remains authoritative.
   if (source === 'local' && localTemplateDir && !env.BUN_CREATE_DIR) {
-    env.BUN_CREATE_DIR = `${import.meta.dir}/../../.bun-create`;
+    env.BUN_CREATE_DIR = dirnamePath(localTemplateDir);
   }
   console.log(`\n  Scaffold source: ${source}${source === 'local' ? ` (${template})` : ''}\n`);
 
@@ -1014,6 +1113,9 @@ async function cmdCreate(args: string[]): Promise<void> {
 
   const exitCode = await proc.exited;
   if (exitCode !== 0) process.exit(exitCode);
+  if (harnessBacked && destination) {
+    await validateMaterializedHarnessScaffold(resolvePath(destination), env);
+  }
 
   // If --publish, register the scaffolded project in the registry
   if (doPublish) {

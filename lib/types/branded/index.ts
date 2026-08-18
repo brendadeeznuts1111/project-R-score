@@ -71,7 +71,7 @@ import type {
   AccessKeyId,
   TokenId,
 } from './identity.ts';
-import type { DocumentId, ZoneId, DocTokenId } from './documents.ts';
+import type { DocumentId, ZoneId, DocTokenId, ReleaseKnowledgeExampleId } from './documents.ts';
 import type { ChallengeId, PolicyId } from './security.ts';
 import type { DeploymentId } from './deployment.ts';
 import type {
@@ -209,6 +209,7 @@ export type AnyId =
   | DocumentId
   | ZoneId
   | DocTokenId
+  | ReleaseKnowledgeExampleId
   | ChallengeId
   | PolicyId
   | DeploymentId

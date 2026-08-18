@@ -4,11 +4,15 @@
   "private": true,
   "type": "module",
   "description": "Deterministic Bun release-announcement inventories for executable contract adoption",
+  "bin": {
+    "bun-release-knowledge": "./src/knowledge-cli.ts"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./generator": "./src/generator.ts",
     "./feed": "./src/feed.ts",
     "./catalog": "./src/catalog.ts",
+    "./knowledge": "./src/knowledge.ts",
     "./package.json": "./package.json"
   },
   "module": "./src/index.ts",
@@ -17,8 +21,12 @@
     "generate": "bun ./src/cli.ts",
     "generate:latest": "bun ./src/cli.ts latest",
     "generate:all": "bun ./src/cli.ts --all",
+    "knowledge": "bun ./src/knowledge-cli.ts",
+    "knowledge:check": "bun ./src/knowledge-cli.ts validate-all ./knowledge",
+    "knowledge:validate": "bun ./src/knowledge-cli.ts validate",
+    "knowledge:validate:all": "bun ./src/knowledge-cli.ts validate-all ./knowledge",
     "check": "bun ./src/cli.ts --check",
     "check:latest": "bun ./src/cli.ts latest --check",
-    "test": "bun test ../../tests/bun-release-contract-generator.test.ts"
+    "test": "bun test ../../tests/bun-release-contract-generator.test.ts ../../tests/bun-release-knowledge.test.ts ../../tests/bun-release-knowledge-validation.test.ts"
   }
 }

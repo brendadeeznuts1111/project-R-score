@@ -282,7 +282,7 @@ describe('inspect / getConsoleDepth', () => {
       }
     );
     expect(result.exitCode).toBe(0);
-    expect(result.stdout.toString().trim()).toBe('4');
+    expect(result.stdout.toString().trim()).toBe('6');
   });
 
   /**

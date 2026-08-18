@@ -268,6 +268,26 @@ async function validateRunnableExamples(
   }
 }
 
+async function validateBundledReferences(
+  skillRoot: string,
+  folderName: string,
+  skillNames: ReadonlySet<string>,
+  repoRoot: string,
+  issues: AgentSkillIssue[]
+): Promise<void> {
+  for await (const relativePath of new Bun.Glob('references/**/*.md').scan({
+    cwd: skillRoot,
+    onlyFiles: true,
+  })) {
+    const referencePath = resolvePath(skillRoot, relativePath);
+    const displayPath = agentSkillsDisplayPath(folderName, relativePath);
+    const text = await Bun.file(referencePath).text();
+    await validateLocalLinks(text, referencePath, displayPath, repoRoot, issues);
+    validateCanonicalSkillPaths(text, folderName, skillNames, displayPath, issues);
+    await validateRunnableExamples(text, skillRoot, displayPath, repoRoot, issues);
+  }
+}
+
 async function validateMetadata(
   metadataPath: string,
   displayPath: string,
@@ -535,6 +555,13 @@ export async function validateAgentSkills(
     validateCanonicalSkillPaths(text, folderName, discoveredSkillNames, displayPath, issues);
     if (folderName in registrySkills) {
       await validateRunnableExamples(text, dirnamePath(skillPath), displayPath, repoRoot, issues);
+      await validateBundledReferences(
+        dirnamePath(skillPath),
+        folderName,
+        discoveredSkillNames,
+        repoRoot,
+        issues
+      );
     }
     await validateMetadata(
       resolveAgentSkillsPath(repoRoot, folderName, AGENT_SKILLS_PATHS.metadataFile),

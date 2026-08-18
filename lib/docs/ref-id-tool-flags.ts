@@ -390,6 +390,22 @@ export const BUN_RELEASE_CONTRACTS_ALLOWED_LONG = [
   'help',
 ] as const;
 
+/** § — bun:release-knowledge (`tools/bun-release-knowledge.ts`) — no design Flags table; tool allowlist only */
+export const BUN_RELEASE_KNOWLEDGE_ALLOWED_LONG = [
+  'version',
+  'output',
+  'catalog',
+  'feeds',
+  'limit',
+  'check',
+  'json',
+  'source',
+  'report',
+  'strict',
+  'max-warnings',
+  'help',
+] as const;
+
 /** § — screenshot (`tools/screenshot-cli.ts`) — no design Flags table; tool allowlist only */
 export const SCREENSHOT_ALLOWED_LONG = [
   'subject',
@@ -2402,15 +2418,6 @@ export const SOFT_ACCOUNTING_BAKE_ALLOWED_LONG = [
   'out',
 ] as const;
 
-/** § — showcase (`tools/bun-api-showcase/oneliners.ts`) — auto team plan */
-export const SHOWCASE_ALLOWED_LONG = ['live'] as const;
-
-/** § — showcase:ops (`tools/bun-api-showcase/ops-oneliners.ts`) — auto team plan */
-export const SHOWCASE_OPS_ALLOWED_LONG = ['live'] as const;
-
-/** § — showcase:verify (`tools/bun-api-showcase/verify.ts`) — auto team plan */
-export const SHOWCASE_VERIFY_ALLOWED_LONG = ['write'] as const;
-
 /** § — docs:sync:integrated (`tools/cli/integrated-cli.ts`) — auto team plan */
 export const DOCS_SYNC_INTEGRATED_ALLOWED_LONG = ['graph'] as const;
 
@@ -2481,6 +2488,7 @@ export type AllowedLongCliName =
   | 'partner:onboard'
   | 'bun:pr:verify'
   | 'bun:release-contracts'
+  | 'bun:release-knowledge'
   | 'screenshot'
   | 'bun:runtime-pin'
   | 'glossary:health'
@@ -2780,9 +2788,6 @@ export type AllowedLongCliName =
   | 'agent'
   | 'telegram:seat:desk'
   | 'soft:accounting:bake'
-  | 'showcase'
-  | 'showcase:ops'
-  | 'showcase:verify'
   | 'docs:sync:integrated'
   | 'status:matrix'
   | 'cli:allowlist:coverage'
@@ -2815,6 +2820,7 @@ export const ALLOWED_LONG_REGISTRY = {
   'partner:onboard': PARTNER_ONBOARD_ALLOWED_LONG,
   'bun:pr:verify': BUN_PR_VERIFY_ALLOWED_LONG,
   'bun:release-contracts': BUN_RELEASE_CONTRACTS_ALLOWED_LONG,
+  'bun:release-knowledge': BUN_RELEASE_KNOWLEDGE_ALLOWED_LONG,
   screenshot: SCREENSHOT_ALLOWED_LONG,
   'bun:runtime-pin': BUN_RUNTIME_PIN_ALLOWED_LONG,
   'glossary:health': GLOSSARY_HEALTH_ALLOWED_LONG,
@@ -3114,9 +3120,6 @@ export const ALLOWED_LONG_REGISTRY = {
   agent: AGENT_ALLOWED_LONG,
   'telegram:seat:desk': TELEGRAM_SEAT_DESK_ALLOWED_LONG,
   'soft:accounting:bake': SOFT_ACCOUNTING_BAKE_ALLOWED_LONG,
-  showcase: SHOWCASE_ALLOWED_LONG,
-  'showcase:ops': SHOWCASE_OPS_ALLOWED_LONG,
-  'showcase:verify': SHOWCASE_VERIFY_ALLOWED_LONG,
   'docs:sync:integrated': DOCS_SYNC_INTEGRATED_ALLOWED_LONG,
   'status:matrix': STATUS_MATRIX_ALLOWED_LONG,
   'cli:allowlist:coverage': CLI_ALLOWLIST_COVERAGE_ALLOWED_LONG,

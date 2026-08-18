@@ -1,21 +1,64 @@
 {
-  "generated": "2026-08-11T00:21:56.443Z",
-  "bunVersion": "1.3.14",
-  "bunTypesDir": "/Users/nolarose/Projects/.worktrees/bun-1.3.14-types-contracts/node_modules/.bun/bun-types@tools+vendor+bun-types+bun-types-1.4.0-tip.23d233b2.tgz/node_modules/bun-types",
-  "bunTypesVersion": "1.4.0-tip.23d233b2",
-  "docsIndexVersion": "1.3.14",
+  "schemaVersion": 2,
+  "generated": "2026-08-17T22:17:28.257Z",
+  "scope": {
+    "population": "curated-runnable-demos",
+    "claim": "Verification applies only to Bun symbols named by runnable API and operations demos; it is not complete Bun API coverage."
+  },
+  "runtime": {
+    "bunVersion": "1.3.14",
+    "bunRevision": "0d9b296af33f2b851fcbf4df3e9ec89751734ba4",
+    "source": "https://github.com/oven-sh/bun/commit/0d9b296af33f2b851fcbf4df3e9ec89751734ba4"
+  },
   "sources": {
-    "apiReference": "https://bun.com/reference",
-    "bunTypes": "https://github.com/oven-sh/bun/tree/main/packages/bun-types",
-    "bunTypesPinned": "https://github.com/oven-sh/bun/tree/bun-v1.4.0-tip.23d233b2/packages/bun-types",
-    "repository": "https://github.com/oven-sh/bun"
+    "sourceCode": {
+      "repository": "https://github.com/oven-sh/bun",
+      "runtimeRevision": "https://github.com/oven-sh/bun/commit/0d9b296af33f2b851fcbf4df3e9ec89751734ba4"
+    },
+    "declarations": {
+      "package": "bun-types",
+      "version": "1.4.0-tip.23d233b2",
+      "repository": "https://github.com/oven-sh/bun",
+      "repositoryDirectory": "packages/bun-types",
+      "source": "https://github.com/oven-sh/bun/tree/23d233b2/packages/bun-types",
+      "main": "https://github.com/oven-sh/bun/tree/main/packages/bun-types",
+      "sha256": "525a3613ada9a81e1e82a1b7781279dc023d824f0bd8f3f12b037ccfc0ebe54f"
+    },
+    "documentation": {
+      "docsIndex": {
+        "source": "https://bun.com/docs/llms.txt",
+        "sha256": "e66905319fa84adf86a7e55ef2855248961f8b82a602a4c9a0c52038599855ec",
+        "generated": "2026-08-17T20:16:55.025Z",
+        "ingestBunVersion": "1.3.14"
+      },
+      "referenceIndex": {
+        "source": "https://bun.com/reference",
+        "sha256": "d5895fd68aab8420103ed6514c397c44b2581b43478905887c738cc582a6dcb3",
+        "generated": "2026-07-27T00:38:14.332Z"
+      },
+      "apiReference": "https://bun.com/reference"
+    },
+    "releases": {
+      "source": "https://bun.com/rss.xml",
+      "sha256": "d5895fd68aab8420103ed6514c397c44b2581b43478905887c738cc582a6dcb3",
+      "generated": "2026-08-13T22:03:28.291Z",
+      "count": 160,
+      "role": "release-history-provenance"
+    }
   },
   "summary": {
     "demos": 46,
     "demosPassed": 46,
-    "apis": 73,
-    "apisVerified": 73,
-    "typesVerified": 73,
+    "apiMentions": 92,
+    "uniqueDemoApis": 73,
+    "demoApisVerified": 73,
+    "declarationMatches": 73,
+    "officialDocumentationMatches": 73,
+    "docsPageMatches": 58,
+    "referencePageMatches": 0,
+    "referenceModulePrefixMatches": 15,
+    "verifiedAnchors": 54,
+    "unavailableAnchors": 1,
     "knownTypeGaps": 0,
     "knownRuntimeGaps": 1,
     "opsDemos": 9,
@@ -29,10 +72,10 @@
       "apis": [
         "Bun.file"
       ],
-      "runtimeOutput": "123696B name=factorywager-enterprise",
+      "runtimeOutput": "nonempty=true name=factorywager-enterprise",
       "runtimeOk": true,
-      "proofHash": "6cf81ebcc8bad09ae8084969e3cb12952e9397dc39b5d9e38a8014181d2ca0b9",
-      "proofPreview": "6cf81ebc"
+      "proofHash": "c2c3b00bc5c94c1974144724bbe633d5eb49dc7ac9c1f15ab4dd2de787c2b582",
+      "proofPreview": "c2c3b00b"
     },
     {
       "id": "file-write-copy",
@@ -42,10 +85,10 @@
         "Bun.write",
         "Bun.file"
       ],
-      "runtimeOutput": "copied 123696B",
+      "runtimeOutput": "copied=true",
       "runtimeOk": true,
-      "proofHash": "5df1a2805cd53594b8765dc82cbed4e03e5358a147f40632a48036109b1a832f",
-      "proofPreview": "5df1a280"
+      "proofHash": "a89ded9e3cf3b3b2a0a51cd9ef32cc9ea981539164d36e32dc562b775062f5f2",
+      "proofPreview": "a89ded9e"
     },
     {
       "id": "toml",
@@ -58,8 +101,8 @@
       ],
       "runtimeOutput": "a=1",
       "runtimeOk": true,
-      "proofHash": "14b0ac5b8b09f01319aabd286cbede77ba75b5182932c1d6618149ce890e4742",
-      "proofPreview": "14b0ac5b"
+      "proofHash": "74b38bc8976cd9efce1b87b00c36b3b5e944c894f5f889fecdbe665312c2e3bc",
+      "proofPreview": "74b38bc8"
     },
     {
       "id": "json-family",
@@ -72,8 +115,8 @@
       ],
       "runtimeOutput": "jsonc=1 json5=world jsonl=2",
       "runtimeOk": true,
-      "proofHash": "3bfa320a697c7a924412f887d3f597b0db7fca70d1264151fbd249ecc0cee068",
-      "proofPreview": "3bfa320a"
+      "proofHash": "643a4f68d091395f6aafbcf022c18be260c9566bd33552ad8297e73d47318aa9",
+      "proofPreview": "643a4f68"
     },
     {
       "id": "crypto-hasher",
@@ -84,8 +127,8 @@
       ],
       "runtimeOutput": "1b2c16b75bd2a870",
       "runtimeOk": true,
-      "proofHash": "c29374813f652097aa7f11c98087ce5fdac2fb65f115b2f3cd9fc3e98e2d3d62",
-      "proofPreview": "c2937481"
+      "proofHash": "ba5f5e2dacea97ce2c876f97438544edc60319e5c20b9fd2af2ea03848ddfe79",
+      "proofPreview": "ba5f5e2d"
     },
     {
       "id": "password",
@@ -98,8 +141,8 @@
       ],
       "runtimeOutput": "verify=true",
       "runtimeOk": true,
-      "proofHash": "be581bf8e423ea06ea4c38839629bf38daf9bc1c4faf8c2504c6a63668407770",
-      "proofPreview": "be581bf8"
+      "proofHash": "5fc1d0b834e6517020d9993809d21d0c5e8dfc73bdfa572fc13bee9472a327b4",
+      "proofPreview": "5fc1d0b8"
     },
     {
       "id": "hash-wyhash-crc32",
@@ -111,8 +154,8 @@
       ],
       "runtimeOutput": "wyhash=1019145960556548909 crc32=907060870",
       "runtimeOk": true,
-      "proofHash": "254666aaf19ae06641c74c2b70969e9639e12983cd50ffb0276a19d5b1081509",
-      "proofPreview": "254666aa"
+      "proofHash": "eb28842517233694b4184db97432a6651ba68e2607dbbcecd22da50534cab159",
+      "proofPreview": "eb288425"
     },
     {
       "id": "uuid-v7",
@@ -121,10 +164,10 @@
       "apis": [
         "Bun.randomUUIDv7"
       ],
-      "runtimeOutput": "019fee32-85fb-7000-a1ba-fdfc9a2047f5",
+      "runtimeOutput": "uuid-v7=true",
       "runtimeOk": true,
-      "proofHash": "5088cc6bd71a1fae0b4e0afcc491a4e7dc40c2ef8422023ab907602cf9a1fe5d",
-      "proofPreview": "5088cc6b"
+      "proofHash": "7937a758a186d137b1b1d69ff35314bec29d4b4d2e073b27d1416b6a7bdf8adc",
+      "proofPreview": "7937a758"
     },
     {
       "id": "compression",
@@ -140,8 +183,8 @@
       ],
       "runtimeOutput": "gz=32 zstd=22 roundtrip=true",
       "runtimeOk": true,
-      "proofHash": "e554e7b13c605d11521730f398a9e4746201a6aca2ad2353466d80be7bea3e27",
-      "proofPreview": "e554e7b1"
+      "proofHash": "b720e9a961291fd9f1d96551ee23b47efe551c2a225a0b251979f13db85a14f5",
+      "proofPreview": "b720e9a9"
     },
     {
       "id": "buffers",
@@ -153,8 +196,8 @@
       ],
       "runtimeOutput": "concat=4 alloc=1024",
       "runtimeOk": true,
-      "proofHash": "f0685e71078da3e3f48c21445538e2182a663bcdca8d5fc521e753241484a2f4",
-      "proofPreview": "f0685e71"
+      "proofHash": "0be7f5cb08eec2ed242f1bd10497e56935117526554cfb63ba21870e463bf966",
+      "proofPreview": "0be7f5cb"
     },
     {
       "id": "string-utils",
@@ -169,8 +212,8 @@
       ],
       "runtimeOutput": "&lt;div&gt; w=2 red long|line|here \u001b[31mre\u001b[39m",
       "runtimeOk": true,
-      "proofHash": "ead22695ca001a8beb670cc5f70378b11d63af91bbb6dbb5e3844309e66a9c8b",
-      "proofPreview": "ead22695"
+      "proofHash": "48c0f185371d6da1d53725d70395001fd83f89c6bb84b6cd28c01dbc5682cd46",
+      "proofPreview": "48c0f185"
     },
     {
       "id": "color",
@@ -181,8 +224,8 @@
       ],
       "runtimeOutput": "#ff0000",
       "runtimeOk": true,
-      "proofHash": "0247abe99a6c015bbaa6b7708f6e76c96e9c588ba8da642c69901bb8f1b37561",
-      "proofPreview": "0247abe9"
+      "proofHash": "0aa117549b10ea6d8e2e1848d772fb6ad4e4d9ff44e2ab314099449ef4ac7400",
+      "proofPreview": "0aa11754"
     },
     {
       "id": "inspect-table",
@@ -194,8 +237,8 @@
       ],
       "runtimeOutput": "inspect=true table=true",
       "runtimeOk": true,
-      "proofHash": "8860fbb37b72d198f15e6fa46014b06d2d7bf430b16009daa04c97a918824fb0",
-      "proofPreview": "8860fbb3"
+      "proofHash": "1ce1a74862609bcefd82987f81a0c1f16628b95dbcb06391cb6d03e55654bb68",
+      "proofPreview": "1ce1a748"
     },
     {
       "id": "semver",
@@ -208,8 +251,8 @@
       ],
       "runtimeOutput": "order=-1 ok=true",
       "runtimeOk": true,
-      "proofHash": "bcb4481df64e1f8561a3920335f8a3fd80d4494c02fc49e9a9f172f3bbaf0c90",
-      "proofPreview": "bcb4481d"
+      "proofHash": "c8c707de48d45f98fd0d0123c2806b8694925830776b085be5dbd9c85033ff98",
+      "proofPreview": "c8c707de"
     },
     {
       "id": "markdown",
@@ -222,8 +265,8 @@
       ],
       "runtimeOutput": "html=true ansi=true",
       "runtimeOk": true,
-      "proofHash": "814c04f96aee39882e24f4ee044b8278976618236e23b00caf0764c93c918cd4",
-      "proofPreview": "814c04f9"
+      "proofHash": "afe6237b631ecda0cece3c9487a181ff417cdeea1f61674135dbdb0a887e39a2",
+      "proofPreview": "afe6237b"
     },
     {
       "id": "shell-which",
@@ -235,8 +278,8 @@
       ],
       "runtimeOutput": "hello which=yes",
       "runtimeOk": true,
-      "proofHash": "92c547d3b68fa9944ae836cc8ae8615a2fc6ea0ed60f3c4f79a6f669436fc917",
-      "proofPreview": "92c547d3"
+      "proofHash": "c684f3aaa3f9f8db4e4b66883298eeedae43695d8c7829f8fc593d877b209e22",
+      "proofPreview": "c684f3aa"
     },
     {
       "id": "spawn",
@@ -248,8 +291,8 @@
       ],
       "runtimeOutput": "1.3.14",
       "runtimeOk": true,
-      "proofHash": "9e82c5e146bc7781130bca1b4f28108767054027e85169779ebb89a6679929d2",
-      "proofPreview": "9e82c5e1"
+      "proofHash": "9e42b5ef9361032493077144482cc1a9d3f54667cfcdf74be8023dd76365bb34",
+      "proofPreview": "9e42b5ef"
     },
     {
       "id": "glob",
@@ -260,8 +303,8 @@
       ],
       "runtimeOutput": "match=true",
       "runtimeOk": true,
-      "proofHash": "3599d14a0d0efe3f0639b1103f8bd504f7441045de0b016e44295fd7b282675f",
-      "proofPreview": "3599d14a"
+      "proofHash": "63cefd39a77c61b67e84717a53f48b8f420ad5c0c02cb58192d0ca46ad612f26",
+      "proofPreview": "63cefd39"
     },
     {
       "id": "csrf",
@@ -274,8 +317,8 @@
       ],
       "runtimeOutput": "verify=true",
       "runtimeOk": true,
-      "proofHash": "3cf3e78f5db09cda104b176f352390d137346ad73908b4743807d1a550326c04",
-      "proofPreview": "3cf3e78f"
+      "proofHash": "dde5be3cec3381f1c98db1773c21f4e14a7ad5cc16a31c02e11fe1837988e89e",
+      "proofPreview": "dde5be3c"
     },
     {
       "id": "cookies",
@@ -287,8 +330,8 @@
       ],
       "runtimeOutput": "session=abc123",
       "runtimeOk": true,
-      "proofHash": "e93f2f23c1eff741e5c5818b730232380e886f8ff5a0914625d5dc1801299847",
-      "proofPreview": "e93f2f23"
+      "proofHash": "cbc7751f625572562c603b94312f50c98e7a46bab8afae7d49bf8c59bf3b92d3",
+      "proofPreview": "cbc7751f"
     },
     {
       "id": "sqlite",
@@ -299,8 +342,8 @@
       ],
       "runtimeOutput": "rows=1 name=Alice",
       "runtimeOk": true,
-      "proofHash": "949d7b90be6fd1625d027aeca46171aa19d993fac5aeaacf44385c7b5da759dc",
-      "proofPreview": "949d7b90"
+      "proofHash": "ef55531eeaa900bf15a553081194e91fc51a4245fcedb23300cc9be778e0a636",
+      "proofPreview": "ef55531e"
     },
     {
       "id": "archive",
@@ -311,8 +354,8 @@
       ],
       "runtimeOutput": "bytes=10240",
       "runtimeOk": true,
-      "proofHash": "4f44680629834daed7212d7ee4f09a369ca3b34a6ea194a6e6afd2a90d1ee8c7",
-      "proofPreview": "4f446806"
+      "proofHash": "0d0efc0091323d97b08f6fc13280777a4b38d3acca7d2b6a64fdba421d9cf25f",
+      "proofPreview": "0d0efc00"
     },
     {
       "id": "transpiler",
@@ -323,8 +366,8 @@
       ],
       "runtimeOutput": "ok",
       "runtimeOk": true,
-      "proofHash": "9a77d471753e1162373114461dd7984e59052f7d5bfe08791e71a78d1525fed5",
-      "proofPreview": "9a77d471"
+      "proofHash": "b8053b3245d477858433ff8b631a7ac9758f3c8168ab4e5e6c0e834980d34b27",
+      "proofPreview": "b8053b32"
     },
     {
       "id": "resolve",
@@ -333,10 +376,10 @@
       "apis": [
         "Bun.resolveSync"
       ],
-      "runtimeOutput": "/Users/nolarose/Projects/.worktrees/bun-1.3.14-types-contracts/package.json",
+      "runtimeOutput": "package=true",
       "runtimeOk": true,
-      "proofHash": "a3f649a1cc1c7a6d8819909643e0a183542dccbe87363a8296f31820d1b747a8",
-      "proofPreview": "a3f649a1"
+      "proofHash": "40fcbe8ab4bfb1390c05d71a536d08cd911ad01c4d68a6b33232dc724db6a53c",
+      "proofPreview": "40fcbe8a"
     },
     {
       "id": "env-argv-main",
@@ -347,10 +390,10 @@
         "Bun.argv",
         "Bun.main"
       ],
-      "runtimeOutput": "home=true argv=3 main=true",
+      "runtimeOutput": "home=true argv=true main=true",
       "runtimeOk": true,
-      "proofHash": "a8957454fb625d51bc242f08c8d2019e44db5cbd43eee8ee6454d3c4545f8070",
-      "proofPreview": "a8957454"
+      "proofHash": "8b162af7b351b5b7cb36d156e575fe753d7ee3d2765ff035c86d2545080e8e0d",
+      "proofPreview": "8b162af7"
     },
     {
       "id": "version-revision",
@@ -362,8 +405,8 @@
       ],
       "runtimeOutput": "1.3.14 0d9b296a",
       "runtimeOk": true,
-      "proofHash": "bf2b1f4fac469b501369f8b23ee9214fcd75dd6d503368cbd2c93440b3c98d9b",
-      "proofPreview": "bf2b1f4f"
+      "proofHash": "bc5468f49f5dbbb8d76e1fe96e6317de11c6c6c778d11171e46afafb0215fde0",
+      "proofPreview": "bc5468f4"
     },
     {
       "id": "deep-equals-peek",
@@ -375,8 +418,8 @@
       ],
       "runtimeOutput": "eq=true peek=42",
       "runtimeOk": true,
-      "proofHash": "0cc805eb43ff1c4e7f3e79981c6b0fb949f3359552a2a46b5e9dd49ae33807d7",
-      "proofPreview": "0cc805eb"
+      "proofHash": "74553d35a9b233972d8dd58449d9137bee701e566cc64c9cee6a769f6b54b8f3",
+      "proofPreview": "74553d35"
     },
     {
       "id": "serve-stop",
@@ -385,10 +428,10 @@
       "apis": [
         "Bun.serve"
       ],
-      "runtimeOutput": "port=65325 body=ok",
+      "runtimeOutput": "listening=true body=ok",
       "runtimeOk": true,
-      "proofHash": "b1fe2fb3b9b8b786219a2f71d359652021e1f8ea1985dce43dd890f652823124",
-      "proofPreview": "b1fe2fb3"
+      "proofHash": "9ad02fea3c317c6b5f60ad3a91bed4a0b22296adf8394a86a151d501aa0b5bb9",
+      "proofPreview": "9ad02fea"
     },
     {
       "id": "build-inline",
@@ -399,8 +442,8 @@
       ],
       "runtimeOutput": "success=true outputs=1",
       "runtimeOk": true,
-      "proofHash": "7d9375cc6a7f71098a3590e242d862b0bae9f23fbeb62eccfa50cc8e8b0ab34d",
-      "proofPreview": "7d9375cc"
+      "proofHash": "b5d38dc30495205f423fbaf97ae61442e6f2186952c2000bf12dd2874161d2ab",
+      "proofPreview": "b5d38dc3"
     },
     {
       "id": "timers",
@@ -411,10 +454,10 @@
         "Bun.sleepSync",
         "Bun.nanoseconds"
       ],
-      "runtimeOutput": "ms=16.4",
+      "runtimeOutput": "slept=true clock=true",
       "runtimeOk": true,
-      "proofHash": "7819855dc838892eb9eae4f4fe26e829b0555b6e77c485d552de2d2f2ac73ff5",
-      "proofPreview": "7819855d"
+      "proofHash": "4ce34687623e101a4f95d44c453f96020c482129bfdec4c32ab5a42f2a31d46c",
+      "proofPreview": "4ce34687"
     },
     {
       "id": "streams",
@@ -426,8 +469,8 @@
       ],
       "runtimeOutput": "stream=ab sink=hello",
       "runtimeOk": true,
-      "proofHash": "29a8fd9aefd3696fd9632a11e9ecc06337ecff67a39e81b8895198e9eee7fe8a",
-      "proofPreview": "29a8fd9a"
+      "proofHash": "67c3e3009db397bdb4cd938d3c3c4f41644396eabc77b517a23d167fc38967be",
+      "proofPreview": "67c3e300"
     },
     {
       "id": "gc-heap",
@@ -439,8 +482,8 @@
       ],
       "runtimeOutput": "heapSnapshotFn=function",
       "runtimeOk": true,
-      "proofHash": "fc4147dc7bfbee073c7edbc1538b8a982f899ae7fbdf347e89c14dbacfffe58f",
-      "proofPreview": "fc4147dc"
+      "proofHash": "e9401530b674101c80c7fcdbe658eb8958ad4d729a933e671ac53c24357b3079",
+      "proofPreview": "e9401530"
     },
     {
       "id": "mmap",
@@ -449,10 +492,10 @@
       "apis": [
         "Bun.mmap"
       ],
-      "runtimeOutput": "ctor=Uint8Array len=123696",
+      "runtimeOutput": "ctor=Uint8Array nonempty=true",
       "runtimeOk": true,
-      "proofHash": "997be308ba559565427584668550ab871fd02c11d03d67183cc1293ed31dcc73",
-      "proofPreview": "997be308"
+      "proofHash": "6ad3f0ce594fb1edbc0168b3457cf44ad1b243bbdb25b4c79d7d7e6222ae2c4b",
+      "proofPreview": "6ad3f0ce"
     },
     {
       "id": "path-url",
@@ -464,8 +507,8 @@
       ],
       "runtimeOutput": "/tmp/x",
       "runtimeOk": true,
-      "proofHash": "41bb10293067982d433de2f2736f63acd9530d30bd5f602fd17a617c2766ded1",
-      "proofPreview": "41bb1029"
+      "proofHash": "56e8cc0802fb3d8673d563c2c8efaaa017ce0085b7a7cc100040b0cb21546224",
+      "proofPreview": "56e8cc08"
     },
     {
       "id": "cron",
@@ -476,8 +519,8 @@
       ],
       "runtimeOutput": "next=2027-01-01T00:00:00.000Z",
       "runtimeOk": true,
-      "proofHash": "1ff8982e9bd9a5176ff1c0a82d32db747bd36ec97c529b1f01829a4c539d2d36",
-      "proofPreview": "1ff8982e"
+      "proofHash": "e698c60eadcb720bfdecc737e124bcc8cd0037514f83e5b276315f6c3292be6a",
+      "proofPreview": "e698c60e"
     },
     {
       "id": "fs-router",
@@ -488,8 +531,8 @@
       ],
       "runtimeOutput": "match=true",
       "runtimeOk": true,
-      "proofHash": "b9e6fd4c1b3e0eac4a2ea5a6ba9cac7773a07c5d878064533883d0abbb6ac68a",
-      "proofPreview": "b9e6fd4c"
+      "proofHash": "6b58a7603cf2f8aa86d59550292ee03fe0ca4ba9f878555a2d1864282b01977c",
+      "proofPreview": "6b58a760"
     },
     {
       "id": "html-rewriter",
@@ -500,8 +543,8 @@
       ],
       "runtimeOutput": "ok",
       "runtimeOk": true,
-      "proofHash": "a6b3c687150e280a7d8601225d14f934f66bfa9ff7ce1f5a014812b68316e486",
-      "proofPreview": "a6b3c687"
+      "proofHash": "f12b1d226d9869b557074bc35094698bd267d9b0fab7dda21dfd9de57d976e73",
+      "proofPreview": "f12b1d22"
     },
     {
       "id": "onboard-partner",
@@ -512,10 +555,10 @@
         "Bun.CryptoHasher",
         "bun:sqlite"
       ],
-      "runtimeOutput": "partner=Partner B proof=2f498ef7",
+      "runtimeOutput": "partner=Partner B proof=1227da11",
       "runtimeOk": true,
-      "proofHash": "538b7ba5c4e8614a25a89458cd0a3827f8b09cb0f7c8bd02e3b02a00b0ecf05e",
-      "proofPreview": "538b7ba5"
+      "proofHash": "a2ba02477953af9c5958bf740a3a66f579885aef541d35c26de21788354f06f4",
+      "proofPreview": "a2ba0247"
     },
     {
       "id": "fund-agent-rail",
@@ -525,10 +568,10 @@
         "bun:sqlite",
         "Bun.CryptoHasher"
       ],
-      "runtimeOutput": "funded=$10000 balance=$15000 proof=f1df69da",
+      "runtimeOutput": "funded=$10000 balance=$15000 proof=8d923315",
       "runtimeOk": true,
-      "proofHash": "b21ad7e20402a16a2710097976d642245ebd5b35d790b2a7964068e8034f86b0",
-      "proofPreview": "b21ad7e2"
+      "proofHash": "1531f46c70519e068cbe3c9af6679278b344c7d11161301bc0bac9752960415b",
+      "proofPreview": "1531f46c"
     },
     {
       "id": "generate-play",
@@ -539,10 +582,10 @@
         "Bun.randomUUIDv7",
         "bun:sqlite"
       ],
-      "runtimeOutput": "play=019fee32 sig=2deeb8e8",
+      "runtimeOutput": "play=stored sig=true",
       "runtimeOk": true,
-      "proofHash": "c4d9895530c2b3e9412528d552ef58c7cb968ba0d957c7013711bf291f2232bf",
-      "proofPreview": "c4d98955"
+      "proofHash": "48fcbdae9e64a5ba51fd4066a74e08123d05c931a39d55765fddd4b43f9f2e9b",
+      "proofPreview": "48fcbdae"
     },
     {
       "id": "distribute-play",
@@ -551,10 +594,10 @@
       "apis": [
         "bun:sqlite"
       ],
-      "runtimeOutput": "recipients=2 play=019fee32",
+      "runtimeOutput": "recipients=2 play=stored",
       "runtimeOk": true,
-      "proofHash": "3c6f78d60f505d24c4befea9a5588fcc0cdb8877546308d3980755d034130f5d",
-      "proofPreview": "3c6f78d6"
+      "proofHash": "931a6ad6c16f8e0dee94637c73cf2508f6762c89dfc0793ffe468a45aedbc7d5",
+      "proofPreview": "931a6ad6"
     },
     {
       "id": "track-wager",
@@ -565,8 +608,8 @@
       ],
       "runtimeOutput": "pnl=$2000",
       "runtimeOk": true,
-      "proofHash": "b2cfd5630dfc3140ae24aa82ac69ad235c648098ecc4bdb555012438a5b4a0c0",
-      "proofPreview": "b2cfd563"
+      "proofHash": "68ba517fcc42f5fae2bea531bcd67ec2490bd9fea3e50359796835b5aaf3222f",
+      "proofPreview": "68ba517f"
     },
     {
       "id": "reconcile-rails",
@@ -578,8 +621,8 @@
       ],
       "runtimeOutput": "reconciled diff=$-5000",
       "runtimeOk": true,
-      "proofHash": "d96939350fb83529d5177441a7d96bce4f38eb7bc015d0b1ebf9e9b9350e31c3",
-      "proofPreview": "d9693935"
+      "proofHash": "29d8eb573773089190fc97525ab1cdad7fd3538b1a07955aaca4b42f6846d82b",
+      "proofPreview": "29d8eb57"
     },
     {
       "id": "phone-inventory",
@@ -589,10 +632,10 @@
         "bun:sqlite",
         "Bun.randomUUIDv7"
       ],
-      "runtimeOutput": "phone=019fee32 agent=019fee32",
+      "runtimeOutput": "phone=issued assigned=true",
       "runtimeOk": true,
-      "proofHash": "947933a9ecdf52ca2bb4027e0153abb899644ef71c361a94bc6514edb5443150",
-      "proofPreview": "947933a9"
+      "proofHash": "2caba695e81d52585c2e79ca33b738e5eaab74917b34698a6dcdf1f524048f3e",
+      "proofPreview": "2caba695"
     },
     {
       "id": "daily-pnl-report",
@@ -604,8 +647,8 @@
       ],
       "runtimeOutput": "table=empty",
       "runtimeOk": true,
-      "proofHash": "a2846d7bf5fa38d9c141b4b7ebb8f2c5f21fe3d37e5593d66c581244fd732e83",
-      "proofPreview": "a2846d7b"
+      "proofHash": "5f0c06458a07aee8d139d7c284cda9b7f2983580494ae3d0c0eac179f402b84b",
+      "proofPreview": "5f0c0645"
     },
     {
       "id": "auto-fund-cron",
@@ -615,742 +658,1929 @@
         "Bun.cron",
         "bun:sqlite"
       ],
-      "runtimeOutput": "next=2026-08-11T06:00:00.000Z funded=yes",
+      "runtimeOutput": "scheduled=true funded=yes",
       "runtimeOk": true,
-      "proofHash": "37942ce7c79c0bf40c63100ecc83f7ae3b52d71d7f89ccf6b27d783b14455cfa",
-      "proofPreview": "37942ce7"
+      "proofHash": "2edb26cdf039787dce65170db3a46dd5bfd89ca094fd71e36b8f7ac8134178c2",
+      "proofPreview": "2edb26cd"
     }
   ],
-  "apis": {
+  "demoApis": {
     "Bun.$": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/shell#getting-started",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "shell-which"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/shell#getting-started",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/shell",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "1c4f093a4d702a80494e5e0a3a2b3954594eb150780734aebf379b5c0195ec05"
+      "sha256": "9215a591ca04d3c16ebc3d1a026ee5f8ed2f6fa904b776dcbb2735c98e882001"
     },
     "Bun.Archive": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/archive#quickstart",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "archive"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/archive#quickstart",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/archive",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "bc73e1b25c88808520c45a5ff89c913c5527f27a00248ed39c95a76b512361e6"
+      "sha256": "e9e5fde73c4089181f805a1a2f6a59df4605e03cb7b5c9530697661d2eb55e4c"
     },
     "Bun.ArrayBufferSink": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/streams#bun-arraybuffersink",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "streams"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/streams#bun-arraybuffersink",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/streams",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "7b48b069b6e5ba2bafab7c906ef89dda27f2d2dc6af84f7cd2aa93b68aff5ba8"
+      "sha256": "7187ed667b62e9a996f32e839a510669f36db09acd0d58d68e0f0fb814649392"
     },
     "Bun.CSRF": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/csrf#bun-csrf-generate",
-      "runtime": "object",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "csrf"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/csrf#bun-csrf-generate",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/csrf",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "object",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "f781cb1b36d4692571acea6d768455c75ce7527c174fe13b2869519671e1fe15"
+      "sha256": "4337274d82c94aa8ea0b68d4ab05398d04e5aa6bef079ffaac2e6ef8d7d2bd6d"
     },
     "Bun.CSRF.generate": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/csrf#bun-csrf-generate",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "csrf"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/csrf#bun-csrf-generate",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/csrf",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "ccd87634b573465c6d17dc246396cc31f095113dcea6f768bb19b8e9f05427fc"
+      "sha256": "60946c3733358e8af59df463c13b09aa15450b762ba4a1415be6acecff166542"
     },
     "Bun.CSRF.verify": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/csrf#bun-csrf-verify",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "csrf"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/csrf#bun-csrf-verify",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/csrf",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "976562da8bf541c0881ea609b8f0b77bdc38e45c6917ca2c7e06f03c7d3871e9"
+      "sha256": "2c804f72745727c52ea82ca44e6f8994a989a0472c39507bbb488ed335c92137"
     },
     "Bun.Cookie": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/cookies#cookie-class",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "cookies"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/cookies#cookie-class",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/cookies",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "e5844c1ed22ae53c114ab14e5f651f12b349d0a29c83dd42efc6f9ec5261341a"
+      "sha256": "a16b37cba5d35b54897c790f672698752592a7e98a62ffd0c23a4ae97a31b0f1"
     },
     "Bun.CookieMap": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/cookies#cookiemap-class",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "cookies"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/cookies#cookiemap-class",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/cookies",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "c6f80d6b271e87500d1cee3688e9aa093269d7577934a085f0ad704ba02740b7"
+      "sha256": "f44a4a40a002b317ec413cce9b272796df3d9699ff72ecaba4cd89db7f8556c6"
     },
     "Bun.CryptoHasher": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/hashing#bun-cryptohasher",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "crypto-hasher",
+        "onboard-partner",
+        "fund-agent-rail",
+        "generate-play"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/hashing#bun-cryptohasher",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/hashing",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "7404cea00a4d5f2837f50fc85b315a4337ebece0f8aca3e7ae43a7ec34315be8"
+      "sha256": "4a56e74e35d75a2afeacffb81e2b8476a99bf6b2376bfba788418ae5e51bec9f"
     },
     "Bun.FileSystemRouter": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/FileSystemRouter",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "fs-router"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/FileSystemRouter",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "499cd0645301fbe8a7364ea1336cfe5e2e305a0c218a2cd5d36c13aff3eb261e"
+      "sha256": "b998c40c8eb3cff24ae64c6613993258bd8b6803d8a8ff4272d860cf3279a902"
     },
     "Bun.Glob": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/glob#quickstart",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "glob"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/glob#quickstart",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/glob",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "8207eee47b7cd0625f1326f0b7f0d35905738007179b597e908813630dd60aa2"
+      "sha256": "058dab250eb41e418549671004e87dfba81c16ad627d605dfd06a586fae1f323"
     },
     "Bun.JSON5": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/JSON5",
-      "runtime": "object",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "json-family"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/JSON5",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "object",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "ed7b572905f81a32bf8c6658ddf3d5abcc6c5f27f0ffd0a69b93025c7104ff79"
+      "sha256": "f6e93632354e3fb26b3b83a8ee25e202e3611b6efdc913cbf1d252636c1bc36e"
     },
     "Bun.JSONC": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/JSONC",
-      "runtime": "object",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "json-family"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/JSONC",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "object",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "aaae1be6ea63b0c2ffb68529a633546d5cda7e79798b0233b802adb1fd2082a7"
+      "sha256": "b8123f8773eb93d5e8b32881786c58751d581105311295762c9a77e2cc973913"
     },
     "Bun.JSONL": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/JSONL",
-      "runtime": "object",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "json-family"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/JSONL",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "object",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "5bf662ccf84cc86004c80273c43f7b22ca0f97f807f098af444ff821aeed1a78"
+      "sha256": "b328f3d37503722382b2a5b6f700aa37b5fd2cb0d4f489e30d1709673debd2a8"
     },
     "Bun.TOML": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/toml#bun-toml-parse",
-      "runtime": "object",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "toml"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/toml#bun-toml-parse",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/toml",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "object",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "331d53f0c2097db0d1bee482cccaf96462677442e8d2ae55c4360589dcefe7e8"
+      "sha256": "bb8991cbd9d76aea2cacc618de5392d135f9a0b69f76cb13f84eae2e2271fac6"
     },
     "Bun.TOML.parse": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/TOML/parse",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "toml"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/TOML/parse",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "e46391c96a6e63263687660cff858142069abf58263196ca45f1b87394f90b81"
+      "sha256": "bf830f5d333da5ffc255277a24ffd4cd1628cacbf79d9a0625f5369e6da5057f"
     },
     "Bun.TOML.stringify": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": true,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/toml",
-      "runtime": "undefined",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "toml"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/toml",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/toml",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "undefined",
+        "matched": false,
+        "knownGap": true
+      },
       "ok": true,
-      "sha256": "0c302413563068befde067f3955ca16ecc6e9eb932bc43479f16c6aadec51b0a"
+      "sha256": "27d6f009ecdc9153ab833ee57213662146762cb47eb2fca843c64a209ea0db72"
     },
     "Bun.Transpiler": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/Transpiler",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "transpiler"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/Transpiler",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "5046b97cf279370c8fcceed36f0bbef72627d543064e3ef54d357c01b6ec442a"
+      "sha256": "d4825e06a65b7e454aa6543c92a1ee917003e434bdf298bb594e6f7ab0bff9f6"
     },
     "Bun.allocUnsafe": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/allocUnsafe",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "buffers"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/allocUnsafe",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "8bae827e72e308118828dd36b0a586ae8d77e051bf8817cbba6d630c0102e4f7"
+      "sha256": "53b8c7a39f0da87b05372ee1c85a5db8c059ba6e6d12654ef9b53e4eaf61fed6"
     },
     "Bun.argv": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/argv",
-      "runtime": "object",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "env-argv-main"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/argv",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "object",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "a09284cabac55850d4f2c007e020cd8441d3ae2a8820fc6bcf71836a960adfdb"
+      "sha256": "9205ab1f5c29d8d3972864360e5e0d4689c8bb273e0b48b52415624411dc57e1"
     },
     "Bun.build": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/bundler/index#basic-example",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "build-inline"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/bundler/index#basic-example",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/bundler",
+        "anchor": "unavailable"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "22195dd48535b5a0290bb6ecffbc3dff0f714af17c091eaecf3b0524ac2ee65f"
+      "sha256": "24b7f6ebe4bd9859aa48c2be6cfd71d1c76884e205ca0fb22690d772b9b85af0"
     },
     "Bun.color": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/color#flexible-input",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "color"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/color#flexible-input",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/color",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "9c7b2949562b99fc6404127b104495c96f1db53bef90af664da36d597eca3183"
+      "sha256": "6380eea063422c17a011f50aedcf0c23dc19aa2e3c1f54d506101fd834248ee3"
     },
     "Bun.concatArrayBuffers": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/concatArrayBuffers",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "buffers"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/concatArrayBuffers",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "8d05605b5708614fc1714dd45320aca5667cc5f72b28d047f23d90c81aef53d2"
+      "sha256": "6ba41300bd4e72457f22110a90f4184c8e6295f53cf3a8ae64d230be50f621d5"
     },
     "Bun.cron": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "cron",
+        "auto-fund-cron"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/cron",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "30b33c90263d79b8b976b3c432d3997b01c65f1af8e5a0d8286983483f94a894"
+      "sha256": "caf9ce8dfd3f895b3ecf1d045d30a1e9b314717a9ef666b33ed991680769e697"
     },
     "Bun.deepEquals": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-deepequals",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "deep-equals-peek"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-deepequals",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "15ff63a5366f6bc41380cf381b4e6bfd5b5514ff650a26373bdcc7e0567e20d4"
+      "sha256": "9013d8450018ce1560d7bd3288d4031a9a671663fd0622de8c12dd7a9a3bd4e5"
     },
     "Bun.deflateSync": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-deflatesync",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "compression"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-deflatesync",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "95ea40250afd2188c98bc658efd688cee451af5b1799e31b586be56a9392c325"
+      "sha256": "8585e4e7583dbfff0186e8e494975c46635e5f661152cf91dd45bbe93a15e7c2"
     },
     "Bun.env": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-env",
-      "runtime": "object",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "env-argv-main"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-env",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "object",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "8e63662eb3601084d4dab117f1b8e63c692a57711cca8c5a43b80f111421af04"
+      "sha256": "705db2f82109abf2d6ca8c79e5323552f4f52b7d2ef02ecbcd5ebcd548f85927"
     },
     "Bun.escapeHTML": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-escapehtml",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "string-utils"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-escapehtml",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "7bd2d4e7fbddb693dc356b3faaa0f2de3def37f12e540c2a475101bf1ea71dfb"
+      "sha256": "abec5c934bdafabd66ce84814deb717a008997f89dcb2afebeb6b6c3882a46a8"
     },
     "Bun.file": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "file-meta",
+        "file-write-copy"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/file-io",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "3fa0469bd7bacd5bcc7c4db0572ce5bc70479e4b070d3eca952c9432eb9d6607"
+      "sha256": "db63a142e56487b86800c74e6972733494718905ad707f61f2540b2e89e639a5"
     },
     "Bun.fileURLToPath": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-fileurltopath",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "path-url"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-fileurltopath",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "22238cc8628da83f3be7f2cfb2beb8c9457807dbc29fbbe1ea750eee7bed9a7f"
+      "sha256": "063dec83ae8c64ad6fbb790264ad2f3c6f34930bd247daaf6cd89439d3a99362"
     },
     "Bun.gc": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/gc",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "gc-heap"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/gc",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "296b4b3acdc31a4feb454b7c355b684b029a74f74aac0e1b000dff9c949ffec2"
+      "sha256": "c8aeac0e23d8e69cbcc736c04735a1201a9171a56c1814adb90147285743ac81"
     },
     "Bun.generateHeapSnapshot": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/generateHeapSnapshot",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "gc-heap"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/generateHeapSnapshot",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "748d39842af419e01a17428b5cf352d8c30deaf0afed56830a49ec6226e0b605"
+      "sha256": "15917398360f245c52835d6493ce38b88af45c945b987dbc27dd2ec89136fc5d"
     },
     "Bun.gunzipSync": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-gunzipsync",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "compression"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-gunzipsync",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "6f2262580a0786f20e7915635490cb49f91b2d73a85b7dfbef15dbd66dab9e0d"
+      "sha256": "7f47a46acb445479868621599365089060c063dd314ffc444e28d3cb7d5b3723"
     },
     "Bun.gzipSync": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-gzipsync",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "compression"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-gzipsync",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "43dcdea33962d75d216d0f2b31aec3fe605d331f430f29a3c5c3eb2623a76988"
+      "sha256": "bf142ad7f59121739dfc01facfe400e7e50673bf30cc629a5c37dc029195d910"
     },
     "Bun.hash": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/hashing#bun-hash",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "hash-wyhash-crc32"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/hashing#bun-hash",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/hashing",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "912853478a424023726dfafc50c57aa9aa56672d3bf491f791e0972a872d049c"
+      "sha256": "a592ef58748a81ac626480d2e3b94122010d84676463bfb3d84936d86f0e4429"
     },
     "Bun.hash.crc32": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/hashing#bun-hash",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "hash-wyhash-crc32"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/hashing#bun-hash",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/hashing",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "045d6b41a3b9f5cfd2b5146c0f222ce569197d28b20c684c1f893109ef88f62b"
+      "sha256": "ade8db95ba733bcd0741a170e4847a0c913a02bf7e9e36fd818f93a878854fbf"
     },
     "Bun.inflateSync": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-inflatesync",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "compression"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-inflatesync",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "d800e21088cd0027b3ba88fb3e11b3456ae502ef6951da647db149a44cb27541"
+      "sha256": "ecb607cc46904bca2a0e5836316bc2fe8ecd1d4893f70713c3f8f3e0026958ee"
     },
     "Bun.inspect": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-inspect",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "inspect-table",
+        "reconcile-rails"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-inspect",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "a421c052edf7e1233ad176f531ebc54e4c5ee0f860e8a776ae65109a61b44c83"
+      "sha256": "0cc66f380ad8849b3cd7c427a3d39645bb9231d40fdba22492dc821be5959375"
     },
     "Bun.inspect.table": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "inspect-table",
+        "daily-pnl-report"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "3282790bbca4032ed1668b9cd9400a8a844a532b059ddcb3b45c43987f98264b"
+      "sha256": "1555e3654a64b3d2b4d53c255a58eed59bf00eada76cdf4d930ec3bec5a89959"
     },
     "Bun.main": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-main",
-      "runtime": "string",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "env-argv-main"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-main",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "string",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "0e6a88b9a9315614882744e5df037246a736ae6a89d523c4a391ef0b34c6968f"
+      "sha256": "9737ef0406f276cb8820c54cfad6071ab761c1e39eaa4a41fc8a8f60fdd4fd7f"
     },
     "Bun.markdown": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/markdown#bun-markdown-html",
-      "runtime": "object",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "markdown"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/markdown#bun-markdown-html",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/markdown",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "object",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "72965dd39cf9e98f37c4167b3c664c2ce86ec3fa5100ed6ae1d2424a5a9cc08f"
+      "sha256": "34ac310d6121fd95d424f21f49e989e16413de8959956022d9e402e1bad459d6"
     },
     "Bun.markdown.ansi": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/markdown#ansi-terminal-output",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "markdown"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/markdown#ansi-terminal-output",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/markdown",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "786989cc3faf461c7ac6cf6c888af2355394a97da4e5edbf51997d4f4e6ae1d9"
+      "sha256": "e284470b3692d10f43631f1ebc2dbf3f6050cf28deb9e48c1816c63292342c45"
     },
     "Bun.markdown.html": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/markdown#bun-markdown-html",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "markdown"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/markdown#bun-markdown-html",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/markdown",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "10ad3961098533092849ec01e81f1e1f39886e0687e377c625c661e26d552c6e"
+      "sha256": "dd5067f1f95d19ab136a524e50a045eb7109eaf88c97083777c03eba5982c10c"
     },
     "Bun.mmap": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/bun-apis",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "mmap"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/bun-apis",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/bun-apis",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "1bcbe1bb9819d566dbf65adb1b5a0a08dc0159352a5443ee6bc9a6c36955181e"
+      "sha256": "5d9886c111832a08f05d151ec3f6dc9a62c59135d042eb58c1b814d2a078c01a"
     },
     "Bun.nanoseconds": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-nanoseconds",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "timers"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-nanoseconds",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "8846877f46e792150cb925e3dedf724db88e42a54042e52a28cf96e4891bb367"
+      "sha256": "359af39fea309fc9044032b9ed0af6e8e472143bb8a03f171bb1f639c428f947"
     },
     "Bun.password": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/hashing#bun-password",
-      "runtime": "object",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "password"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/hashing#bun-password",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/hashing",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "object",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "a573ee3b1dd699f62bfff25e2a17b2181c5d2ae95d59ee384b4cdff255940f61"
+      "sha256": "2b0f4ea6a27195d3420425f64f154aab4fe9e29ec2a02fbcec933391c3549520"
     },
     "Bun.password.hash": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/hashing#bun-password",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "password"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/hashing#bun-password",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/hashing",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "52356d20c19dec6acab7b9d33537d4f2d31f04912597ae711891a1cc0f28be9f"
+      "sha256": "3d7b9983cfb73abef1e023e57c816b69ec59e34763ae307a64299bc8100e17a0"
     },
     "Bun.password.verify": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/hashing#bun-password",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "password"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/hashing#bun-password",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/hashing",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "c4d5a413d7c300f11bc8e32a7c6a040b6c8b3d02d712c8f291161d22d6bc2c81"
+      "sha256": "d150eeb748c3fec55c8c9c859d9d3efc50d299173ebd5d096941123d201c644c"
     },
     "Bun.pathToFileURL": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-pathtofileurl",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "path-url"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-pathtofileurl",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "c81cbc615403fed5843dc5cf1de7f706dfe85f9b0398c8e1338bc19144ad5d2b"
+      "sha256": "ca3d4d282435df6e38e3768b99aac0d82517700823fa001cff8af1df674d7594"
     },
     "Bun.peek": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-peek",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "deep-equals-peek"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-peek",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "bc417c8a8ee7e0c69b8e675d4fd0aa9a1f9b69037ce684b53576b5727415152d"
+      "sha256": "11d7c11c08462efc11b31576c714994e44c6512e468948a407754ca4b2eae556"
     },
     "Bun.randomUUIDv7": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "uuid-v7",
+        "onboard-partner",
+        "generate-play",
+        "phone-inventory"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "be907d5ef981e49c454cfd665e792c173c3336a1896dc63ff99ee18514ba9d99"
+      "sha256": "241cb97a1f0f30474847ae279c4005b32e5a375267b1ea93ee052772603687a1"
     },
     "Bun.readableStreamToBytes": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/readableStreamToBytes",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "streams"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/readableStreamToBytes",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "786df0fe80de34c56d7701ab8bce7544bf1479f781de51887c6d1a464e788e5f"
+      "sha256": "d2257e1e6319b7ae24c19fa911dbb4bee6442f1f7974e9fa38be5e7683f0e8e3"
     },
     "Bun.resolveSync": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-resolvesync",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "resolve"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-resolvesync",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "d894e1e2e08736414a9d9145ed5da4ded4e22f40ac0564ef7c96c9ec39dcddfb"
+      "sha256": "3a8bbcc6fceddc61597da2006f6e344d8243dfd9a29428bcc92ffebda5cf9305"
     },
     "Bun.revision": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-revision",
-      "runtime": "string",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "version-revision"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-revision",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "string",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "cedb9c9a94fea30a65f2eafae1b9dda24a5796c62dab7dc3b31d408939e2773b"
+      "sha256": "03102fcca32cb84b29b666cf5d5fb6d8dcbc226bf793ed022203dd09f9c1edad"
     },
     "Bun.semver": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean",
-      "runtime": "object",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "semver"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/semver",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "object",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "b490a8a2098210b0232b569a635f11a5c90f570edcdf7c7dccaa0b7178ac3f1a"
+      "sha256": "17e1bb206783041e443e94c2b8c311539c06e36736a7dbe73bdb82b24cbd5f28"
     },
     "Bun.semver.order": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/semver/order",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "semver"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/semver/order",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "6cee3e5c721bc0da9562cc1085147d1aa4aad8791ff203b5289468a015672576"
+      "sha256": "08ca3b7c5c57fe6d9c4ae61cf9ff1cb36f8463d34a88af91ac06c429cb7f57a6"
     },
     "Bun.semver.satisfies": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/semver/satisfies",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "semver"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/semver/satisfies",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "4af133436d802e9a9de892c6d44337607a79a032587453da304a5847c618319f"
+      "sha256": "75f0848508c79ce0ac16d83373bbf7a397ba9ba1ffa82cc9e9c4aabbc5198d55"
     },
     "Bun.serve": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/http/server#basic-setup",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "serve-stop"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/http/server#basic-setup",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/http/server",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "3611e169d90b72e702ac71a86421213ca22ba28ec6db029946ce7dcf0676fe93"
+      "sha256": "eb907682e7e1734c23b09abae11b39fc1234aa3488262a50e35ef99d7099a0e7"
     },
     "Bun.sleep": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-sleep",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "timers"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-sleep",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "822810a678200918a5fdb97c4afcaebf6aa300bfee0e6d390e8c4c5c6e8ab3bb"
+      "sha256": "24e93e522c027639e4d481fb2462c169943f75d729c208b0d692ac58e541a5cd"
     },
     "Bun.sleepSync": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-sleepsync",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "timers"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-sleepsync",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "b8b7ae684504d998472b2359b44b17079a1a6f217311d52ce9fe4b611474b24e"
+      "sha256": "23a64ca3ed63f3f1c6b295926bd9e8fa06a7b6017991e9b6b45234b92b384fc7"
     },
     "Bun.sliceAnsi": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/reference/bun/sliceAnsi",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "string-utils"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/reference/bun/sliceAnsi",
+        "official": true,
+        "plane": "reference",
+        "match": "module-prefix",
+        "indexSource": "https://bun.com/reference",
+        "indexedUrl": "https://bun.com/reference/bun",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "255ffdf9e813b2c670258fae1fdbbefcceb01735a5c68fb99f0a93abbbaff8c3"
+      "sha256": "61ec6a188ddc3a897b97e488a7f77717e8e3f5a58ed63e63645cfe2c42cd4039"
     },
     "Bun.spawn": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "spawn"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/child-process",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "38c2a0c3113b88fb8b85ea95bcbb949ef151736e8def6b5378876a34c80b156f"
+      "sha256": "9a1d98fb9666b2b1efe1d99184248f219096dd6b6efdd5c31393a002ffca009d"
     },
     "Bun.spawnSync": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "spawn"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/child-process",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "3508d8ef8eb6029ef5a90475a2c362c766d008f354e45a5674f2cb0546bbffdf"
+      "sha256": "6e733edab7b7b1efca9edd7617203bd497ffb80900c5e1f83c9c2b8de2f96a6d"
     },
     "Bun.stringWidth": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-stringwidth",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "string-utils"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-stringwidth",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "1c2fd040e404603e895e90f2950b04819d09e72465e2028da461192e019ce455"
+      "sha256": "79f74228c933a77a051a9f2a6c9cbf627af542e4e11724463805c048670c367b"
     },
     "Bun.stripANSI": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-stripansi",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "string-utils"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-stripansi",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "efd6aba752d794f6dfe613a1adb7634b22063d9d1e2b609deac5503764f60e4d"
+      "sha256": "1344ffe44203abe37b6b5c4affbb9c266fadbf2cf24c475cdb9997653601b036"
     },
     "Bun.version": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-version",
-      "runtime": "string",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "version-revision"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-version",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "string",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "256e6adf5f90568ae0df9358027501d4416660bb4b9d74bcf9526990ab628bfd"
+      "sha256": "96e8fa0c0a07274b37f29519a94a3a535f79ebfb7acfcebf4b8a2bac2bbfc062"
     },
     "Bun.which": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-which",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "shell-which"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-which",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "b74ecfbedfffa65a1224e6959f5c33b7f3a965b48dbdd3931f1ab7a4b88fa89c"
+      "sha256": "f090efcb1776213acd98118497479b112e1c75f6e064b07a015646f132b58c4a"
     },
     "Bun.wrapAnsi": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-wrapansi",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "string-utils"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-wrapansi",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "f132ed4f0d95d5870481883111975d18f8197a71280aee6f469c5af151803cad"
+      "sha256": "e5a230990fa85ccdf59016bada960350864184e36bbf9758fe734b8fbc43f62f"
     },
     "Bun.write": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "file-write-copy"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/file-io",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "8e2965d7de723aeca66bbd3452e862c3b226990560854f9f0451e4e70aade4d2"
+      "sha256": "dca88eee0591e4f29e98e90161cde5b86d46004d9bd23a5c48779e231710dc0d"
     },
     "Bun.zstdCompressSync": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-zstdcompress-bun-zstdcompresssync",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "compression"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-zstdcompress-bun-zstdcompresssync",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "dad0bc0830d0e0439180b4e60cb0dac9895c12309cd36c6377c88d695eba64f9"
+      "sha256": "dc596bf903c022e6b744250f5e3168edea6b0d0915b3a7ee3e394b3b0af8df2f"
     },
     "Bun.zstdDecompressSync": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "compression"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/utils",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "af8961b71ebe6ff100e5c9297c04f449cb52655896585e4138ee192e13242942"
+      "sha256": "451540f84499e9f07c53cbb19f6ef4430e2cd21cc03e0f1eb5f92b6d98fd6b88"
     },
     "HTMLRewriter": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/html-rewriter",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "html-rewriter"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/html-rewriter",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/html-rewriter",
+        "anchor": "not-requested"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "8a20315559b235ae31095ed8686cef09a4911d8b577b5c263dc1077737286a43"
+      "sha256": "b2b657ed2bc7dc5883353780c8549ab02c58a6506d1a992c6358bfe88a2a7d87"
     },
     "bun:sqlite": {
-      "inTypes": true,
-      "knownTypeGap": false,
-      "knownRuntimeGap": false,
-      "inDocs": true,
-      "docUrl": "https://bun.com/docs/runtime/sqlite#load-via-es-module-import",
-      "runtime": "function",
+      "scope": "curated-runnable-demo",
+      "demoIds": [
+        "sqlite",
+        "onboard-partner",
+        "fund-agent-rail",
+        "generate-play",
+        "distribute-play",
+        "track-wager",
+        "reconcile-rails",
+        "phone-inventory",
+        "daily-pnl-report",
+        "auto-fund-cron"
+      ],
+      "declaration": {
+        "matched": true,
+        "knownGap": false
+      },
+      "documentation": {
+        "canonicalUrl": "https://bun.com/docs/runtime/sqlite#load-via-es-module-import",
+        "official": true,
+        "plane": "docs",
+        "match": "page",
+        "indexSource": "https://bun.com/docs/llms.txt",
+        "indexedUrl": "https://bun.com/docs/runtime/sqlite",
+        "anchor": "verified"
+      },
+      "runtime": {
+        "type": "function",
+        "matched": true,
+        "knownGap": false
+      },
       "ok": true,
-      "sha256": "7709efa90b85d7b6ada7bd031a2f6c689de7de680a34276e04309dec83abec6f"
+      "sha256": "703824c3b5c20614b8abfa15366f87e02439bb43c81601c0dd8465243a57f2d9"
     }
   }
 }

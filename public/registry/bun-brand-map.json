@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "bun-brand-map",
   "path": "/registry/bun-brand-map.json",
-  "generatedAt": "2026-08-15T01:04:46.982Z",
+  "generatedAt": "2026-08-18T00:27:59.700Z",
   "sources": {
     "declarations": "lib/docs/bun-brand-usages.ts",
     "catalog": "tools/bun-docs-catalog.json",
@@ -12,35 +12,35 @@
     "proof": "public/registry/release-features.json"
   },
   "sourceDigests": {
-    "declarations": "805b2249cb909d2ee6f1cef12bbf4c3cef8e80170081e8ea9387924bb7fd4dae",
+    "declarations": "28548421f55640bcadcf09305d02d24c3bdcdceb0d910440785f2183adc28416",
     "catalog": "30344b44b00eb5fa8d2156a2aed6126897f6cf51fe22774072eabdc612823cfb",
-    "brandManifest": "a37c462c9502787be3591d1385dffac0ee5d6813e921f4d82538bca751a0d216",
-    "brandKeymap": "ee86b4d83bdc5edcd4720c747e21340224eb1a2bae29162658c70f6058514fbd",
-    "observations": "5076605fee9b401c46d1238c1fd3f89e911c5d5eba2e04d41b62e3f5e06388e9",
-    "baseline": "f20a24e2b1d9017ebb64996f25926c1561a88927c6141109f89dc02f8e414329",
+    "brandManifest": "af23fc482d19a16764ab8fc574cfe46a181993bab41ecdcd4480c28cbd424027",
+    "brandKeymap": "ff32bb0b1976ea034722923ede487dd9a6e2899181f91becbe539bfe4dc0fc86",
+    "observations": "265f569e775c80b21b666fe0d6158a86ddeda14acd7d9fefaadcc89dca15017f",
+    "baseline": "12deacd645ff9f5adcc24c9ff70c7d4d6de99a1d8f536c7a1fdc2f86db3c93a4",
     "proofs": "53261d0176406620894fd5d32cd17d9fcec54878019ed910530174917c3d88db"
   },
   "summary": {
-    "apis": 11,
-    "relationships": 82,
-    "wrappers": 33,
+    "apis": 12,
+    "relationships": 85,
+    "wrappers": 36,
     "projects": 31,
     "verified": 2,
-    "attention": 48,
-    "declared": 36,
-    "observed": 358,
-    "matched": 109,
-    "undeclared": 249,
-    "baselineUndeclared": 217,
-    "legacyUndeclared": 217,
-    "newUndeclared": 32,
+    "attention": 50,
+    "declared": 38,
+    "observed": 350,
+    "matched": 112,
+    "undeclared": 238,
+    "baselineUndeclared": 238,
+    "legacyUndeclared": 238,
+    "newUndeclared": 0,
     "catalogConflicts": 0,
     "productionProofErrors": 0,
     "stale": 0,
     "experimentalApprovals": 0,
-    "brands": 93,
+    "brands": 94,
     "mappedBrands": 13,
-    "totalCanonicalBrands": 93,
+    "totalCanonicalBrands": 94,
     "trackedProjects": 31,
     "externalProjects": 4
   },
@@ -108,7 +108,9 @@
         }
       ],
       "evidenceState": "verified",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 4,
       "attention": []
     },
@@ -153,9 +155,15 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 2,
-      "attention": ["declared-unproven", "experimental", "lab-only"]
+      "attention": [
+        "declared-unproven",
+        "experimental",
+        "lab-only"
+      ]
     },
     {
       "id": "bun-randomuuidv7-evidence-mint",
@@ -198,9 +206,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 3,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-limit-forecast-issue",
@@ -235,9 +247,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-phone-sportsbook-journal",
@@ -272,9 +288,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-funding-mint",
@@ -309,9 +329,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-ops-channel-event",
@@ -346,9 +370,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-command-mint",
@@ -383,9 +411,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-correlation-mint",
@@ -428,9 +460,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 2,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-toc-tree-node",
@@ -469,9 +505,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 2,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-toc-opaque-rows",
@@ -510,9 +550,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 2,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-partner-ledger-opaque",
@@ -555,9 +599,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 2,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-scratch-temp-dirs",
@@ -600,9 +648,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 2,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-token-mint",
@@ -637,9 +689,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-identity-mint",
@@ -674,9 +730,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-gate-decision",
@@ -727,9 +787,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 6,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-experiment-mints",
@@ -790,9 +854,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 4,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-tree-node-account",
@@ -827,9 +895,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-ops-seed-demo",
@@ -864,9 +936,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 21,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-ops-oneliners-demo",
@@ -909,9 +985,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 8,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-anomaly-opaque",
@@ -970,9 +1050,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 5,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-ops-loop-fixture",
@@ -1015,9 +1099,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 4,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-telegram-broadcast-opaque",
@@ -1068,9 +1156,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 5,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-time-encoding-hex",
@@ -1105,9 +1197,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-time-encoding-buffer",
@@ -1142,9 +1238,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-randomuuidv7-experiment-ab-opaque",
@@ -1195,9 +1295,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 4,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-cron-in-process-monitoring",
@@ -1232,9 +1336,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 0,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-cron-os-persistent",
@@ -1269,9 +1377,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-cron-brand-status-watch",
@@ -1306,9 +1418,54 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-cron-factory-template-preview",
+      "key": "bun-cron-factory-template-preview",
+      "token": "Bun.cron",
+      "variant": "parse",
+      "kind": "api",
+      "versionIntroduced": "1.3.12",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/cron",
+      "scope": "tooling",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": ".bun-create/factory-library/scripts/cron-preview.ts",
+          "symbol": "parseNextCronOccurrence"
+        }
+      ],
+      "consumers": [
+        {
+          "path": ".bun-create/factory-library/package.json",
+          "symbol": "scripts.cron:preview"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The preview parses a UTC schedule without registering work or transporting a domain identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-sliceansi-terminal-output",
@@ -1351,9 +1508,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 0,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-terminal-pty",
@@ -1394,7 +1555,9 @@
         }
       ],
       "evidenceState": "verified",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
       "attention": []
     },
@@ -1471,9 +1634,58 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 11,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-no-orphans-factory-template",
+      "key": "bun-no-orphans-factory-template",
+      "token": "--no-orphans",
+      "variant": "bun-config",
+      "kind": "cli-flag",
+      "versionIntroduced": "1.3.14",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies",
+      "scope": "config",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": ".bun-create/factory-library/harness.toml",
+          "symbol": "noOrphans"
+        },
+        {
+          "path": ".bun-create/factory-library/bunfig.toml",
+          "symbol": "noOrphans"
+        }
+      ],
+      "consumers": [
+        {
+          "path": ".bun-create/factory-library/bunfig.toml",
+          "symbol": "run.noOrphans"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Parent-death behavior is runtime lifecycle configuration and does not create a domain identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 2,
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-test-isolate",
@@ -1508,9 +1720,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-test-shard",
@@ -1569,9 +1785,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 7,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-test-changed",
@@ -1606,9 +1826,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["project-R-score"],
+      "projects": [
+        "project-R-score"
+      ],
       "observations": 1,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "fetch-http2-client",
@@ -1643,9 +1867,13 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": ["projects/active/sports-terminal-os"],
+      "projects": [
+        "projects/active/sports-terminal-os"
+      ],
       "observations": 0,
-      "attention": ["declared-unproven"]
+      "attention": [
+        "declared-unproven"
+      ]
     }
   ],
   "relationships": [
@@ -2760,6 +2988,25 @@
       "proofs": []
     },
     {
+      "id": "bun-cron-factory-template-preview:0:0",
+      "key": "bun-cron-factory-template-preview:0:0",
+      "capabilityId": "bun-cron-factory-template-preview",
+      "capabilityKey": "bun-cron-factory-template-preview",
+      "api": "Bun.cron",
+      "variant": "parse",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The preview parses a UTC schedule without registering work or transporting a domain identity.",
+      "wrapper": ".bun-create/factory-library/scripts/cron-preview.ts",
+      "wrapperSymbol": "parseNextCronOccurrence",
+      "consumer": ".bun-create/factory-library/package.json",
+      "consumerSymbol": "scripts.cron:preview",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
       "id": "bun-sliceansi-terminal-output:0:0",
       "key": "bun-sliceansi-terminal-output:0:0",
       "capabilityId": "bun-sliceansi-terminal-output",
@@ -3028,6 +3275,44 @@
       "proofs": []
     },
     {
+      "id": "bun-no-orphans-factory-template:0:0",
+      "key": "bun-no-orphans-factory-template:0:0",
+      "capabilityId": "bun-no-orphans-factory-template",
+      "capabilityKey": "bun-no-orphans-factory-template",
+      "api": "--no-orphans",
+      "variant": "bun-config",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Parent-death behavior is runtime lifecycle configuration and does not create a domain identity.",
+      "wrapper": ".bun-create/factory-library/harness.toml",
+      "wrapperSymbol": "noOrphans",
+      "consumer": ".bun-create/factory-library/bunfig.toml",
+      "consumerSymbol": "run.noOrphans",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-no-orphans-factory-template:1:0",
+      "key": "bun-no-orphans-factory-template:1:0",
+      "capabilityId": "bun-no-orphans-factory-template",
+      "capabilityKey": "bun-no-orphans-factory-template",
+      "api": "--no-orphans",
+      "variant": "bun-config",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Parent-death behavior is runtime lifecycle configuration and does not create a domain identity.",
+      "wrapper": ".bun-create/factory-library/bunfig.toml",
+      "wrapperSymbol": "noOrphans",
+      "consumer": ".bun-create/factory-library/bunfig.toml",
+      "consumerSymbol": "run.noOrphans",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
       "id": "bun-test-isolate:0:0",
       "key": "bun-test-isolate:0:0",
       "capabilityId": "bun-test-isolate",
@@ -3243,9 +3528,13 @@
     {
       "name": "CorrelationId",
       "domain": "session",
-      "capabilities": ["Bun.randomUUIDv7"],
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
       "relationships": 2,
-      "projects": ["project-R-score"]
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "SnapshotId",
@@ -3271,9 +3560,13 @@
     {
       "name": "IdentityId",
       "domain": "identity",
-      "capabilities": ["Bun.randomUUIDv7"],
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
       "relationships": 1,
-      "projects": ["project-R-score"]
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "OidcClientId",
@@ -3292,9 +3585,13 @@
     {
       "name": "TokenId",
       "domain": "identity",
-      "capabilities": ["Bun.randomUUIDv7"],
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
       "relationships": 1,
-      "projects": ["project-R-score"]
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "DocumentId",
@@ -3312,6 +3609,13 @@
     },
     {
       "name": "DocTokenId",
+      "domain": "documents",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "ReleaseKnowledgeExampleId",
       "domain": "documents",
       "capabilities": [],
       "relationships": 0,
@@ -3376,9 +3680,15 @@
     {
       "name": "EvidenceId",
       "domain": "audit",
-      "capabilities": ["Bun.Image", "Bun.WebView", "Bun.randomUUIDv7"],
+      "capabilities": [
+        "Bun.Image",
+        "Bun.WebView",
+        "Bun.randomUUIDv7"
+      ],
       "relationships": 8,
-      "projects": ["project-R-score"]
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "DodId",
@@ -3565,9 +3875,13 @@
     {
       "name": "TreeNodeId",
       "domain": "operations",
-      "capabilities": ["Bun.randomUUIDv7"],
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
       "relationships": 3,
-      "projects": ["project-R-score"]
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "RailId",
@@ -3579,37 +3893,57 @@
     {
       "name": "FundingId",
       "domain": "operations",
-      "capabilities": ["Bun.randomUUIDv7"],
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
       "relationships": 1,
-      "projects": ["project-R-score"]
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "CommandId",
       "domain": "operations",
-      "capabilities": ["Bun.randomUUIDv7"],
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
       "relationships": 1,
-      "projects": ["project-R-score"]
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "ExperimentId",
       "domain": "operations",
-      "capabilities": ["Bun.randomUUIDv7"],
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
       "relationships": 3,
-      "projects": ["project-R-score"]
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "ExperimentVariantId",
       "domain": "operations",
-      "capabilities": ["Bun.randomUUIDv7"],
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
       "relationships": 3,
-      "projects": ["project-R-score"]
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "ExperimentAssignmentId",
       "domain": "operations",
-      "capabilities": ["Bun.randomUUIDv7"],
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
       "relationships": 3,
-      "projects": ["project-R-score"]
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "PartnerProfileKey",
@@ -3705,23 +4039,35 @@
     {
       "name": "GateDecisionId",
       "domain": "operations",
-      "capabilities": ["Bun.randomUUIDv7"],
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
       "relationships": 3,
-      "projects": ["project-R-score"]
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "OpsChannelEventId",
       "domain": "operations",
-      "capabilities": ["Bun.randomUUIDv7"],
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
       "relationships": 1,
-      "projects": ["project-R-score"]
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "LimitForecastIssueId",
       "domain": "operations",
-      "capabilities": ["Bun.randomUUIDv7"],
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
       "relationships": 1,
-      "projects": ["project-R-score"]
+      "projects": [
+        "project-R-score"
+      ]
     },
     {
       "name": "EventId",
@@ -4163,14 +4509,16 @@
     {
       "path": "projects/active/sports-terminal-os",
       "status": "adopted",
-      "capabilities": ["fetch protocol http2"],
+      "capabilities": [
+        "fetch protocol http2"
+      ],
       "relationships": 1,
       "brands": [],
       "verified": 0,
       "attention": 32,
       "observed": 31,
       "undeclared": 31,
-      "legacyUndeclared": 30
+      "legacyUndeclared": 31
     },
     {
       "path": "projects/experimental/edge-worker",
@@ -4295,336 +4643,6 @@
   ],
   "findings": [
     {
-      "key": "Bun.cron|in-process|lib/operator-research/odds/scheduler.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.cron",
-      "path": "lib/operator-research/odds/scheduler.ts",
-      "line": 95,
-      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.cron|parse|tools/bun-api-oneliners.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.cron",
-      "path": "tools/bun-api-oneliners.ts",
-      "line": 636,
-      "detail": "Bun.cron (parse) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.cron|parse|tools/bun-ops-oneliners.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.cron",
-      "path": "tools/bun-ops-oneliners.ts",
-      "line": 321,
-      "detail": "Bun.cron (parse) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.Image|image-processing|lib/operator-research/doctor.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.Image",
-      "path": "lib/operator-research/doctor.ts",
-      "line": 111,
-      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.Image|image-processing|lib/operator-research/doctor.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.Image",
-      "path": "lib/operator-research/doctor.ts",
-      "line": 118,
-      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.Image|image-processing|lib/operator-research/screenshot.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.Image",
-      "path": "lib/operator-research/screenshot.ts",
-      "line": 73,
-      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.Image|image-processing|lib/operator-research/screenshot.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.Image",
-      "path": "lib/operator-research/screenshot.ts",
-      "line": 117,
-      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.Image|image-processing|tools/verify-bun-release.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.Image",
-      "path": "tools/verify-bun-release.ts",
-      "line": 515,
-      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/dod/telegram-accounting-ingest.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/dod/telegram-accounting-ingest.ts",
-      "line": 312,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/agent-odds-http.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operator-research/agent-odds-http.ts",
-      "line": 684,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/auth/partner-request.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operator-research/auth/partner-request.ts",
-      "line": 31,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/batch.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operator-research/batch.ts",
-      "line": 44,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/batch.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operator-research/batch.ts",
-      "line": 64,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/bet-mock.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operator-research/bet-mock.ts",
-      "line": 89,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/enrich.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operator-research/enrich.ts",
-      "line": 25,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/evidence.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operator-research/evidence.ts",
-      "line": 65,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/odds/odds-store.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operator-research/odds/odds-store.ts",
-      "line": 82,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/odds/odds-store.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operator-research/odds/odds-store.ts",
-      "line": 175,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/worker-registry.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/operator-research/worker-registry.ts",
-      "line": 35,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|lib/tmp-probe.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "lib/tmp-probe.ts",
-      "line": 24,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|packages/bun-release-contracts/src/cli.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "packages/bun-release-contracts/src/cli.ts",
-      "line": 163,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|packages/bun-release-contracts/src/cli.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "packages/bun-release-contracts/src/cli.ts",
-      "line": 231,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/auth/middleware.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "projects/active/sports-terminal-os/src/auth/middleware.ts",
-      "line": 13,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bake-registry-manifest.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bake-registry-manifest.ts",
-      "line": 27,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bake-tennis-partner-contracts.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bake-tennis-partner-contracts.ts",
-      "line": 61,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bake-tennis-partner-contracts.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bake-tennis-partner-contracts.ts",
-      "line": 113,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.sliceAnsi|display-width|lib/console/layout.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.sliceAnsi",
-      "path": "lib/console/layout.ts",
-      "line": 68,
-      "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.sliceAnsi|display-width|lib/console/layout.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.sliceAnsi",
-      "path": "lib/console/layout.ts",
-      "line": 69,
-      "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.sliceAnsi|display-width|lib/console/layout.ts#3",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.sliceAnsi",
-      "path": "lib/console/layout.ts",
-      "line": 99,
-      "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.WebView|headless|lib/operations/scrapers/webview-html.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.WebView",
-      "path": "lib/operations/scrapers/webview-html.ts",
-      "line": 30,
-      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.WebView|headless|lib/operator-research/doctor.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.WebView",
-      "path": "lib/operator-research/doctor.ts",
-      "line": 81,
-      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "Bun.WebView|headless|lib/operator-research/screenshot.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "error",
-      "api": "Bun.WebView",
-      "path": "lib/operator-research/screenshot.ts",
-      "line": 31,
-      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
-      "baseline": false
-    },
-    {
-      "key": "--no-orphans|bun-config|.bun-create/factory-library/bunfig.toml#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "--no-orphans",
-      "path": ".bun-create/factory-library/bunfig.toml",
-      "line": 19,
-      "detail": "--no-orphans (bun-config) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
       "key": "--no-orphans|bun-config|bunfig.toml#1",
       "kind": "observed-undeclared",
       "severity": "warning",
@@ -4662,6 +4680,16 @@
       "path": "scratch/bun-v1.3.9-examples/playground/package.json",
       "line": 9,
       "detail": "--parallel (bun-run) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|in-process|lib/operator-research/odds/scheduler.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "lib/operator-research/odds/scheduler.ts",
+      "line": 95,
+      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
       "baseline": true
     },
     {
@@ -4725,32 +4753,32 @@
       "baseline": true
     },
     {
-      "key": "Bun.cron|in-process|tools/bun-api-showcase/oneliners.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.cron",
-      "path": "tools/bun-api-showcase/oneliners.ts",
-      "line": 589,
-      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.cron|in-process|tools/bun-api-showcase/ops-oneliners.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.cron",
-      "path": "tools/bun-api-showcase/ops-oneliners.ts",
-      "line": 197,
-      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
       "key": "Bun.cron|parse|lib/harness/cron.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
       "api": "Bun.cron",
       "path": "lib/harness/cron.ts",
       "line": 65,
+      "detail": "Bun.cron (parse) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|parse|tools/bun-api-oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "tools/bun-api-oneliners.ts",
+      "line": 669,
+      "detail": "Bun.cron (parse) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|parse|tools/bun-ops-oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "tools/bun-ops-oneliners.ts",
+      "line": 329,
       "detail": "Bun.cron (parse) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4835,6 +4863,46 @@
       "baseline": true
     },
     {
+      "key": "Bun.Image|image-processing|lib/operator-research/doctor.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "lib/operator-research/doctor.ts",
+      "line": 111,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|lib/operator-research/doctor.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "lib/operator-research/doctor.ts",
+      "line": 118,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|lib/operator-research/screenshot.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "lib/operator-research/screenshot.ts",
+      "line": 73,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|lib/operator-research/screenshot.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "lib/operator-research/screenshot.ts",
+      "line": 117,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
       "key": "Bun.Image|image-processing|lib/prediction/report.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
@@ -4915,16 +4983,6 @@
       "baseline": true
     },
     {
-      "key": "Bun.Image|image-processing|tools/bun-api-showcase/oneliners.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.Image",
-      "path": "tools/bun-api-showcase/oneliners.ts",
-      "line": 563,
-      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
       "key": "Bun.Image|image-processing|tools/generate-portal-icons.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
@@ -4951,6 +5009,16 @@
       "api": "Bun.Image",
       "path": "tools/verify-bun-release.ts",
       "line": 474,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|tools/verify-bun-release.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "tools/verify-bun-release.ts",
+      "line": 515,
       "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -5165,6 +5233,16 @@
       "baseline": true
     },
     {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/dod/telegram-accounting-ingest.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/dod/telegram-accounting-ingest.ts",
+      "line": 312,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
       "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/champion-challenger.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
@@ -5200,7 +5278,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "lib/monitoring/collect.ts",
-      "line": 202,
+      "line": 203,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -5365,6 +5443,106 @@
       "baseline": true
     },
     {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/agent-odds-http.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operator-research/agent-odds-http.ts",
+      "line": 684,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/auth/partner-request.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operator-research/auth/partner-request.ts",
+      "line": 31,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/batch.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operator-research/batch.ts",
+      "line": 44,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/batch.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operator-research/batch.ts",
+      "line": 64,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/bet-mock.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operator-research/bet-mock.ts",
+      "line": 89,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/enrich.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operator-research/enrich.ts",
+      "line": 25,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/evidence.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operator-research/evidence.ts",
+      "line": 65,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/odds/odds-store.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operator-research/odds/odds-store.ts",
+      "line": 82,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/odds/odds-store.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operator-research/odds/odds-store.ts",
+      "line": 175,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operator-research/worker-registry.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operator-research/worker-registry.ts",
+      "line": 35,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
       "key": "Bun.randomUUIDv7|uuid-string|lib/prediction/tester.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
@@ -5411,6 +5589,36 @@
       "api": "Bun.randomUUIDv7",
       "path": "lib/telegram/ops-commands.ts",
       "line": 119,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/tmp-probe.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/tmp-probe.ts",
+      "line": 24,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|packages/bun-release-contracts/src/cli.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "packages/bun-release-contracts/src/cli.ts",
+      "line": 163,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|packages/bun-release-contracts/src/cli.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "packages/bun-release-contracts/src/cli.ts",
+      "line": 231,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -5925,6 +6133,16 @@
       "baseline": true
     },
     {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/auth/middleware.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/auth/middleware.ts",
+      "line": 13,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
       "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/index.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
@@ -6195,6 +6413,36 @@
       "baseline": true
     },
     {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bake-registry-manifest.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bake-registry-manifest.ts",
+      "line": 27,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bake-tennis-partner-contracts.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bake-tennis-partner-contracts.ts",
+      "line": 61,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bake-tennis-partner-contracts.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bake-tennis-partner-contracts.ts",
+      "line": 113,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
       "key": "Bun.randomUUIDv7|uuid-string|tools/benchmarks/deep-benchmark.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
@@ -6210,7 +6458,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-api-oneliners.ts",
-      "line": 169,
+      "line": 197,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6225,46 +6473,6 @@
       "baseline": true
     },
     {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-api-showcase/oneliners.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bun-api-showcase/oneliners.ts",
-      "line": 219,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-api-showcase/ops-oneliners.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bun-api-showcase/ops-oneliners.ts",
-      "line": 51,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-api-showcase/ops-oneliners.ts#2",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bun-api-showcase/ops-oneliners.ts",
-      "line": 80,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-api-showcase/ops-oneliners.ts#3",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.randomUUIDv7",
-      "path": "tools/bun-api-showcase/ops-oneliners.ts",
-      "line": 107,
-      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
       "key": "Bun.randomUUIDv7|uuid-string|tools/deep-audit-report.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
@@ -6275,12 +6483,42 @@
       "baseline": true
     },
     {
+      "key": "Bun.sliceAnsi|display-width|lib/console/layout.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.sliceAnsi",
+      "path": "lib/console/layout.ts",
+      "line": 68,
+      "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.sliceAnsi|display-width|lib/console/layout.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.sliceAnsi",
+      "path": "lib/console/layout.ts",
+      "line": 69,
+      "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.sliceAnsi|display-width|lib/console/layout.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.sliceAnsi",
+      "path": "lib/console/layout.ts",
+      "line": 99,
+      "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
       "key": "Bun.sliceAnsi|display-width|lib/factory/cli.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
       "api": "Bun.sliceAnsi",
       "path": "lib/factory/cli.ts",
-      "line": 400,
+      "line": 403,
       "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6300,17 +6538,7 @@
       "severity": "warning",
       "api": "Bun.sliceAnsi",
       "path": "tools/bun-api-oneliners.ts",
-      "line": 229,
-      "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.sliceAnsi|display-width|tools/bun-api-showcase/oneliners.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.sliceAnsi",
-      "path": "tools/bun-api-showcase/oneliners.ts",
-      "line": 263,
+      "line": 259,
       "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6695,6 +6923,36 @@
       "baseline": true
     },
     {
+      "key": "Bun.WebView|headless|lib/operations/scrapers/webview-html.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "lib/operations/scrapers/webview-html.ts",
+      "line": 30,
+      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.WebView|headless|lib/operator-research/doctor.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "lib/operator-research/doctor.ts",
+      "line": 81,
+      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.WebView|headless|lib/operator-research/screenshot.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "lib/operator-research/screenshot.ts",
+      "line": 31,
+      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
       "key": "Bun.WebView|headless|lib/prediction/report.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
@@ -6755,32 +7013,12 @@
       "baseline": true
     },
     {
-      "key": "Bun.WebView|headless|tools/bun-api-showcase/oneliners.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.WebView",
-      "path": "tools/bun-api-showcase/oneliners.ts",
-      "line": 549,
-      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
-      "key": "Bun.WebView|headless|tools/bun-api-showcase/ops-oneliners.ts#1",
-      "kind": "observed-undeclared",
-      "severity": "warning",
-      "api": "Bun.WebView",
-      "path": "tools/bun-api-showcase/ops-oneliners.ts",
-      "line": 124,
-      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
-      "baseline": true
-    },
-    {
       "key": "Bun.WebView|headless|tools/bun-ops-oneliners.ts#1",
       "kind": "observed-undeclared",
       "severity": "warning",
       "api": "Bun.WebView",
       "path": "tools/bun-ops-oneliners.ts",
-      "line": 196,
+      "line": 204,
       "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6790,6 +7028,16 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "tools/brand-status.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-cron-factory-template-preview",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": ".bun-create/factory-library/scripts/cron-preview.ts",
       "line": 1,
       "detail": "optional capability is declared-unproven",
       "baseline": false
@@ -6810,6 +7058,16 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "lib/harness/cron.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-no-orphans-factory-template",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "--no-orphans",
+      "path": ".bun-create/factory-library/harness.toml",
       "line": 1,
       "detail": "optional capability is declared-unproven",
       "baseline": false

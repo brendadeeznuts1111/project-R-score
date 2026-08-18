@@ -1,9 +1,15 @@
 {
   "schemaVersion": 5,
   "kind": "env-inventory",
-  "generatedAt": "2026-08-15T01:04:58.136Z",
-  "scannedRoots": ["lib", "config", "scripts", "tools", "packages"],
-  "usageCount": 680,
+  "generatedAt": "2026-08-17T22:08:09.481Z",
+  "scannedRoots": [
+    "lib",
+    "config",
+    "scripts",
+    "tools",
+    "packages"
+  ],
+  "usageCount": 677,
   "uniqueVars": 270,
   "byKind": {
     "ambient": 20,
@@ -13,7 +19,10 @@
   "vault": {
     "templateKeyCount": 24,
     "vaultRefCount": 16,
-    "actionableVaultGaps": ["OPENAI_API_KEY", "SLACK_WEBHOOK_URL"],
+    "actionableVaultGaps": [
+      "OPENAI_API_KEY",
+      "SLACK_WEBHOOK_URL"
+    ],
     "secretsUsedAndVaulted": [
       "CLOUDFLARE_ACCESS_API_TOKEN",
       "CLOUDFLARE_API_TOKEN",
@@ -68,7 +77,7 @@
     },
     {
       "var": "REDIS_URL",
-      "count": 10,
+      "count": 9,
       "samples": [
         "config/ports.ts:28",
         "tools/bun-api-showcase.ts:309",
@@ -147,16 +156,6 @@
       ]
     },
     {
-      "var": "DATABASE_URL",
-      "count": 4,
-      "samples": [
-        "lib/operations/postgres-bridge.ts:39",
-        "tools/bun-api-showcase.ts:607",
-        "tools/bun-api-oneliners.ts:591",
-        "tools/bun-api-showcase/oneliners.ts:515"
-      ]
-    },
-    {
       "var": "DOMAIN_REGISTRY_PATH",
       "count": 4,
       "samples": [
@@ -212,6 +211,15 @@
         "lib/operations/scrapers/books/caesars.ts:62",
         "tools/baseline-caesars-probe.ts:83",
         "tools/baseline-caesars-probe.ts:174"
+      ]
+    },
+    {
+      "var": "DATABASE_URL",
+      "count": 3,
+      "samples": [
+        "lib/operations/postgres-bridge.ts:39",
+        "tools/bun-api-showcase.ts:607",
+        "tools/bun-api-oneliners.ts:624"
       ]
     },
     {
@@ -298,21 +306,34 @@
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 1,
-      "planes": ["packages"],
-      "packages": ["proton-pass"],
+      "planes": [
+        "packages"
+      ],
+      "packages": [
+        "proton-pass"
+      ],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": ["packages/proton-pass/src/session.ts:164"]
+      "samples": [
+        "packages/proton-pass/src/session.ts:164"
+      ]
     },
     {
       "envKey": "TMPDIR",
       "kind": "ambient",
       "disposition": "ambient",
       "count": 10,
-      "planes": ["lib", "packages", "scripts", "tools"],
-      "packages": ["proton-pass"],
+      "planes": [
+        "lib",
+        "packages",
+        "scripts",
+        "tools"
+      ],
+      "packages": [
+        "proton-pass"
+      ],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
@@ -328,9 +349,16 @@
       "envKey": "REDIS_URL",
       "kind": "config",
       "disposition": "config",
-      "count": 10,
-      "planes": ["config", "packages", "tools"],
-      "packages": ["business", "p2p"],
+      "count": 9,
+      "planes": [
+        "config",
+        "packages",
+        "tools"
+      ],
+      "packages": [
+        "business",
+        "p2p"
+      ],
       "inRootTemplate": true,
       "inAnyTemplate": true,
       "passRef": null,
@@ -347,8 +375,13 @@
       "kind": "config",
       "disposition": "config",
       "count": 2,
-      "planes": ["packages", "tools"],
-      "packages": ["proton-pass"],
+      "planes": [
+        "packages",
+        "tools"
+      ],
+      "packages": [
+        "proton-pass"
+      ],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
@@ -363,20 +396,30 @@
       "kind": "config",
       "disposition": "config",
       "count": 1,
-      "planes": ["packages"],
-      "packages": ["proton-pass"],
+      "planes": [
+        "packages"
+      ],
+      "packages": [
+        "proton-pass"
+      ],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": ["packages/proton-pass/bin/proton-pass.ts:244"]
+      "samples": [
+        "packages/proton-pass/bin/proton-pass.ts:244"
+      ]
     },
     {
       "envKey": "API_KEY",
       "kind": "secret",
       "disposition": "alias",
       "count": 7,
-      "planes": ["config", "lib", "tools"],
+      "planes": [
+        "config",
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -394,7 +437,11 @@
       "kind": "secret",
       "disposition": "vaulted",
       "count": 6,
-      "planes": ["lib", "scripts", "tools"],
+      "planes": [
+        "lib",
+        "scripts",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
@@ -412,7 +459,11 @@
       "kind": "secret",
       "disposition": "vaulted",
       "count": 4,
-      "planes": ["lib", "scripts", "tools"],
+      "planes": [
+        "lib",
+        "scripts",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
@@ -420,7 +471,7 @@
       "runtimePresent": false,
       "samples": [
         "lib/factory/server.ts:218",
-        "scripts/serve-public.ts:1700",
+        "scripts/serve-public.ts:1701",
         "tools/ops-snapshot.ts:186",
         "tools/verify-formdata.ts:26"
       ]
@@ -430,7 +481,10 @@
       "kind": "secret",
       "disposition": "vaulted",
       "count": 9,
-      "planes": ["scripts", "tools"],
+      "planes": [
+        "scripts",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
@@ -448,7 +502,10 @@
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 6,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -466,7 +523,10 @@
       "kind": "secret",
       "disposition": "vaulted",
       "count": 5,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
@@ -484,7 +544,10 @@
       "kind": "secret",
       "disposition": "vaulted",
       "count": 5,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
@@ -502,7 +565,10 @@
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 3,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -519,7 +585,10 @@
       "kind": "secret",
       "disposition": "vaulted",
       "count": 3,
-      "planes": ["scripts", "tools"],
+      "planes": [
+        "scripts",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
@@ -536,7 +605,10 @@
       "kind": "secret",
       "disposition": "alias",
       "count": 3,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -553,7 +625,9 @@
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 6,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -571,7 +645,9 @@
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 4,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -589,7 +665,9 @@
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 4,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -607,7 +685,9 @@
       "kind": "secret",
       "disposition": "vault-required",
       "count": 3,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -624,7 +704,9 @@
       "kind": "secret",
       "disposition": "vault-required",
       "count": 3,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -641,7 +723,9 @@
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 2,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -657,7 +741,9 @@
       "kind": "secret",
       "disposition": "demo",
       "count": 2,
-      "planes": ["tools"],
+      "planes": [
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -673,7 +759,9 @@
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 2,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -689,189 +777,250 @@
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 1,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": ["lib/operator-research/agent-odds-http.ts:113"]
+      "samples": [
+        "lib/operator-research/agent-odds-http.ts:113"
+      ]
     },
     {
       "envKey": "ALERT_WEBHOOK_URL",
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 1,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": ["lib/research/event-alert-engine.ts:200"]
+      "samples": [
+        "lib/research/event-alert-engine.ts:200"
+      ]
     },
     {
       "envKey": "CLOUDFLARE_ACCESS_API_TOKEN",
       "kind": "secret",
       "disposition": "vaulted",
       "count": 1,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
       "passRef": "pass://factorywager/Cloudflare Access API Token/password",
       "runtimePresent": false,
-      "samples": ["lib/verification/cloudflare-access-token.ts:144"]
+      "samples": [
+        "lib/verification/cloudflare-access-token.ts:144"
+      ]
     },
     {
       "envKey": "CSRF_SECRET",
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 1,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": ["lib/operator-research/auth/csrf.ts:19"]
+      "samples": [
+        "lib/operator-research/auth/csrf.ts:19"
+      ]
     },
     {
       "envKey": "DOD_PROOF_SECRET",
       "kind": "secret",
       "disposition": "vaulted",
       "count": 1,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
       "passRef": "pass://factorywager/DOD Proof Secret/password",
       "runtimePresent": false,
-      "samples": ["lib/dod/evidence.ts:242"]
+      "samples": [
+        "lib/dod/evidence.ts:242"
+      ]
     },
     {
       "envKey": "EVENT_ALERT_WEBHOOK",
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 1,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": ["lib/research/event-alert-engine.ts:199"]
+      "samples": [
+        "lib/research/event-alert-engine.ts:199"
+      ]
     },
     {
       "envKey": "FONBET_API_KEY",
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 1,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": ["lib/research/fetchers/fonbet.ts:146"]
+      "samples": [
+        "lib/research/fetchers/fonbet.ts:146"
+      ]
     },
     {
       "envKey": "OPERATOR_RESEARCH_CSRF_SECRET",
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 1,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": ["lib/operator-research/auth/csrf.ts:20"]
+      "samples": [
+        "lib/operator-research/auth/csrf.ts:20"
+      ]
     },
     {
       "envKey": "PARTNER_LIMITS_API_TOKEN",
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 1,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": ["lib/operations/baseline-partner-api.ts:33"]
+      "samples": [
+        "lib/operations/baseline-partner-api.ts:33"
+      ]
     },
     {
       "envKey": "PROVISION_ENCRYPTION_KEY",
       "kind": "secret",
       "disposition": "vaulted",
       "count": 1,
-      "planes": ["tools"],
+      "planes": [
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
       "passRef": "pass://factorywager/Provision Encryption Key/password",
       "runtimePresent": false,
-      "samples": ["tools/provision-queue.ts:130"]
+      "samples": [
+        "tools/provision-queue.ts:130"
+      ]
     },
     {
       "envKey": "PROVISION_PASSWORD",
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 1,
-      "planes": ["tools"],
+      "planes": [
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": ["tools/provision-queue.ts:125"]
+      "samples": [
+        "tools/provision-queue.ts:125"
+      ]
     },
     {
       "envKey": "SPORTS_TERMINAL_TOKEN",
       "kind": "secret",
       "disposition": "unknown-secret",
       "count": 1,
-      "planes": ["scripts"],
+      "planes": [
+        "scripts"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": ["scripts/refresh-sports-terminal-integration-health.ts:70"]
+      "samples": [
+        "scripts/refresh-sports-terminal-integration-health.ts:70"
+      ]
     },
     {
       "envKey": "TELEGRAM_BOT_TOKEN",
       "kind": "secret",
       "disposition": "alias",
       "count": 1,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": ["lib/operations/account-service.ts:426"]
+      "samples": [
+        "lib/operations/account-service.ts:426"
+      ]
     },
     {
       "envKey": "TELEGRAM_CATALOG_RESEARCH_LLM_KEY",
       "kind": "secret",
       "disposition": "alias",
       "count": 1,
-      "planes": ["lib"],
+      "planes": [
+        "lib"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
       "passRef": null,
       "runtimePresent": false,
-      "samples": ["lib/telegram/catalog-research/llm-pass.ts:68"]
+      "samples": [
+        "lib/telegram/catalog-research/llm-pass.ts:68"
+      ]
     },
     {
       "envKey": "HOME",
       "kind": "ambient",
       "disposition": "ambient",
-      "count": 28,
-      "planes": ["config", "lib", "scripts", "tools"],
+      "count": 27,
+      "planes": [
+        "config",
+        "lib",
+        "scripts",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -889,7 +1038,11 @@
       "kind": "config",
       "disposition": "config",
       "count": 49,
-      "planes": ["lib", "scripts", "tools"],
+      "planes": [
+        "lib",
+        "scripts",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -907,7 +1060,11 @@
       "kind": "ambient",
       "disposition": "ambient",
       "count": 8,
-      "planes": ["lib", "scripts", "tools"],
+      "planes": [
+        "lib",
+        "scripts",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -925,7 +1082,11 @@
       "kind": "ambient",
       "disposition": "ambient",
       "count": 5,
-      "planes": ["lib", "scripts", "tools"],
+      "planes": [
+        "lib",
+        "scripts",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -943,7 +1104,11 @@
       "kind": "ambient",
       "disposition": "ambient",
       "count": 3,
-      "planes": ["lib", "scripts", "tools"],
+      "planes": [
+        "lib",
+        "scripts",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -951,7 +1116,7 @@
       "runtimePresent": true,
       "samples": [
         "lib/package/package-manager.ts:75",
-        "scripts/serve-public.ts:1850",
+        "scripts/serve-public.ts:1851",
         "tools/cli/integrated-cli.ts:85"
       ]
     },
@@ -960,7 +1125,11 @@
       "kind": "config",
       "disposition": "config",
       "count": 3,
-      "planes": ["config", "lib", "scripts"],
+      "planes": [
+        "config",
+        "lib",
+        "scripts"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -977,7 +1146,10 @@
       "kind": "config",
       "disposition": "config",
       "count": 6,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": true,
       "inAnyTemplate": true,
@@ -995,7 +1167,10 @@
       "kind": "ambient",
       "disposition": "ambient",
       "count": 6,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1005,7 +1180,7 @@
         "lib/bun-executable.ts:43",
         "lib/verification/resolve-bun-binary.ts:98",
         "tools/overseer-cli.ts:44",
-        "tools/bun-pr-verify.ts:102"
+        "tools/bun-pr-verify.ts:174"
       ]
     },
     {
@@ -1013,7 +1188,10 @@
       "kind": "config",
       "disposition": "config",
       "count": 5,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1031,7 +1209,10 @@
       "kind": "config",
       "disposition": "config",
       "count": 4,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1049,7 +1230,10 @@
       "kind": "config",
       "disposition": "config",
       "count": 4,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1067,7 +1251,10 @@
       "kind": "config",
       "disposition": "config",
       "count": 4,
-      "planes": ["lib", "scripts"],
+      "planes": [
+        "lib",
+        "scripts"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1081,29 +1268,14 @@
       ]
     },
     {
-      "envKey": "DATABASE_URL",
-      "kind": "config",
-      "disposition": "config",
-      "count": 4,
-      "planes": ["lib", "tools"],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/operations/postgres-bridge.ts:39",
-        "tools/bun-api-showcase.ts:607",
-        "tools/bun-api-oneliners.ts:591",
-        "tools/bun-api-showcase/oneliners.ts:515"
-      ]
-    },
-    {
       "envKey": "GITHUB_STEP_SUMMARY",
       "kind": "ambient",
       "disposition": "ambient",
       "count": 4,
-      "planes": ["scripts", "tools"],
+      "planes": [
+        "scripts",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1121,7 +1293,10 @@
       "kind": "config",
       "disposition": "config",
       "count": 4,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1139,7 +1314,10 @@
       "kind": "config",
       "disposition": "config",
       "count": 3,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1152,11 +1330,34 @@
       ]
     },
     {
+      "envKey": "DATABASE_URL",
+      "kind": "config",
+      "disposition": "config",
+      "count": 3,
+      "planes": [
+        "lib",
+        "tools"
+      ],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/operations/postgres-bridge.ts:39",
+        "tools/bun-api-showcase.ts:607",
+        "tools/bun-api-oneliners.ts:624"
+      ]
+    },
+    {
       "envKey": "FACTORY_REGISTRY_URL",
       "kind": "config",
       "disposition": "config",
       "count": 3,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1173,7 +1374,10 @@
       "kind": "config",
       "disposition": "config",
       "count": 3,
-      "planes": ["scripts", "tools"],
+      "planes": [
+        "scripts",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1190,7 +1394,10 @@
       "kind": "config",
       "disposition": "config",
       "count": 3,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1207,7 +1414,10 @@
       "kind": "config",
       "disposition": "config",
       "count": 2,
-      "planes": ["lib", "scripts"],
+      "planes": [
+        "lib",
+        "scripts"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1223,7 +1433,10 @@
       "kind": "config",
       "disposition": "config",
       "count": 2,
-      "planes": ["lib", "scripts"],
+      "planes": [
+        "lib",
+        "scripts"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1239,7 +1452,10 @@
       "kind": "config",
       "disposition": "config",
       "count": 2,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1255,7 +1471,10 @@
       "kind": "config",
       "disposition": "config",
       "count": 2,
-      "planes": ["lib", "tools"],
+      "planes": [
+        "lib",
+        "tools"
+      ],
       "packages": [],
       "inRootTemplate": false,
       "inAnyTemplate": false,
@@ -1285,7 +1504,7 @@
     ]
   },
   "packagesPlane": {
-    "generatedAt": "2026-08-15T01:04:58.130Z",
+    "generatedAt": "2026-08-17T22:08:09.475Z",
     "templateKeys": [
       "R2_ACCOUNT_ID",
       "R2_ACCESS_KEY_ID",
@@ -1441,7 +1660,9 @@
         "inTemplate": true,
         "runtimePresent": false,
         "passRef": null,
-        "samples": ["packages/business/src/habits-classifier.ts:33"]
+        "samples": [
+          "packages/business/src/habits-classifier.ts:33"
+        ]
       },
       {
         "package": "p2p",
@@ -1465,7 +1686,9 @@
         "inTemplate": false,
         "runtimePresent": false,
         "passRef": null,
-        "samples": ["packages/proton-pass/src/session.ts:164"]
+        "samples": [
+          "packages/proton-pass/src/session.ts:164"
+        ]
       },
       {
         "package": "proton-pass",
@@ -1475,30 +1698,43 @@
         "inTemplate": false,
         "runtimePresent": true,
         "passRef": null,
-        "samples": ["packages/proton-pass/src/inject.ts:198"]
+        "samples": [
+          "packages/proton-pass/src/inject.ts:198"
+        ]
       }
     ],
     "byPackage": [
       {
         "package": "business",
-        "envKeys": ["REDIS_URL"],
+        "envKeys": [
+          "REDIS_URL"
+        ],
         "secretKeys": [],
         "vaultedKeys": [],
         "missingTemplateKeys": []
       },
       {
         "package": "p2p",
-        "envKeys": ["REDIS_URL"],
+        "envKeys": [
+          "REDIS_URL"
+        ],
         "secretKeys": [],
         "vaultedKeys": [],
         "missingTemplateKeys": []
       },
       {
         "package": "proton-pass",
-        "envKeys": ["PROTON_PASS_PERSONAL_ACCESS_TOKEN", "TMPDIR"],
-        "secretKeys": ["PROTON_PASS_PERSONAL_ACCESS_TOKEN"],
+        "envKeys": [
+          "PROTON_PASS_PERSONAL_ACCESS_TOKEN",
+          "TMPDIR"
+        ],
+        "secretKeys": [
+          "PROTON_PASS_PERSONAL_ACCESS_TOKEN"
+        ],
         "vaultedKeys": [],
-        "missingTemplateKeys": ["PROTON_PASS_PERSONAL_ACCESS_TOKEN"]
+        "missingTemplateKeys": [
+          "PROTON_PASS_PERSONAL_ACCESS_TOKEN"
+        ]
       }
     ],
     "actions": [
@@ -1830,9 +2066,13 @@
     "products": {
       "templateKeysPresent": 1,
       "templateKeysMissing": 1,
-      "missingKeys": ["SCANNER_PORT"],
+      "missingKeys": [
+        "SCANNER_PORT"
+      ],
       "missingNeedsInject": [],
-      "coveredByTemplateDefault": ["SCANNER_PORT"]
+      "coveredByTemplateDefault": [
+        "SCANNER_PORT"
+      ]
     },
     "templateKeysPresent": 1,
     "templateKeysMissing": 22,
@@ -1969,7 +2209,9 @@
           "images.fallback_avatar",
           "images.max_pixels"
         ],
-        "importers": ["scripts/images-generate.ts:141"]
+        "importers": [
+          "scripts/images-generate.ts:141"
+        ]
       },
       {
         "path": "config/onboarding-defaults.toml",
@@ -1982,7 +2224,9 @@
           "default_template_by_source.telegram",
           "default_template_by_source.promoted"
         ],
-        "importers": ["lib/operations/onboarding-config.ts:14"]
+        "importers": [
+          "lib/operations/onboarding-config.ts:14"
+        ]
       },
       {
         "path": "config/operator-research/alerts.toml",
@@ -2002,14 +2246,22 @@
       {
         "path": "config/operator-research/leagues.toml",
         "keyCount": 1,
-        "sampleKeys": ["leagues"],
-        "importers": ["lib/operator-research/normalization/seed.ts:53"]
+        "sampleKeys": [
+          "leagues"
+        ],
+        "importers": [
+          "lib/operator-research/normalization/seed.ts:53"
+        ]
       },
       {
         "path": "config/operator-research/market-types.toml",
         "keyCount": 1,
-        "sampleKeys": ["market_types"],
-        "importers": ["lib/operator-research/normalization/seed.ts:120"]
+        "sampleKeys": [
+          "market_types"
+        ],
+        "importers": [
+          "lib/operator-research/normalization/seed.ts:120"
+        ]
       },
       {
         "path": "config/operator-research/model-harness.toml",
@@ -2030,8 +2282,12 @@
       {
         "path": "config/operator-research/teams.toml",
         "keyCount": 1,
-        "sampleKeys": ["teams"],
-        "importers": ["lib/operator-research/normalization/seed.ts:80"]
+        "sampleKeys": [
+          "teams"
+        ],
+        "importers": [
+          "lib/operator-research/normalization/seed.ts:80"
+        ]
       },
       {
         "path": "config/operator-research/tier-weights.toml",
@@ -2044,7 +2300,9 @@
           "smart_money.min_lag_ms",
           "smart_money.score_threshold"
         ],
-        "importers": ["lib/operator-research/matching/smart-money.ts:25"]
+        "importers": [
+          "lib/operator-research/matching/smart-money.ts:25"
+        ]
       },
       {
         "path": "config/operators/bet365.toml",
@@ -2737,7 +2995,9 @@
       {
         "path": "reasonix.toml",
         "keyCount": 1,
-        "sampleKeys": ["config_version"],
+        "sampleKeys": [
+          "config_version"
+        ],
         "importers": []
       },
       {
@@ -2787,7 +3047,7 @@
     "parseErrors": []
   },
   "partnersAccountsPlane": {
-    "generatedAt": "2026-08-15T01:04:58.136Z",
+    "generatedAt": "2026-08-17T22:08:09.481Z",
     "sources": {
       "partnersOps": "/registry/partners-ops.json",
       "handshake": "/registry/telegram-handshake.json",
@@ -2797,7 +3057,10 @@
       {
         "envKey": "PARTNER_API_TOKEN",
         "role": "partner-api",
-        "consumers": ["tennis-hq", "partners-board"],
+        "consumers": [
+          "tennis-hq",
+          "partners-board"
+        ],
         "passRef": "pass://factorywager/Tennis HQ Partner API Token/password",
         "inVaultMap": true,
         "inTemplate": false,
@@ -2806,7 +3069,11 @@
       {
         "envKey": "TELEGRAM_BOT_FACTORY",
         "role": "telegram-bot",
-        "consumers": ["partners-board", "factory-bot", "seat-desk"],
+        "consumers": [
+          "partners-board",
+          "factory-bot",
+          "seat-desk"
+        ],
         "passRef": "pass://factorywager/Telegram: factorywager_bot/password",
         "inVaultMap": true,
         "inTemplate": true,
@@ -2815,7 +3082,10 @@
       {
         "envKey": "TELEGRAM_WEBHOOK_SECRET",
         "role": "webhook",
-        "consumers": ["factory-bot", "partners-board"],
+        "consumers": [
+          "factory-bot",
+          "partners-board"
+        ],
         "passRef": "pass://factorywager/Telegram Webhook Secret/password",
         "inVaultMap": true,
         "inTemplate": true,
@@ -2824,7 +3094,9 @@
       {
         "envKey": "TELEGRAM_BOT_TOKEN",
         "role": "telegram-bot",
-        "consumers": ["factory-bot"],
+        "consumers": [
+          "factory-bot"
+        ],
         "passRef": null,
         "inVaultMap": false,
         "inTemplate": false,
@@ -2833,7 +3105,10 @@
       {
         "envKey": "FACTORY_WAGER_TOKEN",
         "role": "signing",
-        "consumers": ["tennis-hq", "partners-board"],
+        "consumers": [
+          "tennis-hq",
+          "partners-board"
+        ],
         "passRef": "pass://factorywager/FactoryWager Registry Token/password",
         "inVaultMap": true,
         "inTemplate": true,

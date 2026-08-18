@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-15T01:12:41.544Z",
+  "generatedAt": "2026-08-18T00:27:54.621Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -12,12 +12,12 @@
     "colorKernel": "public/portal/theme.jsonc"
   },
   "summary": {
-    "brands": 93,
+    "brands": 94,
     "domains": 10,
-    "ids": 71,
+    "ids": 72,
     "keys": 3,
     "codes": 19,
-    "covered": 71,
+    "covered": 72,
     "referencedUnconstructed": 7,
     "unused": 15,
     "cataloguedProjects": 35,
@@ -71,7 +71,7 @@
     {
       "name": "documents",
       "module": "lib/types/branded/documents.ts",
-      "brandCount": 3,
+      "brandCount": 4,
       "colorKey": "green",
       "color": "#3fb950",
       "tone": "ok"
@@ -1052,7 +1052,7 @@
         "status": "covered",
         "references": 4,
         "constructors": {
-          "as": 37,
+          "as": 39,
           "try": 0,
           "parse": 0
         },
@@ -1067,13 +1067,80 @@
           "spine": {
             "status": "covered",
             "references": 4,
-            "constructionCalls": 37,
+            "constructionCalls": 39,
             "guardCalls": 0,
             "files": [
               "lib/docs/bun-brand-contract.ts",
               "lib/docs/bun-brand-usages.ts",
               "lib/docs/token-ref-adapter.ts",
               "lib/docs/token-ref.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ReleaseKnowledgeExampleId",
+      "domain": "documents",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Normalized Bun release knowledge example identity",
+      "kind": "id",
+      "module": "lib/types/branded/documents.ts",
+      "constructors": {
+        "as": "asReleaseKnowledgeExampleId",
+        "try": "tryReleaseKnowledgeExampleId",
+        "parse": "parseReleaseKnowledgeExampleId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isReleaseKnowledgeExampleId",
+      "shortName": "releaseKnowledgeExampleId",
+      "envName": "RELEASE_KNOWLEDGE_EXAMPLE_ID",
+      "colorKey": "green",
+      "color": "#3fb950",
+      "tone": "ok",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 4,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 1
+        },
+        "guards": 0,
+        "files": [
+          "packages/bun-release-contracts/src/knowledge-normalize.ts",
+          "packages/bun-release-contracts/src/knowledge-schema.ts",
+          "packages/bun-release-contracts/src/knowledge-types.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 4,
+            "constructionCalls": 2,
+            "guardCalls": 0,
+            "files": [
+              "packages/bun-release-contracts/src/knowledge-normalize.ts",
+              "packages/bun-release-contracts/src/knowledge-schema.ts",
+              "packages/bun-release-contracts/src/knowledge-types.ts"
             ]
           },
           "projects": {

@@ -47,7 +47,12 @@ function sample(): EdgeHealthBody {
       available: true,
       generated: '2026-07-23T00:00:00.000Z',
       bunVersion: '1.4.0',
-      summary: { demos: 10, demosPassed: 10, apis: 20, apisVerified: 20 },
+      summary: {
+        demos: 10,
+        demosPassed: 10,
+        uniqueDemoApis: 20,
+        demoApisVerified: 20,
+      },
     },
     defaults: {
       available: true,

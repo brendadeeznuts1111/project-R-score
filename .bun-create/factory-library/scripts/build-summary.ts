@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+
 type Metafile = {
   inputs: Record<string, { bytes: number }>;
   outputs: Record<string, { bytes: number; entryPoint?: string }>;

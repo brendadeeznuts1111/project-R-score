@@ -235,6 +235,27 @@ Entry: [`tools/bun-release-contracts.ts`](../../tools/bun-release-contracts.ts)
 · package
 [`packages/bun-release-contracts`](../../packages/bun-release-contracts).
 
+### 2.6.1.1 `bun:release-knowledge` (`BUN_RELEASE_KNOWLEDGE_ALLOWED_LONG`)
+
+| Flag             | Type    | Description                                               |
+| ---------------- | ------- | --------------------------------------------------------- |
+| `--version`      | version | Release version used by `build`                           |
+| `--output`       | path    | Normalized artifact destination                           |
+| `--catalog`      | path    | Committed Bun docs catalog                                |
+| `--feeds`        | path    | Committed RSS provenance artifact                         |
+| `--limit`        | int     | Maximum query results                                     |
+| `--check`        | boolean | Drift-check build output without writing                  |
+| `--json`         | boolean | Machine output for query, diff, matrix, build, and verify |
+| `--source`       | path    | Official Markdown source to cross-check with `validate`   |
+| `--report`       | enum    | Validation report format: `console`, `json`, or `junit`   |
+| `--strict`       | boolean | Treat validation warnings as failures                     |
+| `--max-warnings` | int     | Maximum warnings permitted outside strict mode            |
+| `--help`         | boolean | Usage                                                     |
+
+Entry: [`tools/bun-release-knowledge.ts`](../../tools/bun-release-knowledge.ts)
+· package
+[`packages/bun-release-contracts`](../../packages/bun-release-contracts).
+
 ### 2.6.2 `screenshot` (`SCREENSHOT_ALLOWED_LONG`)
 
 | Flag                  | Type    | Description                                                      |

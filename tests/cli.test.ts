@@ -151,6 +151,23 @@ describe('CLI — create subcommand', () => {
     expect(stderr).toContain('--publish requires an explicit <destination>');
   });
 
+  test('create --publish validates registry requirements before scaffolding', async () => {
+    const destination = `${Bun.env.TMPDIR || '/tmp'}/fw-factory-publish-preflight-${Bun.randomUUIDv7()}`;
+    const { stderr, exitCode } = await runCli(
+      ['create', 'factory-library', destination, '--publish', '--no-install', '--no-git'],
+      {
+        R2_ACCESS_KEY_ID: '',
+        R2_SECRET_ACCESS_KEY: '',
+        R2_ACCOUNT_ID: '',
+        CLOUDFLARE_ACCOUNT_ID: '',
+      }
+    );
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain('--publish requirements failed before scaffold');
+    expect(stderr).toContain('R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY must be set');
+    expect(await Bun.file(`${destination}/package.json`).exists()).toBe(false);
+  });
+
   test('create requires an explicit destination for destructive repository-local templates', async () => {
     const { stderr, exitCode } = await runCli(['create', 'factory-library', '--no-install', '--no-git']);
     expect(exitCode).toBe(1);
@@ -167,6 +184,65 @@ describe('CLI — create subcommand', () => {
       });
       expect(exitCode).toBe(1);
       expect(stderr).toContain('Local template "configured" requires an explicit <destination>');
+    } finally {
+      await removeTempDir(templateRoot);
+    }
+  });
+
+  test('create rejects an incomplete harness-backed template before creating its destination', async () => {
+    const templateRoot = await makeTempDir('factory-incomplete-harness-template');
+    const destination = `${templateRoot}/generated-project`;
+    try {
+      await Promise.all([
+        Bun.write(`${templateRoot}/incomplete/package.json`, '{"name":"incomplete"}\n'),
+        Bun.write(`${templateRoot}/incomplete/harness.toml`, 'schemaVersion = 1\n'),
+      ]);
+      const { stderr, exitCode } = await runCli(
+        ['create', 'incomplete', destination, '--no-install', '--no-git'],
+        { BUN_CREATE_DIR: templateRoot },
+      );
+      expect(exitCode).toBe(1);
+      expect(stderr).toContain(
+        'Local template harness is incomplete before scaffold: missing scripts/requirements.ts',
+      );
+      expect(await Bun.file(destination).exists()).toBe(false);
+    } finally {
+      await removeTempDir(templateRoot);
+    }
+  });
+
+  test('create retains but rejects a scaffold that fails after Bun materialization', async () => {
+    const templateRoot = await makeTempDir('factory-invalid-materialization-template');
+    const template = `${templateRoot}/materialization-sensitive`;
+    const destination = `${templateRoot}/generated-project`;
+    try {
+      await Promise.all([
+        Bun.write(
+          `${template}/package.json`,
+          JSON.stringify({
+            name: '{{name}}',
+            version: '0.1.0',
+            'bun-create': { postinstall: [] },
+          })
+        ),
+        Bun.write(`${template}/harness.toml`, 'schemaVersion = 1\n'),
+        Bun.write(
+          `${template}/scripts/requirements.ts`,
+          `const manifest = await Bun.file('package.json').json();\nif (manifest['bun-create'] === undefined) {\n  console.error('materialized manifest rejected');\n  process.exit(1);\n}\n`
+        ),
+        Bun.write(`${template}/scripts/generate-files-md.ts`, `console.log('generated');\n`),
+        Bun.write(`${template}/scripts/validate-files-md.ts`, `console.log('validated');\n`),
+      ]);
+      const { stderr, exitCode } = await runCli(
+        ['create', 'materialization-sensitive', destination, '--no-install', '--no-git'],
+        { BUN_CREATE_DIR: templateRoot }
+      );
+      expect(exitCode).toBe(1);
+      expect(stderr).toContain(
+        'Generated scaffold harness failed after Bun materialization; destination retained'
+      );
+      expect(stderr).toContain('materialized manifest rejected');
+      expect(await Bun.file(`${destination}/package.json`).exists()).toBe(true);
     } finally {
       await removeTempDir(templateRoot);
     }

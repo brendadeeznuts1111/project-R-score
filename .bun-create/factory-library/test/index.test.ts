@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+
 import { beforeEach, afterEach, describe, expect, test } from 'bun:test';
 import {
   ANSI_RESET,

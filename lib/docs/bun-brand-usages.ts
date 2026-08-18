@@ -638,6 +638,27 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     proofs: [],
   },
   {
+    key: 'bun-cron-factory-template-preview',
+    token: asDocTokenId('Bun.cron'),
+    variant: 'parse',
+    scope: 'tooling',
+    policy: 'optional',
+    ownerLane: 'runtime-tooling',
+    implementations: [
+      {
+        path: '.bun-create/factory-library/scripts/cron-preview.ts',
+        symbol: 'parseNextCronOccurrence',
+      },
+    ],
+    consumers: [
+      { path: '.bun-create/factory-library/package.json', symbol: 'scripts.cron:preview' },
+    ],
+    relationships: none(
+      'The preview parses a UTC schedule without registering work or transporting a domain identity.'
+    ),
+    proofs: [],
+  },
+  {
     key: 'bun-sliceansi-terminal-output',
     token: asDocTokenId('Bun.sliceAnsi'),
     variant: 'display-width',
@@ -700,6 +721,23 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     consumers: [{ path: '.github/workflows/test-sharded.yml', symbol: 'tests shard' }],
     relationships: none(
       'Test scheduling changes execution topology but does not transport domain identities.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-no-orphans-factory-template',
+    token: asDocTokenId('--no-orphans'),
+    variant: 'bun-config',
+    scope: 'config',
+    policy: 'optional',
+    ownerLane: 'runtime-tooling',
+    implementations: [
+      { path: '.bun-create/factory-library/harness.toml', symbol: 'noOrphans' },
+      { path: '.bun-create/factory-library/bunfig.toml', symbol: 'noOrphans' },
+    ],
+    consumers: [{ path: '.bun-create/factory-library/bunfig.toml', symbol: 'run.noOrphans' }],
+    relationships: none(
+      'Parent-death behavior is runtime lifecycle configuration and does not create a domain identity.'
     ),
     proofs: [],
   },

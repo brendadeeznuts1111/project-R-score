@@ -75,7 +75,8 @@ export type MonitoringPayload = {
   bunApiProof?: {
     demosPassed?: number;
     demosTotal?: number;
-    apisVerified?: number;
+    demoApisVerified?: number;
+    demoApisTotal?: number;
     demoPassRate?: string;
     generated?: string;
   };

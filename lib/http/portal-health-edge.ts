@@ -268,10 +268,11 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
 
   let bunApiProof: Record<string, unknown> = { available: false };
   if (proof) {
+    const proofRuntime = proof.runtime as Record<string, unknown> | undefined;
     bunApiProof = {
       available: true,
       generated: proof.generated ?? null,
-      bunVersion: proof.bunVersion ?? null,
+      bunVersion: proofRuntime?.bunVersion ?? proof.bunVersion ?? null,
       summary: proof.summary ?? null,
     };
   } else {
@@ -279,10 +280,11 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
       const res = await fetch(BUN_API_COVERAGE_FALLBACK_URL);
       if (res.ok) {
         const p = (await res.json()) as Record<string, unknown>;
+        const proofRuntime = p.runtime as Record<string, unknown> | undefined;
         bunApiProof = {
           available: true,
           generated: p.generated ?? null,
-          bunVersion: p.bunVersion ?? null,
+          bunVersion: proofRuntime?.bunVersion ?? p.bunVersion ?? null,
           summary: p.summary ?? null,
           source: 'github-raw',
         };
@@ -455,7 +457,9 @@ export function renderEdgeHealthPlain(data: EdgeHealthBody): string {
   if (proof.available) {
     lines.push(`  Generated:   ${proof.generated ?? '—'}`);
     lines.push(`  Demos:       ${proofSum.demosPassed ?? '?'}/${proofSum.demos ?? '?'} passed`);
-    lines.push(`  APIs:        ${proofSum.apisVerified ?? '?'}/${proofSum.apis ?? '?'} verified`);
+    lines.push(
+      `  Demo APIs:   ${proofSum.demoApisVerified ?? proofSum.apisVerified ?? '?'}/${proofSum.uniqueDemoApis ?? proofSum.apis ?? '?'} verified`
+    );
     if (proof.bunVersion) lines.push(`  Bun:         ${proof.bunVersion}`);
   } else {
     lines.push('  Not available on edge artifacts');

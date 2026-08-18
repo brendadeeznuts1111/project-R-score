@@ -8,6 +8,7 @@ import {
   analyzeProjectBrandAdoption,
   inferProjectRoot,
   listProjectsPaths,
+  loadBrandConsumerFiles,
   loadProjectRoots,
   stripSourceComments,
   type BrandCoverageFile,
@@ -184,6 +185,29 @@ describe('brand coverage reporter', () => {
     } finally {
       if (previous === undefined) delete Bun.env.KIMI_STAGED_PROJECTS_LS_FILES;
       else Bun.env.KIMI_STAGED_PROJECTS_LS_FILES = previous;
+      await Bun.$`rm -rf ${tmp}`.quiet().nothrow();
+    }
+  });
+
+  test('skips tracked files deleted from the worktree', async () => {
+    const tmp = `${Bun.env.TMPDIR ?? '/tmp'}brand-coverage-deleted-${Bun.randomUUIDv7()}`;
+    try {
+      await Bun.write(`${tmp}/lib/present.ts`, "export const present = asSessionId('present');\n");
+      await Bun.write(`${tmp}/lib/deleted.ts`, "export const deleted = asSessionId('deleted');\n");
+      const init = await Bun.$`git init -q`.cwd(tmp).quiet().nothrow();
+      expect(init.exitCode, init.stderr.toString()).toBe(0);
+      const add = await Bun.$`git add lib/present.ts lib/deleted.ts`.cwd(tmp).quiet().nothrow();
+      expect(add.exitCode, add.stderr.toString()).toBe(0);
+      await Bun.file(`${tmp}/lib/deleted.ts`).delete();
+
+      expect(await loadBrandConsumerFiles(tmp)).toEqual([
+        {
+          path: 'lib/present.ts',
+          text: "export const present = asSessionId('present');\n",
+          project: undefined,
+        },
+      ]);
+    } finally {
       await Bun.$`rm -rf ${tmp}`.quiet().nothrow();
     }
   });
