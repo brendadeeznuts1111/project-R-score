@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const projectRoot = join(import.meta.dir, "../..");
+const unsupportedAuditRemediation = ["bun", "audit", "fix"].join(" ");
 const readProjectFile = (relativePath: string) =>
   readFileSync(join(projectRoot, relativePath), "utf8");
 
@@ -11,7 +12,7 @@ test("production and complete audits remain explicit", () => {
 
   expect(manifest).toContain('"security:audit": "bun audit --prod --audit-level=high"');
   expect(manifest).toContain('"security:audit:all": "bun audit --audit-level=high"');
-  expect(manifest).not.toContain("bun audit fix");
+  expect(manifest).not.toContain(unsupportedAuditRemediation);
 });
 
 test("unsupported automatic remediation is not advertised", () => {
@@ -22,7 +23,9 @@ test("unsupported automatic remediation is not advertised", () => {
     ".github/workflows/ci.yml",
     ".github/workflows/enhanced-ci.yml"
   ]) {
-    expect(readProjectFile(policyFile)).not.toContain("bun audit fix");
+    expect(readProjectFile(policyFile)).not.toContain(
+      unsupportedAuditRemediation,
+    );
   }
 });
 
