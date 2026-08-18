@@ -3,9 +3,20 @@ import { mkdtemp, mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+// @see https://bun.com/docs/test/index#run-tests
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write
+
 type Report = {
   source: { cacheHits: number; files: number; rescannedFiles: number };
   clusters: Array<{ label: string; samples: string[] }>;
+  rankedSkills: Array<{ name: string }>;
+  skillImpact: Array<{
+    baselineTurnsDelta: number | null;
+    samples: number;
+    skillName: string;
+  }>;
 };
 
 const script = join(
@@ -51,11 +62,14 @@ describe('trace behavior research', () => {
       join(sessions, 'rollout-2026-08-18-a.jsonl'),
       message(
         'Please run bun:ci and commit secret=do-not-copy alice@example.com from /Users/nolarose at 10.1.2.3'
-      )
+      ) +
+        `${JSON.stringify({ type: 'session_summary', timestamp: '2026-08-18T00:10:00.000Z', payload: { error_count: 0, interruption_count: 0, session_id: 'session-a', skills: ['ci-and-proof-loop'], turns_to_resolution: 6 } })}\n`
     );
     await Bun.write(
       join(sessions, 'rollout-2026-08-18-b.jsonl'),
-      message('Use a focused test proof before the pull request commit')
+      'not-json\n' +
+        message('Use a focused test proof before the pull request commit') +
+        `${JSON.stringify({ type: 'session_summary', timestamp: '2026-08-18T00:20:00.000Z', payload: { error_count: 0, interruption_count: 0, session_id: 'session-b', skills: [], turns_to_resolution: 10 } })}\n`
     );
 
     await runMiner(sessions, output, drafts);
@@ -64,6 +78,7 @@ describe('trace behavior research', () => {
     expect(await Bun.file(join(output, 'behavior-research.md')).exists()).toBe(true);
     expect(await Bun.file(join(output, 'behavior-research.html')).exists()).toBe(true);
     expect(await Bun.file(join(output, 'behavior-research.summary.txt')).exists()).toBe(true);
+    expect(await Bun.file(join(output, 'skills.db')).exists()).toBe(true);
     expect(await Bun.file(join(drafts, 'git-delivery-loop.draft.md')).exists()).toBe(true);
     expect(await Bun.file(join(drafts, 'SKILL.md')).exists()).toBe(false);
     const samples = first.clusters.flatMap(cluster => cluster.samples).join(' ');
@@ -75,6 +90,14 @@ describe('trace behavior research', () => {
     expect(samples).toContain('/Users/<user>');
     expect(samples).toContain('<ip-address>');
     expect(samples).toContain('<redacted>');
+    expect(first.skillImpact).toContainEqual(
+      expect.objectContaining({
+        baselineTurnsDelta: -4,
+        samples: 1,
+        skillName: 'ci-and-proof-loop',
+      })
+    );
+    expect(first.rankedSkills.map(skill => skill.name)).toContain('ci-and-proof-loop');
 
     await runMiner(sessions, output, drafts);
     const second = (await Bun.file(join(output, 'behavior-research.json')).json()) as Report;

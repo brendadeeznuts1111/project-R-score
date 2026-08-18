@@ -1,6 +1,21 @@
 #!/usr/bin/env bun
 
 import { mkdir, readdir, stat } from 'node:fs/promises';
+import {
+  parseSkillTelemetry,
+  SkillRegistry,
+  type RankedSkill,
+  type SkillImpact,
+  type SkillMetric,
+} from './skill-registry';
+
+// @see https://bun.com/reference/bun/argv
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher
+// @see https://bun.com/docs/runtime/utils#bun-escapehtml
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file
+// @see https://bun.com/docs/runtime/glob#quickstart
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write
+// @see https://bun.com/reference/bun/JSONL
 
 type OutputFormat = 'all' | 'html' | 'json' | 'markdown' | 'summary';
 type Promotion = 'candidate' | 'observe';
@@ -18,11 +33,13 @@ type FileCluster = {
 };
 type FileResult = {
   clusters: Record<string, FileCluster>;
+  metrics: SkillMetric[];
   messages: number;
   mtimeMs: number;
   size: number;
+  triggers: Array<{ sessionId: string; skillName: string; timestamp: number }>;
 };
-type Cache = { schemaVersion: 1; files: Record<string, FileResult> };
+type Cache = { schemaVersion: 2; files: Record<string, FileResult> };
 type Cluster = {
   confidence: number;
   count: number;
@@ -39,7 +56,7 @@ type Trend = {
   staleFamilies: string[];
 };
 type Report = {
-  schemaVersion: 2;
+  schemaVersion: 3;
   generatedAt: string;
   source: {
     cacheHits: number;
@@ -51,6 +68,8 @@ type Report = {
     since: string | null;
   };
   clusters: Cluster[];
+  rankedSkills: RankedSkill[];
+  skillImpact: SkillImpact[];
   trend: Trend;
 };
 
@@ -74,6 +93,7 @@ const since = sinceValue ? Date.parse(sinceValue) : null;
 const cachePath = valueOf('--cache') ?? `${outputDir}/.trace-cache.json`;
 const historyDir = valueOf('--history-dir') ?? `${outputDir}/history`;
 const draftDir = valueOf('--draft-dir') ?? `${outputDir}/drafts`;
+const registryPath = valueOf('--registry') ?? `${outputDir}/skills.db`;
 
 const usage = `Trace behavior research
 
@@ -87,10 +107,12 @@ Options:
   --since <date>                         Include sessions on or after this date
   --cache <file>                         Incremental cache path
   --history-dir <directory>              Previous-report history
+  --registry <file>                      Native SQLite skill registry
   --min-count <number>                   Promotion threshold (default: 3)
   --draft-skills                         Write review-only .draft.md files
   --draft-dir <directory>                Draft destination
   --no-cache                             Disable cache reads and writes
+  --no-registry                          Disable registry and metrics updates
   -h, --help                             Show this help
 
 Examples:
@@ -213,9 +235,41 @@ const readJson = async <T>(path: string): Promise<T | null> => {
     return null;
   }
 };
+const scanJsonl = async (file: string, onRecord: (record: TraceMessage) => void): Promise<void> => {
+  let buffer = '';
+  const stream = Bun.file(file).stream().pipeThrough(new TextDecoderStream());
+  for await (const chunk of stream) {
+    buffer += chunk;
+    while (buffer) {
+      const result = Bun.JSONL.parseChunk(buffer);
+      for (const value of result.values) {
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          onRecord(value as TraceMessage);
+        }
+      }
+      if (result.error) {
+        const newline = buffer.indexOf('\n', result.read);
+        buffer = newline >= 0 ? buffer.slice(newline + 1) : '';
+        continue;
+      }
+      if (result.read === 0) break;
+      buffer = buffer.slice(result.read);
+      if (result.done) continue;
+      break;
+    }
+  }
+  if (!buffer) return;
+  const result = Bun.JSONL.parseChunk(buffer);
+  for (const value of result.values) {
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      onRecord(value as TraceMessage);
+    }
+  }
+};
 
-const oldCache = has('--no-cache') ? null : await readJson<Cache>(cachePath);
-const nextCache: Cache = { schemaVersion: 1, files: {} };
+const cachedReport = has('--no-cache') ? null : await readJson<Cache>(cachePath);
+const oldCache = cachedReport?.schemaVersion === 2 ? cachedReport : null;
+const nextCache: Cache = { schemaVersion: 2, files: {} };
 const files = [...new Bun.Glob('**/*.jsonl').scanSync({ cwd: root, absolute: true })].sort();
 let cacheHits = 0;
 let rescannedFiles = 0;
@@ -231,17 +285,15 @@ for (const file of files) {
   rescannedFiles++;
   const fallbackTimestamp = new Date(fileStat.mtimeMs).toISOString();
   const clusters: Record<string, FileCluster> = {};
+  const metrics: SkillMetric[] = [];
+  const triggers: Array<{ sessionId: string; skillName: string; timestamp: number }> = [];
   let messages = 0;
-  for (const line of (await Bun.file(file).text()).split('\n')) {
-    if (!line.trim()) continue;
-    let record: TraceMessage;
-    try {
-      record = JSON.parse(line) as TraceMessage;
-    } catch {
-      continue;
-    }
+  await scanJsonl(file, record => {
+    const telemetry = parseSkillTelemetry(record);
+    metrics.push(...telemetry.metrics);
+    triggers.push(...telemetry.triggers);
     const text = normalize(textOf(record));
-    if (!text) continue;
+    if (!text) return;
     messages++;
     for (const family of families) {
       if (!family.pattern.test(text)) continue;
@@ -261,12 +313,14 @@ for (const file of files) {
       }
       clusters[family.label] = item;
     }
-  }
+  });
   nextCache.files[file] = {
     clusters,
+    metrics,
     messages,
     mtimeMs: fileStat.mtimeMs,
     size: fileStat.size,
+    triggers,
   };
 }
 
@@ -352,8 +406,40 @@ const trend: Trend = {
       )
       .map(cluster => cluster.label) ?? [],
 };
+
+let rankedSkills: RankedSkill[] = [];
+let skillImpact: SkillImpact[] = [];
+if (!has('--no-registry')) {
+  const registry = new SkillRegistry(registryPath);
+  try {
+    for (const cluster of clusters) {
+      const family = families.find(item => item.label === cluster.label);
+      if (!family) continue;
+      registry.upsertSkill({
+        actions: family.actions,
+        confidence: cluster.confidence,
+        description: `Trace-derived behavior family with ${cluster.count} redacted observations.`,
+        evidenceHash: hash(cluster.evidenceHashes.join('\n')),
+        lastUsed: Date.parse(cluster.lastSeen),
+        name: cluster.label,
+        status: cluster.promotion === 'candidate' ? 'draft' : 'deprecated',
+        triggers: family.triggers,
+      });
+    }
+    for (const file of Object.values(nextCache.files)) {
+      for (const trigger of file.triggers) {
+        registry.recordTrigger(trigger.skillName, trigger.sessionId, trigger.timestamp);
+      }
+      for (const metric of file.metrics) registry.recordMetric(metric);
+    }
+    rankedSkills = registry.rankedSkills(3);
+    skillImpact = registry.impactSummary();
+  } finally {
+    registry.close();
+  }
+}
 const report: Report = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   generatedAt: new Date().toISOString(),
   source: {
     cacheHits,
@@ -365,6 +451,8 @@ const report: Report = {
     since: sinceValue ?? null,
   },
   clusters,
+  rankedSkills,
+  skillImpact,
   trend,
 };
 
@@ -373,6 +461,10 @@ const summary = [
   ...clusters.map(
     cluster =>
       `${cluster.label}: ${cluster.count} occurrences / ${cluster.sessions} sessions / ${(cluster.confidence * 100).toFixed(0)}% confidence / ${cluster.promotion}`
+  ),
+  ...skillImpact.map(
+    skill =>
+      `${skill.skillName}: ${skill.samples} measured sessions / ${skill.averageTurns} average turns / ${skill.baselineTurnsDelta === null ? 'no baseline' : `${skill.baselineTurnsDelta >= 0 ? '+' : ''}${skill.baselineTurnsDelta} turns vs baseline`}`
   ),
 ];
 const markdown = [
@@ -388,6 +480,24 @@ const markdown = [
   `- New families: ${trend.newFamilies.join(', ') || 'none'}`,
   `- Changed by more than 20%: ${trend.changed.map(item => `${item.label} (${item.changePercent}%)`).join(', ') || 'none'}`,
   `- Stale for 7 days: ${trend.staleFamilies.join(', ') || 'none'}`,
+  '',
+  '## Skill impact',
+  '',
+  ...(skillImpact.length
+    ? skillImpact.map(
+        skill =>
+          `- ${skill.skillName}: ${skill.samples} session(s), ${skill.averageTurns} average turns, ${skill.baselineTurnsDelta === null ? 'no baseline' : `${skill.baselineTurnsDelta >= 0 ? '+' : ''}${skill.baselineTurnsDelta} turns versus baseline`}, ${(skill.successRate * 100).toFixed(0)}% clean-resolution rate`
+      )
+    : ['- No effectiveness events recorded.']),
+  '',
+  '## Ranked skills',
+  '',
+  ...(rankedSkills.length
+    ? rankedSkills.map(
+        skill =>
+          `- ${skill.name}: priority ${skill.priority.toFixed(4)}, confidence ${(skill.confidence * 100).toFixed(0)}%, success ${(skill.successRate * 100).toFixed(0)}%`
+      )
+    : ['- No active or draft skills ranked.']),
   '',
   '## Families',
   '',
@@ -409,7 +519,7 @@ const markdown = [
   'Review candidate clusters manually before editing any active skill.',
 ].join('\n');
 const escapeHtml = (value: string): string => Bun.escapeHTML(value);
-const html = `<!doctype html><html><head><meta charset="utf-8"><title>Trace behavior research</title><style>body{font:15px system-ui;max-width:960px;margin:2rem auto;padding:0 1rem}details{border:1px solid #ddd;border-radius:8px;padding:.8rem;margin:.8rem 0}code{word-break:break-all}blockquote{color:#555}</style></head><body><h1>Trace behavior research</h1><p>${escapeHtml(summary[0])}</p>${clusters.map(cluster => `<details><summary><strong>${escapeHtml(cluster.label)}</strong> — ${cluster.count} occurrences, ${(cluster.confidence * 100).toFixed(0)}% confidence</summary><p>Sessions: ${cluster.sessions}<br>Promotion: ${cluster.promotion}<br>Last seen: ${escapeHtml(cluster.lastSeen)}</p>${cluster.samples.map(sample => `<blockquote>${escapeHtml(sample)}</blockquote>`).join('')}<p><code>${escapeHtml(cluster.evidenceHashes.slice(0, 3).join(' · '))}</code></p></details>`).join('')}</body></html>`;
+const html = `<!doctype html><html><head><meta charset="utf-8"><title>Trace behavior research</title><style>body{font:15px system-ui;max-width:960px;margin:2rem auto;padding:0 1rem}details{border:1px solid #ddd;border-radius:8px;padding:.8rem;margin:.8rem 0}code{word-break:break-all}blockquote{color:#555}</style></head><body><h1>Trace behavior research</h1><p>${escapeHtml(summary[0])}</p><h2>Skill impact</h2>${skillImpact.length ? `<ul>${skillImpact.map(skill => `<li><strong>${escapeHtml(skill.skillName)}</strong>: ${skill.samples} session(s), ${skill.averageTurns} average turns, ${skill.baselineTurnsDelta === null ? 'no baseline' : `${skill.baselineTurnsDelta >= 0 ? '+' : ''}${skill.baselineTurnsDelta} turns versus baseline`}</li>`).join('')}</ul>` : '<p>No effectiveness events recorded.</p>'}<h2>Ranked skills</h2>${rankedSkills.length ? `<ol>${rankedSkills.map(skill => `<li><strong>${escapeHtml(skill.name)}</strong>: priority ${skill.priority.toFixed(4)}</li>`).join('')}</ol>` : '<p>No active or draft skills ranked.</p>'}<h2>Families</h2>${clusters.map(cluster => `<details><summary><strong>${escapeHtml(cluster.label)}</strong> — ${cluster.count} occurrences, ${(cluster.confidence * 100).toFixed(0)}% confidence</summary><p>Sessions: ${cluster.sessions}<br>Promotion: ${cluster.promotion}<br>Last seen: ${escapeHtml(cluster.lastSeen)}</p>${cluster.samples.map(sample => `<blockquote>${escapeHtml(sample)}</blockquote>`).join('')}<p><code>${escapeHtml(cluster.evidenceHashes.slice(0, 3).join(' · '))}</code></p></details>`).join('')}</body></html>`;
 
 const writes: Array<Promise<number>> = [];
 if (format === 'all' || format === 'json') {

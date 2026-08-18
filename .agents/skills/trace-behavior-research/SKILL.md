@@ -22,13 +22,16 @@ modifying skills or exporting trace contents.
 3. Review the JSON, Markdown, HTML, or summary artifact selected with `--format`
    or `--out <format>`. Reports contain redacted samples and evidence hashes;
    they never contain unredacted messages.
-4. Promote a behavior only when it appears in at least three independent
+4. When the trace producer emits the documented telemetry events, review the
+   skill-impact and ranked-skill sections. The miner stores these locally in a
+   native SQLite registry. Use `--no-registry` when persistence is unwanted.
+5. Promote a behavior only when it appears in at least three independent
    sessions, has a clear trigger and ordered action, and has a repository-owned
    proof command.
-5. Use `--draft-skills` only when review-only stubs are useful. Drafts use the
+6. Use `--draft-skills` only when review-only stubs are useful. Drafts use the
    `.draft.md` suffix, default below the report directory, and never overwrite
    or activate a `SKILL.md` package.
-6. Run `bun run skills:validate` and the owning skill's proof before committing.
+7. Run `bun run skills:validate` and the owning skill's proof before committing.
 
 ## Guardrails
 
@@ -42,6 +45,10 @@ modifying skills or exporting trace contents.
   third.
 - Do not add auto-approval. Promotion always uses skill-creator and repository
   validation.
+- Do not infer effectiveness from message text. Only explicit, aggregate
+  telemetry events may update effectiveness metrics.
+- Do not inject ranked skills into prompts automatically. Ranking is evidence
+  for a human or an owning runtime to review.
 
 ## Output contract
 
@@ -50,4 +57,5 @@ redacted evidence, confidence, promotion criteria, and trend deltas. It stores
 history below the selected output directory unless `--history-dir` overrides
 that location.
 
-See [research-schema.md](references/research-schema.md) for the report shape.
+See [research-schema.md](references/research-schema.md) for the report and
+opt-in telemetry contracts.
