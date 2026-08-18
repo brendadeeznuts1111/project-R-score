@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Local secrets browser / editor dashboard server",
+  "engines": {
+    "bun": ">=1.3.14"
+  },
   "scripts": {
     "start": "bun run server.ts",
     "dev": "bun --hot run server.ts"

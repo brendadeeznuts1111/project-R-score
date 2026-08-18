@@ -45,7 +45,11 @@ so operators choose the smaller native route when no harness is needed.
 | Local                        | working-project `./.bun-create/<name>` or `$HOME/.bun-create/<name>`         | Copies local files, updates `name` to the destination basename, and removes `bun-create` metadata.                                                                                                                                                                                                                                                                                                                                                                                                                                | Detects working-project, configured-global, and repository-local templates before routing; requires an explicit, non-current-directory destination and `--replace-local` for an existing local target. | `BUN_CREATE_DIR` changes Bun’s global `$HOME/.bun-create` lookup path; it does not replace working-project lookup. | **Destructive by default:** an existing destination is recursively replaced. | Supported; guarded by docs/tests |
 | Factory R2 artifact registry | `bun run factory:publish -- <archive>` / `bun run factory:install -- <name>` | Not an upstream `bun create` route.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Kept separate; `--publish` records a marker only after an explicit-destination scaffold.                                                                                                               | R2 credentials / Factory registry token.                                                                           | Publishing is explicit/manual.                                               | Intentional separation           |
 
-Discover this matrix from the CLI with `bun run factory:templates`.
+Discover this matrix from the CLI with `bun run factory:templates`. Run
+`bun run factory:templates:verify` for the destructive lifecycle probe. It
+creates a unique system-temp workspace, performs a real dependency install, runs
+the generated project's secret-free `check`, requires `bun.lock`, and then
+removes only that guarded temp workspace.
 
 ## Harness proof decision
 
@@ -105,6 +109,11 @@ handoff: it reruns requirements, regenerates `files.md` to account for an
 installed `bun.lock`, and validates the generated manifest before reporting
 success or writing a marker. A failing output is retained for diagnosis but is
 not registered.
+
+The explicit `factory templates verify` operator probe adds one outer cleanup
+boundary. It always destroys its own unique temp workspace after success or
+failure; ordinary `factory create` still retains a failed user destination for
+diagnosis.
 
 For the npm branch, Bun’s implementation reference describes registry metadata
 and tarball retrieval for its upstream example-template path. Individual

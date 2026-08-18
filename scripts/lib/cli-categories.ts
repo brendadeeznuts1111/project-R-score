@@ -108,7 +108,7 @@ export const CLI_SPECIAL: Record<string, string> = {
   'test:shard': 'Bun test --shard=$SHARD (CI split; default 1/1)',
   'check:path-bun': 'Ratchet: no path/node:path imports under lib/ + tools/',
   'check:bun-env': 'Ratchet: no process.env under lib/ + scripts/',
-  'projects:roots:check': 'Ratchet: product-leaf README.md + package.json under projects/',
+  'projects:roots:check': 'Ratchet: product structure + tier-aware Bun contract under projects/',
   'lib:domains:check': 'Ratchet: every first-level lib/*/ has README.md',
   'lib:area-maps:check': 'Ratchet: ## Area map entry paths/globs resolve under domain',
   'lib:area-maps:check:orphans': 'Report top-level .ts not listed in Area map (warn)',

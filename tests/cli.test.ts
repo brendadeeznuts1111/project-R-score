@@ -146,7 +146,25 @@ describe('CLI — create subcommand', () => {
     expect(stdout).toContain('bun init <folder>');
     expect(stdout).toContain('bun init --minimal <folder>');
     expect(stdout).toContain('Factory does not wrap');
+    expect(stdout).toContain('factory templates [verify]');
   });
+
+  test(
+    'templates verify creates, installs, checks, and destroys its guarded fixture',
+    async () => {
+      const { stdout, stderr, exitCode } = await runCli(['templates', 'verify']);
+      expect(exitCode, `${stdout}\n${stderr}`).toBe(0);
+      expect(stdout).toContain('Lifecycle: create → install → check → destroy');
+      expect(stdout).toContain('Template lifecycle verified with Bun 1.3.14');
+      expect(stdout).toContain('Template lifecycle destroyed:');
+
+      const workspace = stdout.match(/Template lifecycle workspace: (\/[^\n]+)/)?.[1]?.trim();
+      expect(workspace).toBeDefined();
+      const removed = Bun.spawn(['test', '!', '-e', workspace!]);
+      expect(await removed.exited).toBe(0);
+    },
+    30_000
+  );
 
   test('create --publish requires an explicit destination', async () => {
     const { stderr, exitCode } = await runCli(['create', 'factory-library', '--publish']);
