@@ -8,6 +8,8 @@
  * Integration with v2.4.2 infrastructure for complete zero-collateral operations
  */
 
+// @see https://bun.com/docs/pm/lockfile — Bun text lockfile format
+
 // Import v2.4.2 components for combined infrastructure
 import { SecurityHardeningLayer } from "./v2-4-2/security-hardening-layer";
 import { UnicodeStringWidthEngine } from "./v2-4-2/stringwidth-engine";
@@ -31,7 +33,7 @@ class ConfigVersionStabilizer {
   };
 
   static async initializeLockfile(): Promise<void> {
-    const lockfilePath = "bun.lock";
+    const lockfilePath = `${import.meta.dir}/../../bun.lock`;
     const lockfile = Bun.file(lockfilePath);
 
     if (!(await lockfile.exists())) {

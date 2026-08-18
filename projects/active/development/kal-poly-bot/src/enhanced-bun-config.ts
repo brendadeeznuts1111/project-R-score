@@ -1,17 +1,17 @@
-import { deepEquals } from "bun";
-import { AutomatedGovernanceEngine } from "./security/automated-governance-engine";
-import { CSRFProtector } from "./security/csrf-protector";
-import { QuantumResistantSecureDataRepository } from "./security/quantum-resistant-secure-data-repository";
-import { SecureCookieManager } from "./security/secure-cookie-manager";
-import { ThreatIntelligenceService } from "./security/threat-intelligence-service";
+import { deepEquals } from 'bun';
+import { AutomatedGovernanceEngine } from './security/automated-governance-engine';
+import { CSRFProtector } from './security/csrf-protector';
+import { QuantumResistantSecureDataRepository } from './security/quantum-resistant-secure-data-repository';
+import { SecureCookieManager } from './security/secure-cookie-manager';
+import { ThreatIntelligenceService } from './security/threat-intelligence-service';
 
 // Enhanced configuration routes with security integration
-const configRoutes = new URLPattern({ pathname: "/config/:section" });
-const debugRoutes = new URLPattern({ pathname: "/debug" });
-const securityRoutes = new URLPattern({ pathname: "/security" });
-const performanceRoutes = new URLPattern({ pathname: "/performance" });
-const auditRoutes = new URLPattern({ pathname: "/audit" });
-const complianceRoutes = new URLPattern({ pathname: "/compliance" });
+const configRoutes = new URLPattern({ pathname: '/config/:section' });
+const debugRoutes = new URLPattern({ pathname: '/debug' });
+const securityRoutes = new URLPattern({ pathname: '/security' });
+const performanceRoutes = new URLPattern({ pathname: '/performance' });
+const auditRoutes = new URLPattern({ pathname: '/audit' });
+const complianceRoutes = new URLPattern({ pathname: '/compliance' });
 
 // Type definitions for Bun configuration
 interface BunInstallConfig {
@@ -89,7 +89,7 @@ export interface PerformanceMetrics {
 
 export interface RikScore {
   score: number;
-  level: "LOW" | "MEDIM" | "HIGH";
+  level: 'LOW' | 'MEDIM' | 'HIGH';
   factors: string[];
 }
 
@@ -113,11 +113,11 @@ export interface AuditEntry {
     key: string;
     oldValue: unknown;
     newValue: unknown;
-    type: "ADDED" | "REMOVED" | "MODIFIED";
+    type: 'ADDED' | 'REMOVED' | 'MODIFIED';
   }>;
   riskScore: iskScore;
   complianceStatus: ComplianceStatus;
-  threatLevel: "LOW" | "MEDIUM" | "HIGH";
+  threatLevel: 'LOW' | 'MEDIUM' | 'HIGH';
 }
 
 export class EnhancedConfigManager {
@@ -131,10 +131,7 @@ export class EnhancedConfigManager {
     timestamp: string;
     config: Record<string, unknown>;
   }>;
-  private complianceMetrics: Record<
-    string,
-    { score: number; violations: unknown[] }
-  >;
+  private complianceMetrics: Record<string, { score: number; violations: unknown[] }>;
 
   constructor() {
     this.cookieManager = new SecureCookieManager();
@@ -192,7 +189,7 @@ export class EnhancedConfigManager {
     await this.secureRepo.store(`audit-${changeId}`, auditEntry, {
       encrypt: true,
       sign: true,
-      retention: "7y", // 7 years for compliance
+      retention: '7y', // 7 years for compliance
       quantumResistant: true,
     });
 
@@ -218,31 +215,31 @@ export class EnhancedConfigManager {
     const installConfig = config.install as Record<string, unknown>;
     if (
       installConfig?.registry &&
-      typeof installConfig.registry === "string" &&
-      !installConfig.registry.startsWith("https")
+      typeof installConfig.registry === 'string' &&
+      !installConfig.registry.startsWith('https')
     ) {
       riskScore += 25;
-      riskFactors.push("Insecure registry (HTTP)");
+      riskFactors.push('Insecure registry (HTTP)');
     }
 
     const serveConfig = config.serve as Record<string, unknown>;
     if (
       serveConfig?.port &&
-      typeof serveConfig.port === "number" &&
+      typeof serveConfig.port === 'number' &&
       (serveConfig.port < 1024 || serveConfig.port > 49151)
     ) {
       riskScore += 15;
-      riskFactors.push("Non-standard port range");
+      riskFactors.push('Non-standard port range');
     }
 
     const runConfig = config.run as Record<string, unknown>;
     if (
       runConfig?.executor &&
-      typeof runConfig.executor === "string" &&
-      runConfig.executor.includes("..")
+      typeof runConfig.executor === 'string' &&
+      runConfig.executor.includes('..')
     ) {
       riskScore += 30;
-      riskFactors.push("ath traversal in executor");
+      riskFactors.push('ath traversal in executor');
     }
 
     // User behavior analysis
@@ -255,14 +252,12 @@ export class EnhancedConfigManager {
 
     return {
       score: Math.min(riskScore, 100),
-      level: riskScore >= 70 ? "HIGH" : riskScore >= 40 ? "MEDIUM" : "LOW",
+      level: riskScore >= 70 ? 'HIGH' : riskScore >= 40 ? 'MEDIUM' : 'LOW',
       factors: riskFactors,
     };
   }
 
-  async checkCompliance(
-    config: Record<string, unknown>
-  ): Promise<ComplianceStatus> {
+  async checkCompliance(config: Record<string, unknown>): Promise<ComplianceStatus> {
     const violations = [];
 
     // GDPR compliance checks
@@ -270,13 +265,13 @@ export class EnhancedConfigManager {
     const staticConfig = serveConfig?.static as Record<string, unknown>;
     if (
       staticConfig?.dir &&
-      typeof staticConfig.dir === "string" &&
-      staticConfig.dir.includes("user-data")
+      typeof staticConfig.dir === 'string' &&
+      staticConfig.dir.includes('user-data')
     ) {
       violations.push({
-        framework: "GDPR",
-        violation: "User data exposure in static directory",
-        severity: "HIGH",
+        framework: 'GDPR',
+        violation: 'User data exposure in static directory',
+        severity: 'HIGH',
       });
     }
 
@@ -284,13 +279,13 @@ export class EnhancedConfigManager {
     const installConfig = config.install as Record<string, unknown>;
     if (
       installConfig?.registry &&
-      typeof installConfig.registry === "string" &&
-      installConfig.registry.includes("tracking")
+      typeof installConfig.registry === 'string' &&
+      installConfig.registry.includes('tracking')
     ) {
       violations.push({
-        framework: "CCPA",
-        violation: "Tracking registry usage without consent",
-        severity: "MEDIUM",
+        framework: 'CCPA',
+        violation: 'Tracking registry usage without consent',
+        severity: 'MEDIUM',
       });
     }
 
@@ -307,14 +302,11 @@ export class EnhancedConfigManager {
   updateComplianceMetrics(violations: unknown[]): void {
     violations.forEach((violation: any) => {
       if (this.complianceMetrics[violation.framework.toLowerCase()]) {
-        this.complianceMetrics[
-          violation.framework.toLowerCase()
-        ].violations.push(violation);
-        this.complianceMetrics[violation.framework.toLowerCase()].score =
-          Math.max(
-            0,
-            this.complianceMetrics[violation.framework.toLowerCase()].score - 10
-          );
+        this.complianceMetrics[violation.framework.toLowerCase()].violations.push(violation);
+        this.complianceMetrics[violation.framework.toLowerCase()].score = Math.max(
+          0,
+          this.complianceMetrics[violation.framework.toLowerCase()].score - 10
+        );
       }
     });
   }
@@ -326,13 +318,10 @@ export class EnhancedConfigManager {
     key: string;
     oldValue: unknown;
     newValue: unknown;
-    type: "ADDED" | "REMOVED" | "MODIFIED";
+    type: 'ADDED' | 'REMOVED' | 'MODIFIED';
   }> {
     const differences = [];
-    const allKeys = new Set([
-      ...Object.keys(oldConfig),
-      ...Object.keys(newConfig),
-    ]);
+    const allKeys = new Set([...Object.keys(oldConfig), ...Object.keys(newConfig)]);
 
     for (const key of Array.from(allKeys)) {
       if (!deepEquals(oldConfig[key], newConfig[key])) {
@@ -342,10 +331,10 @@ export class EnhancedConfigManager {
           newValue: newConfig[key],
           type:
             oldConfig[key] === undefined
-              ? "ADDED"
+              ? 'ADDED'
               : newConfig[key] === undefined
-                ? "REMOVED"
-                : "MODIFIED",
+                ? 'REMOVED'
+                : 'MODIFIED',
         });
       }
     }
@@ -361,19 +350,15 @@ export class EnhancedConfigManager {
     recommendations: string[];
   } {
     const totalScore =
-      Object.values(this.complianceMetrics).reduce(
-        (sum, metric) => sum + metric.score,
-        0
-      ) / Object.keys(this.complianceMetrics).length;
+      Object.values(this.complianceMetrics).reduce((sum, metric) => sum + metric.score, 0) /
+      Object.keys(this.complianceMetrics).length;
 
     return {
       overallScore: Math.round(totalScore),
       frameworks: this.complianceMetrics,
       auditTrailSize: this.auditTrail.size,
       lastAudit:
-        this.auditTrail.size > 0
-          ? Array.from(this.auditTrail.values()).pop()!.timestamp
-          : null,
+        this.auditTrail.size > 0 ? Array.from(this.auditTrail.values()).pop()!.timestamp : null,
       recommendations: this.generateComplianceRecommendations(),
     };
   }
@@ -382,17 +367,15 @@ export class EnhancedConfigManager {
     const recommendations = [];
 
     if (this.complianceMetrics.gdpr.score < 80) {
-      recommendations.push(
-        "Review data handling practices for GDPR compliance"
-      );
+      recommendations.push('Review data handling practices for GDPR compliance');
     }
 
     if (this.complianceMetrics.ccpa.score < 80) {
-      recommendations.push("Implement user consent management for CCPA");
+      recommendations.push('Implement user consent management for CCPA');
     }
 
     if (this.complianceMetrics.pipl.score < 80) {
-      recommendations.push("Enhance personal information protection for PIPL");
+      recommendations.push('Enhance personal information protection for PIPL');
     }
 
     return recommendations;
@@ -410,44 +393,44 @@ export class EnhancedBunConfig {
   public getDefaultConfig(): BunConfig {
     return {
       install: {
-        cache: { dir: "~/.bun/install/cache" },
-        globalDir: "~/.bun/install/global",
-        globalinDir: "~/.bun/bin",
-        registry: "https://registry.npmjs.org/",
-        prefer: "default",
+        cache: { dir: '~/.bun/install/cache' },
+        globalDir: '~/.bun/install/global',
+        globalinDir: '~/.bun/bin',
+        registry: 'https://registry.npmjs.org/',
+        prefer: 'default',
         exact: false,
       },
       run: {
-        executor: "bun",
+        executor: 'bun',
         args: [],
       },
       test: {
-        pool: "threads",
+        pool: 'threads',
         coveragePathIgnorePatterns: [],
       },
       serve: {
-        static: { dir: "./public" },
+        static: { dir: './public' },
         port: 3000,
-        env: "inline",
+        env: 'inline',
       },
       bun: {
-        version: "1.3.6",
-        logLevel: "info",
+        version: '1.3.6',
+        logLevel: 'info',
       },
     };
   }
 
   public getConfigSection(section: string): Record<string, unknown> {
     switch (section) {
-      case "install":
+      case 'install':
         return { ...this.config.install };
-      case "run":
+      case 'run':
         return { ...this.config.run };
-      case "test":
+      case 'test':
         return { ...this.config.test };
-      case "serve":
+      case 'serve':
         return { ...this.config.serve };
-      case "bun":
+      case 'bun':
         return { ...this.config.bun };
       default:
         return {};
@@ -456,11 +439,11 @@ export class EnhancedBunConfig {
 
   public getConfigSnapshot(): Record<string, unknown> {
     return {
-      install: this.getConfigSection("install"),
-      run: this.getConfigSection("run"),
-      test: this.getConfigSection("test"),
-      serve: this.getConfigSection("serve"),
-      bun: this.getConfigSection("bun"),
+      install: this.getConfigSection('install'),
+      run: this.getConfigSection('run'),
+      test: this.getConfigSection('test'),
+      serve: this.getConfigSection('serve'),
+      bun: this.getConfigSection('bun'),
     };
   }
 
@@ -498,12 +481,10 @@ export class EnhancedBunConfig {
       // Security analysis
       const security = {
         cacheDirSecure:
-          this.config.install.cache.dir.startsWith("/tmp") ||
-          this.config.install.cache.dir.startsWith("/var"),
-        registrySecure: this.config.install.registry.startsWith("https"),
-        globalDirWritable: this.checkDirectoryWritable(
-          this.config.install.globalDir
-        ),
+          this.config.install.cache.dir.startsWith('/tmp') ||
+          this.config.install.cache.dir.startsWith('/var'),
+        registrySecure: this.config.install.registry.startsWith('https'),
+        globalDirWritable: this.checkDirectoryWritable(this.config.install.globalDir),
       };
 
       return new Response(
@@ -518,7 +499,7 @@ export class EnhancedBunConfig {
               Value: v,
             })),
           ],
-          ["Key", "Value"],
+          ['Key', 'Value'],
           { colors: true }
         )
       );
@@ -549,7 +530,7 @@ export class EnhancedBunConfig {
               Value: v,
             })),
           ],
-          ["Key", "Value"],
+          ['Key', 'Value'],
           { colors: true }
         )
       );
@@ -563,11 +544,11 @@ export class EnhancedBunConfig {
 
       // Validation analysis
       const validation = {
-        poolValid: ["threads", "processes"].includes(this.config.test.pool),
+        poolValid: ['threads', 'processes'].includes(this.config.test.pool),
         patternsValid:
           Array.isArray(this.config.test.coveragePathIgnorePatterns) &&
           (this.config.test.coveragePathIgnorePatterns as unknown[]).every(
-            (p: unknown) => typeof p === "string"
+            (p: unknown) => typeof p === 'string'
           ),
       };
 
@@ -583,7 +564,7 @@ export class EnhancedBunConfig {
               Value: v,
             })),
           ],
-          ["Key", "Value"],
+          ['Key', 'Value'],
           { colors: true }
         )
       );
@@ -598,12 +579,9 @@ export class EnhancedBunConfig {
 
       // Network analysis
       const network = {
-        portInRange:
-          this.config.serve.port >= 1 && this.config.serve.port <= 65535,
+        portInRange: this.config.serve.port >= 1 && this.config.serve.port <= 65535,
         staticDirExists: this.checkFileExists(this.config.serve.static.dir),
-        envValid: ["inline", "disable", "prefix"].includes(
-          this.config.serve.env
-        ),
+        envValid: ['inline', 'disable', 'prefix'].includes(this.config.serve.env),
       };
 
       return new Response(
@@ -618,7 +596,7 @@ export class EnhancedBunConfig {
               Value: v,
             })),
           ],
-          ["Key", "Value"],
+          ['Key', 'Value'],
           { colors: true }
         )
       );
@@ -633,9 +611,7 @@ export class EnhancedBunConfig {
       // Version analysis
       const version = {
         versionValid: /^[\d.]+$/.test(this.config.bun.version),
-        logLevelValid: ["debug", "info", "warn", "error"].includes(
-          this.config.bun.logLevel
-        ),
+        logLevelValid: ['debug', 'info', 'warn', 'error'].includes(this.config.bun.logLevel),
         versionWidth: Bun.stringWidth(this.config.bun.version),
       };
 
@@ -651,7 +627,7 @@ export class EnhancedBunConfig {
               Value: v,
             })),
           ],
-          ["Key", "Value"],
+          ['Key', 'Value'],
           { colors: true }
         )
       );
@@ -675,14 +651,14 @@ export class EnhancedBunConfig {
           [
             ...Object.entries(allConfig).map(([k, v]) => ({
               Key: k,
-              Value: typeof v === "object" ? "[object]" : v,
+              Value: typeof v === 'object' ? '[object]' : v,
             })),
             ...Object.entries(analysis).map(([k, v]) => ({
               Key: `Analysis: ${k}`,
               Value: v,
             })),
           ],
-          ["Key", "Value"],
+          ['Key', 'Value'],
           { colors: true }
         )
       );
@@ -701,40 +677,40 @@ export class EnhancedBunConfig {
     // Security checks
     const checks = [
       {
-        name: "Registry HTTPS",
-        check: this.config.install.registry.startsWith("https"),
+        name: 'Registry HTTPS',
+        check: this.config.install.registry.startsWith('https'),
         weight: 10,
       },
       {
-        name: "Cache Directory Secure",
+        name: 'Cache Directory Secure',
         check:
-          this.config.install.cache.dir.startsWith("/tmp") ||
-          this.config.install.cache.dir.startsWith("/var"),
+          this.config.install.cache.dir.startsWith('/tmp') ||
+          this.config.install.cache.dir.startsWith('/var'),
         weight: 5,
       },
       {
-        name: "Global Directory Writable",
+        name: 'Global Directory Writable',
         check: this.checkDirectoryWritable(this.config.install.globalDir),
         weight: 3,
       },
       {
-        name: "Test Pool Valid",
-        check: ["threads", "processes"].includes(this.config.test.pool),
+        name: 'Test Pool Valid',
+        check: ['threads', 'processes'].includes(this.config.test.pool),
         weight: 2,
       },
       {
-        name: "Port in Range",
+        name: 'Port in Range',
         check: this.config.serve.port >= 1 && this.config.serve.port <= 65535,
         weight: 4,
       },
       {
-        name: "Static Directory Exists",
+        name: 'Static Directory Exists',
         check: this.checkFileExists(this.config.serve.static.dir),
         weight: 2,
       },
     ];
 
-    checks.forEach((check) => {
+    checks.forEach(check => {
       securityScore.totalChecks += check.weight;
       if (check.check) {
         securityScore.passed += check.weight;
@@ -744,23 +720,21 @@ export class EnhancedBunConfig {
       }
     });
 
-    const score = Math.round(
-      (securityScore.passed / securityScore.totalChecks) * 100
-    );
+    const score = Math.round((securityScore.passed / securityScore.totalChecks) * 100);
 
     return new Response(
       Bun.inspect.table(
         [
-          { Metric: "Security Score", Value: `${score}%` },
-          { Metric: "Passed Checks", Value: securityScore.passed },
-          { Metric: "Failed Checks", Value: securityScore.failed },
-          { Metric: "Total Weight", Value: securityScore.totalChecks },
+          { Metric: 'Security Score', Value: `${score}%` },
+          { Metric: 'Passed Checks', Value: securityScore.passed },
+          { Metric: 'Failed Checks', Value: securityScore.failed },
+          { Metric: 'Total Weight', Value: securityScore.totalChecks },
           {
-            Metric: "Warnings",
-            Value: securityScore.warnings.join(", ") || "None",
+            Metric: 'Warnings',
+            Value: securityScore.warnings.join(', ') || 'None',
           },
         ],
-        ["Metric", "Value"],
+        ['Metric', 'Value'],
         { colors: true }
       )
     );
@@ -797,42 +771,40 @@ export class EnhancedBunConfig {
       Bun.inspect.table(
         [
           {
-            Metric: "Config Parse Time",
+            Metric: 'Config Parse Time',
             Value: `${performanceMetrics.configParseTime}ms`,
           },
           {
-            Metric: "Config Size",
+            Metric: 'Config Size',
             Value: `${performanceMetrics.configSize} chars`,
           },
-          { Metric: "Config Sections", Value: performanceMetrics.configKeys },
+          { Metric: 'Config Sections', Value: performanceMetrics.configKeys },
           {
-            Metric: "Executor Exists",
-            Value: performanceMetrics.executorPerformance.exists ? "✅" : "❌",
+            Metric: 'Executor Exists',
+            Value: performanceMetrics.executorPerformance.exists ? '✅' : '❌',
           },
           {
-            Metric: "Executor Path Length",
+            Metric: 'Executor Path Length',
             Value: performanceMetrics.executorPerformance.pathLength,
           },
           {
-            Metric: "Test Pool Type",
+            Metric: 'Test Pool Type',
             Value: performanceMetrics.testPerformance.poolType,
           },
           {
-            Metric: "Test Patterns",
+            Metric: 'Test Patterns',
             Value: performanceMetrics.testPerformance.patternsCount,
           },
           {
-            Metric: "Serve Port",
+            Metric: 'Serve Port',
             Value: performanceMetrics.servePerformance.port,
           },
           {
-            Metric: "Static Dir Exists",
-            Value: performanceMetrics.servePerformance.staticDirExists
-              ? "✅"
-              : "❌",
+            Metric: 'Static Dir Exists',
+            Value: performanceMetrics.servePerformance.staticDirExists ? '✅' : '❌',
           },
         ],
-        ["Metric", "Value"],
+        ['Metric', 'Value'],
         { colors: true }
       )
     );
@@ -842,9 +814,9 @@ export class EnhancedBunConfig {
   activateDebug(): string {
     try {
       Bun.openInEditor(import.meta.url, { line: 42 });
-      return "Debug mode activated - editor opened";
+      return 'Debug mode activated - editor opened';
     } catch (error) {
-      return `Debug mode failed: ${error instanceof Error ? error.message : "Unknown error"}`;
+      return `Debug mode failed: ${error instanceof Error ? error.message : 'Unknown error'}`;
     }
   }
 
@@ -854,12 +826,12 @@ export class EnhancedBunConfig {
     if (configRoutes.test(req.url)) {
       const result = configRoutes.exec(req.url);
       if (!result) {
-        return new Response("Invalid route pattern", { status: 400 });
+        return new Response('Invalid route pattern', { status: 400 });
       }
       const section = result.pathname.groups.section;
 
       const handler = this.configHandlers[section as keyof ConfigSection];
-      return handler?.() || new Response("Config section not found");
+      return handler?.() || new Response('Config section not found');
     }
 
     // Security configuration analysis
@@ -878,7 +850,7 @@ export class EnhancedBunConfig {
       return new Response(debugResult);
     }
 
-    return new Response("Route matched");
+    return new Response('Route matched');
   }
 }
 
@@ -894,7 +866,7 @@ export class ConfigComparator {
     const same = differences.length === 0;
 
     return {
-      type: "ConfigComparator",
+      type: 'ConfigComparator',
       same: same,
       differences: differences.length,
       details: differences,
@@ -936,39 +908,31 @@ export function startConfigServer() {
   return Bun.serve({
     async fetch(req) {
       // CSRF protection for all state-changing operations
-      if (req.method !== "GET" && req.method !== "HEAD") {
-        const csrfValid =
-          await enhancedConfigManager.csrfProtector.validateToken(req);
+      if (req.method !== 'GET' && req.method !== 'HEAD') {
+        const csrfValid = await enhancedConfigManager.csrfProtector.validateToken(req);
         if (!csrfValid) {
-          return new Response("CSRF validation failed", { status: 403 });
+          return new Response('CSRF validation failed', { status: 403 });
         }
       }
 
       // Extract user information from secure cookies
-      const userId = await enhancedConfigManager.cookieManager.getSecureCookie(
+      const userId = await enhancedConfigManager.cookieManager.getSecureCookie(req, 'user-id');
+      const sessionId = await enhancedConfigManager.cookieManager.getSecureCookie(
         req,
-        "user-id"
+        'session-id'
       );
-      const sessionId =
-        await enhancedConfigManager.cookieManager.getSecureCookie(
-          req,
-          "session-id"
-        );
 
       // Get client IP for threat analysis
       const clientIP =
-        req.headers.get("x-forwarded-for") ||
-        req.headers.get("x-real-ip") ||
-        "unknown";
+        req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
 
       // Threat intelligence check
-      const threatLevel =
-        await enhancedConfigManager.threatIntel.analyzeRequest(
-          clientIP,
-          userId || "anonymous"
-        );
-      if (threatLevel === "HIGH") {
-        return new Response("Request blocked due to security concerns", {
+      const threatLevel = await enhancedConfigManager.threatIntel.analyzeRequest(
+        clientIP,
+        userId || 'anonymous'
+      );
+      if (threatLevel === 'HIGH') {
+        return new Response('Request blocked due to security concerns', {
           status: 403,
         });
       }
@@ -977,7 +941,7 @@ export function startConfigServer() {
       if (configRoutes.test(req.url)) {
         const result = configRoutes.exec(req.url);
         if (!result) {
-          return new Response("Invalid route pattern", { status: 400 });
+          return new Response('Invalid route pattern', { status: 400 });
         }
         const section = result.pathname.groups.section;
 
@@ -986,7 +950,7 @@ export function startConfigServer() {
           section,
           {},
           enhancedBunConfig.getConfigSection(section),
-          userId || "anonymous",
+          userId || 'anonymous',
           clientIP
         );
 
@@ -998,22 +962,18 @@ export function startConfigServer() {
         const config = enhancedBunConfig.getConfigSnapshot();
         const securityAnalysis = await enhancedConfigManager.calculateRiskScore(
           config,
-          userId || "anonymous",
+          userId || 'anonymous',
           clientIP
         );
 
         const threatIntel = {
-          ipReputation:
-            await enhancedConfigManager.threatIntel.getIPRiskScore(clientIP),
-          userRisk: await enhancedConfigManager.threatIntel.getUserRiskScore(
-            userId || "anonymous"
+          ipReputation: await enhancedConfigManager.threatIntel.getIPRiskScore(clientIP),
+          userRisk: await enhancedConfigManager.threatIntel.getUserRiskScore(userId || 'anonymous'),
+          registryReputation: await enhancedConfigManager.threatIntel.getRegistryReputation(
+            (config.install as { registry?: string })?.registry || ''
           ),
-          registryReputation:
-            await enhancedConfigManager.threatIntel.getRegistryReputation(
-              (config.install as { registry?: string })?.registry || ""
-            ),
           anomalyScore: await enhancedConfigManager.threatIntel.getAnomalyScore(
-            userId || "anonymous",
+            userId || 'anonymous',
             clientIP
           ),
         };
@@ -1021,21 +981,21 @@ export function startConfigServer() {
         return new Response(
           Bun.inspect.table(
             [
-              { Metric: "Security Score", Value: `${securityAnalysis.score}%` },
-              { Metric: "Risk Level", Value: securityAnalysis.level },
-              { Metric: "IP Reputation", Value: threatIntel.ipReputation },
-              { Metric: "User Risk", Value: threatIntel.userRisk },
+              { Metric: 'Security Score', Value: `${securityAnalysis.score}%` },
+              { Metric: 'Risk Level', Value: securityAnalysis.level },
+              { Metric: 'IP Reputation', Value: threatIntel.ipReputation },
+              { Metric: 'User Risk', Value: threatIntel.userRisk },
               {
-                Metric: "Registry Reputation",
+                Metric: 'Registry Reputation',
                 Value: threatIntel.registryReputation.score,
               },
-              { Metric: "Anomaly Score", Value: threatIntel.anomalyScore },
+              { Metric: 'Anomaly Score', Value: threatIntel.anomalyScore },
               {
-                Metric: "Risk Factors",
-                Value: securityAnalysis.factors.join(", ") || "None",
+                Metric: 'Risk Factors',
+                Value: securityAnalysis.factors.join(', ') || 'None',
               },
             ],
-            ["Metric", "Value"],
+            ['Metric', 'Value'],
             { colors: true }
           )
         );
@@ -1043,46 +1003,45 @@ export function startConfigServer() {
 
       // Compliance reporting route
       if (complianceRoutes.test(req.url)) {
-        const complianceReport =
-          enhancedConfigManager.generateComplianceReport();
+        const complianceReport = enhancedConfigManager.generateComplianceReport();
 
         return new Response(
           Bun.inspect.table(
             [
               {
-                Metric: "Overall Compliance Score",
+                Metric: 'Overall Compliance Score',
                 Value: `${complianceReport.overallScore}%`,
               },
               {
-                Metric: "GDPR Score",
+                Metric: 'GDPR Score',
                 Value: `${complianceReport.frameworks.gdpr.score}%`,
               },
               {
-                Metric: "CCPA Score",
+                Metric: 'CCPA Score',
                 Value: `${complianceReport.frameworks.ccpa.score}%`,
               },
               {
-                Metric: "PIPL Score",
-                Value: `${complianceReport.frameworks.pipli.score}%`,
+                Metric: 'PIPL Score',
+                Value: `${complianceReport.frameworks.pipl.score}%`,
               },
               {
-                Metric: "LGPD Score",
+                Metric: 'LGPD Score',
                 Value: `${complianceReport.frameworks.lgpd.score}%`,
               },
               {
-                Metric: "PDPA Score",
+                Metric: 'PDPA Score',
                 Value: `${complianceReport.frameworks.pdpa.score}%`,
               },
               {
-                Metric: "Audit Trail Size",
+                Metric: 'Audit Trail Size',
                 Value: complianceReport.auditTrailSize,
               },
               {
-                Metric: "Recommendations",
+                Metric: 'Recommendations',
                 Value: complianceReport.recommendations.length,
               },
             ],
-            ["Metric", "Value"],
+            ['Metric', 'Value'],
             { colors: true }
           )
         );
@@ -1090,24 +1049,20 @@ export function startConfigServer() {
 
       // Audit trail route
       if (auditRoutes.test(req.url)) {
-        const recentAudits = Array.from(
-          enhancedConfigManager.auditTrail.values()
-        )
+        const recentAudits = Array.from(enhancedConfigManager.auditTrail.values())
           .slice(-10)
-          .map((audit) => ({
+          .map(audit => ({
             Timestamp: audit.timestamp,
             Section: audit.section,
             User: audit.userId,
             Risk: audit.riskScore.level,
-            Compliance: audit.complianceStatus.compliant ? "✅" : "❌",
+            Compliance: audit.complianceStatus.compliant ? '✅' : '❌',
           }));
 
         return new Response(
-          Bun.inspect.table(
-            recentAudits,
-            ["Timestamp", "Section", "User", "Risk", "Compliance"],
-            { colors: true }
-          )
+          Bun.inspect.table(recentAudits, ['Timestamp', 'Section', 'User', 'Risk', 'Compliance'], {
+            colors: true,
+          })
         );
       }
 
@@ -1122,10 +1077,10 @@ export function startConfigServer() {
         return new Response(debugResult);
       }
 
-      return new Response("Route not found", { status: 404 });
+      return new Response('Route not found', { status: 404 });
     },
     port: 3001,
-    hostname: "localhost",
+    hostname: 'localhost',
   });
 }
 
@@ -1136,7 +1091,7 @@ const testConfig: BunConfig = {
   serve: {
     ...originalConfig.serve,
     port: 8080,
-    static: { dir: "./test-public" },
+    static: { dir: './test-public' },
   },
 };
 
@@ -1144,5 +1099,5 @@ const comparator = new ConfigComparator(
   originalConfig as unknown as Record<string, unknown>,
   testConfig as unknown as Record<string, unknown>
 );
-console.info("Config Comparison:");
+console.info('Config Comparison:');
 console.info(Bun.inspect(comparator));
