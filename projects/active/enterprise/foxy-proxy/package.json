@@ -78,8 +78,8 @@
     "profile:import": "cd packages/dashboard && bun run src/utils/scaling/unified-cli.ts import",
     "docs:generate": "typedoc --out docs/ packages/dashboard/src/",
     "docs:serve": "cd docs && python -m http.server 8080",
-    "security:audit": "bun audit",
-    "security:fix": "bun audit fix",
+    "security:audit": "bun audit --prod --audit-level=high",
+    "security:audit:all": "bun audit --audit-level=high",
     "start": "bun run dev",
     "preview": "cd packages/dashboard && bun run preview"
   },

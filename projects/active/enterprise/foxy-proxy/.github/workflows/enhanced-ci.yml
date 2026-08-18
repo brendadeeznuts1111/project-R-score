@@ -96,7 +96,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Audit dependencies
-        run: bun audit
+        run: bun run security:audit
 
       - name: Run Snyk security scan
         uses: snyk/actions/node@master

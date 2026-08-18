@@ -163,8 +163,11 @@ bun update
 # Update specific
 bun update package-name
 
-# Audit security
-bun audit
+# Audit production dependencies at the enforced threshold
+bun run security:audit
+
+# Audit all dependencies, including development tooling
+bun run security:audit:all
 ```
 
 ## 🔗 Documentation Links
