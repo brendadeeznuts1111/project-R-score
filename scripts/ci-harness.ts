@@ -136,8 +136,8 @@ function eslintStep(fullLint: boolean): Step {
 function testStep(mainHead: boolean): Step {
   return {
     name: 'test-changed',
-    // Main-head can select hundreds of files that contend on shared repository
-    // resources. Keep dirty-tree development parallel and merge proof serial.
+    // Main-head can select hundreds of tests that contend on shared repository files.
+    // Keep dirty-tree development parallel and merge proof serial.
     cmd: mainHead
       ? ['bun', 'run', 'test:changed', '--', '--main-head', '--serial']
       : ['bun', 'run', 'test:changed'],
