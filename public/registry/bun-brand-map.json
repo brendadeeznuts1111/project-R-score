@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "bun-brand-map",
   "path": "/registry/bun-brand-map.json",
-  "generatedAt": "2026-08-18T00:27:59.700Z",
+  "generatedAt": "2026-08-18T02:34:09.697Z",
   "sources": {
     "declarations": "lib/docs/bun-brand-usages.ts",
     "catalog": "tools/bun-docs-catalog.json",
@@ -16,7 +16,7 @@
     "catalog": "30344b44b00eb5fa8d2156a2aed6126897f6cf51fe22774072eabdc612823cfb",
     "brandManifest": "af23fc482d19a16764ab8fc574cfe46a181993bab41ecdcd4480c28cbd424027",
     "brandKeymap": "ff32bb0b1976ea034722923ede487dd9a6e2899181f91becbe539bfe4dc0fc86",
-    "observations": "265f569e775c80b21b666fe0d6158a86ddeda14acd7d9fefaadcc89dca15017f",
+    "observations": "9a15f1600f75c7bf52bfd54e896eff2a9a0e6a432d259232b9182274a5d6fa2c",
     "baseline": "12deacd645ff9f5adcc24c9ff70c7d4d6de99a1d8f536c7a1fdc2f86db3c93a4",
     "proofs": "53261d0176406620894fd5d32cd17d9fcec54878019ed910530174917c3d88db"
   },
@@ -5008,7 +5008,7 @@
       "severity": "warning",
       "api": "Bun.Image",
       "path": "tools/verify-bun-release.ts",
-      "line": 474,
+      "line": 473,
       "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -5018,7 +5018,7 @@
       "severity": "warning",
       "api": "Bun.Image",
       "path": "tools/verify-bun-release.ts",
-      "line": 515,
+      "line": 514,
       "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -5338,7 +5338,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "lib/operations/dod-seed.ts",
-      "line": 216,
+      "line": 221,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -5348,7 +5348,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "lib/operations/dod-seed.ts",
-      "line": 217,
+      "line": 222,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6518,7 +6518,7 @@
       "severity": "warning",
       "api": "Bun.sliceAnsi",
       "path": "lib/factory/cli.ts",
-      "line": 403,
+      "line": 408,
       "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
       "baseline": true
     },
