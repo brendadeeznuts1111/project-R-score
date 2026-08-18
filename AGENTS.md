@@ -25,19 +25,21 @@ Project R skills live only in `.agents/skills`. Validate them with
 
 ## First routing hop
 
-| Need | Owner |
-| --- | --- |
-| Task, domain, or deployment route | [`docs/AGENTS.md`](docs/AGENTS.md) |
-| Commands | `bun run help` · generated [`docs/CLI.md`](docs/CLI.md) |
-| Coding contract | [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) |
-| Paths and repository structure | [`STRUCTURE.md`](STRUCTURE.md) · `lib/docs/repo-docs.ts` |
-| Harness authority and merge proof | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · `bun run bun:ci` |
-| Install and Bun configuration | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
+| Need                               | Owner                                                                                                                |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Task, domain, or deployment route  | [`docs/AGENTS.md`](docs/AGENTS.md)                                                                                   |
+| Commands                           | `bun run help` · generated [`docs/CLI.md`](docs/CLI.md)                                                              |
+| Coding contract                    | [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) |
+| Paths and repository structure     | [`STRUCTURE.md`](STRUCTURE.md) · `lib/docs/repo-docs.ts`                                                             |
+| Harness authority and merge proof  | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · `bun run bun:ci`                                          |
+| Install and Bun configuration      | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                 |
+| Domain → concept → shape → surface | [`docs/DOMAIN_CONCEPT_SHAPE.md`](docs/DOMAIN_CONCEPT_SHAPE.md)                                                       |
 
 ## Mandatory code boundaries
 
 Domain IDs are not bare `string`. Use the approved brand and constructor from
-`lib/types/branded.ts` and [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md).
+`lib/types/branded.ts` and
+[`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md).
 An intentionally opaque primary key requires `// brand-ok`; an empty branded
 cast is invalid.
 
@@ -49,9 +51,9 @@ contract is [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md).
 
 - **Inspect before editing.** Run `git status` and `bun run lane:status`. Keep
   work disjoint from dirty files owned by other sessions.
-- **Use worktrees.** The primary checkout tracks `main`; feature work belongs
-  in a worktree. Run `bun install` once there so Husky is wired. Copy only
-  required gitignored runtime files from the primary checkout.
+- **Use worktrees.** The primary checkout tracks `main`; feature work belongs in
+  a worktree. Run `bun install` once there so Husky is wired. Copy only required
+  gitignored runtime files from the primary checkout.
 - **Keep the index scoped.** Commit with an explicit pathspec when another lane
   may be staging. Verify it with
   `git diff-tree --no-commit-id --name-only -r HEAD`. Never reset, restore,
@@ -68,8 +70,8 @@ contract is [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md).
   headings from [the PR template](.github/pull_request_template.md) and run
   `bun run bun:ci` before merge. Hosted Actions are not merge authority.
 - **Synchronize safely after squash.** `git sync-main` uses a soft reset, so
-  merged paths may remain staged. Clear only known, byte-identical paths;
-  never use `git reset --hard` or a repository-wide restore.
+  merged paths may remain staged. Clear only known, byte-identical paths; never
+  use `git reset --hard` or a repository-wide restore.
 - **Record foreign failures.** If a gate fails only on another active lane,
   record its command, output, and owner. Use `SKIP_TEST_CHANGED=1` only with
   that evidence in the commit message.
