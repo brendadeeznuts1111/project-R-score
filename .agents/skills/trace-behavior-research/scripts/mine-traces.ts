@@ -202,6 +202,12 @@ const normalize = (value: string): string =>
     .replace(/\b[A-F0-9]{32,}\b/gi, '<opaque-id>')
     .replace(/\s+/g, ' ')
     .trim();
+const scaffoldingPattern =
+  /^(?:<(?:(?:skills|developer|app-context|environment_context|multi_agent_mode|permissions|collaboration_mode|model_switch)[^>]*>|\/)|#\s+AGENTS\.md instructions|You are `\/root`|You are Codex, an agent based on GPT|## Skills\s*$|<skills_instructions>)/i;
+const isScaffolding = (value: string): boolean => {
+  if (scaffoldingPattern.test(value)) return true;
+  return value.includes('<skills_instructions>') || value.includes('<developer>');
+};
 const textOf = (message: TraceMessage): string => {
   if (typeof message.content === 'string') return message.content;
   if (typeof message.text === 'string') return message.text;
@@ -293,7 +299,7 @@ for (const file of files) {
     metrics.push(...telemetry.metrics);
     triggers.push(...telemetry.triggers);
     const text = normalize(textOf(record));
-    if (!text) return;
+    if (!text || isScaffolding(text)) return;
     messages++;
     for (const family of families) {
       if (!family.pattern.test(text)) continue;
