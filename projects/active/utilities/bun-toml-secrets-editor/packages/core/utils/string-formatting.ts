@@ -16,7 +16,7 @@
  * Use these instead of String.padEnd() or String.padStart() for terminal output.
  *
  * @see https://bun.com/docs/runtime/utils#bun-stringwidth - Bun.stringWidth() documentation
- * @see https://bun.com/docs/runtime/utils#bun-inspect-table - Bun.inspect.table() for simple tables
+ * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options - Bun.inspect.table() for simple tables
  */
 
 /**

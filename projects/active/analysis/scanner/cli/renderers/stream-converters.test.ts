@@ -24,18 +24,19 @@ describe('BUN_CONVERTERS catalog', () => {
 		}
 	});
 
-	test('all function names start with Bun.readableStreamTo', () => {
-		for (const c of BUN_CONVERTERS) {
-			expect(c.function.startsWith('Bun.readableStreamTo')).toBe(true);
-		}
+	test('deprecated converters use ReadableStream instance methods', () => {
+		expect(converterByOutput('string')?.function).toBe('stream.text()');
+		expect(converterByOutput('Uint8Array')?.function).toBe('stream.bytes()');
+		expect(converterByOutput('Blob')?.function).toBe('stream.blob()');
+		expect(converterByOutput('object')?.function).toBe('stream.json()');
 	});
 
 	test('converterByOutput finds known types', () => {
-		expect(converterByOutput('string')?.function).toBe('Bun.readableStreamToText');
+		expect(converterByOutput('string')?.function).toBe('stream.text()');
 		expect(converterByOutput('ArrayBuffer')?.function).toBe('Bun.readableStreamToArrayBuffer');
-		expect(converterByOutput('Uint8Array')?.function).toBe('Bun.readableStreamToBytes');
-		expect(converterByOutput('Blob')?.function).toBe('Bun.readableStreamToBlob');
-		expect(converterByOutput('object')?.function).toBe('Bun.readableStreamToJSON');
+		expect(converterByOutput('Uint8Array')?.function).toBe('stream.bytes()');
+		expect(converterByOutput('Blob')?.function).toBe('stream.blob()');
+		expect(converterByOutput('object')?.function).toBe('stream.json()');
 		expect(converterByOutput('unknown[]')?.function).toBe('Bun.readableStreamToArray');
 		expect(converterByOutput('FormData')?.function).toBe('Bun.readableStreamToFormData');
 	});
@@ -87,14 +88,14 @@ function byteStream(...chunks: Uint8Array[]): ReadableStream<Uint8Array> {
 	});
 }
 
-describe('readableStreamToText', () => {
+describe('ReadableStream.text', () => {
 	test('concatenates text chunks', async () => {
-		const text = await Bun.readableStreamToText(textStream('hello', ' world'));
+		const text = await textStream('hello', ' world').text();
 		expect(text).toBe('hello world');
 	});
 
 	test('empty stream returns empty string', async () => {
-		const text = await Bun.readableStreamToText(textStream());
+		const text = await textStream().text();
 		expect(text).toBe('');
 	});
 });
@@ -107,22 +108,22 @@ describe('readableStreamToArrayBuffer', () => {
 	});
 });
 
-describe('readableStreamToBytes', () => {
+describe('ReadableStream.bytes', () => {
 	test('returns Uint8Array', async () => {
-		const bytes = await Bun.readableStreamToBytes(byteStream(new Uint8Array([10, 20, 30])));
+		const bytes = await byteStream(new Uint8Array([10, 20, 30])).bytes();
 		expect(bytes).toBeInstanceOf(Uint8Array);
 		expect(bytes).toEqual(new Uint8Array([10, 20, 30]));
 	});
 });
 
-describe('readableStreamToJSON', () => {
+describe('ReadableStream.json', () => {
 	test('parses JSON object', async () => {
-		const obj = await Bun.readableStreamToJSON(textStream('{"test":true}'));
+		const obj = await textStream('{"test":true}').json();
 		expect(obj).toEqual({test: true});
 	});
 
 	test('parses JSON array', async () => {
-		const arr = await Bun.readableStreamToJSON(textStream('[1,2,3]'));
+		const arr = await textStream('[1,2,3]').json();
 		expect(arr).toEqual([1, 2, 3]);
 	});
 });
@@ -141,9 +142,9 @@ describe('readableStreamToArray', () => {
 	});
 });
 
-describe('readableStreamToBlob', () => {
+describe('ReadableStream.blob', () => {
 	test('returns Blob with correct size', async () => {
-		const blob = await Bun.readableStreamToBlob(byteStream(new Uint8Array([1, 2, 3, 4, 5])));
+		const blob = await byteStream(new Uint8Array([1, 2, 3, 4, 5])).blob();
 		expect(blob).toBeInstanceOf(Blob);
 		expect(blob.size).toBe(5);
 	});
@@ -156,26 +157,26 @@ describe('readableStreamToBlob', () => {
 describe('Spawn → Stream → Converter', () => {
 	test('stdout to text', async () => {
 		const proc = Bun.spawn(['echo', 'hello'], {stdout: 'pipe'});
-		const text = await Bun.readableStreamToText(proc.stdout!);
+		const text = await proc.stdout!.text();
 		expect(text).toContain('hello');
 	});
 
 	test('stderr to text', async () => {
 		const proc = Bun.spawn(['sh', '-c', 'echo error >&2'], {stderr: 'pipe'});
-		const text = await Bun.readableStreamToText(proc.stderr!);
+		const text = await proc.stderr!.text();
 		expect(text).toContain('error');
 	});
 
 	test('stdout to bytes', async () => {
 		const proc = Bun.spawn(['printf', '\\001\\002\\003'], {stdout: 'pipe'});
-		const bytes = await Bun.readableStreamToBytes(proc.stdout!);
+		const bytes = await proc.stdout!.bytes();
 		expect(bytes).toBeInstanceOf(Uint8Array);
 		expect(bytes.length).toBe(3);
 	});
 
 	test('stdout to JSON', async () => {
 		const proc = Bun.spawn(['echo', '{"ok":true}'], {stdout: 'pipe'});
-		const obj = await Bun.readableStreamToJSON(proc.stdout!);
+		const obj = await proc.stdout!.json();
 		expect(obj).toEqual({ok: true});
 	});
 });

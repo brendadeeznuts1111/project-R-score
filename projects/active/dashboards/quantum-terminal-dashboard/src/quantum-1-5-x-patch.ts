@@ -1,3 +1,11 @@
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+// @see https://bun.com/docs/runtime/utils#bun-gunzipsync — Bun.gunzipSync
+// @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash.crc32
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — Bun.s3
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // [DOMAIN][SCOPE][TYPE][META:{PROPERTY}][CLASS][FUNCTION][INTERFACE][#REF:*][BUN-NATIVE]
 // Quantum Cash-Flow Lattice v1.5.0 – Bun 1.5.x feature pack
 // Zero-breaking, additive only

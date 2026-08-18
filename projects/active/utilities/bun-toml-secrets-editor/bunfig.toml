@@ -2,7 +2,10 @@
 # Optimized for enterprise developer experience
 
 [install]
-registry = "https://registry.factory-wager.com"
+# Public packages resolve from npm. Private FactoryWager packages use the scoped
+# registry below so an unavailable private registry cannot corrupt public
+# package metadata responses.
+registry = "https://registry.npmjs.org/"
 # Cache configuration for faster CI/CD
 cache = true
 # Optional dependencies for premium builds

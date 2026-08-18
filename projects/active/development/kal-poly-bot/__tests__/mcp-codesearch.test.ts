@@ -3,6 +3,9 @@ import { RipgrepCodeSearch } from '../utils/codesearch.ts';
 import { SuperRipgrep } from '../utils/super-ripgrep.ts';
 import type { RipgrepMCP } from '../mcp/ripgrep.ts';
 
+// @see https://bun.com/docs/runtime/utils#bun-fileurltopath
+const PROJECT_ROOT = Bun.fileURLToPath(new URL('../', import.meta.url));
+
 describe('Bun MCP CodeSearch Integration', () => {
   let searcher: RipgrepCodeSearch;
   let superSearcher: SuperRipgrep;
@@ -15,6 +18,7 @@ describe('Bun MCP CodeSearch Integration', () => {
   test('basic text search works', async () => {
     const result = await searcher.search({
       query: 'import.*Bun',
+      path: PROJECT_ROOT,
       type: 'ts',
       maxResults: 5
     });
@@ -27,7 +31,7 @@ describe('Bun MCP CodeSearch Integration', () => {
   });
 
   test('symbol search works', async () => {
-    const matches = await searcher.searchSymbols('RipgrepCodeSearch', '.');
+    const matches = await searcher.searchSymbols('RipgrepCodeSearch', PROJECT_ROOT);
 
     expect(Array.isArray(matches)).toBe(true);
     // Should find this class definition
@@ -37,6 +41,7 @@ describe('Bun MCP CodeSearch Integration', () => {
   test('search with context', async () => {
     const result = await searcher.search({
       query: 'class.*CodeSearch',
+      path: PROJECT_ROOT,
       context: 3,
       type: 'ts'
     });
@@ -57,6 +62,7 @@ describe('Bun MCP CodeSearch Integration', () => {
 
     const result = await searcher.search({
       query: 'export',
+      path: PROJECT_ROOT,
       type: 'ts',
       maxResults: 10
     });
@@ -70,7 +76,7 @@ describe('Bun MCP CodeSearch Integration', () => {
   test('handles no matches gracefully', async () => {
     const result = await searcher.search({
       query: 'ZzZzZzNonExistentFunctionZzZzZz987654321',
-      path: 'mcp', // Search only in mcp directory to avoid test files
+      path: `${PROJECT_ROOT}/mcp`, // Search only in mcp directory to avoid test files
       type: 'ts'
     });
 
@@ -82,6 +88,7 @@ describe('Bun MCP CodeSearch Integration', () => {
   test('respects maxResults limit', async () => {
     const result = await searcher.search({
       query: 'function|class|interface',
+      path: PROJECT_ROOT,
       type: 'ts',
       maxResults: 3
     });
@@ -95,6 +102,7 @@ describe('Bun MCP CodeSearch Integration', () => {
       version: '1.0',
       params: {
         query: 'Bun\\.serve',
+        path: PROJECT_ROOT,
         type: 'ts',
         context: 2
       }
@@ -121,7 +129,7 @@ describe('Bun MCP CodeSearch Integration', () => {
   });
 
   test('SuperRipgrep lightning speed', async () => {
-    const result = await superSearcher.lightningSearch('export');
+    const result = await superSearcher.lightningSearch('export', PROJECT_ROOT);
 
     expect(result).toHaveProperty('matches');
     expect(result).toHaveProperty('files');
@@ -132,7 +140,7 @@ describe('Bun MCP CodeSearch Integration', () => {
   });
 
   test('speed comparison with grep', async () => {
-    const comparison = await superSearcher.compareWithGrep('function', 'mcp');
+    const comparison = await superSearcher.compareWithGrep('function', `${PROJECT_ROOT}/mcp`);
 
     expect(comparison).toHaveProperty('ripgrep');
     expect(comparison).toHaveProperty('grep');
@@ -143,7 +151,7 @@ describe('Bun MCP CodeSearch Integration', () => {
 
   test('benchmark queries performance', async () => {
     const queries = ['class', 'interface', 'export'];
-    const results = await superSearcher.benchmarkQueries(queries, 'mcp');
+    const results = await superSearcher.benchmarkQueries(queries, `${PROJECT_ROOT}/mcp`);
 
     expect(results).toHaveLength(queries.length);
     results.forEach(result => {
@@ -154,7 +162,10 @@ describe('Bun MCP CodeSearch Integration', () => {
   });
 
   test('handles empty results gracefully', async () => {
-    const result = await superSearcher.lightningSearch('ZzZzNonExistentTermZzZz', 'mcp');
+    const result = await superSearcher.lightningSearch(
+      'ZzZzNonExistentTermZzZz',
+      `${PROJECT_ROOT}/mcp`
+    );
 
     expect(result.matches).toBe(0);
     expect(result.files).toBe(0);
@@ -174,7 +185,7 @@ describe('Bun MCP CodeSearch Integration', () => {
       const { searchCodebaseCLI } = await import('../surgical-precision-mcp/history-cli-manager.ts');
 
       // This should work without throwing and return results
-      await expect(searchCodebaseCLI('test')).resolves.toBeUndefined();
+      await expect(searchCodebaseCLI('test', { path: PROJECT_ROOT })).resolves.toBeUndefined();
     });
   });
 });

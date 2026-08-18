@@ -363,7 +363,7 @@ outdir = "./data/build-artifacts"
 
 [test]
 # Test configuration
-preload = ["./scripts/test-setup.ts"]
+preload = ["./__tests__/setup.ts"]
 coverage = ${config.environment === "development"}
 coverageDir = "./coverage"
 

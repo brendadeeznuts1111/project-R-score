@@ -30,8 +30,17 @@ describe('BUN_STREAM_CONVERTER_RULES', () => {
 
 	test('all rules have documentation URLs', () => {
 		for (const rule of BUN_STREAM_CONVERTER_RULES) {
-			expect(rule.documentation).toStartWith('https://bun.com/docs/api/streams');
+			expect(rule.documentation).toStartWith('https://bun.com/docs/guides/streams');
 		}
+	});
+
+	test('does not recommend deprecated Bun stream helpers', () => {
+		const replacements = BUN_STREAM_CONVERTER_RULES.map(rule => rule.replacement).join('\n');
+		expect(replacements).not.toMatch(/Bun\.readableStreamTo(?:Text|JSON|Bytes|Blob)/);
+		expect(replacements).toContain('await $1.text()');
+		expect(replacements).toContain('await $1.json()');
+		expect(replacements).toContain('await $1.bytes()');
+		expect(replacements).toContain('await $1.blob()');
 	});
 });
 
@@ -47,7 +56,7 @@ describe('StreamConverterScanner', () => {
 		const matches = scanner.scan(code);
 		expect(matches.length).toBe(1);
 		expect(matches[0].rule).toBe('ResponseConstructor');
-		expect(matches[0].converter).toBe('readableStreamToText');
+		expect(matches[0].converter).toBe('text');
 	});
 
 	test('detects Buffer.concat pattern', () => {
@@ -55,7 +64,7 @@ describe('StreamConverterScanner', () => {
 		const matches = scanner.scan(code);
 		expect(matches.length).toBe(1);
 		expect(matches[0].rule).toBe('BufferConcat');
-		expect(matches[0].converter).toBe('readableStreamToBytes');
+		expect(matches[0].converter).toBe('bytes');
 	});
 
 	test('detects new TextDecoder pattern', () => {
@@ -63,7 +72,7 @@ describe('StreamConverterScanner', () => {
 		const matches = scanner.scan(code);
 		expect(matches.length).toBe(1);
 		expect(matches[0].rule).toBe('TextDecoder');
-		expect(matches[0].converter).toBe('readableStreamToText');
+		expect(matches[0].converter).toBe('text');
 	});
 
 	test('detects JSON.parse with stream reference', () => {
@@ -71,7 +80,7 @@ describe('StreamConverterScanner', () => {
 		const matches = scanner.scan(code);
 		expect(matches.length).toBe(1);
 		expect(matches[0].rule).toBe('JSONParse');
-		expect(matches[0].converter).toBe('readableStreamToJSON');
+		expect(matches[0].converter).toBe('json');
 	});
 
 	test('detects multiple patterns in one file', () => {
@@ -85,7 +94,7 @@ describe('StreamConverterScanner', () => {
 	});
 
 	test('returns empty for clean code', () => {
-		const code = 'const text = await Bun.readableStreamToText(stream);';
+		const code = 'const text = await stream.text();';
 		const matches = scanner.scan(code);
 		expect(matches.length).toBe(0);
 	});

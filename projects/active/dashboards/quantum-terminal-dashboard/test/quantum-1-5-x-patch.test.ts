@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // test/quantum-1-5-x-patch.test.ts
 // Validates Quantum 1.5.x feature pack
 
@@ -84,15 +86,13 @@ describe("Quantum 1.5.x Patch", () => {
     const testDbPath = ".test-wal.db";
     
     afterAll(() => {
-      try { unlinkSync(testDbPath); } catch {
-    console.error('Unhandled error:', error);
-  }
-      try { unlinkSync(testDbPath + "-wal"); } catch {
-    console.error('Unhandled error:', error);
-  }
-      try { unlinkSync(testDbPath + "-shm"); } catch {
-    console.error('Unhandled error:', error);
-  }
+      for (const suffix of ['', '-wal', '-shm']) {
+        try {
+          unlinkSync(testDbPath + suffix);
+        } catch {
+          // Cleanup is best-effort because SQLite may not create WAL companions.
+        }
+      }
     });
 
     test("creates WAL-enabled database", () => {
@@ -182,4 +182,3 @@ describe("Quantum 1.5.x Patch", () => {
     });
   });
 });
-

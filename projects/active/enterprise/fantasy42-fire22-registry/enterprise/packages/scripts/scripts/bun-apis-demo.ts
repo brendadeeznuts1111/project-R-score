@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
 /**
  * Bun APIs Comprehensive Demo
  * Demonstrating Bun.semver, Bun.TOML.parse, Bun.YAML.parse, and Bun.color
@@ -28,7 +29,7 @@ console.info('🔍 Version Analysis:');
 versions.forEach(version => {
   try {
     // Use Bun.semver to check if valid and get components
-    const isValid = Bun.semver.valid(version);
+    const isValid = Bun.semver.satisfies(version, version);
     if (isValid) {
       // Parse version components manually for demo
       const parts = version.split('.').map(p => parseInt(p.split('-')[0]));
@@ -48,7 +49,7 @@ const baseVersion = '2.0.0';
 console.info(`   Base version: ${baseVersion}`);
 versions.forEach(version => {
   try {
-    const comparison = Bun.semver.compare(version, baseVersion);
+    const comparison = Bun.semver.order(version, baseVersion);
     const symbol = comparison > 0 ? '↑' : comparison < 0 ? '↓' : '=';
     console.info(`   ${version.padEnd(15)} ${symbol} ${comparison}`);
   } catch (error) {

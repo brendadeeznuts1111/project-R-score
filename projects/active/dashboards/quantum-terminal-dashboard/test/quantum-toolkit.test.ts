@@ -1,3 +1,13 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
+// @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
+// @see https://bun.com/docs/runtime/utils#bun-fileurltopath — Bun.fileURLToPath
+// @see https://bun.com/docs/runtime/utils#bun-gunzipsync — Bun.gunzipSync
+// @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-pathtofileurl — Bun.pathToFileURL
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // test/quantum-toolkit.test.ts
 // Validation tests for Quantum Toolkit v1.5.0 integration
 // All 7 components: deepEquals, escapeHTML, stringWidth, gzipSync, fileURL, colourKit, table

@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 // src/headscale-server.ts
 // Bun-native Headscale Server Implementation
 

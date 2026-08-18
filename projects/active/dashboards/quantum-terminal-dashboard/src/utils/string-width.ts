@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 /**
  * string-width.ts - Unicode String Width Utilities
  * Uses Bun.stringWidth() for accurate terminal display width

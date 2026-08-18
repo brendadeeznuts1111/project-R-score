@@ -18,6 +18,7 @@ interface MigrationRule {
 	id: string;
 	pattern: RegExp;
 	replacement: string;
+	converter: string;
 	rScore: number;
 	confidence: number;
 	category: 'StreamConversion';
@@ -52,52 +53,57 @@ const BUN_STREAM_CONVERTER_RULES: readonly MigrationRule[] = [
 	{
 		id: 'stream-text-001',
 		pattern: /await\s+new\s+Response\s*\(\s*(\w+)\s*\)\.text\s*\(\s*\)/g,
-		replacement: 'await Bun.readableStreamToText($1)',
+		replacement: 'await $1.text()',
+		converter: 'text',
 		rScore: 1.0,
 		confidence: 0.99,
 		category: 'StreamConversion',
 		telemetry: {performanceGain: 7.1, memoryReduction: 128, securityImprovement: 100},
-		documentation: `${BUN_DOC_BASE}/api/streams#readablestreamtotext`,
+		documentation: `${BUN_DOC_BASE}/guides/streams/to-string`,
 	},
 	{
 		id: 'stream-json-002',
 		pattern: /await\s+new\s+Response\s*\(\s*(\w+)\s*\)\.json\s*\(\s*\)/g,
-		replacement: 'await Bun.readableStreamToJSON($1)',
+		replacement: 'await $1.json()',
+		converter: 'json',
 		rScore: 1.0,
 		confidence: 0.99,
 		category: 'StreamConversion',
 		telemetry: {performanceGain: 10.2, memoryReduction: 160, securityImprovement: 100},
-		documentation: `${BUN_DOC_BASE}/api/streams#readablestreamtojson`,
+		documentation: `${BUN_DOC_BASE}/guides/streams/to-json`,
 	},
 	{
 		id: 'stream-buffer-003',
 		pattern: /await\s+new\s+Response\s*\(\s*(\w+)\s*\)\.arrayBuffer\s*\(\s*\)/g,
 		replacement: 'await Bun.readableStreamToArrayBuffer($1)',
+		converter: 'readableStreamToArrayBuffer',
 		rScore: 1.0,
 		confidence: 0.98,
 		category: 'StreamConversion',
 		telemetry: {performanceGain: 8.5, memoryReduction: 192, securityImprovement: 100},
-		documentation: `${BUN_DOC_BASE}/api/streams#readablestreamtoarraybuffer`,
+		documentation: `${BUN_DOC_BASE}/guides/streams/to-arraybuffer`,
 	},
 	{
 		id: 'stream-blob-004',
 		pattern: /await\s+new\s+Response\s*\(\s*(\w+)\s*\)\.blob\s*\(\s*\)/g,
-		replacement: 'await Bun.readableStreamToBlob($1)',
+		replacement: 'await $1.blob()',
+		converter: 'blob',
 		rScore: 1.0,
 		confidence: 0.98,
 		category: 'StreamConversion',
 		telemetry: {performanceGain: 6.8, memoryReduction: 256, securityImprovement: 100},
-		documentation: `${BUN_DOC_BASE}/api/streams#readablestreamtoblob`,
+		documentation: `${BUN_DOC_BASE}/guides/streams/to-blob`,
 	},
 	{
 		id: 'stream-concat-005',
 		pattern: /Buffer\.concat\s*\(\s*await\s+(\w+)\.toArray\s*\(\s*\)\s*\)/g,
-		replacement: 'await Bun.readableStreamToBytes($1)',
+		replacement: 'await $1.bytes()',
+		converter: 'bytes',
 		rScore: 1.0,
 		confidence: 0.95,
 		category: 'StreamConversion',
 		telemetry: {performanceGain: 5.3, memoryReduction: 160, securityImprovement: 100},
-		documentation: `${BUN_DOC_BASE}/api/streams#readablestreamtobytes`,
+		documentation: `${BUN_DOC_BASE}/guides/streams/to-typedarray`,
 	},
 ] as const;
 
@@ -106,10 +112,10 @@ const BUN_STREAM_CONVERTER_RULES: readonly MigrationRule[] = [
 // ═══════════════════════════════════════════════════════════════
 
 const BUN_DETECTION_PATTERNS = [
-	{regex: /new\s+Response\s*\(/g, type: 'ResponseConstructor', converter: 'readableStreamToText'},
-	{regex: /Buffer\.concat\s*\(/g, type: 'BufferConcat', converter: 'readableStreamToBytes'},
-	{regex: /new\s+TextDecoder/g, type: 'TextDecoder', converter: 'readableStreamToText'},
-	{regex: /JSON\.parse\s*\([^)]*stream/gi, type: 'JSONParse', converter: 'readableStreamToJSON'},
+	{regex: /new\s+Response\s*\(/g, type: 'ResponseConstructor', converter: 'text'},
+	{regex: /Buffer\.concat\s*\(/g, type: 'BufferConcat', converter: 'bytes'},
+	{regex: /new\s+TextDecoder/g, type: 'TextDecoder', converter: 'text'},
+	{regex: /JSON\.parse\s*\([^)]*stream/gi, type: 'JSONParse', converter: 'json'},
 ] as const;
 
 // ═══════════════════════════════════════════════════════════════
@@ -147,7 +153,7 @@ class StreamConverterScanner {
 		let totalSpeedup = 0;
 		let totalMemory = 0;
 		for (const m of matches) {
-			const rule = BUN_STREAM_CONVERTER_RULES.find(r => r.replacement.includes(m.converter));
+			const rule = BUN_STREAM_CONVERTER_RULES.find(r => r.converter === m.converter);
 			if (rule) {
 				totalSpeedup += rule.telemetry.performanceGain;
 				totalMemory += rule.telemetry.memoryReduction;

@@ -6,7 +6,8 @@
  * and environment-specific configuration.
  */
 
-import { beforeAll, beforeEach, afterEach, afterAll } from 'bun:test';
+// @see https://bun.com/docs/test/index#run-tests
+import { afterAll, afterEach, beforeAll, beforeEach, jest } from 'bun:test';
 
 // =============================================================================
 // TEST ENVIRONMENT CONFIGURATION
@@ -207,8 +208,8 @@ afterEach(async () => {
     globalThis.TEST_TEMP_FILES = [];
   }
 
-  // Reset timers
-  jest.clearAllTimers?.();
+  // Restore real timers even when a test enabled fake timers.
+  jest.useRealTimers();
 });
 
 // =============================================================================

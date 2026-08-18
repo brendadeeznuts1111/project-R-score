@@ -36,16 +36,16 @@ describe('Stream Converters', () => {
 			expect(new Uint8Array(buffer)).toEqual(new Uint8Array([1, 2, 3, 4, 5]));
 		});
 
-		test('readableStreamToBytes', async () => {
+		test('ReadableStream.bytes', async () => {
 			const stream = createBinaryStream([255, 0, 128]);
-			const bytes = await Bun.readableStreamToBytes(stream);
+			const bytes = await stream.bytes();
 			expect(bytes).toBeInstanceOf(Uint8Array);
 			expect(bytes).toEqual(new Uint8Array([255, 0, 128]));
 		});
 
-		test('readableStreamToBlob', async () => {
+		test('ReadableStream.blob', async () => {
 			const stream = createTestStream('blob content');
-			const blob = await Bun.readableStreamToBlob(stream);
+			const blob = await stream.blob();
 			expect(blob).toBeInstanceOf(Blob);
 			expect(blob.size).toBe(12);
 			expect(await blob.text()).toBe('blob content');
@@ -53,13 +53,13 @@ describe('Stream Converters', () => {
 	});
 
 	describe('Text Converters', () => {
-		test('readableStreamToText - basic', async () => {
+		test('ReadableStream.text - basic', async () => {
 			const stream = createTestStream('Hello, World!');
-			const text = await Bun.readableStreamToText(stream);
+			const text = await stream.text();
 			expect(text).toBe('Hello, World!');
 		});
 
-		test('readableStreamToText - multi-chunk', async () => {
+		test('ReadableStream.text - multi-chunk', async () => {
 			const stream = new ReadableStream({
 				start(controller) {
 					controller.enqueue(new TextEncoder().encode('hello'));
@@ -67,28 +67,28 @@ describe('Stream Converters', () => {
 					controller.close();
 				},
 			});
-			const text = await Bun.readableStreamToText(stream);
+			const text = await stream.text();
 			expect(text).toBe('hello world');
 		});
 
-		test('readableStreamToText - unicode', async () => {
+		test('ReadableStream.text - unicode', async () => {
 			const input = '\u{1F389} \u6D4B\u8BD5 \u{1F600}';
 			const stream = createTestStream(input);
-			const text = await Bun.readableStreamToText(stream);
+			const text = await stream.text();
 			expect(text).toBe(input);
 			// UTF-16 code units: 🎉(2) + space(1) + 测(1) + 试(1) + space(1) + 😀(2) = 8
 			expect(text.length).toBe(8);
 		});
 
-		test('readableStreamToJSON', async () => {
+		test('ReadableStream.json', async () => {
 			const stream = createTestStream('{"id": 42, "name": "test"}');
-			const obj = await Bun.readableStreamToJSON(stream);
+			const obj = await stream.json();
 			expect(obj).toEqual({id: 42, name: 'test'});
 		});
 
-		test('readableStreamToJSON - invalid throws', async () => {
+		test('ReadableStream.json - invalid throws', async () => {
 			const stream = createTestStream('invalid json');
-			await expect(Bun.readableStreamToJSON(stream)).rejects.toThrow();
+			await expect(stream.json()).rejects.toThrow();
 		});
 	});
 
@@ -128,7 +128,7 @@ describe('Stream Converters', () => {
 	describe('Spawn Integration', () => {
 		test('proc.stdout to text', async () => {
 			const proc = Bun.spawn(['echo', 'hello'], {stdout: 'pipe'});
-			const text = await Bun.readableStreamToText(proc.stdout!);
+			const text = await proc.stdout!.text();
 			expect(text.trim()).toBe('hello');
 		});
 
@@ -142,7 +142,7 @@ describe('Stream Converters', () => {
 
 		test('large output streaming (seq 1..1000)', async () => {
 			const proc = Bun.spawn(['seq', '1', '1000'], {stdout: 'pipe'});
-			const text = await Bun.readableStreamToText(proc.stdout!);
+			const text = await proc.stdout!.text();
 			const lines = text.trim().split('\n');
 			expect(lines).toHaveLength(1000);
 			expect(lines[999]).toBe('1000');
@@ -156,7 +156,7 @@ describe('Stream Converters', () => {
 			const stream = createTestStream(data);
 
 			const start = Bun.nanoseconds();
-			const result = await Bun.readableStreamToText(stream);
+			const result = await stream.text();
 			const elapsed = (Bun.nanoseconds() - start) / 1e6; // ms
 
 			expect(result.length).toBe(mb);

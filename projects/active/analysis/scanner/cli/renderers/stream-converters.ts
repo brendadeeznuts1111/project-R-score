@@ -22,28 +22,28 @@ const BUN_CONVERTERS: readonly StreamConverter[] = [
 		useCase: 'Binary data for low-level processing',
 	},
 	{
-		function: 'Bun.readableStreamToBytes',
+		function: 'stream.bytes()',
 		input: 'ReadableStream<Uint8Array>',
 		output: 'Uint8Array',
 		sites: 0,
 		useCase: 'Typed array for byte manipulation',
 	},
 	{
-		function: 'Bun.readableStreamToBlob',
+		function: 'stream.blob()',
 		input: 'ReadableStream<Uint8Array>',
 		output: 'Blob',
 		sites: 0,
 		useCase: 'Browser/File API compatibility',
 	},
 	{
-		function: 'Bun.readableStreamToJSON',
+		function: 'stream.json()',
 		input: 'ReadableStream<Uint8Array>',
 		output: 'object',
 		sites: 0,
 		useCase: 'Parse JSON from stream',
 	},
 	{
-		function: 'Bun.readableStreamToText',
+		function: 'stream.text()',
 		input: 'ReadableStream<Uint8Array>',
 		output: 'string',
 		sites: 0,
@@ -79,17 +79,17 @@ interface SpawnConverterRoute {
 }
 
 const BUN_SPAWN_CONVERTER_MATRIX: readonly SpawnConverterRoute[] = [
-	{spawnOption: 'stdout: "pipe"', streamProp: 'stdout', converter: 'readableStreamToText', output: 'string'},
+	{spawnOption: 'stdout: "pipe"', streamProp: 'stdout', converter: 'stream.text()', output: 'string'},
 	{
 		spawnOption: 'stdout: "pipe"',
 		streamProp: 'stdout',
 		converter: 'readableStreamToArrayBuffer',
 		output: 'ArrayBuffer',
 	},
-	{spawnOption: 'stdout: "pipe"', streamProp: 'stdout', converter: 'readableStreamToBytes', output: 'Uint8Array'},
-	{spawnOption: 'stdout: "pipe"', streamProp: 'stdout', converter: 'readableStreamToJSON', output: 'object'},
-	{spawnOption: 'stderr: "pipe"', streamProp: 'stderr', converter: 'readableStreamToText', output: 'string'},
-	{spawnOption: 'stderr: "pipe"', streamProp: 'stderr', converter: 'readableStreamToText', output: 'string'},
+	{spawnOption: 'stdout: "pipe"', streamProp: 'stdout', converter: 'stream.bytes()', output: 'Uint8Array'},
+	{spawnOption: 'stdout: "pipe"', streamProp: 'stdout', converter: 'stream.json()', output: 'object'},
+	{spawnOption: 'stderr: "pipe"', streamProp: 'stderr', converter: 'stream.text()', output: 'string'},
+	{spawnOption: 'stderr: "pipe"', streamProp: 'stderr', converter: 'stream.text()', output: 'string'},
 ];
 
 // ═══════════════════════════════════════════════════════════════

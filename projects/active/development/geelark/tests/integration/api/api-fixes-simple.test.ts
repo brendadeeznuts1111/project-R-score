@@ -1,15 +1,14 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options — Bun.secrets
 
 import { Glob } from "bun";
 import { describe, expect, test } from "bun:test";
 
 describe("🛠️ Bun APIs - All Fixes Verified", () => {
-  test("✅ Bun.secrets + AsyncLocalStorage safe", async () => {
-    // Test that Bun.secrets works without crashing
-    expect(() => {
-      const secret = Bun.secrets.SECRET_KEY;
-      expect(typeof secret === "string" || secret === undefined).toBe(true);
-    }).not.toThrow();
+  test("✅ Bun.secrets + AsyncLocalStorage safe", () => {
+    expect(typeof Bun.secrets.get).toBe("function");
+    expect(typeof Bun.secrets.set).toBe("function");
+    expect(typeof Bun.secrets.delete).toBe("function");
   });
 
   test("✅ Bun.mmap validation", async () => {
@@ -31,18 +30,17 @@ describe("🛠️ Bun APIs - All Fixes Verified", () => {
   });
 
   test("✅ Bun.plugin validation", () => {
-    try {
-      const plugin = Bun.plugin({
-        name: "test",
-        setup(build: any) {
-          build.onLoad({ filter: /.*/ }, () => ({}));
-        },
-      });
-      expect(plugin).toBeDefined();
-    } catch (e: any) {
-      // Plugin might fail in test environment, but shouldn't crash
-      expect(typeof e.message).toBe("string");
-    }
+    const result = Bun.plugin({
+      name: "test",
+      setup(build: any) {
+        build.onLoad({ filter: /\.api-fixes-simple-fixture$/ }, () => ({
+          contents: "export const test = true;",
+          loader: "js",
+        }));
+      },
+    });
+    expect(result).toBeUndefined();
+    Bun.plugin.clearAll();
   });
 
   test("✅ Glob.scan() hidden files", () => {

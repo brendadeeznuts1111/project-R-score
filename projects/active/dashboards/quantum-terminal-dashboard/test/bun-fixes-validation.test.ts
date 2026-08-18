@@ -1,3 +1,13 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/utils#bun-deflatesync — Bun.deflateSync
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/utils#bun-gunzipsync — Bun.gunzipSync
+// @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
+// @see https://bun.com/docs/runtime/utils#bun-inflatesync — Bun.inflateSync
+// @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — Bun.s3
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // test/bun-fixes-validation.test.ts
 // Validates Bun fixes from January 2026 release
 

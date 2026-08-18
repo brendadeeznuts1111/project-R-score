@@ -10,7 +10,7 @@
  * **Last Updated**: 2026-01-08
  * **Version**: 1.0.0
  *
- * @see https://bun.com/docs/runtime/http/websockets#server-side-websockets — Server.upgrade
+ * @see https://bun.com/docs/runtime/http/websockets#start-a-websocket-server — Server.upgrade
  */
 
 import { Server, WebSocket } from "bun";

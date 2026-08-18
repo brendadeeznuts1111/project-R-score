@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // test/spawn-perf-gate.test.ts
 // Performance gate tests for Bun.spawnSync
 // Ensures spawn performance stays within acceptable thresholds

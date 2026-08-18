@@ -4,10 +4,10 @@ Complete guide to module resolution in Bun, including error handling, best pract
 
 ## Official Documentation
 
-- **[Bun.resolve API](https://bun.com/docs/api/utils#bun-resolve)** - Asynchronous module resolution
-- **[Bun.resolveSync API](https://bun.com/docs/api/utils#bun-resolvesync)** - Synchronous module resolution
-- **[import.meta.resolve](https://bun.com/docs/runtime/bun-apis#importmetaresolve)** - ESM module resolution
-- **[ResolveMessage](https://bun.com/docs/api/utils#resolvemessage)** - Error class documentation
+- **[Bun.resolve API](https://bun.com/reference/bun/resolve)** - Asynchronous module resolution
+- **[Bun.resolveSync API](https://bun.com/docs/runtime/utils#bun-resolvesync)** - Synchronous module resolution
+- **[import.meta.resolve](https://bun.com/docs/runtime/module-resolution#import-meta)** - ESM module resolution
+- **[Resolve errors](https://bun.com/reference/bun/resolve)** - Resolution failure behavior
 - **[Bun Utilities API](https://bun.com/docs/api/utils)** - Complete utilities reference
 
 ## Table of Contents
@@ -34,7 +34,7 @@ All three APIs can throw `ResolveMessage` errors when resolution fails.
 
 ### Bun.resolve
 
-**📚 [Official Documentation](https://bun.com/docs/api/utils#bun-resolve)**
+**📚 [Official Documentation](https://bun.com/reference/bun/resolve)**
 
 ```typescript
 const path = await Bun.resolve(specifier: string, from?: string): Promise<string>
@@ -62,7 +62,7 @@ const utilsPath = await Bun.resolve('./utils', import.meta.dir);
 
 ### Bun.resolveSync
 
-**📚 [Official Documentation](https://bun.com/docs/api/utils#bun-resolvesync)**
+**📚 [Official Documentation](https://bun.com/docs/runtime/utils#bun-resolvesync)**
 
 ```typescript
 const path = Bun.resolveSync(specifier: string, from?: string): string
@@ -84,7 +84,7 @@ console.log(path); // "/project/node_modules/uuid/dist/index.js"
 
 ### import.meta.resolve
 
-**📚 [Official Documentation](https://bun.com/docs/runtime/bun-apis#importmetaresolve)**
+**📚 [Official Documentation](https://bun.com/docs/runtime/module-resolution#import-meta)**
 
 ```typescript
 const path = await import.meta.resolve(specifier: string, parent?: string): Promise<string>
@@ -432,8 +432,8 @@ async function resolveMultiple(specifiers: string[]): Promise<Map<string, string
 
 - **[Error Handling Recipes](./error-handling-recipes.ts)** - Reusable error handling patterns
 - **[Bun API Catalog](../../cli/renderers/bun-api-matrix.ts)** - Complete API reference
-- **[Bun.resolve Documentation](https://bun.com/docs/api/utils#bun-resolve)** - Official API documentation
-- **[Bun.resolveSync Documentation](https://bun.com/docs/api/utils#bun-resolvesync)** - Synchronous resolution docs
-- **[import.meta.resolve Documentation](https://bun.com/docs/runtime/bun-apis#importmetaresolve)** - ESM resolution docs
+- **[Bun.resolve Documentation](https://bun.com/reference/bun/resolve)** - Official API documentation
+- **[Bun.resolveSync Documentation](https://bun.com/docs/runtime/utils#bun-resolvesync)** - Synchronous resolution docs
+- **[import.meta.resolve Documentation](https://bun.com/docs/runtime/module-resolution#import-meta)** - ESM resolution docs
 - **[Bun Utilities API](https://bun.com/docs/api/utils)** - Complete utilities reference
 - **[Bun Runtime APIs](https://bun.com/docs/runtime/bun-apis)** - Runtime API documentation

@@ -8,7 +8,7 @@
  *   - Bun.color: https://bun.com/docs/api/utils#bun-color
  *   - Bun.enableANSIColors: https://bun.com/docs/api/utils#bun-enableansicolors
  *   - Bun.stringWidth: https://bun.com/docs/api/utils#bun-stringwidth
- *   - Bun.inspect.table: https://bun.com/docs/api/utils#bun-inspect-table
+ *   - Bun.inspect.table: https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
  */
 
 // ── Constants ───────────────────────────────────────────────────────

@@ -1,11 +1,11 @@
 /**
  * Tier-1380 OMEGA: Secrets Security Audit
  *
- * Comprehensive security verification for Bun secrets (v1.3.7)
+ * Comprehensive security verification for Bun secrets (v1.3.0+)
  *
  * @module verify-secrets
  * @tier 1380-OMEGA
- * @see https://bun.sh/docs/runtime/secrets
+ * @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options
  */
 
 import { mkdir } from "node:fs/promises";

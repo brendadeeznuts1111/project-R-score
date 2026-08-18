@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 // Bun server demonstrating hot route reloading
 let routes = {
   "/api/version": () => Response.json({ version: "1.0.0", status: "initial" }),

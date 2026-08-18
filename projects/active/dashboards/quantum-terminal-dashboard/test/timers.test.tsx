@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
 import { describe, it, expect } from 'bun:test';
 
 /**
