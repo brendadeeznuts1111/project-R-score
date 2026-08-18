@@ -17,6 +17,7 @@ import {
   collectCodeApiUsageDetails,
   collectCodeApiUsages,
   buildApiReleaseProvenance,
+  findSyntaxErrors,
   findMissing,
   sourceFiles,
 } from '../tools/bun-doc-refs.ts';
@@ -31,9 +32,7 @@ async function temporaryDirectory(): Promise<string> {
 
 afterEach(async () => {
   await Promise.all(
-    temporaryDirectories.splice(0).map(directory =>
-      rm(directory, { recursive: true, force: true })
-    )
+    temporaryDirectories.splice(0).map(directory => rm(directory, { recursive: true, force: true }))
   );
 });
 
@@ -82,6 +81,15 @@ void uuid; void stringWidth; void shell; void NativeGlob;
     expect(usages).toEqual(new Set(['Bun.inspect.table']));
   });
 
+  test('grounds YAML serialization at its official function reference', () => {
+    expect(
+      collectCodeApiUsages('Bun.YAML.stringify({ ok: true }, null, 2);', 'fixture.ts')
+    ).toEqual(new Set(['Bun.YAML.stringify']));
+    expect(CANONICAL_REFS['Bun.YAML.stringify']).toBe(
+      'https://bun.com/reference/bun/YAML/stringify'
+    );
+  });
+
   test('uses the exact Bun.Image operation instead of the page-level constructor', async () => {
     const usages = collectCodeApiUsages(
       'await new Bun.Image(bytes).resize(32, 32).webp().bytes();',
@@ -126,12 +134,7 @@ class Holder {
     );
 
     expect(usages).toEqual(
-      new Set([
-        'Bun.Image',
-        'Bun.Image.toBuffer',
-        'Bun.Image.width',
-        'Bun.Image.height',
-      ])
+      new Set(['Bun.Image', 'Bun.Image.toBuffer', 'Bun.Image.width', 'Bun.Image.height'])
     );
   });
 
@@ -339,13 +342,30 @@ void RuntimeGlob; void sqlite;
     await expect(findMissing([file])).rejects.toThrow(`syntax error in ${file}:1:`);
   });
 
+  test('aggregates syntax failures across the requested source tree', async () => {
+    const directory = await temporaryDirectory();
+    await Bun.write(join(directory, 'valid.ts'), 'Bun.file("package.json");\n');
+    await Bun.write(join(directory, 'broken-a.ts'), 'Bun.file("a";\n');
+    await Bun.write(join(directory, 'broken-b.tsx'), 'export const View = () => <div>;\n');
+
+    const findings = await findSyntaxErrors([directory]);
+
+    expect(findings).toHaveLength(2);
+    expect(findings.map(finding => finding.file)).toEqual([
+      join(directory, 'broken-a.ts'),
+      join(directory, 'broken-b.tsx'),
+    ]);
+    expect(findings.every(finding => finding.line === 1 && finding.column > 0)).toBe(true);
+  });
+
   test('CLI exits nonzero with a bounded error for a missing explicit target', async () => {
     const directory = await temporaryDirectory();
     const missing = join(directory, 'missing.ts');
-    const proc = Bun.spawn(
-      [process.execPath, 'tools/bun-doc-refs.ts', 'check', missing],
-      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
-    );
+    const proc = Bun.spawn([process.execPath, 'tools/bun-doc-refs.ts', 'check', missing], {
+      cwd: import.meta.dir + '/..',
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
     const [stdout, stderr, exitCode] = await Promise.all([
       new Response(proc.stdout).text(),
       new Response(proc.stderr).text(),
@@ -361,10 +381,11 @@ void RuntimeGlob; void sqlite;
     const directory = await temporaryDirectory();
     const file = join(directory, 'missing-ref.ts');
     await Bun.write(file, 'Bun.file("a");\nBun.file("b");\n');
-    const proc = Bun.spawn(
-      [process.execPath, 'tools/bun-doc-refs.ts', 'check', '--json', file],
-      { cwd: import.meta.dir + '/..', stdout: 'pipe', stderr: 'pipe' }
-    );
+    const proc = Bun.spawn([process.execPath, 'tools/bun-doc-refs.ts', 'check', '--json', file], {
+      cwd: import.meta.dir + '/..',
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
     const [stdout, stderr, exitCode] = await Promise.all([
       new Response(proc.stdout).text(),
       new Response(proc.stderr).text(),

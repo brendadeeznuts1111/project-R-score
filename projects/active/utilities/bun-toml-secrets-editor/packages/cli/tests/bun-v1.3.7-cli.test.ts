@@ -484,3 +484,4 @@ describe('Performance Features Tests', () => {
         });
     });
 });
+});

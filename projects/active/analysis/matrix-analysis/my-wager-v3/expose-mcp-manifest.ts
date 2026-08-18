@@ -89,8 +89,8 @@ function filterByResource(manifest: any, resource?: string): any {
 function formatOutput(data: any, format: 'json' | 'yaml' = 'json'): string {
   if (format === 'yaml') {
     // Simple YAML conversion
-    const yaml = import { YAML } from "bun";
-    return Bun.YAML.stringify(data, { indent: 2 });
+    // @see https://bun.com/reference/bun/YAML/stringify — Bun.YAML.stringify
+    return Bun.YAML.stringify(data, null, 2);
   }
   
   return JSON.stringify(data, null, 2);

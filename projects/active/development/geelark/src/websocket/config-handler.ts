@@ -9,6 +9,8 @@
  *
  * **Last Updated**: 2026-01-08
  * **Version**: 1.0.0
+ *
+ * @see https://bun.com/docs/runtime/http/websockets#server-side-websockets — Server.upgrade
  */
 
 import { Server, WebSocket } from "bun";
@@ -143,6 +145,9 @@ function handleWebSocketUpgrade(req: Request, server: Server): Response | undefi
 
   // Upgrade connection
   const success = server.upgrade(req, {
+    headers: {
+      "Sec-WebSocket-Protocol": SUBPROTOCOL,
+    },
     data: {
       id: crypto.randomUUID(),
       config,

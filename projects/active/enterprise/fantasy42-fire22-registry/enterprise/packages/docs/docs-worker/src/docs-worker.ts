@@ -481,8 +481,6 @@ class DocsCDN {
       }
     });
   }
-}
-
   /**
    * Serve Pages integration endpoint
    */
@@ -543,7 +541,9 @@ class DocsCDN {
   private async checkPagesHealth(pagesUrl: string): Promise<{status: string, responseTime: number}> {
     try {
       const startTime = Date.now();
-      const response = await fetch(`${pagesUrl}/api/health`, { timeout: 5000 });
+      const response = await fetch(`${pagesUrl}/api/health`, {
+        signal: AbortSignal.timeout(5000)
+      });
       const responseTime = Date.now() - startTime;
 
       return {

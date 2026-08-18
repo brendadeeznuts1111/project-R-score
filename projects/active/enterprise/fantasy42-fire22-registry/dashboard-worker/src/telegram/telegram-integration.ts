@@ -350,7 +350,8 @@ export class Fire22TelegramIntegration {
 
   private logStartupSummary(): void {
     const configSummary = this.environment.getConfigSummary();
-    
+
+    console.info(`
 // Fire22 Telegram Integration Started Successfully!
 ════════════════════════════════════════════════════
 
@@ -386,7 +387,8 @@ Department Workflows: ${this.workflowOrchestrator.getDepartmentWorkflows().join(
 
   private logShutdownSummary(): void {
     const uptime = this.startTime ? Date.now() - this.startTime.getTime() : 0;
-    
+
+    console.info(`
 🛑 Fire22 Telegram Integration Shutdown Summary
 ══════════════════════════════════════════════
 

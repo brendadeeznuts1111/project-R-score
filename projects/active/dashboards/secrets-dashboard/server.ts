@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 
 import {readFile, writeFile, mkdir, readdir} from 'node:fs/promises';
 import {existsSync, watch} from 'node:fs';
@@ -624,7 +625,7 @@ async function listProjects(): Promise<{folder: string; name: string | null; pat
 }
 
 function generateRequestId(): string {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  return Bun.randomUUIDv7();
 }
 
 function logResponse(response: Response, startTime: number, requestId: string): void {
@@ -648,7 +649,6 @@ const server = Bun.serve({
       ip: req.headers.get('x-forwarded-for') || 'unknown'
     }, requestId);
 
-    try {
     if (url.pathname === '/' || url.pathname === '/index.html') {
       const response = serveStatic(req, join(PUBLIC_DIR, 'index.html'));
       logResponse(response, startTime, requestId);
@@ -914,7 +914,6 @@ const server = Bun.serve({
         return response;
       }
     }
-
     const response = new Response('Not found', {status: 404});
     logResponse(response, startTime, requestId);
     return response;

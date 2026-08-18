@@ -19,10 +19,8 @@ class MockD1Database {
     return this.db.prepare(query);
   }
 
-  YAML.stringify() {
-    // This is a placeholder. In a real D1, this would dump the database.
-    // For better-sqlite3, you might return a serialized version or just acknowledge.
-    return [];
+  async dump(): Promise<ArrayBuffer> {
+    return new ArrayBuffer(0);
   }
 
   batch(statements: any[]) {

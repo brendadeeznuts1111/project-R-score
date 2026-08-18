@@ -769,7 +769,7 @@ class IntegratedDashboard {
     
     const server = Bun.serve({
       port: this.config.port,
-      fetch(req) {
+      fetch: (req) => {
         const url = new URL(req.url);
         
         if (url.pathname === "/") {
@@ -798,7 +798,7 @@ class IntegratedDashboard {
         }
         
         return new Response("Not Found", { status: 404 });
-      }.bind(this)
+      }
     });
 
     console.info("🚀 Integrated Dashboard started successfully!");

@@ -2131,6 +2131,7 @@
     "cli:flags:check": "bun scripts/check-cli-flag-allowlists.ts",
     "registry:projects": "bun run scripts/generate-project-registry.ts",
     "projects:roots:check": "bun tools/projects-root-check.ts",
+    "projects:syntax:check": "bun tools/bun-doc-refs.ts syntax projects/active",
     "lib:domains:check": "bun tools/lib-domains-check.ts",
     "lib:area-maps:check": "bun tools/lib-area-map-check.ts",
     "lib:area-maps:check:orphans": "bun tools/lib-area-map-check.ts --orphans",

@@ -3,6 +3,8 @@ import { QuantumResistantSecureDataRepository } from "../security/quantum-resist
 import { SecureCookieManager } from "../security/secure-cookie-manager";
 import { ThreatIntelligenceService } from "../security/threat-intelligence-service";
 
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
+
 /**
  * Advanced Sports Wagering URL Patterns Implementation
  * Licensed operators only - integrates responsible gambling, regional compliance, and quantum-resistant security
@@ -16,7 +18,11 @@ export interface WagerRequest {
   method: string;
   url: string;
   headers: Record<string, string>;
-  body?: unknown;
+  body?: {
+    stake?: string | number;
+    odds?: string | number;
+    legs?: unknown[];
+  };
 }
 
 export interface WagerResponse {
@@ -367,18 +373,30 @@ export class WageringSecurityManager {
       // 2. Decision Point: Threat Intelligence
       const threatScore = await this.threatIntel.analyzeRequest(req);
       if (threatScore > 0.7) {
-        return new Response('Suspicious activity', { status: 403 });
+        auditTrail.push({
+          step: "threat_intelligence",
+          result: "failed",
+          reason: "suspicious_activity",
+        });
+        return { allowed: false, reason: "Suspicious activity", auditTrail };
       }
 
       // 3. Decision Point: RG Check (mandatory)
-      const rgStatus = await this.automatedGovernanceEngine.evaluate(
-        'responsibleGambling.wager',
-        { userId: session.userId, amount: betData.stake || 0 }
+      const rgStatus = await this.governanceEngine.evaluateResponsibleGambling(
+        session.userId,
+        "bet",
+        betData.stake ?? 0
       );
       if (!rgStatus.allowed) {
-        await this.secureRepo.createInterventionLog(session.userId, 'wager_blocked');
-        return new Response('Responsible gambling limit reached', { status: 423 });
-          reason: "Responsible gambling limit reached",
+        await this.secureRepo.createInterventionLog(session.userId, "wager_blocked");
+        auditTrail.push({
+          step: "responsible_gambling",
+          result: "failed",
+          reason: rgStatus.reason,
+        });
+        return {
+          allowed: false,
+          reason: rgStatus.reason ?? "Responsible gambling limit reached",
           auditTrail,
         };
       }
@@ -408,7 +426,10 @@ export class WageringSecurityManager {
 
       return { allowed: true, auditTrail };
     } catch (error) {
-      auditTrail.push({ step: "error", error: error.message });
+      auditTrail.push({
+        step: "error",
+        error: error instanceof Error ? error.message : String(error),
+      });
       return { allowed: false, reason: "Internal error", auditTrail };
     }
   }
@@ -564,6 +585,9 @@ export class AdvancedWageringAPI {
         return this.handleRegulatoryReport(req, match);
 
       default:
+        return this.createResponse(404, { error: "Wagering route not found" });
+    }
+  }
 
   // Placeholder implementations for each pattern handler
   private async handleMicroMarketBet(_req: WagerRequest, match: any): Promise<WagerResponse> {
@@ -591,8 +615,8 @@ export class AdvancedWageringAPI {
       eventId,
       marketType: `micro-${prop}`,
       outcome,
-      stake: parseFloat(req.body?.stake || "0"),
-      odds: parseFloat(req.body?.odds || "1.0"),
+      stake: Number(_req.body?.stake ?? 0),
+      odds: Number(_req.body?.odds ?? 1),
       timestamp: Date.now(),
       userHash: match.pathname.groups.userHash || "unknown",
     };
@@ -735,7 +759,7 @@ export class AdvancedWageringAPI {
   }
 
   private generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    return Bun.randomUUIDv7();
   }
 
   private recordPerformanceMetric(pattern: string, duration: number): void {

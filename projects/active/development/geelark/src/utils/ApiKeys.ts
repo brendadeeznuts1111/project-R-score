@@ -417,7 +417,8 @@ export class Secrets {
    */
   static async get(options: SecretsOptions): Promise<string | null> {
     // Bun.secrets.get exists at runtime but may be missing from types
-    return (Bun as any).secrets?.get?.(options) ?? null;
+    // @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options — Bun.secrets
+    return Bun.secrets.get(options);
   }
 
   /**
@@ -435,7 +436,7 @@ export class Secrets {
    * @param options - Service, name, and value for the credential
    */
   static async set(options: SecretsOptions & { value: string }): Promise<void> {
-    await (Bun as any).secrets?.set?.(options);
+    await Bun.secrets.set(options);
   }
 
   /**
@@ -447,7 +448,7 @@ export class Secrets {
   static async setSimple(service: string, name: string, value: string): Promise<void> {
     // Bun supports both forms: object with value, or (service, name, value) params
     try {
-      await (Bun as any).secrets?.set?.(service, name, value);
+      await Bun.secrets.set({ service, name }, value);
     } catch {
       // Fallback to object form
       await this.set({ service, name, value });
@@ -460,7 +461,7 @@ export class Secrets {
    * @returns true if deleted, false if not found
    */
   static async delete(options: SecretsOptions): Promise<boolean> {
-    return await (Bun as any).secrets?.delete?.(options) ?? false;
+    return Bun.secrets.delete(options);
   }
 
   /**
@@ -552,7 +553,7 @@ export class Secrets {
    * @returns true if secrets API is available
    */
   static isAvailable(): boolean {
-    return typeof (Bun as any).secrets === 'object';
+    return typeof Bun.secrets === 'object';
   }
 }
 
@@ -605,7 +606,7 @@ export class Credentials {
    * @param defaultValue - Optional fallback value
    * @returns The credential value or default
    */
-  static async YAML.parse(
+  static async load(
     options: SecretsOptions,
     envVar: string,
     defaultValue?: string
@@ -633,7 +634,7 @@ export class Credentials {
     options: SecretsOptions,
     envVar: string
   ): Promise<string> {
-    const value = await this.YAML.parse(options, envVar);
+    const value = await this.load(options, envVar);
 
     if (!value) {
       throw new Error(
@@ -657,7 +658,7 @@ export class Credentials {
 
     for (const config of configs) {
       try {
-        const value = await this.YAML.parse(config.options, config.envVar);
+        const value = await this.load(config.options, config.envVar);
         if (value) {
           result[config.options.name] = value;
         }

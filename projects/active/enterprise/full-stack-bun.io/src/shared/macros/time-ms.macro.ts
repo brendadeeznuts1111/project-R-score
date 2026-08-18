@@ -2,6 +2,8 @@
  * TIME.MS.MACRO - Bun.ms() compile-time duration macros
  * Zero-runtime cost duration parsing with inlined literal milliseconds
  * BUN_MS_LITERAL - Compile-time duration conversion
+ *
+ * @see https://bun.com/docs/bundler/macros — macro imports
  */
 
 // Unit multipliers in milliseconds
@@ -22,7 +24,7 @@ const UNITS = {
  * @param duration - Duration string with units (y/M/w/d/h/m/s/ms)
  * @returns Inlined millisecond value
  */
-export macro function ms(duration: string): number {
+export function ms(duration: string): number {
   // Parse the duration string at compile time
   const result = parseDuration(duration);
 
@@ -40,53 +42,23 @@ function parseDuration(duration: string): number {
     throw new Error('Invalid duration string');
   }
 
+  if (/^\d+(?:\.\d+)?$/.test(duration)) return Math.round(Number(duration));
+
   let totalMs = 0;
-  let currentNumber = '';
-  let currentUnit = '';
-
-  for (let i = 0; i < duration.length; i++) {
-    const char = duration[i];
-
-    if (char >= '0' && char <= '9' || char === '.') {
-      // Accumulate number
-      if (currentUnit) {
-        throw new Error(`Unexpected number after unit in "${duration}"`);
-      }
-      currentNumber += char;
-    } else {
-      // Found a unit character
-      if (!currentNumber) {
-        throw new Error(`Missing number before unit "${char}" in "${duration}"`);
-      }
-
-      currentUnit = char;
-      const value = parseFloat(currentNumber);
-
-      if (!(currentUnit in UNITS)) {
-        throw new Error(`Unknown unit "${currentUnit}" in "${duration}". Supported: y/M/w/d/h/m/s/ms`);
-      }
-
-      totalMs += value * UNITS[currentUnit as keyof typeof UNITS];
-
-      // Reset for next number-unit pair
-      currentNumber = '';
-      currentUnit = '';
-    }
+  let offset = 0;
+  const parts = /(\d+(?:\.\d+)?)(ms|[yMwdhms])/gy;
+  for (const match of duration.matchAll(parts)) {
+    const index = match.index ?? -1;
+    if (index !== offset) throw new Error(`Invalid duration string: "${duration}"`);
+    const unit = match[2] as keyof typeof UNITS;
+    totalMs += Number(match[1]) * UNITS[unit];
+    offset = index + match[0].length;
   }
 
-  // Handle case where string ends with a number (assume milliseconds)
-  if (currentNumber) {
-    if (currentUnit) {
-      throw new Error(`Incomplete unit specification in "${duration}"`);
-    }
-    totalMs += parseFloat(currentNumber); // bare number = milliseconds
-  }
+  if (offset !== duration.length) throw new Error(`Invalid duration string: "${duration}"`);
 
   return Math.round(totalMs);
 }
-
-// Export the macro function
-export { ms };
 
 // Example usage:
 // const TTL = ms('1.23y');     // → 38815848000 (compile-time)

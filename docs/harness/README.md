@@ -206,6 +206,7 @@ bun run ci:harness:fast         # before push (quiet)
 bun run proof:install           # install only (also pre-push --quiet)
 bun run check:path-bun && bun run check:bun-env
 bun run projects:roots:check    # product structure + tier-aware Bun contract (also ∥ cheap / pre-commit on projects/)
+bun run projects:syntax:check   # every active JS/TS source parses; provenance debt is ratcheted separately
 bun run lib:domains:check       # lib/*/ README indexes (also ∥ cheap / pre-commit on lib/)
 bun run build:defines           # AST --define BUILD_* + DEBUG=false (prod DCE); runtime config stays Bun.env
 #   bun run build:defines:dev       # DEBUG=true

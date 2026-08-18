@@ -81,6 +81,12 @@ const CHEAP: Step[] = [
     repair: 'bun run projects:roots:check',
   },
   {
+    name: 'projects-syntax',
+    cmd: ['bun', 'run', 'projects:syntax:check'],
+    owner: 'tools/bun-doc-refs.ts · projects/active',
+    repair: 'bun run projects:syntax:check',
+  },
+  {
     name: 'lib-domains',
     cmd: ['bun', 'run', 'lib:domains:check'],
     owner: 'tools/lib-domains-check.ts · lib/README.md',

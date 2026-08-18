@@ -34,6 +34,7 @@
  *   bun tools/bun-doc-refs.ts index-audit                   # rebuild tools/audit-catalog.json
  *   bun tools/bun-doc-refs.ts check [paths...]   # find Bun API usages lacking a @see link
  *   bun tools/bun-doc-refs.ts check --json [paths...] # machine-readable findings with locations
+ *   bun tools/bun-doc-refs.ts syntax [paths...]  # syntax-check every supported source file
  *   bun tools/bun-doc-refs.ts validate [paths..] # HTTP-check all bun.com/github doc links
  *   bun tools/bun-doc-refs.ts integrity          # full stack gate (taxonomy·index·map·links)
  *   bun tools/bun-doc-refs.ts integrity --fix  # auto-heal taxonomy aliases, then re-check
@@ -1033,6 +1034,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'react-18-and-older': 'https://bun.com/docs/runtime/markdown#react-18-and-older',
   reactVersion: 'https://bun.com/docs/runtime/markdown#react-18-and-older',
   'Bun.YAML': 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
+  'Bun.YAML.stringify': 'https://bun.com/reference/bun/YAML/stringify',
   YAML: 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
   'Bun.hash': 'https://bun.com/docs/runtime/hashing#bun-hash',
   'Bun.hash.crc32': 'https://bun.com/docs/runtime/hashing#bun-hash',
@@ -1815,6 +1817,19 @@ export type MissingRef = CodeApiUsage & {
   provenance: ApiReleaseProvenance;
 };
 
+export type SourceSyntaxFinding = {
+  file: string;
+  line: number;
+  column: number;
+  message: string;
+};
+
+class SourceSyntaxError extends Error {
+  constructor(readonly finding: SourceSyntaxFinding) {
+    super(`syntax error in ${finding.file}:${finding.line}:${finding.column}: ${finding.message}`);
+  }
+}
+
 export type ApiHistoryEvent = {
   type: 'released' | 'fixed' | 'changed' | 'stabilized';
   version: string;
@@ -2002,11 +2017,29 @@ function createSyntaxContext(
     const start = diagnostic.start ?? 0;
     const location = source.getLineAndCharacterOfPosition(start);
     const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
-    throw new Error(
-      `syntax error in ${file}:${location.line + 1}:${location.character + 1}: ${message}`
-    );
+    throw new SourceSyntaxError({
+      file,
+      line: location.line + 1,
+      column: location.character + 1,
+      message,
+    });
   }
   return { source, checker: program.getTypeChecker() };
+}
+
+/** Return every syntax error across the requested source set instead of failing on the first file. */
+export async function findSyntaxErrors(paths: string[]): Promise<SourceSyntaxFinding[]> {
+  const findings: SourceSyntaxFinding[] = [];
+  for (const file of await sourceFiles(paths)) {
+    const text = await Bun.file(file).text();
+    try {
+      createSyntaxContext(text, file);
+    } catch (error) {
+      if (!(error instanceof SourceSyntaxError)) throw error;
+      findings.push(error.finding);
+    }
+  }
+  return findings;
 }
 
 function addBindingImports(name: ts.BindingName, add: (api: string, node: ts.Node) => void): void {
@@ -2520,6 +2553,26 @@ async function check(paths: string[], json = false): Promise<number> {
   }
   if (missing.length === 0) console.info('✅ all Bun API usages have canonical doc refs');
   return missing.length;
+}
+
+/** Syntax-only contract for trees whose documentation provenance is still being ratcheted. */
+async function syntax(paths: string[], json = false): Promise<number> {
+  const findings = await findSyntaxErrors(paths);
+  if (json) {
+    jsonOut({
+      schemaVersion: CHECK_JSON_SCHEMA_VERSION,
+      command: 'syntax',
+      ok: findings.length === 0,
+      count: findings.length,
+      findings,
+    });
+    return findings.length;
+  }
+  for (const finding of findings) {
+    console.error(`  ${finding.file}:${finding.line}:${finding.column}: ${finding.message}`);
+  }
+  if (findings.length === 0) console.info('✅ all requested source files are syntactically valid');
+  return findings.length;
 }
 
 /**
@@ -4494,6 +4547,12 @@ async function mainCli(): Promise<void> {
       process.exit((await check(targets.length ? targets : defaultPaths, json)) > 0 ? 1 : 0);
       break;
     }
+    case 'syntax': {
+      const json = rest.includes('--json');
+      const targets = rest.filter(argument => argument !== '--json');
+      process.exit((await syntax(targets.length ? targets : defaultPaths, json)) > 0 ? 1 : 0);
+      break;
+    }
     case 'history': {
       const json = rest.includes('--json');
       const query = rest.filter(argument => argument !== '--json').join(' ');
@@ -4518,8 +4577,9 @@ async function mainCli(): Promise<void> {
     default:
       console.error(
         `unknown command: ${cmd}\n` +
-          `commands: url|token|list|catalog|suggest|index-audit|locus|audit|deepcheck|integrity|status|schedule|export|annotate|check|history|provenance-check|validate|bundler\n` +
+          `commands: url|token|list|catalog|suggest|index-audit|locus|audit|deepcheck|integrity|status|schedule|export|annotate|check|syntax|history|provenance-check|validate|bundler\n` +
           `check flags: --json (machine-readable findings with line/column)\n` +
+          `syntax flags: --json (machine-readable aggregate syntax findings)\n` +
           `history <api> [--json] · provenance-check [--json] [--require-release]\n` +
           `suggest --audit [--json] <q>  ·  index-audit → bun tools/audit-catalog.ts build\n` +
           `catalog: --build · list --section=… --type=… · get <Name>  (also: bun run docs:catalog:export · docs:refresh)\n` +
@@ -4538,10 +4598,14 @@ if (import.meta.main) {
     await mainCli();
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    if (process.argv.includes('--json') && process.argv.includes('check')) {
+    if (
+      process.argv.includes('--json') &&
+      (process.argv.includes('check') || process.argv.includes('syntax'))
+    ) {
+      const command = process.argv.includes('syntax') ? 'syntax' : 'check';
       jsonOut({
         schemaVersion: CHECK_JSON_SCHEMA_VERSION,
-        command: 'check',
+        command,
         ok: false,
         error: { message },
       });

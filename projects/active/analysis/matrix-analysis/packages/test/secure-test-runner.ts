@@ -531,15 +531,10 @@ export class SecureTestRunner {
       `.env.${this.context}`,
       '.env.local',
       '.env'
-    ].filter(file => {
-      try {
-        return Bun.file(file).exists()
-      } catch {
-        return false
-      }
-    })
+    ]
 
     for (const file of envFiles) {
+      if (!(await Bun.file(file).exists())) continue
       try {
         const content = await Bun.file(file).text()
         const lines = content.split('\n')
@@ -549,11 +544,13 @@ export class SecureTestRunner {
           if (trimmed && !trimmed.startsWith('#')) {
             const [key, ...valueParts] = trimmed.split('=')
             const value = valueParts.join('=').trim()
-          const value = valueParts.join('=').trim()
 
-          // Override with precedence
-          env[key.trim()] = value
+            // Override with precedence
+            env[key.trim()] = value
+          }
         }
+      } catch {
+        continue
       }
     }
 
