@@ -38,5 +38,8 @@ export async function removeTempDir(dir: string): Promise<void> {
     stdout: 'ignore',
     stderr: 'ignore',
   });
-  await proc.exited;
+  const exitCode = await proc.exited;
+  if (exitCode !== 0) {
+    throw new Error(`removeTempDir: rm exited ${exitCode} for ${dir}`);
+  }
 }

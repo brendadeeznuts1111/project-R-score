@@ -12,11 +12,19 @@ Each project under `projects/` is classified into one of three tiers:
 
 Every **product leaf** MUST have:
 
-| File | Required |
-|------|----------|
-| `README.md` | Yes — name, purpose, how to run, link up to this file |
-| `package.json` | Yes — install / script root |
-| `bunfig.toml` | Preferred for Bun apps |
+| Contract | Active | Experimental | Archive |
+|----------|--------|--------------|---------|
+| `README.md` + valid `package.json` | Required | Required | Required |
+| `engines.bun` accepts the repository Bun version | Required | Advisory | Frozen |
+| Dependency-bearing independent leaf has `bun.lock` | Required | Advisory | Frozen |
+| Bun package manager and no foreign lockfile | Required | Advisory | Frozen |
+| `bunfig.toml` | Preferred | Preferred | Frozen |
+
+Root workspace members inherit the root `bun.lock`. Other dependency-bearing
+products own their lockfile. `projects:roots:check` derives workspace membership
+from root `package.json`; it does not hardcode package paths. Experimental
+findings stay visible without blocking CI. Archive code is read-only and is not
+silently modernized.
 
 **Product leaf** = one shippable unit under `active/` (category child or top-level) or a top-level folder under `experimental/` / `archive/`. Nested workspace packages stay nested; they are not separate products.
 
@@ -156,7 +164,8 @@ May exist under `~/Projects` but are gitignored or separate remotes — document
 ## Inventory tooling
 
 ```bash
-bun run projects:roots:check   # README + package.json contract
+bun run projects:roots:check   # structure + tier-aware Bun compatibility
+bun run projects:roots:check -- --json
 bun run packages:list --filter=active
 bun run registry:projects      # → public/registry/projects-registry.json
 ```

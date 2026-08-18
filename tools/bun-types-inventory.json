@@ -1,6 +1,6 @@
 {
   "schema": "factorywager/bun-types-inventory/v3",
-  "generated": "2026-08-11T00:21:18.930Z",
+  "generated": "2026-08-18T03:21:56.227Z",
   "runtime": {
     "bunVersion": "1.3.14",
     "bunRevision": "0d9b296af33f2b851fcbf4df3e9ec89751734ba4"
@@ -8,7 +8,7 @@
   "types": {
     "package": "bun-types",
     "version": "1.4.0-tip.23d233b2",
-    "root": "/Users/nolarose/Projects/.worktrees/bun-1.3.14-types-contracts/node_modules/bun-types",
+    "root": "/Users/nolarose/Projects/.worktrees/codex-legacy-bun-template-compliance/node_modules/bun-types",
     "files": [
       "bun.d.ts",
       "deprecated.d.ts",
@@ -79,8 +79,8 @@
       "3": 29
     },
     "agentsMapHits": 70,
-    "withCallSites": 180,
-    "zeroCallSites": 2229,
+    "withCallSites": 208,
+    "zeroCallSites": 2201,
     "maxDepth": 3
   },
   "tipDiff": null,
@@ -168,7 +168,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 10
+      "callSites": 7
     },
     {
       "kind": "type",
@@ -202,7 +202,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 39
+      "callSites": 31
     },
     {
       "kind": "type",
@@ -287,7 +287,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 450
+      "callSites": 453
     },
     {
       "kind": "class",
@@ -304,7 +304,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 13
+      "callSites": 8
     },
     {
       "kind": "type",
@@ -474,7 +474,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 98
+      "callSites": 90
     },
     {
       "kind": "namespace",
@@ -576,7 +576,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 2
+      "callSites": 9
     },
     {
       "kind": "interface",
@@ -780,7 +780,7 @@
       "deprecated": false,
       "overloads": 6,
       "agentsMap": true,
-      "callSites": 227
+      "callSites": 257
     },
     {
       "kind": "type",
@@ -797,7 +797,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 10
     },
     {
       "kind": "interface",
@@ -848,7 +848,7 @@
       "deprecated": false,
       "overloads": 3,
       "agentsMap": false,
-      "callSites": 14
+      "callSites": 10
     },
     {
       "kind": "function",
@@ -865,7 +865,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": false,
-      "callSites": 21
+      "callSites": 22
     },
     {
       "kind": "class",
@@ -882,7 +882,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 28
+      "callSites": 27
     },
     {
       "kind": "interface",
@@ -984,7 +984,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 184
+      "callSites": 173
     },
     {
       "kind": "interface",
@@ -1069,7 +1069,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 239
+      "callSites": 245
     },
     {
       "kind": "namespace",
@@ -1086,7 +1086,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 16
+      "callSites": 21
     },
     {
       "kind": "type",
@@ -1188,7 +1188,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 128
+      "callSites": 134
     },
     {
       "kind": "function",
@@ -1222,7 +1222,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 11
+      "callSites": 7
     },
     {
       "kind": "type",
@@ -1290,7 +1290,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 25
+      "callSites": 24
     },
     {
       "kind": "interface",
@@ -1409,7 +1409,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 762
+      "callSites": 855
     },
     {
       "kind": "function",
@@ -1426,7 +1426,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 762
+      "callSites": 855
     },
     {
       "kind": "interface",
@@ -1545,7 +1545,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 66
+      "callSites": 56
     },
     {
       "kind": "interface",
@@ -1783,7 +1783,7 @@
       "deprecated": false,
       "overloads": 3,
       "agentsMap": true,
-      "callSites": 2388
+      "callSites": 2636
     },
     {
       "kind": "interface",
@@ -1834,7 +1834,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 10
+      "callSites": 6
     },
     {
       "kind": "function",
@@ -1851,7 +1851,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 31
+      "callSites": 27
     },
     {
       "kind": "type",
@@ -1885,7 +1885,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 26
+      "callSites": 23
     },
     {
       "kind": "function",
@@ -1902,7 +1902,7 @@
       "deprecated": false,
       "overloads": 3,
       "agentsMap": false,
-      "callSites": 12
+      "callSites": 6
     },
     {
       "kind": "interface",
@@ -1936,7 +1936,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 332
+      "callSites": 349
     },
     {
       "kind": "interface",
@@ -1970,7 +1970,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 14
+      "callSites": 10
     },
     {
       "kind": "function",
@@ -1987,7 +1987,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 25
+      "callSites": 21
     },
     {
       "kind": "const",
@@ -2004,7 +2004,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 73
+      "callSites": 65
     },
     {
       "kind": "interface",
@@ -2072,7 +2072,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 198
+      "callSites": 268
     },
     {
       "kind": "namespace",
@@ -2089,7 +2089,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 198
+      "callSites": 268
     },
     {
       "kind": "interface",
@@ -2174,7 +2174,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 15
+      "callSites": 11
     },
     {
       "kind": "function",
@@ -2191,7 +2191,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 254
+      "callSites": 257
     },
     {
       "kind": "namespace",
@@ -2208,7 +2208,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 254
+      "callSites": 257
     },
     {
       "kind": "const",
@@ -2276,7 +2276,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 7
+      "callSites": 4
     },
     {
       "kind": "namespace",
@@ -2293,7 +2293,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 12
+      "callSites": 10
     },
     {
       "kind": "namespace",
@@ -2310,7 +2310,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 8
+      "callSites": 5
     },
     {
       "kind": "interface",
@@ -2344,7 +2344,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": false,
-      "callSites": 17
+      "callSites": 20
     },
     {
       "kind": "type",
@@ -2395,7 +2395,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 41
+      "callSites": 35
     },
     {
       "kind": "namespace",
@@ -2412,7 +2412,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 53
+      "callSites": 62
     },
     {
       "kind": "interface",
@@ -2565,7 +2565,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 70
+      "callSites": 65
     },
     {
       "kind": "interface",
@@ -2633,7 +2633,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 198
+      "callSites": 185
     },
     {
       "kind": "interface",
@@ -2939,7 +2939,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 44
+      "callSites": 42
     },
     {
       "kind": "namespace",
@@ -2990,7 +2990,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 34
+      "callSites": 33
     },
     {
       "kind": "function",
@@ -3007,7 +3007,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 67
+      "callSites": 70
     },
     {
       "kind": "namespace",
@@ -3024,7 +3024,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 67
+      "callSites": 70
     },
     {
       "kind": "type",
@@ -3075,7 +3075,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 9
+      "callSites": 3
     },
     {
       "kind": "interface",
@@ -3160,7 +3160,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": true,
-      "callSites": 337
+      "callSites": 348
     },
     {
       "kind": "type",
@@ -3262,7 +3262,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 6
+      "callSites": 2
     },
     {
       "kind": "function",
@@ -3296,7 +3296,7 @@
       "deprecated": true,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 4
+      "callSites": 0
     },
     {
       "kind": "function",
@@ -3313,7 +3313,7 @@
       "deprecated": true,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 17
+      "callSites": 11
     },
     {
       "kind": "function",
@@ -3330,7 +3330,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 4
+      "callSites": 0
     },
     {
       "kind": "function",
@@ -3347,7 +3347,7 @@
       "deprecated": true,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 4
+      "callSites": 0
     },
     {
       "kind": "function",
@@ -3364,7 +3364,7 @@
       "deprecated": true,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 12
+      "callSites": 10
     },
     {
       "kind": "type",
@@ -3432,7 +3432,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 17
+      "callSites": 11
     },
     {
       "kind": "namespace",
@@ -3449,7 +3449,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 17
+      "callSites": 11
     },
     {
       "kind": "interface",
@@ -3534,7 +3534,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 21
+      "callSites": 22
     },
     {
       "kind": "interface",
@@ -3568,7 +3568,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 102
+      "callSites": 115
     },
     {
       "kind": "var",
@@ -3585,7 +3585,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 11
+      "callSites": 13
     },
     {
       "kind": "class",
@@ -3772,7 +3772,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 49
+      "callSites": 47
     },
     {
       "kind": "function",
@@ -3789,7 +3789,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 297
+      "callSites": 403
     },
     {
       "kind": "namespace",
@@ -3840,7 +3840,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 15
+      "callSites": 16
     },
     {
       "kind": "interface",
@@ -4146,7 +4146,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 173
+      "callSites": 177
     },
     {
       "kind": "function",
@@ -4163,7 +4163,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 14
+      "callSites": 10
     },
     {
       "kind": "function",
@@ -4180,7 +4180,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 50
+      "callSites": 51
     },
     {
       "kind": "interface",
@@ -4299,7 +4299,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": true,
-      "callSites": 574
+      "callSites": 781
     },
     {
       "kind": "namespace",
@@ -4333,7 +4333,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": false,
-      "callSites": 232
+      "callSites": 259
     },
     {
       "kind": "const",
@@ -4350,7 +4350,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 5
+      "callSites": 6
     },
     {
       "kind": "class",
@@ -4367,7 +4367,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 25
+      "callSites": 20
     },
     {
       "kind": "interface",
@@ -4384,7 +4384,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 25
+      "callSites": 20
     },
     {
       "kind": "namespace",
@@ -4401,7 +4401,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 25
+      "callSites": 20
     },
     {
       "kind": "interface",
@@ -4503,7 +4503,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 3
+      "callSites": 0
     },
     {
       "kind": "const",
@@ -4520,7 +4520,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 26
+      "callSites": 18
     },
     {
       "kind": "const",
@@ -4537,7 +4537,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 12
+      "callSites": 8
     },
     {
       "kind": "type",
@@ -4588,7 +4588,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 152
+      "callSites": 157
     },
     {
       "kind": "interface",
@@ -4622,7 +4622,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 46
+      "callSites": 48
     },
     {
       "kind": "interface",
@@ -4809,7 +4809,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 52
+      "callSites": 61
     },
     {
       "kind": "interface",
@@ -4928,7 +4928,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 26
+      "callSites": 27
     },
     {
       "kind": "interface",
@@ -5030,7 +5030,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 41
+      "callSites": 38
     },
     {
       "kind": "interface",
@@ -5098,7 +5098,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": false,
-      "callSites": 21
+      "callSites": 24
     },
     {
       "kind": "type",
@@ -5370,7 +5370,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 323
+      "callSites": 345
     },
     {
       "kind": "const",
@@ -5625,7 +5625,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 99
+      "callSites": 94
     },
     {
       "kind": "namespace",
@@ -5642,7 +5642,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 99
+      "callSites": 94
     },
     {
       "kind": "function",
@@ -5761,7 +5761,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 32
+      "callSites": 28
     },
     {
       "kind": "interface",
@@ -5812,7 +5812,7 @@
       "deprecated": false,
       "overloads": 5,
       "agentsMap": true,
-      "callSites": 1021
+      "callSites": 1254
     },
     {
       "kind": "namespace",
@@ -5914,7 +5914,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 11
+      "callSites": 6
     },
     {
       "kind": "function",
@@ -5948,7 +5948,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 10
+      "callSites": 6
     },
     {
       "kind": "type",
@@ -9314,7 +9314,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 20
+      "callSites": 17
     },
     {
       "kind": "function",
@@ -9586,7 +9586,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 10
+      "callSites": 6
     },
     {
       "kind": "function",
@@ -9603,7 +9603,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 20
+      "callSites": 24
     },
     {
       "kind": "function",
@@ -9620,7 +9620,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 15
+      "callSites": 10
     },
     {
       "kind": "const",
@@ -10725,7 +10725,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 9
     },
     {
       "kind": "method",
@@ -10742,7 +10742,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 9
+      "callSites": 8
     },
     {
       "kind": "method",
@@ -11218,7 +11218,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 2
     },
     {
       "kind": "method",
@@ -11235,7 +11235,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 6
     },
     {
       "kind": "method",
@@ -11252,7 +11252,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 4
     },
     {
       "kind": "method",
@@ -11269,7 +11269,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 39
     },
     {
       "kind": "method",
@@ -11286,7 +11286,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 2
     },
     {
       "kind": "interface",
@@ -11303,7 +11303,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 6
     },
     {
       "kind": "method",
@@ -11320,7 +11320,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 4
     },
     {
       "kind": "type",
@@ -11337,7 +11337,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 10
     },
     {
       "kind": "type",
@@ -11354,7 +11354,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 2
     },
     {
       "kind": "method",
@@ -11371,7 +11371,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 2
     },
     {
       "kind": "method",
@@ -11388,7 +11388,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 2
     },
     {
       "kind": "type",
@@ -11405,7 +11405,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 28
     },
     {
       "kind": "method",
@@ -11422,7 +11422,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 2
     },
     {
       "kind": "method",
@@ -11439,7 +11439,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 2
     },
     {
       "kind": "method",
@@ -11456,7 +11456,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 2
     },
     {
       "kind": "property",
@@ -11473,7 +11473,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 5
     },
     {
       "kind": "method",
@@ -11490,7 +11490,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 10
     },
     {
       "kind": "method",
@@ -11507,7 +11507,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 10
+      "callSites": 31
     },
     {
       "kind": "interface",
@@ -11524,7 +11524,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 6
     },
     {
       "kind": "method",
@@ -11541,7 +11541,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 2
     },
     {
       "kind": "interface",
@@ -11558,7 +11558,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 2
     },
     {
       "kind": "method",
@@ -11575,7 +11575,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 8
     },
     {
       "kind": "method",
@@ -11592,7 +11592,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 27
     },
     {
       "kind": "method",
@@ -11609,7 +11609,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 41
     },
     {
       "kind": "interface",
@@ -11626,7 +11626,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 8
     },
     {
       "kind": "method",
@@ -11643,7 +11643,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 2
     },
     {
       "kind": "method",
@@ -11660,7 +11660,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 6
     },
     {
       "kind": "method",
@@ -11677,7 +11677,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 5
     },
     {
       "kind": "method",
@@ -11694,7 +11694,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 21
     },
     {
       "kind": "property",
@@ -11711,7 +11711,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 0
+      "callSites": 6
     },
     {
       "kind": "method",
@@ -11728,7 +11728,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 0
+      "callSites": 14
     },
     {
       "kind": "property",
@@ -11796,7 +11796,7 @@
       "deprecated": false,
       "overloads": 2,
       "agentsMap": true,
-      "callSites": 182
+      "callSites": 192
     },
     {
       "kind": "function",
@@ -11813,7 +11813,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 5
+      "callSites": 2
     },
     {
       "kind": "function",
@@ -11847,7 +11847,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 9
+      "callSites": 7
     },
     {
       "kind": "function",
@@ -11864,7 +11864,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 6
+      "callSites": 4
     },
     {
       "kind": "function",
@@ -11949,7 +11949,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 96
+      "callSites": 109
     },
     {
       "kind": "interface",
@@ -11966,7 +11966,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 16
+      "callSites": 22
     },
     {
       "kind": "interface",
@@ -12136,7 +12136,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 53
+      "callSites": 60
     },
     {
       "kind": "interface",
@@ -12221,7 +12221,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 11
+      "callSites": 16
     },
     {
       "kind": "interface",
@@ -12255,7 +12255,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 8
+      "callSites": 13
     },
     {
       "kind": "interface",
@@ -12272,7 +12272,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 35
+      "callSites": 56
     },
     {
       "kind": "interface",
@@ -12306,7 +12306,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 89
+      "callSites": 92
     },
     {
       "kind": "interface",
@@ -12340,7 +12340,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 113
+      "callSites": 122
     },
     {
       "kind": "interface",
@@ -12357,7 +12357,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 20
+      "callSites": 21
     },
     {
       "kind": "property",
@@ -17967,7 +17967,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 25
+      "callSites": 21
     },
     {
       "kind": "function",
@@ -22710,7 +22710,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": true,
-      "callSites": 96
+      "callSites": 104
     },
     {
       "kind": "function",
@@ -22727,7 +22727,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 20
+      "callSites": 14
     },
     {
       "kind": "method",
@@ -34593,7 +34593,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 359
+      "callSites": 355
     },
     {
       "kind": "interface",
@@ -36565,7 +36565,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 54
+      "callSites": 62
     },
     {
       "kind": "function",
@@ -36582,7 +36582,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 116
+      "callSites": 120
     },
     {
       "kind": "type",
@@ -36667,7 +36667,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 30
+      "callSites": 34
     },
     {
       "kind": "function",
@@ -36684,7 +36684,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 114
+      "callSites": 116
     },
     {
       "kind": "type",
@@ -36735,7 +36735,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 1318
+      "callSites": 1358
     },
     {
       "kind": "interface",
@@ -36803,7 +36803,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 1338
+      "callSites": 1380
     },
     {
       "kind": "interface",
@@ -36871,7 +36871,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 4
+      "callSites": 16
     },
     {
       "kind": "interface",
@@ -37075,7 +37075,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 8
+      "callSites": 10
     },
     {
       "kind": "type",
@@ -37177,7 +37177,7 @@
       "deprecated": false,
       "overloads": 1,
       "agentsMap": false,
-      "callSites": 1328
+      "callSites": 1367
     },
     {
       "kind": "interface",

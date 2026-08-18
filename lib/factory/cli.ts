@@ -41,7 +41,8 @@ import { parseArgs } from 'util';
 import { bunSpawnArgs } from '../bun-executable.ts';
 import { stripANSI } from 'bun';
 import { colorize, jsonOut, logTable, shouldColor } from '../console-depth';
-import { basenamePath, dirnamePath, resolvePath } from '../path-bun';
+import { basenamePath, dirnamePath, joinPath, resolvePath } from '../path-bun';
+import { makeTempDir, removeTempDir } from '../tmp-probe.ts';
 import { tomlStringify } from '../toml-stringify';
 import { buildRegistryHealthReport } from './health';
 import { runIntegrityCycle } from './monitoring';
@@ -79,7 +80,8 @@ Commands:
     --no-install                Skip dependency install
     --no-git                    Skip git init
     --open                      Start and open supported app scaffolds in a browser
-  templates                    List supported scaffold sources and local templates
+  templates                    List or verify supported scaffold sources and local templates
+    verify                      Create, install, check, and destroy factory-library
   env                          Check R2 credentials and bucket access
   colors [color]               Diagnose Bun.color formats, CSS syntax, and palettes
   publish <path> [options]     Publish an artifact
@@ -211,7 +213,10 @@ Examples:
 
 Build-time use needs no custom wrapper:
   import { color } from "bun" with { type: "macro" };`,
-  templates: `factory templates
+  templates: `factory templates [verify]
+
+Use verify to run the repository-owned factory-library through its real local
+template lifecycle: create, install, secret-free checks, and guarded destruction.
 
 Empty-project routes owned directly by Bun:
   bun init <folder>             Blank project with entry point and editor config
@@ -1035,8 +1040,54 @@ async function validateMaterializedHarnessScaffold(
   console.log('  Scaffold materialization: requirements, files, and manifest passed');
 }
 
-function cmdTemplates(): void {
-  console.log(SUBCOMMAND_HELP.templates);
+async function verifyFactoryLibraryLifecycle(): Promise<void> {
+  const workspace = await makeTempDir('factory-library-lifecycle');
+  const destination = joinPath(workspace, 'factory-library');
+  console.log(`\n  Template lifecycle workspace: ${workspace}`);
+  console.log('  Lifecycle: create → install → check → destroy\n');
+
+  try {
+    const create = Bun.spawn(
+      bunSpawnArgs([
+        `${import.meta.dir}/cli.ts`,
+        'create',
+        'factory-library',
+        destination,
+        '--no-git',
+      ]),
+      { stdout: 'inherit', stderr: 'inherit', stdin: 'inherit', env: { ...Bun.env } }
+    );
+    const createExit = await create.exited;
+    if (createExit !== 0) throw new Error(`factory-library create exited ${createExit}`);
+
+    const check = Bun.spawn(bunSpawnArgs(['run', 'check']), {
+      cwd: destination,
+      stdout: 'inherit',
+      stderr: 'inherit',
+      env: { ...Bun.env },
+    });
+    const checkExit = await check.exited;
+    if (checkExit !== 0) throw new Error(`generated factory-library check exited ${checkExit}`);
+    if (!(await Bun.file(joinPath(destination, 'bun.lock')).exists())) {
+      throw new Error('generated factory-library did not materialize bun.lock');
+    }
+    console.log(`\n  ✓ Template lifecycle verified with Bun ${Bun.version}`);
+  } finally {
+    await removeTempDir(workspace);
+    console.log(`  ✓ Template lifecycle destroyed: ${workspace}\n`);
+  }
+}
+
+async function cmdTemplates(args: string[]): Promise<void> {
+  if (args.length === 0) {
+    console.log(SUBCOMMAND_HELP.templates);
+    return;
+  }
+  if (args.length === 1 && args[0] === 'verify') {
+    await verifyFactoryLibraryLifecycle();
+    return;
+  }
+  errorExit('Usage: factory templates [verify]');
 }
 
 async function cmdCreate(args: string[]): Promise<void> {
@@ -1241,7 +1292,7 @@ async function main(): Promise<void> {
       await cmdCreate(subargs);
       break;
     case 'templates':
-      cmdTemplates();
+      await cmdTemplates(subargs);
       break;
     default:
       console.error(`Unknown command: ${command}`);

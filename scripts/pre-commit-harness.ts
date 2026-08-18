@@ -327,7 +327,7 @@ async function main(): Promise<void> {
     const code = await runGate('projects-roots', ['bun', 'run', 'projects:roots:check'], timings);
     if (code !== 0) {
       console.error(
-        '❌ Product-leaf root contract failed — each leaf needs README.md + package.json\n' +
+        '❌ Product root contract failed — fix structure, Bun engine, package manager, or lockfile\n' +
           '   bun run projects:roots:check'
       );
       await writeTimings(timings, full);

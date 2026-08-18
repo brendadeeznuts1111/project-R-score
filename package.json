@@ -1938,6 +1938,7 @@
     "telegram:package-group:accounting": "bun tools/package-group-forum-enhance.ts --all --ensure-topics --accounting-prompt",
     "factory:create": "bun lib/factory/cli.ts create",
     "factory:templates": "bun lib/factory/cli.ts templates",
+    "factory:templates:verify": "bun lib/factory/cli.ts templates verify",
     "ci:harness": "bun scripts/ci-harness.ts",
     "ci:harness:fast": "bun scripts/ci-harness.ts --fast",
     "ci:core": "bun scripts/ci-core.ts",
