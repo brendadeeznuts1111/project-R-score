@@ -95,20 +95,6 @@ export const DuoPlusPage: React.FC = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-md p-4">
-        <div className="flex">
-          <AlertCircle className="h-5 w-5 text-red-400" />
-          <div className="ml-3">
-            <h3 className="text-sm font-medium text-red-800">Error loading data</h3>
-            <p className="mt-2 text-sm text-red-700">{error}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   const handleStartPhone = async (phoneId: string) => {
     try {
       await duoplusAPI.startPhone(phoneId);
@@ -222,7 +208,11 @@ export const DuoPlusPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div
+        className="flex items-center justify-center h-64"
+        role="status"
+        aria-label="Loading DuoPlus data"
+      >
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
     );
@@ -501,8 +491,11 @@ export const DuoPlusPage: React.FC = () => {
         <div className="p-6 space-y-6">
           {/* Phone Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Select Phone</label>
+            <label htmlFor="duoplus-phone" className="block text-sm font-medium text-gray-700 mb-2">
+              Select Phone
+            </label>
             <select
+              id="duoplus-phone"
               value={selectedPhoneId}
               onChange={(e) => setSelectedPhoneId(e.target.value)}
               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
@@ -522,8 +515,14 @@ export const DuoPlusPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* File Path Input */}
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">File Path</label>
+                <label
+                  htmlFor="duoplus-file-path"
+                  className="block text-xs font-medium text-gray-500 mb-1"
+                >
+                  File Path
+                </label>
                 <input
+                  id="duoplus-file-path"
                   type="text"
                   value={filePath}
                   onChange={(e) => setFilePath(e.target.value)}
@@ -537,8 +536,14 @@ export const DuoPlusPage: React.FC = () => {
 
               {/* Operation Selection */}
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Operation</label>
+                <label
+                  htmlFor="duoplus-file-operation"
+                  className="block text-xs font-medium text-gray-500 mb-1"
+                >
+                  Operation
+                </label>
                 <select
+                  id="duoplus-file-operation"
                   value={fileOperation}
                   onChange={(e) =>
                     handleOperationChange(

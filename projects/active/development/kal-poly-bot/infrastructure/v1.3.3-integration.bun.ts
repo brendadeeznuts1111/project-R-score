@@ -2,11 +2,13 @@
 /**
  * Kalman Infrastructure Integration: v1.3.3 Golden Matrix
  *
- * Components #56-64: Package stability, CPU profiling, test finalization,
+ * Components #56-64: Package stability, hot-path timing, test finalization,
  * WebSocket tracking, git security, isolated spawn, config loading, hoisted install
  *
  * Integration with v2.4.2 infrastructure for complete zero-collateral operations
  */
+
+// @see https://bun.com/docs/pm/lockfile — Bun text lockfile format
 
 // Import v2.4.2 components for combined infrastructure
 import { SecurityHardeningLayer } from "./v2-4-2/security-hardening-layer";
@@ -31,7 +33,7 @@ class ConfigVersionStabilizer {
   };
 
   static async initializeLockfile(): Promise<void> {
-    const lockfilePath = "bun.lock";
+    const lockfilePath = `${import.meta.dir}/../../bun.lock`;
     const lockfile = Bun.file(lockfilePath);
 
     if (!(await lockfile.exists())) {
@@ -76,33 +78,29 @@ interface CPUProfilerOptions {
 
 class CPUProfilerEngine {
   private static activeProfile: string | null = null;
+  private static startedAt: number | null = null;
 
   static start(options: CPUProfilerOptions): void {
-    if (typeof Bun !== "undefined" && "profile" in Bun) {
-      const timestamp = Date.now();
-      const profilePath = `${options.dir}/${options.name}`;
-
-      // Start CPU profiling
-      (Bun as any).profile(profilePath, { sampleInterval: options.sampleInterval });
-      this.activeProfile = profilePath;
-
-      console.info(`[CPU-PROFILE] Started: ${profilePath}`);
-    } else {
-      console.warn("[CPU-PROFILE] Bun.profile() not available");
-    }
+    this.activeProfile = `${options.dir}/${options.name}`;
+    this.startedAt = performance.now();
+    console.info(
+      `[HOT-PATH] Timing started: ${this.activeProfile}. ` +
+        "Use bun --cpu-prof for a process CPU profile."
+    );
   }
 
   static stop(): string {
-    if (typeof Bun !== "undefined" && "profile" in Bun) {
-      (Bun as any).profileStop();
+    if (this.activeProfile && this.startedAt !== null) {
       const profile = this.activeProfile;
+      const duration = performance.now() - this.startedAt;
       this.activeProfile = null;
+      this.startedAt = null;
 
-      console.info(`[CPU-PROFILE] Stopped: ${profile}`);
-      return profile || "";
+      console.info(`[HOT-PATH] ${profile}: ${duration.toFixed(2)}ms`);
+      return profile;
     }
 
-    console.warn("[CPU-PROFILE] Bun.profileStop() not available");
+    console.warn("[HOT-PATH] No active timing measurement");
     return "";
   }
 
@@ -520,7 +518,7 @@ export class KalmanStabilityIntegration {
     console.info(`[STABILITY] Kalman linker: ${linker} (configVersion: 1)`);
   }
 
-  // Component #57: CPU profiling for hot path analysis
+  // Component #57: hot-path timing; use bun --cpu-prof for CPU samples.
   static profilePattern(patternId: number): { start: () => void; stop: () => string } {
     if (!this.featureEnabled("CPU_PROFILING")) {
       return {
@@ -822,12 +820,12 @@ export async function demonstrateKalmanIntegration(): Promise<void> {
   console.info("\n📦 Component #56: Package Manager Stability");
   await KalmanStabilityIntegration.stabilizeKalmanDependencies();
 
-  console.info("\n🔍 Component #57: CPU Profiling");
+  console.info("\n🔍 Component #57: Hot-Path Timing");
   const profiler = KalmanStabilityIntegration.profilePattern(74);
   profiler.start();
   setTimeout(() => {
     const profile = profiler.stop();
-    console.info(`Profile saved: ${profile}`);
+    console.info(`Measurement complete: ${profile}`);
   }, 100);
 
   console.info("\n🔒 Component #60: Git Security");

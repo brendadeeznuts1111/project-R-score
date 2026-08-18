@@ -1,4 +1,5 @@
 // lib/interactive-cli.ts - Interactive confirmation layer for Tier-1380
+// @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 
 import {LoopGuard} from './loop-guard';
 
@@ -49,9 +50,8 @@ export class InteractiveTier1380 {
 
 	private async prompt(question: string): Promise<string> {
 		process.stdout.write(question + ' ');
-		const buf = Buffer.alloc(1024);
-		const n = await Bun.stdin.read(buf);
-		return buf.toString('utf8', 0, n ?? 0).trim();
+		for await (const line of console) return line.trim();
+		return '';
 	}
 
 	private showDiff(command: string, current: string) {

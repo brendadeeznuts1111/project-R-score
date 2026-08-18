@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options — Bun.secrets
 
 import { describe, expect, expectTypeOf, it } from "bun:test";
 
@@ -7,18 +8,15 @@ describe("Bun 1.2.3 API Fixes", () => {
     // Test that Bun.secrets has proper typing
     expectTypeOf(Bun.secrets).toBeObject();
 
-    // Test that secrets can be accessed (even if undefined)
-    const secret = Bun.secrets.SECRET_KEY;
-    expectTypeOf(secret).toEqualTypeOf<string | undefined>();
-
-    // Test that secrets can be checked for existence
-    const hasSecret = "SECRET_KEY" in Bun.secrets;
-    expectTypeOf(hasSecret).toBeBoolean();
+    expectTypeOf(Bun.secrets.get).toBeFunction();
+    expectTypeOf(Bun.secrets.set).toBeFunction();
+    expectTypeOf(Bun.secrets.delete).toBeFunction();
 
     // Test that secrets can be iterated
     const secretKeys = Object.keys(Bun.secrets);
     expectTypeOf(secretKeys).toEqualTypeOf<string[]>();
     expect(Array.isArray(secretKeys)).toBe(true);
+    expect(secretKeys.sort()).toEqual(["delete", "get", "set"]);
 
     console.info(`✅ Bun.secrets type safety validated`);
   });
@@ -72,26 +70,20 @@ describe("Bun 1.2.3 API Fixes", () => {
   });
 
   it("should validate Bun.plugin functionality", () => {
-    // Test Bun.plugin with proper plugin setup
-    try {
-      const plugin = Bun.plugin({
-        name: "test-plugin",
-        setup(build) {
-          build.onLoad({ filter: /\.test$/ }, () => ({
-            contents: "export const test = true;",
-            loader: "js",
-          }));
-        },
-      });
+    const result = Bun.plugin({
+      name: "test-plugin",
+      setup(build) {
+        build.onLoad({ filter: /\.bun-123-api-fixture$/ }, () => ({
+          contents: "export const test = true;",
+          loader: "js",
+        }));
+      },
+    });
 
-      expectTypeOf(plugin).toBeObject();
-      expect(plugin).toHaveProperty("name", "test-plugin");
-
-      console.info(`✅ Bun.plugin functionality validated`);
-    } catch (error: any) {
-      console.info(`⚠️ Bun.plugin test skipped: ${error.message}`);
-      expect(true).toBe(true); // Skip test gracefully
-    }
+    expectTypeOf(result).toBeVoid();
+    expect(result).toBeUndefined();
+    Bun.plugin.clearAll();
+    console.info(`✅ Bun.plugin functionality validated`);
   });
 
   it("should test Bun.file API consistency", async () => {

@@ -1,6 +1,9 @@
 /**
  * CMD.*.SPAWN - Root slash-command engine for Cursor IDE
- * Spawn agents and workflows from chat using Bun macros
+ * Runtime helpers for spawning agents and workflows from chat.
+ * These functions perform I/O and must not execute as bundler macros.
+ *
+ * @see https://bun.com/docs/bundler/macros — macro imports
  */
 
 import { spawn } from "bun";
@@ -8,7 +11,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 
 // [CMD][CODER][SPAWN] - Spawn coding agent
-export macro function coder(task: string, context?: string): Promise<any> {
+export async function coder(task: string, context?: string): Promise<any> {
   // Load coder agent rules
   const rules = loadAgentRules('coder');
 
@@ -19,7 +22,7 @@ export macro function coder(task: string, context?: string): Promise<any> {
 }
 
 // [CMD][REVIEWER][SPAWN] - Spawn code review agent
-export macro function reviewer(code: string, criteria?: string): Promise<any> {
+export async function reviewer(code: string, criteria?: string): Promise<any> {
   // Load reviewer agent rules
   const rules = loadAgentRules('reviewer');
 
@@ -30,7 +33,7 @@ export macro function reviewer(code: string, criteria?: string): Promise<any> {
 }
 
 // [CMD][INSTALL][SPAWN] - Spawn package installer agent
-export macro function install(packageName: string, options?: any): Promise<any> {
+export async function install(packageName: string, options?: any): Promise<any> {
   // Load installer agent rules
   const rules = loadAgentRules('installer');
 
@@ -41,7 +44,7 @@ export macro function install(packageName: string, options?: any): Promise<any> 
 }
 
 // [CMD][WORKFLOW][SPAWN] - Spawn workflow agent
-export macro function workflow(name: string, params?: any): Promise<any> {
+export async function workflow(name: string, params?: any): Promise<any> {
   // Load workflow agent rules
   const rules = loadAgentRules('workflow');
 

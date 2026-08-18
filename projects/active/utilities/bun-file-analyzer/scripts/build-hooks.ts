@@ -465,14 +465,8 @@ async function updateBuildCache(metrics: BuildMetrics) {
  */
 async function estimateGzipSize(content: string): Promise<number> {
   try {
-    // Use Bun's built-in compression if available
-    if (Bun.gzip) {
-      const compressed = Bun.gzip(content);
-      return compressed.length;
-    }
-    
-    // Fallback estimation (rough approximation)
-    return Math.floor(content.length * 0.3);
+    // @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
+    return Bun.gzipSync(new TextEncoder().encode(content)).length;
   } catch {
     return Math.floor(content.length * 0.3);
   }

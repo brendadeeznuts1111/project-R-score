@@ -14,13 +14,11 @@ import { spawn } from "bun";
 
 // Diagnostic and fallback for missing Bun features
 console.info(`Bun ${Bun.version} • Node ${process.version}`);
-console.info('✅ Bun.table:', typeof Bun.table);
 console.info('✅ Bun.inspect.table:', typeof Bun.inspect.table);
 console.info('✅ Bun.inspect.custom:', typeof Bun.inspect.custom);
 console.info('✅ Bun.deepEquals:', typeof Bun.deepEquals);
 console.info('✅ Bun.escapeHTML:', typeof Bun.escapeHTML);
 console.info('✅ Bun.stringWidth:', typeof Bun.stringWidth);
-console.info('✅ Bun.readline:', typeof Bun.readline);
 
 // Quick fix for missing features:
 // Bun.inspect.table returns a string, unlike console.table which just logs

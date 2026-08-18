@@ -6,10 +6,22 @@
  * Streamlined workflow for developing enterprise packages locally
  */
 
-// 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's enhanced fs operations and fs.glob
-import * as fs from 'fs';
-import { join, relative, resolve, dirname, basename } from 'path';
-import { execSync } from 'child_process';
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+import { join, relative, dirname } from 'path';
+
+const PROJECT_ROOT = join(import.meta.dir, '..');
+
+function runBun(args: string[], cwd: string, quiet = false): void {
+  const result = Bun.spawnSync([process.execPath, ...args], {
+    cwd,
+    stdout: quiet ? 'pipe' : 'inherit',
+    stderr: quiet ? 'pipe' : 'inherit',
+  });
+  if (result.exitCode !== 0) {
+    throw new Error(`bun ${args.join(' ')} failed with exit code ${result.exitCode}`);
+  }
+}
 
 interface PackageInfo {
   name: string;
@@ -40,18 +52,18 @@ class PackageDevWorkflow {
       return;
     }
 
-    try {
-      // 🚀 BUN 1.1.X OPTIMIZATION: Enhanced fs.glob for package discovery
-      const packageJsonFiles = await Array.fromAsync(
-        fs.glob(join(enterpriseDir, '**/*/package.json'), {
-          exclude: ['**/node_modules/**', '**/dist/**', '**/build/**']
-        })
-      );
-
-      for (const packageJsonPath of packageJsonFiles) {
-        const pkgPath = dirname(packageJsonPath);
-        await this.loadPackageInfo(pkgPath);
+    for await (const packageJsonPath of new Bun.Glob('**/package.json').scan({
+      cwd: enterpriseDir,
+      onlyFiles: true,
+    })) {
+      if (
+        packageJsonPath.includes('/node_modules/') ||
+        packageJsonPath.includes('/dist/') ||
+        packageJsonPath.includes('/build/')
+      ) {
+        continue;
       }
+      await this.loadPackageInfo(dirname(join(enterpriseDir, packageJsonPath)));
     }
 
     console.info(`📦 Discovered ${this.packages.size} enterprise packages`);
@@ -84,15 +96,8 @@ class PackageDevWorkflow {
     const pkg = this.packages.get(packageName)!;
 
     try {
-      // Change to package directory and link
-      process.chdir(pkg.path);
-      execSync('bun link', { stdio: 'inherit' });
-
-      // Change back to root
-      process.chdir(join(__dirname, '..', '..'));
-
-      // Link in main project
-      execSync(`bun link ${packageName}`, { stdio: 'inherit' });
+      runBun(['link'], pkg.path);
+      runBun(['link', packageName], PROJECT_ROOT);
 
       this.linkedPackages.add(packageName);
       console.info(`✅ Package ${packageName} linked successfully`);
@@ -110,16 +115,9 @@ class PackageDevWorkflow {
     }
 
     try {
-      // Unlink from main project
-      execSync(`bun unlink ${packageName}`, { stdio: 'inherit' });
-
-      // Change to package directory and unlink
+      runBun(['unlink', packageName], PROJECT_ROOT);
       const pkg = this.packages.get(packageName)!;
-      process.chdir(pkg.path);
-      execSync('bun unlink', { stdio: 'inherit' });
-
-      // Change back to root
-      process.chdir(join(__dirname, '..', '..'));
+      runBun(['unlink'], pkg.path);
 
       this.linkedPackages.delete(packageName);
       console.info(`✅ Package ${packageName} unlinked successfully`);
@@ -139,27 +137,23 @@ class PackageDevWorkflow {
     const pkg = this.packages.get(packageName)!;
 
     try {
-      process.chdir(pkg.path);
-
       // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file existence check
-      if (await Bun.file('build-demo.js').exists()) {
-        execSync('bun run build:demo', { stdio: 'inherit' });
-      } else if (await Bun.file('package.json').exists()) {
+      if (await Bun.file(join(pkg.path, 'build-demo.js')).exists()) {
+        runBun(['run', 'build:demo'], pkg.path);
+      } else if (await Bun.file(join(pkg.path, 'package.json')).exists()) {
         // 🚀 BUN 1.1.X OPTIMIZATION: Using Bun's optimized file reading
-        const pkgJson = await Bun.file('package.json').json();
+        const pkgJson = await Bun.file(join(pkg.path, 'package.json')).json();
         if (pkgJson.scripts && pkgJson.scripts.build) {
-          execSync('bun run build', { stdio: 'inherit' });
+          runBun(['run', 'build'], pkg.path);
         } else {
-          execSync('bun build ./src/index.ts --outdir ./dist', { stdio: 'inherit' });
+          runBun(['build', './src/index.ts', '--outdir', './dist'], pkg.path);
         }
       }
 
-      process.chdir(join(__dirname, '..', '..'));
       console.info(`✅ Package ${packageName} built successfully`);
       return true;
     } catch (error) {
       console.info(`❌ Failed to build package ${packageName}:`, error);
-      process.chdir(join(__dirname, '..', '..'));
       return false;
     }
   }
@@ -205,7 +199,7 @@ class PackageDevWorkflow {
     }
   }
 
-  showPackageDetails(packageName: string): void {
+  async showPackageDetails(packageName: string): Promise<void> {
     if (!this.packages.has(packageName)) {
       console.info(`❌ Package ${packageName} not found`);
       return;
@@ -255,9 +249,7 @@ class PackageDevWorkflow {
 
     for (const [name, pkg] of this.packages) {
       try {
-        process.chdir(pkg.path);
-        execSync('bun link', { stdio: 'pipe' });
-        process.chdir(join(__dirname, '..', '..'));
+        runBun(['link'], pkg.path, true);
 
         this.linkedPackages.add(name);
         successCount++;
@@ -329,7 +321,7 @@ if (import.meta.main) {
         console.info('Usage: bun run scripts/package-dev-workflow.bun.ts info <package-name>');
         break;
       }
-      workflow.showPackageDetails(packageName);
+      await workflow.showPackageDetails(packageName);
       break;
 
     case 'setup-links':

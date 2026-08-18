@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 import { secrets } from 'bun';
-import { createHash, randomBytes } from 'crypto';
+import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'crypto';
 import { z } from 'zod';
 
 /**
@@ -57,7 +57,11 @@ export class ZeroTrustCredentialManager {
     // In production, this would come from HSM or secure key management service
     const envKey = process.env.MASTER_ENCRYPTION_KEY;
     if (envKey) {
-      return Buffer.from(envKey, 'hex');
+      const key = Buffer.from(envKey, 'hex');
+      if (key.length !== 32) {
+        throw new Error('MASTER_ENCRYPTION_KEY must contain exactly 32 bytes encoded as hex');
+      }
+      return key;
     }
 
     // Generate new key if not exists (development only)
@@ -69,11 +73,9 @@ export class ZeroTrustCredentialManager {
    * Multi-layer encryption for sensitive data
    */
   private async encrypt(data: string): Promise<string> {
-    // Layer 1: AES-256-GCM encryption
-    const iv = randomBytes(16);
-    const cipher = Bun.CryptoHasher.create('aes-256-gcm');
+    const iv = randomBytes(12);
 
-    // Layer 2: Add integrity check
+    // Add integrity check
     const hmac = createHash('sha256');
     hmac.update(data);
     const integrity = hmac.digest('hex');
@@ -81,11 +83,9 @@ export class ZeroTrustCredentialManager {
     // Combine data with integrity check
     const payload = JSON.stringify({ data, integrity });
 
-    // Encrypt payload
-    const encrypted = Buffer.concat([
-      iv,
-      Buffer.from(payload), // Simplified for example
-    ]);
+    const cipher = createCipheriv('aes-256-gcm', this.encryptionKey, iv);
+    const ciphertext = Buffer.concat([cipher.update(payload, 'utf8'), cipher.final()]);
+    const encrypted = Buffer.concat([iv, cipher.getAuthTag(), ciphertext]);
 
     return encrypted.toString('base64');
   }
@@ -93,11 +93,14 @@ export class ZeroTrustCredentialManager {
   private async decrypt(encryptedData: string): Promise<string> {
     // Reverse the encryption process
     const buffer = Buffer.from(encryptedData, 'base64');
-    const iv = buffer.slice(0, 16);
-    const payload = buffer.slice(16);
+    const iv = buffer.subarray(0, 12);
+    const authTag = buffer.subarray(12, 28);
+    const ciphertext = buffer.subarray(28);
 
-    // Decrypt and verify integrity
-    const decrypted = JSON.parse(payload.toString());
+    const decipher = createDecipheriv('aes-256-gcm', this.encryptionKey, iv);
+    decipher.setAuthTag(authTag);
+    const payload = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
+    const decrypted = JSON.parse(payload.toString('utf8'));
 
     // Verify integrity
     const hmac = createHash('sha256');
@@ -189,7 +192,7 @@ export class ZeroTrustCredentialManager {
         });
 
         if (secret) {
-          credential = JSON.parse(secret.value) as Credential;
+          credential = JSON.parse(secret) as Credential;
           this.credentialCache.set(nameOrId, credential);
         }
       } catch (error) {

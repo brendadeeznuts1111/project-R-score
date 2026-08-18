@@ -2,6 +2,7 @@
 // │                   🔗 PATTERN CONNECTOR                         │
 // │       Weaving Patterns Throughout the Application             │
 // ╰─────────────────────────────────────────────────────────────────╯
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 
 import { patternWeaver } from './pattern-weaver';
 
@@ -814,6 +815,7 @@ export class PatternConnector {
       'Workflows': Object.keys(this.defineWorkflows()).length
     };
     
+    console.info(Bun.inspect.table(
       Object.entries(connections).map(([type, count]) => ({
         'Connection Type': type,
         'Count': count,

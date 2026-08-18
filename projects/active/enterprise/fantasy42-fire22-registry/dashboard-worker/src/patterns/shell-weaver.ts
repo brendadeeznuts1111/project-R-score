@@ -2,6 +2,7 @@
 // │                    🐚 SHELL PATTERN WEAVER                      │
 // │         Integrating Bun Shell & bunx into Patterns             │
 // ╰─────────────────────────────────────────────────────────────────╯
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 
 import { $ } from "bun";
 import { patternWeaver } from './pattern-weaver';
@@ -895,6 +896,7 @@ export class ShellPatternWeaver {
       // Display results in table format with property filtering
       
       // Full table
+      console.info(Bun.inspect.table(
         validation.files.map(f => ({
           File: f.path.split('/').pop() || f.path,
           Path: f.path,
@@ -922,6 +924,9 @@ export class ShellPatternWeaver {
       ];
       
       // Summary
+      console.info(Bun.inspect.table(statusSummary, ['Status', 'Count', 'TotalSize'], {
+        colors: true
+      }));
       
       if (validation.missingFiles.length > 0) {
       }
@@ -965,6 +970,7 @@ export class ShellPatternWeaver {
         }
         
         if (changes.length > 0) {
+          console.info(Bun.inspect.table(
             changes,
             ['path', 'change', 'timestamp'], // Show only essential change info
             { colors: true }
@@ -995,13 +1001,15 @@ export class ShellPatternWeaver {
       Features: pattern.bunFeatures.join(', '),
       AppliesTo: pattern.applies.join(', ')
     }));
-      shellTable, 
+    console.info(Bun.inspect.table(
+      shellTable,
       ['Pattern', 'Name', 'Features'], // Show only key info
       { colors: true }
     ));
     
     // Command patterns
     const commandCategories = Object.keys(this.commandPatterns);
+    console.info(Bun.inspect.table(
       commandCategories.map(cat => ({
         Category: cat.toUpperCase(),
         Commands: Object.keys((this.commandPatterns as any)[cat]).join(', '),
@@ -1013,6 +1021,7 @@ export class ShellPatternWeaver {
     
     // Package patterns
     const packageCategories = Object.keys(this.packagePatterns);
+    console.info(Bun.inspect.table(
       packageCategories.map(cat => ({
         Category: cat.charAt(0).toUpperCase() + cat.slice(1),
         Count: Object.keys((this.packagePatterns as any)[cat]).length,

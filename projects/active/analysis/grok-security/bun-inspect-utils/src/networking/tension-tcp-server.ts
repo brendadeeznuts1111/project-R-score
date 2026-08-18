@@ -1,6 +1,7 @@
 // [64.0.0.0] TENSION TCP SERVER - Log Archiving & Compression
 // Enterprise-grade log management with Bun.Archive, KV storage, S3 integration
 // Zero-npm, production-ready, Bun v1.3.5+ native
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 
 import { BunFile } from "bun";
 
@@ -55,24 +56,27 @@ export class TensionTCPServerArchiver {
     const level = options.level ?? 9;
 
     // [64.3.1.1] Collect all .log files
-    const files = await Bun.glob(dir + "/*.log").array();
+    const files = await Array.fromAsync(
+      new Bun.Glob("*.log").scan({ cwd: dir, absolute: true })
+    );
     const logEntries: LogFileEntry[] = [];
 
     let totalSize = 0;
     for (const file of files) {
-      const content = await Bun.file(file.path).text();
-      const stat = await Bun.file(file.path).stat();
+      const name = file.split("/").pop() ?? file;
+      const content = await Bun.file(file).text();
+      const stat = await Bun.file(file).stat();
 
       logEntries.push({
-        path: file.path,
-        name: file.name,
+        path: file,
+        name,
         size: content.length,
         modified: stat?.mtime?.getTime() ?? Date.now(),
         content,
       });
 
       totalSize += content.length;
-      this.archiveMap[file.name] = content;
+      this.archiveMap[name] = content;
     }
 
     // [64.3.1.2] Create archive with compression
@@ -96,7 +100,7 @@ export class TensionTCPServerArchiver {
       status: "completed",
     };
 
-    return blob;
+    return new Blob([blob], { type: "application/octet-stream" });
   }
 
   /**
@@ -173,4 +177,3 @@ export class TensionTCPServerArchiver {
 }
 
 export default TensionTCPServerArchiver;
-

@@ -1,7 +1,7 @@
 /**
  * Tier-1380 OMEGA: Secrets-Aware Orchestrator
  *
- * Native Bun secrets integration (v1.3.7)
+ * Native Bun secrets integration (v1.3.0+)
  * - Encrypted at rest (AES-256-GCM)
  * - Runtime access via Bun.secrets.get()
  * - Auto-inheritance by child processes
@@ -9,7 +9,7 @@
  *
  * @module secrets-orchestrator
  * @tier 1380-OMEGA
- * @see https://bun.sh/docs/runtime/secrets
+ * @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options
  */
 
 import { S3Client } from "bun";

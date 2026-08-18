@@ -12,6 +12,7 @@
 
 import { Database } from 'bun:sqlite';
 import { spawnSync } from 'bun';
+import { mkdirSync } from 'node:fs';
 import { MLGSGraph } from './src/graph/MLGSGraph';
 
 // ==================== DATABASE SETUP ====================
@@ -20,7 +21,7 @@ const mlgsPath = process.env.MLGS_PATH || './data/mlgs-pubsub.db';
 
 // Ensure data directory exists
 try {
-	Bun.mkdir('./data', { recursive: true });
+	mkdirSync('./data', { recursive: true });
 } catch {
 	// Directory may already exist
 }
@@ -249,6 +250,5 @@ console.info('%j', {
 	clients_capacity: 1580,
 	port: server.port
 });
-
 
 

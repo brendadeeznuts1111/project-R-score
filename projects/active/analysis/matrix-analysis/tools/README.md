@@ -163,7 +163,7 @@ bun run css:optimize styles.css
 
 ### RSS Parser (`rss-parser.ts`)
 
-RSS feed parsing with Bun.xml experimental support.
+Dependency-free RSS feed summary extraction.
 
 ```bash
 bun run rss:parse https://bun.sh/rss.xml
@@ -171,7 +171,7 @@ bun run rss:parse https://bun.sh/rss.xml
 
 **Features:**
 
-- Bun.xml.parse (v1.3.7+) with regex fallback
+- Built-in regex extraction with no XML parser dependency
 - Feed size and item analysis
 - Method detection and reporting
 

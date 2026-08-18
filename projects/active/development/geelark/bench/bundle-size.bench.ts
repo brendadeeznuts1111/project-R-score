@@ -7,7 +7,7 @@
 
 import { bench, describe, expect } from "bun:test";
 import { execSync } from "node:child_process";
-import { unlinkSync, existsSync } from "node:fs";
+import { existsSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { measure } from "./utils";
 
@@ -47,7 +47,7 @@ console.info("Bundle test complete");
 `;
 
     try {
-      Bun.writeSync(sourceFile, testCode);
+      writeFileSync(sourceFile, testCode);
     } catch (error) {
       console.warn("Could not create test file:", error);
     }
@@ -210,4 +210,3 @@ console.info("Bundle test complete");
     });
   });
 });
-

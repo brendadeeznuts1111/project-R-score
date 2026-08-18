@@ -565,7 +565,7 @@ function handleDebugPage(): Response {
     <div class="debug-panel">
         <h2>Performance Metrics</h2>
         <div class="json">${JSON.stringify({
-          memory: Bun.memoryUsage(),
+          memory: process.memoryUsage(),
           uptime: process.uptime(),
           platform: process.platform,
           versions: process.versions,
@@ -611,7 +611,7 @@ async function handlePerformanceTest(): Promise<Response> {
       matrixLookups: results,
       complianceValidation: { duration: complianceDuration, valid: compliance.valid },
       scopeAccess: { duration: scopeDuration },
-      memory: Bun.memoryUsage(),
+      memory: process.memoryUsage(),
     },
   }, null, 2), {
     headers: { "Content-Type": "application/json" },

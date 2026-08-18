@@ -42,7 +42,7 @@ Complete implementation of the Bun Native API Mapping Matrix covering components
 - **#138: Stream-Converters** - `Bun.readableStreamToBytes` with <2ms (1MB stream)
 
 ### System & Utilities (121, 128-134, 136, 139-142)
-- **#121: FFI-Bridge** - `bun:ffi` / `Bun.dlopen()` with <0.1ms native call
+- **#121: FFI-Bridge** - `dlopen()` from `bun:ffi` with <0.1ms native call
 - **#128: Node-API-Bridge** - `Node-API` with native addon compat
 - **#129: Import-Meta-Resolver** - `import.meta` / `Bun.fileURLToPath` with <1ms
 - **#130: Utility-Functions** - `Bun.version` / `Bun.env` with zero-cost
@@ -54,7 +54,7 @@ Complete implementation of the Bun Native API Mapping Matrix covering components
 - **#139: Memory-Management** - `Bun.ArrayBufferSink` / `Bun.allocUnsafe` with zero-copy
 - **#140: Module-Resolver** - `Bun.resolveSync()` with <1ms resolution
 - **#141: Parser-Formatters** - `Bun.semver` / `Bun.TOML.parse` with <1ms parse
-- **#142: Low-Level-Internals** - `Bun.mmap` / `Bun.jsc` with hardware-speed
+- **#142: Low-Level-Internals** - `Bun.mmap` with hardware-speed file mapping
 
 ### Testing (123)
 - **#123: Testing-Framework** - `bun:test` with 99.9% CI pass rate

@@ -1,6 +1,11 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/reference/node/os/endianness — node:os endianness
+// @see https://bun.com/reference/node/process — process.memoryUsage
+
 import { describe, expectTypeOf, test } from "bun:test";
+import { endianness } from "node:os";
 
 describe("🚀 Bun Runtime & Process Control - Type Safety Tests", () => {
   test("🗑️ Garbage Collection Types", () => {
@@ -266,17 +271,8 @@ describe("🔧 Bun-Specific Runtime Features", () => {
   });
 
   test("📊 Bun Performance Types", () => {
-    // Test Bun.peekMemory (if available)
-    if (typeof Bun !== "undefined" && "peekMemory" in Bun) {
-      expectTypeOf(Bun.peekMemory).toBeFunction();
-      expectTypeOf(Bun.peekMemory()).toMatchTypeOf<{
-        rss: number;
-        heapUsed: number;
-        heapTotal: number;
-        external: number;
-        arrayBuffers: number;
-      }>();
-    }
+    expectTypeOf(process.memoryUsage).toBeFunction();
+    expectTypeOf(process.memoryUsage()).toMatchTypeOf<NodeJS.MemoryUsage>();
 
     // Test Bun.write (file writing)
     if (typeof Bun !== "undefined" && "write" in Bun) {
@@ -302,11 +298,6 @@ describe("🔧 Bun-Specific Runtime Features", () => {
       >();
     }
 
-    // Test Bun.enableSourceMaps (if available)
-    if (typeof Bun !== "undefined" && "enableSourceMaps" in Bun) {
-      expectTypeOf(Bun.enableSourceMaps).toBeFunction();
-      expectTypeOf(Bun.enableSourceMaps()).toEqualTypeOf<void>();
-    }
   });
 
   test("🛠️ Bun Build Types", () => {
@@ -355,11 +346,8 @@ describe("🔧 Bun-Specific Runtime Features", () => {
       >;
     }
 
-    // Test Bun.CryptoHash (if available)
-    if (typeof Bun !== "undefined" && "CryptoHash" in Bun) {
-      expectTypeOf(Bun.CryptoHash).toBeFunction();
-      expectTypeOf(new Bun.CryptoHash("sha256")).toBeObject();
-    }
+    expectTypeOf(Bun.CryptoHasher).toBeFunction();
+    expectTypeOf(new Bun.CryptoHasher("sha256")).toBeObject();
   });
 
   test("🌍 Environment Variables Types", () => {
@@ -406,10 +394,7 @@ describe("🔧 Bun-Specific Runtime Features", () => {
       | "x64"
     >();
 
-    // Test endianness
-    if (typeof Bun !== "undefined" && "endian" in Bun) {
-      expectTypeOf(Bun.endian).toEqualTypeOf<"little" | "big">();
-    }
+    expectTypeOf(endianness()).toEqualTypeOf<"BE" | "LE">();
   });
 
   test("⚡ Worker Thread Types", () => {

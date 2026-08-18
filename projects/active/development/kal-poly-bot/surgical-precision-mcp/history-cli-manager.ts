@@ -73,7 +73,7 @@ export class HistoryCLIManager {
    * Load history from disk
    * Performance target: <10ms for 10,000 commands
    */
-  async YAML.parse(): Promise<void> {
+  async load(): Promise<void> {
     const startTime = performance.now();
 
     try {
@@ -130,7 +130,7 @@ export class HistoryCLIManager {
     workingDir?: string
   ): void {
     if (!this.isLoaded) {
-      throw new Error('History not loaded - call YAML.parse() first');
+      throw new Error('History not loaded - call load() first');
     }
 
     const entry: HistoryEntry = {
@@ -172,7 +172,7 @@ export class HistoryCLIManager {
     const startTime = performance.now();
 
     if (!this.isLoaded) {
-      await this.YAML.parse();
+      await this.load();
     }
 
     // Check cache first
@@ -270,7 +270,7 @@ export class HistoryCLIManager {
    */
   searchHistory(pattern: string, maxResults: number = 10): HistoryEntry[] {
     if (!this.isLoaded) {
-      throw new Error('History not loaded - call YAML.parse() first');
+      throw new Error('History not loaded - call load() first');
     }
 
     const regex = new RegExp(pattern, 'i');
@@ -313,7 +313,7 @@ export class HistoryCLIManager {
       oldestEntry: this.history[0]?.timestamp || 'none',
       newestEntry: this.history[Math.max(0, this.history.length - 1)]?.timestamp || 'none',
       memorySizeBytes,
-      loadTimeMs: 0, // Set during YAML.parse()
+      loadTimeMs: 0, // Set during load()
     };
   }
 
@@ -404,7 +404,7 @@ export class HistoryCLIManager {
  */
 export async function browseHistory(historyPath?: string): Promise<void> {
   const manager = new HistoryCLIManager(historyPath);
-  await manager.YAML.parse();
+  await manager.load();
 
   const stats = manager.getStats();
 
@@ -425,7 +425,7 @@ export async function browseHistory(historyPath?: string): Promise<void> {
  */
 export async function searchHistoryCLI(pattern: string, historyPath?: string): Promise<void> {
   const manager = new HistoryCLIManager(historyPath);
-  await manager.YAML.parse();
+  await manager.load();
 
   const results = manager.searchHistory(pattern, 20);
 
@@ -557,7 +557,7 @@ if (import.meta.main) {
   console.info('');
 
   const manager = new HistoryCLIManager();
-  await manager.YAML.parse();
+  await manager.load();
 
   console.info('✅ History loaded successfully');
   console.info('');

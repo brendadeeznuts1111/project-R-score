@@ -9,7 +9,7 @@
  */
 
 import { DashboardIntegration } from './dashboard-integration';
-import { Server } from 'bun';
+import type { Server } from 'bun';
 
 interface DashboardMessage {
   type: 'get_packages' | 'start_build' | 'stop_build' | 'build_package' | 'refresh' | 'get_status';

@@ -8,6 +8,8 @@
 
 import { Database } from "bun:sqlite";
 import { randomUUID } from "node:crypto";
+import { unlinkSync } from "node:fs";
+import { rename } from "node:fs/promises";
 
 const SNAPSHOT_DIR = "./snapshots";
 const AUDIT_DB = new Database("./data/tier1380-snapshots.db");
@@ -167,7 +169,7 @@ export async function createTenantSnapshot(
     .join('');
 
   // 8. Atomic move to final location
-  await Bun.rename(tempPath, fullPath);
+  await rename(tempPath, fullPath);
 
   // 9. Database transaction for audit integrity
   const snapshotId = randomUUID();
@@ -476,7 +478,7 @@ export function cleanupOldSnapshots(
   for (const snapshot of oldSnapshots) {
     try {
       if (!dryRun) {
-        await Bun.remove(snapshot.snapshot_path);
+        unlinkSync(snapshot.snapshot_path);
         AUDIT_DB.run("DELETE FROM tenant_snapshots WHERE id = ?", snapshot.id);
         AUDIT_DB.run(
           `INSERT INTO snapshot_audit_log (snapshot_id, action, actor, details)

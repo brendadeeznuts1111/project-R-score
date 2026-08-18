@@ -1,7 +1,8 @@
 /**
  * BunServe - HTTP and WebSocket server using Bun.serve
  *
- * https://bun.sh/docs/runtime/http
+ * @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
+ * @see https://bun.com/docs/runtime/http/server#reference — Server.upgrade
  */
 
 import { BunContext } from "../context/BunContext.js";
@@ -86,34 +87,8 @@ export interface WebSocketHandler<T = any> {
   close?: (ws: ServerWebSocket<T>, code: number, reason: string) => void;
 }
 
-/**
- * WebSocket protocol options type
- * Reference: https://bun.sh/reference/bun/WebSocketOptionsProtocolsOrProtocol
- */
-export type WebSocketProtocolOptions =
-  | { protocol: string }
-  | { protocols: string | string[] };
-
-  /**
-   * Upgrade HTTP request to WebSocket with protocol support
-   */
-  upgrade(
-    request: Request,
-    protocolOptions?: WebSocketProtocolOptions
-  ): boolean {
-    if (!this.server) {
-      console.error("❌ Server not running, cannot upgrade WebSocket");
-      return false;
-    }
-
-    try {
-      // @ts-ignore - server.upgrade is available at runtime
-      return this.server.upgrade(request, protocolOptions);
-    } catch (error) {
-      console.error("❌ WebSocket upgrade failed:", error);
-      return false;
-    }
-  }
+/** Bun server upgrade options for an already-negotiated WebSocket subprotocol. */
+export type WebSocketProtocolOptions = { protocol: string };
 
 export class BunServe {
   private routes: Route[] = [];
@@ -199,8 +174,7 @@ export class BunServe {
   }
 
   /**
-   * Upgrade HTTP request to WebSocket with protocol support
-   * Reference: https://bun.sh/reference/bun/WebSocketOptionsProtocolsOrProtocol
+   * Upgrade an HTTP request and return the negotiated subprotocol as a response header.
    */
   upgrade(
     request: Request,
@@ -212,8 +186,10 @@ export class BunServe {
     }
 
     try {
-      // @ts-ignore - server.upgrade is available at runtime
-      return this.server.upgrade(request, protocolOptions);
+      if (!protocolOptions) return this.server.upgrade(request);
+      return this.server.upgrade(request, {
+        headers: { "Sec-WebSocket-Protocol": protocolOptions.protocol },
+      });
     } catch (error) {
       console.error("❌ WebSocket upgrade failed:", error);
       return false;

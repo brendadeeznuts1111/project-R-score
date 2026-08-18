@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // Empire Pro Config Manager - TOML + R2 Storage CLI
-// Uses Bun's native TOML parsing via TOML.parse() and TOML.stringify()
+// Uses Bun's native TOML parser and an explicit serializer for writes.
 // Usage: bun run config-manager.ts <command> [options]
 
 // ============================================================================
@@ -265,7 +265,7 @@ tags = ["worker", "experimental"]
     return { valid: errors.length === 0, errors };
   }
 
-  async YAML.parse(path: string): Promise<Config> {
+  async load(path: string): Promise<Config> {
     if (!existsSync(path)) {
       throw new Error(`Config file not found: ${path}`);
     }
@@ -475,7 +475,7 @@ const main = async (): Promise<void> => {
       }
 
       case "validate": {
-        const config = await manager.YAML.parse(options.file);
+        const config = await manager.load(options.file);
         const result = manager.validate(config);
         if (result.valid) {
           console.info("✅ Configuration is valid");
@@ -492,7 +492,7 @@ const main = async (): Promise<void> => {
           console.error("❌ Error: --env required for upload");
           process.exit(1);
         }
-        const config = await manager.YAML.parse(options.file);
+        const config = await manager.load(options.file);
         const key = `configs/${options.env}/config.toml`;
         const result = await r2Config!.bucket && new R2Storage(r2Config!).upload(key, JSON.stringify(config, null, 2), {
           uploaded_at: new Date().toISOString(),
@@ -552,7 +552,7 @@ const main = async (): Promise<void> => {
             console.info("✅ Configs are in sync");
           } else {
             console.info("🔄 Syncing local -> R2...");
-            const config = await manager.YAML.parse(options.file!);
+            const config = await manager.load(options.file!);
             await r2.upload(key, JSON.stringify(config, null, 2), {
               synced_at: new Date().toISOString(),
               env: options.env,
@@ -562,7 +562,7 @@ const main = async (): Promise<void> => {
           }
         } catch (error) {
           if (options.verbose) console.info("🔄 No remote config found, uploading...");
-          const config = await manager.YAML.parse(options.file!);
+          const config = await manager.load(options.file!);
           await r2.upload(key, JSON.stringify(config, null, 2), {
             synced_at: new Date().toISOString(),
             env: options.env,

@@ -6,15 +6,15 @@
  *
  * ## Documentation Links
  *
- * - [Bun.resolve](https://bun.com/docs/api/utils#bun-resolve) - Asynchronous module resolution
- * - [Bun.resolveSync](https://bun.com/docs/api/utils#bun-resolvesync) - Synchronous module resolution
- * - [import.meta.resolve](https://bun.com/docs/runtime/bun-apis#importmetaresolve) - ESM module resolution
- * - [ResolveMessage](https://bun.com/docs/api/utils#resolvemessage) - Error class for resolution failures
+ * - [Bun.resolve](https://bun.com/reference/bun/resolve) - Asynchronous module resolution
+ * - [Bun.resolveSync](https://bun.com/docs/runtime/utils#bun-resolvesync) - Synchronous module resolution
+ * - [import.meta.resolve](https://bun.com/docs/runtime/module-resolution#import-meta) - ESM module resolution
+ * - [Resolve errors](https://bun.com/reference/bun/resolve) - Resolution failure behavior
  * - [Module Resolution Guide](./module-resolution-guide.md) - Complete guide with examples
  *
- * @see https://bun.com/docs/api/utils#bun-resolve
- * @see https://bun.com/docs/api/utils#bun-resolvesync
- * @see https://bun.com/docs/runtime/bun-apis#importmetaresolve
+ * @see https://bun.com/reference/bun/resolve
+ * @see https://bun.com/docs/runtime/utils#bun-resolvesync
+ * @see https://bun.com/docs/runtime/module-resolution#import-meta
  */
 
 // ResolveMessage is a global class in Bun, no import needed
@@ -68,7 +68,7 @@ export function isResolveMessage(error: unknown): error is ResolveMessage {
 /**
  * Basic error handling for Bun.resolve
  *
- * @see https://bun.com/docs/api/utils#bun-resolve
+ * @see https://bun.com/reference/bun/resolve
  *
  * @example
  * ```typescript
@@ -105,7 +105,7 @@ export async function resolveWithErrorHandling(specifier: string, from?: string)
 /**
  * Basic error handling for Bun.resolveSync
  *
- * @see https://bun.com/docs/api/utils#bun-resolvesync
+ * @see https://bun.com/docs/runtime/utils#bun-resolvesync
  */
 export function resolveSyncWithErrorHandling(specifier: string, from?: string): ResolveResult<string> {
 	try {
@@ -359,7 +359,7 @@ export async function safeImport<T = unknown>(specifier: string, from?: string):
 /**
  * Error handling for import.meta.resolve
  *
- * @see https://bun.com/docs/runtime/bun-apis#importmetaresolve
+ * @see https://bun.com/docs/runtime/module-resolution#import-meta
  *
  * Note: import.meta.resolve signature may vary by Bun version
  */

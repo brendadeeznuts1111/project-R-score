@@ -33,7 +33,7 @@ export function getCachedValidation(): ValidationResult {
   lastValidation = { result, at: now, contextVersion };
 
   // Hint GC if memory pressure
-  if (Bun.memoryUsage().heapUsed > 100_000_000) {
+  if (process.memoryUsage().heapUsed > 100_000_000) {
     Bun.gc();
   }
 

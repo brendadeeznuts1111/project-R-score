@@ -3,6 +3,7 @@
  * Native Addon Tool - Build script for native modules
  * Demonstrates project isolation with Bun.main context
  */
+// @see https://bun.com/reference/node/process — process.exit
 
 // Entry guard - only allow direct execution
 if (import.meta.path !== Bun.main) {
@@ -79,7 +80,7 @@ Environment Variables:
   BUILD_TARGET      Target runtime (bun, node, etc.)
   PROJECT_HOME      Project root directory
 `);
-  Bun.exit(0);
+  process.exit(0);
 }
 
 const target = args.find(a => a.startsWith('--target='))?.split('=')[1] ||
@@ -89,8 +90,8 @@ process.env.BUILD_TARGET = target;
 
 buildNativeAddon().then(() => {
   console.info('\nBuild process finished successfully.');
-  Bun.exit(0);
+  process.exit(0);
 }).catch(err => {
   console.error('\n❌ Build failed:', err);
-  Bun.exit(1);
+  process.exit(1);
 });

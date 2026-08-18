@@ -4,14 +4,21 @@
  * Neural + FFI + Hot Reload (187K matches/sec)
  * Enhanced with Bun native APIs:
  * - Bun.peek() for synchronous route cache lookups
- * - Bun.sqlite for route caching
+ * - bun:sqlite for route caching
  * - Bun.hash.rapidhash() for fast URL hashing
  * - Bun.main for entry point detection
  */
+// @see https://bun.com/reference/node/fs/watch — node:fs watch
 
 import { hash, peek } from "bun";
+import { existsSync, readFileSync, watch } from "node:fs";
 import { FFIMatcher } from "./ffi-wrapper";
 import { NeuralNet } from "./ai-pattern-evolver";
+import {
+	filterByEnvironment,
+	getAllPatterns,
+	getPriorityDistribution,
+} from "./ai-adaptive-multi-region-patterns";
 import { QuantumArbRouter } from "./quantum-arb-router";
 import type { RouteResult } from "./quantum-arb-router";
 import { patternCache, routeCache, type CachedRoute } from "./utils/pattern-cache";
@@ -34,6 +41,24 @@ export interface UltraRouteResult extends RouteResult {
 	environment?: string;
 	type?: string;
 	processingTime?: string;
+}
+
+interface GeneratedPattern {
+	id?: string; // brand-ok -- opaque identifier from the generated JSON feed
+	pathname?: string;
+	hostname?: string;
+	priority?: number;
+	confidence?: number;
+}
+
+function isGeneratedPattern(value: unknown): value is GeneratedPattern {
+	if (typeof value !== 'object' || value === null) return false;
+	if ('id' in value && value.id !== undefined && typeof value.id !== 'string') return false;
+	if ('pathname' in value && value.pathname !== undefined && typeof value.pathname !== 'string') return false;
+	if ('hostname' in value && value.hostname !== undefined && typeof value.hostname !== 'string') return false;
+	if ('priority' in value && value.priority !== undefined && typeof value.priority !== 'number') return false;
+	if ('confidence' in value && value.confidence !== undefined && typeof value.confidence !== 'number') return false;
+	return true;
 }
 
 export class UltraArbRouter<T = any> {
@@ -67,35 +92,37 @@ export class UltraArbRouter<T = any> {
 	}
 
 	/**
-	 * Setup pattern file watcher for HMR (Bun-native Bun.fs.watch)
+	 * Setup pattern file watcher for HMR
 	 * Watches both JSON files and TypeScript pattern files
 	 */
 	private setupPatternWatcher(): void {
 		try {
 			// Watch JSON pattern files (including ai-driven-feed.json)
-			Bun.watch('./patterns', {
+			watch('./patterns', {
 				recursive: true
 			}, async (event, filename) => {
-				if (event === 'change' && filename.endsWith('.json')) {
-					const isBatch = filename.includes('batch') || filename.includes('feed');
+				const changedFile = filename?.toString();
+				if (event === 'change' && changedFile?.endsWith('.json')) {
+					const isBatch = changedFile.includes('batch') || changedFile.includes('feed');
 					if (isBatch) {
-						console.info(`🔥 BATCH HMR: ${filename} detected`);
+						console.info(`🔥 BATCH HMR: ${changedFile} detected`);
 					}
-					await this.hotReloadPatterns([filename]);
+					await this.hotReloadPatterns([changedFile]);
 				}
 			});
 
 			// Watch TypeScript pattern files
-			Bun.watch('./src', {
+			watch('./src', {
 				recursive: true
 			}, async (event, filename) => {
-				if (event === 'change' && filename.includes('ai-adaptive-multi-region-patterns.ts')) {
-					console.info(`🔥 HMR: src/${filename} MODIFIED`);
+				const changedFile = filename?.toString();
+				if (event === 'change' && changedFile?.includes('ai-adaptive-multi-region-patterns.ts')) {
+					console.info(`🔥 HMR: src/${changedFile} MODIFIED`);
 					await this.hotReloadAdaptivePatterns();
 				}
 			});
 
-			console.info('🔥 HMR: Pattern watcher enabled (Bun.fs.watch, WATCH_PATTERNS=true)');
+			console.info('🔥 HMR: Pattern watcher enabled (node:fs watch, WATCH_PATTERNS=true)');
 		} catch (e) {
 			console.warn('HMR watcher setup failed:', e);
 		}
@@ -290,7 +317,7 @@ export class UltraArbRouter<T = any> {
 
 	/**
 	 * Route request with FFI + AI + Priority-based routing
-	 * Uses Bun.peek() for fast cache lookups and Bun.sqlite for persistence
+	 * Uses Bun.peek() for fast cache lookups and bun:sqlite for persistence
 	 */
 	async routeRequest(url: string, region: string = 'global', environment?: string): Promise<UltraRouteResult> {
 		const startTime = performance.now();
@@ -373,7 +400,7 @@ export class UltraArbRouter<T = any> {
 						const priorityBoost = pattern.priority >= 100 ? 0.1 : pattern.priority / 1000;
 						const finalConfidence = Math.min(1.0, baseConfidence + priorityBoost);
 						
-						// Cache the route for future lookups (Bun.sqlite + in-memory)
+						// Cache the route for future lookups (bun:sqlite + in-memory)
 						if (pattern.id) {
 							routeCache.set(url, pattern.id, execResult.pathname.groups);
 							
@@ -568,12 +595,13 @@ export class UltraArbRouter<T = any> {
 		const hmrStatus = quantumStats.hmrStatus;
 		const cacheStats = quantumStats.cacheStats;
 
-		// Get newest AI pattern using Bun.file
+		// Keep this synchronous because server status routes call getStats() inline.
 		let newestPattern: any = undefined;
 		try {
-			const patternFile = Bun.file('./patterns/ai-generated.json');
-			if (patternFile.size > 0) {
-				const aiPatterns = await patternFile.json() as any[];
+			const patternFile = './patterns/ai-generated.json';
+			if (existsSync(patternFile)) {
+				const parsed: unknown = JSON.parse(readFileSync(patternFile, 'utf8'));
+				const aiPatterns = Array.isArray(parsed) ? parsed.filter(isGeneratedPattern) : [];
 				if (aiPatterns.length > 0) {
 					const latest = aiPatterns[aiPatterns.length - 1];
 					newestPattern = {
@@ -598,9 +626,8 @@ export class UltraArbRouter<T = any> {
 		let newestPatterns: Array<Record<string, any>> | undefined = undefined;
 		
 		try {
-			const { AI_ADAPTIVE_MULTI_REGION_PATTERNS, getPriorityDistribution, filterByEnvironment } = await import('./ai-adaptive-multi-region-patterns');
 			const currentEnv = Bun.env.NODE_ENV || 'prod';
-			const envPatterns = filterByEnvironment(AI_ADAPTIVE_MULTI_REGION_PATTERNS, currentEnv);
+			const envPatterns = filterByEnvironment(getAllPatterns(), currentEnv);
 			priorityDistribution = getPriorityDistribution(envPatterns);
 			
 			environmentStats = {
@@ -613,7 +640,7 @@ export class UltraArbRouter<T = any> {
 			// Get newest patterns (highest priority)
 			const topPatterns = envPatterns.sort((a, b) => b.priority - a.priority).slice(0, 5);
 			newestPatterns = topPatterns.map(p => ({
-				[p.id]: {
+				[p.id ?? 'unknown']: {
 					pathname: p.pathname,
 					priority: p.priority,
 					environment: p.environment,
@@ -660,4 +687,3 @@ export class UltraArbRouter<T = any> {
 		};
 	}
 }
-

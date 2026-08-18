@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "contractKind": "agent-alignment",
+  "projectKey": "project-r",
+  "agentContext": "AGENTS.md",
+  "skillAuthority": ".agents/skills",
+  "installedSkills": [
+    "project-r-ops-management",
+    "project-r-skill-maintenance"
+  ],
+  "globalAuthorityPointers": [
+    "AGENTS.md",
+    "docs/BUN_DOCS_OPERATE.md"
+  ]
+}

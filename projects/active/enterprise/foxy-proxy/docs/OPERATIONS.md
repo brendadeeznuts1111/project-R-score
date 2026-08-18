@@ -148,12 +148,23 @@ bun outdated
 # Update all packages
 bun update
 
-# Review security vulnerabilities
-bun audit
+# Review production vulnerabilities at the enforced threshold
+bun run security:audit
 
-# Fix vulnerabilities
-bun audit fix
+# Review the complete dependency tree, including development tooling
+bun run security:audit:all
+
+# Remediate a reported package, then rerun both audits
+bun update <package-name>
+bun run security:audit
+bun run security:audit:all
 ```
+
+`security:audit` is the production merge policy. `security:audit:all` exposes
+development-tool debt without misclassifying it as deployed code. The pinned
+Bun 1.3.14 runtime does not support automatic audit remediation, so update the
+reported package explicitly and rerun both checks. See Bun's official
+[`bun audit` reference](https://bun.com/docs/pm/cli/audit).
 
 ## 🚨 Incident Response
 

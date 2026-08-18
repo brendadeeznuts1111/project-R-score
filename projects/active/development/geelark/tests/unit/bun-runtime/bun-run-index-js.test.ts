@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 
 import { describe, expect, test } from "bun:test";
+import { mkdir } from "node:fs/promises";
 describe("🎯 Bun Run - File Execution Verification", () => {
   test("✅ bun run index.js - creates and runs index.js", async () => {
     // Create index.js file
@@ -29,7 +30,7 @@ console.info('Doubled numbers:', doubled);
 
   test("✅ bun run index.js - error handling for missing file", async () => {
     // Test with non-existent index.js in current directory
-    await Bun.mkdir("/tmp/test-error", { recursive: true });
+    await mkdir("/tmp/test-error", { recursive: true });
     const result = await Bun.spawn([process.argv[0], "run", "index.js"], {
       cwd: "/tmp/test-error",
       stdout: "pipe",

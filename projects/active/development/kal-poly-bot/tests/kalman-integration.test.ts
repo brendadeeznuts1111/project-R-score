@@ -36,7 +36,7 @@ describe("Kalman Infrastructure Integration: v2.4.2 + v1.3.3", () => {
     }
   });
 
-  test("Component #43: V8 Type Checking Bridge", () => {
+  test("Component #43: JavaScript Type Checking Bridge", () => {
     const testCases = [
       { value: new Uint8Array(10), type: "isTypedArray", expected: true },
       { value: new Date(), type: "isDate", expected: true },
@@ -132,12 +132,12 @@ trustedDependencies: true
     expect(content.configVersion).toBe(1);
   });
 
-  test("Component #57: CPU Profiling", () => {
+  test("Component #57: Hot-Path Timing", () => {
     const profiler = KalmanStabilityIntegration.profilePattern(99);
     expect(profiler).toHaveProperty("start");
     expect(profiler).toHaveProperty("stop");
 
-    // Start profiling
+    // Start timing
     profiler.start();
 
     // Do some work
@@ -146,11 +146,10 @@ trustedDependencies: true
       sum += Math.sqrt(i);
     }
 
-    // Stop profiling
-    const profilePath = profiler.stop();
+    // Stop timing
+    const measurement = profiler.stop();
 
-    // Profile path should be returned (may be empty if not supported)
-    expect(typeof profilePath).toBe("string");
+    expect(typeof measurement).toBe("string");
   });
 
   test("Component #58: Test Finalization", async () => {

@@ -163,7 +163,7 @@ async function optimizeCSS(cssFile: string = "app.css") {
 	}
 }
 
-// 5. Bun.xml RSS parse
+// 5. Dependency-free RSS summary
 async function parseRSS(feedUrl: string = "https://bun.sh/rss.xml") {
 	colorLog("cyan", "\n📰 RSS Feed Parser");
 
@@ -171,38 +171,17 @@ async function parseRSS(feedUrl: string = "https://bun.sh/rss.xml") {
 		const response = await fetch(feedUrl);
 		const text = await response.text();
 
-		let xml: any;
-		let method = "unknown";
+		const titleMatch = text.match(/<title>([^<]+)<\/title>/i);
+		const itemMatches = text.match(/<item>[\s\S]*?<\/item>/gi) || [];
+		const method = "regex";
 
-		// Try Bun.xml.parse (v1.3.7+ experimental)
-		try {
-			xml = (Bun as any).xml.parse(text);
-			method = "Bun.xml.parse";
-		} catch {
-			method = "regex fallback";
-			// Fallback to basic regex parsing
-			const titleMatch = text.match(/<title>([^<]+)<\/title>/i);
-			const itemMatches = text.match(/<item>[\s\S]*?<\/item>/gi) || [];
-
-			return {
-				title: titleMatch?.[1] || "Unknown Feed",
-				itemCount: itemMatches.length,
-				feedSize: text.length,
-				method,
-				status: "success",
-			};
-		}
-
-		const channel = xml.rss?.channel;
-		const itemCount = channel?.item?.length || 0;
-
-		console.info(`📝 Feed: ${channel?.title || "Unknown"}`);
-		console.info(`📦 Items: ${itemCount}`);
+		console.info(`📝 Feed: ${titleMatch?.[1] || "Unknown"}`);
+		console.info(`📦 Items: ${itemMatches.length}`);
 		console.info(`🔧 Method: ${method}`);
 
 		return {
-			title: channel?.title || "Unknown Feed",
-			itemCount,
+			title: titleMatch?.[1] || "Unknown Feed",
+			itemCount: itemMatches.length,
 			feedSize: text.length,
 			method,
 			status: "success",

@@ -48,7 +48,7 @@ const BUN_CONVERTERS: readonly EnhancedStreamConverter[] = [
 		risk: {memory: 0.7, parsing: 0.0, untrusted: 0.3}, // R = 0.56
 	},
 	{
-		function: 'Bun.readableStreamToBytes',
+		function: 'stream.bytes()',
 		input: 'ReadableStream<Uint8Array>',
 		output: 'Uint8Array',
 		sites: 0,
@@ -56,7 +56,7 @@ const BUN_CONVERTERS: readonly EnhancedStreamConverter[] = [
 		risk: {memory: 0.6, parsing: 0.0, untrusted: 0.3}, // R = 0.51
 	},
 	{
-		function: 'Bun.readableStreamToBlob',
+		function: 'stream.blob()',
 		input: 'ReadableStream<Uint8Array>',
 		output: 'Blob',
 		sites: 0,
@@ -64,7 +64,7 @@ const BUN_CONVERTERS: readonly EnhancedStreamConverter[] = [
 		risk: {memory: 0.5, parsing: 0.0, untrusted: 0.2}, // R = 0.39
 	},
 	{
-		function: 'Bun.readableStreamToJSON',
+		function: 'stream.json()',
 		input: 'ReadableStream<Uint8Array>',
 		output: 'object',
 		sites: 0,
@@ -72,7 +72,7 @@ const BUN_CONVERTERS: readonly EnhancedStreamConverter[] = [
 		risk: {memory: 0.4, parsing: 0.8, untrusted: 0.7}, // R = 1.33
 	},
 	{
-		function: 'Bun.readableStreamToText',
+		function: 'stream.text()',
 		input: 'ReadableStream<Uint8Array>',
 		output: 'string',
 		sites: 0,
@@ -160,8 +160,8 @@ const BUN_STREAM_MIGRATION_MATRIX: readonly StreamMigrationEntry[] = [
 	{
 		id: 1,
 		userlandPattern: 'new Response(stream).text()',
-		nativeReplacement: 'Bun.readableStreamToText(stream)',
-		converter: 'readableStreamToText',
+		nativeReplacement: 'stream.text()',
+		converter: 'text',
 		rScore: 1.0,
 		complexityBefore: 4,
 		complexityAfter: 1,
@@ -192,8 +192,8 @@ const BUN_STREAM_MIGRATION_MATRIX: readonly StreamMigrationEntry[] = [
 	{
 		id: 3,
 		userlandPattern: 'new Response(stream).blob()',
-		nativeReplacement: 'Bun.readableStreamToBlob(stream)',
-		converter: 'readableStreamToBlob',
+		nativeReplacement: 'stream.blob()',
+		converter: 'blob',
 		rScore: 1.0,
 		complexityBefore: 4,
 		complexityAfter: 1,
@@ -208,8 +208,8 @@ const BUN_STREAM_MIGRATION_MATRIX: readonly StreamMigrationEntry[] = [
 	{
 		id: 4,
 		userlandPattern: 'new Response(stream).json()',
-		nativeReplacement: 'Bun.readableStreamToJSON(stream)',
-		converter: 'readableStreamToJSON',
+		nativeReplacement: 'stream.json()',
+		converter: 'json',
 		rScore: 1.0,
 		complexityBefore: 5,
 		complexityAfter: 1,
@@ -240,8 +240,8 @@ const BUN_STREAM_MIGRATION_MATRIX: readonly StreamMigrationEntry[] = [
 	{
 		id: 6,
 		userlandPattern: 'new TextDecoder().decode(chunks)',
-		nativeReplacement: 'Bun.readableStreamToText(stream)',
-		converter: 'readableStreamToText',
+		nativeReplacement: 'stream.text()',
+		converter: 'text',
 		rScore: 0.995,
 		complexityBefore: 5,
 		complexityAfter: 1,
@@ -256,8 +256,8 @@ const BUN_STREAM_MIGRATION_MATRIX: readonly StreamMigrationEntry[] = [
 	{
 		id: 7,
 		userlandPattern: 'Buffer.concat(chunks)',
-		nativeReplacement: 'Bun.readableStreamToBytes(stream)',
-		converter: 'readableStreamToBytes',
+		nativeReplacement: 'stream.bytes()',
+		converter: 'bytes',
 		rScore: 1.0,
 		complexityBefore: 4,
 		complexityAfter: 1,

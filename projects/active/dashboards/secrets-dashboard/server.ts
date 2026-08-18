@@ -1,4 +1,20 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/utils#bun-fileurltopath — Bun.fileURLToPath
+// @see https://bun.com/reference/bun/gc — Bun.gc
+// @see https://bun.com/reference/bun/generateHeapSnapshot — Bun.generateHeapSnapshot
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
+// @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-pathtofileurl — Bun.pathToFileURL
+// @see https://bun.com/docs/runtime/utils#bun-resolvesync — Bun.resolveSync
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 
 import {readFile, writeFile, mkdir, readdir} from 'node:fs/promises';
 import {existsSync, watch} from 'node:fs';
@@ -624,7 +640,7 @@ async function listProjects(): Promise<{folder: string; name: string | null; pat
 }
 
 function generateRequestId(): string {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  return Bun.randomUUIDv7();
 }
 
 function logResponse(response: Response, startTime: number, requestId: string): void {
@@ -648,7 +664,6 @@ const server = Bun.serve({
       ip: req.headers.get('x-forwarded-for') || 'unknown'
     }, requestId);
 
-    try {
     if (url.pathname === '/' || url.pathname === '/index.html') {
       const response = serveStatic(req, join(PUBLIC_DIR, 'index.html'));
       logResponse(response, startTime, requestId);
@@ -914,7 +929,6 @@ const server = Bun.serve({
         return response;
       }
     }
-
     const response = new Response('Not found', {status: 404});
     logResponse(response, startTime, requestId);
     return response;

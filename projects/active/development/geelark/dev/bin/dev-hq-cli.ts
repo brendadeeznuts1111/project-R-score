@@ -15,6 +15,7 @@
  *   bunx dev-hq insights --csv > insights.csv
  *   bun bin/dev-hq-cli.ts insights --table
  */
+// @see https://bun.com/reference/node/process — process.memoryUsage
 
 import { inspect, spawn } from "bun";
 import { Command } from "commander";
@@ -232,16 +233,7 @@ async function analyzeCodebase(options: {
 }): Promise<CodebaseInsights> {
   const startTime = performance.now();
   const startMemory = process.memoryUsage();
-  let startHeap = { heapUsed: 0, heapTotal: 0 };
-
-  try {
-    // Try to get Bun heap usage if available
-    if (typeof Bun !== 'undefined' && (Bun as any).heapUsage) {
-      startHeap = (Bun as any).heapUsage();
-    }
-  } catch {
-    // Fall back to 0 if not available
-  }
+  const startHeap = startMemory;
 
   const glob = new Bun.Glob("**/*.{ts,tsx,js,jsx,json,mjs,cjs}");
   const files: FileStats[] = [];
@@ -340,16 +332,7 @@ async function analyzeCodebase(options: {
 
   const endTime = performance.now();
   const endMemory = process.memoryUsage();
-  let endHeap = { heapUsed: 0, heapTotal: 0 };
-
-  try {
-    // Try to get Bun heap usage if available
-    if (typeof Bun !== 'undefined' && (Bun as any).heapUsage) {
-      endHeap = (Bun as any).heapUsage();
-    }
-  } catch {
-    // Fall back to 0 if not available
-  }
+  const endHeap = endMemory;
 
   const analysisTime = endTime - startTime;
   const memoryUsed = endMemory.heapUsed - startMemory.heapUsed;

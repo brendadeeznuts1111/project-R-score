@@ -6,11 +6,11 @@
 
 // Generate complete Golden Matrix status based on the infrastructure files
 function generateGoldenMatrixStatus() {
-  // Based on the infrastructure files, this is the final v1.3.3 status with all 85 components
+  // Based on the retained infrastructure files after removing unsupported demos.
   const status = {
     version: "1.3.3-STABLE-FINAL",
-    totalComponents: 85,
-    activeComponents: 27,
+    totalComponents: 82,
+    activeComponents: 24,
     zeroCostEliminated: 58,
     securityHardening: true,
     securityPatches: {
@@ -19,7 +19,7 @@ function generateGoldenMatrixStatus() {
       nativeStability: 5,
     },
     databaseFixes: {
-      mysql: ["param_binding", "tls_spin", "idle_connection"],
+      mysql: ["param_binding"],
       redis: ["url_validation"],
       s3: ["etag_memory"],
     },
@@ -38,14 +38,14 @@ function generateGoldenMatrixStatus() {
       websocket: "RFC_6455",
       yaml: "YAML_1.2",
     },
-    status: "GOLDEN_MATRIX_LOCKED_85_COMPONENTS",
+    status: "GOLDEN_MATRIX_LOCKED_82_COMPONENTS",
     registry: "mcp-registry-core",
     deployment: "production_ready",
 
     // Component breakdown
     components: {
       v133: {
-        total: 85,
+        total: 82,
         active: [
           "SOURCEMAP_INTEGRITY", // Component #71
           "NAPI_THREADSAFE", // Component #72
@@ -54,11 +54,8 @@ function generateGoldenMatrixStatus() {
           "YAML_DOC_END_FIX", // Component #75
           "BUNX_WINDOWS_UTF8_FIX", // Component #76
           "MYSQL_PARAMETER_BINDING_GUARD", // Component #77
-          "MYSQL_TLS_SPIN_FIX", // Component #78
-          "MYSQL_IDLE_CONNECTION_FIX", // Component #79
           "REDIS_URL_VALIDATOR", // Component #80
           "S3_ETAG_MEMORY_FIX", // Component #81
-          "FFI_ERROR_SURFACER", // Component #82
           "WEBSOCKET_COOKIE_FIX", // Component #83
           "NODEJS_COMPAT_PATCH", // Component #84
           "CLOUDFLARE_SECURITY_PATCH", // Component #85
@@ -100,11 +97,8 @@ function generateGoldenMatrixStatus() {
       75: "m1n2...3o4p", // YAML-Doc-End-Fix
       76: "k1l2...3m4n", // Bunx-Windows-UTF8-Fix
       77: "5o6p...7q8r", // MySQL-Parameter-Binding-Guard
-      78: "9s0t...1u2v", // MySQL-TLS-Spin-Fix
-      79: "3w4x...5y6z", // MySQL-Idle-Connection-Fix
       80: "7a8b...9c0d", // Redis-URL-Validator
       81: "1e2f...3g4h", // S3-ETag-Memory-Fix
-      82: "5i6j...7k8l", // FFI-Error-Surfacer
       83: "9m0n...1o2p", // WebSocket-Cookie-Fix
       84: "3q4r...5s6t", // NodeJS-Compat-Patch
       85: "7u8v...9w0x", // Cloudflare-Security-Patch
@@ -128,22 +122,6 @@ function generateGoldenMatrixStatus() {
         impactLogic: "Rejects boxed primitives (new Number/Boolean)",
         status: "VALIDATED",
       },
-      "78": {
-        name: "MySQL-TLS-Spin-Fix",
-        tier: "Level 1: Database",
-        resourceTax: "CPU: -100%",
-        protocol: "TLS 1.3",
-        impactLogic: "Timer init after connection; prevents 100% CPU",
-        status: "OPTIMIZED",
-      },
-      "79": {
-        name: "MySQL-Idle-Connection-Fix",
-        tier: "Level 0: Kernel",
-        resourceTax: "Heap: -2MB",
-        protocol: "Event Loop",
-        impactLogic: "Fixes v1.2.23 regression; clean process exit",
-        status: "FIXED",
-      },
       "80": {
         name: "Redis-URL-Validator",
         tier: "Level 1: Cache",
@@ -159,14 +137,6 @@ function generateGoldenMatrixStatus() {
         protocol: "S3 ListObjects",
         impactLogic: "Fixes ETag parsing leak; unbounded growth prevented",
         status: "PATCHED",
-      },
-      "82": {
-        name: "FFI-Error-Surfacer",
-        tier: "Level 0: FFI",
-        resourceTax: "CPU: <0.1%",
-        protocol: "dlopen() POSIX",
-        impactLogic: "Actionable dlopen errors with library paths",
-        status: "ENHANCED",
       },
       "83": {
         name: "WebSocket-Cookie-Fix",

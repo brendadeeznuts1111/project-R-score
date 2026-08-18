@@ -1,6 +1,8 @@
 import { QuantumResistantSecureDataRepository } from './quantum-audit.js';
 import { ThreatIntelligenceService } from './threat-intelligence.js';
 import { BUN_DOC_MAP } from './col93-matrix.js';
+
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 import {
   hashManifest,
   verifyScriptSignature,
@@ -212,7 +214,9 @@ export class SecurePackager {
     }
     
     // Find the generated tarball
-    const files = await Array.fromAsync(Bun.glob(`${pkgPath}/*.tgz`));
+    const files = await Array.fromAsync(
+      new Bun.Glob('*.tgz').scan({ cwd: pkgPath, absolute: true })
+    );
     if (files.length === 0) {
       throw new PackExecutionError('No tarball generated', { pkgPath });
     }

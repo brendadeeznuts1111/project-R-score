@@ -5,7 +5,7 @@
  * Production-ready Argon2id password hashing with sensible defaults
  * based on OWASP and NIST recommendations.
  *
- * @see https://bun.sh/docs/api/hashing
+ * @see https://bun.com/docs/runtime/hashing#bun-password
  */
 
 // OWASP-recommended Argon2id configurations

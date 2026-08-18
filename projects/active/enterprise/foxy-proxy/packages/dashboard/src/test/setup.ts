@@ -1,31 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { vi } from "vitest";
+import { cleanup } from "@testing-library/react";
+import { afterEach, vi } from "vitest";
 import React from "react";
-import "@testing-library/jest-dom";
+import "@testing-library/jest-dom/vitest";
 
-// Mock bun:bundle FIRST before any imports that might use it
-vi.mock("bun:bundle", () => ({
-  feature: (name: string) => {
-    // Mock feature flags - return true for development features
-    const mockFeatures: Record<string, boolean> = {
-      DEBUG: true,
-      PREMIUM_TIER: false,
-      ENTERPRISE: false,
-      QUANTUM_SAFE: false,
-      ADVANCED_WIDTH_CALC: true,
-      MOCK_API: true,
-      BETA_FEATURES: false,
-      SSO_INTEGRATION: false,
-      AUDIT_LOGS: false,
-      COMPLIANCE_MODE: false,
-      ADVANCED_ANALYTICS: true,
-      PERFORMANCE_PROFILING: false,
-      WEBHOOK_SUPPORT: true,
-      BACKUP_AUTOMATION: true
-    };
-    return mockFeatures[name] ?? false;
-  }
-}));
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 // Set up DOM environment - ensure window exists first
 if (typeof window === "undefined") {
@@ -136,7 +118,6 @@ global.URL.revokeObjectURL = vi.fn();
 // Manual mocks here were breaking React 19's environment detection
 
 // Mock URL.createObjectURL and revokeObjectURL while preserving URL constructor
-const OriginalURL = global.URL;
 global.URL.createObjectURL = vi.fn(() => "mock-url");
 global.URL.revokeObjectURL = vi.fn();
 
@@ -180,46 +161,14 @@ vi.mock("react-router-dom", () => ({
   useLocation: () => ({ pathname: "/" })
 }));
 
-// Mock lucide-react icons
-vi.mock("lucide-react", () => ({
-  LayoutDashboard: () => React.createElement("div", { "data-testid": "layout-dashboard-icon" }),
-  Server: () => React.createElement("div", { "data-testid": "server-icon" }),
-  BarChart3: () => React.createElement("div", { "data-testid": "bar-chart-icon" }),
-  Settings: () => React.createElement("div", { "data-testid": "settings-icon" }),
-  Shield: () => React.createElement("div", { "data-testid": "shield-icon" }),
-  Activity: () => React.createElement("div", { "data-testid": "activity-icon" }),
-  AlertTriangle: () => React.createElement("div", { "data-testid": "alert-triangle-icon" }),
-  TrendingUp: () => React.createElement("div", { "data-testid": "trending-up-icon" }),
-  Globe: () => React.createElement("div", { "data-testid": "globe-icon" }),
-  RefreshCw: () => React.createElement("div", { "data-testid": "refresh-cw-icon" }),
-  Plus: () => React.createElement("div", { "data-testid": "plus-icon" }),
-  Search: () => React.createElement("div", { "data-testid": "search-icon" }),
-  Filter: () => React.createElement("div", { "data-testid": "filter-icon" }),
-  MoreVertical: () => React.createElement("div", { "data-testid": "more-vertical-icon" }),
-  Bell: () => React.createElement("div", { "data-testid": "bell-icon" }),
-  User: () => React.createElement("div", { "data-testid": "user-icon" }),
-  LogOut: () => React.createElement("div", { "data-testid": "logout-icon" }),
-  Key: () => React.createElement("div", { "data-testid": "key-icon" }),
-  Smartphone: () => React.createElement("div", { "data-testid": "smartphone-icon" }),
-  Save: () => React.createElement("div", { "data-testid": "save-icon" }),
-  Eye: () => React.createElement("div", { "data-testid": "eye-icon" }),
-  EyeOff: () => React.createElement("div", { "data-testid": "eye-off-icon" }),
-  X: () => React.createElement("div", { "data-testid": "x-icon" }),
-  Cloud: () => React.createElement("div", { "data-testid": "cloud-icon" }),
-  Copy: () => React.createElement("div", { "data-testid": "copy-icon" }),
-  Check: () => React.createElement("div", { "data-testid": "check-icon" }),
-  ExternalLink: () => React.createElement("div", { "data-testid": "external-link-icon" }),
-  Play: () => React.createElement("div", { "data-testid": "play-icon" }),
-  Power: () => React.createElement("div", { "data-testid": "power-icon" }),
-  Upload: () => React.createElement("div", { "data-testid": "upload-icon" }),
-  Download: () => React.createElement("div", { "data-testid": "download-icon" }),
-  FileText: () => React.createElement("div", { "data-testid": "file-text-icon" }),
-  Trash2: () => React.createElement("div", { "data-testid": "trash-2-icon" }),
-  AlertCircle: () => React.createElement("div", { "data-testid": "alert-circle-icon" }),
-  Clock: () => React.createElement("div", { "data-testid": "clock-icon" }),
-  Calendar: () => React.createElement("div", { "data-testid": "calendar-icon" }),
-  CheckCircle2: () => React.createElement("div", { "data-testid": "check-circle-2-icon" })
-}));
+// Preserve the real icon surface. This pinned lucide version lacks TestTube.
+vi.mock("lucide-react", async (importOriginal) => {
+  const icons = await importOriginal<Record<string, unknown>>();
+  return {
+    ...icons,
+    TestTube: () => React.createElement("div", { "data-testid": "test-tube-icon" })
+  };
+});
 
 // Mock Recharts
 vi.mock("recharts", () => ({
@@ -240,27 +189,4 @@ vi.mock("recharts", () => ({
   LineChart: ({ children }: { children: React.ReactNode }) =>
     React.createElement("div", { "data-testid": "line-chart" }, children),
   Line: () => React.createElement("div", { "data-testid": "line" })
-}));
-
-// Mock bun:bundle for feature flags
-vi.mock("bun:bundle", () => ({
-  feature: (name: string) => {
-    const mockFeatures: Record<string, boolean> = {
-      DEBUG: true,
-      PREMIUM_TIER: false,
-      ENTERPRISE: false,
-      QUANTUM_SAFE: false,
-      ADVANCED_WIDTH_CALC: true,
-      MOCK_API: true,
-      BETA_FEATURES: false,
-      SSO_INTEGRATION: false,
-      AUDIT_LOGS: false,
-      COMPLIANCE_MODE: false,
-      ADVANCED_ANALYTICS: true,
-      PERFORMANCE_PROFILING: false,
-      WEBHOOK_SUPPORT: true,
-      BACKUP_AUTOMATION: true
-    };
-    return mockFeatures[name] ?? false;
-  }
 }));

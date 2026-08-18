@@ -46,13 +46,6 @@ export class ParserFormatters {
     return Bun.TOML.parse(toml);
   }
 
-  stringifyTOML(value: any): string {
-    if (!feature("PARSER_FORMATTERS")) {
-      return "";
-    }
-
-    return Bun.TOML.stringify(value);
-  }
 }
 
 export const parserFormatters = feature("PARSER_FORMATTERS")
@@ -61,7 +54,6 @@ export const parserFormatters = feature("PARSER_FORMATTERS")
       semverCompare: (v1: string, v2: string) => v1.localeCompare(v2),
       semverSatisfies: (version: string, range: string) => version === range,
       parseTOML: () => ({}),
-      stringifyTOML: () => "",
     };
 
 export default parserFormatters;

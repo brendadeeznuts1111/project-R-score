@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — Bun.s3
 // s3-inline-patch.ts  (zero-breaking, additive)
 // S3 contentDisposition support for Quantum Cash-Flow Lattice v1.5.1
 // Enables inline browser display of tension graphs, bundles, and PNGs

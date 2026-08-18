@@ -2,9 +2,9 @@
  * [ENFORCEMENT][AI][SUGGESTIONS][META:{ACCURACY:95%}][#REF:suggestions,domain]{BUN-NATIVE}
  * Intelligent suggestion engine for column recommendations
  */
+// @see https://bun.com/reference/node/fs/globSync — node:fs globSync
 
-import { glob } from "bun";
-import { readFileSync, existsSync } from "fs";
+import { existsSync, globSync, readFileSync } from "node:fs";
 import {
   DOMAIN_MODELS,
   detectDomain,
@@ -64,11 +64,10 @@ export class SuggestionEngine {
 
     console.info("🔍 Analyzing codebase patterns for suggestions...");
 
-    // Use synchronous glob from bun
     try {
-      const files = glob.sync("**/*.{ts,tsx,js,jsx}", {
+      const files = globSync("**/*.{ts,tsx,js,jsx}", {
         cwd: process.cwd(),
-        ignore: ["node_modules", "dist", "build", "**/*.d.ts"],
+        exclude: ["node_modules/**", "dist/**", "build/**", "**/*.d.ts"],
       });
 
       for (const file of files) {

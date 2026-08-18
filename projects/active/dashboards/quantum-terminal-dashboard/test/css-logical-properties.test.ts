@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/bundler/index#basic-example — Bun.build
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // test/css-logical-properties.test.ts
 // Validates CSS logical properties are correctly transpiled with nested pseudo-elements
 // Fix: inset-inline-end, margin-inline-start, etc. no longer stripped when

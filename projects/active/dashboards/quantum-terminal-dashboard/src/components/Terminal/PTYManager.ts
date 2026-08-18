@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
 /**
  * PTYManager.ts - Core PTY Terminal Management
  * Handles Bun.Terminal instances with reusable terminal support

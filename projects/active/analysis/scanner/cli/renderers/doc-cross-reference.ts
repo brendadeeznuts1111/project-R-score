@@ -114,12 +114,12 @@ export const BUN_API_PROVENANCE: Readonly<Record<string, string>> = {
 	'Bun.pathToFileURL': '<1.2',
 	'Bun.Glob': '<1.2',
 	'HTMLRewriter': '<1.2',
-	'Bun.readableStreamToText': '<1.2',
-	'Bun.readableStreamToJSON': '<1.2',
+	'ReadableStream.text': '<1.2',
+	'ReadableStream.json': '<1.2',
 	'Bun.readableStreamToArray': '<1.2',
 	'Bun.readableStreamToArrayBuffer': '<1.2',
-	'Bun.readableStreamToBytes': '<1.2',
-	'Bun.readableStreamToBlob': '<1.2',
+	'ReadableStream.bytes': '<1.2',
+	'ReadableStream.blob': '<1.2',
 	'Bun.readableStreamToFormData': '<1.2',
 	'bun:ffi': '<1.2',
 	'bun:test': '<1.2',
@@ -201,14 +201,14 @@ export const BUN_PERF_ANNOTATIONS: Readonly<Record<string, readonly PerfAnnotati
 			ref: 'https://bun.com/blog/bun-v1.3.6',
 		},
 	],
-	'Bun.readableStreamToText': [
+	'ReadableStream.text': [
 		{
 			version: '<1.2',
 			change: 'Native C++ stream consumer replaces Response wrapper',
 			impact: '7.1x faster than new Response(stream).text()',
 		},
 	],
-	'Bun.readableStreamToJSON': [
+	'ReadableStream.json': [
 		{
 			version: '<1.2',
 			change: 'Native C++ stream consumer replaces Response wrapper',
@@ -232,7 +232,7 @@ export const BUN_PERF_ANNOTATIONS: Readonly<Record<string, readonly PerfAnnotati
 export const BUN_RELATED_APIS: Readonly<Record<string, readonly string[]>> = {
 	// HTTP & Networking
 	'Bun.serve': ['Bun.fetch', 'WebSocket', 'Bun.listen', 'URLPattern'],
-	'Bun.fetch': ['Bun.serve', 'Bun.readableStreamToJSON', 'Bun.readableStreamToText'],
+	'Bun.fetch': ['Bun.serve', 'ReadableStream.json', 'ReadableStream.text'],
 	'Bun.listen': ['Bun.connect', 'Bun.serve', 'Bun.udpSocket'],
 	'Bun.connect': ['Bun.listen', 'Bun.udpSocket'],
 	'Bun.udpSocket': ['Bun.listen', 'Bun.connect'],
@@ -245,7 +245,7 @@ export const BUN_RELATED_APIS: Readonly<Record<string, readonly string[]>> = {
 	'$ (shell)': ['$.braces', '$.escape', 'Bun.spawn'],
 	'$.braces': ['$ (shell)', '$.escape'],
 	'$.escape': ['$ (shell)', '$.braces'],
-	'Bun.spawn': ['Bun.spawnSync', '$ (shell)', 'Bun.readableStreamToText'],
+	'Bun.spawn': ['Bun.spawnSync', '$ (shell)', 'ReadableStream.text'],
 	'Bun.spawnSync': ['Bun.spawn', '$ (shell)'],
 
 	// File I/O
@@ -291,14 +291,14 @@ export const BUN_RELATED_APIS: Readonly<Record<string, readonly string[]>> = {
 	'Bun.Archive': ['Bun.gzipSync', 'Bun.zstdCompressSync'],
 
 	// Streaming
-	'HTMLRewriter': ['Bun.readableStreamToText', 'Bun.serve'],
-	'Bun.readableStreamToText': ['Bun.readableStreamToJSON', 'Bun.readableStreamToBytes'],
-	'Bun.readableStreamToJSON': ['Bun.readableStreamToText', 'Bun.fetch'],
-	'Bun.readableStreamToArray': ['Bun.readableStreamToBytes', 'Bun.readableStreamToText'],
-	'Bun.readableStreamToArrayBuffer': ['Bun.readableStreamToBytes', 'Bun.readableStreamToBlob'],
-	'Bun.readableStreamToBytes': ['Bun.readableStreamToArrayBuffer', 'Bun.readableStreamToArray'],
-	'Bun.readableStreamToBlob': ['Bun.readableStreamToArrayBuffer', 'Bun.readableStreamToText'],
-	'Bun.readableStreamToFormData': ['Bun.readableStreamToText', 'FormData.from'],
+	'HTMLRewriter': ['ReadableStream.text', 'Bun.serve'],
+	'ReadableStream.text': ['ReadableStream.json', 'ReadableStream.bytes'],
+	'ReadableStream.json': ['ReadableStream.text', 'Bun.fetch'],
+	'Bun.readableStreamToArray': ['ReadableStream.bytes', 'ReadableStream.text'],
+	'Bun.readableStreamToArrayBuffer': ['ReadableStream.bytes', 'ReadableStream.blob'],
+	'ReadableStream.bytes': ['Bun.readableStreamToArrayBuffer', 'Bun.readableStreamToArray'],
+	'ReadableStream.blob': ['Bun.readableStreamToArrayBuffer', 'ReadableStream.text'],
+	'Bun.readableStreamToFormData': ['ReadableStream.text', 'FormData.from'],
 	'FormData.from': ['Bun.readableStreamToFormData'],
 
 	// Routing
@@ -421,12 +421,12 @@ export const BUN_SEARCH_KEYWORDS: Readonly<Record<string, readonly string[]>> = 
 
 	// Streaming
 	'HTMLRewriter': ['html', 'rewrite', 'transform', 'parse', 'selector', 'element'],
-	'Bun.readableStreamToText': ['stream', 'text', 'convert', 'read', 'string'],
-	'Bun.readableStreamToJSON': ['stream', 'json', 'parse', 'convert', 'read'],
+	'ReadableStream.text': ['stream', 'text', 'convert', 'read', 'string'],
+	'ReadableStream.json': ['stream', 'json', 'parse', 'convert', 'read'],
 	'Bun.readableStreamToArray': ['stream', 'array', 'chunks', 'collect', 'read'],
 	'Bun.readableStreamToArrayBuffer': ['stream', 'arraybuffer', 'binary', 'buffer', 'read'],
-	'Bun.readableStreamToBytes': ['stream', 'bytes', 'uint8array', 'binary', 'read'],
-	'Bun.readableStreamToBlob': ['stream', 'blob', 'binary', 'convert', 'read'],
+	'ReadableStream.bytes': ['stream', 'bytes', 'uint8array', 'binary', 'read'],
+	'ReadableStream.blob': ['stream', 'blob', 'binary', 'convert', 'read'],
 	'Bun.readableStreamToFormData': ['stream', 'formdata', 'multipart', 'upload', 'form'],
 	'FormData.from': ['formdata', 'create', 'convert', 'urlsearchparams'],
 

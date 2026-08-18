@@ -167,7 +167,7 @@ bun run tier1380 -- dashboard --team=<name> --profile=<name>      # Open metrics
 # Tier-1380 Audit CLI (Col-89 Compliance)
 bun run tier1380:audit check <file>     # Col-89 violation scan with SQLite
 bun run tier1380:audit css <file>       # LightningCSS minification
-bun run tier1380:audit rss [url]        # RSS feed audit (Bun.xml)
+bun run tier1380:audit rss [url]        # RSS feed audit (dependency-free summary)
 bun run tier1380:audit dashboard        # Launch dashboard on :1380
 bun run tier1380:audit db               # View violations database
 bun run tier1380:audit clean            # Clear audit data
@@ -901,8 +901,8 @@ bun -e 'import{Database}from"bun:sqlite";console.log((new Database("./data/tier1
 # LightningCSS size diff (if installed)
 bun -e 'import{transform}from"lightningcss";const c=await Bun.file("app.css").text();const r=transform({code:Buffer.from(c),minify:true});console.log(((1-r.code.length/c.length)*100).toFixed(1)+"% saved")'
 
-# Bun.xml RSS parse (v1.3.7+ experimental)
-bun -e 'const x=(Bun as any).xml?.parse?.(await(await fetch("https://bun.sh/rss.xml")).text());console.log(x?.rss?.channel?.item?.[0]?.title||"N/A")'
+# RSS title extraction (dependency-free)
+bun -e 'const t=await(await fetch("https://bun.com/rss.xml")).text();const m=t.match(/<item[\s\S]*?<title>([^<]+)<\/title>/i);console.log(m?.[1]||"N/A")'
 
 # Bun.build introspection (async function)
 bun -e 'console.log(typeof Bun.build)' # → "function"

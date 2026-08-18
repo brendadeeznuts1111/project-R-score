@@ -5,7 +5,6 @@
  * Interactive visualization component for bundle analysis and monitoring
  */
 
-import { Bun } from "bun";
 import { join } from "path";
 
 interface BucketData {

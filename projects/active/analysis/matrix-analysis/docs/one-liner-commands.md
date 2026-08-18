@@ -84,22 +84,20 @@ bun -e 'import{transform}from"lightningcss";const c=await Bun.file("app.css").te
 
 ---
 
-## 5. Bun.xml RSS Parse (Experimental v1.3.7+)
+## 5. Dependency-Free RSS Title Extraction
 
-**Purpose:** Parse RSS feeds using Bun's experimental XML parser
+**Purpose:** Extract the latest RSS item title without an XML dependency
 
 ```bash
-bun -e 'const x=(Bun as any).xml.parse(await(await fetch("https://bun.com/rss.xml")).text());console.log(x.rss.channel.item[0].title)'
+bun -e 'const t=await(await fetch("https://bun.com/rss.xml")).text();const m=t.match(/<item[\s\S]*?<title>([^<]+)<\/title>/i);console.log(m?.[1]||"N/A")'
 ```
 
 **Features:**
-- Uses experimental `Bun.xml.parse()` API
+- Uses the built-in Fetch API and regex extraction
 - Fetches and parses RSS feeds
-- Navigates XML structure
 - Extracts latest item title
 
 **Prerequisites:**
-- Bun v1.3.7 or later
 - Internet connection for fetch
 - Valid RSS feed URL
 

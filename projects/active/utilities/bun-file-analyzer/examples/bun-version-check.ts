@@ -8,6 +8,7 @@
  *   bun --version
  *   bun run bun-version-check.ts
  */
+// @see https://bun.com/reference/node/process — process.platform
 
 console.info("🔍 Bun Runtime Detection Demo\n");
 
@@ -16,12 +17,11 @@ if (typeof Bun !== 'undefined') {
   console.info("✅ Running in Bun!");
   console.info("─".repeat(40));
   console.info("Bun version:", Bun.version);
-  console.info("Platform:", Bun.platform);
+  console.info("Platform:", process.platform);
   console.info("Has Bun.file:", typeof Bun.file === 'function');
   console.info("Has Bun.hash:", typeof Bun.hash === 'function');
   console.info("Has Bun.serve:", typeof Bun.serve === 'function');
   console.info("Has Bun.write:", typeof Bun.write === 'function');
-  console.info("Has Bun.read:", typeof Bun.read === 'function');
   console.info("Has Bun.peek:", typeof Bun.peek === 'function');
   console.info("Has Bun.color:", typeof Bun.color === 'function');
   console.info("Has Bun.CookieMap:", typeof Bun.CookieMap === 'function');
@@ -31,7 +31,6 @@ if (typeof Bun !== 'undefined') {
   console.info("\n📦 Additional Bun APIs:");
   console.info("Has Bun.env:", typeof Bun.env === 'object');
   console.info("Has Bun.main:", typeof Bun.main === 'string');
-  console.info("Has Bun.path:", typeof Bun.path === 'object');
   
   // Test some Bun functions
   console.info("\n🧪 Testing Bun Functions:");

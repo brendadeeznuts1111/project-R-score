@@ -426,34 +426,34 @@ export { InspectorDebugger };
 
 // CLI interface
 if (import.meta.main) {
-  const = new InspectorDebugger();
+  const inspectorDebugger = new InspectorDebugger();
   
   console.info('🔍 Bun Inspector Debugger Demo');
   console.info('================================');
   
   try {
     // Start inspector
-    await .startInspector();
+    await inspectorDebugger.startInspector();
     
     // Enable debugger
-    await .enableDebugger();
+    await inspectorDebugger.enableDebugger();
     
     // Demo profiling
     console.info('\n📊 Starting profiling demo...');
     
-    await .startCPUProfiling();
+    await inspectorDebugger.startCPUProfiling();
     
     // Simulate some work
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    await .stopCPUProfiling();
+    await inspectorDebugger.stopCPUProfiling();
     
     // Show status
     console.info('\n📋 Inspector Status:');
-    console.info(JSON.stringify(debugger.getStatus(), null, 2));
+    console.info(JSON.stringify(inspectorDebugger.getStatus(), null, 2));
     
     console.info('\n✅ Inspector demo complete!');
-    console.info(`🌐 Connect with Chrome DevTools: ${debugger.inspectorUrl}`);
+    console.info(`🌐 Connect with Chrome DevTools: ${inspectorDebugger.inspectorUrl}`);
     
   } catch (error) {
     console.error('❌ Inspector demo failed:', error.message);

@@ -3,6 +3,7 @@
  * DNS resolution results displayed with table-utils
  * Run with: bun examples/dns-table-integration.ts
  */
+// @see https://bun.com/docs/runtime/nodejs-compat#nodetty — process.stdout.isTTY
 
 import { enforceTable } from "../src/utils/table-utils";
 import {
@@ -68,7 +69,7 @@ const columns = [
 
 try {
   const table = enforceTable(tableData, columns, {
-    colors: Bun.isTTY,
+    colors: process.stdout.isTTY === true,
     sortByWidth: true,
   });
   console.info(table);
@@ -138,4 +139,3 @@ console.info(`  Per-validation: ${(duration / (validResults.length * 1000)).toFi
 console.info(`  Throughput: ${((validResults.length * 1000) / (duration / 1000)).toFixed(0)} ops/sec`);
 
 console.info("\n✅ DNS table integration complete!\n");
-

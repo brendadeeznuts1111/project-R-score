@@ -8,12 +8,12 @@
  * - Accurate table rendering via Bun.stringWidth()
  * - Compile-time feature flags integration
  *
- * Bun v1.3.5+ Features Tested:
- * - V8 Type Checking APIs
+ * Runtime and local features tested:
+ * - Standard JavaScript type guards
  * - Bun.stringWidth (emoji/ANSI accurate)
  * - feature("NAME") compile-time flags
  * - Bun.Terminal PTY
- * - Bun.Semaphore/RWLock concurrency
+ * - Local Semaphore/RWLock concurrency
  * - Compression APIs
  * - HTMLRewriter streaming
  *
@@ -27,6 +27,7 @@ import { TableUtils } from './precision-utils';
 import { Decimal } from 'decimal.js';
 import { SurgicalTarget } from './surgical-target';
 import { PrecisionUtils, BunTypes, HTMLRewriterUtils } from './precision-utils';
+import { createRWLock, createSemaphore } from './concurrency-primitives';
 
 // Results tracking with type and property information
 interface BenchmarkResult {
@@ -157,9 +158,9 @@ console.info('🛡️ CATEGORY 3: Zero-Collateral Operations');
 }
 
 // ============================================================================
-// CATEGORY 4: V8 Type Checking APIs (Bun v1.3.5+)
+// CATEGORY 4: Standard JavaScript Type Guards
 // ============================================================================
-console.info('🔍 CATEGORY 4: V8 Type Checking APIs (Bun v1.3.5+)');
+console.info('🔍 CATEGORY 4: Standard JavaScript Type Guards');
 {
   const ops = 100000;
   const testValues = [
@@ -191,9 +192,9 @@ console.info('🔍 CATEGORY 4: V8 Type Checking APIs (Bun v1.3.5+)');
   const timeMs = performance.now() - start;
   const totalChecks = ops * 8;
   recordResult({
-    category: 'V8 Type Checking',
-    featureType: 'bun-v1.3.5',
-    property: 'Bun.isTypedArray(), Bun.isDate(), Bun.isMap()...',
+    category: 'Standard Type Guards',
+    featureType: 'core',
+    property: 'ArrayBuffer.isView(), instanceof',
     operations: totalChecks,
     timeMs,
     opsPerSec: Math.round((totalChecks / timeMs) * 1000),
@@ -225,7 +226,7 @@ console.info('📏 CATEGORY 5: Bun.stringWidth Performance (Bun v1.3.5+)');
   for (let i = 0; i < ops; i++) {
     const str = testStrings[i % testStrings.length] ?? '';
     if (bunStringWidthAvailable) {
-      totalWidth += (globalThis.Bun as any).stringWidth(str);
+      totalWidth += Bun.stringWidth(str);
     } else {
       totalWidth += str.length;
     }
@@ -245,46 +246,38 @@ console.info('📏 CATEGORY 5: Bun.stringWidth Performance (Bun v1.3.5+)');
 }
 
 // ============================================================================
-// CATEGORY 6: Bun.Semaphore Concurrency (PLANNED for future Bun version)
-console.info('🔒 CATEGORY 6: Bun.Semaphore Concurrency (Planned for future Bun version)');
+// CATEGORY 6: Local Semaphore Concurrency
+console.info('🔒 CATEGORY 6: Local Semaphore Concurrency');
 {
-  const semaphoreAvailable = typeof globalThis.Bun !== 'undefined' && 'Semaphore' in globalThis.Bun;
   const iterations = 1000;
   const semaphoreOps = [];
 
   for (let i = 0; i < iterations; i++) {
     const start = performance.now();
-    if (semaphoreAvailable) {
-      const semaphore = new (globalThis.Bun as any).Semaphore(10);
-      await semaphore.acquire();
-      semaphore.release();
-    } else {
-      // Fallback - simple counter (not available in current Bun v1.3.5)
-      let counter = 0;
-      counter++;
-    }
+    const semaphore = createSemaphore(10);
+    await semaphore.acquire();
+    semaphore.release();
     semaphoreOps.push(performance.now() - start);
   }
 
-  const semaphoreAvg = semaphoreOps.reduce((a, b) => a + b, 0) / semaphoreOps.length;
-  const semaphoreOpsPerSec = iterations / (semaphoreOps.reduce((a, b) => a + b, 0) / 1000);
+  const elapsed = semaphoreOps.reduce((a, b) => a + b, 0);
 
-  results.push({
-    category: 'Terminal PTY',
-    featureType: 'bun-v1.3.5',
-    property: 'Bun.Terminal',
-    operations: 1000,
-    timeMs: 0.000009,
-    opsPerSec: 109086942,
-    success: typeof globalThis.Bun !== 'undefined' && 'Terminal' in globalThis.Bun,
-    notes: (typeof globalThis.Bun !== 'undefined' && 'Terminal' in globalThis.Bun) ? '✅ PTY Available' : '❌ PTY Not Available'
+  recordResult({
+    category: 'Local Semaphore',
+    featureType: 'core',
+    property: 'createSemaphore().acquire(), .release()',
+    operations: iterations,
+    timeMs: elapsed,
+    opsPerSec: Math.round(iterations / (elapsed / 1000)),
+    success: true,
+    notes: 'Promise-based local implementation'
   });
+}
 
 // ============================================================================
-// CATEGORY 7: Bun.RWLock Performance (PLANNED for future Bun version)
-console.info('🔐 CATEGORY 7: Bun.RWLock Performance (Planned for future Bun version)');
+// CATEGORY 7: Local RWLock Performance
+console.info('🔐 CATEGORY 7: Local RWLock Performance');
 {
-  const rwlockAvailable = typeof globalThis.Bun !== 'undefined' && 'RWLock' in globalThis.Bun;
   const rwlockIterations = 500;
   let readOps = 0;
   let writeOps = 0;
@@ -293,48 +286,37 @@ console.info('🔐 CATEGORY 7: Bun.RWLock Performance (Planned for future Bun ve
 
   for (let i = 0; i < rwlockIterations; i++) {
     const start = performance.now();
+    const rwlock = createRWLock();
 
-    if (rwlockAvailable) {
-      const rwlock = new (globalThis.Bun as any).RWLock();
+    await Promise.all([
+      rwlock.acquireRead(),
+      rwlock.acquireRead(),
+      rwlock.acquireRead()
+    ]);
 
-      // Test concurrent reads
-      await Promise.all([
-        rwlock.acquireRead(),
-        rwlock.acquireRead(),
-        rwlock.acquireRead()
-      ]);
+    readOps += 3;
+    rwlock.releaseRead();
+    rwlock.releaseRead();
+    rwlock.releaseRead();
 
-      readOps += 3;
-      rwlock.releaseRead();
-      rwlock.releaseRead();
-      rwlock.releaseRead();
-
-      // Test write lock
-      await rwlock.acquireWrite();
-      writeOps++;
-      rwlock.releaseWrite();
-
-    } else {
-      // Fallback - simple object locking (not available in current Bun v1.3.5)
-      const obj = {};
-      obj['test'] = 'value';
-    }
+    await rwlock.acquireWrite();
+    writeOps++;
+    rwlock.releaseWrite();
 
     rwlockOps.push(performance.now() - start);
   }
 
-  const rwlockAvg = rwlockOps.reduce((a, b) => a + b, 0) / rwlockOps.length;
-  const rwlockOpsPerSec = (readOps + writeOps) / (rwlockOps.reduce((a, b) => a + b, 0) / 1000);
+  const elapsed = rwlockOps.reduce((a, b) => a + b, 0);
 
-  results.push({
-    category: 'Bun.RWLock',
-    featureType: 'bun-v1.3.5',
-    property: 'Bun.RWLock.acquireRead(), .acquireWrite()',
+  recordResult({
+    category: 'Local RWLock',
+    featureType: 'core',
+    property: 'createRWLock().acquireRead(), .acquireWrite()',
     operations: readOps + writeOps,
-    timeMs: rwlockOps.reduce((a, b) => a + b, 0),
-    opsPerSec: rwlockOpsPerSec,
-    success: !rwlockAvailable, // Success if we properly handle the fallback
-    notes: rwlockAvailable ? `✅ Native RWLock (R:${readOps} W:${writeOps})` : '⏭️ Not available in v1.3.5 (planned for future)'
+    timeMs: elapsed,
+    opsPerSec: Math.round((readOps + writeOps) / (elapsed / 1000)),
+    success: true,
+    notes: `Local RWLock (R:${readOps} W:${writeOps})`
   });
 }
 
@@ -376,7 +358,7 @@ console.info('📁 CATEGORY 9: File I/O Operations');
 
   for (let i = 0; i < ops; i++) {
     try {
-      const bunFile = (globalThis.Bun as any).file('./package.json');
+      const bunFile = Bun.file('./package.json');
       const content = await bunFile.text();
       if (content.length > 0) successfulOps++;
     } catch {
@@ -413,8 +395,8 @@ console.info('🗜️ CATEGORY 10: Compression Performance');
   for (let i = 0; i < ops; i++) {
     try {
       const inputBytes = encoder.encode(testData);
-      const compressed = (globalThis.Bun as any).gzipSync(inputBytes);
-      const decompressed = (globalThis.Bun as any).gunzipSync(compressed);
+      const compressed = Bun.gzipSync(inputBytes);
+      const decompressed = Bun.gunzipSync(compressed);
       const result = decoder.decode(decompressed);
       if (result === testData) {
         successfulOps++;
@@ -622,11 +604,11 @@ const bunAvailable = typeof globalThis.Bun !== 'undefined';
 
 const featureStatusTable = [
   ['Runtime', bunAvailable ? TableUtils.color.green('✅ Active') : TableUtils.color.red('❌ Not detected')],
-  ['Semaphore', (bunAvailable && 'Semaphore' in globalThis.Bun) ? TableUtils.color.green('✅') : TableUtils.color.red('⏭️ (future)')],
-  ['RWLock', (bunAvailable && 'RWLock' in globalThis.Bun) ? TableUtils.color.green('✅') : TableUtils.color.red('⏭️ (future)')],
+  ['Local Semaphore', TableUtils.color.green('✅')],
+  ['Local RWLock', TableUtils.color.green('✅')],
    ['Terminal PTY', (bunAvailable && typeof Bun.Terminal === 'function') ? TableUtils.color.green('✅') : TableUtils.color.yellow('⚠️')],
   ['stringWidth', (bunAvailable && 'stringWidth' in globalThis.Bun) ? TableUtils.color.green('✅') : TableUtils.color.yellow('⚠️')],
-  ['V8 Type APIs', (bunAvailable && 'isTypedArray' in globalThis.Bun) ? TableUtils.color.green('✅') : TableUtils.color.yellow('Fallback')],
+  ['Standard Type Guards', TableUtils.color.green('✅')],
   ['Compile Flags', '✅ feature("NAME") Active']
 ];
 
@@ -647,4 +629,3 @@ if (passed) {
 console.info();
 console.info(TableUtils.color.cyan('📋 Reference: https://bun.sh/blog/bun-v1.3.5'));
 console.info(TableUtils.color.magenta('🎯 Endeavor with surgical precision. #BunWhy #ZeroCollateral'));
-}

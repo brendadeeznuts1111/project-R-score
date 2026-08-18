@@ -7,7 +7,7 @@ describe('Shell Pipeline Integration (Bun.$)', () => {
 	test('text() via shell pipe', async () => {
 		const start = Bun.nanoseconds();
 		const result =
-			await $`echo "hello world" | ${Bun.which('bun')!} -e 'console.info(await Bun.readableStreamToText(Bun.stdin.stream()))'`.text();
+			await $`echo "hello world" | ${Bun.which('bun')!} -e 'console.info(await Bun.stdin.stream().text())'`.text();
 		const latency = (Bun.nanoseconds() - start) / 1e6; // ms
 
 		expect(result.trim()).toBe('hello world');
@@ -17,7 +17,7 @@ describe('Shell Pipeline Integration (Bun.$)', () => {
 	test('bytes() via shell pipe with octal escapes', async () => {
 		// POSIX-portable octal escapes (not \x hex)
 		const result = await $`printf '\001\002\003' | ${Bun.which('bun')!} -e '
-      const bytes = await Bun.readableStreamToBytes(Bun.stdin.stream());
+      const bytes = await Bun.stdin.stream().bytes();
       process.stdout.write(String(bytes.length));
     '`.text();
 
@@ -27,7 +27,7 @@ describe('Shell Pipeline Integration (Bun.$)', () => {
 	test('JSON converter error handling', async () => {
 		const result = await $`echo "invalid json" | ${Bun.which('bun')!} -e '
       try {
-        await Bun.readableStreamToJSON(Bun.stdin.stream());
+		await Bun.stdin.stream().json();
       } catch (e) {
         console.info("ERROR");
       }

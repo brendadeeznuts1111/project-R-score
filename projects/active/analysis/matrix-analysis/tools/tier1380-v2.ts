@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // @bun v1.3.7+
-// Zero Col-89 violations, Bun.xml native parsing, graceful fallbacks
+// Zero Col-89 violations and dependency-free RSS summaries
 
 import { Database } from "bun:sqlite";
 import { existsSync } from "fs";
@@ -61,9 +61,9 @@ function benchCRC32() {
 	return { name: "CRC32", throughput, duration, unit: "MB/s" };
 }
 
-// ─── Bun.xml RSS Parser (v1.3.7 native) ───────────
+// ─── Dependency-free RSS summary ──────────────────
 /**
- * Parse RSS feed with Bun.xml experimental support
+ * Summarize an RSS feed without an XML dependency
  * @param {string} url - RSS feed URL
  * @returns {Promise<Object>} Parsed feed data
  */
@@ -77,30 +77,14 @@ async function parseRSS(url) {
 
 		const fetchTime = (Bun.nanoseconds() - start) / 1e6;
 
-		// Bun.xml.parse is available in v1.3.7+ (experimental)
-		// @ts-expect-error - Bun.xml is experimental API not in TypeScript definitions
-		const xml = Bun.xml?.parse?.(text);
-
-		if (!xml) {
-			// Graceful fallback to regex if XML unavailable
-			const items = text.match(/<item[^>]*>.*?<\/item>/gs) || [];
-			const titles = items.map((i) => i.match(/<title>([^<]+)<\/title>/)?.[1] || "N/A");
-			return {
-				items: items.length,
-				latest: titles[0] || "N/A",
-				fetchTime,
-				method: "regex-fallback",
-			};
-		}
-
-		const items = xml.rss?.channel?.item || [];
-		const latest = items[0];
+		const items = text.match(/<item[^>]*>.*?<\/item>/gs) || [];
+		const titles = items.map((i) => i.match(/<title>([^<]+)<\/title>/)?.[1] || "N/A");
 
 		return {
 			items: items.length,
-			latest: latest?.title || "N/A",
+			latest: titles[0] || "N/A",
 			fetchTime,
-			method: "Bun.XML.parse",
+			method: "regex",
 		};
 	} catch (e) {
 		return { error: String(e), items: 0, method: "failed" };

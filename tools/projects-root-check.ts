@@ -83,12 +83,14 @@ export type ProjectIssueKind =
   | 'missing-bun-engine'
   | 'unsupported-bun-engine'
   | 'missing-bun-lock'
+  | 'missing-workspace-package'
   | 'foreign-lockfile'
   | 'foreign-package-manager'
   | 'unexpected';
 export type ProjectIssue = { kind: ProjectIssueKind; path: string; message?: string };
 
-type PackageManifest = {
+export type PackageManifest = {
+  name?: string;
   engines?: { bun?: string };
   packageManager?: string;
   dependencies?: Record<string, string>;
@@ -97,6 +99,8 @@ type PackageManifest = {
   peerDependencies?: Record<string, string>;
   workspaces?: string[] | { packages?: string[] };
 };
+
+export type WorkspaceManifest = { path: string; manifest: PackageManifest };
 
 type BunContractInput = {
   leaf: ProjectLeaf;
@@ -142,6 +146,107 @@ function hasInstallGraph(manifest: PackageManifest): boolean {
     DEPENDENCY_FIELDS.some(field => nonEmptyRecord(manifest[field])) ||
     (Array.isArray(manifest.workspaces) && manifest.workspaces.length > 0) ||
     (!Array.isArray(manifest.workspaces) && (manifest.workspaces?.packages?.length ?? 0) > 0)
+  );
+}
+
+function manifestWorkspacePatterns(manifest: PackageManifest): string[] {
+  return Array.isArray(manifest.workspaces)
+    ? manifest.workspaces
+    : (manifest.workspaces?.packages ?? []);
+}
+
+export function findMissingWorkspacePackages(packages: WorkspaceManifest[]): ProjectIssue[] {
+  const providers = new Set(
+    packages
+      .map(entry => entry.manifest.name)
+      .filter((name): name is string => typeof name === 'string' && name.length > 0)
+  );
+  const findings = new Map<string, ProjectIssue>();
+
+  for (const entry of packages) {
+    for (const field of DEPENDENCY_FIELDS) {
+      for (const [name, range] of Object.entries(entry.manifest[field] ?? {})) {
+        if (!range.startsWith('workspace:') || providers.has(name)) continue;
+        const key = `${entry.path}\0${name}`;
+        findings.set(key, {
+          kind: 'missing-workspace-package',
+          path: entry.path,
+          message: `${name}@${range}`,
+        });
+      }
+    }
+  }
+
+  return [...findings.values()].sort(
+    (left, right) =>
+      left.path.localeCompare(right.path) || left.message!.localeCompare(right.message!)
+  );
+}
+
+async function auditWorkspacePackages(
+  root: string,
+  leaf: ProjectLeaf,
+  manifest: PackageManifest
+): Promise<ProjectIssue[]> {
+  const leafRoot = joinPath(root, leaf.path);
+  const workspaceRoots: WorkspaceManifest[] = [{ path: `${leaf.path}/package.json`, manifest }];
+  for await (const relative of new Bun.Glob('**/package.json').scan({ cwd: leafRoot })) {
+    if (
+      relative === 'package.json' ||
+      relative.includes('/node_modules/') ||
+      relative.startsWith('node_modules/') ||
+      /\/(?:dist|build|coverage|\.cache)\//.test(`/${relative}`)
+    ) {
+      continue;
+    }
+    try {
+      const nested = (await Bun.file(joinPath(leafRoot, relative)).json()) as PackageManifest;
+      if (manifestWorkspacePatterns(nested).length > 0) {
+        workspaceRoots.push({ path: `${leaf.path}/${relative}`, manifest: nested });
+      }
+    } catch {
+      // The existing invalid-package contract owns malformed nested manifests.
+    }
+  }
+
+  const findings = new Map<string, ProjectIssue>();
+  for (const workspaceRoot of workspaceRoots) {
+    const patterns = manifestWorkspacePatterns(workspaceRoot.manifest);
+    if (patterns.length === 0) continue;
+    const workspaceRelative = workspaceRoot.path.slice(
+      leaf.path.length + 1,
+      -'/package.json'.length
+    );
+    const workspaceAbsolute = workspaceRelative ? joinPath(leafRoot, workspaceRelative) : leafRoot;
+    const packages: WorkspaceManifest[] = [workspaceRoot];
+    const seen = new Set(['package.json']);
+
+    for (const pattern of patterns) {
+      const manifestPattern = `${pattern.replace(/\/$/, '')}/package.json`;
+      for await (const relative of new Bun.Glob(manifestPattern).scan({ cwd: workspaceAbsolute })) {
+        if (seen.has(relative)) continue;
+        seen.add(relative);
+        try {
+          packages.push({
+            path: `${workspaceRoot.path.slice(0, -'package.json'.length)}${relative}`,
+            manifest: (await Bun.file(
+              joinPath(workspaceAbsolute, relative)
+            ).json()) as PackageManifest,
+          });
+        } catch {
+          // The existing invalid-package contract owns malformed nested manifests.
+        }
+      }
+    }
+
+    for (const finding of findMissingWorkspacePackages(packages)) {
+      findings.set(`${finding.path}\0${finding.message}`, finding);
+    }
+  }
+
+  return [...findings.values()].sort(
+    (left, right) =>
+      left.path.localeCompare(right.path) || left.message!.localeCompare(right.message!)
   );
 }
 
@@ -299,6 +404,9 @@ export async function auditProjectRoots(root = REPO): Promise<{
     });
     if (leaf.tier === 'active') issues.push(...findings);
     else advisories.push(...findings);
+    if (leaf.tier === 'active') {
+      advisories.push(...(await auditWorkspacePackages(root, leaf, manifest)));
+    }
   }
   return { leaves: discovered.leaves, issues, advisories };
 }
@@ -342,7 +450,7 @@ async function main(): Promise<void> {
       }
     }
     if (report.advisories.length > 0) {
-      console.info(`\n⚠ experimental advisories: ${report.advisories.length}\n`);
+      console.info(`\n⚠ project advisories: ${report.advisories.length}\n`);
       for (const advisory of report.advisories) {
         console.info(
           `  [${advisory.kind}] ${advisory.path}${advisory.message ? ` — ${advisory.message}` : ''}`

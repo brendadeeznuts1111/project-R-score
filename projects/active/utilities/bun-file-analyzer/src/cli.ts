@@ -1,6 +1,5 @@
 #!/usr/bin/env bun
-
-import { Bun } from "bun";
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 
 // CLI commands
 if (process.argv.includes("--version")) {
@@ -19,7 +18,7 @@ if (process.argv.includes("--archive")) {
     const archive = new Bun.Archive();
     
     // Add files matching pattern
-    for await (const file of Bun.glob(pattern)) {
+    for await (const file of new Bun.Glob(pattern).scan({ cwd: "." })) {
       const contents = await Bun.file(file).bytes();
       archive.add(file, contents);
     }

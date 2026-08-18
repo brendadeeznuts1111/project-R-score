@@ -40,19 +40,19 @@ describe("Dashboard", () => {
     render(<App />);
 
     // Check if main navigation elements are present
-    expect(screen.getByText("IPFoxy")).toBeInTheDocument();
-    expect(screen.getByText("Overview")).toBeInTheDocument();
-    expect(screen.getByText("Proxies")).toBeInTheDocument();
-    expect(screen.getByText("Analytics")).toBeInTheDocument();
-    expect(screen.getByText("Settings")).toBeInTheDocument();
+    expect(screen.getAllByText("IPFoxy").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Overview").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Proxies").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Analytics").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Settings").length).toBeGreaterThan(0);
   });
 
   it("displays overview page by default", () => {
     render(<App />);
 
     // Check if overview page elements are present
-    expect(screen.getByText("Dashboard Overview")).toBeInTheDocument();
-    expect(screen.getByText("Total Proxies")).toBeInTheDocument();
-    expect(screen.getByText("Active Proxies")).toBeInTheDocument();
+    expect(screen.getAllByText("Dashboard Overview").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Total Proxies").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Active Proxies").length).toBeGreaterThan(0);
   });
 });

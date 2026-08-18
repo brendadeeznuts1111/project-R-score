@@ -590,7 +590,9 @@ async function fetchWithRetry(url: string, maxRetries = 3): Promise<Response> {
 ### File Watcher
 
 ```typescript
-const watcher = Bun.watch("./src", { recursive: true });
+import { watch } from "node:fs/promises";
+
+const watcher = watch("./src", { recursive: true });
 
 for await (const event of watcher) {
   console.log(`File changed: ${event.filename}`);

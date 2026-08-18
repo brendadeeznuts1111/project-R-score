@@ -81,6 +81,7 @@ bun update --latest
 # Run security audit
 bun audit
 
-# Fix vulnerabilities
-bun audit fix
+# Update each reported package, then rerun the audit
+bun update <package-name>
+bun audit
 ```

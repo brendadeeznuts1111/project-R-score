@@ -6,8 +6,9 @@ exact = true
 # Cache configuration
 cache = true
 cache-dir = "./.bun-cache"
-# Registry configuration
-registry = "https://registry.factory-wager.com"
+# Public packages resolve from npm. Private FactoryWager packages use the
+# authenticated scopes below.
+registry = "https://registry.npmjs.org/"
 # Lockfile configuration
 lockfile = true
 lockfile-save = true
@@ -26,7 +27,7 @@ outdir = "./data/build-artifacts"
 
 [test]
 # Test configuration
-preload = ["./scripts/test-setup.ts"]
+preload = ["./__tests__/setup.ts"]
 coverage = true
 coverageDir = "./coverage"
 

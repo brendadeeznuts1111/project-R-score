@@ -5,7 +5,6 @@
  * Demonstrates security, performance tracking, and real-time analytics
  */
 
-import { Bun } from "bun";
 import { initializeMonitoring, SecureCookieManager, SecurityMiddleware } from "../src/monitoring";
 
 /**

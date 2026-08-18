@@ -43,7 +43,7 @@ const arbEmitter = new ArbEmitter();
 // Database setup - ensure data directory exists
 const dataDir = './data';
 try {
-	Bun.mkdir(dataDir, { recursive: true });
+	fs.mkdirSync(dataDir, { recursive: true });
 } catch {
 	// Directory may already exist
 }
@@ -436,4 +436,3 @@ console.info('%j', {
 	streamPipingFixed: true,
 	nextTickOverrideSafe: true
 });
-

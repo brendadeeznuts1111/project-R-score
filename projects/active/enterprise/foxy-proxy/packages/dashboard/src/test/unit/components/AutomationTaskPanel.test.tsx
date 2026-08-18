@@ -6,26 +6,26 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { AutomationTaskPanel } from "../../../components/AutomationTaskPanel";
 import DuoPlusAPI from "../../../utils/duoplus/duoplus";
 import { LoopTaskHelper } from "../../../utils/duoplus/loop-task-helper";
-import "@testing-library/jest-dom";
+
+const mocks = vi.hoisted(() => ({
+  createLoopTask: vi.fn(),
+  createIntervalTask: vi.fn(),
+  createDailyTask: vi.fn()
+}));
 
 // Mock the API and Helper
-vi.mock("../../../utils/duoplus/duoplus", () => {
-  return {
-    default: vi.fn().mockImplementation(() => ({
-      createLoopTask: vi.fn()
-    }))
-  };
-});
+vi.mock("../../../utils/duoplus/duoplus", () => ({
+  default: class MockDuoPlusAPI {
+    createLoopTask = mocks.createLoopTask;
+  }
+}));
 
-vi.mock("../../../utils/duoplus/loop-task-helper", () => {
-  const mockHelper = {
-    createIntervalTask: vi.fn(),
-    createDailyTask: vi.fn()
-  };
-  return {
-    LoopTaskHelper: vi.fn().mockImplementation(() => mockHelper)
-  };
-});
+vi.mock("../../../utils/duoplus/loop-task-helper", () => ({
+  LoopTaskHelper: class MockLoopTaskHelper {
+    createIntervalTask = mocks.createIntervalTask;
+    createDailyTask = mocks.createDailyTask;
+  }
+}));
 
 describe("AutomationTaskPanel", () => {
   let api: DuoPlusAPI;

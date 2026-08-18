@@ -18,7 +18,7 @@ export type IPFamily = 4 | 6;
  * [1.1.0.0] DNS Resolution Result Interface
  * Represents a single DNS lookup result from Bun's native resolver
  *
- * @see https://bun.com/docs/api/dns
+ * @see https://bun.com/docs/runtime/networking/dns
  * @tags dns,address,ip,core,enterprise
  */
 export interface DNSResolutionResult {
@@ -177,4 +177,3 @@ export function detectIPFamily(address: string): IPFamily {
   if (isValidIPv6(address)) return 6;
   throw new Error(`[DNS] Unable to detect IP family for: "${address}"`);
 }
-

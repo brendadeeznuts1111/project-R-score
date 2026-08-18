@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options — Bun.secrets
 /**
  * 🔐 Fire22 Environment Setup Wizard
  *
@@ -425,7 +426,11 @@ class Fire22EnvWizard {
       // Try to use Bun.secrets if available
       if (typeof Bun !== 'undefined' && Bun.secrets) {
         if (sensitive) {
-          await Bun.secrets.store(secretKey, value);
+          await Bun.secrets.set({
+            service: 'fire22-dashboard-worker',
+            name: secretKey,
+            value,
+          });
           console.info(`   🔐 Stored ${key} in system keychain`);
         } else {
           // Store non-sensitive values in .env file
@@ -525,7 +530,10 @@ class Fire22EnvWizard {
     try {
       // Try Bun.secrets first
       if (typeof Bun !== 'undefined' && Bun.secrets) {
-        const value = await Bun.secrets.retrieve(secretKey);
+        const value = await Bun.secrets.get({
+          service: 'fire22-dashboard-worker',
+          name: secretKey,
+        });
         if (value) return value;
       }
     } catch (error) {

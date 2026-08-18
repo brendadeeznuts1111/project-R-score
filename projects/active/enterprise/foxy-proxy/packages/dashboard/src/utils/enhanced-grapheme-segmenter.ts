@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/bundler/index#features — bun:bundle
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // Enhanced grapheme segmenter leveraging Bun's improved Unicode 15.0 support
 import { feature } from "bun:bundle";
 

@@ -358,8 +358,6 @@ export class ErrorHandler {
           endpoint: error.context.endpoint,
         });
       }
-      }
-
       // Send R2/Storage errors to infrastructure team
       if (error.code === ERROR_CODES.R2_BUCKET_ALREADY_EXISTS || 
           error.code === ERROR_CODES.STORAGE_ERROR) {

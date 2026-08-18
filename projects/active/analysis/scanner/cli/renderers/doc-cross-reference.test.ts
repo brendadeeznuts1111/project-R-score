@@ -522,7 +522,7 @@ describe('DocumentationScanner', () => {
 		test('generates coverage report', () => {
 			const code = `
         const server = Bun.serve({ fetch() { return new Response("ok"); } });
-        const text = await Bun.readableStreamToText(stream);
+		const text = await stream.text();
       `;
 			const report = scanner.report('server.ts', code);
 			expect(report.file).toBe('server.ts');

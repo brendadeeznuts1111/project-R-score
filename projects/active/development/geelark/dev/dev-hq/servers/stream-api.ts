@@ -3,8 +3,7 @@
  *
  * Provides real-time statistics for stdin, stdout, stderr and file I/O metrics
  */
-
-import { Bun } from "bun";
+// @see https://bun.com/docs/runtime/globals — global Bun namespace
 
 // ============================================================================
 // Types

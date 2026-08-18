@@ -1,4 +1,3 @@
-import { Bun } from "bun";
 import { CookieManager } from "./cookie-manager";
 
 // Environment variables

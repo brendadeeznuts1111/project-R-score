@@ -322,65 +322,33 @@ async function analyzeRSSEnhanced(feedUrl: string = "https://bun.sh/rss.xml") {
 		}
 
 		const text = await response.text();
-		const parseTime = performance.now() - startTime - fetchTime;
+		const parseStart = performance.now();
+		const itemMatches = text.match(/<item>([\s\S]*?)<\/item>/gi) || [];
+		const titleMatch = text.match(/<title>([^<]+)<\/title>/i);
+		const pubDateMatch = itemMatches[0]?.match(/<pubDate>([^<]+)<\/pubDate>/i);
+		const parseTime = performance.now() - parseStart;
+		const method = "regex";
 
-		let xml: any;
-		let method = "unknown";
-
-		// Try Bun.xml.parse
-		try {
-			xml = (Bun as any).xml.parse(text);
-			method = "Bun.xml.parse";
-		} catch {
-			method = "regex fallback";
-			// Enhanced regex parsing
-			const channelMatch = text.match(/<channel>([\s\S]*?)<\/channel>/i);
-			const itemMatches = text.match(/<item>([\s\S]*?)<\/item>/gi) || [];
-			const titleMatch = text.match(/<title>([^<]+)<\/title>/i);
-			const pubDateMatch = itemMatches[0]?.match(/<pubDate>([^<]+)<\/pubDate>/i);
-
-			const feed = {
-				title: titleMatch?.[1] || "Unknown Feed",
-				itemCount: itemMatches.length,
-				feedSize: text.length,
-				method,
-				performance: { fetchTime, parseTime },
-				status: "success",
-				lastUpdated: pubDateMatch?.[1] || "Unknown",
-			};
-
-			console.info(`📊 Feed Health:`);
-			console.info(`   • Title: ${feed.title}`);
-			console.info(`   • Items: ${feed.itemCount}`);
-			console.info(`   • Size: ${(feed.feedSize / 1024).toFixed(1)} KB`);
-			console.info(`   • Last updated: ${feed.lastUpdated}`);
-			console.info(`   • Fetch time: ${fetchTime.toFixed(0)}ms`);
-			console.info(`   • Parse time: ${parseTime.toFixed(0)}ms`);
-			console.info(`   • Method: ${method}`);
-
-			return feed;
-		}
-
-		// Bun.xml.parse succeeded
-		const channel = xml.rss?.channel;
-		const items = channel?.item || [];
-
-		console.info(`📊 Feed Health:`);
-		console.info(`   • Title: ${channel?.title || "Unknown"}`);
-		console.info(`   • Items: ${items.length}`);
-		console.info(`   • Size: ${(text.length / 1024).toFixed(1)} KB`);
-		console.info(`   • Fetch time: ${fetchTime.toFixed(0)}ms`);
-		console.info(`   • Parse time: ${parseTime.toFixed(0)}ms`);
-		console.info(`   • Method: ${method}`);
-
-		return {
-			title: channel?.title || "Unknown Feed",
-			itemCount: items.length,
+		const feed = {
+			title: titleMatch?.[1] || "Unknown Feed",
+			itemCount: itemMatches.length,
 			feedSize: text.length,
 			method,
 			performance: { fetchTime, parseTime },
 			status: "success",
+			lastUpdated: pubDateMatch?.[1] || "Unknown",
 		};
+
+		console.info(`📊 Feed Health:`);
+		console.info(`   • Title: ${feed.title}`);
+		console.info(`   • Items: ${feed.itemCount}`);
+		console.info(`   • Size: ${(feed.feedSize / 1024).toFixed(1)} KB`);
+		console.info(`   • Last updated: ${feed.lastUpdated}`);
+		console.info(`   • Fetch time: ${fetchTime.toFixed(0)}ms`);
+		console.info(`   • Parse time: ${parseTime.toFixed(0)}ms`);
+		console.info(`   • Method: ${method}`);
+
+		return feed;
 	} catch (error: any) {
 		colorLog("bright_red", `❌ Feed error: ${error?.message || error}`);
 		return { status: "error", error: error?.message || error };

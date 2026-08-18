@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // src/headscale-cli.ts
 // Bun CLI for Headscale Management
 

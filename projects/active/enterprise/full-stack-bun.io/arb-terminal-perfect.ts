@@ -5,6 +5,7 @@
  */
 
 import { Database } from 'bun:sqlite';
+import { mkdirSync } from 'node:fs';
 import { MLGSGraph } from './src/graph/MLGSGraph';
 
 // ANSI color codes
@@ -23,7 +24,7 @@ const ANSI = {
 // Database setup
 const dataDir = './data';
 try {
-	Bun.mkdir(dataDir, { recursive: true });
+	mkdirSync(dataDir, { recursive: true });
 } catch {
     console.error('Unhandled error:', error);
   }
@@ -295,4 +296,3 @@ console.info('%j', {
 	refresh_rate: '60fps',
 	metrics_rate: '10fps'
 });
-

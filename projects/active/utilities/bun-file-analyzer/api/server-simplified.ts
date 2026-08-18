@@ -1,5 +1,5 @@
 // api/server-simplified.ts
-import { Bun, fetch as bunFetch, dns } from "bun";
+import { fetch as bunFetch, dns } from "bun";
 import { Palette } from "../src/utils/colors";
 
 const PORT = process.env.PORT || 3000;

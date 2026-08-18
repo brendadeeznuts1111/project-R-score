@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/bundler/index#features — bun:bundle
 /**
  * Enhanced Feature Flags System with Compile-time Elimination
  * Uses Bun's feature() for dead-code elimination and runtime checks

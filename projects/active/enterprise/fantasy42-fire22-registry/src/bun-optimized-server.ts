@@ -7,7 +7,9 @@
  * - Automatic connection pooling
  * - WebSocket support built-in
  */
+// @see https://bun.com/reference/node/process — process.platform
 
+import { readdir } from 'node:fs/promises';
 import { packageCache, queryCache } from './cache';
 import { validatePackageMetadata } from './validation';
 import { DatabaseResourceManager } from './resource-manager';
@@ -216,7 +218,7 @@ export class BunOptimizedServer {
     const stats = {
       server: {
         version: Bun.version,
-        platform: Bun.platform,
+        platform: process.platform,
         uptime: process.uptime(),
       },
       performance: this.stats,
@@ -476,7 +478,7 @@ export class BunOptimizedShell {
   // Fast file system operations
   static async readDirectory(path: string): Promise<string[]> {
     try {
-      return await Bun.readdir(path);
+      return await readdir(path);
     } catch (error) {
       console.error(`Failed to read directory ${path}:`, error);
       return [];
@@ -554,7 +556,7 @@ export class BunOptimizedMonitor {
   } {
     return {
       version: Bun.version,
-      platform: Bun.platform,
+      platform: process.platform,
       arch: process.arch,
       uptime: process.uptime(),
       memory: this.getMemoryUsage(),

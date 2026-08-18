@@ -11,6 +11,7 @@
  */
 
 import http from "node:http";
+import { mkdirSync } from "node:fs";
 import { Database } from "bun:sqlite";
 import { MLGSGraph } from "./src/graph/MLGSGraph";
 
@@ -30,7 +31,7 @@ const mlgsPath = process.env.MLGS_PATH || './data/hyperbun-mlgs-v4.db';
 
 // Ensure data directory exists
 try {
-	Bun.mkdir('./data', { recursive: true });
+	mkdirSync('./data', { recursive: true });
 } catch {
 	// Directory may already exist
 }
@@ -273,6 +274,5 @@ process.on('SIGTERM', () => {
 	db.close();
 	process.exit(0);
 });
-
 
 

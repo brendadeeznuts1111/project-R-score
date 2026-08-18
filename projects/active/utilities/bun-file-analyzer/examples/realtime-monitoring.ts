@@ -1,6 +1,5 @@
 #!/usr/bin/env bun
 
-import { Bun } from "bun";
 import { join } from "path";
 
 // Real-time Bundle Analysis

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
 import { test, expect, describe } from "bun:test";
 import {
   FormattedPerfMetric,
@@ -42,20 +43,20 @@ describe("FormattedPerfMetric", () => {
     properties: { version: "1.0.0" },
   };
 
-  test("FormattedPerfMetric should correctly format category with color and emoji", () => {
+  test("FormattedPerfMetric should format category text and emoji", () => {
     const formatted = new FormattedPerfMetric(mockMetric);
-    expect(formatted.category).toMatch(/🔒 \x1b\[38;5;\d+mSecurity\x1b\[0m/);
+    expect(Bun.stripANSI(formatted.category)).toBe("🔒 Security");
   });
 
-  test("FormattedPerfMetric should correctly format value with latency-based color", () => {
+  test("FormattedPerfMetric should preserve values under the runtime color policy", () => {
     const formatted = new FormattedPerfMetric(mockMetric);
-    expect(formatted.value).toMatch(/\x1b\[38;5;\d+m75ms\x1b\[0m/);
+    expect(Bun.stripANSI(formatted.value)).toBe("75ms");
 
     const formattedError = new FormattedPerfMetric(mockMetric2);
-    expect(formattedError.value).toMatch(/\x1b\[38;5;\d+m120ms\x1b\[0m/);
+    expect(Bun.stripANSI(formattedError.value)).toBe("120ms");
 
     const formattedSuccess = new FormattedPerfMetric(mockMetric3);
-    expect(formattedSuccess.value).toMatch(/\x1b\[38;5;\d+msuccess\x1b\[0m/);
+    expect(Bun.stripANSI(formattedSuccess.value)).toBe("success");
   });
 
   test("FormattedPerfMetric should correctly format id with scope-aware flag emoji", () => {
@@ -136,9 +137,8 @@ describe("Output Functions", () => {
     },
   ];
 
-  test("generateMasterPerfTable should produce colored output", () => {
+  test("generateMasterPerfTable should preserve readable labels", () => {
     const table = generateMasterPerfTable(mockMetrics);
-    expect(table).toContain("\x1b[38;5"); // Expect ANSI color codes
     expect(table).toContain("🔒"); // Expect emojis
     expect(table).toContain("🇺🇸"); // Expect flag emojis
   });
@@ -161,11 +161,11 @@ describe("Output Functions", () => {
     expect(parsed[2].valueStatus).toBe("success");
   });
 
-  test("generateMasterPerfWebSocketPayload should produce JSON with pre-colored values", () => {
+  test("generateMasterPerfWebSocketPayload should preserve values under runtime color policy", () => {
     const payload = generateMasterPerfWebSocketPayload(mockMetrics);
     const parsed = JSON.parse(payload);
 
-    expect(parsed.masterPerf[0].val).toMatch(/\x1b\[38;5;\d+m75ms\x1b\[0m/);
+    expect(Bun.stripANSI(parsed.masterPerf[0].val)).toBe("75ms");
     expect(parsed.masterPerf[0].cat).toBe("Security");
     expect(parsed.masterPerf[0].scope).toBe("ENTERPRISE");
   });

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
 // test/headscale-integration.test.ts
 // Headscale + Cloudflare Integration Tests
 

@@ -1,15 +1,12 @@
 /**
- * Concurrency Primitives for Bun v1.3.5+
- * Polyfill implementations matching expected Bun.Semaphore and Bun.RWLock APIs
+ * Local concurrency primitives for Bun applications.
  * 
  * Features:
- * - Native detection with automatic fallback
  * - Promise-based async/await patterns
  * - Zero-collateral operations (no state corruption)
  * - High-performance queue management
  * - Sub-100ms critical operations
  * 
- * Reference: Planned for future Bun version
  * Standards: Surgical Precision Development (98.5%+ success rate)
  */
 
@@ -18,24 +15,8 @@ import type { Semaphore, SemaphoreOptions, RWLock, RWLockOptions } from './types
 // Re-export types
 export type { Semaphore, SemaphoreOptions, RWLock, RWLockOptions };
 
-/**
- * Check if native Bun.Semaphore is available
- */
-export const hasNativeSemaphore = (): boolean => {
-  return typeof globalThis.Bun !== 'undefined' && 
-         typeof (globalThis.Bun as any).Semaphore === 'function';
-};
-
-/**
- * Check if native Bun.RWLock is available
- */
-export const hasNativeRWLock = (): boolean => {
-  return typeof globalThis.Bun !== 'undefined' && 
-         typeof (globalThis.Bun as any).RWLock === 'function';
-};
-
 // ============================================================================
-// SEMAPHORE POLYFILL
+// SEMAPHORE
 // ============================================================================
 
 /**
@@ -48,7 +29,7 @@ interface SemaphoreWaiter {
 }
 
 /**
- * SemaphorePolyfill - High-performance counting semaphore
+ * High-performance counting semaphore
  * 
  * Limits concurrent access to a resource to a specified number of permits.
  * Uses Promise-based queue management for efficient waiting.
@@ -193,7 +174,7 @@ interface RWLockWaiter {
 }
 
 /**
- * RWLockPolyfill - Read-Write Lock with multiple readers, exclusive writers
+ * Read-write lock with multiple readers and exclusive writers
  * 
  * Allows multiple concurrent readers OR a single exclusive writer.
  * Uses fair queue ordering to prevent starvation.
@@ -430,35 +411,27 @@ export class RWLockPolyfill implements RWLock {
 }
 
 // ============================================================================
-// FACTORY FUNCTIONS WITH NATIVE DETECTION
+// FACTORY FUNCTIONS
 // ============================================================================
 
 /**
- * Create a Semaphore instance
- * Uses native Bun.Semaphore if available, otherwise returns polyfill
+ * Create a local Semaphore instance.
  * 
  * @param permits Maximum number of concurrent permits (default: 1)
  * @param options Optional configuration
  * @returns Semaphore instance
  */
 export function createSemaphore(permits: number = 1, options?: SemaphoreOptions): Semaphore {
-  if (hasNativeSemaphore()) {
-    return new (globalThis.Bun as any).Semaphore(permits, options);
-  }
   return new SemaphorePolyfill(permits, options);
 }
 
 /**
- * Create an RWLock instance
- * Uses native Bun.RWLock if available, otherwise returns polyfill
+ * Create a local RWLock instance.
  * 
  * @param options Optional configuration
  * @returns RWLock instance
  */
 export function createRWLock(options?: RWLockOptions): RWLock {
-  if (hasNativeRWLock()) {
-    return new (globalThis.Bun as any).RWLock(options);
-  }
   return new RWLockPolyfill(options);
 }
 
@@ -467,27 +440,16 @@ export function createRWLock(options?: RWLockOptions): RWLock {
 // ============================================================================
 
 /**
- * BunConcurrency namespace - mirrors BunTypes pattern from precision-utils.ts
- * Provides native detection with fallback for concurrency primitives
+ * Compatibility namespace for the local concurrency primitives.
  */
 export const BunConcurrency = {
   /**
-   * Check if native Bun.Semaphore is available
-   */
-  hasNativeSemaphore,
-
-  /**
-   * Check if native Bun.RWLock is available
-   */
-  hasNativeRWLock,
-
-  /**
-   * Create a Semaphore (native or polyfill)
+   * Create a Semaphore.
    */
   Semaphore: createSemaphore,
 
   /**
-   * Create an RWLock (native or polyfill)
+   * Create an RWLock.
    */
   RWLock: createRWLock,
 

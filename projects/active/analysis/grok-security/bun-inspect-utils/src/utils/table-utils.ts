@@ -3,6 +3,7 @@
  * Enterprise Bun-native (v1.3.5+), zero-npm, Cloudflare Workers/KV-ready
  * Dark-mode-first, width-adaptive table utilities
  */
+// @see https://bun.com/docs/runtime/nodejs-compat#nodetty — process.stdout.isTTY
 
 // [1.0.0.0] CORE TYPES & INTERFACES
 export interface TableRow extends Record<string, unknown> {}
@@ -28,7 +29,7 @@ export function enforceTable(
   }
   if (data.length === 0) {
     return Bun.inspect.table([], columns, {
-      colors: options.colors ?? Bun.isTTY,
+      colors: options.colors ?? process.stdout.isTTY === true,
     });
   }
 
@@ -71,7 +72,7 @@ export function enforceTable(
   }
 
   return Bun.inspect.table(data, displayColumns, {
-    colors: options.colors ?? Bun.isTTY,
+    colors: options.colors ?? process.stdout.isTTY === true,
   });
 }
 

@@ -3,7 +3,6 @@
  * Integrates with cookie system for persistent user settings
  */
 
-import { Bun } from "bun";
 import type { CookieOptions } from "./cookie-manager-browser";
 
 // User profile interfaces

@@ -104,6 +104,7 @@ pathIgnorePatterns = [
   "vendor/**",
   "toc-ops-repo/**",
   "Kalshi-bot/**",
+  "projects/active/enterprise/foxy-proxy/**",
   ".codex-worktrees/**",
   "artifacts/**",
   "artifacts-browser/**",

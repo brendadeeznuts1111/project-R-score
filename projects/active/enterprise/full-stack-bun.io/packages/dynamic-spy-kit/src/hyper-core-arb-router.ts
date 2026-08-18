@@ -3,7 +3,9 @@
  * 
  * Advanced router with all active patterns tracking + Bun-native file watching
  */
+// @see https://bun.com/reference/node/fs/watch — node:fs watch
 
+import { watch } from "node:fs";
 import { QuantumArbRouter } from "./quantum-arb-router";
 import type { RouteResult } from "./quantum-arb-router";
 import type { URLPatternInit } from "./core/urlpattern-spy";
@@ -82,22 +84,20 @@ export class HyperCoreArbRouter extends QuantumArbRouter {
 	}
 
 	/**
-	 * Setup Bun-native file watcher for patterns directory
+	 * Setup file watcher for patterns directory
 	 */
 	private setupPatternWatcher(): void {
 		try {
-			// Use Bun.watch for file watching (Bun-native API)
-			const watcher = Bun.watch('./patterns', {
+			watch('./patterns', {
 				recursive: true
-			});
-			
-			watcher.subscribe(async (event, filename) => {
-				if (event === 'change' && filename && filename.endsWith('.json')) {
-					await this.onPatternChange(event, filename);
+			}, async (event, filename) => {
+				const changedFile = filename?.toString();
+				if (event === 'change' && changedFile?.endsWith('.json')) {
+					await this.onPatternChange(event, changedFile);
 				}
 			});
 			
-			console.info('🔥 HMR: Pattern watcher enabled (Bun.watch)');
+			console.info('🔥 HMR: Pattern watcher enabled (node:fs watch)');
 		} catch (e) {
 			console.warn('Pattern watcher setup failed:', e);
 		}
@@ -195,4 +195,3 @@ export class HyperCoreArbRouter extends QuantumArbRouter {
 		return 50; // Default priority
 	}
 }
-

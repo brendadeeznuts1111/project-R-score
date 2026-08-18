@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   auditProjectRoots,
+  findMissingWorkspacePackages,
   validateProjectBunContract,
   type ProjectLeaf,
 } from '../tools/projects-root-check.ts';
@@ -54,6 +55,34 @@ describe('projects root Bun contract', () => {
         lockfiles: ['yarn.lock'],
       })
     ).toEqual([]);
+  });
+
+  test('reports workspace protocol dependencies without a declared package provider', () => {
+    expect(
+      findMissingWorkspacePackages([
+        {
+          path: 'product/package.json',
+          manifest: {
+            name: 'product',
+            dependencies: {
+              '@factory/present': 'workspace:*',
+              '@factory/missing': 'workspace:^',
+              zod: '4.0.0',
+            },
+          },
+        },
+        {
+          path: 'product/packages/present/package.json',
+          manifest: { name: '@factory/present' },
+        },
+      ])
+    ).toEqual([
+      {
+        kind: 'missing-workspace-package',
+        path: 'product/package.json',
+        message: '@factory/missing@workspace:^',
+      },
+    ]);
   });
 
   test('the checked-in active product set satisfies the contract', async () => {
