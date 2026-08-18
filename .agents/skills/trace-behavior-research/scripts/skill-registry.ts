@@ -1,6 +1,7 @@
 import { Database } from 'bun:sqlite';
 
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import
+// @see https://bun.com/docs/runtime/hashing#bun-hash
 
 export type SkillStatus = 'active' | 'deprecated' | 'draft';
 export type SkillDefinition = {
@@ -57,6 +58,18 @@ type SkillRow = {
   last_used: number | null;
   name: string;
   triggers_json: string;
+};
+
+const hashText = (value: string): string => Bun.hash(value).toString(16);
+const inputHashes = (input: string): Set<string> => {
+  const words = input.toLowerCase().split(/\s+/).filter(Boolean);
+  const hashes = new Set(words.map(hashText));
+  for (let size = 2; size <= Math.min(6, words.length); size++) {
+    for (let index = 0; index + size <= words.length; index++) {
+      hashes.add(hashText(words.slice(index, index + size).join(' ')));
+    }
+  }
+  return hashes;
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -297,13 +310,18 @@ export class SkillRegistry {
       )
       .all() as SkillRow[];
     const normalizedInput = input?.toLowerCase();
+    const hashedInput = input === undefined ? null : inputHashes(input);
     return rows
       .map(row => {
         const triggers = JSON.parse(row.triggers_json) as string[];
         const actions = JSON.parse(row.actions_json) as string[];
         const matches =
           normalizedInput === undefined ||
-          triggers.some(trigger => normalizedInput.includes(trigger.toLowerCase()));
+          triggers.some(
+            trigger =>
+              hashedInput?.has(hashText(trigger.toLowerCase())) === true &&
+              normalizedInput.includes(trigger.toLowerCase())
+          );
         if (!matches) return null;
         const daysSinceLastUse = row.last_used ? Math.max(0, now - row.last_used) / 86_400_000 : 0;
         const recency = Math.max(0, 1 - daysSinceLastUse / 90);

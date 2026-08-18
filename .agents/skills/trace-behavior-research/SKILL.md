@@ -32,6 +32,14 @@ modifying skills or exporting trace contents.
    `.draft.md` suffix, default below the report directory, and never overwrite
    or activate a `SKILL.md` package.
 7. Run `bun run skills:validate` and the owning skill's proof before committing.
+8. Run `bun scripts/validate-drafts.ts --draft-dir <draft-dir>` before asking
+   for promotion. This validates frontmatter and optional code blocks with Bun's
+   native transpiler.
+9. Use `bun scripts/review-server.ts --report-dir <report-dir>` for a local
+   review page. It records approve/reject decisions but never promotes a skill.
+10. Use `bun scripts/archive-report.ts --report-dir <report-dir>` to create a
+    gzip report snapshot. Use `bun scripts/sidecar.ts --root <report-dir>` to
+    stream report changes over a local WebSocket.
 
 ## Guardrails
 
@@ -49,6 +57,9 @@ modifying skills or exporting trace contents.
   telemetry events may update effectiveness metrics.
 - Do not inject ranked skills into prompts automatically. Ranking is evidence
   for a human or an owning runtime to review.
+- Use `node:fs.watch()` for file events. Bun 1.3.14 does not expose `Bun.watch`.
+- Treat `Bun.hash` as a trigger prefilter only. Always perform exact matching
+  before selecting a skill.
 
 ## Output contract
 
