@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { vi } from "vitest";
+import { cleanup } from "@testing-library/react";
+import { afterEach, vi } from "vitest";
 import React from "react";
 import "@testing-library/jest-dom/vitest";
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 // Set up DOM environment - ensure window exists first
 if (typeof window === "undefined") {
@@ -112,7 +118,6 @@ global.URL.revokeObjectURL = vi.fn();
 // Manual mocks here were breaking React 19's environment detection
 
 // Mock URL.createObjectURL and revokeObjectURL while preserving URL constructor
-const OriginalURL = global.URL;
 global.URL.createObjectURL = vi.fn(() => "mock-url");
 global.URL.revokeObjectURL = vi.fn();
 

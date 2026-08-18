@@ -12,7 +12,7 @@
  * CI / agent harness envelope — quiet success; noise only on failure.
  *
  * Cheap ratchets run in parallel (path-bun · bun-env · invisible-chars · brands ·
- * projects-roots · lib-domains · audit-verify). ESLint defaults to changed files (`lint`);
+ * project structure/syntax/Bun API drift · lib-domains · audit-verify). ESLint defaults to changed files (`lint`);
  * full tree only with --full-lint / HARNESS_FULL_LINT=1 (main push).
  *
  *   bun run ci:harness
@@ -85,6 +85,12 @@ const CHEAP: Step[] = [
     cmd: ['bun', 'run', 'projects:syntax:check'],
     owner: 'tools/bun-doc-refs.ts · projects/active',
     repair: 'bun run projects:syntax:check',
+  },
+  {
+    name: 'bun-api-drift',
+    cmd: ['bun', 'run', 'bun:api-drift:check'],
+    owner: 'tools/bun-api-drift.ts · projects/active',
+    repair: 'bun run bun:api-drift:check',
   },
   {
     name: 'lib-domains',

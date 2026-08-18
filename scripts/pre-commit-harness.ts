@@ -400,6 +400,21 @@ async function main(): Promise<void> {
         await writeTimings(timings, full);
         process.exit(1);
       }
+
+      console.info(`🔬 Bun API drift (${projectSourceFiles.length} staged source file(s))...`);
+      const driftCode = await runGate(
+        'projects-bun-api-drift',
+        ['bun', 'tools/bun-api-drift.ts', '--max=0', ...projectSourceFiles],
+        timings
+      );
+      if (driftCode !== 0) {
+        console.error(
+          '❌ Staged project source uses an API absent from the installed Bun runtime\n' +
+            `   bun tools/bun-api-drift.ts --max=0 ${projectSourceFiles.join(' ')}`
+        );
+        await writeTimings(timings, full);
+        process.exit(1);
+      }
     }
   }
 

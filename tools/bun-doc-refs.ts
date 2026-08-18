@@ -2685,10 +2685,11 @@ function parseReferenceBacklogArgs(args: string[]): {
   if (options.write && targets.length === 0) {
     throw new Error('backlog --write requires at least one explicit scan target');
   }
-  if (options.write && (options.limit === null || options.limit < 1)) {
+  const writeLimit = options.limit;
+  if (options.write && (writeLimit === null || writeLimit < 1)) {
     throw new Error('backlog --write requires --limit=N with N greater than zero');
   }
-  if (options.write && options.limit > MAX_REFERENCE_WRITE_BATCH) {
+  if (options.write && writeLimit !== null && writeLimit > MAX_REFERENCE_WRITE_BATCH) {
     throw new Error(`backlog --write limits batches to ${MAX_REFERENCE_WRITE_BATCH} references`);
   }
   return { options, targets };

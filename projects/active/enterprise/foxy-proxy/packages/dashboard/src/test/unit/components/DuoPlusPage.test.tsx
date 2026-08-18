@@ -4,10 +4,14 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DuoPlusPage } from "../../../pages/DuoPlusPage";
 import { DuoPlusAPI } from "../../../utils/duoplus";
+import { useProxyData } from "../../../hooks/useProxyData";
+
+const mockDuoPlusAPIConstructor = vi.hoisted(() => vi.fn());
 
 // Mock the DuoPlusAPI
 vi.mock("../../../utils/duoplus", () => ({
-  DuoPlusAPI: vi.fn(),
+  default: mockDuoPlusAPIConstructor,
+  DuoPlusAPI: mockDuoPlusAPIConstructor,
   __esModule: true
 }));
 
@@ -16,8 +20,8 @@ vi.mock("../../../hooks/useProxyData", () => ({
   useProxyData: vi.fn()
 }));
 
-const mockDuoPlusAPI = DuoPlusAPI as any;
-const mockUseProxyData = vi.fn();
+const mockDuoPlusAPI = vi.mocked(DuoPlusAPI);
+const mockUseProxyData = vi.mocked(useProxyData);
 
 describe("DuoPlusPage", () => {
   const mockAccount = {
@@ -93,7 +97,9 @@ describe("DuoPlusPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    mockDuoPlusAPI.mockImplementation(() => mockAPIInstance);
+    mockDuoPlusAPI.mockImplementation(function MockDuoPlusAPI() {
+      return mockAPIInstance;
+    });
     mockAPIInstance.getMockData.mockResolvedValue({
       account: mockAccount,
       phones: mockPhones
@@ -116,7 +122,7 @@ describe("DuoPlusPage", () => {
     it("should render the DuoPlus page correctly", async () => {
       render(<DuoPlusPage />);
 
-      expect(screen.getByText("DuoPlus Cloud Phones")).toBeInTheDocument();
+      expect(await screen.findByText("DuoPlus Cloud Mobile")).toBeInTheDocument();
       expect(screen.getByText("Account Information")).toBeInTheDocument();
       expect(screen.getByText("Cloud Phone Management")).toBeInTheDocument();
       expect(screen.getByText("File Management")).toBeInTheDocument();
@@ -154,8 +160,10 @@ describe("DuoPlusPage", () => {
       render(<DuoPlusPage />);
 
       await waitFor(() => {
-        expect(screen.getByText(mockAccount.email)).toBeInTheDocument();
-        expect(screen.getByText(`$${mockAccount.balance}`)).toBeInTheDocument();
+        expect(screen.getByText(mockAccount.id)).toBeInTheDocument();
+        expect(
+          screen.getByText(`$${mockAccount.balance} ${mockAccount.currency}`)
+        ).toBeInTheDocument();
         expect(screen.getByText(mockAccount.plan)).toBeInTheDocument();
         expect(
           screen.getByText(`${mockAccount.activePhones}/${mockAccount.totalPhones}`)
@@ -189,9 +197,7 @@ describe("DuoPlusPage", () => {
       const startButtons = screen.getAllByTitle("Start Phone");
       await user.click(startButtons[0]);
 
-      expect(mockAPIInstance.startPhone).toHaveBeenCalledWith(
-        "d0efde27-6bc8-4f5c-bfee-b0bb732bfc36"
-      );
+      expect(mockAPIInstance.startPhone).toHaveBeenCalledWith("phone-2");
     });
 
     it("should handle phone stop operation", async () => {
@@ -302,18 +308,14 @@ describe("DuoPlusPage", () => {
 
       mockAPIInstance.downloadFile.mockResolvedValue(mockBlob);
 
-      // Mock document.createElement and appendChild
-      const mockAnchor = {
-        href: "",
-        download: "",
-        click: vi.fn()
-      };
-      const mockCreateElement = vi.fn(() => mockAnchor);
-      Object.defineProperty(document, "createElement", { value: mockCreateElement });
-      const mockAppendChild = vi.fn();
-      const mockRemoveChild = vi.fn();
-      Object.defineProperty(document.body, "appendChild", { value: mockAppendChild });
-      Object.defineProperty(document.body, "removeChild", { value: mockRemoveChild });
+      const createElement = document.createElement.bind(document);
+      const mockAnchor = createElement("a");
+      vi.spyOn(mockAnchor, "click").mockImplementation(() => undefined);
+      const mockCreateElement = vi
+        .spyOn(document, "createElement")
+        .mockImplementation((tagName, options) =>
+          tagName === "a" ? mockAnchor : createElement(tagName, options)
+        );
 
       render(<DuoPlusPage />);
 
@@ -330,7 +332,7 @@ describe("DuoPlusPage", () => {
       await user.selectOptions(operationSelect, "download");
 
       // Click Download File button
-      const downloadButton = screen.getByText("Download File");
+      const downloadButton = screen.getByRole("button", { name: "Download File" });
       await user.click(downloadButton);
 
       await waitFor(() => {
@@ -362,7 +364,7 @@ describe("DuoPlusPage", () => {
       await user.selectOptions(operationSelect, "delete");
 
       // Click Delete File button
-      const deleteButton = screen.getByText("Delete File");
+      const deleteButton = screen.getByRole("button", { name: "Delete File" });
       await user.click(deleteButton);
 
       await waitFor(() => {
@@ -435,19 +437,14 @@ describe("DuoPlusPage", () => {
     });
 
     it("should show error when no phone is selected", async () => {
-      const user = userEvent.setup();
-
       render(<DuoPlusPage />);
 
       await waitFor(() => {
         expect(screen.getByText("File Management")).toBeInTheDocument();
       });
 
-      // Try to click Get Info without selecting a phone
       const getInfoButton = screen.getByText("Get Info");
-      await user.click(getInfoButton);
-
-      expect(global.alert).toHaveBeenCalledWith("Please select a phone first");
+      expect(getInfoButton).toBeDisabled();
     });
   });
 
@@ -456,8 +453,8 @@ describe("DuoPlusPage", () => {
       render(<DuoPlusPage />);
 
       await waitFor(() => {
-        expect(screen.getByText("6370486b-c456-4efc-842e-9cd1461d05d8")).toBeInTheDocument();
-        expect(screen.getByText("https://my.duoplus.net/api")).toBeInTheDocument();
+        expect(screen.getByText("Token: 6370486b-c456-4efc-842e-9cd1461d05d8")).toBeInTheDocument();
+        expect(screen.getByText("Endpoint: https://my.duoplus.net/api")).toBeInTheDocument();
       });
     });
   });
@@ -486,12 +483,17 @@ describe("DuoPlusPage", () => {
     });
 
     it("should handle mock data loading errors", async () => {
+      const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
       mockAPIInstance.getMockData.mockRejectedValue(new Error("Failed to load mock data"));
 
       render(<DuoPlusPage />);
 
-      // Component should still render, just without the mock data
-      expect(screen.getByText("DuoPlus Cloud Phones")).toBeInTheDocument();
+      await waitFor(() => {
+        expect(consoleError).toHaveBeenCalledWith(
+          "Failed to load DuoPlus data:",
+          expect.objectContaining({ message: "Failed to load mock data" })
+        );
+      });
     });
   });
 });

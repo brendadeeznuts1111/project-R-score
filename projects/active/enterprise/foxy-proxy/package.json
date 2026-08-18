@@ -37,22 +37,22 @@
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "dev": "cd packages/dashboard && bun dev",
-    "build": "cd packages/dashboard && bun build",
-    "build:dev": "cd packages/dashboard && NODE_ENV=development bun build",
-    "build:prod": "cd packages/dashboard && NODE_ENV=production bun build",
-    "build:analyze": "cd packages/dashboard && bun build",
-    "build:staging": "cd packages/dashboard && NODE_ENV=staging bun build",
+    "dev": "cd packages/dashboard && bun run dev",
+    "build": "cd packages/dashboard && bun run build",
+    "build:dev": "cd packages/dashboard && NODE_ENV=development bun run build",
+    "build:prod": "cd packages/dashboard && NODE_ENV=production bun run build",
+    "build:analyze": "cd packages/dashboard && bun run build",
+    "build:staging": "cd packages/dashboard && NODE_ENV=staging bun run build",
     "test": "cd packages/dashboard && bun run test -- --run",
-    "test:watch": "cd packages/dashboard && bun test --watch",
-    "test:coverage": "cd packages/dashboard && bun test --coverage",
+    "test:watch": "cd packages/dashboard && bun run test",
+    "test:coverage": "cd packages/dashboard && bun run test -- --run --coverage",
     "typecheck": "cd packages/dashboard && bun typecheck",
     "clean": "cd packages/dashboard && rm -rf dist node_modules .nyc_output coverage",
     "clean:all": "rm -rf node_modules packages/*/node_modules packages/*/dist",
     "setup": "bun install && cd packages/dashboard && bun install",
     "setup:ci": "bun install --frozen-lockfile",
     "dev:staging": "NODE_ENV=staging bun run dev",
-    "deploy": "cd packages/dashboard && bun build && bun run deploy",
+    "deploy": "cd packages/dashboard && bun run build && bun run deploy",
     "deploy:staging": "bun run build:staging && bun run deploy:staging",
     "deploy:prod": "bun run build:prod && bun run deploy:prod",
     "tiers": "bash ./scripts/build-tiers.sh",
@@ -81,7 +81,7 @@
     "security:audit": "bun audit",
     "security:fix": "bun audit fix",
     "start": "bun run dev",
-    "preview": "cd packages/dashboard && bun preview"
+    "preview": "cd packages/dashboard && bun run preview"
   },
   "workspaces": [
     "packages/*"
@@ -103,6 +103,14 @@
   },
   "dependencies": {
     "types": "0.1.1"
+  },
+  "overrides": {
+    "flatted": "3.4.4",
+    "js-yaml": "4.3.1",
+    "nanoid": "3.3.18",
+    "postcss": "8.5.26",
+    "rollup": "4.62.4",
+    "vite": "7.3.6"
   },
   "publishConfig": {
     "registry": "https://registry.factory-wager.com"
