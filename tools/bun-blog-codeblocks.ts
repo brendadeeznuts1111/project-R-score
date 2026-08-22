@@ -4,6 +4,7 @@
 // @see https://bun.com/reference/bun/inspect/table — Bun.inspect.table reference
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth guide
 // @see https://bun.com/reference/bun/stringWidth — Bun.stringWidth reference
+// @see https://bun.com/docs/runtime/module-resolution#import-meta — import.meta.dir
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file guide
 // @see https://bun.com/reference/bun/file — Bun.file reference
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write guide
@@ -26,8 +27,8 @@
  *
  * Default run: banner + index table (no bodies). Bodies via --all / --section / --grep.
  *
- *   bun tools/bun-blog-codeblocks.ts [/path/to/bun-vX.Y.Z.html]
- *   bun tools/bun-blog-codeblocks.ts --url https://bun.com/blog/bun-v1.3.6
+ *   bun tools/bun-blog-codeblocks.ts .tmp/bun-v1.4/bun-v1.4.html --url https://bun.com/blog/bun-v1.4
+ *   bun tools/bun-blog-codeblocks.ts --url https://bun.com/blog/bun-v1.4
  *   bun tools/bun-blog-codeblocks.ts -s 14
  *   bun tools/bun-blog-codeblocks.ts -g 'requestPayer|files'
  *   bun tools/bun-blog-codeblocks.ts --mode join
@@ -48,11 +49,18 @@ import {
   extractCodeBlocks,
   extractCodeBlocksFromFile,
   stripShikiPre,
+  subtreeBlockCount,
   type CodeBlock,
   type CodeBlockClassSummary,
   type ExtractResult,
+  type HeadingNode,
 } from '../lib/docs/blog-codeblocks.ts';
-import { bunBlog, BunBlogPattern, guideKeyFromUrl } from '../lib/docs/bun-site-url.ts';
+import {
+  bunBlog,
+  BunBlogPattern,
+  guideKeyFromUrl,
+  parseBunSiteUrl,
+} from '../lib/docs/bun-site-url.ts';
 import {
   BUN_GUIDES_INDEX,
   BUN_MARKDOWN_CROSS_REFERENCES,
@@ -63,12 +71,13 @@ import {
   resolveMarkdownPreset,
   type MarkdownPresetName,
 } from '../lib/markdown/options.ts';
-import { resolvePath } from '../lib/path-bun';
+import { basenamePath, dirnamePath, joinPath, normalizePath, resolvePath } from '../lib/path-bun';
 import { BUN_RSS_URL } from '../lib/shared/tools/bun-urls';
 import {
   buildReleaseMap,
   buildTokenIndex,
   cleanBunVersion,
+  expandMinorVersion,
   extractTokenCandidates,
   fetchPostHtml,
   fetchRssXml,
@@ -79,12 +88,16 @@ import {
   type ReleaseEntry,
 } from './bun-docs-releases';
 
-export type { CodeBlock, ExtractResult } from '../lib/docs/blog-codeblocks.ts';
+export type { CodeBlock, ExtractResult, HeadingNode } from '../lib/docs/blog-codeblocks.ts';
 export {
   decodeHtmlEntities,
   extractCodeBlocks,
   extractCodeBlocksFromFile,
+  formatBlockId,
+  hashCodeBlock,
+  INTRO_HEADING_ID,
   stripShikiPre,
+  subtreeBlockCount,
 } from '../lib/docs/blog-codeblocks.ts';
 
 export type CodeBlockWithTokens = CodeBlock & {
@@ -141,9 +154,68 @@ export type MarkdownOutputPlan = {
 
 const DEFAULT_VERSION = '1.3.6';
 const REPO_ROOT = resolvePath(import.meta.dir, '..');
+export const HARVEST_TMP_DIR = '.tmp';
+
+export type HarvestPaths = {
+  version: string;
+  slug: string;
+  sourceUrl: string;
+  htmlPath: string;
+  outDir: string;
+};
+
+/** `bun-v1.4` from a blog URL (URLPattern) or `bun-v1.4.html` basename. */
+export function parseBlogSlug(input: string): string | null {
+  const trimmed = input.trim();
+  if (/^https?:\/\//i.test(trimmed)) {
+    const parsed = parseBunSiteUrl(trimmed);
+    if (parsed?.kind !== 'blog') return null;
+    const slug = parsed.path.replace(/^blog\//, '').split('#')[0]!;
+    return /^bun-v\d+\.\d+(?:\.\d+)?$/i.test(slug) ? slug.toLowerCase() : null;
+  }
+  const base = basenamePath(trimmed).replace(/\.html?$/i, '');
+  return /^bun-v\d+\.\d+(?:\.\d+)?$/i.test(base) ? base.toLowerCase() : null;
+}
+
+export function resolveHarvestPaths(opts: {
+  htmlArg?: string;
+  url?: string;
+  outDir?: string;
+  repoRoot?: string;
+  cwd?: string;
+}): HarvestPaths {
+  const repoRoot = opts.repoRoot ?? REPO_ROOT;
+  const cwd = opts.cwd ?? process.cwd();
+  const url = opts.url?.trim() || undefined;
+  const htmlArg = opts.htmlArg?.trim() || undefined;
+  const version =
+    (url && parseBlogVersion(url)) || (htmlArg && parseBlogVersion(htmlArg)) || DEFAULT_VERSION;
+  const slug =
+    (url && parseBlogSlug(url)) || (htmlArg && parseBlogSlug(htmlArg)) || `bun-v${version}`;
+  const sourceUrl = url || bunBlog(slug);
+  const harvestDir = resolvePath(repoRoot, HARVEST_TMP_DIR, slug);
+
+  const htmlPath =
+    htmlArg && !/^https?:\/\//i.test(htmlArg)
+      ? htmlArg.startsWith('/')
+        ? normalizePath(htmlArg)
+        : resolvePath(cwd, htmlArg)
+      : joinPath(harvestDir, `${slug}.html`);
+
+  const outDirFlag = opts.outDir?.trim();
+  const outDir =
+    outDirFlag && outDirFlag !== ''
+      ? outDirFlag.startsWith('/')
+        ? normalizePath(outDirFlag)
+        : resolvePath(repoRoot, outDirFlag)
+      : dirnamePath(htmlPath);
+
+  return { version, slug, sourceUrl, htmlPath, outDir };
+}
 
 export const CODE_BLOCK_TABLE_PROPERTIES = [
   '#',
+  'id',
   'status',
   'class',
   'section',
@@ -151,7 +223,55 @@ export const CODE_BLOCK_TABLE_PROPERTIES = [
   'preview',
 ] as const;
 
+export type BlockSelector =
+  | { kind: 'index'; index: number }
+  | { kind: 'id'; headingId: string; ordinal: number } // brand-ok — Bun blog heading slug
+  | { kind: 'heading'; headingId: string }; // brand-ok — Bun blog heading slug
+
+/** `-s 14` · `-s bun-cron/2` · `-s bun-cron` · `-s blog/bun-v1.4#bun-cron/2`. */
+export function parseBlockSelector(raw: string): BlockSelector {
+  const trimmed = raw.trim();
+  const afterHash = trimmed.includes('#') ? trimmed.slice(trimmed.lastIndexOf('#') + 1) : trimmed;
+  if (/^\d+$/.test(afterHash)) {
+    return { kind: 'index', index: Number.parseInt(afterHash, 10) };
+  }
+  const slash = afterHash.lastIndexOf('/');
+  if (slash > 0) {
+    const headingId = afterHash.slice(0, slash);
+    const ordinalText = afterHash.slice(slash + 1);
+    if (headingId && /^\d+$/.test(ordinalText)) {
+      return {
+        kind: 'id',
+        headingId,
+        ordinal: Number.parseInt(ordinalText, 10),
+      };
+    }
+  }
+  return { kind: 'heading', headingId: afterHash };
+}
+
 export const CODE_BLOCK_CLASS_TABLE_PROPERTIES = ['class', 'status', 'count'] as const;
+export const OUTLINE_TABLE_PROPERTIES = [
+  '#',
+  'id',
+  'title',
+  'h3',
+  'blocks',
+  'shipped',
+  'improved',
+] as const;
+
+export function outlineH2Rows(outline: readonly HeadingNode[]) {
+  return outline.map((node, index) => ({
+    '#': index + 1,
+    id: node.headingId,
+    title: node.title,
+    h3: node.children.length,
+    blocks: subtreeBlockCount(node),
+    shipped: node.shippedIn ?? '',
+    improved: node.improvedIn ?? '',
+  }));
+}
 export const MARKDOWN_REFERENCE_TABLE_PROPERTIES = [
   'surface',
   'role',
@@ -283,13 +403,14 @@ export function previewLine(code: string, maxWidth = 60): string {
   return `${out}…`;
 }
 
-/** `bun-v1.3.6` / `1.3.6` / blog URL → `1.3.6`. */
+/** `bun-v1.4` / `bun-v1.3.6` / `1.4` / blog URL → patch-expanded version. */
 export function parseBlogVersion(input: string): string | null {
-  const fromUrl = /\/blog\/bun-v(\d+\.\d+\.\d+)/i.exec(input);
-  if (fromUrl) return cleanBunVersion(fromUrl[1]!);
-  const fromFile = /bun-v(\d+\.\d+\.\d+)/i.exec(input);
-  if (fromFile) return cleanBunVersion(fromFile[1]!);
-  if (/^\d+\.\d+\.\d+$/.test(input.trim())) return cleanBunVersion(input.trim());
+  const fromUrl = /\/blog\/bun-v(\d+\.\d+(?:\.\d+)?)/i.exec(input);
+  if (fromUrl) return expandMinorVersion(fromUrl[1]!);
+  const fromFile = /bun-v(\d+\.\d+(?:\.\d+)?)/i.exec(input);
+  if (fromFile) return expandMinorVersion(fromFile[1]!);
+  const trimmed = input.trim();
+  if (/^\d+\.\d+(?:\.\d+)?$/.test(trimmed)) return expandMinorVersion(trimmed);
   return null;
 }
 
@@ -444,10 +565,25 @@ function matchTokensInline(
 
 export function filterBlocks(
   blocks: CodeBlock[],
-  opts: { all?: boolean; section?: number; grep?: string }
+  opts: { all?: boolean; section?: number | string; grep?: string }
 ): CodeBlock[] {
-  if (opts.section != null && !Number.isNaN(opts.section)) {
-    return blocks.filter(b => b.index === opts.section);
+  if (opts.section != null && opts.section !== '') {
+    const selector = parseBlockSelector(String(opts.section));
+    if (selector.kind === 'index') {
+      return blocks.filter(b => b.index === selector.index);
+    }
+    if (selector.kind === 'id') {
+      return blocks.filter(
+        b => b.headingId === selector.headingId && b.ordinal === selector.ordinal
+      );
+    }
+    return blocks.filter(
+      b =>
+        b.headingId === selector.headingId ||
+        b.h2Id === selector.headingId ||
+        b.h3Id === selector.headingId ||
+        b.h4Id === selector.headingId
+    );
   }
   if (opts.grep) {
     let re: RegExp;
@@ -457,7 +593,12 @@ export function filterBlocks(
       re = new RegExp(opts.grep.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
     }
     return blocks.filter(
-      b => re.test(b.section) || re.test(previewLine(b.code)) || re.test(b.code)
+      b =>
+        re.test(b.section) ||
+        re.test(b.headingId) ||
+        re.test(b.blockId) ||
+        re.test(previewLine(b.code)) ||
+        re.test(b.code)
     );
   }
   if (opts.all) return blocks;
@@ -553,9 +694,12 @@ async function ensureHtml(opts: {
 }
 
 function reportMissingHtml(file: Bun.BunFile, sourceUrl: string, error: Error): void {
-  console.error(`Missing HTML: ${file.name ?? '(unnamed BunFile)'}`);
-  console.error(`Fetch unavailable (${error.message}). Download with:`);
-  console.error(`  curl -fsSL '${sourceUrl}' -o '${file.name ?? 'bun-blog.html'}'`);
+  const htmlPath = file.name ?? joinPath(HARVEST_TMP_DIR, 'bun-blog.html');
+  console.error(`Missing HTML: ${htmlPath}`);
+  console.error(`Fetch unavailable (${error.message}). Write with Bun:`);
+  console.error(
+    `  bun -e 'await Bun.write(${JSON.stringify(htmlPath)}, await (await fetch(${JSON.stringify(sourceUrl)})).text())'`
+  );
 }
 
 export function codeBlockClassRows(classStatuses: readonly CodeBlockClassSummary[]) {
@@ -571,11 +715,11 @@ function printHelp(): void {
 
 Extract div.CodeBlock samples from a Bun blog HTML post.
 
-  [html]              Path to saved post (default: /tmp/bun-v${DEFAULT_VERSION}.html)
-  --url <url>         Blog URL (infers version; BunBlogPattern validated)
-  --out-dir <dir>     Artifact directory (default: .tmp)
+  [html]              Saved post (default: <repo>/.tmp/<slug>/<slug>.html)
+  --url <url>         Blog URL (infers slug + version; BunBlogPattern)
+  --out-dir <dir>     Artifacts (default: directory of the HTML file)
   -a, --all           Print all block bodies
-  -s, --section <n>   Print one block by index
+  -s, --section <id>  Print by index, headingId, or headingId/n (bun-cron/2)
   -g, --grep <str>    Print bodies matching section/preview/code (regex)
   --mode <mode>       index | join | derived | all (default index)
   --join              Compatibility alias for --mode=join
@@ -608,7 +752,7 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
       grep: { type: 'string', short: 'g' },
       rss: { type: 'boolean', short: 'r', default: false },
       url: { type: 'string' },
-      'out-dir': { type: 'string', default: '.tmp' },
+      'out-dir': { type: 'string' },
       mode: { type: 'string' },
       join: { type: 'boolean', default: false },
       'derived-table': { type: 'boolean', default: false },
@@ -664,26 +808,22 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
     return 1;
   }
 
-  const urlOpt = values.url?.trim();
   const positional = positionals[0]?.trim();
-  const version =
-    (urlOpt && parseBlogVersion(urlOpt)) ||
-    (positional && parseBlogVersion(positional)) ||
-    DEFAULT_VERSION;
-  const source = urlOpt || blogUrlForVersion(version);
-  if (urlOpt) {
-    try {
-      assertBlogPostUrl(source);
-    } catch (err) {
-      console.error(err instanceof Error ? err.message : String(err));
-      return 1;
-    }
+  const urlOpt =
+    values.url?.trim() || (positional && /^https?:\/\//i.test(positional) ? positional : undefined);
+  const htmlArg = positional && !/^https?:\/\//i.test(positional) ? positional : undefined;
+  const paths = resolveHarvestPaths({
+    htmlArg,
+    url: urlOpt,
+    outDir: values['out-dir'],
+  });
+  const { version, slug, sourceUrl: source, htmlPath, outDir } = paths;
+  try {
+    assertBlogPostUrl(source);
+  } catch (err) {
+    console.error(err instanceof Error ? err.message : String(err));
+    return 1;
   }
-  const htmlPath =
-    positional && !positional.startsWith('http')
-      ? resolvePath(positional)
-      : `/tmp/bun-v${version}.html`;
-  const outDir = resolvePath(REPO_ROOT, values['out-dir'] || '.tmp');
 
   const htmlFile = Bun.file(htmlPath);
   let ensuredHtmlFile: Bun.BunFile;
@@ -704,7 +844,7 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
     return 1;
   }
 
-  const stem = `bun-v${version}-CodeBlock`;
+  const stem = `${slug}-CodeBlock`;
   const jsonPath = resolvePath(outDir, `${stem}.json`);
   const mdPath = resolvePath(outDir, `${stem}.md`);
   const renderedHtmlPath = resolvePath(outDir, `${stem}.html`);
@@ -736,6 +876,9 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
       ansiTheme: markdownPlan.ansi ? markdownPlan.ansiTheme : null,
     },
     bySection: extracted.bySection,
+    outline: extracted.outline,
+    h2Count: extracted.outline.length,
+    introBlockIds: extracted.introBlockIds,
     blocks: blocksForJson,
   };
   const wrote: string[] = [jsonPath, mdPath];
@@ -756,15 +899,20 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
   }
 
   let md = `# Bun v${version} — HTML \`.CodeBlock\` extractions\n\n`;
-  md += `Source: ${source}\n\nCount: **${extracted.codeBlockCount}**\n\n`;
+  md += `Source: ${source}\n\nCount: **${extracted.codeBlockCount}** · H2: **${extracted.outline.length}** · Intro: **${extracted.introBlockIds.length}**\n\n`;
   md += `Class pattern: \`${extracted.classPattern}\` via \`Bun.Glob.match()\`\n\n`;
   md += '| Class | Status | Count |\n| --- | --- | ---: |\n';
   for (const row of codeBlockClassRows(extracted.classStatuses)) {
     md += `| \`${row.class}\` | ${row.status} | ${row.count} |\n`;
   }
+  md +=
+    '\n## Outline\n\n| # | H2 | Title | H3 | Blocks | Shipped | Improved |\n| ---: | --- | --- | ---: | ---: | --- | --- |\n';
+  for (const row of outlineH2Rows(extracted.outline)) {
+    md += `| ${row['#']} | \`${row.id}\` | ${row.title} | ${row.h3} | ${row.blocks} | ${row.shipped || '—'} | ${row.improved || '—'} |\n`;
+  }
   md += '\n';
   for (const b of extracted.blocks) {
-    md += `### ${b.index}. ${b.section}\n\nStatus: **${b.statusLabel}** · Class: \`${b.classNames.join(' ')}\`\n\n\`\`\`\n${b.code}\n\`\`\`\n\n`;
+    md += `### \`${b.blockId}\` · #${b.index} · ${b.section}\n\nStatus: **${b.statusLabel}** · Class: \`${b.classNames.join(' ')}\` · Hash: \`${b.codeHash.slice(0, 12)}\`\n\n\`\`\`\n${b.code}\n\`\`\`\n\n`;
   }
   await Bun.write(mdPath, md);
   if (markdownPlan.html) {
@@ -794,6 +942,7 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
 
   const rows = extracted.blocks.map(b => ({
     '#': b.index,
+    id: b.blockId,
     status: b.statusLabel,
     class: b.classNames.join(' '),
     section: b.section,
@@ -806,21 +955,20 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
   logTable(codeBlockClassRows(extracted.classStatuses), [...CODE_BLOCK_CLASS_TABLE_PROPERTIES], {
     colors: true,
   });
+  console.log('');
+  console.log(`H2 outline · ${extracted.outline.length}`);
+  logTable(outlineH2Rows(extracted.outline), [...OUTLINE_TABLE_PROPERTIES], { colors: true });
 
-  const sectionNum =
-    values.section != null && values.section !== ''
-      ? Number.parseInt(values.section, 10)
-      : undefined;
   const bodies = filterBlocks(extracted.blocks, {
     all: values.all,
-    section: sectionNum,
+    section: values.section,
     grep: values.grep,
   });
 
   for (const b of bodies) {
     const lineCount = b.code.split('\n').length;
     console.log('');
-    console.log(`── #${b.index}  ${b.section}  (${lineCount} lines) ──`);
+    console.log(`── ${b.blockId}  #${b.index}  ${b.section}  (${lineCount} lines) ──`);
     console.log(b.code);
   }
 

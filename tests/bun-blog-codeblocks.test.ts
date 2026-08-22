@@ -113,8 +113,15 @@ import {
   extractCodeBlocks,
   extractCodeBlocksFromFile,
   filterBlocks,
+  formatBlockId,
+  hashCodeBlock,
+  INTRO_HEADING_ID,
   matchBlocksToTokens,
+  parseBlockSelector,
+  parseBlogSlug,
   parseBlogVersion,
+  resolveHarvestPaths,
+  type HeadingNode,
   previewLine,
   resolveCodeBlockMode,
   resolveMarkdownOutputPlan,
@@ -139,6 +146,13 @@ describe('bun-blog-codeblocks extract', () => {
     expect(result.blocks).toHaveLength(2);
     expect(result.blocks[0]?.section).toBe('files in Bun.build');
     expect(result.blocks[1]?.section).toBe('S3 Requester Pays Support');
+    expect(result.blocks[0]?.headingId).toBe('files-in-bun-build');
+    expect(result.blocks[1]?.headingId).toBe('s3-requester-pays-support');
+    expect(result.blocks[0]?.ordinal).toBe(1);
+    expect(result.blocks[1]?.ordinal).toBe(1);
+    expect(result.blocks[0]?.blockId).toBe('files-in-bun-build/1');
+    expect(result.blocks[1]?.blockId).toBe('s3-requester-pays-support/1');
+    expect(result.blocks[0]?.codeHash).toBe(hashCodeBlock(result.blocks[0]!.code));
     expect(result.blocks[0]?.code).toContain('Bun.build');
     expect(result.blocks[1]?.code).toContain('requestPayer: true');
     expect(result.classPattern).toBe('CodeBlock*');
@@ -192,6 +206,7 @@ describe('bun-blog-codeblocks extract', () => {
 
     expect(CODE_BLOCK_TABLE_PROPERTIES).toEqual([
       '#',
+      'id',
       'status',
       'class',
       'section',
@@ -217,7 +232,47 @@ describe('bun-blog-codeblocks extract', () => {
     expect(parseBlogVersion('https://bun.com/blog/bun-v1.3.6')).toBe('1.3.6');
     expect(parseBlogVersion('/tmp/bun-v1.3.6.html')).toBe('1.3.6');
     expect(parseBlogVersion('1.3.6')).toBe('1.3.6');
+    expect(parseBlogVersion('https://bun.com/blog/bun-v1.4')).toBe('1.4.0');
+    expect(parseBlogVersion('/tmp/bun-v1.4.html')).toBe('1.4.0');
+    expect(parseBlogVersion('1.4')).toBe('1.4.0');
     expect(parseBlogVersion('nope')).toBeNull();
+  });
+
+  test('parseBlogSlug uses URLPattern blog slug, not /tmp', () => {
+    expect(parseBlogSlug('https://bun.com/blog/bun-v1.4')).toBe('bun-v1.4');
+    expect(parseBlogSlug('.tmp/bun-v1.4/bun-v1.4.html')).toBe('bun-v1.4');
+    expect(parseBlogSlug('https://bun.com/docs/runtime/http')).toBeNull();
+  });
+
+  test('resolveHarvestPaths colocates HTML and artifacts under repo .tmp/<slug>', () => {
+    const fromHtml = resolveHarvestPaths({
+      htmlArg: '.tmp/bun-v1.4/bun-v1.4.html',
+      url: 'https://bun.com/blog/bun-v1.4',
+      repoRoot: '/repo',
+      cwd: '/repo',
+    });
+    expect(fromHtml).toEqual({
+      version: '1.4.0',
+      slug: 'bun-v1.4',
+      sourceUrl: bunBlog('bun-v1.4'),
+      htmlPath: '/repo/.tmp/bun-v1.4/bun-v1.4.html',
+      outDir: '/repo/.tmp/bun-v1.4',
+    });
+
+    const fromUrl = resolveHarvestPaths({
+      url: 'https://bun.com/blog/bun-v1.4',
+      repoRoot: '/repo',
+      cwd: '/tmp',
+    });
+    expect(fromUrl.htmlPath).toBe('/repo/.tmp/bun-v1.4/bun-v1.4.html');
+    expect(fromUrl.outDir).toBe('/repo/.tmp/bun-v1.4');
+
+    const explicit = resolveHarvestPaths({
+      htmlArg: '/repo/.tmp/bun-v1.4/bun-v1.4.html',
+      outDir: '/var/tmp/out',
+      repoRoot: '/repo',
+    });
+    expect(explicit.outDir).toBe('/var/tmp/out');
   });
 
   test('blogUrlForVersion uses bunBlog canonical shape', () => {
@@ -231,10 +286,97 @@ describe('bun-blog-codeblocks extract', () => {
     const { blocks } = extractCodeBlocks(html);
     expect(filterBlocks(blocks, { section: 2 })).toHaveLength(1);
     expect(filterBlocks(blocks, { section: 2 })[0]?.index).toBe(2);
+    expect(filterBlocks(blocks, { section: 'files-in-bun-build/1' })[0]?.blockId).toBe(
+      'files-in-bun-build/1'
+    );
+    expect(filterBlocks(blocks, { section: 's3-requester-pays-support' })).toHaveLength(1);
     expect(filterBlocks(blocks, { grep: 'requestPayer' })).toHaveLength(1);
     expect(filterBlocks(blocks, { grep: 'files in Bun' })).toHaveLength(1);
     expect(filterBlocks(blocks, { all: true })).toHaveLength(2);
     expect(filterBlocks(blocks, {})).toHaveLength(0);
+  });
+
+  test('heading id + ordinal is the locator; class is not', () => {
+    const html = `<h2 id="streams-and-bodies">Streams and bodies</h2>
+      <div class="CodeBlock group/code"><pre><code>one();</code></pre></div>
+      <div class="CodeBlock group/code"><pre><code>two();</code></pre></div>
+      <h4 id="cpu-prof-md">--cpu-prof-md</h4>
+      <div class="CodeBlock group/code"><pre><code>bun --cpu-prof-md ./app.ts</code></pre></div>
+      <div class="CodeBlock group/code"><pre><code>const a = 1;</code></pre></div>`;
+    const { blocks } = extractCodeBlocks(html);
+    expect(blocks.map(b => b.blockId)).toEqual([
+      'streams-and-bodies/1',
+      'streams-and-bodies/2',
+      'cpu-prof-md/1',
+      'cpu-prof-md/2',
+    ]);
+    expect(blocks.every(b => b.className === 'CodeBlock')).toBe(true);
+    expect(new Set(blocks.map(b => b.codeHash)).size).toBe(4);
+    expect(blocks[2]?.headingId).toBe('cpu-prof-md');
+  });
+
+  test('samples before the first heading use intro/n', () => {
+    const html = `<div class="CodeBlock group/code"><pre><code>bun upgrade</code></pre></div>
+      <h2 id="production">Production</h2>
+      <div class="CodeBlock group/code"><pre><code>process.on("memoryPressure")</code></pre></div>`;
+    const { blocks } = extractCodeBlocks(html);
+    expect(blocks[0]?.headingId).toBe(INTRO_HEADING_ID);
+    expect(blocks[0]?.h2Id).toBe(INTRO_HEADING_ID);
+    expect(blocks[0]?.blockId).toBe('intro/1');
+    expect(blocks[0]?.section).toBe('(intro)');
+    expect(blocks[1]?.blockId).toBe('production/1');
+    expect(blocks[1]?.h2Id).toBe('production');
+    expect(hashCodeBlock('bun upgrade\n')).toBe(hashCodeBlock('bun upgrade'));
+    expect(formatBlockId('bun-cron', 2)).toBe('bun-cron/2');
+  });
+
+  test('parseBlockSelector accepts index, headingId/n, heading, and guideKey#id', () => {
+    expect(parseBlockSelector('14')).toEqual({ kind: 'index', index: 14 });
+    expect(parseBlockSelector('bun-cron/2')).toEqual({
+      kind: 'id',
+      headingId: 'bun-cron',
+      ordinal: 2,
+    });
+    expect(parseBlockSelector('blog/bun-v1.4#bun-cron/2')).toEqual({
+      kind: 'id',
+      headingId: 'bun-cron',
+      ordinal: 2,
+    });
+    expect(parseBlockSelector('bun-cron')).toEqual({ kind: 'heading', headingId: 'bun-cron' });
+  });
+
+  test('outline wires h2→h3→h4, ship/improve chips, and descendant -s', () => {
+    const html = `
+      <h2 id="what-s-new">What's new</h2>
+      <h3 id="bun-webview" class="anchored"><code>Bun.WebView</code>
+        <a class="since" href="/blog/release-notes/bun-v1.3.12" title="Shipped in Bun v1.3.12">v1.3.12</a>
+        <a class="since" href="/blog/release-notes/bun-v1.4.0" title="Improved in Bun v1.4.0">v1.4.0</a>
+        <a href="#bun-webview" aria-label="Permalink" class="anchor">#</a>
+      </h3>
+      <div class="CodeBlock group/code"><pre><code>new Bun.WebView()</code></pre></div>
+      <h2 id="bun-test">bun test</h2>
+      <h3 id="bun-test-parallel">bun test --parallel</h3>
+      <div class="CodeBlock group/code"><pre><code>bun test --parallel</code></pre></div>
+      <h4 id="ontestfinished">onTestFinished()</h4>
+      <div class="CodeBlock group/code"><pre><code>onTestFinished(() => {})</code></pre></div>`;
+    const result = extractCodeBlocks(html);
+    expect(result.outline.map(node => node.headingId)).toEqual(['what-s-new', 'bun-test']);
+    expect(result.outline[0]?.children[0]?.headingId).toBe('bun-webview');
+    expect(result.outline[0]?.children[0]?.shippedIn).toBe('1.3.12');
+    expect(result.outline[0]?.children[0]?.improvedIn).toBe('1.4.0');
+    expect(result.outline[0]?.children[0]?.title).toBe('Bun.WebView');
+    expect(result.blocks[0]?.section).toBe('Bun.WebView');
+    expect(result.blocks[0]?.h2Id).toBe('what-s-new');
+    expect(result.blocks[0]?.h3Id).toBe('bun-webview');
+    expect(result.blocks[0]?.shippedIn).toBe('1.3.12');
+    expect(result.blocks[0]?.improvedIn).toBe('1.4.0');
+    expect(result.blocks[2]?.h2Id).toBe('bun-test');
+    expect(result.blocks[2]?.h3Id).toBe('bun-test-parallel');
+    expect(result.blocks[2]?.h4Id).toBe('ontestfinished');
+    expect(filterBlocks(result.blocks, { section: 'what-s-new' }).map(b => b.blockId)).toEqual([
+      'bun-webview/1',
+    ]);
+    expect(filterBlocks(result.blocks, { section: 'bun-test' })).toHaveLength(2);
   });
 });
 
@@ -368,12 +510,21 @@ describe('bun-blog-codeblocks CLI', () => {
     expect(inv.classPattern).toBe('CodeBlock*');
     expect(inv.classStatuses).toHaveLength(2);
     expect(inv.blocks[0]?.statusLabel).toBe('parsed');
+    expect(inv.blocks[0]?.blockId).toBe('files-in-bun-build/1');
+    expect(inv.blocks[0]?.headingId).toBe('files-in-bun-build');
+    expect(inv.h2Count).toBe(3);
+    expect(inv.outline.map((node: HeadingNode) => node.headingId)).toEqual([
+      'install-tabs',
+      'files-in-bun-build',
+      's3-requester-pays-support',
+    ]);
     const markdown = await Bun.file(
       resolvePath(outDir, 'bun-v9.9.9-CodeBlock.md')
     ).text();
     expect(markdown).toContain('Class pattern: `CodeBlock*` via `Bun.Glob.match()`');
     expect(markdown).toContain('| `CodeBlockTab` | skipped · tab container | 1 |');
     expect(markdown).toContain('Status: **parsed** · Class: `CodeBlock`');
+    expect(markdown).toContain('`files-in-bun-build/1`');
   });
 
   test('runCli --mode=all combines token join and derived sidecar', async () => {
@@ -440,7 +591,7 @@ describe('bun-blog-codeblocks CLI', () => {
     expect(renderedAnsi).not.toContain('\x1b[');
   });
 
-  test('missing HTML exits non-zero with curl hint', () => {
+  test('missing HTML exits non-zero with Bun.write hint', () => {
     const missing = resolvePath(
       Bun.env.TMPDIR ?? '/tmp',
       `bun-v0.0.0-missing-${Bun.randomUUIDv7()}.html`
@@ -459,7 +610,7 @@ describe('bun-blog-codeblocks CLI', () => {
     });
     expect(result.exitCode).not.toBe(0);
     const err = result.stderr.toString();
-    expect(err).toContain('curl -fsSL');
+    expect(err).toContain('Bun.write');
     expect(err).toContain(missing);
   });
 });
