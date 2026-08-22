@@ -49,6 +49,16 @@ files = [".env.local", ".env.development", ".env"]
 memory_limit = "512MB"
 # CPU limit
 cpu_limit = "100%"
+# Caching
+caching = true
+# Compression
+compression = true
+# Minification
+minification = true
+# Bundling
+bundling = true
+# Tree shaking
+tree_shaking = true
 
 # Security settings
 [security]
@@ -60,6 +70,16 @@ allow_read = true
 allow_env = true
 # Allow process spawning
 allow_run = true
+# Authentication
+auth = true
+# Authorization
+authorization = true
+# Rate limiting
+rate_limiting = true
+# Input validation
+input_validation = true
+# Output sanitization
+output_sanitization = true
 
 # Logging configuration
 [logging]
@@ -78,6 +98,14 @@ enabled = true
 interval = "5s"
 # Health check endpoint
 health_check = "/health"
+# Metrics collection
+metrics = true
+# Logging
+logging = true
+# Alerts
+alerts = true
+# Dashboard
+dashboard = true
 
 # Development tools
 [tools]
@@ -198,43 +226,6 @@ environment = "production"
 auto_deploy = false
 # Health checks
 health_checks = true
-
-# Monitoring
-[monitoring]
-# Metrics collection
-metrics = true
-# Logging
-logging = true
-# Alerts
-alerts = true
-# Dashboard
-dashboard = true
-
-# Security
-[security]
-# Authentication
-auth = true
-# Authorization
-authorization = true
-# Rate limiting
-rate_limiting = true
-# Input validation
-input_validation = true
-# Output sanitization
-output_sanitization = true
-
-# Performance
-[performance]
-# Caching
-caching = true
-# Compression
-compression = true
-# Minification
-minification = true
-# Bundling
-bundling = true
-# Tree shaking
-tree_shaking = true
 
 # Development workflow
 [workflow]
