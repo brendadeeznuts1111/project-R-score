@@ -94,7 +94,7 @@
     "fanduel-sdk": "^1.2.0"
   },
   "engines": {
-    "bun": ">=1.3.8"
+    "bun": ">=1.4.0"
   },
   "keywords": [
     "bun",
@@ -114,3 +114,4 @@
     "registry": "https://registry.factory-wager.com"
   }
 }
+

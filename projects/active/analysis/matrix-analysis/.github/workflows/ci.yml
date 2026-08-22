@@ -34,7 +34,7 @@ jobs:
         exclude:
           # Only test latest on Windows to save CI minutes
           - os: windows-latest
-            bun-version: "1.3.6"
+            bun-version: "1.4.0"
 
     runs-on: ${{ matrix.os }}
 
@@ -138,3 +138,4 @@ jobs:
           name: benchmark-results
           path: benchmark.json
           if-no-files-found: ignore
+

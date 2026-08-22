@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Normalized odds / shade pipeline extract target (scaffold — domain logic pending bet-ticker nested checkout; issue #284)",
   "engines": {
-    "bun": ">=1.3.14"
+    "bun": ">=1.4.0"
   },
   "exports": {
     ".": "./src/index.ts",
@@ -16,3 +16,4 @@
     "test": "bun test ../../tests/shade-pipeline-package.test.ts"
   }
 }
+

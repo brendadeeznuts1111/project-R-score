@@ -49,7 +49,7 @@
     "url": "https://github.com/fire22/branding-audit/issues"
   },
   "engines": {
-    "bun": ">=1.0.0"
+    "bun": ">=1.4.0"
   },
   "dependencies": {
     "chroma-js": "2.4.2",

@@ -18,7 +18,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/bun-action@v1
         with:
-          bun-version: '1.0.0'
+          bun-version: '1.4.0'
 
       - name: Validate branch naming convention
         run: |
@@ -72,7 +72,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/bun-action@v1
         with:
-          bun-version: '1.0.0'
+          bun-version: '1.4.0'
 
       - name: Detect domain and validate requirements
         run: |
@@ -123,3 +123,4 @@ jobs:
               echo "⚠️ No domain-specific files modified - please verify branch purpose"
             fi
           fi
+

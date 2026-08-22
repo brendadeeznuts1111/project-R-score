@@ -24,7 +24,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
-          bun-version: '1.0.0'
+          bun-version: '1.4.0'
 
       - name: Validate branch naming
         run: |
@@ -69,7 +69,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
-          bun-version: '1.0.0'
+          bun-version: '1.4.0'
 
       - name: Determine branch type and labels
         id: analyze
@@ -153,7 +153,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
-          bun-version: '1.0.0'
+          bun-version: '1.4.0'
 
       - name: Validate protection requirements
         run: |
@@ -194,7 +194,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
-          bun-version: '1.0.0'
+          bun-version: '1.4.0'
 
       - name: Collect branch metrics
         run: |
@@ -205,3 +205,4 @@ jobs:
         run: |
           echo "📈 Updating branch analytics dashboard"
           bun run analytics:branch:dashboard
+

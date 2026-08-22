@@ -20,7 +20,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.2.3'
+          bun-version: '1.4.0'
 
       - name: Install dependencies
         run: bun install
@@ -57,7 +57,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.2.3'
+          bun-version: '1.4.0'
 
       - name: Install dependencies
         run: bun install
@@ -84,7 +84,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.2.3'
+          bun-version: '1.4.0'
 
       - name: Install dependencies
         run: bun install
@@ -163,7 +163,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.2.3'
+          bun-version: '1.4.0'
 
       - name: Install license checker
         run: npm install -g license-checker
@@ -208,3 +208,4 @@ jobs:
           SLACK_MESSAGE: "Security scan failed in ${{ github.repository }}"
           SLACK_COLOR: "danger"
           SLACK_FOOTER: "Review security report for details"
+

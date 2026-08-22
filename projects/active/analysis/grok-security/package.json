@@ -4,7 +4,7 @@
   "description": "Grok Security - Enterprise-Grade Bun.inspect Utilities with Headscale + Cloudflare + Tailscale Integration",
   "type": "module",
   "engines": {
-    "bun": ">=1.3.8"
+    "bun": ">=1.4.0"
   },
   "scripts": {
     "table-doctor": "cd bun-inspect-utils && bun run ./src/cli/table-doctor.ts",
@@ -67,3 +67,4 @@
     "registry": "https://registry.factory-wager.com"
   }
 }
+

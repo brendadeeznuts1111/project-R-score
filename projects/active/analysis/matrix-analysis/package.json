@@ -4,7 +4,7 @@
   "description": "MCP server configuration with Bun native support and RSS integration",
   "type": "module",
   "engines": {
-    "bun": ">=1.3.8"
+    "bun": ">=1.4.0"
   },
   "main": "./src/cli.ts",
   "module": "./src/cli.ts",
@@ -548,3 +548,4 @@
     "puppeteer"
   ]
 }
+

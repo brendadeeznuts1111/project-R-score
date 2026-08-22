@@ -80,6 +80,7 @@
   "author": "Brenda Williams",
   "license": "MIT",
   "engines": {
-    "bun": ">=1.0.0"
+    "bun": ">=1.4.0"
   }
 }
+

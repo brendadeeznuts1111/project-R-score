@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Partner artifact contracts, ingress compatibility, and validated assembler",
   "engines": {
-    "bun": ">=1.3.14"
+    "bun": ">=1.4.0"
   },
   "exports": {
     ".": "./src/index.ts",
@@ -36,3 +36,4 @@
     "test": "bun test ../../tests/partners-package.test.ts ../../tests/partner-dashboard-artifact.test.ts ../../tests/partner-connector-freshness.test.ts ../../tests/partner-out-capabilities.test.ts ../../tests/partner-bookmaker-account-adapter.test.ts ../../tests/partner-limit-changes-adapter.test.ts ../../tests/partner-telegram-handshake-adapter.test.ts ../../tests/partner-tennis-capacity-adapter.test.ts ../../tests/partner-sports-terminal-adapter.test.ts ../../tests/partner-integration-artifacts.test.ts ../../tests/partner-legacy-ops-adapter.test.ts ../../tests/partner-consumer-contract.test.ts ../../tests/partner-lifecycle-adapter.test.ts ../../tests/partner-build-records.test.ts ../../tests/partner-reconcile-facts.test.ts ../../tests/partner-profile-coverage.test.ts ../../tests/partner-dashboard-proposal.test.ts ../../tests/partner-accounting-ledger-adapter.test.ts"
   }
 }
+

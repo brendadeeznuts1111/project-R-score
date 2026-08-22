@@ -52,7 +52,7 @@
   "author": "Fire22 Security Team",
   "license": "MIT",
   "engines": {
-    "bun": ">=1.0.0"
+    "bun": ">=1.4.0"
   },
   "repository": {
     "type": "git",
@@ -86,3 +86,4 @@
     ]
   }
 }
+

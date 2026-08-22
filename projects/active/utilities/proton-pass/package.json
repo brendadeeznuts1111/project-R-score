@@ -34,10 +34,10 @@
     "typescript": "6.0.3"
   },
   "peerDependencies": {
-    "bun": ">=1.0.0"
+    "bun": ">=1.4.0"
   },
   "engines": {
-    "bun": ">=1.0.0"
+    "bun": ">=1.4.0"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
@@ -45,3 +45,4 @@
   "license": "MIT",
   "private": false
 }
+

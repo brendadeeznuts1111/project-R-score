@@ -18,7 +18,7 @@
     "telegram"
   ],
   "engines": {
-    "bun": ">=1.2.21"
+    "bun": ">=1.4.0"
   },
   "type": "module",
   "main": "src/index.ts",

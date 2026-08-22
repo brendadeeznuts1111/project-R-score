@@ -39,7 +39,7 @@
   },
   "homepage": "https://fire22.com/docs/security-audit",
   "engines": {
-    "bun": ">=1.0.0",
+    "bun": ">=1.4.0",
     "node": ">=18.0.0"
   },
   "peerDependencies": {

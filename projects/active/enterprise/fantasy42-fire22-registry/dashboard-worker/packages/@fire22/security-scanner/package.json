@@ -30,7 +30,7 @@
     "bun": "1.2.20"
   },
   "engines": {
-    "bun": ">=1.2.20"
+    "bun": ">=1.4.0"
   },
   "publishConfig": {
     "registry": "https://fire22.workers.dev/registry/"

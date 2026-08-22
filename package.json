@@ -1713,6 +1713,8 @@
     "serve:public:fetch-curl": "BUN_CONFIG_VERBOSE_FETCH=curl bun scripts/serve-public.ts",
     "dev:portal": "SERVE_PUBLIC_DEV=1 bun run serve:public:hot",
     "audit:bunfig": "bash scripts/audit-bunfig.sh",
+    "audit:bun:pin": "bun tools/bun-pin-audit.ts",
+    "audit:bun:pin:fix": "bun tools/bun-pin-audit.ts --fix",
     "audit:bunfig:strict": "bash scripts/audit-bunfig.sh --strict",
     "build:affected": "bun scripts/affected-workspaces.ts build",
     "test:affected": "bun scripts/affected-workspaces.ts test",

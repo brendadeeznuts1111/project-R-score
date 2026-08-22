@@ -79,7 +79,7 @@
   },
   "homepage": "https://github.com/your-org/crc32-sql-toolkit#readme",
   "engines": {
-    "bun": ">=1.3.8",
+    "bun": ">=1.4.0",
     "node": ">=18.0.0"
   },
   "publishConfig": {
@@ -98,3 +98,4 @@
     "bun"
   ]
 }
+

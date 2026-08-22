@@ -71,7 +71,7 @@
   ],
   "license": "MIT",
   "engines": {
-    "bun": ">=1.3.6"
+    "bun": ">=1.4.0"
   },
   "nolarose": {
     "domain": "factory-wager.com",
@@ -171,3 +171,4 @@
     ]
   }
 }
+

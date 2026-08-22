@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "bun": ">=1.3.8"
+    "bun": ">=1.4.0"
   },
   "scripts": {
     "prepare": "cp scripts/hooks/* .git/hooks/ 2>/dev/null && chmod +x .git/hooks/* 2>/dev/null && git config commit.template .gitmessage || true",
@@ -159,3 +159,4 @@
     "fsevents"
   ]
 }
+
