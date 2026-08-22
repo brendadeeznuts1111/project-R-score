@@ -385,6 +385,25 @@ async function checkCodeFile(path: string): Promise<void> {
         i + 1
       );
     }
+    if (/\.rmdirSync?\s*\([^)]*recursive\s*:\s*true/.test(lines[i])) {
+      add(
+        'error',
+        'node26-rmdir-recursive',
+        path,
+        'fs.rmdir({ recursive: true }) throws ERR_INVALID_ARG_VALUE on Node 26 compat; use fs.rm()',
+        i + 1
+      );
+    }
+    const abi = lines[i].match(/(?:NODE_MODULE_VERSION|versions\.modules)[^\d]*(\d+)/);
+    if (abi && Number(abi[1]) !== 147) {
+      add(
+        'warn',
+        'node26-abi',
+        path,
+        `native ABI pinned to ${abi[1]}; Bun 1.4 reports NODE_MODULE_VERSION 147`,
+        i + 1
+      );
+    }
   }
 }
 
@@ -418,6 +437,7 @@ async function main(): Promise<number> {
   const mdFiles: string[] = [];
   const ymlFiles: string[] = [];
   const codeFiles: string[] = [];
+  const addonFiles: string[] = [];
 
   for (const f of files) {
     const base = f.split('/').pop() ?? '';
@@ -427,6 +447,7 @@ async function main(): Promise<number> {
     else if (base === '.bun-version') continue;
     else if (base.endsWith('.md')) mdFiles.push(f);
     else if (base.endsWith('.yml') || base.endsWith('.yaml')) ymlFiles.push(f);
+    else if (base.endsWith('.node')) addonFiles.push(f);
     else if (CODE_EXT.test(base)) codeFiles.push(f);
   }
 
@@ -436,6 +457,15 @@ async function main(): Promise<number> {
   for (const f of ymlFiles) await checkYamlFile(f);
   for (const f of codeFiles) await checkCodeFile(f);
   for (const f of mdFiles) await checkDocFile(f);
+
+  for (const f of addonFiles) {
+    add(
+      'warn',
+      'node26-addon',
+      f,
+      'prebuilt native addon: must ship a build for NODE_MODULE_VERSION 147 (Node 26)'
+    );
+  }
 
   if (FIX) {
     for (const f of pkgFiles) {
