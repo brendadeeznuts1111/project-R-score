@@ -1,7 +1,7 @@
 {
   "schema": "factorywager/bun-api-index/v1",
-  "generated": "2026-08-14T05:52:28.679Z",
-  "bunVersion": "1.3.14",
+  "generated": "2026-08-22T00:44:54.205Z",
+  "bunVersion": "1.4.0",
   "ssot": {
     "llms": "https://bun.com/docs/llms.txt",
     "docsIndex": "tools/bun-docs-index.json",
@@ -23,8 +23,8 @@
     "bun"
   ],
   "coverage": {
-    "generated": "2026-08-14T05:52:28.678Z",
-    "bunVersion": "1.3.14",
+    "generated": "2026-08-22T00:44:54.205Z",
+    "bunVersion": "1.4.0",
     "composite": {
       "pct": 93
     },
@@ -49,8 +49,8 @@
       "repo": {
         "apis": {
           "hit": 91,
-          "total": 140,
-          "pct": 65,
+          "total": 142,
+          "pct": 64,
           "missing": [
             "bun:types-inventory",
             "bun:types-status",
@@ -66,22 +66,22 @@
             "Bun.ColorInput",
             "Bun.CronController",
             "bun:ci",
+            "bun:remediation",
             "bun:types-usage",
             "bun:types-changelog",
             "bun:types-ci",
+            "Bun.BunFile",
             "Bun.exit",
             "Bun.Foo",
             "bun:runtime-pin",
             "Bun.readableStreamToArray",
             "Bun.enableANSIColors",
-            "bun:check",
-            "bun:utils-proof",
-            "Bun.cwd"
+            "bun:check"
           ]
         },
         "links": {
-          "hit": 4207,
-          "total": 4207,
+          "hit": 4300,
+          "total": 4300,
           "pct": 100
         }
       },
