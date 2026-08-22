@@ -2,13 +2,16 @@
 // @see https://bun.com/docs/runtime/http/fetch — fetch
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 /**
  * Toggle `include*` here. All flags default true except enableAI (use --ai).
+ * Template: Type | Property | Flag | Cmd | Runtime | Version — see HARVEST_TEMPLATE_ROWS.
  *
  * bun tools/harvest.ts --ai https://example.com/blog ./report 0
  * bun tools/harvest.ts https://example.com/blog ./report 0
  */
 import type { HarvestMapConfig } from '../lib/docs/blog-codeblocks.ts';
+export { HARVEST_TEMPLATE_ROWS, formatHarvestFlagCmdTable } from '../lib/docs/blog-codeblocks.ts';
 
 export const CONFIG: HarvestMapConfig = {
   includeToc: true,
@@ -20,6 +23,7 @@ export const CONFIG: HarvestMapConfig = {
   includeTables: true,
   includeFootnotes: true,
   includeRawJson: true,
+  includeSocial: true,
 
   enableAI: false,
   aiProvider: 'ollama',

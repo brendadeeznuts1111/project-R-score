@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
+// @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 /**
  * Universal harvest CLI: URL + out dir + crawl depth. Tables/footnotes stay on
  * unless includeTables / includeFootnotes is false. `--ai` is the only way to
@@ -12,6 +13,7 @@ import {
   DEFAULT_HARVEST_MAP_CONFIG,
   extractCodeBlocks,
   filterHarvestForConfig,
+  formatHarvestFlagCmdTable,
   mapHarvestToBlogHtml,
   mapHarvestToBlogMarkdown,
   summarizeHarvestMap,
@@ -19,6 +21,11 @@ import {
   type HarvestAiSummary,
   type HarvestMapConfig,
 } from './blog-codeblocks.ts';
+import {
+  isHarvestHttpUrl,
+  rewriteHarvestFile,
+  rewriteHarvestResponse,
+} from './harvest-html-rewriter.ts';
 
 export type HarvestUniversalArgs = {
   ai: boolean;
@@ -52,12 +59,20 @@ export function harvestUniversalUsage(): string {
   outdir    Report directory (report.md / report.html / report.json)
   depth     Same-origin link crawl depth. 0 = this page only.
 
-Tables and footnotes are always extracted unless includeTables or includeFootnotes is false.
+Toggle include* in tools/harvest.ts CONFIG. Template:
+
+${formatHarvestFlagCmdTable()}
+
+Tables, footnotes, and Open Graph / Twitter social tags are extracted unless
+includeTables, includeFootnotes, or includeSocial is false. HTMLRewriter reads
+og:* / twitter:* / title fallbacks and rewrites img[src], a[href], and share
+images to absolute URLs. Bun transform() inputs: Response, string, ArrayBuffer;
+Blob and File wrap in Response. Cloudflare Workers only supports Response.
 `;
 }
 
 function isHttpUrl(value: string): boolean {
-  return /^https?:\/\//i.test(value);
+  return isHarvestHttpUrl(value);
 }
 
 function isSkippableHref(href: string): boolean {
@@ -73,11 +88,11 @@ export async function readHarvestHtml(source: string): Promise<string> {
   if (!isHttpUrl(source)) {
     const file = Bun.file(source);
     if (!(await file.exists())) throw new Error(`Missing HTML: ${source}`);
-    return file.text();
+    return rewriteHarvestFile(file);
   }
   const response = await fetch(source);
   if (!response.ok) throw new Error(`fetch ${source} HTTP ${response.status}`);
-  return response.text();
+  return rewriteHarvestResponse(response, source);
 }
 
 function sameOrigin(fromUrl: string, href: string): string | null {
@@ -105,7 +120,10 @@ export async function harvestPages(
     if (!next || seen.has(next.url)) continue;
     seen.add(next.url);
     const html = await readHarvestHtml(next.url);
-    const extracted = extractCodeBlocks(html, { includeGenericPre: true });
+    const extracted = extractCodeBlocks(html, {
+      includeGenericPre: true,
+      baseUrl: isHttpUrl(next.url) ? next.url : undefined,
+    });
     pages.push({ url: next.url, extracted });
     if (next.remaining <= 0) continue;
     for (const link of extracted.links) {
@@ -142,6 +160,7 @@ export async function runHarvestUniversal(
     enableAI: args.ai,
     includeTables: config.includeTables !== false,
     includeFootnotes: config.includeFootnotes !== false,
+    includeSocial: config.includeSocial !== false,
   };
   const extracted = filterHarvestForConfig(primary.extracted, resolved);
 
@@ -176,6 +195,7 @@ export async function runHarvestUniversal(
             blocks: page.extracted.codeBlockCount,
             tables: page.extracted.tables.length,
             footnotes: page.extracted.footnotes.length,
+            social: Object.keys(page.extracted.social).length,
           },
         })),
         extracted,

@@ -5,6 +5,9 @@
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
 // @see https://bun.com/blog/bun-v1.4#bun-markdown — Bun.markdown blog heading
 // @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
+// @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags — SocialMetadata
 // @updated Bun.Glob · fixed v1.0.27 · 2024-02-17 · https://bun.com/blog/bun-v1.0.27
 // @updated Bun.Glob · fixed v1.0.28 · 2024-02-19 · https://bun.com/blog/bun-v1.0.28
 // @updated Bun.Glob · fixed v1.0.29 · 2024-02-23 · https://bun.com/blog/bun-v1.0.29
@@ -32,9 +35,14 @@ import {
   type HarvestAiFetch,
   type HarvestAiSummary,
 } from './blog-harvest-ai.ts';
+import {
+  extractSocialMetadataFromHtmlSync,
+  type SocialMetadata,
+} from './extract-metadata.ts';
 
 export type { HarvestAiConfig, HarvestAiProvider, HarvestAiSummary } from './blog-harvest-ai.ts';
 export { DEFAULT_HARVEST_AI_CONFIG, DEFAULT_HARVEST_AI_PROMPT } from './blog-harvest-ai.ts';
+export type { SocialMetadata } from './extract-metadata.ts';
 
 /** Official heading `id`, or `intro` when the sample precedes the first h2–h4. */
 export const INTRO_HEADING_ID = 'intro' as const;
@@ -120,11 +128,31 @@ export type BlogInlineCode = {
   context: string;
 };
 
+export type MarkdownTableAlign = 'left' | 'right' | 'center';
+
+export type HarvestTableCell = {
+  text: string;
+  align?: MarkdownTableAlign;
+  scope: string;
+  abbr: string;
+  title: string;
+  ariaLabel: string;
+  headersAttr: string;
+  id: string; // brand-ok — HTML th/td id, not a domain brand
+};
+
+export type HarvestTableHeader = HarvestTableCell & {
+  /** Last resolved label. Prefer `harvestTableHeaderLabel` so it stays live. */
+  label: string;
+};
+
 export type BlogTable = {
   headingId: string; // brand-ok — Bun blog heading slug
   h2Id: string;
   markdown: string;
   caption: string;
+  headers: HarvestTableHeader[];
+  rows: string[][];
   htmlOffset: number;
 };
 
@@ -146,6 +174,7 @@ export type HarvestMapConfig = {
   includeRawJson: boolean;
   includeTables: boolean;
   includeFootnotes: boolean;
+  includeSocial: boolean;
 } & HarvestAiConfig;
 
 export const DEFAULT_HARVEST_MAP_CONFIG: HarvestMapConfig = {
@@ -158,6 +187,7 @@ export const DEFAULT_HARVEST_MAP_CONFIG: HarvestMapConfig = {
   includeRawJson: true,
   includeTables: true,
   includeFootnotes: true,
+  includeSocial: true,
   ...DEFAULT_HARVEST_AI_CONFIG,
 };
 
@@ -175,6 +205,7 @@ export type ExtractResult = {
   inlineCodes: BlogInlineCode[];
   tables: BlogTable[];
   footnotes: BlogFootnote[];
+  social: SocialMetadata;
 };
 
 /** Bun.Glob matches the complete CodeBlock CSS-class family, not substrings. */
@@ -368,6 +399,7 @@ export function filterHarvestForConfig(
     inlineCodes: config.includeInlineCode ? extracted.inlineCodes : [],
     tables: config.includeTables ? extracted.tables : [],
     footnotes: config.includeFootnotes ? extracted.footnotes : [],
+    social: config.includeSocial ? extracted.social : {},
     introBlockIds: config.includeCodeBlocks ? extracted.introBlockIds : [],
   };
 }
@@ -497,8 +529,6 @@ function isInsidePre(offset: number, ranges: readonly { start: number; end: numb
   return ranges.some(range => offset >= range.start && offset < range.end);
 }
 
-export type MarkdownTableAlign = 'left' | 'right' | 'center';
-
 const NUMERIC_CELL = /^[+-]?(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d+)?%?$/;
 const UNIT_CELL = /^[+-]?(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d+)?\s?(?:kb|mb|gb|ms|s|x|×)$/i;
 
@@ -518,20 +548,78 @@ function alignFromAttrs(attrs: string): MarkdownTableAlign | undefined {
   return undefined;
 }
 
-function parseTableRow(rowInner: string): Array<{ text: string; align?: MarkdownTableAlign }> {
-  const cells: Array<{ text: string; align?: MarkdownTableAlign }> = [];
+function parseTableCell(attrs: string, inner: string): HarvestTableCell {
+  const text = headingSectionText(inner)
+    .replace(/\s+/g, ' ')
+    .replace(/\|/g, '\\|')
+    .trim();
+  return {
+    text,
+    align: alignFromAttrs(attrs),
+    scope: attrValue(attrs, 'scope'),
+    abbr: decodeHtmlEntities(attrValue(attrs, 'abbr')),
+    title: decodeHtmlEntities(attrValue(attrs, 'title')),
+    ariaLabel: decodeHtmlEntities(attrValue(attrs, 'aria-label')),
+    headersAttr: attrValue(attrs, 'headers'),
+    id: attrValue(attrs, 'id'),
+  };
+}
+
+const PLATFORM_CELL = /linux|windows|macos|mac os|darwin|arm64|x64|win32/i;
+const SPEEDUP_CELL = /[×x]|speedup|faster/i;
+
+export function inferHarvestTableHeader(index: number, samples: readonly string[]): string {
+  if (index === 0) {
+    if (samples.some(sample => PLATFORM_CELL.test(sample))) return 'Platform';
+    return 'Metric';
+  }
+  if (samples.some(sample => SPEEDUP_CELL.test(sample))) return 'Speedup';
+  return `Col ${index + 1}`;
+}
+
+/** Dynamic label from the parsed th form object. Never Open Graph. */
+export function harvestTableHeaderLabel(
+  cell: HarvestTableCell,
+  index: number,
+  samples: readonly string[]
+): string {
+  const fromForm = (cell.text || cell.ariaLabel || cell.abbr || cell.title).trim();
+  if (fromForm) return fromForm;
+  return inferHarvestTableHeader(index, samples);
+}
+
+export function harvestTableColumnSamples(
+  rows: readonly (readonly string[])[],
+  index: number
+): string[] {
+  return rows.map(row => row[index] ?? '').filter(text => text && text !== '—');
+}
+
+export function formatHarvestTable(
+  headers: readonly HarvestTableCell[],
+  rows: readonly (readonly string[])[]
+): string {
+  const labels = headers.map((header, index) =>
+    harvestTableHeaderLabel(header, index, harvestTableColumnSamples(rows, index))
+  );
+  const aligns = headers.map((header, index) => {
+    const sample = harvestTableColumnSamples(rows, index)[0] ?? '';
+    return cellAlign(sample, header.align);
+  });
+  return formatMarkdownTable(labels, rows, aligns);
+}
+
+function parseTableRow(rowInner: string): HarvestTableCell[] {
+  const cells: HarvestTableCell[] = [];
   const cellRe = /<t[hd]\b([^>]*)>([\s\S]*?)<\/t[hd]>/gi;
   let cellMatch: RegExpExecArray | null;
   while ((cellMatch = cellRe.exec(rowInner))) {
-    const attrs = cellMatch[1] ?? '';
-    const text = headingSectionText(cellMatch[2] ?? '')
-      .replace(/\s+/g, ' ')
-      .replace(/\|/g, '\\|')
-      .trim();
-    const span = Math.max(1, Number.parseInt(attrValue(attrs, 'colspan'), 10) || 1);
-    const align = alignFromAttrs(attrs);
-    cells.push({ text, align });
-    for (let extra = 1; extra < span; extra += 1) cells.push({ text: '', align });
+    const cell = parseTableCell(cellMatch[1] ?? '', cellMatch[2] ?? '');
+    const span = Math.max(1, Number.parseInt(attrValue(cellMatch[1] ?? '', 'colspan'), 10) || 1);
+    cells.push(cell);
+    for (let extra = 1; extra < span; extra += 1) {
+      cells.push({ ...cell, text: '', ariaLabel: '', abbr: '', title: '', id: '' });
+    }
   }
   return cells;
 }
@@ -575,11 +663,18 @@ export function formatMarkdownTable(
   ].join('\n');
 }
 
-function htmlTableToMarkdown(tableHtml: string): string {
+function parseHtmlTable(tableHtml: string): {
+  markdown: string;
+  caption: string;
+  headers: HarvestTableHeader[];
+  rows: string[][];
+} {
+  const captionMatch = /<caption\b[^>]*>([\s\S]*?)<\/caption>/i.exec(tableHtml);
+  const caption = captionMatch ? headingSectionText(captionMatch[1] ?? '') : '';
   const thead = /<thead\b[^>]*>([\s\S]*?)<\/thead>/i.exec(tableHtml)?.[1];
   const tbody = /<tbody\b[^>]*>([\s\S]*?)<\/tbody>/i.exec(tableHtml)?.[1] ?? tableHtml;
-  const parseRows = (chunk: string): Array<Array<{ text: string; align?: MarkdownTableAlign }>> => {
-    const rows: Array<Array<{ text: string; align?: MarkdownTableAlign }>> = [];
+  const parseRows = (chunk: string): HarvestTableCell[][] => {
+    const rows: HarvestTableCell[][] = [];
     const rowRe = /<tr\b[^>]*>([\s\S]*?)<\/tr>/gi;
     let rowMatch: RegExpExecArray | null;
     while ((rowMatch = rowRe.exec(chunk))) {
@@ -597,23 +692,35 @@ function htmlTableToMarkdown(tableHtml: string): string {
       bodyRows.shift();
     }
   }
-  if (!headerCells && bodyRows.length === 0) return '';
+  if (!headerCells && bodyRows.length === 0) {
+    return { markdown: '', caption, headers: [], rows: [] };
+  }
   const width = Math.max(headerCells?.length ?? 0, ...bodyRows.map(row => row.length), 1);
-  const headers =
-    headerCells?.map(cell => cell.text) ??
-    Array.from({ length: width }, (_, index) => `Col ${index + 1}`);
-  while (headers.length < width) headers.push(`Col ${headers.length + 1}`);
-  const aligns: MarkdownTableAlign[] = headers.map((_, index) => {
-    const hinted = headerCells?.[index]?.align ?? bodyRows.find(row => row[index]?.align)?.[index]?.align;
-    const sample = bodyRows.map(row => row[index]?.text ?? '').find(text => text.length > 0) ?? '';
-    return cellAlign(sample, hinted);
-  });
+  while ((headerCells?.length ?? 0) < width) {
+    headerCells = [
+      ...(headerCells ?? []),
+      parseTableCell('', ''),
+    ];
+  }
   const rows = bodyRows.map(row => {
     const texts = row.map(cell => cell.text);
     while (texts.length < width) texts.push('');
-    return texts.slice(0, width);
+    return texts.slice(0, width).map(text => (text.trim() === '' ? '—' : text));
   });
-  return formatMarkdownTable(headers.slice(0, width), rows, aligns);
+  const headers: HarvestTableHeader[] = (headerCells ?? []).slice(0, width).map((cell, index) => ({
+    ...cell,
+    label: harvestTableHeaderLabel(cell, index, harvestTableColumnSamples(rows, index)),
+  }));
+  return {
+    markdown: formatHarvestTable(headers, rows),
+    caption,
+    headers,
+    rows,
+  };
+}
+
+function htmlTableToMarkdown(tableHtml: string): string {
+  return parseHtmlTable(tableHtml).markdown;
 }
 
 function isFootnoteIdOrClass(id: string, className: string): boolean {
@@ -630,7 +737,7 @@ function collectBlogAssets(
   let imgMatch: RegExpExecArray | null;
   while ((imgMatch = img.exec(html))) {
     const src = decodeHtmlEntities(attrValue(imgMatch[1] ?? '', 'src'));
-    if (!src || src === '/logo.svg') continue;
+    if (!src || src === '/logo.svg' || src.endsWith('/logo.svg')) continue;
     const ancestry = headingAncestry(headings, imgMatch.index);
     images.push({
       headingId: ancestry.leaf.headingId,
@@ -696,15 +803,16 @@ function collectBlogAssets(
   let tableMatch: RegExpExecArray | null;
   while ((tableMatch = tableRe.exec(html))) {
     if (isInsidePre(tableMatch.index, preRanges)) continue;
-    const markdown = htmlTableToMarkdown(tableMatch[0]!);
-    if (!markdown) continue;
-    const captionMatch = /<caption\b[^>]*>([\s\S]*?)<\/caption>/i.exec(tableMatch[0]!);
+    const parsed = parseHtmlTable(tableMatch[0]!);
+    if (!parsed.markdown) continue;
     const ancestry = headingAncestry(headings, tableMatch.index);
     tables.push({
       headingId: ancestry.leaf.headingId,
       h2Id: ancestry.h2.headingId,
-      markdown,
-      caption: captionMatch ? headingSectionText(captionMatch[1] ?? '') : '',
+      markdown: parsed.markdown,
+      caption: parsed.caption,
+      headers: parsed.headers,
+      rows: parsed.rows,
       htmlOffset: tableMatch.index,
     });
   }
@@ -774,7 +882,7 @@ function pushBlock(
 /** Parse `div.CodeBlock` (not `CodeBlockTab`) from Bun blog HTML. */
 export function extractCodeBlocks(
   html: string,
-  options?: { includeGenericPre?: boolean }
+  options?: { includeGenericPre?: boolean; baseUrl?: string }
 ): ExtractResult {
   const divs = divClassLists(html);
   const headings = collectHeadings(html);
@@ -835,6 +943,7 @@ export function extractCodeBlocks(
     inlineCodes: assets.inlineCodes,
     tables: assets.tables,
     footnotes: assets.footnotes,
+    social: extractSocialMetadataFromHtmlSync(html, options?.baseUrl),
   };
 }
 
@@ -869,6 +978,7 @@ export function resolveHarvestMapConfig(
     includeRawJson: overrides?.includeRawJson ?? DEFAULT_HARVEST_MAP_CONFIG.includeRawJson,
     includeTables: overrides?.includeTables ?? DEFAULT_HARVEST_MAP_CONFIG.includeTables,
     includeFootnotes: overrides?.includeFootnotes ?? DEFAULT_HARVEST_MAP_CONFIG.includeFootnotes,
+    includeSocial: overrides?.includeSocial ?? DEFAULT_HARVEST_MAP_CONFIG.includeSocial,
   };
   return { ...include, ...resolveHarvestAiConfig(overrides) };
 }
@@ -882,7 +992,159 @@ export type HarvestMapStats = {
   inlineCodes: number;
   tables: number;
   footnotes: number;
+  social: number;
 };
+
+export const HARVEST_CLI_CMD = 'bun tools/harvest.ts [--ai] <url> <outdir> [depth]';
+export const HARVEST_AI_CMD = 'bun tools/harvest.ts --ai <url> <outdir> [depth]';
+export const HARVEST_CONFIG_CMD = 'CONFIG';
+export const HARVEST_RUNTIME = 'Bun';
+
+export function harvestRuntimeVersion(): string {
+  return Bun.version;
+}
+
+export type HarvestTemplateRow = {
+  field: string;
+  type: string;
+  property: string;
+  flag: string;
+  cmd: string;
+  countKey?: keyof HarvestMapStats;
+};
+
+/** Harvest template: Field · Type · Property · Flag · Cmd · Runtime · Version · Count. */
+export const HARVEST_TEMPLATE_ROWS: readonly HarvestTemplateRow[] = [
+  { field: 'Runtime', type: 'string', property: 'Bun', flag: '—', cmd: 'bun --version' },
+  { field: 'Version', type: 'string', property: 'Bun.version', flag: '—', cmd: 'bun --version' },
+  {
+    field: 'Rewriter',
+    type: 'HTMLRewriter',
+    property: 'HTMLRewriter.transform',
+    flag: '—',
+    cmd: 'HTMLRewriter',
+  },
+  { field: 'H2', type: 'HeadingNode[]', property: 'HarvestMapStats.h2', flag: '—', cmd: 'extract', countKey: 'h2' },
+  {
+    field: 'Headings',
+    type: 'HeadingNode[]',
+    property: 'HarvestMapStats.headings',
+    flag: '—',
+    cmd: 'extract',
+    countKey: 'headings',
+  },
+  {
+    field: 'Code blocks',
+    type: 'CodeBlock[]',
+    property: 'CONFIG.includeCodeBlocks',
+    flag: 'includeCodeBlocks',
+    cmd: HARVEST_CONFIG_CMD,
+    countKey: 'blocks',
+  },
+  {
+    field: 'Images',
+    type: 'BlogImage[]',
+    property: 'CONFIG.includeImages',
+    flag: 'includeImages',
+    cmd: HARVEST_CONFIG_CMD,
+    countKey: 'images',
+  },
+  {
+    field: 'Links',
+    type: 'BlogLink[]',
+    property: 'CONFIG.includeLinks',
+    flag: 'includeLinks',
+    cmd: HARVEST_CONFIG_CMD,
+    countKey: 'links',
+  },
+  {
+    field: 'Inline code',
+    type: 'BlogInlineCode[]',
+    property: 'CONFIG.includeInlineCode',
+    flag: 'includeInlineCode',
+    cmd: HARVEST_CONFIG_CMD,
+    countKey: 'inlineCodes',
+  },
+  {
+    field: 'Tables',
+    type: 'BlogTable[]',
+    property: 'CONFIG.includeTables',
+    flag: 'includeTables',
+    cmd: HARVEST_CONFIG_CMD,
+    countKey: 'tables',
+  },
+  {
+    field: 'Footnotes',
+    type: 'BlogFootnote[]',
+    property: 'CONFIG.includeFootnotes',
+    flag: 'includeFootnotes',
+    cmd: HARVEST_CONFIG_CMD,
+    countKey: 'footnotes',
+  },
+  {
+    field: 'Social',
+    type: 'SocialMetadata',
+    property: 'SocialMetadata.image',
+    flag: 'includeSocial',
+    cmd: 'HTMLRewriter',
+    countKey: 'social',
+  },
+  { field: 'TOC', type: 'boolean', property: 'CONFIG.includeToc', flag: 'includeToc', cmd: HARVEST_CONFIG_CMD },
+  { field: 'Stats', type: 'boolean', property: 'CONFIG.includeStats', flag: 'includeStats', cmd: HARVEST_CONFIG_CMD },
+  { field: 'Raw JSON', type: 'json', property: 'CONFIG.includeRawJson', flag: 'includeRawJson', cmd: HARVEST_CONFIG_CMD },
+  { field: 'AI', type: 'HarvestAiSummary[]', property: 'CONFIG.enableAI', flag: '--ai', cmd: HARVEST_AI_CMD },
+  { field: 'URL', type: 'string', property: 'Bun.argv', flag: '<url>', cmd: HARVEST_CLI_CMD },
+  { field: 'Out dir', type: 'string', property: 'Bun.argv', flag: '<outdir>', cmd: HARVEST_CLI_CMD },
+  { field: 'Depth', type: 'number', property: 'Bun.argv', flag: '[depth]', cmd: HARVEST_CLI_CMD },
+];
+
+function harvestTemplateMeta(): [string, string] {
+  return [HARVEST_RUNTIME, harvestRuntimeVersion()];
+}
+
+function isHarvestConfigRow(row: HarvestTemplateRow): boolean {
+  return (
+    row.flag !== '—' ||
+    row.property === 'Bun' ||
+    row.property.startsWith('Bun.') ||
+    row.property.startsWith('HTMLRewriter')
+  );
+}
+
+export function formatHarvestFlagCmdTable(): string {
+  const seen = new Set<string>();
+  const rows: string[][] = [];
+  for (const row of HARVEST_TEMPLATE_ROWS) {
+    if (!isHarvestConfigRow(row)) continue;
+    const key = `${row.type}\0${row.property}\0${row.flag}\0${row.cmd}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const [runtime, version] = harvestTemplateMeta();
+    rows.push([row.type, row.property, row.flag, row.cmd, runtime, version]);
+  }
+  return formatMarkdownTable(['Type', 'Property', 'Flag', 'Cmd', 'Runtime', 'Version'], rows);
+}
+
+export function formatHarvestTemplateTable(extracted: ExtractResult): string {
+  const stats = harvestMapStats(extracted);
+  return formatMarkdownTable(
+    ['Field', 'Type', 'Property', 'Flag', 'Cmd', 'Runtime', 'Version', 'Count'],
+    HARVEST_TEMPLATE_ROWS.map(row => {
+      const [runtime, version] = harvestTemplateMeta();
+      return [
+        row.field,
+        row.type,
+        row.property,
+        row.flag,
+        row.cmd,
+        runtime,
+        version,
+        row.countKey ? String(stats[row.countKey]) : '—',
+      ];
+    }),
+    ['left', 'left', 'left', 'left', 'left', 'left', 'left', 'right']
+  );
+}
 
 export type LanguageStat = {
   language: string;
@@ -934,6 +1196,7 @@ export function harvestMapStats(extracted: ExtractResult): HarvestMapStats {
     inlineCodes: extracted.inlineCodes.reduce((sum, row) => sum + row.count, 0),
     tables: extracted.tables.length,
     footnotes: extracted.footnotes.length,
+    social: Object.values(extracted.social).filter(value => value != null && value !== '').length,
   };
 }
 
@@ -1037,7 +1300,9 @@ function renderHeadingNode(
     : '';
   const tables = config.includeTables
     ? assetsForHeading(extracted.tables, node.headingId)
-        .map(table => Bun.markdown.html(table.markdown, { tables: true }))
+        .map(table =>
+          Bun.markdown.html(formatHarvestTable(table.headers, table.rows), { tables: true })
+        )
         .join('')
     : '';
   const footnotes = config.includeFootnotes
@@ -1052,6 +1317,46 @@ function renderHeadingNode(
     .map(child => renderHeadingNode(child, extracted, byBlockId, config, summaries))
     .join('');
   return `${heading}\n${aiHtml}${samples}${tables}${footnotes}${images}${links}${inline}${children}`;
+}
+
+function socialEntries(social: SocialMetadata): Array<[string, string]> {
+  return (
+    [
+      ['title', social.title],
+      ['description', social.description],
+      ['image', social.image],
+      ['url', social.url],
+      ['siteName', social.siteName],
+      ['type', social.type],
+    ] as const
+  ).filter((entry): entry is [string, string] => Boolean(entry[1]));
+}
+
+function renderSocialMarkdown(social: SocialMetadata): string {
+  const rows = socialEntries(social);
+  if (rows.length === 0) return '';
+  let md = `## Social\n\n`;
+  for (const [key, value] of rows) {
+    if (key === 'image') md += `- image: ![og:image](${value})\n`;
+    else md += `- ${key}: ${value}\n`;
+  }
+  return `${md}\n`;
+}
+
+function renderSocialHtml(social: SocialMetadata): string {
+  const rows = socialEntries(social);
+  if (rows.length === 0) return '';
+  const image = social.image
+    ? `<img src="${Bun.escapeHTML(social.image)}" alt="${Bun.escapeHTML(social.title ?? 'og:image')}" class="og-image"/>`
+    : '';
+  const meta = rows
+    .filter(([key]) => key !== 'image')
+    .map(
+      ([key, value]) =>
+        `<li><span class="og-key">${Bun.escapeHTML(key)}</span> ${Bun.escapeHTML(value)}</li>`
+    )
+    .join('');
+  return `<aside class="og">${image}<ul>${meta}</ul></aside>\n`;
 }
 
 function renderTocHtml(nodes: readonly HeadingNode[], sourceUrl: string): string {
@@ -1075,26 +1380,18 @@ function renderLanguageStatsMarkdown(blocks: readonly CodeBlock[]): string {
 }
 
 function renderCountStatsMarkdown(extracted: ExtractResult): string {
-  const stats = harvestMapStats(extracted);
-  return formatMarkdownTable(
-    ['Field', 'Count'],
-    [
-      ['H2', String(stats.h2)],
-      ['Headings', String(stats.headings)],
-      ['Code blocks', String(stats.blocks)],
-      ['Images', String(stats.images)],
-      ['Links', String(stats.links)],
-      ['Inline code', String(stats.inlineCodes)],
-      ['Tables', String(stats.tables)],
-      ['Footnotes', String(stats.footnotes)],
-    ],
-    ['left', 'right']
-  );
+  return formatHarvestTemplateTable(extracted);
 }
 
 function renderStatsHtml(extracted: ExtractResult): string {
   const languages = renderLanguageStatsMarkdown(extracted.blocks);
-  const md = [languages, renderCountStatsMarkdown(extracted)].filter(Boolean).join('\n\n');
+  const md = [
+    formatHarvestFlagCmdTable(),
+    languages,
+    renderCountStatsMarkdown(extracted),
+  ]
+    .filter(Boolean)
+    .join('\n\n');
   return Bun.markdown.html(md, { tables: true });
 }
 
@@ -1121,6 +1418,7 @@ function harvestRawJson(extracted: ExtractResult, opts: BlogMapOptions): string 
       inlineCodes: extracted.inlineCodes,
       tables: extracted.tables,
       footnotes: extracted.footnotes,
+      social: extracted.social,
       summaries: opts.summaries ?? {},
     },
     null,
@@ -1140,6 +1438,7 @@ export function mapHarvestToBlogHtml(extracted: ExtractResult, opts: BlogMapOpti
   const parts: string[] = [
     `<!-- mapped from ${Bun.escapeHTML(opts.sourceUrl)} via Bun.markdown -->\n`,
   ];
+  if (config.includeSocial) parts.push(renderSocialHtml(extracted.social));
   if (config.includeToc) parts.push(renderTocHtml(extracted.outline, opts.sourceUrl));
   if (config.includeStats) parts.push(renderStatsHtml(extracted));
   const intro = config.includeCodeBlocks
@@ -1210,7 +1509,7 @@ function nodeMarkdown(
   if (config.includeTables) {
     for (const table of assetsForHeading(extracted.tables, node.headingId)) {
       if (table.caption) md += `\n*${table.caption}*\n`;
-      md += `\n${table.markdown}\n`;
+      md += `\n${formatHarvestTable(table.headers, table.rows)}\n`;
     }
   }
   if (config.includeFootnotes) {
@@ -1254,9 +1553,13 @@ export function mapHarvestToBlogMarkdown(extracted: ExtractResult, opts: BlogMap
   md += `Mapped with \`Bun.markdown.html\` / \`Bun.markdown.render\`. Heading ids are the official blog \`id\`s, not markdown auto-slugs.\n\n`;
   if (config.includeStats) {
     const languages = renderLanguageStatsMarkdown(extracted.blocks);
+    md += `## Config\n\n${formatHarvestFlagCmdTable()}\n\n`;
     md += `## Stats\n\n`;
     if (languages) md += `${languages}\n\n`;
     md += `${renderCountStatsMarkdown(extracted)}\n\n`;
+  }
+  if (config.includeSocial) {
+    md += renderSocialMarkdown(extracted.social);
   }
   if (config.includeToc) {
     md += `## TOC\n\n${tocMarkdown(extracted.outline, opts.sourceUrl)}\n`;

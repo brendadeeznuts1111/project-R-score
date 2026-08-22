@@ -134,6 +134,8 @@ import {
   BLOG_HEADING_CLASS,
   blogHeadingHref,
   DEFAULT_HARVEST_MAP_CONFIG,
+  HARVEST_AI_CMD,
+  HARVEST_CLI_CMD,
   previewLine,
   resolveCodeBlockMode,
   resolveMarkdownOutputPlan,
@@ -461,6 +463,7 @@ export default function Page() {
       includeRawJson: true,
       includeTables: true,
       includeFootnotes: true,
+      includeSocial: true,
       enableAI: true,
       aiProvider: 'ollama',
       aiEndpoint: 'http://localhost:11434/api/generate',
@@ -488,6 +491,17 @@ export default function Page() {
     const mapped = mapHarvestToBlogHtml(result, { sourceUrl, guideKey: 'blog/bun-v1.4' });
     expect(mapped).toContain('class="toc"');
     expect(mapped).toContain('>Field</th>');
+    expect(mapped).toContain('>Type</th>');
+    expect(mapped).toContain('>Property</th>');
+    expect(mapped).toContain('>Flag</th>');
+    expect(mapped).toContain('>Cmd</th>');
+    expect(mapped).toContain('>Runtime</th>');
+    expect(mapped).toContain('>Version</th>');
+    expect(mapped).toContain('includeCodeBlocks');
+    expect(mapped).toContain('CONFIG.includeCodeBlocks');
+    expect(mapped).toContain(HARVEST_CLI_CMD);
+    expect(mapped).toContain('>Bun</td>');
+    expect(mapped).toContain(Bun.version);
     expect(mapped).toContain('image-pipeline-src.svg');
     expect(mapped).toContain('/docs/runtime/markdown');
     expect(mapped).toContain('<code>Bun.markdown.html</code>');
@@ -495,8 +509,18 @@ export default function Page() {
     expect(mapped).toContain('data-block-id="bun-markdown/1"');
 
     const md = mapHarvestToBlogMarkdown(result, { sourceUrl, guideKey: 'blog/bun-v1.4' });
+    expect(md).toContain('## Config');
+    expect(md).toContain('| Type');
+    expect(md).toContain('| Property');
+    expect(md).toContain('| Flag');
+    expect(md).toContain('| Cmd');
+    expect(md).toContain('| Runtime');
+    expect(md).toContain('| Version');
     expect(md).toContain('## TOC');
     expect(md).toContain('## Stats');
+    expect(md).toContain('| Field');
+    expect(md).toContain('includeCodeBlocks');
+    expect(md).toContain(HARVEST_AI_CMD);
     expect(md).toContain('## Raw JSON');
     expect(md).toContain('image: ![Bun.Image pipeline]');
     expect(md).toContain('inline: `Bun.markdown.html`');

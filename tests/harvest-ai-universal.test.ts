@@ -9,12 +9,21 @@ import {
   detectCodeLanguage,
   extractCodeBlocks,
   filterHarvestForConfig,
+  formatHarvestFlagCmdTable,
+  formatHarvestTable,
+  formatHarvestTemplateTable,
+  harvestTableHeaderLabel,
+  HARVEST_CLI_CMD,
+  HARVEST_RUNTIME,
+  HARVEST_TEMPLATE_ROWS,
   harvestLanguageStats,
+  harvestRuntimeVersion,
   mapHarvestToBlogMarkdown,
   resolveHarvestMapConfig,
 } from '../lib/docs/blog-codeblocks.ts';
 import { CONFIG } from '../tools/harvest.ts';
 import {
+  harvestUniversalUsage,
   parseHarvestUniversalArgv,
   runHarvestUniversal,
 } from '../lib/docs/harvest-universal.ts';
@@ -51,7 +60,75 @@ describe('harvest.js CONFIG', () => {
     expect(CONFIG.includeTables).toBe(true);
     expect(CONFIG.includeFootnotes).toBe(true);
     expect(CONFIG.includeRawJson).toBe(true);
+    expect(CONFIG.includeSocial).toBe(true);
     expect(CONFIG.enableAI).toBe(false);
+  });
+
+  test('template table lists Type, Property, Flag, Cmd, Runtime, and Version', () => {
+    expect(HARVEST_TEMPLATE_ROWS.map(row => row.flag)).toEqual([
+      '—',
+      '—',
+      '—',
+      '—',
+      '—',
+      'includeCodeBlocks',
+      'includeImages',
+      'includeLinks',
+      'includeInlineCode',
+      'includeTables',
+      'includeFootnotes',
+      'includeSocial',
+      'includeToc',
+      'includeStats',
+      'includeRawJson',
+      '--ai',
+      '<url>',
+      '<outdir>',
+      '[depth]',
+    ]);
+    expect(HARVEST_TEMPLATE_ROWS.map(row => row.property)).toContain('CONFIG.includeTables');
+    expect(HARVEST_TEMPLATE_ROWS.map(row => row.property)).toContain('SocialMetadata.image');
+    expect(HARVEST_TEMPLATE_ROWS.map(row => row.flag)).toContain('includeSocial');
+    expect(HARVEST_TEMPLATE_ROWS.map(row => row.cmd)).toContain('HTMLRewriter');
+    expect(HARVEST_TEMPLATE_ROWS.map(row => row.property)).toContain('HTMLRewriter.transform');
+    expect(HARVEST_TEMPLATE_ROWS.map(row => row.property)).toContain('Bun.version');
+    expect(HARVEST_TEMPLATE_ROWS.map(row => row.property)).toContain('Bun.argv');
+    const flags = formatHarvestFlagCmdTable();
+    expect(flags).toContain('| Type');
+    expect(flags).toContain('| Property');
+    expect(flags).toContain('| Flag');
+    expect(flags).toContain('| Cmd');
+    expect(flags).toContain('| Runtime');
+    expect(flags).toContain('| Version');
+    expect(flags).toContain('includeTables');
+    expect(flags).toContain('CONFIG.includeTables');
+    expect(flags).toContain('--ai');
+    expect(flags).toContain(HARVEST_CLI_CMD);
+    expect(flags).toContain(HARVEST_RUNTIME);
+    expect(flags).toContain(harvestRuntimeVersion());
+    expect(flags).not.toContain('| Field');
+    expect(harvestUniversalUsage()).toContain(flags);
+
+    const html = `
+      <h2 id="what-s-new">What's new</h2>
+      <table><tr><th>K</th><th>V</th></tr><tr><td>fastify</td><td>120 MB</td></tr></table>`;
+    const table = formatHarvestTemplateTable(extractCodeBlocks(html));
+    expect(table).toContain('| Field');
+    expect(table).toContain('| Type');
+    expect(table).toContain('| Property');
+    expect(table).toContain('| Flag');
+    expect(table).toContain('| Cmd');
+    expect(table).toContain('| Runtime');
+    expect(table).toContain('| Version');
+    expect(table).toContain('| Count');
+    expect(table).toContain(HARVEST_RUNTIME);
+    expect(table).toContain(harvestRuntimeVersion());
+    expect(table).toMatch(
+      /\|\s*Tables\s+\|\s+BlogTable\[\]\s+\|\s+CONFIG\.includeTables\s+\|\s+includeTables\s+\|\s+CONFIG\s+\|\s+Bun\s+\|\s+\S+\s+\|\s+1\s+\|/
+    );
+    expect(table).toMatch(
+      /\|\s*H2\s+\|\s+HeadingNode\[\]\s+\|\s+HarvestMapStats\.h2\s+\|\s+—\s+\|\s+extract\s+\|\s+Bun\s+\|\s+\S+\s+\|\s+1\s+\|/
+    );
   });
 });
 
@@ -131,6 +208,52 @@ describe('tables and footnotes', () => {
     expect(result.footnotes[0]?.text).toContain('Bun.markdown');
   });
 
+  test('empty headers come from the parsed th form object, not Open Graph', () => {
+    const html = `
+      <html><head>
+        <meta property="og:title" content="Bun 1.4" />
+      </head><body>
+      <h2 id="binary-size">Binary size</h2>
+      <table>
+        <caption>Binary size</caption>
+        <tr><th aria-label="Platform"></th><th>Bun 1.4</th><th>Bun 1.3.14</th></tr>
+        <tr><td>Linux x64</td><td>77.0 MB</td><td>88.5 MB</td></tr>
+      </table>
+      <table>
+        <tr><th></th><th>Bun 1.3</th><th>Bun 1.4</th><th title="Speedup"></th></tr>
+        <tr><td>no-op call</td><td>2.13 ns</td><td>0.70 ns</td><td>3.0×</td></tr>
+        <tr><td>opentui layout reads (1,000)</td><td></td><td></td><td>2.08×</td></tr>
+      </table>
+      </body></html>`;
+    const result = extractCodeBlocks(html);
+    expect(result.social.title).toBe('Bun 1.4');
+    expect(result.tables[0]?.caption).toBe('Binary size');
+    expect(result.tables[0]?.headers[0]).toMatchObject({
+      text: '',
+      ariaLabel: 'Platform',
+      label: 'Platform',
+    });
+    expect(result.tables[0]?.markdown).toContain('| Platform');
+    expect(result.tables[0]?.markdown).not.toContain('| Bun 1.4 | Bun 1.4 |');
+    expect(result.tables[1]?.headers[3]).toMatchObject({
+      text: '',
+      title: 'Speedup',
+      label: 'Speedup',
+    });
+    expect(result.tables[1]?.markdown).toContain('| Speedup');
+    expect(result.tables[1]?.markdown).toMatch(/\|\s*—\s+\|\s+—\s+\|\s+2\.08×/);
+
+    const live = result.tables[0]!;
+    live.headers[0] = { ...live.headers[0]!, ariaLabel: 'OS', text: '' };
+    expect(
+      harvestTableHeaderLabel(live.headers[0]!, 0, ['Linux x64'])
+    ).toBe('OS');
+    expect(formatHarvestTable(live.headers, live.rows)).toContain('| OS');
+    expect(formatHarvestTable(live.headers, live.rows)).not.toContain('| Platform');
+    const remapped = mapHarvestToBlogMarkdown(result, { sourceUrl: 'https://bun.com/blog/bun-v1.4' });
+    expect(remapped).toContain('| OS');
+  });
+
   test('includeTables: false drops tables from the markdown map', () => {
     const html = `
       <h2 id="production">Production</h2>
@@ -147,6 +270,30 @@ describe('tables and footnotes', () => {
     expect(without).not.toContain('| A |');
     expect(without).toContain('## TOC');
   });
+
+  test('HTMLRewriter extracts Open Graph and Twitter share images', () => {
+    const html = `<html><head>
+      <title>Fallback Title</title>
+      <meta property="og:title" content="OG Title" />
+      <meta property="og:image" content="/share.png" />
+      <meta name="twitter:description" content="Twitter desc" />
+    </head><body><h2 id="what-s-new">What's new</h2></body></html>`;
+    const result = extractCodeBlocks(html, { baseUrl: 'https://bun.com/blog/bun-v1.4' });
+    expect(result.social).toMatchObject({
+      title: 'OG Title',
+      image: 'https://bun.com/share.png',
+      description: 'Twitter desc',
+    });
+    const md = mapHarvestToBlogMarkdown(result, { sourceUrl: 'https://bun.com/blog/bun-v1.4' });
+    expect(md).toContain('## Social');
+    expect(md).toContain('![og:image](https://bun.com/share.png)');
+    const dropped = mapHarvestToBlogMarkdown(result, {
+      sourceUrl: 'https://bun.com/blog/bun-v1.4',
+      config: { includeSocial: false, includeRawJson: false },
+    });
+    expect(dropped).not.toContain('## Social');
+    expect(dropped).not.toContain('og:image');
+  });
 });
 
 describe('harvest-ai-universal CLI', () => {
@@ -156,13 +303,33 @@ describe('harvest-ai-universal CLI', () => {
     const outDir = resolvePath(tmp, 'report');
     await Bun.write(
       htmlPath,
-      `<h2 id="intro-heading">Hello</h2>
+      `<html><head>
+         <meta property="og:title" content="Bun — A fast all-in-one JavaScript runtime" />
+         <meta property="og:image" content="https://bun.com/share_v4.png" />
+         <meta property="og:type" content="website" />
+         <meta name="twitter:description" content="Bundle, install, and run JavaScript." />
+       </head><body>
+       <h2 id="intro-heading">Hello</h2>
        <table><tr><th>K</th><th>V</th></tr><tr><td>fastify</td><td>120 MB</td></tr></table>
-       <li id="fn-note">A footnote.</li>`
+       <li id="fn-note">A footnote.</li>
+       </body></html>`
     );
     const code = await runHarvestUniversal([htmlPath, outDir, '0']);
     expect(code).toBe(0);
     const md = await Bun.file(resolvePath(outDir, 'report.md')).text();
+    expect(md).toContain('## Config');
+    expect(md).toContain('| Type');
+    expect(md).toContain('| Property');
+    expect(md).toContain('| Flag');
+    expect(md).toContain('| Cmd');
+    expect(md).toContain('| Runtime');
+    expect(md).toContain('| Version');
+    expect(md).toContain('includeTables');
+    expect(md).toContain('CONFIG.includeTables');
+    expect(md).toContain('## Social');
+    expect(md).toContain('Bun — A fast all-in-one JavaScript runtime');
+    expect(md).toContain('![og:image](https://bun.com/share_v4.png)');
+    expect(md).toContain('Bundle, install, and run JavaScript.');
     expect(md).toMatch(/\|\s*K\s+\|\s+V\s+\|/);
     expect(md).toContain('fastify');
     expect(md).toContain('footnote `fn-note`');
@@ -172,5 +339,11 @@ describe('harvest-ai-universal CLI', () => {
     expect(json.ai).toBe(false);
     expect(json.extracted.tables.length).toBe(1);
     expect(json.extracted.footnotes.length).toBe(1);
+    expect(json.extracted.social).toMatchObject({
+      title: 'Bun — A fast all-in-one JavaScript runtime',
+      image: 'https://bun.com/share_v4.png',
+      type: 'website',
+      description: 'Bundle, install, and run JavaScript.',
+    });
   });
 });

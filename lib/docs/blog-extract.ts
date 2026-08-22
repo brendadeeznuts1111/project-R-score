@@ -17,6 +17,7 @@ import {
 export type { SocialMetadata } from './extract-metadata.ts';
 export {
   extractSocialMetadataFromHtml,
+  extractSocialMetadataFromHtmlSync,
   extractSocialMetadataFromResponse,
 } from './extract-metadata.ts';
 export { fetchPage, stripUrlFragment, type FetchPageOptions } from './fetch-page.ts';
