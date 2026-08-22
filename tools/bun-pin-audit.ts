@@ -1,3 +1,8 @@
+// @see https://bun.com/docs/test/parallel#parallel — --parallel
+// @released --parallel · released v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --parallel · changed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --parallel · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @updated --parallel · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @updated Bun.argv · changed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
 // @verified Bun.argv · Bun v1.3.14 · 2026-08-06 · https://bun.com/reference/bun/argv
@@ -235,6 +240,7 @@ async function checkPackageJson(path: string): Promise<void> {
   }
 
   walkDeps(pkg, [], path, pin);
+  checkBuiltinDeps(path, pkg);
 }
 
 type DepNode = Record<string, unknown>;
@@ -337,6 +343,44 @@ async function checkLockfile(path: string): Promise<void> {
   }
   if (cvNum === null) {
     add('info', 'lock-config', path, 'no configVersion (configVersion 0, hoisted default)');
+  }
+}
+
+const BUILTIN_REPLACEMENTS: Record<string, string> = {
+  sharp: 'Bun.Image',
+  puppeteer: 'Bun.WebView',
+  marked: 'Bun.markdown',
+  'node-cron': 'Bun.cron',
+  'node-pty': 'Bun.Terminal (Bun.spawn terminal)',
+  concurrently: 'bun run --parallel',
+  'npm-run-all': 'bun run --parallel',
+  'serve-static': 'Bun.serve routes { dir }',
+  sirv: 'Bun.serve routes { dir }',
+  json5: 'Bun.JSON5',
+  'fast-xml-parser': 'Bun.XML',
+  tar: 'Bun.Archive',
+  'string-width': 'Bun.stringWidth',
+  'slice-ansi': 'Bun.sliceAnsi',
+  'cli-truncate': 'Bun.wrapAnsi',
+  'wrap-ansi': 'Bun.wrapAnsi',
+};
+
+function checkBuiltinDeps(path: string, pkg: Record<string, unknown>): void {
+  const depSections = ['dependencies', 'devDependencies', 'optionalDependencies'] as const;
+  for (const section of depSections) {
+    const deps = pkg[section];
+    if (deps === null || typeof deps !== 'object') continue;
+    for (const name of Object.keys(deps as Record<string, unknown>)) {
+      const replacement = BUILTIN_REPLACEMENTS[name];
+      if (replacement) {
+        add(
+          'warn',
+          'builtin-dep',
+          path,
+          `"${name}" in ${section} is built into Bun 1.4 — migrate to ${replacement}, then drop the dep`
+        );
+      }
+    }
   }
 }
 
