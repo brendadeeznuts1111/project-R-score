@@ -2242,6 +2242,9 @@ export const WIKI_LINKS_FIX_ALLOWED_LONG = ['fix', 'json'] as const;
 /** § — sync:well-known-mcp (`tools/sync-well-known-mcp.ts`) — auto team plan */
 export const SYNC_WELL_KNOWN_MCP_ALLOWED_LONG = ['check'] as const;
 
+/** § — sync:main (`tools/sync-main.ts`) — post-squash origin/main sync */
+export const SYNC_MAIN_ALLOWED_LONG = ['dry-run', 'force', 'help', 'json', 'yes'] as const;
+
 /** § — onboard:partner (`tools/onboard-partner-package.ts`) — auto team plan */
 export const ONBOARD_PARTNER_ALLOWED_LONG = [
   'create-package-group',
@@ -2773,6 +2776,7 @@ export type AllowedLongCliName =
   | 'telegram:ops:consume'
   | 'wiki:links:fix'
   | 'sync:well-known-mcp'
+  | 'sync:main'
   | 'onboard:partner'
   | 'ops:coverage'
   | 'docs:map:check'
@@ -3105,6 +3109,7 @@ export const ALLOWED_LONG_REGISTRY = {
   'telegram:ops:consume': TELEGRAM_OPS_CONSUME_ALLOWED_LONG,
   'wiki:links:fix': WIKI_LINKS_FIX_ALLOWED_LONG,
   'sync:well-known-mcp': SYNC_WELL_KNOWN_MCP_ALLOWED_LONG,
+  'sync:main': SYNC_MAIN_ALLOWED_LONG,
   'onboard:partner': ONBOARD_PARTNER_ALLOWED_LONG,
   'ops:coverage': OPS_COVERAGE_ALLOWED_LONG,
   'docs:map:check': DOCS_MAP_CHECK_ALLOWED_LONG,

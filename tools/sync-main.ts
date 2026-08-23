@@ -8,9 +8,6 @@
 // @updated --force · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @verified --force · Bun v1.3.14 · 2026-08-18 · https://bun.com/docs/bundler/executables
 // @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
-// @released Bun.markdown.ansi · released v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
-// @updated Bun.markdown.ansi · changed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
-// @updated Bun.markdown.ansi · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -23,11 +20,12 @@
  *
  *   bun run sync:main
  *   bun run sync:main -- --dry-run
+ *   bun run sync:main -- --json
  *   bun run sync:main -- --yes
  *
  * Steps:
  *   1) require branch == main (unless --force)
- *   2) fetch origin main
+ *   2) fetch origin main (also on --dry-run — counts stay honest)
  *   3) if ahead of origin/main → create backup/local-main-pre-sync-<stamp>
  *   4) soft-reset to origin/main
  *   5) clear soft-reset residue (mixed reset + restore tracked tree to HEAD)
@@ -37,14 +35,20 @@
  */
 
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
-import { section, statusLine, tones } from '../lib/console/index.ts';
+import { jsonOut, section, statusLine, tones } from '../lib/console/index.ts';
+import {
+  applyUnknownLongOptionGuardFor,
+  SYNC_MAIN_ALLOWED_LONG,
+} from '../lib/docs/ref-id-tool-flags.ts';
+import { printGateFailure } from '../lib/harness/gate-fail.ts';
 
-export const SYNC_MAIN_ALLOWED_LONG = ['dry-run', 'force', 'help', 'yes'] as const;
+export { SYNC_MAIN_ALLOWED_LONG };
 
 export type SyncMainOpts = {
   dryRun: boolean;
   force: boolean;
   help: boolean;
+  json: boolean;
   yes: boolean;
 };
 
@@ -56,6 +60,17 @@ export type SyncMainPlan = {
   behind: number;
   alreadySynced: boolean;
   backupBranch: string | null;
+  /** True when plan was computed after a successful `git fetch origin main`. */
+  fetched: boolean;
+};
+
+export type SyncMainResult = {
+  ok: boolean;
+  dryRun: boolean;
+  action: 'noop' | 'would-sync' | 'synced' | 'refused' | 'failed';
+  plan: SyncMainPlan;
+  dirtyPaths?: number;
+  error?: string;
 };
 
 export function parseSyncMainOpts(argv: string[]): SyncMainOpts {
@@ -64,23 +79,9 @@ export function parseSyncMainOpts(argv: string[]): SyncMainOpts {
     dryRun: set.has('--dry-run'),
     force: set.has('--force'),
     help: set.has('--help') || set.has('-h'),
+    json: set.has('--json'),
     yes: set.has('--yes') || set.has('-y'),
   };
-}
-
-/** Reject unknown `--*` flags (local allowlist; not yet in ALLOWED_LONG_REGISTRY). */
-export function guardSyncMainArgv(argv: readonly string[]): string[] {
-  const allowed = new Set<string>(SYNC_MAIN_ALLOWED_LONG);
-  const unknown: string[] = [];
-  for (const arg of argv) {
-    if (!arg.startsWith('--') || arg === '--') continue;
-    const name = arg.slice(2).split('=')[0] ?? '';
-    if (!name || !allowed.has(name)) unknown.push(arg);
-  }
-  if (unknown.length > 0) {
-    throw new Error(`❌ Unknown long option(s) in sync:main: ${unknown.join(' ')}`);
-  }
-  return [...argv];
 }
 
 export function backupBranchName(now: Date = new Date()): string {
@@ -116,7 +117,7 @@ function git(
   return { code, stdout, stderr };
 }
 
-export function planSyncMain(root: string): SyncMainPlan {
+export function planSyncMain(root: string, fetched: boolean): SyncMainPlan {
   const branch = git(['branch', '--show-current'], root).stdout;
   const head = git(['rev-parse', 'HEAD'], root).stdout;
   const originMain = git(['rev-parse', 'origin/main'], root, { allowFail: true }).stdout;
@@ -137,6 +138,7 @@ export function planSyncMain(root: string): SyncMainPlan {
     behind,
     alreadySynced,
     backupBranch: ahead > 0 ? backupBranchName() : null,
+    fetched,
   };
 }
 
@@ -150,13 +152,14 @@ Safe post-squash sync onto \`origin/main\` (backup unpushed tip · soft reset ·
 \`\`\`bash
 bun run sync:main
 bun run sync:main -- --dry-run
+bun run sync:main -- --json
 bun run sync:main -- --yes
 bun run sync:main -- --force   # allow non-main branch (rare)
 \`\`\`
 
 ## What it does
 
-1. Fetch \`origin/main\`
+1. Fetch \`origin/main\` (also under \`--dry-run\` so ahead/behind stay honest)
 2. If this tip is **ahead** of \`origin/main\`, create \`backup/local-main-pre-sync-<UTC>\`
 3. Soft-reset to \`origin/main\`
 4. Clear soft-reset staged residue (\`git reset\` + restore tracked files to HEAD)
@@ -175,104 +178,195 @@ function say(label: string, value: string, tone: 'ok' | 'fail' | 'warn' | null =
   console.info(statusLine(label, value, tone));
 }
 
+function failGate(input: {
+  title: string;
+  gate: string;
+  why: string;
+  fix: string;
+  detail?: string;
+  json: boolean;
+  plan: SyncMainPlan;
+  action: SyncMainResult['action'];
+}): number {
+  const result: SyncMainResult = {
+    ok: false,
+    dryRun: false,
+    action: input.action,
+    plan: input.plan,
+    error: input.why,
+  };
+  if (input.json) {
+    jsonOut(result);
+  } else {
+    printGateFailure({
+      title: input.title,
+      gate: input.gate,
+      why: input.why,
+      fix: input.fix,
+      detail: input.detail,
+    });
+  }
+  return 1;
+}
+
+function emitOk(opts: SyncMainOpts, result: SyncMainResult): number {
+  if (opts.json) {
+    jsonOut(result);
+    return result.ok ? 0 : 1;
+  }
+  return result.ok ? 0 : 1;
+}
+
 export async function runSyncMain(
   root: string = process.cwd(),
   argv: string[] = Bun.argv.slice(2)
 ): Promise<number> {
-  guardSyncMainArgv(argv);
-  const opts = parseSyncMainOpts(argv);
+  const guarded = applyUnknownLongOptionGuardFor('sync:main', argv, { onFail: 'throw' });
+  const opts = parseSyncMainOpts(guarded);
   if (opts.help) {
     printHelp();
     return 0;
   }
 
-  console.info(section('fetch origin main'));
-  if (!opts.dryRun) {
-    git(['fetch', 'origin', 'main'], root);
-  } else {
-    say('dry-run', 'skip fetch', 'warn');
+  if (!opts.json) {
+    console.info(section('fetch origin main'));
+  }
+  // Always fetch so dry-run ahead/behind match remote (read-only network).
+  git(['fetch', 'origin', 'main'], root);
+  if (opts.dryRun && !opts.json) {
+    say('fetch', 'origin/main updated (dry-run still fetches)', 'ok');
   }
 
-  const plan = planSyncMain(root);
-  console.info(
-    [
-      `branch=${plan.branch}`,
-      `head=${plan.head.slice(0, 12)}`,
-      `origin/main=${plan.originMain.slice(0, 12)}`,
-      `ahead=${plan.ahead}`,
-      `behind=${plan.behind}`,
-    ].join(' ')
-  );
+  const plan = planSyncMain(root, true);
+  if (!opts.json) {
+    console.info(
+      [
+        `branch=${plan.branch}`,
+        `head=${plan.head.slice(0, 12)}`,
+        `origin/main=${plan.originMain.slice(0, 12)}`,
+        `ahead=${plan.ahead}`,
+        `behind=${plan.behind}`,
+        `fetched=${plan.fetched}`,
+      ].join(' ')
+    );
+  }
 
   if (plan.branch !== 'main' && !opts.force) {
-    say('refused', 'not on main (pass --force to override)', 'fail');
-    return 1;
+    return failGate({
+      title: 'sync:main refused',
+      gate: 'sync-main',
+      why: `Not on main (branch=${plan.branch || '(detached)'})`,
+      fix: 'git checkout main && bun run sync:main',
+      detail: 'Pass --force only for rare non-main sync experiments.',
+      json: opts.json,
+      plan,
+      action: 'refused',
+    });
   }
 
   if (plan.alreadySynced) {
-    say('ok', 'already at origin/main', 'ok');
-    return 0;
+    if (!opts.json) say('ok', 'already at origin/main', 'ok');
+    return emitOk(opts, {
+      ok: true,
+      dryRun: opts.dryRun,
+      action: 'noop',
+      plan,
+      dirtyPaths: 0,
+    });
   }
 
-  if (plan.behind > 0 && plan.ahead === 0) {
-    say('sync', `behind ${plan.behind} — will move HEAD to origin/main`, 'warn');
-  }
-
-  if (plan.ahead > 0) {
-    say('backup', `${plan.ahead} unpushed commit(s) → ${plan.backupBranch}`, 'warn');
+  if (!opts.json) {
+    if (plan.behind > 0 && plan.ahead === 0) {
+      say('sync', `behind ${plan.behind} — will move HEAD to origin/main`, 'warn');
+    }
+    if (plan.ahead > 0) {
+      say('backup', `${plan.ahead} unpushed commit(s) → ${plan.backupBranch}`, 'warn');
+    }
   }
 
   if (opts.dryRun) {
-    console.info(section('dry-run plan'));
-    if (plan.backupBranch) {
-      console.log(`  would create branch ${plan.backupBranch} at ${plan.head.slice(0, 12)}`);
+    if (!opts.json) {
+      console.info(section('dry-run plan'));
+      if (plan.backupBranch) {
+        console.log(`  would create branch ${plan.backupBranch} at ${plan.head.slice(0, 12)}`);
+      }
+      console.log(`  would: git reset --soft origin/main`);
+      console.log(`  would: git reset && git restore --source=HEAD --worktree -- .`);
+      console.log(`  would NOT: git clean -fd`);
+      say('dry-run', 'no changes written', 'warn');
     }
-    console.log(`  would: git reset --soft origin/main`);
-    console.log(`  would: git reset && git restore --source=HEAD --worktree -- .`);
-    console.log(`  would NOT: git clean -fd`);
-    say('dry-run', 'no changes written', 'warn');
-    return 0;
+    return emitOk(opts, {
+      ok: true,
+      dryRun: true,
+      action: 'would-sync',
+      plan,
+    });
   }
 
   if (plan.backupBranch) {
-    console.info(section('backup unpushed tip'));
+    if (!opts.json) console.info(section('backup unpushed tip'));
     git(['branch', plan.backupBranch, 'HEAD'], root);
-    say('backup', plan.backupBranch, 'ok');
+    if (!opts.json) say('backup', plan.backupBranch, 'ok');
   }
 
-  console.info(section('soft reset → origin/main'));
+  if (!opts.json) console.info(section('soft reset → origin/main'));
   git(['reset', '--soft', 'origin/main'], root);
 
-  console.info(section('clear soft-reset residue'));
-  // Mixed reset: unstage everything soft-reset left in the index.
+  if (!opts.json) console.info(section('clear soft-reset residue'));
   git(['reset'], root);
-  // Restore tracked paths to match HEAD (origin/main). Leaves untracked alone.
   git(['restore', '--source=HEAD', '--worktree', '--', '.'], root);
 
-  const after = planSyncMain(root);
+  const after = planSyncMain(root, true);
   if (after.head !== after.originMain) {
-    say('fail', 'HEAD still diverged from origin/main', 'fail');
-    return 1;
+    return failGate({
+      title: 'sync:main incomplete',
+      gate: 'sync-main',
+      why: 'HEAD still diverged from origin/main after reset/restore',
+      fix: 'bun run sync:main -- --dry-run',
+      detail: `head=${after.head.slice(0, 12)} origin/main=${after.originMain.slice(0, 12)}`,
+      json: opts.json,
+      plan: after,
+      action: 'failed',
+    });
   }
 
   const dirty = git(['status', '--porcelain=v1'], root, { allowFail: true }).stdout;
-  const dirtyLines = dirty ? dirty.split('\n').filter(Boolean).length : 0;
-  say(
-    'ok',
-    `synced to origin/main · remaining dirty paths: ${dirtyLines} (untracked/foreign kept)`,
-    'ok'
-  );
-  if (plan.backupBranch) {
-    console.log(tones.dim(`backup tip: git log -1 --oneline ${plan.backupBranch}`));
+  const dirtyPaths = dirty ? dirty.split('\n').filter(Boolean).length : 0;
+  if (!opts.json) {
+    say(
+      'ok',
+      `synced to origin/main · remaining dirty paths: ${dirtyPaths} (untracked/foreign kept)`,
+      'ok'
+    );
+    if (plan.backupBranch) {
+      console.log(tones.dim(`backup tip: git log -1 --oneline ${plan.backupBranch}`));
+    }
   }
-  return 0;
+  return emitOk(opts, {
+    ok: true,
+    dryRun: false,
+    action: 'synced',
+    plan: after,
+    dirtyPaths,
+  });
 }
 
 if (isModuleEntrypoint(import.meta)) {
   try {
     process.exitCode = await runSyncMain();
   } catch (error) {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exitCode = 1;
+    const message = error instanceof Error ? error.message : String(error);
+    if (/unknown flag|Unknown long option/i.test(message)) {
+      printGateFailure({
+        title: 'sync:main flags',
+        gate: 'sync-main',
+        why: message,
+        fix: 'bun run sync:main -- --help',
+      });
+      process.exitCode = 1;
+    } else {
+      console.error(message);
+      process.exitCode = 1;
+    }
   }
 }
