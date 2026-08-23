@@ -1,21 +1,29 @@
 # Tenant: maintain-workspace
 
 **Tenant** `maintain-workspace` (operator runbook — not a spine cron)  
-**Purpose** Keep project-R-score + workspace maintainable: lanes, delivery, daily/weekly pulses, Cursor automations  
-**Related** [`AUTHORITY.md`](../AUTHORITY.md) · [`day-loop.md`](../day-loop.md) · [`workspace-lane-cross-map.md`](workspace-lane-cross-map.md) · [`remaining-work.md`](remaining-work.md) · [`portal-doctor.md`](portal-doctor.md) · [`public-plane.md`](public-plane.md) · [`ops-loop-throughput.md`](ops-loop-throughput.md)  
-**Skills** `.agents/skills/project-r-ops-management/` · `.agents/skills/harness-improve/`
+**Purpose** Keep project-R-score + workspace maintainable: lanes, delivery,
+daily/weekly pulses, Cursor automations  
+**Related** [`AUTHORITY.md`](../AUTHORITY.md) · [`day-loop.md`](../day-loop.md)
+· [`workspace-lane-cross-map.md`](workspace-lane-cross-map.md) ·
+[`remaining-work.md`](remaining-work.md) ·
+[`portal-doctor.md`](portal-doctor.md) · [`public-plane.md`](public-plane.md) ·
+[`ops-loop-throughput.md`](ops-loop-throughput.md)  
+**Skills** `.agents/skills/project-r-ops-management/` ·
+`.agents/skills/harness-improve/`
 
-Operator map for “how do I maintain this workspace?” — diagrams + exact commands + copy-paste Cursor automation prompts.
+Operator map for “how do I maintain this workspace?” — diagrams + exact
+commands + copy-paste Cursor automation prompts.
 
 ## Three planes
 
-Claim **one plane per session** (or one subdirectory lane). Mixing planes is the usual thrash source.
+Claim **one plane per session** (or one subdirectory lane). Mixing planes is the
+usual thrash source.
 
-| Plane | Protects | Entry |
-| ----- | -------- | ----- |
-| Harness | gates · brands · docs · proofs | [`../README.md`](../README.md) · `bun run harness:status` |
-| Public | portal · registry bakes · Pages | [`public-plane.md`](public-plane.md) · `bun run public:audit:verify` |
-| Ops | settle · telegram · VPS pollers | [`ops-loop-throughput.md`](ops-loop-throughput.md) · `bun run ops:diagnose` |
+| Plane   | Protects                        | Entry                                                                       |
+| ------- | ------------------------------- | --------------------------------------------------------------------------- |
+| Harness | gates · brands · docs · proofs  | [`../README.md`](../README.md) · `bun run harness:status`                   |
+| Public  | portal · registry bakes · Pages | [`public-plane.md`](public-plane.md) · `bun run public:audit:verify`        |
+| Ops     | settle · telegram · VPS pollers | [`ops-loop-throughput.md`](ops-loop-throughput.md) · `bun run ops:diagnose` |
 
 ```mermaid
 flowchart TB
@@ -71,7 +79,8 @@ flowchart LR
 
 ## Feature delivery (local merge authority)
 
-Hosted GitHub Actions is a side-signal. Clean local `bun run bun:ci` is merge authority ([`AUTHORITY.md`](../AUTHORITY.md)).
+Hosted GitHub Actions is a side-signal. Clean local `bun run bun:ci` is merge
+authority ([`AUTHORITY.md`](../AUTHORITY.md)).
 
 ```bash
 # Develop
@@ -107,7 +116,8 @@ flowchart TB
 Short honesty check. Fix the owning surface; do not weaken gates.
 
 ```bash
-bun run lane:status
+bun run pulse:lane                 # parallel: lane:status:count + harness:status
+bun run lane:status                # full tables (or --json / --jsonl / --short)
 bun run portal:doctor:bunfig:check
 bun run bun:channel:check
 bun run monorepo:health
@@ -174,7 +184,9 @@ bun run ops:outbox:requeue
 bun run telegram:verify
 ```
 
-VPS poller / cascade: see cascade-mover runbook (`.agents/skills/cascade-mover-v3/`). Token reseed only when the JWT refresh loop breaks.
+VPS poller / cascade: see cascade-mover runbook
+(`.agents/skills/cascade-mover-v3/`). Token reseed only when the JWT refresh
+loop breaks.
 
 ## Failure routing
 
@@ -196,7 +208,9 @@ flowchart TD
   Rerun --> Keep{"Keep / revise / drop"}
 ```
 
-Repeated gate thrash → [`.agents/skills/harness-improve/`](../../../.agents/skills/harness-improve/SKILL.md) (earliest failed handoff → smallest reversible fix → fresh rerun).
+Repeated gate thrash →
+[`.agents/skills/harness-improve/`](../../../.agents/skills/harness-improve/SKILL.md)
+(earliest failed handoff → smallest reversible fix → fresh rerun).
 
 ## Nesting (how the loops compose)
 
@@ -221,7 +235,9 @@ flowchart TB
 
 ## Cursor automation prompts
 
-Paste into a Cursor Automation. Do **not** commit, push, deploy, or touch foreign dirty lanes. Report only; open a draft note or issue when something fails.
+Paste into a Cursor Automation. Do **not** commit, push, deploy, or touch
+foreign dirty lanes. Report only; open a draft note or issue when something
+fails.
 
 ### Morning pulse
 
@@ -288,10 +304,10 @@ Job:
 
 ## Adoption order
 
-1. Lock session start/stop + delivery loop  
-2. Add the daily pulse  
-3. Automate weekly hygiene (Cursor prompt above)  
-4. Deepen ops/runtime only when partners / VPS are live  
+1. Lock session start/stop + delivery loop
+2. Add the daily pulse
+3. Automate weekly hygiene (Cursor prompt above)
+4. Deepen ops/runtime only when partners / VPS are live
 
 ## Prove / refresh
 

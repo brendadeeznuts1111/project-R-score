@@ -1870,7 +1870,22 @@ export const BASELINE_APPLY_OVERRIDES_ALLOWED_LONG = ['dry-run', 'json', 'live']
 export const BASELINE_CAESARS_PROBE_ALLOWED_LONG = ['bake', 'json', 'live'] as const;
 
 /** § — lane:status (`tools/lane-status.ts`) — auto team plan */
-export const LANE_STATUS_ALLOWED_LONG = ['count', 'json', 'left-right', 'merged', 'short'] as const;
+export const LANE_STATUS_ALLOWED_LONG = [
+  'count',
+  'every',
+  'help',
+  'json',
+  'jsonl',
+  'left-right',
+  'merged',
+  'short',
+  'strict',
+  'term',
+  'toml',
+  'tz',
+  'verbose',
+  'watch',
+] as const;
 
 /** § — bench:status (`tools/bench-status.ts`) — harness Bun metric catalog */
 export const BENCH_STATUS_ALLOWED_LONG = ['json'] as const;
