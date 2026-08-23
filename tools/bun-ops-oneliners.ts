@@ -1,4 +1,18 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
+// @released Bun.cron · released v1.3.11 · 2026-03-18 · https://bun.com/blog/bun-v1.3.11
+// @updated Bun.cron · changed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @updated Bun.sleep · changed v0.5.6 · 2023-02-09 · https://bun.com/blog/bun-v0.5.6
+// @updated Bun.sleep · changed v0.5.8 · 2023-03-18 · https://bun.com/blog/bun-v0.5.8
+// @updated Bun.sleep · fixed v1.0.34 · 2024-03-22 · https://bun.com/blog/bun-v1.0.34
+// @verified Bun.sleep · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-sleep
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-version
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
+// @released Bun.WebView · released v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @updated Bun.WebView · changed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import
@@ -18,7 +32,7 @@
 import { randomUUIDv7 } from 'bun';
 import type { Database } from 'bun:sqlite';
 import { proofHash, proofPreview } from '../lib/bun-api-proof.ts';
-import { inspectTable } from '../lib/console-depth.ts';
+import { inspectTable, logDepth } from '../lib/console-depth.ts';
 import { openOperationsDb, PlaySigner } from '../lib/operations/index.ts';
 import { formatCliTable, toolTableVersion } from './cli-table.ts';
 
@@ -435,7 +449,7 @@ if (import.meta.main) {
       process.exit(1);
     }
     const { result } = await runOpsOneliner(id, { live });
-    console.log(result);
+    logDepth(result);
     process.exit(0);
   }
   if (json) {

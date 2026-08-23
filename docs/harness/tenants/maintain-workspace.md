@@ -212,6 +212,29 @@ Repeated gate thrash →
 [`.agents/skills/harness-improve/`](../../../.agents/skills/harness-improve/SKILL.md)
 (earliest failed handoff → smallest reversible fix → fresh rerun).
 
+Hard pre-commit fails print a shared markdown shape (**gate · why · fix**) via
+`lib/harness/gate-fail.ts` (`Bun.markdown.ansi` + `statusLine`). Re-run the
+`fix` command from that block.
+
+Slow hook diagnosis (Bun 1.4 CPU profile → `reports/precommit-cpu.md`, gitignored):
+
+```bash
+bun run precommit:profile
+# or: PRECOMMIT_PROFILE=1 bun run precommit
+```
+
+Packages graph MD audit (existing `--md` path, not a second bundler):
+
+```bash
+bun run audit:packages:full   # includes --md
+```
+
+Console format ratchet (staged at commit; repo-wide on push / `ci:core`):
+
+```bash
+bun run check:console-format
+```
+
 ## Nesting (how the loops compose)
 
 ```mermaid

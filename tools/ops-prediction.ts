@@ -24,7 +24,7 @@ import {
   writePredictionReport,
 } from '../lib/prediction/index.ts';
 import { evaluateShadow, shadowLog } from '../lib/experiments/champion-challenger.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { cliOut, jsonOut } from '../lib/console-depth.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const args = import.meta.main
@@ -67,10 +67,8 @@ Flags: --json · --webview (report only)
 function out(data: object | string | number | boolean | null): void {
   if (json) {
     jsonOut(data);
-  } else if (typeof data === 'string') {
-    console.log(data);
   } else {
-    console.log(Bun.inspect(data, { depth: 6, colors: true }));
+    cliOut(data);
   }
 }
 

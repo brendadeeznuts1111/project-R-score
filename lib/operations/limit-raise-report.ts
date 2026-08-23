@@ -17,6 +17,7 @@ import {
   getConsoleDepth,
   inspectCustom,
   inspectTable as inspectTableCore,
+  logDepth,
   shouldColor,
 } from '../console-depth.ts';
 import { deepEquals } from '../deep-equals.ts';
@@ -487,6 +488,6 @@ export function printLimitRaiseReport(
   opts: LimitRaiseReportOpts = {}
 ): LimitRaiseReport {
   const report = new LimitRaiseReport(raises, opts);
-  console.log(report);
+  logDepth(report);
   return report;
 }

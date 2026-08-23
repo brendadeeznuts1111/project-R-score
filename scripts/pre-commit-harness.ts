@@ -56,6 +56,7 @@
  */
 import { buildHarnessEslintArgs } from '../config/eslint/harness/command.ts';
 import { isHarnessFormatPath, isHarnessLintPath } from '../config/eslint/harness/rollout.ts';
+import { printGateFailure, type GateFailureInput } from '../lib/harness/gate-fail.ts';
 import { isColorKernelPath } from '../lib/portal/color-kernel-paths.ts';
 import { hasFlag } from './lib/cli-args';
 import { ensureDir, writeJson } from './lib/fs-bun';
@@ -64,6 +65,16 @@ const repoRoot = `${import.meta.dir}/..`;
 const TIMING_PATH = `${repoRoot}/reports/harness-gate-timing.json`;
 
 type GateTiming = { name: string; ms: number; ok: boolean };
+
+async function failGate(
+  timings: GateTiming[],
+  full: boolean,
+  input: GateFailureInput
+): Promise<never> {
+  await writeTimings(timings, full);
+  printGateFailure(input);
+  process.exit(1);
+}
 
 const DOC_MAP_SSOT = new Set([
   'AGENTS.md',
@@ -257,9 +268,12 @@ async function assertStagedMatchesWorktree(
   if (dirty.length > 0) {
     const code = await runGate('auto-restage', ['git', 'add', '--', ...dirty], timings);
     if (code !== 0) {
-      console.error(`❌ Auto-restage failed — run manually: git add ${dirty.join(' ')}`);
-      await writeTimings(timings, full);
-      process.exit(1);
+      await failGate(timings, full, {
+        title: 'Auto-restage',
+        gate: 'auto-restage',
+        why: 'Could not auto-restage files rewritten by format/annotate',
+        fix: `git add -- ${dirty.join(' ')}`,
+      });
     }
     console.info(
       `↻ Auto-restaged ${dirty.length} file(s) rewritten by format/annotate gates:\n` +
@@ -320,9 +334,12 @@ async function main(): Promise<void> {
       timings
     );
     if (formatCode !== 0) {
-      console.error('❌ Harness Prettier check failed');
-      await writeTimings(timings, full);
-      process.exit(1);
+      await failGate(timings, full, {
+        title: 'Harness Prettier',
+        gate: 'prettier',
+        why: 'Prettier --write failed on staged harness files',
+        fix: 'bun x prettier --write <files>',
+      });
     }
   }
 
@@ -330,12 +347,12 @@ async function main(): Promise<void> {
     console.info(`🗺️  Doc map check (${docMapFiles.length} SSOT path(s) staged)...`);
     const code = await runGate('doc-map', ['bun', 'tools/doc-map-check.ts'], timings);
     if (code !== 0) {
-      console.error(
-        '❌ Doc map check failed — fix broken links / CANONICAL_* paths\n' +
-          '   bun tools/doc-map-check.ts'
-      );
-      await writeTimings(timings, full);
-      process.exit(1);
+      await failGate(timings, full, {
+        title: 'Doc map',
+        gate: 'doc-map',
+        why: 'Broken links / CANONICAL_* paths',
+        fix: 'bun tools/doc-map-check.ts',
+      });
     }
   }
 
@@ -347,9 +364,12 @@ async function main(): Promise<void> {
       timings
     );
     if (code !== 0) {
-      console.error('❌ Markdown contract failed — run bun run check:docs');
-      await writeTimings(timings, full);
-      process.exit(1);
+      await failGate(timings, full, {
+        title: 'Markdown contract',
+        gate: 'markdown-contract',
+        why: 'Staged markdown failed docs contract',
+        fix: 'bun run check:docs',
+      });
     }
   }
 
@@ -357,13 +377,13 @@ async function main(): Promise<void> {
     console.info('📝 Bun native Markdown evidence...');
     const code = await runGate('native-docs', ['bun', 'run', 'docs:native:check'], timings);
     if (code !== 0) {
-      console.error(
-        '❌ Bun native Markdown evidence is stale\n' +
-          '   bun run docs:native:preview\n' +
-          '   bun run docs:native:sync'
-      );
-      await writeTimings(timings, full);
-      process.exit(1);
+      await failGate(timings, full, {
+        title: 'Native Markdown evidence',
+        gate: 'native-docs',
+        why: 'Bun native Markdown evidence is stale',
+        fix: 'bun run docs:native:sync',
+        detail: 'Preview first: bun run docs:native:preview',
+      });
     }
   }
 
@@ -372,12 +392,12 @@ async function main(): Promise<void> {
     console.info(`📦 Projects root contract (${projectsFiles.length} path(s) staged)...`);
     const code = await runGate('projects-roots', ['bun', 'run', 'projects:roots:check'], timings);
     if (code !== 0) {
-      console.error(
-        '❌ Product root contract failed — fix structure, Bun engine, package manager, or lockfile\n' +
-          '   bun run projects:roots:check'
-      );
-      await writeTimings(timings, full);
-      process.exit(1);
+      await failGate(timings, full, {
+        title: 'Projects roots',
+        gate: 'projects-roots',
+        why: 'Product root contract failed — fix structure, Bun engine, package manager, or lockfile',
+        fix: 'bun run projects:roots:check',
+      });
     }
 
     const projectSourceFiles: string[] = [];
@@ -431,24 +451,24 @@ async function main(): Promise<void> {
     console.info(`📚 Lib domain indexes (${libFiles.length} path(s) staged)...`);
     const code = await runGate('lib-domains', ['bun', 'run', 'lib:domains:check'], timings);
     if (code !== 0) {
-      console.error(
-        '❌ Lib domain index contract failed — each lib/*/ needs README.md\n' +
-          '   bun run lib:domains:check'
-      );
-      await writeTimings(timings, full);
-      process.exit(1);
+      await failGate(timings, full, {
+        title: 'Lib domains',
+        gate: 'lib-domains',
+        why: 'Lib domain index missing README.md',
+        fix: 'bun run lib:domains:check',
+      });
     }
   }
   if (libFiles.length > 0 || areaMapToolStaged) {
     console.info(`🗺️  Lib Area map paths...`);
     const mapCode = await runGate('lib-area-maps', ['bun', 'run', 'lib:area-maps:check'], timings);
     if (mapCode !== 0) {
-      console.error(
-        '❌ Lib Area map path contract failed — fix ## Area map / Ownership map entry paths/globs\n' +
-          '   bun run lib:area-maps:check'
-      );
-      await writeTimings(timings, full);
-      process.exit(1);
+      await failGate(timings, full, {
+        title: 'Lib Area maps',
+        gate: 'lib-area-maps',
+        why: 'Area map / Ownership map entry paths/globs invalid',
+        fix: 'bun run lib:area-maps:check',
+      });
     }
   }
 
@@ -457,13 +477,13 @@ async function main(): Promise<void> {
     console.info(`🧾 Audit catalog verify (${auditFiles.length} path(s) staged)...`);
     const code = await runGate('audit-verify', ['bun', 'run', 'audit:verify'], timings);
     if (code !== 0) {
-      console.error(
-        '❌ Audit catalog verify failed — evidence/graph/relatedDocs/catalog parity\n' +
-          '   bun run audit:verify\n' +
-          '   bun run audit:catalog:build'
-      );
-      await writeTimings(timings, full);
-      process.exit(1);
+      await failGate(timings, full, {
+        title: 'Audit catalog',
+        gate: 'audit-verify',
+        why: 'evidence/graph/relatedDocs/catalog parity failed',
+        fix: 'bun run audit:verify',
+        detail: 'Rebuild: bun run audit:catalog:build',
+      });
     }
   }
 
@@ -472,14 +492,13 @@ async function main(): Promise<void> {
     console.info(`🌐 Public plane discovery (${publicFiles.length} path(s) staged)...`);
     const code = await runGate('public-discover', ['bun', 'run', 'public:discover:check'], timings);
     if (code !== 0) {
-      console.error(
-        '❌ Public plane discovery failed — broken registry ref or portal anti-pattern\n' +
-          '   bun run public:discover:check\n' +
-          '   bun run verify:portal:static\n' +
-          '   docs/harness/tenants/public-plane.md'
-      );
-      await writeTimings(timings, full);
-      process.exit(1);
+      await failGate(timings, full, {
+        title: 'Public plane discovery',
+        gate: 'public-discover',
+        why: 'Broken registry ref or portal anti-pattern',
+        fix: 'bun run public:discover:check',
+        detail: 'Also: bun run verify:portal:static · docs/harness/tenants/public-plane.md',
+      });
     }
   }
 
@@ -490,14 +509,13 @@ async function main(): Promise<void> {
     );
     const code = await runGate('glossary-verify', ['bun', 'run', 'glossary:verify'], timings);
     if (code !== 0) {
-      console.error(
-        '❌ Glossary verify failed — missing/duplicate section domId or unparseable hash\n' +
-          '   bun run glossary:verify\n' +
-          '   bun run glossary:verify:strict  # also fail section-shaped orphans\n' +
-          '   Escape: SKIP_GLOSSARY_VERIFY=1 with reason in commit message'
-      );
-      await writeTimings(timings, full);
-      process.exit(1);
+      await failGate(timings, full, {
+        title: 'Glossary verify',
+        gate: 'glossary-verify',
+        why: 'Missing/duplicate section domId or unparseable hash',
+        fix: 'bun run glossary:verify',
+        detail: 'Strict: bun run glossary:verify:strict · escape: SKIP_GLOSSARY_VERIFY=1',
+      });
     }
   }
 
@@ -511,15 +529,13 @@ async function main(): Promise<void> {
       console.info(`🎨 Color kernel theme check (${colorKernelFiles.length} path(s) staged)...`);
       const code = await runGate('color-kernel', ['bun', 'run', 'portal:theme:check'], timings);
       if (code !== 0) {
-        console.error(
-          '❌ Color kernel theme check failed — theme-tokens stale or alias/floor drift\n' +
-            '   bun run portal:theme:check\n' +
-            '   bun run validate:colors\n' +
-            '   escape: SKIP_COLOR_KERNEL=1\n' +
-            '   docs/portal-foundation.md · claim color-kernel-theme-aliases'
-        );
-        await writeTimings(timings, full);
-        process.exit(1);
+        await failGate(timings, full, {
+          title: 'Color kernel theme',
+          gate: 'color-kernel',
+          why: 'theme-tokens stale or alias/floor drift',
+          fix: 'bun run portal:theme:check',
+          detail: 'Also: bun run validate:colors · escape: SKIP_COLOR_KERNEL=1',
+        });
       }
     }
   }
@@ -528,12 +544,12 @@ async function main(): Promise<void> {
     console.info(`🚩 Runtime flags catalog (${runtimeFlagsFiles.length} path(s) staged)...`);
     const code = await runGate('runtime-flags', ['bun', 'run', 'portal:flags:check'], timings);
     if (code !== 0) {
-      console.error(
-        '❌ Runtime flags catalog failed — fix schema/shortcode/help or bun --help parity\n' +
-          '   bun run portal:flags:check'
-      );
-      await writeTimings(timings, full);
-      process.exit(1);
+      await failGate(timings, full, {
+        title: 'Runtime flags',
+        gate: 'runtime-flags',
+        why: 'schema/shortcode/help or bun --help parity failed',
+        fix: 'bun run portal:flags:check',
+      });
     }
   }
 
@@ -550,14 +566,13 @@ async function main(): Promise<void> {
         timings
       );
       if (code !== 0) {
-        console.error(
-          '❌ Portal doctor bunfig failed — machine/project install policy surface\n' +
-            '   bun run portal:doctor:bunfig:check\n' +
-            '   escape: SKIP_DOCTOR_BUNFIG=1\n' +
-            '   docs/harness/tenants/portal-doctor.md'
-        );
-        await writeTimings(timings, full);
-        process.exit(1);
+        await failGate(timings, full, {
+          title: 'Portal doctor bunfig',
+          gate: 'doctor-bunfig',
+          why: 'machine/project install policy surface failed',
+          fix: 'bun run portal:doctor:bunfig:check',
+          detail: 'escape: SKIP_DOCTOR_BUNFIG=1 · docs/harness/tenants/portal-doctor.md',
+        });
       }
     }
   }
@@ -571,15 +586,13 @@ async function main(): Promise<void> {
       console.info(`🩺 Doctor-state fingerprint (${doctorStateFiles.length} path(s) staged)...`);
       const code = await runGate('doctor-state', ['bun', 'run', 'bake:doctor:check'], timings);
       if (code !== 0) {
-        console.error(
-          '❌ Doctor-state fingerprint failed — re-bake or fix portable groups\n' +
-            '   bun run bake:doctor\n' +
-            '   bun run bake:doctor:check\n' +
-            '   escape: SKIP_DOCTOR_STATE_CHECK=1\n' +
-            '   docs/harness/tenants/portal-doctor.md'
-        );
-        await writeTimings(timings, full);
-        process.exit(1);
+        await failGate(timings, full, {
+          title: 'Doctor-state fingerprint',
+          gate: 'doctor-state',
+          why: 'Portable doctor-state fingerprint mismatch',
+          fix: 'bun run bake:doctor:check',
+          detail: 'Re-bake: bun run bake:doctor · escape: SKIP_DOCTOR_STATE_CHECK=1',
+        });
       }
     }
   }
@@ -597,14 +610,13 @@ async function main(): Promise<void> {
         timings
       );
       if (code !== 0) {
-        console.error(
-          '❌ TS6 types audit failed — monorepo-owned tsconfigs must resolve "types": ["bun"]\n' +
-            '   bun run check:tsconfig-types -- --strict\n' +
-            '   escape: SKIP_TSCONFIG_TYPES=1\n' +
-            '   https://bun.com/docs/typescript-6 · docs/harness/tenants/monorepo-workspaces.md'
-        );
-        await writeTimings(timings, full);
-        process.exit(1);
+        await failGate(timings, full, {
+          title: 'TS6 types audit',
+          gate: 'tsconfig-types',
+          why: 'Monorepo-owned tsconfigs must resolve types: ["bun"]',
+          fix: 'bun run check:tsconfig-types -- --strict',
+          detail: 'escape: SKIP_TSCONFIG_TYPES=1 · docs/harness/tenants/monorepo-workspaces.md',
+        });
       }
     }
   }
@@ -653,9 +665,12 @@ async function main(): Promise<void> {
     timings
   );
   if (lintCode !== 0) {
-    console.error('❌ Harness ESLint check failed');
-    await writeTimings(timings, full);
-    process.exit(1);
+    await failGate(timings, full, {
+      title: 'Harness ESLint',
+      gate: 'eslint',
+      why: 'ESLint failed on staged harness files',
+      fix: 'bun run lint:harness -- --fix',
+    });
   }
 
   await runPrettierWrite(formatFiles);
@@ -674,12 +689,12 @@ async function main(): Promise<void> {
     timings
   );
   if (docCheck !== 0) {
-    console.error(
-      '❌ Missing canonical Bun doc refs after annotate — resolve manually:\n' +
-        '   bun tools/bun-doc-refs.ts suggest "<api>"'
-    );
-    await writeTimings(timings, full);
-    process.exit(1);
+    await failGate(timings, full, {
+      title: 'Doc refs',
+      gate: 'doc-refs-check',
+      why: 'Missing canonical Bun doc refs after annotate',
+      fix: 'bun tools/bun-doc-refs.ts suggest "<api>"',
+    });
   }
 
   // Kill green-commit / dirty-tree / amend thrash (eslint --fix · prettier · annotate).
@@ -689,9 +704,12 @@ async function main(): Promise<void> {
   if (
     (await runGate('brand-manifest', ['bun', 'tools/brand-manifest.ts', '--check'], timings)) !== 0
   ) {
-    console.error('❌ Stale brand-manifest.json — run: bun tools/brand-manifest.ts');
-    await writeTimings(timings, full);
-    process.exit(1);
+    await failGate(timings, full, {
+      title: 'Brand manifest',
+      gate: 'brand-manifest',
+      why: 'Stale brand-manifest.json',
+      fix: 'bun tools/brand-manifest.ts',
+    });
   }
 
   const libStaged = harnessFiles.some(f => f.replace(/^\.\//, '').startsWith('lib/'));
@@ -836,63 +854,84 @@ async function main(): Promise<void> {
     parallelResults.find(r => r.name === 'harness-complexity-staged')?.code ?? 0;
 
   if (brandStaged !== 0) {
-    console.error(
-      '❌ New unbranded domain ID (bare string) — use lib/types/branded.ts as*/try*/parse*'
-    );
-    await writeTimings(timings, full);
-    process.exit(1);
+    await failGate(timings, full, {
+      title: 'Branded IDs',
+      gate: 'brands-staged',
+      why: 'New unbranded domain ID (bare string) in staged changes',
+      fix: 'bun tools/branded-id-check.ts --staged --strict',
+      detail: 'Use lib/types/branded.ts as*/try*/parse* constructors',
+    });
   }
   if (brandTypes !== 0) {
-    console.error('❌ Branded type assertions failed — tests/branded-types.test-d.ts');
-    await writeTimings(timings, full);
-    process.exit(1);
+    await failGate(timings, full, {
+      title: 'Branded types',
+      gate: 'brands-types',
+      why: 'Branded type assertions failed',
+      fix: 'bun run check:brands:types',
+      detail: 'tests/branded-types.test-d.ts',
+    });
   }
   if (pathBun !== 0) {
-    console.error('❌ path/node:path in lib/|tools/ — use lib/path-bun (bun run check:path-bun)');
-    await writeTimings(timings, full);
-    process.exit(1);
+    await failGate(timings, full, {
+      title: 'path-bun',
+      gate: 'path-bun',
+      why: 'path/node:path import in lib/ or tools/',
+      fix: 'bun run check:path-bun',
+      detail: 'Use lib/path-bun',
+    });
   }
   if (bunEnv !== 0) {
-    console.error('❌ process.env in lib/|scripts/ — use Bun.env (bun run check:bun-env)');
-    await writeTimings(timings, full);
-    process.exit(1);
+    await failGate(timings, full, {
+      title: 'Bun.env',
+      gate: 'bun-env',
+      why: 'process.env used in lib/ or scripts/',
+      fix: 'bun run check:bun-env',
+      detail: 'Prefer Bun.env',
+    });
   }
   if (consoleFormatStaged !== 0) {
-    console.error(
-      '❌ raw console.table / pretty-JSON in staged lines — use logTable/logDepth (bun run check:console-format)'
-    );
-    await writeTimings(timings, full);
-    process.exit(1);
+    await failGate(timings, full, {
+      title: 'Console format',
+      gate: 'console-format-staged',
+      why: 'raw console.table / pretty-JSON / object dump in staged lines',
+      fix: 'bun run check:console-format',
+      detail: 'Use logTable / logDepth / cliOut from lib/console (// console-ok to suppress)',
+    });
   }
   if (npmInstall !== 0) {
-    console.error(
-      '❌ npm/yarn/pnpm install command detected in production path — bun run check:npm-install'
-    );
-    await writeTimings(timings, full);
-    process.exit(1);
+    await failGate(timings, full, {
+      title: 'npm install ban',
+      gate: 'npm-install',
+      why: 'npm/yarn/pnpm install command in production path',
+      fix: 'bun run check:npm-install',
+    });
   }
   if (bunDepsTierA !== 0) {
-    console.error(
-      '❌ Tier-A Bun wrapper declared as a direct dependency — bun scripts/check-bun-deps-tier-a.ts'
-    );
-    await writeTimings(timings, full);
-    process.exit(1);
+    await failGate(timings, full, {
+      title: 'Tier-A Bun deps',
+      gate: 'bun-deps-tier-a',
+      why: 'Tier-A Bun wrapper declared as a direct dependency',
+      fix: 'bun scripts/check-bun-deps-tier-a.ts',
+    });
   }
   if (monorepoHealthTests !== 0) {
-    console.error(
-      '❌ monorepo-health unit tests failed — bun scripts/check-monorepo-health.ts --tests-only\n' +
-        '   full ratchet: bun run check:monorepo-health (ci:core)'
-    );
-    await writeTimings(timings, full);
-    process.exit(1);
+    await failGate(timings, full, {
+      title: 'Monorepo health tests',
+      gate: 'monorepo-health-tests',
+      why: 'monorepo-health unit tests failed',
+      fix: 'bun scripts/check-monorepo-health.ts --tests-only',
+      detail: 'Full ratchet: bun run check:monorepo-health (ci:core)',
+    });
   }
   if (complexityStaged !== 0) {
-    console.error(
-      '❌ harness complexity floor exceeded on staged files — bun run check:harness-complexity:staged\n' +
-        '   prefer refactor; raise only via: bun run check:harness-complexity -- --update-baseline --yes'
-    );
-    await writeTimings(timings, full);
-    process.exit(1);
+    await failGate(timings, full, {
+      title: 'Harness complexity',
+      gate: 'harness-complexity-staged',
+      why: 'Complexity floor exceeded on staged harness files',
+      fix: 'bun run check:harness-complexity:staged',
+      detail:
+        'Prefer refactor; raise only via: bun run check:harness-complexity -- --update-baseline --yes',
+    });
   }
 
   if (!full && !brandedTypesStaged) {
