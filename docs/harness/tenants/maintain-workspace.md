@@ -92,10 +92,9 @@ git push -u origin HEAD:refs/heads/<lane>
 # Before merge (clean worktree)
 bun run bun:ci
 
-# After squash-merge
-git sync-main
-# Clear staged identical files (hook-safe, per path):
-#   git show origin/main:<path> > <path> && git add <path>
+# After squash-merge (prefer Bun tool — backs up unpushed tip + clears soft-reset residue)
+bun run sync:main
+# Legacy alias `git sync-main` is soft-reset only and leaves staged residue; avoid it.
 ```
 
 ```mermaid
@@ -106,9 +105,8 @@ flowchart TB
   Push --> PR["Open PR"]
   PR --> CI["bun run bun:ci<br/>clean worktree = merge authority"]
   CI --> Merge["Squash-merge"]
-  Merge --> Sync["git sync-main"]
-  Sync --> Clear["Clear staged identical files<br/>hook-safe per-file pattern"]
-  Clear --> Main["Primary checkout on main"]
+  Merge --> Sync["bun run sync:main"]
+  Sync --> Main["Primary checkout on origin/main<br/>unpushed tip → backup/*"]
 ```
 
 ## Daily pulse
@@ -118,6 +116,7 @@ Short honesty check. Fix the owning surface; do not weaken gates.
 ```bash
 bun run pulse:lane                 # parallel: lane:status:count + harness:status
 bun run lane:status                # full tables (or --json / --jsonl / --short)
+# If health=fail and local main is ahead: bun run sync:main
 bun run portal:doctor:bunfig:check
 bun run bun:channel:check
 bun run monorepo:health
