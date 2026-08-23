@@ -156,9 +156,18 @@ from git state — it does not set these properties.
 # Focus one test by name
 bun test tests/console-depth.test.ts -t "bun run - stdin"
 
-# Focus coverage on exact files (the wrapper owns reporters and output)
+# Coverage — upstream Bun shape (code-coverage docs):
+#   bun test --coverage src/components/*.test.ts
+#   bun test --coverage --test-name-pattern="API"
+# At repo root those are hazardous: no src/components tree, and name-only
+# coverage walks the full discovery set against bunfig coverageThreshold.
+#
+# Prefer the focused wrapper (exact tests/ files first; owns --coverage +
+# text/LCOV under coverage/focused):
 bun run test:coverage -- tests/model-circuit-contracts.test.ts
 bun run test:coverage -- tests/limit-betlog-export.test.ts --test-name-pattern="API"
+# Ad hoc raw equivalent (no wrapper outfile contract):
+# bun test --coverage tests/limit-betlog-export.test.ts --test-name-pattern="API"
 
 # Fail fast while iterating a suite
 bun test tests/wire-boundary-policy.test.ts --bail=1
