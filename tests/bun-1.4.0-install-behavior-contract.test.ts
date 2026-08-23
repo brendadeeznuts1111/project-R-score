@@ -4,7 +4,7 @@
  * Never runs against the monorepo root (frozenLockfile / bun.lock stay untouched).
  */
 import { describe, expect, test } from 'bun:test';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -61,19 +61,22 @@ describe('Bun 1.4.0 Other behavior — install / update / init (tempdir)', () =>
     });
   });
 
-  releaseTest('bun init with non-TTY stdin behaves as -y and writes typescript ^7 (#35165 #33265)', () => {
-    withTempDir('bun-1.4-init-', dir => {
-      const proc = Bun.spawnSync([process.execPath, 'init'], {
-        cwd: dir,
-        stdin: new Blob(['']),
-        stdout: 'pipe',
-        stderr: 'pipe',
+  releaseTest(
+    'bun init with non-TTY stdin behaves as -y and writes typescript ^7 (#35165 #33265)',
+    () => {
+      withTempDir('bun-1.4-init-', dir => {
+        const proc = Bun.spawnSync([process.execPath, 'init'], {
+          cwd: dir,
+          stdin: new Blob(['']),
+          stdout: 'pipe',
+          stderr: 'pipe',
+        });
+        expect(proc.exitCode).toBe(0);
+        const raw = readFileSync(join(dir, 'package.json'), 'utf8');
+        expect(raw).toMatch(/"typescript"\s*:\s*"\^7/);
       });
-      expect(proc.exitCode).toBe(0);
-      const raw = readFileSync(join(dir, 'package.json'), 'utf8');
-      expect(raw).toMatch(/"typescript"\s*:\s*"\^7/);
-    });
-  });
+    }
+  );
 
   releaseTest('bun init -y writes typescript ^7 (#33265 #39341)', () => {
     withTempDir('bun-1.4-init-y-', dir => {
@@ -85,6 +88,119 @@ describe('Bun 1.4.0 Other behavior — install / update / init (tempdir)', () =>
       expect(proc.exitCode).toBe(0);
       const raw = readFileSync(join(dir, 'package.json'), 'utf8');
       expect(raw).toMatch(/"typescript"\s*:\s*"\^7/);
+    });
+  });
+
+  releaseTest('bunfig.toml overrides .npmrc for the same key (#38333)', () => {
+    withTempDir('bun-1.4-bunfig-npmrc-', dir => {
+      writeFileSync(
+        join(dir, 'package.json'),
+        JSON.stringify({ name: 'bunfig-probe', version: '0.0.0', private: true })
+      );
+      writeFileSync(join(dir, '.npmrc'), 'save-exact=false\n');
+      writeFileSync(
+        join(dir, 'bunfig.toml'),
+        '[install]\nexact = true\nfrozenLockfile = false\n'
+      );
+      const add = Bun.spawnSync([process.execPath, 'add', 'is-number@7.0.0'], {
+        cwd: dir,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+      expect(add.exitCode).toBe(0);
+      const pkg = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')) as {
+        dependencies?: Record<string, string>;
+      };
+      expect(pkg.dependencies?.['is-number']).toBe('7.0.0');
+    });
+  });
+
+  releaseTest('bun install --filter edits workspace package, not root (#38333)', () => {
+    withTempDir('bun-1.4-filter-', dir => {
+      writeFileSync(
+        join(dir, 'package.json'),
+        JSON.stringify({
+          name: 'filter-root',
+          version: '0.0.0',
+          private: true,
+          workspaces: ['packages/*'],
+        })
+      );
+      writeFileSync(join(dir, 'bunfig.toml'), '[install]\nfrozenLockfile = false\n');
+      mkdirSync(join(dir, 'packages', 'child'), { recursive: true });
+      writeFileSync(
+        join(dir, 'packages', 'child', 'package.json'),
+        JSON.stringify({ name: 'filter-child', version: '0.0.0', private: true })
+      );
+      const add = Bun.spawnSync(
+        [process.execPath, 'add', 'is-number@7.0.0', '--filter', 'filter-child'],
+        { cwd: dir, stdout: 'pipe', stderr: 'pipe' }
+      );
+      expect(add.exitCode).toBe(0);
+      const root = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')) as {
+        dependencies?: Record<string, string>;
+      };
+      const child = JSON.parse(
+        readFileSync(join(dir, 'packages', 'child', 'package.json'), 'utf8')
+      ) as { dependencies?: Record<string, string> };
+      expect(root.dependencies?.['is-number']).toBeUndefined();
+      expect(child.dependencies?.['is-number']).toBeTruthy();
+    });
+  });
+
+  releaseTest('catalog: write on bun add when catalog lists package (#38333)', () => {
+    withTempDir('bun-1.4-catalog-', dir => {
+      writeFileSync(
+        join(dir, 'package.json'),
+        JSON.stringify({
+          name: 'catalog-root',
+          version: '0.0.0',
+          private: true,
+          workspaces: ['packages/*'],
+          catalog: { 'is-number': '7.0.0' },
+        })
+      );
+      writeFileSync(join(dir, 'bunfig.toml'), '[install]\nfrozenLockfile = false\n');
+      mkdirSync(join(dir, 'packages', 'app'), { recursive: true });
+      writeFileSync(
+        join(dir, 'packages', 'app', 'package.json'),
+        JSON.stringify({ name: 'catalog-app', version: '0.0.0', private: true })
+      );
+      const add = Bun.spawnSync(
+        [process.execPath, 'add', 'is-number', '--filter', 'catalog-app'],
+        { cwd: dir, stdout: 'pipe', stderr: 'pipe' }
+      );
+      expect(add.exitCode).toBe(0);
+      const child = readFileSync(join(dir, 'packages', 'app', 'package.json'), 'utf8');
+      expect(child).toMatch(/catalog:/);
+    });
+  });
+
+  releaseTest('frozen-lockfile --lockfile-only writes nothing (#38333)', () => {
+    withTempDir('bun-1.4-frozen-only-', dir => {
+      writeFileSync(
+        join(dir, 'package.json'),
+        JSON.stringify({
+          name: 'frozen-only',
+          version: '0.0.0',
+          private: true,
+          dependencies: { 'is-number': '7.0.0' },
+        })
+      );
+      writeFileSync(join(dir, 'bunfig.toml'), '[install]\nfrozenLockfile = false\n');
+      const install = Bun.spawnSync([process.execPath, 'install'], {
+        cwd: dir,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+      expect(install.exitCode).toBe(0);
+      const before = readFileSync(join(dir, 'bun.lock'), 'utf8');
+      const only = Bun.spawnSync(
+        [process.execPath, 'install', '--frozen-lockfile', '--lockfile-only'],
+        { cwd: dir, stdout: 'pipe', stderr: 'pipe' }
+      );
+      expect(only.exitCode).toBe(0);
+      expect(readFileSync(join(dir, 'bun.lock'), 'utf8')).toBe(before);
     });
   });
 });
