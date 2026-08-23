@@ -107,6 +107,18 @@ Bun embeds these as `<properties>` when present at **`bun test` process start**
 (preload is too late). Hostname is a `<testsuite hostname>` attribute, not a
 `<property>`.
 
+**Not a unified Bun “metadata” topic.** Upstream uses the word on unrelated
+pages — do not route JUnit provenance to those APIs:
+
+| Upstream “metadata”                                                                                                               | What it actually is                             | Owner here                                                        |
+| --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------- |
+| [Test reporters → JUnit `<properties>`](https://bun.com/docs/test/reporters#environment-variables-in-junit-reports)               | CI / commit / hostname stamps in XML            | this section · `ensureJunitReporterEnv` · `run-with-junit-env.ts` |
+| [Bun.Image `.metadata()`](https://bun.com/docs/runtime/image#metadata)                                                            | width / height / format without decoding pixels | `lib/image-metadata.ts` · claim image evidence                    |
+| [bun info](https://bun.com/docs/pm/cli/info) / [npm registry metadata](https://bun.com/docs/pm/cli/install#npm-registry-metadata) | package / cache registry facts                  | install / pin audit                                               |
+| [HTMLRewriter social meta](https://bun.com/guides/html-rewriter/extract-social-meta)                                              | Open Graph / share tags                         | claim `social-metadata-boundaries`                                |
+| [Markdown callback `meta`](https://bun.com/docs/runtime/markdown#callback-signature)                                              | element-specific render metadata                | markdown render call sites                                        |
+| [Bytecode](https://bun.com/docs/bundler/bytecode) / [S3 examples](https://bun.com/docs/runtime/s3)                                | module / object naming — not a metadata API     | bundler · S3 helpers                                              |
+
 | Environment variable(s)                                                    | XML             | Bun role           | FactoryWager                                                                                                                                                                               |
 | -------------------------------------------------------------------------- | --------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `GITHUB_RUN_ID` · `GITHUB_SERVER_URL` · `GITHUB_REPOSITORY` · `CI_JOB_URL` | `ci`            | CI build / job URL | Actions: leave alone. Local: [`ensureJunitReporterEnv`](../../../lib/junit-reporter-env.ts) fill-missing → `CI_JOB_URL` = commit URL (+ default `GITHUB_SERVER_URL` / `GITHUB_REPOSITORY`) |
