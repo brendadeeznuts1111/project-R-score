@@ -96,7 +96,9 @@ bun run bun:ci
 bun run sync:main
 bun run sync:main -- --dry-run   # still fetches origin/main; prints plan only
 bun run sync:main -- --json      # machine-readable plan/result
-# Legacy alias `git sync-main` is soft-reset only and leaves staged residue; avoid it.
+# Optional: rebind soft-reset-only alias so `git sync-main` is safe
+#   git config alias.sync-main '!bun run sync:main --'
+# New harness CLIs: copy examples/bun-1.4-cli (kernel: lib/harness/bun-cli.ts)
 ```
 
 ```mermaid

@@ -72,9 +72,9 @@ contract is [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md).
   `bun run bun:ci` before merge. Hosted Actions are not merge authority.
 - **Synchronize safely after squash.** Prefer `bun run sync:main` (backs up any
   unpushed tip, soft-resets to `origin/main`, clears soft-reset residue, leaves
-  foreign untracked roots). The soft-reset-only `git sync-main` alias leaves
-  staged residue — avoid it. Never use `git reset --hard` or a repository-wide
-  restore to “clean up” after sync.
+  foreign untracked roots). Optional rebind so muscle memory stays safe:
+  `git config alias.sync-main '!bun run sync:main --'`. Never use
+  `git reset --hard` or a repository-wide restore to “clean up” after sync.
 - **Record foreign failures.** If a gate fails only on another active lane,
   record its command, output, and owner. Use `SKIP_TEST_CHANGED=1` only with
   that evidence in the commit message.
