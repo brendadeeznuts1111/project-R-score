@@ -9,6 +9,7 @@ import {
   getConsoleDepth,
   inspectCustom,
   inspectTable as inspectTableCore,
+  logDepth,
   shouldColor,
 } from '../console-depth.ts';
 import {
@@ -171,6 +172,6 @@ export function printLimitPredictionReport(
   opts?: { nodeId?: string /* brand-ok */ }
 ): LimitPredictionReport {
   const report = new LimitPredictionReport(rows, opts);
-  console.log(report);
+  logDepth(report);
   return report;
 }

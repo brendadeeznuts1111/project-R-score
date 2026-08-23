@@ -78,6 +78,18 @@ describe('repository governance', () => {
     );
   });
 
+  test('default test scripts lock Bun 1.4 parallel and JUnit env wiring', () => {
+    expect(packageJson.scripts.test).toContain('--parallel');
+    expect(packageJson.scripts['test:ci']).toContain('run-with-junit-env');
+    const testDots = packageJson.scripts['test:dots'];
+    if (testDots !== undefined) {
+      expect(
+        testDots.includes('--dots') || testDots.includes('--reporter=dots'),
+        'test:dots must pass --dots or --reporter=dots'
+      ).toBe(true);
+    }
+  });
+
   test('prepare installs Husky hooks in the active worktree', () => {
     expect(packageJson.scripts.prepare).toStartWith('bunx husky');
   });

@@ -1,4 +1,13 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @updated Bun.argv · changed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
+// @verified Bun.argv · Bun v1.3.14 · 2026-08-06 · https://bun.com/reference/bun/argv
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
 // @see https://bun.com/docs/test/reporters#environment-variables-in-junit-reports
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
@@ -25,8 +34,14 @@ if (args.length === 0) {
   process.exit(2);
 }
 
-// Inherit parent env after ensureJunitReporterEnv mutated Bun.env (Bun.env ratchet).
+// Explicit inherit after fill-missing — Bun JUnit snapshots env at child start.
+const childEnv: Record<string, string> = {};
+for (const [k, v] of Object.entries(Bun.env)) {
+  if (v !== undefined) childEnv[k] = v;
+}
+
 const child = Bun.spawn(['bun', ...args], {
+  env: childEnv,
   stdout: 'inherit',
   stderr: 'inherit',
   stdin: 'inherit',

@@ -24,7 +24,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  */
 import { BunDefaultsReport, buildBunDefaultsProof } from '../lib/http/bun-defaults-proof.ts';
 import { runDefaultsVerification } from '../lib/http/defaults-cron.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { jsonOut, logDepth } from '../lib/console-depth.ts';
 
 const argv = import.meta.main
   ? applyUnknownLongOptionGuardFor('check:bun-defaults', Bun.argv.slice(2))
@@ -46,7 +46,7 @@ if (import.meta.main) {
   if (AS_JSON) {
     jsonOut(proof);
   } else {
-    console.log(report);
+    logDepth(report);
     if (result.path) console.log(`\nwrote ${result.path}`);
     console.log('');
     console.log('Canonical notes:');

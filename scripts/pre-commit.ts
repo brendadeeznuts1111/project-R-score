@@ -1,4 +1,43 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @updated Bun.spawn · changed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @updated Bun.spawn · changed v0.3.0 · 2022-12-07 · https://bun.com/blog/bun-v0.3.0
+// @updated Bun.spawn · fixed v0.6.0 · 2023-05-16 · https://bun.com/blog/bun-v0.6.0
+// @updated Bun.spawn · fixed v0.6.6 · 2023-05-31 · https://bun.com/blog/bun-v0.6.6
+// @updated Bun.spawn · fixed v0.7.2 · 2023-08-03 · https://bun.com/blog/bun-v0.7.2
+// @updated Bun.spawn · fixed v1.0.8 · 2023-11-02 · https://bun.com/blog/bun-v1.0.8
+// @updated Bun.spawn · fixed v1.0.9 · 2023-11-05 · https://bun.com/blog/bun-v1.0.9
+// @updated Bun.spawn · fixed v1.0.23 · 2024-01-16 · https://bun.com/blog/bun-v1.0.23
+// @updated Bun.spawn · fixed v1.0.26 · 2024-02-03 · https://bun.com/blog/bun-v1.0.26
+// @updated Bun.spawn · fixed v1.0.31 · 2024-03-14 · https://bun.com/blog/bun-v1.0.31
+// @updated Bun.spawn · fixed v1.0.32 · 2024-03-17 · https://bun.com/blog/bun-v1.0.32
+// @updated Bun.spawn · fixed v1.0.36 · 2024-03-29 · https://bun.com/blog/bun-v1.0.36
+// @updated Bun.spawn · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.spawn · fixed v1.1.5 · 2024-04-26 · https://bun.com/blog/bun-v1.1.5
+// @updated Bun.spawn · changed v1.1.8 · 2024-05-10 · https://bun.com/blog/bun-v1.1.8
+// @updated Bun.spawn · fixed v1.1.8 · 2024-05-10 · https://bun.com/blog/bun-v1.1.8
+// @updated Bun.spawn · fixed v1.1.30 · 2024-10-08 · https://bun.com/blog/bun-v1.1.30
+// @updated Bun.spawn · changed v1.1.39 · 2024-12-17 · https://bun.com/blog/bun-v1.1.39
+// @updated Bun.spawn · fixed v1.1.39 · 2024-12-17 · https://bun.com/blog/bun-v1.1.39
+// @updated Bun.spawn · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
+// @updated Bun.spawn · fixed v1.2.1 · 2025-01-27 · https://bun.com/blog/bun-v1.2.1
+// @updated Bun.spawn · changed v1.2.6 · 2025-03-25 · https://bun.com/blog/bun-v1.2.6
+// @updated Bun.spawn · fixed v1.2.6 · 2025-03-25 · https://bun.com/blog/bun-v1.2.6
+// @updated Bun.spawn · changed v1.2.9 · 2025-04-09 · https://bun.com/blog/bun-v1.2.9
+// @updated Bun.spawn · fixed v1.2.16 · 2025-06-11 · https://bun.com/blog/bun-v1.2.16
+// @updated Bun.spawn · fixed v1.2.17 · 2025-06-21 · https://bun.com/blog/bun-v1.2.17
+// @updated Bun.spawn · changed v1.2.18 · 2025-07-03 · https://bun.com/blog/bun-v1.2.18
+// @updated Bun.spawn · fixed v1.2.18 · 2025-07-03 · https://bun.com/blog/bun-v1.2.18
+// @updated Bun.spawn · changed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.spawn · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.spawn · fixed v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2
+// @updated Bun.spawn · changed v1.3.3 · 2025-11-21 · https://bun.com/blog/bun-v1.3.3
+// @updated Bun.spawn · fixed v1.3.3 · 2025-11-21 · https://bun.com/blog/bun-v1.3.3
+// @updated Bun.spawn · changed v1.3.5 · 2025-12-17 · https://bun.com/blog/bun-v1.3.5
+// @updated Bun.spawn · changed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.spawn · fixed v1.3.10 · 2026-02-26 · https://bun.com/blog/bun-v1.3.10
+// @updated Bun.spawn · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @verified Bun.spawn · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/child-process
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @verified Bun.$ · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/shell
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -14,6 +53,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 /** Bun-native Husky pre-commit orchestration. */
 
 import { $ } from 'bun';
+import { printGateFailure } from '../lib/harness/gate-fail.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import { checkBunPin, type BunPinCheck } from '../lib/verification/bun-runtime-pin.ts';
 import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
@@ -210,11 +250,22 @@ export async function runPrecommit(
       runCommand(['bun', 'scripts/pre-commit-harness.ts']),
     ]);
     if (hygiene.exitCode !== 0) {
-      console.error('❌ repo hygiene failed');
+      printGateFailure({
+        title: 'Repo hygiene',
+        gate: 'repo-hygiene',
+        why: 'Staged hygiene check failed',
+        fix: 'bun scripts/repo-hygiene.ts --staged',
+      });
       return hygiene.exitCode;
     }
     if (harness.exitCode !== 0) {
-      console.error('❌ harness pre-commit failed');
+      printGateFailure({
+        title: 'Harness pre-commit',
+        gate: 'pre-commit-harness',
+        why: 'One or more harness gates failed (see gate · why · fix above)',
+        fix: 'bun scripts/pre-commit-harness.ts',
+        detail: 'Slow hooks: PRECOMMIT_PROFILE=1 bun run precommit (or bun run precommit:profile)',
+      });
       return harness.exitCode;
     }
   }
@@ -404,6 +455,29 @@ export async function runPrecommit(
 }
 
 if (import.meta.main) {
+  // Opt-in Bun 1.4 CPU profile for slow-hook diagnosis (reports/ already gitignored).
+  // @see https://bun.com/docs/project/benchmarking#cpu-profiling
+  if (Bun.env.PRECOMMIT_PROFILE === '1' && Bun.env.PRECOMMIT_PROFILE_CHILD !== '1') {
+    const profilePath = resolvePath(REPO_ROOT, 'reports/precommit-cpu.md');
+    await Bun.$`mkdir -p ${resolvePath(REPO_ROOT, 'reports')}`.nothrow();
+    const bunBin = resolveVerificationBunBinary().path;
+    const child = Bun.spawn(
+      [bunBin, `--cpu-prof-md=${profilePath}`, import.meta.path, ...Bun.argv.slice(2)],
+      {
+        cwd: REPO_ROOT,
+        env: { ...Bun.env, PRECOMMIT_PROFILE_CHILD: '1' },
+        stdout: 'inherit',
+        stderr: 'inherit',
+        stdin: 'inherit',
+      }
+    );
+    const code = await child.exited;
+    if (code === 0) {
+      console.info(`⏱  CPU profile → ${profilePath}`);
+    }
+    process.exit(code);
+  }
+
   const exitCode = await runPrecommit();
   if (exitCode !== 0) process.exit(exitCode);
 }

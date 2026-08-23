@@ -144,7 +144,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Prove in the real environment → [`PROOF.md`](PROOF.md) · `lib/harness/proof.ts`
 - Feedback → infrastructure → [`FEEDBACK.md`](FEEDBACK.md) · `harness:lesson`
 - Coherence / lifetime risk → finish migrations + ratchets (VELOCITY_BASELINE eras)
-- Continuous maintenance → day loop + pre-commit timings · `docs:refresh` operate loop
+- Continuous maintenance → day loop + pre-commit timings · `check:console-format` · `precommit:profile` (`--cpu-prof-md`) · `docs:refresh` operate loop
 - Measured effectiveness → gate timings · PR uses eslint-changed; full-tree ESLint on main push only
 
 ## Setup (hooks + CI)

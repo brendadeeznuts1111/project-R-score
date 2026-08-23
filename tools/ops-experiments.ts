@@ -1,4 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/bunx — bunx (args after bin name; --bun before package)
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
@@ -39,7 +45,7 @@ import {
   type FactorLevel,
 } from '../lib/experiments/index.ts';
 import { parseExperimentId, parseTreeNodeId, unbrand } from '../lib/types/branded.ts';
-import { jsonOut } from '../lib/console-depth.ts';
+import { cliOut, jsonOut } from '../lib/console-depth.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const argv = import.meta.main
@@ -143,10 +149,8 @@ function partnerIdsFromFlag(): string[] {
 function out(data: object | string | number | boolean | null): void {
   if (json) {
     jsonOut(data);
-  } else if (typeof data === 'string') {
-    console.log(data);
   } else {
-    console.log(Bun.inspect(data, { depth: 6, colors: true }));
+    cliOut(data);
   }
 }
 

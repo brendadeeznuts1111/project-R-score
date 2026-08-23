@@ -21,7 +21,11 @@
 export const SCANNED_DIRS = ['lib', 'scripts', 'tools'];
 
 export type ConsoleFormatPatternId =
-  'console-table' | 'pretty-json-console' | 'direct-inspect-table' | 'console-dir';
+  | 'console-table'
+  | 'pretty-json-console'
+  | 'direct-inspect-table'
+  | 'console-dir'
+  | 'console-object-dump';
 
 export type ConsoleFormatPattern = {
   id: ConsoleFormatPatternId;
@@ -51,6 +55,14 @@ export const CONSOLE_FORMAT_PATTERNS: ConsoleFormatPattern[] = [
     id: 'console-dir',
     re: /console\.dir\(/,
     hint: 'use logDepth / cliOut from lib/console (project depth + TTY colors)',
+  },
+  {
+    // Object-literal dumps, or bare dump-shaped identifiers (data/result/report/…).
+    // Omits HELP/line/text string printers and array `[...].join` FPs.
+    id: 'console-object-dump',
+    re: /console\.(?:log|info)\(\s*(?:\{|(?:data|result|report|payload|obj|object|netReport|routeReport)\s*\))/,
+    hint: 'use logDepth / cliOut / statusLine from lib/console (// console-ok to suppress)',
+    excludeFiles: ['lib/console-depth.ts', 'lib/console/index.ts'],
   },
 ];
 

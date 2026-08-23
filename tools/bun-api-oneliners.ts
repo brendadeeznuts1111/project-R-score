@@ -1,4 +1,135 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @updated bun:sqlite · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @updated bun:sqlite · fixed v0.3.0 · 2022-12-07 · https://bun.com/blog/bun-v0.3.0
+// @updated bun:sqlite · fixed v0.5.6 · 2023-02-09 · https://bun.com/blog/bun-v0.5.6
+// @updated bun:sqlite · changed v0.6.8 · 2023-06-09 · https://bun.com/blog/bun-v0.6.8
+// @updated bun:sqlite · fixed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
+// @updated bun:sqlite · changed v0.7.1 · 2023-07-29 · https://bun.com/blog/bun-v0.7.1
+// @updated bun:sqlite · fixed v0.7.3 · 2023-08-06 · https://bun.com/blog/bun-v0.7.3
+// @updated bun:sqlite · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated bun:sqlite · fixed v1.0.7 · 2023-10-20 · https://bun.com/blog/bun-v1.0.7
+// @updated bun:sqlite · fixed v1.0.10 · 2023-11-07 · https://bun.com/blog/bun-v1.0.10
+// @updated bun:sqlite · fixed v1.0.12 · 2023-11-16 · https://bun.com/blog/bun-v1.0.12
+// @updated bun:sqlite · fixed v1.0.21 · 2024-01-02 · https://bun.com/blog/bun-v1.0.21
+// @updated bun:sqlite · fixed v1.0.23 · 2024-01-16 · https://bun.com/blog/bun-v1.0.23
+// @updated bun:sqlite · fixed v1.0.24 · 2024-01-20 · https://bun.com/blog/bun-v1.0.24
+// @updated bun:sqlite · changed v1.0.26 · 2024-02-03 · https://bun.com/blog/bun-v1.0.26
+// @updated bun:sqlite · fixed v1.0.27 · 2024-02-17 · https://bun.com/blog/bun-v1.0.27
+// @updated bun:sqlite · fixed v1.0.28 · 2024-02-19 · https://bun.com/blog/bun-v1.0.28
+// @updated bun:sqlite · fixed v1.0.29 · 2024-02-23 · https://bun.com/blog/bun-v1.0.29
+// @updated bun:sqlite · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated bun:sqlite · fixed v1.1.4 · 2024-04-16 · https://bun.com/blog/bun-v1.1.4
+// @updated bun:sqlite · fixed v1.1.5 · 2024-04-26 · https://bun.com/blog/bun-v1.1.5
+// @updated bun:sqlite · fixed v1.1.6 · 2024-04-28 · https://bun.com/blog/bun-v1.1.6
+// @updated bun:sqlite · changed v1.1.14 · 2024-06-19 · https://bun.com/blog/bun-v1.1.14
+// @updated bun:sqlite · fixed v1.1.14 · 2024-06-19 · https://bun.com/blog/bun-v1.1.14
+// @updated bun:sqlite · fixed v1.1.16 · 2024-06-23 · https://bun.com/blog/bun-v1.1.16
+// @updated bun:sqlite · fixed v1.1.34 · 2024-11-02 · https://bun.com/blog/bun-v1.1.34
+// @updated bun:sqlite · changed v1.1.38 · 2024-11-29 · https://bun.com/blog/bun-v1.1.38
+// @updated bun:sqlite · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
+// @updated bun:sqlite · changed v1.2.6 · 2025-03-25 · https://bun.com/blog/bun-v1.2.6
+// @updated bun:sqlite · changed v1.2.17 · 2025-06-21 · https://bun.com/blog/bun-v1.2.17
+// @updated bun:sqlite · changed v1.2.18 · 2025-07-03 · https://bun.com/blog/bun-v1.2.18
+// @updated bun:sqlite · fixed v1.2.18 · 2025-07-03 · https://bun.com/blog/bun-v1.2.18
+// @updated bun:sqlite · changed v1.2.20 · 2025-08-10 · https://bun.com/blog/bun-v1.2.20
+// @updated bun:sqlite · changed v1.2.21 · 2025-08-25 · https://bun.com/blog/bun-v1.2.21
+// @updated bun:sqlite · fixed v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2
+// @updated bun:sqlite · changed v1.3.3 · 2025-11-21 · https://bun.com/blog/bun-v1.3.3
+// @updated bun:sqlite · fixed v1.3.4 · 2025-12-06 · https://bun.com/blog/bun-v1.3.4
+// @updated bun:sqlite · fixed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated bun:sqlite · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @verified bun:sqlite · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/sqlite
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @verified Bun.$ · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/shell
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+// @released Bun.color · released v1.1.30 · 2024-10-08 · https://bun.com/blog/bun-v1.1.30
+// @updated Bun.color · changed v1.1.30 · 2024-10-08 · https://bun.com/blog/bun-v1.1.30
+// @updated Bun.color · fixed v1.1.31 · 2024-10-18 · https://bun.com/blog/bun-v1.1.31
+// @updated Bun.color · fixed v1.1.32 · 2024-10-21 · https://bun.com/blog/bun-v1.1.32
+// @updated Bun.color · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
+// @see https://bun.com/docs/runtime/cookies#cookie-class — Bun.Cookie
+// @verified Bun.Cookie · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/cookies#cookie-class
+// @see https://bun.com/docs/runtime/cookies#cookiemap-class — Bun.CookieMap
+// @updated Bun.CookieMap · fixed v1.2.15 · 2025-05-28 · https://bun.com/blog/bun-v1.2.15
+// @updated Bun.CookieMap · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.CookieMap · fixed v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2
+// @verified Bun.CookieMap · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/cookies#cookiemap-class
+// @see https://bun.com/docs/runtime/csrf#bun-csrf-verify — Bun.CSRF.verify
+// @released Bun.CSRF.verify · released v1.2.5 · 2025-03-11 · https://bun.com/blog/bun-v1.2.5
+// @updated Bun.CSRF.verify · changed v1.2.5 · 2025-03-11 · https://bun.com/blog/bun-v1.2.5
+// @see https://bun.com/docs/runtime/utils#bun-deflatesync — Bun.deflateSync
+// @verified Bun.deflateSync · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-deflatesync
+// @see https://bun.com/docs/runtime/networking/dns#dns-getcachestats — Bun.dns.getCacheStats
+// @verified Bun.dns.getCacheStats · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/networking/dns#dns-getcachestats
+// @see https://bun.com/docs/runtime/networking/dns#dns-caching-in-bun — Bun.dns.lookup
+// @updated Bun.dns.lookup · fixed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @updated Bun.dns.lookup · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @verified Bun.dns.lookup · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/networking/dns#dns-caching-in-bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
+// @updated Bun.escapeHTML · fixed v1.0.36 · 2024-03-29 · https://bun.com/blog/bun-v1.0.36
+// @updated Bun.escapeHTML · fixed v1.1.5 · 2024-04-26 · https://bun.com/blog/bun-v1.1.5
+// @updated Bun.escapeHTML · fixed v1.1.18 · 2024-07-03 · https://bun.com/blog/bun-v1.1.18
+// @updated Bun.escapeHTML · fixed v1.1.19 · 2024-07-12 · https://bun.com/blog/bun-v1.1.19
+// @updated Bun.escapeHTML · fixed v1.1.21 · 2024-07-27 · https://bun.com/blog/bun-v1.1.21
+// @updated Bun.escapeHTML · fixed v1.1.27 · 2024-09-07 · https://bun.com/blog/bun-v1.1.27
+// @verified Bun.escapeHTML · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-escapehtml
+// @see https://bun.com/docs/runtime/utils#bun-fileurltopath — Bun.fileURLToPath
+// @updated Bun.fileURLToPath · changed v1.0.30 · 2024-03-04 · https://bun.com/blog/bun-v1.0.30
+// @verified Bun.fileURLToPath · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils
+// @see https://bun.com/docs/runtime/utils#bun-gunzipsync — Bun.gunzipSync
+// @verified Bun.gunzipSync · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-gunzipsync
+// @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
+// @verified Bun.gzipSync · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-gzipsync
+// @see https://bun.com/docs/runtime/utils#bun-inflatesync — Bun.inflateSync
+// @verified Bun.inflateSync · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-inflatesync
+// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
+// @released Bun.markdown.ansi · released v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @updated Bun.markdown.ansi · changed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @updated Bun.markdown.ansi · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
+// @updated Bun.peek · changed v1.0.19 · 2023-12-22 · https://bun.com/blog/bun-v1.0.19
+// @updated Bun.peek · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @verified Bun.peek · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-peek
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
+// @updated Bun.revision · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.revision · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-revision
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @updated Bun.sleep · changed v0.5.6 · 2023-02-09 · https://bun.com/blog/bun-v0.5.6
+// @updated Bun.sleep · changed v0.5.8 · 2023-03-18 · https://bun.com/blog/bun-v0.5.8
+// @updated Bun.sleep · fixed v1.0.34 · 2024-03-22 · https://bun.com/blog/bun-v1.0.34
+// @verified Bun.sleep · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-sleep
+// @see https://bun.com/docs/runtime/utils#bun-sleepsync — Bun.sleepSync
+// @updated Bun.sleepSync · changed v0.5.8 · 2023-03-18 · https://bun.com/blog/bun-v0.5.8
+// @verified Bun.sleepSync · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-sleepsync
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @updated Bun.spawnSync · changed v0.3.0 · 2022-12-07 · https://bun.com/blog/bun-v0.3.0
+// @updated Bun.spawnSync · changed v1.0.19 · 2023-12-22 · https://bun.com/blog/bun-v1.0.19
+// @updated Bun.spawnSync · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.spawnSync · changed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.spawnSync · fixed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.spawnSync · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
+// @updated Bun.spawnSync · fixed v1.3.10 · 2026-02-26 · https://bun.com/blog/bun-v1.3.10
+// @verified Bun.spawnSync · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync
+// @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
+// @updated Bun.stripANSI · changed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.stripANSI · fixed v1.3.10 · 2026-02-26 · https://bun.com/blog/bun-v1.3.10
+// @updated Bun.stripANSI · changed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @verified Bun.stripANSI · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-stripansi
+// @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi
+// @updated Bun.wrapAnsi · changed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
+// @updated Bun.wrapAnsi · changed v1.3.11 · 2026-03-18 · https://bun.com/blog/bun-v1.3.11
+// @updated Bun.wrapAnsi · changed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @verified Bun.wrapAnsi · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-wrapansi
+// @see https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync — Bun.zstdDecompressSync
+// @updated Bun.zstdDecompressSync · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @verified Bun.zstdDecompressSync · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync
 // @see https://bun.com/reference/bun/FileSystemRouter — Bun.FileSystemRouter
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/reference/bun/RedisClient — Bun.RedisClient
@@ -60,7 +191,7 @@
  * @see ./cli-table.ts
  */
 import { formatCliTable, toolTableVersion } from './cli-table.ts';
-import { inspectTable } from '../lib/console-depth.ts';
+import { inspectTable, logDepth } from '../lib/console-depth.ts';
 import { tomlStringify } from '../lib/toml-stringify.ts';
 
 export type ApiOneliner = {
@@ -825,7 +956,7 @@ if (import.meta.main) {
       process.exit(1);
     }
     const { result } = await runOneliner(id, { live });
-    console.log(result);
+    logDepth(result);
     process.exit(0);
   }
   if (json) {

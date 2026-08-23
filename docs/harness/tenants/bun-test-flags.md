@@ -11,6 +11,7 @@ and wiring only — no new contract suite.
 **Canonical Bun:** [test](https://bun.com/docs/test) ·
 [configuration](https://bun.com/docs/test/configuration) ·
 [reporters](https://bun.com/docs/test/reporters) ·
+[code coverage](https://bun.com/docs/test/code-coverage) ·
 [parallel / isolate](https://bun.com/docs/test/parallel) ·
 [`--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed) ·
 [debugger](https://bun.com/docs/runtime/debugger).
@@ -35,6 +36,14 @@ Example: bunfig `timeout = 10000`; `test:ci` passes `--timeout=30000` → **30s*
 Clear parent `BUN_OPTIONS` in wrappers/hooks so a shell cannot inject `--hot` /
 `--inspect` into `bun test` argv (see `bun-test-changed-staged.ts`).
 
+## Defaults (Bun 1.4)
+
+- Day-loop prefers `bun run test:changed` (and `test:watch` while iterating).
+- `bun run test` = full `tests/` tree with `--parallel`.
+- `test:ci*` = JUnit reporter + commit/CI provenance (`run-with-junit-env`).
+- `test:dots` = compact console reporter only — **not** a gate.
+- Never treat a full-suite `--dots` run as merge proof (`bun run bun:ci`).
+
 ## bunfig `[test]` (project)
 
 | Key                     | Value here                          | Notes                                   |
@@ -55,8 +64,8 @@ when needed (`test:code-quality:smol` uses `bun --smol`).
 | Flag                                      | Bun role                       | Used by (this repo)                                                                           | Not a default day-loop? |
 | ----------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------- | ----------------------- |
 | _(default console)_                       | Human reporter                 | `test`, `test:dev`, subsets                                                                   | —                       |
-| `--dots` / `--reporter=dots`              | Compact pass/fail              | **ad hoc**                                                                                    | yes — no package script |
-| `--reporter=junit` + `--reporter-outfile` | CI XML                         | `test:ci` · `test:ci:shard*` → `${JUNIT_OUT:-tmp/junit.xml}`                                  | —                       |
+| `--dots` / `--reporter=dots`              | Compact pass/fail              | `test:dots` (ad hoc)                                                                          | yes — not a gate        |
+| `--reporter=junit` + `--reporter-outfile` | CI XML                         | `test:ci` · `test:ci:shard*` via `run-with-junit-env.ts` → `${JUNIT_OUT:-tmp/junit.xml}`      | —                       |
 | GitHub Actions annotations                | Auto in GHA                    | Hosted GHA disabled for merge authority; local proof is `bun:ci`                              | —                       |
 | `-t` / `--test-name-pattern`              | Filter by name                 | `test:coverage` after exact files · direct focused `bun test` · Cursor metadata “Test Filter” | yes                     |
 | `--timeout <ms>`                          | Per-test timeout               | `test:ci*` · `test:parallel` · watch shards (30000)                                           | bunfig default 10000    |
@@ -75,21 +84,22 @@ when needed (`test:code-quality:smol` uses `bun --smol`).
 
 ## Day-loop scripts (prefer these)
 
-| Script                                            | Effective Bun shape                                      | When                                                |
-| ------------------------------------------------- | -------------------------------------------------------- | --------------------------------------------------- |
-| `bun run test`                                    | `bun test --pass-with-no-tests tests`                    | Full `tests/` tree                                  |
-| `bun run test:dev`                                | `--watch --parallel` · `tests`                           | Local iterate                                       |
-| `bun run test:watch`                              | `--changed --watch --parallel`                           | Import-graph watch                                  |
-| `bun run test:changed`                            | wrapper → `--changed` (+ `--parallel` default)           | Dirty / ref selection                               |
-| `bun run test:changed:serial`                     | wrapper `--serial`                                       | Debug race / order                                  |
-| `bun run test:parallel`                           | `--parallel --timeout=30000`                             | Throughput                                          |
-| `bun run test:isolate`                            | `--isolate --timeout=30000`                              | Global pollution debug                              |
-| `bun run test:ci`                                 | `--timeout=30000` · **junit** · all `tests/**/*.test.ts` | Local merge XML                                     |
-| `bun run test:ci:report`                          | `test:ci` then `failures:bake`                           | Failures board                                      |
-| `bun run test:coverage -- <test-file...> [flags]` | exact files · text + LCOV · `coverage/focused`           | Focused coverage; file selectors must precede flags |
-| `SHARD=2/4 bun run test:ci:shard`                 | junit + `--shard`                                        | Matrix                                              |
-| `bun run test:ci:shard:parallel`                  | `--parallel=4` + shard + junit                           | Matrix + workers                                    |
-| `bun run test:concept`                            | fixed concept-lane files                                 | Concept ownership                                   |
+| Script                                            | Effective Bun shape                                  | When                                                |
+| ------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------- |
+| `bun run test`                                    | `bun test --parallel --timeout=30000` · `tests`      | Full `tests/` tree (parallel)                       |
+| `bun run test:dev`                                | `--watch --parallel` · `tests`                       | Local iterate                                       |
+| `bun run test:watch`                              | `--changed --watch --parallel`                       | Import-graph watch                                  |
+| `bun run test:changed`                            | wrapper → `--changed` (+ `--parallel` default)       | Dirty / ref selection                               |
+| `bun run test:changed:serial`                     | wrapper `--serial`                                   | Debug race / order                                  |
+| `bun run test:parallel`                           | `--parallel --timeout=30000`                         | Throughput                                          |
+| `bun run test:isolate`                            | `--isolate --timeout=30000`                          | Global pollution debug                              |
+| `bun run test:dots`                               | `--dots` · `tests`                                   | Compact reporter only (not a gate)                  |
+| `bun run test:ci`                                 | junit + **run-with-junit-env** (`commit`/`ci` props) | Local merge XML                                     |
+| `bun run test:ci:report`                          | `test:ci` then `failures:bake`                       | Failures board                                      |
+| `bun run test:coverage -- <test-file...> [flags]` | exact files · text + LCOV · `coverage/focused`       | Focused coverage; file selectors must precede flags |
+| `SHARD=2/4 bun run test:ci:shard`                 | junit + `--shard`                                    | Matrix                                              |
+| `bun run test:ci:shard:parallel`                  | `--parallel=4` + shard + junit                       | Matrix + workers                                    |
+| `bun run test:concept`                            | fixed concept-lane files                             | Concept ownership                                   |
 
 Pre-commit: `scripts/bun-test-changed-staged.ts` (HEAD ∪ staged scratch). Escape
 only with `SKIP_TEST_CHANGED=1` **and** reason + local proof in the commit
@@ -101,25 +111,54 @@ graph is below the floor; `test:coverage` preserves that exit code.
 
 ## JUnit `<properties>` (env → XML)
 
-Set by Bun when present. Our CI script exports `GIT_SHA` when git is available:
+Upstream:
+[Environment Variables in JUnit Reports](https://bun.com/docs/test/reporters#environment-variables-in-junit-reports).
+Bun embeds these as `<properties>` when present at **`bun test` process start**
+(preload is too late). Hostname is a `<testsuite hostname>` attribute, not a
+`<property>`.
 
-| Env                                                                        | Property   | Script note              |
-| -------------------------------------------------------------------------- | ---------- | ------------------------ |
-| `GITHUB_RUN_ID` · `GITHUB_SERVER_URL` · `GITHUB_REPOSITORY` · `CI_JOB_URL` | `ci`       | Hosted GHA uncommon here |
-| `GITHUB_SHA` · `CI_COMMIT_SHA` · **`GIT_SHA`**                             | `commit`   | `test:ci` sets `GIT_SHA` |
-| hostname                                                                   | `hostname` | Automatic                |
+**Not a unified Bun “metadata” topic.** Upstream uses the word on unrelated
+pages — do not route JUnit provenance to those APIs:
+
+| Upstream “metadata”                                                                                                               | What it actually is                             | Owner here                                                        |
+| --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------- |
+| [Test reporters → JUnit `<properties>`](https://bun.com/docs/test/reporters#environment-variables-in-junit-reports)               | CI / commit / hostname stamps in XML            | this section · `ensureJunitReporterEnv` · `run-with-junit-env.ts` |
+| [Bun.Image `.metadata()`](https://bun.com/docs/runtime/image#metadata)                                                            | width / height / format without decoding pixels | `lib/image-metadata.ts` · claim image evidence                    |
+| [bun info](https://bun.com/docs/pm/cli/info) / [npm registry metadata](https://bun.com/docs/pm/cli/install#npm-registry-metadata) | package / cache registry facts                  | install / pin audit                                               |
+| [HTMLRewriter social meta](https://bun.com/guides/html-rewriter/extract-social-meta)                                              | Open Graph / share tags                         | claim `social-metadata-boundaries`                                |
+| [Markdown callback `meta`](https://bun.com/docs/runtime/markdown#callback-signature)                                              | element-specific render metadata                | markdown render call sites                                        |
+| [Bytecode](https://bun.com/docs/bundler/bytecode) / [S3 examples](https://bun.com/docs/runtime/s3)                                | module / object naming — not a metadata API     | bundler · S3 helpers                                              |
+
+| Environment variable(s)                                                    | XML             | Bun role           | FactoryWager                                                                                                                                                                               |
+| -------------------------------------------------------------------------- | --------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `GITHUB_RUN_ID` · `GITHUB_SERVER_URL` · `GITHUB_REPOSITORY` · `CI_JOB_URL` | `ci`            | CI build / job URL | Actions: leave alone. Local: [`ensureJunitReporterEnv`](../../../lib/junit-reporter-env.ts) fill-missing → `CI_JOB_URL` = commit URL (+ default `GITHUB_SERVER_URL` / `GITHUB_REPOSITORY`) |
+| `GITHUB_SHA` · `CI_COMMIT_SHA` · `GIT_SHA`                                 | `commit`        | Git commit id      | Fill-missing `GIT_SHA` via `git rev-parse HEAD` (never clobber Actions `GITHUB_SHA`)                                                                                                       |
+| _(OS hostname)_                                                            | `hostname` attr | Machine            | Automatic on `<testsuite>`                                                                                                                                                                 |
+
+**Wiring:** `test:ci` · `test:ci:shard*` run through
+[`scripts/run-with-junit-env.ts`](../../../scripts/run-with-junit-env.ts)
+(applies env, then spawns `bun test … --reporter=junit`). Outfile:
+`${JUNIT_OUT:-tmp/junit.xml}`.
+
+```bash
+# Smoke: expect <property name="commit"> and <property name="ci"> (or CI_JOB_URL-backed ci)
+JUNIT_OUT=tmp/junit-props.xml bun scripts/run-with-junit-env.ts test \
+  tests/junit-reporter-env.test.ts --reporter=junit --reporter-outfile=tmp/junit-props.xml
+rg 'property name=|hostname=' tmp/junit-props.xml
+```
 
 JUnit limits (Bun): no per-test stdout/stderr; no precise per-case timestamps.
-Use Inspector / console for live output.
+Use Inspector / console for live output. Orthogonal: `--changed` selects tests
+from git state — it does not set these properties.
 
 ## Orthogonal reporting layers
 
-| Need                     | Tool                                                                                        |
-| ------------------------ | ------------------------------------------------------------------------------------------- |
-| Human                    | default console                                                                             |
-| CI XML + failures board  | JUnit · `test:ci` · `failures:bake`                                                         |
-| Live TestReporter stream | `test:inspect` · Inspector Protocol ([test reporters](https://bun.com/docs/test/reporters)) |
-| Shape freeze             | in-process `expect` / snapshots — not a reporter                                            |
+| Need                     | Tool                                                                                                                                                                                          |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Human                    | default console                                                                                                                                                                               |
+| CI XML + failures board  | JUnit · `test:ci` · `failures:bake`                                                                                                                                                           |
+| Live TestReporter stream | `test:inspect` · Inspector Protocol ([test reporters](https://bun.com/docs/test/reporters#key-events) — event names only; payloads/soft types → [`bun-test-inspect.md`](bun-test-inspect.md)) |
+| Shape freeze             | in-process `expect` / snapshots — not a reporter                                                                                                                                              |
 
 ## Ad hoc recipes
 
@@ -127,9 +166,18 @@ Use Inspector / console for live output.
 # Focus one test by name
 bun test tests/console-depth.test.ts -t "bun run - stdin"
 
-# Focus coverage on exact files (the wrapper owns reporters and output)
+# Coverage — upstream Bun shape (code-coverage docs):
+#   bun test --coverage src/components/*.test.ts
+#   bun test --coverage --test-name-pattern="API"
+# At repo root those are hazardous: no src/components tree, and name-only
+# coverage walks the full discovery set against bunfig coverageThreshold.
+#
+# Prefer the focused wrapper (exact tests/ files first; owns --coverage +
+# text/LCOV under coverage/focused):
 bun run test:coverage -- tests/model-circuit-contracts.test.ts
 bun run test:coverage -- tests/limit-betlog-export.test.ts --test-name-pattern="API"
+# Ad hoc raw equivalent (no wrapper outfile contract):
+# bun test --coverage tests/limit-betlog-export.test.ts --test-name-pattern="API"
 
 # Fail fast while iterating a suite
 bun test tests/wire-boundary-policy.test.ts --bail=1

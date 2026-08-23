@@ -61,3 +61,15 @@ export {
   type CliOutMode,
   type CliOutOptions,
 } from './out.ts';
+export {
+  QUEUE_LANE_STAT_KEYS,
+  QUEUE_LANE_TABLE_KEYS,
+  QueueLaneStatus,
+  QueueLaneStatusReport,
+  queueLaneStatKeys,
+  logQueueLaneStatus,
+  type QueueLaneStatKey,
+  type QueueLaneTableKey,
+  type QueueLaneTotals,
+  type QueueLaneStatusReportJson,
+} from './queue-lane-status.ts';
