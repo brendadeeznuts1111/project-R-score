@@ -11,6 +11,7 @@ and wiring only — no new contract suite.
 **Canonical Bun:** [test](https://bun.com/docs/test) ·
 [configuration](https://bun.com/docs/test/configuration) ·
 [reporters](https://bun.com/docs/test/reporters) ·
+[code coverage](https://bun.com/docs/test/code-coverage) ·
 [parallel / isolate](https://bun.com/docs/test/parallel) ·
 [`--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed) ·
 [debugger](https://bun.com/docs/runtime/debugger).
