@@ -36,6 +36,14 @@ Example: bunfig `timeout = 10000`; `test:ci` passes `--timeout=30000` → **30s*
 Clear parent `BUN_OPTIONS` in wrappers/hooks so a shell cannot inject `--hot` /
 `--inspect` into `bun test` argv (see `bun-test-changed-staged.ts`).
 
+## Defaults (Bun 1.4)
+
+- Day-loop prefers `bun run test:changed` (and `test:watch` while iterating).
+- `bun run test` = full `tests/` tree with `--parallel`.
+- `test:ci*` = JUnit reporter + commit/CI provenance (`run-with-junit-env`).
+- `test:dots` = compact console reporter only — **not** a gate.
+- Never treat a full-suite `--dots` run as merge proof (`bun run bun:ci`).
+
 ## bunfig `[test]` (project)
 
 | Key                     | Value here                          | Notes                                   |
@@ -56,7 +64,7 @@ when needed (`test:code-quality:smol` uses `bun --smol`).
 | Flag                                      | Bun role                       | Used by (this repo)                                                                           | Not a default day-loop? |
 | ----------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------- | ----------------------- |
 | _(default console)_                       | Human reporter                 | `test`, `test:dev`, subsets                                                                   | —                       |
-| `--dots` / `--reporter=dots`              | Compact pass/fail              | **ad hoc**                                                                                    | yes — no package script |
+| `--dots` / `--reporter=dots`              | Compact pass/fail              | `test:dots` (ad hoc)                                                                          | yes — not a gate        |
 | `--reporter=junit` + `--reporter-outfile` | CI XML                         | `test:ci` · `test:ci:shard*` via `run-with-junit-env.ts` → `${JUNIT_OUT:-tmp/junit.xml}`      | —                       |
 | GitHub Actions annotations                | Auto in GHA                    | Hosted GHA disabled for merge authority; local proof is `bun:ci`                              | —                       |
 | `-t` / `--test-name-pattern`              | Filter by name                 | `test:coverage` after exact files · direct focused `bun test` · Cursor metadata “Test Filter” | yes                     |
@@ -78,13 +86,14 @@ when needed (`test:code-quality:smol` uses `bun --smol`).
 
 | Script                                            | Effective Bun shape                                  | When                                                |
 | ------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------- |
-| `bun run test`                                    | `bun test --pass-with-no-tests tests`                | Full `tests/` tree                                  |
+| `bun run test`                                    | `bun test --parallel --timeout=30000` · `tests`      | Full `tests/` tree (parallel)                       |
 | `bun run test:dev`                                | `--watch --parallel` · `tests`                       | Local iterate                                       |
 | `bun run test:watch`                              | `--changed --watch --parallel`                       | Import-graph watch                                  |
 | `bun run test:changed`                            | wrapper → `--changed` (+ `--parallel` default)       | Dirty / ref selection                               |
 | `bun run test:changed:serial`                     | wrapper `--serial`                                   | Debug race / order                                  |
 | `bun run test:parallel`                           | `--parallel --timeout=30000`                         | Throughput                                          |
 | `bun run test:isolate`                            | `--isolate --timeout=30000`                          | Global pollution debug                              |
+| `bun run test:dots`                               | `--dots` · `tests`                                   | Compact reporter only (not a gate)                  |
 | `bun run test:ci`                                 | junit + **run-with-junit-env** (`commit`/`ci` props) | Local merge XML                                     |
 | `bun run test:ci:report`                          | `test:ci` then `failures:bake`                       | Failures board                                      |
 | `bun run test:coverage -- <test-file...> [flags]` | exact files · text + LCOV · `coverage/focused`       | Focused coverage; file selectors must precede flags |

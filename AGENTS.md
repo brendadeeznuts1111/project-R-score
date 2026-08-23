@@ -63,9 +63,10 @@ contract is [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md).
   Ignore foreign root directories; do not delete them to satisfy hygiene.
 - **Use repository quality tools.** Root quality uses pinned Prettier and
   ESLint. Nested standalone products may keep their explicitly pinned tools.
-- **Use Bun's test lanes.** Development uses `bun run test:watch`; staged gates
-  run before commit; `bun run bun:ci` is merge proof. Do not introduce
-  `bun-git-hooks` or Node-only flags such as `--runInBand`.
+- **Use Bun's test lanes.** Development prefers `bun run test:changed` /
+  `test:watch` over bare `bun test --dots`; staged gates run before commit;
+  `bun run bun:ci` is merge proof. Do not introduce `bun-git-hooks` or
+  Node-only flags such as `--runInBand`.
 - **Deliver through a PR.** `main` is squash-only and branch-protected. Keep all
   headings from [the PR template](.github/pull_request_template.md) and run
   `bun run bun:ci` before merge. Hosted Actions are not merge authority.

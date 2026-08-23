@@ -1,6 +1,6 @@
 # Harness day-loop scripts
 
-FactoryWager’s **day loop** is the local (and CI-adjacent) cycle that keeps the spine healthy: type-check, affected builds/tests, import-graph `bun test --changed`, optional isolate/parallel/shard, then fast harness before push.
+FactoryWager’s **day loop** is the local (and CI-adjacent) cycle that keeps the spine healthy: type-check, affected builds/tests, import-graph `bun test --changed`, optional isolate/parallel/shard, then fast harness before push. Default iterate is `bun run test:changed` / `test:watch`; full `bun run test` is the parallel full `tests/` tree — not a `--dots` merge proof.
 
 This is **not** Bun upstream’s CI. It lives in this repo under [`docs/harness/`](./README.md).
 
