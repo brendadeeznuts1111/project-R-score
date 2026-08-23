@@ -74,4 +74,15 @@ export {
   section,
   type CliOutMode,
   type CliOutOptions,
+  // queue / worker lane snapshots (not git lane-status)
+  QUEUE_LANE_STAT_KEYS,
+  QUEUE_LANE_TABLE_KEYS,
+  QueueLaneStatus,
+  QueueLaneStatusReport,
+  queueLaneStatKeys,
+  logQueueLaneStatus,
+  type QueueLaneStatKey,
+  type QueueLaneTableKey,
+  type QueueLaneTotals,
+  type QueueLaneStatusReportJson,
 } from './console/index.ts';

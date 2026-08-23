@@ -92,12 +92,17 @@ Import from `lib/console` (preferred for new code) or `lib/console-depth`
 | **`cliOut`** / `formatCliOut`                             | Dual-mode human/json (advanced CLI pattern)                            |
 | `fitVisible` / `padEndWidth` / `truncateWidth`            | Visible-column layout                                                  |
 | `frameBlock` / `kvLines` / `columnTable`                  | Doctor / portal chrome                                                 |
-| `inspectCustom`                                           | `Bun.inspect.custom`                                                   |
+| `inspectCustom`                                           | `Bun.inspect.custom` (`=== Symbol.for("nodejs.util.inspect.custom")`)  |
+| `QueueLaneStatusReport` / `logQueueLaneStatus`            | Queue/worker stats table (not git `lane:status`)                       |
 | `padEndWidth` / `truncateWidth` / `fitVisible`            | Layout over `stringWidth` / `sliceAnsi`                                |
 | `termWidth`                                               | `process.stdout.columns ?? 80`                                         |
 
 TTY primitives (not re-exported):  
 `import { stringWidth, stripANSI, wrapAnsi, sliceAnsi } from 'bun'`.
+
+**Collections:** put `[inspectCustom]` on a Report wrapper that calls
+`inspectTable(rows, columns)`, not on every row. Row types stay plain enumerable
+fields so `Bun.inspect.table` can project columns.
 
 ## Prefer / avoid
 
