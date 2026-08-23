@@ -294,6 +294,7 @@ config/*
 !config/subdomains.json
 !config/images.toml
 !config/runtime-flags.json
+!config/project-r-agent-contract.json
 !config/scraper-targets.ts
 !config/scrape-agents.toml
 !config/onboarding-defaults.toml
@@ -408,6 +409,11 @@ projects/archive/lazycodex/
 /.worktrees/
 /.codex-worktrees/
 herdr-worktrees/
+# Grok Bot: App Support symlink + nested worktree checkouts (own remote)
+/grokbot
+/grokbot-bun-1.4-audit/
+/grokbot-bun-1.4-status/
+/grokbot-control-research/
 /~/
 /index.html
 /index.ts
@@ -445,6 +451,10 @@ artifacts/reports/
 /toc-ops-repo-wt-brand-ship/
 /toc-ops-worktrees/
 /stream-deck-neo/
+/PPH-Ops-Console/
+/domain-registry-parity-harness/
+# Local portal scaffold (no nested .git yet) — park until own remote/PR
+/agentonboarding-portal/
 examples/demos/alchemy-tutorial/
 examples/mega-liner-v7/
 examples/mega-liner-v8/
