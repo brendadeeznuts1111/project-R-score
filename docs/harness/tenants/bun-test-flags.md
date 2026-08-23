@@ -143,12 +143,12 @@ from git state — it does not set these properties.
 
 ## Orthogonal reporting layers
 
-| Need                     | Tool                                                                                        |
-| ------------------------ | ------------------------------------------------------------------------------------------- |
-| Human                    | default console                                                                             |
-| CI XML + failures board  | JUnit · `test:ci` · `failures:bake`                                                         |
-| Live TestReporter stream | `test:inspect` · Inspector Protocol ([test reporters](https://bun.com/docs/test/reporters)) |
-| Shape freeze             | in-process `expect` / snapshots — not a reporter                                            |
+| Need                     | Tool                                                                                                                                                                                          |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Human                    | default console                                                                                                                                                                               |
+| CI XML + failures board  | JUnit · `test:ci` · `failures:bake`                                                                                                                                                           |
+| Live TestReporter stream | `test:inspect` · Inspector Protocol ([test reporters](https://bun.com/docs/test/reporters#key-events) — event names only; payloads/soft types → [`bun-test-inspect.md`](bun-test-inspect.md)) |
+| Shape freeze             | in-process `expect` / snapshots — not a reporter                                                                                                                                              |
 
 ## Ad hoc recipes
 
