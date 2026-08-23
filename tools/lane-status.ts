@@ -104,6 +104,11 @@ export type LaneReport = {
     stagedFiles: string[];
     bakeDriftFiles: string[];
   };
+  /** Local `main` tip vs `origin/main` — independent of current checkout branch. */
+  localMain: {
+    aheadOfOriginMain: number;
+    behindOriginMain: number;
+  };
   worktrees: Array<{
     path: string;
     branch: string;
@@ -172,13 +177,21 @@ export function areaOf(path: string): string {
   return 'other';
 }
 
-export function healthOf(report: Pick<LaneReport, 'primary'>): LaneHealth {
+export function healthOf(report: Pick<LaneReport, 'primary' | 'localMain'>): LaneHealth {
   const { branch, behindOriginMain, dirtyTotal, bakeDriftFiles } = report.primary;
+  // Unpushed local main poisons stacked PRs (soft-reset residue / conflict hell).
+  if ((report.localMain?.aheadOfOriginMain ?? 0) > 0) return 'fail';
   if (behindOriginMain > 0 && branch === 'main') return 'fail';
+  if (aheadOnMainCheckout(report)) return 'fail';
   if (bakeDriftFiles.length > 0) return 'warn';
   if (dirtyTotal > 0) return 'warn';
   if (branch && branch !== 'main') return 'warn';
   return 'ok';
+}
+
+function aheadOnMainCheckout(report: Pick<LaneReport, 'primary'>): boolean {
+  const { branch, aheadOfOriginMain } = report.primary;
+  return branch === 'main' && aheadOfOriginMain > 0;
 }
 
 export function nextFireIso(every: string, tz: string, from: number = Date.now()): string | null {
@@ -239,6 +252,14 @@ export async function collectReport(
   const ahead = Number(counts[0] ?? 0);
   const behind = Number(counts[1] ?? 0);
 
+  const mainCounts = git(['rev-list', '--left-right', '--count', 'main...origin/main'], root).split(
+    /\s+/
+  );
+  const localMain = {
+    aheadOfOriginMain: Number(mainCounts[0] ?? 0),
+    behindOriginMain: Number(mainCounts[1] ?? 0),
+  };
+
   const primaryDirty = dirtyEntriesSync(root);
   const dirtyByArea: Record<string, number> = {};
   const dirtyFiles = primaryDirty.map(d => {
@@ -290,6 +311,7 @@ export async function collectReport(
 
   const report: LaneReport = {
     primary,
+    localMain,
     worktrees,
     mergedBranches,
     meta: {
@@ -364,6 +386,8 @@ function printCount(report: LaneReport): void {
       `staged=${primary.stagedFiles.length}`,
       `ahead=${primary.aheadOfOriginMain}`,
       `behind=${primary.behindOriginMain}`,
+      `mainAhead=${report.localMain.aheadOfOriginMain}`,
+      `mainBehind=${report.localMain.behindOriginMain}`,
       `worktrees=${meta.worktreeTotal}`,
       `wtDirty=${meta.worktreeDirty}`,
       `wtStale=${meta.worktreeStale}`,
@@ -431,6 +455,19 @@ function printHuman(report: LaneReport, opts: LaneCliOpts): void {
       areas,
     },
   ]);
+
+  if (report.localMain.aheadOfOriginMain > 0 || report.localMain.behindOriginMain > 0) {
+    console.info(
+      statusLine(
+        'local main',
+        `ahead=${report.localMain.aheadOfOriginMain} behind=${report.localMain.behindOriginMain}` +
+          (report.localMain.aheadOfOriginMain > 0
+            ? ` · fix: bun run sync:main  (from main; backs up unpushed tip)`
+            : ''),
+        report.localMain.aheadOfOriginMain > 0 ? 'fail' : 'warn'
+      )
+    );
+  }
 
   if (primary.stagedFiles.length > 0) {
     console.info(statusLine('staged', primary.stagedFiles.join(', ')));

@@ -22,7 +22,10 @@ describe('lane-status areaOf', () => {
 });
 
 describe('lane-status healthOf', () => {
-  const base = (over: Partial<LaneReport['primary']>): Pick<LaneReport, 'primary'> => ({
+  const base = (
+    over: Partial<LaneReport['primary']>,
+    localMain: Partial<LaneReport['localMain']> = {}
+  ): Pick<LaneReport, 'primary' | 'localMain'> => ({
     primary: {
       path: '/tmp',
       branch: 'main',
@@ -36,6 +39,11 @@ describe('lane-status healthOf', () => {
       bakeDriftFiles: [],
       ...over,
     },
+    localMain: {
+      aheadOfOriginMain: 0,
+      behindOriginMain: 0,
+      ...localMain,
+    },
   });
 
   test('ok when clean on main', () => {
@@ -44,6 +52,14 @@ describe('lane-status healthOf', () => {
 
   test('fail when main is behind origin', () => {
     expect(healthOf(base({ behindOriginMain: 2 }))).toBe('fail');
+  });
+
+  test('fail when checkout main is ahead of origin', () => {
+    expect(healthOf(base({ aheadOfOriginMain: 3 }))).toBe('fail');
+  });
+
+  test('fail when local main ref is ahead (even on a feature branch)', () => {
+    expect(healthOf(base({ branch: 'feat/x' }, { aheadOfOriginMain: 14 }))).toBe('fail');
   });
 
   test('warn when dirty or bake drift', () => {
