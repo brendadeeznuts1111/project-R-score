@@ -409,6 +409,9 @@ projects/archive/lazycodex/
 /.worktrees/
 /.codex-worktrees/
 herdr-worktrees/
+# Grok Bot: App Support symlink + nested worktree checkouts (own remote)
+/grokbot
+/grokbot-bun-1.4-audit/
 /~/
 /index.html
 /index.ts
@@ -446,6 +449,10 @@ artifacts/reports/
 /toc-ops-repo-wt-brand-ship/
 /toc-ops-worktrees/
 /stream-deck-neo/
+/PPH-Ops-Console/
+/domain-registry-parity-harness/
+# Local portal scaffold (no nested .git yet) — park until own remote/PR
+/agentonboarding-portal/
 examples/demos/alchemy-tutorial/
 examples/mega-liner-v7/
 examples/mega-liner-v8/
