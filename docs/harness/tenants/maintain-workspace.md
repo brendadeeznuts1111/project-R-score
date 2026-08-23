@@ -94,6 +94,8 @@ bun run bun:ci
 
 # After squash-merge (prefer Bun tool — backs up unpushed tip + clears soft-reset residue)
 bun run sync:main
+bun run sync:main -- --dry-run   # still fetches origin/main; prints plan only
+bun run sync:main -- --json      # machine-readable plan/result
 # Legacy alias `git sync-main` is soft-reset only and leaves staged residue; avoid it.
 ```
 

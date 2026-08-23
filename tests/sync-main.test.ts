@@ -1,17 +1,15 @@
 import { describe, expect, test } from 'bun:test';
-import {
-  backupBranchName,
-  guardSyncMainArgv,
-  parseSyncMainOpts,
-} from '../tools/sync-main.ts';
+import { SYNC_MAIN_ALLOWED_LONG } from '../lib/docs/ref-id-tool-flags.ts';
+import { backupBranchName, parseSyncMainOpts } from '../tools/sync-main.ts';
 
 describe('sync-main parseSyncMainOpts', () => {
-  test('parses dry-run / force / yes / help', () => {
-    const opts = parseSyncMainOpts(['--dry-run', '--force', '--yes', '--help']);
+  test('parses dry-run / force / yes / help / json', () => {
+    const opts = parseSyncMainOpts(['--dry-run', '--force', '--yes', '--help', '--json']);
     expect(opts.dryRun).toBe(true);
     expect(opts.force).toBe(true);
     expect(opts.yes).toBe(true);
     expect(opts.help).toBe(true);
+    expect(opts.json).toBe(true);
   });
 
   test('accepts -y and -h', () => {
@@ -19,18 +17,17 @@ describe('sync-main parseSyncMainOpts', () => {
       dryRun: false,
       force: false,
       help: true,
+      json: false,
       yes: true,
     });
   });
 });
 
-describe('sync-main guardSyncMainArgv', () => {
-  test('allows known flags', () => {
-    expect(guardSyncMainArgv(['--dry-run', '--yes'])).toEqual(['--dry-run', '--yes']);
-  });
-
-  test('rejects unknown long options', () => {
-    expect(() => guardSyncMainArgv(['--typo'])).toThrow(/Unknown long option/);
+describe('sync-main allowlist', () => {
+  test('registry export matches SYNC_MAIN_ALLOWED_LONG', () => {
+    expect([...SYNC_MAIN_ALLOWED_LONG].sort()).toEqual(
+      ['dry-run', 'force', 'help', 'json', 'yes'].sort()
+    );
   });
 });
 
