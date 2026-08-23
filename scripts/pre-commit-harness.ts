@@ -413,12 +413,12 @@ async function main(): Promise<void> {
         timings
       );
       if (syntaxCode !== 0) {
-        console.error(
-          '❌ Active project source contains syntax errors\n' +
-            `   bun tools/bun-doc-refs.ts syntax ${projectSourceFiles.join(' ')}`
-        );
-        await writeTimings(timings, full);
-        process.exit(1);
+        await failGate(timings, full, {
+          title: 'Projects syntax',
+          gate: 'projects-syntax',
+          why: 'Active project source contains syntax errors',
+          fix: `bun tools/bun-doc-refs.ts syntax ${projectSourceFiles.join(' ')}`,
+        });
       }
 
       console.info(`🔬 Bun API drift (${projectSourceFiles.length} staged source file(s))...`);
@@ -428,12 +428,12 @@ async function main(): Promise<void> {
         timings
       );
       if (driftCode !== 0) {
-        console.error(
-          '❌ Staged project source uses an API absent from the installed Bun runtime\n' +
-            `   bun tools/bun-api-drift.ts --max=0 ${projectSourceFiles.join(' ')}`
-        );
-        await writeTimings(timings, full);
-        process.exit(1);
+        await failGate(timings, full, {
+          title: 'Projects Bun API drift',
+          gate: 'projects-bun-api-drift',
+          why: 'Staged project source uses an API absent from the installed Bun runtime',
+          fix: `bun tools/bun-api-drift.ts --max=0 ${projectSourceFiles.join(' ')}`,
+        });
       }
     }
   }
