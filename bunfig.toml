@@ -56,11 +56,15 @@ frozenLockfile = true
 #   --changed[=REF] import-graph filter (wrapper: bun run test:changed)
 #
 # Day-loop (Bun-native selection — no custom git-ls invent):
+#   bun run test             # default: --parallel (Bun 1.4 day-loop)
+#   bun run test:dots        # reporter-only (--dots); not a speed/isolation switch
 #   bun run test:dev          # --watch (import-graph / file watchers)
 #   bun run test:changed      # wrapper → bun test --changed (+ parallel)
 #   bun run test:concept      # concept-lane subset
 #   bun run test:parallel | test:isolate | SHARD=1/4 bun run test:ci:shard
-#   bun run test:ci           # junit under tests/ only
+#   bun run test:ci           # junit under tests/ only via run-with-junit-env
+# Do not set [test.reporter] junit here — test:ci owns junit through
+# scripts/run-with-junit-env.ts (CLI --reporter=junit + outfile).
 # Flag × script matrix: docs/harness/tenants/bun-test-flags.md
 # Pre-commit uses scripts/bun-test-changed-staged.ts (HEAD ∪ staged scratch)
 # so foreign worktree dirt cannot block your commit — not SKIP_TEST_CHANGED by default.
