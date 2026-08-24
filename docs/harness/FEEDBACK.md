@@ -22,12 +22,9 @@ Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affec
 
 ## Upstream Bun feedback boundary
 
-[`bun feedback`](https://bun.com/docs/feedback) sends an external report to
-Bun. It is an operator action, never an automated harness, template, test, CI,
-or agent action. Before sending one, prepare a minimal reproduction with
-`bun --version`, expected/actual behavior, and reviewed non-secret inputs.
-`bun feedback --email <address>` is optional; the recipient is never inferred
-from repository configuration.
+`bun feedback` was **removed in Bun 1.4.0** ([#38444](https://bun.com/blog/bun-v1.4#other-behavior-changes)). Do not call it from scaffolds, tests, CI, or agents. File Bun issues via GitHub / Discord with a minimal reproduction (`bun --version`, expected/actual, non-secret inputs).
+
+This page is about **harness feedback → ratchet** (lessons), not the removed CLI.
 
 ## Promote
 

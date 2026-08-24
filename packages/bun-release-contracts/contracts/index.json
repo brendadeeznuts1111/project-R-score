@@ -2,11 +2,20 @@
   "schemaVersion": 1,
   "runtime": "bun",
   "counts": {
-    "releases": 5,
-    "planned": 949,
-    "executable": 14
+    "releases": 6,
+    "planned": 2747,
+    "executable": 117
   },
   "releases": [
+    {
+      "releaseVersion": "1.4.0",
+      "sourceUrl": "https://bun.com/blog/bun-v1.4.0",
+      "file": "bun-v1.4.0.json",
+      "counts": {
+        "planned": 1798,
+        "executable": 103
+      }
+    },
     {
       "releaseVersion": "1.3.14",
       "sourceUrl": "https://bun.com/blog/bun-v1.3.14",
