@@ -270,6 +270,7 @@ describe('Bun release inventory generator', () => {
   test('selects stable release posts from RSS and builds a deterministic catalog', () => {
     const feed = parseReleaseFeed(RSS_FIXTURE);
     expect(feed.map(entry => entry.version)).toEqual(['1.4.0', '1.3.14', '1.3.13']);
+    expect(feed[0]!.publishedAt).toBe('2026-08-20T00:53:44.000Z');
     expect(selectReleaseFeedEntries(feed, { since: '1.3.14' })).toHaveLength(2);
     expect(selectReleaseFeedEntries(feed, { limit: 1 })[0]?.version).toBe('1.4.0');
 

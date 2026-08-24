@@ -54,6 +54,9 @@ describe('bun-docs-release-index', () => {
   test('normalizeReleaseVersion expands minor and prefers URL', () => {
     expect(normalizeReleaseVersion('Bun 1.3', 'https://bun.com/blog/bun-v1.3')).toBe('1.3.0');
     expect(normalizeReleaseVersion('Bun 1.4', 'https://bun.com/blog/bun-v1.4')).toBe('1.4.0');
+    expect(
+      normalizeReleaseVersion('ignored', 'https://bun.com/blog/release-notes/bun-v1.4.0')
+    ).toBe('1.4.0');
     expect(normalizeReleaseVersion('Bun v0.5', 'https://bun.com/blog/bun-v0.5.0')).toBe('0.5.0');
   });
 

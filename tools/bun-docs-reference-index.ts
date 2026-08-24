@@ -151,7 +151,11 @@ export async function fetchReferenceHtml(opts?: {
 
   let res: Response;
   try {
-    res = await fetch(REFERENCE_URL, { headers });
+    res = await fetch(REFERENCE_URL, {
+      headers,
+      // Same hang class as RSS: stalled CDN must not block `docs:feeds refresh`.
+      signal: AbortSignal.timeout(20_000),
+    });
   } catch (err) {
     if (await Bun.file(CACHE_HTML_PATH).exists()) {
       const html = await Bun.file(CACHE_HTML_PATH).text();
