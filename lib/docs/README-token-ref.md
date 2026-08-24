@@ -1,7 +1,7 @@
 # TokenRef / BunToken — Bun documentation token plane
 
-Token is the **agent export / `@see` research channel**. Catalog is a different
-plane: the materialized bake that adapters read. See operate planes in
+**Token** is the agent export / `@see` research plane. **Catalog** is a
+different plane (materialized bake that adapters read). Operate map:
 [`docs/BUN_DOCS_OPERATE.md`](../../docs/BUN_DOCS_OPERATE.md).
 
 ## Two layers (within token)
@@ -9,10 +9,12 @@ plane: the materialized bake that adapters read. See operate planes in
 | Layer                                           | Role                                                                              |
 | ----------------------------------------------- | --------------------------------------------------------------------------------- |
 | **TokenRef** ([`token-ref.ts`](./token-ref.ts)) | Interior harness — branded `DocTokenId`, provenance, `allPages`, fine `TokenKind` |
-| **BunToken** ([`bun-token.ts`](./bun-token.ts)) | **Agent export contract** — timeline-aware, no scrape nicknames                   |
+| **BunToken** ([`bun-token.ts`](./bun-token.ts)) | Agent export contract — timeline-aware, no scrape nicknames                       |
 
 ```text
-DocCatalogEntry (catalog plane) → TokenRef (internal) → BunToken (suggest / export / JSON Schema)
+DocCatalogEntry (catalog plane)
+  → TokenRef (internal)
+  → BunToken (suggest / export / JSON Schema)
 ```
 
 ## BunToken (public)
@@ -31,20 +33,21 @@ DocCatalogEntry (catalog plane) → TokenRef (internal) → BunToken (suggest / 
 | `related`         | Graph neighbors                                                                 |
 | `meta`            | `buildPin` · `sourceCommit` · `lastVerified`                                    |
 
-**Schemas:** [`bun-token.schema.json`](./bun-token.schema.json) ·
-[`token-ref.schema.json`](./token-ref.schema.json)
-
-**Adapters:** [`token-ref-adapter.ts`](./token-ref-adapter.ts)
-
-**Locus:** [`locus-resolve.ts`](./locus-resolve.ts)
-
-**Operate:** [`docs/BUN_DOCS_OPERATE.md`](../../docs/BUN_DOCS_OPERATE.md)
+| Concern   | Path                                                                                  |
+| --------- | ------------------------------------------------------------------------------------- |
+| Schemas   | [`bun-token.schema.json`](./bun-token.schema.json) · [`token-ref.schema.json`](./token-ref.schema.json) |
+| Adapters  | [`token-ref-adapter.ts`](./token-ref-adapter.ts)                                      |
+| Locus     | [`locus-resolve.ts`](./locus-resolve.ts)                                              |
+| Operate   | [`docs/BUN_DOCS_OPERATE.md`](../../docs/BUN_DOCS_OPERATE.md)                          |
 
 ```bash
-bun tools/bun-doc-refs.ts suggest Bun.cron          # BunToken-shaped output
-bun tools/bun-docs-catalog.ts export                # BunToken JSON
-bun tools/bun-docs-catalog.ts export --jsonl        # BunToken JSONL
-bun run docs:catalog:export                         # thin TSV (--compact)
+# Token plane
+bun tools/bun-doc-refs.ts suggest Bun.cron         # BunToken-shaped output
 bun tools/bun-doc-refs.ts history Bun.cron --json  # dated release/update provenance
-bun run docs:provenance:check                       # reject incomplete recorded events
+bun run docs:provenance:check                      # reject incomplete recorded events
+
+# Catalog plane (bake → BunToken export)
+bun tools/bun-docs-catalog.ts export               # BunToken JSON
+bun tools/bun-docs-catalog.ts export --jsonl       # BunToken JSONL
+bun run docs:catalog:export                        # thin TSV (--compact)
 ```

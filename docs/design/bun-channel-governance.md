@@ -1,6 +1,6 @@
 # Bun channel and type governance
 
-Status: implementation contract (2026-08-05)
+Status: implementation contract (2026-08-23)
 
 ## Outcome
 
@@ -24,15 +24,18 @@ local manifests ─────┤                            ├─ check/CI ex
 installed runtime ───┘                            └─ optional derived artifact
 ```
 
-- `bun-blog` (`sources.blog`) is reachability of the marketing HTML index.
-  Outages are informational (research-only); they do not degrade channel check
-  exit status.
-- `bun-rss` (`sources.rss`) is the dated publication feed used for stable-version
-  corroboration (with GitHub Atom). Docs ingestion and release-contract generation
-  share a separate parse/canonicalize path under `lib/docs/` (`bun-rss.ts` +
-  `bun-blog-url.ts`) — see [`BUN_DOCS_OPERATE.md`](../BUN_DOCS_OPERATE.md) and
-  [`packages/bun-release-contracts/README.md`](../../packages/bun-release-contracts/README.md).
-  Do not treat channel-doctor status JSON as the docs RSS index.
+| Observation   | TOML key / source     | Role                                                              | Outage kind      |
+| ------------- | --------------------- | ----------------------------------------------------------------- | ---------------- |
+| `bun-blog`    | `sources.blog`        | Marketing HTML index reachability (research only)                 | informational    |
+| `bun-rss`     | `sources.rss`         | Dated publication feed; stable-version corroboration              | source-error     |
+| `github-atom` | `sources.atom`        | Independent release-event signal                                  | source-error     |
+| `github-tip`  | `sources.tip_api`     | Upstream tip vs reviewed pinned-tip (never promotion authority)   | informational    |
+
+Docs ingestion and release-contract generation share a separate
+parse/canonicalize path under `lib/docs/` (`bun-rss.ts` + `bun-blog-url.ts`) —
+see [`BUN_DOCS_OPERATE.md`](../BUN_DOCS_OPERATE.md) and
+[`packages/bun-release-contracts/README.md`](../../packages/bun-release-contracts/README.md).
+Do not treat channel-doctor status JSON as the docs RSS index.
 
 ## Canonical policy
 
@@ -82,19 +85,16 @@ active agent session.
 
 ## Source interpretation
 
-- The stable updater API determines the latest stable runtime version.
-- The rolling `canary` release remains an observed upstream signal.
-- The Bun `main` commit endpoint reports promotion drift from the reviewed
-  pinned-tip; it does not invalidate that pin.
-- The Bun blog index proves the marketing HTML surface is reachable; it is not a
-  release-version feed.
-- RSS proves that the stable release was announced on Bun's publication feed.
-- GitHub Atom is an independent release-event signal; prerelease/consolidation
-  entries are observations, not automatic promotion authority.
-- npm dist-tags determine whether the pinned wrapper and declaration versions
-  match their selected channels.
-- `.bun-version`, `packageManager`, `engines.bun`, catalog pins, the lockfile,
-  and the executing Bun version/revision are local evidence.
+| Signal              | Meaning                                                                                          |
+| ------------------- | ------------------------------------------------------------------------------------------------ |
+| Stable updater API  | Latest stable runtime version                                                                    |
+| Rolling canary      | Observed upstream signal                                                                         |
+| `main` tip commit   | Promotion drift vs reviewed pinned-tip; does not invalidate the pin                              |
+| Blog index (`blog`) | Marketing HTML reachable; not a release-version feed                                             |
+| RSS (`rss`)         | Stable release announced on Bun's publication feed                                               |
+| GitHub Atom         | Independent release-event signal; prerelease/consolidation is not promotion authority            |
+| npm dist-tags       | Wrapper / declaration pins match selected channels                                               |
+| Local evidence      | `.bun-version`, `packageManager`, `engines.bun`, catalog, lockfile, executing version/revision |
 
 A source outage is reported separately from version drift. Missing evidence is
 never interpreted as permission to upgrade or as proof that a pin is current.
