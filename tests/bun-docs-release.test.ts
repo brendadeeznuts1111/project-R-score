@@ -91,7 +91,32 @@ describe('bun-docs-release-index', () => {
         ...file,
         entries: [{ ...entries[0]!, version: '1.3.14' }, entries[1]!, entries[2]!],
       })
-    ).toThrow('title/url version does not match');
+    ).toThrow('url is not an official Bun release post');
+  });
+
+  test('parseReleaseIndexFile accepts release-notes URLs and rewrites to marketing form', () => {
+    const entry = {
+      version: '1.4.0',
+      title: 'Bun 1.4',
+      url: 'https://bun.com/blog/release-notes/bun-v1.4.0',
+      guid: 'https://bun.com/blog/release-notes/bun-v1.4.0',
+      pubDate: '2026-08-20T00:53:44.000Z',
+    };
+    const parsed = parseReleaseIndexFile({
+      generated: '2026-08-20T00:00:00.000Z',
+      source: 'https://bun.com/rss.xml',
+      count: 1,
+      entries: [entry],
+    });
+    expect(parsed.entries[0]!.url).toBe('https://bun.com/blog/bun-v1.4');
+    expect(
+      parseReleaseIndexFile({
+        generated: '2026-08-20T00:00:00.000Z',
+        source: 'https://bun.com/rss.xml',
+        count: 1,
+        entries: [{ ...entry, url: 'https://bun.com/blog/bun-v1.4.0' }],
+      }).entries[0]!.url
+    ).toBe('https://bun.com/blog/bun-v1.4');
   });
 
   test('lookupBlogUrl exact and minor fallback', () => {
@@ -366,6 +391,23 @@ describe('bun-docs-release-scrape', () => {
         ],
       })
     ).toThrow('url does not match version');
+    expect(
+      parseReleaseOverlayFile({
+        ...overlay,
+        entries: [
+          {
+            ...overlay.entries[0]!,
+            hits: [
+              {
+                ...overlay.entries[0]!.hits[0]!,
+                version: '1.4.0',
+                url: 'https://bun.com/blog/release-notes/bun-v1.4.0',
+              },
+            ],
+          },
+        ],
+      }).entries[0]!.hits[0]!.url
+    ).toBe('https://bun.com/blog/bun-v1.4');
   });
 
   test('matchCatalogTokenWithAliases resolves scrape alias map', () => {

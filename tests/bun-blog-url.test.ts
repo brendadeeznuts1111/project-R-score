@@ -7,6 +7,7 @@ import {
   parseRssPubDateToIso,
   parseXmlElementList,
   parseXmlText,
+  requireCanonicalBunBlogUrl,
   versionFromBunBlogUrl,
 } from '../lib/docs/bun-blog-url.ts';
 
@@ -29,6 +30,15 @@ describe('bun-blog-url', () => {
     expect(canonicalizeBunBlogUrl('https://bun.sh/blog/bun-v1.3.14')).toBe(
       'https://bun.com/blog/bun-v1.3.14'
     );
+    expect(requireCanonicalBunBlogUrl('https://bun.com/blog/release-notes/bun-v1.4.0', '1.4.0')).toBe(
+      'https://bun.com/blog/bun-v1.4'
+    );
+    expect(requireCanonicalBunBlogUrl('https://bun.com/blog/bun-v1.4.0', '1.4.0')).toBe(
+      'https://bun.com/blog/bun-v1.4'
+    );
+    expect(() =>
+      requireCanonicalBunBlogUrl('https://bun.com/blog/bun-v1.3.14', '1.4.0')
+    ).toThrow('official Bun release post');
   });
 
   test('normalizes Bun.XML list/scalar and RSS pubDate to ISO', () => {

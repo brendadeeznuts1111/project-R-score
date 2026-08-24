@@ -58,6 +58,7 @@ import {
   RELEASE_OVERLAY_CACHE_ABS,
   TOKEN_SUPPLEMENT_CACHE_ABS,
 } from '../lib/docs/docs-artifact-paths.ts';
+import { blogUrlForReleaseVersion } from '../lib/docs/bun-blog-url.ts';
 import { CURATED_ENTRIES } from './bun-docs-curated.ts';
 import { changelogIndex } from './bun-docs-changelog.ts';
 import { catalogReleaseProvenanceFindings, exactReleaseEntry } from './bun-docs-provenance.ts';
@@ -549,10 +550,10 @@ export function releaseUrlFor(version: string): string {
 /**
  * Construct a blog URL path for a version (not RSS-validated).
  * Prefer `resolveBlogUrl` / release-index lookups for catalog stamps.
+ * Patch-0 minors use marketing form (`bun-v1.4`, not `bun-v1.4.0`).
  */
 export function blogUrlFor(version: string): string {
-  const v = cleanBunVersion(version);
-  return `https://bun.com/blog/bun-v${v}`;
+  return blogUrlForReleaseVersion(cleanBunVersion(version));
 }
 
 /**

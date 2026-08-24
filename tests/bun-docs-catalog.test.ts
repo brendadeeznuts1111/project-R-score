@@ -193,6 +193,8 @@ describe('bun-docs-catalog helpers', () => {
   test('blogUrlFor builds bun.com/blog release post URLs', () => {
     expect(blogUrlFor('1.3.12')).toBe('https://bun.com/blog/bun-v1.3.12');
     expect(blogUrlFor('bun-v1.3.12')).toBe('https://bun.com/blog/bun-v1.3.12');
+    expect(blogUrlFor('1.4.0')).toBe('https://bun.com/blog/bun-v1.4');
+    expect(blogUrlFor('bun-v1.4')).toBe('https://bun.com/blog/bun-v1.4');
   });
 
   test('docsUrlFor joins page + optional anchor (unversioned)', () => {

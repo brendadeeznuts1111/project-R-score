@@ -30,16 +30,16 @@ catalog intentionally for bake composition.
 Large data SSOTs (`bun-brand-usages`, `smart-symbol-index`) are inventory /
 runtime helpers, not general docs API.
 
-| Entry                                          | Role                                                                |
-| ---------------------------------------------- | ------------------------------------------------------------------- |
-| [`index.ts`](./index.ts)                       | Barrel subset (repo-docs + bundler)                                 |
-| [`repo-docs.ts`](./repo-docs.ts)               | `CANONICAL_REPO_DOCS` · `CANONICAL_REMOTES`                         |
-| [`bun-site-url.ts`](./bun-site-url.ts)         | URLPatternInit parts · `CANONICAL_SOURCES` · `bunDocs` / `bunBlog`  |
-| [`bun-blog-url.ts`](./bun-blog-url.ts)         | RSS + sitemap blog URL/version + pubDate ISO · Bun.XML list helpers |
-| [`fetch-page.ts`](./fetch-page.ts)             | Shared page fetch SSOT (`fetchPage`)                                |
-| [`extract-metadata.ts`](./extract-metadata.ts) | Social metadata via HTMLRewriter                                    |
-| [`blog-extract.ts`](./blog-extract.ts)         | Article body + re-exports for blog ingestion                        |
-| [`bundler-nav.ts`](./bundler-nav.ts)           | Bun docs Bundler sidebar (leaves · groups · CANONICAL_REFS merge)   |
-| [`bundler-gaps.ts`](./bundler-gaps.ts)         | High-signal anchor/catalog gap reports (`bundler --gaps`)           |
-| [`token-ref.ts`](./token-ref.ts)               | Interior TokenRef                                                   |
-| [`bun-token.ts`](./bun-token.ts)               | Export BunToken                                                     |
+| Entry                                          | Role                                                                                    |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------- |
+| [`index.ts`](./index.ts)                       | Barrel subset (repo-docs + bundler)                                                     |
+| [`repo-docs.ts`](./repo-docs.ts)               | `CANONICAL_REPO_DOCS` · `CANONICAL_REMOTES`                                             |
+| [`bun-site-url.ts`](./bun-site-url.ts)         | URLPatternInit parts · `CANONICAL_SOURCES` · `bunDocs` / `bunBlog`                      |
+| [`bun-blog-url.ts`](./bun-blog-url.ts)         | RSS + sitemap blog URL/version + pubDate ISO · Bun.XML list helpers · canonical require |
+| [`fetch-page.ts`](./fetch-page.ts)             | Shared page fetch SSOT (`fetchPage`)                                                    |
+| [`extract-metadata.ts`](./extract-metadata.ts) | Social metadata via HTMLRewriter                                                        |
+| [`blog-extract.ts`](./blog-extract.ts)         | Article body + re-exports for blog ingestion                                            |
+| [`bundler-nav.ts`](./bundler-nav.ts)           | Bun docs Bundler sidebar (leaves · groups · CANONICAL_REFS merge)                       |
+| [`bundler-gaps.ts`](./bundler-gaps.ts)         | High-signal anchor/catalog gap reports (`bundler --gaps`)                               |
+| [`token-ref.ts`](./token-ref.ts)               | Interior TokenRef                                                                       |
+| [`bun-token.ts`](./bun-token.ts)               | Export BunToken                                                                         |
