@@ -728,7 +728,8 @@ void RuntimeGlob; void sqlite;
       release: {
         version: '1.3.5',
         date: '2025-12-17T10:11:00.000Z',
-        reference: 'https://bun.com/blog/bun-v1.3.5',
+        reference:
+          'https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support',
       },
     });
 

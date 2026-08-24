@@ -2,8 +2,10 @@
 // @see https://bun.com/docs/project/benchmarking#markdown-output — --cpu-prof-md
 // @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof
 // @see https://bun.com/docs/project/benchmarking#markdown-output-1 — --heap-prof-md
+// @see https://bun.com/blog/bun-v1.3.2#cpu-profiling-with-cpu-prof — shipped Bun 1.3.2
 // @see https://bun.com/blog/bun-v1.4#cpu-prof-md — shipped Bun 1.4.0 Observability
 // @see https://bun.com/blog/bun-v1.4#heap-prof-md — shipped Bun 1.4.0 Observability
+// @see https://bun.com/blog/bun-v1.4#process-on-memorypressure — shipped Bun 1.4.0 Observability
 // lib/docs/constants/cli.ts — CLI documentation categories and URLs
 
 export enum CLICategory {
@@ -75,10 +77,21 @@ export const CLI_DOCUMENTATION_URLS = {
 
 /** Versioned announcement URLs (release evidence — not unversioned docs). */
 export const CLI_PROFILE_ANNOUNCEMENT_URLS = {
-  CPU_PROF: 'https://bun.com/blog/bun-v1.3.2',
+  /** Bun 1.3.2 — Chrome DevTools .cpuprofile (+ name/dir/interval companions). */
+  CPU_PROF: 'https://bun.com/blog/bun-v1.3.2#cpu-profiling-with-cpu-prof',
+  CPU_PROF_NAME: 'https://bun.com/blog/bun-v1.3.2#cpu-profiling-with-cpu-prof',
+  CPU_PROF_DIR: 'https://bun.com/blog/bun-v1.3.2#cpu-profiling-with-cpu-prof',
+  CPU_PROF_INTERVAL: 'https://bun.com/blog/bun-v1.3.2#cpu-profiling-with-cpu-prof',
+  /** Bun 1.4.0 Observability — markdown + heap + process hooks. */
   CPU_PROF_MD: 'https://bun.com/blog/bun-v1.4#cpu-prof-md',
   HEAP_PROF: 'https://bun.com/blog/bun-v1.4#heap-prof',
+  HEAP_PROF_NAME: 'https://bun.com/blog/bun-v1.4#heap-prof',
+  HEAP_PROF_DIR: 'https://bun.com/blog/bun-v1.4#heap-prof',
+  HEAP_PROF_INTERVAL: 'https://bun.com/blog/bun-v1.4#heap-prof',
   HEAP_PROF_MD: 'https://bun.com/blog/bun-v1.4#heap-prof-md',
+  MEMORY_PRESSURE: 'https://bun.com/blog/bun-v1.4#process-on-memorypressure',
+  METAFILE_MD: 'https://bun.com/blog/bun-v1.4#metafile-md',
+  OBSERVABILITY: 'https://bun.com/blog/bun-v1.4#observability',
 } as const;
 
 // Common CLI command examples

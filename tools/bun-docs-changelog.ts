@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/bundler/index#metafile — --metafile-md
+// @released --metafile-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#metafile-md
 // @see https://bun.com/docs/project/benchmarking#cpu-profiling — --cpu-prof
 // @released --cpu-prof · released v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2
 // @updated --cpu-prof · changed v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2
@@ -189,12 +191,14 @@ export const CHANGELOG_EVENTS: ChangelogEvent[] = [
 
   // ── Bun 1.4.0 Observability (versioned blog anchors) ─────────────────────
   // https://bun.com/blog/bun-v1.4#cpu-prof-md · #heap-prof-md · #heap-prof
+  // Companion flags share the parent feature's ship version + section.
   {
     name: '--cpu-prof',
     kind: 'feature',
     version: '1.3.2',
     note: 'CPU profiling to Chrome DevTools .cpuprofile',
     blogAnchor: 'cpu-profiling-with-cpu-prof',
+    aliases: ['--cpu-prof-name', '--cpu-prof-dir', '--cpu-prof-interval'],
   },
   {
     name: '--cpu-prof-md',
@@ -209,6 +213,7 @@ export const CHANGELOG_EVENTS: ChangelogEvent[] = [
     version: '1.4.0',
     note: 'V8-compatible heap profile on exit (.heapprofile)',
     blogAnchor: 'heap-prof',
+    aliases: ['--heap-prof-name', '--heap-prof-dir', '--heap-prof-interval'],
   },
   {
     name: '--heap-prof-md',
@@ -216,6 +221,22 @@ export const CHANGELOG_EVENTS: ChangelogEvent[] = [
     version: '1.4.0',
     note: 'Markdown heap profile for CLI analysis (Observability)',
     blogAnchor: 'heap-prof-md',
+  },
+  {
+    name: 'process.on("memoryPressure")',
+    kind: 'feature',
+    version: '1.4.0',
+    note: 'memoryPressure warning|critical process event (Observability)',
+    blogAnchor: 'process-on-memorypressure',
+    aliases: ['memoryPressure', 'process memoryPressure'],
+  },
+  {
+    name: '--metafile-md',
+    kind: 'feature',
+    version: '1.4.0',
+    note: 'bun build --metafile-md markdown bundle graph (Observability)',
+    blogAnchor: 'metafile-md',
+    aliases: ['bun-build-metafile-md'],
   },
 
   // ── Notable fixes (upgrade impact) ───────────────────────────────────────

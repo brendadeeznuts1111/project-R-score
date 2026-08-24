@@ -79,6 +79,16 @@ describe('buildVersionEvents', () => {
 });
 
 describe('announcementUrlFromEvents', () => {
+  test('prefers anchored catalog blogUrl when since evidence is bare same post', () => {
+    const events = buildVersionEvents({
+      introduced: '1.4.0',
+      eventUrls: { since: 'https://bun.com/blog/bun-v1.4' },
+    });
+    expect(
+      announcementUrlFromEvents(events, 'https://bun.com/blog/bun-v1.4#cpu-prof-md')
+    ).toBe('https://bun.com/blog/bun-v1.4#cpu-prof-md');
+  });
+
   test('prefers earliest since event evidenceUrl over catalog blogUrl fallback', () => {
     const events = buildVersionEvents({
       hits: [

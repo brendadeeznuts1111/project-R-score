@@ -184,7 +184,8 @@ export function sinceFromEvents(events: BunVersionEvent[]): string | null {
   ).version;
 }
 
-/** Prefer earliest "since" event with a /blog/ evidence URL; else catalog blogUrl. */
+/** Prefer earliest "since" event with a /blog/ evidence URL; else catalog blogUrl.
+ * When evidence and fallback share the same post base, prefer the `#anchor` URL. */
 export function announcementUrlFromEvents(
   events: BunVersionEvent[],
   fallback?: string | null
@@ -194,7 +195,13 @@ export function announcementUrlFromEvents(
     const earliest = blogSince.reduce((a, b) =>
       compareLooseSemver(a.version, b.version) < 0 ? a : b
     );
-    return earliest.evidenceUrl ?? null;
+    const evidence = earliest.evidenceUrl ?? null;
+    if (fallback?.includes('/blog/') && fallback.includes('#') && evidence) {
+      const evidenceBase = evidence.split('#')[0];
+      const fallbackBase = fallback.split('#')[0];
+      if (evidenceBase === fallbackBase) return fallback;
+    }
+    return evidence;
   }
   if (fallback?.includes('/blog/')) return fallback;
   return fallback ?? null;

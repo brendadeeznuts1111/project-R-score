@@ -171,6 +171,31 @@ describe('Bun 1.4.0 Observability — CLI profile markdown', () => {
     expect(md).toMatch(/500\s*us|0\.5\s*ms/i);
   });
 
+  releaseTest('--heap-prof-interval writes a heap profile with companion flags', () => {
+    const dir = join(root, 'heap-interval');
+    mkdirSync(dir, { recursive: true });
+    const script = join(dir, 'alloc.ts');
+    writeFileSync(
+      script,
+      'const a: string[] = [];\nfor (let i = 0; i < 6000; i++) a.push("z".repeat(60));\nconsole.log(a.length);\n'
+    );
+    const proc = Bun.spawnSync(
+      [
+        process.execPath,
+        '--heap-prof-md',
+        '--heap-prof-interval=1000',
+        `--heap-prof-dir=${dir}`,
+        '--heap-prof-name=hiv',
+        script,
+      ],
+      { stdout: 'pipe', stderr: 'pipe', cwd: dir }
+    );
+    expect(proc.exitCode).toBe(0);
+    const md = readFileSync(join(dir, 'hiv'), 'utf8');
+    expect(md).toContain('# Bun Heap Profile');
+    expect(md).toContain('## Summary');
+  });
+
   releaseTest('BUN_OPTIONS can inject --cpu-prof-md without argv flags', () => {
     const dir = join(root, 'bun-options');
     mkdirSync(dir, { recursive: true });
