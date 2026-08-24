@@ -24,6 +24,9 @@ stable_api = "https://api.github.com/repos/Jarred-Sumner/bun-releases-for-update
 stable_api_fallback = "https://api.github.com/repos/oven-sh/bun/releases/latest"
 canary_api = "https://api.github.com/repos/oven-sh/bun/releases/tags/canary"
 tip_api = "https://api.github.com/repos/oven-sh/bun/commits/main"
+# Marketing blog index (HTML) — research surface for ship-note pages, not the dated feed.
+blog = "https://bun.com/blog"
+# Dated release/blog RSS — provenance plane for release inventories and channel corroboration.
 rss = "https://bun.com/rss.xml"
 atom = "https://github.com/oven-sh/bun/releases.atom"
 npm_registry = "https://registry.npmjs.org"

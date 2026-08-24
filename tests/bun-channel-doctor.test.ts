@@ -30,6 +30,7 @@ const config: BunChannelConfig = {
     stable_api_fallback: 'https://fixture.test/stable-fallback',
     canary_api: 'https://fixture.test/canary',
     tip_api: 'https://fixture.test/tip',
+    blog: 'https://fixture.test/blog',
     rss: 'https://fixture.test/rss',
     atom: 'https://fixture.test/atom',
     npm_registry: 'https://fixture.test/npm',
@@ -50,6 +51,9 @@ function fixtureFetch(overrides: Record<string, Response> = {}): typeof fetch {
       sha: 'fedcba9876543210deadbeef',
       commit: { committer: { date: '2026-08-05T01:00:00Z' } },
     }),
+    'https://fixture.test/blog': new Response(
+      '<html><body><a href="/blog">Bun blog</a></body></html>'
+    ),
     'https://fixture.test/rss': new Response('<rss><title>Bun v1.3.14</title></rss>'),
     'https://fixture.test/atom': new Response('<feed><title>Bun v1.3.14</title></feed>'),
     'https://fixture.test/npm/%40types%2Fbun': Response.json({
@@ -152,6 +156,7 @@ describe('Bun channel doctor', () => {
       stable_api_fallback = "https://fixture.test/fallback"
       canary_api = "https://fixture.test/canary"
       tip_api = "https://fixture.test/tip"
+      blog = "https://fixture.test/blog"
       rss = "https://fixture.test/rss"
       atom = "https://fixture.test/atom"
       npm_registry = "https://fixture.test/npm"
@@ -183,6 +188,7 @@ describe('Bun channel doctor', () => {
       stable_api_fallback = "https://fixture.test/fallback"
       canary_api = "https://fixture.test/canary"
       tip_api = "https://fixture.test/tip"
+      blog = "https://fixture.test/blog"
       rss = "https://fixture.test/rss"
       atom = "https://fixture.test/atom"
       npm_registry = "https://fixture.test/npm"
@@ -266,6 +272,7 @@ describe('Bun channel doctor', () => {
       'github-stable',
       'github-canary',
       'github-tip',
+      'bun-blog',
       'bun-rss',
       'github-atom',
       'npm-@types/bun',
