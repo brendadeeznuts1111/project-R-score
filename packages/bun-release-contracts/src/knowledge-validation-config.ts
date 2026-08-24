@@ -21,7 +21,9 @@ export function knowledgeValidationConfig(
   env: { [key: string]: string | undefined } = Bun.env,
   overrides: Partial<KnowledgeValidationConfig> = {}
 ): KnowledgeValidationConfig {
-  const rawMax = env[KNOWLEDGE_VALIDATION_ENV.maxWarnings] ?? '10';
+  // Bun 1.4+ release posts harvest hundreds of examples; keep a soft budget that
+  // still fails closed on errors while allowing unclassified stability warnings.
+  const rawMax = env[KNOWLEDGE_VALIDATION_ENV.maxWarnings] ?? '80';
   const maxWarnings = overrides.maxWarnings ?? Number(rawMax);
   if (!Number.isSafeInteger(maxWarnings) || maxWarnings < 0) {
     throw new Error(`${KNOWLEDGE_VALIDATION_ENV.maxWarnings} must be a non-negative integer`);

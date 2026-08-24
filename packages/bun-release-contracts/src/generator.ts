@@ -72,7 +72,14 @@ export function normalizeVersion(value: string): string {
 }
 
 export function blogUrlForVersion(version: string): string {
-  return `https://bun.com/blog/bun-v${normalizeVersion(version)}`;
+  const normalized = normalizeVersion(version);
+  const [major, minor, patch] = normalized.split('.').map(part => Number(part));
+  // Bun major/minor posts use /blog/bun-vX.Y (not bun-vX.Y.0). Pre-1.0 kept three parts.
+  const slug =
+    major !== undefined && minor !== undefined && patch === 0 && major >= 1
+      ? `bun-v${major}.${minor}`
+      : `bun-v${normalized}`;
+  return `https://bun.com/blog/${slug}`;
 }
 
 function decodeHtmlEntities(value: string): string {

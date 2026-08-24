@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "runtime": "bun",
   "releaseVersion": "1.4.0",
-  "sourceUrl": "https://bun.com/blog/bun-v1.4.0",
+  "sourceUrl": "https://bun.com/blog/bun-v1.4",
   "counts": {
     "planned": 1798,
     "executable": 103

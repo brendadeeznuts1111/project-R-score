@@ -1,5 +1,11 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.3.14 · 2026-08-18 · https://bun.com/docs/runtime/environment-variables
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
@@ -96,7 +102,10 @@ export async function runKnowledgeCli(argv: string[] = Bun.argv.slice(2)): Promi
       catalog,
     });
     const validation = parseReleaseKnowledgeValidation(knowledge);
-    const validationConfig = knowledgeValidationConfig();
+    const validationConfig = knowledgeValidationConfig(Bun.env, {
+      maxWarnings:
+        values['max-warnings'] === undefined ? undefined : Number(values['max-warnings']),
+    });
     if (!knowledgeValidationPasses(validation.findings, validationConfig)) {
       throw new Error(
         `Normalized release knowledge failed validation:\n${validation.findings

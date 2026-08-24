@@ -209,10 +209,10 @@
       "testPath": null
     },
     {
-      "key": "performance-0e7bdf6b",
+      "key": "performance-fcf8d1bd",
       "category": "performance",
       "section": "Performance",
-      "announcement": "~50% of HTTP/3 CPU time is inside lsquic; further optimizations may come in a future releas.e",
+      "announcement": "~50% of HTTP/3 CPU time is inside lsquic; further optimizations may come in a future release.",
       "status": "planned",
       "testPath": null
     },
