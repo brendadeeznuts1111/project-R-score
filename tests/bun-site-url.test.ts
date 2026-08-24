@@ -7,6 +7,8 @@ import {
   BunComSite,
   BunDocsPattern,
   BunReferencePattern,
+  BunReleaseBlogPattern,
+  BunReleaseNotesBlogPattern,
   CANONICAL_SOURCES,
   bunBlog,
   bunDocs,
@@ -50,6 +52,21 @@ describe('bun-site-url (URLPatternInit components)', () => {
     expect(BunBlogPattern.test(bunBlog('bun-v1.3.4', 'urlpattern-api'))).toBe(true);
   });
 
+  test('release blog patterns expose pathname.groups.version', () => {
+    expect(
+      BunReleaseBlogPattern.exec('https://bun.com/blog/bun-v1.4')?.pathname.groups.version
+    ).toBe('1.4');
+    expect(
+      BunReleaseBlogPattern.exec('https://bun.com/blog/bun-v1.4/')?.pathname.groups.version
+    ).toBe('1.4');
+    expect(
+      BunReleaseNotesBlogPattern.exec(
+        'https://bun.com/blog/release-notes/bun-v1.4.0'
+      )?.pathname.groups.version
+    ).toBe('1.4.0');
+    expect(BunBlogPattern.test('https://bun.com/blog/release-notes/bun-v1.4.0')).toBe(false);
+  });
+
   test('BunDocsPattern rejects spoofed hosts (literal dots in hostname group)', () => {
     expect(BunDocsPattern.test('https://bunXcom/docs/x')).toBe(false);
     expect(BunDocsPattern.test('https://bun-com/docs/x')).toBe(false);
@@ -70,6 +87,10 @@ describe('bun-site-url (URLPatternInit components)', () => {
     expect(blog?.kind).toBe('blog');
     expect(blog?.path).toBe('blog/bun-v1.3.4#urlpattern-api');
     expect(blog?.hash).toBe('urlpattern-api');
+
+    const notes = parseBunSiteUrl('https://bun.com/blog/release-notes/bun-v1.4.0');
+    expect(notes?.kind).toBe('blog');
+    expect(notes?.path).toBe('blog/release-notes/bun-v1.4.0');
   });
 
   test('guideKeyFromUrl keeps blog hash keys for GUIDE_EXAMPLES', () => {

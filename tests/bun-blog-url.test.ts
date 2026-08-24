@@ -15,6 +15,8 @@ describe('bun-blog-url', () => {
   test('expands minor versions and maps RSS + sitemap locs', () => {
     expect(expandBunMinorVersion('1.4')).toBe('1.4.0');
     expect(versionFromBunBlogUrl('https://bun.com/blog/bun-v1.4')).toBe('1.4.0');
+    expect(versionFromBunBlogUrl('https://bun.com/blog/bun-v1.4/')).toBe('1.4.0');
+    expect(versionFromBunBlogUrl('http://bun.com/blog/bun-v1.4')).toBe('1.4.0');
     expect(versionFromBunBlogUrl('https://bun.com/blog/bun-v1.3.14')).toBe('1.3.14');
     expect(versionFromBunBlogUrl('https://bun.com/blog/release-notes/bun-v1.4.0')).toBe('1.4.0');
     expect(versionFromBunBlogUrl('https://bun.sh/blog/release-notes/bun-v1.3.14')).toBe('1.3.14');

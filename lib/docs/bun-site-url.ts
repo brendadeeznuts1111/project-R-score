@@ -49,6 +49,25 @@ export const BunBlogPattern = new URLPattern({
   pathname: '/blog/:slug',
 });
 
+/**
+ * Marketing/RSS release post — like `pathname: "/users/:id"` → `groups.id`.
+ * `result.pathname.groups.version` is `1.4` or `1.3.14` (no `bun-v` prefix).
+ * Optional trailing slash; host-only so `http://` atom locs still match.
+ */
+export const BunReleaseBlogPattern = new URLPattern({
+  hostname: '(bun\\.com|bun\\.sh)',
+  pathname: '/blog/bun-v:version(\\d+\\.\\d+(?:\\.\\d+)?){/}?',
+});
+
+/**
+ * Sitemap release-notes loc → same `groups.version` as marketing pattern.
+ * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api
+ */
+export const BunReleaseNotesBlogPattern = new URLPattern({
+  hostname: '(bun\\.com|bun\\.sh)',
+  pathname: '/blog/release-notes/bun-v:version(\\d+\\.\\d+(?:\\.\\d+)?){/}?',
+});
+
 /** Match /reference/* on bun.com|bun.sh */
 export const BunReferencePattern = new URLPattern({
   protocol: BunComSite.protocol,
@@ -202,6 +221,19 @@ export function parseBunSiteUrl(url: string): ParsedBunSiteUrl | null {
       hash,
       hostname: blog.hostname.input,
       protocol: blog.protocol.input,
+    };
+  }
+  const releaseNotes = BunReleaseNotesBlogPattern.exec(url);
+  if (releaseNotes) {
+    const version = releaseNotes.pathname.groups.version ?? '';
+    const slug = `release-notes/bun-v${version}`;
+    const hash = releaseNotes.hash.input.replace(/^#/, '');
+    return {
+      kind: 'blog',
+      path: hash ? `blog/${slug}#${hash}` : `blog/${slug}`,
+      hash,
+      hostname: releaseNotes.hostname.input,
+      protocol: releaseNotes.protocol.input,
     };
   }
   const ref = BunReferencePattern.exec(url);
