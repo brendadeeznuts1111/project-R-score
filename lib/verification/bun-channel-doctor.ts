@@ -597,6 +597,16 @@ export async function runBunChannelDoctor(
         });
         continue;
       }
+      if (observation.source === 'bun-blog') {
+        drift.push({
+          code: 'blog-unavailable',
+          kind: 'informational',
+          actual: observation.error,
+          message:
+            'The marketing blog index is research reachability only; stable corroboration stays on RSS and Atom.',
+        });
+        continue;
+      }
       drift.push({
         code: `source-unavailable:${observation.source}`,
         kind: 'source-error',

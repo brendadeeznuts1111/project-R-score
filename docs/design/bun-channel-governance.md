@@ -24,13 +24,15 @@ local manifests ─────┤                            ├─ check/CI ex
 installed runtime ───┘                            └─ optional derived artifact
 ```
 
-`bun-blog` (`sources.blog`) is reachability of the marketing HTML index.
-`bun-rss` (`sources.rss`) is the dated publication feed used for stable-version
-corroboration (with GitHub Atom). Docs ingestion and release-contract generation
-share a separate parse/canonicalize path under `lib/docs/` (`bun-rss.ts` +
-`bun-blog-url.ts`) — see [`BUN_DOCS_OPERATE.md`](../BUN_DOCS_OPERATE.md) and
-[`packages/bun-release-contracts/README.md`](../../packages/bun-release-contracts/README.md).
-Do not treat channel-doctor status JSON as the docs RSS index.
+- `bun-blog` (`sources.blog`) is reachability of the marketing HTML index.
+  Outages are informational (research-only); they do not degrade channel check
+  exit status.
+- `bun-rss` (`sources.rss`) is the dated publication feed used for stable-version
+  corroboration (with GitHub Atom). Docs ingestion and release-contract generation
+  share a separate parse/canonicalize path under `lib/docs/` (`bun-rss.ts` +
+  `bun-blog-url.ts`) — see [`BUN_DOCS_OPERATE.md`](../BUN_DOCS_OPERATE.md) and
+  [`packages/bun-release-contracts/README.md`](../../packages/bun-release-contracts/README.md).
+  Do not treat channel-doctor status JSON as the docs RSS index.
 
 ## Canonical policy
 

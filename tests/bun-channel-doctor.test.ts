@@ -399,6 +399,23 @@ describe('Bun channel doctor', () => {
     );
   });
 
+  test('keeps an unavailable marketing blog informational and non-blocking', async () => {
+    const report = await runBunChannelDoctor({
+      root,
+      config,
+      fetchImpl: fixtureFetch({
+        'https://fixture.test/blog': new Response('unavailable', { status: 503 }),
+      }),
+      runtime: { version: '1.3.14', revision: '0d9b296af' },
+    });
+
+    expect(report.summary.status).toBe('healthy');
+    expect(report.summary.exitCode).toBe(0);
+    expect(report.drift).toContainEqual(
+      expect.objectContaining({ code: 'blog-unavailable', kind: 'informational' })
+    );
+  });
+
   test('keeps upstream tip availability informational for a reviewed pinned-tip', async () => {
     const version = '1.4.0-tip.fedcba98';
     const pin = `file:tools/vendor/bun-types/bun-types-${version}.tgz`;
