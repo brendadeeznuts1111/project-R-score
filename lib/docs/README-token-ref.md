@@ -1,6 +1,10 @@
-# TokenRef / BunToken — Bun documentation knowledge unit
+# TokenRef / BunToken — Bun documentation token plane
 
-## Two layers
+Token is the **agent export / `@see` research channel**. Catalog is a different
+plane: the materialized bake that adapters read. See operate planes in
+[`docs/BUN_DOCS_OPERATE.md`](../../docs/BUN_DOCS_OPERATE.md).
+
+## Two layers (within token)
 
 | Layer                                           | Role                                                                              |
 | ----------------------------------------------- | --------------------------------------------------------------------------------- |
@@ -8,7 +12,7 @@
 | **BunToken** ([`bun-token.ts`](./bun-token.ts)) | **Agent export contract** — timeline-aware, no scrape nicknames                   |
 
 ```text
-DocCatalogEntry → TokenRef (internal) → BunToken (suggest / export / JSON Schema)
+DocCatalogEntry (catalog plane) → TokenRef (internal) → BunToken (suggest / export / JSON Schema)
 ```
 
 ## BunToken (public)

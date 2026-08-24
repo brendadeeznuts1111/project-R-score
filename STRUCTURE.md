@@ -17,7 +17,9 @@ High-level map of the FactoryWager Enterprise Platform monorepo
 | Coding standards              | [`.custom-instructions.md`](.custom-instructions.md)                                                                                                                                                     |
 | Bun install policy            | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                                                                     |
 | Bun channel / type governance | [`config/bun-channels.toml`](config/bun-channels.toml) · [`docs/design/bun-channel-governance.md`](docs/design/bun-channel-governance.md) · `bun run bun:channel:check`                                  |
-| Bun token/catalog operate     | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) (`bun run docs:refresh`) · blog helpers [`lib/docs/bun-blog-url.ts`](lib/docs/bun-blog-url.ts) · RSS [`lib/docs/bun-rss.ts`](lib/docs/bun-rss.ts) |
+| Bun token operate             | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) (token plane) · [`lib/docs/token-ref.ts`](lib/docs/token-ref.ts) · [`lib/docs/bun-token.ts`](lib/docs/bun-token.ts) · `bun tools/bun-doc-refs.ts` |
+| Bun catalog operate           | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) (catalog plane) · `bun run docs:refresh` / `docs:catalog:*` · [`tools/bun-docs-catalog.ts`](tools/bun-docs-catalog.ts)                           |
+| Bun blog / RSS helpers        | [`lib/docs/bun-blog-url.ts`](lib/docs/bun-blog-url.ts) · [`lib/docs/bun-rss.ts`](lib/docs/bun-rss.ts) · operate planes in [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md)                        |
 | Root placement policy         | [`config/repo-root-policy.ts`](config/repo-root-policy.ts) · `bun scripts/repo-hygiene.ts`                                                                                                               |
 | Projects triage               | [`projects/README.md`](projects/README.md)                                                                                                                                                               |
 | Path SSOT (code)              | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts)                                                                                                                                                         |
@@ -51,7 +53,7 @@ Projects/
 │   ├── AGENTS.md            # Pointer → root AGENTS.md (routing tables)
 │   ├── harness/capability-map.md  # Grounded Bun/Proton capability matrix (bake:capabilities)
 │   ├── UNIFIED.md · WIRE_BOUNDARY.md · DEVELOPMENT-WORKFLOW.md
-│   ├── BUN_DOCS_OPERATE.md  # Token/catalog operate (RSS → scrape → catalog)
+│   ├── BUN_DOCS_OPERATE.md  # Token · catalog · blog · RSS operate planes
 │   ├── organization/        # Root cleanup history
 │   ├── performance/         # Search pin + pointer to bun-bench-profiling tenant
 │   ├── harness/tenants/bun-bench-profiling.md  # Bun bench/profile metric SSOT

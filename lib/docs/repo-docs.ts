@@ -54,12 +54,12 @@ export const CANONICAL_REPO_DOCS = {
   bunFetchProxyEnvironment: 'docs/guides/bun-fetch-proxy-environment.md',
   /** Bun process-wide runtime argument injection contract */
   bunOptions: 'docs/guides/bun-options.md',
-  /** Bun token/catalog operate loop (RSS → scrape → catalog → integrity) */
+  /** Bun docs operate hub (token · catalog · blog · RSS planes) */
   bunDocsOperate: 'docs/BUN_DOCS_OPERATE.md',
   /** Bun-types pin inventory + tip-diff + usage (not partner-surface) */
   bunTypesInventory: 'docs/design/bun-types-inventory.md',
   bunTypesInventoryJson: 'tools/bun-types-inventory.json',
-  /** TokenRef interior + BunToken export (knowledge unit) */
+  /** TokenRef interior + BunToken export (token plane; not the catalog bake) */
   tokenRef: 'lib/docs/token-ref.ts',
   bunToken: 'lib/docs/bun-token.ts',
   /** Homebase discovery / organization map */
@@ -212,11 +212,11 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   bunNativeCapabilities: 'Bun native capabilities note (browser, md, scheduler, datagram)',
   bunFetchProxyEnvironment: 'Bun fetch proxy env defaults · aliases · precedence',
   bunOptions: 'BUN_OPTIONS runtime argument injection · argv · precedence',
-  bunDocsOperate: 'Bun token/catalog operate (RSS → scrape → catalog)',
+  bunDocsOperate: 'Bun docs operate (token · catalog · blog · RSS planes)',
   bunTypesInventory: 'Bun-types inventory pipeline (pin SSOT · tip-diff · usage)',
   bunTypesInventoryJson: 'Bun-types inventory JSON SSOT (committed under tools/)',
-  tokenRef: 'TokenRef interior knowledge-unit schema',
-  bunToken: 'BunToken agent export contract (northstar)',
+  tokenRef: 'TokenRef interior knowledge-unit schema (token plane)',
+  bunToken: 'BunToken agent export contract (token plane northstar)',
   organizationHistory: 'Homebase discovery / organization map',
   sessionOrganization: 'Reasonix session rename map · lane taxonomy',
   archiveNamingGrammar: 'Archive filename grammar (<t>-<lane>-<slug>)',
