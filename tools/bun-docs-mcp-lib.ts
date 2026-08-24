@@ -18,6 +18,7 @@ import {
   fetchPage,
   stripUrlFragment,
 } from '../lib/docs/blog-extract.ts';
+import { canonicalizeBunBlogUrl } from '../lib/docs/bun-blog-url.ts';
 import {
   BunComSite,
   CANONICAL_SOURCES,
@@ -606,7 +607,7 @@ export async function fetchRssFeed(limit = 50): Promise<ReleaseNote[]> {
 
   // HTML Accept default overridden for RSS; HTTPS/timeout/ok via fetchPage.
   const res = await fetchPage(BUN_CHANGELOG_RSS, {
-    timeoutMs: 10_000,
+    timeoutMs: 20_000,
     headers: {
       Accept: 'application/rss+xml, application/xml, text/xml, */*',
     },
@@ -644,11 +645,13 @@ export async function fetchReleaseNotes(limit = 5): Promise<ReleaseNote[]> {
 }
 
 export function blogSlugFromLink(link: string): string {
+  const canonical = canonicalizeBunBlogUrl(link);
+  const source = canonical ?? link;
   try {
-    const url = new URL(link);
+    const url = new URL(source);
     return url.pathname.replace(/^\/blog\/?/, '').replace(/\/$/, '');
   } catch {
-    return link.replace(/^\/blog\/?/, '').replace(/\/$/, '');
+    return source.replace(/^\/blog\/?/, '').replace(/\/$/, '');
   }
 }
 

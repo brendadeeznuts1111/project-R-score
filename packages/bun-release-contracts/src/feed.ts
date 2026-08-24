@@ -8,6 +8,7 @@ import {
   parseXmlElementList,
   parseRssPubDateToIso,
   parseXmlText,
+  canonicalizeBunBlogUrl,
   versionFromBunBlogUrl,
 } from '../../../lib/docs/bun-blog-url.ts';
 import { normalizeVersion } from './generator';
@@ -72,7 +73,7 @@ function pushReleaseEntry(
   entries.push({
     version,
     title: fields.title || `Bun v${version}`,
-    url: fields.url,
+    url: canonicalizeBunBlogUrl(fields.url) ?? fields.url,
     publishedAt,
   });
 }

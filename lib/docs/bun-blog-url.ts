@@ -60,6 +60,19 @@ export function canonicalizeBunBlogUrl(url: string): string | null {
   return blogUrlForReleaseVersion(version);
 }
 
+/**
+ * Accept RSS, sitemap release-notes, bun.sh, or trailing-slash forms when they
+ * resolve to `version`; return the marketing/RSS canonical URL.
+ */
+export function requireCanonicalBunBlogUrl(url: string, version: string): string {
+  const fromUrl = versionFromBunBlogUrl(url);
+  const canonical = canonicalizeBunBlogUrl(url);
+  if (!fromUrl || !canonical || fromUrl !== version) {
+    throw new Error(`url is not an official Bun release post for ${version}`);
+  }
+  return canonical;
+}
+
 /** Bun.XML compact mode: repeated elements → array; a single element → object. */
 export function parseXmlElementList(value: unknown): Array<Record<string, unknown>> {
   if (value == null) return [];

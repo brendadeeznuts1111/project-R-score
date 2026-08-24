@@ -26,9 +26,11 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  */
 import { resolvePath } from '../lib/path-bun';
 import {
+  canonicalizeBunBlogUrl,
   expandBunMinorVersion,
   parseXmlElementList,
   parseXmlText,
+  requireCanonicalBunBlogUrl,
   versionFromBunBlogUrl,
 } from '../lib/docs/bun-blog-url.ts';
 import {
@@ -101,7 +103,12 @@ export function parseReleaseIndexFile(value: unknown, source = 'release index'):
     if (!entry) throw new Error(`${label} must be an object`);
     if (!isReleaseSemver(entry.version)) throw new Error(`${label}.version is not X.Y.Z`);
     if (typeof entry.title !== 'string' || !entry.title) throw new Error(`${label}.title is empty`);
-    if (typeof entry.url !== 'string' || !entry.url.startsWith('https://bun.com/blog/bun-v')) {
+    if (typeof entry.url !== 'string' || !entry.url) {
+      throw new Error(`${label}.url is not an official Bun release post`);
+    }
+    try {
+      entry.url = requireCanonicalBunBlogUrl(entry.url, entry.version);
+    } catch {
       throw new Error(`${label}.url is not an official Bun release post`);
     }
     if (typeof entry.guid !== 'string' || !entry.guid) throw new Error(`${label}.guid is empty`);
@@ -182,11 +189,12 @@ function releaseEntryFromFields(fields: {
   if (!pubRaw || !Number.isFinite(Date.parse(pubRaw))) {
     throw new Error(`release ${version} has an invalid pubDate: ${pubRaw || '(missing)'}`);
   }
+  const canonicalUrl = canonicalizeBunBlogUrl(url) ?? url;
   return {
     version,
     title,
-    url,
-    guid: guid || url,
+    url: canonicalUrl,
+    guid: guid || canonicalUrl,
     pubDate: new Date(pubRaw).toISOString(),
   };
 }
@@ -1127,11 +1135,12 @@ export function parseReleaseOverlayFile(
       if (!hit || !isReleaseSemver(hit.version)) {
         throw new Error(`${hitLabel}.version is not X.Y.Z`);
       }
-      if (
-        typeof hit.url !== 'string' ||
-        !hit.url.startsWith('https://bun.com/blog/bun-v') ||
-        normalizeReleaseVersion('', hit.url) !== hit.version
-      ) {
+      if (typeof hit.url !== 'string' || !hit.url) {
+        throw new Error(`${hitLabel}.url does not match version ${hit.version}`);
+      }
+      try {
+        hit.url = requireCanonicalBunBlogUrl(hit.url, hit.version);
+      } catch {
         throw new Error(`${hitLabel}.url does not match version ${hit.version}`);
       }
       if (!isIsoTimestamp(hit.publishedAt)) {
