@@ -55,6 +55,11 @@ function releaseFetch(
 const RSS_FIXTURE = `<?xml version="1.0"?>
 <rss><channel>
   <item>
+    <title>Bun 1.4</title>
+    <link>https://bun.com/blog/bun-v1.4</link>
+    <pubDate>Thu, 20 Aug 2026 00:53:44 GMT</pubDate>
+  </item>
+  <item>
     <title>Rewriting Bun in Rust</title>
     <link>https://bun.com/blog/bun-in-rust</link>
     <pubDate>Wed, 08 Jul 2026 16:00:00 GMT</pubDate>
@@ -264,9 +269,9 @@ describe('Bun release inventory generator', () => {
 
   test('selects stable release posts from RSS and builds a deterministic catalog', () => {
     const feed = parseReleaseFeed(RSS_FIXTURE);
-    expect(feed.map(entry => entry.version)).toEqual(['1.3.14', '1.3.13']);
-    expect(selectReleaseFeedEntries(feed, { since: '1.3.14' })).toHaveLength(1);
-    expect(selectReleaseFeedEntries(feed, { limit: 1 })[0]?.version).toBe('1.3.14');
+    expect(feed.map(entry => entry.version)).toEqual(['1.4.0', '1.3.14', '1.3.13']);
+    expect(selectReleaseFeedEntries(feed, { since: '1.3.14' })).toHaveLength(2);
+    expect(selectReleaseFeedEntries(feed, { limit: 1 })[0]?.version).toBe('1.4.0');
 
     const inventory = parseReleaseInventory(
       renderReleaseInventory('1.3.14', [
@@ -285,7 +290,7 @@ describe('Bun release inventory generator', () => {
     <title>Bun v1.10.0</title>`
     ).replace('https://bun.com/blog/bun-v1.3.13', 'https://bun.com/blog/bun-v1.10.0');
     const feed = parseReleaseFeed(unsorted);
-    expect(feed.map(entry => entry.version)).toEqual(['1.10.0', '1.3.14']);
+    expect(feed.map(entry => entry.version)).toEqual(['1.10.0', '1.4.0', '1.3.14']);
     expect(selectReleaseFeedEntries([...feed].reverse(), { limit: 1 })[0]?.version).toBe(
       '1.10.0'
     );

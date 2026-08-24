@@ -19,6 +19,7 @@ export type FetchReleaseFeedOptions = {
 };
 
 const VERSION_PATTERN = /^\d+\.\d+\.\d+$/;
+const BLOG_VERSION_RE = /\/blog\/bun-v(\d+\.\d+(?:\.\d+)?)\/?$/i;
 
 function decodeXml(value: string): string {
   const named: Readonly<Record<string, string>> = {
@@ -44,6 +45,18 @@ function elementText(xml: string, name: string): string {
   return decodeXml(match?.[1] ?? '');
 }
 
+/** Map `/blog/bun-v1.4` → `1.4.0`; keep three-part URLs as-is. */
+export function versionFromBlogUrl(url: string): string | null {
+  const match = BLOG_VERSION_RE.exec(url);
+  if (!match) return null;
+  const raw = match[1]!;
+  const parts = raw.split('.');
+  if (parts.length === 2 && parts.every(part => /^\d+$/.test(part))) {
+    return `${parts[0]}.${parts[1]}.0`;
+  }
+  return VERSION_PATTERN.test(raw) ? raw : null;
+}
+
 export function parseReleaseFeed(xml: string): ReleaseFeedEntry[] {
   const entries: ReleaseFeedEntry[] = [];
   const seen = new Set<string>();
@@ -51,7 +64,7 @@ export function parseReleaseFeed(xml: string): ReleaseFeedEntry[] {
   for (const match of xml.matchAll(/<item(?:\s[^>]*)?>([\s\S]*?)<\/item>/gi)) {
     const item = match[1]!;
     const url = elementText(item, 'link');
-    const version = /\/blog\/bun-v(\d+\.\d+\.\d+)\/?$/i.exec(url)?.[1];
+    const version = versionFromBlogUrl(url);
     if (!version || !VERSION_PATTERN.test(version) || seen.has(version)) continue;
     seen.add(version);
     entries.push({

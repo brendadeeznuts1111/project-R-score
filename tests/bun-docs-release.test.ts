@@ -36,7 +36,10 @@ import {
   normalizeNote,
 } from '../tools/bun-docs-catalog.ts';
 
-const SAMPLE_RSS = `<?xml version="1.0"?><rss><channel>
+const SAMPLE_RSS = `<?xml version="1.0"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
+<title>bun.com</title>
+<atom:link href="http://bun.com/rss.xml" rel="self" type="application/rss+xml" />
+<item><title>Bun 1.4</title><link>https://bun.com/blog/bun-v1.4</link><guid>https://bun.com/blog/bun-v1.4</guid><pubDate>Thu, 20 Aug 2026 00:53:44 GMT</pubDate></item>
 <item><title>Bun v1.3.14</title><link>https://bun.com/blog/bun-v1.3.14</link><guid>g1</guid><pubDate>Wed, 13 May 2026 03:19:35 GMT</pubDate></item>
 <item><title>Rewriting Bun in Rust</title><link>https://bun.com/blog/bun-in-rust</link><guid>g2</guid><pubDate>Wed, 08 Jul 2026 16:00:00 GMT</pubDate></item>
 <item><title>Bun 1.3</title><link>https://bun.com/blog/bun-v1.3</link><guid>g3</guid><pubDate>Fri, 21 Nov 2025 10:11:00 GMT</pubDate></item>
@@ -50,14 +53,14 @@ describe('bun-docs-release-index', () => {
 
   test('normalizeReleaseVersion expands minor and prefers URL', () => {
     expect(normalizeReleaseVersion('Bun 1.3', 'https://bun.com/blog/bun-v1.3')).toBe('1.3.0');
+    expect(normalizeReleaseVersion('Bun 1.4', 'https://bun.com/blog/bun-v1.4')).toBe('1.4.0');
     expect(normalizeReleaseVersion('Bun v0.5', 'https://bun.com/blog/bun-v0.5.0')).toBe('0.5.0');
   });
 
-  test('parseReleaseEntries returns sorted releases', () => {
+  test('parseReleaseEntries returns sorted releases via Bun.XML shape', () => {
     const entries = parseReleaseEntries(SAMPLE_RSS);
-    expect(entries.length).toBe(2);
-    expect(entries[0]!.version).toBe('1.3.0');
-    expect(entries[1]!.version).toBe('1.3.14');
+    expect(entries.map(e => e.version)).toEqual(['1.3.0', '1.3.14', '1.4.0']);
+    expect(entries[2]!.url).toBe('https://bun.com/blog/bun-v1.4');
   });
 
   test('parseReleaseEntries fails closed on a release without a valid date', () => {
@@ -76,14 +79,14 @@ describe('bun-docs-release-index', () => {
       count: entries.length,
       entries,
     };
-    expect(parseReleaseIndexFile(file).count).toBe(2);
+    expect(parseReleaseIndexFile(file).count).toBe(3);
     expect(() => parseReleaseIndexFile({ ...file, count: 99 })).toThrow(
       'count does not match entries.length'
     );
     expect(() =>
       parseReleaseIndexFile({
         ...file,
-        entries: [{ ...entries[0]!, version: '1.3.14' }, entries[1]!],
+        entries: [{ ...entries[0]!, version: '1.3.14' }, entries[1]!, entries[2]!],
       })
     ).toThrow('title/url version does not match');
   });
@@ -92,7 +95,7 @@ describe('bun-docs-release-index', () => {
     const map = buildReleaseMap(parseReleaseEntries(SAMPLE_RSS));
     expect(lookupBlogUrl('1.3.14', map)).toBe('https://bun.com/blog/bun-v1.3.14');
     expect(lookupBlogUrl('1.3.99', map)).toBe('https://bun.com/blog/bun-v1.3');
-    expect(lookupBlogUrl('1.4.0', map)).toBeUndefined();
+    expect(lookupBlogUrl('1.4.0', map)).toBe('https://bun.com/blog/bun-v1.4');
   });
 });
 
