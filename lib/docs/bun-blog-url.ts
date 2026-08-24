@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/runtime/xml — Bun.XML.parse compact shape
 // @see https://bun.com/rss.xml — release posts
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern pathname groups
 // @see https://bun.com/blog — /blog/bun-vX.Y vs /blog/release-notes/bun-vX.Y.Z
 /**
  * Bun blog / RSS / sitemap URL + pubDate shape helpers.
@@ -8,12 +9,13 @@
  *   RSS / marketing:  https://bun.com/blog/bun-v1.4
  *   Sitemap notes:    https://bun.com/blog/release-notes/bun-v1.4.0
  * Both resolve; prefer the RSS/marketing form for inventories and knowledge.
+ *
+ * Version extraction uses URLPattern.exec → pathname.groups.version
+ * (same shape as `new URLPattern({ pathname: "/users/:id" })` → groups.id).
  */
-import { bunBlog } from './bun-site-url.ts';
+import { BunReleaseBlogPattern, BunReleaseNotesBlogPattern, bunBlog } from './bun-site-url.ts';
 
 const VERSION_PATTERN = /^\d+\.\d+\.\d+$/;
-/** `/blog/bun-v1.4`, `/blog/bun-v1.3.14`, `/blog/release-notes/bun-v1.4.0` */
-const BLOG_VERSION_RE = /\/blog\/(?:release-notes\/)?bun-v(\d+\.\d+(?:\.\d+)?)\/?(?:[?#]|$)/i;
 
 /** Expand `1.4` → `1.4.0`; leave three-part alone. */
 export function expandBunMinorVersion(version: string): string {
@@ -27,9 +29,10 @@ export function expandBunMinorVersion(version: string): string {
 
 /** Version from a Bun blog or release-notes URL, or null when not a versioned post. */
 export function versionFromBunBlogUrl(url: string): string | null {
-  const match = BLOG_VERSION_RE.exec(url);
-  if (!match) return null;
-  const expanded = expandBunMinorVersion(match[1]!);
+  const result = BunReleaseBlogPattern.exec(url) ?? BunReleaseNotesBlogPattern.exec(url);
+  const version = result?.pathname.groups.version;
+  if (!version) return null;
+  const expanded = expandBunMinorVersion(version);
   return VERSION_PATTERN.test(expanded) ? expanded : null;
 }
 
