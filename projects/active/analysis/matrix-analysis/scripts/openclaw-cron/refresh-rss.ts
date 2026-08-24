@@ -8,7 +8,7 @@ import { $ } from "bun";
 
 const RSS_FEEDS = [
   "https://openclaw.ai/changelog/rss",
-  "https://bun.sh/rss.xml"
+  "https://bun.com/rss.xml"
 ];
 
 async function refreshRSS() {

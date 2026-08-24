@@ -3,7 +3,7 @@
 
 export {};
 
-const feedUrl = process.argv[2] || "https://bun.sh/rss.xml";
+const feedUrl = process.argv[2] || "https://bun.com/rss.xml";
 
 async function parseRSS() {
 	try {

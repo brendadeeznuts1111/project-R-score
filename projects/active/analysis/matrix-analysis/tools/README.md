@@ -166,7 +166,7 @@ bun run css:optimize styles.css
 Dependency-free RSS feed summary extraction.
 
 ```bash
-bun run rss:parse https://bun.sh/rss.xml
+bun run rss:parse https://bun.com/rss.xml
 ```
 
 **Features:**

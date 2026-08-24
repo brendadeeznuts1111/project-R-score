@@ -11,7 +11,7 @@
  * Commands:
  *   check <file|dir> Col-89 violation scan (--glob="...")
  *   css <file>      LightningCSS minification + sourcemap
- *   rss [url]       Feed audit (default: bun.sh/blog/rss.xml)
+ *   rss [url]       Feed audit (default: bun.com/rss.xml)
  *   scan [exts] [dir] Scan for bad file extensions
  *   globals         Audit available Bun.* APIs
  *   health          System health snapshot
@@ -231,7 +231,7 @@ function parseRSSItems(xml: string): RSSItem[] {
 	return items;
 }
 
-async function checkRSS(feedUrl = "https://bun.sh/blog/rss.xml"): Promise<void> {
+async function checkRSS(feedUrl = "https://bun.com/rss.xml"): Promise<void> {
 	const start = Bun.nanoseconds();
 
 	const res = await fetch(feedUrl).catch(() => null);

@@ -50,7 +50,7 @@ serve({
     // 📰 RSS + FLAG TIPS
     if (url.pathname === "/rss-flags") {
       try {
-        const rss = await fetch("https://bun.sh/rss.xml");
+        const rss = await fetch("https://bun.com/rss.xml");
         const xml = await rss.text();
         return new Response(xml, {
           headers: { "Content-Type": "application/xml" }

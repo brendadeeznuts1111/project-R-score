@@ -46,7 +46,7 @@ export const DEFAULT_ENTRIES: BunDocEntry[] = [
     security: { classification: "high" },
     category: "core",
     cliFlags: ["--experimental-sqlite"],
-    changelogFeed: new URL("https://bun.sh/blog/rss.xml#tag=sqlite"),
+    changelogFeed: new URL("https://bun.com/rss.xml#tag=sqlite"),
   },
   {
     term: "Bun.inspect.table",

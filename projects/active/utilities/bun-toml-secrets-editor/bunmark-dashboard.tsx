@@ -54,7 +54,7 @@ serve({
 
 async function fetchBunReleases() {
   try {
-    const rss = await fetch("https://bun.sh/rss.xml");
+    const rss = await fetch("https://bun.com/rss.xml");
     const xml = await rss.text();
     // Parse top 3 releases (v1.3.7, 1.3.6, 1.3.5)
     return parseReleases(xml).slice(0, 3);

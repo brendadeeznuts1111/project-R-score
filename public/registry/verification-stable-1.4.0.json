@@ -55,8 +55,7 @@
       "verify": "smoke",
       "canonical": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
       "refs": [
-        "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
-        "https://bun.com/docs/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects"
+        "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects"
       ]
     },
     {

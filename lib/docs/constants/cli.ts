@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — --cpu-prof-md
+// @verified --cpu-prof-md · Bun v1.3.14 · 2026-08-18 · https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options
+// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — --heap-prof-md
+// @verified --heap-prof-md · Bun v1.3.14 · 2026-08-18 · https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options
 // lib/docs/constants/cli.ts — CLI documentation categories and URLs
 
 export enum CLICategory {
@@ -54,14 +58,15 @@ export const CLI_DOCUMENTATION_URLS = {
     VERBOSE: '/docs/cli/verbose',
     DEBUGGER: '/docs/cli/debugger',
     INSPECTOR: '/docs/cli/inspector',
-    PROFILE: '/docs/cli/profile',
-    /** @see https://github.com/oven-sh/bun/pull/24112 */
-    CPU_PROF: '/docs/cli/profile#cpu-profiling',
-    /** @see https://github.com/oven-sh/bun/pull/26327 */
-    CPU_PROF_MD: '/docs/cli/profile#markdown-cpu-profile',
-    HEAP_PROF: '/docs/cli/profile#heap-profiling',
-    /** @see https://github.com/oven-sh/bun/pull/26326 */
-    HEAP_PROF_MD: '/docs/cli/profile#markdown-heap-profile',
+    PROFILE: '/docs/project/benchmarking',
+    /** @see https://bun.com/docs/project/benchmarking#cpu-profiling */
+    CPU_PROF: '/docs/project/benchmarking#cpu-profiling',
+    /** @see https://bun.com/docs/project/benchmarking#markdown-output */
+    CPU_PROF_MD: '/docs/project/benchmarking#markdown-output',
+    /** @see https://bun.com/docs/project/benchmarking#heap-profiling */
+    HEAP_PROF: '/docs/project/benchmarking#heap-profiling',
+    /** @see https://bun.com/docs/project/benchmarking#markdown-output-1 */
+    HEAP_PROF_MD: '/docs/project/benchmarking#markdown-output-1',
     TRACE: '/docs/cli/trace',
   },
 } as const;

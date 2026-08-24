@@ -11,9 +11,9 @@ Consolidating everything to the single canonical changelog feed (`/rss.xml`) eli
 |------------------------|------------------------|-----------------------------|------------------------|---------------------------------------|
 | Changelog + Blog Posts | `BUN_CHANGELOG_RSS`    | `https://bun.com/rss.xml`   | 200 / application/xml  | Primary feed (unified content)        |
 | Blog RSS (alias)       | `BUN_BLOG_RSS_URL`     | `https://bun.com/rss.xml`   | same as above          | Points to changelog; no separate feed |
-| Legacy / Alternate Host| —                      | `https://bun.sh/rss.xml`    | 200 / application/xml  | Identical content; fallback           |
+| Legacy / Alternate Host| —                      | `https://bun.com/rss.xml`    | 200 / application/xml  | Identical content; fallback           |
 | Dead / Removed Paths   | —                      | `https://bun.com/blog/rss.xml` | 404 / text/html     | Removed from code; avoid              |
-| Dead / Removed Paths   | —                      | `https://bun.sh/blog/rss.xml`  | 404 / text/html     | Removed from code; avoid              |
+| Dead / Removed Paths   | —                      | `https://bun.com/rss.xml`  | 404 / text/html     | Removed from code; avoid              |
 
 **Key takeaway:** There is **no dedicated `/blog/rss.xml`** feed — Bun publishes blog-style release notes and announcements through the unified changelog RSS at `/rss.xml`. Both hosts serve identical content there.
 
@@ -50,11 +50,11 @@ Returns: `{ event: "RSS_CANONICALIZATION_LOCKED", ts, bun_version?, col89_safe, 
 ```bash
 # 1. Confirm unified feed works on both hosts
 curl -sI https://bun.com/rss.xml    | grep -E "HTTP/|Content-Type"
-curl -sI https://bun.sh/rss.xml     | grep -E "HTTP/|Content-Type"
+curl -sI https://bun.com/rss.xml     | grep -E "HTTP/|Content-Type"
 
 # 2. Confirm blog-specific paths 404
 curl -sI https://bun.com/blog/rss.xml   | head -1   # should be 404
-curl -sI https://bun.sh/blog/rss.xml    | head -1   # should be 404
+curl -sI https://bun.com/rss.xml    | head -1   # should be 404
 
 # 3. Width-check a typical RSS item preview (Col-89)
 bun -e '
