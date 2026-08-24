@@ -23,6 +23,7 @@ Pin ↔ tip **type inventory** (committed `tools/bun-types-inventory.json`,
 | Provenance gate                     | `bun run docs:provenance:check` · add `--json`; `--require-release` additionally fails APIs whose introduction release is not yet attested                                                                                                                                                                                                                                                                                                                                                        |
 | Guide fences                        | Frozen [`bun-docs-guide-examples.ts`](../tools/bun-docs-guide-examples.ts); scrape via `generate-tokens-from-docs` (`guides` domain)                                                                                                                                                                                                                                                                                                                                                              |
 | Blog ingestion                      | `CANONICAL_SOURCES` + [`extract-metadata.ts`](../lib/docs/extract-metadata.ts) · journey `bun test tests/journey/blog-extraction.test.ts`                                                                                                                                                                                                                                                                                                                                                         |
+| Blog / RSS URL shape                | [`bun-site-url.ts`](../lib/docs/bun-site-url.ts) (URLPatternInit build + release patterns) · [`bun-blog-url.ts`](../lib/docs/bun-blog-url.ts) (version + canonicalize) · [`bun-rss.ts`](../lib/docs/bun-rss.ts) (`parseRssChannelItems` — one walk for index / contracts / MCP)                                                                                                                                                                                                                   |
 | Fetch-page SSOT                     | [`fetch-page.ts`](../lib/docs/fetch-page.ts) · locus [`runtime/networking/fetch`](https://bun.com/docs/runtime/networking/fetch) · claim `fetch-page-boundaries` · HTML + RSS (Accept override); conditional GET (304) stays bare `fetch`                                                                                                                                                                                                                                                         |
 | Bundler sidebar nav                 | `bun tools/bun-doc-refs.ts bundler` · SSOT [`lib/docs/bundler-nav.ts`](../lib/docs/bundler-nav.ts) · gaps [`bundler-gaps.ts`](../lib/docs/bundler-gaps.ts)                                                                                                                                                                                                                                                                                                                                        |
 | Bundler anchors / gaps / tokens     | `bundler --anchors` · `bundler --gaps [--json] [--strict] [--group=Extensions]` · `bundler --tokens`                                                                                                                                                                                                                                                                                                                                                                                              |
@@ -96,13 +97,21 @@ inventing a release version or date.
 Every recorded `releasedIn`, `fixedIn`, or `changedIn` value is joined to the
 matching entry in [`bun-docs-feeds.json`](../tools/bun-docs-feeds.json). The RSS
 `pubDate` becomes the event date and that version's Bun blog URL becomes the
-primary evidence reference. If a version has no indexed Bun post, the tool can
-retain the version-specific official GitHub release URL, but
-`docs:provenance:check` fails until a publication date is available. Patch
+primary evidence reference. Inventories store the **marketing** blog form
+(`https://bun.com/blog/bun-v1.4`); sitemap `release-notes` locs are accepted on
+ingest and rewritten via `canonicalizeBunBlogUrl`. If a version has no indexed
+Bun post, the tool can retain the version-specific official GitHub release URL,
+but `docs:provenance:check` fails until a publication date is available. Patch
 evidence is exact: an event for `1.3.99` cannot borrow the date or post for
 `1.3.0`. Both `docs:catalog:verify` and `docs:provenance:check` compare every
 scalar event and every embedded `releaseHits` row with the matching RSS version,
 publication timestamp, and URL.
+
+RSS XML is parsed once through [`lib/docs/bun-rss.ts`](../lib/docs/bun-rss.ts)
+(`parseRssChannelItems`). Callers map items into release-index rows
+(`tools/bun-docs-releases.ts`), release-contract feed entries
+(`packages/bun-release-contracts`), or MCP blog notes
+(`tools/bun-docs-mcp-lib.ts`) — do not add a fourth Bun.XML channel walk.
 
 The scraper reads the merged feed directly; a gitignored legacy
 `release-index.json` is not a clean-worktree prerequisite. It parses nested
