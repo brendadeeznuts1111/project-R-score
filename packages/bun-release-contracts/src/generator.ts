@@ -7,6 +7,7 @@
 // @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { blogUrlForReleaseVersion } from '../../../lib/docs/bun-blog-url.ts';
 
 export type ReleaseItem = {
   category: string;
@@ -72,14 +73,7 @@ export function normalizeVersion(value: string): string {
 }
 
 export function blogUrlForVersion(version: string): string {
-  const normalized = normalizeVersion(version);
-  const [major, minor, patch] = normalized.split('.').map(part => Number(part));
-  // Bun major/minor posts use /blog/bun-vX.Y (not bun-vX.Y.0). Pre-1.0 kept three parts.
-  const slug =
-    major !== undefined && minor !== undefined && patch === 0 && major >= 1
-      ? `bun-v${major}.${minor}`
-      : `bun-v${normalized}`;
-  return `https://bun.com/blog/${slug}`;
+  return blogUrlForReleaseVersion(normalizeVersion(version));
 }
 
 function decodeHtmlEntities(value: string): string {

@@ -26,6 +26,12 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  */
 import { resolvePath } from '../lib/path-bun';
 import {
+  expandBunMinorVersion,
+  parseXmlElementList,
+  parseXmlText,
+  versionFromBunBlogUrl,
+} from '../lib/docs/bun-blog-url.ts';
+import {
   LEGACY_RELEASE_OVERLAY_ABS,
   RELEASE_OVERLAY_CACHE_ABS,
 } from '../lib/docs/docs-artifact-paths.ts';
@@ -39,8 +45,6 @@ const CACHE_XML_PATH = resolvePath(RSS_CACHE_DIR, 'rss.xml');
 const CACHE_META_PATH = resolvePath(RSS_CACHE_DIR, 'meta.json');
 
 const VERSION_RE = /\bv?(\d+\.\d+(?:\.\d+)?)\b/i;
-/** Official posts use `/blog/bun-v1.4` (two-part) or `/blog/bun-v1.3.14` (three-part). */
-const URL_VERSION_RE = /\/blog\/bun-v(\d+\.\d+(?:\.\d+)?)\/?/i;
 
 export type ReleaseEntry = {
   /** Canonical semver, e.g. "1.3.14" or "1.3.0" for minor posts */
@@ -132,25 +136,21 @@ export function cleanBunVersion(version: string): string {
 
 /** Expand "1.3" → "1.3.0"; leave "1.3.14" alone. */
 export function expandMinorVersion(version: string): string {
-  const v = cleanBunVersion(version);
-  const parts = v.split('.');
-  if (parts.length === 2 && parts.every(p => /^\d+$/.test(p))) {
-    return `${parts[0]}.${parts[1]}.0`;
-  }
-  return v;
+  return expandBunMinorVersion(cleanBunVersion(version));
 }
 
 export function isReleasePost(title: string, url: string): boolean {
   if (!/^Bun\s/i.test(title)) return false;
-  return VERSION_RE.test(title) || /\/blog\/bun-v/i.test(url);
+  return VERSION_RE.test(title) || /\/blog\/(?:release-notes\/)?bun-v/i.test(url);
 }
 
 /**
- * Prefer URL path version; else title. Two-part versions become X.Y.0.
+ * Prefer URL path version (incl. `/blog/release-notes/bun-vX.Y.Z`); else title.
+ * Two-part versions become X.Y.0.
  */
 export function normalizeReleaseVersion(title: string, url: string): string | null {
-  const fromUrl = url.match(URL_VERSION_RE)?.[1];
-  if (fromUrl) return expandMinorVersion(fromUrl);
+  const fromUrl = versionFromBunBlogUrl(url);
+  if (fromUrl) return fromUrl;
   const m = title.match(VERSION_RE);
   if (!m) return null;
   return expandMinorVersion(m[1]!);
@@ -167,35 +167,6 @@ function tagText(block: string, tag: string): string {
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
     .trim();
-}
-
-/** Bun.XML scalar / `#text` node → trimmed string. */
-function parseXmlText(value: unknown): string {
-  if (value == null) return '';
-  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-    return String(value).trim();
-  }
-  if (typeof value === 'object' && value !== null && '#text' in value) {
-    return parseXmlText((value as { '#text': unknown })['#text']);
-  }
-  return '';
-}
-
-function parseRssChannelItems(doc: unknown): Array<Record<string, unknown>> {
-  if (!doc || typeof doc !== 'object') return [];
-  const root = doc as Record<string, unknown>;
-  const rss = (root.rss ?? root) as Record<string, unknown> | undefined;
-  const channel = rss?.channel as Record<string, unknown> | undefined;
-  if (!channel || typeof channel !== 'object') return [];
-  const item = channel.item;
-  if (item == null) return [];
-  if (Array.isArray(item)) {
-    return item.filter(
-      (row): row is Record<string, unknown> => row !== null && typeof row === 'object'
-    );
-  }
-  if (typeof item === 'object') return [item as Record<string, unknown>];
-  return [];
 }
 
 function releaseEntryFromFields(fields: {
@@ -236,7 +207,12 @@ function parseReleaseEntriesViaBunXml(xml: string): ReleaseEntry[] | null {
   } catch {
     return null;
   }
-  const items = parseRssChannelItems(doc);
+  if (!doc || typeof doc !== 'object') return null;
+  const root = doc as Record<string, unknown>;
+  const rss = (root.rss ?? root) as Record<string, unknown> | undefined;
+  const channel = rss?.channel as Record<string, unknown> | undefined;
+  if (!channel) return null;
+  const items = parseXmlElementList(channel.item);
   if (items.length === 0) return null;
 
   const out: ReleaseEntry[] = [];

@@ -1,14 +1,22 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML
 // @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
+// @see https://bun.com/docs/runtime/xml — Bun.XML.parse
 // @see https://bun.com/rss.xml — Bun release-post feed
 import { join, resolve } from 'node:path';
+import {
+  parseXmlElementList,
+  parseRssPubDateToIso,
+  parseXmlText,
+  versionFromBunBlogUrl,
+} from '../../../lib/docs/bun-blog-url.ts';
 import { normalizeVersion } from './generator';
 
 export type ReleaseFeedEntry = {
   version: string;
   title: string;
   url: string;
+  /** Canonical ISO-8601 (`…Z`), matching docs feeds `pubDate`. */
   publishedAt: string;
 };
 
@@ -19,7 +27,6 @@ export type FetchReleaseFeedOptions = {
 };
 
 const VERSION_PATTERN = /^\d+\.\d+\.\d+$/;
-const BLOG_VERSION_RE = /\/blog\/bun-v(\d+\.\d+(?:\.\d+)?)\/?$/i;
 
 function decodeXml(value: string): string {
   const named: Readonly<Record<string, string>> = {
@@ -45,36 +52,74 @@ function elementText(xml: string, name: string): string {
   return decodeXml(match?.[1] ?? '');
 }
 
-/** Map `/blog/bun-v1.4` → `1.4.0`; keep three-part URLs as-is. */
+/** @deprecated Prefer `versionFromBunBlogUrl` from `lib/docs/bun-blog-url.ts`. */
 export function versionFromBlogUrl(url: string): string | null {
-  const match = BLOG_VERSION_RE.exec(url);
-  if (!match) return null;
-  const raw = match[1]!;
-  const parts = raw.split('.');
-  if (parts.length === 2 && parts.every(part => /^\d+$/.test(part))) {
-    return `${parts[0]}.${parts[1]}.0`;
+  return versionFromBunBlogUrl(url);
+}
+
+function pushReleaseEntry(
+  entries: ReleaseFeedEntry[],
+  seen: Set<string>,
+  fields: { title: string; url: string; pubRaw: string }
+): void {
+  const version = versionFromBunBlogUrl(fields.url);
+  if (!version || !VERSION_PATTERN.test(version) || seen.has(version)) return;
+  const publishedAt = parseRssPubDateToIso(fields.pubRaw);
+  if (!publishedAt) {
+    throw new Error(`release ${version} has an invalid pubDate: ${fields.pubRaw || '(missing)'}`);
   }
-  return VERSION_PATTERN.test(raw) ? raw : null;
+  seen.add(version);
+  entries.push({
+    version,
+    title: fields.title || `Bun v${version}`,
+    url: fields.url,
+    publishedAt,
+  });
+}
+
+function parseReleaseFeedViaBunXml(xml: string): ReleaseFeedEntry[] | null {
+  let doc: unknown;
+  try {
+    doc = Bun.XML.parse(xml);
+  } catch {
+    return null;
+  }
+  if (!doc || typeof doc !== 'object') return null;
+  const root = doc as Record<string, unknown>;
+  const rss = (root.rss ?? root) as Record<string, unknown> | undefined;
+  const channel = rss?.channel as Record<string, unknown> | undefined;
+  if (!channel) return null;
+  const items = parseXmlElementList(channel.item);
+  if (items.length === 0) return null;
+
+  const entries: ReleaseFeedEntry[] = [];
+  const seen = new Set<string>();
+  for (const item of items) {
+    pushReleaseEntry(entries, seen, {
+      title: parseXmlText(item.title),
+      url: parseXmlText(item.link),
+      pubRaw: parseXmlText(item.pubDate),
+    });
+  }
+  return entries;
+}
+
+function parseReleaseFeedViaRegex(xml: string): ReleaseFeedEntry[] {
+  const entries: ReleaseFeedEntry[] = [];
+  const seen = new Set<string>();
+  for (const match of xml.matchAll(/<item(?:\s[^>]*)?>([\s\S]*?)<\/item>/gi)) {
+    const item = match[1]!;
+    pushReleaseEntry(entries, seen, {
+      title: elementText(item, 'title'),
+      url: elementText(item, 'link'),
+      pubRaw: elementText(item, 'pubDate'),
+    });
+  }
+  return entries;
 }
 
 export function parseReleaseFeed(xml: string): ReleaseFeedEntry[] {
-  const entries: ReleaseFeedEntry[] = [];
-  const seen = new Set<string>();
-
-  for (const match of xml.matchAll(/<item(?:\s[^>]*)?>([\s\S]*?)<\/item>/gi)) {
-    const item = match[1]!;
-    const url = elementText(item, 'link');
-    const version = versionFromBlogUrl(url);
-    if (!version || !VERSION_PATTERN.test(version) || seen.has(version)) continue;
-    seen.add(version);
-    entries.push({
-      version,
-      title: elementText(item, 'title') || `Bun v${version}`,
-      url,
-      publishedAt: elementText(item, 'pubDate'),
-    });
-  }
-
+  const entries = parseReleaseFeedViaBunXml(xml) ?? parseReleaseFeedViaRegex(xml);
   if (entries.length === 0) {
     throw new Error('Bun release feed contained no vMAJOR.MINOR.PATCH blog entries');
   }
