@@ -33,9 +33,10 @@ layers, or outputs.
 | One-shot tip + usage stack                | `bun:types-report` / `:local` · `bun:types-ci`          |
 | Morning dashboard (compose caches)        | `bun:types-status` (+ `:refresh`)                       |
 
-Docs catalog / `@see` / RSS operate loop stays in
+Docs **token** and **catalog** operate planes stay in
 [`BUN_DOCS_OPERATE.md`](../BUN_DOCS_OPERATE.md) — related but a different
-pipeline (token/catalog, not pin↔tip inventory).
+pipeline (not pin↔tip inventory). Do not collapse those two planes into one
+“token/catalog” channel.
 
 ## Not this (partner-surface)
 
