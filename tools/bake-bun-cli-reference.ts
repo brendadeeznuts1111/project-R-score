@@ -10,7 +10,7 @@
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/environment-variables#disabling-automatic-env-loading — --no-env-file
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
-// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — --cpu-prof
+// @see https://bun.com/docs/project/benchmarking#cpu-profiling — --cpu-prof
 // @see https://bun.com/docs/bundler/executables#embedding-runtime-arguments — --user-agent
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main

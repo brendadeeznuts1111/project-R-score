@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags — --cpu
-// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — --cpu-prof
-// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — --cpu-prof-md
+// @see https://bun.com/docs/project/benchmarking#cpu-profiling — --cpu-prof
+// @see https://bun.com/docs/project/benchmarking#markdown-output — --cpu-prof-md
 // @see https://bun.com/docs/project/benchmarking#cpu-profiling — --cpu-prof / --cpu-prof-md
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/reference/bun/argv — Bun.argv

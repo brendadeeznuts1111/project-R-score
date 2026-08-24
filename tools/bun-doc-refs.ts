@@ -1446,9 +1446,10 @@ export const CANONICAL_REFS: Record<string, string> = {
   '--force': 'https://bun.com/docs/bundler/executables',
   '--console':
     'https://bun.com/docs/bundler/html-static#echo-console-logs-from-browser-to-terminal',
-  '--cpu-prof': 'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options',
-  '--cpu-prof-md': 'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options',
-  '--heap-prof-md': 'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options',
+  '--cpu-prof': 'https://bun.com/docs/project/benchmarking#cpu-profiling',
+  '--cpu-prof-md': 'https://bun.com/docs/project/benchmarking#markdown-output',
+  '--heap-prof': 'https://bun.com/docs/project/benchmarking#heap-profiling',
+  '--heap-prof-md': 'https://bun.com/docs/project/benchmarking#markdown-output-1',
   '--deep': 'https://bun.com/docs/bundler/executables#code-signing-on-macos',
   '--entitlements': 'https://bun.com/docs/bundler/executables#code-signing-on-macos',
   '--sign': 'https://bun.com/docs/bundler/executables#code-signing-on-macos',
