@@ -49,15 +49,18 @@ export function emitJson<T>(value: T): void {
  */
 export function spawnText(
   cmd: string[],
-  opts: { cwd?: string; allowFail?: boolean } = {}
+  opts: { cwd?: string; allowFail?: boolean; trim?: boolean } = {}
 ): SpawnTextResult {
   const proc = Bun.spawnSync(cmd, {
     cwd: opts.cwd,
     stdout: 'pipe',
     stderr: 'pipe',
   });
-  const stdout = proc.stdout.toString().trim();
-  const stderr = proc.stderr.toString().trim();
+  const trim = opts.trim !== false;
+  const rawOut = proc.stdout.toString();
+  const rawErr = proc.stderr.toString();
+  const stdout = trim ? rawOut.trim() : rawOut.trimEnd();
+  const stderr = trim ? rawErr.trim() : rawErr.trimEnd();
   const code = proc.exitCode ?? 1;
   if (code !== 0 && !opts.allowFail) {
     throw new Error(`${cmd.join(' ')} failed (${code}): ${stderr || stdout}`);

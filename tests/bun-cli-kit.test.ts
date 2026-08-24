@@ -25,6 +25,14 @@ describe('bun-cli kit', () => {
     expect(r.code).not.toBe(0);
   });
 
+  test('spawnText trim:false keeps leading whitespace (trimEnd only)', () => {
+    const r = spawnText([process.execPath, '-e', 'process.stdout.write("  hi\\n")'], {
+      trim: false,
+    });
+    expect(r.stdout.startsWith('  ')).toBe(true);
+    expect(r.stdout.endsWith('\n')).toBe(false);
+  });
+
   test('setExitCode assigns process.exitCode', () => {
     const prev = process.exitCode;
     setExitCode(0);

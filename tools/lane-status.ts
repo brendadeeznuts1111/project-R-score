@@ -31,9 +31,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-toml — Bun.TOML.stringify
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
-// @see https://bun.com/docs/runtime/utils#bun-exit — Bun.exit
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — logTable
-// @see https://bun.com/blog/bun-v1.4 — Bun.Terminal · Bun.cron tz · wrapAnsi
+// @see https://bun.com/blog/bun-v1.4 — Bun.Terminal · Bun.cron tz · wrapAnsi · bun-cli kit
 /**
  * lane-status.ts — read-only lane / worktree / branch / bake-drift reporter.
  *
@@ -46,7 +45,8 @@
  *   bun run lane:status -- --term
  *   bun run pulse:lane
  *
- * Read-only git via Bun.spawnSync / Bun.spawn. Policy: AGENTS.md lane hygiene.
+ * Read-only git via bun-cli spawnText / Bun.spawn. Policy: AGENTS.md lane hygiene.
+ * Kernel: lib/harness/bun-cli.ts (help · gate-fail · exitCode — not Bun.exit).
  */
 
 import {
@@ -64,6 +64,13 @@ import {
   tones,
   truncateWidth,
 } from '../lib/console/index.ts';
+import {
+  failCli,
+  printMarkdownHelp,
+  setExitCode,
+  spawnText,
+  wantsHelp,
+} from '../lib/harness/bun-cli.ts';
 import { parseGitStatusPorcelain, type GitStatusEntry } from '../scripts/lib/git-porcelain.ts';
 
 export { LANE_STATUS_ALLOWED_LONG };
@@ -130,16 +137,15 @@ export type LaneReport = {
   };
 };
 
-/** Blocking git via Bun.spawnSync. */
+/** Blocking git via bun-cli spawnText (allowFail — empty string on non-zero). */
 function git(args: string[], cwd?: string, preserveLeadingWhitespace = false): string {
-  const proc = Bun.spawnSync(['git', ...args], {
+  const { code, stdout } = spawnText(['git', ...args], {
     cwd,
-    stdout: 'pipe',
-    stderr: 'pipe',
+    allowFail: true,
+    trim: !preserveLeadingWhitespace,
   });
-  if (proc.exitCode !== 0) return '';
-  const out = proc.stdout.toString();
-  return preserveLeadingWhitespace ? out.trimEnd() : out.trim();
+  if (code !== 0) return '';
+  return stdout;
 }
 
 /** Async git via Bun.spawn + readableStreamToText (for parallel worktree probes). */
@@ -375,7 +381,7 @@ bun run pulse:lane
 | \`--tz NAME\` | IANA tz for cron (default \`America/Chicago\`) |
 | \`--term\` | One-shot colored \`git status\` via Bun.Terminal |
 `;
-  Bun.write(Bun.stdout, Bun.markdown.ansi(md));
+  printMarkdownHelp(md);
 }
 
 function printCount(report: LaneReport): void {
@@ -576,24 +582,22 @@ export function parseLaneCliOpts(argv: string[]): LaneCliOpts {
   };
 }
 
-function validateModeExclusions(opts: LaneCliOpts): void {
+function validateModeExclusions(opts: LaneCliOpts): string | null {
   const machine = [opts.json, opts.jsonl, opts.toml].filter(Boolean).length;
-  if (machine > 1) {
-    console.error('lane-status: use only one of --json, --jsonl, --toml');
-    Bun.exit(1);
-  }
-  if (opts.watch && opts.json) {
-    console.error('lane-status: --watch cannot combine with --json (use --jsonl)');
-    Bun.exit(1);
-  }
-  if (opts.watch && opts.toml) {
-    console.error('lane-status: --watch cannot combine with --toml');
-    Bun.exit(1);
-  }
-  if (opts.term && opts.watch) {
-    console.error('lane-status: --term is one-shot (omit --watch)');
-    Bun.exit(1);
-  }
+  if (machine > 1) return 'use only one of --json, --jsonl, --toml';
+  if (opts.watch && opts.json) return '--watch cannot combine with --json (use --jsonl)';
+  if (opts.watch && opts.toml) return '--watch cannot combine with --toml';
+  if (opts.term && opts.watch) return '--term is one-shot (omit --watch)';
+  return null;
+}
+
+function failLane(why: string): number {
+  return failCli({
+    title: 'lane-status',
+    gate: 'lane-status',
+    why,
+    fix: 'bun run lane:status -- --help',
+  });
 }
 
 function strictExitCode(report: LaneReport): number {
@@ -615,7 +619,7 @@ async function runTermStatus(root: string): Promise<void> {
     },
   });
   const code = await proc.exited;
-  Bun.exit(code === null ? 1 : code);
+  setExitCode(code === null ? 1 : code);
 }
 
 function printWatchBanner(opts: LaneCliOpts, next: string | null): void {
@@ -626,32 +630,30 @@ function printWatchBanner(opts: LaneCliOpts, next: string | null): void {
   );
 }
 
-async function main(): Promise<void> {
+async function main(): Promise<number> {
   const rawArgv = Bun.argv.slice(2);
   // Allow -h before long-option guard (guard only knows long flags).
-  if (rawArgv.includes('-h') || rawArgv.includes('--help')) {
+  if (wantsHelp(rawArgv)) {
     printHelp();
-    Bun.exit(0);
+    return 0;
   }
 
   const argv = applyUnknownLongOptionGuardFor('lane:status', rawArgv);
   const opts = parseLaneCliOpts(argv);
-  validateModeExclusions(opts);
+  const modeErr = validateModeExclusions(opts);
+  if (modeErr) return failLane(modeErr);
 
   if (opts.help) {
     printHelp();
-    Bun.exit(0);
+    return 0;
   }
 
   const root = git(['rev-parse', '--show-toplevel']);
-  if (!root) {
-    console.error('lane-status: not inside a git work tree');
-    Bun.exit(1);
-  }
+  if (!root) return failLane('not inside a git work tree');
 
   if (opts.term) {
     await runTermStatus(root);
-    return;
+    return process.exitCode ?? 0;
   }
 
   const home = Bun.env.HOME ?? '';
@@ -689,14 +691,12 @@ async function main(): Promise<void> {
       { tz: opts.tz }
     );
     await new Promise<void>(() => {});
-    return;
+    return 0;
   }
 
-  if (opts.strict) {
-    Bun.exit(strictExitCode(first));
-  }
+  return opts.strict ? strictExitCode(first) : 0;
 }
 
 if (import.meta.main) {
-  await main();
+  setExitCode(await main());
 }
