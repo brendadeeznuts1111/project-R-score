@@ -1498,6 +1498,28 @@ function versionEvidence(
   return release ? { date: release.pubDate, url: release.url } : { url: releaseUrlFor(version) };
 }
 
+/**
+ * Prefer a section-anchored blogUrl when it targets the same release post as
+ * `version` (e.g. …/bun-v1.4#cpu-prof-md over bare …/bun-v1.4).
+ */
+export function preferAnchoredBlogEvidence(
+  blogUrl: string | undefined,
+  version: string | undefined,
+  fallback?: string
+): string | undefined {
+  if (!version) return fallback;
+  if (!blogUrl?.includes('#')) return fallback ?? blogUrl;
+  try {
+    const expectedBase = blogUrlFor(version);
+    if (blogUrl === expectedBase || blogUrl.startsWith(`${expectedBase}#`)) {
+      return blogUrl;
+    }
+  } catch {
+    /* invalid version — keep fallback */
+  }
+  return fallback ?? blogUrl;
+}
+
 /** Join every recorded API release/update version to dated official evidence. */
 export function stampVersionProvenance(
   entry: DocCatalogEntry,
@@ -1508,15 +1530,15 @@ export function stampVersionProvenance(
   const changed = versionEvidence(entry.changedIn, releaseMap);
   if (entry.releasedIn) {
     entry.releasedAt = released.date;
-    entry.releasedUrl = released.url;
+    entry.releasedUrl = preferAnchoredBlogEvidence(entry.blogUrl, entry.releasedIn, released.url);
   }
   if (entry.fixedIn) {
     entry.fixedAt = fixed.date;
-    entry.fixedUrl = fixed.url;
+    entry.fixedUrl = preferAnchoredBlogEvidence(entry.blogUrl, entry.fixedIn, fixed.url);
   }
   if (entry.changedIn) {
     entry.changedAt = changed.date;
-    entry.changedUrl = changed.url;
+    entry.changedUrl = preferAnchoredBlogEvidence(entry.blogUrl, entry.changedIn, changed.url);
   }
 }
 

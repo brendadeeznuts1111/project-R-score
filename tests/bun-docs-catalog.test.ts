@@ -337,6 +337,37 @@ describe('release provenance', () => {
     expect(entry.fixedUrl).toBe('https://bun.com/blog/bun-v1.3.14');
   });
 
+  test('prefers section-anchored blogUrl as releasedUrl evidence', () => {
+    const entry = {
+      name: '--cpu-prof-md',
+      type: 'cli-flag',
+      stability: 'stable',
+      canonicalPage: 'https://bun.com/docs/project/benchmarking#markdown-output',
+      allPages: ['https://bun.com/docs/project/benchmarking#markdown-output'],
+      section: 'project',
+      releasedIn: '1.4.0',
+      blogUrl: 'https://bun.com/blog/bun-v1.4#cpu-prof-md',
+    } satisfies DocCatalogEntry;
+    const releases = new Map([
+      [
+        '1.4.0',
+        {
+          version: '1.4.0',
+          title: 'Bun v1.4',
+          url: 'https://bun.com/blog/bun-v1.4',
+          guid: 'https://bun.com/blog/bun-v1.4',
+          pubDate: '2026-08-01T00:00:00.000Z',
+        },
+      ],
+    ]);
+
+    stampVersionProvenance(entry, releases);
+
+    expect(entry.releasedAt).toBe('2026-08-01T00:00:00.000Z');
+    expect(entry.releasedUrl).toBe('https://bun.com/blog/bun-v1.4#cpu-prof-md');
+    expect(catalogReleaseProvenanceFindings([entry], releases)).toEqual([]);
+  });
+
   test('does not borrow a minor release post for an unknown patch release', () => {
     const entry = {
       name: 'Bun.future',
@@ -469,6 +500,24 @@ describe('bun-docs-changelog overlay', () => {
     const heapMd = changelogFor('--heap-prof-md');
     expect(heapMd.releasedIn).toBe('1.4.0');
     expect(heapMd.blogAnchor).toBe('heap-prof-md');
+
+    // Companion flags inherit parent feature version + blog anchor via aliases
+    for (const name of ['--cpu-prof-name', '--cpu-prof-dir', '--cpu-prof-interval']) {
+      const cl = changelogFor(name);
+      expect(cl.releasedIn).toBe('1.3.2');
+      expect(cl.blogAnchor).toBe('cpu-profiling-with-cpu-prof');
+    }
+    for (const name of ['--heap-prof-name', '--heap-prof-dir', '--heap-prof-interval']) {
+      const cl = changelogFor(name);
+      expect(cl.releasedIn).toBe('1.4.0');
+      expect(cl.blogAnchor).toBe('heap-prof');
+    }
+
+    expect(changelogFor('process.on("memoryPressure")').blogAnchor).toBe(
+      'process-on-memorypressure'
+    );
+    expect(changelogFor('memoryPressure').releasedIn).toBe('1.4.0');
+    expect(changelogFor('--metafile-md').blogAnchor).toBe('metafile-md');
   });
 
   test('alias --no-orphans maps to noOrphans feature', () => {

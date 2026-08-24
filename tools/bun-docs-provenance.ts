@@ -51,6 +51,12 @@ export function exactReleaseEntry<T extends OfficialReleaseEvidence>(
   return releaseMap.get(parts.length === 2 ? `${clean}.0` : clean);
 }
 
+/** Official RSS post URL, optionally with a section `#anchor`. */
+export function matchesOfficialReleaseUrl(actual: string | undefined, expected: string): boolean {
+  if (!actual) return false;
+  return actual === expected || actual.startsWith(`${expected}#`);
+}
+
 /** Compare every dated catalog event with the exact official RSS release row. */
 export function catalogReleaseProvenanceFindings(
   entries: readonly CatalogReleaseProvenanceEntry[],
@@ -83,7 +89,7 @@ export function catalogReleaseProvenanceFindings(
         actual: date,
       });
     }
-    if (url !== release.url) {
+    if (!matchesOfficialReleaseUrl(url, release.url)) {
       findings.push({
         token,
         locus,

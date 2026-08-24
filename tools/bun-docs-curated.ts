@@ -1,3 +1,28 @@
+// @see https://bun.com/docs/project/benchmarking#cpu-profiling — --cpu-prof
+// @released --cpu-prof · released v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2#cpu-profiling-with-cpu-prof
+// @updated --cpu-prof · changed v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2
+// @updated --cpu-prof · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
+// @updated --cpu-prof · fixed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @see https://bun.com/docs/project/benchmarking#cpu-profiling — --cpu-prof-dir
+// @released --cpu-prof-dir · released v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2#cpu-profiling-with-cpu-prof
+// @see https://bun.com/docs/project/benchmarking#cpu-profiling — --cpu-prof-interval
+// @released --cpu-prof-interval · released v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2#cpu-profiling-with-cpu-prof
+// @see https://bun.com/docs/project/benchmarking#markdown-output — --cpu-prof-md
+// @released --cpu-prof-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#cpu-prof-md
+// @see https://bun.com/docs/project/benchmarking#cpu-profiling — --cpu-prof-name
+// @released --cpu-prof-name · released v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2#cpu-profiling-with-cpu-prof
+// @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof
+// @released --heap-prof · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#heap-prof
+// @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof-dir
+// @released --heap-prof-dir · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#heap-prof
+// @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof-interval
+// @released --heap-prof-interval · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#heap-prof
+// @see https://bun.com/docs/project/benchmarking#markdown-output-1 — --heap-prof-md
+// @released --heap-prof-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#heap-prof-md
+// @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof-name
+// @released --heap-prof-name · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#heap-prof
+// @see https://bun.com/docs/bundler/index#metafile — --metafile-md
+// @released --metafile-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#metafile-md
 // @see https://bun.com/reference/bun/TerminalOptions — Bun.TerminalOptions
 // @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
 // @see https://bun.com/reference/bun/SQL — Bun.SQL
@@ -1157,7 +1182,139 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'runtime-arguments-via-bun-options',
       'embedding-runtime-arguments',
       '--compile-exec-argv',
+      '--cpu-prof-md',
+      '--heap-prof-md',
     ],
+  },
+  // Observability profiling family (docs how-to ↔ versioned blog anchors via changelog).
+  {
+    term: '--cpu-prof',
+    path: 'project/benchmarking#cpu-profiling',
+    description:
+      'Write a Chrome DevTools .cpuprofile on exit (Bun 1.3.2+). Companions: --cpu-prof-name / --cpu-prof-dir / --cpu-prof-interval.',
+    minVersion: '1.3.2',
+    related: ['project/benchmarking#markdown-output', 'project/benchmarking#heap-profiling'],
+    relatedTokens: [
+      '--cpu-prof-md',
+      '--cpu-prof-name',
+      '--cpu-prof-dir',
+      '--cpu-prof-interval',
+      '--heap-prof',
+      'BUN_OPTIONS',
+    ],
+  },
+  {
+    term: '--cpu-prof-md',
+    path: 'project/benchmarking#markdown-output',
+    description:
+      'Markdown CPU profile (Hot Functions / Call Tree) for SSH, bug reports, and LLMs (Bun 1.4.0 Observability).',
+    minVersion: '1.4.0',
+    related: ['project/benchmarking#cpu-profiling', 'project/benchmarking#markdown-output-1'],
+    relatedTokens: [
+      '--cpu-prof',
+      '--cpu-prof-name',
+      '--cpu-prof-dir',
+      '--cpu-prof-interval',
+      '--heap-prof-md',
+      'BUN_OPTIONS',
+    ],
+  },
+  {
+    term: '--cpu-prof-name',
+    path: 'project/benchmarking#cpu-profiling',
+    description: 'Output basename for --cpu-prof / --cpu-prof-md artifacts.',
+    minVersion: '1.3.2',
+    relatedTokens: ['--cpu-prof', '--cpu-prof-md', '--cpu-prof-dir', '--cpu-prof-interval'],
+  },
+  {
+    term: '--cpu-prof-dir',
+    path: 'project/benchmarking#cpu-profiling',
+    description: 'Directory for --cpu-prof / --cpu-prof-md artifacts.',
+    minVersion: '1.3.2',
+    relatedTokens: ['--cpu-prof', '--cpu-prof-md', '--cpu-prof-name', '--cpu-prof-interval'],
+  },
+  {
+    term: '--cpu-prof-interval',
+    path: 'project/benchmarking#cpu-profiling',
+    description: 'CPU sample interval in microseconds for --cpu-prof / --cpu-prof-md.',
+    minVersion: '1.3.2',
+    relatedTokens: ['--cpu-prof', '--cpu-prof-md', '--cpu-prof-name', '--cpu-prof-dir'],
+  },
+  {
+    term: '--heap-prof',
+    path: 'project/benchmarking#heap-profiling',
+    description:
+      'Write a V8-compatible .heapprofile on exit (Bun 1.4.0). Companions: --heap-prof-name / --heap-prof-dir / --heap-prof-interval.',
+    minVersion: '1.4.0',
+    related: ['project/benchmarking#markdown-output-1', 'project/benchmarking#cpu-profiling'],
+    relatedTokens: [
+      '--heap-prof-md',
+      '--heap-prof-name',
+      '--heap-prof-dir',
+      '--heap-prof-interval',
+      '--cpu-prof',
+      'BUN_OPTIONS',
+    ],
+  },
+  {
+    term: '--heap-prof-md',
+    path: 'project/benchmarking#markdown-output-1',
+    description:
+      'Markdown heap profile (Summary / Top Types) for CLI analysis (Bun 1.4.0 Observability).',
+    minVersion: '1.4.0',
+    related: ['project/benchmarking#heap-profiling', 'project/benchmarking#markdown-output'],
+    relatedTokens: [
+      '--heap-prof',
+      '--heap-prof-name',
+      '--heap-prof-dir',
+      '--heap-prof-interval',
+      '--cpu-prof-md',
+      'BUN_OPTIONS',
+    ],
+  },
+  {
+    term: '--heap-prof-name',
+    path: 'project/benchmarking#heap-profiling',
+    description: 'Output basename for --heap-prof / --heap-prof-md artifacts.',
+    minVersion: '1.4.0',
+    relatedTokens: ['--heap-prof', '--heap-prof-md', '--heap-prof-dir', '--heap-prof-interval'],
+  },
+  {
+    term: '--heap-prof-dir',
+    path: 'project/benchmarking#heap-profiling',
+    description: 'Directory for --heap-prof / --heap-prof-md artifacts.',
+    minVersion: '1.4.0',
+    relatedTokens: ['--heap-prof', '--heap-prof-md', '--heap-prof-name', '--heap-prof-interval'],
+  },
+  {
+    term: '--heap-prof-interval',
+    path: 'project/benchmarking#heap-profiling',
+    description: 'Heap sample interval for --heap-prof / --heap-prof-md.',
+    minVersion: '1.4.0',
+    relatedTokens: ['--heap-prof', '--heap-prof-md', '--heap-prof-name', '--heap-prof-dir'],
+  },
+  {
+    term: 'process.on("memoryPressure")',
+    path: 'blog/bun-v1.4#process-on-memorypressure',
+    description:
+      'process event memoryPressure with warning|critical levels when the OS signals low memory (Bun 1.4.0 Observability).',
+    minVersion: '1.4.0',
+    relatedTokens: ['memoryPressure', '--heap-prof-md', '--cpu-prof-md'],
+  },
+  {
+    term: 'memoryPressure',
+    path: 'blog/bun-v1.4#process-on-memorypressure',
+    description: 'Alias for process.on("memoryPressure") (Bun 1.4.0 Observability).',
+    minVersion: '1.4.0',
+    relatedTokens: ['process.on("memoryPressure")', '--heap-prof'],
+  },
+  {
+    term: '--metafile-md',
+    path: 'bundler/index#metafile',
+    description:
+      'bun build --metafile-md writes a Markdown bundle graph (Bun 1.4.0 Observability).',
+    minVersion: '1.4.0',
+    relatedTokens: ['bundler metafile', '--cpu-prof-md', '--heap-prof-md'],
   },
   {
     term: 'runtime-arguments-via-bun-options',
