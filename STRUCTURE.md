@@ -9,20 +9,20 @@ High-level map of the FactoryWager Enterprise Platform monorepo
 
 ## Canonical docs
 
-| Role                          | Doc                                                                                                                                                                     |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| This map                      | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                                                          |
-| Human hub                     | [`README.md`](README.md)                                                                                                                                                |
-| AI agents                     | [`AGENTS.md`](AGENTS.md) (entry) · map [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · routing [`docs/AGENTS.md`](docs/AGENTS.md)                    |
-| Coding standards              | [`.custom-instructions.md`](.custom-instructions.md)                                                                                                                   |
-| Bun install policy            | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                                    |
-| Bun channel / type governance | [`config/bun-channels.toml`](config/bun-channels.toml) · [`docs/design/bun-channel-governance.md`](docs/design/bun-channel-governance.md) · `bun run bun:channel:check` |
-| Bun token/catalog operate     | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) (`bun run docs:refresh`)                                                                                         |
-| Root placement policy         | [`config/repo-root-policy.ts`](config/repo-root-policy.ts) · `bun scripts/repo-hygiene.ts`                                                                              |
-| Projects triage               | [`projects/README.md`](projects/README.md)                                                                                                                              |
-| Path SSOT (code)              | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts)                                                                                                                        |
-| Wire boundary                 | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)                                                                                                                        |
-| Harness thesis                | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering)                                                                                         |
+| Role                          | Doc                                                                                                                                                                                                      |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| This map                      | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                                                                                           |
+| Human hub                     | [`README.md`](README.md)                                                                                                                                                                                 |
+| AI agents                     | [`AGENTS.md`](AGENTS.md) (entry) · map [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · routing [`docs/AGENTS.md`](docs/AGENTS.md)                                                   |
+| Coding standards              | [`.custom-instructions.md`](.custom-instructions.md)                                                                                                                                                     |
+| Bun install policy            | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                                                                     |
+| Bun channel / type governance | [`config/bun-channels.toml`](config/bun-channels.toml) · [`docs/design/bun-channel-governance.md`](docs/design/bun-channel-governance.md) · `bun run bun:channel:check`                                  |
+| Bun token/catalog operate     | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) (`bun run docs:refresh`) · RSS/blog helpers [`lib/docs/bun-rss.ts`](lib/docs/bun-rss.ts) · [`lib/docs/bun-blog-url.ts`](lib/docs/bun-blog-url.ts) |
+| Root placement policy         | [`config/repo-root-policy.ts`](config/repo-root-policy.ts) · `bun scripts/repo-hygiene.ts`                                                                                                               |
+| Projects triage               | [`projects/README.md`](projects/README.md)                                                                                                                                                               |
+| Path SSOT (code)              | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts)                                                                                                                                                         |
+| Wire boundary                 | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)                                                                                                                                                         |
+| Harness thesis                | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering)                                                                                                                          |
 
 ## Root layout (current)
 
@@ -198,8 +198,8 @@ route in [`config/repo-root-policy.ts`](config/repo-root-policy.ts)
 | `.mcp.json`                                            | Local + remote MCP servers                               | `mcp`    |
 
 MCP servers (SSOT `.mcp.json`): `bun-docs`, `dx`, `cascade-mover` (HTTP),
-`ast-grep`, `github`, `cloudflare`, `cloudflare-docs`,
-`cloudflare-bindings`, `cloudflare-observability`.
+`ast-grep`, `github`, `cloudflare`, `cloudflare-docs`, `cloudflare-bindings`,
+`cloudflare-observability`.
 
 #### Not monorepo spine (local / nested only)
 
@@ -255,8 +255,9 @@ Related (not root files): `lib/channels/` → `ops-outbox`;
 - **Brands:** [`lib/types/branded/README.md`](lib/types/branded/README.md) ·
   `bun run check:brands:all`
 - **Console domain / `bun run -`:** [`lib/console/`](lib/console/README.md)
-  (`cliOut` · `tones` · chrome) · facade [`lib/console-depth.ts`](lib/console-depth.ts)
-  · note [`lib/console-depth.md`](lib/console-depth.md)
+  (`cliOut` · `tones` · chrome) · facade
+  [`lib/console-depth.ts`](lib/console-depth.ts) · note
+  [`lib/console-depth.md`](lib/console-depth.md)
 - **`bun create` / factory scaffold:**
   [`docs/design/bun-create-alignment.md`](docs/design/bun-create-alignment.md) ·
   [`.bun-create/`](.bun-create/) · [`lib/factory/`](lib/factory/README.md) ·
