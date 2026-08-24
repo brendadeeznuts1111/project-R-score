@@ -1,4 +1,13 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.3.14 · 2026-08-18 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.3.14 · 2026-08-18 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/docs/runtime/console — console depth · AsyncIterable stdin · console.write
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
 // @see https://bun.com/docs/runtime/file-io — Bun.file
@@ -16,12 +25,14 @@
  * brand-status.ts — live brand / apex / subdomain / lineage status for the terminal.
  *
  * Tables use Bun.inspect.table + cli-chrome. Depth follows bunfig [console] depth.
- * `--docs` → Bun.markdown.ansi lineage slice · `--json` → machine snapshot
+ * `--docs` → markdown lineage slice · `--json` → machine snapshot (emitJson)
  * `--plane` filters HOST PLANES · `--lineage [host]` live transition matrix
  * `--flags` → long/short flag catalog · default bind/serve view uses indexed cards
  * `--compact` → wide Bun.inspect.table (may truncate) instead of cards
  * `--lifecycle` → Server methods + serve options cards only (C + D)
  * REPL: FQDN / URL / AccessDomain · commands access · url · plane · lineage · help
+ *
+ * Kernel: lib/harness/bun-cli.ts (help · gate-fail · json · exitCode — not Bun.exit).
  *
  * Usage:
  *   bun tools/brand-status.ts --once
@@ -44,8 +55,13 @@ import {
   applyUnknownLongOptionGuardFor,
   BRAND_STATUS_ALLOWED_LONG,
 } from '../lib/docs/ref-id-tool-flags.ts';
-
-export { BRAND_STATUS_ALLOWED_LONG };
+import {
+  emitJson,
+  failCli,
+  printMarkdownHelp,
+  setExitCode,
+  wantsHelp,
+} from '../lib/harness/bun-cli.ts';
 import {
   LINEAGE_DEMO_HOST,
   dnsAccessLineageRows,
@@ -77,6 +93,7 @@ import {
 } from '../lib/types/branded.ts';
 import { resolvePath } from '../scripts/lib/fs-bun.ts';
 
+export { BRAND_STATUS_ALLOWED_LONG };
 const MANIFEST = new URL('../lib/types/brand-manifest.json', import.meta.url).pathname;
 const BRANDED_README = new URL('../lib/types/branded/README.md', import.meta.url).pathname;
 const ROOT = resolvePath(import.meta.dir, '..');
@@ -200,24 +217,39 @@ function printFlagsCatalog(): void {
   );
 }
 
+function failBrand(why: string): number {
+  return failCli({
+    title: 'brand-status',
+    gate: 'brand-status',
+    why,
+    fix: 'bun tools/brand-status.ts --help',
+  });
+}
+
 function printHelp(): void {
-  console.info(`brand-status — apex/subdomain + host planes + DNS/Access lineage
+  const md = `# brand-status
 
-Usage:
-  bun tools/brand-status.ts --once
-  bun tools/brand-status.ts --plane bind --once     indexed SERVER/URL + bind + lifecycle
-  bun tools/brand-status.ts --lifecycle --once      C. SERVER METHODS + D. SERVE OPTIONS only
-  bun tools/brand-status.ts --flags                 long · short · meaning
-  bun tools/brand-status.ts --compact --plane bind  wide inspect.table (truncates)
-  bun tools/brand-status.ts --docs --once
-  bun tools/brand-status.ts --lineage [host] --once
-  bun tools/brand-status.ts --json --once
-  bun tools/brand-status.ts --watch [--every '*/5 * * * *']
-  bun tools/brand-status.ts --repl
+Apex / subdomain + host planes + DNS/Access lineage (Bun.inspect.table · cli-chrome).
 
-REPL: FQDN · url · host/path · access · url · lineage · plane · docs · help · q
+## Usage
+
+\`\`\`bash
+bun tools/brand-status.ts --once
+bun tools/brand-status.ts --plane bind --once
+bun tools/brand-status.ts --lifecycle --once
+bun tools/brand-status.ts --flags
+bun tools/brand-status.ts --compact --plane bind
+bun tools/brand-status.ts --docs --once
+bun tools/brand-status.ts --lineage [host] --once
+bun tools/brand-status.ts --json --once
+bun tools/brand-status.ts --watch [--every '*/5 * * * *']
+bun tools/brand-status.ts --repl
+\`\`\`
+
+REPL: FQDN · url · host/path · access · url · lineage · plane · docs · help · q  
 Cards: full default/fallback text (wrap). Compact tables may ellipsis.
-`);
+`;
+  printMarkdownHelp(md);
   printFlagsCatalog();
 }
 async function loadManifest(): Promise<Manifest> {
@@ -566,9 +598,9 @@ async function printLineageDocs(): Promise<void> {
   }
   console.info(
     cliTone.accent('\nLINEAGE DOCS') +
-      cliTone.dim('  lib/types/branded/README.md · Bun.markdown.ansi')
+      cliTone.dim('  lib/types/branded/README.md · bun-cli printMarkdownHelp')
   );
-  process.stdout.write(Bun.markdown.ansi(md.slice(a, b).trimEnd() + '\n'));
+  printMarkdownHelp(md.slice(a, b).trimEnd() + '\n');
 }
 
 function printLineageTransitions(rawHost: string): void {
@@ -858,30 +890,34 @@ function startWatch(opts: CliOpts): Bun.CronJob {
   });
 }
 
-async function main(): Promise<void> {
+async function main(): Promise<number> {
+  const rawArgv = Bun.argv.slice(2);
+  // Allow -h before long-option guard (guard only knows long flags).
+  if (wantsHelp(rawArgv)) {
+    printHelp();
+    return 0;
+  }
+
   const opts = args();
   if (opts.help) {
     printHelp();
-    return;
+    return 0;
   }
   if (opts.flagsOnly) {
     printFlagsCatalog();
-    return;
+    return 0;
   }
 
   if (opts.plane === undefined) {
     const planeRaw = Bun.argv.slice(2).find((_, i, a) => a[i - 1] === '--plane');
     if (Bun.argv.includes('--plane') && planeRaw && !isHostPlane(planeRaw)) {
-      console.info(cliTone.fail(`unknown --plane ${planeRaw} (bind|dns|access|pages)`));
-      process.exitCode = 1;
-      return;
+      return failBrand(`unknown --plane ${planeRaw} (bind|dns|access|pages)`);
     }
   }
 
   if (opts.json) {
-    // stdout.write — not console.info(JSON.stringify) — keeps console-format ratchet clean
-    process.stdout.write(`${JSON.stringify(await buildJsonSnapshot(opts), null, 2)}\n`);
-    return;
+    emitJson(await buildJsonSnapshot(opts));
+    return 0;
   }
 
   if (!opts.replOnly) {
@@ -895,18 +931,19 @@ async function main(): Promise<void> {
   if (opts.watch) {
     using _job = startWatch(opts);
     await new Promise<void>(() => {});
-    return;
+    return 0;
   }
 
-  if (opts.once) return;
+  if (opts.once) return 0;
 
   const tty = process.stdin.isTTY === true;
   const piped = process.stdin.isTTY === false;
   if (opts.replOnly || tty || piped) {
     await runRepl(opts);
   }
+  return 0;
 }
 
 if (import.meta.main) {
-  await main();
+  setExitCode(await main());
 }
