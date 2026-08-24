@@ -1,3 +1,14 @@
+// @see https://bun.com/docs/project/benchmarking#cpu-profiling — --cpu-prof
+// @released --cpu-prof · released v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2
+// @updated --cpu-prof · changed v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2
+// @updated --cpu-prof · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
+// @updated --cpu-prof · fixed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @see https://bun.com/docs/project/benchmarking#markdown-output — --cpu-prof-md
+// @released --cpu-prof-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4
+// @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof
+// @released --heap-prof · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4
+// @see https://bun.com/docs/project/benchmarking#markdown-output-1 — --heap-prof-md
+// @released --heap-prof-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4
 // @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
 // @see https://bun.com/docs/bundler/index#features — bun:bundle
 // @see https://bun.com/docs/runtime/s3 — Bun.s3
@@ -174,6 +185,37 @@ export const CHANGELOG_EVENTS: ChangelogEvent[] = [
     version: '1.3.5',
     note: 'contentDisposition option for S3 uploads',
     blogAnchor: 'content-disposition-support-for-s3-uploads',
+  },
+
+  // ── Bun 1.4.0 Observability (versioned blog anchors) ─────────────────────
+  // https://bun.com/blog/bun-v1.4#cpu-prof-md · #heap-prof-md · #heap-prof
+  {
+    name: '--cpu-prof',
+    kind: 'feature',
+    version: '1.3.2',
+    note: 'CPU profiling to Chrome DevTools .cpuprofile',
+    blogAnchor: 'cpu-profiling-with-cpu-prof',
+  },
+  {
+    name: '--cpu-prof-md',
+    kind: 'feature',
+    version: '1.4.0',
+    note: 'Markdown CPU profile for SSH / bug reports / LLMs (Observability)',
+    blogAnchor: 'cpu-prof-md',
+  },
+  {
+    name: '--heap-prof',
+    kind: 'feature',
+    version: '1.4.0',
+    note: 'V8-compatible heap profile on exit (.heapprofile)',
+    blogAnchor: 'heap-prof',
+  },
+  {
+    name: '--heap-prof-md',
+    kind: 'feature',
+    version: '1.4.0',
+    note: 'Markdown heap profile for CLI analysis (Observability)',
+    blogAnchor: 'heap-prof-md',
   },
 
   // ── Notable fixes (upgrade impact) ───────────────────────────────────────

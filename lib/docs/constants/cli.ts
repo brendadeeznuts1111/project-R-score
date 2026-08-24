@@ -1,7 +1,9 @@
-// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — --cpu-prof-md
-// @verified --cpu-prof-md · Bun v1.3.14 · 2026-08-18 · https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options
-// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — --heap-prof-md
-// @verified --heap-prof-md · Bun v1.3.14 · 2026-08-18 · https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options
+// @see https://bun.com/docs/project/benchmarking#cpu-profiling — --cpu-prof
+// @see https://bun.com/docs/project/benchmarking#markdown-output — --cpu-prof-md
+// @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof
+// @see https://bun.com/docs/project/benchmarking#markdown-output-1 — --heap-prof-md
+// @see https://bun.com/blog/bun-v1.4#cpu-prof-md — shipped Bun 1.4.0 Observability
+// @see https://bun.com/blog/bun-v1.4#heap-prof-md — shipped Bun 1.4.0 Observability
 // lib/docs/constants/cli.ts — CLI documentation categories and URLs
 
 export enum CLICategory {
@@ -16,7 +18,7 @@ export enum CLICategory {
 }
 
 export const CLI_DOCUMENTATION_URLS = {
-  // bun.sh CLI documentation
+  // bun.com docs how-to (unversioned). Ship versions: CLI_PROFILE_ANNOUNCEMENT_URLS + bun-docs-changelog.
   [CLICategory.INSTALLATION]: {
     MAIN: '/docs/cli/install',
     WINDOWS: '/docs/cli/install/windows',
@@ -59,16 +61,24 @@ export const CLI_DOCUMENTATION_URLS = {
     DEBUGGER: '/docs/cli/debugger',
     INSPECTOR: '/docs/cli/inspector',
     PROFILE: '/docs/project/benchmarking',
-    /** @see https://bun.com/docs/project/benchmarking#cpu-profiling */
+    /** How-to · ship https://bun.com/blog/bun-v1.3.2 */
     CPU_PROF: '/docs/project/benchmarking#cpu-profiling',
-    /** @see https://bun.com/docs/project/benchmarking#markdown-output */
+    /** How-to · ship https://bun.com/blog/bun-v1.4#cpu-prof-md */
     CPU_PROF_MD: '/docs/project/benchmarking#markdown-output',
-    /** @see https://bun.com/docs/project/benchmarking#heap-profiling */
+    /** How-to · ship https://bun.com/blog/bun-v1.4#heap-prof */
     HEAP_PROF: '/docs/project/benchmarking#heap-profiling',
-    /** @see https://bun.com/docs/project/benchmarking#markdown-output-1 */
+    /** How-to · ship https://bun.com/blog/bun-v1.4#heap-prof-md */
     HEAP_PROF_MD: '/docs/project/benchmarking#markdown-output-1',
     TRACE: '/docs/cli/trace',
   },
+} as const;
+
+/** Versioned announcement URLs (release evidence — not unversioned docs). */
+export const CLI_PROFILE_ANNOUNCEMENT_URLS = {
+  CPU_PROF: 'https://bun.com/blog/bun-v1.3.2',
+  CPU_PROF_MD: 'https://bun.com/blog/bun-v1.4#cpu-prof-md',
+  HEAP_PROF: 'https://bun.com/blog/bun-v1.4#heap-prof',
+  HEAP_PROF_MD: 'https://bun.com/blog/bun-v1.4#heap-prof-md',
 } as const;
 
 // Common CLI command examples

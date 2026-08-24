@@ -7,7 +7,8 @@
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/test/index#run-tests — bun:test
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
-// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — --cpu-prof-md
+// @see https://bun.com/docs/project/benchmarking#markdown-output — --cpu-prof-md
+// @see https://bun.com/blog/bun-v1.4#cpu-prof-md — shipped Bun 1.4.0
 import { afterEach, describe, expect, test } from 'bun:test';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';

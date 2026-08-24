@@ -452,6 +452,25 @@ describe('bun-docs-changelog overlay', () => {
     expect(cl.blogAnchor).toBe('bun-terminal-api-for-pseudo-terminal-pty-support');
   });
 
+  test('Observability profiling flags carry versioned blog anchors', () => {
+    const cpu = changelogFor('--cpu-prof');
+    expect(cpu.releasedIn).toBe('1.3.2');
+    expect(cpu.blogAnchor).toBe('cpu-profiling-with-cpu-prof');
+
+    const cpuMd = changelogFor('--cpu-prof-md');
+    expect(cpuMd.releasedIn).toBe('1.4.0');
+    expect(cpuMd.blogVersion).toBe('1.4.0');
+    expect(cpuMd.blogAnchor).toBe('cpu-prof-md');
+
+    const heap = changelogFor('--heap-prof');
+    expect(heap.releasedIn).toBe('1.4.0');
+    expect(heap.blogAnchor).toBe('heap-prof');
+
+    const heapMd = changelogFor('--heap-prof-md');
+    expect(heapMd.releasedIn).toBe('1.4.0');
+    expect(heapMd.blogAnchor).toBe('heap-prof-md');
+  });
+
   test('alias --no-orphans maps to noOrphans feature', () => {
     const cl = changelogFor('--no-orphans');
     expect(cl.releasedIn).toBe('1.3.14');
