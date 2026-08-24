@@ -50,6 +50,7 @@
  * Build: applied automatically inside bun-docs-catalog.ts buildCatalog()
  */
 
+import { BENCHMARKING_PROFILE_SHIP } from '../lib/docs/benchmarking-profile-loci.ts';
 import { CURATED_ENTRIES } from './bun-docs-curated.ts';
 
 export type ChangelogKind = 'feature' | 'fix' | 'change' | 'deprecate';
@@ -190,52 +191,52 @@ export const CHANGELOG_EVENTS: ChangelogEvent[] = [
   },
 
   // ── Bun 1.4.0 Observability (versioned blog anchors) ─────────────────────
-  // https://bun.com/blog/bun-v1.4#cpu-prof-md · #heap-prof-md · #heap-prof
+  // Ship SSOT: lib/docs/benchmarking-profile-loci.ts · docs how-to = Mintlify collision
   // Companion flags share the parent feature's ship version + section.
   {
     name: '--cpu-prof',
     kind: 'feature',
-    version: '1.3.2',
+    version: BENCHMARKING_PROFILE_SHIP.cpuProf.version,
     note: 'CPU profiling to Chrome DevTools .cpuprofile',
-    blogAnchor: 'cpu-profiling-with-cpu-prof',
+    blogAnchor: BENCHMARKING_PROFILE_SHIP.cpuProf.blogAnchor,
     aliases: ['--cpu-prof-name', '--cpu-prof-dir', '--cpu-prof-interval'],
   },
   {
     name: '--cpu-prof-md',
     kind: 'feature',
-    version: '1.4.0',
+    version: BENCHMARKING_PROFILE_SHIP.cpuProfMd.version,
     note: 'Markdown CPU profile for SSH / bug reports / LLMs (Observability)',
-    blogAnchor: 'cpu-prof-md',
+    blogAnchor: BENCHMARKING_PROFILE_SHIP.cpuProfMd.blogAnchor,
   },
   {
     name: '--heap-prof',
     kind: 'feature',
-    version: '1.4.0',
+    version: BENCHMARKING_PROFILE_SHIP.heapProf.version,
     note: 'V8-compatible heap profile on exit (.heapprofile)',
-    blogAnchor: 'heap-prof',
+    blogAnchor: BENCHMARKING_PROFILE_SHIP.heapProf.blogAnchor,
     aliases: ['--heap-prof-name', '--heap-prof-dir', '--heap-prof-interval'],
   },
   {
     name: '--heap-prof-md',
     kind: 'feature',
-    version: '1.4.0',
+    version: BENCHMARKING_PROFILE_SHIP.heapProfMd.version,
     note: 'Markdown heap profile for CLI analysis (Observability)',
-    blogAnchor: 'heap-prof-md',
+    blogAnchor: BENCHMARKING_PROFILE_SHIP.heapProfMd.blogAnchor,
   },
   {
     name: 'process.on("memoryPressure")',
     kind: 'feature',
-    version: '1.4.0',
+    version: BENCHMARKING_PROFILE_SHIP.memoryPressure.version,
     note: 'memoryPressure warning|critical process event (Observability)',
-    blogAnchor: 'process-on-memorypressure',
+    blogAnchor: BENCHMARKING_PROFILE_SHIP.memoryPressure.blogAnchor,
     aliases: ['memoryPressure', 'process memoryPressure'],
   },
   {
     name: '--metafile-md',
     kind: 'feature',
-    version: '1.4.0',
+    version: BENCHMARKING_PROFILE_SHIP.metafileMd.version,
     note: 'bun build --metafile-md markdown bundle graph (Observability)',
-    blogAnchor: 'metafile-md',
+    blogAnchor: BENCHMARKING_PROFILE_SHIP.metafileMd.blogAnchor,
     aliases: ['bun-build-metafile-md'],
   },
 

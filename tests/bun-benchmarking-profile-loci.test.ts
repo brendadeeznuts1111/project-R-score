@@ -2,27 +2,38 @@
 // @see https://bun.com/docs/project/benchmarking#markdown-output
 // @see https://bun.com/docs/project/benchmarking#heap-profiling
 // @see https://bun.com/docs/project/benchmarking#markdown-output-1
+// @see https://bun.com/blog/bun-v1.4#cpu-prof-md
+// @see https://bun.com/blog/bun-v1.4#heap-prof-md
 /**
- * Ratchet Mintlify collision for heap `--heap-prof-md` how-to locus.
- * Offline fixture + live fetch when bun.com is reachable.
+ * Ratchet Mintlify collision for heap `--heap-prof-md` how-to locus and
+ * docs↔ship plane pairing for Observability profile flags.
  */
 import { describe, expect, test } from 'bun:test';
 import {
   assertBenchmarkingProfileLocusOrder,
+  assertBenchmarkingProfileLocusSemantics,
   BENCHMARKING_PROFILE_ANCHORS,
+  BENCHMARKING_PROFILE_ANNOUNCEMENT_URLS,
   BENCHMARKING_PROFILE_CANONICAL_REFS,
   BENCHMARKING_PROFILE_DOCS_URLS,
+  BENCHMARKING_PROFILE_PLANE_PAIRS,
+  BENCHMARKING_PROFILE_SHIP,
   extractHtmlIds,
+  htmlSnippetAfterId,
 } from '../lib/docs/benchmarking-profile-loci.ts';
+import { CLICategory, CLI_DOCUMENTATION_URLS, CLI_PROFILE_ANNOUNCEMENT_URLS } from '../lib/docs/constants/cli.ts';
 import { CANONICAL_REFS } from '../tools/bun-doc-refs.ts';
-import { CLICategory, CLI_DOCUMENTATION_URLS } from '../lib/docs/constants/cli.ts';
+import { changelogFor } from '../tools/bun-docs-changelog.ts';
+import catalog from '../tools/bun-docs-catalog.json';
 
 const FIXTURE = `
 <section>
   <h2 id="cpu-profiling">CPU profiling</h2>
   <h3 id="markdown-output">Markdown output</h3>
+  <p>Use <code>--cpu-prof-md</code> for LLM-friendly CPU profiles.</p>
   <h2 id="heap-profiling">Heap profiling</h2>
   <h3 id="markdown-output-1">Markdown output</h3>
+  <p>Use <code>--heap-prof-md</code> for CLI heap analysis.</p>
 </section>
 `;
 
@@ -55,6 +66,33 @@ describe('benchmarking profile loci SSOT', () => {
     expect(debug.CPU_PROF_MD).toContain(`#${BENCHMARKING_PROFILE_ANCHORS.cpuProfMd}`);
   });
 
+  test('CLI announcement URLs are the ship-plane SSOT', () => {
+    expect(CLI_PROFILE_ANNOUNCEMENT_URLS).toEqual(BENCHMARKING_PROFILE_ANNOUNCEMENT_URLS);
+    expect(CLI_PROFILE_ANNOUNCEMENT_URLS.HEAP_PROF_MD).toBe(
+      'https://bun.com/blog/bun-v1.4#heap-prof-md'
+    );
+    expect(CLI_PROFILE_ANNOUNCEMENT_URLS.CPU_PROF).toBe(
+      'https://bun.com/blog/bun-v1.3.2#cpu-profiling-with-cpu-prof'
+    );
+  });
+
+  test('docs↔ship plane pairs match catalog docsUrl + blogUrl', () => {
+    for (const pair of BENCHMARKING_PROFILE_PLANE_PAIRS) {
+      const entry = (
+        catalog as {
+          entries: Array<{ name: string; docsUrl?: string; blogUrl?: string }>;
+        }
+      ).entries.find(e => e.name === pair.flag);
+      expect(entry, pair.flag).toBeTruthy();
+      expect(entry!.docsUrl).toBe(pair.docsUrl);
+      expect(entry!.blogUrl).toBe(pair.shipUrl);
+
+      const cl = changelogFor(pair.flag);
+      expect(cl.releasedIn).toBe(BENCHMARKING_PROFILE_SHIP[pair.shipKey].version);
+      expect(cl.blogAnchor).toBe(BENCHMARKING_PROFILE_SHIP[pair.shipKey].blogAnchor);
+    }
+  });
+
   test('fixture HTML keeps cpu markdown before heap markdown-output-1', () => {
     expect(extractHtmlIds(FIXTURE)).toEqual([
       'cpu-profiling',
@@ -63,6 +101,9 @@ describe('benchmarking profile loci SSOT', () => {
       'markdown-output-1',
     ]);
     expect(() => assertBenchmarkingProfileLocusOrder(FIXTURE)).not.toThrow();
+    expect(() => assertBenchmarkingProfileLocusSemantics(FIXTURE)).not.toThrow();
+    expect(htmlSnippetAfterId(FIXTURE, 'markdown-output')).toContain('--cpu-prof-md');
+    expect(htmlSnippetAfterId(FIXTURE, 'markdown-output-1')).toContain('--heap-prof-md');
   });
 
   test('fixture fails closed when Mintlify drops the -1 collision', () => {
@@ -70,14 +111,23 @@ describe('benchmarking profile loci SSOT', () => {
     expect(() => assertBenchmarkingProfileLocusOrder(broken)).toThrow(/markdown-output-1/);
   });
 
+  test('fixture fails closed when section bodies swap flag names', () => {
+    const swapped = FIXTURE.replace('--cpu-prof-md', '--HEAP_TMP')
+      .replace('--heap-prof-md', '--cpu-prof-md')
+      .replace('--HEAP_TMP', '--heap-prof-md');
+    expect(() => assertBenchmarkingProfileLocusSemantics(swapped)).toThrow(
+      /missing --heap-prof-md|mentions --cpu-prof-md first|mentions --heap-prof-md first/
+    );
+  });
+
   test.skipIf(!online)(
-    'live benchmarking page still exposes markdown-output then markdown-output-1',
+    'live benchmarking page still exposes ordered markdown sections with matching flags',
     async () => {
       const page = BENCHMARKING_PROFILE_DOCS_URLS.cpuProf.split('#')[0]!;
       const res = await fetch(page, { signal: AbortSignal.timeout(15_000) });
       expect(res.ok).toBe(true);
       const html = await res.text();
-      expect(() => assertBenchmarkingProfileLocusOrder(html)).not.toThrow();
+      expect(() => assertBenchmarkingProfileLocusSemantics(html)).not.toThrow();
     },
     { timeout: 20_000 }
   );
