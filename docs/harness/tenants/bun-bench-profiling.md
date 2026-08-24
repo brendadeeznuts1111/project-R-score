@@ -13,22 +13,21 @@ Upstream Bun: [benchmarking](https://bun.com/docs/project/benchmarking) ·
 
 ## When to use
 
-| Need | Use |
-| ---- | --- |
-| Search latency / quality pin | `search:bench*` |
-| Brand palette throughput pin | `brand:bench*` |
-| Brand hot-path CPU sample | `brand:bench:profile` (`--cpu-prof`) |
-| Limits-lab forecast CPU sample | `ops:limits:lab:profile` (`--cpu-prof-md`) |
-| Ad-hoc CPU markdown (SSH / LLM) | `bun --cpu-prof-md ./script.ts` ([blog Observability](https://bun.com/blog/bun-v1.4#cpu-prof-md)) |
-| Ad-hoc heap markdown | `bun --heap-prof-md ./script.ts` |
-| Console stringWidth / sliceAnsi microbench | `bench:console-depth` |
-| Nested inspect timing smoke | `bench:deep` |
-| Catalog of suites → metrics → pins | `bench:status` · `bench:status -- --json` |
+| Need                                   | Use                                                                                                                         |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Search latency / quality pin           | `search:bench*`                                                                                                             |
+| Brand palette throughput pin           | `brand:bench*`                                                                                                              |
+| Brand hot-path CPU sample              | `brand:bench:profile` (`--cpu-prof`)                                                                                        |
+| Limits-lab forecast CPU sample         | `ops:limits:lab:profile` (`--cpu-prof-md`)                                                                                  |
+| Ad-hoc CPU markdown (SSH / LLM)        | `bun --cpu-prof-md ./script.ts` · [Bun 1.4 Observability](https://bun.com/blog/bun-v1.4#cpu-prof-md)                         |
+| Ad-hoc heap markdown                   | `bun --heap-prof-md ./script.ts` · [Bun 1.4 Observability](https://bun.com/blog/bun-v1.4#heap-prof-md)                       |
+| Console stringWidth / sliceAnsi bench  | `bench:console-depth`                                                                                                       |
+| Nested inspect timing smoke            | `bench:deep`                                                                                                                |
+| Catalog of suites → metrics → pins     | `bench:status` · `bench:status -- --json`                                                                                   |
 
 Heap profiling (`--heap-prof` / `--heap-prof-md`) is available on Bun 1.4+ for
 ad-hoc diagnosis. Harness scripts still default to **CPU** profiles
-(`--cpu-prof` / `--cpu-prof-md`); prefer those for brand / limits-lab pins, or
-product-local demos under nested trees for heap snapshots.
+(`--cpu-prof` / `--cpu-prof-md`) for brand / limits-lab pins.
 
 ## Metric contract
 
@@ -65,6 +64,7 @@ bun run search:bench:baseline:verify
 bun run brand:bench:evaluate
 bun run bench:console-depth
 bun run bench:deep
+bun test tests/bun-1.4.0-observability-contract.test.ts
 ```
 
 ## Related
@@ -73,3 +73,5 @@ bun run bench:deep
 - Full UI bundle/route audit (not Bun microbench): [`full-ui-performance-audit.md`](full-ui-performance-audit.md)
 - Factory scaffold bench scripts: [`.bun-create/factory-library/`](../../../.bun-create/factory-library/)
 - Path constants: `CANONICAL_REPO_DOCS.bunBenchProfiling` / `CANONICAL_TOOLS.consoleDepthBench` in [`lib/docs/repo-docs.ts`](../../../lib/docs/repo-docs.ts)
+- Bun 1.4 Observability contracts: [`tests/bun-1.4.0-observability-contract.test.ts`](../../../tests/bun-1.4.0-observability-contract.test.ts)
+- Docs operate planes: [`docs/BUN_DOCS_OPERATE.md`](../../BUN_DOCS_OPERATE.md)

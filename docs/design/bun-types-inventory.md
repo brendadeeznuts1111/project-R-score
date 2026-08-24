@@ -35,8 +35,8 @@ layers, or outputs.
 
 Docs **token** and **catalog** operate planes stay in
 [`BUN_DOCS_OPERATE.md`](../BUN_DOCS_OPERATE.md) — related but a different
-pipeline (not pin↔tip inventory). Do not collapse those two planes into one
-“token/catalog” channel.
+pipeline (not pin↔tip inventory). Keep those two planes separate; do not
+collapse them into one “token/catalog” channel.
 
 ## Not this (partner-surface)
 
