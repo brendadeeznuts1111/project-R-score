@@ -1331,7 +1331,7 @@ class DevDashboardServerV3 {
 			maxItems: 5,
 		});
 		this.metricsCollector.addRssFeed({
-			url: "https://bun.sh/rss.xml",
+			url: "https://bun.com/rss.xml",
 			name: "Bun Blog",
 			refreshIntervalMs: 300000,
 			maxItems: 3,

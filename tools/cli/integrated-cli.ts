@@ -1,4 +1,13 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/http/server#configuring-a-default-port — --port
+// @updated --port · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
+// @verified --port · Bun v1.3.14 · 2026-08-18 · https://bun.com/docs/runtime/http/server#configuring-a-default-port
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.3.14 · 2026-08-18 · https://bun.com/docs/runtime/environment-variables
 // @see https://bun.com/reference/bun/argv — Bun.argv
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 
@@ -120,7 +129,7 @@ class IntegratedCLI {
     }
 
     // Subscribe to RSS feeds
-    await this.rssManager.subscribe('https://bun.sh/rss.xml', 'Bun Blog', 'bun');
+    await this.rssManager.subscribe('https://bun.com/rss.xml', 'Bun release RSS', 'bun');
     console.info('✅ Subscribed to Bun RSS feed');
 
     // Install dependencies
@@ -460,7 +469,7 @@ Commands:
 Examples:
   bun-docs init my-project
   bun-docs analyze --graph
-  bun-docs rss subscribe https://bun.sh/rss.xml "Bun Blog"
+  bun-docs rss subscribe https://bun.com/rss.xml "Bun release RSS"
   bun-docs serve --port=8080
   bun-docs publish
 `);

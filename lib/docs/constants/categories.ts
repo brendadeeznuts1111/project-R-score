@@ -264,12 +264,13 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
     [DocumentationProvider.BUN_RSS]: {
       [DocumentationCategory.RSS_FEEDS]: {
         MAIN_RSS: '/rss.xml',
-        BLOG_RSS: '/blog/rss.xml',
+        /** No separate Bun blog feed — same as MAIN_RSS (`/rss.xml`). */
+        BLOG_RSS: '/rss.xml',
         RELEASES_RSS: '/releases/rss.xml',
         SECURITY_RSS: '/security/rss.xml',
         COMMUNITY_RSS: '/community/rss.xml',
         GUIDES_RSS: '/guides/rss.xml',
-        TECHNICAL_RSS: '/rss.xml', // This maps to bun.sh/rss.xml
+        TECHNICAL_RSS: '/rss.xml', // bun.com/rss.xml
       },
 
       [DocumentationCategory.BLOG_POSTS]: {

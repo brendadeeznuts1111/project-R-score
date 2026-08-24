@@ -13,7 +13,7 @@ const PROXY_CONFIG = {
   api: "https://api-proxy.example.com:443",
 };
 
-const RSS_FEED = "https://bun.sh/rss.xml";
+const RSS_FEED = "https://bun.com/rss.xml";
 const API_HOST = "api.example.com";
 
 // 📊 PERFORMANCE METRICS

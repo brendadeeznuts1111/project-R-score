@@ -309,7 +309,7 @@ async function analyzeCSSEnhanced(cssFile: string = "app.css") {
 }
 
 // Enhanced RSS analysis with feed health
-async function analyzeRSSEnhanced(feedUrl: string = "https://bun.sh/rss.xml") {
+async function analyzeRSSEnhanced(feedUrl: string = "https://bun.com/rss.xml") {
 	colorLog("bright_cyan", "\n📰 Enhanced RSS Feed Analysis");
 
 	try {

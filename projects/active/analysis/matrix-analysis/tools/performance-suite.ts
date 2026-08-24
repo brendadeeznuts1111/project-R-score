@@ -164,7 +164,7 @@ async function optimizeCSS(cssFile: string = "app.css") {
 }
 
 // 5. Dependency-free RSS summary
-async function parseRSS(feedUrl: string = "https://bun.sh/rss.xml") {
+async function parseRSS(feedUrl: string = "https://bun.com/rss.xml") {
 	colorLog("cyan", "\n📰 RSS Feed Parser");
 
 	try {

@@ -218,10 +218,7 @@ export const BUN_RELEASE_NOTE_ROWS: readonly BunReleaseNoteRow[] = [
       'Codegen classes (Request, Response, Subprocess, …) no longer re-scan all live instances after every mutator yield; only visitChildren runs. Hand-written types unchanged.',
     canonical: BUN_V1314_ANCHORS['reduced-gc-overhead-for-built-in-objects'],
     verify: 'smoke',
-    refs: [
-      BUN_V1314_ANCHORS['reduced-gc-overhead-for-built-in-objects'],
-      'https://bun.com/docs/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects',
-    ],
+    refs: [BUN_V1314_ANCHORS['reduced-gc-overhead-for-built-in-objects']],
   },
   {
     id: 'binary-size-linux-windows',

@@ -52,12 +52,7 @@ export type DocumentationURLType =
   | 'unknown';
 
 export type DocumentationUserType =
-  | 'developers'
-  | 'beginners'
-  | 'educators'
-  | 'all_users'
-  | 'enterprise_admins'
-  | 'devops_engineers';
+  'developers' | 'beginners' | 'educators' | 'all_users' | 'enterprise_admins' | 'devops_engineers';
 
 export interface DocumentationURLConfig {
   BASE: string;
@@ -114,22 +109,22 @@ export interface DomainPreferences {
 // Enterprise base URLs with environment awareness
 export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   [DocumentationProvider.BUN_OFFICIAL]: {
-    BASE: Bun.env.BUN_DOCS_BASE_URL || 'https://bun.sh',
-    DOCS: Bun.env.BUN_DOCS_URL || 'https://bun.sh/docs',
-    API: 'https://bun.sh/docs/api',
-    RUNTIME: 'https://bun.sh/docs/runtime',
-    GUIDES: 'https://bun.sh/docs/guides',
-    EXAMPLES: 'https://bun.sh/docs/examples',
-    RSS_FEED: 'https://bun.sh/rss.xml',
-    BLOG: 'https://bun.sh/blog',
-    SECURITY: 'https://bun.sh/docs/security',
-    PERFORMANCE: 'https://bun.sh/docs/performance',
+    BASE: Bun.env.BUN_DOCS_BASE_URL || 'https://bun.com',
+    DOCS: Bun.env.BUN_DOCS_URL || 'https://bun.com/docs',
+    API: 'https://bun.com/docs/api',
+    RUNTIME: 'https://bun.com/docs/runtime',
+    GUIDES: 'https://bun.com/docs/guides',
+    EXAMPLES: 'https://bun.com/docs/examples',
+    RSS_FEED: 'https://bun.com/rss.xml',
+    BLOG: 'https://bun.com/blog',
+    SECURITY: 'https://bun.com/docs/security',
+    PERFORMANCE: 'https://bun.com/docs/performance',
     // Legacy/backward compatibility
-    CLI: 'https://bun.sh/docs/cli',
-    DOWNLOADS: 'https://bun.sh/download',
-    CHANGELOG: 'https://bun.sh/changelog',
-    COMPARE: 'https://bun.sh/compare',
-    FEED: 'https://bun.sh/rss.xml',
+    CLI: 'https://bun.com/docs/cli',
+    DOWNLOADS: 'https://bun.com/download',
+    CHANGELOG: 'https://bun.com/changelog',
+    COMPARE: 'https://bun.com/compare',
+    FEED: 'https://bun.com/rss.xml',
   },
 
   // NOTE: Deprecated providers (BUN_TECHNICAL, BUN_API_DOCS, BUN_RUNTIME_DOCS,
@@ -138,10 +133,10 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
 
   // Bun TypeScript Definitions
   [DocumentationProvider.BUN_TYPES]: {
-    BASE: 'https://bun.sh/docs/typescript',
-    INSTALLATION: 'https://bun.sh/docs/typescript/installation',
-    CONFIGURATION: 'https://bun.sh/docs/typescript/configuration',
-    AUTOCOMPLETE: 'https://bun.sh/docs/typescript/autocomplete',
+    BASE: 'https://bun.com/docs/typescript',
+    INSTALLATION: 'https://bun.com/docs/typescript/installation',
+    CONFIGURATION: 'https://bun.com/docs/typescript/configuration',
+    AUTOCOMPLETE: 'https://bun.com/docs/typescript/autocomplete',
 
     // npm package
     NPM_PACKAGE: 'https://www.npmjs.com/package/bun-types',
@@ -248,8 +243,8 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   },
 
   [DocumentationProvider.API_REFERENCE]: {
-    BASE: 'https://bun.sh',
-    API: 'https://bun.sh/docs/api',
+    BASE: 'https://bun.com',
+    API: 'https://bun.com/docs/api',
     REFERENCE: 'https://bun.com/reference',
   },
 
@@ -260,8 +255,8 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   },
 
   [DocumentationProvider.RSS_FEEDS]: {
-    BASE: 'https://bun.sh',
-    MAIN_FEED: 'https://bun.sh/rss.xml',
+    BASE: 'https://bun.com',
+    MAIN_FEED: 'https://bun.com/rss.xml',
     BLOG_FEED: 'https://bun.com/rss.xml',
   },
 
@@ -277,44 +272,44 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   },
 
   [DocumentationProvider.BUN_TECHNICAL]: {
-    BASE: 'https://bun.sh',
-    TECHNICAL_DOCS: 'https://bun.sh/docs',
-    API_REFERENCE: 'https://bun.sh/docs/api',
-    RUNTIME_REFERENCE: 'https://bun.sh/docs/runtime',
-    CLI_REFERENCE: 'https://bun.sh/docs/cli',
-    BENCHMARKS: 'https://bun.sh/docs/benchmarks',
-    PERFORMANCE: 'https://bun.sh/docs/performance',
-    SECURITY: 'https://bun.sh/docs/security',
-    TECHNICAL_BLOG: 'https://bun.sh/blog',
-    TECHNICAL_RSS: 'https://bun.sh/rss.xml',
+    BASE: 'https://bun.com',
+    TECHNICAL_DOCS: 'https://bun.com/docs',
+    API_REFERENCE: 'https://bun.com/docs/api',
+    RUNTIME_REFERENCE: 'https://bun.com/docs/runtime',
+    CLI_REFERENCE: 'https://bun.com/docs/cli',
+    BENCHMARKS: 'https://bun.com/docs/benchmarks',
+    PERFORMANCE: 'https://bun.com/docs/performance',
+    SECURITY: 'https://bun.com/docs/security',
+    TECHNICAL_BLOG: 'https://bun.com/blog',
+    TECHNICAL_RSS: 'https://bun.com/rss.xml',
   },
 
   [DocumentationProvider.BUN_API_DOCS]: {
-    BASE: 'https://bun.sh',
-    API_OVERVIEW: 'https://bun.sh/docs/api',
-    UTILS: 'https://bun.sh/docs/api/utils',
-    HTTP: 'https://bun.sh/docs/api/http',
-    WEBSOCKET: 'https://bun.sh/docs/api/websocket',
-    STREAMS: 'https://bun.sh/docs/api/streams',
-    SERVE: 'https://bun.sh/docs/api/serve',
-    SQL: 'https://bun.sh/docs/api/sql',
-    TEST: 'https://bun.sh/docs/api/test',
-    BUILD: 'https://bun.sh/docs/api/build',
-    PLUGINS: 'https://bun.sh/docs/api/plugins',
+    BASE: 'https://bun.com',
+    API_OVERVIEW: 'https://bun.com/docs/api',
+    UTILS: 'https://bun.com/docs/api/utils',
+    HTTP: 'https://bun.com/docs/api/http',
+    WEBSOCKET: 'https://bun.com/docs/api/websocket',
+    STREAMS: 'https://bun.com/docs/api/streams',
+    SERVE: 'https://bun.com/docs/api/serve',
+    SQL: 'https://bun.com/docs/api/sql',
+    TEST: 'https://bun.com/docs/api/test',
+    BUILD: 'https://bun.com/docs/api/build',
+    PLUGINS: 'https://bun.com/docs/api/plugins',
   },
 
   [DocumentationProvider.BUN_RUNTIME_DOCS]: {
-    BASE: 'https://bun.sh',
-    RUNTIME_OVERVIEW: 'https://bun.sh/docs/runtime',
-    FILESYSTEM: 'https://bun.sh/docs/runtime/filesystem',
-    PROCESS: 'https://bun.sh/docs/runtime/process',
-    NETWORKING: 'https://bun.sh/docs/runtime/networking',
-    BINARY_DATA: 'https://bun.sh/docs/runtime/binary-data',
-    CONCURRENCY: 'https://bun.sh/docs/runtime/concurrency',
-    MODULES: 'https://bun.sh/docs/runtime/modules',
-    ENVIRONMENT: 'https://bun.sh/docs/runtime/environment',
-    PERF_HOOKS: 'https://bun.sh/docs/runtime/perf-hooks',
-    INSPECTOR: 'https://bun.sh/docs/runtime/inspector',
+    BASE: 'https://bun.com',
+    RUNTIME_OVERVIEW: 'https://bun.com/docs/runtime',
+    FILESYSTEM: 'https://bun.com/docs/runtime/filesystem',
+    PROCESS: 'https://bun.com/docs/runtime/process',
+    NETWORKING: 'https://bun.com/docs/runtime/networking',
+    BINARY_DATA: 'https://bun.com/docs/runtime/binary-data',
+    CONCURRENCY: 'https://bun.com/docs/runtime/concurrency',
+    MODULES: 'https://bun.com/docs/runtime/modules',
+    ENVIRONMENT: 'https://bun.com/docs/runtime/environment',
+    PERF_HOOKS: 'https://bun.com/docs/runtime/perf-hooks',
+    INSPECTOR: 'https://bun.com/docs/runtime/inspector',
   },
 
   [DocumentationProvider.BUN_REFERENCE]: {
@@ -381,7 +376,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   [DocumentationProvider.BUN_FEEDS]: {
     BASE: 'https://bun.com',
     MAIN_FEED: 'https://bun.com/rss.xml',
-    TECHNICAL_FEED: 'https://bun.sh/rss.xml',
+    TECHNICAL_FEED: 'https://bun.com/rss.xml',
     BLOG_FEED: 'https://bun.com/rss.xml',
     RELEASES_FEED: 'https://bun.com/rss.xml',
     SECURITY_FEED: 'https://bun.com/security/rss.xml',
@@ -428,7 +423,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     domain: DocumentationDomain.BUN_SH,
   },
 
-  'bun.sh/rss.xml': {
+  'bun.com/rss.xml': {
     provider: DocumentationProvider.BUN_RSS,
     type: 'technical_rss',
     audience: 'developers',
@@ -477,14 +472,6 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     domain: DocumentationDomain.BUN_COM,
   },
 
-  'bun.com/blog/rss.xml': {
-    provider: DocumentationProvider.BUN_RSS,
-    type: 'blog_rss',
-    audience: 'all_users',
-    format: 'xml',
-    domain: DocumentationDomain.BUN_COM,
-  },
-
   // GitHub mappings
   'github.com/oven-sh/bun': {
     provider: DocumentationProvider.GITHUB_PUBLIC,
@@ -499,7 +486,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
 export const QUICK_REFERENCE_URLS = {
   // Typed array documentation across all domains
   TYPED_ARRAY: {
-    TECHNICAL: 'https://bun.sh/docs/runtime/binary-data#typedarray', // Technical docs
+    TECHNICAL: 'https://bun.com/docs/runtime/binary-data#typedarray', // Technical docs
     REFERENCE: 'https://bun.com/reference/binary-data#typedarray', // Interactive reference
     GUIDE: 'https://bun.com/guides/working-with-binary-data', // User guide
     EXAMPLE: 'https://bun.com/examples/typedarray-usage', // Code examples
@@ -508,7 +495,7 @@ export const QUICK_REFERENCE_URLS = {
 
   // Fetch API documentation
   FETCH_API: {
-    TECHNICAL: 'https://bun.sh/docs/runtime/networking/fetch', // Technical docs
+    TECHNICAL: 'https://bun.com/docs/runtime/networking/fetch', // Technical docs
     REFERENCE: 'https://bun.com/reference/fetch', // Interactive reference
     GUIDE: 'https://bun.com/guides/making-http-requests', // User guide
     EXAMPLE: 'https://bun.com/examples/fetch-usage', // Code examples
@@ -518,7 +505,7 @@ export const QUICK_REFERENCE_URLS = {
   // RSS feeds from different sources
   RSS_FEEDS: {
     MAIN: 'https://bun.com/rss.xml', // Main bun.com RSS
-    TECHNICAL: 'https://bun.sh/rss.xml', // Technical bun.sh RSS
+    TECHNICAL: 'https://bun.com/rss.xml', // Technical release RSS (bun.com)
     BLOG: 'https://bun.com/rss.xml', // Blog RSS
     RELEASES: 'https://bun.com/rss.xml', // Release announcements
     SECURITY: 'https://bun.com/security/rss.xml', // Security updates
@@ -527,7 +514,7 @@ export const QUICK_REFERENCE_URLS = {
 
   // Getting started across domains
   GETTING_STARTED: {
-    QUICKSTART: 'https://bun.sh/docs/quickstart', // Technical quickstart
+    QUICKSTART: 'https://bun.com/docs/quickstart', // Technical quickstart
     GUIDE: 'https://bun.com/docs/quickstart', // User-friendly guide
     TUTORIAL: 'https://bun.com/tutorials/beginner', // Interactive tutorial
     EXAMPLE: 'https://bun.com/examples/hello-world', // First example
@@ -536,7 +523,7 @@ export const QUICK_REFERENCE_URLS = {
 
   // API reference comparison
   API_REFERENCE: {
-    TECHNICAL: 'https://bun.sh/docs/api', // Technical API docs
+    TECHNICAL: 'https://bun.com/docs/api', // Technical API docs
     INTERACTIVE: 'https://bun.com/reference', // Interactive reference
     CHEATSHEET: 'https://bun.com/reference', // Quick reference
     COOKBOOK: 'https://bun.com/reference', // Recipe-style examples
@@ -545,7 +532,7 @@ export const QUICK_REFERENCE_URLS = {
 
   // CLI documentation
   CLI_REFERENCE: {
-    TECHNICAL: 'https://bun.sh/docs/cli', // Technical CLI docs
+    TECHNICAL: 'https://bun.com/docs/cli', // Technical CLI docs
     REFERENCE: 'https://bun.com/reference', // Interactive CLI reference
     GUIDE: 'https://bun.com/guides/cli-usage', // CLI usage guide
     EXAMPLES: 'https://bun.com/examples/cli-scripts', // CLI script examples
@@ -554,23 +541,23 @@ export const QUICK_REFERENCE_URLS = {
 
   // Installation guides
   INSTALLATION: {
-    TECHNICAL: 'https://bun.sh/docs/installation', // Technical installation
+    TECHNICAL: 'https://bun.com/docs/installation', // Technical installation
     GUIDE: 'https://bun.com/docs/installation', // User-friendly installation
     PLATFORM_SPECIFIC: {
-      WINDOWS: 'https://bun.sh/docs/installation/windows',
-      MACOS: 'https://bun.sh/docs/installation/macos',
-      LINUX: 'https://bun.sh/docs/installation/linux',
-      DOCKER: 'https://bun.sh/docs/installation/docker',
+      WINDOWS: 'https://bun.com/docs/installation/windows',
+      MACOS: 'https://bun.com/docs/installation/macos',
+      LINUX: 'https://bun.com/docs/installation/linux',
+      DOCKER: 'https://bun.com/docs/installation/docker',
     },
   },
 
   // Performance resources
   PERFORMANCE: {
-    TECHNICAL: 'https://bun.sh/docs/performance', // Technical performance docs
-    BENCHMARKS: 'https://bun.sh/docs/benchmarks', // Benchmark results
+    TECHNICAL: 'https://bun.com/docs/performance', // Technical performance docs
+    BENCHMARKS: 'https://bun.com/docs/benchmarks', // Benchmark results
     GUIDE: 'https://bun.com/guides/performance-optimization', // Performance guide
     TOOLS: 'https://bun.com/examples/performance-testing', // Performance testing examples
-    COMPARISON: 'https://bun.sh/compare', // vs Node.js, Deno, etc.
+    COMPARISON: 'https://bun.com/compare', // vs Node.js, Deno, etc.
   },
 } as const;
 

@@ -10,12 +10,12 @@
 | https://bun.com/blog | 200 | text/html | Blog page works |
 | https://bun.com/blog/rss.xml | **404** | text/html | No path |
 | https://bun.sh/blog | 200 | text/html | Blog page works |
-| https://bun.sh/blog/rss.xml | **404** | text/html | No path |
+| https://bun.com/rss.xml | **404** | text/html | No path |
 | https://bun.com/rss.xml | 200 | application/xml | Changelog feed (XML) |
-| https://bun.sh/rss.xml | 200 | application/xml | Same feed |
+| https://bun.com/rss.xml | 200 | application/xml | Same feed |
 
 - Blog HTML on `bun.com/blog` links only to `https://bun.com/rss.xml` (no `/blog/rss.xml`).
-- GitHub discussion [oven-sh/bun#1663](https://github.com/oven-sh/bun/discussions/1663): official answer is the feed at **https://bun.sh/rss.xml** (changelog, not a separate blog feed).
+- GitHub discussion [oven-sh/bun#1663](https://github.com/oven-sh/bun/discussions/1663): official answer is the feed at **https://bun.com/rss.xml** (changelog, not a separate blog feed).
 
 ## Lib changes
 

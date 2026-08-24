@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "kind": "bun-cli-reference",
   "path": "/registry/bun-cli-reference.json",
-  "generated": "2026-08-01T21:29:28.991Z",
+  "generated": "2026-08-24T02:41:23.854Z",
   "bunVersion": "1.4.0",
   "source": "bun --help",
   "summary": {
-    "groups": 8,
-    "flags": 84,
+    "groups": 9,
+    "flags": 94,
     "curated": 14
   },
   "groups": [
@@ -101,7 +101,7 @@
           "short": null,
           "type": "boolean",
           "default": "false",
-          "description": "Exit when the parent process dies, and on exit SIGKILL every descendant. Linux/macOS only."
+          "description": "Exit when the parent process dies, and on exit kill every descendant."
         },
         {
           "flag": "--print",
@@ -280,6 +280,13 @@
           "category": "Development",
           "curated": true,
           "url": "https://bun.com/docs/runtime/watch-mode"
+        },
+        {
+          "flag": "--watch-kill-signal",
+          "short": null,
+          "type": "string",
+          "default": "\"SIGTERM\"",
+          "description": "Signal whose handlers run when --watch restarts the process (default: \"SIGTERM\")"
         }
       ]
     },
@@ -337,7 +344,7 @@
           "short": null,
           "type": "boolean",
           "default": "false",
-          "description": "Generate V8 heap snapshot on exit (.heapsnapshot)"
+          "description": "Write a heap profile to disk on exit (.heapprofile)"
         },
         {
           "flag": "--heap-prof-dir",
@@ -345,6 +352,13 @@
           "type": "string",
           "default": null,
           "description": "Specify the directory where the heap profile will be saved"
+        },
+        {
+          "flag": "--heap-prof-interval",
+          "short": null,
+          "type": "number",
+          "default": "524288",
+          "description": "Specify the average sampling interval in bytes for heap profiling (default: 524288)"
         },
         {
           "flag": "--heap-prof-md",
@@ -773,6 +787,68 @@
           "category": "Runtime Process",
           "curated": false,
           "url": "https://bun.com/docs/runtime/index#general-execution-options"
+        }
+      ]
+    },
+    {
+      "id": "other",
+      "label": "Other",
+      "flags": [
+        {
+          "flag": "--disable-warning",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Silence specific process warnings by code or type"
+        },
+        {
+          "flag": "--insecure-http-parser",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Use an insecure HTTP parser that accepts invalid HTTP headers"
+        },
+        {
+          "flag": "--interactive",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Start a Node.js-compatible REPL, like node --interactive"
+        },
+        {
+          "flag": "--no-warnings",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Silence all process warnings"
+        },
+        {
+          "flag": "--pending-deprecation",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Emit pending deprecation warnings"
+        },
+        {
+          "flag": "--redirect-warnings",
+          "short": null,
+          "type": "string",
+          "default": null,
+          "description": "Write process warnings to the given file instead of printing to stderr"
+        },
+        {
+          "flag": "--trace-deprecation",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Show stack traces on deprecations"
+        },
+        {
+          "flag": "--trace-warnings",
+          "short": null,
+          "type": "boolean",
+          "default": "false",
+          "description": "Show stack traces on process warnings"
         }
       ]
     }

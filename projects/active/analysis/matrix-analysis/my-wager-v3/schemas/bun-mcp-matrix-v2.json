@@ -85,7 +85,7 @@
       "type": "string",
       "format": "uri",
       "description": "RSS/Atom feed URL for changelog updates",
-      "examples": ["https://bun.sh/blog/rss.xml#tag=fetch"]
+      "examples": ["https://bun.com/rss.xml#tag=fetch"]
     },
     "requiredFlags": {
       "type": "array",

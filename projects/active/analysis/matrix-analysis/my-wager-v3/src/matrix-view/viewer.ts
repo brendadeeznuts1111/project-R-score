@@ -234,9 +234,9 @@ export class BunMatrixViewer {
     console.info("🔄 Syncing matrix with RSS feeds...");
 
     const feeds = [
-      "https://bun.sh/blog/rss.xml",
-      "https://bun.sh/blog/rss.xml#tag=sqlite",
-      "https://bun.sh/blog/rss.xml#tag=ffi",
+      "https://bun.com/rss.xml",
+      "https://bun.com/rss.xml#tag=sqlite",
+      "https://bun.com/rss.xml#tag=ffi",
     ];
 
     for (const feed of feeds) {

@@ -42,7 +42,7 @@ export const BUN_DOC_MAP: BunDocMatrixEntry[] = [
     platforms: ["darwin", "linux", "win32"],
     perfBaseline: { metric: "req/sec", comparison: "1.8x node-fetch" },
     securityScope: { classification: "high", zeroTrustEnforced: true },
-    changelogFeed: "https://bun.sh/blog/rss.xml#tag=fetch",
+    changelogFeed: "https://bun.com/rss.xml#tag=fetch",
     crossRefs: ["Bun.serve", "Headers", "Request"],
     category: "network"
   },
@@ -56,7 +56,7 @@ export const BUN_DOC_MAP: BunDocMatrixEntry[] = [
     perfBaseline: { metric: "throughput", comparison: "4x Node.js http" },
     securityScope: { classification: "critical", requiresRoot: false, zeroTrustEnforced: true },
     breakingSince: ["1.0.20"],
-    changelogFeed: "https://bun.sh/blog/rss.xml#tag=http",
+    changelogFeed: "https://bun.com/rss.xml#tag=http",
     crossRefs: ["fetch", "Bun.file", "WebSocket"],
     category: "network"
   },
@@ -69,7 +69,7 @@ export const BUN_DOC_MAP: BunDocMatrixEntry[] = [
     platforms: ["darwin", "linux", "win32"],
     perfBaseline: { metric: "read latency", comparison: "2.5x fs.readFile" },
     securityScope: { classification: "medium", zeroTrustEnforced: true },
-    changelogFeed: "https://bun.sh/blog/rss.xml#tag=file",
+    changelogFeed: "https://bun.com/rss.xml#tag=file",
     crossRefs: ["Bun.write", "Bun.gzip", "Blob"],
     category: "storage"
   },
@@ -82,7 +82,7 @@ export const BUN_DOC_MAP: BunDocMatrixEntry[] = [
     platforms: ["darwin", "linux", "win32"],
     perfBaseline: { metric: "queries/sec", comparison: "3.2x better-sqlite3" },
     securityScope: { classification: "high", requiresRoot: false, zeroTrustEnforced: true },
-    changelogFeed: "https://bun.sh/blog/rss.xml#tag=sqlite",
+    changelogFeed: "https://bun.com/rss.xml#tag=sqlite",
     crossRefs: ["bun:sqlite", "Database", "Statement"],
     category: "storage"
   },
@@ -95,7 +95,7 @@ export const BUN_DOC_MAP: BunDocMatrixEntry[] = [
     platforms: ["darwin", "linux", "win32"],
     perfBaseline: { metric: "queries/sec", comparison: "17x node-postgres" },
     securityScope: { classification: "high", zeroTrustEnforced: true },
-    changelogFeed: "https://bun.sh/blog/rss.xml#tag=postgres",
+    changelogFeed: "https://bun.com/rss.xml#tag=postgres",
     crossRefs: ["sql", "SQL", "Bun.sql"],
     category: "storage"
   },
@@ -109,7 +109,7 @@ export const BUN_DOC_MAP: BunDocMatrixEntry[] = [
     perfBaseline: { metric: "test runner speed", comparison: "20x Jest" },
     securityScope: { classification: "low", zeroTrustEnforced: false },
     requiredFlags: ["--preload"],
-    changelogFeed: "https://bun.sh/blog/rss.xml#tag=test",
+    changelogFeed: "https://bun.com/rss.xml#tag=test",
     crossRefs: ["expect", "describe", "it"],
     category: "runtime"
   },
@@ -122,7 +122,7 @@ export const BUN_DOC_MAP: BunDocMatrixEntry[] = [
     platforms: ["darwin", "linux"], // Windows: pbkdf2 only, no argon2
     perfBaseline: { metric: "hash ops/sec", comparison: "Native Zig impl" },
     securityScope: { classification: "critical", requiresRoot: false, zeroTrustEnforced: true },
-    changelogFeed: "https://bun.sh/blog/rss.xml#tag=password",
+    changelogFeed: "https://bun.com/rss.xml#tag=password",
     crossRefs: ["Bun.hash", "Bun.CryptoHasher"],
     category: "security"
   },
@@ -136,7 +136,7 @@ export const BUN_DOC_MAP: BunDocMatrixEntry[] = [
     securityScope: { classification: "critical", requiresRoot: true, zeroTrustEnforced: true },
     requiredFlags: ["--experimental-secrets"],
     breakingSince: ["1.2.2"],
-    changelogFeed: "https://bun.sh/blog/rss.xml#tag=secrets",
+    changelogFeed: "https://bun.com/rss.xml#tag=secrets",
     crossRefs: ["Bun.password", "Bun.env"],
     category: "security"
   },
@@ -149,7 +149,7 @@ export const BUN_DOC_MAP: BunDocMatrixEntry[] = [
     platforms: ["darwin", "linux", "win32"],
     perfBaseline: { metric: "upload throughput", comparison: "3.5x AWS SDK" },
     securityScope: { classification: "high", zeroTrustEnforced: true },
-    changelogFeed: "https://bun.sh/blog/rss.xml#tag=s3",
+    changelogFeed: "https://bun.com/rss.xml#tag=s3",
     crossRefs: ["Bun.file", "crypto", "fetch"],
     category: "storage"
   },
@@ -162,7 +162,7 @@ export const BUN_DOC_MAP: BunDocMatrixEntry[] = [
     platforms: ["darwin", "linux", "win32"],
     perfBaseline: { metric: "spawn latency", comparison: "45x zx" },
     securityScope: { classification: "critical", requiresRoot: true, zeroTrustEnforced: true },
-    changelogFeed: "https://bun.sh/blog/rss.xml#tag=shell",
+    changelogFeed: "https://bun.com/rss.xml#tag=shell",
     crossRefs: ["Bun.spawn", "Bun.$"],
     category: "runtime"
   },
@@ -187,7 +187,7 @@ export const BUN_DOC_MAP: BunDocMatrixEntry[] = [
     platforms: ["darwin", "linux", "win32"],
     perfBaseline: { metric: "ops/sec", comparison: "7.9x ioredis" },
     securityScope: { classification: "high", zeroTrustEnforced: true },
-    changelogFeed: "https://bun.sh/blog/rss.xml#tag=redis",
+    changelogFeed: "https://bun.com/rss.xml#tag=redis",
     crossRefs: ["Bun.sql", "WebSocket"],
     category: "storage"
   },
@@ -200,7 +200,7 @@ export const BUN_DOC_MAP: BunDocMatrixEntry[] = [
     platforms: ["darwin", "linux", "win32"],
     securityScope: { classification: "medium", zeroTrustEnforced: true },
     requiredFlags: ["--experimental-mcp"],
-    changelogFeed: "https://bun.sh/blog/rss.xml#tag=mcp",
+    changelogFeed: "https://bun.com/rss.xml#tag=mcp",
     crossRefs: ["Bun.serve", "stdio", "sse"],
     category: "runtime"
   }
@@ -234,7 +234,7 @@ export const MATRIX_FILTERS = {
 
 // RSS Feed Aggregator
 export const CHANGELOG_FEEDS = [
-  "https://bun.sh/blog/rss.xml",
+  "https://bun.com/rss.xml",
   "https://github.com/oven-sh/bun/releases.atom"
 ];
 

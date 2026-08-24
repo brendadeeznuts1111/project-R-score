@@ -112,7 +112,7 @@
       "type": "string",
       "format": "uri",
       "description": "RSS/Atom feed URL for changelog updates",
-      "examples": ["feed://bun.sh/blog/rss.xml#tag/sqlite"]
+      "examples": ["feed://bun.com/rss.xml#tag/sqlite"]
     },
     "crossRefs": {
       "type": "array",

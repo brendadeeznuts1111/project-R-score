@@ -59,7 +59,7 @@ class QuantumResistantSecureDataRepository {
 }
 
 export class RSSBroadcaster {
-  private readonly RSS_FEED_URL = 'https://bun.sh/blog/rss.xml#tag/test';
+  private readonly RSS_FEED_URL = 'https://bun.com/rss.xml#tag/test';
   private readonly quantumStore = new QuantumResistantSecureDataRepository();
   private readonly changelogFeed: RSSEntry[] = [];
 
@@ -262,7 +262,7 @@ export class RSSBroadcaster {
     <description>Secure test execution events with quantum-resistant seals</description>
     <language>en-us</language>
     <lastBuildDate>${new Date().toISOString()}</lastBuildDate>
-    <atom:link href="https://bun.sh/blog/rss.xml#tag/test" rel="self" type="application/rss+xml"/>
+    <atom:link href="https://bun.com/rss.xml#tag/test" rel="self" type="application/rss+xml"/>
     <tier1380:security>quantum-resistant</tier1380:security>
     <tier1380:tier>1380</tier1380:tier>
     <tier1380:version>1.3.8</tier1380:version>
