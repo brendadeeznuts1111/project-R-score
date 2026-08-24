@@ -28,11 +28,10 @@ import { resolvePath } from '../lib/path-bun';
 import {
   canonicalizeBunBlogUrl,
   expandBunMinorVersion,
-  parseXmlElementList,
-  parseXmlText,
   requireCanonicalBunBlogUrl,
   versionFromBunBlogUrl,
 } from '../lib/docs/bun-blog-url.ts';
+import { parseRssChannelItems } from '../lib/docs/bun-rss.ts';
 import {
   LEGACY_RELEASE_OVERLAY_ABS,
   RELEASE_OVERLAY_CACHE_ABS,
@@ -163,19 +162,6 @@ export function normalizeReleaseVersion(title: string, url: string): string | nu
   return expandMinorVersion(m[1]!);
 }
 
-function tagText(block: string, tag: string): string {
-  const m = block.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, 'i'));
-  if (!m) return '';
-  return m[1]!
-    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .trim();
-}
-
 function releaseEntryFromFields(fields: {
   title: string;
   url: string;
@@ -201,62 +187,23 @@ function releaseEntryFromFields(fields: {
 
 /** Prefer Bun.XML (RSS 2.0 object shape); regex fallback for odd fixtures. */
 export function parseReleaseEntries(xml: string): ReleaseEntry[] {
-  const fromDom = parseReleaseEntriesViaBunXml(xml);
-  const entries = fromDom ?? parseReleaseEntriesViaRegex(xml);
-  entries.sort((a, b) => (a.pubDate < b.pubDate ? -1 : a.pubDate > b.pubDate ? 1 : 0));
-  return entries;
-}
-
-// @see https://bun.com/docs/runtime/xml — Bun.XML.parse
-function parseReleaseEntriesViaBunXml(xml: string): ReleaseEntry[] | null {
-  let doc: unknown;
-  try {
-    doc = Bun.XML.parse(xml);
-  } catch {
-    return null;
-  }
-  if (!doc || typeof doc !== 'object') return null;
-  const root = doc as Record<string, unknown>;
-  const rss = (root.rss ?? root) as Record<string, unknown> | undefined;
-  const channel = rss?.channel as Record<string, unknown> | undefined;
-  if (!channel) return null;
-  const items = parseXmlElementList(channel.item);
-  if (items.length === 0) return null;
-
   const out: ReleaseEntry[] = [];
   const seen = new Set<string>();
-  for (const item of items) {
+  for (const item of parseRssChannelItems(xml)) {
     const entry = releaseEntryFromFields({
-      title: parseXmlText(item.title),
-      url: parseXmlText(item.link),
-      guid: parseXmlText(item.guid),
-      pubRaw: parseXmlText(item.pubDate),
+      title: item.title,
+      url: item.link,
+      guid: item.guid,
+      pubRaw: item.pubDate,
     });
     if (!entry || seen.has(entry.version)) continue;
     seen.add(entry.version);
     out.push(entry);
   }
+  out.sort((a, b) => (a.pubDate < b.pubDate ? -1 : a.pubDate > b.pubDate ? 1 : 0));
   return out;
 }
 
-function parseReleaseEntriesViaRegex(xml: string): ReleaseEntry[] {
-  const blocks = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)].map(m => m[1]!);
-  const out: ReleaseEntry[] = [];
-  const seen = new Set<string>();
-
-  for (const block of blocks) {
-    const entry = releaseEntryFromFields({
-      title: tagText(block, 'title'),
-      url: tagText(block, 'link'),
-      guid: tagText(block, 'guid'),
-      pubRaw: tagText(block, 'pubDate'),
-    });
-    if (!entry || seen.has(entry.version)) continue;
-    seen.add(entry.version);
-    out.push(entry);
-  }
-  return out;
-}
 /**
  * Build lookup map: normalized version → entry.
  * Also registers short minor keys ("1.3") when version is "1.3.0".
