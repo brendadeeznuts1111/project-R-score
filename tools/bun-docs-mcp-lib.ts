@@ -19,6 +19,7 @@ import {
   stripUrlFragment,
 } from '../lib/docs/blog-extract.ts';
 import { canonicalizeBunBlogUrl } from '../lib/docs/bun-blog-url.ts';
+import { parseRssChannelItems } from '../lib/docs/bun-rss.ts';
 import {
   BunComSite,
   CANONICAL_SOURCES,
@@ -548,19 +549,6 @@ export function resolveDocSlug(
   };
 }
 
-function stripCdata(value: string): string {
-  return value
-    .replace(/^<!\[CDATA\[/, '')
-    .replace(/\]\]>$/, '')
-    .trim();
-}
-
-function rssField(block: string, tag: string): string {
-  const cdata = block.match(new RegExp(`<${tag}><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`));
-  if (cdata?.[1]) return stripCdata(cdata[1]);
-  return block.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`))?.[1]?.trim() ?? '';
-}
-
 function decodeHtmlEntities(text: string): string {
   return text
     .replace(/&amp;/g, '&')
@@ -582,19 +570,14 @@ function cleanSummary(html: string, max = 400): string {
 }
 
 export function parseRssItems(xml: string, limit = 50): ReleaseNote[] {
-  const items: ReleaseNote[] = [];
-  const re = /<item>([\s\S]*?)<\/item>/gi;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(xml)) && items.length < limit) {
-    const block = m[1] ?? '';
-    items.push({
-      title: decodeHtmlEntities(rssField(block, 'title')),
-      link: rssField(block, 'link'),
-      date: rssField(block, 'pubDate'),
-      summary: cleanSummary(rssField(block, 'description')),
-    });
-  }
-  return items;
+  return parseRssChannelItems(xml)
+    .slice(0, limit)
+    .map(item => ({
+      title: decodeHtmlEntities(item.title),
+      link: item.link,
+      date: item.pubDate,
+      summary: cleanSummary(item.description),
+    }));
 }
 
 const RSS_CACHE_MS = 300_000;
