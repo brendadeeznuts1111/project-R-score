@@ -34,8 +34,8 @@ ad-hoc diagnosis. Harness scripts still default to **CPU** profiles
 | Suite | Script(s) | Metrics | Pin / evidence | Profile |
 | ----- | --------- | ------- | -------------- | ------- |
 | Search | `search:bench` · `search:bench:gate` · `search:bench:baseline:verify` | p50/p95/max ms, peak RSS/heap MB, quality/slop/duplicate scores | `.search/` · [`docs/performance/SEARCH_BASELINE_GOVERNANCE.md`](../../performance/SEARCH_BASELINE_GOVERNANCE.md) | n/a |
-| Brand | `brand:bench:run` · `brand:bench:evaluate` · `brand:bench:pin` | ops/s, p50/p95 ms, avg memory footprint | brand-bench pins under reports | `brand:bench:profile` → `reports/brand-bench/profiles/*.cpuprofile` |
-| Limits lab | `ops:limits:lab` · `ops:limits:lab:profile` | lab wall time / forecast diagnostics | [`limit-forecast-lab.md`](limit-forecast-lab.md) | `--cpu-prof` + `.md` under `reports/limit-forecast-lab/profiles/` |
+| Brand | `brand:bench:run` · `brand:bench:evaluate` · `brand:bench:pin` | ops/s, p50/p95 ms, avg memory footprint | brand-bench pins under reports | `brand:bench:profile` → `*.cpuprofile` + `*.md` under `reports/brand-bench/profiles/` |
+| Limits lab | `ops:limits:lab` · `ops:limits:lab:profile` | lab wall time / forecast diagnostics | [`limit-forecast-lab.md`](limit-forecast-lab.md) | `--cpu-prof` + `--cpu-prof-md` under `reports/limit-forecast-lab/profiles/` |
 | Console depth | `bench:console-depth` | stringWidth / sliceAnsi vs naive (size scales) | PROOF `console-depth-boundaries` · `tools/benchmarks/console-depth-perf.ts` | n/a |
 | Deep inspect | `bench:deep` | mean / stddev / percentiles via `Bun.nanoseconds` | stdout (no pin yet) | n/a |
 
