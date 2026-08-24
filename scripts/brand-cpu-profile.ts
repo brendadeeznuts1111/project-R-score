@@ -2,6 +2,8 @@
 // @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags — --cpu
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — --cpu-prof
+// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — --cpu-prof-md
+// @see https://bun.com/docs/project/benchmarking#cpu-profiling — --cpu-prof / --cpu-prof-md
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
@@ -60,10 +62,10 @@ async function main(): Promise<void> {
   const options = parseArgs(Bun.argv.slice(2));
   await ensureDir(options.profilesDir);
 
-  const profileName =
-    options.target === 'generate'
-      ? `brand_seed_${options.seed}.cpuprofile`
-      : `brand_bench_${options.runId}.cpuprofile`;
+  const profileBase =
+    options.target === 'generate' ? `brand_seed_${options.seed}` : `brand_bench_${options.runId}`;
+  const profileFile = joinPath(options.profilesDir, `${profileBase}.cpuprofile`);
+  const profileMdFile = joinPath(options.profilesDir, `${profileBase}.md`);
 
   const targetScript =
     options.target === 'generate'
@@ -73,12 +75,13 @@ async function main(): Promise<void> {
   const args = [
     'bun',
     '--cpu-prof',
+    '--cpu-prof-md',
     '--cpu-prof-interval',
     String(options.interval),
     '--cpu-prof-dir',
     options.profilesDir,
     '--cpu-prof-name',
-    profileName,
+    profileBase,
     targetScript,
   ];
 
@@ -86,7 +89,7 @@ async function main(): Promise<void> {
     args.push(`--seed=${options.seed}`);
   } else {
     args.push(`--run-id=${options.runId}`);
-    args.push(`--profile-files=${joinPath(options.profilesDir, profileName)}`);
+    args.push(`--profile-files=${profileFile}`);
   }
   args.push(...options.passthrough);
 
@@ -110,7 +113,8 @@ async function main(): Promise<void> {
     interval: options.interval,
     seed: options.seed,
     runId: options.runId,
-    profileFile: joinPath(options.profilesDir, profileName),
+    profileFile,
+    profileMdFile,
     exitCode,
     interrupted: shutdown.requested,
   };

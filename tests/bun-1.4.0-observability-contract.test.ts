@@ -3,8 +3,8 @@
  * Executable proofs for Bun 1.4.0 Observability (safe / in-process tier).
  * Inventory: packages/bun-release-contracts/contracts/bun-v1.4.0.json → "Observability"
  * metafile-md: tests/bun-1.4-cli-example.test.ts
- * Left planned: Datadog · OpenTelemetry npm packages · BUN_CPU_PROFILE alone
- *   (env without --cpu-prof* did not write a profile on this pin).
+ * Left planned: Datadog · OpenTelemetry npm packages · lone BUN_CPU_PROFILE=1
+ *   (use BUN_OPTIONS='--cpu-prof…' when flags cannot be passed on argv).
  */
 import { afterAll, describe, expect, test } from 'bun:test';
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -39,6 +39,15 @@ function writeHotScript(dir: string): string {
       'render("hello <world> ".repeat(30));',
       '',
     ].join('\n')
+  );
+  return path;
+}
+
+function writeBusyScript(dir: string, name = 'busy.ts'): string {
+  const path = join(dir, name);
+  writeFileSync(
+    path,
+    'let x = 0;\nfor (let i = 0; i < 1_500_000; i++) x += Math.sqrt(i);\nconsole.log(x);\n'
   );
   return path;
 }
@@ -140,6 +149,70 @@ describe('Bun 1.4.0 Observability — CLI profile markdown', () => {
     expect(out).toContain('--cpu-prof-md');
     expect(out).toContain('--heap-prof-md');
   });
+
+  releaseTest('--cpu-prof-interval is reflected in the markdown summary', () => {
+    const dir = join(root, 'cpu-interval');
+    mkdirSync(dir, { recursive: true });
+    const script = writeBusyScript(dir);
+    const proc = Bun.spawnSync(
+      [
+        process.execPath,
+        '--cpu-prof-md',
+        '--cpu-prof-interval=500',
+        `--cpu-prof-dir=${dir}`,
+        '--cpu-prof-name=iv',
+        script,
+      ],
+      { stdout: 'pipe', stderr: 'pipe', cwd: dir }
+    );
+    expect(proc.exitCode).toBe(0);
+    const md = readFileSync(join(dir, 'iv'), 'utf8');
+    expect(md).toMatch(/\|[^|]*Interval[^|]*\|/i);
+    expect(md).toMatch(/500\s*us|0\.5\s*ms/i);
+  });
+
+  releaseTest('BUN_OPTIONS can inject --cpu-prof-md without argv flags', () => {
+    const dir = join(root, 'bun-options');
+    mkdirSync(dir, { recursive: true });
+    const script = writeBusyScript(dir);
+    const proc = Bun.spawnSync([process.execPath, script], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+      cwd: dir,
+      env: {
+        ...process.env,
+        BUN_OPTIONS: `--cpu-prof-md --cpu-prof-dir=${dir} --cpu-prof-name=via-opts`,
+      },
+    });
+    expect(proc.exitCode).toBe(0);
+    const md = readFileSync(join(dir, 'via-opts'), 'utf8');
+    expect(md).toContain('# CPU Profile');
+    expect(md).toContain('## Hot Functions (Self Time)');
+  });
+
+  releaseTest('--cpu-prof and --cpu-prof-md together write .cpuprofile and .md', () => {
+    const dir = join(root, 'cpu-both');
+    mkdirSync(dir, { recursive: true });
+    const script = writeBusyScript(dir);
+    const proc = Bun.spawnSync(
+      [
+        process.execPath,
+        '--cpu-prof',
+        '--cpu-prof-md',
+        `--cpu-prof-dir=${dir}`,
+        '--cpu-prof-name=both',
+        script,
+      ],
+      { stdout: 'pipe', stderr: 'pipe', cwd: dir }
+    );
+    expect(proc.exitCode).toBe(0);
+    expect(readdirSync(dir)).toEqual(expect.arrayContaining(['both.cpuprofile', 'both.md']));
+    expect(readFileSync(join(dir, 'both.md'), 'utf8')).toContain('# CPU Profile');
+    const body = JSON.parse(readFileSync(join(dir, 'both.cpuprofile'), 'utf8')) as {
+      nodes?: unknown[];
+    };
+    expect(body.nodes!.length).toBeGreaterThan(0);
+  });
 });
 
 describe('Bun 1.4.0 Observability — process + inspector', () => {
@@ -181,7 +254,7 @@ describe('Bun 1.4.0 Observability — process + inspector', () => {
     }
   });
 
-  releaseTest('async fs.promises / Bun.file errors point at the await site', async () => {
+  releaseTest('async Bun.file and fetch errors point at the await site', async () => {
     async function userAwait() {
       await Bun.file(join(root, `missing-${Date.now()}.bin`)).text();
     }
@@ -191,6 +264,18 @@ describe('Bun 1.4.0 Observability — process + inspector', () => {
     } catch (error) {
       const stack = error instanceof Error ? String(error.stack) : String(error);
       expect(stack).toContain('userAwait');
+      expect(stack).not.toMatch(/at native|native code/i);
+    }
+
+    async function fetchFail() {
+      await fetch('http://127.0.0.1:1/');
+    }
+    try {
+      await fetchFail();
+      expect.unreachable();
+    } catch (error) {
+      const stack = error instanceof Error ? String(error.stack) : String(error);
+      expect(stack).toContain('fetchFail');
       expect(stack).not.toMatch(/at native|native code/i);
     }
   });
