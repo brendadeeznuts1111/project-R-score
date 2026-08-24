@@ -257,3 +257,123 @@ describe('Bun 1.4.0 Bug fixes — color / YAML / module / path / sliceAnsi', () 
     expect(form.get('x')).toBe('hi');
   });
 });
+
+describe('Bun 1.4.0 Bug fixes — color round-trip / file slice / env / build / bunfig', () => {
+  releaseTest('Bun.color hsl/lab output is parseable', () => {
+    const hsl = Bun.color('#ff0000', 'hsl') as string;
+    const lab = Bun.color('#ff0000', 'lab') as string;
+    expect(Bun.color(hsl, '{rgba}')).toEqual({ r: 255, g: 0, b: 0, a: 1 });
+    const labRgba = Bun.color(lab, '{rgba}') as { r: number; g: number; b: number; a: number };
+    expect(labRgba.r).toBeGreaterThan(250);
+    expect(labRgba.g).toBeLessThan(5);
+    expect(labRgba.b).toBeLessThan(5);
+  });
+
+  releaseTest('Bun.color ansi-256 grey ramp does not underflow', () => {
+    const nearBlack = Bun.color('rgb(8,8,8)', 'ansi-256') as string;
+    const black = Bun.color('rgb(0,0,0)', 'ansi-256') as string;
+    expect(nearBlack).toMatch(/\[38;5;(\d+)m/);
+    const code = Number(/\[38;5;(\d+)m/.exec(nearBlack)?.[1]);
+    expect(code).toBeGreaterThanOrEqual(232);
+    expect(black).toMatch(/\[38;5;\d+m/);
+  });
+
+  releaseTest('Bun.color lab() on sRGB gamut boundary stays opaque white', () => {
+    expect(Bun.color('lab(100% 0 0)', '{rgba}')).toEqual({ r: 255, g: 255, b: 255, a: 1 });
+  });
+
+  releaseTest('Sliced Bun.file() reads respect slice bounds', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'bun-1.4-slice-'));
+    try {
+      const filePath = join(dir, 'f.bin');
+      writeFileSync(filePath, Buffer.from([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]));
+      const bytes = new Uint8Array(await Bun.file(filePath).slice(2, 6).arrayBuffer());
+      expect([...bytes]).toEqual([2, 3, 4, 5]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  releaseTest('nested ${...} inside ${VAR:-default} in .env parses correctly', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'bun-1.4-env-'));
+    try {
+      writeFileSync(join(dir, '.env'), 'X=${Y:-${Z:-inner}}\n');
+      const proc = Bun.spawnSync({
+        cmd: [process.execPath, '-e', 'console.log(process.env.X)'],
+        cwd: dir,
+        env: {
+          PATH: process.env.PATH ?? '',
+          HOME: process.env.HOME ?? '',
+        },
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+      expect(proc.exitCode).toBe(0);
+      expect(proc.stdout.toString().trim()).toBe('inner');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  releaseTest('path.relative and path.toNamespacedPath handle long paths', () => {
+    const segment = 'a'.repeat(300);
+    const from = path.resolve('/', segment, 'x');
+    const to = path.resolve('/', segment, 'y', 'z');
+    expect(path.relative(from, to)).toBe(join('..', 'y', 'z'));
+    expect(path.toNamespacedPath(from)).toContain(segment);
+  });
+
+  releaseTest('multipart Content-Disposition Form-Data matches case-insensitively (#34362)', async () => {
+    const boundary = '----case';
+    const body = `--${boundary}\r\nContent-Disposition: Form-Data; name="k"\r\n\r\nv\r\n--${boundary}--\r\n`;
+    const form = await new Response(body, {
+      headers: { 'Content-Type': `multipart/form-data; boundary=${boundary}` },
+    }).formData();
+    expect(form.get('k')).toBe('v');
+  });
+
+  releaseTest('Deeply nested expressions throw a catchable error in Bun.build', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'bun-1.4-deep-'));
+    try {
+      writeFileSync(
+        join(dir, 'deep.ts'),
+        `export default ${'('.repeat(20_000)}1${')'.repeat(20_000)};\n`
+      );
+      await expect(
+        Bun.build({ entrypoints: [join(dir, 'deep.ts')], outdir: join(dir, 'out') })
+      ).rejects.toBeInstanceOf(AggregateError);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  releaseTest('bunfig.toml type-mismatch errors print human-readable type names', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'bun-1.4-bunfig-'));
+    try {
+      writeFileSync(join(dir, 'bunfig.toml'), 'preload = 123\n');
+      const proc = Bun.spawnSync({
+        cmd: [process.execPath, '--print', '1'],
+        cwd: dir,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+      const err = proc.stderr.toString();
+      expect(err).toMatch(/Expected preload to be an array/i);
+      expect(err).not.toMatch(/expected type: \d+/i);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  releaseTest('Bun.deepEquals and Bun.inspect tolerate mutation during read', () => {
+    let reads = 0;
+    const shifting = {
+      get x() {
+        reads += 1;
+        return reads < 3 ? 1 : 2;
+      },
+    };
+    expect(Bun.deepEquals(shifting, shifting)).toBe(true);
+    expect(Bun.inspect({ [Bun.inspect.custom]: () => 'safe' })).toContain('safe');
+  });
+});
