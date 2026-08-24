@@ -42,6 +42,9 @@ export type BunChannelConfig = {
     stable_api_fallback: string;
     canary_api: string;
     tip_api: string;
+    /** Marketing blog index (`https://bun.com/blog`) — HTML research surface. */
+    blog: string;
+    /** Dated RSS feed (`https://bun.com/rss.xml`) — release provenance / corroboration. */
     rss: string;
     atom: string;
     npm_registry: string;
@@ -56,6 +59,7 @@ export type BunChannelSource =
   | 'github-stable'
   | 'github-canary'
   | 'github-tip'
+  | 'bun-blog'
   | 'bun-rss'
   | 'github-atom'
   | 'npm-@types/bun'
@@ -220,7 +224,7 @@ export function parseBunChannelConfig(text: string): BunChannelConfig {
     !monitor ||
     Object.keys(monitor).length !== 6 ||
     !sources ||
-    Object.keys(sources).length !== 7
+    Object.keys(sources).length !== 8
   ) {
     throw new Error('bun channel config: monitor or sources fields are incomplete');
   }
@@ -240,10 +244,11 @@ function errorText(error: unknown): string {
 async function fetchChecked(
   fetchImpl: typeof fetch,
   url: string,
-  timeoutMs: number
+  timeoutMs: number,
+  accept = 'application/json, application/atom+xml, application/rss+xml'
 ): Promise<Response> {
   const response = await fetchImpl(url, {
-    headers: { Accept: 'application/json, application/atom+xml, application/rss+xml' },
+    headers: { Accept: accept },
     signal: AbortSignal.timeout(timeoutMs),
   });
   if (!response.ok)
@@ -463,6 +468,20 @@ export async function runBunChannelDoctor(
     assertString(commit.sha, 'github tip sha');
     return { revision: commit.sha, publishedAt: commit.commit?.committer?.date };
   });
+  const blog = observe('bun-blog', generatedAt, config.sources.blog, async () => {
+    const text = await (
+      await fetchChecked(
+        fetchImpl,
+        config.sources.blog,
+        fetchTimeoutMs,
+        'text/html, application/xhtml+xml'
+      )
+    ).text();
+    if (!/\/blog\b/i.test(text) && !/Bun/i.test(text)) {
+      throw new Error('blog index response did not look like the Bun blog surface');
+    }
+    return {};
+  });
   const rss = observe('bun-rss', generatedAt, config.sources.rss, async () => ({
     versions: versionsFromFeed(
       await (await fetchChecked(fetchImpl, config.sources.rss, fetchTimeoutMs)).text()
@@ -489,6 +508,7 @@ export async function runBunChannelDoctor(
     stable,
     canary,
     tip,
+    blog,
     rss,
     atom,
     npmPackage('@types/bun', 'npm-@types/bun', config.types.wrapper_channel),
@@ -574,6 +594,16 @@ export async function runBunChannelDoctor(
           kind: 'informational',
           actual: observation.error,
           message: 'The main-branch tip is informational and is never promotion authority.',
+        });
+        continue;
+      }
+      if (observation.source === 'bun-blog') {
+        drift.push({
+          code: 'blog-unavailable',
+          kind: 'informational',
+          actual: observation.error,
+          message:
+            'The marketing blog index is research reachability only; stable corroboration stays on RSS and Atom.',
         });
         continue;
       }
@@ -703,6 +733,8 @@ export async function runBunChannelDoctor(
       });
     }
   }
+  // bun-blog is reachability-only (HTML marketing index). Version corroboration
+  // stays on bun-rss + github-atom — do not treat blog HTML as a release feed.
 
   const tipObservation = bySource.get('github-tip');
   drift.push({

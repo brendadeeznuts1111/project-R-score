@@ -126,7 +126,8 @@ release inventory's `covered` test-path contract.
 ## Feed and blog URL SSOT
 
 Release-post discovery reads `config/bun-channels.toml` `sources.rss` (default
-`https://bun.com/rss.xml`). Channel `<item>` extraction is shared:
+`https://bun.com/rss.xml`) — the dated feed channel, not the HTML blog index
+(`sources.blog` / `https://bun.com/blog`). Channel `<item>` extraction is shared:
 
 | Layer                       | Owner                                                                                                                                        |
 | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |

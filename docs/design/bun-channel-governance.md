@@ -5,9 +5,9 @@ Status: implementation contract (2026-08-05)
 ## Outcome
 
 Project R uses a stable Bun runtime for production work while continuously
-observing Bun's stable, canary, blog/RSS, GitHub Atom, and npm type channels.
-Monitoring is read-only: it may publish a status artifact and fail a check, but
-it never upgrades Bun, edits a manifest, or rewrites the lockfile.
+observing Bun's stable, canary, blog index, RSS feed, GitHub Atom, and npm type
+channels. Monitoring is read-only: it may publish a status artifact and fail a
+check, but it never upgrades Bun, edits a manifest, or rewrites the lockfile.
 
 The machine-readable policy is
 [`config/bun-channels.toml`](../../config/bun-channels.toml). This document
@@ -16,19 +16,23 @@ explains the policy; it does not duplicate its version values.
 ```text
 official stable API ─┐
 rolling canary API ──┤
-Bun blog RSS ────────┤
+Bun blog index ──────┤
+Bun release RSS ─────┤
 GitHub release Atom ─┼─> Bun channel doctor ─> structured drift report
 npm dist-tags ───────┤                            │
 local manifests ─────┤                            ├─ check/CI exit status
 installed runtime ───┘                            └─ optional derived artifact
 ```
 
-Bun blog RSS is an observation source for the channel doctor (anonymous fetch).
-Docs ingestion and release-contract generation share a separate
-parse/canonicalize path under `lib/docs/` (`bun-rss.ts` + `bun-blog-url.ts`) —
-see [`BUN_DOCS_OPERATE.md`](../BUN_DOCS_OPERATE.md) and
-[`packages/bun-release-contracts/README.md`](../../packages/bun-release-contracts/README.md).
-Do not treat channel-doctor status JSON as the docs RSS index.
+- `bun-blog` (`sources.blog`) is reachability of the marketing HTML index.
+  Outages are informational (research-only); they do not degrade channel check
+  exit status.
+- `bun-rss` (`sources.rss`) is the dated publication feed used for stable-version
+  corroboration (with GitHub Atom). Docs ingestion and release-contract generation
+  share a separate parse/canonicalize path under `lib/docs/` (`bun-rss.ts` +
+  `bun-blog-url.ts`) — see [`BUN_DOCS_OPERATE.md`](../BUN_DOCS_OPERATE.md) and
+  [`packages/bun-release-contracts/README.md`](../../packages/bun-release-contracts/README.md).
+  Do not treat channel-doctor status JSON as the docs RSS index.
 
 ## Canonical policy
 
@@ -82,6 +86,8 @@ active agent session.
 - The rolling `canary` release remains an observed upstream signal.
 - The Bun `main` commit endpoint reports promotion drift from the reviewed
   pinned-tip; it does not invalidate that pin.
+- The Bun blog index proves the marketing HTML surface is reachable; it is not a
+  release-version feed.
 - RSS proves that the stable release was announced on Bun's publication feed.
 - GitHub Atom is an independent release-event signal; prerelease/consolidation
   entries are observations, not automatic promotion authority.
