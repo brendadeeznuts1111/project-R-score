@@ -145,9 +145,26 @@ describe('Bun 1.4.0 Other behavior — router / equals / fetch shapes', () => {
     expect(Bun.deepEquals(Object(1n), Object(1n))).toBe(true);
   });
 
-  releaseTest('Response.redirect re-serializes absolute URLs (#33126)', () => {
-    const res = Response.redirect('http://example.com');
-    expect(res.headers.get('Location')).toBe('http://example.com/');
+  releaseTest('Response.redirect re-serializes absolute URLs via WHATWG (#33126)', () => {
+    // Absolute URL → WHATWG parse + re-serialize Location (spaces, non-ASCII,
+    // default ports, and dot segments normalized per Fetch).
+    expect(Response.redirect('http://example.com').headers.get('Location')).toBe(
+      'http://example.com/'
+    );
+    expect(Response.redirect('http://example.com:80/path').headers.get('Location')).toBe(
+      'http://example.com/path'
+    );
+    expect(Response.redirect('http://example.com/a/./b/../c').headers.get('Location')).toBe(
+      'http://example.com/a/c'
+    );
+    expect(Response.redirect('http://example.com/hello world').headers.get('Location')).toBe(
+      'http://example.com/hello%20world'
+    );
+    expect(Response.redirect('http://example.com/café').headers.get('Location')).toBe(
+      'http://example.com/caf%C3%A9'
+    );
+    // Relative URL is written as-is (not run through absolute URL serialization).
+    expect(Response.redirect('/relative/path').headers.get('Location')).toBe('/relative/path');
   });
 
   releaseTest('structuredClone rejects non-object transfer entries (#32809)', () => {
