@@ -63,6 +63,7 @@ describe('Bun 1.4.0 Observability — CLI profile markdown', () => {
     expect(md).toContain('# CPU Profile');
     expect(md).toContain('## Hot Functions (Self Time)');
     expect(md).toContain('## Call Tree (Total Time)');
+    expect(md).toContain('## Function Details');
     expect(md).toMatch(/`tokenize`|`escapeHtml`|`render`/);
   });
 
@@ -81,7 +82,7 @@ describe('Bun 1.4.0 Observability — CLI profile markdown', () => {
       nodes?: unknown[];
     };
     expect(Array.isArray(body.nodes)).toBe(true);
-    expect((body.nodes?.length ?? 0) > 0).toBe(true);
+    expect(body.nodes!.length).toBeGreaterThan(0);
   });
 
   releaseTest('--heap-prof-md writes Summary and Top Types markdown', () => {
