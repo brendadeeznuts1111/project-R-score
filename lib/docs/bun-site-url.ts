@@ -78,9 +78,15 @@ export const BunReferencePattern = new URLPattern({
 /**
  * Parts-only canonical site loci (URLPatternInit).
  * Build hrefs with `hrefFromInit` — never assemble host strings by hand.
+ *
+ * Operate planes (do not collapse):
+ * - `blog` — HTML observation (`https://bun.com/blog`)
+ * - `rss` — Atom/RSS 2.0 corroboration (`https://bun.com/rss.xml`)
+ * - `docs` / `reference` / `llms` — documentation catalog surfaces
  */
 export const CANONICAL_SOURCES = {
   blog: { ...BunComSite, pathname: '/blog' },
+  rss: { ...BunComSite, pathname: '/rss.xml' },
   docs: { ...BunComSite, pathname: '/docs' },
   reference: { ...BunComSite, pathname: '/reference' },
   llms: { ...BunComSite, pathname: '/docs/llms.txt' },

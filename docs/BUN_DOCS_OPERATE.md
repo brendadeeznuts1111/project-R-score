@@ -50,14 +50,14 @@ Pin ↔ tip **type inventory** is a fifth pipeline (not these planes):
 
 | Intent         | Command                                                                                                                                                                              |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Blog ingestion | `CANONICAL_SOURCES` + [`extract-metadata.ts`](../lib/docs/extract-metadata.ts) · `bun test tests/journey/blog-extraction.test.ts`                                                     |
+| Blog ingestion | `CANONICAL_SOURCES.blog` + [`extract-metadata.ts`](../lib/docs/extract-metadata.ts) · `bun test tests/journey/blog-extraction.test.ts`                                               |
 | Blog URL shape | [`bun-site-url.ts`](../lib/docs/bun-site-url.ts) · [`bun-blog-url.ts`](../lib/docs/bun-blog-url.ts) (marketing vs `release-notes` canonicalize)                                       |
 
 ### RSS plane
 
 | Intent          | Command                                                                                                                                                                |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| RSS feed shape  | [`bun-rss.ts`](../lib/docs/bun-rss.ts) `parseRssChannelItems` · URL in `config/bun-channels.toml` `sources.rss`                                                         |
+| RSS feed shape  | `CANONICAL_SOURCES.rss` + [`bun-rss.ts`](../lib/docs/bun-rss.ts) `parseRssChannelItems` · URL in `config/bun-channels.toml` `sources.rss`                              |
 | Fetch-page SSOT | [`fetch-page.ts`](../lib/docs/fetch-page.ts) · claim `fetch-page-boundaries` · HTML + RSS Accept override; conditional GET (304) stays bare `fetch`                     |
 
 Loop: RSS index → reference index → scrape → **catalog** build → integrity log

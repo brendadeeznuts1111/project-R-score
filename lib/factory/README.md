@@ -73,9 +73,10 @@ Ship template:
 [`.bun-create/factory-library`](../../.bun-create/factory-library/)
 (`package.json` `"bun-create": { preinstall, postinstall }`).  
 Scaffold metrics: `bun run bench` (`Bun.nanoseconds` → JSON) ·
-`bun run profile:cpu` (`--cpu-prof` → `./profiles/`) — see template README and
-harness tenant
+`bun run profile:cpu` (`--cpu-prof` / `--cpu-prof-md` → `./profiles/`) — see
+template README and harness tenant
 [`bun-bench-profiling.md`](../../docs/harness/tenants/bun-bench-profiling.md).
+Prefer the harness entrypoints over `scratch/` / `examples/` profiling demos.
 
 **Bun flags** (passed through): `--force` · `--no-install` · `--no-git` ·
 `--open`. **Factory-only safety flags:** `--publish` and `--replace-local`.

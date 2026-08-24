@@ -932,6 +932,7 @@ export const BRAND_BENCH_PROFILE_ALLOWED_LONG = [
   'cpu-prof',
   'cpu-prof-dir',
   'cpu-prof-interval',
+  'cpu-prof-md',
   'cpu-prof-name',
   'profiles-dir',
   'run-id',
