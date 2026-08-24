@@ -9,7 +9,7 @@
   "releases": [
     {
       "releaseVersion": "1.4.0",
-      "sourceUrl": "https://bun.com/blog/bun-v1.4.0",
+      "sourceUrl": "https://bun.com/blog/bun-v1.4",
       "file": "bun-v1.4.0.json",
       "counts": {
         "planned": 1798,

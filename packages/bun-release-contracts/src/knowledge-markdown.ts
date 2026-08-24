@@ -19,6 +19,26 @@ export function knowledgeSlug(value: string): string {
   );
 }
 
+/** Bun release fences often tag diffs (`js-diff`) or synonyms (`markdown`). */
+const LANGUAGE_ALIASES: Readonly<Record<string, string>> = {
+  'js-diff': 'js',
+  'jsx-diff': 'jsx',
+  'ts-diff': 'ts',
+  'tsx-diff': 'tsx',
+  'json-diff': 'json',
+  'toml-diff': 'toml',
+  'yaml-diff': 'yaml',
+  markdown: 'md',
+  shell: 'sh',
+  zsh: 'sh',
+  console: 'sh',
+};
+
+export function normalizeFenceLanguage(raw: string): string {
+  const language = raw.trim().split(/[\s#]/, 1)[0]?.toLowerCase() ?? '';
+  return LANGUAGE_ALIASES[language] ?? language;
+}
+
 export function extractMarkdownCodeExamples(markdown: string): MarkdownCodeExample[] {
   const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
   let contentStart = 0;
@@ -57,7 +77,7 @@ export function extractMarkdownCodeExamples(markdown: string): MarkdownCodeExamp
     }
 
     const marker = fence[1] ?? '```';
-    const language = (fence[2] ?? '').trim().split(/[\s#]/, 1)[0]?.toLowerCase() ?? '';
+    const language = normalizeFenceLanguage(fence[2] ?? '');
     const body: string[] = [];
     const sourceLine = index + 2;
     index += 1;

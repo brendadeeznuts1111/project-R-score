@@ -75,6 +75,8 @@ describe('Bun release inventory generator', () => {
   test('normalizes versions and builds the official release URL', () => {
     expect(normalizeVersion('v1.3.14')).toBe('1.3.14');
     expect(blogUrlForVersion('1.3.14')).toBe('https://bun.com/blog/bun-v1.3.14');
+    expect(blogUrlForVersion('1.4.0')).toBe('https://bun.com/blog/bun-v1.4');
+    expect(blogUrlForVersion('0.6.0')).toBe('https://bun.com/blog/bun-v0.6.0');
     expect(() => normalizeVersion('latest')).toThrow('expected vMAJOR.MINOR.PATCH');
     expect(() => normalizeVersion('01.3.14')).toThrow('must not be zero-padded');
   });

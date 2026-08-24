@@ -67,20 +67,20 @@ and the aggregate `contracts/index.json` before the release-knowledge gate runs.
 ## Release example knowledge
 
 The package also turns the official `text/markdown` release representation into
-a strict, searchable example artifact. The committed Bun v1.3.14 artifact is
-[`knowledge/bun-v1.3.14.json`](knowledge/bun-v1.3.14.json). Each example keeps a
-stable content ID, section slot, source line, exact code, catalog APIs, official
-docs links, RSS publication timestamp, dependencies, stability, and explicit
-setup requirements.
+a strict, searchable example artifact. Committed artifacts live under
+[`knowledge/`](knowledge/) (currently Bun v1.3.14 and Bun v1.4.0). Each example
+keeps a stable content ID, section slot, source line, exact code, catalog APIs,
+official docs links, RSS publication timestamp, dependencies, stability, and
+explicit setup requirements.
 
 Harvesting and normalization are deliberately separate. Download the official
 Markdown, then build against the repository's committed docs catalog and RSS
 feed:
 
 ```bash
-curl -fsSL https://bun.com/blog/bun-v1.3.14.md -o /tmp/bun-v1.3.14.md
-bun run bun:release-knowledge -- build /tmp/bun-v1.3.14.md --version 1.3.14
-bun run bun:release-knowledge -- build /tmp/bun-v1.3.14.md --version 1.3.14 --check
+curl -fsSL https://bun.com/blog/bun-v1.4.md -o /tmp/bun-v1.4.0.md
+bun run bun:release-knowledge -- build /tmp/bun-v1.4.0.md --version 1.4.0
+bun run bun:release-knowledge -- build /tmp/bun-v1.4.0.md --version 1.4.0 --check
 ```
 
 The offline gate validates the full recursive shape, deterministic IDs,
