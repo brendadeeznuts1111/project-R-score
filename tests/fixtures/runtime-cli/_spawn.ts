@@ -3,14 +3,22 @@
 export async function runBun(
   args: string[],
   cwd: string,
-  opts?: { killAfterMs?: number }
+  opts?: { killAfterMs?: number; stdin?: string | Uint8Array }
 ): Promise<{ exitCode: number; stdout: string; stderr: string }> {
   const proc = Bun.spawn(['bun', ...args], {
     cwd,
     stdout: 'pipe',
     stderr: 'pipe',
+    stdin: opts?.stdin != null ? 'pipe' : 'ignore',
     env: { ...Bun.env, NO_COLOR: '1' },
   });
+
+  if (opts?.stdin != null && proc.stdin) {
+    const bytes =
+      typeof opts.stdin === 'string' ? new TextEncoder().encode(opts.stdin) : opts.stdin;
+    proc.stdin.write(bytes);
+    proc.stdin.end();
+  }
 
   let timer: ReturnType<typeof setTimeout> | undefined;
   if (opts?.killAfterMs != null) {

@@ -87,6 +87,9 @@ bun run dev --watch
 
 Resolution order for `bun run <name>` (docs): scripts → source files → package
 bins → (run only) system commands. Absolute / `./` paths always run as files.
+Without `bun run`, a name with an allowed extension resolves to the **file**,
+not a `package.json` script. Claim: `runtime-cli-boundaries`
+(`bun test tests/fixtures/runtime-cli/`).
 
 ### BUN OPTIONS environment injection
 

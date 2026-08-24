@@ -16,6 +16,8 @@ tables, width layout, chrome, and dual-mode `cliOut`.
 | Object inspection depth (`--console-depth` · `[console] depth` · default **2**) | [console#object-inspection-depth](https://bun.com/docs/runtime/console#object-inspection-depth)                 |
 | `bun run -` pipe code from stdin (TS/JSX, no temp file)                         | [runtime#bun-run-to-pipe-code-from-stdin](https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin)         |
 | `bun run --console-depth` / flag placement                                      | [runtime#bun-run-console-depth](https://bun.com/docs/runtime#bun-run-console-depth)                             |
+| `bun --smol` (eager GC / slower heap growth)                                    | [runtime#bun-run-smol](https://bun.com/docs/runtime#bun-run-smol)                                               |
+| Resolution order (scripts → files → bins → system)                              | [runtime#resolution-order](https://bun.com/docs/runtime#resolution-order)                                       |
 | Console page (stdin AsyncIterable · runtime surface)                            | [runtime/console](https://bun.com/docs/runtime/console)                                                         |
 | `Bun.inspect`                                                                   | [utils#bun-inspect](https://bun.com/docs/runtime/utils#bun-inspect)                                             |
 | `Bun.inspect.custom`                                                            | [utils#bun-inspect-custom](https://bun.com/docs/runtime/utils#bun-inspect-custom)                               |
