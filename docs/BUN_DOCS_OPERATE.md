@@ -225,6 +225,8 @@ Agent entry: root [`AGENTS.md`](../AGENTS.md) § Bun API references ·
 capabilities: [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) ·
 channel governance: [`design/bun-channel-governance.md`](./design/bun-channel-governance.md) ·
 profiling (cpu/heap markdown): [`harness/tenants/bun-bench-profiling.md`](./harness/tenants/bun-bench-profiling.md) ·
+Mintlify heap-md locus SSOT: [`lib/docs/benchmarking-profile-loci.ts`](../lib/docs/benchmarking-profile-loci.ts) ·
+`bun test tests/bun-benchmarking-profile-loci.test.ts` ·
 Observability contracts: `bun test tests/bun-1.4.0-observability-contract.test.ts`.
 
 Longer command encyclopedia: `git log -- docs/BUN_DOCS_OPERATE.md`.

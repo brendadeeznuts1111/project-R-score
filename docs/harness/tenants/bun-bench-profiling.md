@@ -9,7 +9,12 @@ Harness-level Bun microbench and CPU-profile entrypoints. Nested `projects/` /
 snapshots, product-local guides) without defining root metrics.
 
 Upstream Bun: [benchmarking](https://bun.com/docs/project/benchmarking) ·
-[CPU profiling](https://bun.com/docs/project/benchmarking#cpu-profiling).
+[CPU profiling](https://bun.com/docs/project/benchmarking#cpu-profiling) ·
+[heap markdown](https://bun.com/docs/project/benchmarking#markdown-output-1)
+(`#markdown-output-1` is Mintlify’s collision for the second “Markdown output”
+h3 — docs how-to plane). Ship plane uses stable blog anchors
+(`#heap-prof-md`). SSOT
+[`lib/docs/benchmarking-profile-loci.ts`](../../../lib/docs/benchmarking-profile-loci.ts).
 
 ## When to use
 
@@ -68,6 +73,7 @@ bun run brand:bench:evaluate
 bun run bench:console-depth
 bun run bench:deep
 bun test tests/bun-1.4.0-observability-contract.test.ts
+bun test tests/bun-benchmarking-profile-loci.test.ts
 ```
 
 ## Related
