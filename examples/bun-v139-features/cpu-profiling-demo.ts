@@ -1,14 +1,20 @@
 #!/usr/bin/env bun
 /**
- * Bun v1.3.9: CPU Profiling Demo
- * 
- * Demonstrates the new --cpu-prof-interval flag for configurable profiling
+ * Bun CPU profiling demo (historical v1.3.9 interval flag).
+ *
+ * Harness SSOT for FactoryWager pins:
+ *   docs/harness/tenants/bun-bench-profiling.md
+ *   bun run brand:bench:profile   # --cpu-prof + --cpu-prof-md
+ *   bun run ops:limits:lab:profile
+ *
+ * Bun 1.4 also adds --heap-prof → *.heapprofile (+ --heap-prof-md).
+ * Prefer BUN_OPTIONS='--cpu-prof --cpu-prof-md' for injected runtime args.
  */
 
-import { performance } from "node:perf_hooks";
+import { performance } from 'node:perf_hooks';
 
-console.info("📊 Bun v1.3.9: CPU Profiling Demo\n");
-console.info("=" .repeat(70));
+console.info('Bun CPU Profiling Demo (examples — not harness SSOT)\n');
+console.info('='.repeat(70));
 
 // Demo functions to profile
 function cpuIntensiveTask(duration: number): number {
@@ -28,7 +34,7 @@ function fibonacci(n: number): number {
 }
 
 function stringOperations(): string {
-  let result = "";
+  let result = '';
   for (let i = 0; i < 10000; i++) {
     result += `Iteration ${i}: `;
     result = result.slice(0, 1000); // Keep it bounded
@@ -46,22 +52,22 @@ function arrayOperations(): number[] {
 
 // Benchmark different profiling intervals
 function runWorkload() {
-  console.info("Running workload for profiling...\n");
-  
+  console.info('Running workload for profiling...\n');
+
   const results = {
     cpu: cpuIntensiveTask(100),
     fib: fibonacci(30),
     str: stringOperations().length,
     arr: arrayOperations().length,
   };
-  
-  console.info("Workload complete:", results);
+
+  console.info('Workload complete:', results);
 }
 
 function showProfilingGuide() {
-  console.info("\n" + "=".repeat(70));
-  console.info("🔧 CPU Profiling Guide");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('🔧 CPU Profiling Guide');
+  console.info('='.repeat(70));
   console.info(`
 BASIC USAGE:
 ────────────
@@ -109,9 +115,9 @@ bun run analyze-profile.ts CPU.*.cpuprofile
 }
 
 function showProfilingExample() {
-  console.info("\n" + "=".repeat(70));
-  console.info("📈 Example Profiling Session");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('📈 Example Profiling Session');
+  console.info('='.repeat(70));
   console.info(`
 STEP 1: Run with profiling
 ──────────────────────────
@@ -149,9 +155,9 @@ OPTIMIZATION OPPORTUNITIES:
 }
 
 function showCIIntegration() {
-  console.info("\n" + "=".repeat(70));
-  console.info("🔄 CI/CD Integration");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('🔄 CI/CD Integration');
+  console.info('='.repeat(70));
   console.info(`
 GITHUB ACTIONS EXAMPLE:
 ───────────────────────
@@ -224,9 +230,9 @@ async function main() {
   console.info(`Bun version: ${Bun.version}`);
   console.info(`Platform: ${process.platform} ${process.arch}\n`);
 
-  console.info("This demo shows CPU profiling features.\n");
-  console.info("To profile this script, run:");
-  console.info("  bun --cpu-prof --cpu-prof-interval 500 cpu-profiling-demo.ts\n");
+  console.info('This demo shows CPU profiling features.\n');
+  console.info('To profile this script, run:');
+  console.info('  bun --cpu-prof --cpu-prof-interval 500 cpu-profiling-demo.ts\n');
 
   // Simulate some work that would be profiled
   runWorkload();
@@ -235,7 +241,7 @@ async function main() {
   showProfilingExample();
   showCIIntegration();
 
-  console.info("\n✅ CPU Profiling demo complete!\n");
+  console.info('\n✅ CPU Profiling demo complete!\n');
 }
 
 if (import.meta.main) {

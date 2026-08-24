@@ -1,10 +1,11 @@
 // @see https://bun.com/docs/runtime/xml — Bun.XML.parse compact shape
-// @see https://bun.com/rss.xml — Bun release / blog RSS 2.0
+// @see https://bun.com/rss.xml — Bun release / changelog RSS 2.0 (not HTML blog)
 /**
- * Shared Bun.com RSS channel item extraction.
+ * Shared Bun.com RSS channel item extraction (RSS operate plane).
  *
  * Prefer Bun.XML; regex fallback for odd fixtures. Callers map fields into
  * release-index / contracts / MCP shapes — do not duplicate channel walks.
+ * Do not treat this feed as the HTML blog index (`CANONICAL_SOURCES.blog`).
  */
 import { parseXmlElementList, parseXmlText } from './bun-blog-url.ts';
 

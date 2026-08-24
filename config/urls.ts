@@ -1,12 +1,15 @@
 // config/urls.ts - Bun-native URL configuration
-import { file } from 'bun';
+// Prefer CANONICAL_SOURCES parts — do not hand-assemble bun.sh/bun.com hosts.
+import { CANONICAL_SOURCES, hrefFromInit } from '../lib/docs/bun-site-url.ts';
+
+const DOCS_BASE = hrefFromInit(CANONICAL_SOURCES.docs).replace(/\/$/, '');
 
 // Define constants following Bun's documentation pattern
 export const BUN_DOCS = {
-  // Base URLs (aligned with bun.sh/docs pattern)
-  BASE: 'https://bun.sh/docs',
+  // Base URL (canonical bun.com/docs — not bun.sh)
+  BASE: DOCS_BASE,
 
-  // API endpoints following the bun.sh/docs/{category}/{section} pattern
+  // API endpoints following the /docs/{category}/{section} pattern
   API: {
     FETCH: '/api/fetch',
     HTTP: '/api/http',
@@ -14,7 +17,7 @@ export const BUN_DOCS = {
     SERVE: '/api/serve',
   },
 
-  // Runtime documentation following bun.sh/docs/runtime/{category}
+  // Runtime documentation following /docs/runtime/{category}
   RUNTIME: {
     BINARY_DATA: '/runtime/binary-data',
     FILESYSTEM: '/runtime/filesystem',
@@ -22,12 +25,12 @@ export const BUN_DOCS = {
     NETWORKING: '/runtime/networking',
   },
 
-  // Guides following bun.sh/docs/guides/{topic}
+  // Guides following /docs/guides/{topic}
   GUIDES: {
     READ_FILE: '/guides/read-file',
     WRITE_FILE: '/guides/write-file',
     STREAMS: '/guides/streams',
-  }
+  },
 } as const;
 
 // Typed array specific URLs (our focus)
@@ -38,9 +41,10 @@ export const TYPED_ARRAY_URLS = {
   EXAMPLES: `${BUN_DOCS.RUNTIME.BINARY_DATA}#examples`,
 } as const;
 
-// RSS feed URLs
+// RSS feed URLs (corroboration plane — never the HTML blog index)
 export const RSS_URLS = {
-  BUN_BLOG: 'https://bun.sh/rss.xml',
-  BUN_UPDATES: 'https://bun.sh/updates/feed.xml',
+  /** Bun.com release / changelog RSS 2.0 (`CANONICAL_SOURCES.rss`). */
+  BUN_RSS: hrefFromInit(CANONICAL_SOURCES.rss),
+  BUN_UPDATES: 'https://bun.com/updates/feed.xml',
   OUR_FEED: '/feed/rss', // Our own generated feed
 } as const;

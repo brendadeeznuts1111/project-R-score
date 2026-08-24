@@ -1,3 +1,8 @@
+// @see https://bun.com/reference/bun/semver/order — Bun.semver.order
+// @verified Bun.semver.order · Bun v1.3.14 · 2026-08-18 · https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.3.14 · 2026-08-18 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
@@ -7,7 +12,8 @@
 // @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPatternInit / CANONICAL_SOURCES
 // tools/bun-docs-mcp-lib.ts — Index, search, and MDX helpers for bun-docs MCP
-// Release lists use tools/release-index.json; general blog RSS stays live (full feed).
+// Release lists use tools/release-index.json; changelog RSS stays live (full feed).
+// Blog HTML (`CANONICAL_SOURCES.blog`) and RSS (`CANONICAL_SOURCES.rss`) are separate planes.
 
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import {
@@ -20,13 +26,7 @@ import {
 } from '../lib/docs/blog-extract.ts';
 import { canonicalizeBunBlogUrl } from '../lib/docs/bun-blog-url.ts';
 import { parseRssChannelItems } from '../lib/docs/bun-rss.ts';
-import {
-  BunComSite,
-  CANONICAL_SOURCES,
-  bunBlog,
-  bunDocs,
-  hrefFromInit,
-} from '../lib/docs/bun-site-url.ts';
+import { CANONICAL_SOURCES, bunBlog, bunDocs, hrefFromInit } from '../lib/docs/bun-site-url.ts';
 import { joinPath } from '../lib/path-bun';
 
 /** Docs root href (no trailing slash) — from CANONICAL_SOURCES parts. */
@@ -68,7 +68,7 @@ export type BlogPost = {
 
 /** Blog index href (no trailing slash) — from CANONICAL_SOURCES parts. */
 export const BUN_BLOG_BASE = hrefFromInit(CANONICAL_SOURCES.blog).replace(/\/$/, '');
-export const BUN_CHANGELOG_RSS = hrefFromInit({ ...BunComSite, pathname: '/rss.xml' });
+export const BUN_CHANGELOG_RSS = hrefFromInit(CANONICAL_SOURCES.rss);
 
 export function buildDocUrl(slug: string): string {
   const path = slug.replace(/^\/+/, '').replace(/\.md$/i, '');

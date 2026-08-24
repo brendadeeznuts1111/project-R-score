@@ -573,8 +573,8 @@ function handleRoot(): Response {
             </a>
           </li>
           <li>
-            <a href="${RSS_URLS.BUN_BLOG}" target="_blank">
-              Official Bun Blog RSS
+            <a href="${RSS_URLS.BUN_RSS}" target="_blank">
+              Official Bun release RSS
             </a>
           </li>
           <li>
@@ -954,7 +954,7 @@ function handleTypedArrayURLs(): Response {
     feeds: {
       rss: `http://${SERVER_HOST}:${SERVER_PORT}/feed/rss`,
       json: `http://${SERVER_HOST}:${SERVER_PORT}/feed/json`,
-      bun_blog: RSS_URLS.BUN_BLOG,
+      bun_rss: RSS_URLS.BUN_RSS,
       bun_updates: RSS_URLS.BUN_UPDATES,
     },
   };
@@ -969,7 +969,7 @@ function handleTypedArrayURLs(): Response {
 
 // RSS feed proxy endpoint
 async function handleRSSFeed(): Promise<Response> {
-  const cacheKey = 'bun_blog_rss';
+  const cacheKey = 'bun_release_rss';
   const cached = cache.get(cacheKey);
 
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -984,7 +984,7 @@ async function handleRSSFeed(): Promise<Response> {
 
   try {
     // Using the exact pattern from Bun's fetch documentation
-    const response = await fetch(RSS_URLS.BUN_BLOG);
+    const response = await fetch(RSS_URLS.BUN_RSS);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch RSS: ${response.status} ${response.statusText}`);

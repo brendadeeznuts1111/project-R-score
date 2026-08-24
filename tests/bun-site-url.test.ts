@@ -114,4 +114,10 @@ describe('bun-site-url (URLPatternInit components)', () => {
     const href = hrefFromInit(CANONICAL_SOURCES.blog);
     expect(BunBlogIndexPattern.test(href)).toBe(true);
   });
+
+  test('CANONICAL_SOURCES.rss is a separate plane from blog', () => {
+    expect(CANONICAL_SOURCES.rss.pathname).toBe('/rss.xml');
+    expect(hrefFromInit(CANONICAL_SOURCES.rss)).toBe('https://bun.com/rss.xml');
+    expect(hrefFromInit(CANONICAL_SOURCES.rss)).not.toBe(hrefFromInit(CANONICAL_SOURCES.blog));
+  });
 });

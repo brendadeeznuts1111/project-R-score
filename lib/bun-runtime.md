@@ -176,7 +176,7 @@ executing command help shows it.
 | `--cpu-prof-dir <dir>`       | `string`                  | CPU profile directory                  |
 | `--cpu-prof-md`              | boolean                   | CPU profile as markdown (LLM-friendly) |
 | `--cpu-prof-interval=<µs>`   | `number` (default `1000`) | CPU sampling interval                  |
-| `--heap-prof`                | boolean                   | V8 `.heapsnapshot` on exit             |
+| `--heap-prof`                | boolean                   | V8 `.heapprofile` on exit (Bun 1.4+)   |
 | `--heap-prof-name <file>`    | `string`                  | Heap profile filename                  |
 | `--heap-prof-dir <dir>`      | `string`                  | Heap profile directory                 |
 | `--heap-prof-md`             | boolean                   | Markdown heap profile on exit          |

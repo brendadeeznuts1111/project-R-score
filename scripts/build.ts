@@ -14,7 +14,7 @@ async function build() {
     `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`,
     `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}`,
     `${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}`,
-    RSS_URLS.BUN_BLOG,
+    RSS_URLS.BUN_RSS,
   ];
 
   const results = await Promise.allSettled(
@@ -55,7 +55,7 @@ async function build() {
       networking: `${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.NETWORKING}`,
     },
     feeds: {
-      rss: RSS_URLS.BUN_BLOG,
+      rss: RSS_URLS.BUN_RSS,
       updates: RSS_URLS.BUN_UPDATES,
       our_feed: 'http://example.com/feed/rss',
     },

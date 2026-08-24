@@ -20,7 +20,7 @@
 // @see https://bun.com/reference/bun/markdown/AnsiTheme — Bun.markdown.AnsiTheme reference
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
-// @see https://bun.com/rss.xml — Bun blog RSS
+// @see https://bun.com/rss.xml — Bun release RSS (optional --rss mode; not HTML blog)
 // @see https://bun.com/docs/guides/process/argv — util.parseArgs (page restructured, section anchors removed)
 /**
  * Extract `<div class="CodeBlock">` regions from a Bun blog HTML post.
