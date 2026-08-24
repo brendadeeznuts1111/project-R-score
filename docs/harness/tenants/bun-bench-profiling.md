@@ -18,13 +18,17 @@ Upstream Bun: [benchmarking](https://bun.com/docs/project/benchmarking) ·
 | Search latency / quality pin | `search:bench*` |
 | Brand palette throughput pin | `brand:bench*` |
 | Brand hot-path CPU sample | `brand:bench:profile` (`--cpu-prof`) |
-| Limits-lab forecast CPU sample | `ops:limits:lab:profile` |
+| Limits-lab forecast CPU sample | `ops:limits:lab:profile` (`--cpu-prof-md`) |
+| Ad-hoc CPU markdown (SSH / LLM) | `bun --cpu-prof-md ./script.ts` ([blog Observability](https://bun.com/blog/bun-v1.4#cpu-prof-md)) |
+| Ad-hoc heap markdown | `bun --heap-prof-md ./script.ts` |
 | Console stringWidth / sliceAnsi microbench | `bench:console-depth` |
 | Nested inspect timing smoke | `bench:deep` |
 | Catalog of suites → metrics → pins | `bench:status` · `bench:status -- --json` |
 
-Heap profiling (`--heap-prof`) is **not** wired at harness level yet — prefer
-CPU profiles above, or product-local demos under nested trees.
+Heap profiling (`--heap-prof` / `--heap-prof-md`) is available on Bun 1.4+ for
+ad-hoc diagnosis. Harness scripts still default to **CPU** profiles
+(`--cpu-prof` / `--cpu-prof-md`); prefer those for brand / limits-lab pins, or
+product-local demos under nested trees for heap snapshots.
 
 ## Metric contract
 
