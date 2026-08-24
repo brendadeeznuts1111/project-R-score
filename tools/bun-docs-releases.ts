@@ -39,7 +39,8 @@ const CACHE_XML_PATH = resolvePath(RSS_CACHE_DIR, 'rss.xml');
 const CACHE_META_PATH = resolvePath(RSS_CACHE_DIR, 'meta.json');
 
 const VERSION_RE = /\bv?(\d+\.\d+(?:\.\d+)?)\b/i;
-const URL_VERSION_RE = /\/blog\/bun-v(\d+\.\d+\.\d+)/i;
+/** Official posts use `/blog/bun-v1.4` (two-part) or `/blog/bun-v1.3.14` (three-part). */
+const URL_VERSION_RE = /\/blog\/bun-v(\d+\.\d+(?:\.\d+)?)\/?/i;
 
 export type ReleaseEntry = {
   /** Canonical semver, e.g. "1.3.14" or "1.3.0" for minor posts */
@@ -149,7 +150,7 @@ export function isReleasePost(title: string, url: string): boolean {
  */
 export function normalizeReleaseVersion(title: string, url: string): string | null {
   const fromUrl = url.match(URL_VERSION_RE)?.[1];
-  if (fromUrl) return fromUrl;
+  if (fromUrl) return expandMinorVersion(fromUrl);
   const m = title.match(VERSION_RE);
   if (!m) return null;
   return expandMinorVersion(m[1]!);
@@ -168,32 +169,110 @@ function tagText(block: string, tag: string): string {
     .trim();
 }
 
+/** Bun.XML scalar / `#text` node → trimmed string. */
+function parseXmlText(value: unknown): string {
+  if (value == null) return '';
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return String(value).trim();
+  }
+  if (typeof value === 'object' && value !== null && '#text' in value) {
+    return parseXmlText((value as { '#text': unknown })['#text']);
+  }
+  return '';
+}
+
+function parseRssChannelItems(doc: unknown): Array<Record<string, unknown>> {
+  if (!doc || typeof doc !== 'object') return [];
+  const root = doc as Record<string, unknown>;
+  const rss = (root.rss ?? root) as Record<string, unknown> | undefined;
+  const channel = rss?.channel as Record<string, unknown> | undefined;
+  if (!channel || typeof channel !== 'object') return [];
+  const item = channel.item;
+  if (item == null) return [];
+  if (Array.isArray(item)) {
+    return item.filter(
+      (row): row is Record<string, unknown> => row !== null && typeof row === 'object'
+    );
+  }
+  if (typeof item === 'object') return [item as Record<string, unknown>];
+  return [];
+}
+
+function releaseEntryFromFields(fields: {
+  title: string;
+  url: string;
+  guid: string;
+  pubRaw: string;
+}): ReleaseEntry | null {
+  const { title, url, guid, pubRaw } = fields;
+  if (!isReleasePost(title, url)) return null;
+  const version = normalizeReleaseVersion(title, url);
+  if (!version) return null;
+  if (!pubRaw || !Number.isFinite(Date.parse(pubRaw))) {
+    throw new Error(`release ${version} has an invalid pubDate: ${pubRaw || '(missing)'}`);
+  }
+  return {
+    version,
+    title,
+    url,
+    guid: guid || url,
+    pubDate: new Date(pubRaw).toISOString(),
+  };
+}
+
+/** Prefer Bun.XML (RSS 2.0 object shape); regex fallback for odd fixtures. */
 export function parseReleaseEntries(xml: string): ReleaseEntry[] {
+  const fromDom = parseReleaseEntriesViaBunXml(xml);
+  const entries = fromDom ?? parseReleaseEntriesViaRegex(xml);
+  entries.sort((a, b) => (a.pubDate < b.pubDate ? -1 : a.pubDate > b.pubDate ? 1 : 0));
+  return entries;
+}
+
+// @see https://bun.com/docs/runtime/xml — Bun.XML.parse
+function parseReleaseEntriesViaBunXml(xml: string): ReleaseEntry[] | null {
+  let doc: unknown;
+  try {
+    doc = Bun.XML.parse(xml);
+  } catch {
+    return null;
+  }
+  const items = parseRssChannelItems(doc);
+  if (items.length === 0) return null;
+
+  const out: ReleaseEntry[] = [];
+  const seen = new Set<string>();
+  for (const item of items) {
+    const entry = releaseEntryFromFields({
+      title: parseXmlText(item.title),
+      url: parseXmlText(item.link),
+      guid: parseXmlText(item.guid),
+      pubRaw: parseXmlText(item.pubDate),
+    });
+    if (!entry || seen.has(entry.version)) continue;
+    seen.add(entry.version);
+    out.push(entry);
+  }
+  return out;
+}
+
+function parseReleaseEntriesViaRegex(xml: string): ReleaseEntry[] {
   const blocks = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)].map(m => m[1]!);
   const out: ReleaseEntry[] = [];
   const seen = new Set<string>();
 
   for (const block of blocks) {
-    const title = tagText(block, 'title');
-    const url = tagText(block, 'link');
-    const guid = tagText(block, 'guid') || url;
-    const pubRaw = tagText(block, 'pubDate');
-    if (!isReleasePost(title, url)) continue;
-    const version = normalizeReleaseVersion(title, url);
-    if (!version) continue;
-    if (seen.has(version)) continue; // keep first (newest) occurrence
-    seen.add(version);
-    if (!pubRaw || !Number.isFinite(Date.parse(pubRaw))) {
-      throw new Error(`release ${version} has an invalid pubDate: ${pubRaw || '(missing)'}`);
-    }
-    const pubDate = new Date(pubRaw).toISOString();
-    out.push({ version, title, url, guid, pubDate });
+    const entry = releaseEntryFromFields({
+      title: tagText(block, 'title'),
+      url: tagText(block, 'link'),
+      guid: tagText(block, 'guid'),
+      pubRaw: tagText(block, 'pubDate'),
+    });
+    if (!entry || seen.has(entry.version)) continue;
+    seen.add(entry.version);
+    out.push(entry);
   }
-
-  out.sort((a, b) => (a.pubDate < b.pubDate ? -1 : a.pubDate > b.pubDate ? 1 : 0));
   return out;
 }
-
 /**
  * Build lookup map: normalized version → entry.
  * Also registers short minor keys ("1.3") when version is "1.3.0".
@@ -273,7 +352,11 @@ export async function fetchRssXml(opts?: { force?: boolean }): Promise<FetchRssR
 
   let res: Response;
   try {
-    res = await fetch(RSS_URL, { headers });
+    res = await fetch(RSS_URL, {
+      headers,
+      // Without a timeout, a stalled CDN leaves `docs:feeds refresh --rss-only` hung forever.
+      signal: AbortSignal.timeout(20_000),
+    });
   } catch (err) {
     if (await Bun.file(CACHE_XML_PATH).exists()) {
       const xml = await Bun.file(CACHE_XML_PATH).text();
@@ -323,7 +406,7 @@ export async function fetchRssXml(opts?: { force?: boolean }): Promise<FetchRssR
 
 export async function writeReleaseIndex(
   entries: ReleaseEntry[],
-  opts?: { etag?: string; lastModified?: string }
+  opts?: { etag?: string; lastModified?: string; writeFeeds?: boolean }
 ): Promise<ReleaseIndexFile> {
   const payload: ReleaseIndexFile = {
     generated: new Date().toISOString(),
@@ -334,6 +417,9 @@ export async function writeReleaseIndex(
     entries,
   };
   await Bun.write(RELEASE_INDEX_PATH, `${JSON.stringify(payload, null, 2)}\n`);
+  // Callers that already own `writeFeedsPartial` (refreshFeeds) pass writeFeeds:false
+  // to avoid a second full rewrite of bun-docs-feeds.json mid-refresh.
+  if (opts?.writeFeeds === false) return payload;
   try {
     const { writeFeedsPartial } = await import('./bun-docs-feeds.ts');
     await writeFeedsPartial({ rss: payload });
@@ -346,6 +432,7 @@ export async function writeReleaseIndex(
 /** Fetch RSS (or use cache), parse, write release-index.json. */
 export async function refreshReleaseIndex(opts?: {
   force?: boolean;
+  writeFeeds?: boolean;
 }): Promise<{ file: ReleaseIndexFile; map: Map<string, ReleaseEntry>; fetch: FetchRssResult }> {
   const fetchResult = await fetchRssXml(opts);
   const entries = parseReleaseEntries(fetchResult.xml);
@@ -355,6 +442,7 @@ export async function refreshReleaseIndex(opts?: {
   const file = await writeReleaseIndex(entries, {
     etag: fetchResult.etag,
     lastModified: fetchResult.lastModified,
+    writeFeeds: opts?.writeFeeds,
   });
   return { file, map: buildReleaseMap(entries), fetch: fetchResult };
 }

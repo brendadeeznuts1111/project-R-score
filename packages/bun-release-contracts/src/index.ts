@@ -21,6 +21,7 @@ export {
   loadReleaseFeedSettings,
   parseReleaseFeed,
   selectReleaseFeedEntries,
+  versionFromBlogUrl,
   type FetchReleaseFeedOptions,
   type ReleaseFeedEntry,
 } from './feed';

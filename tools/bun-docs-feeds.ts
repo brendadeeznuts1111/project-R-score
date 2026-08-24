@@ -142,7 +142,7 @@ export async function refreshFeeds(opts?: {
   let reference = existing.reference;
 
   if (doRss) {
-    const r = await refreshReleaseIndex({ force });
+    const r = await refreshReleaseIndex({ force, writeFeeds: false });
     rss = r.file;
   }
   if (doReference) {
