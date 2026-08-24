@@ -6,9 +6,9 @@
  */
 import { afterAll, describe, expect, jest, mock, test } from 'bun:test';
 import { Database } from 'bun:sqlite';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import path, { join } from 'node:path';
 
 const TARGET_VERSION = '1.4.0';
 const releaseTest = Bun.version === TARGET_VERSION ? test : test.skip;
@@ -106,5 +106,154 @@ describe('Bun 1.4.0 Bug fixes — bun:test matcher / mock semantics', () => {
     expect(fn()).toBe(42);
     jest.resetAllMocks();
     expect(fn()).toBeUndefined();
+  });
+});
+
+describe('Bun 1.4.0 Bug fixes — Cookie precedence / Glob depth / HTMLRewriter throws', () => {
+  const fixtureRoot = mkdtempSync(join(tmpdir(), 'bun-1.4-bugfix2-'));
+  const braceDir = join(fixtureRoot, 'braces');
+  const linkDir = join(fixtureRoot, 'links');
+  mkdirSync(braceDir, { recursive: true });
+  mkdirSync(join(linkDir, 'real'), { recursive: true });
+  for (const name of ['a', 'b', 'c', 'd', 'e', 'f']) {
+    writeFileSync(join(braceDir, name), '');
+  }
+  writeFileSync(join(linkDir, 'real', 'file.txt'), 'x');
+  symlinkSync(join(linkDir, 'real'), join(linkDir, 'link'));
+
+  afterAll(() => {
+    rmSync(fixtureRoot, { recursive: true, force: true });
+  });
+
+  releaseTest('Bun.Cookie.isExpired applies Max-Age over Expires (#33393)', () => {
+    const past = new Date(Date.now() - 60_000).toUTCString();
+    const future = new Date(Date.now() + 3_600_000).toUTCString();
+    const maxAgeWinsExpired = Bun.Cookie.parse(`a=b; Max-Age=0; Expires=${future}`)!;
+    const maxAgeWinsFresh = Bun.Cookie.parse(`a=b; Max-Age=3600; Expires=${past}`)!;
+    expect(maxAgeWinsExpired.isExpired()).toBe(true);
+    expect(maxAgeWinsFresh.isExpired()).toBe(false);
+  });
+
+  releaseTest('Bun.Glob handles deeply nested braces', () => {
+    const hits = [...new Bun.Glob('{a,{b,{c,{d,{e,f}}}}}').scanSync({ cwd: braceDir })].sort();
+    expect(hits).toEqual(['a', 'b', 'c', 'd', 'e', 'f']);
+  });
+
+  releaseTest('Bun.Glob literal segments resolve through symlinks without followSymlinks', () => {
+    const hits = [...new Bun.Glob('link/file.txt').scanSync({ cwd: linkDir })];
+    expect(hits).toContain('link/file.txt');
+  });
+
+  releaseTest('Bun.Glob absolute: true reports ENAMETOOLONG for over-long paths', () => {
+    try {
+      [...new Bun.Glob('x'.repeat(4096), { absolute: true }).scanSync({ cwd: tmpdir() })];
+      expect.unreachable();
+    } catch (e) {
+      const err = e as Error & { code?: string };
+      expect(err.code).toBe('ENAMETOOLONG');
+    }
+  });
+
+  releaseTest('HTMLRewriter setAttribute/removeAttribute throw on invalid args (#32840)', async () => {
+    let setThrew = false;
+    let removeThrew = false;
+    await new HTMLRewriter()
+      .on('div', {
+        element(el) {
+          try {
+            el.setAttribute('', 'x');
+          } catch {
+            setThrew = true;
+          }
+          try {
+            // @ts-expect-error intentional invalid arg
+            el.removeAttribute(null);
+          } catch {
+            removeThrew = true;
+          }
+        },
+      })
+      .transform(new Response('<div></div>'))
+      .arrayBuffer();
+    expect(setThrew).toBe(true);
+    expect(removeThrew).toBe(true);
+  });
+});
+
+describe('Bun 1.4.0 Bug fixes — color / YAML / module / path / sliceAnsi', () => {
+  releaseTest('Bun.color ansi-16 emits decimal color digits', () => {
+    const ansi = Bun.color('#00ff00', 'ansi-16') as string;
+    expect(ansi).toMatch(/\[\d+m/);
+    expect([...ansi].some(ch => ch.charCodeAt(0) < 0x20 && ch !== '\u001b')).toBe(false);
+  });
+
+  releaseTest('Bun.YAML.stringify does not emit \\L/\\P for U+00A8/U+00A9 (#32718)', () => {
+    expect(Bun.YAML.stringify('\u00A8')).not.toMatch(/\\[LP]/);
+    expect(Bun.YAML.stringify('\u00A9')).not.toMatch(/\\[LP]/);
+    expect(Bun.YAML.stringify('\u00A8')).toContain('¨');
+  });
+
+  releaseTest('stringify surfaces valueOf throws on boxed Number (#37025)', () => {
+    const bad = Object(1);
+    Object.defineProperty(bad, 'valueOf', {
+      value() {
+        throw new Error('num-boom');
+      },
+    });
+    expect(() => Bun.YAML.stringify(bad)).toThrow('num-boom');
+    expect(() => Bun.JSON5.stringify(bad)).toThrow('num-boom');
+    expect(() => Bun.TOML.stringify({ a: bad })).toThrow('num-boom');
+  });
+
+  releaseTest('CSS imports at runtime default-export {} (#35163)', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'bun-1.4-css-'));
+    try {
+      writeFileSync(join(dir, 'x.css'), 'body{color:red}');
+      writeFileSync(join(dir, 'entry.ts'), 'import css from "./x.css"; console.log(JSON.stringify(css));');
+      const proc = Bun.spawnSync([process.execPath, join(dir, 'entry.ts')], {
+        cwd: dir,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+      expect(proc.exitCode).toBe(0);
+      expect(proc.stdout.toString().trim()).toBe('{}');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  releaseTest('importing a long data: URL does not fail with ENAMETOOLONG (#37157)', async () => {
+    const url = `data:text/javascript,${'export default 1;'.padEnd(100_000, ' ')}`;
+    const mod = await import(url);
+    expect(mod.default).toBe(1);
+  });
+
+  releaseTest('path.resolve handles arbitrarily long paths', () => {
+    const segment = 'a'.repeat(300);
+    const resolved = path.resolve('/', ...Array.from({ length: 40 }, () => segment));
+    expect(resolved.length).toBeGreaterThan(10_000);
+    expect(resolved.startsWith('/')).toBe(true);
+  });
+
+  releaseTest('Bun.sliceAnsi returns ellipsis for zero-width start-cut ranges', () => {
+    const zw = '\u200b\u200bhello';
+    expect(Bun.sliceAnsi(zw, 0, 1, '…')).toBe('…');
+  });
+
+  releaseTest('WebAssembly.instantiateStreaming accepts Application/WASM Content-Type (#33229)', async () => {
+    const wasm = new Uint8Array([0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00]);
+    const { module } = await WebAssembly.instantiateStreaming(
+      Promise.resolve(new Response(wasm, { headers: { 'Content-Type': 'Application/WASM' } }))
+    );
+    expect(module).toBeInstanceOf(WebAssembly.Module);
+  });
+
+  releaseTest('multipart/form-data accepts HTAB after header colon (#34362)', async () => {
+    const boundary = '----bun14';
+    const body = `--${boundary}\r\nContent-Disposition:\tform-data; name="x"\r\n\r\nhi\r\n--${boundary}--\r\n`;
+    const form = await new Response(body, {
+      headers: { 'Content-Type': `multipart/form-data; boundary=${boundary}` },
+    }).formData();
+    expect(form.get('x')).toBe('hi');
   });
 });
