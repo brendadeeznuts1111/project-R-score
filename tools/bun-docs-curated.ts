@@ -98,6 +98,7 @@
 // @see https://bun.com/docs/runtime/markdown#parser-options-2 — parser-options-2
 // @see https://bun.com/docs/runtime/markdown#react-18-and-older — reactVersion: 18
 // @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — BUN_OPTIONS
+// Profile how-to loci SSOT: lib/docs/benchmarking-profile-loci.ts
 // @see https://bun.com/docs/bundler/executables#embedding-runtime-arguments — --compile-exec-argv
 // @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — file-uploads
 // @see https://bun.com/docs/runtime/workers — Concurrency (Runtime nav group)
@@ -117,6 +118,7 @@
 // @see https://bun.com/docs/runtime/networking/udp — Bun.udpSocket
 // tools/bun-docs-curated.ts — Hot-path Bun doc entries (1.3.14+ aware)
 
+import { BENCHMARKING_PROFILE_DOCS_PATHS } from '../lib/docs/benchmarking-profile-loci.ts';
 import { bunBlog, bunDocs, bunReference } from '../lib/docs/bun-site-url.ts';
 
 export type CuratedEntry = {
@@ -1187,13 +1189,14 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     ],
   },
   // Observability profiling family (docs how-to ↔ versioned blog anchors via changelog).
+  // Mintlify `#markdown-output-1` for heap md — SSOT: lib/docs/benchmarking-profile-loci.ts
   {
     term: '--cpu-prof',
-    path: 'project/benchmarking#cpu-profiling',
+    path: BENCHMARKING_PROFILE_DOCS_PATHS.cpuProf,
     description:
       'Write a Chrome DevTools .cpuprofile on exit (Bun 1.3.2+). Companions: --cpu-prof-name / --cpu-prof-dir / --cpu-prof-interval.',
     minVersion: '1.3.2',
-    related: ['project/benchmarking#markdown-output', 'project/benchmarking#heap-profiling'],
+    related: [BENCHMARKING_PROFILE_DOCS_PATHS.cpuProfMd, BENCHMARKING_PROFILE_DOCS_PATHS.heapProf],
     relatedTokens: [
       '--cpu-prof-md',
       '--cpu-prof-name',
@@ -1205,11 +1208,11 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: '--cpu-prof-md',
-    path: 'project/benchmarking#markdown-output',
+    path: BENCHMARKING_PROFILE_DOCS_PATHS.cpuProfMd,
     description:
       'Markdown CPU profile (Hot Functions / Call Tree) for SSH, bug reports, and LLMs (Bun 1.4.0 Observability).',
     minVersion: '1.4.0',
-    related: ['project/benchmarking#cpu-profiling', 'project/benchmarking#markdown-output-1'],
+    related: [BENCHMARKING_PROFILE_DOCS_PATHS.cpuProf, BENCHMARKING_PROFILE_DOCS_PATHS.heapProfMd],
     relatedTokens: [
       '--cpu-prof',
       '--cpu-prof-name',
@@ -1221,32 +1224,32 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: '--cpu-prof-name',
-    path: 'project/benchmarking#cpu-profiling',
+    path: BENCHMARKING_PROFILE_DOCS_PATHS.cpuProf,
     description: 'Output basename for --cpu-prof / --cpu-prof-md artifacts.',
     minVersion: '1.3.2',
     relatedTokens: ['--cpu-prof', '--cpu-prof-md', '--cpu-prof-dir', '--cpu-prof-interval'],
   },
   {
     term: '--cpu-prof-dir',
-    path: 'project/benchmarking#cpu-profiling',
+    path: BENCHMARKING_PROFILE_DOCS_PATHS.cpuProf,
     description: 'Directory for --cpu-prof / --cpu-prof-md artifacts.',
     minVersion: '1.3.2',
     relatedTokens: ['--cpu-prof', '--cpu-prof-md', '--cpu-prof-name', '--cpu-prof-interval'],
   },
   {
     term: '--cpu-prof-interval',
-    path: 'project/benchmarking#cpu-profiling',
+    path: BENCHMARKING_PROFILE_DOCS_PATHS.cpuProf,
     description: 'CPU sample interval in microseconds for --cpu-prof / --cpu-prof-md.',
     minVersion: '1.3.2',
     relatedTokens: ['--cpu-prof', '--cpu-prof-md', '--cpu-prof-name', '--cpu-prof-dir'],
   },
   {
     term: '--heap-prof',
-    path: 'project/benchmarking#heap-profiling',
+    path: BENCHMARKING_PROFILE_DOCS_PATHS.heapProf,
     description:
       'Write a V8-compatible .heapprofile on exit (Bun 1.4.0). Companions: --heap-prof-name / --heap-prof-dir / --heap-prof-interval.',
     minVersion: '1.4.0',
-    related: ['project/benchmarking#markdown-output-1', 'project/benchmarking#cpu-profiling'],
+    related: [BENCHMARKING_PROFILE_DOCS_PATHS.heapProfMd, BENCHMARKING_PROFILE_DOCS_PATHS.cpuProf],
     relatedTokens: [
       '--heap-prof-md',
       '--heap-prof-name',
@@ -1258,11 +1261,11 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: '--heap-prof-md',
-    path: 'project/benchmarking#markdown-output-1',
+    path: BENCHMARKING_PROFILE_DOCS_PATHS.heapProfMd,
     description:
       'Markdown heap profile (Summary / Top Types) for CLI analysis (Bun 1.4.0 Observability).',
     minVersion: '1.4.0',
-    related: ['project/benchmarking#heap-profiling', 'project/benchmarking#markdown-output'],
+    related: [BENCHMARKING_PROFILE_DOCS_PATHS.heapProf, BENCHMARKING_PROFILE_DOCS_PATHS.cpuProfMd],
     relatedTokens: [
       '--heap-prof',
       '--heap-prof-name',
@@ -1274,21 +1277,21 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: '--heap-prof-name',
-    path: 'project/benchmarking#heap-profiling',
+    path: BENCHMARKING_PROFILE_DOCS_PATHS.heapProf,
     description: 'Output basename for --heap-prof / --heap-prof-md artifacts.',
     minVersion: '1.4.0',
     relatedTokens: ['--heap-prof', '--heap-prof-md', '--heap-prof-dir', '--heap-prof-interval'],
   },
   {
     term: '--heap-prof-dir',
-    path: 'project/benchmarking#heap-profiling',
+    path: BENCHMARKING_PROFILE_DOCS_PATHS.heapProf,
     description: 'Directory for --heap-prof / --heap-prof-md artifacts.',
     minVersion: '1.4.0',
     relatedTokens: ['--heap-prof', '--heap-prof-md', '--heap-prof-name', '--heap-prof-interval'],
   },
   {
     term: '--heap-prof-interval',
-    path: 'project/benchmarking#heap-profiling',
+    path: BENCHMARKING_PROFILE_DOCS_PATHS.heapProf,
     description: 'Heap sample interval for --heap-prof / --heap-prof-md.',
     minVersion: '1.4.0',
     relatedTokens: ['--heap-prof', '--heap-prof-md', '--heap-prof-name', '--heap-prof-dir'],

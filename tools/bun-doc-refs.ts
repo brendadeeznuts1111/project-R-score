@@ -72,6 +72,7 @@ import {
   formatBundlerNavTree,
   type BundlerNavGroup,
 } from '../lib/docs/bundler-nav';
+import { BENCHMARKING_PROFILE_CANONICAL_REFS } from '../lib/docs/benchmarking-profile-loci.ts';
 import { bunBlog, bunDocs, bunReference, mdnWebApi } from '../lib/docs/bun-site-url.ts';
 import {
   BUN_REPOSITORY_URL,
@@ -1446,16 +1447,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   '--force': 'https://bun.com/docs/bundler/executables',
   '--console':
     'https://bun.com/docs/bundler/html-static#echo-console-logs-from-browser-to-terminal',
-  '--cpu-prof': 'https://bun.com/docs/project/benchmarking#cpu-profiling',
-  '--cpu-prof-md': 'https://bun.com/docs/project/benchmarking#markdown-output',
-  '--cpu-prof-name': 'https://bun.com/docs/project/benchmarking#cpu-profiling',
-  '--cpu-prof-dir': 'https://bun.com/docs/project/benchmarking#cpu-profiling',
-  '--cpu-prof-interval': 'https://bun.com/docs/project/benchmarking#cpu-profiling',
-  '--heap-prof': 'https://bun.com/docs/project/benchmarking#heap-profiling',
-  '--heap-prof-md': 'https://bun.com/docs/project/benchmarking#markdown-output-1',
-  '--heap-prof-name': 'https://bun.com/docs/project/benchmarking#heap-profiling',
-  '--heap-prof-dir': 'https://bun.com/docs/project/benchmarking#heap-profiling',
-  '--heap-prof-interval': 'https://bun.com/docs/project/benchmarking#heap-profiling',
+  ...BENCHMARKING_PROFILE_CANONICAL_REFS,
   '--metafile-md': 'https://bun.com/docs/bundler/index#metafile',
   'process.on("memoryPressure")': 'https://bun.com/blog/bun-v1.4#process-on-memorypressure',
   memoryPressure: 'https://bun.com/blog/bun-v1.4#process-on-memorypressure',

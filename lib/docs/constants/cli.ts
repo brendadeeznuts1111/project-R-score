@@ -7,6 +7,9 @@
 // @see https://bun.com/blog/bun-v1.4#heap-prof-md — shipped Bun 1.4.0 Observability
 // @see https://bun.com/blog/bun-v1.4#process-on-memorypressure — shipped Bun 1.4.0 Observability
 // lib/docs/constants/cli.ts — CLI documentation categories and URLs
+// Profile how-to loci SSOT: lib/docs/benchmarking-profile-loci.ts
+
+import { BENCHMARKING_PROFILE_DOCS_PATHS } from '../benchmarking-profile-loci.ts';
 
 export enum CLICategory {
   INSTALLATION = 'installation',
@@ -64,13 +67,16 @@ export const CLI_DOCUMENTATION_URLS = {
     INSPECTOR: '/docs/cli/inspector',
     PROFILE: '/docs/project/benchmarking',
     /** How-to · ship https://bun.com/blog/bun-v1.3.2 */
-    CPU_PROF: '/docs/project/benchmarking#cpu-profiling',
+    CPU_PROF: `/docs/${BENCHMARKING_PROFILE_DOCS_PATHS.cpuProf}`,
     /** How-to · ship https://bun.com/blog/bun-v1.4#cpu-prof-md */
-    CPU_PROF_MD: '/docs/project/benchmarking#markdown-output',
+    CPU_PROF_MD: `/docs/${BENCHMARKING_PROFILE_DOCS_PATHS.cpuProfMd}`,
     /** How-to · ship https://bun.com/blog/bun-v1.4#heap-prof */
-    HEAP_PROF: '/docs/project/benchmarking#heap-profiling',
-    /** How-to · ship https://bun.com/blog/bun-v1.4#heap-prof-md */
-    HEAP_PROF_MD: '/docs/project/benchmarking#markdown-output-1',
+    HEAP_PROF: `/docs/${BENCHMARKING_PROFILE_DOCS_PATHS.heapProf}`,
+    /**
+     * How-to · ship https://bun.com/blog/bun-v1.4#heap-prof-md
+     * Mintlify collision `#markdown-output-1` — see benchmarking-profile-loci.ts
+     */
+    HEAP_PROF_MD: `/docs/${BENCHMARKING_PROFILE_DOCS_PATHS.heapProfMd}`,
     TRACE: '/docs/cli/trace',
   },
 } as const;
