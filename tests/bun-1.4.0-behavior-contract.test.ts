@@ -4,6 +4,7 @@
  * Inventory: packages/bun-release-contracts/contracts/bun-v1.4.0.json
  * Install/PM tempdir cases: tests/bun-1.4.0-install-behavior-contract.test.ts
  * Bug fixes (safe tier): tests/bun-1.4.0-bugfix-contract.test.ts
+ * Observability (safe tier): tests/bun-1.4.0-observability-contract.test.ts
  * Metafile #34534: tests/bun-1.4-cli-example.test.ts
  */
 import { afterAll, describe, expect, test } from 'bun:test';
