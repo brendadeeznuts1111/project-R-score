@@ -28,6 +28,7 @@ semantics are owned by
 | [`feed-image.ts`](./feed-image.ts)                     | Validate image enclosures, read Bun.Image metadata, create WebP thumbnails and colors, and conditionally revalidate. |
 | [`fetch-image-bytes.ts`](./fetch-image-bytes.ts)       | Image-specific adapter over the shared remote-fetch boundary.                                                        |
 | [`image-color.ts`](./image-color.ts)                   | Downsample images and decode Bun's one-pixel PNG terminal for average colors.                                        |
+| `project-channel-registry*.ts`                         | Project/repository ownership, strict registry parsing, channel registration, and alias routes.                       |
 
 `RSSManager.fetchFeed()` recognizes image candidates in this order:
 `media:content`, image `enclosure`, then `media:thumbnail`. Enrichment is
