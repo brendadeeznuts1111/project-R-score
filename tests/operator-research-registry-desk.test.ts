@@ -131,10 +131,13 @@ describe('registry-desk snapshot browse', () => {
     expect(found.readmeHtml!).toContain('<');
   });
 
-  test('readmeHtml uses Bun.markdown.html tagFilter (no raw script tags)', async () => {
+  test('readmeHtml disables raw HTML and unsafe URL schemes', async () => {
     const { renderReadmeHTML } = await import('../lib/factory/markdown.ts');
-    const html = renderReadmeHTML('# Hi\n\n<script>alert(1)</script>\n\n**ok**');
+    const html = renderReadmeHTML(
+      '# Hi\n\n<script>alert(1)</script>\n\n[bad](javascript:alert(1))\n\n**ok**'
+    );
     expect(html.toLowerCase()).not.toContain('<script');
+    expect(html).not.toContain('javascript:');
     expect(html).toMatch(/ok|strong|b/i);
   });
 

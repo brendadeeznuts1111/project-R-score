@@ -85,7 +85,7 @@ export type RegistryPackageDetail = {
   /** From Bun 1.3.14+ publish body / factory index (snapshot). */
   readme?: string;
   readmeFilename?: string;
-  /** Server-rendered HTML via Bun.markdown.html (tagFilter). */
+  /** Server-rendered HTML via the raw-HTML-off, URL-scheme-safe Bun.markdown boundary. */
   readmeHtml?: string;
   /** Where version/readme metadata came from. */
   source?: RegistryDetailSource;

@@ -18,6 +18,7 @@ import {
   markdownHtml,
   type MarkdownHtmlOptions,
 } from '../markdown/options.ts';
+import { markdownSafeHtml } from '../markdown/safe-html.ts';
 
 export {
   MARKDOWN_OPTIONS_DEFAULTS,
@@ -31,9 +32,9 @@ export {
   type MarkdownHtmlOptions,
 } from '../markdown/options.ts';
 
-/** GFM HTML for READMEs (headings, autolinks, tag filter). Bun-local only. */
+/** GFM HTML for untrusted READMEs with raw HTML and unsafe URL schemes disabled. */
 export function renderReadmeHTML(markdown: string, overrides?: MarkdownHtmlOptions): string {
-  return markdownHtml(markdown, { ...MARKDOWN_PRESET_README, ...overrides });
+  return markdownSafeHtml(markdown, { ...MARKDOWN_PRESET_README, ...overrides });
 }
 
 /** ANSI terminal README (prefer over hand-rolled render callbacks when enough). */
