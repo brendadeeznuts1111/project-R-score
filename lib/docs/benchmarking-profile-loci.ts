@@ -1,7 +1,7 @@
 // @see https://bun.com/docs/project/benchmarking#cpu-profiling — --cpu-prof
 // @see https://bun.com/docs/project/benchmarking#markdown-output — --cpu-prof-md
 // @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof
-// @see https://bun.com/docs/project/benchmarking#markdown-output-1 — --heap-prof-md
+// @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof-md
 // @see https://bun.com/blog/bun-v1.3.2#cpu-profiling-with-cpu-prof — ship
 // @see https://bun.com/blog/bun-v1.4#cpu-prof-md — ship
 // @see https://bun.com/blog/bun-v1.4#heap-prof — ship
@@ -10,12 +10,12 @@
  * Official Bun benchmarking docs + ship loci for Observability profile flags.
  *
  * Planes:
- *   docs how-to (unversioned) — Mintlify `#markdown-output` / `#markdown-output-1`
+ *   docs how-to (unversioned) — CPU `#markdown-output`; heap `#heap-profiling`
  *   ship evidence (versioned blog) — `#cpu-prof-md` / `#heap-prof-md` (stable)
  *
- * Mintlify auto-slugs both "Markdown output" h3s; the second collision becomes
- * `#markdown-output-1`. Keep that suffix here; ratchet with
- * `tests/bun-benchmarking-profile-loci.test.ts`.
+ * Bun's docs currently expose only one `#markdown-output` fragment for two
+ * same-named headings. The heap Markdown pointer therefore uses the unique
+ * `#heap-profiling` parent. Ratchet that addressable shape with the focused test.
  */
 import { blogUrlForReleaseVersion } from './bun-blog-url.ts';
 import { bunDocs } from './bun-site-url.ts';
@@ -24,19 +24,15 @@ import { bunDocs } from './bun-site-url.ts';
 export const BENCHMARKING_DOCS_PATH = 'project/benchmarking' as const;
 
 /**
- * Section anchors on the benchmarking page.
- * `heapProfMd` is Mintlify's collision suffix — do not invent a prettier slug.
+ * Addressable section anchors on the benchmarking page.
  */
 export const BENCHMARKING_PROFILE_ANCHORS = {
   cpuProfiling: 'cpu-profiling',
   /** CPU `--cpu-prof-md` subsection (first "Markdown output"). */
   cpuProfMd: 'markdown-output',
   heapProfiling: 'heap-profiling',
-  /**
-   * Heap `--heap-prof-md` subsection (second "Markdown output").
-   * Mintlify collision → `-1`. If upstream renames, update here + ratchet.
-   */
-  heapProfMd: 'markdown-output-1',
+  /** Heap Markdown has no unique child fragment; use its addressable parent. */
+  heapProfMd: 'heap-profiling',
 } as const;
 
 export type BenchmarkingProfileAnchor =
@@ -166,40 +162,45 @@ export function htmlSnippetAfterId(
   return html.slice(at, at + maxLen);
 }
 
+/** Addressable section body, bounded by the next h2 instead of byte length. */
+export function htmlSectionAfterId(html: string, id: string): string {
+  // brand-ok — transient HTML fragment, not a domain identity
+  const needle = `id="${id}"`;
+  const alt = `id='${id}'`;
+  let at = html.indexOf(needle);
+  if (at < 0) at = html.indexOf(alt);
+  if (at < 0) return '';
+  const nextHeadingOffset = html.slice(at + 1).search(/<h2\b/i);
+  return nextHeadingOffset < 0 ? html.slice(at) : html.slice(at, at + 1 + nextHeadingOffset);
+}
+
 /**
- * Prove Mintlify collision layout: cpu `#markdown-output` appears before
- * heap `#markdown-output-1`, and both parent sections exist.
+ * Prove the addressable layout: CPU `#markdown-output` appears under CPU and
+ * before the unique heap `#heap-profiling` parent.
  */
 export function assertBenchmarkingProfileLocusOrder(html: string): void {
   const ids = extractHtmlIds(html);
   const cpu = ids.indexOf(BENCHMARKING_PROFILE_ANCHORS.cpuProfiling);
   const cpuMd = ids.indexOf(BENCHMARKING_PROFILE_ANCHORS.cpuProfMd);
   const heap = ids.indexOf(BENCHMARKING_PROFILE_ANCHORS.heapProfiling);
-  const heapMd = ids.indexOf(BENCHMARKING_PROFILE_ANCHORS.heapProfMd);
 
   if (cpu < 0) throw new Error(`missing #${BENCHMARKING_PROFILE_ANCHORS.cpuProfiling}`);
   if (cpuMd < 0) throw new Error(`missing #${BENCHMARKING_PROFILE_ANCHORS.cpuProfMd}`);
   if (heap < 0) throw new Error(`missing #${BENCHMARKING_PROFILE_ANCHORS.heapProfiling}`);
-  if (heapMd < 0) {
-    throw new Error(
-      `missing #${BENCHMARKING_PROFILE_ANCHORS.heapProfMd} (Mintlify collision for heap Markdown output)`
-    );
-  }
-  if (!(cpu < cpuMd && cpuMd < heap && heap < heapMd)) {
-    throw new Error(
-      `unexpected profiling heading order: cpu@${cpu} cpuMd@${cpuMd} heap@${heap} heapMd@${heapMd}`
-    );
+  if (!(cpu < cpuMd && cpuMd < heap)) {
+    throw new Error(`unexpected profiling heading order: cpu@${cpu} cpuMd@${cpuMd} heap@${heap}`);
   }
 }
 
 /**
- * Prove each Mintlify "Markdown output" section documents the matching flag
- * (cpu section → `--cpu-prof-md`, heap collision → `--heap-prof-md`).
+ * Prove each addressable section documents its matching flag. The heap check
+ * starts at the unique parent because the duplicate child heading has no
+ * stable distinct fragment.
  */
 export function assertBenchmarkingProfileLocusSemantics(html: string): void {
   assertBenchmarkingProfileLocusOrder(html);
-  const cpuSnip = htmlSnippetAfterId(html, BENCHMARKING_PROFILE_ANCHORS.cpuProfMd);
-  const heapSnip = htmlSnippetAfterId(html, BENCHMARKING_PROFILE_ANCHORS.heapProfMd);
+  const cpuSnip = htmlSectionAfterId(html, BENCHMARKING_PROFILE_ANCHORS.cpuProfMd);
+  const heapSnip = htmlSectionAfterId(html, BENCHMARKING_PROFILE_ANCHORS.heapProfMd);
   if (!cpuSnip.includes('--cpu-prof-md')) {
     throw new Error(`#${BENCHMARKING_PROFILE_ANCHORS.cpuProfMd} snippet missing --cpu-prof-md`);
   }

@@ -28,7 +28,7 @@
 // @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
 // @see https://bun.com/docs/runtime/utils#bun-readablestreamto — Bun.readableStreamToText
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
-// @see https://bun.com/docs/runtime/utils#bun-toml — Bun.TOML.stringify
+// @see https://bun.com/docs/runtime/toml — Bun.TOML.stringify
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — logTable

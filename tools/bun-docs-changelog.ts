@@ -9,7 +9,7 @@
 // @released --cpu-prof-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4
 // @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof
 // @released --heap-prof · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4
-// @see https://bun.com/docs/project/benchmarking#markdown-output-1 — --heap-prof-md
+// @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof-md
 // @released --heap-prof-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4
 // @see https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies — --no-orphans
 // @see https://bun.com/docs/bundler/index#features — bun:bundle

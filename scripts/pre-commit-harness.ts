@@ -803,12 +803,16 @@ async function main(): Promise<void> {
     const n = f.replace(/^\.\//, '');
     return (
       n === 'tools/monorepo-health.ts' ||
+      n === 'tools/file-removal-candidates.ts' ||
       n === 'scripts/check-monorepo-health.ts' ||
       n === 'scripts/monorepo-health-baseline.json' ||
       n.startsWith('lib/harness/monorepo-health') ||
+      n.startsWith('lib/harness/file-removal-') ||
       n.startsWith('tests/monorepo-health') ||
+      n === 'tests/file-removal-candidates.test.ts' ||
       n === 'tests/check-monorepo-health.test.ts' ||
-      n === 'docs/harness/tenants/monorepo-health.md'
+      n === 'docs/harness/tenants/monorepo-health.md' ||
+      n === 'docs/harness/tenants/file-removal-grading.md'
     );
   });
   if (monorepoHealthStaged) {

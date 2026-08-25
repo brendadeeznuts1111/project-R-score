@@ -44,6 +44,24 @@ export const CLI_CATEGORIES: CliCategory[] = [
     priority: 0,
   },
   {
+    prefix: 'deps:',
+    label: 'Repository Hygiene',
+    desc: 'Evidence-first dependency and file cleanup',
+    priority: 1,
+  },
+  {
+    prefix: 'files:',
+    label: 'Repository Hygiene',
+    desc: 'Evidence-first dependency and file cleanup',
+    priority: 1,
+  },
+  {
+    prefix: 'channels:',
+    label: 'Repository Hygiene',
+    desc: 'Evidence-first dependency, file, and channel lifecycle',
+    priority: 1,
+  },
+  {
     prefix: 'fix:',
     label: 'Antipattern Fixing',
     desc: 'Automated code quality fixes',
@@ -112,6 +130,16 @@ export const CLI_SPECIAL: Record<string, string> = {
   'projects:syntax:check': 'Gate: every active JavaScript/TypeScript source file parses',
   'bun:api-drift:check':
     'Ratchet: active source uses only APIs present in the installed Bun runtime',
+  'deps:rate-removal': 'Grade direct dependency removal evidence; advisory only',
+  'files:rate-removal':
+    'SHA-256 duplicate, large-file, reference, and addressability grading; advisory only',
+  'channels:bun-1.4:check': 'Verify Bun 1.4 manifest-derived XML feeds and ownership snapshot',
+  'channels:bun-1.4:rebuild': 'Rebuild feeds and write a content-addressed Bun.Archive',
+  'channels:bun-1.4:watch': 'Watch the reviewed manifest and rebuild derived channel outputs',
+  'channels:projects': 'Regenerate the reviewed project/repository/channel ownership registry',
+  'channels:projects:check':
+    'Verify project ownership, aliases, copied-feed absence, and branded type contracts',
+  'channels:projects:types': 'Compile the project/channel branded-ID type contract',
   'lib:domains:check': 'Ratchet: every first-level lib/*/ has README.md',
   'lib:area-maps:check': 'Ratchet: ## Area map entry paths/globs resolve under domain',
   'lib:area-maps:check:orphans': 'Report top-level .ts not listed in Area map (warn)',

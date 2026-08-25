@@ -152,6 +152,7 @@ async function runUnitTests(): Promise<number> {
       'test',
       'tests/monorepo-health.test.ts',
       'tests/monorepo-health-ui.test.ts',
+      'tests/file-removal-candidates.test.ts',
       '--timeout=60000',
     ],
     { cwd: ROOT, stdout: 'inherit', stderr: 'inherit' }

@@ -10,10 +10,10 @@ snapshots, product-local guides) without defining root metrics.
 
 Upstream Bun: [benchmarking](https://bun.com/docs/project/benchmarking) ·
 [CPU profiling](https://bun.com/docs/project/benchmarking#cpu-profiling) ·
-[heap markdown](https://bun.com/docs/project/benchmarking#markdown-output-1)
-(`#markdown-output-1` is Mintlify’s collision for the second “Markdown output”
-h3 — docs how-to plane). Ship plane uses stable blog anchors
-(`#heap-prof-md`). SSOT
+[heap markdown](https://bun.com/docs/project/benchmarking#heap-profiling) (the
+duplicate “Markdown output” h3 has no distinct public fragment, so the docs
+how-to plane uses its unique heap parent). The ship plane uses the stable
+`#heap-prof-md` blog anchor. SSOT
 [`lib/docs/benchmarking-profile-loci.ts`](../../../lib/docs/benchmarking-profile-loci.ts).
 
 ## When to use
