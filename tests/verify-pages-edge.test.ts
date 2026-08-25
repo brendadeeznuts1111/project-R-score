@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
+import { CLOUDFLARE_MCP_HTTP_SERVERS } from '../lib/verification/cloudflare-token-scope.ts';
 import { selectProductionContentBase } from '../tools/verify-pages-edge.ts';
 
 describe('verify-pages-edge tiers', () => {
@@ -31,6 +32,14 @@ describe('verify-pages-edge tiers', () => {
     expect(text).toContain('PROOF_TAXONOMY_CONTRACT_COUNT');
     expect(text).toContain('cloudflare-pages-preflight.json');
     expect(PROOF_TAXONOMY_CONTRACT_COUNT).toBeGreaterThanOrEqual(13);
+  });
+
+  test('Cloudflare MCP edge checks use the canonical four-server catalog', async () => {
+    const text = await Bun.file('tools/verify-pages-edge.ts').text();
+    expect(CLOUDFLARE_MCP_HTTP_SERVERS).toHaveLength(4);
+    expect(text).toContain('CLOUDFLARE_MCP_HTTP_SERVERS.length');
+    expect(text).not.toContain('serverCount ?? 0) < 5');
+    expect(text).not.toContain('j.servers.length < 5');
   });
 
   test('production proof prefers the public apex over Access-protected hash previews', () => {
