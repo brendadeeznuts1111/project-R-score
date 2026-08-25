@@ -27,6 +27,7 @@ import { logCompact } from '../lib/console-depth';
 import { githubTokenPresence, resolveGitHubRepositoryRef } from '../lib/github-repository-ref';
 import { hasFlag } from './lib/cli-args';
 import { ensureDir, writeJson } from './lib/fs-bun';
+import { runGroupCommand } from './lib/harness-group-runner';
 const argv = import.meta.main
   ? applyUnknownLongOptionGuardFor('ci:harness', Bun.argv.slice(2))
   : Bun.argv.slice(2);
@@ -165,33 +166,12 @@ async function run(
   step: Step,
   verbose: boolean
 ): Promise<{ code: number; ms: number; out: string }> {
-  const t0 = performance.now();
-  if (verbose) {
-    console.info(`→ ${step.name}`);
-    const proc = Bun.spawn(step.cmd, {
-      cwd: repoRoot,
-      stdout: 'inherit',
-      stderr: 'inherit',
-      stdin: 'inherit',
-    });
-    const code = (await proc.exited) ?? 1;
-    return { code, ms: Math.round(performance.now() - t0), out: '' };
-  }
-
-  const proc = Bun.spawn(step.cmd, {
+  return runGroupCommand(step.cmd, {
     cwd: repoRoot,
-    stdout: 'pipe',
-    stderr: 'pipe',
-    stdin: 'ignore',
+    verbose,
+    reportDir: `${repoRoot}/reports/ci/harness`,
+    logId: step.name,
   });
-  const [stdout, stderr] = await Promise.all([
-    new Response(proc.stdout).text(),
-    new Response(proc.stderr).text(),
-  ]);
-  const code = (await proc.exited) ?? 1;
-  const ms = Math.round(performance.now() - t0);
-  console.info(`${code === 0 ? '✓' : '✗'} ${step.name} (${ms}ms)`);
-  return { code, ms, out: `${stdout}${stderr}` };
 }
 
 async function writeTimings(timings: GateTiming[], mode: string): Promise<void> {

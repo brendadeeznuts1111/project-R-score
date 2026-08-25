@@ -137,6 +137,7 @@ if (!installPrecheck) throw new Error('ci:core requires an install precheck');
 const installResult = await runCoreStep(installPrecheck.cmd, {
   cwd: repoRoot,
   inherit: verbose && !installPrecheck.writeOut,
+  logId: installPrecheck.name,
 });
 await acceptResult(installPrecheck, installResult);
 if (installResult.code !== 0) {
@@ -153,6 +154,7 @@ const parallelResults = await Promise.all(
     result: await runCoreStep(step.cmd, {
       cwd: repoRoot,
       inherit: verbose && !step.writeOut,
+      logId: step.name,
     }),
   }))
 );

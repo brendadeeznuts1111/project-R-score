@@ -28,6 +28,7 @@ export type TestSnapshotSuiteId =
   | 'console-depth'
   | 'failure-report'
   | 'factory-template'
+  | 'focused-coverage'
   | 'identity-board'
   | 'limits-e2e'
   | 'model-circuit'
