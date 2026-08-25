@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/pm/cli/update#latest — --latest
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 import { jsonOut } from '../lib/console-depth';
+import { parseRSSFeed } from '../lib/rss/rss-xml.ts';
 import { fileExists, readJson, readText, resolvePath } from './lib/fs-bun';
 import { normalizeWarningCode } from './lib/search-status-contract';
 
@@ -29,12 +30,12 @@ type ContractResult = {
   };
 };
 
-function parseFirstRssGuid(xml: string): string | null {
-  const match = xml.match(/<guid[^>]*>([^<]+)<\/guid>/i);
-  if (match && match[1]) return match[1].trim();
-  const linkMatch = xml.match(/<item>[\s\S]*?<link>([^<]+)<\/link>/i);
-  if (linkMatch && linkMatch[1]) return linkMatch[1].trim();
-  return null;
+export function parseFirstRssGuid(xml: string): string | null {
+  try {
+    return parseRSSFeed(xml).items[0]?.guid ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export async function runSearchStatusContract(input: ContractInput): Promise<ContractResult> {

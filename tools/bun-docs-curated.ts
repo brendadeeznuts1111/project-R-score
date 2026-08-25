@@ -17,7 +17,7 @@
 // @released --heap-prof-dir · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#heap-prof
 // @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof-interval
 // @released --heap-prof-interval · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#heap-prof
-// @see https://bun.com/docs/project/benchmarking#markdown-output-1 — --heap-prof-md
+// @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof-md
 // @released --heap-prof-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#heap-prof-md
 // @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof-name
 // @released --heap-prof-name · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#heap-prof
@@ -188,6 +188,90 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     minVersion: '1.3.14',
     relatedTokens: ['Bun.Image'],
   })),
+  {
+    term: 'Bun.XML',
+    path: 'runtime/xml',
+    description: 'Native XML 1.0 parser and serializer with compact and ordered shapes',
+    minVersion: '1.4.0',
+    relatedTokens: ['Bun.XML.parse', 'Bun.XML.stringify'],
+  },
+  {
+    term: 'Bun.XML.parse',
+    path: 'reference/bun/XML/parse',
+    description: 'Strict XML 1.0 parsing; compact data shape by default',
+    minVersion: '1.4.0',
+    relatedTokens: ['Bun.XML', 'Bun.XML.Document', 'Bun.XML.ParseOptions'],
+  },
+  {
+    term: 'Bun.XML.stringify',
+    path: 'reference/bun/XML/stringify',
+    description: 'Serialize a compact document or NodeInput as well-formed element markup',
+    minVersion: '1.4.0',
+    relatedTokens: ['Bun.XML', 'Bun.XML.Document', 'Bun.XML.Node'],
+  },
+  {
+    term: 'Bun.XML.Comment',
+    path: 'reference/bun/XML/Comment',
+    description: 'Ordered-tree XML comment node represented by its comment text',
+    minVersion: '1.4.0',
+    relatedTokens: ['Bun.XML.Node', 'Bun.XML.NodeInput'],
+  },
+  {
+    term: 'Bun.XML.Document',
+    path: 'reference/bun/XML/Document',
+    description: 'Compact parsed document with exactly one root-element key',
+    minVersion: '1.4.0',
+    relatedTokens: ['Bun.XML.parse'],
+  },
+  {
+    term: 'Bun.XML.Element',
+    path: 'reference/bun/XML/Element',
+    description: 'Compact element shape using @ attributes and #text character data',
+    minVersion: '1.4.0',
+    relatedTokens: ['Bun.XML.parse'],
+  },
+  {
+    term: 'Bun.XML.ParseOptions',
+    path: 'reference/bun/XML/ParseOptions',
+    description: 'Select compact data or ordered Node parsing',
+    minVersion: '1.4.0',
+    relatedTokens: ['Bun.XML.parse'],
+  },
+  {
+    term: 'Bun.XML.Node',
+    path: 'reference/bun/XML/Node',
+    description: 'Ordered XML element tree returned by compact: false',
+    minVersion: '1.4.0',
+    relatedTokens: ['Bun.XML.parse', 'Bun.XML.stringify'],
+  },
+  {
+    term: 'Bun.XML.NodeInput',
+    path: 'reference/bun/XML/NodeInput',
+    description: 'Ordered element input accepted by Bun.XML.stringify',
+    minVersion: '1.4.0',
+    relatedTokens: ['Bun.XML.stringify', 'Bun.XML.Node'],
+  },
+  {
+    term: 'Bun.XML.ProcessingInstruction',
+    path: 'reference/bun/XML/ProcessingInstruction',
+    description: 'Ordered-tree XML processing instruction with target and data',
+    minVersion: '1.4.0',
+    relatedTokens: ['Bun.XML.Node', 'Bun.XML.NodeInput'],
+  },
+  {
+    term: 'Bun.XML.Scalar',
+    path: 'reference/bun/XML/Scalar',
+    description: 'Scalar values Bun.XML.stringify converts to XML character data',
+    minVersion: '1.4.0',
+    relatedTokens: ['Bun.XML.stringify', 'Bun.XML.NodeInput'],
+  },
+  {
+    term: 'Bun.XML.Value',
+    path: 'reference/bun/XML/Value',
+    description: 'Compact XML leaf string or attributed/child Element value',
+    minVersion: '1.4.0',
+    relatedTokens: ['Bun.XML.parse', 'Bun.XML.Element'],
+  },
   {
     term: 'Bun.serve',
     path: 'runtime/http/server',
@@ -1189,7 +1273,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     ],
   },
   // Observability profiling family (docs how-to ↔ versioned blog anchors via changelog).
-  // Mintlify `#markdown-output-1` for heap md — SSOT: lib/docs/benchmarking-profile-loci.ts
+  // Heap md uses the unique `#heap-profiling` parent — SSOT: benchmarking-profile-loci.ts
   {
     term: '--cpu-prof',
     path: BENCHMARKING_PROFILE_DOCS_PATHS.cpuProf,

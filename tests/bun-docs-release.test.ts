@@ -38,11 +38,13 @@ import {
 
 const SAMPLE_RSS = `<?xml version="1.0"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
 <title>bun.com</title>
+<link>https://bun.com</link>
+<description>Bun release posts</description>
 <atom:link href="http://bun.com/rss.xml" rel="self" type="application/rss+xml" />
-<item><title>Bun 1.4</title><link>https://bun.com/blog/bun-v1.4</link><guid>https://bun.com/blog/bun-v1.4</guid><pubDate>Thu, 20 Aug 2026 00:53:44 GMT</pubDate></item>
-<item><title>Bun v1.3.14</title><link>https://bun.com/blog/bun-v1.3.14</link><guid>g1</guid><pubDate>Wed, 13 May 2026 03:19:35 GMT</pubDate></item>
-<item><title>Rewriting Bun in Rust</title><link>https://bun.com/blog/bun-in-rust</link><guid>g2</guid><pubDate>Wed, 08 Jul 2026 16:00:00 GMT</pubDate></item>
-<item><title>Bun 1.3</title><link>https://bun.com/blog/bun-v1.3</link><guid>g3</guid><pubDate>Fri, 21 Nov 2025 10:11:00 GMT</pubDate></item>
+<item><title>Bun 1.4</title><link>https://bun.com/blog/bun-v1.4</link><guid>https://bun.com/blog/bun-v1.4</guid><pubDate>Thu, 20 Aug 2026 00:53:44 GMT</pubDate><description>Bun 1.4 release</description></item>
+<item><title>Bun v1.3.14</title><link>https://bun.com/blog/bun-v1.3.14</link><guid>g1</guid><pubDate>Wed, 13 May 2026 03:19:35 GMT</pubDate><description>Bun 1.3.14 release</description></item>
+<item><title>Rewriting Bun in Rust</title><link>https://bun.com/blog/bun-in-rust</link><guid>g2</guid><pubDate>Wed, 08 Jul 2026 16:00:00 GMT</pubDate><description>Engineering post</description></item>
+<item><title>Bun 1.3</title><link>https://bun.com/blog/bun-v1.3</link><guid>g3</guid><pubDate>Fri, 21 Nov 2025 10:11:00 GMT</pubDate><description>Bun 1.3 release</description></item>
 </channel></rss>`;
 
 describe('bun-docs-release-index', () => {

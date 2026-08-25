@@ -2,6 +2,7 @@
 // server/server-enhanced.ts
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { BUN_DOCS, TYPED_ARRAY_URLS, RSS_URLS } from '../config/urls.ts';
+import { generateRSS, type RSSFeed } from '../lib/rss/rss-xml.ts';
 
 // Simple in-memory cache for RSS feeds
 const cache = new Map<string, { data: any; timestamp: number }>();
@@ -1028,57 +1029,53 @@ async function handleRSSFeed(): Promise<Response> {
 
 // Generate our own RSS feed
 async function generateRSSFeed(): Promise<Response> {
-  const feed = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-<channel>
-  <title>Bun TypedArray Documentation Updates</title>
-  <link>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}</link>
-  <description>Latest updates, examples, and patterns for working with TypedArrays in Bun</description>
-  <language>en-us</language>
-  <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-  <atom:link href="http://${SERVER_HOST}:${SERVER_PORT}/feed/rss" rel="self" type="application/rss+xml" />
-
-  <item>
-    <title>TypedArray Methods Reference</title>
-    <link>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}</link>
-    <description>Complete reference of all TypedArray methods available in Bun, including performance characteristics and usage examples.</description>
-    <pubDate>${new Date(Date.now() - 86400000).toUTCString()}</pubDate>
-    <guid isPermaLink="true">${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}</guid>
-    <category>Documentation</category>
-    <category>TypedArray</category>
-  </item>
-
-  <item>
-    <title>Binary Data Conversion Examples</title>
-    <link>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.CONVERSION}</link>
-    <description>Examples of converting between ArrayBuffer, Uint8Array, and other binary data formats in Bun.</description>
-    <pubDate>${new Date(Date.now() - 172800000).toUTCString()}</pubDate>
-    <guid isPermaLink="true">${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.CONVERSION}</guid>
-    <category>Examples</category>
-    <category>Binary Data</category>
-  </item>
-
-  <item>
-    <title>Fetch API Integration Guide</title>
-    <link>${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}</link>
-    <description>How to use TypedArrays with Bun's fetch API for handling binary data in HTTP requests and responses.</description>
-    <pubDate>${new Date(Date.now() - 259200000).toUTCString()}</pubDate>
-    <guid isPermaLink="true">${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}</guid>
-    <category>Guide</category>
-    <category>Fetch API</category>
-  </item>
-
-  <item>
-    <title>File Reading Patterns with TypedArrays</title>
-    <link>${BUN_DOCS.BASE}/guides/read-file/arraybuffer</link>
-    <description>Best practices for reading files into ArrayBuffer and Uint8Array for efficient binary data processing.</description>
-    <pubDate>${new Date(Date.now() - 345600000).toUTCString()}</pubDate>
-    <guid isPermaLink="true">${BUN_DOCS.BASE}/guides/read-file/arraybuffer</guid>
-    <category>Patterns</category>
-    <category>File I/O</category>
-  </item>
-</channel>
-</rss>`;
+  const item = (
+    title: string,
+    link: string,
+    description: string,
+    category: string[]
+  ): RSSFeed['items'][number] => ({
+    title,
+    link,
+    description,
+    category,
+    guid: link,
+    pubDate: '',
+  });
+  const model: RSSFeed = {
+    title: 'Bun TypedArray Documentation Updates',
+    link: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`,
+    description: 'Latest updates, examples, and patterns for TypedArrays in Bun',
+    lastBuildDate: '',
+    ttl: 60,
+    items: [
+      item(
+        'TypedArray Methods Reference',
+        `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}`,
+        'Complete reference of TypedArray methods available in Bun.',
+        ['Documentation', 'TypedArray']
+      ),
+      item(
+        'Binary Data Conversion Examples',
+        `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.CONVERSION}`,
+        'Examples of converting between ArrayBuffer and typed arrays.',
+        ['Examples', 'Binary Data']
+      ),
+      item(
+        'Fetch API Integration Guide',
+        `${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}`,
+        "Using typed arrays with Bun's fetch API.",
+        ['Guide', 'Fetch API']
+      ),
+      item(
+        'File Reading Patterns with TypedArrays',
+        `${BUN_DOCS.BASE}/guides/read-file/arraybuffer`,
+        'Reading files into ArrayBuffer and Uint8Array.',
+        ['Patterns', 'File I/O']
+      ),
+    ],
+  };
+  const feed = generateRSS(model);
 
   return new Response(feed, {
     headers: {

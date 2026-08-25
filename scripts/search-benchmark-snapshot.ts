@@ -1,9 +1,18 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.4.0 · 2026-08-18 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync
+// @verified Bun.gzipSync · Bun v1.4.0 · 2026-08-18 · https://bun.com/docs/runtime/utils#bun-gzipsync
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/s3 — S3Client
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+import { generateRSS, type RSSFeed } from '../lib/rss/rss-xml.ts';
 
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
@@ -134,20 +143,13 @@ type R2Config = {
   publicBase?: string;
 };
 
-function escapeXml(input: string): string {
-  return input
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&apos;');
-}
-
 function toRfc822(dateIso: string): string {
-  return new Date(dateIso).toUTCString();
+  const timestamp = Date.parse(dateIso);
+  if (!Number.isFinite(timestamp)) throw new Error(`Invalid RSS timestamp: ${dateIso}`);
+  return new Date(timestamp).toUTCString();
 }
 
-function buildRssFeed(
+export function buildRssFeed(
   index: SnapshotIndex,
   opts: {
     bucket?: string;
@@ -155,49 +157,46 @@ function buildRssFeed(
     publicBase?: string;
   }
 ): string {
-  const channelTitle = 'Search Benchmark Snapshots';
   const channelLink = opts.publicBase
     ? `${opts.publicBase.replace(/\/+$/g, '')}/index.json`
     : `r2://${opts.bucket || 'unknown'}/${opts.prefix}/index.json`;
-  const channelDescription = 'Snapshot updates for search benchmark quality profiles.';
-  const lastBuildDate = toRfc822(index.updatedAt);
+  const items = [...index.snapshots]
+    .sort(
+      (left, right) =>
+        Date.parse(right.createdAt) - Date.parse(left.createdAt) ||
+        (left.id < right.id ? -1 : left.id > right.id ? 1 : 0)
+    )
+    .slice(0, 50)
+    .map(snap => {
+      const jsonKey = snap.r2JsonKey || `${opts.prefix}/${snap.id}/snapshot.json`;
+      const summaryKey = snap.r2MdKey || `${opts.prefix}/${snap.id}/summary.md`;
+      const itemLink = opts.publicBase
+        ? `${opts.publicBase.replace(/\/+$/g, '')}/${snap.id}/snapshot.json`
+        : `r2://${opts.bucket || 'unknown'}/${jsonKey}`;
+      const summaryRef = opts.publicBase
+        ? `${opts.publicBase.replace(/\/+$/g, '')}/${snap.id}/summary.md`
+        : `r2://${opts.bucket || 'unknown'}/${summaryKey}`;
+      const title = `${snap.id} · ${snap.topProfile} · ${snap.topScore.toFixed(2)}`;
+      const description = `Top profile: ${snap.topProfile}. Top score: ${snap.topScore.toFixed(2)}. Summary: ${summaryRef}`;
 
-  const items = index.snapshots.slice(0, 50).map(snap => {
-    const jsonKey = snap.r2JsonKey || `${opts.prefix}/${snap.id}/snapshot.json`;
-    const summaryKey = snap.r2MdKey || `${opts.prefix}/${snap.id}/summary.md`;
-    const itemLink = opts.publicBase
-      ? `${opts.publicBase.replace(/\/+$/g, '')}/${snap.id}/snapshot.json`
-      : `r2://${opts.bucket || 'unknown'}/${jsonKey}`;
-    const summaryRef = opts.publicBase
-      ? `${opts.publicBase.replace(/\/+$/g, '')}/${snap.id}/summary.md`
-      : `r2://${opts.bucket || 'unknown'}/${summaryKey}`;
-    const title = `${snap.id} · ${snap.topProfile} · ${snap.topScore.toFixed(2)}`;
-    const description = `Top profile: ${snap.topProfile}. Top score: ${snap.topScore.toFixed(2)}. Summary: ${summaryRef}`;
+      return {
+        title,
+        link: itemLink,
+        guid: snap.id,
+        pubDate: toRfc822(snap.createdAt),
+        description,
+      };
+    });
 
-    return [
-      '    <item>',
-      `      <title>${escapeXml(title)}</title>`,
-      `      <link>${escapeXml(itemLink)}</link>`,
-      `      <guid isPermaLink="false">${escapeXml(snap.id)}</guid>`,
-      `      <pubDate>${escapeXml(toRfc822(snap.createdAt))}</pubDate>`,
-      `      <description>${escapeXml(description)}</description>`,
-      '    </item>',
-    ].join('\n');
-  });
-
-  return [
-    '<?xml version="1.0" encoding="UTF-8"?>',
-    '<rss version="2.0">',
-    '  <channel>',
-    `    <title>${escapeXml(channelTitle)}</title>`,
-    `    <link>${escapeXml(channelLink)}</link>`,
-    `    <description>${escapeXml(channelDescription)}</description>`,
-    `    <lastBuildDate>${escapeXml(lastBuildDate)}</lastBuildDate>`,
-    ...items,
-    '  </channel>',
-    '</rss>',
-    '',
-  ].join('\n');
+  const feed: RSSFeed = {
+    title: 'Search Benchmark Snapshots',
+    link: channelLink,
+    description: 'Snapshot updates for search benchmark quality profiles.',
+    lastBuildDate: toRfc822(index.updatedAt),
+    ttl: 60,
+    items,
+  };
+  return generateRSS(feed);
 }
 
 export function parseArgs(argv: string[]): CliOptions {
