@@ -56,7 +56,6 @@
 // @released Bun.XML.parse · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4
 import { joinPath } from '../../lib/path-bun.ts';
 import { parseProjectRSSChannelRegistry } from '../../lib/rss/project-channel-registry.ts';
-import { asFeedId, type FeedId } from '../../lib/types/branded.ts';
 import {
   DEFAULT_CAPABILITIES_PATH,
   DEFAULT_FEEDS_DIR,
@@ -66,88 +65,16 @@ import {
 } from './constants.ts';
 import { fail } from './errors.ts';
 import type { Bun14ReleaseSnapshot, ReleaseSnapshotInput } from './release-snapshot-contract.ts';
-import type {
-  AssetManifest,
-  Bun14CapabilityRegistry,
-  Bun14ReleaseChapterId,
-  MediaKind,
-} from './types.ts';
-
-const ALL_CHANNEL_ID = asFeedId('bun-1.4:all');
-
-const FEEDS = [
-  { file: 'all.xml', id: ALL_CHANNEL_ID },
-  { file: 'images.xml', id: asFeedId('bun-1.4:image') },
-  { file: 'videos.xml', id: asFeedId('bun-1.4:video') },
-  { file: 'embeds.xml', id: asFeedId('bun-1.4:embed') },
-] as const;
-
-const CHANNEL_ID_BY_KIND = {
-  image: asFeedId('bun-1.4:image'),
-  video: asFeedId('bun-1.4:video'),
-  embed: asFeedId('bun-1.4:embed'),
-} as const satisfies Record<MediaKind, FeedId>;
+import {
+  ALL_CHANNEL_ID,
+  buildValidatedFeedState,
+  CHANNEL_ID_BY_KIND,
+  RELEASE_SNAPSHOT_FEEDS,
+} from './release-snapshot-feeds.ts';
+import type { AssetManifest, Bun14CapabilityRegistry, Bun14ReleaseChapterId } from './types.ts';
 
 function sha256(value: string | Uint8Array): string {
   return new Bun.CryptoHasher('sha256').update(value).digest('hex');
-}
-
-type CompactFeedItem = {
-  guid?: { '#text'?: string } | string;
-  'media:credit'?: { '@role'?: string; '#text'?: string };
-};
-
-function rssItems(xml: Uint8Array, file: string): CompactFeedItem[] {
-  const parsed = Bun.XML.parse(xml) as {
-    rss?: { channel?: { item?: CompactFeedItem | CompactFeedItem[] } };
-  };
-  const item = parsed.rss?.channel?.item;
-  if (item === undefined) fail(`release snapshot feed has no items: ${file}`);
-  return Array.isArray(item) ? item : [item];
-}
-
-function feedState(input: ReleaseSnapshotInput, manifest: AssetManifest) {
-  const itemsByChannel = new Map<FeedId, CompactFeedItem[]>();
-  const channels = FEEDS.map(feed => {
-    const path = `feeds/v1/${feed.file}`;
-    const items = rssItems(input[path]!, feed.file);
-    itemsByChannel.set(feed.id, items);
-    if (
-      items.some(item => item['media:credit']?.['#text'] !== manifest.attribution.publisher.name)
-    ) {
-      fail(`release snapshot feed ownership mismatch: ${feed.file}`);
-    }
-    return { id: feed.id, file: path, itemCount: items.length };
-  });
-  return { channels, itemsByChannel };
-}
-
-function validateFeedState(
-  manifest: AssetManifest,
-  channels: ReturnType<typeof feedState>['channels'],
-  itemsByChannel: ReturnType<typeof feedState>['itemsByChannel']
-): void {
-  if (
-    channels.find(channel => channel.id === 'bun-1.4:all')?.itemCount !== manifest.assets.length
-  ) {
-    fail('release snapshot all.xml does not match manifest asset count');
-  }
-  const guid = (item: CompactFeedItem) =>
-    typeof item.guid === 'string' ? item.guid : item.guid?.['#text'];
-  const actualGuids = (itemsByChannel.get(ALL_CHANNEL_ID) ?? []).map(guid).sort();
-  const expectedGuids = manifest.assets.map(asset => `bun-1.4:asset:${asset.id}`).sort();
-  if (actualGuids.join('\0') !== expectedGuids.join('\0')) {
-    fail('release snapshot feed GUIDs do not match manifest IDs');
-  }
-  const channelGuids = new Map(
-    [...itemsByChannel].map(([channelId, items]) => [channelId, new Set(items.map(guid))])
-  );
-  for (const asset of manifest.assets) {
-    const kindChannel = CHANNEL_ID_BY_KIND[asset.kind];
-    if (!channelGuids.get(kindChannel)?.has(`bun-1.4:asset:${asset.id}`)) {
-      fail(`release snapshot ${kindChannel} is missing ${asset.id}`);
-    }
-  }
 }
 
 export async function buildBun14ReleaseSnapshot(): Promise<{
@@ -158,7 +85,7 @@ export async function buildBun14ReleaseSnapshot(): Promise<{
     DEFAULT_MANIFEST_PATH,
     DEFAULT_CAPABILITIES_PATH,
     DEFAULT_PROJECT_RSS_REGISTRY_PATH,
-    ...FEEDS.map(feed => joinPath(DEFAULT_FEEDS_DIR, feed.file)),
+    ...RELEASE_SNAPSHOT_FEEDS.map(feed => joinPath(DEFAULT_FEEDS_DIR, feed.file)),
   ];
   const input: ReleaseSnapshotInput = {};
   for (const path of paths) {
@@ -182,8 +109,7 @@ export async function buildBun14ReleaseSnapshot(): Promise<{
     .map(([path, bytes]) => ({ path, bytes: bytes.byteLength, sha256: sha256(bytes) }))
     .sort((a, b) => a.path.localeCompare(b.path));
   const snapshotDigest = sha256(files.map(file => `${file.path}\0${file.sha256}`).join('\0'));
-  const { channels, itemsByChannel } = feedState(input, manifest);
-  validateFeedState(manifest, channels, itemsByChannel);
+  const channels = buildValidatedFeedState(input, manifest);
   const chaptersByAsset = new Map<string, Set<Bun14ReleaseChapterId>>();
   for (const capability of capabilityRegistry.capabilities) {
     if (!capability.chapterId) continue;
