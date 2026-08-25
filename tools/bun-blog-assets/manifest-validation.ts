@@ -1,28 +1,16 @@
 import {
   BUN_14_MARKDOWN_URL,
-  BUN_14_MEDIA_RIGHTS_SCOPE,
   BUN_14_PUBLISHED_AT,
   BUN_14_SOURCE_URL,
-  BUN_LICENSE_URL,
-  BUN_PRESS_KIT_URL,
   EXPECTED_ASSET_COUNT,
-  EXPECTED_YOUTUBE_URL,
   MANIFEST_SCHEMA_VERSION,
 } from './constants.ts';
 import { fail, parseRecord } from './errors.ts';
+import { parseManifestRights } from './rights.ts';
 import type { AssetManifest } from './types.ts';
 
 function isIsoTimestamp(value: unknown): value is string {
   return typeof value === 'string' && Number.isFinite(Date.parse(value));
-}
-
-function isHttpsUrl(value: unknown): value is string {
-  if (typeof value !== 'string') return false;
-  try {
-    return new URL(value).protocol === 'https:';
-  } catch {
-    return false;
-  }
 }
 
 function isSvgRecord(asset: Record<string, unknown>): boolean {
@@ -54,52 +42,7 @@ export function parseManifestShape(manifest: unknown, label: string): AssetManif
   if (record.rightsStatus !== 'pending' && record.rightsStatus !== 'approved') {
     fail(`${label}: rightsStatus must be pending or approved`);
   }
-  const rights = parseRecord(record.rights);
-  const boundaries = parseRecord(rights?.boundaries);
-  const softwareLicense = parseRecord(boundaries?.softwareLicense);
-  const pressKit = parseRecord(boundaries?.pressKit);
-  const releaseBlogMedia = parseRecord(boundaries?.releaseBlogMedia);
-  const youtubeEmbed = parseRecord(boundaries?.youtubeEmbed);
-  if (
-    !rights ||
-    rights.scope !== BUN_14_MEDIA_RIGHTS_SCOPE ||
-    rights.status !== record.rightsStatus ||
-    rights.delivery !== (record.rightsStatus === 'approved' ? 'vendor-approved' : 'external-only')
-  ) {
-    fail(`${label}: rights scope, status, and delivery must agree`);
-  }
-  if (
-    softwareLicense?.classification !== 'out-of-scope' ||
-    softwareLicense.sourceUrl !== BUN_LICENSE_URL ||
-    pressKit?.classification !== 'separate-brand-assets' ||
-    pressKit.sourceUrl !== BUN_PRESS_KIT_URL ||
-    releaseBlogMedia?.classification !== record.rightsStatus ||
-    releaseBlogMedia.sourceUrl !== BUN_14_SOURCE_URL ||
-    releaseBlogMedia.assetCount !== EXPECTED_ASSET_COUNT - 1 ||
-    youtubeEmbed?.classification !== 'external-only' ||
-    youtubeEmbed.sourceUrl !== EXPECTED_YOUTUBE_URL ||
-    youtubeEmbed.assetCount !== 1
-  ) {
-    fail(`${label}: rights boundaries do not match the declared media sources`);
-  }
-  const evidence = parseRecord(rights.evidence);
-  if (record.rightsStatus === 'pending' && rights.evidence !== null) {
-    fail(`${label}: pending rights cannot carry approval evidence`);
-  }
-  if (record.rightsStatus === 'approved') {
-    if (
-      !evidence ||
-      typeof evidence.approvalId !== 'string' ||
-      !evidence.approvalId.trim() ||
-      typeof evidence.approvedBy !== 'string' ||
-      !evidence.approvedBy.trim() ||
-      typeof evidence.approvedAt !== 'string' ||
-      !isIsoTimestamp(evidence.approvedAt) ||
-      !isHttpsUrl(evidence.evidenceUrl)
-    ) {
-      fail(`${label}: approved rights require persisted approval evidence`);
-    }
-  }
+  parseManifestRights(record.rights, record.rightsStatus, label);
   if (!Array.isArray(record.assets) || record.assets.length !== EXPECTED_ASSET_COUNT) {
     fail(`${label}: assets must contain exactly ${EXPECTED_ASSET_COUNT} records`);
   }

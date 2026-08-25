@@ -1,6 +1,3 @@
-// @see https://bun.com/reference/bun/argv — Bun.argv
-// @updated Bun.argv · changed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
-// @verified Bun.argv · Bun v1.4.0 · 2026-08-18 · https://bun.com/reference/bun/argv
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @updated Bun.spawn · changed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
 // @updated Bun.spawn · changed v0.3.0 · 2022-12-07 · https://bun.com/blog/bun-v0.3.0
@@ -45,9 +42,6 @@
 // @verified Bun.version · Bun v1.4.0 · 2026-08-18 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/blog/bun-v1.4#bun-pm-licenses — Bun 1.4 license inventory
 // @see https://bun.com/blog/bun-v1.4#bun-dedupe — Bun 1.4 lockfile deduplication
-// @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
-import { parseArgs } from 'util';
-import { jsonOut } from '../lib/console-depth.ts';
 
 export const LICENSE_REVIEW_MARKERS = /^(unknown|unlicensed|see license in\b)/i;
 
@@ -131,9 +125,9 @@ export function parseLicenseInventory(raw: unknown, bunVersion = Bun.version): L
   };
 }
 
-type CommandResult = { exitCode: number; stdout: string; stderr: string };
+export type CommandResult = { exitCode: number; stdout: string; stderr: string };
 
-async function command(args: string[]): Promise<CommandResult> {
+export async function runBunPackageCommand(args: string[]): Promise<CommandResult> {
   const child = Bun.spawn([process.execPath, ...args], {
     cwd: process.cwd(),
     stdout: 'pipe',
@@ -149,7 +143,7 @@ async function command(args: string[]): Promise<CommandResult> {
 }
 
 export async function collectProductionLicenses(): Promise<LicenseSummary> {
-  const result = await command(['pm', 'licenses', '--prod', '--json']);
+  const result = await runBunPackageCommand(['pm', 'licenses', '--prod', '--json']);
   if (result.exitCode !== 0) {
     throw new Error(`bun pm licenses failed (${result.exitCode}): ${result.stderr.trim()}`);
   }
@@ -161,66 +155,9 @@ export async function collectProductionLicenses(): Promise<LicenseSummary> {
   }
 }
 
-function markdown(summary: LicenseSummary, dedupeChecked: boolean): string {
-  const rows = summary.licenses
-    .map(group => `| ${group.license} | ${group.packages} | ${group.versions} |`)
-    .join('\n');
-  return `# Production dependency governance
-
-- Bun: \`${summary.bunVersion}\`
-- Packages: ${summary.totals.uniquePackages} unique / ${summary.totals.packages} license records
-- Resolved versions: ${summary.totals.versions}
-- License groups: ${summary.totals.licenses}
-- Review-required license labels: ${summary.reviewRequired.length}
-- Lockfile dedupe: ${dedupeChecked ? 'clean' : 'not checked'}
-
-| License | Packages | Versions |
-| --- | ---: | ---: |
-${rows}
-`;
-}
-
-async function main(): Promise<void> {
-  const { values, positionals } = parseArgs({
-    args: Bun.argv.slice(2),
-    options: { json: { type: 'boolean' }, help: { type: 'boolean', short: 'h' } },
-    allowPositionals: true,
-    strict: true,
-  });
-  const action = positionals[0] ?? 'check';
-  if (values.help) {
-    console.log(`Usage: bun tools/bun-package-governance.ts [check|licenses] [--json]
-
-  check       Validate production license metadata and bun.lock deduplication
-  licenses    Validate and summarize production license metadata only
-  --json      Print the normalized, path-free license summary as JSON`);
-    return;
+export async function assertDedupeClean(): Promise<void> {
+  const dedupe = await runBunPackageCommand(['dedupe', '--check']);
+  if (dedupe.exitCode !== 0) {
+    throw new Error(`bun dedupe --check failed:\n${(dedupe.stderr || dedupe.stdout).trim()}`);
   }
-  if (!['check', 'licenses'].includes(action) || positionals.length > 1) {
-    throw new Error(`expected check or licenses, received: ${positionals.join(' ')}`);
-  }
-
-  const summary = await collectProductionLicenses();
-  if (summary.reviewRequired.length) {
-    const labels = summary.reviewRequired.map(item => item.license).join(', ');
-    throw new Error(`production dependency licenses require review: ${labels}`);
-  }
-
-  const dedupeChecked = action === 'check';
-  if (dedupeChecked) {
-    const dedupe = await command(['dedupe', '--check']);
-    if (dedupe.exitCode !== 0) {
-      throw new Error(`bun dedupe --check failed:\n${(dedupe.stderr || dedupe.stdout).trim()}`);
-    }
-  }
-
-  if (values.json) jsonOut(summary);
-  else console.log(Bun.markdown.ansi(markdown(summary, dedupeChecked)));
-}
-
-if (import.meta.main) {
-  main().catch(error => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exitCode = 1;
-  });
 }

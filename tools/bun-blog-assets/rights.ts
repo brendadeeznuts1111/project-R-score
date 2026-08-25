@@ -135,3 +135,55 @@ export function buildMediaRights(
     },
   };
 }
+
+export function parseManifestRights(
+  value: unknown,
+  status: RightsStatus,
+  label: string
+): MediaRights {
+  const rights = parseRecord(value);
+  const boundaries = parseRecord(rights?.boundaries);
+  const softwareLicense = parseRecord(boundaries?.softwareLicense);
+  const pressKit = parseRecord(boundaries?.pressKit);
+  const releaseBlogMedia = parseRecord(boundaries?.releaseBlogMedia);
+  const youtubeEmbed = parseRecord(boundaries?.youtubeEmbed);
+  if (
+    !rights ||
+    rights.scope !== BUN_14_MEDIA_RIGHTS_SCOPE ||
+    rights.status !== status ||
+    rights.delivery !== (status === 'approved' ? 'vendor-approved' : 'external-only')
+  ) {
+    fail(`${label}: rights scope, status, and delivery must agree`);
+  }
+  if (
+    softwareLicense?.classification !== 'out-of-scope' ||
+    softwareLicense.sourceUrl !== BUN_LICENSE_URL ||
+    pressKit?.classification !== 'separate-brand-assets' ||
+    pressKit.sourceUrl !== BUN_PRESS_KIT_URL ||
+    releaseBlogMedia?.classification !== status ||
+    releaseBlogMedia.sourceUrl !== BUN_14_SOURCE_URL ||
+    releaseBlogMedia.assetCount !== EXPECTED_ASSET_COUNT - 1 ||
+    youtubeEmbed?.classification !== 'external-only' ||
+    youtubeEmbed.sourceUrl !== EXPECTED_YOUTUBE_URL ||
+    youtubeEmbed.assetCount !== 1
+  ) {
+    fail(`${label}: rights boundaries do not match the declared media sources`);
+  }
+  const evidence = parseRecord(rights.evidence);
+  if (status === 'pending' && rights.evidence !== null) {
+    fail(`${label}: pending rights cannot carry approval evidence`);
+  }
+  if (
+    status === 'approved' &&
+    (!evidence ||
+      typeof evidence.approvalId !== 'string' ||
+      !evidence.approvalId.trim() ||
+      typeof evidence.approvedBy !== 'string' ||
+      !evidence.approvedBy.trim() ||
+      !iso(evidence.approvedAt) ||
+      !httpsUrl(evidence.evidenceUrl))
+  ) {
+    fail(`${label}: approved rights require persisted approval evidence`);
+  }
+  return rights as MediaRights;
+}
