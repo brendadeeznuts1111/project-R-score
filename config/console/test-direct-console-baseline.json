@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "file": "tests/bun-defaults-proof.test.ts",
+      "count": 1,
+      "reason": "Prints failed Bun-default probes before the assertion terminates the test."
+    },
+    {
+      "file": "tests/domain-glossary-portal.test.ts",
+      "count": 1,
+      "reason": "Explains an intentionally absent optional submodule before the test skips."
+    },
+    {
+      "file": "tests/harness-tenant-runbooks.test.ts",
+      "count": 1,
+      "reason": "Surfaces non-fatal retirement warnings from the long-running harness check."
+    },
+    {
+      "file": "tests/inspect-test-reporter.test.ts",
+      "count": 2,
+      "reason": "Dumps child-process stdout and stderr only when its smoke assertion fails."
+    },
+    {
+      "file": "tests/public-discovery.test.ts",
+      "count": 1,
+      "reason": "Reports public-discovery error identifiers before preserving the failing assertion."
+    },
+    {
+      "file": "tests/show-enhancements.test.ts",
+      "count": 1,
+      "reason": "Prints child-process stderr only when the enhancement command fails."
+    },
+    {
+      "file": "tests/verification-proof-consistency.test.ts",
+      "count": 1,
+      "reason": "Prints failing proof rows before the consistency assertion fails."
+    },
+    {
+      "file": "tests/verification-proof-taxonomy-tool.test.ts",
+      "count": 1,
+      "reason": "Prints child tool output only when the taxonomy command fails."
+    },
+    {
+      "file": "tests/verification-proof-taxonomy.test.ts",
+      "count": 2,
+      "reason": "Reports optional-artifact skips and taxonomy audit failures beside their assertions."
+    }
+  ]
+}
