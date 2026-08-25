@@ -23,6 +23,8 @@ const options = {
   duplicateByteThreshold: 4 * 1024,
 };
 
+const REPO_ROOT = joinPath(import.meta.dir, '..');
+
 function row(overrides: Partial<FileInventoryRow> = {}): FileInventoryRow {
   return {
     path: 'docs/archives/old-guide.md',
@@ -134,6 +136,40 @@ describe('file removal grading safety', () => {
       expect(evidence.importedBy.get(data)).toEqual(new Set([source]));
     } finally {
       await rm(root, { recursive: true, force: true });
+    }
+  });
+
+  test('consolidated project content roots stay pointers instead of mirrors', async () => {
+    const consolidations = [
+      {
+        pointer:
+          'projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/communications',
+        canonical:
+          'projects/active/enterprise/fantasy42-fire22-registry/communications/CLOUDFLARE-DURABLE-OBJECTS-SECURITY-REQUEST.md',
+      },
+      {
+        pointer:
+          'projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/analytics/expanded-analytics',
+        canonical: 'projects/active/enterprise/fantasy42-fire22-registry/analytics/index.html',
+      },
+      {
+        pointer: 'projects/active/development/kal-poly-bot/docs/utils',
+        canonical: 'projects/active/development/kal-poly-bot/utils/TEST_RESULTS.md',
+      },
+    ] as const;
+
+    for (const consolidation of consolidations) {
+      const files = await Array.fromAsync(
+        new Bun.Glob('**/*').scan({
+          cwd: joinPath(REPO_ROOT, consolidation.pointer),
+          onlyFiles: true,
+        })
+      );
+      expect(files, consolidation.pointer).toEqual(['README.md']);
+      expect(
+        await Bun.file(joinPath(REPO_ROOT, consolidation.canonical)).exists(),
+        consolidation.canonical
+      ).toBe(true);
     }
   });
 

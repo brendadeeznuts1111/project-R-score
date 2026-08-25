@@ -102,8 +102,8 @@
 ## 🔗 Related Documentation
 
 - [Analytics Department Definition](../departments/analytics-department.md)
-- [Analytics Dashboard README](../../src/packages/analytics/README.md)
-- [Expanded Analytics README](../../src/analytics/README.md)
+- [Analytics Dashboard package](../../../enterprise/packages/analytics/analytics-dashboard/package.json)
+- [Expanded Analytics README](../../../analytics/README.md)
 
 ---
 
