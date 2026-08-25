@@ -1,4 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/environment-variables
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -39,13 +45,27 @@ import {
   CONSOLE_FORMAT_SUPPRESS,
   isConsoleFormatScannable,
   scanConsoleFormat,
-  stripConsoleFormatLine,
   summarizeConsoleFormat,
   type ConsoleFormatSummary,
-  type ConsoleFormatViolation,
 } from '../lib/console-format-scan.ts';
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+import {
+  buildTestConsoleBaselineCandidate,
+  scanTestConsole,
+  summarizeLegacyTestConsole,
+  validateTestConsoleBaseline,
+  type TestConsoleBaseline,
+} from './lib/console-test-ratchet.ts';
+import { stagedConsoleFormatViolations } from './lib/console-staged-violations.ts';
 import { withIndexTree } from './lib/index-tree.ts';
+
+export {
+  buildTestConsoleBaselineCandidate,
+  isSpecificTestConsoleReason,
+  scanTestConsoleSource,
+  validateTestConsoleBaseline,
+  type TestConsoleBaseline,
+} from './lib/console-test-ratchet.ts';
 
 const ROOT = process.cwd();
 const BASELINE_PATH = `${ROOT}/scripts/console-format-baseline.json`;
@@ -57,164 +77,6 @@ const argv = import.meta.main
 const WRITE_BASELINE = argv.includes('--write-baseline');
 const STAGED = argv.includes('--staged');
 const TEST_BASELINE_UPDATE = Bun.env.CONSOLE_TEST_BASELINE_UPDATE === 'confirm';
-
-const TEST_CONSOLE_CALL =
-  /\bconsole\.(log|info|warn|error|debug|table|dir|trace|assert|time|timeEnd|timeLog|group|groupEnd|groupCollapsed|count|countReset|clear|profile|profileEnd)\s*\(/;
-const TEST_CONSOLE_ALLOW = /\/\/\s*test-console-ok:\s*(\S.*)$/;
-
-export type TestConsoleCall = {
-  file: string;
-  line: number;
-  method: string;
-  text: string;
-  allowReason?: string;
-  invalidAllowReason?: string;
-};
-
-export type TestConsoleBaselineEntry = {
-  file: string;
-  count: number;
-  reason: string;
-};
-
-export type TestConsoleBaseline = {
-  schemaVersion: 1;
-  entries: TestConsoleBaselineEntry[];
-};
-
-/** Keep one-word acknowledgements from turning into a blanket exemption. */
-export function isSpecificTestConsoleReason(reason: string): boolean {
-  return reason.trim().length >= 16 && reason.trim().split(/\s+/).length >= 3;
-}
-
-/** Scan actual test call sites; quoted fixture source and comments are ignored. */
-export function scanTestConsoleSource(file: string, text: string): TestConsoleCall[] {
-  const calls: TestConsoleCall[] = [];
-  let inTemplate = false;
-  let inBlockComment = false;
-  for (const [index, raw] of text.split('\n').entries()) {
-    let code = '';
-    let inString: string | null = null;
-    for (let i = 0; i < raw.length; i++) {
-      const ch = raw[i]!;
-      const next = raw[i + 1];
-      const prev = raw[i - 1];
-      if (inBlockComment) {
-        if (ch === '*' && next === '/') {
-          inBlockComment = false;
-          i++;
-        }
-        continue;
-      }
-      if (inTemplate) {
-        if (ch === '`' && prev !== '\\') inTemplate = false;
-        continue;
-      }
-      if (inString) {
-        if (ch === inString && prev !== '\\') inString = null;
-        continue;
-      }
-      if (ch === '/' && next === '/') break;
-      if (ch === '/' && next === '*') {
-        inBlockComment = true;
-        i++;
-        continue;
-      }
-      if (ch === '`') {
-        inTemplate = true;
-        continue;
-      }
-      if (ch === "'" || ch === '"') {
-        inString = ch;
-        continue;
-      }
-      code += ch;
-    }
-    const match = TEST_CONSOLE_CALL.exec(code);
-    if (!match) continue;
-    const marker = TEST_CONSOLE_ALLOW.exec(raw);
-    const markerReason = marker?.[1]?.trim();
-    calls.push({
-      file,
-      line: index + 1,
-      method: match[1]!,
-      text: raw.trim(),
-      ...(markerReason && isSpecificTestConsoleReason(markerReason)
-        ? { allowReason: markerReason }
-        : markerReason
-          ? { invalidAllowReason: markerReason }
-          : {}),
-    });
-  }
-  return calls;
-}
-
-export function summarizeLegacyTestConsole(calls: TestConsoleCall[]): Map<string, number> {
-  const summary = new Map<string, number>();
-  for (const call of calls) {
-    if (call.allowReason) continue;
-    summary.set(call.file, (summary.get(call.file) ?? 0) + 1);
-  }
-  return summary;
-}
-
-export function validateTestConsoleBaseline(
-  calls: TestConsoleCall[],
-  baseline: TestConsoleBaseline
-): string[] {
-  const failures: string[] = [];
-  const expected = new Map<string, number>();
-  for (const call of calls) {
-    if (call.invalidAllowReason) {
-      failures.push(`${call.file}:${call.line} test-console-ok needs a specific reason`);
-    }
-  }
-  for (const entry of baseline.entries) {
-    if (!entry.file || !Number.isInteger(entry.count) || entry.count < 1) {
-      failures.push(`invalid baseline entry for ${entry.file || '(missing file)'}`);
-      continue;
-    }
-    if (!entry.reason.trim() || entry.reason.startsWith('TODO:')) {
-      failures.push(`baseline entry ${entry.file} needs a specific non-TODO reason`);
-      continue;
-    }
-    if (expected.has(entry.file)) failures.push(`baseline has duplicate entry for ${entry.file}`);
-    expected.set(entry.file, entry.count);
-  }
-  const actual = summarizeLegacyTestConsole(calls);
-  for (const [file, count] of actual) {
-    const allowed = expected.get(file) ?? 0;
-    if (count > allowed)
-      failures.push(
-        `${file}: ${count} unannotated direct console call(s), baseline allows ${allowed}`
-      );
-  }
-  return failures;
-}
-
-export function buildTestConsoleBaselineCandidate(calls: TestConsoleCall[]): TestConsoleBaseline {
-  return {
-    schemaVersion: 1,
-    entries: [...summarizeLegacyTestConsole(calls)]
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([file, count]) => ({
-        file,
-        count,
-        reason: 'TODO: explain why this legacy test requires direct console output',
-      })),
-  };
-}
-
-async function scanTestConsole(root: string): Promise<TestConsoleCall[]> {
-  const calls: TestConsoleCall[] = [];
-  for (const suffix of ['test.ts', 'spec.ts']) {
-    const glob = new Bun.Glob(`tests/**/*.${suffix}`);
-    for await (const file of glob.scan({ cwd: root })) {
-      calls.push(...scanTestConsoleSource(file, await Bun.file(`${root}/${file}`).text()));
-    }
-  }
-  return calls;
-}
 
 async function testConsoleTree(
   root: string
@@ -262,46 +124,6 @@ async function writeTestConsoleBaselineCandidate(root: string): Promise<void> {
   );
 }
 
-/** Violations in added lines of the staged diff (hunk-aware, no baseline). */
-async function stagedViolations(): Promise<ConsoleFormatViolation[]> {
-  const proc = Bun.spawn(['git', 'diff', '--cached', '-U0', '--diff-filter=ACM', '--', '*.ts'], {
-    cwd: ROOT,
-    stdout: 'pipe',
-  });
-  const diff = await new Response(proc.stdout).text();
-  await proc.exited;
-  const violations: ConsoleFormatViolation[] = [];
-  let file = '';
-  let newLine = 0;
-  for (const raw of diff.split('\n')) {
-    if (raw.startsWith('+++ b/')) {
-      file = raw.slice('+++ b/'.length);
-      continue;
-    }
-    const hunk = raw.match(/^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
-    if (hunk) {
-      newLine = Number(hunk[1]);
-      continue;
-    }
-    if (raw.startsWith('+') && !raw.startsWith('+++')) {
-      const line = raw.slice(1);
-      if (isConsoleFormatScannable(file) && !CONSOLE_FORMAT_SUPPRESS.test(line)) {
-        const code = stripConsoleFormatLine(line);
-        if (code !== null) {
-          for (const p of CONSOLE_FORMAT_PATTERNS) {
-            if (p.excludeFiles?.includes(file)) continue;
-            if (p.re.test(code)) {
-              violations.push({ file, line: newLine, id: p.id, hint: p.hint, text: line.trim() });
-            }
-          }
-        }
-      }
-      newLine++;
-    }
-  }
-  return violations;
-}
-
 async function main(): Promise<void> {
   if (TEST_BASELINE_UPDATE) {
     await writeTestConsoleBaselineCandidate(ROOT);
@@ -309,7 +131,7 @@ async function main(): Promise<void> {
   }
 
   if (STAGED) {
-    const violations = await stagedViolations();
+    const violations = await stagedConsoleFormatViolations(ROOT);
     if (violations.length > 0) {
       console.error('❌ console-format: raw structured output in staged lines');
       for (const v of violations) {
