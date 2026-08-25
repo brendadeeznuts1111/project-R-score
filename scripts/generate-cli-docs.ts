@@ -71,7 +71,7 @@ const lines: string[] = [
   "| `bun run test:affected` | `bun run --filter '...' test` |",
   '| `bun run cli:docs` | Refresh this file |',
   '',
-  'CI uses `bun run type-check:ci` (`tsconfig.ci.json`). Full solution: `type-check:full` (rare).',
+  'Use `bun run type-check:ci` (`tsconfig.ci.json`) for the fast development loop. Merge CI runs the root `type-check:full` solution once.',
   '',
   '---',
   '',

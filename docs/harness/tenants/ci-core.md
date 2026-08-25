@@ -24,7 +24,7 @@ When Actions jobs die in ~2s with empty steps (billing), treat **local**
    · install verify · hygiene · boundary-fixtures)
 4. Re-run: `bun run ci:core`
 5. Types (required check body, not inside `ci:core`):  
-   `bun run ts:verify && bun run imports:verify && bun run type-check:ci && bun run type-check:full`
+   `bun run ts:verify && bun run imports:verify && bun run type-check:full`
 6. Actions offline → admin-merge after local proof; see
    [AUTHORITY.md](../AUTHORITY.md)
 

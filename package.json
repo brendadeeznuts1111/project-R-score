@@ -1963,7 +1963,7 @@
     "ci:harness": "bun scripts/ci-harness.ts",
     "ci:harness:fast": "bun scripts/ci-harness.ts --fast",
     "ci:core": "bun scripts/ci-core.ts",
-    "ci:types": "bun run ts:verify && bun run imports:verify && bun run check:tsconfig-types -- --strict && bun run type-check:ci && bun run type-check:full && bun run check:concept-registry:types && bun run check:bun-native-comprehensive:types && bun run check:factory-color:types",
+    "ci:types": "bun run ts:verify && bun run imports:verify && bun run check:tsconfig-types -- --strict && bun run type-check:full && bun run check:concept-registry:types && bun run check:bun-native-comprehensive:types && bun run check:factory-color:types",
     "ci:security": "bun run security:guard:deps && bun run dependencies:governance:check && bun run security:audit",
     "ci:portal-registry": "bun scripts/assert-public-clean.ts",
     "bun:ci": "bun --env-file ~/.reasonix/.env scripts/bun-ci.ts",
