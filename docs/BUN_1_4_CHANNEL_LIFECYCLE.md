@@ -49,6 +49,12 @@ canonical endpoint.
 An item remains in active feeds while it is present in the approved manifest.
 Removing unrelated repository duplicates does not alter any channel.
 
+The removal grader joins candidate paths to this project registry before it
+assigns deduplication confidence. Byte identity across project or package
+ownership boundaries is evidence only, not reclaimable capacity. A contained
+project's `unregistered` state proves it has no Bun 1.4 feed membership; it does
+not transfer file ownership to the root project or authorize deletion.
+
 For manifest content, removal is a release operation:
 
 1. Resolve publisher ownership, rights, and any canonical replacement.

@@ -1,4 +1,6 @@
-export const FILE_REMOVAL_SCHEMA_VERSION = 1 as const;
+import type { ProjectRSSProjectRegistration } from '../rss/project-channel-registry.ts';
+
+export const FILE_REMOVAL_SCHEMA_VERSION = 2 as const;
 export const FILE_REMOVAL_VERIFICATION_COMMANDS = [
   'bun run channels:bun-1.4:check',
   'bun run channels:projects:check',
@@ -17,6 +19,15 @@ export type RemovalAction =
 export type Addressability =
   'public-referenced' | 'public-unreferenced' | 'internal-referenced' | 'unreferenced';
 
+export type FileRemovalOwnership = Pick<
+  ProjectRSSProjectRegistration,
+  'projectId' | 'path' | 'repositoryRelation' | 'repositoryRemote' | 'feedStatus'
+> & {
+  channelIds: ProjectRSSProjectRegistration['channels'][number]['id'][];
+  packageRoot: string;
+  boundary: string;
+};
+
 export type FileInventoryRow = {
   path: string;
   bytes: number;
@@ -29,8 +40,10 @@ export type FileInventoryRow = {
   text: boolean;
   generated: boolean;
   publicUrl: string | null;
+  ownership: FileRemovalOwnership;
   inboundReferences: string[];
   importedBy: string[];
+  contentMatchPaths: string[];
   duplicatePaths: string[];
   canonicalDuplicate: string | null;
 };
@@ -50,8 +63,10 @@ export type FileRemovalCandidate = FileInventoryRow & {
 export type DuplicateGroup = {
   sha256: string;
   bytesEach: number;
-  canonicalPath: string;
+  canonicalPaths: string[];
+  ownershipBoundaries: string[];
   paths: string[];
+  theoreticalReclaimableBytes: number;
   reclaimableBytes: number;
 };
 
@@ -75,6 +90,8 @@ export type FileRemovalReport = {
     largeByBytes: number;
     duplicateGroups: number;
     exactDuplicateBytes: number;
+    ownershipScopedDuplicateBytes: number;
+    crossOwnershipDuplicateBytes: number;
     safeReviewDuplicateBytes: number;
     byVerdict: Record<RemovalVerdict, number>;
     byAction: Record<RemovalAction, number>;

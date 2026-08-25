@@ -8,6 +8,7 @@ import {
 } from './file-removal-content.ts';
 import { dirtyGitPaths, listGitFiles } from './file-removal-git.ts';
 import { gradeFileRemoval } from './file-removal-grade.ts';
+import { buildFileRemovalOwnershipIndex } from './file-removal-ownership.ts';
 import { isSourcePath, isTextPath, looksGenerated, publicUrlFor } from './file-removal-policy.ts';
 import { collectReferenceEvidence } from './file-removal-references.ts';
 import { buildDuplicateGroups, buildFileRemovalSummary } from './file-removal-report.ts';
@@ -30,11 +31,11 @@ export async function buildFileRemovalReport(
     row => isInventoryCandidate(row, options) || content.duplicateRows.has(row.path)
   );
   const candidatePaths = new Set(candidateFacts.map(row => row.path));
-  const references = await collectReferenceEvidence(
-    root,
-    gitFiles.map(row => row.path),
-    candidatePaths
-  );
+  const allPaths = gitFiles.map(row => row.path);
+  const [references, ownership] = await Promise.all([
+    collectReferenceEvidence(root, allPaths, candidatePaths),
+    buildFileRemovalOwnershipIndex(root, allPaths),
+  ]);
   const rows: FileInventoryRow[] = candidateFacts.map(row => ({
     path: row.path,
     bytes: row.bytes,
@@ -47,11 +48,13 @@ export async function buildFileRemovalReport(
     text: isTextPath(row.path),
     generated: looksGenerated(row.path, row.textHead),
     publicUrl: publicUrlFor(row.path),
+    ownership: ownership.forPath(row.path),
     inboundReferences: [...(references.inboundReferences.get(row.path) ?? [])].sort(),
     importedBy: [...(references.importedBy.get(row.path) ?? [])].sort(),
-    duplicatePaths: (content.duplicateRows.get(row.path) ?? [])
+    contentMatchPaths: (content.duplicateRows.get(row.path) ?? [])
       .filter(path => path !== row.path)
       .sort(),
+    duplicatePaths: [],
     canonicalDuplicate: null,
   }));
 

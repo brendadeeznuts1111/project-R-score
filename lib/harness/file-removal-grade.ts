@@ -47,6 +47,9 @@ function collectRemovalEvidence(
     row.lines > options.largeLineThreshold;
   const largeByBytes = row.bytes > options.largeByteThreshold;
   const duplicate = row.duplicatePaths.length > 0;
+  const crossOwnershipMatches = row.contentMatchPaths.filter(
+    path => !row.duplicatePaths.includes(path)
+  );
   const hardBlockers = hardProtectionReasons(row);
   const blockers = [...hardBlockers];
   const addressability = addressabilityFor(row);
@@ -55,7 +58,15 @@ function collectRemovalEvidence(
 
   if (duplicate) {
     removalConfidence += 60;
-    reasons.push(`byte-identical to ${row.duplicatePaths.length} other file(s)`);
+    reasons.push(
+      `byte-identical to ${row.duplicatePaths.length} file(s) in ownership boundary ${row.ownership.boundary}`
+    );
+  }
+  if (crossOwnershipMatches.length > 0) {
+    reasons.push(
+      `byte-identical to ${crossOwnershipMatches.length} file(s) across ownership boundaries`
+    );
+    if (!duplicate) blockers.push('content match crosses project or package ownership boundary');
   }
   if (addressability === 'unreferenced') {
     removalConfidence += 20;

@@ -1,7 +1,13 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 import { describe, expect, test } from 'bun:test';
 import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { chooseCanonicalDuplicate, gradeFileRemoval } from '../lib/harness/file-removal-grade.ts';
+import { buildFileRemovalOwnershipIndex } from '../lib/harness/file-removal-ownership.ts';
+import { buildDuplicateGroups } from '../lib/harness/file-removal-report.ts';
 import {
   isMonorepoHealthSourcePath,
   publicUrlFor,
@@ -12,6 +18,7 @@ import {
   resolveReferenceTargets,
 } from '../lib/harness/file-removal-references.ts';
 import { joinPath } from '../lib/path-bun.ts';
+import { asProjectId } from '../lib/types/branded.ts';
 import {
   FILE_REMOVAL_VERIFICATION_COMMANDS,
   type FileInventoryRow,
@@ -38,8 +45,19 @@ function row(overrides: Partial<FileInventoryRow> = {}): FileInventoryRow {
     text: true,
     generated: false,
     publicUrl: null,
+    ownership: {
+      projectId: asProjectId('project-r-score'),
+      path: '.',
+      repositoryRelation: 'root',
+      repositoryRemote: 'origin',
+      feedStatus: 'registered',
+      channelIds: [],
+      packageRoot: '.',
+      boundary: 'project-r-score:.',
+    },
     inboundReferences: [],
     importedBy: [],
+    contentMatchPaths: ['docs/current-guide.md'],
     duplicatePaths: ['docs/current-guide.md'],
     canonicalDuplicate: 'docs/current-guide.md',
     ...overrides,
@@ -197,6 +215,14 @@ describe('file removal grading safety', () => {
       'projects/active/development/kal-poly-bot/docs/packages/platform-architecture.mermaid.md',
       'projects/active/development/kal-poly-bot/docs/packages/PLUGIN_SYSTEM.md',
       'projects/active/development/kal-poly-bot/docs/packages/Bun_Configuration_Hardening_Guide.md',
+      'projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/web-servers/dashboard-integration.html',
+      'projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/scripts/scripts/bunx-registry-demo.bun.ts',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/tests/monitoring/security-monitor.test.ts',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/tests/monitoring/health-check.test.ts',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/tests/monitoring/performance-monitor.test.ts',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/tests/utils/monitoring-utils.test.ts',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/tests/utils/edge-case-helpers.ts',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/tests/integration/system-integration/e2e-integration.test.ts',
     ] as const;
     const canonical = [
       'projects/active/analysis/matrix-analysis/monitoring/dashboard/index.html',
@@ -211,6 +237,14 @@ describe('file removal grading safety', () => {
       'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/docs/business/LIVE-CASINO-ENHANCEMENT.md',
       'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/docs/development/BUN-FEATURES-ENHANCEMENT.md',
       'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/docs/development/TYPE-SAFETY-PROGRESS.md',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-integration.html',
+      'projects/active/enterprise/fantasy42-fire22-registry/bunx-registry-demo.bun.ts',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/test/monitoring/security-monitor.test.ts',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/test/monitoring/health-check.test.ts',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/test/monitoring/performance-monitor.test.ts',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/test/utils/monitoring-utils.test.ts',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/test/utils/edge-case-helpers.ts',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/tests/e2e-integration.test.ts',
     ] as const;
     const pointers = [
       'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/SPORTS-BETTING-ENHANCEMENT.md',
@@ -249,6 +283,90 @@ describe('file removal grading safety', () => {
     expect(result.action).toBe('deduplicate');
   });
 
+  test('cross-owner content matches are evidence, not deletion authority', () => {
+    const left = row({
+      path: 'projects/active/app-a/copied-guide.md',
+      ownership: {
+        projectId: asProjectId('app-a'),
+        path: 'projects/active/app-a',
+        repositoryRelation: 'contained',
+        repositoryRemote: 'origin',
+        feedStatus: 'unregistered',
+        channelIds: [],
+        packageRoot: 'projects/active/app-a',
+        boundary: 'app-a:projects/active/app-a',
+      },
+      contentMatchPaths: ['projects/active/app-b/copied-guide.md'],
+      duplicatePaths: [],
+      canonicalDuplicate: null,
+    });
+    const right = row({
+      path: 'projects/active/app-b/copied-guide.md',
+      ownership: {
+        projectId: asProjectId('app-b'),
+        path: 'projects/active/app-b',
+        repositoryRelation: 'contained',
+        repositoryRemote: 'origin',
+        feedStatus: 'unregistered',
+        channelIds: [],
+        packageRoot: 'projects/active/app-b',
+        boundary: 'app-b:projects/active/app-b',
+      },
+      contentMatchPaths: [left.path],
+      duplicatePaths: [],
+      canonicalDuplicate: null,
+    });
+    const group = buildDuplicateGroups(
+      [left, right],
+      new Map([
+        [
+          left.sha256,
+          [left, right].map(item => ({
+            path: item.path,
+            tracked: item.tracked,
+            gitMode: item.gitMode,
+            bytes: item.bytes,
+            lines: item.lines,
+            textHead: null,
+          })),
+        ],
+      ])
+    );
+    expect(group[0]?.canonicalPaths).toEqual([]);
+    expect(group[0]?.reclaimableBytes).toBe(0);
+    expect(group[0]?.theoreticalReclaimableBytes).toBe(left.bytes);
+    expect(left.duplicatePaths).toEqual([]);
+
+    const result = gradeFileRemoval(left, options);
+    expect(result.verdict).toBe('retain');
+    expect(result.action).toBe('retain');
+    expect(result.reclaimableBytes).toBe(0);
+    expect(result.blockers).toContain(
+      'content match crosses project or package ownership boundary'
+    );
+  });
+
+  test('ownership joins project RSS registration and nearest package root', async () => {
+    const project = 'projects/active/enterprise/fantasy42-fire22-registry';
+    const nested = `${project}/dashboard-worker`;
+    const index = await buildFileRemovalOwnershipIndex(REPO_ROOT, [
+      'package.json',
+      `${project}/package.json`,
+      `${nested}/package.json`,
+    ]);
+
+    const rootOwner = index.forPath('lib/harness/file-removal-grade.ts');
+    expect(rootOwner.projectId).toBe(asProjectId('project-r-score'));
+    expect(rootOwner.feedStatus).toBe('registered');
+    expect(rootOwner.channelIds).toHaveLength(4);
+
+    const nestedOwner = index.forPath(`${nested}/tests/example.test.ts`);
+    expect(nestedOwner.projectId).toBe(asProjectId('fantasy42-fire22-registry'));
+    expect(nestedOwner.feedStatus).toBe('unregistered');
+    expect(nestedOwner.channelIds).toEqual([]);
+    expect(nestedOwner.packageRoot).toBe(nested);
+  });
+
   test('an unreferenced public URL never reaches a safe deletion grade', () => {
     const result = gradeFileRemoval(
       row({ path: 'public/archive/copied-guide.md', publicUrl: '/archive/copied-guide.md' }),
@@ -284,6 +402,7 @@ describe('file removal grading safety', () => {
         path: 'lib/large-owner.ts',
         lines: 450,
         source: true,
+        contentMatchPaths: [],
         duplicatePaths: [],
         canonicalDuplicate: null,
       }),
@@ -300,6 +419,7 @@ describe('file removal grading safety', () => {
         path: 'lib/large-owner.ts',
         lines: 450,
         source: true,
+        contentMatchPaths: [],
         duplicatePaths: [],
         canonicalDuplicate: null,
         importedBy: ['lib/index.ts'],
