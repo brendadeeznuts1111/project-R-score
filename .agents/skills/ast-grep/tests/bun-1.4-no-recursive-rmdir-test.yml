@@ -1,0 +1,9 @@
+id: bun-1.4-no-recursive-rmdir
+valid:
+  - "fs.rm(path, { recursive: true }, callback)"
+  - "fs.rmSync(path, { recursive: true })"
+  - "fs.rmdir(path, callback)"
+invalid:
+  - "fs.rmdir(path, { recursive: true }, callback)"
+  - "nodeFs.rmdir(path, { force: true, recursive: true }, callback)"
+  - "fs.rmdirSync(path, { recursive: true, force: true })"

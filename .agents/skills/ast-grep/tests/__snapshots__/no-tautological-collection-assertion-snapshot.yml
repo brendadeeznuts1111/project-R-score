@@ -1,0 +1,26 @@
+id: no-tautological-collection-assertion
+snapshots:
+  expect(items.length >= 0).toBe(true):
+    labels:
+    - source: expect(items.length >= 0).toBe(true)
+      style: primary
+      start: 0
+      end: 36
+  expect(items.length).toBeGreaterThanOrEqual(0):
+    labels:
+    - source: expect(items.length).toBeGreaterThanOrEqual(0)
+      style: primary
+      start: 0
+      end: 46
+  expect(items.size >= 0).toBe(true):
+    labels:
+    - source: expect(items.size >= 0).toBe(true)
+      style: primary
+      start: 0
+      end: 34
+  expect(items.size).toBeGreaterThanOrEqual(0):
+    labels:
+    - source: expect(items.size).toBeGreaterThanOrEqual(0)
+      style: primary
+      start: 0
+      end: 44

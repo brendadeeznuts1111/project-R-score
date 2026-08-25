@@ -30,6 +30,15 @@ description: >
   `lastUpdated`. Recorded release and update events require the exact official
   version, publication timestamp, and URL, proved by the provenance commands in
   the command map.
+- Bun 1.4 assets, capabilities, feeds, and release snapshots: read
+  [`BUN_1_4_MIGRATION.md`](../../../docs/BUN_1_4_MIGRATION.md) and
+  [`BUN_1_4_CHANNEL_LIFECYCLE.md`](../../../docs/BUN_1_4_CHANNEL_LIFECYCLE.md).
+  Only the breaking-change tracker's **Merged** section is a Bun 1.4 behavior
+  source; **Under consideration** did not ship. Treat registry presence as
+  release-note coverage, not adoption. Only `integrated` and `contract` records
+  may claim executable `contractFiles`; `candidate` and `upstream-claim` records
+  must not. Keep rights-pending media external and verify item channel IDs
+  against the declared snapshot channels.
 - Bun-native scaffold and config work: read
   [`bun-create-alignment.md`](../../../docs/design/bun-create-alignment.md) and
   [`UNIFIED.md`](../../../docs/UNIFIED.md). Bun owns `bun create`, `bun init`,
@@ -85,7 +94,7 @@ description: >
   is merge authority.
 - When full CI fails only on stale external bakes or a concurrency flake, rerun
   the exact failing test, record the owning artifact and repair command, and
-  keep the unrelated failure visible. Do not rebake a credential-backed
-  artifact or weaken freshness without its owning authority.
+  keep the unrelated failure visible. Do not rebake a credential-backed artifact
+  or weaken freshness without its owning authority.
 - If a command in the command map is absent from `package.json`, repair the
   SSOT; do not invent a substitute.

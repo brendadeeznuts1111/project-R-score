@@ -1,0 +1,8 @@
+id: no-ambiguous-exit-code-assertion
+language: TypeScript
+severity: warning
+message: Assert the expected exit code; accepting both 0 and 1 cannot prove behavior
+rule:
+  any:
+    - pattern: expect([0, 1]).toContain($EXIT_CODE)
+    - pattern: expect([1, 0]).toContain($EXIT_CODE)

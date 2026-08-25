@@ -1,0 +1,14 @@
+id: bun-1.4-no-write-header
+snapshots:
+  'res.writeHeader(200, { ''content-type'': ''text/plain'' })':
+    labels:
+    - source: 'res.writeHeader(200, { ''content-type'': ''text/plain'' })'
+      style: primary
+      start: 0
+      end: 54
+  response.writeHeader(200):
+    labels:
+    - source: response.writeHeader(200)
+      style: primary
+      start: 0
+      end: 25

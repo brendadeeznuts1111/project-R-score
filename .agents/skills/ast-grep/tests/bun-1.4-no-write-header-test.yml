@@ -1,0 +1,7 @@
+id: bun-1.4-no-write-header
+valid:
+  - "response.writeHead(200)"
+  - "headers.set('content-type', 'application/json')"
+invalid:
+  - "response.writeHeader(200)"
+  - "res.writeHeader(200, { 'content-type': 'text/plain' })"
