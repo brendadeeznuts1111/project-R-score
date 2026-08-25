@@ -115,10 +115,33 @@ function cssOutputPath(result: Awaited<ReturnType<typeof Bun.build>>, opts: Buil
   return output.path;
 }
 
-function printBuildWarnings(label: string, logs: readonly unknown[]): void {
-  if (logs.length === 0) return;
-  console.warn(`${label} completed with ${logs.length} Bun.build warning(s):`);
-  for (const log of logs) console.warn(log);
+type BuildLog = {
+  level?: unknown;
+  message?: unknown;
+};
+
+type BuildLogAtLevel = {
+  level: 'error' | 'warning';
+  message: string;
+};
+
+function buildLogAtLevel(log: unknown, level: 'error' | 'warning'): log is BuildLogAtLevel {
+  if (!log || typeof log !== 'object') return false;
+  const candidate = log as BuildLog;
+  return candidate.level === level && typeof candidate.message === 'string';
+}
+
+function checkBuildLogs(label: string, logs: readonly unknown[]): void {
+  const errors = logs.filter(log => buildLogAtLevel(log, 'error'));
+  if (errors.length > 0) {
+    throw new Error(
+      `${label} reported Bun.build error(s): ${errors.map(log => log.message).join('; ')}`
+    );
+  }
+  const warnings = logs.filter(log => buildLogAtLevel(log, 'warning'));
+  if (warnings.length === 0) return;
+  console.warn(`${label} completed with ${warnings.length} Bun.build warning(s):`);
+  for (const warning of warnings) console.warn(warning.message);
 }
 
 async function main(): Promise<void> {
@@ -139,7 +162,7 @@ async function main(): Promise<void> {
     for (const log of lowered.logs) console.error(log);
     process.exit(1);
   }
-  printBuildWarnings('portal CSS build', lowered.logs);
+  checkBuildLogs('portal CSS build', lowered.logs);
 
   const outPath = cssOutputPath(lowered, { naming: 'style.css', minify: false, analyze });
   const size = Bun.file(outPath).size;
@@ -156,7 +179,7 @@ async function main(): Promise<void> {
       for (const log of minified.logs) console.error(log);
       process.exit(1);
     }
-    printBuildWarnings('portal CSS minify build', minified.logs);
+    checkBuildLogs('portal CSS minify build', minified.logs);
     minPath = cssOutputPath(minified, { naming: 'style.min.css', minify: true, analyze });
     minSize = Bun.file(minPath).size;
     if (analyze) {
