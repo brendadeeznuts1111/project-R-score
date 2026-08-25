@@ -47,4 +47,3 @@ describe('Bun 1.4 migration audit', () => {
     expect(classifyMigrationFindings([FINDING, FINDING], [EXPECTED]).ok).toBe(false);
   });
 });
-
