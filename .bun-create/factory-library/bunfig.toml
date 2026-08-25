@@ -4,8 +4,8 @@
 # @see https://bun.com/docs/pm/global-store — isolated global virtual store
 
 [install]
-# The global store is effective only with the isolated linker. Packages are
-# shared through Bun's cache while this project's node_modules stays isolated.
+# The standalone template keeps portable linker/store defaults; the monorepo
+# root inherits its machine-owned install policy from ~/.bunfig.toml.
 linker = "isolated"
 globalStore = true
 # A new scaffold has no lockfile yet. Allow the first install and intentional

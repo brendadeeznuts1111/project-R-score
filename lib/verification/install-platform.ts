@@ -22,7 +22,7 @@ import {
 import { joinPath } from '../path-bun.ts';
 import {
   formatPolicySource,
-  readMachineBunfig,
+  readGlobalBunfigLayers,
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
 } from '../../scripts/lib/machine-bunfig.ts';
@@ -298,15 +298,21 @@ function skippedRow(aspect: InstallPlatformAspectId, note: string): InstallPlatf
 async function probeMachineInstallPolicy(
   rootDir: string
 ): Promise<{ linkerOk: boolean; storeOk: boolean; note: string }> {
-  const [project, machine] = await Promise.all([readProjectBunfig(rootDir), readMachineBunfig()]);
-  const policy = resolveEffectiveInstallPolicy(project, machine);
+  const [project, layers] = await Promise.all([
+    readProjectBunfig(rootDir),
+    readGlobalBunfigLayers(),
+  ]);
+  const machine = layers.machine;
+  const policy = resolveEffectiveInstallPolicy(project, layers.effective);
   const linkerOk = policy.linker === 'isolated';
   const storeOk = policy.globalStore === true;
   const parts = [
     `linker=${policy.linker ?? 'unset'} (${formatPolicySource('linker', policy)})`,
     `globalStore=${String(policy.globalStore)} (${formatPolicySource('globalStore', policy)})`,
   ];
-  if (!machine.bunfigPath) {
+  if (machine.inode === 'dangling-symlink') {
+    parts.push('dangling symlink ~/.bunfig.toml');
+  } else if (!machine.bunfigPath) {
     parts.push('missing ~/.bunfig.toml');
   }
   return { linkerOk, storeOk, note: parts.join('; ') };

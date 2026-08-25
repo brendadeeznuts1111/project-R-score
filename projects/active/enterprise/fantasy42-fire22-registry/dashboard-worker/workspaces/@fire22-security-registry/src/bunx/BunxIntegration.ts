@@ -199,39 +199,9 @@ export class BunxIntegration {
    * Configure bun registry settings
    */
   private async configureBunRegistry(): Promise<void> {
-    const bunfigPath = `${process.env.HOME}/.bunfig.toml`;
-
-    const registryConfig = `
-# Fire22 Registry Configuration
-[install]
-registry = "https://registry.npmjs.org/"
-
-[install.scopes]
-"@fire22" = "https://fire22.workers.dev/registry/"
-
-[install.cache]
-dir = "~/.bun/install/cache"
-
-[install.lockfile]
-print = "yarn"
-
-[install.security]
-audit = true
-scan = true
-`;
-
-    try {
-      const existingConfig = await Bun.file(bunfigPath)
-        .text()
-        .catch(() => '');
-
-      if (!existingConfig.includes('@fire22')) {
-        await Bun.write(bunfigPath, existingConfig + registryConfig);
-        console.info('✅ Fire22 registry configured in ~/.bunfig.toml');
-      }
-    } catch (error) {
-      console.warn(`Warning: Could not configure registry: ${error.message}`);
-    }
+    console.warn(
+      'refusing to write ~/.bunfig.toml — machine SSOT. Add [install.scopes] to the project bunfig.toml.'
+    );
   }
 
   /**

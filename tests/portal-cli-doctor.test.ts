@@ -282,6 +282,7 @@ describe('portal-cli doctor pure', () => {
     expect(r.group).toBe('bunfig');
     expect(r.checks).toHaveLength(7);
     expect(r.checks.every(c => c.group === 'bunfig')).toBe(true);
+    expect(r.checks.some(c => c.group === 'catalog' || c.group === 'infra')).toBe(false);
     expect(r.ok).toBe(true);
   });
 
@@ -298,6 +299,53 @@ describe('portal-cli doctor pure', () => {
     expect(shadow?.ok).toBe(false);
     expect(shadow?.level).toBe('fatal');
     expect(shadow?.message).toContain('shadows');
+    const merge = checks.find(c => c.id === 'bunfig-merge-consistency');
+    expect(merge?.ok).toBe(false);
+    expect(merge?.message).toContain('hoisted');
+    await Bun.$`rm -rf ${tmp}`.quiet();
+  });
+
+  test('--group catalog does not emit bunfig or isolated-linker checks', async () => {
+    const r = await runPortalDoctor({
+      cwd: ROOT,
+      group: 'catalog',
+      skipLiveAccess: true,
+    });
+    expect(r.checks.some(c => c.group === 'catalog')).toBe(true);
+    expect(r.checks.some(c => c.id === 'machine-isolated-linker')).toBe(false);
+    expect(r.checks.some(c => c.id === 'linker-config-version')).toBe(false);
+    expect(r.checks.some(c => c.group === 'bunfig')).toBe(false);
+    expect(r.checks.some(c => c.group === 'infra')).toBe(false);
+  });
+
+  test('machine-isolated-linker uses machineEnv, not process HOME', async () => {
+    const tmp = `${ROOT}/tmp/doctor-isolated-env`;
+    await Bun.$`rm -rf ${tmp}`.quiet();
+    await Bun.$`mkdir -p ${tmp}/home`.quiet();
+    await Bun.write(`${tmp}/home/.bunfig.toml`, '[install]\nlinker = "hoisted"\n');
+    const r = await runPortalDoctor({
+      cwd: ROOT,
+      group: 'linker',
+      skipLiveAccess: true,
+      machineEnv: { HOME: `${tmp}/home` },
+    });
+    const linker = r.checks.find(c => c.id === 'machine-isolated-linker');
+    expect(linker?.ok).toBe(false);
+    expect(linker?.message).toContain('hoisted');
+    await Bun.$`rm -rf ${tmp}`.quiet();
+  });
+
+  test('bunfig-machine-ssot names a dangling home link, not missing', async () => {
+    const tmp = `${ROOT}/tmp/doctor-dangling-home`;
+    await Bun.$`rm -rf ${tmp}`.quiet();
+    await Bun.$`mkdir -p ${tmp}/home`.quiet();
+    const { symlinkSync } = await import('node:fs');
+    symlinkSync(`${tmp}/home/missing-target.toml`, `${tmp}/home/.bunfig.toml`);
+    const checks = await runBunfigChecks(ROOT, { HOME: `${tmp}/home` });
+    const ssot = checks.find(c => c.id === 'bunfig-machine-ssot');
+    expect(ssot?.ok).toBe(false);
+    expect(ssot?.message).toContain('dangling symlink');
+    expect(ssot?.message).not.toContain('file missing');
     await Bun.$`rm -rf ${tmp}`.quiet();
   });
 

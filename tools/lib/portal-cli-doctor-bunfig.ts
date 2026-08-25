@@ -13,21 +13,21 @@
  *
  * Fix: bun run audit:bunfig · bun run install:verify · docs/UNIFIED.md
  */
-import { TOML } from 'bun';
 import {
   FORBIDDEN_INSTALL_ENV_VARS,
   isEphemeralCiInstallEnv,
   MACHINE_OWNED_CACHE_DIR_LABEL,
   MACHINE_OWNED_INSTALL_KEYS,
   REQUIRED_RELEASE_AGE_EXCLUDES,
-  xdgShadowBunfigPath,
 } from '../../lib/install/machine-bunfig-policy.ts';
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import {
   isAbsoluteCachePath,
-  readMachineBunfig,
+  readGlobalBunfigLayers,
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
+  type GlobalBunfigLayers,
+  type MachineBunfigSnapshot,
 } from '../../scripts/lib/machine-bunfig.ts';
 import type { PortalDoctorCheck } from './portal-cli-doctor.ts';
 
@@ -59,15 +59,11 @@ function withMeta(
   return { ...base, ...meta };
 }
 
-async function readInstallSection(path: string | null): Promise<InstallToml | null> {
-  if (!path) return null;
-  try {
-    if (!(await Bun.file(path).exists())) return null;
-    const parsed = TOML.parse(await Bun.file(path).text()) as { install?: InstallToml };
-    return parsed.install ?? {};
-  } catch {
-    return null;
-  }
+function installTomlFromSnapshot(
+  snap: Awaited<ReturnType<typeof readProjectBunfig>>
+): InstallToml | null {
+  if (!snap.bunfigPath) return null;
+  return (snap.install ?? {}) as InstallToml;
 }
 
 /** Coerce TOML install array fields (typed as optional unknown on InstallToml). */
@@ -80,24 +76,35 @@ function asStringArray(v: InstallToml[keyof InstallToml]): string[] {
   return out;
 }
 
+export type BunfigCheckLoad = {
+  layers: GlobalBunfigLayers;
+  project: MachineBunfigSnapshot;
+};
+
 /**
  * Run pure bunfig SSOT checks (no network, no spawn).
  * @param env process-like env for HOME / BUN_INSTALL_* (tests inject; default Bun.env)
+ * @param loaded reuse layers/project already read by portal doctor
  */
 export async function runBunfigChecks(
   cwd: string,
-  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>,
+  loaded?: BunfigCheckLoad
 ): Promise<PortalDoctorCheck[]> {
-  const machine = await readMachineBunfig(env);
-  const project = await readProjectBunfig(cwd);
-  const machineInstall = await readInstallSection(machine.bunfigPath);
-  const projectInstall = await readInstallSection(project.bunfigPath);
-  const effective = resolveEffectiveInstallPolicy(project, machine);
+  const layers = loaded?.layers ?? (await readGlobalBunfigLayers(env));
+  const project = loaded?.project ?? (await readProjectBunfig(cwd));
+  const machine = layers.machine;
+  const globalLayer = layers.effective;
+  const machineInstall = installTomlFromSnapshot(machine);
+  const projectInstall = installTomlFromSnapshot(project);
+  const effective = resolveEffectiveInstallPolicy(project, globalLayer);
   const checks: PortalDoctorCheck[] = [];
 
   // 1) Machine ~/.bunfig.toml SSOT keys
   const missing: string[] = [];
-  if (!machine.bunfigPath) {
+  if (machine.inode === 'dangling-symlink') {
+    missing.push('dangling symlink (~/.bunfig.toml)');
+  } else if (!machine.bunfigPath) {
     missing.push('file missing (~/.bunfig.toml)');
   } else {
     if (machineInstall?.linker !== 'isolated') missing.push('linker="isolated"');
@@ -145,8 +152,8 @@ export async function runBunfigChecks(
   );
 
   // 1a) $XDG_CONFIG_HOME/.bunfig.toml wins over $HOME/.bunfig.toml (Bun 1.3.14).
-  const xdgShadow = xdgShadowBunfigPath(env);
-  const xdgShadowExists = xdgShadow != null && (await Bun.file(xdgShadow).exists());
+  const xdgShadow = layers.xdgPath;
+  const xdgShadowExists = layers.xdgLoaded;
   checks.push(
     withMeta(
       {
@@ -257,8 +264,8 @@ export async function runBunfigChecks(
         group: 'bunfig',
         ok: mergeOk,
         message: mergeOk
-          ? `effective linker=isolated · globalStore=true · cache=${effective.source.cacheDir}`
-          : `effective policy mismatch: ${mergeParts.join('; ')}`,
+          ? `effective linker=isolated · globalStore=true · cache=${effective.source.cacheDir} · global=${globalLayer.bunfigPath}`
+          : `effective policy mismatch: ${mergeParts.join('; ')} (global=${globalLayer.bunfigPath ?? 'none'})`,
         source: BUNFIG_ISOLATED,
       },
       {

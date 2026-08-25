@@ -215,7 +215,7 @@ export const INSTALL_CONFIG_NOTES: readonly InstallNote[] = [
     id: 'bunfig-merge',
     group: 'config',
     summary:
-      'bunfig search: $XDG_CONFIG_HOME/.bunfig.toml or $HOME/.bunfig.toml, then ./bunfig.toml; both merge (project overlays machine).',
+      'bunfig search: one global ($XDG_CONFIG_HOME/.bunfig.toml if that file exists, else $HOME/.bunfig.toml), then ./bunfig.toml; project overlays the global. The two globals do not merge.',
     docs: INSTALL_LOCI.bunfig,
     aliases: ['bunfig.toml', 'bun install bunfig'],
   },

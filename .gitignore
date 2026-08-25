@@ -19,8 +19,8 @@
 # Local symlinks inside nested enterprise repos
 projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/dashboard-worker
 
-# Dependencies
-node_modules/
+# Dependencies (no trailing slash: worktree node_modules is often a symlink)
+node_modules
 # Bun's text lockfile is source-controlled at every package boundary. Only the
 # retired binary format stays ignored so an old client cannot add it back.
 bun.lockb

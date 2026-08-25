@@ -25,7 +25,6 @@ import {
   isEphemeralCiInstallEnv,
   MACHINE_EXPECTED_GLOBAL_STORE,
   MACHINE_EXPECTED_LINKER,
-  xdgShadowBunfigPath,
 } from '../lib/install/machine-bunfig-policy.ts';
 import {
   applyBunInstallEnv,
@@ -36,7 +35,7 @@ import {
 import {
   formatPolicySource,
   isAbsoluteCachePath,
-  readMachineBunfig,
+  readGlobalBunfigLayers,
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
 } from './lib/machine-bunfig.ts';
@@ -70,25 +69,29 @@ function envInstallPolicyOk(env: ReturnType<typeof applyBunInstallEnv>): boolean
 
 async function checkBunfig(): Promise<Check> {
   const processEnv = Bun.env as Record<string, string | undefined>;
-  const xdgShadow = xdgShadowBunfigPath(processEnv);
-  if (xdgShadow && (await Bun.file(xdgShadow).exists())) {
+  const [project, layers] = await Promise.all([
+    readProjectBunfig(ROOT),
+    readGlobalBunfigLayers(processEnv),
+  ]);
+  if (layers.xdgLoaded && layers.xdgPath) {
     return {
       ok: false,
       label: 'install policy',
-      detail: `$XDG_CONFIG_HOME/.bunfig.toml shadows ~/.bunfig.toml (${xdgShadow})`,
+      detail: `$XDG_CONFIG_HOME/.bunfig.toml shadows ~/.bunfig.toml (${layers.xdgPath})`,
     };
   }
 
-  const [project, machine] = await Promise.all([readProjectBunfig(ROOT), readMachineBunfig()]);
-  const policy = resolveEffectiveInstallPolicy(project, machine);
+  const machine = layers.machine;
+  const policy = resolveEffectiveInstallPolicy(project, layers.effective);
   const env = applyBunInstallEnv();
 
   const linkerOk = policy.linker === MACHINE_EXPECTED_LINKER;
   const storeOk = policy.globalStore === MACHINE_EXPECTED_GLOBAL_STORE;
   const policyOk = linkerOk && storeOk;
   const envPolicyOk = envInstallPolicyOk(env);
-  const envFallback = !machine.bunfigPath && envPolicyOk;
-  const ok = policyOk || envFallback;
+  const danglingHome = machine.inode === 'dangling-symlink';
+  const envFallback = !machine.bunfigPath && !danglingHome && envPolicyOk;
+  const ok = !danglingHome && (policyOk || envFallback);
 
   const parts: string[] = [];
   parts.push(`linker=${policy.linker ?? 'unset'} (${formatPolicySource('linker', policy)})`);
@@ -107,6 +110,14 @@ async function checkBunfig(): Promise<Check> {
         ? `policy via ${FORBIDDEN_INSTALL_ENV_LABEL} (ephemeral CI)`
         : `policy via ${FORBIDDEN_INSTALL_ENV_LABEL} env`
     );
+  }
+
+  if (danglingHome) {
+    return {
+      ok: false,
+      label: 'install policy',
+      detail: 'dangling symlink ~/.bunfig.toml',
+    };
   }
 
   if (!machine.bunfigPath && !envPolicyOk) {

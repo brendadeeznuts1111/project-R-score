@@ -39,6 +39,8 @@
  *   portal-cli doctor --group linker --group catalog
  *   portal-cli doctor --env ci      # skip envScope=dev checks
  *
+ * `--group` runs only that group's work (no catalog/infra/bunfig I/O for the others).
+ *
  * Bunfig probes: tools/lib/portal-cli-doctor-bunfig.ts
  * Bake: bun run bake:doctor · check: bun run bake:doctor --check · board: /portal/doctor/
  *
@@ -61,9 +63,11 @@ import {
 } from '../../lib/security/pass-session.ts';
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import {
-  readMachineBunfig,
+  readEffectiveGlobalBunfig,
+  readGlobalBunfigLayers,
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
+  type MachineBunfigSnapshot,
 } from '../../scripts/lib/machine-bunfig.ts';
 import { shouldColor, termWidth } from '../../lib/console-depth.ts';
 import { cliTone, displayWidth, frameBlock, padDisplay } from '../../lib/portal/cli-chrome.ts';
@@ -365,11 +369,13 @@ export async function checkLinkerConfigVersion(cwd: string): Promise<PortalDocto
   );
 }
 
-export async function checkMachineIsolatedLinker(cwd: string): Promise<PortalDoctorCheck> {
-  const eff = resolveEffectiveInstallPolicy(
-    await readProjectBunfig(cwd),
-    await readMachineBunfig()
-  );
+export async function checkMachineIsolatedLinker(
+  cwd: string,
+  loaded?: { project: MachineBunfigSnapshot; effective: MachineBunfigSnapshot }
+): Promise<PortalDoctorCheck> {
+  const project = loaded?.project ?? (await readProjectBunfig(cwd));
+  const effective = loaded?.effective ?? (await readEffectiveGlobalBunfig());
+  const eff = resolveEffectiveInstallPolicy(project, effective);
   const ok = eff.linker === 'isolated';
   return withMeta(
     {
@@ -464,11 +470,32 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   const nowMs = opts.nowMs ?? Date.now();
   const checks: PortalDoctorCheck[] = [];
 
-  // 1) Linker policy (mandatory, pure)
-  checks.push(await checkLinkerConfigVersion(cwd));
-  checks.push(await checkMachineIsolatedLinker(cwd));
+  const machineEnv = opts.machineEnv ?? (Bun.env as Record<string, string | undefined>);
+  const wants = (g: PortalDoctorGroup) => !groups?.length || groups.includes(g);
+  const wantLinker = wants('linker');
+  const wantBunfig = wants('bunfig');
+  const needBunfigLoad = wantLinker || wantBunfig;
+  const bunfigLoad = needBunfigLoad
+    ? await Promise.all([readProjectBunfig(cwd), readGlobalBunfigLayers(machineEnv)])
+    : null;
+  const projectBunfig = bunfigLoad?.[0];
+  const bunfigLayers = bunfigLoad?.[1];
+
+  // 1) Linker policy (pure)
+  if (wantLinker) {
+    checks.push(await checkLinkerConfigVersion(cwd));
+  }
+  if (wantLinker && projectBunfig && bunfigLayers) {
+    checks.push(
+      await checkMachineIsolatedLinker(cwd, {
+        project: projectBunfig,
+        effective: bunfigLayers.effective,
+      })
+    );
+  }
 
   // 2) Offline artifact presence (vault / capabilities / bunfig bake)
+  if (wants('bakes')) {
   const vaultHealth = joinPath(cwd, 'public/registry/vault-health.json');
   const vaultOk = await fileExists(vaultHealth);
   const vaultAt = vaultOk ? await readBakeGeneratedAt(vaultHealth) : undefined;
@@ -603,29 +630,40 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
       }
     )
   );
+  }
 
   // 3) Catalog SSOT health (runtime flags — pure, no network)
   //    catalog-json-schema · catalog-shortcode-conflict · catalog-help-coverage · catalog-deprecated-flags
-  const catalogResult = await runCatalogChecks(cwd);
-  checks.push(...catalogResult.checks);
+  if (wants('catalog')) {
+    const catalogResult = await runCatalogChecks(cwd);
+    checks.push(...catalogResult.checks);
+  }
 
   // 3b) Bunfig machine/project SSOT
-  checks.push(...(await runBunfigChecks(cwd, opts.machineEnv)));
+  if (wantBunfig && projectBunfig && bunfigLayers) {
+    checks.push(
+      ...(await runBunfigChecks(cwd, machineEnv, { layers: bunfigLayers, project: projectBunfig }))
+    );
+  }
 
   // 3c) Bun runtime environment controls (pure; raw values never reported)
-  checks.push(...runRuntimeEnvChecks(opts.machineEnv ?? Bun.env));
+  if (wants('runtime')) {
+    checks.push(...runRuntimeEnvChecks(opts.machineEnv ?? Bun.env));
+  }
 
   // 3d) Infra · Access (live HTTPS or offline policy SSOT)
-  checks.push(
-    ...(await runInfraChecks({
-      cwd,
-      fetch: opts.accessFetch,
-      skipLive: opts.skipLiveAccess,
-    }))
-  );
+  if (wants('infra')) {
+    checks.push(
+      ...(await runInfraChecks({
+        cwd,
+        fetch: opts.accessFetch,
+        skipLive: opts.skipLiveAccess,
+      }))
+    );
+  }
 
   // 4) Optional full: spawn existing gates (no network assumed)
-  if (full) {
+  if (full && wants('gates')) {
     // Live Pass session + PAT vault matrix (dev-only; skipped under --env ci).
     // @see https://protonpass.github.io/pass-cli/commands/info/
     const passProbe =
