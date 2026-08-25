@@ -37,8 +37,10 @@ type PortalBundleReport = {
   schemaVersion: 1;
   metric: 'aggregate-initial-js-css-by-route';
   pageCount: number;
+  baselinePageCount: number;
   baselineRevision: string;
   baselineBytes: number;
+  normalizedBaselineBytes: number;
   sourceBytes: number;
   optimizedBytes: number;
   targetReductionPct: number;
@@ -338,6 +340,8 @@ export async function optimizePortalAssets(
     baseline.metric !== 'aggregate-initial-js-css-by-route' ||
     !Number.isSafeInteger(baseline.baselineBytes) ||
     baseline.baselineBytes <= 0 ||
+    !Number.isSafeInteger(baseline.pageCount) ||
+    baseline.pageCount <= 0 ||
     !isReductionPercentage(baseline.minimumReductionPct)
   ) {
     throw new Error(`Unsupported portal performance baseline: ${baselinePath}`);
@@ -356,21 +360,26 @@ export async function optimizePortalAssets(
   }
   const sourceBytes = source.reduce((total, row) => total + row.totalBytes, 0);
   const optimizedBytes = optimized.reduce((total, row) => total + row.totalBytes, 0);
-  const { baselineBytes, minimumReductionPct } = baseline;
+  const { baselineBytes, minimumReductionPct, pageCount: baselinePageCount } = baseline;
+  const normalizedBaselineBytes = Math.round(
+    (baselineBytes * optimized.length) / baselinePageCount
+  );
   const reductionPct = Number(
-    (((baselineBytes - optimizedBytes) / baselineBytes) * 100).toFixed(2)
+    (((normalizedBaselineBytes - optimizedBytes) / normalizedBaselineBytes) * 100).toFixed(2)
   );
   const report: PortalBundleReport = {
     schemaVersion: 1,
     metric: 'aggregate-initial-js-css-by-route',
     pageCount: optimized.length,
+    baselinePageCount,
     baselineRevision: baseline.revision,
     baselineBytes,
+    normalizedBaselineBytes,
     sourceBytes,
     optimizedBytes,
     targetReductionPct: minimumReductionPct,
     reductionPct,
-    targetBytes: Math.floor(baselineBytes * (1 - minimumReductionPct / 100)),
+    targetBytes: Math.floor(normalizedBaselineBytes * (1 - minimumReductionPct / 100)),
     pass: reductionPct >= minimumReductionPct,
     source,
     optimized,
@@ -388,7 +397,7 @@ async function main(): Promise<void> {
     : resolvePath(ROOT, flagValue('report') ?? 'tools/performance/portal-performance-report.json');
   const report = await optimizePortalAssets({ outdir, reportPath });
   console.log(
-    `Portal optimize: ${report.pageCount} pages · ${report.baselineBytes} → ${report.optimizedBytes} bytes · ${report.reductionPct}%`
+    `Portal optimize: ${report.pageCount} pages · ${report.normalizedBaselineBytes} normalized bytes (${report.baselineBytes}/${report.baselinePageCount} baseline) → ${report.optimizedBytes} bytes · ${report.reductionPct}%`
   );
   console.log(`Output: ${outdir}`);
   if (reportPath) console.log(`Report: ${reportPath}`);

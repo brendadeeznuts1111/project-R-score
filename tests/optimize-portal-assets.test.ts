@@ -15,7 +15,7 @@ async function temporaryBaseline(overrides: Record<string, unknown> = {}): Promi
       {
         schemaVersion: 1,
         metric: 'aggregate-initial-js-css-by-route',
-        pageCount: 0,
+        pageCount: 1,
         baselineBytes: 10_000_000,
         minimumReductionPct: 1,
         revision: 'test',
@@ -84,14 +84,17 @@ describe('portal deployment optimizer', () => {
     { timeout: 15_000 }
   );
 
-  test('derives target bytes from the versioned reduction policy', async () => {
+  test('normalizes the target to the dynamically discovered page inventory', async () => {
     const outdir = resolvePath(import.meta.dir, `../tmp/portal-optimizer-policy-${process.pid}`);
     const report = await optimizePortalAssets({
       outdir,
       baselinePath: await temporaryBaseline({ baselineBytes: 10_000, minimumReductionPct: 12.5 }),
     });
     expect(report.targetReductionPct).toBe(12.5);
-    expect(report.targetBytes).toBe(8_750);
+    expect(report.normalizedBaselineBytes).toBe(10_000 * report.pageCount);
+    expect(report.targetBytes).toBe(
+      Math.floor(report.normalizedBaselineBytes * (1 - report.targetReductionPct / 100))
+    );
   });
 
   test('rejects a missing or invalid reduction policy', async () => {
