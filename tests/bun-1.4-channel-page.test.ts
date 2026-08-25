@@ -34,4 +34,20 @@ describe('Bun 1.4 channel discovery', () => {
     expect(sitemap).toContain(CHANNEL_URL);
     expect(robots).toContain('Sitemap: https://score.factory-wager.com/sitemap.xml');
   });
+
+  test('generates one external-source MP4 share page per manifest video', async () => {
+    const manifest = await Bun.file('public/registry/bun-1.4-assets.json').json();
+    const sitemap = await Bun.file('public/sitemap-bun-1.4-videos.xml').text();
+    const videos = manifest.assets.filter((asset: { kind: string }) => asset.kind === 'video');
+    expect(videos).toHaveLength(4);
+    for (const video of videos) {
+      const path = `public/channels/bun-1.4/videos/${video.id}/index.html`;
+      const html = await Bun.file(path).text();
+      expect(html).toContain(`property="og:video" content="${video.publicUrl}"`);
+      expect(html).toContain('property="og:video:type" content="video/mp4"');
+      expect(html).toContain('preload="none"');
+      expect(html).toContain(`/channels/bun-1.4/videos/${video.id}/`);
+      expect(sitemap).toContain(`/channels/bun-1.4/videos/${video.id}/`);
+    }
+  });
 });
