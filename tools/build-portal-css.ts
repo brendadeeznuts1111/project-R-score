@@ -21,6 +21,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  * Usage:
  *   bun tools/build-portal-css.ts
  *   bun tools/build-portal-css.ts --minify
+ *   bun tools/build-portal-css.ts --analyze
  *   bun tools/build-portal-css.ts --check
  *
  * @see https://bun.com/docs/bundler#content-types — Asset Processing / Content types
@@ -32,6 +33,13 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
+import {
+  assertMetafile,
+  checkBuildLogs,
+  cssOutputPath,
+  metafilePaths,
+  type BuildOpts,
+} from './lib/portal-css-build-results.ts';
 import { syncPortalTheme } from './sync-portal-theme.ts';
 
 const argv = import.meta.main
@@ -45,18 +53,15 @@ const OUTDIR = joinPath(ROOT, 'public/portal/dist');
 const PUBLIC_PATH = '/portal/dist/';
 
 const minify = argv.includes('--minify');
+const analyze = argv.includes('--analyze');
 const check = argv.includes('--check');
 
-type BuildOpts = {
-  naming: string;
-  minify: boolean;
-};
-
 async function buildCss(opts: BuildOpts) {
+  const metafile = opts.analyze ? { metafile: metafilePaths(opts) } : {};
   // Explicit css loader — default for .css, documented for Asset Processing clarity.
   // @see https://bun.com/docs/bundler/loaders#css
   // @see https://bun.com/docs/bundler#content-types
-  return Bun.build({
+  const config = {
     entrypoints: [SOURCE],
     outdir: OUTDIR,
     naming: opts.naming,
@@ -65,7 +70,13 @@ async function buildCss(opts: BuildOpts) {
     loader: {
       '.css': 'css',
     },
-  });
+    // Bun 1.4: emit both esbuild-compatible JSON and LLM-readable Markdown
+    // only in explicit analysis mode. Local bundled declarations still expose
+    // the pre-1.4 Boolean-only shape.
+    // @see https://bun.com/docs/bundler#metafile
+    ...metafile,
+  };
+  return Bun.build(config as Parameters<typeof Bun.build>[0]);
 }
 
 async function main(): Promise<void> {
@@ -79,29 +90,39 @@ async function main(): Promise<void> {
   }
 
   // Always emit readable lowered CSS; optionally also emit minified.
-  const lowered = await buildCss({ naming: 'style.css', minify: false });
+  const lowered = await buildCss({ naming: 'style.css', minify: false, analyze });
 
   if (!lowered.success) {
     console.error('portal CSS build failed:');
     for (const log of lowered.logs) console.error(log);
     process.exit(1);
   }
+  checkBuildLogs('portal CSS build', lowered.logs);
 
-  const outPath = lowered.outputs[0]?.path ?? joinPath(OUTDIR, 'style.css');
+  const outPath = cssOutputPath(OUTDIR, lowered, { naming: 'style.css', minify: false, analyze });
   const size = Bun.file(outPath).size;
-  const kind = lowered.outputs[0]?.kind ?? 'asset';
+  const kind = lowered.outputs.find(item => item.path === outPath)?.kind ?? 'asset';
+  const loweredMetafile = metafilePaths({ naming: 'style.css', minify: false, analyze });
+  if (analyze) await assertMetafile(OUTDIR, loweredMetafile);
 
   let minPath: string | undefined;
   let minSize: number | undefined;
   if (minify) {
-    const minified = await buildCss({ naming: 'style.min.css', minify: true });
+    const minified = await buildCss({ naming: 'style.min.css', minify: true, analyze });
     if (!minified.success) {
       console.error('portal CSS minify failed:');
       for (const log of minified.logs) console.error(log);
       process.exit(1);
     }
-    minPath = minified.outputs[0]?.path ?? joinPath(OUTDIR, 'style.min.css');
+    checkBuildLogs('portal CSS minify build', minified.logs);
+    minPath = cssOutputPath(OUTDIR, minified, { naming: 'style.min.css', minify: true, analyze });
     minSize = Bun.file(minPath).size;
+    if (analyze) {
+      await assertMetafile(
+        OUTDIR,
+        metafilePaths({ naming: 'style.min.css', minify: true, analyze })
+      );
+    }
   }
 
   const readme = [
@@ -118,6 +139,9 @@ async function main(): Promise<void> {
     '|------|------|',
     '| `style.css` | Lowered / vendor-prefixed (Bun default browser targets) |',
     '| `style.min.css` | Same + minify (`--minify`) |',
+    '| `meta.json` | `--analyze`: esbuild-compatible input/output graph for CI and tooling |',
+    '| `meta.md` | `--analyze`: Bun 1.4 Markdown graph for human and agent review |',
+    '| `meta.min.{json,md}` | `--analyze --minify`: matching minified-build analysis |',
     '',
     `\`publicPath\`: \`${PUBLIC_PATH}\` (prefixes rewritten asset URLs).`,
     '',
@@ -132,6 +156,11 @@ async function main(): Promise<void> {
   console.log(`  loader: css (Asset Processing) · kind=${kind}`);
   console.log(`  publicPath: ${PUBLIC_PATH}`);
   console.log(`  size:   ${size} bytes (lowered)`);
+  if (analyze) {
+    console.log(
+      `  meta:   ${joinPath(OUTDIR, loweredMetafile.json)} · ${joinPath(OUTDIR, loweredMetafile.markdown)}`
+    );
+  }
   if (minPath) console.log(`  minify: ${minPath} (${minSize} bytes)`);
   console.log(`  docs:   bundler#content-types · bundler/loaders#css · bundler/css`);
   console.log('');

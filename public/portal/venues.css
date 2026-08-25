@@ -10,34 +10,6 @@
  * @see docs/portal-foundation.md
  */
 
-:root,
-[data-theme="dark"] {
-  /* Polymarket — Poly Blue */
-  --venue-poly-border: #2e5cff;
-  --venue-poly-text: #58a6ff; /* Primer accent-fg, lighter for dark bg */
-  --venue-poly-bg: rgba(46, 92, 255, 0.08);
-
-  /* Pinnacle — Royal Blue */
-  --venue-pinnacle-border: #1a73e8;
-  --venue-pinnacle-text: #79c0ff;
-  --venue-pinnacle-bg: rgba(26, 115, 232, 0.08);
-
-  /* Betfair — Yellow (attention family, not status-warn fills) */
-  --venue-betfair-border: #f5b942;
-  --venue-betfair-text: #e3b341;
-  --venue-betfair-bg: rgba(245, 185, 66, 0.08);
-
-  /* Kalshi — Sky / cyan */
-  --venue-kalshi-border: #7dd3fc;
-  --venue-kalshi-text: #a5d6ff;
-  --venue-kalshi-bg: rgba(125, 211, 252, 0.08);
-
-  /* Unknown */
-  --venue-unknown-border: var(--border, #30363d);
-  --venue-unknown-text: var(--text-dim, #8b949e);
-  --venue-unknown-bg: rgba(139, 148, 158, 0.08);
-}
-
 /* ── Badge ─────────────────────────────────────────────────────────── */
 
 .venue-badge {
@@ -133,7 +105,7 @@
 }
 
 .venue-legend__title {
-  color: var(--text-dim, #8b949e);
+  color: var(--text-dim);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.06em;

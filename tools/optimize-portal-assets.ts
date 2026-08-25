@@ -37,11 +37,13 @@ type PortalBundleReport = {
   schemaVersion: 1;
   metric: 'aggregate-initial-js-css-by-route';
   pageCount: number;
+  baselinePageCount: number;
   baselineRevision: string;
   baselineBytes: number;
+  normalizedBaselineBytes: number;
   sourceBytes: number;
   optimizedBytes: number;
-  targetReductionPct: 35;
+  targetReductionPct: number;
   reductionPct: number;
   targetBytes: number;
   pass: boolean;
@@ -55,7 +57,12 @@ type PortalPerformanceBaseline = {
   revision: string;
   pageCount: number;
   baselineBytes: number;
+  minimumReductionPct: number;
 };
+
+function isReductionPercentage(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0 && value < 100;
+}
 
 function flagValue(name: string): string | undefined {
   const prefix = `--${name}=`;
@@ -328,7 +335,15 @@ export async function optimizePortalAssets(
   const outdir = options.outdir ?? DEFAULT_OUTDIR;
   const baselinePath = options.baselinePath ?? DEFAULT_BASELINE;
   const baseline = (await Bun.file(baselinePath).json()) as PortalPerformanceBaseline;
-  if (baseline.schemaVersion !== 1 || baseline.metric !== 'aggregate-initial-js-css-by-route') {
+  if (
+    baseline.schemaVersion !== 1 ||
+    baseline.metric !== 'aggregate-initial-js-css-by-route' ||
+    !Number.isSafeInteger(baseline.baselineBytes) ||
+    baseline.baselineBytes <= 0 ||
+    !Number.isSafeInteger(baseline.pageCount) ||
+    baseline.pageCount <= 0 ||
+    !isReductionPercentage(baseline.minimumReductionPct)
+  ) {
     throw new Error(`Unsupported portal performance baseline: ${baselinePath}`);
   }
   await copyPublicTree(outdir);
@@ -345,22 +360,27 @@ export async function optimizePortalAssets(
   }
   const sourceBytes = source.reduce((total, row) => total + row.totalBytes, 0);
   const optimizedBytes = optimized.reduce((total, row) => total + row.totalBytes, 0);
-  const { baselineBytes } = baseline;
+  const { baselineBytes, minimumReductionPct, pageCount: baselinePageCount } = baseline;
+  const normalizedBaselineBytes = Math.round(
+    (baselineBytes * optimized.length) / baselinePageCount
+  );
   const reductionPct = Number(
-    (((baselineBytes - optimizedBytes) / baselineBytes) * 100).toFixed(2)
+    (((normalizedBaselineBytes - optimizedBytes) / normalizedBaselineBytes) * 100).toFixed(2)
   );
   const report: PortalBundleReport = {
     schemaVersion: 1,
     metric: 'aggregate-initial-js-css-by-route',
     pageCount: optimized.length,
+    baselinePageCount,
     baselineRevision: baseline.revision,
     baselineBytes,
+    normalizedBaselineBytes,
     sourceBytes,
     optimizedBytes,
-    targetReductionPct: 35,
+    targetReductionPct: minimumReductionPct,
     reductionPct,
-    targetBytes: Math.floor(baselineBytes * 0.65),
-    pass: reductionPct >= 35,
+    targetBytes: Math.floor(normalizedBaselineBytes * (1 - minimumReductionPct / 100)),
+    pass: reductionPct >= minimumReductionPct,
     source,
     optimized,
   };
@@ -377,7 +397,7 @@ async function main(): Promise<void> {
     : resolvePath(ROOT, flagValue('report') ?? 'tools/performance/portal-performance-report.json');
   const report = await optimizePortalAssets({ outdir, reportPath });
   console.log(
-    `Portal optimize: ${report.pageCount} pages · ${report.baselineBytes} → ${report.optimizedBytes} bytes · ${report.reductionPct}%`
+    `Portal optimize: ${report.pageCount} pages · ${report.normalizedBaselineBytes} normalized bytes (${report.baselineBytes}/${report.baselinePageCount} baseline) → ${report.optimizedBytes} bytes · ${report.reductionPct}%`
   );
   console.log(`Output: ${outdir}`);
   if (reportPath) console.log(`Report: ${reportPath}`);

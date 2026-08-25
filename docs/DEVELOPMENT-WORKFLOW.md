@@ -48,6 +48,25 @@ References:
 ·
 [`bun test --changed` release](https://bun.com/blog/bun-v1.3.13#bun-test-changed).
 
+### Bun boundary: execution vs. governance
+
+Bun owns execution: test discovery and CLI overrides, `--changed`,
+`--path-ignore-patterns`, `--parallel` / isolation, timing data, reporters,
+and CPU/heap profiling. This repository uses those capabilities directly; it
+does not describe its own workflow policy as a Bun API recommendation.
+
+FactoryWager owns governance layered above Bun: exclusive CI-suite ownership,
+the reserved-suite exclusion passed to changed-test wrappers, proof receipts
+for pre-push, quiet-success log retention, console-output ratchets, and merge
+quality thresholds. In particular, the temporary CLI ignore override partitions
+execution between repo-owned groups; Bun documents ignores chiefly as discovery
+pruning. Keep stable discovery exclusions in `bunfig.toml`, and keep any
+execution partition explicit in the owning wrapper and its tests.
+
+See [`bun-test-flags.md`](harness/tenants/bun-test-flags.md) for the native
+flag-to-wrapper map and [Bun 1.4 observability](https://bun.com/blog/bun-v1.4#observability)
+for the profiling capabilities used by hook diagnostics.
+
 ---
 
 ## Pre-commit (husky — keep this)

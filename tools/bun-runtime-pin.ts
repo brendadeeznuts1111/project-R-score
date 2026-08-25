@@ -6,15 +6,17 @@
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { cliOut, tones } from '../lib/console/index.ts';
 import {
-  applyUnknownLongOptionGuardFor,
+  applyReleaseUnknownLongOptionGuardFor,
   BUN_RUNTIME_PIN_ALLOWED_LONG,
-} from '../lib/docs/ref-id-tool-flags.ts';
+} from '../lib/docs/flags/release.ts';
 import { checkBunPin } from '../lib/verification/bun-runtime-pin.ts';
 
 export { BUN_RUNTIME_PIN_ALLOWED_LONG };
 
 export async function runBunRuntimePinCli(argv: string[] = Bun.argv.slice(2)): Promise<number> {
-  const guarded = applyUnknownLongOptionGuardFor('bun:runtime-pin', argv, { onFail: 'throw' });
+  const guarded = applyReleaseUnknownLongOptionGuardFor('bun:runtime-pin', argv, {
+    onFail: 'throw',
+  });
   const json = guarded.includes('--json');
 
   const result = await checkBunPin();

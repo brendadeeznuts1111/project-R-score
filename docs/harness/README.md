@@ -158,7 +158,7 @@ bun run ci:harness          # quiet harness envelope
 bun run ci:core             # install verify · hygiene · ci:harness (= GHA body)
 # Actions offline (billing)? Local proof = required-check bodies:
 #   bun run ci:core
-#   bun run ts:verify && bun run imports:verify && bun run type-check:ci && bun run type-check:full
+#   bun run ts:verify && bun run imports:verify && bun run type-check:full
 ```
 
 ### CI tiers
@@ -175,7 +175,7 @@ bun run ci:core             # install verify · hygiene · ci:harness (= GHA bod
   *Ratchet* → [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml)
 - **`setup`** — shared Bun + install cache (+ optional eslint cache)  
   *Ratchet* → [setup-factory-bun](../../.github/actions/setup-factory-bun/action.yml)
-- **`types`** — `type-check:ci` then `type-check:full` (not matrix×2 installs)  
+- **`types`** — one root `type-check:full`; `type-check:ci` remains development-only
   *Ratchet* → [typescript-checks.yml](../../.github/workflows/typescript-checks.yml) · local: same scripts
 
 **Required checks:** Harness Gates + Type Check — see [AUTHORITY.md](AUTHORITY.md). When Actions cannot start, local `ci:core` + type-check is the proof; GitHub status stays red until billing restores. Velocity / install-tax: [VELOCITY_BASELINE.md](../organization/VELOCITY_BASELINE.md#ci-install-tax-2026-07-21-deepen). Pre-commit write tools fail if staged≠worktree (re-stage + retry).

@@ -2,7 +2,7 @@
   "schemaVersion": 3,
   "release": "Bun 1.4",
   "version": "1.4.0",
-  "generatedAt": "2026-08-25T05:07:48.626Z",
+  "generatedAt": "2026-08-25T17:33:30.428Z",
   "sourcePage": "https://bun.com/blog/bun-v1.4",
   "rightsStatus": "pending",
   "owner": {
@@ -36,7 +36,7 @@
       }
     ]
   },
-  "snapshotDigest": "9252a4ec4f38e3bc0f91788b9f7073b7bdaa29de4daffcb9d6183aa81e32cc2e",
+  "snapshotDigest": "aa86f3f9256e620c59ed21637c4966c7dc9dee400a987e77de41a1cc8ad59de5",
   "files": [
     {
       "path": "feeds/v1/all.xml",
@@ -60,13 +60,13 @@
     },
     {
       "path": "registry/bun-1.4-assets.json",
-      "bytes": 22905,
-      "sha256": "25a0c09bce2b7b1904fb7623099bfa61d2bda7d32be9b7c8ef6bff0d13677a5d"
+      "bytes": 28053,
+      "sha256": "2335f8838e08454128b54a3f224e637107b4f85e9e098e08da91b6488639b577"
     },
     {
       "path": "registry/bun-1.4-capabilities.json",
       "bytes": 38656,
-      "sha256": "68c37963dbd2cb553ea60d476d21a7c5c2ac9ceff0c1ab99fcd45129fbc2091c"
+      "sha256": "48a807c5e7a1d1e1993e94ed864868d25ce32a8b5199d528e2b9430adaa6cb82"
     },
     {
       "path": "registry/project-rss-channels.json",

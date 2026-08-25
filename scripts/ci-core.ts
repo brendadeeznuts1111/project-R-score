@@ -2,7 +2,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+import { applyHarnessUnknownLongOptionGuardFor } from '../lib/docs/flags/harness.ts';
 /**
  * One local/CI envelope after `bun ci`: install proof + hygiene + ci:harness.
  * Avoids a second GHA job that re-installs for hygiene alone.
@@ -16,101 +16,13 @@ import {
   type CoreStepResult,
   type GateTiming,
 } from './lib/ci-core-runner';
+import { CORE_STEPS } from './lib/ci-core-steps.ts';
 
 const repoRoot = `${import.meta.dir}/..`;
 const TIMING_PATH = `${repoRoot}/reports/ci-core-timing.json`;
 
-const CORE_STEPS: CoreStep[] = [
-  {
-    name: 'install-verify',
-    // cache-lifecycle owns the one expensive global-cache size traversal below.
-    cmd: ['bun', 'scripts/verify-install-cache.ts', '--strict', '--quiet', '--skip-cache-size'],
-  },
-  {
-    name: 'cache-lifecycle',
-    cmd: ['bun', 'run', 'install:cache:lifecycle'],
-  },
-  {
-    name: 'hygiene',
-    cmd: ['bun', 'run', 'hygiene'],
-  },
-  {
-    name: 'agent-skills',
-    cmd: ['bun', 'run', 'skills:validate'],
-  },
-  {
-    name: 'native-docs',
-    cmd: ['bun', 'run', 'docs:native:check'],
-  },
-  {
-    name: 'bun-release-contracts',
-    cmd: ['bun', 'run', 'bun:release-contracts:check'],
-  },
-  {
-    name: 'bun-1.4-channel-release',
-    cmd: ['bun', 'run', 'channels:bun-1.4:check'],
-  },
-  {
-    name: 'bun-release-knowledge',
-    cmd: ['bun', 'run', 'bun:release-knowledge:validate:all'],
-  },
-  {
-    name: 'markdown-contract',
-    cmd: ['bun', 'run', 'check:docs'],
-  },
-  {
-    name: 'wiki-coverage',
-    cmd: ['bun', 'run', 'wiki:coverage:check'],
-  },
-  {
-    name: 'wiki-links',
-    cmd: ['bun', 'run', 'wiki:links:check'],
-  },
-  {
-    name: 'import-graph',
-    cmd: ['bun', 'scripts/check-import-graph.ts'],
-  },
-  {
-    name: 'console-format-ratchet',
-    cmd: ['bun', 'scripts/lint-console-format.ts'],
-  },
-  {
-    name: 'brand-manifest',
-    cmd: ['bun', 'tools/brand-manifest.ts', '--check'],
-  },
-  {
-    name: 'brand-adoption',
-    cmd: ['bun', 'tools/branded-id-check.ts', '--smart', '--strict', '--quiet'],
-  },
-  {
-    name: 'brand-catalog',
-    cmd: ['bun', 'test', 'tests/branded-catalog.test.ts'],
-  },
-  {
-    name: 'policy-audit',
-    cmd: ['bun', 'tools/policy-audit.ts'],
-  },
-  {
-    name: 'jurisdictions-docs',
-    cmd: ['bun', 'tools/jurisdictions-docs.ts', '--check'],
-  },
-  {
-    name: 'monorepo-health',
-    cmd: ['bun', 'scripts/check-monorepo-health.ts', '--no-history', '--no-write'],
-  },
-  {
-    name: 'concept-audit',
-    cmd: ['bun', 'run', 'concept:audit', '--', '--strict', '--output', 'json'],
-    writeOut: 'concept-audit.json',
-  },
-  {
-    name: 'tennis-ssot-release',
-    cmd: ['bun', 'run', 'tennis:ssot:release:check'],
-  },
-];
-
 const harnessArgs = import.meta.main
-  ? applyUnknownLongOptionGuardFor('ci:core', Bun.argv.slice(2))
+  ? applyHarnessUnknownLongOptionGuardFor('ci:core', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 const verbose = harnessArgs.includes('--verbose');
 const timings: GateTiming[] = [];
@@ -137,6 +49,7 @@ if (!installPrecheck) throw new Error('ci:core requires an install precheck');
 const installResult = await runCoreStep(installPrecheck.cmd, {
   cwd: repoRoot,
   inherit: verbose && !installPrecheck.writeOut,
+  logId: installPrecheck.name,
 });
 await acceptResult(installPrecheck, installResult);
 if (installResult.code !== 0) {
@@ -153,6 +66,7 @@ const parallelResults = await Promise.all(
     result: await runCoreStep(step.cmd, {
       cwd: repoRoot,
       inherit: verbose && !step.writeOut,
+      logId: step.name,
     }),
   }))
 );

@@ -168,7 +168,7 @@ do not treat hosted green as proof those bans still hold.
   inventory/knowledge proof · `ci:harness`.
 - `snapshot-api` = partner CLI stdout/stderr contract captured with
   `toMatchSnapshot()` from argv-safe `Bun.spawn` subprocesses.
-- `ci:types` = config/import verification plus CI and full type scopes.
+- `ci:types` = config/import verification plus one root full type scope.
 - `ci:security` = dependency guard plus security audit.
 - `ci:portal-registry` = isolated writer tests plus clean-public-tree proof.
 - `security-scanner.yml` is retained reference-only and maps to the local

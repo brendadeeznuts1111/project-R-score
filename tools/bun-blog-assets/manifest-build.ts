@@ -14,10 +14,10 @@ import type {
   AssetRecord,
   Attribution,
   CliOptions,
-  FetchedAsset,
   RightsApprovalEvidence,
   SourceDocuments,
 } from './types.ts';
+import type { FetchedAsset } from './inspection-types.ts';
 
 function localUrlFor(asset: AssetDraft, mode: CliOptions['mode']): string | null {
   if (mode !== 'vendor' || asset.kind === 'embed') return null;
@@ -48,6 +48,11 @@ export function buildManifest(
       metadataSource: item.metadataSource,
       width: item.asset.width,
       height: item.asset.height,
+      stewardship: {
+        team: 'project-r-score-release-channel',
+        reviewRole: 'release-channel-maintainer',
+        responsibility: 'metadata-routing-and-rights-review',
+      },
     } satisfies AssetRecord;
   });
   const rightsStatus = mode === 'vendor' ? 'approved' : 'pending';

@@ -147,6 +147,10 @@ export const CLI_SPECIAL: Record<string, string> = {
   'files:rate-removal':
     'SHA-256 duplicate, large-file, reference, and addressability grading; advisory only',
   'channels:bun-1.4:check': 'Verify Bun 1.4 manifest-derived XML feeds and ownership snapshot',
+  'channels:bun-1.4:refresh':
+    'Fetch official Bun 1.4 sources and refresh the reviewed manifest plus derived channels',
+  'channels:bun-1.4:refresh:plan':
+    'Fetch official Bun 1.4 sources and report manifest drift without writing',
   'channels:bun-1.4:rebuild': 'Rebuild feeds and write a content-addressed Bun.Archive',
   'channels:bun-1.4:watch': 'Watch the reviewed manifest and rebuild derived channel outputs',
   'channels:projects': 'Regenerate the reviewed project/repository/channel ownership registry',

@@ -51,6 +51,12 @@ export const SCHEDULED_JOB_OWNERS: Readonly<Record<string, string>> = {
  */
 export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
   {
+    id: 'gha-bun-1.4-release-drift',
+    source: 'gha-cron',
+    match: 'bun-1.4-release-drift.yml',
+    reason: 'CI-owned Bun release-source drift proof; ci-core owns its workflow contract',
+  },
+  {
     id: 'verify-bun-apis-workflow',
     source: 'gha-cron',
     match: 'verify-bun-apis.yml',

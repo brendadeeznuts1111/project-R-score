@@ -3,5 +3,6 @@
   "metric": "aggregate-initial-js-css-by-route",
   "pageCount": 37,
   "baselineBytes": 6755228,
+  "minimumReductionPct": 35,
   "revision": "b0f6f6299be1f56867a90d64cd69f380689758ea"
 }

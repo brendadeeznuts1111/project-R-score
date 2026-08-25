@@ -58,6 +58,12 @@ function main(): void {
       `package.json script type-check:full is unexpected: ${scripts['type-check:full'] ?? '<missing>'}`
     );
   }
+  if (scripts['ci:types']?.includes('type-check:ci')) {
+    fail('ci:types must not run type-check:ci before its root-project superset type-check:full');
+  }
+  if (!scripts['ci:types']?.includes('type-check:full')) {
+    fail('ci:types must run the root-project type-check:full build');
+  }
 
   const rootRefs = pathsFromRefs(rootCfg);
   const ciRefs = pathsFromRefs(ciCfg);

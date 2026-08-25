@@ -59,7 +59,16 @@ import { isHarnessFormatPath, isHarnessLintPath } from '../config/eslint/harness
 import { printGateFailure, type GateFailureInput } from '../lib/harness/gate-fail.ts';
 import { isColorKernelPath } from '../lib/portal/color-kernel-paths.ts';
 import { hasFlag } from './lib/cli-args';
-import { ensureDir, writeJson } from './lib/fs-bun';
+import {
+  getStagedFiles as readStagedFiles,
+  stagedPatchIncludes as patchIncludes,
+  writeTimings as persistTimings,
+} from './precommit/gate-runtime.ts';
+import {
+  isAuditSsotPath as isAuditSsotPathFromPaths,
+  isDoctorBunfigPath as isDoctorBunfigPathFromPaths,
+  isGlossaryVerifyPath as isGlossaryVerifyPathFromPaths,
+} from './precommit/staged-paths.ts';
 
 const repoRoot = `${import.meta.dir}/..`;
 const TIMING_PATH = `${repoRoot}/reports/harness-gate-timing.json`;
@@ -71,7 +80,7 @@ async function failGate(
   full: boolean,
   input: GateFailureInput
 ): Promise<never> {
-  await writeTimings(timings, full);
+  await persistTimings(repoRoot, TIMING_PATH, timings, full);
   printGateFailure(input);
   process.exit(1);
 }
@@ -119,18 +128,6 @@ function isNativeCapabilitiesSyncPath(file: string): boolean {
   return NATIVE_CAPABILITIES_SYNC_PATHS.has(file.replace(/^\.\//, ''));
 }
 
-async function stagedPatchIncludes(files: string[], needle: string): Promise<boolean> {
-  if (files.length === 0) return false;
-  const proc = Bun.spawn(['git', 'diff', '--cached', '-U0', '--', ...files], {
-    cwd: repoRoot,
-    stdout: 'pipe',
-    stderr: 'pipe',
-  });
-  const patch = await new Response(proc.stdout).text();
-  const code = await proc.exited;
-  return code === 0 && patch.includes(needle);
-}
-
 /** Pages static plane — portal/registry/monitoring shells. */
 function isPublicPlanePath(file: string): boolean {
   const n = file.replace(/^\.\//, '');
@@ -149,12 +146,7 @@ function isPublicPlanePath(file: string): boolean {
  * Escape: SKIP_GLOSSARY_VERIFY=1
  */
 export function isGlossaryVerifyPath(file: string): boolean {
-  const n = file.replace(/^\.\//, '');
-  if (n === 'public/registry/domain-glossary.json') return true;
-  if (n === 'lib/portal/page-glossary.ts') return true;
-  if (n === 'tools/glossary-verify.ts') return true;
-  if (n === 'tests/glossary-verify.test.ts') return true;
-  return /^public\/portal\/(account|limits|partners|partner-history)\//.test(n);
+  return isGlossaryVerifyPathFromPaths(file);
 }
 
 /** Runtime flags catalog SSOT — keep JSON valid and in sync with live bun --help. */
@@ -167,14 +159,7 @@ function isRuntimeFlagsPath(file: string): boolean {
  * Escape: SKIP_DOCTOR_BUNFIG=1
  */
 export function isDoctorBunfigPath(file: string): boolean {
-  const n = file.replace(/^\.\//, '');
-  return (
-    n === 'bunfig.toml' ||
-    n === 'config/machine.bunfig.toml.template' ||
-    n === 'scripts/ensure-machine-bunfig.ts' ||
-    n === 'scripts/lib/machine-bunfig.ts' ||
-    n === 'tools/lib/portal-cli-doctor-bunfig.ts'
-  );
+  return isDoctorBunfigPathFromPaths(file);
 }
 
 /**
@@ -203,37 +188,7 @@ export function isTsconfigTypesPath(file: string): boolean {
 
 /** Audit findings/concepts SSOT — verify even when no harness .ts is staged. */
 export function isAuditSsotPath(file: string): boolean {
-  const n = file.replace(/^\.\//, '');
-  return (
-    n.startsWith('tools/audit-findings/') ||
-    n.startsWith('tools/audit-concepts/') ||
-    n.startsWith('tools/audit-evidence/') ||
-    n.startsWith('lib/audit/') ||
-    n.startsWith('docs/audit/') ||
-    n === 'tools/audit-catalog.ts' ||
-    n === 'tools/audit-catalog.json' ||
-    n === 'tools/audit-emit-stub.ts' ||
-    n === 'tools/audit-migrate-to-sha3.ts' ||
-    n === 'tests/audit-catalog.test.ts' ||
-    n === 'lib/types/branded/audit.ts' ||
-    n === 'tools/bun-doc-refs.ts' ||
-    n === 'tools/bun-docs-curated.ts'
-  );
-}
-
-async function getStagedFiles(): Promise<string[]> {
-  const proc = Bun.spawn(['git', 'diff', '--cached', '--name-only', '--diff-filter=ACM'], {
-    cwd: repoRoot,
-    stdout: 'pipe',
-    stderr: 'pipe',
-  });
-  const out = await new Response(proc.stdout).text();
-  const code = await proc.exited;
-  if (code !== 0) return [];
-  return out
-    .split('\n')
-    .map(f => f.trim())
-    .filter(Boolean);
+  return isAuditSsotPathFromPaths(file);
 }
 
 /** Worktree ≠ index for these paths (write tools rewrote without re-stage). */
@@ -299,22 +254,10 @@ async function runGate(name: string, cmd: string[], timings: GateTiming[]): Prom
   return code;
 }
 
-async function writeTimings(timings: GateTiming[], full: boolean): Promise<void> {
-  await ensureDir(`${repoRoot}/reports`);
-  const payload = {
-    generatedAt: new Date().toISOString(),
-    full,
-    totalMs: timings.reduce((s, t) => s + t.ms, 0),
-    gates: timings,
-  };
-  await writeJson(TIMING_PATH, payload);
-  console.info(`⏱  gate timings → reports/harness-gate-timing.json (${payload.totalMs}ms total)`);
-}
-
 async function main(): Promise<void> {
   const full = hasFlag('full');
   const timings: GateTiming[] = [];
-  const staged = await getStagedFiles();
+  const staged = await readStagedFiles(repoRoot);
   const harnessFiles = staged.filter(isHarnessLintPath);
   /** Lint scope ∪ tests / *.test.ts — Prettier only (ESLint stays on harnessFiles). */
   const formatFiles = staged.filter(isHarnessFormatPath);
@@ -323,7 +266,7 @@ async function main(): Promise<void> {
   const nativeCapabilitiesFiles = staged.filter(isNativeCapabilitiesSyncPath);
   const nativeCapabilitiesTriggered =
     nativeCapabilitiesFiles.length > 0 ||
-    (await stagedPatchIncludes(harnessFiles, 'Bun.markdown.'));
+    (await patchIncludes(repoRoot, harnessFiles, 'Bun.markdown.'));
 
   async function runPrettierWrite(files: string[]): Promise<void> {
     if (files.length === 0) return;
@@ -472,7 +415,7 @@ async function main(): Promise<void> {
     }
   }
 
-  const auditFiles = staged.filter(isAuditSsotPath);
+  const auditFiles = staged.filter(isAuditSsotPathFromPaths);
   if (auditFiles.length > 0) {
     console.info(`🧾 Audit catalog verify (${auditFiles.length} path(s) staged)...`);
     const code = await runGate('audit-verify', ['bun', 'run', 'audit:verify'], timings);
@@ -502,7 +445,7 @@ async function main(): Promise<void> {
     }
   }
 
-  const glossaryVerifyFiles = staged.filter(isGlossaryVerifyPath);
+  const glossaryVerifyFiles = staged.filter(isGlossaryVerifyPathFromPaths);
   if (glossaryVerifyFiles.length > 0 && Bun.env.SKIP_GLOSSARY_VERIFY !== '1') {
     console.info(
       `📖 Glossary DOM mounts (${glossaryVerifyFiles.length} path(s) staged) · HTMLRewriter…`
@@ -554,7 +497,7 @@ async function main(): Promise<void> {
   }
 
   // Bunfig policy surface — offline doctor group only (no full doctor / no Access network).
-  const doctorBunfigFiles = staged.filter(isDoctorBunfigPath);
+  const doctorBunfigFiles = staged.filter(isDoctorBunfigPathFromPaths);
   if (doctorBunfigFiles.length > 0) {
     if (Bun.env.SKIP_DOCTOR_BUNFIG === '1') {
       console.info('⏭️  SKIP_DOCTOR_BUNFIG=1 — portal doctor bunfig group skipped');
@@ -646,7 +589,7 @@ async function main(): Promise<void> {
     } else {
       console.info('✅ No staged harness TypeScript or doc-map SSOT files');
     }
-    await writeTimings(timings, full);
+    await persistTimings(repoRoot, TIMING_PATH, timings, full);
     return;
   }
 
@@ -945,7 +888,7 @@ async function main(): Promise<void> {
   }
 
   console.info('✅ Harness pre-commit checks passed');
-  await writeTimings(timings, full);
+  await persistTimings(repoRoot, TIMING_PATH, timings, full);
 }
 
 if (import.meta.main) {

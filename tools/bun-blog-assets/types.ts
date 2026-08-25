@@ -126,6 +126,12 @@ export type AssetRecord = AssetDraft & {
   sha256: string | null;
   format: string | null;
   metadataSource: 'source-attributes' | 'remote-bytes' | 'not-fetched';
+  /** Repository operational owner; never asserts ownership of Bun source media. */
+  stewardship: {
+    team: 'project-r-score-release-channel';
+    reviewRole: 'release-channel-maintainer';
+    responsibility: 'metadata-routing-and-rights-review';
+  };
 };
 
 export type Attribution = {
@@ -164,25 +170,9 @@ export type SourceDocuments = {
   markdownSource: string;
 };
 
-export type FetchedAsset = {
-  asset: AssetDraft;
-  bytes: Uint8Array | null;
-  mimeType: string | null;
-  byteSize: number | null;
-  sha256: string | null;
-  format: string | null;
-  metadataSource: AssetRecord['metadataSource'];
-  rangeProbe: RangeProbe | null;
-};
-
-export type RangeProbe = {
-  request: 'bytes=0-0';
-  result: 'supported' | 'ignored';
-  totalBytes: number;
-};
-
 export type CliOptions = {
   check: boolean;
+  plan?: boolean;
   vendor: boolean;
   confirmRights: boolean;
   mode: 'external' | 'vendor';

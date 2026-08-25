@@ -16,7 +16,7 @@ Category labels come from [`scripts/lib/cli-categories.ts`](../scripts/lib/cli-c
 | `bun run test:affected` | `bun run --filter '...' test` |
 | `bun run cli:docs` | Refresh this file |
 
-CI uses `bun run type-check:ci` (`tsconfig.ci.json`). Full solution: `type-check:full` (rare).
+Use `bun run type-check:ci` (`tsconfig.ci.json`) for the fast development loop. Merge CI runs the root `type-check:full` solution once.
 
 ---
 
@@ -80,6 +80,8 @@ All commands run via `bun run <name>` from the project root:
 |---------|-------------|
 | `bun run channels:bun-1.4:check` | Verify Bun 1.4 manifest-derived XML feeds and ownership snapshot |
 | `bun run channels:bun-1.4:rebuild` | Rebuild feeds and write a content-addressed Bun.Archive |
+| `bun run channels:bun-1.4:refresh` | Fetch official Bun 1.4 sources and refresh the reviewed manifest plus derived channels |
+| `bun run channels:bun-1.4:refresh:plan` | Fetch official Bun 1.4 sources and report manifest drift without writing |
 | `bun run channels:bun-1.4:watch` | Watch the reviewed manifest and rebuild derived channel outputs |
 | `bun run channels:projects` | Regenerate the reviewed project/repository/channel ownership registry |
 | `bun run channels:projects:check` | Verify project ownership, aliases, copied-feed absence, and branded type contracts |
@@ -336,10 +338,10 @@ All commands run via `bun run <name>` from the project root:
 | `bun run ci:core` | Install verify · hygiene · ci:harness (GHA harness-gates / one install) |
 | `bun run ci:harness` | Quiet CI envelope (∥ cheap · eslint-changed · test:changed:main; --full-lint on main) |
 | `bun run ci:harness:fast` | Quiet local parity (∥ cheap · test:changed dirty; no eslint) |
-| `bun run ci:portal-registry` | bash -c 'bun test --timeout=60000 tests/compliance-portal-bake.test.ts tests/harness-utilities.test.ts tests/ops-snapshot-cron.test.ts tests/portal-weave.test.ts tests/registry-contracts.test.ts && test -z "$(git status --porcelain --untracked-files=all -- public/)"' |
+| `bun run ci:portal-registry` | scripts/assert-public-clean.ts |
 | `bun run ci:r2:version:check` | scripts/ci-r2-version-check.ts |
 | `bun run ci:security` | security:guard:deps && bun run dependencies:governance:check && bun run security:audit |
-| `bun run ci:types` | ts:verify && bun run imports:verify && bun run check:tsconfig-types -- --strict && bun run type-check:ci && bun run type-check:full && bun run check:concept-registry:types && bun run check:bun-native-comprehensive:types && bun run check:factory-color:types |
+| `bun run ci:types` | ts:verify && bun run imports:verify && bun run check:tsconfig-types -- --strict && bun run type-check:full && bun run check:concept-registry:types && bun run check:bun-native-comprehensive:types && bun run check:factory-color:types |
 | `bun run ci:validate` | --sequential standards:check |
 
 ### Security

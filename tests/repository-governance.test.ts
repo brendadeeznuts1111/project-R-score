@@ -54,11 +54,12 @@ describe('repository governance', () => {
     expect(packageJson.scripts['bun:ci']).not.toContain('R2_BUCKET_NAME=');
     const localCi = await Bun.file(`${import.meta.dir}/../scripts/bun-ci.ts`).text();
     expect(localCi).toContain("['bun', 'run', 'ci:core']");
-    expect(localCi).toContain("['bun', 'run', 'test:snapshots']");
+    expect(localCi).not.toContain("['bun', 'run', 'test:snapshots']");
     expect(localCi).not.toContain("['bun', 'run', 'test:partner-cli:snapshots']");
     expect(localCi).toContain("['bun', 'run', 'ci:types']");
     expect(localCi).toContain("['bun', 'run', 'ci:security']");
     expect(localCi).toContain("['bun', 'run', 'ci:portal-registry']");
+    expect(packageJson.scripts['ci:portal-registry']).toBe('bun scripts/assert-public-clean.ts');
     expect(localCi).toContain("from '../lib/macros/git-commit.ts'");
     expect(localCi).not.toContain("type: 'macro'");
     expect(localCi).toContain("Bun.env.R2_BUCKET_NAME");
@@ -68,13 +69,14 @@ describe('repository governance', () => {
     const ciCoreRunner = await Bun.file(
       `${import.meta.dir}/../scripts/lib/ci-core-runner.ts`
     ).text();
-    expect(ciCore).toContain("'--skip-cache-size'");
+    const ciCoreSteps = await Bun.file(`${import.meta.dir}/../scripts/lib/ci-core-steps.ts`).text();
+    expect(ciCoreSteps).toContain("'--skip-cache-size'");
     expect(ciCore).toContain('parallelCoreSteps.map');
     expect(ciCoreRunner).toContain('wallMs:');
-    expect(ciCore).toContain("name: 'bun-release-contracts'");
-    expect(ciCore).toContain("['bun', 'run', 'bun:release-contracts:check']");
-    expect(ciCore.indexOf("name: 'bun-release-contracts'")).toBeLessThan(
-      ciCore.indexOf("name: 'bun-release-knowledge'")
+    expect(ciCoreSteps).toContain("name: 'bun-release-contracts'");
+    expect(ciCoreSteps).toContain("['bun', 'run', 'bun:release-contracts:check']");
+    expect(ciCoreSteps.indexOf("name: 'bun-release-contracts'")).toBeLessThan(
+      ciCoreSteps.indexOf("name: 'bun-release-knowledge'")
     );
     expect(packageJson.scripts['test:partner-cli:snapshots']).toBe(
       'bun test tests/partner-cli-snapshots.test.ts'

@@ -376,7 +376,13 @@ export async function runPrecommit(
   if (dryRun) {
     if (hasTestSources) {
       const code = await requireCommand(
-        ['bun', 'scripts/bun-test-changed-staged.ts', '--dry-run', '--bail=1'],
+        [
+          'bun',
+          'scripts/bun-test-changed-staged.ts',
+          '--dry-run',
+          '--bail=1',
+          '--exclude-ci-reserved',
+        ],
         '❌ test:changed dry-run failed'
       );
       if (code !== 0) return code;
@@ -387,7 +393,7 @@ export async function runPrecommit(
     console.info('  ⏭️  SKIP_TEST_CHANGED=1');
   } else if (hasTestSources) {
     const code = await requireCommand(
-      ['bun', 'scripts/bun-test-changed-staged.ts', '--bail=1'],
+      ['bun', 'scripts/bun-test-changed-staged.ts', '--bail=1', '--exclude-ci-reserved'],
       '❌ test:changed failed (bail=1). Fix or SKIP_TEST_CHANGED=1 with reason in commit message.'
     );
     if (code !== 0) return code;

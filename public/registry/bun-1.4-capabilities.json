@@ -4,7 +4,7 @@
   "version": "1.4.0",
   "sourcePage": "https://bun.com/blog/bun-v1.4",
   "publishedAt": "2026-08-20T00:53:44.000Z",
-  "generatedAt": "2026-08-25T05:07:48.626Z",
+  "generatedAt": "2026-08-25T17:33:30.428Z",
   "relationModel": "capability-references-assets",
   "migration": {
     "breakingChangesUrl": "https://github.com/oven-sh/bun/issues/28792",

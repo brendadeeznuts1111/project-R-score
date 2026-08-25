@@ -5,7 +5,7 @@
   "sourcePage": "https://bun.com/blog/bun-v1.4",
   "sourceMarkdown": "https://bun.com/blog/bun-v1.4.md",
   "publishedAt": "2026-08-20T00:53:44.000Z",
-  "generatedAt": "2026-08-25T05:07:48.626Z",
+  "generatedAt": "2026-08-25T17:33:30.428Z",
   "rightsStatus": "pending",
   "rights": {
     "scope": "bun-1.4-release-blog-media",
@@ -92,7 +92,12 @@
       "byteSize": 31435,
       "sha256": "61eb660efeed9d7104e56439a0b6378111c56f0ce359b6d54fa12f0662346abe",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-bun-dedupe-poster",
@@ -111,7 +116,12 @@
       "byteSize": 31267,
       "sha256": "9785831492fd6ef2a74a141d7a495169478b9c020a3acf621de88cc9e45d4232",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-bun-prune-poster",
@@ -130,7 +140,12 @@
       "byteSize": 31323,
       "sha256": "6174aded6f97294c97de9c35bf8b1e70ad90a6d536ec051d6aa818f64b99bf4d",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-cpu-prof-devtools",
@@ -148,7 +163,12 @@
       "byteSize": 484152,
       "sha256": "44572fbf91c774b66e0000de31ae43e0e1b76298e93545505aee1e253c799288",
       "format": "png",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-cpu-usage-cc",
@@ -166,7 +186,12 @@
       "byteSize": 279147,
       "sha256": "7a0674afb5fb0dee71899d1579fae0d0f8714272620062de9021877c5717cb5e",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-ffi-3x",
@@ -185,7 +210,12 @@
       "byteSize": 254723,
       "sha256": "517fe9e02369beabee663f940786c000ceda973ba96632446485cef7ed2263c4",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-idle-cpu",
@@ -203,7 +233,12 @@
       "byteSize": 701275,
       "sha256": "7654a1643c8f39f752a2b1f557e8c5ae802275bc4f5a606d5e525e5f2a72b138",
       "format": "png",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-image-pipeline-src",
@@ -221,7 +256,12 @@
       "byteSize": 3687,
       "sha256": "3942aefa55828fbb42fcd171f9a082d1e66780640cafe85faa27717229667cf4",
       "format": "svg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-memory-pressure",
@@ -240,7 +280,12 @@
       "byteSize": 48791,
       "sha256": "578923232d09b9e67d72b6d777a42caf1a68d3a7f35768a45b6bfaf0632d6e60",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-nextjs-ssr-fetch-leak",
@@ -259,7 +304,12 @@
       "byteSize": 293597,
       "sha256": "e97643c7ae18474bd340d036e507693717505475a5759c5572ca621b2e3b9091",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-no-orphans",
@@ -278,7 +328,12 @@
       "byteSize": 147600,
       "sha256": "4e195a486d03af8649d1d34b92d2eb03c2caaf538fd256b24a388925743320b8",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-node-sqlite",
@@ -296,7 +351,12 @@
       "byteSize": 131291,
       "sha256": "f72fe5212d6c388c1977a63f941eb46dc18bf725291b02cf51ddc0b092020f2c",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-node-test-suite-progress",
@@ -314,7 +374,12 @@
       "byteSize": 560053,
       "sha256": "1af80ebc3279a0ddad22d0da8e8b49e848c1d8da03f39e0768b8e061ec01a8b0",
       "format": "png",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-og-image",
@@ -332,7 +397,12 @@
       "byteSize": 329366,
       "sha256": "ff20703acc390d2216ab8687d0a3fc15a3ce5ae929717e03edb9f90a2ee4c194",
       "format": "png",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-react-compiler",
@@ -351,7 +421,12 @@
       "byteSize": 35895,
       "sha256": "ee2cbb377c5d8eed6dfc049c0739bf0850516366d331ccb6d4553fd0876f014c",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-sourcemap-decoding",
@@ -370,7 +445,12 @@
       "byteSize": 33237,
       "sha256": "1870a74a7f0b2c1a04e1d5f532ec0094531f4de0d45f9752d44242e1eae7ea04",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-spawn-cgroup-poster",
@@ -389,7 +469,12 @@
       "byteSize": 22420,
       "sha256": "fb3b484aa5c232df28f27f5a7a241ece33ef7f1a6402d5a3fb78d4230b2267e1",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-stringwidth-cjk",
@@ -408,7 +493,12 @@
       "byteSize": 162823,
       "sha256": "18edef15eb75711984edf7f1fb820a7011c549b2934f4e84ef095ce562d082e9",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-test-timings",
@@ -427,7 +517,12 @@
       "byteSize": 354823,
       "sha256": "f5e02f9a028e8ae83e4f4f107ade77e6161f0a3d10c997ac00e4b2c67a5a4653",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-windows-timers",
@@ -446,7 +541,12 @@
       "byteSize": 164790,
       "sha256": "6175565ea58a6fd239068f02a47a0a56404908a597a299f4b2b63dd6ec530874",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-yaml-cyclic-anchors",
@@ -465,7 +565,12 @@
       "byteSize": 78171,
       "sha256": "12ad3d9d219d126d073d45e0e42bd59c85d9286ca56d7a4c747e896df9a60778",
       "format": "jpeg",
-      "metadataSource": "remote-bytes"
+      "metadataSource": "remote-bytes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-bun-audit-fix",
@@ -485,7 +590,12 @@
       "byteSize": 2478401,
       "sha256": "3cd917098134766b3f792bf69cfaa9d1df9db80b97d49511bd5f539721b56406",
       "format": "mp4",
-      "metadataSource": "source-attributes"
+      "metadataSource": "source-attributes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-bun-dedupe",
@@ -505,7 +615,12 @@
       "byteSize": 2752083,
       "sha256": "cb99595ba1d14a922d20d88bd12d11e0039f5a869d5645272c6fdd19d369b09a",
       "format": "mp4",
-      "metadataSource": "source-attributes"
+      "metadataSource": "source-attributes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-bun-prune",
@@ -525,7 +640,12 @@
       "byteSize": 1984969,
       "sha256": "1f6785891fda646ed54a2b1e5532d1f6c49a7b2c98195ea471cfef8d6372285c",
       "format": "mp4",
-      "metadataSource": "source-attributes"
+      "metadataSource": "source-attributes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-spawn-cgroup",
@@ -545,7 +665,12 @@
       "byteSize": 7379993,
       "sha256": "5062c687ea01563ebd0993616d3b9d5c2e290f7d3b2d62f613387691f3cecb95",
       "format": "mp4",
-      "metadataSource": "source-attributes"
+      "metadataSource": "source-attributes",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     },
     {
       "id": "bun-1.4-youtube-overview",
@@ -563,7 +688,12 @@
       "byteSize": null,
       "sha256": null,
       "format": null,
-      "metadataSource": "not-fetched"
+      "metadataSource": "not-fetched",
+      "stewardship": {
+        "team": "project-r-score-release-channel",
+        "reviewRole": "release-channel-maintainer",
+        "responsibility": "metadata-routing-and-rights-review"
+      }
     }
   ]
 }

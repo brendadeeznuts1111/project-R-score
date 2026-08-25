@@ -97,6 +97,15 @@ export function parseManifestShape(manifest: unknown, label: string): AssetManif
     if (record.rightsStatus === 'pending' && asset.publicUrl !== asset.sourceUrl) {
       fail(`${label}: pending rights must use source publicUrl (${asset.id})`);
     }
+    const stewardship = parseRecord(asset.stewardship);
+    if (
+      !stewardship ||
+      stewardship.team !== 'project-r-score-release-channel' ||
+      stewardship.reviewRole !== 'release-channel-maintainer' ||
+      stewardship.responsibility !== 'metadata-routing-and-rights-review'
+    ) {
+      fail(`${label}: assets[${index}] requires the release-channel stewardship record`);
+    }
     if (isSvgRecord(asset)) {
       if (
         asset.kind !== 'image' ||
@@ -140,8 +149,9 @@ export function compareManifestToInspection(expected: AssetManifest, actual: Ass
       'width',
       'height',
       'posterId',
+      'stewardship',
     ] as const) {
-      if (expectedAsset[field] !== actualAsset[field]) {
+      if (JSON.stringify(expectedAsset[field]) !== JSON.stringify(actualAsset[field])) {
         fail(
           `manifest drift for ${expectedAsset.id}: ${field} ` +
             `${JSON.stringify(expectedAsset[field])} !== ${JSON.stringify(actualAsset[field])}`

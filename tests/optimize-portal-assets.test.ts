@@ -7,6 +7,27 @@ import {
   optimizePortalAssets,
 } from '../tools/optimize-portal-assets.ts';
 
+async function temporaryBaseline(overrides: Record<string, unknown> = {}): Promise<string> {
+  const path = resolvePath(import.meta.dir, `../tmp/portal-baseline-${crypto.randomUUID()}.json`);
+  await Bun.write(
+    path,
+    JSON.stringify(
+      {
+        schemaVersion: 1,
+        metric: 'aggregate-initial-js-css-by-route',
+        pageCount: 1,
+        baselineBytes: 10_000_000,
+        minimumReductionPct: 1,
+        revision: 'test',
+        ...overrides,
+      },
+      null,
+      2
+    )
+  );
+  return path;
+}
+
 describe('portal deployment optimizer', () => {
   test('minifies runnable inline assets without changing JSON scripts', async () => {
     const html = `
@@ -52,11 +73,37 @@ describe('portal deployment optimizer', () => {
     'optimized Pages output keeps dot-directory discovery assets',
     async () => {
       const outdir = resolvePath(import.meta.dir, `../tmp/portal-optimizer-test-${process.pid}`);
-      const report = await optimizePortalAssets({ outdir });
+      const report = await optimizePortalAssets({
+        outdir,
+        baselinePath: await temporaryBaseline(),
+      });
       expect(report.pass).toBe(true);
       const discovery = await Bun.file(joinPath(outdir, '.well-known/mcp.json')).json();
       expect(discovery).toBeObject();
     },
     { timeout: 15_000 }
   );
+
+  test('normalizes the target to the dynamically discovered page inventory', async () => {
+    const outdir = resolvePath(import.meta.dir, `../tmp/portal-optimizer-policy-${process.pid}`);
+    const report = await optimizePortalAssets({
+      outdir,
+      baselinePath: await temporaryBaseline({ baselineBytes: 10_000, minimumReductionPct: 12.5 }),
+    });
+    expect(report.targetReductionPct).toBe(12.5);
+    expect(report.normalizedBaselineBytes).toBe(10_000 * report.pageCount);
+    expect(report.targetBytes).toBe(
+      Math.floor(report.normalizedBaselineBytes * (1 - report.targetReductionPct / 100))
+    );
+  });
+
+  test('rejects a missing or invalid reduction policy', async () => {
+    const outdir = resolvePath(import.meta.dir, `../tmp/portal-optimizer-invalid-${process.pid}`);
+    await expect(
+      optimizePortalAssets({
+        outdir,
+        baselinePath: await temporaryBaseline({ minimumReductionPct: 0 }),
+      })
+    ).rejects.toThrow('Unsupported portal performance baseline');
+  });
 });

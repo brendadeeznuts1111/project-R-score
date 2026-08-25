@@ -51,6 +51,7 @@ import {
   validateCapabilityAnchors,
 } from './capabilities.ts';
 import { syncBun14ChannelRelease } from './channel-release.ts';
+import { syncBun14VideoSharePages } from './channel-pages.ts';
 import { REPO_ROOT } from './constants.ts';
 import { discoverAssets } from './discovery.ts';
 import { fail } from './errors.ts';
@@ -59,6 +60,7 @@ import { inspectAllAssets } from './inspection.ts';
 import { buildManifest } from './manifest-build.ts';
 import { compareManifestToInspection, parseManifestShape } from './manifest-validation.ts';
 import { readRightsApprovalEvidence } from './rights.ts';
+import { buildRefreshPlan, formatRefreshPlan } from './refresh-plan.ts';
 import { loadSourceDocuments } from './sources.ts';
 import { atomicWriteJson, readManifest, stageVendorAssets } from './storage.ts';
 import type { AssetManifest, CliOptions } from './types.ts';
@@ -88,6 +90,12 @@ export async function run(options: CliOptions): Promise<AssetManifest> {
     'generated manifest'
   );
 
+  if (options.plan) {
+    const existing = await readManifest(options.manifestPath);
+    console.log(formatRefreshPlan(buildRefreshPlan(existing, manifest)));
+    return manifest;
+  }
+
   if (options.check) {
     const existing = await readManifest(options.manifestPath);
     compareManifestToInspection(existing, manifest);
@@ -104,6 +112,7 @@ export async function run(options: CliOptions): Promise<AssetManifest> {
       }
     }
     await syncBun14AssetFeeds(existing, capabilityRegistry, true);
+    await syncBun14VideoSharePages(existing, true);
     await syncBun14ChannelRelease({ check: true, archive: false, quiet: true });
     console.log(
       `bun-blog-assets: check passed (${existing.assets.length} assets; ` +
@@ -121,6 +130,7 @@ export async function run(options: CliOptions): Promise<AssetManifest> {
   validateCapabilityAnchors(capabilityRegistry, documents.html);
   await syncBun14CapabilityRegistry(capabilityRegistry, false);
   await syncBun14AssetFeeds(manifest, capabilityRegistry, false);
+  await syncBun14VideoSharePages(manifest, false);
   await syncBun14ChannelRelease({ check: false, archive: true, quiet: true });
   console.log(
     `bun-blog-assets: wrote ${manifest.assets.length}-asset ${manifest.rightsStatus} manifest to ${options.manifestPath}`

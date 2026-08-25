@@ -3,6 +3,11 @@
 The Bun 1.4 asset manifest is the source contract. The capability registry,
 portal, and four Bun.XML RSS feeds are derived projections.
 
+This is a versioned release projection, not a general RSS ingestion service or
+an odds/channel runtime. It does not imply a SQLite feed registry, polling,
+proxying, replay endpoints, MP4 transcoding, WebSocket delivery, or enabled
+HTTP/3. Add any such system as its own owned design and runtime contract.
+
 Breaking-behavior and upgrade evidence is owned by
 [`BUN_1_4_MIGRATION.md`](./BUN_1_4_MIGRATION.md). The registry stores those
 sources once under `migration`; release-note anchors remain capability-local.
@@ -103,11 +108,31 @@ exactly one declared kind channel; feed filenames remain plural (`images.xml`,
 ## Commands
 
 ```bash
+bun run channels:bun-1.4:refresh
+bun run channels:bun-1.4:refresh:plan
 bun run channels:bun-1.4:check
 bun run channels:bun-1.4:rebuild
 bun run channels:bun-1.4:watch
 bun run channels:projects:check
 ```
+
+`refresh` is the dynamic upstream path: it fetches the official Bun release
+sources, validates the complete media inventory, then rewrites the reviewed
+manifest and all derived capability, feed, video-share-page, and channel-release
+outputs. It remains external-only while rights are pending; it cannot vendor
+media without the separate explicit approval command. Review and commit its
+diff—an upstream hash or inventory change is never silently deployed.
+
+`refresh:plan` performs the same bounded source fetch and inspection but makes
+no writes. It reports added, removed, and changed stable asset IDs plus
+manifest-level metadata drift; use it before `refresh` when reviewing an
+upstream change.
+
+Merge proof runs `docs:blog-assets:check` before the manifest-derived channel
+check. The daily/manual
+[`bun-1.4-release-drift.yml`](../.github/workflows/bun-1.4-release-drift.yml)
+workflow repeats that source check; on failure it uploads the no-write refresh
+plan for review. Neither path refreshes, vendors, commits, or deploys media.
 
 `rebuild` derives capability and RSS outputs from the committed manifest, then
 writes a gzip-compressed tar archive and `latest.json` under

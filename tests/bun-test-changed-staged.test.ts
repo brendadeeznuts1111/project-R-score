@@ -167,6 +167,14 @@ describe('test-changed-staged helpers', () => {
     ]);
   });
 
+  test('reserved CI tests are excluded without leaking the wrapper flag', () => {
+    const command = buildStagedTestCommand(['--exclude-ci-reserved', '--bail=1']);
+    expect(command).toContain('--path-ignore-patterns');
+    expect(command).toContain('node_modules/**');
+    expect(command).toContain('tests/harness-ci-deploy.test.ts');
+    expect(command).not.toContain('--exclude-ci-reserved');
+  });
+
   test('stagedDeletions parses name-only diff output', () => {
     expect(stagedDeletions('lib/a.ts\nscripts/b.ts\n')).toEqual(['lib/a.ts', 'scripts/b.ts']);
     expect(stagedDeletions('')).toEqual([]);
@@ -177,7 +185,7 @@ describe('test-changed-staged helpers', () => {
     const hook = await Bun.file('.husky/pre-commit').text();
     const runner = await Bun.file('scripts/pre-commit.ts').text();
     expect(hook).toContain('exec bun scripts/pre-commit.ts "$@"');
-    expect(runner).toContain("['bun', 'scripts/bun-test-changed-staged.ts', '--bail=1']");
+    expect(runner).toContain("['bun', 'scripts/bun-test-changed-staged.ts', '--bail=1', '--exclude-ci-reserved']");
     expect(runner).not.toContain('bun run test:changed -- --bail=1');
   });
 

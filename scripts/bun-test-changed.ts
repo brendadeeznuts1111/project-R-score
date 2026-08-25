@@ -11,7 +11,7 @@
 // @see https://bun.com/docs/test/parallel#parallel — --parallel
 // @see https://bun.com/blog/bun-v1.4#bun-test-timings — --timings / --update-timings
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+import { applyHarnessUnknownLongOptionGuardFor } from '../lib/docs/flags/harness.ts';
 /**
  * Day-loop wrapper for `bun test --changed` (+ parallel by default).
  *
@@ -32,6 +32,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  * booting the Bun test import graph (~1–2s saved on docs-only diffs).
  */
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
+import { affectedTestIgnorePatterns } from '../lib/harness/ci-test-groups.ts';
 import { hasCodeLikeChange, listChangedFiles, resolveMainHead } from './lib/git-changed';
 import { ensureDir } from './lib/fs-bun';
 
@@ -51,6 +52,8 @@ export type TestChangedArgs = {
   isolate: boolean;
   timings: boolean;
   mainHead: boolean;
+  /** Exclude CI-owned reserved suites; used only by hooks and merge harness. */
+  excludeCiReserved: boolean;
   shard: TestChangedShard | undefined;
   /** Remaining flags to forward to `bun test` (e.g. --bail=1). */
   flags: string[];
@@ -97,10 +100,16 @@ export function parseTestChangedArgs(
   const wantSerial =
     argv.includes('--serial') || env.BUN_TEST_SERIAL === '1' || env.BUN_TEST_SERIAL === 'true';
   const wantIsolate = argv.includes('--isolate');
+  const excludeCiReserved = argv.includes('--exclude-ci-reserved');
   const wantTimings = !argv.includes('--no-timings');
   const dryRun = argv.includes('--dry-run');
   const stripped = argv.filter(
-    a => a !== '--main-head' && a !== '--serial' && a !== '--dry-run' && a !== '--no-timings'
+    a =>
+      a !== '--main-head' &&
+      a !== '--serial' &&
+      a !== '--dry-run' &&
+      a !== '--no-timings' &&
+      a !== '--exclude-ci-reserved'
   );
 
   // Parse --shard=M/N and remove from forwarded flags so we can validate it.
@@ -127,6 +136,7 @@ export function parseTestChangedArgs(
     timings: wantTimings,
     shard,
     mainHead: wantMainHead,
+    excludeCiReserved,
     flags,
     restPositionals,
   };
@@ -139,6 +149,12 @@ export function buildBunTestCommand(
 ): string[] {
   const bunArgs = ['test', '--pass-with-no-tests'];
   bunArgs.push(resolvedRef ? `--changed=${resolvedRef}` : '--changed');
+
+  if (args.excludeCiReserved) {
+    for (const pattern of affectedTestIgnorePatterns()) {
+      bunArgs.push('--path-ignore-patterns', pattern);
+    }
+  }
 
   const hasTimings = args.flags.some(flag => flag === '--timings' || flag.startsWith('--timings='));
   const updatesTimings = args.flags.includes('--update-timings');
@@ -193,7 +209,7 @@ export async function runTestChanged(
   } & TestChangedDeps = {}
 ): Promise<number> {
   const args = parseTestChangedArgs(
-    opts.argv ?? applyUnknownLongOptionGuardFor('test:changed', Bun.argv.slice(2)),
+    opts.argv ?? applyHarnessUnknownLongOptionGuardFor('test:changed', Bun.argv.slice(2)),
     opts.env ?? Bun.env
   );
   const resolveHead = opts.resolveMainHead ?? resolveMainHead;

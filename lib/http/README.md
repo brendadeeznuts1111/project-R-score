@@ -57,12 +57,9 @@ handler when `development: true` so Bun serves its in-browser page; when
 development is off, attaches `servePublicErrorHandler` → JSON
 `{ error: "Internal Server Error" }` with status 500 (no stack on the wire).
 
-**TOML bind prefs**: optional operator file `config/serve-public.toml` is
-**gitignored** (not in the git tree). Load/merge via
-[`serve-public-config.ts`](serve-public-config.ts)
-(`resolveServePublicBindPrefs()`). Env/`--port`/`BUN_PORT`/`PORT`/`NODE_PORT`
-activate Bun's native port chain (omit `port` on `Bun.serve`); otherwise
-`[server] port` / `host` from local TOML apply. Operator reference:
+**TOML bind prefs**: `config/serve-public.toml` is an optional, gitignored,
+repository-local application overlay—not `bunfig.toml`. Its custom `[server]`
+table is documented once in the operator reference:
 [`docs/harness/tenants/serve-public-bind.md`](../../docs/harness/tenants/serve-public-bind.md).
 
 ### Verification scripts via stdin (`bun run -`)

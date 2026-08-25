@@ -1,0 +1,47 @@
+name: Bun 1.4 Release Drift
+
+on:
+  schedule:
+    - cron: "20 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bun-1.4-release-drift-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Official source and channel projection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Factory Bun
+        uses: ./.github/actions/setup-factory-bun
+
+      - name: Verify official source against committed manifest
+        id: source-check
+        run: bun run docs:blog-assets:check
+
+      - name: Capture no-write refresh plan after source drift
+        if: failure() && steps.source-check.outcome == 'failure'
+        run: |
+          mkdir -p reports
+          bun run channels:bun-1.4:refresh:plan | tee reports/bun-1.4-refresh-plan.txt
+
+      - name: Upload refresh plan
+        if: always() && steps.source-check.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: bun-1.4-refresh-plan
+          path: reports/bun-1.4-refresh-plan.txt
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Verify committed channel projection
+        if: success()
+        run: bun run channels:bun-1.4:check

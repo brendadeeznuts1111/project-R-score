@@ -26,7 +26,8 @@ matched guide.
 | Bun API reference workflow     | [`BUN_DOCS_OPERATE.md`](./BUN_DOCS_OPERATE.md)                                                                |
 | Bun 1.4 native XML contract    | [`BUN_XML.md`](./BUN_XML.md)                                                                                  |
 | Bun 1.4 migration boundary     | [`BUN_1_4_MIGRATION.md`](./BUN_1_4_MIGRATION.md)                                                              |
-| Bun 1.4 channel lifecycle      | [`BUN_1_4_CHANNEL_LIFECYCLE.md`](./BUN_1_4_CHANNEL_LIFECYCLE.md)                                              |
+| Bun 1.4 channels, ownership, and removal | [`BUN_1_4_CHANNEL_LIFECYCLE.md`](./BUN_1_4_CHANNEL_LIFECYCLE.md) · generated registry `public/registry/bun-1.4-*.json` |
+| Bun 1.4 media delivery and rights | [`BUN_1_4_MEDIA_RIGHTS.md`](./BUN_1_4_MEDIA_RIGHTS.md) — external by default; vendor only after reviewed approval |
 | RSS + Media RSS shape contract | [`RSS_XML_CONTRACT.md`](./RSS_XML_CONTRACT.md)                                                                |
 | Grounded native capability map | [`harness/capability-map.md`](./harness/capability-map.md)                                                    |
 | Repository runtime conventions | [`../lib/bun-runtime.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/bun-runtime.md) |

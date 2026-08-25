@@ -165,6 +165,24 @@
     "border": "var(--border)",
   },
 
+  // Named non-status identities. These are the only product/venue colors that
+  // may differ from the shared status palette; generated as --venue-* and
+  // --subsystem-* variables for portal consumers and CSS-only pages.
+  "identity": {
+    "venue": {
+      "polymarket": { "border": "#2e5cff", "text": "#58a6ff", "bg": "rgba(46, 92, 255, 0.08)" },
+      "pinnacle": { "border": "#1a73e8", "text": "#79c0ff", "bg": "rgba(26, 115, 232, 0.08)" },
+      "betfair": { "border": "#f5b942", "text": "#e3b341", "bg": "rgba(245, 185, 66, 0.08)" },
+      "kalshi": { "border": "#7dd3fc", "text": "#a5d6ff", "bg": "rgba(125, 211, 252, 0.08)" },
+      "unknown": { "border": "#30363d", "text": "#8b949e", "bg": "rgba(139, 148, 158, 0.08)" },
+    },
+    "subsystem": {
+      "packageManager": "#a371f7",
+      "networking": "#39c5cf",
+      "bundler": "#f0883e",
+    },
+  },
+
   // Product/release surfaces receive namespaced role aliases only. Values must
   // resolve through the shared FactoryWager palette and semantic kernel; never
   // place a second palette or product-owned hex values in this section.

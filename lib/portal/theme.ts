@@ -102,6 +102,20 @@ export type PortalThemeLayers = {
   border: string;
 };
 
+export type PortalThemeIdentityColor = {
+  border: string;
+  text: string;
+  bg: string;
+};
+
+export type PortalThemeIdentity = {
+  venue: Record<
+    'polymarket' | 'pinnacle' | 'betfair' | 'kalshi' | 'unknown',
+    PortalThemeIdentityColor
+  >;
+  subsystem: Record<'packageManager' | 'networking' | 'bundler', string>;
+};
+
 /**
  * Collision-resistant role aliases for the Bun 1.4 release surface.
  * These are projections of the shared kernel, never an independent palette.
@@ -239,6 +253,7 @@ export type PortalTheme = {
   tones: PortalThemeTones;
   semantic: PortalThemeSemantic;
   layers: PortalThemeLayers;
+  identity: PortalThemeIdentity;
   namespaces: PortalThemeNamespaces;
   typography: PortalThemeTypography;
   layout: PortalThemeLayout;
@@ -339,6 +354,40 @@ function bun14NamespaceBlock(namespace: PortalThemeBun14Namespace, indent = '  '
     .join('\n');
 }
 
+const VENUE_CSS_PREFIX: Record<keyof PortalThemeIdentity['venue'], string> = {
+  polymarket: 'poly',
+  pinnacle: 'pinnacle',
+  betfair: 'betfair',
+  kalshi: 'kalshi',
+  unknown: 'unknown',
+};
+
+const SUBSYSTEM_CSS_NAME: Record<keyof PortalThemeIdentity['subsystem'], string> = {
+  packageManager: 'package-manager',
+  networking: 'networking',
+  bundler: 'bundler',
+};
+
+function identityBlock(identity: PortalThemeIdentity, indent = '  '): string {
+  const venues = (Object.keys(identity.venue) as Array<keyof PortalThemeIdentity['venue']>)
+    .flatMap(venue => {
+      const prefix = VENUE_CSS_PREFIX[venue];
+      const value = identity.venue[venue];
+      return [
+        `${indent}--venue-${prefix}-border: ${value.border};`,
+        `${indent}--venue-${prefix}-text: ${value.text};`,
+        `${indent}--venue-${prefix}-bg: ${value.bg};`,
+      ];
+    })
+    .join('\n');
+  const subsystems = (
+    Object.keys(identity.subsystem) as Array<keyof PortalThemeIdentity['subsystem']>
+  )
+    .map(key => `${indent}--subsystem-${SUBSYSTEM_CSS_NAME[key]}: ${identity.subsystem[key]};`)
+    .join('\n');
+  return `${venues}\n${subsystems}`;
+}
+
 export function renderThemeTokensCss(theme: PortalTheme = portalTheme): string {
   const {
     brand,
@@ -347,6 +396,7 @@ export function renderThemeTokensCss(theme: PortalTheme = portalTheme): string {
     tones,
     semantic,
     layers,
+    identity,
     typography,
     breakpoints,
     animation,
@@ -387,6 +437,8 @@ export function renderThemeTokensCss(theme: PortalTheme = portalTheme): string {
     `  --bg-elevated: ${layers.elevated};`,
     `  --bg-inverse: ${layers.inverse};`,
     `  --layer-border: ${layers.border};`,
+    // Non-status venue and subsystem identities
+    identityBlock(identity),
     // Semantic status (bake age · pills · freshness)
     `  --status-fresh: ${semantic.status.fresh};`,
     `  --status-stale: ${semantic.status.stale};`,

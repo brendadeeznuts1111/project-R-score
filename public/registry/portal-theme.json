@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "theme": {
+    "version": "1.4.0",
+    "colorSchemeDefault": "dark",
+    "identity": {
+      "venues": 5,
+      "subsystems": 3
+    }
+  },
+  "source": {
+    "path": "/portal/theme.jsonc",
+    "resolvedSha256": "8723d51b0616a35c92b261bc099f9272a09bf08168aef8bac80708b06cf4e924"
+  },
+  "generated": [
+    {
+      "path": "/portal/theme-tokens.css",
+      "sha256": "19902f6d8e3f2211e16651900dd8a0b031018b6e027bc253172cb03932949aca"
+    },
+    {
+      "path": "/portal/bun-1.4/bun-1.4-theme.css",
+      "sha256": "33b2fdc69455b67cdb4a96f5f248fde56e3228ce97d8ad89dc646059b5f9f7e3"
+    }
+  ],
+  "colorPolicy": {
+    "rawLiteralMaximum": 0,
+    "consumerScopes": [
+      "components",
+      "style.css",
+      "venues.css",
+      "bun-1.4"
+    ],
+    "verificationCommand": "bun run validate:colors"
+  }
+}

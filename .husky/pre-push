@@ -1,26 +1,2 @@
 #!/usr/bin/env sh
-set -e
-
-# Push boundary: verify a fast subset even if a local commit bypassed its hook.
-# Full merge proof is local-only and owned by: bun run bun:ci.
-
-# Ref-only pushes (branch/tag deletes: `git push origin :branch` / `--delete`)
-# carry no content — the content gates below are moot and would only fail on
-# pre-existing tree state owned by other lanes. Skip them.
-has_content=0
-while read -r _lref lsha _rref _rsha; do
-  if [ "$lsha" != "0000000000000000000000000000000000000000" ]; then
-    has_content=1
-  fi
-done
-if [ "$has_content" -eq 0 ]; then
-  echo "⏭️  ref-only push (no content) — skipping content gates"
-  exit 0
-fi
-
-bun scripts/verify-install-cache.ts --quiet
-bun scripts/repo-hygiene.ts --tracked
-bun tools/brand-manifest.ts --check
-bun tools/branded-id-check.ts --smart --strict --quiet
-bun test tests/branded-catalog.test.ts tests/repository-governance.test.ts
-bun scripts/security-dependency-guard.ts
+exec bun scripts/pre-push-receipt.ts "$@"

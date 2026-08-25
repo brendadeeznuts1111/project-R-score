@@ -29,14 +29,14 @@ const STYLE = `
   <style>
     :host {
       display: block;
-      color: var(--text, #e6edf3);
+      color: var(--text);
       font-family: var(--font-sans, Inter, system-ui, sans-serif);
-      --lcc-up: var(--partner-ops-operator-ready, var(--tone-ok, #3fb950));
-      --lcc-down: var(--partner-ops-rejected, var(--tone-bad, #f85149));
-      --lcc-warn: var(--partner-ops-deferred, var(--tone-warn, #d29922));
-      --lcc-border: var(--border, #30363d);
-      --lcc-surface: var(--surface, #161b22);
-      --lcc-muted: var(--text-dim, #8b949e);
+      --lcc-up: var(--partner-ops-operator-ready, var(--tone-ok));
+      --lcc-down: var(--partner-ops-rejected, var(--tone-bad));
+      --lcc-warn: var(--partner-ops-deferred, var(--tone-warn));
+      --lcc-border: var(--border);
+      --lcc-surface: var(--surface);
+      --lcc-muted: var(--text-dim);
     }
     .lcc-toolbar {
       display: flex;
@@ -64,8 +64,8 @@ const STYLE = `
     }
     .lcc-toolbar button:hover,
     .lcc-toolbar a:hover {
-      border-color: var(--accent, #58a6ff);
-      color: var(--accent, #58a6ff);
+      border-color: var(--accent);
+      color: var(--accent);
     }
     .lcc-summary {
       display: flex;
@@ -109,7 +109,7 @@ const STYLE = `
     .lcc-table td {
       padding: 8px 10px;
       text-align: left;
-      border-bottom: 1px solid rgba(48, 54, 61, 0.45);
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
       vertical-align: top;
     }
     .lcc-table th {
@@ -125,7 +125,7 @@ const STYLE = `
       border-bottom: 1px solid var(--lcc-border);
       white-space: nowrap;
     }
-    .lcc-table tbody tr:hover td { background: rgba(255, 255, 255, 0.025); }
+    .lcc-table tbody tr:hover td { background: color-mix(in srgb, var(--text) 2.5%, transparent); }
     .lcc-table tr.lcc-row-up td:first-child { box-shadow: inset 3px 0 0 var(--lcc-up); }
     .lcc-table tr.lcc-row-down td:first-child { box-shadow: inset 3px 0 0 var(--lcc-down); }
     .lcc-up { color: var(--lcc-up); font-weight: 600; }
@@ -138,7 +138,7 @@ const STYLE = `
     .lcc-account {
       font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
       font-size: 0.92em;
-      color: var(--accent, #58a6ff);
+      color: var(--accent);
       text-decoration: none;
     }
     .lcc-account:hover { text-decoration: underline; }
@@ -155,7 +155,7 @@ const STYLE = `
     .lcc-book-ext,
     .lcc-book-type {
       font-size: 0.85em;
-      color: var(--accent, #58a6ff);
+      color: var(--accent);
       text-decoration: none;
       opacity: 0.85;
     }
@@ -184,7 +184,7 @@ const STYLE = `
     .lcc-meter-track {
       height: 6px;
       border-radius: 999px;
-      background: rgba(139, 148, 158, 0.25);
+      background: color-mix(in srgb, var(--text-dim) 25%, transparent);
       overflow: hidden;
     }
     .lcc-meter-fill {

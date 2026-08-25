@@ -25,3 +25,4 @@ Disallow: /tmp/
 # Sitemaps advertised for crawler discovery
 Sitemap: https://wiki.factory-wager.com/sitemap.xml
 Sitemap: https://wiki.factory-wager.com/sitemap-pages.xml
+Sitemap: https://score.factory-wager.com/sitemap.xml
