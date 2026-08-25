@@ -154,33 +154,13 @@ A changed source ETag with unchanged decoded content need not mint an asset
 identity. Changed bytes update the digest and enrichment revision, but do not by
 themselves mint a new item GUID.
 
-## Bun 1.4 media endpoints
+## Bun 1.4 release projection
 
-The committed Bun 1.4 manifest deterministically fans out to four feed-schema v1
-documents:
-
-| Endpoint               | Membership                          |
-| ---------------------- | ----------------------------------- |
-| `/feeds/v1/all.xml`    | All 26 manifest records             |
-| `/feeds/v1/images.xml` | 21 images, including release art    |
-| `/feeds/v1/videos.xml` | Four MP4s with poster relationships |
-| `/feeds/v1/embeds.xml` | One interaction-gated player        |
-
-Each document has one channel, an exact Atom self link, a bounded core channel
-image, a schema version held outside RSS XML, a strong SHA-256 ETag over emitted
-bytes, and the official Bun RSS publication time as its source publication and
-initial material revision. The aggregate and specific feeds retain the same
-opaque item GUID. Equal manifest data produces byte-identical XML.
-
-Rights-pending records use absolute Bun-hosted source URLs. An approved manifest
-may resolve approved local URLs against the Pages origin without changing item
-identity. A changed representation changes the exact-byte ETag; it does not
-rewrite the original publication date.
-
-Capability membership is a separate normalized relation in
-[`bun-1.4-capabilities.json`](../public/registry/bun-1.4-capabilities.json).
-Related feed items emit stable standard categories such as
-`bun:capability:bun-spawn-cgroup`; no private RSS element or capability-specific
-endpoint is invented. Channel membership remains derived from the referenced
-asset's canonical kind, so the capability graph cannot duplicate or override
-media facts.
+The versioned Bun 1.4 endpoint list, item counts, aliases, capability relations,
+rights mode, and asset membership are generated release data—not RSS-shape
+rules. They are owned by
+[`BUN_1_4_CHANNEL_LIFECYCLE.md`](./BUN_1_4_CHANNEL_LIFECYCLE.md),
+[`BUN_1_4_MEDIA_RIGHTS.md`](./BUN_1_4_MEDIA_RIGHTS.md), and the committed
+`public/registry/bun-1.4-*.json` records. Verify the projection with
+`bun run channels:bun-1.4:check` rather than copying its counts or routes into
+another document.
