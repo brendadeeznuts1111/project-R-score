@@ -80,6 +80,7 @@ All commands run via `bun run <name>` from the project root:
 |---------|-------------|
 | `bun run channels:bun-1.4:check` | Verify Bun 1.4 manifest-derived XML feeds and ownership snapshot |
 | `bun run channels:bun-1.4:rebuild` | Rebuild feeds and write a content-addressed Bun.Archive |
+| `bun run channels:bun-1.4:refresh` | Fetch official Bun 1.4 sources and refresh the reviewed manifest plus derived channels |
 | `bun run channels:bun-1.4:watch` | Watch the reviewed manifest and rebuild derived channel outputs |
 | `bun run channels:projects` | Regenerate the reviewed project/repository/channel ownership registry |
 | `bun run channels:projects:check` | Verify project ownership, aliases, copied-feed absence, and branded type contracts |
