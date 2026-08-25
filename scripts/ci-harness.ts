@@ -22,7 +22,7 @@
  *   bun scripts/ci-harness.ts --verbose
  *   bun scripts/ci-harness.ts --fail-json
  */
-import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+import { applyHarnessUnknownLongOptionGuardFor } from '../lib/docs/flags/harness.ts';
 import { logCompact } from '../lib/console-depth';
 import { githubTokenPresence, resolveGitHubRepositoryRef } from '../lib/github-repository-ref';
 import { buildReservedTestCommand } from '../lib/harness/ci-test-groups.ts';
@@ -30,7 +30,7 @@ import { hasFlag } from './lib/cli-args';
 import { ensureDir, writeJson } from './lib/fs-bun';
 import { runGroupCommand } from './lib/harness-group-runner';
 const argv = import.meta.main
-  ? applyUnknownLongOptionGuardFor('ci:harness', Bun.argv.slice(2))
+  ? applyHarnessUnknownLongOptionGuardFor('ci:harness', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 const repoRoot = `${import.meta.dir}/..`;
 const TIMING_PATH = `${repoRoot}/reports/ci-harness-timing.json`;

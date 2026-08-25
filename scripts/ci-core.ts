@@ -2,7 +2,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+import { applyHarnessUnknownLongOptionGuardFor } from '../lib/docs/flags/harness.ts';
 /**
  * One local/CI envelope after `bun ci`: install proof + hygiene + ci:harness.
  * Avoids a second GHA job that re-installs for hygiene alone.
@@ -110,7 +110,7 @@ const CORE_STEPS: CoreStep[] = [
 ];
 
 const harnessArgs = import.meta.main
-  ? applyUnknownLongOptionGuardFor('ci:core', Bun.argv.slice(2))
+  ? applyHarnessUnknownLongOptionGuardFor('ci:core', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 const verbose = harnessArgs.includes('--verbose');
 const timings: GateTiming[] = [];

@@ -11,7 +11,7 @@
 // @see https://bun.com/docs/test/parallel#parallel — --parallel
 // @see https://bun.com/blog/bun-v1.4#bun-test-timings — --timings / --update-timings
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+import { applyHarnessUnknownLongOptionGuardFor } from '../lib/docs/flags/harness.ts';
 /**
  * Day-loop wrapper for `bun test --changed` (+ parallel by default).
  *
@@ -209,7 +209,7 @@ export async function runTestChanged(
   } & TestChangedDeps = {}
 ): Promise<number> {
   const args = parseTestChangedArgs(
-    opts.argv ?? applyUnknownLongOptionGuardFor('test:changed', Bun.argv.slice(2)),
+    opts.argv ?? applyHarnessUnknownLongOptionGuardFor('test:changed', Bun.argv.slice(2)),
     opts.env ?? Bun.env
   );
   const resolveHead = opts.resolveMainHead ?? resolveMainHead;
