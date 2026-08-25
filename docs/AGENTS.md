@@ -15,10 +15,11 @@ grounded API matrix. Load only the matching route and its owner.
   [`DOMAIN_CONCEPT_SHAPE.md`](DOMAIN_CONCEPT_SHAPE.md)
 - Bun APIs: [`BUN_NATIVE_CAPABILITIES.md`](BUN_NATIVE_CAPABILITIES.md) ·
   [`BUN_DOCS_OPERATE.md`](BUN_DOCS_OPERATE.md) · `bun run docs:refresh`
-- Bun 1.4 release facts: [`BUN_1_4_MIGRATION.md`](BUN_1_4_MIGRATION.md)
-  (what shipped) · [`BUN_1_4_CHANNEL_LIFECYCLE.md`](BUN_1_4_CHANNEL_LIFECYCLE.md)
-  (channels, ownership, removal) · [`BUN_1_4_MEDIA_RIGHTS.md`](BUN_1_4_MEDIA_RIGHTS.md)
-  (external versus vendored delivery) · `public/registry/bun-1.4-*.json` ·
+- Bun 1.4 release facts: [`BUN_1_4_MIGRATION.md`](BUN_1_4_MIGRATION.md) (what
+  shipped) · [`BUN_1_4_CHANNEL_LIFECYCLE.md`](BUN_1_4_CHANNEL_LIFECYCLE.md)
+  (channels, ownership, removal) ·
+  [`BUN_1_4_MEDIA_RIGHTS.md`](BUN_1_4_MEDIA_RIGHTS.md) (external versus vendored
+  delivery) · `public/registry/bun-1.4-*.json` ·
   `bun run docs:blog-assets:check` · `bun run channels:bun-1.4:check`
 - Native fetch protocols: `lib/docs/fetch-protocol-docs.ts` ·
   `bun test tests/bun-release-tracker.test.ts`
@@ -29,7 +30,8 @@ grounded API matrix. Load only the matching route and its owner.
   `lib/factory/` · `bun run factory:templates`
 - Package release:
   [`design/bun-publish-alignment.md`](design/bun-publish-alignment.md) ·
-  `bun publish --dry-run` · `bun pm pack`
+  `bun publish --dry-run` · `bun pm pack` — select the owning package first; the
+  private monorepo root is not a default publish target
 - CLI flags: [`harness/cli-constants-flags.md`](harness/cli-constants-flags.md)
   · `lib/docs/ref-id-tool-flags.ts` · `bun run cli:flags:check`
 - Bun upstream PR proof:
@@ -42,8 +44,11 @@ grounded API matrix. Load only the matching route and its owner.
   `bun tools/bun-doc-refs.ts suggest --audit "<q>"`
 - Import graph: [`IMPORT_BOUNDARIES.md`](IMPORT_BOUNDARIES.md) ·
   `bun run check:import-graph`
-- Workspace and path ownership: [`STRUCTURE.md`](../STRUCTURE.md) ·
+- Workspace layout and path ownership: [`STRUCTURE.md`](../STRUCTURE.md) ·
   `lib/docs/repo-docs.ts`
+- Worktree lane ownership and lifecycle:
+  [`harness/tenants/maintain-workspace.md`](harness/tenants/maintain-workspace.md)
+  · `bun run lane:status` (inspection only; not a claim or retirement grant)
 - Harness: [`harness/README.md`](harness/) · `bun run harness:status`
 - Platform routing: [`platform-routing.md`](platform-routing.md) ·
   `bun run verify:pages-edge`

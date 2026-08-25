@@ -25,6 +25,20 @@ description: >
 6. Register a new skill in `.agents/skills/ast-grep/skill-loop-registry.json`
    with enabled `doctor` and `rate` phases. Add `precommit` only when the skill
    owns that command.
+
+## Authority regressions
+
+- Reject installed-parity contracts, synchronization commands, or copied Project
+  R skill packages under `~/.codex/skills`. They create a second policy plane
+  with ambiguous precedence and broken repository-relative links.
+- A machine doctor may report a duplicate installed package, but repository CI
+  must not require, compare, update, or delete user-scoped skill directories.
+- Global guidance may point to the current checkout. It must not copy Project R
+  commands, release state, gate policy, or skill bodies.
+- Treat a task report, worktree listing, or old commit timestamp as observation,
+  not ownership. Durable ownership needs an explicit claim record; absence or
+  expiry of a claim never grants deletion authority.
+
 7. Replace repeated multi-command audit recipes with one owner command when the
    repository already has the machinery. A versioned audit must fail for new
    findings and stale expected findings; keep every expected finding explicit,
@@ -116,3 +130,6 @@ proof. Do not synchronize repository skills into a global skill directory.
   conflicts with a verified contract.
 - Never encode model branding, co-author trailers, publishing, or upload as a
   mandatory skill action.
+- Do not reintroduce `config/project-r-agent-contract.json`,
+  `agents:contract:check`, or installed-skill parity as a substitute for
+  `bun run skills:validate`.

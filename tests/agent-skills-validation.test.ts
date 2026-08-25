@@ -211,8 +211,19 @@ describe('validateAgentSkills', () => {
   });
 
   it('keeps the repository skill plane valid', async () => {
-    const result = await validateAgentSkills(join(import.meta.dir, '..'));
+    const repoRoot = join(import.meta.dir, '..');
+    const result = await validateAgentSkills(repoRoot);
     expect(result.issues.filter(item => item.level === 'error')).toEqual([]);
+    expect(await Bun.file(join(repoRoot, 'config/project-r-agent-contract.json')).exists()).toBe(
+      false
+    );
+    expect(await Bun.file(join(repoRoot, 'scripts/check-project-r-agent-contract.ts')).exists()).toBe(
+      false
+    );
+    const rootPackage = (await Bun.file(join(repoRoot, 'package.json')).json()) as {
+      scripts?: Record<string, string>;
+    };
+    expect(rootPackage.scripts?.['agents:contract:check']).toBeUndefined();
   });
 
   it('hydrates the ast-grep doctor pin without filtering the root workspace', async () => {
