@@ -39,6 +39,7 @@
 import { hasCodeLikeChange } from './lib/git-changed.ts';
 import { isDirectorySync } from './lib/fs-bun.ts';
 import { removeIndexTreeSync } from './lib/index-tree.ts';
+import { affectedTestIgnorePatterns } from '../lib/harness/ci-test-groups.ts';
 import { dirnamePath } from '../lib/path-bun.ts';
 
 const ROOT = process.cwd();
@@ -142,7 +143,11 @@ export function buildStagedTestCommand(
 ): string[] {
   const serial =
     argv.includes('--serial') || env.BUN_TEST_SERIAL === '1' || env.BUN_TEST_SERIAL === 'true';
-  const forwarded = argv.filter(arg => arg !== '--' && arg !== '--serial' && arg !== '--dry-run');
+  const excludeCiReserved = argv.includes('--exclude-ci-reserved');
+  const forwarded = argv.filter(
+    arg =>
+      arg !== '--' && arg !== '--serial' && arg !== '--dry-run' && arg !== '--exclude-ci-reserved'
+  );
   const hasParallel = forwarded.some(arg => arg === '--parallel' || arg.startsWith('--parallel='));
   const hasIsolate = forwarded.includes('--isolate');
   const command = ['bun', 'test'];
@@ -151,6 +156,12 @@ export function buildStagedTestCommand(
     command.push(changedFlag);
   }
   command.push('--pass-with-no-tests');
+
+  if (excludeCiReserved) {
+    for (const pattern of affectedTestIgnorePatterns()) {
+      command.push('--path-ignore-patterns', pattern);
+    }
+  }
 
   // Bun workers imply a fresh global per file. Preserve explicit runner choices;
   // otherwise use the bounded staged-gate default.
