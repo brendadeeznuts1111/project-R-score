@@ -89,14 +89,15 @@ Do not use one as proof for a different layer.
 
 | Intent                   | Command                                                  | Contract                                                                     |
 | ------------------------ | -------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Changed-file development | `bun run test:watch`                                     | Watch the affected test set.                                                 |
+| Changed-file development | `bun run test:watch`                                     | Watch the affected set through the owned wrapper and timing cache.           |
 | Focused proof            | `bun test <test-file...>`                                | Name exact files; add `-t <pattern>` only for a narrower behavior.           |
 | Focused coverage         | `bun run test:coverage -- <test-file...> [-t <pattern>]` | Exact files first; wrapper owns text + LCOV output under `coverage/focused`. |
-| Changed staged scope     | `bun run test:changed`                                   | Project-owned changed-test resolver.                                         |
+| Changed staged scope     | `bun run test:changed`                                   | `--changed` plus Bun 1.4 adaptive timings and parallel files.                |
 | Snapshot catalog check   | `bun run check:snapshots`                                | Validate headers, registrations, and orphan state without running tests.     |
 | Snapshot contract proof  | `bun run test:snapshots`                                 | Run every registered snapshot suite.                                         |
 | Scoped snapshot update   | `bun tools/bun-test-snapshots.ts --update --id <id>`     | File-scoped `-u`; review and stage only the owned diff.                      |
 | Staged gate              | `.husky/pre-commit`                                      | Path-gated staged checks.                                                    |
+| Merge-base test proof    | `bun run test:changed:main -- --parallel=4`              | Bun 1.4 timings plus bounded workers; isolate every writable fixture.        |
 | Merge proof              | `bun run bun:ci`                                         | Clean-worktree local authority, including the snapshot catalog.              |
 
 Flag boundaries:
@@ -109,8 +110,17 @@ Flag boundaries:
   never place it in a verification or merge command.
 - `--randomize --seed=<n>` and `--rerun-each=<n>` are diagnostic lanes for
   ordering and flake detection. Record the seed or repetition count.
+- `--timings=<path> --update-timings` is the finite-run scheduling pair. The
+  owned wrapper defaults to `.cache/bun-test-timings.json`; `--no-timings` is a
+  diagnosis-only opt-out.
 - `--coverage`, `--bail`, `--retry`, and `--smol` change the proof being run;
   add them only when the owning script or investigation requires them.
+
+For a slow pre-commit hook, run `bun run precommit:profile`. The emitted
+`reports/precommit-cpu.md` uses Bun 1.4's boolean `--cpu-prof-md` with separate
+`--cpu-prof-dir` and `--cpu-prof-name` routing. For CI wall-time, inspect
+`reports/ci-core-timing.json`: `wallMs` is elapsed time and `totalMs` is the
+parallel step sum.
 
 ## Release proof
 

@@ -76,6 +76,16 @@ clarity but must not be added to that catalog.
   `.agents/skills/`.
 - Remove obsolete translations. Bun has no `bun test --runInBand`; `--parallel`
   implies `--isolate`; Node test worker IDs are not `bun:test` allocation APIs.
+- Preserve Bun 1.4 CLI value shapes when documenting observability:
+  `--cpu-prof-md` and `--heap-prof-md` are boolean flags, while output paths use
+  their `--*-prof-dir` and `--*-prof-name` companions. Reject copied
+  `--cpu-prof-md=<path>` examples.
+- Route changed-test loops through the repository wrapper so Bun 1.4 `--timings`
+  scheduling has one cache and one opt-out. Do not duplicate the raw
+  `--changed --watch --parallel` command in another skill or package script.
+- Preserve bounded merge scheduling: the harness may add `--parallel=4` to the
+  wrapper, while `test:changed:serial` remains a diagnostic. Skill examples must
+  not recommend serial execution as a substitute for fixture isolation.
 - Root Project R uses pinned ESLint and Prettier. Keep Oxlint only inside a
   standalone nested product with its own explicit pin.
 - Link shared staged-gate or loop behavior through

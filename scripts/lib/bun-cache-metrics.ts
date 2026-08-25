@@ -157,11 +157,14 @@ export async function runCachePrune(): Promise<{ ok: boolean; output: string }> 
   return { ok: proc.exitCode === 0, output };
 }
 
-export async function runBunCacheLifecycle(options: {
-  dryRun: boolean;
-  prune: boolean;
-}): Promise<BunCacheLifecyclePlan> {
-  const metrics = await collectBunCacheMetrics();
+export async function runBunCacheLifecycle(
+  options: {
+    dryRun: boolean;
+    prune: boolean;
+  },
+  collectedMetrics?: BunCacheMetrics
+): Promise<BunCacheLifecyclePlan> {
+  const metrics = collectedMetrics ?? (await collectBunCacheMetrics());
   const maxBytes = resolvePruneMaxBytes();
   const { wouldPrune, reason } = shouldPruneCache(metrics, maxBytes);
 

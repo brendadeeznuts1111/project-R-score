@@ -910,7 +910,13 @@ export const SPORTS_TERMINAL_HEALTH_REFRESH_ALLOWED_LONG = [
 export const CONCEPT_REGISTRY_SERVE_ALLOWED_LONG = ['no-scan'] as const;
 
 /** § — install:verify (`scripts/verify-install-cache.ts`) — auto team plan */
-export const INSTALL_VERIFY_ALLOWED_LONG = ['dry-run', 'json', 'quiet', 'strict'] as const;
+export const INSTALL_VERIFY_ALLOWED_LONG = [
+  'dry-run',
+  'json',
+  'quiet',
+  'skip-cache-size',
+  'strict',
+] as const;
 
 /** § — search:domain:doctor (`scripts/domain-registry-status.ts`) — auto team plan */
 export const SEARCH_DOMAIN_DOCTOR_ALLOWED_LONG = [
@@ -1169,9 +1175,12 @@ export const TEST_CHANGED_ALLOWED_LONG = [
   'dry-run',
   'isolate',
   'main-head',
+  'no-timings',
   'parallel',
   'serial',
   'shard',
+  'timings',
+  'update-timings',
   'watch',
 ] as const;
 

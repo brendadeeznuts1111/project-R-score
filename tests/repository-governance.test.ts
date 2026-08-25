@@ -65,6 +65,12 @@ describe('repository governance', () => {
     expect(localCi).toContain('factory-wager-wiki');
     expect(localCi).toContain('Bun.spawn([bunExecutable');
     const ciCore = await Bun.file(`${import.meta.dir}/../scripts/ci-core.ts`).text();
+    const ciCoreRunner = await Bun.file(
+      `${import.meta.dir}/../scripts/lib/ci-core-runner.ts`
+    ).text();
+    expect(ciCore).toContain("'--skip-cache-size'");
+    expect(ciCore).toContain('parallelCoreSteps.map');
+    expect(ciCoreRunner).toContain('wallMs:');
     expect(ciCore).toContain("name: 'bun-release-contracts'");
     expect(ciCore).toContain("['bun', 'run', 'bun:release-contracts:check']");
     expect(ciCore.indexOf("name: 'bun-release-contracts'")).toBeLessThan(
@@ -80,6 +86,7 @@ describe('repository governance', () => {
 
   test('default test scripts lock Bun 1.4 parallel and JUnit env wiring', () => {
     expect(packageJson.scripts.test).toContain('--parallel');
+    expect(packageJson.scripts['test:watch']).toBe('NODE_ENV=test bun run test:changed:watch');
     expect(packageJson.scripts['test:ci']).toContain('run-with-junit-env');
     const testDots = packageJson.scripts['test:dots'];
     if (testDots !== undefined) {

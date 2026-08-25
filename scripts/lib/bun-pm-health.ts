@@ -180,8 +180,11 @@ export function auditPmProjectIdentity(cwd = ROOT): PmProjectIdentity {
   }
 }
 
-export async function collectBunPmHealth(cwd = ROOT): Promise<BunPmHealthReport> {
-  const cache = await collectBunCacheMetrics();
+export async function collectBunPmHealth(
+  cwd = ROOT,
+  collectedCache?: BunCacheMetrics
+): Promise<BunPmHealthReport> {
+  const cache = collectedCache ?? (await collectBunCacheMetrics());
   const lockfile = auditLockfileIntegrity(cwd);
   const trust = auditPmTrust(cwd);
   const bin = auditPmBin(cwd);

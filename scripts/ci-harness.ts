@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/test/parallel#parallel — --parallel
+// @see https://bun.com/blog/bun-v1.4#bun-test-timings — --timings / --update-timings
 // @released --parallel · released v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
 // @updated --parallel · changed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
 // @updated --parallel · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
@@ -148,14 +149,14 @@ function eslintStep(fullLint: boolean): Step {
 function testStep(mainHead: boolean): Step {
   return {
     name: 'test-changed',
-    // Main-head can select hundreds of tests that contend on shared repository files.
-    // Keep dirty-tree development parallel and merge proof serial.
+    // Bun 1.4's timing cache improves scheduling; cap merge-proof fan-out so the
+    // larger main-head selection stays fast without saturating shared runners.
     cmd: mainHead
-      ? ['bun', 'run', 'test:changed', '--', '--main-head', '--serial']
+      ? ['bun', 'run', 'test:changed', '--', '--main-head', '--parallel=4']
       : ['bun', 'run', 'test:changed'],
-    owner: 'scripts/bun-test-changed.ts · --changed · --parallel/--serial · --main-head',
+    owner: 'scripts/bun-test-changed.ts · --changed · --timings · --parallel/--serial',
     repair: mainHead
-      ? 'bun run test:changed:main -- --serial'
+      ? 'bun run test:changed:main -- --parallel=4  # use test:changed:serial to diagnose races'
       : 'bun run test:changed  # or --serial / BUN_TEST_SERIAL=1',
   };
 }

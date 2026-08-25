@@ -72,6 +72,17 @@ description: >
 - Use focused file tests while editing, `bun run test:watch` for the
   changed-file loop, `.husky/pre-commit` for staged proof, and `bun run bun:ci`
   on a clean worktree before merge.
+- The changed-test wrapper owns Bun 1.4 adaptive scheduling through the
+  gitignored `.cache/bun-test-timings.json`. Keep `--timings` and
+  `--update-timings` together on finite runs; use `--no-timings` only when
+  diagnosing that cache. Do not add a second watch command that bypasses the
+  wrapper.
+- Merge-base proof uses the wrapper with bounded `--parallel=4`. A test must use
+  a unique scratch path and remove only its own fixture; retain the serial
+  wrapper for diagnosing a race, not for hiding shared-state cleanup.
+- Diagnose a slow hook with `bun run precommit:profile`. Bun 1.4 `--cpu-prof-md`
+  is boolean; route output with `--cpu-prof-dir` and `--cpu-prof-name`, never
+  `--cpu-prof-md=<path>`.
 - When Bun docs, API history, feed, overlay, scrape-state, or catalog files
   move, run the exact provenance proof. Repair malformed persisted artifacts or
   use the documented `scrape --force` rebuild; do not weaken fail-closed parsing

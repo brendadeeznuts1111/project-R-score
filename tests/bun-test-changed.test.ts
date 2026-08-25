@@ -16,6 +16,7 @@ function args(partial: Partial<TestChangedArgs> = {}): TestChangedArgs {
     dryRun: false,
     serial: false,
     isolate: false,
+    timings: true,
     mainHead: false,
     shard: undefined,
     flags: [],
@@ -31,6 +32,7 @@ describe('parseTestChangedArgs', () => {
     expect(parsed.watch).toBe(false);
     expect(parsed.dryRun).toBe(false);
     expect(parsed.serial).toBe(false);
+    expect(parsed.timings).toBe(true);
     expect(parsed.mainHead).toBe(false);
     expect(parsed.flags).toEqual([]);
     expect(parsed.restPositionals).toEqual([]);
@@ -58,6 +60,12 @@ describe('parseTestChangedArgs', () => {
   test('--dry-run is recognized and stripped from flags', () => {
     const parsed = parseTestChangedArgs(['--dry-run', '--bail=1']);
     expect(parsed.dryRun).toBe(true);
+    expect(parsed.flags).toEqual(['--bail=1']);
+  });
+
+  test('--no-timings disables and strips the adaptive timing cache flag', () => {
+    const parsed = parseTestChangedArgs(['--no-timings', '--bail=1']);
+    expect(parsed.timings).toBe(false);
     expect(parsed.flags).toEqual(['--bail=1']);
   });
 
@@ -114,22 +122,49 @@ describe('parseShard', () => {
 describe('buildBunTestCommand', () => {
   test('adds --parallel by default', () => {
     const cmd = buildBunTestCommand(args(), undefined);
-    expect(cmd).toEqual(['test', '--pass-with-no-tests', '--changed', '--parallel']);
+    expect(cmd).toEqual([
+      'test',
+      '--pass-with-no-tests',
+      '--changed',
+      '--timings=.cache/bun-test-timings.json',
+      '--update-timings',
+      '--parallel',
+    ]);
   });
 
   test('uses --changed=<ref> when ref is resolved', () => {
     const cmd = buildBunTestCommand(args(), 'origin/main');
-    expect(cmd).toEqual(['test', '--pass-with-no-tests', '--changed=origin/main', '--parallel']);
+    expect(cmd).toEqual([
+      'test',
+      '--pass-with-no-tests',
+      '--changed=origin/main',
+      '--timings=.cache/bun-test-timings.json',
+      '--update-timings',
+      '--parallel',
+    ]);
   });
 
   test('omits --parallel when serial is requested', () => {
     const cmd = buildBunTestCommand(args({ serial: true }), 'HEAD~1');
-    expect(cmd).toEqual(['test', '--pass-with-no-tests', '--changed=HEAD~1']);
+    expect(cmd).toEqual([
+      'test',
+      '--pass-with-no-tests',
+      '--changed=HEAD~1',
+      '--timings=.cache/bun-test-timings.json',
+      '--update-timings',
+    ]);
   });
 
   test('does not duplicate --parallel when already in flags', () => {
     const cmd = buildBunTestCommand(args({ flags: ['--parallel=4'] }), undefined);
-    expect(cmd).toEqual(['test', '--pass-with-no-tests', '--changed', '--parallel=4']);
+    expect(cmd).toEqual([
+      'test',
+      '--pass-with-no-tests',
+      '--changed',
+      '--timings=.cache/bun-test-timings.json',
+      '--update-timings',
+      '--parallel=4',
+    ]);
   });
 
   test('forwards flags and rest positionals after changed/parallel args', () => {
@@ -141,6 +176,8 @@ describe('buildBunTestCommand', () => {
       'test',
       '--pass-with-no-tests',
       '--changed=main',
+      '--timings=.cache/bun-test-timings.json',
+      '--update-timings',
       '--parallel',
       '--bail=1',
       'tests/foo.test.ts',
@@ -149,7 +186,14 @@ describe('buildBunTestCommand', () => {
 
   test('omits --parallel when isolate is requested', () => {
     const cmd = buildBunTestCommand(args({ isolate: true, flags: ['--isolate'] }), undefined);
-    expect(cmd).toEqual(['test', '--pass-with-no-tests', '--changed', '--isolate']);
+    expect(cmd).toEqual([
+      'test',
+      '--pass-with-no-tests',
+      '--changed',
+      '--timings=.cache/bun-test-timings.json',
+      '--update-timings',
+      '--isolate',
+    ]);
   });
 
   test('renders --shard before forwarded flags', () => {
@@ -161,6 +205,8 @@ describe('buildBunTestCommand', () => {
       'test',
       '--pass-with-no-tests',
       '--changed=main',
+      '--timings=.cache/bun-test-timings.json',
+      '--update-timings',
       '--parallel',
       '--shard=2/4',
       '--bail=1',
@@ -176,9 +222,31 @@ describe('buildBunTestCommand', () => {
       'test',
       '--pass-with-no-tests',
       '--changed=main',
+      '--timings=.cache/bun-test-timings.json',
+      '--update-timings',
       '--parallel=8',
       'tests/foo.test.ts',
     ]);
+  });
+
+  test('does not duplicate explicitly supplied timing flags', () => {
+    const cmd = buildBunTestCommand(
+      args({ flags: ['--timings=custom.json', '--update-timings'] }),
+      'main'
+    );
+    expect(cmd).toEqual([
+      'test',
+      '--pass-with-no-tests',
+      '--changed=main',
+      '--parallel',
+      '--timings=custom.json',
+      '--update-timings',
+    ]);
+  });
+
+  test('omits adaptive timing flags when disabled', () => {
+    const cmd = buildBunTestCommand(args({ timings: false }), undefined);
+    expect(cmd).toEqual(['test', '--pass-with-no-tests', '--changed', '--parallel']);
   });
 });
 
@@ -187,7 +255,9 @@ describe('buildTestChangedPreview', () => {
     const preview = buildTestChangedPreview(args(), undefined, ['lib/foo.ts']);
     expect(preview.codeLike).toBe(true);
     expect(preview.skipReason).toBeUndefined();
-    expect(preview.command).toBe('bun test --pass-with-no-tests --changed --parallel');
+    expect(preview.command).toBe(
+      'bun test --pass-with-no-tests --changed --timings=.cache/bun-test-timings.json --update-timings --parallel'
+    );
   });
 
   test('non-code files report skip reason', () => {
@@ -205,7 +275,9 @@ describe('buildTestChangedPreview', () => {
 
   test('respects serial mode in preview command', () => {
     const preview = buildTestChangedPreview(args({ serial: true }), undefined, ['lib/foo.ts']);
-    expect(preview.command).toBe('bun test --pass-with-no-tests --changed');
+    expect(preview.command).toBe(
+      'bun test --pass-with-no-tests --changed --timings=.cache/bun-test-timings.json --update-timings'
+    );
   });
 
   test('respects isolate mode in preview command', () => {
@@ -214,7 +286,9 @@ describe('buildTestChangedPreview', () => {
       undefined,
       ['lib/foo.ts']
     );
-    expect(preview.command).toBe('bun test --pass-with-no-tests --changed --isolate');
+    expect(preview.command).toBe(
+      'bun test --pass-with-no-tests --changed --timings=.cache/bun-test-timings.json --update-timings --isolate'
+    );
   });
 
   test('includes shard in preview command', () => {
@@ -223,7 +297,9 @@ describe('buildTestChangedPreview', () => {
       undefined,
       ['lib/foo.ts']
     );
-    expect(preview.command).toBe('bun test --pass-with-no-tests --changed --parallel --shard=1/4');
+    expect(preview.command).toBe(
+      'bun test --pass-with-no-tests --changed --timings=.cache/bun-test-timings.json --update-timings --parallel --shard=1/4'
+    );
   });
 });
 
